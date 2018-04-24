@@ -1,0 +1,40 @@
+PODS:
+  - DZNEmptyDataSet (1.8.1)
+  - GRDB.swift (2.10.0)
+  - Snabble (0.3.3):
+    - Snabble/Core (= 0.3.3)
+    - Snabble/UI (= 0.3.3)
+  - Snabble/Core (0.3.3):
+    - GRDB.swift (~> 2)
+    - Zip (~> 1)
+  - Snabble/UI (0.3.3):
+    - DZNEmptyDataSet
+    - Snabble/Core
+    - SwiftMessages
+  - SwiftMessages (4.1.2)
+  - Zip (1.1.0)
+
+DEPENDENCIES:
+  - Snabble (from `../`)
+
+SPEC REPOS:
+  https://github.com/CocoaPods/Specs.git:
+    - DZNEmptyDataSet
+    - GRDB.swift
+    - SwiftMessages
+    - Zip
+
+EXTERNAL SOURCES:
+  Snabble:
+    :path: "../"
+
+SPEC CHECKSUMS:
+  DZNEmptyDataSet: 9525833b9e68ac21c30253e1d3d7076cc828eaa7
+  GRDB.swift: 9859cab1b990eac62ee550d3d2208ec1b44f76af
+  Snabble: a3c11efcdf16d3067fdb29276ba85009111e4106
+  SwiftMessages: d81f48c1f8b6bc1dbebdfffe11226f0344f937ca
+  Zip: 8877eede3dda76bcac281225c20e71c25270774c
+
+PODFILE CHECKSUM: ec9c3ccc9086e423066ea6c887d019a49fc4b5eb
+
+COCOAPODS: 1.5.0

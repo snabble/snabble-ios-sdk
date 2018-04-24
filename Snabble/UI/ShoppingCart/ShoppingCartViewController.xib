@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="13771" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" colorMatched="YES">
+    <device id="retina4_7" orientation="portrait">
+        <adaptation id="fullscreen"/>
+    </device>
+    <dependencies>
+        <deployment identifier="iOS"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="13772"/>
+        <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
+    </dependencies>
+    <objects>
+        <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner" customClass="ShoppingCartViewController" customModule="Snabble" customModuleProvider="target">
+            <connections>
+                <outlet property="checkoutButton" destination="4R3-oH-v0g" id="n9H-BA-7zk"/>
+                <outlet property="tableBottomMargin" destination="42e-MF-iQe" id="1wV-ZL-Zz5"/>
+                <outlet property="tableView" destination="HUc-lW-uQH" id="3Si-CA-Ty2"/>
+                <outlet property="view" destination="i5M-Pr-FkT" id="sfx-zR-JGt"/>
+            </connections>
+        </placeholder>
+        <placeholder placeholderIdentifier="IBFirstResponder" id="-2" customClass="UIResponder"/>
+        <view clearsContextBeforeDrawing="NO" contentMode="scaleToFill" id="i5M-Pr-FkT">
+            <rect key="frame" x="0.0" y="0.0" width="375" height="822"/>
+            <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+            <subviews>
+                <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" style="plain" separatorStyle="default" rowHeight="44" sectionHeaderHeight="28" sectionFooterHeight="28" translatesAutoresizingMaskIntoConstraints="NO" id="HUc-lW-uQH" userLabel="Shopping Cart Table">
+                    <rect key="frame" x="0.0" y="0.0" width="375" height="736"/>
+                    <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                    <connections>
+                        <outlet property="dataSource" destination="-1" id="vMj-Bq-kcq"/>
+                        <outlet property="delegate" destination="-1" id="SFY-lN-w75"/>
+                    </connections>
+                </tableView>
+                <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="X6z-x3-q9y">
+                    <rect key="frame" x="0.0" y="736" width="375" height="86"/>
+                    <subviews>
+                        <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="4R3-oH-v0g">
+                            <rect key="frame" x="16" y="16" width="343" height="48"/>
+                            <constraints>
+                                <constraint firstAttribute="height" constant="48" id="paJ-8Q-hNX"/>
+                            </constraints>
+                            <state key="normal" title="1 Artikel für 4,99€ kaufen"/>
+                            <connections>
+                                <action selector="checkoutTapped:" destination="-1" eventType="touchUpInside" id="Ird-CD-g8S"/>
+                            </connections>
+                        </button>
+                    </subviews>
+                    <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                    <constraints>
+                        <constraint firstItem="4R3-oH-v0g" firstAttribute="top" secondItem="X6z-x3-q9y" secondAttribute="top" constant="16" id="ClY-7A-bCg"/>
+                        <constraint firstItem="4R3-oH-v0g" firstAttribute="leading" secondItem="X6z-x3-q9y" secondAttribute="leading" constant="16" id="gHi-sR-hFc"/>
+                        <constraint firstAttribute="trailing" secondItem="4R3-oH-v0g" secondAttribute="trailing" constant="16" id="gb7-Gz-3qv"/>
+                        <constraint firstAttribute="bottom" secondItem="4R3-oH-v0g" secondAttribute="bottom" constant="22" id="uYJ-ba-XZd"/>
+                    </constraints>
+                </view>
+            </subviews>
+            <constraints>
+                <constraint firstItem="X6z-x3-q9y" firstAttribute="top" secondItem="HUc-lW-uQH" secondAttribute="bottom" id="42e-MF-iQe"/>
+                <constraint firstAttribute="trailing" secondItem="X6z-x3-q9y" secondAttribute="trailing" id="XbR-vT-bo1"/>
+                <constraint firstAttribute="trailing" secondItem="HUc-lW-uQH" secondAttribute="trailing" id="ikB-Ai-fnc"/>
+                <constraint firstItem="X6z-x3-q9y" firstAttribute="leading" secondItem="i5M-Pr-FkT" secondAttribute="leading" id="mTA-uk-8LF"/>
+                <constraint firstAttribute="bottom" secondItem="X6z-x3-q9y" secondAttribute="bottom" id="nil-zZ-RwS"/>
+                <constraint firstItem="HUc-lW-uQH" firstAttribute="top" secondItem="i5M-Pr-FkT" secondAttribute="top" id="ob5-eA-eaN"/>
+                <constraint firstItem="HUc-lW-uQH" firstAttribute="leading" secondItem="i5M-Pr-FkT" secondAttribute="leading" id="yXV-A0-5Cj"/>
+            </constraints>
+            <nil key="simulatedTopBarMetrics"/>
+            <nil key="simulatedBottomBarMetrics"/>
+            <freeformSimulatedSizeMetrics key="simulatedDestinationMetrics"/>
+            <point key="canvasLocation" x="32" y="128"/>
+        </view>
+    </objects>
+</document>

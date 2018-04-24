@@ -1,0 +1,179 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="14109" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
+    <device id="retina4_7" orientation="portrait">
+        <adaptation id="fullscreen"/>
+    </device>
+    <dependencies>
+        <deployment identifier="iOS"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="14088"/>
+        <capability name="Safe area layout guides" minToolsVersion="9.0"/>
+        <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
+    </dependencies>
+    <objects>
+        <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner" customClass="CashCheckoutViewController" customModule="Snabble" customModuleProvider="target">
+            <connections>
+                <outlet property="cancelButton" destination="4hs-yF-PEh" id="LEc-Cz-dqF"/>
+                <outlet property="checkoutIdLabel" destination="FQN-MV-s6n" id="9a5-bC-tGw"/>
+                <outlet property="view" destination="i5M-Pr-FkT" id="sfx-zR-JGt"/>
+                <outletCollection property="steps" destination="Xn4-H9-zbh" collectionClass="NSMutableArray" id="9op-D4-iNA"/>
+                <outletCollection property="steps" destination="b2V-Hv-7D2" collectionClass="NSMutableArray" id="fJS-mA-J50"/>
+                <outletCollection property="steps" destination="r4s-7s-Slb" collectionClass="NSMutableArray" id="GSi-vu-U5J"/>
+                <outletCollection property="spinners" destination="rv9-oH-QBN" collectionClass="NSMutableArray" id="1aB-nU-JSL"/>
+                <outletCollection property="spinners" destination="p34-Fc-9eb" collectionClass="NSMutableArray" id="elf-4B-DkR"/>
+                <outletCollection property="spinners" destination="J4g-wD-XLc" collectionClass="NSMutableArray" id="Ezv-gp-EDB"/>
+            </connections>
+        </placeholder>
+        <placeholder placeholderIdentifier="IBFirstResponder" id="-2" customClass="UIResponder"/>
+        <view clearsContextBeforeDrawing="NO" contentMode="scaleToFill" id="i5M-Pr-FkT">
+            <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
+            <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+            <subviews>
+                <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" translatesAutoresizingMaskIntoConstraints="NO" id="odR-RD-HjT">
+                    <rect key="frame" x="0.0" y="0.0" width="375" height="621"/>
+                    <subviews>
+                        <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="Xn4-H9-zbh" userLabel="Locate">
+                            <rect key="frame" x="0.0" y="0.0" width="375" height="207"/>
+                            <subviews>
+                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Bitte begeben Sie sich zum Kassenbereich" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="ffZ-WZ-dyn">
+                                    <rect key="frame" x="50" y="174" width="274.5" height="17"/>
+                                    <fontDescription key="fontDescription" type="system" pointSize="14"/>
+                                    <color key="textColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                    <nil key="highlightedColor"/>
+                                </label>
+                                <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="icon-checkout-localization" translatesAutoresizingMaskIntoConstraints="NO" id="MLv-Nt-nDr">
+                                    <rect key="frame" x="151" y="61" width="72" height="72"/>
+                                </imageView>
+                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Lokalisierung" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="txB-Jf-XAl">
+                                    <rect key="frame" x="141" y="149" width="92.5" height="17"/>
+                                    <fontDescription key="fontDescription" type="boldSystem" pointSize="14"/>
+                                    <color key="textColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                    <nil key="highlightedColor"/>
+                                </label>
+                                <activityIndicatorView hidden="YES" opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" hidesWhenStopped="YES" style="white" translatesAutoresizingMaskIntoConstraints="NO" id="rv9-oH-QBN">
+                                    <rect key="frame" x="177" y="80" width="20" height="20"/>
+                                </activityIndicatorView>
+                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Checkout-Id: 4711" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="FQN-MV-s6n" userLabel="Checkout-ID">
+                                    <rect key="frame" x="132.5" y="8" width="110" height="16"/>
+                                    <fontDescription key="fontDescription" type="system" pointSize="13"/>
+                                    <nil key="textColor"/>
+                                    <nil key="highlightedColor"/>
+                                </label>
+                            </subviews>
+                            <color key="backgroundColor" white="0.8266601562" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                            <constraints>
+                                <constraint firstItem="FQN-MV-s6n" firstAttribute="top" secondItem="Xn4-H9-zbh" secondAttribute="top" constant="8" id="8kZ-MS-Q2f"/>
+                                <constraint firstItem="MLv-Nt-nDr" firstAttribute="centerX" secondItem="Xn4-H9-zbh" secondAttribute="centerX" id="GzZ-xd-5Ur"/>
+                                <constraint firstItem="ffZ-WZ-dyn" firstAttribute="top" secondItem="txB-Jf-XAl" secondAttribute="bottom" constant="8" id="Kzo-BN-Ad5"/>
+                                <constraint firstItem="MLv-Nt-nDr" firstAttribute="top" secondItem="rv9-oH-QBN" secondAttribute="bottom" constant="-39" id="MFp-B9-gb9"/>
+                                <constraint firstAttribute="bottom" secondItem="ffZ-WZ-dyn" secondAttribute="bottom" constant="16" id="XSR-Wd-7aH"/>
+                                <constraint firstItem="FQN-MV-s6n" firstAttribute="centerX" secondItem="Xn4-H9-zbh" secondAttribute="centerX" id="duN-h2-rpR"/>
+                                <constraint firstItem="txB-Jf-XAl" firstAttribute="top" secondItem="MLv-Nt-nDr" secondAttribute="bottom" constant="16" id="jzz-ws-fWB"/>
+                                <constraint firstItem="ffZ-WZ-dyn" firstAttribute="centerX" secondItem="Xn4-H9-zbh" secondAttribute="centerX" id="o9B-OU-slI"/>
+                                <constraint firstItem="txB-Jf-XAl" firstAttribute="centerX" secondItem="Xn4-H9-zbh" secondAttribute="centerX" id="oJ9-b7-V7C"/>
+                                <constraint firstItem="rv9-oH-QBN" firstAttribute="centerX" secondItem="Xn4-H9-zbh" secondAttribute="centerX" id="x3B-mh-ITD"/>
+                            </constraints>
+                        </view>
+                        <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="b2V-Hv-7D2" userLabel="Verify">
+                            <rect key="frame" x="0.0" y="207" width="375" height="207"/>
+                            <subviews>
+                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Verifizierung des Bezahlverfahrens" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="5sR-UG-Yeq">
+                                    <rect key="frame" x="66.5" y="174" width="242" height="17"/>
+                                    <fontDescription key="fontDescription" type="boldSystem" pointSize="14"/>
+                                    <color key="textColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                    <nil key="highlightedColor"/>
+                                </label>
+                                <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="icon-checkout-payment" translatesAutoresizingMaskIntoConstraints="NO" id="7v6-8l-hIQ">
+                                    <rect key="frame" x="152" y="67.5" width="72" height="72"/>
+                                </imageView>
+                                <activityIndicatorView hidden="YES" opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" hidesWhenStopped="YES" style="white" translatesAutoresizingMaskIntoConstraints="NO" id="p34-Fc-9eb">
+                                    <rect key="frame" x="178" y="103" width="20" height="20"/>
+                                </activityIndicatorView>
+                            </subviews>
+                            <color key="backgroundColor" white="0.82666015625" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                            <constraints>
+                                <constraint firstItem="7v6-8l-hIQ" firstAttribute="centerX" secondItem="b2V-Hv-7D2" secondAttribute="centerX" id="GMo-nz-vNb"/>
+                                <constraint firstItem="7v6-8l-hIQ" firstAttribute="centerY" secondItem="b2V-Hv-7D2" secondAttribute="centerY" id="PUC-tg-6ap"/>
+                                <constraint firstItem="p34-Fc-9eb" firstAttribute="top" secondItem="7v6-8l-hIQ" secondAttribute="bottom" constant="-36.5" id="Psv-7v-ANb"/>
+                                <constraint firstItem="p34-Fc-9eb" firstAttribute="centerX" secondItem="b2V-Hv-7D2" secondAttribute="centerX" id="XiU-LB-8ed"/>
+                                <constraint firstItem="5sR-UG-Yeq" firstAttribute="centerX" secondItem="b2V-Hv-7D2" secondAttribute="centerX" id="jAa-0b-On7"/>
+                                <constraint firstAttribute="bottom" secondItem="5sR-UG-Yeq" secondAttribute="bottom" constant="16" id="uJg-gJ-kHY"/>
+                            </constraints>
+                        </view>
+                        <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="r4s-7s-Slb" userLabel="Approval">
+                            <rect key="frame" x="0.0" y="414" width="375" height="207"/>
+                            <subviews>
+                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Ihr Einkauf wird durch einen Mitarbeiter geprüft,  bitte warten Sie einen Moment." textAlignment="center" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="5Bk-Vx-YxQ">
+                                    <rect key="frame" x="16" y="157.5" width="343" height="33.5"/>
+                                    <fontDescription key="fontDescription" type="system" pointSize="14"/>
+                                    <color key="textColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                    <nil key="highlightedColor"/>
+                                </label>
+                                <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="icon-checkout-gatekeeper" translatesAutoresizingMaskIntoConstraints="NO" id="rRk-L1-iNe">
+                                    <rect key="frame" x="151" y="44" width="72" height="72"/>
+                                </imageView>
+                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Freigabe durch Mitarbeiter" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="q4N-uI-KyC">
+                                    <rect key="frame" x="95" y="132" width="185" height="17"/>
+                                    <fontDescription key="fontDescription" type="boldSystem" pointSize="14"/>
+                                    <color key="textColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                    <nil key="highlightedColor"/>
+                                </label>
+                                <activityIndicatorView hidden="YES" opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" hidesWhenStopped="YES" style="white" translatesAutoresizingMaskIntoConstraints="NO" id="J4g-wD-XLc">
+                                    <rect key="frame" x="177" y="55" width="20" height="20"/>
+                                </activityIndicatorView>
+                            </subviews>
+                            <color key="backgroundColor" white="0.8266601562" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                            <constraints>
+                                <constraint firstItem="5Bk-Vx-YxQ" firstAttribute="leading" secondItem="r4s-7s-Slb" secondAttribute="leading" constant="16" id="3tH-3Y-fGZ"/>
+                                <constraint firstAttribute="trailing" secondItem="5Bk-Vx-YxQ" secondAttribute="trailing" constant="16" id="9gX-jG-srn"/>
+                                <constraint firstAttribute="bottom" secondItem="5Bk-Vx-YxQ" secondAttribute="bottom" constant="16" id="FcQ-jJ-Mfn"/>
+                                <constraint firstItem="5Bk-Vx-YxQ" firstAttribute="top" secondItem="q4N-uI-KyC" secondAttribute="bottom" constant="8" id="Guj-9u-IXW"/>
+                                <constraint firstItem="q4N-uI-KyC" firstAttribute="centerX" secondItem="r4s-7s-Slb" secondAttribute="centerX" id="H5M-gy-qIc"/>
+                                <constraint firstItem="q4N-uI-KyC" firstAttribute="top" secondItem="rRk-L1-iNe" secondAttribute="bottom" constant="16" id="Prp-Cw-dC0"/>
+                                <constraint firstItem="rRk-L1-iNe" firstAttribute="centerX" secondItem="r4s-7s-Slb" secondAttribute="centerX" id="W4V-Nu-y1k"/>
+                                <constraint firstItem="5Bk-Vx-YxQ" firstAttribute="centerX" secondItem="r4s-7s-Slb" secondAttribute="centerX" id="mzc-Dh-jkk"/>
+                                <constraint firstItem="rRk-L1-iNe" firstAttribute="top" secondItem="J4g-wD-XLc" secondAttribute="bottom" constant="-31" id="pI8-e9-uDL"/>
+                                <constraint firstItem="J4g-wD-XLc" firstAttribute="centerX" secondItem="r4s-7s-Slb" secondAttribute="centerX" id="rF7-K7-bFO"/>
+                            </constraints>
+                        </view>
+                    </subviews>
+                    <constraints>
+                        <constraint firstItem="Xn4-H9-zbh" firstAttribute="height" secondItem="b2V-Hv-7D2" secondAttribute="height" id="5G5-QK-7XG"/>
+                        <constraint firstItem="Xn4-H9-zbh" firstAttribute="leading" secondItem="odR-RD-HjT" secondAttribute="leading" id="JI3-gm-eJa"/>
+                        <constraint firstItem="r4s-7s-Slb" firstAttribute="leading" secondItem="odR-RD-HjT" secondAttribute="leading" id="N7n-pq-Mvf"/>
+                        <constraint firstAttribute="trailing" secondItem="Xn4-H9-zbh" secondAttribute="trailing" id="R5Z-L9-5xP"/>
+                        <constraint firstAttribute="trailing" secondItem="b2V-Hv-7D2" secondAttribute="trailing" id="Xgh-vc-Wk6"/>
+                        <constraint firstAttribute="trailing" secondItem="r4s-7s-Slb" secondAttribute="trailing" id="gZ6-V2-rVo"/>
+                        <constraint firstItem="r4s-7s-Slb" firstAttribute="height" secondItem="b2V-Hv-7D2" secondAttribute="height" id="j2f-up-KXN"/>
+                        <constraint firstItem="b2V-Hv-7D2" firstAttribute="leading" secondItem="odR-RD-HjT" secondAttribute="leading" id="qEe-zv-GZo"/>
+                    </constraints>
+                </stackView>
+                <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="4hs-yF-PEh">
+                    <rect key="frame" x="149" y="629" width="76" height="30"/>
+                    <constraints>
+                        <constraint firstAttribute="height" constant="30" id="AzQ-Dn-mCn"/>
+                    </constraints>
+                    <state key="normal" title="Abbrechen"/>
+                    <connections>
+                        <action selector="cancelButtonTapped:" destination="-1" eventType="touchUpInside" id="Reb-xD-VfY"/>
+                    </connections>
+                </button>
+            </subviews>
+            <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+            <constraints>
+                <constraint firstItem="4hs-yF-PEh" firstAttribute="top" secondItem="odR-RD-HjT" secondAttribute="bottom" constant="8" id="RF7-qz-Gc5"/>
+                <constraint firstItem="odR-RD-HjT" firstAttribute="trailing" secondItem="fnl-2z-Ty3" secondAttribute="trailing" id="Uh0-0P-1Ge"/>
+                <constraint firstItem="4hs-yF-PEh" firstAttribute="centerX" secondItem="i5M-Pr-FkT" secondAttribute="centerX" id="kAA-qH-1Dg"/>
+                <constraint firstItem="odR-RD-HjT" firstAttribute="top" secondItem="i5M-Pr-FkT" secondAttribute="top" id="mJM-TJ-k7q"/>
+                <constraint firstItem="odR-RD-HjT" firstAttribute="leading" secondItem="fnl-2z-Ty3" secondAttribute="leading" id="vZr-Zn-vJg"/>
+                <constraint firstItem="fnl-2z-Ty3" firstAttribute="bottom" secondItem="4hs-yF-PEh" secondAttribute="bottom" constant="8" id="wPw-m7-hLd"/>
+            </constraints>
+            <viewLayoutGuide key="safeArea" id="fnl-2z-Ty3"/>
+            <point key="canvasLocation" x="33.5" y="54.5"/>
+        </view>
+    </objects>
+    <resources>
+        <image name="icon-checkout-gatekeeper" width="72" height="72"/>
+        <image name="icon-checkout-localization" width="72" height="72"/>
+        <image name="icon-checkout-payment" width="72" height="72"/>
+    </resources>
+</document>
