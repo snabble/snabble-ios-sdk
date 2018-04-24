@@ -25,7 +25,7 @@ Pod::Spec.new do |s|
   s.homepage         = 'https://snabble.io/'
   s.license          = { :type => 'MIT', :file => 'LICENSE' }
   s.author           = { 'snabble GmbH' => 'info@snabble.io' }
-  s.source           = { :git => 'https://github.com/snabble/iOS-SDK', :tag => "#{s.version}" }
+  s.source           = { :git => 'https://github.com/snabble/iOS-SDK.git', :tag => "#{s.version}" }
   s.social_media_url = 'https://twitter.com/snabble_io'
 
   s.ios.deployment_target = '10.0'
