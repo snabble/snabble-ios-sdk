@@ -1,3 +1,6 @@
+![Build](https://api.travis-ci.org/snabble/iOS-SDK.svg?branch=master)
+![Version](https://img.shields.io/cocoapods/v/Snabble.svg)
+
 # Snabble
 
 snabble - the self-scanning and checkout platform.
