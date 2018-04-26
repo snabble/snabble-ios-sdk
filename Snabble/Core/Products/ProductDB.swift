@@ -96,7 +96,7 @@ public protocol ProductProvider: class {
     ///
     /// get products matching `name`
     ///
-    /// - Parameter name: the string to search for. The search is case- and diactritic-insensitive
+    /// - Parameter name: the string to search for. The search is case- and diacritic-insensitive
     /// - Returns: an array of matching Products
     func productsByName(_ name: String, filterDeposits: Bool) -> [Product]
 
@@ -149,6 +149,7 @@ final public class ProductDB: ProductProvider {
 
     /// major schema version of the current local database
     private(set) public var schemaVersionMajor = 0
+    /// minor schema version of the current local database
     private(set) public var schemaVersionMinor = 0
 
     /// date of last successful product update (i.e, whenever we last got a HTTP status 200 or 304)
@@ -310,17 +311,29 @@ final public class ProductDB: ProductProvider {
             }
 
             if ok {
-                let majorVersion = try tempDb.inDatabase { db in
-                    return try String.fetchOne(db, "select value from metadata where key='\(MetadataKeys.schemaVersionMajor)'")
+                let result = try tempDb.inDatabase { db in
+                    return try String.fetchAll(db, """
+                        select value from metadata where key='\(MetadataKeys.schemaVersionMajor)'
+                        union
+                        select value from metadata where key='\(MetadataKeys.schemaVersionMinor)'
+                        """)
+                }
+                guard result.count == 2 else {
+                    return false
                 }
 
-                if let schemaVersion = Int(majorVersion ?? "") {
-                    if schemaVersion != self.supportedSchemaVersion {
-                        return false
-                    }
+                let majorVersion = Int(result[0]) ?? 0
+                let minorVersion = Int(result[1]) ?? 0
+
+                if majorVersion != self.supportedSchemaVersion {
+                    return false
                 }
 
-                return revision > self.revision
+                let shouldSwitch = revision > self.revision || minorVersion > self.schemaVersionMinor
+                if shouldSwitch {
+                    NSLog("new db: revision=\(revision), schema=\(majorVersion).\(minorVersion)")
+                }
+                return shouldSwitch
             }
         } catch let error {
             NSLog("db update error \(error)")
