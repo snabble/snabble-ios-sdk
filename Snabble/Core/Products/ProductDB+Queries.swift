@@ -130,7 +130,7 @@ extension ProductDB {
             let rows = try dbQueue.inDatabase { db in
                 return try Row.fetchAll(db, ProductDB.baseQuery + " " + """
                     join scannableCodes s on s.sku = p.sku
-                    where s.code glob ? \(depositCondition) and p.weighing != \(ProductType.preWeighed.rawValue) and p.isDeposit = 0
+                    where s.code glob ? \(depositCondition) and p.weighing != \(ProductType.preWeighed.rawValue)
                     limit ?
                     """, arguments: [prefix + "*", limit])
             }
