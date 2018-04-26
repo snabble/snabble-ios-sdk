@@ -25,29 +25,31 @@ extension EANCode {
     }
 
     public var hasEmbeddedWeight: Bool {
-        let prefixes = APIConfig.shared.project.weighPrefixes
-        guard prefixes.count > 0 else {
-            return false
-        }
+        return self.encoding == .ean13 && self.matchPrefixes(APIConfig.shared.project.weighPrefixes)
+    }
 
-        for prefix in prefixes {
-            if self.code.hasPrefix(prefix) {
-                return true
-            }
-        }
+    public var hasEmbeddedPrice: Bool {
+        return self.encoding == .ean13 && self.matchPrefixes(APIConfig.shared.project.pricePrefixes)
+    }
 
-        return false
+    public var hasEmbeddedAmount: Bool {
+        return self.encoding == .ean13 && self.matchPrefixes(APIConfig.shared.project.amountPrefixes)
+    }
+
+    public var hasEmbeddedData: Bool {
+        return self.hasEmbeddedWeight || self.hasEmbeddedPrice || self.hasEmbeddedData
     }
 
     public var codeForLookup: String {
-        switch code.count {
-        case 13:
-            if self.hasEmbeddedWeight {
+        switch self.encoding {
+        case .ean13:
+            if self.hasEmbeddedData {
                 return self.code.prefix(7) + "000000"
             } else {
                 return code
             }
-        default: return code
+        case .ean8:
+            return code
         }
     }
 
@@ -64,6 +66,20 @@ extension EANCode {
         default:
             return nil
         }
+    }
+
+    private func matchPrefixes(_ prefixes: [String]) -> Bool {
+        guard prefixes.count > 0 else {
+            return false
+        }
+
+        for prefix in prefixes {
+            if self.code.hasPrefix(prefix) {
+                return true
+            }
+        }
+
+        return false
     }
 }
 

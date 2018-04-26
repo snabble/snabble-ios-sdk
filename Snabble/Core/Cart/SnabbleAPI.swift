@@ -10,13 +10,17 @@ public struct SnabbleProject {
     public let name: String
     public let jwt: String
     public let weighPrefixes: [String]
+    public let pricePrefixes: [String]
+    public let amountPrefixes: [String]
     public let currencySymbol: String
     public let decimalDigits: Int
 
-    public init(name: String, jwt: String, weighPrefixes: [String], currencySymbol: String, decimalDigits: Int) {
+    public init(name: String, jwt: String, weighPrefixes: [String] = [], pricePrefixes: [String] = [], amountPrefixes: [String] = [], currencySymbol: String, decimalDigits: Int) {
         self.name = name
         self.jwt = jwt
         self.weighPrefixes = weighPrefixes
+        self.pricePrefixes = pricePrefixes
+        self.amountPrefixes = amountPrefixes
         self.currencySymbol = currencySymbol
         self.decimalDigits = decimalDigits
     }
@@ -41,7 +45,7 @@ public class APIConfig {
 
     private init() {
         self.baseUrl = ""
-        self.project = SnabbleProject(name: "none", jwt: "", weighPrefixes: [], currencySymbol: "€", decimalDigits: 2)
+        self.project = SnabbleProject(name: "none", jwt: "", currencySymbol: "€", decimalDigits: 2)
     }
 
     /// initialize the API configuration for the subsequent network calls
