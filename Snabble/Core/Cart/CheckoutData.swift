@@ -118,6 +118,7 @@ struct Cart: Encodable {
     struct Item: Encodable {
         let sku: String
         let amount: Int
+        let scannedCode: String
     }
 
     struct CustomerInfo: Encodable {
