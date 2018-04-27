@@ -30,7 +30,7 @@ class ShoppingCartTableCell: UITableViewCell {
 
     @IBOutlet weak var spinner: UIActivityIndicatorView!
     
-    private var product: Product!
+    private var item: CartItem!
     private var quantity = 0
     private weak var delegate: ShoppingCartTableDelegate!
     private var task: URLSessionDataTask?
@@ -67,11 +67,12 @@ class ShoppingCartTableCell: UITableViewCell {
         self.textMargin.constant = 8
     }
 
-    func setProduct(_ product: Product, quantity: Int, row: Int, delegate: ShoppingCartTableDelegate) {
+    func setCartItem(_ item: CartItem, row: Int, delegate: ShoppingCartTableDelegate) {
         self.delegate = delegate
-        self.product = product
-        self.quantity = quantity
+        self.item = item
+        self.quantity = item.quantity
 
+        let product = item.product
         self.nameLabel.text = product.name
         self.subtitleLabel.text = product.subtitle
 
@@ -85,7 +86,7 @@ class ShoppingCartTableCell: UITableViewCell {
         let weightEntry = product.type == .userMustWeigh
         self.quantityInput.isHidden = !weightEntry
         self.quantityWidth.constant = weightEntry ? 50 : 0
-        self.quantityInput.text = "\(quantity)"
+        self.quantityInput.text = "\(item.quantity)"
 
         if weightEntry {
             self.plusButton.backgroundColor = SnabbleAppearance.shared.config.primaryColor
@@ -96,37 +97,54 @@ class ShoppingCartTableCell: UITableViewCell {
             self.plusButton.setImage(UIImage.fromBundle("icon-plus"), for: .normal)
         }
 
-        self.updateQuantity(at: row)
+        self.showQuantity()
 
         self.loadImage()
     }
 
     private func updateQuantity(at row: Int) {
-        if self.quantity == 0 && self.product.type == .singleItem {
+        if self.quantity == 0 && self.item.product.type == .singleItem {
             self.delegate.confirmDeletion(at: row)
             return
         }
 
-        let gram = self.product.weightDependent ? "g" : ""
-        self.quantityLabel.text = "\(self.quantity)\(gram)"
-
-        let price = self.product.priceFor(self.quantity)
-        let total = Price.format(price)
-        if self.quantity == 1 && self.product.type == .singleItem {
-            self.priceLabel.text = total
-        } else {
-            let single = Price.format(product.price)
-            let perKg = product.weightDependent ? "/kg" : ""
-            self.priceLabel.text = "× \(single)\(perKg) = \(total)"
-        }
-
+        self.showQuantity()
         self.delegate.cart.setQuantity(self.quantity, at: row)
         self.delegate.updateTotals()
     }
 
+    private func showQuantity() {
+        guard let ean = EAN.parse(self.item.scannedCode) else {
+            return
+        }
+
+        var showWeight = false
+        var price = self.item.product.priceFor(self.quantity)
+
+        if ean.hasEmbeddedWeight {
+            showWeight = true
+        } else if let embeddedPrice = ean.embeddedPrice {
+            price = embeddedPrice
+        } else if let embeddedAmount = ean.embeddedAmount {
+            price = embeddedAmount * self.item.product.priceWithDeposit
+        }
+
+        let gram = showWeight ? "g" : ""
+        self.quantityLabel.text = "\(self.quantity)\(gram)"
+
+        let total = Price.format(price)
+        if showWeight {
+            let single = Price.format(self.item.product.price)
+            let perKg = showWeight ? "/kg" : ""
+            self.priceLabel.text = "× \(single)\(perKg) = \(total)"
+        } else {
+            self.priceLabel.text = total
+        }
+    }
+
     private func loadImage() {
         guard
-            let imgUrl = self.product?.imageUrl,
+            let imgUrl = self.item.product.imageUrl,
             let url = URL(string: imgUrl)
         else {
             self.imageWidth.constant = 0
@@ -165,7 +183,7 @@ class ShoppingCartTableCell: UITableViewCell {
     }
 
     @IBAction func plusButtonTapped(_ button: UIButton) {
-        if self.product.type == .userMustWeigh {
+        if self.item.product.type == .userMustWeigh {
             // treat this as the "OK" button
             self.quantityInput.resignFirstResponder()
             return

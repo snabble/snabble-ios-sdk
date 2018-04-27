@@ -105,8 +105,8 @@ public class ScannerViewController: UIViewController {
     
     // MARK: - scan confirmation views
     
-    private func showConfirmation(for product: Product, weight: Int?, scannedCode: String) {
-        self.scanConfirmationView.present(product, weight, cart: self.shoppingCart, scannedCode: scannedCode)
+    private func showConfirmation(for product: Product, _ ean: EANCode) {
+        self.scanConfirmationView.present(product, cart: self.shoppingCart, ean: ean)
         
         self.scanningView.stopScanning()
         self.hideScanConfirmationView(false)
@@ -243,15 +243,14 @@ extension ScannerViewController {
 
             self.delegate.track(.scanProduct(code))
 
-            let weight = product.type == .preWeighed ? ean.embeddedData : nil
             self.productType = product.type
-            self.showConfirmation(for: product, weight: weight, scannedCode: ean.code)
+            self.showConfirmation(for: product, ean)
             self.lastScannedCode = ""
         }
     }
 
     private func productForEan(_ ean: EANCode, completion: @escaping (Product?) -> () ) {
-        if ean.hasEmbeddedWeight {
+        if ean.hasEmbeddedData {
             self.productProvider.productByWeighItemId(ean.codeForLookup) { product, error in
                 completion(product)
             }

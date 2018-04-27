@@ -249,9 +249,7 @@ extension ShoppingCartViewController: UITableViewDelegate, UITableViewDataSource
         let cell = tableView.dequeueReusableCell(withIdentifier: self.itemCellIdentifier, for: indexPath) as! ShoppingCartTableCell
 
         let item = self.shoppingCart.at(indexPath.row)
-        if let product = self.shoppingCart.product(at: indexPath.row) {
-            cell.setProduct(product, quantity: item.quantity, row: indexPath.row, delegate: self)
-        }
+        cell.setCartItem(item, row: indexPath.row, delegate: self)
 
         return cell
     }

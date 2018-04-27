@@ -155,10 +155,19 @@ public class ShoppingCart {
     /// return the the total price of all products
     public var totalPrice: Int {
         var total = 0
-        for (index, item) in self.items.enumerated() {
-            if let product = self.product(at: index) {
-                total += product.priceFor(item.quantity)
+        for item in self.items {
+            guard let ean = EAN.parse(item.scannedCode) else {
+                continue
             }
+
+            var price = item.product.priceFor(item.quantity)
+            if let embeddedPrice = ean.embeddedPrice {
+                price = embeddedPrice
+            } else if let embeddedAmount = ean.embeddedAmount {
+                price = embeddedAmount * item.product.priceWithDeposit
+            }
+
+            total += price
         }
         return total
     }

@@ -37,7 +37,7 @@ extension EANCode {
     }
 
     public var hasEmbeddedData: Bool {
-        return self.hasEmbeddedWeight || self.hasEmbeddedPrice || self.hasEmbeddedData
+        return self.hasEmbeddedWeight || self.hasEmbeddedPrice || self.hasEmbeddedAmount
     }
 
     public var codeForLookup: String {
@@ -53,10 +53,22 @@ extension EANCode {
         }
     }
 
+    public var embeddedWeight: Int? {
+        return self.hasEmbeddedWeight ? self.embeddedData : nil
+    }
+
+    public var embeddedPrice: Int? {
+        return self.hasEmbeddedPrice ? self.embeddedData : nil
+    }
+
+    public var embeddedAmount: Int? {
+        return self.hasEmbeddedAmount ? self.embeddedData : nil
+    }
+
     public var embeddedData: Int? {
         switch self.code.count {
         case 13:
-            guard self.hasEmbeddedWeight else {
+            guard self.hasEmbeddedData else {
                 return nil
             }
             let start = self.code.index(code.startIndex, offsetBy: 7)
