@@ -24,6 +24,7 @@ extension EANCode {
         return Int(last)!
     }
 
+    // MARK: - check for embedded data
     public var hasEmbeddedWeight: Bool {
         return self.encoding == .ean13 && self.matchPrefixes(APIConfig.shared.project.weighPrefixes)
     }
@@ -40,6 +41,24 @@ extension EANCode {
         return self.hasEmbeddedWeight || self.hasEmbeddedPrice || self.hasEmbeddedAmount
     }
 
+    // MARK: - get embedded data
+    public var embeddedWeight: Int? {
+        return self.hasEmbeddedWeight ? self.rawEmbeddedData : nil
+    }
+
+    public var embeddedPrice: Int? {
+        return self.hasEmbeddedPrice ? self.rawEmbeddedData : nil
+    }
+
+    public var embeddedAmount: Int? {
+        return self.hasEmbeddedAmount ? self.rawEmbeddedData : nil
+    }
+
+    public var embeddedData: Int? {
+        return self.hasEmbeddedData ? self.rawEmbeddedData : nil
+    }
+
+    // MARK: - get a code suitable for lookup (i.e. with the last 5 data digits and the checksum digits as 0)
     public var codeForLookup: String {
         switch self.encoding {
         case .ean13:
@@ -53,29 +72,14 @@ extension EANCode {
         }
     }
 
-    public var embeddedWeight: Int? {
-        return self.hasEmbeddedWeight ? self.embeddedData : nil
-    }
-
-    public var embeddedPrice: Int? {
-        return self.hasEmbeddedPrice ? self.embeddedData : nil
-    }
-
-    public var embeddedAmount: Int? {
-        return self.hasEmbeddedAmount ? self.embeddedData : nil
-    }
-
-    public var embeddedData: Int? {
-        switch self.code.count {
-        case 13:
-            guard self.hasEmbeddedData else {
-                return nil
-            }
+    private var rawEmbeddedData: Int? {
+        switch self.encoding {
+        case .ean13:
             let start = self.code.index(code.startIndex, offsetBy: 7)
             let end = self.code.index(code.startIndex, offsetBy: 12)
             let data = self.code[start ..< end]
-            return data == "00000" ? nil : Int(data)
-        default:
+            return Int(data)
+        case .ean8:
             return nil
         }
     }
@@ -96,9 +100,8 @@ extension EANCode {
 }
 
 
-
 /// methods for parsing and encoding an EAN-8 or EAN-13
-public struct EAN {
+public enum EAN {
 
     public enum Encoding {
         case ean8
@@ -149,9 +152,7 @@ public struct EAN {
     }
 }
 
-// MARK: -
-
-/// EAN-8
+// MARK: - EAN-8
 public struct EAN8: EANCode {
     public let code: String
     public let encoding = EAN.Encoding.ean8
@@ -179,7 +180,7 @@ public struct EAN8: EANCode {
         }
 
         self.leftDigits = Array(digits[0...3])
-        self.rightDigits = Array(digits[4..<digits.endIndex])
+        self.rightDigits = Array(digits[4...7])
 
         self.code = code.prefix(7) + String(check)
     }
@@ -207,9 +208,8 @@ public struct EAN8: EANCode {
     }
 }
 
-// MARK: -
+// MARK: - EAN-13
 
-/// EAN-13
 public struct EAN13: EANCode {
     public let code: String
     public let encoding = EAN.Encoding.ean13
@@ -238,7 +238,7 @@ public struct EAN13: EANCode {
 
         self.firstDigit = digits[0]
         self.leftDigits = Array(digits[1...6])
-        self.rightDigits = Array(digits[7..<digits.endIndex])
+        self.rightDigits = Array(digits[7...11])
 
         self.code = code.prefix(12) + String(check)
     }

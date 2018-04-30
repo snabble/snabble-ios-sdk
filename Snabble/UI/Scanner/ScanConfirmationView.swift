@@ -91,7 +91,7 @@ class ScanConfirmationView: DesignableView {
         if let weight = ean.embeddedWeight {
             self.initialQuantity = 0
             self.quantity = weight
-        } else if ean.embeddedPrice != nil {
+        } else if ean.hasEmbeddedPrice {
             self.initialQuantity = 0
             self.quantity = 1
         } else if product.type == .singleItem {

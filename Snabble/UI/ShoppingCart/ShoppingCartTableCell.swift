@@ -118,16 +118,8 @@ class ShoppingCartTableCell: UITableViewCell {
             return
         }
 
-        var showWeight = false
-        var price = self.item.product.priceFor(self.quantity)
-
-        if ean.hasEmbeddedWeight {
-            showWeight = true
-        } else if let embeddedPrice = ean.embeddedPrice {
-            price = embeddedPrice
-        } else if let embeddedAmount = ean.embeddedAmount {
-            price = embeddedAmount * self.item.product.priceWithDeposit
-        }
+        let showWeight = ean.hasEmbeddedWeight
+        let price = self.item.price
 
         let gram = showWeight ? "g" : ""
         self.quantityLabel.text = "\(self.quantity)\(gram)"

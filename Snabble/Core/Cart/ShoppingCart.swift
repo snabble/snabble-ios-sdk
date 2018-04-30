@@ -44,6 +44,21 @@ public struct CartItem: Codable {
         self.quantity = quantity
         self.scannedCode = scannedCode
     }
+
+    var price: Int {
+        guard let ean = EAN.parse(self.scannedCode) else {
+            return 0
+        }
+
+        var price = self.product.priceFor(self.quantity)
+        if let embeddedPrice = ean.embeddedPrice {
+            price = embeddedPrice
+        } else if let embeddedAmount = ean.embeddedAmount {
+            price = embeddedAmount * self.product.priceWithDeposit
+        }
+
+        return price
+    }
 }
 
 /// a ShoppingCart is an collection of CartItem objects
@@ -78,6 +93,7 @@ public class ShoppingCart {
     }
 
     /// add a Product. if already present and not weight dependent, increase its quantity
+    ///
     /// the newly added (or modified) product is moved to the start of the list
     public func add(_ product: Product, quantity: Int = 1, scannedCode: String) {
         if let index = self.indexOf(product), product.type == .singleItem {
@@ -151,38 +167,21 @@ public class ShoppingCart {
     public var count:  Int {
         return self.items.count
     }
-    
+
     /// return the the total price of all products
     public var totalPrice: Int {
-        var total = 0
-        for item in self.items {
-            guard let ean = EAN.parse(item.scannedCode) else {
-                continue
-            }
-
-            var price = item.product.priceFor(item.quantity)
-            if let embeddedPrice = ean.embeddedPrice {
-                price = embeddedPrice
-            } else if let embeddedAmount = ean.embeddedAmount {
-                price = embeddedAmount * item.product.priceWithDeposit
-            }
-
-            total += price
-        }
-        return total
+        return self.items.reduce(0) { $0 + $1.price }
     }
     
     /// return the total number of items
     public func numberOfItems() -> Int {
         var count = 0
-        for (index, item) in self.items.enumerated() {
-            if let product = self.product(at: index) {
-                switch product.type {
-                case .singleItem:
-                    count += item.quantity
-                case .preWeighed, .userMustWeigh:
-                    count += 1
-                }
+        for item in self.items {
+            switch item.product.type {
+            case .singleItem:
+                count += item.quantity
+            case .preWeighed, .userMustWeigh:
+                count += 1
             }
         }
         return count
