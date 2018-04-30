@@ -238,6 +238,7 @@ extension ScannerViewController {
             if product.type == .preWeighed && ean.embeddedData == nil {
                 let msg = "Snabble.Scanner.scannedShelfCode".localized()
                 self.scannedUnknown(msg, code)
+                self.scanningView.startScanning()
                 return
             }
 
