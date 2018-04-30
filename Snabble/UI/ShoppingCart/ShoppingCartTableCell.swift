@@ -127,8 +127,7 @@ class ShoppingCartTableCell: UITableViewCell {
         let total = Price.format(price)
         if showWeight {
             let single = Price.format(self.item.product.price)
-            let perKg = showWeight ? "/kg" : ""
-            self.priceLabel.text = "× \(single)\(perKg) = \(total)"
+            self.priceLabel.text = "× \(single)/kg = \(total)"
         } else {
             self.priceLabel.text = total
         }
