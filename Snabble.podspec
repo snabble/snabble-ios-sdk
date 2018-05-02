@@ -29,6 +29,7 @@ Pod::Spec.new do |s|
   s.social_media_url = 'https://twitter.com/snabble_io'
 
   s.ios.deployment_target = '10.0'
+  s.swift_version = '4.1'
 
   s.subspec 'Core' do |core|
     core.source_files = 'Snabble/Core/{Products,EAN,Cart,Metadata}/*.swift'
