@@ -117,7 +117,10 @@ public extension UIImage {
 
 /// Base class for UIViews that can be used directy in interface builder.
 @IBDesignable
-open class DesignableView: UIView {
+open class DesignableView: NibView {}
+
+/// Base class for UIViews that can be instantiated from a NIB
+open class NibView: UIView {
     var view: UIView!
 
     override public init(frame: CGRect) {
@@ -140,11 +143,17 @@ open class DesignableView: UIView {
         // use bounds not frame or it'll be offset
         view.frame = self.bounds
 
-        // Make the view stretch with the containing view
-        view.autoresizingMask = [UIViewAutoresizing.flexibleWidth, UIViewAutoresizing.flexibleHeight]
-
         // Add custom subview on top of our view
         addSubview(self.view)
+        
+        // Make the view stretch with the containing view
+        // view.autoresizingMask = [UIViewAutoresizing.flexibleWidth, UIViewAutoresizing.flexibleHeight]
+        view.translatesAutoresizingMaskIntoConstraints = false
+        view.topAnchor.constraint(equalTo: self.topAnchor).isActive = true
+        view.rightAnchor.constraint(equalTo: self.rightAnchor).isActive = true
+        view.bottomAnchor.constraint(equalTo: self.bottomAnchor).isActive = true
+        view.leftAnchor.constraint(equalTo: self.leftAnchor).isActive = true
+
     }
 
     open func nibName() -> String {

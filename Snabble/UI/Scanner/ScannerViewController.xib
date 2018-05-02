@@ -11,9 +11,6 @@
     <objects>
         <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner" customClass="ScannerViewController" customModule="Snabble" customModuleProvider="target">
             <connections>
-                <outlet property="scanConfirmationView" destination="yCo-ob-s42" id="qdO-ca-XcL"/>
-                <outlet property="scanConfirmationViewBottom" destination="2CN-O4-MfP" id="Lau-sL-lZl"/>
-                <outlet property="scanningView" destination="Ddk-86-3o3" id="OLY-dk-dZq"/>
                 <outlet property="spinner" destination="N9z-bZ-BCF" id="F1a-fs-Fit"/>
                 <outlet property="view" destination="QeV-hn-is3" id="5p1-Gb-hrb"/>
             </connections>
@@ -23,31 +20,12 @@
             <rect key="frame" x="0.0" y="0.0" width="320" height="480"/>
             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
             <subviews>
-                <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="Ddk-86-3o3" customClass="ScanningView" customModule="Snabble">
-                    <rect key="frame" x="0.0" y="0.0" width="320" height="480"/>
-                    <subviews>
-                        <view contentMode="scaleToFill" ambiguous="YES" translatesAutoresizingMaskIntoConstraints="NO" id="yCo-ob-s42" customClass="ScanConfirmationView" customModule="Snabble" customModuleProvider="target">
-                            <rect key="frame" x="16" y="115" width="288" height="301"/>
-                            <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
-                        </view>
-                    </subviews>
-                    <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
-                    <constraints>
-                        <constraint firstAttribute="trailing" secondItem="yCo-ob-s42" secondAttribute="trailing" constant="16" id="Mmo-Xc-X4b"/>
-                        <constraint firstItem="yCo-ob-s42" firstAttribute="leading" secondItem="Ddk-86-3o3" secondAttribute="leading" constant="16" id="zL3-Mr-ES6"/>
-                    </constraints>
-                </view>
                 <activityIndicatorView hidden="YES" opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" hidesWhenStopped="YES" style="whiteLarge" translatesAutoresizingMaskIntoConstraints="NO" id="N9z-bZ-BCF">
                     <rect key="frame" x="141" y="40" width="37" height="37"/>
                 </activityIndicatorView>
             </subviews>
             <constraints>
                 <constraint firstItem="N9z-bZ-BCF" firstAttribute="top" secondItem="QeV-hn-is3" secondAttribute="top" constant="40" id="02K-f3-pGk"/>
-                <constraint firstAttribute="bottom" secondItem="yCo-ob-s42" secondAttribute="bottom" constant="64" id="2CN-O4-MfP"/>
-                <constraint firstAttribute="bottom" secondItem="Ddk-86-3o3" secondAttribute="bottom" id="IID-0e-ozu"/>
-                <constraint firstItem="Ddk-86-3o3" firstAttribute="leading" secondItem="QeV-hn-is3" secondAttribute="leading" id="jgh-MA-itn"/>
-                <constraint firstItem="Ddk-86-3o3" firstAttribute="trailing" secondItem="QeV-hn-is3" secondAttribute="trailing" id="m3a-ze-zNP"/>
-                <constraint firstItem="Ddk-86-3o3" firstAttribute="top" secondItem="QeV-hn-is3" secondAttribute="top" id="tlS-ka-HrR"/>
                 <constraint firstItem="N9z-bZ-BCF" firstAttribute="centerX" secondItem="QeV-hn-is3" secondAttribute="centerX" id="tp8-Ip-mmg"/>
             </constraints>
             <nil key="simulatedStatusBarMetrics"/>

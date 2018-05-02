@@ -6,7 +6,7 @@
 
 import UIKit
 
-class ShoppingCartEmptyStateView: DesignableView {
+class ShoppingCartEmptyStateView: NibView {
     @IBOutlet weak var mainImage: UIImageView!
     @IBOutlet weak var titleLabel: UILabel!
     @IBOutlet weak var descriptionLabel: UILabel!

@@ -14,11 +14,12 @@ public protocol ScannerDelegate: AnalyticsDelegate {
 }
 
 public class ScannerViewController: UIViewController {
-    
-    @IBOutlet weak var scanningView: ScanningView!
-    @IBOutlet weak var scanConfirmationView: ScanConfirmationView!
-    @IBOutlet weak var scanConfirmationViewBottom: NSLayoutConstraint!
-    @IBOutlet weak var spinner: UIActivityIndicatorView!
+
+    @IBOutlet private weak var spinner: UIActivityIndicatorView!
+
+    private var scanningView: ScanningView!
+    private var scanConfirmationView: ScanConfirmationView!
+    private var scanConfirmationViewBottom: NSLayoutConstraint!
     
     private weak var productProvider: ProductProvider!
     private weak var shoppingCart: ShoppingCart!
@@ -27,7 +28,7 @@ public class ScannerViewController: UIViewController {
     private var confirmationVisible = false
     private var productType: ProductType?
     
-    private var hiddenConfirmationOffset: CGFloat = 0
+    private var hiddenConfirmationOffset: CGFloat = 310
     private var keyboardObserver: KeyboardObserver!
     private var objectTypes: [AVMetadataObject.ObjectType] = [ .ean8, .ean13, .code128 ]
     private weak var delegate: ScannerDelegate!
@@ -57,6 +58,25 @@ public class ScannerViewController: UIViewController {
         
         self.view.backgroundColor = .black
 
+        self.scanningView = ScanningView()
+        self.scanningView.translatesAutoresizingMaskIntoConstraints = false
+        self.view.addSubview(self.scanningView)
+        self.scanningView.topAnchor.constraint(equalTo: self.view.topAnchor).isActive = true
+        self.scanningView.rightAnchor.constraint(equalTo: self.view.rightAnchor).isActive = true
+        self.scanningView.bottomAnchor.constraint(equalTo: self.view.bottomAnchor).isActive = true
+        self.scanningView.leftAnchor.constraint(equalTo: self.view.leftAnchor).isActive = true
+
+        self.scanConfirmationView = ScanConfirmationView()
+        self.scanConfirmationView.translatesAutoresizingMaskIntoConstraints = false
+        self.scanningView.addSubview(self.scanConfirmationView)
+        self.scanConfirmationView.leadingAnchor.constraint(equalTo: self.scanningView.leadingAnchor, constant: 16).isActive = true
+        self.scanConfirmationView.trailingAnchor.constraint(equalTo: self.scanningView.trailingAnchor, constant: -16).isActive = true
+        self.scanConfirmationView.centerXAnchor.constraint(equalTo: self.scanningView.centerXAnchor).isActive = true
+        let bottom = self.scanConfirmationView.bottomAnchor.constraint(equalTo: self.scanningView.bottomAnchor)
+        bottom.isActive = true
+        bottom.constant = self.hiddenConfirmationOffset
+        self.scanConfirmationViewBottom = bottom
+
         var scannerConfig = ScanningViewConfig()
         
         scannerConfig.torchButtonTitle = "Snabble.Scanner.torchButton".localized()
@@ -77,14 +97,6 @@ public class ScannerViewController: UIViewController {
 
     override public func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-
-        // first appearance, figure out the height of the confirmation dialog and hide it
-        if self.hiddenConfirmationOffset == 0 {
-            self.hiddenConfirmationOffset = -self.scanConfirmationView.bounds.height
-            self.scanConfirmationViewBottom.constant = self.hiddenConfirmationOffset
-
-            self.scanningView.bringSubview(toFront: self.scanConfirmationView)
-        }
     }
 
     override public func viewDidAppear(_ animated: Bool) {
@@ -92,8 +104,6 @@ public class ScannerViewController: UIViewController {
 
         self.delegate.track(.viewScanner)
         self.scanningView.startScanning()
-
-        // SnabbleMessage.hideAll()
     }
 
     override public func viewWillDisappear(_ animated: Bool) {
@@ -113,9 +123,8 @@ public class ScannerViewController: UIViewController {
     }
     
     private func hideScanConfirmationView(_ hide: Bool) {
-        let bottomOffset: CGFloat = 16
         self.confirmationVisible = !hide
-        self.scanConfirmationViewBottom.constant = hide ? self.hiddenConfirmationOffset : bottomOffset
+        self.scanConfirmationViewBottom.constant = hide ? self.hiddenConfirmationOffset : -16
         
         self.scanningView.bottomBarHidden = !hide
         self.scanningView.reticleHidden = !hide
