@@ -44,7 +44,17 @@ Pod::Spec.new do |s|
     ui.dependency 'SwiftMessages'
 
     ui.resource_bundles = {
-      "Snabble" => [ 'Snabble.xcassets', 'Snabble/UI/*.lproj/*.strings' ]
+      "Snabble" => [ 'Snabble.xcassets', 'Snabble/UI/*.lproj/*.strings', 'Snabble/UI/*.twine' ]
+    }
+
+    ui.script_phase = { 
+      :name => "Run twine", 
+      :script => <<-SCRIPT
+      if which twine >/dev/null; then
+        cd $PODS_TARGET_SRCROOT
+        twine generate-localization-file Snabble/UI/Snabble.twine --lang en --format apple Snabble/UI/en.lproj/SnabbleLocalizable.strings
+      fi
+      SCRIPT
     }
   end
 
