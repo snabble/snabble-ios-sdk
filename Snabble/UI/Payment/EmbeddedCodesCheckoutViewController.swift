@@ -52,8 +52,7 @@ class EmbeddedCodesCheckoutViewController: UIViewController {
         self.collectionView.register(nib, forCellWithReuseIdentifier: "qrCodeCell")
 
         let codes: [String] = self.cart.items.reduce(into: [], { result, item in
-            let quantity = item.product.weightDependent ? 1 : item.quantity
-            result.append(contentsOf: Array(repeating: item.scannedCode, count: quantity))
+            result.append(contentsOf: Array(repeating: item.scannedCode, count: item.quantity))
         })
 
         let chunks = (Float(codes.count) / Float(maxCodesPerQR)).rounded(.up)

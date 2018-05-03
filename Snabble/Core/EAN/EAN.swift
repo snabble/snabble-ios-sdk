@@ -33,12 +33,12 @@ extension EANCode {
         return self.encoding == .ean13 && self.matchPrefixes(APIConfig.shared.project.pricePrefixes)
     }
 
-    public var hasEmbeddedAmount: Bool {
-        return self.encoding == .ean13 && self.matchPrefixes(APIConfig.shared.project.amountPrefixes)
+    public var hasEmbeddedUnits: Bool {
+        return self.encoding == .ean13 && self.matchPrefixes(APIConfig.shared.project.unitPrefixes)
     }
 
     public var hasEmbeddedData: Bool {
-        return self.hasEmbeddedWeight || self.hasEmbeddedPrice || self.hasEmbeddedAmount
+        return self.hasEmbeddedWeight || self.hasEmbeddedPrice || self.hasEmbeddedUnits
     }
 
     // MARK: - get embedded data
@@ -50,8 +50,8 @@ extension EANCode {
         return self.hasEmbeddedPrice ? self.rawEmbeddedData : nil
     }
 
-    public var embeddedAmount: Int? {
-        return self.hasEmbeddedAmount ? self.rawEmbeddedData : nil
+    public var embeddedUnits: Int? {
+        return self.hasEmbeddedUnits ? self.rawEmbeddedData : nil
     }
 
     public var embeddedData: Int? {

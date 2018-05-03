@@ -11,16 +11,16 @@ public struct SnabbleProject {
     public let jwt: String
     public let weighPrefixes: [String]
     public let pricePrefixes: [String]
-    public let amountPrefixes: [String]
+    public let unitPrefixes: [String]
     public let currencySymbol: String
     public let decimalDigits: Int
 
-    public init(name: String, jwt: String, weighPrefixes: [String] = [], pricePrefixes: [String] = [], amountPrefixes: [String] = [], currencySymbol: String, decimalDigits: Int) {
+    public init(name: String, jwt: String, weighPrefixes: [String] = [], pricePrefixes: [String] = [], unitPrefixes: [String] = [], currencySymbol: String, decimalDigits: Int) {
         self.name = name
         self.jwt = jwt
         self.weighPrefixes = weighPrefixes
         self.pricePrefixes = pricePrefixes
-        self.amountPrefixes = amountPrefixes
+        self.unitPrefixes = unitPrefixes
         self.currencySymbol = currencySymbol
         self.decimalDigits = decimalDigits
     }
@@ -135,6 +135,7 @@ struct SnabbleAPI {
         do {
             var urlRequest = request(method, url, timeout: timeout)
             urlRequest.httpBody = try JSONEncoder().encode(body)
+            
             return urlRequest
         } catch {
             NSLog("error serializing request body: \(error)")

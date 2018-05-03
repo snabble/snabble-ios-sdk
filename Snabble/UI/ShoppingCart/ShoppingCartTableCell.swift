@@ -70,7 +70,7 @@ class ShoppingCartTableCell: UITableViewCell {
     func setCartItem(_ item: CartItem, row: Int, delegate: ShoppingCartTableDelegate) {
         self.delegate = delegate
         self.item = item
-        self.quantity = item.quantity
+        self.quantity = item.weight ?? item.quantity
 
         let product = item.product
         self.nameLabel.text = product.name
@@ -119,7 +119,7 @@ class ShoppingCartTableCell: UITableViewCell {
         }
 
         let showWeight = ean.hasEmbeddedWeight
-        let price = self.item.price
+        let price = self.item.total
 
         let gram = showWeight ? "g" : ""
         self.quantityLabel.text = "\(self.quantity)\(gram)"

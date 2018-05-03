@@ -33,35 +33,51 @@ public struct CartConfig {
     }
 }
 
-/// an entry in a shopping cart. for weighing products, `quantity` is the weight in grams
+/// an entry in a shopping cart.
 public struct CartItem: Codable {
     public var quantity: Int
     public let product: Product
     public let scannedCode: String
 
-    init(_ product: Product, quantity: Int, scannedCode: String) {
+    // optional data extracted from the scanned code
+    let price: Int?
+    let weight: Int?
+    let units: Int?
+
+    init(_ quantity: Int, _ product: Product, _ scannedCode: String) {
         self.product = product
         self.quantity = quantity
         self.scannedCode = scannedCode
+
+        let ean = EAN.parse(scannedCode)
+        self.price = ean?.embeddedPrice
+        self.weight = ean?.embeddedWeight
+        self.units = ean?.embeddedUnits
     }
 
-    var price: Int {
-        guard let ean = EAN.parse(self.scannedCode) else {
-            return 0
+    /// total price for this cart item
+    public var total: Int {
+        if let price = self.price {
+            return price
+        } else if let units = self.units {
+            return units * self.product.priceWithDeposit
+        } else if let weight = self.weight {
+            return self.product.priceFor(weight)
         }
+        return self.product.priceFor(self.quantity)
+    }
 
-        var price = self.product.priceFor(self.quantity)
-        if let embeddedPrice = ean.embeddedPrice {
-            price = embeddedPrice
-        } else if let embeddedAmount = ean.embeddedAmount {
-            price = embeddedAmount * self.product.priceWithDeposit
-        }
-
-        return price
+    func cartItem() -> Cart.Item {
+        return Cart.Item(sku: self.product.sku,
+                         amount: self.quantity,
+                         scannedCode: self.scannedCode,
+                         price: self.price,
+                         weight: self.weight,
+                         units: self.units)
     }
 }
 
-/// a ShoppingCart is an collection of CartItem objects
+/// a ShoppingCart is a collection of CartItem objects
 public class ShoppingCart {
     
     public static let maxAmount = 9999
@@ -102,7 +118,7 @@ public class ShoppingCart {
             self.items.remove(at: index)
             self.items.insert(item, at: 0)
         } else {
-            let item = CartItem(product, quantity: quantity, scannedCode: scannedCode)
+            let item = CartItem(quantity, product, scannedCode)
             self.items.insert(item, at: 0)
         }
 
@@ -170,21 +186,12 @@ public class ShoppingCart {
 
     /// return the the total price of all products
     public var totalPrice: Int {
-        return self.items.reduce(0) { $0 + $1.price }
+        return self.items.reduce(0) { $0 + $1.total }
     }
     
     /// return the total number of items
     public func numberOfItems() -> Int {
-        var count = 0
-        for item in self.items {
-            switch item.product.type {
-            case .singleItem:
-                count += item.quantity
-            case .preWeighed, .userMustWeigh:
-                count += 1
-            }
-        }
-        return count
+        return self.items.reduce(0) { $0 + $1.quantity }
     }
 
     /// get all products from this list
@@ -231,7 +238,7 @@ extension ShoppingCart {
         do {
             let data = try Data(contentsOf: self.cartUrl())
             let items = try JSONDecoder().decode([CartItem].self, from: data)
-            return items.map { CartItem(self.refreshLocal($0.product), quantity: $0.quantity, scannedCode: $0.scannedCode) }
+            return items.map { CartItem($0.quantity, self.refreshLocal($0.product), $0.scannedCode) }
         } catch let error {
             NSLog("error loading cart \(self.config.name): \(error)")
             return []

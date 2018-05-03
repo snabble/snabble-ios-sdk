@@ -34,7 +34,7 @@ class ScanConfirmationView: DesignableView {
     weak var delegate: ScanConfirmationViewDelegate!
 
     private var product: Product!
-    private var initialQuantity = 0
+    private var alreadyInCart = false
     private var quantity = 1
     private var ean: EANCode!
     
@@ -73,6 +73,7 @@ class ScanConfirmationView: DesignableView {
     }
     
     func present(_ product: Product, cart: ShoppingCart, ean: EANCode) {
+        // avoid ugly animations
         UIView.performWithoutAnimation {
             self.doPresent(product, cart: cart, ean: ean)
             self.layoutIfNeeded()
@@ -85,19 +86,15 @@ class ScanConfirmationView: DesignableView {
         self.shoppingCart = cart
         self.ean = ean
 
-        self.initialQuantity = 0
-        self.quantity = 0
+        self.quantity = 1
 
-        if let weight = ean.embeddedWeight {
-            self.initialQuantity = 0
-            self.quantity = weight
-        } else if ean.hasEmbeddedPrice {
-            self.initialQuantity = 0
-            self.quantity = 1
-        } else if product.type == .singleItem {
-            self.initialQuantity = self.shoppingCart.quantity(of: product)
-            self.quantity = initialQuantity == 0 ? 1 : initialQuantity + 1
+        if product.type == .singleItem {
+            let cartQuantity = self.shoppingCart.quantity(of: product)
+            self.quantity = cartQuantity + 1
+            self.alreadyInCart = cartQuantity > 0
         }
+
+        let initialQuantity = ean.embeddedWeight ?? self.quantity
 
         self.minusButton.isHidden = product.weightDependent
         self.plusButton.isHidden = product.weightDependent
@@ -116,9 +113,9 @@ class ScanConfirmationView: DesignableView {
             self.quantityField.inputAccessoryView = nil
         }
 
-        self.updateQuantity(true)
+        self.showQuantity(initialQuantity, updateTextField: true)
 
-        let cartTitle = initialQuantity == 0 ? "Snabble.Scanner.addToCart" : "Snabble.Scanner.updateCart"
+        let cartTitle = self.alreadyInCart ? "Snabble.Scanner.updateCart" : "Snabble.Scanner.addToCart"
         self.cartButton.setTitle(cartTitle.localized(), for: .normal)
 
         if product.discountedPrice != nil {
@@ -130,43 +127,44 @@ class ScanConfirmationView: DesignableView {
         }
     }
     
-    private func updateQuantity(_ updateTextField: Bool) {
-        if self.quantity < 1 && self.product.type != .userMustWeigh {
-            self.quantity = 1
+    private func showQuantity(_ quantity: Int, updateTextField: Bool) {
+        var qty = quantity
+        if quantity < 1 && self.product.type != .userMustWeigh {
+            qty = 1
         } else if self.quantity > ShoppingCart.maxAmount {
-            self.quantity = ShoppingCart.maxAmount
+            qty = ShoppingCart.maxAmount
         }
 
         if updateTextField {
-            self.quantityField.text = self.quantity == 0 ? "" : "\(self.quantity)"
+            self.quantityField.text = qty == 0 ? "" : "\(qty)"
         }
 
-        self.cartButton.isEnabled = self.quantity > 0
-        self.minusButton.isEnabled = self.quantity > 1
-        self.plusButton.isEnabled = self.quantity < ShoppingCart.maxAmount
+        self.cartButton.isEnabled = qty > 0
+        self.minusButton.isEnabled = qty > 1
+        self.plusButton.isEnabled = qty < ShoppingCart.maxAmount
 
         var productPrice = 0
         if let weight = self.ean.embeddedWeight {
             productPrice = product.priceFor(weight)
             let priceKilo = Price.format(product.price)
             let formattedPrice = Price.format(productPrice)
-            self.priceLabel.text = "\(self.quantity)g × \(priceKilo)/kg = \(formattedPrice)"
+            self.priceLabel.text = "\(qty)g × \(priceKilo)/kg = \(formattedPrice)"
         } else if let price = self.ean.embeddedPrice {
             productPrice = price
             self.priceLabel.text = Price.format(productPrice)
             self.quantityField.isHidden = true
             self.gramLabel.isHidden = true
-        } else if let amount = self.ean.embeddedAmount {
+        } else if let amount = self.ean.embeddedUnits {
             productPrice = self.product.priceWithDeposit * amount
             self.priceLabel.text = Price.format(productPrice)
             self.quantityField.isHidden = true
             self.gramLabel.isHidden = true
         } else {
-            productPrice = self.product.priceFor(self.quantity)
+            productPrice = self.product.priceFor(qty)
             self.priceLabel.text = Price.format(productPrice)
         }
 
-        let cartTotal = self.initialQuantity == 0 ? self.shoppingCart.totalPrice : 0
+        let cartTotal = self.alreadyInCart ? 0 : self.shoppingCart.totalPrice
         let newTotal = productPrice + cartTotal
 
         let totalPrice = Price.format(newTotal)
@@ -189,12 +187,12 @@ class ScanConfirmationView: DesignableView {
 
     @IBAction private func plusTapped(_ button: UIButton) {
         self.quantity += 1
-        self.updateQuantity(true)
+        self.showQuantity(self.quantity, updateTextField: true)
     }
 
     @IBAction private func minusTapped(_ button: UIButton) {
         self.quantity -= 1
-        self.updateQuantity(true)
+        self.showQuantity(self.quantity, updateTextField: true)
     }
 
     @IBAction private func cartTapped(_ button: UIButton) {
@@ -239,7 +237,8 @@ extension ScanConfirmationView: UITextFieldDelegate {
         }
 
         self.quantity = qty
-        self.updateQuantity(false)
+        self.showQuantity(qty, updateTextField: false)
+
         return true
     }
 
