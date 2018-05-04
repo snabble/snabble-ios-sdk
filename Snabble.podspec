@@ -38,13 +38,13 @@ Pod::Spec.new do |s|
   end
 
   s.subspec 'UI' do |ui|
-    ui.source_files = 'Snabble/UI/{Utilities,EAN,Scanner,ShoppingCart,Payment}/*.{swift,xib}'
+    ui.source_files = 'Snabble/UI/{Utilities,EAN,Scanner,ShoppingCart,Payment}/*.swift'
     ui.dependency 'Snabble/Core'
     ui.dependency 'DZNEmptyDataSet'
     ui.dependency 'SwiftMessages'
 
     ui.resource_bundles = {
-      "Snabble" => [ 'Snabble.xcassets', 'Snabble/UI/*.lproj/*.strings', 'i18n/*.twine' ]
+      "Snabble" => [ 'Snabble.xcassets', 'Snabble/UI/*.lproj/*.strings', 'Snabble/UI/**/*.xib', 'i18n/*.twine' ]
     }
 
     if ENV["SNABBLE_DEV"]
