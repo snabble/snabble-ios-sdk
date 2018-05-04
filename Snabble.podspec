@@ -47,19 +47,20 @@ Pod::Spec.new do |s|
       "Snabble" => [ 'Snabble.xcassets', 'Snabble/UI/*.lproj/*.strings', 'i18n/*.twine' ]
     }
 
-    ui.script_phase = { 
-      :name => "Run twine", 
-      :script => <<-SCRIPT
-      if which twine >/dev/null; then
-        cd $PODS_TARGET_SRCROOT
-        TWINE=i18n/Snabble.twine
-        if [ -r "$TWINE" ]; then
-          echo "Creating strings file"
-          twine generate-localization-file $TWINE --lang en --format apple Snabble/UI/en.lproj/SnabbleLocalizable.strings
+    if ENV["SNABBLE_DEV"]
+      ui.script_phase = { :name => "Run twine", 
+        :script => <<-SCRIPT
+        if which twine >/dev/null; then
+          cd $PODS_TARGET_SRCROOT
+          TWINE=i18n/Snabble.twine
+          if [ -r "$TWINE" ]; then
+            echo "Creating strings file"
+            twine generate-localization-file $TWINE --lang en --format apple Snabble/UI/en.lproj/SnabbleLocalizable.strings
+          fi
         fi
-      fi
-      SCRIPT
-    }
+        SCRIPT
+      }
+    end
   end
 
 end
