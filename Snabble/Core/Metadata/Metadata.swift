@@ -1,5 +1,5 @@
 //
-//  Metadata
+//  Metadata.swift
 //
 //  Copyright © 2018 snabble. All rights reserved.
 //
@@ -64,8 +64,8 @@ public struct Shop: Decodable {
 
     /// externally provided identifier
     public let externalId: String?
-    /// externally provided data, contains a serialized JSON object - see `externalData` convenience accessor
-    public let external: String?
+    /// externally provided data
+    public let external: [String: Any]?
 
     /// latitude
     public let latitude: Double
@@ -101,22 +101,26 @@ public struct Shop: Decodable {
         case services, openingHoursSpecification, email, phone, city, street
         case postalCode = "zip", state, country
     }
-}
 
-public extension Shop {
+    public init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
 
-    /// convenience access to the shop's `external` data
-    public var externalData: [String: Any]? {
-        guard let ext = self.external, let data = ext.data(using: .utf8) else {
-            return nil
-        }
-
-        do {
-            return try JSONSerialization.jsonObject(with: data, options: []) as? [String: Any]
-        } catch let error {
-            NSLog("shop.external parse error: \(error)")
-        }
-        return nil
+        self.id = try container.decode(.id)
+        self.name = try container.decode(.name)
+        self.project = try container.decode(.project)
+        self.externalId = try container.decode(.externalId)
+        self.external = try container.decodeIfPresent([String: Any].self, forKey: .external)
+        self.latitude = try container.decode(.latitude)
+        self.longitude = try container.decode(.longitude)
+        self.services = try container.decode(.services)
+        self.openingHoursSpecification = try container.decode(.openingHoursSpecification)
+        self.email = try container.decode(.email)
+        self.phone = try container.decode(.phone)
+        self.city = try container.decode(.city)
+        self.street = try container.decode(.street)
+        self.postalCode = try container.decode(.postalCode)
+        self.state = try container.decode(.state)
+        self.country = try container.decode(.country)
     }
 }
 
