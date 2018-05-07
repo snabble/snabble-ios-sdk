@@ -12,7 +12,7 @@ extension ShoppingCart {
     ///
     /// create a new "session" and sends the current cart to the backend.
     /// - Parameters:
-    ///   - timeout: the timeout for the HTTP request (0 for no timeout)
+    ///   - timeout: the timeout for the HTTP request (0 for the system default timeout)
     ///   - completion: is called on the main thread with the result of the API call,
     ///    with either a `SignedCheckoutInfo` object or `nil` if an error occurred
     public func createCheckoutInfo(timeout: TimeInterval = 0, completion: @escaping (SignedCheckoutInfo?) -> () ) {
@@ -47,7 +47,7 @@ extension SignedCheckoutInfo {
     ///
     /// - Parameters:
     ///   - paymentMethod: the user's chosen payment method
-    ///   - timeout: the timeout for the HTTP request (0 for no timeout)
+    ///   - timeout: the timeout for the HTTP request (0 for the system default timeout)
     ///   - completion: is called on the main thread with the result of the API call,
     ///     with either a `CheckoutProcess` object or `nil` if an error occurred
     public func createCheckoutProcess(paymentMethod: PaymentMethod, timeout: TimeInterval = 0, completion: @escaping (CheckoutProcess?) -> () ) {
@@ -78,6 +78,8 @@ extension CheckoutProcess {
     ///    - timeout: the timeout for the HTTP request (0 for no timeout)
     ///    - completion: is called on the main thread with the result of the API call,
     ///      with either a `CheckoutProcess` object or `nil` if an error occurred
+    /// - Returns:
+    ///    a `URLSessionDataTask` object or nil (if the request couldn't be started)
     @discardableResult
     public func update(timeout: TimeInterval = 0, completion: @escaping (CheckoutProcess?) -> () ) -> URLSessionDataTask? {
         guard let url = APIConfig.shared.urlFor(self.links.`self`.href) else {

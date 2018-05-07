@@ -6,16 +6,33 @@
 
 import Foundation
 
+/// configuration data for a snabble project
 public struct SnabbleProject {
+    /// the name of the project
     public let name: String
+    /// the jwt used for api authorization
     public let jwt: String
+    /// Scanned EAN-13 codes that begin with one of the prefixes are considered to contain am embedded weight (in grams)
     public let weighPrefixes: [String]
+    /// Scanned EAN-13 codes that begin with one of the prefixes are considered to contain am embedded price (in cents)
     public let pricePrefixes: [String]
+    /// Scanned EAN-13 codes that begin with one of the prefixes are considered to contain am embedded number of units (e.g. a bag containing 5 apples)
     public let unitPrefixes: [String]
+    /// the currency symbol used for display
     public let currencySymbol: String
+    /// the number of decimal digits
     public let decimalDigits: Int
+    /// the rounding mode to use for weight-based price calculations
+    public let roundingMode: NSDecimalNumber.RoundingMode
 
-    public init(name: String, jwt: String, weighPrefixes: [String] = [], pricePrefixes: [String] = [], unitPrefixes: [String] = [], currencySymbol: String, decimalDigits: Int) {
+    public init(name: String,
+                jwt: String,
+                weighPrefixes: [String] = [],
+                pricePrefixes: [String] = [],
+                unitPrefixes: [String] = [],
+                currencySymbol: String,
+                decimalDigits: Int,
+                roundingMode: NSDecimalNumber.RoundingMode = .up) {
         self.name = name
         self.jwt = jwt
         self.weighPrefixes = weighPrefixes
@@ -23,13 +40,16 @@ public struct SnabbleProject {
         self.unitPrefixes = unitPrefixes
         self.currencySymbol = currencySymbol
         self.decimalDigits = decimalDigits
+        self.roundingMode = roundingMode
     }
 }
 
 /// general config data for using the snabble API.
-/// Applications must create the singleton instance and call `setup()` before they make their first API call.
+/// Applications must call `setup()` before they make their first API call.
 public class APIConfig {
+    /// the singleton instance
     public static let shared = APIConfig()
+
     private(set) var project: SnabbleProject
     private(set) var baseUrl: String
 
@@ -51,9 +71,8 @@ public class APIConfig {
     /// initialize the API configuration for the subsequent network calls
     ///
     /// - Parameters:
-    ///   - host: either the hostname (e.g. "api.snabble.io") or baseUrl (e.g. "https://api.snabble.io")".
-    ///     If a hostname is passed, `https://` will be used as the URL scheme
-    ///   - jwt: the JWT that has been assigned your project
+    ///   - baseUrl: the base URL (e.g. "https://api.snabble.io")" to use for relative URLs
+    ///   - project: the `SnabbleProject` instance that describes your project
     ///
     public func setup(with project: SnabbleProject, using baseUrl: String) {
         self.project = project

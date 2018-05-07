@@ -46,6 +46,7 @@ public enum PaymentState: String, Decodable {
 // CheckoutInfo
 public struct CheckoutInfo: Decodable {
     public let price: Price
+    /// available payment methods, as delivered by the API
     public let availableMethods: [String]
     public let shopID: String
     public let project: String
@@ -63,21 +64,23 @@ public struct CheckoutInfo: Decodable {
 //    }
 
     public struct Price: Decodable {
-        public let tax: Tax
+// we don't need tax info right now, so we just ignore it
+//        public let tax: Tax
         public let netPrice: Int
         public let price: Int
 
-        public struct Tax: Decodable {
-            public let tax0, tax7, tax19: Int?
-
-            public enum CodingKeys: String, CodingKey {
-                case tax0 = "0"
-                case tax7 = "7"
-                case tax19 = "19"
-            }
-        }
+//        public struct Tax: Decodable {
+//            public let tax0, tax7, tax19: Int?
+//
+//            public enum CodingKeys: String, CodingKey {
+//                case tax0 = "0"
+//                case tax7 = "7"
+//                case tax19 = "19"
+//            }
+//        }
     }
 
+    /// available and implemented payment methods
     public var paymentMethods: [PaymentMethod] {
         return availableMethods.compactMap { PaymentMethod(rawValue: $0) }
     }
@@ -101,7 +104,7 @@ public struct CheckoutProcess: Decodable {
     }
 
     public struct PaymentInformation: Decodable {
-        // for method == .qrCode
+        /// for method == .qrCode
         public let qrCodeContent: String?
     }
 }
