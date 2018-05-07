@@ -84,9 +84,8 @@ extension Product {
     ///
     /// - Parameters:
     ///   - quantityOrWeight: quantity or weight
-    ///   - roundingMode: the rounding mode to use, default is `.up`
     /// - Returns: the price
-    public func priceFor(_ quantityOrWeight: Int, _ roundingMode: NSDecimalNumber.RoundingMode = .up) -> Int {
+    public func priceFor(_ quantityOrWeight: Int) -> Int {
         switch self.type {
         case .singleItem:
             return quantityOrWeight * self.priceWithDeposit
@@ -95,12 +94,18 @@ extension Product {
             let gramPrice = Decimal(self.price) / Decimal(1000.0)
             let total = Decimal(quantityOrWeight) * gramPrice
 
-            return self.round(total, roundingMode)
+            return self.round(total)
         }
     }
 
-    private func round(_ n: Decimal, _ roundingMode: NSDecimalNumber.RoundingMode) -> Int {
-        let round = NSDecimalNumberHandler(roundingMode: roundingMode, scale: 0, raiseOnExactness: false, raiseOnOverflow: false, raiseOnUnderflow: false, raiseOnDivideByZero: false)
+    private func round(_ n: Decimal) -> Int {
+        let mode = APIConfig.shared.project.roundingMode
+        let round = NSDecimalNumberHandler(roundingMode: mode,
+                                           scale: 0,
+                                           raiseOnExactness: false,
+                                           raiseOnOverflow: false,
+                                           raiseOnUnderflow: false,
+                                           raiseOnDivideByZero: false)
         return (n as NSDecimalNumber).rounding(accordingToBehavior: round).intValue
     }
 }
@@ -140,7 +145,17 @@ public struct Price {
         fmt.minimumIntegerDigits = 1
         fmt.numberStyle = .currency
         fmt.currencySymbol = APIConfig.shared.project.currencySymbol
+        fmt.roundingMode = roundingMode(for: APIConfig.shared.project.roundingMode)
         return fmt
+    }
+
+    private static func roundingMode(for decimal: NSDecimalNumber.RoundingMode) -> NumberFormatter.RoundingMode {
+        switch decimal {
+        case .plain: return .halfUp
+        case .up: return .up
+        case .down: return .down
+        case .bankers: return .halfEven
+        }
     }
 
 }
