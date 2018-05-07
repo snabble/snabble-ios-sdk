@@ -224,7 +224,8 @@ extension ShoppingCartViewController: ShoppingCartTableDelegate {
 
         let count = self.shoppingCart.numberOfItems()
 
-        let title = String(format: "Snabble.Shoppingcart.buyProducts".localized(), count, formattedTotal)
+        let fmt = count == 1 ? "Snabble.Shoppingcart.buyProducts.one" : "Snabble.Shoppingcart.buyProducts"
+        let title = String(format: fmt.localized(), count, formattedTotal)
         UIView.performWithoutAnimation {
             self.checkoutButton?.setTitle(title, for: .normal)
             self.checkoutButton?.layoutIfNeeded()

@@ -22,7 +22,13 @@
 
 "Snabble.Settings" = "Settings";
 
+"Snabble.Delete" = "Delete";
+
 "Snabble.remove" = "Remove";
+
+"Snabble.pleaseWait" = "Please wait...";
+
+"Snabble.undo" = "Undo";
 
 "Snabble.Payment.errorStarting" = "Error starting the payment process";
 
@@ -62,6 +68,8 @@
 
 "Snabble.Scanner.torchButton" = "Torch";
 
+"Snabble.Scanner.networkError" = "Product could not be searched online. Please check your internet connection.";
+
 "Snabble.Scanner.unknownBarcode" = "Price information is not available for this product";
 
 "Snabble.Scanner.updateCart" = "Update Cart";
@@ -69,6 +77,8 @@
 "Snabble.Scanner.addToCart" = "Add to Cart";
 
 "Snabble.ShoppingCart.title" = "Shopping Cart";
+
+"Snabble.Shoppingcart.buyProducts.one" = "Buy %d product for %@";
 
 "Snabble.Shoppingcart.buyProducts" = "Buy %d products for %@";
 
@@ -81,3 +91,18 @@
 "Snabble.Shoppingcart.removeItem" = "Remove %@ from the cart?";
 
 "Snabble.Shoppingcart.removeItems" = "Remove all products from shopping cart?";
+
+"Snabble.PaymentMethod.encodedCodes" = "Pay at the cash register";
+
+"Snabble.PaymentMethod.qrCodePOS" = "Checkstand";
+
+
+/********** Android **********/
+
+"Snabble.Payment.aborted" = "Payment process was aborted";
+
+"Snabble.Payment.backToHome" = "Back to the homepage";
+
+"Snabble.Payment.success" = "Thank you for your purchase";
+
+"Snabble.Shoppingcart.articleRemoved" = "Article removed";
