@@ -32,10 +32,6 @@ class ShoppingCartEmptyStateView: NibView {
         fatalError("init(coder:) has not been implemented")
     }
     
-    override func nibName() -> String {
-        return "ShoppingCartEmptyStateView"
-    }
-    
     @IBAction func buttonTapped(_ sender: UIButton) {
         self.tapHandler(sender)
     }

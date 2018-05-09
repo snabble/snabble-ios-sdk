@@ -114,10 +114,6 @@ public class ScanningView: DesignableView {
         }
     }
 
-    override public func nibName() -> String {
-        return "ScanningView"
-    }
-
     public override func awakeFromNib() {
         super.awakeFromNib()
 

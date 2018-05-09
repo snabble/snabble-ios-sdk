@@ -125,19 +125,18 @@ open class NibView: UIView {
 
     override public init(frame: CGRect) {
         super.init(frame: frame)
-        xibSetup(self.nibName())
+        nibSetup(self.nibName)
         self.awakeFromNib()
     }
 
     required public init?(coder aDecoder: NSCoder) {
         super.init(coder: aDecoder)
-        xibSetup(self.nibName())
+        nibSetup(self.nibName)
         self.awakeFromNib()
     }
 
-    func xibSetup(_ nibName: String) {
-        let bundle = Bundle(for: type(of: self))
-        let nib = UINib(nibName: nibName, bundle: bundle)
+    func nibSetup(_ nibName: String) {
+        let nib = self.getNib(for: nibName)
         self.view = nib.instantiate(withOwner: self, options: nil)[0] as! UIView
 
         // use bounds not frame or it'll be offset
@@ -153,11 +152,20 @@ open class NibView: UIView {
         view.rightAnchor.constraint(equalTo: self.rightAnchor).isActive = true
         view.bottomAnchor.constraint(equalTo: self.bottomAnchor).isActive = true
         view.leftAnchor.constraint(equalTo: self.leftAnchor).isActive = true
-
     }
 
-    open func nibName() -> String {
-        preconditionFailure("child classes must override nibName()")
+    func getNib(for name: String) -> UINib {
+        let bundle = Bundle(for: type(of: self))
+        if bundle.path(forResource: name, ofType: "nib") != nil {
+            return UINib(nibName: name, bundle: bundle)
+        } else {
+            return UINib(nibName: name, bundle: Snabble.bundle)
+        }
+    }
+
+    // override this if the name of the .xib file is not $CLASSNAME.xib
+    open var nibName: String {
+        return String(describing: type(of: self))
     }
 }
 
@@ -182,9 +190,9 @@ class InsetLabel: UILabel {
 // MARK: - l10n and image support
 
 class Snabble: NSObject {
-    static let bundle = Bundle(for: Snabble.self)
-    static let path = bundle.path(forResource: "Snabble", ofType: "bundle")!
-    static let resourceBundle = Bundle(path: path)!
+    private static let frameworkBundle = Bundle(for: Snabble.self)
+    static let path = frameworkBundle.path(forResource: "Snabble", ofType: "bundle")!
+    static let bundle = Bundle(path: path)!
 }
 
 extension String {
@@ -195,7 +203,7 @@ extension String {
         if appValue != upper {
             return appValue
         }
-        let sdkValue = Snabble.resourceBundle.localizedString(forKey: self, value: upper, table: "SnabbleLocalizable")
+        let sdkValue = Snabble.bundle.localizedString(forKey: self, value: upper, table: "SnabbleLocalizable")
         return sdkValue
     }
 }
@@ -203,6 +211,6 @@ extension String {
 extension UIImage {
     /// get an image from our snabble bundle
     static func fromBundle(_ name: String) -> UIImage? {
-        return UIImage(named: name, in: Snabble.resourceBundle, compatibleWith: nil)
+        return UIImage(named: name, in: Snabble.bundle, compatibleWith: nil)
     }
 }

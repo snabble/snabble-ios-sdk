@@ -40,10 +40,6 @@ class ScanConfirmationView: DesignableView {
     
     private weak var shoppingCart: ShoppingCart!
 
-    override func nibName() -> String {
-        return "ScanConfirmationView"
-    }
-    
     override func awakeFromNib() {
         super.awakeFromNib()
 
