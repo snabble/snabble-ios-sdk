@@ -1,14 +1,11 @@
-![Build](https://api.travis-ci.org/snabble/iOS-SDK.svg?branch=master)
-![Version](https://img.shields.io/cocoapods/v/Snabble.svg)
-
-# Snabble
+# Snabble [![Build](https://api.travis-ci.org/snabble/iOS-SDK.svg?branch=master)](https://travis-ci.org/snabble/iOS-SDK) [![Version](https://img.shields.io/cocoapods/v/Snabble.svg)](http://cocoapods.org/pods/Snabble)
 
 snabble - the self-scanning and checkout platform.
 
 ## Installation
 
 Snabble is available through [CocoaPods](http://cocoapods.org). To install it, 
-simply add the following lines to your Podfile:
+simply add the following line to your Podfile:
 
 ```
 pod 'Snabble'
