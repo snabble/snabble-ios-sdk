@@ -60,7 +60,7 @@ public protocol ProductProvider: class {
     init(_ config: ProductDBConfiguration)
 
     /// Setup the product database
-    func setup(completion: @escaping ((Bool) -> ()))
+    func setup(update: Bool, completion: @escaping ((Bool) -> ()))
 
     /// Attempt to update the product database
     func updateDatabase(completion: @escaping (Bool) -> ())
@@ -171,7 +171,7 @@ final public class ProductDB: ProductProvider {
         and once more later, after the automatic database update check has finished.
         The closure's parameter indicates whether new data is available or not.
     */
-    public func setup(completion: @escaping (Bool) -> () ) {
+    public func setup(update: Bool = true, completion: @escaping (Bool) -> () ) {
         self.db = self.openDb()
 
         if let seedRevision = self.config.seedRevision, seedRevision > self.revision {
@@ -184,7 +184,9 @@ final public class ProductDB: ProductProvider {
             completion(false)
         }
 
-        self.updateDatabase(completion: completion)
+        if update {
+            self.updateDatabase(completion: completion)
+        }
     }
 
     /**
