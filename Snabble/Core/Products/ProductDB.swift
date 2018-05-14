@@ -115,9 +115,10 @@ public protocol ProductProvider: class {
     ///
     /// - Parameters:
     ///   - sku: the sku to look for
+    ///   - forceDownload: if true, skip the lookup in the local DB
     ///   - product: the product found, or nil.
     ///   - error: whether an error occurred during the lookup.
-    func productBySku(_ sku: String, completion: @escaping (_ product: Product?, _ error: Bool) -> () )
+    func productBySku(_ sku: String, forceDownload: Bool, completion: @escaping (_ product: Product?, _ error: Bool) -> () )
 
     /// get a product by (one of) its scannable codes
     ///
@@ -528,10 +529,11 @@ extension ProductDB {
     ///
     /// - Parameters:
     ///   - sku: the SKU to look for
+    ///   - forceDownload: if true, skip the lookup in the local DB
     ///   - product: the product found, or nil.
     ///   - error: whether an error occurred during the lookup.
-    public func productBySku(_ sku: String, completion: @escaping (_ product: Product?, _ error: Bool) -> ()) {
-        if let product = self.productBySku(sku) {
+    public func productBySku(_ sku: String, forceDownload: Bool = false, completion: @escaping (_ product: Product?, _ error: Bool) -> ()) {
+        if !forceDownload, let product = self.productBySku(sku) {
             DispatchQueue.main.async {
                 completion(product, false)
             }
