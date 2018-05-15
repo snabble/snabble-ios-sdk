@@ -20,10 +20,10 @@ public class ScannerViewController: UIViewController {
     private var scanningView: ScanningView!
     private var scanConfirmationView: ScanConfirmationView!
     private var scanConfirmationViewBottom: NSLayoutConstraint!
-    
-    private weak var productProvider: ProductProvider!
-    private weak var shoppingCart: ShoppingCart!
-    
+
+    private var productProvider: ProductProvider!
+    private var shoppingCart: ShoppingCart!
+
     private var lastScannedCode = ""
     private var confirmationVisible = false
     private var productType: ProductType?
@@ -111,6 +111,15 @@ public class ScannerViewController: UIViewController {
         
         self.scanningView.stopScanning()
         self.hideScanConfirmationView(true)
+    }
+
+    /// reset `productProvider` and `shoppingCart` when switching between projects
+    public func reset(_ productProvider: ProductProvider, _ cart: ShoppingCart) {
+        self.productProvider = productProvider
+        self.shoppingCart = cart
+
+        self.closeConfirmation()
+        self.navigationController?.popToRootViewController(animated: false)
     }
     
     // MARK: - scan confirmation views

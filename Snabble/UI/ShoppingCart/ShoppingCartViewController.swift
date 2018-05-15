@@ -23,7 +23,12 @@ public class ShoppingCartViewController: UIViewController {
     private var trashButton: UIBarButtonItem!
 
     private let itemCellIdentifier = "itemCell"
-    private var shoppingCart: ShoppingCart!
+    public var shoppingCart: ShoppingCart! {
+        didSet {
+            self.tableView.reloadData()
+            self.updateTotals()
+        }
+    }
 
     private var keyboardObserver: KeyboardObserver!
     private weak var delegate: ShoppingCartDelegate!
