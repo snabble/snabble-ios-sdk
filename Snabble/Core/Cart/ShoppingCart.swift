@@ -235,6 +235,11 @@ extension ShoppingCart {
 
     // load this shoppping cart from disk
     private func loadItems() -> [CartItem] {
+        let fileManager = FileManager.default
+        if !fileManager.fileExists(atPath: self.cartUrl().path) {
+            return []
+        }
+        
         do {
             let data = try Data(contentsOf: self.cartUrl())
             let items = try JSONDecoder().decode([CartItem].self, from: data)
