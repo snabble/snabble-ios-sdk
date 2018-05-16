@@ -5,7 +5,6 @@
 //
 
 import UIKit
-import DZNEmptyDataSet
 import SwiftMessages
 
 public protocol ShoppingCartDelegate: AnalyticsDelegate {
@@ -21,6 +20,8 @@ public class ShoppingCartViewController: UIViewController {
 
     private var editButton: UIBarButtonItem!
     private var trashButton: UIBarButtonItem!
+
+    private var emptyState: ShoppingCartEmptyStateView!
 
     private let itemCellIdentifier = "itemCell"
     public var shoppingCart: ShoppingCart! {
@@ -60,8 +61,8 @@ public class ShoppingCartViewController: UIViewController {
         let primaryBackgroundColor = SnabbleAppearance.shared.config.primaryBackgroundColor
         self.view.backgroundColor = primaryBackgroundColor
 
-        self.tableView.emptyDataSetSource = self
-        self.tableView.emptyDataSetDelegate = self
+        self.emptyState = ShoppingCartEmptyStateView(self.showScanner)
+        self.emptyState.addTo(self.view)
 
         self.tableView.register(UINib(nibName: "ShoppingCartTableCell", bundle: Snabble.bundle), forCellReuseIdentifier: self.itemCellIdentifier)
 
@@ -194,6 +195,9 @@ public class ShoppingCartViewController: UIViewController {
         }
     }
 
+    func showScanner() {
+        self.delegate.gotoScanner()
+    }
 }
 
 extension ShoppingCartViewController: ShoppingCartTableDelegate {
@@ -242,13 +246,14 @@ extension ShoppingCartViewController: ShoppingCartTableDelegate {
     var cart: ShoppingCart {
         return self.shoppingCart
     }
-
- }
+}
 
 extension ShoppingCartViewController: UITableViewDelegate, UITableViewDataSource {
     // MARK: table view data source
     public func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return self.shoppingCart.count
+        let rows = self.shoppingCart.count
+        self.emptyState.isHidden = rows > 0
+        return rows
     }
 
     public func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
@@ -291,19 +296,7 @@ extension ShoppingCartViewController: UITableViewDelegate, UITableViewDataSource
     }
 }
 
-// MARK: - empty set delegate
-extension ShoppingCartViewController: DZNEmptyDataSetSource, DZNEmptyDataSetDelegate {
-
-    public func customView(forEmptyDataSet scrollView: UIScrollView!) -> UIView! {
-        return ShoppingCartEmptyStateView(self.showScanner)
-    }
-
-    func showScanner(_ button: UIButton) {
-        self.delegate.gotoScanner()
-    }
-}
-
- // MARK: keyboard show/hide
+// MARK: keyboard show/hide
 extension ShoppingCartViewController: KeyboardHandling {
 
     public func keyboardWillShow(_ info: KeyboardInfo) {
@@ -331,4 +324,4 @@ extension ShoppingCartViewController: KeyboardHandling {
     }
 
 }
- 
+

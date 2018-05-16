@@ -38,9 +38,8 @@ Pod::Spec.new do |s|
   end
 
   s.subspec 'UI' do |ui|
-    ui.source_files = 'Snabble/UI/{Utilities,EAN,Scanner,ShoppingCart,Payment}/*.swift'
+    ui.source_files = 'Snabble/UI/{Utilities,EAN,Scanner,ShoppingCart,Payment,EmptyState}/*.swift'
     ui.dependency 'Snabble/Core'
-    ui.dependency 'DZNEmptyDataSet'
     ui.dependency 'SwiftMessages'
 
     ui.resource_bundles = {

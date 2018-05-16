@@ -140,18 +140,19 @@ open class NibView: UIView {
         self.view = nib.instantiate(withOwner: self, options: nil)[0] as! UIView
 
         // use bounds not frame or it'll be offset
-        view.frame = self.bounds
+        self.view.frame = self.bounds
 
         // Add custom subview on top of our view
-        addSubview(self.view)
+        self.addSubview(self.view)
         
         // Make the view stretch with the containing view
         // view.autoresizingMask = [UIViewAutoresizing.flexibleWidth, UIViewAutoresizing.flexibleHeight]
-        view.translatesAutoresizingMaskIntoConstraints = false
-        view.topAnchor.constraint(equalTo: self.topAnchor).isActive = true
-        view.rightAnchor.constraint(equalTo: self.rightAnchor).isActive = true
-        view.bottomAnchor.constraint(equalTo: self.bottomAnchor).isActive = true
-        view.leftAnchor.constraint(equalTo: self.leftAnchor).isActive = true
+        self.translatesAutoresizingMaskIntoConstraints = false
+        self.view.translatesAutoresizingMaskIntoConstraints = false
+        self.view.topAnchor.constraint(equalTo: self.topAnchor).isActive = true
+        self.view.rightAnchor.constraint(equalTo: self.rightAnchor).isActive = true
+        self.view.bottomAnchor.constraint(equalTo: self.bottomAnchor).isActive = true
+        self.view.leftAnchor.constraint(equalTo: self.leftAnchor).isActive = true
     }
 
     func getNib(for name: String) -> UINib {

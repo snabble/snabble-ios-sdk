@@ -5,7 +5,6 @@
 //
 
 import UIKit
-import DZNEmptyDataSet
 
 class BarcodeEntryViewController: UIViewController, UISearchBarDelegate, UITableViewDataSource, UITableViewDelegate {
 
@@ -21,6 +20,7 @@ class BarcodeEntryViewController: UIViewController, UISearchBarDelegate, UITable
     private var searchText = ""
     private var keyboardObserver: KeyboardObserver!
     private weak var delegate: AnalyticsDelegate!
+    private var emptyState: EmptyStateView!
 
     init(_ productProvider: ProductProvider, delegate: AnalyticsDelegate, completion: @escaping (String)->() ) {
         super.init(nibName: nil, bundle: Snabble.bundle)
@@ -37,9 +37,9 @@ class BarcodeEntryViewController: UIViewController, UISearchBarDelegate, UITable
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        self.tableView.emptyDataSetSource = self
-        self.tableView.emptyDataSetDelegate = self
-        
+        self.emptyState = BarcodeEntryEmptyStateView(nil)
+        self.emptyState.addTo(self.view)
+
         self.tableView.tableFooterView = UIView(frame: CGRect.zero)
 
         self.searchBar.placeholder = "Snabble.Scanner.enterBarcode".localized()
@@ -72,7 +72,9 @@ class BarcodeEntryViewController: UIViewController, UISearchBarDelegate, UITable
 
     // MARK: - table view
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return filteredProducts.count
+        let rows = filteredProducts.count
+        self.emptyState.isHidden = rows > 0
+        return rows
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
@@ -116,32 +118,6 @@ class BarcodeEntryViewController: UIViewController, UISearchBarDelegate, UITable
         CATransaction.commit()
     }
     
-}
-
-// MARK: - empty set
-extension BarcodeEntryViewController: DZNEmptyDataSetSource, DZNEmptyDataSetDelegate {
-
-    func description(forEmptyDataSet scrollView: UIScrollView!) -> NSAttributedString! {
-        let msg = self.searchText.count > 0 ? "Snabble.Scanner.noMatchesFound" : "Snabble.Scanner.enterBarcode"
-        
-        return NSAttributedString(string: msg.localized())
-    }
-
-    func buttonTitle(forEmptyDataSet scrollView: UIScrollView!, for state: UIControlState) -> NSAttributedString! {
-        if self.searchText.count == 0 {
-            return nil
-        }
-
-        let primaryColor = SnabbleAppearance.shared.config.primaryColor
-        let str = NSAttributedString(string: "Snabble.Scanner.addCodeAsIs".localized(), attributes: [NSAttributedStringKey.foregroundColor: primaryColor])
-        return str
-    }
-
-    func emptyDataSet(_ scrollView: UIScrollView!, didTap button: UIButton!) {
-        self.searchBar.resignFirstResponder()
-        self.addCode(self.searchText)
-    }
-
 }
 
 extension BarcodeEntryViewController: KeyboardHandling {

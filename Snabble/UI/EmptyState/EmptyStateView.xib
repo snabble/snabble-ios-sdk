@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="14109" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" colorMatched="YES">
+    <device id="retina4_7" orientation="portrait">
+        <adaptation id="fullscreen"/>
+    </device>
+    <dependencies>
+        <deployment identifier="iOS"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="14088"/>
+        <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
+    </dependencies>
+    <objects>
+        <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner" customClass="EmptyStateView" customModule="Snabble" customModuleProvider="target">
+            <connections>
+                <outlet property="button" destination="HZs-9r-MmT" id="DAr-cV-KhK"/>
+                <outlet property="descriptionLabel" destination="fze-DJ-8ae" id="6eg-A0-nUQ"/>
+                <outlet property="image" destination="KQx-lw-o5j" id="jaK-J3-Arx"/>
+                <outlet property="titleLabel" destination="ZQv-pz-7TU" id="3Xv-Jb-Kdc"/>
+            </connections>
+        </placeholder>
+        <placeholder placeholderIdentifier="IBFirstResponder" id="-2" customClass="UIResponder"/>
+        <view contentMode="scaleToFill" id="eT1-L4-RYN">
+            <rect key="frame" x="0.0" y="0.0" width="275" height="263"/>
+            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+            <subviews>
+                <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" alignment="center" spacing="4" translatesAutoresizingMaskIntoConstraints="NO" id="vue-rx-F3v">
+                    <rect key="frame" x="0.0" y="0.0" width="275" height="262.5"/>
+                    <subviews>
+                        <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="KQx-lw-o5j" userLabel="image">
+                            <rect key="frame" x="87.5" y="0.0" width="100" height="100"/>
+                            <constraints>
+                                <constraint firstAttribute="height" constant="100" id="LlO-Zo-t3y"/>
+                                <constraint firstAttribute="width" constant="100" id="q96-hS-1h4"/>
+                            </constraints>
+                        </imageView>
+                        <label opaque="NO" userInteractionEnabled="NO" tag="1" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" ambiguous="YES" text="This is your shopping cart" textAlignment="center" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="ZQv-pz-7TU" userLabel="title">
+                            <rect key="frame" x="29" y="104" width="217.5" height="77"/>
+                            <fontDescription key="fontDescription" type="system" weight="light" pointSize="20"/>
+                            <color key="textColor" red="0.08235294118" green="0.08235294118" blue="0.08235294118" alpha="1" colorSpace="calibratedRGB"/>
+                            <nil key="highlightedColor"/>
+                        </label>
+                        <label opaque="NO" userInteractionEnabled="NO" tag="2" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" ambiguous="YES" text="While in a store, scan products to add them to your shopping cart." textAlignment="center" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="fze-DJ-8ae" userLabel="description">
+                            <rect key="frame" x="13.5" y="185" width="248" height="33.5"/>
+                            <fontDescription key="fontDescription" type="system" pointSize="14"/>
+                            <color key="textColor" red="0.2901960784" green="0.2901960784" blue="0.2901960784" alpha="1" colorSpace="calibratedRGB"/>
+                            <nil key="highlightedColor"/>
+                        </label>
+                        <button opaque="NO" tag="3" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="HZs-9r-MmT" userLabel="button">
+                            <rect key="frame" x="78.5" y="222.5" width="118" height="40"/>
+                            <constraints>
+                                <constraint firstAttribute="height" constant="40" id="hfP-ot-ePk"/>
+                            </constraints>
+                            <fontDescription key="fontDescription" type="system" pointSize="14"/>
+                            <inset key="contentEdgeInsets" minX="8" minY="0.0" maxX="16" maxY="0.0"/>
+                            <inset key="titleEdgeInsets" minX="8" minY="0.0" maxX="-8" maxY="0.0"/>
+                            <state key="normal" title="Scan products">
+                                <color key="titleColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                            </state>
+                            <connections>
+                                <action selector="buttonTapped:" destination="-1" eventType="touchUpInside" id="dfd-Iw-oyU"/>
+                            </connections>
+                        </button>
+                    </subviews>
+                </stackView>
+            </subviews>
+            <constraints>
+                <constraint firstAttribute="bottom" secondItem="vue-rx-F3v" secondAttribute="bottom" constant="0.5" id="JGX-Bh-qfM"/>
+                <constraint firstItem="vue-rx-F3v" firstAttribute="leading" secondItem="eT1-L4-RYN" secondAttribute="leading" id="biS-8c-PkC"/>
+                <constraint firstItem="vue-rx-F3v" firstAttribute="top" secondItem="eT1-L4-RYN" secondAttribute="top" id="ryw-WZ-Kda"/>
+                <constraint firstAttribute="trailing" secondItem="vue-rx-F3v" secondAttribute="trailing" id="ypj-9u-bJ5"/>
+            </constraints>
+            <nil key="simulatedStatusBarMetrics"/>
+            <freeformSimulatedSizeMetrics key="simulatedDestinationMetrics"/>
+            <point key="canvasLocation" x="-118.5" y="-80.5"/>
+        </view>
+    </objects>
+</document>
