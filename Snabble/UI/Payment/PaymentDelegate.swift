@@ -7,7 +7,7 @@
 import Foundation
 
 /// a protocol that users of `PaymentProcess` must implement
-public protocol PaymentDelegate: AnalyticsDelegate {
+public protocol PaymentDelegate: AnalyticsDelegate, MessageDelegate {
     /// callback when the payment is finished
     ///
     /// - Parameters:

@@ -77,7 +77,7 @@ public class PaymentProcess {
                 processor.hidesBottomBarWhenPushed = true
                 completion(processor)
             } else {
-                SnabbleMessage.showToast(msg: "Snabble.Payment.errorStarting".localized())
+                self.delegate.showInfoMessage("Snabble.Payment.errorStarting".localized())
             }
         }
     }

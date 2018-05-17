@@ -5,9 +5,8 @@
 //
 
 import UIKit
-import SwiftMessages
 
-public protocol ShoppingCartDelegate: AnalyticsDelegate {
+public protocol ShoppingCartDelegate: AnalyticsDelegate, MessageDelegate {
     func gotoPayment(_ info: SignedCheckoutInfo, _ cart: ShoppingCart)
     func gotoScanner()
 }
@@ -190,7 +189,7 @@ public class ShoppingCartViewController: UIViewController {
             if let info = info {
                 self.delegate.gotoPayment(info, self.shoppingCart)
             } else {
-                SnabbleMessage.showBottomToast(msg: "Checkout aktuell nicht möglich", in: self)
+                self.delegate.showInfoMessage("Snabble.Payment.errorStarting".localized())
             }
         }
     }

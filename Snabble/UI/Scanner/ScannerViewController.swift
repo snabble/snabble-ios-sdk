@@ -6,9 +6,8 @@
 
 import UIKit
 import AVFoundation
-import SwiftMessages
 
-public protocol ScannerDelegate: AnalyticsDelegate {
+public protocol ScannerDelegate: AnalyticsDelegate, MessageDelegate {
     func closeScanningView()
     func gotoCheckout()
 }
@@ -146,6 +145,14 @@ public class ScannerViewController: UIViewController {
 
 // MARK: - analytics delegate
 extension ScannerViewController: AnalyticsDelegate {
+    public func showInfoMessage(_ message: String) {
+        //
+    }
+
+    public func showWarningMessage(_ message: String) {
+        //
+    }
+
     public func track(_ event: AnalyticsEvent) {
         self.delegate.track(event)
     }
@@ -222,7 +229,7 @@ extension ScannerViewController: ScanningViewDelegate {
 extension ScannerViewController {
 
     private func scannedUnknown(_ msg: String, _ code: String) {
-        SnabbleMessage.showToast(msg: msg, theme: .warning, duration: 2.0)
+        self.delegate.showWarningMessage(msg)
         self.delegate.track(.scanUnknown(code))
     }
 

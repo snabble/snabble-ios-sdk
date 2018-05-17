@@ -40,7 +40,6 @@ Pod::Spec.new do |s|
   s.subspec 'UI' do |ui|
     ui.source_files = 'Snabble/UI/{Utilities,EAN,Scanner,ShoppingCart,Payment,EmptyState}/*.swift'
     ui.dependency 'Snabble/Core'
-    ui.dependency 'SwiftMessages'
 
     ui.resource_bundles = {
       "Snabble" => [ 'Snabble.xcassets', 'Snabble/UI/*.lproj/*.strings', 'Snabble/UI/**/*.xib', 'i18n/*.twine' ]
