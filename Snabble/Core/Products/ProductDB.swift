@@ -90,7 +90,7 @@ public protocol ProductProvider: class {
     /// get a product by (one of) its scannable codes
     func productByScannableCode(_ code: String) -> Product?
 
-    /// get a product by its weighItemId
+    /// get a product by (one of) its weighItemIds
     func productByWeighItemId(_ weighItemId: String) -> Product?
 
     ///
@@ -124,17 +124,19 @@ public protocol ProductProvider: class {
     ///
     /// - Parameters:
     ///   - code: the code to look for
+    ///   - forceDownload: if true, skip the lookup in the local DB
     ///   - product: the product found, or nil.
     ///   - error: whether an error occurred during the lookup.
-    func productByScannableCode(_ code: String, completion: @escaping (_ product: Product?, _ error: Bool) -> () )
+    func productByScannableCode(_ code: String, forceDownload: Bool, completion: @escaping (_ product: Product?, _ error: Bool) -> () )
 
     /// get a product by (one of) it weigh item ids
     ///
     /// - Parameters:
     ///   - weighItemId: the id to look for
+    ///   - forceDownload: if true, skip the lookup in the local DB
     ///   - product: the product found, or nil.
     ///   - error: whether an error occurred during the lookup.
-    func productByWeighItemId(_ weighItemId: String, completion: @escaping (_ product: Product?, _ error: Bool) -> () )
+    func productByWeighItemId(_ weighItemId: String, forceDownload: Bool, completion: @escaping (_ product: Product?, _ error: Bool) -> () )
 }
 
 final public class ProductDB: ProductProvider {
@@ -549,10 +551,11 @@ extension ProductDB {
     ///
     /// - Parameters:
     ///   - code: the code to look for
+    ///   - forceDownload: if true, skip the lookup in the local DB
     ///   - product: the product found, or nil.
     ///   - error: whether an error occurred during the lookup.
-    public func productByScannableCode(_ code: String, completion: @escaping (_ product: Product?, _ error: Bool) -> ()) {
-        if let product = self.productByScannableCode(code) {
+    public func productByScannableCode(_ code: String, forceDownload: Bool = false, completion: @escaping (_ product: Product?, _ error: Bool) -> ()) {
+        if !forceDownload, let product = self.productByScannableCode(code) {
             DispatchQueue.main.async {
                 completion(product, false)
             }
@@ -568,10 +571,11 @@ extension ProductDB {
     ///
     /// - Parameters:
     ///   - weighItemId: the id to look for
+    ///   - forceDownload: if true, skip the lookup in the local DB
     ///   - product: the product found, or nil.
     ///   - error: whether an error occurred during the lookup.
-    public func productByWeighItemId(_ weighItemId: String, completion: @escaping (_ product: Product?, _ error: Bool) -> ()) {
-        if let product = self.productByWeighItemId(weighItemId) {
+    public func productByWeighItemId(_ weighItemId: String, forceDownload: Bool = false, completion: @escaping (_ product: Product?, _ error: Bool) -> ()) {
+        if !forceDownload, let product = self.productByWeighItemId(weighItemId) {
             DispatchQueue.main.async {
                 completion(product, false)
             }

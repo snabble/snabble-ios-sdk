@@ -13,6 +13,32 @@ public enum ProductType: Int, Codable {
     case userMustWeigh
 }
 
+public enum SaleRestriction: Codable {
+    case none
+    case age(Int)
+
+    enum CodingKeys: String, CodingKey {
+        case age
+    }
+
+    public init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        if let age = try container.decodeIfPresent(Int.self, forKey: .age) {
+            self = .age(age)
+        } else {
+            self = .none
+        }
+    }
+
+    public func encode(to encoder: Encoder) throws {
+        var container = encoder.container(keyedBy: CodingKeys.self)
+        switch self {
+        case .age(let age): try container.encode(age, forKey: .age)
+        case .none: break
+        }
+    }
+}
+
 /// data for one product.
 public struct Product: Codable {
     /// the stock keeping unit, unique identifier for this product
@@ -58,6 +84,10 @@ public struct Product: Codable {
     /// if this product has an associated deposit, this is the deposit product's `price`
     internal(set) public var deposit: Int?
 
+    public let saleRestriction: SaleRestriction
+
+    public let saleStop: Bool
+
     /// convenience accessor for the price
     public var price: Int {
         return self.discountedPrice ?? self.listPrice
@@ -71,6 +101,60 @@ public struct Product: Codable {
     /// convenience method: is the price weight-dependent?
     public var weightDependent: Bool {
         return self.type != .singleItem
+    }
+
+    public init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+
+        self.sku = try container.decode(.sku)
+        self.name = try container.decode(.name)
+        self.description = try container.decodeIfPresent(.description)
+        self.subtitle = try container.decodeIfPresent(.subtitle)
+        self.imageUrl = try container.decodeIfPresent(.imageUrl)
+        self.basePrice = try container.decodeIfPresent(.basePrice)
+        self.listPrice = try container.decode(.listPrice)
+        self.discountedPrice = try container.decodeIfPresent(.discountedPrice)
+        self.type = try container.decode(.type)
+        self.scannableCodes = try container.decode(.scannableCodes)
+        self.weighedItemIds = try container.decodeIfPresent(.weighedItemIds)
+        self.depositSku = try container.decodeIfPresent(.depositSku)
+        self.isDeposit = try container.decode(.isDeposit)
+        self.saleRestriction = try container.decodeIfPresent(.saleRestriction) ?? .none
+        self.saleStop = try container.decodeIfPresent(.saleStop) ?? false
+    }
+
+    public init(sku: String,
+                name: String,
+                description: String?,
+                subtitle: String?,
+                imageUrl: String?,
+                basePrice: String?,
+                listPrice: Int,
+                discountedPrice: Int?,
+                type: ProductType,
+                scannableCodes: Set<String>,
+                weighedItemIds: Set<String>?,
+                depositSku: String?,
+                isDeposit: Bool,
+                deposit: Int?,
+                saleRestriction: SaleRestriction,
+                saleStop: Bool) {
+        self.sku = sku
+        self.name = name
+        self.description = description
+        self.subtitle = subtitle
+        self.imageUrl = imageUrl
+        self.basePrice = basePrice
+        self.listPrice = listPrice
+        self.discountedPrice = discountedPrice
+        self.type = type
+        self.scannableCodes = scannableCodes
+        self.weighedItemIds = weighedItemIds
+        self.depositSku = depositSku
+        self.isDeposit = isDeposit
+        self.deposit = deposit
+        self.saleRestriction = saleRestriction
+        self.saleStop = saleStop
     }
 }
 

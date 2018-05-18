@@ -160,8 +160,8 @@ extension ProductDB {
             return nil
         }
 
+        // find SKU
         let sku: String
-
         if let intSku = row["sku"] as? Int64 {
             sku = String(intSku)
         } else if let strSku = row["sku"] as? String {
@@ -170,9 +170,8 @@ extension ProductDB {
             return nil
         }
 
-        var depositPrice: Int?
+        // find deposit SKU
         let depositSku: String?
-
         if let dSku = row["depositSku"] as? Int64 {
             depositSku = String(dSku)
         } else if let dSku = row["depositSku"] as? String {
@@ -181,6 +180,7 @@ extension ProductDB {
             depositSku = nil
         }
 
+        var depositPrice: Int?
         if let dSku = depositSku, let depositProduct = self.productBySku(dbQueue, dSku) {
             depositPrice = depositProduct.price
         }
@@ -198,7 +198,9 @@ extension ProductDB {
                         weighedItemIds: makeSet(row["weighIds"]),
                         depositSku: depositSku,
                         isDeposit: row["isDeposit"] == 1,
-                        deposit: depositPrice)
+                        deposit: depositPrice,
+                        saleRestriction: self.decodeSaleRestriction(row["saleRestriction"]),
+                        saleStop: row["saleStop"] ?? false)
 
         return p
     }
@@ -208,5 +210,19 @@ extension ProductDB {
             return Set([])
         }
         return Set(s.components(separatedBy: ","))
+    }
+
+    private func decodeSaleRestriction(_ code: Int64?) -> SaleRestriction {
+        guard let code = code else {
+            return .none
+        }
+
+        let type = code & 0xFF
+        if type == 1 { // age
+            let age = (code & 0xFF00) >> 8
+            return .age(Int(age))
+        }
+
+        return .none
     }
 }

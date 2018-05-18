@@ -87,11 +87,33 @@ struct APIProduct: Codable {
     let discountedPrice: Int?
     let basePrice: String?
     let weighing: Weighing?
+    let saleRestriction: APISaleRestriction?
+    let saleStop: Bool?
 
     enum APIProductType: String, Codable {
         case `default`
         case weighable
         case deposit
+    }
+
+    enum APISaleRestriction: String, Codable {
+        case min_age_6
+        case min_age_12
+        case min_age_14
+        case min_age_16
+        case min_age_18
+        case min_age_21
+
+        func convert() -> SaleRestriction {
+            switch self {
+            case .min_age_6: return .age(6)
+            case .min_age_12: return .age(12)
+            case .min_age_14: return .age(14)
+            case .min_age_16: return .age(16)
+            case .min_age_18: return .age(18)
+            case .min_age_21: return .age(21)
+            }
+        }
     }
 
     struct Weighing: Codable {
@@ -122,6 +144,9 @@ struct APIProduct: Codable {
                        weighedItemIds: weighItemIds,
                        depositSku: self.depositProduct,
                        isDeposit: self.productType == .deposit,
-                       deposit: deposit)
+                       deposit: deposit,
+                       saleRestriction: self.saleRestriction?.convert() ?? .none,
+                       saleStop: self.saleStop ?? false
+        )
     }
 }
