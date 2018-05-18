@@ -25,7 +25,7 @@ public class ShoppingCartViewController: UIViewController {
     private let itemCellIdentifier = "itemCell"
     public var shoppingCart: ShoppingCart! {
         didSet {
-            self.tableView.reloadData()
+            self.tableView?.reloadData()
             self.updateTotals()
         }
     }

@@ -131,6 +131,10 @@ public class ScannerViewController: UIViewController {
     }
     
     private func hideScanConfirmationView(_ hide: Bool) {
+        guard self.view.window != nil else {
+            return
+        }
+        
         self.confirmationVisible = !hide
         self.scanConfirmationViewBottom.constant = hide ? self.hiddenConfirmationOffset : -16
         
