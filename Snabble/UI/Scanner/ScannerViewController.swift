@@ -281,11 +281,11 @@ extension ScannerViewController {
 
     private func productForEan(_ ean: EANCode, completion: @escaping (Product?) -> () ) {
         if ean.hasEmbeddedData {
-            self.productProvider.productByWeighItemId(ean.codeForLookup) { product, error in
+            self.productProvider.productByWeighItemId(ean.codeForLookup, forceDownload: false) { product, error in
                 completion(product)
             }
         } else {
-            self.productProvider.productByScannableCode(ean.code) { product, error in
+            self.productProvider.productByScannableCode(ean.code, forceDownload: false) { product, error in
                 completion(product)
             }
         }
