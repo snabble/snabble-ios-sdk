@@ -71,6 +71,7 @@ class BarcodeEntryEmptyStateView: EmptyStateView {
         self.titleLabel.text = "Snabble.Scanner.enterBarcode".localized()
         self.descriptionLabel.text = nil
         self.button.setTitle("Snabble.Scanner.addCodeAsIs".localized(), for: .normal)
+        self.button.setTitleColor(SnabbleAppearance.shared.config.primaryColor, for: .normal)
     }
 
     required init?(coder aDecoder: NSCoder) {

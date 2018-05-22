@@ -37,7 +37,7 @@ class BarcodeEntryViewController: UIViewController, UISearchBarDelegate, UITable
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        self.emptyState = BarcodeEntryEmptyStateView(nil)
+        self.emptyState = BarcodeEntryEmptyStateView(self.addEnteredCode)
         self.emptyState.addTo(self.view)
 
         self.tableView.tableFooterView = UIView(frame: CGRect.zero)
@@ -74,6 +74,10 @@ class BarcodeEntryViewController: UIViewController, UISearchBarDelegate, UITable
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         let rows = filteredProducts.count
         self.emptyState.isHidden = rows > 0
+        self.emptyState.button.isHidden = true
+        if let ean = EAN.parse(self.searchText) {
+            self.emptyState.button.isHidden = ean.code != self.searchText
+        }
         return rows
     }
     
@@ -94,7 +98,6 @@ class BarcodeEntryViewController: UIViewController, UISearchBarDelegate, UITable
         str.addAttributes([NSAttributedStringKey.font : boldFont], range: NSMakeRange(0, self.searchText.count))
         cell.textLabel?.attributedText = str
 
-
         cell.detailTextLabel?.text = product.name
         
         return cell
@@ -104,6 +107,10 @@ class BarcodeEntryViewController: UIViewController, UISearchBarDelegate, UITable
         let product = self.filteredProducts[indexPath.row]
 
         self.addCode(product.scannableCodes.first!)
+    }
+
+    func addEnteredCode() {
+        self.addCode(self.searchText)
     }
 
     func addCode(_ code: String) {
