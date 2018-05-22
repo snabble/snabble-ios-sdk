@@ -180,7 +180,7 @@ public struct EAN8: EANCode {
         }
 
         self.leftDigits = Array(digits[0...3])
-        self.rightDigits = Array(digits[4...7])
+        self.rightDigits = Array(digits[4...min(code.count-1, 7)])
 
         self.code = code.prefix(7) + String(check)
     }
@@ -238,7 +238,7 @@ public struct EAN13: EANCode {
 
         self.firstDigit = digits[0]
         self.leftDigits = Array(digits[1...6])
-        self.rightDigits = Array(digits[7...11])
+        self.rightDigits = Array(digits[7...min(code.count-1, 11)])
 
         self.code = code.prefix(12) + String(check)
     }
