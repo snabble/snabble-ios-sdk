@@ -32,7 +32,7 @@ public struct SnabbleProject {
                 unitPrefixes: [String] = [],
                 currencySymbol: String,
                 decimalDigits: Int,
-                roundingMode: NSDecimalNumber.RoundingMode = .up) {
+                roundingMode: NSDecimalNumber.RoundingMode = .plain) {
         self.name = name
         self.jwt = jwt
         self.weighPrefixes = weighPrefixes

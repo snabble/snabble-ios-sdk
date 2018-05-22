@@ -205,21 +205,12 @@ extension Product: Hashable {
     }
 }
 
-// price formatting
-public struct Price {
-
+/// price formatting
+public enum Price {
     public static func format(_ price: Int) -> String {
-        return format(price, decimalDigits: APIConfig.shared.project.decimalDigits, currency: APIConfig.shared.project.currencySymbol)
-    }
-
-    public static func format(_ price: Int, decimalDigits: Int, currency: String) -> String {
-        let decimalPrice = decimal(price, decimalDigits)
+        let divider = pow(10.0, APIConfig.shared.project.decimalDigits)
+        let decimalPrice = Decimal(price) / divider
         return formatter.string(for: decimalPrice)!
-    }
-
-    private static func decimal(_ price: Int, _ decimalDigits: Int) -> Decimal {
-        let divider = pow(10.0, decimalDigits)
-        return Decimal(price) / divider
     }
 
     private static var formatter: NumberFormatter {
@@ -229,18 +220,7 @@ public struct Price {
         fmt.minimumIntegerDigits = 1
         fmt.numberStyle = .currency
         fmt.currencySymbol = APIConfig.shared.project.currencySymbol
-        fmt.roundingMode = roundingMode(for: APIConfig.shared.project.roundingMode)
         return fmt
     }
-
-    private static func roundingMode(for decimal: NSDecimalNumber.RoundingMode) -> NumberFormatter.RoundingMode {
-        switch decimal {
-        case .plain: return .halfUp
-        case .up: return .up
-        case .down: return .down
-        case .bankers: return .halfEven
-        }
-    }
-
 }
 
