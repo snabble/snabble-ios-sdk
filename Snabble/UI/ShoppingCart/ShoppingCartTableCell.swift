@@ -108,9 +108,11 @@ class ShoppingCartTableCell: UITableViewCell {
             return
         }
 
-        self.showQuantity()
+        self.item.quantity = self.quantity
         self.delegate.cart.setQuantity(self.quantity, at: row)
         self.delegate.updateTotals()
+
+        self.showQuantity()
     }
 
     private func showQuantity() {
@@ -129,7 +131,12 @@ class ShoppingCartTableCell: UITableViewCell {
             let single = Price.format(self.item.product.price)
             self.priceLabel.text = "× \(single)/kg = \(total)"
         } else {
-            self.priceLabel.text = total
+            if self.quantity == 1 {
+                self.priceLabel.text = total
+            } else {
+                let itemPrice = Price.format(self.item.product.priceWithDeposit)
+                self.priceLabel.text = "× \(itemPrice) = \(total)"
+            }
         }
     }
 
