@@ -63,7 +63,7 @@ extension EANCode {
         switch self.encoding {
         case .ean13:
             if self.hasEmbeddedData {
-                return self.code.prefix(7) + "000000"
+                return self.code.prefix(6) + "0000000"
             } else {
                 return code
             }
