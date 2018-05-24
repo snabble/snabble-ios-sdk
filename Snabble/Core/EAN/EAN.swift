@@ -266,6 +266,37 @@ public struct EAN13: EANCode {
 
 }
 
+// MARK: - price/weight check digit
+
+extension EAN13 {
+    /// check if the 5-digit embedded weight/price/units matches the check digit in position 6
+    public func priceFieldOk() -> Bool {
+        return self.internalChecksum() == self.leftDigits[5]
+    }
+
+    // calculate the internal price/weight checksum for a 5-digit data field
+    func internalChecksum() -> Int {
+        let sum = self.rightDigits[0 ..< 5].enumerated().reduce(0) { $0 + self.weightedProduct($1.0, $1.1) }
+        let mod10 = (10 - (sum % 10)) % 10
+        let check = EAN13.check5minusReverse[mod10] ?? -1
+        return check
+    }
+
+    static let check5plus =  [ 0:0, 1:5, 2:1, 3:6, 4:2, 5:7, 6:3, 7:8, 8:4, 9:9 ]
+    static let check2minus = [ 0:0, 1:2, 2:4, 3:6, 4:8, 5:9, 6:1, 7:3, 8:5, 9:7 ]
+    static let check5minus = [ 0:0, 1:5, 2:9, 3:4, 4:8, 5:3, 6:7, 7:2, 8:6, 9:1 ]
+    static let check5minusReverse = Dictionary(uniqueKeysWithValues: check5minus.map { ($1, $0) })
+
+    func weightedProduct(_ index: Int, _ digit: Int) -> Int {
+        switch index {
+        case 0, 3: return EAN13.check5plus[digit] ?? -1
+        case 1, 4: return EAN13.check2minus[digit] ?? -1
+        case 2: return EAN13.check5minus[digit] ?? -1
+        default: return -1
+        }
+    }
+}
+
 // MARK: - bitwise encoding
 
 extension EAN {
