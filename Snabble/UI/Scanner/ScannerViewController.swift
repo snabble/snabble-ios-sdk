@@ -160,7 +160,7 @@ extension ScannerViewController: MessageDelegate {
     }
 
     public func showWarningMessage(_ message: String) {
-        self.delegate.showInfoMessage(message)
+        self.delegate.showWarningMessage(message)
     }
 }
 
