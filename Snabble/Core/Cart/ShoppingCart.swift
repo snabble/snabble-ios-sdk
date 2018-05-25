@@ -60,7 +60,8 @@ public struct CartItem: Codable {
         if let price = self.price {
             return price
         } else if let units = self.units {
-            return units * self.product.priceWithDeposit
+            let multiplier = units == 0 ? self.quantity : units
+            return multiplier * self.product.priceWithDeposit
         } else if let weight = self.weight {
             return self.product.priceFor(weight)
         }

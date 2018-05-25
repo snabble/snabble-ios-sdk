@@ -151,12 +151,14 @@ class ScanConfirmationView: DesignableView {
             self.quantityField.isHidden = true
             self.gramLabel.isHidden = true
         } else if let amount = self.ean.embeddedUnits {
-            productPrice = self.product.priceWithDeposit * amount
+            let multiplier = amount == 0 ? self.quantity : amount
+            productPrice = self.product.priceWithDeposit * multiplier
             self.priceLabel.text = Price.format(productPrice)
             self.quantityField.isHidden = true
             self.gramLabel.isHidden = true
-            self.minusButton.isHidden = true
-            self.plusButton.isHidden = true
+            self.minusButton.isHidden = amount > 0
+            self.minusButton.isHidden = amount > 0
+            self.quantityField.isHidden = amount > 0
         } else {
             productPrice = self.product.priceFor(qty)
             self.priceLabel.text = Price.format(productPrice)

@@ -82,6 +82,12 @@ class ShoppingCartTableCell: UITableViewCell {
 
         self.minusButton.isHidden = product.weightDependent
         self.plusButton.isHidden = product.type == .preWeighed
+        if let ean = EAN.parse(item.scannedCode), let ean13 = ean as? EAN13, let units = ean13.embeddedUnits {
+            if units == 0 {
+                self.minusButton.isHidden = false
+                self.plusButton.isHidden = false
+            }
+        }
 
         let weightEntry = product.type == .userMustWeigh
         self.quantityInput.isHidden = !weightEntry
@@ -103,7 +109,7 @@ class ShoppingCartTableCell: UITableViewCell {
     }
 
     private func updateQuantity(at row: Int) {
-        if self.quantity == 0 && self.item.product.type == .singleItem {
+        if self.quantity == 0 {
             self.delegate.confirmDeletion(at: row)
             return
         }
