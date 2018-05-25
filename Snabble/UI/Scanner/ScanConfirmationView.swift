@@ -155,6 +155,8 @@ class ScanConfirmationView: DesignableView {
             self.priceLabel.text = Price.format(productPrice)
             self.quantityField.isHidden = true
             self.gramLabel.isHidden = true
+            self.minusButton.isHidden = true
+            self.plusButton.isHidden = true
         } else {
             productPrice = self.product.priceFor(qty)
             self.priceLabel.text = Price.format(productPrice)
