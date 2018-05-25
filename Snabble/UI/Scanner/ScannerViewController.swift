@@ -149,16 +149,18 @@ public class ScannerViewController: UIViewController {
 
 // MARK: - analytics delegate
 extension ScannerViewController: AnalyticsDelegate {
+    public func track(_ event: AnalyticsEvent) {
+        self.delegate.track(event)
+    }
+}
+
+extension ScannerViewController: MessageDelegate {
     public func showInfoMessage(_ message: String) {
-        //
+        self.delegate.showInfoMessage(message)
     }
 
     public func showWarningMessage(_ message: String) {
-        //
-    }
-
-    public func track(_ event: AnalyticsEvent) {
-        self.delegate.track(event)
+        self.delegate.showInfoMessage(message)
     }
 }
 
