@@ -92,7 +92,7 @@
 
 "Snabble.Shoppingcart.removeItems" = "Remove all products from shopping cart?";
 
-"Snabble.PaymentMethod.encodedCodes" = "Pay at the cash register";
+"Snabble.PaymentMethod.encodedCodes" = "Checkstand";
 
 "Snabble.PaymentMethod.qrCodePOS" = "Checkstand";
 
