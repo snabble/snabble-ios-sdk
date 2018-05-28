@@ -145,8 +145,18 @@ public enum EAN {
     ///   if code did not represent a well-formed EAN-8 or EAN-13
     public static func encode(_ code: String) -> Bits? {
         switch code.count {
-        case 13: return encode13(code)
-        case 8: return encode8(code)
+        case 13:
+            let bits = encode13(code)
+            if let c = bits?.count {
+                assert(c == 113)
+            }
+            return bits
+        case 8:
+            let bits = encode8(code)
+            if let c = bits?.count {
+                assert(c == 85)
+            }
+            return bits
         default: return nil
         }
     }
@@ -238,7 +248,7 @@ public struct EAN13: EANCode {
 
         self.firstDigit = digits[0]
         self.leftDigits = Array(digits[1...6])
-        self.rightDigits = Array(digits[7...min(code.count-1, 11)])
+        self.rightDigits = Array(digits[7...min(code.count-1, 12)])
 
         self.code = code.prefix(12) + String(check)
     }
