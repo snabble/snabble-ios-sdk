@@ -8,7 +8,6 @@ import UIKit
 
 protocol ScanConfirmationViewDelegate: AnalyticsDelegate {
     func closeConfirmation()
-    func gotoCheckout()
 }
 
 public extension Notification.Name {
@@ -29,7 +28,6 @@ class ScanConfirmationView: DesignableView {
 
     @IBOutlet private weak var closeButton: UIButton!
     @IBOutlet private weak var cartButton: UIButton!
-    @IBOutlet private weak var checkoutButton: UIButton!
 
     weak var delegate: ScanConfirmationViewDelegate!
 
@@ -52,9 +50,6 @@ class ScanConfirmationView: DesignableView {
 
         let mono14 = UIFont.monospacedDigitSystemFont(ofSize: 14, weight: .regular)
         self.priceLabel.font = mono14
-        self.checkoutButton.titleLabel?.font = mono14
-        self.checkoutButton.titleLabel?.adjustsFontSizeToFitWidth = true
-        self.checkoutButton.titleLabel?.minimumScaleFactor = 0.5
 
         self.minusButton.makeBorderedButton()
         self.plusButton.makeBorderedButton()
@@ -161,17 +156,6 @@ class ScanConfirmationView: DesignableView {
             productPrice = self.product.priceFor(qty)
             self.priceLabel.text = Price.format(productPrice)
         }
-
-        let cartTotal = self.alreadyInCart ? 0 : self.shoppingCart.totalPrice
-        let newTotal = productPrice + cartTotal
-
-        let totalPrice = Price.format(newTotal)
-        let checkoutTitle = String(format: "Snabble.Scanner.gotoCheckout".localized(), totalPrice)
-
-        UIView.performWithoutAnimation {
-            self.checkoutButton.setTitle(checkoutTitle, for: .normal)
-            self.checkoutButton.layoutIfNeeded()
-        }
     }
 
     func addDoneButton() {
@@ -205,11 +189,6 @@ class ScanConfirmationView: DesignableView {
         self.delegate.closeConfirmation()
 
         self.quantityField.resignFirstResponder()
-    }
-
-    @IBAction private func checkoutTapped(_ button: UIButton) {
-        self.cartTapped(button)
-        self.delegate.gotoCheckout()
     }
 
     @IBAction private func closeButtonTapped(_ button: UIButton) {

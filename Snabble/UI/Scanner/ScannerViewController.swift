@@ -9,7 +9,6 @@ import AVFoundation
 
 public protocol ScannerDelegate: AnalyticsDelegate, MessageDelegate {
     func closeScanningView()
-    func gotoCheckout()
 }
 
 public class ScannerViewController: UIViewController {
@@ -169,10 +168,6 @@ extension ScannerViewController: ScanConfirmationViewDelegate {
     func closeConfirmation() {
         self.hideScanConfirmationView(true)
         self.scanningView.startScanning()
-    }
-
-    func gotoCheckout() {
-        self.delegate.gotoCheckout()
     }
 }
 
