@@ -98,6 +98,7 @@ public class ScanningView: DesignableView {
     var reticleBorderLayer: CAShapeLayer!   // dims the preview, leaving a hole for the reticle
     var firstLayoutDone = false
     var fullDimmingLayer: CAShapeLayer!     // dims the whole preview layer
+    var frameView = UIView()
 
     /// toggle the visibility of the "barcode entry" and "torch" buttons at the bottom
     public var bottomBarHidden = false {
@@ -126,6 +127,13 @@ public class ScanningView: DesignableView {
 
         let torchTap = UITapGestureRecognizer(target: self, action: #selector(self.torchButtonTapped(_:)))
         self.torchWrapper.addGestureRecognizer(torchTap)
+
+        self.frameView.backgroundColor = .clear
+        self.frameView.layer.borderColor = UIColor.lightGray.cgColor
+        self.frameView.layer.borderWidth = 1
+        self.frameView.layer.cornerRadius = 3
+        self.view.addSubview(self.frameView)
+        self.view.bringSubview(toFront: self.frameView)
     }
 
     /// this passes the `ScanningViewConfig` data to the ScanningView. This method must be called before the first pass of the
@@ -159,6 +167,8 @@ public class ScanningView: DesignableView {
 
     /// start scanning
     public func startScanning() {
+        self.frameView.isHidden = true
+        self.frameView.frame = self.reticle.frame
         self.initCaptureSession()
 
         self.view.bringSubview(toFront: self.reticle)
@@ -333,6 +343,19 @@ extension ScanningView: AVCaptureMetadataOutputObjectsDelegate {
             let code = codeObject.stringValue
         else {
             return
+        }
+
+        if let barCodeObject = self.previewLayer?.transformedMetadataObject(for: codeObject) {
+            var bounds = barCodeObject.bounds
+            let minHeight: CGFloat = 60
+            if bounds.height < minHeight {
+                bounds.size.height = minHeight
+                bounds.origin.y -= minHeight / 2
+            }
+            self.frameView.isHidden = false
+            UIView.animate(withDuration: 0.25) {
+                self.frameView.frame = bounds
+            }
         }
 
         self.delegate.scannedCode(code)
