@@ -58,8 +58,6 @@
 
 "Snabble.Scanner.enterCodeButton" = "Enter\nBarcode";
 
-"Snabble.Scanner.gotoCheckout" = "Checkout and pay %@ now";
-
 "Snabble.Scanner.scannedShelfCode" = "Please scan the article's barcode instead";
 
 "Snabble.Scanner.scanningTitle" = "Scan Barcode";
