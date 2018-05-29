@@ -82,7 +82,7 @@ struct APIProduct: Codable {
     let depositProduct: String?
     let imageUrl: String?
     let productType: APIProductType
-    let eans: [String]
+    let eans: [String]?
     let price: Int
     let discountedPrice: Int?
     let basePrice: String?
@@ -131,6 +131,11 @@ struct APIProduct: Codable {
             weighItemIds = Set(w.weighedItemIds)
         }
 
+        var scannableCodes: Set<String> = Set([])
+        if let eans = self.eans {
+            scannableCodes = Set(eans)
+        }
+
         return Product(sku: self.sku,
                        name: self.name,
                        description: self.description,
@@ -140,7 +145,7 @@ struct APIProduct: Codable {
                        listPrice: self.price,
                        discountedPrice: self.discountedPrice,
                        type: type,
-                       scannableCodes: Set(self.eans),
+                       scannableCodes: scannableCodes,
                        weighedItemIds: weighItemIds,
                        depositSku: self.depositProduct,
                        isDeposit: self.productType == .deposit,
