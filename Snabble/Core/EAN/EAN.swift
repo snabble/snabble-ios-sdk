@@ -146,17 +146,9 @@ public enum EAN {
     public static func encode(_ code: String) -> Bits? {
         switch code.count {
         case 13:
-            let bits = encode13(code)
-            if let c = bits?.count {
-                assert(c == 113)
-            }
-            return bits
+            return encode13(code)
         case 8:
-            let bits = encode8(code)
-            if let c = bits?.count {
-                assert(c == 85)
-            }
-            return bits
+            return encode8(code)
         default: return nil
         }
     }
