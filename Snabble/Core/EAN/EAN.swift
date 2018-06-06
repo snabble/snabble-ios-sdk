@@ -75,8 +75,8 @@ extension EANCode {
     private var rawEmbeddedData: Int? {
         switch self.encoding {
         case .ean13:
-            let start = self.code.index(code.startIndex, offsetBy: 7)
-            let end = self.code.index(code.startIndex, offsetBy: 12)
+            let start = self.code.index(self.code.startIndex, offsetBy: 7)
+            let end = self.code.index(self.code.startIndex, offsetBy: 12)
             let data = self.code[start ..< end]
             return Int(data)
         case .ean8:
@@ -85,17 +85,8 @@ extension EANCode {
     }
 
     private func matchPrefixes(_ prefixes: [String]) -> Bool {
-        guard prefixes.count > 0 else {
-            return false
-        }
-
-        for prefix in prefixes {
-            if self.code.hasPrefix(prefix) {
-                return true
-            }
-        }
-
-        return false
+        let prefixed = prefixes.filter { self.code.hasPrefix($0) }
+        return prefixed.count > 0
     }
 }
 
