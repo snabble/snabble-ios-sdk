@@ -97,13 +97,20 @@ public class APIConfig {
 }
 
 public struct EmbeddedCodesConfig {
-    let prefix: String
-    let suffix: String
-    let separator: String
-    let maxCodes: Int
+    public let prefix: String
+    public let suffix: String
+    public let separator: String
+    public let maxCodes: Int
 
-    static let edeka = EmbeddedCodesConfig(prefix: "XE", suffix: "XZ", separator: "XE", maxCodes: 30)
-    static let multiline = EmbeddedCodesConfig(prefix: "", suffix: "", separator: "\n", maxCodes: 100)
+    public static let edeka = EmbeddedCodesConfig(prefix: "XE", suffix: "XZ", separator: "XE", maxCodes: 30)
+    public static let multiline = EmbeddedCodesConfig(prefix: "", suffix: "", separator: "\n", maxCodes: 100)
+
+    public init(prefix: String, suffix: String, separator: String, maxCodes: Int) {
+        self.prefix = prefix
+        self.suffix = suffix
+        self.separator = separator
+        self.maxCodes = maxCodes
+    }
 }
 
 enum HTTPRequestMethod: String {
