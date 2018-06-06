@@ -24,6 +24,8 @@ public struct SnabbleProject {
     public let decimalDigits: Int
     /// the rounding mode to use for weight-based price calculations
     public let roundingMode: NSDecimalNumber.RoundingMode
+    /// if the `.embeddedCodes` payment method is used, set this to configure how the code is assembled
+    public let embeddedCodesConfig: EmbeddedCodesConfig?
 
     public init(name: String,
                 jwt: String,
@@ -32,7 +34,8 @@ public struct SnabbleProject {
                 unitPrefixes: [String] = [],
                 currencySymbol: String,
                 decimalDigits: Int,
-                roundingMode: NSDecimalNumber.RoundingMode = .plain) {
+                roundingMode: NSDecimalNumber.RoundingMode = .plain,
+                embeddedCodesConfig: EmbeddedCodesConfig? = nil) {
         self.name = name
         self.jwt = jwt
         self.weighPrefixes = weighPrefixes
@@ -41,6 +44,7 @@ public struct SnabbleProject {
         self.currencySymbol = currencySymbol
         self.decimalDigits = decimalDigits
         self.roundingMode = roundingMode
+        self.embeddedCodesConfig = embeddedCodesConfig
     }
 }
 
@@ -90,8 +94,16 @@ public class APIConfig {
             return url
         }
     }
+}
 
+public struct EmbeddedCodesConfig {
+    let prefix: String
+    let suffix: String
+    let separator: String
+    let maxCodes: Int
 
+    static let edeka = EmbeddedCodesConfig(prefix: "XE", suffix: "XZ", separator: "XE", maxCodes: 30)
+    static let multiline = EmbeddedCodesConfig(prefix: "", suffix: "", separator: "\n", maxCodes: 100)
 }
 
 enum HTTPRequestMethod: String {
