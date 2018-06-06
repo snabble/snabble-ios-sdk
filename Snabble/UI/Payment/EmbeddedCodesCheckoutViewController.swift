@@ -161,7 +161,7 @@ extension EmbeddedCodesCheckoutViewController: UICollectionViewDataSource, UICol
         return nil
     }
 
-    @IBAction func newsPageControlTapped(_ pageControl: UIPageControl) {
+    @IBAction func pageControlTapped(_ pageControl: UIPageControl) {
         if pageControl.currentPage < self.codeblocks.count {
             let indexPath = IndexPath(item: pageControl.currentPage, section: 0)
             self.collectionView.scrollToItem(at: indexPath, at: .left, animated: true)
