@@ -6,13 +6,13 @@
 
 extension ProductDB {
 
-    func getSingleProduct(_ url: String, _ placeHolder: String, _ identifier: String, completion: @escaping (Product?, Bool) -> () ) {
+    func getSingleProduct(_ url: String, _ placeholder: String, _ identifier: String, completion: @escaping (Product?, Bool) -> () ) {
         let session = URLSession(configuration: URLSessionConfiguration.default)
 
         // TODO: is this the right value?
         let timeoutInterval: TimeInterval = 5
 
-        let fullUrl = url.replacingOccurrences(of: placeHolder, with: identifier)
+        let fullUrl = url.replacingOccurrences(of: placeholder, with: identifier)
         guard let request = SnabbleAPI.request(.get, fullUrl, timeout: timeoutInterval) else {
             return completion(nil, true)
         }
@@ -21,12 +21,14 @@ extension ProductDB {
             if let data = data, let response = response as? HTTPURLResponse {
                 if response.statusCode == 404 {
                     DispatchQueue.main.async {
+                        NSLog("online product lookup with \(placeholder) \(identifier): not found")
                         completion(nil, false)
                     }
                     return
                 }
 
                 do {
+                    NSLog("online product lookup with \(placeholder) \(identifier) succeeded")
                     let apiProduct = try JSONDecoder().decode(APIProduct.self, from: data)
                     if let depositSku = apiProduct.depositProduct {
                         // get the deposit product

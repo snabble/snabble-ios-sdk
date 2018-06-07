@@ -285,11 +285,11 @@ extension ScannerViewController {
                 completion(nil)
                 return
             }
-            self.productProvider.productByWeighItemId(ean.codeForLookup, forceDownload: false) { product, error in
+            self.productProvider.productByWeighItemId(ean.codeForLookup) { product, error in
                 completion(product)
             }
         } else {
-            self.productProvider.productByScannableCode(ean.code, forceDownload: false) { product, error in
+            self.productProvider.productByScannableCode(ean.code) { product, error in
                 completion(product)
             }
         }
