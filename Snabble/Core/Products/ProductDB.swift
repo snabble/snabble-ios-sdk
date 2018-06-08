@@ -97,7 +97,8 @@ public protocol ProductProvider: class {
     /// get products matching `name`
     ///
     /// - Parameter name: the string to search for. The search is case- and diacritic-insensitive
-    /// - Returns: an array of matching Products
+    /// - Returns: an array of matching `Product`s
+    @available(iOS, deprecated: 1.0, message: "this method is going away soon")
     func productsByName(_ name: String, filterDeposits: Bool) -> [Product]
 
     ///
@@ -137,19 +138,34 @@ public protocol ProductProvider: class {
     ///   - product: the product found, or nil.
     ///   - error: whether an error occurred during the lookup.
     func productByWeighItemId(_ weighItemId: String, forceDownload: Bool, completion: @escaping (_ product: Product?, _ error: Bool) -> () )
+
+    var revision: Int64 { get }
+    var lastProductUpdate: Date { get }
 }
 
-extension ProductProvider {
-    func productBySku(_ sku: String, forceDownload: Bool = false, completion: @escaping (_ product: Product?, _ error: Bool) -> () ) {
-        self.productBySku(sku, forceDownload: forceDownload, completion: completion)
+public extension ProductProvider {
+    public func setup(completion: @escaping (Bool) -> () ) {
+        self.setup(update: true, completion: completion)
     }
 
-    func productByScannableCode(_ code: String, forceDownload: Bool = false, completion: @escaping (_ product: Product?, _ error: Bool) -> () ) {
-        self.productByScannableCode(code, forceDownload: forceDownload, completion: completion)
+    public func productBySku(_ sku: String, completion: @escaping (_ product: Product?, _ error: Bool) -> () ) {
+        self.productBySku(sku, forceDownload: false, completion: completion)
     }
 
-    func productByWeighItemId(_ code: String, forceDownload: Bool = false, completion: @escaping (_ product: Product?, _ error: Bool) -> () ) {
-        self.productByWeighItemId(code, forceDownload: forceDownload, completion: completion)
+     public func productByScannableCode(_ code: String, completion: @escaping (_ product: Product?, _ error: Bool) -> () ) {
+        self.productByScannableCode(code, forceDownload: false, completion: completion)
+    }
+
+    public func productsByScannableCodePrefix(_ prefix: String, filterDeposits: Bool = true) -> [Product] {
+        return self.productsByScannableCodePrefix(prefix, filterDeposits: true)
+    }
+
+    public func productByWeighItemId(_ code: String, completion: @escaping (_ product: Product?, _ error: Bool) -> () ) {
+        self.productByWeighItemId(code, forceDownload: false, completion: completion)
+    }
+
+    public func productsByName(_ name: String) -> [Product] {
+        return self.productsByName(name, filterDeposits: true)
     }
 }
 
@@ -188,7 +204,7 @@ final public class ProductDB: ProductProvider {
         and once more later, after the automatic database update check has finished.
         The closure's parameter indicates whether new data is available or not.
     */
-    public func setup(update: Bool = true, completion: @escaping (Bool) -> () ) {
+    public func setup(update: Bool, completion: @escaping (Bool) -> () ) {
         self.db = self.openDb()
 
         if let seedRevision = self.config.seedRevision, seedRevision > self.revision {
@@ -516,6 +532,7 @@ extension ProductDB {
     ///   - name: the string to search for. The search is case- and diacritic-insensitive
     ///   - filterDeposits: if true, products with `isDeposit==true` are not returned
     /// - Returns: an array of matching Products
+    @available(iOS, deprecated, message: "this method will go away soon")
     public func productsByName(_ name: String, filterDeposits: Bool = true) -> [Product] {
         guard let db = self.db else {
             return []
@@ -531,7 +548,7 @@ extension ProductDB {
     ///   - prefix: the prefix to search for
     ///   - filterDeposits: if true, products with `isDeposit==true` are not returned
     /// - Returns: an array of matching Products
-    public func productsByScannableCodePrefix(_ prefix: String, filterDeposits: Bool = true) -> [Product] {
+    public func productsByScannableCodePrefix(_ prefix: String, filterDeposits: Bool) -> [Product] {
         guard let db = self.db else {
             return []
         }
