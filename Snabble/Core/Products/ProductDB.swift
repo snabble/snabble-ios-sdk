@@ -164,6 +164,7 @@ public extension ProductProvider {
         self.productByWeighItemId(code, forceDownload: false, completion: completion)
     }
 
+    @available(iOS, deprecated, message: "this method is going away soon")
     public func productsByName(_ name: String) -> [Product] {
         return self.productsByName(name, filterDeposits: true)
     }
