@@ -156,29 +156,15 @@ extension ProductDB {
     }
 
     private func productFromRow(_ dbQueue: DatabaseQueue, _ row: Row?) -> Product? {
-        guard let row = row else {
-            return nil
-        }
-
-        // find SKU
-        let sku: String
-        if let intSku = row["sku"] as? Int64 {
-            sku = String(intSku)
-        } else if let strSku = row["sku"] as? String {
-            sku = strSku
-        } else {
+        guard
+            let row = row,
+            let sku = row["sku"] as? String
+        else {
             return nil
         }
 
         // find deposit SKU
-        let depositSku: String?
-        if let dSku = row["depositSku"] as? Int64 {
-            depositSku = String(dSku)
-        } else if let dSku = row["depositSku"] as? String {
-            depositSku = dSku
-        } else {
-            depositSku = nil
-        }
+        let depositSku = row["depositSku"] as? String
 
         var depositPrice: Int?
         if let dSku = depositSku, let depositProduct = self.productBySku(dbQueue, dSku) {
