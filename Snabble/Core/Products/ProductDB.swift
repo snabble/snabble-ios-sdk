@@ -141,6 +141,9 @@ public protocol ProductProvider: class {
 
     var revision: Int64 { get }
     var lastProductUpdate: Date { get }
+
+    var schemaVersionMajor: Int { get }
+    var schemaVersionMinor: Int { get }
 }
 
 public extension ProductProvider {
