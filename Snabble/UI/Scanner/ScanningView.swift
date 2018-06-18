@@ -174,6 +174,11 @@ public class ScanningView: DesignableView {
         self.view.bringSubview(toFront: self.reticle)
         self.view.bringSubview(toFront: self.bottomBar)
 
+        if let camera = self.camera {
+            let torchToggleSupported = camera.isTorchModeSupported(.on) && camera.isTorchModeSupported(.off)
+            self.torchWrapper.isHidden = !torchToggleSupported
+        }
+
         if let capture = self.captureSession, !capture.isRunning {
             let rect = self.reticle.frame
             self.serialQueue.async {
@@ -318,18 +323,6 @@ public class ScanningView: DesignableView {
 
                 self.captureSession = captureSession
             }
-        }
-    }
-
-    func cameraAuthorized(_ granted: Bool) {
-        if granted {
-            if let device = self.camera, device.isTorchAvailable, device.isTorchModeSupported(.on), device.isTorchModeSupported(.off) {
-                self.torchWrapper.isHidden = true
-            }
-            
-            self.startScanning()
-        } else {
-            self.captureSession = nil
         }
     }
 }
