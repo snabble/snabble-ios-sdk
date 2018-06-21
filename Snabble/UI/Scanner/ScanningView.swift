@@ -98,7 +98,9 @@ public class ScanningView: DesignableView {
     var reticleBorderLayer: CAShapeLayer!   // dims the preview, leaving a hole for the reticle
     var firstLayoutDone = false
     var fullDimmingLayer: CAShapeLayer!     // dims the whole preview layer
-    var frameView = UIView()
+
+    var frameView = UIView()    // indicator for where the barcode was detected
+    var frameTimer: Timer?
 
     /// toggle the visibility of the "barcode entry" and "torch" buttons at the bottom
     public var bottomBarHidden = false {
@@ -159,7 +161,11 @@ public class ScanningView: DesignableView {
         self.metadataObjectTypes = config.metadataObjectTypes
 
         self.bottomBarHidden = config.bottomBarHidden
+    }
 
+    /// this must be called once to initialize the camera. If the app doesn't already have camera usage permission,
+    /// the `requestCameraPermission` method of the delegate is called
+    public func initializeCamera() {
         if self.checkCameraStatus() {
             self.initCaptureSession()
         }
@@ -191,6 +197,7 @@ public class ScanningView: DesignableView {
 
     /// stop scanning
     public func stopScanning() {
+        self.frameTimer?.invalidate()
         self.captureSession?.stopRunning()
     }
 
@@ -216,7 +223,7 @@ public class ScanningView: DesignableView {
         } catch {}
     }
 
-    func checkCameraStatus() -> Bool {
+    private func checkCameraStatus() -> Bool {
         // get the back camera device
         guard let camera = AVCaptureDevice.default(.builtInWideAngleCamera, for: AVMediaType.video, position: .back) else {
             self.delegate?.noCameraFound()
@@ -340,14 +347,23 @@ extension ScanningView: AVCaptureMetadataOutputObjectsDelegate {
 
         if let barCodeObject = self.previewLayer?.transformedMetadataObject(for: codeObject) {
             var bounds = barCodeObject.bounds
-            let minHeight: CGFloat = 60
-            if bounds.height < minHeight {
-                bounds.size.height = minHeight
-                bounds.origin.y -= minHeight / 2
+            let minSize: CGFloat = 60
+            if bounds.height < minSize {
+                bounds.size.height = minSize
+                bounds.origin.y -= minSize / 2
+            }
+            if bounds.width < minSize {
+                bounds.size.width = minSize
+                bounds.origin.x -= minSize / 2
             }
             self.frameView.isHidden = false
             UIView.animate(withDuration: 0.25) {
                 self.frameView.frame = bounds
+            }
+
+            self.frameTimer?.invalidate()
+            self.frameTimer = Timer.scheduledTimer(withTimeInterval: 1, repeats: false) { timer in
+                self.frameView.isHidden = true
             }
         }
 

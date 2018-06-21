@@ -19,6 +19,8 @@ public class ScannerViewController: UIViewController {
     private var scanConfirmationView: ScanConfirmationView!
     private var scanConfirmationViewBottom: NSLayoutConstraint!
 
+    private var infoView: ScannerInfoView!
+
     private var productProvider: ProductProvider!
     private var shoppingCart: ShoppingCart!
 
@@ -31,7 +33,7 @@ public class ScannerViewController: UIViewController {
     private var objectTypes: [AVMetadataObject.ObjectType] = [ .ean8, .ean13, .code128 ]
     private weak var delegate: ScannerDelegate!
     private var timer: Timer?
-    
+
     public init(_ productProvider: ProductProvider, _ cart: ShoppingCart, delegate: ScannerDelegate, objectTypes: [AVMetadataObject.ObjectType]? = nil) {
         super.init(nibName: nil, bundle: Snabble.bundle)
 
@@ -49,6 +51,11 @@ public class ScannerViewController: UIViewController {
     
     public required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
+    }
+
+    private var firstTimeInfoShown: Bool {
+        get { return UserDefaults.standard.bool(forKey: "snabble.scanner.firstTimeInfoShown") }
+        set { UserDefaults.standard.set(newValue, forKey: "snabble.scanner.firstTimeInfoShown") }
     }
     
     override public func viewDidLoad() {
@@ -75,6 +82,16 @@ public class ScannerViewController: UIViewController {
         bottom.constant = self.hiddenConfirmationOffset
         self.scanConfirmationViewBottom = bottom
 
+        self.infoView = ScannerInfoView()
+        self.infoView.delegate = self
+        self.infoView.translatesAutoresizingMaskIntoConstraints = false
+        self.scanningView.addSubview(self.infoView)
+        self.infoView.leadingAnchor.constraint(equalTo: self.scanningView.leadingAnchor, constant: 16).isActive = true
+        self.infoView.trailingAnchor.constraint(equalTo: self.scanningView.trailingAnchor, constant: -16).isActive = true
+        self.infoView.centerXAnchor.constraint(equalTo: self.scanningView.centerXAnchor).isActive = true
+        self.infoView.bottomAnchor.constraint(equalTo: self.scanningView.bottomAnchor, constant: -16).isActive = true
+        self.infoView.isHidden = self.firstTimeInfoShown
+
         var scannerConfig = ScanningViewConfig()
         
         scannerConfig.torchButtonTitle = "Snabble.Scanner.torchButton".localized()
@@ -91,6 +108,10 @@ public class ScannerViewController: UIViewController {
         self.scanConfirmationView.delegate = self
 
         self.keyboardObserver = KeyboardObserver(handler: self)
+
+        let infoIcon = UIImage.fromBundle("icon-info")?.recolored(with: .white)
+        let infoButton = UIBarButtonItem(image: infoIcon, style: .plain, target: self, action: #selector(self.infoButtonTapped(_:)))
+        self.navigationItem.leftBarButtonItem = infoButton
     }
 
     override public func viewWillAppear(_ animated: Bool) {
@@ -101,7 +122,10 @@ public class ScannerViewController: UIViewController {
         super.viewDidAppear(animated)
 
         self.delegate.track(.viewScanner)
-        self.scanningView.startScanning()
+        if self.firstTimeInfoShown {
+            self.scanningView.initializeCamera()
+            self.scanningView.startScanning()
+        }
     }
 
     override public func viewWillDisappear(_ animated: Bool) {
@@ -109,6 +133,7 @@ public class ScannerViewController: UIViewController {
         
         self.scanningView.stopScanning()
         self.hideScanConfirmationView(true)
+        self.infoView.isHidden = true
     }
 
     /// reset `productProvider` and `shoppingCart` when switching between projects
@@ -143,6 +168,31 @@ public class ScannerViewController: UIViewController {
         UIView.animate(withDuration: 0.12) {
             self.view.layoutIfNeeded()
         }
+    }
+
+    @objc func infoButtonTapped(_ sender: Any) {
+        if self.confirmationVisible {
+            return
+        }
+
+        self.infoView.isHidden = false
+        self.scanningView.stopScanning()
+    }
+}
+
+// MARK: - info delegate
+extension ScannerViewController: ScannerInfoDelegate {
+
+    func showInfo() {
+        self.scanningView.stopScanning()
+        self.infoView.isHidden = false
+    }
+
+    func close() {
+        self.infoView.isHidden = true
+        self.firstTimeInfoShown = true
+        self.scanningView.initializeCamera()
+        self.scanningView.startScanning()
     }
 }
 
@@ -230,8 +280,14 @@ extension ScannerViewController: ScanningViewDelegate {
 extension ScannerViewController {
 
     private func scannedUnknown(_ msg: String, _ code: String) {
+        print("scanned unknown code \(code)")
         self.delegate.showWarningMessage(msg)
         self.delegate.track(.scanUnknown(code))
+
+        self.timer?.invalidate()
+        self.timer = Timer.scheduledTimer(withTimeInterval: 3, repeats: false) { timer in
+            self.lastScannedCode = ""
+        }
     }
 
     private func handleScannedCode(_ code: String) {
