@@ -34,7 +34,7 @@ extension ProductDB {
 
     func productsBySku(_ dbQueue: DatabaseQueue, _ skus: [String]) -> [Product] {
         do {
-            let list = skus.map { String($0) }.joined(separator: ",")
+            let list = skus.map { "\"\($0)\"" }.joined(separator: ",")
             let rows = try dbQueue.inDatabase { db in
                 return try Row.fetchAll(db, ProductDB.baseQuery + " where p.sku in (\(list))")
             }

@@ -467,6 +467,9 @@ func synchronized<T>(_ lock: Any, closure: () throws -> T) rethrows -> T {
 extension ProductDB {
 
     /// get a product by its SKU
+    ///
+    /// - Parameter sku: the SKU of the product to get
+    /// - Returns: a `Product` if found; nil otherwise
     public func productBySku(_ sku: String) -> Product? {
         guard let db = self.db else {
             return nil
@@ -476,6 +479,11 @@ extension ProductDB {
     }
 
     /// get a list of products by their SKUs
+    ///
+    /// the ordering of the returned products is unspecified
+    ///
+    /// - Parameter skus: SKUs of the products to get
+    /// - Returns: an array of `Product`
     public func productsBySku(_ skus: [String]) -> [Product] {
         guard let db = self.db, skus.count > 0 else {
             return []
