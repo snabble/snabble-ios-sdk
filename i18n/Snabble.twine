@@ -69,6 +69,12 @@
         en = Update Cart
     [Snabble.Scanner.addToCart]
         en = Add to Cart
+    [Snabble.Scanner.plusDeposit]
+        en = + %@ deposit
+    [Snabble.Scanner.introText]
+        en = Scan barcodes on products and place them in your shopping cart.
+    [Snabble.Scanner.start]
+        en = Start scanner
 
     [Snabble.ShoppingCart.title]
         en = Shopping Cart
@@ -86,6 +92,8 @@
         en = Remove %@ from the cart?
     [Snabble.Shoppingcart.removeItems]
         en = Remove all products from shopping cart?
+    [Snabble.Shoppingcart.deposit]
+        en = Deposit
 
     [Snabble.PaymentMethod.encodedCodes]
         en = Checkstand
@@ -104,4 +112,7 @@
         tags = android
     [Snabble.Shoppingcart.articleRemoved]
         en = Article removed
+        tags = android
+    [Snabble.loadingProductInformation]
+        en = Loading product information...
         tags = android
