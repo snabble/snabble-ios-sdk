@@ -175,8 +175,7 @@ public class ScannerViewController: UIViewController {
             return
         }
 
-        self.infoView.isHidden = false
-        self.scanningView.stopScanning()
+        self.showInfo()
     }
 }
 
@@ -186,11 +185,13 @@ extension ScannerViewController: ScannerInfoDelegate {
     func showInfo() {
         self.scanningView.stopScanning()
         self.infoView.isHidden = false
+        self.scanningView.reticleHidden = true
     }
 
     func close() {
         self.infoView.isHidden = true
         self.firstTimeInfoShown = true
+        self.scanningView.reticleHidden = false
         self.scanningView.initializeCamera()
         self.scanningView.startScanning()
     }
