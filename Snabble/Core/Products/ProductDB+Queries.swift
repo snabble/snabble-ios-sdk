@@ -45,7 +45,6 @@ extension ProductDB {
         return []
     }
 
-
     func boostedProducts(_ dbQueue: DatabaseQueue, limit: Int) -> [Product] {
         do {
             let rows = try dbQueue.inDatabase { db in
@@ -113,7 +112,7 @@ extension ProductDB {
             let depositCondition = filterDeposits ? "and isDeposit = 0" : ""
             let rows = try dbQueue.inDatabase { db in
                 return try Row.fetchAll(db, ProductDB.baseQuery + " " + """
-                    where p.sku in (select docid from searchByName where foldedName match ? limit ?) \(depositCondition)
+                    where p.sku in (select sku from searchByName where foldedName match ? limit ?) \(depositCondition)
                     """, arguments: [name + "*", limit])
             }
             return rows.compactMap { self.productFromRow(dbQueue, $0) }
@@ -180,8 +179,8 @@ extension ProductDB {
                         listPrice: row["listPrice"],
                         discountedPrice: row["discountedPrice"],
                         type: ProductType(rawValue: row["weighing"]) ?? .singleItem,
-                        scannableCodes: makeSet(row["scannableCodes"]),
-                        weighedItemIds: makeSet(row["weighIds"]),
+                        scannableCodes: self.makeSet(row["scannableCodes"]),
+                        weighedItemIds: self.makeSet(row["weighIds"]),
                         depositSku: depositSku,
                         isDeposit: row["isDeposit"] == 1,
                         deposit: depositPrice,
