@@ -38,7 +38,7 @@ class BarcodeEntryViewController: UIViewController, UISearchBarDelegate, UITable
         super.viewDidLoad()
         
         self.emptyState = BarcodeEntryEmptyStateView(self.addEnteredCode)
-        self.emptyState.addTo(self.view)
+        self.emptyState.addTo(self.tableView)
 
         self.tableView.tableFooterView = UIView(frame: CGRect.zero)
 
