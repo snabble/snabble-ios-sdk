@@ -148,8 +148,9 @@ public class ScannerViewController: UIViewController {
     // MARK: - scan confirmation views
     
     private func showConfirmation(for product: Product, _ ean: EANCode) {
+        self.confirmationVisible = true
         self.scanConfirmationView.present(product, cart: self.shoppingCart, ean: ean)
-        
+
         self.scanningView.stopScanning()
         self.hideScanConfirmationView(false)
     }
@@ -160,7 +161,11 @@ public class ScannerViewController: UIViewController {
         }
         
         self.confirmationVisible = !hide
-        self.scanConfirmationViewBottom.constant = hide ? self.hiddenConfirmationOffset : -16
+        var offset: CGFloat = -16
+        if self.scanConfirmationView.isFirstResponder {
+            offset = self.scanConfirmationViewBottom.constant
+        }
+        self.scanConfirmationViewBottom.constant = hide ? self.hiddenConfirmationOffset : offset
         
         self.scanningView.bottomBarHidden = !hide
         self.scanningView.reticleHidden = !hide
@@ -369,7 +374,7 @@ extension ScannerViewController: KeyboardHandling {
         }
 
         let offset: CGFloat = self.productType == .singleItem ? 104 : 0
-        self.scanConfirmationViewBottom.constant += info.keyboardHeight - offset
+        self.scanConfirmationViewBottom.constant = -info.keyboardHeight - offset
 
         UIView.animate(withDuration: info.animationDuration) {
             self.view.layoutIfNeeded()

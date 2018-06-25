@@ -38,6 +38,10 @@ class ScanConfirmationView: DesignableView {
     
     private weak var shoppingCart: ShoppingCart!
 
+    override var isFirstResponder: Bool {
+        return self.quantityField.isFirstResponder
+    }
+
     override func awakeFromNib() {
         super.awakeFromNib()
 
@@ -77,7 +81,7 @@ class ScanConfirmationView: DesignableView {
         self.shoppingCart = cart
         self.ean = ean
 
-        self.quantity = 1
+        self.quantity = product.type != .userMustWeigh ? 1 : 0
 
         if product.type == .singleItem {
             let cartQuantity = self.shoppingCart.quantity(of: product)
@@ -134,26 +138,30 @@ class ScanConfirmationView: DesignableView {
         self.minusButton.isEnabled = qty > 1
         self.plusButton.isEnabled = qty < ShoppingCart.maxAmount
 
-        var productPrice = 0
+
         if let weight = self.ean.embeddedWeight {
-            productPrice = product.priceFor(weight)
+            let productPrice = product.priceFor(weight)
             let priceKilo = Price.format(product.price)
             let formattedPrice = Price.format(productPrice)
             self.priceLabel.text = "\(qty)g × \(priceKilo)/kg = \(formattedPrice)"
         } else if let price = self.ean.embeddedPrice {
-            productPrice = price
-            self.priceLabel.text = Price.format(productPrice)
+            self.priceLabel.text = Price.format(price)
             self.quantityField.isHidden = true
             self.gramLabel.isHidden = true
         } else if let amount = self.ean.embeddedUnits {
-            productPrice = self.product.priceWithDeposit * amount
+            let productPrice = self.product.priceWithDeposit * amount
             self.priceLabel.text = Price.format(productPrice)
             self.quantityField.isHidden = true
             self.gramLabel.isHidden = true
             self.minusButton.isHidden = true
             self.plusButton.isHidden = true
+        } else if product.type == .userMustWeigh {
+            let productPrice = product.priceFor(quantity)
+            let priceKilo = Price.format(product.price)
+            let formattedPrice = Price.format(productPrice)
+            self.priceLabel.text = "\(qty)g × \(priceKilo)/kg = \(formattedPrice)"
         } else {
-            productPrice = self.product.priceFor(qty)
+            let productPrice = self.product.priceFor(qty)
             self.priceLabel.text = Price.format(productPrice)
         }
     }

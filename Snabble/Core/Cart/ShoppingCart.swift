@@ -191,7 +191,10 @@ public class ShoppingCart {
     
     /// return the total number of items
     public func numberOfItems() -> Int {
-        return self.items.reduce(0) { $0 + $1.quantity }
+        return self.items.reduce(0) {
+            let qty = $1.product.weightDependent ? 1 :  $1.quantity
+            return $0 + qty
+        }
     }
 
     /// get all products from this list

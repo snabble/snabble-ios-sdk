@@ -120,7 +120,7 @@ class ShoppingCartTableCell: UITableViewCell {
             return
         }
 
-        let showWeight = ean.hasEmbeddedWeight
+        let showWeight = ean.hasEmbeddedWeight || self.item.product.type == .userMustWeigh
         let price = self.item.total
 
         let gram = showWeight ? "g" : ""
