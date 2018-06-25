@@ -90,10 +90,9 @@ class BarcodeEntryViewController: UIViewController, UISearchBarDelegate, UITable
         }()
         
         let product = self.filteredProducts[indexPath.row]
+        let matchingCode = product.scannableCodes.filter { $0.hasPrefix(self.searchText) }.first ?? product.scannableCodes.first!
         
-        let matchingEan = product.scannableCodes.filter { $0.contains(self.searchText) }.first ?? product.scannableCodes.first!
-        
-        let str = NSMutableAttributedString(string: matchingEan)
+        let str = NSMutableAttributedString(string: matchingCode)
         let boldFont = UIFont.systemFont(ofSize: cell.textLabel?.font.pointSize ?? 0, weight: .medium)
         str.addAttributes([NSAttributedStringKey.font : boldFont], range: NSMakeRange(0, self.searchText.count))
         cell.textLabel?.attributedText = str
