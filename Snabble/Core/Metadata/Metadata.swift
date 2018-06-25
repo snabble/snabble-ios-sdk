@@ -22,17 +22,20 @@ public struct AppData: Decodable {
     public let flags: Flags
     public let shops: [Shop]
     public let rawLinks: [String: Link]
+    public let project: Project
 
     enum CodingKeys: String, CodingKey {
         case links
         case flags = "metadata"
         case shops
+        case project
     }
 
     public init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
         self.links = try container.decode(MetadataLinks.self, forKey: .links)
         self.flags = try container.decode(Flags.self, forKey: .flags)
+        self.project = try container.decode(Project.self, forKey: .project)
         self.shops = (try container.decodeIfPresent([Shop].self, forKey: .shops)) ?? []
 
         self.rawLinks = try container.decode([String: Link].self, forKey: .links)
@@ -42,6 +45,30 @@ public struct AppData: Decodable {
 public struct Flags: Decodable {
     public let kill: Bool
     public let enableCheckout: Bool
+}
+
+public enum RoundingMode: String, Decodable {
+    case up
+    case down
+    case commercial
+
+    var mode: NSDecimalNumber.RoundingMode {
+        switch self {
+        case .up: return .up
+        case .down: return .down
+        case .commercial: return .plain
+        }
+    }
+}
+
+public struct Project: Decodable {
+    public let currency: String
+    public let decimalDigits: Int
+    public let locale: String
+    public let pricePrefixes: [String]?
+    public let unitPrefixes: [String]?
+    public let weighPrefixes: [String]?
+    public let roundingMode: RoundingMode
 }
 
 // MARK: - shop data
