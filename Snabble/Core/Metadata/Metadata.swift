@@ -47,7 +47,7 @@ public struct Flags: Decodable {
     public let enableCheckout: Bool
 }
 
-public enum RoundingMode: String, Decodable {
+public enum RoundingMode: String, Codable {
     case up
     case down
     case commercial
@@ -61,7 +61,7 @@ public enum RoundingMode: String, Decodable {
     }
 }
 
-public struct Project: Decodable {
+public struct Project: Codable {
     public let currency: String
     public let decimalDigits: Int
     public let locale: String
@@ -69,6 +69,20 @@ public struct Project: Decodable {
     public let unitPrefixes: [String]?
     public let weighPrefixes: [String]?
     public let roundingMode: RoundingMode
+    public let verifyInternalEanChecksum: Bool
+
+    public init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+
+        self.currency = try container.decode(.currency)
+        self.decimalDigits = try container.decode(.decimalDigits)
+        self.locale = try container.decode(.locale)
+        self.pricePrefixes = try container.decode(.pricePrefixes)
+        self.unitPrefixes = try container.decode(.unitPrefixes)
+        self.weighPrefixes = try container.decode(.weighPrefixes)
+        self.roundingMode = try container.decode(.roundingMode)
+        self.verifyInternalEanChecksum = try container.decodeIfPresent(.verifyInternalEanChecksum) ?? true
+    }
 }
 
 // MARK: - shop data
