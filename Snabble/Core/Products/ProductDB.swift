@@ -59,10 +59,21 @@ public protocol ProductProvider: class {
     /// - parameter config: a `ProductDBConfiguration` object
     init(_ config: ProductDBConfiguration)
 
+
     /// Setup the product database
+    ///
+    /// The database can be used as soon as this method returns.
+    ///
+    /// - parameter completion: This is called asynchronously on the main thread after the automatic database update check has finished
+    ///   (i.e., only if `update` is true)
+    /// - parameter newData: indicates if new data is available
     func setup(update: Bool, completion: @escaping ((Bool) -> ()))
 
     /// Attempt to update the product database
+    ///
+    /// - parameter completion: This is called asynchronously on the main thread after the automatic database update check has finished
+    ///   (i.e., only if `update` is true)
+    /// - parameter newData: indicates if new data is available
     func updateDatabase(completion: @escaping (Bool) -> ())
 
     /// get a product by its SKU
@@ -198,17 +209,13 @@ final public class ProductDB: ProductProvider {
         self.config = config
     }
 
-    /**
-     Setup the product database
-
-     The database can be used as soon as this method returns.
-
-     - parameter completion: a closure taking a `Bool` parameter.
-        This is called asynchronously on the main thread, once after the database present on the device has been opened,
-        and once more later, after the automatic database update check has finished.
-        The closure's parameter indicates whether new data is available or not.
-    */
-    public func setup(update: Bool, completion: @escaping (Bool) -> () ) {
+    /// Setup the product database
+    /// - Parameters:
+    ///   - update: if true, attempt to update the database to the latest revision
+    ///   - completion: This is called asynchronously on the main thread after the automatic database update check has finished
+    ///     (i.e., only if `update` is true)
+    ///   - newData: indicates if the database was updated
+    public func setup(update: Bool, completion: @escaping (_ newData: Bool) -> () ) {
         self.db = self.openDb()
 
         if let seedRevision = self.config.seedRevision, seedRevision > self.revision {
@@ -217,23 +224,16 @@ final public class ProductDB: ProductProvider {
             self.db = openDb()
         }
 
-        DispatchQueue.main.async {
-            completion(false)
-        }
-
         if update {
             self.updateDatabase(completion: completion)
         }
     }
 
-    /**
-     Attempt to update the product database
-
-     - parameter completion: a closure taking a `Bool` parameter.
-        This is called asynchronously on the main thread, after the update check has finished.
-        The parameter indicates whether new data is available or not.
-    */
-    public func updateDatabase(completion: @escaping (Bool)->() ) {
+    /// Attempt to update the product database
+    /// - Parameters:
+    ///   - completion: This is called asynchronously on the main thread, after the update check has finished.
+    ///   - newData: indicates if new data is available
+    public func updateDatabase(completion: @escaping (_ newData: Bool)->() ) {
         let schemaVersion = "\(self.schemaVersionMajor).\(self.schemaVersionMinor)"
         self.getAppDb(currentRevision: self.revision, schemaVersion: schemaVersion) { dbResponse in
             self.lastProductUpdate = Date()
