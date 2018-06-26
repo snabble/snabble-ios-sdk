@@ -22,6 +22,8 @@ public struct SnabbleProject {
     public let currencySymbol: String
     /// the number of decimal digits
     public let decimalDigits: Int
+    /// if true, verify the internal checksum for embedded data in EANs
+    public let verifyInternalEanChecksum: Bool
     /// the rounding mode to use for weight-based price calculations
     public let roundingMode: NSDecimalNumber.RoundingMode
     /// if the `.embeddedCodes` payment method is used, set this to configure how the code is assembled
@@ -32,6 +34,7 @@ public struct SnabbleProject {
                 weighPrefixes: [String] = [],
                 pricePrefixes: [String] = [],
                 unitPrefixes: [String] = [],
+                verifyInternalEanChecksum: Bool = true,
                 currencySymbol: String,
                 decimalDigits: Int,
                 roundingMode: NSDecimalNumber.RoundingMode = .plain,
@@ -41,6 +44,7 @@ public struct SnabbleProject {
         self.weighPrefixes = weighPrefixes
         self.pricePrefixes = pricePrefixes
         self.unitPrefixes = unitPrefixes
+        self.verifyInternalEanChecksum = verifyInternalEanChecksum
         self.currencySymbol = currencySymbol
         self.decimalDigits = decimalDigits
         self.roundingMode = roundingMode

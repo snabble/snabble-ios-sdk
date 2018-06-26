@@ -340,13 +340,16 @@ extension ScannerViewController {
 
     private func productForEan(_ ean: EANCode, completion: @escaping (Product?) -> () ) {
         if ean.hasEmbeddedData {
-            guard
-                let ean13 = ean as? EAN13,
-                ean13.priceFieldOk()
-            else {
-                completion(nil)
-                return
+            if APIConfig.shared.project.verifyInternalEanChecksum {
+                guard
+                    let ean13 = ean as? EAN13,
+                    ean13.priceFieldOk()
+                else {
+                    completion(nil)
+                    return
+                }
             }
+            
             self.productProvider.productByWeighItemId(ean.codeForLookup) { product, error in
                 completion(product)
             }
