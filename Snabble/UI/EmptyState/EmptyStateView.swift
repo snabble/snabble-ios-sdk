@@ -55,6 +55,7 @@ class ShoppingCartEmptyStateView: EmptyStateView {
         self.descriptionLabel.text = "Snabble.Shoppingcart.emptyState.description".localized()
         self.button.setTitle("Snabble.Shoppingcart.emptyState.buttonTitle".localized(), for: .normal)
         self.button.setImage(UIImage.fromBundle("icon-scan")?.recolored(with: primaryColor), for: .normal)
+        self.button.setTitleColor(SnabbleAppearance.shared.config.primaryColor, for: .normal)
     }
 
     required init?(coder aDecoder: NSCoder) {
@@ -70,6 +71,7 @@ class BarcodeEntryEmptyStateView: EmptyStateView {
         self.image.isHidden = true
         self.titleLabel.text = "Snabble.Scanner.enterBarcode".localized()
         self.descriptionLabel.text = nil
+        self.button.titleLabel?.font = UIFont.systemFont(ofSize: 17, weight: .medium)
         self.button.setTitle("Snabble.Scanner.addCodeAsIs".localized(), for: .normal)
         self.button.setTitleColor(SnabbleAppearance.shared.config.primaryColor, for: .normal)
     }
