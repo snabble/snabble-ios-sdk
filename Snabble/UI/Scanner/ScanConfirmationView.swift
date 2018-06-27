@@ -149,8 +149,9 @@ class ScanConfirmationView: DesignableView {
             self.quantityField.isHidden = true
             self.gramLabel.isHidden = true
         } else if let amount = self.ean.embeddedUnits {
-            let productPrice = self.product.priceWithDeposit * amount
-            self.priceLabel.text = Price.format(productPrice)
+            let singlePrice = Price.format(self.product.priceWithDeposit)
+            let productPrice = Price.format(self.product.priceWithDeposit * amount)
+            self.priceLabel.text = "\(amount) x \(singlePrice) = \(productPrice)"
             self.quantityField.isHidden = true
             self.gramLabel.isHidden = true
             self.minusButton.isHidden = true
