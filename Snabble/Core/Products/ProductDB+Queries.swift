@@ -180,7 +180,7 @@ extension ProductDB {
                         discountedPrice: row["discountedPrice"],
                         type: ProductType(rawValue: row["weighing"]) ?? .singleItem,
                         scannableCodes: self.makeSet(row["scannableCodes"]),
-                        weighedItemIds: self.makeSet(row["weighIds"]),
+                        weighedItemIds: self.makeSet(row["weighItemIds"]),
                         depositSku: depositSku,
                         isDeposit: row["isDeposit"] == 1,
                         deposit: depositPrice,
