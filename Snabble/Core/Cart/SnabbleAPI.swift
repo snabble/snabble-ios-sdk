@@ -234,14 +234,16 @@ struct SnabbleAPI {
     @discardableResult
     static func perform<T: Decodable>(_ request: URLRequest, returnRaw: Bool, _ completion: @escaping (_ obj: T?, _ raw: [String: Any]?) -> () ) -> URLSessionDataTask {
         let session = URLSession(configuration: URLSessionConfiguration.default)
-        let task = session.dataTask(with: request) { data, response, error in
+        let task = session.dataTask(with: request) { rawData, response, error in
             let url = request.url?.absoluteString ?? "n/a"
             guard
-                let data = data,
+                let data = rawData,
                 let response = response as? HTTPURLResponse,
                 response.statusCode == 200 || response.statusCode == 201
             else {
                 NSLog("error getting response from \(url): \(String(describing: error))")
+                let str = rawData != nil ? String(bytes: rawData!, encoding: .utf8) : "n/a"
+                NSLog("response was '\(String(describing: str))'")
                 DispatchQueue.main.async {
                     completion(nil, nil)
                 }
