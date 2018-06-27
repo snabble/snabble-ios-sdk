@@ -42,6 +42,29 @@ class EmbeddedCodesCheckoutViewController: UIViewController {
         fatalError("init(coder:) has not been implemented")
     }
 
+    private func encodeWeightInEan(_ template: String, weight: Int) -> String {
+        assert(weight < 99999)
+
+        let str = String(weight)
+        let padding = String(repeatElement("0", count: 5 - str.count))
+        let weightField = padding + str
+
+        let code = String(template.prefix(6) + "0" + weightField)
+
+        if let ean = EAN13(code) {
+            if APIConfig.shared.config.verifyInternalEanChecksum {
+                let internalCheck = ean.internalChecksum5()
+                let newCode = String(ean.code.prefix(6)) + String(internalCheck) + weightField
+                let newEan = EAN13(newCode)
+                return newEan?.code ?? ""
+            } else {
+                return ean.code
+            }
+        }
+
+        return ""
+    }
+
     override func viewDidLoad() {
         super.viewDidLoad()
 
@@ -53,7 +76,15 @@ class EmbeddedCodesCheckoutViewController: UIViewController {
         self.collectionView.register(nib, forCellWithReuseIdentifier: "qrCodeCell")
 
         let codes: [String] = self.cart.items.reduce(into: [], { result, item in
-            result.append(contentsOf: Array(repeating: item.scannedCode, count: item.quantity))
+            if item.product.type == .userMustWeigh {
+                // generate an EAN with the embedded weight
+                if let template = item.product.weighedItemIds?.first {
+                    let ean = self.encodeWeightInEan(template, weight: item.quantity)
+                    result.append(ean)
+                }
+            } else {
+                result.append(contentsOf: Array(repeating: item.scannedCode, count: item.quantity))
+            }
         })
 
         let chunks = (Float(codes.count) / Float(self.config.maxCodes)).rounded(.up)
@@ -149,7 +180,7 @@ extension EmbeddedCodesCheckoutViewController: UICollectionViewDataSource, UICol
 
     private func qrCode(for codes: [String]) -> UIImage? {
         let qrCodeContent = config.prefix + codes.joined(separator: config.separator) + config.suffix
-
+        print("\(qrCodeContent)")
         for scale in (1...7).reversed() {
             if let img = QRCode.generate(for: qrCodeContent, scale: scale) {
                 if img.size.width <= self.collectionView.bounds.width {
