@@ -41,6 +41,7 @@ public enum PaymentState: String, Decodable {
     case pending
     case successful
     case failed
+    case transferred = "transfered"
 }
 
 // CheckoutInfo
