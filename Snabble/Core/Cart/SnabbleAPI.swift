@@ -12,42 +12,12 @@ public struct SnabbleProject {
     public let name: String
     /// the jwt used for api authorization
     public let jwt: String
-    /// Scanned EAN-13 codes that begin with one of the prefixes are considered to contain am embedded weight (in grams)
-    public let weighPrefixes: [String]
-    /// Scanned EAN-13 codes that begin with one of the prefixes are considered to contain am embedded price (in cents)
-    public let pricePrefixes: [String]
-    /// Scanned EAN-13 codes that begin with one of the prefixes are considered to contain am embedded number of units (e.g. a bag containing 5 apples)
-    public let unitPrefixes: [String]
-    /// the currency symbol used for display
-    public let currencySymbol: String
-    /// the number of decimal digits
-    public let decimalDigits: Int
-    /// if true, verify the internal checksum for embedded data in EANs
-    public let verifyInternalEanChecksum: Bool
-    /// the rounding mode to use for weight-based price calculations
-    public let roundingMode: NSDecimalNumber.RoundingMode
-    /// if the `.embeddedCodes` payment method is used, set this to configure how the code is assembled
+    /// if the `.embeddedCodes` payment method is used, set this to configure how the QR code is assembled
     public let embeddedCodesConfig: EmbeddedCodesConfig?
 
-    public init(name: String,
-                jwt: String,
-                weighPrefixes: [String] = [],
-                pricePrefixes: [String] = [],
-                unitPrefixes: [String] = [],
-                verifyInternalEanChecksum: Bool = true,
-                currencySymbol: String,
-                decimalDigits: Int,
-                roundingMode: NSDecimalNumber.RoundingMode = .plain,
-                embeddedCodesConfig: EmbeddedCodesConfig? = nil) {
+    public init(name: String, jwt: String, embeddedCodesConfig: EmbeddedCodesConfig? = nil) {
         self.name = name
         self.jwt = jwt
-        self.weighPrefixes = weighPrefixes
-        self.pricePrefixes = pricePrefixes
-        self.unitPrefixes = unitPrefixes
-        self.verifyInternalEanChecksum = verifyInternalEanChecksum
-        self.currencySymbol = currencySymbol
-        self.decimalDigits = decimalDigits
-        self.roundingMode = roundingMode
         self.embeddedCodesConfig = embeddedCodesConfig
     }
 }
@@ -58,7 +28,12 @@ public class APIConfig {
     /// the singleton instance
     public static let shared = APIConfig()
 
-    private(set) var project: SnabbleProject
+    public internal(set) var project: SnabbleProject
+    public internal(set) var config: ProjectConfig {
+        didSet {
+            print("config set to \(config)")
+        }
+    }
     private(set) var baseUrl: String
 
     var clientId: String {
@@ -73,7 +48,8 @@ public class APIConfig {
 
     private init() {
         self.baseUrl = ""
-        self.project = SnabbleProject(name: "none", jwt: "", currencySymbol: "€", decimalDigits: 2)
+        self.project = SnabbleProject(name: "none", jwt: "")
+        self.config = ProjectConfig()
     }
 
     /// initialize the API configuration for the subsequent network calls

@@ -183,7 +183,7 @@ extension Product {
     }
 
     private func round(_ n: Decimal) -> Int {
-        let mode = APIConfig.shared.project.roundingMode
+        let mode = APIConfig.shared.config.roundingMode.mode
         let round = NSDecimalNumberHandler(roundingMode: mode,
                                            scale: 0,
                                            raiseOnExactness: false,
@@ -208,18 +208,18 @@ extension Product: Hashable {
 /// price formatting
 public enum Price {
     public static func format(_ price: Int) -> String {
-        let divider = pow(10.0, APIConfig.shared.project.decimalDigits)
+        let divider = pow(10.0, APIConfig.shared.config.decimalDigits)
         let decimalPrice = Decimal(price) / divider
         return formatter.string(for: decimalPrice)!
     }
 
     private static var formatter: NumberFormatter {
         let fmt = NumberFormatter()
-        fmt.minimumFractionDigits = APIConfig.shared.project.decimalDigits
-        fmt.maximumFractionDigits = APIConfig.shared.project.decimalDigits
+        fmt.minimumFractionDigits = APIConfig.shared.config.decimalDigits
+        fmt.maximumFractionDigits = APIConfig.shared.config.decimalDigits
         fmt.minimumIntegerDigits = 1
         fmt.numberStyle = .currency
-        fmt.currencySymbol = APIConfig.shared.project.currencySymbol
+        fmt.currencySymbol = APIConfig.shared.config.currencySymbol
         return fmt
     }
 }

@@ -22,7 +22,7 @@ public struct AppData: Decodable {
     public let flags: Flags
     public let shops: [Shop]
     public let rawLinks: [String: Link]
-    public let project: Project
+    public let project: ProjectConfig
 
     enum CodingKeys: String, CodingKey {
         case links
@@ -35,7 +35,7 @@ public struct AppData: Decodable {
         let container = try decoder.container(keyedBy: CodingKeys.self)
         self.links = try container.decode(MetadataLinks.self, forKey: .links)
         self.flags = try container.decode(Flags.self, forKey: .flags)
-        self.project = try container.decode(Project.self, forKey: .project)
+        self.project = try container.decode(ProjectConfig.self, forKey: .project)
         self.shops = (try container.decodeIfPresent([Shop].self, forKey: .shops)) ?? []
 
         self.rawLinks = try container.decode([String: Link].self, forKey: .links)
@@ -52,6 +52,7 @@ public enum RoundingMode: String, Codable {
     case down
     case commercial
 
+    ///
     var mode: NSDecimalNumber.RoundingMode {
         switch self {
         case .up: return .up
@@ -61,15 +62,17 @@ public enum RoundingMode: String, Codable {
     }
 }
 
-public struct Project: Codable {
+public struct ProjectConfig: Codable {
     public let currency: String
     public let decimalDigits: Int
     public let locale: String
-    public let pricePrefixes: [String]?
-    public let unitPrefixes: [String]?
-    public let weighPrefixes: [String]?
+    public let pricePrefixes: [String]
+    public let unitPrefixes: [String]
+    public let weighPrefixes: [String]
     public let roundingMode: RoundingMode
     public let verifyInternalEanChecksum: Bool
+
+    public let currencySymbol: String
 
     public init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
@@ -77,11 +80,28 @@ public struct Project: Codable {
         self.currency = try container.decode(.currency)
         self.decimalDigits = try container.decode(.decimalDigits)
         self.locale = try container.decode(.locale)
-        self.pricePrefixes = try container.decode(.pricePrefixes)
-        self.unitPrefixes = try container.decode(.unitPrefixes)
-        self.weighPrefixes = try container.decode(.weighPrefixes)
-        self.roundingMode = try container.decode(.roundingMode)
+        self.pricePrefixes = try container.decodeIfPresent(.pricePrefixes) ?? []
+        self.unitPrefixes = try container.decodeIfPresent(.unitPrefixes) ?? []
+        self.weighPrefixes = try container.decodeIfPresent(.weighPrefixes) ?? []
+        self.roundingMode = try container.decodeIfPresent(.roundingMode) ?? .up
         self.verifyInternalEanChecksum = try container.decodeIfPresent(.verifyInternalEanChecksum) ?? true
+
+        let formatter = NumberFormatter()
+        formatter.locale = Locale(identifier: self.locale)
+        formatter.numberStyle = .currency
+        self.currencySymbol = formatter.currencySymbol
+    }
+
+    internal init(pricePrefixes: [String] = [], weighPrefixes: [String] = [], unitPrefixes: [String] = []) {
+        self.currency = "EUR"
+        self.decimalDigits = 2
+        self.locale = "de_DE"
+        self.pricePrefixes = pricePrefixes
+        self.weighPrefixes = weighPrefixes
+        self.unitPrefixes = unitPrefixes
+        self.roundingMode = .commercial
+        self.verifyInternalEanChecksum = true
+        self.currencySymbol = "€"
     }
 }
 
@@ -172,6 +192,7 @@ public extension AppData {
             do {
                 let data = try Data(contentsOf: url)
                 let appData = try JSONDecoder().decode(AppData.self, from: data)
+                APIConfig.shared.config = appData.project
                 return appData
             } catch let error {
                 NSLog("error parsing app data resource: \(error)")
@@ -185,6 +206,9 @@ public extension AppData {
             return completion(nil)
         }
         SnabbleAPI.perform(request) { (appData: AppData?) in
+            if let projectConfig = appData?.project {
+                APIConfig.shared.config = projectConfig
+            }
             completion(appData)
         }
     }

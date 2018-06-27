@@ -26,15 +26,15 @@ extension EANCode {
 
     // MARK: - check for embedded data
     public var hasEmbeddedWeight: Bool {
-        return self.encoding == .ean13 && self.matchPrefixes(APIConfig.shared.project.weighPrefixes)
+        return self.encoding == .ean13 && self.matchPrefixes(APIConfig.shared.config.weighPrefixes)
     }
 
     public var hasEmbeddedPrice: Bool {
-        return self.encoding == .ean13 && self.matchPrefixes(APIConfig.shared.project.pricePrefixes)
+        return self.encoding == .ean13 && self.matchPrefixes(APIConfig.shared.config.pricePrefixes)
     }
 
     public var hasEmbeddedUnits: Bool {
-        return self.encoding == .ean13 && self.matchPrefixes(APIConfig.shared.project.unitPrefixes)
+        return self.encoding == .ean13 && self.matchPrefixes(APIConfig.shared.config.unitPrefixes)
     }
 
     public var hasEmbeddedData: Bool {
