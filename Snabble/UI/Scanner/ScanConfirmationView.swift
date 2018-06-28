@@ -138,9 +138,8 @@ class ScanConfirmationView: DesignableView {
         self.minusButton.isEnabled = qty > 1
         self.plusButton.isEnabled = qty < ShoppingCart.maxAmount
 
-
         if let weight = self.ean.embeddedWeight {
-            let productPrice = product.priceFor(weight)
+            let productPrice = self.product.priceFor(weight)
             let priceKilo = Price.format(product.price)
             let formattedPrice = Price.format(productPrice)
             self.priceLabel.text = "\(qty)g × \(priceKilo)/kg = \(formattedPrice)"
@@ -162,8 +161,16 @@ class ScanConfirmationView: DesignableView {
             let formattedPrice = Price.format(productPrice)
             self.priceLabel.text = "\(qty)g × \(priceKilo)/kg = \(formattedPrice)"
         } else {
-            let productPrice = self.product.priceFor(qty)
-            self.priceLabel.text = Price.format(productPrice)
+            if let deposit = self.product.deposit {
+                let productPrice = Price.format(self.product.price)
+                let depositPrice = Price.format(deposit * qty)
+                let totalPrice = Price.format(self.product.priceFor(qty))
+                let deposit = String(format: "Snabble.Scanner.plusDeposit".localized(), depositPrice)
+                self.priceLabel.text = "\(qty) × \(productPrice) \(deposit) = \(totalPrice)"
+            } else {
+                let productPrice = self.product.priceFor(qty)
+                self.priceLabel.text = Price.format(productPrice)
+            }
         }
     }
 
