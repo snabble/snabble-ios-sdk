@@ -119,7 +119,10 @@ public class ShoppingCart {
     ///
     /// the newly added (or modified) product is moved to the start of the list
     public func add(_ product: Product, quantity: Int = 1, scannedCode: String) {
-        if let index = self.indexOf(product), product.type == .singleItem {
+        guard let ean = EAN.parse(scannedCode) else {
+            return
+        }
+        if let index = self.indexOf(product), product.type == .singleItem, !ean.hasEmbeddedData {
             var item = self.items[index]
             item.quantity += quantity
             self.items.remove(at: index)

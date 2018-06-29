@@ -80,10 +80,11 @@ class ScanConfirmationView: DesignableView {
         self.productNameLabel.text = product.name
         self.shoppingCart = cart
         self.ean = ean
-
+        self.alreadyInCart = false
+        
         self.quantity = product.type != .userMustWeigh ? 1 : 0
 
-        if product.type == .singleItem {
+        if product.type == .singleItem && !ean.hasEmbeddedData {
             let cartQuantity = self.shoppingCart.quantity(of: product)
             self.quantity = cartQuantity + 1
             self.alreadyInCart = cartQuantity > 0
@@ -195,7 +196,7 @@ class ScanConfirmationView: DesignableView {
 
     @IBAction private func cartTapped(_ button: UIButton) {
         let cart = self.shoppingCart!
-        if cart.quantity(of: self.product) == 0 || self.product.type != .singleItem {
+        if cart.quantity(of: self.product) == 0 || self.product.type != .singleItem || self.ean.hasEmbeddedData {
             cart.add(self.product, quantity: self.quantity, scannedCode: self.ean.code)
         } else {
             cart.setQuantity(self.quantity, for: self.product)

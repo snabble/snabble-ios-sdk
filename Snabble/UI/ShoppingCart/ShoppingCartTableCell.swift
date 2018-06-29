@@ -82,6 +82,11 @@ class ShoppingCartTableCell: UITableViewCell {
 
         self.minusButton.isHidden = product.weightDependent
         self.plusButton.isHidden = product.type == .preWeighed
+        if let ean = EAN.parse(item.scannedCode) {
+            let embeddedData = ean.hasEmbeddedData
+            self.minusButton.isHidden = embeddedData
+            self.plusButton.isHidden = embeddedData
+        }
 
         let weightEntry = product.type == .userMustWeigh
         self.quantityInput.isHidden = !weightEntry
@@ -136,6 +141,10 @@ class ShoppingCartTableCell: UITableViewCell {
                 let depositPrice = Price.format(deposit * self.quantity)
                 let plusDeposit = String(format: "Snabble.Scanner.plusDeposit".localized(), depositPrice)
                 self.priceLabel.text = "× \(itemPrice) \(plusDeposit) = \(total)"
+            } else if let units = ean.embeddedUnits {
+                self.quantityLabel.text = "\(units)"
+                let itemPrice = Price.format(self.item.product.price)
+                self.priceLabel.text  = "× \(itemPrice) = \(total)"
             } else if self.quantity == 1 {
                 self.priceLabel.text = total
             } else {
