@@ -121,17 +121,22 @@ class ShoppingCartTableCell: UITableViewCell {
         }
 
         let showWeight = ean.hasEmbeddedWeight || self.item.product.type == .userMustWeigh
-        let price = self.item.total
-
         let gram = showWeight ? "g" : ""
         self.quantityLabel.text = "\(self.quantity)\(gram)"
 
+        let price = self.item.total
         let total = Price.format(price)
+
         if showWeight {
             let single = Price.format(self.item.product.price)
             self.priceLabel.text = "× \(single)/kg = \(total)"
         } else {
-            if self.quantity == 1 {
+            if let deposit = self.item.product.deposit {
+                let itemPrice = Price.format(self.item.product.price)
+                let depositPrice = Price.format(deposit * self.quantity)
+                let plusDeposit = String(format: "Snabble.Scanner.plusDeposit".localized(), depositPrice)
+                self.priceLabel.text = "× \(itemPrice) \(plusDeposit) = \(total)"
+            } else if self.quantity == 1 {
                 self.priceLabel.text = total
             } else {
                 let itemPrice = Price.format(self.item.product.priceWithDeposit)
