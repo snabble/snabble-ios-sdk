@@ -76,6 +76,8 @@ class BarcodeEntryViewController: UIViewController, UISearchBarDelegate, UITable
         self.emptyState.isHidden = rows > 0
         self.emptyState.button.isHidden = true
         if let ean = EAN.parse(self.searchText) {
+            let title = String(format: "Snabble.Scanner.addCodeAsIs".localized(), ean.code)
+            self.emptyState.button.setTitle(title, for: .normal)
             self.emptyState.button.isHidden = ean.code != self.searchText
         }
         return rows
