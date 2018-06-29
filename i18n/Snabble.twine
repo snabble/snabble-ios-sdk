@@ -75,7 +75,8 @@
         en = Scan barcodes on products and place them in your shopping cart.
     [Snabble.Scanner.start]
         en = Start scanner
-
+    [Snabble.Scanner.addCodeAsIs]
+        en = Add %@ as is
     [Snabble.ShoppingCart.title]
         en = Shopping Cart
     [Snabble.Shoppingcart.buyProducts.one]
