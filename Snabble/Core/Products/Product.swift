@@ -215,11 +215,13 @@ public enum Price {
 
     private static var formatter: NumberFormatter {
         let fmt = NumberFormatter()
+        fmt.minimumIntegerDigits = 1
         fmt.minimumFractionDigits = APIConfig.shared.config.decimalDigits
         fmt.maximumFractionDigits = APIConfig.shared.config.decimalDigits
-        fmt.minimumIntegerDigits = 1
-        fmt.numberStyle = .currency
+        fmt.locale = Locale(identifier: APIConfig.shared.config.locale)
+        fmt.currencyCode = APIConfig.shared.config.currency
         fmt.currencySymbol = APIConfig.shared.config.currencySymbol
+        fmt.numberStyle = .currency
         return fmt
     }
 }

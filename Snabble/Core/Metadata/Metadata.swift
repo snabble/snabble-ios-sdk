@@ -88,6 +88,7 @@ public struct ProjectConfig: Codable {
 
         let formatter = NumberFormatter()
         formatter.locale = Locale(identifier: self.locale)
+        formatter.currencyCode = self.currency
         formatter.numberStyle = .currency
         self.currencySymbol = formatter.currencySymbol
     }
