@@ -41,9 +41,10 @@ public enum PaymentState: String, Decodable {
     case unknown
 
     case pending
+    case processing
+    case transferred
     case successful
     case failed
-    case transferred
 
     public init(from decoder: Decoder) throws {
         let value = try decoder.singleValueContainer().decode(String.self)
