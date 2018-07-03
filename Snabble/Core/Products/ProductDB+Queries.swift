@@ -154,6 +154,35 @@ extension ProductDB {
         return [:]
     }
 
+    func createFullTextIndex(_ dbQueue: DatabaseQueue) throws {
+        let start = Date.timeIntervalSinceReferenceDate
+        try dbQueue.write { db in
+            try db.execute("drop table if exists searchByName_tmp")
+            try db.execute("create virtual table searchByName_tmp using fts4(sku text, foldedname text)")
+
+            let rows = try Row.fetchCursor(db, "select sku, name from products")
+
+            try db.inTransaction {
+                while let row = try rows.next() {
+                    guard let sku = row["sku"] as? String, let name = row["name"] as? String else {
+                        continue
+                    }
+
+                    let foldedName = name.folding(options: [.diacriticInsensitive, .caseInsensitive], locale: .current)
+                    try db.execute("insert into searchByName_tmp values(?, ?)", arguments: [ sku, foldedName ])
+                }
+                return .commit
+            }
+
+            try db.execute("drop table if exists searchByName")
+            try db.execute("alter table searchByName_tmp rename to searchByName")
+            try db.execute("vacuum")
+        }
+        let elapsed = Date.timeIntervalSinceReferenceDate - start
+        print("update took \(elapsed)")
+    }
+
+
     private func productFromRow(_ dbQueue: DatabaseQueue, _ row: Row?) -> Product? {
         guard
             let row = row,

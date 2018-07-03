@@ -42,6 +42,9 @@ public struct ProductDBConfiguration {
     /// if the app bundle contains a zipped seed database, this must contain the revision of that database.
     public var seedRevision: Int64?
 
+    /// set this to true if you want to use the `productsByName` method
+    public var useFTS = false
+
     public init() {
         self.dbDirectory = NSSearchPathForDirectoriesInDomains(.applicationSupportDirectory, .userDomainMask, true).first!
     }
@@ -260,6 +263,10 @@ final public class ProductDB: ProductProvider {
                     newData = false
                 }
 
+                if self.config.useFTS && newData {
+                    self.createFulltextIndex(self.config.dbPathname(temp: true))
+                }
+
                 if performSwitch {
                     self.switchDatabases()
                 } else {
@@ -274,6 +281,16 @@ final public class ProductDB: ProductProvider {
                     completion(newData)
                 }
             }
+        }
+    }
+
+    private func createFulltextIndex(_ path: String) {
+        NSLog("creating FTS index...")
+        do {
+            let db = try DatabaseQueue(path: path)
+            try self.createFullTextIndex(db)
+        } catch {
+            NSLog("create FTS failed: error \(error)")
         }
     }
 
@@ -317,6 +334,10 @@ final public class ProductDB: ProductProvider {
                 try Zip.unzipFile(seedUrl, destination: URL(fileURLWithPath: self.config.dbDirectory), overwrite: true, password: nil)
             } catch let error {
                 NSLog("error while unzipping seed: \(error)")
+            }
+
+            if self.config.useFTS {
+                self.createFulltextIndex(self.config.dbPathname())
             }
         }
     }
@@ -427,7 +448,7 @@ final public class ProductDB: ProductProvider {
                     try fileManager.moveItem(atPath: dbFile, toPath: oldFile)
                 }
                 try fileManager.moveItem(atPath: tmpFile, toPath: dbFile)
-                self.db = openDb()
+                self.db = self.openDb()
             }
             if fileManager.fileExists(atPath: oldFile) {
                 try fileManager.removeItem(atPath: oldFile)
