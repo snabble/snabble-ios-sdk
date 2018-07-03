@@ -14,11 +14,14 @@ public struct SnabbleProject {
     public let jwt: String
     /// if the `.embeddedCodes` payment method is used, set this to configure how the QR code is assembled
     public let embeddedCodesConfig: EmbeddedCodesConfig?
+    /// set to true if this project uses the german EAN prefixes for magazines/newspapers
+    public let useGermanPrintPrefixes: Bool
 
-    public init(name: String, jwt: String, embeddedCodesConfig: EmbeddedCodesConfig? = nil) {
+    public init(name: String, jwt: String, embeddedCodesConfig: EmbeddedCodesConfig? = nil, useGermanPrintPrefixes: Bool = false) {
         self.name = name
         self.jwt = jwt
         self.embeddedCodesConfig = embeddedCodesConfig
+        self.useGermanPrintPrefixes = useGermanPrintPrefixes
     }
 }
 
@@ -48,7 +51,7 @@ public class APIConfig {
 
     private init() {
         self.baseUrl = ""
-        self.project = SnabbleProject(name: "none", jwt: "")
+        self.project = SnabbleProject(name: "none", jwt: "", useGermanPrintPrefixes: false)
         self.config = ProjectConfig()
     }
 

@@ -30,7 +30,7 @@ extension EANCode {
     }
 
     public var hasEmbeddedPrice: Bool {
-        return self.encoding == .ean13 && self.matchPrefixes(APIConfig.shared.config.pricePrefixes)
+        return self.encoding == .ean13 && (self.matchPrefixes(APIConfig.shared.config.pricePrefixes) || self.hasGermanPrintPrefix)
     }
 
     public var hasEmbeddedUnits: Bool {
@@ -62,7 +62,9 @@ extension EANCode {
     public var codeForLookup: String {
         switch self.encoding {
         case .ean13:
-            if self.hasEmbeddedData {
+            if self.hasGermanPrintPrefix {
+                return self.code.prefix(3) + "0000000000"
+            } else if self.hasEmbeddedData {
                 return self.code.prefix(6) + "0000000"
             } else {
                 return code
@@ -75,7 +77,8 @@ extension EANCode {
     private var rawEmbeddedData: Int? {
         switch self.encoding {
         case .ean13:
-            let start = self.code.index(self.code.startIndex, offsetBy: 7)
+            let offset = self.hasGermanPrintPrefix ? 8 : 7
+            let start = self.code.index(self.code.startIndex, offsetBy: offset)
             let end = self.code.index(self.code.startIndex, offsetBy: 12)
             let data = self.code[start ..< end]
             return Int(data)
@@ -87,6 +90,16 @@ extension EANCode {
     private func matchPrefixes(_ prefixes: [String]) -> Bool {
         let prefixed = prefixes.filter { self.code.hasPrefix($0) }
         return prefixed.count > 0
+    }
+
+    // MARK: - logic for german newspapers/magazines
+
+
+    fileprivate var hasGermanPrintPrefix: Bool {
+        return
+            self.encoding == .ean13
+            && APIConfig.shared.project.useGermanPrintPrefixes
+            && [ "414", "419", "434", "449" ].contains(self.code.prefix(3))
     }
 }
 
@@ -264,6 +277,9 @@ public struct EAN13: EANCode {
 extension EAN13 {
     /// check if the 5-digit embedded weight/price/units matches the check digit in position 6
     public func priceFieldOk() -> Bool {
+        if self.hasGermanPrintPrefix {
+            return true
+        }
         return self.internalChecksum5() == self.leftDigits[5]
     }
 
