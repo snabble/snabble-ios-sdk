@@ -103,6 +103,15 @@ enum HTTPRequestMethod: String {
     case patch = "PATCH"
 }
 
+public struct ApiError: Decodable {
+    public let error: ErrorResponse
+}
+
+public struct ErrorResponse: Decodable {
+    public let type: String
+    public let message: String
+}
+
 struct SnabbleAPI {
 
     /// create an URLRequest
@@ -199,16 +208,17 @@ struct SnabbleAPI {
     ///   - request: the `URLRequest` to perform
     ///   - completion: called on the main thread when the result is available.
     ///   - obj: the parsed result object, or nil if an error occured
-    static func retry<T: Decodable>(_ retryCount: Int, _ pauseTime: TimeInterval, _ request: URLRequest, _ completion: @escaping (_ obj: T?) -> () ) {
-        perform(request) { (obj: T?) in
+    ///   - error: if not nil, contains the error response from the backend
+    static func retry<T: Decodable>(_ retryCount: Int, _ pauseTime: TimeInterval, _ request: URLRequest, _ completion: @escaping (_ obj: T?, _ error: ApiError?) -> () ) {
+        perform(request) { (obj: T?, error) in
             if obj != nil {
-                completion(obj)
+                completion(obj, nil)
             } else if retryCount > 1 {
                 DispatchQueue.main.asyncAfter(deadline: .now() + pauseTime) {
                     retry(retryCount - 1, pauseTime * 2, request, completion)
                 }
             } else {
-                completion(nil)
+                completion(nil, error)
             }
         }
     }
@@ -219,10 +229,11 @@ struct SnabbleAPI {
     ///   - request: the `URLRequest` to perform
     ///   - completion: called on the main thread when the result is available.
     ///   - obj: the parsed result object, or nil if an error occured
+    ///   - error: if not nil, contains the error response from the backend
     @discardableResult
-    static func perform<T: Decodable>(_ request: URLRequest, _ completion: @escaping (_ obj: T?) -> () ) -> URLSessionDataTask {
-        return perform(request, returnRaw: false) { (_ obj: T?, _) in
-            completion(obj)
+    static func perform<T: Decodable>(_ request: URLRequest, _ completion: @escaping (_ obj: T?, _ error: ApiError?) -> () ) -> URLSessionDataTask {
+        return perform(request, returnRaw: false) { (_ obj: T?, error, json) in
+            completion(obj, error)
         }
     }
 
@@ -233,9 +244,10 @@ struct SnabbleAPI {
     ///   - returnRaw: indicates whether the raw JSON data should be returned along with the decoded data
     ///   - completion: called on the main thread when the result is available.
     ///   - obj: the parsed result object, or nil if an error occured
+    ///   - error: if not nil, contains the error response from the backend
     ///   - raw: the JSON structure returned by the server, or nil if an error occurred
     @discardableResult
-    static func perform<T: Decodable>(_ request: URLRequest, returnRaw: Bool, _ completion: @escaping (_ obj: T?, _ raw: [String: Any]?) -> () ) -> URLSessionDataTask {
+    static func perform<T: Decodable>(_ request: URLRequest, returnRaw: Bool, _ completion: @escaping (_ obj: T?, _ error: ApiError?, _ raw: [String: Any]?) -> () ) -> URLSessionDataTask {
         let session = URLSession(configuration: URLSessionConfiguration.default)
         let task = session.dataTask(with: request) { rawData, response, error in
             let url = request.url?.absoluteString ?? "n/a"
@@ -245,22 +257,32 @@ struct SnabbleAPI {
                 response.statusCode == 200 || response.statusCode == 201
             else {
                 NSLog("error getting response from \(url): \(String(describing: error))")
-                let str = rawData != nil ? String(bytes: rawData!, encoding: .utf8) : "n/a"
-                NSLog("response was '\(String(describing: str))'")
+                var apiError: ApiError?
+                if let data = rawData {
+                    do {
+                        let error = try JSONDecoder().decode(ApiError.self, from: data)
+                        NSLog("error response: \(String(describing: error))")
+                        apiError = error
+                    }
+                    catch {
+                        let rawResponse = String(bytes: data, encoding: .utf8)
+                        NSLog("failed parsing error response: \(String(describing: rawResponse)) -> \(error)")
+                    }
+                }
                 DispatchQueue.main.async {
-                    completion(nil, nil)
+                    completion(nil, apiError, nil)
                 }
                 return
             }
 
             do {
                 let result = try JSONDecoder().decode(T.self, from: data)
-                var json: [String: Any]? = nil
+                var json: [String: Any]?
                 if returnRaw {
                     json = try JSONSerialization.jsonObject(with: data, options: .allowFragments) as? [String: Any]
                 }
                 DispatchQueue.main.async {
-                    completion(result, json)
+                    completion(result, nil, json)
                 }
             } catch {
                 NSLog("error parsing response from \(url): \(error)")

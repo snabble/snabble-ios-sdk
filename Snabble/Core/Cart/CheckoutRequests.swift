@@ -20,12 +20,13 @@ extension ShoppingCart {
         let customerInfo = Cart.CustomerInfo(loyaltyCard: self.config.loyaltyCard)
         let cart = Cart(session: UUID().uuidString, shopID: self.config.shopId, customer: customerInfo, items: items)
 
+        NSLog("create checkout session: \(cart.session)")
         guard let request = SnabbleAPI.request(.post, self.config.checkoutInfoUrl, body: cart, timeout: timeout) else {
             completion(nil)
             return
         }
 
-        SnabbleAPI.perform(request, returnRaw: true) { (result: SignedCheckoutInfo?, json) in
+        SnabbleAPI.perform(request, returnRaw: true) { (result: SignedCheckoutInfo?, error, json) in
             var newResult = result
             newResult?.rawJson = json
             completion(newResult)
@@ -49,16 +50,21 @@ extension SignedCheckoutInfo {
     ///   - paymentMethod: the user's chosen payment method
     ///   - timeout: the timeout for the HTTP request (0 for the system default timeout)
     ///   - completion: is called on the main thread with the result of the API call,
-    ///     with either a `CheckoutProcess` object or `nil` if an error occurred
-    public func createCheckoutProcess(paymentMethod: PaymentMethod, timeout: TimeInterval = 0, completion: @escaping (CheckoutProcess?) -> () ) {
+    ///   - process: the newly created `CheckoutProcess`, or nil on error
+    ///   - error: if not nil, contains the error response from the backend
+    public func createCheckoutProcess(paymentMethod: PaymentMethod, timeout: TimeInterval = 0, completion: @escaping (_ process: CheckoutProcess?, _ error: ApiError?) -> () ) {
         do {
             var dict = [String: Any]()
             dict["paymentMethod"] = paymentMethod.rawValue
             dict["signedCheckoutInfo"] = self.rawJson
 
+            if let checkoutInfo = self.rawJson?["checkoutInfo"] as? [String: Any], let session = checkoutInfo["session"] as? String {
+                NSLog("check process for session: \(session)")
+            }
+
             let data = try JSONSerialization.data(withJSONObject: dict, options: [])
             guard let request = SnabbleAPI.request(.post, self.links.checkoutProcess.href, body: data, timeout: timeout) else {
-                completion(nil)
+                completion(nil, nil)
                 return
             }
 
@@ -75,15 +81,16 @@ extension CheckoutProcess {
     /// get the current state of this checkout process
     ///
     /// - Parameters:
-    ///    - timeout: the timeout for the HTTP request (0 for no timeout)
-    ///    - completion: is called on the main thread with the result of the API call,
-    ///      with either a `CheckoutProcess` object or `nil` if an error occurred
+    ///   - timeout: the timeout for the HTTP request (0 for no timeout)
+    ///   - completion: is called on the main thread with the result of the API call,
+    ///   - process: the `CheckoutProcess` returned from the backend, or nil on error
+    ///   - error: if not nil, contains the error response from the backend
     /// - Returns:
     ///    a `URLSessionDataTask` object or nil (if the request couldn't be started)
     @discardableResult
-    public func update(timeout: TimeInterval = 0, completion: @escaping (CheckoutProcess?) -> () ) -> URLSessionDataTask? {
+    public func update(timeout: TimeInterval = 0, completion: @escaping (_ process: CheckoutProcess?, _ error: ApiError?) -> () ) -> URLSessionDataTask? {
         guard let url = APIConfig.shared.urlFor(self.links.`self`.href) else {
-            completion(nil)
+            completion(nil, nil)
             return nil
         }
 
@@ -94,13 +101,14 @@ extension CheckoutProcess {
     /// abort this checkout process
     ///
     /// - Parameters:
-    ///    - timeout: the timeout for the HTTP request (0 for no timeout)
-    ///    - completion: is called on the main thread with the result of the API call,
-    ///      with either a `CheckoutProcess` object or `nil` if an error occurred
-    public func abort(timeout: TimeInterval = 0, completion: @escaping (CheckoutProcess?) -> () ) {
+    ///   - timeout: the timeout for the HTTP request (0 for no timeout)
+    ///   - completion: is called on the main thread with the result of the API call,
+    ///   - process: the `CheckoutProcess` returned from the backend, or nil on error
+    ///   - error: if not nil, contains the error response from the backend
+    public func abort(timeout: TimeInterval = 0, completion: @escaping (_ process: CheckoutProcess?, _ error: ApiError?) -> () ) {
         let abort = AbortRequest(aborted: true)
         guard let request = SnabbleAPI.request(.patch, self.links.`self`.href, body: abort, timeout: timeout) else {
-            completion(nil)
+            completion(nil, nil)
             return
         }
 

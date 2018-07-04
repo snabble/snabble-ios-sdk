@@ -94,7 +94,7 @@ class CashCheckoutViewController: UIViewController {
 
         self.delegate.track(.paymentCancelled)
 
-        self.process.abort { process in
+        self.process.abort { process, error in
             self.navigationController?.popToRootViewController(animated: true)
         }
     }

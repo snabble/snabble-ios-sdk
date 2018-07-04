@@ -48,7 +48,7 @@ class PaymentProcessPoller {
     private func checkApproval(_ timer: Timer) {
         print("checking approval...")
 
-        self.task = self.process.update { process in
+        self.task = self.process.update { process, error in
             guard
                 let process = process,
                 let paymentApproval = process.paymentApproval,
@@ -67,7 +67,7 @@ class PaymentProcessPoller {
     private func checkPayment(_ timer: Timer) {
         print("checking payment...")
 
-        self.task = self.process.update { process in
+        self.task = self.process.update { process, error in
             guard let process = process, process.paymentState != .pending else {
                 return
             }

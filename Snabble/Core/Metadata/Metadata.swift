@@ -206,7 +206,7 @@ public extension AppData {
         guard let request = SnabbleAPI.request(.get, url, parameters: parameters, timeout: 0) else {
             return completion(nil)
         }
-        SnabbleAPI.perform(request) { (appData: AppData?) in
+        SnabbleAPI.perform(request) { (appData: AppData?, error) in
             if let projectConfig = appData?.project {
                 APIConfig.shared.config = projectConfig
             }
