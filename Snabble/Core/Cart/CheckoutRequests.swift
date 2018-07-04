@@ -15,21 +15,21 @@ extension ShoppingCart {
     ///   - timeout: the timeout for the HTTP request (0 for the system default timeout)
     ///   - completion: is called on the main thread with the result of the API call,
     ///    with either a `SignedCheckoutInfo` object or `nil` if an error occurred
-    public func createCheckoutInfo(timeout: TimeInterval = 0, completion: @escaping (SignedCheckoutInfo?) -> () ) {
+    public func createCheckoutInfo(timeout: TimeInterval = 0, completion: @escaping (SignedCheckoutInfo?, ApiError?) -> () ) {
         let items = self.items.map { $0.cartItem() }
         let customerInfo = Cart.CustomerInfo(loyaltyCard: self.config.loyaltyCard)
         let cart = Cart(session: UUID().uuidString, shopID: self.config.shopId, customer: customerInfo, items: items)
 
         NSLog("create checkout session: \(cart.session)")
         guard let request = SnabbleAPI.request(.post, self.config.checkoutInfoUrl, body: cart, timeout: timeout) else {
-            completion(nil)
+            completion(nil, nil)
             return
         }
 
         SnabbleAPI.perform(request, returnRaw: true) { (result: SignedCheckoutInfo?, error, json) in
             var newResult = result
             newResult?.rawJson = json
-            completion(newResult)
+            completion(newResult, error)
         }
     }
 

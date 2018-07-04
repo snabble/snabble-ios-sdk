@@ -6,9 +6,20 @@
 
 import UIKit
 
+/// a protocol that users of `ShoppingCartViewController` must implement
 public protocol ShoppingCartDelegate: AnalyticsDelegate, MessageDelegate {
+    /// called when the user wants to initiate payment.
+    /// Implementations should usually create a `PaymentProcess` instance and invoke its `start` method
     func gotoPayment(_ info: SignedCheckoutInfo, _ cart: ShoppingCart)
+
+    /// called when the "Scan Products" button in the cart's empty state is tapped
     func gotoScanner()
+
+    /// called when an error occurred
+    ///
+    /// - Parameter error: if not nil, the ApiError from the backend
+    /// - Returns: true if the error has been dealt with and no error messages need to be shown from the SDK
+    func handleCheckoutError(_ error: ApiError?) -> Bool
 }
  
 public class ShoppingCartViewController: UIViewController {
@@ -182,14 +193,17 @@ public class ShoppingCartViewController: UIViewController {
         spinner.centerYAnchor.constraint(equalTo: button.centerYAnchor).isActive = true
         button.isEnabled = false
 
-        self.shoppingCart.createCheckoutInfo() { info in
+        self.shoppingCart.createCheckoutInfo() { info, error in
             spinner.stopAnimating()
             spinner.removeFromSuperview()
             button.isEnabled = true
             if let info = info {
                 self.delegate.gotoPayment(info, self.shoppingCart)
             } else {
-                self.delegate.showInfoMessage("Snabble.Payment.errorStarting".localized())
+                let handled = self.delegate.handleCheckoutError(error)
+                if !handled {
+                    self.delegate.showInfoMessage("Snabble.Payment.errorStarting".localized())
+                }
             }
         }
     }
