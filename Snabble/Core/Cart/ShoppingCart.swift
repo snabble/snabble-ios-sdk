@@ -244,6 +244,13 @@ extension ShoppingCart {
         } catch let error {
             NSLog("error saving cart \(self.config.name): \(error)")
         }
+
+        let items = self.items.map { $0.cartItem() }
+        let customerInfo = Cart.CustomerInfo(loyaltyCard: self.config.loyaltyCard)
+        let cart = Cart(session: "n/a", shopID: self.shopId, customer: customerInfo, items: items)
+
+        let event = AppEvent(cart: cart)
+        event.post()
     }
 
     // load this shoppping cart from disk

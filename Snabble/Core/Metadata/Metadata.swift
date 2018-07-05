@@ -10,11 +10,12 @@ public struct Link: Decodable {
 }
 
 public struct MetadataLinks: Decodable {
-    public var appdb: Link
-    public var checkoutInfo: Link
-    public var productBySku: Link
-    public var productByCode: Link
-    public var productByWeighItemId: Link
+    public let appdb: Link
+    public let appEvents: Link
+    public let checkoutInfo: Link
+    public let productBySku: Link
+    public let productByCode: Link
+    public let productByWeighItemId: Link
 }
 
 public struct AppData: Decodable {
@@ -207,8 +208,9 @@ public extension AppData {
             return completion(nil)
         }
         SnabbleAPI.perform(request) { (appData: AppData?, error) in
-            if let projectConfig = appData?.project {
-                APIConfig.shared.config = projectConfig
+            if let appData = appData {
+                APIConfig.shared.config = appData.project
+                APIConfig.shared.links = appData.links
             }
             completion(appData)
         }

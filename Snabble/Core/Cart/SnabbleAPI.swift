@@ -32,6 +32,7 @@ public class APIConfig {
     public static let shared = APIConfig()
 
     public internal(set) var project: SnabbleProject
+    public internal(set) var links: MetadataLinks?
     public internal(set) var config: ProjectConfig {
         didSet {
             print("config set to \(config)")
