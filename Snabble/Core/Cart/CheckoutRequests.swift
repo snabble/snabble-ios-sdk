@@ -37,13 +37,6 @@ extension ShoppingCart {
 
 extension SignedCheckoutInfo {
 
-    // since we need to pass the originally-received SignedCheckoutInfo as-is,
-    // we can't use the struct but have to build this manually:
-    struct CreateCheckoutProcess {
-        let paymentMethod: String
-        let signedCheckoutInfo: SignedCheckoutInfo
-    }
-
     /// create a checkout process
     ///
     /// - Parameters:
@@ -54,6 +47,8 @@ extension SignedCheckoutInfo {
     ///   - error: if not nil, contains the error response from the backend
     public func createCheckoutProcess(paymentMethod: PaymentMethod, timeout: TimeInterval = 0, completion: @escaping (_ process: CheckoutProcess?, _ error: ApiError?) -> () ) {
         do {
+            // since we need to pass the originally-received SignedCheckoutInfo as-is,
+            // we can't use the struct but have to build this manually:
             var dict = [String: Any]()
             dict["paymentMethod"] = paymentMethod.rawValue
             dict["signedCheckoutInfo"] = self.rawJson
