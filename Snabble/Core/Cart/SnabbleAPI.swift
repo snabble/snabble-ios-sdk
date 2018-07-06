@@ -29,7 +29,7 @@ public struct SnabbleProject {
 /// Applications must call `setup()` before they make their first API call.
 public class APIConfig {
     /// the singleton instance
-    public static let shared = APIConfig()
+    static let shared = APIConfig()
 
     public internal(set) var project: SnabbleProject
     public internal(set) var links: MetadataLinks?
@@ -62,7 +62,11 @@ public class APIConfig {
     ///   - baseUrl: the base URL (e.g. "https://api.snabble.io")" to use for relative URLs
     ///   - project: the `SnabbleProject` instance that describes your project
     ///
-    public func setup(with project: SnabbleProject, using baseUrl: String) {
+    public static func setup(with project: SnabbleProject, using baseUrl: String) {
+        shared.setup(with: project, using: baseUrl)
+    }
+
+    func setup(with project: SnabbleProject, using baseUrl: String) {
         self.project = project
         self.baseUrl = baseUrl
     }

@@ -41,12 +41,12 @@ struct AppEvent: Encodable {
     let type: EventType
     let appId: String
     let payload: Payload
+    let project: String
+    let timestamp: String
 
     let shopId: String?
-    let project: String?
     let id: String?
     let agent: String?
-    let timestamp: String?
 
     private init(type: EventType, payload: Payload,
                      shopId: String? = nil, id: String? = nil,
@@ -74,7 +74,8 @@ struct AppEvent: Encodable {
         self.init(type: .error, payload: error, shopId: shopId)
     }
 
-    init(cart: Cart) {
+    init(_ shoppingCart: ShoppingCart) {
+        let cart = shoppingCart.createCart()
         self.init(type: .cart, payload: Payload.cart(cart), shopId: cart.shopID)
     }
 
@@ -83,7 +84,7 @@ struct AppEvent: Encodable {
 extension AppEvent {
 
     struct Empty: Decodable { }
-    
+
     func post() {
         guard
             let appEvents = APIConfig.shared.links?.appEvents.href,
@@ -92,6 +93,7 @@ extension AppEvent {
             return
         }
 
+        NSLog("posting event \(String(describing: self))")
         SnabbleAPI.perform(request) { (result: Empty?, error) in
             if let error = error {
                 NSLog("error posting event: \(error)")

@@ -28,6 +28,9 @@ public struct CartConfig {
     /// the customer's loyalty card, if known
     public var loyaltyCard: String? = nil
 
+    /// the maximum age of a shopping cart, in seconds. Set this to 0 to keep carts forever
+    public var maxAge: TimeInterval = 14400
+
     public init() {
         self.directory = NSSearchPathForDirectoriesInDomains(.documentDirectory, .userDomainMask, true).first!
     }
@@ -90,29 +93,46 @@ public class ShoppingCart {
     public static let maxAmount = 9999
 
     private(set) public var items = [CartItem]()
-    var config: CartConfig
+    private(set) public var session = ""
+    private(set) public var lastSaved: Date?
+
+    private var timer: Timer?
+
+    private(set) var config: CartConfig
 
     public init(_ config: CartConfig) {
         self.config = config
-        self.items = self.loadItems()
+        let storage = self.loadCart()
+        self.items = storage.items
+        self.session = storage.session
     }
 
-    /// get/set this cart's `shopId`
+    /// check if this cart is outdated (ie. it was last saved more than `config.maxAge` seconds ago)
+    public var outdated: Bool {
+        return self.isTooOld(self.lastSaved)
+    }
+
+    private func isTooOld(_ date: Date?) -> Bool {
+        if let date = date, self.config.maxAge > 0 {
+            let now = Date.timeIntervalSinceReferenceDate
+            return date.timeIntervalSinceReferenceDate < now - self.config.maxAge
+        }
+        return false
+    }
+
+    /// get this cart's `shopId`
     public var shopId: String {
-        get { return self.config.shopId }
-        set { self.config.shopId = newValue }
+        return self.config.shopId
     }
 
-    /// get/set this cart's `loyaltyCard`
+    /// get this cart's `loyaltyCard`
     public var loyaltyCard: String? {
-        get { return self.config.loyaltyCard }
-        set { self.config.loyaltyCard = newValue }
+        return self.config.loyaltyCard
     }
 
-    /// get/set this cart's `createInfoUrl`
+    /// get this cart's `createInfoUrl`
     public var checkoutInfoUrl: String {
-        get { return self.config.checkoutInfoUrl }
-        set { self.config.checkoutInfoUrl = newValue }
+        return self.config.checkoutInfoUrl
     }
 
     /// add a Product. if already present and not weight dependent, increase its quantity
@@ -213,13 +233,35 @@ public class ShoppingCart {
     }
     
     /// remove all items from the cart
-    public func removeAll() {
+    public func removeAll(endSession: Bool = false) {
         self.items.removeAll()
         self.save()
+
+        if endSession {
+            CartEvent.sessionEnd(self)
+            self.session = ""
+        }
     }
 
     private func indexOf(_ product: Product) -> Int? {
         return self.items.index { $0.product.sku == product.sku }
+    }
+}
+
+struct CartStorage: Codable {
+    let items: [CartItem]
+    let session: String
+    var lastSaved: Date?
+
+    init() {
+        self.items = []
+        self.session = ""
+    }
+
+    init(_ shoppingCart: ShoppingCart) {
+        self.items = shoppingCart.items
+        self.session = shoppingCart.session
+        self.lastSaved = shoppingCart.lastSaved
     }
 }
 
@@ -239,46 +281,70 @@ extension ShoppingCart {
                 try fileManager.createDirectory(atPath: self.config.directory, withIntermediateDirectories: true, attributes: nil)
             }
 
-            let encodedItems = try JSONEncoder().encode(self.items)
+            self.lastSaved = Date()
+            if self.session == "" {
+                self.session = UUID().uuidString
+                CartEvent.sessionStart(self)
+            }
+            let storage = CartStorage(self)
+            let encodedItems = try JSONEncoder().encode(storage)
             try encodedItems.write(to: self.cartUrl(), options: .atomic)
         } catch let error {
             NSLog("error saving cart \(self.config.name): \(error)")
         }
 
-        let items = self.items.map { $0.cartItem() }
-        let customerInfo = Cart.CustomerInfo(loyaltyCard: self.config.loyaltyCard)
-        let cart = Cart(session: "n/a", shopID: self.shopId, customer: customerInfo, items: items)
-
-        let event = AppEvent(cart: cart)
-        event.post()
+        timer?.invalidate()
+        timer = Timer.scheduledTimer(withTimeInterval: 3, repeats: false) { timer in
+            CartEvent.cart(self)
+        }
     }
 
     // load this shoppping cart from disk
-    private func loadItems() -> [CartItem] {
+    private func loadCart() -> CartStorage {
         let fileManager = FileManager.default
         if !fileManager.fileExists(atPath: self.cartUrl().path) {
-            return []
+            return CartStorage()
         }
         
         do {
             let data = try Data(contentsOf: self.cartUrl())
-            let items = try JSONDecoder().decode([CartItem].self, from: data)
-            return items.map { CartItem($0.quantity, self.refreshLocal($0.product), $0.scannedCode) }
+            let storage = try JSONDecoder().decode(CartStorage.self, from: data)
+            if self.isTooOld(storage.lastSaved) {
+                return CartStorage()
+            }
+            return storage
         } catch let error {
             NSLog("error loading cart \(self.config.name): \(error)")
-            return []
+            return CartStorage()
         }
     }
+}
 
-    private func refreshLocal(_ product: Product) -> Product {
-        if let p = self.config.productProvider?.productBySku(product.sku) {
-            return p
-        } else {
-            return product
-        }
+extension ShoppingCart {
+
+    func createCart() -> Cart {
+        let items = self.items.map { $0.cartItem() }
+        let customerInfo = Cart.CustomerInfo(loyaltyCard: self.loyaltyCard)
+        return Cart(session: self.session, shopID: self.shopId, customer: customerInfo, items: items)
     }
 
 }
 
+// MARK: send events
+struct CartEvent {
+    static func sessionStart(_ cart: ShoppingCart) {
+        let event = AppEvent(.sessionStart, session: cart.session, shopId: cart.shopId)
+        event.post()
+    }
 
+    static func sessionEnd(_ cart: ShoppingCart) {
+        let event = AppEvent(.sessionEnd, session: cart.session, shopId: cart.shopId)
+        event.post()
+    }
 
+    static func cart(_ cart: ShoppingCart) {
+        let event = AppEvent(cart)
+        event.post()
+    }
+
+}
