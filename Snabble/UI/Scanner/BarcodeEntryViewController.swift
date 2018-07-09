@@ -107,7 +107,8 @@ class BarcodeEntryViewController: UIViewController, UISearchBarDelegate, UITable
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         let product = self.filteredProducts[indexPath.row]
 
-        self.addCode(product.scannableCodes.first!)
+        let matchingCode = product.scannableCodes.filter { $0.hasPrefix(self.searchText) }.first ?? product.scannableCodes.first!
+        self.addCode(matchingCode)
     }
 
     func addEnteredCode() {
