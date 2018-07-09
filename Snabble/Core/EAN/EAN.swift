@@ -121,17 +121,20 @@ public enum EAN {
     /// parse an EAN-8, EAN-13 or EAN-14
     ///
     /// - Parameter code: the EAN code.
-    ///   This must be a 7 or 8 digit string for EAN-8, or a 12 or 13 digit string for EAN-13, or a 14 digit string for EAN-14
+    ///   This must be a
+    ///   - 7 or 8 digit string for EAN-8
+    ///   - 12 or 13 digit string for EAN-13
+    ///   - 14 or 16 digit string for EAN-14
     ///
     ///   if `code` has 8, 13 or 14 digits, the last digit is checked to be the correct check digit for this code.
     ///   if `code` has 7 or 12 digits, the check digit for this code is calculated and appended to the code.
-    ///
+    ///   if `code` has 16 digits, it is treated as an EAN-14 embedded in a Code-128 (i.e, prefixed with "01")
     /// - Returns: an EANCode, or nil if the code did not represent a well-formed EAN-8, EAN-13 or EAN-14
     public static func parse(_ code: String) -> EANCode? {
         switch code.count {
         case 7, 8: return EAN8(code)
         case 12, 13: return EAN13(code)
-        case 14: return EAN14(code)
+        case 14, 16: return EAN14(code)
         default: return nil
         }
     }
