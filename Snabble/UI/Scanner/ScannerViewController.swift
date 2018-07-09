@@ -330,7 +330,7 @@ extension ScannerViewController {
                 return
             }
 
-            self.delegate.track(.scanProduct(code))
+            self.delegate.track(.scanProduct(ean.code))
 
             self.productType = product.type
             self.showConfirmation(for: product, ean)
