@@ -6,6 +6,9 @@
 
 extension ProductDB {
 
+    func getSingleProduct(_ url: String, _ placeholder: String, _ identifier: String, completion: @escaping (LookupResult?, Bool) -> () ) {
+    }
+
     func getSingleProduct(_ url: String, _ placeholder: String, _ identifier: String, completion: @escaping (Product?, Bool) -> () ) {
         let session = URLSession(configuration: URLSessionConfiguration.default)
 

@@ -354,7 +354,7 @@ extension ScannerViewController {
                 completion(product)
             }
         } else {
-            self.productProvider.productByScannableCode(ean.code) { product, error in
+            self.productProvider.productByScannableCode(ean.code) { result in
                 completion(product)
             }
         }

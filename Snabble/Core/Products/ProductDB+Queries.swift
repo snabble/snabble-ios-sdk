@@ -76,7 +76,7 @@ extension ProductDB {
         return []
     }
 
-    func productByScannableCode(_ dbQueue: DatabaseQueue, _ code: String) -> Product? {
+    func productByScannableCode(_ dbQueue: DatabaseQueue, _ code: String) -> LookupResult? {
         do {
             let row = try dbQueue.inDatabase { db in
                 return try Row.fetchOne(db, ProductDB.baseQuery + " " + """
@@ -84,9 +84,17 @@ extension ProductDB {
                     where s.code = ?
                     """, arguments: [code])
                 }
-            return self.productFromRow(dbQueue, row)
+            if let product = self.productFromRow(dbQueue, row) {
+                return LookupResult(product: product, code: code)
+            }
+            return nil
         } catch {
             NSLog("db error: \(error)")
+        }
+
+        if code.first == "0", let codeInt = Int(code) {
+            // no product found. try the lookup again, with all leading zeroes removed from `code`
+            return self.productByScannableCode(dbQueue, String(codeInt))
         }
         return nil
     }
