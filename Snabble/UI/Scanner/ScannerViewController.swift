@@ -147,9 +147,9 @@ public class ScannerViewController: UIViewController {
     
     // MARK: - scan confirmation views
     
-    private func showConfirmation(for product: Product, _ ean: EANCode) {
+    private func showConfirmation(for product: Product, _ code: String) {
         self.confirmationVisible = true
-        self.scanConfirmationView.present(product, cart: self.shoppingCart, ean: ean)
+        self.scanConfirmationView.present(product, cart: self.shoppingCart, code: code)
 
         self.scanningView.stopScanning()
         self.hideScanConfirmationView(false)
@@ -296,13 +296,8 @@ extension ScannerViewController {
         }
     }
 
-    private func handleScannedCode(_ code: String) {
-        self.lastScannedCode = code
-
-        guard let ean = EAN.parse(code) else {
-            self.scannedUnknown("Snabble.Scanner.unknownBarcode".localized(), code)
-            return
-        }
+    private func handleScannedCode(_ scannedCode: String) {
+        self.lastScannedCode = scannedCode
 
         self.timer?.invalidate()
         self.timer = Timer.scheduledTimer(withTimeInterval: 0.3, repeats: false) { timer in
@@ -311,7 +306,7 @@ extension ScannerViewController {
 
         self.scanningView.stopScanning()
 
-        self.productForEan(ean) { product in
+        self.productForCode(scannedCode) { product, code in
             self.timer?.invalidate()
             self.timer = nil
             self.spinner.stopAnimating()
@@ -322,40 +317,45 @@ extension ScannerViewController {
                 return
             }
 
+            let ean = EAN.parse(scannedCode)
             // handle scanning the shelf code of a pre-weighed product
-            if product.type == .preWeighed && ean.embeddedData == nil {
+            if product.type == .preWeighed && ean?.embeddedData == nil {
                 let msg = "Snabble.Scanner.scannedShelfCode".localized()
                 self.scannedUnknown(msg, code)
                 self.scanningView.startScanning()
                 return
             }
 
-            self.delegate.track(.scanProduct(ean.code))
+            self.delegate.track(.scanProduct(code))
 
             self.productType = product.type
-            self.showConfirmation(for: product, ean)
+            self.showConfirmation(for: product, code)
             self.lastScannedCode = ""
         }
     }
 
-    private func productForEan(_ ean: EANCode, completion: @escaping (Product?) -> () ) {
-        if ean.hasEmbeddedData {
+    private func productForCode(_ code: String, completion: @escaping (Product?, String) -> () ) {
+        if let ean = EAN.parse(code), ean.hasEmbeddedData {
             if APIConfig.shared.config.verifyInternalEanChecksum {
                 guard
                     let ean13 = ean as? EAN13,
                     ean13.priceFieldOk()
                 else {
-                    completion(nil)
+                    completion(nil, "")
                     return
                 }
             }
             
             self.productProvider.productByWeighItemId(ean.codeForLookup) { product, error in
-                completion(product)
+                completion(product, code)
             }
         } else {
-            self.productProvider.productByScannableCode(ean.code) { result in
-                completion(product)
+            self.productProvider.productByScannableCode(code) { result, error in
+                if let result = result {
+                    completion(result.product, result.code)
+                } else {
+                    completion(nil, "")
+                }
             }
         }
     }

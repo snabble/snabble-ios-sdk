@@ -87,13 +87,13 @@ extension ProductDB {
             if let product = self.productFromRow(dbQueue, row) {
                 return LookupResult(product: product, code: code)
             }
-            return nil
         } catch {
             NSLog("db error: \(error)")
         }
 
         if code.first == "0", let codeInt = Int(code) {
             // no product found. try the lookup again, with all leading zeroes removed from `code`
+            print("2nd db lookup attempt \(code) -> \(codeInt)")
             return self.productByScannableCode(dbQueue, String(codeInt))
         }
         return nil

@@ -57,7 +57,12 @@ public struct ProductDBConfiguration {
     }
 }
 
-///
+/// the return type from `productByScannableCode`.
+/// - `product` contains the product found
+/// - `code` contains the code by which the product was found, which is not necessarily the
+///    same as the one that was passed to `productByScannableCode` as a parameter
+///    (e.g. when a UPC-A code is scanned as an EAN-13, and the leading "0" filler digits had
+///    to be stripped)
 public struct LookupResult {
     public let product: Product
     public let code: String
@@ -107,7 +112,7 @@ public protocol ProductProvider: class {
     /// - Returns: an array of `Product`
     func discountedProducts() -> [Product]
 
-    /// get a product by (one of) its scannable codes
+    /// get a product and the code by which it was found by (one of) its scannable codes
     func productByScannableCode(_ code: String) -> LookupResult?
 
     /// get a product by (one of) its weighItemIds

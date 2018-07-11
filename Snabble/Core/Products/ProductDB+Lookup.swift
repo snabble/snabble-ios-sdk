@@ -7,6 +7,14 @@
 extension ProductDB {
 
     func getSingleProduct(_ url: String, _ placeholder: String, _ identifier: String, completion: @escaping (LookupResult?, Bool) -> () ) {
+        // TODO: once the backend supports this, return the actual code used to find this product, instead of the identifier
+        self.getSingleProduct(url, placeholder, identifier) { (product: Product?, error: Bool) in
+            if let product = product {
+                completion(LookupResult(product: product, code: identifier), error)
+            } else {
+                completion(nil, error)
+            }
+        }
     }
 
     func getSingleProduct(_ url: String, _ placeholder: String, _ identifier: String, completion: @escaping (Product?, Bool) -> () ) {
