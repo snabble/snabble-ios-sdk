@@ -92,6 +92,10 @@ public class ShoppingCart {
     
     public static let maxAmount = 9999
 
+    /// this is intended mainly for the EmbeddedCodesCheckout - use this to append additional codes
+    /// (e.g. special "QR code purchase" marker codes) to the list of scanned codes of this cart
+    public var additionalCodes: [String]?
+
     private(set) public var items = [CartItem]()
     private(set) public var session = ""
     private(set) public var lastSaved: Date?
