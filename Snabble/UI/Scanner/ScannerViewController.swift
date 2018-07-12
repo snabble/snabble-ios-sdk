@@ -141,8 +141,11 @@ public class ScannerViewController: UIViewController {
         self.productProvider = productProvider
         self.shoppingCart = cart
 
-        self.closeConfirmation()
-        self.navigationController?.popToRootViewController(animated: false)
+        // avoid camera permission query if this is called before we've ever been on-screen
+        if self.scanningView != nil {
+            self.closeConfirmation()
+            self.navigationController?.popToRootViewController(animated: false)
+        }
     }
     
     // MARK: - scan confirmation views
