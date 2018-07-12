@@ -75,18 +75,7 @@ class EmbeddedCodesCheckoutViewController: UIViewController {
         let nib = UINib(nibName: "QRCodeCell", bundle: Snabble.bundle)
         self.collectionView.register(nib, forCellWithReuseIdentifier: "qrCodeCell")
 
-        let codes: [String] = self.cart.items.reduce(into: [], { result, item in
-            if item.product.type == .userMustWeigh {
-                // generate an EAN with the embedded weight
-                if let template = item.product.weighedItemIds?.first {
-                    let ean = self.encodeWeightInEan(template, weight: item.quantity)
-                    result.append(ean)
-                }
-            } else {
-                result.append(contentsOf: Array(repeating: item.scannedCode, count: item.quantity))
-            }
-        })
-
+        let codes = self.codesForQR()
         let chunks = (Float(codes.count) / Float(self.config.maxCodes)).rounded(.up)
         let chunkSize = Int((Float(codes.count) / chunks).rounded(.up))
         self.codeblocks = stride(from: 0, to: codes.count, by: chunkSize).map {
@@ -133,6 +122,25 @@ class EmbeddedCodesCheckoutViewController: UIViewController {
         super.viewWillDisappear(animated)
 
         UIScreen.main.brightness = self.initialBrightness
+    }
+
+    private func codesForQR() -> [String] {
+        let codes: [String] = self.cart.items.reduce(into: [], { result, item in
+            if item.product.type == .userMustWeigh {
+                // generate an EAN with the embedded weight
+                if let template = item.product.weighedItemIds?.first {
+                    let ean = self.encodeWeightInEan(template, weight: item.quantity)
+                    result.append(ean)
+                }
+            } else {
+                result.append(contentsOf: Array(repeating: item.scannedCode, count: item.quantity))
+            }
+        })
+
+        if let additionalCodes = self.cart.additionalCodes {
+            return codes + additionalCodes
+        }
+        return codes
     }
 
     private func setButtonTitle() {
