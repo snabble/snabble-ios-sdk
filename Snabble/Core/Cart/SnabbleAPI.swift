@@ -253,9 +253,12 @@ struct SnabbleAPI {
     ///   - raw: the JSON structure returned by the server, or nil if an error occurred
     @discardableResult
     static func perform<T: Decodable>(_ request: URLRequest, returnRaw: Bool, _ completion: @escaping (_ obj: T?, _ error: ApiError?, _ raw: [String: Any]?) -> () ) -> URLSessionDataTask {
+        let start = Date.timeIntervalSinceReferenceDate
         let session = URLSession(configuration: URLSessionConfiguration.default)
         let task = session.dataTask(with: request) { rawData, response, error in
             let url = request.url?.absoluteString ?? "n/a"
+            let elapsed = Date.timeIntervalSinceReferenceDate - start
+            NSLog("get \(url) took \(elapsed)s")
             guard
                 let data = rawData,
                 let response = response as? HTTPURLResponse,
