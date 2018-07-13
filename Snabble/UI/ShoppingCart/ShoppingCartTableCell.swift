@@ -121,11 +121,9 @@ class ShoppingCartTableCell: UITableViewCell {
     }
 
     private func showQuantity() {
-        guard let ean = EAN.parse(self.item.scannedCode) else {
-            return
-        }
+        let ean = EAN.parse(self.item.scannedCode)
 
-        let showWeight = ean.hasEmbeddedWeight || self.item.product.type == .userMustWeigh
+        let showWeight = ean?.hasEmbeddedWeight == true || self.item.product.type == .userMustWeigh
         let gram = showWeight ? "g" : ""
         self.quantityLabel.text = "\(self.quantity)\(gram)"
 
@@ -141,7 +139,7 @@ class ShoppingCartTableCell: UITableViewCell {
                 let depositPrice = Price.format(deposit * self.quantity)
                 let plusDeposit = String(format: "Snabble.Scanner.plusDeposit".localized(), depositPrice)
                 self.priceLabel.text = "× \(itemPrice) \(plusDeposit) = \(total)"
-            } else if let units = ean.embeddedUnits {
+            } else if let units = ean?.embeddedUnits {
                 self.quantityLabel.text = "\(units)"
                 let itemPrice = Price.format(self.item.product.price)
                 self.priceLabel.text  = "× \(itemPrice) = \(total)"
