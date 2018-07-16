@@ -6,18 +6,17 @@
 
 extension ProductDB {
 
-    func getSingleProduct(_ url: String, _ placeholder: String, _ identifier: String, completion: @escaping (LookupResult?, Bool) -> () ) {
-        // TODO: once the backend supports this, return the actual code used to find this product, instead of the identifier
-        self.getSingleProduct(url, placeholder, identifier) { (product: Product?, error: Bool) in
-            if let product = product {
-                completion(LookupResult(product: product, code: identifier), error)
+    func getSingleProduct(_ url: String, _ placeholder: String, _ identifier: String, completion: @escaping (Product?, Bool) -> () ) {
+        self.getSingleProduct(url, placeholder, identifier) { (result: LookupResult?, error: Bool) in
+            if let result = result {
+                completion(result.product, error)
             } else {
                 completion(nil, error)
             }
         }
     }
 
-    func getSingleProduct(_ url: String, _ placeholder: String, _ identifier: String, completion: @escaping (Product?, Bool) -> () ) {
+    func getSingleProduct(_ url: String, _ placeholder: String, _ identifier: String, completion: @escaping (LookupResult?, Bool) -> () ) {
         let session = URLSession(configuration: URLSessionConfiguration.default)
 
         // TODO: is this the right value?
@@ -71,14 +70,15 @@ extension ProductDB {
         task.resume()
     }
 
-    func completeProduct(_ apiProduct: APIProduct, _ deposit: Int? = nil, completion: @escaping (Product?, Bool) -> () ) {
-        let product = apiProduct.convert(deposit)
+    func completeProduct(_ apiProduct: APIProduct, _ deposit: Int? = nil, completion: @escaping (LookupResult?, Bool) -> () ) {
+        let matchingCode = apiProduct.matchingCode ?? ""
+        let result = LookupResult(product: apiProduct.convert(deposit), code: matchingCode)
         DispatchQueue.main.async {
-            completion(product, false)
+            completion(result, false)
         }
     }
 
-    func returnError(_ msg: String, completion: @escaping (Product?, Bool) -> () ) {
+    func returnError(_ msg: String, completion: @escaping (LookupResult?, Bool) -> () ) {
         NSLog(msg)
         DispatchQueue.main.sync {
             completion(nil, true)
@@ -102,6 +102,7 @@ struct APIProduct: Codable {
     let weighing: Weighing?
     let saleRestriction: APISaleRestriction?
     let saleStop: Bool?
+    let matchingCode: String?
 
     enum APIProductType: String, Codable {
         case `default`
