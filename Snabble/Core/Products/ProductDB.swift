@@ -136,9 +136,11 @@ public protocol ProductProvider: class {
     /// - Returns: an array of matching Products
     func productsByScannableCodePrefix(_ prefix: String, filterDeposits: Bool) -> [Product]
 
-    /// asynchronous variants of the product lookup methods
+    func productsBundling(_ sku: String) -> [Product]
+    
+    // MARK: - asynchronous variants of the product lookup methods
 
-    /// get a product by its SKU
+    /// asynchronously get a product by its SKU
     ///
     /// - Parameters:
     ///   - sku: the sku to look for
@@ -147,7 +149,7 @@ public protocol ProductProvider: class {
     ///   - error: whether an error occurred during the lookup.
     func productBySku(_ sku: String, forceDownload: Bool, completion: @escaping (_ product: Product?, _ error: Bool) -> () )
 
-    /// get a product by (one of) its scannable codes
+    /// asynchronously get a product by (one of) its scannable codes
     ///
     /// - Parameters:
     ///   - code: the code to look for
@@ -156,7 +158,7 @@ public protocol ProductProvider: class {
     ///   - error: whether an error occurred during the lookup.
     func productByScannableCode(_ code: String, forceDownload: Bool, completion: @escaping (_ result: LookupResult?, _ error: Bool) -> () )
 
-    /// get a product by (one of) it weigh item ids
+    /// asynchronously get a product by (one of) it weigh item ids
     ///
     /// - Parameters:
     ///   - weighItemId: the id to look for
@@ -605,7 +607,22 @@ extension ProductDB {
         return self.productsByScannableCodePrefix(db, prefix, filterDeposits)
     }
 
-    /// get a product by its SKU
+    /// returns products that bundle `sku`
+    ///
+    /// e.g.
+    ///
+    /// - Parameter sku: SKU of the product
+    /// - Returns: an array of products that contain `sku` as their bundled product
+    public func productsBundling(_ sku: String) -> [Product] {
+        guard let db = self.db else {
+            return []
+        }
+
+        return self.productsBundling(db, sku)
+    }
+
+
+    /// asynchronously get a product by its SKU
     ///
     /// invokes the completion handler on the main thread with the result of the lookup
     ///
@@ -625,7 +642,7 @@ extension ProductDB {
         self.getSingleProduct(self.config.lookupBySkuUrl, "{sku}", sku, completion: completion)
     }
 
-    /// get a product by (one of) it scannable codes
+    /// asynchronously get a product by (one of) it scannable codes
     ///
     /// invokes the completion handler on the main thread with the result of the lookup
     ///
@@ -645,7 +662,7 @@ extension ProductDB {
         self.getSingleProduct(self.config.lookupByCodeUrl, "{code}", code, completion: completion)
     }
 
-    /// get a product by (one of) it weigh item ids
+    /// asynchronously get a product by (one of) it weigh item ids
     ///
     /// invokes the completion handler on the main thread with the result of the lookup
     ///
@@ -664,5 +681,4 @@ extension ProductDB {
 
         self.getSingleProduct(self.config.lookupByIdUrl, "{id}", weighItemId, completion: completion)
     }
-
 }

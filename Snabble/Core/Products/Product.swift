@@ -78,6 +78,10 @@ public struct Product: Codable {
     /// if not nil, refers to the SKU of the product that carries the price information for the deposit
     public let depositSku: String?
 
+    /// if not nil, this is a "bundle product" and `bundledSku` refers to the product this is bundling
+    /// (e.g. a case of beer will have this set, referring to the sku of the individual bottle)
+    public let bundledSku: String?
+
     /// if true, this product represents a deposit and thus shouldn't be displayed in search results
     public let isDeposit: Bool
 
@@ -118,12 +122,13 @@ public struct Product: Codable {
         self.scannableCodes = try container.decode(.scannableCodes)
         self.weighedItemIds = try container.decodeIfPresent(.weighedItemIds)
         self.depositSku = try container.decodeIfPresent(.depositSku)
+        self.bundledSku = try container.decodeIfPresent(.bundledSku)
         self.isDeposit = try container.decode(.isDeposit)
         self.saleRestriction = try container.decodeIfPresent(.saleRestriction) ?? .none
         self.saleStop = try container.decodeIfPresent(.saleStop) ?? false
     }
 
-    public init(sku: String,
+    init(sku: String,
                 name: String,
                 description: String?,
                 subtitle: String?,
@@ -135,6 +140,7 @@ public struct Product: Codable {
                 scannableCodes: Set<String>,
                 weighedItemIds: Set<String>?,
                 depositSku: String?,
+                bundledSku: String?,
                 isDeposit: Bool,
                 deposit: Int?,
                 saleRestriction: SaleRestriction,
@@ -151,6 +157,7 @@ public struct Product: Codable {
         self.scannableCodes = scannableCodes
         self.weighedItemIds = weighedItemIds
         self.depositSku = depositSku
+        self.bundledSku = bundledSku
         self.isDeposit = isDeposit
         self.deposit = deposit
         self.saleRestriction = saleRestriction

@@ -148,6 +148,20 @@ extension ProductDB {
         return []
     }
 
+    func productsBundling(_ dbQueue: DatabaseQueue, _ sku: String) -> [Product] {
+        do {
+            let rows = try dbQueue.inDatabase { db in
+                return try Row.fetchAll(db, ProductDB.baseQuery + " " + """
+                    where p.bundledSku = ?
+                    """, arguments: [sku])
+            }
+            return rows.compactMap { self.productFromRow(dbQueue, $0) }
+        } catch {
+            NSLog("db error: \(error)")
+        }
+        return []
+    }
+
     func metadata(_ dbQueue: DatabaseQueue) -> [String: String] {
         do {
             let rows = try dbQueue.inDatabase { db in
@@ -219,6 +233,7 @@ extension ProductDB {
                         scannableCodes: self.makeSet(row["scannableCodes"]),
                         weighedItemIds: self.makeSet(row["weighItemIds"]),
                         depositSku: depositSku,
+                        bundledSku: row["bundledSku"],
                         isDeposit: row["isDeposit"] == 1,
                         deposit: depositPrice,
                         saleRestriction: self.decodeSaleRestriction(row["saleRestriction"]),

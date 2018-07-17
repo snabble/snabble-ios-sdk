@@ -93,6 +93,7 @@ struct APIProduct: Codable {
     let description: String?
     let subtitle: String?
     let depositProduct: String?
+    let bundledProduct: String?
     let imageUrl: String?
     let productType: APIProductType
     let eans: [String]?
@@ -162,6 +163,7 @@ struct APIProduct: Codable {
                        scannableCodes: scannableCodes,
                        weighedItemIds: weighItemIds,
                        depositSku: self.depositProduct,
+                       bundledSku: self.bundledProduct,
                        isDeposit: self.productType == .deposit,
                        deposit: deposit,
                        saleRestriction: self.saleRestriction?.convert() ?? .none,
