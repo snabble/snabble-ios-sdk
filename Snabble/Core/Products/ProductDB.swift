@@ -121,9 +121,10 @@ public protocol ProductProvider: class {
     ///
     /// get products matching `name`
     ///
+    /// The project's `useFTS` flag must be `true` for this to work.
+    ///
     /// - Parameter name: the string to search for. The search is case- and diacritic-insensitive
     /// - Returns: an array of matching `Product`s
-    @available(iOS, deprecated: 1.0, message: "this method is going away soon")
     func productsByName(_ name: String, filterDeposits: Bool) -> [Product]
 
     ///
@@ -192,7 +193,6 @@ public extension ProductProvider {
         self.productByWeighItemId(code, forceDownload: false, completion: completion)
     }
 
-    @available(iOS, deprecated, message: "this method is going away soon")
     public func productsByName(_ name: String) -> [Product] {
         return self.productsByName(name, filterDeposits: true)
     }
@@ -572,14 +572,19 @@ extension ProductDB {
 
     /// get products matching `name`
     ///
+    /// The project's `useFTS` flag must be `true` for this to work.
+    ///
     /// - Parameters:
     ///   - name: the string to search for. The search is case- and diacritic-insensitive
     ///   - filterDeposits: if true, products with `isDeposit==true` are not returned
     /// - Returns: an array of matching Products
-    @available(iOS, deprecated, message: "this method will go away soon")
     public func productsByName(_ name: String, filterDeposits: Bool = true) -> [Product] {
         guard let db = self.db else {
             return []
+        }
+
+        if !self.config.useFTS {
+            NSLog("WARNING: productsByName called, but useFTS not set")
         }
 
         return self.productsByName(db, name, filterDeposits)
