@@ -330,11 +330,43 @@ extension ScannerViewController {
             }
 
             self.delegate.track(.scanProduct(code))
-
             self.productType = product.type
-            self.showConfirmation(for: product, code)
             self.lastScannedCode = ""
+
+            let bundles = self.productProvider.productsBundling(product.sku)
+            if bundles.count > 0 {
+                self.showBundleSelection(for: product, code, bundles)
+            } else {
+                self.showConfirmation(for: product, code)
+            }
         }
+    }
+
+    private func showBundleSelection(for product: Product, _ code: String, _ bundles: [Product]) {
+        let alert = UIAlertController(title: nil, message: "Bitte Verpackungseinheit auswählen", preferredStyle: .actionSheet)
+
+        alert.addAction(UIAlertAction(title: product.name, style: .default) { action in
+            self.showConfirmation(for: product, code)
+        })
+
+        for bundle in bundles {
+            alert.addAction(UIAlertAction(title: bundle.name, style: .default) { action in
+                let bundleCode = bundle.scannableCodes.first ?? ""
+                self.showConfirmation(for: bundle, bundleCode)
+            })
+        }
+
+        alert.addAction(UIAlertAction(title: "Snabble.Cancel".localized(), style: .cancel, handler: nil))
+
+        // HACK: set the action sheet buttons background
+        if let alertContentView = alert.view.subviews.first?.subviews.first {
+            for view in alertContentView.subviews { //This is main catch
+                view.backgroundColor = .white
+            }
+        }
+
+        self.scanningView.stopScanning()
+        self.present(alert, animated: true)
     }
 
     private func productForCode(_ code: String, completion: @escaping (Product?, String) -> () ) {
