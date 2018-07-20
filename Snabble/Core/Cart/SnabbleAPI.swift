@@ -126,7 +126,7 @@ struct SnabbleAPI {
     ///   - url: the URL to use
     ///   - json: if true, add "application/json" as the "Accept" and "Content-Type" HTTP Headers
     ///   - parameters: the query parameters to append to the URL
-    ///   - timeout: the timeout for the HTTP request (0 for no timeout)
+    ///   - timeout: the timeout for the HTTP request (0 for the system default timeout)
     /// - Returns: the URLRequest
     static func request(_ method: HTTPRequestMethod, _ url: String, json: Bool = true, parameters: [String: String]? = nil, timeout: TimeInterval) -> URLRequest? {
         guard
@@ -144,7 +144,7 @@ struct SnabbleAPI {
     ///   - method: the HTTP method to use
     ///   - url: the URL to use
     ///   - body: the JSON data to send as the HTTP body
-    ///   - timeout: the timeout for the HTTP request (0 for no timeout)
+    ///   - timeout: the timeout for the HTTP request (0 for the system default timeout)
     /// - Returns: the URLRequest
     static func request(_ method: HTTPRequestMethod, _ url: String, body: Data, timeout: TimeInterval) -> URLRequest? {
         guard let url = APIConfig.shared.urlFor(url) else {
@@ -161,7 +161,7 @@ struct SnabbleAPI {
     ///   - method: the HTTP method to use
     ///   - url: the URL to use
     ///   - body: the JSON object to send as the HTTP body
-    ///   - timeout: the timeout for the HTTP request (0 for no timeout)
+    ///   - timeout: the timeout for the HTTP request (0 for the system default timeout)
     /// - Returns: the URLRequest
     static func request<T: Encodable>(_ method: HTTPRequestMethod, _ url: String, body: T, timeout: TimeInterval) -> URLRequest? {
         guard let url = APIConfig.shared.urlFor(url) else {
@@ -184,7 +184,7 @@ struct SnabbleAPI {
     ///   - method: the HTTP method to use
     ///   - url: the absolute URL to use
     ///   - json: if true, add "application/json" as the "Accept" and "Content-Type" HTTP Headers
-    ///   - timeout: the timeout for the HTTP request (0 for no timeout)
+    ///   - timeout: the timeout for the HTTP request (0 for the system default timeout)
     /// - Returns: the URLRequest
     static func request(_ method: HTTPRequestMethod, _ url: URL, json: Bool = true, timeout: TimeInterval) -> URLRequest {
         var urlRequest = URLRequest(url: url)

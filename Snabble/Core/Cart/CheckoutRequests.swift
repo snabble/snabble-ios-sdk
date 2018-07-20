@@ -76,7 +76,7 @@ extension CheckoutProcess {
     /// get the current state of this checkout process
     ///
     /// - Parameters:
-    ///   - timeout: the timeout for the HTTP request (0 for no timeout)
+    ///   - timeout: the timeout for the HTTP request (0 for the system default timeout)
     ///   - completion: is called on the main thread with the result of the API call,
     ///   - process: the `CheckoutProcess` returned from the backend, or nil on error
     ///   - error: if not nil, contains the error response from the backend
