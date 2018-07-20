@@ -343,7 +343,7 @@ extension ScannerViewController {
     }
 
     private func showBundleSelection(for product: Product, _ code: String, _ bundles: [Product]) {
-        let alert = UIAlertController(title: nil, message: "Bitte Verpackungseinheit auswählen", preferredStyle: .actionSheet)
+        let alert = UIAlertController(title: nil, message: "Snabble.Scanner.BundleDialog.headline".localized(), preferredStyle: .actionSheet)
 
         alert.addAction(UIAlertAction(title: product.name, style: .default) { action in
             self.showConfirmation(for: product, code)
