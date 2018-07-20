@@ -69,6 +69,8 @@
         en = Update Cart
     [Snabble.Scanner.addToCart]
         en = Add to Cart
+    [Snabble.Scanner.BundleDialog.headline]
+        en = Please select an item
     [Snabble.Scanner.plusDeposit]
         en = + %@ deposit
     [Snabble.Scanner.introText]
