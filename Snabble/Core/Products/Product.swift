@@ -16,15 +16,19 @@ public enum ProductType: Int, Codable {
 public enum SaleRestriction: Codable {
     case none
     case age(Int)
+    case fsk
 
     enum CodingKeys: String, CodingKey {
         case age
+        case fsk
     }
 
     public init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
         if let age = try container.decodeIfPresent(Int.self, forKey: .age) {
             self = .age(age)
+        } else if try container.decodeIfPresent(Bool.self, forKey: .fsk) == true {
+            self = .fsk
         } else {
             self = .none
         }
@@ -34,7 +38,26 @@ public enum SaleRestriction: Codable {
         var container = encoder.container(keyedBy: CodingKeys.self)
         switch self {
         case .age(let age): try container.encode(age, forKey: .age)
+        case .fsk: try container.encode(true, forKey: .fsk)
         case .none: break
+        }
+    }
+
+    public init(_ code: Int64?) {
+        guard let code = code else {
+            self = .none
+            return
+        }
+
+        let type = code & 0xFF
+        switch type {
+        case 1: // age
+            let age = (code & 0xFF00) >> 8
+            self = .age(Int(age))
+        case 2: // fsk
+            self = .fsk
+        default:
+            self = .none
         }
     }
 }

@@ -118,6 +118,7 @@ struct APIProduct: Codable {
         case min_age_16
         case min_age_18
         case min_age_21
+        case fsk
 
         func convert() -> SaleRestriction {
             switch self {
@@ -127,6 +128,7 @@ struct APIProduct: Codable {
             case .min_age_16: return .age(16)
             case .min_age_18: return .age(18)
             case .min_age_21: return .age(21)
+            case .fsk: return .fsk
             }
         }
     }
