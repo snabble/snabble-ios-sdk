@@ -315,7 +315,7 @@ extension ScannerViewController {
             self.spinner.stopAnimating()
 
             guard let product = product else {
-                self.scannedUnknown("Snabble.Scanner.unknownBarcode".localized(), code)
+                self.scannedUnknown("Snabble.Scanner.unknownBarcode".localized(), scannedCode)
                 self.scanningView.startScanning()
                 return
             }
