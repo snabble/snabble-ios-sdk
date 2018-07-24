@@ -78,17 +78,19 @@ public protocol ProductProvider: class {
     ///
     /// The database can be used as soon as this method returns.
     ///
+    /// - parameter forceFullDownload: if true, force a full download of the product database
     /// - parameter completion: This is called asynchronously on the main thread after the automatic database update check has finished
     ///   (i.e., only if `update` is true)
     /// - parameter newData: indicates if new data is available
-    func setup(update: Bool, completion: @escaping ((Bool) -> ()))
+    func setup(update: Bool, forceFullDownload: Bool, completion: @escaping ((Bool) -> ()))
 
     /// Attempt to update the product database
     ///
+    /// - parameter forceFullDownload: if true, force a full download of the product database
     /// - parameter completion: This is called asynchronously on the main thread after the automatic database update check has finished
     ///   (i.e., only if `update` is true)
     /// - parameter newData: indicates if new data is available
-    func updateDatabase(completion: @escaping (Bool) -> ())
+    func updateDatabase(forceFullDownload: Bool, completion: @escaping (Bool) -> ())
 
     /// get a product by its SKU
     func productBySku(_ sku: String) -> Product?
@@ -176,7 +178,11 @@ public protocol ProductProvider: class {
 
 public extension ProductProvider {
     public func setup(completion: @escaping (Bool) -> () ) {
-        self.setup(update: true, completion: completion)
+        self.setup(update: true, forceFullDownload: false, completion: completion)
+    }
+
+    public func updateDatabase(completion: @escaping (Bool) -> ()) {
+        self.updateDatabase(forceFullDownload: false, completion: completion)
     }
 
     public func productBySku(_ sku: String, completion: @escaping (_ product: Product?, _ error: Bool) -> () ) {
@@ -201,7 +207,6 @@ public extension ProductProvider {
 }
 
 final public class ProductDB: ProductProvider {
-
     internal let supportedSchemaVersion = 1
 
     internal let config: ProductDBConfiguration
@@ -227,11 +232,12 @@ final public class ProductDB: ProductProvider {
 
     /// Setup the product database
     /// - Parameters:
+    ///   - forceFullDownload: if true, force a full download of the product database
     ///   - update: if true, attempt to update the database to the latest revision
     ///   - completion: This is called asynchronously on the main thread after the automatic database update check has finished
     ///     (i.e., only if `update` is true)
     ///   - newData: indicates if the database was updated
-    public func setup(update: Bool, completion: @escaping (_ newData: Bool) -> () ) {
+    public func setup(update: Bool = true, forceFullDownload: Bool = false, completion: @escaping (_ newData: Bool) -> () ) {
         self.db = self.openDb()
 
         if let seedRevision = self.config.seedRevision, seedRevision > self.revision {
@@ -241,17 +247,19 @@ final public class ProductDB: ProductProvider {
         }
 
         if update {
-            self.updateDatabase(completion: completion)
+            self.updateDatabase(forceFullDownload: forceFullDownload, completion: completion)
         }
     }
 
     /// Attempt to update the product database
     /// - Parameters:
+    ///   - forceFullDownload: if true, force a full download of the product database
     ///   - completion: This is called asynchronously on the main thread, after the update check has finished.
     ///   - newData: indicates if new data is available
-    public func updateDatabase(completion: @escaping (_ newData: Bool)->() ) {
+    public func updateDatabase(forceFullDownload: Bool, completion: @escaping (_ newData: Bool)->() ) {
         let schemaVersion = "\(self.schemaVersionMajor).\(self.schemaVersionMinor)"
-        self.getAppDb(currentRevision: self.revision, schemaVersion: schemaVersion) { dbResponse in
+        let revision = forceFullDownload ? 0 : self.revision
+        self.getAppDb(currentRevision: revision, schemaVersion: schemaVersion) { dbResponse in
             self.lastProductUpdate = Date()
 
             DispatchQueue.global(qos: .userInitiated).async {
