@@ -256,3 +256,53 @@ public enum Price {
     }
 }
 
+/*
+/// pretty names PoC
+
+extension Product {
+
+    var prettyName: String {
+        var words = self.name.components(separatedBy: " ")
+        for (index, word) in words.enumerated() {
+            // COCA-COLA -> Coca-Cola
+            var newWord = word.capitalized
+
+            // 6X4 -> 6×4
+            newWord = self.replace(newWord, "\\d+X\\d+", "X", "×")
+
+            // 250MG -> 250mg
+            for suffix in [ "L", "ML", "G", "MG", "GR", "KG", "CM" ] {
+                newWord = self.replace(newWord, "\\d+\(suffix)$", suffix, suffix.lowercased())
+            }
+
+            // single-letter abbreviations and other stuff that needs to be all-lowercase
+            for abbr in [ "U.", "M.", "O.", "In", "Aa", "Und", "Von", "Der", "Ca", "Ca." ] {
+                if newWord == abbr {
+                    newWord = abbr.lowercased()
+                }
+            }
+
+            // some stuff needs to be all-uppercase
+            for abbr in [ "Bh", "Fa", "Ocb" ] {
+                if newWord == abbr {
+                    newWord = abbr.uppercased()
+                }
+            }
+
+            words[index] = newWord
+        }
+
+        return words.joined(separator: " ")
+    }
+
+    private func replace(_ word: String, _ regex: String, _ string: String, _ replacement: String) -> String {
+        let regex = try! NSRegularExpression(pattern: regex, options: [.caseInsensitive])
+        let matches = regex.matches(in: word, options: [], range: NSMakeRange(0, word.count))
+        if matches.count > 0 {
+            return word.replacingOccurrences(of: string.capitalized, with: replacement)
+        }
+        return word
+    }
+
+}
+*/
