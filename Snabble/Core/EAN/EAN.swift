@@ -306,6 +306,29 @@ extension EAN13 {
         default: return -1
         }
     }
+
+    static public func embedDataInEan(_ template: String, data: Int) -> String {
+        assert(data < 99999)
+
+        let str = String(data)
+        let padding = String(repeatElement("0", count: 5 - str.count))
+        let dataString = padding + str
+
+        let code = String(template.prefix(6) + "0" + dataString)
+
+        guard let ean = EAN13(code) else {
+            return ""
+        }
+
+        if APIConfig.shared.config.verifyInternalEanChecksum {
+            let internalCheck = ean.internalChecksum5()
+            let newCode = String(ean.code.prefix(6)) + String(internalCheck) + dataString
+            let newEan = EAN13(newCode)
+            return newEan?.code ?? ""
+        } else {
+            return ean.code
+        }
+    }
 }
 
 // MARK: - EAN-14

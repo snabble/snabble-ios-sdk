@@ -201,8 +201,18 @@ class ScanConfirmationView: DesignableView {
     @IBAction private func cartTapped(_ button: UIButton) {
         let cart = self.shoppingCart!
         if cart.quantity(of: self.product) == 0 || self.product.type != .singleItem || self.ean?.hasEmbeddedData == true {
-            cart.add(self.product, quantity: self.quantity, scannedCode: code)
+            var code = self.code
+            var editableUnits = false
+            // embedded units==0 (e.g. billa bakery shelf code)? generate new EAN from user-entered quantity
+            if let ean = self.ean, ean.hasEmbeddedUnits, ean.embeddedUnits == 0 {
+                code = EAN13.embedDataInEan(code, data: self.quantity)
+                self.quantity = 1
+                editableUnits = true
+            }
+            // NSLog("adding to cart: \(self.quantity) x \(self.product.name), code=\(code)")
+            cart.add(self.product, quantity: self.quantity, scannedCode: code, editableUnits: editableUnits)
         } else {
+            // NSLog("updating cart: add \(self.quantity) to \(self.product.name)")
             cart.setQuantity(self.quantity, for: self.product)
         }
 

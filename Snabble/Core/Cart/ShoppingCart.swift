@@ -42,20 +42,35 @@ public struct CartItem: Codable {
     public let product: Product
     public let scannedCode: String
 
+    // for those stupid self codes that have 0 as the embedded units and need to be editable later
+    public let editableUnits: Bool
+
     // optional data extracted from the scanned code
     let price: Int?
     let weight: Int?
     let units: Int?
 
-    init(_ quantity: Int, _ product: Product, _ scannedCode: String) {
+    init(_ quantity: Int, _ product: Product, _ scannedCode: String, _ editableUnits: Bool = false) {
         self.product = product
         self.quantity = quantity
         self.scannedCode = scannedCode
+        self.editableUnits = editableUnits
 
         let ean = EAN.parse(scannedCode)
         self.price = ean?.embeddedPrice
         self.weight = ean?.embeddedWeight
         self.units = ean?.embeddedUnits
+    }
+
+    public init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        self.product = try container.decode(Product.self, forKey: .product)
+        self.quantity = try container.decode(Int.self, forKey: .quantity)
+        self.scannedCode = try container.decode(String.self, forKey: .scannedCode)
+        self.editableUnits = try container.decodeIfPresent(Bool.self, forKey: .editableUnits) ?? false
+        self.price = try container.decodeIfPresent(Int.self, forKey: .price)
+        self.weight = try container.decodeIfPresent(Int.self, forKey: .weight)
+        self.units = try container.decodeIfPresent(Int.self, forKey: .units)
     }
 
     /// total price for this cart item
@@ -143,7 +158,7 @@ public class ShoppingCart {
     /// add a Product. if already present and not weight dependent, increase its quantity
     ///
     /// the newly added (or modified) product is moved to the start of the list
-    public func add(_ product: Product, quantity: Int = 1, scannedCode: String) {
+    public func add(_ product: Product, quantity: Int = 1, scannedCode: String, editableUnits: Bool = false) {
         let ean = EAN.parse(scannedCode)
         if let index = self.indexOf(product), product.type == .singleItem, ean?.hasEmbeddedData == false {
             var item = self.items[index]
@@ -151,7 +166,7 @@ public class ShoppingCart {
             self.items.remove(at: index)
             self.items.insert(item, at: 0)
         } else {
-            let item = CartItem(quantity, product, scannedCode)
+            let item = CartItem(quantity, product, scannedCode, editableUnits)
             self.items.insert(item, at: 0)
         }
 
