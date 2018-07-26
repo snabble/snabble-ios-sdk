@@ -38,9 +38,26 @@ public enum PaymentMethod: String {
 }
 
 public enum PaymentState: String, Decodable {
+    case unknown
+
     case pending
+    case processing
+    case transferred
     case successful
     case failed
+
+    public init(from decoder: Decoder) throws {
+        let value = try decoder.singleValueContainer().decode(String.self)
+
+        if let state = PaymentState(rawValue: value) {
+            self = state
+        } else {
+            switch value {
+            case "transfered": self = .transferred // handle typo
+            default: self = .unknown
+            }
+        }
+    }
 }
 
 // CheckoutInfo

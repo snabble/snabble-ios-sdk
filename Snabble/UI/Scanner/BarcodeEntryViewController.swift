@@ -38,7 +38,7 @@ class BarcodeEntryViewController: UIViewController, UISearchBarDelegate, UITable
         super.viewDidLoad()
         
         self.emptyState = BarcodeEntryEmptyStateView(self.addEnteredCode)
-        self.emptyState.addTo(self.view)
+        self.emptyState.addTo(self.tableView)
 
         self.tableView.tableFooterView = UIView(frame: CGRect.zero)
 
@@ -75,8 +75,10 @@ class BarcodeEntryViewController: UIViewController, UISearchBarDelegate, UITable
         let rows = filteredProducts.count
         self.emptyState.isHidden = rows > 0
         self.emptyState.button.isHidden = true
-        if let ean = EAN.parse(self.searchText) {
-            self.emptyState.button.isHidden = ean.code != self.searchText
+        if self.searchText.count > 0 {
+            let title = String(format: "Snabble.Scanner.addCodeAsIs".localized(), self.searchText)
+            self.emptyState.button.setTitle(title, for: .normal)
+            self.emptyState.button.isHidden = false
         }
         return rows
     }
@@ -90,10 +92,9 @@ class BarcodeEntryViewController: UIViewController, UISearchBarDelegate, UITable
         }()
         
         let product = self.filteredProducts[indexPath.row]
+        let matchingCode = product.scannableCodes.filter { $0.hasPrefix(self.searchText) }.first ?? product.scannableCodes.first!
         
-        let matchingEan = product.scannableCodes.filter { $0.contains(self.searchText) }.first ?? product.scannableCodes.first!
-        
-        let str = NSMutableAttributedString(string: matchingEan)
+        let str = NSMutableAttributedString(string: matchingCode)
         let boldFont = UIFont.systemFont(ofSize: cell.textLabel?.font.pointSize ?? 0, weight: .medium)
         str.addAttributes([NSAttributedStringKey.font : boldFont], range: NSMakeRange(0, self.searchText.count))
         cell.textLabel?.attributedText = str
@@ -106,7 +107,8 @@ class BarcodeEntryViewController: UIViewController, UISearchBarDelegate, UITable
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         let product = self.filteredProducts[indexPath.row]
 
-        self.addCode(product.scannableCodes.first!)
+        let matchingCode = product.scannableCodes.filter { $0.hasPrefix(self.searchText) }.first ?? product.scannableCodes.first!
+        self.addCode(matchingCode)
     }
 
     func addEnteredCode() {

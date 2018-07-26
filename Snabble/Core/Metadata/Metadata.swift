@@ -10,11 +10,12 @@ public struct Link: Decodable {
 }
 
 public struct MetadataLinks: Decodable {
-    public var appdb: Link
-    public var checkoutInfo: Link
-    public var productBySku: Link
-    public var productByCode: Link
-    public var productByWeighItemId: Link
+    public let appdb: Link
+    public let appEvents: Link
+    public let checkoutInfo: Link
+    public let productBySku: Link
+    public let productByCode: Link
+    public let productByWeighItemId: Link
 }
 
 public struct AppData: Decodable {
@@ -22,17 +23,20 @@ public struct AppData: Decodable {
     public let flags: Flags
     public let shops: [Shop]
     public let rawLinks: [String: Link]
+    public let project: ProjectConfig
 
     enum CodingKeys: String, CodingKey {
         case links
         case flags = "metadata"
         case shops
+        case project
     }
 
     public init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
         self.links = try container.decode(MetadataLinks.self, forKey: .links)
         self.flags = try container.decode(Flags.self, forKey: .flags)
+        self.project = try container.decode(ProjectConfig.self, forKey: .project)
         self.shops = (try container.decodeIfPresent([Shop].self, forKey: .shops)) ?? []
 
         self.rawLinks = try container.decode([String: Link].self, forKey: .links)
@@ -42,6 +46,65 @@ public struct AppData: Decodable {
 public struct Flags: Decodable {
     public let kill: Bool
     public let enableCheckout: Bool
+}
+
+public enum RoundingMode: String, Codable {
+    case up
+    case down
+    case commercial
+
+    ///
+    var mode: NSDecimalNumber.RoundingMode {
+        switch self {
+        case .up: return .up
+        case .down: return .down
+        case .commercial: return .plain
+        }
+    }
+}
+
+public struct ProjectConfig: Codable {
+    public let currency: String
+    public let decimalDigits: Int
+    public let locale: String
+    public let pricePrefixes: [String]
+    public let unitPrefixes: [String]
+    public let weighPrefixes: [String]
+    public let roundingMode: RoundingMode
+    public let verifyInternalEanChecksum: Bool
+
+    public let currencySymbol: String
+
+    public init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+
+        self.currency = try container.decode(.currency)
+        self.decimalDigits = try container.decode(.decimalDigits)
+        self.locale = try container.decode(.locale)
+        self.pricePrefixes = try container.decodeIfPresent(.pricePrefixes) ?? []
+        self.unitPrefixes = try container.decodeIfPresent(.unitPrefixes) ?? []
+        self.weighPrefixes = try container.decodeIfPresent(.weighPrefixes) ?? []
+        self.roundingMode = try container.decodeIfPresent(.roundingMode) ?? .up
+        self.verifyInternalEanChecksum = try container.decodeIfPresent(.verifyInternalEanChecksum) ?? true
+
+        let formatter = NumberFormatter()
+        formatter.locale = Locale(identifier: self.locale)
+        formatter.currencyCode = self.currency
+        formatter.numberStyle = .currency
+        self.currencySymbol = formatter.currencySymbol
+    }
+
+    internal init(pricePrefixes: [String] = [], weighPrefixes: [String] = [], unitPrefixes: [String] = []) {
+        self.currency = "EUR"
+        self.decimalDigits = 2
+        self.locale = "de_DE"
+        self.pricePrefixes = pricePrefixes
+        self.weighPrefixes = weighPrefixes
+        self.unitPrefixes = unitPrefixes
+        self.roundingMode = .commercial
+        self.verifyInternalEanChecksum = true
+        self.currencySymbol = "€"
+    }
 }
 
 // MARK: - shop data
@@ -131,6 +194,7 @@ public extension AppData {
             do {
                 let data = try Data(contentsOf: url)
                 let appData = try JSONDecoder().decode(AppData.self, from: data)
+                APIConfig.shared.config = appData.project
                 return appData
             } catch let error {
                 NSLog("error parsing app data resource: \(error)")
@@ -140,10 +204,14 @@ public extension AppData {
     }
 
     public static func load(from url: String, _ parameters: [String: String]? = nil, completion: @escaping (AppData?) -> () ) {
-        guard let request = SnabbleAPI.request(.get, url, parameters: parameters, timeout: 0) else {
+        guard let request = SnabbleAPI.request(.get, url, parameters: parameters, timeout: 5) else {
             return completion(nil)
         }
-        SnabbleAPI.perform(request) { (appData: AppData?) in
+        SnabbleAPI.perform(request) { (appData: AppData?, error) in
+            if let appData = appData {
+                APIConfig.shared.config = appData.project
+                APIConfig.shared.links = appData.links
+            }
             completion(appData)
         }
     }

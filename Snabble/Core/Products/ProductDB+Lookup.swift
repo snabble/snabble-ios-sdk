@@ -6,13 +6,23 @@
 
 extension ProductDB {
 
-    func getSingleProduct(_ url: String, _ placeHolder: String, _ identifier: String, completion: @escaping (Product?, Bool) -> () ) {
+    func getSingleProduct(_ url: String, _ placeholder: String, _ identifier: String, completion: @escaping (Product?, Bool) -> () ) {
+        self.getSingleProduct(url, placeholder, identifier) { (result: LookupResult?, error: Bool) in
+            if let result = result {
+                completion(result.product, error)
+            } else {
+                completion(nil, error)
+            }
+        }
+    }
+
+    func getSingleProduct(_ url: String, _ placeholder: String, _ identifier: String, completion: @escaping (LookupResult?, Bool) -> () ) {
         let session = URLSession(configuration: URLSessionConfiguration.default)
 
         // TODO: is this the right value?
         let timeoutInterval: TimeInterval = 5
 
-        let fullUrl = url.replacingOccurrences(of: placeHolder, with: identifier)
+        let fullUrl = url.replacingOccurrences(of: placeholder, with: identifier)
         guard let request = SnabbleAPI.request(.get, fullUrl, timeout: timeoutInterval) else {
             return completion(nil, true)
         }
@@ -21,12 +31,14 @@ extension ProductDB {
             if let data = data, let response = response as? HTTPURLResponse {
                 if response.statusCode == 404 {
                     DispatchQueue.main.async {
+                        NSLog("online product lookup with \(placeholder) \(identifier): not found")
                         completion(nil, false)
                     }
                     return
                 }
 
                 do {
+                    NSLog("online product lookup with \(placeholder) \(identifier) succeeded")
                     let apiProduct = try JSONDecoder().decode(APIProduct.self, from: data)
                     if let depositSku = apiProduct.depositProduct {
                         // get the deposit product
@@ -58,14 +70,15 @@ extension ProductDB {
         task.resume()
     }
 
-    func completeProduct(_ apiProduct: APIProduct, _ deposit: Int? = nil, completion: @escaping (Product?, Bool) -> () ) {
-        let product = apiProduct.convert(deposit)
+    func completeProduct(_ apiProduct: APIProduct, _ deposit: Int? = nil, completion: @escaping (LookupResult?, Bool) -> () ) {
+        let matchingCode = apiProduct.matchingCode ?? ""
+        let result = LookupResult(product: apiProduct.convert(deposit), code: matchingCode)
         DispatchQueue.main.async {
-            completion(product, false)
+            completion(result, false)
         }
     }
 
-    func returnError(_ msg: String, completion: @escaping (Product?, Bool) -> () ) {
+    func returnError(_ msg: String, completion: @escaping (LookupResult?, Bool) -> () ) {
         NSLog(msg)
         DispatchQueue.main.sync {
             completion(nil, true)
@@ -80,15 +93,17 @@ struct APIProduct: Codable {
     let description: String?
     let subtitle: String?
     let depositProduct: String?
+    let bundledProduct: String?
     let imageUrl: String?
     let productType: APIProductType
-    let eans: [String]
+    let eans: [String]?
     let price: Int
     let discountedPrice: Int?
     let basePrice: String?
     let weighing: Weighing?
     let saleRestriction: APISaleRestriction?
     let saleStop: Bool?
+    let matchingCode: String?
 
     enum APIProductType: String, Codable {
         case `default`
@@ -103,6 +118,7 @@ struct APIProduct: Codable {
         case min_age_16
         case min_age_18
         case min_age_21
+        case fsk
 
         func convert() -> SaleRestriction {
             switch self {
@@ -112,6 +128,7 @@ struct APIProduct: Codable {
             case .min_age_16: return .age(16)
             case .min_age_18: return .age(18)
             case .min_age_21: return .age(21)
+            case .fsk: return .fsk
             }
         }
     }
@@ -131,6 +148,11 @@ struct APIProduct: Codable {
             weighItemIds = Set(w.weighedItemIds)
         }
 
+        var scannableCodes: Set<String> = Set([])
+        if let eans = self.eans {
+            scannableCodes = Set(eans)
+        }
+
         return Product(sku: self.sku,
                        name: self.name,
                        description: self.description,
@@ -140,9 +162,10 @@ struct APIProduct: Codable {
                        listPrice: self.price,
                        discountedPrice: self.discountedPrice,
                        type: type,
-                       scannableCodes: Set(self.eans),
+                       scannableCodes: scannableCodes,
                        weighedItemIds: weighItemIds,
                        depositSku: self.depositProduct,
+                       bundledSku: self.bundledProduct,
                        isDeposit: self.productType == .deposit,
                        deposit: deposit,
                        saleRestriction: self.saleRestriction?.convert() ?? .none,

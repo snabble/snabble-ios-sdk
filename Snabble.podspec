@@ -8,7 +8,7 @@
 
 Pod::Spec.new do |s|
   s.name             = 'Snabble'
-  s.version          = '0.3.22'
+  s.version          = '0.6.3'
   s.summary          = 'The snabble iOS SDK'
 
 # This description is used to generate tags and improve search results.
@@ -48,12 +48,14 @@ Pod::Spec.new do |s|
     if ENV["SNABBLE_DEV"]
       ui.script_phase = { :name => "Run twine", 
         :script => <<-SCRIPT
-        if which twine >/dev/null; then
-          cd $PODS_TARGET_SRCROOT
-          TWINE=i18n/Snabble.twine
-          if [ -r "$TWINE" ]; then
-            echo "Creating strings file"
-            twine generate-localization-file $TWINE --lang en --format apple Snabble/UI/en.lproj/SnabbleLocalizable.strings
+        if [ "$TESTING" -ne "1" ]; then
+          if which twine >/dev/null; then
+            cd $PODS_TARGET_SRCROOT
+            TWINE=i18n/Snabble.twine
+            if [ -r "$TWINE" ]; then
+              echo "Creating strings file"
+              twine generate-localization-file $TWINE --lang en --format apple Snabble/UI/en.lproj/SnabbleLocalizable.strings
+            fi
           fi
         fi
         SCRIPT

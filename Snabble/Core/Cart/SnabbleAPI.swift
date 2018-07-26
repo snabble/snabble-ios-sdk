@@ -12,35 +12,16 @@ public struct SnabbleProject {
     public let name: String
     /// the jwt used for api authorization
     public let jwt: String
-    /// Scanned EAN-13 codes that begin with one of the prefixes are considered to contain am embedded weight (in grams)
-    public let weighPrefixes: [String]
-    /// Scanned EAN-13 codes that begin with one of the prefixes are considered to contain am embedded price (in cents)
-    public let pricePrefixes: [String]
-    /// Scanned EAN-13 codes that begin with one of the prefixes are considered to contain am embedded number of units (e.g. a bag containing 5 apples)
-    public let unitPrefixes: [String]
-    /// the currency symbol used for display
-    public let currencySymbol: String
-    /// the number of decimal digits
-    public let decimalDigits: Int
-    /// the rounding mode to use for weight-based price calculations
-    public let roundingMode: NSDecimalNumber.RoundingMode
+    /// if the `.embeddedCodes` payment method is used, set this to configure how the QR code is assembled
+    public let embeddedCodesConfig: EmbeddedCodesConfig?
+    /// set to true if this project uses the german EAN prefixes for magazines/newspapers
+    public let useGermanPrintPrefixes: Bool
 
-    public init(name: String,
-                jwt: String,
-                weighPrefixes: [String] = [],
-                pricePrefixes: [String] = [],
-                unitPrefixes: [String] = [],
-                currencySymbol: String,
-                decimalDigits: Int,
-                roundingMode: NSDecimalNumber.RoundingMode = .plain) {
+    public init(name: String, jwt: String, embeddedCodesConfig: EmbeddedCodesConfig? = nil, useGermanPrintPrefixes: Bool = false) {
         self.name = name
         self.jwt = jwt
-        self.weighPrefixes = weighPrefixes
-        self.pricePrefixes = pricePrefixes
-        self.unitPrefixes = unitPrefixes
-        self.currencySymbol = currencySymbol
-        self.decimalDigits = decimalDigits
-        self.roundingMode = roundingMode
+        self.embeddedCodesConfig = embeddedCodesConfig
+        self.useGermanPrintPrefixes = useGermanPrintPrefixes
     }
 }
 
@@ -48,9 +29,15 @@ public struct SnabbleProject {
 /// Applications must call `setup()` before they make their first API call.
 public class APIConfig {
     /// the singleton instance
-    public static let shared = APIConfig()
+    static let shared = APIConfig()
 
-    private(set) var project: SnabbleProject
+    public internal(set) var project: SnabbleProject
+    public internal(set) var links: MetadataLinks?
+    public internal(set) var config: ProjectConfig {
+        didSet {
+            // NSLog("config set to \(config)")
+        }
+    }
     private(set) var baseUrl: String
 
     var clientId: String {
@@ -65,7 +52,8 @@ public class APIConfig {
 
     private init() {
         self.baseUrl = ""
-        self.project = SnabbleProject(name: "none", jwt: "", currencySymbol: "€", decimalDigits: 2)
+        self.project = SnabbleProject(name: "none", jwt: "", useGermanPrintPrefixes: false)
+        self.config = ProjectConfig()
     }
 
     /// initialize the API configuration for the subsequent network calls
@@ -74,7 +62,11 @@ public class APIConfig {
     ///   - baseUrl: the base URL (e.g. "https://api.snabble.io")" to use for relative URLs
     ///   - project: the `SnabbleProject` instance that describes your project
     ///
-    public func setup(with project: SnabbleProject, using baseUrl: String) {
+    public static func setup(with project: SnabbleProject, using baseUrl: String) {
+        shared.setup(with: project, using: baseUrl)
+    }
+
+    func setup(with project: SnabbleProject, using baseUrl: String) {
         self.project = project
         self.baseUrl = baseUrl
     }
@@ -90,8 +82,23 @@ public class APIConfig {
             return url
         }
     }
+}
 
+public struct EmbeddedCodesConfig {
+    public let prefix: String
+    public let suffix: String
+    public let separator: String
+    public let maxCodes: Int
 
+    public static let edeka = EmbeddedCodesConfig(prefix: "XE", suffix: "XZ", separator: "XE", maxCodes: 30)
+    public static let multiline = EmbeddedCodesConfig(prefix: "", suffix: "", separator: "\n", maxCodes: 100)
+
+    public init(prefix: String, suffix: String, separator: String, maxCodes: Int) {
+        self.prefix = prefix
+        self.suffix = suffix
+        self.separator = separator
+        self.maxCodes = maxCodes
+    }
 }
 
 enum HTTPRequestMethod: String {
@@ -99,6 +106,15 @@ enum HTTPRequestMethod: String {
     case post = "POST"
     case put = "PUT"
     case patch = "PATCH"
+}
+
+public struct ApiError: Decodable {
+    public let error: ErrorResponse
+}
+
+public struct ErrorResponse: Decodable {
+    public let type: String
+    public let message: String
 }
 
 struct SnabbleAPI {
@@ -110,7 +126,7 @@ struct SnabbleAPI {
     ///   - url: the URL to use
     ///   - json: if true, add "application/json" as the "Accept" and "Content-Type" HTTP Headers
     ///   - parameters: the query parameters to append to the URL
-    ///   - timeout: the timeout for the HTTP request (0 for no timeout)
+    ///   - timeout: the timeout for the HTTP request (0 for the system default timeout)
     /// - Returns: the URLRequest
     static func request(_ method: HTTPRequestMethod, _ url: String, json: Bool = true, parameters: [String: String]? = nil, timeout: TimeInterval) -> URLRequest? {
         guard
@@ -128,7 +144,7 @@ struct SnabbleAPI {
     ///   - method: the HTTP method to use
     ///   - url: the URL to use
     ///   - body: the JSON data to send as the HTTP body
-    ///   - timeout: the timeout for the HTTP request (0 for no timeout)
+    ///   - timeout: the timeout for the HTTP request (0 for the system default timeout)
     /// - Returns: the URLRequest
     static func request(_ method: HTTPRequestMethod, _ url: String, body: Data, timeout: TimeInterval) -> URLRequest? {
         guard let url = APIConfig.shared.urlFor(url) else {
@@ -145,7 +161,7 @@ struct SnabbleAPI {
     ///   - method: the HTTP method to use
     ///   - url: the URL to use
     ///   - body: the JSON object to send as the HTTP body
-    ///   - timeout: the timeout for the HTTP request (0 for no timeout)
+    ///   - timeout: the timeout for the HTTP request (0 for the system default timeout)
     /// - Returns: the URLRequest
     static func request<T: Encodable>(_ method: HTTPRequestMethod, _ url: String, body: T, timeout: TimeInterval) -> URLRequest? {
         guard let url = APIConfig.shared.urlFor(url) else {
@@ -168,7 +184,7 @@ struct SnabbleAPI {
     ///   - method: the HTTP method to use
     ///   - url: the absolute URL to use
     ///   - json: if true, add "application/json" as the "Accept" and "Content-Type" HTTP Headers
-    ///   - timeout: the timeout for the HTTP request (0 for no timeout)
+    ///   - timeout: the timeout for the HTTP request (0 for the system default timeout)
     /// - Returns: the URLRequest
     static func request(_ method: HTTPRequestMethod, _ url: URL, json: Bool = true, timeout: TimeInterval) -> URLRequest {
         var urlRequest = URLRequest(url: url)
@@ -197,16 +213,17 @@ struct SnabbleAPI {
     ///   - request: the `URLRequest` to perform
     ///   - completion: called on the main thread when the result is available.
     ///   - obj: the parsed result object, or nil if an error occured
-    static func retry<T: Decodable>(_ retryCount: Int, _ pauseTime: TimeInterval, _ request: URLRequest, _ completion: @escaping (_ obj: T?) -> () ) {
-        perform(request) { (obj: T?) in
+    ///   - error: if not nil, contains the error response from the backend
+    static func retry<T: Decodable>(_ retryCount: Int, _ pauseTime: TimeInterval, _ request: URLRequest, _ completion: @escaping (_ obj: T?, _ error: ApiError?) -> () ) {
+        perform(request) { (obj: T?, error) in
             if obj != nil {
-                completion(obj)
+                completion(obj, nil)
             } else if retryCount > 1 {
                 DispatchQueue.main.asyncAfter(deadline: .now() + pauseTime) {
                     retry(retryCount - 1, pauseTime * 2, request, completion)
                 }
             } else {
-                completion(nil)
+                completion(nil, error)
             }
         }
     }
@@ -217,10 +234,11 @@ struct SnabbleAPI {
     ///   - request: the `URLRequest` to perform
     ///   - completion: called on the main thread when the result is available.
     ///   - obj: the parsed result object, or nil if an error occured
+    ///   - error: if not nil, contains the error response from the backend
     @discardableResult
-    static func perform<T: Decodable>(_ request: URLRequest, _ completion: @escaping (_ obj: T?) -> () ) -> URLSessionDataTask {
-        return perform(request, returnRaw: false) { (_ obj: T?, _) in
-            completion(obj)
+    static func perform<T: Decodable>(_ request: URLRequest, _ completion: @escaping (_ obj: T?, _ error: ApiError?) -> () ) -> URLSessionDataTask {
+        return perform(request, returnRaw: false) { (_ obj: T?, error, json) in
+            completion(obj, error)
         }
     }
 
@@ -231,32 +249,48 @@ struct SnabbleAPI {
     ///   - returnRaw: indicates whether the raw JSON data should be returned along with the decoded data
     ///   - completion: called on the main thread when the result is available.
     ///   - obj: the parsed result object, or nil if an error occured
+    ///   - error: if not nil, contains the error response from the backend
     ///   - raw: the JSON structure returned by the server, or nil if an error occurred
     @discardableResult
-    static func perform<T: Decodable>(_ request: URLRequest, returnRaw: Bool, _ completion: @escaping (_ obj: T?, _ raw: [String: Any]?) -> () ) -> URLSessionDataTask {
+    static func perform<T: Decodable>(_ request: URLRequest, returnRaw: Bool, _ completion: @escaping (_ obj: T?, _ error: ApiError?, _ raw: [String: Any]?) -> () ) -> URLSessionDataTask {
+        let start = Date.timeIntervalSinceReferenceDate
         let session = URLSession(configuration: URLSessionConfiguration.default)
-        let task = session.dataTask(with: request) { data, response, error in
+        let task = session.dataTask(with: request) { rawData, response, error in
             let url = request.url?.absoluteString ?? "n/a"
+            let elapsed = Date.timeIntervalSinceReferenceDate - start
+            NSLog("get \(url) took \(elapsed)s")
             guard
-                let data = data,
+                let data = rawData,
                 let response = response as? HTTPURLResponse,
                 response.statusCode == 200 || response.statusCode == 201
             else {
                 NSLog("error getting response from \(url): \(String(describing: error))")
+                var apiError: ApiError?
+                if let data = rawData {
+                    do {
+                        let error = try JSONDecoder().decode(ApiError.self, from: data)
+                        NSLog("error response: \(String(describing: error))")
+                        apiError = error
+                    }
+                    catch {
+                        let rawResponse = String(bytes: data, encoding: .utf8)
+                        NSLog("failed parsing error response: \(String(describing: rawResponse)) -> \(error)")
+                    }
+                }
                 DispatchQueue.main.async {
-                    completion(nil, nil)
+                    completion(nil, apiError, nil)
                 }
                 return
             }
 
             do {
                 let result = try JSONDecoder().decode(T.self, from: data)
-                var json: [String: Any]? = nil
+                var json: [String: Any]?
                 if returnRaw {
                     json = try JSONSerialization.jsonObject(with: data, options: .allowFragments) as? [String: Any]
                 }
                 DispatchQueue.main.async {
-                    completion(result, json)
+                    completion(result, nil, json)
                 }
             } catch {
                 NSLog("error parsing response from \(url): \(error)")

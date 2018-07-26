@@ -82,6 +82,7 @@ class ShoppingCartTableCell: UITableViewCell {
 
         self.minusButton.isHidden = product.weightDependent
         self.plusButton.isHidden = product.type == .preWeighed
+
         if let ean = EAN.parse(item.scannedCode), let ean13 = ean as? EAN13, let units = ean13.embeddedUnits {
             if units == 0 {
                 self.minusButton.isHidden = false
@@ -122,22 +123,29 @@ class ShoppingCartTableCell: UITableViewCell {
     }
 
     private func showQuantity() {
-        guard let ean = EAN.parse(self.item.scannedCode) else {
-            return
-        }
+        let ean = EAN.parse(self.item.scannedCode)
 
-        let showWeight = ean.hasEmbeddedWeight
-        let price = self.item.total
-
+        let showWeight = ean?.hasEmbeddedWeight == true || self.item.product.type == .userMustWeigh
         let gram = showWeight ? "g" : ""
         self.quantityLabel.text = "\(self.quantity)\(gram)"
 
+        let price = self.item.total
         let total = Price.format(price)
+
         if showWeight {
             let single = Price.format(self.item.product.price)
             self.priceLabel.text = "× \(single)/kg = \(total)"
         } else {
-            if self.quantity == 1 {
+            if let deposit = self.item.product.deposit {
+                let itemPrice = Price.format(self.item.product.price)
+                let depositPrice = Price.format(deposit * self.quantity)
+                let plusDeposit = String(format: "Snabble.Scanner.plusDeposit".localized(), depositPrice)
+                self.priceLabel.text = "× \(itemPrice) \(plusDeposit) = \(total)"
+            } else if let units = ean?.embeddedUnits {
+                self.quantityLabel.text = "\(units)"
+                let itemPrice = Price.format(self.item.product.price)
+                self.priceLabel.text  = "× \(itemPrice) = \(total)"
+            } else if self.quantity == 1 {
                 self.priceLabel.text = total
             } else {
                 let itemPrice = Price.format(self.item.product.priceWithDeposit)

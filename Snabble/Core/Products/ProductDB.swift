@@ -42,6 +42,9 @@ public struct ProductDBConfiguration {
     /// if the app bundle contains a zipped seed database, this must contain the revision of that database.
     public var seedRevision: Int64?
 
+    /// set this to true if you want to use the `productsByName` method
+    public var useFTS = false
+
     public init() {
         self.dbDirectory = NSSearchPathForDirectoriesInDomains(.applicationSupportDirectory, .userDomainMask, true).first!
     }
@@ -54,16 +57,40 @@ public struct ProductDBConfiguration {
     }
 }
 
+/// the return type from `productByScannableCode`.
+/// - `product` contains the product found
+/// - `code` contains the code by which the product was found, which is not necessarily the
+///    same as the one that was passed to `productByScannableCode` as a parameter
+///    (e.g. when a UPC-A code is scanned as an EAN-13, and the leading "0" filler digits had
+///    to be stripped)
+public struct LookupResult {
+    public let product: Product
+    public let code: String
+}
+
 public protocol ProductProvider: class {
     /// initialize a ProductDB instance with the given configuration
     /// - parameter config: a `ProductDBConfiguration` object
     init(_ config: ProductDBConfiguration)
 
+
     /// Setup the product database
-    func setup(update: Bool, completion: @escaping ((Bool) -> ()))
+    ///
+    /// The database can be used as soon as this method returns.
+    ///
+    /// - parameter forceFullDownload: if true, force a full download of the product database
+    /// - parameter completion: This is called asynchronously on the main thread after the automatic database update check has finished
+    ///   (i.e., only if `update` is true)
+    /// - parameter newData: indicates if new data is available
+    func setup(update: Bool, forceFullDownload: Bool, completion: @escaping ((Bool) -> ()))
 
     /// Attempt to update the product database
-    func updateDatabase(completion: @escaping (Bool) -> ())
+    ///
+    /// - parameter forceFullDownload: if true, force a full download of the product database
+    /// - parameter completion: This is called asynchronously on the main thread after the automatic database update check has finished
+    ///   (i.e., only if `update` is true)
+    /// - parameter newData: indicates if new data is available
+    func updateDatabase(forceFullDownload: Bool, completion: @escaping (Bool) -> ())
 
     /// get a product by its SKU
     func productBySku(_ sku: String) -> Product?
@@ -87,8 +114,8 @@ public protocol ProductProvider: class {
     /// - Returns: an array of `Product`
     func discountedProducts() -> [Product]
 
-    /// get a product by (one of) its scannable codes
-    func productByScannableCode(_ code: String) -> Product?
+    /// get a product and the code by which it was found by (one of) its scannable codes
+    func productByScannableCode(_ code: String) -> LookupResult?
 
     /// get a product by (one of) its weighItemIds
     func productByWeighItemId(_ weighItemId: String) -> Product?
@@ -96,8 +123,10 @@ public protocol ProductProvider: class {
     ///
     /// get products matching `name`
     ///
+    /// The project's `useFTS` flag must be `true` for this to work.
+    ///
     /// - Parameter name: the string to search for. The search is case- and diacritic-insensitive
-    /// - Returns: an array of matching Products
+    /// - Returns: an array of matching `Product`s
     func productsByName(_ name: String, filterDeposits: Bool) -> [Product]
 
     ///
@@ -109,9 +138,11 @@ public protocol ProductProvider: class {
     /// - Returns: an array of matching Products
     func productsByScannableCodePrefix(_ prefix: String, filterDeposits: Bool) -> [Product]
 
-    /// asynchronous variants of the product lookup methods
+    func productsBundling(_ sku: String) -> [Product]
+    
+    // MARK: - asynchronous variants of the product lookup methods
 
-    /// get a product by its SKU
+    /// asynchronously get a product by its SKU
     ///
     /// - Parameters:
     ///   - sku: the sku to look for
@@ -120,16 +151,16 @@ public protocol ProductProvider: class {
     ///   - error: whether an error occurred during the lookup.
     func productBySku(_ sku: String, forceDownload: Bool, completion: @escaping (_ product: Product?, _ error: Bool) -> () )
 
-    /// get a product by (one of) its scannable codes
+    /// asynchronously get a product by (one of) its scannable codes
     ///
     /// - Parameters:
     ///   - code: the code to look for
     ///   - forceDownload: if true, skip the lookup in the local DB
     ///   - product: the product found, or nil.
     ///   - error: whether an error occurred during the lookup.
-    func productByScannableCode(_ code: String, forceDownload: Bool, completion: @escaping (_ product: Product?, _ error: Bool) -> () )
+    func productByScannableCode(_ code: String, forceDownload: Bool, completion: @escaping (_ result: LookupResult?, _ error: Bool) -> () )
 
-    /// get a product by (one of) it weigh item ids
+    /// asynchronously get a product by (one of) it weigh item ids
     ///
     /// - Parameters:
     ///   - weighItemId: the id to look for
@@ -137,10 +168,45 @@ public protocol ProductProvider: class {
     ///   - product: the product found, or nil.
     ///   - error: whether an error occurred during the lookup.
     func productByWeighItemId(_ weighItemId: String, forceDownload: Bool, completion: @escaping (_ product: Product?, _ error: Bool) -> () )
+
+    var revision: Int64 { get }
+    var lastProductUpdate: Date { get }
+
+    var schemaVersionMajor: Int { get }
+    var schemaVersionMinor: Int { get }
+}
+
+public extension ProductProvider {
+    public func setup(completion: @escaping (Bool) -> () ) {
+        self.setup(update: true, forceFullDownload: false, completion: completion)
+    }
+
+    public func updateDatabase(completion: @escaping (Bool) -> ()) {
+        self.updateDatabase(forceFullDownload: false, completion: completion)
+    }
+
+    public func productBySku(_ sku: String, completion: @escaping (_ product: Product?, _ error: Bool) -> () ) {
+        self.productBySku(sku, forceDownload: false, completion: completion)
+    }
+
+    public func productByScannableCode(_ code: String, completion: @escaping (_ result: LookupResult?, _ error: Bool) -> () ) {
+        self.productByScannableCode(code, forceDownload: false, completion: completion)
+    }
+
+    public func productsByScannableCodePrefix(_ prefix: String, filterDeposits: Bool = true) -> [Product] {
+        return self.productsByScannableCodePrefix(prefix, filterDeposits: true)
+    }
+
+    public func productByWeighItemId(_ code: String, completion: @escaping (_ product: Product?, _ error: Bool) -> () ) {
+        self.productByWeighItemId(code, forceDownload: false, completion: completion)
+    }
+
+    public func productsByName(_ name: String) -> [Product] {
+        return self.productsByName(name, filterDeposits: true)
+    }
 }
 
 final public class ProductDB: ProductProvider {
-
     internal let supportedSchemaVersion = 1
 
     internal let config: ProductDBConfiguration
@@ -164,17 +230,14 @@ final public class ProductDB: ProductProvider {
         self.config = config
     }
 
-    /**
-     Setup the product database
-
-     The database can be used as soon as this method returns.
-
-     - parameter completion: a closure taking a `Bool` parameter.
-        This is called asynchronously on the main thread, once after the database present on the device has been opened,
-        and once more later, after the automatic database update check has finished.
-        The closure's parameter indicates whether new data is available or not.
-    */
-    public func setup(update: Bool = true, completion: @escaping (Bool) -> () ) {
+    /// Setup the product database
+    /// - Parameters:
+    ///   - forceFullDownload: if true, force a full download of the product database
+    ///   - update: if true, attempt to update the database to the latest revision
+    ///   - completion: This is called asynchronously on the main thread after the automatic database update check has finished
+    ///     (i.e., only if `update` is true)
+    ///   - newData: indicates if the database was updated
+    public func setup(update: Bool = true, forceFullDownload: Bool = false, completion: @escaping (_ newData: Bool) -> () ) {
         self.db = self.openDb()
 
         if let seedRevision = self.config.seedRevision, seedRevision > self.revision {
@@ -183,25 +246,20 @@ final public class ProductDB: ProductProvider {
             self.db = openDb()
         }
 
-        DispatchQueue.main.async {
-            completion(false)
-        }
-
         if update {
-            self.updateDatabase(completion: completion)
+            self.updateDatabase(forceFullDownload: forceFullDownload, completion: completion)
         }
     }
 
-    /**
-     Attempt to update the product database
-
-     - parameter completion: a closure taking a `Bool` parameter.
-        This is called asynchronously on the main thread, after the update check has finished.
-        The parameter indicates whether new data is available or not.
-    */
-    public func updateDatabase(completion: @escaping (Bool)->() ) {
+    /// Attempt to update the product database
+    /// - Parameters:
+    ///   - forceFullDownload: if true, force a full download of the product database
+    ///   - completion: This is called asynchronously on the main thread, after the update check has finished.
+    ///   - newData: indicates if new data is available
+    public func updateDatabase(forceFullDownload: Bool, completion: @escaping (_ newData: Bool)->() ) {
         let schemaVersion = "\(self.schemaVersionMajor).\(self.schemaVersionMinor)"
-        self.getAppDb(currentRevision: self.revision, schemaVersion: schemaVersion) { dbResponse in
+        let revision = forceFullDownload ? 0 : self.revision
+        self.getAppDb(currentRevision: revision, schemaVersion: schemaVersion) { dbResponse in
             self.lastProductUpdate = Date()
 
             DispatchQueue.global(qos: .userInitiated).async {
@@ -226,6 +284,10 @@ final public class ProductDB: ProductProvider {
                     newData = false
                 }
 
+                if self.config.useFTS && newData {
+                    self.createFulltextIndex(self.config.dbPathname(temp: true))
+                }
+
                 if performSwitch {
                     self.switchDatabases()
                 } else {
@@ -240,6 +302,16 @@ final public class ProductDB: ProductProvider {
                     completion(newData)
                 }
             }
+        }
+    }
+
+    private func createFulltextIndex(_ path: String) {
+        NSLog("creating FTS index...")
+        do {
+            let db = try DatabaseQueue(path: path)
+            try self.createFullTextIndex(db)
+        } catch {
+            NSLog("create FTS failed: error \(error)")
         }
     }
 
@@ -283,6 +355,10 @@ final public class ProductDB: ProductProvider {
                 try Zip.unzipFile(seedUrl, destination: URL(fileURLWithPath: self.config.dbDirectory), overwrite: true, password: nil)
             } catch let error {
                 NSLog("error while unzipping seed: \(error)")
+            }
+
+            if self.config.useFTS {
+                self.createFulltextIndex(self.config.dbPathname())
             }
         }
     }
@@ -393,7 +469,7 @@ final public class ProductDB: ProductProvider {
                     try fileManager.moveItem(atPath: dbFile, toPath: oldFile)
                 }
                 try fileManager.moveItem(atPath: tmpFile, toPath: dbFile)
-                self.db = openDb()
+                self.db = self.openDb()
             }
             if fileManager.fileExists(atPath: oldFile) {
                 try fileManager.removeItem(atPath: oldFile)
@@ -433,6 +509,9 @@ func synchronized<T>(_ lock: Any, closure: () throws -> T) rethrows -> T {
 extension ProductDB {
 
     /// get a product by its SKU
+    ///
+    /// - Parameter sku: the SKU of the product to get
+    /// - Returns: a `Product` if found; nil otherwise
     public func productBySku(_ sku: String) -> Product? {
         guard let db = self.db else {
             return nil
@@ -442,6 +521,11 @@ extension ProductDB {
     }
 
     /// get a list of products by their SKUs
+    ///
+    /// the ordering of the returned products is unspecified
+    ///
+    /// - Parameter skus: SKUs of the products to get
+    /// - Returns: an array of `Product`
     public func productsBySku(_ skus: [String]) -> [Product] {
         guard let db = self.db, skus.count > 0 else {
             return []
@@ -479,7 +563,7 @@ extension ProductDB {
     }
 
     /// get a product by its scannable code
-    public func productByScannableCode(_ code: String) -> Product? {
+    public func productByScannableCode(_ code: String) -> LookupResult? {
         guard let db = self.db else {
             return nil
         }
@@ -498,6 +582,8 @@ extension ProductDB {
 
     /// get products matching `name`
     ///
+    /// The project's `useFTS` flag must be `true` for this to work.
+    ///
     /// - Parameters:
     ///   - name: the string to search for. The search is case- and diacritic-insensitive
     ///   - filterDeposits: if true, products with `isDeposit==true` are not returned
@@ -505,6 +591,10 @@ extension ProductDB {
     public func productsByName(_ name: String, filterDeposits: Bool = true) -> [Product] {
         guard let db = self.db else {
             return []
+        }
+
+        if !self.config.useFTS {
+            NSLog("WARNING: productsByName called, but useFTS not set")
         }
 
         return self.productsByName(db, name, filterDeposits)
@@ -517,7 +607,7 @@ extension ProductDB {
     ///   - prefix: the prefix to search for
     ///   - filterDeposits: if true, products with `isDeposit==true` are not returned
     /// - Returns: an array of matching Products
-    public func productsByScannableCodePrefix(_ prefix: String, filterDeposits: Bool = true) -> [Product] {
+    public func productsByScannableCodePrefix(_ prefix: String, filterDeposits: Bool) -> [Product] {
         guard let db = self.db else {
             return []
         }
@@ -525,7 +615,22 @@ extension ProductDB {
         return self.productsByScannableCodePrefix(db, prefix, filterDeposits)
     }
 
-    /// get a product by its SKU
+    /// returns products that bundle `sku`
+    ///
+    /// e.g.
+    ///
+    /// - Parameter sku: SKU of the product
+    /// - Returns: an array of products that contain `sku` as their bundled product
+    public func productsBundling(_ sku: String) -> [Product] {
+        guard let db = self.db else {
+            return []
+        }
+
+        return self.productsBundling(db, sku)
+    }
+
+
+    /// asynchronously get a product by its SKU
     ///
     /// invokes the completion handler on the main thread with the result of the lookup
     ///
@@ -534,7 +639,7 @@ extension ProductDB {
     ///   - forceDownload: if true, skip the lookup in the local DB
     ///   - product: the product found, or nil.
     ///   - error: whether an error occurred during the lookup.
-    public func productBySku(_ sku: String, forceDownload: Bool = false, completion: @escaping (_ product: Product?, _ error: Bool) -> ()) {
+    public func productBySku(_ sku: String, forceDownload: Bool, completion: @escaping (_ product: Product?, _ error: Bool) -> ()) {
         if !forceDownload, let product = self.productBySku(sku) {
             DispatchQueue.main.async {
                 completion(product, false)
@@ -545,7 +650,7 @@ extension ProductDB {
         self.getSingleProduct(self.config.lookupBySkuUrl, "{sku}", sku, completion: completion)
     }
 
-    /// get a product by (one of) it scannable codes
+    /// asynchronously get a product by (one of) it scannable codes
     ///
     /// invokes the completion handler on the main thread with the result of the lookup
     ///
@@ -554,10 +659,10 @@ extension ProductDB {
     ///   - forceDownload: if true, skip the lookup in the local DB
     ///   - product: the product found, or nil.
     ///   - error: whether an error occurred during the lookup.
-    public func productByScannableCode(_ code: String, forceDownload: Bool = false, completion: @escaping (_ product: Product?, _ error: Bool) -> ()) {
-        if !forceDownload, let product = self.productByScannableCode(code) {
+    public func productByScannableCode(_ code: String, forceDownload: Bool, completion: @escaping (_ result: LookupResult?, _ error: Bool) -> ()) {
+        if !forceDownload, let result = self.productByScannableCode(code) {
             DispatchQueue.main.async {
-                completion(product, false)
+                completion(result, false)
             }
             return
         }
@@ -565,7 +670,7 @@ extension ProductDB {
         self.getSingleProduct(self.config.lookupByCodeUrl, "{code}", code, completion: completion)
     }
 
-    /// get a product by (one of) it weigh item ids
+    /// asynchronously get a product by (one of) it weigh item ids
     ///
     /// invokes the completion handler on the main thread with the result of the lookup
     ///
@@ -574,7 +679,7 @@ extension ProductDB {
     ///   - forceDownload: if true, skip the lookup in the local DB
     ///   - product: the product found, or nil.
     ///   - error: whether an error occurred during the lookup.
-    public func productByWeighItemId(_ weighItemId: String, forceDownload: Bool = false, completion: @escaping (_ product: Product?, _ error: Bool) -> ()) {
+    public func productByWeighItemId(_ weighItemId: String, forceDownload: Bool, completion: @escaping (_ product: Product?, _ error: Bool) -> ()) {
         if !forceDownload, let product = self.productByWeighItemId(weighItemId) {
             DispatchQueue.main.async {
                 completion(product, false)
@@ -584,5 +689,4 @@ extension ProductDB {
 
         self.getSingleProduct(self.config.lookupByIdUrl, "{id}", weighItemId, completion: completion)
     }
-
 }

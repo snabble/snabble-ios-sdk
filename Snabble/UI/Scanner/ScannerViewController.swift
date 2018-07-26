@@ -9,7 +9,6 @@ import AVFoundation
 
 public protocol ScannerDelegate: AnalyticsDelegate, MessageDelegate {
     func closeScanningView()
-    func gotoCheckout()
 }
 
 public class ScannerViewController: UIViewController {
@@ -19,6 +18,8 @@ public class ScannerViewController: UIViewController {
     private var scanningView: ScanningView!
     private var scanConfirmationView: ScanConfirmationView!
     private var scanConfirmationViewBottom: NSLayoutConstraint!
+
+    private var infoView: ScannerInfoView!
 
     private var productProvider: ProductProvider!
     private var shoppingCart: ShoppingCart!
@@ -32,7 +33,7 @@ public class ScannerViewController: UIViewController {
     private var objectTypes: [AVMetadataObject.ObjectType] = [ .ean8, .ean13, .code128 ]
     private weak var delegate: ScannerDelegate!
     private var timer: Timer?
-    
+
     public init(_ productProvider: ProductProvider, _ cart: ShoppingCart, delegate: ScannerDelegate, objectTypes: [AVMetadataObject.ObjectType]? = nil) {
         super.init(nibName: nil, bundle: Snabble.bundle)
 
@@ -50,6 +51,11 @@ public class ScannerViewController: UIViewController {
     
     public required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
+    }
+
+    private var firstTimeInfoShown: Bool {
+        get { return UserDefaults.standard.bool(forKey: "snabble.scanner.firstTimeInfoShown") }
+        set { UserDefaults.standard.set(newValue, forKey: "snabble.scanner.firstTimeInfoShown") }
     }
     
     override public func viewDidLoad() {
@@ -76,6 +82,16 @@ public class ScannerViewController: UIViewController {
         bottom.constant = self.hiddenConfirmationOffset
         self.scanConfirmationViewBottom = bottom
 
+        self.infoView = ScannerInfoView()
+        self.infoView.delegate = self
+        self.infoView.translatesAutoresizingMaskIntoConstraints = false
+        self.scanningView.addSubview(self.infoView)
+        self.infoView.leadingAnchor.constraint(equalTo: self.scanningView.leadingAnchor, constant: 16).isActive = true
+        self.infoView.trailingAnchor.constraint(equalTo: self.scanningView.trailingAnchor, constant: -16).isActive = true
+        self.infoView.centerXAnchor.constraint(equalTo: self.scanningView.centerXAnchor).isActive = true
+        self.infoView.bottomAnchor.constraint(equalTo: self.scanningView.bottomAnchor, constant: -16).isActive = true
+        self.infoView.isHidden = self.firstTimeInfoShown
+
         var scannerConfig = ScanningViewConfig()
         
         scannerConfig.torchButtonTitle = "Snabble.Scanner.torchButton".localized()
@@ -92,6 +108,10 @@ public class ScannerViewController: UIViewController {
         self.scanConfirmationView.delegate = self
 
         self.keyboardObserver = KeyboardObserver(handler: self)
+
+        let infoIcon = UIImage.fromBundle("icon-info")?.recolored(with: .white)
+        let infoButton = UIBarButtonItem(image: infoIcon, style: .plain, target: self, action: #selector(self.infoButtonTapped(_:)))
+        self.navigationItem.leftBarButtonItem = infoButton
     }
 
     override public func viewWillAppear(_ animated: Bool) {
@@ -102,7 +122,10 @@ public class ScannerViewController: UIViewController {
         super.viewDidAppear(animated)
 
         self.delegate.track(.viewScanner)
-        self.scanningView.startScanning()
+        if self.firstTimeInfoShown {
+            self.scanningView.initializeCamera()
+            self.scanningView.startScanning()
+        }
     }
 
     override public func viewWillDisappear(_ animated: Bool) {
@@ -110,6 +133,7 @@ public class ScannerViewController: UIViewController {
         
         self.scanningView.stopScanning()
         self.hideScanConfirmationView(true)
+        self.infoView.isHidden = true
     }
 
     /// reset `productProvider` and `shoppingCart` when switching between projects
@@ -117,15 +141,19 @@ public class ScannerViewController: UIViewController {
         self.productProvider = productProvider
         self.shoppingCart = cart
 
-        self.closeConfirmation()
-        self.navigationController?.popToRootViewController(animated: false)
+        // avoid camera permission query if this is called before we've ever been on-screen
+        if self.scanningView != nil {
+            self.closeConfirmation()
+            self.navigationController?.popToRootViewController(animated: false)
+        }
     }
     
     // MARK: - scan confirmation views
     
-    private func showConfirmation(for product: Product, _ ean: EANCode) {
-        self.scanConfirmationView.present(product, cart: self.shoppingCart, ean: ean)
-        
+    private func showConfirmation(for product: Product, _ code: String) {
+        self.confirmationVisible = true
+        self.scanConfirmationView.present(product, cart: self.shoppingCart, code: code)
+
         self.scanningView.stopScanning()
         self.hideScanConfirmationView(false)
     }
@@ -136,7 +164,11 @@ public class ScannerViewController: UIViewController {
         }
         
         self.confirmationVisible = !hide
-        self.scanConfirmationViewBottom.constant = hide ? self.hiddenConfirmationOffset : -16
+        var offset: CGFloat = -16
+        if self.scanConfirmationView.isFirstResponder {
+            offset = self.scanConfirmationViewBottom.constant
+        }
+        self.scanConfirmationViewBottom.constant = hide ? self.hiddenConfirmationOffset : offset
         
         self.scanningView.bottomBarHidden = !hide
         self.scanningView.reticleHidden = !hide
@@ -144,6 +176,32 @@ public class ScannerViewController: UIViewController {
         UIView.animate(withDuration: 0.12) {
             self.view.layoutIfNeeded()
         }
+    }
+
+    @objc func infoButtonTapped(_ sender: Any) {
+        if self.confirmationVisible {
+            return
+        }
+
+        self.showInfo()
+    }
+}
+
+// MARK: - info delegate
+extension ScannerViewController: ScannerInfoDelegate {
+
+    func showInfo() {
+        self.scanningView.stopScanning()
+        self.infoView.isHidden = false
+        self.scanningView.reticleHidden = true
+    }
+
+    func close() {
+        self.infoView.isHidden = true
+        self.firstTimeInfoShown = true
+        self.scanningView.reticleHidden = false
+        self.scanningView.initializeCamera()
+        self.scanningView.startScanning()
     }
 }
 
@@ -169,10 +227,6 @@ extension ScannerViewController: ScanConfirmationViewDelegate {
     func closeConfirmation() {
         self.hideScanConfirmationView(true)
         self.scanningView.startScanning()
-    }
-
-    func gotoCheckout() {
-        self.delegate.gotoCheckout()
     }
 }
 
@@ -235,17 +289,18 @@ extension ScannerViewController: ScanningViewDelegate {
 extension ScannerViewController {
 
     private func scannedUnknown(_ msg: String, _ code: String) {
+        print("scanned unknown code \(code)")
         self.delegate.showWarningMessage(msg)
         self.delegate.track(.scanUnknown(code))
+
+        self.timer?.invalidate()
+        self.timer = Timer.scheduledTimer(withTimeInterval: 3, repeats: false) { timer in
+            self.lastScannedCode = ""
+        }
     }
 
-    private func handleScannedCode(_ code: String) {
-        self.lastScannedCode = code
-
-        guard let ean = EAN.parse(code) else {
-            self.scannedUnknown("Snabble.Scanner.unknownBarcode".localized(), code)
-            return
-        }
+    private func handleScannedCode(_ scannedCode: String) {
+        self.lastScannedCode = scannedCode
 
         self.timer?.invalidate()
         self.timer = Timer.scheduledTimer(withTimeInterval: 0.3, repeats: false) { timer in
@@ -254,19 +309,20 @@ extension ScannerViewController {
 
         self.scanningView.stopScanning()
 
-        self.productForEan(ean) { product in
+        self.productForCode(scannedCode) { product, code in
             self.timer?.invalidate()
             self.timer = nil
             self.spinner.stopAnimating()
 
             guard let product = product else {
-                self.scannedUnknown("Snabble.Scanner.unknownBarcode".localized(), code)
+                self.scannedUnknown("Snabble.Scanner.unknownBarcode".localized(), scannedCode)
                 self.scanningView.startScanning()
                 return
             }
 
+            let ean = EAN.parse(scannedCode)
             // handle scanning the shelf code of a pre-weighed product
-            if product.type == .preWeighed && ean.embeddedData == nil {
+            if product.type == .preWeighed && ean?.embeddedData == nil {
                 let msg = "Snabble.Scanner.scannedShelfCode".localized()
                 self.scannedUnknown(msg, code)
                 self.scanningView.startScanning()
@@ -274,28 +330,67 @@ extension ScannerViewController {
             }
 
             self.delegate.track(.scanProduct(code))
-
             self.productType = product.type
-            self.showConfirmation(for: product, ean)
             self.lastScannedCode = ""
+
+            let bundles = self.productProvider.productsBundling(product.sku)
+            if bundles.count > 0 {
+                self.showBundleSelection(for: product, code, bundles)
+            } else {
+                self.showConfirmation(for: product, code)
+            }
         }
     }
 
-    private func productForEan(_ ean: EANCode, completion: @escaping (Product?) -> () ) {
-        if ean.hasEmbeddedData {
-            guard
-                let ean13 = ean as? EAN13,
-                ean13.priceFieldOk()
-            else {
-                completion(nil)
-                return
+    private func showBundleSelection(for product: Product, _ code: String, _ bundles: [Product]) {
+        let alert = UIAlertController(title: nil, message: "Snabble.Scanner.BundleDialog.headline".localized(), preferredStyle: .actionSheet)
+
+        alert.addAction(UIAlertAction(title: product.name, style: .default) { action in
+            self.showConfirmation(for: product, code)
+        })
+
+        for bundle in bundles {
+            alert.addAction(UIAlertAction(title: bundle.name, style: .default) { action in
+                let bundleCode = bundle.scannableCodes.first ?? ""
+                self.showConfirmation(for: bundle, bundleCode)
+            })
+        }
+
+        alert.addAction(UIAlertAction(title: "Snabble.Cancel".localized(), style: .cancel, handler: nil))
+
+        // HACK: set the action sheet buttons background
+        if let alertContentView = alert.view.subviews.first?.subviews.first {
+            for view in alertContentView.subviews { //This is main catch
+                view.backgroundColor = .white
             }
-            self.productProvider.productByWeighItemId(ean.codeForLookup, forceDownload: false) { product, error in
-                completion(product)
+        }
+
+        self.scanningView.stopScanning()
+        self.present(alert, animated: true)
+    }
+
+    private func productForCode(_ code: String, completion: @escaping (Product?, String) -> () ) {
+        if let ean = EAN.parse(code), ean.hasEmbeddedData {
+            if APIConfig.shared.config.verifyInternalEanChecksum {
+                guard
+                    let ean13 = ean as? EAN13,
+                    ean13.priceFieldOk()
+                else {
+                    completion(nil, "")
+                    return
+                }
+            }
+            
+            self.productProvider.productByWeighItemId(ean.codeForLookup) { product, error in
+                completion(product, code)
             }
         } else {
-            self.productProvider.productByScannableCode(ean.code, forceDownload: false) { product, error in
-                completion(product)
+            self.productProvider.productByScannableCode(code) { result, error in
+                if let result = result {
+                    completion(result.product, result.code)
+                } else {
+                    completion(nil, "")
+                }
             }
         }
     }
@@ -317,7 +412,7 @@ extension ScannerViewController: KeyboardHandling {
         }
 
         let offset: CGFloat = self.productType == .singleItem ? 104 : 0
-        self.scanConfirmationViewBottom.constant += info.keyboardHeight - offset
+        self.scanConfirmationViewBottom.constant = -info.keyboardHeight - offset
 
         UIView.animate(withDuration: info.animationDuration) {
             self.view.layoutIfNeeded()

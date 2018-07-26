@@ -53,8 +53,6 @@
         en = Enter Barcode
     [Snabble.Scanner.enterCodeButton]
         en = Enter\nBarcode
-    [Snabble.Scanner.gotoCheckout]
-        en = Checkout and pay %@ now
     [Snabble.Scanner.scannedShelfCode]
         en = Please scan the article's barcode instead
     [Snabble.Scanner.scanningTitle]
@@ -71,7 +69,16 @@
         en = Update Cart
     [Snabble.Scanner.addToCart]
         en = Add to Cart
-
+    [Snabble.Scanner.BundleDialog.headline]
+        en = Please select an item
+    [Snabble.Scanner.plusDeposit]
+        en = + %@ deposit
+    [Snabble.Scanner.introText]
+        en = Scan barcodes on products and place them in your shopping cart.
+    [Snabble.Scanner.start]
+        en = Start scanner
+    [Snabble.Scanner.addCodeAsIs]
+        en = Add %@ as is
     [Snabble.ShoppingCart.title]
         en = Shopping Cart
     [Snabble.Shoppingcart.buyProducts.one]
@@ -88,6 +95,8 @@
         en = Remove %@ from the cart?
     [Snabble.Shoppingcart.removeItems]
         en = Remove all products from shopping cart?
+    [Snabble.Shoppingcart.deposit]
+        en = Deposit
 
     [Snabble.PaymentMethod.encodedCodes]
         en = Checkstand
@@ -106,4 +115,7 @@
         tags = android
     [Snabble.Shoppingcart.articleRemoved]
         en = Article removed
+        tags = android
+    [Snabble.loadingProductInformation]
+        en = Loading product information...
         tags = android

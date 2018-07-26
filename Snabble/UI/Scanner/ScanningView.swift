@@ -99,6 +99,9 @@ public class ScanningView: DesignableView {
     var firstLayoutDone = false
     var fullDimmingLayer: CAShapeLayer!     // dims the whole preview layer
 
+    var frameView = UIView()    // indicator for where the barcode was detected
+    var frameTimer: Timer?
+
     /// toggle the visibility of the "barcode entry" and "torch" buttons at the bottom
     public var bottomBarHidden = false {
         didSet {
@@ -126,6 +129,13 @@ public class ScanningView: DesignableView {
 
         let torchTap = UITapGestureRecognizer(target: self, action: #selector(self.torchButtonTapped(_:)))
         self.torchWrapper.addGestureRecognizer(torchTap)
+
+        self.frameView.backgroundColor = .clear
+        self.frameView.layer.borderColor = UIColor.lightGray.cgColor
+        self.frameView.layer.borderWidth = 1
+        self.frameView.layer.cornerRadius = 3
+        self.view.addSubview(self.frameView)
+        self.view.bringSubview(toFront: self.frameView)
     }
 
     /// this passes the `ScanningViewConfig` data to the ScanningView. This method must be called before the first pass of the
@@ -151,7 +161,11 @@ public class ScanningView: DesignableView {
         self.metadataObjectTypes = config.metadataObjectTypes
 
         self.bottomBarHidden = config.bottomBarHidden
+    }
 
+    /// this must be called once to initialize the camera. If the app doesn't already have camera usage permission,
+    /// the `requestCameraPermission` method of the delegate is called
+    public func initializeCamera() {
         if self.checkCameraStatus() {
             self.initCaptureSession()
         }
@@ -159,10 +173,17 @@ public class ScanningView: DesignableView {
 
     /// start scanning
     public func startScanning() {
+        self.frameView.isHidden = true
+        self.frameView.frame = self.reticle.frame
         self.initCaptureSession()
 
         self.view.bringSubview(toFront: self.reticle)
         self.view.bringSubview(toFront: self.bottomBar)
+
+        if let camera = self.camera {
+            let torchToggleSupported = camera.isTorchModeSupported(.on) && camera.isTorchModeSupported(.off)
+            self.torchWrapper.isHidden = !torchToggleSupported
+        }
 
         if let capture = self.captureSession, !capture.isRunning {
             let rect = self.reticle.frame
@@ -176,6 +197,7 @@ public class ScanningView: DesignableView {
 
     /// stop scanning
     public func stopScanning() {
+        self.frameTimer?.invalidate()
         self.captureSession?.stopRunning()
     }
 
@@ -201,7 +223,7 @@ public class ScanningView: DesignableView {
         } catch {}
     }
 
-    func checkCameraStatus() -> Bool {
+    private func checkCameraStatus() -> Bool {
         // get the back camera device
         guard let camera = AVCaptureDevice.default(.builtInWideAngleCamera, for: AVMediaType.video, position: .back) else {
             self.delegate?.noCameraFound()
@@ -310,18 +332,6 @@ public class ScanningView: DesignableView {
             }
         }
     }
-
-    func cameraAuthorized(_ granted: Bool) {
-        if granted {
-            if let device = self.camera, device.isTorchAvailable, device.isTorchModeSupported(.on), device.isTorchModeSupported(.off) {
-                self.torchWrapper.isHidden = true
-            }
-            
-            self.startScanning()
-        } else {
-            self.captureSession = nil
-        }
-    }
 }
 
 extension ScanningView: AVCaptureMetadataOutputObjectsDelegate {
@@ -333,6 +343,28 @@ extension ScanningView: AVCaptureMetadataOutputObjectsDelegate {
             let code = codeObject.stringValue
         else {
             return
+        }
+
+        if let barCodeObject = self.previewLayer?.transformedMetadataObject(for: codeObject) {
+            var bounds = barCodeObject.bounds
+            let minSize: CGFloat = 60
+            if bounds.height < minSize {
+                bounds.size.height = minSize
+                bounds.origin.y -= minSize / 2
+            }
+            if bounds.width < minSize {
+                bounds.size.width = minSize
+                bounds.origin.x -= minSize / 2
+            }
+            self.frameView.isHidden = false
+            UIView.animate(withDuration: 0.25) {
+                self.frameView.frame = bounds
+            }
+
+            self.frameTimer?.invalidate()
+            self.frameTimer = Timer.scheduledTimer(withTimeInterval: 1, repeats: false) { timer in
+                self.frameView.isHidden = true
+            }
         }
 
         self.delegate.scannedCode(code)

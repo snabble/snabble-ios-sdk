@@ -94,13 +94,14 @@ class CashCheckoutViewController: UIViewController {
 
         self.delegate.track(.paymentCancelled)
 
-        self.process.abort { process in
+        self.process.abort { process, error in
             self.navigationController?.popToRootViewController(animated: true)
         }
     }
 
     private func paymentFinished(_ success: Bool) {
         self.poller = nil
+        self.cart.removeAll()
         self.delegate.paymentFinished(success, self.cart)
     }
 

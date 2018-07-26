@@ -16,15 +16,19 @@ public enum ProductType: Int, Codable {
 public enum SaleRestriction: Codable {
     case none
     case age(Int)
+    case fsk
 
     enum CodingKeys: String, CodingKey {
         case age
+        case fsk
     }
 
     public init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
         if let age = try container.decodeIfPresent(Int.self, forKey: .age) {
             self = .age(age)
+        } else if try container.decodeIfPresent(Bool.self, forKey: .fsk) == true {
+            self = .fsk
         } else {
             self = .none
         }
@@ -34,7 +38,26 @@ public enum SaleRestriction: Codable {
         var container = encoder.container(keyedBy: CodingKeys.self)
         switch self {
         case .age(let age): try container.encode(age, forKey: .age)
+        case .fsk: try container.encode(true, forKey: .fsk)
         case .none: break
+        }
+    }
+
+    public init(_ code: Int64?) {
+        guard let code = code else {
+            self = .none
+            return
+        }
+
+        let type = code & 0xFF
+        switch type {
+        case 1: // age
+            let age = (code & 0xFF00) >> 8
+            self = .age(Int(age))
+        case 2: // fsk
+            self = .fsk
+        default:
+            self = .none
         }
     }
 }
@@ -78,6 +101,10 @@ public struct Product: Codable {
     /// if not nil, refers to the SKU of the product that carries the price information for the deposit
     public let depositSku: String?
 
+    /// if not nil, this is a "bundle product" and `bundledSku` refers to the product this is bundling
+    /// (e.g. a case of beer will have this set, referring to the sku of the individual bottle)
+    public let bundledSku: String?
+
     /// if true, this product represents a deposit and thus shouldn't be displayed in search results
     public let isDeposit: Bool
 
@@ -118,12 +145,13 @@ public struct Product: Codable {
         self.scannableCodes = try container.decode(.scannableCodes)
         self.weighedItemIds = try container.decodeIfPresent(.weighedItemIds)
         self.depositSku = try container.decodeIfPresent(.depositSku)
+        self.bundledSku = try container.decodeIfPresent(.bundledSku)
         self.isDeposit = try container.decode(.isDeposit)
         self.saleRestriction = try container.decodeIfPresent(.saleRestriction) ?? .none
         self.saleStop = try container.decodeIfPresent(.saleStop) ?? false
     }
 
-    public init(sku: String,
+    init(sku: String,
                 name: String,
                 description: String?,
                 subtitle: String?,
@@ -135,6 +163,7 @@ public struct Product: Codable {
                 scannableCodes: Set<String>,
                 weighedItemIds: Set<String>?,
                 depositSku: String?,
+                bundledSku: String?,
                 isDeposit: Bool,
                 deposit: Int?,
                 saleRestriction: SaleRestriction,
@@ -151,6 +180,7 @@ public struct Product: Codable {
         self.scannableCodes = scannableCodes
         self.weighedItemIds = weighedItemIds
         self.depositSku = depositSku
+        self.bundledSku = bundledSku
         self.isDeposit = isDeposit
         self.deposit = deposit
         self.saleRestriction = saleRestriction
@@ -183,7 +213,7 @@ extension Product {
     }
 
     private func round(_ n: Decimal) -> Int {
-        let mode = APIConfig.shared.project.roundingMode
+        let mode = APIConfig.shared.config.roundingMode.mode
         let round = NSDecimalNumberHandler(roundingMode: mode,
                                            scale: 0,
                                            raiseOnExactness: false,
@@ -208,19 +238,71 @@ extension Product: Hashable {
 /// price formatting
 public enum Price {
     public static func format(_ price: Int) -> String {
-        let divider = pow(10.0, APIConfig.shared.project.decimalDigits)
+        let divider = pow(10.0, APIConfig.shared.config.decimalDigits)
         let decimalPrice = Decimal(price) / divider
         return formatter.string(for: decimalPrice)!
     }
 
     private static var formatter: NumberFormatter {
         let fmt = NumberFormatter()
-        fmt.minimumFractionDigits = APIConfig.shared.project.decimalDigits
-        fmt.maximumFractionDigits = APIConfig.shared.project.decimalDigits
         fmt.minimumIntegerDigits = 1
+        fmt.minimumFractionDigits = APIConfig.shared.config.decimalDigits
+        fmt.maximumFractionDigits = APIConfig.shared.config.decimalDigits
+        fmt.locale = Locale(identifier: APIConfig.shared.config.locale)
+        fmt.currencyCode = APIConfig.shared.config.currency
+        fmt.currencySymbol = APIConfig.shared.config.currencySymbol
         fmt.numberStyle = .currency
-        fmt.currencySymbol = APIConfig.shared.project.currencySymbol
         return fmt
     }
 }
 
+/*
+/// pretty names PoC
+
+extension Product {
+
+    var prettyName: String {
+        var words = self.name.components(separatedBy: " ")
+        for (index, word) in words.enumerated() {
+            // COCA-COLA -> Coca-Cola
+            var newWord = word.capitalized
+
+            // 6X4 -> 6×4
+            newWord = self.replace(newWord, "\\d+X\\d+", "X", "×")
+
+            // 250MG -> 250mg
+            for suffix in [ "L", "ML", "G", "MG", "GR", "KG", "CM" ] {
+                newWord = self.replace(newWord, "\\d+\(suffix)$", suffix, suffix.lowercased())
+            }
+
+            // single-letter abbreviations and other stuff that needs to be all-lowercase
+            for abbr in [ "U.", "M.", "O.", "In", "Aa", "Und", "Von", "Der", "Ca", "Ca." ] {
+                if newWord == abbr {
+                    newWord = abbr.lowercased()
+                }
+            }
+
+            // some stuff needs to be all-uppercase
+            for abbr in [ "Bh", "Fa", "Ocb" ] {
+                if newWord == abbr {
+                    newWord = abbr.uppercased()
+                }
+            }
+
+            words[index] = newWord
+        }
+
+        return words.joined(separator: " ")
+    }
+
+    private func replace(_ word: String, _ regex: String, _ string: String, _ replacement: String) -> String {
+        let regex = try! NSRegularExpression(pattern: regex, options: [.caseInsensitive])
+        let matches = regex.matches(in: word, options: [], range: NSMakeRange(0, word.count))
+        if matches.count > 0 {
+            return word.replacingOccurrences(of: string.capitalized, with: replacement)
+        }
+        return word
+    }
+
+}
+*/

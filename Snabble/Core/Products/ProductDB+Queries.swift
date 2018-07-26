@@ -34,7 +34,7 @@ extension ProductDB {
 
     func productsBySku(_ dbQueue: DatabaseQueue, _ skus: [String]) -> [Product] {
         do {
-            let list = skus.map { String($0) }.joined(separator: ",")
+            let list = skus.map { "\"\($0)\"" }.joined(separator: ",")
             let rows = try dbQueue.inDatabase { db in
                 return try Row.fetchAll(db, ProductDB.baseQuery + " where p.sku in (\(list))")
             }
@@ -44,7 +44,6 @@ extension ProductDB {
         }
         return []
     }
-
 
     func boostedProducts(_ dbQueue: DatabaseQueue, limit: Int) -> [Product] {
         do {
@@ -77,7 +76,7 @@ extension ProductDB {
         return []
     }
 
-    func productByScannableCode(_ dbQueue: DatabaseQueue, _ code: String) -> Product? {
+    func productByScannableCode(_ dbQueue: DatabaseQueue, _ code: String) -> LookupResult? {
         do {
             let row = try dbQueue.inDatabase { db in
                 return try Row.fetchOne(db, ProductDB.baseQuery + " " + """
@@ -85,9 +84,17 @@ extension ProductDB {
                     where s.code = ?
                     """, arguments: [code])
                 }
-            return self.productFromRow(dbQueue, row)
+            if let product = self.productFromRow(dbQueue, row) {
+                return LookupResult(product: product, code: code)
+            }
         } catch {
             NSLog("db error: \(error)")
+        }
+
+        if code.first == "0", let codeInt = Int(code) {
+            // no product found. try the lookup again, with all leading zeroes removed from `code`
+            print("2nd db lookup attempt \(code) -> \(codeInt)")
+            return self.productByScannableCode(dbQueue, String(codeInt))
         }
         return nil
     }
@@ -113,7 +120,7 @@ extension ProductDB {
             let depositCondition = filterDeposits ? "and isDeposit = 0" : ""
             let rows = try dbQueue.inDatabase { db in
                 return try Row.fetchAll(db, ProductDB.baseQuery + " " + """
-                    where p.sku in (select docid from searchByName where foldedName match ? limit ?) \(depositCondition)
+                    where p.sku in (select sku from searchByName where foldedName match ? limit ?) \(depositCondition)
                     """, arguments: [name + "*", limit])
             }
             return rows.compactMap { self.productFromRow(dbQueue, $0) }
@@ -141,6 +148,20 @@ extension ProductDB {
         return []
     }
 
+    func productsBundling(_ dbQueue: DatabaseQueue, _ sku: String) -> [Product] {
+        do {
+            let rows = try dbQueue.inDatabase { db in
+                return try Row.fetchAll(db, ProductDB.baseQuery + " " + """
+                    where p.bundledSku = ?
+                    """, arguments: [sku])
+            }
+            return rows.compactMap { self.productFromRow(dbQueue, $0) }
+        } catch {
+            NSLog("db error: \(error)")
+        }
+        return []
+    }
+
     func metadata(_ dbQueue: DatabaseQueue) -> [String: String] {
         do {
             let rows = try dbQueue.inDatabase { db in
@@ -155,30 +176,45 @@ extension ProductDB {
         return [:]
     }
 
-    private func productFromRow(_ dbQueue: DatabaseQueue, _ row: Row?) -> Product? {
-        guard let row = row else {
-            return nil
-        }
+    func createFullTextIndex(_ dbQueue: DatabaseQueue) throws {
+        let start = Date.timeIntervalSinceReferenceDate
+        try dbQueue.write { db in
+            try db.execute("drop table if exists searchByName_tmp")
+            try db.execute("create virtual table searchByName_tmp using fts4(sku text, foldedname text)")
 
-        // find SKU
-        let sku: String
-        if let intSku = row["sku"] as? Int64 {
-            sku = String(intSku)
-        } else if let strSku = row["sku"] as? String {
-            sku = strSku
-        } else {
+            let rows = try Row.fetchCursor(db, "select sku, name from products")
+
+            try db.inTransaction {
+                while let row = try rows.next() {
+                    guard let sku = row["sku"] as? String, let name = row["name"] as? String else {
+                        continue
+                    }
+
+                    let foldedName = name.folding(options: [.diacriticInsensitive, .caseInsensitive], locale: .current)
+                    try db.execute("insert into searchByName_tmp values(?, ?)", arguments: [ sku, foldedName ])
+                }
+                return .commit
+            }
+
+            try db.execute("drop table if exists searchByName")
+            try db.execute("alter table searchByName_tmp rename to searchByName")
+            try db.execute("vacuum")
+        }
+        let elapsed = Date.timeIntervalSinceReferenceDate - start
+        print("update took \(elapsed)")
+    }
+
+
+    private func productFromRow(_ dbQueue: DatabaseQueue, _ row: Row?) -> Product? {
+        guard
+            let row = row,
+            let sku = row["sku"] as? String
+        else {
             return nil
         }
 
         // find deposit SKU
-        let depositSku: String?
-        if let dSku = row["depositSku"] as? Int64 {
-            depositSku = String(dSku)
-        } else if let dSku = row["depositSku"] as? String {
-            depositSku = dSku
-        } else {
-            depositSku = nil
-        }
+        let depositSku = row["depositSku"] as? String
 
         var depositPrice: Int?
         if let dSku = depositSku, let depositProduct = self.productBySku(dbQueue, dSku) {
@@ -194,12 +230,13 @@ extension ProductDB {
                         listPrice: row["listPrice"],
                         discountedPrice: row["discountedPrice"],
                         type: ProductType(rawValue: row["weighing"]) ?? .singleItem,
-                        scannableCodes: makeSet(row["scannableCodes"]),
-                        weighedItemIds: makeSet(row["weighIds"]),
+                        scannableCodes: self.makeSet(row["scannableCodes"]),
+                        weighedItemIds: self.makeSet(row["weighItemIds"]),
                         depositSku: depositSku,
+                        bundledSku: row["bundledSku"],
                         isDeposit: row["isDeposit"] == 1,
                         deposit: depositPrice,
-                        saleRestriction: self.decodeSaleRestriction(row["saleRestriction"]),
+                        saleRestriction: SaleRestriction(row["saleRestriction"]),
                         saleStop: row["saleStop"] ?? false)
 
         return p
@@ -212,17 +249,5 @@ extension ProductDB {
         return Set(s.components(separatedBy: ","))
     }
 
-    private func decodeSaleRestriction(_ code: Int64?) -> SaleRestriction {
-        guard let code = code else {
-            return .none
-        }
-
-        let type = code & 0xFF
-        if type == 1 { // age
-            let age = (code & 0xFF00) >> 8
-            return .age(Int(age))
-        }
-
-        return .none
-    }
+    
 }

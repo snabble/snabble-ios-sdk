@@ -67,7 +67,7 @@ public class PaymentProcess {
         UIApplication.shared.beginIgnoringInteractionEvents()
         self.showHud()
 
-        self.signedCheckoutInfo.createCheckoutProcess(paymentMethod: method) { process in
+        self.signedCheckoutInfo.createCheckoutProcess(paymentMethod: method) { process, error in
             self.hudTimer?.invalidate()
             self.hudTimer = nil
             UIApplication.shared.endIgnoringInteractionEvents()
@@ -77,7 +77,10 @@ public class PaymentProcess {
                 processor.hidesBottomBarWhenPushed = true
                 completion(processor)
             } else {
-                self.delegate.showInfoMessage("Snabble.Payment.errorStarting".localized())
+                let handled = self.delegate.handlePaymentError(error)
+                if !handled {
+                    self.delegate.showInfoMessage("Snabble.Payment.errorStarting".localized())
+                }
             }
         }
     }

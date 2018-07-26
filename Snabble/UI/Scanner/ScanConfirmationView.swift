@@ -8,7 +8,6 @@ import UIKit
 
 protocol ScanConfirmationViewDelegate: AnalyticsDelegate {
     func closeConfirmation()
-    func gotoCheckout()
 }
 
 public extension Notification.Name {
@@ -29,16 +28,20 @@ class ScanConfirmationView: DesignableView {
 
     @IBOutlet private weak var closeButton: UIButton!
     @IBOutlet private weak var cartButton: UIButton!
-    @IBOutlet private weak var checkoutButton: UIButton!
 
     weak var delegate: ScanConfirmationViewDelegate!
 
     private var product: Product!
     private var alreadyInCart = false
     private var quantity = 1
-    private var ean: EANCode!
+    private var ean: EANCode?
+    private var code = ""
     
     private weak var shoppingCart: ShoppingCart!
+
+    override var isFirstResponder: Bool {
+        return self.quantityField.isFirstResponder
+    }
 
     override func awakeFromNib() {
         super.awakeFromNib()
@@ -52,9 +55,6 @@ class ScanConfirmationView: DesignableView {
 
         let mono14 = UIFont.monospacedDigitSystemFont(ofSize: 14, weight: .regular)
         self.priceLabel.font = mono14
-        self.checkoutButton.titleLabel?.font = mono14
-        self.checkoutButton.titleLabel?.adjustsFontSizeToFitWidth = true
-        self.checkoutButton.titleLabel?.minimumScaleFactor = 0.5
 
         self.minusButton.makeBorderedButton()
         self.plusButton.makeBorderedButton()
@@ -68,29 +68,31 @@ class ScanConfirmationView: DesignableView {
         self.minusButton.setImage(UIImage.fromBundle("icon-minus"), for: .normal)
     }
     
-    func present(_ product: Product, cart: ShoppingCart, ean: EANCode) {
+    func present(_ product: Product, cart: ShoppingCart, code: String) {
         // avoid ugly animations
         UIView.performWithoutAnimation {
-            self.doPresent(product, cart: cart, ean: ean)
+            self.doPresent(product, cart: cart, code: code)
             self.layoutIfNeeded()
         }
     }
 
-    private func doPresent(_ product: Product, cart: ShoppingCart, ean: EANCode) {
+    private func doPresent(_ product: Product, cart: ShoppingCart, code: String) {
         self.product = product
         self.productNameLabel.text = product.name
         self.shoppingCart = cart
-        self.ean = ean
+        self.code = code
+        self.ean = EAN.parse(code)
+        self.alreadyInCart = false
+        
+        self.quantity = product.type != .userMustWeigh ? 1 : 0
 
-        self.quantity = 1
-
-        if product.type == .singleItem {
+        if product.type == .singleItem && ean?.hasEmbeddedData == false {
             let cartQuantity = self.shoppingCart.quantity(of: product)
             self.quantity = cartQuantity + 1
             self.alreadyInCart = cartQuantity > 0
         }
 
-        let initialQuantity = ean.embeddedWeight ?? self.quantity
+        let initialQuantity = ean?.embeddedWeight ?? self.quantity
 
         self.minusButton.isHidden = product.weightDependent
         self.plusButton.isHidden = product.weightDependent
@@ -139,40 +141,41 @@ class ScanConfirmationView: DesignableView {
         self.minusButton.isEnabled = qty > 1
         self.plusButton.isEnabled = qty < ShoppingCart.maxAmount
 
-        var productPrice = 0
-        if let weight = self.ean.embeddedWeight {
-            productPrice = product.priceFor(weight)
+        if let weight = self.ean?.embeddedWeight {
+            let productPrice = self.product.priceFor(weight)
             let priceKilo = Price.format(product.price)
             let formattedPrice = Price.format(productPrice)
             self.priceLabel.text = "\(qty)g × \(priceKilo)/kg = \(formattedPrice)"
-        } else if let price = self.ean.embeddedPrice {
-            productPrice = price
-            self.priceLabel.text = Price.format(productPrice)
+        } else if let price = self.ean?.embeddedPrice {
+            self.priceLabel.text = Price.format(price)
             self.quantityField.isHidden = true
             self.gramLabel.isHidden = true
-        } else if let amount = self.ean.embeddedUnits {
+        } else if let amount = self.ean?.embeddedUnits {
+            let productPrice = Price.format(product.priceWithDeposit)
             let multiplier = amount == 0 ? self.quantity : amount
-            productPrice = self.product.priceWithDeposit * multiplier
-            self.priceLabel.text = Price.format(productPrice)
+            let totalPrice = Price.format(self.product.priceWithDeposit * multiplier)
+            self.priceLabel.text = "\(multiplier) × \(productPrice) = \(totalPrice)"
             self.quantityField.isHidden = true
             self.gramLabel.isHidden = true
             self.minusButton.isHidden = amount > 0
-            self.minusButton.isHidden = amount > 0
+            self.plusButton.isHidden = amount > 0
             self.quantityField.isHidden = amount > 0
+        } else if product.type == .userMustWeigh {
+            let productPrice = product.priceFor(quantity)
+            let priceKilo = Price.format(product.price)
+            let formattedPrice = Price.format(productPrice)
+            self.priceLabel.text = "\(qty)g × \(priceKilo)/kg = \(formattedPrice)"
         } else {
-            productPrice = self.product.priceFor(qty)
-            self.priceLabel.text = Price.format(productPrice)
-        }
-
-        let cartTotal = self.alreadyInCart ? 0 : self.shoppingCart.totalPrice
-        let newTotal = productPrice + cartTotal
-
-        let totalPrice = Price.format(newTotal)
-        let checkoutTitle = String(format: "Snabble.Scanner.gotoCheckout".localized(), totalPrice)
-
-        UIView.performWithoutAnimation {
-            self.checkoutButton.setTitle(checkoutTitle, for: .normal)
-            self.checkoutButton.layoutIfNeeded()
+            if let deposit = self.product.deposit {
+                let productPrice = Price.format(self.product.price)
+                let depositPrice = Price.format(deposit * qty)
+                let totalPrice = Price.format(self.product.priceFor(qty))
+                let deposit = String(format: "Snabble.Scanner.plusDeposit".localized(), depositPrice)
+                self.priceLabel.text = "\(qty) × \(productPrice) \(deposit) = \(totalPrice)"
+            } else {
+                let productPrice = self.product.priceFor(qty)
+                self.priceLabel.text = Price.format(productPrice)
+            }
         }
     }
 
@@ -197,8 +200,8 @@ class ScanConfirmationView: DesignableView {
 
     @IBAction private func cartTapped(_ button: UIButton) {
         let cart = self.shoppingCart!
-        if cart.quantity(of: self.product) == 0 || self.product.type != .singleItem {
-            cart.add(self.product, quantity: self.quantity, scannedCode: self.ean.code)
+        if cart.quantity(of: self.product) == 0 || self.product.type != .singleItem || self.ean?.hasEmbeddedData == true {
+            cart.add(self.product, quantity: self.quantity, scannedCode: code)
         } else {
             cart.setQuantity(self.quantity, for: self.product)
         }
@@ -207,11 +210,6 @@ class ScanConfirmationView: DesignableView {
         self.delegate.closeConfirmation()
 
         self.quantityField.resignFirstResponder()
-    }
-
-    @IBAction private func checkoutTapped(_ button: UIButton) {
-        self.cartTapped(button)
-        self.delegate.gotoCheckout()
     }
 
     @IBAction private func closeButtonTapped(_ button: UIButton) {
