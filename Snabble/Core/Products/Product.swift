@@ -283,7 +283,7 @@ extension Product {
             }
 
             // some stuff needs to be all-uppercase
-            for abbr in [ "Bh", "Fa", "Ocb" ] {
+            for abbr in [ "Bh", "Ocb" ] {
                 if newWord == abbr {
                     newWord = abbr.uppercased()
                 }
