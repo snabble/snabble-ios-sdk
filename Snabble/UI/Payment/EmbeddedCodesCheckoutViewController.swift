@@ -165,7 +165,7 @@ extension EmbeddedCodesCheckoutViewController: UICollectionViewDataSource, UICol
 
     private func qrCode(for codes: [String]) -> UIImage? {
         let qrCodeContent = config.prefix + codes.joined(separator: config.separator) + config.suffix
-        NSLog("\(qrCodeContent)")
+        NSLog("QR Code content:\n\(qrCodeContent)")
         for scale in (1...7).reversed() {
             if let img = QRCode.generate(for: qrCodeContent, scale: scale) {
                 if img.size.width <= self.collectionView.bounds.width {

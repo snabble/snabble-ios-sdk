@@ -83,11 +83,9 @@ class ShoppingCartTableCell: UITableViewCell {
         self.minusButton.isHidden = product.weightDependent
         self.plusButton.isHidden = product.type == .preWeighed
 
-        if let ean = EAN.parse(item.scannedCode), let ean13 = ean as? EAN13, let units = ean13.embeddedUnits {
-            if units == 0 {
-                self.minusButton.isHidden = false
-                self.plusButton.isHidden = false
-            }
+        if let ean = EAN13(item.scannedCode), ean.embeddedUnits != nil {
+            self.minusButton.isHidden = !item.editableUnits
+            self.plusButton.isHidden = !item.editableUnits
         }
 
         let weightEntry = product.type == .userMustWeigh
@@ -188,9 +186,18 @@ class ShoppingCartTableCell: UITableViewCell {
     }
 
     @IBAction func minusButtonTapped(_ button: UIButton) {
-        if self.quantity > 0 {
-            self.quantity -= 1
-            self.updateQuantity(at: button.tag)
+        if self.item.editableUnits, let ean = EAN13(self.item.scannedCode), let units = ean.embeddedUnits, units < ShoppingCart.maxAmount {
+            if units == 1 {
+                self.delegate.confirmDeletion(at: button.tag)
+            } else {
+                item.scannedCode = EAN13.embedDataInEan(item.scannedCode, data: units - 1)
+                self.updateQuantity(at: button.tag)
+            }
+        } else {
+            if self.quantity > 0 {
+                self.quantity -= 1
+                self.updateQuantity(at: button.tag)
+            }
         }
     }
 
@@ -201,9 +208,14 @@ class ShoppingCartTableCell: UITableViewCell {
             return
         }
 
-        if self.quantity < ShoppingCart.maxAmount {
-            self.quantity += 1
+        if self.item.editableUnits, let ean = EAN13(self.item.scannedCode), let units = ean.embeddedUnits, units < ShoppingCart.maxAmount {
+            item.scannedCode = EAN13.embedDataInEan(item.scannedCode, data: units + 1)
             self.updateQuantity(at: button.tag)
+        } else {
+            if self.quantity < ShoppingCart.maxAmount {
+                self.quantity += 1
+                self.updateQuantity(at: button.tag)
+            }
         }
     }
 

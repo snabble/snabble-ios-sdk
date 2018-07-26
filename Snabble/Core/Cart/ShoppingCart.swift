@@ -37,32 +37,37 @@ public struct CartConfig {
 }
 
 /// an entry in a shopping cart.
-public struct CartItem: Codable {
+public class CartItem: Codable {
     public var quantity: Int
     public let product: Product
-    public let scannedCode: String
+    public var scannedCode: String {
+        didSet { self.parseCode() }
+    }
 
-    // for those stupid self codes that have 0 as the embedded units and need to be editable later
+    // for shelf codes that have 0 as the embedded units and need to be editable later
     public let editableUnits: Bool
 
     // optional data extracted from the scanned code
-    let price: Int?
-    let weight: Int?
-    let units: Int?
+    private(set) var price: Int?
+    private(set) var weight: Int?
+    private(set) var units: Int?
 
     init(_ quantity: Int, _ product: Product, _ scannedCode: String, _ editableUnits: Bool = false) {
         self.product = product
         self.quantity = quantity
-        self.scannedCode = scannedCode
         self.editableUnits = editableUnits
+        self.scannedCode = scannedCode
+        self.parseCode()
+    }
 
-        let ean = EAN.parse(scannedCode)
+    private func parseCode() {
+        let ean = EAN.parse(self.scannedCode)
         self.price = ean?.embeddedPrice
         self.weight = ean?.embeddedWeight
         self.units = ean?.embeddedUnits
     }
 
-    public init(from decoder: Decoder) throws {
+    public required init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
         self.product = try container.decode(Product.self, forKey: .product)
         self.quantity = try container.decode(Int.self, forKey: .quantity)
