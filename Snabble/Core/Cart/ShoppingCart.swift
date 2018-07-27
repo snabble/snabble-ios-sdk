@@ -37,19 +37,24 @@ public struct CartConfig {
 }
 
 /// an entry in a shopping cart.
-public class CartItem: Codable {
-    public var quantity: Int
-    public let product: Product
-    public var scannedCode: String {
-        didSet { self.parseCode() }
+public struct CartItem: Codable {
+    public var quantity: Int {
+        didSet {
+            // for items with editableUnits, encode the quantity in the EAN code
+            self.scannedCode = EAN13.embedDataInEan(self.scannedCode, data: quantity)
+            self.units = quantity
+            self.quantity = 1
+        }
     }
+    public let product: Product
+    private(set) public var scannedCode: String
 
-    // for shelf codes that have 0 as the embedded units and need to be editable later
+    /// for shelf codes that have 0 as the embedded units and need to be editable later
     public let editableUnits: Bool
 
     // optional data extracted from the scanned code
-    private(set) var price: Int?
-    private(set) var weight: Int?
+    let price: Int?
+    let weight: Int?
     private(set) var units: Int?
 
     init(_ quantity: Int, _ product: Product, _ scannedCode: String, _ editableUnits: Bool = false) {
@@ -57,17 +62,14 @@ public class CartItem: Codable {
         self.quantity = quantity
         self.editableUnits = editableUnits
         self.scannedCode = scannedCode
-        self.parseCode()
-    }
 
-    private func parseCode() {
         let ean = EAN.parse(self.scannedCode)
         self.price = ean?.embeddedPrice
         self.weight = ean?.embeddedWeight
         self.units = ean?.embeddedUnits
     }
 
-    public required init(from decoder: Decoder) throws {
+    public init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
         self.product = try container.decode(Product.self, forKey: .product)
         self.quantity = try container.decode(Int.self, forKey: .quantity)

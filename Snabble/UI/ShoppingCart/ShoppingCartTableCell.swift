@@ -186,18 +186,9 @@ class ShoppingCartTableCell: UITableViewCell {
     }
 
     @IBAction func minusButtonTapped(_ button: UIButton) {
-        if self.item.editableUnits, let ean = EAN13(self.item.scannedCode), let units = ean.embeddedUnits, units < ShoppingCart.maxAmount {
-            if units == 1 {
-                self.delegate.confirmDeletion(at: button.tag)
-            } else {
-                item.scannedCode = EAN13.embedDataInEan(item.scannedCode, data: units - 1)
-                self.updateQuantity(at: button.tag)
-            }
-        } else {
-            if self.quantity > 0 {
-                self.quantity -= 1
-                self.updateQuantity(at: button.tag)
-            }
+        if self.quantity > 0 {
+            self.quantity -= 1
+            self.updateQuantity(at: button.tag)
         }
     }
 
@@ -207,15 +198,10 @@ class ShoppingCartTableCell: UITableViewCell {
             self.quantityInput.resignFirstResponder()
             return
         }
-
-        if self.item.editableUnits, let ean = EAN13(self.item.scannedCode), let units = ean.embeddedUnits, units < ShoppingCart.maxAmount {
-            item.scannedCode = EAN13.embedDataInEan(item.scannedCode, data: units + 1)
+        
+        if self.quantity < ShoppingCart.maxAmount {
+            self.quantity += 1
             self.updateQuantity(at: button.tag)
-        } else {
-            if self.quantity < ShoppingCart.maxAmount {
-                self.quantity += 1
-                self.updateQuantity(at: button.tag)
-            }
         }
     }
 

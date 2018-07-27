@@ -237,7 +237,7 @@ extension ShoppingCartViewController: ShoppingCartTableDelegate {
 
     func updateTotals() {
         let total = self.shoppingCart.totalPrice
-        let formattedTotal = Price.format(self.cart.totalPrice)
+        let formattedTotal = Price.format(self.shoppingCart.totalPrice)
         if total == 0 {
             self.tabBarItem.title = "Snabble.ShoppingCart.title".localized()
         } else {
@@ -254,6 +254,11 @@ extension ShoppingCartViewController: ShoppingCartTableDelegate {
         }
 
         self.checkoutButton?.isHidden = count == 0
+
+        print("updated cart:")
+        for item in self.shoppingCart.items {
+            print("\(item.quantity) \(item.product.name) \(item.scannedCode)")
+        }
     }
 
     var cart: ShoppingCart {
