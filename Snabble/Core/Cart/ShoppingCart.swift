@@ -41,9 +41,11 @@ public struct CartItem: Codable {
     public var quantity: Int {
         didSet {
             // for items with editableUnits, encode the quantity in the EAN code
-            self.scannedCode = EAN13.embedDataInEan(self.scannedCode, data: quantity)
-            self.units = quantity
-            self.quantity = 1
+            if self.editableUnits {
+                self.scannedCode = EAN13.embedDataInEan(self.scannedCode, data: quantity)
+                self.units = quantity
+                self.quantity = 1
+            }
         }
     }
     public let product: Product
@@ -168,9 +170,8 @@ public class ShoppingCart {
     public func add(_ product: Product, quantity: Int = 1, scannedCode: String, editableUnits: Bool = false) {
         let ean = EAN.parse(scannedCode)
         if let index = self.indexOf(product), product.type == .singleItem, ean?.hasEmbeddedData == false {
-            var item = self.items[index]
-            item.quantity += quantity
-            self.items.remove(at: index)
+            self.items[index].quantity += quantity
+            let item = self.items.remove(at: index)
             self.items.insert(item, at: 0)
         } else {
             let item = CartItem(quantity, product, scannedCode, editableUnits)
