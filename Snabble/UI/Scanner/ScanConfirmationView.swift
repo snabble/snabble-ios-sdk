@@ -151,13 +151,15 @@ class ScanConfirmationView: DesignableView {
             self.quantityField.isHidden = true
             self.gramLabel.isHidden = true
         } else if let amount = self.ean?.embeddedUnits {
-            let singlePrice = Price.format(self.product.priceWithDeposit)
-            let productPrice = Price.format(self.product.priceWithDeposit * amount)
-            self.priceLabel.text = "\(amount) x \(singlePrice) = \(productPrice)"
+            let productPrice = Price.format(product.priceWithDeposit)
+            let multiplier = amount == 0 ? self.quantity : amount
+            let totalPrice = Price.format(self.product.priceWithDeposit * multiplier)
+            self.priceLabel.text = "\(multiplier) × \(productPrice) = \(totalPrice)"
             self.quantityField.isHidden = true
             self.gramLabel.isHidden = true
-            self.minusButton.isHidden = true
-            self.plusButton.isHidden = true
+            self.minusButton.isHidden = amount > 0
+            self.plusButton.isHidden = amount > 0
+            self.quantityField.isHidden = amount > 0
         } else if product.type == .userMustWeigh {
             let productPrice = product.priceFor(quantity)
             let priceKilo = Price.format(product.price)
@@ -199,8 +201,18 @@ class ScanConfirmationView: DesignableView {
     @IBAction private func cartTapped(_ button: UIButton) {
         let cart = self.shoppingCart!
         if cart.quantity(of: self.product) == 0 || self.product.type != .singleItem || self.ean?.hasEmbeddedData == true {
-            cart.add(self.product, quantity: self.quantity, scannedCode: code)
+            var code = self.code
+            var editableUnits = false
+            // embedded units==0 (e.g. billa bakery shelf code)? generate new EAN from user-entered quantity
+            if let ean = self.ean, ean.hasEmbeddedUnits, ean.embeddedUnits == 0 {
+                code = EAN13.embedDataInEan(code, data: self.quantity)
+                self.quantity = 1
+                editableUnits = true
+            }
+            // NSLog("adding to cart: \(self.quantity) x \(self.product.name), code=\(code)")
+            cart.add(self.product, quantity: self.quantity, scannedCode: code, editableUnits: editableUnits)
         } else {
+            // NSLog("updating cart: add \(self.quantity) to \(self.product.name)")
             cart.setQuantity(self.quantity, for: self.product)
         }
 

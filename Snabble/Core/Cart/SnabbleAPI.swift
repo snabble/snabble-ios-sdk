@@ -35,7 +35,7 @@ public class APIConfig {
     public internal(set) var links: MetadataLinks?
     public internal(set) var config: ProjectConfig {
         didSet {
-            print("config set to \(config)")
+            // NSLog("config set to \(config)")
         }
     }
     private(set) var baseUrl: String

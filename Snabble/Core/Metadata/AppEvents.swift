@@ -93,7 +93,7 @@ extension AppEvent {
             return
         }
 
-        NSLog("posting event \(String(describing: self))")
+        // NSLog("posting event \(String(describing: self))")
         SnabbleAPI.perform(request) { (result: Empty?, error) in
             if let error = error {
                 NSLog("error posting event: \(error)")
