@@ -111,6 +111,9 @@ public struct Product: Codable {
     /// if this product has an associated deposit, this is the deposit product's `price`
     internal(set) public var deposit: Int?
 
+    /// if this product is contained in bundles (e.g. crates of bottles), this is the list of bundling products
+    public let bundles: [Product]
+
     public let saleRestriction: SaleRestriction
 
     public let saleStop: Bool
@@ -149,6 +152,7 @@ public struct Product: Codable {
         self.isDeposit = try container.decode(.isDeposit)
         self.saleRestriction = try container.decodeIfPresent(.saleRestriction) ?? .none
         self.saleStop = try container.decodeIfPresent(.saleStop) ?? false
+        self.bundles = try container.decodeIfPresent(.bundles) ?? []
     }
 
     init(sku: String,
@@ -167,7 +171,8 @@ public struct Product: Codable {
                 isDeposit: Bool,
                 deposit: Int?,
                 saleRestriction: SaleRestriction,
-                saleStop: Bool) {
+                saleStop: Bool,
+                bundles: [Product]) {
         self.sku = sku
         self.name = name
         self.description = description
@@ -185,6 +190,7 @@ public struct Product: Codable {
         self.deposit = deposit
         self.saleRestriction = saleRestriction
         self.saleStop = saleStop
+        self.bundles = bundles
     }
 }
 

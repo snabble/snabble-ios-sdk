@@ -34,6 +34,9 @@ public struct ProductDBConfiguration {
     /// URL for weighed item id lookup
     public var lookupByIdUrl = ""
 
+    /// URL for looking up bundles
+    public var lookupBundleUrl = ""
+
     /// if the app bundle contains a zipped seed database, set this to the path in the bundle,
     /// e.g. using `cfg.seedDbPath = Bundle.main.path(forResource: "seed", ofType: "zip")`
     /// this file is assumed to be a ZIP archive, containing a file with the same name as the value of `dbName`
@@ -138,8 +141,6 @@ public protocol ProductProvider: class {
     /// - Returns: an array of matching Products
     func productsByScannableCodePrefix(_ prefix: String, filterDeposits: Bool) -> [Product]
 
-    func productsBundling(_ sku: String) -> [Product]
-    
     // MARK: - asynchronous variants of the product lookup methods
 
     /// asynchronously get a product by its SKU
@@ -615,20 +616,7 @@ extension ProductDB {
         return self.productsByScannableCodePrefix(db, prefix, filterDeposits)
     }
 
-    /// returns products that bundle `sku`
-    ///
-    /// e.g.
-    ///
-    /// - Parameter sku: SKU of the product
-    /// - Returns: an array of products that contain `sku` as their bundled product
-    public func productsBundling(_ sku: String) -> [Product] {
-        guard let db = self.db else {
-            return []
-        }
-
-        return self.productsBundling(db, sku)
-    }
-
+    // MARK: - asynchronous requests
 
     /// asynchronously get a product by its SKU
     ///
@@ -689,4 +677,5 @@ extension ProductDB {
 
         self.getSingleProduct(self.config.lookupByIdUrl, "{id}", weighItemId, completion: completion)
     }
+
 }

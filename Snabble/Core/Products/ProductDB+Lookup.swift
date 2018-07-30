@@ -70,11 +70,43 @@ extension ProductDB {
         task.resume()
     }
 
+    func getBundlingProducts(_ url: String, _ placeholder: String, _ sku: String, completion: @escaping (_ bundles: [Product], _ error: Bool) -> ()) {
+        let session = URLSession(configuration: URLSessionConfiguration.default)
+
+        // TODO: is this the right value?
+        let timeoutInterval: TimeInterval = 5
+
+        let fullUrl = url.replacingOccurrences(of: placeholder, with: sku)
+        guard let request = SnabbleAPI.request(.get, fullUrl, timeout: timeoutInterval) else {
+            return completion([], true)
+        }
+
+        let task = session.dataTask(with: request) { data, response, error in
+            if let data = data, let response = response as? HTTPURLResponse {
+                if response.statusCode == 404 {
+                    DispatchQueue.main.async {
+                        NSLog("online bundle lookup with \(placeholder) \(sku): not found")
+                        completion([], false)
+                    }
+                    return
+                }
+
+                do {
+                    // FIXME: parse result once it's no longer a json stream
+                }
+            }
+        }
+        task.resume()
+    }
+
     func completeProduct(_ apiProduct: APIProduct, _ deposit: Int? = nil, completion: @escaping (LookupResult?, Bool) -> () ) {
         let matchingCode = apiProduct.matchingCode ?? ""
-        let result = LookupResult(product: apiProduct.convert(deposit), code: matchingCode)
-        DispatchQueue.main.async {
-            completion(result, false)
+
+        self.getBundlingProducts(self.config.lookupBundleUrl, "{sku}", apiProduct.sku) { bundles, error in
+            let result = LookupResult(product: apiProduct.convert(deposit, bundles), code: matchingCode)
+            DispatchQueue.main.async {
+                completion(result, false)
+            }
         }
     }
 
@@ -139,7 +171,7 @@ struct APIProduct: Codable {
     }
 
     // convert a JSON representation to our normal model object
-    func convert(_ deposit: Int?) -> Product {
+    func convert(_ deposit: Int?, _ bundles: [Product]) -> Product {
         var type = ProductType.singleItem
         var weighItemIds: Set<String>?
 
@@ -169,7 +201,8 @@ struct APIProduct: Codable {
                        isDeposit: self.productType == .deposit,
                        deposit: deposit,
                        saleRestriction: self.saleRestriction?.convert() ?? .none,
-                       saleStop: self.saleStop ?? false
+                       saleStop: self.saleStop ?? false,
+                       bundles: bundles
         )
     }
 }

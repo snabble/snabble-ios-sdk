@@ -221,6 +221,8 @@ extension ProductDB {
             depositPrice = depositProduct.price
         }
 
+        let bundles = self.productsBundling(dbQueue, sku)
+
         let p = Product(sku: sku,
                         name: row["name"],
                         description: row["description"],
@@ -237,7 +239,8 @@ extension ProductDB {
                         isDeposit: row["isDeposit"] == 1,
                         deposit: depositPrice,
                         saleRestriction: SaleRestriction(row["saleRestriction"]),
-                        saleStop: row["saleStop"] ?? false)
+                        saleStop: row["saleStop"] ?? false,
+                        bundles: bundles)
 
         return p
     }

@@ -333,23 +333,22 @@ extension ScannerViewController {
             self.productType = product.type
             self.lastScannedCode = ""
 
-            let bundles = self.productProvider.productsBundling(product.sku)
-            if bundles.count > 0 {
-                self.showBundleSelection(for: product, code, bundles)
+            if product.bundles.count > 0 {
+                self.showBundleSelection(for: product, code)
             } else {
                 self.showConfirmation(for: product, code)
             }
         }
     }
 
-    private func showBundleSelection(for product: Product, _ code: String, _ bundles: [Product]) {
+    private func showBundleSelection(for product: Product, _ code: String) {
         let alert = UIAlertController(title: nil, message: "Snabble.Scanner.BundleDialog.headline".localized(), preferredStyle: .actionSheet)
 
         alert.addAction(UIAlertAction(title: product.name, style: .default) { action in
             self.showConfirmation(for: product, code)
         })
 
-        for bundle in bundles {
+        for bundle in product.bundles {
             alert.addAction(UIAlertAction(title: bundle.name, style: .default) { action in
                 let bundleCode = bundle.scannableCodes.first ?? ""
                 self.showConfirmation(for: bundle, bundleCode)
