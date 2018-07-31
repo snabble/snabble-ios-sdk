@@ -167,7 +167,9 @@ struct APIProduct: Codable {
 
     struct Weighing: Codable {
         let weighedItemIds: [String]
-        let weighByCustomer: Bool
+        let weighByCustomer: Bool?
+        let referenceUnit: String?
+        let encodingUnit: String?
     }
 
     // convert a JSON representation to our normal model object
@@ -176,7 +178,9 @@ struct APIProduct: Codable {
         var weighItemIds: Set<String>?
 
         if let w = self.weighing {
-            type = w.weighByCustomer ? .userMustWeigh : .preWeighed
+            if let weighByCustomer = w.weighByCustomer {
+                type = weighByCustomer ? .userMustWeigh : .preWeighed
+            }
             weighItemIds = Set(w.weighedItemIds)
         }
 
