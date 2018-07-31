@@ -44,26 +44,26 @@ extension ProductDB {
                         // get the deposit product
                         if let depositProduct = self.productBySku(depositSku) {
                             // found it locally in db
-                            self.completeProduct(apiProduct, depositProduct.price, completion: completion)
+                            self.completeProduct(apiProduct, depositProduct.price, completion)
                         } else {
                             // get from server
                             self.productBySku(depositSku) { depositProduct, error in
                                 if let deposit = depositProduct?.price {
-                                    self.completeProduct(apiProduct, deposit, completion: completion)
+                                    self.completeProduct(apiProduct, deposit, completion)
                                 } else {
-                                    self.returnError("deposit product not found", completion: completion)
+                                    self.returnError("deposit product not found", completion)
                                 }
                             }
                         }
                     } else {
                         // product w/o deposit
-                        self.completeProduct(apiProduct, completion: completion)
+                        self.completeProduct(apiProduct, nil, completion)
                     }
                 } catch let error {
-                    self.returnError("product parse error: \(error)", completion: completion)
+                    self.returnError("product parse error: \(error)", completion)
                 }
             } else {
-                self.returnError("error getting product from \(fullUrl): \(String(describing: error))", completion: completion)
+                self.returnError("error getting product from \(fullUrl): \(String(describing: error))", completion)
             }
         }
 
@@ -92,14 +92,26 @@ extension ProductDB {
                 }
 
                 do {
-                    // FIXME: parse result once it's no longer a json stream
+                    let apiProducts = try JSONDecoder().decode(APIProducts.self, from: data)
+                    self.completeBundles(apiProducts, completion)
+                }
+                catch let error {
+                    NSLog("bundle parse error: \(error)")
+                    DispatchQueue.main.sync {
+                        completion([], true)
+                    }
+                }
+            } else {
+                NSLog("error gettings bundles for sku \(sku): \(String(describing: error))")
+                DispatchQueue.main.sync {
+                    completion([], true)
                 }
             }
         }
         task.resume()
     }
 
-    func completeProduct(_ apiProduct: APIProduct, _ deposit: Int? = nil, completion: @escaping (LookupResult?, Bool) -> () ) {
+    func completeProduct(_ apiProduct: APIProduct, _ deposit: Int?, _ completion: @escaping (LookupResult?, Bool) -> () ) {
         let matchingCode = apiProduct.matchingCode ?? ""
 
         self.getBundlingProducts(self.config.lookupBundleUrl, "{sku}", apiProduct.sku) { bundles, error in
@@ -110,7 +122,32 @@ extension ProductDB {
         }
     }
 
-    func returnError(_ msg: String, completion: @escaping (LookupResult?, Bool) -> () ) {
+    func completeBundles(_ apiProducts: APIProducts, _ completion: @escaping (_ products: [Product], _ error: Bool) ->() ) {
+        let group = DispatchGroup()
+        var deposits = [Int](repeating: 0, count: apiProducts.products.count)
+
+        for (index, apiProduct) in apiProducts.products.enumerated() {
+            group.enter()
+
+            self.productBySku(apiProduct.sku) { product, error in
+                if let product = product, let deposit = product.deposit {
+                    deposits[index] = deposit
+                }
+                group.leave()
+            }
+        }
+
+        group.notify(queue: DispatchQueue.main) {
+            let bundles = apiProducts.products.enumerated().map { index, apiProduct in
+                apiProduct.convert(deposits[index], [])
+            }
+            DispatchQueue.main.async {
+                completion(bundles, false)
+            }
+        }
+    }
+
+    func returnError(_ msg: String, _ completion: @escaping (LookupResult?, Bool) -> () ) {
         NSLog(msg)
         DispatchQueue.main.sync {
             completion(nil, true)
@@ -119,6 +156,10 @@ extension ProductDB {
 }
 
 // this is how we get product data from the lookup endpoints
+struct APIProducts: Decodable {
+    let products: [APIProduct]
+}
+
 struct APIProduct: Codable {
     let sku: String
     let name: String
