@@ -285,7 +285,9 @@ struct SnabbleAPI {
 
             // handle empty response
             if data.count == 0 {
-                completion(nil, nil, nil)
+                DispatchQueue.main.async {
+                    completion(nil, nil, nil)
+                }
                 return
             }
             do {
@@ -301,7 +303,9 @@ struct SnabbleAPI {
                 NSLog("error parsing response from \(url): \(error)")
                 let body = String(bytes: data, encoding: .utf8) ?? ""
                 NSLog("raw response body: \(body)")
-                completion(nil, nil, nil)
+                DispatchQueue.main.async {
+                    completion(nil, nil, nil)
+                }
             }
         }
         task.resume()
