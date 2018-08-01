@@ -29,6 +29,7 @@ public struct MetadataLinks: Decodable {
     public let productByCode: Link
     public let productByWeighItemId: Link
     public let bundlesForSku: Link
+    public let productsBySku: Link
 
     public init() {
         self.appdb = Link.empty
@@ -38,9 +39,10 @@ public struct MetadataLinks: Decodable {
         self.productByCode = Link.empty
         self.productByWeighItemId = Link.empty
         self.bundlesForSku = Link.empty
+        self.productsBySku = Link.empty
     }
 
-    public init(appdb: Link, appEvents: Link, checkoutInfo: Link, productBySku: Link, productByCode: Link, productByWeighItemId: Link, bundlesForSku: Link) {
+    public init(appdb: Link, appEvents: Link, checkoutInfo: Link, productBySku: Link, productByCode: Link, productByWeighItemId: Link, bundlesForSku: Link, productsBySku: Link) {
         self.appdb = appdb
         self.appEvents = appEvents
         self.checkoutInfo = checkoutInfo
@@ -48,6 +50,7 @@ public struct MetadataLinks: Decodable {
         self.productByCode = productByCode
         self.productByWeighItemId = productByWeighItemId
         self.bundlesForSku = bundlesForSku
+        self.productsBySku = productsBySku
     }
 
     ///
@@ -63,7 +66,9 @@ public struct MetadataLinks: Decodable {
             productBySku: self.productBySku.absoluteUrl(host),
             productByCode: self.productByCode.absoluteUrl(host),
             productByWeighItemId: self.productByWeighItemId.absoluteUrl(host),
-            bundlesForSku: self.bundlesForSku.absoluteUrl(host))
+            bundlesForSku: self.bundlesForSku.absoluteUrl(host),
+            productsBySku: self.productsBySku.absoluteUrl(host)
+        )
     }
 }
 
