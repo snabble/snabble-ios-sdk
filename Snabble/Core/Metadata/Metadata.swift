@@ -7,6 +7,18 @@
 /// Link
 public struct Link: Decodable {
     public let href: String
+
+    /// empty instance, used for the default init of `MetadataLinks`
+    static let empty = Link(href: "")
+
+    /// create a copy of `self` where `href` is an absolute URL
+    public func absoluteUrl(_ host: String) -> Link {
+        if self.href.hasPrefix("/") {
+            return Link(href: host + self.href)
+        } else {
+            return self
+        }
+    }
 }
 
 public struct MetadataLinks: Decodable {
@@ -17,6 +29,42 @@ public struct MetadataLinks: Decodable {
     public let productByCode: Link
     public let productByWeighItemId: Link
     public let bundlesForSku: Link
+
+    public init() {
+        self.appdb = Link.empty
+        self.appEvents = Link.empty
+        self.checkoutInfo = Link.empty
+        self.productBySku = Link.empty
+        self.productByCode = Link.empty
+        self.productByWeighItemId = Link.empty
+        self.bundlesForSku = Link.empty
+    }
+
+    public init(appdb: Link, appEvents: Link, checkoutInfo: Link, productBySku: Link, productByCode: Link, productByWeighItemId: Link, bundlesForSku: Link) {
+        self.appdb = appdb
+        self.appEvents = appEvents
+        self.checkoutInfo = checkoutInfo
+        self.productBySku = productBySku
+        self.productByCode = productByCode
+        self.productByWeighItemId = productByWeighItemId
+        self.bundlesForSku = bundlesForSku
+    }
+
+    ///
+    /// create a copy of `self` where all Links are now absolute URLs
+    ///
+    /// - Parameter host: the host to use to create absolute URLs
+    /// - Returns: a new `MetadataLinks` instance
+    public func makeAbsolute(host: String) -> MetadataLinks {
+        return MetadataLinks(
+            appdb: self.appdb.absoluteUrl(host),
+            appEvents: self.appEvents.absoluteUrl(host),
+            checkoutInfo: self.checkoutInfo.absoluteUrl(host),
+            productBySku: self.productBySku.absoluteUrl(host),
+            productByCode: self.productByCode.absoluteUrl(host),
+            productByWeighItemId: self.productByWeighItemId.absoluteUrl(host),
+            bundlesForSku: self.bundlesForSku.absoluteUrl(host))
+    }
 }
 
 public struct AppData: Decodable {

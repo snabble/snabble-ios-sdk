@@ -22,20 +22,7 @@ public struct ProductDBConfiguration {
     /// Default: the app's "Application Support" directory
     public var dbDirectory: String
 
-    /// where to get database updates from?
-    public var updateUrl = ""
-
-    /// URL for sku lookup
-    public var lookupBySkuUrl = ""
-
-    /// URL for scannable code lookup
-    public var lookupByCodeUrl = ""
-
-    /// URL for weighed item id lookup
-    public var lookupByIdUrl = ""
-
-    /// URL for looking up bundles
-    public var lookupBundleUrl = ""
+    public var links: MetadataLinks
 
     /// if the app bundle contains a zipped seed database, set this to the path in the bundle,
     /// e.g. using `cfg.seedDbPath = Bundle.main.path(forResource: "seed", ofType: "zip")`
@@ -50,6 +37,7 @@ public struct ProductDBConfiguration {
 
     public init() {
         self.dbDirectory = NSSearchPathForDirectoriesInDomains(.applicationSupportDirectory, .userDomainMask, true).first!
+        self.links = MetadataLinks()
     }
 
     func dbPathname(temp: Bool = false) -> String {
@@ -635,7 +623,7 @@ extension ProductDB {
             return
         }
 
-        self.getSingleProduct(self.config.lookupBySkuUrl, "{sku}", sku, completion: completion)
+        self.getSingleProduct(self.config.links.productBySku.href, "{sku}", sku, completion: completion)
     }
 
     /// asynchronously get a product by (one of) it scannable codes
@@ -655,7 +643,7 @@ extension ProductDB {
             return
         }
 
-        self.getSingleProduct(self.config.lookupByCodeUrl, "{code}", code, completion: completion)
+        self.getSingleProduct(self.config.links.productByCode.href, "{code}", code, completion: completion)
     }
 
     /// asynchronously get a product by (one of) it weigh item ids
@@ -675,7 +663,7 @@ extension ProductDB {
             return
         }
 
-        self.getSingleProduct(self.config.lookupByIdUrl, "{id}", weighItemId, completion: completion)
+        self.getSingleProduct(self.config.links.productByWeighItemId.href, "{id}", weighItemId, completion: completion)
     }
 
 }

@@ -119,7 +119,7 @@ extension ProductDB {
             return
         }
 
-        self.getBundlingProducts(self.config.lookupBundleUrl, "{bundledSku}", apiProduct.sku) { bundles, error in
+        self.getBundlingProducts(self.config.links.bundlesForSku.href, "{bundledSku}", apiProduct.sku) { bundles, error in
             let result = LookupResult(product: apiProduct.convert(deposit, bundles), code: matchingCode)
             DispatchQueue.main.async {
                 completion(result, false)
