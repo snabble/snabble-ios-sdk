@@ -16,7 +16,7 @@ public struct MetadataLinks: Decodable {
     public let productBySku: Link
     public let productByCode: Link
     public let productByWeighItemId: Link
-    public let productBundles: Link?        // FIXME: name?
+    public let bundlesForSku: Link
 }
 
 public struct AppData: Decodable {

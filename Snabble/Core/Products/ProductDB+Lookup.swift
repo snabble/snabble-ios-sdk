@@ -42,17 +42,11 @@ extension ProductDB {
                     let apiProduct = try JSONDecoder().decode(APIProduct.self, from: data)
                     if let depositSku = apiProduct.depositProduct {
                         // get the deposit product
-                        if let depositProduct = self.productBySku(depositSku) {
-                            // found it locally in db
-                            self.completeProduct(apiProduct, depositProduct.price, completion)
-                        } else {
-                            // get from server
-                            self.productBySku(depositSku) { depositProduct, error in
-                                if let deposit = depositProduct?.price {
-                                    self.completeProduct(apiProduct, deposit, completion)
-                                } else {
-                                    self.returnError("deposit product not found", completion)
-                                }
+                        self.productBySku(depositSku) { depositProduct, error in
+                            if let deposit = depositProduct?.price {
+                                self.completeProduct(apiProduct, deposit, completion)
+                            } else {
+                                self.returnError("deposit product not found", completion)
                             }
                         }
                     } else {
@@ -92,11 +86,13 @@ extension ProductDB {
                 }
 
                 do {
-                    let apiProducts = try JSONDecoder().decode(APIProducts.self, from: data)
-                    self.completeBundles(apiProducts, completion)
+                    let result = try JSONDecoder().decode(APIProducts.self, from: data)
+                    NSLog("online bundle lookup for sku \(sku) found \(result.products.count) bundles")
+                    self.completeBundles(result.products, completion)
                 }
                 catch let error {
-                    NSLog("bundle parse error: \(error)")
+                    let raw = String(bytes: data, encoding: .utf8)
+                    NSLog("bundle parse error: \(error) \(String(describing: raw))")
                     DispatchQueue.main.sync {
                         completion([], true)
                     }
@@ -114,7 +110,16 @@ extension ProductDB {
     func completeProduct(_ apiProduct: APIProduct, _ deposit: Int?, _ completion: @escaping (LookupResult?, Bool) -> () ) {
         let matchingCode = apiProduct.matchingCode ?? ""
 
-        self.getBundlingProducts(self.config.lookupBundleUrl, "{sku}", apiProduct.sku) { bundles, error in
+        // is this a bundle or a deposit? then don't do the bundling lookup!
+        if apiProduct.bundledProduct != nil || apiProduct.productType == .deposit {
+            let result = LookupResult(product: apiProduct.convert(deposit, []), code: matchingCode)
+            DispatchQueue.main.async {
+                completion(result, false)
+            }
+            return
+        }
+
+        self.getBundlingProducts(self.config.lookupBundleUrl, "{bundledSku}", apiProduct.sku) { bundles, error in
             let result = LookupResult(product: apiProduct.convert(deposit, bundles), code: matchingCode)
             DispatchQueue.main.async {
                 completion(result, false)
@@ -122,24 +127,24 @@ extension ProductDB {
         }
     }
 
-    func completeBundles(_ apiProducts: APIProducts, _ completion: @escaping (_ products: [Product], _ error: Bool) ->() ) {
+    // for a list of bundles, get their respective deposit
+    func completeBundles(_ bundles: [APIProduct], _ completion: @escaping (_ products: [Product], _ error: Bool) ->() ) {
         let group = DispatchGroup()
-        var deposits = [Int](repeating: 0, count: apiProducts.products.count)
+        var deposits = [Int](repeating: 0, count: bundles.count)
 
-        for (index, apiProduct) in apiProducts.products.enumerated() {
-            group.enter()
-
-            self.productBySku(apiProduct.sku) { product, error in
-                if let product = product, let deposit = product.deposit {
-                    deposits[index] = deposit
+        for (index, bundle) in bundles.enumerated() {
+            if let depositSku = bundle.depositProduct {
+                group.enter()
+                self.productBySku(depositSku) { product, error in
+                    deposits[index] = product?.listPrice ?? 0
+                    group.leave()
                 }
-                group.leave()
             }
         }
 
         group.notify(queue: DispatchQueue.main) {
-            let bundles = apiProducts.products.enumerated().map { index, apiProduct in
-                apiProduct.convert(deposits[index], [])
+            let bundles = bundles.enumerated().map { index, bundle in
+                bundle.convert(deposits[index], [])
             }
             DispatchQueue.main.async {
                 completion(bundles, false)
