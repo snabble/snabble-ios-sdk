@@ -232,7 +232,7 @@ final public class ProductDB: ProductProvider {
         if let seedRevision = self.config.seedRevision, seedRevision > self.revision {
             self.db = nil
             self.unzipSeed()
-            self.db = openDb()
+            self.db = self.openDb()
         }
 
         if update {
