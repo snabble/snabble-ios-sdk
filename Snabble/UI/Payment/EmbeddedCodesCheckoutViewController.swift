@@ -35,7 +35,7 @@ class EmbeddedCodesCheckoutViewController: UIViewController {
         self.title = "Snabble.QRCode.title".localized()
         self.hidesBottomBarWhenPushed = true
 
-        self.config = APIConfig.shared.project.embeddedCodesConfig ?? EmbeddedCodesConfig.multiline
+        self.config = APIConfig.shared.project.embeddedCodesConfig
     }
 
     required init?(coder aDecoder: NSCoder) {

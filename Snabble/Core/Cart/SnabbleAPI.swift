@@ -12,16 +12,10 @@ public struct SnabbleProject {
     public let name: String
     /// the jwt used for api authorization
     public let jwt: String
-    /// if the `.embeddedCodes` payment method is used, set this to configure how the QR code is assembled
-    public let embeddedCodesConfig: EmbeddedCodesConfig?
-    /// set to true if this project uses the german EAN prefixes for magazines/newspapers
-    public let useGermanPrintPrefixes: Bool
 
-    public init(name: String, jwt: String, embeddedCodesConfig: EmbeddedCodesConfig? = nil, useGermanPrintPrefixes: Bool = false) {
+    public init(name: String, jwt: String) {
         self.name = name
         self.jwt = jwt
-        self.embeddedCodesConfig = embeddedCodesConfig
-        self.useGermanPrintPrefixes = useGermanPrintPrefixes
     }
 }
 
@@ -31,14 +25,13 @@ public class APIConfig {
     /// the singleton instance
     static let shared = APIConfig()
 
-    public internal(set) var project: SnabbleProject
-    public internal(set) var links: MetadataLinks?
-    public internal(set) var config: ProjectConfig {
-        didSet {
-            // NSLog("config set to \(config)")
-        }
+    public internal(set) var snabble: SnabbleProject
+    public var project: Project {
+        return self.metadata.projects[0]
     }
+
     private(set) var baseUrl: String
+    internal var metadata: Metadata!
 
     var clientId: String {
         if let id = UserDefaults.standard.string(forKey: "Snabble.api.clientId") {
@@ -52,8 +45,7 @@ public class APIConfig {
 
     private init() {
         self.baseUrl = ""
-        self.project = SnabbleProject(name: "none", jwt: "", useGermanPrintPrefixes: false)
-        self.config = ProjectConfig()
+        self.snabble = SnabbleProject(name: "none", jwt: "")
     }
 
     /// initialize the API configuration for the subsequent network calls
@@ -67,7 +59,7 @@ public class APIConfig {
     }
 
     func setup(with project: SnabbleProject, using baseUrl: String) {
-        self.project = project
+        self.snabble = project
         self.baseUrl = baseUrl
     }
 
@@ -81,23 +73,6 @@ public class APIConfig {
         } else {
             return url
         }
-    }
-}
-
-public struct EmbeddedCodesConfig {
-    public let prefix: String
-    public let suffix: String
-    public let separator: String
-    public let maxCodes: Int
-
-    public static let edeka = EmbeddedCodesConfig(prefix: "XE", suffix: "XZ", separator: "XE", maxCodes: 30)
-    public static let multiline = EmbeddedCodesConfig(prefix: "", suffix: "", separator: "\n", maxCodes: 100)
-
-    public init(prefix: String, suffix: String, separator: String, maxCodes: Int) {
-        self.prefix = prefix
-        self.suffix = suffix
-        self.separator = separator
-        self.maxCodes = maxCodes
     }
 }
 
@@ -211,7 +186,7 @@ struct SnabbleAPI {
         var urlRequest = URLRequest(url: url)
 
         urlRequest.httpMethod = method.rawValue
-        urlRequest.addValue(APIConfig.shared.project.jwt, forHTTPHeaderField: "Client-Token")
+        urlRequest.addValue(APIConfig.shared.snabble.jwt, forHTTPHeaderField: "Client-Token")
         urlRequest.addValue(APIConfig.shared.clientId, forHTTPHeaderField: "Client-Id")
 
         if timeout > 0 {

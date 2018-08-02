@@ -55,7 +55,7 @@ struct AppEvent: Encodable {
         self.appId = APIConfig.shared.clientId
         self.payload = payload
         self.shopId = shopId
-        self.project = APIConfig.shared.project.name
+        self.project = APIConfig.shared.project.id
         self.id = id
         self.agent = agent
         let fmt = DateFormatter()
@@ -86,8 +86,8 @@ extension AppEvent {
     struct Empty: Decodable { }
 
     func post() {
+        let appEvents = APIConfig.shared.project.links.appEvents.href
         guard
-            let appEvents = APIConfig.shared.links?.appEvents.href,
             let request = SnabbleAPI.request(.post, appEvents, body: self, timeout: 0)
         else {
             return

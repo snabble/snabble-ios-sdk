@@ -28,15 +28,15 @@ extension EANCode {
 
     /// checks for embedded data
     public var hasEmbeddedWeight: Bool {
-        return self.encoding == .ean13 && self.matchPrefixes(APIConfig.shared.config.weighPrefixes)
+        return self.encoding == .ean13 && self.matchPrefixes(APIConfig.shared.project.weighPrefixes)
     }
 
     public var hasEmbeddedPrice: Bool {
-        return self.encoding == .ean13 && (self.matchPrefixes(APIConfig.shared.config.pricePrefixes) || self.hasGermanPrintPrefix)
+        return self.encoding == .ean13 && (self.matchPrefixes(APIConfig.shared.project.pricePrefixes) || self.hasGermanPrintPrefix)
     }
 
     public var hasEmbeddedUnits: Bool {
-        return self.encoding == .ean13 && self.matchPrefixes(APIConfig.shared.config.unitPrefixes)
+        return self.encoding == .ean13 && self.matchPrefixes(APIConfig.shared.project.unitPrefixes)
     }
 
     public var hasEmbeddedData: Bool {
@@ -320,7 +320,7 @@ extension EAN13 {
             return ""
         }
 
-        if APIConfig.shared.config.verifyInternalEanChecksum {
+        if APIConfig.shared.project.verifyInternalEanChecksum {
             let internalCheck = ean.internalChecksum5()
             let newCode = String(ean.code.prefix(6)) + String(internalCheck) + dataString
             let newEan = EAN13(newCode)

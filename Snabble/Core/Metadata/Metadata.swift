@@ -4,6 +4,100 @@
 //  Copyright © 2018 snabble. All rights reserved.
 //
 
+public struct EmbeddedCodesConfig {
+    public let prefix: String
+    public let suffix: String
+    public let separator: String
+    public let maxCodes: Int
+
+    public static let edeka = EmbeddedCodesConfig(prefix: "XE", suffix: "XZ", separator: "XE", maxCodes: 30)
+    public static let multiline = EmbeddedCodesConfig(prefix: "", suffix: "", separator: "\n", maxCodes: 100)
+
+    public init(prefix: String, suffix: String, separator: String, maxCodes: Int) {
+        self.prefix = prefix
+        self.suffix = suffix
+        self.separator = separator
+        self.maxCodes = maxCodes
+    }
+}
+
+
+public struct Metadata: Decodable {
+    public let flags: Flags
+    public let projects: [Project]
+
+    enum CodingKeys: String, CodingKey {
+        case flags = "metadata"
+        case projects
+    }
+}
+
+public struct Project: Decodable {
+    public let id: String
+    public let links: MetadataLinks
+    public let rawLinks: [String: Link]
+
+    public let currency: String
+    public let decimalDigits: Int
+    public let locale: String
+    public let pricePrefixes: [String]
+    public let unitPrefixes: [String]
+    public let weighPrefixes: [String]
+    public let roundingMode: RoundingMode
+    public let currencySymbol: String // derived from the locale
+
+    public let verifyInternalEanChecksum: Bool
+    public let useGermanPrintPrefixes: Bool
+    public let qrCodePrefix: String
+    public let qrCodeSeparator: String
+    public let qrCodeSuffix: String
+    public let qrCodeMaxEans: Int
+
+    public let shops: [Shop]
+
+    public var embeddedCodesConfig: EmbeddedCodesConfig {
+        return EmbeddedCodesConfig(prefix: self.qrCodePrefix, suffix: self.qrCodeSuffix, separator: self.qrCodeSeparator, maxCodes: self.qrCodeMaxEans)
+    }
+
+    enum CodingKeys: String, CodingKey {
+        case id, links
+        case currency, decimalDigits, locale, pricePrefixes, unitPrefixes, weighPrefixes, roundingMode
+        case verifyInternalEanChecksum, useGermanPrintPrefixes, qrCodePrefix, qrCodeSeparator, qrCodeSuffix, qrCodeMaxEans
+        case shops
+    }
+
+    public init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+
+        self.id = try container.decode(String.self, forKey: .id)
+        self.links = try container.decode(MetadataLinks.self, forKey: .links)
+        self.rawLinks = try container.decode([String: Link].self, forKey: .links)
+
+        self.currency = try container.decode(.currency)
+        self.decimalDigits = try container.decode(.decimalDigits)
+        self.locale = try container.decode(.locale)
+        self.pricePrefixes = try container.decode(.pricePrefixes)
+        self.unitPrefixes = try container.decode(.unitPrefixes)
+        self.weighPrefixes = try container.decode(.weighPrefixes)
+        self.roundingMode = try container.decode(.roundingMode)
+
+        self.verifyInternalEanChecksum = try container.decode(.verifyInternalEanChecksum)
+        self.qrCodePrefix = try container.decodeIfPresent(.qrCodePrefix) ?? ""
+        self.qrCodeSeparator = try container.decodeIfPresent(.qrCodeSeparator) ?? "\n"
+        self.qrCodeSuffix = try container.decodeIfPresent(.qrCodeSuffix) ?? ""
+        self.qrCodeMaxEans = try container.decodeIfPresent(.qrCodeMaxEans) ?? 100
+        self.useGermanPrintPrefixes = try container.decodeIfPresent(.useGermanPrintPrefixes) ?? false
+
+        let formatter = NumberFormatter()
+        formatter.locale = Locale(identifier: self.locale)
+        formatter.currencyCode = self.currency
+        formatter.numberStyle = .currency
+        self.currencySymbol = formatter.currencySymbol
+
+        self.shops = (try container.decodeIfPresent([Shop].self, forKey: .shops)) ?? []
+    }
+}
+
 /// Link
 public struct Link: Decodable {
     public let href: String
@@ -45,37 +139,36 @@ public struct MetadataLinks: Decodable {
     }
 }
 
-public struct AppData: Decodable {
-    public let links: MetadataLinks
-    public let flags: Flags
-    public let shops: [Shop]
-    public let rawLinks: [String: Link]
-    public let project: ProjectConfig
-
-    enum CodingKeys: String, CodingKey {
-        case links
-        case flags = "metadata"
-        case shops
-        case project
-    }
-
-    public init(from decoder: Decoder) throws {
-        let container = try decoder.container(keyedBy: CodingKeys.self)
-        self.links = try container.decode(MetadataLinks.self, forKey: .links)
-        self.flags = try container.decode(Flags.self, forKey: .flags)
-        self.project = try container.decode(ProjectConfig.self, forKey: .project)
-        self.shops = (try container.decodeIfPresent([Shop].self, forKey: .shops)) ?? []
-
-        self.rawLinks = try container.decode([String: Link].self, forKey: .links)
-    }
-}
+//public struct AppData: Decodable {
+//    public let links: MetadataLinks
+//    public let flags: Flags
+//    public let shops: [Shop]
+//    public let rawLinks: [String: Link]
+//    public let project: ProjectConfig
+//
+//    enum CodingKeys: String, CodingKey {
+//        case links
+//        case flags = "metadata"
+//        case shops
+//        case project
+//    }
+//
+//    public init(from decoder: Decoder) throws {
+//        let container = try decoder.container(keyedBy: CodingKeys.self)
+//        self.links = try container.decode(MetadataLinks.self, forKey: .links)
+//        self.flags = try container.decode(Flags.self, forKey: .flags)
+//        self.project = try container.decode(ProjectConfig.self, forKey: .project)
+//        self.shops = (try container.decodeIfPresent([Shop].self, forKey: .shops)) ?? []
+//
+//        self.rawLinks = try container.decode([String: Link].self, forKey: .links)
+//    }
+//}
 
 public struct Flags: Decodable {
     public let kill: Bool
-    public let enableCheckout: Bool
 }
 
-public enum RoundingMode: String, Codable {
+public enum RoundingMode: String, Decodable {
     case up
     case down
     case commercial
@@ -90,49 +183,49 @@ public enum RoundingMode: String, Codable {
     }
 }
 
-public struct ProjectConfig: Codable {
-    public let currency: String
-    public let decimalDigits: Int
-    public let locale: String
-    public let pricePrefixes: [String]
-    public let unitPrefixes: [String]
-    public let weighPrefixes: [String]
-    public let roundingMode: RoundingMode
-    public let verifyInternalEanChecksum: Bool
-
-    public let currencySymbol: String
-
-    public init(from decoder: Decoder) throws {
-        let container = try decoder.container(keyedBy: CodingKeys.self)
-
-        self.currency = try container.decode(.currency)
-        self.decimalDigits = try container.decode(.decimalDigits)
-        self.locale = try container.decode(.locale)
-        self.pricePrefixes = try container.decodeIfPresent(.pricePrefixes) ?? []
-        self.unitPrefixes = try container.decodeIfPresent(.unitPrefixes) ?? []
-        self.weighPrefixes = try container.decodeIfPresent(.weighPrefixes) ?? []
-        self.roundingMode = try container.decodeIfPresent(.roundingMode) ?? .up
-        self.verifyInternalEanChecksum = try container.decodeIfPresent(.verifyInternalEanChecksum) ?? true
-
-        let formatter = NumberFormatter()
-        formatter.locale = Locale(identifier: self.locale)
-        formatter.currencyCode = self.currency
-        formatter.numberStyle = .currency
-        self.currencySymbol = formatter.currencySymbol
-    }
-
-    internal init(pricePrefixes: [String] = [], weighPrefixes: [String] = [], unitPrefixes: [String] = []) {
-        self.currency = "EUR"
-        self.decimalDigits = 2
-        self.locale = "de_DE"
-        self.pricePrefixes = pricePrefixes
-        self.weighPrefixes = weighPrefixes
-        self.unitPrefixes = unitPrefixes
-        self.roundingMode = .commercial
-        self.verifyInternalEanChecksum = true
-        self.currencySymbol = "€"
-    }
-}
+//public struct ProjectConfig: Codable {
+//    public let currency: String
+//    public let decimalDigits: Int
+//    public let locale: String
+//    public let pricePrefixes: [String]
+//    public let unitPrefixes: [String]
+//    public let weighPrefixes: [String]
+//    public let roundingMode: RoundingMode
+//    public let verifyInternalEanChecksum: Bool
+//
+//    public let currencySymbol: String
+//
+//    public init(from decoder: Decoder) throws {
+//        let container = try decoder.container(keyedBy: CodingKeys.self)
+//
+//        self.currency = try container.decode(.currency)
+//        self.decimalDigits = try container.decode(.decimalDigits)
+//        self.locale = try container.decode(.locale)
+//        self.pricePrefixes = try container.decodeIfPresent(.pricePrefixes) ?? []
+//        self.unitPrefixes = try container.decodeIfPresent(.unitPrefixes) ?? []
+//        self.weighPrefixes = try container.decodeIfPresent(.weighPrefixes) ?? []
+//        self.roundingMode = try container.decodeIfPresent(.roundingMode) ?? .up
+//        self.verifyInternalEanChecksum = try container.decodeIfPresent(.verifyInternalEanChecksum) ?? true
+//
+//        let formatter = NumberFormatter()
+//        formatter.locale = Locale(identifier: self.locale)
+//        formatter.currencyCode = self.currency
+//        formatter.numberStyle = .currency
+//        self.currencySymbol = formatter.currencySymbol
+//    }
+//
+//    internal init(pricePrefixes: [String] = [], weighPrefixes: [String] = [], unitPrefixes: [String] = []) {
+//        self.currency = "EUR"
+//        self.decimalDigits = 2
+//        self.locale = "de_DE"
+//        self.pricePrefixes = pricePrefixes
+//        self.weighPrefixes = weighPrefixes
+//        self.unitPrefixes = unitPrefixes
+//        self.roundingMode = .commercial
+//        self.verifyInternalEanChecksum = true
+//        self.currencySymbol = "€"
+//    }
+//}
 
 // MARK: - shop data
 
@@ -214,15 +307,15 @@ public struct Shop: Decodable {
     }
 }
 
-public extension AppData {
+public extension Metadata {
 
-    public static func readResource(_ name: String, extension: String) -> AppData? {
+    public static func readResource(_ name: String, extension: String) -> Metadata? {
         if let url = Bundle.main.url(forResource: name, withExtension: `extension`) {
             do {
                 let data = try Data(contentsOf: url)
-                let appData = try JSONDecoder().decode(AppData.self, from: data)
-                APIConfig.shared.config = appData.project
-                return appData
+                let metadata = try JSONDecoder().decode(Metadata.self, from: data)
+                APIConfig.shared.metadata = metadata
+                return metadata
             } catch let error {
                 NSLog("error parsing app data resource: \(error)")
             }
@@ -230,16 +323,15 @@ public extension AppData {
         return nil
     }
 
-    public static func load(from url: String, _ parameters: [String: String]? = nil, completion: @escaping (AppData?) -> () ) {
+    public static func load(from url: String, _ parameters: [String: String]? = nil, completion: @escaping (Metadata?) -> () ) {
         guard let request = SnabbleAPI.request(.get, url, parameters: parameters, timeout: 5) else {
             return completion(nil)
         }
-        SnabbleAPI.perform(request) { (appData: AppData?, error) in
-            if let appData = appData {
-                APIConfig.shared.config = appData.project
-                APIConfig.shared.links = appData.links
+        SnabbleAPI.perform(request) { (metadata: Metadata?, error) in
+            if let metadata = metadata {
+                APIConfig.shared.metadata = metadata
             }
-            completion(appData)
+            completion(metadata)
         }
     }
 
