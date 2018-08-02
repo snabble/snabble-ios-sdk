@@ -10,15 +10,6 @@ public struct Link: Decodable {
 
     /// empty instance, used for the default init of `MetadataLinks`
     static let empty = Link(href: "")
-
-    /// create a copy of `self` where `href` is an absolute URL
-    public func absoluteUrl(_ host: String) -> Link {
-        if self.href.hasPrefix("/") {
-            return Link(href: host + self.href)
-        } else {
-            return self
-        }
-    }
 }
 
 public struct MetadataLinks: Decodable {
@@ -51,24 +42,6 @@ public struct MetadataLinks: Decodable {
         self.productByWeighItemId = productByWeighItemId
         self.bundlesForSku = bundlesForSku
         self.productsBySku = productsBySku
-    }
-
-    ///
-    /// create a copy of `self` where all Links are now absolute URLs
-    ///
-    /// - Parameter host: the host to use to create absolute URLs
-    /// - Returns: a new `MetadataLinks` instance
-    public func makeAbsolute(host: String) -> MetadataLinks {
-        return MetadataLinks(
-            appdb: self.appdb.absoluteUrl(host),
-            appEvents: self.appEvents.absoluteUrl(host),
-            checkoutInfo: self.checkoutInfo.absoluteUrl(host),
-            productBySku: self.productBySku.absoluteUrl(host),
-            productByCode: self.productByCode.absoluteUrl(host),
-            productByWeighItemId: self.productByWeighItemId.absoluteUrl(host),
-            bundlesForSku: self.bundlesForSku.absoluteUrl(host),
-            productsBySku: self.productsBySku.absoluteUrl(host)
-        )
     }
 }
 
