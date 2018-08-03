@@ -6,33 +6,42 @@
 
 import Foundation
 
-/// configuration data for a snabble project
-public struct SnabbleProject {
-    /// the name of the project
-    public let name: String
-    /// the jwt used for api authorization
-    public let jwt: String
-
-    public init(name: String, jwt: String) {
-        self.name = name
-        self.jwt = jwt
-    }
-}
+///// configuration data for a snabble project
+//public struct SnabbleProject {
+//    /// the name of the project
+//    public let name: String
+//
+//    public init(name: String, jwt: String) {
+//        self.name = name
+//    }
+//}
 
 /// general config data for using the snabble API.
 /// Applications must call `setup()` before they make their first API call.
-public class APIConfig {
+public final class APIConfig {
     /// the singleton instance
     static let shared = APIConfig()
 
-    public internal(set) var snabble: SnabbleProject
+    var currentProject = 0
     public var project: Project {
-        return self.metadata.projects[0]
+        return self.metadata.projects[currentProject]
     }
 
-    private(set) var baseUrl: String
-    internal var metadata: Metadata!
+    public static var project: Project {
+        return self.shared.project
+    }
 
+    public static var jwt: String? {
+        return TokenRegistry.shared.jwtFor(self.project.id)
+    }
+
+    public static var projects: [Project] {
+        return self.shared.metadata.projects
+    }
+    
+    private(set) var baseUrl: String
+    var metadata = Metadata.none
+    
     var clientId: String {
         if let id = UserDefaults.standard.string(forKey: "Snabble.api.clientId") {
             return id
@@ -45,7 +54,6 @@ public class APIConfig {
 
     private init() {
         self.baseUrl = ""
-        self.snabble = SnabbleProject(name: "none", jwt: "")
     }
 
     /// initialize the API configuration for the subsequent network calls
@@ -54,12 +62,15 @@ public class APIConfig {
     ///   - baseUrl: the base URL (e.g. "https://api.snabble.io")" to use for relative URLs
     ///   - project: the `SnabbleProject` instance that describes your project
     ///
-    public static func setup(with project: SnabbleProject, using baseUrl: String) {
-        shared.setup(with: project, using: baseUrl)
+    public static func setup(using baseUrl: String) {
+        shared.setup(using: baseUrl)
     }
 
-    func setup(with project: SnabbleProject, using baseUrl: String) {
-        self.snabble = project
+    public static func setCurrentProject(_ index: Int) {
+        shared.currentProject = index
+    }
+
+    func setup(using baseUrl: String) {
         self.baseUrl = baseUrl
     }
 
@@ -186,7 +197,9 @@ struct SnabbleAPI {
         var urlRequest = URLRequest(url: url)
 
         urlRequest.httpMethod = method.rawValue
-        urlRequest.addValue(APIConfig.shared.snabble.jwt, forHTTPHeaderField: "Client-Token")
+        if let jwt = APIConfig.jwt {
+            urlRequest.addValue(jwt, forHTTPHeaderField: "Client-Token")
+        }
         urlRequest.addValue(APIConfig.shared.clientId, forHTTPHeaderField: "Client-Id")
 
         if timeout > 0 {
@@ -252,8 +265,8 @@ struct SnabbleAPI {
         let start = Date.timeIntervalSinceReferenceDate
         let session = URLSession(configuration: URLSessionConfiguration.default)
         let task = session.dataTask(with: request) { rawData, response, error in
-            let url = request.url?.absoluteString ?? "n/a"
             let elapsed = Date.timeIntervalSinceReferenceDate - start
+            let url = request.url?.absoluteString ?? "n/a"
             NSLog("get \(url) took \(elapsed)s")
             guard
                 let data = rawData,
@@ -328,4 +341,11 @@ struct SnabbleAPI {
         return urlComponents.url?.absoluteString
     }
 
+}
+
+/// run `closure` synchronized using `lock`
+func synchronized<T>(_ lock: Any, closure: () throws -> T) rethrows -> T {
+    objc_sync_enter(lock)
+    defer { objc_sync_exit(lock) }
+    return try closure()
 }

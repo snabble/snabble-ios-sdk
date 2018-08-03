@@ -9,7 +9,7 @@ import Foundation
 /// data needed to initialize a shopping cart
 public struct CartConfig {
 
-    /// name of the cart.
+    /// name of the cart. used as the part of the pathname for locally storing the cart
     public var name = "default"
 
     /// directory where the cart should be stored, will be created if it doesn't exist.
@@ -113,7 +113,7 @@ public struct CartItem: Codable {
 }
 
 /// a ShoppingCart is a collection of CartItem objects
-public class ShoppingCart {
+public final class ShoppingCart {
     
     public static let maxAmount = 9999
 

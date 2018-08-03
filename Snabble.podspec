@@ -32,9 +32,10 @@ Pod::Spec.new do |s|
   s.swift_version = '4.1'
 
   s.subspec 'Core' do |core|
-    core.source_files = 'Snabble/Core/{Products,EAN,Cart,Metadata}/*.swift'
+    core.source_files = 'Snabble/Core/**/*.swift'
     core.dependency 'GRDB.swift', '~> 2'
     core.dependency 'Zip', '~> 1'
+    core.dependency 'OneTimePassword', '~> 3.1'
   end
 
   s.subspec 'UI' do |ui|

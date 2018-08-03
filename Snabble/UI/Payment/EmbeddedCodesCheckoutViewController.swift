@@ -23,7 +23,6 @@ class EmbeddedCodesCheckoutViewController: UIViewController {
 
     private var codeblocks = [[String]]()
     private var itemSize = CGSize(width: 100, height: 100)
-    private var config: EmbeddedCodesConfig!
 
     init(_ process: CheckoutProcess, _ cart: ShoppingCart, _ delegate: PaymentDelegate) {
         self.process = process
@@ -34,8 +33,6 @@ class EmbeddedCodesCheckoutViewController: UIViewController {
 
         self.title = "Snabble.QRCode.title".localized()
         self.hidesBottomBarWhenPushed = true
-
-        self.config = APIConfig.shared.project.embeddedCodesConfig
     }
 
     required init?(coder aDecoder: NSCoder) {
@@ -52,8 +49,9 @@ class EmbeddedCodesCheckoutViewController: UIViewController {
         let nib = UINib(nibName: "QRCodeCell", bundle: Snabble.bundle)
         self.collectionView.register(nib, forCellWithReuseIdentifier: "qrCodeCell")
 
+        let maxCodes = APIConfig.shared.project.qrCodeMaxEans
         let codes = self.codesForQR()
-        let chunks = (Float(codes.count) / Float(self.config.maxCodes)).rounded(.up)
+        let chunks = (Float(codes.count) / Float(maxCodes)).rounded(.up)
         let chunkSize = Int((Float(codes.count) / chunks).rounded(.up))
         self.codeblocks = stride(from: 0, to: codes.count, by: chunkSize).map {
             Array(codes[$0..<min($0 + chunkSize, codes.count)])
@@ -164,7 +162,8 @@ extension EmbeddedCodesCheckoutViewController: UICollectionViewDataSource, UICol
     }
 
     private func qrCode(for codes: [String]) -> UIImage? {
-        let qrCodeContent = config.prefix + codes.joined(separator: config.separator) + config.suffix
+        let project = APIConfig.shared.project
+        let qrCodeContent = project.qrCodePrefix + codes.joined(separator: project.qrCodeSeparator) + project.qrCodeSuffix
         NSLog("QR Code content:\n\(qrCodeContent)")
         for scale in (1...7).reversed() {
             if let img = QRCode.generate(for: qrCodeContent, scale: scale) {
