@@ -220,9 +220,6 @@ public struct Shop: Decodable {
     /// country
     public let country: String
 
-    /// distance to user's current location (in meters)
-    public var distance: Double? = nil
-
     enum CodingKeys: String, CodingKey {
         case id, name, project, externalId, external
         case latitude = "lat", longitude = "lon"
