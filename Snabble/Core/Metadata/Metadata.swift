@@ -258,7 +258,7 @@ public extension Metadata {
             do {
                 let data = try Data(contentsOf: url)
                 let metadata = try JSONDecoder().decode(Metadata.self, from: data)
-                APIConfig.shared.metadata = metadata
+                SnabbleAPI.metadata = metadata
                 return metadata
             } catch let error {
                 NSLog("error parsing app data resource: \(error)")
@@ -273,7 +273,7 @@ public extension Metadata {
         }
         SnabbleAPI.perform(request) { (metadata: Metadata?, error) in
             if let metadata = metadata {
-                APIConfig.shared.metadata = metadata
+                SnabbleAPI.metadata = metadata
             }
 
             completion(metadata)

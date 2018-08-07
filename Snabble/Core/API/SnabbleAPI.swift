@@ -6,51 +6,12 @@
 
 import Foundation
 
-///// configuration data for a snabble project
-//public struct SnabbleProject {
-//    /// the name of the project
-//    public let name: String
-//
-//    public init(name: String, jwt: String) {
-//        self.name = name
-//    }
-//}
-
 /// general config data for using the snabble API.
 /// Applications must call `setup()` before they make their first API call.
 public final class APIConfig {
     /// the singleton instance
     static let shared = APIConfig()
-
-    var currentProject = 0
-    public var project: Project {
-        return self.metadata.projects[currentProject]
-    }
-
-    public static var project: Project {
-        return self.shared.project
-    }
-
-    public static var jwt: String? {
-        return TokenRegistry.shared.token(for: self.project.id)
-    }
-
-    public static var projects: [Project] {
-        return self.shared.metadata.projects
-    }
-    
     private(set) var baseUrl: String
-    var metadata = Metadata.none
-    
-    var clientId: String {
-        if let id = UserDefaults.standard.string(forKey: "Snabble.api.clientId") {
-            return id
-        } else {
-            let id = UUID().uuidString.lowercased().replacingOccurrences(of: "-", with: "")
-            UserDefaults.standard.set(id, forKey: "Snabble.api.clientId")
-            return id
-        }
-    }
 
     private init() {
         self.baseUrl = ""
@@ -63,15 +24,7 @@ public final class APIConfig {
     ///   - project: the `SnabbleProject` instance that describes your project
     ///
     public static func setup(using baseUrl: String) {
-        shared.setup(using: baseUrl)
-    }
-
-    public static func setCurrentProject(_ index: Int) {
-        shared.currentProject = index
-    }
-
-    func setup(using baseUrl: String) {
-        self.baseUrl = baseUrl
+        shared.baseUrl = baseUrl
     }
 
     func urlFor(_ url: String) -> URL? {
@@ -103,7 +56,27 @@ public struct ErrorResponse: Decodable {
     public let message: String
 }
 
-struct SnabbleAPI {
+public struct SnabbleAPI {
+    public internal(set) static var project = Project.none
+    public internal(set) static var metadata = Metadata.none
+
+    public static func registerProject(_ project: Project) {
+        SnabbleAPI.project = project
+    }
+
+    public static var projects: [Project] {
+        return SnabbleAPI.metadata.projects
+    }
+
+    static var clientId: String {
+        if let id = UserDefaults.standard.string(forKey: "Snabble.api.clientId") {
+            return id
+        } else {
+            let id = UUID().uuidString.lowercased().replacingOccurrences(of: "-", with: "")
+            UserDefaults.standard.set(id, forKey: "Snabble.api.clientId")
+            return id
+        }
+    }
 
     /// create an URLRequest
     ///
@@ -197,10 +170,10 @@ struct SnabbleAPI {
         var urlRequest = URLRequest(url: url)
 
         urlRequest.httpMethod = method.rawValue
-        if let jwt = APIConfig.jwt {
+        if let jwt = TokenRegistry.shared.token(for: SnabbleAPI.project.id) {
             urlRequest.addValue(jwt, forHTTPHeaderField: "Client-Token")
         }
-        urlRequest.addValue(APIConfig.shared.clientId, forHTTPHeaderField: "Client-Id")
+        urlRequest.addValue(SnabbleAPI.clientId, forHTTPHeaderField: "Client-Id")
 
         if timeout > 0 {
             urlRequest.timeoutInterval = timeout

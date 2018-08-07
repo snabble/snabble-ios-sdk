@@ -28,15 +28,15 @@ extension EANCode {
 
     /// checks for embedded data
     public var hasEmbeddedWeight: Bool {
-        return self.encoding == .ean13 && self.matchPrefixes(APIConfig.shared.project.weighPrefixes)
+        return self.encoding == .ean13 && self.matchPrefixes(SnabbleAPI.project.weighPrefixes)
     }
 
     public var hasEmbeddedPrice: Bool {
-        return self.encoding == .ean13 && (self.matchPrefixes(APIConfig.shared.project.pricePrefixes) || self.hasGermanPrintPrefix)
+        return self.encoding == .ean13 && (self.matchPrefixes(SnabbleAPI.project.pricePrefixes) || self.hasGermanPrintPrefix)
     }
 
     public var hasEmbeddedUnits: Bool {
-        return self.encoding == .ean13 && self.matchPrefixes(APIConfig.shared.project.unitPrefixes)
+        return self.encoding == .ean13 && self.matchPrefixes(SnabbleAPI.project.unitPrefixes)
     }
 
     public var hasEmbeddedData: Bool {
@@ -103,7 +103,7 @@ extension EANCode {
     fileprivate var hasGermanPrintPrefix: Bool {
         return
             self.encoding == .ean13
-            && APIConfig.shared.project.useGermanPrintPrefixes
+            && SnabbleAPI.project.useGermanPrintPrefixes
             && [ "414", "419", "434", "449" ].contains(self.code.prefix(3))
     }
 }
@@ -320,7 +320,7 @@ extension EAN13 {
             return ""
         }
 
-        if APIConfig.shared.project.verifyInternalEanChecksum {
+        if SnabbleAPI.project.verifyInternalEanChecksum {
             let internalCheck = ean.internalChecksum5()
             let newCode = String(ean.code.prefix(6)) + String(internalCheck) + dataString
             let newEan = EAN13(newCode)
