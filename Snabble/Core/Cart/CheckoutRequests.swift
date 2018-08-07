@@ -26,7 +26,7 @@ extension ShoppingCart {
             return
         }
 
-        SnabbleAPI.perform(request, returnRaw: true) { (result: SignedCheckoutInfo?, error, json) in
+        SnabbleAPI.perform(request, returnRaw: true) { (result: SignedCheckoutInfo?, error, json, _) in
             var newResult = result
             newResult?.rawJson = json
             completion(newResult, error)
