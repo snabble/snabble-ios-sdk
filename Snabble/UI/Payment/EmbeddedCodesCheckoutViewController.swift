@@ -49,7 +49,7 @@ class EmbeddedCodesCheckoutViewController: UIViewController {
         let nib = UINib(nibName: "QRCodeCell", bundle: Snabble.bundle)
         self.collectionView.register(nib, forCellWithReuseIdentifier: "qrCodeCell")
 
-        let maxCodes = SnabbleAPI.project.qrCodeMaxEans
+        let maxCodes = SnabbleAPI.project.encodedCodes?.maxCodes ?? 100
         let codes = self.codesForQR()
         let chunks = (Float(codes.count) / Float(maxCodes)).rounded(.up)
         let chunkSize = Int((Float(codes.count) / chunks).rounded(.up))
@@ -162,8 +162,11 @@ extension EmbeddedCodesCheckoutViewController: UICollectionViewDataSource, UICol
     }
 
     private func qrCode(for codes: [String]) -> UIImage? {
-        let project = SnabbleAPI.project
-        let qrCodeContent = project.qrCodePrefix + codes.joined(separator: project.qrCodeSeparator) + project.qrCodeSuffix
+        guard let encoding = SnabbleAPI.project.encodedCodes else {
+            return nil
+        }
+
+        let qrCodeContent = encoding.prefix + codes.joined(separator: encoding.separator) + encoding.suffix
         NSLog("QR Code content:\n\(qrCodeContent)")
         for scale in (1...7).reversed() {
             if let img = QRCode.generate(for: qrCodeContent, scale: scale) {

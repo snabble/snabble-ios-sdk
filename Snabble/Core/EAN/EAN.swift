@@ -103,7 +103,7 @@ extension EANCode {
     fileprivate var hasGermanPrintPrefix: Bool {
         return
             self.encoding == .ean13
-            && SnabbleAPI.project.useGermanPrintPrefixes
+            && SnabbleAPI.project.useGermanPrintPrefix
             && [ "414", "419", "434", "449" ].contains(self.code.prefix(3))
     }
 }

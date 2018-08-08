@@ -21,6 +21,13 @@ public struct Metadata: Decodable {
     static let none = Metadata()
 }
 
+public struct EncodedCodes: Decodable {
+    let prefix: String
+    let separator: String
+    let suffix: String
+    let maxCodes: Int
+}
+
 public struct Project: Decodable {
     public let id: String
     public let links: Links
@@ -36,20 +43,17 @@ public struct Project: Decodable {
     public let currencySymbol: String   // not part of JSON, derived from the locale
 
     public let verifyInternalEanChecksum: Bool
-    public let useGermanPrintPrefixes: Bool
+    public let useGermanPrintPrefix: Bool
 
     // config for embedded QR codes
-    public let qrCodePrefix: String
-    public let qrCodeSeparator: String
-    public let qrCodeSuffix: String
-    public let qrCodeMaxEans: Int
+    public let encodedCodes: EncodedCodes?
 
     public let shops: [Shop]
 
     enum CodingKeys: String, CodingKey {
         case id, links
         case currency, decimalDigits, locale, pricePrefixes, unitPrefixes, weighPrefixes, roundingMode
-        case verifyInternalEanChecksum, useGermanPrintPrefixes, qrCodePrefix, qrCodeSeparator, qrCodeSuffix, qrCodeMaxEans
+        case verifyInternalEanChecksum, useGermanPrintPrefix, encodedCodes
         case shops
     }
 
@@ -69,11 +73,8 @@ public struct Project: Decodable {
         self.roundingMode = try container.decode(.roundingMode)
 
         self.verifyInternalEanChecksum = try container.decode(.verifyInternalEanChecksum)
-        self.qrCodePrefix = try container.decodeIfPresent(.qrCodePrefix) ?? ""
-        self.qrCodeSeparator = try container.decodeIfPresent(.qrCodeSeparator) ?? "\n"
-        self.qrCodeSuffix = try container.decodeIfPresent(.qrCodeSuffix) ?? ""
-        self.qrCodeMaxEans = try container.decodeIfPresent(.qrCodeMaxEans) ?? 100
-        self.useGermanPrintPrefixes = try container.decodeIfPresent(.useGermanPrintPrefixes) ?? false
+        self.encodedCodes = try container.decodeIfPresent(.encodedCodes)
+        self.useGermanPrintPrefix = try container.decode(.useGermanPrintPrefix)
 
         let formatter = NumberFormatter()
         formatter.locale = Locale(identifier: self.locale)
@@ -96,11 +97,8 @@ public struct Project: Decodable {
         self.weighPrefixes = []
         self.roundingMode = .up
         self.verifyInternalEanChecksum = false
-        self.qrCodeMaxEans = 0
-        self.qrCodePrefix = ""
-        self.qrCodeSuffix = ""
-        self.qrCodeSeparator = ""
-        self.useGermanPrintPrefixes = false
+        self.encodedCodes = nil
+        self.useGermanPrintPrefix = false
         self.currencySymbol = ""
         self.shops = []
     }
