@@ -37,7 +37,7 @@ public struct ProductDBConfiguration {
 
     public init() {
         self.dbDirectory = NSSearchPathForDirectoriesInDomains(.applicationSupportDirectory, .userDomainMask, true).first!
-        self.links = Links()
+        self.links = Links.empty
     }
 
     func dbPathname(temp: Bool = false) -> String {

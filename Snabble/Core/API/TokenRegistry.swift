@@ -21,13 +21,15 @@ struct TokenData {
     let jwt: String
     let expires: Date
     let refresh: Date
+    let url: String
 
-    init(_ response: TokenResponse) {
+    init(_ response: TokenResponse, _ url: String) {
         self.jwt = response.token
         let expires = Date(timeIntervalSince1970: TimeInterval(response.expiresAt))
         let refreshIn = (expires.timeIntervalSinceReferenceDate - Date.timeIntervalSinceReferenceDate) / 2
         self.expires = expires
         self.refresh = Date(timeIntervalSinceNow: refreshIn)
+        self.url = url
     }
 }
 
@@ -37,56 +39,27 @@ public class TokenRegistry {
     public var appId = ""
     public var secret = ""
 
-    typealias TokenHandler = (String) -> ()
-
     private var registry = [String: TokenData]()
-    private var inFlight = [String: [TokenHandler]]()
     private var refreshTimer: Timer?
 
     private init() { }
 
-    /// synchronously return the JWT for the given project, if known
-    func token(for project: String) -> String? {
-        guard let tokenData = self.registry[project] else {
-            return nil
+    public func getToken(for projectId: String, from url: String, completion: @escaping (String?)->() ) {
+        if let token = self.registry[projectId] {
+            // we already have a token
+            return completion(token.jwt)
         }
 
-        return tokenData.jwt
-    }
-
-    public func getToken(for project: Project, completion: @escaping ()->() ) {
-        return self.getTokens(for: [project], completion: completion)
-    }
-    
-    public func getTokens(for projects: [Project], completion: @escaping ()->()) {
-        let group = DispatchGroup()
-
-        for project in projects {
-            group.enter()
-            self.retrieveToken(for: project.id) { tokenData in
-                self.registry[project.id] = tokenData
-                group.leave()
-            }
-        }
-
-        group.notify(queue: DispatchQueue.main) {
-            self.startRefreshTimer()
-            completion()
-        }
-    }
-
-    public func refreshTokens() {
-        let now = Date.timeIntervalSinceReferenceDate - 5
-        for (project, tokenData) in self.registry {
-            if tokenData.refresh.timeIntervalSinceReferenceDate > now {
-                self.retrieveToken(for: project) { tokenData in
-                    self.registry[project] = tokenData
-                }
+        // no token in our registry, go fetch it
+        self.retrieveToken(from: url) { tokenData in
+            if let tokenData = tokenData {
+                self.registry[projectId] = tokenData
+                self.startRefreshTimer()
+                completion(tokenData.jwt)
             } else {
-                print("not refreshing \(project)")
+                completion(nil)
             }
         }
-        self.startRefreshTimer()
     }
 
     private func startRefreshTimer() {
@@ -96,18 +69,30 @@ public class TokenRegistry {
 
         let now = Date()
         let refreshIn = max(earliest.refresh.timeIntervalSinceReferenceDate - now.timeIntervalSinceReferenceDate, 1.0)
-        print("refresh in \(refreshIn)s -> \(earliest.refresh) \(now)")
         self.refreshTimer?.invalidate()
         self.refreshTimer = Timer.scheduledTimer(withTimeInterval: refreshIn, repeats: false) { timer in
-            print("\n\nrefresh start")
             self.refreshTokens()
         }
     }
 
-    private func retrieveToken(for project: String, _ date: Date? = nil, completion: @escaping (TokenData?) -> () ) {
+    private func refreshTokens() {
+        let now = Date.timeIntervalSinceReferenceDate - 5
+        for (project, tokenData) in self.registry {
+            if tokenData.refresh.timeIntervalSinceReferenceDate > now {
+                self.retrieveToken(from: tokenData.url) { tokenData in
+                    if let tokenData = tokenData {
+                        self.registry[project] = tokenData
+                    }
+                }
+            }
+        }
+        self.startRefreshTimer()
+    }
+
+    private func retrieveToken(from url: String, _ date: Date? = nil, completion: @escaping (TokenData?) -> () ) {
         let parameters = [ "role" : "retailerApp" ]
 
-        SnabbleAPI.request(.get, "/\(project)/tokens", json: true, parameters: parameters, timeout: 2) { request in
+        SnabbleAPI.request(.get, url, jwtRequired: false, parameters: parameters, timeout: 2) { request in
             guard
                 var request = request,
                 let password = self.generatePassword(date),
@@ -121,10 +106,10 @@ public class TokenRegistry {
             request.cachePolicy = .reloadIgnoringCacheData
             SnabbleAPI.perform(request) { (token: TokenResponse?, error, httpResponse) in
                 if let token = token {
-                    completion(TokenData(token))
+                    completion(TokenData(token, url))
                 } else {
                     if let response = httpResponse, response.statusCode == 403 {
-                        self.retryWithServerDate(project: project, response, completion: completion)
+                        self.retryWithServerDate(url, response, completion: completion)
                         return
                     }
                     completion(nil)
@@ -133,14 +118,14 @@ public class TokenRegistry {
         }
     }
 
-    private func retryWithServerDate(project: String, _ response: HTTPURLResponse, completion: @escaping (TokenData?) -> () ) {
+    private func retryWithServerDate(_ url: String, _ response: HTTPURLResponse, completion: @escaping (TokenData?) -> () ) {
         if let serverDate = response.allHeaderFields["Date"] as? String {
             // not authorized. try again with the content of the the server's "Date" header
             let formatter = DateFormatter()
             formatter.dateFormat = "EEEE, dd LLL yyyy HH:mm:ss zzz"
             formatter.locale = Locale(identifier: "en_US_Posix")
             if let date = formatter.date(from: serverDate) {
-                self.retrieveToken(for: project, date, completion: completion)
+                self.retrieveToken(from: url, date, completion: completion)
             }
         } else {
             completion(nil)
@@ -163,29 +148,5 @@ public class TokenRegistry {
             return nil
         }
     }
-
-    // unused
-    // FIXME synchronize map/array accesses!!!!
-    func __token(for project: String, completion: @escaping (String) -> ()) {
-        if let tokenData = self.registry[project] {
-            return completion(tokenData.jwt)
-        } else {
-            if self.inFlight.keys.contains(project) {
-                // append the completion handler to the already existing in-flight requests
-                self.inFlight[project]!.append(completion)
-            } else {
-                // start a request for this project
-                self.inFlight[project] = [completion]
-                self.retrieveToken(for: project) { token in
-                    self.registry[project] = token
-                    if let token = token {
-                        for callback in self.inFlight[project]! {
-                            callback(token.jwt)
-                        }
-                    }
-                    self.inFlight[project] = nil
-                }
-            }
-        }
-    }
+    
 }

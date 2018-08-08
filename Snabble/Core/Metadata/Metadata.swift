@@ -87,7 +87,7 @@ public struct Project: Decodable {
 
     private init() {
         self.id = "none"
-        self.links = Links()
+        self.links = Links.empty
         self.rawLinks = [:]
         self.currency = ""
         self.decimalDigits = 0
@@ -123,8 +123,11 @@ public struct Links: Decodable {
     public let productByWeighItemId: Link
     public let bundlesForSku: Link
     public let productsBySku: Link
+    public let tokens: Link
 
-    public init() {
+    public static let empty = Links()
+
+    private init() {
         self.appdb = Link.empty
         self.appEvents = Link.empty
         self.checkoutInfo = Link.empty
@@ -133,9 +136,10 @@ public struct Links: Decodable {
         self.productByWeighItemId = Link.empty
         self.bundlesForSku = Link.empty
         self.productsBySku = Link.empty
+        self.tokens = Link.empty
     }
 
-    public init(appdb: Link, appEvents: Link, checkoutInfo: Link, productBySku: Link, productByCode: Link, productByWeighItemId: Link, bundlesForSku: Link, productsBySku: Link) {
+    init(appdb: Link, appEvents: Link, checkoutInfo: Link, productBySku: Link, productByCode: Link, productByWeighItemId: Link, bundlesForSku: Link, productsBySku: Link, tokens: Link) {
         self.appdb = appdb
         self.appEvents = appEvents
         self.checkoutInfo = checkoutInfo
@@ -144,6 +148,7 @@ public struct Links: Decodable {
         self.productByWeighItemId = productByWeighItemId
         self.bundlesForSku = bundlesForSku
         self.productsBySku = productsBySku
+        self.tokens = tokens
     }
 }
 
@@ -266,7 +271,7 @@ public extension Metadata {
     }
 
     public static func load(from url: String, _ parameters: [String: String]? = nil, completion: @escaping (Metadata?) -> () ) {
-        SnabbleAPI.request(.get, url, parameters: parameters, timeout: 5) { request in
+        SnabbleAPI.request(.get, url, jwtRequired: false, parameters: parameters, timeout: 5) { request in
             guard let request = request else {
                 return completion(nil)
             }

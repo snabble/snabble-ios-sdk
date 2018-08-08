@@ -87,7 +87,7 @@ public struct SnabbleAPI {
     ///   - parameters: the query parameters to append to the URL
     ///   - timeout: the timeout for the HTTP request (0 for the system default timeout)
     /// - Returns: the URLRequest
-    static func request(_ method: HTTPRequestMethod, _ url: String, json: Bool = true, parameters: [String: String]? = nil, timeout: TimeInterval, completion: @escaping (URLRequest?) -> ()) {
+    static func request(_ method: HTTPRequestMethod, _ url: String, json: Bool = true, jwtRequired: Bool = true, parameters: [String: String]? = nil, timeout: TimeInterval, completion: @escaping (URLRequest?) -> ()) {
         guard
             let url = urlString(url, parameters),
             let fullUrl = APIConfig.shared.urlFor(url)
@@ -95,7 +95,7 @@ public struct SnabbleAPI {
             return completion(nil)
         }
 
-        SnabbleAPI.request(method, fullUrl, json: json, timeout: timeout, completion: completion)
+        SnabbleAPI.request(method, fullUrl, json, jwtRequired, timeout, completion)
     }
 
     /// create an URLRequest
@@ -107,7 +107,7 @@ public struct SnabbleAPI {
     ///   - queryItems: the query parameters to append to the URL
     ///   - timeout: the timeout for the HTTP request (0 for the system default timeout)
     /// - Returns: the URLRequest
-    static func request(_ method: HTTPRequestMethod, _ url: String, json: Bool = true, queryItems: [URLQueryItem], timeout: TimeInterval, completion: @escaping (URLRequest?) -> ()) {
+    static func request(_ method: HTTPRequestMethod, _ url: String, json: Bool = true, jwtRequired: Bool = true, queryItems: [URLQueryItem], timeout: TimeInterval, completion: @escaping (URLRequest?) -> ()) {
         guard
             let url = urlString(url, queryItems),
             let fullUrl = APIConfig.shared.urlFor(url)
@@ -115,7 +115,7 @@ public struct SnabbleAPI {
             return completion(nil)
         }
 
-        SnabbleAPI.request(method, fullUrl, json: json, timeout: timeout, completion: completion)
+        SnabbleAPI.request(method, fullUrl, json, jwtRequired, timeout, completion)
     }
 
     /// create an URLRequest
@@ -131,7 +131,7 @@ public struct SnabbleAPI {
             return completion(nil)
         }
 
-        SnabbleAPI.request(method, url, timeout: timeout) { request in
+        SnabbleAPI.request(method, url, true, true,  timeout) { request in
             var urlRequest = request
             urlRequest.httpBody = body
             completion(urlRequest)
@@ -146,12 +146,12 @@ public struct SnabbleAPI {
     ///   - body: the JSON object to send as the HTTP body
     ///   - timeout: the timeout for the HTTP request (0 for the system default timeout)
     /// - Returns: the URLRequest
-    static func request<T: Encodable>(_ method: HTTPRequestMethod, _ url: String, body: T, timeout: TimeInterval = 0, completion: @escaping (URLRequest?) -> () ) {
+    static func request<T: Encodable>(_ method: HTTPRequestMethod, _ url: String, body: T, timeout: TimeInterval = 0, _ completion: @escaping (URLRequest?) -> () ) {
         guard let url = APIConfig.shared.urlFor(url) else {
             return completion(nil)
         }
 
-        SnabbleAPI.request(method, url, timeout: timeout) { request in
+        SnabbleAPI.request(method, url, true, true, timeout) { request in
             do {
                 var urlRequest = request
                 urlRequest.httpBody = try JSONEncoder().encode(body)
@@ -169,28 +169,38 @@ public struct SnabbleAPI {
     ///   - method: the HTTP method to use
     ///   - url: the absolute URL to use
     ///   - json: if true, add "application/json" as the "Accept" and "Content-Type" HTTP Headers
+    ///   - jwtRequired: if true, this request required authorization via JWT
     ///   - timeout: the timeout for the HTTP request (0 for the system default timeout)
     /// - Returns: the URLRequest
-    static func request(_ method: HTTPRequestMethod, _ url: URL, json: Bool = true, timeout: TimeInterval, completion: @escaping (URLRequest) -> ()) {
+    static func request(_ method: HTTPRequestMethod, _ url: URL, _ json: Bool, _ jwtRequired: Bool, _ timeout: TimeInterval, _ completion: @escaping (URLRequest) -> ()) {
         var urlRequest = URLRequest(url: url)
-
-        // FIXME add async jwt fetch
         urlRequest.httpMethod = method.rawValue
-        if let jwt = TokenRegistry.shared.token(for: SnabbleAPI.project.id) {
-            urlRequest.addValue(jwt, forHTTPHeaderField: "Client-Token")
+
+        if jwtRequired {
+            let project = SnabbleAPI.project
+            TokenRegistry.shared.getToken(for: project.id, from: project.links.tokens.href) { token in
+                if let token = token {
+                    urlRequest.addValue(token, forHTTPHeaderField: "Client-Token")
+                }
+                SnabbleAPI.buildRequest(&urlRequest, timeout, json, completion)
+            }
+        } else {
+            SnabbleAPI.buildRequest(&urlRequest, timeout, json, completion)
         }
-        urlRequest.addValue(SnabbleAPI.clientId, forHTTPHeaderField: "Client-Id")
+    }
+
+    static func buildRequest(_ request: inout URLRequest, _ timeout: TimeInterval, _ json: Bool, _ completion: @escaping (URLRequest) -> ()) {
+        request.addValue(SnabbleAPI.clientId, forHTTPHeaderField: "Client-Id")
 
         if timeout > 0 {
-            urlRequest.timeoutInterval = timeout
+            request.timeoutInterval = timeout
         }
 
         if json {
-            urlRequest.addValue("application/json", forHTTPHeaderField: "Accept")
-            urlRequest.addValue("application/json", forHTTPHeaderField: "Content-Type")
+            request.addValue("application/json", forHTTPHeaderField: "Accept")
+            request.addValue("application/json", forHTTPHeaderField: "Content-Type")
         }
-
-        completion(urlRequest)
+        completion(request)
     }
 
     /// perfom an API Request

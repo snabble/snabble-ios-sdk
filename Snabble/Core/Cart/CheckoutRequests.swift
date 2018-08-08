@@ -87,11 +87,12 @@ extension CheckoutProcess {
     public func update(timeout: TimeInterval = 0,
                        taskCreated: @escaping (URLSessionDataTask) -> (),
                        completion: @escaping (_ process: CheckoutProcess?, _ error: ApiError?) -> () ) {
-        guard let url = APIConfig.shared.urlFor(self.links.`self`.href) else {
-            return completion(nil, nil)
-        }
 
-        SnabbleAPI.request(.get, url, timeout: timeout) { request in
+        SnabbleAPI.request(.get, self.links.`self`.href, timeout: timeout) { request in
+            guard let request = request else {
+                return completion(nil, nil)
+            }
+
             let task = SnabbleAPI.perform(request, completion)
             taskCreated(task)
         }
