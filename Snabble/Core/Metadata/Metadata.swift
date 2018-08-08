@@ -268,15 +268,18 @@ public extension Metadata {
     }
 
     public static func load(from url: String, _ parameters: [String: String]? = nil, completion: @escaping (Metadata?) -> () ) {
-        guard let request = SnabbleAPI.request(.get, url, parameters: parameters, timeout: 5) else {
-            return completion(nil)
-        }
-        SnabbleAPI.perform(request) { (metadata: Metadata?, error) in
-            if let metadata = metadata {
-                SnabbleAPI.metadata = metadata
+        SnabbleAPI.request(.get, url, parameters: parameters, timeout: 5) { request in
+            guard let request = request else {
+                return completion(nil)
             }
 
-            completion(metadata)
+            SnabbleAPI.perform(request) { (metadata: Metadata?, error) in
+                if let metadata = metadata {
+                    SnabbleAPI.metadata = metadata
+                }
+
+                completion(metadata)
+            }
         }
     }
 }

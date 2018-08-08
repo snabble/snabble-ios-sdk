@@ -87,15 +87,15 @@ public struct SnabbleAPI {
     ///   - parameters: the query parameters to append to the URL
     ///   - timeout: the timeout for the HTTP request (0 for the system default timeout)
     /// - Returns: the URLRequest
-    static func request(_ method: HTTPRequestMethod, _ url: String, json: Bool = true, parameters: [String: String]? = nil, timeout: TimeInterval) -> URLRequest? {
+    static func request(_ method: HTTPRequestMethod, _ url: String, json: Bool = true, parameters: [String: String]? = nil, timeout: TimeInterval, completion: @escaping (URLRequest?) -> ()) {
         guard
             let url = urlString(url, parameters),
             let fullUrl = APIConfig.shared.urlFor(url)
         else {
-            return nil
+            return completion(nil)
         }
 
-        return request(method, fullUrl, json: json, timeout: timeout)
+        SnabbleAPI.request(method, fullUrl, json: json, timeout: timeout, completion: completion)
     }
 
     /// create an URLRequest
@@ -107,15 +107,15 @@ public struct SnabbleAPI {
     ///   - queryItems: the query parameters to append to the URL
     ///   - timeout: the timeout for the HTTP request (0 for the system default timeout)
     /// - Returns: the URLRequest
-    static func request(_ method: HTTPRequestMethod, _ url: String, json: Bool = true, queryItems: [URLQueryItem], timeout: TimeInterval) -> URLRequest? {
+    static func request(_ method: HTTPRequestMethod, _ url: String, json: Bool = true, queryItems: [URLQueryItem], timeout: TimeInterval, completion: @escaping (URLRequest?) -> ()) {
         guard
             let url = urlString(url, queryItems),
             let fullUrl = APIConfig.shared.urlFor(url)
         else {
-            return nil
+            return completion(nil)
         }
 
-        return request(method, fullUrl, json: json, timeout: timeout)
+        SnabbleAPI.request(method, fullUrl, json: json, timeout: timeout, completion: completion)
     }
 
     /// create an URLRequest
@@ -126,13 +126,16 @@ public struct SnabbleAPI {
     ///   - body: the JSON data to send as the HTTP body
     ///   - timeout: the timeout for the HTTP request (0 for the system default timeout)
     /// - Returns: the URLRequest
-    static func request(_ method: HTTPRequestMethod, _ url: String, body: Data, timeout: TimeInterval) -> URLRequest? {
+    static func request(_ method: HTTPRequestMethod, _ url: String, body: Data, timeout: TimeInterval, completion: @escaping (URLRequest?) -> ()) {
         guard let url = APIConfig.shared.urlFor(url) else {
-            return nil
+            return completion(nil)
         }
-        var urlRequest = request(method, url, timeout: timeout)
-        urlRequest.httpBody = body
-        return urlRequest
+
+        SnabbleAPI.request(method, url, timeout: timeout) { request in
+            var urlRequest = request
+            urlRequest.httpBody = body
+            completion(urlRequest)
+        }
     }
 
     /// create an URLRequest
@@ -143,18 +146,20 @@ public struct SnabbleAPI {
     ///   - body: the JSON object to send as the HTTP body
     ///   - timeout: the timeout for the HTTP request (0 for the system default timeout)
     /// - Returns: the URLRequest
-    static func request<T: Encodable>(_ method: HTTPRequestMethod, _ url: String, body: T, timeout: TimeInterval) -> URLRequest? {
+    static func request<T: Encodable>(_ method: HTTPRequestMethod, _ url: String, body: T, timeout: TimeInterval = 0, completion: @escaping (URLRequest?) -> () ) {
         guard let url = APIConfig.shared.urlFor(url) else {
-            return nil
+            return completion(nil)
         }
-        do {
-            var urlRequest = request(method, url, timeout: timeout)
-            urlRequest.httpBody = try JSONEncoder().encode(body)
-            
-            return urlRequest
-        } catch {
-            NSLog("error serializing request body: \(error)")
-            return nil
+
+        SnabbleAPI.request(method, url, timeout: timeout) { request in
+            do {
+                var urlRequest = request
+                urlRequest.httpBody = try JSONEncoder().encode(body)
+                completion(urlRequest)
+            } catch {
+                NSLog("error serializing request body: \(error)")
+                completion(nil)
+            }
         }
     }
 
@@ -166,9 +171,10 @@ public struct SnabbleAPI {
     ///   - json: if true, add "application/json" as the "Accept" and "Content-Type" HTTP Headers
     ///   - timeout: the timeout for the HTTP request (0 for the system default timeout)
     /// - Returns: the URLRequest
-    static func request(_ method: HTTPRequestMethod, _ url: URL, json: Bool = true, timeout: TimeInterval) -> URLRequest {
+    static func request(_ method: HTTPRequestMethod, _ url: URL, json: Bool = true, timeout: TimeInterval, completion: @escaping (URLRequest) -> ()) {
         var urlRequest = URLRequest(url: url)
 
+        // FIXME add async jwt fetch
         urlRequest.httpMethod = method.rawValue
         if let jwt = TokenRegistry.shared.token(for: SnabbleAPI.project.id) {
             urlRequest.addValue(jwt, forHTTPHeaderField: "Client-Token")
@@ -184,7 +190,7 @@ public struct SnabbleAPI {
             urlRequest.addValue("application/json", forHTTPHeaderField: "Content-Type")
         }
 
-        return urlRequest
+        completion(urlRequest)
     }
 
     /// perfom an API Request

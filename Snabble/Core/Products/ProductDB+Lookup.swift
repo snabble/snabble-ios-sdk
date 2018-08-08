@@ -23,45 +23,47 @@ extension ProductDB {
         let timeoutInterval: TimeInterval = 5
 
         let fullUrl = url.replacingOccurrences(of: placeholder, with: identifier)
-        guard let request = SnabbleAPI.request(.get, fullUrl, timeout: timeoutInterval) else {
-            return completion(nil, true)
-        }
-
-        let task = session.dataTask(with: request) { data, response, error in
-            if let data = data, let response = response as? HTTPURLResponse {
-                if response.statusCode == 404 {
-                    DispatchQueue.main.async {
-                        NSLog("online product lookup with \(placeholder) \(identifier): not found")
-                        completion(nil, false)
-                    }
-                    return
-                }
-
-                do {
-                    NSLog("online product lookup with \(placeholder) \(identifier) succeeded")
-                    let apiProduct = try JSONDecoder().decode(APIProduct.self, from: data)
-                    if let depositSku = apiProduct.depositProduct {
-                        // get the deposit product
-                        self.productBySku(depositSku) { depositProduct, error in
-                            if let deposit = depositProduct?.price {
-                                self.completeProduct(apiProduct, deposit, completion)
-                            } else {
-                                self.returnError("deposit product not found", completion)
-                            }
-                        }
-                    } else {
-                        // product w/o deposit
-                        self.completeProduct(apiProduct, nil, completion)
-                    }
-                } catch let error {
-                    self.returnError("product parse error: \(error)", completion)
-                }
-            } else {
-                self.returnError("error getting product from \(fullUrl): \(String(describing: error))", completion)
+        SnabbleAPI.request(.get, fullUrl, timeout: timeoutInterval) { request in
+            guard let request = request else {
+                return completion(nil, true)
             }
-        }
 
-        task.resume()
+            let task = session.dataTask(with: request) { data, response, error in
+                if let data = data, let response = response as? HTTPURLResponse {
+                    if response.statusCode == 404 {
+                        DispatchQueue.main.async {
+                            NSLog("online product lookup with \(placeholder) \(identifier): not found")
+                            completion(nil, false)
+                        }
+                        return
+                    }
+
+                    do {
+                        NSLog("online product lookup with \(placeholder) \(identifier) succeeded")
+                        let apiProduct = try JSONDecoder().decode(APIProduct.self, from: data)
+                        if let depositSku = apiProduct.depositProduct {
+                            // get the deposit product
+                            self.productBySku(depositSku) { depositProduct, error in
+                                if let deposit = depositProduct?.price {
+                                    self.completeProduct(apiProduct, deposit, completion)
+                                } else {
+                                    self.returnError("deposit product not found", completion)
+                                }
+                            }
+                        } else {
+                            // product w/o deposit
+                            self.completeProduct(apiProduct, nil, completion)
+                        }
+                    } catch let error {
+                        self.returnError("product parse error: \(error)", completion)
+                    }
+                } else {
+                    self.returnError("error getting product from \(fullUrl): \(String(describing: error))", completion)
+                }
+            }
+
+            task.resume()
+        }
     }
 
     private func returnError(_ msg: String, _ completion: @escaping (LookupResult?, Bool) -> () ) {
@@ -98,34 +100,36 @@ extension ProductDB {
         let timeoutInterval: TimeInterval = 5
 
         let fullUrl = url.replacingOccurrences(of: placeholder, with: sku)
-        guard let request = SnabbleAPI.request(.get, fullUrl, timeout: timeoutInterval) else {
-            return completion([], true)
-        }
+        SnabbleAPI.request(.get, fullUrl, timeout: timeoutInterval) { request in
+            guard let request = request else {
+                return completion([], true)
+            }
 
-        let task = session.dataTask(with: request) { data, response, error in
-            if let data = data, let response = response as? HTTPURLResponse {
-                if response.statusCode == 404 {
-                    NSLog("online bundle lookup with \(placeholder) \(sku): not found")
-                    completion([], false)
-                    return
-                }
+            let task = session.dataTask(with: request) { data, response, error in
+                if let data = data, let response = response as? HTTPURLResponse {
+                    if response.statusCode == 404 {
+                        NSLog("online bundle lookup with \(placeholder) \(sku): not found")
+                        completion([], false)
+                        return
+                    }
 
-                do {
-                    let result = try JSONDecoder().decode(APIProducts.self, from: data)
-                    NSLog("online bundle lookup for sku \(sku) found \(result.products.count) bundles")
-                    self.completeBundles(result.products, completion)
-                }
-                catch let error {
-                    let raw = String(bytes: data, encoding: .utf8)
-                    NSLog("bundle parse error: \(error) \(String(describing: raw))")
+                    do {
+                        let result = try JSONDecoder().decode(APIProducts.self, from: data)
+                        NSLog("online bundle lookup for sku \(sku) found \(result.products.count) bundles")
+                        self.completeBundles(result.products, completion)
+                    }
+                    catch let error {
+                        let raw = String(bytes: data, encoding: .utf8)
+                        NSLog("bundle parse error: \(error) \(String(describing: raw))")
+                        completion([], true)
+                    }
+                } else {
+                    NSLog("error gettings bundles for sku \(sku): \(String(describing: error))")
                     completion([], true)
                 }
-            } else {
-                NSLog("error gettings bundles for sku \(sku): \(String(describing: error))")
-                completion([], true)
             }
+            task.resume()
         }
-        task.resume()
     }
 
     // for a list of bundles, get their respective deposit
@@ -150,35 +154,37 @@ extension ProductDB {
 
         let skuSet = Set(skus)
         let skuItems = skuSet.map { URLQueryItem(name: "skus", value: $0) }
-        guard let request = SnabbleAPI.request(.get, url, queryItems: skuItems, timeout: timeoutInterval) else {
-            return completion([], true)
-        }
+        SnabbleAPI.request(.get, url, queryItems: skuItems, timeout: timeoutInterval) { request in
+            guard let request = request else {
+                return completion([], true)
+            }
 
-        let task = session.dataTask(with: request) { data, response, error in
-            if let data = data, let response = response as? HTTPURLResponse {
-                if response.statusCode == 404 {
-                    NSLog("online products lookup for \(skus): not found")
-                    completion([], false)
-                    return
-                }
+            let task = session.dataTask(with: request) { data, response, error in
+                if let data = data, let response = response as? HTTPURLResponse {
+                    if response.statusCode == 404 {
+                        NSLog("online products lookup for \(skus): not found")
+                        completion([], false)
+                        return
+                    }
 
-                do {
-                    let result = try JSONDecoder().decode(APIProducts.self, from: data)
-                    NSLog("online products lookup for skus \(skus) found \(result.products.count) products")
-                    let products = result.products.map { $0.convert(nil, []) }
-                    completion(products, false)
-                }
-                catch let error {
-                    let raw = String(bytes: data, encoding: .utf8)
-                    NSLog("products parse error: \(error) \(String(describing: raw))")
+                    do {
+                        let result = try JSONDecoder().decode(APIProducts.self, from: data)
+                        NSLog("online products lookup for skus \(skus) found \(result.products.count) products")
+                        let products = result.products.map { $0.convert(nil, []) }
+                        completion(products, false)
+                    }
+                    catch let error {
+                        let raw = String(bytes: data, encoding: .utf8)
+                        NSLog("products parse error: \(error) \(String(describing: raw))")
+                        completion([], true)
+                    }
+                } else {
+                    NSLog("error getting products for skus \(skus): \(String(describing: error))")
                     completion([], true)
                 }
-            } else {
-                NSLog("error getting products for skus \(skus): \(String(describing: error))")
-                completion([], true)
             }
+            task.resume()
         }
-        task.resume()
     }
 
 }

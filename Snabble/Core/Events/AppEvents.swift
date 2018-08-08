@@ -87,16 +87,16 @@ extension AppEvent {
 
     func post() {
         let appEvents = SnabbleAPI.project.links.appEvents.href
-        guard
-            let request = SnabbleAPI.request(.post, appEvents, body: self, timeout: 0)
-        else {
-            return
-        }
+        SnabbleAPI.request(.post, appEvents, body: self, timeout: 0) { request in
+            guard let request = request else {
+                return
+            }
 
-        // NSLog("posting event \(String(describing: self))")
-        SnabbleAPI.perform(request) { (result: Empty?, error) in
-            if let error = error {
-                NSLog("error posting event: \(error)")
+            // NSLog("posting event \(String(describing: self))")
+            SnabbleAPI.perform(request) { (result: Empty?, error) in
+                if let error = error {
+                    NSLog("error posting event: \(error)")
+                }
             }
         }
     }

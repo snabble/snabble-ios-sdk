@@ -21,15 +21,16 @@ extension ShoppingCart {
         let cart = Cart(session: self.session, shopID: self.shopId, customer: customerInfo, items: items)
 
         NSLog("create checkout session: \(cart.session)")
-        guard let request = SnabbleAPI.request(.post, self.checkoutInfoUrl, body: cart, timeout: timeout) else {
-            completion(nil, nil)
-            return
-        }
+        SnabbleAPI.request(.post, self.checkoutInfoUrl, body: cart, timeout: timeout) { request in
+            guard let request = request else {
+                return completion(nil, nil)
+            }
 
-        SnabbleAPI.perform(request, returnRaw: true) { (result: SignedCheckoutInfo?, error, json, _) in
-            var newResult = result
-            newResult?.rawJson = json
-            completion(newResult, error)
+            SnabbleAPI.perform(request, returnRaw: true) { (result: SignedCheckoutInfo?, error, json, _) in
+                var newResult = result
+                newResult?.rawJson = json
+                completion(newResult, error)
+            }
         }
     }
 
@@ -58,12 +59,13 @@ extension SignedCheckoutInfo {
             }
 
             let data = try JSONSerialization.data(withJSONObject: dict, options: [])
-            guard let request = SnabbleAPI.request(.post, self.links.checkoutProcess.href, body: data, timeout: timeout) else {
-                completion(nil, nil)
-                return
-            }
+            SnabbleAPI.request(.post, self.links.checkoutProcess.href, body: data, timeout: timeout) { request in
+                guard let request = request else {
+                    return completion(nil, nil)
+                }
 
-            SnabbleAPI.perform(request, completion)
+                SnabbleAPI.perform(request, completion)
+            }
         } catch {
             NSLog("error serializing request body: \(error)")
         }
@@ -82,15 +84,17 @@ extension CheckoutProcess {
     ///   - error: if not nil, contains the error response from the backend
     /// - Returns:
     ///    a `URLSessionDataTask` object or nil (if the request couldn't be started)
-    @discardableResult
-    public func update(timeout: TimeInterval = 0, completion: @escaping (_ process: CheckoutProcess?, _ error: ApiError?) -> () ) -> URLSessionDataTask? {
+    public func update(timeout: TimeInterval = 0,
+                       taskCreated: @escaping (URLSessionDataTask) -> (),
+                       completion: @escaping (_ process: CheckoutProcess?, _ error: ApiError?) -> () ) {
         guard let url = APIConfig.shared.urlFor(self.links.`self`.href) else {
-            completion(nil, nil)
-            return nil
+            return completion(nil, nil)
         }
 
-        let request = SnabbleAPI.request(.get, url, timeout: timeout)
-        return SnabbleAPI.perform(request, completion)
+        SnabbleAPI.request(.get, url, timeout: timeout) { request in
+            let task = SnabbleAPI.perform(request, completion)
+            taskCreated(task)
+        }
     }
 
     /// abort this checkout process
@@ -102,12 +106,14 @@ extension CheckoutProcess {
     ///   - error: if not nil, contains the error response from the backend
     public func abort(timeout: TimeInterval = 0, completion: @escaping (_ process: CheckoutProcess?, _ error: ApiError?) -> () ) {
         let abort = AbortRequest(aborted: true)
-        guard let request = SnabbleAPI.request(.patch, self.links.`self`.href, body: abort, timeout: timeout) else {
-            completion(nil, nil)
-            return
-        }
 
-        SnabbleAPI.perform(request, completion)
+        SnabbleAPI.request(.patch, self.links.`self`.href, body: abort, timeout: timeout) { request in
+            guard let request = request else {
+                return completion(nil, nil)
+            }
+
+            SnabbleAPI.perform(request, completion)
+        }
     }
 
 }

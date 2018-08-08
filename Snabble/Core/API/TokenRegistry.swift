@@ -106,26 +106,29 @@ public class TokenRegistry {
 
     private func retrieveToken(for project: String, _ date: Date? = nil, completion: @escaping (TokenData?) -> () ) {
         let parameters = [ "role" : "retailerApp" ]
-        guard
-            var request = SnabbleAPI.request(.get, "/\(project)/tokens", json: true, parameters: parameters, timeout: 2),
-            let password = self.generatePassword(date),
-            let data = "\(self.appId):\(password)".data(using: .utf8)
-        else {
-            return completion(nil)
-        }
 
-        let base64 = data.base64EncodedString()
-        request.addValue("Basic \(base64)", forHTTPHeaderField: "Authorization")
-        request.cachePolicy = .reloadIgnoringCacheData
-        SnabbleAPI.perform(request) { (token: TokenResponse?, error, httpResponse) in
-            if let token = token {
-                completion(TokenData(token))
-            } else {
-                if let response = httpResponse, response.statusCode == 403 {
-                    self.retryWithServerDate(project: project, response, completion: completion)
-                    return
+        SnabbleAPI.request(.get, "/\(project)/tokens", json: true, parameters: parameters, timeout: 2) { request in
+            guard
+                var request = request,
+                let password = self.generatePassword(date),
+                let data = "\(self.appId):\(password)".data(using: .utf8)
+            else {
+                return completion(nil)
+            }
+
+            let base64 = data.base64EncodedString()
+            request.addValue("Basic \(base64)", forHTTPHeaderField: "Authorization")
+            request.cachePolicy = .reloadIgnoringCacheData
+            SnabbleAPI.perform(request) { (token: TokenResponse?, error, httpResponse) in
+                if let token = token {
+                    completion(TokenData(token))
+                } else {
+                    if let response = httpResponse, response.statusCode == 403 {
+                        self.retryWithServerDate(project: project, response, completion: completion)
+                        return
+                    }
+                    completion(nil)
                 }
-                completion(nil)
             }
         }
     }
