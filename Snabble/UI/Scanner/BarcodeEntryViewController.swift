@@ -28,6 +28,8 @@ class BarcodeEntryViewController: UIViewController, UISearchBarDelegate, UITable
         self.productProvider = productProvider
         self.completion = completion
         self.delegate = delegate
+
+        self.title = "Snabble.Scanner.enterBarcode".localized()
     }
 
     required init?(coder aDecoder: NSCoder) {

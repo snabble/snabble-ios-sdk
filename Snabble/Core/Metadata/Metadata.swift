@@ -103,7 +103,7 @@ public struct Project: Decodable {
         self.shops = []
     }
 
-    static let none = Project()
+    public static let none = Project()
 }
 
 /// Link

@@ -282,7 +282,7 @@ extension Product {
             }
 
             // single-letter abbreviations and other stuff that needs to be all-lowercase
-            for abbr in [ "U.", "M.", "O.", "In", "Aa", "Und", "Von", "Der", "Ca", "Ca." ] {
+            for abbr in [ "U.", "M.", "O.", "In", "An", "Und", "Von", "Der", "Ca", "Ca." ] {
                 if newWord == abbr {
                     newWord = abbr.lowercased()
                 }

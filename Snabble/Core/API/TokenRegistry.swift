@@ -90,7 +90,7 @@ public class TokenRegistry {
     }
 
     private func retrieveToken(from url: String, _ date: Date? = nil, completion: @escaping (TokenData?) -> () ) {
-        let parameters = [ "role" : "retailerApp" ]
+        let parameters = [ "role": "retailerApp" ]
 
         SnabbleAPI.request(.get, url, jwtRequired: false, parameters: parameters, timeout: 2) { request in
             guard
