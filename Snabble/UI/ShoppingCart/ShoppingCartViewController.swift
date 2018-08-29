@@ -254,11 +254,6 @@ extension ShoppingCartViewController: ShoppingCartTableDelegate {
         }
 
         self.checkoutButton?.isHidden = count == 0
-
-        print("updated cart:")
-        for item in self.shoppingCart.items {
-            print("\(item.quantity) \(item.product.name) \(item.scannedCode)")
-        }
     }
 
     var cart: ShoppingCart {
