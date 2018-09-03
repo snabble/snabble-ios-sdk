@@ -16,7 +16,7 @@ extension ProductDB {
             p.*, pr.listPrice, pr.discountedPrice, pr.basePrice,
             (select group_concat(sc.code) from scannableCodes sc where sc.sku = p.sku) scannableCodes,
             (select group_concat(w.weighItemId) from weighItemIds w where w.sku = p.sku) weighItemIds,
-            (SELECT group_concat(ifnull(sc.transmissionCode, "")) FROM scannableCodes sc WHERE sc.sku = p.sku) transmissionCodes
+            (select group_concat(ifnull(sc.transmissionCode, "")) from scannableCodes sc where sc.sku = p.sku) transmissionCodes
         from products p
         join prices pr on pr.sku = p.sku
     """
@@ -140,14 +140,14 @@ extension ProductDB {
 
     func productsByScannableCodePrefix(_ dbQueue: DatabaseQueue, _ prefix: String, _ filterDeposits: Bool) -> [Product] {
         do {
-            let limit = prefix.count < 5 ? prefix.count * 100 : -1
+            let limit = 100 //  prefix.count < 5 ? prefix.count * 100 : -1
             let depositCondition = filterDeposits ? "and isDeposit = 0" : ""
             let rows = try dbQueue.inDatabase { db in
                 return try Row.fetchAll(db, ProductDB.baseQuery + " " + """
                     join scannableCodes s on s.sku = p.sku
-                    where s.code glob ? \(depositCondition) and p.weighing != \(ProductType.preWeighed.rawValue)
+                    where (s.code glob ? or s.code glob ?) \(depositCondition) and p.weighing != \(ProductType.preWeighed.rawValue)
                     limit ?
-                    """, arguments: [prefix + "*", limit])
+                    """, arguments: [prefix + "*", "00000" + prefix + "*", limit])
             }
             return rows.compactMap { self.productFromRow(dbQueue, $0) }
         } catch {
