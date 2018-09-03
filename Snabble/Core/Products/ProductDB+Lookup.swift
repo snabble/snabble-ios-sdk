@@ -135,6 +135,11 @@ extension ProductDB {
     // for a list of bundles, get their respective deposit
     func completeBundles(_ bundles: [APIProduct], _ completion: @escaping (_ products: [Product], _ error: Bool) ->() ) {
         let skus = bundles.compactMap { $0.depositProduct }
+        if skus.count == 0 {
+            completion([], false)
+            return
+        }
+
         self.getProductsBySku(self.config.links.productsBySku.href, skus) { products, error in
             let deposits = Dictionary(uniqueKeysWithValues: products.map { ($0.sku, $0.listPrice) })
 
@@ -192,6 +197,20 @@ extension ProductDB {
 // this is how we get product data from the lookup endpoints
 struct APIProducts: Decodable {
     let products: [APIProduct]
+
+    enum CodingKeys: String, CodingKey {
+        case products
+    }
+
+    init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        self.products = try container.decodeIfPresent([APIProduct].self, forKey: .products) ?? []
+    }
+}
+
+struct Code: Codable {
+    let code: String
+    let transmissionCode: String?
 }
 
 struct APIProduct: Codable {
@@ -203,13 +222,14 @@ struct APIProduct: Codable {
     let bundledProduct: String?
     let imageUrl: String?
     let productType: APIProductType
-    let eans: [String]?
+    let transmissionCodes: [String]?
     let price: Int
     let discountedPrice: Int?
     let basePrice: String?
     let weighing: Weighing?
     let saleRestriction: APISaleRestriction?
     let saleStop: Bool?
+    let codes: [Code]
     let matchingCode: String?
 
     enum APIProductType: String, Codable {
@@ -259,9 +279,13 @@ struct APIProduct: Codable {
             weighItemIds = Set(w.weighedItemIds)
         }
 
-        var scannableCodes: Set<String> = Set([])
-        if let eans = self.eans {
-            scannableCodes = Set(eans)
+        let scannableCodes = self.codes.map { $0.code }
+
+        var transmissionCodes = [String: String]()
+        for code in self.codes {
+            if let xmit = code.transmissionCode {
+                transmissionCodes[code.code] = xmit
+            }
         }
 
         return Product(sku: self.sku,
@@ -273,7 +297,7 @@ struct APIProduct: Codable {
                        listPrice: self.price,
                        discountedPrice: self.discountedPrice,
                        type: type,
-                       scannableCodes: scannableCodes,
+                       scannableCodes: Set(scannableCodes),
                        weighedItemIds: weighItemIds,
                        depositSku: self.depositProduct,
                        bundledSku: self.bundledProduct,
@@ -281,7 +305,8 @@ struct APIProduct: Codable {
                        deposit: deposit,
                        saleRestriction: self.saleRestriction?.convert() ?? .none,
                        saleStop: self.saleStop ?? false,
-                       bundles: bundles
+                       bundles: bundles,
+                       transmissionCodes: transmissionCodes
         )
     }
 }

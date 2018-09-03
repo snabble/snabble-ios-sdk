@@ -153,6 +153,7 @@ public struct Product: Codable {
         self.saleRestriction = try container.decodeIfPresent(.saleRestriction) ?? .none
         self.saleStop = try container.decodeIfPresent(.saleStop) ?? false
         self.bundles = try container.decodeIfPresent(.bundles) ?? []
+        self.transmissionCodes = try container.decodeIfPresent(.transmissionCodes) ?? [:]
     }
 
     init(sku: String,
@@ -172,7 +173,8 @@ public struct Product: Codable {
                 deposit: Int?,
                 saleRestriction: SaleRestriction,
                 saleStop: Bool,
-                bundles: [Product]) {
+                bundles: [Product],
+                transmissionCodes: [String: String]) {
         self.sku = sku
         self.name = name
         self.description = description
@@ -191,7 +193,11 @@ public struct Product: Codable {
         self.saleRestriction = saleRestriction
         self.saleStop = saleStop
         self.bundles = bundles
+        self.transmissionCodes = transmissionCodes
     }
+
+    // store a mapping of scannableCode to transmissionCode
+    internal let transmissionCodes: [String: String]
 }
 
 /// price calculation stuff
