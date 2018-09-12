@@ -89,21 +89,23 @@ extension ProductDB {
                 let transmissionCode = product.transmissionCodes[code] ?? code
                 return LookupResult(product: product, code: transmissionCode)
             } else {
-                // lookup failed. if it was an EAN-8, try again with the same EAN padded to an EAN-13
+                // lookup failed.
+
+                // if it was an EAN-8, try again with the same EAN padded to an EAN-13
+                // if it was an EAN-13 with a leading "0", try again with all leading zeroes removed
                 if code.count == 8 {
                     print("8->13 lookup attempt \(code) -> 00000\(code)")
                     return self.productByScannableCode("00000" + code)
+                } else if code.first == "0", let codeInt = Int(code) {
+                    print("no leading zeroes db lookup attempt \(code) -> \(codeInt)")
+                    return self.productByScannableCode(dbQueue, String(codeInt))
                 }
             }
         } catch {
             NSLog("db error: \(error)")
         }
 
-        if code.first == "0", let codeInt = Int(code) {
-            // no product found. try the lookup again, with all leading zeroes removed from `code`
-            print("2nd db lookup attempt \(code) -> \(codeInt)")
-            return self.productByScannableCode(dbQueue, String(codeInt))
-        }
+
         return nil
     }
 
