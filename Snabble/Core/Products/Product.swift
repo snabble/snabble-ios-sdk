@@ -150,6 +150,7 @@ public struct Product: Codable {
         self.depositSku = try container.decodeIfPresent(.depositSku)
         self.bundledSku = try container.decodeIfPresent(.bundledSku)
         self.isDeposit = try container.decode(.isDeposit)
+        self.deposit = try container.decodeIfPresent(.deposit)
         self.saleRestriction = try container.decodeIfPresent(.saleRestriction) ?? .none
         self.saleStop = try container.decodeIfPresent(.saleStop) ?? false
         self.bundles = try container.decodeIfPresent(.bundles) ?? []
@@ -157,24 +158,24 @@ public struct Product: Codable {
     }
 
     init(sku: String,
-                name: String,
-                description: String?,
-                subtitle: String?,
-                imageUrl: String?,
-                basePrice: String?,
-                listPrice: Int,
-                discountedPrice: Int?,
-                type: ProductType,
-                scannableCodes: Set<String>,
-                weighedItemIds: Set<String>?,
-                depositSku: String?,
-                bundledSku: String?,
-                isDeposit: Bool,
-                deposit: Int?,
-                saleRestriction: SaleRestriction,
-                saleStop: Bool,
-                bundles: [Product],
-                transmissionCodes: [String: String]) {
+         name: String,
+         description: String?,
+         subtitle: String?,
+         imageUrl: String?,
+         basePrice: String?,
+         listPrice: Int,
+         discountedPrice: Int?,
+         type: ProductType,
+         scannableCodes: Set<String>,
+         weighedItemIds: Set<String>?,
+         depositSku: String?,
+         bundledSku: String?,
+         isDeposit: Bool,
+         deposit: Int?,
+         saleRestriction: SaleRestriction,
+         saleStop: Bool,
+         bundles: [Product],
+         transmissionCodes: [String: String]) {
         self.sku = sku
         self.name = name
         self.description = description
