@@ -351,7 +351,8 @@ extension ScannerViewController {
         for bundle in product.bundles {
             alert.addAction(UIAlertAction(title: bundle.name, style: .default) { action in
                 let bundleCode = bundle.scannableCodes.first ?? ""
-                self.showConfirmation(for: bundle, bundleCode)
+                let transmissionCode = bundle.transmissionCodes[bundleCode] ?? bundleCode
+                self.showConfirmation(for: bundle, transmissionCode)
             })
         }
 
