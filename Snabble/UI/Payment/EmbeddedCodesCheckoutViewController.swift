@@ -23,11 +23,13 @@ class EmbeddedCodesCheckoutViewController: UIViewController {
 
     private var codeblocks = [[String]]()
     private var itemSize = CGSize(width: 100, height: 100)
+    private let encodedCodes: EncodedCodes?
 
     init(_ process: CheckoutProcess, _ cart: ShoppingCart, _ delegate: PaymentDelegate) {
         self.process = process
         self.cart = cart
         self.delegate = delegate
+        self.encodedCodes = SnabbleAPI.project.encodedCodes
 
         super.init(nibName: nil, bundle: Snabble.bundle)
 
@@ -49,13 +51,7 @@ class EmbeddedCodesCheckoutViewController: UIViewController {
         let nib = UINib(nibName: "QRCodeCell", bundle: Snabble.bundle)
         self.collectionView.register(nib, forCellWithReuseIdentifier: "qrCodeCell")
 
-        let maxCodes = SnabbleAPI.project.encodedCodes?.maxCodes ?? 100
-        let codes = self.codesForQR()
-        let chunks = (Float(codes.count) / Float(maxCodes)).rounded(.up)
-        let chunkSize = Int((Float(codes.count) / chunks).rounded(.up))
-        self.codeblocks = stride(from: 0, to: codes.count, by: chunkSize).map {
-            Array(codes[$0..<min($0 + chunkSize, codes.count)])
-        }
+        self.setupCodeBlocks()
 
         self.pageControl.numberOfPages = self.codeblocks.count
         self.pageControl.pageIndicatorTintColor = .lightGray
@@ -99,8 +95,94 @@ class EmbeddedCodesCheckoutViewController: UIViewController {
         UIScreen.main.brightness = self.initialBrightness
     }
 
-    private func codesForQR() -> [String] {
-        let codes: [String] = self.cart.items.reduce(into: [], { result, item in
+    private func setupCodeBlocks() {
+        let maxCodes = (self.encodedCodes?.maxCodes ?? 100) - 1
+        let (regularCodes, restrictedCodes) = self.codesForQR()
+
+        var regularBlocks = self.blocksFor(regularCodes, maxCodes)
+        var restrictedBlocks = self.blocksFor(restrictedCodes, maxCodes)
+
+        // if possible, merge the last regular and the last restricted Block
+        if regularBlocks.count > 1 && restrictedBlocks.count > 0 {
+            let lastRegularBlock = regularBlocks.count - 1
+            let lastRestrictedBlock = restrictedBlocks.count - 1
+            if regularBlocks[lastRegularBlock].count + restrictedBlocks[lastRestrictedBlock].count < maxCodes {
+                let final = restrictedBlocks[lastRestrictedBlock].remove(at: restrictedBlocks[lastRestrictedBlock].count-1)
+                restrictedBlocks[lastRestrictedBlock].append(contentsOf: regularBlocks[lastRegularBlock])
+                restrictedBlocks[lastRestrictedBlock].append(final)
+                regularBlocks.remove(at: lastRegularBlock)
+            }
+        }
+
+        // append "nextCode" to all blocks
+        if let nextCode = self.encodedCodes?.nextCode {
+            for i in 0..<regularBlocks.count - 1 {
+                regularBlocks[i].append(nextCode)
+            }
+            for i in 0..<restrictedBlocks.count - 1 {
+                restrictedBlocks[i].append(nextCode)
+            }
+        }
+
+        if let nextCodeCheck = self.encodedCodes?.nextCodeWithCheck, restrictedCodes.count > 0 {
+            let lastBlock = regularBlocks.count - 1
+            if lastBlock >= 0 {
+                // if we added a "nextCode" above, undo that for the last block
+                if self.encodedCodes?.nextCode != nil {
+                    let lastBlockSize = regularBlocks[lastBlock].count
+                    regularBlocks[lastBlock].remove(at: lastBlockSize - 1)
+                }
+                // add the "nextCodeWithCheck" code
+                regularBlocks[lastBlock].append(nextCodeCheck)
+            } else {
+                // there were no regular products, create a new regular block with just the `nextCodeCheck` code
+                regularBlocks = [[nextCodeCheck]]
+            }
+        }
+
+        self.codeblocks = regularBlocks
+        self.codeblocks.append(contentsOf: restrictedBlocks)
+
+        for (index, block) in self.codeblocks.enumerated() {
+            print("block \(index): \(block.count) elements, first=\(block[0]), last=\(block[block.count-1])")
+        }
+    }
+
+    private func codesForQR() -> ([String],[String]) {
+        if self.encodedCodes?.nextCodeWithCheck != nil {
+            let regularItems = self.cart.items.filter { return $0.product.saleRestriction == .none }
+            let restrictedItems = self.cart.items.filter { return $0.product.saleRestriction != .none }
+
+            var regularCodes = self.codesFor(regularItems)
+            if let additionalCodes = self.cart.additionalCodes {
+                regularCodes.append(contentsOf: additionalCodes)
+            }
+
+            var restrictedCodes = self.codesFor(restrictedItems)
+
+            if let finalCode = self.encodedCodes?.finalCode {
+                if restrictedCodes.count > 0 {
+                    restrictedCodes.append(finalCode)
+                } else {
+                    regularCodes.append(finalCode)
+                }
+            }
+
+            return (regularCodes, restrictedCodes)
+        } else {
+            var codes = self.codesFor(self.cart.items)
+            if let additionalCodes = self.cart.additionalCodes {
+                codes.append(contentsOf: additionalCodes)
+            }
+            if let finalCode = self.encodedCodes?.finalCode {
+                codes.append(finalCode)
+            }
+            return (codes, [])
+        }
+    }
+
+    private func codesFor(_ items: [CartItem]) -> [String] {
+        return items.reduce(into: [], { result, item in
             if item.product.type == .userMustWeigh {
                 // generate an EAN with the embedded weight
                 if let template = item.product.weighedItemIds?.first {
@@ -111,11 +193,12 @@ class EmbeddedCodesCheckoutViewController: UIViewController {
                 result.append(contentsOf: Array(repeating: item.scannedCode, count: item.quantity))
             }
         })
+    }
 
-        if let additionalCodes = self.cart.additionalCodes {
-            return codes + additionalCodes
+    private func blocksFor(_ codes: [String], _ blockSize: Int) -> [[String]] {
+        return stride(from: 0, to: codes.count, by: blockSize).map {
+            Array(codes[$0 ..< min($0 + blockSize, codes.count)])
         }
-        return codes
     }
 
     private func setButtonTitle() {
@@ -162,7 +245,7 @@ extension EmbeddedCodesCheckoutViewController: UICollectionViewDataSource, UICol
     }
 
     private func qrCode(for codes: [String]) -> UIImage? {
-        guard let encoding = SnabbleAPI.project.encodedCodes else {
+        guard let encoding = self.encodedCodes else {
             return nil
         }
 

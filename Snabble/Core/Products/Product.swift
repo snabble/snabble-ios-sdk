@@ -62,6 +62,17 @@ public enum SaleRestriction: Codable {
     }
 }
 
+extension SaleRestriction: Equatable {
+    public static func==(_ lhs: SaleRestriction, _ rhs: SaleRestriction) -> Bool {
+        switch (lhs, rhs) {
+        case (.none, .none): return true
+        case (.age(let age1), .age(let age2)): return age1 == age2
+        case (.fsk, .fsk): return true
+        default: return false
+        }
+    }
+}
+
 /// data for one product.
 public struct Product: Codable {
     /// the stock keeping unit, unique identifier for this product

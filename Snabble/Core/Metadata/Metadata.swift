@@ -26,6 +26,11 @@ public struct EncodedCodes: Decodable {
     let separator: String
     let suffix: String
     let maxCodes: Int
+
+    // optional EAN codes used when splitting into multiple QR codes
+    let finalCode: String?          // last code of the last block
+    let nextCode: String?           // marker code to indicate "more QR codes"
+    let nextCodeWithCheck: String?  // marker code to indicate "more QR codes" + age check required
 }
 
 public struct Project: Decodable {
@@ -285,4 +290,5 @@ public extension Metadata {
             }
         }
     }
+    
 }
