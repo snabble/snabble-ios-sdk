@@ -1,5 +1,5 @@
 //
-//  EmbeddedCodesCheckoutViewController
+//  EmbeddedCodesCheckoutViewController.swift
 //
 //  Copyright © 2018 snabble. All rights reserved.
 //
@@ -21,15 +21,16 @@ class EmbeddedCodesCheckoutViewController: UIViewController {
     private weak var cart: ShoppingCart!
     private weak var delegate: PaymentDelegate!
 
-    private var codeblocks = [[String]]()
+    private var codeblocks: Codeblocks
+    private var codes = [String]()
     private var itemSize = CGSize(width: 100, height: 100)
-    private let encodedCodes: EncodedCodes?
+    private static let defaultCodes = EncodedCodes(prefix: "", separator: "", suffix: "", maxCodes: 100, finalCode: nil, nextCode: nil, nextCodeWithCheck: nil)
 
     init(_ process: CheckoutProcess, _ cart: ShoppingCart, _ delegate: PaymentDelegate) {
         self.process = process
         self.cart = cart
         self.delegate = delegate
-        self.encodedCodes = SnabbleAPI.project.encodedCodes
+        self.codeblocks = Codeblocks(SnabbleAPI.project.encodedCodes ?? EmbeddedCodesCheckoutViewController.defaultCodes)
 
         super.init(nibName: nil, bundle: Snabble.bundle)
 
@@ -51,9 +52,12 @@ class EmbeddedCodesCheckoutViewController: UIViewController {
         let nib = UINib(nibName: "QRCodeCell", bundle: Snabble.bundle)
         self.collectionView.register(nib, forCellWithReuseIdentifier: "qrCodeCell")
 
-        self.setupCodeBlocks()
+        let codeblocks = Codeblocks(SnabbleAPI.project.encodedCodes!)
 
-        self.pageControl.numberOfPages = self.codeblocks.count
+        let (regularCodes, restrictedCodes) = self.codesForQR()
+        self.codes = codeblocks.generateQrCodes(regularCodes, restrictedCodes)
+
+        self.pageControl.numberOfPages = self.codes.count
         self.pageControl.pageIndicatorTintColor = .lightGray
         self.pageControl.currentPageIndicatorTintColor = SnabbleAppearance.shared.config.primaryColor
         self.collectionView.dataSource = self
@@ -74,7 +78,7 @@ class EmbeddedCodesCheckoutViewController: UIViewController {
 
         let total = Price.format(cart.totalPrice)
         self.totalPriceLabel.text = "Snabble.QRCode.total".localized() + "\(total)"
-        let explanation = self.codeblocks.count > 1 ? "Snabble.QRCode.showTheseCodes" : "Snabble.QRCode.showThisCode"
+        let explanation = self.codes.count > 1 ? "Snabble.QRCode.showTheseCodes" : "Snabble.QRCode.showThisCode"
         self.explanation1.text = explanation.localized()
         self.explanation2.text = "Snabble.QRCode.priceMayDiffer".localized()
     }
@@ -95,61 +99,8 @@ class EmbeddedCodesCheckoutViewController: UIViewController {
         UIScreen.main.brightness = self.initialBrightness
     }
 
-    private func setupCodeBlocks() {
-        let maxCodes = (self.encodedCodes?.maxCodes ?? 100) - 1
-        let (regularCodes, restrictedCodes) = self.codesForQR()
-
-        var regularBlocks = self.blocksFor(regularCodes, maxCodes)
-        var restrictedBlocks = self.blocksFor(restrictedCodes, maxCodes)
-
-        // if possible, merge the last regular and the last restricted Block
-        if regularBlocks.count > 1 && restrictedBlocks.count > 0 {
-            let lastRegularBlock = regularBlocks.count - 1
-            let lastRestrictedBlock = restrictedBlocks.count - 1
-            if regularBlocks[lastRegularBlock].count + restrictedBlocks[lastRestrictedBlock].count < maxCodes {
-                let final = restrictedBlocks[lastRestrictedBlock].remove(at: restrictedBlocks[lastRestrictedBlock].count-1)
-                restrictedBlocks[lastRestrictedBlock].append(contentsOf: regularBlocks[lastRegularBlock])
-                restrictedBlocks[lastRestrictedBlock].append(final)
-                regularBlocks.remove(at: lastRegularBlock)
-            }
-        }
-
-        // append "nextCode" to all blocks
-        if let nextCode = self.encodedCodes?.nextCode {
-            for i in 0..<regularBlocks.count - 1 {
-                regularBlocks[i].append(nextCode)
-            }
-            for i in 0..<restrictedBlocks.count - 1 {
-                restrictedBlocks[i].append(nextCode)
-            }
-        }
-
-        if let nextCodeCheck = self.encodedCodes?.nextCodeWithCheck, restrictedCodes.count > 0 {
-            let lastBlock = regularBlocks.count - 1
-            if lastBlock >= 0 {
-                // if we added a "nextCode" above, undo that for the last block
-                if self.encodedCodes?.nextCode != nil {
-                    let lastBlockSize = regularBlocks[lastBlock].count
-                    regularBlocks[lastBlock].remove(at: lastBlockSize - 1)
-                }
-                // add the "nextCodeWithCheck" code
-                regularBlocks[lastBlock].append(nextCodeCheck)
-            } else {
-                // there were no regular products, create a new regular block with just the `nextCodeCheck` code
-                regularBlocks = [[nextCodeCheck]]
-            }
-        }
-
-        self.codeblocks = regularBlocks
-        self.codeblocks.append(contentsOf: restrictedBlocks)
-
-        for (index, block) in self.codeblocks.enumerated() {
-            print("block \(index): \(block.count) elements, first=\(block[0]), last=\(block[block.count-1])")
-        }
-    }
-
     private func codesForQR() -> ([String],[String]) {
-        if self.encodedCodes?.nextCodeWithCheck != nil {
+        if self.codeblocks.config.nextCodeWithCheck != nil {
             let regularItems = self.cart.items.filter { return $0.product.saleRestriction == .none }
             let restrictedItems = self.cart.items.filter { return $0.product.saleRestriction != .none }
 
@@ -158,24 +109,13 @@ class EmbeddedCodesCheckoutViewController: UIViewController {
                 regularCodes.append(contentsOf: additionalCodes)
             }
 
-            var restrictedCodes = self.codesFor(restrictedItems)
-
-            if let finalCode = self.encodedCodes?.finalCode {
-                if restrictedCodes.count > 0 {
-                    restrictedCodes.append(finalCode)
-                } else {
-                    regularCodes.append(finalCode)
-                }
-            }
+            let restrictedCodes = self.codesFor(restrictedItems)
 
             return (regularCodes, restrictedCodes)
         } else {
             var codes = self.codesFor(self.cart.items)
             if let additionalCodes = self.cart.additionalCodes {
                 codes.append(contentsOf: additionalCodes)
-            }
-            if let finalCode = self.encodedCodes?.finalCode {
-                codes.append(finalCode)
             }
             return (codes, [])
         }
@@ -195,19 +135,13 @@ class EmbeddedCodesCheckoutViewController: UIViewController {
         })
     }
 
-    private func blocksFor(_ codes: [String], _ blockSize: Int) -> [[String]] {
-        return stride(from: 0, to: codes.count, by: blockSize).map {
-            Array(codes[$0 ..< min($0 + blockSize, codes.count)])
-        }
-    }
-
     private func setButtonTitle() {
-        let title = self.pageControl.currentPage == self.codeblocks.count - 1 ? "Snabble.QRCode.didPay" : "Snabble.QRCode.nextCode"
+        let title = self.pageControl.currentPage == self.codes.count - 1 ? "Snabble.QRCode.didPay" : "Snabble.QRCode.nextCode"
         self.paidButton.setTitle(title.localized(), for: .normal)
     }
 
     @IBAction func paidButtonTapped(_ sender: UIButton) {
-        if self.pageControl.currentPage != self.codeblocks.count - 1 {
+        if self.pageControl.currentPage != self.codes.count - 1 {
             self.pageControl.currentPage += 1
             let indexPath = IndexPath(item: pageControl.currentPage, section: 0)
             self.collectionView.scrollToItem(at: indexPath, at: .left, animated: true)
@@ -227,13 +161,13 @@ class EmbeddedCodesCheckoutViewController: UIViewController {
 extension EmbeddedCodesCheckoutViewController: UICollectionViewDataSource, UICollectionViewDelegate, UICollectionViewDelegateFlowLayout {
 
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return self.codeblocks.count
+        return self.codes.count
     }
 
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "qrCodeCell", for: indexPath) as! QRCodeCell
 
-        let img = self.qrCode(for: self.codeblocks[indexPath.row])
+        let img = self.qrCode(with: self.codes[indexPath.row])
         cell.imageView.image = img
         cell.imageWidth.constant = img?.size.width ?? 0
 
@@ -244,15 +178,10 @@ extension EmbeddedCodesCheckoutViewController: UICollectionViewDataSource, UICol
         return self.itemSize
     }
 
-    private func qrCode(for codes: [String]) -> UIImage? {
-        guard let encoding = self.encodedCodes else {
-            return nil
-        }
-
-        let qrCodeContent = encoding.prefix + codes.joined(separator: encoding.separator) + encoding.suffix
-        NSLog("QR Code content:\n\(qrCodeContent)")
+    private func qrCode(with code: String) -> UIImage? {
+        NSLog("QR Code content:\n\(code)")
         for scale in (1...7).reversed() {
-            if let img = QRCode.generate(for: qrCodeContent, scale: scale) {
+            if let img = QRCode.generate(for: code, scale: scale) {
                 if img.size.width <= self.collectionView.bounds.width {
                     return img
                 }
@@ -263,7 +192,7 @@ extension EmbeddedCodesCheckoutViewController: UICollectionViewDataSource, UICol
     }
 
     @IBAction func pageControlTapped(_ pageControl: UIPageControl) {
-        if pageControl.currentPage < self.codeblocks.count {
+        if pageControl.currentPage < self.codes.count {
             let indexPath = IndexPath(item: pageControl.currentPage, section: 0)
             self.collectionView.scrollToItem(at: indexPath, at: .left, animated: true)
         }
