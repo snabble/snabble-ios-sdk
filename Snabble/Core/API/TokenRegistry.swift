@@ -42,12 +42,19 @@ public class TokenRegistry {
     private var registry = [String: TokenData]()
     private var refreshTimer: Timer?
 
-    private init() { }
+    private init() {
+        let nc = NotificationCenter.default
+        nc.addObserver(self, selector: #selector(appEnteredForeground(_:)), name: .UIApplicationWillEnterForeground, object: nil)
+        nc.addObserver(self, selector: #selector(appEnteredBackground(_:)), name: .UIApplicationDidEnterBackground, object: nil)
+    }
 
-    public func getToken(for projectId: String, from url: String, completion: @escaping (String?)->() ) {
+    func getToken(for projectId: String, from url: String, completion: @escaping (String?)->() ) {
         if let token = self.registry[projectId] {
-            // we already have a token
-            return completion(token.jwt)
+            // we already have a token. return it if it's still valid
+            let now = Date()
+            if token.expires > now {
+                return completion(token.jwt)
+            }
         }
 
         // no token in our registry, go fetch it
@@ -62,13 +69,25 @@ public class TokenRegistry {
         }
     }
 
+    @objc private func appEnteredForeground(_ notification: Notification) {
+        // print("app going to fg, start refresh")
+        self.startRefreshTimer()
+    }
+
+    @objc private func appEnteredBackground(_ notification: Notification) {
+        // print("app going to bg, stop refresh")
+        self.refreshTimer?.invalidate()
+        self.refreshTimer = nil
+    }
+
     private func startRefreshTimer() {
         guard let earliest = self.registry.values.min(by: { $0.refresh < $1.refresh }) else {
             return
         }
 
         let now = Date()
-        let refreshIn = max(earliest.refresh.timeIntervalSinceReferenceDate - now.timeIntervalSinceReferenceDate, 1.0)
+        let refreshIn = earliest.refresh.timeIntervalSinceReferenceDate - now.timeIntervalSinceReferenceDate
+        // print("run refresh in \(refreshIn)s")
         self.refreshTimer?.invalidate()
         self.refreshTimer = Timer.scheduledTimer(withTimeInterval: refreshIn, repeats: false) { timer in
             self.refreshTokens()
@@ -77,16 +96,23 @@ public class TokenRegistry {
 
     private func refreshTokens() {
         let now = Date.timeIntervalSinceReferenceDate - 5
+
+        let group = DispatchGroup()
         for (project, tokenData) in self.registry {
             if tokenData.refresh.timeIntervalSinceReferenceDate > now {
+                group.enter()
                 self.retrieveToken(from: tokenData.url) { tokenData in
                     if let tokenData = tokenData {
                         self.registry[project] = tokenData
                     }
+                    group.leave()
                 }
             }
         }
-        self.startRefreshTimer()
+
+        group.notify(queue: DispatchQueue.main) {
+            self.startRefreshTimer()
+        }
     }
 
     private func retrieveToken(from url: String, _ date: Date? = nil, completion: @escaping (TokenData?) -> () ) {
@@ -119,8 +145,8 @@ public class TokenRegistry {
     }
 
     private func retryWithServerDate(_ url: String, _ response: HTTPURLResponse, completion: @escaping (TokenData?) -> () ) {
+        // not authorized. try again with the content of the the server's "Date" header
         if let serverDate = response.allHeaderFields["Date"] as? String {
-            // not authorized. try again with the content of the the server's "Date" header
             let formatter = DateFormatter()
             formatter.dateFormat = "EEEE, dd LLL yyyy HH:mm:ss zzz"
             formatter.locale = Locale(identifier: "en_US_Posix")
