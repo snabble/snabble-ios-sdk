@@ -32,7 +32,9 @@ extension EANCode {
     }
 
     public var hasEmbeddedPrice: Bool {
-        return self.encoding == .ean13 && (self.matchPrefixes(SnabbleAPI.project.pricePrefixes) || self.hasGermanPrintPrefix)
+        return (self.encoding == .ean13 && (self.matchPrefixes(SnabbleAPI.project.pricePrefixes))
+               || self.hasGermanPrintPrefix)
+               || self.encoding == .edekaProductPrice
     }
 
     public var hasEmbeddedUnits: Bool {
@@ -75,6 +77,8 @@ extension EANCode {
             return code
         case .ean14:
             return code
+        case .edekaProductPrice:
+            return code
         }
     }
 
@@ -90,6 +94,11 @@ extension EANCode {
             return nil
         case .ean14:
             return nil
+        case .edekaProductPrice:
+            let start = code.index(code.startIndex, offsetBy: 15)
+            let end = code.index(code.startIndex, offsetBy: 20)
+            let embedded = String(code[start...end])
+            return Int(embedded)
         }
     }
 
@@ -116,6 +125,7 @@ public enum EAN {
         case ean8
         case ean13
         case ean14
+        case edekaProductPrice // special hack
     }
 
     /// parse an EAN-8, EAN-13 or EAN-14
@@ -135,6 +145,7 @@ public enum EAN {
         case 7, 8: return EAN8(code)
         case 12, 13: return EAN13(code)
         case 14, 16: return EAN14(code)
+        case 22: return code.hasPrefix("97") ? EdekaProductPrice(code) : nil
         default: return nil
         }
     }
@@ -254,7 +265,22 @@ public struct EAN13: EANCode {
         let check = (10 - mod10) % 10
         return check
     }
+}
 
+/// special `EANCode` implementation for individual product price at edeka
+/// codes have 22 digits and look like
+/// 97 4056905473742 000998 9
+/// where "97" is the GS-1 application identifier, "4056905473742" is the EAN-8 or EAN-13 of the product,
+/// "000998" is the price in cents, and "9" is a checksum (algorithm unspecified, so we can't check it)
+public struct EdekaProductPrice: EANCode {
+    public let code: String
+    public let encoding = EAN.Encoding.edekaProductPrice
+    public let digits: [Int]
+
+    public init?(_ code: String) {
+        self.code = code
+        self.digits = self.code.compactMap { Int(String($0)) }
+    }
 }
 
 // MARK: - price/weight check digit

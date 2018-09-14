@@ -370,7 +370,7 @@ extension ScannerViewController {
     }
 
     private func productForCode(_ code: String, completion: @escaping (Product?, String) -> () ) {
-        if let ean = EAN.parse(code), ean.hasEmbeddedData {
+        if let ean = EAN.parse(code), ean.hasEmbeddedData, ean.encoding != .edekaProductPrice {
             if SnabbleAPI.project.verifyInternalEanChecksum {
                 guard
                     let ean13 = ean as? EAN13,
@@ -385,11 +385,23 @@ extension ScannerViewController {
                 completion(product, code)
             }
         } else {
-            self.productProvider.productByScannableCode(code) { result, error in
-                if let result = result {
-                    completion(result.product, result.code)
-                } else {
-                    completion(nil, "")
+            if code.hasPrefix("97") && code.count == 22 {
+                let startIndex = code.startIndex
+                let embeddedCode = String(code[code.index(startIndex, offsetBy: 2)..<code.index(startIndex, offsetBy: 15)])
+                self.productProvider.productByScannableCode(embeddedCode) { result, error in
+                    if let result = result {
+                        completion(result.product, code)
+                    } else {
+                        completion(nil, "")
+                    }
+                }
+            } else {
+                self.productProvider.productByScannableCode(code) { result, error in
+                    if let result = result {
+                        completion(result.product, result.code)
+                    } else {
+                        completion(nil, "")
+                    }
                 }
             }
         }
