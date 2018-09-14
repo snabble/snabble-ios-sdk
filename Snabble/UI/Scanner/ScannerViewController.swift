@@ -47,6 +47,10 @@ public class ScannerViewController: UIViewController {
         self.title = "Snabble.Scanner.title".localized()
         self.tabBarItem.image = UIImage.fromBundle("icon-scan")
         self.navigationItem.title = "Snabble.Scanner.scanningTitle".localized()
+
+        let infoIcon = UIImage.fromBundle("icon-info")?.recolored(with: .white)
+        let infoButton = UIBarButtonItem(image: infoIcon, style: .plain, target: self, action: #selector(self.infoButtonTapped(_:)))
+        self.navigationItem.leftBarButtonItem = infoButton
     }
     
     public required init?(coder aDecoder: NSCoder) {
@@ -108,10 +112,6 @@ public class ScannerViewController: UIViewController {
         self.scanConfirmationView.delegate = self
 
         self.keyboardObserver = KeyboardObserver(handler: self)
-
-        let infoIcon = UIImage.fromBundle("icon-info")?.recolored(with: .white)
-        let infoButton = UIBarButtonItem(image: infoIcon, style: .plain, target: self, action: #selector(self.infoButtonTapped(_:)))
-        self.navigationItem.leftBarButtonItem = infoButton
     }
 
     override public func viewWillAppear(_ animated: Bool) {
