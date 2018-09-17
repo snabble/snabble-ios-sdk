@@ -21,6 +21,11 @@ class Codeblocks {
         var regularBlocks = self.blocksFor(regularCodes, maxCodes)
         var restrictedBlocks = self.blocksFor(restrictedCodes, maxCodes)
 
+        var nextCode = self.config.nextCode ?? ""
+        if let nextCheck = self.config.nextCodeWithCheck, restrictedCodes.count > 0 {
+            nextCode = nextCheck
+        }
+
         // if possible, merge the last regular and the last restricted block
         if regularBlocks.count > 1 && restrictedBlocks.count > 0 {
             let lastRegularBlock = regularBlocks.count - 1
@@ -32,7 +37,7 @@ class Codeblocks {
         }
 
         // append "nextCode" to all blocks but the last
-        if let nextCode = self.config.nextCode {
+        if nextCode.count > 0 {
             if regularBlocks.count > 0 {
                 let upper = restrictedBlocks.count > 0 ? regularBlocks.count : regularBlocks.count - 1
                 for i in 0 ..< upper {
@@ -56,28 +61,17 @@ class Codeblocks {
             }
         }
 
-        if let nextCodeCheck = self.config.nextCodeWithCheck, restrictedCodes.count > 0 {
-            let lastBlock = regularBlocks.count - 1
-            if lastBlock >= 0 {
-                // if we added a "nextCode" above, undo that for the last block
-                if self.config.nextCode != nil {
-                    let lastBlockSize = regularBlocks[lastBlock].count
-                    regularBlocks[lastBlock].remove(at: lastBlockSize - 1)
-                }
-                // add the "nextCodeWithCheck" code
-                regularBlocks[lastBlock].append(nextCodeCheck)
-            } else {
-                // there were no regular products, create a new regular block with just the `nextCodeCheck` code
-                regularBlocks = [[nextCodeCheck]]
-            }
+        if restrictedCodes.count > 0 && regularBlocks.count == 0 && nextCode.count > 0 {
+            // there were no regular products, create a new regular block with just the `nextCodeCheck` code
+            regularBlocks = [[nextCode]]
         }
 
         var codeblocks = regularBlocks
         codeblocks.append(contentsOf: restrictedBlocks)
 
-        for (index, block) in codeblocks.enumerated() {
-            print("block \(index): \(block.count) elements, first=\(block[0]), last=\(block[block.count-1])")
-        }
+//        for (index, block) in codeblocks.enumerated() {
+//            print("block \(index): \(block.count) elements, first=\(block[0]), last=\(block[block.count-1])")
+//        }
 
         return codeblocks
     }
@@ -97,5 +91,67 @@ class Codeblocks {
         }
     }
 
+    func generateQrCodes(_ regularCodes: [String], _ restrictedCodes: [String], maxCodeSize: Int) -> [String] {
+
+        let availableSize = maxCodeSize - self.config.suffix.count - (self.config.finalCode?.count ?? 0) - self.config.separator.count
+
+        var nextCode = self.config.nextCode ?? ""
+        if let nextCheck = self.config.nextCodeWithCheck, restrictedCodes.count > 0 {
+            nextCode = nextCheck
+        }
+
+        var codes = [String]()
+
+        var currentCode = self.config.prefix
+        var sep = ""
+
+        if regularCodes.count == 0 {
+            let code = self.config.prefix + nextCode + self.config.suffix
+            codes.append(code)
+        }
+        for code in regularCodes {
+            let addition = sep + code
+            sep = self.config.separator
+
+            if currentCode.count + addition.count > availableSize {
+                currentCode += sep + nextCode + self.config.suffix
+                codes.append(currentCode)
+                currentCode = self.config.prefix + code
+            } else {
+                currentCode += addition
+            }
+        }
+
+        if restrictedCodes.count > 0 && currentCode.count > self.config.prefix.count {
+            currentCode += self.config.separator + nextCode
+            currentCode += self.config.suffix
+            codes.append(currentCode)
+            currentCode = self.config.prefix
+            sep = ""
+        }
+
+        for code in restrictedCodes {
+            let addition = sep + code
+            sep = self.config.separator
+
+            if currentCode.count + addition.count > availableSize {
+                currentCode += sep + nextCode + self.config.suffix
+                codes.append(currentCode)
+                currentCode = self.config.prefix + code
+            } else {
+                currentCode += addition
+            }
+        }
+
+        if currentCode.count > self.config.prefix.count {
+            if let final = self.config.finalCode {
+                currentCode += self.config.separator + final
+            }
+            currentCode += self.config.suffix
+            codes.append(currentCode)
+        }
+
+        return codes
+    }
     
 }
