@@ -245,7 +245,7 @@ extension ScannerViewController: ScanningViewDelegate {
                 self.closeScanningView()
             })
             alert.addAction(UIAlertAction(title: "Snabble.Settings".localized(), style: .default) { action in
-                UIApplication.shared.open(URL(string: UIApplicationOpenSettingsURLString)!)
+                UIApplication.shared.open(URL(string: UIApplication.openSettingsURLString)!)
                 self.closeScanningView()
             })
             self.present(alert, animated: true)

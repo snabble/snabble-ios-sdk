@@ -8,7 +8,7 @@
 
 Pod::Spec.new do |s|
   s.name             = 'Snabble'
-  s.version          = '0.6.6'
+  s.version          = '0.7.0'
   s.summary          = 'The snabble iOS SDK'
 
 # This description is used to generate tags and improve search results.
@@ -29,13 +29,13 @@ Pod::Spec.new do |s|
   s.social_media_url = 'https://twitter.com/snabble_io'
 
   s.ios.deployment_target = '10.0'
-  s.swift_version = '4.1'
+  s.swift_version = '4.2'
 
   s.subspec 'Core' do |core|
     core.source_files = 'Snabble/Core/**/*.swift'
-    core.dependency 'GRDB.swift', '~> 2'
+    core.dependency 'GRDB.swift', '~> 3'
     core.dependency 'Zip', '~> 1'
-    core.dependency 'OneTimePassword', '~> 3.1'
+    core.dependency 'SwiftBase32'
   end
 
   s.subspec 'UI' do |ui|

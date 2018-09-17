@@ -79,7 +79,7 @@ public class ShoppingCartViewController: UIViewController {
         self.tableView.tableFooterView = UIView(frame: CGRect.zero)
         self.tableView.backgroundColor = UIColor.clear
 
-        self.tableView.rowHeight = UITableViewAutomaticDimension
+        self.tableView.rowHeight = UITableView.automaticDimension
         self.tableView.estimatedRowHeight = 88
 
         self.editButton = UIBarButtonItem(title: "Snabble.Edit".localized(), style: .plain, target: self, action: #selector(self.toggleEditingMode(_:)))
@@ -185,7 +185,7 @@ public class ShoppingCartViewController: UIViewController {
     public func startCheckout() {
         let button = self.checkoutButton!
 
-        let spinner = UIActivityIndicatorView(activityIndicatorStyle: .white)
+        let spinner = UIActivityIndicatorView(style: .white)
         spinner.startAnimating()
         button.addSubview(spinner)
         spinner.translatesAutoresizingMaskIntoConstraints = false
@@ -278,7 +278,7 @@ extension ShoppingCartViewController: UITableViewDelegate, UITableViewDataSource
         return cell
     }
 
-    public func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCellEditingStyle, forRowAt indexPath: IndexPath) {
+    public func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
         if editingStyle == .delete {
             self.deleteRow(indexPath.row)
         }

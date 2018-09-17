@@ -111,7 +111,7 @@ class CashCheckoutViewController: UIViewController {
 
         CATransaction.begin()
         CATransaction.setAnimationDuration(duration)
-        CATransaction.setAnimationTimingFunction(CAMediaTimingFunction(name: kCAMediaTimingFunctionEaseInEaseOut))
+        CATransaction.setAnimationTimingFunction(CAMediaTimingFunction(name: CAMediaTimingFunctionName.easeInEaseOut))
 
         CATransaction.setCompletionBlock {
             self.spinners[index].stopAnimating()
@@ -120,7 +120,7 @@ class CashCheckoutViewController: UIViewController {
 
         self.curtainAnimation(view, duration)
         
-        let animationOptions: UIViewAnimationOptions = [ .transitionCrossDissolve, .curveEaseInOut, .allowAnimatedContent ]
+        let animationOptions: UIView.AnimationOptions = [ .transitionCrossDissolve, .curveEaseInOut, .allowAnimatedContent ]
         view.subviews.forEach { subview in
             if let label = subview as? UILabel {
                 UIView.transition(with: label, duration: duration, options: animationOptions , animations: {
@@ -153,9 +153,9 @@ class CashCheckoutViewController: UIViewController {
         growAnimation.keyPath = "path"
         growAnimation.duration = duration
         growAnimation.toValue = endPath.cgPath
-        growAnimation.fillMode = kCAFillModeForwards
+        growAnimation.fillMode = CAMediaTimingFillMode.forwards
         growAnimation.isRemovedOnCompletion = false
-        growAnimation.timingFunction = CAMediaTimingFunction(name: kCAMediaTimingFunctionEaseInEaseOut)
+        growAnimation.timingFunction = CAMediaTimingFunction(name: CAMediaTimingFunctionName.easeInEaseOut)
         rectangleLayer.add(growAnimation, forKey: "grow")
     }
 

@@ -103,7 +103,7 @@ public class PaymentProcess {
         blurEffectView.frame = self.delegate.view.bounds
         blurEffectView.autoresizingMask = [.flexibleWidth, .flexibleHeight]
 
-        let activityIndicator = UIActivityIndicatorView(activityIndicatorStyle: .whiteLarge)
+        let activityIndicator = UIActivityIndicatorView(style: .whiteLarge)
         activityIndicator.frame = CGRect(x: 0, y: 0, width: 50, height: 50)
         activityIndicator.startAnimating()
 

@@ -118,7 +118,7 @@ class ScanConfirmationView: DesignableView {
 
         if product.discountedPrice != nil {
             let originalPrice = Price.format(product.listPrice)
-            let str = NSAttributedString(string: originalPrice, attributes: [NSAttributedStringKey.strikethroughStyle: NSUnderlineStyle.styleSingle.rawValue])
+            let str = NSAttributedString(string: originalPrice, attributes: [NSAttributedString.Key.strikethroughStyle: NSUnderlineStyle.single.rawValue])
             self.originalPriceLabel.attributedText = str
         } else {
             self.originalPriceLabel.text = nil

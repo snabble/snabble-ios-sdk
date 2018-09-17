@@ -88,8 +88,8 @@ import UIKit
             ctx.strokePath()
         } else {
             let attrs = [
-                NSAttributedStringKey.font: UIFont.systemFont(ofSize: 15),
-                NSAttributedStringKey.foregroundColor: UIColor.red
+                NSAttributedString.Key.font: UIFont.systemFont(ofSize: 15),
+                NSAttributedString.Key.foregroundColor: UIColor.red
             ]
             let str = NSAttributedString(string: "Invalid Barcode", attributes: attrs)
             

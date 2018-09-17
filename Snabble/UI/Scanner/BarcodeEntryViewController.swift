@@ -106,7 +106,7 @@ class BarcodeEntryViewController: UIViewController, UISearchBarDelegate, UITable
 
         let str = NSMutableAttributedString(string: matchingCode)
         let boldFont = UIFont.systemFont(ofSize: cell.textLabel?.font.pointSize ?? 0, weight: .medium)
-        str.addAttributes([NSAttributedStringKey.font : boldFont], range: NSMakeRange(0, self.searchText.count))
+        str.addAttributes([NSAttributedString.Key.font : boldFont], range: NSMakeRange(0, self.searchText.count))
         cell.textLabel?.attributedText = str
 
         cell.detailTextLabel?.text = product.name

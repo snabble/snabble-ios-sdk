@@ -5,8 +5,7 @@
 //
 
 import Foundation
-import OneTimePassword
-import Base32
+import SwiftBase32
 
 // backend response
 struct TokenResponse: Decodable {
@@ -44,8 +43,8 @@ public class TokenRegistry {
 
     private init() {
         let nc = NotificationCenter.default
-        nc.addObserver(self, selector: #selector(appEnteredForeground(_:)), name: .UIApplicationWillEnterForeground, object: nil)
-        nc.addObserver(self, selector: #selector(appEnteredBackground(_:)), name: .UIApplicationDidEnterBackground, object: nil)
+        nc.addObserver(self, selector: #selector(appEnteredForeground(_:)), name: UIApplication.willEnterForegroundNotification, object: nil)
+        nc.addObserver(self, selector: #selector(appEnteredBackground(_:)), name: UIApplication.didEnterBackgroundNotification, object: nil)
     }
 
     func getToken(for projectId: String, from url: String, completion: @escaping (String?)->() ) {
@@ -160,7 +159,7 @@ public class TokenRegistry {
 
     private func generatePassword(_ date: Date? = nil) -> String? {
         guard
-            let secretData = MF_Base32Codec.data(fromBase32String: self.secret),
+            let secretData = self.secret.base32DecodedData,
             let generator = Generator(factor: .timer(period: 30), secret: secretData, algorithm: .sha256, digits: 8)
         else {
             return nil

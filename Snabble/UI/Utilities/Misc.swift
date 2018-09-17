@@ -79,7 +79,7 @@ extension UIView {
         borderView.bottomAnchor.constraint(equalTo: self.bottomAnchor).isActive = true
         borderView.leftAnchor.constraint(equalTo: self.leftAnchor).isActive = true
 
-        self.sendSubview(toBack: borderView)
+        self.sendSubviewToBack(borderView)
 
         return borderView
     }
@@ -137,7 +137,7 @@ open class NibView: UIView {
 
     func nibSetup(_ nibName: String) {
         let nib = self.getNib(for: nibName)
-        self.view = nib.instantiate(withOwner: self, options: nil)[0] as! UIView
+        self.view = (nib.instantiate(withOwner: self, options: nil)[0] as! UIView)
 
         // use bounds not frame or it'll be offset
         self.view.frame = self.bounds
@@ -179,7 +179,7 @@ class InsetLabel: UILabel {
 
     override func drawText(in rect: CGRect) {
         let insets = UIEdgeInsets(top: topInset, left: leftInset, bottom: bottomInset, right: rightInset)
-        super.drawText(in: UIEdgeInsetsInsetRect(rect, insets))
+        super.drawText(in: rect.inset(by: insets))
     }
 
     override var intrinsicContentSize: CGSize {

@@ -81,7 +81,7 @@ class PaymentMethodSelectionViewController: UIViewController {
                 contentInsetTop = 0
             }
         }
-        self.collectionView.contentInset = UIEdgeInsetsMake(contentInsetTop, 0, 0, 0)
+        self.collectionView.contentInset = UIEdgeInsets.init(top: contentInsetTop, left: 0, bottom: 0, right: 0)
     }
 
     fileprivate func startPayment(_ method: PaymentMethod) {
