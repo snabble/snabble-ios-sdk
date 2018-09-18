@@ -94,8 +94,8 @@ class ScanConfirmationView: DesignableView {
 
         let initialQuantity = ean?.embeddedWeight ?? self.quantity
 
-        self.minusButton.isHidden = product.weightDependent || ean?.encoding == .edekaProductPrice
-        self.plusButton.isHidden = product.weightDependent || ean?.encoding == .edekaProductPrice
+        self.minusButton.isHidden = ean?.hasEmbeddedData == true
+        self.plusButton.isHidden = ean?.hasEmbeddedData == true
         self.gramLabel.isHidden = !product.weightDependent
         self.quantityField.isEnabled = product.type != .preWeighed
         self.quantityField.isHidden = false

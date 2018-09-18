@@ -409,9 +409,12 @@ extension ScannerViewController {
             if code.hasPrefix("97") && code.count == 22 {
                 let startIndex = code.startIndex
                 let embeddedCode = String(code[code.index(startIndex, offsetBy: 2)..<code.index(startIndex, offsetBy: 15)])
+                let embeddedPrice = Int(String(code[code.index(startIndex, offsetBy: 16)..<code.index(startIndex, offsetBy: 21)])) ?? 0
                 self.productProvider.productByScannableCode(embeddedCode) { result, error in
                     if let result = result {
-                        completion(result.product, code)
+                        let template = "2417000000000"
+                        let newCode = EAN13.embedDataInEan(template, data: embeddedPrice)
+                        completion(result.product, newCode)
                     } else {
                         completion(nil, "")
                     }
