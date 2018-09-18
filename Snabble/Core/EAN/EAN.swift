@@ -346,14 +346,10 @@ extension EAN13 {
             return ""
         }
 
-        if SnabbleAPI.project.verifyInternalEanChecksum {
-            let internalCheck = ean.internalChecksum5()
-            let newCode = String(ean.code.prefix(6)) + String(internalCheck) + dataString
-            let newEan = EAN13(newCode)
-            return newEan?.code ?? ""
-        } else {
-            return ean.code
-        }
+        let internalCheck = ean.internalChecksum5()
+        let newCode = String(ean.code.prefix(6)) + String(internalCheck) + dataString
+        let newEan = EAN13(newCode)
+        return newEan?.code ?? ""
     }
 }
 
