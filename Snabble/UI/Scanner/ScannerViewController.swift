@@ -21,8 +21,9 @@ public class ScannerViewController: UIViewController {
 
     private var infoView: ScannerInfoView!
 
-    private var productProvider: ProductProvider!
-    private var shoppingCart: ShoppingCart!
+    private var productProvider: ProductProvider
+    private var shoppingCart: ShoppingCart
+    private var shop: Shop
 
     private var lastScannedCode = ""
     private var confirmationVisible = false
@@ -34,11 +35,13 @@ public class ScannerViewController: UIViewController {
     private weak var delegate: ScannerDelegate!
     private var timer: Timer?
 
-    public init(_ productProvider: ProductProvider, _ cart: ShoppingCart, delegate: ScannerDelegate, objectTypes: [AVMetadataObject.ObjectType]? = nil) {
-        super.init(nibName: nil, bundle: Snabble.bundle)
-
+    public init(_ productProvider: ProductProvider, _ cart: ShoppingCart, _ shop: Shop, delegate: ScannerDelegate, objectTypes: [AVMetadataObject.ObjectType]? = nil) {
         self.productProvider = productProvider
         self.shoppingCart = cart
+        self.shop = shop
+
+        super.init(nibName: nil, bundle: Snabble.bundle)
+
         self.delegate = delegate
         if let objectTypes = objectTypes {
             self.objectTypes = objectTypes
@@ -60,6 +63,11 @@ public class ScannerViewController: UIViewController {
     private var firstTimeInfoShown: Bool {
         get { return UserDefaults.standard.bool(forKey: "snabble.scanner.firstTimeInfoShown") }
         set { UserDefaults.standard.set(newValue, forKey: "snabble.scanner.firstTimeInfoShown") }
+    }
+
+    private var firstScanComplete: Bool {
+        get { return UserDefaults.standard.bool(forKey: "snabble.scanner.firstScanComplete") }
+        set { UserDefaults.standard.set(newValue, forKey: "snabble.scanner.firstScanComplete") }
     }
     
     override public func viewDidLoad() {
@@ -226,7 +234,20 @@ extension ScannerViewController: MessageDelegate {
 extension ScannerViewController: ScanConfirmationViewDelegate {
     func closeConfirmation() {
         self.hideScanConfirmationView(true)
-        self.scanningView.startScanning()
+
+        if !self.firstScanComplete {
+            self.firstScanComplete = true
+
+            let title = String(format: "Snabble.Hints.title".localized(), self.shop.name)
+            let msg = "Snabble.Hints.closedBags".localized()
+            let alert = UIAlertController(title: title, message: msg, preferredStyle: .alert)
+            alert.addAction(UIAlertAction(title: "Snabble.Hints.continueScanning".localized(), style: .default) { action in
+                self.scanningView.startScanning()
+            })
+            self.present(alert, animated: false)
+        } else {
+            self.scanningView.startScanning()
+        }
     }
 }
 
