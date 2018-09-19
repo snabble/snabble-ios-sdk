@@ -5,7 +5,8 @@
 //
 
 import Foundation
-import SwiftBase32
+import OneTimePassword
+import Base32
 
 // backend response
 struct TokenResponse: Decodable {
@@ -159,7 +160,7 @@ public class TokenRegistry {
 
     private func generatePassword(_ date: Date? = nil) -> String? {
         guard
-            let secretData = self.secret.base32DecodedData,
+            let secretData = MF_Base32Codec.data(fromBase32String: self.secret),
             let generator = Generator(factor: .timer(period: 30), secret: secretData, algorithm: .sha256, digits: 8)
         else {
             return nil
