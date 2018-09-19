@@ -108,6 +108,62 @@ public struct Project: Decodable {
         self.shops = []
     }
 
+    // only used for unit tests
+    internal init(pricePrefixes: [String], weighPrefixes: [String], unitPrefixes: [String]) {
+        self.id = "none"
+        self.links = Links.empty
+        self.rawLinks = [:]
+        self.currency = ""
+        self.decimalDigits = 0
+        self.locale = ""
+        self.pricePrefixes = pricePrefixes
+        self.unitPrefixes = unitPrefixes
+        self.weighPrefixes = weighPrefixes
+        self.roundingMode = .up
+        self.verifyInternalEanChecksum = false
+        self.encodedCodes = nil
+        self.useGermanPrintPrefix = false
+        self.currencySymbol = ""
+        self.shops = []
+    }
+
+    // only used for unit tests
+    internal init(decimalDigits: Int, locale: String, currency: String, currencySymbol: String) {
+        self.id = "none"
+        self.links = Links.empty
+        self.rawLinks = [:]
+        self.currency = currency
+        self.decimalDigits = decimalDigits
+        self.locale = locale
+        self.pricePrefixes = []
+        self.unitPrefixes = []
+        self.weighPrefixes = []
+        self.roundingMode = .up
+        self.verifyInternalEanChecksum = false
+        self.encodedCodes = nil
+        self.useGermanPrintPrefix = false
+        self.currencySymbol = currencySymbol
+        self.shops = []
+    }
+
+    internal init(links: Links) {
+        self.id = "none"
+        self.links = links
+        self.rawLinks = [:]
+        self.currency = ""
+        self.decimalDigits = 0
+        self.locale = ""
+        self.pricePrefixes = []
+        self.unitPrefixes = []
+        self.weighPrefixes = []
+        self.roundingMode = .up
+        self.verifyInternalEanChecksum = false
+        self.encodedCodes = nil
+        self.useGermanPrintPrefix = false
+        self.currencySymbol = ""
+        self.shops = []
+    }
+
     public static let none = Project()
 }
 
