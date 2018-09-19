@@ -377,7 +377,9 @@ extension ScannerViewController {
             })
         }
 
-        alert.addAction(UIAlertAction(title: "Snabble.Cancel".localized(), style: .cancel, handler: nil))
+        alert.addAction(UIAlertAction(title: "Snabble.Cancel".localized(), style: .cancel) { action in
+            self.scanningView.startScanning()
+        })
 
         // HACK: set the action sheet buttons background
         if let alertContentView = alert.view.subviews.first?.subviews.first {
