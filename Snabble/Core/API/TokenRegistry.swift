@@ -36,8 +36,8 @@ struct TokenData {
 public class TokenRegistry {
     public static let shared = TokenRegistry()
 
-    public var appId = ""
-    public var secret = ""
+    private var appId = ""
+    private var secret = ""
 
     private var registry = [String: TokenData]()
     private var refreshTimer: Timer?
@@ -46,6 +46,13 @@ public class TokenRegistry {
         let nc = NotificationCenter.default
         nc.addObserver(self, selector: #selector(appEnteredForeground(_:)), name: UIApplication.willEnterForegroundNotification, object: nil)
         nc.addObserver(self, selector: #selector(appEnteredBackground(_:)), name: UIApplication.didEnterBackgroundNotification, object: nil)
+    }
+
+    public func setup(_ appId: String, _ secret: String) {
+        self.refreshTimer?.invalidate()
+        self.appId = appId
+        self.secret = secret
+        self.registry.removeAll()
     }
 
     func getToken(for projectId: String, from url: String, completion: @escaping (String?)->() ) {
@@ -67,6 +74,15 @@ public class TokenRegistry {
                 completion(nil)
             }
         }
+    }
+
+    // only for unit testing
+    func storeToken(_ projectId: String, _ jwt: String) {
+        let now = Int64(Date().timeIntervalSince1970)
+        let tokenResponse = TokenResponse(id: projectId, token: jwt, issuedAt: now , expiresAt: now + 3600)
+        let tokenData = TokenData(tokenResponse, "")
+
+        self.registry[projectId] = tokenData
     }
 
     @objc private func appEnteredForeground(_ notification: Notification) {
