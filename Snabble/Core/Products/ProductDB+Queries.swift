@@ -95,7 +95,7 @@ extension ProductDB {
                 // if it was an EAN-13 with a leading "0", try again with all leading zeroes removed
                 if code.count == 8 {
                     print("8->13 lookup attempt \(code) -> 00000\(code)")
-                    return self.productByScannableCode("00000" + code)
+                    return self.productByScannableCode(dbQueue, "00000" + code)
                 } else if code.first == "0", let codeInt = Int(code) {
                     print("no leading zeroes db lookup attempt \(code) -> \(codeInt)")
                     return self.productByScannableCode(dbQueue, String(codeInt))
@@ -104,7 +104,6 @@ extension ProductDB {
         } catch {
             NSLog("db error: \(error)")
         }
-
 
         return nil
     }
@@ -188,7 +187,7 @@ extension ProductDB {
 
     func createFullTextIndex(_ dbQueue: DatabaseQueue) throws {
         let start = Date.timeIntervalSinceReferenceDate
-        try dbQueue.write { db in
+        try dbQueue.inDatabase { db in
             try db.execute("drop table if exists searchByName_tmp")
             try db.execute("create virtual table searchByName_tmp using fts4(sku text, foldedname text)")
 
