@@ -55,7 +55,7 @@ public class TokenRegistry {
         self.registry.removeAll()
     }
 
-    func getToken(for projectId: String, from url: String, completion: @escaping (String?)->() ) {
+    public func getToken(for projectId: String, from url: String, completion: @escaping (String?)->() ) {
         if let token = self.registry[projectId] {
             // we already have a token. return it if it's still valid
             let now = Date()
