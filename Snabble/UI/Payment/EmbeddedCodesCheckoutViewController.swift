@@ -1,5 +1,5 @@
 //
-//  EmbeddedCodesCheckoutViewController
+//  EmbeddedCodesCheckoutViewController.swift
 //
 //  Copyright © 2018 snabble. All rights reserved.
 //
@@ -21,21 +21,21 @@ class EmbeddedCodesCheckoutViewController: UIViewController {
     private weak var cart: ShoppingCart!
     private weak var delegate: PaymentDelegate!
 
-    private var codeblocks = [[String]]()
+    private var codeblocks: Codeblocks
+    private var codes = [String]()
     private var itemSize = CGSize(width: 100, height: 100)
-    private var config: EmbeddedCodesConfig!
+    private static let defaultCodes = EncodedCodes(prefix: "", separator: "", suffix: "", maxCodes: 100, finalCode: nil, nextCode: nil, nextCodeWithCheck: nil)
 
     init(_ process: CheckoutProcess, _ cart: ShoppingCart, _ delegate: PaymentDelegate) {
         self.process = process
         self.cart = cart
         self.delegate = delegate
+        self.codeblocks = Codeblocks(SnabbleAPI.project.encodedCodes ?? EmbeddedCodesCheckoutViewController.defaultCodes)
 
         super.init(nibName: nil, bundle: Snabble.bundle)
 
         self.title = "Snabble.QRCode.title".localized()
         self.hidesBottomBarWhenPushed = true
-
-        self.config = APIConfig.shared.project.embeddedCodesConfig ?? EmbeddedCodesConfig.multiline
     }
 
     required init?(coder aDecoder: NSCoder) {
@@ -52,14 +52,12 @@ class EmbeddedCodesCheckoutViewController: UIViewController {
         let nib = UINib(nibName: "QRCodeCell", bundle: Snabble.bundle)
         self.collectionView.register(nib, forCellWithReuseIdentifier: "qrCodeCell")
 
-        let codes = self.codesForQR()
-        let chunks = (Float(codes.count) / Float(self.config.maxCodes)).rounded(.up)
-        let chunkSize = Int((Float(codes.count) / chunks).rounded(.up))
-        self.codeblocks = stride(from: 0, to: codes.count, by: chunkSize).map {
-            Array(codes[$0..<min($0 + chunkSize, codes.count)])
-        }
+        let codeblocks = Codeblocks(SnabbleAPI.project.encodedCodes!)
 
-        self.pageControl.numberOfPages = self.codeblocks.count
+        let (regularCodes, restrictedCodes) = self.codesForQR()
+        self.codes = codeblocks.generateQrCodes(regularCodes, restrictedCodes)
+
+        self.pageControl.numberOfPages = self.codes.count
         self.pageControl.pageIndicatorTintColor = .lightGray
         self.pageControl.currentPageIndicatorTintColor = SnabbleAppearance.shared.config.primaryColor
         self.collectionView.dataSource = self
@@ -80,7 +78,7 @@ class EmbeddedCodesCheckoutViewController: UIViewController {
 
         let total = Price.format(cart.totalPrice)
         self.totalPriceLabel.text = "Snabble.QRCode.total".localized() + "\(total)"
-        let explanation = self.codeblocks.count > 1 ? "Snabble.QRCode.showTheseCodes" : "Snabble.QRCode.showThisCode"
+        let explanation = self.codes.count > 1 ? "Snabble.QRCode.showTheseCodes" : "Snabble.QRCode.showThisCode"
         self.explanation1.text = explanation.localized()
         self.explanation2.text = "Snabble.QRCode.priceMayDiffer".localized()
     }
@@ -101,8 +99,30 @@ class EmbeddedCodesCheckoutViewController: UIViewController {
         UIScreen.main.brightness = self.initialBrightness
     }
 
-    private func codesForQR() -> [String] {
-        let codes: [String] = self.cart.items.reduce(into: [], { result, item in
+    private func codesForQR() -> ([String],[String]) {
+        if self.codeblocks.config.nextCodeWithCheck != nil {
+            let regularItems = self.cart.items.filter { return $0.product.saleRestriction == .none }
+            let restrictedItems = self.cart.items.filter { return $0.product.saleRestriction != .none }
+
+            var regularCodes = self.codesFor(regularItems)
+            if let additionalCodes = self.cart.additionalCodes {
+                regularCodes.append(contentsOf: additionalCodes)
+            }
+
+            let restrictedCodes = self.codesFor(restrictedItems)
+
+            return (regularCodes, restrictedCodes)
+        } else {
+            var codes = self.codesFor(self.cart.items)
+            if let additionalCodes = self.cart.additionalCodes {
+                codes.append(contentsOf: additionalCodes)
+            }
+            return (codes, [])
+        }
+    }
+
+    private func codesFor(_ items: [CartItem]) -> [String] {
+        return items.reduce(into: [], { result, item in
             if item.product.type == .userMustWeigh {
                 // generate an EAN with the embedded weight
                 if let template = item.product.weighedItemIds?.first {
@@ -113,20 +133,15 @@ class EmbeddedCodesCheckoutViewController: UIViewController {
                 result.append(contentsOf: Array(repeating: item.scannedCode, count: item.quantity))
             }
         })
-
-        if let additionalCodes = self.cart.additionalCodes {
-            return codes + additionalCodes
-        }
-        return codes
     }
 
     private func setButtonTitle() {
-        let title = self.pageControl.currentPage == self.codeblocks.count - 1 ? "Snabble.QRCode.didPay" : "Snabble.QRCode.nextCode"
+        let title = self.pageControl.currentPage == self.codes.count - 1 ? "Snabble.QRCode.didPay" : "Snabble.QRCode.nextCode"
         self.paidButton.setTitle(title.localized(), for: .normal)
     }
 
     @IBAction func paidButtonTapped(_ sender: UIButton) {
-        if self.pageControl.currentPage != self.codeblocks.count - 1 {
+        if self.pageControl.currentPage != self.codes.count - 1 {
             self.pageControl.currentPage += 1
             let indexPath = IndexPath(item: pageControl.currentPage, section: 0)
             self.collectionView.scrollToItem(at: indexPath, at: .left, animated: true)
@@ -146,13 +161,13 @@ class EmbeddedCodesCheckoutViewController: UIViewController {
 extension EmbeddedCodesCheckoutViewController: UICollectionViewDataSource, UICollectionViewDelegate, UICollectionViewDelegateFlowLayout {
 
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return self.codeblocks.count
+        return self.codes.count
     }
 
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "qrCodeCell", for: indexPath) as! QRCodeCell
 
-        let img = self.qrCode(for: self.codeblocks[indexPath.row])
+        let img = self.qrCode(with: self.codes[indexPath.row])
         cell.imageView.image = img
         cell.imageWidth.constant = img?.size.width ?? 0
 
@@ -163,11 +178,10 @@ extension EmbeddedCodesCheckoutViewController: UICollectionViewDataSource, UICol
         return self.itemSize
     }
 
-    private func qrCode(for codes: [String]) -> UIImage? {
-        let qrCodeContent = config.prefix + codes.joined(separator: config.separator) + config.suffix
-        NSLog("QR Code content:\n\(qrCodeContent)")
+    private func qrCode(with code: String) -> UIImage? {
+        NSLog("QR Code content:\n\(code)")
         for scale in (1...7).reversed() {
-            if let img = QRCode.generate(for: qrCodeContent, scale: scale) {
+            if let img = QRCode.generate(for: code, scale: scale) {
                 if img.size.width <= self.collectionView.bounds.width {
                     return img
                 }
@@ -178,7 +192,7 @@ extension EmbeddedCodesCheckoutViewController: UICollectionViewDataSource, UICol
     }
 
     @IBAction func pageControlTapped(_ pageControl: UIPageControl) {
-        if pageControl.currentPage < self.codeblocks.count {
+        if pageControl.currentPage < self.codes.count {
             let indexPath = IndexPath(item: pageControl.currentPage, section: 0)
             self.collectionView.scrollToItem(at: indexPath, at: .left, animated: true)
         }

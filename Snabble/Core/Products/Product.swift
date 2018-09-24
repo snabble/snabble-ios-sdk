@@ -62,6 +62,17 @@ public enum SaleRestriction: Codable {
     }
 }
 
+extension SaleRestriction: Equatable {
+    public static func==(_ lhs: SaleRestriction, _ rhs: SaleRestriction) -> Bool {
+        switch (lhs, rhs) {
+        case (.none, .none): return true
+        case (.age(let age1), .age(let age2)): return age1 == age2
+        case (.fsk, .fsk): return true
+        default: return false
+        }
+    }
+}
+
 /// data for one product.
 public struct Product: Codable {
     /// the stock keeping unit, unique identifier for this product
@@ -150,29 +161,32 @@ public struct Product: Codable {
         self.depositSku = try container.decodeIfPresent(.depositSku)
         self.bundledSku = try container.decodeIfPresent(.bundledSku)
         self.isDeposit = try container.decode(.isDeposit)
+        self.deposit = try container.decodeIfPresent(.deposit)
         self.saleRestriction = try container.decodeIfPresent(.saleRestriction) ?? .none
         self.saleStop = try container.decodeIfPresent(.saleStop) ?? false
         self.bundles = try container.decodeIfPresent(.bundles) ?? []
+        self.transmissionCodes = try container.decodeIfPresent(.transmissionCodes) ?? [:]
     }
 
     init(sku: String,
-                name: String,
-                description: String?,
-                subtitle: String?,
-                imageUrl: String?,
-                basePrice: String?,
-                listPrice: Int,
-                discountedPrice: Int?,
-                type: ProductType,
-                scannableCodes: Set<String>,
-                weighedItemIds: Set<String>?,
-                depositSku: String?,
-                bundledSku: String?,
-                isDeposit: Bool,
-                deposit: Int?,
-                saleRestriction: SaleRestriction,
-                saleStop: Bool,
-                bundles: [Product]) {
+         name: String,
+         description: String?,
+         subtitle: String?,
+         imageUrl: String?,
+         basePrice: String?,
+         listPrice: Int,
+         discountedPrice: Int?,
+         type: ProductType,
+         scannableCodes: Set<String>,
+         weighedItemIds: Set<String>?,
+         depositSku: String?,
+         bundledSku: String?,
+         isDeposit: Bool,
+         deposit: Int?,
+         saleRestriction: SaleRestriction,
+         saleStop: Bool,
+         bundles: [Product],
+         transmissionCodes: [String: String]) {
         self.sku = sku
         self.name = name
         self.description = description
@@ -191,7 +205,11 @@ public struct Product: Codable {
         self.saleRestriction = saleRestriction
         self.saleStop = saleStop
         self.bundles = bundles
+        self.transmissionCodes = transmissionCodes
     }
+
+    // store a mapping of scannableCode to transmissionCode
+    internal let transmissionCodes: [String: String]
 }
 
 /// price calculation stuff
@@ -219,7 +237,7 @@ extension Product {
     }
 
     private func round(_ n: Decimal) -> Int {
-        let mode = APIConfig.shared.config.roundingMode.mode
+        let mode = SnabbleAPI.project.roundingMode.mode
         let round = NSDecimalNumberHandler(roundingMode: mode,
                                            scale: 0,
                                            raiseOnExactness: false,
@@ -244,7 +262,7 @@ extension Product: Hashable {
 /// price formatting
 public enum Price {
     public static func format(_ price: Int) -> String {
-        let divider = pow(10.0, APIConfig.shared.config.decimalDigits)
+        let divider = pow(10.0, SnabbleAPI.project.decimalDigits)
         let decimalPrice = Decimal(price) / divider
         return formatter.string(for: decimalPrice)!
     }
@@ -252,11 +270,11 @@ public enum Price {
     private static var formatter: NumberFormatter {
         let fmt = NumberFormatter()
         fmt.minimumIntegerDigits = 1
-        fmt.minimumFractionDigits = APIConfig.shared.config.decimalDigits
-        fmt.maximumFractionDigits = APIConfig.shared.config.decimalDigits
-        fmt.locale = Locale(identifier: APIConfig.shared.config.locale)
-        fmt.currencyCode = APIConfig.shared.config.currency
-        fmt.currencySymbol = APIConfig.shared.config.currencySymbol
+        fmt.minimumFractionDigits = SnabbleAPI.project.decimalDigits
+        fmt.maximumFractionDigits = SnabbleAPI.project.decimalDigits
+        fmt.locale = Locale(identifier: SnabbleAPI.project.locale)
+        fmt.currencyCode = SnabbleAPI.project.currency
+        fmt.currencySymbol = SnabbleAPI.project.currencySymbol
         fmt.numberStyle = .currency
         return fmt
     }
@@ -282,7 +300,7 @@ extension Product {
             }
 
             // single-letter abbreviations and other stuff that needs to be all-lowercase
-            for abbr in [ "U.", "M.", "O.", "In", "Aa", "Und", "Von", "Der", "Ca", "Ca." ] {
+            for abbr in [ "U.", "M.", "O.", "In", "An", "Und", "Von", "Der", "Ca", "Ca." ] {
                 if newWord == abbr {
                     newWord = abbr.lowercased()
                 }

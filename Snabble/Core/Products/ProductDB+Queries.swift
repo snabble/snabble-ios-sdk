@@ -15,7 +15,8 @@ extension ProductDB {
         select
             p.*, pr.listPrice, pr.discountedPrice, pr.basePrice,
             (select group_concat(sc.code) from scannableCodes sc where sc.sku = p.sku) scannableCodes,
-            (select group_concat(w.weighItemId) from weighItemIds w where w.sku = p.sku) weighItemIds
+            (select group_concat(w.weighItemId) from weighItemIds w where w.sku = p.sku) weighItemIds,
+            (select group_concat(ifnull(sc.transmissionCode, "")) from scannableCodes sc where sc.sku = p.sku) transmissionCodes
         from products p
         join prices pr on pr.sku = p.sku
     """
@@ -85,17 +86,25 @@ extension ProductDB {
                     """, arguments: [code])
                 }
             if let product = self.productFromRow(dbQueue, row) {
-                return LookupResult(product: product, code: code)
+                let transmissionCode = product.transmissionCodes[code] ?? code
+                return LookupResult(product: product, code: transmissionCode)
+            } else {
+                // lookup failed.
+
+                // if it was an EAN-8, try again with the same EAN padded to an EAN-13
+                // if it was an EAN-13 with a leading "0", try again with all leading zeroes removed
+                if code.count == 8 {
+                    print("8->13 lookup attempt \(code) -> 00000\(code)")
+                    return self.productByScannableCode(dbQueue, "00000" + code)
+                } else if code.first == "0", let codeInt = Int(code) {
+                    print("no leading zeroes db lookup attempt \(code) -> \(codeInt)")
+                    return self.productByScannableCode(dbQueue, String(codeInt))
+                }
             }
         } catch {
             NSLog("db error: \(error)")
         }
 
-        if code.first == "0", let codeInt = Int(code) {
-            // no product found. try the lookup again, with all leading zeroes removed from `code`
-            print("2nd db lookup attempt \(code) -> \(codeInt)")
-            return self.productByScannableCode(dbQueue, String(codeInt))
-        }
         return nil
     }
 
@@ -132,14 +141,14 @@ extension ProductDB {
 
     func productsByScannableCodePrefix(_ dbQueue: DatabaseQueue, _ prefix: String, _ filterDeposits: Bool) -> [Product] {
         do {
-            let limit = prefix.count < 5 ? prefix.count * 100 : -1
+            let limit = 100 //  prefix.count < 5 ? prefix.count * 100 : -1
             let depositCondition = filterDeposits ? "and isDeposit = 0" : ""
             let rows = try dbQueue.inDatabase { db in
                 return try Row.fetchAll(db, ProductDB.baseQuery + " " + """
                     join scannableCodes s on s.sku = p.sku
-                    where s.code glob ? \(depositCondition) and p.weighing != \(ProductType.preWeighed.rawValue)
+                    where (s.code glob ? or s.code glob ?) \(depositCondition) and p.weighing != \(ProductType.preWeighed.rawValue)
                     limit ?
-                    """, arguments: [prefix + "*", limit])
+                    """, arguments: [prefix + "*", "00000" + prefix + "*", limit])
             }
             return rows.compactMap { self.productFromRow(dbQueue, $0) }
         } catch {
@@ -178,7 +187,7 @@ extension ProductDB {
 
     func createFullTextIndex(_ dbQueue: DatabaseQueue) throws {
         let start = Date.timeIntervalSinceReferenceDate
-        try dbQueue.write { db in
+        try dbQueue.inDatabase { db in
             try db.execute("drop table if exists searchByName_tmp")
             try db.execute("create virtual table searchByName_tmp using fts4(sku text, foldedname text)")
 
@@ -223,6 +232,8 @@ extension ProductDB {
 
         let bundles = self.productsBundling(dbQueue, sku)
 
+        let (scannableCodes, transmissionCodes) = self.buildScannableCodeSets(row["scannableCodes"], row["transmissionCodes"])
+
         let p = Product(sku: sku,
                         name: row["name"],
                         description: row["description"],
@@ -232,7 +243,7 @@ extension ProductDB {
                         listPrice: row["listPrice"],
                         discountedPrice: row["discountedPrice"],
                         type: ProductType(rawValue: row["weighing"]) ?? .singleItem,
-                        scannableCodes: self.makeSet(row["scannableCodes"]),
+                        scannableCodes: scannableCodes,
                         weighedItemIds: self.makeSet(row["weighItemIds"]),
                         depositSku: depositSku,
                         bundledSku: row["bundledSku"],
@@ -240,9 +251,28 @@ extension ProductDB {
                         deposit: depositPrice,
                         saleRestriction: SaleRestriction(row["saleRestriction"]),
                         saleStop: row["saleStop"] ?? false,
-                        bundles: bundles)
+                        bundles: bundles,
+                        transmissionCodes: transmissionCodes)
 
         return p
+    }
+
+    private func buildScannableCodeSets(_ rawScan: String?, _ rawTransmit: String?) -> (Set<String>, [String:String]) {
+        guard let rawScan = rawScan, let rawTransmit = rawTransmit else {
+            return (Set<String>(), [:])
+        }
+
+        let codes = rawScan.components(separatedBy: ",")
+        let transmit = rawTransmit.components(separatedBy: ",")
+
+        var codeMap = [String: String]()
+        for (code, xmit) in zip(codes, transmit) {
+            if xmit.count > 0 {
+                codeMap[code] = xmit
+            }
+        }
+
+        return (Set(codes), codeMap)
     }
 
     private func makeSet(_ str: String?) -> Set<String> {

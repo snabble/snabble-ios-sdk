@@ -94,8 +94,8 @@ class ScanConfirmationView: DesignableView {
 
         let initialQuantity = ean?.embeddedWeight ?? self.quantity
 
-        self.minusButton.isHidden = product.weightDependent
-        self.plusButton.isHidden = product.weightDependent
+        self.minusButton.isHidden = ean?.hasEmbeddedData == true
+        self.plusButton.isHidden = ean?.hasEmbeddedData == true
         self.gramLabel.isHidden = !product.weightDependent
         self.quantityField.isEnabled = product.type != .preWeighed
         self.quantityField.isHidden = false
@@ -118,7 +118,7 @@ class ScanConfirmationView: DesignableView {
 
         if product.discountedPrice != nil {
             let originalPrice = Price.format(product.listPrice)
-            let str = NSAttributedString(string: originalPrice, attributes: [NSAttributedStringKey.strikethroughStyle: NSUnderlineStyle.styleSingle.rawValue])
+            let str = NSAttributedString(string: originalPrice, attributes: [NSAttributedString.Key.strikethroughStyle: NSUnderlineStyle.single.rawValue])
             self.originalPriceLabel.attributedText = str
         } else {
             self.originalPriceLabel.text = nil

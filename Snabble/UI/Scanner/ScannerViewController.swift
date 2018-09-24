@@ -21,8 +21,9 @@ public class ScannerViewController: UIViewController {
 
     private var infoView: ScannerInfoView!
 
-    private var productProvider: ProductProvider!
-    private var shoppingCart: ShoppingCart!
+    private var productProvider: ProductProvider
+    private var shoppingCart: ShoppingCart
+    private var shop: Shop
 
     private var lastScannedCode = ""
     private var confirmationVisible = false
@@ -34,11 +35,13 @@ public class ScannerViewController: UIViewController {
     private weak var delegate: ScannerDelegate!
     private var timer: Timer?
 
-    public init(_ productProvider: ProductProvider, _ cart: ShoppingCart, delegate: ScannerDelegate, objectTypes: [AVMetadataObject.ObjectType]? = nil) {
-        super.init(nibName: nil, bundle: Snabble.bundle)
-
+    public init(_ productProvider: ProductProvider, _ cart: ShoppingCart, _ shop: Shop, delegate: ScannerDelegate, objectTypes: [AVMetadataObject.ObjectType]? = nil) {
         self.productProvider = productProvider
         self.shoppingCart = cart
+        self.shop = shop
+
+        super.init(nibName: nil, bundle: Snabble.bundle)
+
         self.delegate = delegate
         if let objectTypes = objectTypes {
             self.objectTypes = objectTypes
@@ -47,6 +50,10 @@ public class ScannerViewController: UIViewController {
         self.title = "Snabble.Scanner.title".localized()
         self.tabBarItem.image = UIImage.fromBundle("icon-scan")
         self.navigationItem.title = "Snabble.Scanner.scanningTitle".localized()
+
+        let infoIcon = UIImage.fromBundle("icon-info")?.recolored(with: .white)
+        let infoButton = UIBarButtonItem(image: infoIcon, style: .plain, target: self, action: #selector(self.infoButtonTapped(_:)))
+        self.navigationItem.leftBarButtonItem = infoButton
     }
     
     public required init?(coder aDecoder: NSCoder) {
@@ -56,6 +63,11 @@ public class ScannerViewController: UIViewController {
     private var firstTimeInfoShown: Bool {
         get { return UserDefaults.standard.bool(forKey: "snabble.scanner.firstTimeInfoShown") }
         set { UserDefaults.standard.set(newValue, forKey: "snabble.scanner.firstTimeInfoShown") }
+    }
+
+    private var firstScanComplete: Bool {
+        get { return UserDefaults.standard.bool(forKey: "snabble.scanner.firstScanComplete") }
+        set { UserDefaults.standard.set(newValue, forKey: "snabble.scanner.firstScanComplete") }
     }
     
     override public func viewDidLoad() {
@@ -108,10 +120,6 @@ public class ScannerViewController: UIViewController {
         self.scanConfirmationView.delegate = self
 
         self.keyboardObserver = KeyboardObserver(handler: self)
-
-        let infoIcon = UIImage.fromBundle("icon-info")?.recolored(with: .white)
-        let infoButton = UIBarButtonItem(image: infoIcon, style: .plain, target: self, action: #selector(self.infoButtonTapped(_:)))
-        self.navigationItem.leftBarButtonItem = infoButton
     }
 
     override public func viewWillAppear(_ animated: Bool) {
@@ -226,7 +234,20 @@ extension ScannerViewController: MessageDelegate {
 extension ScannerViewController: ScanConfirmationViewDelegate {
     func closeConfirmation() {
         self.hideScanConfirmationView(true)
-        self.scanningView.startScanning()
+
+        if !self.firstScanComplete {
+            self.firstScanComplete = true
+
+            let title = String(format: "Snabble.Hints.title".localized(), self.shop.name)
+            let msg = "Snabble.Hints.closedBags".localized()
+            let alert = UIAlertController(title: title, message: msg, preferredStyle: .alert)
+            alert.addAction(UIAlertAction(title: "Snabble.Hints.continueScanning".localized(), style: .default) { action in
+                self.scanningView.startScanning()
+            })
+            self.present(alert, animated: false)
+        } else {
+            self.scanningView.startScanning()
+        }
     }
 }
 
@@ -245,7 +266,7 @@ extension ScannerViewController: ScanningViewDelegate {
                 self.closeScanningView()
             })
             alert.addAction(UIAlertAction(title: "Snabble.Settings".localized(), style: .default) { action in
-                UIApplication.shared.open(URL(string: UIApplicationOpenSettingsURLString)!)
+                UIApplication.shared.open(URL(string: UIApplication.openSettingsURLString)!)
                 self.closeScanningView()
             })
             self.present(alert, animated: true)
@@ -351,11 +372,14 @@ extension ScannerViewController {
         for bundle in product.bundles {
             alert.addAction(UIAlertAction(title: bundle.name, style: .default) { action in
                 let bundleCode = bundle.scannableCodes.first ?? ""
-                self.showConfirmation(for: bundle, bundleCode)
+                let transmissionCode = bundle.transmissionCodes[bundleCode] ?? bundleCode
+                self.showConfirmation(for: bundle, transmissionCode)
             })
         }
 
-        alert.addAction(UIAlertAction(title: "Snabble.Cancel".localized(), style: .cancel, handler: nil))
+        alert.addAction(UIAlertAction(title: "Snabble.Cancel".localized(), style: .cancel) { action in
+            self.scanningView.startScanning()
+        })
 
         // HACK: set the action sheet buttons background
         if let alertContentView = alert.view.subviews.first?.subviews.first {
@@ -369,8 +393,8 @@ extension ScannerViewController {
     }
 
     private func productForCode(_ code: String, completion: @escaping (Product?, String) -> () ) {
-        if let ean = EAN.parse(code), ean.hasEmbeddedData {
-            if APIConfig.shared.config.verifyInternalEanChecksum {
+        if let ean = EAN.parse(code), ean.hasEmbeddedData, ean.encoding != .edekaProductPrice {
+            if SnabbleAPI.project.verifyInternalEanChecksum {
                 guard
                     let ean13 = ean as? EAN13,
                     ean13.priceFieldOk()
@@ -384,11 +408,26 @@ extension ScannerViewController {
                 completion(product, code)
             }
         } else {
-            self.productProvider.productByScannableCode(code) { result, error in
-                if let result = result {
-                    completion(result.product, result.code)
-                } else {
-                    completion(nil, "")
+            if code.hasPrefix("97") && code.count == 22 {
+                let startIndex = code.startIndex
+                let embeddedCode = String(code[code.index(startIndex, offsetBy: 2)..<code.index(startIndex, offsetBy: 15)])
+                let embeddedPrice = Int(String(code[code.index(startIndex, offsetBy: 16)..<code.index(startIndex, offsetBy: 21)])) ?? 0
+                self.productProvider.productByScannableCode(embeddedCode) { result, error in
+                    if let result = result {
+                        let template = "2417000000000"
+                        let newCode = EAN13.embedDataInEan(template, data: embeddedPrice)
+                        completion(result.product, newCode)
+                    } else {
+                        completion(nil, "")
+                    }
+                }
+            } else {
+                self.productProvider.productByScannableCode(code) { result, error in
+                    if let result = result {
+                        completion(result.product, result.code)
+                    } else {
+                        completion(nil, "")
+                    }
                 }
             }
         }

@@ -80,10 +80,11 @@ class ShoppingCartTableCell: UITableViewCell {
         self.plusButton.tag = row
         self.quantityInput.tag = row
 
-        self.minusButton.isHidden = product.weightDependent
-        self.plusButton.isHidden = product.type == .preWeighed
+        let ean = EAN.parse(item.scannedCode)
+        self.minusButton.isHidden = ean?.hasEmbeddedData == true
+        self.plusButton.isHidden = product.type == .preWeighed || ean?.hasEmbeddedData == true
 
-        if let ean = EAN13(item.scannedCode), ean.embeddedUnits != nil {
+        if let ean = ean, ean.encoding == .ean13, ean.embeddedUnits != nil {
             self.minusButton.isHidden = !item.editableUnits
             self.plusButton.isHidden = !item.editableUnits
         }

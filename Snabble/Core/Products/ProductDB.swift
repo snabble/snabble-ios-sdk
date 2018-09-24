@@ -22,7 +22,7 @@ public struct ProductDBConfiguration {
     /// Default: the app's "Application Support" directory
     public var dbDirectory: String
 
-    public var links: MetadataLinks
+    public var links: Links
 
     /// if the app bundle contains a zipped seed database, set this to the path in the bundle,
     /// e.g. using `cfg.seedDbPath = Bundle.main.path(forResource: "seed", ofType: "zip")`
@@ -37,7 +37,7 @@ public struct ProductDBConfiguration {
 
     public init() {
         self.dbDirectory = NSSearchPathForDirectoriesInDomains(.applicationSupportDirectory, .userDomainMask, true).first!
-        self.links = MetadataLinks()
+        self.links = Links.empty
     }
 
     func dbPathname(temp: Bool = false) -> String {
@@ -195,7 +195,7 @@ public extension ProductProvider {
     }
 }
 
-final public class ProductDB: ProductProvider {
+public final class ProductDB: ProductProvider {
     internal let supportedSchemaVersion = 1
 
     internal let config: ProductDBConfiguration
@@ -485,13 +485,6 @@ final public class ProductDB: ProductProvider {
         }
     }
 
-}
-
-/// run `closure` synchronized using `lock`
-func synchronized<T>(_ lock: Any, closure: () throws -> T) rethrows -> T {
-    objc_sync_enter(lock)
-    defer { objc_sync_exit(lock) }
-    return try closure()
 }
 
 // MARK: - product access methods

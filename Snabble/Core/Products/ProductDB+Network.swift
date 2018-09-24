@@ -28,51 +28,53 @@ extension ProductDB {
             "schemaVersion": schemaVersion
         ]
 
-        guard var request = SnabbleAPI.request(.get, self.config.links.appdb.href, json: false, parameters: parameters, timeout: 0) else {
-            return completion(.httpError)
-        }
-
-        if !forceFullDb {
-            request.setValue(ProductDB.contentTypes, forHTTPHeaderField: "Accept")
-        }
-
-        let session = URLSession(configuration: URLSessionConfiguration.default)
-
-        let task = session.dataTask(with: request) { data, response, error in
-            let elapsed = Date.timeIntervalSinceReferenceDate - start
-            let url = request.url?.absoluteString ?? "n/a"
-            NSLog("get \(url) took \(elapsed)s")
-
-            if error != nil {
-                completion(.httpError)
-                return
+        SnabbleAPI.request(.get, self.config.links.appdb.href, json: false, parameters: parameters, timeout: 0) { request in
+            guard var request = request else {
+                return completion(.httpError)
             }
 
-            if let data = data, let response = response as? HTTPURLResponse {
-                if response.statusCode == 304 {
-                    completion(.noUpdate)
+            if !forceFullDb {
+                request.setValue(ProductDB.contentTypes, forHTTPHeaderField: "Accept")
+            }
+
+            let session = URLSession(configuration: URLSessionConfiguration.default)
+
+            let task = session.dataTask(with: request) { data, response, error in
+                let elapsed = Date.timeIntervalSinceReferenceDate - start
+                let url = request.url?.absoluteString ?? "n/a"
+                NSLog("get \(url) took \(elapsed)s")
+
+                if error != nil {
+                    completion(.httpError)
                     return
                 }
 
-                let headers = response.allHeaderFields
-                if let contentType = headers["Content-Type"] as? String {
-                    if contentType == ProductDB.sqliteType {
-                        if let etag = headers["Etag"] as? String {
-                            completion(.full(db: data, revision: self.parseEtag(etag)))
-                            return
-                        }
-                    } else if contentType == ProductDB.sqlType {
-                        if let str = String(bytes: data, encoding: .utf8) {
-                            completion(.diff(lines: str))
-                            return
+                if let data = data, let response = response as? HTTPURLResponse {
+                    if response.statusCode == 304 {
+                        completion(.noUpdate)
+                        return
+                    }
+
+                    let headers = response.allHeaderFields
+                    if let contentType = headers["Content-Type"] as? String {
+                        if contentType == ProductDB.sqliteType {
+                            if let etag = headers["Etag"] as? String {
+                                completion(.full(db: data, revision: self.parseEtag(etag)))
+                                return
+                            }
+                        } else if contentType == ProductDB.sqlType {
+                            if let str = String(bytes: data, encoding: .utf8) {
+                                completion(.diff(lines: str))
+                                return
+                            }
                         }
                     }
-                }
 
-                completion(.dataError)
+                    completion(.dataError)
+                }
             }
+            task.resume()
         }
-        task.resume()
     }
 
     // parse an ETag header value to extract the db revision

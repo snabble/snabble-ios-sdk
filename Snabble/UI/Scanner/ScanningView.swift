@@ -135,7 +135,7 @@ public class ScanningView: DesignableView {
         self.frameView.layer.borderWidth = 1
         self.frameView.layer.cornerRadius = 3
         self.view.addSubview(self.frameView)
-        self.view.bringSubview(toFront: self.frameView)
+        self.view.bringSubviewToFront(self.frameView)
     }
 
     /// this passes the `ScanningViewConfig` data to the ScanningView. This method must be called before the first pass of the
@@ -177,8 +177,8 @@ public class ScanningView: DesignableView {
         self.frameView.frame = self.reticle.frame
         self.initCaptureSession()
 
-        self.view.bringSubview(toFront: self.reticle)
-        self.view.bringSubview(toFront: self.bottomBar)
+        self.view.bringSubviewToFront(self.reticle)
+        self.view.bringSubviewToFront(self.bottomBar)
 
         if let camera = self.camera {
             let torchToggleSupported = camera.isTorchModeSupported(.on) && camera.isTorchModeSupported(.off)
@@ -278,7 +278,7 @@ public class ScanningView: DesignableView {
 
             self.reticleBorderLayer = CAShapeLayer()
             self.reticleBorderLayer.path = overlayPath.cgPath
-            self.reticleBorderLayer.fillRule = kCAFillRuleEvenOdd
+            self.reticleBorderLayer.fillRule = CAShapeLayerFillRule.evenOdd
             self.reticleBorderLayer.fillColor = self.dimmingColor.cgColor
             self.reticleBorderLayer.zPosition = -0.5
             self.view.layer.addSublayer(self.reticleBorderLayer)

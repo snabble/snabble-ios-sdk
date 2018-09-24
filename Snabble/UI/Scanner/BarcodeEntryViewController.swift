@@ -28,6 +28,8 @@ class BarcodeEntryViewController: UIViewController, UISearchBarDelegate, UITable
         self.productProvider = productProvider
         self.completion = completion
         self.delegate = delegate
+
+        self.title = "Snabble.Scanner.enterBarcode".localized()
     }
 
     required init?(coder aDecoder: NSCoder) {
@@ -60,8 +62,12 @@ class BarcodeEntryViewController: UIViewController, UISearchBarDelegate, UITable
 
     // MARK: - search bar
     func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
-        self.filteredProducts = self.productProvider.productsByScannableCodePrefix(searchText, filterDeposits: true)
-
+        let products = self.productProvider.productsByScannableCodePrefix(searchText, filterDeposits: true)
+        self.filteredProducts = products.sorted { p1, p2 in
+            let c1 = p1.scannableCodes.filter { $0.hasPrefix(searchText) }.first ?? p1.scannableCodes.first!
+            let c2 = p2.scannableCodes.filter { $0.hasPrefix(searchText) }.first ?? p2.scannableCodes.first!
+            return c1 < c2
+        }
         self.searchText = searchText
         self.tableView.reloadData()
     }
@@ -92,11 +98,15 @@ class BarcodeEntryViewController: UIViewController, UISearchBarDelegate, UITable
         }()
         
         let product = self.filteredProducts[indexPath.row]
-        let matchingCode = product.scannableCodes.filter { $0.hasPrefix(self.searchText) }.first ?? product.scannableCodes.first!
-        
+        var matchingCode = product.scannableCodes.filter { $0.hasPrefix(self.searchText) }.first ?? product.scannableCodes.first!
+        if matchingCode.hasPrefix("00000") {
+            let start = matchingCode.index(matchingCode.startIndex, offsetBy: 5)
+            matchingCode = String(matchingCode[start..<matchingCode.endIndex])
+        }
+
         let str = NSMutableAttributedString(string: matchingCode)
         let boldFont = UIFont.systemFont(ofSize: cell.textLabel?.font.pointSize ?? 0, weight: .medium)
-        str.addAttributes([NSAttributedStringKey.font : boldFont], range: NSMakeRange(0, self.searchText.count))
+        str.addAttributes([NSAttributedString.Key.font : boldFont], range: NSMakeRange(0, self.searchText.count))
         cell.textLabel?.attributedText = str
 
         cell.detailTextLabel?.text = product.name
