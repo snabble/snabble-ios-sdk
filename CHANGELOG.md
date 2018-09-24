@@ -2,7 +2,7 @@
 
 # v0.7.0
 
-* add support for multi-project apps
+* add support for multi-project apps. All of the following changes break existing clients.
 * requires Swift 4.2/Xcode 10
 * removes the need to use hard-coded JWTs per app, authorization tokens are instead created on-demand using HOTP
 * `Shop.distance` property was removed
@@ -10,6 +10,7 @@
 * accordingly, app initialization now has to use the new app-scoped API endpoint URLs that looks like `/metadata/app/{appID}/{platform}/{version}`
 * `ScannerViewController.init` now needs to be passed a `Shop` instance
 * `APIConfig.setup` and `SnabbleProject` have been removed. Instead, use `TokenRegistry.shared.setup()` and `APIConfig.registerProject()` during app setup to initialize the SDK. Contact snabble to get the required app secret and id.
+* When the user first scans an item and adds it to their shopping cart, a special confirmation alert is shown, using the new localization keys `Snabble.Hints.*`
 
 # v0.6.6
 
