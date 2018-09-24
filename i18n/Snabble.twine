@@ -13,6 +13,8 @@
         en = Yes
     [Snabble.No]
         en = No
+    [Snabble.OK]
+        en = OK
     [Snabble.Settings]
         en = Settings
     [Snabble.Delete]
@@ -23,7 +25,9 @@
         en = Please wait...
     [Snabble.undo]
         en = Undo
-
+    [Snabble.goToSettings]
+        en = Open Settings
+        
     [Snabble.Payment.errorStarting]
         en = Error starting the payment process
     [Snabble.PaymentSelection.title]
@@ -102,8 +106,17 @@
         en = Checkstand
     [Snabble.PaymentMethod.qrCodePOS]
         en = Checkstand
-
+    [Snabble.Hints.title]
+        en = Hint from %@
+    [Snabble.Hints.closedBags]
+        en = Please make it easy for the cashier and do not put your items directly in closed pockets. Thank you!
+    [Snabble.Hints.continueScanning]
+        en = Continue scanning
+        
 [[Android]]
+    [Snabble.askForPermission]
+        en = Ask for permission
+        tags = android
     [Snabble.Payment.aborted]
         en = Payment process was aborted
         tags = android
