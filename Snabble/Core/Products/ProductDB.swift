@@ -422,7 +422,7 @@ public final class ProductDB: ProductProvider {
             if fileManager.fileExists(atPath: tempDbPath) {
                 try fileManager.removeItem(atPath: tempDbPath)
             }
-            try FileManager.default.copyItem(atPath: self.config.dbPathname(), toPath: tempDbPath)
+            try fileManager.copyItem(atPath: self.config.dbPathname(), toPath: tempDbPath)
 
             let tempDb = try DatabaseQueue(path: tempDbPath)
 
