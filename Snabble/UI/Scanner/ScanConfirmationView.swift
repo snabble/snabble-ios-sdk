@@ -49,8 +49,8 @@ class ScanConfirmationView: DesignableView {
         self.view.backgroundColor = .clear
         self.addCornersAndShadow(backgroundColor: .white, cornerRadius: 8)
 
-        self.cartButton.backgroundColor = SnabbleAppearance.shared.config.primaryColor
-        self.cartButton.tintColor = SnabbleAppearance.shared.config.secondaryColor
+        self.cartButton.backgroundColor = SnabbleUI.appearance.primaryColor
+        self.cartButton.tintColor = SnabbleUI.appearance.secondaryColor
         self.cartButton.makeRoundedButton()
 
         let mono14 = UIFont.monospacedDigitSystemFont(ofSize: 14, weight: .regular)
@@ -60,7 +60,7 @@ class ScanConfirmationView: DesignableView {
         self.plusButton.makeBorderedButton()
 
         self.quantityField.font = UIFont.monospacedDigitSystemFont(ofSize: 21, weight: .regular)
-        self.quantityField.tintColor = SnabbleAppearance.shared.config.primaryColor
+        self.quantityField.tintColor = SnabbleUI.appearance.primaryColor
         self.quantityField.delegate = self
 
         self.closeButton.setImage(UIImage.fromBundle("icon-close"), for: .normal)

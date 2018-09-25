@@ -40,8 +40,8 @@ class ScannerInfoView: DesignableView {
         self.textLabel.attributedText = attributedString
         self.textLabel.sizeToFit()
 
-        self.startButton.backgroundColor = SnabbleAppearance.shared.config.primaryColor
-        self.startButton.tintColor = SnabbleAppearance.shared.config.secondaryColor
+        self.startButton.backgroundColor = SnabbleUI.appearance.primaryColor
+        self.startButton.tintColor = SnabbleUI.appearance.secondaryColor
         self.startButton.makeRoundedButton()
         self.startButton.setTitle("Snabble.Scanner.start".localized(), for: .normal)
     }

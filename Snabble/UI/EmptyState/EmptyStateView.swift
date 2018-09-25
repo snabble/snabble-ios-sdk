@@ -20,7 +20,7 @@ class EmptyStateView: NibView {
         super.init(frame: CGRect.zero)
 
         self.button.isHidden = tapHandler == nil
-        self.backgroundColor = SnabbleAppearance.shared.config.primaryBackgroundColor
+        self.backgroundColor = SnabbleUI.appearance.primaryBackgroundColor
     }
     
     required init?(coder aDecoder: NSCoder) {
@@ -49,13 +49,13 @@ class ShoppingCartEmptyStateView: EmptyStateView {
     override init(_ tapHandler: Handler?) {
         super.init(tapHandler)
 
-        let primaryColor = SnabbleAppearance.shared.config.primaryColor
+        let primaryColor = SnabbleUI.appearance.primaryColor
         self.image.image = UIImage.fromBundle("icon-cart-big")?.recolored(with: primaryColor)
         self.titleLabel.text = "Snabble.Shoppingcart.emptyState.title".localized()
         self.descriptionLabel.text = "Snabble.Shoppingcart.emptyState.description".localized()
         self.button.setTitle("Snabble.Shoppingcart.emptyState.buttonTitle".localized(), for: .normal)
         self.button.setImage(UIImage.fromBundle("icon-scan")?.recolored(with: primaryColor), for: .normal)
-        self.button.setTitleColor(SnabbleAppearance.shared.config.primaryColor, for: .normal)
+        self.button.setTitleColor(SnabbleUI.appearance.primaryColor, for: .normal)
     }
 
     required init?(coder aDecoder: NSCoder) {
@@ -73,7 +73,7 @@ class BarcodeEntryEmptyStateView: EmptyStateView {
         self.descriptionLabel.text = nil
         self.button.titleLabel?.font = UIFont.systemFont(ofSize: 17, weight: .medium)
         self.button.setTitle("", for: .normal)
-        self.button.setTitleColor(SnabbleAppearance.shared.config.primaryColor, for: .normal)
+        self.button.setTitleColor(SnabbleUI.appearance.primaryColor, for: .normal)
     }
 
     required init?(coder aDecoder: NSCoder) {

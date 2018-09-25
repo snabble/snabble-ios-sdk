@@ -124,12 +124,12 @@ class CashCheckoutViewController: UIViewController {
         view.subviews.forEach { subview in
             if let label = subview as? UILabel {
                 UIView.transition(with: label, duration: duration, options: animationOptions , animations: {
-                    label.textColor = SnabbleAppearance.shared.config.secondaryColor
+                    label.textColor = SnabbleUI.appearance.secondaryColor
                 }, completion: nil)
             }
             if let img = subview as? UIImageView {
                 UIView.transition(with: img, duration: duration, options: animationOptions, animations: {
-                    img.image = img.image?.recolored(with: SnabbleAppearance.shared.config.secondaryColor)
+                    img.image = img.image?.recolored(with: SnabbleUI.appearance.secondaryColor)
                 }, completion: nil)
             }
         }
@@ -145,7 +145,7 @@ class CashCheckoutViewController: UIViewController {
 
         let rectangleLayer = CAShapeLayer()
         rectangleLayer.path = startPath.cgPath
-        rectangleLayer.fillColor = SnabbleAppearance.shared.config.primaryColor.cgColor
+        rectangleLayer.fillColor = SnabbleUI.appearance.primaryColor.cgColor
         rectangleLayer.zPosition = -1
         view.layer.addSublayer(rectangleLayer)
 

@@ -55,7 +55,7 @@ struct AppEvent: Encodable {
         self.appId = SnabbleAPI.clientId
         self.payload = payload
         self.shopId = shopId
-        self.project = SnabbleAPI.project.id
+        self.project = SnabbleUI.project.id
         self.id = id
         self.agent = agent
         let fmt = DateFormatter()
@@ -86,7 +86,7 @@ extension AppEvent {
     struct Empty: Decodable { }
 
     func post() {
-        let appEvents = SnabbleAPI.project.links.appEvents.href
+        let appEvents = SnabbleUI.project.links.appEvents.href
         SnabbleAPI.request(.post, appEvents, body: self, timeout: 0) { request in
             guard let request = request else {
                 return

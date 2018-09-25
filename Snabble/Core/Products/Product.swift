@@ -237,7 +237,8 @@ extension Product {
     }
 
     private func round(_ n: Decimal) -> Int {
-        let mode = SnabbleAPI.project.roundingMode.mode
+        #warning("need project")
+        let mode = Project.none.roundingMode.mode
         let round = NSDecimalNumberHandler(roundingMode: mode,
                                            scale: 0,
                                            raiseOnExactness: false,
@@ -262,7 +263,8 @@ extension Product: Hashable {
 /// price formatting
 public enum Price {
     public static func format(_ price: Int) -> String {
-        let divider = pow(10.0, SnabbleAPI.project.decimalDigits)
+        #warning("need project")
+        let divider = pow(10.0, Project.none.decimalDigits)
         let decimalPrice = Decimal(price) / divider
         return formatter.string(for: decimalPrice)!
     }
@@ -270,11 +272,12 @@ public enum Price {
     private static var formatter: NumberFormatter {
         let fmt = NumberFormatter()
         fmt.minimumIntegerDigits = 1
-        fmt.minimumFractionDigits = SnabbleAPI.project.decimalDigits
-        fmt.maximumFractionDigits = SnabbleAPI.project.decimalDigits
-        fmt.locale = Locale(identifier: SnabbleAPI.project.locale)
-        fmt.currencyCode = SnabbleAPI.project.currency
-        fmt.currencySymbol = SnabbleAPI.project.currencySymbol
+        #warning("need project")
+        fmt.minimumFractionDigits = Project.none.decimalDigits
+        fmt.maximumFractionDigits = Project.none.decimalDigits
+        fmt.locale = Locale(identifier: Project.none.locale)
+        fmt.currencyCode = Project.none.currency
+        fmt.currencySymbol = Project.none.currencySymbol
         fmt.numberStyle = .currency
         return fmt
     }

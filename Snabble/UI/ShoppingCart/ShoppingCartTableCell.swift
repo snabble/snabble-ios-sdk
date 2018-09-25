@@ -45,12 +45,12 @@ class ShoppingCartTableCell: UITableViewCell {
         self.priceLabel.font = mono10
         self.quantityLabel.font = mono10
 
-        self.quantityLabel.backgroundColor = SnabbleAppearance.shared.config.primaryColor
+        self.quantityLabel.backgroundColor = SnabbleUI.appearance.primaryColor
         self.quantityLabel.layer.cornerRadius = 2
         self.quantityLabel.layer.masksToBounds = true
-        self.quantityLabel.textColor = SnabbleAppearance.shared.config.secondaryColor
+        self.quantityLabel.textColor = SnabbleUI.appearance.secondaryColor
 
-        self.quantityInput.tintColor = SnabbleAppearance.shared.config.primaryColor
+        self.quantityInput.tintColor = SnabbleUI.appearance.primaryColor
         self.quantityInput.delegate = self
 
         self.minusButton.setImage(UIImage.fromBundle("icon-minus"), for: .normal)
@@ -95,11 +95,11 @@ class ShoppingCartTableCell: UITableViewCell {
         self.quantityInput.text = "\(item.quantity)"
 
         if weightEntry {
-            self.plusButton.backgroundColor = SnabbleAppearance.shared.config.primaryColor
+            self.plusButton.backgroundColor = SnabbleUI.appearance.primaryColor
             // FIXME("replace w/ checkmark icon")
-            self.plusButton.setImage(UIImage.fromBundle("icon-close")?.recolored(with: SnabbleAppearance.shared.config.secondaryColor), for: .normal)
+            self.plusButton.setImage(UIImage.fromBundle("icon-close")?.recolored(with: SnabbleUI.appearance.secondaryColor), for: .normal)
         } else {
-            self.plusButton.backgroundColor = SnabbleAppearance.shared.config.buttonBackgroundColor
+            self.plusButton.backgroundColor = SnabbleUI.appearance.buttonBackgroundColor
             self.plusButton.setImage(UIImage.fromBundle("icon-plus"), for: .normal)
         }
 

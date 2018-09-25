@@ -7,45 +7,87 @@
 import Foundation
 
 /// general config data for using the snabble API.
-/// Applications must call `setup()` before they make their first API call.
-public final class APIConfig {
-    /// the singleton instance
-    static let shared = APIConfig()
-    private(set) var baseUrl: String
+/// Applications must call `SnabbleAPI.setup()` with an instance of this struct before they make their first API call.
+public struct SnabbleAPIConfig {
+    /// the appID assigned by snabble
+    public let appId: String
+    /// the base URL to use
+    public let baseUrl: String
+    /// the sectrect assigned by snabble, used to retrieve authorization tokens
+    public let secret: String
 
-    private init() {
-        self.baseUrl = ""
+    /// set this to true if you want to use the `productsByName` method of `ProductDB`
+    public var useFTS = false
+
+    /// if the app comes with a zipped seed database, set this to the path in the Bundle
+    public var seedDatabase: String?
+    /// if the app comes with a zipped seed database, set this to the db revision of the seed
+    public var seedRevision: Int64?
+    /// if the app comes with a seed metadata JSON, set this to the path in the Bundle
+    public var seedMetadata: String?
+
+    public init(appId: String, baseUrl: String, secret: String) {
+        self.appId = appId
+        self.baseUrl = baseUrl
+        self.secret = secret
     }
 
-    /// initialize the API configuration for the subsequent network calls
-    ///
-    /// - Parameters:
-    ///   - baseUrl: the base URL (e.g. "https://api.snabble.io")" to use for relative URLs
-    ///   - project: the `SnabbleProject` instance that describes your project
-    ///
-    public static func setup(using baseUrl: String) {
-        shared.baseUrl = baseUrl
+    public init(appId: String, baseUrl: String, secret: String, useFTS: Bool, seedDatabase: String?, seedRevision: Int64?, seedMetadata: String?) {
+        self.appId = appId
+        self.baseUrl = baseUrl
+        self.secret = secret
+        self.useFTS = useFTS
+        self.seedDatabase = seedDatabase
+        self.seedRevision = seedRevision
+        self.seedMetadata = seedMetadata
     }
 
-    func urlFor(_ url: String) -> URL? {
-        return URL(string: self.absoluteUrl(url))
+    static let none = SnabbleAPIConfig(appId: "none", baseUrl: "", secret: "")
+}
+
+public struct SnabbleAPI {
+    private(set) public static var config = SnabbleAPIConfig.none
+    static var metadata = Metadata.none
+
+    public static var projects: [Project] {
+        return self.metadata.projects
     }
 
-    private func absoluteUrl(_ url: String) -> String {
-        if url.hasPrefix("/") {
-            return self.baseUrl + url
-        } else {
-            return url
+    public static func setup(_ config: SnabbleAPIConfig, completion: @escaping ()->() ) {
+        self.config = config
+
+        if let metadataPath = config.seedMetadata, self.metadata.projects.count == 0 {
+            if let metadata = Metadata.readResource(metadataPath) {
+                self.metadata = metadata
+            }
+        }
+
+        let bundleVersion = Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String ?? "0.0"
+        let version = bundleVersion.addingPercentEncoding(withAllowedCharacters: .urlPathAllowed) ?? bundleVersion
+        let metadataURL = config.baseUrl + "/metadata/app/\(config.appId)/ios/\(version)"
+
+        Metadata.load(from: metadataURL) { metadata in
+            if let metadata = metadata {
+                self.metadata = metadata
+            }
+            completion()
         }
     }
 }
 
-enum HTTPRequestMethod: String {
-    case get = "GET"
-    case post = "POST"
-    case put = "PUT"
-    case patch = "PATCH"
+extension SnabbleAPI {
+    static var clientId: String {
+        if let id = UserDefaults.standard.string(forKey: "Snabble.api.clientId") {
+            return id
+        } else {
+            let id = UUID().uuidString.lowercased().replacingOccurrences(of: "-", with: "")
+            UserDefaults.standard.set(id, forKey: "Snabble.api.clientId")
+            return id
+        }
+    }
 }
+
+// MARK: - networking stuff
 
 public struct ApiError: Decodable {
     public let error: ErrorResponse
@@ -56,25 +98,24 @@ public struct ErrorResponse: Decodable {
     public let message: String
 }
 
-public struct SnabbleAPI {
-    public internal(set) static var project = Project.none
-    public internal(set) static var metadata = Metadata.none
+enum HTTPRequestMethod: String {
+    case get = "GET"
+    case post = "POST"
+    case put = "PUT"
+    case patch = "PATCH"
+}
 
-    public static func registerProject(_ project: Project) {
-        SnabbleAPI.project = project
+extension SnabbleAPI {
+
+    static func urlFor(_ url: String) -> URL? {
+        return URL(string: self.absoluteUrl(url))
     }
 
-    public static var projects: [Project] {
-        return SnabbleAPI.metadata.projects
-    }
-
-    static var clientId: String {
-        if let id = UserDefaults.standard.string(forKey: "Snabble.api.clientId") {
-            return id
+    private static func absoluteUrl(_ url: String) -> String {
+        if url.hasPrefix("/") {
+            return self.config.baseUrl + url
         } else {
-            let id = UUID().uuidString.lowercased().replacingOccurrences(of: "-", with: "")
-            UserDefaults.standard.set(id, forKey: "Snabble.api.clientId")
-            return id
+            return url
         }
     }
 
@@ -90,7 +131,7 @@ public struct SnabbleAPI {
     static func request(_ method: HTTPRequestMethod, _ url: String, json: Bool = true, jwtRequired: Bool = true, parameters: [String: String]? = nil, timeout: TimeInterval, completion: @escaping (URLRequest?) -> ()) {
         guard
             let url = urlString(url, parameters),
-            let fullUrl = APIConfig.shared.urlFor(url)
+            let fullUrl = SnabbleAPI.urlFor(url)
         else {
             return completion(nil)
         }
@@ -110,7 +151,7 @@ public struct SnabbleAPI {
     static func request(_ method: HTTPRequestMethod, _ url: String, json: Bool = true, jwtRequired: Bool = true, queryItems: [URLQueryItem], timeout: TimeInterval, completion: @escaping (URLRequest?) -> ()) {
         guard
             let url = urlString(url, queryItems),
-            let fullUrl = APIConfig.shared.urlFor(url)
+            let fullUrl = SnabbleAPI.urlFor(url)
         else {
             return completion(nil)
         }
@@ -127,7 +168,7 @@ public struct SnabbleAPI {
     ///   - timeout: the timeout for the HTTP request (0 for the system default timeout)
     /// - Returns: the URLRequest
     static func request(_ method: HTTPRequestMethod, _ url: String, body: Data, timeout: TimeInterval, completion: @escaping (URLRequest?) -> ()) {
-        guard let url = APIConfig.shared.urlFor(url) else {
+        guard let url = SnabbleAPI.urlFor(url) else {
             return completion(nil)
         }
 
@@ -147,7 +188,7 @@ public struct SnabbleAPI {
     ///   - timeout: the timeout for the HTTP request (0 for the system default timeout)
     /// - Returns: the URLRequest
     static func request<T: Encodable>(_ method: HTTPRequestMethod, _ url: String, body: T, timeout: TimeInterval = 0, _ completion: @escaping (URLRequest?) -> () ) {
-        guard let url = APIConfig.shared.urlFor(url) else {
+        guard let url = SnabbleAPI.urlFor(url) else {
             return completion(nil)
         }
 
@@ -177,7 +218,8 @@ public struct SnabbleAPI {
         urlRequest.httpMethod = method.rawValue
 
         if jwtRequired {
-            let project = SnabbleAPI.project
+            #warning("need project here!")
+            let project = Project.none
             TokenRegistry.shared.getToken(for: project.id, from: project.links.tokens.href) { token in
                 if let token = token {
                     urlRequest.addValue(token, forHTTPHeaderField: "Client-Token")

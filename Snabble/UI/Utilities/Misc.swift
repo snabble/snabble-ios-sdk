@@ -8,7 +8,7 @@
 import UIKit
 
 /// configuration parameters for the look of the view controllers in the Snabble SDK
-public struct UIConfig {
+public struct SnabbleAppearance {
     public var primaryColor = UIColor.black
     public var primaryBackgroundColor = UIColor.white
     public var secondaryColor = UIColor.white
@@ -20,16 +20,20 @@ public struct UIConfig {
     public init() {}
 }
 
-/// global storage for a `UIConfig` object.
-public class SnabbleAppearance {
-    public static let shared = SnabbleAppearance()
-    var config = UIConfig()
+/// global settings for the Snabble UI classes
+public class SnabbleUI {
 
-    private init() {}
+    static var appearance = SnabbleAppearance()
+    static var project = Project.none
 
-    /// sets the global `UIConfig` to be used. Your app must call `SnabbleAppearance.shared.setup()` before instantiating any snabble view controllers
-    public func setup(_ config: UIConfig) {
-        self.config = config
+    /// sets the global appearance to be used. Your app must call `SnabbleUI.setup()` before instantiating any snabble view controllers
+    public static func setup(_ appearance: SnabbleAppearance) {
+        self.appearance = appearance
+    }
+
+    /// sets the project to be used
+    public static func register(_ project: Project) {
+        self.project = project
     }
 }
 
@@ -39,7 +43,7 @@ extension UIView {
     public func makeRoundedButton(cornerRadius: CGFloat? = nil) {
         self.layer.cornerRadius = cornerRadius ?? (self.frame.height / 2.0)
         self.layer.shadowOffset = CGSize(width: 0, height: 2)
-        self.layer.shadowColor = SnabbleAppearance.shared.config.buttonShadowColor.cgColor
+        self.layer.shadowColor = SnabbleUI.appearance.buttonShadowColor.cgColor
         self.layer.shadowOpacity = 1
         self.layer.shadowRadius = 2
     }
@@ -47,9 +51,9 @@ extension UIView {
     /// add a "bordered button" appearance to this view
     public func makeBorderedButton() {
         self.layer.cornerRadius = 6
-        self.backgroundColor = SnabbleAppearance.shared.config.buttonBackgroundColor
+        self.backgroundColor = SnabbleUI.appearance.buttonBackgroundColor
         self.layer.borderWidth = 0.5
-        self.layer.borderColor = SnabbleAppearance.shared.config.buttonBorderColor.cgColor
+        self.layer.borderColor = SnabbleUI.appearance.buttonBorderColor.cgColor
     }
 
     /// add a "rounded card" appearance to this view

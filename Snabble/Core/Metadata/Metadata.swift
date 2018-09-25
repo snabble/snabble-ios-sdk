@@ -317,16 +317,14 @@ public struct Shop: Decodable {
 
 public extension Metadata {
 
-    public static func readResource(_ name: String, extension: String) -> Metadata? {
-        if let url = Bundle.main.url(forResource: name, withExtension: `extension`) {
-            do {
-                let data = try Data(contentsOf: url)
-                let metadata = try JSONDecoder().decode(Metadata.self, from: data)
-                SnabbleAPI.metadata = metadata
-                return metadata
-            } catch let error {
-                NSLog("error parsing app data resource: \(error)")
-            }
+    public static func readResource(_ path: String) -> Metadata? {
+        let url = URL(fileURLWithPath: path)
+        do {
+            let data = try Data(contentsOf: url)
+            let metadata = try JSONDecoder().decode(Metadata.self, from: data)
+            return metadata
+        } catch let error {
+            NSLog("error parsing app data resource: \(error)")
         }
         return nil
     }

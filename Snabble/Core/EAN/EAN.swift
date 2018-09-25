@@ -18,6 +18,8 @@ public protocol EANCode {
 
     /// the encoding (EAN-8, EAN-13 or EAN-14)
     var encoding: EAN.Encoding { get }
+
+    var project: Project? { get set }
 }
 
 extension EANCode {
@@ -28,17 +30,17 @@ extension EANCode {
 
     /// checks for embedded data
     public var hasEmbeddedWeight: Bool {
-        return self.encoding == .ean13 && self.matchPrefixes(SnabbleAPI.project.weighPrefixes)
+        return self.encoding == .ean13 && self.matchPrefixes(self.project?.weighPrefixes)
     }
 
     public var hasEmbeddedPrice: Bool {
-        return (self.encoding == .ean13 && (self.matchPrefixes(SnabbleAPI.project.pricePrefixes))
+        return (self.encoding == .ean13 && (self.matchPrefixes(self.project?.pricePrefixes))
                || self.hasGermanPrintPrefix)
                || self.encoding == .edekaProductPrice
     }
 
     public var hasEmbeddedUnits: Bool {
-        return self.encoding == .ean13 && self.matchPrefixes(SnabbleAPI.project.unitPrefixes)
+        return self.encoding == .ean13 && self.matchPrefixes(self.project?.unitPrefixes)
     }
 
     public var hasEmbeddedData: Bool {
@@ -102,7 +104,10 @@ extension EANCode {
         }
     }
 
-    private func matchPrefixes(_ prefixes: [String]) -> Bool {
+    private func matchPrefixes(_ prefixes: [String]?) -> Bool {
+        guard let prefixes = prefixes else {
+            return false
+        }
         let prefixed = prefixes.filter { self.code.hasPrefix($0) }
         return prefixed.count > 0
     }
@@ -112,7 +117,7 @@ extension EANCode {
     fileprivate var hasGermanPrintPrefix: Bool {
         return
             self.encoding == .ean13
-            && SnabbleAPI.project.useGermanPrintPrefix
+            && self.project?.useGermanPrintPrefix == true
             && [ "414", "419", "434", "449" ].contains(self.code.prefix(3))
     }
 }
@@ -186,6 +191,7 @@ public struct EAN8: EANCode {
     public let code: String
     public let encoding = EAN.Encoding.ean8
     public let digits: [Int]
+    public var project: Project?
 
     /// create an EAN8
     ///
@@ -230,6 +236,7 @@ public struct EAN13: EANCode {
     public let code: String
     public let encoding = EAN.Encoding.ean13
     public let digits: [Int]
+    public var project: Project?
 
     /// create an EAN13
     ///
@@ -276,6 +283,7 @@ public struct EdekaProductPrice: EANCode {
     public let code: String
     public let encoding = EAN.Encoding.edekaProductPrice
     public let digits: [Int]
+    public var project: Project?
 
     public init?(_ code: String) {
         self.code = code
@@ -358,6 +366,7 @@ public struct EAN14: EANCode {
     public let code: String
     public let encoding = EAN.Encoding.ean14
     public let digits: [Int]
+    public var project: Project?
 
     /// create an EAN14
     ///
