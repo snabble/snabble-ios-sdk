@@ -330,12 +330,13 @@ public extension Metadata {
     }
 
     public static func load(from url: String, _ parameters: [String: String]? = nil, completion: @escaping (Metadata?) -> () ) {
-        SnabbleAPI.request(.get, url, jwtRequired: false, parameters: parameters, timeout: 5) { request in
+        let project = Project.none
+        project.request(.get, url, jwtRequired: false, parameters: parameters, timeout: 5) { request in
             guard let request = request else {
                 return completion(nil)
             }
 
-            SnabbleAPI.perform(request) { (metadata: Metadata?, error) in
+            project.perform(request) { (metadata: Metadata?, error) in
                 if let metadata = metadata {
                     SnabbleAPI.metadata = metadata
                 }

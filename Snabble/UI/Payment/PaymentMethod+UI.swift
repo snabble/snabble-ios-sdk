@@ -67,7 +67,7 @@ public class PaymentProcess {
         UIApplication.shared.beginIgnoringInteractionEvents()
         self.showHud()
 
-        self.signedCheckoutInfo.createCheckoutProcess(paymentMethod: method) { process, error in
+        self.signedCheckoutInfo.createCheckoutProcess(SnabbleUI.project, paymentMethod: method) { process, error in
             self.hudTimer?.invalidate()
             self.hudTimer = nil
             UIApplication.shared.endIgnoringInteractionEvents()

@@ -86,14 +86,15 @@ extension AppEvent {
     struct Empty: Decodable { }
 
     func post() {
-        let appEvents = SnabbleUI.project.links.appEvents.href
-        SnabbleAPI.request(.post, appEvents, body: self, timeout: 0) { request in
+        let project = SnabbleUI.project
+        let appEvents = project.links.appEvents.href
+        project.request(.post, appEvents, body: self, timeout: 0) { request in
             guard let request = request else {
                 return
             }
 
             // NSLog("posting event \(String(describing: self))")
-            SnabbleAPI.perform(request) { (result: Empty?, error) in
+            project.perform(request) { (result: Empty?, error) in
                 if let error = error {
                     NSLog("error posting event: \(error)")
                 }

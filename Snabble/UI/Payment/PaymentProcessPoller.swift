@@ -10,11 +10,13 @@ import Foundation
 class PaymentProcessPoller {
     private var timer: Timer?
     private var process: CheckoutProcess
+    private var project: Project
     private var task: URLSessionDataTask?
     private var completion: ((Bool) -> ())?
 
-    init(_ process: CheckoutProcess) {
+    init(_ process: CheckoutProcess, _ project: Project) {
         self.process = process
+        self.project = project
     }
 
     func waitForApproval(completion: @escaping (Bool) -> () ) {
@@ -47,7 +49,7 @@ class PaymentProcessPoller {
 
     private func checkApproval(_ timer: Timer) {
         print("checking approval...")
-        self.process.update(taskCreated: { self.task = $0 }) { process, error in
+        self.process.update(project, taskCreated: { self.task = $0 }) { process, error in
             guard
                 let process = process,
                 let paymentApproval = process.paymentApproval,
@@ -66,7 +68,7 @@ class PaymentProcessPoller {
     private func checkPayment(_ timer: Timer) {
         print("checking payment...")
 
-        self.process.update(taskCreated: { self.task = $0 }) { process, error in
+        self.process.update(project, taskCreated: { self.task = $0 }) { process, error in
             guard let process = process, process.paymentState != .pending else {
                 return
             }

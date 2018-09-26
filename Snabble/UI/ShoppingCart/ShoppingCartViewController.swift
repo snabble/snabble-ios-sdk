@@ -193,7 +193,7 @@ public class ShoppingCartViewController: UIViewController {
         spinner.centerYAnchor.constraint(equalTo: button.centerYAnchor).isActive = true
         button.isEnabled = false
 
-        self.shoppingCart.createCheckoutInfo() { info, error in
+        self.shoppingCart.createCheckoutInfo(SnabbleUI.project) { info, error in
             spinner.stopAnimating()
             spinner.removeFromSuperview()
             button.isEnabled = true

@@ -70,7 +70,7 @@ class CashCheckoutViewController: UIViewController {
         self.spinners[1].startAnimating()
         self.spinners[2].startAnimating()
 
-        self.poller = PaymentProcessPoller(self.process)
+        self.poller = PaymentProcessPoller(self.process, SnabbleUI.project)
         self.poller?.waitForApproval { success in
             self.poller = nil
             if success {
@@ -94,7 +94,7 @@ class CashCheckoutViewController: UIViewController {
 
         self.delegate.track(.paymentCancelled)
 
-        self.process.abort { process, error in
+        self.process.abort(SnabbleUI.project) { process, error in
             self.navigationController?.popToRootViewController(animated: true)
         }
     }

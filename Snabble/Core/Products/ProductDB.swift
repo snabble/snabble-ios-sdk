@@ -14,40 +14,6 @@ public struct MetadataKeys {
     public static let schemaVersionMinor = "schemaVersionMinor"
 }
 
-public struct ProductDBConfiguration {
-    /// Name of the database file. Default: `products.sqlite3`
-    public var dbName = "products.sqlite3"
-
-    /// Directory where the database should be stored, will be created if it doesn't exist.
-    /// Default: the app's "Application Support" directory
-    public var dbDirectory: String
-
-    public var links: Links
-
-    /// if the app bundle contains a zipped seed database, set this to the path in the bundle,
-    /// e.g. using `cfg.seedDbPath = Bundle.main.path(forResource: "seed", ofType: "zip")`
-    /// this file is assumed to be a ZIP archive, containing a file with the same name as the value of `dbName`
-    public var seedDbPath: String?
-
-    /// if the app bundle contains a zipped seed database, this must contain the revision of that database.
-    public var seedRevision: Int64?
-
-    /// set this to true if you want to use the `productsByName` method
-    public var useFTS = false
-
-    public init() {
-        self.dbDirectory = NSSearchPathForDirectoriesInDomains(.applicationSupportDirectory, .userDomainMask, true).first!
-        self.links = Links.empty
-    }
-
-    func dbPathname(temp: Bool = false) -> String {
-        let dbDir = self.dbDirectory
-        let path = dbDir + (temp ? "/tmp_" : "/") + self.dbName
-
-        return path
-    }
-}
-
 /// the return type from `productByScannableCode`.
 /// - `product` contains the product found
 /// - `code` contains the code by which the product was found, which is not necessarily the
@@ -61,9 +27,9 @@ public struct LookupResult {
 
 public protocol ProductProvider: class {
     /// initialize a ProductDB instance with the given configuration
-    /// - parameter config: a `ProductDBConfiguration` object
-    init(_ config: ProductDBConfiguration)
-
+    /// - parameter config: a `SnabbleAPIConfig` object
+    /// - parameter project: the snabble `Project`
+    init(_ config: SnabbleAPIConfig, _ project: Project)
 
     /// Setup the product database
     ///
@@ -195,12 +161,14 @@ public extension ProductProvider {
     }
 }
 
-public final class ProductDB: ProductProvider {
+final class ProductDB: ProductProvider {
     internal let supportedSchemaVersion = 1
 
-    internal let config: ProductDBConfiguration
-
+    private let dbName = "products.sqlite3"
     private var db: DatabaseQueue?
+    private var dbDirectory: URL
+    private let config: SnabbleAPIConfig
+    let project: Project
 
     /// revision of the current local product database
     private(set) public var revision: Int64 = 0
@@ -215,8 +183,22 @@ public final class ProductDB: ProductProvider {
 
     /// initialize a ProductDB instance with the given configuration
     /// - parameter config: a `ProductDBConfiguration` object
-    public init(_ config: ProductDBConfiguration) {
+    public init(_ config: SnabbleAPIConfig, _ project: Project) {
         self.config = config
+        self.project = project
+
+        let appSupportDir = FileManager.default.urls(for: .applicationSupportDirectory, in: .userDomainMask)[0]
+        self.dbDirectory = appSupportDir.appendingPathComponent(project.id, isDirectory: true)
+    }
+
+    func dbPathname(temp: Bool = false) -> String {
+        var dbDir = self.dbDirectory
+        if temp {
+            dbDir.appendPathComponent("tmp_", isDirectory: true)
+        }
+        dbDir.appendPathComponent(self.dbName)
+
+        return dbDir.path
     }
 
     /// Setup the product database
@@ -274,13 +256,13 @@ public final class ProductDB: ProductProvider {
                 }
 
                 if self.config.useFTS && newData {
-                    self.createFulltextIndex(self.config.dbPathname(temp: true))
+                    self.createFulltextIndex(self.dbPathname(temp: true))
                 }
 
                 if performSwitch {
                     self.switchDatabases()
                 } else {
-                    let tempDbPath = self.config.dbPathname(temp: true)
+                    let tempDbPath = self.dbPathname(temp: true)
                     let fileManager = FileManager.default
                     if fileManager.fileExists(atPath: tempDbPath) {
                         try? fileManager.removeItem(atPath: tempDbPath)
@@ -309,11 +291,11 @@ public final class ProductDB: ProductProvider {
 
         do {
             // ensure database directory exists
-            if !fileManager.fileExists(atPath: self.config.dbDirectory) {
-                try fileManager.createDirectory(atPath: self.config.dbDirectory, withIntermediateDirectories: true, attributes: nil)
+            if !fileManager.fileExists(atPath: self.dbDirectory.path) {
+                try fileManager.createDirectory(at: self.dbDirectory, withIntermediateDirectories: true, attributes: nil)
             }
 
-            let dbFile = self.config.dbPathname()
+            let dbFile = self.dbPathname()
             NSLog("using sqlite db: \(dbFile)")
 
             // remove comments to simulate first app installation
@@ -338,16 +320,16 @@ public final class ProductDB: ProductProvider {
     }
 
     private func unzipSeed() {
-        if let seedPath = self.config.seedDbPath {
+        if let seedPath = self.config.seedDatabase {
             do {
                 let seedUrl = URL(fileURLWithPath: seedPath)
-                try Zip.unzipFile(seedUrl, destination: URL(fileURLWithPath: self.config.dbDirectory), overwrite: true, password: nil)
+                try Zip.unzipFile(seedUrl, destination: self.dbDirectory, overwrite: true, password: nil)
             } catch let error {
                 NSLog("error while unzipping seed: \(error)")
             }
 
             if self.config.useFTS {
-                self.createFulltextIndex(self.config.dbPathname())
+                self.createFulltextIndex(self.dbPathname())
             }
         }
     }
@@ -360,7 +342,7 @@ public final class ProductDB: ProductProvider {
     /// - Returns: true if the database was written successfully and passes internal integrity checks,
     ///         false otherwise
     private func writeFullDatabase(_ data: Data, _ revision: Int) -> Bool {
-        let tempDbPath = self.config.dbPathname(temp: true)
+        let tempDbPath = self.dbPathname(temp: true)
         let fileManager = FileManager.default
 
         do {
@@ -416,13 +398,13 @@ public final class ProductDB: ProductProvider {
     }
 
     private func copyAndUpdateDatabase(_ statements: String) -> Bool {
-        let tempDbPath = self.config.dbPathname(temp: true)
+        let tempDbPath = self.dbPathname(temp: true)
         let fileManager = FileManager.default
         do {
             if fileManager.fileExists(atPath: tempDbPath) {
                 try fileManager.removeItem(atPath: tempDbPath)
             }
-            try fileManager.copyItem(atPath: self.config.dbPathname(), toPath: tempDbPath)
+            try fileManager.copyItem(atPath: self.dbPathname(), toPath: tempDbPath)
 
             let tempDb = try DatabaseQueue(path: tempDbPath)
 
@@ -446,9 +428,9 @@ public final class ProductDB: ProductProvider {
     private func switchDatabases() {
         do {
             let fileManager = FileManager.default
-            let dbFile = self.config.dbPathname()
+            let dbFile = self.dbPathname()
             let oldFile = dbFile + ".old"
-            let tmpFile = self.config.dbPathname(temp: true)
+            let tmpFile = self.dbPathname(temp: true)
             try synchronized(self) {
                 self.db = nil
                 if fileManager.fileExists(atPath: oldFile) {
@@ -616,7 +598,7 @@ extension ProductDB {
             return
         }
 
-        self.getSingleProduct(self.config.links.productBySku.href, "{sku}", sku, completion: completion)
+        self.getSingleProduct(self.project.links.productBySku.href, "{sku}", sku, completion: completion)
     }
 
     /// asynchronously get a product by (one of) it scannable codes
@@ -636,7 +618,7 @@ extension ProductDB {
             return
         }
 
-        self.getSingleProduct(self.config.links.productByCode.href, "{code}", code, completion: completion)
+        self.getSingleProduct(self.project.links.productByCode.href, "{code}", code, completion: completion)
     }
 
     /// asynchronously get a product by (one of) it weigh item ids
@@ -656,7 +638,7 @@ extension ProductDB {
             return
         }
 
-        self.getSingleProduct(self.config.links.productByWeighItemId.href, "{id}", weighItemId, completion: completion)
+        self.getSingleProduct(self.project.links.productByWeighItemId.href, "{id}", weighItemId, completion: completion)
     }
 
 }

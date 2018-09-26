@@ -13,8 +13,11 @@ public struct SnabbleAPIConfig {
     public let appId: String
     /// the base URL to use
     public let baseUrl: String
-    /// the sectrect assigned by snabble, used to retrieve authorization tokens
+    /// the secrect assigned by snabble, used to retrieve authorization tokens
     public let secret: String
+
+    /// the app version that is passed to the metadata endpoint. if not set, the app's `CFBundleShortVersionString` is used
+    public var appVersion: String?
 
     /// set this to true if you want to use the `productsByName` method of `ProductDB`
     public var useFTS = false
@@ -26,16 +29,11 @@ public struct SnabbleAPIConfig {
     /// if the app comes with a seed metadata JSON, set this to the path in the Bundle
     public var seedMetadata: String?
 
-    public init(appId: String, baseUrl: String, secret: String) {
+    public init(appId: String, baseUrl: String, secret: String, appVersion: String? = nil, useFTS: Bool = false, seedDatabase: String? = nil, seedRevision: Int64? = nil, seedMetadata: String? = nil) {
         self.appId = appId
         self.baseUrl = baseUrl
         self.secret = secret
-    }
-
-    public init(appId: String, baseUrl: String, secret: String, useFTS: Bool, seedDatabase: String?, seedRevision: Int64?, seedMetadata: String?) {
-        self.appId = appId
-        self.baseUrl = baseUrl
-        self.secret = secret
+        self.appVersion = appVersion
         self.useFTS = useFTS
         self.seedDatabase = seedDatabase
         self.seedRevision = seedRevision
@@ -48,6 +46,7 @@ public struct SnabbleAPIConfig {
 public struct SnabbleAPI {
     private(set) public static var config = SnabbleAPIConfig.none
     static var metadata = Metadata.none
+    static var tokenRegistry = TokenRegistry("", "")
 
     public static var projects: [Project] {
         return self.metadata.projects
@@ -56,6 +55,8 @@ public struct SnabbleAPI {
     public static func setup(_ config: SnabbleAPIConfig, completion: @escaping ()->() ) {
         self.config = config
 
+        self.tokenRegistry = TokenRegistry(config.appId, config.secret)
+
         if let metadataPath = config.seedMetadata, self.metadata.projects.count == 0 {
             if let metadata = Metadata.readResource(metadataPath) {
                 self.metadata = metadata
@@ -63,7 +64,8 @@ public struct SnabbleAPI {
         }
 
         let bundleVersion = Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String ?? "0.0"
-        let version = bundleVersion.addingPercentEncoding(withAllowedCharacters: .urlPathAllowed) ?? bundleVersion
+        let appVersion = config.appVersion ?? bundleVersion
+        let version = appVersion.addingPercentEncoding(withAllowedCharacters: .urlPathAllowed) ?? appVersion
         let metadataURL = config.baseUrl + "/metadata/app/\(config.appId)/ios/\(version)"
 
         Metadata.load(from: metadataURL) { metadata in
@@ -72,6 +74,10 @@ public struct SnabbleAPI {
             }
             completion()
         }
+    }
+
+    public static func productProvider(_ project: Project) -> ProductProvider {
+        return ProductDB(SnabbleAPI.config, project)
     }
 }
 
@@ -119,6 +125,29 @@ extension SnabbleAPI {
         }
     }
 
+    static func urlString(_ url: String, _ parameters: [String: String]?) -> String? {
+        let queryItems = parameters?.map { (k, v) in
+            URLQueryItem(name: k, value: v)
+        }
+        return urlString(url, queryItems ?? [])
+    }
+
+    static func urlString(_ url: String, _ queryItems: [URLQueryItem]) -> String? {
+        guard var urlComponents = URLComponents(string: url) else {
+            return nil
+        }
+        if urlComponents.queryItems == nil {
+            urlComponents.queryItems = queryItems
+        } else {
+            urlComponents.queryItems?.append(contentsOf: queryItems)
+        }
+
+        return urlComponents.url?.absoluteString
+    }
+}
+
+extension Project {
+
     /// create an URLRequest
     ///
     /// - Parameters:
@@ -128,15 +157,15 @@ extension SnabbleAPI {
     ///   - parameters: the query parameters to append to the URL
     ///   - timeout: the timeout for the HTTP request (0 for the system default timeout)
     /// - Returns: the URLRequest
-    static func request(_ method: HTTPRequestMethod, _ url: String, json: Bool = true, jwtRequired: Bool = true, parameters: [String: String]? = nil, timeout: TimeInterval, completion: @escaping (URLRequest?) -> ()) {
+    func request(_ method: HTTPRequestMethod, _ url: String, json: Bool = true, jwtRequired: Bool = true, parameters: [String: String]? = nil, timeout: TimeInterval, completion: @escaping (URLRequest?) -> ()) {
         guard
-            let url = urlString(url, parameters),
+            let url = SnabbleAPI.urlString(url, parameters),
             let fullUrl = SnabbleAPI.urlFor(url)
         else {
             return completion(nil)
         }
 
-        SnabbleAPI.request(method, fullUrl, json, jwtRequired, timeout, completion)
+        self.request(method, fullUrl, json, jwtRequired, timeout, completion)
     }
 
     /// create an URLRequest
@@ -148,15 +177,15 @@ extension SnabbleAPI {
     ///   - queryItems: the query parameters to append to the URL
     ///   - timeout: the timeout for the HTTP request (0 for the system default timeout)
     /// - Returns: the URLRequest
-    static func request(_ method: HTTPRequestMethod, _ url: String, json: Bool = true, jwtRequired: Bool = true, queryItems: [URLQueryItem], timeout: TimeInterval, completion: @escaping (URLRequest?) -> ()) {
+    func request(_ method: HTTPRequestMethod, _ url: String, json: Bool = true, jwtRequired: Bool = true, queryItems: [URLQueryItem], timeout: TimeInterval, completion: @escaping (URLRequest?) -> ()) {
         guard
-            let url = urlString(url, queryItems),
+            let url = SnabbleAPI.urlString(url, queryItems),
             let fullUrl = SnabbleAPI.urlFor(url)
         else {
             return completion(nil)
         }
 
-        SnabbleAPI.request(method, fullUrl, json, jwtRequired, timeout, completion)
+        self.request(method, fullUrl, json, jwtRequired, timeout, completion)
     }
 
     /// create an URLRequest
@@ -167,12 +196,12 @@ extension SnabbleAPI {
     ///   - body: the JSON data to send as the HTTP body
     ///   - timeout: the timeout for the HTTP request (0 for the system default timeout)
     /// - Returns: the URLRequest
-    static func request(_ method: HTTPRequestMethod, _ url: String, body: Data, timeout: TimeInterval, completion: @escaping (URLRequest?) -> ()) {
+    func request(_ method: HTTPRequestMethod, _ url: String, body: Data, timeout: TimeInterval, completion: @escaping (URLRequest?) -> ()) {
         guard let url = SnabbleAPI.urlFor(url) else {
             return completion(nil)
         }
 
-        SnabbleAPI.request(method, url, true, true,  timeout) { request in
+        self.request(method, url, true, true,  timeout) { request in
             var urlRequest = request
             urlRequest.httpBody = body
             completion(urlRequest)
@@ -187,12 +216,12 @@ extension SnabbleAPI {
     ///   - body: the JSON object to send as the HTTP body
     ///   - timeout: the timeout for the HTTP request (0 for the system default timeout)
     /// - Returns: the URLRequest
-    static func request<T: Encodable>(_ method: HTTPRequestMethod, _ url: String, body: T, timeout: TimeInterval = 0, _ completion: @escaping (URLRequest?) -> () ) {
+    func request<T: Encodable>(_ method: HTTPRequestMethod, _ url: String, body: T, timeout: TimeInterval = 0, _ completion: @escaping (URLRequest?) -> () ) {
         guard let url = SnabbleAPI.urlFor(url) else {
             return completion(nil)
         }
 
-        SnabbleAPI.request(method, url, true, true, timeout) { request in
+        self.request(method, url, true, true, timeout) { request in
             do {
                 var urlRequest = request
                 urlRequest.httpBody = try JSONEncoder().encode(body)
@@ -213,25 +242,23 @@ extension SnabbleAPI {
     ///   - jwtRequired: if true, this request required authorization via JWT
     ///   - timeout: the timeout for the HTTP request (0 for the system default timeout)
     /// - Returns: the URLRequest
-    static func request(_ method: HTTPRequestMethod, _ url: URL, _ json: Bool, _ jwtRequired: Bool, _ timeout: TimeInterval, _ completion: @escaping (URLRequest) -> ()) {
+    func request(_ method: HTTPRequestMethod, _ url: URL, _ json: Bool, _ jwtRequired: Bool, _ timeout: TimeInterval, _ completion: @escaping (URLRequest) -> ()) {
         var urlRequest = URLRequest(url: url)
         urlRequest.httpMethod = method.rawValue
 
         if jwtRequired {
-            #warning("need project here!")
-            let project = Project.none
-            TokenRegistry.shared.getToken(for: project.id, from: project.links.tokens.href) { token in
+            SnabbleAPI.tokenRegistry.getToken(for: self) { token in
                 if let token = token {
                     urlRequest.addValue(token, forHTTPHeaderField: "Client-Token")
                 }
-                SnabbleAPI.buildRequest(&urlRequest, timeout, json, completion)
+                self.buildRequest(&urlRequest, timeout, json, completion)
             }
         } else {
-            SnabbleAPI.buildRequest(&urlRequest, timeout, json, completion)
+            self.buildRequest(&urlRequest, timeout, json, completion)
         }
     }
 
-    static func buildRequest(_ request: inout URLRequest, _ timeout: TimeInterval, _ json: Bool, _ completion: @escaping (URLRequest) -> ()) {
+    func buildRequest(_ request: inout URLRequest, _ timeout: TimeInterval, _ json: Bool, _ completion: @escaping (URLRequest) -> ()) {
         request.addValue(SnabbleAPI.clientId, forHTTPHeaderField: "Client-Id")
 
         if timeout > 0 {
@@ -254,13 +281,13 @@ extension SnabbleAPI {
     ///   - completion: called on the main thread when the result is available.
     ///   - obj: the parsed result object, or nil if an error occured
     ///   - error: if not nil, contains the error response from the backend
-    static func retry<T: Decodable>(_ retryCount: Int, _ pauseTime: TimeInterval, _ request: URLRequest, _ completion: @escaping (_ obj: T?, _ error: ApiError?) -> () ) {
+    func retry<T: Decodable>(_ retryCount: Int, _ pauseTime: TimeInterval, _ request: URLRequest, _ completion: @escaping (_ obj: T?, _ error: ApiError?) -> () ) {
         perform(request) { (obj: T?, error) in
             if obj != nil {
                 completion(obj, nil)
             } else if retryCount > 1 {
                 DispatchQueue.main.asyncAfter(deadline: .now() + pauseTime) {
-                    retry(retryCount - 1, pauseTime * 2, request, completion)
+                    self.retry(retryCount - 1, pauseTime * 2, request, completion)
                 }
             } else {
                 completion(nil, error)
@@ -276,8 +303,8 @@ extension SnabbleAPI {
     ///   - obj: the parsed result object, or nil if an error occured
     ///   - error: if not nil, contains the error response from the backend
     @discardableResult
-    static func perform<T: Decodable>(_ request: URLRequest, _ completion: @escaping (_ obj: T?, _ error: ApiError?) -> () ) -> URLSessionDataTask {
-        return perform(request, returnRaw: false) { (_ obj: T?, error, json, headers) in
+    func perform<T: Decodable>(_ request: URLRequest, _ completion: @escaping (_ obj: T?, _ error: ApiError?) -> () ) -> URLSessionDataTask {
+        return self.perform(request, returnRaw: false) { (_ obj: T?, error, json, headers) in
             completion(obj, error)
         }
     }
@@ -291,8 +318,8 @@ extension SnabbleAPI {
     ///   - error: if not nil, contains the error response from the backend
     ///   - response: the HTTPURLResponse object
     @discardableResult
-    static func perform<T: Decodable>(_ request: URLRequest, _ completion: @escaping (_ obj: T?, _ error: ApiError?, _ response: HTTPURLResponse?) -> () ) -> URLSessionDataTask {
-        return perform(request, returnRaw: false) { (_ obj: T?, error, json, response) in
+    func perform<T: Decodable>(_ request: URLRequest, _ completion: @escaping (_ obj: T?, _ error: ApiError?, _ response: HTTPURLResponse?) -> () ) -> URLSessionDataTask {
+        return self.perform(request, returnRaw: false) { (_ obj: T?, error, json, response) in
             completion(obj, error, response)
         }
     }
@@ -308,7 +335,7 @@ extension SnabbleAPI {
     ///   - raw: the JSON structure returned by the server, or nil if an error occurred
     ///   - response: the HTTPURLResponse object
     @discardableResult
-    static func perform<T: Decodable>(_ request: URLRequest, returnRaw: Bool, _ completion: @escaping (_ obj: T?, _ error: ApiError?, _ raw: [String: Any]?, _ response: HTTPURLResponse?) -> () ) -> URLSessionDataTask {
+    func perform<T: Decodable>(_ request: URLRequest, returnRaw: Bool, _ completion: @escaping (_ obj: T?, _ error: ApiError?, _ raw: [String: Any]?, _ response: HTTPURLResponse?) -> () ) -> URLSessionDataTask {
         let start = Date.timeIntervalSinceReferenceDate
         let session = URLSession(configuration: URLSessionConfiguration.default)
         let task = session.dataTask(with: request) { rawData, response, error in
@@ -366,26 +393,6 @@ extension SnabbleAPI {
         }
         task.resume()
         return task
-    }
-
-    private static func urlString(_ url: String, _ parameters: [String: String]?) -> String? {
-        let queryItems = parameters?.map { (k, v) in
-            URLQueryItem(name: k, value: v)
-        }
-        return urlString(url, queryItems ?? [])
-    }
-
-    private static func urlString(_ url: String, _ queryItems: [URLQueryItem]) -> String? {
-        guard var urlComponents = URLComponents(string: url) else {
-            return nil
-        }
-        if urlComponents.queryItems == nil {
-            urlComponents.queryItems = queryItems
-        } else {
-            urlComponents.queryItems?.append(contentsOf: queryItems)
-        }
-
-        return urlComponents.url?.absoluteString
     }
 
 }

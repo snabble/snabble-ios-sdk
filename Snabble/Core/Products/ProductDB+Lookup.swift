@@ -23,7 +23,7 @@ extension ProductDB {
         let timeoutInterval: TimeInterval = 5
 
         let fullUrl = url.replacingOccurrences(of: placeholder, with: identifier)
-        SnabbleAPI.request(.get, fullUrl, timeout: timeoutInterval) { request in
+        self.project.request(.get, fullUrl, timeout: timeoutInterval) { request in
             guard let request = request else {
                 return completion(nil, true)
             }
@@ -85,7 +85,7 @@ extension ProductDB {
             return
         }
 
-        self.getBundlingProducts(self.config.links.bundlesForSku.href, "{bundledSku}", apiProduct.sku) { bundles, error in
+        self.getBundlingProducts(self.project.links.bundlesForSku.href, "{bundledSku}", apiProduct.sku) { bundles, error in
             let result = LookupResult(product: apiProduct.convert(deposit, bundles), code: matchingCode)
             DispatchQueue.main.async {
                 completion(result, false)
@@ -100,7 +100,7 @@ extension ProductDB {
         let timeoutInterval: TimeInterval = 5
 
         let fullUrl = url.replacingOccurrences(of: placeholder, with: sku)
-        SnabbleAPI.request(.get, fullUrl, timeout: timeoutInterval) { request in
+        self.project.request(.get, fullUrl, timeout: timeoutInterval) { request in
             guard let request = request else {
                 return completion([], true)
             }
@@ -140,7 +140,7 @@ extension ProductDB {
             return
         }
 
-        self.getProductsBySku(self.config.links.productsBySku.href, skus) { products, error in
+        self.getProductsBySku(self.project.links.productsBySku.href, skus) { products, error in
             let deposits = Dictionary(uniqueKeysWithValues: products.map { ($0.sku, $0.listPrice) })
 
             let products = bundles.map { (bundle) -> Product in
@@ -159,7 +159,7 @@ extension ProductDB {
 
         let skuSet = Set(skus)
         let skuItems = skuSet.map { URLQueryItem(name: "skus", value: $0) }
-        SnabbleAPI.request(.get, url, queryItems: skuItems, timeout: timeoutInterval) { request in
+        self.project.request(.get, url, queryItems: skuItems, timeout: timeoutInterval) { request in
             guard let request = request else {
                 return completion([], true)
             }
