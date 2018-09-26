@@ -128,26 +128,26 @@ class ShoppingCartTableCell: UITableViewCell {
         let gram = showWeight ? "g" : ""
         self.quantityLabel.text = "\(self.quantity)\(gram)"
 
-        let price = self.item.total
-        let total = Price.format(price)
+        let price = self.item.total(SnabbleUI.project)
+        let total = PriceFormatter.format(price)
 
         if showWeight {
-            let single = Price.format(self.item.product.price)
+            let single = PriceFormatter.format(self.item.product.price)
             self.priceLabel.text = "× \(single)/kg = \(total)"
         } else {
             if let deposit = self.item.product.deposit {
-                let itemPrice = Price.format(self.item.product.price)
-                let depositPrice = Price.format(deposit * self.quantity)
+                let itemPrice = PriceFormatter.format(self.item.product.price)
+                let depositPrice = PriceFormatter.format(deposit * self.quantity)
                 let plusDeposit = String(format: "Snabble.Scanner.plusDeposit".localized(), depositPrice)
                 self.priceLabel.text = "× \(itemPrice) \(plusDeposit) = \(total)"
             } else if let units = ean?.embeddedUnits {
                 self.quantityLabel.text = "\(units)"
-                let itemPrice = Price.format(self.item.product.price)
+                let itemPrice = PriceFormatter.format(self.item.product.price)
                 self.priceLabel.text  = "× \(itemPrice) = \(total)"
             } else if self.quantity == 1 {
                 self.priceLabel.text = total
             } else {
-                let itemPrice = Price.format(self.item.product.priceWithDeposit)
+                let itemPrice = PriceFormatter.format(self.item.product.priceWithDeposit)
                 self.priceLabel.text = "× \(itemPrice) = \(total)"
             }
         }

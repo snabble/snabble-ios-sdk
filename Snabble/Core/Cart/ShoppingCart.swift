@@ -9,18 +9,12 @@ import Foundation
 /// data needed to initialize a shopping cart
 public struct CartConfig {
 
-    /// name of the cart. used as the part of the pathname for locally storing the cart
-    public var name = "default"
-
     /// directory where the cart should be stored, will be created if it doesn't exist.
     /// Default: the app's "Documents" directory
     public var directory: String
 
-    /// a `ProductProvider` instance to use for resolving SKUs to `Product`s. You must always use the same snabble project for a cart.
-    public weak var productProvider: ProductProvider?
-
-    /// url for the "create checkout info" endpoint
-    public var checkoutInfoUrl = ""
+    /// the `Project` that this cart is used in. You must always use the same snabble project for a cart.
+    public var project = Project.none
 
     /// id of the shop that this cart is used for
     public var shopId = "unknown"
@@ -32,7 +26,8 @@ public struct CartConfig {
     public var maxAge: TimeInterval = 14400
 
     public init() {
-        self.directory = NSSearchPathForDirectoriesInDomains(.documentDirectory, .userDomainMask, true).first!
+        let docDir = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)[0]
+        self.directory = docDir.path
     }
 }
 
@@ -83,16 +78,16 @@ public struct CartItem: Codable {
     }
 
     /// total price for this cart item
-    public var total: Int {
+    public func total(_ project: Project) -> Int {
         if let price = self.price {
             return price
         } else if let units = self.units {
             let multiplier = units == 0 ? self.quantity : units
             return multiplier * self.product.priceWithDeposit
         } else if let weight = self.weight {
-            return self.product.priceFor(weight)
+            return PriceFormatter.priceFor(project, product, weight)
         }
-        return self.product.priceFor(self.quantity)
+        return PriceFormatter.priceFor(project, self.product, self.quantity)
     }
 
     func cartItem() -> Cart.Item {
@@ -116,10 +111,6 @@ public struct CartItem: Codable {
 public final class ShoppingCart {
     
     public static let maxAmount = 9999
-
-    /// this is intended mainly for the EmbeddedCodesCheckout - use this to append additional codes
-    /// (e.g. special "QR code purchase" marker codes) to the list of scanned codes of this cart
-    public var additionalCodes: [String]?
 
     private(set) public var items = [CartItem]()
     private(set) public var session = ""
@@ -157,11 +148,6 @@ public final class ShoppingCart {
     /// get this cart's `loyaltyCard`
     public var loyaltyCard: String? {
         return self.config.loyaltyCard
-    }
-
-    /// get this cart's `createInfoUrl`
-    public var checkoutInfoUrl: String {
-        return self.config.checkoutInfoUrl
     }
 
     /// add a Product. if already present and not weight dependent, increase its quantity
@@ -242,7 +228,7 @@ public final class ShoppingCart {
 
     /// return the the total price of all products
     public var totalPrice: Int {
-        return self.items.reduce(0) { $0 + $1.total }
+        return self.items.reduce(0) { $0 + $1.total(self.config.project) }
     }
     
     /// return the total number of items
@@ -295,8 +281,8 @@ struct CartStorage: Codable {
 extension ShoppingCart {
 
     private func cartUrl() -> URL {
-        let path = self.config.directory + "/" + self.config.name + ".json"
-        return URL(fileURLWithPath: path)
+        let url = URL(fileURLWithPath: self.config.directory)
+        return url.appendingPathComponent(self.config.project.id + ".json")
     }
 
     /// persist this shopping cart to disk
@@ -316,7 +302,7 @@ extension ShoppingCart {
             let encodedItems = try JSONEncoder().encode(storage)
             try encodedItems.write(to: self.cartUrl(), options: .atomic)
         } catch let error {
-            NSLog("error saving cart \(self.config.name): \(error)")
+            NSLog("error saving cart \(self.config.project.id): \(error)")
         }
 
         timer?.invalidate()
@@ -340,7 +326,7 @@ extension ShoppingCart {
             }
             return storage
         } catch let error {
-            NSLog("error loading cart \(self.config.name): \(error)")
+            NSLog("error loading cart \(self.config.project.id): \(error)")
             return CartStorage()
         }
     }

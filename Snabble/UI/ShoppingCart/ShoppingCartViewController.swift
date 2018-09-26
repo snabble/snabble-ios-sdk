@@ -237,7 +237,7 @@ extension ShoppingCartViewController: ShoppingCartTableDelegate {
 
     func updateTotals() {
         let total = self.shoppingCart.totalPrice
-        let formattedTotal = Price.format(self.shoppingCart.totalPrice)
+        let formattedTotal = PriceFormatter.format(self.shoppingCart.totalPrice)
         if total == 0 {
             self.tabBarItem.title = "Snabble.ShoppingCart.title".localized()
         } else {

@@ -76,7 +76,7 @@ class EmbeddedCodesCheckoutViewController: UIViewController {
             UIScreen.main.brightness = 0.5
         }
 
-        let total = Price.format(cart.totalPrice)
+        let total = PriceFormatter.format(cart.totalPrice)
         self.totalPriceLabel.text = "Snabble.QRCode.total".localized() + "\(total)"
         let explanation = self.codes.count > 1 ? "Snabble.QRCode.showTheseCodes" : "Snabble.QRCode.showThisCode"
         self.explanation1.text = explanation.localized()
@@ -104,19 +104,12 @@ class EmbeddedCodesCheckoutViewController: UIViewController {
             let regularItems = self.cart.items.filter { return $0.product.saleRestriction == .none }
             let restrictedItems = self.cart.items.filter { return $0.product.saleRestriction != .none }
 
-            var regularCodes = self.codesFor(regularItems)
-            if let additionalCodes = self.cart.additionalCodes {
-                regularCodes.append(contentsOf: additionalCodes)
-            }
-
+            let regularCodes = self.codesFor(regularItems)
             let restrictedCodes = self.codesFor(restrictedItems)
 
             return (regularCodes, restrictedCodes)
         } else {
-            var codes = self.codesFor(self.cart.items)
-            if let additionalCodes = self.cart.additionalCodes {
-                codes.append(contentsOf: additionalCodes)
-            }
+            let codes = self.codesFor(self.cart.items)
             return (codes, [])
         }
     }

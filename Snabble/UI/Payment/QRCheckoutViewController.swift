@@ -52,7 +52,7 @@ class QRCheckoutViewController: UIViewController {
             UIScreen.main.brightness = 0.5
         }
 
-        let total = Price.format(self.process.checkoutInfo.price.price)
+        let total = PriceFormatter.format(self.process.checkoutInfo.price.price)
         self.totalPriceLabel.text = "Snabble.QRCode.total".localized() + "\(total)"
         self.explanation1.text = "Snabble.QRCode.showThisCode".localized()
 

@@ -212,43 +212,6 @@ public struct Product: Codable {
     internal let transmissionCodes: [String: String]
 }
 
-/// price calculation stuff
-extension Product {
-
-    /// get the price for this product, multiplied by `quantityOrWeight`
-    ///
-    /// for single item products, `quantityOrWeight` is treated as the quantity
-    /// for weighing products, `quantityOrWeight` is treated as the weight in grams
-    ///
-    /// - Parameters:
-    ///   - quantityOrWeight: quantity or weight
-    /// - Returns: the price
-    public func priceFor(_ quantityOrWeight: Int) -> Int {
-        switch self.type {
-        case .singleItem:
-            return quantityOrWeight * self.priceWithDeposit
-
-        case .preWeighed, .userMustWeigh:
-            let gramPrice = Decimal(self.price) / Decimal(1000.0)
-            let total = Decimal(quantityOrWeight) * gramPrice
-
-            return self.round(total)
-        }
-    }
-
-    private func round(_ n: Decimal) -> Int {
-        #warning("need project")
-        let mode = Project.none.roundingMode.mode
-        let round = NSDecimalNumberHandler(roundingMode: mode,
-                                           scale: 0,
-                                           raiseOnExactness: false,
-                                           raiseOnOverflow: false,
-                                           raiseOnUnderflow: false,
-                                           raiseOnDivideByZero: false)
-        return (n as NSDecimalNumber).rounding(accordingToBehavior: round).intValue
-    }
-}
-
 /// conform to Hashable
 extension Product: Hashable {
     public static func ==(_ lhs: Product, _ rhs: Product) -> Bool {
@@ -257,28 +220,5 @@ extension Product: Hashable {
 
     public var hashValue: Int {
         return self.sku.hashValue
-    }
-}
-
-/// price formatting
-public enum Price {
-    public static func format(_ price: Int) -> String {
-        #warning("need project")
-        let divider = pow(10.0, Project.none.decimalDigits)
-        let decimalPrice = Decimal(price) / divider
-        return formatter.string(for: decimalPrice)!
-    }
-
-    private static var formatter: NumberFormatter {
-        let fmt = NumberFormatter()
-        fmt.minimumIntegerDigits = 1
-        #warning("need project")
-        fmt.minimumFractionDigits = Project.none.decimalDigits
-        fmt.maximumFractionDigits = Project.none.decimalDigits
-        fmt.locale = Locale(identifier: Project.none.locale)
-        fmt.currencyCode = Project.none.currency
-        fmt.currencySymbol = Project.none.currencySymbol
-        fmt.numberStyle = .currency
-        return fmt
     }
 }

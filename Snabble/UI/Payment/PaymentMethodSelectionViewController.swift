@@ -39,7 +39,7 @@ class PaymentMethodSelectionViewController: UIViewController {
         self.view.backgroundColor = SnabbleUI.appearance.primaryColor
         self.titleLabel.textColor = SnabbleUI.appearance.secondaryColor
 
-        let totalPrice = Price.format(self.signedCheckoutInfo.checkoutInfo.price.price)
+        let totalPrice = PriceFormatter.format(self.signedCheckoutInfo.checkoutInfo.price.price)
         self.titleLabel.text = String(format: "Snabble.PaymentSelection.howToPay".localized(), totalPrice)
 
         let nib = UINib(nibName: "PaymentMethodCell", bundle: Snabble.bundle)

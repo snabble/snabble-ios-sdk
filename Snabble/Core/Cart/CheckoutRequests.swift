@@ -21,7 +21,8 @@ extension ShoppingCart {
         let cart = Cart(session: self.session, shopID: self.shopId, customer: customerInfo, items: items)
 
         NSLog("create checkout session: \(cart.session)")
-        project.request(.post, self.checkoutInfoUrl, body: cart, timeout: timeout) { request in
+        let url = project.links.checkoutInfo.href
+        project.request(.post, url, body: cart, timeout: timeout) { request in
             guard let request = request else {
                 return completion(nil, nil)
             }

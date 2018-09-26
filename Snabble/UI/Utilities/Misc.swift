@@ -23,8 +23,8 @@ public struct SnabbleAppearance {
 /// global settings for the Snabble UI classes
 public class SnabbleUI {
 
-    static var appearance = SnabbleAppearance()
-    static var project = Project.none
+    static private(set) var appearance = SnabbleAppearance()
+    static private(set) var project = Project.none
 
     /// sets the global appearance to be used. Your app must call `SnabbleUI.setup()` before instantiating any snabble view controllers
     public static func setup(_ appearance: SnabbleAppearance) {
