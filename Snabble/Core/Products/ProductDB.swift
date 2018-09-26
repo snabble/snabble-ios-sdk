@@ -195,6 +195,8 @@ final class ProductDB: ProductProvider {
         var dbDir = self.dbDirectory
         if temp {
             dbDir.appendPathComponent("tmp_", isDirectory: true)
+            // make sure the temporary directory exists
+            try? FileManager.default.createDirectory(at: dbDir, withIntermediateDirectories: true)
         }
         dbDir.appendPathComponent(self.dbName)
 
