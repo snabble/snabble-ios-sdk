@@ -81,7 +81,7 @@ class ScanConfirmationView: DesignableView {
         self.productNameLabel.text = product.name
         self.shoppingCart = cart
         self.code = code
-        self.ean = EAN.parse(code)
+        self.ean = EAN.parse(code, SnabbleUI.project)
         self.alreadyInCart = false
         
         self.quantity = product.type != .userMustWeigh ? 1 : 0
@@ -210,7 +210,9 @@ class ScanConfirmationView: DesignableView {
                 editableUnits = true
             }
             // NSLog("adding to cart: \(self.quantity) x \(self.product.name), code=\(code)")
-            cart.add(self.product, quantity: self.quantity, scannedCode: code, editableUnits: editableUnits)
+
+            let ean = EAN.parse(code, SnabbleUI.project)!
+            cart.add(self.product, quantity: self.quantity, scannedCode: ean, editableUnits: editableUnits)
         } else {
             // NSLog("updating cart: add \(self.quantity) to \(self.product.name)")
             cart.setQuantity(self.quantity, for: self.product)

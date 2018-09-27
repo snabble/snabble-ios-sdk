@@ -80,7 +80,7 @@ class ShoppingCartTableCell: UITableViewCell {
         self.plusButton.tag = row
         self.quantityInput.tag = row
 
-        let ean = EAN.parse(item.scannedCode)
+        let ean = EAN.parse(item.scannedCode, SnabbleUI.project)
         self.minusButton.isHidden = ean?.hasEmbeddedData == true
         self.plusButton.isHidden = product.type == .preWeighed || ean?.hasEmbeddedData == true
 
@@ -122,7 +122,7 @@ class ShoppingCartTableCell: UITableViewCell {
     }
 
     private func showQuantity() {
-        let ean = EAN.parse(self.item.scannedCode)
+        let ean = EAN.parse(self.item.scannedCode, SnabbleUI.project)
 
         let showWeight = ean?.hasEmbeddedWeight == true || self.item.product.type == .userMustWeigh
         let gram = showWeight ? "g" : ""

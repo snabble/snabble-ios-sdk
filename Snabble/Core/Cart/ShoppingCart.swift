@@ -54,16 +54,15 @@ public struct CartItem: Codable {
     let weight: Int?
     private(set) var units: Int?
 
-    init(_ quantity: Int, _ product: Product, _ scannedCode: String, _ editableUnits: Bool = false) {
+    init(_ quantity: Int, _ product: Product, _ ean: EANCode, _ editableUnits: Bool = false) {
         self.product = product
         self.quantity = quantity
         self.editableUnits = editableUnits
-        self.scannedCode = scannedCode
+        self.scannedCode = ean.code
 
-        let ean = EAN.parse(self.scannedCode)
-        self.price = ean?.embeddedPrice
-        self.weight = ean?.embeddedWeight
-        self.units = ean?.embeddedUnits
+        self.price = ean.embeddedPrice
+        self.weight = ean.embeddedWeight
+        self.units = ean.embeddedUnits
     }
 
     public init(from decoder: Decoder) throws {
@@ -153,9 +152,8 @@ public final class ShoppingCart {
     /// add a Product. if already present and not weight dependent, increase its quantity
     ///
     /// the newly added (or modified) product is moved to the start of the list
-    public func add(_ product: Product, quantity: Int = 1, scannedCode: String, editableUnits: Bool = false) {
-        let ean = EAN.parse(scannedCode)
-        if let index = self.indexOf(product), product.type == .singleItem, ean?.hasEmbeddedData == false {
+    public func add(_ product: Product, quantity: Int = 1, scannedCode: EANCode, editableUnits: Bool = false) {
+        if let index = self.indexOf(product), product.type == .singleItem, scannedCode.hasEmbeddedData == false {
             self.items[index].quantity += quantity
             let item = self.items.remove(at: index)
             self.items.insert(item, at: 0)
@@ -176,7 +174,7 @@ public final class ShoppingCart {
         return self.items[index].product
     }
     
-    /// change the quantity of the item at  `index`
+    /// change the quantity of the item at `index`
     public func setQuantity(_ quantity: Int, at index: Int) {
         self.items[index].quantity = quantity
 

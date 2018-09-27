@@ -145,10 +145,10 @@ public enum EAN {
     ///   if `code` has 7 or 12 digits, the check digit for this code is calculated and appended to the code.
     ///   if `code` has 16 digits, it is treated as an EAN-14 embedded in a Code-128 (i.e, prefixed with "01")
     /// - Returns: an EANCode, or nil if the code did not represent a well-formed EAN-8, EAN-13 or EAN-14
-    public static func parse(_ code: String) -> EANCode? {
+    public static func parse(_ code: String, _ project: Project?) -> EANCode? {
         switch code.count {
         case 7, 8: return EAN8(code)
-        case 12, 13: return EAN13(code)
+        case 12, 13: return EAN13(code, project)
         case 14, 16: return EAN14(code)
         case 22: return code.hasPrefix("97") ? EdekaProductPrice(code) : nil
         default: return nil
@@ -241,8 +241,9 @@ public struct EAN13: EANCode {
     /// create an EAN13
     ///
     /// - Parameter code: a 12 or 13 digit string representing an EAN-13
+    /// - Parameter project: the snabble project (for prefix information)
     /// - Returns: an EAN13 object, or nil if `code` did not represent an EAN-13
-    public init?(_ code: String) {
+    public init?(_ code: String, _ project: Project? = nil) {
         guard
             code.count == 13 || code.count == 12,
             Int64(code) != nil,
@@ -254,6 +255,7 @@ public struct EAN13: EANCode {
 
         self.code = code.prefix(12) + String(check)
         self.digits = self.code.compactMap { Int(String($0)) }
+        self.project = project
     }
 
     /// calculate the check digit for an EAN-13
