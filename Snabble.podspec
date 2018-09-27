@@ -8,7 +8,7 @@
 
 Pod::Spec.new do |s|
   s.name             = 'Snabble'
-  s.version          = '0.7.0'
+  s.version          = '0.7.1'
   s.summary          = 'The snabble iOS SDK'
 
 # This description is used to generate tags and improve search results.

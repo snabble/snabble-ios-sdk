@@ -31,6 +31,9 @@ public protocol ProductProvider: class {
     /// - parameter project: the snabble `Project`
     init(_ config: SnabbleAPIConfig, _ project: Project)
 
+    /// Check if a database file is present for this project
+    func hasDatabase() -> Bool
+
     /// Setup the product database
     ///
     /// The database can be used as soon as this method returns.
@@ -192,15 +195,13 @@ final class ProductDB: ProductProvider {
     }
 
     func dbPathname(temp: Bool = false) -> String {
-        var dbDir = self.dbDirectory
-        if temp {
-            dbDir.appendPathComponent("tmp_", isDirectory: true)
-            // make sure the temporary directory exists
-            try? FileManager.default.createDirectory(at: dbDir, withIntermediateDirectories: true)
-        }
-        dbDir.appendPathComponent(self.dbName)
-
+        let prefix = temp ? "tmp_" : ""
+        let dbDir = self.dbDirectory.appendingPathComponent(prefix + self.dbName)
         return dbDir.path
+    }
+
+    func hasDatabase() -> Bool {
+        return FileManager.default.fileExists(atPath: self.dbPathname())
     }
 
     /// Setup the product database

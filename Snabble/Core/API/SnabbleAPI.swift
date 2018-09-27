@@ -52,6 +52,10 @@ public struct SnabbleAPI {
         return self.metadata.projects
     }
 
+    public static var flags: Flags {
+        return self.metadata.flags
+    }
+
     public static func setup(_ config: SnabbleAPIConfig, completion: @escaping ()->() ) {
         self.config = config
 
@@ -63,6 +67,10 @@ public struct SnabbleAPI {
             }
         }
 
+        self.loadMetadata(completion: completion)
+    }
+
+    public static func loadMetadata(completion: @escaping ()->() ) {
         let bundleVersion = Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String ?? "0.0"
         let appVersion = config.appVersion ?? bundleVersion
         let version = appVersion.addingPercentEncoding(withAllowedCharacters: .urlPathAllowed) ?? appVersion
@@ -76,8 +84,16 @@ public struct SnabbleAPI {
         }
     }
 
+    private static var providerPool = [String: ProductProvider]()
+
     public static func productProvider(_ project: Project) -> ProductProvider {
-        return ProductDB(SnabbleAPI.config, project)
+        if let provider = providerPool[project.id] {
+            return provider
+        } else {
+            let provider = ProductDB(SnabbleAPI.config, project)
+            providerPool[project.id] = provider
+            return provider
+        }
     }
 }
 
