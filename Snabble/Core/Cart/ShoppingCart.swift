@@ -343,12 +343,12 @@ extension ShoppingCart {
 // MARK: send events
 struct CartEvent {
     static func sessionStart(_ cart: ShoppingCart) {
-        let event = AppEvent(.sessionStart, session: cart.session, shopId: cart.shopId)
+        let event = AppEvent(.sessionStart, session: cart.session, project: cart.config.project, shopId: cart.shopId)
         event.post()
     }
 
     static func sessionEnd(_ cart: ShoppingCart) {
-        let event = AppEvent(.sessionEnd, session: cart.session, shopId: cart.shopId)
+        let event = AppEvent(.sessionEnd, session: cart.session, project: cart.config.project, shopId: cart.shopId)
         event.post()
     }
 
