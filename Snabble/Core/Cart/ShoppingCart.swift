@@ -54,15 +54,15 @@ public struct CartItem: Codable {
     let weight: Int?
     private(set) var units: Int?
 
-    init(_ quantity: Int, _ product: Product, _ ean: EANCode, _ editableUnits: Bool = false) {
+    init(_ quantity: Int, _ product: Product, _ scannedCode: String, _ ean: EANCode?, _ editableUnits: Bool = false) {
         self.product = product
         self.quantity = quantity
         self.editableUnits = editableUnits
-        self.scannedCode = ean.code
+        self.scannedCode = scannedCode
 
-        self.price = ean.embeddedPrice
-        self.weight = ean.embeddedWeight
-        self.units = ean.embeddedUnits
+        self.price = ean?.embeddedPrice
+        self.weight = ean?.embeddedWeight
+        self.units = ean?.embeddedUnits
     }
 
     public init(from decoder: Decoder) throws {
@@ -152,13 +152,13 @@ public final class ShoppingCart {
     /// add a Product. if already present and not weight dependent, increase its quantity
     ///
     /// the newly added (or modified) product is moved to the start of the list
-    public func add(_ product: Product, quantity: Int = 1, scannedCode: EANCode, editableUnits: Bool = false) {
-        if let index = self.indexOf(product), product.type == .singleItem, scannedCode.hasEmbeddedData == false {
+    public func add(_ product: Product, quantity: Int = 1, scannedCode: String, ean: EANCode?, editableUnits: Bool = false) {
+        if let index = self.indexOf(product), product.type == .singleItem, ean?.hasEmbeddedData == false {
             self.items[index].quantity += quantity
             let item = self.items.remove(at: index)
             self.items.insert(item, at: 0)
         } else {
-            let item = CartItem(quantity, product, scannedCode, editableUnits)
+            let item = CartItem(quantity, product, scannedCode, ean, editableUnits)
             self.items.insert(item, at: 0)
         }
 
