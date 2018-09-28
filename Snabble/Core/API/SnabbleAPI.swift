@@ -86,7 +86,7 @@ public struct SnabbleAPI {
 
     private static var providerPool = [String: ProductProvider]()
 
-    public static func productProvider(_ project: Project) -> ProductProvider {
+    public static func productProvider(for project: Project) -> ProductProvider {
         if let provider = providerPool[project.id] {
             return provider
         } else {
