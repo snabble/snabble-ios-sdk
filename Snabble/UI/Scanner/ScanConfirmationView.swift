@@ -49,8 +49,8 @@ class ScanConfirmationView: DesignableView {
         self.view.backgroundColor = .clear
         self.addCornersAndShadow(backgroundColor: .white, cornerRadius: 8)
 
-        self.cartButton.backgroundColor = SnabbleAppearance.shared.config.primaryColor
-        self.cartButton.tintColor = SnabbleAppearance.shared.config.secondaryColor
+        self.cartButton.backgroundColor = SnabbleUI.appearance.primaryColor
+        self.cartButton.tintColor = SnabbleUI.appearance.secondaryColor
         self.cartButton.makeRoundedButton()
 
         let mono14 = UIFont.monospacedDigitSystemFont(ofSize: 14, weight: .regular)
@@ -60,7 +60,7 @@ class ScanConfirmationView: DesignableView {
         self.plusButton.makeBorderedButton()
 
         self.quantityField.font = UIFont.monospacedDigitSystemFont(ofSize: 21, weight: .regular)
-        self.quantityField.tintColor = SnabbleAppearance.shared.config.primaryColor
+        self.quantityField.tintColor = SnabbleUI.appearance.primaryColor
         self.quantityField.delegate = self
 
         self.closeButton.setImage(UIImage.fromBundle("icon-close"), for: .normal)
@@ -81,7 +81,7 @@ class ScanConfirmationView: DesignableView {
         self.productNameLabel.text = product.name
         self.shoppingCart = cart
         self.code = code
-        self.ean = EAN.parse(code)
+        self.ean = EAN.parse(code, SnabbleUI.project)
         self.alreadyInCart = false
         
         self.quantity = product.type != .userMustWeigh ? 1 : 0
@@ -117,7 +117,7 @@ class ScanConfirmationView: DesignableView {
         self.cartButton.setTitle(cartTitle.localized(), for: .normal)
 
         if product.discountedPrice != nil {
-            let originalPrice = Price.format(product.listPrice)
+            let originalPrice = PriceFormatter.format(product.listPrice)
             let str = NSAttributedString(string: originalPrice, attributes: [NSAttributedString.Key.strikethroughStyle: NSUnderlineStyle.single.rawValue])
             self.originalPriceLabel.attributedText = str
         } else {
@@ -142,18 +142,18 @@ class ScanConfirmationView: DesignableView {
         self.plusButton.isEnabled = qty < ShoppingCart.maxAmount
 
         if let weight = self.ean?.embeddedWeight {
-            let productPrice = self.product.priceFor(weight)
-            let priceKilo = Price.format(product.price)
-            let formattedPrice = Price.format(productPrice)
+            let productPrice = PriceFormatter.priceFor(self.product, weight)
+            let priceKilo = PriceFormatter.format(product.price)
+            let formattedPrice = PriceFormatter.format(productPrice)
             self.priceLabel.text = "\(qty)g × \(priceKilo)/kg = \(formattedPrice)"
         } else if let price = self.ean?.embeddedPrice {
-            self.priceLabel.text = Price.format(price)
+            self.priceLabel.text = PriceFormatter.format(price)
             self.quantityField.isHidden = true
             self.gramLabel.isHidden = true
         } else if let amount = self.ean?.embeddedUnits {
-            let productPrice = Price.format(product.priceWithDeposit)
+            let productPrice = PriceFormatter.format(product.priceWithDeposit)
             let multiplier = amount == 0 ? self.quantity : amount
-            let totalPrice = Price.format(self.product.priceWithDeposit * multiplier)
+            let totalPrice = PriceFormatter.format(self.product.priceWithDeposit * multiplier)
             self.priceLabel.text = "\(multiplier) × \(productPrice) = \(totalPrice)"
             self.quantityField.isHidden = true
             self.gramLabel.isHidden = true
@@ -161,20 +161,20 @@ class ScanConfirmationView: DesignableView {
             self.plusButton.isHidden = amount > 0
             self.quantityField.isHidden = amount > 0
         } else if product.type == .userMustWeigh {
-            let productPrice = product.priceFor(quantity)
-            let priceKilo = Price.format(product.price)
-            let formattedPrice = Price.format(productPrice)
+            let productPrice = PriceFormatter.priceFor(self.product, quantity)
+            let priceKilo = PriceFormatter.format(product.price)
+            let formattedPrice = PriceFormatter.format(productPrice)
             self.priceLabel.text = "\(qty)g × \(priceKilo)/kg = \(formattedPrice)"
         } else {
             if let deposit = self.product.deposit {
-                let productPrice = Price.format(self.product.price)
-                let depositPrice = Price.format(deposit * qty)
-                let totalPrice = Price.format(self.product.priceFor(qty))
+                let productPrice = PriceFormatter.format(self.product.price)
+                let depositPrice = PriceFormatter.format(deposit * qty)
+                let totalPrice = PriceFormatter.format(PriceFormatter.priceFor(self.product, qty))
                 let deposit = String(format: "Snabble.Scanner.plusDeposit".localized(), depositPrice)
                 self.priceLabel.text = "\(qty) × \(productPrice) \(deposit) = \(totalPrice)"
             } else {
-                let productPrice = self.product.priceFor(qty)
-                self.priceLabel.text = Price.format(productPrice)
+                let productPrice = PriceFormatter.priceFor(self.product, qty)
+                self.priceLabel.text = PriceFormatter.format(productPrice)
             }
         }
     }
@@ -210,7 +210,9 @@ class ScanConfirmationView: DesignableView {
                 editableUnits = true
             }
             // NSLog("adding to cart: \(self.quantity) x \(self.product.name), code=\(code)")
-            cart.add(self.product, quantity: self.quantity, scannedCode: code, editableUnits: editableUnits)
+
+            let ean = EAN.parse(code, SnabbleUI.project)
+            cart.add(self.product, quantity: self.quantity, scannedCode: code, ean: ean, editableUnits: editableUnits)
         } else {
             // NSLog("updating cart: add \(self.quantity) to \(self.product.name)")
             cart.setQuantity(self.quantity, for: self.product)

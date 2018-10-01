@@ -41,21 +41,41 @@ struct AppEvent: Encodable {
     let type: EventType
     let appId: String
     let payload: Payload
-    let project: String
+    let projectId: String
     let timestamp: String
 
     let shopId: String?
     let id: String?
     let agent: String?
 
-    private init(type: EventType, payload: Payload,
-                     shopId: String? = nil, id: String? = nil,
-                     agent: String? = nil) {
+    private let project: Project
+
+    enum CodingKeys: String, CodingKey {
+        case type, appId, payload, timestamp
+        case projectId = "project"
+        case shopId, id, agent
+    }
+
+    func encode(to encoder: Encoder) throws {
+        var container = encoder.container(keyedBy: CodingKeys.self)
+        try container.encode(self.type, forKey: .type)
+        try container.encode(self.appId, forKey: .appId)
+        try container.encode(self.payload, forKey: .payload)
+        try container.encode(self.projectId, forKey: .projectId)
+        try container.encode(self.timestamp, forKey: .timestamp)
+        try container.encode(self.shopId, forKey: .shopId)
+        try container.encode(self.id, forKey: .id)
+        try container.encode(self.agent, forKey: .agent)
+    }
+
+    private init(type: EventType, payload: Payload, project: Project,
+                 shopId: String? = nil, id: String? = nil, agent: String? = nil) {
         self.type = type
         self.appId = SnabbleAPI.clientId
         self.payload = payload
         self.shopId = shopId
-        self.project = SnabbleAPI.project.id
+        self.project = project
+        self.projectId = project.id
         self.id = id
         self.agent = agent
         let fmt = DateFormatter()
@@ -63,20 +83,20 @@ struct AppEvent: Encodable {
         self.timestamp = fmt.string(from: Date())
     }
 
-    init(_ type: EventType, session: String, shopId: String? = nil) {
+    init(_ type: EventType, session: String, project: Project, shopId: String? = nil) {
         assert(type == .sessionStart || type == .sessionEnd, "session events must have a session type")
         let session = Payload.session(Session(session: session))
-        self.init(type: type, payload: session, shopId: shopId)
+        self.init(type: type, payload: session, project: project, shopId: shopId)
     }
 
-    init(message: String, session: String? = nil, shopId: String? = nil) {
+    init(message: String, project: Project, session: String? = nil, shopId: String? = nil) {
         let error = Payload.error(Error(message: message, session: session))
-        self.init(type: .error, payload: error, shopId: shopId)
+        self.init(type: .error, payload: error, project: project, shopId: shopId)
     }
 
     init(_ shoppingCart: ShoppingCart) {
         let cart = shoppingCart.createCart()
-        self.init(type: .cart, payload: Payload.cart(cart), shopId: cart.shopID)
+        self.init(type: .cart, payload: Payload.cart(cart), project: shoppingCart.config.project, shopId: cart.shopID)
     }
 
 }
@@ -86,14 +106,13 @@ extension AppEvent {
     struct Empty: Decodable { }
 
     func post() {
-        let appEvents = SnabbleAPI.project.links.appEvents.href
-        SnabbleAPI.request(.post, appEvents, body: self, timeout: 0) { request in
+        project.request(.post, project.links.appEvents.href, body: self, timeout: 0) { request in
             guard let request = request else {
                 return
             }
 
             // NSLog("posting event \(String(describing: self))")
-            SnabbleAPI.perform(request) { (result: Empty?, error) in
+            self.project.perform(request) { (result: Empty?, error) in
                 if let error = error {
                     NSLog("error posting event: \(error)")
                 }

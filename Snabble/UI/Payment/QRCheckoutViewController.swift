@@ -52,7 +52,7 @@ class QRCheckoutViewController: UIViewController {
             UIScreen.main.brightness = 0.5
         }
 
-        let total = Price.format(self.process.checkoutInfo.price.price)
+        let total = PriceFormatter.format(self.process.checkoutInfo.price.price)
         self.totalPriceLabel.text = "Snabble.QRCode.total".localized() + "\(total)"
         self.explanation1.text = "Snabble.QRCode.showThisCode".localized()
 
@@ -61,7 +61,7 @@ class QRCheckoutViewController: UIViewController {
         self.qrCodeView.image = QRCode.generate(for: qrCodeContent, scale: 5)
         self.qrCodeWidth.constant = self.qrCodeView.image?.size.width ?? 0
 
-        self.poller = PaymentProcessPoller(self.process)
+        self.poller = PaymentProcessPoller(self.process, SnabbleUI.project)
         self.poller?.waitForPayment { success in
             self.poller = nil
             self.paymentFinished(success)
@@ -84,7 +84,7 @@ class QRCheckoutViewController: UIViewController {
 
         self.delegate.track(.paymentCancelled)
 
-        self.process.abort { process, error in
+        self.process.abort(SnabbleUI.project) { process, error in
             self.navigationController?.popToRootViewController(animated: true)
         }
     }

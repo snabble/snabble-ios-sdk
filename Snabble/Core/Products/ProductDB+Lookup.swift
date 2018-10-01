@@ -23,7 +23,7 @@ extension ProductDB {
         let timeoutInterval: TimeInterval = 5
 
         let fullUrl = url.replacingOccurrences(of: placeholder, with: identifier)
-        SnabbleAPI.request(.get, fullUrl, timeout: timeoutInterval) { request in
+        self.project.request(.get, fullUrl, timeout: timeoutInterval) { request in
             guard let request = request else {
                 return completion(nil, true)
             }
@@ -67,7 +67,7 @@ extension ProductDB {
     }
 
     private func returnError(_ msg: String, _ completion: @escaping (LookupResult?, Bool) -> () ) {
-        NSLog(msg)
+        self.logError(msg)
         DispatchQueue.main.sync {
             completion(nil, true)
         }
@@ -85,7 +85,7 @@ extension ProductDB {
             return
         }
 
-        self.getBundlingProducts(self.config.links.bundlesForSku.href, "{bundledSku}", apiProduct.sku) { bundles, error in
+        self.getBundlingProducts(self.project.links.bundlesForSku.href, "{bundledSku}", apiProduct.sku) { bundles, error in
             let result = LookupResult(product: apiProduct.convert(deposit, bundles), code: matchingCode)
             DispatchQueue.main.async {
                 completion(result, false)
@@ -100,7 +100,7 @@ extension ProductDB {
         let timeoutInterval: TimeInterval = 5
 
         let fullUrl = url.replacingOccurrences(of: placeholder, with: sku)
-        SnabbleAPI.request(.get, fullUrl, timeout: timeoutInterval) { request in
+        self.project.request(.get, fullUrl, timeout: timeoutInterval) { request in
             guard let request = request else {
                 return completion([], true)
             }
@@ -120,11 +120,11 @@ extension ProductDB {
                     }
                     catch let error {
                         let raw = String(bytes: data, encoding: .utf8)
-                        NSLog("bundle parse error: \(error) \(String(describing: raw))")
+                        self.logError("bundle parse error: \(error) \(String(describing: raw))")
                         completion([], true)
                     }
                 } else {
-                    NSLog("error gettings bundles for sku \(sku): \(String(describing: error))")
+                    self.logError("error gettings bundles for sku \(sku): \(String(describing: error))")
                     completion([], true)
                 }
             }
@@ -140,7 +140,7 @@ extension ProductDB {
             return
         }
 
-        self.getProductsBySku(self.config.links.productsBySku.href, skus) { products, error in
+        self.getProductsBySku(self.project.links.productsBySku.href, skus) { products, error in
             let deposits = Dictionary(uniqueKeysWithValues: products.map { ($0.sku, $0.listPrice) })
 
             let products = bundles.map { (bundle) -> Product in
@@ -159,7 +159,7 @@ extension ProductDB {
 
         let skuSet = Set(skus)
         let skuItems = skuSet.map { URLQueryItem(name: "skus", value: $0) }
-        SnabbleAPI.request(.get, url, queryItems: skuItems, timeout: timeoutInterval) { request in
+        self.project.request(.get, url, queryItems: skuItems, timeout: timeoutInterval) { request in
             guard let request = request else {
                 return completion([], true)
             }
@@ -180,11 +180,11 @@ extension ProductDB {
                     }
                     catch let error {
                         let raw = String(bytes: data, encoding: .utf8)
-                        NSLog("products parse error: \(error) \(String(describing: raw))")
+                        self.logError("products parse error: \(error) \(String(describing: raw))")
                         completion([], true)
                     }
                 } else {
-                    NSLog("error getting products for skus \(skus): \(String(describing: error))")
+                    self.logError("error getting products for skus \(skus): \(String(describing: error))")
                     completion([], true)
                 }
             }
@@ -223,7 +223,7 @@ struct APIProduct: Codable {
     let imageUrl: String?
     let productType: APIProductType
     let transmissionCodes: [String]?
-    let price: Int
+    let price: Int?
     let discountedPrice: Int?
     let basePrice: String?
     let weighing: Weighing?
@@ -294,7 +294,7 @@ struct APIProduct: Codable {
                        subtitle: self.subtitle,
                        imageUrl: self.imageUrl,
                        basePrice: self.basePrice,
-                       listPrice: self.price,
+                       listPrice: self.price ?? 0,
                        discountedPrice: self.discountedPrice,
                        type: type,
                        scannableCodes: Set(scannableCodes),

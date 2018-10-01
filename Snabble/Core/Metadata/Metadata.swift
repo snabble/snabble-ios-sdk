@@ -317,27 +317,26 @@ public struct Shop: Decodable {
 
 public extension Metadata {
 
-    public static func readResource(_ name: String, extension: String) -> Metadata? {
-        if let url = Bundle.main.url(forResource: name, withExtension: `extension`) {
-            do {
-                let data = try Data(contentsOf: url)
-                let metadata = try JSONDecoder().decode(Metadata.self, from: data)
-                SnabbleAPI.metadata = metadata
-                return metadata
-            } catch let error {
-                NSLog("error parsing app data resource: \(error)")
-            }
+    public static func readResource(_ path: String) -> Metadata? {
+        let url = URL(fileURLWithPath: path)
+        do {
+            let data = try Data(contentsOf: url)
+            let metadata = try JSONDecoder().decode(Metadata.self, from: data)
+            return metadata
+        } catch let error {
+            NSLog("error parsing app data resource: \(error)")
         }
         return nil
     }
 
-    public static func load(from url: String, _ parameters: [String: String]? = nil, completion: @escaping (Metadata?) -> () ) {
-        SnabbleAPI.request(.get, url, jwtRequired: false, parameters: parameters, timeout: 5) { request in
+    public static func load(from url: String, completion: @escaping (Metadata?) -> () ) {
+        let project = Project.none
+        project.request(.get, url, jwtRequired: false, timeout: 5) { request in
             guard let request = request else {
                 return completion(nil)
             }
 
-            SnabbleAPI.perform(request) { (metadata: Metadata?, error) in
+            project.perform(request) { (metadata: Metadata?, error) in
                 if let metadata = metadata {
                     SnabbleAPI.metadata = metadata
                 }

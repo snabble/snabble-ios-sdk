@@ -68,7 +68,7 @@ public class ShoppingCartViewController: UIViewController {
     override public func viewDidLoad() {
         super.viewDidLoad()
         
-        let primaryBackgroundColor = SnabbleAppearance.shared.config.primaryBackgroundColor
+        let primaryBackgroundColor = SnabbleUI.appearance.primaryBackgroundColor
         self.view.backgroundColor = primaryBackgroundColor
 
         self.emptyState = ShoppingCartEmptyStateView(self.showScanner)
@@ -90,8 +90,8 @@ public class ShoppingCartViewController: UIViewController {
         self.tableBottomMargin.constant = 0
 
         self.checkoutButton.titleLabel?.font = UIFont.monospacedDigitSystemFont(ofSize: 15, weight: .regular)
-        self.checkoutButton.backgroundColor = SnabbleAppearance.shared.config.primaryColor
-        self.checkoutButton.tintColor = SnabbleAppearance.shared.config.secondaryColor
+        self.checkoutButton.backgroundColor = SnabbleUI.appearance.primaryColor
+        self.checkoutButton.tintColor = SnabbleUI.appearance.secondaryColor
         self.checkoutButton.makeRoundedButton()
     }
 
@@ -107,8 +107,8 @@ public class ShoppingCartViewController: UIViewController {
         self.delegate.track(.viewShoppingCart)
 
         // WTF? without this code, the button text sometimes appears as .textColor :(
-        self.checkoutButton.tintColor = SnabbleAppearance.shared.config.secondaryColor
-        self.checkoutButton.titleLabel?.textColor = SnabbleAppearance.shared.config.secondaryColor
+        self.checkoutButton.tintColor = SnabbleUI.appearance.secondaryColor
+        self.checkoutButton.titleLabel?.textColor = SnabbleUI.appearance.secondaryColor
     }
     
     override public func viewWillDisappear(_ animated: Bool) {
@@ -193,7 +193,7 @@ public class ShoppingCartViewController: UIViewController {
         spinner.centerYAnchor.constraint(equalTo: button.centerYAnchor).isActive = true
         button.isEnabled = false
 
-        self.shoppingCart.createCheckoutInfo() { info, error in
+        self.shoppingCart.createCheckoutInfo(SnabbleUI.project) { info, error in
             spinner.stopAnimating()
             spinner.removeFromSuperview()
             button.isEnabled = true
@@ -237,7 +237,7 @@ extension ShoppingCartViewController: ShoppingCartTableDelegate {
 
     func updateTotals() {
         let total = self.shoppingCart.totalPrice
-        let formattedTotal = Price.format(self.shoppingCart.totalPrice)
+        let formattedTotal = PriceFormatter.format(self.shoppingCart.totalPrice)
         if total == 0 {
             self.tabBarItem.title = "Snabble.ShoppingCart.title".localized()
         } else {

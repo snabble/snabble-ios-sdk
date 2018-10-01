@@ -28,7 +28,7 @@ extension ProductDB {
             "schemaVersion": schemaVersion
         ]
 
-        SnabbleAPI.request(.get, self.config.links.appdb.href, json: false, parameters: parameters, timeout: 0) { request in
+        self.project.request(.get, self.project.links.appdb.href, json: false, parameters: parameters, timeout: 0) { request in
             guard var request = request else {
                 return completion(.httpError)
             }

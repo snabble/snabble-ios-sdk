@@ -30,7 +30,7 @@ class EmbeddedCodesCheckoutViewController: UIViewController {
         self.process = process
         self.cart = cart
         self.delegate = delegate
-        self.codeblocks = Codeblocks(SnabbleAPI.project.encodedCodes ?? EmbeddedCodesCheckoutViewController.defaultCodes)
+        self.codeblocks = Codeblocks(SnabbleUI.project.encodedCodes ?? EmbeddedCodesCheckoutViewController.defaultCodes)
 
         super.init(nibName: nil, bundle: Snabble.bundle)
 
@@ -45,21 +45,21 @@ class EmbeddedCodesCheckoutViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        self.paidButton.backgroundColor = SnabbleAppearance.shared.config.primaryColor
+        self.paidButton.backgroundColor = SnabbleUI.appearance.primaryColor
         self.paidButton.makeRoundedButton()
         self.paidButton.setTitle("Snabble.QRCode.didPay".localized(), for: .normal)
 
         let nib = UINib(nibName: "QRCodeCell", bundle: Snabble.bundle)
         self.collectionView.register(nib, forCellWithReuseIdentifier: "qrCodeCell")
 
-        let codeblocks = Codeblocks(SnabbleAPI.project.encodedCodes!)
+        let codeblocks = Codeblocks(SnabbleUI.project.encodedCodes!)
 
         let (regularCodes, restrictedCodes) = self.codesForQR()
         self.codes = codeblocks.generateQrCodes(regularCodes, restrictedCodes)
 
         self.pageControl.numberOfPages = self.codes.count
         self.pageControl.pageIndicatorTintColor = .lightGray
-        self.pageControl.currentPageIndicatorTintColor = SnabbleAppearance.shared.config.primaryColor
+        self.pageControl.currentPageIndicatorTintColor = SnabbleUI.appearance.primaryColor
         self.collectionView.dataSource = self
         self.collectionView.delegate = self
 
@@ -76,7 +76,7 @@ class EmbeddedCodesCheckoutViewController: UIViewController {
             UIScreen.main.brightness = 0.5
         }
 
-        let total = Price.format(cart.totalPrice)
+        let total = PriceFormatter.format(cart.totalPrice)
         self.totalPriceLabel.text = "Snabble.QRCode.total".localized() + "\(total)"
         let explanation = self.codes.count > 1 ? "Snabble.QRCode.showTheseCodes" : "Snabble.QRCode.showThisCode"
         self.explanation1.text = explanation.localized()
@@ -108,7 +108,6 @@ class EmbeddedCodesCheckoutViewController: UIViewController {
             if let additionalCodes = self.cart.additionalCodes {
                 regularCodes.append(contentsOf: additionalCodes)
             }
-
             let restrictedCodes = self.codesFor(restrictedItems)
 
             return (regularCodes, restrictedCodes)
@@ -117,6 +116,7 @@ class EmbeddedCodesCheckoutViewController: UIViewController {
             if let additionalCodes = self.cart.additionalCodes {
                 codes.append(contentsOf: additionalCodes)
             }
+
             return (codes, [])
         }
     }

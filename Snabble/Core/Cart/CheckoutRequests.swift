@@ -15,18 +15,19 @@ extension ShoppingCart {
     ///   - timeout: the timeout for the HTTP request (0 for the system default timeout)
     ///   - completion: is called on the main thread with the result of the API call,
     ///    with either a `SignedCheckoutInfo` object or `nil` if an error occurred
-    public func createCheckoutInfo(timeout: TimeInterval = 0, completion: @escaping (SignedCheckoutInfo?, ApiError?) -> () ) {
+    public func createCheckoutInfo(_ project: Project, timeout: TimeInterval = 0, completion: @escaping (SignedCheckoutInfo?, ApiError?) -> () ) {
         let items = self.items.map { $0.cartItem() }
         let customerInfo = Cart.CustomerInfo(loyaltyCard: self.loyaltyCard)
         let cart = Cart(session: self.session, shopID: self.shopId, customer: customerInfo, items: items)
 
         NSLog("create checkout session: \(cart.session)")
-        SnabbleAPI.request(.post, self.checkoutInfoUrl, body: cart, timeout: timeout) { request in
+        let url = project.links.checkoutInfo.href
+        project.request(.post, url, body: cart, timeout: timeout) { request in
             guard let request = request else {
                 return completion(nil, nil)
             }
 
-            SnabbleAPI.perform(request, returnRaw: true) { (result: SignedCheckoutInfo?, error, json, _) in
+            project.perform(request, returnRaw: true) { (result: SignedCheckoutInfo?, error, json, _) in
                 var newResult = result
                 newResult?.rawJson = json
                 completion(newResult, error)
@@ -46,7 +47,7 @@ extension SignedCheckoutInfo {
     ///   - completion: is called on the main thread with the result of the API call,
     ///   - process: the newly created `CheckoutProcess`, or nil on error
     ///   - error: if not nil, contains the error response from the backend
-    public func createCheckoutProcess(paymentMethod: PaymentMethod, timeout: TimeInterval = 0, completion: @escaping (_ process: CheckoutProcess?, _ error: ApiError?) -> () ) {
+    public func createCheckoutProcess(_ project: Project, paymentMethod: PaymentMethod, timeout: TimeInterval = 0, completion: @escaping (_ process: CheckoutProcess?, _ error: ApiError?) -> () ) {
         do {
             // since we need to pass the originally-received SignedCheckoutInfo as-is,
             // we can't use the struct but have to build this manually:
@@ -59,12 +60,12 @@ extension SignedCheckoutInfo {
             }
 
             let data = try JSONSerialization.data(withJSONObject: dict, options: [])
-            SnabbleAPI.request(.post, self.links.checkoutProcess.href, body: data, timeout: timeout) { request in
+            project.request(.post, self.links.checkoutProcess.href, body: data, timeout: timeout) { request in
                 guard let request = request else {
                     return completion(nil, nil)
                 }
 
-                SnabbleAPI.perform(request, completion)
+                project.perform(request, completion)
             }
         } catch {
             NSLog("error serializing request body: \(error)")
@@ -84,16 +85,17 @@ extension CheckoutProcess {
     ///   - error: if not nil, contains the error response from the backend
     /// - Returns:
     ///    a `URLSessionDataTask` object or nil (if the request couldn't be started)
-    public func update(timeout: TimeInterval = 0,
+    public func update(_ project: Project,
+                       timeout: TimeInterval = 0,
                        taskCreated: @escaping (URLSessionDataTask) -> (),
                        completion: @escaping (_ process: CheckoutProcess?, _ error: ApiError?) -> () ) {
 
-        SnabbleAPI.request(.get, self.links.`self`.href, timeout: timeout) { request in
+        project.request(.get, self.links.`self`.href, timeout: timeout) { request in
             guard let request = request else {
                 return completion(nil, nil)
             }
 
-            let task = SnabbleAPI.perform(request, completion)
+            let task = project.perform(request, completion)
             taskCreated(task)
         }
     }
@@ -105,15 +107,15 @@ extension CheckoutProcess {
     ///   - completion: is called on the main thread with the result of the API call,
     ///   - process: the `CheckoutProcess` returned from the backend, or nil on error
     ///   - error: if not nil, contains the error response from the backend
-    public func abort(timeout: TimeInterval = 0, completion: @escaping (_ process: CheckoutProcess?, _ error: ApiError?) -> () ) {
+    public func abort(_ project: Project, timeout: TimeInterval = 0, completion: @escaping (_ process: CheckoutProcess?, _ error: ApiError?) -> () ) {
         let abort = AbortRequest(aborted: true)
 
-        SnabbleAPI.request(.patch, self.links.`self`.href, body: abort, timeout: timeout) { request in
+        project.request(.patch, self.links.`self`.href, body: abort, timeout: timeout) { request in
             guard let request = request else {
                 return completion(nil, nil)
             }
 
-            SnabbleAPI.perform(request, completion)
+            project.perform(request, completion)
         }
     }
 

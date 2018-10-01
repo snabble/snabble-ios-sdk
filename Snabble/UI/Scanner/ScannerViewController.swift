@@ -341,7 +341,7 @@ extension ScannerViewController {
                 return
             }
 
-            let ean = EAN.parse(scannedCode)
+            let ean = EAN.parse(scannedCode, SnabbleUI.project)
             // handle scanning the shelf code of a pre-weighed product
             if product.type == .preWeighed && ean?.embeddedData == nil {
                 let msg = "Snabble.Scanner.scannedShelfCode".localized()
@@ -393,8 +393,8 @@ extension ScannerViewController {
     }
 
     private func productForCode(_ code: String, completion: @escaping (Product?, String) -> () ) {
-        if let ean = EAN.parse(code), ean.hasEmbeddedData, ean.encoding != .edekaProductPrice {
-            if SnabbleAPI.project.verifyInternalEanChecksum {
+        if let ean = EAN.parse(code, SnabbleUI.project), ean.hasEmbeddedData, ean.encoding != .edekaProductPrice {
+            if SnabbleUI.project.verifyInternalEanChecksum {
                 guard
                     let ean13 = ean as? EAN13,
                     ean13.priceFieldOk()

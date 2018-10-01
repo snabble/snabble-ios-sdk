@@ -45,12 +45,12 @@ class ShoppingCartTableCell: UITableViewCell {
         self.priceLabel.font = mono10
         self.quantityLabel.font = mono10
 
-        self.quantityLabel.backgroundColor = SnabbleAppearance.shared.config.primaryColor
+        self.quantityLabel.backgroundColor = SnabbleUI.appearance.primaryColor
         self.quantityLabel.layer.cornerRadius = 2
         self.quantityLabel.layer.masksToBounds = true
-        self.quantityLabel.textColor = SnabbleAppearance.shared.config.secondaryColor
+        self.quantityLabel.textColor = SnabbleUI.appearance.secondaryColor
 
-        self.quantityInput.tintColor = SnabbleAppearance.shared.config.primaryColor
+        self.quantityInput.tintColor = SnabbleUI.appearance.primaryColor
         self.quantityInput.delegate = self
 
         self.minusButton.setImage(UIImage.fromBundle("icon-minus"), for: .normal)
@@ -80,7 +80,7 @@ class ShoppingCartTableCell: UITableViewCell {
         self.plusButton.tag = row
         self.quantityInput.tag = row
 
-        let ean = EAN.parse(item.scannedCode)
+        let ean = EAN.parse(item.scannedCode, SnabbleUI.project)
         self.minusButton.isHidden = ean?.hasEmbeddedData == true
         self.plusButton.isHidden = product.type == .preWeighed || ean?.hasEmbeddedData == true
 
@@ -95,11 +95,11 @@ class ShoppingCartTableCell: UITableViewCell {
         self.quantityInput.text = "\(item.quantity)"
 
         if weightEntry {
-            self.plusButton.backgroundColor = SnabbleAppearance.shared.config.primaryColor
+            self.plusButton.backgroundColor = SnabbleUI.appearance.primaryColor
             // FIXME("replace w/ checkmark icon")
-            self.plusButton.setImage(UIImage.fromBundle("icon-close")?.recolored(with: SnabbleAppearance.shared.config.secondaryColor), for: .normal)
+            self.plusButton.setImage(UIImage.fromBundle("icon-close")?.recolored(with: SnabbleUI.appearance.secondaryColor), for: .normal)
         } else {
-            self.plusButton.backgroundColor = SnabbleAppearance.shared.config.buttonBackgroundColor
+            self.plusButton.backgroundColor = SnabbleUI.appearance.buttonBackgroundColor
             self.plusButton.setImage(UIImage.fromBundle("icon-plus"), for: .normal)
         }
 
@@ -122,32 +122,32 @@ class ShoppingCartTableCell: UITableViewCell {
     }
 
     private func showQuantity() {
-        let ean = EAN.parse(self.item.scannedCode)
+        let ean = EAN.parse(self.item.scannedCode, SnabbleUI.project)
 
         let showWeight = ean?.hasEmbeddedWeight == true || self.item.product.type == .userMustWeigh
         let gram = showWeight ? "g" : ""
         self.quantityLabel.text = "\(self.quantity)\(gram)"
 
-        let price = self.item.total
-        let total = Price.format(price)
+        let price = self.item.total(SnabbleUI.project)
+        let total = PriceFormatter.format(price)
 
         if showWeight {
-            let single = Price.format(self.item.product.price)
+            let single = PriceFormatter.format(self.item.product.price)
             self.priceLabel.text = "× \(single)/kg = \(total)"
         } else {
             if let deposit = self.item.product.deposit {
-                let itemPrice = Price.format(self.item.product.price)
-                let depositPrice = Price.format(deposit * self.quantity)
+                let itemPrice = PriceFormatter.format(self.item.product.price)
+                let depositPrice = PriceFormatter.format(deposit * self.quantity)
                 let plusDeposit = String(format: "Snabble.Scanner.plusDeposit".localized(), depositPrice)
                 self.priceLabel.text = "× \(itemPrice) \(plusDeposit) = \(total)"
             } else if let units = ean?.embeddedUnits {
                 self.quantityLabel.text = "\(units)"
-                let itemPrice = Price.format(self.item.product.price)
+                let itemPrice = PriceFormatter.format(self.item.product.price)
                 self.priceLabel.text  = "× \(itemPrice) = \(total)"
             } else if self.quantity == 1 {
                 self.priceLabel.text = total
             } else {
-                let itemPrice = Price.format(self.item.product.priceWithDeposit)
+                let itemPrice = PriceFormatter.format(self.item.product.priceWithDeposit)
                 self.priceLabel.text = "× \(itemPrice) = \(total)"
             }
         }

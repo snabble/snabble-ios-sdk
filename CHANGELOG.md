@@ -1,5 +1,14 @@
 ## snabble iOS SDK changelog
 
+# v0.7.1
+
+* removes global static state that was previously kept by the core SDK. This results in breaking changes to the initialization and usage:
+* to initialize the SDK, create a `SnabbleAPIConfig` object and pass it to `SnabbleAPI.setup`. For single-project apps, the project to use is available as `SnabbleAPI.projects[0]`.
+* `ProductDBConfiguration` has been removed, the relevant configuration info is now part of `SnabbleAPIConfig`. Call `SnabbleAPI.productProvider(for:)` to get the `ProductProvider` instance for a project.
+* the current project to be used by the UI components has to be set using `SnabbleUI.registerProject()`
+* `UIConfig` has been renamed to `SnabbleAppearance`. To configure the UI appearance, create an instance and pass it to `SnabbleUI.setup()`.
+* Price calculation and formatting methods have moved from the `Price` and `Product` structs to static methods in `PriceFormatter`. 
+
 # v0.7.0
 
 * add support for multi-project apps. All of the following changes break existing clients.

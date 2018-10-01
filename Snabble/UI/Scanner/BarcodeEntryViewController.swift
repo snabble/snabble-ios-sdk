@@ -48,7 +48,7 @@ class BarcodeEntryViewController: UIViewController, UISearchBarDelegate, UITable
         
         self.keyboardObserver = KeyboardObserver(handler: self)
         
-        let primaryBackgroundColor = SnabbleAppearance.shared.config.primaryBackgroundColor
+        let primaryBackgroundColor = SnabbleUI.appearance.primaryBackgroundColor
         self.view.backgroundColor = primaryBackgroundColor
         self.tableView.backgroundColor = .clear
     }
