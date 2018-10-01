@@ -1,6 +1,6 @@
 ## snabble iOS SDK changelog
 
-# v0.7.x
+# v0.7.1
 
 * removes global static state that was previously kept by the core SDK. This results in breaking changes to the initialization and usage:
 * to initialize the SDK, create a `SnabbleAPIConfig` object and pass it to `SnabbleAPI.setup`. For single-project apps, the project to use is available as `SnabbleAPI.projects[0]`.
