@@ -104,12 +104,19 @@ class EmbeddedCodesCheckoutViewController: UIViewController {
             let regularItems = self.cart.items.filter { return $0.product.saleRestriction == .none }
             let restrictedItems = self.cart.items.filter { return $0.product.saleRestriction != .none }
 
-            let regularCodes = self.codesFor(regularItems)
+            var regularCodes = self.codesFor(regularItems)
+            if let additionalCodes = self.cart.additionalCodes {
+                regularCodes.append(contentsOf: additionalCodes)
+            }
             let restrictedCodes = self.codesFor(restrictedItems)
 
             return (regularCodes, restrictedCodes)
         } else {
-            let codes = self.codesFor(self.cart.items)
+            var codes = self.codesFor(self.cart.items)
+            if let additionalCodes = self.cart.additionalCodes {
+                codes.append(contentsOf: additionalCodes)
+            }
+
             return (codes, [])
         }
     }

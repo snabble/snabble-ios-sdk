@@ -115,6 +115,10 @@ public final class ShoppingCart {
     private(set) public var session = ""
     private(set) public var lastSaved: Date?
 
+    /// this is intended mainly for the EmbeddedCodesCheckout - use this to append additional codes
+    /// (e.g. special "QR code purchase" marker codes) to the list of scanned codes of this cart
+    public var additionalCodes: [String]?
+
     private var timer: Timer?
 
     private(set) var config: CartConfig
