@@ -61,7 +61,7 @@ public struct SnabbleAPI {
 
         self.tokenRegistry = TokenRegistry(config.appId, config.secret)
 
-        if let metadataPath = config.seedMetadata, self.metadata.projects.count == 0 {
+        if let metadataPath = config.seedMetadata, self.metadata.projects[0].id == Project.none.id {
             if let metadata = Metadata.readResource(metadataPath) {
                 self.metadata = metadata
             }

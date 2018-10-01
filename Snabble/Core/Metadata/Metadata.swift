@@ -329,9 +329,9 @@ public extension Metadata {
         return nil
     }
 
-    public static func load(from url: String, _ parameters: [String: String]? = nil, completion: @escaping (Metadata?) -> () ) {
+    public static func load(from url: String, completion: @escaping (Metadata?) -> () ) {
         let project = Project.none
-        project.request(.get, url, jwtRequired: false, parameters: parameters, timeout: 5) { request in
+        project.request(.get, url, jwtRequired: false, timeout: 5) { request in
             guard let request = request else {
                 return completion(nil)
             }
