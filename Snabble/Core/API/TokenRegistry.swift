@@ -50,7 +50,7 @@ class TokenRegistry {
         nc.addObserver(self, selector: #selector(appEnteredBackground(_:)), name: UIApplication.didEnterBackgroundNotification, object: nil)
     }
 
-    public func getToken(for project: Project, completion: @escaping (String?)->() ) {
+    func getToken(for project: Project, completion: @escaping (String?)->() ) {
         if let token = self.registry[project.id] {
             // we already have a token. return it if it's still valid
             let now = Date()

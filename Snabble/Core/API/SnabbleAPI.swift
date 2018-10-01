@@ -84,6 +84,10 @@ public struct SnabbleAPI {
         }
     }
 
+    public static func getToken(for project: Project, completion: @escaping (String?)->() ) {
+        self.tokenRegistry.getToken(for: project, completion: completion)
+    }
+
     private static var providerPool = [String: ProductProvider]()
 
     public static func productProvider(for project: Project) -> ProductProvider {
