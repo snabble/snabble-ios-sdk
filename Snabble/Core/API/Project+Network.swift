@@ -103,7 +103,7 @@ extension Project {
                 urlRequest.httpBody = try JSONEncoder().encode(body)
                 completion(urlRequest)
             } catch {
-                NSLog("error serializing request body: \(error)")
+                self.logError("error serializing request body: \(error)")
                 completion(nil)
             }
         }
@@ -223,17 +223,17 @@ extension Project {
                 let httpResponse = response as? HTTPURLResponse,
                 httpResponse.statusCode == 200 || httpResponse.statusCode == 201
                 else {
-                    NSLog("error getting response from \(url): \(String(describing: error))")
+                    self.logError("error getting response from \(url): \(String(describing: error))")
                     var apiError: ApiError?
                     if let data = rawData {
                         do {
                             let error = try JSONDecoder().decode(ApiError.self, from: data)
-                            NSLog("error response: \(String(describing: error))")
+                            self.logError("error response: \(String(describing: error))")
                             apiError = error
                         }
                         catch {
                             let rawResponse = String(bytes: data, encoding: .utf8)
-                            NSLog("failed parsing error response: \(String(describing: rawResponse)) -> \(error)")
+                            self.logError("failed parsing error response: \(String(describing: rawResponse)) -> \(error)")
                         }
                     }
                     DispatchQueue.main.async {
@@ -269,6 +269,17 @@ extension Project {
         }
         task.resume()
         return task
+    }
+
+}
+
+extension Project {
+
+    func logError(_ msg: String) {
+        NSLog(msg)
+
+        let event = AppEvent(message: msg, project: self)
+        event.post()
     }
 
 }

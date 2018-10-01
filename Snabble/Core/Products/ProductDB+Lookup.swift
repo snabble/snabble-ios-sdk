@@ -67,7 +67,7 @@ extension ProductDB {
     }
 
     private func returnError(_ msg: String, _ completion: @escaping (LookupResult?, Bool) -> () ) {
-        NSLog(msg)
+        self.logError(msg)
         DispatchQueue.main.sync {
             completion(nil, true)
         }
@@ -120,11 +120,11 @@ extension ProductDB {
                     }
                     catch let error {
                         let raw = String(bytes: data, encoding: .utf8)
-                        NSLog("bundle parse error: \(error) \(String(describing: raw))")
+                        self.logError("bundle parse error: \(error) \(String(describing: raw))")
                         completion([], true)
                     }
                 } else {
-                    NSLog("error gettings bundles for sku \(sku): \(String(describing: error))")
+                    self.logError("error gettings bundles for sku \(sku): \(String(describing: error))")
                     completion([], true)
                 }
             }
@@ -180,11 +180,11 @@ extension ProductDB {
                     }
                     catch let error {
                         let raw = String(bytes: data, encoding: .utf8)
-                        NSLog("products parse error: \(error) \(String(describing: raw))")
+                        self.logError("products parse error: \(error) \(String(describing: raw))")
                         completion([], true)
                     }
                 } else {
-                    NSLog("error getting products for skus \(skus): \(String(describing: error))")
+                    self.logError("error getting products for skus \(skus): \(String(describing: error))")
                     completion([], true)
                 }
             }
@@ -223,7 +223,7 @@ struct APIProduct: Codable {
     let imageUrl: String?
     let productType: APIProductType
     let transmissionCodes: [String]?
-    let price: Int
+    let price: Int?
     let discountedPrice: Int?
     let basePrice: String?
     let weighing: Weighing?
@@ -294,7 +294,7 @@ struct APIProduct: Codable {
                        subtitle: self.subtitle,
                        imageUrl: self.imageUrl,
                        basePrice: self.basePrice,
-                       listPrice: self.price,
+                       listPrice: self.price ?? 0,
                        discountedPrice: self.discountedPrice,
                        type: type,
                        scannableCodes: Set(scannableCodes),

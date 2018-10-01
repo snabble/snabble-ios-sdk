@@ -285,7 +285,7 @@ final class ProductDB: ProductProvider {
             let db = try DatabaseQueue(path: path)
             try self.createFullTextIndex(db)
         } catch {
-            NSLog("create FTS failed: error \(error)")
+            self.logError("create FTS failed: error \(error)")
         }
     }
 
@@ -317,7 +317,7 @@ final class ProductDB: ProductProvider {
             self.readMetadata(db)
             return db
         } catch let error {
-            NSLog("db setup error \(error)")
+            self.logError("openDb: db setup error \(error)")
             return nil
         }
     }
@@ -328,7 +328,7 @@ final class ProductDB: ProductProvider {
                 let seedUrl = URL(fileURLWithPath: seedPath)
                 try Zip.unzipFile(seedUrl, destination: self.dbDirectory, overwrite: true, password: nil)
             } catch let error {
-                NSLog("error while unzipping seed: \(error)")
+                self.logError("error while unzipping seed: \(error)")
             }
 
             if self.config.useFTS {
@@ -391,7 +391,7 @@ final class ProductDB: ProductProvider {
                 return shouldSwitch
             }
         } catch let error {
-            NSLog("db update error \(error)")
+            self.logError("writeFullDatabase: db update error \(error)")
         }
 
         if fileManager.fileExists(atPath: tempDbPath) {
@@ -421,7 +421,7 @@ final class ProductDB: ProductProvider {
             }
             return true
         } catch let error {
-            NSLog("db update error \(error)")
+            self.logError("copyAndUpdateDatabase: db update error \(error)")
 
             try? fileManager.removeItem(atPath: tempDbPath)
             return false
@@ -449,7 +449,7 @@ final class ProductDB: ProductProvider {
                 try fileManager.removeItem(atPath: oldFile)
             }
         } catch let error {
-            NSLog("db switch error \(error)")
+            self.logError("switchDatabases: db switch error \(error)")
         }
     }
 
@@ -644,4 +644,7 @@ extension ProductDB {
         self.getSingleProduct(self.project.links.productByWeighItemId.href, "{id}", weighItemId, completion: completion)
     }
 
+    func logError(_ msg: String) {
+        self.project.logError(msg)
+    }
 }

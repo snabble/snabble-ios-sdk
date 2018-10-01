@@ -19,7 +19,7 @@ extension ProductDB {
             (select group_concat(ifnull(sc.transmissionCode, "")) from scannableCodes sc where sc.sku = p.sku) transmissionCodes
         from products p
         join prices pr on pr.sku = p.sku
-    """
+        """
 
     func productBySku(_ dbQueue: DatabaseQueue, _ sku: String) -> Product? {
         do {
@@ -28,7 +28,7 @@ extension ProductDB {
             }
             return self.productFromRow(dbQueue, row)
         } catch {
-            NSLog("db error: \(error)")
+            self.logError("productBySku db error: \(error)")
         }
         return nil
     }
@@ -41,7 +41,7 @@ extension ProductDB {
             }
             return rows.compactMap { self.productFromRow(dbQueue, $0) }
         } catch {
-            NSLog("db error: \(error)")
+            self.logError("productsBySku db error: \(error)")
         }
         return []
     }
@@ -57,7 +57,7 @@ extension ProductDB {
             }
             return rows.compactMap { self.productFromRow(dbQueue, $0) }
         } catch {
-            NSLog("db error: \(error)")
+            self.logError("boostedProducts db error: \(error)")
         }
         return []
     }
@@ -72,7 +72,7 @@ extension ProductDB {
                 }
             return rows.compactMap { self.productFromRow(dbQueue, $0) }
         } catch {
-            NSLog("db error: \(error)")
+            self.logError("discountedProducts db error: \(error)")
         }
         return []
     }
@@ -102,7 +102,7 @@ extension ProductDB {
                 }
             }
         } catch {
-            NSLog("db error: \(error)")
+            self.logError("productByScannableCode db error: \(error)")
         }
 
         return nil
@@ -118,7 +118,7 @@ extension ProductDB {
             }
             return self.productFromRow(dbQueue, row)
         } catch {
-            NSLog("db error: \(error)")
+            self.logError("productByWeighItemId db error: \(error)")
         }
         return nil
     }
@@ -134,7 +134,7 @@ extension ProductDB {
             }
             return rows.compactMap { self.productFromRow(dbQueue, $0) }
         } catch {
-            NSLog("db error: \(error)")
+            self.logError("productsByName db error: \(error)")
         }
         return []
     }
@@ -152,7 +152,7 @@ extension ProductDB {
             }
             return rows.compactMap { self.productFromRow(dbQueue, $0) }
         } catch {
-            NSLog("db error: \(error)")
+            self.logError("productByScannableCodePrefix db error: \(error)")
         }
         return []
     }
@@ -166,7 +166,7 @@ extension ProductDB {
             }
             return rows.compactMap { self.productFromRow(dbQueue, $0) }
         } catch {
-            NSLog("db error: \(error)")
+            self.logError("productsBundling db error: \(error)")
         }
         return []
     }
@@ -180,7 +180,7 @@ extension ProductDB {
             let tuples = rows.compactMap { ($0["key"], $0["value"]) as? (String, String) }
             return Dictionary(uniqueKeysWithValues: tuples)
         } catch {
-            NSLog("db error: \(error)")
+            self.logError("metadata db error: \(error)")
         }
         return [:]
     }
@@ -212,7 +212,6 @@ extension ProductDB {
         let elapsed = Date.timeIntervalSinceReferenceDate - start
         print("update took \(elapsed)")
     }
-
 
     private func productFromRow(_ dbQueue: DatabaseQueue, _ row: Row?) -> Product? {
         guard
@@ -282,5 +281,4 @@ extension ProductDB {
         return Set(s.components(separatedBy: ","))
     }
 
-    
 }
