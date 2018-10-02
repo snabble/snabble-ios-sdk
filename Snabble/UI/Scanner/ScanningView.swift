@@ -53,6 +53,9 @@ public struct ScanningViewConfig {
     /// corner radius of the reticle's border, default 0
     public var reticleCornerRadius: CGFloat = 0
 
+    /// height of the reticle, in pixels
+    public var reticleHeight: CGFloat = 160
+
     /// color for the dimming overlay. Default: 13% white, 60% alpha
     public var dimmingColor = UIColor(white:0.13, alpha:0.6)
 
@@ -82,6 +85,8 @@ public class ScanningView: DesignableView {
     @IBOutlet weak var torchWrapper: UIView!
     @IBOutlet weak var torchIcon: UIImageView!
     @IBOutlet weak var torchLabel: UILabel!
+
+    @IBOutlet weak var reticleHeight: NSLayoutConstraint!
 
     @objc private var camera: AVCaptureDevice? = AVCaptureDevice.default(for: AVMediaType.video)
 
@@ -161,6 +166,8 @@ public class ScanningView: DesignableView {
         self.metadataObjectTypes = config.metadataObjectTypes
 
         self.bottomBarHidden = config.bottomBarHidden
+
+        self.reticleHeight.constant = config.reticleHeight
     }
 
     /// this must be called once to initialize the camera. If the app doesn't already have camera usage permission,
