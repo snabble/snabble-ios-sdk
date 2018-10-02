@@ -280,7 +280,7 @@ public class ScanningView: DesignableView {
         if self.reticleBorderLayer == nil && self.firstLayoutDone {
             let overlayPath = UIBezierPath(rect: self.view.bounds)
             let rect = self.reticle.convert(self.reticle.bounds, to: self.view)
-            let transparentPath = UIBezierPath(rect: rect)
+            let transparentPath = UIBezierPath(roundedRect: rect, cornerRadius: self.reticle.layer.cornerRadius)
             overlayPath.append(transparentPath)
 
             self.reticleBorderLayer = CAShapeLayer()
