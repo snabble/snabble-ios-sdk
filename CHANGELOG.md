@@ -1,5 +1,10 @@
 ## snabble iOS SDK changelog
 
+# v0.7.2
+
+* add `reticleHeight` property to `ScanningViewConfig`
+* `ScanningView` now renders `reticleCornerRadius` correctly
+
 # v0.7.1
 
 * removes global static state that was previously kept by the core SDK. This results in breaking changes to the initialization and usage:
