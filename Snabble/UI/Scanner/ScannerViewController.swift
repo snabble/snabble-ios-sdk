@@ -112,6 +112,7 @@ public class ScannerViewController: UIViewController {
         scannerConfig.enterButtonImage = UIImage.fromBundle("icon-entercode")?.recolored(with: .white)
         scannerConfig.textColor = .white
         scannerConfig.metadataObjectTypes = self.objectTypes
+        scannerConfig.reticleCornerRadius = 3
 
         scannerConfig.delegate = self
 
