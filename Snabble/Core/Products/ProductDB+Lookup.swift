@@ -6,8 +6,8 @@
 
 extension ProductDB {
 
-    func getSingleProduct(_ url: String, _ placeholder: String, _ identifier: String, completion: @escaping (Product?, Bool) -> () ) {
-        self.getSingleProduct(url, placeholder, identifier) { (result: LookupResult?, error: Bool) in
+    func getSingleProduct(_ url: String, _ placeholder: String, _ identifier: String, _ shopId: String?, completion: @escaping (Product?, Bool) -> () ) {
+        self.getSingleProduct(url, placeholder, identifier, shopId) { (result: LookupResult?, error: Bool) in
             if let result = result {
                 completion(result.product, error)
             } else {
@@ -16,7 +16,7 @@ extension ProductDB {
         }
     }
 
-    func getSingleProduct(_ url: String, _ placeholder: String, _ identifier: String, completion: @escaping (LookupResult?, Bool) -> () ) {
+    func getSingleProduct(_ url: String, _ placeholder: String, _ identifier: String, _ shopId: String?, completion: @escaping (LookupResult?, Bool) -> () ) {
         let session = URLSession(configuration: URLSessionConfiguration.default)
 
         // TODO: is this the right value?
@@ -43,7 +43,7 @@ extension ProductDB {
                         let apiProduct = try JSONDecoder().decode(APIProduct.self, from: data)
                         if let depositSku = apiProduct.depositProduct {
                             // get the deposit product
-                            self.productBySku(depositSku) { depositProduct, error in
+                            self.productBySku(depositSku, shopId) { depositProduct, error in
                                 if let deposit = depositProduct?.price {
                                     self.completeProduct(apiProduct, deposit, completion)
                                 } else {

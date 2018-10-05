@@ -11,35 +11,36 @@ import GRDB
 // MARK: - low-level db queries
 extension ProductDB {
 
-    static let baseQuery = """
+    static let baseQuery =
+        """
         select
             p.*, pr.listPrice, pr.discountedPrice, pr.basePrice,
             (select group_concat(sc.code) from scannableCodes sc where sc.sku = p.sku) scannableCodes,
             (select group_concat(w.weighItemId) from weighItemIds w where w.sku = p.sku) weighItemIds,
             (select group_concat(ifnull(sc.transmissionCode, "")) from scannableCodes sc where sc.sku = p.sku) transmissionCodes
         from products p
-        join prices pr on pr.sku = p.sku
+        join prices pr on pr.sku = p.sku and pr.priceCategory is (select priceCategory from shops where shops.id is ?)
         """
 
-    func productBySku(_ dbQueue: DatabaseQueue, _ sku: String) -> Product? {
+    func productBySku(_ dbQueue: DatabaseQueue, _ sku: String, _ shopId: String?) -> Product? {
         do {
             let row = try dbQueue.inDatabase { db in
-                return try Row.fetchOne(db, ProductDB.baseQuery + " where p.sku = ?", arguments: [sku])
+                return try Row.fetchOne(db, ProductDB.baseQuery + " where p.sku = ?", arguments: [shopId, sku])
             }
-            return self.productFromRow(dbQueue, row)
+            return self.productFromRow(dbQueue, row, shopId)
         } catch {
             self.logError("productBySku db error: \(error)")
         }
         return nil
     }
 
-    func productsBySku(_ dbQueue: DatabaseQueue, _ skus: [String]) -> [Product] {
+    func productsBySku(_ dbQueue: DatabaseQueue, _ skus: [String], _ shopId: String?) -> [Product] {
         do {
             let list = skus.map { "\"\($0)\"" }.joined(separator: ",")
             let rows = try dbQueue.inDatabase { db in
-                return try Row.fetchAll(db, ProductDB.baseQuery + " where p.sku in (\(list))")
+                return try Row.fetchAll(db, ProductDB.baseQuery + " where p.sku in (\(list))", arguments: [shopId])
             }
-            return rows.compactMap { self.productFromRow(dbQueue, $0) }
+            return rows.compactMap { self.productFromRow(dbQueue, $0, shopId) }
         } catch {
             self.logError("productsBySku db error: \(error)")
         }
@@ -53,9 +54,9 @@ extension ProductDB {
                     where p.imageUrl is not null and p.boost > 0
                     order by p.boost desc
                     limit ?
-                    """, arguments: [limit])
+                    """, arguments: [nil, limit])
             }
-            return rows.compactMap { self.productFromRow(dbQueue, $0) }
+            return rows.compactMap { self.productFromRow(dbQueue, $0, nil) }
         } catch {
             self.logError("boostedProducts db error: \(error)")
         }
@@ -68,24 +69,24 @@ extension ProductDB {
                 return try Row.fetchAll(db, ProductDB.baseQuery + " " + """
                     where p.imageUrl is not null and pr.discountedPrice is not null
                     group by p.sku
-                    """)
+                    """, arguments: [nil])
                 }
-            return rows.compactMap { self.productFromRow(dbQueue, $0) }
+            return rows.compactMap { self.productFromRow(dbQueue, $0, nil) }
         } catch {
             self.logError("discountedProducts db error: \(error)")
         }
         return []
     }
 
-    func productByScannableCode(_ dbQueue: DatabaseQueue, _ code: String, retry: Bool = false) -> LookupResult? {
+    func productByScannableCode(_ dbQueue: DatabaseQueue, _ code: String, _ shopId: String?, retry: Bool = false) -> LookupResult? {
         do {
             let row = try dbQueue.inDatabase { db in
                 return try Row.fetchOne(db, ProductDB.baseQuery + " " + """
                     join scannableCodes s on s.sku = p.sku
                     where s.code = ?
-                    """, arguments: [code])
+                    """, arguments: [shopId, code])
                 }
-            if let product = self.productFromRow(dbQueue, row) {
+            if let product = self.productFromRow(dbQueue, row, shopId) {
                 let transmissionCode = product.transmissionCodes[code] ?? code
                 return LookupResult(product: product, code: transmissionCode)
             } else if !retry {
@@ -95,10 +96,10 @@ extension ProductDB {
                 // if it was an EAN-13 with a leading "0", try again with all leading zeroes removed
                 if code.count == 8 {
                     print("8->13 lookup attempt \(code) -> 00000\(code)")
-                    return self.productByScannableCode(dbQueue, "00000" + code, retry: true)
+                    return self.productByScannableCode(dbQueue, "00000" + code, shopId, retry: true)
                 } else if code.first == "0", let codeInt = Int(code) {
                     print("no leading zeroes db lookup attempt \(code) -> \(codeInt)")
-                    return self.productByScannableCode(dbQueue, String(codeInt), retry: true)
+                    return self.productByScannableCode(dbQueue, String(codeInt), shopId, retry: true)
                 }
             }
         } catch {
@@ -108,15 +109,15 @@ extension ProductDB {
         return nil
     }
 
-    func productByWeighItemId(_ dbQueue: DatabaseQueue, _ weighItemId: String) -> Product? {
+    func productByWeighItemId(_ dbQueue: DatabaseQueue, _ weighItemId: String, _ shopId: String?) -> Product? {
         do {
             let row = try dbQueue.inDatabase { db in
                 return  try Row.fetchOne(db, ProductDB.baseQuery + " " + """
                     join weighItemIds w on w.sku = p.sku
                     where w.weighItemId = ?
-                    """, arguments: [weighItemId])
+                    """, arguments: [shopId, weighItemId])
             }
-            return self.productFromRow(dbQueue, row)
+            return self.productFromRow(dbQueue, row, shopId)
         } catch {
             self.logError("productByWeighItemId db error: \(error)")
         }
@@ -130,9 +131,9 @@ extension ProductDB {
             let rows = try dbQueue.inDatabase { db in
                 return try Row.fetchAll(db, ProductDB.baseQuery + " " + """
                     where p.sku in (select sku from searchByName where foldedName match ? limit ?) \(depositCondition)
-                    """, arguments: [name + "*", limit])
+                    """, arguments: [nil, name + "*", limit])
             }
-            return rows.compactMap { self.productFromRow(dbQueue, $0) }
+            return rows.compactMap { self.productFromRow(dbQueue, $0, nil) }
         } catch {
             self.logError("productsByName db error: \(error)")
         }
@@ -148,23 +149,23 @@ extension ProductDB {
                     join scannableCodes s on s.sku = p.sku
                     where (s.code glob ? or s.code glob ?) \(depositCondition) and p.weighing != \(ProductType.preWeighed.rawValue)
                     limit ?
-                    """, arguments: [prefix + "*", "00000" + prefix + "*", limit])
+                    """, arguments: [nil, prefix + "*", "00000" + prefix + "*", limit])
             }
-            return rows.compactMap { self.productFromRow(dbQueue, $0) }
+            return rows.compactMap { self.productFromRow(dbQueue, $0, nil) }
         } catch {
             self.logError("productByScannableCodePrefix db error: \(error)")
         }
         return []
     }
 
-    func productsBundling(_ dbQueue: DatabaseQueue, _ sku: String) -> [Product] {
+    func productsBundling(_ dbQueue: DatabaseQueue, _ sku: String, _ shopId: String?) -> [Product] {
         do {
             let rows = try dbQueue.inDatabase { db in
                 return try Row.fetchAll(db, ProductDB.baseQuery + " " + """
                     where p.bundledSku = ?
-                    """, arguments: [sku])
+                    """, arguments: [shopId, sku])
             }
-            return rows.compactMap { self.productFromRow(dbQueue, $0) }
+            return rows.compactMap { self.productFromRow(dbQueue, $0, shopId) }
         } catch {
             self.logError("productsBundling db error: \(error)")
         }
@@ -213,7 +214,7 @@ extension ProductDB {
         print("update took \(elapsed)")
     }
 
-    private func productFromRow(_ dbQueue: DatabaseQueue, _ row: Row?) -> Product? {
+    private func productFromRow(_ dbQueue: DatabaseQueue, _ row: Row?, _ shopId: String?) -> Product? {
         guard
             let row = row,
             let sku = row["sku"] as? String
@@ -225,11 +226,11 @@ extension ProductDB {
         let depositSku = row["depositSku"] as? String
 
         var depositPrice: Int?
-        if let dSku = depositSku, let depositProduct = self.productBySku(dbQueue, dSku) {
+        if let dSku = depositSku, let depositProduct = self.productBySku(dbQueue, dSku, shopId) {
             depositPrice = depositProduct.price
         }
 
-        let bundles = self.productsBundling(dbQueue, sku)
+        let bundles = self.productsBundling(dbQueue, sku, shopId)
 
         let (scannableCodes, transmissionCodes) = self.buildScannableCodeSets(row["scannableCodes"], row["transmissionCodes"])
 

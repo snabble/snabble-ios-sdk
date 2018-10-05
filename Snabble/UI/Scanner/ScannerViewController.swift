@@ -404,8 +404,8 @@ extension ScannerViewController {
                     return
                 }
             }
-            
-            self.productProvider.productByWeighItemId(ean.codeForLookup) { product, error in
+
+            self.productProvider.productByWeighItemId(ean.codeForLookup, self.shop.id) { product, error in
                 completion(product, code)
             }
         } else {
@@ -413,7 +413,7 @@ extension ScannerViewController {
                 let startIndex = code.startIndex
                 let embeddedCode = String(code[code.index(startIndex, offsetBy: 2)..<code.index(startIndex, offsetBy: 15)])
                 let embeddedPrice = Int(String(code[code.index(startIndex, offsetBy: 16)..<code.index(startIndex, offsetBy: 21)])) ?? 0
-                self.productProvider.productByScannableCode(embeddedCode) { result, error in
+                self.productProvider.productByScannableCode(embeddedCode, self.shop.id) { result, error in
                     if let result = result {
                         let template = "2417000000000"
                         let newCode = EAN13.embedDataInEan(template, data: embeddedPrice)
@@ -423,7 +423,7 @@ extension ScannerViewController {
                     }
                 }
             } else {
-                self.productProvider.productByScannableCode(code) { result, error in
+                self.productProvider.productByScannableCode(code, self.shop.id) { result, error in
                     if let result = result {
                         completion(result.product, result.code)
                     } else {
