@@ -13,16 +13,16 @@ enum EventType: String, Encodable {
     case error
 }
 
-struct Session: Encodable {
+private struct Session: Encodable {
     let session: String
 }
 
-struct Error: Encodable {
+private struct Error: Encodable {
     let message: String
     let session: String?
 }
 
-enum Payload: Encodable {
+private enum Payload: Encodable {
     case session(Session)
     case error(Error)
     case cart(Cart)
@@ -38,15 +38,15 @@ enum Payload: Encodable {
 }
 
 struct AppEvent: Encodable {
-    let type: EventType
-    let appId: String
-    let payload: Payload
-    let projectId: String
-    let timestamp: String
+    private let type: EventType
+    private let appId: String
+    private let payload: Payload
+    private let projectId: String
+    private let timestamp: String
 
-    let shopId: String?
-    let id: String?
-    let agent: String?
+    private let shopId: String?
+    private let id: String?
+    private let agent: String?
 
     private let project: Project
 
