@@ -193,11 +193,8 @@ public class ScanningView: DesignableView {
         }
 
         if let capture = self.captureSession, !capture.isRunning {
-            let rect = self.reticle.frame
             self.serialQueue.async {
                 capture.startRunning()
-                let visibleRect = self.previewLayer.metadataOutputRectConverted(fromLayerRect: rect)
-                self.metadataOutput.rectOfInterest = visibleRect
             }
         }
     }
@@ -211,6 +208,10 @@ public class ScanningView: DesignableView {
     /// is it possible to scan?
     public func readyToScan() -> Bool {
         return self.captureSession != nil
+    }
+
+    public func setScanObjects(_ objects: [AVMetadataObject.ObjectType]) {
+        self.metadataOutput.metadataObjectTypes = objects
     }
 
     @objc func enterButtonTapped(_ button: UIButton) {
@@ -301,6 +302,13 @@ public class ScanningView: DesignableView {
 
         if !self.firstLayoutDone {
             self.setNeedsLayout()
+        } else {
+            // set rectOfInterest asynchronously because it's slooooooow
+            DispatchQueue.main.async {
+                let rect = self.reticle.frame
+                let visibleRect = self.previewLayer.metadataOutputRectConverted(fromLayerRect: rect)
+                self.metadataOutput.rectOfInterest = visibleRect
+            }
         }
 
         self.firstLayoutDone = true
