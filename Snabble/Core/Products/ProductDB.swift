@@ -74,7 +74,7 @@ public protocol ProductProvider: class {
     ///
     /// - Returns: an array of `Product`
     @available(iOS, deprecated:1.0, message: "this method will be removed in the near future")
-    func discountedProducts() -> [Product]
+    func discountedProducts(_ shopId: String?) -> [Product]
 
     /// get a product and the code by which it was found by (one of) its scannable codes
     func productByScannableCode(_ code: String, _ shopId: String?) -> LookupResult?
@@ -301,12 +301,18 @@ final class ProductDB: ProductProvider {
             }
 
             let dbFile = self.dbPathname()
+
+            if !fileManager.fileExists(atPath: dbFile) {
+                NSLog("no sqlite file found at \(dbFile)")
+                return nil
+            }
+
             NSLog("using sqlite db: \(dbFile)")
 
             // remove comments to simulate first app installation
-            if fileManager.fileExists(atPath: dbFile) {
-                try fileManager.removeItem(atPath: dbFile)
-            }
+//            if fileManager.fileExists(atPath: dbFile) {
+//                try fileManager.removeItem(atPath: dbFile)
+//            }
 
             // copy our seed database to the app support directory if the file doesn't exist
             if !fileManager.fileExists(atPath: dbFile) {
@@ -526,12 +532,12 @@ extension ProductDB {
     ///
     /// - Returns: an array of `Product`
     @available(iOS, deprecated: 1.0)
-    public func discountedProducts() -> [Product] {
+    public func discountedProducts(_ shopId: String?) -> [Product] {
         guard let db = self.db else {
             return []
         }
 
-        return self.discountedProducts(db)
+        return self.discountedProducts(db, shopId)
     }
 
     /// get a product by its scannable code
