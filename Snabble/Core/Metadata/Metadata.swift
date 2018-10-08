@@ -4,6 +4,8 @@
 //  Copyright © 2018 snabble. All rights reserved.
 //
 
+import Foundation
+
 public struct Metadata: Decodable {
     public let flags: Flags
     public let projects: [Project]
@@ -33,6 +35,18 @@ public struct EncodedCodes: Decodable {
     let nextCodeWithCheck: String?  // marker code to indicate "more QR codes" + age check required
 }
 
+public enum ScanFormat: String, Decodable {
+    // 1d codes
+    case ean13
+    case ean8
+    case code128
+    case itf14
+    case code39
+    // 2d codes
+    case qr
+    case dataMatrix
+}
+
 public struct Project: Decodable {
     public let id: String
     public let links: Links
@@ -54,6 +68,16 @@ public struct Project: Decodable {
     public let encodedCodes: EncodedCodes?
 
     public let shops: [Shop]
+
+    public var scanFormats: [ScanFormat] {
+        let standard: [ScanFormat] = [ .ean8, .ean13, .code128 ]
+
+        if self.id.hasPrefix("knauber") {
+            return [ .ean8, .ean13, .code128, .code39 ]
+        }
+
+        return standard
+    }
 
     enum CodingKeys: String, CodingKey {
         case id, links

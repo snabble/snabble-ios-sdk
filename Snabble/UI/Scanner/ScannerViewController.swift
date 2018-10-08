@@ -11,6 +11,20 @@ public protocol ScannerDelegate: AnalyticsDelegate, MessageDelegate {
     func closeScanningView()
 }
 
+extension ScanFormat {
+    var avType: AVMetadataObject.ObjectType {
+        switch self {
+        case .ean8: return .ean8
+        case .ean13: return .ean13
+        case .code128: return .code128
+        case .itf14: return .itf14
+        case .code39: return .code39
+        case .qr: return .qr
+        case .dataMatrix: return .dataMatrix
+        }
+    }
+}
+
 public class ScannerViewController: UIViewController {
 
     @IBOutlet private weak var spinner: UIActivityIndicatorView!
@@ -35,17 +49,15 @@ public class ScannerViewController: UIViewController {
     private weak var delegate: ScannerDelegate!
     private var timer: Timer?
 
-    public init(_ productProvider: ProductProvider, _ cart: ShoppingCart, _ shop: Shop, delegate: ScannerDelegate, objectTypes: [AVMetadataObject.ObjectType]? = nil) {
-        self.productProvider = productProvider
+    public init(_ project: Project, _ cart: ShoppingCart, _ shop: Shop, delegate: ScannerDelegate) {
+        self.productProvider = SnabbleAPI.productProvider(for: project)
         self.shoppingCart = cart
         self.shop = shop
+        self.objectTypes = project.scanFormats.map { $0.avType }
 
         super.init(nibName: nil, bundle: Snabble.bundle)
 
         self.delegate = delegate
-        if let objectTypes = objectTypes {
-            self.objectTypes = objectTypes
-        }
 
         self.title = "Snabble.Scanner.title".localized()
         self.tabBarItem.image = UIImage.fromBundle("icon-scan")
@@ -146,9 +158,11 @@ public class ScannerViewController: UIViewController {
     }
 
     /// reset `productProvider` and `shoppingCart` when switching between projects
-    public func reset(_ productProvider: ProductProvider, _ cart: ShoppingCart) {
-        self.productProvider = productProvider
+    public func reset(_ project: Project, _ cart: ShoppingCart) {
+        self.productProvider = SnabbleAPI.productProvider(for: project)
         self.shoppingCart = cart
+        self.objectTypes = project.scanFormats.map { $0.avType }
+        self.scanningView?.setScanObjects(self.objectTypes)
 
         // avoid camera permission query if this is called before we've ever been on-screen
         if self.scanningView != nil {
@@ -156,7 +170,7 @@ public class ScannerViewController: UIViewController {
             self.navigationController?.popToRootViewController(animated: false)
         }
     }
-    
+
     // MARK: - scan confirmation views
     
     private func showConfirmation(for product: Product, _ code: String) {
