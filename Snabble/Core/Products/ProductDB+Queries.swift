@@ -33,7 +33,7 @@ extension ProductDB {
     func productBySku(_ dbQueue: DatabaseQueue, _ sku: String, _ shopId: String?) -> Product? {
         do {
             let row = try dbQueue.inDatabase { db in
-                return try Row.fetchOne(db, ProductDB.productQueryWithPrice + " where p.sku = ?", arguments: [shopId, sku])
+                return try self.fetchOne(db, ProductDB.productQueryWithPrice + " where p.sku = ?", arguments: [shopId, sku])
             }
             return self.productFromRow(dbQueue, row, shopId)
         } catch {
@@ -46,7 +46,7 @@ extension ProductDB {
         do {
             let list = skus.map { "\"\($0)\"" }.joined(separator: ",")
             let rows = try dbQueue.inDatabase { db in
-                return try Row.fetchAll(db, ProductDB.productQueryWithPrice + " where p.sku in (\(list))", arguments: [shopId])
+                return try self.fetchAll(db, ProductDB.productQueryWithPrice + " where p.sku in (\(list))", arguments: [shopId])
             }
             return rows.compactMap { self.productFromRow(dbQueue, $0, shopId) }
         } catch {
@@ -58,7 +58,7 @@ extension ProductDB {
     func boostedProducts(_ dbQueue: DatabaseQueue, limit: Int) -> [Product] {
         do {
             let rows = try dbQueue.inDatabase { db in
-                return try Row.fetchAll(db, ProductDB.productQueryNoPrice + " " + """
+                return try self.fetchAll(db, ProductDB.productQueryNoPrice + " " + """
                     where p.imageUrl is not null and p.boost > 0
                     order by p.boost desc
                     limit ?
@@ -74,7 +74,7 @@ extension ProductDB {
     func discountedProducts(_ dbQueue: DatabaseQueue, _ shopId: String?) -> [Product] {
         do {
             let rows = try dbQueue.inDatabase { db in
-                return try Row.fetchAll(db, ProductDB.productQueryWithPrice + " " + """
+                return try self.fetchAll(db, ProductDB.productQueryWithPrice + " " + """
                     where p.imageUrl is not null and pr.discountedPrice is not null
                     group by p.sku
                     """, arguments: [shopId])
@@ -89,7 +89,7 @@ extension ProductDB {
     func productByScannableCode(_ dbQueue: DatabaseQueue, _ code: String, _ shopId: String?, retry: Bool = false) -> LookupResult? {
         do {
             let row = try dbQueue.inDatabase { db in
-                return try Row.fetchOne(db, ProductDB.productQueryWithPrice + " " + """
+                return try self.fetchOne(db, ProductDB.productQueryWithPrice + " " + """
                     join scannableCodes s on s.sku = p.sku
                     where s.code = ?
                     """, arguments: [shopId, code])
@@ -120,7 +120,7 @@ extension ProductDB {
     func productByWeighItemId(_ dbQueue: DatabaseQueue, _ weighItemId: String, _ shopId: String?) -> Product? {
         do {
             let row = try dbQueue.inDatabase { db in
-                return  try Row.fetchOne(db, ProductDB.productQueryWithPrice + " " + """
+                return  try self.fetchOne(db, ProductDB.productQueryWithPrice + " " + """
                     join weighItemIds w on w.sku = p.sku
                     where w.weighItemId = ?
                     """, arguments: [shopId, weighItemId])
@@ -137,7 +137,7 @@ extension ProductDB {
             let limit = name.count < 5 ? name.count * 100 : -1
             let depositCondition = filterDeposits ? "and isDeposit = 0" : ""
             let rows = try dbQueue.inDatabase { db in
-                return try Row.fetchAll(db, ProductDB.productQueryNoPrice + " " + """
+                return try self.fetchAll(db, ProductDB.productQueryNoPrice + " " + """
                     where p.sku in (select sku from searchByName where foldedName match ? limit ?) \(depositCondition)
                     """, arguments: [name + "*", limit])
             }
@@ -153,7 +153,7 @@ extension ProductDB {
             let limit = 100 //  prefix.count < 5 ? prefix.count * 100 : -1
             let depositCondition = filterDeposits ? "and isDeposit = 0" : ""
             let rows = try dbQueue.inDatabase { db in
-                return try Row.fetchAll(db, ProductDB.productQueryNoPrice + " " + """
+                return try self.fetchAll(db, ProductDB.productQueryNoPrice + " " + """
                     join scannableCodes s on s.sku = p.sku
                     where (s.code glob ? or s.code glob ?) \(depositCondition) and p.weighing != \(ProductType.preWeighed.rawValue)
                     limit ?
@@ -169,7 +169,7 @@ extension ProductDB {
     func productsBundling(_ dbQueue: DatabaseQueue, _ sku: String, _ shopId: String?) -> [Product] {
         do {
             let rows = try dbQueue.inDatabase { db in
-                return try Row.fetchAll(db, ProductDB.productQueryWithPrice + " " + """
+                return try self.fetchAll(db, ProductDB.productQueryWithPrice + " " + """
                     where p.bundledSku = ?
                     """, arguments: [shopId, sku])
             }
@@ -183,7 +183,7 @@ extension ProductDB {
     func metadata(_ dbQueue: DatabaseQueue) -> [String: String] {
         do {
             let rows = try dbQueue.inDatabase { db in
-                return try Row.fetchAll(db, "select * from metadata")
+                return try self.fetchAll(db, "select * from metadata")
             }
 
             let tuples = rows.compactMap { ($0["key"], $0["value"]) as? (String, String) }
@@ -295,8 +295,7 @@ extension ProductDB {
     private func fetchOne(_ db: Database, _ query: String, arguments: StatementArguments? = nil) throws -> Row? {
         let start = Date.timeIntervalSinceReferenceDate
         defer {
-            let elapsed = Date.timeIntervalSinceReferenceDate - start
-            NSLog("sqlite: \(elapsed) for \(query)" )
+            self.logSlowQuery(db, query, arguments, start)
         }
         return try Row.fetchOne(db, query, arguments: arguments, adapter: nil)
     }
@@ -304,9 +303,27 @@ extension ProductDB {
     private func fetchAll(_ db: Database, _ query: String, arguments: StatementArguments? = nil) throws -> [Row] {
         let start = Date.timeIntervalSinceReferenceDate
         defer {
-            let elapsed = Date.timeIntervalSinceReferenceDate - start
-            NSLog("sqlite: \(elapsed) for \(query)" )
+            self.logSlowQuery(db, query, arguments, start)
         }
         return try Row.fetchAll(db, query, arguments: arguments, adapter: nil)
+    }
+
+    private func logSlowQuery(_ db: Database, _ query: String, _ arguments: StatementArguments?, _ start: TimeInterval) {
+        let elapsed = Date.timeIntervalSinceReferenceDate - start
+
+        if elapsed >= 0.01 {
+            NSLog("slow query: \(elapsed)s for \(query) - arguments: \(String(describing: arguments))" )
+            self.queryPlan(db, query, arguments)
+        }
+    }
+
+    private func queryPlan(_ db: Database, _ query: String, _ arguments: StatementArguments?) {
+        do {
+            for explain in try Row.fetchAll(db, "EXPLAIN QUERY PLAN " + query, arguments: arguments) {
+                print("EXPLAIN: \(explain)")
+            }
+        } catch {
+            print("query explain error \(error)")
+        }
     }
 }

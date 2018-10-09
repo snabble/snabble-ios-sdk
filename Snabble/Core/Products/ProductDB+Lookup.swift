@@ -6,7 +6,7 @@
 
 extension ProductDB {
 
-    func getSingleProduct(_ url: String, _ placeholder: String, _ identifier: String, _ shopId: String?, completion: @escaping (Product?, Bool) -> () ) {
+    func getSingleProduct(_ url: String, _ placeholder: String, _ identifier: String, _ shopId: String, completion: @escaping (Product?, Bool) -> () ) {
         self.getSingleProduct(url, placeholder, identifier, shopId) { (result: LookupResult?, error: Bool) in
             if let result = result {
                 completion(result.product, error)
@@ -16,14 +16,15 @@ extension ProductDB {
         }
     }
 
-    func getSingleProduct(_ url: String, _ placeholder: String, _ identifier: String, _ shopId: String?, completion: @escaping (LookupResult?, Bool) -> () ) {
+    func getSingleProduct(_ url: String, _ placeholder: String, _ identifier: String, _ shopId: String, completion: @escaping (LookupResult?, Bool) -> () ) {
         let session = URLSession(configuration: URLSessionConfiguration.default)
 
         // TODO: is this the right value?
         let timeoutInterval: TimeInterval = 5
 
         let fullUrl = url.replacingOccurrences(of: placeholder, with: identifier)
-        self.project.request(.get, fullUrl, timeout: timeoutInterval) { request in
+        let parameters = [ "shopID": shopId ]
+        self.project.request(.get, fullUrl, parameters: parameters, timeout: timeoutInterval) { request in
             guard let request = request else {
                 return completion(nil, true)
             }
@@ -45,14 +46,14 @@ extension ProductDB {
                             // get the deposit product
                             self.productBySku(depositSku, shopId) { depositProduct, error in
                                 if let deposit = depositProduct?.price {
-                                    self.completeProduct(apiProduct, deposit, completion)
+                                    self.completeProduct(apiProduct, deposit, shopId, completion)
                                 } else {
                                     self.returnError("deposit product not found", completion)
                                 }
                             }
                         } else {
                             // product w/o deposit
-                            self.completeProduct(apiProduct, nil, completion)
+                            self.completeProduct(apiProduct, nil, shopId, completion)
                         }
                     } catch let error {
                         self.returnError("product parse error: \(error)", completion)
@@ -73,7 +74,7 @@ extension ProductDB {
         }
     }
 
-    private func completeProduct(_ apiProduct: APIProduct, _ deposit: Int?, _ completion: @escaping (LookupResult?, Bool) -> () ) {
+    private func completeProduct(_ apiProduct: APIProduct, _ deposit: Int?, _ shopId: String, _ completion: @escaping (LookupResult?, Bool) -> () ) {
         let matchingCode = apiProduct.matchingCode ?? ""
 
         // is this a bundle or a deposit? then don't do the bundling lookup!
@@ -85,7 +86,7 @@ extension ProductDB {
             return
         }
 
-        self.getBundlingProducts(self.project.links.bundlesForSku.href, "{bundledSku}", apiProduct.sku) { bundles, error in
+        self.getBundlingProducts(self.project.links.bundlesForSku.href, "{bundledSku}", apiProduct.sku, shopId) { bundles, error in
             let result = LookupResult(product: apiProduct.convert(deposit, bundles), code: matchingCode)
             DispatchQueue.main.async {
                 completion(result, false)
@@ -93,14 +94,15 @@ extension ProductDB {
         }
     }
 
-    private func getBundlingProducts(_ url: String, _ placeholder: String, _ sku: String, completion: @escaping (_ bundles: [Product], _ error: Bool) -> ()) {
+    private func getBundlingProducts(_ url: String, _ placeholder: String, _ sku: String, _ shopId: String, completion: @escaping (_ bundles: [Product], _ error: Bool) -> ()) {
         let session = URLSession(configuration: URLSessionConfiguration.default)
 
         // TODO: is this the right value?
         let timeoutInterval: TimeInterval = 5
 
         let fullUrl = url.replacingOccurrences(of: placeholder, with: sku)
-        self.project.request(.get, fullUrl, timeout: timeoutInterval) { request in
+        let parameters = [ "shopID": shopId ]
+        self.project.request(.get, fullUrl, parameters: parameters, timeout: timeoutInterval) { request in
             guard let request = request else {
                 return completion([], true)
             }
@@ -116,7 +118,7 @@ extension ProductDB {
                     do {
                         let result = try JSONDecoder().decode(APIProducts.self, from: data)
                         NSLog("online bundle lookup for sku \(sku) found \(result.products.count) bundles")
-                        self.completeBundles(result.products, completion)
+                        self.completeBundles(result.products, shopId, completion)
                     }
                     catch let error {
                         let raw = String(bytes: data, encoding: .utf8)
@@ -133,14 +135,14 @@ extension ProductDB {
     }
 
     // for a list of bundles, get their respective deposit
-    func completeBundles(_ bundles: [APIProduct], _ completion: @escaping (_ products: [Product], _ error: Bool) ->() ) {
+    func completeBundles(_ bundles: [APIProduct], _ shopId: String, _ completion: @escaping (_ products: [Product], _ error: Bool) ->() ) {
         let skus = bundles.compactMap { $0.depositProduct }
         if skus.count == 0 {
             completion([], false)
             return
         }
 
-        self.getProductsBySku(self.project.links.productsBySku.href, skus) { products, error in
+        self.getProductsBySku(self.project.links.productsBySku.href, skus, shopId) { products, error in
             let deposits = Dictionary(uniqueKeysWithValues: products.map { ($0.sku, $0.listPrice) })
 
             let products = bundles.map { (bundle) -> Product in
@@ -151,15 +153,17 @@ extension ProductDB {
         }
     }
 
-    func getProductsBySku(_ url: String, _ skus: [String], completion: @escaping (_ products: [Product], _ error: Bool) -> ()) {
+    func getProductsBySku(_ url: String, _ skus: [String], _ shopId: String, completion: @escaping (_ products: [Product], _ error: Bool) -> ()) {
         let session = URLSession(configuration: URLSessionConfiguration.default)
 
         // TODO: is this the right value?
         let timeoutInterval: TimeInterval = 5
 
         let skuSet = Set(skus)
-        let skuItems = skuSet.map { URLQueryItem(name: "skus", value: $0) }
-        self.project.request(.get, url, queryItems: skuItems, timeout: timeoutInterval) { request in
+        var parameters = skuSet.map { URLQueryItem(name: "skus", value: $0) }
+        parameters.append(URLQueryItem(name: "shopID", value: shopId))
+
+        self.project.request(.get, url, queryItems: parameters, timeout: timeoutInterval) { request in
             guard let request = request else {
                 return completion([], true)
             }
