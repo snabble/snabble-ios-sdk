@@ -306,8 +306,10 @@ public class ScanningView: DesignableView {
             // set rectOfInterest asynchronously because it's slooooooow
             DispatchQueue.main.async {
                 let rect = self.reticle.frame
-                let visibleRect = self.previewLayer.metadataOutputRectConverted(fromLayerRect: rect)
-                self.metadataOutput.rectOfInterest = visibleRect
+                if let layer = self.previewLayer {
+                    let visibleRect = layer.metadataOutputRectConverted(fromLayerRect: rect)
+                    self.metadataOutput.rectOfInterest = visibleRect
+                }
             }
         }
 
