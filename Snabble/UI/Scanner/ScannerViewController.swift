@@ -45,7 +45,7 @@ public class ScannerViewController: UIViewController {
     
     private var hiddenConfirmationOffset: CGFloat = 310
     private var keyboardObserver: KeyboardObserver!
-    private var objectTypes: [AVMetadataObject.ObjectType] = [ .ean8, .ean13, .code128 ]
+    private var objectTypes = [AVMetadataObject.ObjectType]()
     private weak var delegate: ScannerDelegate!
     private var timer: Timer?
 
@@ -157,12 +157,12 @@ public class ScannerViewController: UIViewController {
         self.infoView.isHidden = true
     }
 
-    /// reset `productProvider` and `shoppingCart` when switching between projects
+    /// reset `project` and `shoppingCart` when switching between projects
     public func reset(_ project: Project, _ cart: ShoppingCart) {
         self.productProvider = SnabbleAPI.productProvider(for: project)
         self.shoppingCart = cart
         self.objectTypes = project.scanFormats.map { $0.avType }
-        self.scanningView?.setScanObjects(self.objectTypes)
+        self.scanningView?.setObjectTypes(self.objectTypes)
 
         // avoid camera permission query if this is called before we've ever been on-screen
         if self.scanningView != nil {
