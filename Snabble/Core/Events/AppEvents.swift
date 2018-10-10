@@ -103,8 +103,6 @@ struct AppEvent: Encodable {
 
 extension AppEvent {
 
-    struct Empty: Decodable { }
-
     func post() {
         project.request(.post, project.links.appEvents.href, body: self, timeout: 0) { request in
             guard let request = request else {
@@ -112,11 +110,15 @@ extension AppEvent {
             }
 
             // NSLog("posting event \(String(describing: self))")
-            self.project.perform(request) { (result: Empty?, error) in
+
+            // use URLSession directly to avoid error logging loops when posting the event fails
+            let session = URLSession(configuration: URLSessionConfiguration.default)
+            let task = session.dataTask(with: request) { rawData, response, error in
                 if let error = error {
-                    NSLog("error posting event: \(error)")
+                    NSLog("posting event failed: \(error)")
                 }
             }
+            task.resume()
         }
     }
 
