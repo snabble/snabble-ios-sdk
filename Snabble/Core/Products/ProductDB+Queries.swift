@@ -13,7 +13,7 @@ extension ProductDB {
 
     static let productQueryNoPrice = """
         select
-            p.*, 0 as listPrice, 0 as discountedPrice, "" as basePrice,
+            p.*, 0 as listPrice, null as discountedPrice, null as basePrice,
             (select group_concat(sc.code) from scannableCodes sc where sc.sku = p.sku) scannableCodes,
             (select group_concat(w.weighItemId) from weighItemIds w where w.sku = p.sku) weighItemIds,
             (select group_concat(ifnull(sc.transmissionCode, "")) from scannableCodes sc where sc.sku = p.sku) transmissionCodes
@@ -27,7 +27,7 @@ extension ProductDB {
             (select group_concat(w.weighItemId) from weighItemIds w where w.sku = p.sku) weighItemIds,
             (select group_concat(ifnull(sc.transmissionCode, "")) from scannableCodes sc where sc.sku = p.sku) transmissionCodes
         from products p
-        join prices pr on pr.sku = p.sku and pr.pricingCategory is (select pricingCategory from shops where shops.id is ?)
+        join prices pr on pr.sku = p.sku and pr.pricingCategory = ifnull((select pricingCategory from shops where shops.id = ?), 0)
         """
 
     func productBySku(_ dbQueue: DatabaseQueue, _ sku: String, _ shopId: String?) -> Product? {
