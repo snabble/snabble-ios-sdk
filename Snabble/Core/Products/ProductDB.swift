@@ -428,7 +428,7 @@ final class ProductDB: ProductProvider {
             }
 
             try tempDb.inDatabase { db in
-                try db.execute("vacuumx")
+                try db.execute("vacuum")
             }
             return true
         } catch let error {
