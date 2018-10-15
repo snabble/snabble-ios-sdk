@@ -100,9 +100,12 @@ class EmbeddedCodesCheckoutViewController: UIViewController {
     }
 
     private func codesForQR() -> ([String],[String]) {
+        let project = SnabbleUI.project
+        let items = self.cart.items.sorted { $0.itemPrice(project) < $1.itemPrice(project) }
+
         if self.codeblocks.config.nextCodeWithCheck != nil {
-            let regularItems = self.cart.items.filter { return $0.product.saleRestriction == .none }
-            let restrictedItems = self.cart.items.filter { return $0.product.saleRestriction != .none }
+            let regularItems = items.filter { return $0.product.saleRestriction == .none }
+            let restrictedItems = items.filter { return $0.product.saleRestriction != .none }
 
             var regularCodes = self.codesFor(regularItems)
             if let additionalCodes = self.cart.additionalCodes {
@@ -112,7 +115,7 @@ class EmbeddedCodesCheckoutViewController: UIViewController {
 
             return (regularCodes, restrictedCodes)
         } else {
-            var codes = self.codesFor(self.cart.items)
+            var codes = self.codesFor(items)
             if let additionalCodes = self.cart.additionalCodes {
                 codes.append(contentsOf: additionalCodes)
             }
