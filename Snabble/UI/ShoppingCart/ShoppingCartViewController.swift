@@ -284,6 +284,10 @@ extension ShoppingCartViewController: UITableViewDelegate, UITableViewDataSource
         }
     }
 
+    public func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
+        return 80
+    }
+
     // MARK: table view delegate
 
     // call tableView.deleteRowsAtIndexPaths() inside a CATransaction block so that we can reload the tableview afterwards
