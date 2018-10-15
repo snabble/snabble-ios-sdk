@@ -51,12 +51,8 @@ class TokenRegistry {
     }
 
     func getToken(for project: Project, completion: @escaping (String?)->() ) {
-        if let token = self.registry[project.id] {
-            // we already have a token. return it if it's still valid
-            let now = Date()
-            if token.expires > now {
-                return completion(token.jwt)
-            }
+        if let jwt = self.token(for: project) {
+            return completion(jwt)
         }
 
         // no token in our registry, go fetch it
@@ -69,6 +65,18 @@ class TokenRegistry {
                 completion(nil)
             }
         }
+    }
+
+    // raw, synchronous token access. externally only used by AppEvent.post() to avoid endless loops
+    func token(for project: Project) -> String? {
+        if let token = self.registry[project.id] {
+            // we already have a token. return it if it's still valid
+            let now = Date()
+            if token.expires > now {
+                return token.jwt
+            }
+        }
+        return nil
     }
 
     // only for unit testing

@@ -42,8 +42,8 @@ extension Project {
         guard
             let url = SnabbleAPI.urlString(url, parameters),
             let fullUrl = SnabbleAPI.urlFor(url)
-            else {
-                return completion(nil)
+        else {
+            return completion(nil)
         }
 
         self.request(method, fullUrl, json, jwtRequired, timeout, completion)
@@ -227,24 +227,24 @@ extension Project {
                 let data = rawData,
                 let httpResponse = response as? HTTPURLResponse,
                 httpResponse.statusCode == 200 || httpResponse.statusCode == 201
-                else {
-                    self.logError("error getting response from \(url): \(String(describing: error))")
-                    var apiError: ApiError?
-                    if let data = rawData {
-                        do {
-                            let error = try JSONDecoder().decode(ApiError.self, from: data)
-                            self.logError("error response: \(String(describing: error))")
-                            apiError = error
-                        }
-                        catch {
-                            let rawResponse = String(bytes: data, encoding: .utf8)
-                            self.logError("failed parsing error response: \(String(describing: rawResponse)) -> \(error)")
-                        }
+            else {
+                self.logError("error getting response from \(url): \(String(describing: error))")
+                var apiError: ApiError?
+                if let data = rawData {
+                    do {
+                        let error = try JSONDecoder().decode(ApiError.self, from: data)
+                        self.logError("error response: \(String(describing: error))")
+                        apiError = error
                     }
-                    DispatchQueue.main.async {
-                        completion(nil, apiError, nil, response as? HTTPURLResponse)
+                    catch {
+                        let rawResponse = String(bytes: data, encoding: .utf8)
+                        self.logError("failed parsing error response: \(String(describing: rawResponse)) -> \(error)")
                     }
-                    return
+                }
+                DispatchQueue.main.async {
+                    completion(nil, apiError, nil, response as? HTTPURLResponse)
+                }
+                return
             }
 
             // handle empty response

@@ -104,22 +104,35 @@ struct AppEvent: Encodable {
 extension AppEvent {
 
     func post() {
-        project.request(.post, project.links.appEvents.href, body: self, timeout: 0) { request in
-            guard let request = request else {
-                return
-            }
-
-            // NSLog("posting event \(String(describing: self))")
-
-            // use URLSession directly to avoid error logging loops when posting the event fails
-            let session = URLSession(configuration: URLSessionConfiguration.default)
-            let task = session.dataTask(with: request) { rawData, response, error in
-                if let error = error {
-                    NSLog("posting event failed: \(error)")
-                }
-            }
-            task.resume()
+        // use URLRequest/URLSession directly to avoid error logging loops when posting the event fails
+        guard
+            let url = SnabbleAPI.urlFor(project.links.appEvents.href),
+            let token = SnabbleAPI.tokenRegistry.token(for: self.project)
+        else {
+            return
         }
+        var request = URLRequest(url: url)
+        request.httpMethod = "POST"
+
+        do {
+            request.httpBody = try JSONEncoder().encode(self)
+            request.addValue(token, forHTTPHeaderField: "Client-Token")
+            request.addValue("application/json", forHTTPHeaderField: "Accept")
+            request.addValue("application/json", forHTTPHeaderField: "Content-Type")
+        }
+        catch {
+            print("\(error)")
+        }
+
+        // NSLog("posting event \(String(describing: self))")
+
+        let session = URLSession(configuration: URLSessionConfiguration.default)
+        let task = session.dataTask(with: request) { rawData, response, error in
+            if let error = error {
+                NSLog("posting event failed: \(error)")
+            }
+        }
+        task.resume()
     }
 
 }
