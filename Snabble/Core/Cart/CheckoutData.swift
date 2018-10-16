@@ -20,19 +20,30 @@ public struct SignedCheckoutInfo: Decodable {
 
     public struct CheckoutLinks: Decodable {
         public let checkoutProcess: Link
+
+        fileprivate init() {
+            self.checkoutProcess = Link.empty
+        }
     }
 
     // not part of the Snabble API, only used internally
     var rawJson: [String: Any]? = nil
+
+    // only used for the embedded codes offline payment
+    init() {
+        self.checkoutInfo = CheckoutInfo()
+        self.signature = ""
+        self.links = CheckoutLinks()
+    }
 }
 
 // known payment methods
 public enum PaymentMethod: String {
     case cash
-//    case girocard
-//    case sepa
-//    case visa
-//    case mastercard
+    // case girocard
+    // case sepa
+    // case visa
+    // case mastercard
     case qrCode = "qrCodePOS"
     case encodedCodes
 }
@@ -69,37 +80,50 @@ public struct CheckoutInfo: Decodable {
     public let project: String
     public let session: String
 
-// we dont need line items right now, so we just ignore them
-//    public let lineItems: [LineItem]
-//    public struct LineItem: Decodable {
-//        public let totalPrice: Int
-//        public let amount: Int
-//        public let name: String
-//        public let price: Int
-//        public let taxRate: Int
-//        public let sku: String
-//    }
+    // we dont need line items right now, so we just ignore them
+    // public let lineItems: [LineItem]
+    // public struct LineItem: Decodable {
+    //   public let totalPrice: Int
+    //   public let amount: Int
+    //   public let name: String
+    //   public let price: Int
+    //   public let taxRate: Int
+    //   public let sku: String
+    // }
 
     public struct Price: Decodable {
-// we don't need tax info right now, so we just ignore it
-//        public let tax: Tax
+        // we don't need tax info right now, so we just ignore it
+        // public let tax: Tax
         public let netPrice: Int
         public let price: Int
 
-//        public struct Tax: Decodable {
-//            public let tax0, tax7, tax19: Int?
-//
-//            public enum CodingKeys: String, CodingKey {
-//                case tax0 = "0"
-//                case tax7 = "7"
-//                case tax19 = "19"
-//            }
-//        }
+        // public struct Tax: Decodable {
+        // public let tax0, tax7, tax19: Int?
+        //
+        //   public enum CodingKeys: String, CodingKey {
+        //     case tax0 = "0"
+        //     case tax7 = "7"
+        //     case tax19 = "19"
+        //   }
+        // }
+
+        init() {
+            self.netPrice = 0
+            self.price = 0
+        }
     }
 
     /// available and implemented payment methods
     public var paymentMethods: [PaymentMethod] {
         return availableMethods.compactMap { PaymentMethod(rawValue: $0) }
+    }
+
+    fileprivate init() {
+        self.price = Price()
+        self.availableMethods = [ PaymentMethod.encodedCodes.rawValue ]
+        self.shopID = ""
+        self.project = ""
+        self.session = ""
     }
 }
 

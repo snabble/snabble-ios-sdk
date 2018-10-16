@@ -17,7 +17,6 @@ class EmbeddedCodesCheckoutViewController: UIViewController {
 
     @IBOutlet weak var collectionView: UICollectionView!
     @IBOutlet weak var pageControl: UIPageControl!
-    private var process: CheckoutProcess!
     private weak var cart: ShoppingCart!
     private weak var delegate: PaymentDelegate!
 
@@ -26,8 +25,7 @@ class EmbeddedCodesCheckoutViewController: UIViewController {
     private var itemSize = CGSize(width: 100, height: 100)
     private static let defaultCodes = EncodedCodes(prefix: "", separator: "", suffix: "", maxCodes: 100, finalCode: nil, nextCode: nil, nextCodeWithCheck: nil)
 
-    init(_ process: CheckoutProcess, _ cart: ShoppingCart, _ delegate: PaymentDelegate) {
-        self.process = process
+    init(_ cart: ShoppingCart, _ delegate: PaymentDelegate) {
         self.cart = cart
         self.delegate = delegate
         self.codeblocks = Codeblocks(SnabbleUI.project.encodedCodes ?? EmbeddedCodesCheckoutViewController.defaultCodes)
@@ -35,7 +33,6 @@ class EmbeddedCodesCheckoutViewController: UIViewController {
         super.init(nibName: nil, bundle: Snabble.bundle)
 
         self.title = "Snabble.QRCode.title".localized()
-        self.hidesBottomBarWhenPushed = true
     }
 
     required init?(coder aDecoder: NSCoder) {
