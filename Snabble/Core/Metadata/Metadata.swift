@@ -354,7 +354,7 @@ public struct Shop: Decodable {
         self.externalId = nil
     }
 
-    static let none = Shop()
+    public static let none = Shop()
 }
 
 // MARK: - loading metadata
