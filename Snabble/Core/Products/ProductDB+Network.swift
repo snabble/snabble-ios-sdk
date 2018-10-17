@@ -33,10 +33,7 @@ extension ProductDB {
                 return completion(.httpError)
             }
 
-            if !forceFullDb {
-                request.setValue(ProductDB.contentTypes, forHTTPHeaderField: "Accept")
-            }
-
+            request.setValue(ProductDB.contentTypes, forHTTPHeaderField: "Accept")
             let session = URLSession(configuration: URLSessionConfiguration.default)
 
             let task = session.dataTask(with: request) { data, response, error in

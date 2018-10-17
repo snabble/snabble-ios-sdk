@@ -22,14 +22,21 @@ class PaymentProcessPoller {
     func waitForApproval(completion: @escaping (Bool) -> () ) {
         self.completion = completion
         self.timer = Timer.scheduledTimer(withTimeInterval: 1.0, repeats: true) { timer in
-            self.checkApproval(timer)
+            self.checkApproval()
         }
     }
 
     func waitForPayment(completion: @escaping (Bool) -> () ) {
         self.completion = completion
         self.timer = Timer.scheduledTimer(withTimeInterval: 1.0, repeats: true) { timer in
-            self.checkPayment(timer)
+            self.checkPayment()
+        }
+    }
+
+    func waitForReceipt(_ shopName: String, completion: @escaping (Bool) -> () ) {
+        self.completion = completion
+        self.timer = Timer.scheduledTimer(withTimeInterval: 1.0, repeats: true) { timer in
+            self.checkReceipt(shopName)
         }
     }
 
@@ -47,9 +54,9 @@ class PaymentProcessPoller {
         self.completion = nil
     }
 
-    private func checkApproval(_ timer: Timer) {
+    private func checkApproval() {
         print("checking approval...")
-        self.process.update(project, taskCreated: { self.task = $0 }) { process, error in
+        self.process.update(self.project, taskCreated: { self.task = $0 }) { process, error in
             guard
                 let process = process,
                 let paymentApproval = process.paymentApproval,
@@ -65,10 +72,10 @@ class PaymentProcessPoller {
         }
     }
 
-    private func checkPayment(_ timer: Timer) {
+    private func checkPayment() {
         print("checking payment...")
 
-        self.process.update(project, taskCreated: { self.task = $0 }) { process, error in
+        self.process.update(self.project, taskCreated: { self.task = $0 }) { process, error in
             guard let process = process, process.paymentState != .pending else {
                 return
             }
@@ -77,6 +84,24 @@ class PaymentProcessPoller {
             self.timer = nil
 
             self.completion?(process.paymentState == .successful)
+        }
+    }
+
+    private func checkReceipt(_ shopName: String) {
+        print("checking receipt...")
+
+        self.process.update(project, taskCreated: { self.task = $0 }) { process, error in
+            guard let process = process, process.links.receipt != nil else {
+                return
+            }
+
+            self.timer?.invalidate()
+            self.timer = nil
+
+            // download the receipt
+            ReceiptsManager.shared.download(process, self.project, shopName)
+
+            self.completion?(true)
         }
     }
 

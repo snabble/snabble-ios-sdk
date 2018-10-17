@@ -1,5 +1,13 @@
 ## snabble iOS SDK changelog
 
+# v0.7.3
+
+* add support for shop-specific price information, introduced in database schema v1.15. This brings another set of breaking changes:
+* most Core API methods that retrieve product information now require an additional parameter, namely the identifier of the shop that the price information should relate to.
+* `ProductProvider.boostedProducts` has been deprecated and will be removed in a future version of the SDK.
+* Likewise, `ProductProvider.discountedProducts` has been deprecated and will be removed soon. Use `ProductProvider.discountedProducts(_:)` instead.
+* `productsByName` and `productsByScannableCodePrefix` still return products, but without price information (price fields are 0 or nil, respectively)
+
 # v0.7.2
 
 * add `reticleHeight` property to `ScanningViewConfig`

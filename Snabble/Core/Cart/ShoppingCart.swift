@@ -19,6 +19,9 @@ public struct CartConfig {
     /// id of the shop that this cart is used for
     public var shopId = "unknown"
 
+    /// name of the shop
+    public var shopName = ""
+
     /// the customer's loyalty card, if known
     public var loyaltyCard: String? = nil
 
@@ -78,15 +81,24 @@ public struct CartItem: Codable {
 
     /// total price for this cart item
     public func total(_ project: Project) -> Int {
+        return self.price(for: self.quantity, project)
+    }
+
+    /// item price
+    public func itemPrice(_ project: Project) -> Int {
+        return self.price(for: 1, project)
+    }
+
+    func price(for quantity: Int, _ project: Project) -> Int {
         if let price = self.price {
             return price
         } else if let units = self.units {
             let multiplier = units == 0 ? self.quantity : units
             return multiplier * self.product.priceWithDeposit
         } else if let weight = self.weight {
-            return PriceFormatter.priceFor(project, product, weight)
+            return PriceFormatter.priceFor(project, self.product, weight)
         }
-        return PriceFormatter.priceFor(project, self.product, self.quantity)
+        return PriceFormatter.priceFor(project, self.product, quantity)
     }
 
     func cartItem() -> Cart.Item {

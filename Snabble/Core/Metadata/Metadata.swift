@@ -4,6 +4,8 @@
 //  Copyright © 2018 snabble. All rights reserved.
 //
 
+import Foundation
+
 public struct Metadata: Decodable {
     public let flags: Flags
     public let projects: [Project]
@@ -33,6 +35,18 @@ public struct EncodedCodes: Decodable {
     let nextCodeWithCheck: String?  // marker code to indicate "more QR codes" + age check required
 }
 
+public enum ScanFormat: String, Decodable {
+    // 1d codes
+    case ean13
+    case ean8
+    case code128
+    case itf14
+    case code39
+    // 2d codes
+    case qr
+    case dataMatrix = "datamatrix"
+}
+
 public struct Project: Decodable {
     public let id: String
     public let links: Links
@@ -53,13 +67,15 @@ public struct Project: Decodable {
     // config for embedded QR codes
     public let encodedCodes: EncodedCodes?
 
+    public let scanFormats: [ScanFormat]
+
     public let shops: [Shop]
 
     enum CodingKeys: String, CodingKey {
         case id, links
         case currency, decimalDigits, locale, pricePrefixes, unitPrefixes, weighPrefixes, roundingMode
         case verifyInternalEanChecksum, useGermanPrintPrefix, encodedCodes
-        case shops
+        case shops, scanFormats
     }
 
     public init(from decoder: Decoder) throws {
@@ -87,7 +103,10 @@ public struct Project: Decodable {
         formatter.numberStyle = .currency
         self.currencySymbol = formatter.currencySymbol
 
-        self.shops = (try container.decodeIfPresent([Shop].self, forKey: .shops)) ?? []
+        self.shops = (try container.decodeIfPresent([Shop].self, forKey: .shops)) ?? [Shop.none]
+
+        let formats = (try container.decodeIfPresent([String].self, forKey: .scanFormats)) ?? []
+        self.scanFormats = formats.compactMap { ScanFormat(rawValue: $0) }
     }
 
     private init() {
@@ -106,6 +125,7 @@ public struct Project: Decodable {
         self.useGermanPrintPrefix = false
         self.currencySymbol = ""
         self.shops = []
+        self.scanFormats = []
     }
 
     // only used for unit tests
@@ -125,6 +145,7 @@ public struct Project: Decodable {
         self.useGermanPrintPrefix = false
         self.currencySymbol = ""
         self.shops = []
+        self.scanFormats = []
     }
 
     // only used for unit tests
@@ -144,6 +165,7 @@ public struct Project: Decodable {
         self.useGermanPrintPrefix = false
         self.currencySymbol = currencySymbol
         self.shops = []
+        self.scanFormats = []
     }
 
     internal init(links: Links) {
@@ -162,6 +184,7 @@ public struct Project: Decodable {
         self.useGermanPrintPrefix = false
         self.currencySymbol = ""
         self.shops = []
+        self.scanFormats = []
     }
 
     public static let none = Project()
@@ -311,6 +334,27 @@ public struct Shop: Decodable {
         self.state = try container.decode(.state)
         self.country = try container.decode(.country)
     }
+
+    private init() {
+        self.id = "n/a"
+        self.name = "none"
+        self.project = "none"
+        self.latitude = 0
+        self.longitude = 0
+        self.email = "email@example.com"
+        self.phone = "+1 234 567 8901"
+        self.city = "Teststadt"
+        self.street = "Teststraße"
+        self.postalCode = "12345"
+        self.state = ""
+        self.country = "DE"
+        self.openingHoursSpecification = []
+        self.services = []
+        self.external = [:]
+        self.externalId = nil
+    }
+
+    static let none = Shop()
 }
 
 // MARK: - loading metadata

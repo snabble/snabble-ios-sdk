@@ -193,7 +193,7 @@ public class ShoppingCartViewController: UIViewController {
         spinner.centerYAnchor.constraint(equalTo: button.centerYAnchor).isActive = true
         button.isEnabled = false
 
-        self.shoppingCart.createCheckoutInfo(SnabbleUI.project) { info, error in
+        self.shoppingCart.createCheckoutInfo(SnabbleUI.project, timeout: 2) { info, error in
             spinner.stopAnimating()
             spinner.removeFromSuperview()
             button.isEnabled = true
@@ -202,7 +202,15 @@ public class ShoppingCartViewController: UIViewController {
             } else {
                 let handled = self.delegate.handleCheckoutError(error)
                 if !handled {
-                    self.delegate.showInfoMessage("Snabble.Payment.errorStarting".localized())
+                    // app didn't handle the error. see if we can use embedded QR codes anyway
+                    let project = SnabbleUI.project
+                    if project.encodedCodes != nil {
+                        // yes we can
+                        let info = SignedCheckoutInfo()
+                        self.delegate.gotoPayment(info, self.shoppingCart)
+                    } else {
+                        self.delegate.showInfoMessage("Snabble.Payment.errorStarting".localized())
+                    }
                 }
             }
         }
@@ -282,6 +290,10 @@ extension ShoppingCartViewController: UITableViewDelegate, UITableViewDataSource
         if editingStyle == .delete {
             self.deleteRow(indexPath.row)
         }
+    }
+
+    public func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
+        return 80
     }
 
     // MARK: table view delegate

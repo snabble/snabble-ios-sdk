@@ -17,16 +17,17 @@ class EmbeddedCodesCheckoutViewController: UIViewController {
 
     @IBOutlet weak var collectionView: UICollectionView!
     @IBOutlet weak var pageControl: UIPageControl!
-    private var process: CheckoutProcess!
     private weak var cart: ShoppingCart!
     private weak var delegate: PaymentDelegate!
+    private var process: CheckoutProcess?
+    private var poller: PaymentProcessPoller?
 
     private var codeblocks: Codeblocks
     private var codes = [String]()
     private var itemSize = CGSize(width: 100, height: 100)
     private static let defaultCodes = EncodedCodes(prefix: "", separator: "", suffix: "", maxCodes: 100, finalCode: nil, nextCode: nil, nextCodeWithCheck: nil)
 
-    init(_ process: CheckoutProcess, _ cart: ShoppingCart, _ delegate: PaymentDelegate) {
+    init(_ process: CheckoutProcess?, _ cart: ShoppingCart, _ delegate: PaymentDelegate) {
         self.process = process
         self.cart = cart
         self.delegate = delegate
@@ -35,7 +36,6 @@ class EmbeddedCodesCheckoutViewController: UIViewController {
         super.init(nibName: nil, bundle: Snabble.bundle)
 
         self.title = "Snabble.QRCode.title".localized()
-        self.hidesBottomBarWhenPushed = true
     }
 
     required init?(coder aDecoder: NSCoder) {
@@ -99,10 +99,22 @@ class EmbeddedCodesCheckoutViewController: UIViewController {
         UIScreen.main.brightness = self.initialBrightness
     }
 
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+
+//        if let process = self.process {
+//            self.poller = PaymentProcessPoller(process, SnabbleUI.project)
+//            self.poller?.waitForReceipt(self.cart.config.shopName) { success in }
+//        }
+    }
+
     private func codesForQR() -> ([String],[String]) {
+        let project = SnabbleUI.project
+        let items = self.cart.items.sorted { $0.itemPrice(project) < $1.itemPrice(project) }
+
         if self.codeblocks.config.nextCodeWithCheck != nil {
-            let regularItems = self.cart.items.filter { return $0.product.saleRestriction == .none }
-            let restrictedItems = self.cart.items.filter { return $0.product.saleRestriction != .none }
+            let regularItems = items.filter { return $0.product.saleRestriction == .none }
+            let restrictedItems = items.filter { return $0.product.saleRestriction != .none }
 
             var regularCodes = self.codesFor(regularItems)
             if let additionalCodes = self.cart.additionalCodes {
@@ -112,7 +124,7 @@ class EmbeddedCodesCheckoutViewController: UIViewController {
 
             return (regularCodes, restrictedCodes)
         } else {
-            var codes = self.codesFor(self.cart.items)
+            var codes = self.codesFor(items)
             if let additionalCodes = self.cart.additionalCodes {
                 codes.append(contentsOf: additionalCodes)
             }

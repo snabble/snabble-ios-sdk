@@ -62,11 +62,15 @@ class BarcodeEntryViewController: UIViewController, UISearchBarDelegate, UITable
 
     // MARK: - search bar
     func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
-        let products = self.productProvider.productsByScannableCodePrefix(searchText, filterDeposits: true)
-        self.filteredProducts = products.sorted { p1, p2 in
-            let c1 = p1.scannableCodes.filter { $0.hasPrefix(searchText) }.first ?? p1.scannableCodes.first!
-            let c2 = p2.scannableCodes.filter { $0.hasPrefix(searchText) }.first ?? p2.scannableCodes.first!
-            return c1 < c2
+        if searchText.count > 0 {
+            let products = self.productProvider.productsByScannableCodePrefix(searchText, filterDeposits: true)
+            self.filteredProducts = products.sorted { p1, p2 in
+                let c1 = p1.scannableCodes.filter { $0.hasPrefix(searchText) }.first ?? p1.scannableCodes.first!
+                let c2 = p2.scannableCodes.filter { $0.hasPrefix(searchText) }.first ?? p2.scannableCodes.first!
+                return c1 < c2
+            }
+        } else {
+            self.filteredProducts.removeAll()
         }
         self.searchText = searchText
         self.tableView.reloadData()

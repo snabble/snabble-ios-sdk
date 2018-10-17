@@ -63,7 +63,7 @@ public struct ScanningViewConfig {
     public var bottomBarHidden = false
 
     /// which object types should be recognized
-    public var metadataObjectTypes: [AVMetadataObject.ObjectType]?
+    public var metadataObjectTypes = [ AVMetadataObject.ObjectType.ean13 ]
 
     /// delegate object, the ScanningView keeps a weak reference to this
     public var delegate: ScanningViewDelegate?
@@ -192,12 +192,13 @@ public class ScanningView: DesignableView {
             self.torchWrapper.isHidden = !torchToggleSupported
         }
 
-        if let capture = self.captureSession, !capture.isRunning {
-            let rect = self.reticle.frame
+        self.startCaptureSession()
+    }
+
+    private func startCaptureSession() {
+        if let capture = self.captureSession, !capture.isRunning, self.firstLayoutDone {
             self.serialQueue.async {
                 capture.startRunning()
-                let visibleRect = self.previewLayer.metadataOutputRectConverted(fromLayerRect: rect)
-                self.metadataOutput.rectOfInterest = visibleRect
             }
         }
     }
@@ -211,6 +212,10 @@ public class ScanningView: DesignableView {
     /// is it possible to scan?
     public func readyToScan() -> Bool {
         return self.captureSession != nil
+    }
+
+    public func setObjectTypes(_ objects: [AVMetadataObject.ObjectType]) {
+        self.metadataOutput.metadataObjectTypes = objects
     }
 
     @objc func enterButtonTapped(_ button: UIButton) {
@@ -301,6 +306,13 @@ public class ScanningView: DesignableView {
 
         if !self.firstLayoutDone {
             self.setNeedsLayout()
+        } else {
+            let rect = self.reticle.frame
+            if let layer = self.previewLayer {
+                let visibleRect = layer.metadataOutputRectConverted(fromLayerRect: rect)
+                self.metadataOutput.rectOfInterest = visibleRect
+            }
+            self.startCaptureSession()
         }
 
         self.firstLayoutDone = true
