@@ -7,6 +7,7 @@
 * `ProductProvider.boostedProducts` has been deprecated and will be removed in a future version of the SDK.
 * Likewise, `ProductProvider.discountedProducts` has been deprecated and will be removed soon. Use `ProductProvider.discountedProducts(_:)` instead.
 * `productsByName` and `productsByScannableCodePrefix` still return products, but without price information (price fields are 0 or nil, respectively)
+* `CartConfig` has a new property `shopName` that needs to be set along with `shopId` for display in the upcoming support for receipts.
 
 # v0.7.2
 
