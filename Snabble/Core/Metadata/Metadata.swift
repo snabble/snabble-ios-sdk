@@ -44,7 +44,7 @@ public enum ScanFormat: String, Decodable {
     case code39
     // 2d codes
     case qr
-    case dataMatrix
+    case dataMatrix = "datamatrix"
 }
 
 public struct Project: Decodable {
@@ -67,23 +67,15 @@ public struct Project: Decodable {
     // config for embedded QR codes
     public let encodedCodes: EncodedCodes?
 
+    public let scanFormats: [ScanFormat]
+
     public let shops: [Shop]
-
-    public var scanFormats: [ScanFormat] {
-        let standard: [ScanFormat] = [ .ean8, .ean13, .code128 ]
-
-        if self.id.hasPrefix("knauber") {
-            return [ .ean8, .ean13, .code128, .code39 ]
-        }
-
-        return standard
-    }
 
     enum CodingKeys: String, CodingKey {
         case id, links
         case currency, decimalDigits, locale, pricePrefixes, unitPrefixes, weighPrefixes, roundingMode
         case verifyInternalEanChecksum, useGermanPrintPrefix, encodedCodes
-        case shops
+        case shops, scanFormats
     }
 
     public init(from decoder: Decoder) throws {
@@ -112,6 +104,9 @@ public struct Project: Decodable {
         self.currencySymbol = formatter.currencySymbol
 
         self.shops = (try container.decodeIfPresent([Shop].self, forKey: .shops)) ?? [Shop.none]
+
+        let formats = (try container.decodeIfPresent([String].self, forKey: .scanFormats)) ?? []
+        self.scanFormats = formats.compactMap { ScanFormat(rawValue: $0) }
     }
 
     private init() {
@@ -130,6 +125,7 @@ public struct Project: Decodable {
         self.useGermanPrintPrefix = false
         self.currencySymbol = ""
         self.shops = []
+        self.scanFormats = []
     }
 
     // only used for unit tests
@@ -149,6 +145,7 @@ public struct Project: Decodable {
         self.useGermanPrintPrefix = false
         self.currencySymbol = ""
         self.shops = []
+        self.scanFormats = []
     }
 
     // only used for unit tests
@@ -168,6 +165,7 @@ public struct Project: Decodable {
         self.useGermanPrintPrefix = false
         self.currencySymbol = currencySymbol
         self.shops = []
+        self.scanFormats = []
     }
 
     internal init(links: Links) {
@@ -186,6 +184,7 @@ public struct Project: Decodable {
         self.useGermanPrintPrefix = false
         self.currencySymbol = ""
         self.shops = []
+        self.scanFormats = []
     }
 
     public static let none = Project()
