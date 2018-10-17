@@ -19,6 +19,9 @@ public struct CartConfig {
     /// id of the shop that this cart is used for
     public var shopId = "unknown"
 
+    /// name of the shop
+    public var shopName = ""
+
     /// the customer's loyalty card, if known
     public var loyaltyCard: String? = nil
 

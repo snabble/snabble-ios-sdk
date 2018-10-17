@@ -32,7 +32,7 @@ extension PaymentMethod {
         switch self {
         case .cash: processor = CashCheckoutViewController(process!, cart, delegate)
         case .qrCode: processor = QRCheckoutViewController(process!, cart, delegate)
-        case .encodedCodes: processor = EmbeddedCodesCheckoutViewController(cart, delegate)
+        case .encodedCodes: processor = EmbeddedCodesCheckoutViewController(process, cart, delegate)
         }
         processor.hidesBottomBarWhenPushed = true
         return processor

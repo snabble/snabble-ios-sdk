@@ -107,7 +107,7 @@ public struct CheckoutInfo: Decodable {
         //   }
         // }
 
-        init() {
+        fileprivate init() {
             self.netPrice = 0
             self.price = 0
         }
@@ -142,6 +142,7 @@ public struct CheckoutProcess: Decodable {
     public struct ProcessLinks: Decodable {
         public let `self`: Link
         public let approval: Link
+        public let receipt: Link?
     }
 
     public struct PaymentInformation: Decodable {
