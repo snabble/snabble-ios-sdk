@@ -33,6 +33,7 @@ public class ReceiptsListViewController: UIViewController {
 
     private var receipts = [ReceiptData]()
     private var quickLook = QLPreviewController()
+    private var previewItem: QLPreviewItem!
 
     public init() {
         super.init(nibName: nil, bundle: Snabble.bundle)
@@ -82,17 +83,18 @@ extension ReceiptsListViewController: UITableViewDelegate, UITableViewDataSource
     }
 
     public func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        self.quickLook.currentPreviewItemIndex = indexPath.row
+        self.quickLook.currentPreviewItemIndex = 0
+        self.previewItem = self.receipts[indexPath.row ].previewItem
         self.navigationController?.pushViewController(self.quickLook, animated: true)
     }
 }
 
 extension ReceiptsListViewController: QLPreviewControllerDelegate, QLPreviewControllerDataSource {
     public func numberOfPreviewItems(in controller: QLPreviewController) -> Int {
-        return self.receipts.count
+        return 1
     }
 
     public func previewController(_ controller: QLPreviewController, previewItemAt index: Int) -> QLPreviewItem {
-        return self.receipts[index].previewItem
+        return self.previewItem
     }
 }
