@@ -6,32 +6,44 @@
 
 import Foundation
 
-struct ReceiptData: Codable {
-    let total: Int
+public struct ReceiptData: Codable {
+    let id: String
+
     let projectId: String
     let shopName: String
+    let shopId: String
     let date: Date
+    let pdfUrl: String
+    let total: Int
+
     var pdfPath: URL?
 
     enum CodingKeys: String, CodingKey {
-        case total, projectId, shopName, date
+        case id, total, projectId, shopName, shopId, pdfUrl, date
     }
 
-    init(_ total: Int, _ projectId: String, _ shopName: String, _ pdfPath: String) {
+    init(_ id: String, _ total: Int, _ projectId: String, _ shop: Shop, _ pdfUrl: String, _ pdfPath: String) {
+        self.id = id
         self.total = total
         self.projectId = projectId
-        self.shopName = shopName
+        self.shopName = shop.name
+        self.shopId = shop.id
+        self.pdfUrl = pdfUrl
         self.date = Date()
     }
 }
 
-class ReceiptsManager {
-    static let shared = ReceiptsManager()
+public class ReceiptsManager {
+    public static let shared = ReceiptsManager()
+
+    /// set to false to
+    public var autoDownload = true
 
     private init() {}
 
-    func download(_ process: CheckoutProcess, _ project: Project, _ shopName: String) {
+    func download(_ process: CheckoutProcess, _ project: Project, _ shop: Shop) {
         guard
+            self.autoDownload,
             let receiptUrl = process.links.receipt?.href,
             let url = SnabbleAPI.urlFor(receiptUrl),
             let token = SnabbleAPI.tokenRegistry.token(for: project)
@@ -48,31 +60,33 @@ class ReceiptsManager {
                 return
             }
 
-            self.saveReceipt(location, process, project, shopName)
+            self.saveReceipt(location, process, project, shop, receiptUrl)
         }
         task.resume()
     }
 
-    private func saveReceipt(_ tempFile: URL, _ process: CheckoutProcess, _ project: Project, _ shopName: String) {
+    private func saveReceipt(_ tempFile: URL, _ process: CheckoutProcess, _ project: Project, _ shop: Shop, _ pdfUrl: String) {
         let fileManager = FileManager.default
         let targetPath = self.receiptsPath()
         let uuid = UUID().uuidString
         let targetPDF = targetPath.appendingPathComponent(uuid + ".pdf")
         let targetJSON = targetPath.appendingPathComponent(uuid + ".json")
-        let receiptData = ReceiptData(process.checkoutInfo.price.price, project.id, shopName, targetPDF.path)
+        let total = process.checkoutInfo.price.price
+        let receiptData = ReceiptData(uuid, total, project.id, shop, pdfUrl, targetPDF.path)
 
         do {
             try fileManager.moveItem(at: tempFile, to: targetPDF)
             let data = try JSONEncoder().encode(receiptData)
             try data.write(to: targetJSON, options: .atomic)
         } catch {
-            print("save receipt error: \(error)")
+            project.logError("save receipt error: \(error)")
             try? fileManager.removeItem(at: targetPDF)
             try? fileManager.removeItem(at: targetJSON)
         }
     }
 
-    func listReceipts() -> [ReceiptData] {
+    /// get a list of all receipts, sorted by date descending
+    public func listReceipts() -> [ReceiptData] {
         let fileManager = FileManager.default
 
         do {
@@ -83,16 +97,31 @@ class ReceiptsManager {
             var receipts = [ReceiptData]()
             for json in jsonFiles {
                 let jsonPath = receiptsDirectory.appendingPathComponent(json)
-                let data = try Data(contentsOf: jsonPath)
-                var receipt = try JSONDecoder().decode(ReceiptData.self, from: data)
-                receipt.pdfPath = jsonPath.deletingPathExtension().appendingPathExtension("pdf")
-                receipts.append(receipt)
+                do {
+                    let data = try Data(contentsOf: jsonPath)
+                    var receipt = try JSONDecoder().decode(ReceiptData.self, from: data)
+                    receipt.pdfPath = jsonPath.deletingPathExtension().appendingPathExtension("pdf")
+                    receipts.append(receipt)
+                } catch {
+                    NSLog("read receipt error: \(error)")
+                    try? fileManager.removeItem(at: jsonPath)
+                }
             }
-            return receipts
+            return receipts.sorted { $0.date > $1.date }
         } catch {
-            print("list receipts error: \(error)")
+            NSLog("list receipts error: \(error)")
             return []
         }
+    }
+
+    public func delete(_ receipt: ReceiptData) {
+        let fileManager = FileManager.default
+
+        let receiptsDirectory = self.receiptsPath()
+        let pdf = receiptsDirectory.appendingPathComponent(receipt.id).appendingPathComponent("pdf")
+        let json = receiptsDirectory.appendingPathComponent(receipt.id).appendingPathComponent("json")
+        try? fileManager.removeItem(at: pdf)
+        try? fileManager.removeItem(at: json)
     }
 
     private func receiptsPath() -> URL {

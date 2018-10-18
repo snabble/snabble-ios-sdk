@@ -16,11 +16,8 @@ public struct CartConfig {
     /// the `Project` that this cart is used in. You must always use the same snabble project for a cart.
     public var project = Project.none
 
-    /// id of the shop that this cart is used for
-    public var shopId = "unknown"
-
-    /// name of the shop
-    public var shopName = ""
+    /// the shop that this cart is used for
+    public var shop = Shop.none
 
     /// the customer's loyalty card, if known
     public var loyaltyCard: String? = nil
@@ -157,7 +154,7 @@ public final class ShoppingCart {
 
     /// get this cart's `shopId`
     public var shopId: String {
-        return self.config.shopId
+        return self.config.shop.id
     }
 
     /// get this cart's `loyaltyCard`

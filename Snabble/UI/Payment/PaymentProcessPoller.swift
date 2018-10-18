@@ -7,37 +7,38 @@
 
 import Foundation
 
+enum PaymentEvent {
+    case approval
+    case paymentSuccess
+
+    case receipt
+
+    var abortOnFailure: Bool {
+        switch self {
+        case .approval: return true
+        case .paymentSuccess: return true
+        case .receipt: return false
+        }
+    }
+}
+
 class PaymentProcessPoller {
     private var timer: Timer?
-    private var process: CheckoutProcess
-    private var project: Project
+
+    private let process: CheckoutProcess
+    private let project: Project
+    private let shop: Shop
+
     private var task: URLSessionDataTask?
     private var completion: ((Bool) -> ())?
 
-    init(_ process: CheckoutProcess, _ project: Project) {
+    private var waitingFor = [PaymentEvent]()
+    private var alreadySeen = [PaymentEvent]()
+
+    init(_ process: CheckoutProcess, _ project: Project, _ shop: Shop) {
         self.process = process
         self.project = project
-    }
-
-    func waitForApproval(completion: @escaping (Bool) -> () ) {
-        self.completion = completion
-        self.timer = Timer.scheduledTimer(withTimeInterval: 1.0, repeats: true) { timer in
-            self.checkApproval()
-        }
-    }
-
-    func waitForPayment(completion: @escaping (Bool) -> () ) {
-        self.completion = completion
-        self.timer = Timer.scheduledTimer(withTimeInterval: 1.0, repeats: true) { timer in
-            self.checkPayment()
-        }
-    }
-
-    func waitForReceipt(_ shopName: String, completion: @escaping (Bool) -> () ) {
-        self.completion = completion
-        self.timer = Timer.scheduledTimer(withTimeInterval: 1.0, repeats: true) { timer in
-            self.checkReceipt(shopName)
-        }
+        self.shop = shop
     }
 
     deinit {
@@ -47,62 +48,89 @@ class PaymentProcessPoller {
     func stop() {
         self.timer?.invalidate()
         self.timer = nil
-        
+
         self.task?.cancel()
         self.task = nil
 
         self.completion = nil
     }
 
-    private func checkApproval() {
-        print("checking approval...")
-        self.process.update(self.project, taskCreated: { self.task = $0 }) { process, error in
-            guard
-                let process = process,
-                let paymentApproval = process.paymentApproval,
-                let supervisorApproval = process.supervisorApproval
-            else {
-                return
-            }
-
-            self.timer?.invalidate()
-            self.timer = nil
-
-            self.completion?(paymentApproval && supervisorApproval)
+    // wait for a number of events, and call the completion handler as soon as one (or more) are fulfilled
+    func waitFor(_ events: [PaymentEvent], completion: @escaping ([PaymentEvent: Bool]) -> () ) {
+        self.waitingFor = events
+        self.alreadySeen = []
+        self.timer = Timer.scheduledTimer(withTimeInterval: 1.0, repeats: true) { timer in
+            self.checkEvents(events, completion)
         }
     }
 
-    private func checkPayment() {
-        print("checking payment...")
-
+    private func checkEvents(_ events: [PaymentEvent], _ completion: @escaping ([PaymentEvent: Bool]) -> () ) {
         self.process.update(self.project, taskCreated: { self.task = $0 }) { process, error in
-            guard let process = process, process.paymentState != .pending else {
+            guard let process = process else {
                 return
             }
 
-            self.timer?.invalidate()
-            self.timer = nil
+            var seenNow = [PaymentEvent: Bool]()
+            var abort = false
+            for event in self.waitingFor {
+                if self.alreadySeen.contains(event) {
+                    continue
+                }
 
-            self.completion?(process.paymentState == .successful)
+                var result: (event: PaymentEvent, ok: Bool)? = nil
+                switch event {
+                case .approval: result = self.checkApproval(process)
+                case .paymentSuccess: result = self.checkPayment(process)
+                case .receipt: result = self.checkReceipt(process)
+                }
+
+                if let result = result {
+                    seenNow[result.event] = result.ok
+                    self.alreadySeen.append(result.event)
+                    if result.event.abortOnFailure {
+                        abort = abort || !result.ok
+                    }
+                }
+            }
+
+            if seenNow.count > 0 {
+                completion(seenNow)
+            }
+
+            if abort || self.alreadySeen.count == self.waitingFor.count {
+                self.timer?.invalidate()
+                self.timer = nil
+            }
         }
     }
 
-    private func checkReceipt(_ shopName: String) {
-        print("checking receipt...")
-
-        self.process.update(project, taskCreated: { self.task = $0 }) { process, error in
-            guard let process = process, process.links.receipt != nil else {
-                return
-            }
-
-            self.timer?.invalidate()
-            self.timer = nil
-
-            // download the receipt
-            ReceiptsManager.shared.download(process, self.project, shopName)
-
-            self.completion?(true)
+    private func checkApproval(_ process: CheckoutProcess) -> (PaymentEvent, Bool)? {
+        guard
+            let paymentApproval = process.paymentApproval,
+            let supervisorApproval = process.supervisorApproval
+        else {
+            return nil
         }
+
+        return (.approval, paymentApproval && supervisorApproval)
+    }
+
+    private func checkPayment(_ process: CheckoutProcess) -> (PaymentEvent, Bool)? {
+        guard process.paymentState != .pending else {
+            return nil
+        }
+
+        return (.paymentSuccess, process.paymentState == .successful)
+    }
+
+    private func checkReceipt(_ process: CheckoutProcess) -> (PaymentEvent, Bool)? {
+        guard process.links.receipt != nil else {
+            return nil
+        }
+
+        // download the receipt
+        ReceiptsManager.shared.download(process, self.project, self.shop)
+        return (.receipt, true)
     }
 
 }

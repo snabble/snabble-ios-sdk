@@ -102,10 +102,10 @@ class EmbeddedCodesCheckoutViewController: UIViewController {
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
 
-//        if let process = self.process {
-//            self.poller = PaymentProcessPoller(process, SnabbleUI.project)
-//            self.poller?.waitForReceipt(self.cart.config.shopName) { success in }
-//        }
+        if let process = self.process {
+            self.poller = PaymentProcessPoller(process, SnabbleUI.project, self.cart.config.shop)
+            self.poller?.waitFor([.receipt]) { events in }
+        }
     }
 
     private func codesForQR() -> ([String],[String]) {

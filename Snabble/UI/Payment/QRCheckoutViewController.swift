@@ -61,10 +61,11 @@ class QRCheckoutViewController: UIViewController {
         self.qrCodeView.image = QRCode.generate(for: qrCodeContent, scale: 5)
         self.qrCodeWidth.constant = self.qrCodeView.image?.size.width ?? 0
 
-        self.poller = PaymentProcessPoller(self.process, SnabbleUI.project)
-        self.poller?.waitForPayment { success in
-            self.poller = nil
-            self.paymentFinished(success)
+        self.poller = PaymentProcessPoller(self.process, SnabbleUI.project, self.cart.config.shop)
+        self.poller?.waitFor([.paymentSuccess, .receipt]) { events in
+            if let success = events[.paymentSuccess] {
+                self.paymentFinished(success)
+            }
         }
     }
 
@@ -76,6 +77,7 @@ class QRCheckoutViewController: UIViewController {
 
     override func viewWillDisappear(_ animated: Bool) {
         UIScreen.main.brightness = self.initialBrightness
+        self.poller = nil
     }
 
     @IBAction func cancelButtonTapped(_ sender: UIButton) {

@@ -64,26 +64,34 @@ class CashCheckoutViewController: UIViewController {
         }
     }
 
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
+
+        self.poller = nil
+    }
+
     private func locationAquired() {
         self.switchColors(0)
 
         self.spinners[1].startAnimating()
         self.spinners[2].startAnimating()
 
-        self.poller = PaymentProcessPoller(self.process, SnabbleUI.project)
-        self.poller?.waitForApproval { success in
-            self.poller = nil
-            if success {
-                self.switchColors(1) {
-                    DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
-                        self.switchColors(2)
+        self.poller = PaymentProcessPoller(self.process, SnabbleUI.project, self.cart.config.shop)
+
+        self.poller?.waitFor([ .approval, .receipt ]) { events in
+            if let success = events[.approval] {
+                if success {
+                    self.switchColors(1) {
                         DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
-                            self.paymentFinished(true)
+                            self.switchColors(2)
+                            DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
+                                self.paymentFinished(true)
+                            }
                         }
                     }
+                } else {
+                    self.paymentFinished(false)
                 }
-            } else {
-                self.paymentFinished(false)
             }
         }
     }
