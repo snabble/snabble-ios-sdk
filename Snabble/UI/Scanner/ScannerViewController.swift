@@ -32,6 +32,7 @@ public class ScannerViewController: UIViewController {
     private var scanningView: ScanningView!
     private var scanConfirmationView: ScanConfirmationView!
     private var scanConfirmationViewBottom: NSLayoutConstraint!
+    private var tapticFeedback = UINotificationFeedbackGenerator()
 
     private var infoView: ScannerInfoView!
 
@@ -313,7 +314,7 @@ extension ScannerViewController: ScanningViewDelegate {
         if code == self.lastScannedCode {
             return
         }
-        AudioServicesPlaySystemSound(SystemSoundID(kSystemSoundID_Vibrate))
+
         self.handleScannedCode(code)
     }
 }
@@ -321,7 +322,9 @@ extension ScannerViewController: ScanningViewDelegate {
 extension ScannerViewController {
 
     private func scannedUnknown(_ msg: String, _ code: String) {
-        print("scanned unknown code \(code)")
+        // print("scanned unknown code \(code)")
+        self.tapticFeedback.notificationOccurred(.error)
+
         self.delegate.showWarningMessage(msg)
         self.delegate.track(.scanUnknown(code))
 
@@ -332,6 +335,7 @@ extension ScannerViewController {
     }
 
     private func handleScannedCode(_ scannedCode: String) {
+        print("handleScannedCode \(scannedCode) \(self.lastScannedCode)")
         self.lastScannedCode = scannedCode
 
         self.timer?.invalidate()
@@ -351,6 +355,8 @@ extension ScannerViewController {
                 self.scanningView.startScanning()
                 return
             }
+
+            self.tapticFeedback.notificationOccurred(.success)
 
             let ean = EAN.parse(scannedCode, SnabbleUI.project)
             // handle scanning the shelf code of a pre-weighed product

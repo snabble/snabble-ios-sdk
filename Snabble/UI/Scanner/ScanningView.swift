@@ -308,11 +308,11 @@ public class ScanningView: DesignableView {
             self.setNeedsLayout()
         } else {
             let rect = self.reticle.frame
-            if let layer = self.previewLayer {
+            if let layer = self.previewLayer, self.metadataOutput.rectOfInterest.origin.x == 0 {
                 let visibleRect = layer.metadataOutputRectConverted(fromLayerRect: rect)
                 self.metadataOutput.rectOfInterest = visibleRect
+                self.startCaptureSession()
             }
-            self.startCaptureSession()
         }
 
         self.firstLayoutDone = true

@@ -105,7 +105,8 @@ public struct Project: Decodable {
 
         self.shops = (try container.decodeIfPresent([Shop].self, forKey: .shops)) ?? [Shop.none]
 
-        let formats = (try container.decodeIfPresent([String].self, forKey: .scanFormats)) ?? []
+        let defaultFormats = [ ScanFormat.ean8.rawValue, ScanFormat.ean13.rawValue, ScanFormat.code128.rawValue ]
+        let formats = (try container.decodeIfPresent([String].self, forKey: .scanFormats)) ?? defaultFormats
         self.scanFormats = formats.compactMap { ScanFormat(rawValue: $0) }
     }
 
