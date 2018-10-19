@@ -1,5 +1,10 @@
 ## snabble iOS SDK changelog
 
+# v0.7.4
+
+* fix a bug where the scanner's capture session was started on every layout pass
+* tactile scanning confirmation now uses `UINotificationFeedbackGenerator`
+
 # v0.7.3
 
 * add support for shop-specific price information, introduced in database schema v1.15. This brings another set of breaking changes:
