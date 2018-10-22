@@ -151,11 +151,12 @@ class TokenRegistry {
             let base64 = data.base64EncodedString()
             request.addValue("Basic \(base64)", forHTTPHeaderField: "Authorization")
             request.cachePolicy = .reloadIgnoringCacheData
+
             project.perform(request) { (token: TokenResponse?, error, httpResponse) in
                 if let token = token {
                     completion(TokenData(token, project))
                 } else {
-                    if let response = httpResponse, response.statusCode == 403 {
+                    if let response = httpResponse, response.statusCode == 403, date == nil {
                         self.retryWithServerDate(project, response, completion: completion)
                         return
                     }
