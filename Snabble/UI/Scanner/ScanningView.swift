@@ -57,12 +57,12 @@ public struct ScanningViewConfig {
     public var reticleHeight: CGFloat = 160
 
     /// color for the dimming overlay. Default: 13% white, 60% alpha
-    public var dimmingColor = UIColor(white:0.13, alpha:0.6)
+    public var dimmingColor = UIColor(white: 0.13, alpha: 0.6)
 
     /// initial visibility of the button bar
     public var bottomBarHidden = false
 
-    /// which object types should be recognized
+    /// which object types should be recognized. Default: EAN-13/UPC-A
     public var metadataObjectTypes = [ AVMetadataObject.ObjectType.ean13 ]
 
     /// delegate object, the ScanningView keeps a weak reference to this
