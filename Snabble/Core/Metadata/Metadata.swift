@@ -35,6 +35,12 @@ public struct EncodedCodes: Decodable {
     let nextCodeWithCheck: String?  // marker code to indicate "more QR codes" + age check required
 }
 
+// used e.g. for IKEA where we need to extract substrings from the scanned codes
+public struct CodeSubstring {
+    let start: Int
+    let length: Int
+}
+
 public enum ScanFormat: String, Decodable {
     // 1d codes
     case ean13
@@ -68,6 +74,10 @@ public struct Project: Decodable {
     public let encodedCodes: EncodedCodes?
 
     public let scanFormats: [ScanFormat]
+
+    public var codeSubstring: CodeSubstring? {
+        return self.id.hasPrefix("ikea") ? CodeSubstring(start: 0, length: 8) : nil
+    }
 
     public let shops: [Shop]
 

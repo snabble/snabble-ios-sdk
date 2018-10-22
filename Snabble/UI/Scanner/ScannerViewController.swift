@@ -148,7 +148,7 @@ public class ScannerViewController: UIViewController {
 
     override public func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
-        
+
         self.scanningView.stopScanning()
         self.hideScanConfirmationView(true)
         self.infoView.isHidden = true
@@ -344,6 +344,13 @@ extension ScannerViewController {
         }
 
         self.scanningView.stopScanning()
+
+        var scannedCode = scannedCode
+        if let codeSubstring = SnabbleUI.project.codeSubstring {
+            let startIndex = scannedCode.index(scannedCode.startIndex, offsetBy: codeSubstring.start)
+            let endIndex = scannedCode.index(scannedCode.startIndex, offsetBy: codeSubstring.start + codeSubstring.length)
+            scannedCode = String(scannedCode[startIndex ..< endIndex])
+        }
 
         self.productForCode(scannedCode) { product, code in
             self.timer?.invalidate()
