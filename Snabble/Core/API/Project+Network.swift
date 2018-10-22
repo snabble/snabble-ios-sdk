@@ -12,7 +12,7 @@ public struct ApiError: Decodable {
 
 public struct ErrorResponse: Decodable {
     public let type: String // TODO: create an enum for this
-    public let details: [ErrorDetail]
+    public let details: [ErrorDetail]?
 }
 
 public struct ErrorDetail: Decodable {
