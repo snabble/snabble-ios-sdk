@@ -1,5 +1,10 @@
 ## snabble iOS SDK changelog
 
+# v0.7.5
+
+* add support for special ITF14 and DataMatrix barcodes
+
+
 # v0.7.4
 
 * fix a bug where the scanner's capture session was started on every layout pass
