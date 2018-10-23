@@ -118,7 +118,8 @@
         en = Processing purchase
     [Snabble.PaymentStatus.step3]
         en = Processing payment
-        
+    [Snabble.Receipt.errorDownload]
+        en = Receipt could not be downloaded
 [[Android]]
     [Snabble.askForPermission]
         en = Ask for permission
@@ -137,4 +138,7 @@
         tags = android
     [Snabble.loadingProductInformation]
         en = Loading product information...
+        tags = android
+    [Snabble.Receipt.pdfReaderUnavailable]
+        en = No suitable PDF reader application found
         tags = android
