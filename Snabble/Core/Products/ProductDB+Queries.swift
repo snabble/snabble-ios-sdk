@@ -95,7 +95,7 @@ extension ProductDB {
                     """, arguments: [shopId, code])
                 }
             if let product = self.productFromRow(dbQueue, row, shopId) {
-                let transmissionCode = product.transmissionCodes[code] ?? code
+                let transmissionCode = product.transmissionCodes[code]
                 return LookupResult(product: product, code: transmissionCode)
             } else if !retry {
                 // initial lookup failed

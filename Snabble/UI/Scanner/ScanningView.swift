@@ -13,7 +13,7 @@ public protocol ScanningViewDelegate: class {
     func closeScanningView()
 
     /// callback for a successful scan
-    func scannedCode(_ code: String)
+    func scannedCode(_ code: String, _ type: AVMetadataObject.ObjectType)
 
     /// called to request camera permission
     func requestCameraPermission(currentStatus: AVAuthorizationStatus)
@@ -386,7 +386,7 @@ extension ScanningView: AVCaptureMetadataOutputObjectsDelegate {
             }
         }
 
-        self.delegate.scannedCode(code)
+        self.delegate.scannedCode(code, codeObject.type)
     }
 
 }

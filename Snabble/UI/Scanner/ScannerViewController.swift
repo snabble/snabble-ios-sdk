@@ -25,6 +25,21 @@ extension ScanFormat {
     }
 }
 
+extension AVMetadataObject.ObjectType {
+    var scanFormat: ScanFormat? {
+        switch self {
+        case .ean8: return .ean8
+        case .ean13: return .ean13
+        case .code128: return .code128
+        case .itf14: return .itf14
+        case .code39: return .code39
+        case .qr: return .qr
+        case .dataMatrix: return .dataMatrix
+        default: return nil
+        }
+    }
+}
+
 public class ScannerViewController: UIViewController {
 
     @IBOutlet private weak var spinner: UIActivityIndicatorView!
@@ -310,12 +325,12 @@ extension ScannerViewController: ScanningViewDelegate {
         self.scanningView.stopScanning()
     }
     
-    public func scannedCode(_ code: String) {
+    public func scannedCode(_ code: String, _ type: AVMetadataObject.ObjectType) {
         if code == self.lastScannedCode {
             return
         }
 
-        self.handleScannedCode(code)
+        self.handleScannedCode(code, type)
     }
 }
 
@@ -334,7 +349,7 @@ extension ScannerViewController {
         }
     }
 
-    private func handleScannedCode(_ scannedCode: String) {
+    private func handleScannedCode(_ scannedCode: String, _ type: AVMetadataObject.ObjectType?) {
         print("handleScannedCode \(scannedCode) \(self.lastScannedCode)")
         self.lastScannedCode = scannedCode
 
@@ -345,14 +360,7 @@ extension ScannerViewController {
 
         self.scanningView.stopScanning()
 
-        var scannedCode = scannedCode
-        if let codeSubstring = SnabbleUI.project.codeSubstring {
-            let startIndex = scannedCode.index(scannedCode.startIndex, offsetBy: codeSubstring.start)
-            let endIndex = scannedCode.index(scannedCode.startIndex, offsetBy: codeSubstring.start + codeSubstring.length)
-            scannedCode = String(scannedCode[startIndex ..< endIndex])
-        }
-
-        self.productForCode(scannedCode) { product, code in
+        self.productForCode(scannedCode, type) { product, code in
             self.timer?.invalidate()
             self.timer = nil
             self.spinner.stopAnimating()
@@ -405,9 +413,9 @@ extension ScannerViewController {
             self.scanningView.startScanning()
         })
 
-        // HACK: set the action sheet buttons background
+        // HACK: set the action sheet buttonqs background
         if let alertContentView = alert.view.subviews.first?.subviews.first {
-            for view in alertContentView.subviews { //This is main catch
+            for view in alertContentView.subviews {
                 view.backgroundColor = .white
             }
         }
@@ -416,8 +424,15 @@ extension ScannerViewController {
         self.present(alert, animated: true)
     }
 
-    private func productForCode(_ code: String, completion: @escaping (Product?, String) -> () ) {
-        if let ean = EAN.parse(code, SnabbleUI.project), ean.hasEmbeddedData, ean.encoding != .edekaProductPrice {
+    private func productForCode(_ code: String, _ type: AVMetadataObject.ObjectType?, completion: @escaping (Product?, String) -> () ) {
+        var lookupCode = code
+        if let scanFormat = type?.scanFormat, let codeRange = SnabbleUI.project.codeRange(for: scanFormat) {
+            let startIndex = code.index(code.startIndex, offsetBy: codeRange.lowerBound)
+            let endIndex = code.index(code.startIndex, offsetBy: codeRange.upperBound)
+            lookupCode = String(code[startIndex ..< endIndex])
+        }
+
+        if let ean = EAN.parse(code, SnabbleUI.project), ean.hasEmbeddedData, (ean.encoding != .edekaProductPrice && ean.encoding != .ikeaProductPrice) {
             if SnabbleUI.project.verifyInternalEanChecksum {
                 guard
                     let ean13 = ean as? EAN13,
@@ -435,7 +450,7 @@ extension ScannerViewController {
             if code.hasPrefix("97") && code.count == 22 {
                 let startIndex = code.startIndex
                 let embeddedCode = String(code[code.index(startIndex, offsetBy: 2)..<code.index(startIndex, offsetBy: 15)])
-                let embeddedPrice = Int(String(code[code.index(startIndex, offsetBy: 16)..<code.index(startIndex, offsetBy: 21)])) ?? 0
+                let embeddedPrice = Int(String(code[code.index(startIndex, offsetBy: 15)..<code.index(startIndex, offsetBy: 21)])) ?? 0
                 self.productProvider.productByScannableCode(embeddedCode, self.shop.id) { result, error in
                     if let result = result {
                         let template = "2417000000000"
@@ -446,9 +461,9 @@ extension ScannerViewController {
                     }
                 }
             } else {
-                self.productProvider.productByScannableCode(code, self.shop.id) { result, error in
+                self.productProvider.productByScannableCode(lookupCode, self.shop.id) { result, error in
                     if let result = result {
-                        completion(result.product, result.code)
+                        completion(result.product, result.code ?? code)
                     } else {
                         completion(nil, "")
                     }
@@ -460,7 +475,7 @@ extension ScannerViewController {
     private func manuallyEnteredCode(_ code: String?) {
         // print("entered \(code)")
         if let code = code {
-            self.handleScannedCode(code)
+            self.handleScannedCode(code, nil)
         }
     }
 

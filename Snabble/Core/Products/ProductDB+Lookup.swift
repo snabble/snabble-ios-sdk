@@ -75,7 +75,7 @@ extension ProductDB {
     }
 
     private func completeProduct(_ apiProduct: APIProduct, _ deposit: Int?, _ shopId: String, _ completion: @escaping (LookupResult?, Bool) -> () ) {
-        let matchingCode = apiProduct.matchingCode ?? ""
+        let matchingCode = apiProduct.matchingCode
 
         // is this a bundle or a deposit? then don't do the bundling lookup!
         if apiProduct.bundledProduct != nil || apiProduct.productType == .deposit {
