@@ -22,7 +22,7 @@ public struct MetadataKeys {
 ///    to be stripped)
 public struct LookupResult {
     public let product: Product
-    public let code: String
+    public let code: String?
 }
 
 public protocol ProductProvider: class {

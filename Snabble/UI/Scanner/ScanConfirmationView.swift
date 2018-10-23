@@ -86,7 +86,7 @@ class ScanConfirmationView: DesignableView {
         
         self.quantity = product.type != .userMustWeigh ? 1 : 0
 
-        if product.type == .singleItem && ean?.hasEmbeddedData == false {
+        if product.type == .singleItem && self.ean?.hasEmbeddedData == false {
             let cartQuantity = self.shoppingCart.quantity(of: product)
             self.quantity = cartQuantity + 1
             self.alreadyInCart = cartQuantity > 0

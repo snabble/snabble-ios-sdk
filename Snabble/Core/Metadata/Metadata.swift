@@ -189,6 +189,18 @@ public struct Project: Decodable {
     }
 
     public static let none = Project()
+
+    public func codeRange(for format: ScanFormat) -> Range<Int>? {
+        guard self.id.hasPrefix("ikea") else {
+            return nil
+        }
+
+        switch format {
+        case .itf14: return 0..<8
+        case .dataMatrix: return 30..<38
+        default: return nil
+        }
+    }
 }
 
 /// Link
