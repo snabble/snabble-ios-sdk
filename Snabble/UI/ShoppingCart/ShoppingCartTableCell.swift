@@ -166,8 +166,9 @@ class ShoppingCartTableCell: UITableViewCell {
         self.imageWidth.constant = 44
         self.textMargin.constant = 8
         self.setNeedsLayout()
-        
-        spinner.startAnimating()
+
+        self.spinner.startAnimating()
+
         self.task = URLSession.shared.dataTask(with: url) { data, response, error in
             self.task = nil
             DispatchQueue.main.async() {

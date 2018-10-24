@@ -3,7 +3,7 @@
 # v0.7.5
 
 * add support for special ITF14 and DataMatrix barcodes
-
+* `ScanningViewDelegate.scannedCode` changed to take a second parameter, the detected code type. New signature is `func scannedCode(_ code: String, _ type: AVMetadataObject.ObjectType)`
 
 # v0.7.4
 

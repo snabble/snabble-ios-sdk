@@ -164,8 +164,10 @@ public class ShoppingCartViewController: UIViewController {
         self.present(alert, animated: true)
     }
 
-    private func updateView() {
-        self.tableView.reloadData()
+    private func updateView(reload: Bool = true) {
+        if reload {
+            self.tableView.reloadData()
+        }
         
         self.setEditButton()
         self.setDeleteButton()
@@ -310,7 +312,7 @@ extension ShoppingCartViewController: UITableViewDelegate, UITableViewDataSource
         self.tableView.deleteRows(at: [indexPath], with: .none)
 
         CATransaction.setCompletionBlock {
-            self.updateView()
+            self.updateView(reload: false)
         }
         
         CATransaction.commit()
