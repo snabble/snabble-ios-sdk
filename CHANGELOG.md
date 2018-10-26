@@ -1,5 +1,9 @@
 ## snabble iOS SDK changelog
 
+# v0.7.6
+
+* `ScannerViewController.reset()` now has a third parameter, `shop`
+
 # v0.7.5
 
 * add support for special ITF14 and DataMatrix barcodes
