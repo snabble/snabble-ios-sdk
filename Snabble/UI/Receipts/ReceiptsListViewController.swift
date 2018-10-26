@@ -28,6 +28,7 @@ extension ReceiptData {
     }
 }
 
+@objc(ReceiptsListViewController)
 public class ReceiptsListViewController: UIViewController {
     @IBOutlet weak var tableView: UITableView!
 
