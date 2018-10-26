@@ -170,9 +170,10 @@ public class ScannerViewController: UIViewController {
     }
 
     /// reset `project` and `shoppingCart` when switching between projects
-    public func reset(_ project: Project, _ cart: ShoppingCart) {
+    public func reset(_ project: Project, _ cart: ShoppingCart, _ shop: Shop) {
         self.productProvider = SnabbleAPI.productProvider(for: project)
         self.shoppingCart = cart
+        self.shop = shop
         self.objectTypes = project.scanFormats.map { $0.avType }
         self.scanningView?.setObjectTypes(self.objectTypes)
 
