@@ -66,6 +66,8 @@ class ScanConfirmationView: DesignableView {
         self.closeButton.setImage(UIImage.fromBundle("icon-close"), for: .normal)
         self.plusButton.setImage(UIImage.fromBundle("icon-plus"), for: .normal)
         self.minusButton.setImage(UIImage.fromBundle("icon-minus"), for: .normal)
+
+        self.addDoneButton()
     }
     
     func present(_ product: Product, cart: ShoppingCart, code: String) {
@@ -104,11 +106,6 @@ class ScanConfirmationView: DesignableView {
 
         if product.type == .userMustWeigh {
             self.quantityField.becomeFirstResponder()
-        }
-        if product.type == .singleItem {
-            self.addDoneButton()
-        } else {
-            self.quantityField.inputAccessoryView = nil
         }
 
         self.showQuantity(initialQuantity, updateTextField: true)
@@ -179,7 +176,7 @@ class ScanConfirmationView: DesignableView {
         }
     }
 
-    func addDoneButton() {
+    private func addDoneButton() {
         let keyboardToolbar = UIToolbar()
         keyboardToolbar.sizeToFit()
         let flexSpace = UIBarButtonItem(barButtonSystemItem: .flexibleSpace, target: nil, action: nil)
@@ -225,9 +222,9 @@ class ScanConfirmationView: DesignableView {
     }
 
     @IBAction private func closeButtonTapped(_ button: UIButton) {
-        self.quantityField.resignFirstResponder()
         self.delegate.track(.scanAborted(self.product.sku))
         self.delegate.closeConfirmation()
+        self.quantityField.resignFirstResponder()
     }
 
 }

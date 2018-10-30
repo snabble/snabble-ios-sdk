@@ -59,7 +59,9 @@ public class ScannerViewController: UIViewController {
     private var confirmationVisible = false
     private var productType: ProductType?
     
-    private var hiddenConfirmationOffset: CGFloat = 310
+    private let hiddenConfirmationOffset: CGFloat = 310
+    private let visibleConfirmationOffset: CGFloat = -16
+
     private var keyboardObserver: KeyboardObserver!
     private var objectTypes = [AVMetadataObject.ObjectType]()
     private weak var delegate: ScannerDelegate!
@@ -147,12 +149,11 @@ public class ScannerViewController: UIViewController {
         self.scanningView.setup(with: scannerConfig)
 
         self.scanConfirmationView.delegate = self
-
-        self.keyboardObserver = KeyboardObserver(handler: self)
     }
 
     override public func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
+        self.keyboardObserver = KeyboardObserver(handler: self)
 
         self.delegate.track(.viewScanner)
         if self.firstTimeInfoShown {
@@ -165,8 +166,10 @@ public class ScannerViewController: UIViewController {
         super.viewWillDisappear(animated)
 
         self.scanningView.stopScanning()
-        self.hideScanConfirmationView(true)
+        self.displayScanConfirmationView(hidden: true)
         self.infoView.isHidden = true
+
+        self.keyboardObserver = nil
     }
 
     /// reset `project` and `shoppingCart` when switching between projects
@@ -191,26 +194,23 @@ public class ScannerViewController: UIViewController {
         self.scanConfirmationView.present(product, cart: self.shoppingCart, code: code)
 
         self.scanningView.stopScanning()
-        self.hideScanConfirmationView(false)
+        self.displayScanConfirmationView(hidden: false, setBottomOffset: self.productType != .userMustWeigh)
     }
     
-    private func hideScanConfirmationView(_ hide: Bool) {
+    private func displayScanConfirmationView(hidden: Bool, setBottomOffset: Bool = true) {
         guard self.view.window != nil else {
             return
         }
         
-        self.confirmationVisible = !hide
-        var offset: CGFloat = -16
-        if self.scanConfirmationView.isFirstResponder {
-            offset = self.scanConfirmationViewBottom.constant
-        }
-        self.scanConfirmationViewBottom.constant = hide ? self.hiddenConfirmationOffset : offset
-        
-        self.scanningView.bottomBarHidden = !hide
-        self.scanningView.reticleHidden = !hide
+        self.confirmationVisible = !hidden
+        self.scanningView.bottomBarHidden = !hidden
+        self.scanningView.reticleHidden = !hidden
 
-        UIView.animate(withDuration: 0.12) {
-            self.view.layoutIfNeeded()
+        if setBottomOffset {
+            self.scanConfirmationViewBottom.constant = hidden ? self.hiddenConfirmationOffset : self.visibleConfirmationOffset
+            UIView.animate(withDuration: 0.12) {
+                self.view.layoutIfNeeded()
+            }
         }
     }
 
@@ -261,7 +261,7 @@ extension ScannerViewController: MessageDelegate {
 // MARK: - scanning confirmation delegate
 extension ScannerViewController: ScanConfirmationViewDelegate {
     func closeConfirmation() {
-        self.hideScanConfirmationView(true)
+        self.displayScanConfirmationView(hidden: true)
 
         if !self.firstScanComplete {
             self.firstScanComplete = true
@@ -351,7 +351,7 @@ extension ScannerViewController {
     }
 
     private func handleScannedCode(_ scannedCode: String, _ type: AVMetadataObject.ObjectType?) {
-        print("handleScannedCode \(scannedCode) \(self.lastScannedCode)")
+        // print("handleScannedCode \(scannedCode) \(self.lastScannedCode)")
         self.lastScannedCode = scannedCode
 
         self.timer?.invalidate()
@@ -414,7 +414,7 @@ extension ScannerViewController {
             self.scanningView.startScanning()
         })
 
-        // HACK: set the action sheet buttonqs background
+        // HACK: set the action sheet buttons background
         if let alertContentView = alert.view.subviews.first?.subviews.first {
             for view in alertContentView.subviews {
                 view.backgroundColor = .white
@@ -485,26 +485,14 @@ extension ScannerViewController {
 extension ScannerViewController: KeyboardHandling {
 
     public func keyboardWillShow(_ info: KeyboardInfo) {
-        if !self.confirmationVisible {
-            return
-        }
-
-        let offset: CGFloat = self.productType == .singleItem ? 104 : 0
-        self.scanConfirmationViewBottom.constant = -info.keyboardHeight - offset
-
+        self.scanConfirmationViewBottom.constant = -(info.keyboardHeight - 48)
         UIView.animate(withDuration: info.animationDuration) {
             self.view.layoutIfNeeded()
         }
     }
 
     public func keyboardWillHide(_ info: KeyboardInfo) {
-        if !self.confirmationVisible {
-            return
-        }
-
-        let offset: CGFloat = self.productType == .singleItem ? 104 : 0
-        self.scanConfirmationViewBottom.constant -= info.keyboardHeight - offset
-
+        self.scanConfirmationViewBottom.constant = self.confirmationVisible ? self.visibleConfirmationOffset : self.hiddenConfirmationOffset
         UIView.animate(withDuration: info.animationDuration) {
             self.view.layoutIfNeeded()
         }
