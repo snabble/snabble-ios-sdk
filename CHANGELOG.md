@@ -1,5 +1,9 @@
 ## snabble iOS SDK changelog
 
+# v0.7.7
+
+* fixes a bug where the scanner confirmation dialog was incorrectly positioned when the keyboard appeared/disappeared
+
 # v0.7.6
 
 * `ScannerViewController.reset()` now has a third parameter, `shop`
