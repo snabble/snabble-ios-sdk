@@ -1,5 +1,9 @@
 ## snabble iOS SDK changelog
 
+# v0.7.8
+
+* add additional log info when product db updates fail with i/o errors
+
 # v0.7.7
 
 * fixes a bug where the scanner confirmation dialog was incorrectly positioned when the keyboard appeared/disappeared
