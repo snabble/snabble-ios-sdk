@@ -402,7 +402,11 @@ final class ProductDB: ProductProvider {
                 return shouldSwitch
             }
         } catch let error {
-            self.logError("writeFullDatabase: db update error \(error)")
+            var extendedError: Int32 = 0
+            if let dbError = error as? DatabaseError {
+                extendedError = dbError.extendedResultCode.rawValue
+            }
+            self.logError("writeFullDatabase: db update error \(error), extended error \(extendedError)")
         }
 
         if fileManager.fileExists(atPath: tempDbPath) {
@@ -432,7 +436,11 @@ final class ProductDB: ProductProvider {
             }
             return true
         } catch let error {
-            self.logError("copyAndUpdateDatabase: db update error \(error)")
+            var extendedError: Int32 = 0
+            if let dbError = error as? DatabaseError {
+                extendedError = dbError.extendedResultCode.rawValue
+            }
+            self.logError("copyAndUpdateDatabase: db update error \(error), extended error \(extendedError)")
 
             try? fileManager.removeItem(atPath: tempDbPath)
             if let dbError = error as? DatabaseError, dbError.resultCode == .SQLITE_CORRUPT {
