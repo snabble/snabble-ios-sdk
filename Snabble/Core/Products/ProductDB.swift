@@ -289,7 +289,11 @@ final class ProductDB: ProductProvider {
             let db = try DatabaseQueue(path: path)
             try self.createFullTextIndex(db)
         } catch {
-            self.logError("create FTS failed: error \(error)")
+            var extendedResult: Int32 = 0
+            if let dbError = error as? DatabaseError {
+                extendedResult = dbError.extendedResultCode.rawValue
+            }
+            self.logError("create FTS failed: error \(error), extended error \(extendedResult)")
         }
     }
 
