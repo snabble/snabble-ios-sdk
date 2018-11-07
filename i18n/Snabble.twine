@@ -120,6 +120,11 @@
         en = Processing payment
     [Snabble.Receipt.errorDownload]
         en = Receipt could not be downloaded
+    [Snabble.Receipt.title]
+        en = Receipts
+    [Snabble.Receipt.noReceipt]
+        en = No receipts found
+
 [[Android]]
     [Snabble.askForPermission]
         en = Ask for permission
