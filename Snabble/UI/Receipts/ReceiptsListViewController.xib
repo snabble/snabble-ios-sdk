@@ -1,16 +1,18 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="14313.18" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="14460.31" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
     <device id="retina4_7" orientation="portrait">
         <adaptation id="fullscreen"/>
     </device>
     <dependencies>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="14283.14"/>
+        <deployment identifier="iOS"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="14460.20"/>
         <capability name="Safe area layout guides" minToolsVersion="9.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <objects>
-        <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner" customClass="ReceiptsListViewController" customModuleProvider="target">
+        <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner" customClass="ReceiptsListViewController" customModule="Snabble" customModuleProvider="target">
             <connections>
+                <outlet property="emptyLabel" destination="HxX-aC-gXf" id="ibf-Gw-hB5"/>
                 <outlet property="tableView" destination="0MM-7x-oyO" id="0An-Sx-Kxq"/>
                 <outlet property="view" destination="iN0-l3-epB" id="5Xy-qi-15V"/>
             </connections>
@@ -28,9 +30,17 @@
                         <outlet property="delegate" destination="-1" id="xDY-ji-kSA"/>
                     </connections>
                 </tableView>
+                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="center" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="HxX-aC-gXf">
+                    <rect key="frame" x="166.5" y="323.5" width="42" height="20.5"/>
+                    <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                    <nil key="textColor"/>
+                    <nil key="highlightedColor"/>
+                </label>
             </subviews>
             <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
             <constraints>
+                <constraint firstItem="HxX-aC-gXf" firstAttribute="centerY" secondItem="iN0-l3-epB" secondAttribute="centerY" id="1xx-d2-JWS"/>
+                <constraint firstItem="HxX-aC-gXf" firstAttribute="centerX" secondItem="iN0-l3-epB" secondAttribute="centerX" id="3fH-ah-mi2"/>
                 <constraint firstItem="0MM-7x-oyO" firstAttribute="bottom" secondItem="vUN-kp-3ea" secondAttribute="bottom" id="44q-29-HLA"/>
                 <constraint firstItem="0MM-7x-oyO" firstAttribute="leading" secondItem="vUN-kp-3ea" secondAttribute="leading" id="61B-gy-FGR"/>
                 <constraint firstItem="0MM-7x-oyO" firstAttribute="trailing" secondItem="vUN-kp-3ea" secondAttribute="trailing" id="dLR-U1-JZ5"/>

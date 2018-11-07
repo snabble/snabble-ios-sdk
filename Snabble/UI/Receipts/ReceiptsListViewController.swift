@@ -31,7 +31,8 @@ extension ReceiptData {
 @objc(ReceiptsListViewController)
 public class ReceiptsListViewController: UIViewController {
     @IBOutlet weak var tableView: UITableView!
-
+    @IBOutlet weak var emptyLabel: UILabel!
+    
     private var receipts = [ReceiptData]()
     private var quickLook = QLPreviewController()
     private var previewItem: QLPreviewItem!
@@ -39,7 +40,7 @@ public class ReceiptsListViewController: UIViewController {
     public init() {
         super.init(nibName: nil, bundle: Snabble.bundle)
 
-        self.title = "Belege"
+        self.title = "Snabble.Receipts.title".localized()
     }
 
     required init?(coder aDecoder: NSCoder) {
@@ -55,6 +56,9 @@ public class ReceiptsListViewController: UIViewController {
         self.quickLook.delegate = self
 
         self.receipts = ReceiptsManager.shared.listReceipts()
+
+        self.emptyLabel.text = "Snabble.Receipts.noReceipts".localized()
+        self.emptyLabel.isHidden = self.receipts.count > 0
     }
 }
 
