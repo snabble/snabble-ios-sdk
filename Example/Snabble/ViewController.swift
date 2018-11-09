@@ -27,7 +27,7 @@ class ViewController: UIViewController {
     @IBAction func scannerButtonTapped(_ sender: Any) {
         let project = SnabbleAPI.projects[0]
         let shop = project.shops[0]
-        let scanner = ScannerViewController(project, self.shoppingCart, shop, delegate: self)
+        let scanner = ScannerViewController(self.shoppingCart, shop, delegate: self)
         scanner.navigationItem.leftBarButtonItem = nil
         self.navigationController?.pushViewController(scanner, animated: true)
     }
@@ -65,38 +65,66 @@ class ViewController: UIViewController {
 }
 
 extension ViewController: ScannerDelegate {
+    // called when the scanner needs to close itself
     func closeScanningView() {
-        //
+        self.navigationController?.popViewController(animated: true)
     }
 }
 
 extension ViewController: ShoppingCartDelegate {
     func gotoPayment(_ info: SignedCheckoutInfo, _ cart: ShoppingCart) {
-        //
+        let process = PaymentProcess(info, cart, delegate: self)
+
+        process.start { viewController, error in
+            if let vc = viewController {
+                self.navigationController?.pushViewController(vc, animated: true)
+            } else {
+                self.showWarningMessage("Error creating payment process: \(error!))")
+            }
+        }
     }
 
     func gotoScanner() {
-        //
+        // implement this method to switch from the shopping cart's empty state to the scanner
     }
 
     func handleCheckoutError(_ error: ApiError?) -> Bool {
+        if let error = error {
+            NSLog("checkout error: \(error)")
+        }
         return false
     }
 }
 
+/// implement this method to track an event generated from the SDK in your analytics system
 extension ViewController: AnalyticsDelegate {
     func track(_ event: AnalyticsEvent) {
-        //
+        NSLog("track: \(event)")
     }
 }
 
+/// implement these methods to show warning/info messages on-screen, e.g. as toasts
 extension ViewController: MessageDelegate {
     func showInfoMessage(_ message: String) {
-        //
+        NSLog("warning: \(message)")
     }
 
     func showWarningMessage(_ message: String) {
-        //
+        NSLog("info: \(message)")
+    }
+}
+
+extension ViewController: PaymentDelegate {
+    func paymentFinished(_ success: Bool, _ cart: ShoppingCart) {
+        cart.removeAll()
+        self.navigationController?.popViewController(animated: true)
+    }
+
+    func handlePaymentError(_ error: ApiError?) -> Bool {
+        if let error = error {
+            NSLog("payment error: \(error)")
+        }
+        return false
     }
 }
 

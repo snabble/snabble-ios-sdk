@@ -61,24 +61,26 @@ public class PaymentProcess {
     /// start a payment process
     ///
     /// if the checkout allows multiple payment methods, offer a selection
-    /// otherwise, directly create the corresponding view controller for the selected payment mehthod
+    /// otherwise, directly create the corresponding view controller for the selected payment method
     ///
-    /// - Parameter completion: a closure called when the payment method has been determined.
-    ///             This is passed a `UIViewController` instance that the caller can present
-    public func start(completion: @escaping (UIViewController) -> () ) {
+    /// - Parameters:
+    ///   - completion: a closure called when the payment method has been determined.
+    ///   - viewController: if not nil, the view controller to present for this payment process
+    ///   - error: if not nil, contains the error response from the backend
+    public func start(completion: @escaping (_ viewController: UIViewController?, _ error: ApiError?) -> () ) {
         let info = self.signedCheckoutInfo
         if info.checkoutInfo.paymentMethods.count > 1 {
             let paymentSelection = PaymentMethodSelectionViewController(self)
-            completion(paymentSelection)
+            completion(paymentSelection, nil)
         } else {
             let method = info.checkoutInfo.paymentMethods[0]
-            self.start(method) { viewController in
-                completion(viewController)
+            self.start(method) { viewController, error in
+                completion(viewController, error)
             }
         }
     }
 
-    func start(_ method: PaymentMethod, completion: @escaping (UIViewController) -> () ) {
+    func start(_ method: PaymentMethod, completion: @escaping (UIViewController?, ApiError?) -> () ) {
         UIApplication.shared.beginIgnoringInteractionEvents()
         self.startBlurOverlayTimer()
 
@@ -88,13 +90,13 @@ public class PaymentProcess {
             UIApplication.shared.endIgnoringInteractionEvents()
             self.hideBlurOverlay()
             if let process = process, let processor = method.processor(process, self.cart, self.delegate) {
-                completion(processor)
+                completion(processor, nil)
             } else {
                 let handled = self.delegate.handlePaymentError(error)
                 if !handled {
                     if method == .encodedCodes, let processor = method.processor(nil, self.cart, self.delegate) {
                         // continue anyway
-                        completion(processor)
+                        completion(processor, nil)
                         self.retryCreatingMissingCheckout()
                     } else {
                         self.delegate.showInfoMessage("Snabble.Payment.errorStarting".localized())

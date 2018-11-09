@@ -67,7 +67,8 @@ public class ScannerViewController: UIViewController {
     private weak var delegate: ScannerDelegate!
     private var timer: Timer?
 
-    public init(_ project: Project, _ cart: ShoppingCart, _ shop: Shop, delegate: ScannerDelegate) {
+    public init(_ cart: ShoppingCart, _ shop: Shop, delegate: ScannerDelegate) {
+        let project = SnabbleUI.project
         self.productProvider = SnabbleAPI.productProvider(for: project)
         self.shoppingCart = cart
         self.shop = shop

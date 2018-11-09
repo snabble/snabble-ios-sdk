@@ -85,8 +85,12 @@ class PaymentMethodSelectionViewController: UIViewController {
     }
 
     fileprivate func startPayment(_ method: PaymentMethod) {
-        self.process.start(method) { viewController in
-            self.navigationController?.pushViewController(viewController, animated: true)
+        self.process.start(method) { viewController, error in
+            if let vc = viewController {
+                self.navigationController?.pushViewController(vc, animated: true)
+            } else {
+                // FIXME
+            }
         }
     }
 
