@@ -1,5 +1,10 @@
 ## snabble iOS SDK changelog
 
+# v0.7.9
+
+* added a very simple example app
+* removed the redundant `project` parameter from `ScannerViewController.init` and `ScannerViewController.reset` - the class now fully relies on `SnabbleUI.project`
+
 # v0.7.8
 
 * add additional log info when product db updates fail with i/o errors

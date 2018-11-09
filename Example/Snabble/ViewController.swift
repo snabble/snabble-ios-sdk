@@ -85,7 +85,8 @@ extension ViewController: ShoppingCartDelegate {
     }
 
     func gotoScanner() {
-        // implement this method to switch from the shopping cart's empty state to the scanner
+        self.navigationController?.popViewController(animated: false)
+        self.scannerButtonTapped(1)
     }
 
     func handleCheckoutError(_ error: ApiError?) -> Bool {
