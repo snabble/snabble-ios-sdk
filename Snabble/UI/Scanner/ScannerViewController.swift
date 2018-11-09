@@ -173,8 +173,9 @@ public class ScannerViewController: UIViewController {
         self.keyboardObserver = nil
     }
 
-    /// reset `project` and `shoppingCart` when switching between projects
-    public func reset(_ project: Project, _ cart: ShoppingCart, _ shop: Shop) {
+    /// reset `shoppingCart` when switching between projects
+    public func reset(_ cart: ShoppingCart, _ shop: Shop) {
+        let project = SnabbleUI.project
         self.productProvider = SnabbleAPI.productProvider(for: project)
         self.shoppingCart = cart
         self.shop = shop
