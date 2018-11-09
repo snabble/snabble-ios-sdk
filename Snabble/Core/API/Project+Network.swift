@@ -18,6 +18,7 @@ public struct ErrorResponse: Decodable {
 public struct ErrorDetail: Decodable {
     public let type: String // TODO: create an enum for this
     public let message: String?
+    public let sku: String?
 }
 
 enum HTTPRequestMethod: String {
