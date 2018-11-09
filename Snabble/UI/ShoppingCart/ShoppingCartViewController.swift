@@ -211,7 +211,7 @@ public class ShoppingCartViewController: UIViewController {
                         let info = SignedCheckoutInfo()
                         self.delegate.gotoPayment(info, self.shoppingCart)
                     } else {
-                        self.delegate.showInfoMessage("Snabble.Payment.errorStarting".localized())
+                        self.delegate.showWarningMessage("Snabble.Payment.errorStarting".localized())
                     }
                 }
             }

@@ -44,7 +44,7 @@ public class PaymentProcess {
     private(set) var signedCheckoutInfo: SignedCheckoutInfo
     private(set) var cart: ShoppingCart
     private var hudTimer: Timer?
-    private weak var delegate: PaymentDelegate!
+    weak var delegate: PaymentDelegate!
 
     /// create a payment process
     ///
@@ -99,7 +99,7 @@ public class PaymentProcess {
                         completion(processor, nil)
                         self.retryCreatingMissingCheckout()
                     } else {
-                        self.delegate.showInfoMessage("Snabble.Payment.errorStarting".localized())
+                        self.delegate.showWarningMessage("Snabble.Payment.errorStarting".localized())
                     }
                 }
             }

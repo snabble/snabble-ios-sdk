@@ -89,7 +89,10 @@ class PaymentMethodSelectionViewController: UIViewController {
             if let vc = viewController {
                 self.navigationController?.pushViewController(vc, animated: true)
             } else {
-                // FIXME
+                let handled = self.process.delegate.handlePaymentError(error)
+                if !handled {
+                    self.process.delegate.showWarningMessage("Snabble.Payment.errorStarting".localized())
+                }
             }
         }
     }
