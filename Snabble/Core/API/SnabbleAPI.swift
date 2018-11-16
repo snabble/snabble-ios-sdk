@@ -48,6 +48,10 @@ public struct SnabbleAPI {
     static var metadata = Metadata.none
     static var tokenRegistry = TokenRegistry("", "")
 
+    public static var certificates: [GatewayCertificate] {
+        return self.metadata.gatewayCertificates
+    }
+    
     public static var projects: [Project] {
         return self.metadata.projects
     }

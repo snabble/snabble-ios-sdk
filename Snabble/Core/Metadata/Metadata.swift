@@ -9,18 +9,39 @@ import Foundation
 public struct Metadata: Decodable {
     public let flags: Flags
     public let projects: [Project]
+    public let gatewayCertificates: [GatewayCertificate]
 
     enum CodingKeys: String, CodingKey {
         case flags = "metadata"
         case projects
+        case gatewayCertificates
     }
 
     private init() {
         self.flags = Flags()
         self.projects = [ Project.none ]
+        self.gatewayCertificates = []
     }
 
     static let none = Metadata()
+
+    public init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+
+        self.flags = try container.decode(Flags.self, forKey: .flags)
+        self.projects = try container.decode([Project].self, forKey: .projects)
+        let certs = try container.decodeIfPresent([GatewayCertificate].self, forKey: .gatewayCertificates)
+        self.gatewayCertificates = certs == nil ? [] : certs!
+    }
+}
+
+public struct GatewayCertificate: Decodable {
+    public let value: String
+    public let validUntil: String // iso8601 date
+
+    public var data: Data? {
+        return Data(base64Encoded: self.value)
+    }
 }
 
 public struct EncodedCodes: Decodable {
