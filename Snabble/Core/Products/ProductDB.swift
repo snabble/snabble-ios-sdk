@@ -198,8 +198,8 @@ final class ProductDB: ProductProvider {
         self.dbDirectory = appSupportDir.appendingPathComponent(project.id, isDirectory: true)
     }
 
-    func dbPathname(temp: Bool = false) -> String {
-        let prefix = temp ? "tmp_" : ""
+    private func dbPathname(temporary: Bool = false) -> String {
+        let prefix = temporary ? ProcessInfo().globallyUniqueString + "_" : ""
         let dbDir = self.dbDirectory.appendingPathComponent(prefix + self.dbName)
         return dbDir.path
     }
@@ -241,16 +241,17 @@ final class ProductDB: ProductProvider {
             self.lastProductUpdate = Date()
 
             DispatchQueue.global(qos: .userInitiated).async {
+                let tempDbPath = self.dbPathname(temporary: true)
                 let performSwitch: Bool
                 let newData: Bool
                 switch dbResponse {
                 case .diff(let statements):
                     NSLog("db update: got diff")
-                    performSwitch = self.copyAndUpdateDatabase(statements)
+                    performSwitch = self.copyAndUpdateDatabase(statements, tempDbPath)
                     newData = true
                 case .full(let data, let revision):
                     NSLog("db update: got full db, rev=\(revision)")
-                    performSwitch = self.writeFullDatabase(data, revision)
+                    performSwitch = self.writeFullDatabase(data, revision, tempDbPath)
                     newData = true
                 case .noUpdate:
                     NSLog("db update: no new data")
@@ -263,13 +264,12 @@ final class ProductDB: ProductProvider {
                 }
 
                 if self.config.useFTS && newData {
-                    self.createFulltextIndex(self.dbPathname(temp: true))
+                    self.createFulltextIndex(tempDbPath)
                 }
 
                 if performSwitch {
-                    self.switchDatabases()
+                    self.switchDatabases(tempDbPath)
                 } else {
-                    let tempDbPath = self.dbPathname(temp: true)
                     let fileManager = FileManager.default
                     if fileManager.fileExists(atPath: tempDbPath) {
                         try? fileManager.removeItem(atPath: tempDbPath)
@@ -359,8 +359,7 @@ final class ProductDB: ProductProvider {
     ///   - revision: the revision of this new database
     /// - Returns: true if the database was written successfully and passes internal integrity checks,
     ///         false otherwise
-    private func writeFullDatabase(_ data: Data, _ revision: Int) -> Bool {
-        let tempDbPath = self.dbPathname(temp: true)
+    private func writeFullDatabase(_ data: Data, _ revision: Int, _ tempDbPath: String) -> Bool {
         let fileManager = FileManager.default
 
         do {
@@ -419,8 +418,7 @@ final class ProductDB: ProductProvider {
         return false
     }
 
-    private func copyAndUpdateDatabase(_ statements: String) -> Bool {
-        let tempDbPath = self.dbPathname(temp: true)
+    private func copyAndUpdateDatabase(_ statements: String, _ tempDbPath: String) -> Bool {
         let fileManager = FileManager.default
         do {
             if fileManager.fileExists(atPath: tempDbPath) {
@@ -435,9 +433,8 @@ final class ProductDB: ProductProvider {
                 return .commit
             }
 
-            try tempDb.inDatabase { db in
-                try db.execute("vacuum")
-            }
+            try tempDb.vacuum()
+
             return true
         } catch let error {
             var extendedError: Int32 = 0
@@ -456,12 +453,11 @@ final class ProductDB: ProductProvider {
         }
     }
 
-    private func switchDatabases() {
+    private func switchDatabases(_ tempDbPath: String) {
         do {
             let fileManager = FileManager.default
             let dbFile = self.dbPathname()
             let oldFile = dbFile + ".old"
-            let tmpFile = self.dbPathname(temp: true)
             try synchronized(self) {
                 self.db = nil
                 if fileManager.fileExists(atPath: oldFile) {
@@ -470,7 +466,7 @@ final class ProductDB: ProductProvider {
                 if fileManager.fileExists(atPath: dbFile) {
                     try fileManager.moveItem(atPath: dbFile, toPath: oldFile)
                 }
-                try fileManager.moveItem(atPath: tmpFile, toPath: dbFile)
+                try fileManager.moveItem(atPath: tempDbPath, toPath: dbFile)
                 self.db = self.openDb()
             }
             if fileManager.fileExists(atPath: oldFile) {
