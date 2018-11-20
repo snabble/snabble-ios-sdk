@@ -6,43 +6,6 @@
 
 import UIKit
 
-public struct PaymentMethodData {
-    public let displayName: String
-    public let encryptedData: String
-
-    public init(_ displayName: String, _ encryptedData: String) {
-        self.displayName = displayName
-        self.encryptedData = encryptedData
-    }
-}
-
-public enum PaymentMethod {
-    case cash
-    case qrCode
-    case encodedCodes
-    case teleCashDeDirectDebit(PaymentMethodData)
-
-    var rawMethod: RawPaymentMethod {
-        switch self {
-        case .cash: return .cash
-        case .qrCode: return .qrCode
-        case .encodedCodes: return .encodedCodes
-        case .teleCashDeDirectDebit: return .teleCashDeDirectDebit
-        }
-    }
-
-    var displayName: String? {
-        return self.data?.displayName
-    }
-
-    var data: PaymentMethodData? {
-        switch self {
-        case .teleCashDeDirectDebit(let data): return data
-        default: return nil
-        }
-    }
-}
-
 class PaymentMethodSelectionViewController: UIViewController {
 
     @IBOutlet var titleLabel: UILabel!

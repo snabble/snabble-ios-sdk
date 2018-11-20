@@ -45,6 +45,45 @@ public enum RawPaymentMethod: String {
     case teleCashDeDirectDebit  // SEPA via Telecash
 }
 
+// associated data for a payment method
+public struct PaymentMethodData {
+    public let displayName: String
+    public let encryptedData: String
+
+    public init(_ displayName: String, _ encryptedData: String) {
+        self.displayName = displayName
+        self.encryptedData = encryptedData
+    }
+}
+
+// payment method with associated data
+public enum PaymentMethod {
+    case cash
+    case qrCode
+    case encodedCodes
+    case teleCashDeDirectDebit(PaymentMethodData)
+
+    public var rawMethod: RawPaymentMethod {
+        switch self {
+        case .cash: return .cash
+        case .qrCode: return .qrCode
+        case .encodedCodes: return .encodedCodes
+        case .teleCashDeDirectDebit: return .teleCashDeDirectDebit
+        }
+    }
+
+    public var displayName: String? {
+        return self.data?.displayName
+    }
+
+    public var data: PaymentMethodData? {
+        switch self {
+        case .teleCashDeDirectDebit(let data): return data
+        default: return nil
+        }
+    }
+}
+
 public enum PaymentState: String, Decodable {
     case unknown
 
