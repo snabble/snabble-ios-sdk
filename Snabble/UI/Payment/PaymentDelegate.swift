@@ -24,4 +24,6 @@ public protocol PaymentDelegate: AnalyticsDelegate, MessageDelegate {
     /// - Parameter error: if not nil, the ApiError from the backend
     /// - Returns: true if the error has been dealt with and no error messages need to be shown from the SDK
     func handlePaymentError(_ error: ApiError?) -> Bool
+
+    func getPaymentData() -> [PaymentMethod]
 }

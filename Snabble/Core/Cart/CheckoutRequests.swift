@@ -52,8 +52,12 @@ extension SignedCheckoutInfo {
             // since we need to pass the originally-received SignedCheckoutInfo as-is,
             // we can't use the struct but have to build this manually:
             var dict = [String: Any]()
-            dict["paymentMethod"] = paymentMethod.rawValue
+            dict["paymentMethod"] = paymentMethod.rawMethod.rawValue
             dict["signedCheckoutInfo"] = self.rawJson
+
+            if let data = paymentMethod.data {
+                dict["paymentInformation"] = [ "encryptedOrigin": data.encryptedData ]
+            }
 
             if let checkoutInfo = self.rawJson?["checkoutInfo"] as? [String: Any], let session = checkoutInfo["session"] as? String {
                 NSLog("check process for session: \(session)")

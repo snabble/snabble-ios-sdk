@@ -38,14 +38,11 @@ public struct SignedCheckoutInfo: Decodable {
 }
 
 // known payment methods
-public enum PaymentMethod: String {
+public enum RawPaymentMethod: String {
     case cash
-    // case girocard
-    // case sepa
-    // case visa
-    // case mastercard
     case qrCode = "qrCodePOS"
     case encodedCodes
+    case teleCashDeDirectDebit  // SEPA via Telecash
 }
 
 public enum PaymentState: String, Decodable {
@@ -114,13 +111,13 @@ public struct CheckoutInfo: Decodable {
     }
 
     /// available and implemented payment methods
-    public var paymentMethods: [PaymentMethod] {
-        return availableMethods.compactMap { PaymentMethod(rawValue: $0) }
+    public var paymentMethods: [RawPaymentMethod] {
+        return availableMethods.compactMap { RawPaymentMethod(rawValue: $0) }
     }
 
     fileprivate init() {
         self.price = Price()
-        self.availableMethods = [ PaymentMethod.encodedCodes.rawValue ]
+        self.availableMethods = [ RawPaymentMethod.encodedCodes.rawValue ]
         self.shopID = ""
         self.project = ""
         self.session = ""

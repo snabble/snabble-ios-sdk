@@ -6,6 +6,43 @@
 
 import UIKit
 
+public struct PaymentMethodData {
+    public let displayName: String
+    public let encryptedData: String
+
+    public init(_ displayName: String, _ encryptedData: String) {
+        self.displayName = displayName
+        self.encryptedData = encryptedData
+    }
+}
+
+public enum PaymentMethod {
+    case cash
+    case qrCode
+    case encodedCodes
+    case teleCashDeDirectDebit(PaymentMethodData)
+
+    var rawMethod: RawPaymentMethod {
+        switch self {
+        case .cash: return .cash
+        case .qrCode: return .qrCode
+        case .encodedCodes: return .encodedCodes
+        case .teleCashDeDirectDebit: return .teleCashDeDirectDebit
+        }
+    }
+
+    var displayName: String? {
+        return self.data?.displayName
+    }
+
+    var data: PaymentMethodData? {
+        switch self {
+        case .teleCashDeDirectDebit(let data): return data
+        default: return nil
+        }
+    }
+}
+
 class PaymentMethodSelectionViewController: UIViewController {
 
     @IBOutlet var titleLabel: UILabel!
@@ -17,12 +54,11 @@ class PaymentMethodSelectionViewController: UIViewController {
     private var paymentMethods: [PaymentMethod]
     private var itemSize = CGSize.zero
 
-    init(_ process: PaymentProcess) {
+    init(_ process: PaymentProcess, _ paymentMethods: [PaymentMethod]) {
         self.process = process
         self.signedCheckoutInfo = process.signedCheckoutInfo
         self.cart = process.cart
-
-        self.paymentMethods = self.signedCheckoutInfo.checkoutInfo.paymentMethods
+        self.paymentMethods = paymentMethods
 
         super.init(nibName: nil, bundle: Snabble.bundle)
     }
@@ -36,8 +72,8 @@ class PaymentMethodSelectionViewController: UIViewController {
         
         super.viewDidLoad()
 
-        self.view.backgroundColor = SnabbleUI.appearance.primaryColor
-        self.titleLabel.textColor = SnabbleUI.appearance.secondaryColor
+        self.view.backgroundColor = SnabbleUI.appearance.secondaryColor
+        self.titleLabel.textColor = SnabbleUI.appearance.primaryColor
 
         let totalPrice = PriceFormatter.format(self.signedCheckoutInfo.checkoutInfo.price.price)
         self.titleLabel.text = String(format: "Snabble.PaymentSelection.howToPay".localized(), totalPrice)
@@ -82,6 +118,11 @@ class PaymentMethodSelectionViewController: UIViewController {
             }
         }
         self.collectionView.contentInset = UIEdgeInsets.init(top: contentInsetTop, left: 0, bottom: 0, right: 0)
+        if contentInsetTop == 0 {
+            // scroll so that the last entry is fully visible
+            let last = IndexPath(item: numRows-1, section: 0)
+            self.collectionView.scrollToItem(at: last, at: .bottom, animated: false)
+        }
     }
 
     fileprivate func startPayment(_ method: PaymentMethod) {
@@ -111,6 +152,7 @@ extension PaymentMethodSelectionViewController: UICollectionViewDelegate, UIColl
 
         let paymentMethod = self.paymentMethods[indexPath.row]
         cell.icon.image = UIImage.fromBundle(paymentMethod.icon)
+        cell.label.text = paymentMethod.displayName
 
         return cell
     }

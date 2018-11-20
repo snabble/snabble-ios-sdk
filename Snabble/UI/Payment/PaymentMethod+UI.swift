@@ -13,18 +13,29 @@ extension PaymentMethod {
         case .cash: return "payment-method-cash"
         case .qrCode: return "payment-method-checkstand"
         case .encodedCodes: return "payment-method-checkstand"
+        case .teleCashDeDirectDebit: return "payment-sepa"
         }
     }
 
     var processRequired: Bool {
         switch self {
-        case .cash, .qrCode: return true
         case .encodedCodes: return false
+        default: return true
         }
     }
 
-    func processor(_ process: CheckoutProcess?, _ cart: ShoppingCart, _ delegate: PaymentDelegate) -> UIViewController? {
+    var dataRequired: Bool {
+        switch self {
+        case .teleCashDeDirectDebit: return true
+        default: return false
+        }
+    }
+
+    func processor(_ process: CheckoutProcess?, _ method: PaymentMethod, _ cart: ShoppingCart, _ delegate: PaymentDelegate) -> UIViewController? {
         if self.processRequired && process == nil {
+            return nil
+        }
+        if self.dataRequired && method.data == nil {
             return nil
         }
 
@@ -33,6 +44,7 @@ extension PaymentMethod {
         case .cash: processor = CashCheckoutViewController(process!, cart, delegate)
         case .qrCode: processor = QRCheckoutViewController(process!, cart, delegate)
         case .encodedCodes: processor = EmbeddedCodesCheckoutViewController(process, cart, delegate)
+        case .teleCashDeDirectDebit: processor = SepaCheckoutViewController(process!, method.data!, cart, delegate)
         }
         processor.hidesBottomBarWhenPushed = true
         return processor
@@ -69,32 +81,52 @@ public class PaymentProcess {
     ///   - error: if not nil, contains the error response from the backend
     public func start(completion: @escaping (_ viewController: UIViewController?, _ error: ApiError?) -> () ) {
         let info = self.signedCheckoutInfo
-        if info.checkoutInfo.paymentMethods.count > 1 {
-            let paymentSelection = PaymentMethodSelectionViewController(self)
+
+        let paymentMethods = self.mergePaymentMethodList(info.checkoutInfo.paymentMethods)
+
+        if paymentMethods.count > 1 {
+            let paymentSelection = PaymentMethodSelectionViewController(self, paymentMethods)
             completion(paymentSelection, nil)
         } else {
-            let method = info.checkoutInfo.paymentMethods[0]
+            let method = paymentMethods[0]
             self.start(method) { viewController, error in
                 completion(viewController, error)
             }
         }
     }
 
+    private func mergePaymentMethodList(_ methods: [RawPaymentMethod]) -> [PaymentMethod] {
+        let userData = self.delegate.getPaymentData()
+        var result = [PaymentMethod]()
+        for method in methods {
+            switch method {
+            case .cash: result.append(.cash)
+            case .encodedCodes: result.append(.encodedCodes)
+            case .qrCode: result.append(.qrCode)
+            case .teleCashDeDirectDebit:
+                let telecash = userData.filter { if case .teleCashDeDirectDebit = $0 { return true } else { return false } }
+                result.append(contentsOf: telecash.reversed())
+            }
+        }
+
+        return result
+    }
+
     func start(_ method: PaymentMethod, completion: @escaping (UIViewController?, ApiError?) -> () ) {
         UIApplication.shared.beginIgnoringInteractionEvents()
         self.startBlurOverlayTimer()
 
-        self.signedCheckoutInfo.createCheckoutProcess(SnabbleUI.project, paymentMethod: method, timeout: 2) { process, error in
+        self.signedCheckoutInfo.createCheckoutProcess(SnabbleUI.project, paymentMethod: method, timeout: 20) { process, error in
             self.hudTimer?.invalidate()
             self.hudTimer = nil
             UIApplication.shared.endIgnoringInteractionEvents()
             self.hideBlurOverlay()
-            if let process = process, let processor = method.processor(process, self.cart, self.delegate) {
+            if let process = process, let processor = method.processor(process, method, self.cart, self.delegate) {
                 completion(processor, nil)
             } else {
                 let handled = self.delegate.handlePaymentError(error)
                 if !handled {
-                    if method == .encodedCodes, let processor = method.processor(nil, self.cart, self.delegate) {
+                    if method.rawMethod == .encodedCodes, let processor = method.processor(nil, method, self.cart, self.delegate) {
                         // continue anyway
                         completion(processor, nil)
                         self.retryCreatingMissingCheckout()
