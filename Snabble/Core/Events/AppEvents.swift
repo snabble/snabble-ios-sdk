@@ -78,8 +78,11 @@ struct AppEvent: Encodable {
         self.projectId = project.id
         self.id = id
         self.agent = agent
-        let fmt = DateFormatter()
-        fmt.dateFormat = "yyyy-MM-dd'T'HH:mm:ssZZZZZ"
+        let fmt = ISO8601DateFormatter()
+        fmt.timeZone = TimeZone.current
+        if #available(iOS 11, *) {
+            fmt.formatOptions.insert(.withFractionalSeconds)
+        }
         self.timestamp = fmt.string(from: Date())
     }
 
