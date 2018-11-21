@@ -16,7 +16,7 @@ class PaymentMethodCell: UICollectionViewCell {
         super.awakeFromNib()
 
         self.containerView.makeRoundedButton(cornerRadius: 5)
-        self.containerView.layer.shadowColor = UIColor.red.cgColor
+        self.containerView.layer.shadowColor = UIColor.darkGray.cgColor
         self.label.text = nil
     }
     

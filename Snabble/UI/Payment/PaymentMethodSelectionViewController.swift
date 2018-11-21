@@ -125,8 +125,12 @@ extension PaymentMethodSelectionViewController: UICollectionViewDelegate, UIColl
     }
 
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-        let paymentMethod = self.paymentMethods[indexPath.row]
+        let method = self.paymentMethods[indexPath.row]
 
-        self.startPayment(paymentMethod)
+        self.process.delegate.startPayment(method, self) { proceed in
+            if proceed {
+                self.startPayment(method)
+            }
+        }
     }
 }

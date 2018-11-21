@@ -5,9 +5,14 @@
 //
 
 import Foundation
+import UIKit
 
 /// a protocol that users of `PaymentProcess` must implement
 public protocol PaymentDelegate: AnalyticsDelegate, MessageDelegate {
+    /// called before a given payment method is run.
+    /// Call the `completion` closure with an argument of `true` to continue the process, `false` to abort it.
+    func startPayment(_ method: PaymentMethod, _ presenter: UIViewController, _ completion: @escaping (Bool)->() )
+
     /// callback when the payment is finished
     ///
     /// - Parameters:
@@ -26,4 +31,16 @@ public protocol PaymentDelegate: AnalyticsDelegate, MessageDelegate {
     func handlePaymentError(_ error: ApiError?) -> Bool
 
     func getPaymentData() -> [PaymentMethod]
+}
+
+/// provide simple default implementations
+extension PaymentDelegate {
+
+    public func startPayment(_ method: PaymentMethod, _ presenter: UIViewController, _ completion: @escaping (Bool)->() ) {
+        completion(true)
+    }
+
+    public func handlePaymentError(_ error: ApiError?) -> Bool {
+        return false
+    }
 }

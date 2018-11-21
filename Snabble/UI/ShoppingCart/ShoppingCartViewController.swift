@@ -21,6 +21,12 @@ public protocol ShoppingCartDelegate: AnalyticsDelegate, MessageDelegate {
     /// - Returns: true if the error has been dealt with and no error messages need to be shown from the SDK
     func handleCheckoutError(_ error: ApiError?) -> Bool
 }
+
+extension ShoppingCartDelegate {
+    public func handleCheckoutError(_ error: ApiError?) -> Bool {
+        return false
+    }
+}
  
 public class ShoppingCartViewController: UIViewController {
 
