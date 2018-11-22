@@ -142,6 +142,9 @@ extension Project {
 
     func buildRequest(_ request: inout URLRequest, _ timeout: TimeInterval, _ json: Bool, _ completion: @escaping (URLRequest) -> ()) {
         request.addValue(SnabbleAPI.clientId, forHTTPHeaderField: "Client-Id")
+        if let userAgent = Project.userAgent {
+            request.addValue(userAgent, forHTTPHeaderField: "User-Agent")
+        }
 
         if timeout > 0 {
             request.timeoutInterval = timeout
@@ -153,6 +156,29 @@ extension Project {
         }
         completion(request)
     }
+
+    private static let userAgent: String? = {
+        guard
+            let bundleDict = Bundle.main.infoDictionary,
+            let appName = bundleDict["CFBundleName"] as? String,
+            let appVersion = bundleDict["CFBundleShortVersionString"] as? String,
+            let appBuild = bundleDict["CFBundleVersion"] as? String
+        else {
+            return nil
+        }
+
+        let appDescriptor = appName + "/" + appVersion + "(" + appBuild + ")"
+
+        let osDescriptor = "iOS/" + UIDevice.current.systemVersion
+
+        var size = 0
+        sysctlbyname("hw.machine", nil, &size, nil, 0)
+        var machine = [CChar](repeating: 0,  count: size)
+        sysctlbyname("hw.machine", &machine, &size, nil, 0)
+        let hardwareString = String(cString: machine)
+
+        return appDescriptor + " " + osDescriptor + " (" + hardwareString + ")"
+    }()
 
     /// perfom an API Request
     ///
