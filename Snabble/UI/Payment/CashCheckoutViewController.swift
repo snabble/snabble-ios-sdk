@@ -109,7 +109,9 @@ class CashCheckoutViewController: UIViewController {
 
     private func paymentFinished(_ success: Bool) {
         self.poller = nil
-        self.cart.removeAll()
+        if success {
+            self.cart.removeAll()
+        }
         self.delegate.paymentFinished(success, self.cart)
     }
 
