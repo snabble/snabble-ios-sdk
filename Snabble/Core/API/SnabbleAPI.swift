@@ -31,7 +31,7 @@ public struct SnabbleAPIConfig {
 
     /// max age for the local product database. if the last update of the db is older than this,
     /// the asychronous lookup methods will not use the local database anymore.
-    public var maxProductDabaseAge: TimeInterval = 3600
+    public var maxProductDatabaseAge: TimeInterval = 3600
 
     public init(appId: String, baseUrl: String, secret: String, appVersion: String? = nil, useFTS: Bool = false, seedDatabase: String? = nil, seedRevision: Int64? = nil, seedMetadata: String? = nil) {
         self.appId = appId

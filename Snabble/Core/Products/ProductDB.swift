@@ -646,7 +646,7 @@ extension ProductDB {
     private func lookupLocally(_ forceDownload: Bool) -> Bool {
         let now = Date.timeIntervalSinceReferenceDate
         let age = now - self.lastProductUpdate.timeIntervalSinceReferenceDate
-        let ageOk = age < self.config.maxProductDabaseAge
+        let ageOk = age < self.config.maxProductDatabaseAge
         print("age \(age) -> \(ageOk)")
         return !forceDownload && ageOk
     }
