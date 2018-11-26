@@ -22,12 +22,16 @@ extension ProductDB {
 
     static let productQueryWithPrice = """
         select
-            p.*, pr.listPrice, pr.discountedPrice, pr.basePrice,
-            (select group_concat(sc.code) from scannableCodes sc where sc.sku = p.sku) scannableCodes,
-            (select group_concat(w.weighItemId) from weighItemIds w where w.sku = p.sku) weighItemIds,
-            (select group_concat(ifnull(sc.transmissionCode, "")) from scannableCodes sc where sc.sku = p.sku) transmissionCodes
+            p.*,
+            ifnull(pr1.listPrice, pr2.listPrice) as listPrice,
+            ifnull(pr1.discountedPrice, pr2.discountedPrice) as discountedPrice,
+            ifnull(pr1.basePrice, pr2.basePrice) as basePrice,
+            (select group_concat(sc.code) from scannableCodes sc where sc.sku = p.sku) as scannableCodes,
+            (select group_concat(w.weighItemId) from weighItemIds w where w.sku = p.sku) as weighItemIds,
+            (select group_concat(ifnull(sc.transmissionCode, "")) from scannableCodes sc where sc.sku = p.sku) as transmissionCodes
         from products p
-        join prices pr on pr.sku = p.sku and pr.pricingCategory = ifnull((select pricingCategory from shops where shops.id = ?), 0)
+        left outer join prices pr1 on pr1.sku = p.sku and pr1.pricingCategory = ifnull((select pricingCategory from shops where shops.id = ?), 0)
+        left outer join prices pr2 on pr2.sku = p.sku and pr2.pricingCategory = 0
         """
 
     func productBySku(_ dbQueue: DatabaseQueue, _ sku: String, _ shopId: String?) -> Product? {
