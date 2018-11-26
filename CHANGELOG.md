@@ -1,5 +1,13 @@
 ## snabble iOS SDK changelog
 
+# v0.8.0
+
+* fixes a bug with shop-specific prices
+* added `SnabbleApiConfig.maxProductDatabaseAge`. Product lookups in the local database are only made if the last update of the db is not longer ago than this value. Default value is 1 hour.
+* added `AnalyticsEvent.viewSepaCheckout`
+* added support for handling Telecash direct debit payments in Germany.
+* The HTTP `User-Agent` header for SDK requests now contains detailed information about the hardware and OS version of the user's device.
+
 # v0.7.9
 
 * added a very simple example app
