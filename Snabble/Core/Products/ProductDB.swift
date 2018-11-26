@@ -12,6 +12,8 @@ public struct MetadataKeys {
     public static let revision = "revision"
     public static let schemaVersionMajor = "schemaVersionMajor"
     public static let schemaVersionMinor = "schemaVersionMinor"
+
+    fileprivate static let appLastUpdate = "app_lastUpdate"
 }
 
 /// the return type from `productByScannableCode`.
@@ -186,7 +188,7 @@ final class ProductDB: ProductProvider {
     private(set) public var schemaVersionMinor = 0
 
     /// date of last successful product update (i.e, whenever we last got a HTTP status 200 or 304)
-    private(set) public var lastProductUpdate = Date()
+    private(set) public var lastProductUpdate = Date(timeIntervalSinceReferenceDate: 0)
 
     /// initialize a ProductDB instance with the given configuration
     /// - parameter config: a `ProductDBConfiguration` object
@@ -349,6 +351,13 @@ final class ProductDB: ProductProvider {
             if self.config.useFTS {
                 self.createFulltextIndex(self.dbPathname())
             }
+
+            do {
+                let dbQueue = try DatabaseQueue(path: self.dbPathname())
+                self.setLastUpdate(dbQueue)
+            } catch {
+                self.logError("error updating metadata: \(error)")
+            }
         }
     }
 
@@ -398,6 +407,8 @@ final class ProductDB: ProductProvider {
                     return false
                 }
 
+                self.setLastUpdate(tempDb)
+
                 let shouldSwitch = revision > self.revision || minorVersion > self.schemaVersionMinor
                 if shouldSwitch {
                     NSLog("new db: revision=\(revision), schema=\(majorVersion).\(minorVersion)")
@@ -418,6 +429,18 @@ final class ProductDB: ProductProvider {
         return false
     }
 
+    private func setLastUpdate(_ dbQueue: DatabaseQueue) {
+        do {
+            let fmt = ISO8601DateFormatter()
+            let now = fmt.string(from: Date())
+            try dbQueue.inDatabase { db in
+                try db.execute("insert or replace into metadata values(?,?)", arguments: [MetadataKeys.appLastUpdate, now])
+            }
+        } catch {
+            self.logError("setLastUpdate failed: \(error)")
+        }
+    }
+
     private func copyAndUpdateDatabase(_ statements: String, _ tempDbPath: String) -> Bool {
         let fileManager = FileManager.default
         do {
@@ -433,6 +456,7 @@ final class ProductDB: ProductProvider {
                 return .commit
             }
 
+            self.setLastUpdate(tempDb)
             try tempDb.vacuum()
 
             return true
@@ -488,6 +512,11 @@ final class ProductDB: ProductProvider {
                 self.schemaVersionMajor = Int(value) ?? 0
             case MetadataKeys.schemaVersionMinor:
                 self.schemaVersionMinor = Int(value) ?? 0
+            case MetadataKeys.appLastUpdate:
+                let fmt = ISO8601DateFormatter()
+                if let date = fmt.date(from: value) {
+                    self.lastProductUpdate = date
+                }
             default:
                 break
             }
@@ -614,6 +643,14 @@ extension ProductDB {
 
     // MARK: - asynchronous requests
 
+    private func lookupLocally(_ forceDownload: Bool) -> Bool {
+        let now = Date.timeIntervalSinceReferenceDate
+        let age = now - self.lastProductUpdate.timeIntervalSinceReferenceDate
+        let ageOk = age < self.config.maxProductDabaseAge
+        print("age \(age) -> \(ageOk)")
+        return !forceDownload && ageOk
+    }
+
     /// asynchronously get a product by its SKU
     ///
     /// invokes the completion handler on the main thread with the result of the lookup
@@ -624,7 +661,7 @@ extension ProductDB {
     ///   - product: the product found, or nil.
     ///   - error: whether an error occurred during the lookup.
     public func productBySku(_ sku: String, _ shopId: String, forceDownload: Bool, completion: @escaping (_ product: Product?, _ error: Bool) -> ()) {
-        if !forceDownload, let product = self.productBySku(sku, shopId) {
+        if self.lookupLocally(forceDownload), let product = self.productBySku(sku, shopId) {
             DispatchQueue.main.async {
                 completion(product, false)
             }
@@ -644,7 +681,7 @@ extension ProductDB {
     ///   - product: the product found, or nil.
     ///   - error: whether an error occurred during the lookup.
     public func productByScannableCode(_ code: String, _ shopId: String, forceDownload: Bool, completion: @escaping (_ result: LookupResult?, _ error: Bool) -> ()) {
-        if !forceDownload, let result = self.productByScannableCode(code, shopId) {
+        if self.lookupLocally(forceDownload), let result = self.productByScannableCode(code, shopId) {
             DispatchQueue.main.async {
                 completion(result, false)
             }
@@ -664,7 +701,7 @@ extension ProductDB {
     ///   - product: the product found, or nil.
     ///   - error: whether an error occurred during the lookup.
     public func productByWeighItemId(_ weighItemId: String, _ shopId: String, forceDownload: Bool, completion: @escaping (_ product: Product?, _ error: Bool) -> ()) {
-        if !forceDownload, let product = self.productByWeighItemId(weighItemId, shopId) {
+        if self.lookupLocally(forceDownload), let product = self.productByWeighItemId(weighItemId, shopId) {
             DispatchQueue.main.async {
                 completion(product, false)
             }
