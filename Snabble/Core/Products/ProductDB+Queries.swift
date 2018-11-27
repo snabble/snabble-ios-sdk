@@ -11,21 +11,23 @@ import GRDB
 // MARK: - low-level db queries
 extension ProductDB {
 
+    // NB: price columns need the p_ prefix to disambiguate their names from the joined columns!
     static let productQueryNoPrice = """
         select
-            p.*, 0 as listPrice, null as discountedPrice, null as basePrice,
+            p.*, 0 as p_listPrice, null as p_discountedPrice, null as p_basePrice,
             (select group_concat(sc.code) from scannableCodes sc where sc.sku = p.sku) scannableCodes,
             (select group_concat(w.weighItemId) from weighItemIds w where w.sku = p.sku) weighItemIds,
             (select group_concat(ifnull(sc.transmissionCode, "")) from scannableCodes sc where sc.sku = p.sku) transmissionCodes
         from products p
         """
 
+    // NB: price columns need the p_ prefix to disambiguate their names from the joined columns!
     static let productQueryWithPrice = """
         select
             p.*,
-            ifnull(pr1.listPrice, pr2.listPrice) as listPrice,
-            ifnull(pr1.discountedPrice, pr2.discountedPrice) as discountedPrice,
-            ifnull(pr1.basePrice, pr2.basePrice) as basePrice,
+            ifnull(pr1.listPrice, pr2.listPrice) as p_listPrice,
+            ifnull(pr1.discountedPrice, pr2.discountedPrice) as p_discountedPrice,
+            ifnull(pr1.basePrice, pr2.basePrice) as p_basePrice,
             (select group_concat(sc.code) from scannableCodes sc where sc.sku = p.sku) as scannableCodes,
             (select group_concat(w.weighItemId) from weighItemIds w where w.sku = p.sku) as weighItemIds,
             (select group_concat(ifnull(sc.transmissionCode, "")) from scannableCodes sc where sc.sku = p.sku) as transmissionCodes
@@ -79,7 +81,7 @@ extension ProductDB {
         do {
             let rows = try dbQueue.inDatabase { db in
                 return try self.fetchAll(db, ProductDB.productQueryWithPrice + " " + """
-                    where p.imageUrl is not null and pr.discountedPrice is not null
+                    where p.imageUrl is not null and p_discountedPrice is not null
                     group by p.sku
                     """, arguments: [shopId])
                 }
@@ -107,10 +109,10 @@ extension ProductDB {
                 // if it was an EAN-8, try again with the same EAN padded to an EAN-13
                 // if it was an EAN-13 with a leading "0", try again with all leading zeroes removed
                 if code.count == 8 {
-                    print("8->13 lookup attempt \(code) -> 00000\(code)")
+                    Log.debug("8->13 lookup attempt \(code) -> 00000\(code)")
                     return self.productByScannableCode(dbQueue, "00000" + code, shopId, retry: true)
                 } else if code.first == "0", let codeInt = Int(code) {
-                    print("no leading zeroes db lookup attempt \(code) -> \(codeInt)")
+                    Log.debug("no leading zeroes db lookup attempt \(code) -> \(codeInt)")
                     return self.productByScannableCode(dbQueue, String(codeInt), shopId, retry: true)
                 }
             }
@@ -251,9 +253,9 @@ extension ProductDB {
                         description: row["description"],
                         subtitle: row["subtitle"],
                         imageUrl: row["imageUrl"],
-                        basePrice: row["basePrice"],
-                        listPrice: row["listPrice"],
-                        discountedPrice: row["discountedPrice"],
+                        basePrice: row["p_basePrice"],
+                        listPrice: row["p_listPrice"],
+                        discountedPrice: row["p_discountedPrice"],
                         type: ProductType(rawValue: row["weighing"]) ?? .singleItem,
                         scannableCodes: scannableCodes,
                         weighedItemIds: self.makeSet(row["weighItemIds"]),
