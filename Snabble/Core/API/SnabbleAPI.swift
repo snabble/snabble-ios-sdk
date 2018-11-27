@@ -162,3 +162,22 @@ func synchronized<T>(_ lock: Any, closure: () throws -> T) rethrows -> T {
     defer { objc_sync_exit(lock) }
     return try closure()
 }
+
+/// Logging
+enum Log {
+    static func info(_ str: String) {
+        NSLog("SnabbleSDK INFO: %@", str)
+    }
+
+    static func debug(_ str: String) {
+        NSLog("SnabbleSDK DEBUG: %@", str)
+    }
+
+    static func warn(_ str: String) {
+        NSLog("SnabbleSDK WARN: %@", str)
+    }
+
+    static func error(_ str: String) {
+        NSLog("SnabbleSDK ERROR: %@", str)
+    }
+}

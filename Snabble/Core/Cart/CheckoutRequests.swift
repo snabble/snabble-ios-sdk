@@ -20,7 +20,7 @@ extension ShoppingCart {
         let customerInfo = Cart.CustomerInfo(loyaltyCard: self.loyaltyCard)
         let cart = Cart(session: self.session, shopID: self.shopId, customer: customerInfo, items: items)
 
-        NSLog("create checkout session: \(cart.session)")
+        Log.info("create checkout session: \(cart.session)")
         let url = project.links.checkoutInfo.href
         project.request(.post, url, body: cart, timeout: timeout) { request in
             guard let request = request else {
@@ -60,7 +60,7 @@ extension SignedCheckoutInfo {
             }
 
             if let checkoutInfo = self.rawJson?["checkoutInfo"] as? [String: Any], let session = checkoutInfo["session"] as? String {
-                NSLog("check process for session: \(session)")
+                Log.info("check process for session: \(session)")
             }
 
             let data = try JSONSerialization.data(withJSONObject: dict, options: [])
@@ -72,7 +72,7 @@ extension SignedCheckoutInfo {
                 project.perform(request, completion)
             }
         } catch {
-            NSLog("error serializing request body: \(error)")
+            Log.error("error serializing request body: \(error)")
         }
     }
 

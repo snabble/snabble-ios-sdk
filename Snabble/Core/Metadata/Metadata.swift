@@ -402,7 +402,7 @@ public extension Metadata {
             let metadata = try JSONDecoder().decode(Metadata.self, from: data)
             return metadata
         } catch let error {
-            NSLog("error parsing app data resource: \(error)")
+            Log.error("error parsing app data resource: \(error)")
         }
         return nil
     }

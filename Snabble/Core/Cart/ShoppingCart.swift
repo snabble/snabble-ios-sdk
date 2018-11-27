@@ -313,7 +313,7 @@ extension ShoppingCart {
             let encodedItems = try JSONEncoder().encode(storage)
             try encodedItems.write(to: self.cartUrl(), options: .atomic)
         } catch let error {
-            NSLog("error saving cart \(self.config.project.id): \(error)")
+            Log.error("error saving cart \(self.config.project.id): \(error)")
         }
 
         timer?.invalidate()
@@ -337,7 +337,7 @@ extension ShoppingCart {
             }
             return storage
         } catch let error {
-            NSLog("error loading cart \(self.config.project.id): \(error)")
+            Log.error("error loading cart \(self.config.project.id): \(error)")
             return CartStorage()
         }
     }

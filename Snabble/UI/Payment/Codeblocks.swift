@@ -70,7 +70,7 @@ class Codeblocks {
         codeblocks.append(contentsOf: restrictedBlocks)
 
 //        for (index, block) in codeblocks.enumerated() {
-//            print("block \(index): \(block.count) elements, first=\(block[0]), last=\(block[block.count-1])")
+//            Log.debug("block \(index): \(block.count) elements, first=\(block[0]), last=\(block[block.count-1])")
 //        }
 
         return codeblocks

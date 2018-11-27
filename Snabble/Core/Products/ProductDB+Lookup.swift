@@ -33,14 +33,14 @@ extension ProductDB {
                 if let data = data, let response = response as? HTTPURLResponse {
                     if response.statusCode == 404 {
                         DispatchQueue.main.async {
-                            NSLog("online product lookup with \(placeholder) \(identifier): not found")
+                            Log.info("online product lookup with \(placeholder) \(identifier): not found")
                             completion(nil, false)
                         }
                         return
                     }
 
                     do {
-                        NSLog("online product lookup with \(placeholder) \(identifier) succeeded")
+                        Log.info("online product lookup with \(placeholder) \(identifier) succeeded")
                         let apiProduct = try JSONDecoder().decode(APIProduct.self, from: data)
                         if let depositSku = apiProduct.depositProduct {
                             // get the deposit product
@@ -110,14 +110,14 @@ extension ProductDB {
             let task = session.dataTask(with: request) { data, response, error in
                 if let data = data, let response = response as? HTTPURLResponse {
                     if response.statusCode == 404 {
-                        NSLog("online bundle lookup with \(placeholder) \(sku): not found")
+                        Log.info("online bundle lookup with \(placeholder) \(sku): not found")
                         completion([], false)
                         return
                     }
 
                     do {
                         let result = try JSONDecoder().decode(APIProducts.self, from: data)
-                        NSLog("online bundle lookup for sku \(sku) found \(result.products.count) bundles")
+                        Log.info("online bundle lookup for sku \(sku) found \(result.products.count) bundles")
                         self.completeBundles(result.products, shopId, completion)
                     }
                     catch let error {
@@ -171,14 +171,14 @@ extension ProductDB {
             let task = session.dataTask(with: request) { data, response, error in
                 if let data = data, let response = response as? HTTPURLResponse {
                     if response.statusCode == 404 {
-                        NSLog("online products lookup for \(skus): not found")
+                        Log.info("online products lookup for \(skus): not found")
                         completion([], false)
                         return
                     }
 
                     do {
                         let result = try JSONDecoder().decode(APIProducts.self, from: data)
-                        NSLog("online products lookup for skus \(skus) found \(result.products.count) products")
+                        Log.info("online products lookup for skus \(skus) found \(result.products.count) products")
                         let products = result.products.map { $0.convert(nil, []) }
                         completion(products, false)
                     }

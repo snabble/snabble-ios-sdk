@@ -89,12 +89,12 @@ class TokenRegistry {
     }
 
     @objc private func appEnteredForeground(_ notification: Notification) {
-        // print("app going to fg, start refresh")
+        // Log.debug("app going to fg, start refresh")
         self.startRefreshTimer()
     }
 
     @objc private func appEnteredBackground(_ notification: Notification) {
-        // print("app going to bg, stop refresh")
+        // Log.debug("app going to bg, stop refresh")
         self.refreshTimer?.invalidate()
         self.refreshTimer = nil
     }
@@ -106,7 +106,7 @@ class TokenRegistry {
 
         let now = Date()
         let refreshIn = earliest.refresh.timeIntervalSinceReferenceDate - now.timeIntervalSinceReferenceDate
-        // print("run refresh in \(refreshIn)s")
+        // Log.debug("run refresh in \(refreshIn)s")
         self.refreshTimer?.invalidate()
         self.refreshTimer = Timer.scheduledTimer(withTimeInterval: refreshIn, repeats: false) { timer in
             self.refreshTokens()

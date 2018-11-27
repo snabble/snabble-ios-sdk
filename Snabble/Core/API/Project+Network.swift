@@ -249,7 +249,7 @@ extension Project {
         let task = session.dataTask(with: request) { rawData, response, error in
             let elapsed = Date.timeIntervalSinceReferenceDate - start
             let url = request.url?.absoluteString ?? "n/a"
-            NSLog("get \(url) took \(elapsed)s")
+            Log.info("get \(url) took \(elapsed)s")
             guard
                 let data = rawData,
                 let httpResponse = response as? HTTPURLResponse,
@@ -291,9 +291,9 @@ extension Project {
                     completion(result, nil, json, httpResponse)
                 }
             } catch {
-                NSLog("error parsing response from \(url): \(error)")
+                Log.error("error parsing response from \(url): \(error)")
                 let body = String(bytes: data, encoding: .utf8) ?? ""
-                NSLog("raw response body: \(body)")
+                Log.error("raw response body: \(body)")
                 DispatchQueue.main.async {
                     completion(nil, nil, nil, httpResponse)
                 }
@@ -308,7 +308,7 @@ extension Project {
 extension Project {
 
     func logError(_ msg: String) {
-        NSLog(msg)
+        Log.error(msg)
 
         let event = AppEvent(message: msg, project: self)
         event.post()

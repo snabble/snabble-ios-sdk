@@ -124,15 +124,15 @@ extension AppEvent {
             request.addValue("application/json", forHTTPHeaderField: "Content-Type")
         }
         catch {
-            print("\(error)")
+            Log.error("\(error)")
         }
 
-        // NSLog("posting event \(String(describing: self))")
+        // Log.info("posting event \(String(describing: self))")
 
         let session = URLSession(configuration: URLSessionConfiguration.default)
         let task = session.dataTask(with: request) { rawData, response, error in
             if let error = error {
-                NSLog("posting event failed: \(error)")
+                Log.error("posting event failed: \(error)")
             }
         }
         task.resume()

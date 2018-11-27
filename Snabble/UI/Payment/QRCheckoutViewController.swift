@@ -57,7 +57,7 @@ class QRCheckoutViewController: UIViewController {
         self.explanation1.text = "Snabble.QRCode.showThisCode".localized()
 
         let qrCodeContent = self.process.paymentInformation?.qrCodeContent ?? "n/a"
-        // print("QR code: \(qrCodeContent)")
+        // Log.debug("QR code: \(qrCodeContent)")
         self.qrCodeView.image = QRCode.generate(for: qrCodeContent, scale: 5)
         self.qrCodeWidth.constant = self.qrCodeView.image?.size.width ?? 0
 

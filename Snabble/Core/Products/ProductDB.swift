@@ -248,19 +248,19 @@ final class ProductDB: ProductProvider {
                 let newData: Bool
                 switch dbResponse {
                 case .diff(let statements):
-                    NSLog("db update: got diff")
+                    Log.info("db update: got diff")
                     performSwitch = self.copyAndUpdateDatabase(statements, tempDbPath)
                     newData = true
                 case .full(let data, let revision):
-                    NSLog("db update: got full db, rev=\(revision)")
+                    Log.info("db update: got full db, rev=\(revision)")
                     performSwitch = self.writeFullDatabase(data, revision, tempDbPath)
                     newData = true
                 case .noUpdate:
-                    NSLog("db update: no new data")
+                    Log.info("db update: no new data")
                     performSwitch = false
                     newData = false
                 case .httpError, .dataError:
-                    NSLog("db update: http error or no data")
+                    Log.info("db update: http error or no data")
                     performSwitch = false
                     newData = false
                 }
@@ -286,7 +286,7 @@ final class ProductDB: ProductProvider {
     }
 
     private func createFulltextIndex(_ path: String) {
-        NSLog("creating FTS index...")
+        Log.info("creating FTS index...")
         do {
             let db = try DatabaseQueue(path: path)
             try self.createFullTextIndex(db)
@@ -311,11 +311,11 @@ final class ProductDB: ProductProvider {
             let dbFile = self.dbPathname()
 
             if !fileManager.fileExists(atPath: dbFile) {
-                NSLog("no sqlite file found at \(dbFile)")
+                Log.info("no sqlite file found at \(dbFile)")
                 return nil
             }
 
-            NSLog("using sqlite db: \(dbFile)")
+            Log.info("using sqlite db: \(dbFile)")
 
             // remove comments to simulate first app installation
 //            if fileManager.fileExists(atPath: dbFile) {
@@ -340,7 +340,7 @@ final class ProductDB: ProductProvider {
 
     private func unzipSeed() {
         if let seedPath = self.config.seedDatabase {
-            NSLog("unzipping seed database")
+            Log.info("unzipping seed database")
             do {
                 let seedUrl = URL(fileURLWithPath: seedPath)
                 try Zip.unzipFile(seedUrl, destination: self.dbDirectory, overwrite: true, password: nil)
@@ -411,7 +411,7 @@ final class ProductDB: ProductProvider {
 
                 let shouldSwitch = revision > self.revision || minorVersion > self.schemaVersionMinor
                 if shouldSwitch {
-                    NSLog("new db: revision=\(revision), schema=\(majorVersion).\(minorVersion)")
+                    Log.info("new db: revision=\(revision), schema=\(majorVersion).\(minorVersion)")
                 }
                 return shouldSwitch
             }
@@ -620,7 +620,7 @@ extension ProductDB {
         }
 
         if !self.config.useFTS {
-            NSLog("WARNING: productsByName called, but useFTS not set")
+            Log.warn("WARNING: productsByName called, but useFTS not set")
         }
 
         return self.productsByName(db, name, filterDeposits)
@@ -647,7 +647,6 @@ extension ProductDB {
         let now = Date.timeIntervalSinceReferenceDate
         let age = now - self.lastProductUpdate.timeIntervalSinceReferenceDate
         let ageOk = age < self.config.maxProductDatabaseAge
-        print("age \(age) -> \(ageOk)")
         return !forceDownload && ageOk
     }
 

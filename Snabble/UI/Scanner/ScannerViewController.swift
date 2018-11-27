@@ -318,7 +318,7 @@ extension ScannerViewController: ScanningViewDelegate {
     }
 
     public func noCameraFound() {
-        print("no camera found")
+        Log.debug("no camera found")
     }
 
     public func enterBarcode() {
@@ -340,7 +340,7 @@ extension ScannerViewController: ScanningViewDelegate {
 extension ScannerViewController {
 
     private func scannedUnknown(_ msg: String, _ code: String) {
-        // print("scanned unknown code \(code)")
+        // Log.debug("scanned unknown code \(code)")
         self.tapticFeedback.notificationOccurred(.error)
 
         self.delegate.showWarningMessage(msg)
@@ -353,7 +353,7 @@ extension ScannerViewController {
     }
 
     private func handleScannedCode(_ scannedCode: String, _ type: AVMetadataObject.ObjectType?) {
-        // print("handleScannedCode \(scannedCode) \(self.lastScannedCode)")
+        // Log.debug("handleScannedCode \(scannedCode) \(self.lastScannedCode)")
         self.lastScannedCode = scannedCode
 
         self.timer?.invalidate()
@@ -476,7 +476,7 @@ extension ScannerViewController {
     }
 
     private func manuallyEnteredCode(_ code: String?) {
-        // print("entered \(code)")
+        // Log.debug("entered \(code)")
         if let code = code {
             self.handleScannedCode(code, nil)
         }

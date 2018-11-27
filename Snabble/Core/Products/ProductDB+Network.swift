@@ -39,7 +39,7 @@ extension ProductDB {
             let task = session.dataTask(with: request) { data, response, error in
                 let elapsed = Date.timeIntervalSinceReferenceDate - start
                 let url = request.url?.absoluteString ?? "n/a"
-                NSLog("get \(url) took \(elapsed)s")
+                Log.info("get \(url) took \(elapsed)s")
 
                 if error != nil {
                     completion(.httpError)

@@ -103,13 +103,13 @@ public class ReceiptsManager {
                     receipt.pdfPath = jsonPath.deletingPathExtension().appendingPathExtension("pdf")
                     receipts.append(receipt)
                 } catch {
-                    NSLog("read receipt error: \(error)")
+                    Log.error("read receipt error: \(error)")
                     try? fileManager.removeItem(at: jsonPath)
                 }
             }
             return receipts.sorted { $0.date > $1.date }
         } catch {
-            NSLog("list receipts error: \(error)")
+            Log.error("list receipts error: \(error)")
             return []
         }
     }

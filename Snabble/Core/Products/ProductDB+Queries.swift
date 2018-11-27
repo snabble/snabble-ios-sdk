@@ -223,7 +223,7 @@ extension ProductDB {
             try db.execute("vacuum")
         }
         let elapsed = Date.timeIntervalSinceReferenceDate - start
-        print("update took \(elapsed)")
+        Log.debug("update took \(elapsed)")
     }
 
     private func productFromRow(_ dbQueue: DatabaseQueue, _ row: Row?, _ shopId: String?) -> Product? {
@@ -316,7 +316,7 @@ extension ProductDB {
         let elapsed = Date.timeIntervalSinceReferenceDate - start
 
         if _isDebugAssertConfiguration() && elapsed >= 0.01 {
-            NSLog("slow query: \(elapsed)s for \(query) - arguments: \(String(describing: arguments))" )
+            Log.info("slow query: \(elapsed)s for \(query) - arguments: \(String(describing: arguments))" )
             self.queryPlan(db, query, arguments)
         }
     }
@@ -324,10 +324,10 @@ extension ProductDB {
     private func queryPlan(_ db: Database, _ query: String, _ arguments: StatementArguments?) {
         do {
             for explain in try Row.fetchAll(db, "EXPLAIN QUERY PLAN " + query, arguments: arguments) {
-                print("EXPLAIN: \(explain)")
+                Log.debug("EXPLAIN: \(explain)")
             }
         } catch {
-            print("query explain error \(error)")
+            Log.error("query explain error \(error)")
         }
     }
 }
