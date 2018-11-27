@@ -1,5 +1,9 @@
 ## snabble iOS SDK changelog
 
+# v0.8.1
+
+* fixes a bug in `ProductDB.discountedProducts()`
+
 # v0.8.0
 
 * fixes a bug with shop-specific prices
