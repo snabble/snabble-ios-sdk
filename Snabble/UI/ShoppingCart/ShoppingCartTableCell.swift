@@ -13,7 +13,7 @@ protocol ShoppingCartTableDelegate: class {
     var cart: ShoppingCart { get }
 }
 
-class ShoppingCartTableCell: UITableViewCell {
+final class ShoppingCartTableCell: UITableViewCell {
 
     @IBOutlet weak var productImage: UIImageView!
     @IBOutlet weak var subtitleLabel: UILabel!

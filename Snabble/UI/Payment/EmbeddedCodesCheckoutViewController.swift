@@ -6,7 +6,7 @@
 
 import UIKit
 
-class EmbeddedCodesCheckoutViewController: UIViewController {
+final class EmbeddedCodesCheckoutViewController: UIViewController {
 
     @IBOutlet weak var explanation1: UILabel!
     @IBOutlet weak var totalPriceLabel: UILabel!

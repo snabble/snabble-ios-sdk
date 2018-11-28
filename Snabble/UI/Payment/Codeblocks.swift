@@ -6,7 +6,7 @@
 
 import Foundation
 
-class Codeblocks {
+final class Codeblocks {
 
     private(set) var config: EncodedCodes
 

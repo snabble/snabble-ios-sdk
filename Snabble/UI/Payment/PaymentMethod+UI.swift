@@ -52,7 +52,7 @@ extension PaymentMethod {
 }
 
 /// Manage the payment process
-public class PaymentProcess {
+public final class PaymentProcess {
     private(set) var signedCheckoutInfo: SignedCheckoutInfo
     private(set) var cart: ShoppingCart
     private var hudTimer: Timer?

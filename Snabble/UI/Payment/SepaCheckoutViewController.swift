@@ -6,7 +6,7 @@
 
 import UIKit
 
-class SepaCheckoutViewController: UIViewController {
+final class SepaCheckoutViewController: UIViewController {
 
     @IBOutlet var steps: [UIView]!
     @IBOutlet var spinners: [UIActivityIndicatorView]!

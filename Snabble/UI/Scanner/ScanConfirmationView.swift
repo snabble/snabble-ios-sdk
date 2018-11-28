@@ -14,7 +14,7 @@ public extension Notification.Name {
     static let snabbleCartUpdated = Notification.Name("snabbleCartUpdated")
 }
 
-class ScanConfirmationView: DesignableView {
+final class ScanConfirmationView: DesignableView {
     @IBOutlet private weak var subtitleLabel: UILabel!
     @IBOutlet private weak var productNameLabel: UILabel!
     @IBOutlet private weak var originalPriceLabel: UILabel!

@@ -33,7 +33,7 @@ struct TokenData {
     }
 }
 
-class TokenRegistry {
+final class TokenRegistry {
 
     private var appId = ""
     private var secret = ""

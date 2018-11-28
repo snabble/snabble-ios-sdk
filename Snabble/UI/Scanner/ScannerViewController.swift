@@ -40,7 +40,7 @@ extension AVMetadataObject.ObjectType {
     }
 }
 
-public class ScannerViewController: UIViewController {
+public final class ScannerViewController: UIViewController {
 
     @IBOutlet private weak var spinner: UIActivityIndicatorView!
 
@@ -486,14 +486,14 @@ extension ScannerViewController {
 
 extension ScannerViewController: KeyboardHandling {
 
-    public func keyboardWillShow(_ info: KeyboardInfo) {
+    func keyboardWillShow(_ info: KeyboardInfo) {
         self.scanConfirmationViewBottom.constant = -(info.keyboardHeight - 48)
         UIView.animate(withDuration: info.animationDuration) {
             self.view.layoutIfNeeded()
         }
     }
 
-    public func keyboardWillHide(_ info: KeyboardInfo) {
+    func keyboardWillHide(_ info: KeyboardInfo) {
         self.scanConfirmationViewBottom.constant = self.confirmationVisible ? self.visibleConfirmationOffset : self.hiddenConfirmationOffset
         UIView.animate(withDuration: info.animationDuration) {
             self.view.layoutIfNeeded()
