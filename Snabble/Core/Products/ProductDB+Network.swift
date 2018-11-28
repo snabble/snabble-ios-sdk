@@ -34,7 +34,7 @@ extension ProductDB {
             }
 
             request.setValue(ProductDB.contentTypes, forHTTPHeaderField: "Accept")
-            let session = URLSession(configuration: URLSessionConfiguration.default)
+            let session = SnabbleAPI.urlSession()
 
             let task = session.dataTask(with: request) { data, response, error in
                 let elapsed = Date.timeIntervalSinceReferenceDate - start

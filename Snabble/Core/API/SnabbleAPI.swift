@@ -5,6 +5,7 @@
 //
 
 import Foundation
+import TrustKit
 
 /// general config data for using the snabble API.
 /// Applications must call `SnabbleAPI.setup()` with an instance of this struct before they make their first API call.
@@ -66,6 +67,7 @@ public struct SnabbleAPI {
 
     public static func setup(_ config: SnabbleAPIConfig, completion: @escaping ()->() ) {
         self.config = config
+        self.initializeTrustKit()
 
         self.tokenRegistry = TokenRegistry(config.appId, config.secret)
 
@@ -153,6 +155,70 @@ extension SnabbleAPI {
         }
 
         return urlComponents.url?.absoluteString
+    }
+}
+
+/// Trustkit / certificate pinning
+extension SnabbleAPI {
+
+    private static func initializeTrustKit() {
+        let trustKitConfig: [String: Any] = [
+            kTSKSwizzleNetworkDelegates: false,
+            kTSKPinnedDomains: [
+                "snabble.io": [
+                    kTSKExpirationDate: "2021-03-17",
+                    kTSKIncludeSubdomains: true,
+                    kTSKDisableDefaultReportUri: true,
+                    kTSKPublicKeyHashes: [
+                        "YLh1dUR9y6Kja30RrAn7JKnbQG/uEtLMkBgFF2Fuihg=", "sRHdihwgkaib1P1gxX8HFszlD+7/gTfNvuAybgLPNis="  // let's encrypt
+                    ],
+                ],
+                "snabble-testing.io": [
+                    kTSKExpirationDate: "2021-03-17",
+                    kTSKIncludeSubdomains: true,
+                    kTSKDisableDefaultReportUri: true,
+                    kTSKPublicKeyHashes: [
+                        "YLh1dUR9y6Kja30RrAn7JKnbQG/uEtLMkBgFF2Fuihg=", "sRHdihwgkaib1P1gxX8HFszlD+7/gTfNvuAybgLPNis="  // let's encrypt
+                    ],
+                ],
+                "snabble-staging.io": [
+                    kTSKExpirationDate: "2021-03-17",
+                    kTSKIncludeSubdomains: true,
+                    kTSKDisableDefaultReportUri: true,
+                    kTSKPublicKeyHashes: [
+                        "YLh1dUR9y6Kja30RrAn7JKnbQG/uEtLMkBgFF2Fuihg=", "sRHdihwgkaib1P1gxX8HFszlD+7/gTfNvuAybgLPNis="  // let's encrypt
+                    ],
+                ]
+            ]
+        ]
+
+        TrustKit.initSharedInstance(withConfiguration:trustKitConfig)
+
+        TrustKit.sharedInstance().pinningValidatorCallback = { result, hostname, policy in
+            if result.finalTrustDecision != .shouldAllowConnection {
+                Log.error("untrusted connection to \(hostname) denied: eval=\(result.evaluationResult.rawValue) final=\(result.finalTrustDecision.rawValue)")
+            }
+        }
+    }
+
+    ///
+    /// create a URLSession that is suitable for making requests to the snabble servers
+    ///
+    /// - Returns: a URLSession object
+    static public func urlSession() -> URLSession {
+        let checker = TrustChecker()
+        let session = URLSession(configuration: .default, delegate: checker, delegateQueue: OperationQueue.main)
+        return session
+    }
+}
+
+/// handle the certificate pinning checks for our requests
+final class TrustChecker: NSObject, URLSessionDelegate {
+    func urlSession(_ session: URLSession, didReceive challenge: URLAuthenticationChallenge, completionHandler: @escaping (URLSession.AuthChallengeDisposition, URLCredential?) -> Void) {
+        let handled = TrustKit.sharedInstance().pinningValidator.handle(challenge, completionHandler: completionHandler)
+        if !handled {
+            completionHandler(.performDefaultHandling, nil)
+        }
     }
 }
 
