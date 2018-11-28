@@ -110,7 +110,7 @@ public struct SnabbleAPI {
 }
 
 extension SnabbleAPI {
-    static var clientId: String {
+    public static var clientId: String {
         if let id = UserDefaults.standard.string(forKey: "Snabble.api.clientId") {
             return id
         } else {
