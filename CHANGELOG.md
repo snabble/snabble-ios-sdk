@@ -1,5 +1,9 @@
 ## snabble iOS SDK changelog
 
+# v0.8.2
+
+* all classes that don't need to be (implicitly) `open` are now `final`
+
 # v0.8.1
 
 * fixes a bug in `ProductDB.discountedProducts()`
