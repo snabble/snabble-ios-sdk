@@ -1,5 +1,9 @@
 ## snabble iOS SDK changelog
 
+# v0.8.3
+
+* improve performance of product database queries that return price information
+
 # v0.8.2
 
 * all classes that don't need to be (implicitly) `open` are now `final`
