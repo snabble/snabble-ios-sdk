@@ -377,8 +377,8 @@ extension ScannerViewController {
             self.tapticFeedback.notificationOccurred(.success)
 
             let ean = EAN.parse(scannedCode, SnabbleUI.project)
-            // handle scanning the shelf code of a pre-weighed product
-            if product.type == .preWeighed && ean?.embeddedData == nil {
+            // handle scanning the shelf code of a pre-weighed product (no data or 0 encoded in the EAN)
+            if product.type == .preWeighed && (ean?.embeddedData == nil || ean?.embeddedData == 0) {
                 let msg = "Snabble.Scanner.scannedShelfCode".localized()
                 self.scannedUnknown(msg, code)
                 self.scanningView.startScanning()
