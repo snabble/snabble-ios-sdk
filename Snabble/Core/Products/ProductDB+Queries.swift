@@ -276,7 +276,7 @@ extension ProductDB {
             }
             let row2 = try dbQueue.inDatabase { db in
                 return  try self.fetchOne(db, """
-                        select * from prices where pricingCategory = 0) and sku = ?
+                        select * from prices where pricingCategory = 0 and sku = ?
                         """, arguments: [sku])
             }
             return row2
