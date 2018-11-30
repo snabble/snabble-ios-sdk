@@ -1,5 +1,9 @@
 ## snabble iOS SDK changelog
 
+# v0.8.5
+
+* show "shelf code scanned" message when the scanned EAN has no or 0 as its embedded data.
+
 # v0.8.4
 
 * fixes a bug in the price query for the default price category
