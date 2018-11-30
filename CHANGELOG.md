@@ -1,5 +1,9 @@
 ## snabble iOS SDK changelog
 
+# v0.8.4
+
+* fixes a bug in the price query for the default price category
+
 # v0.8.3
 
 * improve performance of product database queries that return price information
