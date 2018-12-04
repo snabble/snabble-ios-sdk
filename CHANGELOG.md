@@ -1,4 +1,8 @@
-## snabble iOS SDK changelog
+## snabble iOS SDK Changelog
+
+# v0.8.6
+
+* add `ShoppingCart.updateProducts()`
 
 # v0.8.5
 

@@ -76,6 +76,21 @@ public struct CartItem: Codable {
         self.units = try container.decodeIfPresent(Int.self, forKey: .units)
     }
 
+    // init with a freshly retrieved copy of `item.product`.
+    init?(updating item: CartItem, _ provider: ProductProvider, _ shopId: String) {
+        guard let product = provider.productBySku(item.product.sku, shopId) else {
+            return nil
+        }
+
+        self.product = product
+        self.quantity = item.quantity
+        self.scannedCode = item.scannedCode
+        self.editableUnits = item.editableUnits
+        self.price = item.price
+        self.weight = item.weight
+        self.units = item.units
+    }
+
     /// total price for this cart item
     public func total(_ project: Project) -> Int {
         return self.price(for: self.quantity, project)
@@ -341,6 +356,22 @@ extension ShoppingCart {
             return CartStorage()
         }
     }
+
+    /// update the products in this shopping cart, e.g. after a database update was downloaded
+    public func updateProducts() {
+        let provider = SnabbleAPI.productProvider(for: self.config.project)
+        var newItems = [CartItem]()
+        for item in self.items {
+            if let newItem = CartItem(updating: item, provider, self.config.shop.id) {
+                newItems.append(newItem)
+            } else {
+                newItems.append(item)
+            }
+        }
+        self.items = newItems
+        self.save()
+    }
+
 }
 
 extension ShoppingCart {
