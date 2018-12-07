@@ -245,7 +245,7 @@ extension Project {
     @discardableResult
     func perform<T: Decodable>(_ request: URLRequest, returnRaw: Bool, _ completion: @escaping (_ obj: T?, _ error: ApiError?, _ raw: [String: Any]?, _ response: HTTPURLResponse?) -> () ) -> URLSessionDataTask {
         let start = Date.timeIntervalSinceReferenceDate
-        let session = URLSession(configuration: URLSessionConfiguration.default)
+        let session = SnabbleAPI.urlSession()
         let task = session.dataTask(with: request) { rawData, response, error in
             let elapsed = Date.timeIntervalSinceReferenceDate - start
             let url = request.url?.absoluteString ?? "n/a"
@@ -315,3 +315,5 @@ extension Project {
     }
 
 }
+
+

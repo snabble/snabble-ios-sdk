@@ -51,7 +51,7 @@ public final class ReceiptsManager {
             return
         }
 
-        let session = URLSession(configuration: URLSessionConfiguration.default)
+        let session = SnabbleAPI.urlSession()
         var request = URLRequest(url: url)
         request.addValue(token, forHTTPHeaderField: "Client-Token")
 

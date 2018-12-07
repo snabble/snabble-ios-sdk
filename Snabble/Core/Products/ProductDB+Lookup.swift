@@ -17,7 +17,7 @@ extension ProductDB {
     }
 
     func getSingleProduct(_ url: String, _ placeholder: String, _ identifier: String, _ shopId: String, completion: @escaping (LookupResult?, Bool) -> () ) {
-        let session = URLSession(configuration: URLSessionConfiguration.default)
+        let session = SnabbleAPI.urlSession()
 
         // TODO: is this the right value?
         let timeoutInterval: TimeInterval = 5
@@ -95,7 +95,7 @@ extension ProductDB {
     }
 
     private func getBundlingProducts(_ url: String, _ placeholder: String, _ sku: String, _ shopId: String, completion: @escaping (_ bundles: [Product], _ error: Bool) -> ()) {
-        let session = URLSession(configuration: URLSessionConfiguration.default)
+        let session = SnabbleAPI.urlSession()
 
         // TODO: is this the right value?
         let timeoutInterval: TimeInterval = 5
@@ -154,7 +154,7 @@ extension ProductDB {
     }
 
     func getProductsBySku(_ url: String, _ skus: [String], _ shopId: String, completion: @escaping (_ products: [Product], _ error: Bool) -> ()) {
-        let session = URLSession(configuration: URLSessionConfiguration.default)
+        let session = SnabbleAPI.urlSession()
 
         // TODO: is this the right value?
         let timeoutInterval: TimeInterval = 5

@@ -129,7 +129,8 @@ extension AppEvent {
 
         // Log.info("posting event \(String(describing: self))")
 
-        let session = URLSession(configuration: URLSessionConfiguration.default)
+        // use a system default session here so we can still log pinning errors
+        let session = URLSession(configuration: .default)
         let task = session.dataTask(with: request) { rawData, response, error in
             if let error = error {
                 Log.error("posting event failed: \(error)")
