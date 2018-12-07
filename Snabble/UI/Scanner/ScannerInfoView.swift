@@ -10,7 +10,7 @@ protocol ScannerInfoDelegate {
     func close()
 }
 
-class ScannerInfoView: DesignableView {
+final class ScannerInfoView: DesignableView {
     @IBOutlet private weak var startButton: UIButton!
     @IBOutlet private weak var textLabel: UILabel!
 

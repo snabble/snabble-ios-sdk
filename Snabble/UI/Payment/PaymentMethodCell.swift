@@ -6,7 +6,7 @@
 
 import UIKit
 
-class PaymentMethodCell: UICollectionViewCell {
+final class PaymentMethodCell: UICollectionViewCell {
 
     @IBOutlet weak var containerView: UIView!
     @IBOutlet weak var icon: UIImageView!

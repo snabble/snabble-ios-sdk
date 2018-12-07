@@ -33,7 +33,7 @@ public struct ReceiptData: Codable {
     }
 }
 
-public class ReceiptsManager {
+public final class ReceiptsManager {
     public static let shared = ReceiptsManager()
 
     /// set to false to

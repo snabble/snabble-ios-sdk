@@ -6,7 +6,7 @@
 
 import UIKit
 
-class QRCheckoutViewController: UIViewController {
+final class QRCheckoutViewController: UIViewController {
 
     @IBOutlet weak var qrCodeView: UIImageView!
     @IBOutlet weak var explanation1: UILabel!

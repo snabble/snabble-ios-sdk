@@ -1,4 +1,24 @@
-## snabble iOS SDK changelog
+## snabble iOS SDK Changelog
+
+# v0.8.6
+
+* add `ShoppingCart.updateProducts()`
+
+# v0.8.5
+
+* show "shelf code scanned" message when the scanned EAN has no or 0 as its embedded data.
+
+# v0.8.4
+
+* fixes a bug in the price query for the default price category
+
+# v0.8.3
+
+* improve performance of product database queries that return price information
+
+# v0.8.2
+
+* all classes that don't need to be (implicitly) `open` are now `final`
 
 # v0.8.1
 

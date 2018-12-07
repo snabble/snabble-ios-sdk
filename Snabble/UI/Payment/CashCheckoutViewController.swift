@@ -6,7 +6,7 @@
 
 import UIKit
 
-class CashCheckoutViewController: UIViewController {
+final class CashCheckoutViewController: UIViewController {
 
     @IBOutlet var steps: [UIView]!
     @IBOutlet var spinners: [UIActivityIndicatorView]!

@@ -28,7 +28,7 @@ extension ShoppingCartDelegate {
     }
 }
  
-public class ShoppingCartViewController: UIViewController {
+public final class ShoppingCartViewController: UIViewController {
 
     @IBOutlet private weak var tableView: UITableView!
     @IBOutlet private weak var tableBottomMargin: NSLayoutConstraint!
@@ -332,7 +332,7 @@ extension ShoppingCartViewController: UITableViewDelegate, UITableViewDataSource
 // MARK: keyboard show/hide
 extension ShoppingCartViewController: KeyboardHandling {
 
-    public func keyboardWillShow(_ info: KeyboardInfo) {
+    func keyboardWillShow(_ info: KeyboardInfo) {
         guard self.view.window != nil else {
             return
         }
@@ -345,7 +345,7 @@ extension ShoppingCartViewController: KeyboardHandling {
         }
     }
 
-    public func keyboardWillHide(_ info: KeyboardInfo) {
+    func keyboardWillHide(_ info: KeyboardInfo) {
         guard self.view.window != nil else {
             return
         }

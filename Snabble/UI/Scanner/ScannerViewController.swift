@@ -40,7 +40,7 @@ extension AVMetadataObject.ObjectType {
     }
 }
 
-public class ScannerViewController: UIViewController {
+public final class ScannerViewController: UIViewController {
 
     @IBOutlet private weak var spinner: UIActivityIndicatorView!
 
@@ -377,8 +377,8 @@ extension ScannerViewController {
             self.tapticFeedback.notificationOccurred(.success)
 
             let ean = EAN.parse(scannedCode, SnabbleUI.project)
-            // handle scanning the shelf code of a pre-weighed product
-            if product.type == .preWeighed && ean?.embeddedData == nil {
+            // handle scanning the shelf code of a pre-weighed product (no data or 0 encoded in the EAN)
+            if product.type == .preWeighed && (ean?.embeddedData == nil || ean?.embeddedData == 0) {
                 let msg = "Snabble.Scanner.scannedShelfCode".localized()
                 self.scannedUnknown(msg, code)
                 self.scanningView.startScanning()
@@ -486,14 +486,14 @@ extension ScannerViewController {
 
 extension ScannerViewController: KeyboardHandling {
 
-    public func keyboardWillShow(_ info: KeyboardInfo) {
+    func keyboardWillShow(_ info: KeyboardInfo) {
         self.scanConfirmationViewBottom.constant = -(info.keyboardHeight - 48)
         UIView.animate(withDuration: info.animationDuration) {
             self.view.layoutIfNeeded()
         }
     }
 
-    public func keyboardWillHide(_ info: KeyboardInfo) {
+    func keyboardWillHide(_ info: KeyboardInfo) {
         self.scanConfirmationViewBottom.constant = self.confirmationVisible ? self.visibleConfirmationOffset : self.hiddenConfirmationOffset
         UIView.animate(withDuration: info.animationDuration) {
             self.view.layoutIfNeeded()

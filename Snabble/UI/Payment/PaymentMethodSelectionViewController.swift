@@ -6,7 +6,7 @@
 
 import UIKit
 
-class PaymentMethodSelectionViewController: UIViewController {
+final class PaymentMethodSelectionViewController: UIViewController {
 
     @IBOutlet var titleLabel: UILabel!
     @IBOutlet weak var collectionView: UICollectionView!

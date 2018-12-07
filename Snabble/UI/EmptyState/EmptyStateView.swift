@@ -45,7 +45,7 @@ class EmptyStateView: NibView {
     }
 }
 
-class ShoppingCartEmptyStateView: EmptyStateView {
+final class ShoppingCartEmptyStateView: EmptyStateView {
     override init(_ tapHandler: Handler?) {
         super.init(tapHandler)
 
@@ -63,7 +63,7 @@ class ShoppingCartEmptyStateView: EmptyStateView {
     }
 }
 
-class BarcodeEntryEmptyStateView: EmptyStateView {
+final class BarcodeEntryEmptyStateView: EmptyStateView {
     override init(_ tapHandler: Handler?) {
         super.init(tapHandler)
 

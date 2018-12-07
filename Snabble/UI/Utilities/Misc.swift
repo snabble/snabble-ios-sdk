@@ -21,7 +21,7 @@ public struct SnabbleAppearance {
 }
 
 /// global settings for the Snabble UI classes
-public class SnabbleUI {
+public final class SnabbleUI {
 
     static private(set) var appearance = SnabbleAppearance()
     static private(set) var project = Project.none
@@ -175,7 +175,7 @@ open class NibView: UIView {
 }
 
 @IBDesignable
-class InsetLabel: UILabel {
+final class InsetLabel: UILabel {
     @IBInspectable var topInset: CGFloat = 0
     @IBInspectable var leftInset: CGFloat = 0
     @IBInspectable var bottomInset: CGFloat = 0
@@ -194,7 +194,7 @@ class InsetLabel: UILabel {
 
 // MARK: - l10n and image support
 
-class Snabble: NSObject {
+final class Snabble: NSObject {
     private static let frameworkBundle = Bundle(for: Snabble.self)
     static let path = frameworkBundle.path(forResource: "Snabble", ofType: "bundle")!
     static let bundle = Bundle(path: path)!

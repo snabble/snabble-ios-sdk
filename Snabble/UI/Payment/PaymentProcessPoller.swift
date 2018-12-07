@@ -22,7 +22,7 @@ enum PaymentEvent {
     }
 }
 
-class PaymentProcessPoller {
+final class PaymentProcessPoller {
     private var timer: Timer?
 
     private let process: CheckoutProcess

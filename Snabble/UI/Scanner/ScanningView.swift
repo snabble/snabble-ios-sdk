@@ -71,7 +71,7 @@ public struct ScanningViewConfig {
     public init() {}
 }
 
-public class ScanningView: DesignableView {
+public final class ScanningView: DesignableView {
 
     @IBOutlet weak var reticleWrapper: UIView!
     @IBOutlet weak var reticle: UIView!

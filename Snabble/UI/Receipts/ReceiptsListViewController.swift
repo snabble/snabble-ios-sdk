@@ -7,7 +7,7 @@
 import UIKit
 import QuickLook
 
-class PreviewItem: NSObject, QLPreviewItem {
+final class PreviewItem: NSObject, QLPreviewItem {
     var previewItemURL: URL? {
         return self.receipt.pdfPath
     }
@@ -29,7 +29,7 @@ extension ReceiptData {
 }
 
 @objc(ReceiptsListViewController)
-public class ReceiptsListViewController: UIViewController {
+public final class ReceiptsListViewController: UIViewController {
     @IBOutlet weak var tableView: UITableView!
     @IBOutlet weak var emptyLabel: UILabel!
     

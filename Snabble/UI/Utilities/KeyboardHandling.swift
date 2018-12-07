@@ -7,7 +7,7 @@
 import UIKit
 
 /// frame and animation data extracted from a keyboard show/hide notification
-public struct KeyboardInfo {
+struct KeyboardInfo {
     public let beginFrame: CGRect
     public let endFrame: CGRect
     public let animationDuration: TimeInterval
@@ -32,7 +32,7 @@ public struct KeyboardInfo {
     }
 }
 
-public protocol KeyboardHandling: class {
+protocol KeyboardHandling: class {
 
     func keyboardWillShow(_ info: KeyboardInfo)
 
@@ -40,7 +40,7 @@ public protocol KeyboardHandling: class {
 
 }
 
-public class KeyboardObserver: NSObject {
+final class KeyboardObserver: NSObject {
 
     private weak var handler: KeyboardHandling!
 

@@ -4,7 +4,7 @@
 //  Copyright © 2018 snabble. All rights reserved.
 //
 
-public class QRCode {
+public final class QRCode {
 
     public enum CorrectionLevel: String {
         case L
