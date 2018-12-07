@@ -1,5 +1,9 @@
 ## snabble iOS SDK Changelog
 
+# v0.8.7
+
+* add CA pinning to all https connections the SDK makes. Call  `SnabbleAPI.urlSession()` to get a `URLSession` that implements this behaviour.
+
 # v0.8.6
 
 * add `ShoppingCart.updateProducts()`
