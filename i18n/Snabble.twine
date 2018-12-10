@@ -124,7 +124,39 @@
         en = Receipts
     [Snabble.Receipt.noReceipt]
         en = No receipts found
-
+    [Snabble.saleStop.errorMsg.title]
+        en = Sorry
+    [Snabble.saleStop.errorMsg.one]
+        en = This product cannot be paid for using the app, please pay for it at the cashier.
+    [Snabble.saleStop.errorMsg]
+        en = These products cannot be paid for using the app, please pay for them at the cashier.
+    [Snabble.Payment.SEPA.Name]
+        en = Name
+    [Snabble.Payment.SEPA.IBAN]
+        en = IBAN
+    [Snabble.Payment.SEPA.InvalidIBAN]
+        en = Please enter a valid IBAN.
+    [Snabble.Payment.SEPA.InvalidName]
+        en = Please enter a valid name.
+    [Snabble.Save]
+        en = Save
+    [Snabble.Payment.emptyState.message]
+        en = You don't have any payment methods added yet. Add one now to conveniently check out.
+    [Snabble.Payment.emptyState.add]
+        en = Add SEPA credentials
+    [Snabble.Payment.delete.message]
+        en = Are you sure you want to remove this payment method?
+    [Snabble.Payment.add]
+        en = Add SEPA credentials
+        
+    [Snabble.Checkout.verifying]
+        en = Verifying
+    [Snabble.Checkout.done]
+        en = Finished!
+    [Snabble.Checkout.payAtCashRegister]
+        en = Pay at cash register
+    [Snabble.Checkout.error]
+        en = An error has occurred
 [[Android]]
     [Snabble.askForPermission]
         en = Ask for permission
