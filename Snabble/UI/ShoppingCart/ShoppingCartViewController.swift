@@ -210,6 +210,11 @@ public final class ShoppingCartViewController: UIViewController {
             } else {
                 let handled = self.delegate.handleCheckoutError(error)
                 if !handled {
+                    if let offendingSkus = error?.error.details?.compactMap({ $0.sku }) {
+                        self.showProductError(offendingSkus)
+                        return
+                    }
+
                     // app didn't handle the error. see if we can use embedded QR codes anyway
                     let project = SnabbleUI.project
                     if project.encodedCodes != nil {
@@ -226,6 +231,21 @@ public final class ShoppingCartViewController: UIViewController {
 
     func showScanner() {
         self.delegate.gotoScanner()
+    }
+
+    private func showProductError(_ skus: [String]) {
+        var offendingProducts = [String]()
+        for sku in skus {
+            if let item = self.cart.items.first(where: { $0.product.sku == sku }) {
+                offendingProducts.append(item.product.name)
+            }
+        }
+
+        let start = offendingProducts.count == 1 ? "Snabble.saleStop.errorMsg.one" : "Snabble.saleStop.errorMsg"
+        let msg = start.localized() + "\n" + offendingProducts.joined(separator: "\n")
+        let alert = UIAlertController(title: "Snabble.saleStop.errorMsg.title".localized(), message: msg, preferredStyle: .alert)
+        alert.addAction(UIAlertAction(title: "Snabble.OK".localized(), style: .default, handler: nil))
+        self.present(alert, animated: true)
     }
 }
 
