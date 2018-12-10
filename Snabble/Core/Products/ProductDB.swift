@@ -554,20 +554,9 @@ extension ProductDB {
         return self.productsBySku(db, skus, shopId)
     }
 
-    /// get boosted products
-    ///
-    /// returns a list of products that have a non-null `boost` value and a valid image URL
-    /// the returned list is sorted by descending boost value
-    ///
-    /// - Parameter limit: number of products to get
-    /// - Returns: an array of `Product`
     @available(*, deprecated)
     public func boostedProducts(limit: Int) -> [Product] {
-        guard let db = self.db else {
-            return []
-        }
-
-        return self.boostedProducts(db, limit: limit)
+        return []
     }
 
     @available(*, deprecated)

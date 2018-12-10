@@ -45,22 +45,6 @@ extension ProductDB {
         return []
     }
 
-    func boostedProducts(_ dbQueue: DatabaseQueue, limit: Int) -> [Product] {
-        do {
-            let rows = try dbQueue.inDatabase { db in
-                return try self.fetchAll(db, ProductDB.productQuery + " " + """
-                    where p.imageUrl is not null and p.boost > 0
-                    order by p.boost desc
-                    limit ?
-                    """, arguments: [limit])
-            }
-            return rows.compactMap { self.productFromRow(dbQueue, $0, nil) }
-        } catch {
-            self.logError("boostedProducts db error: \(error)")
-        }
-        return []
-    }
-
     func discountedProducts(_ dbQueue: DatabaseQueue, _ shopId: String?) -> [Product] {
         do {
             let rows = try dbQueue.inDatabase { db in
