@@ -168,7 +168,7 @@ public final class ScannerViewController: UIViewController {
 
         self.scanningView.stopScanning()
         self.displayScanConfirmationView(hidden: true)
-        self.infoView.isHidden = true
+        self.infoView?.isHidden = true
 
         self.keyboardObserver = nil
     }
