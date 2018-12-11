@@ -1,12 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="14113" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="14460.31" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
     <device id="retina3_5" orientation="portrait">
         <adaptation id="fullscreen"/>
     </device>
     <dependencies>
         <deployment identifier="iOS"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="14088"/>
-        <capability name="Aspect ratio constraints" minToolsVersion="5.1"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="14460.20"/>
         <capability name="Safe area layout guides" minToolsVersion="9.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
@@ -40,7 +39,7 @@
                                     <nil key="highlightedColor"/>
                                 </label>
                                 <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Total Price" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="bMi-BY-Zh4">
-                                    <rect key="frame" x="103" y="322" width="82.5" height="21"/>
+                                    <rect key="frame" x="103" y="321.5" width="82.5" height="21"/>
                                     <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                     <fontDescription key="fontDescription" type="system" weight="medium" pointSize="17"/>
                                     <nil key="textColor"/>
@@ -53,7 +52,7 @@
                                     <nil key="highlightedColor"/>
                                 </label>
                                 <pageControl opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" hidesForSinglePage="YES" numberOfPages="3" translatesAutoresizingMaskIntoConstraints="NO" id="qoR-oB-4QU">
-                                    <rect key="frame" x="0.0" y="285" width="288" height="37"/>
+                                    <rect key="frame" x="0.0" y="284.5" width="288" height="37"/>
                                     <constraints>
                                         <constraint firstAttribute="height" constant="37" id="AhD-Tk-l8Y"/>
                                     </constraints>
@@ -64,7 +63,7 @@
                                     </connections>
                                 </pageControl>
                                 <collectionView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" pagingEnabled="YES" showsHorizontalScrollIndicator="NO" showsVerticalScrollIndicator="NO" dataMode="none" translatesAutoresizingMaskIntoConstraints="NO" id="ev5-Ha-DDh">
-                                    <rect key="frame" x="12.5" y="20.5" width="264.5" height="264.5"/>
+                                    <rect key="frame" x="12" y="20.5" width="264" height="264"/>
                                     <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                     <constraints>
                                         <constraint firstAttribute="height" relation="greaterThanOrEqual" constant="120" id="CP2-VO-NmE"/>
@@ -108,7 +107,7 @@
                     </constraints>
                 </view>
                 <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="xcE-5B-t8q">
-                    <rect key="frame" x="20" y="392" width="280" height="48"/>
+                    <rect key="frame" x="16" y="392" width="288" height="48"/>
                     <color key="backgroundColor" red="0.5" green="0.66411675349999999" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                     <constraints>
                         <constraint firstAttribute="height" constant="48" id="6YG-qp-JoA"/>
@@ -124,8 +123,8 @@
             </subviews>
             <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
             <constraints>
-                <constraint firstAttribute="trailing" secondItem="xcE-5B-t8q" secondAttribute="trailing" constant="20" id="3eV-oY-gH8"/>
-                <constraint firstItem="xcE-5B-t8q" firstAttribute="leading" secondItem="i5M-Pr-FkT" secondAttribute="leading" constant="20" id="42G-qz-baI"/>
+                <constraint firstAttribute="trailing" secondItem="xcE-5B-t8q" secondAttribute="trailing" constant="16" id="3eV-oY-gH8"/>
+                <constraint firstItem="xcE-5B-t8q" firstAttribute="leading" secondItem="i5M-Pr-FkT" secondAttribute="leading" constant="16" id="42G-qz-baI"/>
                 <constraint firstItem="EIP-gZ-GFM" firstAttribute="top" secondItem="i5M-Pr-FkT" secondAttribute="top" id="Sl7-tl-o0u"/>
                 <constraint firstAttribute="trailing" secondItem="EIP-gZ-GFM" secondAttribute="trailing" id="aC0-kr-a8N"/>
                 <constraint firstItem="xcE-5B-t8q" firstAttribute="top" secondItem="EIP-gZ-GFM" secondAttribute="bottom" id="b35-ux-mcV"/>

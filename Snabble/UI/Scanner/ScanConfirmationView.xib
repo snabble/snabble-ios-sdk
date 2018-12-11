@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="14109" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" colorMatched="YES">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="14460.31" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" colorMatched="YES">
     <device id="retina4_7" orientation="portrait">
         <adaptation id="fullscreen"/>
     </device>
     <dependencies>
         <deployment identifier="iOS"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="14088"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="14460.20"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <objects>
@@ -105,11 +105,11 @@
                     </subviews>
                 </stackView>
                 <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="I3p-Ca-9rl">
-                    <rect key="frame" x="24" y="209" width="418" height="48"/>
+                    <rect key="frame" x="16" y="209" width="434" height="48"/>
                     <constraints>
                         <constraint firstAttribute="height" constant="48" id="pmQ-ZU-o7u"/>
                     </constraints>
-                    <fontDescription key="fontDescription" type="system" pointSize="14"/>
+                    <fontDescription key="fontDescription" type="system" weight="semibold" pointSize="17"/>
                     <state key="normal" title="In den Warenkorb"/>
                     <connections>
                         <action selector="cartTapped:" destination="-1" eventType="touchUpInside" id="wfj-Dw-4Bz"/>
@@ -117,11 +117,11 @@
                 </button>
             </subviews>
             <constraints>
-                <constraint firstItem="I3p-Ca-9rl" firstAttribute="leading" secondItem="jOc-h1-O0a" secondAttribute="leading" constant="24" id="1a7-oH-MBU"/>
+                <constraint firstItem="I3p-Ca-9rl" firstAttribute="leading" secondItem="jOc-h1-O0a" secondAttribute="leading" constant="16" id="1a7-oH-MBU"/>
                 <constraint firstItem="ueH-dr-ZB3" firstAttribute="centerX" secondItem="jOc-h1-O0a" secondAttribute="centerX" id="7cJ-Bl-s5l"/>
                 <constraint firstItem="DDW-l5-CzJ" firstAttribute="centerX" secondItem="jOc-h1-O0a" secondAttribute="centerX" id="CZ5-Io-aso"/>
                 <constraint firstItem="CRe-3i-HxU" firstAttribute="top" secondItem="jOc-h1-O0a" secondAttribute="top" constant="17" id="Kom-Ey-3jX"/>
-                <constraint firstAttribute="trailing" secondItem="I3p-Ca-9rl" secondAttribute="trailing" constant="24" id="LGG-qU-zgT"/>
+                <constraint firstAttribute="trailing" secondItem="I3p-Ca-9rl" secondAttribute="trailing" constant="16" id="LGG-qU-zgT"/>
                 <constraint firstItem="DDW-l5-CzJ" firstAttribute="top" secondItem="CRe-3i-HxU" secondAttribute="bottom" constant="17" id="Lg5-Rh-INh"/>
                 <constraint firstAttribute="trailing" secondItem="Mon-A5-B2P" secondAttribute="trailing" constant="16" id="M99-Nx-bWE"/>
                 <constraint firstAttribute="bottom" secondItem="I3p-Ca-9rl" secondAttribute="bottom" constant="16" id="R7B-Kh-IEx"/>

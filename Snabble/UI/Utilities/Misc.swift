@@ -41,11 +41,7 @@ extension UIView {
 
     /// add a "rounded button" appearance to this view
     public func makeRoundedButton(cornerRadius: CGFloat? = nil) {
-        self.layer.cornerRadius = cornerRadius ?? (self.frame.height / 2.0)
-        self.layer.shadowOffset = CGSize(width: 0, height: 2)
-        self.layer.shadowColor = SnabbleUI.appearance.buttonShadowColor.cgColor
-        self.layer.shadowOpacity = 1
-        self.layer.shadowRadius = 2
+        self.layer.cornerRadius = cornerRadius ?? 8
     }
 
     /// add a "bordered button" appearance to this view

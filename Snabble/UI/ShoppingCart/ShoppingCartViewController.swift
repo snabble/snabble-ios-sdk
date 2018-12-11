@@ -95,7 +95,7 @@ public final class ShoppingCartViewController: UIViewController {
 
         self.tableBottomMargin.constant = 0
 
-        self.checkoutButton.titleLabel?.font = UIFont.monospacedDigitSystemFont(ofSize: 15, weight: .regular)
+        self.checkoutButton.titleLabel?.font = UIFont.monospacedDigitSystemFont(ofSize: 17, weight: .semibold)
         self.checkoutButton.backgroundColor = SnabbleUI.appearance.primaryColor
         self.checkoutButton.tintColor = SnabbleUI.appearance.secondaryColor
         self.checkoutButton.makeRoundedButton()
