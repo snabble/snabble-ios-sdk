@@ -209,7 +209,7 @@ public final class ShoppingCartViewController: UIViewController {
 
         self.cart.loyaltyCard = self.delegate.getLoyaltyCard(SnabbleUI.project)
         
-        self.shoppingCart.createCheckoutInfo(SnabbleUI.project, timeout: 2) { info, error in
+        self.shoppingCart.createCheckoutInfo(SnabbleUI.project, timeout: 10) { info, error in
             spinner.stopAnimating()
             spinner.removeFromSuperview()
             button.isEnabled = true
