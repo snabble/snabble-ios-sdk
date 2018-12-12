@@ -1,5 +1,9 @@
 ## snabble iOS SDK Changelog
 
+# v0.8.9
+
+* fixes a rare crash
+
 # v0.8.8
 
 * Change button style
