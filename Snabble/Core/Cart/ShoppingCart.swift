@@ -174,7 +174,8 @@ public final class ShoppingCart {
 
     /// get this cart's `loyaltyCard`
     public var loyaltyCard: String? {
-        return self.config.loyaltyCard
+        get { return self.config.loyaltyCard }
+        set { self.config.loyaltyCard = newValue }
     }
 
     /// add a Product. if already present and not weight dependent, increase its quantity

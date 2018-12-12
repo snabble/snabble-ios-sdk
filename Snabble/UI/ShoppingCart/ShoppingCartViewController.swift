@@ -20,11 +20,17 @@ public protocol ShoppingCartDelegate: AnalyticsDelegate, MessageDelegate {
     /// - Parameter error: if not nil, the ApiError from the backend
     /// - Returns: true if the error has been dealt with and no error messages need to be shown from the SDK
     func handleCheckoutError(_ error: ApiError?) -> Bool
+
+    func getLoyaltyCard(_ project: Project) -> String?
 }
 
 extension ShoppingCartDelegate {
     public func handleCheckoutError(_ error: ApiError?) -> Bool {
         return false
+    }
+
+    public func getLoyaltyCard(_ project: Project) -> String? {
+        return nil
     }
 }
  
@@ -190,7 +196,7 @@ public final class ShoppingCartViewController: UIViewController {
         self.startCheckout()
     }
 
-    public func startCheckout() {
+    func startCheckout() {
         let button = self.checkoutButton!
 
         let spinner = UIActivityIndicatorView(style: .white)
@@ -201,6 +207,8 @@ public final class ShoppingCartViewController: UIViewController {
         spinner.centerYAnchor.constraint(equalTo: button.centerYAnchor).isActive = true
         button.isEnabled = false
 
+        self.cart.loyaltyCard = self.delegate.getLoyaltyCard(SnabbleUI.project)
+        
         self.shoppingCart.createCheckoutInfo(SnabbleUI.project, timeout: 2) { info, error in
             spinner.stopAnimating()
             spinner.removeFromSuperview()
