@@ -1,4 +1,4 @@
-github 'mattrubin/OneTimePassword'
-github 'groue/GRDB.swift'
-github 'marmelroy/Zip'
-github 'datatheorem/TrustKit'
+github "https://github.com/mattrubin/OneTimePassword"
+github "https://github.com/groue/GRDB.swift"
+github "https://github.com/marmelroy/Zip"
+github "https://github.com/datatheorem/TrustKit"
