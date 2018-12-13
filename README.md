@@ -9,6 +9,8 @@ snabble - the self-scanning and checkout platform.
 
 ## Installation
 
+### CocoaPods
+
 Snabble is available through [CocoaPods](http://cocoapods.org). To install it, 
 simply add the following line to your Podfile:
 
@@ -23,6 +25,22 @@ pod 'Snabble/Core'
 ```
 
 As with all cocoapods written in Swift, make sure you have `use_frameworks!` in your Podfile.
+
+### Carthage 
+
+[Carthage](https://github.com/Carthage/Carthage) is currently unsupported. This is because one of the dependencies we use ([GRDB.swift](https://github.com/groue/GRDB.swift)) does not reliably build using Carthage, as documented in their [README](https://github.com/groue/GRDB.swift#carthage). If and when this issue get resolved, you should be able to use the provided `Cartfile`.
+
+### Manually
+
+Build the example project, as described below, and copy the following frameworks and bundles to your app's target:
+
+* Snabble.framework
+* GRDB.framework
+* OneTimePassword.framework
+* Base32.framework
+* TrustKit.framework
+* Zip.framework
+* Snabble.bundle
 
 ## Versioning
 
