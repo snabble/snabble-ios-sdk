@@ -80,7 +80,7 @@ struct AppEvent: Encodable {
         self.agent = agent
         let fmt = ISO8601DateFormatter()
         fmt.timeZone = TimeZone.current
-        if #available(iOS 11, *) {
+        if #available(iOS 11.2, *) {
             fmt.formatOptions.insert(.withFractionalSeconds)
         }
         self.timestamp = fmt.string(from: Date())
