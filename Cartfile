@@ -1,0 +1,4 @@
+github "https://github.com/mattrubin/OneTimePassword" ~> 3
+github "https://github.com/groue/GRDB.swift" ~> 3
+github "https://github.com/marmelroy/Zip" ~> 1
+github "https://github.com/datatheorem/TrustKit" ~> 1
