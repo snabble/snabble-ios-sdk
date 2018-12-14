@@ -11,13 +11,10 @@ enum PaymentEvent {
     case approval
     case paymentSuccess
 
-    case receipt
-
     var abortOnFailure: Bool {
         switch self {
         case .approval: return true
         case .paymentSuccess: return true
-        case .receipt: return false
         }
     }
 }
@@ -81,7 +78,6 @@ final class PaymentProcessPoller {
                 switch event {
                 case .approval: result = self.checkApproval(process)
                 case .paymentSuccess: result = self.checkPayment(process)
-                case .receipt: result = self.checkReceipt(process)
                 }
 
                 if let result = result {
@@ -121,16 +117,6 @@ final class PaymentProcessPoller {
         }
 
         return (.paymentSuccess, process.paymentState == .successful)
-    }
-
-    private func checkReceipt(_ process: CheckoutProcess) -> (PaymentEvent, Bool)? {
-        guard process.links.receipt != nil else {
-            return nil
-        }
-
-        // download the receipt
-        ReceiptsManager.shared.download(process, self.project, self.shop)
-        return (.receipt, true)
     }
 
 }

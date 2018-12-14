@@ -13,6 +13,7 @@
         <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner" customClass="ReceiptsListViewController" customModule="Snabble" customModuleProvider="target">
             <connections>
                 <outlet property="emptyLabel" destination="HxX-aC-gXf" id="ibf-Gw-hB5"/>
+                <outlet property="spinner" destination="aPr-LM-zyF" id="kTq-eU-PCI"/>
                 <outlet property="tableView" destination="0MM-7x-oyO" id="0An-Sx-Kxq"/>
                 <outlet property="view" destination="iN0-l3-epB" id="5Xy-qi-15V"/>
             </connections>
@@ -36,6 +37,9 @@
                     <nil key="textColor"/>
                     <nil key="highlightedColor"/>
                 </label>
+                <activityIndicatorView opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" hidesWhenStopped="YES" animating="YES" style="gray" translatesAutoresizingMaskIntoConstraints="NO" id="aPr-LM-zyF">
+                    <rect key="frame" x="177.5" y="323.5" width="20" height="20"/>
+                </activityIndicatorView>
             </subviews>
             <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
             <constraints>
@@ -43,8 +47,10 @@
                 <constraint firstItem="HxX-aC-gXf" firstAttribute="centerX" secondItem="iN0-l3-epB" secondAttribute="centerX" id="3fH-ah-mi2"/>
                 <constraint firstItem="0MM-7x-oyO" firstAttribute="bottom" secondItem="vUN-kp-3ea" secondAttribute="bottom" id="44q-29-HLA"/>
                 <constraint firstItem="0MM-7x-oyO" firstAttribute="leading" secondItem="vUN-kp-3ea" secondAttribute="leading" id="61B-gy-FGR"/>
+                <constraint firstItem="aPr-LM-zyF" firstAttribute="centerY" secondItem="iN0-l3-epB" secondAttribute="centerY" id="QCy-hP-YLx"/>
                 <constraint firstItem="0MM-7x-oyO" firstAttribute="trailing" secondItem="vUN-kp-3ea" secondAttribute="trailing" id="dLR-U1-JZ5"/>
                 <constraint firstItem="0MM-7x-oyO" firstAttribute="top" secondItem="iN0-l3-epB" secondAttribute="top" id="iw7-KC-Oa5"/>
+                <constraint firstItem="aPr-LM-zyF" firstAttribute="centerX" secondItem="iN0-l3-epB" secondAttribute="centerX" id="sxp-nr-FHG"/>
             </constraints>
             <viewLayoutGuide key="safeArea" id="vUN-kp-3ea"/>
             <point key="canvasLocation" x="138.40000000000001" y="154.27286356821591"/>
