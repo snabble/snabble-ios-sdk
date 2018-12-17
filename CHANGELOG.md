@@ -2,7 +2,9 @@
 
 # v0.8.9
 
-* fixes a rare crash
+* fixes two rare crash bugs
+* renamed `ApiError` to `SnabbleError` and changed its optionality in the `handleXYZError` delegate methods
+* the `PaymentProcess.start` method now calls its closure argument with a `Result` instance which is modeled after the recently approved SE-0235 proposal.
 
 # v0.8.8
 
