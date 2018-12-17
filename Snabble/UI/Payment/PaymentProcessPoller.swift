@@ -62,8 +62,8 @@ final class PaymentProcessPoller {
     }
 
     private func checkEvents(_ events: [PaymentEvent], _ completion: @escaping ([PaymentEvent: Bool]) -> () ) {
-        self.process.update(self.project, taskCreated: { self.task = $0 }) { process, error in
-            guard let process = process else {
+        self.process.update(self.project, taskCreated: { self.task = $0 }) { result in
+            guard case Result.success(let process) = result else {
                 return
             }
 

@@ -77,20 +77,19 @@ public final class PaymentProcess {
     ///
     /// - Parameters:
     ///   - completion: a closure called when the payment method has been determined.
-    ///   - viewController: if not nil, the view controller to present for this payment process
-    ///   - error: if not nil, contains the error response from the backend
-    public func start(completion: @escaping (_ viewController: UIViewController?, _ error: ApiError?) -> () ) {
+    ///   - result: the view controller to present for this payment process or the error
+    public func start(completion: @escaping (_ result: Result<UIViewController, ApiError>) -> () ) {
         let info = self.signedCheckoutInfo
 
         let paymentMethods = self.mergePaymentMethodList(info.checkoutInfo.paymentMethods)
 
         if paymentMethods.count > 1 {
             let paymentSelection = PaymentMethodSelectionViewController(self, paymentMethods)
-            completion(paymentSelection, nil)
+            completion(Result.success(paymentSelection))
         } else {
             let method = paymentMethods[0]
-            self.start(method) { viewController, error in
-                completion(viewController, error)
+            self.start(method) { result in
+                completion(result)
             }
         }
     }
@@ -112,28 +111,50 @@ public final class PaymentProcess {
         return result
     }
 
-    func start(_ method: PaymentMethod, completion: @escaping (UIViewController?, ApiError?) -> () ) {
+    func start(_ method: PaymentMethod, completion: @escaping (_ result: Result<UIViewController, ApiError>) -> () ) {
         UIApplication.shared.beginIgnoringInteractionEvents()
         self.startBlurOverlayTimer()
 
-        self.signedCheckoutInfo.createCheckoutProcess(SnabbleUI.project, paymentMethod: method, timeout: 20) { process, error in
+        self.signedCheckoutInfo.createCheckoutProcess(SnabbleUI.project, paymentMethod: method, timeout: 20) { result in
             self.hudTimer?.invalidate()
             self.hudTimer = nil
             UIApplication.shared.endIgnoringInteractionEvents()
             self.hideBlurOverlay()
-            if let process = process, let processor = method.processor(process, method, self.cart, self.delegate) {
-                completion(processor, nil)
-            } else {
+            switch result {
+            case .success(let process):
+                if let processor = method.processor(process, method, self.cart, self.delegate) {
+                    completion(Result.success(processor))
+                } else {
+                    self.startFailed(method, nil, completion)
+                }
+            case .failure(let error):
+                self.startFailed(method, error, completion)
                 let handled = self.delegate.handlePaymentError(error)
                 if !handled {
                     if method.rawMethod == .encodedCodes, let processor = method.processor(nil, method, self.cart, self.delegate) {
                         // continue anyway
-                        completion(processor, nil)
+                        completion(Result.success(processor))
                         self.retryCreatingMissingCheckout()
                     } else {
                         self.delegate.showWarningMessage("Snabble.Payment.errorStarting".localized())
                     }
                 }
+            }
+        }
+    }
+
+    private func startFailed(_ method: PaymentMethod, _ error: ApiError?, _ completion: @escaping (_ result: Result<UIViewController, ApiError>) -> () ) {
+        var handled = false
+        if let error = error {
+            handled = self.delegate.handlePaymentError(error)
+        }
+        if !handled {
+            if method.rawMethod == .encodedCodes, let processor = method.processor(nil, method, self.cart, self.delegate) {
+                // continue anyway
+                completion(Result.success(processor))
+                self.retryCreatingMissingCheckout()
+            } else {
+                self.delegate.showWarningMessage("Snabble.Payment.errorStarting".localized())
             }
         }
     }
@@ -151,8 +172,10 @@ public final class PaymentProcess {
     // retry creating the checkout info / checkout process that is potentially missing
     private func retryCreatingMissingCheckout() {
         DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
-            self.cart.createCheckoutInfo(SnabbleUI.project) { info, _ in
-                info?.createCheckoutProcess(SnabbleUI.project, paymentMethod: .encodedCodes) { _,_ in }
+            self.cart.createCheckoutInfo(SnabbleUI.project) { result in
+                if case Result.success(let info) = result {
+                    info.createCheckoutProcess(SnabbleUI.project, paymentMethod: .encodedCodes) { _ in }
+                }
             }
         }
     }

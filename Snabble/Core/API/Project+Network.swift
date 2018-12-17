@@ -6,8 +6,27 @@
 
 import Foundation
 
-public struct ApiError: Decodable {
+/// Now that [SE-0235](https://github.com/apple/swift-evolution/blob/master/proposals/0235-add-result.md) has passed review,
+/// implement the trivial parts we need now so we can easily migrate later
+public enum Result<Success, Failure: Swift.Error> {
+    case success(Success)
+    case failure(Failure)
+
+    public func get() throws -> Success {
+        switch self {
+        case .success(let success): return success
+        case .failure(let failure): throw failure
+        }
+    }
+}
+
+public struct ApiError: Decodable, Error {
     public let error: ErrorResponse
+
+    public static let unknown = ApiError(error: ErrorResponse(type: "unknown", details: nil))
+    public static let empty = ApiError(error: ErrorResponse(type: "empty", details: nil))
+    public static let invalid = ApiError(error: ErrorResponse(type: "invalid", details: nil))
+    public static let noRequest = ApiError(error: ErrorResponse(type: "no request", details: nil))
 }
 
 public struct ErrorResponse: Decodable {
@@ -121,7 +140,7 @@ extension Project {
     ///   - method: the HTTP method to use
     ///   - url: the absolute URL to use
     ///   - json: if true, add "application/json" as the "Accept" and "Content-Type" HTTP Headers
-    ///   - jwtRequired: if true, this request required authorization via JWT
+    ///   - jwtRequired: if true, this request requires authorization via JWT
     ///   - timeout: the timeout for the HTTP request (0 for the system default timeout)
     /// - Returns: the URLRequest
     func request(_ method: HTTPRequestMethod, _ url: URL, _ json: Bool, _ jwtRequired: Bool, _ timeout: TimeInterval, _ completion: @escaping (URLRequest) -> ()) {
@@ -187,18 +206,20 @@ extension Project {
     ///   - pauseTime: how long (in seconds) to wait after a failed request. This value is doubled for each retry after the first.
     ///   - request: the `URLRequest` to perform
     ///   - completion: called on the main thread when the result is available.
-    ///   - obj: the parsed result object, or nil if an error occured
-    ///   - error: if not nil, contains the error response from the backend
-    func retry<T: Decodable>(_ retryCount: Int, _ pauseTime: TimeInterval, _ request: URLRequest, _ completion: @escaping (_ obj: T?, _ error: ApiError?) -> () ) {
-        perform(request) { (obj: T?, error) in
-            if obj != nil {
-                completion(obj, nil)
-            } else if retryCount > 1 {
-                DispatchQueue.main.asyncAfter(deadline: .now() + pauseTime) {
-                    self.retry(retryCount - 1, pauseTime * 2, request, completion)
+    ///   - result: the parsed result object or error
+    func retry<T: Decodable>(_ retryCount: Int, _ pauseTime: TimeInterval, _ request: URLRequest, _ completion: @escaping (_ result: Result<T, ApiError>) -> () ) {
+        perform(request) { (result: Result<T, ApiError>) in
+            switch result {
+            case .success:
+                completion(result)
+            case .failure:
+                if retryCount > 1 {
+                    DispatchQueue.main.asyncAfter(deadline: .now() + pauseTime) {
+                        self.retry(retryCount - 1, pauseTime * 2, request, completion)
+                    }
+                } else {
+                    completion(result)
                 }
-            } else {
-                completion(nil, error)
             }
         }
     }
@@ -208,12 +229,11 @@ extension Project {
     /// - Parameters:
     ///   - request: the `URLRequest` to perform
     ///   - completion: called on the main thread when the result is available.
-    ///   - obj: the parsed result object, or nil if an error occured
-    ///   - error: if not nil, contains the error response from the backend
+    ///   - result: the parsed result object or error
     @discardableResult
-    func perform<T: Decodable>(_ request: URLRequest, _ completion: @escaping (_ obj: T?, _ error: ApiError?) -> () ) -> URLSessionDataTask {
-        return self.perform(request, returnRaw: false) { (_ obj: T?, error, json, headers) in
-            completion(obj, error)
+    func perform<T: Decodable>(_ request: URLRequest, _ completion: @escaping (_ result: Result<T, ApiError>) -> () ) -> URLSessionDataTask {
+        return self.perform(request, returnRaw: false) { result, json, headers in
+            completion(result)
         }
     }
 
@@ -222,13 +242,12 @@ extension Project {
     /// - Parameters:
     ///   - request: the `URLRequest` to perform
     ///   - completion: called on the main thread when the result is available.
-    ///   - obj: the parsed result object, or nil if an error occured
-    ///   - error: if not nil, contains the error response from the backend
+    ///   - result: the parsed result object or error
     ///   - response: the HTTPURLResponse object
     @discardableResult
-    func perform<T: Decodable>(_ request: URLRequest, _ completion: @escaping (_ obj: T?, _ error: ApiError?, _ response: HTTPURLResponse?) -> () ) -> URLSessionDataTask {
-        return self.perform(request, returnRaw: false) { (_ obj: T?, error, json, response) in
-            completion(obj, error, response)
+    func perform<T: Decodable>(_ request: URLRequest, _ completion: @escaping (_ result: Result<T, ApiError>, _ response: HTTPURLResponse?) -> () ) -> URLSessionDataTask {
+        return self.perform(request, returnRaw: false) { result, json, response in
+            completion(result, response)
         }
     }
 
@@ -237,13 +256,12 @@ extension Project {
     /// - Parameters:
     ///   - request: the `URLRequest` to perform
     ///   - returnRaw: indicates whether the raw JSON data should be returned along with the decoded data
-    ///   - completion: called on the main thread when the result is available.
-    ///   - obj: the parsed result object, or nil if an error occured
-    ///   - error: if not nil, contains the error response from the backend
+    ///   - completion: called on the main thread when the request has finished.
+    ///   - result: the parsed result object or error
     ///   - raw: the JSON structure returned by the server, or nil if an error occurred
-    ///   - response: the HTTPURLResponse object
+    ///   - response: the HTTPURLResponse object if available
     @discardableResult
-    func perform<T: Decodable>(_ request: URLRequest, returnRaw: Bool, _ completion: @escaping (_ obj: T?, _ error: ApiError?, _ raw: [String: Any]?, _ response: HTTPURLResponse?) -> () ) -> URLSessionDataTask {
+    func perform<T: Decodable>(_ request: URLRequest, returnRaw: Bool, _ completion: @escaping (_ result: Result<T, ApiError>, _ raw: [String: Any]?, _ response: HTTPURLResponse?) -> () ) -> URLSessionDataTask {
         let start = Date.timeIntervalSinceReferenceDate
         let session = SnabbleAPI.urlSession()
         let task = session.dataTask(with: request) { rawData, response, error in
@@ -256,7 +274,7 @@ extension Project {
                 httpResponse.statusCode == 200 || httpResponse.statusCode == 201
             else {
                 self.logError("error getting response from \(url): \(String(describing: error))")
-                var apiError: ApiError?
+                var apiError = ApiError.unknown
                 if let data = rawData {
                     do {
                         let error = try JSONDecoder().decode(ApiError.self, from: data)
@@ -269,7 +287,7 @@ extension Project {
                     }
                 }
                 DispatchQueue.main.async {
-                    completion(nil, apiError, nil, response as? HTTPURLResponse)
+                    completion(Result.failure(apiError), nil, response as? HTTPURLResponse)
                 }
                 return
             }
@@ -277,7 +295,7 @@ extension Project {
             // handle empty response
             if data.count == 0 {
                 DispatchQueue.main.async {
-                    completion(nil, nil, nil, httpResponse)
+                    completion(Result.failure(ApiError.empty), nil, httpResponse)
                 }
                 return
             }
@@ -288,14 +306,14 @@ extension Project {
                     json = try JSONSerialization.jsonObject(with: data, options: .allowFragments) as? [String: Any]
                 }
                 DispatchQueue.main.async {
-                    completion(result, nil, json, httpResponse)
+                    completion(Result.success(result), json, httpResponse)
                 }
             } catch {
                 Log.error("error parsing response from \(url): \(error)")
                 let body = String(bytes: data, encoding: .utf8) ?? ""
                 Log.error("raw response body: \(body)")
                 DispatchQueue.main.async {
-                    completion(nil, nil, nil, httpResponse)
+                    completion(Result.failure(ApiError.invalid), nil, httpResponse)
                 }
             }
         }

@@ -22,6 +22,7 @@ final class PreviewItem: NSObject, QLPreviewItem {
     }
 }
 
+// TODO: add pull-to-refresh
 @objc(ReceiptsListViewController)
 public final class ReceiptsListViewController: UIViewController {
     @IBOutlet weak var tableView: UITableView!
@@ -54,7 +55,14 @@ public final class ReceiptsListViewController: UIViewController {
         self.emptyLabel.isHidden = true
 
         self.spinner.startAnimating()
-        ClientOrders.loadList { orders in
+        ClientOrders.loadList { result in
+            self.orderListLoaded(result)
+        }
+    }
+
+    private func orderListLoaded(_ result: Result<OrderList, ApiError>) {
+        switch result {
+        case .success(let orders):
             self.orderList = orders
             DispatchQueue.main.async {
                 self.spinner.stopAnimating()
@@ -63,6 +71,10 @@ public final class ReceiptsListViewController: UIViewController {
                 }
                 self.tableView.reloadData()
             }
+
+        case .failure:
+            // TODO: display error msg
+            break
         }
     }
 }

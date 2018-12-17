@@ -86,7 +86,7 @@ final class QRCheckoutViewController: UIViewController {
 
         self.delegate.track(.paymentCancelled)
 
-        self.process.abort(SnabbleUI.project) { process, error in
+        self.process.abort(SnabbleUI.project) { result in
             self.navigationController?.popToRootViewController(animated: true)
         }
     }

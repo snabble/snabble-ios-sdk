@@ -32,10 +32,10 @@ struct Order: Decodable {
         let date = try container.decode(String.self, forKey: .date)
         let formatter = ISO8601DateFormatter()
         self.date = formatter.date(from: date) ?? Date()
-        #warning("remove optionals")
-        self.shopId = (try container.decodeIfPresent(String.self, forKey: .shopId)) ?? "1"
-        self.shopName = (try container.decodeIfPresent(String.self, forKey: .shopName)) ?? "Shopname"
-        self.price = (try container.decodeIfPresent(Int.self, forKey: .price)) ?? 42
+
+        self.shopId = try container.decode(String.self, forKey: .shopId)
+        self.shopName = try container.decode(String.self, forKey: .shopName)
+        self.price = try container.decode(Int.self, forKey: .price)
         self.links = try container.decode(.links, as: OrderLinks.self)
     }
 }
@@ -46,16 +46,16 @@ struct OrderLinks: Decodable {
 
 struct ClientOrders {
 
-    static func loadList(completion: @escaping (OrderList?)->() ) {
+    static func loadList(completion: @escaping (Result<OrderList, ApiError>)->() ) {
         let url = SnabbleAPI.links.clientOrders.href.replacingOccurrences(of: "{clientID}", with: SnabbleAPI.clientId)
 
         let project = SnabbleAPI.projects[0]
         project.request(.get, url, timeout: 0) { request in
             guard let request = request else {
-                return completion(nil)
+                return completion(Result.failure(ApiError.noRequest))
             }
 
-            project.perform(request) { (result: OrderList?, error) in
+            project.perform(request) { (result: Result<OrderList, ApiError>) in
                 completion(result)
             }
         }

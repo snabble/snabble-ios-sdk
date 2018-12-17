@@ -19,13 +19,13 @@ public protocol ShoppingCartDelegate: AnalyticsDelegate, MessageDelegate {
     ///
     /// - Parameter error: if not nil, the ApiError from the backend
     /// - Returns: true if the error has been dealt with and no error messages need to be shown from the SDK
-    func handleCheckoutError(_ error: ApiError?) -> Bool
+    func handleCheckoutError(_ error: ApiError) -> Bool
 
     func getLoyaltyCard(_ project: Project) -> String?
 }
 
 extension ShoppingCartDelegate {
-    public func handleCheckoutError(_ error: ApiError?) -> Bool {
+    public func handleCheckoutError(_ error: ApiError) -> Bool {
         return false
     }
 
@@ -209,16 +209,18 @@ public final class ShoppingCartViewController: UIViewController {
 
         self.cart.loyaltyCard = self.delegate.getLoyaltyCard(SnabbleUI.project)
         
-        self.shoppingCart.createCheckoutInfo(SnabbleUI.project, timeout: 10) { info, error in
+        self.shoppingCart.createCheckoutInfo(SnabbleUI.project, timeout: 10) { result in
             spinner.stopAnimating()
             spinner.removeFromSuperview()
             button.isEnabled = true
-            if let info = info {
+
+            switch result {
+            case .success(let info):
                 self.delegate.gotoPayment(info, self.shoppingCart)
-            } else {
+            case .failure(let error):
                 let handled = self.delegate.handleCheckoutError(error)
                 if !handled {
-                    if let offendingSkus = error?.error.details?.compactMap({ $0.sku }) {
+                    if let offendingSkus = error.error.details?.compactMap({ $0.sku }) {
                         self.showProductError(offendingSkus)
                         return
                     }

@@ -428,12 +428,14 @@ public extension Metadata {
                 return completion(nil)
             }
 
-            project.perform(request) { (metadata: Metadata?, error) in
-                if let metadata = metadata {
+            project.perform(request) { (result: Result<Metadata, ApiError>) in
+                switch result {
+                case .success(let metadata):
                     SnabbleAPI.metadata = metadata
+                    completion(metadata)
+                case .failure:
+                    completion(nil)
                 }
-
-                completion(metadata)
             }
         }
     }
