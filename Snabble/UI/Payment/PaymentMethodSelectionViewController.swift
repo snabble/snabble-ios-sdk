@@ -89,13 +89,14 @@ final class PaymentMethodSelectionViewController: UIViewController {
     }
 
     fileprivate func startPayment(_ method: PaymentMethod) {
-        self.process.start(method) { viewController, error in
-            if let vc = viewController {
-                self.navigationController?.pushViewController(vc, animated: true)
-            } else {
-                let handled = self.process.delegate.handlePaymentError(error)
-                if !handled {
-                    self.process.delegate.showWarningMessage("Snabble.Payment.errorStarting".localized())
+        self.process.start(method) { result in
+            switch result {
+            case .success(let viewController):
+                self.navigationController?.pushViewController(viewController, animated: true)
+            case .failure(let error):
+                    let handled = self.process.delegate.handlePaymentError(error)
+                    if !handled {
+                        self.process.delegate.showWarningMessage("Snabble.Payment.errorStarting".localized())
                 }
             }
         }

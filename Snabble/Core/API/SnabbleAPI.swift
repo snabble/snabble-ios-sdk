@@ -64,6 +64,14 @@ public struct SnabbleAPI {
         return self.metadata.flags
     }
 
+    public static var links: MetadataLinks {
+        return self.metadata.links
+    }
+
+    public static func projectFor(_ projectId: String) -> Project? {
+        return self.metadata.projects.first { $0.id == projectId }
+    }
+
     public static func setup(_ config: SnabbleAPIConfig, completion: @escaping ()->() ) {
         self.config = config
         self.initializeTrustKit()

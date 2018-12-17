@@ -78,7 +78,7 @@ final class SepaCheckoutViewController: UIViewController {
 
         self.poller = PaymentProcessPoller(self.process, SnabbleUI.project, self.cart.config.shop)
 
-        self.poller?.waitFor([ .approval, .receipt ]) { events in
+        self.poller?.waitFor([.approval]) { events in
             if let success = events[.approval] {
                 if success {
                     self.switchColors(1) {
@@ -102,7 +102,7 @@ final class SepaCheckoutViewController: UIViewController {
 
         self.delegate.track(.paymentCancelled)
 
-        self.process.abort(SnabbleUI.project) { process, error in
+        self.process.abort(SnabbleUI.project) { result in
             self.navigationController?.popToRootViewController(animated: true)
         }
     }

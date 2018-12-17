@@ -10,17 +10,20 @@ public struct Metadata: Decodable {
     public let flags: Flags
     public let projects: [Project]
     public let gatewayCertificates: [GatewayCertificate]
+    public let links: MetadataLinks
 
     enum CodingKeys: String, CodingKey {
         case flags = "metadata"
         case projects
         case gatewayCertificates
+        case links
     }
 
     private init() {
         self.flags = Flags()
         self.projects = [ Project.none ]
         self.gatewayCertificates = []
+        self.links = MetadataLinks()
     }
 
     static let none = Metadata()
@@ -32,6 +35,7 @@ public struct Metadata: Decodable {
         self.projects = try container.decode([Project].self, forKey: .projects)
         let certs = try container.decodeIfPresent([GatewayCertificate].self, forKey: .gatewayCertificates)
         self.gatewayCertificates = certs == nil ? [] : certs!
+        self.links = try container.decode(MetadataLinks.self, forKey: .links)
     }
 }
 
@@ -41,6 +45,16 @@ public struct GatewayCertificate: Decodable {
 
     public var data: Data? {
         return Data(base64Encoded: self.value)
+    }
+}
+
+public struct MetadataLinks: Decodable {
+    public let clientOrders: Link
+    public let `self`: Link
+
+    fileprivate init() {
+        self.clientOrders = Link.empty
+        self.`self` = Link.empty
     }
 }
 
@@ -70,7 +84,7 @@ public enum ScanFormat: String, Decodable {
 
 public struct Project: Decodable {
     public let id: String
-    public let links: Links
+    public let links: ProjectLinks
     public let rawLinks: [String: Link]
 
     public let currency: String
@@ -103,7 +117,7 @@ public struct Project: Decodable {
         let container = try decoder.container(keyedBy: CodingKeys.self)
 
         self.id = try container.decode(String.self, forKey: .id)
-        self.links = try container.decode(Links.self, forKey: .links)
+        self.links = try container.decode(ProjectLinks.self, forKey: .links)
         self.rawLinks = try container.decode([String: Link].self, forKey: .links)
 
         self.currency = try container.decode(.currency)
@@ -133,7 +147,7 @@ public struct Project: Decodable {
 
     private init() {
         self.id = "none"
-        self.links = Links.empty
+        self.links = ProjectLinks.empty
         self.rawLinks = [:]
         self.currency = ""
         self.decimalDigits = 0
@@ -153,7 +167,7 @@ public struct Project: Decodable {
     // only used for unit tests
     internal init(pricePrefixes: [String], weighPrefixes: [String], unitPrefixes: [String]) {
         self.id = "none"
-        self.links = Links.empty
+        self.links = ProjectLinks.empty
         self.rawLinks = [:]
         self.currency = ""
         self.decimalDigits = 0
@@ -173,7 +187,7 @@ public struct Project: Decodable {
     // only used for unit tests
     internal init(decimalDigits: Int, locale: String, currency: String, currencySymbol: String) {
         self.id = "none"
-        self.links = Links.empty
+        self.links = ProjectLinks.empty
         self.rawLinks = [:]
         self.currency = currency
         self.decimalDigits = decimalDigits
@@ -190,7 +204,7 @@ public struct Project: Decodable {
         self.scanFormats = []
     }
 
-    internal init(links: Links) {
+    internal init(links: ProjectLinks) {
         self.id = "none"
         self.links = links
         self.rawLinks = [:]
@@ -232,7 +246,7 @@ public struct Link: Decodable {
     static let empty = Link(href: "")
 }
 
-public struct Links: Decodable {
+public struct ProjectLinks: Decodable {
     public let appdb: Link
     public let appEvents: Link
     public let checkoutInfo: Link
@@ -243,7 +257,7 @@ public struct Links: Decodable {
     public let productsBySku: Link
     public let tokens: Link
 
-    public static let empty = Links()
+    public static let empty = ProjectLinks()
 
     private init() {
         self.appdb = Link.empty
@@ -414,12 +428,14 @@ public extension Metadata {
                 return completion(nil)
             }
 
-            project.perform(request) { (metadata: Metadata?, error) in
-                if let metadata = metadata {
+            project.perform(request) { (result: Result<Metadata, SnabbleError>) in
+                switch result {
+                case .success(let metadata):
                     SnabbleAPI.metadata = metadata
+                    completion(metadata)
+                case .failure:
+                    completion(nil)
                 }
-
-                completion(metadata)
             }
         }
     }

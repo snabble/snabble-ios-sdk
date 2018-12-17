@@ -152,10 +152,11 @@ final class TokenRegistry {
             request.addValue("Basic \(base64)", forHTTPHeaderField: "Authorization")
             request.cachePolicy = .reloadIgnoringCacheData
 
-            project.perform(request) { (token: TokenResponse?, error, httpResponse) in
-                if let token = token {
+            project.perform(request) { (result: Result<TokenResponse, SnabbleError>, httpResponse) in
+                switch result {
+                case .success(let token):
                     completion(TokenData(token, project))
-                } else {
+                case .failure:
                     if let response = httpResponse, response.statusCode == 403, date == nil {
                         self.retryWithServerDate(project, response, completion: completion)
                         return

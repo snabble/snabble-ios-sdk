@@ -99,15 +99,6 @@ final class EmbeddedCodesCheckoutViewController: UIViewController {
         UIScreen.main.brightness = self.initialBrightness
     }
 
-    override func viewDidAppear(_ animated: Bool) {
-        super.viewDidAppear(animated)
-
-        if let process = self.process {
-            self.poller = PaymentProcessPoller(process, SnabbleUI.project, self.cart.config.shop)
-            self.poller?.waitFor([.receipt]) { events in }
-        }
-    }
-
     private func codesForQR() -> ([String],[String]) {
         let project = SnabbleUI.project
         let items = self.cart.items.sorted { $0.itemPrice(project) < $1.itemPrice(project) }

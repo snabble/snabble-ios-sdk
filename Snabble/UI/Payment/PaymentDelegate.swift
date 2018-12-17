@@ -26,9 +26,9 @@ public protocol PaymentDelegate: AnalyticsDelegate, MessageDelegate {
 
     /// callback when an error occurred
     ///
-    /// - Parameter error: if not nil, the ApiError from the backend
+    /// - Parameter error: the error from the backend
     /// - Returns: true if the error has been dealt with and no error messages need to be shown from the SDK
-    func handlePaymentError(_ error: ApiError?) -> Bool
+    func handlePaymentError(_ error: SnabbleError) -> Bool
 
     /// get payment data from the host app. Use this method to return e.g. encrypted SEPA data for use with .telecashDeDirectDebit to the SDK
     func getPaymentData() -> [PaymentMethod]
@@ -41,7 +41,7 @@ extension PaymentDelegate {
         completion(true)
     }
 
-    public func handlePaymentError(_ error: ApiError?) -> Bool {
+    public func handlePaymentError(_ error: SnabbleError) -> Bool {
         return false
     }
 

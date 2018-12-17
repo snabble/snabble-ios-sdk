@@ -10,12 +10,13 @@ extension ShoppingCart {
 
     /// create a SignedCheckoutInfo object
     ///
-    /// create a new "session" and sends the current cart to the backend.
+    /// create a new "checkout session" and sends the current cart to the backend.
     /// - Parameters:
+    ///   - project: the project for this request
     ///   - timeout: the timeout for the HTTP request (0 for the system default timeout)
-    ///   - completion: is called on the main thread with the result of the API call,
-    ///    with either a `SignedCheckoutInfo` object or `nil` if an error occurred
-    public func createCheckoutInfo(_ project: Project, timeout: TimeInterval = 0, completion: @escaping (SignedCheckoutInfo?, ApiError?) -> () ) {
+    ///   - completion: is called on the main thread with the result of the API call
+    ///   - result: the `SignedCheckoutInfo` or the error
+    public func createCheckoutInfo(_ project: Project, timeout: TimeInterval = 0, completion: @escaping (_ result: Result<SignedCheckoutInfo, SnabbleError>) -> () ) {
         let items = self.items.map { $0.cartItem() }
         let customerInfo = Cart.CustomerInfo(loyaltyCard: self.loyaltyCard)
         let cart = Cart(session: self.session, shopID: self.shopId, customer: customerInfo, items: items)
@@ -24,13 +25,17 @@ extension ShoppingCart {
         let url = project.links.checkoutInfo.href
         project.request(.post, url, body: cart, timeout: timeout) { request in
             guard let request = request else {
-                return completion(nil, nil)
+                return completion(Result.failure(SnabbleError.noRequest))
             }
 
-            project.perform(request, returnRaw: true) { (result: SignedCheckoutInfo?, error, json, _) in
-                var newResult = result
-                newResult?.rawJson = json
-                completion(newResult, error)
+            project.perform(request, returnRaw: true) { (_ result: Result<SignedCheckoutInfo, SnabbleError>, json, _) in
+                switch result {
+                case .success(var value):
+                    value.rawJson = json
+                    completion(Result.success(value))
+                case .failure:
+                    completion(result)
+                }
             }
         }
     }
@@ -42,12 +47,12 @@ extension SignedCheckoutInfo {
     /// create a checkout process
     ///
     /// - Parameters:
+    ///   - project: the project for this request
     ///   - paymentMethod: the user's chosen payment method
     ///   - timeout: the timeout for the HTTP request (0 for the system default timeout)
     ///   - completion: is called on the main thread with the result of the API call,
-    ///   - process: the newly created `CheckoutProcess`, or nil on error
-    ///   - error: if not nil, contains the error response from the backend
-    public func createCheckoutProcess(_ project: Project, paymentMethod: PaymentMethod, timeout: TimeInterval = 0, completion: @escaping (_ process: CheckoutProcess?, _ error: ApiError?) -> () ) {
+    ///   - result: the newly created `CheckoutProcess` or the error
+    public func createCheckoutProcess(_ project: Project, paymentMethod: PaymentMethod, timeout: TimeInterval = 0, completion: @escaping (_ result: Result<CheckoutProcess, SnabbleError>) -> () ) {
         do {
             // since we need to pass the originally-received SignedCheckoutInfo as-is,
             // we can't use the struct but have to build this manually:
@@ -66,7 +71,7 @@ extension SignedCheckoutInfo {
             let data = try JSONSerialization.data(withJSONObject: dict, options: [])
             project.request(.post, self.links.checkoutProcess.href, body: data, timeout: timeout) { request in
                 guard let request = request else {
-                    return completion(nil, nil)
+                    return completion(Result.failure(SnabbleError.noRequest))
                 }
 
                 project.perform(request, completion)
@@ -83,20 +88,20 @@ extension CheckoutProcess {
     /// get the current state of this checkout process
     ///
     /// - Parameters:
+    ///   - the project for this request
     ///   - timeout: the timeout for the HTTP request (0 for the system default timeout)
-    ///   - completion: is called on the main thread with the result of the API call,
-    ///   - process: the `CheckoutProcess` returned from the backend, or nil on error
-    ///   - error: if not nil, contains the error response from the backend
-    /// - Returns:
-    ///    a `URLSessionDataTask` object or nil (if the request couldn't be started)
+    ///   - taskCreated: is called with the `URLSessionTask` created for the request
+    ///   - task: the `URLSessionTask`
+    ///   - completion: is called on the main thread with the result of the API call
+    ///   - result: the `CheckoutProcess` returned from the backend or the error
     public func update(_ project: Project,
                        timeout: TimeInterval = 0,
-                       taskCreated: @escaping (URLSessionDataTask) -> (),
-                       completion: @escaping (_ process: CheckoutProcess?, _ error: ApiError?) -> () ) {
+                       taskCreated: @escaping (_ task: URLSessionDataTask) -> (),
+                       completion: @escaping (_ result: Result<CheckoutProcess, SnabbleError>) -> () ) {
 
         project.request(.get, self.links.`self`.href, timeout: timeout) { request in
             guard let request = request else {
-                return completion(nil, nil)
+                return completion(Result.failure(SnabbleError.noRequest))
             }
 
             let task = project.perform(request, completion)
@@ -107,16 +112,16 @@ extension CheckoutProcess {
     /// abort this checkout process
     ///
     /// - Parameters:
-    ///   - timeout: the timeout for the HTTP request (0 for no timeout)
+    ///   - project: the project for this request
+    ///   - timeout: the timeout for the HTTP request (0 for the system default timeout)
     ///   - completion: is called on the main thread with the result of the API call,
-    ///   - process: the `CheckoutProcess` returned from the backend, or nil on error
-    ///   - error: if not nil, contains the error response from the backend
-    public func abort(_ project: Project, timeout: TimeInterval = 0, completion: @escaping (_ process: CheckoutProcess?, _ error: ApiError?) -> () ) {
+    ///   - result: the `CheckoutProcess` returned from the backend or the error
+    public func abort(_ project: Project, timeout: TimeInterval = 0, completion: @escaping (_ result: Result<CheckoutProcess, SnabbleError>) -> () ) {
         let abort = AbortRequest(aborted: true)
 
         project.request(.patch, self.links.`self`.href, body: abort, timeout: timeout) { request in
             guard let request = request else {
-                return completion(nil, nil)
+                return completion(Result.failure(SnabbleError.noRequest))
             }
 
             project.perform(request, completion)
