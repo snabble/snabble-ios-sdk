@@ -75,11 +75,12 @@ extension ViewController: ShoppingCartDelegate {
     func gotoPayment(_ info: SignedCheckoutInfo, _ cart: ShoppingCart) {
         let process = PaymentProcess(info, cart, delegate: self)
 
-        process.start { viewController, error in
-            if let vc = viewController {
+        process.start { result in
+            switch result {
+            case .success(let vc):
                 self.navigationController?.pushViewController(vc, animated: true)
-            } else {
-                self.showWarningMessage("Error creating payment process: \(error!))")
+            case .failure(let error):
+                self.showWarningMessage("Error creating payment process: \(error))")
             }
         }
     }
@@ -89,10 +90,8 @@ extension ViewController: ShoppingCartDelegate {
         self.scannerButtonTapped(1)
     }
 
-    func handleCheckoutError(_ error: ApiError?) -> Bool {
-        if let error = error {
-            NSLog("checkout error: \(error)")
-        }
+    func handleCheckoutError(_ error: SnabbleError) -> Bool {
+        NSLog("checkout error: \(error)")
         return false
     }
 }
@@ -121,10 +120,8 @@ extension ViewController: PaymentDelegate {
         self.navigationController?.popViewController(animated: true)
     }
 
-    func handlePaymentError(_ error: ApiError?) -> Bool {
-        if let error = error {
-            NSLog("payment error: \(error)")
-        }
+    func handlePaymentError(_ error: SnabbleError) -> Bool {
+        NSLog("payment error: \(error)")
         return false
     }
 }
