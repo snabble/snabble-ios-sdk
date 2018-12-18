@@ -6,17 +6,16 @@
 
 extension ProductDB {
 
-    func getSingleProduct(_ url: String, _ placeholder: String, _ identifier: String, _ shopId: String, completion: @escaping (Product?, Bool) -> () ) {
-        self.getSingleProduct(url, placeholder, identifier, shopId) { (result: LookupResult?, error: Bool) in
-            if let result = result {
-                completion(result.product, error)
-            } else {
-                completion(nil, error)
+    func getSingleProduct(_ url: String, _ placeholder: String, _ identifier: String, _ shopId: String, completion: @escaping (_ result: Result<Product, SnabbleError>) -> () ) {
+        self.getSingleProduct(url, placeholder, identifier, shopId) { (result: Result<LookupResult, SnabbleError>) in
+            switch result {
+            case .success(let lookupResult): completion(Result.success(lookupResult.product))
+            case .failure(let error): completion(Result.failure(error))
             }
         }
     }
 
-    func getSingleProduct(_ url: String, _ placeholder: String, _ identifier: String, _ shopId: String, completion: @escaping (LookupResult?, Bool) -> () ) {
+    func getSingleProduct(_ url: String, _ placeholder: String, _ identifier: String, _ shopId: String, completion: @escaping (_ result: Result<LookupResult, SnabbleError>) -> () ) {
         let session = SnabbleAPI.urlSession()
 
         // TODO: is this the right value?
@@ -26,7 +25,7 @@ extension ProductDB {
         let parameters = [ "shopID": shopId ]
         self.project.request(.get, fullUrl, parameters: parameters, timeout: timeoutInterval) { request in
             guard let request = request else {
-                return completion(nil, true)
+                return completion(Result.failure(SnabbleError.noRequest))
             }
 
             let task = session.dataTask(with: request) { data, response, error in
@@ -34,7 +33,7 @@ extension ProductDB {
                     if response.statusCode == 404 {
                         DispatchQueue.main.async {
                             Log.info("online product lookup with \(placeholder) \(identifier): not found")
-                            completion(nil, false)
+                            completion(Result.failure(SnabbleError.notFound))
                         }
                         return
                     }
@@ -44,10 +43,11 @@ extension ProductDB {
                         let apiProduct = try JSONDecoder().decode(APIProduct.self, from: data)
                         if let depositSku = apiProduct.depositProduct {
                             // get the deposit product
-                            self.productBySku(depositSku, shopId) { depositProduct, error in
-                                if let deposit = depositProduct?.price {
-                                    self.completeProduct(apiProduct, deposit, shopId, completion)
-                                } else {
+                            self.productBySku(depositSku, shopId) { result in
+                                switch result {
+                                case .success(let depositProduct):
+                                    self.completeProduct(apiProduct, depositProduct.price, shopId, completion)
+                                case .failure:
                                     self.returnError("deposit product not found", completion)
                                 }
                             }
@@ -67,21 +67,21 @@ extension ProductDB {
         }
     }
 
-    private func returnError(_ msg: String, _ completion: @escaping (LookupResult?, Bool) -> () ) {
+    private func returnError(_ msg: String, _ completion: @escaping (_ result: Result<LookupResult, SnabbleError>) -> () ) {
         self.logError(msg)
         DispatchQueue.main.sync {
-            completion(nil, true)
+            completion(Result.failure(SnabbleError(error: ErrorResponse(msg))))
         }
     }
 
-    private func completeProduct(_ apiProduct: APIProduct, _ deposit: Int?, _ shopId: String, _ completion: @escaping (LookupResult?, Bool) -> () ) {
+    private func completeProduct(_ apiProduct: APIProduct, _ deposit: Int?, _ shopId: String, _ completion: @escaping (_ result: Result<LookupResult, SnabbleError>) -> () ) {
         let matchingCode = apiProduct.matchingCode
 
         // is this a bundle or a deposit? then don't do the bundling lookup!
         if apiProduct.bundledProduct != nil || apiProduct.productType == .deposit {
             let result = LookupResult(product: apiProduct.convert(deposit, []), code: matchingCode)
             DispatchQueue.main.async {
-                completion(result, false)
+                completion(Result.success(result))
             }
             return
         }
@@ -89,7 +89,7 @@ extension ProductDB {
         self.getBundlingProducts(self.project.links.bundlesForSku.href, "{bundledSku}", apiProduct.sku, shopId) { bundles, error in
             let result = LookupResult(product: apiProduct.convert(deposit, bundles), code: matchingCode)
             DispatchQueue.main.async {
-                completion(result, false)
+                completion(Result.success(result))
             }
         }
     }

@@ -446,29 +446,33 @@ extension ScannerViewController {
                 }
             }
 
-            self.productProvider.productByWeighItemId(ean.codeForLookup, self.shop.id) { product, error in
-                completion(product, code)
+            self.productProvider.productByWeighItemId(ean.codeForLookup, self.shop.id) { result in
+                switch result {
+                case .success(let product): completion(product, code)
+                case .failure: completion(nil, code)
+                }
             }
         } else {
             if code.hasPrefix("97") && code.count == 22 {
                 let startIndex = code.startIndex
                 let embeddedCode = String(code[code.index(startIndex, offsetBy: 2)..<code.index(startIndex, offsetBy: 15)])
                 let embeddedPrice = Int(String(code[code.index(startIndex, offsetBy: 15)..<code.index(startIndex, offsetBy: 21)])) ?? 0
-                self.productProvider.productByScannableCode(embeddedCode, self.shop.id) { result, error in
-                    if let result = result {
+                self.productProvider.productByScannableCode(embeddedCode, self.shop.id) { result in
+                    switch result {
+                    case .success(let lookupResult):
                         let template = "2417000000000"
                         let newCode = EAN13.embedDataInEan(template, data: embeddedPrice)
-                        completion(result.product, newCode)
-                    } else {
+                        completion(lookupResult.product, newCode)
+                    case .failure:
                         completion(nil, "")
                     }
                 }
             } else {
-                self.productProvider.productByScannableCode(lookupCode, self.shop.id) { result, error in
-                    if let result = result {
-                        completion(result.product, result.code ?? code)
-                    } else {
-                        completion(nil, "")
+                self.productProvider.productByScannableCode(lookupCode, self.shop.id) { result in
+                    switch result {
+                    case .success(let lookupResult):
+                        completion(lookupResult.product, lookupResult.code ?? code)
+                    case .failure: completion(nil, "")
                     }
                 }
             }

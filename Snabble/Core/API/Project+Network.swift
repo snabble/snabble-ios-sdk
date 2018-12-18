@@ -23,15 +23,21 @@ public enum Result<Success, Failure: Swift.Error> {
 public struct SnabbleError: Decodable, Error {
     public let error: ErrorResponse
 
-    public static let unknown = SnabbleError(error: ErrorResponse(type: "unknown", details: nil))
-    public static let empty = SnabbleError(error: ErrorResponse(type: "empty", details: nil))
-    public static let invalid = SnabbleError(error: ErrorResponse(type: "invalid", details: nil))
-    public static let noRequest = SnabbleError(error: ErrorResponse(type: "no request", details: nil))
+    static let unknown = SnabbleError(error: ErrorResponse("unknown"))
+    static let empty = SnabbleError(error: ErrorResponse("empty"))
+    static let invalid = SnabbleError(error: ErrorResponse("invalid"))
+    static let noRequest = SnabbleError(error: ErrorResponse("no request"))
+    static let notFound = SnabbleError(error: ErrorResponse("not found"))
 }
 
 public struct ErrorResponse: Decodable {
     public let type: String // TODO: create an enum for this
     public let details: [ErrorDetail]?
+
+    init(_ type: String) {
+        self.type = type
+        self.details = nil
+    }
 }
 
 public struct ErrorDetail: Decodable {
