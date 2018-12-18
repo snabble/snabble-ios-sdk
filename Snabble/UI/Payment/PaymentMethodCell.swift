@@ -15,7 +15,7 @@ final class PaymentMethodCell: UICollectionViewCell {
     override func awakeFromNib() {
         super.awakeFromNib()
 
-        self.containerView.makeRoundedButton(cornerRadius: 5)
+        self.containerView.addCornersAndShadow(backgroundColor: .white, cornerRadius: 5)
         self.containerView.layer.shadowColor = UIColor.darkGray.cgColor
         self.label.text = nil
     }

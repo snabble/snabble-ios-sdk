@@ -54,10 +54,10 @@ extension UIView {
 
     /// add a "rounded card" appearance to this view
     public func addCornersAndShadow(backgroundColor: UIColor, cornerRadius: CGFloat) {
-        self.layer.shadowColor = UIColor.black.cgColor
-        self.layer.shadowOffset = CGSize(width: 0, height: 2)
+        self.layer.shadowColor = SnabbleUI.appearance.buttonShadowColor.cgColor
+        self.layer.shadowOffset = CGSize(width: 0, height: 1)
         self.layer.shadowOpacity = 0.5
-        self.layer.shadowRadius = 4.0
+        self.layer.shadowRadius = 2.0
 
         self.backgroundColor = UIColor.clear
 
