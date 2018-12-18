@@ -16,6 +16,14 @@ else
     exit 1
 fi
 
+echo building sample app...
+if (cd Example; xcodebuild -scheme Snabble-Example -workspace Snabble.xcworkspace build); then
+    echo "passed!"
+else
+    echo "build failed"
+    exit 1
+fi
+
 VERSION=$(awk '/s.version.*=/ { print substr($3,2,length($3)-2) }' Snabble.podspec)
 
 git add .

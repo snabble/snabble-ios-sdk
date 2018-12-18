@@ -5,7 +5,7 @@
 * fixes two rare crash bugs
 * renamed `ApiError` to `SnabbleError` and changed its optionality in the `handleXYZError` delegate methods
 * the `PaymentProcess.start` method now calls its closure argument with a `Result` instance which is modeled after the recently approved SE-0235 proposal.
-* likewise, the asynchronous methods `productBySku`, `productByScannableCode` and `productByWeighItemId` have been changed so that ttheir completion closure is also called with a `Result` instance.
+* likewise, the asynchronous methods `productBySku`, `productByScannableCode` and `productByWeighItemId` have been changed so that ttheir completion closure now also takes a `Result` argument.
 
 # v0.8.8
 

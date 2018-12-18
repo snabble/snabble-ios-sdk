@@ -92,7 +92,6 @@ final class Codeblocks {
     }
 
     func generateQrCodes(_ regularCodes: [String], _ restrictedCodes: [String], maxCodeSize: Int) -> [String] {
-
         let availableSize = maxCodeSize - self.config.suffix.count - (self.config.finalCode?.count ?? 0) - self.config.separator.count
 
         var nextCode = self.config.nextCode ?? ""
