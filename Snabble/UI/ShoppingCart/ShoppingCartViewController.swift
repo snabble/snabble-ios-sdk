@@ -83,7 +83,7 @@ public final class ShoppingCartViewController: UIViewController {
         let primaryBackgroundColor = SnabbleUI.appearance.primaryBackgroundColor
         self.view.backgroundColor = primaryBackgroundColor
 
-        self.emptyState = ShoppingCartEmptyStateView(self.showScanner)
+        self.emptyState = ShoppingCartEmptyStateView({ [weak self] in self?.showScanner() })
         self.emptyState.addTo(self.view)
 
         self.tableView.register(UINib(nibName: "ShoppingCartTableCell", bundle: Snabble.bundle), forCellReuseIdentifier: self.itemCellIdentifier)

@@ -6,7 +6,7 @@
 
 import UIKit
 
-protocol ScannerInfoDelegate {
+protocol ScannerInfoDelegate: class {
     func close()
 }
 
@@ -14,7 +14,7 @@ final class ScannerInfoView: DesignableView {
     @IBOutlet private weak var startButton: UIButton!
     @IBOutlet private weak var textLabel: UILabel!
 
-    var delegate: ScannerInfoDelegate?
+    weak var delegate: ScannerInfoDelegate?
 
     override func awakeFromNib() {
         super.awakeFromNib()
