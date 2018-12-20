@@ -82,6 +82,16 @@ public enum ScanFormat: String, Decodable {
     case dataMatrix = "datamatrix"
 }
 
+public struct CustomerCardInfo: Decodable {
+    public let required: String?
+    public let accepted: [String]?
+
+    init() {
+        self.required = nil
+        self.accepted = nil
+    }
+}
+
 public struct Project: Decodable {
     public let id: String
     public let links: ProjectLinks
@@ -106,11 +116,13 @@ public struct Project: Decodable {
 
     public let shops: [Shop]
 
+    public let customerCards: CustomerCardInfo
+
     enum CodingKeys: String, CodingKey {
         case id, links
         case currency, decimalDigits, locale, pricePrefixes, unitPrefixes, weighPrefixes, roundingMode
         case verifyInternalEanChecksum, useGermanPrintPrefix, encodedCodes
-        case shops, scanFormats
+        case shops, scanFormats, customerCards
     }
 
     public init(from decoder: Decoder) throws {
@@ -143,6 +155,7 @@ public struct Project: Decodable {
         let defaultFormats = [ ScanFormat.ean8.rawValue, ScanFormat.ean13.rawValue, ScanFormat.code128.rawValue ]
         let formats = (try container.decodeIfPresent([String].self, forKey: .scanFormats)) ?? defaultFormats
         self.scanFormats = formats.compactMap { ScanFormat(rawValue: $0) }
+        self.customerCards = (try container.decodeIfPresent(CustomerCardInfo.self, forKey: .customerCards)) ?? CustomerCardInfo()
     }
 
     private init() {
@@ -162,6 +175,7 @@ public struct Project: Decodable {
         self.currencySymbol = ""
         self.shops = []
         self.scanFormats = []
+        self.customerCards = CustomerCardInfo()
     }
 
     // only used for unit tests
@@ -182,6 +196,7 @@ public struct Project: Decodable {
         self.currencySymbol = ""
         self.shops = []
         self.scanFormats = []
+        self.customerCards = CustomerCardInfo()
     }
 
     // only used for unit tests
@@ -202,6 +217,7 @@ public struct Project: Decodable {
         self.currencySymbol = currencySymbol
         self.shops = []
         self.scanFormats = []
+        self.customerCards = CustomerCardInfo()
     }
 
     internal init(links: ProjectLinks) {
@@ -221,6 +237,7 @@ public struct Project: Decodable {
         self.currencySymbol = ""
         self.shops = []
         self.scanFormats = []
+        self.customerCards = CustomerCardInfo()
     }
 
     public static let none = Project()
