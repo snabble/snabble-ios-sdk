@@ -86,9 +86,9 @@ public struct CustomerCardInfo: Decodable {
     public let required: String?
     public let accepted: [String]?
 
-    init() {
-        self.required = nil
-        self.accepted = nil
+    init(_ required: String? = nil, _ accepted: [String]? = nil) {
+        self.required = required
+        self.accepted = accepted
     }
 }
 
@@ -116,7 +116,7 @@ public struct Project: Decodable {
 
     public let shops: [Shop]
 
-    public let customerCards: CustomerCardInfo
+    public let customerCards: CustomerCardInfo?
 
     enum CodingKeys: String, CodingKey {
         case id, links
@@ -155,7 +155,7 @@ public struct Project: Decodable {
         let defaultFormats = [ ScanFormat.ean8.rawValue, ScanFormat.ean13.rawValue, ScanFormat.code128.rawValue ]
         let formats = (try container.decodeIfPresent([String].self, forKey: .scanFormats)) ?? defaultFormats
         self.scanFormats = formats.compactMap { ScanFormat(rawValue: $0) }
-        self.customerCards = (try container.decodeIfPresent(CustomerCardInfo.self, forKey: .customerCards)) ?? CustomerCardInfo()
+        self.customerCards = try container.decodeIfPresent(CustomerCardInfo.self, forKey: .customerCards)
     }
 
     private init() {

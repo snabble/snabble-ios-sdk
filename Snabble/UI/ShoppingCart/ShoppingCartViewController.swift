@@ -8,6 +8,11 @@ import UIKit
 
 /// a protocol that users of `ShoppingCartViewController` must implement
 public protocol ShoppingCartDelegate: AnalyticsDelegate, MessageDelegate {
+
+    /// called to determine if checking out is possible, e.g. if required customer card data is present
+    /// it is this mehtod's responsibility to display corresponding error messages
+    func checkoutAllowed(_ project: Project) -> Bool
+
     /// called when the user wants to initiate payment.
     /// Implementations should usually create a `PaymentProcess` instance and invoke its `start` method
     func gotoPayment(_ info: SignedCheckoutInfo, _ cart: ShoppingCart)
@@ -25,6 +30,10 @@ public protocol ShoppingCartDelegate: AnalyticsDelegate, MessageDelegate {
 }
 
 extension ShoppingCartDelegate {
+    public func checkoutAllowed(_ project: Project) -> Bool {
+        return true
+    }
+
     public func handleCheckoutError(_ error: SnabbleError) -> Bool {
         return false
     }
@@ -196,7 +205,12 @@ public final class ShoppingCartViewController: UIViewController {
         self.startCheckout()
     }
 
-    func startCheckout() {
+    private func startCheckout() {
+        let project = SnabbleUI.project
+        guard self.delegate.checkoutAllowed(project) else {
+            return
+        }
+
         let button = self.checkoutButton!
 
         let spinner = UIActivityIndicatorView(style: .white)
@@ -207,7 +221,7 @@ public final class ShoppingCartViewController: UIViewController {
         spinner.centerYAnchor.constraint(equalTo: button.centerYAnchor).isActive = true
         button.isEnabled = false
 
-        self.cart.loyaltyCard = self.delegate.getLoyaltyCard(SnabbleUI.project)
+        self.cart.loyaltyCard = self.delegate.getLoyaltyCard(project)
         
         self.shoppingCart.createCheckoutInfo(SnabbleUI.project, timeout: 10) { result in
             spinner.stopAnimating()
