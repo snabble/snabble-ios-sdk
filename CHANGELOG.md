@@ -1,5 +1,10 @@
 ## snabble iOS SDK Changelog
 
+# v0.8.10
+
+* fixes some small and rare memory leaks
+* adds the optional `customerCard` property to `Project`
+
 # v0.8.9
 
 * fixes two rare crash bugs
