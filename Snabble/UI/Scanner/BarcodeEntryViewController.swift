@@ -6,7 +6,7 @@
 
 import UIKit
 
-final class BarcodeEntryViewController: UIViewController, UISearchBarDelegate, UITableViewDataSource, UITableViewDelegate {
+final public class BarcodeEntryViewController: UIViewController, UISearchBarDelegate, UITableViewDataSource, UITableViewDelegate {
 
     @IBOutlet weak var tableView: UITableView!
     @IBOutlet weak var searchBar: UISearchBar!
@@ -22,7 +22,7 @@ final class BarcodeEntryViewController: UIViewController, UISearchBarDelegate, U
     private weak var delegate: AnalyticsDelegate!
     private var emptyState: EmptyStateView!
 
-    init(_ productProvider: ProductProvider, delegate: AnalyticsDelegate, completion: @escaping (String)->() ) {
+    public init(_ productProvider: ProductProvider, delegate: AnalyticsDelegate, completion: @escaping (String)->() ) {
         super.init(nibName: nil, bundle: Snabble.bundle)
 
         self.productProvider = productProvider
@@ -36,7 +36,7 @@ final class BarcodeEntryViewController: UIViewController, UISearchBarDelegate, U
         fatalError("init(coder:) has not been implemented")
     }
 
-    override func viewDidLoad() {
+    override public func viewDidLoad() {
         super.viewDidLoad()
         
         self.emptyState = BarcodeEntryEmptyStateView( { [weak self] in self?.addEnteredCode() } )
@@ -53,7 +53,7 @@ final class BarcodeEntryViewController: UIViewController, UISearchBarDelegate, U
         self.tableView.backgroundColor = .clear
     }
     
-    override func viewWillAppear(_ animated: Bool) {
+    override public func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         self.searchBar.becomeFirstResponder()
 
@@ -61,7 +61,7 @@ final class BarcodeEntryViewController: UIViewController, UISearchBarDelegate, U
     }
 
     // MARK: - search bar
-    func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
+    public func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
         if searchText.count > 0 {
             let products = self.productProvider.productsByScannableCodePrefix(searchText, filterDeposits: true)
             self.filteredProducts = products.sorted { p1, p2 in
@@ -76,12 +76,12 @@ final class BarcodeEntryViewController: UIViewController, UISearchBarDelegate, U
         self.tableView.reloadData()
     }
 
-    func searchBarCancelButtonClicked(_ searchBar: UISearchBar) {
+    public func searchBarCancelButtonClicked(_ searchBar: UISearchBar) {
         let _ = self.navigationController?.popViewController(animated: true)
     }
 
     // MARK: - table view
-    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+    public func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         let rows = filteredProducts.count
         self.emptyState.isHidden = rows > 0
         self.emptyState.button.isHidden = true
@@ -93,7 +93,7 @@ final class BarcodeEntryViewController: UIViewController, UISearchBarDelegate, U
         return rows
     }
     
-    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+    public func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let identifier = "barcodeCell"
         let cell = tableView.dequeueReusableCell(withIdentifier: identifier) ?? {
             let c = UITableViewCell(style: .subtitle, reuseIdentifier: identifier)
@@ -118,7 +118,7 @@ final class BarcodeEntryViewController: UIViewController, UISearchBarDelegate, U
         return cell
     }
     
-    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+    public func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         let product = self.filteredProducts[indexPath.row]
 
         let matchingCode = product.scannableCodes.filter { $0.hasPrefix(self.searchText) }.first ?? product.scannableCodes.first!
