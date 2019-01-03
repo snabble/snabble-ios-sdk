@@ -1,5 +1,9 @@
 ## snabble iOS SDK Changelog
 
+# v0.8.11
+
+* made `BarcodeEntryViewController` public
+
 # v0.8.10
 
 * fixes some small and rare memory leaks
