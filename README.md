@@ -31,7 +31,7 @@ As with all cocoapods written in Swift, make sure you have `use_frameworks!` in 
 [Carthage](https://github.com/Carthage/Carthage) is currently unsupported. 
 This is because one of the dependencies we use ([GRDB.swift](https://github.com/groue/GRDB.swift)) does not reliably 
 build using Carthage, as documented in their [README](https://github.com/groue/GRDB.swift#carthage). 
-If and when this issue get resolved, you should be able to use the provided `Cartfile`.
+If and when this issue gets resolved, you should be able to use the provided `Cartfile`.
 
 ### Manually
 
