@@ -225,6 +225,9 @@ extension ProductDB {
 
         let (scannableCodes, transmissionCodes) = self.buildScannableCodeSets(row["scannableCodes"], row["transmissionCodes"])
 
+        let referenceUnit = Unit(rawValue: row["referenceUnit"])
+        let encodingUnit = Unit(rawValue: row["encodingUnit"])
+
         let p = Product(sku: sku,
                         name: row["name"],
                         description: row["description"],
@@ -243,7 +246,9 @@ extension ProductDB {
                         saleRestriction: SaleRestriction(row["saleRestriction"]),
                         saleStop: row["saleStop"] ?? false,
                         bundles: bundles,
-                        transmissionCodes: transmissionCodes)
+                        transmissionCodes: transmissionCodes,
+                        referenceUnit: referenceUnit,
+                        encodingUnit: encodingUnit)
 
         return p
     }

@@ -129,6 +129,14 @@ public struct Product: Codable {
 
     public let saleStop: Bool
 
+    /// for products with unit-dependent prices.
+    /// `referenceUnit` specifies the Unit that the product's list price refers to, e.g. `.kilogram`.
+    public let referenceUnit: Unit?
+
+    /// for products with unit-dependent prices.
+    /// `encodingUnit` specifies the Unit that the product's sale price refers to, e.g. `.gram`.
+    public let encodingUnit: Unit?
+
     /// convenience accessor for the price
     public var price: Int {
         return self.discountedPrice ?? self.listPrice
@@ -166,6 +174,8 @@ public struct Product: Codable {
         self.saleStop = try container.decodeIfPresent(.saleStop) ?? false
         self.bundles = try container.decodeIfPresent(.bundles) ?? []
         self.transmissionCodes = try container.decodeIfPresent(.transmissionCodes) ?? [:]
+        self.referenceUnit = try container.decodeIfPresent(.referenceUnit)
+        self.encodingUnit = try container.decodeIfPresent(.encodingUnit)
     }
 
     init(sku: String,
@@ -186,7 +196,9 @@ public struct Product: Codable {
          saleRestriction: SaleRestriction,
          saleStop: Bool,
          bundles: [Product],
-         transmissionCodes: [String: String]) {
+         transmissionCodes: [String: String],
+         referenceUnit: Unit?,
+         encodingUnit: Unit?) {
         self.sku = sku
         self.name = name
         self.description = description
@@ -206,6 +218,8 @@ public struct Product: Codable {
         self.saleStop = saleStop
         self.bundles = bundles
         self.transmissionCodes = transmissionCodes
+        self.referenceUnit = referenceUnit
+        self.encodingUnit = encodingUnit
     }
 
     // store a mapping of scannableCode to transmissionCode

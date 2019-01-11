@@ -235,6 +235,8 @@ struct APIProduct: Codable {
     let saleStop: Bool?
     let codes: [Code]
     let matchingCode: String?
+    let referenceUnit: String?
+    let encodingUnit: String?
 
     enum APIProductType: String, Codable {
         case `default`
@@ -310,7 +312,9 @@ struct APIProduct: Codable {
                        saleRestriction: self.saleRestriction?.convert() ?? .none,
                        saleStop: self.saleStop ?? false,
                        bundles: bundles,
-                       transmissionCodes: transmissionCodes
+                       transmissionCodes: transmissionCodes,
+                       referenceUnit: Unit(rawValue: self.referenceUnit ?? ""),
+                       encodingUnit: Unit(rawValue: self.encodingUnit ?? "")
         )
     }
 }

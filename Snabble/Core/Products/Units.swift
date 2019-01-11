@@ -75,7 +75,19 @@ extension Unit {
 extension Unit {
 
     ///
-    /// Convert a value in a give unit into another unit within the same quantity
+    /// Convert a value in a given unit into another unit within the same quantity
+    ///
+    /// - Parameters:
+    ///   - value: the value to convert
+    ///   - from: the unit of `value`
+    ///   - to: the desired result unit
+    /// - Returns: the converted value, or 0 if the conversion is impossible
+    public static func convert(_ value: Int, from: Unit, to: Unit) -> Decimal {
+        return Unit.convert(Decimal(value), from: from, to: to)
+    }
+
+    ///
+    /// Convert a value in a given unit into another unit within the same quantity
     ///
     /// - Parameters:
     ///   - value: the value to convert

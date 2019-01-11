@@ -12,7 +12,7 @@ public struct PriceFormatter {
     /// get the price for a product, multiplied by `quantityOrWeight`
     ///
     /// for single item products, `quantityOrWeight` is treated as the quantity
-    /// for weighing products, `quantityOrWeight` is treated as the weight in grams
+    /// for weighing products, `quantityOrWeight` is treated as the unit in `encodingUnits`
     ///
     /// - Parameters:
     ///   - project: the project
@@ -25,8 +25,12 @@ public struct PriceFormatter {
             return quantityOrWeight * product.priceWithDeposit
 
         case .preWeighed, .userMustWeigh:
-            let gramPrice = Decimal(product.price) / Decimal(1000.0)
-            let total = Decimal(quantityOrWeight) * gramPrice
+            // if we get here but have no units, fall back to our previous default of kilograms/grams
+            let referenceUnit = product.referenceUnit ?? .kilogram
+            let encodingUnit = product.encodingUnit ?? .gram
+
+            let unitPrice = Unit.convert(product.price, from: encodingUnit, to: referenceUnit)
+            let total = Decimal(quantityOrWeight) * unitPrice
 
             return self.round(total, project.roundingMode)
         }
