@@ -98,7 +98,10 @@ final class ScanConfirmationView: DesignableView {
 
         self.minusButton.isHidden = ean?.hasEmbeddedData == true
         self.plusButton.isHidden = ean?.hasEmbeddedData == true
+
+        self.gramLabel.text = product.encodingUnit?.display
         self.gramLabel.isHidden = !product.weightDependent
+
         self.quantityField.isEnabled = product.type != .preWeighed
         self.quantityField.isHidden = false
 
@@ -138,11 +141,14 @@ final class ScanConfirmationView: DesignableView {
         self.minusButton.isEnabled = qty > 1
         self.plusButton.isEnabled = qty < ShoppingCart.maxAmount
 
+        let encodingSymbol = self.product.encodingUnit?.display ?? ""
+        let referenceSymbol = self.product.referenceUnit?.display ?? ""
+
         if let weight = self.ean?.embeddedWeight {
             let productPrice = PriceFormatter.priceFor(self.product, weight)
             let priceKilo = PriceFormatter.format(product.price)
             let formattedPrice = PriceFormatter.format(productPrice)
-            self.priceLabel.text = "\(qty)g × \(priceKilo)/kg = \(formattedPrice)"
+            self.priceLabel.text = "\(qty)\(encodingSymbol) × \(priceKilo)/\(referenceSymbol) = \(formattedPrice)"
         } else if let price = self.ean?.embeddedPrice {
             self.priceLabel.text = PriceFormatter.format(price)
             self.quantityField.isHidden = true
@@ -161,7 +167,7 @@ final class ScanConfirmationView: DesignableView {
             let productPrice = PriceFormatter.priceFor(self.product, quantity)
             let priceKilo = PriceFormatter.format(product.price)
             let formattedPrice = PriceFormatter.format(productPrice)
-            self.priceLabel.text = "\(qty)g × \(priceKilo)/kg = \(formattedPrice)"
+            self.priceLabel.text = "\(qty)\(encodingSymbol) × \(priceKilo)/\(referenceSymbol) = \(formattedPrice)"
         } else {
             if let deposit = self.product.deposit {
                 let productPrice = PriceFormatter.format(self.product.price)

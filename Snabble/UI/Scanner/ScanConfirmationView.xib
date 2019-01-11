@@ -64,7 +64,7 @@
                     <nil key="highlightedColor"/>
                 </label>
                 <stackView opaque="NO" contentMode="scaleToFill" spacing="8" translatesAutoresizingMaskIntoConstraints="NO" id="ptT-kU-baw">
-                    <rect key="frame" x="137" y="149" width="256.5" height="40"/>
+                    <rect key="frame" x="137" y="149" width="242" height="40"/>
                     <subviews>
                         <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="2HH-gl-5Tv">
                             <rect key="frame" x="0.0" y="0.0" width="40" height="40"/>
@@ -96,8 +96,8 @@
                                 <action selector="plusTapped:" destination="-1" eventType="touchUpInside" id="goo-9J-OVX"/>
                             </connections>
                         </button>
-                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Gramm" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="hlj-8a-jF0">
-                            <rect key="frame" x="200" y="0.0" width="56.5" height="40"/>
+                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Gram" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="hlj-8a-jF0">
+                            <rect key="frame" x="200" y="0.0" width="42" height="40"/>
                             <fontDescription key="fontDescription" type="system" pointSize="17"/>
                             <nil key="textColor"/>
                             <nil key="highlightedColor"/>

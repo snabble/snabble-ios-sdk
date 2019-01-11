@@ -125,7 +125,9 @@ final class ShoppingCartTableCell: UITableViewCell {
         let ean = EAN.parse(self.item.scannedCode, SnabbleUI.project)
 
         let showWeight = ean?.hasEmbeddedWeight == true || self.item.product.type == .userMustWeigh
-        let gram = showWeight ? "g" : ""
+
+        let symbol = self.item.product.encodingUnit?.display ?? ""
+        let gram = showWeight ? symbol : ""
         self.quantityLabel.text = "\(self.quantity)\(gram)"
 
         let price = self.item.total(SnabbleUI.project)
@@ -133,7 +135,8 @@ final class ShoppingCartTableCell: UITableViewCell {
 
         if showWeight {
             let single = PriceFormatter.format(self.item.product.price)
-            self.priceLabel.text = "× \(single)/kg = \(total)"
+            let unit = self.item.product.referenceUnit?.display ?? ""
+            self.priceLabel.text = "× \(single)/\(unit) = \(total)"
         } else {
             if let deposit = self.item.product.deposit {
                 let itemPrice = PriceFormatter.format(self.item.product.price)
