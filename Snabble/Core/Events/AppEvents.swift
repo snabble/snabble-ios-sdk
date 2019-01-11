@@ -11,27 +11,30 @@ enum EventType: String, Encodable {
     case sessionEnd
     case cart
     case error
+    case log
 }
 
 private struct Session: Encodable {
     let session: String
 }
 
-private struct Error: Encodable {
+private struct Message: Encodable {
     let message: String
     let session: String?
 }
 
 private enum Payload: Encodable {
     case session(Session)
-    case error(Error)
+    case error(Message)
     case cart(Cart)
+    case log(Message)
 
     func encode(to encoder: Encoder) throws {
         var container = encoder.singleValueContainer()
         switch self {
         case .session(let session): try container.encode(session)
-        case .error(let error): try container.encode(error)
+        case .error(let msg): try container.encode(msg)
+        case .log(let msg): try container.encode(msg)
         case .cart(let cart): try container.encode(cart)
         }
     }
@@ -92,9 +95,14 @@ struct AppEvent: Encodable {
         self.init(type: type, payload: session, project: project, shopId: shopId)
     }
 
-    init(message: String, project: Project, session: String? = nil, shopId: String? = nil) {
-        let error = Payload.error(Error(message: message, session: session))
+    init(error: String, project: Project, session: String? = nil, shopId: String? = nil) {
+        let error = Payload.error(Message(message: error, session: session))
         self.init(type: .error, payload: error, project: project, shopId: shopId)
+    }
+
+    init(log: String, project: Project, session: String? = nil, shopId: String? = nil) {
+        let log = Payload.log(Message(message: log, session: session))
+        self.init(type: .log, payload: log, project: project, shopId: shopId)
     }
 
     init(_ shoppingCart: ShoppingCart) {

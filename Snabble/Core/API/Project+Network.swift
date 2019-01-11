@@ -331,13 +331,17 @@ extension Project {
 
 extension Project {
 
-    func logError(_ msg: String) {
+    public func logError(_ msg: String) {
         Log.error(msg)
 
-        let event = AppEvent(message: msg, project: self)
+        let event = AppEvent(error: msg, project: self)
         event.post()
     }
 
+    public func logMsg(_ msg: String) {
+        let event = AppEvent(log: msg, project: self)
+        event.post()
+    }
 }
 
 
