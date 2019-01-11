@@ -58,7 +58,7 @@ public struct MetadataLinks: Decodable {
     }
 }
 
-public struct EncodedCodes: Decodable {
+public struct QRCodeConfig: Decodable {
     let prefix: String
     let separator: String
     let suffix: String
@@ -68,6 +68,36 @@ public struct EncodedCodes: Decodable {
     let finalCode: String?          // last code of the last block
     let nextCode: String?           // marker code to indicate "more QR codes"
     let nextCodeWithCheck: String?  // marker code to indicate "more QR codes" + age check required
+
+    enum CodingKeys: String, CodingKey {
+        case prefix, separator, suffix, maxCodes
+        case finalCode, nextCode, nextCodeWithCheck
+    }
+
+    public init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+
+        self.prefix = try container.decodeIfPresent(String.self, forKey: .prefix) ?? ""
+        self.separator = try container.decodeIfPresent(String.self, forKey: .separator) ?? "\n"
+        self.suffix = try container.decodeIfPresent(String.self, forKey: .suffix) ?? ""
+        self.maxCodes = try container.decode(Int.self, forKey: .maxCodes)
+        
+        self.finalCode = try container.decodeIfPresent(String.self, forKey: .finalCode)
+        self.nextCode = try container.decodeIfPresent(String.self, forKey: .nextCode)
+        self.nextCodeWithCheck = try container.decodeIfPresent(String.self, forKey: .nextCodeWithCheck)
+    }
+
+    init(prefix: String = "", separator: String = "\n", suffix: String = "", maxCodes: Int = 100, finalCode: String? = nil, nextCode: String? = nil, nextCodeWithCheck: String? = nil) {
+        self.prefix = prefix
+        self.separator = separator
+        self.suffix = suffix
+        self.maxCodes = maxCodes
+        self.finalCode = finalCode
+        self.nextCode = nextCode
+        self.nextCodeWithCheck = nextCodeWithCheck
+    }
+
+    public static let `default` = QRCodeConfig()
 }
 
 public enum ScanFormat: String, Decodable {
@@ -110,7 +140,7 @@ public struct Project: Decodable {
     public let useGermanPrintPrefix: Bool
 
     // config for embedded QR codes
-    public let encodedCodes: EncodedCodes?
+    public let encodedCodes: QRCodeConfig?
 
     public let scanFormats: [ScanFormat]
 

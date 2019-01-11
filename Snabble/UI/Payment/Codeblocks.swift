@@ -8,9 +8,9 @@ import Foundation
 
 final class Codeblocks {
 
-    private(set) var config: EncodedCodes
+    private(set) var config: QRCodeConfig
 
-    init(_ config: EncodedCodes) {
+    init(_ config: QRCodeConfig) {
         self.config = config
     }
 

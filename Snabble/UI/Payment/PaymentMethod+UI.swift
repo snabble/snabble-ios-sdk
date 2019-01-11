@@ -13,6 +13,7 @@ extension PaymentMethod {
         case .cash: return "payment-method-cash"
         case .qrCode: return "payment-method-checkstand"
         case .encodedCodes: return "payment-method-checkstand"
+        case .encodedCodesCSV: return "payment-method-checkstand"
         case .teleCashDeDirectDebit: return "payment-sepa"
         }
     }
@@ -43,7 +44,8 @@ extension PaymentMethod {
         switch self {
         case .cash: processor = CashCheckoutViewController(process!, cart, delegate)
         case .qrCode: processor = QRCheckoutViewController(process!, cart, delegate)
-        case .encodedCodes: processor = EmbeddedCodesCheckoutViewController(process, cart, delegate)
+        case .encodedCodes: processor = EmbeddedCodesCheckoutViewController(process, self, cart, delegate)
+        case .encodedCodesCSV: processor = EmbeddedCodesCheckoutViewController(process, self, cart, delegate)
         case .teleCashDeDirectDebit: processor = SepaCheckoutViewController(process!, method.data!, cart, delegate)
         }
         processor.hidesBottomBarWhenPushed = true
@@ -101,6 +103,7 @@ public final class PaymentProcess {
             switch method {
             case .cash: result.append(.cash)
             case .encodedCodes: result.append(.encodedCodes)
+            case .encodedCodesCSV: result.append(.encodedCodesCSV)
             case .qrCode: result.append(.qrCode)
             case .teleCashDeDirectDebit:
                 let telecash = userData.filter { if case .teleCashDeDirectDebit = $0 { return true } else { return false } }

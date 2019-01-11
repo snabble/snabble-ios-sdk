@@ -20,18 +20,19 @@ final class EmbeddedCodesCheckoutViewController: UIViewController {
     private weak var cart: ShoppingCart!
     private weak var delegate: PaymentDelegate!
     private var process: CheckoutProcess?
+    private var method: PaymentMethod
     private var poller: PaymentProcessPoller?
+    private var qrCodeConfig: QRCodeConfig
 
-    private var codeblocks: Codeblocks
     private var codes = [String]()
     private var itemSize = CGSize(width: 100, height: 100)
-    private static let defaultCodes = EncodedCodes(prefix: "", separator: "", suffix: "", maxCodes: 100, finalCode: nil, nextCode: nil, nextCodeWithCheck: nil)
 
-    init(_ process: CheckoutProcess?, _ cart: ShoppingCart, _ delegate: PaymentDelegate) {
+    init(_ process: CheckoutProcess?, _ method: PaymentMethod, _ cart: ShoppingCart, _ delegate: PaymentDelegate) {
         self.process = process
+        self.method = method
         self.cart = cart
         self.delegate = delegate
-        self.codeblocks = Codeblocks(SnabbleUI.project.encodedCodes ?? EmbeddedCodesCheckoutViewController.defaultCodes)
+        self.qrCodeConfig = SnabbleUI.project.encodedCodes ?? QRCodeConfig.default
 
         super.init(nibName: nil, bundle: Snabble.bundle)
 
@@ -52,10 +53,17 @@ final class EmbeddedCodesCheckoutViewController: UIViewController {
         let nib = UINib(nibName: "QRCodeCell", bundle: Snabble.bundle)
         self.collectionView.register(nib, forCellWithReuseIdentifier: "qrCodeCell")
 
-        let codeblocks = Codeblocks(SnabbleUI.project.encodedCodes!)
-
-        let (regularCodes, restrictedCodes) = self.codesForQR()
-        self.codes = codeblocks.generateQrCodes(regularCodes, restrictedCodes)
+        switch self.method {
+        case .encodedCodes:
+            let codeblocks = Codeblocks(self.qrCodeConfig)
+            let (regularCodes, restrictedCodes) = self.codesForQR()
+            self.codes = codeblocks.generateQrCodes(regularCodes, restrictedCodes)
+        case .encodedCodesCSV:
+            self.codes = self.csvForQR()
+        default:
+            fatalError("payment method \(self.method) not implemented")
+            break
+        }
 
         self.pageControl.numberOfPages = self.codes.count
         self.pageControl.pageIndicatorTintColor = .lightGray
@@ -99,11 +107,38 @@ final class EmbeddedCodesCheckoutViewController: UIViewController {
         UIScreen.main.brightness = self.initialBrightness
     }
 
+    private func csvForQR() -> [String] {
+        let lines: [String] = self.cart.items.reduce(into: [], { result, item in
+            if item.product.type == .userMustWeigh {
+                // generate an EAN with the embedded weight
+                if let template = item.product.weighedItemIds?.first {
+                    let ean = EAN13.embedDataInEan(template, data: item.quantity)
+                    result.append("1;\(ean)")
+                }
+            } else {
+                result.append("\(item.quantity);\(item.scannedCode)")
+            }
+        })
+
+        // divide into chunks if needed
+        let maxCodes = Float(self.qrCodeConfig.maxCodes)
+        let linesCount = Float(lines.count)
+        let chunks = (linesCount / maxCodes).rounded(.up)
+        let chunkSize = Int((linesCount / chunks).rounded(.up))
+        let blocks = stride(from: 0, to: lines.count, by: chunkSize).map { start -> [String] in
+            var block = [ "snabble;" ]
+            block.append(contentsOf: lines[start ..< min(start + chunkSize, lines.count)])
+            return block
+        }
+
+        return blocks.map { $0.joined(separator: "\n") }
+    }
+
     private func codesForQR() -> ([String],[String]) {
         let project = SnabbleUI.project
         let items = self.cart.items.sorted { $0.itemPrice(project) < $1.itemPrice(project) }
 
-        if self.codeblocks.config.nextCodeWithCheck != nil {
+        if self.qrCodeConfig.nextCodeWithCheck != nil {
             let regularItems = items.filter { return $0.product.saleRestriction == .none }
             let restrictedItems = items.filter { return $0.product.saleRestriction != .none }
 
