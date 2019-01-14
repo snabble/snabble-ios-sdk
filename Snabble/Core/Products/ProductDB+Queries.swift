@@ -225,8 +225,8 @@ extension ProductDB {
 
         let (scannableCodes, transmissionCodes) = self.buildScannableCodeSets(row["scannableCodes"], row["transmissionCodes"])
 
-        let referenceUnit = Unit(rawValue: row["referenceUnit"])
-        let encodingUnit = Unit(rawValue: row["encodingUnit"])
+        let referenceUnit = Unit.from(row["referenceUnit"] as? String)
+        let encodingUnit = Unit.from(row["encodingUnit"] as? String)
 
         let p = Product(sku: sku,
                         name: row["name"],

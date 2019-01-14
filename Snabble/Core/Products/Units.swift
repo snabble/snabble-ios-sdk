@@ -56,6 +56,13 @@ public enum Unit: String, Codable {
         case .price: return .amount
         }
     }
+
+    static func from(_ rawValue: String?) -> Unit? {
+        guard let rawValue = rawValue else {
+            return nil
+        }
+        return Unit(rawValue: rawValue)
+    }
 }
 
 extension Unit {

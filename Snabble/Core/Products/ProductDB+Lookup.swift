@@ -313,8 +313,8 @@ struct APIProduct: Codable {
                        saleStop: self.saleStop ?? false,
                        bundles: bundles,
                        transmissionCodes: transmissionCodes,
-                       referenceUnit: Unit(rawValue: self.referenceUnit ?? ""),
-                       encodingUnit: Unit(rawValue: self.encodingUnit ?? "")
+                       referenceUnit: Unit.from(self.referenceUnit),
+                       encodingUnit: Unit.from(self.encodingUnit)
         )
     }
 }
