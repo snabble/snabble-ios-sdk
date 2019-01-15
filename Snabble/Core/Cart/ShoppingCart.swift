@@ -117,16 +117,24 @@ public struct CartItem: Codable {
         let product = self.product
         var quantity = self.quantity
         var weight = self.weight
+        var units = self.units
+
         if product.type == .userMustWeigh {
             quantity = 1
             weight = self.quantity
         }
+
+        if product.referenceUnit == .piece {
+            quantity = 1
+            units = self.quantity
+        }
+
         return Cart.Item(sku: product.sku,
                          amount: quantity,
                          scannedCode: self.scannedCode,
                          price: self.price,
                          weight: weight,
-                         units: self.units)
+                         units: units)
     }
 }
 
