@@ -1,5 +1,10 @@
 ## snabble iOS SDK Changelog
 
+# v0.8.12
+
+* add support for the CSV-based QR Code payment method
+* add support for the `referenceUnit` product property
+
 # v0.8.11
 
 * made `BarcodeEntryViewController` public
