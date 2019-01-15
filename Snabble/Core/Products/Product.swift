@@ -135,7 +135,8 @@ public struct Product: Codable {
 
     /// for products with unit-dependent prices.
     /// `encodingUnit` specifies the Unit that the product's sale price refers to, e.g. `.gram`.
-    public let encodingUnit: Unit?
+    /// NB: will be removed in the next release
+    internal let encodingUnit: Unit?
 
     /// convenience accessor for the price
     public var price: Int {
