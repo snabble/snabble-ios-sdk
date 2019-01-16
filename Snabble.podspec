@@ -47,7 +47,7 @@ Pod::Spec.new do |s|
       "Snabble" => [ 'Snabble.xcassets', 'Snabble/UI/*.lproj/*.strings', 'Snabble/UI/**/*.xib', 'i18n/*.twine' ]
     }
 
-    if ENV["SNABBLE_DEV"]
+    if ENV["SNABBLE_POD"] == "dev"
       ui.script_phase = { :name => "Run twine", 
         :script => <<-SCRIPT
         if [ "$TESTING" -ne "1" ]; then
