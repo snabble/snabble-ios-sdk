@@ -124,7 +124,7 @@ public struct CartItem: Codable {
             weight = self.quantity
         }
 
-        if product.referenceUnit == .piece {
+        if product.referenceUnit == .piece && self.units == nil {
             quantity = 1
             units = self.quantity
         }
