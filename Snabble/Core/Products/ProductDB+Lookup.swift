@@ -135,7 +135,7 @@ extension ProductDB {
     }
 
     // for a list of bundles, get their respective deposit
-    func completeBundles(_ bundles: [APIProduct], _ shopId: String, _ completion: @escaping (_ products: [Product], _ error: Bool) ->() ) {
+    fileprivate func completeBundles(_ bundles: [APIProduct], _ shopId: String, _ completion: @escaping (_ products: [Product], _ error: Bool) ->() ) {
         let skus = bundles.compactMap { $0.depositProduct }
         if skus.count == 0 {
             completion([], false)
@@ -199,7 +199,7 @@ extension ProductDB {
 }
 
 // this is how we get product data from the lookup endpoints
-struct APIProducts: Decodable {
+private struct APIProducts: Decodable {
     let products: [APIProduct]
 
     enum CodingKeys: String, CodingKey {
@@ -212,12 +212,12 @@ struct APIProducts: Decodable {
     }
 }
 
-struct Code: Codable {
+private struct Code: Codable {
     let code: String
     let transmissionCode: String?
 }
 
-struct APIProduct: Codable {
+private struct APIProduct: Codable {
     let sku: String
     let name: String
     let description: String?
