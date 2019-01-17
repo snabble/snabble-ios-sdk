@@ -1,5 +1,9 @@
 ## snabble iOS SDK Changelog
 
+# v0.8.13
+
+* fixes a bug with unit-encoded EANs
+
 # v0.8.12
 
 * add support for the CSV-based QR Code payment method
