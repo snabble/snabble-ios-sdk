@@ -250,7 +250,7 @@ final class ProductDB: ProductProvider {
                     newData = true
                 case .full(let data, let revision):
                     Log.info("db update: got full db, rev=\(revision)")
-                    performSwitch = self.writeFullDatabase(data, revision, tempDbPath)
+                    performSwitch = self.writeFullDatabase(data, revision, tempDbPath, forceFullDownload)
                     newData = true
                 case .noUpdate:
                     Log.info("db update: no new data")
@@ -365,7 +365,7 @@ final class ProductDB: ProductProvider {
     ///   - revision: the revision of this new database
     /// - Returns: true if the database was written successfully and passes internal integrity checks,
     ///         false otherwise
-    private func writeFullDatabase(_ data: Data, _ revision: Int, _ tempDbPath: String) -> Bool {
+    private func writeFullDatabase(_ data: Data, _ revision: Int, _ tempDbPath: String, _ forceSwitch: Bool) -> Bool {
         let fileManager = FileManager.default
 
         do {
@@ -406,7 +406,7 @@ final class ProductDB: ProductProvider {
 
                 self.setLastUpdate(tempDb)
 
-                let shouldSwitch = revision > self.revision || minorVersion > self.schemaVersionMinor
+                let shouldSwitch = forceSwitch || revision > self.revision || minorVersion > self.schemaVersionMinor
                 if shouldSwitch {
                     Log.info("new db: revision=\(revision), schema=\(majorVersion).\(minorVersion)")
                 }
