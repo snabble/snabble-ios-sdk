@@ -331,7 +331,11 @@ extension EAN13 {
 
     // calculate the internal checksum for a 5-digit price/weight data field
     func internalChecksum5() -> Int {
-        let sum = self.digits[7 ... 11].enumerated().reduce(0) { $0 + self.weightedProduct5digits($1.0, $1.1) }
+        return EAN13.internalChecksum5(Array(self.digits[7 ... 11]))
+    }
+
+    static func internalChecksum5(_ digits: [Int]) -> Int {
+        let sum = digits.enumerated().reduce(0) { $0 + EAN13.weightedProduct5digits($1.0, $1.1) }
         let mod10 = (10 - (sum % 10)) % 10
         let check = EAN13.check5minusReverse[mod10] ?? -1
         return check
@@ -339,7 +343,7 @@ extension EAN13 {
 
     // calculate the internal checksum for a 4-digit price/weight data field
     func internalChecksum4() -> Int {
-        let sum = self.digits[8 ... 11].enumerated().reduce(0) { $0 + self.weightedProduct4digits($1.0, $1.1) }
+        let sum = self.digits[8 ... 11].enumerated().reduce(0) { $0 + EAN13.weightedProduct4digits($1.0, $1.1) }
         let check = (sum * 3) % 10
         return check
     }
@@ -350,7 +354,7 @@ extension EAN13 {
     static let check5minus = [ 0:0, 1:5, 2:9, 3:4, 4:8, 5:3, 6:7, 7:2, 8:6, 9:1 ]
     static let check5minusReverse = Dictionary(uniqueKeysWithValues: check5minus.map { ($1, $0) })
 
-    func weightedProduct5digits(_ index: Int, _ digit: Int) -> Int {
+    static func weightedProduct5digits(_ index: Int, _ digit: Int) -> Int {
         switch index {
         case 0, 3: return EAN13.check5plus[digit] ?? -1
         case 1, 4: return EAN13.check2minus[digit] ?? -1
@@ -359,7 +363,7 @@ extension EAN13 {
         }
     }
 
-    func weightedProduct4digits(_ index: Int, _ digit: Int) -> Int {
+    static func weightedProduct4digits(_ index: Int, _ digit: Int) -> Int {
         switch index {
         case 0,1 : return EAN13.check2minus[digit] ?? -1
         case 2: return EAN13.check3[digit] ?? -1
