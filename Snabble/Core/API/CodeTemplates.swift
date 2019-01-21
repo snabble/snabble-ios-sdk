@@ -19,13 +19,9 @@ enum TemplateComponent {
 
     static let knownCodes = ["ean8": 8, "ean13": 13, "ean14": 14]
 
-    init?(_ str: String, _ isProperty: Bool) {
-        guard str.count > 0 else {
-            return nil
-        }
-
-        if isProperty {
-            let parts = str.components(separatedBy: ":")
+    init?(_ str: String) {
+        if str.prefix(1) == "{" {
+            let parts = str.dropFirst().dropLast().components(separatedBy: ":")
             let lengthPart = parts.count > 1 ? parts[1] : "1"
             let length = Int(lengthPart)
 
@@ -111,43 +107,44 @@ enum TemplateComponent {
 struct CodeTemplate {
     let template: String
     let components: [TemplateComponent]
+
+    static let token = try! NSRegularExpression(pattern: "^(\\{.*?\\})", options: [])
+    static let plaintext = try! NSRegularExpression(pattern: "^([^{]+)", options: [])
+    static let regexps = [ token, plaintext ]
+
     var expectedLength: Int {
         return components.reduce(0) { $0 + $1.length }
     }
 
     init?(_ template: String) {
-        var insideBrace = false
-        var token = ""
-        var components = [TemplateComponent]()
+        var str = template
 
-        for char in template {
-            if char == "{" && insideBrace {
-                return nil
-            }
-            if char == "}" && !insideBrace {
-                return nil
-            }
-            if char == "{" || char == "}" {
-                if insideBrace && token.count == 0 {
-                    return nil
-                }
-                insideBrace.toggle()
-                if token.count == 0 {
+        var components = [TemplateComponent]()
+        while str.count > 0 {
+            var foundMatch = false
+            for re in CodeTemplate.regexps {
+                let result = re.matches(in: str, options: [], range: NSRange(location: 0, length: str.count))
+                if result.count == 0 {
                     continue
                 }
-                if let component = TemplateComponent(token, !insideBrace) {
+                foundMatch = true
+                let range = result[0].range(at: 0)
+                let token = String(str.prefix(range.length))
+                if let component = TemplateComponent(token) {
                     components.append(component)
                 } else {
                     return nil
                 }
-                token = ""
-            } else {
-                token.append(char)
+                str = String(str.dropFirst(range.length))
+                continue
+            }
+            if !foundMatch {
+                return nil
             }
         }
-        if insideBrace {
-            return nil
-        }
+
+        self.components = components
+        self.template = template
 
         // further checks:
         // each component may occur 0 or 1 times, except _
@@ -175,8 +172,6 @@ struct CodeTemplate {
             }
         }
 
-        self.components = components
-        self.template = template
     }
 
     func match(_ string: String) -> ParseResult? {
