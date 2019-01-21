@@ -26,13 +26,13 @@ enum TemplateComponent {
             let length = Int(lengthPart)
 
             if parts[0] == "code" {
-                if TemplateComponent.knownCodes.keys.contains(lengthPart) || length != nil {
+                if TemplateComponent.knownCodes.keys.contains(lengthPart) || (length != nil && length! > 0) {
                     self = .code(lengthPart)
                 } else {
                     return nil
                 }
             } else {
-                guard let len = length else {
+                guard let len = length, len > 0 else {
                     return nil
                 }
                 switch parts[0] {
@@ -143,6 +143,9 @@ struct CodeTemplate {
             }
         }
 
+        guard components.count > 0 else {
+            return nil
+        }
         self.components = components
         self.template = template
 
