@@ -9,18 +9,30 @@ import Foundation
 // template parsing and matching, see
 // https://github.com/snabble/product-ng/blob/master/code-templates.md
 
+/// the constituent parts of a template
 enum TemplateComponent {
+    /// known plain text that will be ignored (e.g. "01" from "01{code:ean14}". The value is the actual string
     case plainText(String)
+    /// the code part of the template. this is what we will use to look up products in the database
+    /// may specify a known code ("ean8", "ean13", or "ean14") or a length
     case code(String)
+    /// the embedded data of the code (not necessarily always a weight), the value is the length of the field
     case weight(Int)
+    /// the embedded price of one `referenceUnit` worth of the product. For weight-dependenent prices, this is usually the price per kilogram.
+    /// The value is the length of the field
     case price(Int)
+    /// unknown plain text that will be ignored (e.g. checksums that we can't/won't verify)
+    /// The value is the length of the field
     case ignore(Int)
+    /// represents the internal 5-digit-checksum for embedded data in an EAN-13, which is always one character.
     case internalChecksum
 
-    static let knownCodes = ["ean8": 8, "ean13": 13, "ean14": 14]
+    fileprivate static let knownCodes = ["ean8": 8, "ean13": 13, "ean14": 14]
 
+    /// parse one template component. properties look like "{name:length}", everything else is considered plain text
     init?(_ str: String) {
         if str.prefix(1) == "{" {
+            // strip off the braces and split
             let parts = str.dropFirst().dropLast().components(separatedBy: ":")
             let lengthPart = parts.count > 1 ? parts[1] : "1"
             let length = Int(lengthPart)
@@ -48,6 +60,7 @@ enum TemplateComponent {
         }
     }
 
+    /// get the regular expression that matches this component
     var regex: String {
         switch self {
         case .plainText(let str): return "(\\Q\(str)\\E)"
@@ -59,6 +72,7 @@ enum TemplateComponent {
         }
     }
 
+    /// get the length of this component
     var length: Int {
         switch self {
         case .plainText(let str): return str.count
@@ -70,6 +84,7 @@ enum TemplateComponent {
         }
     }
 
+    /// is this a `code` component?
     var isCode: Bool {
         switch self {
         case .code: return true
@@ -77,6 +92,7 @@ enum TemplateComponent {
         }
     }
 
+    /// is this a `weight` component?
     var isWeight: Bool {
         switch self {
         case .weight: return true
@@ -84,7 +100,8 @@ enum TemplateComponent {
         }
     }
 
-    var key: Int {
+    /// get a simple but unique key for each type
+    fileprivate var key: Int {
         switch self {
         case .plainText: return 0
         case .code: return 1
@@ -104,19 +121,21 @@ enum TemplateComponent {
     }
 }
 
+/// a `CodeTemplate` represents a fully parsed template expression, like "01{code:ean14"
 struct CodeTemplate {
+    /// the original template string
     let template: String
+    /// the parsed components in left-to-right order
     let components: [TemplateComponent]
 
+    /// RE for a token
     static let token = try! NSRegularExpression(pattern: "^(\\{.*?\\})", options: [])
+    /// RE for plaintext
     static let plaintext = try! NSRegularExpression(pattern: "^([^{]+)", options: [])
     static let regexps = [ token, plaintext ]
 
-    var expectedLength: Int {
-        return components.reduce(0) { $0 + $1.length }
-    }
-
     init?(_ template: String) {
+        self.template = template
         var str = template
 
         var components = [TemplateComponent]()
@@ -127,7 +146,6 @@ struct CodeTemplate {
                 if result.count == 0 {
                     continue
                 }
-                foundMatch = true
                 let range = result[0].range(at: 0)
                 let token = String(str.prefix(range.length))
                 if let component = TemplateComponent(token) {
@@ -135,6 +153,7 @@ struct CodeTemplate {
                 } else {
                     return nil
                 }
+                foundMatch = true
                 str = String(str.dropFirst(range.length))
                 continue
             }
@@ -147,7 +166,6 @@ struct CodeTemplate {
             return nil
         }
         self.components = components
-        self.template = template
 
         // further checks:
         // each component may occur 0 or 1 times, except _
@@ -166,17 +184,21 @@ struct CodeTemplate {
 
         // when {i} is present, check for {weight:5}
         if count[TemplateComponent.internalChecksum.key] != nil {
-            if let weightComponent = components.first(where: { $0.isWeight }) {
-                if weightComponent.length != 5 {
-                    return nil
-                }
-            } else {
+            guard let len = components.first(where: { $0.isWeight })?.length, len == 5 else {
                 return nil
             }
         }
-
     }
 
+    /// total length of all components
+    var expectedLength: Int {
+        return components.reduce(0) { $0 + $1.length }
+    }
+
+    /// check if a given string matches this template
+    ///
+    /// - Parameter string: the code to match
+    /// - Returns: a `ParseResult` object, or `nil` if the code didn't match
     func match(_ string: String) -> ParseResult? {
         let regexStr = self.components.map { $0.regex }.joined()
         let matches = self.regexMatches(regexStr, string)
@@ -189,6 +211,12 @@ struct CodeTemplate {
         }
     }
 
+    /// check if `text` matches `regexStr`,
+    ///
+    /// - Parameters:
+    ///   - regexStr: the regex to match against
+    ///   - text: the text to match
+    /// - Returns: array containing the text of all matched capture groups
     private func regexMatches(_ regexStr: String, _ text: String) -> [String] {
         do {
             let regex = try NSRegularExpression(pattern: regexStr, options: [])
@@ -211,14 +239,20 @@ struct CodeTemplate {
     }
 }
 
+/// the matcher's result for one component
 struct ParsedComponent {
+    /// the component that we matched against
     let template: TemplateComponent
+    /// the matched value
     let value: String
 }
 
+/// the matcher's result
 struct ParseResult {
+    /// matched components, in left-to-right order
     let components: [ParsedComponent]
 
+    /// return the (part of the) code we should use for database lookups
     var lookupCode: String {
         guard let codeComponent = self.components.first(where: { $0.template.isCode }) else {
             return ""
@@ -227,6 +261,8 @@ struct ParseResult {
         return codeComponent.value
     }
 
+    /// is this result valid?
+    /// (it is if all components are valid)
     var isValid: Bool {
         for comp in self.components {
             if !self.valid(comp) {
@@ -236,6 +272,7 @@ struct ParseResult {
         return true
     }
 
+    /// is this component's value valid?
     private func valid(_ component: ParsedComponent) -> Bool {
         switch component.template {
         case .code(let format):
@@ -251,7 +288,8 @@ struct ParseResult {
             let digits = weightComponent.value.compactMap { Int(String($0)) }
             let checksum = EAN13.internalChecksum5(digits)
             return String(checksum) == component.value
-        default: return true
+        default:
+            return true
         }
     }
 }
