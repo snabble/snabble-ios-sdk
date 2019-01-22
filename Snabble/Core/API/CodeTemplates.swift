@@ -128,11 +128,15 @@ struct CodeTemplate {
     /// the parsed components in left-to-right order
     let components: [TemplateComponent]
 
+    static let ean13instore = CodeTemplate("{code:5}{i}{_:7}")!
+    static let ean14code128 = CodeTemplate("01{code:ean14}")!
+    static let edekaDiscount = CodeTemplate("97{code:ean13}{price:6}{_}")!
+
     /// RE for a token
-    static let token = try! NSRegularExpression(pattern: "^(\\{.*?\\})", options: [])
+    private static let token = try! NSRegularExpression(pattern: "^(\\{.*?\\})", options: [])
     /// RE for plaintext
-    static let plaintext = try! NSRegularExpression(pattern: "^([^{]+)", options: [])
-    static let regexps = [ token, plaintext ]
+    private static let plaintext = try! NSRegularExpression(pattern: "^([^{]+)", options: [])
+    private static let regexps = [ token, plaintext ]
 
     init?(_ template: String) {
         self.template = template
@@ -270,6 +274,44 @@ struct ParseResult {
             }
         }
         return true
+    }
+
+    /// embed data into a scanned code in place of the `weight` placeholder
+    func embed(_ data: Int) -> String {
+        var result = ""
+        var embeddedData = ""
+        var needChecksum = false
+        var isEan13 = false
+        for component in components {
+            switch component.template {
+            case .weight:
+                let str = String(data)
+                let padding = String(repeatElement("0", count: component.template.length - str.count))
+                embeddedData = padding + str
+                result.append(embeddedData)
+            case .code(let len):
+                isEan13 = len == "ean13"
+                result.append(component.value)
+            case .internalChecksum:
+                needChecksum = true
+                result.append(component.value)
+            default:
+                result.append(component.value)
+            }
+        }
+
+        // calculate EAN-13 checksum(s)
+        if isEan13 && result.count == 13 && embeddedData.count == 5 {
+            if needChecksum {
+                let embedDigits = embeddedData.map { Int(String($0))! }
+                let check = EAN13.internalChecksum5(embedDigits)
+                result = String(result.prefix(6)) + String(check) + String(result.suffix(6))
+            }
+            if let ean = EAN13(String(result.prefix(12))) {
+                return ean.code
+            }
+        }
+        return result
     }
 
     /// is this component's value valid?
