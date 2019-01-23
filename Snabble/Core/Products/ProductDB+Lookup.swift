@@ -6,8 +6,8 @@
 
 extension ProductDB {
 
-    func getSingleProduct(_ url: String, _ placeholder: String, _ identifier: String, _ shopId: String, completion: @escaping (_ result: Result<Product, SnabbleError>) -> () ) {
-        self.getSingleProduct(url, placeholder, identifier, shopId) { (result: Result<LookupResult, SnabbleError>) in
+    func getSingleProduct(_ url: String, _ placeholder: String, _ identifier: String, _ template: String? = nil, _ shopId: String, completion: @escaping (_ result: Result<Product, SnabbleError>) -> () ) {
+        self.getSingleProduct(url, placeholder, identifier, template, shopId) { (result: Result<LookupResult, SnabbleError>) in
             switch result {
             case .success(let lookupResult): completion(Result.success(lookupResult.product))
             case .failure(let error): completion(Result.failure(error))
@@ -15,7 +15,7 @@ extension ProductDB {
         }
     }
 
-    func getSingleProduct(_ url: String, _ placeholder: String, _ identifier: String, _ shopId: String, completion: @escaping (_ result: Result<LookupResult, SnabbleError>) -> () ) {
+    func getSingleProduct(_ url: String, _ placeholder: String, _ identifier: String, _ template: String? = nil, _ shopId: String, completion: @escaping (_ result: Result<LookupResult, SnabbleError>) -> () ) {
         let session = SnabbleAPI.urlSession()
 
         // TODO: is this the right value?
@@ -313,8 +313,6 @@ private struct APIProduct: Codable {
                        saleStop: self.saleStop ?? false,
                        bundles: bundles,
                        transmissionCodes: transmissionCodes,
-                       referenceUnit: Unit.from(self.referenceUnit),
-                       encodingUnit: Unit.from(self.encodingUnit)
-        )
+                       referenceUnit: Unit.from(self.referenceUnit))
     }
 }

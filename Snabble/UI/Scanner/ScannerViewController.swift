@@ -363,7 +363,7 @@ extension ScannerViewController {
 
         self.scanningView.stopScanning()
 
-        self.productForCode(scannedCode, type) { product, code in
+        self.productForCode(scannedCode) { product, code in
             self.timer?.invalidate()
             self.timer = nil
             self.spinner.stopAnimating()
@@ -425,6 +425,37 @@ extension ScannerViewController {
 
         self.scanningView.stopScanning()
         self.present(alert, animated: true)
+    }
+
+    private func productForCode(_ code: String, completion: @escaping (Product?, String) -> () ) {
+        let result = CodeMatcher.match(code)
+
+        guard result.count > 0 else {
+            return completion(nil, "")
+        }
+
+        // only one match? look that up directly
+        if result.count == 1 {
+            let lookupCode = result[0].lookupCode
+            self.productProvider.productByScannableCode(lookupCode, result[0].template.id, self.shop.id) { result in
+                switch result {
+                case .success(let lookupResult):
+                    completion(lookupResult.product, lookupResult.code ?? code)
+                case .failure: completion(nil, "")
+                }
+            }
+        } else {
+            // multiple possible matches. try looking them up locally first, and if that fails, make an online check
+            let lookupCodes = result.map { $0.lookupCode }
+            let templates = result.map { $0.template.id }
+            self.productProvider.productByScannableCodes(lookupCodes, templates, self.shop.id, forceDownload: false) { result in
+                switch result {
+                case .success(let lookupResult):
+                    completion(lookupResult.product, lookupResult.code ?? code)
+                case .failure: completion(nil, "")
+                }
+            }
+        }
     }
 
     private func productForCode(_ code: String, _ type: AVMetadataObject.ObjectType?, completion: @escaping (Product?, String) -> () ) {

@@ -133,10 +133,7 @@ public struct Product: Codable {
     /// `referenceUnit` specifies the Unit that the product's list price refers to, e.g. `.kilogram`.
     public let referenceUnit: Unit?
 
-    /// for products with unit-dependent prices.
-    /// `encodingUnit` specifies the Unit that the product's sale price refers to, e.g. `.gram`.
-    /// NB: will be removed in the next release
-    internal let encodingUnit: Unit?
+    internal var encodingUnit: Unit? = nil
 
     /// convenience accessor for the price
     public var price: Int {
@@ -176,7 +173,6 @@ public struct Product: Codable {
         self.bundles = try container.decodeIfPresent(.bundles) ?? []
         self.transmissionCodes = try container.decodeIfPresent(.transmissionCodes) ?? [:]
         self.referenceUnit = try container.decodeIfPresent(.referenceUnit)
-        self.encodingUnit = try container.decodeIfPresent(.encodingUnit)
     }
 
     init(sku: String,

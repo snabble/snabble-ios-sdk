@@ -92,6 +92,47 @@ extension ProductDB {
         return nil
     }
 
+    func productByScannableCode(_ dbQueue: DatabaseQueue, _ code: String, _ template: String, _ shopId: String?, retry: Bool = false) -> LookupResult? {
+        do {
+            let row = try dbQueue.inDatabase { db in
+                return try self.fetchOne(db, ProductDB.productQuery + " " + """
+                    join scannableCodes s on s.sku = p.sku
+                    where s.code = ? and s.template = ?
+                    """, arguments: [code, template])
+            }
+            if let product = self.productFromRow(dbQueue, row, shopId) {
+                let transmissionCode = product.transmissionCodes[code]
+                return LookupResult(product: product, code: transmissionCode)
+            } else if !retry {
+                // initial lookup failed
+
+                // if it was an EAN-8, try again with the same EAN padded to an EAN-13
+                // if it was an EAN-13 with a leading "0", try again with all leading zeroes removed
+                if code.count == 8 {
+                    Log.debug("8->13 lookup attempt \(code) -> 00000\(code)")
+                    return self.productByScannableCode(dbQueue, "00000" + code, template, shopId, retry: true)
+                } else if code.first == "0", let codeInt = Int(code) {
+                    Log.debug("no leading zeroes db lookup attempt \(code) -> \(codeInt)")
+                    return self.productByScannableCode(dbQueue, String(codeInt), template, shopId, retry: true)
+                }
+            }
+        } catch {
+            self.logError("productByScannableCode db error: \(error)")
+        }
+
+        return nil
+    }
+
+    func productByScannableCodes(_ dbQueue: DatabaseQueue, _ codes: [String], _ templates: [String], _ shopId: String?, retry: Bool = false) -> LookupResult? {
+        for i in 0 ..< codes.count {
+            if let result = self.productByScannableCode(dbQueue, codes[i], templates[i], shopId) {
+                return result
+            }
+        }
+
+        return nil
+    }
+
     func productByWeighItemId(_ dbQueue: DatabaseQueue, _ weighItemId: String, _ shopId: String?) -> Product? {
         do {
             let row = try dbQueue.inDatabase { db in
@@ -130,7 +171,7 @@ extension ProductDB {
             let rows = try dbQueue.inDatabase { db in
                 return try self.fetchAll(db, ProductDB.productQuery + " " + """
                     join scannableCodes s on s.sku = p.sku
-                    where (s.code glob ? or s.code glob ?) \(depositCondition) and p.weighing != \(ProductType.preWeighed.rawValue)
+                    where s.template = "default" and (s.code glob ? or s.code glob ?) \(depositCondition) and p.weighing != \(ProductType.preWeighed.rawValue)
                     limit ?
                     """, arguments: [prefix + "*", "00000" + prefix + "*", limit])
             }
@@ -226,7 +267,6 @@ extension ProductDB {
         let (scannableCodes, transmissionCodes) = self.buildScannableCodeSets(row["scannableCodes"], row["transmissionCodes"])
 
         let referenceUnit = Unit.from(row["referenceUnit"] as? String)
-        let encodingUnit = Unit.from(row["encodingUnit"] as? String)
 
         let p = Product(sku: sku,
                         name: row["name"],
@@ -247,8 +287,7 @@ extension ProductDB {
                         saleStop: row["saleStop"] ?? false,
                         bundles: bundles,
                         transmissionCodes: transmissionCodes,
-                        referenceUnit: referenceUnit,
-                        encodingUnit: encodingUnit)
+                        referenceUnit: referenceUnit)
 
         return p
     }

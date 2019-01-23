@@ -131,6 +131,14 @@ fileprivate enum TemplateComponent {
         }
     }
 
+    /// is this a `catchAll` component?
+    var isCatchall: Bool {
+        switch self {
+        case .catchall: return true
+        default: return false
+        }
+    }
+
     /// get a simple but unique key for each type
     fileprivate var key: Int {
         switch self {
@@ -284,10 +292,13 @@ struct ParseResult {
 
     /// return the (part of the) code we should use for database lookups
     var lookupCode: String {
-        guard let entry = self.entries.first(where: { $0.templateComponent.isCode }) else {
-            return ""
+        if let entry = self.entries.first(where: { $0.templateComponent.isCode }) {
+            return entry.value
         }
-        return entry.value
+        if let entry = self.entries.first(where: { $0.templateComponent.isCatchall }) {
+            return entry.value
+        }
+        return ""
     }
 
     /// is this result valid?

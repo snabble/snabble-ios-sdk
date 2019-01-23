@@ -272,6 +272,7 @@ public struct Project: Decodable {
 
     public static let none = Project()
 
+    #warning("remove this when we have templates")
     public func codeRange(for format: ScanFormat) -> Range<Int>? {
         guard self.id.hasPrefix("ikea") else {
             return nil

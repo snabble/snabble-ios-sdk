@@ -83,6 +83,9 @@ public protocol ProductProvider: class {
     /// get a product and the code by which it was found by (one of) its scannable codes
     func productByScannableCode(_ code: String, _ shopId: String) -> LookupResult?
 
+    /// get a product and the code by which it was found by (one of) its scannable codes
+    func productByScannableCode(_ code: String, _ template: String, _ shopId: String) -> LookupResult?
+
     /// get a product by (one of) its weighItemIds
     func productByWeighItemId(_ weighItemId: String, _ shopId: String) -> Product?
 
@@ -122,6 +125,24 @@ public protocol ProductProvider: class {
     ///   - result: the lookup result or the error
     func productByScannableCode(_ code: String, _ shopId: String, forceDownload: Bool, completion: @escaping (_ result: Result<LookupResult, SnabbleError>) -> () )
 
+    /// asynchronously get a product by (one of) its scannable codes
+    ///
+    /// - Parameters:
+    ///   - code: the code to look for
+    ///   - template: the template that matched this code
+    ///   - forceDownload: if true, skip the lookup in the local DB
+    ///   - result: the lookup result or the error
+    func productByScannableCode(_ code: String, _ template: String, _ shopId: String, forceDownload: Bool, completion: @escaping (_ result: Result<LookupResult, SnabbleError>) -> () )
+
+    /// asynchronously get a product by (one of) its scannable codes
+    ///
+    /// - Parameters:
+    ///   - code: the code to look for
+    ///   - template: the template that matched this code
+    ///   - forceDownload: if true, skip the lookup in the local DB
+    ///   - result: the lookup result or the error
+    func productByScannableCodes(_ codes: [String], _ templates: [String], _ shopId: String, forceDownload: Bool, completion: @escaping (_ result: Result<LookupResult, SnabbleError>) -> () )
+
     /// asynchronously get a product by (one of) it weigh item ids
     ///
     /// - Parameters:
@@ -152,6 +173,10 @@ public extension ProductProvider {
 
     public func productByScannableCode(_ code: String, _ shopId: String, completion: @escaping (_ result: Result<LookupResult, SnabbleError>) -> () ) {
         self.productByScannableCode(code, shopId, forceDownload: false, completion: completion)
+    }
+
+    public func productByScannableCode(_ code: String, _ template: String, _ shopId: String, completion: @escaping (_ result: Result<LookupResult, SnabbleError>) -> () ) {
+        self.productByScannableCode(code, template, shopId, forceDownload: false, completion: completion)
     }
 
     public func productsByScannableCodePrefix(_ prefix: String, filterDeposits: Bool = true) -> [Product] {
@@ -583,6 +608,24 @@ extension ProductDB {
         return self.productByScannableCode(db, code, shopId)
     }
 
+    /// get a product by its scannable code
+    public func productByScannableCode(_ code: String, _ template: String, _ shopId: String) -> LookupResult? {
+        guard let db = self.db else {
+            return nil
+        }
+
+        return self.productByScannableCode(db, code, template, shopId)
+    }
+
+    /// get a product by its scannable code
+    public func productByScannableCodes(_ codes: [String], _ templates: [String], _ shopId: String) -> LookupResult? {
+        guard let db = self.db else {
+            return nil
+        }
+
+        return self.productByScannableCodes(db, codes, templates, shopId)
+    }
+
     /// get a product by its weighItemId
     public func productByWeighItemId(_ weighItemId: String, _ shopId: String) -> Product? {
         guard let db = self.db else {
@@ -653,7 +696,7 @@ extension ProductDB {
             return
         }
 
-        self.getSingleProduct(self.project.links.productBySku.href, "{sku}", sku, shopId, completion: completion)
+        self.getSingleProduct(self.project.links.productBySku.href, "{sku}", sku, nil, shopId, completion: completion)
     }
 
     /// asynchronously get a product by (one of) it scannable codes
@@ -673,8 +716,44 @@ extension ProductDB {
             return
         }
 
-        self.getSingleProduct(self.project.links.productByCode.href, "{code}", code, shopId, completion: completion)
+        self.getSingleProduct(self.project.links.productByCode.href, "{code}", code, nil, shopId, completion: completion)
     }
+
+    /// asynchronously get a product by (one of) it scannable codes
+    ///
+    /// invokes the completion handler on the main thread with the result of the lookup
+    ///
+    /// - Parameters:
+    ///   - code: the code to look for
+    ///   - template: the template that matched the scanned code
+    ///   - forceDownload: if true, skip the lookup in the local DB
+    ///   - product: the product found, or nil.
+    ///   - error: whether an error occurred during the lookup.
+    public func productByScannableCode(_ code: String, _ template: String, _ shopId: String, forceDownload: Bool, completion: @escaping (_ result: Result<LookupResult, SnabbleError>) -> ()) {
+        if self.lookupLocally(forceDownload), let result = self.productByScannableCode(code, template, shopId) {
+            DispatchQueue.main.async {
+                completion(Result.success(result))
+            }
+            return
+        }
+
+        self.getSingleProduct(self.project.links.productByCode.href, "{code}", code, template, shopId, completion: completion)
+    }
+
+    public func productByScannableCodes(_ codes: [String], _ templates: [String], _ shopId: String, forceDownload: Bool, completion: @escaping (_ result: Result<LookupResult, SnabbleError>) -> ()) {
+        if self.lookupLocally(forceDownload), let result = self.productByScannableCodes(codes, templates, shopId) {
+            DispatchQueue.main.async {
+                completion(Result.success(result))
+            }
+            return
+        }
+
+        #warning("fixme")
+        // self.getSingleProduct(self.project.links.productByCode.href, "{code}", code, template, shopId, completion: completion)
+    }
+
+
+
 
     /// asynchronously get a product by (one of) it weigh item ids
     ///
@@ -693,7 +772,7 @@ extension ProductDB {
             return
         }
 
-        self.getSingleProduct(self.project.links.productByWeighItemId.href, "{id}", weighItemId, shopId, completion: completion)
+        self.getSingleProduct(self.project.links.productByWeighItemId.href, "{id}", weighItemId, nil, shopId, completion: completion)
     }
 
     func logError(_ msg: String) {
