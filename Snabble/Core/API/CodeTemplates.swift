@@ -9,13 +9,42 @@ import Foundation
 // template parsing and matching, see
 // https://github.com/snabble/product-ng/blob/master/code-templates.md
 
+fileprivate enum CodeType: Equatable {
+    case ean8
+    case ean13
+    case ean14
+    case untyped(Int)
+
+    init?(_ code: String) {
+        switch code {
+        case "ean8": self = .ean8
+        case "ean13": self = .ean13
+        case "ean14": self = .ean14
+        default:
+            guard let len = Int(code), len > 0 else {
+                return nil
+            }
+            self = .untyped(len)
+        }
+    }
+
+    var length: Int {
+        switch self {
+        case .ean8: return 8
+        case .ean13: return 13
+        case .ean14: return 14
+        case .untyped(let len): return len
+        }
+    }
+}
+
 /// the constituent parts of a template
-enum TemplateComponent {
+fileprivate enum TemplateComponent {
     /// known plain text that will be ignored (e.g. "01" from "01{code:ean14}". The value is the actual string
     case plainText(String)
     /// the code part of the template. this is what we will use to look up products in the database
     /// may specify a known code ("ean8", "ean13", or "ean14") or a length
-    case code(String)
+    case code(CodeType)
     /// the embedded data of the code (not necessarily always a weight), the value is the length of the field
     case weight(Int)
     /// the embedded price of one `referenceUnit` worth of the product. For weight-dependenent prices, this is usually the price per kilogram.
@@ -27,22 +56,19 @@ enum TemplateComponent {
     /// represents the internal 5-digit-checksum for embedded data in an EAN-13, which is always one character.
     case internalChecksum
 
-    fileprivate static let knownCodes = ["ean8": 8, "ean13": 13, "ean14": 14]
-
     /// parse one template component. properties look like "{name:length}", everything else is considered plain text
     init?(_ str: String) {
         if str.prefix(1) == "{" {
-            // strip off the braces and split
+            // strip off the braces and split at the first ":"
             let parts = str.dropFirst().dropLast().components(separatedBy: ":")
             let lengthPart = parts.count > 1 ? parts[1] : "1"
             let length = Int(lengthPart)
 
             if parts[0] == "code" {
-                if TemplateComponent.knownCodes.keys.contains(lengthPart) || (length != nil && length! > 0) {
-                    self = .code(lengthPart)
-                } else {
+                guard let codeType = CodeType(lengthPart) else {
                     return nil
                 }
+                self = .code(codeType)
             } else {
                 guard let len = length, len > 0 else {
                     return nil
@@ -64,7 +90,7 @@ enum TemplateComponent {
     var regex: String {
         switch self {
         case .plainText(let str): return "(\\Q\(str)\\E)"
-        case .code(let str): return "(\\d{\(self.codeLength(str))})"
+        case .code(let codeType): return "(\\d{\(codeType.length)})"
         case .weight(let len): return "(\\d{\(len)})"
         case .price(let len): return "(\\d{\(len)})"
         case .ignore(let len): return "(.{\(len)})"
@@ -76,7 +102,7 @@ enum TemplateComponent {
     var length: Int {
         switch self {
         case .plainText(let str): return str.count
-        case .code(let str): return self.codeLength(str)
+        case .code(let codeType): return codeType.length
         case .weight(let len): return len
         case .price(let len): return len
         case .ignore(let len): return len
@@ -111,26 +137,16 @@ enum TemplateComponent {
         case .internalChecksum: return 5
         }
     }
-
-    private func codeLength(_ str: String) -> Int {
-        if let len = TemplateComponent.knownCodes[str] {
-            return len
-        } else {
-            return Int(str) ?? 1
-        }
-    }
 }
 
 /// a `CodeTemplate` represents a fully parsed template expression, like "01{code:ean14"
 struct CodeTemplate {
+    /// the template's identifier
+    let id: String
     /// the original template string
     let template: String
     /// the parsed components in left-to-right order
-    let components: [TemplateComponent]
-
-    static let ean13instore = CodeTemplate("{code:5}{i}{_:7}")!
-    static let ean14code128 = CodeTemplate("01{code:ean14}")!
-    static let edekaDiscount = CodeTemplate("97{code:ean13}{price:6}{_}")!
+    fileprivate let components: [TemplateComponent]
 
     /// RE for a token
     private static let token = try! NSRegularExpression(pattern: "^(\\{.*?\\})", options: [])
@@ -138,7 +154,8 @@ struct CodeTemplate {
     private static let plaintext = try! NSRegularExpression(pattern: "^([^{]+)", options: [])
     private static let regexps = [ token, plaintext ]
 
-    init?(_ template: String) {
+    init?(_ id: String, _ template: String) {
+        self.id = ""
         self.template = template
         var str = template
 
@@ -246,7 +263,7 @@ struct CodeTemplate {
 /// the matcher's result for one component
 struct ParsedComponent {
     /// the component that we matched against
-    let template: TemplateComponent
+    fileprivate let template: TemplateComponent
     /// the matched value
     let value: String
 }
@@ -281,7 +298,6 @@ struct ParseResult {
         var result = ""
         var embeddedData = ""
         var needChecksum = false
-        var isEan13 = false
         for component in components {
             switch component.template {
             case .weight:
@@ -289,9 +305,6 @@ struct ParseResult {
                 let padding = String(repeatElement("0", count: component.template.length - str.count))
                 embeddedData = padding + str
                 result.append(embeddedData)
-            case .code(let len):
-                isEan13 = len == "ean13"
-                result.append(component.value)
             case .internalChecksum:
                 needChecksum = true
                 result.append(component.value)
@@ -301,11 +314,11 @@ struct ParseResult {
         }
 
         // calculate EAN-13 checksum(s)
-        if isEan13 && result.count == 13 && embeddedData.count == 5 {
+        if result.count == 13 && embeddedData.count == 5 {
             if needChecksum {
                 let embedDigits = embeddedData.map { Int(String($0))! }
                 let check = EAN13.internalChecksum5(embedDigits)
-                result = String(result.prefix(6)) + String(check) + String(result.suffix(6))
+                result = String(result.prefix(6) + String(check) + result.suffix(6))
             }
             if let ean = EAN13(String(result.prefix(12))) {
                 return ean.code
@@ -317,11 +330,12 @@ struct ParseResult {
     /// is this component's value valid?
     private func valid(_ component: ParsedComponent) -> Bool {
         switch component.template {
-        case .code(let format):
-            if TemplateComponent.knownCodes[format] != nil {
+        case .code(let codeType):
+            switch codeType {
+            case .ean8, .ean13, .ean14:
                 return EAN.parse(component.value, nil) != nil
-            } else {
-                return component.value.count == Int(format)
+            case .untyped(let len):
+                return component.value.count == len
             }
         case .internalChecksum:
             guard let weightComponent = self.components.first(where: { $0.template.isWeight }) else {
@@ -335,3 +349,18 @@ struct ParseResult {
         }
     }
 }
+
+//struct XXXX {
+//    static let builtinTemplates = [
+//        CodeTemplate("ean13_instore", "{code:5}{_:8}")!,
+//        CodeTemplate("ean13_instore_chk", "{code:5}{i}{_:7}")!,
+//        CodeTemplate("edeka_discount", "97{code:ean13}{price:6}{_}")!
+//    ]
+//
+//    static var allTemplates = [CodeTemplate]()
+//
+//    static func prepare(_ templates: [CodeTemplate]) {
+//        allTemplates = builtinTemplates + templates
+//        allTemplates.sort { $0.expectedLength < $1.expectedLength }
+//    }
+//}
