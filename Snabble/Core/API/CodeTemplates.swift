@@ -45,9 +45,9 @@ fileprivate enum TemplateComponent {
     /// the code part of the template. this is what we will use to look up products in the database
     /// may specify a known code ("ean8", "ean13", or "ean14") or a length
     case code(CodeType)
-    /// the embedded data of the code (not necessarily always a weight), the value is the length of the field
-    case weight(Int)
-    /// the embedded price of one `referenceUnit` worth of the product. For weight-dependenent prices, this is usually the price per kilogram.
+    /// the embedded data of the code (weight, price or amount), the value is the length of the field
+    case embed(Int)
+    /// the embedded price of one `referenceUnit` worth of the product. For weight-dependent prices, this is usually the price per kilogram.
     /// The value is the length of the field
     case price(Int)
     /// unknown plain text that will be ignored (e.g. checksums that we can't/won't verify)
@@ -55,6 +55,8 @@ fileprivate enum TemplateComponent {
     case ignore(Int)
     /// represents the internal 5-digit-checksum for embedded data in an EAN-13, which is always one character.
     case internalChecksum
+    /// match the entire string - used only in our internal "default" template
+    case catchall
 
     /// parse one template component. properties look like "{name:length}", everything else is considered plain text
     init?(_ str: String) {
@@ -74,10 +76,11 @@ fileprivate enum TemplateComponent {
                     return nil
                 }
                 switch parts[0] {
-                case "weight": self = .weight(len)
+                case "embed": self = .embed(len)
                 case "price": self = .price(len)
                 case "_": self = .ignore(len)
                 case "i": self = .internalChecksum
+                case "*": self = .catchall
                 default: return nil
                 }
             }
@@ -91,10 +94,11 @@ fileprivate enum TemplateComponent {
         switch self {
         case .plainText(let str): return "(\\Q\(str)\\E)"
         case .code(let codeType): return "(\\d{\(codeType.length)})"
-        case .weight(let len): return "(\\d{\(len)})"
+        case .embed(let len): return "(\\d{\(len)})"
         case .price(let len): return "(\\d{\(len)})"
         case .ignore(let len): return "(.{\(len)})"
         case .internalChecksum: return "(\\d)"
+        case .catchall: return "(.*)"
         }
     }
 
@@ -103,10 +107,11 @@ fileprivate enum TemplateComponent {
         switch self {
         case .plainText(let str): return str.count
         case .code(let codeType): return codeType.length
-        case .weight(let len): return len
+        case .embed(let len): return len
         case .price(let len): return len
         case .ignore(let len): return len
         case .internalChecksum: return 1
+        case .catchall: return 0
         }
     }
 
@@ -118,10 +123,10 @@ fileprivate enum TemplateComponent {
         }
     }
 
-    /// is this a `weight` component?
-    var isWeight: Bool {
+    /// is this an `embed` component?
+    var isEmbed: Bool {
         switch self {
-        case .weight: return true
+        case .embed: return true
         default: return false
         }
     }
@@ -131,10 +136,11 @@ fileprivate enum TemplateComponent {
         switch self {
         case .plainText: return 0
         case .code: return 1
-        case .weight: return 2
+        case .embed: return 2
         case .price: return 3
         case .ignore: return 4
         case .internalChecksum: return 5
+        case .catchall: return 6
         }
     }
 }
@@ -145,6 +151,8 @@ struct CodeTemplate {
     let id: String
     /// the original template string
     let template: String
+    /// the expected length of a string that could possibly match
+    let expectedLength: Int
     /// the parsed components in left-to-right order
     fileprivate let components: [TemplateComponent]
 
@@ -154,8 +162,10 @@ struct CodeTemplate {
     private static let plaintext = try! NSRegularExpression(pattern: "^([^{]+)", options: [])
     private static let regexps = [ token, plaintext ]
 
+    static let `default` = CodeTemplate("default", "{*}")!
+
     init?(_ id: String, _ template: String) {
-        self.id = ""
+        self.id = id
         self.template = template
         var str = template
 
@@ -187,6 +197,7 @@ struct CodeTemplate {
             return nil
         }
         self.components = components
+        self.expectedLength = components.reduce(0) { $0 + $1.length }
 
         // further checks:
         // each component may occur 0 or 1 times, except _
@@ -203,17 +214,12 @@ struct CodeTemplate {
             return nil
         }
 
-        // when {i} is present, check for {weight:5}
+        // when {i} is present, check for {embed:5}
         if count[TemplateComponent.internalChecksum.key] != nil {
-            guard let len = components.first(where: { $0.isWeight })?.length, len == 5 else {
+            guard let len = components.first(where: { $0.isEmbed })?.length, len == 5 else {
                 return nil
             }
         }
-    }
-
-    /// total length of all components
-    var expectedLength: Int {
-        return components.reduce(0) { $0 + $1.length }
     }
 
     /// check if a given string matches this template
@@ -221,11 +227,13 @@ struct CodeTemplate {
     /// - Parameter string: the code to match
     /// - Returns: a `ParseResult` object, or `nil` if the code didn't match
     func match(_ string: String) -> ParseResult? {
-        let regexStr = self.components.map { $0.regex }.joined()
+        if self.expectedLength > 0 && self.expectedLength != string.count {
+            return nil
+        }
+        let regexStr = "^" + self.components.map { $0.regex }.joined() + "$"
         let matches = self.regexMatches(regexStr, string)
         if matches.count == self.components.count {
-            let components = zip(self.components, matches).map { ParsedComponent(template: $0.0, value: $0.1) }
-            let result = ParseResult(components: components)
+            let result = ParseResult(self, matches)
             return result.isValid ? result : nil
         } else {
             return nil
@@ -243,7 +251,7 @@ struct CodeTemplate {
             let regex = try NSRegularExpression(pattern: regexStr, options: [])
             let range = NSRange(location: 0, length: text.count)
             let matches = regex.matches(in: text, options: [], range: range)
-            if matches.count == 1, let match = matches.first {
+            if let match = matches.first {
                 var result = [String]()
                 for r in 1 ..< match.numberOfRanges {
                     if let range = Range(match.range(at: r), in: text) {
@@ -260,56 +268,63 @@ struct CodeTemplate {
     }
 }
 
-/// the matcher's result for one component
-struct ParsedComponent {
-    /// the component that we matched against
-    fileprivate let template: TemplateComponent
-    /// the matched value
-    let value: String
-}
-
 /// the matcher's result
 struct ParseResult {
-    /// matched components, in left-to-right order
-    let components: [ParsedComponent]
+    /// the template we matched against
+    let template: CodeTemplate
+
+    fileprivate typealias Entry = (templateComponent: TemplateComponent, value: String)
+    fileprivate let entries: [Entry]
+
+    init(_ template: CodeTemplate, _ values: [String]) {
+        assert(template.components.count == values.count)
+        self.template = template
+        self.entries = Array(zip(template.components, values))
+    }
 
     /// return the (part of the) code we should use for database lookups
     var lookupCode: String {
-        guard let codeComponent = self.components.first(where: { $0.template.isCode }) else {
+        guard let entry = self.entries.first(where: { $0.templateComponent.isCode }) else {
             return ""
         }
-
-        return codeComponent.value
+        return entry.value
     }
 
     /// is this result valid?
     /// (it is if all components are valid)
     var isValid: Bool {
-        for comp in self.components {
-            if !self.valid(comp) {
+        for component in self.entries {
+            if !self.valid(component) {
                 return false
             }
         }
         return true
     }
 
-    /// embed data into a scanned code in place of the `weight` placeholder
+    var embeddedData: Int? {
+        guard let entry = self.entries.first(where: { $0.templateComponent.isEmbed }) else {
+            return nil
+        }
+        return Int(entry.value)
+    }
+
+    /// embed data into a scanned code in place of the `embed` placeholder
     func embed(_ data: Int) -> String {
         var result = ""
         var embeddedData = ""
         var needChecksum = false
-        for component in components {
-            switch component.template {
-            case .weight:
+        for entry in self.entries {
+            switch entry.templateComponent {
+            case .embed:
                 let str = String(data)
-                let padding = String(repeatElement("0", count: component.template.length - str.count))
+                let padding = String(repeatElement("0", count: entry.templateComponent.length - str.count))
                 embeddedData = padding + str
                 result.append(embeddedData)
             case .internalChecksum:
                 needChecksum = true
-                result.append(component.value)
+                result.append(entry.value)
             default:
-                result.append(component.value)
+                result.append(entry.value)
             }
         }
 
@@ -328,39 +343,65 @@ struct ParseResult {
     }
 
     /// is this component's value valid?
-    private func valid(_ component: ParsedComponent) -> Bool {
-        switch component.template {
+    private func valid(_ entry: Entry) -> Bool {
+        switch entry.templateComponent {
         case .code(let codeType):
             switch codeType {
             case .ean8, .ean13, .ean14:
-                return EAN.parse(component.value, nil) != nil
+                return EAN.parse(entry.value, nil) != nil
             case .untyped(let len):
-                return component.value.count == len
+                return entry.value.count == len
             }
         case .internalChecksum:
-            guard let weightComponent = self.components.first(where: { $0.template.isWeight }) else {
+            guard let embedComponent = self.entries.first(where: { $0.templateComponent.isEmbed }) else {
                 return false
             }
-            let digits = weightComponent.value.compactMap { Int(String($0)) }
+            let digits = embedComponent.value.compactMap { Int(String($0)) }
             let checksum = EAN13.internalChecksum5(digits)
-            return String(checksum) == component.value
+            return String(checksum) == entry.value
         default:
             return true
         }
     }
 }
 
-//struct XXXX {
-//    static let builtinTemplates = [
-//        CodeTemplate("ean13_instore", "{code:5}{_:8}")!,
-//        CodeTemplate("ean13_instore_chk", "{code:5}{i}{_:7}")!,
-//        CodeTemplate("edeka_discount", "97{code:ean13}{price:6}{_}")!
-//    ]
-//
-//    static var allTemplates = [CodeTemplate]()
-//
-//    static func prepare(_ templates: [CodeTemplate]) {
-//        allTemplates = builtinTemplates + templates
-//        allTemplates.sort { $0.expectedLength < $1.expectedLength }
-//    }
-//}
+struct CodeMatcher {
+    static let builtinTemplates = [
+        "ean13_instore":        "2{code:5}{_}{embed:5}{_}",
+        "ean13_instore_chk":    "2{code:5}{i}{embed:5}{_}",
+        "german_print":         "4{code:2}{_:5}{embed:4}{_}",
+        "ean14_code128":        "01{code:ean14}",
+        "edeka_discount":       "97{code:ean13}{embed:6}{_}",
+    ]
+
+    private static let templates = prepareTemplates()
+
+    static func prepareTemplates() -> [CodeTemplate] {
+        var templates = [CodeTemplate]()
+        builtinTemplates.forEach { id, tmpl in
+            guard let template = CodeTemplate(id, tmpl) else {
+                return
+            }
+
+            templates.append(template)
+        }
+
+        // sort by length
+        templates.sort { $0.expectedLength < $1.expectedLength }
+
+        // add the catchall template last
+        templates.append(CodeTemplate.default)
+
+        return templates
+    }
+
+    static func match(_ code: String) -> [ParseResult] {
+        var results = [ParseResult]()
+        for template in templates {
+            if let result = template.match(code) {
+                results.append(result)
+            }
+        }
+        return results
+    }
+}
