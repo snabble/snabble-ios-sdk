@@ -111,10 +111,11 @@ final class EmbeddedCodesCheckoutViewController: UIViewController {
         let lines: [String] = self.cart.items.reduce(into: [], { result, item in
             if item.product.type == .userMustWeigh {
                 // generate an EAN with the embedded weight
-                if let template = item.product.weighedItemIds?.first {
-                    let ean = EAN13.embedDataInEan(template, data: item.quantity)
-                    result.append("1;\(ean)")
-                }
+                #warning("fixme")
+//                if let template = item.product.weighedItemIds?.first {
+//                    let ean = EAN13.embedDataInEan(template, data: item.quantity)
+//                    result.append("1;\(ean)")
+//                }
             } else {
                 result.append("\(item.quantity);\(item.scannedCode)")
             }
@@ -163,10 +164,11 @@ final class EmbeddedCodesCheckoutViewController: UIViewController {
         return items.reduce(into: [], { result, item in
             if item.product.type == .userMustWeigh {
                 // generate an EAN with the embedded weight
-                if let template = item.product.weighedItemIds?.first {
-                    let ean = EAN13.embedDataInEan(template, data: item.quantity)
-                    result.append(ean)
-                }
+                #warning("fixme")
+//                if let template = item.product.weighedItemIds?.first {
+//                    let ean = EAN13.embedDataInEan(template, data: item.quantity)
+//                    result.append(ean)
+//                }
             } else {
                 result.append(contentsOf: Array(repeating: item.scannedCode, count: item.quantity))
             }

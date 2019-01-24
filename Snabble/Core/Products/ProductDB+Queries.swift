@@ -14,10 +14,25 @@ extension ProductDB {
     static let productQuery = """
         select
             p.*, 0 as listPrice, null as discountedPrice, null as basePrice,
-            (select group_concat(sc.code) from scannableCodes sc where sc.sku = p.sku) scannableCodes,
-            (select group_concat(w.weighItemId) from weighItemIds w where w.sku = p.sku) weighItemIds,
-            (select group_concat(ifnull(sc.transmissionCode, "")) from scannableCodes sc where sc.sku = p.sku) transmissionCodes
+            null as code_encodingUnit,
+            (select group_concat(sc.code) from scannableCodes sc where sc.sku = p.sku) as codes,
+            (select group_concat(sc.template) from scannableCodes sc where sc.sku = p.sku) as templates,
+            (select group_concat(ifnull(sc.encodingUnit, "")) from scannableCodes sc where sc.sku = p.sku) as encodingUnits,
+            (select group_concat(ifnull(sc.transmissionCode, "")) from scannableCodes sc where sc.sku = p.sku) as transmissionCodes
         from products p
+        """
+
+    static let productQueryUnits = """
+        select
+            p.*, 0 as listPrice, null as discountedPrice, null as basePrice,
+            s.encodingUnit as code_encodingUnit,
+            (select group_concat(sc.code) from scannableCodes sc where sc.sku = p.sku) as codes,
+            (select group_concat(sc.template) from scannableCodes sc where sc.sku = p.sku) as templates,
+            (select group_concat(ifnull(sc.encodingUnit, "")) from scannableCodes sc where sc.sku = p.sku) as encodingUnits,
+            (select group_concat(ifnull(sc.transmissionCode, "")) from scannableCodes sc where sc.sku = p.sku) as transmissionCodes
+        from products p
+        join scannableCodes s on s.sku = p.sku
+        where s.code = ? and s.template = ?
         """
 
     func productBySku(_ dbQueue: DatabaseQueue, _ sku: String, _ shopId: String?) -> Product? {
@@ -61,6 +76,7 @@ extension ProductDB {
         return []
     }
 
+    @available(*, deprecated, message: "will be removed")
     func productByScannableCode(_ dbQueue: DatabaseQueue, _ code: String, _ shopId: String?, retry: Bool = false) -> LookupResult? {
         do {
             let row = try dbQueue.inDatabase { db in
@@ -70,7 +86,7 @@ extension ProductDB {
                     """, arguments: [code])
                 }
             if let product = self.productFromRow(dbQueue, row, shopId) {
-                let transmissionCode = product.transmissionCodes[code]
+                let transmissionCode = "xxx"
                 return LookupResult(product: product, code: transmissionCode)
             } else if !retry {
                 // initial lookup failed
@@ -95,13 +111,11 @@ extension ProductDB {
     func productByScannableCode(_ dbQueue: DatabaseQueue, _ code: String, _ template: String, _ shopId: String?, retry: Bool = false) -> LookupResult? {
         do {
             let row = try dbQueue.inDatabase { db in
-                return try self.fetchOne(db, ProductDB.productQuery + " " + """
-                    join scannableCodes s on s.sku = p.sku
-                    where s.code = ? and s.template = ?
-                    """, arguments: [code, template])
+                return try self.fetchOne(db, ProductDB.productQueryUnits, arguments: [code, template])
             }
             if let product = self.productFromRow(dbQueue, row, shopId) {
-                let transmissionCode = product.transmissionCodes[code]
+                #warning("fixme")
+                let transmissionCode: String? = nil // product.transmissionCodes[code]
                 return LookupResult(product: product, code: transmissionCode)
             } else if !retry {
                 // initial lookup failed
@@ -123,9 +137,9 @@ extension ProductDB {
         return nil
     }
 
-    func productByScannableCodes(_ dbQueue: DatabaseQueue, _ codes: [String], _ templates: [String], _ shopId: String?, retry: Bool = false) -> LookupResult? {
-        for i in 0 ..< codes.count {
-            if let result = self.productByScannableCode(dbQueue, codes[i], templates[i], shopId) {
+    func productByScannableCodes(_ dbQueue: DatabaseQueue, _ codes: [(String, String)], _ shopId: String?, retry: Bool = false) -> LookupResult? {
+        for (code, template) in codes {
+            if let result = self.productByScannableCode(dbQueue, code, template, shopId) {
                 return result
             }
         }
@@ -264,9 +278,14 @@ extension ProductDB {
 
         let bundles = self.productsBundling(dbQueue, sku, shopId)
 
-        let (scannableCodes, transmissionCodes) = self.buildScannableCodeSets(row["scannableCodes"], row["transmissionCodes"])
+        #warning("initialize me")
+        let codes = [ScannableCode]()
 
         let referenceUnit = Unit.from(row["referenceUnit"] as? String)
+        var encodingUnit = Unit.from(row["encodingUnit"] as? String)
+        if let encodingOverride = Unit.from(row["code_encodingUnit"] as? String) {
+            encodingUnit = encodingOverride
+        }
 
         let p = Product(sku: sku,
                         name: row["name"],
@@ -277,8 +296,7 @@ extension ProductDB {
                         listPrice: priceRow["listPrice"],
                         discountedPrice: priceRow["discountedPrice"],
                         type: ProductType(rawValue: row["weighing"]) ?? .singleItem,
-                        scannableCodes: scannableCodes,
-                        weighedItemIds: self.makeSet(row["weighItemIds"]),
+                        codes: codes,
                         depositSku: depositSku,
                         bundledSku: row["bundledSku"],
                         isDeposit: row["isDeposit"] == 1,
@@ -286,8 +304,8 @@ extension ProductDB {
                         saleRestriction: SaleRestriction(row["saleRestriction"]),
                         saleStop: row["saleStop"] ?? false,
                         bundles: bundles,
-                        transmissionCodes: transmissionCodes,
-                        referenceUnit: referenceUnit)
+                        referenceUnit: referenceUnit,
+                        encodingUnit: encodingUnit)
 
         return p
     }

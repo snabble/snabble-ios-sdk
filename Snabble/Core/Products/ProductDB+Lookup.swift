@@ -6,6 +6,79 @@
 
 extension ProductDB {
 
+    func resolveProductsLookup(_ url: String, _ codes: [(String, String)], _ shopId: String, completion: @escaping (_ result: Result<LookupResult, SnabbleError>) -> ()) {
+        let group = DispatchGroup()
+        var results = [Result<LookupResult, SnabbleError>]()
+
+        // lookup each code/template
+        for (code, template) in codes {
+            group.enter()
+            self.resolveProductsLookup(url, code, template, shopId) { result in
+                results.append(result)
+                group.leave()
+            }
+        }
+
+        // all requests done - return the first success, if any
+        group.notify(queue: DispatchQueue.main) {
+            for result in results {
+                switch result {
+                case .success: return completion(result)
+                default: ()
+                }
+            }
+
+            // no successes found, return the first error
+            completion(results[0])
+        }
+    }
+
+    private func resolveProductsLookup(_ url: String, _ code: String, _ template: String, _ shopId: String, completion: @escaping (_ result: Result<LookupResult, SnabbleError>) -> ()) {
+        let session = SnabbleAPI.urlSession()
+
+        // TODO: is this the right value?
+        let timeoutInterval: TimeInterval = 5
+
+        let parameters = [
+            "code": code,
+            "template": template,
+            "shopID": shopId
+        ]
+        let placeholder = "code=\(code),tmpl=\(template),shop=\(shopId)"
+
+        self.project.request(.get, url, parameters: parameters, timeout: timeoutInterval) { request in
+            guard let request = request else {
+                return completion(Result.failure(SnabbleError.noRequest))
+            }
+
+            let task = session.dataTask(with: request) { data, response, error in
+                if let data = data, let response = response as? HTTPURLResponse {
+                    if response.statusCode == 404 {
+                        DispatchQueue.main.async {
+                            Log.info("online product lookup for \(placeholder): not found")
+                            completion(Result.failure(SnabbleError.notFound))
+                        }
+                        return
+                    }
+
+                    do {
+                        Log.info("online product lookup for \(placeholder) succeeded")
+                        let resolvedProduct = try JSONDecoder().decode(ResolvedProduct.self, from: data)
+                        let product = resolvedProduct.convert(code, template)
+                        let lookupResult = LookupResult(product: product, code: code)
+                        completion(Result.success(lookupResult))
+                    } catch let error {
+                        self.returnError("product parse error: \(error)", completion)
+                    }
+                } else {
+                    self.returnError("error getting product from \(url): \(String(describing: error))", completion)
+                }
+            }
+
+            task.resume()
+        }
+    }
+
     func getSingleProduct(_ url: String, _ placeholder: String, _ identifier: String, _ template: String? = nil, _ shopId: String, completion: @escaping (_ result: Result<Product, SnabbleError>) -> () ) {
         self.getSingleProduct(url, placeholder, identifier, template, shopId) { (result: Result<LookupResult, SnabbleError>) in
             switch result {
@@ -212,9 +285,32 @@ private struct APIProducts: Decodable {
     }
 }
 
-private struct Code: Codable {
-    let code: String
-    let transmissionCode: String?
+enum APIProductType: String, Codable {
+    case `default`
+    case weighable
+    case deposit
+}
+
+enum APISaleRestriction: String, Codable {
+    case min_age_6
+    case min_age_12
+    case min_age_14
+    case min_age_16
+    case min_age_18
+    case min_age_21
+    case fsk
+
+    func convert() -> SaleRestriction {
+        switch self {
+        case .min_age_6: return .age(6)
+        case .min_age_12: return .age(12)
+        case .min_age_14: return .age(14)
+        case .min_age_16: return .age(16)
+        case .min_age_18: return .age(18)
+        case .min_age_21: return .age(21)
+        case .fsk: return .fsk
+        }
+    }
 }
 
 private struct APIProduct: Codable {
@@ -233,37 +329,14 @@ private struct APIProduct: Codable {
     let weighing: Weighing?
     let saleRestriction: APISaleRestriction?
     let saleStop: Bool?
-    let codes: [Code]
+    let codes: [ApiProductCode]
     let matchingCode: String?
     let referenceUnit: String?
     let encodingUnit: String?
 
-    enum APIProductType: String, Codable {
-        case `default`
-        case weighable
-        case deposit
-    }
-
-    enum APISaleRestriction: String, Codable {
-        case min_age_6
-        case min_age_12
-        case min_age_14
-        case min_age_16
-        case min_age_18
-        case min_age_21
-        case fsk
-
-        func convert() -> SaleRestriction {
-            switch self {
-            case .min_age_6: return .age(6)
-            case .min_age_12: return .age(12)
-            case .min_age_14: return .age(14)
-            case .min_age_16: return .age(16)
-            case .min_age_18: return .age(18)
-            case .min_age_21: return .age(21)
-            case .fsk: return .fsk
-            }
-        }
+    struct ApiProductCode: Codable {
+        let code: String
+        let transmissionCode: String?
     }
 
     struct Weighing: Codable {
@@ -276,16 +349,16 @@ private struct APIProduct: Codable {
     // convert a JSON representation to our normal model object
     func convert(_ deposit: Int?, _ bundles: [Product]) -> Product {
         var type = ProductType.singleItem
-        var weighItemIds: Set<String>?
 
         if let w = self.weighing {
             if let weighByCustomer = w.weighByCustomer {
                 type = weighByCustomer ? .userMustWeigh : .preWeighed
             }
-            weighItemIds = Set(w.weighedItemIds)
         }
 
         let scannableCodes = self.codes.map { $0.code }
+        #warning("initialize me")
+        let codes = [ScannableCode]()
 
         var transmissionCodes = [String: String]()
         for code in self.codes {
@@ -303,8 +376,7 @@ private struct APIProduct: Codable {
                        listPrice: self.price ?? 0,
                        discountedPrice: self.discountedPrice,
                        type: type,
-                       scannableCodes: Set(scannableCodes),
-                       weighedItemIds: weighItemIds,
+                       codes: codes,
                        depositSku: self.depositProduct,
                        bundledSku: self.bundledProduct,
                        isDeposit: self.productType == .deposit,
@@ -312,7 +384,90 @@ private struct APIProduct: Codable {
                        saleRestriction: self.saleRestriction?.convert() ?? .none,
                        saleStop: self.saleStop ?? false,
                        bundles: bundles,
-                       transmissionCodes: transmissionCodes,
                        referenceUnit: Unit.from(self.referenceUnit))
+    }
+}
+
+private struct ResolvedProduct: Decodable {
+    let sku, name: String
+    let description, subtitle: String?
+    let imageUrl: String?
+    let productType: APIProductType
+    let saleStop: Bool?
+    let codes: [ResolvedProductCode]
+    let price: Price
+    let saleRestriction: APISaleRestriction?
+    let deposit: Deposit?
+    let bundles: [Bundle]?
+    let weighByCustomer: Bool?
+    let referenceUnit: String?
+
+    struct ResolvedProductCode: Codable {
+        let code, template: String
+        let transmissionCode, encodingUnit: String?
+    }
+
+    struct Bundle: Codable {
+        let sku, name: String
+        let productType: APIProductType
+        let saleStop: Bool
+        let price: Price
+        let deposit: Deposit
+
+        var product: Product {
+            let product = Product(sku: self.sku, name: self.name, listPrice: self.price.listPrice, type: .singleItem, codes: [])
+            return product
+        }
+    }
+
+    struct Deposit: Codable {
+        let sku, name: String
+        let productType: APIProductType
+        let saleStop: Bool
+        let price: Price
+    }
+
+    struct Price: Codable {
+        let listPrice: Int
+        let basePrice: String?
+        let discountedPrice: Int?
+    }
+
+    func convert(_ code: String, _ template: String) -> Product {
+
+        let code = self.codes.first { $0.code == code && $0.template == template }
+        let encodingUnit = Unit.from(code?.encodingUnit)
+
+        let type: ProductType
+        switch self.weighByCustomer {
+        case .none: type = .singleItem
+        case .some(let weigh):
+            type = weigh ? .userMustWeigh : .preWeighed
+        }
+
+        #warning("initialize me")
+        let codes = [ScannableCode]()
+
+        let product = Product(sku: self.sku,
+                              name: self.name,
+                              description: self.description,
+                              subtitle: self.subtitle,
+                              imageUrl: self.imageUrl,
+                              basePrice: self.price.basePrice,
+                              listPrice: self.price.listPrice,
+                              discountedPrice: self.price.discountedPrice,
+                              type: type,
+                              codes: codes,
+                              depositSku: self.deposit?.sku,
+                              bundledSku: nil,  // ??
+                              isDeposit: self.productType == .deposit, // ??
+                              deposit: self.deposit?.price.listPrice,
+                              saleRestriction: self.saleRestriction?.convert() ?? .none,
+                              saleStop: self.saleStop ?? false,
+                              bundles: self.bundles?.compactMap { $0.product } ?? [],
+                              referenceUnit: Unit.from(self.referenceUnit),
+                              encodingUnit: encodingUnit)
+
+        return product
     }
 }

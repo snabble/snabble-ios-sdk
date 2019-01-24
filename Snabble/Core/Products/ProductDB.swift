@@ -80,15 +80,6 @@ public protocol ProductProvider: class {
     @available(*, deprecated, message: "this method will be removed in the near future, use discountedProducts(_:) instead")
     func discountedProducts() -> [Product]
 
-    /// get a product and the code by which it was found by (one of) its scannable codes
-    func productByScannableCode(_ code: String, _ shopId: String) -> LookupResult?
-
-    /// get a product and the code by which it was found by (one of) its scannable codes
-    func productByScannableCode(_ code: String, _ template: String, _ shopId: String) -> LookupResult?
-
-    /// get a product by (one of) its weighItemIds
-    func productByWeighItemId(_ weighItemId: String, _ shopId: String) -> Product?
-
     /// get products matching `name`
     ///
     /// The project's `useFTS` flag must be `true` for this to work.
@@ -120,36 +111,10 @@ public protocol ProductProvider: class {
     /// asynchronously get a product by (one of) its scannable codes
     ///
     /// - Parameters:
-    ///   - code: the code to look for
+    ///   - codes: the code/template pairs to look for
     ///   - forceDownload: if true, skip the lookup in the local DB
     ///   - result: the lookup result or the error
-    func productByScannableCode(_ code: String, _ shopId: String, forceDownload: Bool, completion: @escaping (_ result: Result<LookupResult, SnabbleError>) -> () )
-
-    /// asynchronously get a product by (one of) its scannable codes
-    ///
-    /// - Parameters:
-    ///   - code: the code to look for
-    ///   - template: the template that matched this code
-    ///   - forceDownload: if true, skip the lookup in the local DB
-    ///   - result: the lookup result or the error
-    func productByScannableCode(_ code: String, _ template: String, _ shopId: String, forceDownload: Bool, completion: @escaping (_ result: Result<LookupResult, SnabbleError>) -> () )
-
-    /// asynchronously get a product by (one of) its scannable codes
-    ///
-    /// - Parameters:
-    ///   - code: the code to look for
-    ///   - template: the template that matched this code
-    ///   - forceDownload: if true, skip the lookup in the local DB
-    ///   - result: the lookup result or the error
-    func productByScannableCodes(_ codes: [String], _ templates: [String], _ shopId: String, forceDownload: Bool, completion: @escaping (_ result: Result<LookupResult, SnabbleError>) -> () )
-
-    /// asynchronously get a product by (one of) it weigh item ids
-    ///
-    /// - Parameters:
-    ///   - weighItemId: the id to look for
-    ///   - forceDownload: if true, skip the lookup in the local DB
-    ///   - result: the product found or the error
-    func productByWeighItemId(_ weighItemId: String, _ shopId: String, forceDownload: Bool, completion: @escaping (_ result: Result<Product, SnabbleError>) -> () )
+    func productByScannableCodes(_ codes: [(String, String)], _ shopId: String, forceDownload: Bool, completion: @escaping (_ result: Result<LookupResult, SnabbleError>) -> () )
 
     var revision: Int64 { get }
     var lastProductUpdate: Date { get }
@@ -171,20 +136,8 @@ public extension ProductProvider {
         self.productBySku(sku, shopId, forceDownload: false, completion: completion)
     }
 
-    public func productByScannableCode(_ code: String, _ shopId: String, completion: @escaping (_ result: Result<LookupResult, SnabbleError>) -> () ) {
-        self.productByScannableCode(code, shopId, forceDownload: false, completion: completion)
-    }
-
-    public func productByScannableCode(_ code: String, _ template: String, _ shopId: String, completion: @escaping (_ result: Result<LookupResult, SnabbleError>) -> () ) {
-        self.productByScannableCode(code, template, shopId, forceDownload: false, completion: completion)
-    }
-
     public func productsByScannableCodePrefix(_ prefix: String, filterDeposits: Bool = true) -> [Product] {
         return self.productsByScannableCodePrefix(prefix, filterDeposits: true)
-    }
-
-    public func productByWeighItemId(_ code: String, _ shopId: String, completion: @escaping (_ result: Result<Product, SnabbleError>) -> () ) {
-        self.productByWeighItemId(code, shopId, forceDownload: false, completion: completion)
     }
 
     public func productsByName(_ name: String) -> [Product] {
@@ -600,39 +553,12 @@ extension ProductDB {
     }
 
     /// get a product by its scannable code
-    public func productByScannableCode(_ code: String, _ shopId: String) -> LookupResult? {
+    public func productByScannableCodes(_ codes: [(String, String)], _ shopId: String) -> LookupResult? {
         guard let db = self.db else {
             return nil
         }
 
-        return self.productByScannableCode(db, code, shopId)
-    }
-
-    /// get a product by its scannable code
-    public func productByScannableCode(_ code: String, _ template: String, _ shopId: String) -> LookupResult? {
-        guard let db = self.db else {
-            return nil
-        }
-
-        return self.productByScannableCode(db, code, template, shopId)
-    }
-
-    /// get a product by its scannable code
-    public func productByScannableCodes(_ codes: [String], _ templates: [String], _ shopId: String) -> LookupResult? {
-        guard let db = self.db else {
-            return nil
-        }
-
-        return self.productByScannableCodes(db, codes, templates, shopId)
-    }
-
-    /// get a product by its weighItemId
-    public func productByWeighItemId(_ weighItemId: String, _ shopId: String) -> Product? {
-        guard let db = self.db else {
-            return nil
-        }
-
-        return self.productByWeighItemId(db, weighItemId, shopId)
+        return self.productByScannableCodes(db, codes, shopId)
     }
 
     /// get products matching `name`
@@ -676,7 +602,8 @@ extension ProductDB {
         let now = Date.timeIntervalSinceReferenceDate
         let age = now - self.lastProductUpdate.timeIntervalSinceReferenceDate
         let ageOk = age < self.config.maxProductDatabaseAge
-        return !forceDownload && ageOk
+        #warning("removeme")
+        return true // !forceDownload && ageOk
     }
 
     /// asynchronously get a product by its SKU
@@ -704,75 +631,21 @@ extension ProductDB {
     /// invokes the completion handler on the main thread with the result of the lookup
     ///
     /// - Parameters:
-    ///   - code: the code to look for
+    ///   - codes: the code/template to look for
+    ///   - shopId: the shop id
     ///   - forceDownload: if true, skip the lookup in the local DB
     ///   - product: the product found, or nil.
     ///   - error: whether an error occurred during the lookup.
-    public func productByScannableCode(_ code: String, _ shopId: String, forceDownload: Bool, completion: @escaping (_ result: Result<LookupResult, SnabbleError>) -> ()) {
-        if self.lookupLocally(forceDownload), let result = self.productByScannableCode(code, shopId) {
+    public func productByScannableCodes(_ codes: [(String, String)], _ shopId: String, forceDownload: Bool, completion: @escaping (_ result: Result<LookupResult, SnabbleError>) -> ()) {
+        if self.lookupLocally(forceDownload), let result = self.productByScannableCodes(codes, shopId) {
             DispatchQueue.main.async {
                 completion(Result.success(result))
             }
             return
         }
 
-        self.getSingleProduct(self.project.links.productByCode.href, "{code}", code, nil, shopId, completion: completion)
-    }
-
-    /// asynchronously get a product by (one of) it scannable codes
-    ///
-    /// invokes the completion handler on the main thread with the result of the lookup
-    ///
-    /// - Parameters:
-    ///   - code: the code to look for
-    ///   - template: the template that matched the scanned code
-    ///   - forceDownload: if true, skip the lookup in the local DB
-    ///   - product: the product found, or nil.
-    ///   - error: whether an error occurred during the lookup.
-    public func productByScannableCode(_ code: String, _ template: String, _ shopId: String, forceDownload: Bool, completion: @escaping (_ result: Result<LookupResult, SnabbleError>) -> ()) {
-        if self.lookupLocally(forceDownload), let result = self.productByScannableCode(code, template, shopId) {
-            DispatchQueue.main.async {
-                completion(Result.success(result))
-            }
-            return
-        }
-
-        self.getSingleProduct(self.project.links.productByCode.href, "{code}", code, template, shopId, completion: completion)
-    }
-
-    public func productByScannableCodes(_ codes: [String], _ templates: [String], _ shopId: String, forceDownload: Bool, completion: @escaping (_ result: Result<LookupResult, SnabbleError>) -> ()) {
-        if self.lookupLocally(forceDownload), let result = self.productByScannableCodes(codes, templates, shopId) {
-            DispatchQueue.main.async {
-                completion(Result.success(result))
-            }
-            return
-        }
-
-        #warning("fixme")
-        // self.getSingleProduct(self.project.links.productByCode.href, "{code}", code, template, shopId, completion: completion)
-    }
-
-
-
-
-    /// asynchronously get a product by (one of) it weigh item ids
-    ///
-    /// invokes the completion handler on the main thread with the result of the lookup
-    ///
-    /// - Parameters:
-    ///   - weighItemId: the id to look for
-    ///   - forceDownload: if true, skip the lookup in the local DB
-    ///   - product: the product found, or nil.
-    ///   - error: whether an error occurred during the lookup.
-    public func productByWeighItemId(_ weighItemId: String, _ shopId: String, forceDownload: Bool, completion: @escaping (_ result: Result<Product, SnabbleError>) -> ()) {
-        if self.lookupLocally(forceDownload), let product = self.productByWeighItemId(weighItemId, shopId) {
-            DispatchQueue.main.async {
-                completion(Result.success(product))
-            }
-            return
-        }
-
-        self.getSingleProduct(self.project.links.productByWeighItemId.href, "{id}", weighItemId, nil, shopId, completion: completion)
+        let url = self.project.links.resolvedProductLookUp.href
+        self.resolveProductsLookup(url, codes, shopId, completion: completion)
     }
 
     func logError(_ msg: String) {

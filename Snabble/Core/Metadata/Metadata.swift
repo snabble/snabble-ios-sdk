@@ -271,19 +271,6 @@ public struct Project: Decodable {
     }
 
     public static let none = Project()
-
-    #warning("remove this when we have templates")
-    public func codeRange(for format: ScanFormat) -> Range<Int>? {
-        guard self.id.hasPrefix("ikea") else {
-            return nil
-        }
-
-        switch format {
-        case .itf14: return 0..<8
-        case .dataMatrix: return 30..<38
-        default: return nil
-        }
-    }
 }
 
 /// Link
@@ -304,6 +291,8 @@ public struct ProjectLinks: Decodable {
     public let bundlesForSku: Link
     public let productsBySku: Link
     public let tokens: Link
+    public let resolvedProductBySku: Link
+    public let resolvedProductLookUp: Link
 
     public static let empty = ProjectLinks()
 
@@ -317,9 +306,11 @@ public struct ProjectLinks: Decodable {
         self.bundlesForSku = Link.empty
         self.productsBySku = Link.empty
         self.tokens = Link.empty
+        self.resolvedProductBySku = Link.empty
+        self.resolvedProductLookUp = Link.empty
     }
 
-    init(appdb: Link, appEvents: Link, checkoutInfo: Link, productBySku: Link, productByCode: Link, productByWeighItemId: Link, bundlesForSku: Link, productsBySku: Link, tokens: Link) {
+    init(appdb: Link, appEvents: Link, checkoutInfo: Link, productBySku: Link, productByCode: Link, productByWeighItemId: Link, bundlesForSku: Link, productsBySku: Link, tokens: Link, resolvedProductBySku: Link, resolvedProductLookUp: Link) {
         self.appdb = appdb
         self.appEvents = appEvents
         self.checkoutInfo = checkoutInfo
@@ -329,6 +320,8 @@ public struct ProjectLinks: Decodable {
         self.bundlesForSku = bundlesForSku
         self.productsBySku = productsBySku
         self.tokens = tokens
+        self.resolvedProductBySku = resolvedProductBySku
+        self.resolvedProductLookUp = resolvedProductLookUp
     }
 }
 

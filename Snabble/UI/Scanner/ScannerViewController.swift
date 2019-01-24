@@ -406,9 +406,10 @@ extension ScannerViewController {
 
         for bundle in product.bundles {
             alert.addAction(UIAlertAction(title: bundle.name, style: .default) { action in
-                let bundleCode = bundle.scannableCodes.first ?? ""
-                let transmissionCode = bundle.transmissionCodes[bundleCode] ?? bundleCode
-                self.showConfirmation(for: bundle, transmissionCode)
+                #warning("fixme")
+//                let bundleCode = bundle.scannableCodes.first ?? ""
+//                let transmissionCode = bundle.transmissionCodes[bundleCode] ?? bundleCode
+//                self.showConfirmation(for: bundle, transmissionCode)
             })
         }
 
@@ -434,30 +435,22 @@ extension ScannerViewController {
             return completion(nil, "")
         }
 
-        // only one match? look that up directly
-        if result.count == 1 {
-            let lookupCode = result[0].lookupCode
-            self.productProvider.productByScannableCode(lookupCode, result[0].template.id, self.shop.id) { result in
-                switch result {
-                case .success(let lookupResult):
-                    completion(lookupResult.product, lookupResult.code ?? code)
-                case .failure: completion(nil, "")
-                }
-            }
-        } else {
-            // multiple possible matches. try looking them up locally first, and if that fails, make an online check
-            let lookupCodes = result.map { $0.lookupCode }
-            let templates = result.map { $0.template.id }
-            self.productProvider.productByScannableCodes(lookupCodes, templates, self.shop.id, forceDownload: false) { result in
-                switch result {
-                case .success(let lookupResult):
-                    completion(lookupResult.product, lookupResult.code ?? code)
-                case .failure: completion(nil, "")
-                }
+        let lookupCodes = result.map { $0.lookupCode }
+        let templates = result.map { $0.template.id }
+        let codes = Array(zip(lookupCodes, templates))
+        self.productProvider.productByScannableCodes(codes, self.shop.id, forceDownload: false) { result in
+            switch result {
+            case .success(let lookupResult):
+                completion(lookupResult.product, lookupResult.code ?? code)
+            case .failure:
+                completion(nil, "")
             }
         }
     }
 
+    #warning("remove this")
+    /*
+    @available(*, deprecated, message: "will be removed")
     private func productForCode(_ code: String, _ type: AVMetadataObject.ObjectType?, completion: @escaping (Product?, String) -> () ) {
         var lookupCode = code
         if let scanFormat = type?.scanFormat, let codeRange = SnabbleUI.project.codeRange(for: scanFormat) {
@@ -509,6 +502,7 @@ extension ScannerViewController {
             }
         }
     }
+    */
 
     private func manuallyEnteredCode(_ code: String?) {
         // Log.debug("entered \(code)")

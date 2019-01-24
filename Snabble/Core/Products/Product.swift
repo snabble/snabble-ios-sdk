@@ -73,6 +73,13 @@ extension SaleRestriction: Equatable {
     }
 }
 
+public struct ScannableCode: Codable {
+    let code: String
+    let template: String
+    let transmissionCode: String?
+    let encodingUnit: Unit?
+}
+
 /// data for one product.
 public struct Product: Codable {
     /// the stock keeping unit, unique identifier for this product
@@ -103,11 +110,8 @@ public struct Product: Codable {
     /// the product's type
     public let type: ProductType
 
-    /// list of scannable codes (usually EANs/GTINs) for this product
-    public let scannableCodes: Set<String>
-
-    /// list of "EAN templates" for this product, if it's weight-dependent
-    public let weighedItemIds: Set<String>?
+    /// list of scannable codes for this product
+    public let codes: [ScannableCode]
 
     /// if not nil, refers to the SKU of the product that carries the price information for the deposit
     public let depositSku: String?
@@ -133,7 +137,10 @@ public struct Product: Codable {
     /// `referenceUnit` specifies the Unit that the product's list price refers to, e.g. `.kilogram`.
     public let referenceUnit: Unit?
 
-    internal var encodingUnit: Unit? = nil
+    /// for products with unit-dependent prices.
+    /// `encodingUnit` specifies the Unit that the this product's scanned code refers to, e.g. `.gram`.
+    /// this is only set when retrieving a product via one of the `productByScannableCode` methods
+    public var encodingUnit: Unit? = nil
 
     /// convenience accessor for the price
     public var price: Int {
@@ -162,8 +169,7 @@ public struct Product: Codable {
         self.listPrice = try container.decode(.listPrice)
         self.discountedPrice = try container.decodeIfPresent(.discountedPrice)
         self.type = try container.decode(.type)
-        self.scannableCodes = try container.decode(.scannableCodes)
-        self.weighedItemIds = try container.decodeIfPresent(.weighedItemIds)
+        self.codes = try container.decode(.codes)
         self.depositSku = try container.decodeIfPresent(.depositSku)
         self.bundledSku = try container.decodeIfPresent(.bundledSku)
         self.isDeposit = try container.decode(.isDeposit)
@@ -171,8 +177,8 @@ public struct Product: Codable {
         self.saleRestriction = try container.decodeIfPresent(.saleRestriction) ?? .none
         self.saleStop = try container.decodeIfPresent(.saleStop) ?? false
         self.bundles = try container.decodeIfPresent(.bundles) ?? []
-        self.transmissionCodes = try container.decodeIfPresent(.transmissionCodes) ?? [:]
         self.referenceUnit = try container.decodeIfPresent(.referenceUnit)
+        self.encodingUnit = try container.decodeIfPresent(.encodingUnit)
     }
 
     init(sku: String,
@@ -184,8 +190,7 @@ public struct Product: Codable {
          listPrice: Int,
          discountedPrice: Int? = nil,
          type: ProductType,
-         scannableCodes: Set<String>,
-         weighedItemIds: Set<String>? = nil,
+         codes: [ScannableCode],
          depositSku: String? = nil,
          bundledSku: String? = nil,
          isDeposit: Bool = false,
@@ -193,7 +198,6 @@ public struct Product: Codable {
          saleRestriction: SaleRestriction = .none,
          saleStop: Bool = false,
          bundles: [Product] = [],
-         transmissionCodes: [String: String] = [:],
          referenceUnit: Unit? = nil,
          encodingUnit: Unit? = nil) {
         self.sku = sku
@@ -205,8 +209,7 @@ public struct Product: Codable {
         self.listPrice = listPrice
         self.discountedPrice = discountedPrice
         self.type = type
-        self.scannableCodes = scannableCodes
-        self.weighedItemIds = weighedItemIds
+        self.codes = codes
         self.depositSku = depositSku
         self.bundledSku = bundledSku
         self.isDeposit = isDeposit
@@ -214,13 +217,9 @@ public struct Product: Codable {
         self.saleRestriction = saleRestriction
         self.saleStop = saleStop
         self.bundles = bundles
-        self.transmissionCodes = transmissionCodes
         self.referenceUnit = referenceUnit
         self.encodingUnit = encodingUnit
     }
-
-    // store a mapping of scannableCode to transmissionCode
-    internal let transmissionCodes: [String: String]
 }
 
 /// conform to Hashable
