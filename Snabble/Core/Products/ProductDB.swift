@@ -57,6 +57,9 @@ public protocol ProductProvider: class {
     /// get a product by its SKU
     func productBySku(_ sku: String, _ shopId: String) -> Product?
 
+    /// get a product by one of its scannable codes/templates
+    func productByScannableCodes(_ codes: [(String, String)], _ shopId: String) -> LookupResult?
+
     /// get a list of products by their SKUs
     func productsBySku(_ skus: [String], _ shopId: String) -> [Product]
 
@@ -142,6 +145,10 @@ public extension ProductProvider {
 
     public func productsByName(_ name: String) -> [Product] {
         return self.productsByName(name, filterDeposits: true)
+    }
+
+    func productByScannableCodes(_ codes: [(String, String)], _ shopId: String, completion: @escaping (_ result: Result<LookupResult, SnabbleError>) -> () ) {
+        self.productByScannableCodes(codes, shopId, forceDownload: false, completion: completion)
     }
 }
 
@@ -552,7 +559,7 @@ extension ProductDB {
         return self.discountedProducts(db, shopId)
     }
 
-    /// get a product by its scannable code
+    /// get a product by one of its scannable codes/template pairs
     public func productByScannableCodes(_ codes: [(String, String)], _ shopId: String) -> LookupResult? {
         guard let db = self.db else {
             return nil
@@ -602,8 +609,7 @@ extension ProductDB {
         let now = Date.timeIntervalSinceReferenceDate
         let age = now - self.lastProductUpdate.timeIntervalSinceReferenceDate
         let ageOk = age < self.config.maxProductDatabaseAge
-        #warning("removeme")
-        return true // !forceDownload && ageOk
+        return !forceDownload && ageOk
     }
 
     /// asynchronously get a product by its SKU
@@ -623,7 +629,8 @@ extension ProductDB {
             return
         }
 
-        self.getSingleProduct(self.project.links.productBySku.href, "{sku}", sku, nil, shopId, completion: completion)
+        let url = self.project.links.resolvedProductBySku.href
+        self.resolveProductLookup(url, sku, shopId, completion: completion)
     }
 
     /// asynchronously get a product by (one of) it scannable codes
@@ -631,7 +638,7 @@ extension ProductDB {
     /// invokes the completion handler on the main thread with the result of the lookup
     ///
     /// - Parameters:
-    ///   - codes: the code/template to look for
+    ///   - codes: the codes/templates to look for
     ///   - shopId: the shop id
     ///   - forceDownload: if true, skip the lookup in the local DB
     ///   - product: the product found, or nil.
