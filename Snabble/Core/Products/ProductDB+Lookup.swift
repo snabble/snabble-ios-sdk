@@ -197,19 +197,36 @@ private struct ResolvedProduct: Decodable {
     struct Bundle: Codable {
         let sku, name: String
         let productType: ResolvedProductType
-        let saleStop: Bool
         let price: Price
-        let deposit: Deposit
+        let deposit: Deposit?
 
         var product: Product {
-            return Product(sku: self.sku, name: self.name, listPrice: self.price.listPrice, type: .singleItem, codes: [])
+            let product = Product(sku: self.sku,
+                                  name: self.name,
+                                  description: nil,
+                                  subtitle: nil,
+                                  imageUrl: nil,
+                                  basePrice: self.price.basePrice,
+                                  listPrice: self.price.listPrice,
+                                  discountedPrice: self.price.discountedPrice,
+                                  type: .singleItem,
+                                  codes: [],
+                                  depositSku: self.deposit?.sku,
+                                  bundledSku: nil,  // ??
+                                  isDeposit: self.productType == .deposit,
+                                  deposit: self.deposit?.price.listPrice,
+                                  saleRestriction: .none,
+                                  saleStop: false,
+                                  bundles: [],
+                                  referenceUnit: nil,
+                                  encodingUnit: nil)
+            return product
         }
     }
 
     struct Deposit: Codable {
         let sku, name: String
         let productType: ResolvedProductType
-        let saleStop: Bool
         let price: Price
     }
 
