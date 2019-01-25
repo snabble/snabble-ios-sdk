@@ -285,11 +285,6 @@ public struct ProjectLinks: Decodable {
     public let appdb: Link
     public let appEvents: Link
     public let checkoutInfo: Link
-    public let productBySku: Link
-    public let productByCode: Link
-    public let productByWeighItemId: Link
-    public let bundlesForSku: Link
-    public let productsBySku: Link
     public let tokens: Link
     public let resolvedProductBySku: Link
     public let resolvedProductLookUp: Link
@@ -300,25 +295,15 @@ public struct ProjectLinks: Decodable {
         self.appdb = Link.empty
         self.appEvents = Link.empty
         self.checkoutInfo = Link.empty
-        self.productBySku = Link.empty
-        self.productByCode = Link.empty
-        self.productByWeighItemId = Link.empty
-        self.bundlesForSku = Link.empty
-        self.productsBySku = Link.empty
         self.tokens = Link.empty
         self.resolvedProductBySku = Link.empty
         self.resolvedProductLookUp = Link.empty
     }
 
-    init(appdb: Link, appEvents: Link, checkoutInfo: Link, productBySku: Link, productByCode: Link, productByWeighItemId: Link, bundlesForSku: Link, productsBySku: Link, tokens: Link, resolvedProductBySku: Link, resolvedProductLookUp: Link) {
+    init(appdb: Link, appEvents: Link, checkoutInfo: Link, tokens: Link, resolvedProductBySku: Link, resolvedProductLookUp: Link) {
         self.appdb = appdb
         self.appEvents = appEvents
         self.checkoutInfo = checkoutInfo
-        self.productBySku = productBySku
-        self.productByCode = productByCode
-        self.productByWeighItemId = productByWeighItemId
-        self.bundlesForSku = bundlesForSku
-        self.productsBySku = productsBySku
         self.tokens = tokens
         self.resolvedProductBySku = resolvedProductBySku
         self.resolvedProductLookUp = resolvedProductLookUp
