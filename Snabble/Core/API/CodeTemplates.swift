@@ -415,4 +415,36 @@ struct CodeMatcher {
         }
         return results
     }
+
+    static func createInstoreEan(_ templateId: String, _ code: String, _ data: Int) -> String? {
+        guard let template = templates.first(where: { $0.id == templateId }) else {
+            return nil
+        }
+
+        let rawEmbed = String(data)
+        let padding = String(repeating: "0", count: 5 - rawEmbed.count)
+        let embed = padding + rawEmbed
+
+        var result = ""
+        for c in template.components {
+            switch c {
+            case .plainText(let str):
+                result.append(str)
+            case .code:
+                result.append(code)
+            case .internalChecksum:
+                let embedDigits = embed.map { Int(String($0))! }
+                let check = EAN13.internalChecksum5(embedDigits)
+                result.append(String(check))
+            case .embed(let len):
+                result.append(String(repeating: "0", count: len))
+            case .ignore(let len):
+                result.append(String(repeating: "0", count: len))
+            default: ()
+            }
+        }
+
+        let ean = EAN13(String(result.prefix(7)) + embed)
+        return ean?.code
+    }
 }
