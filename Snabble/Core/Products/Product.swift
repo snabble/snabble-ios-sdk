@@ -78,6 +78,13 @@ public struct ScannableCode: Codable {
     let template: String
     let transmissionCode: String?
     let encodingUnit: Unit?
+
+    init(_ code: String, _ template: String, _ transmissionCode: String?, _ encodingUnit: Unit?) {
+        self.code = code
+        self.template = template
+        self.transmissionCode = transmissionCode
+        self.encodingUnit = encodingUnit
+    }
 }
 
 /// data for one product.

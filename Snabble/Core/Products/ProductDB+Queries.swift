@@ -114,8 +114,8 @@ extension ProductDB {
                 return try self.fetchOne(db, ProductDB.productQueryUnits, arguments: [code, template])
             }
             if let product = self.productFromRow(dbQueue, row, shopId) {
-                #warning("fixme")
-                let transmissionCode: String? = nil // product.transmissionCodes[code]
+                let codeEntry = product.codes.first { $0.code == code }
+                let transmissionCode = codeEntry?.transmissionCode
                 return LookupResult(product: product, code: transmissionCode)
             } else if !retry {
                 // initial lookup failed
@@ -278,8 +278,7 @@ extension ProductDB {
 
         let bundles = self.productsBundling(dbQueue, sku, shopId)
 
-        #warning("initialize me")
-        let codes = [ScannableCode]()
+        let codes = self.buildCodes(row["codes"], row["templates"], row["transmissionCodes"], rawUnits: row["encodingUnits"])
 
         let referenceUnit = Unit.from(row["referenceUnit"] as? String)
         var encodingUnit = Unit.from(row["encodingUnit"] as? String)
@@ -332,29 +331,25 @@ extension ProductDB {
         return nil
     }
 
-    private func buildScannableCodeSets(_ rawScan: String?, _ rawTransmit: String?) -> (Set<String>, [String:String]) {
-        guard let rawScan = rawScan, let rawTransmit = rawTransmit else {
-            return (Set<String>(), [:])
+    private func buildCodes(_ rawCodes: String?, _ rawTemplates: String?, _ rawTransmits: String?, rawUnits: String?) -> [ScannableCode] {
+        guard let rawCodes = rawCodes, let rawTransmits = rawTransmits, let rawTemplates = rawTemplates, let rawUnits = rawUnits  else {
+            return []
         }
 
-        let codes = rawScan.components(separatedBy: ",")
-        let transmit = rawTransmit.components(separatedBy: ",")
+        let codes = rawCodes.components(separatedBy: ",")
+        let templates = rawTemplates.components(separatedBy: ",")
+        let transmits = rawTransmits.components(separatedBy: ",")
+        let units = rawUnits.components(separatedBy: ",")
 
-        var codeMap = [String: String]()
-        for (code, xmit) in zip(codes, transmit) {
-            if xmit.count > 0 {
-                codeMap[code] = xmit
-            }
+        assert(codes.count == templates.count); assert(codes.count == transmits.count); assert(codes.count == units.count);
+
+        var scannableCodes = [ScannableCode]()
+        for i in 0 ..< codes.count {
+            let transmissionCode = transmits[i].count == 0 ? nil : transmits[i]
+            let c = ScannableCode(codes[i], templates[i], transmissionCode, Unit.from(units[i]))
+            scannableCodes.append(c)
         }
-
-        return (Set(codes), codeMap)
-    }
-
-    private func makeSet(_ str: String?) -> Set<String> {
-        guard let s = str else {
-            return Set([])
-        }
-        return Set(s.components(separatedBy: ","))
+        return scannableCodes
     }
 
     // timing-logging wrappers around Row.fecthOne/fetchAll
@@ -390,7 +385,7 @@ extension ProductDB {
                 Log.debug("EXPLAIN: \(explain)")
             }
         } catch {
-            Log.error("query explain error \(error)")
+            Log.error("query explain error \(error) for \(query)")
         }
     }
 }
