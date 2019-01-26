@@ -145,7 +145,7 @@ extension ScannableCode {
     }
 }
 
-private struct ResolvedProduct: Decodable {
+private class ResolvedProduct: Decodable {
     let sku, name: String
     let description, subtitle: String?
     let imageUrl: String?
@@ -154,8 +154,8 @@ private struct ResolvedProduct: Decodable {
     let codes: [ResolvedProductCode]
     let price: Price
     let saleRestriction: ResolvedSaleRestriction?
-    let deposit: Deposit?
-    let bundles: [Bundle]?
+    let deposit: ResolvedProduct?
+    let bundles: [ResolvedProduct]?
     let weighing: Int
     let weighByCustomer: Bool?
     let referenceUnit: String?
@@ -192,42 +192,6 @@ private struct ResolvedProduct: Decodable {
     struct ResolvedProductCode: Codable {
         let code, template: String
         let transmissionCode, encodingUnit: String?
-    }
-
-    struct Bundle: Codable {
-        let sku, name: String
-        let productType: ResolvedProductType
-        let price: Price
-        let deposit: Deposit?
-
-        var product: Product {
-            let product = Product(sku: self.sku,
-                                  name: self.name,
-                                  description: nil,
-                                  subtitle: nil,
-                                  imageUrl: nil,
-                                  basePrice: self.price.basePrice,
-                                  listPrice: self.price.listPrice,
-                                  discountedPrice: self.price.discountedPrice,
-                                  type: .singleItem,
-                                  codes: [],
-                                  depositSku: self.deposit?.sku,
-                                  bundledSku: nil,  // ??
-                                  isDeposit: self.productType == .deposit,
-                                  deposit: self.deposit?.price.listPrice,
-                                  saleRestriction: .none,
-                                  saleStop: false,
-                                  bundles: [],
-                                  referenceUnit: nil,
-                                  encodingUnit: nil)
-            return product
-        }
-    }
-
-    struct Deposit: Codable {
-        let sku, name: String
-        let productType: ResolvedProductType
-        let price: Price
     }
 
     struct Price: Codable {
@@ -273,7 +237,7 @@ private struct ResolvedProduct: Decodable {
                               deposit: self.deposit?.price.listPrice,
                               saleRestriction: self.saleRestriction?.convert() ?? .none,
                               saleStop: self.saleStop ?? false,
-                              bundles: self.bundles?.compactMap { $0.product } ?? [],
+                              bundles: self.bundles?.compactMap { $0.convert() } ?? [],
                               referenceUnit: Unit.from(self.referenceUnit),
                               encodingUnit: encodingUnit)
 
