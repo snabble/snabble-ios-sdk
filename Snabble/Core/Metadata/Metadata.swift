@@ -286,8 +286,8 @@ public struct ProjectLinks: Decodable {
     public let appEvents: Link
     public let checkoutInfo: Link
     public let tokens: Link
-    public let resolvedProductBySku: Link
-    public let resolvedProductLookUp: Link
+    public let resolvedProductBySku: Link?
+    public let resolvedProductLookUp: Link?
 
     public static let empty = ProjectLinks()
 

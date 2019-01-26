@@ -629,8 +629,11 @@ extension ProductDB {
             return
         }
 
-        let url = self.project.links.resolvedProductBySku.href
-        self.resolveProductLookup(url, sku, shopId, completion: completion)
+        if let url = self.project.links.resolvedProductBySku?.href {
+            self.resolveProductLookup(url, sku, shopId, completion: completion)
+        } else {
+            completion(Result.failure(SnabbleError.notFound))
+        }
     }
 
     /// asynchronously get a product by (one of) it scannable codes
@@ -651,8 +654,11 @@ extension ProductDB {
             return
         }
 
-        let url = self.project.links.resolvedProductLookUp.href
-        self.resolveProductsLookup(url, codes, shopId, completion: completion)
+        if let url = self.project.links.resolvedProductLookUp?.href {
+            self.resolveProductsLookup(url, codes, shopId, completion: completion)
+        } else {
+            completion(Result.failure(SnabbleError.notFound))
+        }
     }
 
     func logError(_ msg: String) {
