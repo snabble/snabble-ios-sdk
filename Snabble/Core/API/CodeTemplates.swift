@@ -153,14 +153,14 @@ fileprivate enum TemplateComponent {
     }
 }
 
-/// a `CodeTemplate` represents a fully parsed template expression, like "01{code:ean14"
-struct CodeTemplate {
+/// a `CodeTemplate` represents a fully parsed template expression, like "01{code:ean14}"
+public struct CodeTemplate {
     /// the template's identifier
-    let id: String
+    public let id: String
     /// the original template string
-    let template: String
+    public let template: String
     /// the expected length of a string that could possibly match
-    let expectedLength: Int
+    public let expectedLength: Int
     /// the parsed components in left-to-right order
     fileprivate let components: [TemplateComponent]
 
@@ -277,9 +277,9 @@ struct CodeTemplate {
 }
 
 /// the matcher's result
-struct ParseResult {
+public struct ParseResult {
     /// the template we matched against
-    let template: CodeTemplate
+    public let template: CodeTemplate
 
     fileprivate typealias Entry = (templateComponent: TemplateComponent, value: String)
     fileprivate let entries: [Entry]
@@ -291,7 +291,7 @@ struct ParseResult {
     }
 
     /// return the (part of the) code we should use for database lookups
-    var lookupCode: String {
+    public var lookupCode: String {
         if let entry = self.entries.first(where: { $0.templateComponent.isCode }) {
             return entry.value
         }
@@ -303,7 +303,7 @@ struct ParseResult {
 
     /// is this result valid?
     /// (it is if all components are valid)
-    var isValid: Bool {
+    public var isValid: Bool {
         for component in self.entries {
             if !self.valid(component) {
                 return false
@@ -312,7 +312,7 @@ struct ParseResult {
         return true
     }
 
-    var embeddedData: Int? {
+    public var embeddedData: Int? {
         guard let entry = self.entries.first(where: { $0.templateComponent.isEmbed }) else {
             return nil
         }
@@ -320,7 +320,7 @@ struct ParseResult {
     }
 
     /// embed data into a scanned code in place of the `embed` placeholder
-    func embed(_ data: Int) -> String {
+    public func embed(_ data: Int) -> String {
         var result = ""
         var embeddedData = ""
         var needChecksum = false
@@ -376,7 +376,7 @@ struct ParseResult {
     }
 }
 
-struct CodeMatcher {
+public struct CodeMatcher {
     static let builtinTemplates = [
         "ean13_instore":        "2{code:5}{_}{embed:5}{_}",
         "ean13_instore_chk":    "2{code:5}{i}{embed:5}{_}",
@@ -385,11 +385,16 @@ struct CodeMatcher {
         "edeka_discount":       "97{code:ean13}{embed:6}{_}",
     ]
 
+    public static var customTemplates = [String: String]()
+
     private static let templates = prepareTemplates()
 
     static func prepareTemplates() -> [CodeTemplate] {
         var templates = [CodeTemplate]()
-        builtinTemplates.forEach { id, tmpl in
+
+        let allTemplates = builtinTemplates.merging(customTemplates, uniquingKeysWith: { (_, new) in return new })
+
+        allTemplates.forEach { id, tmpl in
             guard let template = CodeTemplate(id, tmpl) else {
                 return
             }
@@ -406,7 +411,7 @@ struct CodeMatcher {
         return templates
     }
 
-    static func match(_ code: String) -> [ParseResult] {
+    public static func match(_ code: String) -> [ParseResult] {
         var results = [ParseResult]()
         for template in templates {
             if let result = template.match(code) {
@@ -416,7 +421,7 @@ struct CodeMatcher {
         return results
     }
 
-    static func createInstoreEan(_ templateId: String, _ code: String, _ data: Int) -> String? {
+    public static func createInstoreEan(_ templateId: String, _ code: String, _ data: Int) -> String? {
         guard let template = templates.first(where: { $0.id == templateId }) else {
             return nil
         }
