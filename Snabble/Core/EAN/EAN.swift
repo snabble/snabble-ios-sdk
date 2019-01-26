@@ -37,7 +37,6 @@ extension EANCode {
         return (self.encoding == .ean13 && (self.matchPrefixes(self.project?.pricePrefixes))
                || self.hasGermanPrintPrefix)
                || self.encoding == .edekaProductPrice
-               || self.encoding == .ikeaProductPrice
     }
 
     public var hasEmbeddedUnits: Bool {
@@ -82,8 +81,6 @@ extension EANCode {
             return code
         case .edekaProductPrice:
             return code
-        case .ikeaProductPrice:
-            return code
         }
     }
 
@@ -104,14 +101,6 @@ extension EANCode {
             let end = self.code.index(code.startIndex, offsetBy: 20)
             let embedded = String(self.code[start...end])
             return Int(embedded)
-        case .ikeaProductPrice:
-            let start = self.code.index(code.startIndex, offsetBy: 48)
-            let end = self.code.index(code.startIndex, offsetBy: 52)
-            let embedded = String(self.code[start...end])
-            if let data = Int(embedded) {
-                return data * 100
-            }
-            return nil
         }
     }
 
@@ -142,7 +131,6 @@ public enum EAN {
         case ean13
         case ean14
         case edekaProductPrice  // code 128 with embedded price
-        case ikeaProductPrice   // datamatrix with embedded price
     }
 
     /// parse an EAN-8, EAN-13 or EAN-14
@@ -163,7 +151,6 @@ public enum EAN {
         case 12, 13: return EAN13(code, project)
         case 14, 16: return EAN14(code)
         case 22: return code.hasPrefix("97") ? EdekaProductPrice(code) : nil
-        case 54: return IkeaProductPrice(code)
         default: return nil
         }
     }
@@ -297,18 +284,6 @@ public struct EAN13: EANCode {
 public struct EdekaProductPrice: EANCode {
     public let code: String
     public let encoding = EAN.Encoding.edekaProductPrice
-    public let digits: [Int]
-    public var project: Project?
-
-    public init?(_ code: String) {
-        self.code = code
-        self.digits = self.code.compactMap { Int(String($0)) }
-    }
-}
-
-public struct IkeaProductPrice: EANCode {
-    public let code: String
-    public let encoding = EAN.Encoding.ikeaProductPrice
     public let digits: [Int]
     public var project: Project?
 
