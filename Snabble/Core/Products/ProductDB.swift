@@ -16,15 +16,25 @@ public struct MetadataKeys {
     fileprivate static let appLastUpdate = "app_lastUpdate"
 }
 
-/// the return type from `productByScannableCode`.
+/// the return type from `productByScannableCodes`.
 /// - `product` contains the product found
 /// - `code` contains the code by which the product was found, which is not necessarily the
-///    same as the one that was passed to `productByScannableCode` as a parameter
+///    same as the one that was passed to `productByScannableCodes` as a parameter
 ///    (e.g. when a UPC-A code is scanned as an EAN-13, and the leading "0" filler digits had
 ///    to be stripped)
-public struct LookupResult {
+/// - `embeddedData` contains the embedded data from the scanned code (from the {embed} template component), if any
+public struct ScannedProduct {
     public let product: Product
     public let code: String?
+    public let template: String?
+    public let embeddedData: Int?
+
+    public init(_ product: Product, _ code: String?, _ template: String? = nil, _ embeddedData: Int? = nil) {
+        self.product = product
+        self.code = code
+        self.template = template
+        self.embeddedData = embeddedData
+    }
 }
 
 public protocol ProductProvider: class {
@@ -58,7 +68,7 @@ public protocol ProductProvider: class {
     func productBySku(_ sku: String, _ shopId: String) -> Product?
 
     /// get a product by one of its scannable codes/templates
-    func productByScannableCodes(_ codes: [(String, String)], _ shopId: String) -> LookupResult?
+    func productByScannableCodes(_ codes: [(String, String)], _ shopId: String) -> ScannedProduct?
 
     /// get a list of products by their SKUs
     func productsBySku(_ skus: [String], _ shopId: String) -> [Product]
@@ -117,7 +127,7 @@ public protocol ProductProvider: class {
     ///   - codes: the code/template pairs to look for
     ///   - forceDownload: if true, skip the lookup in the local DB
     ///   - result: the lookup result or the error
-    func productByScannableCodes(_ codes: [(String, String)], _ shopId: String, forceDownload: Bool, completion: @escaping (_ result: Result<LookupResult, SnabbleError>) -> () )
+    func productByScannableCodes(_ codes: [(String, String)], _ shopId: String, forceDownload: Bool, completion: @escaping (_ result: Result<ScannedProduct, SnabbleError>) -> () )
 
     var revision: Int64 { get }
     var lastProductUpdate: Date { get }
@@ -147,7 +157,7 @@ public extension ProductProvider {
         return self.productsByName(name, filterDeposits: true)
     }
 
-    func productByScannableCodes(_ codes: [(String, String)], _ shopId: String, completion: @escaping (_ result: Result<LookupResult, SnabbleError>) -> () ) {
+    func productByScannableCodes(_ codes: [(String, String)], _ shopId: String, completion: @escaping (_ result: Result<ScannedProduct, SnabbleError>) -> () ) {
         self.productByScannableCodes(codes, shopId, forceDownload: false, completion: completion)
     }
 }
@@ -560,7 +570,7 @@ extension ProductDB {
     }
 
     /// get a product by one of its scannable codes/template pairs
-    public func productByScannableCodes(_ codes: [(String, String)], _ shopId: String) -> LookupResult? {
+    public func productByScannableCodes(_ codes: [(String, String)], _ shopId: String) -> ScannedProduct? {
         guard let db = self.db else {
             return nil
         }
@@ -646,7 +656,7 @@ extension ProductDB {
     ///   - forceDownload: if true, skip the lookup in the local DB
     ///   - product: the product found, or nil.
     ///   - error: whether an error occurred during the lookup.
-    public func productByScannableCodes(_ codes: [(String, String)], _ shopId: String, forceDownload: Bool, completion: @escaping (_ result: Result<LookupResult, SnabbleError>) -> ()) {
+    public func productByScannableCodes(_ codes: [(String, String)], _ shopId: String, forceDownload: Bool, completion: @escaping (_ result: Result<ScannedProduct, SnabbleError>) -> ()) {
         if self.lookupLocally(forceDownload), let result = self.productByScannableCodes(codes, shopId) {
             DispatchQueue.main.async {
                 completion(Result.success(result))

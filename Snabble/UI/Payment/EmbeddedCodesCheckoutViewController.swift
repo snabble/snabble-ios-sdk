@@ -110,7 +110,7 @@ final class EmbeddedCodesCheckoutViewController: UIViewController {
     private func csvForQR() -> [String] {
         let lines: [String] = self.cart.items.reduce(into: [], { result, item in
             if item.product.type == .userMustWeigh {
-                if let ean = self.getEanTemplate(for: item) {
+                if let ean = self.getEanFromTemplate(for: item) {
                     result.append("1;\(ean)")
                 }
             } else {
@@ -159,8 +159,8 @@ final class EmbeddedCodesCheckoutViewController: UIViewController {
 
     private func codesFor(_ items: [CartItem]) -> [String] {
         return items.reduce(into: [], { result, item in
-            if item.product.type == .userMustWeigh {
-                if let ean = self.getEanTemplate(for: item) {
+            if item.product.type == .userMustWeigh || item.product.referenceUnit == .piece {
+                if let ean = self.getEanFromTemplate(for: item) {
                     result.append(ean)
                 }
             } else {
@@ -169,7 +169,7 @@ final class EmbeddedCodesCheckoutViewController: UIViewController {
         })
     }
 
-    private func getEanTemplate(for item: CartItem) -> String? {
+    private func getEanFromTemplate(for item: CartItem) -> String? {
         // find a ean13_instore template we can use
         guard let code = item.product.codes.first(where: { $0.template.hasPrefix("ean13_instore") }) else {
             return nil

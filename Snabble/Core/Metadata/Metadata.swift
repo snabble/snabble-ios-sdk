@@ -130,14 +130,8 @@ public struct Project: Decodable {
     public let currency: String
     public let decimalDigits: Int
     public let locale: String
-    public let pricePrefixes: [String]
-    public let unitPrefixes: [String]
-    public let weighPrefixes: [String]
     public let roundingMode: RoundingMode
     public let currencySymbol: String   // not part of JSON, derived from the locale
-
-    public let verifyInternalEanChecksum: Bool
-    public let useGermanPrintPrefix: Bool
 
     // config for embedded QR codes
     public let encodedCodes: QRCodeConfig?
@@ -150,8 +144,8 @@ public struct Project: Decodable {
 
     enum CodingKeys: String, CodingKey {
         case id, links
-        case currency, decimalDigits, locale, pricePrefixes, unitPrefixes, weighPrefixes, roundingMode
-        case verifyInternalEanChecksum, useGermanPrintPrefix, encodedCodes
+        case currency, decimalDigits, locale, roundingMode
+        case encodedCodes
         case shops, scanFormats, customerCards
     }
 
@@ -165,14 +159,9 @@ public struct Project: Decodable {
         self.currency = try container.decode(.currency)
         self.decimalDigits = try container.decode(.decimalDigits)
         self.locale = try container.decode(.locale)
-        self.pricePrefixes = try container.decode(.pricePrefixes)
-        self.unitPrefixes = try container.decode(.unitPrefixes)
-        self.weighPrefixes = try container.decode(.weighPrefixes)
         self.roundingMode = try container.decode(.roundingMode)
 
-        self.verifyInternalEanChecksum = try container.decode(.verifyInternalEanChecksum)
         self.encodedCodes = try container.decodeIfPresent(.encodedCodes)
-        self.useGermanPrintPrefix = try container.decode(.useGermanPrintPrefix)
 
         let formatter = NumberFormatter()
         formatter.locale = Locale(identifier: self.locale)
@@ -195,34 +184,8 @@ public struct Project: Decodable {
         self.currency = ""
         self.decimalDigits = 0
         self.locale = ""
-        self.pricePrefixes = []
-        self.unitPrefixes = []
-        self.weighPrefixes = []
         self.roundingMode = .up
-        self.verifyInternalEanChecksum = false
         self.encodedCodes = nil
-        self.useGermanPrintPrefix = false
-        self.currencySymbol = ""
-        self.shops = []
-        self.scanFormats = []
-        self.customerCards = CustomerCardInfo()
-    }
-
-    // only used for unit tests
-    internal init(pricePrefixes: [String], weighPrefixes: [String], unitPrefixes: [String]) {
-        self.id = "none"
-        self.links = ProjectLinks.empty
-        self.rawLinks = [:]
-        self.currency = ""
-        self.decimalDigits = 0
-        self.locale = ""
-        self.pricePrefixes = pricePrefixes
-        self.unitPrefixes = unitPrefixes
-        self.weighPrefixes = weighPrefixes
-        self.roundingMode = .up
-        self.verifyInternalEanChecksum = false
-        self.encodedCodes = nil
-        self.useGermanPrintPrefix = false
         self.currencySymbol = ""
         self.shops = []
         self.scanFormats = []
@@ -237,13 +200,8 @@ public struct Project: Decodable {
         self.currency = currency
         self.decimalDigits = decimalDigits
         self.locale = locale
-        self.pricePrefixes = []
-        self.unitPrefixes = []
-        self.weighPrefixes = []
         self.roundingMode = .up
-        self.verifyInternalEanChecksum = false
         self.encodedCodes = nil
-        self.useGermanPrintPrefix = false
         self.currencySymbol = currencySymbol
         self.shops = []
         self.scanFormats = []
@@ -257,13 +215,8 @@ public struct Project: Decodable {
         self.currency = ""
         self.decimalDigits = 0
         self.locale = ""
-        self.pricePrefixes = []
-        self.unitPrefixes = []
-        self.weighPrefixes = []
         self.roundingMode = .up
-        self.verifyInternalEanChecksum = false
         self.encodedCodes = nil
-        self.useGermanPrintPrefix = false
         self.currencySymbol = ""
         self.shops = []
         self.scanFormats = []

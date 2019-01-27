@@ -191,9 +191,9 @@ public final class ScannerViewController: UIViewController {
 
     // MARK: - scan confirmation views
     
-    private func showConfirmation(for product: Product, _ code: String) {
+    private func showConfirmation(for scannedProduct: ScannedProduct) {
         self.confirmationVisible = true
-        self.scanConfirmationView.present(product, cart: self.shoppingCart, code: code)
+        self.scanConfirmationView.present(scannedProduct, cart: self.shoppingCart)
 
         self.scanningView.stopScanning()
         self.displayScanConfirmationView(hidden: false, setBottomOffset: self.productType != .userMustWeigh)
@@ -333,7 +333,7 @@ extension ScannerViewController: ScanningViewDelegate {
             return
         }
 
-        self.handleScannedCode(code, type)
+        self.handleScannedCode(code)
     }
 }
 
@@ -352,7 +352,7 @@ extension ScannerViewController {
         }
     }
 
-    private func handleScannedCode(_ scannedCode: String, _ type: AVMetadataObject.ObjectType?) {
+    private func handleScannedCode(_ scannedCode: String) {
         // Log.debug("handleScannedCode \(scannedCode) \(self.lastScannedCode)")
         self.lastScannedCode = scannedCode
 
@@ -363,52 +363,55 @@ extension ScannerViewController {
 
         self.scanningView.stopScanning()
 
-        self.productForCode(scannedCode) { product, code in
+        self.productForCode(scannedCode) { scannedProduct in
             self.timer?.invalidate()
             self.timer = nil
             self.spinner.stopAnimating()
 
-            guard let product = product else {
+            guard let scannedProduct = scannedProduct else {
                 self.scannedUnknown("Snabble.Scanner.unknownBarcode".localized(), scannedCode)
                 self.scanningView.startScanning()
                 return
             }
 
-            self.tapticFeedback.notificationOccurred(.success)
+            let product = scannedProduct.product
+            let embeddedData = scannedProduct.embeddedData
 
-            let ean = EAN.parse(scannedCode, SnabbleUI.project)
             // handle scanning the shelf code of a pre-weighed product (no data or 0 encoded in the EAN)
-            if product.type == .preWeighed && (ean?.embeddedData == nil || ean?.embeddedData == 0) {
+            if product.type == .preWeighed && (embeddedData == nil || embeddedData == 0) {
                 let msg = "Snabble.Scanner.scannedShelfCode".localized()
-                self.scannedUnknown(msg, code)
+                self.scannedUnknown(msg, scannedCode)
                 self.scanningView.startScanning()
                 return
             }
+            self.tapticFeedback.notificationOccurred(.success)
 
-            self.delegate.track(.scanProduct(code))
+            self.delegate.track(.scanProduct(scannedProduct.code ?? scannedCode))
             self.productType = product.type
             self.lastScannedCode = ""
 
             if product.bundles.count > 0 {
-                self.showBundleSelection(for: product, code)
+                self.showBundleSelection(for: scannedProduct)
             } else {
-                self.showConfirmation(for: product, code)
+                self.showConfirmation(for: scannedProduct)
             }
         }
     }
 
-    private func showBundleSelection(for product: Product, _ code: String) {
+    private func showBundleSelection(for scannedProduct: ScannedProduct) {
         let alert = UIAlertController(title: nil, message: "Snabble.Scanner.BundleDialog.headline".localized(), preferredStyle: .actionSheet)
 
+        let product = scannedProduct.product
         alert.addAction(UIAlertAction(title: product.name, style: .default) { action in
-            self.showConfirmation(for: product, code)
+            self.showConfirmation(for: scannedProduct)
         })
 
         for bundle in product.bundles {
             alert.addAction(UIAlertAction(title: bundle.name, style: .default) { action in
-                let bundleCode = bundle.codes.first?.code ?? ""
+                let bundleCode = bundle.codes.first?.code
                 let transmissionCode = bundle.codes.first?.transmissionCode ?? bundleCode
-                self.showConfirmation(for: bundle, transmissionCode)
+                let scannedBundle = ScannedProduct(bundle, transmissionCode)
+                self.showConfirmation(for: scannedBundle)
             })
         }
 
@@ -427,22 +430,25 @@ extension ScannerViewController {
         self.present(alert, animated: true)
     }
 
-    private func productForCode(_ code: String, completion: @escaping (Product?, String) -> () ) {
-        let result = CodeMatcher.match(code)
+    private func productForCode(_ code: String, completion: @escaping (ScannedProduct?) -> () ) {
+        let matches = CodeMatcher.match(code)
 
-        guard result.count > 0 else {
-            return completion(nil, "")
+        guard matches.count > 0 else {
+            return completion(nil)
         }
 
-        let lookupCodes = result.map { $0.lookupCode }
-        let templates = result.map { $0.template.id }
+        let lookupCodes = matches.map { $0.lookupCode }
+        let templates = matches.map { $0.template.id }
         let codes = Array(zip(lookupCodes, templates))
         self.productProvider.productByScannableCodes(codes, self.shop.id, forceDownload: false) { result in
             switch result {
             case .success(let lookupResult):
-                completion(lookupResult.product, lookupResult.code ?? code)
+                let parseResult = matches.first { $0.template.id == lookupResult.template }
+                let scannedCode = lookupResult.code ?? code
+                let newResult = ScannedProduct(lookupResult.product, scannedCode, lookupResult.template, parseResult?.embeddedData)
+                completion(newResult)
             case .failure:
-                completion(nil, "")
+                completion(nil)
             }
         }
     }
@@ -506,7 +512,7 @@ extension ScannerViewController {
     private func manuallyEnteredCode(_ code: String?) {
         // Log.debug("entered \(code)")
         if let code = code {
-            self.handleScannedCode(code, nil)
+            self.handleScannedCode(code)
         }
     }
 

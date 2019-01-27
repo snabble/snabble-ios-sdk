@@ -70,7 +70,10 @@ final class ShoppingCartTableCell: UITableViewCell {
     func setCartItem(_ item: CartItem, row: Int, delegate: ShoppingCartTableDelegate) {
         self.delegate = delegate
         self.item = item
-        self.quantity = item.weight ?? item.quantity
+        self.quantity = item.quantity
+        if item.product.referenceUnit?.hasUnit == true, let embeddedData = item.embeddedData {
+            self.quantity = embeddedData
+        }
 
         let product = item.product
         self.nameLabel.text = product.name
@@ -80,11 +83,10 @@ final class ShoppingCartTableCell: UITableViewCell {
         self.plusButton.tag = row
         self.quantityInput.tag = row
 
-        let ean = EAN.parse(item.scannedCode, SnabbleUI.project)
-        self.minusButton.isHidden = ean?.hasEmbeddedData == true
-        self.plusButton.isHidden = product.type == .preWeighed || ean?.hasEmbeddedData == true
+        self.minusButton.isHidden = item.embeddedData != nil
+        self.plusButton.isHidden = product.type == .preWeighed || item.embeddedData != nil
 
-        if let ean = ean, ean.encoding == .ean13, ean.embeddedUnits != nil {
+        if product.referenceUnit == .piece && item.embeddedData != nil {
             self.minusButton.isHidden = !item.editableUnits
             self.plusButton.isHidden = !item.editableUnits
         }
@@ -122,9 +124,7 @@ final class ShoppingCartTableCell: UITableViewCell {
     }
 
     private func showQuantity() {
-        let ean = EAN.parse(self.item.scannedCode, SnabbleUI.project)
-
-        let showWeight = ean?.hasEmbeddedWeight == true || self.item.product.type == .userMustWeigh
+        let showWeight = self.item.product.referenceUnit?.hasUnit == true || self.item.product.type == .userMustWeigh
 
         let symbol = self.item.product.encodingUnit?.display ?? ""
         let gram = showWeight ? symbol : ""
@@ -143,10 +143,14 @@ final class ShoppingCartTableCell: UITableViewCell {
                 let depositPrice = PriceFormatter.format(deposit * self.quantity)
                 let plusDeposit = String(format: "Snabble.Scanner.plusDeposit".localized(), depositPrice)
                 self.priceLabel.text = "× \(itemPrice) \(plusDeposit) = \(total)"
-            } else if let units = ean?.embeddedUnits {
-                self.quantityLabel.text = "\(units)"
+            } else if let referenceUnit = self.item.product.referenceUnit, referenceUnit == .piece, let units = self.item.embeddedData {
+                let qty = units == 0 ? self.quantity : units
+                self.quantityLabel.text = "\(qty)"
                 let itemPrice = PriceFormatter.format(self.item.product.price)
                 self.priceLabel.text  = "× \(itemPrice) = \(total)"
+            } else if let referenceUnit = self.item.product.referenceUnit, referenceUnit == .price, let price = self.item.embeddedData {
+                self.quantityLabel.text = "\(self.quantity)"
+                self.priceLabel.text = PriceFormatter.format(price)
             } else if self.quantity == 1 {
                 self.priceLabel.text = total
             } else {

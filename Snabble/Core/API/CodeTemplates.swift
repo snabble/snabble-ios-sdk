@@ -359,7 +359,7 @@ public struct ParseResult {
         case .code(let codeType):
             switch codeType {
             case .ean8, .ean13, .ean14:
-                return EAN.parse(entry.value, nil) != nil
+                return EAN.parse(entry.value) != nil
             case .untyped(let len):
                 return entry.value.count == len
             }
@@ -421,8 +421,8 @@ public struct CodeMatcher {
         return results
     }
 
-    public static func createInstoreEan(_ templateId: String, _ code: String, _ data: Int) -> String? {
-        guard let template = templates.first(where: { $0.id == templateId }) else {
+    public static func createInstoreEan(_ template: String, _ code: String, _ data: Int) -> String? {
+        guard let template = templates.first(where: { $0.id == template }) else {
             return nil
         }
 

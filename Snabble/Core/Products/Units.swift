@@ -63,6 +63,15 @@ public enum Unit: String, Codable {
         }
         return Unit(rawValue: rawValue)
     }
+
+    var hasUnit: Bool {
+        switch self {
+        case .piece, .price:
+            return false
+        default:
+            return true
+        }
+    }
 }
 
 extension Unit {

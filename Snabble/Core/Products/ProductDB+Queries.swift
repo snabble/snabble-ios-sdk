@@ -76,7 +76,7 @@ extension ProductDB {
         return []
     }
 
-    func productByScannableCodes(_ dbQueue: DatabaseQueue, _ codes: [(String, String)], _ shopId: String?, retry: Bool = false) -> LookupResult? {
+    func productByScannableCodes(_ dbQueue: DatabaseQueue, _ codes: [(String, String)], _ shopId: String?, retry: Bool = false) -> ScannedProduct? {
         for (code, template) in codes {
             if let result = self.productByScannableCode(dbQueue, code, template, shopId) {
                 return result
@@ -86,7 +86,7 @@ extension ProductDB {
         return nil
     }
 
-    private func productByScannableCode(_ dbQueue: DatabaseQueue, _ code: String, _ template: String, _ shopId: String?, retry: Bool = false) -> LookupResult? {
+    private func productByScannableCode(_ dbQueue: DatabaseQueue, _ code: String, _ template: String, _ shopId: String?, retry: Bool = false) -> ScannedProduct? {
         do {
             let row = try dbQueue.inDatabase { db in
                 return try self.fetchOne(db, ProductDB.productQueryUnits, arguments: [code, template])
@@ -94,7 +94,7 @@ extension ProductDB {
             if let product = self.productFromRow(dbQueue, row, shopId) {
                 let codeEntry = product.codes.first { $0.code == code }
                 let transmissionCode = codeEntry?.transmissionCode
-                return LookupResult(product: product, code: transmissionCode)
+                return ScannedProduct(product, transmissionCode, template)
             } else if !retry {
                 // initial lookup failed
 

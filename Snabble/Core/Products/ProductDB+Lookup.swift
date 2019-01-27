@@ -6,9 +6,9 @@
 
 extension ProductDB {
 
-    func resolveProductsLookup(_ url: String, _ codes: [(String, String)], _ shopId: String, completion: @escaping (_ result: Result<LookupResult, SnabbleError>) -> ()) {
+    func resolveProductsLookup(_ url: String, _ codes: [(String, String)], _ shopId: String, completion: @escaping (_ result: Result<ScannedProduct, SnabbleError>) -> ()) {
         let group = DispatchGroup()
-        var results = [Result<LookupResult, SnabbleError>]()
+        var results = [Result<ScannedProduct, SnabbleError>]()
 
         // lookup each code/template
         for (code, template) in codes {
@@ -33,7 +33,7 @@ extension ProductDB {
         }
     }
 
-    private func resolveProductsLookup(_ url: String, _ code: String, _ template: String, _ shopId: String, completion: @escaping (_ result: Result<LookupResult, SnabbleError>) -> ()) {
+    private func resolveProductsLookup(_ url: String, _ code: String, _ template: String, _ shopId: String, completion: @escaping (_ result: Result<ScannedProduct, SnabbleError>) -> ()) {
         let session = SnabbleAPI.urlSession()
 
         // TODO: is this the right value?
@@ -68,7 +68,7 @@ extension ProductDB {
 
                         let codeEntry = product.codes.first { $0.code == code }
                         let transmissionCode = codeEntry?.transmissionCode
-                        let lookupResult = LookupResult(product: product, code: transmissionCode)
+                        let lookupResult = ScannedProduct(product, transmissionCode, template)
                         completion(Result.success(lookupResult))
                     } catch let error {
                         self.returnError("product parse error: \(error)", completion)
