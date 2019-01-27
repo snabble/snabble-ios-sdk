@@ -206,36 +206,19 @@ final class ScanConfirmationView: DesignableView {
         let cart = self.shoppingCart!
         let product = self.scannedProduct.product
 
-        #warning("fixme")
         if cart.quantity(of: product) == 0 || product.type != .singleItem || self.scannedProduct.embeddedData != nil {
             var editableUnits = false
             if product.referenceUnit?.hasUnit == true && self.scannedProduct.embeddedData == 0 {
                 self.quantity = 1
                 editableUnits = true
             }
-            print("adding \(self.quantity) x \(product.name), scannedCode = \(String(describing: self.scannedProduct.code)), embed=\(String(describing: self.scannedProduct.embeddedData)) editableUnits=\(editableUnits)")
+            // Log.info("adding to cart: \(self.quantity) x \(product.name), scannedCode = \(String(describing: self.scannedProduct.code)), embed=\(String(describing: self.scannedProduct.embeddedData)) editableUnits=\(editableUnits)")
             cart.add(product, quantity: self.quantity, scannedCode: self.scannedProduct.code ?? "", embeddedData: self.scannedProduct.embeddedData, editableUnits: editableUnits)
         } else {
+            // Log.info("updating cart: set qty=\(self.quantity) for \(product.name)")
             cart.setQuantity(self.quantity, for: product)
         }
 
-//        if cart.quantity(of: product) == 0 || product.type != .singleItem || self.scannedProduct.embeddedData != nil {
-//            var editableUnits = false
-//            // embedded units==0 (e.g. billa bakery shelf code)? generate new EAN from user-entered quantity
-//            if let ean = self.ean, ean.hasEmbeddedUnits, ean.embeddedUnits == 0 {
-//                code = EAN13.embedDataInEan(code, data: self.quantity)
-//                self.quantity = 1
-//                editableUnits = true
-//            }
-//            // Log.info("adding to cart: \(self.quantity) x \(self.product.name), code=\(code)")
-//
-//            let ean = EAN.parse(code)
-//            cart.add(self.product, quantity: self.quantity, scannedCode: code, ean: ean, editableUnits: editableUnits)
-//        } else {
-//            // Log.info("updating cart: add \(self.quantity) to \(self.product.name)")
-//            cart.setQuantity(self.quantity, for: product)
-//        }
-//
         NotificationCenter.default.post(name: .snabbleCartUpdated, object: self)
         self.delegate.closeConfirmation()
 
