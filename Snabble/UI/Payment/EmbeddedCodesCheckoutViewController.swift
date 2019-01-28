@@ -175,7 +175,12 @@ final class EmbeddedCodesCheckoutViewController: UIViewController {
             return nil
         }
 
-        return CodeMatcher.createInstoreEan(code.template, code.code, item.quantity)
+        var quantity = item.quantity
+        if let data = item.embeddedData {
+            quantity = data
+        }
+
+        return CodeMatcher.createInstoreEan(code.template, code.code, quantity)
     }
 
     private func setButtonTitle() {
