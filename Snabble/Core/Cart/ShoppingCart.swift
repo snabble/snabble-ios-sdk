@@ -185,7 +185,7 @@ public final class ShoppingCart {
     ///
     /// the newly added (or modified) product is moved to the start of the list
     public func add(_ product: Product, quantity: Int = 1, scannedCode: String, embeddedData: Int? = nil, editableUnits: Bool = false) {
-        if let index = self.indexOf(product), product.type == .singleItem {
+        if let index = self.indexOf(product), product.type == .singleItem, product.referenceUnit == nil {
             self.items[index].quantity += quantity
             let item = self.items.remove(at: index)
             self.items.insert(item, at: 0)
