@@ -156,6 +156,7 @@ private class ResolvedProduct: Decodable {
     let saleRestriction: ResolvedSaleRestriction?
     let deposit: ResolvedProduct?
     let bundles: [ResolvedProduct]?
+    let bundledProduct: String?
     let weighing: Int
     let weighByCustomer: Bool?
     let referenceUnit: String?
@@ -232,7 +233,7 @@ private class ResolvedProduct: Decodable {
                               type: type,
                               codes: codes,
                               depositSku: self.deposit?.sku,
-                              bundledSku: nil,  // ??
+                              bundledSku: self.bundledProduct,
                               isDeposit: self.productType == .deposit,
                               deposit: self.deposit?.price.listPrice,
                               saleRestriction: self.saleRestriction?.convert() ?? .none,
