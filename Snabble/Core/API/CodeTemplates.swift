@@ -383,6 +383,8 @@ public struct CodeMatcher {
         "german_print":         "4{code:2}{_:5}{embed:4}{_}",
         "ean14_code128":        "01{code:ean14}",
         "edeka_discount":       "97{code:ean13}{embed:6}{_}",
+        // "ikea_fundgrube":       "{_}{_:7}{_}{_:17}{_}{_:3}{code:8}{_}{_:9}{embed100:5}{_}",
+        // "ikea_itf14":           "{code:8}{_:6}"
     ]
 
     public static var customTemplates = [String: String]()
