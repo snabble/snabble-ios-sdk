@@ -73,25 +73,12 @@ public protocol ProductProvider: class {
     /// get a list of products by their SKUs
     func productsBySku(_ skus: [String], _ shopId: String) -> [Product]
 
-    /// get boosted products
-    ///
-    /// returns a list of products that have a non-null `boost` value and a valid image URL
-    /// the returned list is sorted by descending boost value
-    ///
-    /// - Parameter limit: number of products to get
-    /// - Returns: an array of `Product`
-    @available(*, deprecated, message: "this method will be removed in the near future")
-    func boostedProducts(limit: Int) -> [Product]
-
     /// get discounted products
     ///
     /// returns a list of all products that have a discounted price and a valid image URL
     ///
     /// - Returns: an array of `Product`
     func discountedProducts(_ shopId: String) -> [Product]
-
-    @available(*, deprecated, message: "this method will be removed in the near future, use discountedProducts(_:) instead")
-    func discountedProducts() -> [Product]
 
     /// get products matching `name`
     ///
@@ -544,16 +531,6 @@ extension ProductDB {
         }
 
         return self.productsBySku(db, skus, shopId)
-    }
-
-    @available(*, deprecated)
-    public func boostedProducts(limit: Int) -> [Product] {
-        return []
-    }
-
-    @available(*, deprecated)
-    public func discountedProducts() -> [Product] {
-        return []
     }
 
     /// get discounted products

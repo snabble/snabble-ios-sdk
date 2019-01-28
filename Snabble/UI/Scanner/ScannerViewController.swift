@@ -455,7 +455,6 @@ extension ScannerViewController {
 
     #warning("remove this")
     /*
-    @available(*, deprecated, message: "will be removed")
     private func productForCode(_ code: String, _ type: AVMetadataObject.ObjectType?, completion: @escaping (Product?, String) -> () ) {
         var lookupCode = code
         if let scanFormat = type?.scanFormat, let codeRange = SnabbleUI.project.codeRange(for: scanFormat) {
