@@ -1,5 +1,10 @@
 ## snabble iOS SDK Changelog
 
+# v0.9.0
+
+* removed the deprecated `discountedProducts` and `boostedProducts` methods
+* decoding of embedded data in EANs no longer relies on project-specific prefixes. Instead, EANs are now parsed using templates that extract the embedded data (if any) and map to the `encodingUnit` used. This is a breaking change for users of the Core API, but transparent if only the UI components are used.
+
 # v0.8.13
 
 * fixes a bug with unit-encoded EANs
