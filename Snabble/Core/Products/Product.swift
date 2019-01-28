@@ -131,7 +131,7 @@ public struct Product: Codable {
     public let isDeposit: Bool
 
     /// if this product has an associated deposit, this is the deposit product's `price`
-    internal(set) public var deposit: Int?
+    public let deposit: Int?
 
     /// if this product is contained in bundles (e.g. crates of bottles), this is the list of bundling products
     public let bundles: [Product]
