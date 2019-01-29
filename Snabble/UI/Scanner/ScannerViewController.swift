@@ -432,7 +432,17 @@ extension ScannerViewController {
 
     private func productForCode(_ code: String, completion: @escaping (ScannedProduct?) -> () ) {
         // is this a global price override code?
-        if let match = CodeMatcher.matchOverride("edeka_discount", code) {
+        #warning("get this from the project")
+
+        var override: String? = nil
+        let project = SnabbleUI.project
+        if project.id.hasPrefix("edeka") {
+            override = "edeka_discount"
+        } else if project.id.hasPrefix("ikea") {
+            override = "ikea_fundgrube"
+        }
+
+        if let override = override, let match = CodeMatcher.matchOverride(override, code) {
             return self.productForOverrideCode(match, completion: completion)
         }
 

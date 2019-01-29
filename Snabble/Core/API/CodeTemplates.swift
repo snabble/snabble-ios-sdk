@@ -47,6 +47,9 @@ fileprivate enum TemplateComponent {
     case code(CodeType)
     /// the embedded data of the code (weight, price or amount), the value is the length of the field
     case embed(Int)
+    /// the embedded data of the code (weight, price or amount), the value is the length of the field.
+    /// When extracting the value from a scanned code, it will be multiplied by 100
+    case embed100(Int)
     /// the embedded price of one `referenceUnit` worth of the product. For weight-dependent prices, this is usually the price per kilogram.
     /// The value is the length of the field
     case price(Int)
@@ -77,6 +80,7 @@ fileprivate enum TemplateComponent {
                 }
                 switch parts[0] {
                 case "embed": self = .embed(len)
+                case "embed100": self = .embed100(len)
                 case "price": self = .price(len)
                 case "_": self = .ignore(len)
                 case "i": self = .internalChecksum
@@ -95,6 +99,7 @@ fileprivate enum TemplateComponent {
         case .plainText(let str): return "(\\Q\(str)\\E)"
         case .code(let codeType): return "(\\d{\(codeType.length)})"
         case .embed(let len): return "(\\d{\(len)})"
+        case .embed100(let len): return "(\\d{\(len)})"
         case .price(let len): return "(\\d{\(len)})"
         case .ignore(let len): return "(.{\(len)})"
         case .internalChecksum: return "(\\d)"
@@ -108,6 +113,7 @@ fileprivate enum TemplateComponent {
         case .plainText(let str): return str.count
         case .code(let codeType): return codeType.length
         case .embed(let len): return len
+        case .embed100(let len): return len
         case .price(let len): return len
         case .ignore(let len): return len
         case .internalChecksum: return 1
@@ -126,7 +132,7 @@ fileprivate enum TemplateComponent {
     /// is this an `embed` component?
     var isEmbed: Bool {
         switch self {
-        case .embed: return true
+        case .embed, .embed100: return true
         default: return false
         }
     }
@@ -149,6 +155,7 @@ fileprivate enum TemplateComponent {
         case .ignore: return 4
         case .internalChecksum: return 5
         case .catchall: return 6
+        case .embed100: return 7
         }
     }
 }
@@ -312,10 +319,17 @@ public struct ParseResult {
     }
 
     public var embeddedData: Int? {
-        guard let entry = self.entries.first(where: { $0.templateComponent.isEmbed }) else {
+        guard
+            let entry = self.entries.first(where: { $0.templateComponent.isEmbed }),
+            let value = Int(entry.value)
+        else {
             return nil
         }
-        return Int(entry.value)
+
+        if case .embed100 = entry.templateComponent {
+            return value * 100
+        }
+        return value
     }
 
     /// embed data into a scanned code in place of the `embed` placeholder
@@ -406,7 +420,7 @@ public struct CodeMatcher {
 
     static let overrideCodes = [
         PriceOverrideCode("edeka_discount", "97{code:ean13}0{embed:5}{_}", "ean13_instore", "2417000"),
-        // PriceOverrideCode("ikea_fundgrube", "{_}{_:7}{_}{_:17}{_}{_:3}{code:8}{_}{_:9}{embed100:5}{_}", nil, nil)
+        PriceOverrideCode("ikea_fundgrube", "{_}{_:7}{_}{_:17}{_}{_:3}{code:8}{_}{_:9}{embed100:5}{_}", nil, nil)
     ]
 
     public static var customTemplates = [String: String]()
@@ -454,11 +468,15 @@ public struct CodeMatcher {
         }
 
         let lookupCode = result.lookupCode
-        if let transmissionTemplate = overrideCode.transmissionTemplate, let transmissionCode = overrideCode.transmissionCode, let embeddedData = result.embeddedData {
-            let newCode = createInstoreEan(transmissionTemplate, transmissionCode, embeddedData)
-            return OverrideLookup(lookupCode: lookupCode, transmissionCode: newCode, embeddedData: embeddedData)
+        if let transmissionTemplate = overrideCode.transmissionTemplate {
+            if let transmissionCode = overrideCode.transmissionCode, let embeddedData = result.embeddedData {
+                let newCode = createInstoreEan(transmissionTemplate, transmissionCode, embeddedData)
+                return OverrideLookup(lookupCode: lookupCode, transmissionCode: newCode, embeddedData: embeddedData)
+            } else {
+                return OverrideLookup(lookupCode: lookupCode, transmissionCode: overrideCode.transmissionCode, embeddedData: result.embeddedData)
+            }
         } else {
-            return OverrideLookup(lookupCode: lookupCode, transmissionCode: nil, embeddedData: nil)
+            return OverrideLookup(lookupCode: lookupCode, transmissionCode: overrideCode.transmissionCode, embeddedData: result.embeddedData)
         }
     }
 
