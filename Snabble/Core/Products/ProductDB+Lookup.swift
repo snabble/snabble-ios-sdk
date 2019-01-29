@@ -14,22 +14,34 @@ extension ProductDB {
         for (code, template) in codes {
             group.enter()
             self.resolveProductsLookup(url, code, template, shopId) { result in
-                results.append(result)
+                synchronized(self) {
+                    results.append(result)
+                }
                 group.leave()
             }
         }
 
         // all requests done - return the first success, if any
         group.notify(queue: DispatchQueue.main) {
-            for result in results {
-                switch result {
-                case .success: return completion(result)
+            var result = results[0]
+            var found = 0
+            for res in results {
+                switch res {
+                case .success:
+                    result = res
+                    found += 1
                 default: ()
                 }
             }
 
-            // no successes found, return the first error
-            completion(results[0])
+            // more than one success? log this
+            if found > 1 {
+                let msg = "got \(found) matches for lookup \(codes)"
+                Log.warn(msg)
+                let event = AppEvent(log: msg, project: self.project)
+                event.post()
+            }
+            completion(result)
         }
     }
 
