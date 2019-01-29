@@ -208,13 +208,12 @@ public struct CodeTemplate {
         self.expectedLength = components.reduce(0) { $0 + $1.length }
 
         // further checks:
-        // each component may occur 0 or 1 times, except _
+        // each component may occur 0 or 1 times, except _ and plainText
         var count = [Int: Int]()
         for comp in components {
-            if case .ignore = comp {
-                // skip .ignore
-            } else {
-                count[comp.key, default: 0] += 1
+            switch comp {
+            case .ignore, .plainText: ()
+            default: count[comp.key, default: 0] += 1
             }
         }
 
@@ -376,15 +375,38 @@ public struct ParseResult {
     }
 }
 
+struct PriceOverrideCode {
+    let id: String
+    let template: CodeTemplate
+    let transmissionTemplate: String?
+    let transmissionCode: String?
+
+    init(_ id: String, _ codeTemplate: String, _ transmissionTemplate: String?, _ transmissionCode: String?) {
+        self.id = id
+        self.template = CodeTemplate(id, codeTemplate)!
+        self.transmissionTemplate = transmissionTemplate
+        self.transmissionCode = transmissionCode
+    }
+}
+
+public struct OverrideLookup {
+    public let lookupCode: String
+    public let transmissionCode: String?
+    public let embeddedData: Int?
+}
+
 public struct CodeMatcher {
     static let builtinTemplates = [
         "ean13_instore":        "2{code:5}{_}{embed:5}{_}",
         "ean13_instore_chk":    "2{code:5}{i}{embed:5}{_}",
         "german_print":         "4{code:2}{_:5}{embed:4}{_}",
         "ean14_code128":        "01{code:ean14}",
-        "edeka_discount":       "97{code:ean13}{embed:6}{_}",
-        // "ikea_fundgrube":       "{_}{_:7}{_}{_:17}{_}{_:3}{code:8}{_}{_:9}{embed100:5}{_}",
-        // "ikea_itf14":           "{code:8}{_:6}"
+        "ikea_itf14":           "{code:8}{_:6}"
+    ]
+
+    static let overrideCodes = [
+        PriceOverrideCode("edeka_discount", "97{code:ean13}0{embed:5}{_}", "ean13_instore", "2417000"),
+        // PriceOverrideCode("ikea_fundgrube", "{_}{_:7}{_}{_:17}{_}{_:3}{code:8}{_}{_:9}{embed100:5}{_}", nil, nil)
     ]
 
     public static var customTemplates = [String: String]()
@@ -421,6 +443,23 @@ public struct CodeMatcher {
             }
         }
         return results
+    }
+
+    public static func matchOverride(_ templateId: String, _ code: String) -> OverrideLookup? {
+        guard
+            let overrideCode = overrideCodes.first(where: { $0.id == templateId }),
+            let result = overrideCode.template.match(code)
+        else {
+            return nil
+        }
+
+        let lookupCode = result.lookupCode
+        if let transmissionTemplate = overrideCode.transmissionTemplate, let transmissionCode = overrideCode.transmissionCode, let embeddedData = result.embeddedData {
+            let newCode = createInstoreEan(transmissionTemplate, transmissionCode, embeddedData)
+            return OverrideLookup(lookupCode: lookupCode, transmissionCode: newCode, embeddedData: embeddedData)
+        } else {
+            return OverrideLookup(lookupCode: lookupCode, transmissionCode: nil, embeddedData: nil)
+        }
     }
 
     public static func createInstoreEan(_ template: String, _ code: String, _ data: Int) -> String? {

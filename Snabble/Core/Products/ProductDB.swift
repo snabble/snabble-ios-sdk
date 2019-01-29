@@ -26,14 +26,16 @@ public struct MetadataKeys {
 public struct ScannedProduct {
     public let product: Product
     public let code: String?
-    public let template: String?
+    public let templateId: String?
     public let embeddedData: Int?
+    public let encodingUnit: Unit?
 
-    public init(_ product: Product, _ code: String?, _ template: String? = nil, _ embeddedData: Int? = nil) {
+    public init(_ product: Product, _ code: String?, _ template: String? = nil, _ embeddedData: Int? = nil, _ encodingUnit: Unit? = nil) {
         self.product = product
         self.code = code
-        self.template = template
+        self.templateId = template
         self.embeddedData = embeddedData
+        self.encodingUnit = encodingUnit
     }
 }
 

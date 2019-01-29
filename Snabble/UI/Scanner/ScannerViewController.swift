@@ -431,6 +431,11 @@ extension ScannerViewController {
     }
 
     private func productForCode(_ code: String, completion: @escaping (ScannedProduct?) -> () ) {
+        // is this a global price override code?
+        if let match = CodeMatcher.matchOverride("edeka_discount", code) {
+            return self.productForOverrideCode(match, completion: completion)
+        }
+
         let matches = CodeMatcher.match(code)
 
         guard matches.count > 0 else {
@@ -440,12 +445,12 @@ extension ScannerViewController {
         let lookupCodes = matches.map { $0.lookupCode }
         let templates = matches.map { $0.template.id }
         let codes = Array(zip(lookupCodes, templates))
-        self.productProvider.productByScannableCodes(codes, self.shop.id, forceDownload: false) { result in
+        self.productProvider.productByScannableCodes(codes, self.shop.id) { result in
             switch result {
             case .success(let lookupResult):
-                let parseResult = matches.first { $0.template.id == lookupResult.template }
+                let parseResult = matches.first { $0.template.id == lookupResult.templateId }
                 let scannedCode = lookupResult.code ?? code
-                let newResult = ScannedProduct(lookupResult.product, scannedCode, lookupResult.template, parseResult?.embeddedData)
+                let newResult = ScannedProduct(lookupResult.product, scannedCode, lookupResult.templateId, parseResult?.embeddedData)
                 completion(newResult)
             case .failure:
                 completion(nil)
@@ -453,60 +458,27 @@ extension ScannerViewController {
         }
     }
 
-    #warning("remove this")
-    /*
-    private func productForCode(_ code: String, _ type: AVMetadataObject.ObjectType?, completion: @escaping (Product?, String) -> () ) {
-        var lookupCode = code
-        if let scanFormat = type?.scanFormat, let codeRange = SnabbleUI.project.codeRange(for: scanFormat) {
-            let startIndex = code.index(code.startIndex, offsetBy: codeRange.lowerBound)
-            let endIndex = code.index(code.startIndex, offsetBy: codeRange.upperBound)
-            lookupCode = String(code[startIndex ..< endIndex])
+    private func productForOverrideCode(_ match: OverrideLookup, completion: @escaping (ScannedProduct?) -> () ) {
+        let code = match.lookupCode
+        let matches = CodeMatcher.match(code)
+
+        guard matches.count > 0 else {
+            return completion(nil)
         }
 
-        if let ean = EAN.parse(code, SnabbleUI.project), ean.hasEmbeddedData, (ean.encoding != .edekaProductPrice && ean.encoding != .ikeaProductPrice) {
-            if SnabbleUI.project.verifyInternalEanChecksum {
-                guard
-                    let ean13 = ean as? EAN13,
-                    ean13.priceFieldOk()
-                else {
-                    completion(nil, "")
-                    return
-                }
-            }
-
-            self.productProvider.productByWeighItemId(ean.codeForLookup, self.shop.id) { result in
-                switch result {
-                case .success(let product): completion(product, code)
-                case .failure: completion(nil, code)
-                }
-            }
-        } else {
-            if code.hasPrefix("97") && code.count == 22 {
-                let startIndex = code.startIndex
-                let embeddedCode = String(code[code.index(startIndex, offsetBy: 2)..<code.index(startIndex, offsetBy: 15)])
-                let embeddedPrice = Int(String(code[code.index(startIndex, offsetBy: 15)..<code.index(startIndex, offsetBy: 21)])) ?? 0
-                self.productProvider.productByScannableCode(embeddedCode, self.shop.id) { result in
-                    switch result {
-                    case .success(let lookupResult):
-                        let template = "2417000000000"
-                        let newCode = EAN13.embedDataInEan(template, data: embeddedPrice)
-                        completion(lookupResult.product, newCode)
-                    case .failure:
-                        completion(nil, "")
-                    }
-                }
-            } else {
-                self.productProvider.productByScannableCode(lookupCode, self.shop.id) { result in
-                    switch result {
-                    case .success(let lookupResult):
-                        completion(lookupResult.product, lookupResult.code ?? code)
-                    case .failure: completion(nil, "")
-                    }
-                }
+        let lookupCodes = matches.map { $0.lookupCode }
+        let templates = matches.map { $0.template.id }
+        let codes = Array(zip(lookupCodes, templates))
+        self.productProvider.productByScannableCodes(codes, self.shop.id) { result in
+            switch result {
+            case .success(let lookupResult):
+                let newResult = ScannedProduct(lookupResult.product, match.transmissionCode, "ean13_instore", match.embeddedData, .price)
+                completion(newResult)
+            case .failure:
+                completion(nil)
             }
         }
     }
-    */
 
     private func manuallyEnteredCode(_ code: String?) {
         // Log.debug("entered \(code)")

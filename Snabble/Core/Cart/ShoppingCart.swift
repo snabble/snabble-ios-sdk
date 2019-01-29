@@ -35,20 +35,23 @@ public struct CartConfig {
 public struct CartItem: Codable {
     public var quantity: Int
     public let product: Product
-    private(set) public var scannedCode: String
+    public let scannedCode: String
 
     /// for shelf codes that have 0 as the embedded units and need to be editable later
     public let editableUnits: Bool
 
     // optional data extracted from the scanned code
     public let embeddedData: Int?
+    // what does the embedded data represent?
+    public let encodingUnit: Unit?
 
-    init(_ quantity: Int, _ product: Product, _ scannedCode: String, _ embeddedData: Int? = nil, _ editableUnits: Bool = false) {
+    init(_ quantity: Int, _ product: Product, _ scannedCode: String, _ embeddedData: Int? = nil, _ editableUnits: Bool = false, _ encodingUnit: Unit? = nil) {
         self.product = product
         self.quantity = quantity
         self.editableUnits = editableUnits
         self.scannedCode = scannedCode
         self.embeddedData = embeddedData
+        self.encodingUnit = encodingUnit
     }
 
     public init(from decoder: Decoder) throws {
@@ -58,6 +61,7 @@ public struct CartItem: Codable {
         self.scannedCode = try container.decode(String.self, forKey: .scannedCode)
         self.editableUnits = try container.decodeIfPresent(Bool.self, forKey: .editableUnits) ?? false
         self.embeddedData = try container.decodeIfPresent(Int.self, forKey: .embeddedData)
+        self.encodingUnit = try container.decodeIfPresent(Unit.self, forKey: .encodingUnit)
     }
 
     // init with a freshly retrieved copy of `item.product`.
@@ -71,6 +75,7 @@ public struct CartItem: Codable {
         self.scannedCode = item.scannedCode
         self.editableUnits = item.editableUnits
         self.embeddedData = item.embeddedData
+        self.encodingUnit = item.encodingUnit
     }
 
     /// total price for this cart item
@@ -84,11 +89,12 @@ public struct CartItem: Codable {
     }
 
     func price(for quantity: Int, _ project: Project) -> Int {
-        guard let embed = self.embeddedData, let referenceUnit = self.product.referenceUnit else {
+        let unit = self.product.encodingUnit ?? self.encodingUnit
+        guard let embed = self.embeddedData, let encodingUnit = unit else {
             return PriceFormatter.priceFor(project, self.product, quantity)
         }
 
-        switch referenceUnit {
+        switch encodingUnit {
         case .price:
             return embed
         case .piece:
@@ -184,13 +190,13 @@ public final class ShoppingCart {
     /// add a Product. if already present and not weight dependent, increase its quantity
     ///
     /// the newly added (or modified) product is moved to the start of the list
-    public func add(_ product: Product, quantity: Int = 1, scannedCode: String, embeddedData: Int? = nil, editableUnits: Bool = false) {
-        if let index = self.indexOf(product), product.type == .singleItem, product.referenceUnit == nil {
+    public func add(_ product: Product, quantity: Int = 1, scannedCode: String, embeddedData: Int? = nil, editableUnits: Bool = false, encodingUnit: Unit? = nil) {
+        if let index = self.indexOf(product), product.type == .singleItem, product.referenceUnit == nil, encodingUnit == nil {
             self.items[index].quantity += quantity
             let item = self.items.remove(at: index)
             self.items.insert(item, at: 0)
         } else {
-            let item = CartItem(quantity, product, scannedCode, embeddedData, editableUnits)
+            let item = CartItem(quantity, product, scannedCode, embeddedData, editableUnits, encodingUnit)
             self.items.insert(item, at: 0)
         }
 

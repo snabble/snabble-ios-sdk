@@ -6,7 +6,7 @@
 
 import Foundation
 
-public enum Quantity: String, Codable {
+public enum Quantity: String {
     case volume
     case capacity
     case area

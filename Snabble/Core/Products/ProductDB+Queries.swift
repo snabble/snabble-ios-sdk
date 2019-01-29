@@ -76,7 +76,7 @@ extension ProductDB {
         return []
     }
 
-    func productByScannableCodes(_ dbQueue: DatabaseQueue, _ codes: [(String, String)], _ shopId: String?, retry: Bool = false) -> ScannedProduct? {
+    func productByScannableCodes(_ dbQueue: DatabaseQueue, _ codes: [(String, String)], _ shopId: String?) -> ScannedProduct? {
         for (code, template) in codes {
             if let result = self.productByScannableCode(dbQueue, code, template, shopId) {
                 return result
@@ -86,7 +86,7 @@ extension ProductDB {
         return nil
     }
 
-    private func productByScannableCode(_ dbQueue: DatabaseQueue, _ code: String, _ template: String, _ shopId: String?, retry: Bool = false) -> ScannedProduct? {
+    private func productByScannableCode(_ dbQueue: DatabaseQueue, _ code: String, _ template: String, _ shopId: String?) -> ScannedProduct? {
         do {
             let row = try dbQueue.inDatabase { db in
                 return try self.fetchOne(db, ProductDB.productQueryUnits, arguments: [code, template])
@@ -95,18 +95,6 @@ extension ProductDB {
                 let codeEntry = product.codes.first { $0.code == code }
                 let transmissionCode = codeEntry?.transmissionCode
                 return ScannedProduct(product, transmissionCode, template)
-            } else if !retry {
-                // initial lookup failed
-
-                // if it was an EAN-8, try again with the same EAN padded to an EAN-13
-                // if it was an EAN-13 with a leading "0", try again with all leading zeroes removed
-                if code.count == 8 {
-                    Log.debug("8->13 lookup attempt \(code) -> 00000\(code)")
-                    return self.productByScannableCode(dbQueue, "00000" + code, template, shopId, retry: true)
-                } else if code.first == "0", let codeInt = Int(code) {
-                    Log.debug("no leading zeroes db lookup attempt \(code) -> \(codeInt)")
-                    return self.productByScannableCode(dbQueue, String(codeInt), template, shopId, retry: true)
-                }
             }
         } catch {
             self.logError("productByScannableCode db error: \(error)")
