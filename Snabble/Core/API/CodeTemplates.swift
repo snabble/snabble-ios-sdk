@@ -215,11 +215,11 @@ public struct CodeTemplate {
         self.expectedLength = components.reduce(0) { $0 + $1.length }
 
         // further checks:
-        // each component may occur 0 or 1 times, except _ and plainText
+        // each component may occur 0 or 1 times, except _ (ignore)
         var count = [Int: Int]()
         for comp in components {
             switch comp {
-            case .ignore, .plainText: ()
+            case .ignore: ()
             default: count[comp.key, default: 0] += 1
             }
         }
@@ -420,7 +420,8 @@ public struct CodeMatcher {
 
     static let overrideCodes = [
         PriceOverrideCode("edeka_discount", "97{code:ean13}0{embed:5}{_}", "ean13_instore", "2417000"),
-        PriceOverrideCode("ikea_fundgrube", "{_}{_:7}{_}{_:17}{_}{_:3}{code:8}{_}{_:9}{embed100:5}{_}", nil, nil)
+        PriceOverrideCode("ikea_fundgrube", "{_}{_:7}{_}{_:17}{_}{_:3}{code:8}{_}{_:9}{embed100:5}{_}", nil, nil),
+        PriceOverrideCode("globus_discount", "98{code:ean13}{_:8}{embed:7}{_:2}", nil, nil)
     ]
 
     public static var customTemplates = [String: String]()
