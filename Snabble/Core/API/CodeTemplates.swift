@@ -419,7 +419,7 @@ public struct CodeMatcher {
     ]
 
     static let overrideCodes = [
-        PriceOverrideCode("edeka_discount", "97{code:ean13}0{embed:5}{_}", "ean13_instore", "2417000"),
+        PriceOverrideCode("edeka_discount", "97{code:ean13}{_}{embed:5}{_}", "ean13_instore", "2417000"),
         PriceOverrideCode("ikea_fundgrube", "{_}{_:7}{_}{_:17}{_}{_:3}{code:8}{_}{_:9}{embed100:5}{_}", nil, nil),
         PriceOverrideCode("globus_discount", "98{code:ean13}{_:8}{embed:7}{_:2}", nil, nil)
     ]
