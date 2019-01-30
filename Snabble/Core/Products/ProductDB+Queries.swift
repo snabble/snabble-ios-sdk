@@ -119,16 +119,18 @@ extension ProductDB {
         return []
     }
 
-    func productsByScannableCodePrefix(_ dbQueue: DatabaseQueue, _ prefix: String, _ filterDeposits: Bool) -> [Product] {
+    func productsByScannableCodePrefix(_ dbQueue: DatabaseQueue, _ prefix: String, _ filterDeposits: Bool, _ templates: [String]?) -> [Product] {
         do {
             let limit = 100 //  prefix.count < 5 ? prefix.count * 100 : -1
             let depositCondition = filterDeposits ? "and isDeposit = 0" : ""
+            let templateNames = templates ?? [ "default" ]
+            let list = templateNames.map { "\"\($0)\"" }.joined(separator: ",")
             let rows = try dbQueue.inDatabase { db in
                 return try self.fetchAll(db, ProductDB.productQuery + " " + """
                     join scannableCodes s on s.sku = p.sku
-                    where s.template = "default" and (s.code glob ? or s.code glob ?) \(depositCondition) and p.weighing != \(ProductType.preWeighed.rawValue)
+                    where s.template in (\(list)) and (s.code glob ?) \(depositCondition) and p.weighing != \(ProductType.preWeighed.rawValue)
                     limit ?
-                    """, arguments: [prefix + "*", "00000" + prefix + "*", limit])
+                    """, arguments: [ prefix + "*", limit])
             }
             return rows.compactMap { self.productFromRow(dbQueue, $0, nil) }
         } catch {
