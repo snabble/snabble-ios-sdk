@@ -182,7 +182,7 @@ extension Project {
         completion(request)
     }
 
-    private static let userAgent: String? = {
+    internal static let userAgent: String? = {
         guard
             let bundleDict = Bundle.main.infoDictionary,
             let appName = bundleDict["CFBundleName"] as? String,
