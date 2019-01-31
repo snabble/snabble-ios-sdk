@@ -119,8 +119,8 @@ public struct CartItem: Codable {
         } else if product.referenceUnit == .piece && (self.embeddedData == nil || self.embeddedData == 0) {
             quantity = 1
             units = self.quantity
-        } else if let embed = self.embeddedData, let referenceUnit = product.referenceUnit {
-            switch referenceUnit {
+        } else if let embed = self.embeddedData, let encodingUnit = self.encodingUnit {
+            switch encodingUnit {
             case .price:
                 price = embed
             case .piece:
