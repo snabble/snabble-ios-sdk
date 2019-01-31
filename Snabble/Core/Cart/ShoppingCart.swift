@@ -135,7 +135,8 @@ public struct CartItem: Codable {
                          scannedCode: self.scannedCode,
                          price: price,
                          weight: weight,
-                         units: units)
+                         units: units,
+                         encodingUnit: self.encodingUnit)
     }
 }
 
