@@ -103,13 +103,7 @@ final public class BarcodeEntryViewController: UIViewController, UISearchBarDele
         
         let product = self.filteredProducts[indexPath.row]
         let codeEntry = product.codes.filter { $0.code.hasPrefix(self.searchText) }.first ?? product.codes.first!
-        var matchingCode = codeEntry.code
-        if matchingCode.hasPrefix("00000") {
-            let start = matchingCode.index(matchingCode.startIndex, offsetBy: 5)
-            matchingCode = String(matchingCode[start..<matchingCode.endIndex])
-        }
-
-        let str = NSMutableAttributedString(string: matchingCode)
+        let str = NSMutableAttributedString(string: codeEntry.code)
         let boldFont = UIFont.systemFont(ofSize: cell.textLabel?.font.pointSize ?? 0, weight: .medium)
         str.addAttributes([NSAttributedString.Key.font : boldFont], range: NSMakeRange(0, self.searchText.count))
         cell.textLabel?.attributedText = str
