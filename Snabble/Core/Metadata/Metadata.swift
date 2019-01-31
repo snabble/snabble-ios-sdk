@@ -11,12 +11,11 @@ public struct Metadata: Decodable {
     public let projects: [Project]
     public let gatewayCertificates: [GatewayCertificate]
     public let links: MetadataLinks
+    public let templates: [String: String]
 
     enum CodingKeys: String, CodingKey {
         case flags = "metadata"
-        case projects
-        case gatewayCertificates
-        case links
+        case projects, gatewayCertificates, links, templates
     }
 
     private init() {
@@ -24,6 +23,7 @@ public struct Metadata: Decodable {
         self.projects = [ Project.none ]
         self.gatewayCertificates = []
         self.links = MetadataLinks()
+        self.templates = [:]
     }
 
     static let none = Metadata()
@@ -36,6 +36,8 @@ public struct Metadata: Decodable {
         let certs = try container.decodeIfPresent([GatewayCertificate].self, forKey: .gatewayCertificates)
         self.gatewayCertificates = certs == nil ? [] : certs!
         self.links = try container.decode(MetadataLinks.self, forKey: .links)
+        let templates = try container.decodeIfPresent([String: String].self, forKey: .templates)
+        self.templates = templates ?? [:]
     }
 }
 
@@ -122,6 +124,13 @@ public struct CustomerCardInfo: Decodable {
     }
 }
 
+public struct PriceOverrideCode: Decodable {
+    public let id: String
+    public let template: String
+    public let transmissionTemplate: String?
+    public let transmissionCode: String?
+}
+
 public struct Project: Decodable {
     public let id: String
     public let links: ProjectLinks
@@ -142,11 +151,15 @@ public struct Project: Decodable {
 
     public let customerCards: CustomerCardInfo?
 
+    public let searchableBarcodeTemplates: [String]?
+
+    public let priceOverrideCodes: [PriceOverrideCode]?
+
     enum CodingKeys: String, CodingKey {
         case id, links
         case currency, decimalDigits, locale, roundingMode
         case encodedCodes
-        case shops, scanFormats, customerCards
+        case shops, scanFormats, customerCards, searchableBarcodeTemplates, priceOverrideCodes
     }
 
     public init(from decoder: Decoder) throws {
@@ -175,6 +188,8 @@ public struct Project: Decodable {
         let formats = (try container.decodeIfPresent([String].self, forKey: .scanFormats)) ?? defaultFormats
         self.scanFormats = formats.compactMap { ScanFormat(rawValue: $0) }
         self.customerCards = try container.decodeIfPresent(CustomerCardInfo.self, forKey: .customerCards)
+        self.searchableBarcodeTemplates = try container.decodeIfPresent([String].self, forKey: .searchableBarcodeTemplates)
+        self.priceOverrideCodes = try container.decodeIfPresent([PriceOverrideCode].self, forKey: .priceOverrideCodes)
     }
 
     private init() {
@@ -190,6 +205,8 @@ public struct Project: Decodable {
         self.shops = []
         self.scanFormats = []
         self.customerCards = CustomerCardInfo()
+        self.searchableBarcodeTemplates = nil
+        self.priceOverrideCodes = nil
     }
 
     // only used for unit tests
@@ -206,6 +223,8 @@ public struct Project: Decodable {
         self.shops = []
         self.scanFormats = []
         self.customerCards = CustomerCardInfo()
+        self.searchableBarcodeTemplates = nil
+        self.priceOverrideCodes = nil
     }
 
     internal init(links: ProjectLinks) {
@@ -221,6 +240,8 @@ public struct Project: Decodable {
         self.shops = []
         self.scanFormats = []
         self.customerCards = CustomerCardInfo()
+        self.searchableBarcodeTemplates = nil
+        self.priceOverrideCodes = nil
     }
 
     public static let none = Project()

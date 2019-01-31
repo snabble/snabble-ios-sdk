@@ -49,8 +49,14 @@ public struct SnabbleAPIConfig {
 
 public struct SnabbleAPI {
     private(set) public static var config = SnabbleAPIConfig.none
-    static var metadata = Metadata.none
     static var tokenRegistry = TokenRegistry("", "")
+    static var metadata = Metadata.none {
+        didSet {
+            for (id, template) in self.metadata.templates {
+                CodeMatcher.addTemplate(id, template)
+            }
+        }
+    }
 
     public static var certificates: [GatewayCertificate] {
         return self.metadata.gatewayCertificates

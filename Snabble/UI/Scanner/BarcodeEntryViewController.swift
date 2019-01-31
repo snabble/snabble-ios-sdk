@@ -63,7 +63,7 @@ final public class BarcodeEntryViewController: UIViewController, UISearchBarDele
     // MARK: - search bar
     public func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
         if searchText.count > 0 {
-            let products = self.productProvider.productsByScannableCodePrefix(searchText)
+            let products = self.productProvider.productsByScannableCodePrefix(searchText, filterDeposits: true, templates: SnabbleUI.project.searchableBarcodeTemplates)
             self.filteredProducts = products.sorted { p1, p2 in
                 let c1 = p1.codes.filter { $0.code.hasPrefix(searchText) }.first ?? p1.codes.first!
                 let c2 = p2.codes.filter { $0.code.hasPrefix(searchText) }.first ?? p2.codes.first!
