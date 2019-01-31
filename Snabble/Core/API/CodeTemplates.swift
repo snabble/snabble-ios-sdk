@@ -14,9 +14,11 @@ fileprivate enum CodeType: Equatable {
     case ean13
     case ean14
     case untyped(Int)
+    case matchAll
 
     init?(_ code: String) {
         switch code {
+        case "*": self = .matchAll
         case "ean8": self = .ean8
         case "ean13": self = .ean13
         case "ean14": self = .ean14
@@ -34,6 +36,7 @@ fileprivate enum CodeType: Equatable {
         case .ean13: return 13
         case .ean14: return 14
         case .untyped(let len): return len
+        case .matchAll: return 0
         }
     }
 }
@@ -60,8 +63,6 @@ fileprivate enum TemplateComponent {
     case internalChecksum
     /// represents the check digit for an EAN-8, EAN-13 or EAN-14. always one character, and must be the last component
     case eanChecksum
-    /// match the entire string - used only in our internal "default" template
-    case catchall
 
     /// parse one template component. properties look like "{name:length}", everything else is considered plain text
     init?(_ str: String) {
@@ -87,7 +88,6 @@ fileprivate enum TemplateComponent {
                 case "_": self = .ignore(len)
                 case "i": self = .internalChecksum
                 case "ec": self = .eanChecksum
-                case "*": self = .catchall
                 default: return nil
                 }
             }
@@ -100,14 +100,18 @@ fileprivate enum TemplateComponent {
     var regex: String {
         switch self {
         case .plainText(let str): return "(\\Q\(str)\\E)"
-        case .code(let codeType): return "(\\d{\(codeType.length)})"
+        case .code(let codeType):
+            if case .matchAll = codeType {
+                return "(.*)"
+            } else {
+                return "(\\d{\(codeType.length)})"
+            }
         case .embed(let len): return "(\\d{\(len)})"
         case .embed100(let len): return "(\\d{\(len)})"
         case .price(let len): return "(\\d{\(len)})"
         case .ignore(let len): return "(.{\(len)})"
         case .internalChecksum: return "(\\d)"
         case .eanChecksum: return "(\\d)"
-        case .catchall: return "(.*)"
         }
     }
 
@@ -122,7 +126,6 @@ fileprivate enum TemplateComponent {
         case .ignore(let len): return len
         case .internalChecksum: return 1
         case .eanChecksum: return 1
-        case .catchall: return 0
         }
     }
 
@@ -142,14 +145,6 @@ fileprivate enum TemplateComponent {
         }
     }
 
-    /// is this a `catchAll` component?
-    var isCatchall: Bool {
-        switch self {
-        case .catchall: return true
-        default: return false
-        }
-    }
-
     /// get a simple but unique key for each type
     fileprivate var key: Int {
         switch self {
@@ -159,9 +154,8 @@ fileprivate enum TemplateComponent {
         case .price: return 3
         case .ignore: return 4
         case .internalChecksum: return 5
-        case .catchall: return 6
-        case .embed100: return 7
-        case .eanChecksum: return 8
+        case .embed100: return 6
+        case .eanChecksum: return 7
         }
     }
 }
@@ -182,8 +176,6 @@ public struct CodeTemplate {
     /// RE for plaintext
     private static let plaintext = try! NSRegularExpression(pattern: "^([^{]+)", options: [])
     private static let regexps = [ token, plaintext ]
-
-    static let `default` = CodeTemplate("default", "{*}")!
 
     init?(_ id: String, _ template: String) {
         self.id = id
@@ -314,9 +306,6 @@ public struct ParseResult {
         if let entry = self.entries.first(where: { $0.templateComponent.isCode }) {
             return entry.value
         }
-        if let entry = self.entries.first(where: { $0.templateComponent.isCatchall }) {
-            return entry.value
-        }
         return ""
     }
 
@@ -390,6 +379,8 @@ public struct ParseResult {
                 return EAN.parse(entry.value) != nil
             case .untyped(let len):
                 return entry.value.count == len
+            case .matchAll:
+                return true
             }
         case .internalChecksum:
             guard let embedComponent = self.entries.first(where: { $0.templateComponent.isEmbed }) else {
@@ -411,20 +402,6 @@ public struct ParseResult {
     }
 }
 
-struct PriceOverrideCode {
-    let id: String
-    let template: CodeTemplate
-    let transmissionTemplate: String?
-    let transmissionCode: String?
-
-    init(_ id: String, _ codeTemplate: String, _ transmissionTemplate: String?, _ transmissionCode: String?) {
-        self.id = id
-        self.template = CodeTemplate(id, codeTemplate)!
-        self.transmissionTemplate = transmissionTemplate
-        self.transmissionCode = transmissionCode
-    }
-}
-
 public struct OverrideLookup {
     public let lookupCode: String
     public let transmissionCode: String?
@@ -432,49 +409,40 @@ public struct OverrideLookup {
 }
 
 public struct CodeMatcher {
-    static let builtinTemplates = [
-        "ean13_instore":        "2{code:5}{_}{embed:5}{ec}",
-        "ean13_instore_chk":    "2{code:5}{i}{embed:5}{ec}",
-        "german_print":         "4{code:2}{_:5}{embed:4}{ec}",
-        "ean14_code128":        "01{code:ean14}",
-        "ikea_itf14":           "{code:8}{_:6}"
-    ]
+    private static var templates = prepareTemplates()
 
-    static let overrideCodes = [
-        PriceOverrideCode("edeka_discount", "97{code:ean13}{_}{embed:5}{_}", "ean13_instore", "2417000"),
-        PriceOverrideCode("ikea_fundgrube", "{_}{_:7}{_}{_:17}{_}{_:3}{code:8}{_}{_:9}{embed100:5}{_}", nil, nil),
-        PriceOverrideCode("globus_discount", "98{code:ean13}{_:8}{embed:7}{_:2}", nil, nil)
-    ]
+    private static func prepareTemplates() -> [String: CodeTemplate] {
+        let builtinTemplates = [
+            "ean13_instore":        "2{code:5}{_}{embed:5}{ec}",
+            "ean13_instore_chk":    "2{code:5}{i}{embed:5}{ec}",
+            "german_print":         "4{code:2}{_:5}{embed:4}{ec}",
+            "ean14_code128":        "01{code:ean14}",
+            "ikea_itf14":           "{code:8}{_:6}",
+            "default":              "{code:*}"
+        ]
 
-    public static var customTemplates = [String: String]()
-
-    private static let templates = prepareTemplates()
-
-    static func prepareTemplates() -> [CodeTemplate] {
-        var templates = [CodeTemplate]()
-
-        let allTemplates = builtinTemplates.merging(customTemplates, uniquingKeysWith: { (_, new) in return new })
-
-        allTemplates.forEach { id, tmpl in
-            guard let template = CodeTemplate(id, tmpl) else {
-                return
+        var result = [String: CodeTemplate]()
+        for (id, value) in builtinTemplates {
+            if let template = CodeTemplate(id, value) {
+                result[id] = template
             }
-
-            templates.append(template)
         }
+        return result
+    }
 
-        // sort by length
-        templates.sort { $0.expectedLength < $1.expectedLength }
+    static func addTemplate(_ id: String, _ template: String) {
+        if let tmpl = CodeTemplate(id, template) {
+            templates[id] = tmpl
+        }
+    }
 
-        // add the catchall template last
-        templates.append(CodeTemplate.default)
-
-        return templates
+    static func getTemplate(by id: String) -> CodeTemplate? {
+        return templates[id]
     }
 
     public static func match(_ code: String) -> [ParseResult] {
         var results = [ParseResult]()
-        for template in templates {
+        for template in templates.values {
             if let result = template.match(code) {
                 results.append(result)
             }
@@ -482,10 +450,16 @@ public struct CodeMatcher {
         return results
     }
 
-    public static func matchOverride(_ templateId: String, _ code: String) -> OverrideLookup? {
+    public static func matchOverride(_ code: String, _ overrides: [PriceOverrideCode]?) -> OverrideLookup? {
+        guard let overrides = overrides, overrides.count > 0 else {
+            return nil
+        }
+
+        let templates = overrides.compactMap { getTemplate(by: $0.id) }
         guard
-            let overrideCode = overrideCodes.first(where: { $0.id == templateId }),
-            let result = overrideCode.template.match(code)
+            let template = templates.first,
+            let result = template.match(code),
+            let overrideCode = overrides.first(where: { $0.template == template.id })
         else {
             return nil
         }
@@ -503,8 +477,8 @@ public struct CodeMatcher {
         }
     }
 
-    public static func createInstoreEan(_ template: String, _ code: String, _ data: Int) -> String? {
-        guard let template = templates.first(where: { $0.id == template }) else {
+    public static func createInstoreEan(_ templateId: String, _ code: String, _ data: Int) -> String? {
+        guard let template = getTemplate(by: templateId) else {
             return nil
         }
 
@@ -534,4 +508,8 @@ public struct CodeMatcher {
         let ean = EAN13(String(result.prefix(7)) + embed)
         return ean?.code
     }
+}
+
+struct TemplateRegistry {
+
 }
