@@ -58,6 +58,8 @@ fileprivate enum TemplateComponent {
     case ignore(Int)
     /// represents the internal 5-digit-checksum for embedded data in an EAN-13, which is always one character.
     case internalChecksum
+    /// represents the check digit for an EAN-8, EAN-13 or EAN-14. always one character, and must be the last component
+    case eanChecksum
     /// match the entire string - used only in our internal "default" template
     case catchall
 
@@ -84,6 +86,7 @@ fileprivate enum TemplateComponent {
                 case "price": self = .price(len)
                 case "_": self = .ignore(len)
                 case "i": self = .internalChecksum
+                case "ec": self = .eanChecksum
                 case "*": self = .catchall
                 default: return nil
                 }
@@ -103,6 +106,7 @@ fileprivate enum TemplateComponent {
         case .price(let len): return "(\\d{\(len)})"
         case .ignore(let len): return "(.{\(len)})"
         case .internalChecksum: return "(\\d)"
+        case .eanChecksum: return "(\\d)"
         case .catchall: return "(.*)"
         }
     }
@@ -117,6 +121,7 @@ fileprivate enum TemplateComponent {
         case .price(let len): return len
         case .ignore(let len): return len
         case .internalChecksum: return 1
+        case .eanChecksum: return 1
         case .catchall: return 0
         }
     }
@@ -156,6 +161,7 @@ fileprivate enum TemplateComponent {
         case .internalChecksum: return 5
         case .catchall: return 6
         case .embed100: return 7
+        case .eanChecksum: return 8
         }
     }
 }
@@ -231,6 +237,13 @@ public struct CodeTemplate {
         // when {i} is present, check for {embed:5}
         if count[TemplateComponent.internalChecksum.key] != nil {
             guard let len = components.first(where: { $0.isEmbed })?.length, len == 5 else {
+                return nil
+            }
+        }
+
+        // when {ec} is present, it must be the last component
+        if count[TemplateComponent.eanChecksum.key] != nil, let comp = components.last {
+            if comp.key != TemplateComponent.eanChecksum.key {
                 return nil
             }
         }
@@ -336,7 +349,8 @@ public struct ParseResult {
     public func embed(_ data: Int) -> String {
         var result = ""
         var embeddedData = ""
-        var needChecksum = false
+        var internalChecksum = false
+        var eanChecksum = false
         for entry in self.entries {
             switch entry.templateComponent {
             case .embed:
@@ -345,7 +359,10 @@ public struct ParseResult {
                 embeddedData = padding + str
                 result.append(embeddedData)
             case .internalChecksum:
-                needChecksum = true
+                internalChecksum = true
+                result.append(entry.value)
+            case .eanChecksum:
+                eanChecksum = true
                 result.append(entry.value)
             default:
                 result.append(entry.value)
@@ -353,15 +370,13 @@ public struct ParseResult {
         }
 
         // calculate EAN-13 checksum(s)
-        if result.count == 13 && embeddedData.count == 5 {
-            if needChecksum {
-                let embedDigits = embeddedData.map { Int(String($0))! }
-                let check = EAN13.internalChecksum5(embedDigits)
-                result = String(result.prefix(6) + String(check) + result.suffix(6))
-            }
-            if let ean = EAN13(String(result.prefix(12))) {
-                return ean.code
-            }
+        if internalChecksum {
+            let embedDigits = embeddedData.map { Int(String($0))! }
+            let check = EAN13.internalChecksum5(embedDigits)
+            result = String(result.prefix(6) + String(check) + result.suffix(6))
+        }
+        if eanChecksum, let ean = EAN13(String(result.prefix(12))) {
+            return ean.code
         }
         return result
     }
@@ -383,6 +398,13 @@ public struct ParseResult {
             let digits = embedComponent.value.compactMap { Int(String($0)) }
             let checksum = EAN13.internalChecksum5(digits)
             return String(checksum) == entry.value
+        case .eanChecksum:
+            let str = self.entries.map { $0.value }.joined()
+            if let ean = EAN.parse(str) {
+                return ean.checkDigit == Int(entry.value)!
+            } else {
+                return false
+            }
         default:
             return true
         }
@@ -411,9 +433,9 @@ public struct OverrideLookup {
 
 public struct CodeMatcher {
     static let builtinTemplates = [
-        "ean13_instore":        "2{code:5}{_}{embed:5}{_}",
-        "ean13_instore_chk":    "2{code:5}{i}{embed:5}{_}",
-        "german_print":         "4{code:2}{_:5}{embed:4}{_}",
+        "ean13_instore":        "2{code:5}{_}{embed:5}{ec}",
+        "ean13_instore_chk":    "2{code:5}{i}{embed:5}{ec}",
+        "german_print":         "4{code:2}{_:5}{embed:4}{ec}",
         "ean14_code128":        "01{code:ean14}",
         "ikea_itf14":           "{code:8}{_:6}"
     ]
