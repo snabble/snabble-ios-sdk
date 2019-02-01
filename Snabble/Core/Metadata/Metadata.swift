@@ -11,7 +11,6 @@ public struct Metadata: Decodable {
     public let projects: [Project]
     public let gatewayCertificates: [GatewayCertificate]
     public let links: MetadataLinks
-    public let templates: [TemplateDefinition]
 
     enum CodingKeys: String, CodingKey {
         case flags = "metadata"
@@ -23,7 +22,6 @@ public struct Metadata: Decodable {
         self.projects = [ Project.none ]
         self.gatewayCertificates = []
         self.links = MetadataLinks()
-        self.templates = []
     }
 
     static let none = Metadata()
@@ -36,14 +34,23 @@ public struct Metadata: Decodable {
         let certs = try container.decodeIfPresent([GatewayCertificate].self, forKey: .gatewayCertificates)
         self.gatewayCertificates = certs == nil ? [] : certs!
         self.links = try container.decode(MetadataLinks.self, forKey: .links)
-        let templates = try container.decodeIfPresent([TemplateDefinition].self, forKey: .templates)
-        self.templates = templates ?? []
     }
 }
 
 public struct TemplateDefinition: Decodable {
     public let id: String
-    public let template: String?
+    public let template: String
+
+    static func arrayFrom(_ templates: [String: String]?) -> [TemplateDefinition] {
+        guard let templates = templates else {
+            return []
+        }
+
+        let result: [TemplateDefinition] = templates.reduce(into: []) { result, entry in
+            result.append(TemplateDefinition(id: entry.key, template: entry.value))
+        }
+        return result
+    }
 }
 
 public struct GatewayCertificate: Decodable {
@@ -194,8 +201,8 @@ public struct Project: Decodable {
         let formats = (try container.decodeIfPresent([String].self, forKey: .scanFormats)) ?? defaultFormats
         self.scanFormats = formats.compactMap { ScanFormat(rawValue: $0) }
         self.customerCards = try container.decodeIfPresent(CustomerCardInfo.self, forKey: .customerCards)
-        let codeTemplates = try container.decodeIfPresent([TemplateDefinition].self, forKey: .codeTemplates)
-        self.codeTemplates = codeTemplates ?? []
+        let templates = try container.decodeIfPresent([String: String].self, forKey: .codeTemplates)
+        self.codeTemplates = TemplateDefinition.arrayFrom(templates)
         self.searchableTemplates = try container.decodeIfPresent([String].self, forKey: .searchableTemplates)
         self.priceOverrideCodes = try container.decodeIfPresent([PriceOverrideCode].self, forKey: .priceOverrideCodes)
     }

@@ -180,7 +180,7 @@ final class EmbeddedCodesCheckoutViewController: UIViewController {
             quantity = data
         }
 
-        return CodeMatcher.createInstoreEan(code.template, code.code, quantity)
+        return CodeMatcher.createInstoreEan(code.template, code.code, quantity, SnabbleUI.project.id)
     }
 
     private func setButtonTitle() {

@@ -174,7 +174,7 @@ public struct CodeTemplate {
     /// RE for a token
     private static let token = try! NSRegularExpression(pattern: "^(\\{.*?\\})", options: [])
     /// RE for plaintext
-    private static let plaintext = try! NSRegularExpression(pattern: "^([^{]+)", options: [])
+    private static let plaintext = try! NSRegularExpression(pattern: "^([^{^}]+)", options: [])
     private static let regexps = [ token, plaintext ]
 
     init?(_ id: String, _ template: String) {
@@ -213,11 +213,11 @@ public struct CodeTemplate {
         self.expectedLength = components.reduce(0) { $0 + $1.length }
 
         // further checks:
-        // each component may occur 0 or 1 times, except _ (ignore)
+        // each component may occur 0 or 1 times, except _ (ignore) and plainText
         var count = [Int: Int]()
         for comp in components {
             switch comp {
-            case .ignore: ()
+            case .ignore, .plainText: ()
             default: count[comp.key, default: 0] += 1
             }
         }
@@ -409,62 +409,51 @@ public struct OverrideLookup {
 }
 
 public struct CodeMatcher {
-    private static var templates = prepareTemplates()
+    private static var templates = [String: [String: CodeTemplate]]()
 
-    private static func prepareTemplates() -> [String: CodeTemplate] {
-        let builtinTemplates = [
-            "ean13_instore":        "2{code:5}{_}{embed:5}{ec}",
-            "ean13_instore_chk":    "2{code:5}{i}{embed:5}{ec}",
-            "german_print":         "4{code:2}{_:5}{embed:4}{ec}",
-            "ean14_code128":        "01{code:ean14}",
-            "ikea_itf14":           "{code:8}{_:6}",
-            "default":              "{code:*}"
-        ]
-
-        var result = [String: CodeTemplate]()
-        for (id, value) in builtinTemplates {
-            if let template = CodeTemplate(id, value) {
-                result[id] = template
-            }
-        }
-        return result
-    }
-
-    static func addTemplate(_ id: String, _ template: String) {
-        guard
-            templates[id] == nil,
-            let tmpl = CodeTemplate(id, template)
-        else {
+    static func addTemplate(_ projectId: String, _ id: String, _ template: String) {
+        print("add template \(projectId) \(id) \(template)")
+        guard let tmpl = CodeTemplate(id, template) else {
+            print("oops")
             return
         }
 
-        templates[id] = tmpl
+        CodeMatcher.templates[projectId, default: [:]][id] = tmpl
     }
 
-    static func getTemplate(by id: String) -> CodeTemplate? {
-        return templates[id]
+    // only for unit tests!
+    static func clearTemplates() {
+        CodeMatcher.templates = [:]
     }
 
-    public static func match(_ code: String) -> [ParseResult] {
-        var results = [ParseResult]()
-        for template in templates.values {
-            if let result = template.match(code) {
-                results.append(result)
-            }
+    public static func match(_ code: String, _ projectId: String) -> [ParseResult] {
+        guard let templates = CodeMatcher.templates[projectId] else {
+            return []
         }
+
+        let results: [ParseResult] = templates.values.reduce(into: [], { result, template in
+            if let res = template.match(code) {
+                result.append(res)
+            }
+        })
+
         return results
     }
 
-    public static func matchOverride(_ code: String, _ overrides: [PriceOverrideCode]?) -> OverrideLookup? {
+    public static func matchOverride(_ code: String, _ overrides: [PriceOverrideCode]?, _ projectId: String) -> OverrideLookup? {
         guard let overrides = overrides, overrides.count > 0 else {
             return nil
         }
 
-        let templates = overrides.compactMap { getTemplate(by: $0.id) }
+        guard let candidates = CodeMatcher.templates[projectId] else {
+            return nil
+        }
+
+        let templates = overrides.compactMap { candidates[$0.id] }
         guard
             let template = templates.first,
             let result = template.match(code),
-            let overrideCode = overrides.first(where: { $0.template == template.id })
+            let overrideCode = overrides.first(where: { $0.id == template.id })
         else {
             return nil
         }
@@ -472,7 +461,7 @@ public struct CodeMatcher {
         let lookupCode = result.lookupCode
         if let transmissionTemplate = overrideCode.transmissionTemplate {
             if let transmissionCode = overrideCode.transmissionCode, let embeddedData = result.embeddedData {
-                let newCode = createInstoreEan(transmissionTemplate, transmissionCode, embeddedData)
+                let newCode = createInstoreEan(transmissionTemplate, transmissionCode, embeddedData, projectId)
                 return OverrideLookup(lookupCode: lookupCode, transmissionCode: newCode, embeddedData: embeddedData)
             } else {
                 return OverrideLookup(lookupCode: lookupCode, transmissionCode: overrideCode.transmissionCode, embeddedData: result.embeddedData)
@@ -482,8 +471,8 @@ public struct CodeMatcher {
         }
     }
 
-    public static func createInstoreEan(_ templateId: String, _ code: String, _ data: Int) -> String? {
-        guard let template = getTemplate(by: templateId) else {
+    public static func createInstoreEan(_ templateId: String, _ code: String, _ data: Int, _ projectId: String) -> String? {
+        guard let template = CodeMatcher.templates[projectId]?[templateId] else {
             return nil
         }
 

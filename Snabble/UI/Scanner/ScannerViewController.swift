@@ -431,11 +431,12 @@ extension ScannerViewController {
     }
 
     private func productForCode(_ code: String, completion: @escaping (ScannedProduct?) -> () ) {
-        if let match = CodeMatcher.matchOverride(code, SnabbleUI.project.priceOverrideCodes) {
+        let project = SnabbleUI.project
+        if let match = CodeMatcher.matchOverride(code, project.priceOverrideCodes, project.id) {
             return self.productForOverrideCode(match, completion: completion)
         }
 
-        let matches = CodeMatcher.match(code)
+        let matches = CodeMatcher.match(code, SnabbleUI.project.id)
 
         guard matches.count > 0 else {
             return completion(nil)
@@ -459,7 +460,7 @@ extension ScannerViewController {
 
     private func productForOverrideCode(_ match: OverrideLookup, completion: @escaping (ScannedProduct?) -> () ) {
         let code = match.lookupCode
-        let matches = CodeMatcher.match(code)
+        let matches = CodeMatcher.match(code, SnabbleUI.project.id)
 
         guard matches.count > 0 else {
             return completion(nil)

@@ -104,10 +104,13 @@ public struct SnabbleAPI {
     private static func setMetadata(_ metadata: Metadata) {
         self.metadata = metadata
 
-        let projectTemplates = metadata.projects.flatMap { $0.codeTemplates }
-        for templateDef in metadata.templates + projectTemplates {
-            if let template = templateDef.template {
-                CodeMatcher.addTemplate(templateDef.id, template)
+        for project in metadata.projects {
+            project.codeTemplates.forEach {
+                CodeMatcher.addTemplate(project.id, $0.id, $0.template)
+            }
+
+            project.priceOverrideCodes?.forEach {
+                CodeMatcher.addTemplate(project.id, $0.id, $0.template)
             }
         }
     }
