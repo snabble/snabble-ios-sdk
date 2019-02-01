@@ -99,7 +99,7 @@ final class ScanConfirmationView: DesignableView {
         self.minusButton.isHidden = scannedProduct.embeddedData != nil
         self.plusButton.isHidden = scannedProduct.embeddedData != nil
 
-        self.gramLabel.text = product.encodingUnit?.display
+        self.gramLabel.text = scannedProduct.encodingUnit?.display
         self.gramLabel.isHidden = !product.weightDependent
 
         self.quantityField.isEnabled = product.type != .preWeighed
@@ -142,7 +142,7 @@ final class ScanConfirmationView: DesignableView {
         self.minusButton.isEnabled = qty > 1
         self.plusButton.isEnabled = qty < ShoppingCart.maxAmount
 
-        let encodingSymbol = product.encodingUnit?.display ?? ""
+        let encodingSymbol = self.scannedProduct.encodingUnit?.display ?? ""
         let referenceSymbol = product.referenceUnit?.display ?? ""
 
         let encodingUnit = self.scannedProduct.encodingUnit ?? product.encodingUnit

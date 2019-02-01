@@ -450,7 +450,31 @@ extension ScannerViewController {
             case .success(let lookupResult):
                 let parseResult = matches.first { $0.template.id == lookupResult.templateId }
                 let scannedCode = lookupResult.code ?? code
-                let newResult = ScannedProduct(lookupResult.product, scannedCode, lookupResult.templateId, parseResult?.embeddedData)
+                var newResult = ScannedProduct(lookupResult.product, scannedCode, lookupResult.templateId, parseResult?.embeddedData, lookupResult.encodingUnit)
+
+                if let decimalData = parseResult?.embeddedDecimal {
+                    var encodingUnit = lookupResult.product.encodingUnit
+                    var embeddedData: Int? = nil
+                    var product = lookupResult.product
+                    let div = Int(pow(10.0, Double(decimalData.fractionDigits)))
+                    if let enc = encodingUnit {
+                        switch enc {
+                        case .piece:
+                            encodingUnit = .piece
+                            embeddedData = decimalData.value / div
+                        case .kilogram, .meter, .liter, .squareMeter:
+                            encodingUnit = enc.fractionalUnit(Decimal(div))
+                            embeddedData = decimalData.value
+                        default: ()
+                        }
+                    }
+
+                    if encodingUnit != nil {
+                        product.encodingUnit = encodingUnit
+                    }
+                    newResult = ScannedProduct(product, scannedCode, lookupResult.templateId, embeddedData, encodingUnit)
+                }
+
                 completion(newResult)
             case .failure:
                 completion(nil)

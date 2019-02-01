@@ -53,6 +53,9 @@ fileprivate enum TemplateComponent {
     /// the embedded data of the code (weight, price or amount), the value is the length of the field.
     /// When extracting the value from a scanned code, it will be multiplied by 100
     case embed100(Int)
+    /// the embedded data of the code (weight, price or amount), the values are the number of integer and fraction digits
+    /// When extracting the value from a scanned code, it will be represented as a `DecimalNumber`
+    case embedDecimal(Int, Int)
     /// the embedded price of one `referenceUnit` worth of the product. For weight-dependent prices, this is usually the price per kilogram.
     /// The value is the length of the field
     case price(Int)
@@ -72,17 +75,24 @@ fileprivate enum TemplateComponent {
             let lengthPart = parts.count > 1 ? parts[1] : "1"
             let length = Int(lengthPart)
 
-            if parts[0] == "code" {
+            let token = parts[0]
+            if token == "code" {
                 guard let codeType = CodeType(lengthPart) else {
                     return nil
                 }
                 self = .code(codeType)
+            } else if token == "embed" {
+                let digits = lengthPart.components(separatedBy: ".").compactMap { Int($0) }.filter { $0 > 0 }
+                switch digits.count {
+                case 1: self = .embed(digits[0])
+                case 2: self = .embedDecimal(digits[0], digits[1])
+                default: return nil
+                }
             } else {
                 guard let len = length, len > 0 else {
                     return nil
                 }
-                switch parts[0] {
-                case "embed": self = .embed(len)
+                switch token {
                 case "embed100": self = .embed100(len)
                 case "price": self = .price(len)
                 case "_": self = .ignore(len)
@@ -108,6 +118,7 @@ fileprivate enum TemplateComponent {
             }
         case .embed(let len): return "(\\d{\(len)})"
         case .embed100(let len): return "(\\d{\(len)})"
+        case .embedDecimal(let i, let f): return "(\\d{\(i+f)})"
         case .price(let len): return "(\\d{\(len)})"
         case .ignore(let len): return "(.{\(len)})"
         case .internalChecksum: return "(\\d)"
@@ -121,6 +132,7 @@ fileprivate enum TemplateComponent {
         case .plainText(let str): return str.count
         case .code(let codeType): return codeType.length
         case .embed(let len): return len
+        case .embedDecimal(let i, let f): return i+f
         case .embed100(let len): return len
         case .price(let len): return len
         case .ignore(let len): return len
@@ -145,6 +157,14 @@ fileprivate enum TemplateComponent {
         }
     }
 
+    /// is this an `embed` component?
+    var isDecimal: Bool {
+        switch self {
+        case .embedDecimal: return true
+        default: return false
+        }
+    }
+
     /// get a simple but unique key for each type
     fileprivate var key: Int {
         switch self {
@@ -156,8 +176,15 @@ fileprivate enum TemplateComponent {
         case .internalChecksum: return 5
         case .embed100: return 6
         case .eanChecksum: return 7
+        case .embedDecimal: return 8
         }
     }
+}
+
+public struct EmbeddedDecimal {
+    public let integerDigits: Int
+    public let fractionDigits: Int
+    public let value: Int
 }
 
 /// a `CodeTemplate` represents a fully parsed template expression, like "01{code:ean14}"
@@ -332,6 +359,18 @@ public struct ParseResult {
             return value * 100
         }
         return value
+    }
+
+    public var embeddedDecimal: EmbeddedDecimal? {
+        guard
+            let entry = self.entries.first(where: { $0.templateComponent.isDecimal }),
+            case .embedDecimal(let i, let f) = entry.templateComponent,
+            let value = Int(entry.value)
+        else {
+            return nil
+        }
+
+        return EmbeddedDecimal(integerDigits: i, fractionDigits: f, value: value)
     }
 
     /// embed data into a scanned code in place of the `embed` placeholder

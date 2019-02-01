@@ -17,7 +17,7 @@ public enum Quantity: String {
 }
 
 /// units for variable-price products
-public enum Unit: String, Codable {
+public enum Unit: String, Codable, Equatable {
     // length
     case millimeter = "mm"
     case centimeter = "cm"
@@ -72,6 +72,16 @@ public enum Unit: String, Codable {
             return true
         }
     }
+
+    func fractionalUnit(_ div: Decimal) -> Unit? {
+        guard let conv = Unit.conversions[self.quantity] else {
+            return nil
+        }
+
+        let unit = conv.first { $0.from == self && $0.factor == div}
+        return unit?.to
+    }
+
 }
 
 extension Unit {
