@@ -431,9 +431,14 @@ public struct CodeMatcher {
     }
 
     static func addTemplate(_ id: String, _ template: String) {
-        if let tmpl = CodeTemplate(id, template) {
-            templates[id] = tmpl
+        guard
+            templates[id] == nil,
+            let tmpl = CodeTemplate(id, template)
+        else {
+            return
         }
+
+        templates[id] = tmpl
     }
 
     static func getTemplate(by id: String) -> CodeTemplate? {

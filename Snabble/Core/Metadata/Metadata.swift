@@ -11,7 +11,7 @@ public struct Metadata: Decodable {
     public let projects: [Project]
     public let gatewayCertificates: [GatewayCertificate]
     public let links: MetadataLinks
-    public let templates: [String: String]
+    public let templates: [TemplateDefinition]
 
     enum CodingKeys: String, CodingKey {
         case flags = "metadata"
@@ -23,7 +23,7 @@ public struct Metadata: Decodable {
         self.projects = [ Project.none ]
         self.gatewayCertificates = []
         self.links = MetadataLinks()
-        self.templates = [:]
+        self.templates = []
     }
 
     static let none = Metadata()
@@ -36,9 +36,14 @@ public struct Metadata: Decodable {
         let certs = try container.decodeIfPresent([GatewayCertificate].self, forKey: .gatewayCertificates)
         self.gatewayCertificates = certs == nil ? [] : certs!
         self.links = try container.decode(MetadataLinks.self, forKey: .links)
-        let templates = try container.decodeIfPresent([String: String].self, forKey: .templates)
-        self.templates = templates ?? [:]
+        let templates = try container.decodeIfPresent([TemplateDefinition].self, forKey: .templates)
+        self.templates = templates ?? []
     }
+}
+
+public struct TemplateDefinition: Decodable {
+    public let id: String
+    public let template: String?
 }
 
 public struct GatewayCertificate: Decodable {
@@ -151,7 +156,8 @@ public struct Project: Decodable {
 
     public let customerCards: CustomerCardInfo?
 
-    public let searchableBarcodeTemplates: [String]?
+    public let codeTemplates: [TemplateDefinition]
+    public let searchableTemplates: [String]?
 
     public let priceOverrideCodes: [PriceOverrideCode]?
 
@@ -159,7 +165,7 @@ public struct Project: Decodable {
         case id, links
         case currency, decimalDigits, locale, roundingMode
         case encodedCodes
-        case shops, scanFormats, customerCards, searchableBarcodeTemplates, priceOverrideCodes
+        case shops, scanFormats, customerCards, codeTemplates, searchableTemplates, priceOverrideCodes
     }
 
     public init(from decoder: Decoder) throws {
@@ -188,7 +194,9 @@ public struct Project: Decodable {
         let formats = (try container.decodeIfPresent([String].self, forKey: .scanFormats)) ?? defaultFormats
         self.scanFormats = formats.compactMap { ScanFormat(rawValue: $0) }
         self.customerCards = try container.decodeIfPresent(CustomerCardInfo.self, forKey: .customerCards)
-        self.searchableBarcodeTemplates = try container.decodeIfPresent([String].self, forKey: .searchableBarcodeTemplates)
+        let codeTemplates = try container.decodeIfPresent([TemplateDefinition].self, forKey: .codeTemplates)
+        self.codeTemplates = codeTemplates ?? []
+        self.searchableTemplates = try container.decodeIfPresent([String].self, forKey: .searchableTemplates)
         self.priceOverrideCodes = try container.decodeIfPresent([PriceOverrideCode].self, forKey: .priceOverrideCodes)
     }
 
@@ -205,7 +213,8 @@ public struct Project: Decodable {
         self.shops = []
         self.scanFormats = []
         self.customerCards = CustomerCardInfo()
-        self.searchableBarcodeTemplates = nil
+        self.codeTemplates = []
+        self.searchableTemplates = nil
         self.priceOverrideCodes = nil
     }
 
@@ -223,7 +232,8 @@ public struct Project: Decodable {
         self.shops = []
         self.scanFormats = []
         self.customerCards = CustomerCardInfo()
-        self.searchableBarcodeTemplates = nil
+        self.codeTemplates = []
+        self.searchableTemplates = nil
         self.priceOverrideCodes = nil
     }
 
@@ -240,7 +250,8 @@ public struct Project: Decodable {
         self.shops = []
         self.scanFormats = []
         self.customerCards = CustomerCardInfo()
-        self.searchableBarcodeTemplates = nil
+        self.codeTemplates = []
+        self.searchableTemplates = nil
         self.priceOverrideCodes = nil
     }
 
@@ -431,7 +442,6 @@ public extension Metadata {
             project.perform(request) { (result: Result<Metadata, SnabbleError>) in
                 switch result {
                 case .success(let metadata):
-                    SnabbleAPI.metadata = metadata
                     completion(metadata)
                 case .failure:
                     completion(nil)

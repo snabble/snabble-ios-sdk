@@ -50,13 +50,7 @@ public struct SnabbleAPIConfig {
 public struct SnabbleAPI {
     private(set) public static var config = SnabbleAPIConfig.none
     static var tokenRegistry = TokenRegistry("", "")
-    static var metadata = Metadata.none {
-        didSet {
-            for (id, template) in self.metadata.templates {
-                CodeMatcher.addTemplate(id, template)
-            }
-        }
-    }
+    static var metadata = Metadata.none
 
     public static var certificates: [GatewayCertificate] {
         return self.metadata.gatewayCertificates
@@ -86,7 +80,7 @@ public struct SnabbleAPI {
 
         if let metadataPath = config.seedMetadata, self.metadata.projects[0].id == Project.none.id {
             if let metadata = Metadata.readResource(metadataPath) {
-                self.metadata = metadata
+                self.setMetadata(metadata)
             }
         }
 
@@ -101,9 +95,20 @@ public struct SnabbleAPI {
 
         Metadata.load(from: metadataURL) { metadata in
             if let metadata = metadata {
-                self.metadata = metadata
+                self.setMetadata(metadata)
             }
             completion()
+        }
+    }
+
+    private static func setMetadata(_ metadata: Metadata) {
+        self.metadata = metadata
+
+        let projectTemplates = metadata.projects.flatMap { $0.codeTemplates }
+        for templateDef in metadata.templates + projectTemplates {
+            if let template = templateDef.template {
+                CodeMatcher.addTemplate(templateDef.id, template)
+            }
         }
     }
 
