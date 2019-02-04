@@ -43,9 +43,9 @@ public struct CartItem: Codable {
     // optional data extracted from the scanned code
     public let embeddedData: Int?
     // what does the embedded data represent?
-    public let encodingUnit: Unit?
+    public let encodingUnit: Units?
 
-    init(_ quantity: Int, _ product: Product, _ scannedCode: String, _ embeddedData: Int? = nil, _ editableUnits: Bool = false, _ encodingUnit: Unit? = nil) {
+    init(_ quantity: Int, _ product: Product, _ scannedCode: String, _ embeddedData: Int? = nil, _ editableUnits: Bool = false, _ encodingUnit: Units? = nil) {
         self.product = product
         self.quantity = quantity
         self.editableUnits = editableUnits
@@ -61,7 +61,7 @@ public struct CartItem: Codable {
         self.scannedCode = try container.decode(String.self, forKey: .scannedCode)
         self.editableUnits = try container.decodeIfPresent(Bool.self, forKey: .editableUnits) ?? false
         self.embeddedData = try container.decodeIfPresent(Int.self, forKey: .embeddedData)
-        self.encodingUnit = try container.decodeIfPresent(Unit.self, forKey: .encodingUnit)
+        self.encodingUnit = try container.decodeIfPresent(Units.self, forKey: .encodingUnit)
     }
 
     // init with a freshly retrieved copy of `item.product`.
@@ -191,7 +191,7 @@ public final class ShoppingCart {
     /// add a Product. if already present and not weight dependent, increase its quantity
     ///
     /// the newly added (or modified) product is moved to the start of the list
-    public func add(_ product: Product, quantity: Int = 1, scannedCode: String, embeddedData: Int? = nil, editableUnits: Bool = false, encodingUnit: Unit? = nil) {
+    public func add(_ product: Product, quantity: Int = 1, scannedCode: String, embeddedData: Int? = nil, editableUnits: Bool = false, encodingUnit: Units? = nil) {
         if let index = self.indexOf(product), product.type == .singleItem, product.referenceUnit == nil, encodingUnit == nil {
             self.items[index].quantity += quantity
             let item = self.items.remove(at: index)

@@ -71,7 +71,7 @@ final class ShoppingCartTableCell: UITableViewCell {
         self.delegate = delegate
         self.item = item
         self.quantity = item.quantity
-        if item.product.referenceUnit?.hasUnit == true, let embeddedData = item.embeddedData {
+        if item.product.referenceUnit?.hasDimension == true, let embeddedData = item.embeddedData {
             self.quantity = embeddedData
         }
 
@@ -124,7 +124,7 @@ final class ShoppingCartTableCell: UITableViewCell {
     }
 
     private func showQuantity() {
-        let showWeight = self.item.product.referenceUnit?.hasUnit == true || self.item.product.type == .userMustWeigh
+        let showWeight = self.item.product.referenceUnit?.hasDimension == true || self.item.product.type == .userMustWeigh
 
         let symbol = self.item.product.encodingUnit?.display ?? ""
         let gram = showWeight ? symbol : ""

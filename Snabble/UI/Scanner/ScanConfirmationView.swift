@@ -92,7 +92,7 @@ final class ScanConfirmationView: DesignableView {
         }
 
         var initialQuantity = self.quantity // ean?.embeddedWeight ?? self.quantity
-        if let embed = scannedProduct.embeddedData, product.referenceUnit?.hasUnit == true {
+        if let embed = scannedProduct.embeddedData, product.referenceUnit?.hasDimension == true {
             initialQuantity = embed
         }
 
@@ -147,7 +147,7 @@ final class ScanConfirmationView: DesignableView {
 
         let encodingUnit = self.scannedProduct.encodingUnit ?? product.encodingUnit
 
-        if let weight = self.scannedProduct.embeddedData, product.referenceUnit?.hasUnit == true {
+        if let weight = self.scannedProduct.embeddedData, product.referenceUnit?.hasDimension == true {
             let productPrice = PriceFormatter.priceFor(product, weight)
             let priceKilo = PriceFormatter.format(product.price)
             let formattedPrice = PriceFormatter.format(productPrice)
@@ -210,7 +210,7 @@ final class ScanConfirmationView: DesignableView {
 
         if cart.quantity(of: product) == 0 || product.type != .singleItem || self.scannedProduct.embeddedData != nil {
             var editableUnits = false
-            if product.referenceUnit?.hasUnit == true && self.scannedProduct.embeddedData == 0 {
+            if product.referenceUnit?.hasDimension == true && self.scannedProduct.embeddedData == 0 {
                 self.quantity = 1
                 editableUnits = true
             }

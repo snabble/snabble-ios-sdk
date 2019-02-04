@@ -223,9 +223,9 @@ extension ProductDB {
 
         let codes = self.buildCodes(row["codes"], row["templates"], row["transmissionCodes"], rawUnits: row["encodingUnits"])
 
-        let referenceUnit = Unit.from(row["referenceUnit"] as? String)
-        var encodingUnit = Unit.from(row["encodingUnit"] as? String)
-        if let encodingOverride = Unit.from(row["code_encodingUnit"] as? String) {
+        let referenceUnit = Units.from(row["referenceUnit"] as? String)
+        var encodingUnit = Units.from(row["encodingUnit"] as? String)
+        if let encodingOverride = Units.from(row["code_encodingUnit"] as? String) {
             encodingUnit = encodingOverride
         }
 
@@ -289,7 +289,7 @@ extension ProductDB {
         var scannableCodes = [ScannableCode]()
         for i in 0 ..< codes.count {
             let transmissionCode = transmits[i].count == 0 ? nil : transmits[i]
-            let c = ScannableCode(codes[i], templates[i], transmissionCode, Unit.from(units[i]))
+            let c = ScannableCode(codes[i], templates[i], transmissionCode, Units.from(units[i]))
             scannableCodes.append(c)
         }
         return scannableCodes

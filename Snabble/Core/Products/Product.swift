@@ -77,9 +77,9 @@ public struct ScannableCode: Codable {
     let code: String
     let template: String
     let transmissionCode: String?
-    let encodingUnit: Unit?
+    let encodingUnit: Units?
 
-    init(_ code: String, _ template: String, _ transmissionCode: String?, _ encodingUnit: Unit?) {
+    init(_ code: String, _ template: String, _ transmissionCode: String?, _ encodingUnit: Units?) {
         self.code = code
         self.template = template
         self.transmissionCode = transmissionCode
@@ -142,11 +142,11 @@ public struct Product: Codable {
 
     /// for products with unit-dependent prices.
     /// `referenceUnit` specifies the Unit that the product's list price refers to, e.g. `.kilogram`.
-    public let referenceUnit: Unit?
+    public let referenceUnit: Units?
 
     /// for products with unit-dependent prices.
     /// `encodingUnit` specifies the Unit that the this product's scanned code refers to, e.g. `.gram`.
-    internal(set) public var encodingUnit: Unit? = nil
+    internal(set) public var encodingUnit: Units?
 
     /// convenience accessor for the price
     public var price: Int {
@@ -204,8 +204,8 @@ public struct Product: Codable {
          saleRestriction: SaleRestriction = .none,
          saleStop: Bool = false,
          bundles: [Product] = [],
-         referenceUnit: Unit? = nil,
-         encodingUnit: Unit? = nil) {
+         referenceUnit: Units? = nil,
+         encodingUnit: Units? = nil) {
         self.sku = sku
         self.name = name
         self.description = description

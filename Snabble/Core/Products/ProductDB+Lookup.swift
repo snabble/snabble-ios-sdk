@@ -153,7 +153,7 @@ extension ScannableCode {
         self.code = resolved.code
         self.template = resolved.template
         self.transmissionCode = resolved.transmissionCode
-        self.encodingUnit = Unit.from(resolved.encodingUnit)
+        self.encodingUnit = Units.from(resolved.encodingUnit)
     }
 }
 
@@ -216,7 +216,7 @@ private class ResolvedProduct: Decodable {
     fileprivate func convert(_ code: String, _ template: String) -> Product {
         let codes = self.codes.map { ScannableCode($0) }
         
-        var encodingUnit = Unit.from(self.encodingUnit)
+        var encodingUnit = Units.from(self.encodingUnit)
         let code = codes.first { $0.code == code && $0.template == template }
         if let encodingOverride = code?.encodingUnit {
             encodingUnit = encodingOverride
@@ -228,10 +228,10 @@ private class ResolvedProduct: Decodable {
     fileprivate func convert() -> Product {
         let codes = self.codes.map { ScannableCode($0) }
 
-        return convert(codes, Unit.from(self.encodingUnit))
+        return convert(codes, Units.from(self.encodingUnit))
     }
 
-    private func convert(_ codes: [ScannableCode], _ encodingUnit: Unit?) -> Product {
+    private func convert(_ codes: [ScannableCode], _ encodingUnit: Units?) -> Product {
         let type = ProductType(rawValue: self.weighing) ?? .singleItem
 
         let product = Product(sku: self.sku,
@@ -251,7 +251,7 @@ private class ResolvedProduct: Decodable {
                               saleRestriction: self.saleRestriction?.convert() ?? .none,
                               saleStop: self.saleStop ?? false,
                               bundles: self.bundles?.compactMap { $0.convert() } ?? [],
-                              referenceUnit: Unit.from(self.referenceUnit),
+                              referenceUnit: Units.from(self.referenceUnit),
                               encodingUnit: encodingUnit)
 
         return product

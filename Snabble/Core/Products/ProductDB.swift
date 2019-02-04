@@ -28,9 +28,9 @@ public struct ScannedProduct {
     public let code: String?
     public let templateId: String?
     public let embeddedData: Int?
-    public let encodingUnit: Unit?
+    public let encodingUnit: Units?
 
-    public init(_ product: Product, _ code: String?, _ template: String? = nil, _ embeddedData: Int? = nil, _ encodingUnit: Unit? = nil) {
+    public init(_ product: Product, _ code: String?, _ template: String? = nil, _ embeddedData: Int? = nil, _ encodingUnit: Units? = nil) {
         self.product = product
         self.code = code
         self.templateId = template

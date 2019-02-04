@@ -29,7 +29,7 @@ public struct PriceFormatter {
             let referenceUnit = product.referenceUnit ?? .kilogram
             let encodingUnit = product.encodingUnit ?? .gram
 
-            let unitPrice = Unit.convert(product.price, from: encodingUnit, to: referenceUnit)
+            let unitPrice = Units.convert(product.price, from: encodingUnit, to: referenceUnit)
             let total = Decimal(quantityOrWeight) * unitPrice
 
             return self.round(total, project.roundingMode)
