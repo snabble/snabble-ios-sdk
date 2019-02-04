@@ -35,7 +35,7 @@ public struct ScannedProduct {
         self.code = code
         self.templateId = template
         self.embeddedData = embeddedData
-        self.encodingUnit = encodingUnit
+        self.encodingUnit = encodingUnit ?? product.encodingUnit
     }
 }
 
