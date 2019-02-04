@@ -83,6 +83,7 @@ final class ShoppingCartTableCell: UITableViewCell {
         self.plusButton.tag = row
         self.quantityInput.tag = row
 
+        self.priceLabel.isHidden = false
         self.minusButton.isHidden = item.embeddedData != nil
         self.plusButton.isHidden = product.type == .preWeighed || item.embeddedData != nil
 
@@ -106,6 +107,13 @@ final class ShoppingCartTableCell: UITableViewCell {
         }
 
         self.showQuantity()
+
+        // suppress display when price == 0
+        if item.product.price == 0 {
+            self.priceLabel.isHidden = true
+            self.minusButton.isHidden = true
+            self.plusButton.isHidden = true
+        }
 
         self.loadImage()
     }

@@ -96,6 +96,7 @@ final class ScanConfirmationView: DesignableView {
             initialQuantity = embed
         }
 
+        self.priceLabel.isHidden = false
         self.minusButton.isHidden = scannedProduct.embeddedData != nil
         self.plusButton.isHidden = scannedProduct.embeddedData != nil
 
@@ -122,6 +123,14 @@ final class ScanConfirmationView: DesignableView {
             self.originalPriceLabel.attributedText = str
         } else {
             self.originalPriceLabel.text = nil
+        }
+
+        // suppress display when price == 0
+        if scannedProduct.product.price == 0 {
+            self.priceLabel.isHidden = true
+            self.plusButton.isHidden = true
+            self.minusButton.isHidden = true
+            self.quantityField.isEnabled = false
         }
     }
     
