@@ -78,6 +78,10 @@ public enum Units: String, Codable, Equatable {
         }
     }
 
+    func fractionalUnit(_ div: Int) -> Units? {
+        return self.fractionalUnit(Decimal(div))
+    }
+
     func fractionalUnit(_ div: Decimal) -> Units? {
         guard let conv = Units.conversions[self.quantity] else {
             return nil

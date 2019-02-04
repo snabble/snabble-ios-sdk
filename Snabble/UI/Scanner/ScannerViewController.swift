@@ -463,7 +463,7 @@ extension ScannerViewController {
                             encodingUnit = .piece
                             embeddedData = decimalData.value / div
                         case .kilogram, .meter, .liter, .squareMeter:
-                            encodingUnit = enc.fractionalUnit(Decimal(div))
+                            encodingUnit = enc.fractionalUnit(div)
                             embeddedData = decimalData.value
                         default: ()
                         }
