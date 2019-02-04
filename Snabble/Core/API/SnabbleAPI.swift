@@ -113,9 +113,6 @@ public struct SnabbleAPI {
                 CodeMatcher.addTemplate(project.id, $0.id, $0.template)
             }
         }
-
-        #warning("removeme")
-        CodeMatcher.addTemplate("globus-fachmaerkte-be3273","globus_weighing","96{code:ean13}{embed:4.3}{price:5}{_}")
     }
 
     public static func getToken(for project: Project, completion: @escaping (String?)->() ) {
