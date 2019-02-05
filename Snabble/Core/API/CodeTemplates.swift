@@ -149,7 +149,7 @@ fileprivate enum TemplateComponent {
         }
     }
 
-    /// is this an `embed` component?
+    /// is this an `embed` integer component?
     var isEmbed: Bool {
         switch self {
         case .embed, .embed100: return true
@@ -157,10 +157,18 @@ fileprivate enum TemplateComponent {
         }
     }
 
-    /// is this an `embed` component?
+    /// is this an `embed` decimal component?
     var isDecimal: Bool {
         switch self {
         case .embedDecimal: return true
+        default: return false
+        }
+    }
+
+    /// is this a `price` component?
+    var isPrice: Bool {
+        switch self {
+        case .price: return true
         default: return false
         }
     }
@@ -345,6 +353,17 @@ public struct ParseResult {
             }
         }
         return true
+    }
+
+    public var referencePrice: Int? {
+        guard
+            let entry = self.entries.first(where: { $0.templateComponent.isPrice }),
+            let value = Int(entry.value)
+        else {
+            return nil
+        }
+
+        return value
     }
 
     public var embeddedData: Int? {

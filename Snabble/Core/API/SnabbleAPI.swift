@@ -17,7 +17,7 @@ public struct SnabbleAPIConfig {
     public let secret: String
 
     /// the app version that is passed to the metadata endpoint. if not set, the app's `CFBundleShortVersionString` is used
-    public var appVersion: String?
+    public let appVersion: String?
 
     /// set this to true if you want to use the `productsByName` method of `ProductDB`
     public var useFTS = false
@@ -32,6 +32,10 @@ public struct SnabbleAPIConfig {
     /// max age for the local product database. if the last update of the db is older than this,
     /// the asychronous lookup methods will not use the local database anymore.
     public var maxProductDatabaseAge: TimeInterval = 3600
+
+    // debug mode only:
+    // SQL statements that are executed just before the product database is opened
+    public var initialSQL: [String]? = nil
 
     public init(appId: String, baseUrl: String, secret: String, appVersion: String? = nil, useFTS: Bool = false, seedDatabase: String? = nil, seedRevision: Int64? = nil, seedMetadata: String? = nil) {
         self.appId = appId

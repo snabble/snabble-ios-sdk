@@ -19,8 +19,8 @@ extension PriceFormatter {
     ///   - product: the product
     ///   - quantityOrWeight: quantity or weight
     /// - Returns: the price
-    public static func priceFor(_ product: Product, _ quantityOrWeight: Int) -> Int {
-        return self.priceFor(SnabbleUI.project, product, quantityOrWeight)
+    public static func priceFor(_ product: Product, _ quantityOrWeight: Int, _ encodingUnit: Units? = nil, _ referencePrice: Int? = nil) -> Int {
+        return self.priceFor(SnabbleUI.project, product, quantityOrWeight, encodingUnit, referencePrice)
     }
 
     /// Format a price

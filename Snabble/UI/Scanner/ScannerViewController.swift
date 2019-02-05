@@ -450,12 +450,11 @@ extension ScannerViewController {
             case .success(let lookupResult):
                 let parseResult = matches.first { $0.template.id == lookupResult.templateId }
                 let scannedCode = lookupResult.code ?? code
-                var newResult = ScannedProduct(lookupResult.product, scannedCode, lookupResult.templateId, parseResult?.embeddedData, lookupResult.encodingUnit)
+                var newResult = ScannedProduct(lookupResult.product, scannedCode, lookupResult.templateId, parseResult?.embeddedData, lookupResult.encodingUnit, parseResult?.referencePrice)
 
                 if let decimalData = parseResult?.embeddedDecimal {
                     var encodingUnit = lookupResult.product.encodingUnit
                     var embeddedData: Int? = nil
-                    var product = lookupResult.product
                     let div = Int(pow(10.0, Double(decimalData.fractionDigits)))
                     if let enc = encodingUnit {
                         switch enc {
@@ -469,10 +468,7 @@ extension ScannerViewController {
                         }
                     }
 
-                    if encodingUnit != nil {
-                        product.encodingUnit = encodingUnit
-                    }
-                    newResult = ScannedProduct(product, scannedCode, lookupResult.templateId, embeddedData, encodingUnit)
+                    newResult = ScannedProduct(lookupResult.product, scannedCode, lookupResult.templateId, embeddedData, encodingUnit, newResult.referencePrice)
                 }
 
                 completion(newResult)

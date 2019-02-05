@@ -134,7 +134,8 @@ final class ShoppingCartTableCell: UITableViewCell {
     private func showQuantity() {
         let showWeight = self.item.product.referenceUnit?.hasDimension == true || self.item.product.type == .userMustWeigh
 
-        let symbol = self.item.product.encodingUnit?.display ?? ""
+        let encodingUnit = self.item.encodingUnit ?? self.item.product.encodingUnit
+        let symbol = encodingUnit?.display ?? ""
         let gram = showWeight ? symbol : ""
         self.quantityLabel.text = "\(self.quantity)\(gram)"
 
@@ -142,7 +143,8 @@ final class ShoppingCartTableCell: UITableViewCell {
         let total = PriceFormatter.format(price)
 
         if showWeight {
-            let single = PriceFormatter.format(self.item.product.price)
+            let price = self.item.referencePrice ?? self.item.product.price
+            let single = PriceFormatter.format(price)
             let unit = self.item.product.referenceUnit?.display ?? ""
             self.priceLabel.text = "× \(single)/\(unit) = \(total)"
         } else {

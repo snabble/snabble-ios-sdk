@@ -44,14 +44,17 @@ public struct CartItem: Codable {
     public let embeddedData: Int?
     // what does the embedded data represent?
     public let encodingUnit: Units?
+    // optional reference price
+    public let referencePrice: Int?
 
-    init(_ quantity: Int, _ product: Product, _ scannedCode: String, _ embeddedData: Int? = nil, _ editableUnits: Bool = false, _ encodingUnit: Units? = nil) {
+    init(_ quantity: Int, _ product: Product, _ scannedCode: String, _ embeddedData: Int? = nil, _ editableUnits: Bool = false, _ encodingUnit: Units? = nil, _ referencePrice: Int? = nil) {
         self.product = product
         self.quantity = quantity
         self.editableUnits = editableUnits
         self.scannedCode = scannedCode
         self.embeddedData = embeddedData
         self.encodingUnit = encodingUnit
+        self.referencePrice = referencePrice
     }
 
     public init(from decoder: Decoder) throws {
@@ -62,6 +65,7 @@ public struct CartItem: Codable {
         self.editableUnits = try container.decodeIfPresent(Bool.self, forKey: .editableUnits) ?? false
         self.embeddedData = try container.decodeIfPresent(Int.self, forKey: .embeddedData)
         self.encodingUnit = try container.decodeIfPresent(Units.self, forKey: .encodingUnit)
+        self.referencePrice = try container.decodeIfPresent(Int.self, forKey: .referencePrice)
     }
 
     // init with a freshly retrieved copy of `item.product`.
@@ -76,6 +80,7 @@ public struct CartItem: Codable {
         self.editableUnits = item.editableUnits
         self.embeddedData = item.embeddedData
         self.encodingUnit = item.encodingUnit
+        self.referencePrice = item.referencePrice
     }
 
     /// total price for this cart item
@@ -101,7 +106,7 @@ public struct CartItem: Codable {
             let multiplier = embed == 0 ? self.quantity : embed
             return multiplier * self.product.price
         default:
-            return PriceFormatter.priceFor(project, self.product, embed)
+            return PriceFormatter.priceFor(project, self.product, embed, self.encodingUnit, self.referencePrice)
         }
     }
 
@@ -191,13 +196,13 @@ public final class ShoppingCart {
     /// add a Product. if already present and not weight dependent, increase its quantity
     ///
     /// the newly added (or modified) product is moved to the start of the list
-    public func add(_ product: Product, quantity: Int = 1, scannedCode: String, embeddedData: Int? = nil, editableUnits: Bool = false, encodingUnit: Units? = nil) {
+    public func add(_ product: Product, quantity: Int = 1, scannedCode: String, embeddedData: Int? = nil, editableUnits: Bool = false, encodingUnit: Units? = nil, referencePrice: Int? = nil) {
         if let index = self.indexOf(product), product.type == .singleItem, product.referenceUnit == nil, encodingUnit == nil {
             self.items[index].quantity += quantity
             let item = self.items.remove(at: index)
             self.items.insert(item, at: 0)
         } else {
-            let item = CartItem(quantity, product, scannedCode, embeddedData, editableUnits, encodingUnit)
+            let item = CartItem(quantity, product, scannedCode, embeddedData, editableUnits, encodingUnit, referencePrice)
             self.items.insert(item, at: 0)
         }
 

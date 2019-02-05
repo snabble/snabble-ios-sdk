@@ -91,7 +91,7 @@ final class ScanConfirmationView: DesignableView {
             self.alreadyInCart = cartQuantity > 0
         }
 
-        var initialQuantity = self.quantity // ean?.embeddedWeight ?? self.quantity
+        var initialQuantity = self.quantity
         if let embed = scannedProduct.embeddedData, product.referenceUnit?.hasDimension == true {
             initialQuantity = embed
         }
@@ -157,8 +157,9 @@ final class ScanConfirmationView: DesignableView {
         let encodingUnit = self.scannedProduct.encodingUnit ?? product.encodingUnit
 
         if let weight = self.scannedProduct.embeddedData, product.referenceUnit?.hasDimension == true {
-            let productPrice = PriceFormatter.priceFor(product, weight)
-            let priceKilo = PriceFormatter.format(product.price)
+            let productPrice = PriceFormatter.priceFor(product, weight, encodingUnit, self.scannedProduct.referencePrice)
+            let price = self.scannedProduct.referencePrice ?? product.price
+            let priceKilo = PriceFormatter.format(price)
             let formattedPrice = PriceFormatter.format(productPrice)
             self.priceLabel.text = "\(qty)\(encodingSymbol) × \(priceKilo)/\(referenceSymbol) = \(formattedPrice)"
         } else if let price = self.scannedProduct.embeddedData, encodingUnit == .price {
@@ -224,7 +225,7 @@ final class ScanConfirmationView: DesignableView {
                 editableUnits = true
             }
             // Log.info("adding to cart: \(self.quantity) x \(product.name), scannedCode = \(String(describing: self.scannedProduct.code)), embed=\(String(describing: self.scannedProduct.embeddedData)) editableUnits=\(editableUnits)")
-            cart.add(product, quantity: self.quantity, scannedCode: self.scannedProduct.code ?? "", embeddedData: self.scannedProduct.embeddedData, editableUnits: editableUnits, encodingUnit: self.scannedProduct.encodingUnit)
+            cart.add(product, quantity: self.quantity, scannedCode: self.scannedProduct.code ?? "", embeddedData: self.scannedProduct.embeddedData, editableUnits: editableUnits, encodingUnit: self.scannedProduct.encodingUnit, referencePrice: self.scannedProduct.referencePrice)
         } else {
             // Log.info("updating cart: set qty=\(self.quantity) for \(product.name)")
             cart.setQuantity(self.quantity, for: product)

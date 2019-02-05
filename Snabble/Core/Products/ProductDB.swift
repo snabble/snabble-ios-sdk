@@ -29,13 +29,15 @@ public struct ScannedProduct {
     public let templateId: String?
     public let embeddedData: Int?
     public let encodingUnit: Units?
+    public let referencePrice: Int?
 
-    public init(_ product: Product, _ code: String?, _ template: String? = nil, _ embeddedData: Int? = nil, _ encodingUnit: Units? = nil) {
+    public init(_ product: Product, _ code: String?, _ template: String? = nil, _ embeddedData: Int? = nil, _ encodingUnit: Units? = nil, _ referencePrice: Int? = nil) {
         self.product = product
         self.code = code
         self.templateId = template
         self.embeddedData = embeddedData
         self.encodingUnit = encodingUnit ?? product.encodingUnit
+        self.referencePrice = referencePrice
     }
 }
 
@@ -209,7 +211,12 @@ final class ProductDB: ProductProvider {
         }
 
         if update {
-            self.updateDatabase(forceFullDownload: forceFullDownload, completion: completion)
+            self.updateDatabase(forceFullDownload: forceFullDownload) { newData in
+                self.executeInitialSQL()
+                completion(newData)
+            }
+        } else {
+            self.executeInitialSQL()
         }
     }
 
@@ -505,6 +512,23 @@ final class ProductDB: ProductProvider {
         }
     }
 
+    private func executeInitialSQL() {
+        guard _isDebugAssertConfiguration(), let statements = self.config.initialSQL, statements.count > 0 else {
+            return
+        }
+
+        do {
+            let dbQueue = try DatabaseQueue(path: self.dbPathname())
+            for statement in statements {
+                Log.warn("execute SQL: \(statement)")
+                try dbQueue.inDatabase { db in
+                    try db.execute(statement)
+                }
+            }
+        } catch {
+            Log.error("executeInitialSQL: \(error)")
+        }
+    }
 }
 
 // MARK: - product access methods
