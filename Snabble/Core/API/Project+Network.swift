@@ -28,6 +28,8 @@ public struct SnabbleError: Decodable, Error {
     static let invalid = SnabbleError(error: ErrorResponse("invalid"))
     static let noRequest = SnabbleError(error: ErrorResponse("no request"))
     static let notFound = SnabbleError(error: ErrorResponse("not found"))
+
+    static let noPaymentAvailable = SnabbleError(error: ErrorResponse("no payment method available"))
 }
 
 public struct ErrorResponse: Decodable {
