@@ -262,6 +262,12 @@ public final class ShoppingCart {
 
         self.save()
     }
+
+    /// check if we can calculate the total price (ie, are there any commissions or other products with price==0)
+    public var canCalculateTotal: Bool {
+        let zeroPrice = self.items.filter { $0.total(self.config.project) == 0 }
+        return zeroPrice.count == 0
+    }
     
     /// return the number of separate items
     public var count:  Int {

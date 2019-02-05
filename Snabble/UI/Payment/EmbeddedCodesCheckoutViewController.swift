@@ -89,6 +89,11 @@ final class EmbeddedCodesCheckoutViewController: UIViewController {
         let explanation = self.codes.count > 1 ? "Snabble.QRCode.showTheseCodes" : "Snabble.QRCode.showThisCode"
         self.explanation1.text = explanation.localized()
         self.explanation2.text = "Snabble.QRCode.priceMayDiffer".localized()
+
+        if !self.cart.canCalculateTotal {
+            self.totalPriceLabel.isHidden = true
+            self.explanation2.isHidden = true
+        }
     }
 
     override func viewDidLayoutSubviews() {
