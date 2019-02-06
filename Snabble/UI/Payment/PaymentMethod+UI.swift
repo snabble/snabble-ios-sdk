@@ -85,14 +85,17 @@ public final class PaymentProcess {
 
         let paymentMethods = self.mergePaymentMethodList(info.checkoutInfo.paymentMethods)
 
-        if paymentMethods.count > 1 {
-            let paymentSelection = PaymentMethodSelectionViewController(self, paymentMethods)
-            completion(Result.success(paymentSelection))
-        } else {
+        switch paymentMethods.count {
+        case 0:
+            completion(Result.failure(SnabbleError.noPaymentAvailable))
+        case 1:
             let method = paymentMethods[0]
             self.start(method) { result in
                 completion(result)
             }
+        default:
+            let paymentSelection = PaymentMethodSelectionViewController(self, paymentMethods)
+            completion(Result.success(paymentSelection))
         }
     }
 

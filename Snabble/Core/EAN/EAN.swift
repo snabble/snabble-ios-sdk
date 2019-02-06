@@ -18,118 +18,12 @@ public protocol EANCode {
 
     /// the encoding (EAN-8, EAN-13 or EAN-14)
     var encoding: EAN.Encoding { get }
-
-    var project: Project? { get set }
 }
 
 extension EANCode {
     /// the check digit as an Int
     public var checkDigit: Int {
         return self.digits.last ?? 0
-    }
-
-    /// checks for embedded data
-    public var hasEmbeddedWeight: Bool {
-        return self.encoding == .ean13 && self.matchPrefixes(self.project?.weighPrefixes)
-    }
-
-    public var hasEmbeddedPrice: Bool {
-        return (self.encoding == .ean13 && (self.matchPrefixes(self.project?.pricePrefixes))
-               || self.hasGermanPrintPrefix)
-               || self.encoding == .edekaProductPrice
-               || self.encoding == .ikeaProductPrice
-    }
-
-    public var hasEmbeddedUnits: Bool {
-        return self.encoding == .ean13 && self.matchPrefixes(self.project?.unitPrefixes)
-    }
-
-    public var hasEmbeddedData: Bool {
-        return self.hasEmbeddedWeight || self.hasEmbeddedPrice || self.hasEmbeddedUnits
-    }
-
-    /// get embedded data
-    public var embeddedWeight: Int? {
-        return self.hasEmbeddedWeight ? self.rawEmbeddedData : nil
-    }
-
-    public var embeddedPrice: Int? {
-        return self.hasEmbeddedPrice ? self.rawEmbeddedData : nil
-    }
-
-    public var embeddedUnits: Int? {
-        return self.hasEmbeddedUnits ? self.rawEmbeddedData : nil
-    }
-
-    public var embeddedData: Int? {
-        return self.hasEmbeddedData ? self.rawEmbeddedData : nil
-    }
-
-    /// get a code suitable for lookup as a so-called `weighItemId` (i.e. with the last 5 data digits and the checksum digits as 0)
-    public var codeForLookup: String {
-        switch self.encoding {
-        case .ean13:
-            if self.hasGermanPrintPrefix {
-                return self.code.prefix(3) + "0000000000"
-            } else if self.hasEmbeddedData {
-                return self.code.prefix(6) + "0000000"
-            } else {
-                return code
-            }
-        case .ean8:
-            return code
-        case .ean14:
-            return code
-        case .edekaProductPrice:
-            return code
-        case .ikeaProductPrice:
-            return code
-        }
-    }
-
-    private var rawEmbeddedData: Int? {
-        switch self.encoding {
-        case .ean13:
-            let offset = self.hasGermanPrintPrefix ? 8 : 7
-            let start = self.code.index(self.code.startIndex, offsetBy: offset)
-            let end = self.code.index(self.code.startIndex, offsetBy: 12)
-            let data = self.code[start ..< end]
-            return Int(data)
-        case .ean8:
-            return nil
-        case .ean14:
-            return nil
-        case .edekaProductPrice:
-            let start = self.code.index(code.startIndex, offsetBy: 15)
-            let end = self.code.index(code.startIndex, offsetBy: 20)
-            let embedded = String(self.code[start...end])
-            return Int(embedded)
-        case .ikeaProductPrice:
-            let start = self.code.index(code.startIndex, offsetBy: 48)
-            let end = self.code.index(code.startIndex, offsetBy: 52)
-            let embedded = String(self.code[start...end])
-            if let data = Int(embedded) {
-                return data * 100
-            }
-            return nil
-        }
-    }
-
-    private func matchPrefixes(_ prefixes: [String]?) -> Bool {
-        guard let prefixes = prefixes else {
-            return false
-        }
-        let prefixed = prefixes.filter { self.code.hasPrefix($0) }
-        return prefixed.count > 0
-    }
-
-    // MARK: - logic for german newspapers/magazines
-
-    fileprivate var hasGermanPrintPrefix: Bool {
-        return
-            self.encoding == .ean13
-            && self.project?.useGermanPrintPrefix == true
-            && [ "414", "419", "434", "449" ].contains(self.code.prefix(3))
     }
 }
 
@@ -141,8 +35,6 @@ public enum EAN {
         case ean8
         case ean13
         case ean14
-        case edekaProductPrice  // code 128 with embedded price
-        case ikeaProductPrice   // datamatrix with embedded price
     }
 
     /// parse an EAN-8, EAN-13 or EAN-14
@@ -157,13 +49,11 @@ public enum EAN {
     ///   if `code` has 7 or 12 digits, the check digit for this code is calculated and appended to the code.
     ///   if `code` has 16 digits, it is treated as an EAN-14 embedded in a Code-128 (i.e, prefixed with "01")
     /// - Returns: an EANCode, or nil if the code did not represent a well-formed EAN-8, EAN-13 or EAN-14
-    public static func parse(_ code: String, _ project: Project?) -> EANCode? {
+    public static func parse(_ code: String) -> EANCode? {
         switch code.count {
         case 7, 8: return EAN8(code)
-        case 12, 13: return EAN13(code, project)
+        case 12, 13: return EAN13(code)
         case 14, 16: return EAN14(code)
-        case 22: return code.hasPrefix("97") ? EdekaProductPrice(code) : nil
-        case 54: return IkeaProductPrice(code)
         default: return nil
         }
     }
@@ -204,7 +94,6 @@ public struct EAN8: EANCode {
     public let code: String
     public let encoding = EAN.Encoding.ean8
     public let digits: [Int]
-    public var project: Project?
 
     /// create an EAN8
     ///
@@ -249,14 +138,12 @@ public struct EAN13: EANCode {
     public let code: String
     public let encoding = EAN.Encoding.ean13
     public let digits: [Int]
-    public var project: Project?
 
     /// create an EAN13
     ///
     /// - Parameter code: a 12 or 13 digit string representing an EAN-13
-    /// - Parameter project: the snabble project (for prefix information)
     /// - Returns: an EAN13 object, or nil if `code` did not represent an EAN-13
-    public init?(_ code: String, _ project: Project? = nil) {
+    public init?(_ code: String) {
         guard
             code.count == 13 || code.count == 12,
             Int64(code) != nil,
@@ -268,7 +155,6 @@ public struct EAN13: EANCode {
 
         self.code = code.prefix(12) + String(check)
         self.digits = self.code.compactMap { Int(String($0)) }
-        self.project = project
     }
 
     /// calculate the check digit for an EAN-13
@@ -289,46 +175,9 @@ public struct EAN13: EANCode {
     }
 }
 
-/// special `EANCode` implementation for individual product price at edeka
-/// codes have 22 digits and look like
-/// 97 4056905473742 000998 9
-/// where "97" is the GS-1 application identifier, "4056905473742" is the EAN-8 or EAN-13 of the product,
-/// "000998" is the price in cents, and "9" is a checksum (algorithm unspecified, so we can't check it)
-public struct EdekaProductPrice: EANCode {
-    public let code: String
-    public let encoding = EAN.Encoding.edekaProductPrice
-    public let digits: [Int]
-    public var project: Project?
-
-    public init?(_ code: String) {
-        self.code = code
-        self.digits = self.code.compactMap { Int(String($0)) }
-    }
-}
-
-public struct IkeaProductPrice: EANCode {
-    public let code: String
-    public let encoding = EAN.Encoding.ikeaProductPrice
-    public let digits: [Int]
-    public var project: Project?
-
-    public init?(_ code: String) {
-        self.code = code
-        self.digits = self.code.compactMap { Int(String($0)) }
-    }
-}
-
 // MARK: - price/weight check digit
 
 extension EAN13 {
-    /// check if the 5-digit embedded weight/price/units matches the check digit in position 6
-    public func priceFieldOk() -> Bool {
-        if self.hasGermanPrintPrefix {
-            return true
-        }
-        return self.internalChecksum5() == self.digits[6]
-    }
-
     // calculate the internal checksum for a 5-digit price/weight data field
     func internalChecksum5() -> Int {
         return EAN13.internalChecksum5(Array(self.digits[7 ... 11]))
@@ -348,13 +197,13 @@ extension EAN13 {
         return check
     }
 
-    static let check2minus = [ 0:0, 1:2, 2:4, 3:6, 4:8, 5:9, 6:1, 7:3, 8:5, 9:7 ]
-    static let check3      = [ 0:0, 1:3, 2:6, 3:9, 4:2, 5:5, 6:8, 7:1, 8:4, 9:7 ]
-    static let check5plus  = [ 0:0, 1:5, 2:1, 3:6, 4:2, 5:7, 6:3, 7:8, 8:4, 9:9 ]
-    static let check5minus = [ 0:0, 1:5, 2:9, 3:4, 4:8, 5:3, 6:7, 7:2, 8:6, 9:1 ]
-    static let check5minusReverse = Dictionary(uniqueKeysWithValues: check5minus.map { ($1, $0) })
+    private static let check2minus = [ 0:0, 1:2, 2:4, 3:6, 4:8, 5:9, 6:1, 7:3, 8:5, 9:7 ]
+    private static let check3      = [ 0:0, 1:3, 2:6, 3:9, 4:2, 5:5, 6:8, 7:1, 8:4, 9:7 ]
+    private static let check5plus  = [ 0:0, 1:5, 2:1, 3:6, 4:2, 5:7, 6:3, 7:8, 8:4, 9:9 ]
+    private static let check5minus = [ 0:0, 1:5, 2:9, 3:4, 4:8, 5:3, 6:7, 7:2, 8:6, 9:1 ]
+    private static let check5minusReverse = Dictionary(uniqueKeysWithValues: check5minus.map { ($1, $0) })
 
-    static func weightedProduct5digits(_ index: Int, _ digit: Int) -> Int {
+    private static func weightedProduct5digits(_ index: Int, _ digit: Int) -> Int {
         switch index {
         case 0, 3: return EAN13.check5plus[digit] ?? -1
         case 1, 4: return EAN13.check2minus[digit] ?? -1
@@ -363,7 +212,7 @@ extension EAN13 {
         }
     }
 
-    static func weightedProduct4digits(_ index: Int, _ digit: Int) -> Int {
+    private static func weightedProduct4digits(_ index: Int, _ digit: Int) -> Int {
         switch index {
         case 0,1 : return EAN13.check2minus[digit] ?? -1
         case 2: return EAN13.check3[digit] ?? -1
@@ -397,14 +246,12 @@ public struct EAN14: EANCode {
     public let code: String
     public let encoding = EAN.Encoding.ean14
     public let digits: [Int]
-    public var project: Project?
 
     /// create an EAN14
     ///
     /// - Parameter code: a 14 digit string representing an EAN-14
     /// - Returns: an EAN14 object, or nil if `code` did not represent an EAN-14
     public init?(_ code: String) {
-        let code = EAN14.extractFromCode128(code)
         guard
             code.count == 14,
             Int64(code) != nil,
@@ -434,14 +281,6 @@ public struct EAN14: EANCode {
         let mod10 = (sum1 + 3 * sum2) % 10
         let check = (10 - mod10) % 10
         return check
-    }
-
-    /// extract an EAN-14 from a scanned Code 128 barcode
-    private static func extractFromCode128(_ str: String) -> String {
-        if str.count == 16 && str.prefix(2) == "01" {
-            return String(str.suffix(14))
-        }
-        return str
     }
 }
 

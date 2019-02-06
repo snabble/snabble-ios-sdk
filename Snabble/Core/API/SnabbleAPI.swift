@@ -17,7 +17,7 @@ public struct SnabbleAPIConfig {
     public let secret: String
 
     /// the app version that is passed to the metadata endpoint. if not set, the app's `CFBundleShortVersionString` is used
-    public var appVersion: String?
+    public let appVersion: String?
 
     /// set this to true if you want to use the `productsByName` method of `ProductDB`
     public var useFTS = false
@@ -32,6 +32,10 @@ public struct SnabbleAPIConfig {
     /// max age for the local product database. if the last update of the db is older than this,
     /// the asychronous lookup methods will not use the local database anymore.
     public var maxProductDatabaseAge: TimeInterval = 3600
+
+    // debug mode only:
+    // SQL statements that are executed just before the product database is opened
+    public var initialSQL: [String]? = nil
 
     public init(appId: String, baseUrl: String, secret: String, appVersion: String? = nil, useFTS: Bool = false, seedDatabase: String? = nil, seedRevision: Int64? = nil, seedMetadata: String? = nil) {
         self.appId = appId
@@ -49,8 +53,8 @@ public struct SnabbleAPIConfig {
 
 public struct SnabbleAPI {
     private(set) public static var config = SnabbleAPIConfig.none
-    static var metadata = Metadata.none
     static var tokenRegistry = TokenRegistry("", "")
+    static var metadata = Metadata.none
 
     public static var certificates: [GatewayCertificate] {
         return self.metadata.gatewayCertificates
@@ -80,7 +84,7 @@ public struct SnabbleAPI {
 
         if let metadataPath = config.seedMetadata, self.metadata.projects[0].id == Project.none.id {
             if let metadata = Metadata.readResource(metadataPath) {
-                self.metadata = metadata
+                self.setMetadata(metadata)
             }
         }
 
@@ -95,9 +99,23 @@ public struct SnabbleAPI {
 
         Metadata.load(from: metadataURL) { metadata in
             if let metadata = metadata {
-                self.metadata = metadata
+                self.setMetadata(metadata)
             }
             completion()
+        }
+    }
+
+    private static func setMetadata(_ metadata: Metadata) {
+        self.metadata = metadata
+
+        for project in metadata.projects {
+            project.codeTemplates.forEach {
+                CodeMatcher.addTemplate(project.id, $0.id, $0.template)
+            }
+
+            project.priceOverrideCodes?.forEach {
+                CodeMatcher.addTemplate(project.id, $0.id, $0.template)
+            }
         }
     }
 

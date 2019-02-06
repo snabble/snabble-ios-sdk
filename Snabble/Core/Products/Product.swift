@@ -73,6 +73,20 @@ extension SaleRestriction: Equatable {
     }
 }
 
+public struct ScannableCode: Codable {
+    let code: String
+    let template: String
+    let transmissionCode: String?
+    let encodingUnit: Units?
+
+    init(_ code: String, _ template: String, _ transmissionCode: String?, _ encodingUnit: Units?) {
+        self.code = code
+        self.template = template
+        self.transmissionCode = transmissionCode
+        self.encodingUnit = encodingUnit
+    }
+}
+
 /// data for one product.
 public struct Product: Codable {
     /// the stock keeping unit, unique identifier for this product
@@ -103,11 +117,8 @@ public struct Product: Codable {
     /// the product's type
     public let type: ProductType
 
-    /// list of scannable codes (usually EANs/GTINs) for this product
-    public let scannableCodes: Set<String>
-
-    /// list of "EAN templates" for this product, if it's weight-dependent
-    public let weighedItemIds: Set<String>?
+    /// list of scannable codes for this product
+    public let codes: [ScannableCode]
 
     /// if not nil, refers to the SKU of the product that carries the price information for the deposit
     public let depositSku: String?
@@ -120,7 +131,7 @@ public struct Product: Codable {
     public let isDeposit: Bool
 
     /// if this product has an associated deposit, this is the deposit product's `price`
-    internal(set) public var deposit: Int?
+    public let deposit: Int?
 
     /// if this product is contained in bundles (e.g. crates of bottles), this is the list of bundling products
     public let bundles: [Product]
@@ -131,12 +142,11 @@ public struct Product: Codable {
 
     /// for products with unit-dependent prices.
     /// `referenceUnit` specifies the Unit that the product's list price refers to, e.g. `.kilogram`.
-    public let referenceUnit: Unit?
+    public let referenceUnit: Units?
 
     /// for products with unit-dependent prices.
-    /// `encodingUnit` specifies the Unit that the product's sale price refers to, e.g. `.gram`.
-    /// NB: will be removed in the next release
-    internal let encodingUnit: Unit?
+    /// `encodingUnit` specifies the Unit that the this product's scanned code refers to, e.g. `.gram`.
+    public let encodingUnit: Units?
 
     /// convenience accessor for the price
     public var price: Int {
@@ -165,8 +175,7 @@ public struct Product: Codable {
         self.listPrice = try container.decode(.listPrice)
         self.discountedPrice = try container.decodeIfPresent(.discountedPrice)
         self.type = try container.decode(.type)
-        self.scannableCodes = try container.decode(.scannableCodes)
-        self.weighedItemIds = try container.decodeIfPresent(.weighedItemIds)
+        self.codes = try container.decode(.codes)
         self.depositSku = try container.decodeIfPresent(.depositSku)
         self.bundledSku = try container.decodeIfPresent(.bundledSku)
         self.isDeposit = try container.decode(.isDeposit)
@@ -174,7 +183,6 @@ public struct Product: Codable {
         self.saleRestriction = try container.decodeIfPresent(.saleRestriction) ?? .none
         self.saleStop = try container.decodeIfPresent(.saleStop) ?? false
         self.bundles = try container.decodeIfPresent(.bundles) ?? []
-        self.transmissionCodes = try container.decodeIfPresent(.transmissionCodes) ?? [:]
         self.referenceUnit = try container.decodeIfPresent(.referenceUnit)
         self.encodingUnit = try container.decodeIfPresent(.encodingUnit)
     }
@@ -188,8 +196,7 @@ public struct Product: Codable {
          listPrice: Int,
          discountedPrice: Int? = nil,
          type: ProductType,
-         scannableCodes: Set<String>,
-         weighedItemIds: Set<String>? = nil,
+         codes: [ScannableCode],
          depositSku: String? = nil,
          bundledSku: String? = nil,
          isDeposit: Bool = false,
@@ -197,9 +204,8 @@ public struct Product: Codable {
          saleRestriction: SaleRestriction = .none,
          saleStop: Bool = false,
          bundles: [Product] = [],
-         transmissionCodes: [String: String] = [:],
-         referenceUnit: Unit? = nil,
-         encodingUnit: Unit? = nil) {
+         referenceUnit: Units? = nil,
+         encodingUnit: Units? = nil) {
         self.sku = sku
         self.name = name
         self.description = description
@@ -209,8 +215,7 @@ public struct Product: Codable {
         self.listPrice = listPrice
         self.discountedPrice = discountedPrice
         self.type = type
-        self.scannableCodes = scannableCodes
-        self.weighedItemIds = weighedItemIds
+        self.codes = codes
         self.depositSku = depositSku
         self.bundledSku = bundledSku
         self.isDeposit = isDeposit
@@ -218,13 +223,9 @@ public struct Product: Codable {
         self.saleRestriction = saleRestriction
         self.saleStop = saleStop
         self.bundles = bundles
-        self.transmissionCodes = transmissionCodes
         self.referenceUnit = referenceUnit
         self.encodingUnit = encodingUnit
     }
-
-    // store a mapping of scannableCode to transmissionCode
-    internal let transmissionCodes: [String: String]
 }
 
 /// conform to Hashable

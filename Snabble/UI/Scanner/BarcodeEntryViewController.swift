@@ -63,11 +63,11 @@ final public class BarcodeEntryViewController: UIViewController, UISearchBarDele
     // MARK: - search bar
     public func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
         if searchText.count > 0 {
-            let products = self.productProvider.productsByScannableCodePrefix(searchText, filterDeposits: true)
+            let products = self.productProvider.productsByScannableCodePrefix(searchText, filterDeposits: true, templates: SnabbleUI.project.searchableTemplates)
             self.filteredProducts = products.sorted { p1, p2 in
-                let c1 = p1.scannableCodes.filter { $0.hasPrefix(searchText) }.first ?? p1.scannableCodes.first!
-                let c2 = p2.scannableCodes.filter { $0.hasPrefix(searchText) }.first ?? p2.scannableCodes.first!
-                return c1 < c2
+                let c1 = p1.codes.filter { $0.code.hasPrefix(searchText) }.first ?? p1.codes.first!
+                let c2 = p2.codes.filter { $0.code.hasPrefix(searchText) }.first ?? p2.codes.first!
+                return c1.code < c2.code
             }
         } else {
             self.filteredProducts.removeAll()
@@ -102,13 +102,8 @@ final public class BarcodeEntryViewController: UIViewController, UISearchBarDele
         }()
         
         let product = self.filteredProducts[indexPath.row]
-        var matchingCode = product.scannableCodes.filter { $0.hasPrefix(self.searchText) }.first ?? product.scannableCodes.first!
-        if matchingCode.hasPrefix("00000") {
-            let start = matchingCode.index(matchingCode.startIndex, offsetBy: 5)
-            matchingCode = String(matchingCode[start..<matchingCode.endIndex])
-        }
-
-        let str = NSMutableAttributedString(string: matchingCode)
+        let codeEntry = product.codes.filter { $0.code.hasPrefix(self.searchText) }.first ?? product.codes.first!
+        let str = NSMutableAttributedString(string: codeEntry.code)
         let boldFont = UIFont.systemFont(ofSize: cell.textLabel?.font.pointSize ?? 0, weight: .medium)
         str.addAttributes([NSAttributedString.Key.font : boldFont], range: NSMakeRange(0, self.searchText.count))
         cell.textLabel?.attributedText = str
@@ -121,8 +116,8 @@ final public class BarcodeEntryViewController: UIViewController, UISearchBarDele
     public func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         let product = self.filteredProducts[indexPath.row]
 
-        let matchingCode = product.scannableCodes.filter { $0.hasPrefix(self.searchText) }.first ?? product.scannableCodes.first!
-        self.addCode(matchingCode)
+        let codeEntry = product.codes.filter { $0.code.hasPrefix(self.searchText) }.first ?? product.codes.first!
+        self.addCode(codeEntry.code)
     }
 
     func addEnteredCode() {

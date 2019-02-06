@@ -19,17 +19,19 @@ public struct PriceFormatter {
     ///   - product: the product
     ///   - quantityOrWeight: quantity or weight
     /// - Returns: the price
-    public static func priceFor(_ project: Project, _ product: Product, _ quantityOrWeight: Int) -> Int {
+    public static func priceFor(_ project: Project, _ product: Product, _ quantityOrWeight: Int, _ encodingUnit: Units? = nil, _ referencePrice: Int? = nil) -> Int {
         switch product.type {
         case .singleItem:
             return quantityOrWeight * product.priceWithDeposit
 
         case .preWeighed, .userMustWeigh:
+            let price = referencePrice ?? product.price
+
             // if we get here but have no units, fall back to our previous default of kilograms/grams
             let referenceUnit = product.referenceUnit ?? .kilogram
-            let encodingUnit = product.encodingUnit ?? .gram
+            let encodingUnit = encodingUnit ?? product.encodingUnit ?? .gram
 
-            let unitPrice = Unit.convert(product.price, from: encodingUnit, to: referenceUnit)
+            let unitPrice = Units.convert(price, from: encodingUnit, to: referenceUnit)
             let total = Decimal(quantityOrWeight) * unitPrice
 
             return self.round(total, project.roundingMode)

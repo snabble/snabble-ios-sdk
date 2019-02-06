@@ -28,6 +28,8 @@ public struct SnabbleError: Decodable, Error {
     static let invalid = SnabbleError(error: ErrorResponse("invalid"))
     static let noRequest = SnabbleError(error: ErrorResponse("no request"))
     static let notFound = SnabbleError(error: ErrorResponse("not found"))
+
+    static let noPaymentAvailable = SnabbleError(error: ErrorResponse("no payment method available"))
 }
 
 public struct ErrorResponse: Decodable {
@@ -182,7 +184,7 @@ extension Project {
         completion(request)
     }
 
-    private static let userAgent: String? = {
+    internal static let userAgent: String? = {
         guard
             let bundleDict = Bundle.main.infoDictionary,
             let appName = bundleDict["CFBundleName"] as? String,

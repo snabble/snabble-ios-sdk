@@ -14,10 +14,25 @@ extension ProductDB {
     static let productQuery = """
         select
             p.*, 0 as listPrice, null as discountedPrice, null as basePrice,
-            (select group_concat(sc.code) from scannableCodes sc where sc.sku = p.sku) scannableCodes,
-            (select group_concat(w.weighItemId) from weighItemIds w where w.sku = p.sku) weighItemIds,
-            (select group_concat(ifnull(sc.transmissionCode, "")) from scannableCodes sc where sc.sku = p.sku) transmissionCodes
+            null as code_encodingUnit,
+            (select group_concat(sc.code) from scannableCodes sc where sc.sku = p.sku) as codes,
+            (select group_concat(sc.template) from scannableCodes sc where sc.sku = p.sku) as templates,
+            (select group_concat(ifnull(sc.encodingUnit, "")) from scannableCodes sc where sc.sku = p.sku) as encodingUnits,
+            (select group_concat(ifnull(sc.transmissionCode, "")) from scannableCodes sc where sc.sku = p.sku) as transmissionCodes
         from products p
+        """
+
+    static let productQueryUnits = """
+        select
+            p.*, 0 as listPrice, null as discountedPrice, null as basePrice,
+            s.encodingUnit as code_encodingUnit,
+            (select group_concat(sc.code) from scannableCodes sc where sc.sku = p.sku) as codes,
+            (select group_concat(sc.template) from scannableCodes sc where sc.sku = p.sku) as templates,
+            (select group_concat(ifnull(sc.encodingUnit, "")) from scannableCodes sc where sc.sku = p.sku) as encodingUnits,
+            (select group_concat(ifnull(sc.transmissionCode, "")) from scannableCodes sc where sc.sku = p.sku) as transmissionCodes
+        from products p
+        join scannableCodes s on s.sku = p.sku
+        where s.code = ? and s.template = ?
         """
 
     func productBySku(_ dbQueue: DatabaseQueue, _ sku: String, _ shopId: String?) -> Product? {
@@ -61,49 +76,30 @@ extension ProductDB {
         return []
     }
 
-    func productByScannableCode(_ dbQueue: DatabaseQueue, _ code: String, _ shopId: String?, retry: Bool = false) -> LookupResult? {
-        do {
-            let row = try dbQueue.inDatabase { db in
-                return try self.fetchOne(db, ProductDB.productQuery + " " + """
-                    join scannableCodes s on s.sku = p.sku
-                    where s.code = ?
-                    """, arguments: [code])
-                }
-            if let product = self.productFromRow(dbQueue, row, shopId) {
-                let transmissionCode = product.transmissionCodes[code]
-                return LookupResult(product: product, code: transmissionCode)
-            } else if !retry {
-                // initial lookup failed
-
-                // if it was an EAN-8, try again with the same EAN padded to an EAN-13
-                // if it was an EAN-13 with a leading "0", try again with all leading zeroes removed
-                if code.count == 8 {
-                    Log.debug("8->13 lookup attempt \(code) -> 00000\(code)")
-                    return self.productByScannableCode(dbQueue, "00000" + code, shopId, retry: true)
-                } else if code.first == "0", let codeInt = Int(code) {
-                    Log.debug("no leading zeroes db lookup attempt \(code) -> \(codeInt)")
-                    return self.productByScannableCode(dbQueue, String(codeInt), shopId, retry: true)
-                }
+    func productByScannableCodes(_ dbQueue: DatabaseQueue, _ codes: [(String, String)], _ shopId: String?) -> ScannedProduct? {
+        for (code, template) in codes {
+            if let result = self.productByScannableCode(dbQueue, code, template, shopId) {
+                return result
             }
-        } catch {
-            self.logError("productByScannableCode db error: \(error)")
         }
 
         return nil
     }
 
-    func productByWeighItemId(_ dbQueue: DatabaseQueue, _ weighItemId: String, _ shopId: String?) -> Product? {
+    private func productByScannableCode(_ dbQueue: DatabaseQueue, _ code: String, _ template: String, _ shopId: String?) -> ScannedProduct? {
         do {
             let row = try dbQueue.inDatabase { db in
-                return  try self.fetchOne(db, ProductDB.productQuery + " " + """
-                    join weighItemIds w on w.sku = p.sku
-                    where w.weighItemId = ?
-                    """, arguments: [weighItemId])
+                return try self.fetchOne(db, ProductDB.productQueryUnits, arguments: [code, template])
             }
-            return self.productFromRow(dbQueue, row, shopId)
+            if let product = self.productFromRow(dbQueue, row, shopId) {
+                let codeEntry = product.codes.first { $0.code == code }
+                let transmissionCode = codeEntry?.transmissionCode
+                return ScannedProduct(product, transmissionCode, template)
+            }
         } catch {
-            self.logError("productByWeighItemId db error: \(error)")
+            self.logError("productByScannableCode db error: \(error)")
         }
+
         return nil
     }
 
@@ -123,16 +119,18 @@ extension ProductDB {
         return []
     }
 
-    func productsByScannableCodePrefix(_ dbQueue: DatabaseQueue, _ prefix: String, _ filterDeposits: Bool) -> [Product] {
+    func productsByScannableCodePrefix(_ dbQueue: DatabaseQueue, _ prefix: String, _ filterDeposits: Bool, _ templates: [String]?) -> [Product] {
         do {
             let limit = 100 //  prefix.count < 5 ? prefix.count * 100 : -1
             let depositCondition = filterDeposits ? "and isDeposit = 0" : ""
+            let templateNames = templates ?? [ "default" ]
+            let list = templateNames.map { "\"\($0)\"" }.joined(separator: ",")
             let rows = try dbQueue.inDatabase { db in
                 return try self.fetchAll(db, ProductDB.productQuery + " " + """
                     join scannableCodes s on s.sku = p.sku
-                    where (s.code glob ? or s.code glob ?) \(depositCondition) and p.weighing != \(ProductType.preWeighed.rawValue)
+                    where s.template in (\(list)) and (s.code glob ?) \(depositCondition) and p.weighing != \(ProductType.preWeighed.rawValue)
                     limit ?
-                    """, arguments: [prefix + "*", "00000" + prefix + "*", limit])
+                    """, arguments: [ prefix + "*", limit])
             }
             return rows.compactMap { self.productFromRow(dbQueue, $0, nil) }
         } catch {
@@ -223,10 +221,13 @@ extension ProductDB {
 
         let bundles = self.productsBundling(dbQueue, sku, shopId)
 
-        let (scannableCodes, transmissionCodes) = self.buildScannableCodeSets(row["scannableCodes"], row["transmissionCodes"])
+        let codes = self.buildCodes(row["codes"], row["templates"], row["transmissionCodes"], rawUnits: row["encodingUnits"])
 
-        let referenceUnit = Unit.from(row["referenceUnit"] as? String)
-        let encodingUnit = Unit.from(row["encodingUnit"] as? String)
+        let referenceUnit = Units.from(row["referenceUnit"] as? String)
+        var encodingUnit = Units.from(row["encodingUnit"] as? String)
+        if let encodingOverride = Units.from(row["code_encodingUnit"] as? String) {
+            encodingUnit = encodingOverride
+        }
 
         let p = Product(sku: sku,
                         name: row["name"],
@@ -237,8 +238,7 @@ extension ProductDB {
                         listPrice: priceRow["listPrice"],
                         discountedPrice: priceRow["discountedPrice"],
                         type: ProductType(rawValue: row["weighing"]) ?? .singleItem,
-                        scannableCodes: scannableCodes,
-                        weighedItemIds: self.makeSet(row["weighItemIds"]),
+                        codes: codes,
                         depositSku: depositSku,
                         bundledSku: row["bundledSku"],
                         isDeposit: row["isDeposit"] == 1,
@@ -246,7 +246,6 @@ extension ProductDB {
                         saleRestriction: SaleRestriction(row["saleRestriction"]),
                         saleStop: row["saleStop"] ?? false,
                         bundles: bundles,
-                        transmissionCodes: transmissionCodes,
                         referenceUnit: referenceUnit,
                         encodingUnit: encodingUnit)
 
@@ -275,29 +274,25 @@ extension ProductDB {
         return nil
     }
 
-    private func buildScannableCodeSets(_ rawScan: String?, _ rawTransmit: String?) -> (Set<String>, [String:String]) {
-        guard let rawScan = rawScan, let rawTransmit = rawTransmit else {
-            return (Set<String>(), [:])
+    private func buildCodes(_ rawCodes: String?, _ rawTemplates: String?, _ rawTransmits: String?, rawUnits: String?) -> [ScannableCode] {
+        guard let rawCodes = rawCodes, let rawTransmits = rawTransmits, let rawTemplates = rawTemplates, let rawUnits = rawUnits  else {
+            return []
         }
 
-        let codes = rawScan.components(separatedBy: ",")
-        let transmit = rawTransmit.components(separatedBy: ",")
+        let codes = rawCodes.components(separatedBy: ",")
+        let templates = rawTemplates.components(separatedBy: ",")
+        let transmits = rawTransmits.components(separatedBy: ",")
+        let units = rawUnits.components(separatedBy: ",")
 
-        var codeMap = [String: String]()
-        for (code, xmit) in zip(codes, transmit) {
-            if xmit.count > 0 {
-                codeMap[code] = xmit
-            }
+        assert(codes.count == templates.count); assert(codes.count == transmits.count); assert(codes.count == units.count);
+
+        var scannableCodes = [ScannableCode]()
+        for i in 0 ..< codes.count {
+            let transmissionCode = transmits[i].count == 0 ? nil : transmits[i]
+            let c = ScannableCode(codes[i], templates[i], transmissionCode, Units.from(units[i]))
+            scannableCodes.append(c)
         }
-
-        return (Set(codes), codeMap)
-    }
-
-    private func makeSet(_ str: String?) -> Set<String> {
-        guard let s = str else {
-            return Set([])
-        }
-        return Set(s.components(separatedBy: ","))
+        return scannableCodes
     }
 
     // timing-logging wrappers around Row.fecthOne/fetchAll
@@ -333,7 +328,7 @@ extension ProductDB {
                 Log.debug("EXPLAIN: \(explain)")
             }
         } catch {
-            Log.error("query explain error \(error)")
+            Log.error("query explain error \(error) for \(query)")
         }
     }
 }

@@ -14,9 +14,11 @@ fileprivate enum CodeType: Equatable {
     case ean13
     case ean14
     case untyped(Int)
+    case matchAll
 
     init?(_ code: String) {
         switch code {
+        case "*": self = .matchAll
         case "ean8": self = .ean8
         case "ean13": self = .ean13
         case "ean14": self = .ean14
@@ -34,6 +36,7 @@ fileprivate enum CodeType: Equatable {
         case .ean13: return 13
         case .ean14: return 14
         case .untyped(let len): return len
+        case .matchAll: return 0
         }
     }
 }
@@ -47,6 +50,12 @@ fileprivate enum TemplateComponent {
     case code(CodeType)
     /// the embedded data of the code (weight, price or amount), the value is the length of the field
     case embed(Int)
+    /// the embedded data of the code (weight, price or amount), the value is the length of the field.
+    /// When extracting the value from a scanned code, it will be multiplied by 100
+    case embed100(Int)
+    /// the embedded data of the code (weight, price or amount), the values are the number of integer and fraction digits
+    /// When extracting the value from a scanned code, it will be represented as a `DecimalNumber`
+    case embedDecimal(Int, Int)
     /// the embedded price of one `referenceUnit` worth of the product. For weight-dependent prices, this is usually the price per kilogram.
     /// The value is the length of the field
     case price(Int)
@@ -55,8 +64,8 @@ fileprivate enum TemplateComponent {
     case ignore(Int)
     /// represents the internal 5-digit-checksum for embedded data in an EAN-13, which is always one character.
     case internalChecksum
-    /// match the entire string - used only in our internal "default" template
-    case catchall
+    /// represents the check digit for an EAN-8, EAN-13 or EAN-14. always one character, and must be the last component
+    case eanChecksum
 
     /// parse one template component. properties look like "{name:length}", everything else is considered plain text
     init?(_ str: String) {
@@ -66,21 +75,29 @@ fileprivate enum TemplateComponent {
             let lengthPart = parts.count > 1 ? parts[1] : "1"
             let length = Int(lengthPart)
 
-            if parts[0] == "code" {
+            let token = parts[0]
+            if token == "code" {
                 guard let codeType = CodeType(lengthPart) else {
                     return nil
                 }
                 self = .code(codeType)
+            } else if token == "embed" {
+                let digits = lengthPart.components(separatedBy: ".").compactMap { Int($0) }.filter { $0 > 0 }
+                switch digits.count {
+                case 1: self = .embed(digits[0])
+                case 2: self = .embedDecimal(digits[0], digits[1])
+                default: return nil
+                }
             } else {
                 guard let len = length, len > 0 else {
                     return nil
                 }
-                switch parts[0] {
-                case "embed": self = .embed(len)
+                switch token {
+                case "embed100": self = .embed100(len)
                 case "price": self = .price(len)
                 case "_": self = .ignore(len)
                 case "i": self = .internalChecksum
-                case "*": self = .catchall
+                case "ec": self = .eanChecksum
                 default: return nil
                 }
             }
@@ -93,12 +110,19 @@ fileprivate enum TemplateComponent {
     var regex: String {
         switch self {
         case .plainText(let str): return "(\\Q\(str)\\E)"
-        case .code(let codeType): return "(\\d{\(codeType.length)})"
+        case .code(let codeType):
+            if case .matchAll = codeType {
+                return "(.*)"
+            } else {
+                return "(\\d{\(codeType.length)})"
+            }
         case .embed(let len): return "(\\d{\(len)})"
+        case .embed100(let len): return "(\\d{\(len)})"
+        case .embedDecimal(let i, let f): return "(\\d{\(i+f)})"
         case .price(let len): return "(\\d{\(len)})"
         case .ignore(let len): return "(.{\(len)})"
         case .internalChecksum: return "(\\d)"
-        case .catchall: return "(.*)"
+        case .eanChecksum: return "(\\d)"
         }
     }
 
@@ -108,10 +132,12 @@ fileprivate enum TemplateComponent {
         case .plainText(let str): return str.count
         case .code(let codeType): return codeType.length
         case .embed(let len): return len
+        case .embedDecimal(let i, let f): return i+f
+        case .embed100(let len): return len
         case .price(let len): return len
         case .ignore(let len): return len
         case .internalChecksum: return 1
-        case .catchall: return 0
+        case .eanChecksum: return 1
         }
     }
 
@@ -123,10 +149,26 @@ fileprivate enum TemplateComponent {
         }
     }
 
-    /// is this an `embed` component?
+    /// is this an `embed` integer component?
     var isEmbed: Bool {
         switch self {
-        case .embed: return true
+        case .embed, .embed100: return true
+        default: return false
+        }
+    }
+
+    /// is this an `embed` decimal component?
+    var isDecimal: Bool {
+        switch self {
+        case .embedDecimal: return true
+        default: return false
+        }
+    }
+
+    /// is this a `price` component?
+    var isPrice: Bool {
+        switch self {
+        case .price: return true
         default: return false
         }
     }
@@ -140,29 +182,35 @@ fileprivate enum TemplateComponent {
         case .price: return 3
         case .ignore: return 4
         case .internalChecksum: return 5
-        case .catchall: return 6
+        case .embed100: return 6
+        case .eanChecksum: return 7
+        case .embedDecimal: return 8
         }
     }
 }
 
-/// a `CodeTemplate` represents a fully parsed template expression, like "01{code:ean14"
-struct CodeTemplate {
+public struct EmbeddedDecimal {
+    public let integerDigits: Int
+    public let fractionDigits: Int
+    public let value: Int
+}
+
+/// a `CodeTemplate` represents a fully parsed template expression, like "01{code:ean14}"
+public struct CodeTemplate {
     /// the template's identifier
-    let id: String
+    public let id: String
     /// the original template string
-    let template: String
+    public let template: String
     /// the expected length of a string that could possibly match
-    let expectedLength: Int
+    public let expectedLength: Int
     /// the parsed components in left-to-right order
     fileprivate let components: [TemplateComponent]
 
     /// RE for a token
     private static let token = try! NSRegularExpression(pattern: "^(\\{.*?\\})", options: [])
     /// RE for plaintext
-    private static let plaintext = try! NSRegularExpression(pattern: "^([^{]+)", options: [])
+    private static let plaintext = try! NSRegularExpression(pattern: "^([^{^}]+)", options: [])
     private static let regexps = [ token, plaintext ]
-
-    static let `default` = CodeTemplate("default", "{*}")!
 
     init?(_ id: String, _ template: String) {
         self.id = id
@@ -200,13 +248,12 @@ struct CodeTemplate {
         self.expectedLength = components.reduce(0) { $0 + $1.length }
 
         // further checks:
-        // each component may occur 0 or 1 times, except _
+        // each component may occur 0 or 1 times, except _ (ignore) and plainText
         var count = [Int: Int]()
         for comp in components {
-            if case .ignore = comp {
-                // skip .ignore
-            } else {
-                count[comp.key, default: 0] += 1
+            switch comp {
+            case .ignore, .plainText: ()
+            default: count[comp.key, default: 0] += 1
             }
         }
 
@@ -217,6 +264,13 @@ struct CodeTemplate {
         // when {i} is present, check for {embed:5}
         if count[TemplateComponent.internalChecksum.key] != nil {
             guard let len = components.first(where: { $0.isEmbed })?.length, len == 5 else {
+                return nil
+            }
+        }
+
+        // when {ec} is present, it must be the last component
+        if count[TemplateComponent.eanChecksum.key] != nil, let comp = components.last {
+            if comp.key != TemplateComponent.eanChecksum.key {
                 return nil
             }
         }
@@ -269,9 +323,9 @@ struct CodeTemplate {
 }
 
 /// the matcher's result
-struct ParseResult {
+public struct ParseResult {
     /// the template we matched against
-    let template: CodeTemplate
+    public let template: CodeTemplate
 
     fileprivate typealias Entry = (templateComponent: TemplateComponent, value: String)
     fileprivate let entries: [Entry]
@@ -283,16 +337,16 @@ struct ParseResult {
     }
 
     /// return the (part of the) code we should use for database lookups
-    var lookupCode: String {
-        guard let entry = self.entries.first(where: { $0.templateComponent.isCode }) else {
-            return ""
+    public var lookupCode: String {
+        if let entry = self.entries.first(where: { $0.templateComponent.isCode }) {
+            return entry.value
         }
-        return entry.value
+        return ""
     }
 
     /// is this result valid?
     /// (it is if all components are valid)
-    var isValid: Bool {
+    public var isValid: Bool {
         for component in self.entries {
             if !self.valid(component) {
                 return false
@@ -301,18 +355,49 @@ struct ParseResult {
         return true
     }
 
-    var embeddedData: Int? {
-        guard let entry = self.entries.first(where: { $0.templateComponent.isEmbed }) else {
+    public var referencePrice: Int? {
+        guard
+            let entry = self.entries.first(where: { $0.templateComponent.isPrice }),
+            let value = Int(entry.value)
+        else {
             return nil
         }
-        return Int(entry.value)
+
+        return value
+    }
+
+    public var embeddedData: Int? {
+        guard
+            let entry = self.entries.first(where: { $0.templateComponent.isEmbed }),
+            let value = Int(entry.value)
+        else {
+            return nil
+        }
+
+        if case .embed100 = entry.templateComponent {
+            return value * 100
+        }
+        return value
+    }
+
+    public var embeddedDecimal: EmbeddedDecimal? {
+        guard
+            let entry = self.entries.first(where: { $0.templateComponent.isDecimal }),
+            case .embedDecimal(let i, let f) = entry.templateComponent,
+            let value = Int(entry.value)
+        else {
+            return nil
+        }
+
+        return EmbeddedDecimal(integerDigits: i, fractionDigits: f, value: value)
     }
 
     /// embed data into a scanned code in place of the `embed` placeholder
-    func embed(_ data: Int) -> String {
+    public func embed(_ data: Int) -> String {
         var result = ""
         var embeddedData = ""
-        var needChecksum = false
+        var internalChecksum = false
+        var eanChecksum = false
         for entry in self.entries {
             switch entry.templateComponent {
             case .embed:
@@ -321,7 +406,10 @@ struct ParseResult {
                 embeddedData = padding + str
                 result.append(embeddedData)
             case .internalChecksum:
-                needChecksum = true
+                internalChecksum = true
+                result.append(entry.value)
+            case .eanChecksum:
+                eanChecksum = true
                 result.append(entry.value)
             default:
                 result.append(entry.value)
@@ -329,15 +417,13 @@ struct ParseResult {
         }
 
         // calculate EAN-13 checksum(s)
-        if result.count == 13 && embeddedData.count == 5 {
-            if needChecksum {
-                let embedDigits = embeddedData.map { Int(String($0))! }
-                let check = EAN13.internalChecksum5(embedDigits)
-                result = String(result.prefix(6) + String(check) + result.suffix(6))
-            }
-            if let ean = EAN13(String(result.prefix(12))) {
-                return ean.code
-            }
+        if internalChecksum {
+            let embedDigits = embeddedData.map { Int(String($0))! }
+            let check = EAN13.internalChecksum5(embedDigits)
+            result = String(result.prefix(6) + String(check) + result.suffix(6))
+        }
+        if eanChecksum, let ean = EAN13(String(result.prefix(12))) {
+            return ean.code
         }
         return result
     }
@@ -348,9 +434,11 @@ struct ParseResult {
         case .code(let codeType):
             switch codeType {
             case .ean8, .ean13, .ean14:
-                return EAN.parse(entry.value, nil) != nil
+                return EAN.parse(entry.value) != nil
             case .untyped(let len):
                 return entry.value.count == len
+            case .matchAll:
+                return true
             }
         case .internalChecksum:
             guard let embedComponent = self.entries.first(where: { $0.templateComponent.isEmbed }) else {
@@ -359,49 +447,121 @@ struct ParseResult {
             let digits = embedComponent.value.compactMap { Int(String($0)) }
             let checksum = EAN13.internalChecksum5(digits)
             return String(checksum) == entry.value
+        case .eanChecksum:
+            let str = self.entries.map { $0.value }.joined()
+            if let ean = EAN.parse(str) {
+                return ean.checkDigit == Int(entry.value)!
+            } else {
+                return false
+            }
         default:
             return true
         }
     }
 }
 
-struct CodeMatcher {
-    static let builtinTemplates = [
-        "ean13_instore":        "2{code:5}{_}{embed:5}{_}",
-        "ean13_instore_chk":    "2{code:5}{i}{embed:5}{_}",
-        "german_print":         "4{code:2}{_:5}{embed:4}{_}",
-        "ean14_code128":        "01{code:ean14}",
-        "edeka_discount":       "97{code:ean13}{embed:6}{_}",
-    ]
+public struct OverrideLookup {
+    public let lookupCode: String
+    public let transmissionCode: String?
+    public let embeddedData: Int?
+}
 
-    private static let templates = prepareTemplates()
+public struct CodeMatcher {
+    private static var templates = [String: [String: CodeTemplate]]()
 
-    static func prepareTemplates() -> [CodeTemplate] {
-        var templates = [CodeTemplate]()
-        builtinTemplates.forEach { id, tmpl in
-            guard let template = CodeTemplate(id, tmpl) else {
-                return
-            }
-
-            templates.append(template)
+    static func addTemplate(_ projectId: String, _ id: String, _ template: String) {
+        print("add template \(projectId) \(id) \(template)")
+        guard let tmpl = CodeTemplate(id, template) else {
+            print("oops")
+            return
         }
 
-        // sort by length
-        templates.sort { $0.expectedLength < $1.expectedLength }
-
-        // add the catchall template last
-        templates.append(CodeTemplate.default)
-
-        return templates
+        CodeMatcher.templates[projectId, default: [:]][id] = tmpl
     }
 
-    static func match(_ code: String) -> [ParseResult] {
-        var results = [ParseResult]()
-        for template in templates {
-            if let result = template.match(code) {
-                results.append(result)
-            }
+    // only for unit tests!
+    static func clearTemplates() {
+        CodeMatcher.templates = [:]
+    }
+
+    public static func match(_ code: String, _ projectId: String) -> [ParseResult] {
+        guard let templates = CodeMatcher.templates[projectId] else {
+            return []
         }
+
+        let results: [ParseResult] = templates.values.reduce(into: [], { result, template in
+            if let res = template.match(code) {
+                result.append(res)
+            }
+        })
+
         return results
     }
+
+    public static func matchOverride(_ code: String, _ overrides: [PriceOverrideCode]?, _ projectId: String) -> OverrideLookup? {
+        guard let overrides = overrides, overrides.count > 0 else {
+            return nil
+        }
+
+        guard let candidates = CodeMatcher.templates[projectId] else {
+            return nil
+        }
+
+        let templates = overrides.compactMap { candidates[$0.id] }
+        guard
+            let template = templates.first,
+            let result = template.match(code),
+            let overrideCode = overrides.first(where: { $0.id == template.id })
+        else {
+            return nil
+        }
+
+        let lookupCode = result.lookupCode
+        if let transmissionTemplate = overrideCode.transmissionTemplate {
+            if let transmissionCode = overrideCode.transmissionCode, let embeddedData = result.embeddedData {
+                let newCode = createInstoreEan(transmissionTemplate, transmissionCode, embeddedData, projectId)
+                return OverrideLookup(lookupCode: lookupCode, transmissionCode: newCode, embeddedData: embeddedData)
+            } else {
+                return OverrideLookup(lookupCode: lookupCode, transmissionCode: overrideCode.transmissionCode, embeddedData: result.embeddedData)
+            }
+        } else {
+            return OverrideLookup(lookupCode: lookupCode, transmissionCode: overrideCode.transmissionCode, embeddedData: result.embeddedData)
+        }
+    }
+
+    public static func createInstoreEan(_ templateId: String, _ code: String, _ data: Int, _ projectId: String) -> String? {
+        guard let template = CodeMatcher.templates[projectId]?[templateId] else {
+            return nil
+        }
+
+        let rawEmbed = String(data)
+        let padding = String(repeating: "0", count: 5 - rawEmbed.count)
+        let embed = padding + rawEmbed
+
+        var result = ""
+        for c in template.components {
+            switch c {
+            case .plainText(let str):
+                result.append(str)
+            case .code:
+                result.append(code)
+            case .internalChecksum:
+                let embedDigits = embed.map { Int(String($0))! }
+                let check = EAN13.internalChecksum5(embedDigits)
+                result.append(String(check))
+            case .embed(let len):
+                result.append(String(repeating: "0", count: len))
+            case .ignore(let len):
+                result.append(String(repeating: "0", count: len))
+            default: ()
+            }
+        }
+
+        let ean = EAN13(String(result.prefix(7)) + embed)
+        return ean?.code
+    }
+}
+
+struct TemplateRegistry {
+
 }

@@ -17,7 +17,7 @@ extension ShoppingCart {
     ///   - completion: is called on the main thread with the result of the API call
     ///   - result: the `SignedCheckoutInfo` or the error
     public func createCheckoutInfo(_ project: Project, timeout: TimeInterval = 0, completion: @escaping (_ result: Result<SignedCheckoutInfo, SnabbleError>) -> () ) {
-        let items = self.items.map { $0.cartItem() }
+        let items = self.items.map { $0.cartItem(project) }
         let customerInfo = Cart.CustomerInfo(loyaltyCard: self.loyaltyCard)
         let cart = Cart(session: self.session, shopID: self.shopId, customer: customerInfo, items: items)
 

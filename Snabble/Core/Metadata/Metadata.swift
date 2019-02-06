@@ -14,9 +14,7 @@ public struct Metadata: Decodable {
 
     enum CodingKeys: String, CodingKey {
         case flags = "metadata"
-        case projects
-        case gatewayCertificates
-        case links
+        case projects, gatewayCertificates, links, templates
     }
 
     private init() {
@@ -36,6 +34,22 @@ public struct Metadata: Decodable {
         let certs = try container.decodeIfPresent([GatewayCertificate].self, forKey: .gatewayCertificates)
         self.gatewayCertificates = certs == nil ? [] : certs!
         self.links = try container.decode(MetadataLinks.self, forKey: .links)
+    }
+}
+
+public struct TemplateDefinition: Decodable {
+    public let id: String
+    public let template: String
+
+    static func arrayFrom(_ templates: [String: String]?) -> [TemplateDefinition] {
+        guard let templates = templates else {
+            return []
+        }
+
+        let result: [TemplateDefinition] = templates.reduce(into: []) { result, entry in
+            result.append(TemplateDefinition(id: entry.key, template: entry.value))
+        }
+        return result
     }
 }
 
@@ -122,6 +136,13 @@ public struct CustomerCardInfo: Decodable {
     }
 }
 
+public struct PriceOverrideCode: Decodable {
+    public let id: String
+    public let template: String
+    public let transmissionTemplate: String?
+    public let transmissionCode: String?
+}
+
 public struct Project: Decodable {
     public let id: String
     public let links: ProjectLinks
@@ -130,14 +151,8 @@ public struct Project: Decodable {
     public let currency: String
     public let decimalDigits: Int
     public let locale: String
-    public let pricePrefixes: [String]
-    public let unitPrefixes: [String]
-    public let weighPrefixes: [String]
     public let roundingMode: RoundingMode
     public let currencySymbol: String   // not part of JSON, derived from the locale
-
-    public let verifyInternalEanChecksum: Bool
-    public let useGermanPrintPrefix: Bool
 
     // config for embedded QR codes
     public let encodedCodes: QRCodeConfig?
@@ -148,11 +163,16 @@ public struct Project: Decodable {
 
     public let customerCards: CustomerCardInfo?
 
+    public let codeTemplates: [TemplateDefinition]
+    public let searchableTemplates: [String]?
+
+    public let priceOverrideCodes: [PriceOverrideCode]?
+
     enum CodingKeys: String, CodingKey {
         case id, links
-        case currency, decimalDigits, locale, pricePrefixes, unitPrefixes, weighPrefixes, roundingMode
-        case verifyInternalEanChecksum, useGermanPrintPrefix, encodedCodes
-        case shops, scanFormats, customerCards
+        case currency, decimalDigits, locale, roundingMode
+        case encodedCodes
+        case shops, scanFormats, customerCards, codeTemplates, searchableTemplates, priceOverrideCodes
     }
 
     public init(from decoder: Decoder) throws {
@@ -165,14 +185,9 @@ public struct Project: Decodable {
         self.currency = try container.decode(.currency)
         self.decimalDigits = try container.decode(.decimalDigits)
         self.locale = try container.decode(.locale)
-        self.pricePrefixes = try container.decode(.pricePrefixes)
-        self.unitPrefixes = try container.decode(.unitPrefixes)
-        self.weighPrefixes = try container.decode(.weighPrefixes)
         self.roundingMode = try container.decode(.roundingMode)
 
-        self.verifyInternalEanChecksum = try container.decode(.verifyInternalEanChecksum)
         self.encodedCodes = try container.decodeIfPresent(.encodedCodes)
-        self.useGermanPrintPrefix = try container.decode(.useGermanPrintPrefix)
 
         let formatter = NumberFormatter()
         formatter.locale = Locale(identifier: self.locale)
@@ -186,6 +201,10 @@ public struct Project: Decodable {
         let formats = (try container.decodeIfPresent([String].self, forKey: .scanFormats)) ?? defaultFormats
         self.scanFormats = formats.compactMap { ScanFormat(rawValue: $0) }
         self.customerCards = try container.decodeIfPresent(CustomerCardInfo.self, forKey: .customerCards)
+        let templates = try container.decodeIfPresent([String: String].self, forKey: .codeTemplates)
+        self.codeTemplates = TemplateDefinition.arrayFrom(templates)
+        self.searchableTemplates = try container.decodeIfPresent([String].self, forKey: .searchableTemplates)
+        self.priceOverrideCodes = try container.decodeIfPresent([PriceOverrideCode].self, forKey: .priceOverrideCodes)
     }
 
     private init() {
@@ -195,38 +214,15 @@ public struct Project: Decodable {
         self.currency = ""
         self.decimalDigits = 0
         self.locale = ""
-        self.pricePrefixes = []
-        self.unitPrefixes = []
-        self.weighPrefixes = []
         self.roundingMode = .up
-        self.verifyInternalEanChecksum = false
         self.encodedCodes = nil
-        self.useGermanPrintPrefix = false
         self.currencySymbol = ""
         self.shops = []
         self.scanFormats = []
         self.customerCards = CustomerCardInfo()
-    }
-
-    // only used for unit tests
-    internal init(pricePrefixes: [String], weighPrefixes: [String], unitPrefixes: [String]) {
-        self.id = "none"
-        self.links = ProjectLinks.empty
-        self.rawLinks = [:]
-        self.currency = ""
-        self.decimalDigits = 0
-        self.locale = ""
-        self.pricePrefixes = pricePrefixes
-        self.unitPrefixes = unitPrefixes
-        self.weighPrefixes = weighPrefixes
-        self.roundingMode = .up
-        self.verifyInternalEanChecksum = false
-        self.encodedCodes = nil
-        self.useGermanPrintPrefix = false
-        self.currencySymbol = ""
-        self.shops = []
-        self.scanFormats = []
-        self.customerCards = CustomerCardInfo()
+        self.codeTemplates = []
+        self.searchableTemplates = nil
+        self.priceOverrideCodes = nil
     }
 
     // only used for unit tests
@@ -237,17 +233,15 @@ public struct Project: Decodable {
         self.currency = currency
         self.decimalDigits = decimalDigits
         self.locale = locale
-        self.pricePrefixes = []
-        self.unitPrefixes = []
-        self.weighPrefixes = []
         self.roundingMode = .up
-        self.verifyInternalEanChecksum = false
         self.encodedCodes = nil
-        self.useGermanPrintPrefix = false
         self.currencySymbol = currencySymbol
         self.shops = []
         self.scanFormats = []
         self.customerCards = CustomerCardInfo()
+        self.codeTemplates = []
+        self.searchableTemplates = nil
+        self.priceOverrideCodes = nil
     }
 
     internal init(links: ProjectLinks) {
@@ -257,32 +251,18 @@ public struct Project: Decodable {
         self.currency = ""
         self.decimalDigits = 0
         self.locale = ""
-        self.pricePrefixes = []
-        self.unitPrefixes = []
-        self.weighPrefixes = []
         self.roundingMode = .up
-        self.verifyInternalEanChecksum = false
         self.encodedCodes = nil
-        self.useGermanPrintPrefix = false
         self.currencySymbol = ""
         self.shops = []
         self.scanFormats = []
         self.customerCards = CustomerCardInfo()
+        self.codeTemplates = []
+        self.searchableTemplates = nil
+        self.priceOverrideCodes = nil
     }
 
     public static let none = Project()
-
-    public func codeRange(for format: ScanFormat) -> Range<Int>? {
-        guard self.id.hasPrefix("ikea") else {
-            return nil
-        }
-
-        switch format {
-        case .itf14: return 0..<8
-        case .dataMatrix: return 30..<38
-        default: return nil
-        }
-    }
 }
 
 /// Link
@@ -297,12 +277,9 @@ public struct ProjectLinks: Decodable {
     public let appdb: Link
     public let appEvents: Link
     public let checkoutInfo: Link
-    public let productBySku: Link
-    public let productByCode: Link
-    public let productByWeighItemId: Link
-    public let bundlesForSku: Link
-    public let productsBySku: Link
     public let tokens: Link
+    public let resolvedProductBySku: Link?
+    public let resolvedProductLookUp: Link?
 
     public static let empty = ProjectLinks()
 
@@ -310,24 +287,18 @@ public struct ProjectLinks: Decodable {
         self.appdb = Link.empty
         self.appEvents = Link.empty
         self.checkoutInfo = Link.empty
-        self.productBySku = Link.empty
-        self.productByCode = Link.empty
-        self.productByWeighItemId = Link.empty
-        self.bundlesForSku = Link.empty
-        self.productsBySku = Link.empty
         self.tokens = Link.empty
+        self.resolvedProductBySku = Link.empty
+        self.resolvedProductLookUp = Link.empty
     }
 
-    init(appdb: Link, appEvents: Link, checkoutInfo: Link, productBySku: Link, productByCode: Link, productByWeighItemId: Link, bundlesForSku: Link, productsBySku: Link, tokens: Link) {
+    init(appdb: Link, appEvents: Link, checkoutInfo: Link, tokens: Link, resolvedProductBySku: Link, resolvedProductLookUp: Link) {
         self.appdb = appdb
         self.appEvents = appEvents
         self.checkoutInfo = checkoutInfo
-        self.productBySku = productBySku
-        self.productByCode = productByCode
-        self.productByWeighItemId = productByWeighItemId
-        self.bundlesForSku = bundlesForSku
-        self.productsBySku = productsBySku
         self.tokens = tokens
+        self.resolvedProductBySku = resolvedProductBySku
+        self.resolvedProductLookUp = resolvedProductLookUp
     }
 }
 
@@ -340,8 +311,12 @@ public struct Flags: Decodable {
 }
 
 public enum RoundingMode: String, Decodable {
+    /// always round up
     case up
+    /// always round down
     case down
+    /// round to the closest possible value; when caught halfway between two positive numbers, round up; when caught between two negative numbers, round down.
+    /// (ie use `NSDecimalNumber.RoundingMode.plain`)
     case commercial
 
     /// get the appropriate `NSDecimalNumber.RoundingMode`
@@ -478,7 +453,6 @@ public extension Metadata {
             project.perform(request) { (result: Result<Metadata, SnabbleError>) in
                 switch result {
                 case .success(let metadata):
-                    SnabbleAPI.metadata = metadata
                     completion(metadata)
                 case .failure:
                     completion(nil)

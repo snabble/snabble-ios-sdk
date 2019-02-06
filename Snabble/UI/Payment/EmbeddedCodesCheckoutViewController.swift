@@ -89,6 +89,11 @@ final class EmbeddedCodesCheckoutViewController: UIViewController {
         let explanation = self.codes.count > 1 ? "Snabble.QRCode.showTheseCodes" : "Snabble.QRCode.showThisCode"
         self.explanation1.text = explanation.localized()
         self.explanation2.text = "Snabble.QRCode.priceMayDiffer".localized()
+
+        if !self.cart.canCalculateTotal {
+            self.totalPriceLabel.isHidden = true
+            self.explanation2.isHidden = true
+        }
     }
 
     override func viewDidLayoutSubviews() {
@@ -110,9 +115,7 @@ final class EmbeddedCodesCheckoutViewController: UIViewController {
     private func csvForQR() -> [String] {
         let lines: [String] = self.cart.items.reduce(into: [], { result, item in
             if item.product.type == .userMustWeigh {
-                // generate an EAN with the embedded weight
-                if let template = item.product.weighedItemIds?.first {
-                    let ean = EAN13.embedDataInEan(template, data: item.quantity)
+                if let ean = self.getEanFromTemplate(for: item) {
                     result.append("1;\(ean)")
                 }
             } else {
@@ -161,16 +164,28 @@ final class EmbeddedCodesCheckoutViewController: UIViewController {
 
     private func codesFor(_ items: [CartItem]) -> [String] {
         return items.reduce(into: [], { result, item in
-            if item.product.type == .userMustWeigh {
-                // generate an EAN with the embedded weight
-                if let template = item.product.weighedItemIds?.first {
-                    let ean = EAN13.embedDataInEan(template, data: item.quantity)
+            if item.product.type == .userMustWeigh || item.product.referenceUnit == .piece {
+                if let ean = self.getEanFromTemplate(for: item) {
                     result.append(ean)
                 }
             } else {
                 result.append(contentsOf: Array(repeating: item.scannedCode, count: item.quantity))
             }
         })
+    }
+
+    private func getEanFromTemplate(for item: CartItem) -> String? {
+        // find a ean13_instore template we can use
+        guard let code = item.product.codes.first(where: { $0.template.hasPrefix("ean13_instore") }) else {
+            return nil
+        }
+
+        var quantity = item.quantity
+        if let data = item.embeddedData {
+            quantity = data
+        }
+
+        return CodeMatcher.createInstoreEan(code.template, code.code, quantity, SnabbleUI.project.id)
     }
 
     private func setButtonTitle() {

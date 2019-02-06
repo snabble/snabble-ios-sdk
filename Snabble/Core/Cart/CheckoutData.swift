@@ -207,6 +207,7 @@ struct Cart: Encodable {
         let price: Int?
         let weight: Int?
         let units: Int?
+        let weightUnit: Units?
     }
 
     struct CustomerInfo: Encodable {

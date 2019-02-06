@@ -89,6 +89,8 @@
         en = Buy %d product for %@
     [Snabble.Shoppingcart.buyProducts]
         en = Buy %d products for %@
+    [Snabble.Shoppingcart.buyProducts.now]
+        en = Pay now
     [Snabble.Shoppingcart.emptyState.buttonTitle]
         en = Scan products
     [Snabble.Shoppingcart.emptyState.description]

@@ -1,5 +1,11 @@
 ## snabble iOS SDK Changelog
 
+# v0.9.0
+
+* removed the deprecated `discountedProducts` and `boostedProducts` methods
+* decoding of embedded data in scanned codes no longer relies on project-specific prefixes. Instead, codes are now parsed using templates that extract the embedded data (if any) and map to the `encodingUnit` used. This is a major breaking change for users of the Core API, but transparent if only the UI components are used.
+* all methods referring to `weighItemIds` have been removed, since product lookup now only occurs through the scanned codes resulting from the template parsing.
+
 # v0.8.13
 
 * fixes a bug with unit-encoded EANs
