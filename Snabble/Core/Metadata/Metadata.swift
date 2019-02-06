@@ -311,8 +311,12 @@ public struct Flags: Decodable {
 }
 
 public enum RoundingMode: String, Decodable {
+    /// always round up
     case up
+    /// always round down
     case down
+    /// round to the closest possible value; when caught halfway between two positive numbers, round up; when caught between two negative numbers, round down.
+    /// (ie use `NSDecimalNumber.RoundingMode.plain`)
     case commercial
 
     /// get the appropriate `NSDecimalNumber.RoundingMode`
