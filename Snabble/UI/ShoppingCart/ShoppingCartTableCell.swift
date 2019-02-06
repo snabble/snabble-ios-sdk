@@ -109,7 +109,8 @@ final class ShoppingCartTableCell: UITableViewCell {
         self.showQuantity()
 
         // suppress display when price == 0
-        if item.product.price == 0 {
+        let total = self.item.total(SnabbleUI.project)
+        if total == 0 {
             self.priceLabel.isHidden = true
             self.minusButton.isHidden = true
             self.plusButton.isHidden = true
@@ -156,7 +157,8 @@ final class ShoppingCartTableCell: UITableViewCell {
             } else if let referenceUnit = self.item.product.referenceUnit, referenceUnit == .piece, let units = self.item.embeddedData {
                 let qty = units == 0 ? self.quantity : units
                 self.quantityLabel.text = "\(qty)"
-                let itemPrice = PriceFormatter.format(self.item.product.price)
+                let price = self.item.referencePrice ?? self.item.product.price
+                let itemPrice = PriceFormatter.format(price)
                 self.priceLabel.text  = "× \(itemPrice) = \(total)"
             } else if let referenceUnit = self.item.product.referenceUnit, referenceUnit == .price, let price = self.item.embeddedData {
                 self.quantityLabel.text = "\(self.quantity)"

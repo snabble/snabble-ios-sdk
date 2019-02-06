@@ -104,13 +104,14 @@ public struct CartItem: Codable {
             return embed
         case .piece:
             let multiplier = embed == 0 ? self.quantity : embed
-            return multiplier * self.product.price
+            let price = self.referencePrice ?? self.product.price
+            return multiplier * price
         default:
             return PriceFormatter.priceFor(project, self.product, embed, self.encodingUnit, self.referencePrice)
         }
     }
 
-    func cartItem() -> Cart.Item {
+    func cartItem(_ project: Project) -> Cart.Item {
         let product = self.product
         var quantity = self.quantity
         
@@ -124,7 +125,11 @@ public struct CartItem: Codable {
         } else if product.referenceUnit == .piece && (self.embeddedData == nil || self.embeddedData == 0) {
             quantity = 1
             units = self.quantity
-        } else if let embed = self.embeddedData, let encodingUnit = self.encodingUnit {
+        } else if self.referencePrice != nil {
+            price = self.total(project)
+        }
+
+        if let embed = self.embeddedData, let encodingUnit = self.encodingUnit {
             switch encodingUnit {
             case .price:
                 price = embed
@@ -399,7 +404,7 @@ extension ShoppingCart {
 extension ShoppingCart {
 
     func createCart() -> Cart {
-        let items = self.items.map { $0.cartItem() }
+        let items = self.items.map { $0.cartItem(self.config.project) }
         let customerInfo = Cart.CustomerInfo(loyaltyCard: self.loyaltyCard)
         return Cart(session: self.session, shopID: self.shopId, customer: customerInfo, items: items)
     }
