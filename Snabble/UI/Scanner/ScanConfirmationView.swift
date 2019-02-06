@@ -85,7 +85,7 @@ final class ScanConfirmationView: DesignableView {
         self.productNameLabel.text = product.name
         self.quantity = product.type != .userMustWeigh ? 1 : 0
 
-        if product.type == .singleItem && scannedProduct.embeddedData == nil {
+        if product.type == .singleItem && scannedProduct.embeddedData == nil && product.price != 0 {
             let cartQuantity = self.shoppingCart.quantity(of: product)
             self.quantity = cartQuantity + 1
             self.alreadyInCart = cartQuantity > 0
@@ -218,7 +218,7 @@ final class ScanConfirmationView: DesignableView {
         let cart = self.shoppingCart!
         let product = self.scannedProduct.product
 
-        if cart.quantity(of: product) == 0 || product.type != .singleItem || self.scannedProduct.embeddedData != nil {
+        if cart.quantity(of: product) == 0 || product.type != .singleItem || self.scannedProduct.embeddedData != nil || product.price == 0 {
             var editableUnits = false
             if product.referenceUnit?.hasDimension == true && self.scannedProduct.embeddedData == 0 {
                 self.quantity = 1
