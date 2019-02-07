@@ -74,10 +74,10 @@ extension SaleRestriction: Equatable {
 }
 
 public struct ScannableCode: Codable {
-    let code: String
-    let template: String
-    let transmissionCode: String?
-    let encodingUnit: Units?
+    public let code: String
+    public let template: String
+    public let transmissionCode: String?
+    public let encodingUnit: Units?
 
     init(_ code: String, _ template: String, _ transmissionCode: String?, _ encodingUnit: Units?) {
         self.code = code
