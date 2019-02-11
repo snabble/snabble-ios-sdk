@@ -3,8 +3,10 @@
 # v0.9.0
 
 * removed the deprecated `discountedProducts` and `boostedProducts` methods
+* Products now have an optional property `encodingUnit` that specified how it is measured in scannable codes. The most common example is groceries with a `referenceUnit` of kg and and `encodingUnit` of g. This encoding can be overridden by specific scannable codes.
 * decoding of embedded data in scanned codes no longer relies on project-specific prefixes. Instead, codes are now parsed using templates that extract the embedded data (if any) and map to the `encodingUnit` used. This is a major breaking change for users of the Core API, but transparent if only the UI components are used.
 * all methods referring to `weighItemIds` have been removed, since product lookup now only occurs through the scanned codes resulting from the template parsing.
+* this new information can be accessed using a product's `codes` property, an array of `ScannableCode` objects. This replaces the previous `scanneableCodes` property.
 
 # v0.8.13
 
@@ -204,11 +206,3 @@
 
 * mark the productsByName methods as deprecated
 * finish the conversion of SKUs to Strings. This requires product databases with at least schema version 1.8
-
-
-
-
-
-
-
-
