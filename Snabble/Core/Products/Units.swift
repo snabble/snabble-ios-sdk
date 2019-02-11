@@ -137,8 +137,9 @@ extension Units {
         guard
             let candidates = conversions[from.quantity],
             let conversion = candidates.filter({ $0.from == from && $0.to == to }).first
-            else {
-                return 0
+        else {
+            Log.warn("cannot convert units from \(from) to \(to)")
+            return 0
         }
 
         return value * conversion.factor / conversion.divisor
