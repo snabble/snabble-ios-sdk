@@ -210,7 +210,7 @@
 			files = (
 			);
 			inputPaths = (
-				"${SRCROOT}/Pods/Target Support Files/Pods-Snabble_Example/Pods-Snabble_Example-frameworks.sh",
+				"${PODS_ROOT}/Target Support Files/Pods-Snabble_Example/Pods-Snabble_Example-frameworks.sh",
 				"${BUILT_PRODUCTS_DIR}/Base32/Base32.framework",
 				"${BUILT_PRODUCTS_DIR}/GRDB.swift/GRDB.framework",
 				"${BUILT_PRODUCTS_DIR}/OneTimePassword/OneTimePassword.framework",
@@ -229,7 +229,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-Snabble_Example/Pods-Snabble_Example-frameworks.sh\"\n";
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-Snabble_Example/Pods-Snabble_Example-frameworks.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
 		F96C47CC98287376350CF687 /* [CP] Check Pods Manifest.lock */ = {
