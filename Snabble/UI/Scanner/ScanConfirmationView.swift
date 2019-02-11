@@ -126,7 +126,12 @@ final class ScanConfirmationView: DesignableView {
         }
 
         // suppress display when price == 0
-        if scannedProduct.product.price == 0 {
+        var hasPrice = scannedProduct.product.price != 0
+        let encodingUnit = scannedProduct.encodingUnit ?? scannedProduct.product.encodingUnit
+        if encodingUnit == .price {
+            hasPrice = true
+        }
+        if !hasPrice {
             self.priceLabel.isHidden = true
             self.plusButton.isHidden = true
             self.minusButton.isHidden = true
