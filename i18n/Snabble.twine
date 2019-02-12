@@ -27,7 +27,6 @@
         en = Undo
     [Snabble.goToSettings]
         en = Open Settings
-        
     [Snabble.Payment.errorStarting]
         en = Error starting the payment process
     [Snabble.PaymentSelection.title]
@@ -159,6 +158,16 @@
         en = Pay at cash register
     [Snabble.Checkout.error]
         en = An error has occurred
+
+    [Snabble.Payment.confirm]
+        en = Confirm purchase
+    [Snabble.Payment.presentCode]
+        en = Show this code at a snabble monitor or to a cashier to confirm your purchase.
+    [Snabble.Payment.waiting]
+        en = Waiting for confirmation
+        
+    [Snabble.networkError]
+        en = Connection error
 [[Android]]
     [Snabble.askForPermission]
         en = Ask for permission
