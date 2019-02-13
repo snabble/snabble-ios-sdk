@@ -142,7 +142,7 @@ public final class ShoppingCartViewController: UIViewController {
 
     private func setEditButton() {
         let navItem = self.navigationItem
-        let items = self.shoppingCart.numberOfItems()
+        let items = self.shoppingCart.numberOfItems
         navItem.rightBarButtonItem = items == 0 ? nil : self.editButton
     }
     
@@ -193,7 +193,7 @@ public final class ShoppingCartViewController: UIViewController {
         self.setEditButton()
         self.setDeleteButton()
         
-        let items = self.shoppingCart.numberOfItems()
+        let items = self.shoppingCart.numberOfItems
         if items == 0 {
             self.setEditingMode(false)
         }
@@ -296,18 +296,18 @@ extension ShoppingCartViewController: ShoppingCartTableDelegate {
     }
 
     func updateTotals() {
-        let total = self.shoppingCart.totalPrice
-        let formattedTotal = PriceFormatter.format(self.shoppingCart.totalPrice)
+        let total = self.shoppingCart.total
+        let formattedTotal = PriceFormatter.format(self.shoppingCart.total ?? 0)
         if total == 0 {
             self.tabBarItem.title = "Snabble.ShoppingCart.title".localized()
         } else {
             self.tabBarItem.title = formattedTotal
         }
 
-        let count = self.shoppingCart.numberOfItems()
+        let count = self.shoppingCart.numberOfItems
 
         let title: String
-        if self.shoppingCart.canCalculateTotal {
+        if self.shoppingCart.total != nil {
             let fmt = count == 1 ? "Snabble.Shoppingcart.buyProducts.one" : "Snabble.Shoppingcart.buyProducts"
             title = String(format: fmt.localized(), count, formattedTotal)
         } else {
@@ -330,7 +330,7 @@ extension ShoppingCartViewController: ShoppingCartTableDelegate {
 extension ShoppingCartViewController: UITableViewDelegate, UITableViewDataSource {
     // MARK: table view data source
     public func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        let rows = self.shoppingCart.count
+        let rows = self.shoppingCart.numberOfItems
         self.emptyState.isHidden = rows > 0
         return rows
     }

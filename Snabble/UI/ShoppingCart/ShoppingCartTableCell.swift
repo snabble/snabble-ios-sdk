@@ -71,6 +71,8 @@ final class ShoppingCartTableCell: UITableViewCell {
         self.delegate = delegate
         self.item = item
         self.quantity = item.quantity
+
+        /*
         if item.product.referenceUnit?.hasDimension == true, let embeddedData = item.embeddedData {
             self.quantity = embeddedData
         }
@@ -115,6 +117,7 @@ final class ShoppingCartTableCell: UITableViewCell {
             self.minusButton.isHidden = true
             self.plusButton.isHidden = true
         }
+         */
 
         self.loadImage()
     }
@@ -125,7 +128,7 @@ final class ShoppingCartTableCell: UITableViewCell {
             return
         }
 
-        self.item.quantity = self.quantity
+        // self.item.quantity = self.quantity
         self.delegate.cart.setQuantity(self.quantity, at: row)
         self.delegate.updateTotals()
 
@@ -140,6 +143,7 @@ final class ShoppingCartTableCell: UITableViewCell {
         let gram = showWeight ? symbol : ""
         self.quantityLabel.text = "\(self.quantity)\(gram)"
 
+        /*
         let price = self.item.total(SnabbleUI.project)
         let total = PriceFormatter.format(price)
 
@@ -170,6 +174,7 @@ final class ShoppingCartTableCell: UITableViewCell {
                 self.priceLabel.text = "× \(itemPrice) = \(total)"
             }
         }
+        */
     }
 
     private func loadImage() {

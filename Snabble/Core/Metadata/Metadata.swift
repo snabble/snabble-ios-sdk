@@ -310,7 +310,7 @@ public struct Flags: Decodable {
     }
 }
 
-public enum RoundingMode: String, Decodable {
+public enum RoundingMode: String, Codable {
     /// always round up
     case up
     /// always round down

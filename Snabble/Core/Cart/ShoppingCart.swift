@@ -31,41 +31,50 @@ public struct CartConfig {
     }
 }
 
-/// an entry in a shopping cart.
-public struct CartItem: Codable {
-    public var quantity: Int
-    public let product: Product
-    public let scannedCode: String
+public struct ScannedCode: Codable {
+    let code: String            // der transmissionCode des Produkts
+    let embeddedData: Int?      // daten aus dem gescannten code
+    let encodingUnit: Units?    // unit aus dem code falls anders als beim produkt
+    let priceOverride: Int?     // preis aus dem code falls vorhanden (zB 96er EDEKA)
+    let referencePriceOverride: Int? // referencePrice aus dem code falls vorhanden (zB Globus Wiegeartikel)
+    let templateId: String      // welches Template wurde benutzt
 
-    /// for shelf codes that have 0 as the embedded units and need to be editable later
-    public let editableUnits: Bool
-
-    // optional data extracted from the scanned code
-    public let embeddedData: Int?
-    // what does the embedded data represent?
-    public let encodingUnit: Units?
-    // optional reference price
-    public let referencePrice: Int?
-
-    init(_ quantity: Int, _ product: Product, _ scannedCode: String, _ embeddedData: Int? = nil, _ editableUnits: Bool = false, _ encodingUnit: Units? = nil, _ referencePrice: Int? = nil) {
-        self.product = product
-        self.quantity = quantity
-        self.editableUnits = editableUnits
-        self.scannedCode = scannedCode
+    init(code: String, embeddedData: Int? = nil, encodingUnit: Units? = nil, priceOverride: Int? = nil, referencePriceOverride: Int? = nil, templateId: String) {
+        self.code = code
         self.embeddedData = embeddedData
         self.encodingUnit = encodingUnit
-        self.referencePrice = referencePrice
+        self.priceOverride = priceOverride
+        self.referencePriceOverride = referencePriceOverride
+        self.templateId = templateId
     }
+}
 
-    public init(from decoder: Decoder) throws {
-        let container = try decoder.container(keyedBy: CodingKeys.self)
-        self.product = try container.decode(Product.self, forKey: .product)
-        self.quantity = try container.decode(Int.self, forKey: .quantity)
-        self.scannedCode = try container.decode(String.self, forKey: .scannedCode)
-        self.editableUnits = try container.decodeIfPresent(Bool.self, forKey: .editableUnits) ?? false
-        self.embeddedData = try container.decodeIfPresent(Int.self, forKey: .embeddedData)
-        self.encodingUnit = try container.decodeIfPresent(Units.self, forKey: .encodingUnit)
-        self.referencePrice = try container.decodeIfPresent(Int.self, forKey: .referencePrice)
+public struct QRCodeData: Equatable {
+    let quantity: Int
+    let code: String
+
+    init(_ quantity: Int, _ code: String) {
+        self.quantity = quantity
+        self.code = code
+    }
+}
+
+public protocol SnabblePriceFormatter {
+    func format(_ price: Int) -> String
+}
+
+/// an entry in a shopping cart.
+public struct CartItem: Codable {
+    fileprivate(set) public var quantity: Int  // quantity or weight
+    public let product: Product
+    public let scannedCode: ScannedCode
+    public let roundingMode: RoundingMode
+
+    public init(_ quantity: Int, _ product: Product, _ scannedCode: ScannedCode, _ roundingMode: RoundingMode) {
+        self.quantity = quantity
+        self.product = product
+        self.scannedCode = scannedCode
+        self.roundingMode = roundingMode
     }
 
     // init with a freshly retrieved copy of `item.product`.
@@ -77,84 +86,187 @@ public struct CartItem: Codable {
         self.product = product
         self.quantity = item.quantity
         self.scannedCode = item.scannedCode
-        self.editableUnits = item.editableUnits
-        self.embeddedData = item.embeddedData
-        self.encodingUnit = item.encodingUnit
-        self.referencePrice = item.referencePrice
+        self.roundingMode = item.roundingMode
     }
 
-    /// total price for this cart item
-    public func total(_ project: Project) -> Int {
-        return self.price(for: self.quantity, project)
+    /// can this entry be merged with another for the same SKU?
+    public var canMerge: Bool {
+        // yes if it is a single products and we don't have any overrides from the scanned code
+        return self.product.type == .singleItem
+            && self.encodingUnit == nil
+            && self.scannedCode.priceOverride == nil
+            && self.scannedCode.referencePriceOverride == nil
     }
 
-    /// item price
-    public func itemPrice(_ project: Project) -> Int {
-        return self.price(for: 1, project)
+    /// is the quantity user-editable?
+    public var editable: Bool {
+        // yes if it is a single or user-weighed product, but not if we have data > 0 from the code
+        var allowEdit = true
+        if let embed = self.scannedCode.embeddedData, embed > 0 {
+            allowEdit = false
+        }
+        if self.scannedCode.priceOverride != nil || self.scannedCode.referencePriceOverride != nil {
+            allowEdit = false
+        }
+        return (self.product.type == .singleItem || self.product.type == .userMustWeigh) && allowEdit
     }
 
-    func price(for quantity: Int, _ project: Project) -> Int {
-        let unit = self.product.encodingUnit ?? self.encodingUnit
-        guard let embed = self.embeddedData, let encodingUnit = unit else {
-            return PriceFormatter.priceFor(project, self.product, quantity)
+    /// encodingUnit from the code or the product
+    public var encodingUnit: Units? {
+        return self.scannedCode.encodingUnit ?? self.product.encodingUnit
+    }
+
+    /// total price of this cart item
+    public var price: Int {
+        if let override = self.scannedCode.priceOverride {
+            return override
+        }
+        if let embed = self.scannedCode.embeddedData, let encodingUnit = self.encodingUnit, let referenceUnit = self.product.referenceUnit {
+            if case .price = encodingUnit {
+                return embed
+            }
+
+            let price = self.scannedCode.referencePriceOverride ?? self.product.price
+            let quantity = max(self.quantity, embed)
+            return self.roundedPrice(price, quantity, encodingUnit, referenceUnit)
         }
 
-        switch encodingUnit {
-        case .price:
-            return embed
-        case .piece:
-            let multiplier = embed == 0 ? self.quantity : embed
-            let price = self.referencePrice ?? self.product.price
-            return multiplier * price
-        default:
-            return PriceFormatter.priceFor(project, self.product, embed, self.encodingUnit, self.referencePrice)
+        if self.product.type == .userMustWeigh {
+            // if we get here but have no units, fall back to our previous default of kilograms/grams
+            let referenceUnit = product.referenceUnit ?? .kilogram
+            let encodingUnit = self.encodingUnit ?? .gram
+
+            return self.roundedPrice(self.product.price, self.quantity, encodingUnit, referenceUnit)
         }
+        return self.quantity * self.product.priceWithDeposit
     }
 
-    func cartItem(_ project: Project) -> Cart.Item {
-        let product = self.product
-        var quantity = self.quantity
-        
-        var price: Int? = nil
-        var weight: Int? = nil
-        var units: Int? = nil
+    private func roundedPrice(_ price: Int, _ quantity: Int, _ encodingUnit: Units, _ referenceUnit: Units) -> Int {
+        let unitPrice = Units.convert(price, from: encodingUnit, to: referenceUnit)
+        let total = Decimal(quantity) * unitPrice
 
-        if product.type == .userMustWeigh {
-            quantity = 1
-            weight = self.quantity
-        } else if product.referenceUnit == .piece && (self.embeddedData == nil || self.embeddedData == 0) {
-            quantity = 1
-            units = self.quantity
-        } else if self.referencePrice != nil {
-            price = self.total(project)
+        return self.round(total, self.roundingMode)
+    }
+
+    private func round(_ n: Decimal, _ roundingMode: RoundingMode) -> Int {
+        var mode: NSDecimalNumber.RoundingMode
+        switch roundingMode {
+        case .up: mode = .up
+        case .down: mode = .down
+        case .commercial: mode = .plain
+        }
+        let round = NSDecimalNumberHandler(roundingMode: mode,
+                                           scale: 0,
+                                           raiseOnExactness: false,
+                                           raiseOnOverflow: false,
+                                           raiseOnUnderflow: false,
+                                           raiseOnDivideByZero: false)
+        return (n as NSDecimalNumber).rounding(accordingToBehavior: round).intValue
+    }
+
+    // string für den QR-Code. normalerweise scannedCode.code, oder die quantity eingebettet in ein Template (wann genau?!?)
+    public var dataForQR: QRCodeData {
+        let cartItem = self.cartItem
+        return QRCodeData(cartItem.amount, cartItem.scannedCode)
+    }
+
+    // schöne preisanzeige für confirmation/cart zelle. Sowas wie "x 2,99€ = 5,98€" etc (quantity ist *nicht* enthalten)
+    public func priceDisplay(_ formatter: SnabblePriceFormatter) -> String {
+        let total = formatter.format(self.price)
+
+        let showUnit = self.product.referenceUnit?.hasDimension == true || self.product.type == .userMustWeigh
+        if showUnit {
+            let price = self.scannedCode.referencePriceOverride ?? self.product.price
+            let single = formatter.format(price)
+            let unit = self.product.referenceUnit?.display ?? ""
+            return "× \(single)/\(unit) = \(total)"
         }
 
-        if let embed = self.embeddedData, let encodingUnit = self.encodingUnit {
-            switch encodingUnit {
-            case .price:
-                price = embed
-            case .piece:
-                units = embed
-            default:
-                weight = embed
+        if self.product.type == .singleItem {
+            if let deposit = self.product.deposit {
+                let itemPrice = formatter.format(self.product.price)
+                let depositPrice = formatter.format(deposit * self.quantity)
+                return "× \(itemPrice) + \(depositPrice) = \(total)"
+            }
+
+            if self.effectiveQuantity == 1 {
+                return total
+            } else {
+                let price = self.scannedCode.referencePriceOverride ?? self.scannedCode.priceOverride ?? self.product.price
+                let single = formatter.format(price)
+                return "× \(single) = \(total)"
             }
         }
 
-        return Cart.Item(sku: product.sku,
-                         amount: quantity,
-                         scannedCode: self.scannedCode,
-                         price: price,
-                         weight: weight,
-                         units: units,
-                         weightUnit: self.encodingUnit)
+        return "n/a"
     }
+
+    public func quantityDisplay() -> String {
+        let symbol = self.encodingUnit?.display ?? ""
+        return "\(self.effectiveQuantity)\(symbol)"
+    }
+
+    private var effectiveQuantity: Int {
+        if let embeddedData = self.scannedCode.embeddedData, embeddedData > 0 {
+            if self.product.referenceUnit?.hasDimension == true || self.scannedCode.referencePriceOverride != nil {
+                return embeddedData
+            }
+        }
+
+        return self.quantity
+    }
+
+    var cartItem: BackendCartItem {
+        var quantity = self.quantity
+        var units: Int? = nil
+        var price: Int? = nil
+        var weight: Int? = nil
+        var code = self.scannedCode.code
+        let encodingUnit = self.encodingUnit
+
+        if self.product.type == .userMustWeigh {
+            #warning("remove project param")
+            code = CodeMatcher.createInstoreEan(self.scannedCode.templateId, code, quantity, "") ?? "n/a"
+            weight = quantity
+            quantity = 1
+        }
+
+        if self.product.referenceUnit == .piece && (self.scannedCode.embeddedData == nil || self.scannedCode.embeddedData == 0) {
+            #warning("remove project param")
+            code = CodeMatcher.createInstoreEan(self.scannedCode.templateId, code, quantity, "") ?? "n/a"
+            units = quantity
+            quantity = 1
+        }
+
+        if let unit = encodingUnit, let embed = self.scannedCode.embeddedData, embed > 0 {
+            switch unit {
+            case .piece: units = embed
+            case .price: price = embed
+            default: weight = embed
+            }
+        }
+
+        if let override = self.scannedCode.priceOverride {
+            price = override
+        }
+
+        if self.scannedCode.referencePriceOverride != nil {
+            price = self.price
+        }
+
+        return BackendCartItem(sku: self.product.sku,
+                               amount: quantity,
+                               scannedCode: code,
+                               price: price,
+                               weight: weight,
+                               units: units,
+                               weightUnit: encodingUnit)
+    }
+
 }
 
 /// a ShoppingCart is a collection of CartItem objects
-public final class ShoppingCart {
-    
-    public static let maxAmount = 9999
-
+final public class ShoppingCart {
     private(set) public var items = [CartItem]()
     private(set) public var session = ""
     private(set) public var lastSaved: Date?
@@ -166,6 +278,8 @@ public final class ShoppingCart {
     private var timer: Timer?
 
     private(set) var config: CartConfig
+
+    public static let maxAmount = 9999
 
     public init(_ config: CartConfig) {
         self.config = config
@@ -192,111 +306,95 @@ public final class ShoppingCart {
         return self.config.shop.id
     }
 
-    /// get this cart's `loyaltyCard`
-    public var loyaltyCard: String? {
-        get { return self.config.loyaltyCard }
-        set { self.config.loyaltyCard = newValue }
-    }
-
-    /// add a Product. if already present and not weight dependent, increase its quantity
+    /// add an item. if already present and not weight dependent, increase its quantity
     ///
-    /// the newly added (or modified) product is moved to the start of the list
-    public func add(_ product: Product, quantity: Int = 1, scannedCode: String, embeddedData: Int? = nil, editableUnits: Bool = false, encodingUnit: Units? = nil, referencePrice: Int? = nil) {
-        if let index = self.indexOf(product), product.type == .singleItem, product.referenceUnit == nil, encodingUnit == nil, product.price > 0 {
-            self.items[index].quantity += quantity
-            let item = self.items.remove(at: index)
-            self.items.insert(item, at: 0)
-        } else {
-            let item = CartItem(quantity, product, scannedCode, embeddedData, editableUnits, encodingUnit, referencePrice)
-            self.items.insert(item, at: 0)
+    /// the newly added (or modified) item is moved to the start of the list
+    public func add(_ item: CartItem) {
+        defer { self.save() }
+        if let index = self.items.firstIndex(where: { $0.product.sku == item.product.sku }) {
+            var existing = self.items[index]
+            if existing.canMerge {
+                existing.quantity += item.quantity
+                self.items.remove(at: index)
+                self.items.insert(existing, at: 0)
+                return
+            }
         }
 
-        self.save()
+        self.items.insert(item, at: 0)
     }
 
     /// get the `CartItem` at `index`
     public func at(_ index: Int) -> CartItem {
+        #warning("do we need this? - if yes, add test")
         return self.items[index]
     }
 
     public func product(at index: Int) -> Product? {
+        #warning("do we need this? - if yes, add test")
         return self.items[index].product
-    }
-    
-    /// change the quantity of the item at `index`
-    public func setQuantity(_ quantity: Int, at index: Int) {
-        self.items[index].quantity = quantity
-
-        self.save()
-    }
-
-    /// change the quantity for the given product
-    public func setQuantity(_ quantity: Int, for product: Product) {
-        if let index = self.indexOf(product) {
-            self.setQuantity(quantity, at: index)
-        }
     }
 
     /// delete the entry at position `index`
     public func remove(at index: Int) {
         self.items.remove(at: index)
-
         self.save()
     }
 
-    /// delete a Product entry if it exists
-    public func removeProduct(_ product: Product) {
-        if let index = self.indexOf(product) {
-            self.remove(at: index)
+    public func setQuantity(_ quantity: Int, at index: Int) {
+        if self.items[index].editable {
+            self.items[index].quantity = quantity
+        } else {
+            Log.warn("ignored attempt modify quantity of non-editable item, sku=\(self.items[index].product.sku)")
         }
     }
 
-    /// get the quantity of `product` in the cart.
-    public func quantity(of product: Product) -> Int {
-        if let index = self.indexOf(product) {
-            return self.items[index].quantity
+    public func setQuantity(_ quantity: Int, for item: CartItem) {
+        #warning("add test for this")
+        if let index = self.items.firstIndex(where: { $0.product.sku == item.product.sku }) {
+            self.setQuantity(quantity, at: index)
+        } else {
+            Log.warn("setQuantity: item not found, sku=\(item.product.sku)")
         }
+    }
+
+    /// current quantity. returns 0 if not present or item cannot be merged with others
+    public func quantity(of cartItem: CartItem) -> Int {
+        if let existing = self.items.first(where: { $0.product.sku == cartItem.product.sku }) {
+            return existing.canMerge ? existing.quantity : 0
+        }
+
         return 0
     }
-    
-    /// rearrange order: move the entry at `from` to `to`
-    public func moveEntry(from: Int, to: Int) {
-        let item = self.items[from]
-        self.items.remove(at: from)
-        self.items.insert(item, at: to)
 
-        self.save()
+    /// number of separate items in the cart
+    public var numberOfItems: Int {
+        return items.count
     }
 
-    /// check if we can calculate the total price (ie, are there any commissions or other products with price==0)
-    public var canCalculateTotal: Bool {
-        let zeroPrice = self.items.filter { $0.total(self.config.project) == 0 }
-        return zeroPrice.count == 0
-    }
-    
-    /// return the number of separate items
-    public var count:  Int {
-        return self.items.count
+    /// number of products in the cart (sum of all quantities)
+    public var numberOfProducts: Int {
+        #warning("do we need this? - if yes, add a test!")
+        return items.reduce(0) { $0 + $1.quantity }
     }
 
-    /// return the the total price of all products
-    public var totalPrice: Int {
-        return self.items.reduce(0) { $0 + $1.total(self.config.project) }
+    func backendItems() -> [BackendCartItem] {
+        return items.map { $0.cartItem }
     }
-    
-    /// return the total number of items
-    public func numberOfItems() -> Int {
-        return self.items.reduce(0) {
-            let qty = $1.product.weightDependent ? 1 :  $1.quantity
-            return $0 + qty
+
+    /// return the the total price of all products. nil if unknown, i.e. when there are products with unknown prices in the cart
+    public var total: Int? {
+        var noPrice = false
+        let total = self.items.reduce(0) { acc, item in
+            let price = item.price
+            if price == 0 {
+                noPrice = true
+            }
+            return acc + price
         }
+        return noPrice ? nil : total
     }
 
-    /// get all products from this list
-    public func allProducts() -> [Product] {
-        return (0 ..< self.items.count).compactMap { self.product(at: $0) }
-    }
-    
     /// remove all items from the cart
     public func removeAll(endSession: Bool = false) {
         self.items.removeAll()
@@ -308,8 +406,10 @@ public final class ShoppingCart {
         }
     }
 
-    private func indexOf(_ product: Product) -> Int? {
-        return self.items.index { $0.product.sku == product.sku }
+    /// get this cart's `loyaltyCard`
+    public var loyaltyCard: String? {
+        get { return self.config.loyaltyCard }
+        set { self.config.loyaltyCard = newValue }
     }
 }
 
@@ -404,7 +504,7 @@ extension ShoppingCart {
 extension ShoppingCart {
 
     func createCart() -> Cart {
-        let items = self.items.map { $0.cartItem(self.config.project) }
+        let items = self.items.map { $0.cartItem }
         let customerInfo = Cart.CustomerInfo(loyaltyCard: self.loyaltyCard)
         return Cart(session: self.session, shopID: self.shopId, customer: customerInfo, items: items)
     }

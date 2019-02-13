@@ -222,6 +222,8 @@ struct Cart: Encodable {
     }
 }
 
+typealias BackendCartItem = Cart.Item
+
 /// AbortRequest
 struct AbortRequest: Encodable {
     let aborted: Bool

@@ -196,7 +196,7 @@ public struct Product: Codable {
          listPrice: Int,
          discountedPrice: Int? = nil,
          type: ProductType,
-         codes: [ScannableCode],
+         codes: [ScannableCode] = [],
          depositSku: String? = nil,
          bundledSku: String? = nil,
          isDeposit: Bool = false,

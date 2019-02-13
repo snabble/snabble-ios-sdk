@@ -36,6 +36,7 @@ final class ScanConfirmationView: DesignableView {
     private var quantity = 1
 
     private weak var shoppingCart: ShoppingCart!
+    private var cartItem: CartItem!
 
     override var isFirstResponder: Bool {
         return self.quantityField.isFirstResponder
@@ -85,8 +86,17 @@ final class ScanConfirmationView: DesignableView {
         self.productNameLabel.text = product.name
         self.quantity = product.type != .userMustWeigh ? 1 : 0
 
+        let scannedCode = ScannedCode(code: scannedProduct.code!,
+            embeddedData: scannedProduct.embeddedData,
+            encodingUnit: scannedProduct.encodingUnit,
+            priceOverride: nil,
+            referencePriceOverride: scannedProduct.referencePrice,
+            templateId: scannedProduct.templateId!)
+        let cartItem = CartItem(self.quantity, product, scannedCode, SnabbleUI.project.roundingMode)
+        self.cartItem = cartItem
+
         if product.type == .singleItem && scannedProduct.embeddedData == nil && product.price != 0 {
-            let cartQuantity = self.shoppingCart.quantity(of: product)
+            let cartQuantity = self.shoppingCart.quantity(of: cartItem)
             self.quantity = cartQuantity + 1
             self.alreadyInCart = cartQuantity > 0
         }
@@ -223,17 +233,18 @@ final class ScanConfirmationView: DesignableView {
         let cart = self.shoppingCart!
         let product = self.scannedProduct.product
 
-        if cart.quantity(of: product) == 0 || product.type != .singleItem || self.scannedProduct.embeddedData != nil || product.price == 0 {
+        if cart.quantity(of: self.cartItem) == 0 || product.type != .singleItem || self.scannedProduct.embeddedData != nil || product.price == 0 {
             var editableUnits = false
             if product.referenceUnit?.hasDimension == true && self.scannedProduct.embeddedData == 0 {
                 self.quantity = 1
                 editableUnits = true
             }
             // Log.info("adding to cart: \(self.quantity) x \(product.name), scannedCode = \(String(describing: self.scannedProduct.code)), embed=\(String(describing: self.scannedProduct.embeddedData)) editableUnits=\(editableUnits)")
-            cart.add(product, quantity: self.quantity, scannedCode: self.scannedProduct.code ?? "", embeddedData: self.scannedProduct.embeddedData, editableUnits: editableUnits, encodingUnit: self.scannedProduct.encodingUnit, referencePrice: self.scannedProduct.referencePrice)
+            // cart.add(product, quantity: self.quantity, scannedCode: self.scannedProduct.code ?? "", embeddedData: self.scannedProduct.embeddedData, editableUnits: editableUnits, encodingUnit: self.scannedProduct.encodingUnit, referencePrice: self.scannedProduct.referencePrice)
+            cart.add(self.cartItem)
         } else {
             // Log.info("updating cart: set qty=\(self.quantity) for \(product.name)")
-            cart.setQuantity(self.quantity, for: product)
+            cart.setQuantity(self.quantity, for: self.cartItem)
         }
 
         NotificationCenter.default.post(name: .snabbleCartUpdated, object: self)
