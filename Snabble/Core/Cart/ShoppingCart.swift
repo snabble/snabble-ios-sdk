@@ -65,7 +65,7 @@ public protocol SnabblePriceFormatter {
 
 /// an entry in a shopping cart.
 public struct CartItem: Codable {
-    fileprivate(set) public var quantity: Int  // quantity or weight
+    internal(set) public var quantity: Int  // quantity or weight
     public let product: Product
     public let scannedCode: ScannedCode
     public let roundingMode: RoundingMode
@@ -182,20 +182,19 @@ public struct CartItem: Codable {
             return "× \(single)/\(unit) = \(total)"
         }
 
-        if self.product.type == .singleItem {
-            if let deposit = self.product.deposit {
-                let itemPrice = formatter.format(self.product.price)
-                let depositPrice = formatter.format(deposit * self.quantity)
-                return "× \(itemPrice) + \(depositPrice) = \(total)"
-            }
 
-            if self.effectiveQuantity == 1 {
-                return total
-            } else {
-                let price = self.scannedCode.referencePriceOverride ?? self.scannedCode.priceOverride ?? self.product.price
-                let single = formatter.format(price)
-                return "× \(single) = \(total)"
-            }
+        if let deposit = self.product.deposit {
+            let itemPrice = formatter.format(self.product.price)
+            let depositPrice = formatter.format(deposit * self.quantity)
+            return "× \(itemPrice) + \(depositPrice) = \(total)"
+        }
+
+        if self.effectiveQuantity == 1 {
+            return total
+        } else {
+            let price = self.scannedCode.referencePriceOverride ?? self.scannedCode.priceOverride ?? self.product.price
+            let single = formatter.format(price)
+            return "× \(single) = \(total)"
         }
 
         return "n/a"
@@ -374,7 +373,7 @@ final public class ShoppingCart {
 
     /// number of products in the cart (sum of all quantities)
     public var numberOfProducts: Int {
-        #warning("do we need this? - if yes, add a test!")
+        #warning("do we need this? - if yes, add a test, including weigh items")
         return items.reduce(0) { $0 + $1.quantity }
     }
 

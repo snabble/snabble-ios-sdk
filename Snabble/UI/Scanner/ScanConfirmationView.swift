@@ -31,9 +31,7 @@ final class ScanConfirmationView: DesignableView {
 
     weak var delegate: ScanConfirmationViewDelegate!
 
-    private var scannedProduct: ScannedProduct!
     private var alreadyInCart = false
-    private var quantity = 1
 
     private weak var shoppingCart: ShoppingCart!
     private var cartItem: CartItem!
@@ -52,8 +50,7 @@ final class ScanConfirmationView: DesignableView {
         self.cartButton.tintColor = SnabbleUI.appearance.secondaryColor
         self.cartButton.makeRoundedButton()
 
-        let mono14 = UIFont.monospacedDigitSystemFont(ofSize: 14, weight: .regular)
-        self.priceLabel.font = mono14
+        self.priceLabel.font = UIFont.monospacedDigitSystemFont(ofSize: 14, weight: .regular)
 
         self.minusButton.makeBorderedButton()
         self.plusButton.makeBorderedButton()
@@ -77,44 +74,45 @@ final class ScanConfirmationView: DesignableView {
         }
     }
 
-    private func doPresent(_ scannedProduct: ScannedProduct, cart: ShoppingCart) {
-        self.scannedProduct = scannedProduct
+    private func doPresent(_ __scannedProduct: ScannedProduct, cart: ShoppingCart) {
         self.shoppingCart = cart
         self.alreadyInCart = false
 
-        let product = scannedProduct.product
+        let product = __scannedProduct.product
         self.productNameLabel.text = product.name
-        self.quantity = product.type != .userMustWeigh ? 1 : 0
 
-        let scannedCode = ScannedCode(code: scannedProduct.code!,
-            embeddedData: scannedProduct.embeddedData,
-            encodingUnit: scannedProduct.encodingUnit,
+        #warning("handle priceoverride")
+        let scannedCode = ScannedCode(code: __scannedProduct.code!,
+            embeddedData: __scannedProduct.embeddedData,
+            encodingUnit: __scannedProduct.encodingUnit,
             priceOverride: nil,
-            referencePriceOverride: scannedProduct.referencePrice,
-            templateId: scannedProduct.templateId!)
-        let cartItem = CartItem(self.quantity, product, scannedCode, SnabbleUI.project.roundingMode)
-        self.cartItem = cartItem
+            referencePriceOverride: __scannedProduct.referencePrice,
+            templateId: __scannedProduct.templateId!)
 
-        if product.type == .singleItem && scannedProduct.embeddedData == nil && product.price != 0 {
-            let cartQuantity = self.shoppingCart.quantity(of: cartItem)
-            self.quantity = cartQuantity + 1
-            self.alreadyInCart = cartQuantity > 0
+        self.cartItem = CartItem(1, product, scannedCode, SnabbleUI.project.roundingMode)
+
+        let cartQuantity = self.shoppingCart.quantity(of: cartItem)
+        self.alreadyInCart = cartQuantity > 0
+
+        var quantity = cartQuantity + 1
+        if product.type == .userMustWeigh {
+            quantity = 0
         }
 
-        var initialQuantity = self.quantity
-        if let embed = scannedProduct.embeddedData, product.referenceUnit?.hasDimension == true {
-            initialQuantity = embed
+        if let embed = cartItem.scannedCode.embeddedData, product.referenceUnit?.hasDimension == true {
+            quantity = embed
         }
+        self.cartItem.quantity = quantity
 
         self.priceLabel.isHidden = false
-        self.minusButton.isHidden = scannedProduct.embeddedData != nil
-        self.plusButton.isHidden = scannedProduct.embeddedData != nil
 
-        self.gramLabel.text = scannedProduct.encodingUnit?.display
-        self.gramLabel.isHidden = !product.weightDependent
+        self.minusButton.isHidden = !self.cartItem.editable
+        self.plusButton.isHidden = !self.cartItem.editable
 
-        self.quantityField.isEnabled = product.type != .preWeighed
-        self.quantityField.isHidden = false
+        self.gramLabel.text = cartItem.encodingUnit?.display
+        self.gramLabel.isHidden = !self.cartItem.editable
+
+        self.quantityField.isHidden = !self.cartItem.editable
 
         self.subtitleLabel.text = product.subtitle
 
@@ -122,7 +120,7 @@ final class ScanConfirmationView: DesignableView {
             self.quantityField.becomeFirstResponder()
         }
 
-        self.showQuantity(initialQuantity, updateTextField: true)
+        self.showQuantity(updateTextField: true)
 
         let cartTitle = self.alreadyInCart ? "Snabble.Scanner.updateCart" : "Snabble.Scanner.addToCart"
         self.cartButton.setTitle(cartTitle.localized(), for: .normal)
@@ -136,9 +134,8 @@ final class ScanConfirmationView: DesignableView {
         }
 
         // suppress display when price == 0
-        var hasPrice = scannedProduct.product.price != 0
-        let encodingUnit = scannedProduct.encodingUnit ?? scannedProduct.product.encodingUnit
-        if encodingUnit == .price {
+        var hasPrice = product.price != 0
+        if self.cartItem.encodingUnit == .price {
             hasPrice = true
         }
         if !hasPrice {
@@ -149,65 +146,29 @@ final class ScanConfirmationView: DesignableView {
         }
     }
     
-    private func showQuantity(_ quantity: Int, updateTextField: Bool) {
-        var qty = quantity
-        let product = self.scannedProduct.product
+    private func showQuantity(updateTextField: Bool) {
+        var quantity = self.cartItem.quantity
+        let product = self.cartItem.product
         if quantity < 1 && product.type != .userMustWeigh {
-            qty = 1
-        } else if self.quantity > ShoppingCart.maxAmount {
-            qty = ShoppingCart.maxAmount
+            quantity = 1
+        } else if quantity > ShoppingCart.maxAmount {
+            quantity = ShoppingCart.maxAmount
         }
 
         if updateTextField {
-            self.quantityField.text = qty == 0 ? "" : "\(qty)"
+            self.quantityField.text = quantity == 0 ? "" : "\(quantity)"
         }
 
-        self.cartButton.isEnabled = qty > 0
-        self.minusButton.isEnabled = qty > 1
-        self.plusButton.isEnabled = qty < ShoppingCart.maxAmount
+        self.cartButton.isEnabled = quantity > 0
+        self.minusButton.isEnabled = quantity > 1
+        self.plusButton.isEnabled = quantity < ShoppingCart.maxAmount
 
-        let encodingSymbol = self.scannedProduct.encodingUnit?.display ?? ""
-        let referenceSymbol = product.referenceUnit?.display ?? ""
+        self.quantityField.isEnabled = self.cartItem.editable
 
-        let encodingUnit = self.scannedProduct.encodingUnit ?? product.encodingUnit
-
-        if let weight = self.scannedProduct.embeddedData, product.referenceUnit?.hasDimension == true {
-            let productPrice = PriceFormatter.priceFor(product, weight, encodingUnit, self.scannedProduct.referencePrice)
-            let price = self.scannedProduct.referencePrice ?? product.price
-            let priceKilo = PriceFormatter.format(price)
-            let formattedPrice = PriceFormatter.format(productPrice)
-            self.priceLabel.text = "\(qty)\(encodingSymbol) × \(priceKilo)/\(referenceSymbol) = \(formattedPrice)"
-        } else if let price = self.scannedProduct.embeddedData, encodingUnit == .price {
-            self.priceLabel.text = PriceFormatter.format(price)
-            self.quantityField.isHidden = true
-            self.gramLabel.isHidden = true
-        } else if let amount = self.scannedProduct.embeddedData, encodingUnit == .piece {
-            let productPrice = PriceFormatter.format(product.priceWithDeposit)
-            let multiplier = amount == 0 ? self.quantity : amount
-            let totalPrice = PriceFormatter.format(product.priceWithDeposit * multiplier)
-            self.priceLabel.text = "\(multiplier) × \(productPrice) = \(totalPrice)"
-            self.quantityField.isHidden = true
-            self.gramLabel.isHidden = true
-            self.minusButton.isHidden = amount > 0
-            self.plusButton.isHidden = amount > 0
-            self.quantityField.isHidden = amount > 0
-        } else if product.type == .userMustWeigh {
-            let productPrice = PriceFormatter.priceFor(product, quantity)
-            let priceKilo = PriceFormatter.format(product.price)
-            let formattedPrice = PriceFormatter.format(productPrice)
-            self.priceLabel.text = "\(qty)\(encodingSymbol) × \(priceKilo)/\(referenceSymbol) = \(formattedPrice)"
-        } else {
-            if let deposit = product.deposit {
-                let productPrice = PriceFormatter.format(product.price)
-                let depositPrice = PriceFormatter.format(deposit * qty)
-                let totalPrice = PriceFormatter.format(PriceFormatter.priceFor(product, qty))
-                let deposit = String(format: "Snabble.Scanner.plusDeposit".localized(), depositPrice)
-                self.priceLabel.text = "\(qty) × \(productPrice) \(deposit) = \(totalPrice)"
-            } else {
-                let productPrice = PriceFormatter.priceFor(product, qty)
-                self.priceLabel.text = PriceFormatter.format(productPrice)
-            }
-        }
+        let formatter = NewPriceFormatter(SnabbleUI.project)
+        let formattedPrice = self.cartItem.priceDisplay(formatter)
+        let quantityDisplay = self.cartItem.quantityDisplay()
+        self.priceLabel.text = (quantity != 1 ? quantityDisplay + " " : "") + formattedPrice
     }
 
     private func addDoneButton() {
@@ -220,31 +181,24 @@ final class ScanConfirmationView: DesignableView {
     }
 
     @IBAction private func plusTapped(_ button: UIButton) {
-        self.quantity += 1
-        self.showQuantity(self.quantity, updateTextField: true)
+        self.cartItem.quantity += 1
+        self.showQuantity(updateTextField: true)
     }
 
     @IBAction private func minusTapped(_ button: UIButton) {
-        self.quantity -= 1
-        self.showQuantity(self.quantity, updateTextField: true)
+        self.cartItem.quantity -= 1
+        self.showQuantity(updateTextField: true)
     }
 
     @IBAction private func cartTapped(_ button: UIButton) {
         let cart = self.shoppingCart!
-        let product = self.scannedProduct.product
 
-        if cart.quantity(of: self.cartItem) == 0 || product.type != .singleItem || self.scannedProduct.embeddedData != nil || product.price == 0 {
-            var editableUnits = false
-            if product.referenceUnit?.hasDimension == true && self.scannedProduct.embeddedData == 0 {
-                self.quantity = 1
-                editableUnits = true
-            }
-            // Log.info("adding to cart: \(self.quantity) x \(product.name), scannedCode = \(String(describing: self.scannedProduct.code)), embed=\(String(describing: self.scannedProduct.embeddedData)) editableUnits=\(editableUnits)")
-            // cart.add(product, quantity: self.quantity, scannedCode: self.scannedProduct.code ?? "", embeddedData: self.scannedProduct.embeddedData, editableUnits: editableUnits, encodingUnit: self.scannedProduct.encodingUnit, referencePrice: self.scannedProduct.referencePrice)
+        if cart.quantity(of: self.cartItem) == 0 || !self.cartItem.canMerge {
+            Log.info("adding to cart: \(self.cartItem.quantity) x \(self.cartItem.product.name), scannedCode = \(self.cartItem.scannedCode.code), embed=\(String(describing: self.cartItem.scannedCode.embeddedData))")
             cart.add(self.cartItem)
         } else {
-            // Log.info("updating cart: set qty=\(self.quantity) for \(product.name)")
-            cart.setQuantity(self.quantity, for: self.cartItem)
+            Log.info("updating cart: set qty=\(self.cartItem.quantity) for \(self.cartItem.product.name)")
+            cart.setQuantity(self.cartItem.quantity, for: self.cartItem)
         }
 
         NotificationCenter.default.post(name: .snabbleCartUpdated, object: self)
@@ -254,7 +208,7 @@ final class ScanConfirmationView: DesignableView {
     }
 
     @IBAction private func closeButtonTapped(_ button: UIButton) {
-        self.delegate.track(.scanAborted(self.scannedProduct.product.sku))
+        self.delegate.track(.scanAborted(self.cartItem.product.sku))
         self.delegate.closeConfirmation()
         self.quantityField.resignFirstResponder()
     }
@@ -271,12 +225,12 @@ extension ScanConfirmationView: UITextFieldDelegate {
         let newText = text.replacingCharacters(in: range, with: string)
         let qty = Int(newText) ?? 0
 
-        if qty > ShoppingCart.maxAmount || (range.location == 0 && string == "0") {
+        if qty < 0 || qty > ShoppingCart.maxAmount || (range.location == 0 && string == "0") {
             return false
         }
 
-        self.quantity = qty
-        self.showQuantity(qty, updateTextField: false)
+        self.cartItem.quantity = qty
+        self.showQuantity(updateTextField: false)
 
         return true
     }

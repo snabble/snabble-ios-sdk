@@ -73,3 +73,29 @@ public struct PriceFormatter {
     }
 }
 
+#warning("change name")
+public struct NewPriceFormatter: SnabblePriceFormatter {
+    let decimalDigits: Int
+    let formatter: NumberFormatter
+
+    init(_ project: Project) {
+        self.decimalDigits = project.decimalDigits
+
+        let fmt = NumberFormatter()
+        fmt.minimumIntegerDigits = 1
+        fmt.minimumFractionDigits = project.decimalDigits
+        fmt.maximumFractionDigits = project.decimalDigits
+        fmt.locale = Locale(identifier: project.locale)
+        fmt.currencyCode = project.currency
+        fmt.currencySymbol = project.currencySymbol
+        fmt.numberStyle = .currency
+
+        self.formatter = fmt
+    }
+
+    public func format(_ price: Int) -> String {
+        let divider = pow(10.0, self.decimalDigits)
+        let decimalPrice = Decimal(price) / divider
+        return self.formatter.string(for: decimalPrice)!
+    }
+}
