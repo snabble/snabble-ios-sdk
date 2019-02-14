@@ -32,15 +32,21 @@ public struct CartConfig {
 }
 
 public struct ScannedCode: Codable {
-    let code: String            // der transmissionCode des Produkts
+    let scannedCode: String     // der code vom scanner
+    let transmissionCode: String? // der transmissionCode des Produkts
     let embeddedData: Int?      // daten aus dem gescannten code
     let encodingUnit: Units?    // unit aus dem code falls anders als beim produkt
     let priceOverride: Int?     // preis aus dem code falls vorhanden (zB 96er EDEKA)
     let referencePriceOverride: Int? // referencePrice aus dem code falls vorhanden (zB Globus Wiegeartikel)
     let templateId: String      // welches Template wurde benutzt
 
-    init(code: String, embeddedData: Int? = nil, encodingUnit: Units? = nil, priceOverride: Int? = nil, referencePriceOverride: Int? = nil, templateId: String) {
-        self.code = code
+    var code: String {
+        return self.transmissionCode ?? self.scannedCode
+    }
+
+    init(scannedCode: String, transmissionCode: String? = nil, embeddedData: Int? = nil, encodingUnit: Units? = nil, priceOverride: Int? = nil, referencePriceOverride: Int? = nil, templateId: String) {
+        self.scannedCode = scannedCode
+        self.transmissionCode = transmissionCode
         self.embeddedData = embeddedData
         self.encodingUnit = encodingUnit
         self.priceOverride = priceOverride

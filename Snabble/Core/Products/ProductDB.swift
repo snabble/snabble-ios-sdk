@@ -23,21 +23,24 @@ public struct MetadataKeys {
 ///    (e.g. when a UPC-A code is scanned as an EAN-13, and the leading "0" filler digits had
 ///    to be stripped)
 /// - `embeddedData` contains the embedded data from the scanned code (from the {embed} template component), if any
+#warning("update docs")
 public struct ScannedProduct {
     public let product: Product
-    public let code: String?
+    public let transmissionCode: String?
     public let templateId: String?
     public let embeddedData: Int?
     public let encodingUnit: Units?
-    public let referencePrice: Int?
+    public let referencePriceOverride: Int?
+    public let priceOverride: Int?
 
-    public init(_ product: Product, _ code: String?, _ template: String? = nil, _ embeddedData: Int? = nil, _ encodingUnit: Units? = nil, _ referencePrice: Int? = nil) {
+    public init(_ product: Product, _ transmissionCode: String?, _ templateId: String? = nil, _ embeddedData: Int? = nil, _ encodingUnit: Units? = nil, _ referencePriceOverride: Int? = nil, priceOverride: Int? = nil) {
         self.product = product
-        self.code = code
-        self.templateId = template
+        self.transmissionCode = transmissionCode
+        self.templateId = templateId
         self.embeddedData = embeddedData
         self.encodingUnit = encodingUnit ?? product.encodingUnit
-        self.referencePrice = referencePrice
+        self.referencePriceOverride = referencePriceOverride
+        self.priceOverride = priceOverride
     }
 }
 

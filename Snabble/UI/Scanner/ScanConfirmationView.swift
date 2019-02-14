@@ -66,28 +66,29 @@ final class ScanConfirmationView: DesignableView {
         self.addDoneButton()
     }
     
-    func present(_ scannedProduct: ScannedProduct, cart: ShoppingCart) {
+    func present(_ scannedProduct: ScannedProduct, _ scannedCode: String, cart: ShoppingCart) {
         // avoid ugly animations
         UIView.performWithoutAnimation {
-            self.doPresent(scannedProduct, cart: cart)
+            self.doPresent(scannedProduct, scannedCode, cart: cart)
             self.layoutIfNeeded()
         }
     }
 
-    private func doPresent(_ __scannedProduct: ScannedProduct, cart: ShoppingCart) {
+    private func doPresent(_ scannedProduct: ScannedProduct, _ scannedCode: String, cart: ShoppingCart) {
         self.shoppingCart = cart
         self.alreadyInCart = false
 
-        let product = __scannedProduct.product
+        let product = scannedProduct.product
         self.productNameLabel.text = product.name
 
-        #warning("handle priceoverride")
-        let scannedCode = ScannedCode(code: __scannedProduct.code!,
-            embeddedData: __scannedProduct.embeddedData,
-            encodingUnit: __scannedProduct.encodingUnit,
-            priceOverride: nil,
-            referencePriceOverride: __scannedProduct.referencePrice,
-            templateId: __scannedProduct.templateId!)
+        let scannedCode = ScannedCode(
+            scannedCode: scannedCode,
+            transmissionCode: scannedProduct.transmissionCode,
+            embeddedData: scannedProduct.embeddedData,
+            encodingUnit: scannedProduct.encodingUnit,
+            priceOverride: scannedProduct.priceOverride,
+            referencePriceOverride: scannedProduct.referencePriceOverride,
+            templateId: scannedProduct.templateId ?? "default")
 
         self.cartItem = CartItem(1, product, scannedCode, SnabbleUI.project.roundingMode)
 
