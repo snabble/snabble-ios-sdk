@@ -228,15 +228,13 @@ public struct CartItem: Codable {
         let encodingUnit = self.encodingUnit
 
         if self.product.type == .userMustWeigh {
-            #warning("remove project param")
-            code = CodeMatcher.createInstoreEan(self.scannedCode.templateId, code, quantity, "") ?? "n/a"
+            code = CodeMatcher.createInstoreEan(self.scannedCode.templateId, code, quantity) ?? "n/a"
             weight = quantity
             quantity = 1
         }
 
         if self.product.referenceUnit == .piece && (self.scannedCode.embeddedData == nil || self.scannedCode.embeddedData == 0) {
-            #warning("remove project param")
-            code = CodeMatcher.createInstoreEan(self.scannedCode.templateId, code, quantity, "") ?? "n/a"
+            code = CodeMatcher.createInstoreEan(self.scannedCode.templateId, code, quantity) ?? "n/a"
             units = quantity
             quantity = 1
         }

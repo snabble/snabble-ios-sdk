@@ -114,14 +114,8 @@ final class EmbeddedCodesCheckoutViewController: UIViewController {
 
     private func csvForQR() -> [String] {
         let lines: [String] = self.cart.items.reduce(into: [], { result, item in
-            #warning("use item.dataForQR")
-            if item.product.type == .userMustWeigh {
-                if let ean = self.getEanFromTemplate(for: item) {
-                    result.append("1;\(ean)")
-                }
-            } else {
-                result.append("\(item.quantity);\(item.scannedCode)")
-            }
+            let qrCode = item.dataForQR
+            result.append("\(qrCode.quantity);\(qrCode.code)")
         })
 
         // divide into chunks if needed
@@ -163,30 +157,11 @@ final class EmbeddedCodesCheckoutViewController: UIViewController {
     }
 
     private func codesFor(_ items: [CartItem]) -> [String] {
-        #warning("use item.dataForQR")
         return items.reduce(into: [], { result, item in
-            if item.product.type == .userMustWeigh || item.product.referenceUnit == .piece {
-                if let ean = self.getEanFromTemplate(for: item) {
-                    result.append(ean)
-                }
-            } else {
-                result.append(contentsOf: Array(repeating: item.scannedCode.code, count: item.quantity))
-            }
+            let qrCode = item.dataForQR
+            let arr = Array(repeating: qrCode.code, count: qrCode.quantity)
+            result.append(contentsOf: arr)
         })
-    }
-
-    private func getEanFromTemplate(for item: CartItem) -> String? {
-        // find a ean13_instore template we can use
-        guard let code = item.product.codes.first(where: { $0.template.hasPrefix("ean13_instore") }) else {
-            return nil
-        }
-
-        var quantity = item.quantity
-        if let data = item.scannedCode.embeddedData {
-            quantity = data
-        }
-
-        return CodeMatcher.createInstoreEan(code.template, code.code, quantity, SnabbleUI.project.id)
     }
 
     private func setButtonTitle() {

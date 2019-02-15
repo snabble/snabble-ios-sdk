@@ -16,21 +16,21 @@ public struct MetadataKeys {
     fileprivate static let appLastUpdate = "app_lastUpdate"
 }
 
-/// the return type from `productByScannableCodes`.
-/// - `product` contains the product found
-/// - `code` contains the code by which the product was found, which is not necessarily the
-///    same as the one that was passed to `productByScannableCodes` as a parameter
-///    (e.g. when a UPC-A code is scanned as an EAN-13, and the leading "0" filler digits had
-///    to be stripped)
-/// - `embeddedData` contains the embedded data from the scanned code (from the {embed} template component), if any
-#warning("update docs")
+/// the return type from `productByScannableCodes`
 public struct ScannedProduct {
+    /// contains the product found
     public let product: Product
+    /// can be used to override the code that gets sent to the backend, e.g. when an EAN-8 is scanned, but the backend requires EAN-13s
     public let transmissionCode: String?
+    /// the template that was used to match this code, if any
     public let templateId: String?
+    /// the embedded data from the scanned code (from the {embed} template component), if any
     public let embeddedData: Int?
+    /// the units of the embedded data, if any
     public let encodingUnit: Units?
+    /// optional override for the product's price per `referenceUnit`
     public let referencePriceOverride: Int?
+    /// optional override for the product's price
     public let priceOverride: Int?
 
     public init(_ product: Product, _ transmissionCode: String?, _ templateId: String? = nil, _ embeddedData: Int? = nil, _ encodingUnit: Units? = nil, _ referencePriceOverride: Int? = nil, priceOverride: Int? = nil) {

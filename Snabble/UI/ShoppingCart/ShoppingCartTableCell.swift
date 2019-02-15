@@ -131,40 +131,8 @@ final class ShoppingCartTableCell: UITableViewCell {
         let gram = showWeight ? symbol : ""
         self.quantityLabel.text = "\(self.quantity)\(gram)"
 
-        let formatter = NewPriceFormatter(SnabbleUI.project)
+        let formatter = PriceFormatter(SnabbleUI.project)
         self.priceLabel.text = self.item.priceDisplay(formatter)
-        /*
-        let price = self.item.total(SnabbleUI.project)
-        let total = PriceFormatter.format(price)
-
-        if showWeight {
-            let price = self.item.referencePrice ?? self.item.product.price
-            let single = PriceFormatter.format(price)
-            let unit = self.item.product.referenceUnit?.display ?? ""
-            self.priceLabel.text = "× \(single)/\(unit) = \(total)"
-        } else {
-            if let deposit = self.item.product.deposit {
-                let itemPrice = PriceFormatter.format(self.item.product.price)
-                let depositPrice = PriceFormatter.format(deposit * self.quantity)
-                let plusDeposit = String(format: "Snabble.Scanner.plusDeposit".localized(), depositPrice)
-                self.priceLabel.text = "× \(itemPrice) \(plusDeposit) = \(total)"
-            } else if let referenceUnit = self.item.product.referenceUnit, referenceUnit == .piece, let units = self.item.embeddedData {
-                let qty = units == 0 ? self.quantity : units
-                self.quantityLabel.text = "\(qty)"
-                let price = self.item.referencePrice ?? self.item.product.price
-                let itemPrice = PriceFormatter.format(price)
-                self.priceLabel.text  = "× \(itemPrice) = \(total)"
-            } else if let referenceUnit = self.item.product.referenceUnit, referenceUnit == .price, let price = self.item.embeddedData {
-                self.quantityLabel.text = "\(self.quantity)"
-                self.priceLabel.text = PriceFormatter.format(price)
-            } else if self.quantity == 1 {
-                self.priceLabel.text = total
-            } else {
-                let itemPrice = PriceFormatter.format(self.item.product.priceWithDeposit)
-                self.priceLabel.text = "× \(itemPrice) = \(total)"
-            }
-        }
-        */
     }
 
     private func loadImage() {

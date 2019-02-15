@@ -162,11 +162,6 @@ public struct Product: Codable {
         return self.price + (self.deposit ?? 0)
     }
 
-    /// convenience method: is the price weight-dependent?
-    public var weightDependent: Bool {
-        return self.type != .singleItem
-    }
-
     public init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
 

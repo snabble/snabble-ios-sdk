@@ -166,7 +166,7 @@ final class ScanConfirmationView: DesignableView {
 
         self.quantityField.isEnabled = self.cartItem.editable
 
-        let formatter = NewPriceFormatter(SnabbleUI.project)
+        let formatter = PriceFormatter(SnabbleUI.project)
         let formattedPrice = self.cartItem.priceDisplay(formatter)
         let quantityDisplay = self.cartItem.quantityDisplay()
 
