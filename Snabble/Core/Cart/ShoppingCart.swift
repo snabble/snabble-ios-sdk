@@ -202,8 +202,6 @@ public struct CartItem: Codable {
             let single = formatter.format(price)
             return "× \(single) = \(total)"
         }
-
-        return "n/a"
     }
 
     public func quantityDisplay() -> String {
@@ -329,17 +327,6 @@ final public class ShoppingCart {
         self.items.insert(item, at: 0)
     }
 
-    /// get the `CartItem` at `index`
-    public func at(_ index: Int) -> CartItem {
-        #warning("do we need this? - if yes, add test")
-        return self.items[index]
-    }
-
-    public func product(at index: Int) -> Product? {
-        #warning("do we need this? - if yes, add test")
-        return self.items[index].product
-    }
-
     /// delete the entry at position `index`
     public func remove(at index: Int) {
         self.items.remove(at: index)
@@ -356,7 +343,6 @@ final public class ShoppingCart {
     }
 
     public func setQuantity(_ quantity: Int, for item: CartItem) {
-        #warning("add test for this")
         if let index = self.items.firstIndex(where: { $0.product.sku == item.product.sku }) {
             self.setQuantity(quantity, at: index)
         } else {
@@ -380,8 +366,10 @@ final public class ShoppingCart {
 
     /// number of products in the cart (sum of all quantities)
     public var numberOfProducts: Int {
-        #warning("do we need this? - if yes, add a test, including weigh items")
-        return items.reduce(0) { $0 + $1.quantity }
+        return items.reduce(0) { result, item in
+            let count = item.product.type == .singleItem ? item.quantity : 1
+            return result + count
+        }
     }
 
     func backendItems() -> [BackendCartItem] {
@@ -510,9 +498,8 @@ extension ShoppingCart {
 extension ShoppingCart {
 
     func createCart() -> Cart {
-        let items = self.items.map { $0.cartItem }
         let customerInfo = Cart.CustomerInfo(loyaltyCard: self.loyaltyCard)
-        return Cart(session: self.session, shopID: self.shopId, customer: customerInfo, items: items)
+        return Cart(session: self.session, shopID: self.shopId, customer: customerInfo, items: self.backendItems())
     }
 
 }

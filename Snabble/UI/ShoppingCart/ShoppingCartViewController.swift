@@ -276,9 +276,8 @@ public final class ShoppingCartViewController: UIViewController {
 extension ShoppingCartViewController: ShoppingCartTableDelegate {
 
     func confirmDeletion(at row: Int) {
-        guard let product = self.shoppingCart.product(at: row) else {
-            return
-        }
+        let product = self.shoppingCart.items[row].product
+
         let msg = String(format: "Snabble.Shoppingcart.removeItem".localized(), product.name)
         let alert = UIAlertController(title: nil, message: msg, preferredStyle: .alert)
 
@@ -338,7 +337,7 @@ extension ShoppingCartViewController: UITableViewDelegate, UITableViewDataSource
     public func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: self.itemCellIdentifier, for: indexPath) as! ShoppingCartTableCell
 
-        let item = self.shoppingCart.at(indexPath.row)
+        let item = self.shoppingCart.items[indexPath.row]
         cell.setCartItem(item, row: indexPath.row, delegate: self)
 
         return cell
@@ -358,9 +357,10 @@ extension ShoppingCartViewController: UITableViewDelegate, UITableViewDataSource
 
     // call tableView.deleteRowsAtIndexPaths() inside a CATransaction block so that we can reload the tableview afterwards
     func deleteRow(_ row: Int) {
-        if let product = self.shoppingCart.product(at: row) {
-            self.delegate.track(.deletedFromCart(product.sku))
-        }
+        let item = self.shoppingCart.items[row]
+        let product = item.product
+        self.delegate.track(.deletedFromCart(product.sku))
+
 
         self.shoppingCart.remove(at: row)
         let indexPath = IndexPath(row: row, section: 0)

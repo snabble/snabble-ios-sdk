@@ -139,9 +139,7 @@ final class EmbeddedCodesCheckoutViewController: UIViewController {
     }
 
     private func codesForQR() -> ([String],[String]) {
-        let project = SnabbleUI.project
-        #warning("re-add sorting")
-        let items = self.cart.items // .sorted { $0.itemPrice(project) < $1.itemPrice(project) }
+        let items = self.cart.items.sorted { $0.price < $1.price }
 
         if self.qrCodeConfig.nextCodeWithCheck != nil {
             let regularItems = items.filter { return $0.product.saleRestriction == .none }
