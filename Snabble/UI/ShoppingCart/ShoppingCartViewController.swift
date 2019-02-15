@@ -304,7 +304,7 @@ extension ShoppingCartViewController: ShoppingCartTableDelegate {
             self.tabBarItem.title = formattedTotal
         }
 
-        let count = self.shoppingCart.numberOfItems
+        let count = self.shoppingCart.numberOfProducts
 
         let title: String
         if self.shoppingCart.total != nil {

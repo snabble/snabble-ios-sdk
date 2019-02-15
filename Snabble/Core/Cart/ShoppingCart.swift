@@ -350,8 +350,9 @@ final public class ShoppingCart {
         if self.items[index].editable {
             self.items[index].quantity = quantity
         } else {
-            Log.warn("ignored attempt modify quantity of non-editable item, sku=\(self.items[index].product.sku)")
+            Log.warn("ignored attempt to modify quantity of non-editable item, sku=\(self.items[index].product.sku)")
         }
+        self.save()
     }
 
     public func setQuantity(_ quantity: Int, for item: CartItem) {

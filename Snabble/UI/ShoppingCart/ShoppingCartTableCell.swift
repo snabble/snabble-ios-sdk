@@ -29,9 +29,9 @@ final class ShoppingCartTableCell: UITableViewCell {
     @IBOutlet weak var textMargin: NSLayoutConstraint!
 
     @IBOutlet weak var spinner: UIActivityIndicatorView!
-    
-    private var item: CartItem!
     private var quantity = 0
+    private var item: CartItem!
+
     private weak var delegate: ShoppingCartTableDelegate!
     private var task: URLSessionDataTask?
 
@@ -72,11 +72,6 @@ final class ShoppingCartTableCell: UITableViewCell {
         self.item = item
         self.quantity = item.quantity
 
-        /*
-        if item.product.referenceUnit?.hasDimension == true, let embeddedData = item.embeddedData {
-            self.quantity = embeddedData
-        }
-
         let product = item.product
         self.nameLabel.text = product.name
         self.subtitleLabel.text = product.subtitle
@@ -86,13 +81,8 @@ final class ShoppingCartTableCell: UITableViewCell {
         self.quantityInput.tag = row
 
         self.priceLabel.isHidden = false
-        self.minusButton.isHidden = item.embeddedData != nil
-        self.plusButton.isHidden = product.type == .preWeighed || item.embeddedData != nil
-
-        if product.referenceUnit == .piece && item.embeddedData != nil {
-            self.minusButton.isHidden = !item.editableUnits
-            self.plusButton.isHidden = !item.editableUnits
-        }
+        self.minusButton.isHidden = !item.editable
+        self.plusButton.isHidden = !item.editable
 
         let weightEntry = product.type == .userMustWeigh
         self.quantityInput.isHidden = !weightEntry
@@ -111,13 +101,11 @@ final class ShoppingCartTableCell: UITableViewCell {
         self.showQuantity()
 
         // suppress display when price == 0
-        let total = self.item.total(SnabbleUI.project)
-        if total == 0 {
+        if self.item.price == 0 {
             self.priceLabel.isHidden = true
             self.minusButton.isHidden = true
             self.plusButton.isHidden = true
         }
-         */
 
         self.loadImage()
     }
@@ -128,7 +116,7 @@ final class ShoppingCartTableCell: UITableViewCell {
             return
         }
 
-        // self.item.quantity = self.quantity
+        self.item.quantity = self.quantity
         self.delegate.cart.setQuantity(self.quantity, at: row)
         self.delegate.updateTotals()
 
@@ -143,6 +131,8 @@ final class ShoppingCartTableCell: UITableViewCell {
         let gram = showWeight ? symbol : ""
         self.quantityLabel.text = "\(self.quantity)\(gram)"
 
+        let formatter = NewPriceFormatter(SnabbleUI.project)
+        self.priceLabel.text = self.item.priceDisplay(formatter)
         /*
         let price = self.item.total(SnabbleUI.project)
         let total = PriceFormatter.format(price)

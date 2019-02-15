@@ -169,7 +169,9 @@ final class ScanConfirmationView: DesignableView {
         let formatter = NewPriceFormatter(SnabbleUI.project)
         let formattedPrice = self.cartItem.priceDisplay(formatter)
         let quantityDisplay = self.cartItem.quantityDisplay()
-        self.priceLabel.text = (quantity != 1 ? quantityDisplay + " " : "") + formattedPrice
+
+        let showQuantity = quantity != 1 || self.cartItem.product.deposit != nil
+        self.priceLabel.text = (showQuantity ? quantityDisplay + " " : "") + formattedPrice
     }
 
     private func addDoneButton() {
