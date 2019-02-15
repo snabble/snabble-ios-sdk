@@ -109,6 +109,10 @@ public enum PaymentState: String, Decodable {
         }
     }
 }
+#warning("is 'transfered' (sic) still used?")
+//extension PaymentState: UnknownCaseRepresentable {
+//    static let unknownCase = PaymentState.unknown
+//}
 
 // CheckoutInfo
 public struct CheckoutInfo: Decodable {

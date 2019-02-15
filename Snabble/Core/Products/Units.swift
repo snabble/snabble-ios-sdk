@@ -4,7 +4,7 @@
 //  Copyright © 2018 snabble. All rights reserved.
 //
 
-public enum Dimension: String {
+public enum Dimension {
     case volume
     case capacity
     case area

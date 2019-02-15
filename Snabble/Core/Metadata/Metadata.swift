@@ -329,6 +329,10 @@ public enum RoundingMode: String, Codable {
     }
 }
 
+extension RoundingMode: UnknownCaseRepresentable {
+    static let unknownCase = RoundingMode.up
+}
+
 // MARK: - shop data
 
 /// opening hours

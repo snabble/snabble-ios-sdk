@@ -232,7 +232,7 @@ private class ResolvedProduct: Decodable {
     }
 
     private func convert(_ codes: [ScannableCode], _ encodingUnit: Units?) -> Product {
-        let type = ProductType(rawValue: self.weighing) ?? .singleItem
+        let type = ProductType(rawValue: self.weighing)
 
         let product = Product(sku: self.sku,
                               name: self.name,

@@ -13,6 +13,10 @@ public enum ProductType: Int, Codable {
     case userMustWeigh
 }
 
+extension ProductType: UnknownCaseRepresentable {
+    static let unknownCase = ProductType.singleItem
+}
+
 public enum SaleRestriction: Codable {
     case none
     case age(Int)
