@@ -111,7 +111,7 @@ final class ShoppingCartTableCell: UITableViewCell {
     }
 
     private func updateQuantity(at row: Int) {
-        if self.quantity == 0 {
+        if self.quantity == 0 && self.item.product.type != .userMustWeigh {
             self.delegate.confirmDeletion(at: row)
             return
         }

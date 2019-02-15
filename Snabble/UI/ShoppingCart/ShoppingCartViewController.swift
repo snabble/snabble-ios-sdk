@@ -161,14 +161,14 @@ public final class ShoppingCartViewController: UIViewController {
     }
     
     private func setEditingMode(_ editing: Bool) {
-        self.tableView.reloadData()
-        
         self.isEditing = editing
-        self.tableView.isEditing = editing
-        
+        UIView.performWithoutAnimation {
+            self.tableView.isEditing = editing
+        }
+
         self.editButton.title = editing ? "Snabble.Done".localized() : "Snabble.Edit".localized()
         self.setDeleteButton()
-        
+
         self.tableView.reloadData()
         self.tableView.setNeedsLayout()
     }
@@ -197,7 +197,7 @@ public final class ShoppingCartViewController: UIViewController {
         if items == 0 {
             self.setEditingMode(false)
         }
-        
+
         self.updateTotals()
     }
 
@@ -361,7 +361,6 @@ extension ShoppingCartViewController: UITableViewDelegate, UITableViewDataSource
         let product = item.product
         self.delegate.track(.deletedFromCart(product.sku))
 
-
         self.shoppingCart.remove(at: row)
         let indexPath = IndexPath(row: row, section: 0)
         CATransaction.begin()
@@ -370,7 +369,7 @@ extension ShoppingCartViewController: UITableViewDelegate, UITableViewDataSource
         CATransaction.setCompletionBlock {
             self.updateView(reload: false)
         }
-        
+
         CATransaction.commit()
     }
 
