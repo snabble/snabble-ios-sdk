@@ -233,6 +233,11 @@ public struct CartItem: Codable {
             quantity = 1
         }
 
+        if self.product.type == .preWeighed {
+            weight = quantity
+            quantity = 1
+        }
+
         if self.product.referenceUnit == .piece && (self.scannedCode.embeddedData == nil || self.scannedCode.embeddedData == 0) {
             code = CodeMatcher.createInstoreEan(self.scannedCode.templateId, code, quantity) ?? "n/a"
             units = quantity
