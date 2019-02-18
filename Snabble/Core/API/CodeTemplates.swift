@@ -470,9 +470,9 @@ public struct CodeMatcher {
     private static var templates = [String: [String: CodeTemplate]]()
 
     static func addTemplate(_ projectId: String, _ id: String, _ template: String) {
-        print("add template \(projectId) \(id) \(template)")
+        // print("add template \(projectId) \(id) \(template)")
         guard let tmpl = CodeTemplate(id, template) else {
-            print("oops")
+            Log.warn("ignoring invalid template: \(id) \(template) for \(projectId)")
             return
         }
 
