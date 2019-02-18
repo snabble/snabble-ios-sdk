@@ -129,7 +129,7 @@ final class ShoppingCartTableCell: UITableViewCell {
         let encodingUnit = self.item.encodingUnit ?? self.item.product.encodingUnit
         let symbol = encodingUnit?.display ?? ""
         let gram = showWeight ? symbol : ""
-        self.quantityLabel.text = "\(self.quantity)\(gram)"
+        self.quantityLabel.text = "\(self.item.effectiveQuantity)\(gram)"
 
         let formatter = PriceFormatter(SnabbleUI.project)
         self.priceLabel.text = self.item.priceDisplay(formatter)

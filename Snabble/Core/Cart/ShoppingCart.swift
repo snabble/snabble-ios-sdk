@@ -97,8 +97,9 @@ public struct CartItem: Codable {
 
     /// can this entry be merged with another for the same SKU?
     public var canMerge: Bool {
-        // yes if it is a single products and we don't have any overrides from the scanned code
+        // yes if it is a single products with a price and we don't have any overrides from the scanned code
         return self.product.type == .singleItem
+            && self.product.price != 0
             && self.encodingUnit == nil
             && self.scannedCode.priceOverride == nil
             && self.scannedCode.referencePriceOverride == nil
@@ -209,7 +210,7 @@ public struct CartItem: Codable {
         return "\(self.effectiveQuantity)\(symbol)"
     }
 
-    private var effectiveQuantity: Int {
+    public var effectiveQuantity: Int {
         if let embeddedData = self.scannedCode.embeddedData, embeddedData > 0 {
             if self.product.referenceUnit?.hasDimension == true || self.scannedCode.referencePriceOverride != nil {
                 return embeddedData
