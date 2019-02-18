@@ -295,21 +295,16 @@ extension ShoppingCartViewController: ShoppingCartTableDelegate {
     }
 
     func updateTotals() {
-        let total = self.shoppingCart.total
-        let formattedTotal = PriceFormatter.format(self.shoppingCart.total ?? 0)
-        if total == 0 {
-            self.tabBarItem.title = "Snabble.ShoppingCart.title".localized()
-        } else {
-            self.tabBarItem.title = formattedTotal
-        }
-
         let count = self.shoppingCart.numberOfProducts
 
         let title: String
-        if self.shoppingCart.total != nil {
+        if let total = self.shoppingCart.total, count > 0 {
+            let formattedTotal = PriceFormatter.format(total)
             let fmt = count == 1 ? "Snabble.Shoppingcart.buyProducts.one" : "Snabble.Shoppingcart.buyProducts"
             title = String(format: fmt.localized(), count, formattedTotal)
+            self.tabBarItem.title = formattedTotal
         } else {
+            self.tabBarItem.title = "Snabble.ShoppingCart.title".localized()
             title = "Snabble.Shoppingcart.buyProducts.now".localized()
         }
 
