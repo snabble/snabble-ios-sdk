@@ -95,24 +95,11 @@ public enum PaymentState: String, Decodable {
     case transferred
     case successful
     case failed
-
-    public init(from decoder: Decoder) throws {
-        let value = try decoder.singleValueContainer().decode(String.self)
-
-        if let state = PaymentState(rawValue: value) {
-            self = state
-        } else {
-            switch value {
-            case "transfered": self = .transferred // handle typo
-            default: self = .unknown
-            }
-        }
-    }
 }
-#warning("is 'transfered' (sic) still used?")
-//extension PaymentState: UnknownCaseRepresentable {
-//    static let unknownCase = PaymentState.unknown
-//}
+
+extension PaymentState: UnknownCaseRepresentable {
+    static let unknownCase = PaymentState.unknown
+}
 
 // CheckoutInfo
 public struct CheckoutInfo: Decodable {
