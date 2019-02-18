@@ -148,7 +148,7 @@ final class ScanConfirmationView: DesignableView {
     }
     
     private func showQuantity(updateTextField: Bool) {
-        var quantity = self.cartItem.quantity
+        var quantity = self.cartItem.effectiveQuantity
         let product = self.cartItem.product
         if quantity < 1 && product.type != .userMustWeigh {
             quantity = 1
