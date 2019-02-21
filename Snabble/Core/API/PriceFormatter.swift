@@ -7,26 +7,15 @@
 
 import Foundation
 
-public struct PriceFormatter: SnabblePriceFormatter {
-    let decimalDigits: Int
-    let formatter: NumberFormatter
+public struct PriceFormatter {
+    private let decimalDigits: Int
+    private let formatter: NumberFormatter
 
-    init(_ project: Project) {
-        self.decimalDigits = project.decimalDigits
-
-        let fmt = NumberFormatter()
-        fmt.minimumIntegerDigits = 1
-        fmt.minimumFractionDigits = project.decimalDigits
-        fmt.maximumFractionDigits = project.decimalDigits
-        fmt.locale = Locale(identifier: project.locale)
-        fmt.currencyCode = project.currency
-        fmt.currencySymbol = project.currencySymbol
-        fmt.numberStyle = .currency
-
-        self.formatter = fmt
+    public init(_ project: Project) {
+        self.init(project.decimalDigits, project.locale, project.currency, project.currencySymbol)
     }
 
-    init(_ decimalDigits: Int, _ locale: String, _ currency: String, _ currencySymbol: String) {
+    public init(_ decimalDigits: Int, _ locale: String, _ currency: String, _ currencySymbol: String) {
         self.decimalDigits = decimalDigits
 
         let fmt = NumberFormatter()

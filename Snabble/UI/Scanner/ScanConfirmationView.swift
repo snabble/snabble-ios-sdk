@@ -127,7 +127,8 @@ final class ScanConfirmationView: DesignableView {
         self.cartButton.setTitle(cartTitle.localized(), for: .normal)
 
         if product.discountedPrice != nil {
-            let originalPrice = PriceFormatter.format(product.listPrice)
+            let formatter = PriceFormatter(SnabbleUI.project)
+            let originalPrice = formatter.format(product.listPrice)
             let str = NSAttributedString(string: originalPrice, attributes: [NSAttributedString.Key.strikethroughStyle: NSUnderlineStyle.single.rawValue])
             self.originalPriceLabel.attributedText = str
         } else {

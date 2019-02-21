@@ -299,7 +299,8 @@ extension ShoppingCartViewController: ShoppingCartTableDelegate {
 
         let title: String
         if let total = self.shoppingCart.total, count > 0 {
-            let formattedTotal = PriceFormatter.format(total)
+            let formatter = PriceFormatter(SnabbleUI.project)
+            let formattedTotal = formatter.format(total)
             let fmt = count == 1 ? "Snabble.Shoppingcart.buyProducts.one" : "Snabble.Shoppingcart.buyProducts"
             title = String(format: fmt.localized(), count, formattedTotal)
             self.tabBarItem.title = formattedTotal
