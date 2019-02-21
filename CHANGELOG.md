@@ -1,5 +1,9 @@
 ## snabble iOS SDK Changelog
 
+# v0.9.1
+
+* refactored a lot of common code from `ScanConfirmationView` and `ShoppingCartTableCell` into the `ShoppingCart` and `CartItem` structs. This is mostly invisible for users of the UI components, but has a bunch of breaking changes for the Core API. In particular, the static methods of `PriceFormatter` are gone
+
 # v0.9.0
 
 * removed the deprecated `discountedProducts` and `boostedProducts` methods
