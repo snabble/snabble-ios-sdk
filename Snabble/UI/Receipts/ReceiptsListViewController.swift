@@ -100,11 +100,13 @@ extension ReceiptsListViewController: UITableViewDelegate, UITableViewDataSource
         }
 
         cell.textLabel?.text = order.shopName
-        let price = PriceFormatter.format(project, order.price)
-        let formatter = DateFormatter()
-        formatter.dateStyle = .medium
-        formatter.timeStyle = .short
-        let date = formatter.string(from: order.date)
+        let formatter = PriceFormatter(project)
+        let price = formatter.format(order.price)
+
+        let dateFormatter = DateFormatter()
+        dateFormatter.dateStyle = .medium
+        dateFormatter.timeStyle = .short
+        let date = dateFormatter.string(from: order.date)
         cell.detailTextLabel?.text = "\(price) - \(date) Uhr"
 
         return cell

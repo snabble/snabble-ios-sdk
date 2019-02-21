@@ -142,7 +142,7 @@ public final class ShoppingCartViewController: UIViewController {
 
     private func setEditButton() {
         let navItem = self.navigationItem
-        let items = self.shoppingCart.numberOfItems()
+        let items = self.shoppingCart.numberOfItems
         navItem.rightBarButtonItem = items == 0 ? nil : self.editButton
     }
     
@@ -161,14 +161,14 @@ public final class ShoppingCartViewController: UIViewController {
     }
     
     private func setEditingMode(_ editing: Bool) {
-        self.tableView.reloadData()
-        
         self.isEditing = editing
-        self.tableView.isEditing = editing
-        
+        UIView.performWithoutAnimation {
+            self.tableView.isEditing = editing
+        }
+
         self.editButton.title = editing ? "Snabble.Done".localized() : "Snabble.Edit".localized()
         self.setDeleteButton()
-        
+
         self.tableView.reloadData()
         self.tableView.setNeedsLayout()
     }
@@ -193,11 +193,11 @@ public final class ShoppingCartViewController: UIViewController {
         self.setEditButton()
         self.setDeleteButton()
         
-        let items = self.shoppingCart.numberOfItems()
+        let items = self.shoppingCart.numberOfItems
         if items == 0 {
             self.setEditingMode(false)
         }
-        
+
         self.updateTotals()
     }
 
@@ -276,9 +276,8 @@ public final class ShoppingCartViewController: UIViewController {
 extension ShoppingCartViewController: ShoppingCartTableDelegate {
 
     func confirmDeletion(at row: Int) {
-        guard let product = self.shoppingCart.product(at: row) else {
-            return
-        }
+        let product = self.shoppingCart.items[row].product
+
         let msg = String(format: "Snabble.Shoppingcart.removeItem".localized(), product.name)
         let alert = UIAlertController(title: nil, message: msg, preferredStyle: .alert)
 
@@ -296,21 +295,17 @@ extension ShoppingCartViewController: ShoppingCartTableDelegate {
     }
 
     func updateTotals() {
-        let total = self.shoppingCart.totalPrice
-        let formattedTotal = PriceFormatter.format(self.shoppingCart.totalPrice)
-        if total == 0 {
-            self.tabBarItem.title = "Snabble.ShoppingCart.title".localized()
-        } else {
-            self.tabBarItem.title = formattedTotal
-        }
-
-        let count = self.shoppingCart.numberOfItems()
+        let count = self.shoppingCart.numberOfProducts
 
         let title: String
-        if self.shoppingCart.canCalculateTotal {
+        if let total = self.shoppingCart.total, count > 0 {
+            let formatter = PriceFormatter(SnabbleUI.project)
+            let formattedTotal = formatter.format(total)
             let fmt = count == 1 ? "Snabble.Shoppingcart.buyProducts.one" : "Snabble.Shoppingcart.buyProducts"
             title = String(format: fmt.localized(), count, formattedTotal)
+            self.tabBarItem.title = formattedTotal
         } else {
+            self.tabBarItem.title = "Snabble.ShoppingCart.title".localized()
             title = "Snabble.Shoppingcart.buyProducts.now".localized()
         }
 
@@ -330,7 +325,7 @@ extension ShoppingCartViewController: ShoppingCartTableDelegate {
 extension ShoppingCartViewController: UITableViewDelegate, UITableViewDataSource {
     // MARK: table view data source
     public func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        let rows = self.shoppingCart.count
+        let rows = self.shoppingCart.numberOfItems
         self.emptyState.isHidden = rows > 0
         return rows
     }
@@ -338,7 +333,7 @@ extension ShoppingCartViewController: UITableViewDelegate, UITableViewDataSource
     public func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: self.itemCellIdentifier, for: indexPath) as! ShoppingCartTableCell
 
-        let item = self.shoppingCart.at(indexPath.row)
+        let item = self.shoppingCart.items[indexPath.row]
         cell.setCartItem(item, row: indexPath.row, delegate: self)
 
         return cell
@@ -358,9 +353,9 @@ extension ShoppingCartViewController: UITableViewDelegate, UITableViewDataSource
 
     // call tableView.deleteRowsAtIndexPaths() inside a CATransaction block so that we can reload the tableview afterwards
     func deleteRow(_ row: Int) {
-        if let product = self.shoppingCart.product(at: row) {
-            self.delegate.track(.deletedFromCart(product.sku))
-        }
+        let item = self.shoppingCart.items[row]
+        let product = item.product
+        self.delegate.track(.deletedFromCart(product.sku))
 
         self.shoppingCart.remove(at: row)
         let indexPath = IndexPath(row: row, section: 0)
@@ -370,7 +365,7 @@ extension ShoppingCartViewController: UITableViewDelegate, UITableViewDataSource
         CATransaction.setCompletionBlock {
             self.updateView(reload: false)
         }
-        
+
         CATransaction.commit()
     }
 

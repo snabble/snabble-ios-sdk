@@ -310,7 +310,7 @@ public struct Flags: Decodable {
     }
 }
 
-public enum RoundingMode: String, Decodable {
+public enum RoundingMode: String, Codable {
     /// always round up
     case up
     /// always round down
@@ -327,6 +327,10 @@ public enum RoundingMode: String, Decodable {
         case .commercial: return .plain
         }
     }
+}
+
+extension RoundingMode: UnknownCaseRepresentable {
+    static let unknownCase = RoundingMode.up
 }
 
 // MARK: - shop data

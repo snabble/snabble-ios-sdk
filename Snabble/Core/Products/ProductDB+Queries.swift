@@ -237,7 +237,7 @@ extension ProductDB {
                         basePrice: priceRow["basePrice"],
                         listPrice: priceRow["listPrice"],
                         discountedPrice: priceRow["discountedPrice"],
-                        type: ProductType(rawValue: row["weighing"]) ?? .singleItem,
+                        type: ProductType(rawValue: row["weighing"]),
                         codes: codes,
                         depositSku: depositSku,
                         bundledSku: row["bundledSku"],

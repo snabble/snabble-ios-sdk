@@ -470,9 +470,9 @@ public struct CodeMatcher {
     private static var templates = [String: [String: CodeTemplate]]()
 
     static func addTemplate(_ projectId: String, _ id: String, _ template: String) {
-        print("add template \(projectId) \(id) \(template)")
+        // print("add template \(projectId) \(id) \(template)")
         guard let tmpl = CodeTemplate(id, template) else {
-            print("oops")
+            Log.warn("ignoring invalid template: \(id) \(template) for \(projectId)")
             return
         }
 
@@ -529,8 +529,8 @@ public struct CodeMatcher {
         }
     }
 
-    public static func createInstoreEan(_ templateId: String, _ code: String, _ data: Int, _ projectId: String) -> String? {
-        guard let template = CodeMatcher.templates[projectId]?[templateId] else {
+    public static func createInstoreEan(_ templateId: String, _ code: String, _ data: Int, _ projectId: String? = nil) -> String? {
+        guard let template = self.findTemplate(templateId, projectId) else {
             return nil
         }
 
@@ -560,8 +560,13 @@ public struct CodeMatcher {
         let ean = EAN13(String(result.prefix(7)) + embed)
         return ean?.code
     }
-}
 
-struct TemplateRegistry {
-
+    private static func findTemplate(_ templateId: String, _ projectId: String?) -> CodeTemplate? {
+        if let projectId = projectId {
+            return CodeMatcher.templates[projectId]?[templateId]
+        } else {
+            let matching = CodeMatcher.templates.values.flatMap { $0 }.filter { $0.key == templateId }
+            return matching.first?.value
+        }
+    }
 }

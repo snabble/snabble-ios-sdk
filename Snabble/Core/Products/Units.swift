@@ -4,7 +4,7 @@
 //  Copyright © 2018 snabble. All rights reserved.
 //
 
-public enum Dimension: String {
+public enum Dimension {
     case volume
     case capacity
     case area
@@ -94,7 +94,7 @@ public enum Units: String, Codable, Equatable {
 }
 
 extension Units {
-    var display: String {
+    public var display: String {
         switch self {
         case .squareMeter: return "m²"
         case .squareCentimeter: return "cm²"

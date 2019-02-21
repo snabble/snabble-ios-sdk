@@ -84,13 +84,15 @@ final class EmbeddedCodesCheckoutViewController: UIViewController {
             UIScreen.main.brightness = 0.5
         }
 
-        let total = PriceFormatter.format(self.cart.totalPrice)
+        let formatter = PriceFormatter(SnabbleUI.project)
+        let total = formatter.format(self.cart.total ?? 0)
+        
         self.totalPriceLabel.text = "Snabble.QRCode.total".localized() + "\(total)"
         let explanation = self.codes.count > 1 ? "Snabble.QRCode.showTheseCodes" : "Snabble.QRCode.showThisCode"
         self.explanation1.text = explanation.localized()
         self.explanation2.text = "Snabble.QRCode.priceMayDiffer".localized()
 
-        if !self.cart.canCalculateTotal {
+        if self.cart.total == nil {
             self.totalPriceLabel.isHidden = true
             self.explanation2.isHidden = true
         }
@@ -114,13 +116,8 @@ final class EmbeddedCodesCheckoutViewController: UIViewController {
 
     private func csvForQR() -> [String] {
         let lines: [String] = self.cart.items.reduce(into: [], { result, item in
-            if item.product.type == .userMustWeigh {
-                if let ean = self.getEanFromTemplate(for: item) {
-                    result.append("1;\(ean)")
-                }
-            } else {
-                result.append("\(item.quantity);\(item.scannedCode)")
-            }
+            let qrCode = item.dataForQR
+            result.append("\(qrCode.quantity);\(qrCode.code)")
         })
 
         // divide into chunks if needed
@@ -138,8 +135,7 @@ final class EmbeddedCodesCheckoutViewController: UIViewController {
     }
 
     private func codesForQR() -> ([String],[String]) {
-        let project = SnabbleUI.project
-        let items = self.cart.items.sorted { $0.itemPrice(project) < $1.itemPrice(project) }
+        let items = self.cart.items.sorted { $0.price < $1.price }
 
         if self.qrCodeConfig.nextCodeWithCheck != nil {
             let regularItems = items.filter { return $0.product.saleRestriction == .none }
@@ -164,28 +160,10 @@ final class EmbeddedCodesCheckoutViewController: UIViewController {
 
     private func codesFor(_ items: [CartItem]) -> [String] {
         return items.reduce(into: [], { result, item in
-            if item.product.type == .userMustWeigh || item.product.referenceUnit == .piece {
-                if let ean = self.getEanFromTemplate(for: item) {
-                    result.append(ean)
-                }
-            } else {
-                result.append(contentsOf: Array(repeating: item.scannedCode, count: item.quantity))
-            }
+            let qrCode = item.dataForQR
+            let arr = Array(repeating: qrCode.code, count: qrCode.quantity)
+            result.append(contentsOf: arr)
         })
-    }
-
-    private func getEanFromTemplate(for item: CartItem) -> String? {
-        // find a ean13_instore template we can use
-        guard let code = item.product.codes.first(where: { $0.template.hasPrefix("ean13_instore") }) else {
-            return nil
-        }
-
-        var quantity = item.quantity
-        if let data = item.embeddedData {
-            quantity = data
-        }
-
-        return CodeMatcher.createInstoreEan(code.template, code.code, quantity, SnabbleUI.project.id)
     }
 
     private func setButtonTitle() {

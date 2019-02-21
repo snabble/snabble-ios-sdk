@@ -191,9 +191,9 @@ public final class ScannerViewController: UIViewController {
 
     // MARK: - scan confirmation views
     
-    private func showConfirmation(for scannedProduct: ScannedProduct) {
+    private func showConfirmation(for scannedProduct: ScannedProduct, _ scannedCode: String) {
         self.confirmationVisible = true
-        self.scanConfirmationView.present(scannedProduct, cart: self.shoppingCart)
+        self.scanConfirmationView.present(scannedProduct, scannedCode, cart: self.shoppingCart)
 
         self.scanningView.stopScanning()
         self.displayScanConfirmationView(hidden: false, setBottomOffset: self.productType != .userMustWeigh)
@@ -386,24 +386,24 @@ extension ScannerViewController {
             }
             self.tapticFeedback.notificationOccurred(.success)
 
-            self.delegate.track(.scanProduct(scannedProduct.code ?? scannedCode))
+            self.delegate.track(.scanProduct(scannedProduct.transmissionCode ?? scannedCode))
             self.productType = product.type
             self.lastScannedCode = ""
 
             if product.bundles.count > 0 {
-                self.showBundleSelection(for: scannedProduct)
+                self.showBundleSelection(for: scannedProduct, scannedCode)
             } else {
-                self.showConfirmation(for: scannedProduct)
+                self.showConfirmation(for: scannedProduct, scannedCode)
             }
         }
     }
 
-    private func showBundleSelection(for scannedProduct: ScannedProduct) {
+    private func showBundleSelection(for scannedProduct: ScannedProduct, _ scannedCode: String) {
         let alert = UIAlertController(title: nil, message: "Snabble.Scanner.BundleDialog.headline".localized(), preferredStyle: .actionSheet)
 
         let product = scannedProduct.product
         alert.addAction(UIAlertAction(title: product.name, style: .default) { action in
-            self.showConfirmation(for: scannedProduct)
+            self.showConfirmation(for: scannedProduct, scannedCode)
         })
 
         for bundle in product.bundles {
@@ -411,7 +411,7 @@ extension ScannerViewController {
                 let bundleCode = bundle.codes.first?.code
                 let transmissionCode = bundle.codes.first?.transmissionCode ?? bundleCode
                 let scannedBundle = ScannedProduct(bundle, transmissionCode)
-                self.showConfirmation(for: scannedBundle)
+                self.showConfirmation(for: scannedBundle, transmissionCode ?? scannedCode)
             })
         }
 
@@ -449,7 +449,7 @@ extension ScannerViewController {
             switch result {
             case .success(let lookupResult):
                 let parseResult = matches.first { $0.template.id == lookupResult.templateId }
-                let scannedCode = lookupResult.code ?? code
+                let scannedCode = lookupResult.transmissionCode ?? code
                 var newResult = ScannedProduct(lookupResult.product, scannedCode, lookupResult.templateId, parseResult?.embeddedData, lookupResult.encodingUnit, parseResult?.referencePrice)
 
                 if let decimalData = parseResult?.embeddedDecimal {
@@ -468,7 +468,7 @@ extension ScannerViewController {
                         }
                     }
 
-                    newResult = ScannedProduct(lookupResult.product, scannedCode, lookupResult.templateId, embeddedData, encodingUnit, newResult.referencePrice)
+                    newResult = ScannedProduct(lookupResult.product, scannedCode, lookupResult.templateId, embeddedData, encodingUnit, newResult.referencePriceOverride)
                 }
 
                 completion(newResult)
@@ -492,7 +492,7 @@ extension ScannerViewController {
         self.productProvider.productByScannableCodes(codes, self.shop.id) { result in
             switch result {
             case .success(let lookupResult):
-                let newResult = ScannedProduct(lookupResult.product, match.transmissionCode, "ean13_instore", match.embeddedData, .price)
+                let newResult = ScannedProduct(lookupResult.product, match.transmissionCode, "ean13_instore", nil, .price, priceOverride: match.embeddedData)
                 completion(newResult)
             case .failure:
                 completion(nil)
