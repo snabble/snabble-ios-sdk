@@ -31,20 +31,30 @@ public struct CartConfig {
     }
 }
 
+/// information about the scanned code that was used to add an item to the
+/// shopping cart.
 public struct ScannedCode: Codable {
-    let scannedCode: String     // der code vom scanner
-    let transmissionCode: String? // der transmissionCode des Produkts
-    let embeddedData: Int?      // daten aus dem gescannten code
-    let encodingUnit: Units?    // unit aus dem code falls anders als beim produkt
-    let priceOverride: Int?     // preis aus dem code falls vorhanden (zB 96er EDEKA)
-    let referencePriceOverride: Int? // referencePrice aus dem code falls vorhanden (zB Globus Wiegeartikel)
-    let templateId: String      // welches Template wurde benutzt
+    /// the raw code as seen by the scanner
+    public let scannedCode: String
+    /// the transmissionCode from the `scannableCodes` table
+    public let transmissionCode: String?
+    /// embedded data from the scanned code
+    public let embeddedData: Int?
+    /// encodingUnit from the `scannableCodes` table, overrides the product's if not nil
+    public let encodingUnit: Units?
+    /// price extracted from the code, e.g. for discount labels at EDEKA
+    public let priceOverride: Int?
+    /// referencePrice extracted from the code, e.g. at Globus
+    public let referencePriceOverride: Int?
+    /// template used to parse the code
+    public let templateId: String
 
-    var code: String {
+    /// the code we need to transmit to the backend
+    public var code: String {
         return self.transmissionCode ?? self.scannedCode
     }
 
-    init(scannedCode: String, transmissionCode: String? = nil, embeddedData: Int? = nil, encodingUnit: Units? = nil, priceOverride: Int? = nil, referencePriceOverride: Int? = nil, templateId: String) {
+    public init(scannedCode: String, transmissionCode: String? = nil, embeddedData: Int? = nil, encodingUnit: Units? = nil, priceOverride: Int? = nil, referencePriceOverride: Int? = nil, templateId: String) {
         self.scannedCode = scannedCode
         self.transmissionCode = transmissionCode
         self.embeddedData = embeddedData
@@ -55,25 +65,27 @@ public struct ScannedCode: Codable {
     }
 }
 
+/// return type for the `dataForQR` method -
+/// quantity and code sting to be embedded in a QR code
 public struct QRCodeData: Equatable {
-    let quantity: Int
-    let code: String
+    public let quantity: Int
+    public let code: String
 
-    init(_ quantity: Int, _ code: String) {
+    public init(_ quantity: Int, _ code: String) {
         self.quantity = quantity
         self.code = code
     }
 }
 
-public protocol SnabblePriceFormatter {
-    func format(_ price: Int) -> String
-}
-
 /// an entry in a shopping cart.
 public struct CartItem: Codable {
-    internal(set) public var quantity: Int  // quantity or weight
+    /// quantity or weight
+    internal(set) public var quantity: Int
+    /// the product
     public let product: Product
+    /// the scanned code
     public let scannedCode: ScannedCode
+    /// the rounding mode to use for price calculations
     public let roundingMode: RoundingMode
 
     public init(_ quantity: Int, _ product: Product, _ scannedCode: ScannedCode, _ roundingMode: RoundingMode) {
@@ -83,7 +95,7 @@ public struct CartItem: Codable {
         self.roundingMode = roundingMode
     }
 
-    // init with a freshly retrieved copy of `item.product`.
+    /// init with a freshly retrieved copy of `item.product`.
     init?(updating item: CartItem, _ provider: ProductProvider, _ shopId: String) {
         guard let product = provider.productBySku(item.product.sku, shopId) else {
             return nil
@@ -152,33 +164,28 @@ public struct CartItem: Codable {
         let unitPrice = Units.convert(price, from: encodingUnit, to: referenceUnit)
         let total = Decimal(quantity) * unitPrice
 
-        return self.round(total, self.roundingMode)
-    }
-
-    private func round(_ n: Decimal, _ roundingMode: RoundingMode) -> Int {
-        var mode: NSDecimalNumber.RoundingMode
-        switch roundingMode {
-        case .up: mode = .up
-        case .down: mode = .down
-        case .commercial: mode = .plain
-        }
-        let round = NSDecimalNumberHandler(roundingMode: mode,
+        let roundingHandler = NSDecimalNumberHandler(roundingMode: self.roundingMode.mode,
                                            scale: 0,
                                            raiseOnExactness: false,
                                            raiseOnOverflow: false,
                                            raiseOnUnderflow: false,
                                            raiseOnDivideByZero: false)
-        return (n as NSDecimalNumber).rounding(accordingToBehavior: round).intValue
+        return (total as NSDecimalNumber).rounding(accordingToBehavior: roundingHandler).intValue
     }
 
-    // string für den QR-Code. normalerweise scannedCode.code, oder die quantity eingebettet in ein Template (wann genau?!?)
+    /// data for embedding in a QR code
     public var dataForQR: QRCodeData {
         let cartItem = self.cartItem
         return QRCodeData(cartItem.amount, cartItem.scannedCode)
     }
 
-    // schöne preisanzeige für confirmation/cart zelle. Sowas wie "x 2,99€ = 5,98€" etc (quantity ist *nicht* enthalten)
-    public func priceDisplay(_ formatter: SnabblePriceFormatter) -> String {
+    /// formatted price display, e.g. for the confirmation dialog and the shopping cart table cell.
+    /// returns a String like `"x 2,99€ = 5,98€"`. NB: `quantity` is not part of the string!
+    ///
+    /// - Parameter formatter: the formatter to use
+    /// - Returns: the formatted price
+    /// - See Also: `quantityDisplay`
+    public func priceDisplay(_ formatter: PriceFormatter) -> String {
         let total = formatter.format(self.price)
 
         let showUnit = self.product.referenceUnit?.hasDimension == true || self.product.type == .userMustWeigh
@@ -188,7 +195,6 @@ public struct CartItem: Codable {
             let unit = self.product.referenceUnit?.display ?? ""
             return "× \(single)/\(unit) = \(total)"
         }
-
 
         if let deposit = self.product.deposit {
             let itemPrice = formatter.format(self.product.price)
@@ -205,11 +211,17 @@ public struct CartItem: Codable {
         }
     }
 
+    /// formatted quantity display, e.g. for the confirmation dialog and the shopping cart table cell.
+    /// returns a String like `42g`
+    ///
+    /// - Returns: the formatted price
+    /// - See Also: `priceDisplay`
     public func quantityDisplay() -> String {
         let symbol = self.encodingUnit?.display ?? ""
         return "\(self.effectiveQuantity)\(symbol)"
     }
 
+    /// the effective quantity of this cart item.
     public var effectiveQuantity: Int {
         if let embeddedData = self.scannedCode.embeddedData, embeddedData > 0 {
             if self.product.referenceUnit?.hasDimension == true || self.scannedCode.referencePriceOverride != nil {
@@ -220,6 +232,7 @@ public struct CartItem: Codable {
         return self.quantity
     }
 
+    /// get a copy of this data suitable for transferring to the backend
     var cartItem: BackendCartItem {
         var quantity = self.quantity
         var units: Int? = nil
