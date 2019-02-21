@@ -204,7 +204,7 @@ extension Project {
         sysctlbyname("hw.machine", &machine, &size, nil, 0)
         let hardwareString = String(cString: machine)
 
-        return appDescriptor + " " + osDescriptor + " (" + hardwareString + ")"
+        return appDescriptor + " " + osDescriptor + " (" + hardwareString + ") SDK/\(APIVersion.version)"
     }()
 
     /// perfom an API Request
