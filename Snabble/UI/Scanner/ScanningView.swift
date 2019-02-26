@@ -36,15 +36,22 @@ extension AVMetadataObject.ObjectType {
     }
 }
 
+/// custom barcode detectors need to conform to this protocol
 public protocol BarcodeDetector {
+    /// a scan formats are should be detected
     var scanFormats: [ScanFormat] { get set }
 
+    /// the AVCaptureOutput to use
     var captureOutput: AVCaptureOutput { get }
 
+    /// the ScanningViewDelegate
     var delegate: ScanningViewDelegate? { get set }
 
+    /// the UIView for camera preview. Use this for scale calculations
     var cameraView: UIView? { get set }
 
+    /// the UIView used to mark the detected code within the camera preview. Modify its frame
+    /// when a barcode is detected
     var indicatorView: UIView? { get set }
 }
 
