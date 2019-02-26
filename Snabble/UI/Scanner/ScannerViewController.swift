@@ -11,35 +11,6 @@ public protocol ScannerDelegate: AnalyticsDelegate, MessageDelegate {
     func closeScanningView()
 }
 
-extension ScanFormat {
-    var avType: AVMetadataObject.ObjectType {
-        switch self {
-        case .ean8: return .ean8
-        case .ean13: return .ean13
-        case .code128: return .code128
-        case .itf14: return .itf14
-        case .code39: return .code39
-        case .qr: return .qr
-        case .dataMatrix: return .dataMatrix
-        }
-    }
-}
-
-extension AVMetadataObject.ObjectType {
-    var scanFormat: ScanFormat? {
-        switch self {
-        case .ean8: return .ean8
-        case .ean13: return .ean13
-        case .code128: return .code128
-        case .itf14: return .itf14
-        case .code39: return .code39
-        case .qr: return .qr
-        case .dataMatrix: return .dataMatrix
-        default: return nil
-        }
-    }
-}
-
 public final class ScannerViewController: UIViewController {
 
     @IBOutlet private weak var spinner: UIActivityIndicatorView!
@@ -63,20 +34,22 @@ public final class ScannerViewController: UIViewController {
     private let visibleConfirmationOffset: CGFloat = -16
 
     private var keyboardObserver: KeyboardObserver!
-    private var objectTypes = [AVMetadataObject.ObjectType]()
+    private var scanFormats = [ScanFormat]()
     private weak var delegate: ScannerDelegate!
     private var timer: Timer?
+    private var barcodeDetector: BarcodeDetector?
 
-    public init(_ cart: ShoppingCart, _ shop: Shop, delegate: ScannerDelegate) {
+    public init(_ cart: ShoppingCart, _ shop: Shop, delegate: ScannerDelegate, barcodeDetector: BarcodeDetector?) {
         let project = SnabbleUI.project
         self.productProvider = SnabbleAPI.productProvider(for: project)
         self.shoppingCart = cart
         self.shop = shop
-        self.objectTypes = project.scanFormats.map { $0.avType }
+        self.scanFormats = project.scanFormats
 
         super.init(nibName: nil, bundle: Snabble.bundle)
 
         self.delegate = delegate
+        self.barcodeDetector = barcodeDetector
 
         self.title = "Snabble.Scanner.title".localized()
         self.tabBarItem.image = UIImage.fromBundle("icon-scan")
@@ -135,19 +108,7 @@ public final class ScannerViewController: UIViewController {
         self.infoView.bottomAnchor.constraint(equalTo: self.scanningView.bottomAnchor, constant: -16).isActive = true
         self.infoView.isHidden = self.firstTimeInfoShown
 
-        var scannerConfig = ScanningViewConfig()
-        
-        scannerConfig.torchButtonTitle = "Snabble.Scanner.torchButton".localized()
-        scannerConfig.torchButtonImage = UIImage.fromBundle("icon-light")?.recolored(with: .white)
-        scannerConfig.enterButtonTitle = "Snabble.Scanner.enterCodeButton".localized()
-        scannerConfig.enterButtonImage = UIImage.fromBundle("icon-entercode")?.recolored(with: .white)
-        scannerConfig.textColor = .white
-        scannerConfig.metadataObjectTypes = self.objectTypes
-        scannerConfig.reticleCornerRadius = 3
-
-        scannerConfig.delegate = self
-
-        self.scanningView.setup(with: scannerConfig)
+        self.scanningView.setup(with: self.scannerConfig())
 
         self.scanConfirmationView.delegate = self
     }
@@ -173,14 +134,35 @@ public final class ScannerViewController: UIViewController {
         self.keyboardObserver = nil
     }
 
+    private func scannerConfig() -> ScanningViewConfig {
+        var config = ScanningViewConfig()
+
+        config.torchButtonTitle = "Snabble.Scanner.torchButton".localized()
+        config.torchButtonImage = UIImage.fromBundle("icon-light")?.recolored(with: .white)
+        config.enterButtonTitle = "Snabble.Scanner.enterCodeButton".localized()
+        config.enterButtonImage = UIImage.fromBundle("icon-entercode")?.recolored(with: .white)
+        config.textColor = .white
+        config.scanFormats = self.scanFormats
+        config.reticleCornerRadius = 3
+
+        config.barcodeDetector = self.barcodeDetector
+
+        self.barcodeDetector?.scanFormats = self.scanFormats
+        if self.barcodeDetector != nil && self.barcodeDetector?.delegate == nil {
+            self.barcodeDetector?.delegate = self
+        }
+        config.delegate = self
+        return config
+    }
+
     /// reset `shoppingCart` when switching between projects
     public func reset(_ cart: ShoppingCart, _ shop: Shop) {
         let project = SnabbleUI.project
         self.productProvider = SnabbleAPI.productProvider(for: project)
         self.shoppingCart = cart
         self.shop = shop
-        self.objectTypes = project.scanFormats.map { $0.avType }
-        self.scanningView?.setObjectTypes(self.objectTypes)
+        self.scanFormats = project.scanFormats
+        self.scanningView?.setScanFormats(self.scanFormats)
 
         // avoid camera permission query if this is called before we've ever been on-screen
         if self.scanningView != nil {
@@ -328,7 +310,7 @@ extension ScannerViewController: ScanningViewDelegate {
         self.scanningView.stopScanning()
     }
     
-    public func scannedCode(_ code: String, _ type: AVMetadataObject.ObjectType) {
+    public func scannedCode(_ code: String, _ format: ScanFormat) {
         if code == self.lastScannedCode {
             return
         }

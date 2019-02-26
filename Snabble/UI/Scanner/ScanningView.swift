@@ -7,13 +7,54 @@
 import UIKit
 import AVFoundation
 
+extension ScanFormat {
+    var avType: AVMetadataObject.ObjectType {
+        switch self {
+        case .ean8: return .ean8
+        case .ean13: return .ean13
+        case .code128: return .code128
+        case .code39: return .code39
+        case .itf14: return .itf14
+        case .qr: return .qr
+        case .dataMatrix: return .dataMatrix
+        }
+    }
+}
+
+extension AVMetadataObject.ObjectType {
+    var scanFormat: ScanFormat? {
+        switch self {
+        case .ean13: return .ean13
+        case .ean8: return .ean8
+        case .code128: return .code128
+        case .code39: return .code39
+        case .itf14: return .itf14
+        case .qr: return .qr
+        case .dataMatrix: return .dataMatrix
+        default: return nil
+        }
+    }
+}
+
+public protocol BarcodeDetector {
+    var scanFormats: [ScanFormat] { get set }
+
+    var captureOutput: AVCaptureOutput { get }
+
+    var delegate: ScanningViewDelegate? { get set }
+
+    var cameraView: UIView? { get set }
+
+    var indicatorView: UIView? { get set }
+}
+
 public protocol ScanningViewDelegate: class {
 
     /// called when the ScanningView needs to close itself
     func closeScanningView()
 
     /// callback for a successful scan
-    func scannedCode(_ code: String, _ type: AVMetadataObject.ObjectType)
+    func scannedCode(_ code: String, _ format: ScanFormat)
 
     /// called to request camera permission
     func requestCameraPermission(currentStatus: AVAuthorizationStatus)
@@ -63,10 +104,13 @@ public struct ScanningViewConfig {
     public var bottomBarHidden = false
 
     /// which object types should be recognized. Default: EAN-13/UPC-A
-    public var metadataObjectTypes = [ AVMetadataObject.ObjectType.ean13 ]
+    public var scanFormats = [ ScanFormat.ean13 ]
 
     /// delegate object, the ScanningView keeps a weak reference to this
     public var delegate: ScanningViewDelegate?
+
+    /// if nil, use AVFoundation's built-in barcode detection, can be set to a host app's implementation eg. using Firebase/MLKit
+    public var barcodeDetector: BarcodeDetector?
 
     public init() {}
 }
@@ -91,13 +135,14 @@ public final class ScanningView: DesignableView {
     @objc private var camera: AVCaptureDevice? = AVCaptureDevice.default(for: AVMediaType.video)
 
     weak var delegate: ScanningViewDelegate!
-    var metadataObjectTypes: [AVMetadataObject.ObjectType]?
+    var scanFormats = [ScanFormat]()
 
     var captureSession: AVCaptureSession?
     var previewLayer: AVCaptureVideoPreviewLayer!
 
     var serialQueue = DispatchQueue(label: "snabble.scannerQueue")
-    var metadataOutput = AVCaptureMetadataOutput()
+    var metadataOutput: AVCaptureMetadataOutput?
+    var barcodeDetector: BarcodeDetector?
 
     var dimmingColor: UIColor!
     var reticleBorderLayer: CAShapeLayer!   // dims the preview, leaving a hole for the reticle
@@ -162,8 +207,12 @@ public final class ScanningView: DesignableView {
         self.torchIcon.image = config.torchButtonImage
         self.torchLabel.textColor = config.textColor
 
+        self.barcodeDetector = config.barcodeDetector
+        self.barcodeDetector?.cameraView = self.view
+        self.barcodeDetector?.indicatorView = self.frameView
+        
         self.delegate = config.delegate
-        self.metadataObjectTypes = config.metadataObjectTypes
+        self.scanFormats = config.scanFormats
 
         self.bottomBarHidden = config.bottomBarHidden
 
@@ -214,8 +263,9 @@ public final class ScanningView: DesignableView {
         return self.captureSession != nil
     }
 
-    public func setObjectTypes(_ objects: [AVMetadataObject.ObjectType]) {
-        self.metadataOutput.metadataObjectTypes = objects
+    public func setScanFormats(_ formats: [ScanFormat]) {
+        self.barcodeDetector?.scanFormats = formats
+        self.metadataOutput?.metadataObjectTypes = formats.map { $0.avType }
     }
 
     @objc func enterButtonTapped(_ button: UIButton) {
@@ -308,9 +358,13 @@ public final class ScanningView: DesignableView {
             self.setNeedsLayout()
         } else {
             let rect = self.reticle.frame
-            if let layer = self.previewLayer, self.metadataOutput.rectOfInterest.origin.x == 0 {
-                let visibleRect = layer.metadataOutputRectConverted(fromLayerRect: rect)
-                self.metadataOutput.rectOfInterest = visibleRect
+            if let metadataOutput = self.metadataOutput {
+                if let layer = self.previewLayer, metadataOutput.rectOfInterest.origin.x == 0 {
+                    let visibleRect = layer.metadataOutputRectConverted(fromLayerRect: rect)
+                    metadataOutput.rectOfInterest = visibleRect
+                    self.startCaptureSession()
+                }
+            } else {
                 self.startCaptureSession()
             }
         }
@@ -335,20 +389,27 @@ public final class ScanningView: DesignableView {
                 return
             }
 
-            if captureSession.canAddOutput(self.metadataOutput) {
-                captureSession.addOutput(self.metadataOutput)
-
-                self.metadataOutput.setMetadataObjectsDelegate(self, queue: DispatchQueue.main)
-                self.metadataOutput.metadataObjectTypes = self.metadataObjectTypes
-                self.previewLayer = AVCaptureVideoPreviewLayer(session: captureSession)
-                self.previewLayer.frame = self.view.frame
-                self.previewLayer.videoGravity = AVLayerVideoGravity.resizeAspectFill
-
-                self.previewLayer.zPosition = -1
-                self.view.layer.addSublayer(self.previewLayer)
-
-                self.captureSession = captureSession
+            let captureOutput: AVCaptureOutput
+            if let detector = self.barcodeDetector {
+                captureOutput = detector.captureOutput
+                captureSession.addOutput(captureOutput)
+            } else {
+                let metadataOutput = AVCaptureMetadataOutput()
+                captureSession.addOutput(metadataOutput)
+                metadataOutput.setMetadataObjectsDelegate(self, queue: DispatchQueue.main)
+                metadataOutput.metadataObjectTypes = self.scanFormats.map { $0.avType }
+                captureOutput = metadataOutput
+                self.metadataOutput = metadataOutput
             }
+
+            self.previewLayer = AVCaptureVideoPreviewLayer(session: captureSession)
+            self.previewLayer.frame = self.view.frame
+            self.previewLayer.videoGravity = AVLayerVideoGravity.resizeAspectFill
+
+            self.previewLayer.zPosition = -1
+            self.view.layer.addSublayer(self.previewLayer)
+
+            self.captureSession = captureSession
         }
     }
 }
@@ -359,7 +420,8 @@ extension ScanningView: AVCaptureMetadataOutputObjectsDelegate {
         guard
             let metadataObject = metadataObjects.first,
             let codeObject = metadataObject as? AVMetadataMachineReadableCodeObject,
-            let code = codeObject.stringValue
+            let code = codeObject.stringValue,
+            let format = codeObject.type.scanFormat
         else {
             return
         }
@@ -386,7 +448,7 @@ extension ScanningView: AVCaptureMetadataOutputObjectsDelegate {
             }
         }
 
-        self.delegate.scannedCode(code, codeObject.type)
+        self.delegate.scannedCode(code, format)
     }
 
 }

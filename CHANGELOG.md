@@ -1,8 +1,12 @@
 ## snabble iOS SDK Changelog
 
+# v0.9.2
+
+* `ScanningView` now supports using a custom barcode detector, e.g. one based on Firebase/MLKit. Such a detector needs to conform to the `BarcodeDetector` protocol, and be passed to the scanning view as part of its configuration, namely in the `barcodeDetector` property. In order to de-couple the detector from `AVFoundation`, the various `objectTypes` properties have been renamed to `scanFormats` and are now arrays of `ScanFormat`, an enum that represents the barcode formats supported by the SDK, with the same case names as are used in `AVMetadataObject.ObjectType`.
+
 # v0.9.1
 
-* refactored a lot of common code from `ScanConfirmationView` and `ShoppingCartTableCell` into the `ShoppingCart` and `CartItem` structs. This is mostly invisible for users of the UI components, but has a bunch of breaking changes for the Core API. In particular, the static methods of `PriceFormatter` are gone
+* refactored a lot of common code from `ScanConfirmationView` and `ShoppingCartTableCell` into the `ShoppingCart` and `CartItem` structs. This is mostly invisible for users of the UI components, but has a bunch of breaking changes for the Core API. In particular, the static methods of `PriceFormatter` are gone.
 
 # v0.9.0
 
