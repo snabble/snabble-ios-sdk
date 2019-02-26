@@ -32,7 +32,7 @@ public struct Metadata: Decodable {
         self.flags = try container.decode(Flags.self, forKey: .flags)
         self.projects = try container.decode([Project].self, forKey: .projects)
         let certs = try container.decodeIfPresent([GatewayCertificate].self, forKey: .gatewayCertificates)
-        self.gatewayCertificates = certs == nil ? [] : certs!
+        self.gatewayCertificates = certs ?? []
         self.links = try container.decode(MetadataLinks.self, forKey: .links)
     }
 }
