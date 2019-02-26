@@ -39,7 +39,7 @@ public final class ScannerViewController: UIViewController {
     private var timer: Timer?
     private var barcodeDetector: BarcodeDetector?
 
-    public init(_ cart: ShoppingCart, _ shop: Shop, delegate: ScannerDelegate, barcodeDetector: BarcodeDetector?) {
+    public init(_ cart: ShoppingCart, _ shop: Shop, delegate: ScannerDelegate, barcodeDetector: BarcodeDetector? = nil) {
         let project = SnabbleUI.project
         self.productProvider = SnabbleAPI.productProvider(for: project)
         self.shoppingCart = cart
