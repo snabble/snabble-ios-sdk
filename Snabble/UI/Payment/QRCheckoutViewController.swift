@@ -10,6 +10,7 @@ final class QRCheckoutViewController: UIViewController {
 
     @IBOutlet weak var qrCodeView: UIImageView!
     @IBOutlet weak var explanation1: UILabel!
+    @IBOutlet weak var explanation2: UILabel!
     @IBOutlet weak var totalPriceLabel: UILabel!
     @IBOutlet weak var qrCodeWidth: NSLayoutConstraint!
     @IBOutlet weak var checkoutIdLabel: UILabel!
@@ -56,6 +57,7 @@ final class QRCheckoutViewController: UIViewController {
         let total = formatter.format(self.process.checkoutInfo.price.price)
         self.totalPriceLabel.text = "Snabble.QRCode.total".localized() + "\(total)"
         self.explanation1.text = "Snabble.QRCode.showThisCode".localized()
+        self.explanation2.text = "Snabble.QRCode.priceMayDiffer".localized()
 
         let qrCodeContent = self.process.paymentInformation?.qrCodeContent ?? "n/a"
         // Log.debug("QR code: \(qrCodeContent)")

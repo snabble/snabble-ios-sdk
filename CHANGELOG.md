@@ -1,5 +1,9 @@
 ## snabble iOS SDK Changelog
 
+# v0.9.3
+
+* `QRCheckoutViewController` now displays the same "price may differ" message that is already present on `EmbeddedCodesCheckoutViewController` (localization key `Snabble.QRCode.priceMayDiffer`)
+
 # v0.9.2
 
 * `ScanningView` now supports using a custom barcode detector, e.g. one based on Firebase/MLKit. Such a detector needs to conform to the `BarcodeDetector` protocol, and be passed to the scanning view as part of its configuration, namely in the `barcodeDetector` property. In order to de-couple the detector from `AVFoundation`, the various `objectTypes` properties have been renamed to `scanFormats` and are now arrays of `ScanFormat`, an enum that represents the barcode formats supported by the SDK, with the same case names as are used in `AVMetadataObject.ObjectType`.
