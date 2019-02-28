@@ -85,9 +85,15 @@ final class EmbeddedCodesCheckoutViewController: UIViewController {
         }
 
         let formatter = PriceFormatter(SnabbleUI.project)
-        let total = formatter.format(self.cart.total ?? 0)
+
+        let formattedTotal: String
+        if let total = self.cart.backendCartInfo?.totalPrice {
+            formattedTotal = formatter.format(total) + " ✓"
+        } else {
+            formattedTotal = formatter.format(self.cart.total ?? 0)
+        }
         
-        self.totalPriceLabel.text = "Snabble.QRCode.total".localized() + "\(total)"
+        self.totalPriceLabel.text = "Snabble.QRCode.total".localized() + "\(formattedTotal)"
         let explanation = self.codes.count > 1 ? "Snabble.QRCode.showTheseCodes" : "Snabble.QRCode.showThisCode"
         self.explanation1.text = explanation.localized()
         self.explanation2.text = "Snabble.QRCode.priceMayDiffer".localized()
