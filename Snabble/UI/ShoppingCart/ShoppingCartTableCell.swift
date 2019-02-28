@@ -31,6 +31,7 @@ final class ShoppingCartTableCell: UITableViewCell {
     @IBOutlet weak var spinner: UIActivityIndicatorView!
     private var quantity = 0
     private var item: CartItem!
+    private var lineItems: [CheckoutInfo.LineItem]?
 
     private weak var delegate: ShoppingCartTableDelegate!
     private var task: URLSessionDataTask?
@@ -65,11 +66,15 @@ final class ShoppingCartTableCell: UITableViewCell {
         self.productImage.image = nil
         self.imageWidth.constant = 44
         self.textMargin.constant = 8
+
+        self.item = nil
+        self.lineItems = nil
     }
 
-    func setCartItem(_ item: CartItem, row: Int, delegate: ShoppingCartTableDelegate) {
+    func setCartItem(_ item: CartItem, _ lineItems: [CheckoutInfo.LineItem], row: Int, delegate: ShoppingCartTableDelegate) {
         self.delegate = delegate
         self.item = item
+        self.lineItems = lineItems
         self.quantity = item.quantity
 
         let product = item.product
@@ -120,6 +125,7 @@ final class ShoppingCartTableCell: UITableViewCell {
         self.delegate.cart.setQuantity(self.quantity, at: row)
         self.delegate.updateTotals()
 
+        self.lineItems = nil
         self.showQuantity()
     }
 
@@ -132,7 +138,17 @@ final class ShoppingCartTableCell: UITableViewCell {
         self.quantityLabel.text = "\(self.item.effectiveQuantity)\(gram)"
 
         let formatter = PriceFormatter(SnabbleUI.project)
-        self.priceLabel.text = self.item.priceDisplay(formatter)
+
+        if let lineItem = self.lineItems?.first {
+            if lineItem.totalPrice != self.item.price {
+                let formattedPrice = formatter.format(lineItem.totalPrice)
+                self.priceLabel.text = formattedPrice + " ✓"
+            } else {
+                self.priceLabel.text = self.item.priceDisplay(formatter) + " ✓"
+            }
+        } else {
+            self.priceLabel.text = self.item.priceDisplay(formatter)
+        }
     }
 
     private func loadImage() {

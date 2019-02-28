@@ -290,12 +290,17 @@ public struct CartItem: Codable {
 
 }
 
+public struct BackendCartInfo: Codable {
+    public let lineItems: [CheckoutInfo.LineItem]
+    public let totalPrice: Int
+}
+
 /// a ShoppingCart is a collection of CartItem objects
 final public class ShoppingCart {
     private(set) public var items = [CartItem]()
     private(set) public var session = ""
     private(set) public var lastSaved: Date?
-    fileprivate var lineItems: [CheckoutInfo.LineItem]?
+    private(set) public var backendCartInfo: BackendCartInfo?
 
     /// this is intended mainly for the EmbeddedCodesCheckout - use this to append additional codes
     /// (e.g. special "QR code purchase" marker codes) to the list of scanned codes of this cart
@@ -311,7 +316,7 @@ final public class ShoppingCart {
         self.config = config
         let storage = self.loadCart()
         self.items = storage.items
-        self.lineItems = storage.lineItems
+        self.backendCartInfo = storage.backendCartInfo
         self.session = storage.session
     }
 
@@ -431,21 +436,21 @@ final public class ShoppingCart {
     }
 }
 
-struct CartStorage: Codable {
+fileprivate struct CartStorage: Codable {
     let items: [CartItem]
-    let lineItems: [CheckoutInfo.LineItem]?
+    let backendCartInfo: BackendCartInfo?
     let session: String
     var lastSaved: Date?
 
     init() {
         self.items = []
-        self.lineItems = nil
+        self.backendCartInfo = nil
         self.session = ""
     }
 
     init(_ shoppingCart: ShoppingCart) {
         self.items = shoppingCart.items
-        self.lineItems = shoppingCart.lineItems
+        self.backendCartInfo = shoppingCart.backendCartInfo
         self.session = shoppingCart.session
         self.lastSaved = shoppingCart.lastSaved
     }
@@ -460,7 +465,11 @@ extension ShoppingCart {
     }
 
     /// persist this shopping cart to disk
-    private func save() {
+    fileprivate func save(postEvent: Bool = true) {
+        if postEvent {
+            self.backendCartInfo = nil
+        }
+        
         do {
             let fileManager = FileManager.default
             if !fileManager.fileExists(atPath: self.config.directory) {
@@ -479,9 +488,11 @@ extension ShoppingCart {
             Log.error("error saving cart \(self.config.project.id): \(error)")
         }
 
-        timer?.invalidate()
-        timer = Timer.scheduledTimer(withTimeInterval: 3, repeats: false) { timer in
-            CartEvent.cart(self)
+        if postEvent {
+            self.timer?.invalidate()
+            self.timer = Timer.scheduledTimer(withTimeInterval: 3, repeats: false) { timer in
+                CartEvent.cart(self)
+            }
         }
     }
 
@@ -522,13 +533,33 @@ extension ShoppingCart {
 
 }
 
+// MARK: backend connection
 extension ShoppingCart {
-
     func createCart() -> Cart {
         let customerInfo = Cart.CustomerInfo(loyaltyCard: self.loyaltyCard)
         return Cart(session: self.session, shopID: self.shopId, customer: customerInfo, items: self.backendItems())
     }
 
+    func createCheckoutInfo(userInitiated: Bool = false, completion: @escaping (Bool) -> ()) {
+        self.createCheckoutInfo(self.config.project, timeout: 2) { result in
+            switch result {
+            case .failure(let error):
+                Log.warn("createCheckoutInfo failed: \(error)")
+                self.backendCartInfo = nil
+                completion(false)
+            case .success(let info):
+                let session = info.checkoutInfo.session
+                Log.info("createCheckoutInfo succeeded: \(session)")
+                let totalPrice = info.checkoutInfo.price.price
+                self.backendCartInfo = BackendCartInfo(lineItems: info.checkoutInfo.lineItems, totalPrice: totalPrice)
+                self.save(postEvent: false)
+                completion(true)
+            }
+            if !userInitiated {
+                NotificationCenter.default.post(name: .snabbleCartUpdated, object: nil)
+            }
+        }
+    }
 }
 
 // MARK: send events
@@ -544,17 +575,7 @@ struct CartEvent {
     }
 
     static func cart(_ cart: ShoppingCart) {
-        cart.createCheckoutInfo(SnabbleUI.project, timeout: 2) { result in
-            switch result {
-            case .failure(let error):
-                Log.warn("createCheckoutInfo failed: \(error)")
-            case .success(let info):
-                let session = info.checkoutInfo.session
-                Log.info("createCheckoutInfo succeeded: \(session)")
-                cart.lineItems = info.checkoutInfo.lineItems
-            }
-        }
-
+        cart.createCheckoutInfo(completion: {_ in})
         let event = AppEvent(cart)
         event.post()
     }

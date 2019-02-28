@@ -120,6 +120,11 @@ public struct CheckoutInfo: Decodable {
         public let priceOrigin: String
         public let taxRate: String
         public let scannedCode: String
+
+        enum CodingKeys: String, CodingKey {
+            case cartItemId = "cartItemID"
+            case sku, name, amount, price, totalPrice, priceOrigin, taxRate, scannedCode
+        }
     }
 
     public struct Price: Decodable {
