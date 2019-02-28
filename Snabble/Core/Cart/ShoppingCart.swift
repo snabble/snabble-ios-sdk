@@ -556,7 +556,7 @@ extension ShoppingCart {
                 completion(true)
             }
             if !userInitiated {
-                NotificationCenter.default.post(name: .snabbleCartUpdated, object: nil)
+                NotificationCenter.default.post(name: .snabbleCartUpdated, object: self)
             }
         }
     }
