@@ -533,6 +533,10 @@ extension ShoppingCart {
 
 }
 
+public extension Notification.Name {
+    static let snabbleCartUpdated = Notification.Name("snabbleCartUpdated")
+}
+
 // MARK: backend connection
 extension ShoppingCart {
     func createCart() -> Cart {
