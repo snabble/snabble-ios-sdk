@@ -103,41 +103,47 @@ extension PaymentState: UnknownCaseRepresentable {
 
 // CheckoutInfo
 public struct CheckoutInfo: Decodable {
-    public let price: Price
+    public let clientID, session, currency, project: String
+    public let createdAt, shopID: String
     /// available payment methods, as delivered by the API
     public let availableMethods: [String]
-    public let shopID: String
-    public let project: String
-    public let session: String
+    public let lineItems: [LineItem]
+    public let price: Price
 
-    // we dont need line items right now, so we just ignore them
-    // public let lineItems: [LineItem]
-    // public struct LineItem: Decodable {
-    //   public let totalPrice: Int
-    //   public let amount: Int
-    //   public let name: String
-    //   public let price: Int
-    //   public let taxRate: Int
-    //   public let sku: String
-    // }
+    public struct LineItem: Codable {
+        public let cartItemId: String?
+        public let sku: String
+        public let name: String
+        public let amount: Int
+        public let price: Int
+        public let totalPrice: Int
+        public let priceOrigin: String
+        public let taxRate: String
+        public let scannedCode: String
+    }
 
     public struct Price: Decodable {
-        // we don't need tax info right now, so we just ignore it
-        // public let tax: Tax
+        public let tax: Tax
+        public let taxPre: Tax
+        public let taxNet: Tax
         public let netPrice: Int
         public let price: Int
 
-        // public struct Tax: Decodable {
-        // public let tax0, tax7, tax19: Int?
-        //
-        //   public enum CodingKeys: String, CodingKey {
-        //     case tax0 = "0"
-        //     case tax7 = "7"
-        //     case tax19 = "19"
-        //   }
-        // }
+        public struct Tax: Decodable {
+            public let tax0, tax7, tax19: Int?
+
+            public enum CodingKeys: String, CodingKey {
+                case tax0 = "0"
+                case tax7 = "7"
+                case tax19 = "19"
+            }
+        }
 
         fileprivate init() {
+            let tax0 = Tax.init(tax0: 0, tax7: 0, tax19: 0)
+            self.tax = tax0
+            self.taxPre = tax0
+            self.taxNet = tax0
             self.netPrice = 0
             self.price = 0
         }
@@ -149,11 +155,15 @@ public struct CheckoutInfo: Decodable {
     }
 
     fileprivate init() {
+        self.clientID = ""
+        self.currency = ""
+        self.createdAt = ""
         self.price = Price()
         self.availableMethods = [ RawPaymentMethod.encodedCodes.rawValue ]
         self.shopID = ""
         self.project = ""
         self.session = ""
+        self.lineItems = []
     }
 }
 
@@ -191,6 +201,7 @@ struct Cart: Encodable {
     let items: [Item]
 
     struct Item: Encodable {
+        let id: String
         let sku: String
         let amount: Int
         let scannedCode: String

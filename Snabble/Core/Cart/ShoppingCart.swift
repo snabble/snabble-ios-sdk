@@ -87,12 +87,15 @@ public struct CartItem: Codable {
     public let scannedCode: ScannedCode
     /// the rounding mode to use for price calculations
     public let roundingMode: RoundingMode
+    /// uuid of this item
+    public let uuid: String
 
     public init(_ quantity: Int, _ product: Product, _ scannedCode: ScannedCode, _ roundingMode: RoundingMode) {
         self.quantity = quantity
         self.product = product
         self.scannedCode = scannedCode
         self.roundingMode = roundingMode
+        self.uuid = UUID().uuidString
     }
 
     /// init with a freshly retrieved copy of `item.product`.
@@ -105,6 +108,7 @@ public struct CartItem: Codable {
         self.quantity = item.quantity
         self.scannedCode = item.scannedCode
         self.roundingMode = item.roundingMode
+        self.uuid = item.uuid
     }
 
     /// can this entry be merged with another for the same SKU?
@@ -274,7 +278,8 @@ public struct CartItem: Codable {
             price = self.price
         }
 
-        return BackendCartItem(sku: self.product.sku,
+        return BackendCartItem(id: self.uuid,
+                               sku: self.product.sku,
                                amount: quantity,
                                scannedCode: code,
                                price: price,
@@ -290,6 +295,7 @@ final public class ShoppingCart {
     private(set) public var items = [CartItem]()
     private(set) public var session = ""
     private(set) public var lastSaved: Date?
+    fileprivate var lineItems: [CheckoutInfo.LineItem]?
 
     /// this is intended mainly for the EmbeddedCodesCheckout - use this to append additional codes
     /// (e.g. special "QR code purchase" marker codes) to the list of scanned codes of this cart
@@ -305,6 +311,7 @@ final public class ShoppingCart {
         self.config = config
         let storage = self.loadCart()
         self.items = storage.items
+        self.lineItems = storage.lineItems
         self.session = storage.session
     }
 
@@ -426,16 +433,19 @@ final public class ShoppingCart {
 
 struct CartStorage: Codable {
     let items: [CartItem]
+    let lineItems: [CheckoutInfo.LineItem]?
     let session: String
     var lastSaved: Date?
 
     init() {
         self.items = []
+        self.lineItems = nil
         self.session = ""
     }
 
     init(_ shoppingCart: ShoppingCart) {
         self.items = shoppingCart.items
+        self.lineItems = shoppingCart.lineItems
         self.session = shoppingCart.session
         self.lastSaved = shoppingCart.lastSaved
     }
@@ -534,6 +544,17 @@ struct CartEvent {
     }
 
     static func cart(_ cart: ShoppingCart) {
+        cart.createCheckoutInfo(SnabbleUI.project, timeout: 2) { result in
+            switch result {
+            case .failure(let error):
+                Log.warn("createCheckoutInfo failed: \(error)")
+            case .success(let info):
+                let session = info.checkoutInfo.session
+                Log.info("createCheckoutInfo succeeded: \(session)")
+                cart.lineItems = info.checkoutInfo.lineItems
+            }
+        }
+
         let event = AppEvent(cart)
         event.post()
     }
