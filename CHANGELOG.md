@@ -1,5 +1,9 @@
 ## snabble iOS SDK Changelog
 
+# v0.9.4
+
+* `ShoppingCartViewController` and both QR-Code-based checkout views now display price information from the backened, if available.
+
 # v0.9.3
 
 * `QRCheckoutViewController` now displays the same "price may differ" message that is already present on `EmbeddedCodesCheckoutViewController` (localization key `Snabble.QRCode.priceMayDiffer`)
