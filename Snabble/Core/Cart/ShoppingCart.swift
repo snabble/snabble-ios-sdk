@@ -87,12 +87,15 @@ public struct CartItem: Codable {
     public let scannedCode: ScannedCode
     /// the rounding mode to use for price calculations
     public let roundingMode: RoundingMode
+    /// uuid of this item
+    public let uuid: String
 
     public init(_ quantity: Int, _ product: Product, _ scannedCode: ScannedCode, _ roundingMode: RoundingMode) {
         self.quantity = quantity
         self.product = product
         self.scannedCode = scannedCode
         self.roundingMode = roundingMode
+        self.uuid = UUID().uuidString
     }
 
     /// init with a freshly retrieved copy of `item.product`.
@@ -105,6 +108,7 @@ public struct CartItem: Codable {
         self.quantity = item.quantity
         self.scannedCode = item.scannedCode
         self.roundingMode = item.roundingMode
+        self.uuid = item.uuid
     }
 
     /// can this entry be merged with another for the same SKU?
@@ -274,7 +278,8 @@ public struct CartItem: Codable {
             price = self.price
         }
 
-        return BackendCartItem(sku: self.product.sku,
+        return BackendCartItem(id: self.uuid,
+                               sku: self.product.sku,
                                amount: quantity,
                                scannedCode: code,
                                price: price,
@@ -285,11 +290,17 @@ public struct CartItem: Codable {
 
 }
 
+public struct BackendCartInfo: Codable {
+    public let lineItems: [CheckoutInfo.LineItem]
+    public let totalPrice: Int
+}
+
 /// a ShoppingCart is a collection of CartItem objects
 final public class ShoppingCart {
     private(set) public var items = [CartItem]()
     private(set) public var session = ""
     private(set) public var lastSaved: Date?
+    private(set) public var backendCartInfo: BackendCartInfo?
 
     /// this is intended mainly for the EmbeddedCodesCheckout - use this to append additional codes
     /// (e.g. special "QR code purchase" marker codes) to the list of scanned codes of this cart
@@ -299,12 +310,16 @@ final public class ShoppingCart {
 
     private(set) var config: CartConfig
 
+    // number of seconds to wait after a local modification is sent to the backend
+    private let saveDelay: TimeInterval = 1.0
+
     public static let maxAmount = 9999
 
     public init(_ config: CartConfig) {
         self.config = config
         let storage = self.loadCart()
         self.items = storage.items
+        self.backendCartInfo = storage.backendCartInfo
         self.session = storage.session
     }
 
@@ -424,18 +439,21 @@ final public class ShoppingCart {
     }
 }
 
-struct CartStorage: Codable {
+fileprivate struct CartStorage: Codable {
     let items: [CartItem]
+    let backendCartInfo: BackendCartInfo?
     let session: String
     var lastSaved: Date?
 
     init() {
         self.items = []
+        self.backendCartInfo = nil
         self.session = ""
     }
 
     init(_ shoppingCart: ShoppingCart) {
         self.items = shoppingCart.items
+        self.backendCartInfo = shoppingCart.backendCartInfo
         self.session = shoppingCart.session
         self.lastSaved = shoppingCart.lastSaved
     }
@@ -450,7 +468,11 @@ extension ShoppingCart {
     }
 
     /// persist this shopping cart to disk
-    private func save() {
+    fileprivate func save(postEvent: Bool = true) {
+        if postEvent {
+            self.backendCartInfo = nil
+        }
+        
         do {
             let fileManager = FileManager.default
             if !fileManager.fileExists(atPath: self.config.directory) {
@@ -469,9 +491,11 @@ extension ShoppingCart {
             Log.error("error saving cart \(self.config.project.id): \(error)")
         }
 
-        timer?.invalidate()
-        timer = Timer.scheduledTimer(withTimeInterval: 3, repeats: false) { timer in
-            CartEvent.cart(self)
+        if postEvent {
+            self.timer?.invalidate()
+            self.timer = Timer.scheduledTimer(withTimeInterval: self.saveDelay, repeats: false) { timer in
+                CartEvent.cart(self)
+            }
         }
     }
 
@@ -512,13 +536,37 @@ extension ShoppingCart {
 
 }
 
-extension ShoppingCart {
+public extension Notification.Name {
+    static let snabbleCartUpdated = Notification.Name("snabbleCartUpdated")
+}
 
+// MARK: backend connection
+extension ShoppingCart {
     func createCart() -> Cart {
         let customerInfo = Cart.CustomerInfo(loyaltyCard: self.loyaltyCard)
         return Cart(session: self.session, shopID: self.shopId, customer: customerInfo, items: self.backendItems())
     }
 
+    func createCheckoutInfo(userInitiated: Bool = false, completion: @escaping (Bool) -> ()) {
+        self.createCheckoutInfo(self.config.project, timeout: 2) { result in
+            switch result {
+            case .failure(let error):
+                Log.warn("createCheckoutInfo failed: \(error)")
+                self.backendCartInfo = nil
+                completion(false)
+            case .success(let info):
+                let session = info.checkoutInfo.session
+                Log.info("createCheckoutInfo succeeded: \(session)")
+                let totalPrice = info.checkoutInfo.price.price
+                self.backendCartInfo = BackendCartInfo(lineItems: info.checkoutInfo.lineItems, totalPrice: totalPrice)
+                self.save(postEvent: false)
+                completion(true)
+            }
+            if !userInitiated {
+                NotificationCenter.default.post(name: .snabbleCartUpdated, object: self)
+            }
+        }
+    }
 }
 
 // MARK: send events
@@ -534,8 +582,8 @@ struct CartEvent {
     }
 
     static func cart(_ cart: ShoppingCart) {
+        cart.createCheckoutInfo(completion: {_ in})
         let event = AppEvent(cart)
         event.post()
     }
-
 }

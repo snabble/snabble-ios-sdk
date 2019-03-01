@@ -103,6 +103,10 @@ public final class ShoppingCartViewController: UIViewController {
         self.tableView.rowHeight = UITableView.automaticDimension
         self.tableView.estimatedRowHeight = 88
 
+        let refreshControl = UIRefreshControl()
+        refreshControl.addTarget(self, action: #selector(self.handleRefresh(_:)), for: .valueChanged)
+        self.tableView.refreshControl = refreshControl
+
         self.editButton = UIBarButtonItem(title: "Snabble.Edit".localized(), style: .plain, target: self, action: #selector(self.toggleEditingMode(_:)))
         self.editButton.possibleTitles = Set(["Snabble.Edit".localized(), "Snabble.Done".localized()])
 
@@ -153,6 +157,7 @@ public final class ShoppingCartViewController: UIViewController {
 
     // MARK: notification handlers
     @objc private func updateShoppingCart(_ notification: Notification) {
+        self.tableView.reloadData()
         self.updateTotals()
     }
 
@@ -183,6 +188,14 @@ public final class ShoppingCartViewController: UIViewController {
         alert.addAction(UIAlertAction(title: "Snabble.No".localized(), style: .cancel, handler: nil))
 
         self.present(alert, animated: true)
+    }
+
+    @objc private func handleRefresh(_ sender: Any) {
+        self.cart.createCheckoutInfo(userInitiated: true) { success in
+            self.tableView.refreshControl?.endRefreshing()
+            self.tableView.reloadData()
+            self.updateTotals()
+        }
     }
 
     private func updateView(reload: Bool = true) {
@@ -297,9 +310,10 @@ extension ShoppingCartViewController: ShoppingCartTableDelegate {
     func updateTotals() {
         let count = self.shoppingCart.numberOfProducts
 
+        let formatter = PriceFormatter(SnabbleUI.project)
         let title: String
-        if let total = self.shoppingCart.total, count > 0 {
-            let formatter = PriceFormatter(SnabbleUI.project)
+        let totalPrice = self.shoppingCart.backendCartInfo?.totalPrice ?? self.shoppingCart.total
+        if let total = totalPrice, count > 0 {
             let formattedTotal = formatter.format(total)
             let fmt = count == 1 ? "Snabble.Shoppingcart.buyProducts.one" : "Snabble.Shoppingcart.buyProducts"
             title = String(format: fmt.localized(), count, formattedTotal)
@@ -334,7 +348,8 @@ extension ShoppingCartViewController: UITableViewDelegate, UITableViewDataSource
         let cell = tableView.dequeueReusableCell(withIdentifier: self.itemCellIdentifier, for: indexPath) as! ShoppingCartTableCell
 
         let item = self.shoppingCart.items[indexPath.row]
-        cell.setCartItem(item, row: indexPath.row, delegate: self)
+        let lineItems = self.shoppingCart.backendCartInfo?.lineItems.filter { $0.cartItemId == item.uuid } ?? []
+        cell.setCartItem(item, lineItems, row: indexPath.row, delegate: self)
 
         return cell
     }

@@ -10,10 +10,6 @@ protocol ScanConfirmationViewDelegate: AnalyticsDelegate {
     func closeConfirmation()
 }
 
-public extension Notification.Name {
-    static let snabbleCartUpdated = Notification.Name("snabbleCartUpdated")
-}
-
 final class ScanConfirmationView: DesignableView {
     @IBOutlet private weak var subtitleLabel: UILabel!
     @IBOutlet private weak var productNameLabel: UILabel!
