@@ -69,11 +69,6 @@ public final class ScannerViewController: UIViewController {
         set { UserDefaults.standard.set(newValue, forKey: "snabble.scanner.firstTimeInfoShown") }
     }
 
-    private var firstScanComplete: Bool {
-        get { return UserDefaults.standard.bool(forKey: "snabble.scanner.firstScanComplete") }
-        set { UserDefaults.standard.set(newValue, forKey: "snabble.scanner.firstScanComplete") }
-    }
-    
     override public func viewDidLoad() {
         super.viewDidLoad()
         
@@ -246,20 +241,7 @@ extension ScannerViewController: MessageDelegate {
 extension ScannerViewController: ScanConfirmationViewDelegate {
     func closeConfirmation() {
         self.displayScanConfirmationView(hidden: true)
-
-        if !self.firstScanComplete {
-            self.firstScanComplete = true
-
-            let title = String(format: "Snabble.Hints.title".localized(), self.shop.name)
-            let msg = "Snabble.Hints.closedBags".localized()
-            let alert = UIAlertController(title: title, message: msg, preferredStyle: .alert)
-            alert.addAction(UIAlertAction(title: "Snabble.Hints.continueScanning".localized(), style: .default) { action in
-                self.scanningView.startScanning()
-            })
-            self.present(alert, animated: false)
-        } else {
-            self.scanningView.startScanning()
-        }
+        self.scanningView.startScanning()
     }
 }
 
