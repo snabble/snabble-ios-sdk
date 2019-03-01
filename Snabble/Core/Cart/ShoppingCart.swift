@@ -310,6 +310,9 @@ final public class ShoppingCart {
 
     private(set) var config: CartConfig
 
+    // number of seconds to wait after a local modification is sent to the backend
+    private let saveDelay: TimeInterval = 1.0
+
     public static let maxAmount = 9999
 
     public init(_ config: CartConfig) {
@@ -490,7 +493,7 @@ extension ShoppingCart {
 
         if postEvent {
             self.timer?.invalidate()
-            self.timer = Timer.scheduledTimer(withTimeInterval: 3, repeats: false) { timer in
+            self.timer = Timer.scheduledTimer(withTimeInterval: self.saveDelay, repeats: false) { timer in
                 CartEvent.cart(self)
             }
         }
@@ -583,5 +586,4 @@ struct CartEvent {
         let event = AppEvent(cart)
         event.post()
     }
-
 }
