@@ -140,12 +140,7 @@ final class ShoppingCartTableCell: UITableViewCell {
         let formatter = PriceFormatter(SnabbleUI.project)
 
         if let lineItem = self.lineItems?.first {
-            if lineItem.totalPrice != self.item.price {
-                let formattedPrice = formatter.format(lineItem.totalPrice)
-                self.priceLabel.text = formattedPrice + " ✓"
-            } else {
-                self.priceLabel.text = self.item.priceDisplay(formatter) + " ✓"
-            }
+            self.priceLabel.text = formatter.format(lineItem.totalPrice)
         } else {
             self.priceLabel.text = self.item.priceDisplay(formatter)
         }

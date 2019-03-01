@@ -312,12 +312,8 @@ extension ShoppingCartViewController: ShoppingCartTableDelegate {
 
         let formatter = PriceFormatter(SnabbleUI.project)
         let title: String
-        if let total = self.shoppingCart.backendCartInfo?.totalPrice {
-            let formattedTotal = formatter.format(total) + " ✓"
-            let fmt = count == 1 ? "Snabble.Shoppingcart.buyProducts.one" : "Snabble.Shoppingcart.buyProducts"
-            title = String(format: fmt.localized(), count, formattedTotal)
-            self.tabBarItem.title = formattedTotal
-        } else if let total = self.shoppingCart.total, count > 0 {
+        let totalPrice = self.shoppingCart.backendCartInfo?.totalPrice ?? self.shoppingCart.total
+        if let total = totalPrice, count > 0 {
             let formattedTotal = formatter.format(total)
             let fmt = count == 1 ? "Snabble.Shoppingcart.buyProducts.one" : "Snabble.Shoppingcart.buyProducts"
             title = String(format: fmt.localized(), count, formattedTotal)
