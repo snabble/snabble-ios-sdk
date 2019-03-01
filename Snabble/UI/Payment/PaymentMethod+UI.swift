@@ -10,7 +10,6 @@ import Foundation
 extension PaymentMethod {
     var icon: String {
         switch self {
-        case .cash: return "payment-method-cash"
         case .qrCode: return "payment-method-checkstand"
         case .encodedCodes: return "payment-method-checkstand"
         case .encodedCodesCSV: return "payment-method-checkstand"
@@ -42,7 +41,6 @@ extension PaymentMethod {
 
         let processor: UIViewController
         switch self {
-        case .cash: processor = CashCheckoutViewController(process!, cart, delegate)
         case .qrCode: processor = QRCheckoutViewController(process!, cart, delegate)
         case .encodedCodes: processor = EmbeddedCodesCheckoutViewController(process, self, cart, delegate)
         case .encodedCodesCSV: processor = EmbeddedCodesCheckoutViewController(process, self, cart, delegate)
@@ -104,7 +102,6 @@ public final class PaymentProcess {
         var result = [PaymentMethod]()
         for method in methods {
             switch method {
-            case .cash: result.append(.cash)
             case .encodedCodes: result.append(.encodedCodes)
             case .encodedCodesCSV: result.append(.encodedCodesCSV)
             case .qrCode: result.append(.qrCode)

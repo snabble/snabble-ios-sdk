@@ -39,7 +39,6 @@ public struct SignedCheckoutInfo: Decodable {
 
 // known payment methods
 public enum RawPaymentMethod: String {
-    case cash
     case qrCode = "qrCodePOS"
     case encodedCodes           // QR Code with EANs and separators
     case teleCashDeDirectDebit  // SEPA via Telecash
@@ -59,7 +58,6 @@ public struct PaymentMethodData {
 
 // payment method with associated data
 public enum PaymentMethod {
-    case cash
     case qrCode
     case encodedCodes
     case teleCashDeDirectDebit(PaymentMethodData)
@@ -67,7 +65,6 @@ public enum PaymentMethod {
 
     public var rawMethod: RawPaymentMethod {
         switch self {
-        case .cash: return .cash
         case .qrCode: return .qrCode
         case .encodedCodes: return .encodedCodes
         case .teleCashDeDirectDebit: return .teleCashDeDirectDebit
