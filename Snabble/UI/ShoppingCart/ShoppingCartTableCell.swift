@@ -139,11 +139,12 @@ final class ShoppingCartTableCell: UITableViewCell {
 
         let formatter = PriceFormatter(SnabbleUI.project)
 
-        if let lineItem = self.lineItems?.first {
-            self.priceLabel.text = formatter.format(lineItem.totalPrice)
-        } else {
-            self.priceLabel.text = self.item.priceDisplay(formatter)
-        }
+//        if let lineItem = self.lineItems?.first {
+//            self.priceLabel.text = formatter.format(lineItem.totalPrice)
+//        } else {
+//            self.priceLabel.text = self.item.priceDisplay(formatter)
+//        }
+        self.priceLabel.text = self.item.priceDisplay(formatter)
     }
 
     private func loadImage() {
