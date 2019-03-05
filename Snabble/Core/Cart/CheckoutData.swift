@@ -114,9 +114,9 @@ public struct CheckoutInfo: Decodable {
         public let amount: Int
         public let price: Int
         public let totalPrice: Int
-        public let priceOrigin: String
+        public let priceOrigin: String?
         public let taxRate: String
-        public let scannedCode: String
+        public let scannedCode: String?
 
         enum CodingKeys: String, CodingKey {
             case cartItemId = "cartItemID"
@@ -125,7 +125,7 @@ public struct CheckoutInfo: Decodable {
     }
 
     public struct Price: Decodable {
-        public let tax: Tax
+        public let tax: Tax?
         public let taxPre: Tax
         public let taxNet: Tax
         public let netPrice: Int
