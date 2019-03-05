@@ -1,5 +1,9 @@
 ## snabble iOS SDK Changelog
 
+# v0.9.5
+
+* fixes a bug in the price display of products with deposits
+
 # v0.9.4
 
 * `ShoppingCartViewController` and both QR-Code-based checkout views now display price information from the backened, if available.
