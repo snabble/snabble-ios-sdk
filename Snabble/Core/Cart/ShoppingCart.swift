@@ -393,19 +393,19 @@ final public class ShoppingCart {
 
     /// number of separate items in the cart
     public var numberOfItems: Int {
-        return items.count
+        return self.items.count
     }
 
     /// number of products in the cart (sum of all quantities)
     public var numberOfProducts: Int {
-        return items.reduce(0) { result, item in
+        return self.items.reduce(0) { result, item in
             let count = item.product.type == .singleItem ? item.quantity : 1
             return result + count
         }
     }
 
     func backendItems() -> [BackendCartItem] {
-        return items.map { $0.cartItem }
+        return self.items.map { $0.cartItem }
     }
 
     /// return the the total price of all products. nil if unknown, i.e. when there are products with unknown prices in the cart
