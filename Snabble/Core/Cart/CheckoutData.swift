@@ -126,8 +126,6 @@ public struct CheckoutInfo: Decodable {
 
     public struct Price: Decodable {
         public let tax: Tax?
-        public let taxPre: Tax
-        public let taxNet: Tax
         public let netPrice: Int
         public let price: Int
 
@@ -144,8 +142,6 @@ public struct CheckoutInfo: Decodable {
         fileprivate init() {
             let tax0 = Tax.init(tax0: 0, tax7: 0, tax19: 0)
             self.tax = tax0
-            self.taxPre = tax0
-            self.taxNet = tax0
             self.netPrice = 0
             self.price = 0
         }
