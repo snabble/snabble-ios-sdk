@@ -8,9 +8,8 @@ import UIKit
 
 /// a protocol that users of `ShoppingCartViewController` must implement
 public protocol ShoppingCartDelegate: AnalyticsDelegate, MessageDelegate {
-
     /// called to determine if checking out is possible, e.g. if required customer card data is present
-    /// it is this mehtod's responsibility to display corresponding error messages
+    /// it is this method's responsibility to display corresponding error messages
     func checkoutAllowed(_ project: Project) -> Bool
 
     /// called when the user wants to initiate payment.
@@ -73,12 +72,7 @@ public final class ShoppingCartViewController: UIViewController {
 
         self.title = "Snabble.ShoppingCart.title".localized()
         self.tabBarItem.image = UIImage.fromBundle("icon-cart")
-
-        let nc = NotificationCenter.default
-        nc.addObserver(self, selector: #selector(self.updateShoppingCart(_:)), name: .snabbleCartUpdated, object: nil)
-
-        self.keyboardObserver = KeyboardObserver(handler: self)
-
+        
         self.updateTotals()
     }
 
@@ -88,7 +82,12 @@ public final class ShoppingCartViewController: UIViewController {
 
     override public func viewDidLoad() {
         super.viewDidLoad()
-        
+
+        let nc = NotificationCenter.default
+        nc.addObserver(self, selector: #selector(self.updateShoppingCart(_:)), name: .snabbleCartUpdated, object: nil)
+
+        self.keyboardObserver = KeyboardObserver(handler: self)
+
         let primaryBackgroundColor = SnabbleUI.appearance.primaryBackgroundColor
         self.view.backgroundColor = primaryBackgroundColor
 
