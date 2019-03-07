@@ -54,7 +54,6 @@ public final class ShoppingCartViewController: UIViewController {
     @IBOutlet private weak var tableBottomMargin: NSLayoutConstraint!
     @IBOutlet private weak var checkoutButton: UIButton!
 
-    private var editButton: UIBarButtonItem!
     private var trashButton: UIBarButtonItem!
 
     private var emptyState: ShoppingCartEmptyStateView!
@@ -136,9 +135,6 @@ public final class ShoppingCartViewController: UIViewController {
         refreshControl.addTarget(self, action: #selector(self.handleRefresh(_:)), for: .valueChanged)
         self.tableView.refreshControl = refreshControl
 
-        self.editButton = UIBarButtonItem(title: "Snabble.Edit".localized(), style: .plain, target: self, action: #selector(self.toggleEditingMode(_:)))
-        self.editButton.possibleTitles = Set(["Snabble.Edit".localized(), "Snabble.Done".localized()])
-
         self.trashButton = UIBarButtonItem(image: UIImage.fromBundle("icon-trash"), style: .plain, target: self, action: #selector(self.trashButtonTapped(_:)))
 
         self.tableBottomMargin.constant = 0
@@ -169,7 +165,7 @@ public final class ShoppingCartViewController: UIViewController {
         super.viewWillDisappear(animated)
         // turn off table editing, and re-enable everything that is disabled while editing
         self.isEditing = false
-        self.editButton.title = "Snabble.Edit".localized()
+        self.setEditing(false, animated: false)
         self.tableView.isEditing = false
     }
 
@@ -180,7 +176,7 @@ public final class ShoppingCartViewController: UIViewController {
     private func setEditButton() {
         let navItem = self.navigationItem
         let items = self.items.count
-        navItem.rightBarButtonItem = items == 0 ? nil : self.editButton
+        navItem.rightBarButtonItem = items == 0 ? nil : self.editButtonItem
     }
     
     private func setDeleteButton() {
@@ -195,20 +191,20 @@ public final class ShoppingCartViewController: UIViewController {
         self.updateTotals()
     }
 
-    @objc private func toggleEditingMode(_ sender: UIBarButtonItem) {
-        self.setEditingMode(!self.isEditing)
-    }
-    
-    private func setEditingMode(_ editing: Bool) {
-        self.isEditing = editing
+//    private func setEditingMode(_ editing: Bool) {
+//        self.setEditing(editing, animated: false)
+//
+//        self.setDeleteButton()
+//
+//        self.tableView.reloadData()
+//        self.tableView.setNeedsLayout()
+//    }
 
-        self.tableView.setEditing(editing, animated: false)
+    override public func setEditing(_ editing: Bool, animated: Bool) {
+        super.setEditing(editing, animated: animated)
+        self.tableView.setEditing(editing, animated: animated)
 
-        self.editButton.title = editing ? "Snabble.Done".localized() : "Snabble.Edit".localized()
         self.setDeleteButton()
-
-        self.tableView.reloadData()
-        self.tableView.setNeedsLayout()
     }
 
     @objc private func trashButtonTapped(_ sender: UIBarButtonItem) {
@@ -240,7 +236,7 @@ public final class ShoppingCartViewController: UIViewController {
         
         let items = self.items.count
         if items == 0 {
-            self.setEditingMode(false)
+            self.setEditing(false, animated: false)
         }
 
         self.updateTotals()
