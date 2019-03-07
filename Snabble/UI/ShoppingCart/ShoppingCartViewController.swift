@@ -44,7 +44,7 @@ extension ShoppingCartDelegate {
 }
 
 enum CartTableEntry {
-    case cartItem(CartItem, CheckoutInfo.LineItem?)
+    case cartItem(CartItem, [CheckoutInfo.LineItem])
     case lineItem(CheckoutInfo.LineItem)
 }
  
@@ -92,8 +92,8 @@ public final class ShoppingCartViewController: UIViewController {
     func setupItems(_ cart: ShoppingCart) {
         self.items = []
         for item in cart.items {
-            let lineItem = cart.backendCartInfo?.lineItems.first(where: { $0.cartItemId == item.uuid })
-            let item = CartTableEntry.cartItem(item, lineItem)
+            let lineItems = cart.backendCartInfo?.lineItems.filter { $0.cartItemId == item.uuid }
+            let item = CartTableEntry.cartItem(item, lineItems ?? [])
             self.items.append(item)
         }
 
@@ -390,8 +390,8 @@ extension ShoppingCartViewController: UITableViewDelegate, UITableViewDataSource
 
         let item = self.items[indexPath.row]
         switch item {
-        case .cartItem(let item, let lineItem):
-            cell.setCartItem(item, lineItem, row: indexPath.row, delegate: self)
+        case .cartItem(let item, let lineItems):
+            cell.setCartItem(item, lineItems, row: indexPath.row, delegate: self)
         case .lineItem(let lineItem):
             cell.setLineItem(lineItem, row: indexPath.row, delegate: self)
         }

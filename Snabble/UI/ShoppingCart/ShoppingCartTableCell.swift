@@ -29,7 +29,7 @@ final class ShoppingCartTableCell: UITableViewCell {
     @IBOutlet weak var spinner: UIActivityIndicatorView!
     private var quantity = 0
     private var item: CartItem?
-    private var lineItem: CheckoutInfo.LineItem?
+    private var lineItems = [CheckoutInfo.LineItem]()
 
     private weak var delegate: ShoppingCartTableDelegate!
     private var task: URLSessionDataTask?
@@ -66,13 +66,13 @@ final class ShoppingCartTableCell: UITableViewCell {
         self.textMargin.constant = 8
 
         self.item = nil
-        self.lineItem = nil
+        self.lineItems = []
     }
 
     func setLineItem(_ lineItem: CheckoutInfo.LineItem, row: Int, delegate: ShoppingCartTableDelegate) {
         self.delegate = delegate
         self.item = nil
-        self.lineItem = lineItem
+        self.lineItems = [lineItem]
         self.quantity = 0
 
         self.nameLabel.text = lineItem.name
@@ -101,10 +101,10 @@ final class ShoppingCartTableCell: UITableViewCell {
         self.showQuantity()
     }
 
-    func setCartItem(_ item: CartItem, _ lineItem: CheckoutInfo.LineItem?, row: Int, delegate: ShoppingCartTableDelegate) {
+    func setCartItem(_ item: CartItem, _ lineItems: [CheckoutInfo.LineItem], row: Int, delegate: ShoppingCartTableDelegate) {
         self.delegate = delegate
         self.item = item
-        self.lineItem = lineItem
+        self.lineItems = lineItems
         self.quantity = item.quantity
 
         let product = item.product
@@ -158,7 +158,7 @@ final class ShoppingCartTableCell: UITableViewCell {
         self.item?.quantity = self.quantity
         self.delegate.updateQuantity(self.quantity, at: row)
 
-        self.lineItem = nil
+        self.lineItems = []
         self.showQuantity()
     }
 
@@ -176,11 +176,13 @@ final class ShoppingCartTableCell: UITableViewCell {
 
         let formatter = PriceFormatter(SnabbleUI.project)
 
+        #warning("MISSING: calculate and display price from lineItems, if present")
 //        if let lineItem = self.lineItems?.first {
 //            self.priceLabel.text = formatter.format(lineItem.totalPrice)
 //        } else {
 //            self.priceLabel.text = self.item.priceDisplay(formatter)
 //        }
+
         self.priceLabel.text = item.priceDisplay(formatter)
     }
 
