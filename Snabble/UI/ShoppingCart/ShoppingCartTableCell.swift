@@ -69,23 +69,24 @@ final class ShoppingCartTableCell: UITableViewCell {
         self.lineItems = []
     }
 
-    func setLineItem(_ lineItem: CheckoutInfo.LineItem, row: Int, delegate: ShoppingCartTableDelegate) {
+    func setLineItem(_ mainItem: CheckoutInfo.LineItem, _ lineItems: [CheckoutInfo.LineItem], row: Int, delegate: ShoppingCartTableDelegate) {
         self.delegate = delegate
         self.item = nil
-        self.lineItems = [lineItem]
+        self.lineItems = []
         self.quantity = 0
 
-        self.nameLabel.text = lineItem.name
+        self.nameLabel.text = mainItem.name
 
+        #warning("hande additional info in lineItems")
         let formatter = PriceFormatter(SnabbleUI.project)
-        if lineItem.amount == 1 {
-            self.priceLabel.text = formatter.format(lineItem.totalPrice)
+        if mainItem.amount == 1 {
+            self.priceLabel.text = formatter.format(mainItem.totalPrice)
         } else {
-            let single = formatter.format(lineItem.price)
-            let total = formatter.format(lineItem.totalPrice)
+            let single = formatter.format(mainItem.price)
+            let total = formatter.format(mainItem.totalPrice)
             self.priceLabel.text = "× \(single) = \(total)"
         }
-        self.quantityLabel.text = "\(lineItem.amount)"
+        self.quantityLabel.text = "\(mainItem.amount)"
         self.subtitleLabel.text = ""
 
         self.minusButton.isHidden = true

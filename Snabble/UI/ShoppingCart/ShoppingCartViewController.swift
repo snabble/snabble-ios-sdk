@@ -44,8 +44,11 @@ extension ShoppingCartDelegate {
 }
 
 enum CartTableEntry {
+    // out main item and any additional line items referring to it
     case cartItem(CartItem, [CheckoutInfo.LineItem])
-    case lineItem(CheckoutInfo.LineItem)
+
+    // a new main item from the backend, plus its additional items.
+    case lineItem(CheckoutInfo.LineItem, [CheckoutInfo.LineItem])
 }
  
 public final class ShoppingCartViewController: UIViewController {
@@ -91,17 +94,25 @@ public final class ShoppingCartViewController: UIViewController {
 
     func setupItems(_ cart: ShoppingCart) {
         self.items = []
+
+        // find all line items that refer to our own cart items
         for item in cart.items {
             let lineItems = cart.backendCartInfo?.lineItems.filter { $0.cartItemId == item.uuid }
             let item = CartTableEntry.cartItem(item, lineItems ?? [])
             self.items.append(item)
         }
-
         let count = self.items.count
         print("setupItems: \(count) cartItems")
+
         if let lineItems = cart.backendCartInfo?.lineItems {
-            for lineItem in lineItems where lineItem.cartItemId == nil {
-                let item = CartTableEntry.lineItem(lineItem)
+            // now gather the remaining lineItems. find the "master" items first
+            let cartIds = Set(cart.items.map { $0.uuid })
+
+            let masterItems = lineItems.filter { $0.type == .item && !cartIds.contains($0.cartItemId!) }
+
+            for item in masterItems {
+                let additionalItems = lineItems.filter { $0.type != .item && $0.cartItemId == item.cartItemId }
+                let item = CartTableEntry.lineItem(item, additionalItems)
                 self.items.append(item)
             }
         }
@@ -392,8 +403,8 @@ extension ShoppingCartViewController: UITableViewDelegate, UITableViewDataSource
         switch item {
         case .cartItem(let item, let lineItems):
             cell.setCartItem(item, lineItems, row: indexPath.row, delegate: self)
-        case .lineItem(let lineItem):
-            cell.setLineItem(lineItem, row: indexPath.row, delegate: self)
+        case .lineItem(let item, let lineItems):
+            cell.setLineItem(item, lineItems, row: indexPath.row, delegate: self)
         }
 
         return cell
