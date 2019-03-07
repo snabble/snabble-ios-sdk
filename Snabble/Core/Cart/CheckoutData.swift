@@ -98,6 +98,28 @@ extension PaymentState: UnknownCaseRepresentable {
     static let unknownCase = PaymentState.unknown
 }
 
+/// line items can be added by the backend. if they refer back to a shopping cart item via their `cartItemId`, the `type` describes the relationsip
+public enum LineItemType: String, Codable {
+    /// not actually sent by the backend
+    case unknown
+
+    ///
+    case item
+
+    /// this item contains information about deposits, e.g. for a crate of beer
+    case deposit
+
+    /// this item contains a new price that overrides the locally calculated price
+    case priceOverride
+
+    /// this item contains an amount that needs to be added to the locally calculated price (e.g. its `price` must be negative to express a price reduction)
+    case priceChange
+}
+
+extension LineItemType: UnknownCaseRepresentable {
+    static let unknownCase = LineItemType.unknown
+}
+
 // CheckoutInfo
 public struct CheckoutInfo: Decodable {
     public let clientID, session, currency, project: String
@@ -114,35 +136,19 @@ public struct CheckoutInfo: Decodable {
         public let amount: Int
         public let price: Int
         public let totalPrice: Int
-        public let priceOrigin: String?
-        public let taxRate: String
         public let scannedCode: String?
+        public let type: LineItemType?
 
         enum CodingKeys: String, CodingKey {
             case cartItemId = "cartItemID"
-            case sku, name, amount, price, totalPrice, priceOrigin, taxRate, scannedCode
+            case sku, name, amount, price, totalPrice, scannedCode, type
         }
     }
 
     public struct Price: Decodable {
-        public let tax: Tax?
-        public let netPrice: Int
         public let price: Int
 
-        public struct Tax: Decodable {
-            public let tax0, tax7, tax19: Int?
-
-            public enum CodingKeys: String, CodingKey {
-                case tax0 = "0"
-                case tax7 = "7"
-                case tax19 = "19"
-            }
-        }
-
         fileprivate init() {
-            let tax0 = Tax.init(tax0: 0, tax7: 0, tax19: 0)
-            self.tax = tax0
-            self.netPrice = 0
             self.price = 0
         }
     }
