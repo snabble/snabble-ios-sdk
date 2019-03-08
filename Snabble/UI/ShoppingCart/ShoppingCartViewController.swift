@@ -72,7 +72,12 @@ public final class ShoppingCartViewController: UIViewController {
 
         self.title = "Snabble.ShoppingCart.title".localized()
         self.tabBarItem.image = UIImage.fromBundle("icon-cart")
-        
+
+        let nc = NotificationCenter.default
+        nc.addObserver(self, selector: #selector(self.updateShoppingCart(_:)), name: .snabbleCartUpdated, object: nil)
+
+        self.keyboardObserver = KeyboardObserver(handler: self)
+
         self.updateTotals()
     }
 
@@ -82,11 +87,6 @@ public final class ShoppingCartViewController: UIViewController {
 
     override public func viewDidLoad() {
         super.viewDidLoad()
-
-        let nc = NotificationCenter.default
-        nc.addObserver(self, selector: #selector(self.updateShoppingCart(_:)), name: .snabbleCartUpdated, object: nil)
-
-        self.keyboardObserver = KeyboardObserver(handler: self)
 
         let primaryBackgroundColor = SnabbleUI.appearance.primaryBackgroundColor
         self.view.backgroundColor = primaryBackgroundColor
@@ -156,7 +156,7 @@ public final class ShoppingCartViewController: UIViewController {
 
     // MARK: notification handlers
     @objc private func updateShoppingCart(_ notification: Notification) {
-        self.tableView.reloadData()
+        self.tableView?.reloadData()
         self.updateTotals()
     }
 
