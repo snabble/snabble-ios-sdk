@@ -100,9 +100,8 @@ extension PaymentState: UnknownCaseRepresentable {
 
 // CheckoutInfo
 public struct CheckoutInfo: Decodable {
-    public let clientID, session, currency, project: String
-    public let createdAt, shopID: String
     /// available payment methods, as delivered by the API
+    public let session: String
     public let availableMethods: [String]
     public let lineItems: [LineItem]
     public let price: Price
@@ -114,39 +113,18 @@ public struct CheckoutInfo: Decodable {
         public let amount: Int
         public let price: Int
         public let totalPrice: Int
-        public let priceOrigin: String?
-        public let taxRate: String
         public let scannedCode: String?
 
         enum CodingKeys: String, CodingKey {
             case cartItemId = "cartItemID"
-            case sku, name, amount, price, totalPrice, priceOrigin, taxRate, scannedCode
+            case sku, name, amount, price, totalPrice, scannedCode
         }
     }
 
     public struct Price: Decodable {
-        public let tax: Tax?
-        public let taxPre: Tax
-        public let taxNet: Tax
-        public let netPrice: Int
         public let price: Int
 
-        public struct Tax: Decodable {
-            public let tax0, tax7, tax19: Int?
-
-            public enum CodingKeys: String, CodingKey {
-                case tax0 = "0"
-                case tax7 = "7"
-                case tax19 = "19"
-            }
-        }
-
         fileprivate init() {
-            let tax0 = Tax.init(tax0: 0, tax7: 0, tax19: 0)
-            self.tax = tax0
-            self.taxPre = tax0
-            self.taxNet = tax0
-            self.netPrice = 0
             self.price = 0
         }
     }
@@ -157,13 +135,8 @@ public struct CheckoutInfo: Decodable {
     }
 
     fileprivate init() {
-        self.clientID = ""
-        self.currency = ""
-        self.createdAt = ""
         self.price = Price()
         self.availableMethods = [ RawPaymentMethod.encodedCodes.rawValue ]
-        self.shopID = ""
-        self.project = ""
         self.session = ""
         self.lineItems = []
     }
