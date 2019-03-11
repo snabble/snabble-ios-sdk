@@ -8,9 +8,8 @@ import UIKit
 
 /// a protocol that users of `ShoppingCartViewController` must implement
 public protocol ShoppingCartDelegate: AnalyticsDelegate, MessageDelegate {
-
     /// called to determine if checking out is possible, e.g. if required customer card data is present
-    /// it is this mehtod's responsibility to display corresponding error messages
+    /// it is this method's responsibility to display corresponding error messages
     func checkoutAllowed(_ project: Project) -> Bool
 
     /// called when the user wants to initiate payment.
@@ -97,21 +96,26 @@ public final class ShoppingCartViewController: UIViewController {
 
         // find all line items that refer to our own cart items
         for item in cart.items {
-            let lineItems = cart.backendCartInfo?.lineItems.filter { $0.cartItemId == item.uuid }
-            let item = CartTableEntry.cartItem(item, lineItems ?? [])
-            self.items.append(item)
+            if let lineItems = cart.backendCartInfo?.lineItems {
+                let items = lineItems.filter { $0.id == item.uuid ||  $0.refersTo == item.uuid }
+                let item = CartTableEntry.cartItem(item, items)
+                self.items.append(item)
+            } else {
+                let item = CartTableEntry.cartItem(item, [])
+                self.items.append(item)
+            }
         }
         let count = self.items.count
         print("setupItems: \(count) cartItems")
 
+        // now gather the remaining lineItems. find the "master" items first
         if let lineItems = cart.backendCartInfo?.lineItems {
-            // now gather the remaining lineItems. find the "master" items first
             let cartIds = Set(cart.items.map { $0.uuid })
 
-            let masterItems = lineItems.filter { $0.type == .item && !cartIds.contains($0.cartItemId!) }
+            let masterItems = lineItems.filter { $0.type == .default && !cartIds.contains($0.id) }
 
             for item in masterItems {
-                let additionalItems = lineItems.filter { $0.type != .item && $0.cartItemId == item.cartItemId }
+                let additionalItems = lineItems.filter { $0.type != .default && $0.refersTo == item.id }
                 let item = CartTableEntry.lineItem(item, additionalItems)
                 self.items.append(item)
             }
@@ -127,7 +131,7 @@ public final class ShoppingCartViewController: UIViewController {
 
     override public func viewDidLoad() {
         super.viewDidLoad()
-        
+
         let primaryBackgroundColor = SnabbleUI.appearance.primaryBackgroundColor
         self.view.backgroundColor = primaryBackgroundColor
 
@@ -198,18 +202,9 @@ public final class ShoppingCartViewController: UIViewController {
     // MARK: notification handlers
     @objc private func updateShoppingCart(_ notification: Notification) {
         self.setupItems(self.shoppingCart)
-        self.tableView.reloadData()
+        self.tableView?.reloadData()
         self.updateTotals()
     }
-
-//    private func setEditingMode(_ editing: Bool) {
-//        self.setEditing(editing, animated: false)
-//
-//        self.setDeleteButton()
-//
-//        self.tableView.reloadData()
-//        self.tableView.setNeedsLayout()
-//    }
 
     override public func setEditing(_ editing: Bool, animated: Bool) {
         super.setEditing(editing, animated: animated)

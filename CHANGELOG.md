@@ -1,5 +1,9 @@
 ## snabble iOS SDK Changelog
 
+# v0.9.6
+
+* `ShoppingCartViewContoller` now handles notifications that arrive before `viewDidLoad` is called.
+
 # v0.9.5
 
 * fixes a bug in the price display of products with deposits
