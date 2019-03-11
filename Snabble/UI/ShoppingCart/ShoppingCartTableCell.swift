@@ -77,15 +77,8 @@ final class ShoppingCartTableCell: UITableViewCell {
 
         self.nameLabel.text = mainItem.name
 
-        #warning("hande additional info in lineItems")
-        let formatter = PriceFormatter(SnabbleUI.project)
-        if mainItem.amount == 1 {
-            self.priceLabel.text = formatter.format(mainItem.totalPrice)
-        } else {
-            let single = formatter.format(mainItem.price)
-            let total = formatter.format(mainItem.totalPrice)
-            self.priceLabel.text = "× \(single) = \(total)"
-        }
+        self.displayLineItemPrice(mainItem, lineItems)
+
         self.quantityLabel.text = "\(mainItem.amount)"
         self.subtitleLabel.text = ""
 
@@ -98,8 +91,6 @@ final class ShoppingCartTableCell: UITableViewCell {
 
         self.imageWidth.constant = 0
         self.textMargin.constant = 0
-
-        self.showQuantity()
     }
 
     func setCartItem(_ item: CartItem, _ lineItems: [CheckoutInfo.LineItem], row: Int, delegate: ShoppingCartTableDelegate) {
@@ -175,18 +166,34 @@ final class ShoppingCartTableCell: UITableViewCell {
         let gram = showWeight ? symbol : ""
         self.quantityLabel.text = "\(item.effectiveQuantity)\(gram)"
 
-        let formatter = PriceFormatter(SnabbleUI.project)
-
-        #warning("MISSING: calculate and display price from lineItems, if present")
-//        if let lineItem = self.lineItems?.first {
-//            self.priceLabel.text = formatter.format(lineItem.totalPrice)
-//        } else {
-//            self.priceLabel.text = self.item.priceDisplay(formatter)
-//        }
-
-        self.priceLabel.text = item.priceDisplay(formatter)
+        if let defaultItem = lineItems.first(where: { $0.type == .default }) {
+            self.displayLineItemPrice(defaultItem, lineItems)
+        } else {
+            let formatter = PriceFormatter(SnabbleUI.project)
+            self.priceLabel.text = item.priceDisplay(formatter)
+        }
     }
 
+    private func displayLineItemPrice(_ mainItem: CheckoutInfo.LineItem, _ lineItems: [CheckoutInfo.LineItem]) {
+        let formatter = PriceFormatter(SnabbleUI.project)
+
+        if let depositTotal = lineItems.first(where: { $0.type == .deposit })?.totalPrice {
+            let single = formatter.format(mainItem.price)
+            let deposit = formatter.format(depositTotal)
+            let total = formatter.format(mainItem.totalPrice + depositTotal)
+            self.priceLabel.text = "× \(single) + \(deposit) = \(total)"
+        } else {
+            if mainItem.amount == 1 {
+                let total = formatter.format(mainItem.totalPrice)
+                self.priceLabel.text = "\(total)"
+            } else {
+                let single = formatter.format(mainItem.price)
+                let total = formatter.format(mainItem.totalPrice)
+                self.priceLabel.text = "× \(single) = \(total)"
+            }
+        }
+    }
+    
     private func loadImage() {
         guard
             let imgUrl = self.item?.product.imageUrl,
