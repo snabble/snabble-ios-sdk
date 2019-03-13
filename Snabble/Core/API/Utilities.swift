@@ -7,7 +7,7 @@
 // MARK: - string-based enums
 
 /// for RawRepresentable enums, define a `unknownCase` fallback and a non-failable initializer
-protocol UnknownCaseRepresentable: RawRepresentable, CaseIterable where RawValue: Equatable {
+public protocol UnknownCaseRepresentable: RawRepresentable, CaseIterable where RawValue: Equatable {
     static var unknownCase: Self { get }
 }
 

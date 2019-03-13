@@ -95,7 +95,7 @@ public enum PaymentState: String, Decodable {
 }
 
 extension PaymentState: UnknownCaseRepresentable {
-    static let unknownCase = PaymentState.unknown
+    public static let unknownCase = PaymentState.unknown
 }
 
 /// line items can be added by the backend. if they refer back to a shopping cart item via their `refersTo` property, the `type` describes the relationsip
@@ -111,7 +111,7 @@ public enum LineItemType: String, Codable {
 }
 
 extension LineItemType: UnknownCaseRepresentable {
-    static let unknownCase = LineItemType.unknown
+    public static let unknownCase = LineItemType.unknown
 }
 
 // CheckoutInfo
