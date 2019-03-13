@@ -62,7 +62,7 @@ public final class ShoppingCartViewController: UIViewController {
 
     private let itemCellIdentifier = "itemCell"
 
-    fileprivate var shoppingCart: ShoppingCart! {
+    public var shoppingCart: ShoppingCart! {
         didSet {
             self.setupItems(self.shoppingCart)
             self.tableView?.reloadData()
@@ -182,10 +182,6 @@ public final class ShoppingCartViewController: UIViewController {
         self.isEditing = false
         self.setEditing(false, animated: false)
         self.tableView.isEditing = false
-    }
-
-    public func setShoppingCart(_ cart: ShoppingCart) {
-        self.shoppingCart = cart
     }
 
     private func setEditButton() {
