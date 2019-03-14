@@ -121,7 +121,7 @@ open class DesignableView: NibView {}
 
 /// Base class for UIViews that can be instantiated from a NIB
 open class NibView: UIView {
-    var view: UIView!
+    public var view: UIView!
 
     override public init(frame: CGRect) {
         super.init(frame: frame)
