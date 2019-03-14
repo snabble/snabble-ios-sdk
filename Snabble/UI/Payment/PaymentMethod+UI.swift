@@ -132,16 +132,6 @@ public final class PaymentProcess {
                 }
             case .failure(let error):
                 self.startFailed(method, error, completion)
-                let handled = self.delegate.handlePaymentError(error)
-                if !handled {
-                    if method.rawMethod == .encodedCodes, let processor = method.processor(nil, method, self.cart, self.delegate) {
-                        // continue anyway
-                        completion(Result.success(processor))
-                        self.retryCreatingMissingCheckout()
-                    } else {
-                        self.delegate.showWarningMessage("Snabble.Payment.errorStarting".localized())
-                    }
-                }
             }
         }
     }
