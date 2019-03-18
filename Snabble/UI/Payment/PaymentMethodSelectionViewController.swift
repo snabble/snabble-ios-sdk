@@ -32,7 +32,7 @@ final class PaymentMethodSelectionViewController: UIViewController {
 
     override func viewDidLoad() {
         self.title = "Snabble.PaymentSelection.title".localized()
-        
+
         super.viewDidLoad()
 
         self.view.backgroundColor = SnabbleUI.appearance.secondaryColor
@@ -40,7 +40,9 @@ final class PaymentMethodSelectionViewController: UIViewController {
 
         let formatter = PriceFormatter(SnabbleUI.project)
         let totalPrice = formatter.format(self.signedCheckoutInfo.checkoutInfo.price.price)
-        self.titleLabel.text = String(format: "Snabble.PaymentSelection.howToPay".localized(), totalPrice)
+        self.titleLabel.text = "" // String(format: "Snabble.PaymentSelection.howToPay".localized(), totalPrice)
+
+        self.title = String(format: "Snabble.PaymentSelection.payNow".localized(), totalPrice)
 
         let nib = UINib(nibName: "PaymentMethodCell", bundle: Snabble.bundle)
         self.collectionView.register(nib, forCellWithReuseIdentifier: "paymentCell")

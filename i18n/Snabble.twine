@@ -33,6 +33,8 @@
         en = Pay
     [Snabble.PaymentSelection.howToPay]
         en = How would you like to pay %@?
+    [Snabble.PaymentSelection.payNow]
+        en = Pay %@ now
     [Snabble.QRCode.didPay]
         en = I've paid
     [Snabble.QRCode.nextCode]
