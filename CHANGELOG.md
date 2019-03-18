@@ -1,5 +1,10 @@
 ## snabble iOS SDK Changelog
 
+# v0.9.7
+
+* The shopping cart now shows the price information as delivered from the backend as part of the `CheckoutInfo` data, if available. This data is updated automatically, and `ShoppingCartViewController` also now has a pull-to-refresh function.
+* Text shown on the payment method selection screen has changed slightly and now uses the `Snabble.PaymentSelection.payNow` localization key.
+
 # v0.9.6
 
 * `ShoppingCartViewContoller` now handles notifications that arrive before `viewDidLoad` is called.
