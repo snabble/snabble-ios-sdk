@@ -320,7 +320,16 @@ public final class ShoppingCartViewController: UIViewController {
 
         let formatter = PriceFormatter(SnabbleUI.project)
         let title: String
-        let totalPrice = self.shoppingCart.backendCartInfo?.totalPrice ?? self.shoppingCart.total
+
+        /// workaround for backend giving us 0 as price for price-less products :(
+        let nilPrice: Bool
+        if let items = self.shoppingCart.backendCartInfo?.lineItems, items.first(where: { $0.totalPrice == nil} ) != nil {
+            nilPrice = true
+        } else {
+            nilPrice = false
+        }
+
+        let totalPrice = nilPrice ? nil : (self.shoppingCart.backendCartInfo?.totalPrice ?? self.shoppingCart.total)
         if let total = totalPrice, count > 0 {
             let formattedTotal = formatter.format(total)
             let fmt = count == 1 ? "Snabble.Shoppingcart.buyProducts.one" : "Snabble.Shoppingcart.buyProducts"

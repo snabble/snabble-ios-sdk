@@ -178,17 +178,17 @@ final class ShoppingCartTableCell: UITableViewCell {
         let formatter = PriceFormatter(SnabbleUI.project)
 
         if let depositTotal = lineItems.first(where: { $0.type == .deposit })?.totalPrice {
-            let single = formatter.format(mainItem.price)
+            let single = formatter.format(mainItem.price ?? 0)
             let deposit = formatter.format(depositTotal)
-            let total = formatter.format(mainItem.totalPrice + depositTotal)
+            let total = formatter.format(mainItem.totalPrice ?? 0 + depositTotal)
             self.priceLabel.text = "× \(single) + \(deposit) = \(total)"
         } else {
             if mainItem.amount == 1 {
-                let total = formatter.format(mainItem.totalPrice)
+                let total = formatter.format(mainItem.totalPrice ?? 0)
                 self.priceLabel.text = "\(total)"
             } else {
-                let single = formatter.format(mainItem.price)
-                let total = formatter.format(mainItem.totalPrice)
+                let single = formatter.format(mainItem.price ?? 0)
+                let total = formatter.format(mainItem.totalPrice ?? 0)
                 self.priceLabel.text = "× \(single) = \(total)"
             }
         }

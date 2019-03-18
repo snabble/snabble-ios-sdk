@@ -127,8 +127,8 @@ public struct CheckoutInfo: Decodable {
         public let sku: String
         public let name: String
         public let amount: Int
-        public let price: Int
-        public let totalPrice: Int
+        public let price: Int?
+        public let totalPrice: Int?
         public let scannedCode: String?
         public let type: LineItemType
         public let refersTo: String?
