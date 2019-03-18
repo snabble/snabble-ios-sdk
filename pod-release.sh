@@ -6,6 +6,8 @@ CHANGELOG_DATE=$(stat -f "%Sm" -t "%Y-%m-%d" CHANGELOG.md)
 POD_VERSION=$(awk '/s.version.*=/ { print substr($3,2,length($3)-2) }' Snabble.podspec)
 SDK_VERSION=$(awk '/version =/ { print substr($5,2,length($5)-2) }' Snabble/Core/API/APIVersion.swift)
 
+trap "exit" INT
+
 if [ "$POD_VERSION" != "$SDK_VERSION" ]; then
     echo "Versions in podspec and APIVersion don't match ($POD_VERSION vs $SDK_VERSION)"
     exit 1

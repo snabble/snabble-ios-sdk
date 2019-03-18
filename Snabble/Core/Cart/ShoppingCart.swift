@@ -274,8 +274,8 @@ public struct CartItem: Codable {
             price = override
         }
 
-        if self.scannedCode.referencePriceOverride != nil {
-            price = self.price
+        if let refOverride = self.scannedCode.referencePriceOverride {
+            price = refOverride
         }
 
         return BackendCartItem(id: self.uuid,

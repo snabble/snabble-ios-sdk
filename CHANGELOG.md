@@ -1,5 +1,10 @@
 ## snabble iOS SDK Changelog
 
+# v0.9.8
+
+* fixes a bug in the price display for products without price data, e.g. for consigments
+* fixes a bug in the price data transmission for barcodes that override a product's reference price
+
 # v0.9.7
 
 * The shopping cart now shows the price information as delivered from the backend as part of the `CheckoutInfo` data, if available. This data is updated automatically, and `ShoppingCartViewController` also now has a pull-to-refresh function.
