@@ -14,7 +14,7 @@ public enum ProductType: Int, Codable {
 }
 
 extension ProductType: UnknownCaseRepresentable {
-    static let unknownCase = ProductType.singleItem
+    public static let unknownCase = ProductType.singleItem
 }
 
 public enum SaleRestriction: Codable {

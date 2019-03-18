@@ -95,7 +95,23 @@ public enum PaymentState: String, Decodable {
 }
 
 extension PaymentState: UnknownCaseRepresentable {
-    static let unknownCase = PaymentState.unknown
+    public static let unknownCase = PaymentState.unknown
+}
+
+/// line items can be added by the backend. if they refer back to a shopping cart item via their `refersTo` property, the `type` describes the relationsip
+public enum LineItemType: String, Codable {
+    /// not actually sent by the backend
+    case unknown
+
+    /// default item
+    case `default`
+
+    /// this item contains information about deposits, e.g. for a crate of beer
+    case deposit
+}
+
+extension LineItemType: UnknownCaseRepresentable {
+    public static let unknownCase = LineItemType.unknown
 }
 
 // CheckoutInfo
@@ -107,18 +123,15 @@ public struct CheckoutInfo: Decodable {
     public let price: Price
 
     public struct LineItem: Codable {
-        public let cartItemId: String?
+        public let id: String
         public let sku: String
         public let name: String
         public let amount: Int
         public let price: Int
         public let totalPrice: Int
         public let scannedCode: String?
-
-        enum CodingKeys: String, CodingKey {
-            case cartItemId = "cartItemID"
-            case sku, name, amount, price, totalPrice, scannedCode
-        }
+        public let type: LineItemType
+        public let refersTo: String?
     }
 
     public struct Price: Decodable {

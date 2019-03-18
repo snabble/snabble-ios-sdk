@@ -8,9 +8,7 @@ import UIKit
 
 protocol ShoppingCartTableDelegate: class {
     func confirmDeletion(at row: Int)
-    func updateTotals()
-
-    var cart: ShoppingCart { get }
+    func updateQuantity(_ quantity: Int, at row: Int)
 }
 
 final class ShoppingCartTableCell: UITableViewCell {
@@ -30,8 +28,8 @@ final class ShoppingCartTableCell: UITableViewCell {
 
     @IBOutlet weak var spinner: UIActivityIndicatorView!
     private var quantity = 0
-    private var item: CartItem!
-    private var lineItems: [CheckoutInfo.LineItem]?
+    private var item: CartItem?
+    private var lineItems = [CheckoutInfo.LineItem]()
 
     private weak var delegate: ShoppingCartTableDelegate!
     private var task: URLSessionDataTask?
@@ -68,7 +66,31 @@ final class ShoppingCartTableCell: UITableViewCell {
         self.textMargin.constant = 8
 
         self.item = nil
-        self.lineItems = nil
+        self.lineItems = []
+    }
+
+    func setLineItem(_ mainItem: CheckoutInfo.LineItem, _ lineItems: [CheckoutInfo.LineItem], row: Int, delegate: ShoppingCartTableDelegate) {
+        self.delegate = delegate
+        self.item = nil
+        self.lineItems = []
+        self.quantity = 0
+
+        self.nameLabel.text = mainItem.name
+
+        self.displayLineItemPrice(mainItem, lineItems)
+
+        self.quantityLabel.text = "\(mainItem.amount)"
+        self.subtitleLabel.text = ""
+
+        self.minusButton.isHidden = true
+        self.plusButton.isHidden = true
+        self.quantityInput.isHidden = true
+
+        self.priceLabel.isHidden = false
+        self.quantityWidth.constant = 0
+
+        self.imageWidth.constant = 0
+        self.textMargin.constant = 0
     }
 
     func setCartItem(_ item: CartItem, _ lineItems: [CheckoutInfo.LineItem], row: Int, delegate: ShoppingCartTableDelegate) {
@@ -106,7 +128,7 @@ final class ShoppingCartTableCell: UITableViewCell {
         self.showQuantity()
 
         // suppress display when price == 0
-        if self.item.price == 0 {
+        if item.price == 0 {
             self.priceLabel.isHidden = true
             self.minusButton.isHidden = true
             self.plusButton.isHidden = true
@@ -116,40 +138,65 @@ final class ShoppingCartTableCell: UITableViewCell {
     }
 
     private func updateQuantity(at row: Int) {
-        if self.quantity == 0 && self.item.product.type != .userMustWeigh {
+        guard let item = self.item else {
+            return
+        }
+
+        if self.quantity == 0 && item.product.type != .userMustWeigh {
             self.delegate.confirmDeletion(at: row)
             return
         }
 
-        self.item.quantity = self.quantity
-        self.delegate.cart.setQuantity(self.quantity, at: row)
-        self.delegate.updateTotals()
+        self.item?.quantity = self.quantity
+        self.delegate.updateQuantity(self.quantity, at: row)
 
-        self.lineItems = nil
+        self.lineItems = []
         self.showQuantity()
     }
 
     private func showQuantity() {
-        let showWeight = self.item.product.referenceUnit?.hasDimension == true || self.item.product.type == .userMustWeigh
+        guard let item = self.item else {
+            return
+        }
 
-        let encodingUnit = self.item.encodingUnit ?? self.item.product.encodingUnit
+        let showWeight = item.product.referenceUnit?.hasDimension == true || item.product.type == .userMustWeigh
+
+        let encodingUnit = item.encodingUnit ?? item.product.encodingUnit
         let symbol = encodingUnit?.display ?? ""
         let gram = showWeight ? symbol : ""
-        self.quantityLabel.text = "\(self.item.effectiveQuantity)\(gram)"
+        self.quantityLabel.text = "\(item.effectiveQuantity)\(gram)"
 
-        let formatter = PriceFormatter(SnabbleUI.project)
-
-//        if let lineItem = self.lineItems?.first {
-//            self.priceLabel.text = formatter.format(lineItem.totalPrice)
-//        } else {
-//            self.priceLabel.text = self.item.priceDisplay(formatter)
-//        }
-        self.priceLabel.text = self.item.priceDisplay(formatter)
+        if let defaultItem = lineItems.first(where: { $0.type == .default }) {
+            self.displayLineItemPrice(defaultItem, lineItems)
+        } else {
+            let formatter = PriceFormatter(SnabbleUI.project)
+            self.priceLabel.text = item.priceDisplay(formatter)
+        }
     }
 
+    private func displayLineItemPrice(_ mainItem: CheckoutInfo.LineItem, _ lineItems: [CheckoutInfo.LineItem]) {
+        let formatter = PriceFormatter(SnabbleUI.project)
+
+        if let depositTotal = lineItems.first(where: { $0.type == .deposit })?.totalPrice {
+            let single = formatter.format(mainItem.price)
+            let deposit = formatter.format(depositTotal)
+            let total = formatter.format(mainItem.totalPrice + depositTotal)
+            self.priceLabel.text = "× \(single) + \(deposit) = \(total)"
+        } else {
+            if mainItem.amount == 1 {
+                let total = formatter.format(mainItem.totalPrice)
+                self.priceLabel.text = "\(total)"
+            } else {
+                let single = formatter.format(mainItem.price)
+                let total = formatter.format(mainItem.totalPrice)
+                self.priceLabel.text = "× \(single) = \(total)"
+            }
+        }
+    }
+    
     private func loadImage() {
         guard
-            let imgUrl = self.item.product.imageUrl,
+            let imgUrl = self.item?.product.imageUrl,
             let url = URL(string: imgUrl)
         else {
             self.imageWidth.constant = 0
@@ -189,7 +236,7 @@ final class ShoppingCartTableCell: UITableViewCell {
     }
 
     @IBAction func plusButtonTapped(_ button: UIButton) {
-        if self.item.product.type == .userMustWeigh {
+        if self.item?.product.type == .userMustWeigh {
             // treat this as the "OK" button
             self.quantityInput.resignFirstResponder()
             return
