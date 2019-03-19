@@ -341,6 +341,12 @@ extension ScannerViewController {
             let product = scannedProduct.product
             let embeddedData = scannedProduct.embeddedData
 
+            // check for sale stop
+            if product.saleStop {
+                self.showSaleStop()
+                return
+            }
+
             // handle scanning the shelf code of a pre-weighed product (no data or 0 encoded in the EAN)
             if product.type == .preWeighed && (embeddedData == nil || embeddedData == 0) {
                 let msg = "Snabble.Scanner.scannedShelfCode".localized()
@@ -360,6 +366,16 @@ extension ScannerViewController {
                 self.showConfirmation(for: scannedProduct, scannedCode)
             }
         }
+    }
+
+    private func showSaleStop() {
+        let alert = UIAlertController(title: "Snabble.saleStop.errorMsg.title".localized(), message: "Snabble.saleStop.errorMsg.scan".localized(), preferredStyle: .alert)
+
+        alert.addAction(UIAlertAction(title: "Snabble.OK".localized(), style: .default) { action in
+            self.scanningView.startScanning()
+        })
+        
+        self.present(alert, animated: true)
     }
 
     private func showBundleSelection(for scannedProduct: ScannedProduct, _ scannedCode: String) {

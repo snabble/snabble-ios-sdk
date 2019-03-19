@@ -105,6 +105,15 @@
     [Snabble.Shoppingcart.deposit]
         en = Deposit
 
+    [Snabble.saleStop.errorMsg.title]
+        en = Sorry
+    [Snabble.saleStop.errorMsg.scan]
+        en = This product can't be bought using the app. Please use the regular checkstand.
+    [Snabble.saleStop.errorMsg.one]
+        en = This product can't be bought using the app. Please use the regular checkstand:
+    [Snabble.saleStop.errorMsg]
+        en = These products can't be bought using the app. Please use the regular checkstand:
+
     [Snabble.PaymentMethod.encodedCodes]
         en = Checkstand
     [Snabble.PaymentMethod.qrCodePOS]
