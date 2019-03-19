@@ -143,12 +143,6 @@
         en = Receipts
     [Snabble.Receipt.noReceipt]
         en = No receipts found
-    [Snabble.saleStop.errorMsg.title]
-        en = Sorry
-    [Snabble.saleStop.errorMsg.one]
-        en = This product cannot be paid for using the app, please pay for it at the cashier.
-    [Snabble.saleStop.errorMsg]
-        en = These products cannot be paid for using the app, please pay for them at the cashier.
     [Snabble.Payment.SEPA.Name]
         en = Name
     [Snabble.Payment.SEPA.IBAN]
