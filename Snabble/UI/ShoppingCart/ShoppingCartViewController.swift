@@ -106,8 +106,6 @@ public final class ShoppingCartViewController: UIViewController {
                 self.items.append(item)
             }
         }
-        let count = self.items.count
-        // print("setupItems: \(count) cartItems")
 
         // now gather the remaining lineItems. find the "master" items first
         if let lineItems = cart.backendCartInfo?.lineItems {
@@ -121,9 +119,6 @@ public final class ShoppingCartViewController: UIViewController {
                 self.items.append(item)
             }
         }
-
-        let line = self.items.count - count
-        // print("setupItems: \(line) lineItems")
     }
 
     required public init?(coder aDecoder: NSCoder) {

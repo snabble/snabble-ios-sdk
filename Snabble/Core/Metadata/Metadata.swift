@@ -212,8 +212,7 @@ public struct Project: Decodable {
         self.codeTemplates = TemplateDefinition.arrayFrom(templates)
         self.searchableTemplates = try container.decodeIfPresent([String].self, forKey: .searchableTemplates)
         self.priceOverrideCodes = try container.decodeIfPresent([PriceOverrideCode].self, forKey: .priceOverrideCodes)
-        // self.checkoutLimits = try container.decodeIfPresent(CheckoutLimits.self, forKey: .checkoutLimits)
-        self.checkoutLimits = CheckoutLimits(notAllMethodsAvailable: 20000, checkoutNotAvailable: 40000)
+        self.checkoutLimits = try container.decodeIfPresent(CheckoutLimits.self, forKey: .checkoutLimits)
     }
 
     private init() {
