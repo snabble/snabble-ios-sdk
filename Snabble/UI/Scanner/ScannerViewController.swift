@@ -409,6 +409,7 @@ extension ScannerViewController {
         let lookupCodes = matches.map { $0.lookupCode }
         let templates = matches.map { $0.template.id }
         let codes = Array(zip(lookupCodes, templates))
+
         self.productProvider.productByScannableCodes(codes, self.shop.id) { result in
             switch result {
             case .success(let lookupResult):

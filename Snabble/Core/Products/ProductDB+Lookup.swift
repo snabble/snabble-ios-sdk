@@ -208,7 +208,7 @@ private class ResolvedProduct: Decodable {
     }
 
     struct Price: Codable {
-        let listPrice: Int
+        let listPrice: Int?
         let basePrice: String?
         let discountedPrice: Int?
     }
@@ -240,7 +240,7 @@ private class ResolvedProduct: Decodable {
                               subtitle: self.subtitle,
                               imageUrl: self.imageUrl,
                               basePrice: self.price.basePrice,
-                              listPrice: self.price.listPrice,
+                              listPrice: self.price.listPrice ?? 0,
                               discountedPrice: self.price.discountedPrice,
                               type: type,
                               codes: codes,
