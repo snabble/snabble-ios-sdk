@@ -1,5 +1,9 @@
 ## snabble iOS SDK Changelog
 
+# v0.9.9
+
+* when scanning a product that has `saleStop`, a warning alert is shown. This uses the new localization key `Snabble.saleStop.errorMsg.scan`.
+
 # v0.9.8
 
 * fixes a bug in the price display for products without price data, e.g. for consigments

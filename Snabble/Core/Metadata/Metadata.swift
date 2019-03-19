@@ -143,6 +143,11 @@ public struct PriceOverrideCode: Decodable {
     public let transmissionCode: String?
 }
 
+public struct CheckoutLimits: Decodable {
+    let notAllMethodsAvailable: Int?
+    let checkoutNotAvailable: Int?
+}
+
 public struct Project: Decodable {
     public let id: String
     public let links: ProjectLinks
@@ -168,11 +173,13 @@ public struct Project: Decodable {
 
     public let priceOverrideCodes: [PriceOverrideCode]?
 
+    public let checkoutLimits: CheckoutLimits?
+
     enum CodingKeys: String, CodingKey {
         case id, links
         case currency, decimalDigits, locale, roundingMode
         case encodedCodes
-        case shops, scanFormats, customerCards, codeTemplates, searchableTemplates, priceOverrideCodes
+        case shops, scanFormats, customerCards, codeTemplates, searchableTemplates, priceOverrideCodes, checkoutLimits
     }
 
     public init(from decoder: Decoder) throws {
@@ -205,6 +212,8 @@ public struct Project: Decodable {
         self.codeTemplates = TemplateDefinition.arrayFrom(templates)
         self.searchableTemplates = try container.decodeIfPresent([String].self, forKey: .searchableTemplates)
         self.priceOverrideCodes = try container.decodeIfPresent([PriceOverrideCode].self, forKey: .priceOverrideCodes)
+        // self.checkoutLimits = try container.decodeIfPresent(CheckoutLimits.self, forKey: .checkoutLimits)
+        self.checkoutLimits = CheckoutLimits(notAllMethodsAvailable: 20000, checkoutNotAvailable: 40000)
     }
 
     private init() {
@@ -223,6 +232,7 @@ public struct Project: Decodable {
         self.codeTemplates = []
         self.searchableTemplates = nil
         self.priceOverrideCodes = nil
+        self.checkoutLimits = nil
     }
 
     // only used for unit tests
@@ -242,6 +252,7 @@ public struct Project: Decodable {
         self.codeTemplates = []
         self.searchableTemplates = nil
         self.priceOverrideCodes = nil
+        self.checkoutLimits = nil
     }
 
     internal init(links: ProjectLinks) {
@@ -260,6 +271,7 @@ public struct Project: Decodable {
         self.codeTemplates = []
         self.searchableTemplates = nil
         self.priceOverrideCodes = nil
+        self.checkoutLimits = nil
     }
 
     public static let none = Project()

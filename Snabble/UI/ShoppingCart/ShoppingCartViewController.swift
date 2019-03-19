@@ -59,6 +59,7 @@ public final class ShoppingCartViewController: UIViewController {
     private var trashButton: UIBarButtonItem!
 
     private var emptyState: ShoppingCartEmptyStateView!
+    private var limitAlert: UIAlertController?
 
     private let itemCellIdentifier = "itemCell"
 
@@ -106,7 +107,7 @@ public final class ShoppingCartViewController: UIViewController {
             }
         }
         let count = self.items.count
-        print("setupItems: \(count) cartItems")
+        // print("setupItems: \(count) cartItems")
 
         // now gather the remaining lineItems. find the "master" items first
         if let lineItems = cart.backendCartInfo?.lineItems {
@@ -122,7 +123,7 @@ public final class ShoppingCartViewController: UIViewController {
         }
 
         let line = self.items.count - count
-        print("setupItems: \(line) lineItems")
+        // print("setupItems: \(line) lineItems")
     }
 
     required public init?(coder aDecoder: NSCoder) {
@@ -335,6 +336,7 @@ public final class ShoppingCartViewController: UIViewController {
             let fmt = count == 1 ? "Snabble.Shoppingcart.buyProducts.one" : "Snabble.Shoppingcart.buyProducts"
             title = String(format: fmt.localized(), count, formattedTotal)
             self.tabBarItem.title = formattedTotal
+            self.checkCheckoutLimits(total)
         } else {
             self.tabBarItem.title = "Snabble.ShoppingCart.title".localized()
             title = "Snabble.Shoppingcart.buyProducts.now".localized()
@@ -348,6 +350,49 @@ public final class ShoppingCartViewController: UIViewController {
         self.checkoutButton?.isHidden = count == 0
     }
 
+    private var notAllMethodsAvailableShown = false
+    private var checkoutNotAvailableShown = false
+
+    private func checkCheckoutLimits(_ totalPrice: Int) {
+        let formatter = PriceFormatter(SnabbleUI.project)
+
+        if let notAllMethodsAvailable = SnabbleUI.project.checkoutLimits?.notAllMethodsAvailable {
+            if totalPrice > notAllMethodsAvailable {
+                if !self.notAllMethodsAvailableShown {
+                    let limit = formatter.format(notAllMethodsAvailable)
+                    self.showLimitAlert(String(format: "Snabble.limitsAlert.notAllMethodsAvailable".localized(), limit))
+                    self.notAllMethodsAvailableShown = true
+                }
+            } else {
+                self.notAllMethodsAvailableShown = false
+            }
+        }
+
+        if let checkoutNotAvailable = SnabbleUI.project.checkoutLimits?.checkoutNotAvailable {
+            if totalPrice > checkoutNotAvailable {
+                if !self.checkoutNotAvailableShown {
+                    let limit = formatter.format(checkoutNotAvailable)
+                    self.showLimitAlert(String(format: "Snabble.limitsAlert.checkoutNotAvailable".localized(), limit))
+                    self.checkoutNotAvailableShown = true
+                }
+            } else {
+                self.checkoutNotAvailableShown = false
+            }
+        }
+    }
+
+    private func showLimitAlert(_ msg: String) {
+        guard self.limitAlert == nil else {
+            return
+        }
+
+        let alert = UIAlertController(title: "Snabble.limitsAlert.title".localized(), message: msg, preferredStyle: .alert)
+        alert.addAction(UIAlertAction(title: "Snabble.OK".localized(), style: .default) { action in
+            self.limitAlert = nil
+        })
+        UIApplication.topViewController()?.present(alert, animated: true)
+        self.limitAlert = alert
+    }
 }
 
 extension ShoppingCartViewController: ShoppingCartTableDelegate {

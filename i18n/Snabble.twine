@@ -108,11 +108,11 @@
     [Snabble.saleStop.errorMsg.title]
         en = Sorry
     [Snabble.saleStop.errorMsg.scan]
-        en = This product can't be bought using the app. Please use the regular checkstand.
+        en = This product cannot be paid for using the app, please pay for it at the cashier.
     [Snabble.saleStop.errorMsg.one]
-        en = This product can't be bought using the app. Please use the regular checkstand:
+        en = This product cannot be paid for using the app, please pay for it at the cashier:
     [Snabble.saleStop.errorMsg]
-        en = These products can't be bought using the app. Please use the regular checkstand:
+        en = These products cannot be paid for using the app, please pay for them at the cashier:
 
     [Snabble.PaymentMethod.encodedCodes]
         en = Checkstand
