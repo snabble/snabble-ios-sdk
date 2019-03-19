@@ -114,6 +114,13 @@
     [Snabble.saleStop.errorMsg]
         en = These products cannot be paid for using the app, please pay for them at the cashier:
 
+    [Snabble.limitsAlert.title]
+        en = Note
+    [Snabble.limitsAlert.notAllMethodsAvailable]
+        en = With a total of %@, not all payment mehtods are available.
+    [Snabble.limitsAlert.checkoutNotAvailable]
+        en = With a total of %@, checkout using the app is unfortunately no longer possible.
+
     [Snabble.PaymentMethod.encodedCodes]
         en = Checkstand
     [Snabble.PaymentMethod.qrCodePOS]
