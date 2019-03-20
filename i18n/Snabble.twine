@@ -117,9 +117,9 @@
     [Snabble.limitsAlert.title]
         en = Note
     [Snabble.limitsAlert.notAllMethodsAvailable]
-        en = With a total of %@, not all payment mehtods are available.
+        en = With a total of more than %@, not all payment methods are available.
     [Snabble.limitsAlert.checkoutNotAvailable]
-        en = With a total of %@, checkout using the app is unfortunately no longer possible.
+        en = With a total of more than %@, checkout using the app is unfortunately no longer possible.
 
     [Snabble.PaymentMethod.encodedCodes]
         en = Checkstand
