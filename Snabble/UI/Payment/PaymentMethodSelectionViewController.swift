@@ -60,6 +60,13 @@ final class PaymentMethodSelectionViewController: UIViewController {
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
 
+        if !self.isBeingPresented && !self.isMovingToParent {
+            // whatever was covering us has been dismissed or popped
+            let info = self.signedCheckoutInfo
+            self.paymentMethods = self.process.mergePaymentMethodList(info.checkoutInfo.paymentMethods)
+            self.collectionView.reloadData()
+        }
+
         if self.paymentMethods.count == 1 {
             self.startPayment(self.paymentMethods[0])
         }
@@ -118,9 +125,8 @@ extension PaymentMethodSelectionViewController: UICollectionViewDelegate, UIColl
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "paymentCell", for: indexPath) as! PaymentMethodCell
 
         let paymentMethod = self.paymentMethods[indexPath.row]
-        cell.icon.image = UIImage.fromBundle(paymentMethod.icon)
-        cell.label.text = paymentMethod.displayName
-
+        cell.paymentMethod = paymentMethod
+        
         return cell
     }
 
@@ -131,6 +137,11 @@ extension PaymentMethodSelectionViewController: UICollectionViewDelegate, UIColl
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         let method = self.paymentMethods[indexPath.row]
 
+        if method.data == nil, let entryVC = self.process.delegate.dataEntry(for: method) {
+            self.navigationController?.pushViewController(entryVC, animated: true)
+            return
+        }
+        
         self.process.delegate.startPayment(method, self) { proceed in
             if proceed {
                 self.startPayment(method)

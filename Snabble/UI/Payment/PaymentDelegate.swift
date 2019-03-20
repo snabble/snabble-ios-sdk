@@ -32,6 +32,10 @@ public protocol PaymentDelegate: AnalyticsDelegate, MessageDelegate {
 
     /// get payment data from the host app. Use this method to return e.g. encrypted SEPA data for use with .telecashDeDirectDebit to the SDK
     func getPaymentData() -> [PaymentMethod]
+
+    /// for payment methods with missing data (e.g. Telecash, but no SEPA data available), provide a `UIViewController` instance that allows the user
+    /// to enter the missing data
+    func dataEntry(for: PaymentMethod) -> UIViewController?
 }
 
 /// provide simple default implementations
@@ -48,4 +52,9 @@ extension PaymentDelegate {
     public func getPaymentData() -> [PaymentMethod] {
         return []
     }
+
+    public func dataEntry(for: PaymentMethod) -> UIViewController? {
+        return nil
+    }
+
 }
