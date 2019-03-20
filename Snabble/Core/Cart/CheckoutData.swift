@@ -74,7 +74,7 @@ public enum PaymentMethod {
 
     public var displayName: String? {
         switch self {
-        case .teleCashDeDirectDebit(let data): return data?.displayName ?? "Snabble.PaymentSelection.addNow".localized()
+        case .teleCashDeDirectDebit(let data): return data?.displayName
         default: return nil
         }
     }

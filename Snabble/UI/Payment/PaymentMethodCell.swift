@@ -16,16 +16,18 @@ final class PaymentMethodCell: UICollectionViewCell {
         didSet {
             let image = UIImage.fromBundle(paymentMethod.icon)
             self.icon.image = image
+            self.label.text = paymentMethod.displayName
+
             switch paymentMethod {
             case .teleCashDeDirectDebit(let data):
                 if data == nil {
                     self.icon.image = image?.grayscale()
                     self.label.textColor = SnabbleUI.appearance.primaryColor
+                    self.label.text = "Snabble.PaymentSelection.addNow".localized()
                 }
             default: ()
             }
 
-            self.label.text = paymentMethod.displayName
         }
     }
 
