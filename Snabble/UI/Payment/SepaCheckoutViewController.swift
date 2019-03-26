@@ -86,7 +86,7 @@ final class SepaCheckoutViewController: UIViewController {
     private func paymentFinished(_ success: Bool) {
         self.poller = nil
         if success {
-            self.cart.removeAll()
+            self.cart.removeAll(endSession: true)
         }
         self.delegate.paymentFinished(success, self.cart)
     }

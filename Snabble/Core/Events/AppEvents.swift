@@ -117,7 +117,7 @@ extension AppEvent {
     func post() {
         // use URLRequest/URLSession directly to avoid error logging loops when posting the event fails
         guard
-            let url = SnabbleAPI.urlFor(project.links.appEvents.href),
+            let url = SnabbleAPI.urlFor(self.project.links.appEvents.href),
             let token = SnabbleAPI.tokenRegistry.token(for: self.project)
         else {
             return
@@ -138,7 +138,13 @@ extension AppEvent {
             Log.error("\(error)")
         }
 
-        // Log.info("posting event \(String(describing: self))")
+        var sessionId = ""
+        switch self.payload {
+        case .session(let session): sessionId = session.session
+        case .cart(let cart): sessionId = cart.session
+        default: sessionId = "n/a"
+        }
+        // Log.info("posting event: \(self.type) session=\(sessionId)")
 
         // use a system default session here so we can still log pinning errors
         let session = URLSession(configuration: .default)

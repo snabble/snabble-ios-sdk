@@ -582,6 +582,10 @@ struct CartEvent {
     }
 
     static func cart(_ cart: ShoppingCart) {
+        if cart.items.count == 0 && cart.session == "" {
+            return
+        }
+
         cart.createCheckoutInfo(completion: {_ in})
         let event = AppEvent(cart)
         event.post()
