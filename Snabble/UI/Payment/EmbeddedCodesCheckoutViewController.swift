@@ -49,6 +49,15 @@ final class EmbeddedCodesCheckoutViewController: UIViewController {
         self.paidButton.backgroundColor = SnabbleUI.appearance.primaryColor
         self.paidButton.makeRoundedButton()
         self.paidButton.setTitle("Snabble.QRCode.didPay".localized(), for: .normal)
+        self.paidButton.alpha = 0
+        self.paidButton.isUserInteractionEnabled = false
+
+        Timer.scheduledTimer(withTimeInterval: 2, repeats: false) { timer in
+            UIView.animate(withDuration: 0.2) {
+                self.paidButton.alpha = 1
+            }
+            self.paidButton.isUserInteractionEnabled = true
+        }
 
         let nib = UINib(nibName: "QRCodeCell", bundle: Snabble.bundle)
         self.collectionView.register(nib, forCellWithReuseIdentifier: "qrCodeCell")
