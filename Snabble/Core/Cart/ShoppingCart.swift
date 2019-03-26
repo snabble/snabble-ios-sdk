@@ -251,7 +251,7 @@ public struct CartItem: Codable {
             quantity = 1
         }
 
-        if self.product.type == .preWeighed {
+        if self.product.type == .preWeighed && self.encodingUnit?.hasDimension == true {
             weight = quantity
             quantity = 1
         }
