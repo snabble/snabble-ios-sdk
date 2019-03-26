@@ -20,8 +20,6 @@ public final class ScannerViewController: UIViewController {
     private var scanConfirmationViewBottom: NSLayoutConstraint!
     private var tapticFeedback = UINotificationFeedbackGenerator()
 
-    private var infoView: ScannerInfoView!
-
     private var productProvider: ProductProvider
     private var shoppingCart: ShoppingCart
     private var shop: Shop
@@ -54,19 +52,10 @@ public final class ScannerViewController: UIViewController {
         self.title = "Snabble.Scanner.title".localized()
         self.tabBarItem.image = UIImage.fromBundle("icon-scan")
         self.navigationItem.title = "Snabble.Scanner.scanningTitle".localized()
-
-        let infoIcon = UIImage.fromBundle("icon-info")?.recolored(with: .white)
-        let infoButton = UIBarButtonItem(image: infoIcon, style: .plain, target: self, action: #selector(self.infoButtonTapped(_:)))
-        self.navigationItem.leftBarButtonItem = infoButton
     }
     
     public required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
-    }
-
-    private var firstTimeInfoShown: Bool {
-        get { return UserDefaults.standard.bool(forKey: "snabble.scanner.firstTimeInfoShown") }
-        set { UserDefaults.standard.set(newValue, forKey: "snabble.scanner.firstTimeInfoShown") }
     }
 
     override public func viewDidLoad() {
@@ -93,16 +82,6 @@ public final class ScannerViewController: UIViewController {
         bottom.constant = self.hiddenConfirmationOffset
         self.scanConfirmationViewBottom = bottom
 
-        self.infoView = ScannerInfoView()
-        self.infoView.delegate = self
-        self.infoView.translatesAutoresizingMaskIntoConstraints = false
-        self.scanningView.addSubview(self.infoView)
-        self.infoView.leadingAnchor.constraint(equalTo: self.scanningView.leadingAnchor, constant: 16).isActive = true
-        self.infoView.trailingAnchor.constraint(equalTo: self.scanningView.trailingAnchor, constant: -16).isActive = true
-        self.infoView.centerXAnchor.constraint(equalTo: self.scanningView.centerXAnchor).isActive = true
-        self.infoView.bottomAnchor.constraint(equalTo: self.scanningView.bottomAnchor, constant: -16).isActive = true
-        self.infoView.isHidden = self.firstTimeInfoShown
-
         self.scanningView.setup(with: self.scannerConfig())
 
         self.scanConfirmationView.delegate = self
@@ -113,10 +92,8 @@ public final class ScannerViewController: UIViewController {
         self.keyboardObserver = KeyboardObserver(handler: self)
 
         self.delegate.track(.viewScanner)
-        if self.firstTimeInfoShown {
-            self.scanningView.initializeCamera()
-            self.scanningView.startScanning()
-        }
+        self.scanningView.initializeCamera()
+        self.scanningView.startScanning()
     }
 
     override public func viewWillDisappear(_ animated: Bool) {
@@ -124,7 +101,6 @@ public final class ScannerViewController: UIViewController {
 
         self.scanningView.stopScanning()
         self.displayScanConfirmationView(hidden: true)
-        self.infoView?.isHidden = true
 
         self.keyboardObserver = nil
     }
@@ -199,31 +175,6 @@ public final class ScannerViewController: UIViewController {
         }
     }
 
-    @objc func infoButtonTapped(_ sender: Any) {
-        if self.confirmationVisible {
-            return
-        }
-
-        self.showInfo()
-    }
-}
-
-// MARK: - info delegate
-extension ScannerViewController: ScannerInfoDelegate {
-
-    func showInfo() {
-        self.scanningView.stopScanning()
-        self.infoView.isHidden = false
-        self.scanningView.reticleHidden = true
-    }
-
-    func close() {
-        self.infoView.isHidden = true
-        self.firstTimeInfoShown = true
-        self.scanningView.reticleHidden = false
-        self.scanningView.initializeCamera()
-        self.scanningView.startScanning()
-    }
 }
 
 // MARK: - analytics delegate
