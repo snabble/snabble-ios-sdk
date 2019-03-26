@@ -138,13 +138,15 @@ extension AppEvent {
             Log.error("\(error)")
         }
 
+        /*
         var sessionId = ""
         switch self.payload {
         case .session(let session): sessionId = session.session
         case .cart(let cart): sessionId = cart.session
         default: sessionId = "n/a"
         }
-        // Log.info("posting event: \(self.type) session=\(sessionId)")
+        Log.info("posting event: \(self.type) session=\(sessionId)")
+        */
 
         // use a system default session here so we can still log pinning errors
         let session = URLSession(configuration: .default)
