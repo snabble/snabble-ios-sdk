@@ -8,7 +8,6 @@ import UIKit
 
 final class PaymentMethodSelectionViewController: UIViewController {
 
-    @IBOutlet var titleLabel: UILabel!
     @IBOutlet weak var collectionView: UICollectionView!
     
     private weak var cart: ShoppingCart!
@@ -36,11 +35,9 @@ final class PaymentMethodSelectionViewController: UIViewController {
         super.viewDidLoad()
 
         self.view.backgroundColor = SnabbleUI.appearance.secondaryColor
-        self.titleLabel.textColor = SnabbleUI.appearance.primaryColor
 
         let formatter = PriceFormatter(SnabbleUI.project)
         let totalPrice = formatter.format(self.signedCheckoutInfo.checkoutInfo.price.price)
-        self.titleLabel.text = "" // String(format: "Snabble.PaymentSelection.howToPay".localized(), totalPrice)
 
         self.title = String(format: "Snabble.PaymentSelection.payNow".localized(), totalPrice)
 
@@ -49,10 +46,10 @@ final class PaymentMethodSelectionViewController: UIViewController {
     }
 
     override func viewDidLayoutSubviews() {
-        super .viewDidLayoutSubviews()
+        super.viewDidLayoutSubviews()
 
-        let width = self.collectionView.frame.width - 32
-        self.itemSize = CGSize(width: width, height: 96)
+        let width = self.collectionView.frame.width
+        self.itemSize = CGSize(width: width, height: 120)
 
         self.updateContentInset()
     }
@@ -85,11 +82,13 @@ final class PaymentMethodSelectionViewController: UIViewController {
         for i in 0 ..< numRows {
             let attributes = self.collectionView.layoutAttributesForItem(at: IndexPath(item: i, section: 0))
             let rowRect = attributes?.frame ?? CGRect.zero
-            contentInsetTop -= rowRect.size.height + 10
+            contentInsetTop -= rowRect.size.height
             if contentInsetTop <= 0 {
                 contentInsetTop = 0
             }
         }
+
+        contentInsetTop -= 16.0 * CGFloat(numRows - 1)
         self.collectionView.contentInset = UIEdgeInsets.init(top: contentInsetTop, left: 0, bottom: 0, right: 0)
         if contentInsetTop == 0 {
             // scroll so that the last entry is fully visible

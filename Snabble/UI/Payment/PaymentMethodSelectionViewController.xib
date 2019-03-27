@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="14109" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="14490.70" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
     <device id="retina4_7" orientation="portrait">
         <adaptation id="fullscreen"/>
     </device>
     <dependencies>
         <deployment identifier="iOS"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="14088"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="14490.49"/>
         <capability name="Safe area layout guides" minToolsVersion="9.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
@@ -13,7 +13,6 @@
         <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner" customClass="PaymentMethodSelectionViewController" customModule="Snabble" customModuleProvider="target">
             <connections>
                 <outlet property="collectionView" destination="M2k-W7-qjk" id="9Qb-DO-wfE"/>
-                <outlet property="titleLabel" destination="9fe-8s-tEw" id="njX-K7-me6"/>
                 <outlet property="view" destination="i5M-Pr-FkT" id="sfx-zR-JGt"/>
             </connections>
         </placeholder>
@@ -22,20 +21,14 @@
             <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
             <subviews>
-                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Wie möchten Sie zahlen?" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="9fe-8s-tEw">
-                    <rect key="frame" x="102" y="36" width="172" height="17"/>
-                    <fontDescription key="fontDescription" type="boldSystem" pointSize="14"/>
-                    <color key="textColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
-                    <nil key="highlightedColor"/>
-                </label>
                 <collectionView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" dataMode="none" translatesAutoresizingMaskIntoConstraints="NO" id="M2k-W7-qjk">
-                    <rect key="frame" x="0.0" y="69" width="375" height="582"/>
+                    <rect key="frame" x="16" y="36" width="343" height="615"/>
                     <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
-                    <collectionViewFlowLayout key="collectionViewLayout" minimumLineSpacing="10" minimumInteritemSpacing="10" id="kc7-4d-PQw">
-                        <size key="itemSize" width="50" height="50"/>
+                    <collectionViewFlowLayout key="collectionViewLayout" minimumLineSpacing="16" minimumInteritemSpacing="0.0" id="kc7-4d-PQw">
+                        <size key="itemSize" width="50" height="120"/>
                         <size key="headerReferenceSize" width="0.0" height="0.0"/>
                         <size key="footerReferenceSize" width="0.0" height="0.0"/>
-                        <inset key="sectionInset" minX="16" minY="0.0" maxX="16" maxY="0.0"/>
+                        <inset key="sectionInset" minX="0.0" minY="0.0" maxX="0.0" maxY="0.0"/>
                     </collectionViewFlowLayout>
                     <connections>
                         <outlet property="dataSource" destination="-1" id="vY8-5R-rIT"/>
@@ -43,13 +36,10 @@
                     </connections>
                 </collectionView>
             </subviews>
-            <color key="backgroundColor" red="0.5" green="0.66411675347222221" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
             <constraints>
-                <constraint firstItem="9fe-8s-tEw" firstAttribute="centerX" secondItem="i5M-Pr-FkT" secondAttribute="centerX" id="54F-fm-SPK"/>
-                <constraint firstItem="9fe-8s-tEw" firstAttribute="top" secondItem="fnl-2z-Ty3" secondAttribute="top" constant="16" id="MIU-sP-i0W"/>
-                <constraint firstItem="M2k-W7-qjk" firstAttribute="top" secondItem="9fe-8s-tEw" secondAttribute="bottom" constant="16" id="Tip-5D-qqz"/>
-                <constraint firstItem="fnl-2z-Ty3" firstAttribute="trailing" secondItem="M2k-W7-qjk" secondAttribute="trailing" id="Usq-QU-YZq"/>
-                <constraint firstItem="M2k-W7-qjk" firstAttribute="leading" secondItem="fnl-2z-Ty3" secondAttribute="leading" id="q3B-Gn-s5B"/>
+                <constraint firstItem="fnl-2z-Ty3" firstAttribute="trailing" secondItem="M2k-W7-qjk" secondAttribute="trailing" constant="16" id="Usq-QU-YZq"/>
+                <constraint firstItem="M2k-W7-qjk" firstAttribute="top" secondItem="fnl-2z-Ty3" secondAttribute="top" constant="16" id="gtf-tc-4pc"/>
+                <constraint firstItem="M2k-W7-qjk" firstAttribute="leading" secondItem="fnl-2z-Ty3" secondAttribute="leading" constant="16" id="q3B-Gn-s5B"/>
                 <constraint firstItem="fnl-2z-Ty3" firstAttribute="bottom" secondItem="M2k-W7-qjk" secondAttribute="bottom" constant="16" id="w6y-yR-IHY"/>
             </constraints>
             <viewLayoutGuide key="safeArea" id="fnl-2z-Ty3"/>

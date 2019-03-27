@@ -34,14 +34,16 @@ final class PaymentMethodCell: UICollectionViewCell {
     override func awakeFromNib() {
         super.awakeFromNib()
 
-        self.containerView.addCornersAndShadow(backgroundColor: .white, cornerRadius: 5)
-        self.containerView.layer.shadowColor = UIColor.darkGray.cgColor
+        self.containerView.layer.cornerRadius = 10
+        self.containerView.layer.borderColor = UIColor(white: 0, alpha: 0.25).cgColor
+        self.containerView.layer.borderWidth = 1 / UIScreen.main.scale
+        self.containerView.layer.masksToBounds = true
+
         self.label.text = nil
     }
 
     override func prepareForReuse() {
         super.prepareForReuse()
-        self.containerView.backgroundColor = .white
         self.label.textColor = nil
     }
 }
