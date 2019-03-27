@@ -174,11 +174,11 @@ public final class ScannerViewController: UIViewController {
 
         if setBottomOffset {
             self.scanConfirmationViewBottom.constant = hidden ? self.hiddenConfirmationOffset : self.visibleConfirmationOffset
-            UIView.animate(withDuration: 0.12,
+            UIView.animate(withDuration: 0.15,
                            delay: 0,
-                           usingSpringWithDamping: 0.75,
-                           initialSpringVelocity: 0.2,
-                           options: .curveLinear,
+                           usingSpringWithDamping: 0.6,
+                           initialSpringVelocity: 0,
+                           options: .curveEaseInOut,
                            animations: {
                                 self.view.layoutIfNeeded()
                            },
