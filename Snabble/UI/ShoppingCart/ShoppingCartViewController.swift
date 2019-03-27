@@ -82,7 +82,8 @@ public final class ShoppingCartViewController: UIViewController {
         self.delegate = delegate
 
         self.title = "Snabble.ShoppingCart.title".localized()
-        self.tabBarItem.image = UIImage.fromBundle("icon-cart")
+        self.tabBarItem.image = UIImage.fromBundle("icon-cart-inactive")
+        self.tabBarItem.selectedImage = UIImage.fromBundle("icon-cart-active")
 
         let nc = NotificationCenter.default
         nc.addObserver(self, selector: #selector(self.updateShoppingCart(_:)), name: .snabbleCartUpdated, object: nil)

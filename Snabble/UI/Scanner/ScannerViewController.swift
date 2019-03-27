@@ -50,7 +50,8 @@ public final class ScannerViewController: UIViewController {
         self.barcodeDetector = barcodeDetector
 
         self.title = "Snabble.Scanner.title".localized()
-        self.tabBarItem.image = UIImage.fromBundle("icon-scan")
+        self.tabBarItem.image = UIImage.fromBundle("icon-scan-inactive")
+        self.tabBarItem.selectedImage = UIImage.fromBundle("icon-scan-active")
         self.navigationItem.title = "Snabble.Scanner.scanningTitle".localized()
     }
     
@@ -109,7 +110,7 @@ public final class ScannerViewController: UIViewController {
         var config = ScanningViewConfig()
 
         config.torchButtonTitle = "Snabble.Scanner.torchButton".localized()
-        config.torchButtonImage = UIImage.fromBundle("icon-light")?.recolored(with: .white)
+        config.torchButtonImage = UIImage.fromBundle("icon-light-inactive")?.recolored(with: .white)
         config.enterButtonTitle = "Snabble.Scanner.enterCodeButton".localized()
         config.enterButtonImage = UIImage.fromBundle("icon-entercode")?.recolored(with: .white)
         config.textColor = .white
