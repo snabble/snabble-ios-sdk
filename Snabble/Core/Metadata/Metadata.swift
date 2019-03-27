@@ -446,7 +446,7 @@ public struct Shop: Decodable {
 
 public extension Metadata {
 
-    public static func readResource(_ path: String) -> Metadata? {
+    static func readResource(_ path: String) -> Metadata? {
         let url = URL(fileURLWithPath: path)
         do {
             let data = try Data(contentsOf: url)
@@ -458,7 +458,7 @@ public extension Metadata {
         return nil
     }
 
-    public static func load(from url: String, completion: @escaping (Metadata?) -> () ) {
+    static func load(from url: String, completion: @escaping (Metadata?) -> () ) {
         let project = Project.none
         project.request(.get, url, jwtRequired: false, timeout: 5) { request in
             guard let request = request else {

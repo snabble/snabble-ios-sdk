@@ -91,7 +91,7 @@ public extension UIImage {
     ///
     /// used to generate icons suitable for use in a tabbar, since we can't use
     /// unselectedItemTintColor yet
-    public func recolored(with color: UIColor) -> UIImage {
+    func recolored(with color: UIColor) -> UIImage {
         UIGraphicsBeginImageContextWithOptions(self.size, false, self.scale)
         color.setFill()
 
@@ -114,7 +114,7 @@ public extension UIImage {
     }
 
     /// create a black-and-white version of `self`
-    public func grayscale(brightness: Double = 0.0, contrast: Double = 1.0) -> UIImage? {
+    func grayscale(brightness: Double = 0.0, contrast: Double = 1.0) -> UIImage? {
         guard let ciImage = CIImage(image: self, options: nil) else {
             return nil
         }
