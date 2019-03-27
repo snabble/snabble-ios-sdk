@@ -9,6 +9,7 @@ import AVFoundation
 
 public protocol ScannerDelegate: AnalyticsDelegate, MessageDelegate {
     func closeScanningView()
+    func gotoShoppingCart()
 }
 
 public final class ScannerViewController: UIViewController {
@@ -86,6 +87,14 @@ public final class ScannerViewController: UIViewController {
         self.scanningView.setup(with: self.scannerConfig())
 
         self.scanConfirmationView.delegate = self
+
+        NotificationCenter.default.addObserver(self, selector: #selector(self.cartUpdated(_:)), name: .snabbleCartUpdated, object: nil)
+    }
+
+    override public func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+
+        self.updateCartButton()
     }
 
     override public func viewDidAppear(_ animated: Bool) {
@@ -109,11 +118,12 @@ public final class ScannerViewController: UIViewController {
     private func scannerConfig() -> ScanningViewConfig {
         var config = ScanningViewConfig()
 
-        config.torchButtonTitle = "Snabble.Scanner.torchButton".localized()
         config.torchButtonImage = UIImage.fromBundle("icon-light-inactive")?.recolored(with: .white)
-        config.enterButtonTitle = "Snabble.Scanner.enterCodeButton".localized()
+        config.torchButtonActiveImage = UIImage.fromBundle("icon-light-active")
         config.enterButtonImage = UIImage.fromBundle("icon-entercode")?.recolored(with: .white)
         config.textColor = .white
+        config.backgroundColor = SnabbleUI.appearance.primaryColor
+
         config.scanFormats = self.scanFormats
         config.reticleCornerRadius = 3
 
@@ -176,6 +186,23 @@ public final class ScannerViewController: UIViewController {
         }
     }
 
+    func updateCartButton() {
+        let items = self.shoppingCart.numberOfItems
+        if items > 0 {
+            if let total = self.shoppingCart.total {
+                let formatter = PriceFormatter(SnabbleUI.project)
+                self.scanningView.cartButtonTitle = String(format: "Snabble.Scanner.goToCart".localized(), formatter.format(total))
+            } else {
+                self.scanningView.cartButtonTitle = "Snabble.Scanner.goToCart.empty".localized()
+            }
+        } else {
+            self.scanningView.cartButtonTitle = nil
+        }
+    }
+
+    @objc func cartUpdated(_ notification: Notification) {
+        self.updateCartButton()
+    }
 }
 
 // MARK: - analytics delegate
@@ -200,6 +227,8 @@ extension ScannerViewController: ScanConfirmationViewDelegate {
     func closeConfirmation() {
         self.displayScanConfirmationView(hidden: true)
         self.scanningView.startScanning()
+
+        self.updateCartButton()
     }
 }
 
@@ -256,6 +285,10 @@ extension ScannerViewController: ScanningViewDelegate {
         }
 
         self.handleScannedCode(code)
+    }
+
+    public func gotoShoppingCart() {
+        self.delegate.gotoShoppingCart()
     }
 }
 
