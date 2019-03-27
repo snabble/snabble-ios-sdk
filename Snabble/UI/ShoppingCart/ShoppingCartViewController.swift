@@ -91,6 +91,8 @@ public final class ShoppingCartViewController: UIViewController {
         self.keyboardObserver = KeyboardObserver(handler: self)
 
         self.shoppingCart = cart
+
+        self.updateTotals()
     }
 
     func setupItems(_ cart: ShoppingCart) {

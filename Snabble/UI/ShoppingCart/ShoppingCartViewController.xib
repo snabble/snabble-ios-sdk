@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="14460.31" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" colorMatched="YES">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="14490.70" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" colorMatched="YES">
     <device id="retina4_7" orientation="portrait">
         <adaptation id="fullscreen"/>
     </device>
     <dependencies>
         <deployment identifier="iOS"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="14460.20"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="14490.49"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <objects>
@@ -23,7 +23,7 @@
             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
             <subviews>
                 <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" style="plain" separatorStyle="default" rowHeight="44" sectionHeaderHeight="28" sectionFooterHeight="28" translatesAutoresizingMaskIntoConstraints="NO" id="HUc-lW-uQH" userLabel="Shopping Cart Table">
-                    <rect key="frame" x="0.0" y="0.0" width="375" height="736"/>
+                    <rect key="frame" x="0.0" y="0.0" width="375" height="742"/>
                     <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                     <connections>
                         <outlet property="dataSource" destination="-1" id="vMj-Bq-kcq"/>
@@ -31,7 +31,7 @@
                     </connections>
                 </tableView>
                 <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="X6z-x3-q9y">
-                    <rect key="frame" x="0.0" y="736" width="375" height="86"/>
+                    <rect key="frame" x="0.0" y="742" width="375" height="80"/>
                     <subviews>
                         <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="4R3-oH-v0g">
                             <rect key="frame" x="16" y="16" width="343" height="48"/>
@@ -50,7 +50,7 @@
                         <constraint firstItem="4R3-oH-v0g" firstAttribute="top" secondItem="X6z-x3-q9y" secondAttribute="top" constant="16" id="ClY-7A-bCg"/>
                         <constraint firstItem="4R3-oH-v0g" firstAttribute="leading" secondItem="X6z-x3-q9y" secondAttribute="leading" constant="16" id="gHi-sR-hFc"/>
                         <constraint firstAttribute="trailing" secondItem="4R3-oH-v0g" secondAttribute="trailing" constant="16" id="gb7-Gz-3qv"/>
-                        <constraint firstAttribute="bottom" secondItem="4R3-oH-v0g" secondAttribute="bottom" constant="22" id="uYJ-ba-XZd"/>
+                        <constraint firstAttribute="bottom" secondItem="4R3-oH-v0g" secondAttribute="bottom" constant="16" id="uYJ-ba-XZd"/>
                     </constraints>
                 </view>
             </subviews>
