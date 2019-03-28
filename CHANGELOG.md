@@ -4,6 +4,8 @@
 
 * when scanning a product that has `saleStop`, a warning alert is shown. This uses the new localization key `Snabble.saleStop.errorMsg.scan`.
 * adds support for the new `checkoutLimits` project metadata. Alerts are displayed when these limits are reached, using the new localization keys `Snabble.limitsAlert.title`, `Snabble.limitsAlert.notAllMethodsAvailable` and `Snabble.limitsAlert.checkoutNotAvailable`.
+* The layout of the scanning view has changed, and some properties of the `ScanningViewConfig` struct have been removed. At the same time, some new configuration properties have been added: `torchButtonActiveImage`, `backgroundColor` and `borderColor`. The new "go to cart" button uses the localization keys `Snabble.Scanner.goToCart` and `Snabble.Scanner.goToCart.empty`
+* `ScanningViewDelegate` has a new method `gotoShoppingCart` that is called when the shopping cart should be displayed.
 
 # v0.9.8
 
