@@ -333,10 +333,8 @@ public final class ShoppingCartViewController: UIViewController {
             let formattedTotal = formatter.format(total)
             let fmt = count == 1 ? "Snabble.Shoppingcart.buyProducts.one" : "Snabble.Shoppingcart.buyProducts"
             title = String(format: fmt.localized(), count, formattedTotal)
-            self.tabBarItem.title = formattedTotal
             self.checkCheckoutLimits(total)
         } else {
-            self.tabBarItem.title = "Snabble.ShoppingCart.title".localized()
             title = "Snabble.Shoppingcart.buyProducts.now".localized()
         }
 
