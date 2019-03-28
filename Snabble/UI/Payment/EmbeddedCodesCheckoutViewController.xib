@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="14460.31" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="14490.70" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
     <device id="retina3_5" orientation="portrait">
         <adaptation id="fullscreen"/>
     </device>
     <dependencies>
         <deployment identifier="iOS"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="14460.20"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="14490.49"/>
         <capability name="Safe area layout guides" minToolsVersion="9.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
@@ -27,31 +27,31 @@
             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
             <subviews>
                 <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="EIP-gZ-GFM" userLabel="Top View">
-                    <rect key="frame" x="0.0" y="0.0" width="320" height="392"/>
+                    <rect key="frame" x="0.0" y="0.0" width="320" height="416"/>
                     <subviews>
                         <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="emd-rI-ZOi" userLabel="Inner Wrapper">
-                            <rect key="frame" x="16" y="12" width="288" height="368"/>
+                            <rect key="frame" x="16" y="12" width="288" height="392"/>
                             <subviews>
-                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Show this Code to the Cashier" textAlignment="center" lineBreakMode="wordWrap" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="jje-sq-VTZ" userLabel="explanation1">
+                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" ambiguous="YES" text="Show this Code to the Cashier" textAlignment="center" lineBreakMode="wordWrap" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="jje-sq-VTZ" userLabel="explanation1">
                                     <rect key="frame" x="20" y="0.0" width="248" height="20.5"/>
                                     <fontDescription key="fontDescription" type="system" weight="light" pointSize="17"/>
                                     <color key="textColor" red="0.082352941176470587" green="0.082352941176470587" blue="0.082352941176470587" alpha="1" colorSpace="calibratedRGB"/>
                                     <nil key="highlightedColor"/>
                                 </label>
-                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Total Price" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="bMi-BY-Zh4">
+                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" ambiguous="YES" text="Total Price" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="bMi-BY-Zh4">
                                     <rect key="frame" x="103" y="321.5" width="82.5" height="21"/>
                                     <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                     <fontDescription key="fontDescription" type="system" weight="medium" pointSize="17"/>
                                     <nil key="textColor"/>
                                     <nil key="highlightedColor"/>
                                 </label>
-                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Preis kann abweichen" textAlignment="center" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="F9K-BY-3TG">
+                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" ambiguous="YES" text="Preis kann abweichen" textAlignment="center" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="F9K-BY-3TG">
                                     <rect key="frame" x="26" y="354.5" width="236" height="13.5"/>
                                     <fontDescription key="fontDescription" type="system" pointSize="11"/>
                                     <nil key="textColor"/>
                                     <nil key="highlightedColor"/>
                                 </label>
-                                <pageControl opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" hidesForSinglePage="YES" numberOfPages="3" translatesAutoresizingMaskIntoConstraints="NO" id="qoR-oB-4QU">
+                                <pageControl opaque="NO" contentMode="scaleToFill" ambiguous="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" hidesForSinglePage="YES" numberOfPages="3" translatesAutoresizingMaskIntoConstraints="NO" id="qoR-oB-4QU">
                                     <rect key="frame" x="0.0" y="284.5" width="288" height="37"/>
                                     <constraints>
                                         <constraint firstAttribute="height" constant="37" id="AhD-Tk-l8Y"/>
@@ -62,8 +62,8 @@
                                         <action selector="pageControlTapped:" destination="-1" eventType="valueChanged" id="8wu-1f-8oq"/>
                                     </connections>
                                 </pageControl>
-                                <collectionView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" pagingEnabled="YES" showsHorizontalScrollIndicator="NO" showsVerticalScrollIndicator="NO" dataMode="none" translatesAutoresizingMaskIntoConstraints="NO" id="ev5-Ha-DDh">
-                                    <rect key="frame" x="12" y="20.5" width="264" height="264"/>
+                                <collectionView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" ambiguous="YES" pagingEnabled="YES" showsHorizontalScrollIndicator="NO" showsVerticalScrollIndicator="NO" dataMode="none" translatesAutoresizingMaskIntoConstraints="NO" id="ev5-Ha-DDh">
+                                    <rect key="frame" x="1" y="20.5" width="286" height="264"/>
                                     <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                     <constraints>
                                         <constraint firstAttribute="height" relation="greaterThanOrEqual" constant="120" id="CP2-VO-NmE"/>
@@ -107,7 +107,7 @@
                     </constraints>
                 </view>
                 <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="xcE-5B-t8q">
-                    <rect key="frame" x="16" y="392" width="288" height="48"/>
+                    <rect key="frame" x="16" y="416" width="288" height="48"/>
                     <color key="backgroundColor" red="0.5" green="0.66411675349999999" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                     <constraints>
                         <constraint firstAttribute="height" constant="48" id="6YG-qp-JoA"/>
@@ -128,7 +128,7 @@
                 <constraint firstItem="EIP-gZ-GFM" firstAttribute="top" secondItem="i5M-Pr-FkT" secondAttribute="top" id="Sl7-tl-o0u"/>
                 <constraint firstAttribute="trailing" secondItem="EIP-gZ-GFM" secondAttribute="trailing" id="aC0-kr-a8N"/>
                 <constraint firstItem="xcE-5B-t8q" firstAttribute="top" secondItem="EIP-gZ-GFM" secondAttribute="bottom" id="b35-ux-mcV"/>
-                <constraint firstItem="hlh-RL-0Du" firstAttribute="bottom" secondItem="xcE-5B-t8q" secondAttribute="bottom" constant="40" id="hDh-gt-GXp"/>
+                <constraint firstItem="hlh-RL-0Du" firstAttribute="bottom" secondItem="xcE-5B-t8q" secondAttribute="bottom" constant="16" id="hDh-gt-GXp"/>
                 <constraint firstItem="EIP-gZ-GFM" firstAttribute="leading" secondItem="i5M-Pr-FkT" secondAttribute="leading" id="st2-S7-aka"/>
             </constraints>
             <nil key="simulatedTopBarMetrics"/>
