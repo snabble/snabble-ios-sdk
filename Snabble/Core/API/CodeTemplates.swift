@@ -539,11 +539,15 @@ public struct CodeMatcher {
         let embed = padding + rawEmbed
 
         var result = ""
+        var embedSeen = false
         for c in template.components {
             switch c {
             case .plainText(let str):
                 result.append(str)
-            case .code:
+            case .code(let type):
+                if code.count != type.length {
+                    return nil
+                }
                 result.append(code)
             case .internalChecksum:
                 let embedDigits = embed.map { Int(String($0))! }
@@ -551,10 +555,15 @@ public struct CodeMatcher {
                 result.append(String(check))
             case .embed(let len):
                 result.append(String(repeating: "0", count: len))
+                embedSeen = true
             case .ignore(let len):
                 result.append(String(repeating: "0", count: len))
             default: ()
             }
+        }
+
+        if !embedSeen {
+            return nil
         }
 
         let ean = EAN13(String(result.prefix(7)) + embed)
