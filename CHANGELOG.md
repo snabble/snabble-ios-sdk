@@ -2,10 +2,11 @@
 
 # v0.9.9
 
-* when scanning a product that has `saleStop`, a warning alert is shown. This uses the new localization key `Snabble.saleStop.errorMsg.scan`.
-* adds support for the new `checkoutLimits` project metadata. Alerts are displayed when these limits are reached, using the new localization keys `Snabble.limitsAlert.title`, `Snabble.limitsAlert.notAllMethodsAvailable` and `Snabble.limitsAlert.checkoutNotAvailable`.
-* The layout of the scanning view has changed, and some properties of the `ScanningViewConfig` struct have been removed. At the same time, some new configuration properties have been added: `torchButtonActiveImage`, `backgroundColor` and `borderColor`. The new "go to cart" button uses the localization keys `Snabble.Scanner.goToCart` and `Snabble.Scanner.goToCart.empty`
+* When scanning a product that has `saleStop`, a warning alert is shown. This uses the new localization key `Snabble.saleStop.errorMsg.scan`. The product is not added to the shopping cart.
+* Adds support for the new `checkoutLimits` project metadata. Alerts are displayed when these limits are reached, using the new localization keys `Snabble.limitsAlert.title`, `Snabble.limitsAlert.notAllMethodsAvailable` and `Snabble.limitsAlert.checkoutNotAvailable`.
+* Breaking change: The layout of the scanning view has changed, and the `ScanningViewConfig` struct has changed to reflect this. New configuration properties have been added: `torchButtonActiveImage`, `backgroundColor` and `borderColor`. The properties `title`, `enterButtonTitle` and `torchButtonTitle` have been removed. The new "go to cart" button uses the localization keys `Snabble.Scanner.goToCart` and `Snabble.Scanner.goToCart.empty`
 * `ScanningViewDelegate` has a new method `gotoShoppingCart` that is called when the shopping cart should be displayed.
+* Fixes a bug where invalid barcodes could be transmitted to the backend after scanning items with `piece` encoding.
 
 # v0.9.8
 
@@ -27,7 +28,7 @@
 
 # v0.9.4
 
-* `ShoppingCartViewController` and both QR-Code-based checkout views now display price information from the backened, if available.
+* `ShoppingCartViewController` and both QR-Code-based checkout views now display price information from the backend, if available.
 
 # v0.9.3
 
@@ -47,7 +48,7 @@
 * Products now have an optional property `encodingUnit` that specified how it is measured in scannable codes. The most common example is groceries with a `referenceUnit` of kg and and `encodingUnit` of g. This encoding can be overridden by specific scannable codes.
 * decoding of embedded data in scanned codes no longer relies on project-specific prefixes. Instead, codes are now parsed using templates that extract the embedded data (if any) and map to the `encodingUnit` used. This is a major breaking change for users of the Core API, but transparent if only the UI components are used.
 * all methods referring to `weighItemIds` have been removed, since product lookup now only occurs through the scanned codes resulting from the template parsing.
-* this new information can be accessed using a product's `codes` property, an array of `ScannableCode` objects. This replaces the previous `scanneableCodes` property.
+* this new information can be accessed using a product's `codes` property, an array of `ScannableCode` objects. This replaces the previous `scannableCodes` property.
 
 # v0.8.13
 
