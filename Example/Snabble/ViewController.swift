@@ -33,8 +33,7 @@ class ViewController: UIViewController {
     }
 
     @IBAction func shoppingCartButtonTapped(_ sender: Any) {
-        let shoppingCart = ShoppingCartViewController(self.shoppingCart, delegate: self)
-        self.navigationController?.pushViewController(shoppingCart, animated: true)
+        self.gotoShoppingCart()
     }
 
     func snabbleSetup() {
@@ -65,6 +64,11 @@ class ViewController: UIViewController {
 }
 
 extension ViewController: ScannerDelegate {
+    func gotoShoppingCart() {
+        let shoppingCart = ShoppingCartViewController(self.shoppingCart, delegate: self)
+        self.navigationController?.pushViewController(shoppingCart, animated: true)
+    }
+
     // called when the scanner needs to close itself
     func closeScanningView() {
         self.navigationController?.popViewController(animated: true)
