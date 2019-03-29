@@ -79,7 +79,7 @@ extension ProductDB {
                         let product = resolvedProduct.convert(code, template)
 
                         let codeEntry = product.codes.first { $0.code == code }
-                        let transmissionCode = codeEntry?.transmissionCode
+                        let transmissionCode = codeEntry?.transmissionCode ?? codeEntry?.code
                         let lookupResult = ScannedProduct(product, transmissionCode, template)
                         completion(Result.success(lookupResult))
                     } catch let error {
