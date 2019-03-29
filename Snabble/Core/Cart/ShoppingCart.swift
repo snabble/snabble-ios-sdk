@@ -246,20 +246,24 @@ public struct CartItem: Codable {
         let encodingUnit = self.encodingUnit
 
         if self.product.type == .userMustWeigh {
-            code = CodeMatcher.createInstoreEan(self.scannedCode.templateId, code, quantity) ?? "n/a"
-            weight = quantity
-            quantity = 1
+            if let newCode = CodeMatcher.createInstoreEan(self.scannedCode.templateId, code, quantity) {
+                code = newCode
+                weight = quantity
+                quantity = 1
+            }
         }
 
-        if self.product.type == .preWeighed {
+        if self.product.type == .preWeighed && self.encodingUnit?.hasDimension == true {
             weight = quantity
             quantity = 1
         }
 
         if self.product.referenceUnit == .piece && (self.scannedCode.embeddedData == nil || self.scannedCode.embeddedData == 0) {
-            code = CodeMatcher.createInstoreEan(self.scannedCode.templateId, code, quantity) ?? "n/a"
-            units = quantity
-            quantity = 1
+            if let newCode = CodeMatcher.createInstoreEan(self.scannedCode.templateId, code, quantity) {
+                code = newCode
+                units = quantity
+                quantity = 1
+            }
         }
 
         if let unit = encodingUnit, let embed = self.scannedCode.embeddedData, embed > 0 {
@@ -582,6 +586,10 @@ struct CartEvent {
     }
 
     static func cart(_ cart: ShoppingCart) {
+        if cart.items.count == 0 && cart.session == "" {
+            return
+        }
+
         cart.createCheckoutInfo(completion: {_ in})
         let event = AppEvent(cart)
         event.post()

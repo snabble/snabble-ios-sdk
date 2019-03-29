@@ -1,27 +1,23 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="14313.18" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" colorMatched="YES">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="14490.70" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" colorMatched="YES">
     <device id="retina4_7" orientation="portrait">
         <adaptation id="fullscreen"/>
     </device>
     <dependencies>
         <deployment identifier="iOS"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="14283.14"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="14490.49"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <objects>
         <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner" customClass="ScanningView" customModule="Snabble" customModuleProvider="target">
             <connections>
                 <outlet property="bottomBar" destination="Dv0-OS-hgA" id="hFM-d3-zCI"/>
-                <outlet property="enterCodeIcon" destination="Io5-Lb-9s6" id="rUQ-5B-CST"/>
-                <outlet property="enterCodeLabel" destination="a1U-ME-5LP" id="zQE-hn-rFK"/>
-                <outlet property="enterCodeWrapper" destination="S7q-48-tkd" id="pTL-ar-l2D"/>
+                <outlet property="cartButton" destination="phO-va-Pyx" id="eki-6m-frR"/>
                 <outlet property="reticle" destination="QIs-Nt-v4t" id="xYt-vv-erK"/>
                 <outlet property="reticleHeight" destination="82b-j4-Jit" id="DTy-Sn-vlg"/>
                 <outlet property="reticleWrapper" destination="fyq-J0-gU0" id="egc-lf-5eu"/>
-                <outlet property="titleLabel" destination="5cs-zN-Qdt" id="hkc-hp-3PB"/>
-                <outlet property="torchIcon" destination="b8Q-wE-1G4" id="UVU-XP-anZ"/>
-                <outlet property="torchLabel" destination="gH8-Z8-Kio" id="FTV-85-HNh"/>
-                <outlet property="torchWrapper" destination="GFd-2j-beT" id="O7b-JL-7Vm"/>
+                <outlet property="searchButton" destination="4Gy-zp-8zo" id="opg-k9-iL7"/>
+                <outlet property="torchButton" destination="eDD-iX-Jub" id="dCx-f7-AT0"/>
             </connections>
         </placeholder>
         <placeholder placeholderIdentifier="IBFirstResponder" id="-2" customClass="UIResponder"/>
@@ -30,10 +26,10 @@
             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
             <subviews>
                 <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="fyq-J0-gU0" userLabel="Reticle Wrapper">
-                    <rect key="frame" x="0.0" y="33" width="485" height="319"/>
+                    <rect key="frame" x="0.0" y="0.0" width="485" height="368"/>
                     <subviews>
                         <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="QIs-Nt-v4t" userLabel="Reticle">
-                            <rect key="frame" x="8" y="79.5" width="469" height="160"/>
+                            <rect key="frame" x="8" y="104" width="469" height="160"/>
                             <color key="backgroundColor" white="0.66666666666666663" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                             <constraints>
                                 <constraint firstAttribute="height" constant="160" id="82b-j4-Jit"/>
@@ -48,95 +44,62 @@
                     </constraints>
                 </view>
                 <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="Dv0-OS-hgA" userLabel="Bottom Bar">
-                    <rect key="frame" x="60" y="352" width="365" height="56"/>
+                    <rect key="frame" x="16" y="368" width="453" height="48"/>
                     <subviews>
-                        <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="S7q-48-tkd" userLabel="Barcode Wrapper">
-                            <rect key="frame" x="0.0" y="0.0" width="60" height="56"/>
-                            <subviews>
-                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Barcode eingeben" textAlignment="center" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="a1U-ME-5LP">
-                                    <rect key="frame" x="0.0" y="32" width="60" height="24"/>
-                                    <fontDescription key="fontDescription" type="system" weight="medium" pointSize="10"/>
-                                    <nil key="textColor"/>
-                                    <nil key="highlightedColor"/>
-                                </label>
-                                <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="Io5-Lb-9s6">
-                                    <rect key="frame" x="18" y="0.0" width="24" height="24"/>
-                                    <constraints>
-                                        <constraint firstAttribute="width" constant="24" id="Pgi-pR-swN"/>
-                                        <constraint firstAttribute="height" constant="24" id="o27-UX-Xms"/>
-                                    </constraints>
-                                </imageView>
-                            </subviews>
-                            <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                        <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="4Gy-zp-8zo">
+                            <rect key="frame" x="0.0" y="0.0" width="48" height="48"/>
                             <constraints>
-                                <constraint firstItem="Io5-Lb-9s6" firstAttribute="top" secondItem="S7q-48-tkd" secondAttribute="top" id="Afm-b0-yS5"/>
-                                <constraint firstAttribute="bottom" secondItem="a1U-ME-5LP" secondAttribute="bottom" id="Pz7-yW-Egq"/>
-                                <constraint firstItem="a1U-ME-5LP" firstAttribute="top" secondItem="Io5-Lb-9s6" secondAttribute="bottom" constant="8" id="esC-UC-1lT"/>
-                                <constraint firstItem="Io5-Lb-9s6" firstAttribute="centerX" secondItem="S7q-48-tkd" secondAttribute="centerX" id="m8I-KH-4lW"/>
-                                <constraint firstAttribute="width" constant="60" id="pON-8d-aBB"/>
-                                <constraint firstItem="a1U-ME-5LP" firstAttribute="leading" secondItem="S7q-48-tkd" secondAttribute="leading" id="r8q-Px-9ka"/>
-                                <constraint firstItem="Io5-Lb-9s6" firstAttribute="top" secondItem="S7q-48-tkd" secondAttribute="top" id="uIL-c1-slm"/>
-                                <constraint firstAttribute="trailing" secondItem="a1U-ME-5LP" secondAttribute="trailing" id="wMU-Y0-Lml"/>
+                                <constraint firstAttribute="height" constant="48" id="0Bd-D5-hrZ"/>
+                                <constraint firstAttribute="width" constant="48" id="jQE-3g-J00"/>
                             </constraints>
-                        </view>
-                        <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="GFd-2j-beT" userLabel="Torch Wrapper">
-                            <rect key="frame" x="305" y="0.0" width="60" height="56"/>
-                            <subviews>
-                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Licht" textAlignment="center" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="gH8-Z8-Kio">
-                                    <rect key="frame" x="0.0" y="32" width="60" height="12"/>
-                                    <fontDescription key="fontDescription" type="system" weight="medium" pointSize="10"/>
-                                    <nil key="textColor"/>
-                                    <nil key="highlightedColor"/>
-                                </label>
-                                <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="b8Q-wE-1G4">
-                                    <rect key="frame" x="18" y="0.0" width="24" height="24"/>
-                                    <constraints>
-                                        <constraint firstAttribute="height" constant="24" id="5m7-Lo-hWr"/>
-                                        <constraint firstAttribute="width" constant="24" id="vn3-hW-TTd"/>
-                                    </constraints>
-                                </imageView>
-                            </subviews>
-                            <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                            <connections>
+                                <action selector="enterButtonTapped:" destination="-1" eventType="touchUpInside" id="4KT-B8-GIj"/>
+                            </connections>
+                        </button>
+                        <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="eDD-iX-Jub">
+                            <rect key="frame" x="64" y="0.0" width="48" height="48"/>
                             <constraints>
-                                <constraint firstAttribute="width" constant="60" id="2yK-aM-yqn"/>
-                                <constraint firstItem="gH8-Z8-Kio" firstAttribute="top" secondItem="b8Q-wE-1G4" secondAttribute="bottom" constant="8" id="3ta-wK-eUe"/>
-                                <constraint firstItem="b8Q-wE-1G4" firstAttribute="top" secondItem="GFd-2j-beT" secondAttribute="top" id="Ja8-pf-fEK"/>
-                                <constraint firstItem="b8Q-wE-1G4" firstAttribute="top" secondItem="GFd-2j-beT" secondAttribute="top" id="SoT-fg-UxB"/>
-                                <constraint firstItem="gH8-Z8-Kio" firstAttribute="leading" secondItem="GFd-2j-beT" secondAttribute="leading" id="XBM-hf-UN6"/>
-                                <constraint firstItem="b8Q-wE-1G4" firstAttribute="centerX" secondItem="GFd-2j-beT" secondAttribute="centerX" id="gey-6X-abc"/>
-                                <constraint firstAttribute="trailing" secondItem="gH8-Z8-Kio" secondAttribute="trailing" id="jBm-eA-dUn"/>
+                                <constraint firstAttribute="height" constant="48" id="l2y-rq-XHw"/>
+                                <constraint firstAttribute="width" constant="48" id="o2I-CJ-I1P"/>
                             </constraints>
-                        </view>
+                            <connections>
+                                <action selector="torchButtonTapped:" destination="-1" eventType="touchUpInside" id="CkQ-u5-KuZ"/>
+                            </connections>
+                        </button>
+                        <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="phO-va-Pyx">
+                            <rect key="frame" x="128" y="0.0" width="325" height="48"/>
+                            <constraints>
+                                <constraint firstAttribute="height" constant="48" id="ypl-dd-XOd"/>
+                            </constraints>
+                            <fontDescription key="fontDescription" type="system" weight="medium" pointSize="17"/>
+                            <state key="normal" title="Button"/>
+                            <connections>
+                                <action selector="cartButtonTapped:" destination="-1" eventType="touchUpInside" id="tFb-UZ-GFO"/>
+                            </connections>
+                        </button>
                     </subviews>
                     <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                     <constraints>
-                        <constraint firstItem="S7q-48-tkd" firstAttribute="top" secondItem="Dv0-OS-hgA" secondAttribute="top" id="CDH-S5-bMT"/>
-                        <constraint firstItem="GFd-2j-beT" firstAttribute="top" secondItem="Dv0-OS-hgA" secondAttribute="top" id="LSQ-Ci-x75"/>
-                        <constraint firstAttribute="bottom" secondItem="GFd-2j-beT" secondAttribute="bottom" id="NaN-5H-Erg"/>
-                        <constraint firstAttribute="bottom" secondItem="S7q-48-tkd" secondAttribute="bottom" id="RrN-NH-b10"/>
-                        <constraint firstAttribute="trailing" secondItem="GFd-2j-beT" secondAttribute="trailing" id="g0p-bw-ftL"/>
-                        <constraint firstAttribute="height" constant="56" id="hYV-rx-c3D"/>
-                        <constraint firstItem="S7q-48-tkd" firstAttribute="leading" secondItem="Dv0-OS-hgA" secondAttribute="leading" id="zOl-AP-cme"/>
+                        <constraint firstItem="4Gy-zp-8zo" firstAttribute="leading" secondItem="Dv0-OS-hgA" secondAttribute="leading" id="4ph-ly-gDk"/>
+                        <constraint firstAttribute="trailing" secondItem="phO-va-Pyx" secondAttribute="trailing" id="6fV-HF-4Ax"/>
+                        <constraint firstItem="eDD-iX-Jub" firstAttribute="centerY" secondItem="Dv0-OS-hgA" secondAttribute="centerY" id="C0z-SC-jib"/>
+                        <constraint firstItem="eDD-iX-Jub" firstAttribute="leading" secondItem="4Gy-zp-8zo" secondAttribute="trailing" constant="16" id="Crk-1W-c3F"/>
+                        <constraint firstItem="4Gy-zp-8zo" firstAttribute="centerY" secondItem="Dv0-OS-hgA" secondAttribute="centerY" id="Zo4-4O-U3B"/>
+                        <constraint firstAttribute="height" constant="48" id="hYV-rx-c3D"/>
+                        <constraint firstItem="phO-va-Pyx" firstAttribute="centerY" secondItem="Dv0-OS-hgA" secondAttribute="centerY" id="oj9-ts-qwy"/>
+                        <constraint firstItem="phO-va-Pyx" firstAttribute="leading" secondItem="eDD-iX-Jub" secondAttribute="trailing" constant="16" id="yCP-ec-p5a"/>
                     </constraints>
                 </view>
-                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Barcode scannen" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="5cs-zN-Qdt">
-                    <rect key="frame" x="183" y="16" width="119" height="17"/>
-                    <fontDescription key="fontDescription" type="boldSystem" pointSize="14"/>
-                    <nil key="textColor"/>
-                    <nil key="highlightedColor"/>
-                </label>
             </subviews>
             <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
             <constraints>
-                <constraint firstItem="5cs-zN-Qdt" firstAttribute="top" secondItem="iN0-l3-epB" secondAttribute="top" constant="16" id="2dZ-Zb-GJg"/>
-                <constraint firstItem="Dv0-OS-hgA" firstAttribute="leading" secondItem="iN0-l3-epB" secondAttribute="leading" constant="60" id="4x3-36-GO6"/>
+                <constraint firstItem="Dv0-OS-hgA" firstAttribute="leading" secondItem="iN0-l3-epB" secondAttribute="leading" constant="16" id="4x3-36-GO6"/>
                 <constraint firstItem="fyq-J0-gU0" firstAttribute="leading" secondItem="iN0-l3-epB" secondAttribute="leading" id="9AV-1R-M8f"/>
                 <constraint firstItem="Dv0-OS-hgA" firstAttribute="top" secondItem="fyq-J0-gU0" secondAttribute="bottom" id="DaL-UN-aVC"/>
                 <constraint firstAttribute="trailing" secondItem="fyq-J0-gU0" secondAttribute="trailing" id="KiG-8V-FfL"/>
-                <constraint firstAttribute="trailing" secondItem="Dv0-OS-hgA" secondAttribute="trailing" constant="60" id="MIr-jh-oPQ"/>
-                <constraint firstItem="5cs-zN-Qdt" firstAttribute="centerX" secondItem="iN0-l3-epB" secondAttribute="centerX" id="Nvw-6E-JeK"/>
-                <constraint firstAttribute="bottom" secondItem="Dv0-OS-hgA" secondAttribute="bottom" constant="24" id="uW0-F7-8tc"/>
-                <constraint firstItem="fyq-J0-gU0" firstAttribute="top" secondItem="5cs-zN-Qdt" secondAttribute="bottom" id="xac-rk-9pd"/>
+                <constraint firstItem="fyq-J0-gU0" firstAttribute="top" secondItem="iN0-l3-epB" secondAttribute="top" id="Lbk-rw-cLn"/>
+                <constraint firstAttribute="trailing" secondItem="Dv0-OS-hgA" secondAttribute="trailing" constant="16" id="MIr-jh-oPQ"/>
+                <constraint firstAttribute="bottom" secondItem="Dv0-OS-hgA" secondAttribute="bottom" constant="16" id="uW0-F7-8tc"/>
             </constraints>
             <nil key="simulatedStatusBarMetrics"/>
             <freeformSimulatedSizeMetrics key="simulatedDestinationMetrics"/>

@@ -9,6 +9,7 @@ import AVFoundation
 
 public protocol ScannerDelegate: AnalyticsDelegate, MessageDelegate {
     func closeScanningView()
+    func gotoShoppingCart()
 }
 
 public final class ScannerViewController: UIViewController {
@@ -19,8 +20,6 @@ public final class ScannerViewController: UIViewController {
     private var scanConfirmationView: ScanConfirmationView!
     private var scanConfirmationViewBottom: NSLayoutConstraint!
     private var tapticFeedback = UINotificationFeedbackGenerator()
-
-    private var infoView: ScannerInfoView!
 
     private var productProvider: ProductProvider
     private var shoppingCart: ShoppingCart
@@ -52,21 +51,13 @@ public final class ScannerViewController: UIViewController {
         self.barcodeDetector = barcodeDetector
 
         self.title = "Snabble.Scanner.title".localized()
-        self.tabBarItem.image = UIImage.fromBundle("icon-scan")
+        self.tabBarItem.image = UIImage.fromBundle("icon-scan-inactive")
+        self.tabBarItem.selectedImage = UIImage.fromBundle("icon-scan-active")
         self.navigationItem.title = "Snabble.Scanner.scanningTitle".localized()
-
-        let infoIcon = UIImage.fromBundle("icon-info")?.recolored(with: .white)
-        let infoButton = UIBarButtonItem(image: infoIcon, style: .plain, target: self, action: #selector(self.infoButtonTapped(_:)))
-        self.navigationItem.leftBarButtonItem = infoButton
     }
     
     public required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
-    }
-
-    private var firstTimeInfoShown: Bool {
-        get { return UserDefaults.standard.bool(forKey: "snabble.scanner.firstTimeInfoShown") }
-        set { UserDefaults.standard.set(newValue, forKey: "snabble.scanner.firstTimeInfoShown") }
     }
 
     override public func viewDidLoad() {
@@ -93,19 +84,17 @@ public final class ScannerViewController: UIViewController {
         bottom.constant = self.hiddenConfirmationOffset
         self.scanConfirmationViewBottom = bottom
 
-        self.infoView = ScannerInfoView()
-        self.infoView.delegate = self
-        self.infoView.translatesAutoresizingMaskIntoConstraints = false
-        self.scanningView.addSubview(self.infoView)
-        self.infoView.leadingAnchor.constraint(equalTo: self.scanningView.leadingAnchor, constant: 16).isActive = true
-        self.infoView.trailingAnchor.constraint(equalTo: self.scanningView.trailingAnchor, constant: -16).isActive = true
-        self.infoView.centerXAnchor.constraint(equalTo: self.scanningView.centerXAnchor).isActive = true
-        self.infoView.bottomAnchor.constraint(equalTo: self.scanningView.bottomAnchor, constant: -16).isActive = true
-        self.infoView.isHidden = self.firstTimeInfoShown
-
         self.scanningView.setup(with: self.scannerConfig())
 
         self.scanConfirmationView.delegate = self
+
+        NotificationCenter.default.addObserver(self, selector: #selector(self.cartUpdated(_:)), name: .snabbleCartUpdated, object: nil)
+    }
+
+    override public func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+
+        self.updateCartButton()
     }
 
     override public func viewDidAppear(_ animated: Bool) {
@@ -113,10 +102,8 @@ public final class ScannerViewController: UIViewController {
         self.keyboardObserver = KeyboardObserver(handler: self)
 
         self.delegate.track(.viewScanner)
-        if self.firstTimeInfoShown {
-            self.scanningView.initializeCamera()
-            self.scanningView.startScanning()
-        }
+        self.scanningView.initializeCamera()
+        self.scanningView.startScanning()
     }
 
     override public func viewWillDisappear(_ animated: Bool) {
@@ -124,7 +111,6 @@ public final class ScannerViewController: UIViewController {
 
         self.scanningView.stopScanning()
         self.displayScanConfirmationView(hidden: true)
-        self.infoView?.isHidden = true
 
         self.keyboardObserver = nil
     }
@@ -132,11 +118,12 @@ public final class ScannerViewController: UIViewController {
     private func scannerConfig() -> ScanningViewConfig {
         var config = ScanningViewConfig()
 
-        config.torchButtonTitle = "Snabble.Scanner.torchButton".localized()
-        config.torchButtonImage = UIImage.fromBundle("icon-light")?.recolored(with: .white)
-        config.enterButtonTitle = "Snabble.Scanner.enterCodeButton".localized()
+        config.torchButtonImage = UIImage.fromBundle("icon-light-inactive")?.recolored(with: .white)
+        config.torchButtonActiveImage = UIImage.fromBundle("icon-light-active")
         config.enterButtonImage = UIImage.fromBundle("icon-entercode")?.recolored(with: .white)
         config.textColor = .white
+        config.backgroundColor = SnabbleUI.appearance.primaryColor
+
         config.scanFormats = self.scanFormats
         config.reticleCornerRadius = 3
 
@@ -187,36 +174,34 @@ public final class ScannerViewController: UIViewController {
 
         if setBottomOffset {
             self.scanConfirmationViewBottom.constant = hidden ? self.hiddenConfirmationOffset : self.visibleConfirmationOffset
-            UIView.animate(withDuration: 0.12) {
-                self.view.layoutIfNeeded()
+            UIView.animate(withDuration: 0.25,
+                           delay: 0,
+                           usingSpringWithDamping: 0.8,
+                           initialSpringVelocity: 0,
+                           options: .curveEaseInOut,
+                           animations: {
+                                self.view.layoutIfNeeded()
+                           },
+                           completion: { _ in })
+        }
+    }
+
+    func updateCartButton() {
+        let items = self.shoppingCart.numberOfItems
+        if items > 0 {
+            if let total = self.shoppingCart.total {
+                let formatter = PriceFormatter(SnabbleUI.project)
+                self.scanningView.cartButtonTitle = String(format: "Snabble.Scanner.goToCart".localized(), formatter.format(total))
+            } else {
+                self.scanningView.cartButtonTitle = "Snabble.Scanner.goToCart.empty".localized()
             }
+        } else {
+            self.scanningView.cartButtonTitle = nil
         }
     }
 
-    @objc func infoButtonTapped(_ sender: Any) {
-        if self.confirmationVisible {
-            return
-        }
-
-        self.showInfo()
-    }
-}
-
-// MARK: - info delegate
-extension ScannerViewController: ScannerInfoDelegate {
-
-    func showInfo() {
-        self.scanningView.stopScanning()
-        self.infoView.isHidden = false
-        self.scanningView.reticleHidden = true
-    }
-
-    func close() {
-        self.infoView.isHidden = true
-        self.firstTimeInfoShown = true
-        self.scanningView.reticleHidden = false
-        self.scanningView.initializeCamera()
-        self.scanningView.startScanning()
+    @objc func cartUpdated(_ notification: Notification) {
+        self.updateCartButton()
     }
 }
 
@@ -242,6 +227,8 @@ extension ScannerViewController: ScanConfirmationViewDelegate {
     func closeConfirmation() {
         self.displayScanConfirmationView(hidden: true)
         self.scanningView.startScanning()
+
+        self.updateCartButton()
     }
 }
 
@@ -298,6 +285,10 @@ extension ScannerViewController: ScanningViewDelegate {
         }
 
         self.handleScannedCode(code)
+    }
+
+    public func gotoShoppingCart() {
+        self.delegate.gotoShoppingCart()
     }
 }
 

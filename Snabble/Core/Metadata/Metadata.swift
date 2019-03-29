@@ -148,6 +148,11 @@ public struct CheckoutLimits: Decodable {
     let checkoutNotAvailable: Int?
 }
 
+public struct ProjectMessages: Decodable {
+    public let sepaMandate: String?
+    public let sepaMandateShort: String?
+}
+
 public struct Project: Decodable {
     public let id: String
     public let links: ProjectLinks
@@ -175,11 +180,14 @@ public struct Project: Decodable {
 
     public let checkoutLimits: CheckoutLimits?
 
+    public let messsages: ProjectMessages?
+
     enum CodingKeys: String, CodingKey {
         case id, links
         case currency, decimalDigits, locale, roundingMode
         case encodedCodes
         case shops, scanFormats, customerCards, codeTemplates, searchableTemplates, priceOverrideCodes, checkoutLimits
+        case messages = "texts"
     }
 
     public init(from decoder: Decoder) throws {
@@ -213,6 +221,7 @@ public struct Project: Decodable {
         self.searchableTemplates = try container.decodeIfPresent([String].self, forKey: .searchableTemplates)
         self.priceOverrideCodes = try container.decodeIfPresent([PriceOverrideCode].self, forKey: .priceOverrideCodes)
         self.checkoutLimits = try container.decodeIfPresent(CheckoutLimits.self, forKey: .checkoutLimits)
+        self.messsages = try container.decodeIfPresent(ProjectMessages.self, forKey: .messages)
     }
 
     private init() {
@@ -232,6 +241,7 @@ public struct Project: Decodable {
         self.searchableTemplates = nil
         self.priceOverrideCodes = nil
         self.checkoutLimits = nil
+        self.messsages = nil
     }
 
     // only used for unit tests
@@ -252,6 +262,7 @@ public struct Project: Decodable {
         self.searchableTemplates = nil
         self.priceOverrideCodes = nil
         self.checkoutLimits = nil
+        self.messsages = nil
     }
 
     internal init(links: ProjectLinks) {
@@ -271,6 +282,7 @@ public struct Project: Decodable {
         self.searchableTemplates = nil
         self.priceOverrideCodes = nil
         self.checkoutLimits = nil
+        self.messsages = nil
     }
 
     public static let none = Project()
@@ -446,7 +458,7 @@ public struct Shop: Decodable {
 
 public extension Metadata {
 
-    public static func readResource(_ path: String) -> Metadata? {
+    static func readResource(_ path: String) -> Metadata? {
         let url = URL(fileURLWithPath: path)
         do {
             let data = try Data(contentsOf: url)
@@ -458,7 +470,7 @@ public extension Metadata {
         return nil
     }
 
-    public static func load(from url: String, completion: @escaping (Metadata?) -> () ) {
+    static func load(from url: String, completion: @escaping (Metadata?) -> () ) {
         let project = Project.none
         project.request(.get, url, jwtRequired: false, timeout: 5) { request in
             guard let request = request else {

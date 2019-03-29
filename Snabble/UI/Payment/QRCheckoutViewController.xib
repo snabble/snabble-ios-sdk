@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="14460.31" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" colorMatched="YES">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="14490.70" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" colorMatched="YES">
     <device id="retina4_7" orientation="portrait">
         <adaptation id="fullscreen"/>
     </device>
     <dependencies>
         <deployment identifier="iOS"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="14460.20"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="14490.49"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <objects>
@@ -58,7 +58,7 @@
                     <nil key="highlightedColor"/>
                 </label>
                 <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="qNE-1g-jyd">
-                    <rect key="frame" x="149.5" y="617" width="76" height="30"/>
+                    <rect key="frame" x="149.5" y="621" width="76" height="30"/>
                     <state key="normal" title="Abbrechen"/>
                     <connections>
                         <action selector="cancelButtonTapped:" destination="-1" eventType="touchUpInside" id="gU3-21-SW4"/>
@@ -72,7 +72,7 @@
                 <constraint firstItem="l6N-Hz-Aju" firstAttribute="centerX" secondItem="i5M-Pr-FkT" secondAttribute="centerX" id="E7V-ga-sIQ"/>
                 <constraint firstItem="qNE-1g-jyd" firstAttribute="centerX" secondItem="i5M-Pr-FkT" secondAttribute="centerX" id="HAr-29-3AP"/>
                 <constraint firstAttribute="trailing" secondItem="jje-sq-VTZ" secondAttribute="trailing" constant="16" id="HPh-F4-RIt"/>
-                <constraint firstAttribute="bottom" secondItem="qNE-1g-jyd" secondAttribute="bottom" constant="20" id="IAM-gC-Bac"/>
+                <constraint firstAttribute="bottom" secondItem="qNE-1g-jyd" secondAttribute="bottom" constant="16" id="IAM-gC-Bac"/>
                 <constraint firstAttribute="trailing" secondItem="V64-uG-eh4" secondAttribute="trailing" constant="42" id="K2v-o1-g1u"/>
                 <constraint firstItem="V64-uG-eh4" firstAttribute="leading" secondItem="i5M-Pr-FkT" secondAttribute="leading" constant="42" id="TLz-Ui-BG0"/>
                 <constraint firstItem="Guj-1R-xhP" firstAttribute="top" secondItem="i5M-Pr-FkT" secondAttribute="top" constant="8" id="VzQ-QY-2lY"/>

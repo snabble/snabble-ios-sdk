@@ -132,23 +132,23 @@ public protocol ProductProvider: class {
 }
 
 public extension ProductProvider {
-    public func setup(completion: @escaping (Bool) -> () ) {
+    func setup(completion: @escaping (Bool) -> () ) {
         self.setup(update: true, forceFullDownload: false, completion: completion)
     }
 
-    public func updateDatabase(completion: @escaping (Bool) -> ()) {
+    func updateDatabase(completion: @escaping (Bool) -> ()) {
         self.updateDatabase(forceFullDownload: false, completion: completion)
     }
 
-    public func productBySku(_ sku: String, _ shopId: String, completion: @escaping (_ result: Result<Product, SnabbleError>) -> () ) {
+    func productBySku(_ sku: String, _ shopId: String, completion: @escaping (_ result: Result<Product, SnabbleError>) -> () ) {
         self.productBySku(sku, shopId, forceDownload: false, completion: completion)
     }
 
-    public func productsByScannableCodePrefix(_ prefix: String) -> [Product] {
+    func productsByScannableCodePrefix(_ prefix: String) -> [Product] {
         return self.productsByScannableCodePrefix(prefix, filterDeposits: true, templates: nil)
     }
 
-    public func productsByName(_ name: String) -> [Product] {
+    func productsByName(_ name: String) -> [Product] {
         return self.productsByName(name, filterDeposits: true)
     }
 

@@ -72,27 +72,30 @@ public protocol ScanningViewDelegate: class {
     /// called when the device has no back camera
     func noCameraFound()
 
+    /// called when the shopping cart should be displayed
+    func gotoShoppingCart()
+
     func track(_ event: AnalyticsEvent)
 }
 
 /// configuration of a ScanningView
 public struct ScanningViewConfig {
-
-    /// title for the view
-    public var title: String?
-
-    /// title for the "enter barcode" button
-    public var enterButtonTitle: String?
     /// icon for the "enter barcode" button
     public var enterButtonImage: UIImage?
 
-    /// title for the "torch toggle" button
-    public var torchButtonTitle: String?
-    /// icon for the "torch toggle" button
+    /// icon for the inactive "torch toggle" button
     public var torchButtonImage: UIImage?
 
-    /// text color
+    /// icon for the active "torch toggle" button (if nil, `torchButtonImage` is used)
+    public var torchButtonActiveImage: UIImage?
+
+    /// text color for the cart button
     public var textColor = UIColor.white
+    /// background color for the cart button
+    public var backgroundColor = UIColor.clear
+
+    /// border color for the "enter barcode" and "torch" buttons
+    public var borderColor = UIColor.white
 
     /// color of the reticle's border. Default: 100% white, 20% alpha
     public var reticleBorderColor = UIColor.init(white: 1.0, alpha: 0.2)
@@ -128,14 +131,9 @@ public final class ScanningView: DesignableView {
     @IBOutlet weak var reticle: UIView!
     @IBOutlet weak var bottomBar: UIView!
 
-    @IBOutlet weak var titleLabel: UILabel!
-    @IBOutlet weak var enterCodeWrapper: UIView!
-    @IBOutlet weak var enterCodeIcon: UIImageView!
-    @IBOutlet weak var enterCodeLabel: UILabel!
-
-    @IBOutlet weak var torchWrapper: UIView!
-    @IBOutlet weak var torchIcon: UIImageView!
-    @IBOutlet weak var torchLabel: UILabel!
+    @IBOutlet weak var searchButton: UIButton!
+    @IBOutlet weak var torchButton: UIButton!
+    @IBOutlet weak var cartButton: UIButton!
 
     @IBOutlet weak var reticleHeight: NSLayoutConstraint!
 
@@ -159,10 +157,22 @@ public final class ScanningView: DesignableView {
     var frameView = UIView()    // indicator for where the barcode was detected
     var frameTimer: Timer?
 
+    var torchImages = [ AVCaptureDevice.TorchMode: UIImage? ]()
+
     /// toggle the visibility of the "barcode entry" and "torch" buttons at the bottom
     public var bottomBarHidden = false {
         didSet {
             self.bottomBar.isHidden = bottomBarHidden
+        }
+    }
+
+    public var cartButtonTitle: String? {
+        didSet {
+            UIView.performWithoutAnimation {
+                self.cartButton.setTitle(self.cartButtonTitle, for: .normal)
+                self.cartButton.isHidden = self.cartButtonTitle == nil
+                self.cartButton.layoutIfNeeded()
+            }
         }
     }
 
@@ -181,12 +191,6 @@ public final class ScanningView: DesignableView {
         self.reticle.backgroundColor = .clear
         self.reticle.layer.masksToBounds = true
 
-        let codeTap = UITapGestureRecognizer(target: self, action: #selector(self.enterButtonTapped(_:)))
-        self.enterCodeWrapper.addGestureRecognizer(codeTap)
-
-        let torchTap = UITapGestureRecognizer(target: self, action: #selector(self.torchButtonTapped(_:)))
-        self.torchWrapper.addGestureRecognizer(torchTap)
-
         self.frameView.backgroundColor = .clear
         self.frameView.layer.borderColor = UIColor.lightGray.cgColor
         self.frameView.layer.borderWidth = 1
@@ -198,21 +202,27 @@ public final class ScanningView: DesignableView {
     /// this passes the `ScanningViewConfig` data to the ScanningView. This method must be called before the first pass of the
     /// layout engine, i.e. in you view controller's `viewDidLoad` or `viewWillAppear`
     public func setup(with config: ScanningViewConfig) {
-        self.titleLabel.text = config.title
-        self.titleLabel.textColor = config.textColor
-        
         self.reticle.layer.borderColor = config.reticleBorderColor.cgColor
         self.reticle.layer.borderWidth = config.reticleBorderWidth
         self.reticle.layer.cornerRadius = config.reticleCornerRadius
         self.dimmingColor = config.dimmingColor
 
-        self.enterCodeLabel.text = config.enterButtonTitle
-        self.enterCodeIcon.image = config.enterButtonImage
-        self.enterCodeLabel.textColor = config.textColor
+        self.searchButton.setImage(config.enterButtonImage, for: .normal)
+        self.searchButton.layer.cornerRadius = 8
+        self.searchButton.layer.backgroundColor = UIColor.clear.cgColor
+        self.searchButton.layer.borderColor = config.borderColor.cgColor
+        self.searchButton.layer.borderWidth = 1.0 / UIScreen.main.scale
 
-        self.torchLabel.text = config.torchButtonTitle
-        self.torchIcon.image = config.torchButtonImage
-        self.torchLabel.textColor = config.textColor
+        self.torchButton.setImage(config.torchButtonImage, for: .normal)
+        self.torchButton.layer.cornerRadius = 8
+        self.torchButton.layer.backgroundColor = UIColor.clear.cgColor
+        self.torchButton.layer.borderColor = config.borderColor.cgColor
+        self.torchButton.layer.borderWidth = 1.0 / UIScreen.main.scale
+
+        self.cartButton.makeRoundedButton()
+        self.cartButton.backgroundColor = config.backgroundColor
+        self.cartButton.tintColor = config.textColor
+        self.cartButton.setTitle("Cart: XYZ €", for: .normal)
 
         self.barcodeDetector = config.barcodeDetector
         self.barcodeDetector?.cameraView = self.view
@@ -224,6 +234,9 @@ public final class ScanningView: DesignableView {
         self.bottomBarHidden = config.bottomBarHidden
 
         self.reticleHeight.constant = config.reticleHeight
+
+        self.torchImages[.on] = config.torchButtonActiveImage ?? config.torchButtonImage
+        self.torchImages[.off] = config.torchButtonImage
     }
 
     /// this must be called once to initialize the camera. If the app doesn't already have camera usage permission,
@@ -245,7 +258,7 @@ public final class ScanningView: DesignableView {
 
         if let camera = self.camera {
             let torchToggleSupported = camera.isTorchModeSupported(.on) && camera.isTorchModeSupported(.off)
-            self.torchWrapper.isHidden = !torchToggleSupported
+            self.torchButton.isHidden = !torchToggleSupported
         }
 
         self.startCaptureSession()
@@ -275,11 +288,11 @@ public final class ScanningView: DesignableView {
         self.metadataOutput?.metadataObjectTypes = formats.map { $0.avType }
     }
 
-    @objc func enterButtonTapped(_ button: UIButton) {
+    @IBAction func enterButtonTapped(_ button: UIButton) {
         self.delegate.enterBarcode()
     }
     
-    @objc func torchButtonTapped(_ button: UIButton) {
+    @IBAction func torchButtonTapped(_ button: UIButton) {
         guard let camera = self.camera else {
             return
         }
@@ -288,8 +301,14 @@ public final class ScanningView: DesignableView {
             try camera.lockForConfiguration()
             defer { camera.unlockForConfiguration() }
             camera.torchMode = camera.torchMode == .on ? .off : .on
+            self.torchButton.setImage(self.torchImages[camera.torchMode] ?? nil, for: .normal)
+            self.torchButton.backgroundColor = camera.torchMode == .on ? .white : .clear
             self.delegate.track(.toggleTorch)
         } catch {}
+    }
+
+    @IBAction func cartButtonTapped(_ button: UIButton) {
+        self.delegate.gotoShoppingCart()
     }
 
     private func checkCameraStatus() -> Bool {

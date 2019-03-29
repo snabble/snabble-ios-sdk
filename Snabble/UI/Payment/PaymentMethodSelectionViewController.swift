@@ -8,7 +8,6 @@ import UIKit
 
 final class PaymentMethodSelectionViewController: UIViewController {
 
-    @IBOutlet var titleLabel: UILabel!
     @IBOutlet weak var collectionView: UICollectionView!
     
     private weak var cart: ShoppingCart!
@@ -36,11 +35,9 @@ final class PaymentMethodSelectionViewController: UIViewController {
         super.viewDidLoad()
 
         self.view.backgroundColor = SnabbleUI.appearance.secondaryColor
-        self.titleLabel.textColor = SnabbleUI.appearance.primaryColor
 
         let formatter = PriceFormatter(SnabbleUI.project)
         let totalPrice = formatter.format(self.signedCheckoutInfo.checkoutInfo.price.price)
-        self.titleLabel.text = "" // String(format: "Snabble.PaymentSelection.howToPay".localized(), totalPrice)
 
         self.title = String(format: "Snabble.PaymentSelection.payNow".localized(), totalPrice)
 
@@ -49,16 +46,23 @@ final class PaymentMethodSelectionViewController: UIViewController {
     }
 
     override func viewDidLayoutSubviews() {
-        super .viewDidLayoutSubviews()
+        super.viewDidLayoutSubviews()
 
-        let width = self.collectionView.frame.width - 32
-        self.itemSize = CGSize(width: width, height: 96)
+        let width = self.collectionView.frame.width
+        self.itemSize = CGSize(width: width, height: 120)
 
         self.updateContentInset()
     }
 
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
+
+        if !self.isBeingPresented && !self.isMovingToParent {
+            // whatever was covering us has been dismissed or popped
+            let info = self.signedCheckoutInfo
+            self.paymentMethods = self.process.mergePaymentMethodList(info.checkoutInfo.paymentMethods)
+            self.collectionView.reloadData()
+        }
 
         if self.paymentMethods.count == 1 {
             self.startPayment(self.paymentMethods[0])
@@ -78,11 +82,13 @@ final class PaymentMethodSelectionViewController: UIViewController {
         for i in 0 ..< numRows {
             let attributes = self.collectionView.layoutAttributesForItem(at: IndexPath(item: i, section: 0))
             let rowRect = attributes?.frame ?? CGRect.zero
-            contentInsetTop -= rowRect.size.height + 10
+            contentInsetTop -= rowRect.size.height
             if contentInsetTop <= 0 {
                 contentInsetTop = 0
             }
         }
+
+        contentInsetTop -= 16.0 * CGFloat(numRows - 1)
         self.collectionView.contentInset = UIEdgeInsets.init(top: contentInsetTop, left: 0, bottom: 0, right: 0)
         if contentInsetTop == 0 {
             // scroll so that the last entry is fully visible
@@ -118,9 +124,8 @@ extension PaymentMethodSelectionViewController: UICollectionViewDelegate, UIColl
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "paymentCell", for: indexPath) as! PaymentMethodCell
 
         let paymentMethod = self.paymentMethods[indexPath.row]
-        cell.icon.image = UIImage.fromBundle(paymentMethod.icon)
-        cell.label.text = paymentMethod.displayName
-
+        cell.paymentMethod = paymentMethod
+        
         return cell
     }
 
@@ -131,6 +136,11 @@ extension PaymentMethodSelectionViewController: UICollectionViewDelegate, UIColl
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         let method = self.paymentMethods[indexPath.row]
 
+        if method.data == nil, let entryVC = self.process.delegate.dataEntry(for: method) {
+            self.navigationController?.pushViewController(entryVC, animated: true)
+            return
+        }
+        
         self.process.delegate.startPayment(method, self) { proceed in
             if proceed {
                 self.startPayment(method)

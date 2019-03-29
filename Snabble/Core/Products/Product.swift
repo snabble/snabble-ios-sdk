@@ -226,14 +226,3 @@ public struct Product: Codable {
         self.encodingUnit = encodingUnit
     }
 }
-
-/// conform to Hashable
-extension Product: Hashable {
-    public static func ==(_ lhs: Product, _ rhs: Product) -> Bool {
-        return lhs.sku == rhs.sku
-    }
-
-    public var hashValue: Int {
-        return self.sku.hashValue
-    }
-}

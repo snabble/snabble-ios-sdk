@@ -82,7 +82,8 @@ public final class ShoppingCartViewController: UIViewController {
         self.delegate = delegate
 
         self.title = "Snabble.ShoppingCart.title".localized()
-        self.tabBarItem.image = UIImage.fromBundle("icon-cart")
+        self.tabBarItem.image = UIImage.fromBundle("icon-cart-inactive")
+        self.tabBarItem.selectedImage = UIImage.fromBundle("icon-cart-active")
 
         let nc = NotificationCenter.default
         nc.addObserver(self, selector: #selector(self.updateShoppingCart(_:)), name: .snabbleCartUpdated, object: nil)
@@ -90,6 +91,8 @@ public final class ShoppingCartViewController: UIViewController {
         self.keyboardObserver = KeyboardObserver(handler: self)
 
         self.shoppingCart = cart
+
+        self.updateTotals()
     }
 
     func setupItems(_ cart: ShoppingCart) {
@@ -330,10 +333,8 @@ public final class ShoppingCartViewController: UIViewController {
             let formattedTotal = formatter.format(total)
             let fmt = count == 1 ? "Snabble.Shoppingcart.buyProducts.one" : "Snabble.Shoppingcart.buyProducts"
             title = String(format: fmt.localized(), count, formattedTotal)
-            self.tabBarItem.title = formattedTotal
             self.checkCheckoutLimits(total)
         } else {
-            self.tabBarItem.title = "Snabble.ShoppingCart.title".localized()
             title = "Snabble.Shoppingcart.buyProducts.now".localized()
         }
 

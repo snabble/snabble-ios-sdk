@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="14460.31" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="14490.70" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
     <device id="retina4_0" orientation="portrait">
         <adaptation id="fullscreen"/>
     </device>
     <dependencies>
         <deployment identifier="iOS"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="14460.20"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="14490.49"/>
         <capability name="Safe area layout guides" minToolsVersion="9.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
@@ -66,7 +66,7 @@
                     </constraints>
                 </view>
                 <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="4hs-yF-PEh">
-                    <rect key="frame" x="122" y="530" width="76" height="30"/>
+                    <rect key="frame" x="122" y="522" width="76" height="30"/>
                     <constraints>
                         <constraint firstAttribute="height" constant="30" id="AzQ-Dn-mCn"/>
                     </constraints>
@@ -82,7 +82,7 @@
                 <constraint firstItem="fnl-2z-Ty3" firstAttribute="trailing" secondItem="UIv-TL-Pr7" secondAttribute="trailing" id="AEf-oj-V6J"/>
                 <constraint firstItem="UIv-TL-Pr7" firstAttribute="centerY" secondItem="i5M-Pr-FkT" secondAttribute="centerY" id="WmH-Rl-l9e"/>
                 <constraint firstItem="4hs-yF-PEh" firstAttribute="centerX" secondItem="i5M-Pr-FkT" secondAttribute="centerX" id="kAA-qH-1Dg"/>
-                <constraint firstItem="fnl-2z-Ty3" firstAttribute="bottom" secondItem="4hs-yF-PEh" secondAttribute="bottom" constant="8" id="wPw-m7-hLd"/>
+                <constraint firstItem="fnl-2z-Ty3" firstAttribute="bottom" secondItem="4hs-yF-PEh" secondAttribute="bottom" constant="16" id="wPw-m7-hLd"/>
             </constraints>
             <viewLayoutGuide key="safeArea" id="fnl-2z-Ty3"/>
             <point key="canvasLocation" x="446.39999999999998" y="65.217391304347828"/>

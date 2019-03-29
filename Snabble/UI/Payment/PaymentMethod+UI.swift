@@ -97,7 +97,7 @@ public final class PaymentProcess {
         }
     }
 
-    private func mergePaymentMethodList(_ methods: [RawPaymentMethod]) -> [PaymentMethod] {
+    func mergePaymentMethodList(_ methods: [RawPaymentMethod]) -> [PaymentMethod] {
         let userData = self.delegate.getPaymentData()
         var result = [PaymentMethod]()
         for method in methods {
@@ -107,7 +107,11 @@ public final class PaymentProcess {
             case .qrCode: result.append(.qrCode)
             case .teleCashDeDirectDebit:
                 let telecash = userData.filter { if case .teleCashDeDirectDebit = $0 { return true } else { return false } }
-                result.append(contentsOf: telecash.reversed())
+                if telecash.count > 0 {
+                    result.append(contentsOf: telecash.reversed())
+                } else {
+                    result.append(.teleCashDeDirectDebit(nil))
+                }
             }
         }
 

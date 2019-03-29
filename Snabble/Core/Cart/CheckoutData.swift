@@ -60,7 +60,7 @@ public struct PaymentMethodData {
 public enum PaymentMethod {
     case qrCode
     case encodedCodes
-    case teleCashDeDirectDebit(PaymentMethodData)
+    case teleCashDeDirectDebit(PaymentMethodData?)
     case encodedCodesCSV
 
     public var rawMethod: RawPaymentMethod {
@@ -73,7 +73,10 @@ public enum PaymentMethod {
     }
 
     public var displayName: String? {
-        return self.data?.displayName
+        switch self {
+        case .teleCashDeDirectDebit(let data): return data?.displayName
+        default: return nil
+        }
     }
 
     public var data: PaymentMethodData? {

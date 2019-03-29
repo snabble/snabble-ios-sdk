@@ -49,6 +49,20 @@ final class SepaCheckoutViewController: UIViewController {
         self.cancelButton.setTitle("Snabble.Cancel".localized(), for: .normal)
     }
 
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+
+        self.cancelButton.alpha = 0
+        self.cancelButton.isUserInteractionEnabled = false
+
+        Timer.scheduledTimer(withTimeInterval: 2, repeats: false) { timer in
+            UIView.animate(withDuration: 0.2) {
+                self.cancelButton.alpha = 1
+            }
+            self.cancelButton.isUserInteractionEnabled = true
+        }
+    }
+
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
 
@@ -86,7 +100,7 @@ final class SepaCheckoutViewController: UIViewController {
     private func paymentFinished(_ success: Bool) {
         self.poller = nil
         if success {
-            self.cart.removeAll()
+            self.cart.removeAll(endSession: true)
         }
         self.delegate.paymentFinished(success, self.cart)
     }
