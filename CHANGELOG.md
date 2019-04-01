@@ -1,5 +1,9 @@
 ## snabble iOS SDK Changelog
 
+# v0.9.10
+
+* Fixes a bug when scanning a regular (non-instore) EAN of a product that has `encodingUnit == piece`.
+
 # v0.9.9
 
 * When scanning a product that has `saleStop`, a warning alert is shown. This uses the new localization key `Snabble.saleStop.errorMsg.scan`. The product is not added to the shopping cart.

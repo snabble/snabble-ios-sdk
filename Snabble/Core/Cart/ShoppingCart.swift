@@ -248,9 +248,9 @@ public struct CartItem: Codable {
         if self.product.type == .userMustWeigh {
             if let newCode = CodeMatcher.createInstoreEan(self.scannedCode.templateId, code, quantity) {
                 code = newCode
-                weight = quantity
-                quantity = 1
             }
+            weight = quantity
+            quantity = 1
         }
 
         if self.product.type == .preWeighed && self.encodingUnit?.hasDimension == true {
@@ -261,9 +261,9 @@ public struct CartItem: Codable {
         if self.product.referenceUnit == .piece && (self.scannedCode.embeddedData == nil || self.scannedCode.embeddedData == 0) {
             if let newCode = CodeMatcher.createInstoreEan(self.scannedCode.templateId, code, quantity) {
                 code = newCode
-                units = quantity
-                quantity = 1
             }
+            units = quantity
+            quantity = 1
         }
 
         if let unit = encodingUnit, let embed = self.scannedCode.embeddedData, embed > 0 {
