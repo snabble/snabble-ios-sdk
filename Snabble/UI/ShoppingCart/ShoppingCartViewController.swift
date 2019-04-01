@@ -82,7 +82,7 @@ public final class ShoppingCartViewController: UIViewController {
         self.delegate = delegate
 
         self.title = "Snabble.ShoppingCart.title".localized()
-        self.tabBarItem.image = UIImage.fromBundle("icon-cart-inactive")
+        self.tabBarItem.image = UIImage.fromBundle("icon-cart-inactive-empty")
         self.tabBarItem.selectedImage = UIImage.fromBundle("icon-cart-active")
 
         let nc = NotificationCenter.default
@@ -316,6 +316,8 @@ public final class ShoppingCartViewController: UIViewController {
 
     func updateTotals() {
         let count = self.shoppingCart.numberOfProducts
+
+        self.tabBarItem.image = UIImage.fromBundle(count == 0 ? "icon-cart-inactive-empty" : "icon-cart-inactive-full")
 
         let formatter = PriceFormatter(SnabbleUI.project)
         let title: String
