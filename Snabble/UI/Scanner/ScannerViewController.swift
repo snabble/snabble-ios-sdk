@@ -381,7 +381,8 @@ extension ScannerViewController {
             alert.addAction(UIAlertAction(title: bundle.name, style: .default) { action in
                 let bundleCode = bundle.codes.first?.code
                 let transmissionCode = bundle.codes.first?.transmissionCode ?? bundleCode
-                let scannedBundle = ScannedProduct(bundle, transmissionCode)
+                let lookupCode = transmissionCode ?? scannedCode
+                let scannedBundle = ScannedProduct(bundle, lookupCode, transmissionCode)
                 self.showConfirmation(for: scannedBundle, transmissionCode ?? scannedCode)
             })
         }
@@ -420,11 +421,15 @@ extension ScannerViewController {
         self.productProvider.productByScannableCodes(codes, self.shop.id) { result in
             switch result {
             case .success(let lookupResult):
-                let parseResult = matches.first { $0.template.id == lookupResult.templateId }
-                let scannedCode = lookupResult.transmissionCode ?? code
-                var newResult = ScannedProduct(lookupResult.product, scannedCode, lookupResult.templateId, parseResult?.embeddedData, lookupResult.encodingUnit, parseResult?.referencePrice)
+                guard let parseResult = matches.first(where: { $0.template.id == lookupResult.templateId }) else {
+                    completion(nil)
+                    return
+                }
 
-                if let decimalData = parseResult?.embeddedDecimal {
+                let scannedCode = lookupResult.transmissionCode ?? code
+                var newResult = ScannedProduct(lookupResult.product, parseResult.lookupCode, scannedCode, lookupResult.templateId, parseResult.embeddedData, lookupResult.encodingUnit, parseResult.referencePrice)
+
+                if let decimalData = parseResult.embeddedDecimal {
                     var encodingUnit = lookupResult.product.encodingUnit
                     var embeddedData: Int? = nil
                     let div = Int(pow(10.0, Double(decimalData.fractionDigits)))
@@ -440,7 +445,7 @@ extension ScannerViewController {
                         }
                     }
 
-                    newResult = ScannedProduct(lookupResult.product, scannedCode, lookupResult.templateId, embeddedData, encodingUnit, newResult.referencePriceOverride)
+                    newResult = ScannedProduct(lookupResult.product, parseResult.lookupCode, scannedCode, lookupResult.templateId, embeddedData, encodingUnit, newResult.referencePriceOverride)
                 }
 
                 completion(newResult)
@@ -464,7 +469,7 @@ extension ScannerViewController {
         self.productProvider.productByScannableCodes(codes, self.shop.id) { result in
             switch result {
             case .success(let lookupResult):
-                let newResult = ScannedProduct(lookupResult.product, match.transmissionCode, "ean13_instore", nil, .price, priceOverride: match.embeddedData)
+                let newResult = ScannedProduct(lookupResult.product, code, match.transmissionCode, lookupResult.templateId, nil, .price, priceOverride: match.embeddedData)
                 completion(newResult)
             case .failure:
                 completion(nil)

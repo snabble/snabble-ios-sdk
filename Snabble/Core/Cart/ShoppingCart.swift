@@ -48,13 +48,15 @@ public struct ScannedCode: Codable {
     public let referencePriceOverride: Int?
     /// template used to parse the code
     public let templateId: String
+    /// the lookup code we used to find the product in the database
+    public let lookupCode: String
 
     /// the code we need to transmit to the backend
     public var code: String {
         return self.transmissionCode ?? self.scannedCode
     }
 
-    public init(scannedCode: String, transmissionCode: String? = nil, embeddedData: Int? = nil, encodingUnit: Units? = nil, priceOverride: Int? = nil, referencePriceOverride: Int? = nil, templateId: String) {
+    public init(scannedCode: String, transmissionCode: String? = nil, embeddedData: Int? = nil, encodingUnit: Units? = nil, priceOverride: Int? = nil, referencePriceOverride: Int? = nil, templateId: String, lookupCode: String) {
         self.scannedCode = scannedCode
         self.transmissionCode = transmissionCode
         self.embeddedData = embeddedData
@@ -62,6 +64,7 @@ public struct ScannedCode: Codable {
         self.priceOverride = priceOverride
         self.referencePriceOverride = referencePriceOverride
         self.templateId = templateId
+        self.lookupCode = lookupCode
     }
 }
 
@@ -246,7 +249,7 @@ public struct CartItem: Codable {
         let encodingUnit = self.encodingUnit
 
         if self.product.type == .userMustWeigh {
-            if let newCode = CodeMatcher.createInstoreEan(self.scannedCode.templateId, code, quantity) {
+            if let newCode = CodeMatcher.createInstoreEan(self.scannedCode.templateId, self.scannedCode.lookupCode, quantity) {
                 code = newCode
             }
             weight = quantity
@@ -259,7 +262,7 @@ public struct CartItem: Codable {
         }
 
         if self.product.referenceUnit == .piece && (self.scannedCode.embeddedData == nil || self.scannedCode.embeddedData == 0) {
-            if let newCode = CodeMatcher.createInstoreEan(self.scannedCode.templateId, code, quantity) {
+            if let newCode = CodeMatcher.createInstoreEan(self.scannedCode.templateId, self.scannedCode.lookupCode, quantity) {
                 code = newCode
             }
             units = quantity

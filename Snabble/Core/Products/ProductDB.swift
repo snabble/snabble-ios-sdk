@@ -32,9 +32,19 @@ public struct ScannedProduct {
     public let referencePriceOverride: Int?
     /// optional override for the product's price
     public let priceOverride: Int?
+    /// the lookup code we used to find the product in the database
+    public let lookupCode: String
 
-    public init(_ product: Product, _ transmissionCode: String?, _ templateId: String? = nil, _ embeddedData: Int? = nil, _ encodingUnit: Units? = nil, _ referencePriceOverride: Int? = nil, priceOverride: Int? = nil) {
+    public init(_ product: Product,
+                _ lookupCode: String,
+                _ transmissionCode: String?,
+                _ templateId: String? = nil,
+                _ embeddedData: Int? = nil,
+                _ encodingUnit: Units? = nil,
+                _ referencePriceOverride: Int? = nil,
+                priceOverride: Int? = nil) {
         self.product = product
+        self.lookupCode = lookupCode
         self.transmissionCode = transmissionCode
         self.templateId = templateId
         self.embeddedData = embeddedData

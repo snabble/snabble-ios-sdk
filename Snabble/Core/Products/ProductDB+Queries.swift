@@ -93,8 +93,8 @@ extension ProductDB {
             }
             if let product = self.productFromRow(dbQueue, row, shopId) {
                 let codeEntry = product.codes.first { $0.code == code }
-                let transmissionCode = codeEntry?.transmissionCode ?? codeEntry?.code
-                return ScannedProduct(product, transmissionCode, template)
+                let transmissionCode = codeEntry?.transmissionCode
+                return ScannedProduct(product, code, transmissionCode, template)
             }
         } catch {
             self.logError("productByScannableCode db error: \(error)")
