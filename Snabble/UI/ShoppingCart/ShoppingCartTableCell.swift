@@ -180,7 +180,7 @@ final class ShoppingCartTableCell: UITableViewCell {
         if let depositTotal = lineItems.first(where: { $0.type == .deposit })?.totalPrice {
             let single = formatter.format(mainItem.price ?? 0)
             let deposit = formatter.format(depositTotal)
-            let total = formatter.format(mainItem.totalPrice ?? 0 + depositTotal)
+            let total = formatter.format((mainItem.totalPrice ?? 0) + depositTotal)
             self.priceLabel.text = "× \(single) + \(deposit) = \(total)"
         } else {
             if mainItem.amount == 1 {
