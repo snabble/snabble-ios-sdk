@@ -1,5 +1,11 @@
 ## snabble iOS SDK Changelog
 
+# v0.9.11
+
+* Fixes a bug in the shopping cart's display of products with deposits
+* Renames the payment method `teleCashDeDirectDebit` to just `deDirectDebit`
+* Fixes bug where invalid barcodes could be transmitted to the backend
+
 # v0.9.10
 
 * Fixes a bug when scanning a regular (non-instore) EAN of a product that has `encodingUnit == piece`.
