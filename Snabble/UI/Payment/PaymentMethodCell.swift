@@ -19,7 +19,7 @@ final class PaymentMethodCell: UICollectionViewCell {
             self.label.text = paymentMethod.displayName
 
             switch paymentMethod {
-            case .teleCashDeDirectDebit(let data):
+            case .deDirectDebit(let data):
                 if data == nil {
                     self.icon.image = image?.grayscale()
                     self.label.textColor = SnabbleUI.appearance.primaryColor

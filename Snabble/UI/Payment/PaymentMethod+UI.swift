@@ -13,7 +13,7 @@ extension PaymentMethod {
         case .qrCode: return "payment-method-checkstand"
         case .encodedCodes: return "payment-method-checkstand"
         case .encodedCodesCSV: return "payment-method-checkstand"
-        case .teleCashDeDirectDebit: return "payment-sepa"
+        case .deDirectDebit: return "payment-sepa"
         }
     }
 
@@ -26,7 +26,7 @@ extension PaymentMethod {
 
     var dataRequired: Bool {
         switch self {
-        case .teleCashDeDirectDebit: return true
+        case .deDirectDebit: return true
         default: return false
         }
     }
@@ -44,7 +44,7 @@ extension PaymentMethod {
         case .qrCode: processor = QRCheckoutViewController(process!, cart, delegate)
         case .encodedCodes: processor = EmbeddedCodesCheckoutViewController(process, self, cart, delegate)
         case .encodedCodesCSV: processor = EmbeddedCodesCheckoutViewController(process, self, cart, delegate)
-        case .teleCashDeDirectDebit: processor = SepaCheckoutViewController(process!, method.data!, cart, delegate)
+        case .deDirectDebit: processor = SepaCheckoutViewController(process!, method.data!, cart, delegate)
         }
         processor.hidesBottomBarWhenPushed = true
         return processor
@@ -105,12 +105,12 @@ public final class PaymentProcess {
             case .encodedCodes: result.append(.encodedCodes)
             case .encodedCodesCSV: result.append(.encodedCodesCSV)
             case .qrCode: result.append(.qrCode)
-            case .teleCashDeDirectDebit:
-                let telecash = userData.filter { if case .teleCashDeDirectDebit = $0 { return true } else { return false } }
+            case .deDirectDebit:
+                let telecash = userData.filter { if case .deDirectDebit = $0 { return true } else { return false } }
                 if telecash.count > 0 {
                     result.append(contentsOf: telecash.reversed())
                 } else {
-                    result.append(.teleCashDeDirectDebit(nil))
+                    result.append(.deDirectDebit(nil))
                 }
             }
         }
