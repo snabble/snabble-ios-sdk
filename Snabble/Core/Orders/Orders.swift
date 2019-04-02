@@ -31,6 +31,9 @@ struct Order: Decodable {
         self.id = try container.decode(String.self, forKey: .id)
         let date = try container.decode(String.self, forKey: .date)
         let formatter = ISO8601DateFormatter()
+        if #available(iOS 11.2, *) {
+            formatter.formatOptions.insert(.withFractionalSeconds)
+        }
         self.date = formatter.date(from: date) ?? Date()
 
         self.shopId = try container.decode(String.self, forKey: .shopId)
