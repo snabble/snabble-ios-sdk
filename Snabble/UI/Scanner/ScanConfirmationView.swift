@@ -46,7 +46,7 @@ final class ScanConfirmationView: DesignableView {
         self.cartButton.tintColor = SnabbleUI.appearance.secondaryColor
         self.cartButton.makeRoundedButton()
 
-        self.priceLabel.font = UIFont.monospacedDigitSystemFont(ofSize: 14, weight: .regular)
+        self.priceLabel.font = UIFont.monospacedDigitSystemFont(ofSize: 17, weight: .regular)
 
         self.minusButton.makeBorderedButton()
         self.plusButton.makeBorderedButton()
