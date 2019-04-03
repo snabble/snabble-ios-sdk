@@ -228,9 +228,19 @@ public final class ShoppingCartViewController: UIViewController {
         }
     }
 
-    private func updateView() {
+    private func updateView(at row: Int? = nil) {
         self.setupItems(self.shoppingCart)
-        self.tableView.reloadData()
+
+        if let row = row {
+            UIView.performWithoutAnimation {
+                let offset = self.tableView.contentOffset
+                let indexPath = IndexPath(row: row, section: 0)
+                self.tableView.reloadRows(at: [indexPath], with: .none)
+                self.tableView.contentOffset = offset
+            }
+        } else {
+            self.tableView.reloadData()
+        }
 
         self.setEditButton()
         self.setDeleteButton()
@@ -424,7 +434,7 @@ extension ShoppingCartViewController: ShoppingCartTableDelegate {
         }
 
         self.shoppingCart.setQuantity(quantity, at: row)
-        self.updateView()
+        self.updateView(at: row)
     }
 }
 
@@ -460,7 +470,7 @@ extension ShoppingCartViewController: UITableViewDelegate, UITableViewDataSource
     }
 
     public func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-        return 80
+        return 74
     }
 
     public func tableView(_ tableView: UITableView, canEditRowAt indexPath: IndexPath) -> Bool {

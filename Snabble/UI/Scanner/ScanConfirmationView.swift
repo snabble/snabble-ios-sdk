@@ -54,12 +54,11 @@ final class ScanConfirmationView: DesignableView {
         self.quantityField.font = UIFont.monospacedDigitSystemFont(ofSize: 21, weight: .regular)
         self.quantityField.tintColor = SnabbleUI.appearance.primaryColor
         self.quantityField.delegate = self
+        self.quantityField.addDoneButton()
 
         self.closeButton.setImage(UIImage.fromBundle("icon-close"), for: .normal)
         self.plusButton.setImage(UIImage.fromBundle("icon-plus"), for: .normal)
         self.minusButton.setImage(UIImage.fromBundle("icon-minus"), for: .normal)
-
-        self.addDoneButton()
     }
     
     func present(_ scannedProduct: ScannedProduct, _ scannedCode: String, cart: ShoppingCart) {
@@ -170,15 +169,6 @@ final class ScanConfirmationView: DesignableView {
 
         let showQuantity = quantity != 1 || self.cartItem.product.deposit != nil
         self.priceLabel.text = (showQuantity ? quantityDisplay + " " : "") + formattedPrice
-    }
-
-    private func addDoneButton() {
-        let keyboardToolbar = UIToolbar()
-        keyboardToolbar.sizeToFit()
-        let flexSpace = UIBarButtonItem(barButtonSystemItem: .flexibleSpace, target: nil, action: nil)
-        let doneButton = UIBarButtonItem(barButtonSystemItem: .done, target: self, action: #selector(UITextField.endEditing(_:)))
-        keyboardToolbar.items = [ flexSpace, doneButton ]
-        self.quantityField.inputAccessoryView = keyboardToolbar
     }
 
     @IBAction private func plusTapped(_ button: UIButton) {

@@ -14,25 +14,31 @@ protocol ShoppingCartTableDelegate: class {
 final class ShoppingCartTableCell: UITableViewCell {
 
     @IBOutlet weak var productImage: UIImageView!
-    @IBOutlet weak var subtitleLabel: UILabel!
+    @IBOutlet weak var spinner: UIActivityIndicatorView!
+
     @IBOutlet weak var nameLabel: UILabel!
     @IBOutlet weak var quantityLabel: UILabel!
     @IBOutlet weak var priceLabel: UILabel!
+
     @IBOutlet weak var minusButton: UIButton!
     @IBOutlet weak var plusButton: UIButton!
+
     @IBOutlet weak var quantityInput: UITextField!
+    @IBOutlet weak var unitsLabel: UILabel!
 
-    @IBOutlet weak var quantityWidth: NSLayoutConstraint!
-    @IBOutlet weak var imageWidth: NSLayoutConstraint!
-    @IBOutlet weak var textMargin: NSLayoutConstraint!
+    @IBOutlet weak var buttonWrapper: UIView!
+    @IBOutlet weak var weightWrapper: UIView!
+    @IBOutlet weak var imageWrapper: UIView!
+    @IBOutlet weak var imageWrapperWidth: NSLayoutConstraint!
+    @IBOutlet weak var quantityWrapper: UIView!
 
-    @IBOutlet weak var spinner: UIActivityIndicatorView!
     private var quantity = 0
     private var item: CartItem?
     private var lineItems = [CheckoutInfo.LineItem]()
 
     private weak var delegate: ShoppingCartTableDelegate!
     private var task: URLSessionDataTask?
+    private var doneButton: UIBarButtonItem?
 
     override func awakeFromNib() {
         super.awakeFromNib()
@@ -40,20 +46,20 @@ final class ShoppingCartTableCell: UITableViewCell {
         self.minusButton.makeBorderedButton()
         self.plusButton.makeBorderedButton()
 
-        let mono10 = UIFont.monospacedDigitSystemFont(ofSize: 10, weight: .regular)
-        self.priceLabel.font = mono10
-        self.quantityLabel.font = mono10
-
-        self.quantityLabel.backgroundColor = SnabbleUI.appearance.primaryColor
-        self.quantityLabel.layer.cornerRadius = 2
-        self.quantityLabel.layer.masksToBounds = true
+        self.priceLabel.font = UIFont.monospacedDigitSystemFont(ofSize: 13, weight: .regular)
+        self.quantityLabel.font = UIFont.monospacedDigitSystemFont(ofSize: 13, weight: .bold)
         self.quantityLabel.textColor = SnabbleUI.appearance.secondaryColor
+        self.quantityLabel.backgroundColor = .clear
+
+        self.quantityWrapper.backgroundColor = SnabbleUI.appearance.primaryColor
+        self.quantityWrapper.layer.cornerRadius = 2
+        self.quantityWrapper.layer.masksToBounds = true
 
         self.quantityInput.tintColor = SnabbleUI.appearance.primaryColor
+        self.doneButton = self.quantityInput.addDoneButton()
         self.quantityInput.delegate = self
 
-        self.minusButton.setImage(UIImage.fromBundle("icon-minus"), for: .normal)
-        self.productImage.image = nil
+        self.prepareForReuse()
     }
 
     override func prepareForReuse() {
@@ -62,8 +68,11 @@ final class ShoppingCartTableCell: UITableViewCell {
         self.task?.cancel()
         self.task = nil
         self.productImage.image = nil
-        self.imageWidth.constant = 44
-        self.textMargin.constant = 8
+        self.imageWrapperWidth.constant = 61
+
+        self.buttonWrapper.isHidden = true
+        self.weightWrapper.isHidden = true
+        self.imageWrapper.isHidden = true
 
         self.item = nil
         self.lineItems = []
@@ -77,20 +86,9 @@ final class ShoppingCartTableCell: UITableViewCell {
 
         self.nameLabel.text = mainItem.name
 
-        self.displayLineItemPrice(mainItem, lineItems)
+        self.displayLineItemPrice(nil, mainItem, lineItems)
 
         self.quantityLabel.text = "\(mainItem.amount)"
-        self.subtitleLabel.text = ""
-
-        self.minusButton.isHidden = true
-        self.plusButton.isHidden = true
-        self.quantityInput.isHidden = true
-
-        self.priceLabel.isHidden = false
-        self.quantityWidth.constant = 0
-
-        self.imageWidth.constant = 0
-        self.textMargin.constant = 0
     }
 
     func setCartItem(_ item: CartItem, _ lineItems: [CheckoutInfo.LineItem], row: Int, delegate: ShoppingCartTableDelegate) {
@@ -101,43 +99,34 @@ final class ShoppingCartTableCell: UITableViewCell {
 
         let product = item.product
         self.nameLabel.text = product.name
-        self.subtitleLabel.text = product.subtitle
 
         self.minusButton.tag = row
         self.plusButton.tag = row
         self.quantityInput.tag = row
 
-        self.priceLabel.isHidden = false
-        self.minusButton.isHidden = !item.editable
-        self.plusButton.isHidden = !item.editable
+        if item.editable {
+            self.buttonWrapper.isHidden = false
+        }
 
         let weightEntry = product.type == .userMustWeigh
-        self.quantityInput.isHidden = !weightEntry
-        self.quantityWidth.constant = weightEntry ? 50 : 0
-        self.quantityInput.text = "\(item.quantity)"
-
         if weightEntry {
-            self.plusButton.backgroundColor = SnabbleUI.appearance.primaryColor
-            // FIXME("replace w/ checkmark icon")
-            self.plusButton.setImage(UIImage.fromBundle("icon-close")?.recolored(with: SnabbleUI.appearance.secondaryColor), for: .normal)
-        } else {
-            self.plusButton.backgroundColor = SnabbleUI.appearance.buttonBackgroundColor
-            self.plusButton.setImage(UIImage.fromBundle("icon-plus"), for: .normal)
+            self.weightWrapper.isHidden = false
+            self.buttonWrapper.isHidden = true
         }
+        self.quantityInput.text = "\(item.quantity)"
 
         self.showQuantity()
 
         // suppress display when price == 0
         if item.price == 0 {
-            self.priceLabel.isHidden = true
-            self.minusButton.isHidden = true
-            self.plusButton.isHidden = true
+            self.priceLabel.text = ""
+            self.buttonWrapper.isHidden = true
         }
 
         self.loadImage()
     }
 
-    private func updateQuantity(at row: Int) {
+    private func updateQuantity(at row: Int, reload: Bool = true) {
         guard let item = self.item else {
             return
         }
@@ -148,7 +137,9 @@ final class ShoppingCartTableCell: UITableViewCell {
         }
 
         self.item?.quantity = self.quantity
-        self.delegate.updateQuantity(self.quantity, at: row)
+        if reload {
+            self.delegate.updateQuantity(self.quantity, at: row)
+        }
 
         self.lineItems = []
         self.showQuantity()
@@ -161,20 +152,21 @@ final class ShoppingCartTableCell: UITableViewCell {
 
         let showWeight = item.product.referenceUnit?.hasDimension == true || item.product.type == .userMustWeigh
 
+        self.quantityLabel.text = "\(item.effectiveQuantity)"
+
         let encodingUnit = item.encodingUnit ?? item.product.encodingUnit
-        let symbol = encodingUnit?.display ?? ""
-        let gram = showWeight ? symbol : ""
-        self.quantityLabel.text = "\(item.effectiveQuantity)\(gram)"
+        let unit = encodingUnit?.display ?? ""
+        self.unitsLabel.text = showWeight ? unit : ""
 
         if let defaultItem = lineItems.first(where: { $0.type == .default }) {
-            self.displayLineItemPrice(defaultItem, lineItems)
+            self.displayLineItemPrice(item.product, defaultItem, lineItems)
         } else {
             let formatter = PriceFormatter(SnabbleUI.project)
             self.priceLabel.text = item.priceDisplay(formatter)
         }
     }
 
-    private func displayLineItemPrice(_ mainItem: CheckoutInfo.LineItem, _ lineItems: [CheckoutInfo.LineItem]) {
+    private func displayLineItemPrice(_ product: Product?, _ mainItem: CheckoutInfo.LineItem, _ lineItems: [CheckoutInfo.LineItem]) {
         let formatter = PriceFormatter(SnabbleUI.project)
 
         if let depositTotal = lineItems.first(where: { $0.type == .deposit })?.totalPrice {
@@ -183,13 +175,21 @@ final class ShoppingCartTableCell: UITableViewCell {
             let total = formatter.format((mainItem.totalPrice ?? 0) + depositTotal)
             self.priceLabel.text = "× \(single) + \(deposit) = \(total)"
         } else {
-            if mainItem.amount == 1 {
-                let total = formatter.format(mainItem.totalPrice ?? 0)
-                self.priceLabel.text = "\(total)"
-            } else {
+            let showUnit = product?.referenceUnit?.hasDimension == true || product?.type == .userMustWeigh
+            if showUnit {
                 let single = formatter.format(mainItem.price ?? 0)
+                let unit = product?.referenceUnit?.display ?? ""
                 let total = formatter.format(mainItem.totalPrice ?? 0)
-                self.priceLabel.text = "× \(single) = \(total)"
+                self.priceLabel.text = "× \(single)/\(unit) = \(total)"
+            } else {
+                if mainItem.amount == 1 {
+                    let total = formatter.format(mainItem.totalPrice ?? 0)
+                    self.priceLabel.text = "\(total)"
+                } else {
+                    let single = formatter.format(mainItem.price ?? 0)
+                    let total = formatter.format(mainItem.totalPrice ?? 0)
+                    self.priceLabel.text = "× \(single) = \(total)"
+                }
             }
         }
     }
@@ -199,14 +199,14 @@ final class ShoppingCartTableCell: UITableViewCell {
             let imgUrl = self.item?.product.imageUrl,
             let url = URL(string: imgUrl)
         else {
-            self.imageWidth.constant = 0
-            self.textMargin.constant = 0
+            self.imageWrapperWidth.constant = 0
+            self.imageWrapper.isHidden = true
             return
         }
 
-        self.imageWidth.constant = 44
-        self.textMargin.constant = 8
-        self.setNeedsLayout()
+        self.imageWrapperWidth.constant = 61
+        self.imageWrapper.isHidden = false
+        // self.setNeedsLayout()
 
         self.spinner.startAnimating()
 
@@ -260,11 +260,17 @@ extension ShoppingCartTableCell: UITextFieldDelegate {
         let newText = text.replacingCharacters(in: range, with: string)
         let qty = Int(newText) ?? 0
 
+        self.doneButton?.isEnabled = qty > 0
         if qty > ShoppingCart.maxAmount || (range.location == 0 && string == "0") {
             return false
         }
 
         self.quantity = qty
+        self.updateQuantity(at: textField.tag, reload: false)
+        return true
+    }
+
+    func textFieldShouldEndEditing(_ textField: UITextField) -> Bool {
         self.updateQuantity(at: textField.tag)
         return true
     }
