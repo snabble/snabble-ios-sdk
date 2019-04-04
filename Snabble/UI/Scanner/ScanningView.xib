@@ -71,7 +71,7 @@
                             <constraints>
                                 <constraint firstAttribute="height" constant="48" id="ypl-dd-XOd"/>
                             </constraints>
-                            <fontDescription key="fontDescription" type="system" weight="medium" pointSize="17"/>
+                            <fontDescription key="fontDescription" type="system" weight="semibold" pointSize="17"/>
                             <state key="normal" title="Button"/>
                             <connections>
                                 <action selector="cartButtonTapped:" destination="-1" eventType="touchUpInside" id="tFb-UZ-GFO"/>

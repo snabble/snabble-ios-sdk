@@ -221,7 +221,7 @@ public final class ScanningView: DesignableView {
 
         self.cartButton.makeRoundedButton()
         self.cartButton.backgroundColor = config.backgroundColor
-        self.cartButton.tintColor = config.textColor
+        self.cartButton.setTitleColor(config.textColor, for: .normal)
         self.cartButton.setTitle("Cart: XYZ €", for: .normal)
 
         self.barcodeDetector = config.barcodeDetector
