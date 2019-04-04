@@ -73,3 +73,18 @@ final class KeyboardObserver: NSObject {
         self.handler.keyboardWillHide(info)
     }
 }
+
+extension UITextField {
+
+    @discardableResult
+    func addDoneButton() -> UIBarButtonItem {
+        let keyboardToolbar = UIToolbar()
+        keyboardToolbar.sizeToFit()
+        let flexSpace = UIBarButtonItem(barButtonSystemItem: .flexibleSpace, target: nil, action: nil)
+        let doneButton = UIBarButtonItem(barButtonSystemItem: .done, target: self, action: #selector(UITextField.endEditing(_:)))
+        keyboardToolbar.items = [ flexSpace, doneButton ]
+        self.inputAccessoryView = keyboardToolbar
+        return doneButton
+    }
+
+}
