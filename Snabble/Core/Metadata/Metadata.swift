@@ -139,6 +139,7 @@ public struct CustomerCardInfo: Decodable {
 public struct PriceOverrideCode: Decodable {
     public let id: String
     public let template: String
+    public let lookupTemplate: String?
     public let transmissionTemplate: String?
     public let transmissionCode: String?
 }

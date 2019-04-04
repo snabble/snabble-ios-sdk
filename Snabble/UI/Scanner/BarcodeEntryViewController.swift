@@ -14,7 +14,7 @@ final public class BarcodeEntryViewController: UIViewController, UISearchBarDele
 
     private weak var productProvider: ProductProvider!
 
-    private var completion: ((String)->Void)!
+    private var completion: ((String, String?)->Void)!
 
     private var filteredProducts = [Product]()
     private var searchText = ""
@@ -22,7 +22,7 @@ final public class BarcodeEntryViewController: UIViewController, UISearchBarDele
     private weak var delegate: AnalyticsDelegate!
     private var emptyState: EmptyStateView!
 
-    public init(_ productProvider: ProductProvider, delegate: AnalyticsDelegate, completion: @escaping (String)->() ) {
+    public init(_ productProvider: ProductProvider, delegate: AnalyticsDelegate, completion: @escaping (String, String?)->() ) {
         super.init(nibName: nil, bundle: Snabble.bundle)
 
         self.productProvider = productProvider
@@ -117,19 +117,19 @@ final public class BarcodeEntryViewController: UIViewController, UISearchBarDele
         let product = self.filteredProducts[indexPath.row]
 
         let codeEntry = product.codes.filter { $0.code.hasPrefix(self.searchText) }.first ?? product.codes.first!
-        self.addCode(codeEntry.code)
+        self.addCode(codeEntry.code, codeEntry.template)
     }
 
     func addEnteredCode() {
-        self.addCode(self.searchText)
+        self.addCode(self.searchText, nil)
     }
 
-    func addCode(_ code: String) {
+    private func addCode(_ code: String, _ template: String?) {
         // popViewController has no completion handler, so we roll our own
         CATransaction.begin()
         CATransaction.setCompletionBlock {
             self.delegate.track(.barcodeSelected(code))
-            self.completion?(code)
+            self.completion?(code, template)
         }
 
         let _ = self.navigationController?.popViewController(animated: false)

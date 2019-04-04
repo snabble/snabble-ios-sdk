@@ -307,7 +307,7 @@ extension ScannerViewController {
         }
     }
 
-    private func handleScannedCode(_ scannedCode: String) {
+    private func handleScannedCode(_ scannedCode: String, _ template: String? = nil) {
         // Log.debug("handleScannedCode \(scannedCode) \(self.lastScannedCode)")
         self.lastScannedCode = scannedCode
 
@@ -318,7 +318,7 @@ extension ScannerViewController {
 
         self.scanningView.stopScanning()
 
-        self.productForCode(scannedCode) { scannedProduct in
+        self.productForCode(scannedCode, template) { scannedProduct in
             self.timer?.invalidate()
             self.timer = nil
             self.spinner.stopAnimating()
@@ -402,14 +402,20 @@ extension ScannerViewController {
         self.present(alert, animated: true)
     }
 
-    private func productForCode(_ code: String, completion: @escaping (ScannedProduct?) -> () ) {
+    private func productForCode(_ code: String, _ template: String?, completion: @escaping (ScannedProduct?) -> () ) {
+        // if we were given a template from the barcode entry, use that to lookup the product directly
+        if let template = template {
+            return self.lookupProduct(code, template, nil, completion)
+        }
+
+        // check override codes first
         let project = SnabbleUI.project
         if let match = CodeMatcher.matchOverride(code, project.priceOverrideCodes, project.id) {
             return self.productForOverrideCode(match, completion: completion)
         }
 
-        let matches = CodeMatcher.match(code, SnabbleUI.project.id)
-
+        // then, check our regular templates
+        let matches = CodeMatcher.match(code, project.id)
         guard matches.count > 0 else {
             return completion(nil)
         }
@@ -457,6 +463,11 @@ extension ScannerViewController {
 
     private func productForOverrideCode(_ match: OverrideLookup, completion: @escaping (ScannedProduct?) -> () ) {
         let code = match.lookupCode
+
+        if let template = match.lookupTemplate {
+            return self.lookupProduct(code, template, match.embeddedData, completion)
+        }
+
         let matches = CodeMatcher.match(code, SnabbleUI.project.id)
 
         guard matches.count > 0 else {
@@ -477,11 +488,27 @@ extension ScannerViewController {
         }
     }
 
-    private func manuallyEnteredCode(_ code: String?) {
-        // Log.debug("entered \(code)")
-        if let code = code {
-            self.handleScannedCode(code)
+    private func lookupProduct(_ code: String, _ template: String, _ priceOverride: Int?, _ completion: @escaping (ScannedProduct?) -> () ) {
+        let codes = [(code, template)]
+        self.productProvider.productByScannableCodes(codes, self.shop.id) { result in
+            switch result {
+            case .success(let lookupResult):
+                let transmissionCode = lookupResult.product.codes[0].transmissionCode
+                let scannedProduct: ScannedProduct
+                if let priceOverride = priceOverride {
+                    scannedProduct = ScannedProduct(lookupResult.product, code, transmissionCode, template, nil, .price, nil, priceOverride: priceOverride)
+                } else {
+                    scannedProduct = ScannedProduct(lookupResult.product, code, transmissionCode, template)
+                }
+                completion(scannedProduct)
+            case .failure:
+                completion(nil)
+            }
         }
+    }
+
+    private func manuallyEnteredCode(_ code: String, _ template: String?) {
+        self.handleScannedCode(code, template)
     }
 
 }

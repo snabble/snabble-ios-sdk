@@ -462,6 +462,7 @@ public struct ParseResult {
 
 public struct OverrideLookup {
     public let lookupCode: String
+    public let lookupTemplate: String?
     public let transmissionCode: String?
     public let embeddedData: Int?
 }
@@ -517,15 +518,16 @@ public struct CodeMatcher {
         }
 
         let lookupCode = result.lookupCode
+        let lookupTemplate = overrideCode.lookupTemplate
         if let transmissionTemplate = overrideCode.transmissionTemplate {
             if let transmissionCode = overrideCode.transmissionCode, let embeddedData = result.embeddedData {
                 let newCode = createInstoreEan(transmissionTemplate, transmissionCode, embeddedData, projectId)
-                return OverrideLookup(lookupCode: lookupCode, transmissionCode: newCode, embeddedData: embeddedData)
+                return OverrideLookup(lookupCode: lookupCode, lookupTemplate: lookupTemplate, transmissionCode: newCode, embeddedData: embeddedData)
             } else {
-                return OverrideLookup(lookupCode: lookupCode, transmissionCode: overrideCode.transmissionCode, embeddedData: result.embeddedData)
+                return OverrideLookup(lookupCode: lookupCode, lookupTemplate: lookupTemplate, transmissionCode: overrideCode.transmissionCode, embeddedData: result.embeddedData)
             }
         } else {
-            return OverrideLookup(lookupCode: lookupCode, transmissionCode: overrideCode.transmissionCode, embeddedData: result.embeddedData)
+            return OverrideLookup(lookupCode: lookupCode, lookupTemplate: lookupTemplate, transmissionCode: overrideCode.transmissionCode, embeddedData: result.embeddedData)
         }
     }
 
