@@ -75,6 +75,7 @@ public final class ShoppingCartViewController: UIViewController {
     private weak var delegate: ShoppingCartDelegate!
 
     private var items = [CartTableEntry]()
+    internal var showImages = false
     
     public init(_ cart: ShoppingCart, delegate: ShoppingCartDelegate) {
         super.init(nibName: nil, bundle: Snabble.bundle)
@@ -95,7 +96,7 @@ public final class ShoppingCartViewController: UIViewController {
         self.updateTotals()
     }
 
-    func setupItems(_ cart: ShoppingCart) {
+    private func setupItems(_ cart: ShoppingCart) {
         self.items = []
 
         // find all line items that refer to our own cart items
@@ -122,6 +123,10 @@ public final class ShoppingCartViewController: UIViewController {
                 self.items.append(item)
             }
         }
+
+        // check if any of the cart items's products has an associated image
+        let imgIndex = cart.items.firstIndex { $0.product.imageUrl != nil }
+        self.showImages = imgIndex != nil
     }
 
     required public init?(coder aDecoder: NSCoder) {

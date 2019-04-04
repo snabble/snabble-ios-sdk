@@ -9,6 +9,7 @@ import UIKit
 protocol ShoppingCartTableDelegate: class {
     func confirmDeletion(at row: Int)
     func updateQuantity(_ quantity: Int, at row: Int)
+    var showImages: Bool { get }
 }
 
 final class ShoppingCartTableCell: UITableViewCell {
@@ -199,7 +200,7 @@ final class ShoppingCartTableCell: UITableViewCell {
             let imgUrl = self.item?.product.imageUrl,
             let url = URL(string: imgUrl)
         else {
-            self.imageWrapperWidth.constant = 0
+            self.imageWrapperWidth.constant = self.delegate.showImages ? 61 : 0
             self.imageWrapper.isHidden = true
             return
         }
