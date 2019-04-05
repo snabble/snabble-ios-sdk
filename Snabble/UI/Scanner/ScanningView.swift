@@ -237,6 +237,10 @@ public final class ScanningView: DesignableView {
 
         self.torchImages[.on] = config.torchButtonActiveImage ?? config.torchButtonImage
         self.torchImages[.off] = config.torchButtonImage
+
+        if self.barcodeDetector == nil {
+            self.metadataOutput = AVCaptureMetadataOutput()
+        }
     }
 
     /// this must be called once to initialize the camera. If the app doesn't already have camera usage permission,
@@ -251,7 +255,6 @@ public final class ScanningView: DesignableView {
     public func startScanning() {
         self.frameView.isHidden = true
         self.frameView.frame = self.reticle.frame
-        self.initCaptureSession()
 
         self.view.bringSubviewToFront(self.reticle)
         self.view.bringSubviewToFront(self.bottomBar)
@@ -345,7 +348,6 @@ public final class ScanningView: DesignableView {
         return true
     }
 
-
     // this is a terrible hack.
     // we need one pass through the layout system in order to figure out the position of the reticle, then force a second pass
     // and only then can we add the dimming overlay with the transparent "hole" at the right position
@@ -399,44 +401,45 @@ public final class ScanningView: DesignableView {
     }
 
     func initCaptureSession() {
-        if self.captureSession == nil {
-            guard
-                let videoCaptureDevice = AVCaptureDevice.default(for: AVMediaType.video),
-                let videoInput = try? AVCaptureDeviceInput(device: videoCaptureDevice)
-            else {
-                return
-            }
-
-            let captureSession = AVCaptureSession()
-
-            if captureSession.canAddInput(videoInput) {
-                captureSession.addInput(videoInput)
-            } else {
-                return
-            }
-
-            let captureOutput: AVCaptureOutput
-            if let detector = self.barcodeDetector {
-                captureOutput = detector.captureOutput
-                captureSession.addOutput(captureOutput)
-            } else {
-                let metadataOutput = AVCaptureMetadataOutput()
-                captureSession.addOutput(metadataOutput)
-                metadataOutput.setMetadataObjectsDelegate(self, queue: DispatchQueue.main)
-                metadataOutput.metadataObjectTypes = self.scanFormats.map { $0.avType }
-                captureOutput = metadataOutput
-                self.metadataOutput = metadataOutput
-            }
-
-            self.previewLayer = AVCaptureVideoPreviewLayer(session: captureSession)
-            self.previewLayer.frame = self.view.frame
-            self.previewLayer.videoGravity = AVLayerVideoGravity.resizeAspectFill
-
-            self.previewLayer.zPosition = -1
-            self.view.layer.addSublayer(self.previewLayer)
-
-            self.captureSession = captureSession
+        guard self.captureSession == nil else {
+            return
         }
+
+        guard
+            let videoCaptureDevice = AVCaptureDevice.default(for: AVMediaType.video),
+            let videoInput = try? AVCaptureDeviceInput(device: videoCaptureDevice)
+        else {
+            return
+        }
+
+        let captureSession = AVCaptureSession()
+
+        if captureSession.canAddInput(videoInput) {
+            captureSession.addInput(videoInput)
+        } else {
+            return
+        }
+
+        let captureOutput: AVCaptureOutput
+        if let detector = self.barcodeDetector {
+            captureOutput = detector.captureOutput
+            captureSession.addOutput(captureOutput)
+        } else if let metadataOutput = self.metadataOutput {
+            captureSession.addOutput(metadataOutput)
+            metadataOutput.setMetadataObjectsDelegate(self, queue: DispatchQueue.main)
+            metadataOutput.metadataObjectTypes = self.scanFormats.map { $0.avType }
+        } else {
+            Log.error("scanner: initializeCaptureSession has no capture output")
+        }
+
+        self.previewLayer = AVCaptureVideoPreviewLayer(session: captureSession)
+        self.previewLayer.frame = self.view.frame
+        self.previewLayer.videoGravity = .resizeAspectFill
+
+        self.previewLayer.zPosition = -1
+        self.view.layer.addSublayer(self.previewLayer)
+
+        self.captureSession = captureSession
     }
 }
 
