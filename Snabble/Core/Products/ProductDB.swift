@@ -411,7 +411,7 @@ final class ProductDB: ProductProvider {
 
                 self.setLastUpdate(tempDb)
 
-                let shouldSwitch = forceSwitch || revision > self.revision || minorVersion > self.schemaVersionMinor
+                let shouldSwitch = forceSwitch || revision != self.revision || minorVersion > self.schemaVersionMinor
                 if shouldSwitch {
                     Log.info("new db: revision=\(revision), schema=\(majorVersion).\(minorVersion)")
                 }
