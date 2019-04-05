@@ -40,30 +40,6 @@
                         <action selector="closeButtonTapped:" destination="-1" eventType="touchUpInside" id="bEa-RK-48x"/>
                     </connections>
                 </button>
-                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Brand" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="DDW-l5-CzJ">
-                    <rect key="frame" x="254" y="56" width="28.5" height="12"/>
-                    <fontDescription key="fontDescription" type="system" pointSize="10"/>
-                    <color key="textColor" red="0.13333333333333333" green="0.13333333333333333" blue="0.13333333333333333" alpha="1" colorSpace="calibratedRGB"/>
-                    <nil key="highlightedColor"/>
-                </label>
-                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Produktname" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" minimumScaleFactor="0.5" adjustsLetterSpacingToFitWidth="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Mon-A5-B2P">
-                    <rect key="frame" x="16" y="72" width="504" height="20.5"/>
-                    <fontDescription key="fontDescription" type="boldSystem" pointSize="17"/>
-                    <color key="textColor" red="0.13333333333333333" green="0.13333333333333333" blue="0.13333333333333333" alpha="1" colorSpace="calibratedRGB"/>
-                    <nil key="highlightedColor"/>
-                </label>
-                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Originalpreis" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="9TC-UF-tdX">
-                    <rect key="frame" x="220" y="96.5" width="96.5" height="20.5"/>
-                    <fontDescription key="fontDescription" type="system" pointSize="17"/>
-                    <color key="textColor" red="0.5607843137254902" green="0.5607843137254902" blue="0.5607843137254902" alpha="1" colorSpace="calibratedRGB"/>
-                    <nil key="highlightedColor"/>
-                </label>
-                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Preis" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="0Ik-L9-ptA">
-                    <rect key="frame" x="249" y="121" width="38" height="20.5"/>
-                    <fontDescription key="fontDescription" type="system" pointSize="17"/>
-                    <nil key="textColor"/>
-                    <nil key="highlightedColor"/>
-                </label>
                 <stackView opaque="NO" contentMode="scaleToFill" spacing="8" translatesAutoresizingMaskIntoConstraints="NO" id="ptT-kU-baw">
                     <rect key="frame" x="164" y="157.5" width="258" height="48"/>
                     <subviews>
@@ -116,24 +92,47 @@
                         <action selector="cartTapped:" destination="-1" eventType="touchUpInside" id="wfj-Dw-4Bz"/>
                     </connections>
                 </button>
+                <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" alignment="center" spacing="4" translatesAutoresizingMaskIntoConstraints="NO" id="bew-MM-dpm">
+                    <rect key="frame" x="16" y="56" width="504" height="85.5"/>
+                    <subviews>
+                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Brand" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="DDW-l5-CzJ">
+                            <rect key="frame" x="238" y="0.0" width="28.5" height="12"/>
+                            <fontDescription key="fontDescription" type="system" pointSize="10"/>
+                            <color key="textColor" red="0.13333333333333333" green="0.13333333333333333" blue="0.13333333333333333" alpha="1" colorSpace="calibratedRGB"/>
+                            <nil key="highlightedColor"/>
+                        </label>
+                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Produktname" textAlignment="center" lineBreakMode="tailTruncation" numberOfLines="2" baselineAdjustment="alignBaselines" minimumScaleFactor="0.5" adjustsLetterSpacingToFitWidth="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Mon-A5-B2P">
+                            <rect key="frame" x="197" y="16" width="110.5" height="20.5"/>
+                            <fontDescription key="fontDescription" type="boldSystem" pointSize="17"/>
+                            <color key="textColor" red="0.13333333333333333" green="0.13333333333333333" blue="0.13333333333333333" alpha="1" colorSpace="calibratedRGB"/>
+                            <nil key="highlightedColor"/>
+                        </label>
+                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Originalpreis" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="9TC-UF-tdX">
+                            <rect key="frame" x="204" y="40.5" width="96.5" height="20.5"/>
+                            <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                            <color key="textColor" red="0.5607843137254902" green="0.5607843137254902" blue="0.5607843137254902" alpha="1" colorSpace="calibratedRGB"/>
+                            <nil key="highlightedColor"/>
+                        </label>
+                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Preis" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="0Ik-L9-ptA">
+                            <rect key="frame" x="233" y="65" width="38" height="20.5"/>
+                            <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                            <nil key="textColor"/>
+                            <nil key="highlightedColor"/>
+                        </label>
+                    </subviews>
+                </stackView>
             </subviews>
             <constraints>
+                <constraint firstItem="bew-MM-dpm" firstAttribute="leading" secondItem="jOc-h1-O0a" secondAttribute="leading" constant="16" id="1V8-WQ-l2x"/>
                 <constraint firstItem="I3p-Ca-9rl" firstAttribute="leading" secondItem="jOc-h1-O0a" secondAttribute="leading" constant="16" id="1a7-oH-MBU"/>
                 <constraint firstItem="ueH-dr-ZB3" firstAttribute="centerX" secondItem="jOc-h1-O0a" secondAttribute="centerX" id="7cJ-Bl-s5l"/>
-                <constraint firstItem="DDW-l5-CzJ" firstAttribute="centerX" secondItem="jOc-h1-O0a" secondAttribute="centerX" id="CZ5-Io-aso"/>
                 <constraint firstItem="CRe-3i-HxU" firstAttribute="top" secondItem="jOc-h1-O0a" secondAttribute="top" constant="12" id="Kom-Ey-3jX"/>
                 <constraint firstAttribute="trailing" secondItem="I3p-Ca-9rl" secondAttribute="trailing" constant="16" id="LGG-qU-zgT"/>
-                <constraint firstItem="DDW-l5-CzJ" firstAttribute="top" secondItem="CRe-3i-HxU" secondAttribute="bottom" constant="12" id="Lg5-Rh-INh"/>
-                <constraint firstAttribute="trailing" secondItem="Mon-A5-B2P" secondAttribute="trailing" constant="16" id="M99-Nx-bWE"/>
-                <constraint firstItem="0Ik-L9-ptA" firstAttribute="top" secondItem="9TC-UF-tdX" secondAttribute="bottom" constant="4" id="XBe-1i-Rwp"/>
-                <constraint firstItem="ptT-kU-baw" firstAttribute="top" secondItem="0Ik-L9-ptA" secondAttribute="bottom" constant="16" id="apz-BZ-BBk"/>
-                <constraint firstItem="Mon-A5-B2P" firstAttribute="leading" secondItem="jOc-h1-O0a" secondAttribute="leading" constant="16" id="bg7-y9-ftR"/>
-                <constraint firstItem="9TC-UF-tdX" firstAttribute="centerX" secondItem="jOc-h1-O0a" secondAttribute="centerX" id="d8E-n9-hxK"/>
-                <constraint firstItem="9TC-UF-tdX" firstAttribute="top" secondItem="Mon-A5-B2P" secondAttribute="bottom" constant="4" id="j1Q-ZZ-h58"/>
+                <constraint firstAttribute="trailing" secondItem="bew-MM-dpm" secondAttribute="trailing" constant="16" id="OB9-cN-qUp"/>
+                <constraint firstItem="ptT-kU-baw" firstAttribute="top" secondItem="bew-MM-dpm" secondAttribute="bottom" constant="16" id="YyG-l7-KDE"/>
                 <constraint firstItem="I3p-Ca-9rl" firstAttribute="top" secondItem="ptT-kU-baw" secondAttribute="bottom" constant="16" id="jIX-hX-G3h"/>
                 <constraint firstAttribute="bottom" secondItem="I3p-Ca-9rl" secondAttribute="bottom" constant="16.5" id="kID-BO-hDB"/>
-                <constraint firstItem="0Ik-L9-ptA" firstAttribute="centerX" secondItem="jOc-h1-O0a" secondAttribute="centerX" id="kyd-8n-rju"/>
-                <constraint firstItem="Mon-A5-B2P" firstAttribute="top" secondItem="DDW-l5-CzJ" secondAttribute="bottom" constant="4" id="u6L-ac-00D"/>
+                <constraint firstItem="bew-MM-dpm" firstAttribute="top" secondItem="CRe-3i-HxU" secondAttribute="bottom" constant="12" id="lFy-oW-imB"/>
                 <constraint firstItem="CRe-3i-HxU" firstAttribute="centerX" secondItem="jOc-h1-O0a" secondAttribute="centerX" id="zVd-CC-U8e"/>
             </constraints>
             <freeformSimulatedSizeMetrics key="simulatedDestinationMetrics"/>
