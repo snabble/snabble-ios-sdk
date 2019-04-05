@@ -74,6 +74,10 @@
         en = Update Cart
     [Snabble.Scanner.addToCart]
         en = Add to Cart
+    [Snabble.Scanner.goToCart]
+        en = Cart: %@
+    [Snabble.Scanner.goToCart.empty]
+        en = Cart
     [Snabble.Scanner.BundleDialog.headline]
         en = Please select an item
     [Snabble.Scanner.plusDeposit]
@@ -151,6 +155,8 @@
         en = Please enter a valid IBAN.
     [Snabble.Payment.SEPA.InvalidName]
         en = Please enter a valid name.
+    [Snabble.Payment.SEPA.hint]
+        en = Note: In order to protect you and our merchants against misuse, the merchant will have your bank card shown on your first payment by SEPA direct debit.
     [Snabble.Save]
         en = Save
     [Snabble.Payment.emptyState.message]
@@ -180,6 +186,7 @@
         
     [Snabble.networkError]
         en = Connection error
+        
 [[Android]]
     [Snabble.askForPermission]
         en = Ask for permission
@@ -201,4 +208,7 @@
         tags = android
     [Snabble.Receipt.pdfReaderUnavailable]
         en = No suitable PDF reader application found
+        tags = android
+    [Snabble.Keyguard.requireScreenLock]
+        en = You need to secure your smartphone with a screen lock to add this payment method.
         tags = android
