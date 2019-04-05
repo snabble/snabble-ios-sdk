@@ -474,7 +474,7 @@ extension ShoppingCartViewController: UITableViewDelegate, UITableViewDataSource
         }
     }
 
-    public func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
+    public func tableView(_ tableView: UITableView, estimatedHeightForRowAt indexPath: IndexPath) -> CGFloat {
         return 74
     }
 
