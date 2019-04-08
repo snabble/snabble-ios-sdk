@@ -25,6 +25,9 @@ public protocol ShoppingCartDelegate: AnalyticsDelegate, MessageDelegate {
     /// - Returns: true if the error has been dealt with and no error messages need to be shown from the SDK
     func handleCheckoutError(_ error: SnabbleError) -> Bool
 
+    /// called to get a customer's loyalty card number. if not nil, this number is passed to the backend as the
+    /// `loyaltyCard` property of the shopping cart, and it is also displayed as part of the QR code, if any of
+    /// the `encodedCodes` payment methods is used
     func getLoyaltyCard(_ project: Project) -> String?
 }
 
@@ -278,7 +281,9 @@ public final class ShoppingCartViewController: UIViewController {
         spinner.centerYAnchor.constraint(equalTo: button.centerYAnchor).isActive = true
         button.isEnabled = false
 
-        self.shoppingCart.loyaltyCard = self.delegate.getLoyaltyCard(project)
+        if self.shoppingCart.loyaltyCard == nil {
+            self.shoppingCart.loyaltyCard = self.delegate.getLoyaltyCard(project)
+        }
         
         self.shoppingCart.createCheckoutInfo(SnabbleUI.project, timeout: 10) { result in
             spinner.stopAnimating()

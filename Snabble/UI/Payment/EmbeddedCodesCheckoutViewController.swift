@@ -129,7 +129,12 @@ final class EmbeddedCodesCheckoutViewController: UIViewController {
     }
 
     private func csvForQR() -> [String] {
-        let lines: [String] = self.cart.items.reduce(into: [], { result, item in
+        var lines = [String]()
+        if let card = self.cart.loyaltyCard {
+            lines.append("1;\(card)")
+        }
+
+        lines += self.cart.items.reduce(into: [], { result, item in
             let qrCode = item.dataForQR
             result.append("\(qrCode.quantity);\(qrCode.code)")
         })
@@ -155,7 +160,12 @@ final class EmbeddedCodesCheckoutViewController: UIViewController {
             let regularItems = items.filter { return $0.product.saleRestriction == .none }
             let restrictedItems = items.filter { return $0.product.saleRestriction != .none }
 
-            var regularCodes = self.codesFor(regularItems)
+            var regularCodes = [String]()
+            if let card = self.cart.loyaltyCard {
+                regularCodes.append(card)
+            }
+
+            regularCodes += self.codesFor(regularItems)
             if let additionalCodes = self.cart.additionalCodes {
                 regularCodes.append(contentsOf: additionalCodes)
             }
@@ -163,7 +173,11 @@ final class EmbeddedCodesCheckoutViewController: UIViewController {
 
             return (regularCodes, restrictedCodes)
         } else {
-            var codes = self.codesFor(items)
+            var codes = [String]()
+            if let card = self.cart.loyaltyCard {
+                codes.append(card)
+            }
+            codes += self.codesFor(items)
             if let additionalCodes = self.cart.additionalCodes {
                 codes.append(contentsOf: additionalCodes)
             }
