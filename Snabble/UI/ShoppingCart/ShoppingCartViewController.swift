@@ -537,6 +537,9 @@ extension ShoppingCartViewController: KeyboardHandling {
         UIView.animate(withDuration: info.animationDuration) {
             self.view.layoutIfNeeded()
         }
+
+        self.editButtonItem.isEnabled = false
+        self.trashButton.isEnabled = false
     }
 
     func keyboardWillHide(_ info: KeyboardInfo) {
@@ -548,6 +551,9 @@ extension ShoppingCartViewController: KeyboardHandling {
         UIView.animate(withDuration: info.animationDuration) {
             self.view.layoutIfNeeded()
         }
+
+        self.editButtonItem.isEnabled = true
+        self.trashButton.isEnabled = true
     }
 
 }
