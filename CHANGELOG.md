@@ -1,5 +1,9 @@
 ## snabble iOS SDK Changelog
 
+# v0.9.13
+
+* Loyalty cards set in the shopping cart are now also included in the QR code that is shown when one of the `encodedCode` payment mehtods is used.
+
 # v0.9.12
 
 * Layout changes in the scanner confirmation view and the shopping cart table cells.
