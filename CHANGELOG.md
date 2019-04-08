@@ -1,5 +1,12 @@
 ## snabble iOS SDK Changelog
 
+# v0.9.12
+
+* Layout changes in the scanner confirmation view and the shopping cart table cells.
+* full appdb downloads are now always used
+* fixes barcode entry for codes that did not match the `default` template
+* fixes a bug where the camera preview was not stopped after the very first scan after starting the app
+
 # v0.9.11
 
 * Fixes a bug in the shopping cart's display of products with deposits
