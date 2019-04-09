@@ -1,5 +1,9 @@
 ## snabble iOS SDK Changelog
 
+# v0.9.14
+
+* Adds a new error message when no payment methods are available during checkout. This uses the new localization key `Snabble.Payment.noMethodAvailable`.
+
 # v0.9.13
 
 * Loyalty cards set in the shopping cart are now also included in the QR code that is shown when one of the `encodedCode` payment mehtods is used.
