@@ -32,20 +32,65 @@ public struct SnabbleError: Decodable, Error {
     static let noPaymentAvailable = SnabbleError(error: ErrorResponse("no payment method available"))
 }
 
+public enum ErrorResponseType: String {
+    case unknown
+
+    // checkout errors
+    case shopNotFound = "shop_not_found"
+    case badShopId = "bad_shop_id"
+    case noAvailableMethod = "no_available_method"
+    case invalidCartItem = "invalid_cart_item"
+}
+
+extension ErrorResponseType: UnknownCaseRepresentable {
+    public static let unknownCase = ErrorResponseType.unknown
+}
+
 public struct ErrorResponse: Decodable {
-    public let type: String // TODO: create an enum for this
+    public let rawType: String
     public let details: [ErrorDetail]?
 
+    enum CodingKeys: String, CodingKey {
+        case rawType = "type"
+        case details
+    }
+
     init(_ type: String) {
-        self.type = type
+        self.rawType = type
         self.details = nil
+    }
+
+    var type: ErrorResponseType {
+        return ErrorResponseType(rawValue: self.rawType)
     }
 }
 
+public enum ErrorDetailType: String {
+    case unknown
+
+    // invalidCartItem details
+    case saleStop = "sale_stop"
+    case productNotFound = "product_not_found"
+}
+
+extension ErrorDetailType: UnknownCaseRepresentable {
+    public static let unknownCase = ErrorDetailType.unknown
+}
+
 public struct ErrorDetail: Decodable {
-    public let type: String // TODO: create an enum for this
+    public let rawType: String
     public let message: String?
     public let sku: String?
+
+    enum CodingKeys: String, CodingKey {
+        case rawType = "type"
+        case message
+        case sku
+    }
+
+    var type: ErrorDetailType {
+        return ErrorDetailType(rawValue: self.rawType)
+    }
 }
 
 enum HTTPRequestMethod: String {
