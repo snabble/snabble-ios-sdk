@@ -301,6 +301,11 @@ public final class ShoppingCartViewController: UIViewController {
                         return
                     }
 
+                    if error.error.type == .noAvailableMethod {
+                        self.delegate.showWarningMessage("Snabble.Payment.noMethodAvailable".localized())
+                        return
+                    }
+
                     // app didn't handle the error. see if we can use embedded QR codes anyway
                     let project = SnabbleUI.project
                     if project.encodedCodes != nil {

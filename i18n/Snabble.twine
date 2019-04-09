@@ -35,6 +35,8 @@
         en = How would you like to pay %@?
     [Snabble.PaymentSelection.payNow]
         en = Pay %@ now
+    [Snabble.Payment.noMethodAvailable]
+        en = Unfortunately, this purchase can't be made using the app.
     [Snabble.QRCode.didPay]
         en = I've paid
     [Snabble.QRCode.nextCode]
