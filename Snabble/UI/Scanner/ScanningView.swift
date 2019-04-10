@@ -247,7 +247,7 @@ public final class ScanningView: DesignableView {
     /// the `requestCameraPermission` method of the delegate is called
     public func initializeCamera() {
         if self.checkCameraStatus() {
-            self.initCaptureSession()
+            self.initializeCaptureSession()
         }
     }
 
@@ -264,6 +264,7 @@ public final class ScanningView: DesignableView {
             self.torchButton.isHidden = !torchToggleSupported
         }
 
+        self.initializeCaptureSession()
         self.startCaptureSession()
     }
 
@@ -278,7 +279,9 @@ public final class ScanningView: DesignableView {
     /// stop scanning
     public func stopScanning() {
         self.frameTimer?.invalidate()
-        self.captureSession?.stopRunning()
+        if let capture = self.captureSession, capture.isRunning {
+            capture.stopRunning()
+        }
     }
 
     /// is it possible to scan?
@@ -390,17 +393,17 @@ public final class ScanningView: DesignableView {
                 if let layer = self.previewLayer, metadataOutput.rectOfInterest.origin.x == 0 {
                     let visibleRect = layer.metadataOutputRectConverted(fromLayerRect: rect)
                     metadataOutput.rectOfInterest = visibleRect
-                    self.startCaptureSession()
+                    // self.startCaptureSession()
                 }
             } else {
-                self.startCaptureSession()
+                // self.startCaptureSession()
             }
         }
 
         self.firstLayoutDone = true
     }
 
-    func initCaptureSession() {
+    private func initializeCaptureSession() {
         guard self.captureSession == nil else {
             return
         }

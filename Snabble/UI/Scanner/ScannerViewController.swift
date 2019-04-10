@@ -158,8 +158,6 @@ public final class ScannerViewController: UIViewController {
     private func showConfirmation(for scannedProduct: ScannedProduct, _ scannedCode: String) {
         self.confirmationVisible = true
         self.scanConfirmationView.present(scannedProduct, scannedCode, cart: self.shoppingCart)
-
-        self.scanningView.stopScanning()
         self.displayScanConfirmationView(hidden: false, setBottomOffset: self.productType != .userMustWeigh)
     }
     
@@ -226,6 +224,7 @@ extension ScannerViewController: MessageDelegate {
 extension ScannerViewController: ScanConfirmationViewDelegate {
     func closeConfirmation() {
         self.displayScanConfirmationView(hidden: true)
+        self.lastScannedCode = ""
         self.scanningView.startScanning()
 
         self.updateCartButton()
@@ -349,7 +348,6 @@ extension ScannerViewController {
 
             self.delegate.track(.scanProduct(scannedProduct.transmissionCode ?? scannedCode))
             self.productType = product.type
-            self.lastScannedCode = ""
 
             if product.bundles.count > 0 {
                 self.showBundleSelection(for: scannedProduct, scannedCode)
@@ -398,7 +396,6 @@ extension ScannerViewController {
             }
         }
 
-        self.scanningView.stopScanning()
         self.present(alert, animated: true)
     }
 
