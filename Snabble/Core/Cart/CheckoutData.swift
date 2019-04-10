@@ -39,10 +39,11 @@ public struct SignedCheckoutInfo: Decodable {
 
 // known payment methods
 public enum RawPaymentMethod: String {
-    case qrCode = "qrCodePOS"
+    case qrCodePOS              // QR Code with a reference to snabble's backend
     case encodedCodes           // QR Code with EANs and separators
     case deDirectDebit          // SEPA direct debit via Telecash/First Data
     case encodedCodesCSV        // QR Code with CSV
+    case encodedCodesIKEA       // QR Code for IKEA
 }
 
 // associated data for a payment method
@@ -58,17 +59,19 @@ public struct PaymentMethodData {
 
 // payment method with associated data
 public enum PaymentMethod {
-    case qrCode
+    case qrCodePOS
     case encodedCodes
     case deDirectDebit(PaymentMethodData?)
     case encodedCodesCSV
+    case encodedCodesIKEA
 
     public var rawMethod: RawPaymentMethod {
         switch self {
-        case .qrCode: return .qrCode
+        case .qrCodePOS: return .qrCodePOS
         case .encodedCodes: return .encodedCodes
         case .deDirectDebit: return .deDirectDebit
         case .encodedCodesCSV: return .encodedCodesCSV
+        case .encodedCodesIKEA: return .encodedCodesIKEA
         }
     }
 
@@ -177,7 +180,7 @@ public struct CheckoutProcess: Decodable {
     }
 
     public struct PaymentInformation: Decodable {
-        /// for method == .qrCode
+        /// for method == .qrCodePOS
         public let qrCodeContent: String?
     }
 }

@@ -10,9 +10,10 @@ import Foundation
 extension PaymentMethod {
     var icon: String {
         switch self {
-        case .qrCode: return "payment-method-checkstand"
+        case .qrCodePOS: return "payment-method-checkstand"
         case .encodedCodes: return "payment-method-checkstand"
         case .encodedCodesCSV: return "payment-method-checkstand"
+        case .encodedCodesIKEA: return "payment-method-checkstand"
         case .deDirectDebit: return "payment-sepa"
         }
     }
@@ -41,10 +42,12 @@ extension PaymentMethod {
 
         let processor: UIViewController
         switch self {
-        case .qrCode: processor = QRCheckoutViewController(process!, cart, delegate)
-        case .encodedCodes: processor = EmbeddedCodesCheckoutViewController(process, self, cart, delegate)
-        case .encodedCodesCSV: processor = EmbeddedCodesCheckoutViewController(process, self, cart, delegate)
-        case .deDirectDebit: processor = SepaCheckoutViewController(process!, method.data!, cart, delegate)
+        case .qrCodePOS:
+            processor = QRCheckoutViewController(process!, cart, delegate)
+        case .encodedCodes, .encodedCodesCSV, .encodedCodesIKEA:
+            processor = EmbeddedCodesCheckoutViewController(process, self, cart, delegate)
+        case .deDirectDebit:
+            processor = SepaCheckoutViewController(process!, method.data!, cart, delegate)
         }
         processor.hidesBottomBarWhenPushed = true
         return processor
@@ -104,7 +107,8 @@ public final class PaymentProcess {
             switch method {
             case .encodedCodes: result.append(.encodedCodes)
             case .encodedCodesCSV: result.append(.encodedCodesCSV)
-            case .qrCode: result.append(.qrCode)
+            case .encodedCodesIKEA: result.append(.encodedCodesIKEA)
+            case .qrCodePOS: result.append(.qrCodePOS)
             case .deDirectDebit:
                 let telecash = userData.filter { if case .deDirectDebit = $0 { return true } else { return false } }
                 if telecash.count > 0 {

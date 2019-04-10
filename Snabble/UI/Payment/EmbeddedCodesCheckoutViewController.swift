@@ -69,6 +69,8 @@ final class EmbeddedCodesCheckoutViewController: UIViewController {
             self.codes = codeblocks.generateQrCodes(regularCodes, restrictedCodes)
         case .encodedCodesCSV:
             self.codes = self.csvForQR()
+        case .encodedCodesIKEA:
+            self.codes = self.codesForIKEA()
         default:
             fatalError("payment method \(self.method) not implemented")
             break
@@ -128,6 +130,42 @@ final class EmbeddedCodesCheckoutViewController: UIViewController {
         UIScreen.main.brightness = self.initialBrightness
     }
 
+    private func divideIntoChunks(_ lines: [String], maxSize: Int) -> [[String]] {
+        let maxCodes = Float(maxSize)
+        let linesCount = Float(lines.count)
+        let chunks = (linesCount / maxCodes).rounded(.up)
+        let chunkSize = Int((linesCount / chunks).rounded(.up))
+        let blocks = stride(from: 0, to: lines.count, by: chunkSize).map { start -> [String] in
+            return Array(lines[start ..< min(start + chunkSize, lines.count)])
+        }
+        return blocks
+    }
+
+    private func codesForIKEA() -> [String] {
+        let lines = self.codesFor(self.cart.items)
+
+        let chunks = self.divideIntoChunks(lines, maxSize: self.qrCodeConfig.maxCodes)
+
+        let gs = "\u{001d}" // ASCII Group Separator
+        let blocks = chunks.enumerated().map { index, block -> String in
+            let header = "9100003"                  // AI 91 (origin type), 00003 == IKEA Store App
+            let blocks = "10" + "0\(chunks.count)"  // AI 10 (lot number), # of chunks
+
+            var result = header + gs + blocks
+
+            // family card goes into the first code
+            if let card = self.cart.loyaltyCard, index == 0 {
+                let familyCard = "92" + card        // AI 92 (additional item id), card number
+                result += gs + familyCard
+            }
+
+            let items = block.map { "240" + $0 }    // AI 240 (additional item is), item's scanned code
+            return result + gs + items.joined(separator: gs)
+        }
+
+        return blocks
+    }
+
     private func csvForQR() -> [String] {
         var lines = [String]()
         if let card = self.cart.loyaltyCard {
@@ -139,15 +177,9 @@ final class EmbeddedCodesCheckoutViewController: UIViewController {
             result.append("\(qrCode.quantity);\(qrCode.code)")
         })
 
-        // divide into chunks if needed
-        let maxCodes = Float(self.qrCodeConfig.maxCodes)
-        let linesCount = Float(lines.count)
-        let chunks = (linesCount / maxCodes).rounded(.up)
-        let chunkSize = Int((linesCount / chunks).rounded(.up))
-        let blocks = stride(from: 0, to: lines.count, by: chunkSize).map { start -> [String] in
-            var block = [ "snabble;" ]
-            block.append(contentsOf: lines[start ..< min(start + chunkSize, lines.count)])
-            return block
+        let chunks = self.divideIntoChunks(lines, maxSize: self.qrCodeConfig.maxCodes)
+        let blocks = chunks.map {
+            return [ "snabble;" ] + $0
         }
 
         return blocks.map { $0.joined(separator: "\n") }

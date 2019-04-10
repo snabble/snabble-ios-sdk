@@ -311,6 +311,7 @@ final public class ShoppingCart {
 
     /// this is intended mainly for the EmbeddedCodesCheckout - use this to append additional codes
     /// (e.g. special "QR code purchase" marker codes) to the list of scanned codes of this cart
+    @available(*, deprecated, message: "no longer supported, this property will be removed soon")
     public var additionalCodes: [String]?
 
     private var timer: Timer?
