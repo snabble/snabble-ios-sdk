@@ -1,5 +1,10 @@
 ## snabble iOS SDK Changelog
 
+# v0.9.15
+
+* Fixes a bug where the taptic feedback would be triggered twice on the first scan after starting the app
+* Fixes a bug where the camera preview would not start immediately after granting camera permission
+
 # v0.9.14
 
 * Adds a new error message when no payment methods are available during checkout. This uses the new localization key `Snabble.Payment.noMethodAvailable`.
