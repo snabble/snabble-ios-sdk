@@ -119,7 +119,7 @@ public final class PaymentProcess {
             }
         }
 
-        return result
+        return result.reversed()
     }
 
     func start(_ method: PaymentMethod, completion: @escaping (_ result: Result<UIViewController, SnabbleError>) -> () ) {
