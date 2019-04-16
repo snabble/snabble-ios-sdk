@@ -35,8 +35,8 @@ struct TokenData {
 
 final class TokenRegistry {
 
-    private var appId = ""
-    private var secret = ""
+    private let appId: String
+    private let secret: String
 
     private var registry = [String: TokenData]()
     private var refreshTimer: Timer?
@@ -173,8 +173,11 @@ final class TokenRegistry {
             let formatter = DateFormatter()
             formatter.dateFormat = "EEEE, dd LLL yyyy HH:mm:ss zzz"
             formatter.locale = Locale(identifier: "en_US_Posix")
+            formatter.timeZone = TimeZone(secondsFromGMT: 0)
             if let date = formatter.date(from: serverDate) {
                 self.retrieveToken(for: project, date, completion: completion)
+            } else {
+                completion(nil)
             }
         } else {
             completion(nil)
