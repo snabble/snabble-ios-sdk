@@ -205,7 +205,9 @@ public final class ShoppingCartViewController: UIViewController {
     // MARK: notification handlers
     @objc private func updateShoppingCart(_ notification: Notification) {
         self.setupItems(self.shoppingCart)
-        self.tableView?.reloadData()
+        if self.items.count > 0 {
+            self.tableView?.reloadData()
+        }
         self.updateTotals()
     }
 
@@ -247,15 +249,20 @@ public final class ShoppingCartViewController: UIViewController {
                 self.tableView.contentOffset = offset
             }
         } else {
-            self.tableView.reloadData()
+            if self.items.count > 0 {
+                self.tableView.reloadData()
+            }
         }
 
         self.setEditButton()
         self.setDeleteButton()
-        
+
+        // ugly workaround for visual glitch :(
         let items = self.items.count
-        if items == 0 {
-            self.setEditing(false, animated: false)
+        if items == 0 && self.isEditing {
+            DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
+                self.setEditing(false, animated: false)
+            }
         }
 
         self.updateTotals()
