@@ -357,7 +357,10 @@ public final class ScanningView: DesignableView {
     public override func layoutSubviews() {
         super.layoutSubviews()
 
-        assert(self.dimmingColor != nil, "setup() must be called before the first layout pass")
+        guard self.dimmingColor != nil else {
+            Log.error("setup() must be called before the first layout pass")
+            return
+        }
 
         if let previewLayer = self.previewLayer {
             previewLayer.frame = self.view.frame
