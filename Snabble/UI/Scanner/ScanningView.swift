@@ -266,6 +266,7 @@ public final class ScanningView: DesignableView {
 
         self.initializeCaptureSession()
         self.startCaptureSession()
+        self.setTorchButtonIcon()
     }
 
     private func startCaptureSession() {
@@ -307,10 +308,17 @@ public final class ScanningView: DesignableView {
             try camera.lockForConfiguration()
             defer { camera.unlockForConfiguration() }
             camera.torchMode = camera.torchMode == .on ? .off : .on
-            self.torchButton.setImage(self.torchImages[camera.torchMode] ?? nil, for: .normal)
-            self.torchButton.backgroundColor = camera.torchMode == .on ? .white : .clear
+            self.setTorchButtonIcon()
             self.delegate.track(.toggleTorch)
         } catch {}
+    }
+
+    private func setTorchButtonIcon() {
+        guard let camera = self.camera else {
+            return
+        }
+        self.torchButton.setImage(self.torchImages[camera.torchMode] ?? nil, for: .normal)
+        self.torchButton.backgroundColor = camera.torchMode == .on ? .white : .clear
     }
 
     @IBAction func cartButtonTapped(_ button: UIButton) {
