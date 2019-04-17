@@ -1,5 +1,11 @@
 ## snabble iOS SDK Changelog
 
+# v0.9.16
+
+* Fixes a bug where the torch button on `ScanningView` could remain highlighted when the torch was actually off.
+* Fixes a visual glitch when deleting the last item in the shopping cart
+* Marks the `additionalCodes` property of the shopping cart as deprecated. This property will be removed in a future release.
+
 # v0.9.15
 
 * Fixes a bug where the taptic feedback would be triggered twice on the first scan after starting the app
