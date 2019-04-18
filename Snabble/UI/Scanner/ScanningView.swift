@@ -38,7 +38,7 @@ extension AVMetadataObject.ObjectType {
 
 /// custom barcode detectors need to conform to this protocol
 public protocol BarcodeDetector {
-    /// a scan formats are should be detected
+    /// the scan formats that should be detected
     var scanFormats: [ScanFormat] { get set }
 
     /// the AVCaptureOutput to use
@@ -53,6 +53,27 @@ public protocol BarcodeDetector {
     /// the UIView used to mark the detected code within the camera preview. Modify its frame
     /// when a barcode is detected
     var indicatorView: UIView? { get set }
+
+    /// set this to true if the detector takes full control of the camera (e.g. CortexDecoder)
+    /// in this case, you need to also implement all of the methods below
+    var handlesCamera: Bool { get }
+
+    func startScanning()
+
+    func stopScanning()
+
+    /// ask the detector for its camera preview
+    func getCameraPreview(_ frame: CGRect) -> UIView?
+
+    func setTorch(_ on: Bool)
+}
+
+public extension BarcodeDetector {
+    var handlesCamera: Bool { return false }
+    func startScanning() {}
+    func stopScanning() {}
+    func getCameraPreview(_ frame: CGRect) -> UIView? { return nil }
+    func setTorch(_ on: Bool) {}
 }
 
 public protocol ScanningViewDelegate: class {
@@ -145,7 +166,7 @@ public final class ScanningView: DesignableView {
     var captureSession: AVCaptureSession?
     var previewLayer: AVCaptureVideoPreviewLayer!
 
-    var serialQueue = DispatchQueue(label: "snabble.scannerQueue")
+    var serialQueue = DispatchQueue(label: "io.snabble.scannerQueue")
     var metadataOutput: AVCaptureMetadataOutput?
     var barcodeDetector: BarcodeDetector?
 
@@ -267,9 +288,14 @@ public final class ScanningView: DesignableView {
         self.initializeCaptureSession()
         self.startCaptureSession()
         self.setTorchButtonIcon()
+        self.barcodeDetector?.startScanning()
     }
 
     private func startCaptureSession() {
+        if self.barcodeDetector?.handlesCamera == true {
+            return
+        }
+
         if let capture = self.captureSession, !capture.isRunning, self.firstLayoutDone {
             self.serialQueue.async {
                 capture.startRunning()
@@ -283,6 +309,7 @@ public final class ScanningView: DesignableView {
         if let capture = self.captureSession, capture.isRunning {
             capture.stopRunning()
         }
+        self.barcodeDetector?.stopScanning()
     }
 
     /// is it possible to scan?
@@ -301,6 +328,13 @@ public final class ScanningView: DesignableView {
     
     @IBAction func torchButtonTapped(_ button: UIButton) {
         guard let camera = self.camera else {
+            return
+        }
+
+        if self.barcodeDetector?.handlesCamera == true {
+            let torchOn = camera.torchMode == .on
+            self.barcodeDetector?.setTorch(!torchOn)
+            self.setTorchButtonIcon()
             return
         }
 
@@ -408,6 +442,12 @@ public final class ScanningView: DesignableView {
                 }
             } else {
                 // self.startCaptureSession()
+            }
+
+            if self.barcodeDetector?.handlesCamera == true {
+                if let preview = self.barcodeDetector?.getCameraPreview(self.view.frame) {
+                    self.view.addSubview(preview)
+                }
             }
         }
 
