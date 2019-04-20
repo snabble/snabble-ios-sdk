@@ -58,6 +58,8 @@ public protocol BarcodeDetector {
     /// in this case, you need to also implement all of the methods below
     var handlesCamera: Bool { get }
 
+    func scannerWillAppear()
+
     func startScanning()
 
     func stopScanning()
@@ -70,6 +72,7 @@ public protocol BarcodeDetector {
 
 public extension BarcodeDetector {
     var handlesCamera: Bool { return false }
+    func scannerWillAppear() {}
     func startScanning() {}
     func stopScanning() {}
     func getCameraPreview(_ frame: CGRect) -> UIView? { return nil }
@@ -119,7 +122,7 @@ public struct ScanningViewConfig {
     public var borderColor = UIColor.white
 
     /// color of the reticle's border. Default: 100% white, 20% alpha
-    public var reticleBorderColor = UIColor.init(white: 1.0, alpha: 0.2)
+    public var reticleBorderColor = UIColor(white: 1.0, alpha: 0.2)
     /// width of the reticle's border, default 0.5
     public var reticleBorderWidth: CGFloat = 0.5
     /// corner radius of the reticle's border, default 0
@@ -262,6 +265,8 @@ public final class ScanningView: DesignableView {
         if self.barcodeDetector == nil {
             self.metadataOutput = AVCaptureMetadataOutput()
         }
+
+        self.barcodeDetector?.scannerWillAppear()
     }
 
     /// this must be called once to initialize the camera. If the app doesn't already have camera usage permission,
@@ -313,6 +318,7 @@ public final class ScanningView: DesignableView {
     }
 
     /// is it possible to scan?
+    @available(*, deprecated, message: "no longer supported, this property will be removed soon")
     public func readyToScan() -> Bool {
         return self.captureSession != nil
     }
@@ -438,10 +444,7 @@ public final class ScanningView: DesignableView {
                 if let layer = self.previewLayer, metadataOutput.rectOfInterest.origin.x == 0 {
                     let visibleRect = layer.metadataOutputRectConverted(fromLayerRect: rect)
                     metadataOutput.rectOfInterest = visibleRect
-                    // self.startCaptureSession()
                 }
-            } else {
-                // self.startCaptureSession()
             }
 
             if self.barcodeDetector?.handlesCamera == true {
@@ -455,6 +458,10 @@ public final class ScanningView: DesignableView {
     }
 
     private func initializeCaptureSession() {
+        if self.barcodeDetector?.handlesCamera == true {
+            return
+        }
+
         guard self.captureSession == nil else {
             return
         }
@@ -489,6 +496,9 @@ public final class ScanningView: DesignableView {
         self.previewLayer = AVCaptureVideoPreviewLayer(session: captureSession)
         self.previewLayer.frame = self.view.frame
         self.previewLayer.videoGravity = .resizeAspectFill
+
+        let rectOfInterest = self.previewLayer.metadataOutputRectConverted(fromLayerRect: self.reticle.frame)
+        self.metadataOutput?.rectOfInterest = rectOfInterest
 
         self.previewLayer.zPosition = -1
         self.view.layer.addSublayer(self.previewLayer)
