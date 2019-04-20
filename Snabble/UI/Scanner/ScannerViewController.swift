@@ -10,6 +10,11 @@ import AVFoundation
 public protocol ScannerDelegate: AnalyticsDelegate, MessageDelegate {
     func closeScanningView()
     func gotoShoppingCart()
+    func barcodeDetector() -> BarcodeDetector?
+}
+
+public extension ScannerDelegate {
+    func barcodeDetector() -> BarcodeDetector? { return nil }
 }
 
 public final class ScannerViewController: UIViewController {
@@ -36,9 +41,8 @@ public final class ScannerViewController: UIViewController {
     private var scanFormats = [ScanFormat]()
     private weak var delegate: ScannerDelegate!
     private var timer: Timer?
-    private var barcodeDetector: BarcodeDetector?
 
-    public init(_ cart: ShoppingCart, _ shop: Shop, delegate: ScannerDelegate, barcodeDetector: BarcodeDetector? = nil) {
+    public init(_ cart: ShoppingCart, _ shop: Shop, delegate: ScannerDelegate) {
         let project = SnabbleUI.project
         self.productProvider = SnabbleAPI.productProvider(for: project)
         self.shoppingCart = cart
@@ -48,7 +52,6 @@ public final class ScannerViewController: UIViewController {
         super.init(nibName: nil, bundle: Snabble.bundle)
 
         self.delegate = delegate
-        self.barcodeDetector = barcodeDetector
 
         self.title = "Snabble.Scanner.title".localized()
         self.tabBarItem.image = UIImage.fromBundle("icon-scan-inactive")
@@ -127,12 +130,13 @@ public final class ScannerViewController: UIViewController {
         config.scanFormats = self.scanFormats
         config.reticleCornerRadius = 3
 
-        config.barcodeDetector = self.barcodeDetector
-
-        self.barcodeDetector?.scanFormats = self.scanFormats
-        if self.barcodeDetector != nil && self.barcodeDetector?.delegate == nil {
-            self.barcodeDetector?.delegate = self
+        var barcodeDetector = self.delegate.barcodeDetector()
+        barcodeDetector?.scanFormats = self.scanFormats
+        if barcodeDetector?.delegate == nil {
+            barcodeDetector?.delegate = self
         }
+
+        config.barcodeDetector = barcodeDetector
         config.delegate = self
         return config
     }
