@@ -101,14 +101,16 @@ final class PaymentProcessPoller {
     }
 
     private func checkApproval(_ process: CheckoutProcess) -> (PaymentEvent, Bool)? {
-        if process.paymentApproval == nil && process.supervisorApproval == nil {
+        switch (process.paymentApproval, process.supervisorApproval) {
+        case (.none, .none):
             return nil
+        case (.some(let paymentApproval), .none):
+            return paymentApproval ? nil : (.approval, false)
+        case (.none, .some(let supervisorApproval)):
+            return supervisorApproval ? nil : (.approval, false)
+        case (.some(let paymentApproval), .some(let supervisorApproval)):
+            return (.approval, paymentApproval && supervisorApproval)
         }
-
-        let paymentApproval = process.paymentApproval ?? false
-        let supervisorApproval = process.supervisorApproval ?? false
-
-        return (.approval, paymentApproval && supervisorApproval)
     }
 
     private func checkPayment(_ process: CheckoutProcess) -> (PaymentEvent, Bool)? {
