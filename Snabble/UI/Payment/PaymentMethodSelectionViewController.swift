@@ -104,7 +104,7 @@ final class PaymentMethodSelectionViewController: UIViewController {
         for i in 0 ..< numRows {
             let attributes = self.collectionView.layoutAttributesForItem(at: IndexPath(item: i, section: 0))
             let rowRect = attributes?.frame ?? CGRect.zero
-            contentInsetTop -= rowRect.size.height + 16
+            contentInsetTop -= rowRect.size.height + (i > 0 ? 16 : 0)
             if contentInsetTop <= 0 {
                 contentInsetTop = 0
             }
