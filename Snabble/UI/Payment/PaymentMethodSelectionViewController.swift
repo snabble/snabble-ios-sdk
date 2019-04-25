@@ -67,12 +67,21 @@ final class PaymentMethodSelectionViewController: UIViewController {
         if self.paymentMethods.count == 1 {
             self.startPayment(self.paymentMethods[0])
         }
+
+        NotificationCenter.default.addObserver(self, selector: #selector(self.shoppingCartChanged(_:)), name: .snabbleCartUpdated, object: nil)
     }
 
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
 
         self.process.track(.viewPaymentMethodSelection)
+    }
+
+    @objc private func shoppingCartChanged(_ notification: Notification) {
+        // if we're the top VC and not already disappearing, pop.
+        if let top = self.navigationController?.topViewController as? PaymentMethodSelectionViewController, !top.isMovingFromParent {
+            self.navigationController?.popViewController(animated: false)
+        }
     }
 
     private func updateContentInset() {
