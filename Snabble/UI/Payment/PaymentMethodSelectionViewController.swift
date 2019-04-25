@@ -82,13 +82,12 @@ final class PaymentMethodSelectionViewController: UIViewController {
         for i in 0 ..< numRows {
             let attributes = self.collectionView.layoutAttributesForItem(at: IndexPath(item: i, section: 0))
             let rowRect = attributes?.frame ?? CGRect.zero
-            contentInsetTop -= rowRect.size.height
+            contentInsetTop -= rowRect.size.height + 16
             if contentInsetTop <= 0 {
                 contentInsetTop = 0
             }
         }
 
-        contentInsetTop -= 16.0 * CGFloat(numRows - 1)
         self.collectionView.contentInset = UIEdgeInsets.init(top: contentInsetTop, left: 0, bottom: 0, right: 0)
         if contentInsetTop == 0 {
             // scroll so that the last entry is fully visible
