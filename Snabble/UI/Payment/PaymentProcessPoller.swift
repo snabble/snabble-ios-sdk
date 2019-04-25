@@ -101,12 +101,12 @@ final class PaymentProcessPoller {
     }
 
     private func checkApproval(_ process: CheckoutProcess) -> (PaymentEvent, Bool)? {
-        guard
-            let paymentApproval = process.paymentApproval,
-            let supervisorApproval = process.supervisorApproval
-        else {
+        if process.paymentApproval == nil && process.supervisorApproval == nil {
             return nil
         }
+
+        let paymentApproval = process.paymentApproval ?? false
+        let supervisorApproval = process.supervisorApproval ?? false
 
         return (.approval, paymentApproval && supervisorApproval)
     }
