@@ -433,7 +433,8 @@ final public class ShoppingCart {
     public func removeAll(endSession: Bool = false) {
         self.items.removeAll()
         self.save()
-
+        NotificationCenter.default.post(name: .snabbleCartUpdated, object: self)
+        
         if endSession {
             CartEvent.sessionEnd(self)
             self.session = ""

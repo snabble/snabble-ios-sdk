@@ -203,9 +203,8 @@ public final class ShoppingCartViewController: UIViewController {
     // MARK: notification handlers
     @objc private func updateShoppingCart(_ notification: Notification) {
         self.setupItems(self.shoppingCart)
-        if self.items.count > 0 {
-            self.tableView?.reloadData()
-        }
+        self.tableView?.reloadData()
+
         self.updateTotals()
     }
 
@@ -254,6 +253,7 @@ public final class ShoppingCartViewController: UIViewController {
 
         self.setEditButton()
         self.setDeleteButton()
+        self.emptyState.isHidden = self.items.count > 0
 
         // ugly workaround for visual glitch :(
         let items = self.items.count
