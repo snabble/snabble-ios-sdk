@@ -1,5 +1,12 @@
 ## snabble iOS SDK Changelog
 
+# v0.9.17
+
+* Fixes some minor layout issues in `PaymentMethodSelectionViewController`.
+* Fixes a bug in `PaymentProcessPoller` where the polling would not stop when the customer's (debit) card was rejected in the initial check.
+* Avoids a potential race condition where the "checkout limit" alerts could be presented while the naviation hierarchy changed.
+* Fixes a problem in `ShoppingCartViewController` where the view was not always correctly refreshed after emptying the cart.
+
 # v0.9.16
 
 * Fixes a bug where the torch button on `ScanningView` could remain highlighted when the torch was actually off.
