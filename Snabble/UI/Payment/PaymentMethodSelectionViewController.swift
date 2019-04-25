@@ -6,6 +6,10 @@
 
 import UIKit
 
+public extension Notification.Name {
+    static let paymentMethodsChanged = Notification.Name("paymentMethodsChanged")
+}
+
 final class PaymentMethodSelectionViewController: UIViewController {
 
     @IBOutlet weak var collectionView: UICollectionView!
@@ -68,7 +72,9 @@ final class PaymentMethodSelectionViewController: UIViewController {
             self.startPayment(self.paymentMethods[0])
         }
 
-        NotificationCenter.default.addObserver(self, selector: #selector(self.shoppingCartChanged(_:)), name: .snabbleCartUpdated, object: nil)
+        let nc = NotificationCenter.default
+        nc.addObserver(self, selector: #selector(self.shoppingCartChanged(_:)), name: .snabbleCartUpdated, object: nil)
+        nc.addObserver(self, selector: #selector(self.paymentMethodsChanged(_:)), name: .paymentMethodsChanged, object: nil)
     }
 
     override func viewDidAppear(_ animated: Bool) {
@@ -82,6 +88,13 @@ final class PaymentMethodSelectionViewController: UIViewController {
         if let top = self.navigationController?.topViewController as? PaymentMethodSelectionViewController, !top.isMovingFromParent {
             self.navigationController?.popViewController(animated: false)
         }
+    }
+
+    @objc private func paymentMethodsChanged(_ notification: Notification) {
+        let info = self.signedCheckoutInfo
+        self.paymentMethods = self.process.mergePaymentMethodList(info.checkoutInfo.paymentMethods)
+        self.collectionView.reloadData()
+        self.view.setNeedsLayout()
     }
 
     private func updateContentInset() {
