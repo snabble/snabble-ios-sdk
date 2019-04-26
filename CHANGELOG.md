@@ -1,5 +1,9 @@
 ## snabble iOS SDK Changelog
 
+# v0.9.18
+
+* Fixes a bug in bug in `PaymentProcessPoller` where the polling would not detect rejected payments correctly
+
 # v0.9.17
 
 * Fixes some minor layout issues in `PaymentMethodSelectionViewController`.
