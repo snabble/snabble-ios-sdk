@@ -101,6 +101,7 @@ final class PaymentProcessPoller {
     }
 
     private func checkApproval(_ process: CheckoutProcess) -> (PaymentEvent, Bool)? {
+        // print("approval: \(process.paymentApproval) \(process.supervisorApproval)")
         switch (process.paymentApproval, process.supervisorApproval) {
         case (.none, .none):
             return nil
@@ -114,7 +115,9 @@ final class PaymentProcessPoller {
     }
 
     private func checkPayment(_ process: CheckoutProcess) -> (PaymentEvent, Bool)? {
-        guard process.paymentState != .pending else {
+        // print("paymentState: \(process.paymentState)")
+        let skipStates = [PaymentState.pending, .processing ]
+        if skipStates.contains(process.paymentState) {
             return nil
         }
 
