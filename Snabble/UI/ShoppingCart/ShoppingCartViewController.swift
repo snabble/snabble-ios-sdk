@@ -289,7 +289,7 @@ public final class ShoppingCartViewController: UIViewController {
         if self.shoppingCart.loyaltyCard == nil {
             self.shoppingCart.loyaltyCard = self.delegate.getLoyaltyCard(project)
         }
-        
+
         self.shoppingCart.createCheckoutInfo(SnabbleUI.project, timeout: 10) { result in
             spinner.stopAnimating()
             spinner.removeFromSuperview()
