@@ -17,17 +17,24 @@ extension ShoppingCart {
     ///   - completion: is called on the main thread with the result of the API call
     ///   - result: the `SignedCheckoutInfo` or the error
     public func createCheckoutInfo(_ project: Project, timeout: TimeInterval = 0, completion: @escaping (_ result: Result<SignedCheckoutInfo, SnabbleError>) -> () ) {
+        // cancel any previous tasks
+
+        self.eventTimer?.invalidate()
+        self.checkoutInfoTask?.cancel()
+
         let customerInfo = Cart.CustomerInfo(loyaltyCard: self.loyaltyCard)
         let cart = Cart(session: self.session, shopID: self.shopId, customer: customerInfo, items: self.backendItems())
 
         Log.info("create checkout session: \(cart.session)")
+
         let url = project.links.checkoutInfo.href
         project.request(.post, url, body: cart, timeout: timeout) { request in
             guard let request = request else {
                 return completion(Result.failure(SnabbleError.noRequest))
             }
 
-            project.perform(request, returnRaw: true) { (_ result: Result<SignedCheckoutInfo, SnabbleError>, json, _) in
+            let task = project.perform(request, returnRaw: true) { (_ result: Result<SignedCheckoutInfo, SnabbleError>, json, _) in
+                self.checkoutInfoTask = nil
                 switch result {
                 case .success(var value):
                     value.rawJson = json
@@ -36,6 +43,7 @@ extension ShoppingCart {
                     completion(result)
                 }
             }
+            self.checkoutInfoTask = task
         }
     }
 

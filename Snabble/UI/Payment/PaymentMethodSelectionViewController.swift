@@ -6,6 +6,10 @@
 
 import UIKit
 
+public extension Notification.Name {
+    static let paymentMethodsChanged = Notification.Name("paymentMethodsChanged")
+}
+
 final class PaymentMethodSelectionViewController: UIViewController {
 
     @IBOutlet weak var collectionView: UICollectionView!
@@ -67,12 +71,30 @@ final class PaymentMethodSelectionViewController: UIViewController {
         if self.paymentMethods.count == 1 {
             self.startPayment(self.paymentMethods[0])
         }
+
+        let nc = NotificationCenter.default
+        nc.addObserver(self, selector: #selector(self.shoppingCartChanged(_:)), name: .snabbleCartUpdated, object: nil)
+        nc.addObserver(self, selector: #selector(self.paymentMethodsChanged(_:)), name: .paymentMethodsChanged, object: nil)
     }
 
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
 
         self.process.track(.viewPaymentMethodSelection)
+    }
+
+    @objc private func shoppingCartChanged(_ notification: Notification) {
+        // if we're the top VC and not already disappearing, pop.
+        if let top = self.navigationController?.topViewController as? PaymentMethodSelectionViewController, !top.isMovingFromParent {
+            self.navigationController?.popViewController(animated: false)
+        }
+    }
+
+    @objc private func paymentMethodsChanged(_ notification: Notification) {
+        let info = self.signedCheckoutInfo
+        self.paymentMethods = self.process.mergePaymentMethodList(info.checkoutInfo.paymentMethods)
+        self.collectionView.reloadData()
+        self.view.setNeedsLayout()
     }
 
     private func updateContentInset() {
@@ -82,13 +104,12 @@ final class PaymentMethodSelectionViewController: UIViewController {
         for i in 0 ..< numRows {
             let attributes = self.collectionView.layoutAttributesForItem(at: IndexPath(item: i, section: 0))
             let rowRect = attributes?.frame ?? CGRect.zero
-            contentInsetTop -= rowRect.size.height
+            contentInsetTop -= rowRect.size.height + (i > 0 ? 16 : 0)
             if contentInsetTop <= 0 {
                 contentInsetTop = 0
             }
         }
 
-        contentInsetTop -= 16.0 * CGFloat(numRows - 1)
         self.collectionView.contentInset = UIEdgeInsets.init(top: contentInsetTop, left: 0, bottom: 0, right: 0)
         if contentInsetTop == 0 {
             // scroll so that the last entry is fully visible

@@ -308,13 +308,14 @@ final public class ShoppingCart {
     private(set) public var session = ""
     private(set) public var lastSaved: Date?
     private(set) public var backendCartInfo: BackendCartInfo?
+    internal var checkoutInfoTask: URLSessionDataTask?
 
     /// this is intended mainly for the EmbeddedCodesCheckout - use this to append additional codes
     /// (e.g. special "QR code purchase" marker codes) to the list of scanned codes of this cart
     @available(*, deprecated, message: "no longer supported, this property will be removed soon")
     public var additionalCodes: [String]?
 
-    private var timer: Timer?
+    internal var eventTimer: Timer?
 
     private(set) var config: CartConfig
 
@@ -433,7 +434,8 @@ final public class ShoppingCart {
     public func removeAll(endSession: Bool = false) {
         self.items.removeAll()
         self.save()
-
+        NotificationCenter.default.post(name: .snabbleCartUpdated, object: self)
+        
         if endSession {
             CartEvent.sessionEnd(self)
             self.session = ""
@@ -500,8 +502,8 @@ extension ShoppingCart {
         }
 
         if postEvent {
-            self.timer?.invalidate()
-            self.timer = Timer.scheduledTimer(withTimeInterval: self.saveDelay, repeats: false) { timer in
+            self.eventTimer?.invalidate()
+            self.eventTimer = Timer.scheduledTimer(withTimeInterval: self.saveDelay, repeats: false) { timer in
                 CartEvent.cart(self)
             }
         }

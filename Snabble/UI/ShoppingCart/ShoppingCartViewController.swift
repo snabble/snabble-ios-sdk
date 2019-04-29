@@ -86,7 +86,7 @@ public final class ShoppingCartViewController: UIViewController {
         self.delegate = delegate
 
         self.title = "Snabble.ShoppingCart.title".localized()
-        self.tabBarItem.image = UIImage.fromBundle("icon-cart-inactive-empty")
+        self.tabBarItem.image = UIImage.fromBundle(cart.numberOfProducts == 0 ? "icon-cart-inactive-empty" : "icon-cart-inactive-full")
         self.tabBarItem.selectedImage = UIImage.fromBundle("icon-cart-active")
 
         let nc = NotificationCenter.default
@@ -95,8 +95,6 @@ public final class ShoppingCartViewController: UIViewController {
         self.keyboardObserver = KeyboardObserver(handler: self)
 
         self.shoppingCart = cart
-
-        self.updateTotals()
     }
 
     private func setupItems(_ cart: ShoppingCart) {
@@ -205,9 +203,8 @@ public final class ShoppingCartViewController: UIViewController {
     // MARK: notification handlers
     @objc private func updateShoppingCart(_ notification: Notification) {
         self.setupItems(self.shoppingCart)
-        if self.items.count > 0 {
-            self.tableView?.reloadData()
-        }
+        self.tableView?.reloadData()
+
         self.updateTotals()
     }
 
@@ -256,6 +253,7 @@ public final class ShoppingCartViewController: UIViewController {
 
         self.setEditButton()
         self.setDeleteButton()
+        self.emptyState.isHidden = self.items.count > 0
 
         // ugly workaround for visual glitch :(
         let items = self.items.count
@@ -291,7 +289,7 @@ public final class ShoppingCartViewController: UIViewController {
         if self.shoppingCart.loyaltyCard == nil {
             self.shoppingCart.loyaltyCard = self.delegate.getLoyaltyCard(project)
         }
-        
+
         self.shoppingCart.createCheckoutInfo(SnabbleUI.project, timeout: 10) { result in
             spinner.stopAnimating()
             spinner.removeFromSuperview()

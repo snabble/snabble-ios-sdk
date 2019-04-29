@@ -114,7 +114,7 @@ fileprivate enum TemplateComponent {
             if case .matchAll = codeType {
                 return "(.*)"
             } else {
-                return "(\\d{\(codeType.length)})"
+                return "(.{\(codeType.length)})"
             }
         case .embed(let len): return "(\\d{\(len)})"
         case .embed100(let len): return "(\\d{\(len)})"
@@ -302,7 +302,7 @@ public struct CodeTemplate {
     /// - Returns: array containing the text of all matched capture groups
     private func regexMatches(_ regexStr: String, _ text: String) -> [String] {
         do {
-            let regex = try NSRegularExpression(pattern: regexStr, options: [])
+            let regex = try NSRegularExpression(pattern: regexStr, options: [.dotMatchesLineSeparators])
             let range = NSRange(location: 0, length: text.count)
             let matches = regex.matches(in: text, options: [], range: range)
             if let match = matches.first {

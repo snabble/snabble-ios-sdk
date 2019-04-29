@@ -70,11 +70,17 @@ final class SepaCheckoutViewController: UIViewController {
 
         self.poller = PaymentProcessPoller(self.process, SnabbleUI.project, self.cart.config.shop)
 
-        self.poller?.waitFor([.approval]) { events in
-            if let success = events[.approval] {
-                self.paymentFinished(success)
-            } else {
+        var events = [PaymentEvent: Bool]()
+        self.poller?.waitFor([.approval, .paymentSuccess]) { event in
+            events.merge(event, uniquingKeysWith: { b1, b2 in b1 })
+
+            if let approval = events[.approval], approval == false {
                 self.paymentFinished(false)
+                return
+            }
+
+            if let approval = events[.approval], let paymentSuccess = events[.paymentSuccess] {
+                self.paymentFinished(approval && paymentSuccess)
             }
         }
     }
