@@ -1,5 +1,9 @@
 ## snabble iOS SDK Changelog
 
+# v0.9.20
+
+* Fixes a bug where the wrong receipt could be displayed when selecting multiple receipts in `ReceiptsViewController`
+
 # v0.9.19
 
 * Adds support for the `code=constant` format in code templates.
