@@ -15,6 +15,7 @@ fileprivate enum CodeType: Equatable {
     case ean14
     case untyped(Int)
     case matchAll
+    case matchConstant(String)
 
     init?(_ code: String) {
         switch code {
@@ -37,6 +38,7 @@ fileprivate enum CodeType: Equatable {
         case .ean14: return 14
         case .untyped(let len): return len
         case .matchAll: return 0
+        case .matchConstant(let str): return str.count
         }
     }
 }
@@ -70,13 +72,24 @@ fileprivate enum TemplateComponent {
     /// parse one template component. properties look like "{name:length}", everything else is considered plain text
     init?(_ str: String) {
         if str.prefix(1) == "{" {
-            // strip off the braces and split at the first ":"
-            let parts = str.dropFirst().dropLast().components(separatedBy: ":")
+            // strip off the braces
+            let base = str.dropFirst().dropLast()
+            // and split at the first possible separator
+            let separators = CharacterSet(charactersIn: ":=")
+            let parts = base.components(separatedBy: separators)
+
             let lengthPart = parts.count > 1 ? parts[1] : "1"
             let length = Int(lengthPart)
 
             let token = parts[0]
+
             if token == "code" {
+                if base.contains("=") {
+                    let codeType = CodeType.matchConstant(lengthPart)
+                    self = .code(codeType)
+                    return
+                }
+
                 guard let codeType = CodeType(lengthPart) else {
                     return nil
                 }
@@ -111,9 +124,12 @@ fileprivate enum TemplateComponent {
         switch self {
         case .plainText(let str): return "(\\Q\(str)\\E)"
         case .code(let codeType):
-            if case .matchAll = codeType {
+            switch codeType {
+            case .matchAll:
                 return "(.*)"
-            } else {
+            case .matchConstant(let constant):
+                return "(\\Q\(constant)\\E)"
+            default:
                 return "(.{\(codeType.length)})"
             }
         case .embed(let len): return "(\\d{\(len)})"
@@ -439,6 +455,8 @@ public struct ParseResult {
                 return entry.value.count == len
             case .matchAll:
                 return true
+            case .matchConstant(let constant):
+                return entry.value == constant
             }
         case .internalChecksum:
             guard let embedComponent = self.entries.first(where: { $0.templateComponent.isEmbed }) else {

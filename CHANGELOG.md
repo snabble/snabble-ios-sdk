@@ -1,5 +1,10 @@
 ## snabble iOS SDK Changelog
 
+# v0.9.19
+
+* Adds support for the `code=constant` format in code templates.
+* Disables the idle timer while waiting for an online payment.
+
 # v0.9.18
 
 * Fixes a bug in bug in `PaymentProcessPoller` where the polling would not detect rejected payments correctly
