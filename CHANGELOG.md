@@ -1,6 +1,6 @@
 ## snabble iOS SDK Changelog
 
-# v0.9.20
+# v0.9.21
 
 * Fixes a bug where the wrong receipt could be displayed when selecting multiple receipts in `ReceiptsViewController`
 
