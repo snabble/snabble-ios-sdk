@@ -21,8 +21,6 @@ extension ProductDB {
     private static let contentTypes = "\(sqlType),\(sqliteType)"
 
     func getAppDb(currentRevision: Int64, schemaVersion: String, forceFullDb: Bool = false, completion: @escaping (AppDbResponse) -> () ) {
-        let start = Date.timeIntervalSinceReferenceDate
-
         let parameters = [
             "havingRevision": "\(currentRevision)",
             "schemaVersion": schemaVersion
@@ -35,7 +33,7 @@ extension ProductDB {
 
             request.setValue(ProductDB.contentTypes, forHTTPHeaderField: "Accept")
             let session = SnabbleAPI.urlSession()
-
+            let start = Date.timeIntervalSinceReferenceDate
             let task = session.dataTask(with: request) { data, response, error in
                 let elapsed = Date.timeIntervalSinceReferenceDate - start
                 let url = request.url?.absoluteString ?? "n/a"
