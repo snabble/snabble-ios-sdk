@@ -32,6 +32,10 @@ final class SepaCheckoutViewController: UIViewController {
         fatalError("init(coder:) has not been implemented")
     }
 
+    deinit {
+        UIApplication.shared.isIdleTimerDisabled = false
+    }
+
     override func viewDidLoad() {
         super.viewDidLoad()
 
@@ -61,6 +65,8 @@ final class SepaCheckoutViewController: UIViewController {
             }
             self.cancelButton.isUserInteractionEnabled = true
         }
+
+        UIApplication.shared.isIdleTimerDisabled = true
     }
 
     override func viewDidAppear(_ animated: Bool) {
@@ -90,6 +96,8 @@ final class SepaCheckoutViewController: UIViewController {
         self.poller = nil
 
         self.delegate.track(.paymentCancelled)
+
+        UIApplication.shared.isIdleTimerDisabled = false
     }
 
     @IBAction func cancelButtonTapped(_ sender: UIButton) {

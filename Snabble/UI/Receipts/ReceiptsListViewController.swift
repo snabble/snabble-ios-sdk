@@ -179,6 +179,7 @@ extension ReceiptsListViewController {
         self.quickLook.currentPreviewItemIndex = 0
         self.previewItem = PreviewItem(url)
         self.navigationController?.pushViewController(self.quickLook, animated: true)
+        self.quickLook.reloadData()
     }
 
 }

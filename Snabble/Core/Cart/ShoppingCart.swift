@@ -20,6 +20,7 @@ public struct CartConfig {
     public var shop = Shop.none
 
     /// the customer's loyalty card, if known
+    @available(*, deprecated, message: "this will be removed soon. implement ShoppingCartDelegate.getLoyaltyCard(_:) instead")
     public var loyaltyCard: String? = nil
 
     /// the maximum age of a shopping cart, in seconds. Set this to 0 to keep carts forever
