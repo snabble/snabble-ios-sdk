@@ -1,5 +1,9 @@
 ## snabble iOS SDK Changelog
 
+# v0.9.22
+
+* Marks the `CartConfig.loyaltyCard` property as deprecated. Please implement ` ShoppingCartDelegate.getLoyaltyCard(_:)` instead
+
 # v0.9.21
 
 * Fixes a bug where the wrong receipt could be displayed when selecting multiple receipts in `ReceiptsViewController`
