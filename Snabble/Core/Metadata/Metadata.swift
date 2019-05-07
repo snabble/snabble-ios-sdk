@@ -181,7 +181,7 @@ public struct Project: Decodable {
 
     public let checkoutLimits: CheckoutLimits?
 
-    public let messsages: ProjectMessages?
+    public let messages: ProjectMessages?
 
     enum CodingKeys: String, CodingKey {
         case id, links
@@ -222,7 +222,7 @@ public struct Project: Decodable {
         self.searchableTemplates = try container.decodeIfPresent([String].self, forKey: .searchableTemplates)
         self.priceOverrideCodes = try container.decodeIfPresent([PriceOverrideCode].self, forKey: .priceOverrideCodes)
         self.checkoutLimits = try container.decodeIfPresent(CheckoutLimits.self, forKey: .checkoutLimits)
-        self.messsages = try container.decodeIfPresent(ProjectMessages.self, forKey: .messages)
+        self.messages = try container.decodeIfPresent(ProjectMessages.self, forKey: .messages)
     }
 
     private init() {
@@ -242,7 +242,7 @@ public struct Project: Decodable {
         self.searchableTemplates = nil
         self.priceOverrideCodes = nil
         self.checkoutLimits = nil
-        self.messsages = nil
+        self.messages = nil
     }
 
     // only used for unit tests
@@ -263,7 +263,7 @@ public struct Project: Decodable {
         self.searchableTemplates = nil
         self.priceOverrideCodes = nil
         self.checkoutLimits = nil
-        self.messsages = nil
+        self.messages = nil
     }
 
     internal init(links: ProjectLinks) {
@@ -283,7 +283,7 @@ public struct Project: Decodable {
         self.searchableTemplates = nil
         self.priceOverrideCodes = nil
         self.checkoutLimits = nil
-        self.messsages = nil
+        self.messages = nil
     }
 
     public static let none = Project()
