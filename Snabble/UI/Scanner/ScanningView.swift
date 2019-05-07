@@ -70,6 +70,29 @@ public protocol BarcodeDetector {
     func setTorch(_ on: Bool)
 }
 
+public protocol SnabbleBarcodeDetector {
+    /// this will be called from `viewWillAppear()` of the hosting view controller
+    /// use this method to initialize the detector as well as the camera
+    func scannerWillAppear()
+
+    /// this will be called from `viewDidLayoutSubviews()` of the hosting view controller.
+    /// at this point, the bounds of the area reserved for camera preview have been determined
+    /// and a barcode detector instance can place its preview layer/view at these coordinates
+    func scannerDidLayoutSubviews(_ cameraPreview: UIView)
+
+    /// instructs the detector to start capturing video frames and detect barcodes
+    func startScanning()
+
+    /// instructs the detector to stop capturing video frames and detect barcodes
+    func stopScanning()
+
+    /// the `ScanningViewDelegate`
+    var delegate: ScanningViewDelegate? { get set }
+
+    /// the scan formats that should be detected
+    var scanFormats: [ScanFormat] { get set }
+}
+
 public extension BarcodeDetector {
     var handlesCamera: Bool { return false }
     func scannerWillAppear() {}
