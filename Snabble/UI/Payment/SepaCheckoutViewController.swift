@@ -14,7 +14,7 @@ final class SepaCheckoutViewController: UIViewController {
     @IBOutlet weak var cancelButton: UIButton!
     @IBOutlet weak var codeWidth: NSLayoutConstraint!
     
-    private weak var cart: ShoppingCart!
+    private var cart: ShoppingCart
     private weak var delegate: PaymentDelegate!
 
     private var process: CheckoutProcess
