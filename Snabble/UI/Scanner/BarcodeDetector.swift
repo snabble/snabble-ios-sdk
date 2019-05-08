@@ -35,6 +35,9 @@ public protocol BarcodeDetectorTNG {
 
     /// the scan formats that should be detected, must be set before `scannerWillAppear()` is called.
     var scanFormats: [ScanFormat] { get set }
+
+    /// controls the visibility of the reticle
+    var reticleVisible: Bool { get set }
 }
 
 extension ScanFormat {
@@ -114,15 +117,19 @@ public class BuiltinBarcodeDetector: NSObject, BarcodeDetectorTNG {
         didSet { self.updateCartButtonTitle() }
     }
 
+    public var reticleVisible: Bool = true {
+        didSet { self.toggleReticleVisibility() }
+    }
+
     private var camera: AVCaptureDevice?
     private var captureSession: AVCaptureSession
     private var previewLayer: AVCaptureVideoPreviewLayer?
     private var metadataOutput: AVCaptureMetadataOutput
     private var sessionQueue: DispatchQueue
+
     private var appearance: BarcodeDetectorAppearance
-    private var torchButton: UIButton?
-    private var cartButton: UIButton?
-    private var enterButton: UIButton?
+    private var decoration: BarcodeDetectorDecoration?
+    private var frameTimer: Timer?
 
     required public init(_ appearance: BarcodeDetectorAppearance) {
         self.appearance = appearance
@@ -155,37 +162,51 @@ public class BuiltinBarcodeDetector: NSObject, BarcodeDetectorTNG {
     }
 
     public func scannerDidLayoutSubviews(_ cameraPreview: UIView) {
-        guard self.previewLayer?.frame.size.height == 0 else {
+        guard
+            let previewLayer = self.previewLayer,
+            previewLayer.frame.size.height == 0
+        else {
             return
         }
 
-        self.previewLayer?.frame = cameraPreview.bounds
-        if let layer = self.previewLayer {
-            cameraPreview.layer.addSublayer(layer)
-        }
+        previewLayer.frame = cameraPreview.bounds
+        cameraPreview.layer.addSublayer(previewLayer)
 
         // add the preview layer's decoration
         let decoration = BarcodeDetectorDecoration.add(to: cameraPreview, appearance: self.appearance)
 
-        self.torchButton = decoration.torchButton
-        self.torchButton?.addTarget(self, action: #selector(self.torchButtonTapped(_:)), for: .touchUpInside)
+        decoration.torchButton.addTarget(self, action: #selector(self.torchButtonTapped(_:)), for: .touchUpInside)
 
         if let camera = self.camera {
             let torchToggleSupported = camera.isTorchModeSupported(.on) && camera.isTorchModeSupported(.off)
-            self.torchButton?.isHidden = !torchToggleSupported
+            decoration.torchButton.isHidden = !torchToggleSupported
         }
 
-        self.enterButton = decoration.barcodeEntryButton
-        self.enterButton?.addTarget(self, action: #selector(self.enterButtonTapped(_:)), for: .touchUpInside)
+        decoration.enterButton.addTarget(self, action: #selector(self.enterButtonTapped(_:)), for: .touchUpInside)
+        decoration.cartButton.addTarget(self, action: #selector(self.cartButtonTapped(_:)), for: .touchUpInside)
 
-        self.cartButton = decoration.cartButton
-        self.cartButton?.addTarget(self, action: #selector(self.cartButtonTapped(_:)), for: .touchUpInside)
+        self.decoration = decoration
+
+        self.updateCartButtonTitle()
     }
 
     public func startScanning() {
         self.sessionQueue.async {
             print("start")
             self.captureSession.startRunning()
+
+            // set the ROI matching the reticle
+            guard
+                let previewLayer = self.previewLayer,
+                let reticle = self.decoration?.reticle
+            else {
+                return
+            }
+
+            DispatchQueue.main.async {
+                let rectangleOfInterest = previewLayer.metadataOutputRectConverted(fromLayerRect: reticle.frame)
+                self.metadataOutput.rectOfInterest = rectangleOfInterest
+            }
         }
     }
 
@@ -199,15 +220,15 @@ public class BuiltinBarcodeDetector: NSObject, BarcodeDetectorTNG {
     // MARK: - private implementation
 
     private func updateCartButtonTitle() {
-        self.cartButton?.setTitle(self.cartButtonTitle, for: .normal)
-        self.cartButton?.isHidden = self.cartButtonTitle == nil
+        self.decoration?.cartButton.setTitle(self.cartButtonTitle, for: .normal)
+        self.decoration?.cartButton.isHidden = self.cartButtonTitle == nil
     }
 
-    @objc func enterButtonTapped(_ sender: Any) {
+    @objc private func enterButtonTapped(_ sender: Any) {
         self.delegate?.enterBarcode()
     }
 
-    @objc func torchButtonTapped(_ sender: Any) {
+    @objc private func torchButtonTapped(_ sender: Any) {
         guard let camera = self.camera else {
             return
         }
@@ -216,14 +237,27 @@ public class BuiltinBarcodeDetector: NSObject, BarcodeDetectorTNG {
             try camera.lockForConfiguration()
             defer { camera.unlockForConfiguration() }
             camera.torchMode = camera.torchMode == .on ? .off : .on
-            #warning("set torch button icon")
-            // self.setTorchButtonIcon()
+            let torchImage = self.torchImage(for: camera.torchMode)
+            self.decoration?.torchButton.setImage(torchImage, for: .normal)
             self.delegate?.track(.toggleTorch)
         } catch {}
     }
 
-    @objc func cartButtonTapped(_ sender: Any) {
+    private func torchImage(for torchMode: AVCaptureDevice.TorchMode) -> UIImage? {
+        switch torchMode {
+        case .on: return self.appearance.torchButtonActiveImage ?? self.appearance.torchButtonImage
+        default: return self.appearance.torchButtonImage
+        }
+    }
+
+    @objc private func cartButtonTapped(_ sender: Any) {
         self.delegate?.gotoShoppingCart()
+    }
+
+    private func toggleReticleVisibility() {
+        self.decoration?.reticle.isHidden = self.reticleVisible
+        self.decoration?.reticleDimmingLayer.isHidden = !self.reticleVisible
+        self.decoration?.fullDimmingLayer.isHidden = self.reticleVisible
     }
 }
 
@@ -239,6 +273,29 @@ extension BuiltinBarcodeDetector: AVCaptureMetadataOutputObjectsDelegate {
             return
         }
 
+        if let barcodeObject = self.previewLayer?.transformedMetadataObject(for: codeObject) {
+            var bounds = barcodeObject.bounds
+            let center = CGPoint(x: bounds.midX, y: bounds.midY)
+            let minSize: CGFloat = 60
+            if bounds.height < minSize {
+                bounds.size.height = minSize
+            }
+            if bounds.width < minSize {
+                bounds.size.width = minSize
+            }
+
+            self.decoration?.frameView.isHidden = false
+            UIView.animate(withDuration: 0.25) {
+                self.decoration?.frameView.frame = bounds
+                self.decoration?.frameView.center = center
+            }
+
+            self.frameTimer?.invalidate()
+            self.frameTimer = Timer.scheduledTimer(withTimeInterval: 1.5, repeats: false) { timer in
+                self.decoration?.frameView.isHidden = true
+            }
+        }
+
         self.delegate?.scannedCode(code, format)
     }
 
@@ -249,9 +306,13 @@ public struct BarcodeDetectorDecoration {
 
     let reticle: UIView
     let bottomBar: UIView
-    let barcodeEntryButton: UIButton
+    let enterButton: UIButton
     let torchButton: UIButton
     let cartButton: UIButton
+    let frameView: UIView
+
+    let reticleDimmingLayer: CAShapeLayer
+    let fullDimmingLayer: CAShapeLayer
 
     /// add the standard overlay decoration for the product scanner
     ///
@@ -260,7 +321,7 @@ public struct BarcodeDetectorDecoration {
     ///   - appearance: the appearance to use
     /// - Returns: a `BarcodeDetectorDecoration` instance that contains all views and buttons that were created
     public static func add(to cameraPreview: UIView, appearance: BarcodeDetectorAppearance) -> BarcodeDetectorDecoration {
-        // add the reticle
+        // the reticle itself
         let reticle = UIView(frame: .zero)
         reticle.backgroundColor = .clear
         reticle.layer.borderColor = appearance.reticleBorderColor.cgColor
@@ -274,6 +335,7 @@ public struct BarcodeDetectorDecoration {
         reticle.frame = reticleFrame
         cameraPreview.addSubview(reticle)
 
+        // a dimming layer with a hole for the reticle
         let overlayPath = UIBezierPath(rect: cameraPreview.bounds)
         let transparentPath = UIBezierPath(roundedRect: reticleFrame, cornerRadius: appearance.reticleCornerRadius)
         overlayPath.append(transparentPath)
@@ -285,11 +347,22 @@ public struct BarcodeDetectorDecoration {
         cameraPreview.layer.addSublayer(borderLayer)
 
         // add the bottom bar
-        let bottomBar = UIView(frame: CGRect(x: 16,
-                                             y: cameraPreview.frame.height - 64,
-                                             width: cameraPreview.frame.width - 32,
-                                             height: 48))
+        let bottomBarFrame = CGRect(x: 16,
+                                    y: cameraPreview.frame.height - 64,
+                                    width: cameraPreview.frame.width - 32,
+                                    height: 48)
+        let bottomBar = UIView(frame: bottomBarFrame)
+        bottomBar.isHidden = appearance.bottomBarHidden
         cameraPreview.addSubview(bottomBar)
+
+        // a dimming layer that covers the whole preview
+        let fullDimmingLayer = CAShapeLayer()
+        let path = UIBezierPath(rect: cameraPreview.bounds)
+        fullDimmingLayer.path = path.cgPath
+        fullDimmingLayer.fillColor = appearance.dimmingColor.cgColor
+        // fullDimmingLayer.zPosition = -0.5
+        fullDimmingLayer.isHidden = true
+        cameraPreview.layer.addSublayer(fullDimmingLayer)
 
         // barcode entry button
         let enterButton = UIButton(type: .custom)
@@ -316,14 +389,25 @@ public struct BarcodeDetectorDecoration {
         cartButton.layer.cornerRadius = 8
         cartButton.backgroundColor = appearance.backgroundColor
         cartButton.setTitleColor(appearance.textColor, for: .normal)
-        cartButton.setTitle("Cart: 47,11 €", for: .normal)
+        cartButton.setTitle("", for: .normal)
         cartButton.titleLabel?.font = UIFont.systemFont(ofSize: 17, weight: .semibold)
         bottomBar.addSubview(cartButton)
 
+        // frame view
+        let frameView = UIView(frame: .zero)
+        frameView.backgroundColor = .clear
+        frameView.layer.borderColor = UIColor.lightGray.cgColor
+        frameView.layer.borderWidth = 1 / UIScreen.main.scale
+        frameView.layer.cornerRadius = 3
+        cameraPreview.addSubview(frameView)
+
         return BarcodeDetectorDecoration(reticle: reticle,
                                          bottomBar: bottomBar,
-                                         barcodeEntryButton: enterButton,
+                                         enterButton: enterButton,
                                          torchButton: torchButton,
-                                         cartButton: cartButton)
+                                         cartButton: cartButton,
+                                         frameView: frameView,
+                                         reticleDimmingLayer: borderLayer,
+                                         fullDimmingLayer: fullDimmingLayer)
     }
 }

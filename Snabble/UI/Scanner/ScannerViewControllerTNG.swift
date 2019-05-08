@@ -103,6 +103,7 @@ public final class ScannerViewControllerTNG: UIViewController {
         super.viewDidLayoutSubviews()
 
         self.barcodeDetector.scannerDidLayoutSubviews(self.view)
+        self.view.bringSubviewToFront(self.scanConfirmationView)
     }
 
     override public func viewWillDisappear(_ animated: Bool) {
@@ -156,6 +157,7 @@ public final class ScannerViewControllerTNG: UIViewController {
         }
         
         self.confirmationVisible = !hidden
+        self.barcodeDetector.reticleVisible = hidden
 
         if setBottomOffset {
             self.scanConfirmationViewBottom.constant = hidden ? self.hiddenConfirmationOffset : self.visibleConfirmationOffset
