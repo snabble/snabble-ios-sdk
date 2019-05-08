@@ -38,7 +38,7 @@ public final class ScannerViewControllerTNG: UIViewController {
         self.barcodeDetector = detector ?? BuiltinBarcodeDetector(ScannerViewControllerTNG.scannerConfig())
         self.shop = shop
 
-        super.init(nibName: nil, bundle: Snabble.bundle)
+        super.init(nibName: nil, bundle: SnabbleBundle.main)
 
         self.barcodeDetector.scanFormats = project.scanFormats
         self.barcodeDetector.delegate = self

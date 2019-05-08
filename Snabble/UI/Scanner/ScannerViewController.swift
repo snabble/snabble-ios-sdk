@@ -49,7 +49,7 @@ public final class ScannerViewController: UIViewController {
         self.shop = shop
         self.scanFormats = project.scanFormats
 
-        super.init(nibName: nil, bundle: Snabble.bundle)
+        super.init(nibName: nil, bundle: SnabbleBundle.main)
 
         self.delegate = delegate
 

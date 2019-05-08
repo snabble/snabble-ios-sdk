@@ -81,7 +81,7 @@ public final class ShoppingCartViewController: UIViewController {
     internal var showImages = false
     
     public init(_ cart: ShoppingCart, delegate: ShoppingCartDelegate) {
-        super.init(nibName: nil, bundle: Snabble.bundle)
+        super.init(nibName: nil, bundle: SnabbleBundle.main)
 
         self.delegate = delegate
 
@@ -143,7 +143,7 @@ public final class ShoppingCartViewController: UIViewController {
         self.emptyState = ShoppingCartEmptyStateView({ [weak self] in self?.showScanner() })
         self.emptyState.addTo(self.view)
 
-        self.tableView.register(UINib(nibName: "ShoppingCartTableCell", bundle: Snabble.bundle), forCellReuseIdentifier: self.itemCellIdentifier)
+        self.tableView.register(UINib(nibName: "ShoppingCartTableCell", bundle: SnabbleBundle.main), forCellReuseIdentifier: self.itemCellIdentifier)
 
         self.tableView.tableFooterView = UIView(frame: CGRect.zero)
         self.tableView.backgroundColor = UIColor.clear
