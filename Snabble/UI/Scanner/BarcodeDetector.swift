@@ -9,14 +9,26 @@ import UIKit
 import AVFoundation
 
 public protocol BarcodeDetectorTNG {
-    /// creates a barcodedetector instance with the given visual parameters
+    /// the `ScanningViewDelegate`. Implementations should make this `weak`
+    var delegate: ScanningViewDelegate? { get set }
+
+    /// the cart button's title
+    var cartButtonTitle: String? { get set }
+
+    /// the scan formats that should be detected, must be set before `scannerWillAppear()` is called.
+    var scanFormats: [ScanFormat] { get set }
+
+    /// controls the visibility of the reticle
+    var reticleVisible: Bool { get set }
+
+    /// creates a BarcodeDetector instance with the given visual parameters
     init(_ appearance: BarcodeDetectorAppearance)
 
-    /// this will be called from `viewWillAppear()` of the hosting view controller
+    /// this must be called from `viewWillAppear()` of the hosting view controller
     /// use this method to initialize the detector as well as the camera
     func scannerWillAppear()
 
-    /// this will be called from `viewDidLayoutSubviews()` of the hosting view controller.
+    /// this must be called from `viewDidLayoutSubviews()` of the hosting view controller.
     /// at this point, the bounds of the area reserved for camera preview have been determined
     /// and a barcode detector instance can place its preview layer/view at these coordinates
     func scannerDidLayoutSubviews(_ cameraPreview: UIView)
@@ -26,18 +38,6 @@ public protocol BarcodeDetectorTNG {
 
     /// instructs the detector to stop capturing video frames and detect barcodes
     func stopScanning()
-
-    /// the cart button's title
-    var cartButtonTitle: String? { get set }
-
-    /// the `ScanningViewDelegate`
-    var delegate: ScanningViewDelegate? { get set }
-
-    /// the scan formats that should be detected, must be set before `scannerWillAppear()` is called.
-    var scanFormats: [ScanFormat] { get set }
-
-    /// controls the visibility of the reticle
-    var reticleVisible: Bool { get set }
 }
 
 extension ScanFormat {
