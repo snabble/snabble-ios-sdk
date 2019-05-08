@@ -114,6 +114,7 @@ public class BuiltinBarcodeDetector: NSObject, BarcodeDetectorTNG {
         didSet { self.updateCartButtonTitle() }
     }
 
+    private var camera: AVCaptureDevice?
     private var captureSession: AVCaptureSession
     private var previewLayer: AVCaptureVideoPreviewLayer?
     private var metadataOutput: AVCaptureMetadataOutput
@@ -121,6 +122,7 @@ public class BuiltinBarcodeDetector: NSObject, BarcodeDetectorTNG {
     private var appearance: BarcodeDetectorAppearance
     private var torchButton: UIButton?
     private var cartButton: UIButton?
+    private var enterButton: UIButton?
 
     required public init(_ appearance: BarcodeDetectorAppearance) {
         self.appearance = appearance
@@ -142,6 +144,7 @@ public class BuiltinBarcodeDetector: NSObject, BarcodeDetectorTNG {
             return
         }
 
+        self.camera = camera
         self.captureSession.addInput(videoInput)
         self.captureSession.addOutput(self.metadataOutput)
         self.metadataOutput.metadataObjectTypes = self.scanFormats.map { $0.avType }
@@ -162,77 +165,21 @@ public class BuiltinBarcodeDetector: NSObject, BarcodeDetectorTNG {
         }
 
         // add the preview layer's decoration
+        let decoration = BarcodeDetectorDecoration.add(to: cameraPreview, appearance: self.appearance)
 
+        self.torchButton = decoration.torchButton
+        self.torchButton?.addTarget(self, action: #selector(self.torchButtonTapped(_:)), for: .touchUpInside)
 
-        #warning("pull this out")
-        // add the reticle
-        let reticle = UIView(frame: .zero)
-        reticle.backgroundColor = .clear
-        reticle.layer.borderColor = self.appearance.reticleBorderColor.cgColor
-        reticle.layer.borderWidth = 1 / UIScreen.main.scale
-        reticle.layer.cornerRadius = self.appearance.reticleCornerRadius
+        if let camera = self.camera {
+            let torchToggleSupported = camera.isTorchModeSupported(.on) && camera.isTorchModeSupported(.off)
+            self.torchButton?.isHidden = !torchToggleSupported
+        }
 
-        let reticleFrame = CGRect(x: 16,
-                                  y: (cameraPreview.frame.height - 64 - self.appearance.reticleHeight) / 2,
-                                  width: cameraPreview.frame.width - 32,
-                                  height: self.appearance.reticleHeight)
-        reticle.frame = reticleFrame
-        cameraPreview.addSubview(reticle)
+        self.enterButton = decoration.barcodeEntryButton
+        self.enterButton?.addTarget(self, action: #selector(self.enterButtonTapped(_:)), for: .touchUpInside)
 
-        let overlayPath = UIBezierPath(rect: cameraPreview.bounds)
-        let transparentPath = UIBezierPath(roundedRect: reticleFrame, cornerRadius: self.appearance.reticleCornerRadius)
-        overlayPath.append(transparentPath)
-
-        let borderLayer = CAShapeLayer()
-        borderLayer.path = overlayPath.cgPath
-        borderLayer.fillRule = .evenOdd
-        borderLayer.fillColor = self.appearance.dimmingColor.cgColor
-        cameraPreview.layer.addSublayer(borderLayer)
-
-        // add the bottom bar
-        let bottomBar = UIView(frame: .zero)
-        bottomBar.translatesAutoresizingMaskIntoConstraints = false
-
-        cameraPreview.addSubview(bottomBar)
-
-        cameraPreview.addConstraint(NSLayoutConstraint(item: bottomBar, attribute: .left, relatedBy: .equal, toItem: cameraPreview, attribute: .left, multiplier: 1.0, constant: 16))
-        cameraPreview.addConstraint(NSLayoutConstraint(item: bottomBar, attribute: .right, relatedBy: .equal, toItem: cameraPreview, attribute: .right, multiplier: 1.0, constant: -16))
-        cameraPreview.addConstraint(NSLayoutConstraint(item: bottomBar, attribute: .bottom, relatedBy: .equal, toItem: cameraPreview, attribute: .bottom, multiplier: 1.0, constant: -16))
-        cameraPreview.addConstraint(NSLayoutConstraint(item: bottomBar, attribute: .height, relatedBy: .equal, toItem: nil, attribute: .notAnAttribute, multiplier: 1.0, constant: 48))
-
-        // barcode entry button
-        let enterButton = UIButton(type: .custom)
-        enterButton.frame = CGRect(origin: .zero, size: CGSize(width: 48, height: 48))
-        enterButton.setImage(appearance.enterButtonImage, for: .normal)
-        enterButton.layer.cornerRadius = 8
-        enterButton.layer.borderColor = self.appearance.borderColor.cgColor
-        enterButton.layer.borderWidth = 1.0 / UIScreen.main.scale
-        enterButton.addTarget(self, action: #selector(self.enterButtonTapped(_:)), for: .touchUpInside)
-        bottomBar.addSubview(enterButton)
-
-        // torch button
-        let torchButton = UIButton(type: .custom)
-        torchButton.frame = CGRect(origin: CGPoint(x: 48+16, y: 0), size: CGSize(width: 48, height: 48))
-        torchButton.setImage(appearance.torchButtonImage, for: .normal)
-        torchButton.layer.cornerRadius = 8
-        torchButton.layer.borderColor = self.appearance.borderColor.cgColor
-        torchButton.layer.borderWidth = 1.0 / UIScreen.main.scale
-        torchButton.addTarget(self, action: #selector(self.torchButtonTapped(_:)), for: .touchUpInside)
-        self.torchButton = torchButton
-        bottomBar.addSubview(torchButton)
-
-        // cart button
-        let cartButton = UIButton(type: .system)
-        let cartWidth = cameraPreview.frame.width - 2*48 - 4*16
-        cartButton.frame = CGRect(origin: CGPoint(x: 48+16+48+16, y: 0), size: CGSize(width: cartWidth, height: 48))
-        cartButton.layer.cornerRadius = 8
-        cartButton.backgroundColor = self.appearance.backgroundColor
-        cartButton.setTitleColor(self.appearance.textColor, for: .normal)
-        cartButton.setTitle("Cart: 47,11 €", for: .normal)
-        cartButton.titleLabel?.font = UIFont.systemFont(ofSize: 17, weight: .semibold)
-        cartButton.addTarget(self, action: #selector(self.cartButtonTapped(_:)), for: .touchUpInside)
-        self.cartButton = cartButton
-        bottomBar.addSubview(cartButton)
+        self.cartButton = decoration.cartButton
+        self.cartButton?.addTarget(self, action: #selector(self.cartButtonTapped(_:)), for: .touchUpInside)
     }
 
     public func startScanning() {
@@ -261,8 +208,18 @@ public class BuiltinBarcodeDetector: NSObject, BarcodeDetectorTNG {
     }
 
     @objc func torchButtonTapped(_ sender: Any) {
-        #warning("implement me")
-        print("toggle torch")
+        guard let camera = self.camera else {
+            return
+        }
+
+        do {
+            try camera.lockForConfiguration()
+            defer { camera.unlockForConfiguration() }
+            camera.torchMode = camera.torchMode == .on ? .off : .on
+            #warning("set torch button icon")
+            // self.setTorchButtonIcon()
+            self.delegate?.track(.toggleTorch)
+        } catch {}
     }
 
     @objc func cartButtonTapped(_ sender: Any) {
@@ -285,4 +242,88 @@ extension BuiltinBarcodeDetector: AVCaptureMetadataOutputObjectsDelegate {
         self.delegate?.scannedCode(code, format)
     }
 
+}
+
+/// creates the standard overlay decoration for the product scanner
+public struct BarcodeDetectorDecoration {
+
+    let reticle: UIView
+    let bottomBar: UIView
+    let barcodeEntryButton: UIButton
+    let torchButton: UIButton
+    let cartButton: UIButton
+
+    /// add the standard overlay decoration for the product scanner
+    ///
+    /// - Parameters:
+    ///   - cameraPreview: the view to add the decoration to. Note that the decoration is added based on that view's frame/bounds, and therefore this should only be called after the view has been laid out.
+    ///   - appearance: the appearance to use
+    /// - Returns: a `BarcodeDetectorDecoration` instance that contains all views and buttons that were created
+    public static func add(to cameraPreview: UIView, appearance: BarcodeDetectorAppearance) -> BarcodeDetectorDecoration {
+        // add the reticle
+        let reticle = UIView(frame: .zero)
+        reticle.backgroundColor = .clear
+        reticle.layer.borderColor = appearance.reticleBorderColor.cgColor
+        reticle.layer.borderWidth = 1 / UIScreen.main.scale
+        reticle.layer.cornerRadius = appearance.reticleCornerRadius
+
+        let reticleFrame = CGRect(x: 16,
+                                  y: (cameraPreview.frame.height - 64 - appearance.reticleHeight) / 2,
+                                  width: cameraPreview.frame.width - 32,
+                                  height: appearance.reticleHeight)
+        reticle.frame = reticleFrame
+        cameraPreview.addSubview(reticle)
+
+        let overlayPath = UIBezierPath(rect: cameraPreview.bounds)
+        let transparentPath = UIBezierPath(roundedRect: reticleFrame, cornerRadius: appearance.reticleCornerRadius)
+        overlayPath.append(transparentPath)
+
+        let borderLayer = CAShapeLayer()
+        borderLayer.path = overlayPath.cgPath
+        borderLayer.fillRule = .evenOdd
+        borderLayer.fillColor = appearance.dimmingColor.cgColor
+        cameraPreview.layer.addSublayer(borderLayer)
+
+        // add the bottom bar
+        let bottomBar = UIView(frame: CGRect(x: 16,
+                                             y: cameraPreview.frame.height - 64,
+                                             width: cameraPreview.frame.width - 32,
+                                             height: 48))
+        cameraPreview.addSubview(bottomBar)
+
+        // barcode entry button
+        let enterButton = UIButton(type: .custom)
+        enterButton.frame = CGRect(origin: .zero, size: CGSize(width: 48, height: 48))
+        enterButton.setImage(appearance.enterButtonImage, for: .normal)
+        enterButton.layer.cornerRadius = 8
+        enterButton.layer.borderColor = appearance.borderColor.cgColor
+        enterButton.layer.borderWidth = 1.0 / UIScreen.main.scale
+        bottomBar.addSubview(enterButton)
+
+        // torch button
+        let torchButton = UIButton(type: .custom)
+        torchButton.frame = CGRect(origin: CGPoint(x: 48+16, y: 0), size: CGSize(width: 48, height: 48))
+        torchButton.setImage(appearance.torchButtonImage, for: .normal)
+        torchButton.layer.cornerRadius = 8
+        torchButton.layer.borderColor = appearance.borderColor.cgColor
+        torchButton.layer.borderWidth = 1.0 / UIScreen.main.scale
+        bottomBar.addSubview(torchButton)
+
+        // cart button
+        let cartButton = UIButton(type: .system)
+        let cartWidth = cameraPreview.frame.width - 2*48 - 4*16
+        cartButton.frame = CGRect(origin: CGPoint(x: 48+16+48+16, y: 0), size: CGSize(width: cartWidth, height: 48))
+        cartButton.layer.cornerRadius = 8
+        cartButton.backgroundColor = appearance.backgroundColor
+        cartButton.setTitleColor(appearance.textColor, for: .normal)
+        cartButton.setTitle("Cart: 47,11 €", for: .normal)
+        cartButton.titleLabel?.font = UIFont.systemFont(ofSize: 17, weight: .semibold)
+        bottomBar.addSubview(cartButton)
+
+        return BarcodeDetectorDecoration(reticle: reticle,
+                                         bottomBar: bottomBar,
+                                         barcodeEntryButton: enterButton,
+                                         torchButton: torchButton,
+                                         cartButton: cartButton)
+    }
 }
