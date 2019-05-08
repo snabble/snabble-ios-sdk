@@ -88,6 +88,8 @@ public final class ScannerViewController: UIViewController {
 
         self.scanConfirmationView.delegate = self
 
+        self.scanConfirmationViewBottom.constant = self.hiddenConfirmationOffset
+
         NotificationCenter.default.addObserver(self, selector: #selector(self.cartUpdated(_:)), name: .snabbleCartUpdated, object: nil)
     }
 
