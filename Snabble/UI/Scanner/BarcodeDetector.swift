@@ -111,7 +111,7 @@ public class BuiltinBarcodeDetector: NSObject, BarcodeDetectorTNG {
 
     public var delegate: ScanningViewDelegate?
 
-    public var scanFormats = [ScanFormat]()
+    public var scanFormats: [ScanFormat]
 
     public var cartButtonTitle: String? {
         didSet { self.updateCartButtonTitle() }
@@ -136,7 +136,8 @@ public class BuiltinBarcodeDetector: NSObject, BarcodeDetectorTNG {
         self.sessionQueue = DispatchQueue(label: "io.snabble.scannerQueue")
         self.captureSession = AVCaptureSession()
         self.metadataOutput = AVCaptureMetadataOutput()
-
+        self.scanFormats = []
+        
         super.init()
 
         self.metadataOutput.setMetadataObjectsDelegate(self, queue: DispatchQueue.main)
@@ -304,15 +305,15 @@ extension BuiltinBarcodeDetector: AVCaptureMetadataOutputObjectsDelegate {
 /// creates the standard overlay decoration for the product scanner
 public struct BarcodeDetectorDecoration {
 
-    let reticle: UIView
-    let bottomBar: UIView
-    let enterButton: UIButton
-    let torchButton: UIButton
-    let cartButton: UIButton
-    let frameView: UIView
+    public let reticle: UIView
+    public let bottomBar: UIView
+    public let enterButton: UIButton
+    public let torchButton: UIButton
+    public let cartButton: UIButton
+    public let frameView: UIView
 
-    let reticleDimmingLayer: CAShapeLayer
-    let fullDimmingLayer: CAShapeLayer
+    public let reticleDimmingLayer: CAShapeLayer
+    public let fullDimmingLayer: CAShapeLayer
 
     /// add the standard overlay decoration for the product scanner
     ///
