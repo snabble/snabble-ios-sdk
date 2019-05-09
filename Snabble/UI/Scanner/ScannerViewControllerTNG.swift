@@ -7,6 +7,37 @@
 import UIKit
 import AVFoundation
 
+public protocol ScanningViewDelegate: class {
+
+    /// called when the ScanningView needs to close itself
+    #warning("do we still need this?")
+    func closeScanningView()
+
+    /// callback for a successful scan
+    func scannedCode(_ code: String, _ format: ScanFormat)
+
+    /// called to request camera permission
+    #warning("how to handle this with the new detectors?")
+    func requestCameraPermission(currentStatus: AVAuthorizationStatus)
+
+    /// called when the "enter barcode" button is tapped
+    func enterBarcode()
+
+    /// called when the device has no back camera
+    #warning("remove this")
+    func noCameraFound()
+
+    /// called when the shopping cart should be displayed
+    func gotoShoppingCart()
+
+    func track(_ event: AnalyticsEvent)
+}
+
+public protocol ScannerDelegate: AnalyticsDelegate, MessageDelegate {
+    func closeScanningView()
+    func gotoShoppingCart()
+}
+
 public final class ScannerViewControllerTNG: UIViewController {
 
     @IBOutlet private weak var spinner: UIActivityIndicatorView!
