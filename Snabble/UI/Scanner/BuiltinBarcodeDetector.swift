@@ -206,8 +206,11 @@ public final class BuiltinBarcodeDetector: NSObject, BarcodeDetector {
     }
 
     private func updateCartButtonTitle() {
-        self.decoration?.cartButton.setTitle(self.cartButtonTitle, for: .normal)
-        self.decoration?.cartButton.isHidden = self.cartButtonTitle == nil
+        UIView.performWithoutAnimation {
+            self.decoration?.cartButton.setTitle(self.cartButtonTitle, for: .normal)
+            self.decoration?.cartButton.isHidden = self.cartButtonTitle == nil
+            self.decoration?.cartButton.layoutIfNeeded()
+        }
     }
 
     @objc private func enterButtonTapped(_ sender: Any) {
