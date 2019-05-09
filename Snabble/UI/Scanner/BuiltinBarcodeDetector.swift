@@ -36,9 +36,9 @@ extension AVMetadataObject.ObjectType {
     }
 }
 
-public final class BuiltinBarcodeDetector: NSObject, BarcodeDetectorTNG {
+public final class BuiltinBarcodeDetector: NSObject, BarcodeDetector {
 
-    public var delegate: ScanningViewDelegate?
+    public var delegate: BarcodeDetectorDelegate?
 
     public var scanFormats: [ScanFormat]
 
@@ -161,7 +161,7 @@ public final class BuiltinBarcodeDetector: NSObject, BarcodeDetectorTNG {
         // camera found, are we allowed to access it?
         let authorizationStatus = AVCaptureDevice.authorizationStatus(for: AVMediaType.video)
         if authorizationStatus != .authorized {
-            self.delegate?.requestCameraPermission(currentStatus: authorizationStatus)
+            self.requestCameraPermission(currentStatus: authorizationStatus)
         }
 
         // set focus/low light properties of the camera
@@ -181,6 +181,28 @@ public final class BuiltinBarcodeDetector: NSObject, BarcodeDetectorTNG {
         } catch {}
 
         return camera
+    }
+
+    private func requestCameraPermission(currentStatus: AVAuthorizationStatus) {
+        switch currentStatus {
+        case .restricted, .denied:
+            let title = "Snabble.Scanner.Camera.accessDenied".localized()
+            let msg = "Snabble.Scanner.Camera.allowAccess".localized()
+            let alert = UIAlertController(title: title, message: msg, preferredStyle: .alert)
+            alert.addAction(UIAlertAction(title: "Snabble.cancel".localized(), style: .cancel) { _ in
+            })
+            alert.addAction(UIAlertAction(title: "Snabble.settings".localized(), style: .default) { action in
+                UIApplication.shared.open(URL(string: UIApplication.openSettingsURLString)!)
+            })
+            self.delegate?.present(alert, animated: true, completion: nil)
+
+        case .notDetermined:
+            AVCaptureDevice.requestAccess(for: .video) { granted in }
+
+        default:
+            assertionFailure("unhandled av auth status \(currentStatus.rawValue)")
+            break
+        }
     }
 
     private func updateCartButtonTitle() {

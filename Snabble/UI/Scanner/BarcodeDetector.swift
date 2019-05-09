@@ -7,9 +7,25 @@
 import Foundation
 import UIKit
 
-public protocol BarcodeDetectorTNG {
-    /// the `ScanningViewDelegate`. Implementations should make this `weak`
-    var delegate: ScanningViewDelegate? { get set }
+public protocol BarcodeDetectorDelegate: class {
+    /// callback for a successful scan
+    func scannedCode(_ code: String, _ format: ScanFormat)
+
+    /// called when the "enter barcode" button is tapped
+    func enterBarcode()
+
+    /// called when the "goto cart" button is tapped
+    func gotoShoppingCart()
+
+    // track an `AnalyticsEvent`
+    func track(_ event: AnalyticsEvent)
+
+    func present(_ viewControllerToPresent: UIViewController, animated flag: Bool, completion: (() -> Void)?)
+}
+
+public protocol BarcodeDetector {
+    /// the `BarcodeDetectorDelegate`. Implementations should make this `weak`
+    var delegate: BarcodeDetectorDelegate? { get set }
 
     /// the cart button's title
     var cartButtonTitle: String? { get set }

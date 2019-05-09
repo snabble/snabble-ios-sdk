@@ -38,7 +38,7 @@ final public class BarcodeEntryViewController: UIViewController, UISearchBarDele
 
     override public func viewDidLoad() {
         super.viewDidLoad()
-        
+
         self.emptyState = BarcodeEntryEmptyStateView( { [weak self] in self?.addEnteredCode() } )
         self.emptyState.addTo(self.tableView)
 

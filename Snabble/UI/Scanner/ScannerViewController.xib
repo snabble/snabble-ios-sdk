@@ -9,7 +9,7 @@
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <objects>
-        <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner" customClass="ScannerViewControllerTNG" customModule="Snabble" customModuleProvider="target">
+        <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner" customClass="ScannerViewController">
             <connections>
                 <outlet property="spinner" destination="N9z-bZ-BCF" id="F1a-fs-Fit"/>
                 <outlet property="view" destination="QeV-hn-is3" id="5p1-Gb-hrb"/>

@@ -7,38 +7,12 @@
 import UIKit
 import AVFoundation
 
-public protocol ScanningViewDelegate: class {
-
-    /// called when the ScanningView needs to close itself
-    #warning("do we still need this?")
-    func closeScanningView()
-
-    /// callback for a successful scan
-    func scannedCode(_ code: String, _ format: ScanFormat)
-
-    /// called to request camera permission
-    #warning("how to handle this with the new detectors?")
-    func requestCameraPermission(currentStatus: AVAuthorizationStatus)
-
-    /// called when the "enter barcode" button is tapped
-    func enterBarcode()
-
-    /// called when the device has no back camera
-    #warning("remove this")
-    func noCameraFound()
-
-    /// called when the shopping cart should be displayed
-    func gotoShoppingCart()
-
-    func track(_ event: AnalyticsEvent)
-}
-
 public protocol ScannerDelegate: AnalyticsDelegate, MessageDelegate {
-    func closeScanningView()
+    /// called when the "goto cart" button is tapped
     func gotoShoppingCart()
 }
 
-public final class ScannerViewControllerTNG: UIViewController {
+public final class ScannerViewController: UIViewController {
 
     @IBOutlet private weak var spinner: UIActivityIndicatorView!
     
@@ -60,13 +34,13 @@ public final class ScannerViewControllerTNG: UIViewController {
     private var keyboardObserver: KeyboardObserver!
     private weak var delegate: ScannerDelegate!
     private var timer: Timer?
-    private var barcodeDetector: BarcodeDetectorTNG
+    private var barcodeDetector: BarcodeDetector
 
-    public init(_ cart: ShoppingCart, _ shop: Shop, _ detector: BarcodeDetectorTNG? = nil, delegate: ScannerDelegate) {
+    public init(_ cart: ShoppingCart, _ shop: Shop, _ detector: BarcodeDetector? = nil, delegate: ScannerDelegate) {
         let project = SnabbleUI.project
         self.productProvider = SnabbleAPI.productProvider(for: project)
         self.shoppingCart = cart
-        self.barcodeDetector = detector ?? BuiltinBarcodeDetector(ScannerViewControllerTNG.scannerConfig())
+        self.barcodeDetector = detector ?? BuiltinBarcodeDetector(ScannerViewController.scannerConfig())
         self.shop = shop
 
         super.init(nibName: nil, bundle: SnabbleBundle.main)
@@ -217,13 +191,13 @@ public final class ScannerViewControllerTNG: UIViewController {
 }
 
 // MARK: - analytics delegate
-extension ScannerViewControllerTNG: AnalyticsDelegate {
+extension ScannerViewController: AnalyticsDelegate {
     public func track(_ event: AnalyticsEvent) {
         self.delegate.track(event)
     }
 }
 
-extension ScannerViewControllerTNG: MessageDelegate {
+extension ScannerViewController: MessageDelegate {
     public func showInfoMessage(_ message: String) {
         self.delegate.showInfoMessage(message)
     }
@@ -234,7 +208,7 @@ extension ScannerViewControllerTNG: MessageDelegate {
 }
 
 // MARK: - scanning confirmation delegate
-extension ScannerViewControllerTNG: ScanConfirmationViewDelegate {
+extension ScannerViewController: ScanConfirmationViewDelegate {
     func closeConfirmation() {
         self.displayScanConfirmationView(hidden: true)
         self.lastScannedCode = ""
@@ -245,36 +219,7 @@ extension ScannerViewControllerTNG: ScanConfirmationViewDelegate {
 }
 
 // MARK: - scanning view delegate
-extension ScannerViewControllerTNG: ScanningViewDelegate {
-    public func closeScanningView() {
-    }
-
-    public func requestCameraPermission(currentStatus: AVAuthorizationStatus) {
-        switch currentStatus {
-        case .restricted, .denied:
-            let title = "Snabble.Scanner.Camera.accessDenied".localized()
-            let msg = "Snabble.Scanner.Camera.allowAccess".localized()
-            let alert = UIAlertController(title: title, message: msg, preferredStyle: .alert)
-            alert.addAction(UIAlertAction(title: "Snabble.Cancel".localized(), style: .cancel) { _ in
-            })
-            alert.addAction(UIAlertAction(title: "Snabble.Settings".localized(), style: .default) { action in
-                UIApplication.shared.open(URL(string: UIApplication.openSettingsURLString)!)
-            })
-            self.present(alert, animated: true)
-
-        case .notDetermined:
-            AVCaptureDevice.requestAccess(for: .video) { granted in }
-
-        default:
-            assertionFailure("unhandled av auth status \(currentStatus.rawValue)")
-            break
-        }
-    }
-
-    public func noCameraFound() {
-        Log.debug("no camera found")
-    }
-
+extension ScannerViewController: BarcodeDetectorDelegate {
     public func enterBarcode() {
         let barcodeEntry = BarcodeEntryViewController(self.productProvider, delegate: self.delegate, completion: self.manuallyEnteredCode)
         self.navigationController?.pushViewController(barcodeEntry, animated: true)
@@ -295,7 +240,7 @@ extension ScannerViewControllerTNG: ScanningViewDelegate {
     }
 }
 
-extension ScannerViewControllerTNG {
+extension ScannerViewController {
 
     private func scannedUnknown(_ msg: String, _ code: String) {
         // Log.debug("scanned unknown code \(code)")
@@ -514,7 +459,7 @@ extension ScannerViewControllerTNG {
 
 }
 
-extension ScannerViewControllerTNG: KeyboardHandling {
+extension ScannerViewController: KeyboardHandling {
 
     func keyboardWillShow(_ info: KeyboardInfo) {
         self.scanConfirmationViewBottom.constant = -(info.keyboardHeight - 48)
