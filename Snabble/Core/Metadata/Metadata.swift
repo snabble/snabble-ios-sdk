@@ -116,11 +116,12 @@ public struct QRCodeConfig: Decodable {
 
 public enum ScanFormat: String, Decodable {
     // 1d codes
-    case ean13
+    case ean13      // includes UPC-A
     case ean8
     case code128
     case itf14
     case code39
+    
     // 2d codes
     case qr
     case dataMatrix = "datamatrix"

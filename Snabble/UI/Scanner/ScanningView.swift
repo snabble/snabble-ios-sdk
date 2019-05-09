@@ -120,6 +120,7 @@ public struct ScanningViewConfig {
     public init() {}
 }
 
+@available(*, deprecated, message: "use BarcodeDetectorTNG instead")
 public final class ScanningView: DesignableView {
 
     @IBOutlet weak var reticleWrapper: UIView!
