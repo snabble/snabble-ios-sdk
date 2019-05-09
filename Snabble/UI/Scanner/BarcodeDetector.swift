@@ -73,7 +73,7 @@ public struct BarcodeDetectorAppearance {
     /// color for the dimming overlay, default: 13% white, 60% alpha
     public var dimmingColor = UIColor(white: 0.13, alpha: 0.6)
 
-    /// initial visibility of the button bar
+    /// show the button bar?
     public var bottomBarHidden = false
 
     public init() {}

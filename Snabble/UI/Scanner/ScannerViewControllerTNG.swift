@@ -59,14 +59,6 @@ public final class ScannerViewControllerTNG: UIViewController {
         
         self.view.backgroundColor = .black
 
-//        self.scanningView = ScanningView()
-//        self.scanningView.translatesAutoresizingMaskIntoConstraints = false
-//        self.view.addSubview(self.scanningView)
-//        self.scanningView.topAnchor.constraint(equalTo: self.view.topAnchor).isActive = true
-//        self.scanningView.rightAnchor.constraint(equalTo: self.view.rightAnchor).isActive = true
-//        self.scanningView.bottomAnchor.constraint(equalTo: self.view.bottomAnchor).isActive = true
-//        self.scanningView.leftAnchor.constraint(equalTo: self.view.leftAnchor).isActive = true
-
         self.scanConfirmationView = ScanConfirmationView()
         self.scanConfirmationView.translatesAutoresizingMaskIntoConstraints = false
         self.view.addSubview(self.scanConfirmationView)
@@ -88,6 +80,7 @@ public final class ScannerViewControllerTNG: UIViewController {
 
         self.updateCartButton()
         self.barcodeDetector.scannerWillAppear()
+        self.barcodeDetector.startScanning()
     }
 
     override public func viewDidAppear(_ animated: Bool) {
@@ -223,33 +216,24 @@ extension ScannerViewControllerTNG: ScanConfirmationViewDelegate {
 // MARK: - scanning view delegate
 extension ScannerViewControllerTNG: ScanningViewDelegate {
     public func closeScanningView() {
-        self.delegate.closeScanningView()
     }
 
     public func requestCameraPermission(currentStatus: AVAuthorizationStatus) {
         switch currentStatus {
         case .restricted, .denied:
+            let title = "Snabble.Scanner.Camera.accessDenied".localized()
             let msg = "Snabble.Scanner.Camera.allowAccess".localized()
-            let alert = UIAlertController(title: "Snabble.Scanner.Camera.accessDenied".localized(), message: msg, preferredStyle: .alert)
-            alert.addAction(UIAlertAction(title: "Snabble.Cancel".localized(), style: .cancel) { action in
-                self.closeScanningView()
+            let alert = UIAlertController(title: title, message: msg, preferredStyle: .alert)
+            alert.addAction(UIAlertAction(title: "Snabble.Cancel".localized(), style: .cancel) { _ in
             })
             alert.addAction(UIAlertAction(title: "Snabble.Settings".localized(), style: .default) { action in
                 UIApplication.shared.open(URL(string: UIApplication.openSettingsURLString)!)
-                self.closeScanningView()
             })
             self.present(alert, animated: true)
 
         case .notDetermined:
-            AVCaptureDevice.requestAccess(for: AVMediaType.video) { granted in
-                DispatchQueue.main.async {
-                    if granted {
-                        self.barcodeDetector.startScanning()
-                    } else {
-                        self.closeScanningView()
-                    }
-                }
-            }
+            AVCaptureDevice.requestAccess(for: .video) { granted in }
+
         default:
             assertionFailure("unhandled av auth status \(currentStatus.rawValue)")
             break

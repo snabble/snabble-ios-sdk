@@ -53,18 +53,21 @@ public extension BarcodeDetector {
 public protocol ScanningViewDelegate: class {
 
     /// called when the ScanningView needs to close itself
+    #warning("do we still need this?")
     func closeScanningView()
 
     /// callback for a successful scan
     func scannedCode(_ code: String, _ format: ScanFormat)
 
     /// called to request camera permission
+    #warning("how to handle this with the new detectors?")
     func requestCameraPermission(currentStatus: AVAuthorizationStatus)
 
     /// called when the "enter barcode" button is tapped
     func enterBarcode()
 
     /// called when the device has no back camera
+    #warning("remove this")
     func noCameraFound()
 
     /// called when the shopping cart should be displayed

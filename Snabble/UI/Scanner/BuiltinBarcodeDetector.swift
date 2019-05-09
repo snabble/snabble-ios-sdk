@@ -74,11 +74,11 @@ public final class BuiltinBarcodeDetector: NSObject, BarcodeDetectorTNG {
 
     public func scannerWillAppear() {
         guard
-            let camera = AVCaptureDevice.default(for: .video),
+            let camera = self.initializeCamera(),
             let videoInput = try? AVCaptureDeviceInput(device: camera),
             self.captureSession.canAddInput(videoInput)
-            else {
-                return
+        else {
+            return
         }
 
         self.camera = camera
@@ -121,7 +121,9 @@ public final class BuiltinBarcodeDetector: NSObject, BarcodeDetectorTNG {
     }
 
     public func startScanning() {
-        self.sessionQueue.async {
+        // self.sessionQueue.async {
+
+        if !self.captureSession.isRunning {
             print("start")
             self.captureSession.startRunning()
 
@@ -148,6 +150,38 @@ public final class BuiltinBarcodeDetector: NSObject, BarcodeDetectorTNG {
     }
 
     // MARK: - private implementation
+
+    private func initializeCamera() -> AVCaptureDevice? {
+        // get the back camera device
+        guard let camera = AVCaptureDevice.default(.builtInWideAngleCamera, for: AVMediaType.video, position: .back) else {
+            print("no camera found")
+            return nil
+        }
+
+        // camera found, are we allowed to access it?
+        let authorizationStatus = AVCaptureDevice.authorizationStatus(for: AVMediaType.video)
+        if authorizationStatus != .authorized {
+            self.delegate?.requestCameraPermission(currentStatus: authorizationStatus)
+        }
+
+        // set focus/low light properties of the camera
+        do {
+            try camera.lockForConfiguration()
+            defer { camera.unlockForConfiguration() }
+
+            if camera.isAutoFocusRangeRestrictionSupported {
+                camera.autoFocusRangeRestriction = .near
+            }
+            if camera.isFocusModeSupported(.continuousAutoFocus) {
+                camera.focusMode = .continuousAutoFocus
+            }
+            if camera.isLowLightBoostSupported {
+                camera.automaticallyEnablesLowLightBoostWhenAvailable = true
+            }
+        } catch {}
+
+        return camera
+    }
 
     private func updateCartButtonTitle() {
         self.decoration?.cartButton.setTitle(self.cartButtonTitle, for: .normal)
@@ -258,8 +292,9 @@ public struct BarcodeDetectorDecoration {
         reticle.layer.borderWidth = 1 / UIScreen.main.scale
         reticle.layer.cornerRadius = appearance.reticleCornerRadius
 
+        let bottomOffset: CGFloat = appearance.bottomBarHidden ? 0 : 64
         let reticleFrame = CGRect(x: 16,
-                                  y: (cameraPreview.frame.height - 64 - appearance.reticleHeight) / 2,
+                                  y: (cameraPreview.frame.height - bottomOffset - appearance.reticleHeight) / 2,
                                   width: cameraPreview.frame.width - 32,
                                   height: appearance.reticleHeight)
         reticle.frame = reticleFrame
