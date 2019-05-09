@@ -95,8 +95,8 @@ public final class BuiltinBarcodeDetector: NSObject, BarcodeDetector {
         guard
             let previewLayer = self.previewLayer,
             previewLayer.frame.size.height == 0
-            else {
-                return
+        else {
+            return
         }
 
         previewLayer.frame = cameraPreview.bounds
@@ -131,8 +131,8 @@ public final class BuiltinBarcodeDetector: NSObject, BarcodeDetector {
             guard
                 let previewLayer = self.previewLayer,
                 let reticle = self.decoration?.reticle
-                else {
-                    return
+            else {
+                return
             }
 
             DispatchQueue.main.async {
@@ -159,7 +159,7 @@ public final class BuiltinBarcodeDetector: NSObject, BarcodeDetector {
         }
 
         // camera found, are we allowed to access it?
-        let authorizationStatus = AVCaptureDevice.authorizationStatus(for: AVMediaType.video)
+        let authorizationStatus = AVCaptureDevice.authorizationStatus(for: .video)
         if authorizationStatus != .authorized {
             self.requestCameraPermission(currentStatus: authorizationStatus)
         }
@@ -189,9 +189,9 @@ public final class BuiltinBarcodeDetector: NSObject, BarcodeDetector {
             let title = "Snabble.Scanner.Camera.accessDenied".localized()
             let msg = "Snabble.Scanner.Camera.allowAccess".localized()
             let alert = UIAlertController(title: title, message: msg, preferredStyle: .alert)
-            alert.addAction(UIAlertAction(title: "Snabble.cancel".localized(), style: .cancel) { _ in
+            alert.addAction(UIAlertAction(title: "Snabble.Cancel".localized(), style: .cancel) { _ in
             })
-            alert.addAction(UIAlertAction(title: "Snabble.settings".localized(), style: .default) { action in
+            alert.addAction(UIAlertAction(title: "Snabble.Settings".localized(), style: .default) { action in
                 UIApplication.shared.open(URL(string: UIApplication.openSettingsURLString)!)
             })
             self.delegate?.present(alert, animated: true, completion: nil)
