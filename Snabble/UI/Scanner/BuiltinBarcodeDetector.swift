@@ -258,8 +258,8 @@ extension BuiltinBarcodeDetector: AVCaptureMetadataOutputObjectsDelegate {
             let codeObject = metadataObject as? AVMetadataMachineReadableCodeObject,
             let code = codeObject.stringValue,
             let format = codeObject.type.scanFormat
-            else {
-                return
+        else {
+            return
         }
 
         if let barcodeObject = self.previewLayer?.transformedMetadataObject(for: codeObject) {

@@ -17,9 +17,10 @@ public protocol BarcodeDetectorDelegate: class {
     /// called when the "goto cart" button is tapped
     func gotoShoppingCart()
 
-    // track an `AnalyticsEvent`
+    /// track an `AnalyticsEvent`
     func track(_ event: AnalyticsEvent)
 
+    /// this is used to present permission alerts. If the delegate instance is a `UIViewController`, no more code is needed
     func present(_ viewControllerToPresent: UIViewController, animated flag: Bool, completion: (() -> Void)?)
 }
 
