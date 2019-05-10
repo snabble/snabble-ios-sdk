@@ -78,6 +78,8 @@ public final class ShoppingCartViewController: UIViewController {
     private weak var delegate: ShoppingCartDelegate!
 
     private var items = [CartTableEntry]()
+
+    private var knownImages = Set<String>()
     internal var showImages = false
     
     public init(_ cart: ShoppingCart, delegate: ShoppingCartDelegate) {
@@ -206,6 +208,29 @@ public final class ShoppingCartViewController: UIViewController {
         self.tableView?.reloadData()
 
         self.updateTotals()
+        self.getMissingImages()
+    }
+
+    private func getMissingImages() {
+        let allImages: [String] = self.items.compactMap {
+            guard case .cartItem(let item) = $0 else {
+                return nil
+            }
+
+            return item.0.product.imageUrl
+        }
+
+        let images = Set(allImages)
+        let newImages = images.subtracting(self.knownImages)
+        for img in newImages {
+            guard let url = URL(string: img) else {
+                continue
+            }
+            let session = URLSession(configuration: .default)
+            let task = session.dataTask(with: url) { _,_,_ in }
+            task.resume()
+        }
+        self.knownImages = images
     }
 
     override public func setEditing(_ editing: Bool, animated: Bool) {
