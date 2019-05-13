@@ -583,17 +583,25 @@ extension ShoppingCart {
 // MARK: send events
 struct CartEvent {
     static func sessionStart(_ cart: ShoppingCart) {
+        guard cart.shopId != "" else {
+            return
+        }
+        
         let event = AppEvent(.sessionStart, session: cart.session, project: cart.config.project, shopId: cart.shopId)
         event.post()
     }
 
     static func sessionEnd(_ cart: ShoppingCart) {
+        guard cart.shopId != "" else {
+            return
+        }
+
         let event = AppEvent(.sessionEnd, session: cart.session, project: cart.config.project, shopId: cart.shopId)
         event.post()
     }
 
     static func cart(_ cart: ShoppingCart) {
-        if cart.items.count == 0 && cart.session == "" {
+        if cart.shopId == "" || (cart.items.count == 0 && cart.session == "") {
             return
         }
 

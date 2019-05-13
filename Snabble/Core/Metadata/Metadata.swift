@@ -434,18 +434,18 @@ public struct Shop: Decodable {
     }
 
     private init() {
-        self.id = "n/a"
-        self.name = "none"
-        self.project = "none"
+        self.id = ""
+        self.name = ""
+        self.project = ""
         self.latitude = 0
         self.longitude = 0
-        self.email = "email@example.com"
-        self.phone = "+1 234 567 8901"
-        self.city = "Teststadt"
-        self.street = "Teststraße"
-        self.postalCode = "12345"
+        self.email = ""
+        self.phone = ""
+        self.city = ""
+        self.street = ""
+        self.postalCode = ""
         self.state = ""
-        self.country = "DE"
+        self.country = ""
         self.openingHoursSpecification = []
         self.services = []
         self.external = [:]
