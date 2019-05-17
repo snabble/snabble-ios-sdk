@@ -51,6 +51,8 @@ final class SepaCheckoutViewController: UIViewController {
         self.codeWidth.constant = self.codeImage.image?.size.width ?? 0
 
         self.cancelButton.setTitle("Snabble.Cancel".localized(), for: .normal)
+
+        self.navigationItem.hidesBackButton = true
     }
 
     override func viewWillAppear(_ animated: Bool) {
