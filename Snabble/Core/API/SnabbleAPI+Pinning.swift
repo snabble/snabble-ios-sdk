@@ -62,18 +62,14 @@ extension SnabbleAPI {
     ///
     /// - Returns: a URLSession object
     static public func urlSession() -> URLSession {
-        let checker = TrustChecker.instance
+        let checker = CertificatePinningDelegate()
         let session = URLSession(configuration: .default, delegate: checker, delegateQueue: OperationQueue.main)
         return session
     }
 }
 
 /// handle the certificate pinning checks for our requests
-final class TrustChecker: NSObject, URLSessionDelegate {
-
-    static let instance = TrustChecker()
-    private override init() {}
-
+class CertificatePinningDelegate: NSObject, URLSessionDelegate {
     func urlSession(_ session: URLSession, didReceive challenge: URLAuthenticationChallenge, completionHandler: @escaping (URLSession.AuthChallengeDisposition, URLCredential?) -> Void) {
         let handled = TrustKit.sharedInstance().pinningValidator.handle(challenge, completionHandler: completionHandler)
         if !handled {
@@ -81,4 +77,3 @@ final class TrustChecker: NSObject, URLSessionDelegate {
         }
     }
 }
- 
