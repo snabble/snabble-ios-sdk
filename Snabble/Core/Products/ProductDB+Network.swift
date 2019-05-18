@@ -34,57 +34,18 @@ extension ProductDB {
             request.setValue(ProductDB.contentTypes, forHTTPHeaderField: "Accept")
             let delegate = AppDBDownloadDelegate(completion)
             let session = URLSession(configuration: .default, delegate: delegate, delegateQueue: OperationQueue.main)
-            // let start = Date.timeIntervalSinceReferenceDate
 
             let task = session.downloadTask(with: request)
-            /*
-            let task = session.dataTask(with: request) { data, response, error in
-                let elapsed = Date.timeIntervalSinceReferenceDate - start
-                let url = request.url?.absoluteString ?? "n/a"
-                Log.info("get \(url) took \(elapsed)s")
-
-                if error != nil {
-                    completion(.httpError)
-                    return
-                }
-
-                if let data = data, let response = response as? HTTPURLResponse {
-                    if response.statusCode == 304 {
-                        completion(.noUpdate)
-                        return
-                    }
-
-                    let headers = response.allHeaderFields
-                    if let contentType = headers["Content-Type"] as? String {
-                        if contentType == ProductDB.sqliteType {
-                            if let etag = headers["Etag"] as? String {
-                                completion(.full(db: data, revision: self.parseEtag(etag)))
-                                return
-                            }
-                        } else if contentType == ProductDB.sqlType {
-                            if let str = String(bytes: data, encoding: .utf8) {
-                                completion(.diff(lines: str))
-                                return
-                            }
-                        }
-                    }
-
-                    completion(.dataError)
-                }
-            }
-            */
             task.resume()
         }
     }
-
-
-
 }
 
 class AppDBDownloadDelegate: CertificatePinningDelegate, URLSessionDownloadDelegate {
 
     private var completion: (AppDbResponse) -> ()
     private var response: URLResponse?
+    private var resumeData: Data?
 
     init(_ completion: @escaping (AppDbResponse) -> ()) {
         self.completion = completion
@@ -128,10 +89,17 @@ class AppDBDownloadDelegate: CertificatePinningDelegate, URLSessionDownloadDeleg
     }
 
     func urlSession(_ session: URLSession, task: URLSessionTask, didCompleteWithError error: Error?) {
+        guard let error = error else {
+            return
+        }
+
         let url = task.currentRequest?.url?.absoluteString
         print("\(String(describing: url)) finished with error \(String(describing: error))")
-        if error != nil {
-            self.completion(.httpError)
+        self.completion(.httpError)
+
+        let userInfo = (error as NSError).userInfo
+        if let resumeData = userInfo[NSURLSessionDownloadTaskResumeData] as? Data {
+            self.resumeData = resumeData
         }
     }
 
