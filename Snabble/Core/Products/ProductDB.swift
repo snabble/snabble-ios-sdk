@@ -54,6 +54,12 @@ public struct ScannedProduct {
     }
 }
 
+public enum AppDbAvailability {
+    case newData
+    case unchanged
+    case incomplete
+}
+
 public protocol ProductProvider: class {
     /// initialize a ProductDB instance with the given configuration
     /// - parameter config: a `SnabbleAPIConfig` object
@@ -70,16 +76,23 @@ public protocol ProductProvider: class {
     /// - parameter forceFullDownload: if true, force a full download of the product database
     /// - parameter completion: This is called asynchronously on the main thread after the automatic database update check has finished
     ///   (i.e., only if `update` is true)
-    /// - parameter newData: indicates if new data is available
-    func setup(update: Bool, forceFullDownload: Bool, completion: @escaping ((Bool) -> ()))
+    /// - parameter dataAvailable: indicates if new data is available
+    func setup(update: Bool, forceFullDownload: Bool, completion: @escaping ((_ dataAvailable: AppDbAvailability) -> ()))
 
     /// Attempt to update the product database
     ///
     /// - parameter forceFullDownload: if true, force a full download of the product database
     /// - parameter completion: This is called asynchronously on the main thread after the automatic database update check has finished
     ///   (i.e., only if `update` is true)
-    /// - parameter newData: indicates if new data is available
-    func updateDatabase(forceFullDownload: Bool, completion: @escaping (Bool) -> ())
+    /// - parameter dataAvailable: indicates if new data is available
+    func updateDatabase(forceFullDownload: Bool, completion: @escaping (_ dataAvailable: AppDbAvailability) -> ())
+
+    /// attempt to resume a previously aborted update of the product database
+    /// calling this method when there is no previous download has no effect.
+    ///
+    /// - parameter completion: This is called asynchronously on the main thread after the database update check has finished
+    /// - parameter dataAvailable: indicated if new data is available
+    func resumeAbortedUpdate(completion: @escaping (_ dataAvailable: AppDbAvailability)->() )
 
     /// get a product by its SKU
     func productBySku(_ sku: String, _ shopId: String) -> Product?
@@ -142,11 +155,11 @@ public protocol ProductProvider: class {
 }
 
 public extension ProductProvider {
-    func setup(completion: @escaping (Bool) -> () ) {
+    func setup(completion: @escaping (AppDbAvailability) -> () ) {
         self.setup(update: true, forceFullDownload: false, completion: completion)
     }
 
-    func updateDatabase(completion: @escaping (Bool) -> ()) {
+    func updateDatabase(completion: @escaping (AppDbAvailability) -> ()) {
         self.updateDatabase(forceFullDownload: false, completion: completion)
     }
 
@@ -167,6 +180,7 @@ public extension ProductProvider {
     }
 }
 
+
 final class ProductDB: ProductProvider {
     internal let supportedSchemaVersion = 1
 
@@ -186,6 +200,8 @@ final class ProductDB: ProductProvider {
 
     /// date of last successful product update (i.e, whenever we last got a HTTP status 200 or 304)
     private(set) public var lastProductUpdate = Date(timeIntervalSinceReferenceDate: 0)
+
+    internal var resumeData: Data?
 
     /// initialize a ProductDB instance with the given configuration
     /// - parameter config: a `ProductDBConfiguration` object
@@ -214,7 +230,7 @@ final class ProductDB: ProductProvider {
     ///   - completion: This is called asynchronously on the main thread after the automatic database update check has finished
     ///     (i.e., only if `update` is true)
     ///   - newData: indicates if the database was updated
-    public func setup(update: Bool = true, forceFullDownload: Bool = false, completion: @escaping (_ newData: Bool) -> () ) {
+    public func setup(update: Bool = true, forceFullDownload: Bool = false, completion: @escaping (_ dataAvailable: AppDbAvailability) -> () ) {
         self.db = self.openDb()
 
         if let seedRevision = self.config.seedRevision, seedRevision > self.revision {
@@ -238,51 +254,70 @@ final class ProductDB: ProductProvider {
     ///   - forceFullDownload: if true, force a full download of the product database
     ///   - completion: This is called asynchronously on the main thread, after the update check has finished.
     ///   - newData: indicates if new data is available
-    public func updateDatabase(forceFullDownload: Bool, completion: @escaping (_ newData: Bool)->() ) {
+    public func updateDatabase(forceFullDownload: Bool, completion: @escaping (_ dataAvailable: AppDbAvailability)->() ) {
         let schemaVersion = "\(self.schemaVersionMajor).\(self.schemaVersionMinor)"
         let revision = (forceFullDownload || !self.hasDatabase()) ? 0 : self.revision
         self.getAppDb(currentRevision: revision, schemaVersion: schemaVersion) { dbResponse in
-            self.lastProductUpdate = Date()
+            self.processAppDbResponse(dbResponse, forceFullDownload, completion)
+        }
+    }
 
-            DispatchQueue.global(qos: .userInitiated).async {
-                let tempDbPath = self.dbPathname(temporary: true)
-                let performSwitch: Bool
-                let newData: Bool
-                switch dbResponse {
-                case .diff(let statements):
-                    Log.info("db update: got diff")
-                    performSwitch = self.copyAndUpdateDatabase(statements, tempDbPath)
-                    newData = true
-                case .full(let data, let revision):
-                    Log.info("db update: got full db, rev=\(revision)")
-                    performSwitch = self.writeFullDatabase(data, revision, tempDbPath, forceFullDownload)
-                    newData = true
-                case .noUpdate:
-                    Log.info("db update: no new data")
-                    performSwitch = false
-                    newData = false
-                case .httpError, .dataError:
-                    Log.info("db update: http error or no data")
-                    performSwitch = false
-                    newData = false
-                }
+    public func resumeAbortedUpdate(completion: @escaping (_ dataAvailable: AppDbAvailability)->() ) {
+        guard self.resumeData != nil else {
+            Log.warn("resumeAbortedUpdate called without resumeData?!?")
+            return
+        }
 
-                if self.config.useFTS && newData {
-                    self.createFulltextIndex(tempDbPath)
-                }
+        self.resumeAppDbDownload { dbResponse in
+            self.processAppDbResponse(dbResponse, false, completion)
+        }
+    }
 
-                if performSwitch {
-                    self.switchDatabases(tempDbPath)
-                } else {
-                    let fileManager = FileManager.default
-                    if fileManager.fileExists(atPath: tempDbPath) {
-                        try? fileManager.removeItem(atPath: tempDbPath)
-                    }
-                }
+    private func processAppDbResponse(_ dbResponse: AppDbResponse, _ forceFullDownload: Bool, _ completion: @escaping (_ dataAvailable: AppDbAvailability)->() ) {
+        self.lastProductUpdate = Date()
 
-                DispatchQueue.main.async {
-                    completion(newData)
+        DispatchQueue.global(qos: .userInitiated).async {
+            let tempDbPath = self.dbPathname(temporary: true)
+            let performSwitch: Bool
+            let dataAvailable: AppDbAvailability
+            switch dbResponse {
+            case .diff(let statements):
+                Log.info("db update: got diff")
+                performSwitch = self.copyAndUpdateDatabase(statements, tempDbPath)
+                dataAvailable = .newData
+            case .full(let data, let revision):
+                Log.info("db update: got full db, rev=\(revision)")
+                performSwitch = self.writeFullDatabase(data, revision, tempDbPath, forceFullDownload)
+                dataAvailable = .newData
+            case .noUpdate:
+                Log.info("db update: no new data")
+                performSwitch = false
+                dataAvailable = .unchanged
+            case .httpError, .dataError:
+                Log.info("db update: http error or no data")
+                performSwitch = false
+                dataAvailable = .unchanged
+            case .aborted:
+                Log.info("db update: download aborted, try again later")
+                performSwitch = false
+                dataAvailable = .incomplete
+            }
+
+            if self.config.useFTS && dataAvailable == .newData {
+                self.createFulltextIndex(tempDbPath)
+            }
+
+            if performSwitch {
+                self.switchDatabases(tempDbPath)
+            } else {
+                let fileManager = FileManager.default
+                if fileManager.fileExists(atPath: tempDbPath) {
+                    try? fileManager.removeItem(atPath: tempDbPath)
                 }
+            }
+
+            DispatchQueue.main.async {
+                completion(dataAvailable)
             }
         }
     }

@@ -12,6 +12,7 @@ enum AppDbResponse {
     case noUpdate   // no data, used when we get http 304
     case httpError  // http or network error
     case dataError  // data error: invalid content-type, unparsable data or other weird things
+    case aborted    // download was aborted. app may attempt resuming later
 }
 
 extension ProductDB {
@@ -32,12 +33,24 @@ extension ProductDB {
             }
 
             request.setValue(ProductDB.contentTypes, forHTTPHeaderField: "Accept")
-            let delegate = AppDBDownloadDelegate(completion)
+            let delegate = AppDBDownloadDelegate(self, completion)
             let session = URLSession(configuration: .default, delegate: delegate, delegateQueue: OperationQueue.main)
 
             let task = session.downloadTask(with: request)
             task.resume()
         }
+    }
+
+    func resumeAppDbDownload(_ completion: @escaping (AppDbResponse) -> () ) {
+        guard let resumeData = self.resumeData else {
+            return
+        }
+
+        let delegate = AppDBDownloadDelegate(self, completion)
+        let session = URLSession(configuration: .default, delegate: delegate, delegateQueue: OperationQueue.main)
+
+        let task = session.downloadTask(withResumeData: resumeData)
+        task.resume()
     }
 }
 
@@ -45,9 +58,10 @@ class AppDBDownloadDelegate: CertificatePinningDelegate, URLSessionDownloadDeleg
 
     private var completion: (AppDbResponse) -> ()
     private var response: URLResponse?
-    private var resumeData: Data?
+    private weak var productDb: ProductDB?
 
-    init(_ completion: @escaping (AppDbResponse) -> ()) {
+    init(_ productDb: ProductDB, _ completion: @escaping (AppDbResponse) -> ()) {
+        self.productDb = productDb
         self.completion = completion
     }
 
@@ -89,17 +103,20 @@ class AppDBDownloadDelegate: CertificatePinningDelegate, URLSessionDownloadDeleg
     }
 
     func urlSession(_ session: URLSession, task: URLSessionTask, didCompleteWithError error: Error?) {
-        guard let error = error else {
+        guard let error = error as NSError? else {
             return
         }
 
         let url = task.currentRequest?.url?.absoluteString
-        print("\(String(describing: url)) finished with error \(String(describing: error))")
-        self.completion(.httpError)
+        print("\(String(describing: url)) finished with error \(error.code)")
 
-        let userInfo = (error as NSError).userInfo
+        let userInfo = error.userInfo
         if let resumeData = userInfo[NSURLSessionDownloadTaskResumeData] as? Data {
-            self.resumeData = resumeData
+            self.productDb?.resumeData = resumeData
+            self.completion(.aborted)
+        } else {
+            self.productDb?.resumeData = nil
+            self.completion(.httpError)
         }
     }
 
