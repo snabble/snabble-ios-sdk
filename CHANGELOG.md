@@ -1,5 +1,9 @@
 ## snabble iOS SDK Changelog
 
+# v0.9.23
+
+* Removes the back button from `SepaCheckoutViewController`
+
 # v0.9.22
 
 * Marks the `CartConfig.loyaltyCard` property as deprecated. Please implement ` ShoppingCartDelegate.getLoyaltyCard(_:)` instead
