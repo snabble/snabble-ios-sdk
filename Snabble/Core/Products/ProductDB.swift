@@ -54,9 +54,15 @@ public struct ScannedProduct {
     }
 }
 
+/// status of the last appdb update call
 public enum AppDbAvailability {
+    /// update is in progress or hasn't started yet
+    case unknown
+    /// update returned new data
     case newData
+    /// update did not return new data
     case unchanged
+    /// update was aborted and has received incomplete data.
     case incomplete
 }
 
@@ -91,8 +97,8 @@ public protocol ProductProvider: class {
     /// calling this method when there is no previous download has no effect.
     ///
     /// - parameter completion: This is called asynchronously on the main thread after the database update check has finished
-    /// - parameter dataAvailable: indicated if new data is available
-    func resumeAbortedUpdate(completion: @escaping (_ dataAvailable: AppDbAvailability)->() )
+    /// - parameter dataAvailable: indicates if new data is available
+    func resumeAbortedUpdate(completion: @escaping (_ dataAvailable: AppDbAvailability) -> ())
 
     /// get a product by its SKU
     func productBySku(_ sku: String, _ shopId: String) -> Product?
@@ -150,6 +156,8 @@ public protocol ProductProvider: class {
     var revision: Int64 { get }
     var lastProductUpdate: Date { get }
 
+    var appDbAvailability: AppDbAvailability { get }
+
     var schemaVersionMajor: Int { get }
     var schemaVersionMinor: Int { get }
 }
@@ -201,7 +209,10 @@ final class ProductDB: ProductProvider {
     /// date of last successful product update (i.e, whenever we last got a HTTP status 200 or 304)
     private(set) public var lastProductUpdate = Date(timeIntervalSinceReferenceDate: 0)
 
+    private(set) public var appDbAvailability = AppDbAvailability.unknown
+
     internal var resumeData: Data?
+    internal var downloadTask: URLSessionDownloadTask?
 
     /// initialize a ProductDB instance with the given configuration
     /// - parameter config: a `ProductDBConfiguration` object
@@ -258,24 +269,26 @@ final class ProductDB: ProductProvider {
         let schemaVersion = "\(self.schemaVersionMajor).\(self.schemaVersionMinor)"
         let revision = (forceFullDownload || !self.hasDatabase()) ? 0 : self.revision
         self.getAppDb(currentRevision: revision, schemaVersion: schemaVersion) { dbResponse in
-            self.processAppDbResponse(dbResponse, forceFullDownload, completion)
+            self.processAppDbResponse(dbResponse, completion)
         }
     }
 
     public func resumeAbortedUpdate(completion: @escaping (_ dataAvailable: AppDbAvailability)->() ) {
+        guard self.appDbAvailability == .incomplete else {
+            return
+        }
+        
         guard self.resumeData != nil else {
             Log.warn("resumeAbortedUpdate called without resumeData?!?")
             return
         }
 
         self.resumeAppDbDownload { dbResponse in
-            self.processAppDbResponse(dbResponse, false, completion)
+            self.processAppDbResponse(dbResponse, completion)
         }
     }
 
-    private func processAppDbResponse(_ dbResponse: AppDbResponse, _ forceFullDownload: Bool, _ completion: @escaping (_ dataAvailable: AppDbAvailability)->() ) {
-        self.lastProductUpdate = Date()
-
+    private func processAppDbResponse(_ dbResponse: AppDbResponse, _ completion: @escaping (_ dataAvailable: AppDbAvailability)->() ) {
         DispatchQueue.global(qos: .userInitiated).async {
             let tempDbPath = self.dbPathname(temporary: true)
             let performSwitch: Bool
@@ -285,14 +298,17 @@ final class ProductDB: ProductProvider {
                 Log.info("db update: got diff")
                 performSwitch = self.copyAndUpdateDatabase(statements, tempDbPath)
                 dataAvailable = .newData
-            case .full(let data, let revision):
-                Log.info("db update: got full db, rev=\(revision)")
-                performSwitch = self.writeFullDatabase(data, revision, tempDbPath, forceFullDownload)
+                self.lastProductUpdate = Date()
+            case .full(let data):
+                Log.info("db update: got full db")
+                performSwitch = self.writeFullDatabase(data, tempDbPath)
                 dataAvailable = .newData
+                self.lastProductUpdate = Date()
             case .noUpdate:
                 Log.info("db update: no new data")
                 performSwitch = false
                 dataAvailable = .unchanged
+                self.lastProductUpdate = Date()
             case .httpError, .dataError:
                 Log.info("db update: http error or no data")
                 performSwitch = false
@@ -317,6 +333,7 @@ final class ProductDB: ProductProvider {
             }
 
             DispatchQueue.main.async {
+                self.appDbAvailability = dataAvailable
                 completion(dataAvailable)
             }
         }
@@ -402,10 +419,9 @@ final class ProductDB: ProductProvider {
     ///
     /// - Parameters:
     ///   - data: the bytes to write
-    ///   - revision: the revision of this new database
     /// - Returns: true if the database was written successfully and passes internal integrity checks,
     ///         false otherwise
-    private func writeFullDatabase(_ data: Data, _ revision: Int, _ tempDbPath: String, _ forceSwitch: Bool) -> Bool {
+    private func writeFullDatabase(_ data: Data, _ tempDbPath: String) -> Bool {
         let fileManager = FileManager.default
 
         do {
@@ -431,14 +447,17 @@ final class ProductDB: ProductProvider {
                         select value from metadata where key='\(MetadataKeys.schemaVersionMajor)'
                         union
                         select value from metadata where key='\(MetadataKeys.schemaVersionMinor)'
+                        union
+                        select value from metadata where key='\(MetadataKeys.revision)'
                         """)
                 }
-                guard result.count == 2 else {
+                guard result.count == 3 else {
                     return false
                 }
 
                 let majorVersion = Int(result[0]) ?? 0
                 let minorVersion = Int(result[1]) ?? 0
+                let revision = Int(result[2]) ?? 0
 
                 if majorVersion != self.supportedSchemaVersion {
                     return false
@@ -446,11 +465,9 @@ final class ProductDB: ProductProvider {
 
                 self.setLastUpdate(tempDb)
 
-                let shouldSwitch = forceSwitch || revision != self.revision || minorVersion > self.schemaVersionMinor
-                if shouldSwitch {
-                    Log.info("new db: revision=\(revision), schema=\(majorVersion).\(minorVersion)")
-                }
-                return shouldSwitch
+                Log.info("new db: revision=\(revision), schema=\(majorVersion).\(minorVersion)")
+
+                return true
             }
         } catch let error {
             var extendedError: Int32 = 0

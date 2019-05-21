@@ -8,7 +8,7 @@ import Foundation
 
 enum AppDbResponse {
     case diff(lines: String)
-    case full(db: Data, revision: Int)
+    case full(db: Data)
     case noUpdate   // no data, used when we get http 304
     case httpError  // http or network error
     case dataError  // data error: invalid content-type, unparsable data or other weird things
@@ -27,6 +27,7 @@ extension ProductDB {
             "schemaVersion": schemaVersion
         ]
 
+        self.downloadTask?.cancel()
         self.project.request(.get, self.project.links.appdb.href, json: false, parameters: parameters, timeout: 0) { request in
             guard var request = request else {
                 return completion(.httpError)
@@ -38,6 +39,7 @@ extension ProductDB {
 
             let task = session.downloadTask(with: request)
             task.resume()
+            self.downloadTask = task
         }
     }
 
@@ -46,19 +48,27 @@ extension ProductDB {
             return
         }
 
+        Log.info("resuming d/l of appdb")
+        self.downloadTask?.cancel()
+
         let delegate = AppDBDownloadDelegate(self, completion)
         let session = URLSession(configuration: .default, delegate: delegate, delegateQueue: OperationQueue.main)
 
         let task = session.downloadTask(withResumeData: resumeData)
         task.resume()
+        self.downloadTask = task
     }
 }
+
+
+// https://developer.apple.com/documentation/foundation/url_loading_system/pausing_and_resuming_downloads
 
 class AppDBDownloadDelegate: CertificatePinningDelegate, URLSessionDownloadDelegate {
 
     private var completion: (AppDbResponse) -> ()
     private var response: URLResponse?
     private weak var productDb: ProductDB?
+    private let start = Date.timeIntervalSinceReferenceDate
 
     init(_ productDb: ProductDB, _ completion: @escaping (AppDbResponse) -> ()) {
         self.productDb = productDb
@@ -73,9 +83,11 @@ class AppDBDownloadDelegate: CertificatePinningDelegate, URLSessionDownloadDeleg
     }
 
     func urlSession(_ session: URLSession, downloadTask: URLSessionDownloadTask, didFinishDownloadingTo location: URL) {
-        let url = downloadTask.currentRequest?.url?.absoluteString
-        print("\(String(describing: url)) finished downloading")
+        let url = downloadTask.currentRequest?.url?.absoluteString ?? "n/a"
+        let elapsed = Date.timeIntervalSinceReferenceDate - self.start
+        Log.info("get \(url) took \(elapsed)s")
 
+        self.productDb?.downloadTask = nil
         let fileData = try? Data(contentsOf: location)
         if let data = fileData, let response = downloadTask.response as? HTTPURLResponse {
             if response.statusCode == 304 {
@@ -86,10 +98,8 @@ class AppDBDownloadDelegate: CertificatePinningDelegate, URLSessionDownloadDeleg
             let headers = response.allHeaderFields
             if let contentType = headers["Content-Type"] as? String {
                 if contentType == ProductDB.sqliteType {
-                    if let etag = headers["Etag"] as? String {
-                        completion(.full(db: data, revision: self.parseEtag(etag)))
-                        return
-                    }
+                    completion(.full(db: data))
+                    return
                 } else if contentType == ProductDB.sqlType {
                     if let str = String(bytes: data, encoding: .utf8) {
                         completion(.diff(lines: str))
@@ -103,32 +113,21 @@ class AppDBDownloadDelegate: CertificatePinningDelegate, URLSessionDownloadDeleg
     }
 
     func urlSession(_ session: URLSession, task: URLSessionTask, didCompleteWithError error: Error?) {
+        self.productDb?.resumeData = nil
+        self.productDb?.downloadTask = nil
         guard let error = error as NSError? else {
             return
         }
 
-        let url = task.currentRequest?.url?.absoluteString
-        print("\(String(describing: url)) finished with error \(error.code)")
+        let url = task.currentRequest?.url?.absoluteString ?? "n/a"
+        Log.info("\(url) finished with error \(error.code)")
 
         let userInfo = error.userInfo
         if let resumeData = userInfo[NSURLSessionDownloadTaskResumeData] as? Data {
             self.productDb?.resumeData = resumeData
             self.completion(.aborted)
         } else {
-            self.productDb?.resumeData = nil
             self.completion(.httpError)
         }
-    }
-
-    // https://developer.apple.com/documentation/foundation/url_loading_system/pausing_and_resuming_downloads
-
-    // parse an ETag header value to extract the db revision
-    // format is either W/"xyz" (for weak tags) or simply "xyz"
-    private func parseEtag(_ etag: String) -> Int {
-        let isWeak = etag.lowercased().hasPrefix("w/")
-        let startIndex = isWeak ? etag.index(etag.startIndex, offsetBy: 2) : etag.startIndex
-        let tagValue = etag[startIndex...]
-        let stripped = tagValue.trimmingCharacters(in: CharacterSet(charactersIn: "\""))
-        return Int(stripped) ?? 0
     }
 }
