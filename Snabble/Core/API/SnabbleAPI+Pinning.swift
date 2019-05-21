@@ -63,7 +63,7 @@ extension SnabbleAPI {
     /// - Returns: a URLSession object
     static public func urlSession() -> URLSession {
         let checker = CertificatePinningDelegate()
-        let session = URLSession(configuration: .default, delegate: checker, delegateQueue: OperationQueue.main)
+        let session = URLSession(configuration: .default, delegate: checker, delegateQueue: nil)
         return session
     }
 }

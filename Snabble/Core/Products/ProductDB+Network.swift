@@ -52,14 +52,13 @@ extension ProductDB {
         self.downloadTask?.cancel()
 
         let delegate = AppDBDownloadDelegate(self, completion)
-        let session = URLSession(configuration: .default, delegate: delegate, delegateQueue: OperationQueue.main)
+        let session = URLSession(configuration: .default, delegate: delegate, delegateQueue: nil)
 
         let task = session.downloadTask(withResumeData: resumeData)
         task.resume()
         self.downloadTask = task
     }
 }
-
 
 // https://developer.apple.com/documentation/foundation/url_loading_system/pausing_and_resuming_downloads
 
@@ -77,11 +76,13 @@ class AppDBDownloadDelegate: CertificatePinningDelegate, URLSessionDownloadDeleg
 
     // MARK: - download delegate
 
+    /*
     func urlSession(_ session: URLSession, downloadTask: URLSessionDownloadTask, didWriteData bytesWritten: Int64, totalBytesWritten: Int64, totalBytesExpectedToWrite: Int64) {
-        let url = downloadTask.currentRequest?.url?.absoluteString
-        print("\(String(describing: url)) \(bytesWritten) \(totalBytesWritten) \(totalBytesExpectedToWrite)")
+        let url = downloadTask.currentRequest?.url?.absoluteString ?? "n/a"
+        print("\(url) wrote \(bytesWritten), total \(totalBytesWritten), expect \(totalBytesExpectedToWrite)")
     }
-
+    */
+    
     func urlSession(_ session: URLSession, downloadTask: URLSessionDownloadTask, didFinishDownloadingTo location: URL) {
         let url = downloadTask.currentRequest?.url?.absoluteString ?? "n/a"
         let elapsed = Date.timeIntervalSinceReferenceDate - self.start
