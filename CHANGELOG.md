@@ -1,5 +1,9 @@
 ## snabble iOS SDK Changelog
 
+# v0.9.24
+
+* Adds client-side support for resuming failed downloads of the product database (this feature is not yet enabled on our backend servers). Apps can use the new `appDbAvailability` property of `ProductProvider` to determine if the last download attempt was incomplete, and can call `resumeAbortedUpdate` when connectivity is restored (monitoring connectivity is the app's responsibility, e.g. via one of the various `Reachability` implementations) This new feature makes a minor breaking change to the parameter of the closure invoked by the `setup` and `updateDatabase` methods of `ProductProvider`: the type has changed from `Bool` to `AppDbAvailability`. 
+
 # v0.9.23
 
 * Removes the back button from `SepaCheckoutViewController`

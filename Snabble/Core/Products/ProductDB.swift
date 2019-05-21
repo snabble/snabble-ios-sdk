@@ -240,7 +240,7 @@ final class ProductDB: ProductProvider {
     ///   - update: if true, attempt to update the database to the latest revision
     ///   - completion: This is called asynchronously on the main thread after the automatic database update check has finished
     ///     (i.e., only if `update` is true)
-    ///   - newData: indicates if the database was updated
+    ///   - dataAvailable: indicates if the database was updated
     public func setup(update: Bool = true, forceFullDownload: Bool = false, completion: @escaping (_ dataAvailable: AppDbAvailability) -> () ) {
         self.db = self.openDb()
 
@@ -251,9 +251,9 @@ final class ProductDB: ProductProvider {
         }
 
         if update {
-            self.updateDatabase(forceFullDownload: forceFullDownload) { newData in
+            self.updateDatabase(forceFullDownload: forceFullDownload) { dataAvailable in
                 self.executeInitialSQL()
-                completion(newData)
+                completion(dataAvailable)
             }
         } else {
             self.executeInitialSQL()
@@ -264,7 +264,7 @@ final class ProductDB: ProductProvider {
     /// - Parameters:
     ///   - forceFullDownload: if true, force a full download of the product database
     ///   - completion: This is called asynchronously on the main thread, after the update check has finished.
-    ///   - newData: indicates if new data is available
+    ///   - dataAvailable: indicates if new data is available
     public func updateDatabase(forceFullDownload: Bool, completion: @escaping (_ dataAvailable: AppDbAvailability)->() ) {
         let schemaVersion = "\(self.schemaVersionMajor).\(self.schemaVersionMinor)"
         let revision = (forceFullDownload || !self.hasDatabase()) ? 0 : self.revision
