@@ -58,6 +58,7 @@ extension ProductDB {
         task.resume()
         self.downloadTask = task
     }
+
 }
 
 // https://developer.apple.com/documentation/foundation/url_loading_system/pausing_and_resuming_downloads
@@ -68,6 +69,8 @@ class AppDBDownloadDelegate: CertificatePinningDelegate, URLSessionDownloadDeleg
     private var response: URLResponse?
     private weak var productDb: ProductDB?
     private let start = Date.timeIntervalSinceReferenceDate
+    private var bytesReceived: Int64 = 0
+    private var mbps = 0.0 // megabytes/second
 
     init(_ productDb: ProductDB, _ completion: @escaping (AppDbResponse) -> ()) {
         self.productDb = productDb
@@ -76,12 +79,14 @@ class AppDBDownloadDelegate: CertificatePinningDelegate, URLSessionDownloadDeleg
 
     // MARK: - download delegate
 
-    /*
     func urlSession(_ session: URLSession, downloadTask: URLSessionDownloadTask, didWriteData bytesWritten: Int64, totalBytesWritten: Int64, totalBytesExpectedToWrite: Int64) {
-        let url = downloadTask.currentRequest?.url?.absoluteString ?? "n/a"
-        print("\(url) wrote \(bytesWritten), total \(totalBytesWritten), expect \(totalBytesExpectedToWrite)")
+        let elapsed = Date.timeIntervalSinceReferenceDate - self.start
+        self.bytesReceived += bytesWritten
+
+        if elapsed > 0 {
+            self.mbps = Double(self.bytesReceived) / elapsed / 1024 / 1024
+        }
     }
-    */
     
     func urlSession(_ session: URLSession, downloadTask: URLSessionDownloadTask, didFinishDownloadingTo location: URL) {
         let url = downloadTask.currentRequest?.url?.absoluteString ?? "n/a"
@@ -91,6 +96,7 @@ class AppDBDownloadDelegate: CertificatePinningDelegate, URLSessionDownloadDeleg
         self.productDb?.downloadTask = nil
         let fileData = try? Data(contentsOf: location)
         if let data = fileData, let response = downloadTask.response as? HTTPURLResponse {
+            // print("got bytes: \(data.count) \(self.bytesReceived), \(self.mbps) MB/s")
             if response.statusCode == 304 {
                 completion(.noUpdate)
                 return
