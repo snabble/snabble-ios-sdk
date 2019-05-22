@@ -93,12 +93,18 @@ public protocol ProductProvider: class {
     /// - parameter dataAvailable: indicates if new data is available
     func updateDatabase(forceFullDownload: Bool, completion: @escaping (_ dataAvailable: AppDbAvailability) -> ())
 
-    /// attempt to resume a previously aborted update of the product database
-    /// calling this method when there is no previous download has no effect.
+    /// attempt to resume a previously interrupted update of the product database
+    /// calling this method when there is no previous resumable download has no effect.
     ///
     /// - parameter completion: This is called asynchronously on the main thread after the database update check has finished
     /// - parameter dataAvailable: indicates if new data is available
-    func resumeAbortedUpdate(completion: @escaping (_ dataAvailable: AppDbAvailability) -> ())
+    func resumeIncompleteUpdate(completion: @escaping (_ dataAvailable: AppDbAvailability) -> ())
+
+    /// stop the currently running product database update, if one is in progress.
+    ///
+    /// if possible, this will create the necessary resume data so that the download can be continued later
+    /// by calling `resumeIncompleteUpdate(completion:)`
+    func stopDatabaseUpdate()
 
     /// get a product by its SKU
     func productBySku(_ sku: String, _ shopId: String) -> Product?
@@ -190,7 +196,7 @@ public extension ProductProvider {
 
 
 final class ProductDB: ProductProvider {
-    internal let supportedSchemaVersion = 1
+    internal let supportedSchemaVersion = "1"
 
     private let dbName = "products.sqlite3"
     private var db: DatabaseQueue?
@@ -273,7 +279,7 @@ final class ProductDB: ProductProvider {
         }
     }
 
-    public func resumeAbortedUpdate(completion: @escaping (_ dataAvailable: AppDbAvailability)->() ) {
+    public func resumeIncompleteUpdate(completion: @escaping (_ dataAvailable: AppDbAvailability)->() ) {
         guard self.appDbAvailability == .incomplete else {
             return
         }
@@ -288,6 +294,17 @@ final class ProductDB: ProductProvider {
         }
     }
 
+    public func stopDatabaseUpdate() {
+        guard let task = self.downloadTask else {
+            return
+        }
+
+        task.cancel { data in
+            self.resumeData = data
+            self.appDbAvailability = data != nil ? .incomplete : .unknown
+        }
+    }
+    
     private func processAppDbResponse(_ dbResponse: AppDbResponse, _ completion: @escaping (_ dataAvailable: AppDbAvailability)->() ) {
         DispatchQueue.global(qos: .userInitiated).async {
             let tempDbPath = self.dbPathname(temporary: true)
