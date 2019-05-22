@@ -442,22 +442,22 @@ final class ProductDB: ProductProvider {
             }
 
             if ok {
-                let result = try tempDb.inDatabase { db in
-                    return try String.fetchAll(db, """
-                        select value from metadata where key='\(MetadataKeys.schemaVersionMajor)'
-                        union
-                        select value from metadata where key='\(MetadataKeys.schemaVersionMinor)'
-                        union
-                        select value from metadata where key='\(MetadataKeys.revision)'
-                        """)
+                let keys = [ MetadataKeys.schemaVersionMajor, MetadataKeys.schemaVersionMinor, MetadataKeys.revision ]
+                let rows: [Row] = try tempDb.inDatabase { db in
+                    let list = keys.map { "\"\($0)\"" }.joined(separator: ",")
+                    return try Row.fetchAll(db, "select key, value from metadata where key in (\(list))")
                 }
-                guard result.count == 3 else {
+                guard rows.count == keys.count else {
                     return false
                 }
 
-                let majorVersion = Int(result[0]) ?? 0
-                let minorVersion = Int(result[1]) ?? 0
-                let revision = Int(result[2]) ?? 0
+                let metadata = rows
+                    .compactMap { ($0["key"] as String, $0["value"] as String) }
+                    .reduce(into: [:]) { $0[$1.0] = $1.1 }
+
+                let majorVersion = metadata[MetadataKeys.schemaVersionMajor] ?? "0"
+                let minorVersion = metadata[MetadataKeys.schemaVersionMinor] ?? "0"
+                let revision = metadata[MetadataKeys.revision] ?? "0"
 
                 if majorVersion != self.supportedSchemaVersion {
                     return false
