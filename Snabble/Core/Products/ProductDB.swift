@@ -459,24 +459,14 @@ final class ProductDB: ProductProvider {
             }
 
             if ok {
-                let keys = [ MetadataKeys.schemaVersionMajor, MetadataKeys.schemaVersionMinor, MetadataKeys.revision ]
-                let rows: [Row] = try tempDb.inDatabase { db in
-                    let list = keys.map { "\"\($0)\"" }.joined(separator: ",")
-                    return try Row.fetchAll(db, "select key, value from metadata where key in (\(list))")
-                }
-                guard rows.count == keys.count else {
-                    return false
-                }
+                let metadata = self.metadata(tempDb)
 
-                let metadata = rows
-                    .compactMap { ($0["key"] as String, $0["value"] as String) }
-                    .reduce(into: [:]) { $0[$1.0] = $1.1 }
-
-                let majorVersion = metadata[MetadataKeys.schemaVersionMajor] ?? "0"
-                let minorVersion = metadata[MetadataKeys.schemaVersionMinor] ?? "0"
-                let revision = metadata[MetadataKeys.revision] ?? "0"
-
-                if majorVersion != self.supportedSchemaVersion {
+                guard
+                    let majorVersion = metadata[MetadataKeys.schemaVersionMajor],
+                    let minorVersion = metadata[MetadataKeys.schemaVersionMinor],
+                    let revision = metadata[MetadataKeys.revision],
+                    majorVersion == self.supportedSchemaVersion
+                else {
                     return false
                 }
 
