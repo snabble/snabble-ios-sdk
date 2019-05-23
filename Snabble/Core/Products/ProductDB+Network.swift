@@ -20,23 +20,31 @@ extension ProductDB {
     fileprivate static let sqlType = "application/vnd+snabble.appdb+sql"
     fileprivate static let sqliteType = "application/vnd+snabble.appdb+sqlite3"
     private static let contentTypes = "\(sqlType),\(sqliteType)"
-    
+
+    func appDbSession(_ completion: @escaping (AppDbResponse) -> ()) -> URLSession {
+        let delegate = AppDBDownloadDelegate(self, completion)
+        return URLSession(configuration: .default, delegate: delegate, delegateQueue: nil)
+    }
+
     func getAppDb(currentRevision: Int64, schemaVersion: String, forceFullDb: Bool = false, completion: @escaping (AppDbResponse) -> () ) {
         let parameters = [
             "havingRevision": "\(currentRevision)",
             "schemaVersion": schemaVersion
         ]
 
-        self.downloadTask?.cancel()
+        if self.downloadTask != nil {
+            Log.warn("appDB download task already running, ignoring update request")
+            return
+        }
+
         self.project.request(.get, self.project.links.appdb.href, json: false, parameters: parameters, timeout: 0) { request in
             guard var request = request else {
                 return completion(.httpError)
             }
 
             request.setValue(ProductDB.contentTypes, forHTTPHeaderField: "Accept")
-            let delegate = AppDBDownloadDelegate(self, completion)
-            let session = URLSession(configuration: .default, delegate: delegate, delegateQueue: OperationQueue.main)
 
+            let session = self.appDbSession(completion)
             let task = session.downloadTask(with: request)
             task.resume()
             self.downloadTask = task
@@ -48,20 +56,20 @@ extension ProductDB {
             return
         }
 
-        Log.info("resuming d/l of appdb")
-        self.downloadTask?.cancel()
+        if self.downloadTask != nil {
+            Log.warn("appDB download task already running, ignoring resume request")
+            return
+        }
 
-        let delegate = AppDBDownloadDelegate(self, completion)
-        let session = URLSession(configuration: .default, delegate: delegate, delegateQueue: nil)
-
+        Log.info("resuming download of appdb")
+        
+        let session = self.appDbSession(completion)
         let task = session.downloadTask(withResumeData: resumeData)
         task.resume()
         self.downloadTask = task
     }
 
 }
-
-// https://developer.apple.com/documentation/foundation/url_loading_system/pausing_and_resuming_downloads
 
 class AppDBDownloadDelegate: CertificatePinningDelegate, URLSessionDownloadDelegate {
 
@@ -86,6 +94,7 @@ class AppDBDownloadDelegate: CertificatePinningDelegate, URLSessionDownloadDeleg
         if elapsed > 0 {
             self.mbps = Double(self.bytesReceived) / elapsed / 1024 / 1024
         }
+        // print("download progress: \(totalBytesWritten ) \(self.mbps)")
     }
     
     func urlSession(_ session: URLSession, downloadTask: URLSessionDownloadTask, didFinishDownloadingTo location: URL) {
