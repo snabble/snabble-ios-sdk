@@ -451,7 +451,7 @@ final class ProductDB: ProductProvider {
             // open the db and check its integrity
             let tempDb = try DatabaseQueue(path: tempDbPath)
             let ok: Bool = try tempDb.inDatabase { db in
-                if let result = try String.fetchOne(db, "pragma integrity_check") {
+                if let result = try String.fetchOne(db, sql: "pragma integrity_check") {
                     return result.lowercased() == "ok"
                 } else {
                     return false
@@ -495,7 +495,7 @@ final class ProductDB: ProductProvider {
             let fmt = ISO8601DateFormatter()
             let now = fmt.string(from: Date())
             try dbQueue.inDatabase { db in
-                try db.execute("insert or replace into metadata values(?,?)", arguments: [MetadataKeys.appLastUpdate, now])
+                try db.execute(sql: "insert or replace into metadata values(?,?)", arguments: [MetadataKeys.appLastUpdate, now])
             }
         } catch {
             self.logError("setLastUpdate failed: \(error)")
@@ -513,7 +513,7 @@ final class ProductDB: ProductProvider {
             let tempDb = try DatabaseQueue(path: tempDbPath)
 
             try tempDb.inTransaction { db in
-                try db.execute(statements)
+                try db.execute(sql: statements)
                 return .commit
             }
 
@@ -594,7 +594,7 @@ final class ProductDB: ProductProvider {
             for statement in statements {
                 Log.warn("execute SQL: \(statement)")
                 try dbQueue.inDatabase { db in
-                    try db.execute(statement)
+                    try db.execute(sql: statement)
                 }
             }
         } catch {

@@ -8,7 +8,7 @@
 
 Pod::Spec.new do |s|
   s.name             = 'Snabble'
-  s.version          = '0.9.24'
+  s.version          = '0.9.25'
   s.summary          = 'The snabble iOS SDK'
 
   s.description      = <<-DESC
@@ -23,11 +23,11 @@ Pod::Spec.new do |s|
   s.social_media_url = 'https://twitter.com/snabble_io'
 
   s.ios.deployment_target = '10.0'
-  s.swift_version = '4.2'
+  s.swift_versions = ['4.2', '5.0']
 
   s.subspec 'Core' do |core|
     core.source_files = 'Snabble/Core/**/*.swift'
-    core.dependency 'GRDB.swift', '~> 3'
+    core.dependency 'GRDB.swift', '~> 4'
     core.dependency 'Zip', '~> 1'
     core.dependency 'OneTimePassword', '~> 3'
     core.dependency 'TrustKit', '~> 1'

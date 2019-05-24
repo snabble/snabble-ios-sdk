@@ -1,5 +1,9 @@
 ## snabble iOS SDK Changelog
 
+# v0.9.25
+
+* Update GRDB.swift to v4.x, specify compatibility with Swift versions 4.2 and 5.0 in `Snabble.podspec`. This requires using cocoapods v1.7.0 or later to work. The deprecated `.swiftversion` file has been removed.
+
 # v0.9.24
 
 * Adds client-side support for resuming failed downloads of the product database (this feature is not yet enabled on our backend servers). Apps can use the new `appDbAvailability` property of `ProductProvider` to determine if the last download attempt was incomplete, and can call `resumeAbortedUpdate` when connectivity is restored (monitoring connectivity is the app's responsibility, e.g. via one of the various `Reachability` implementations). This new feature makes a minor breaking change to the parameter of the closure invoked by the `setup` and `updateDatabase` methods of `ProductProvider`: the type has changed from `Bool` to `AppDbAvailability`. 
