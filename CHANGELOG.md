@@ -2,7 +2,7 @@
 
 # v0.9.25
 
-* Update GRDB.swift to v4.x, specify compatibility with Swift versions 4.2 and 5.0 in `Snabble.podspec`. This requires using cocoapods v1.7.0 or later to work. The deprecated `.swiftversion` file has been removed.
+* Update `GRDB.swift` to v4.0 and specify compatibility with Swift versions 4.2 and 5.0 in `Snabble.podspec`. From this version onward, cocoapods v1.7.0 or later is required to install the SDK. The deprecated `.swiftversion` file has been removed.
 
 # v0.9.24
 
