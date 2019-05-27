@@ -286,6 +286,7 @@ public struct Project: Decodable {
         self.messages = nil
     }
 
+    @available(*, deprecated, message: "no longer supported, will be removed soon")
     public static let none = Project()
 }
 
@@ -452,6 +453,7 @@ public struct Shop: Decodable {
         self.externalId = nil
     }
 
+    @available(*, deprecated, message: "no longer supported, will be removed soon")
     public static let none = Shop()
 }
 
