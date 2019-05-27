@@ -156,6 +156,7 @@ public struct ProjectMessages: Decodable {
 
 public struct Project: Decodable {
     public let id: String
+    public let name: String
     public let links: ProjectLinks
     public let rawLinks: [String: Link]
 
@@ -184,7 +185,7 @@ public struct Project: Decodable {
     public let messages: ProjectMessages?
 
     enum CodingKeys: String, CodingKey {
-        case id, links
+        case id, name, links
         case currency, decimalDigits, locale, roundingMode
         case encodedCodes
         case shops, scanFormats, customerCards, codeTemplates, searchableTemplates, priceOverrideCodes, checkoutLimits
@@ -195,6 +196,7 @@ public struct Project: Decodable {
         let container = try decoder.container(keyedBy: CodingKeys.self)
 
         self.id = try container.decode(String.self, forKey: .id)
+        self.name = (try container.decodeIfPresent(String.self, forKey: .name)) ?? ""
         self.links = try container.decode(ProjectLinks.self, forKey: .links)
         self.rawLinks = try container.decode([String: Link].self, forKey: .links)
 
@@ -227,6 +229,7 @@ public struct Project: Decodable {
 
     private init() {
         self.id = "none"
+        self.name = ""
         self.links = ProjectLinks.empty
         self.rawLinks = [:]
         self.currency = ""
@@ -248,6 +251,7 @@ public struct Project: Decodable {
     // only used for unit tests
     internal init(decimalDigits: Int, locale: String, currency: String, currencySymbol: String) {
         self.id = "none"
+        self.name = ""
         self.links = ProjectLinks.empty
         self.rawLinks = [:]
         self.currency = currency
@@ -268,6 +272,7 @@ public struct Project: Decodable {
 
     internal init(links: ProjectLinks) {
         self.id = "none"
+        self.name = ""
         self.links = links
         self.rawLinks = [:]
         self.currency = ""
