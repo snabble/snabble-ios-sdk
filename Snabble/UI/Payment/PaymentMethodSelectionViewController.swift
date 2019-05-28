@@ -124,9 +124,9 @@ final class PaymentMethodSelectionViewController: UIViewController {
             case .success(let viewController):
                 self.navigationController?.pushViewController(viewController, animated: true)
             case .failure(let error):
-                    let handled = self.process.delegate.handlePaymentError(error)
-                    if !handled {
-                        self.process.delegate.showWarningMessage("Snabble.Payment.errorStarting".localized())
+                let handled = self.process.delegate.handlePaymentError(error)
+                if !handled {
+                    self.process.delegate.showWarningMessage("Snabble.Payment.errorStarting".localized())
                 }
             }
         }
