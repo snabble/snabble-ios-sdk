@@ -12,6 +12,7 @@ enum EventType: String, Encodable {
     case cart
     case error
     case log
+    case analytics
 }
 
 private struct Session: Encodable {
@@ -23,11 +24,18 @@ private struct Message: Encodable {
     let session: String?
 }
 
+private struct Analytics: Encodable {
+    let key: String
+    let value: String
+    let comment: String
+}
+
 private enum Payload: Encodable {
     case session(Session)
     case error(Message)
     case cart(Cart)
     case log(Message)
+    case analytics(Analytics)
 
     func encode(to encoder: Encoder) throws {
         var container = encoder.singleValueContainer()
@@ -36,6 +44,7 @@ private enum Payload: Encodable {
         case .error(let msg): try container.encode(msg)
         case .log(let msg): try container.encode(msg)
         case .cart(let cart): try container.encode(cart)
+        case .analytics(let analytics): try container.encode(analytics)
         }
     }
 }
@@ -103,6 +112,11 @@ struct AppEvent: Encodable {
     init(log: String, project: Project, session: String? = nil, shopId: String? = nil) {
         let log = Payload.log(Message(message: log, session: session))
         self.init(type: .log, payload: log, project: project, shopId: shopId)
+    }
+
+    init(key: String, value: String, comment: String = "", project: Project) {
+        let analytics = Payload.analytics(Analytics(key: key, value: value, comment: comment))
+        self.init(type: .analytics, payload: analytics, project: project)
     }
 
     init(_ shoppingCart: ShoppingCart) {

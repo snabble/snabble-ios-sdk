@@ -139,7 +139,7 @@ final class TokenRegistry {
         let parameters = [ "role": "retailerApp" ]
 
         let url = project.links.tokens.href
-        project.request(.get, url, jwtRequired: false, parameters: parameters, timeout: 2) { request in
+        project.request(.get, url, jwtRequired: false, parameters: parameters, timeout: 5) { request in
             guard
                 var request = request,
                 let password = self.generatePassword(date),

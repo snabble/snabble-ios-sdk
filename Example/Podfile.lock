@@ -1,17 +1,19 @@
 PODS:
   - Base32 (1.1.2)
-  - GRDB.swift (3.7.0)
+  - GRDB.swift (4.0.0):
+    - GRDB.swift/standard (= 4.0.0)
+  - GRDB.swift/standard (4.0.0)
   - OneTimePassword (3.1.5):
     - Base32 (~> 1.1.2)
-  - Snabble (0.9.22):
-    - Snabble/Core (= 0.9.22)
-    - Snabble/UI (= 0.9.22)
-  - Snabble/Core (0.9.22):
-    - GRDB.swift (~> 3)
+  - Snabble (0.9.25):
+    - Snabble/Core (= 0.9.25)
+    - Snabble/UI (= 0.9.25)
+  - Snabble/Core (0.9.25):
+    - GRDB.swift (~> 4)
     - OneTimePassword (~> 3)
     - TrustKit (~> 1)
     - Zip (~> 1)
-  - Snabble/UI (0.9.22):
+  - Snabble/UI (0.9.25):
     - Snabble/Core
   - TrustKit (1.6.1)
   - Zip (1.1.0)
@@ -33,12 +35,12 @@ EXTERNAL SOURCES:
 
 SPEC CHECKSUMS:
   Base32: 163c298644d184e89ca4e00a996bad6bf5166390
-  GRDB.swift: 51cc9e57ae8ff7083a9d674c97925aa1de06aac5
+  GRDB.swift: 30cf6c14fea491549b654d7649493320ed7e93ed
   OneTimePassword: 247500f67ab074f10501bb1c46bd1596c57bdb2a
-  Snabble: 270125f1a3e0083d0422fd09b5de288f72cc9461
+  Snabble: 4bbe132720a31e10f97b2550e8cb628cee1f2da8
   TrustKit: 0660dd1ce827ae7c8f553f35502a8542e248188f
   Zip: 8877eede3dda76bcac281225c20e71c25270774c
 
 PODFILE CHECKSUM: 5fe949c2bbae7d80c6adb3e0c7cccc072f60642a
 
-COCOAPODS: 1.6.1
+COCOAPODS: 1.7.0

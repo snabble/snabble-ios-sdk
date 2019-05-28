@@ -170,10 +170,10 @@ extension ProductDB {
     func createFullTextIndex(_ dbQueue: DatabaseQueue) throws {
         let start = Date.timeIntervalSinceReferenceDate
         try dbQueue.inDatabase { db in
-            try db.execute("drop table if exists searchByName_tmp")
-            try db.execute("create virtual table searchByName_tmp using fts4(sku text, foldedname text)")
+            try db.execute(sql: "drop table if exists searchByName_tmp")
+            try db.execute(sql: "create virtual table searchByName_tmp using fts4(sku text, foldedname text)")
 
-            let rows = try Row.fetchCursor(db, "select sku, name from products")
+            let rows = try Row.fetchCursor(db, sql: "select sku, name from products")
 
             try db.inTransaction {
                 while let row = try rows.next() {
@@ -182,14 +182,14 @@ extension ProductDB {
                     }
 
                     let foldedName = name.folding(options: [.diacriticInsensitive, .caseInsensitive], locale: .current)
-                    try db.execute("insert into searchByName_tmp values(?, ?)", arguments: [ sku, foldedName ])
+                    try db.execute(sql: "insert into searchByName_tmp values(?, ?)", arguments: [ sku, foldedName ])
                 }
                 return .commit
             }
 
-            try db.execute("drop table if exists searchByName")
-            try db.execute("alter table searchByName_tmp rename to searchByName")
-            try db.execute("vacuum")
+            try db.execute(sql: "drop table if exists searchByName")
+            try db.execute(sql: "alter table searchByName_tmp rename to searchByName")
+            try db.execute(sql: "vacuum")
         }
         let elapsed = Date.timeIntervalSinceReferenceDate - start
         Log.debug("update took \(elapsed)")
@@ -255,19 +255,11 @@ extension ProductDB {
     private func getPriceRowForSku(_ dbQueue: DatabaseQueue, _ sku: String, _ shopId: String) -> Row? {
         do {
             let row = try dbQueue.inDatabase { db in
-                return  try self.fetchOne(db, """
+                return try self.fetchOne(db, """
                         select * from prices where pricingCategory = ifnull((select pricingCategory from shops where shops.id = ?), '0') and sku = ?
                         """, arguments: [shopId, sku])
             }
-            if row != nil {
-                return row
-            }
-            let row2 = try dbQueue.inDatabase { db in
-                return  try self.fetchOne(db, """
-                        select * from prices where pricingCategory = 0 and sku = ?
-                        """, arguments: [sku])
-            }
-            return row2
+            return row
         } catch {
             self.logError("getPriceRowForSku db error: \(error)")
         }
@@ -295,25 +287,25 @@ extension ProductDB {
         return scannableCodes
     }
 
-    // timing-logging wrappers around Row.fecthOne/fetchAll
+    // timing-logging wrappers around Row.fetchOne/fetchAll
 
-    private func fetchOne(_ db: Database, _ query: String, arguments: StatementArguments? = nil) throws -> Row? {
+    private func fetchOne(_ db: Database, _ query: String, arguments: StatementArguments = StatementArguments()) throws -> Row? {
         let start = Date.timeIntervalSinceReferenceDate
         defer {
             self.logSlowQuery(db, query, arguments, start)
         }
-        return try Row.fetchOne(db, query, arguments: arguments, adapter: nil)
+        return try Row.fetchOne(db, sql: query, arguments: arguments, adapter: nil)
     }
 
-    private func fetchAll(_ db: Database, _ query: String, arguments: StatementArguments? = nil) throws -> [Row] {
+    private func fetchAll(_ db: Database, _ query: String, arguments: StatementArguments = StatementArguments()) throws -> [Row] {
         let start = Date.timeIntervalSinceReferenceDate
         defer {
             self.logSlowQuery(db, query, arguments, start)
         }
-        return try Row.fetchAll(db, query, arguments: arguments, adapter: nil)
+        return try Row.fetchAll(db, sql: query, arguments: arguments, adapter: nil)
     }
 
-    private func logSlowQuery(_ db: Database, _ query: String, _ arguments: StatementArguments?, _ start: TimeInterval) {
+    private func logSlowQuery(_ db: Database, _ query: String, _ arguments: StatementArguments, _ start: TimeInterval) {
         let elapsed = Date.timeIntervalSinceReferenceDate - start
 
         if _isDebugAssertConfiguration() && elapsed >= 0.01 {
@@ -322,9 +314,9 @@ extension ProductDB {
         }
     }
 
-    private func queryPlan(_ db: Database, _ query: String, _ arguments: StatementArguments?) {
+    private func queryPlan(_ db: Database, _ query: String, _ arguments: StatementArguments = StatementArguments()) {
         do {
-            for explain in try Row.fetchAll(db, "EXPLAIN QUERY PLAN " + query, arguments: arguments) {
+            for explain in try Row.fetchAll(db, sql: "EXPLAIN QUERY PLAN " + query, arguments: arguments) {
                 Log.debug("EXPLAIN: \(explain)")
             }
         } catch {

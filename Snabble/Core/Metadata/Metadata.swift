@@ -157,6 +157,7 @@ public struct ProjectMessages: Decodable {
 
 public struct Project: Decodable {
     public let id: String
+    public let name: String
     public let links: ProjectLinks
     public let rawLinks: [String: Link]
 
@@ -182,10 +183,10 @@ public struct Project: Decodable {
 
     public let checkoutLimits: CheckoutLimits?
 
-    public let messsages: ProjectMessages?
+    public let messages: ProjectMessages?
 
     enum CodingKeys: String, CodingKey {
-        case id, links
+        case id, name, links
         case currency, decimalDigits, locale, roundingMode
         case encodedCodes
         case shops, scanFormats, customerCards, codeTemplates, searchableTemplates, priceOverrideCodes, checkoutLimits
@@ -196,6 +197,7 @@ public struct Project: Decodable {
         let container = try decoder.container(keyedBy: CodingKeys.self)
 
         self.id = try container.decode(String.self, forKey: .id)
+        self.name = try container.decode(String.self, forKey: .name)
         self.links = try container.decode(ProjectLinks.self, forKey: .links)
         self.rawLinks = try container.decode([String: Link].self, forKey: .links)
 
@@ -223,11 +225,12 @@ public struct Project: Decodable {
         self.searchableTemplates = try container.decodeIfPresent([String].self, forKey: .searchableTemplates)
         self.priceOverrideCodes = try container.decodeIfPresent([PriceOverrideCode].self, forKey: .priceOverrideCodes)
         self.checkoutLimits = try container.decodeIfPresent(CheckoutLimits.self, forKey: .checkoutLimits)
-        self.messsages = try container.decodeIfPresent(ProjectMessages.self, forKey: .messages)
+        self.messages = try container.decodeIfPresent(ProjectMessages.self, forKey: .messages)
     }
 
     private init() {
         self.id = "none"
+        self.name = ""
         self.links = ProjectLinks.empty
         self.rawLinks = [:]
         self.currency = ""
@@ -243,12 +246,13 @@ public struct Project: Decodable {
         self.searchableTemplates = nil
         self.priceOverrideCodes = nil
         self.checkoutLimits = nil
-        self.messsages = nil
+        self.messages = nil
     }
 
     // only used for unit tests
     internal init(decimalDigits: Int, locale: String, currency: String, currencySymbol: String) {
         self.id = "none"
+        self.name = ""
         self.links = ProjectLinks.empty
         self.rawLinks = [:]
         self.currency = currency
@@ -264,11 +268,12 @@ public struct Project: Decodable {
         self.searchableTemplates = nil
         self.priceOverrideCodes = nil
         self.checkoutLimits = nil
-        self.messsages = nil
+        self.messages = nil
     }
 
     internal init(links: ProjectLinks) {
         self.id = "none"
+        self.name = ""
         self.links = links
         self.rawLinks = [:]
         self.currency = ""
@@ -284,9 +289,10 @@ public struct Project: Decodable {
         self.searchableTemplates = nil
         self.priceOverrideCodes = nil
         self.checkoutLimits = nil
-        self.messsages = nil
+        self.messages = nil
     }
 
+    @available(*, deprecated, message: "no longer supported, will be removed soon")
     public static let none = Project()
 }
 
@@ -435,24 +441,25 @@ public struct Shop: Decodable {
     }
 
     private init() {
-        self.id = "n/a"
-        self.name = "none"
-        self.project = "none"
+        self.id = ""
+        self.name = ""
+        self.project = ""
         self.latitude = 0
         self.longitude = 0
-        self.email = "email@example.com"
-        self.phone = "+1 234 567 8901"
-        self.city = "Teststadt"
-        self.street = "Teststraße"
-        self.postalCode = "12345"
+        self.email = ""
+        self.phone = ""
+        self.city = ""
+        self.street = ""
+        self.postalCode = ""
         self.state = ""
-        self.country = "DE"
+        self.country = ""
         self.openingHoursSpecification = []
         self.services = []
         self.external = [:]
         self.externalId = nil
     }
 
+    @available(*, deprecated, message: "no longer supported, will be removed soon")
     public static let none = Shop()
 }
 

@@ -2,6 +2,7 @@
 
 ![License](https://img.shields.io/github/license/mashape/apistatus.svg) 
 ![Swift 4.2](https://img.shields.io/badge/Swift-4.2-green.svg)
+![Swift 5.0](https://img.shields.io/badge/Swift-5.0-green.svg)
 [![Build](https://api.travis-ci.org/snabble/iOS-SDK.svg?branch=master)](https://travis-ci.org/snabble/iOS-SDK) 
 [![Version](https://img.shields.io/cocoapods/v/Snabble.svg)](http://cocoapods.org/pods/Snabble) 
 
@@ -11,8 +12,8 @@ snabble - the self-scanning and checkout platform.
 
 ### CocoaPods
 
-Snabble is available through [CocoaPods](https://cocoapods.org). To install it, 
-simply add the following line to your Podfile:
+Snabble is available through [CocoaPods](https://cocoapods.org), v1.7.0 or later is required.  
+To install snabble, add the following line to your Podfile:
 
 ```
 pod 'Snabble'
@@ -24,7 +25,7 @@ If you only need the core functionality without any UI components, use
 pod 'Snabble/Core'
 ```
 
-As with all cocoapods written in Swift, make sure you have `use_frameworks!` in your Podfile.
+instead. As with all cocoapods written in Swift, make sure you have `use_frameworks!` in your Podfile.
 
 ### Carthage 
 
@@ -47,7 +48,7 @@ Build the example project, as described below, and copy the following frameworks
 
 ## Versioning
 
-snabble follows [semantic versioning](https://semver.org/) rules.
+Snabble follows [semantic versioning](https://semver.org/) rules.
 Note that we are currently in initial development, with major version 0. Anything may change at any time.
 
 ## Example project

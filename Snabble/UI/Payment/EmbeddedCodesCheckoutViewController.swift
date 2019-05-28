@@ -178,6 +178,7 @@ final class EmbeddedCodesCheckoutViewController: UIViewController {
         })
 
         let chunks = self.divideIntoChunks(lines, maxSize: self.qrCodeConfig.maxCodes)
+        // TODO: add N;M to header line, see https://github.com/snabble/docs/pull/60
         let blocks = chunks.map {
             return [ "snabble;" ] + $0
         }

@@ -10,6 +10,23 @@ This version brings major changes to the scanning subsystem. It is now much easi
 
 Sample code for implementations of `BarcodeDetector` based on third-party SDKs (currently [Digimarc](https://www.digimarc.com/solutions/mobilesdk), [MLKit Vision](https://developers.google.com/ml-kit/vision/barcode-scanning/), [Scandit](https://www.scandit.com/developers/) and [Tachyoniq](https://www.tachyoniq.com/software-solutions/cortexdecoder-2/)) is available upon request.
 
+# v0.9.26
+
+* The public `Project.none` and `Shop.none` instances have been decreated and will be removed soon.
+* The `name` property has been added to `Project`, it contains the display name of each project that is already visible in the retailer portal.
+
+# v0.9.25
+
+* Update `GRDB.swift` to v4.0 and specify compatibility with Swift versions 4.2 and 5.0 in `Snabble.podspec`. From this version onward, cocoapods v1.7.0 or later is required to install the SDK. The deprecated `.swiftversion` file has been removed.
+
+# v0.9.24
+
+* Adds client-side support for resuming failed downloads of the product database (this feature is not yet enabled on our backend servers). Apps can use the new `appDbAvailability` property of `ProductProvider` to determine if the last download attempt was incomplete, and can call `resumeAbortedUpdate` when connectivity is restored (monitoring connectivity is the app's responsibility, e.g. via one of the various `Reachability` implementations). This new feature makes a minor breaking change to the parameter of the closure invoked by the `setup` and `updateDatabase` methods of `ProductProvider`: the type has changed from `Bool` to `AppDbAvailability`. 
+
+# v0.9.23
+
+* Removes the back button from `SepaCheckoutViewController`
+>>>>>>> master
 
 # v0.9.22
 
