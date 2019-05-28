@@ -196,7 +196,7 @@ public struct Project: Decodable {
         let container = try decoder.container(keyedBy: CodingKeys.self)
 
         self.id = try container.decode(String.self, forKey: .id)
-        self.name = (try container.decodeIfPresent(String.self, forKey: .name)) ?? ""
+        self.name = try container.decode(String.self, forKey: .name)
         self.links = try container.decode(ProjectLinks.self, forKey: .links)
         self.rawLinks = try container.decode([String: Link].self, forKey: .links)
 
