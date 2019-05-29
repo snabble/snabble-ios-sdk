@@ -216,7 +216,7 @@ extension ProductDB {
 
         var depositPrice: Int?
         if let dSku = depositSku, let depositProduct = self.productBySku(dbQueue, dSku, shopId) {
-            depositPrice = depositProduct.price
+            depositPrice = depositProduct.price(nil)
         }
 
         let bundles = self.productsBundling(dbQueue, sku, shopId)

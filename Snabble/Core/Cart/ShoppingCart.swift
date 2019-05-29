@@ -19,10 +19,6 @@ public struct CartConfig {
     /// the shop that this cart is used for
     public var shop = Shop.none
 
-    /// the customer's loyalty card, if known
-    @available(*, deprecated, message: "this will be removed soon. implement ShoppingCartDelegate.getLoyaltyCard(_:) instead")
-    public var loyaltyCard: String? = nil
-
     /// the maximum age of a shopping cart, in seconds. Set this to 0 to keep carts forever
     public var maxAge: TimeInterval = 14400
 
@@ -93,17 +89,20 @@ public struct CartItem: Codable {
     public let roundingMode: RoundingMode
     /// uuid of this item
     public let uuid: String
+    /// optional customer Card no.
+    public let customerCard: String?
 
-    public init(_ quantity: Int, _ product: Product, _ scannedCode: ScannedCode, _ roundingMode: RoundingMode) {
+    public init(_ quantity: Int, _ product: Product, _ scannedCode: ScannedCode, _ customerCard: String?, _ roundingMode: RoundingMode) {
         self.quantity = quantity
         self.product = product
         self.scannedCode = scannedCode
+        self.customerCard = customerCard
         self.roundingMode = roundingMode
         self.uuid = UUID().uuidString
     }
 
     /// init with a freshly retrieved copy of `item.product`.
-    init?(updating item: CartItem, _ provider: ProductProvider, _ shopId: String) {
+    init?(updating item: CartItem, _ provider: ProductProvider, _ shopId: String, _ customerCard: String?) {
         guard let product = provider.productBySku(item.product.sku, shopId) else {
             return nil
         }
@@ -111,6 +110,7 @@ public struct CartItem: Codable {
         self.product = product
         self.quantity = item.quantity
         self.scannedCode = item.scannedCode
+        self.customerCard = customerCard
         self.roundingMode = item.roundingMode
         self.uuid = item.uuid
     }
@@ -119,7 +119,7 @@ public struct CartItem: Codable {
     public var canMerge: Bool {
         // yes if it is a single products with a price and we don't have any overrides from the scanned code
         return self.product.type == .singleItem
-            && self.product.price != 0
+            && self.product.price(self.customerCard) != 0
             && self.encodingUnit == nil
             && self.scannedCode.priceOverride == nil
             && self.scannedCode.referencePriceOverride == nil
@@ -153,7 +153,7 @@ public struct CartItem: Codable {
                 return embed
             }
 
-            let price = self.scannedCode.referencePriceOverride ?? self.product.price
+            let price = self.scannedCode.referencePriceOverride ?? self.product.price(self.customerCard)
             let quantity = max(self.quantity, embed)
             return self.roundedPrice(price, quantity, encodingUnit, referenceUnit)
         }
@@ -163,9 +163,9 @@ public struct CartItem: Codable {
             let referenceUnit = product.referenceUnit ?? .kilogram
             let encodingUnit = self.encodingUnit ?? .gram
 
-            return self.roundedPrice(self.product.price, self.quantity, encodingUnit, referenceUnit)
+            return self.roundedPrice(self.product.price(self.customerCard), self.quantity, encodingUnit, referenceUnit)
         }
-        return self.quantity * self.product.priceWithDeposit
+        return self.quantity * self.product.priceWithDeposit(self.customerCard)
     }
 
     private func roundedPrice(_ price: Int, _ quantity: Int, _ encodingUnit: Units, _ referenceUnit: Units) -> Int {
@@ -198,14 +198,14 @@ public struct CartItem: Codable {
 
         let showUnit = self.product.referenceUnit?.hasDimension == true || self.product.type == .userMustWeigh
         if showUnit {
-            let price = self.scannedCode.referencePriceOverride ?? self.product.price
+            let price = self.scannedCode.referencePriceOverride ?? self.product.price(self.customerCard)
             let single = formatter.format(price)
             let unit = self.product.referenceUnit?.display ?? ""
             return "× \(single)/\(unit) = \(total)"
         }
 
         if let deposit = self.product.deposit {
-            let itemPrice = formatter.format(self.product.price)
+            let itemPrice = formatter.format(self.product.price(self.customerCard))
             let depositPrice = formatter.format(deposit * self.quantity)
             return "× \(itemPrice) + \(depositPrice) = \(total)"
         }
@@ -213,7 +213,7 @@ public struct CartItem: Codable {
         if self.effectiveQuantity == 1 {
             return total
         } else {
-            let price = self.scannedCode.referencePriceOverride ?? self.scannedCode.priceOverride ?? self.product.price
+            let price = self.scannedCode.referencePriceOverride ?? self.scannedCode.priceOverride ?? self.product.price(self.customerCard)
             let single = formatter.format(price)
             return "× \(single) = \(total)"
         }
@@ -311,10 +311,11 @@ final public class ShoppingCart {
     private(set) public var backendCartInfo: BackendCartInfo?
     internal var checkoutInfoTask: URLSessionDataTask?
 
-    /// this is intended mainly for the EmbeddedCodesCheckout - use this to append additional codes
-    /// (e.g. special "QR code purchase" marker codes) to the list of scanned codes of this cart
-    @available(*, deprecated, message: "no longer supported, this property will be removed soon")
-    public var additionalCodes: [String]?
+    public var customerCard: String? {
+        didSet {
+            self.updateProducts(self.customerCard)
+        }
+    }
 
     internal var eventTimer: Timer?
 
@@ -442,12 +443,6 @@ final public class ShoppingCart {
             self.session = ""
         }
     }
-
-    /// get this cart's `loyaltyCard`
-    public var loyaltyCard: String? {
-        get { return self.config.loyaltyCard }
-        set { self.config.loyaltyCard = newValue }
-    }
 }
 
 fileprivate struct CartStorage: Codable {
@@ -531,11 +526,12 @@ extension ShoppingCart {
     }
 
     /// update the products in this shopping cart, e.g. after a database update was downloaded
-    public func updateProducts() {
+    /// or when the customer card was changed
+    public func updateProducts(_ customerCard: String? = nil) {
         let provider = SnabbleAPI.productProvider(for: self.config.project)
         var newItems = [CartItem]()
         for item in self.items {
-            if let newItem = CartItem(updating: item, provider, self.config.shop.id) {
+            if let newItem = CartItem(updating: item, provider, self.config.shop.id, customerCard) {
                 newItems.append(newItem)
             } else {
                 newItems.append(item)
@@ -554,7 +550,7 @@ public extension Notification.Name {
 // MARK: backend connection
 extension ShoppingCart {
     func createCart() -> Cart {
-        let customerInfo = Cart.CustomerInfo(loyaltyCard: self.loyaltyCard)
+        let customerInfo = Cart.CustomerInfo(loyaltyCard: self.customerCard)
         return Cart(session: self.session, shopID: self.shopId, customer: customerInfo, items: self.backendItems())
     }
 

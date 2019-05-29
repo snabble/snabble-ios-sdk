@@ -7,7 +7,7 @@
 import UIKit
 
 /// a protocol that users of `ShoppingCartViewController` must implement
-public protocol ShoppingCartDelegate: AnalyticsDelegate, MessageDelegate {
+public protocol ShoppingCartDelegate: AnalyticsDelegate, MessageDelegate, CustomerCardDelegate {
     /// called to determine if checking out is possible, e.g. if required customer card data is present
     /// it is this method's responsibility to display corresponding error messages
     func checkoutAllowed(_ project: Project) -> Bool
@@ -24,11 +24,6 @@ public protocol ShoppingCartDelegate: AnalyticsDelegate, MessageDelegate {
     /// - Parameter error: the error from the backend
     /// - Returns: true if the error has been dealt with and no error messages need to be shown from the SDK
     func handleCheckoutError(_ error: SnabbleError) -> Bool
-
-    /// called to get a customer's loyalty card number. if not nil, this number is passed to the backend as the
-    /// `loyaltyCard` property of the shopping cart, and it is also displayed as part of the QR code, if any of
-    /// the `encodedCodes` payment methods is used
-    func getLoyaltyCard(_ project: Project) -> String?
 }
 
 extension ShoppingCartDelegate {
@@ -38,10 +33,6 @@ extension ShoppingCartDelegate {
 
     public func handleCheckoutError(_ error: SnabbleError) -> Bool {
         return false
-    }
-
-    public func getLoyaltyCard(_ project: Project) -> String? {
-        return nil
     }
 }
 
@@ -97,6 +88,7 @@ public final class ShoppingCartViewController: UIViewController {
         self.keyboardObserver = KeyboardObserver(handler: self)
 
         self.shoppingCart = cart
+        self.shoppingCart.customerCard = self.delegate.getCustomerCard(SnabbleUI.project)
     }
 
     private func setupItems(_ cart: ShoppingCart) {
@@ -311,9 +303,7 @@ public final class ShoppingCartViewController: UIViewController {
         spinner.centerYAnchor.constraint(equalTo: button.centerYAnchor).isActive = true
         button.isEnabled = false
 
-        if self.shoppingCart.loyaltyCard == nil {
-            self.shoppingCart.loyaltyCard = self.delegate.getLoyaltyCard(project)
-        }
+        self.shoppingCart.customerCard = self.delegate.getCustomerCard(project)
 
         self.shoppingCart.createCheckoutInfo(SnabbleUI.project, timeout: 10) { result in
             spinner.stopAnimating()

@@ -160,13 +160,17 @@ public struct Product: Codable {
     public let scanMessage: String?
 
     /// convenience accessor for the price
-    public var price: Int {
-        return self.discountedPrice ?? self.listPrice
+    public func price(_ customerCard: String?) -> Int {
+        if customerCard != nil {
+            return self.customerCardPrice ?? self.discountedPrice ?? self.listPrice
+        } else {
+            return self.discountedPrice ?? self.listPrice
+        }
     }
 
     /// convenience accessor for price including deposit
-    public var priceWithDeposit: Int {
-        return self.price + (self.deposit ?? 0)
+    public func priceWithDeposit(_ customerCard: String?) -> Int {
+        return self.price(customerCard) + (self.deposit ?? 0)
     }
 
     public init(from decoder: Decoder) throws {

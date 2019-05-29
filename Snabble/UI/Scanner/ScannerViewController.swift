@@ -7,7 +7,7 @@
 import UIKit
 import AVFoundation
 
-public protocol ScannerDelegate: AnalyticsDelegate, MessageDelegate {
+public protocol ScannerDelegate: AnalyticsDelegate, MessageDelegate, CustomerCardDelegate {
     func closeScanningView()
     func gotoShoppingCart()
 }
@@ -40,15 +40,18 @@ public final class ScannerViewController: UIViewController {
 
     public init(_ cart: ShoppingCart, _ shop: Shop, delegate: ScannerDelegate, barcodeDetector: BarcodeDetector? = nil) {
         let project = SnabbleUI.project
-        self.productProvider = SnabbleAPI.productProvider(for: project)
-        self.shoppingCart = cart
+
         self.shop = shop
+        self.delegate = delegate
+        self.barcodeDetector = barcodeDetector
+
+        self.shoppingCart = cart
+        self.shoppingCart.customerCard = self.delegate.getCustomerCard(project)
+
+        self.productProvider = SnabbleAPI.productProvider(for: project)
         self.scanFormats = project.scanFormats
 
         super.init(nibName: nil, bundle: Snabble.bundle)
-
-        self.delegate = delegate
-        self.barcodeDetector = barcodeDetector
 
         self.title = "Snabble.Scanner.title".localized()
         self.tabBarItem.image = UIImage.fromBundle("icon-scan-inactive")
@@ -140,6 +143,7 @@ public final class ScannerViewController: UIViewController {
     }
 
     /// reset `shoppingCart` when switching between projects
+    @available(*, deprecated, message: "no longer supported, will be removed soon. Create new instance on project/shop change")
     public func reset(_ cart: ShoppingCart, _ shop: Shop) {
         let project = SnabbleUI.project
         self.productProvider = SnabbleAPI.productProvider(for: project)

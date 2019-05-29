@@ -86,7 +86,7 @@ final class ScanConfirmationView: DesignableView {
             templateId: scannedProduct.templateId ?? "default",
             lookupCode: scannedProduct.lookupCode)
 
-        self.cartItem = CartItem(1, product, scannedCode, SnabbleUI.project.roundingMode)
+        self.cartItem = CartItem(1, product, scannedCode, cart.customerCard, SnabbleUI.project.roundingMode)
 
         let cartQuantity = self.shoppingCart.quantity(of: cartItem)
         self.alreadyInCart = cartQuantity > 0
@@ -132,7 +132,7 @@ final class ScanConfirmationView: DesignableView {
         }
 
         // suppress display when price == 0
-        var hasPrice = product.price != 0
+        var hasPrice = product.price(cart.customerCard) != 0
         if self.cartItem.encodingUnit == .price {
             hasPrice = true
         }
