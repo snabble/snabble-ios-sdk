@@ -13,7 +13,7 @@ extension ProductDB {
 
     static let productQuery = """
         select
-            p.*, 0 as listPrice, null as discountedPrice, null as basePrice,
+            p.*, 0 as listPrice, null as discountedPrice, null as customerCardPrice, null as basePrice,
             null as code_encodingUnit,
             (select group_concat(sc.code) from scannableCodes sc where sc.sku = p.sku) as codes,
             (select group_concat(sc.template) from scannableCodes sc where sc.sku = p.sku) as templates,
@@ -24,7 +24,7 @@ extension ProductDB {
 
     static let productQueryUnits = """
         select
-            p.*, 0 as listPrice, null as discountedPrice, null as basePrice,
+            p.*, 0 as listPrice, null as discountedPrice, null as customerCardPrice, null as basePrice,
             s.encodingUnit as code_encodingUnit,
             (select group_concat(sc.code) from scannableCodes sc where sc.sku = p.sku) as codes,
             (select group_concat(sc.template) from scannableCodes sc where sc.sku = p.sku) as templates,
@@ -237,6 +237,7 @@ extension ProductDB {
                         basePrice: priceRow["basePrice"],
                         listPrice: priceRow["listPrice"],
                         discountedPrice: priceRow["discountedPrice"],
+                        customerCardPrice: priceRow["customerCardPrice"],
                         type: ProductType(rawValue: row["weighing"]),
                         codes: codes,
                         depositSku: depositSku,
@@ -247,7 +248,8 @@ extension ProductDB {
                         saleStop: row["saleStop"] ?? false,
                         bundles: bundles,
                         referenceUnit: referenceUnit,
-                        encodingUnit: encodingUnit)
+                        encodingUnit: encodingUnit,
+                        scanMessage: row["scanMessage"])
 
         return p
     }
