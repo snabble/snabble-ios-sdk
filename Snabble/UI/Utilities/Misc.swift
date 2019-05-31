@@ -32,8 +32,8 @@ public final class SnabbleUI {
     }
 
     /// sets the project to be used
-    public static func register(_ project: Project) {
-        self.project = project
+    public static func register(_ project: Project?) {
+        self.project = project ?? Project.none
     }
 }
 

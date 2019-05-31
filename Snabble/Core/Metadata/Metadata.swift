@@ -292,8 +292,7 @@ public struct Project: Decodable {
         self.messages = nil
     }
 
-    @available(*, deprecated, message: "no longer supported, will be removed soon")
-    public static let none = Project()
+    static let none = Project()
 }
 
 /// Link
@@ -459,8 +458,7 @@ public struct Shop: Decodable {
         self.externalId = nil
     }
 
-    @available(*, deprecated, message: "no longer supported, will be removed soon")
-    public static let none = Shop()
+    static let none = Shop()
 }
 
 // MARK: - loading metadata

@@ -126,6 +126,7 @@ public struct SnabbleAPI {
     private static var providerPool = [String: ProductProvider]()
 
     public static func productProvider(for project: Project) -> ProductProvider {
+        assert(project.id != "", "empty projects don't have a product provider")
         if let provider = providerPool[project.id] {
             return provider
         } else {

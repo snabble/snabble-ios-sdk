@@ -327,6 +327,7 @@ final public class ShoppingCart {
     public static let maxAmount = 9999
 
     public init(_ config: CartConfig) {
+        assert(config.project.id != "", "empty projects cannot have a shopping cart")
         self.config = config
         let storage = self.loadCart()
         self.items = storage.items
