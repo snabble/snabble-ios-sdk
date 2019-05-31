@@ -692,9 +692,6 @@ extension ProductDB {
     // MARK: - asynchronous requests
 
     private func lookupLocally(_ forceDownload: Bool) -> Bool {
-        #warning("removeme")
-        return false
-
         let now = Date.timeIntervalSinceReferenceDate
         let age = now - self.lastProductUpdate.timeIntervalSinceReferenceDate
         let ageOk = age < self.config.maxProductDatabaseAge

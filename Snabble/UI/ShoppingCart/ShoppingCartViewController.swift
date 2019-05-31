@@ -359,7 +359,7 @@ public final class ShoppingCartViewController: UIViewController {
         self.present(alert, animated: true)
     }
 
-    func updateTotals() {
+    public func updateTotals() {
         let count = self.shoppingCart.numberOfProducts
 
         self.tabBarItem.image = UIImage.fromBundle(count == 0 ? "icon-cart-inactive-empty" : "icon-cart-inactive-full")

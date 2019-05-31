@@ -10,6 +10,12 @@ import AVFoundation
 public protocol ScannerDelegate: AnalyticsDelegate, MessageDelegate, CustomerCardDelegate {
     func closeScanningView()
     func gotoShoppingCart()
+
+    func scanMessageText(for: String) -> String?
+}
+
+public extension ScannerDelegate {
+    func scanMessageText(for: String) -> String? { return nil }
 }
 
 public final class ScannerViewController: UIViewController {
@@ -154,7 +160,7 @@ public final class ScannerViewController: UIViewController {
 
         // avoid camera permission query if this is called before we've ever been on-screen
         if self.scanningView != nil {
-            self.closeConfirmation()
+            self.closeConfirmation(nil)
             self.navigationController?.popToRootViewController(animated: false)
         }
     }
@@ -228,8 +234,23 @@ extension ScannerViewController: MessageDelegate {
 
 // MARK: - scanning confirmation delegate
 extension ScannerViewController: ScanConfirmationViewDelegate {
-    func closeConfirmation() {
+    func closeConfirmation(_ msgId: String?) {
+
         self.displayScanConfirmationView(hidden: true)
+
+        if let msgId = msgId, let msgText = self.delegate.scanMessageText(for: msgId) {
+            let alert = UIAlertController(title: "Snabble.Scanner.multiPack".localized(), message: msgText, preferredStyle: .alert)
+            alert.addAction(UIAlertAction(title: "Snabble.OK".localized(), style: .default) { action in
+                self.closeConfirmation()
+            })
+
+            self.present(alert, animated: true)
+        } else {
+            self.closeConfirmation()
+        }
+    }
+
+    private func closeConfirmation() {
         self.lastScannedCode = ""
         self.scanningView.startScanning()
 
