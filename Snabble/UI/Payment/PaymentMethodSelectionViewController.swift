@@ -26,7 +26,7 @@ final class PaymentMethodSelectionViewController: UIViewController {
         self.cart = process.cart
         self.paymentMethods = paymentMethods
 
-        super.init(nibName: nil, bundle: Snabble.bundle)
+        super.init(nibName: nil, bundle: SnabbleBundle.main)
     }
 
     required init?(coder aDecoder: NSCoder) {
@@ -45,7 +45,7 @@ final class PaymentMethodSelectionViewController: UIViewController {
 
         self.title = String(format: "Snabble.PaymentSelection.payNow".localized(), totalPrice)
 
-        let nib = UINib(nibName: "PaymentMethodCell", bundle: Snabble.bundle)
+        let nib = UINib(nibName: "PaymentMethodCell", bundle: SnabbleBundle.main)
         self.collectionView.register(nib, forCellWithReuseIdentifier: "paymentCell")
     }
 

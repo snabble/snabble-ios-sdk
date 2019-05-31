@@ -34,7 +34,7 @@ final class EmbeddedCodesCheckoutViewController: UIViewController {
         self.delegate = delegate
         self.qrCodeConfig = SnabbleUI.project.encodedCodes ?? QRCodeConfig.default
 
-        super.init(nibName: nil, bundle: Snabble.bundle)
+        super.init(nibName: nil, bundle: SnabbleBundle.main)
 
         self.title = "Snabble.QRCode.title".localized()
     }
@@ -59,7 +59,7 @@ final class EmbeddedCodesCheckoutViewController: UIViewController {
             self.paidButton.isUserInteractionEnabled = true
         }
 
-        let nib = UINib(nibName: "QRCodeCell", bundle: Snabble.bundle)
+        let nib = UINib(nibName: "QRCodeCell", bundle: SnabbleBundle.main)
         self.collectionView.register(nib, forCellWithReuseIdentifier: "qrCodeCell")
 
         switch self.method {

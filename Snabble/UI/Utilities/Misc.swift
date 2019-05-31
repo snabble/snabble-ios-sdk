@@ -173,7 +173,7 @@ open class NibView: UIView {
         if bundle.path(forResource: name, ofType: "nib") != nil {
             return UINib(nibName: name, bundle: bundle)
         } else {
-            return UINib(nibName: name, bundle: Snabble.bundle)
+            return UINib(nibName: name, bundle: SnabbleBundle.main)
         }
     }
 
@@ -203,10 +203,10 @@ final class InsetLabel: UILabel {
 
 // MARK: - l10n and image support
 
-final class Snabble: NSObject {
-    private static let frameworkBundle = Bundle(for: Snabble.self)
+public final class SnabbleBundle: NSObject {
+    private static let frameworkBundle = Bundle(for: SnabbleBundle.self)
     static let path = frameworkBundle.path(forResource: "Snabble", ofType: "bundle")!
-    static let bundle = Bundle(path: path)!
+    public static let main = Bundle(path: path)!
 }
 
 extension String {
@@ -217,7 +217,7 @@ extension String {
         if appValue != upper {
             return appValue
         }
-        let sdkValue = Snabble.bundle.localizedString(forKey: self, value: upper, table: "SnabbleLocalizable")
+        let sdkValue = SnabbleBundle.main.localizedString(forKey: self, value: upper, table: "SnabbleLocalizable")
         return sdkValue
     }
 }
@@ -225,7 +225,7 @@ extension String {
 extension UIImage {
     /// get an image from our snabble bundle
     static func fromBundle(_ name: String) -> UIImage? {
-        return UIImage(named: name, in: Snabble.bundle, compatibleWith: nil)
+        return UIImage(named: name, in: SnabbleBundle.main, compatibleWith: nil)
     }
 }
 

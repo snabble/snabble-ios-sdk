@@ -25,7 +25,7 @@ final class SepaCheckoutViewController: UIViewController {
         self.cart = cart
         self.delegate = delegate
         
-        super.init(nibName: nil, bundle: Snabble.bundle)
+        super.init(nibName: nil, bundle: SnabbleBundle.main)
     }
 
     required init?(coder aDecoder: NSCoder) {

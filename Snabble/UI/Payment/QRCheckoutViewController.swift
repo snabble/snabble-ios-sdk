@@ -27,7 +27,7 @@ final class QRCheckoutViewController: UIViewController {
         self.process = process
         self.delegate = delegate
 
-        super.init(nibName: nil, bundle: Snabble.bundle)
+        super.init(nibName: nil, bundle: SnabbleBundle.main)
 
         self.title = "Snabble.QRCode.title".localized()
     }
