@@ -8,15 +8,14 @@ import UIKit
 import AVFoundation
 
 public protocol ScannerDelegate: AnalyticsDelegate, MessageDelegate {
-    func closeScanningView()
+    /// called when the "goto cart" button is tapped
     func gotoShoppingCart()
 }
 
 public final class ScannerViewController: UIViewController {
 
     @IBOutlet private weak var spinner: UIActivityIndicatorView!
-
-    private var scanningView: ScanningView!
+    
     private var scanConfirmationView: ScanConfirmationView!
     private var scanConfirmationViewBottom: NSLayoutConstraint!
     private var tapticFeedback = UINotificationFeedbackGenerator()
@@ -33,22 +32,22 @@ public final class ScannerViewController: UIViewController {
     private let visibleConfirmationOffset: CGFloat = -16
 
     private var keyboardObserver: KeyboardObserver!
-    private var scanFormats = [ScanFormat]()
     private weak var delegate: ScannerDelegate!
     private var timer: Timer?
-    private var barcodeDetector: BarcodeDetector?
+    private var barcodeDetector: BarcodeDetector
 
-    public init(_ cart: ShoppingCart, _ shop: Shop, delegate: ScannerDelegate, barcodeDetector: BarcodeDetector? = nil) {
+    public init(_ cart: ShoppingCart, _ shop: Shop, _ detector: BarcodeDetector? = nil, delegate: ScannerDelegate) {
         let project = SnabbleUI.project
         self.productProvider = SnabbleAPI.productProvider(for: project)
         self.shoppingCart = cart
+        self.barcodeDetector = detector ?? BuiltinBarcodeDetector(ScannerViewController.scannerConfig())
         self.shop = shop
-        self.scanFormats = project.scanFormats
 
-        super.init(nibName: nil, bundle: Snabble.bundle)
+        super.init(nibName: nil, bundle: SnabbleBundle.main)
 
+        self.barcodeDetector.scanFormats = project.scanFormats
+        self.barcodeDetector.delegate = self
         self.delegate = delegate
-        self.barcodeDetector = barcodeDetector
 
         self.title = "Snabble.Scanner.title".localized()
         self.tabBarItem.image = UIImage.fromBundle("icon-scan-inactive")
@@ -65,26 +64,16 @@ public final class ScannerViewController: UIViewController {
         
         self.view.backgroundColor = .black
 
-        self.scanningView = ScanningView()
-        self.scanningView.translatesAutoresizingMaskIntoConstraints = false
-        self.view.addSubview(self.scanningView)
-        self.scanningView.topAnchor.constraint(equalTo: self.view.topAnchor).isActive = true
-        self.scanningView.rightAnchor.constraint(equalTo: self.view.rightAnchor).isActive = true
-        self.scanningView.bottomAnchor.constraint(equalTo: self.view.bottomAnchor).isActive = true
-        self.scanningView.leftAnchor.constraint(equalTo: self.view.leftAnchor).isActive = true
-
         self.scanConfirmationView = ScanConfirmationView()
         self.scanConfirmationView.translatesAutoresizingMaskIntoConstraints = false
-        self.scanningView.addSubview(self.scanConfirmationView)
-        self.scanConfirmationView.leadingAnchor.constraint(equalTo: self.scanningView.leadingAnchor, constant: 16).isActive = true
-        self.scanConfirmationView.trailingAnchor.constraint(equalTo: self.scanningView.trailingAnchor, constant: -16).isActive = true
-        self.scanConfirmationView.centerXAnchor.constraint(equalTo: self.scanningView.centerXAnchor).isActive = true
-        let bottom = self.scanConfirmationView.bottomAnchor.constraint(equalTo: self.scanningView.bottomAnchor)
+        self.view.addSubview(self.scanConfirmationView)
+        self.scanConfirmationView.leadingAnchor.constraint(equalTo: self.view.leadingAnchor, constant: 16).isActive = true
+        self.scanConfirmationView.trailingAnchor.constraint(equalTo: self.view.trailingAnchor, constant: -16).isActive = true
+        self.scanConfirmationView.centerXAnchor.constraint(equalTo: self.view.centerXAnchor).isActive = true
+        let bottom = self.scanConfirmationView.bottomAnchor.constraint(equalTo: self.view.bottomAnchor)
         bottom.isActive = true
         bottom.constant = self.hiddenConfirmationOffset
         self.scanConfirmationViewBottom = bottom
-
-        self.scanningView.setup(with: self.scannerConfig())
 
         self.scanConfirmationView.delegate = self
 
@@ -97,6 +86,8 @@ public final class ScannerViewController: UIViewController {
         super.viewWillAppear(animated)
 
         self.updateCartButton()
+        self.barcodeDetector.scannerWillAppear()
+        self.barcodeDetector.startScanning()
     }
 
     override public func viewDidAppear(_ animated: Bool) {
@@ -104,39 +95,37 @@ public final class ScannerViewController: UIViewController {
         self.keyboardObserver = KeyboardObserver(handler: self)
 
         self.delegate.track(.viewScanner)
-        self.scanningView.initializeCamera()
-        self.scanningView.startScanning()
+
+        self.barcodeDetector.startScanning()
+    }
+
+    override public func viewDidLayoutSubviews() {
+        super.viewDidLayoutSubviews()
+
+        self.barcodeDetector.scannerDidLayoutSubviews(self.view)
+        self.view.bringSubviewToFront(self.scanConfirmationView)
     }
 
     override public func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
 
-        self.scanningView.stopScanning()
+        self.barcodeDetector.stopScanning()
         self.displayScanConfirmationView(hidden: true)
 
         self.keyboardObserver = nil
     }
 
-    private func scannerConfig() -> ScanningViewConfig {
-        var config = ScanningViewConfig()
+    private static func scannerConfig() -> BarcodeDetectorAppearance {
+        var appearance = BarcodeDetectorAppearance()
 
-        config.torchButtonImage = UIImage.fromBundle("icon-light-inactive")?.recolored(with: .white)
-        config.torchButtonActiveImage = UIImage.fromBundle("icon-light-active")
-        config.enterButtonImage = UIImage.fromBundle("icon-entercode")?.recolored(with: .white)
-        config.textColor = .white
-        config.backgroundColor = SnabbleUI.appearance.primaryColor
+        appearance.torchButtonImage = UIImage.fromBundle("icon-light-inactive")?.recolored(with: .white)
+        appearance.torchButtonActiveImage = UIImage.fromBundle("icon-light-active")
+        appearance.enterButtonImage = UIImage.fromBundle("icon-entercode")?.recolored(with: .white)
+        appearance.textColor = .white
+        appearance.backgroundColor = SnabbleUI.appearance.primaryColor
+        appearance.reticleCornerRadius = 3
 
-        config.scanFormats = self.scanFormats
-        config.reticleCornerRadius = 3
-
-        config.barcodeDetector = self.barcodeDetector
-
-        self.barcodeDetector?.scanFormats = self.scanFormats
-        if self.barcodeDetector != nil && self.barcodeDetector?.delegate == nil {
-            self.barcodeDetector?.delegate = self
-        }
-        config.delegate = self
-        return config
+        return appearance
     }
 
     /// reset `shoppingCart` when switching between projects
@@ -146,11 +135,10 @@ public final class ScannerViewController: UIViewController {
         self.productProvider = SnabbleAPI.productProvider(for: project)
         self.shoppingCart = cart
         self.shop = shop
-        self.scanFormats = project.scanFormats
-        self.scanningView?.setScanFormats(self.scanFormats)
+        self.barcodeDetector.scanFormats = project.scanFormats
 
         // avoid camera permission query if this is called before we've ever been on-screen
-        if self.scanningView != nil {
+        if self.view != nil {
             self.closeConfirmation()
             self.navigationController?.popToRootViewController(animated: false)
         }
@@ -170,8 +158,7 @@ public final class ScannerViewController: UIViewController {
         }
         
         self.confirmationVisible = !hidden
-        self.scanningView.bottomBarHidden = !hidden
-        self.scanningView.reticleHidden = !hidden
+        self.barcodeDetector.reticleVisible = hidden
 
         if setBottomOffset {
             self.scanConfirmationViewBottom.constant = hidden ? self.hiddenConfirmationOffset : self.visibleConfirmationOffset
@@ -192,12 +179,12 @@ public final class ScannerViewController: UIViewController {
         if items > 0 {
             if let total = self.shoppingCart.total {
                 let formatter = PriceFormatter(SnabbleUI.project)
-                self.scanningView.cartButtonTitle = String(format: "Snabble.Scanner.goToCart".localized(), formatter.format(total))
+                self.barcodeDetector.cartButtonTitle = String(format: "Snabble.Scanner.goToCart".localized(), formatter.format(total))
             } else {
-                self.scanningView.cartButtonTitle = "Snabble.Scanner.goToCart.empty".localized()
+                self.barcodeDetector.cartButtonTitle = "Snabble.Scanner.goToCart.empty".localized()
             }
         } else {
-            self.scanningView.cartButtonTitle = nil
+            self.barcodeDetector.cartButtonTitle = nil
         }
     }
 
@@ -228,57 +215,19 @@ extension ScannerViewController: ScanConfirmationViewDelegate {
     func closeConfirmation() {
         self.displayScanConfirmationView(hidden: true)
         self.lastScannedCode = ""
-        self.scanningView.startScanning()
+        self.barcodeDetector.startScanning()
 
         self.updateCartButton()
     }
 }
 
 // MARK: - scanning view delegate
-extension ScannerViewController: ScanningViewDelegate {
-    public func closeScanningView() {
-        self.delegate.closeScanningView()
-    }
-
-    public func requestCameraPermission(currentStatus: AVAuthorizationStatus) {
-        switch currentStatus {
-        case .restricted, .denied:
-            let msg = "Snabble.Scanner.Camera.allowAccess".localized()
-            let alert = UIAlertController(title: "Snabble.Scanner.Camera.accessDenied".localized(), message: msg, preferredStyle: .alert)
-            alert.addAction(UIAlertAction(title: "Snabble.Cancel".localized(), style: .cancel) { action in
-                self.closeScanningView()
-            })
-            alert.addAction(UIAlertAction(title: "Snabble.Settings".localized(), style: .default) { action in
-                UIApplication.shared.open(URL(string: UIApplication.openSettingsURLString)!)
-                self.closeScanningView()
-            })
-            self.present(alert, animated: true)
-
-        case .notDetermined:
-            AVCaptureDevice.requestAccess(for: AVMediaType.video) { granted in
-                DispatchQueue.main.async {
-                    if granted {
-                        self.scanningView.startScanning()
-                    } else {
-                        self.closeScanningView()
-                    }
-                }
-            }
-        default:
-            assertionFailure("unhandled av auth status \(currentStatus.rawValue)")
-            break
-        }
-    }
-
-    public func noCameraFound() {
-        Log.debug("no camera found")
-    }
-
+extension ScannerViewController: BarcodeDetectorDelegate {
     public func enterBarcode() {
         let barcodeEntry = BarcodeEntryViewController(self.productProvider, delegate: self.delegate, completion: self.manuallyEnteredCode)
         self.navigationController?.pushViewController(barcodeEntry, animated: true)
         
-        self.scanningView.stopScanning()
+        self.barcodeDetector.stopScanning()
     }
     
     public func scannedCode(_ code: String, _ format: ScanFormat) {
@@ -318,7 +267,7 @@ extension ScannerViewController {
             self.spinner.startAnimating()
         }
 
-        self.scanningView.stopScanning()
+        self.barcodeDetector.stopScanning()
 
         self.productForCode(scannedCode, template) { scannedProduct in
             self.timer?.invalidate()
@@ -327,7 +276,7 @@ extension ScannerViewController {
 
             guard let scannedProduct = scannedProduct else {
                 self.scannedUnknown("Snabble.Scanner.unknownBarcode".localized(), scannedCode)
-                self.scanningView.startScanning()
+                self.barcodeDetector.startScanning()
                 return
             }
 
@@ -344,7 +293,7 @@ extension ScannerViewController {
             if product.type == .preWeighed && (embeddedData == nil || embeddedData == 0) {
                 let msg = "Snabble.Scanner.scannedShelfCode".localized()
                 self.scannedUnknown(msg, scannedCode)
-                self.scanningView.startScanning()
+                self.barcodeDetector.startScanning()
                 return
             }
             self.tapticFeedback.notificationOccurred(.success)
@@ -364,7 +313,7 @@ extension ScannerViewController {
         let alert = UIAlertController(title: "Snabble.saleStop.errorMsg.title".localized(), message: "Snabble.saleStop.errorMsg.scan".localized(), preferredStyle: .alert)
 
         alert.addAction(UIAlertAction(title: "Snabble.OK".localized(), style: .default) { action in
-            self.scanningView.startScanning()
+            self.barcodeDetector.startScanning()
         })
         
         self.present(alert, animated: true)
@@ -389,7 +338,7 @@ extension ScannerViewController {
         }
 
         alert.addAction(UIAlertAction(title: "Snabble.Cancel".localized(), style: .cancel) { action in
-            self.scanningView.startScanning()
+            self.barcodeDetector.startScanning()
         })
 
         // HACK: set the action sheet buttons background

@@ -23,7 +23,7 @@ final public class BarcodeEntryViewController: UIViewController, UISearchBarDele
     private var emptyState: EmptyStateView!
 
     public init(_ productProvider: ProductProvider, delegate: AnalyticsDelegate, completion: @escaping (String, String?)->() ) {
-        super.init(nibName: nil, bundle: Snabble.bundle)
+        super.init(nibName: nil, bundle: SnabbleBundle.main)
 
         self.productProvider = productProvider
         self.completion = completion
@@ -38,7 +38,7 @@ final public class BarcodeEntryViewController: UIViewController, UISearchBarDele
 
     override public func viewDidLoad() {
         super.viewDidLoad()
-        
+
         self.emptyState = BarcodeEntryEmptyStateView( { [weak self] in self?.addEnteredCode() } )
         self.emptyState.addTo(self.tableView)
 

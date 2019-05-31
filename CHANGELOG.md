@@ -1,5 +1,15 @@
 ## snabble iOS SDK Changelog
 
+# v0.10.0
+
+This version brings major changes to the scanning subsystem. It is now much easier to plug in other barcode detector systems instead of the built-in metadata detector from iOS. To enable this, the following breaking changes were made:
+
+* The previously available `ScanningView` has been replaced by the `BarcodeDetector` protocol and the `BuiltinBarcodeDetector` implementation (based on the iOS built-in `AVCaptureMetadataOutput`)
+* For custom implementations of `BarcodeDetector`, the overlay that is placed on top of the camera preview is available via `BarcodeDetectorDecoration`. The configuration of that decoration is made through a `BarcodeDetectorAppearance` instance, which replaces the old `ScanningViewConfig` struct.
+* `ScannerViewController` has a new optional parameter `detector` of type `BarcodeDetector?`. Pass your own implementation of the protocol, or leave it as nil to use the default built-in implementation.
+
+Sample code for implementations of `BarcodeDetector` based on third-party SDKs (currently [Digimarc](https://www.digimarc.com/solutions/mobilesdk), [MLKit Vision](https://developers.google.com/ml-kit/vision/barcode-scanning/), [Scandit](https://www.scandit.com/developers/) and [Tachyoniq](https://www.tachyoniq.com/software-solutions/cortexdecoder-2/)) is available upon request.
+
 # v0.9.26
 
 * The public `Project.none` and `Shop.none` instances have been decreated and will be removed soon.
@@ -16,6 +26,7 @@
 # v0.9.23
 
 * Removes the back button from `SepaCheckoutViewController`
+>>>>>>> master
 
 # v0.9.22
 

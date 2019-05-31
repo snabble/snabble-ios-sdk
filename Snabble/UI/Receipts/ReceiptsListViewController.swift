@@ -34,7 +34,7 @@ public final class ReceiptsListViewController: UIViewController {
     private var previewItem: QLPreviewItem!
 
     public init() {
-        super.init(nibName: nil, bundle: Snabble.bundle)
+        super.init(nibName: nil, bundle: SnabbleBundle.main)
 
         self.title = "Snabble.Receipts.title".localized()
     }
