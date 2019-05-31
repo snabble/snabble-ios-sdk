@@ -140,6 +140,7 @@ public final class ScannerViewController: UIViewController {
     }
 
     /// reset `shoppingCart` when switching between projects
+    @available(*, deprecated, message: "no longer supported, will be removed soon. Create new instance on project/shop change")
     public func reset(_ cart: ShoppingCart, _ shop: Shop) {
         let project = SnabbleUI.project
         self.productProvider = SnabbleAPI.productProvider(for: project)
