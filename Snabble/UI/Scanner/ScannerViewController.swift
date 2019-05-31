@@ -7,7 +7,7 @@
 import UIKit
 import AVFoundation
 
-public protocol ScannerDelegate: AnalyticsDelegate, MessageDelegate, CustomerCardDelegate {
+public protocol ScannerDelegate: AnalyticsDelegate, MessageDelegate {
     func gotoShoppingCart()
 
     func scanMessageText(for: String) -> String?
@@ -48,7 +48,6 @@ public final class ScannerViewController: UIViewController {
         self.delegate = delegate
 
         self.shoppingCart = cart
-        self.shoppingCart.customerCard = self.delegate.getCustomerCard(project)
 
         self.productProvider = SnabbleAPI.productProvider(for: project)
 

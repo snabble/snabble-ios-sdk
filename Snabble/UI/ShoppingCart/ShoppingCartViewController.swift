@@ -7,7 +7,7 @@
 import UIKit
 
 /// a protocol that users of `ShoppingCartViewController` must implement
-public protocol ShoppingCartDelegate: AnalyticsDelegate, MessageDelegate, CustomerCardDelegate {
+public protocol ShoppingCartDelegate: AnalyticsDelegate, MessageDelegate {
     /// called to determine if checking out is possible, e.g. if required customer card data is present
     /// it is this method's responsibility to display corresponding error messages
     func checkoutAllowed(_ project: Project) -> Bool
@@ -88,7 +88,6 @@ public final class ShoppingCartViewController: UIViewController {
         self.keyboardObserver = KeyboardObserver(handler: self)
 
         self.shoppingCart = cart
-        self.shoppingCart.customerCard = self.delegate.getCustomerCard(SnabbleUI.project)
     }
 
     private func setupItems(_ cart: ShoppingCart) {
@@ -302,8 +301,6 @@ public final class ShoppingCartViewController: UIViewController {
         spinner.centerXAnchor.constraint(equalTo: button.centerXAnchor).isActive = true
         spinner.centerYAnchor.constraint(equalTo: button.centerYAnchor).isActive = true
         button.isEnabled = false
-
-        self.shoppingCart.customerCard = self.delegate.getCustomerCard(project)
 
         self.shoppingCart.createCheckoutInfo(SnabbleUI.project, timeout: 10) { result in
             spinner.stopAnimating()
