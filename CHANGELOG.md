@@ -13,7 +13,7 @@ The scanning subsystem as been redesigned. It is now much easier to plug in othe
 
 * Also in the scanner, custom messages can be displayed e.g. when scanning products that consist of multiple packages to remind customers. The new product property `scanMessage` is passed to the `scanMessageText` method of `ScannerDelegate` where it should be used to lookup or create a user-visible message. When the delegate method returns a non-nil String, that is displayed in a simple UIAlertController.
 
-* Support for special prices when a customer card is present. `ShoppingCart` has a new property `customerCard` (replacing the previous `loyaltyCard` in `ShoppingCartConfig`) which is used in the Scanner and Shopping Cart views to fetch/display prices from the `customerCardPrice` of products.
+* Support for special prices when a customer card is present. `ShoppingCart` has a new property `customerCard` (replacing the previous `loyaltyCard` in `ShoppingCartConfig`) which is used in the Scanner and Shopping Cart views to fetch/display prices from the `customerCardPrice` of products. The previous `price` and `priceWithDeposit` Product properties have been deprecated in favor of the new methods of the same name that both take a customercard (or `nil`) as their parameter.
 
 * The previously public `none` instances of `Project` and `Shop` are no longer available.
 
