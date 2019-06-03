@@ -173,6 +173,18 @@ public struct Product: Codable {
         return self.price(customerCard) + (self.deposit ?? 0)
     }
 
+    /// convenience accessor for price w/o any customer card.
+    @available(*, deprecated, renamed: "price(_:)")
+    public var price: Int {
+        return self.price(nil)
+    }
+
+    /// convenience accessor for price+deposit w/o any customer card.
+    @available(*, deprecated, renamed: "priceWithDeposit(_:)")
+    public var priceWithDeposit: Int {
+        return self.priceWithDeposit(nil)
+    }
+
     public init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
 
@@ -219,7 +231,7 @@ public struct Product: Codable {
          bundles: [Product] = [],
          referenceUnit: Units? = nil,
          encodingUnit: Units? = nil,
-         scanMessage: String?) {
+         scanMessage: String? = nil) {
         self.sku = sku
         self.name = name
         self.description = description
