@@ -1,7 +1,7 @@
 //
 //  ShoppingCartViewController.swift
 //
-//  Copyright © 2018 snabble. All rights reserved.
+//  Copyright © 2019 snabble. All rights reserved.
 //
 
 import UIKit

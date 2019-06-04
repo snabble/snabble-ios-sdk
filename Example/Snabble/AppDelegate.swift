@@ -2,7 +2,7 @@
 //  AppDelegate.swift
 //  Snabble
 //
-//  Copyright (c) 2018 snabble GmbH. All rights reserved.
+//  Copyright (c) 2019 snabble GmbH. All rights reserved.
 //
 
 import UIKit

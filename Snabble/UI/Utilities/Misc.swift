@@ -1,7 +1,7 @@
 //
 //  Misc.swift
 //
-//  Copyright © 2018 snabble. All rights reserved.
+//  Copyright © 2019 snabble. All rights reserved.
 //
 //  Miscellaneous UI utility methods that don't warrant having their own source file
 

@@ -1,7 +1,7 @@
 //
 //  EANView.swift
 //
-//  Copyright © 2018 snabble. All rights reserved.
+//  Copyright © 2019 snabble. All rights reserved.
 //
 
 //  loosely based on code from https://github.com/astrokin/EAN13BarcodeGenerator
