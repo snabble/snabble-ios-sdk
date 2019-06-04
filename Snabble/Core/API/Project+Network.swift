@@ -6,7 +6,7 @@
 
 import Foundation
 
-// #if swift(<5.0)
+#if swift(<5.0)
 /// Implement a trivial version of `Result` when compiling in Swift 4.2 mode
 public enum Result<Success, Failure: Swift.Error> {
     case success(Success)
@@ -19,7 +19,7 @@ public enum Result<Success, Failure: Swift.Error> {
         }
     }
 }
-// #endif
+#endif
 
 public struct SnabbleError: Decodable, Error {
     public let error: ErrorResponse
