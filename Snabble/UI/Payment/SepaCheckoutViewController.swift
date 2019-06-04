@@ -108,8 +108,12 @@ final class SepaCheckoutViewController: UIViewController {
 
         self.delegate.track(.paymentCancelled)
 
-        self.process.abort(SnabbleUI.project) { result in
-            self.navigationController?.popToRootViewController(animated: true)
+        self.process.abort(SnabbleUI.project) { _ in
+            if let cartVC = self.navigationController?.viewControllers.first(where: { $0 is ShoppingCartViewController}) {
+                self.navigationController?.popToViewController(cartVC, animated: true)
+            } else {
+                self.navigationController?.popToRootViewController(animated: true)
+            }
         }
     }
 

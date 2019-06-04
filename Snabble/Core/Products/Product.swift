@@ -118,6 +118,9 @@ public struct Product: Codable {
     /// if not nil, this product has a (temporary) price different from its `listPrice`
     public let discountedPrice: Int?
 
+    /// if not nil, this product has a special price for owners of customer/loyalty cards
+    public let customerCardPrice: Int?
+
     /// the product's type
     public let type: ProductType
 
@@ -152,14 +155,34 @@ public struct Product: Codable {
     /// `encodingUnit` specifies the Unit that the this product's scanned code refers to, e.g. `.gram`.
     public let encodingUnit: Units?
 
+    /// if not nil, a reference to a message that should be displayed to the user when this product is scanned or added to a shopping cart
+    /// (i.e. to remind users that this product consists of multiple packages where only one can be or needs to be scanned)
+    public let scanMessage: String?
+
     /// convenience accessor for the price
-    public var price: Int {
-        return self.discountedPrice ?? self.listPrice
+    public func price(_ customerCard: String?) -> Int {
+        if customerCard != nil {
+            return self.customerCardPrice ?? self.discountedPrice ?? self.listPrice
+        } else {
+            return self.discountedPrice ?? self.listPrice
+        }
     }
 
     /// convenience accessor for price including deposit
+    public func priceWithDeposit(_ customerCard: String?) -> Int {
+        return self.price(customerCard) + (self.deposit ?? 0)
+    }
+
+    /// convenience accessor for price w/o any customer card.
+    @available(*, deprecated, renamed: "price(_:)")
+    public var price: Int {
+        return self.price(nil)
+    }
+
+    /// convenience accessor for price+deposit w/o any customer card.
+    @available(*, deprecated, renamed: "priceWithDeposit(_:)")
     public var priceWithDeposit: Int {
-        return self.price + (self.deposit ?? 0)
+        return self.priceWithDeposit(nil)
     }
 
     public init(from decoder: Decoder) throws {
@@ -172,6 +195,7 @@ public struct Product: Codable {
         self.imageUrl = try container.decodeIfPresent(.imageUrl)
         self.basePrice = try container.decodeIfPresent(.basePrice)
         self.listPrice = try container.decode(.listPrice)
+        self.customerCardPrice = try container.decode(.customerCardPrice)
         self.discountedPrice = try container.decodeIfPresent(.discountedPrice)
         self.type = try container.decode(.type)
         self.codes = try container.decode(.codes)
@@ -184,6 +208,7 @@ public struct Product: Codable {
         self.bundles = try container.decodeIfPresent(.bundles) ?? []
         self.referenceUnit = try container.decodeIfPresent(.referenceUnit)
         self.encodingUnit = try container.decodeIfPresent(.encodingUnit)
+        self.scanMessage = try container.decodeIfPresent(.scanMessage)
     }
 
     init(sku: String,
@@ -194,6 +219,7 @@ public struct Product: Codable {
          basePrice: String? = nil,
          listPrice: Int,
          discountedPrice: Int? = nil,
+         customerCardPrice: Int? = nil,
          type: ProductType,
          codes: [ScannableCode] = [],
          depositSku: String? = nil,
@@ -204,7 +230,8 @@ public struct Product: Codable {
          saleStop: Bool = false,
          bundles: [Product] = [],
          referenceUnit: Units? = nil,
-         encodingUnit: Units? = nil) {
+         encodingUnit: Units? = nil,
+         scanMessage: String? = nil) {
         self.sku = sku
         self.name = name
         self.description = description
@@ -213,6 +240,7 @@ public struct Product: Codable {
         self.basePrice = basePrice
         self.listPrice = listPrice
         self.discountedPrice = discountedPrice
+        self.customerCardPrice = customerCardPrice
         self.type = type
         self.codes = codes
         self.depositSku = depositSku
@@ -224,5 +252,6 @@ public struct Product: Codable {
         self.bundles = bundles
         self.referenceUnit = referenceUnit
         self.encodingUnit = encodingUnit
+        self.scanMessage = scanMessage
     }
 }

@@ -7,7 +7,7 @@
 import UIKit
 
 protocol ScanConfirmationViewDelegate: AnalyticsDelegate {
-    func closeConfirmation()
+    func closeConfirmation(_ msg: String?)
 }
 
 final class ScanConfirmationView: DesignableView {
@@ -86,7 +86,7 @@ final class ScanConfirmationView: DesignableView {
             templateId: scannedProduct.templateId ?? "default",
             lookupCode: scannedProduct.lookupCode)
 
-        self.cartItem = CartItem(1, product, scannedCode, SnabbleUI.project.roundingMode)
+        self.cartItem = CartItem(1, product, scannedCode, cart.customerCard, SnabbleUI.project.roundingMode)
 
         let cartQuantity = self.shoppingCart.quantity(of: cartItem)
         self.alreadyInCart = cartQuantity > 0
@@ -132,7 +132,7 @@ final class ScanConfirmationView: DesignableView {
         }
 
         // suppress display when price == 0
-        var hasPrice = product.price != 0
+        var hasPrice = product.price(cart.customerCard) != 0
         if self.cartItem.encodingUnit == .price {
             hasPrice = true
         }
@@ -193,14 +193,15 @@ final class ScanConfirmationView: DesignableView {
         }
 
         NotificationCenter.default.post(name: .snabbleCartUpdated, object: self)
-        self.delegate.closeConfirmation()
+
+        self.delegate.closeConfirmation(self.cartItem.product.scanMessage)
 
         self.quantityField.resignFirstResponder()
     }
 
     @IBAction private func closeButtonTapped(_ button: UIButton) {
         self.delegate.track(.scanAborted(self.cartItem.product.sku))
-        self.delegate.closeConfirmation()
+        self.delegate.closeConfirmation(nil)
         self.quantityField.resignFirstResponder()
     }
 

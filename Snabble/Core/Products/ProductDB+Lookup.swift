@@ -174,6 +174,7 @@ private class ResolvedProduct: Decodable {
     let weighByCustomer: Bool?
     let referenceUnit: String?
     let encodingUnit: String?
+    let scanMessage: String?
 
     enum ResolvedProductType: String, Codable {
         case `default`
@@ -212,6 +213,7 @@ private class ResolvedProduct: Decodable {
         let listPrice: Int?
         let basePrice: String?
         let discountedPrice: Int?
+        let customerCardPrice: Int?
     }
 
     fileprivate func convert(_ code: String, _ template: String) -> Product {
@@ -223,13 +225,13 @@ private class ResolvedProduct: Decodable {
             encodingUnit = encodingOverride
         }
 
-        return convert(codes, encodingUnit)
+        return self.convert(codes, encodingUnit)
     }
 
     fileprivate func convert() -> Product {
         let codes = self.codes.map { ScannableCode($0) }
 
-        return convert(codes, Units.from(self.encodingUnit))
+        return self.convert(codes, Units.from(self.encodingUnit))
     }
 
     private func convert(_ codes: [ScannableCode], _ encodingUnit: Units?) -> Product {
@@ -243,6 +245,7 @@ private class ResolvedProduct: Decodable {
                               basePrice: self.price.basePrice,
                               listPrice: self.price.listPrice ?? 0,
                               discountedPrice: self.price.discountedPrice,
+                              customerCardPrice: self.price.customerCardPrice,
                               type: type,
                               codes: codes,
                               depositSku: self.deposit?.sku,
@@ -253,7 +256,8 @@ private class ResolvedProduct: Decodable {
                               saleStop: self.saleStop ?? false,
                               bundles: self.bundles?.compactMap { $0.convert() } ?? [],
                               referenceUnit: Units.from(self.referenceUnit),
-                              encodingUnit: encodingUnit)
+                              encodingUnit: encodingUnit,
+                              scanMessage: self.scanMessage)
 
         return product
     }

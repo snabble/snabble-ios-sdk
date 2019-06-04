@@ -154,7 +154,7 @@ final class EmbeddedCodesCheckoutViewController: UIViewController {
             var result = header + gs + blocks
 
             // family card goes into the first code
-            if let card = self.cart.loyaltyCard, index == 0 {
+            if let card = self.cart.customerCard, index == 0 {
                 let familyCard = "92" + card        // AI 92 (additional item id), card number
                 result += gs + familyCard
             }
@@ -168,7 +168,7 @@ final class EmbeddedCodesCheckoutViewController: UIViewController {
 
     private func csvForQR() -> [String] {
         var lines = [String]()
-        if let card = self.cart.loyaltyCard {
+        if let card = self.cart.customerCard {
             lines.append("1;\(card)")
         }
 
@@ -194,26 +194,20 @@ final class EmbeddedCodesCheckoutViewController: UIViewController {
             let restrictedItems = items.filter { return $0.product.saleRestriction != .none }
 
             var regularCodes = [String]()
-            if let card = self.cart.loyaltyCard {
+            if let card = self.cart.customerCard {
                 regularCodes.append(card)
             }
-
             regularCodes += self.codesFor(regularItems)
-            if let additionalCodes = self.cart.additionalCodes {
-                regularCodes.append(contentsOf: additionalCodes)
-            }
+
             let restrictedCodes = self.codesFor(restrictedItems)
 
             return (regularCodes, restrictedCodes)
         } else {
             var codes = [String]()
-            if let card = self.cart.loyaltyCard {
+            if let card = self.cart.customerCard {
                 codes.append(card)
             }
             codes += self.codesFor(items)
-            if let additionalCodes = self.cart.additionalCodes {
-                codes.append(contentsOf: additionalCodes)
-            }
 
             return (codes, [])
         }

@@ -2,11 +2,23 @@
 
 # v0.10.0
 
-This version brings major changes to the scanning subsystem. It is now much easier to plug in other barcode detector systems instead of the built-in metadata detector from iOS. To enable this, the following breaking changes were made:
+This version implements a number of major changes in different areas.
+
+The scanning subsystem as been redesigned. It is now much easier to plug in other barcode detector systems instead of the built-in metadata detector from iOS. To enable this, the following breaking changes were made:
 
 * The previously available `ScanningView` has been replaced by the `BarcodeDetector` protocol and the `BuiltinBarcodeDetector` implementation (based on the iOS built-in `AVCaptureMetadataOutput`)
 * For custom implementations of `BarcodeDetector`, the overlay that is placed on top of the camera preview is available via `BarcodeDetectorDecoration`. The configuration of that decoration is made through a `BarcodeDetectorAppearance` instance, which replaces the old `ScanningViewConfig` struct.
 * `ScannerViewController` has a new optional parameter `detector` of type `BarcodeDetector?`. Pass your own implementation of the protocol, or leave it as nil to use the default built-in implementation.
+* The `reset` method in `ScannerViewController` has been removed. When switching between projects or shops, create new instances of the Scanner instead.
+
+* Also in the scanner, custom messages can be displayed e.g. when scanning products that consist of multiple packages to remind customers. The new product property `scanMessage` is passed to the `scanMessageText` method of `ScannerDelegate` where it should be used to lookup or create a user-visible message. When the delegate method returns a non-nil String, that is displayed in a simple UIAlertController.
+
+* Support for special prices when a customer card is present. `ShoppingCart` has a new property `customerCard` (replacing the previous `loyaltyCard` in `ShoppingCartConfig`) which is used in the Scanner and Shopping Cart views to fetch/display prices from the `customerCardPrice` of products. The previous `price` and `priceWithDeposit` Product properties have been deprecated in favor of the new methods of the same name that both take a customercard (or `nil`) as their parameter.
+
+* The previously public `none` instances of `Project` and `Shop` are no longer available.
+
+* Tapping the "Cancel" button on one of the views that wait for payment approval/processing no longer pops the navigation stack back to the root, but only to the `ShoppingCartViewController` instance.
+
 
 Sample code for implementations of `BarcodeDetector` based on third-party SDKs (currently [Digimarc](https://www.digimarc.com/solutions/mobilesdk), [MLKit Vision](https://developers.google.com/ml-kit/vision/barcode-scanning/), [Scandit](https://www.scandit.com/developers/) and [Tachyoniq](https://www.tachyoniq.com/software-solutions/cortexdecoder-2/)) is available upon request.
 

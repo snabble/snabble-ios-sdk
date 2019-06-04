@@ -8,8 +8,13 @@ import UIKit
 import AVFoundation
 
 public protocol ScannerDelegate: AnalyticsDelegate, MessageDelegate {
-    /// called when the "goto cart" button is tapped
     func gotoShoppingCart()
+
+    func scanMessageText(for: String) -> String?
+}
+
+public extension ScannerDelegate {
+    func scanMessageText(for: String) -> String? { return nil }
 }
 
 public final class ScannerViewController: UIViewController {
@@ -38,16 +43,20 @@ public final class ScannerViewController: UIViewController {
 
     public init(_ cart: ShoppingCart, _ shop: Shop, _ detector: BarcodeDetector? = nil, delegate: ScannerDelegate) {
         let project = SnabbleUI.project
-        self.productProvider = SnabbleAPI.productProvider(for: project)
-        self.shoppingCart = cart
-        self.barcodeDetector = detector ?? BuiltinBarcodeDetector(ScannerViewController.scannerConfig())
+
         self.shop = shop
+        self.delegate = delegate
+
+        self.shoppingCart = cart
+
+        self.productProvider = SnabbleAPI.productProvider(for: project)
+
+        self.barcodeDetector = detector ?? BuiltinBarcodeDetector(ScannerViewController.scannerAppearance())
+        self.barcodeDetector.scanFormats = project.scanFormats
 
         super.init(nibName: nil, bundle: SnabbleBundle.main)
 
-        self.barcodeDetector.scanFormats = project.scanFormats
         self.barcodeDetector.delegate = self
-        self.delegate = delegate
 
         self.title = "Snabble.Scanner.title".localized()
         self.tabBarItem.image = UIImage.fromBundle("icon-scan-inactive")
@@ -87,7 +96,6 @@ public final class ScannerViewController: UIViewController {
 
         self.updateCartButton()
         self.barcodeDetector.scannerWillAppear()
-        self.barcodeDetector.startScanning()
     }
 
     override public func viewDidAppear(_ animated: Bool) {
@@ -115,7 +123,7 @@ public final class ScannerViewController: UIViewController {
         self.keyboardObserver = nil
     }
 
-    private static func scannerConfig() -> BarcodeDetectorAppearance {
+    private static func scannerAppearance() -> BarcodeDetectorAppearance {
         var appearance = BarcodeDetectorAppearance()
 
         appearance.torchButtonImage = UIImage.fromBundle("icon-light-inactive")?.recolored(with: .white)
@@ -126,22 +134,6 @@ public final class ScannerViewController: UIViewController {
         appearance.reticleCornerRadius = 3
 
         return appearance
-    }
-
-    /// reset `shoppingCart` when switching between projects
-    @available(*, deprecated, message: "no longer supported, will be removed soon. Create new instance on project/shop change")
-    public func reset(_ cart: ShoppingCart, _ shop: Shop) {
-        let project = SnabbleUI.project
-        self.productProvider = SnabbleAPI.productProvider(for: project)
-        self.shoppingCart = cart
-        self.shop = shop
-        self.barcodeDetector.scanFormats = project.scanFormats
-
-        // avoid camera permission query if this is called before we've ever been on-screen
-        if self.view != nil {
-            self.closeConfirmation()
-            self.navigationController?.popToRootViewController(animated: false)
-        }
     }
 
     // MARK: - scan confirmation views
@@ -212,8 +204,23 @@ extension ScannerViewController: MessageDelegate {
 
 // MARK: - scanning confirmation delegate
 extension ScannerViewController: ScanConfirmationViewDelegate {
-    func closeConfirmation() {
+    func closeConfirmation(_ msgId: String?) {
+
         self.displayScanConfirmationView(hidden: true)
+
+        if let msgId = msgId, let msgText = self.delegate.scanMessageText(for: msgId) {
+            let alert = UIAlertController(title: "Snabble.Scanner.multiPack".localized(), message: msgText, preferredStyle: .alert)
+            alert.addAction(UIAlertAction(title: "Snabble.OK".localized(), style: .default) { action in
+                self.closeConfirmation()
+            })
+
+            self.present(alert, animated: true)
+        } else {
+            self.closeConfirmation()
+        }
+    }
+
+    private func closeConfirmation() {
         self.lastScannedCode = ""
         self.barcodeDetector.startScanning()
 
