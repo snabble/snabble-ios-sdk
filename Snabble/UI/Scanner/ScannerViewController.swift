@@ -96,7 +96,6 @@ public final class ScannerViewController: UIViewController {
 
         self.updateCartButton()
         self.barcodeDetector.scannerWillAppear()
-        self.barcodeDetector.startScanning()
     }
 
     override public func viewDidAppear(_ animated: Bool) {
