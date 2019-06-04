@@ -6,8 +6,8 @@
 
 import Foundation
 
-/// Now that [SE-0235](https://github.com/apple/swift-evolution/blob/master/proposals/0235-add-result.md) has passed review,
-/// implement the trivial parts we need now so we can easily migrate later
+// #if swift(<5.0)
+/// Implement a trivial version of `Result` when compiling in Swift 4.2 mode
 public enum Result<Success, Failure: Swift.Error> {
     case success(Success)
     case failure(Failure)
@@ -19,6 +19,7 @@ public enum Result<Success, Failure: Swift.Error> {
         }
     }
 }
+// #endif
 
 public struct SnabbleError: Decodable, Error {
     public let error: ErrorResponse
