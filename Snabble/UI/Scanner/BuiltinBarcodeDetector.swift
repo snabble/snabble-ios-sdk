@@ -124,7 +124,6 @@ public final class BuiltinBarcodeDetector: NSObject, BarcodeDetector {
         // self.sessionQueue.async {
 
         if !self.captureSession.isRunning {
-            print("start")
             self.captureSession.startRunning()
 
             // set the ROI matching the reticle
@@ -144,7 +143,6 @@ public final class BuiltinBarcodeDetector: NSObject, BarcodeDetector {
 
     public func stopScanning() {
         self.sessionQueue.async {
-            print("stop")
             self.captureSession.stopRunning()
         }
     }
