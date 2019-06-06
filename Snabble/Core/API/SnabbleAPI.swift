@@ -51,6 +51,15 @@ public struct SnabbleAPIConfig {
     static let none = SnabbleAPIConfig(appId: "none", baseUrl: "", secret: "")
 }
 
+public struct TelecashSecretResult: Decodable {
+    public let hash: String
+    public let storeId: String
+    public let date: String
+    public let currency: String
+    public let chargeTotal: String
+    public let url: String
+}
+
 public struct SnabbleAPI {
     private(set) public static var config = SnabbleAPIConfig.none
     static var tokenRegistry = TokenRegistry("", "")
@@ -115,6 +124,21 @@ public struct SnabbleAPI {
 
             project.priceOverrideCodes?.forEach {
                 CodeMatcher.addTemplate(project.id, $0.id, $0.template)
+            }
+        }
+    }
+
+    public static func getTelecashSecret(completion: @escaping (Result<TelecashSecretResult, SnabbleError>)->() ) {
+        let project = self.projects[0]
+
+        #warning("TODO: get this URL from metadata")
+        project.request(.get, "https://api.snabble-testing.io/payment/telecash/global/secret", timeout: 5) { request in
+            guard let request = request else {
+                return completion(Result.failure(SnabbleError.noRequest))
+            }
+
+            project.perform(request) { (_ result: Result<TelecashSecretResult, SnabbleError>) in
+                completion(result)
             }
         }
     }

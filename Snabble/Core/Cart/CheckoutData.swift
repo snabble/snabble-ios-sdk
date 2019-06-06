@@ -44,6 +44,8 @@ public enum RawPaymentMethod: String {
     case deDirectDebit          // SEPA direct debit via Telecash/First Data
     case encodedCodesCSV        // QR Code with CSV
     case encodedCodesIKEA       // QR Code for IKEA
+    case creditcardVisa         // VISA via Telecash/First Data
+    case creditcardMastercard   // MASTERCARD via Telecash/First Data
 }
 
 // associated data for a payment method
@@ -64,6 +66,8 @@ public enum PaymentMethod {
     case deDirectDebit(PaymentMethodData?)
     case encodedCodesCSV
     case encodedCodesIKEA
+    case visa(PaymentMethodData?)
+    case mastercard(PaymentMethodData?)
 
     public var rawMethod: RawPaymentMethod {
         switch self {
@@ -72,6 +76,8 @@ public enum PaymentMethod {
         case .deDirectDebit: return .deDirectDebit
         case .encodedCodesCSV: return .encodedCodesCSV
         case .encodedCodesIKEA: return .encodedCodesIKEA
+        case .visa: return .creditcardVisa
+        case .mastercard: return .creditcardMastercard
         }
     }
 
