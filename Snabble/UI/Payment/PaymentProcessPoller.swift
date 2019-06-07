@@ -21,7 +21,7 @@ enum PaymentEvent {
     }
 }
 
-final class PaymentProcessPoller {
+final public class PaymentProcessPoller {
     private var timer: Timer?
 
     private let process: CheckoutProcess
@@ -34,7 +34,7 @@ final class PaymentProcessPoller {
     private var waitingFor = [PaymentEvent]()
     private var alreadySeen = [PaymentEvent]()
 
-    init(_ process: CheckoutProcess, _ project: Project, _ shop: Shop) {
+    public init(_ process: CheckoutProcess, _ project: Project, _ shop: Shop) {
         self.process = process
         self.project = project
         self.shop = shop
@@ -52,6 +52,15 @@ final class PaymentProcessPoller {
         self.task = nil
 
         self.completion = nil
+    }
+
+    /// wait for the receipt for this process to become available
+    public func waitForReceipt(_ completion: @escaping (Bool)->() ) {
+        self.waitFor([.receipt]) { result in
+            if let receiptAvailable = result[.receipt] {
+                completion(receiptAvailable)
+            }
+        }
     }
 
     // wait for a number of events, and call the completion handler as soon as one (or more) are fulfilled

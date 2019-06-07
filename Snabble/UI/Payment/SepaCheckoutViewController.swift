@@ -122,6 +122,6 @@ final class SepaCheckoutViewController: UIViewController {
         if success {
             self.cart.removeAll(endSession: true)
         }
-        self.delegate.paymentFinished(success, self.cart)
+        self.delegate.paymentFinished(success, self.cart, self.process)
     }
 }

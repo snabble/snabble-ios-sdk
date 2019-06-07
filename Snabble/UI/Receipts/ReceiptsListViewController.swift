@@ -22,18 +22,30 @@ final class PreviewItem: NSObject, QLPreviewItem {
     }
 }
 
-// TODO: add pull-to-refresh
+enum OrderEntry {
+    case pending(String)    // shop name
+    case done(Order)
+}
+
 @objc(ReceiptsListViewController)
 public final class ReceiptsListViewController: UIViewController {
     @IBOutlet weak var tableView: UITableView!
     @IBOutlet weak var emptyLabel: UILabel!
     @IBOutlet weak var spinner: UIActivityIndicatorView!
     
-    private var orderList: OrderList?
     private var quickLook = QLPreviewController()
     private var previewItem: QLPreviewItem!
 
-    public init() {
+    private var orders = [OrderEntry]()
+    private var process: CheckoutProcess?
+
+    convenience init() {
+        self.init(nil)
+    }
+
+    public init(_ process: CheckoutProcess?) {
+        self.process = process
+        
         super.init(nibName: nil, bundle: SnabbleBundle.main)
 
         self.title = "Snabble.Receipts.title".localized()
@@ -57,16 +69,24 @@ public final class ReceiptsListViewController: UIViewController {
         self.spinner.startAnimating()
         ClientOrders.loadList { result in
             self.orderListLoaded(result)
+            let refreshControl = UIRefreshControl()
+            refreshControl.addTarget(self, action: #selector(self.handleRefresh(_:)), for: .valueChanged)
+            self.tableView.refreshControl = refreshControl
         }
     }
 
     private func orderListLoaded(_ result: Result<OrderList, SnabbleError>) {
         switch result {
-        case .success(let orders):
-            self.orderList = orders
+        case .success(let orderList):
+            self.orders = orderList.orders.map { OrderEntry.done($0) }
+
+            #warning("add real check")
+            let pending = OrderEntry.pending("Knauber Freizeitmarkt")
+            self.orders.insert(pending, at: 0)
+
             DispatchQueue.main.async {
                 self.spinner.stopAnimating()
-                if self.orderList?.orders.count == 0 {
+                if self.orders.count == 0 {
                     self.emptyLabel.isHidden = false
                 }
                 self.tableView.reloadData()
@@ -77,11 +97,31 @@ public final class ReceiptsListViewController: UIViewController {
             break
         }
     }
+
+    @objc private func handleRefresh(_ sender: Any) {
+        ClientOrders.loadList { result in
+            self.tableView.refreshControl?.endRefreshing()
+            self.orderListLoaded(result)
+        }
+    }
+
+    private func checkReceipt(_ shop: Shop) {
+        guard let process = self.process else {
+            return
+        }
+
+        let poller = PaymentProcessPoller(process, SnabbleUI.project, shop)
+
+        poller.waitForReceipt { available in
+            print("receipt poller: \(available)")
+        }
+    }
+
 }
 
 extension ReceiptsListViewController: UITableViewDelegate, UITableViewDataSource {
     public func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return self.orderList?.orders.count ?? 0
+        return self.orders.count
     }
 
     public func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
@@ -92,22 +132,34 @@ extension ReceiptsListViewController: UITableViewDelegate, UITableViewDataSource
             return c
         }()
 
-        guard
-            let order = self.orderList?.orders[indexPath.row],
-            let project = SnabbleAPI.projectFor(order.project)
-        else {
-            return cell
+        let orderEntry = self.orders[indexPath.row]
+
+        switch orderEntry {
+        case .done(let order):
+            cell.accessoryType = .disclosureIndicator
+            cell.textLabel?.text = order.shopName
+            cell.detailTextLabel?.text = ""
+
+            guard let project = SnabbleAPI.projectFor(order.project) else {
+                break
+            }
+
+            let formatter = PriceFormatter(project)
+            let price = formatter.format(order.price)
+
+            let dateFormatter = DateFormatter()
+            dateFormatter.dateStyle = .medium
+            dateFormatter.timeStyle = .short
+            let date = dateFormatter.string(from: order.date)
+            cell.detailTextLabel?.text = "\(price) - \(date) Uhr"
+
+        case .pending(let shopName):
+            cell.textLabel?.text = shopName
+            cell.detailTextLabel?.text = "(wird geladen)"
+            let spinner = UIActivityIndicatorView(style: .gray)
+            spinner.startAnimating()
+            cell.accessoryView = spinner
         }
-
-        cell.textLabel?.text = order.shopName
-        let formatter = PriceFormatter(project)
-        let price = formatter.format(order.price)
-
-        let dateFormatter = DateFormatter()
-        dateFormatter.dateStyle = .medium
-        dateFormatter.timeStyle = .short
-        let date = dateFormatter.string(from: order.date)
-        cell.detailTextLabel?.text = "\(price) - \(date) Uhr"
 
         return cell
     }
@@ -116,9 +168,10 @@ extension ReceiptsListViewController: UITableViewDelegate, UITableViewDataSource
         if self.spinner.isAnimating {
             return
         }
-        
+
+        let orderEntry = self.orders[indexPath.row]
         guard
-            let order = self.orderList?.orders[indexPath.row],
+            case .done(let order) = orderEntry,
             let project = SnabbleAPI.projectFor(order.project)
         else {
             return

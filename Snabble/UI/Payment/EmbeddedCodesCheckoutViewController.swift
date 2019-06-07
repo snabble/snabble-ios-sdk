@@ -238,7 +238,7 @@ final class EmbeddedCodesCheckoutViewController: UIViewController {
             self.cart.removeAll(endSession: true)
             NotificationCenter.default.post(name: .snabbleCartUpdated, object: self)
 
-            self.delegate.paymentFinished(true, self.cart)
+            self.delegate.paymentFinished(true, self.cart, self.process)
         }
     }
 

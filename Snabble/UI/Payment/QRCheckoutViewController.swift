@@ -106,7 +106,7 @@ final class QRCheckoutViewController: UIViewController {
     @objc private func paymentFinished(_ success: Bool) {
         self.poller = nil
 
-        self.delegate.paymentFinished(success, self.cart)
+        self.delegate.paymentFinished(success, self.cart, self.process)
     }
 
 }

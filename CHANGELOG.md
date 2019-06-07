@@ -1,5 +1,9 @@
 ## snabble iOS SDK Changelog
 
+# v0.10.11
+
+* Adds pull-to-refresh to `ReceiptsListViewController`
+
 # v0.10.0
 
 This version implements a number of major changes in different areas.
