@@ -1,5 +1,10 @@
 ## snabble iOS SDK Changelog
 
+# v0.10.x
+
+* Adds support for additional payment methods, `creditcardVisa` and `creditcardMastercard`.
+* `PaymentMethodData.encryptedData` has been renamed to `associatedData`
+
 # v0.10.0
 
 This version implements a number of major changes in different areas.

@@ -51,11 +51,16 @@ public enum RawPaymentMethod: String {
 // associated data for a payment method
 public struct PaymentMethodData {
     public let displayName: String
-    public let encryptedData: String
+    public let associatedData: String
 
-    public init(_ displayName: String, _ encryptedData: String) {
+    public init(_ displayName: String, _ associatedData: String) {
         self.displayName = displayName
-        self.encryptedData = encryptedData
+        self.associatedData = associatedData
+    }
+
+    @available(*, unavailable, renamed: "associatedData")
+    public var encryptedData: String {
+        return associatedData
     }
 }
 
