@@ -172,6 +172,7 @@ public struct CheckoutProcess: Decodable {
     public let modified: Bool
     public let paymentInformation: PaymentInformation?
     public let paymentState: PaymentState
+    public let orderId: String?
 
     public struct ProcessLinks: Decodable {
         public let `self`: Link

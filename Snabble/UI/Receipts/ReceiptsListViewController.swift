@@ -36,7 +36,8 @@ public final class ReceiptsListViewController: UIViewController {
     private var quickLook = QLPreviewController()
     private var previewItem: QLPreviewItem!
 
-    private var orders = [OrderEntry]()
+    private var orderList: OrderList?
+    private var orders: [OrderEntry]?
     private var process: CheckoutProcess?
 
     convenience init() {
@@ -67,35 +68,72 @@ public final class ReceiptsListViewController: UIViewController {
         self.emptyLabel.isHidden = true
 
         self.spinner.startAnimating()
+        self.loadOrderList()
+        self.startReceiptPolling()
+    }
+
+    private func loadOrderList() {
         ClientOrders.loadList { result in
             self.orderListLoaded(result)
-            let refreshControl = UIRefreshControl()
-            refreshControl.addTarget(self, action: #selector(self.handleRefresh(_:)), for: .valueChanged)
-            self.tableView.refreshControl = refreshControl
+
+            if self.tableView.refreshControl == nil {
+                let refreshControl = UIRefreshControl()
+                refreshControl.addTarget(self, action: #selector(self.handleRefresh(_:)), for: .valueChanged)
+                self.tableView.refreshControl = refreshControl
+            }
+        }
+    }
+
+    private func startReceiptPolling() {
+        guard let process = self.process else {
+            return
+        }
+
+        let poller = PaymentProcessPoller(process, SnabbleUI.project)
+
+        poller.waitFor([.receipt]) { result in
+            if let receiptAvailable = result[.receipt], receiptAvailable, self.orderList != nil {
+                self.loadOrderList()
+            }
         }
     }
 
     private func orderListLoaded(_ result: Result<OrderList, SnabbleError>) {
         switch result {
         case .success(let orderList):
-            self.orders = orderList.orders.map { OrderEntry.done($0) }
-
-            #warning("add real check")
-            let pending = OrderEntry.pending("Knauber Freizeitmarkt")
-            self.orders.insert(pending, at: 0)
-
-            DispatchQueue.main.async {
-                self.spinner.stopAnimating()
-                if self.orders.count == 0 {
-                    self.emptyLabel.isHidden = false
-                }
-                self.tableView.reloadData()
-            }
+            self.orderList = orderList
+            self.updateDisplay(orderList)
 
         case .failure:
             // TODO: display error msg
             break
         }
+    }
+
+    private func updateDisplay(_ orderList: OrderList) {
+        var orders = orderList.orders.map { OrderEntry.done($0) }
+
+        let orderIds: [String] = orders.compactMap {
+            if case .done(let entry) = $0 {
+                return entry.id
+            } else {
+                return nil
+            }
+        }
+
+        if let process = self.process, let orderId = process.orderId {
+            if !orderIds.contains(orderId) {
+                let pending = OrderEntry.pending(orderId)
+                orders.insert(pending, at: 0)
+            }
+        }
+        self.orders = orders
+
+        self.spinner.stopAnimating()
+        if orders.count == 0 {
+            self.emptyLabel.isHidden = false
+        }
+        self.tableView.reloadData()
     }
 
     @objc private func handleRefresh(_ sender: Any) {
@@ -104,24 +142,11 @@ public final class ReceiptsListViewController: UIViewController {
             self.orderListLoaded(result)
         }
     }
-
-    private func checkReceipt(_ shop: Shop) {
-        guard let process = self.process else {
-            return
-        }
-
-        let poller = PaymentProcessPoller(process, SnabbleUI.project, shop)
-
-        poller.waitForReceipt { available in
-            print("receipt poller: \(available)")
-        }
-    }
-
 }
 
 extension ReceiptsListViewController: UITableViewDelegate, UITableViewDataSource {
     public func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return self.orders.count
+        return self.orders?.count ?? 0
     }
 
     public func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
@@ -132,7 +157,11 @@ extension ReceiptsListViewController: UITableViewDelegate, UITableViewDataSource
             return c
         }()
 
-        let orderEntry = self.orders[indexPath.row]
+        guard let orders = self.orders else {
+            return cell
+        }
+
+        let orderEntry = orders[indexPath.row]
 
         switch orderEntry {
         case .done(let order):
@@ -165,11 +194,11 @@ extension ReceiptsListViewController: UITableViewDelegate, UITableViewDataSource
     }
 
     public func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        if self.spinner.isAnimating {
+        guard let orders = self.orders else {
             return
         }
 
-        let orderEntry = self.orders[indexPath.row]
+        let orderEntry = orders[indexPath.row]
         guard
             case .done(let order) = orderEntry,
             let project = SnabbleAPI.projectFor(order.project)
