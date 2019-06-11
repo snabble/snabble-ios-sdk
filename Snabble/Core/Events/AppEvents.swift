@@ -123,7 +123,6 @@ struct AppEvent: Encodable {
         let cart = shoppingCart.createCart()
         self.init(type: .cart, payload: Payload.cart(cart), project: shoppingCart.config.project, shopId: cart.shopID)
     }
-
 }
 
 extension AppEvent {
@@ -152,16 +151,6 @@ extension AppEvent {
             Log.error("\(error)")
         }
 
-        /*
-        var sessionId = ""
-        switch self.payload {
-        case .session(let session): sessionId = session.session
-        case .cart(let cart): sessionId = cart.session
-        default: sessionId = "n/a"
-        }
-        Log.info("posting event: \(self.type) session=\(sessionId)")
-        */
-
         // use a system default session here so we can still log pinning errors
         let session = URLSession(configuration: .default)
         let task = session.dataTask(with: request) { rawData, response, error in
@@ -172,4 +161,11 @@ extension AppEvent {
         task.resume()
     }
 
+}
+
+public enum RatingEvent {
+    public static func track(_ project: Project, _ value: Int, _ comment: String?) {
+        let event = AppEvent(key: "rating", value: "\(value)", comment: comment ?? "", project: project)
+        event.post()
+    }
 }
