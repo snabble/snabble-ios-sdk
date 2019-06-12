@@ -68,7 +68,7 @@ extension SignedCheckoutInfo {
             dict["signedCheckoutInfo"] = self.rawJson
 
             if let data = paymentMethod.data {
-                dict["paymentInformation"] = [ "encryptedOrigin": data.associatedData ]
+                dict["paymentInformation"] = [ "encryptedOrigin": data.encryptedData ]
             }
 
             if let checkoutInfo = self.rawJson?["checkoutInfo"] as? [String: Any], let session = checkoutInfo["session"] as? String {

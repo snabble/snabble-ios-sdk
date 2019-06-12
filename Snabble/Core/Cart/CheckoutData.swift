@@ -44,23 +44,18 @@ public enum RawPaymentMethod: String {
     case deDirectDebit          // SEPA direct debit via Telecash/First Data
     case encodedCodesCSV        // QR Code with CSV
     case encodedCodesIKEA       // QR Code for IKEA
-    case creditcardVisa         // VISA via Telecash/First Data
-    case creditcardMastercard   // MASTERCARD via Telecash/First Data
+    case creditCardVisa         // VISA via Telecash/First Data
+    case creditCardMastercard   // MASTERCARD via Telecash/First Data
 }
 
 // associated data for a payment method
 public struct PaymentMethodData {
     public let displayName: String
-    public let associatedData: String
+    public let encryptedData: String
 
-    public init(_ displayName: String, _ associatedData: String) {
+    public init(_ displayName: String, _ encryptedData: String) {
         self.displayName = displayName
-        self.associatedData = associatedData
-    }
-
-    @available(*, unavailable, renamed: "associatedData")
-    public var encryptedData: String {
-        return associatedData
+        self.encryptedData = encryptedData
     }
 }
 
@@ -81,8 +76,8 @@ public enum PaymentMethod {
         case .deDirectDebit: return .deDirectDebit
         case .encodedCodesCSV: return .encodedCodesCSV
         case .encodedCodesIKEA: return .encodedCodesIKEA
-        case .visa: return .creditcardVisa
-        case .mastercard: return .creditcardMastercard
+        case .visa: return .creditCardVisa
+        case .mastercard: return .creditCardMastercard
         }
     }
 

@@ -118,14 +118,14 @@ public final class PaymentProcess {
                 } else {
                     result.append(.deDirectDebit(nil))
                 }
-            case .creditcardVisa:
+            case .creditCardVisa:
                 let visa = userData.filter { if case .visa = $0 { return true } else { return false } }
                 if visa.count > 0 {
                     result.append(contentsOf: visa.reversed())
                 } else {
                     result.append(.visa(nil))
                 }
-            case .creditcardMastercard:
+            case .creditCardMastercard:
                 let mc = userData.filter { if case .mastercard = $0 { return true } else { return false } }
                 if mc.count > 0 {
                     result.append(contentsOf: mc.reversed())
