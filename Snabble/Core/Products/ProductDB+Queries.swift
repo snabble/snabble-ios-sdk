@@ -257,11 +257,20 @@ extension ProductDB {
     private func getPriceRowForSku(_ dbQueue: DatabaseQueue, _ sku: String, _ shopId: String) -> Row? {
         do {
             let row = try dbQueue.inDatabase { db in
-                return try self.fetchOne(db, """
-                        select * from prices where pricingCategory = ifnull((select pricingCategory from shops where shops.id = ?), '0') and sku = ?
-                        """, arguments: [shopId, sku])
+                return try self.fetchOne(db,
+                    "select * from prices where pricingCategory = ifnull((select pricingCategory from shops where shops.id = ?), 0) and sku = ?",
+                    arguments: [shopId, sku])
             }
-            return row
+            if row != nil {
+                // we have a price in the given category, return it
+                return row
+            }
+
+            // no price in the category, try the default category, 0
+            let row2 = try dbQueue.inDatabase { db in
+                return try self.fetchOne(db, "select * from prices where pricingCategory = 0 and sku = ?", arguments: [sku])
+            }
+            return row2
         } catch {
             self.logError("getPriceRowForSku db error: \(error)")
         }

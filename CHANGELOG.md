@@ -2,8 +2,11 @@
 
 # v0.10.x
 
-* Adds support for additional payment methods, `creditcardVisa` and `creditcardMastercard`.
-* `PaymentMethodData.encryptedData` has been renamed to `associatedData`
+* Adds support for additional payment methods, `creditCardVisa` and `creditCardMastercard`.
+
+# v0.10.1
+
+* Fixes a bug where store-specific prices would sometimes be reported as 0.
 
 # v0.10.0
 
