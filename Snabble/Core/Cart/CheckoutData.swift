@@ -81,18 +81,18 @@ public enum PaymentMethod {
         }
     }
 
-    public var displayName: String? {
+    public var data: PaymentMethodData? {
         switch self {
-        case .deDirectDebit(let data): return data?.displayName
-        default: return nil
+        case .deDirectDebit(let data), .visa(let data), .mastercard(let data):
+             return data
+
+        case .qrCodePOS, .encodedCodes, .encodedCodesCSV, .encodedCodesIKEA:
+            return nil
         }
     }
 
-    public var data: PaymentMethodData? {
-        switch self {
-        case .deDirectDebit(let data): return data
-        default: return nil
-        }
+    public var displayName: String? {
+        return self.data?.displayName
     }
 }
 

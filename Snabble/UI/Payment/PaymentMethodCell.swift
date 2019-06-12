@@ -18,16 +18,20 @@ final class PaymentMethodCell: UICollectionViewCell {
             self.icon.image = image
             self.label.text = paymentMethod.displayName
 
+            let incomplete: Bool
             switch paymentMethod {
-            case .deDirectDebit(let data):
-                if data == nil {
-                    self.icon.image = image?.grayscale()
-                    self.label.textColor = SnabbleUI.appearance.primaryColor
-                    self.label.text = "Snabble.PaymentSelection.addNow".localized()
-                }
-            default: ()
+            case .deDirectDebit(let data), .visa(let data), .mastercard(let data):
+                incomplete = data == nil
+
+            case .qrCodePOS, .encodedCodes, .encodedCodesCSV, .encodedCodesIKEA:
+                incomplete = false
             }
 
+            if incomplete {
+                self.icon.image = image?.grayscale()
+                self.label.textColor = SnabbleUI.appearance.primaryColor
+                self.label.text = "Snabble.PaymentSelection.addNow".localized()
+            }
         }
     }
 
