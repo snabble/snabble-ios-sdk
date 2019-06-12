@@ -1,5 +1,9 @@
 ## snabble iOS SDK Changelog
 
+# v0.10.1
+
+* Fixes a bug where store-specific prices would sometimes be reported as 0.
+
 # v0.10.0
 
 This version implements a number of major changes in different areas.
