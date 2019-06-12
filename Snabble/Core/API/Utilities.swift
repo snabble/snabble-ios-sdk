@@ -21,18 +21,18 @@ extension UnknownCaseRepresentable {
 // MARK: - Logging
 enum Log {
     static func info(_ str: String) {
-        NSLog("SnabbleSDK INFO: %@", str)
+        NSLog("[snabble] INFO: %@", str)
     }
 
     static func debug(_ str: String) {
-        NSLog("SnabbleSDK DEBUG: %@", str)
+        NSLog("[snabble] DEBUG: %@", str)
     }
 
     static func warn(_ str: String) {
-        NSLog("SnabbleSDK WARN: %@", str)
+        NSLog("[snabble] WARN: %@", str)
     }
 
     static func error(_ str: String) {
-        NSLog("SnabbleSDK ERROR: %@", str)
+        NSLog("[snabble] ERROR: %@", str)
     }
 }
