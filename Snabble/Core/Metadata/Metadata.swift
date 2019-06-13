@@ -65,28 +65,14 @@ public struct GatewayCertificate: Decodable {
 public struct MetadataLinks: Decodable {
     public let clientOrders: Link
     public let telecashSecret: Link
-    public let telecashDeletePreauth: Link
+    public let telecashPreauth: Link
     public let `self`: Link
 
     fileprivate init() {
         self.clientOrders = Link.empty
         self.telecashSecret = Link.empty
-        self.telecashDeletePreauth = Link.empty
+        self.telecashPreauth = Link.empty
         self.`self` = Link.empty
-    }
-
-    #warning("removeme")
-    enum CodingKeys: String, CodingKey {
-        case clientOrders, telecashSecret, telecashDeletePreaut, `self`
-    }
-    public init(from decoder: Decoder) throws {
-        let container = try decoder.container(keyedBy: CodingKeys.self)
-
-        self.clientOrders = try container.decode(Link.self, forKey: .clientOrders)
-        self.telecashSecret = try container.decodeIfPresent(Link.self, forKey: .telecashSecret) ??
-            Link(href: "https://api.snabble-testing.io/payment/telecash/global/secret")
-        self.telecashDeletePreauth = try container.decodeIfPresent(Link.self, forKey: .telecashDeletePreaut) ?? Link.empty
-        self.`self` = try container.decode(Link.self, forKey: .self)
     }
 }
 

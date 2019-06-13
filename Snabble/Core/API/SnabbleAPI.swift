@@ -195,7 +195,6 @@ public struct TelecashSecret: Decodable {
     public let url: String
 }
 
-struct DeleteResponse: Decodable {}
 
 extension SnabbleAPI {
     public static func getTelecashSecret(_ project: Project, completion: @escaping (Result<TelecashSecret, SnabbleError>)->() ) {
@@ -210,15 +209,18 @@ extension SnabbleAPI {
         }
     }
 
-    public static func deletePreauth(_ project: Project, _ transactionId: String) {
-        let url = SnabbleAPI.metadata.links.telecashDeletePreauth.href
-                    .replacingOccurrences(of: "{transactionId}", with: transactionId)
+    public static func deletePreauth(_ project: Project, _ orderId: String) {
+        let url = SnabbleAPI.metadata.links.telecashPreauth.href
+                    .replacingOccurrences(of: "{orderID}", with: orderId)
         project.request(.delete, url, timeout: 5) { request in
             guard let request = request else {
                 return
             }
 
-            project.perform(request) { (_ result: Result<DeleteResponse, SnabbleError>) in }
+            struct DeleteResponse: Decodable {}
+            project.perform(request) { (_ result: Result<DeleteResponse, SnabbleError>) in
+                print(result)
+            }
         }
     }
 
