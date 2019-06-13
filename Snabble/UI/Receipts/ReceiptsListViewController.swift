@@ -55,7 +55,7 @@ public final class ReceiptsListViewController: UIViewController {
         self.emptyLabel.isHidden = true
 
         self.spinner.startAnimating()
-        ClientOrders.loadList { result in
+        OrderList.load(SnabbleUI.project) { result in
             self.orderListLoaded(result)
         }
     }
