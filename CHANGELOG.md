@@ -1,5 +1,9 @@
 ## snabble iOS SDK Changelog
 
+# v0.10.2
+
+* Adds support for additional payment methods, `creditCardVisa` and `creditCardMastercard`.
+
 # v0.10.1
 
 * Fixes a bug where store-specific prices would sometimes be reported as 0.

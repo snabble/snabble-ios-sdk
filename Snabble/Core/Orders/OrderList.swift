@@ -1,30 +1,34 @@
 //
-//  ReceiptsManager.swift
+//  OrderList.swift
 //
 //  Copyright © 2019 snabble. All rights reserved.
 //
 
 import Foundation
 
-struct OrderList: Decodable {
-    let orders: [Order]
+public struct OrderList: Decodable {
+    public let orders: [Order]
 }
 
-struct Order: Decodable {
-    let project: String
-    let id: String
-    let date: Date
-    let shopId: String
-    let shopName: String
-    let price: Int
-    let links: OrderLinks
+public struct Order: Decodable {
+    public let project: String
+    public let id: String
+    public let date: Date
+    public let shopId: String
+    public let shopName: String
+    public let price: Int
+    public let links: OrderLinks
+
+    public struct OrderLinks: Decodable {
+        public let receipt: Link
+    }
 
     enum CodingKeys: String, CodingKey {
         case project, id, date, shopName, price, links
         case shopId = "shopID"
     }
 
-    init(from decoder: Decoder) throws {
+    public init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
 
         self.project = try container.decode(String.self, forKey: .project)
@@ -43,16 +47,11 @@ struct Order: Decodable {
     }
 }
 
-struct OrderLinks: Decodable {
-    let receipt: Link
-}
 
-struct ClientOrders {
-
-    static func loadList(completion: @escaping (Result<OrderList, SnabbleError>)->() ) {
+extension OrderList {
+    static func load(_ project: Project, completion: @escaping (Result<OrderList, SnabbleError>)->() ) {
         let url = SnabbleAPI.links.clientOrders.href.replacingOccurrences(of: "{clientID}", with: SnabbleAPI.clientId)
 
-        let project = SnabbleAPI.projects[0]
         project.request(.get, url, timeout: 0) { request in
             guard let request = request else {
                 return completion(Result.failure(SnabbleError.noRequest))
@@ -63,5 +62,4 @@ struct ClientOrders {
             }
         }
     }
-
 }

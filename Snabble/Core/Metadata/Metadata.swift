@@ -64,10 +64,14 @@ public struct GatewayCertificate: Decodable {
 
 public struct MetadataLinks: Decodable {
     public let clientOrders: Link
+    public let telecashSecret: Link
+    public let telecashPreauth: Link
     public let `self`: Link
 
     fileprivate init() {
         self.clientOrders = Link.empty
+        self.telecashSecret = Link.empty
+        self.telecashPreauth = Link.empty
         self.`self` = Link.empty
     }
 }

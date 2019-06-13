@@ -113,7 +113,7 @@ public extension UIImage {
         return newImage!.withRenderingMode(.alwaysOriginal)
     }
 
-    /// create a black-and-white version of `self`
+    /// create a grayscale version of `self`
     func grayscale(brightness: Double = 0.0, contrast: Double = 1.0) -> UIImage? {
         guard let ciImage = CIImage(image: self, options: nil) else {
             return nil
