@@ -1,6 +1,6 @@
 ## snabble iOS SDK Changelog
 
-# v0.10.x
+# v0.10.2
 
 * Adds support for additional payment methods, `creditCardVisa` and `creditCardMastercard`.
 
