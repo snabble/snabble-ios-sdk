@@ -212,6 +212,7 @@ extension SnabbleAPI {
     public static func deletePreauth(_ project: Project, _ orderId: String) {
         let url = SnabbleAPI.metadata.links.telecashPreauth.href
                     .replacingOccurrences(of: "{orderID}", with: orderId)
+        
         project.request(.delete, url, timeout: 5) { request in
             guard let request = request else {
                 return
