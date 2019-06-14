@@ -36,3 +36,10 @@ enum Log {
         NSLog("[snabble] ERROR: %@", str)
     }
 }
+
+/// run `closure` synchronized using `lock`
+func synchronized<T>(_ lock: Any, closure: () throws -> T) rethrows -> T {
+    objc_sync_enter(lock)
+    defer { objc_sync_exit(lock) }
+    return try closure()
+}

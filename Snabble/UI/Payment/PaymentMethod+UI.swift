@@ -15,6 +15,8 @@ extension PaymentMethod {
         case .encodedCodesCSV: return "payment-method-checkstand"
         case .encodedCodesIKEA: return "payment-method-checkstand"
         case .deDirectDebit: return "payment-sepa"
+        case .visa: return "payment-visa"
+        case .mastercard: return "payment-mastercard"
         }
     }
 
@@ -46,7 +48,7 @@ extension PaymentMethod {
             processor = QRCheckoutViewController(process!, cart, delegate)
         case .encodedCodes, .encodedCodesCSV, .encodedCodesIKEA:
             processor = EmbeddedCodesCheckoutViewController(process, self, cart, delegate)
-        case .deDirectDebit:
+        case .deDirectDebit, .visa, .mastercard:
             processor = SepaCheckoutViewController(process!, method.data!, cart, delegate)
         }
         processor.hidesBottomBarWhenPushed = true
@@ -110,11 +112,25 @@ public final class PaymentProcess {
             case .encodedCodesIKEA: result.append(.encodedCodesIKEA)
             case .qrCodePOS: result.append(.qrCodePOS)
             case .deDirectDebit:
-                let telecash = userData.filter { if case .deDirectDebit = $0 { return true } else { return false } }
-                if telecash.count > 0 {
-                    result.append(contentsOf: telecash.reversed())
+                let sepa = userData.filter { if case .deDirectDebit = $0 { return true } else { return false } }
+                if sepa.count > 0 {
+                    result.append(contentsOf: sepa.reversed())
                 } else {
                     result.append(.deDirectDebit(nil))
+                }
+            case .creditCardVisa:
+                let visa = userData.filter { if case .visa = $0 { return true } else { return false } }
+                if visa.count > 0 {
+                    result.append(contentsOf: visa.reversed())
+                } else {
+                    result.append(.visa(nil))
+                }
+            case .creditCardMastercard:
+                let mc = userData.filter { if case .mastercard = $0 { return true } else { return false } }
+                if mc.count > 0 {
+                    result.append(contentsOf: mc.reversed())
+                } else {
+                    result.append(.mastercard(nil))
                 }
             }
         }

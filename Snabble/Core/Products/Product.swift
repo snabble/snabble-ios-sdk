@@ -195,7 +195,7 @@ public struct Product: Codable {
         self.imageUrl = try container.decodeIfPresent(.imageUrl)
         self.basePrice = try container.decodeIfPresent(.basePrice)
         self.listPrice = try container.decode(.listPrice)
-        self.customerCardPrice = try container.decode(.customerCardPrice)
+        self.customerCardPrice = try container.decodeIfPresent(.customerCardPrice)
         self.discountedPrice = try container.decodeIfPresent(.discountedPrice)
         self.type = try container.decode(.type)
         self.codes = try container.decode(.codes)

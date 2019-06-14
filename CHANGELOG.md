@@ -1,8 +1,14 @@
 ## snabble iOS SDK Changelog
 
-# v0.10.11
+# v0.10.2
 
-* Adds pull-to-refresh to `ReceiptsListViewController`
+* Adds support for additional payment methods, `creditCardVisa` and `creditCardMastercard`.
+* Adds pull-to-refresh to `ReceiptsListViewController`. 
+* `ReceiptsListViewController.init` now takes an optional `CheckoutProcess` parameter. If this is used, the VC will add the specified order to the table display, if it's not already in the client's order list, and wait for the receipt PDF to be generated.
+
+# v0.10.1
+
+* Fixes a bug where store-specific prices would sometimes be reported as 0.
 
 # v0.10.0
 

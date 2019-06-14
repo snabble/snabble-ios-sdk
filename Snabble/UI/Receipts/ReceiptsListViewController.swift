@@ -68,12 +68,13 @@ public final class ReceiptsListViewController: UIViewController {
         self.emptyLabel.isHidden = true
 
         self.spinner.startAnimating()
+
         self.loadOrderList()
         self.startReceiptPolling()
     }
 
     private func loadOrderList() {
-        ClientOrders.loadList { result in
+        OrderList.load(SnabbleUI.project) { result in
             self.orderListLoaded(result)
 
             if self.tableView.refreshControl == nil {
@@ -121,7 +122,7 @@ public final class ReceiptsListViewController: UIViewController {
             }
         }
 
-        if let process = self.process, let orderId = process.orderId {
+        if let process = self.process, let orderId = process.orderID {
             if !orderIds.contains(orderId) {
                 let pending = OrderEntry.pending(orderId)
                 orders.insert(pending, at: 0)
@@ -137,7 +138,7 @@ public final class ReceiptsListViewController: UIViewController {
     }
 
     @objc private func handleRefresh(_ sender: Any) {
-        ClientOrders.loadList { result in
+        OrderList.load(SnabbleUI.project) { result in
             self.tableView.refreshControl?.endRefreshing()
             self.orderListLoaded(result)
         }
