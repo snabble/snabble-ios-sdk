@@ -26,7 +26,6 @@ final class PaymentProcessPoller {
 
     private let process: CheckoutProcess
     private let project: Project
-    private let shop: Shop
 
     private var task: URLSessionDataTask?
     private var completion: ((Bool) -> ())?
@@ -34,10 +33,9 @@ final class PaymentProcessPoller {
     private var waitingFor = [PaymentEvent]()
     private var alreadySeen = [PaymentEvent]()
 
-    init(_ process: CheckoutProcess, _ project: Project, _ shop: Shop) {
+    init(_ process: CheckoutProcess, _ project: Project) {
         self.process = process
         self.project = project
-        self.shop = shop
     }
 
     deinit {

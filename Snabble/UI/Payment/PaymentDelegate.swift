@@ -18,7 +18,8 @@ public protocol PaymentDelegate: AnalyticsDelegate, MessageDelegate {
     /// - Parameters:
     ///   - success: indicates whether the payment was successful
     ///   - cart: the shopping cart
-    func paymentFinished(_ success: Bool, _ cart: ShoppingCart)
+    ///   - process: the checkout process, if available
+    func paymentFinished(_ success: Bool, _ cart: ShoppingCart, _ process: CheckoutProcess?)
 
     /// a view that the payment process can use to temporarily display e.g. loading indicators
     /// (this uses `UIView!` as the type so that instances of `UIViewController` don't need to do anything to conform)

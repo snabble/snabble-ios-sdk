@@ -76,7 +76,7 @@ final class SepaCheckoutViewController: UIViewController {
 
         self.delegate.track(.viewSepaCheckout)
 
-        self.poller = PaymentProcessPoller(self.process, SnabbleUI.project, self.cart.config.shop)
+        self.poller = PaymentProcessPoller(self.process, SnabbleUI.project)
 
         var events = [PaymentEvent: Bool]()
         self.poller?.waitFor([.approval, .paymentSuccess]) { event in
@@ -122,6 +122,6 @@ final class SepaCheckoutViewController: UIViewController {
         if success {
             self.cart.removeAll(endSession: true)
         }
-        self.delegate.paymentFinished(success, self.cart)
+        self.delegate.paymentFinished(success, self.cart, self.process)
     }
 }

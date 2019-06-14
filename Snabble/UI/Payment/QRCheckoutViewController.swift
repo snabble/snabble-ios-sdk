@@ -69,7 +69,7 @@ final class QRCheckoutViewController: UIViewController {
         self.qrCodeView.image = QRCode.generate(for: qrCodeContent, scale: 5)
         self.qrCodeWidth.constant = self.qrCodeView.image?.size.width ?? 0
 
-        self.poller = PaymentProcessPoller(self.process, SnabbleUI.project, self.cart.config.shop)
+        self.poller = PaymentProcessPoller(self.process, SnabbleUI.project)
         self.poller?.waitFor([.paymentSuccess]) { events in
             if let success = events[.paymentSuccess] {
                 self.paymentFinished(success)
@@ -106,7 +106,7 @@ final class QRCheckoutViewController: UIViewController {
     @objc private func paymentFinished(_ success: Bool) {
         self.poller = nil
 
-        self.delegate.paymentFinished(success, self.cart)
+        self.delegate.paymentFinished(success, self.cart, self.process)
     }
 
 }

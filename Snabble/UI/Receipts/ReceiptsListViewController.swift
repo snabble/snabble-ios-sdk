@@ -22,18 +22,31 @@ final class PreviewItem: NSObject, QLPreviewItem {
     }
 }
 
-// TODO: add pull-to-refresh
+enum OrderEntry {
+    case pending(String)    // shop name
+    case done(Order)
+}
+
 @objc(ReceiptsListViewController)
 public final class ReceiptsListViewController: UIViewController {
     @IBOutlet weak var tableView: UITableView!
     @IBOutlet weak var emptyLabel: UILabel!
     @IBOutlet weak var spinner: UIActivityIndicatorView!
     
-    private var orderList: OrderList?
     private var quickLook = QLPreviewController()
     private var previewItem: QLPreviewItem!
 
-    public init() {
+    private var orderList: OrderList?
+    private var orders: [OrderEntry]?
+    private var process: CheckoutProcess?
+
+    convenience init() {
+        self.init(nil)
+    }
+
+    public init(_ process: CheckoutProcess?) {
+        self.process = process
+        
         super.init(nibName: nil, bundle: SnabbleBundle.main)
 
         self.title = "Snabble.Receipts.title".localized()
@@ -55,33 +68,86 @@ public final class ReceiptsListViewController: UIViewController {
         self.emptyLabel.isHidden = true
 
         self.spinner.startAnimating()
+
+        self.loadOrderList()
+        self.startReceiptPolling()
+    }
+
+    private func loadOrderList() {
         OrderList.load(SnabbleUI.project) { result in
             self.orderListLoaded(result)
+
+            if self.tableView.refreshControl == nil {
+                let refreshControl = UIRefreshControl()
+                refreshControl.addTarget(self, action: #selector(self.handleRefresh(_:)), for: .valueChanged)
+                self.tableView.refreshControl = refreshControl
+            }
+        }
+    }
+
+    private func startReceiptPolling() {
+        guard let process = self.process else {
+            return
+        }
+
+        let poller = PaymentProcessPoller(process, SnabbleUI.project)
+
+        poller.waitFor([.receipt]) { result in
+            if let receiptAvailable = result[.receipt], receiptAvailable, self.orderList != nil {
+                self.loadOrderList()
+            }
         }
     }
 
     private func orderListLoaded(_ result: Result<OrderList, SnabbleError>) {
         switch result {
-        case .success(let orders):
-            self.orderList = orders
-            DispatchQueue.main.async {
-                self.spinner.stopAnimating()
-                if self.orderList?.orders.count == 0 {
-                    self.emptyLabel.isHidden = false
-                }
-                self.tableView.reloadData()
-            }
+        case .success(let orderList):
+            self.orderList = orderList
+            self.updateDisplay(orderList)
 
         case .failure:
             // TODO: display error msg
             break
         }
     }
+
+    private func updateDisplay(_ orderList: OrderList) {
+        var orders = orderList.orders.map { OrderEntry.done($0) }
+
+        let orderIds: [String] = orders.compactMap {
+            if case .done(let entry) = $0 {
+                return entry.id
+            } else {
+                return nil
+            }
+        }
+
+        if let process = self.process, let orderId = process.orderID {
+            if !orderIds.contains(orderId) {
+                let pending = OrderEntry.pending(orderId)
+                orders.insert(pending, at: 0)
+            }
+        }
+        self.orders = orders
+
+        self.spinner.stopAnimating()
+        if orders.count == 0 {
+            self.emptyLabel.isHidden = false
+        }
+        self.tableView.reloadData()
+    }
+
+    @objc private func handleRefresh(_ sender: Any) {
+        OrderList.load(SnabbleUI.project) { result in
+            self.tableView.refreshControl?.endRefreshing()
+            self.orderListLoaded(result)
+        }
+    }
 }
 
 extension ReceiptsListViewController: UITableViewDelegate, UITableViewDataSource {
     public func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return self.orderList?.orders.count ?? 0
+        return self.orders?.count ?? 0
     }
 
     public func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
@@ -92,33 +158,50 @@ extension ReceiptsListViewController: UITableViewDelegate, UITableViewDataSource
             return c
         }()
 
-        guard
-            let order = self.orderList?.orders[indexPath.row],
-            let project = SnabbleAPI.projectFor(order.project)
-        else {
+        guard let orders = self.orders else {
             return cell
         }
 
-        cell.textLabel?.text = order.shopName
-        let formatter = PriceFormatter(project)
-        let price = formatter.format(order.price)
+        let orderEntry = orders[indexPath.row]
 
-        let dateFormatter = DateFormatter()
-        dateFormatter.dateStyle = .medium
-        dateFormatter.timeStyle = .short
-        let date = dateFormatter.string(from: order.date)
-        cell.detailTextLabel?.text = "\(price) - \(date) Uhr"
+        switch orderEntry {
+        case .done(let order):
+            cell.accessoryType = .disclosureIndicator
+            cell.textLabel?.text = order.shopName
+            cell.detailTextLabel?.text = ""
+
+            guard let project = SnabbleAPI.projectFor(order.project) else {
+                break
+            }
+
+            let formatter = PriceFormatter(project)
+            let price = formatter.format(order.price)
+
+            let dateFormatter = DateFormatter()
+            dateFormatter.dateStyle = .medium
+            dateFormatter.timeStyle = .short
+            let date = dateFormatter.string(from: order.date)
+            cell.detailTextLabel?.text = "\(price) - \(date) Uhr"
+
+        case .pending(let shopName):
+            cell.textLabel?.text = shopName
+            cell.detailTextLabel?.text = "(wird geladen)"
+            let spinner = UIActivityIndicatorView(style: .gray)
+            spinner.startAnimating()
+            cell.accessoryView = spinner
+        }
 
         return cell
     }
 
     public func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        if self.spinner.isAnimating {
+        guard let orders = self.orders else {
             return
         }
-        
+
+        let orderEntry = orders[indexPath.row]
         guard
-            let order = self.orderList?.orders[indexPath.row],
+            case .done(let order) = orderEntry,
             let project = SnabbleAPI.projectFor(order.project)
         else {
             return

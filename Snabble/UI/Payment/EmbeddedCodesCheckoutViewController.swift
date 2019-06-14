@@ -52,7 +52,8 @@ final class EmbeddedCodesCheckoutViewController: UIViewController {
         self.paidButton.alpha = 0
         self.paidButton.isUserInteractionEnabled = false
 
-        Timer.scheduledTimer(withTimeInterval: 2, repeats: false) { timer in
+        #warning("reset me")
+        Timer.scheduledTimer(withTimeInterval: 0.001, repeats: false) { timer in
             UIView.animate(withDuration: 0.2) {
                 self.paidButton.alpha = 1
             }
@@ -238,7 +239,7 @@ final class EmbeddedCodesCheckoutViewController: UIViewController {
             self.cart.removeAll(endSession: true)
             NotificationCenter.default.post(name: .snabbleCartUpdated, object: self)
 
-            self.delegate.paymentFinished(true, self.cart)
+            self.delegate.paymentFinished(true, self.cart, self.process)
         }
     }
 
