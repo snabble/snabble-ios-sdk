@@ -41,7 +41,7 @@ public final class ReceiptsListViewController: UIViewController {
     private var process: CheckoutProcess?
     private var orderId: String?
 
-    convenience init() {
+    public convenience init() {
         self.init(nil)
     }
 

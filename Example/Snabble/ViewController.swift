@@ -119,7 +119,7 @@ extension ViewController: MessageDelegate {
 }
 
 extension ViewController: PaymentDelegate {
-    func paymentFinished(_ success: Bool, _ cart: ShoppingCart) {
+    func paymentFinished(_ success: Bool, _ cart: ShoppingCart, _ process: CheckoutProcess?) {
         cart.removeAll()
         self.navigationController?.popViewController(animated: true)
     }

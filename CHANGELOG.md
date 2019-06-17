@@ -5,6 +5,7 @@
 * Adds support for new payment methods, `creditCardVisa` and `creditCardMastercard`.
 * Adds pull-to-refresh to `ReceiptsListViewController`. 
 * `ReceiptsListViewController.init` now takes an optional `CheckoutProcess` parameter. If this is used, the VC will add the specified order to the table display, if it's not already in the client's order list, and wait for the receipt PDF to be generated.
+* The `PaymentDelegate.paymentFinished()` method has a new third parameter of type `CheckoutProcess?` to allow passing the current process from the payment views to the receipt list.
 
 # v0.10.1
 
