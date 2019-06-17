@@ -184,11 +184,12 @@ extension ReceiptsListViewController: UITableViewDelegate, UITableViewDataSource
             dateFormatter.dateStyle = .medium
             dateFormatter.timeStyle = .short
             let date = dateFormatter.string(from: order.date)
-            cell.detailTextLabel?.text = "\(price) - \(date) Uhr"
+            let oClock = "Snabble.Receipts.oClock".localized()
+            cell.detailTextLabel?.text = "\(price) - \(date) \(oClock)"
 
         case .pending(let shopName):
             cell.textLabel?.text = shopName
-            cell.detailTextLabel?.text = "(wird geladen)"
+            cell.detailTextLabel?.text = "Snabble.Receipts.loading".localized()
             let spinner = UIActivityIndicatorView(style: .gray)
             spinner.startAnimating()
             cell.accessoryView = spinner

@@ -145,10 +145,14 @@
         en = Processing payment
     [Snabble.Receipt.errorDownload]
         en = Receipt could not be downloaded
-    [Snabble.Receipt.title]
+    [Snabble.Receipts.title]
         en = Receipts
-    [Snabble.Receipt.noReceipt]
+    [Snabble.Receipts.noReceipt]
         en = No receipts found
+    [Snabble.Receipts.oClock]
+        en = o'clock
+    [Snabble.Receipts.loading]
+        en = (loading)
     [Snabble.Payment.SEPA.Name]
         en = Name
     [Snabble.Payment.SEPA.IBAN]
@@ -213,4 +217,10 @@
         tags = android
     [Snabble.Keyguard.requireScreenLock]
         en = You need to secure your smartphone with a screen lock to add this payment method.
+        tags = android
+    [Snabble.Payment.CreditCard.error]
+        en = There was an error processing your credit card
+        tags = android
+    [Snabble.Payment.CreditCard.expireDate]
+        en = Expires: %@
         tags = android
