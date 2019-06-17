@@ -21,7 +21,6 @@ final class EmbeddedCodesCheckoutViewController: UIViewController {
     private weak var delegate: PaymentDelegate!
     private var process: CheckoutProcess?
     private var method: PaymentMethod
-    private var poller: PaymentProcessPoller?
     private var qrCodeConfig: QRCodeConfig
 
     private var codes = [String]()
@@ -52,8 +51,7 @@ final class EmbeddedCodesCheckoutViewController: UIViewController {
         self.paidButton.alpha = 0
         self.paidButton.isUserInteractionEnabled = false
 
-        #warning("reset me")
-        Timer.scheduledTimer(withTimeInterval: 0.001, repeats: false) { timer in
+        Timer.scheduledTimer(withTimeInterval: 2, repeats: false) { timer in
             UIView.animate(withDuration: 0.2) {
                 self.paidButton.alpha = 1
             }
@@ -160,7 +158,7 @@ final class EmbeddedCodesCheckoutViewController: UIViewController {
                 result += gs + familyCard
             }
 
-            let items = block.map { "240" + $0 }    // AI 240 (additional item is), item's scanned code
+            let items = block.map { "240" + $0 }    // AI 240 (additional item ids), item's scanned code
             return result + gs + items.joined(separator: gs)
         }
 

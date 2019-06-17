@@ -33,8 +33,11 @@ final class PaymentProcessPoller {
     private var waitingFor = [PaymentEvent]()
     private var alreadySeen = [PaymentEvent]()
 
+    private(set) var updatedProcess: CheckoutProcess
+
     init(_ process: CheckoutProcess, _ project: Project) {
         self.process = process
+        self.updatedProcess = process
         self.project = project
     }
 
@@ -67,6 +70,8 @@ final class PaymentProcessPoller {
                 return
             }
 
+            self.updatedProcess = process
+            
             var seenNow = [PaymentEvent: Bool]()
             var abort = false
             for event in self.waitingFor {

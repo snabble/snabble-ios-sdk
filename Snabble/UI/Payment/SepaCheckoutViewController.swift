@@ -76,21 +76,22 @@ final class SepaCheckoutViewController: UIViewController {
 
         self.delegate.track(.viewSepaCheckout)
 
-        self.poller = PaymentProcessPoller(self.process, SnabbleUI.project)
+        let poller = PaymentProcessPoller(self.process, SnabbleUI.project)
 
         var events = [PaymentEvent: Bool]()
-        self.poller?.waitFor([.approval, .paymentSuccess]) { event in
+        poller.waitFor([.approval, .paymentSuccess]) { event in
             events.merge(event, uniquingKeysWith: { b1, b2 in b1 })
 
             if let approval = events[.approval], approval == false {
-                self.paymentFinished(false)
+                self.paymentFinished(false, poller.updatedProcess)
                 return
             }
 
             if let approval = events[.approval], let paymentSuccess = events[.paymentSuccess] {
-                self.paymentFinished(approval && paymentSuccess)
+                self.paymentFinished(approval && paymentSuccess, poller.updatedProcess)
             }
         }
+        self.poller = poller
     }
 
     override func viewWillDisappear(_ animated: Bool) {
@@ -117,11 +118,12 @@ final class SepaCheckoutViewController: UIViewController {
         }
     }
 
-    private func paymentFinished(_ success: Bool) {
+    private func paymentFinished(_ success: Bool, _ process: CheckoutProcess) {
         self.poller = nil
+        
         if success {
             self.cart.removeAll(endSession: true)
         }
-        self.delegate.paymentFinished(success, self.cart, self.process)
+        self.delegate.paymentFinished(success, self.cart, process)
     }
 }

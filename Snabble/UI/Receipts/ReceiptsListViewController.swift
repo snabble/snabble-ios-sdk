@@ -39,6 +39,7 @@ public final class ReceiptsListViewController: UIViewController {
     private var orderList: OrderList?
     private var orders: [OrderEntry]?
     private var process: CheckoutProcess?
+    private var orderId: String?
 
     convenience init() {
         self.init(nil)
@@ -46,6 +47,7 @@ public final class ReceiptsListViewController: UIViewController {
 
     public init(_ process: CheckoutProcess?) {
         self.process = process
+        self.orderId = process?.orderID
         
         super.init(nibName: nil, bundle: SnabbleBundle.main)
 
@@ -93,6 +95,7 @@ public final class ReceiptsListViewController: UIViewController {
         let poller = PaymentProcessPoller(process, SnabbleUI.project)
 
         poller.waitFor([.receipt]) { result in
+            self.orderId = poller.updatedProcess.orderID
             if let receiptAvailable = result[.receipt], receiptAvailable, self.orderList != nil {
                 self.loadOrderList()
             }
@@ -122,9 +125,9 @@ public final class ReceiptsListViewController: UIViewController {
             }
         }
 
-        if let process = self.process, let orderId = process.orderID {
+        if let orderId = self.orderId {
             if !orderIds.contains(orderId) {
-                let pending = OrderEntry.pending(orderId)
+                let pending = OrderEntry.pending(SnabbleUI.project.name)
                 orders.insert(pending, at: 0)
             }
         }

@@ -69,12 +69,13 @@ final class QRCheckoutViewController: UIViewController {
         self.qrCodeView.image = QRCode.generate(for: qrCodeContent, scale: 5)
         self.qrCodeWidth.constant = self.qrCodeView.image?.size.width ?? 0
 
-        self.poller = PaymentProcessPoller(self.process, SnabbleUI.project)
-        self.poller?.waitFor([.paymentSuccess]) { events in
+        let poller = PaymentProcessPoller(self.process, SnabbleUI.project)
+        poller.waitFor([.paymentSuccess]) { events in
             if let success = events[.paymentSuccess] {
-                self.paymentFinished(success)
+                self.paymentFinished(success, poller.updatedProcess)
             }
         }
+        self.poller = poller
     }
 
     override func viewDidAppear(_ animated: Bool) {
@@ -85,6 +86,7 @@ final class QRCheckoutViewController: UIViewController {
 
     override func viewWillDisappear(_ animated: Bool) {
         UIScreen.main.brightness = self.initialBrightness
+        self.poller?.stop()
         self.poller = nil
     }
 
@@ -103,10 +105,10 @@ final class QRCheckoutViewController: UIViewController {
         }
     }
 
-    @objc private func paymentFinished(_ success: Bool) {
+    private func paymentFinished(_ success: Bool, _ process: CheckoutProcess) {
         self.poller = nil
 
-        self.delegate.paymentFinished(success, self.cart, self.process)
+        self.delegate.paymentFinished(success, self.cart, process)
     }
 
 }
