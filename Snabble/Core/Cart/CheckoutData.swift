@@ -46,6 +46,16 @@ public enum RawPaymentMethod: String {
     case encodedCodesIKEA       // QR Code for IKEA
     case creditCardVisa         // VISA via Telecash/First Data
     case creditCardMastercard   // MASTERCARD via Telecash/First Data
+
+    /// true if this method reqires additional data, like an IBAN or a credit card number
+    public var dataRequired: Bool {
+        switch self {
+        case .deDirectDebit, .creditCardVisa, .creditCardMastercard:
+            return true
+        case .qrCodePOS, .encodedCodes, .encodedCodesCSV, .encodedCodesIKEA:
+            return false
+        }
+    }
 }
 
 // associated data for a payment method
