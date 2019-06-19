@@ -188,6 +188,7 @@ public struct Project: Decodable {
     public let checkoutLimits: CheckoutLimits?
 
     public let messages: ProjectMessages?
+    public let paymentMethods: [RawPaymentMethod]
 
     enum CodingKeys: String, CodingKey {
         case id, name, links
@@ -195,6 +196,7 @@ public struct Project: Decodable {
         case encodedCodes
         case shops, scanFormats, customerCards, codeTemplates, searchableTemplates, priceOverrideCodes, checkoutLimits
         case messages = "texts"
+        case paymentMethods
     }
 
     public init(from decoder: Decoder) throws {
@@ -230,6 +232,9 @@ public struct Project: Decodable {
         self.priceOverrideCodes = try container.decodeIfPresent([PriceOverrideCode].self, forKey: .priceOverrideCodes)
         self.checkoutLimits = try container.decodeIfPresent(CheckoutLimits.self, forKey: .checkoutLimits)
         self.messages = try container.decodeIfPresent(ProjectMessages.self, forKey: .messages)
+
+        let paymentMethods = try container.decode([String].self, forKey: .paymentMethods)
+        self.paymentMethods = paymentMethods.compactMap { RawPaymentMethod(rawValue: $0) }
     }
 
     private init() {
@@ -251,6 +256,7 @@ public struct Project: Decodable {
         self.priceOverrideCodes = nil
         self.checkoutLimits = nil
         self.messages = nil
+        self.paymentMethods = []
     }
 
     // only used for unit tests
@@ -273,6 +279,7 @@ public struct Project: Decodable {
         self.priceOverrideCodes = nil
         self.checkoutLimits = nil
         self.messages = nil
+        self.paymentMethods = []
     }
 
     internal init(links: ProjectLinks) {
@@ -294,6 +301,7 @@ public struct Project: Decodable {
         self.priceOverrideCodes = nil
         self.checkoutLimits = nil
         self.messages = nil
+        self.paymentMethods = []
     }
 
     static let none = Project()
