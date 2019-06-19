@@ -1,5 +1,9 @@
 ## snabble iOS SDK Changelog
 
+# v0.10.3
+
+* adds the `Project.paymentMethods` property
+
 # v0.10.2
 
 * Adds support for new payment methods, `creditCardVisa` and `creditCardMastercard`.
