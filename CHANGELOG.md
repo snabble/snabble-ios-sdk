@@ -3,6 +3,7 @@
 # v0.10.3
 
 * adds the `Project.paymentMethods` property
+* `PaymentDelegate.handlePaymentError()` method now takes two parameters, the `PaymentMethod` as well as the `Error` that occurred
 
 # v0.10.2
 

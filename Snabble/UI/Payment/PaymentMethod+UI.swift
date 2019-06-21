@@ -20,25 +20,18 @@ extension PaymentMethod {
         }
     }
 
-    var processRequired: Bool {
-        switch self {
-        case .encodedCodes: return false
-        default: return true
-        }
-    }
-
     var dataRequired: Bool {
         switch self {
-        case .deDirectDebit: return true
-        default: return false
+        case .deDirectDebit, .visa, .mastercard: return true
+        case .qrCodePOS, .encodedCodes, .encodedCodesCSV, .encodedCodesIKEA: return false
         }
     }
 
-    func processor(_ process: CheckoutProcess?, _ method: PaymentMethod, _ cart: ShoppingCart, _ delegate: PaymentDelegate) -> UIViewController? {
-        if self.processRequired && process == nil {
+    func processor(_ process: CheckoutProcess?, _ cart: ShoppingCart, _ delegate: PaymentDelegate) -> UIViewController? {
+        if !self.rawMethod.offline && process == nil {
             return nil
         }
-        if self.dataRequired && method.data == nil {
+        if self.dataRequired && self.data == nil {
             return nil
         }
 
@@ -49,7 +42,7 @@ extension PaymentMethod {
         case .encodedCodes, .encodedCodesCSV, .encodedCodesIKEA:
             processor = EmbeddedCodesCheckoutViewController(process, self, cart, delegate)
         case .deDirectDebit, .visa, .mastercard:
-            processor = SepaCheckoutViewController(process!, method.data!, cart, delegate)
+            processor = SepaCheckoutViewController(process!, self.data!, cart, delegate)
         }
         processor.hidesBottomBarWhenPushed = true
         return processor
@@ -149,10 +142,10 @@ public final class PaymentProcess {
             self.hideBlurOverlay()
             switch result {
             case .success(let process):
-                if let processor = method.processor(process, method, self.cart, self.delegate) {
+                if let processor = method.processor(process, self.cart, self.delegate) {
                     completion(Result.success(processor))
                 } else {
-                    self.startFailed(method, nil, completion)
+                    self.delegate.showWarningMessage("Snabble.Payment.errorStarting".localized())
                 }
             case .failure(let error):
                 self.startFailed(method, error, completion)
@@ -163,13 +156,12 @@ public final class PaymentProcess {
     private func startFailed(_ method: PaymentMethod, _ error: SnabbleError?, _ completion: @escaping (_ result: Result<UIViewController, SnabbleError>) -> () ) {
         var handled = false
         if let error = error {
-            handled = self.delegate.handlePaymentError(error)
+            handled = self.delegate.handlePaymentError(method, error)
         }
         if !handled {
-            if method.rawMethod == .encodedCodes, let processor = method.processor(nil, method, self.cart, self.delegate) {
-                // continue anyway
+            if method.rawMethod.offline, let processor = method.processor(nil, self.cart, self.delegate) {
                 completion(Result.success(processor))
-                self.retryCreatingMissingCheckout()
+                self.retryCreatingMissingCheckout(method)
             } else {
                 self.delegate.showWarningMessage("Snabble.Payment.errorStarting".localized())
             }
@@ -187,11 +179,12 @@ public final class PaymentProcess {
     }
 
     // retry creating the checkout info / checkout process that is potentially missing
-    private func retryCreatingMissingCheckout() {
+    private func retryCreatingMissingCheckout(_ method: PaymentMethod) {
+        let project = SnabbleUI.project
         DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
-            self.cart.createCheckoutInfo(SnabbleUI.project) { result in
+            self.cart.createCheckoutInfo(project) { result in
                 if case Result.success(let info) = result {
-                    info.createCheckoutProcess(SnabbleUI.project, paymentMethod: .encodedCodes) { _ in }
+                    info.createCheckoutProcess(project, paymentMethod: method) { _ in }
                 }
             }
         }

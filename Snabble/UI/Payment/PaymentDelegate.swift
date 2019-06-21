@@ -29,7 +29,7 @@ public protocol PaymentDelegate: AnalyticsDelegate, MessageDelegate {
     ///
     /// - Parameter error: the error from the backend
     /// - Returns: true if the error has been dealt with and no error messages need to be shown from the SDK
-    func handlePaymentError(_ error: SnabbleError) -> Bool
+    func handlePaymentError(_ method: PaymentMethod, _ error: SnabbleError) -> Bool
 
     /// get payment data from the host app. Use this method to return e.g. encrypted SEPA data for use with .deDirectDebit to the SDK
     func getPaymentData() -> [PaymentMethod]

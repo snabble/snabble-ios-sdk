@@ -323,10 +323,9 @@ public final class ShoppingCartViewController: UIViewController {
                         return
                     }
 
-                    // app didn't handle the error. see if we can use embedded QR codes anyway
-                    let project = SnabbleUI.project
-                    if project.encodedCodes != nil {
-                        // yes we can
+                    // app didn't handle the error. see if the project has a offline-capable payment method
+                    let offlineMethods = SnabbleUI.project.paymentMethods.filter { $0.offline }
+                    if offlineMethods.count > 0 {
                         let info = SignedCheckoutInfo()
                         self.delegate.gotoPayment(info, self.shoppingCart)
                     } else {

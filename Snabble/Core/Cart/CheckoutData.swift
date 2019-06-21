@@ -38,7 +38,7 @@ public struct SignedCheckoutInfo: Decodable {
 }
 
 // known payment methods
-public enum RawPaymentMethod: String {
+public enum RawPaymentMethod: String, CaseIterable {
     case qrCodePOS              // QR Code with a reference to snabble's backend
     case encodedCodes           // QR Code with EANs and separators
     case deDirectDebit          // SEPA direct debit via Telecash/First Data
@@ -53,6 +53,16 @@ public enum RawPaymentMethod: String {
         case .deDirectDebit, .creditCardVisa, .creditCardMastercard:
             return true
         case .qrCodePOS, .encodedCodes, .encodedCodesCSV, .encodedCodesIKEA:
+            return false
+        }
+    }
+
+    /// true if this method can be used even if creating a checkout info/process fails
+    public var offline: Bool {
+        switch self {
+        case .encodedCodes, .encodedCodesCSV, .encodedCodesIKEA:
+            return true
+        case .qrCodePOS, .deDirectDebit, .creditCardVisa, .creditCardMastercard:
             return false
         }
     }
@@ -95,7 +105,6 @@ public enum PaymentMethod {
         switch self {
         case .deDirectDebit(let data), .visa(let data), .mastercard(let data):
              return data
-
         case .qrCodePOS, .encodedCodes, .encodedCodesCSV, .encodedCodesIKEA:
             return nil
         }

@@ -195,7 +195,6 @@ public struct TelecashSecret: Decodable {
     public let url: String
 }
 
-
 extension SnabbleAPI {
     public static func getTelecashSecret(_ project: Project, completion: @escaping (Result<TelecashSecret, SnabbleError>)->() ) {
         project.request(.get, SnabbleAPI.metadata.links.telecashSecret.href, timeout: 5) { request in
