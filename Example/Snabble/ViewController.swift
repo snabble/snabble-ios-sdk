@@ -124,8 +124,8 @@ extension ViewController: PaymentDelegate {
         self.navigationController?.popViewController(animated: true)
     }
 
-    func handlePaymentError(_ error: SnabbleError) -> Bool {
-        NSLog("payment error: \(error)")
+    func handlePaymentError(_ method: PaymentMethod, _ error: SnabbleError) -> Bool {
+        NSLog("payment error: \(method) \(error)")
         return false
     }
 }
