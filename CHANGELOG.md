@@ -1,5 +1,9 @@
 ## snabble iOS SDK Changelog
 
+# v0.10.4
+
+* Add missing parameter to the default implementation of `PaymentDelegate.handlePaymentError()`
+
 # v0.10.3
 
 * adds the `Project.paymentMethods` property

@@ -46,7 +46,7 @@ extension PaymentDelegate {
         completion(true)
     }
 
-    public func handlePaymentError(_ error: SnabbleError) -> Bool {
+    public func handlePaymentError(_ method: PaymentMethod, _ error: SnabbleError) -> Bool {
         return false
     }
 
