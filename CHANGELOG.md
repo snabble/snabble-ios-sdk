@@ -1,5 +1,9 @@
 ## snabble iOS SDK Changelog
 
+# v0.10.5
+
+* Protect against simultaneous appdb updates. When an appdb update is requested while a previous request is already waiting for completion, the completion handler is immediately called with `.inProgess`.
+
 # v0.10.4
 
 * Add missing parameter to the default implementation of `PaymentDelegate.handlePaymentError()`
