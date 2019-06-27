@@ -64,6 +64,8 @@ public enum AppDbAvailability {
     case unchanged
     /// update was aborted and has received incomplete data.
     case incomplete
+    /// an update is already in progress
+    case inProgress
 }
 
 public protocol ProductProvider: class {
@@ -217,6 +219,8 @@ final class ProductDB: ProductProvider {
 
     private(set) public var appDbAvailability = AppDbAvailability.unknown
 
+    private var updateInProgress = false
+
     internal var resumeData: Data?
     internal var downloadTask: URLSessionDownloadTask?
 
@@ -274,8 +278,15 @@ final class ProductDB: ProductProvider {
     public func updateDatabase(forceFullDownload: Bool, completion: @escaping (_ dataAvailable: AppDbAvailability)->() ) {
         let schemaVersion = "\(self.schemaVersionMajor).\(self.schemaVersionMinor)"
         let revision = (forceFullDownload || !self.hasDatabase()) ? 0 : self.revision
+
+        if self.updateInProgress {
+            return completion(.inProgress)
+        }
+
+        self.updateInProgress = true
         self.getAppDb(currentRevision: revision, schemaVersion: schemaVersion) { dbResponse in
             self.processAppDbResponse(dbResponse, completion)
+            self.updateInProgress = false
         }
     }
 
@@ -552,10 +563,8 @@ final class ProductDB: ProductProvider {
                     try fileManager.moveItem(atPath: dbFile, toPath: oldFile)
                 }
                 try fileManager.moveItem(atPath: tempDbPath, toPath: dbFile)
+                try? fileManager.removeItem(atPath: oldFile)
                 self.db = self.openDb()
-            }
-            if fileManager.fileExists(atPath: oldFile) {
-                try fileManager.removeItem(atPath: oldFile)
             }
         } catch let error {
             self.logError("switchDatabases: db switch error \(error)")

@@ -34,6 +34,7 @@ extension ProductDB {
 
         if self.downloadTask != nil {
             Log.warn("appDB download task already running, ignoring update request")
+            completion(.noUpdate)
             return
         }
 
