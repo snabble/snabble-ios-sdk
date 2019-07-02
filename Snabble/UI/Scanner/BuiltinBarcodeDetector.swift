@@ -74,6 +74,7 @@ public final class BuiltinBarcodeDetector: NSObject, BarcodeDetector {
 
     public func scannerWillAppear() {
         guard
+            self.camera == nil,
             let camera = self.initializeCamera(),
             let videoInput = try? AVCaptureDeviceInput(device: camera),
             self.captureSession.canAddInput(videoInput)
@@ -290,12 +291,17 @@ extension BuiltinBarcodeDetector: AVCaptureMetadataOutputObjectsDelegate {
 
 /// creates the standard overlay decoration for the product scanner
 public struct BarcodeDetectorDecoration {
-
+    /// the visible reticle
     public let reticle: UIView
+    /// the container for the buttons
     public let bottomBar: UIView
+    /// the "enter barcode manually" button
     public let enterButton: UIButton
+    /// the "toggle the torch" button
     public let torchButton: UIButton
+    /// the "go to shopping cart" button
     public let cartButton: UIButton
+    /// the frame for showing where the barcode was scanned
     public let frameView: UIView
 
     public let reticleDimmingLayer: CAShapeLayer
