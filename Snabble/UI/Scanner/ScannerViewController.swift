@@ -412,7 +412,8 @@ extension ScannerViewController {
                             embeddedData = decimalData.value
                         case .gram, .millimeter, .milliliter:
                             embeddedData = decimalData.value
-                        default: ()
+                        default:
+                            Log.warn("unspecified conversion for embedded data: \(decimalData.value) \(enc)")
                         }
                     }
 
