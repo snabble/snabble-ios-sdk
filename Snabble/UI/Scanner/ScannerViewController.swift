@@ -303,6 +303,7 @@ extension ScannerViewController {
                 self.barcodeDetector.startScanning()
                 return
             }
+
             self.tapticFeedback.notificationOccurred(.success)
 
             self.delegate.track(.scanProduct(scannedProduct.transmissionCode ?? scannedCode))
@@ -389,7 +390,13 @@ extension ScannerViewController {
                 }
 
                 let scannedCode = lookupResult.transmissionCode ?? code
-                var newResult = ScannedProduct(lookupResult.product, parseResult.lookupCode, scannedCode, lookupResult.templateId, parseResult.embeddedData, lookupResult.encodingUnit, parseResult.referencePrice)
+                var newResult = ScannedProduct(lookupResult.product,
+                                               parseResult.lookupCode,
+                                               scannedCode,
+                                               lookupResult.templateId,
+                                               parseResult.embeddedData,
+                                               lookupResult.encodingUnit,
+                                               parseResult.referencePrice)
 
                 if let decimalData = parseResult.embeddedDecimal {
                     var encodingUnit = lookupResult.product.encodingUnit
@@ -402,6 +409,8 @@ extension ScannerViewController {
                             embeddedData = decimalData.value / div
                         case .kilogram, .meter, .liter, .squareMeter:
                             encodingUnit = enc.fractionalUnit(div)
+                            embeddedData = decimalData.value
+                        case .gram, .millimeter, .milliliter:
                             embeddedData = decimalData.value
                         default: ()
                         }
