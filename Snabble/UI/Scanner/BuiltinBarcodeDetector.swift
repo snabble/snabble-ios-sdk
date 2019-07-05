@@ -121,22 +121,22 @@ public final class BuiltinBarcodeDetector: NSObject, BarcodeDetector {
     }
 
     public func startScanning() {
-        // self.sessionQueue.async {
+        self.sessionQueue.async {
+            if !self.captureSession.isRunning {
+                self.captureSession.startRunning()
 
-        if !self.captureSession.isRunning {
-            self.captureSession.startRunning()
+                // set the ROI matching the reticle on first start
+                guard
+                    let previewLayer = self.previewLayer,
+                    let reticle = self.decoration?.reticle
+                else {
+                    return
+                }
 
-            // set the ROI matching the reticle
-            guard
-                let previewLayer = self.previewLayer,
-                let reticle = self.decoration?.reticle
-            else {
-                return
-            }
-
-            DispatchQueue.main.async {
-                let rectangleOfInterest = previewLayer.metadataOutputRectConverted(fromLayerRect: reticle.frame)
-                self.metadataOutput.rectOfInterest = rectangleOfInterest
+                DispatchQueue.main.async {
+                    let rectangleOfInterest = previewLayer.metadataOutputRectConverted(fromLayerRect: reticle.frame)
+                    self.metadataOutput.rectOfInterest = rectangleOfInterest
+                }
             }
         }
     }
