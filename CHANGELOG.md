@@ -1,5 +1,9 @@
 ## snabble iOS SDK Changelog
 
+# v0.10.7
+
+* Fixes a bug where some codes using an "embedded decimal" template would not be interpreted correctly.
+
 # v0.10.6
 
 * Fixes a bug in `BuiltinBarcodeDetector` where the scanner overlay would not appear in simulator builds.
