@@ -96,7 +96,7 @@ public final class ShoppingCartViewController: UIViewController {
         // find all line items that refer to our own cart items
         for item in cart.items {
             if let lineItems = cart.backendCartInfo?.lineItems {
-                let items = lineItems.filter { $0.id == item.uuid ||  $0.refersTo == item.uuid }
+                let items = lineItems.filter { $0.id == item.uuid || $0.refersTo == item.uuid }
                 let item = CartTableEntry.cartItem(item, items)
                 self.items.append(item)
             } else {
