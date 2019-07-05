@@ -140,8 +140,9 @@ public enum LineItemType: String, Codable {
     /// this item contains information about deposits, e.g. for a crate of beer
     case deposit
 
-    /// a promotion like "1 € off"
-    case promotion
+    /// a price-reducing promotion like "1 € off"
+    case discount = "promotion"
+    #warning("change string constant")
 }
 
 extension LineItemType: UnknownCaseRepresentable {

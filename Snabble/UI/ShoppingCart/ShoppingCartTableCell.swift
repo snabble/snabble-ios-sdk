@@ -109,8 +109,7 @@ final class ShoppingCartTableCell: UITableViewCell {
             self.buttonWrapper.isHidden = false
         }
 
-        let weightEntry = product.type == .userMustWeigh
-        if weightEntry {
+        if product.type == .userMustWeigh {
             self.weightWrapper.isHidden = false
             self.buttonWrapper.isHidden = true
         }
@@ -118,8 +117,13 @@ final class ShoppingCartTableCell: UITableViewCell {
 
         self.showQuantity()
 
+        var price = item.price
+        if let linePrice = lineItems.first(where: { $0.type == .default })?.price {
+            price = linePrice
+        }
+
         // suppress display when price == 0
-        if item.price == 0 {
+        if price == 0 {
             self.priceLabel.text = ""
             self.buttonWrapper.isHidden = true
         }

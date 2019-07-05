@@ -204,11 +204,11 @@ public final class ShoppingCartViewController: UIViewController {
 
     private func getMissingImages() {
         let allImages: [String] = self.items.compactMap {
-            guard case .cartItem(let item) = $0 else {
+            guard case .cartItem(let item, _) = $0 else {
                 return nil
             }
 
-            return item.0.product.imageUrl
+            return item.product.imageUrl
         }
 
         let images = Set(allImages)
