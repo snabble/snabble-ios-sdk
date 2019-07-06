@@ -129,8 +129,8 @@ final class EmbeddedCodesCheckoutViewController: UIViewController {
         UIScreen.main.brightness = self.initialBrightness
     }
 
-    private func divideIntoChunks(_ lines: [String], maxSize: Int) -> [[String]] {
-        let maxCodes = Float(maxSize)
+    private func divideIntoChunks(_ lines: [String], maxCodes: Int) -> [[String]] {
+        let maxCodes = Float(maxCodes)
         let linesCount = Float(lines.count)
         let chunks = (linesCount / maxCodes).rounded(.up)
         let chunkSize = Int((linesCount / chunks).rounded(.up))
@@ -143,26 +143,13 @@ final class EmbeddedCodesCheckoutViewController: UIViewController {
     private func codesForIKEA() -> [String] {
         let lines = self.codesFor(self.cart.items)
 
-        let chunks = self.divideIntoChunks(lines, maxSize: self.qrCodeConfig.maxCodes)
+        let chunks = self.divideIntoChunks(lines, maxCodes: self.qrCodeConfig.maxCodes)
 
-        let gs = "\u{001d}" // ASCII Group Separator
-        let blocks = chunks.enumerated().map { index, block -> String in
-            let header = "9100003"                  // AI 91 (origin type), 00003 == IKEA Store App
-            let blocks = "10" + "0\(chunks.count)"  // AI 10 (lot number), # of chunks
+        return EncodedCodesIKEA.codes(chunks, self.cart.customerCard)
+    }
 
-            var result = header + gs + blocks
-
-            // family card goes into the first code
-            if let card = self.cart.customerCard, index == 0 {
-                let familyCard = "92" + card        // AI 92 (additional item id), card number
-                result += gs + familyCard
-            }
-
-            let items = block.map { "240" + $0 }    // AI 240 (additional item ids), item's scanned code
-            return result + gs + items.joined(separator: gs)
-        }
-
-        return blocks
+    private func codesForIKEA_new() -> [String] {
+        return EncodedCodesIKEA.codes(self.cart, self.cart.customerCard, maxBytes: 100)
     }
 
     private func csvForQR() -> [String] {
@@ -176,7 +163,7 @@ final class EmbeddedCodesCheckoutViewController: UIViewController {
             result.append("\(qrCode.quantity);\(qrCode.code)")
         })
 
-        let chunks = self.divideIntoChunks(lines, maxSize: self.qrCodeConfig.maxCodes)
+        let chunks = self.divideIntoChunks(lines, maxCodes: self.qrCodeConfig.maxCodes)
         // TODO: add N;M to header line, see https://github.com/snabble/docs/pull/60
         let blocks = chunks.map {
             return [ "snabble;" ] + $0

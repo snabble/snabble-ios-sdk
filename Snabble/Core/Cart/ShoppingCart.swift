@@ -67,7 +67,7 @@ public struct ScannedCode: Codable {
 
 /// return type for the `dataForQR` method -
 /// quantity and code sting to be embedded in a QR code
-public struct QRCodeData: Equatable {
+struct QRCodeData: Equatable {
     public let quantity: Int
     public let code: String
 
@@ -182,7 +182,7 @@ public struct CartItem: Codable {
     }
 
     /// data for embedding in a QR code
-    public var dataForQR: QRCodeData {
+    var dataForQR: QRCodeData {
         let cartItem = self.cartItem
         return QRCodeData(cartItem.amount, cartItem.scannedCode)
     }
