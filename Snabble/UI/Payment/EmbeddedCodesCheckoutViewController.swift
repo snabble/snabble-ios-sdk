@@ -67,9 +67,11 @@ final class EmbeddedCodesCheckoutViewController: UIViewController {
             let (regularCodes, restrictedCodes) = self.codesForQR()
             self.codes = codeblocks.generateQrCodes(regularCodes, restrictedCodes)
         case .encodedCodesCSV:
-            self.codes = self.csvForQR()
+            let codeblocks = CodeblocksCSV(self.qrCodeConfig)
+            self.codes = codeblocks.generateQrCodes(self.cart)
         case .encodedCodesIKEA:
-            self.codes = self.codesForIKEA()
+            let codeblocks = CodeblocksIKEA(self.qrCodeConfig)
+            self.codes = codeblocks.generateQrCodes(self.cart, self.codesFor(self.cart.items))
         default:
             fatalError("payment method \(self.method) not implemented")
             break
@@ -129,49 +131,6 @@ final class EmbeddedCodesCheckoutViewController: UIViewController {
         UIScreen.main.brightness = self.initialBrightness
     }
 
-    private func divideIntoChunks(_ lines: [String], maxCodes: Int) -> [[String]] {
-        let maxCodes = Float(maxCodes)
-        let linesCount = Float(lines.count)
-        let chunks = (linesCount / maxCodes).rounded(.up)
-        let chunkSize = Int((linesCount / chunks).rounded(.up))
-        let blocks = stride(from: 0, to: lines.count, by: chunkSize).map { start -> [String] in
-            return Array(lines[start ..< min(start + chunkSize, lines.count)])
-        }
-        return blocks
-    }
-
-    private func codesForIKEA() -> [String] {
-        let lines = self.codesFor(self.cart.items)
-
-        let chunks = self.divideIntoChunks(lines, maxCodes: self.qrCodeConfig.maxCodes)
-
-        return EncodedCodesIKEA.codes(chunks, self.cart.customerCard)
-    }
-
-    private func codesForIKEA_new() -> [String] {
-        return EncodedCodesIKEA.codes(self.cart, self.cart.customerCard, maxBytes: 100)
-    }
-
-    private func csvForQR() -> [String] {
-        var lines = [String]()
-        if let card = self.cart.customerCard {
-            lines.append("1;\(card)")
-        }
-
-        lines += self.cart.items.reduce(into: [], { result, item in
-            let qrCode = item.dataForQR
-            result.append("\(qrCode.quantity);\(qrCode.code)")
-        })
-
-        let chunks = self.divideIntoChunks(lines, maxCodes: self.qrCodeConfig.maxCodes)
-        // TODO: add N;M to header line, see https://github.com/snabble/docs/pull/60
-        let blocks = chunks.map {
-            return [ "snabble;" ] + $0
-        }
-
-        return blocks.map { $0.joined(separator: "\n") }
-    }
-
     private func codesForQR() -> ([String],[String]) {
         let items = self.cart.items.sorted { $0.price < $1.price }
 
@@ -201,7 +160,7 @@ final class EmbeddedCodesCheckoutViewController: UIViewController {
 
     private func codesFor(_ items: [CartItem]) -> [String] {
         return items.reduce(into: [], { result, item in
-            let qrCode = item.dataForQR
+            let qrCode = QRCodeData(item)
             let arr = Array(repeating: qrCode.code, count: qrCode.quantity)
             result.append(contentsOf: arr)
         })
