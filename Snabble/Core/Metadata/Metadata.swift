@@ -101,7 +101,7 @@ public struct QRCodeConfig: Decodable {
         self.prefix = try container.decodeIfPresent(String.self, forKey: .prefix) ?? ""
         self.separator = try container.decodeIfPresent(String.self, forKey: .separator) ?? "\n"
         self.suffix = try container.decodeIfPresent(String.self, forKey: .suffix) ?? ""
-        self.maxCodes = try container.decode(Int.self, forKey: .maxCodes)
+        self.maxCodes = try container.decodeIfPresent(Int.self, forKey: .maxCodes) ?? 100
 
         self.maxChars = try container.decodeIfPresent(Int.self, forKey: .maxChars)
         self.finalCode = try container.decodeIfPresent(String.self, forKey: .finalCode)
