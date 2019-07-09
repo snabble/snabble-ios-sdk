@@ -1,5 +1,9 @@
 ## snabble iOS SDK Changelog
 
+# v0.10.8
+
+* Adds support for restricting QR codes to maximum string lengths instead of max. number of codes.
+
 # v0.10.7
 
 * Fixes a bug where some codes using an "embedded decimal" template would not be interpreted correctly.
