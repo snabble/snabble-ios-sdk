@@ -4,14 +4,6 @@
 //  Copyright © 2019 snabble. All rights reserved.
 //
 
-// mit karte: 13 8er codes + 4 byte
-// ohne karte: 15 8er codes + 2 byte
-
-// "an der expresskasse ganz rechts"
-
-// android: besseres multi-code handling
-// beide plattformen: "code x von y"
-
 import Foundation
 
 fileprivate struct CodeBucket {
