@@ -56,6 +56,8 @@ public struct SnabbleAPI {
     static var tokenRegistry = TokenRegistry("", "")
     static var metadata = Metadata.none
 
+    private static var providerPool = [String: ProductProvider]()
+
     public static var certificates: [GatewayCertificate] {
         return self.metadata.gatewayCertificates
     }
@@ -80,6 +82,7 @@ public struct SnabbleAPI {
         self.config = config
         self.initializeTrustKit()
 
+        self.providerPool.removeAll()
         self.tokenRegistry = TokenRegistry(config.appId, config.secret)
 
         if let metadataPath = config.seedMetadata, self.metadata.projects[0].id == Project.none.id {
@@ -122,8 +125,6 @@ public struct SnabbleAPI {
     public static func getToken(for project: Project, completion: @escaping (String?)->() ) {
         self.tokenRegistry.getToken(for: project, completion: completion)
     }
-
-    private static var providerPool = [String: ProductProvider]()
 
     public static func productProvider(for project: Project) -> ProductProvider {
         assert(project.id != "", "empty projects don't have a product provider")
