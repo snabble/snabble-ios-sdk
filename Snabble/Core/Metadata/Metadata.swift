@@ -87,8 +87,11 @@ public struct QRCodeConfig: Decodable {
     let nextCode: String?           // marker code to indicate "more QR codes"
     let nextCodeWithCheck: String?  // marker code to indicate "more QR codes" + age check required
 
+    // when maxCodes is not sufficiently precise, maxChars imposes a string length limit
+    let maxChars: Int?
+
     enum CodingKeys: String, CodingKey {
-        case prefix, separator, suffix, maxCodes
+        case prefix, separator, suffix, maxCodes, maxChars
         case finalCode, nextCode, nextCodeWithCheck
     }
 
@@ -99,17 +102,19 @@ public struct QRCodeConfig: Decodable {
         self.separator = try container.decodeIfPresent(String.self, forKey: .separator) ?? "\n"
         self.suffix = try container.decodeIfPresent(String.self, forKey: .suffix) ?? ""
         self.maxCodes = try container.decode(Int.self, forKey: .maxCodes)
-        
+
+        self.maxChars = try container.decodeIfPresent(Int.self, forKey: .maxChars)
         self.finalCode = try container.decodeIfPresent(String.self, forKey: .finalCode)
         self.nextCode = try container.decodeIfPresent(String.self, forKey: .nextCode)
         self.nextCodeWithCheck = try container.decodeIfPresent(String.self, forKey: .nextCodeWithCheck)
     }
 
-    init(prefix: String = "", separator: String = "\n", suffix: String = "", maxCodes: Int = 100, finalCode: String? = nil, nextCode: String? = nil, nextCodeWithCheck: String? = nil) {
+    init(prefix: String = "", separator: String = "\n", suffix: String = "", maxCodes: Int = 100, maxChars: Int? = nil, finalCode: String? = nil, nextCode: String? = nil, nextCodeWithCheck: String? = nil) {
         self.prefix = prefix
         self.separator = separator
         self.suffix = suffix
         self.maxCodes = maxCodes
+        self.maxChars = maxChars
         self.finalCode = finalCode
         self.nextCode = nextCode
         self.nextCodeWithCheck = nextCodeWithCheck

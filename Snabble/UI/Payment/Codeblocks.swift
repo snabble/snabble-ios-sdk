@@ -8,7 +8,7 @@ import Foundation
 
 final class Codeblocks {
 
-    private(set) var config: QRCodeConfig
+    private let config: QRCodeConfig
 
     init(_ config: QRCodeConfig) {
         self.config = config
@@ -90,67 +90,4 @@ final class Codeblocks {
             Array(codes[$0 ..< min($0 + blockSize, codes.count)])
         }
     }
-
-    func generateQrCodes(_ regularCodes: [String], _ restrictedCodes: [String], maxCodeSize: Int) -> [String] {
-        let availableSize = maxCodeSize - self.config.suffix.count - (self.config.finalCode?.count ?? 0) - self.config.separator.count
-
-        var nextCode = self.config.nextCode ?? ""
-        if let nextCheck = self.config.nextCodeWithCheck, restrictedCodes.count > 0 {
-            nextCode = nextCheck
-        }
-
-        var codes = [String]()
-
-        var currentCode = self.config.prefix
-        var sep = ""
-
-        if regularCodes.count == 0 {
-            let code = self.config.prefix + nextCode + self.config.suffix
-            codes.append(code)
-        }
-        for code in regularCodes {
-            let addition = sep + code
-            sep = self.config.separator
-
-            if currentCode.count + addition.count > availableSize {
-                currentCode += sep + nextCode + self.config.suffix
-                codes.append(currentCode)
-                currentCode = self.config.prefix + code
-            } else {
-                currentCode += addition
-            }
-        }
-
-        if restrictedCodes.count > 0 && currentCode.count > self.config.prefix.count {
-            currentCode += self.config.separator + nextCode
-            currentCode += self.config.suffix
-            codes.append(currentCode)
-            currentCode = self.config.prefix
-            sep = ""
-        }
-
-        for code in restrictedCodes {
-            let addition = sep + code
-            sep = self.config.separator
-
-            if currentCode.count + addition.count > availableSize {
-                currentCode += sep + nextCode + self.config.suffix
-                codes.append(currentCode)
-                currentCode = self.config.prefix + code
-            } else {
-                currentCode += addition
-            }
-        }
-
-        if currentCode.count > self.config.prefix.count {
-            if let final = self.config.finalCode {
-                currentCode += self.config.separator + final
-            }
-            currentCode += self.config.suffix
-            codes.append(currentCode)
-        }
-
-        return codes
-    }
-    
 }
