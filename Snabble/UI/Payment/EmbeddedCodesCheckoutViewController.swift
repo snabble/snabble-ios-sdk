@@ -105,13 +105,28 @@ final class EmbeddedCodesCheckoutViewController: UIViewController {
         let formattedTotal = formatter.format(total ?? 0)
 
         self.totalPriceLabel.text = "Snabble.QRCode.total".localized() + "\(formattedTotal)"
-        let explanation = self.codes.count > 1 ? "Snabble.QRCode.showTheseCodes" : "Snabble.QRCode.showThisCode"
-        self.explanation1.text = explanation.localized()
+
+        let explKey = self.codes.count > 1 ? "Snabble.QRCode.showTheseCodes" : "Snabble.QRCode.showThisCode"
+        let explanation = self.showCodesMessage(explKey)
+
+        self.explanation1.text = String(format: explanation, self.codes.count)
         self.explanation2.text = "Snabble.QRCode.priceMayDiffer".localized()
 
         if total == nil {
             self.totalPriceLabel.isHidden = true
             self.explanation2.isHidden = true
+        }
+    }
+
+    private func showCodesMessage(_ msgId: String) -> String {
+        let projectId = SnabbleUI.project.id.replacingOccurrences(of: "-", with: ".")
+        let textId = projectId + "." + msgId
+        let l10n = NSLocalizedString(textId, comment: "")
+
+        if l10n.hasPrefix(projectId) {
+            return msgId.localized()
+        } else {
+            return l10n
         }
     }
 
@@ -167,8 +182,14 @@ final class EmbeddedCodesCheckoutViewController: UIViewController {
     }
 
     private func setButtonTitle() {
-        let title = self.pageControl.currentPage == self.codes.count - 1 ? "Snabble.QRCode.didPay" : "Snabble.QRCode.nextCode"
-        self.paidButton.setTitle(title.localized(), for: .normal)
+        var title = ""
+        if self.pageControl.currentPage == self.codes.count - 1 {
+            title = "Snabble.QRCode.didPay".localized()
+        } else {
+            title = String(format: "Snabble.QRCode.nextCode".localized(),
+                           self.pageControl.currentPage+2, self.codes.count)
+        }
+        self.paidButton.setTitle(title, for: .normal)
     }
 
     @IBAction func paidButtonTapped(_ sender: UIButton) {
