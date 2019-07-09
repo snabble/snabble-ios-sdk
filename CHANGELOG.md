@@ -1,5 +1,9 @@
 ## snabble iOS SDK Changelog
 
+# v0.10.9
+
+* Adds a temporary implementation for project-specific strings in `EmbeddedCodesCheckoutViewController` 
+
 # v0.10.8
 
 * Adds support for restricting QR codes to maximum string lengths instead of max. number of codes.
