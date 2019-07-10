@@ -42,6 +42,9 @@ enum CartTableEntry {
 
     // a new main item from the backend, plus its additional items.
     case lineItem(CheckoutInfo.LineItem, [CheckoutInfo.LineItem])
+
+    // sums up the total discounts
+    case discount(Int)
 }
  
 public final class ShoppingCartViewController: UIViewController {
@@ -114,6 +117,16 @@ public final class ShoppingCartViewController: UIViewController {
             for item in masterItems {
                 let additionalItems = lineItems.filter { $0.type != .default && $0.refersTo == item.id }
                 let item = CartTableEntry.lineItem(item, additionalItems)
+                self.items.append(item)
+            }
+        }
+
+        // find all discounts and
+        if let lineItems = cart.backendCartInfo?.lineItems {
+            let discounts = lineItems.filter { $0.type == .discount }
+            if discounts.count > 0 {
+                let sum = discounts.reduce(0) { $0 + $1.amount * ($1.price ?? 0) }
+                let item = CartTableEntry.discount(sum)
                 self.items.append(item)
             }
         }
@@ -252,20 +265,25 @@ public final class ShoppingCartViewController: UIViewController {
     }
 
     private func updateView(at row: Int? = nil) {
+        let currentCount = self.items.count
         self.setupItems(self.shoppingCart)
-
-        if let row = row {
-            UIView.performWithoutAnimation {
-                let offset = self.tableView.contentOffset
-                let indexPath = IndexPath(row: row, section: 0)
-                self.tableView.reloadRows(at: [indexPath], with: .none)
-                self.tableView.contentOffset = offset
-            }
+        if self.items.count != currentCount {
+            self.tableView.reloadData()
         } else {
-            if self.items.count > 0 {
-                self.tableView.reloadData()
+            if let row = row {
+                UIView.performWithoutAnimation {
+                    let offset = self.tableView.contentOffset
+                    let indexPath = IndexPath(row: row, section: 0)
+                    self.tableView.reloadRows(at: [indexPath], with: .none)
+                    self.tableView.contentOffset = offset
+                }
+            } else {
+                if self.items.count > 0 {
+                    self.tableView.reloadData()
+                }
             }
         }
+
 
         self.setEditButton()
         self.setDeleteButton()
@@ -489,6 +507,8 @@ extension ShoppingCartViewController: UITableViewDelegate, UITableViewDataSource
             cell.setCartItem(item, lineItems, row: indexPath.row, delegate: self)
         case .lineItem(let item, let lineItems):
             cell.setLineItem(item, lineItems, row: indexPath.row, delegate: self)
+        case .discount(let amount):
+            cell.setDiscount(amount, delegate: self)
         }
 
         return cell
@@ -514,6 +534,7 @@ extension ShoppingCartViewController: UITableViewDelegate, UITableViewDataSource
         switch item {
         case .cartItem: return true
         case .lineItem: return false
+        case .discount: return false
         }
     }
 

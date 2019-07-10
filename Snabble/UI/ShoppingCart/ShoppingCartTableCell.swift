@@ -14,24 +14,24 @@ protocol ShoppingCartTableDelegate: class {
 
 final class ShoppingCartTableCell: UITableViewCell {
 
-    @IBOutlet weak var productImage: UIImageView!
-    @IBOutlet weak var spinner: UIActivityIndicatorView!
+    @IBOutlet private weak var productImage: UIImageView!
+    @IBOutlet private weak var spinner: UIActivityIndicatorView!
 
-    @IBOutlet weak var nameLabel: UILabel!
-    @IBOutlet weak var quantityLabel: UILabel!
-    @IBOutlet weak var priceLabel: UILabel!
+    @IBOutlet private weak var nameLabel: UILabel!
+    @IBOutlet private weak var quantityLabel: UILabel!
+    @IBOutlet private weak var priceLabel: UILabel!
 
-    @IBOutlet weak var minusButton: UIButton!
-    @IBOutlet weak var plusButton: UIButton!
+    @IBOutlet private weak var minusButton: UIButton!
+    @IBOutlet private weak var plusButton: UIButton!
 
-    @IBOutlet weak var quantityInput: UITextField!
-    @IBOutlet weak var unitsLabel: UILabel!
+    @IBOutlet private weak var quantityInput: UITextField!
+    @IBOutlet private weak var unitsLabel: UILabel!
 
-    @IBOutlet weak var buttonWrapper: UIView!
-    @IBOutlet weak var weightWrapper: UIView!
-    @IBOutlet weak var imageWrapper: UIView!
-    @IBOutlet weak var imageWrapperWidth: NSLayoutConstraint!
-    @IBOutlet weak var quantityWrapper: UIView!
+    @IBOutlet private weak var buttonWrapper: UIView!
+    @IBOutlet private weak var weightWrapper: UIView!
+    @IBOutlet private weak var imageWrapper: UIView!
+    @IBOutlet private weak var imageWrapperWidth: NSLayoutConstraint!
+    @IBOutlet private weak var quantityWrapper: UIView!
 
     private var quantity = 0
     private var item: CartItem?
@@ -77,6 +77,13 @@ final class ShoppingCartTableCell: UITableViewCell {
 
         self.item = nil
         self.lineItems = []
+        self.quantity = 0
+
+        self.quantityLabel.text = nil
+        self.nameLabel.text = nil
+        self.priceLabel.text = nil
+        self.unitsLabel.text = nil
+        self.quantityInput.text = nil
     }
 
     func setLineItem(_ mainItem: CheckoutInfo.LineItem, _ lineItems: [CheckoutInfo.LineItem], row: Int, delegate: ShoppingCartTableDelegate) {
@@ -90,6 +97,23 @@ final class ShoppingCartTableCell: UITableViewCell {
         self.displayLineItemPrice(nil, mainItem, lineItems)
 
         self.quantityLabel.text = "\(mainItem.amount)"
+
+        self.loadImage()
+    }
+
+    func setDiscount(_ amount: Int, delegate: ShoppingCartTableDelegate) {
+        self.delegate = delegate
+
+        self.nameLabel.text = "Snabble.Shoppingcart.discounts".localized()
+        self.quantityWrapper.isHidden = true
+
+        let formatter = PriceFormatter(SnabbleUI.project)
+        self.priceLabel.text = formatter.format(amount)
+
+        self.loadImage()
+        if self.delegate.showImages {
+            self.imageView?.image = UIImage.fromBundle("icon-percent")
+        }
     }
 
     func setCartItem(_ item: CartItem, _ lineItems: [CheckoutInfo.LineItem], row: Int, delegate: ShoppingCartTableDelegate) {
@@ -146,7 +170,7 @@ final class ShoppingCartTableCell: UITableViewCell {
             self.delegate.updateQuantity(self.quantity, at: row)
         }
 
-        self.lineItems = []
+        // self.lineItems = []
         self.showQuantity()
     }
 
