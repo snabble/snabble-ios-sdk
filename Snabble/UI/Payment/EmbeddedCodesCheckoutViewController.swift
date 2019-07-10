@@ -147,7 +147,7 @@ final class EmbeddedCodesCheckoutViewController: UIViewController {
     }
 
     private func codesForQR() -> ([String],[String]) {
-        let items = self.cart.items.sorted { $0.price < $1.price }
+        let items = self.cart.items
 
         if self.qrCodeConfig.nextCodeWithCheck != nil {
             let regularItems = items.filter { return $0.product.saleRestriction == .none }
