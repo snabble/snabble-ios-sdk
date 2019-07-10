@@ -81,7 +81,7 @@ final class ShoppingCartTableCell: UITableViewCell {
 
         self.quantityLabel.text = nil
         self.nameLabel.text = nil
-        self.priceLabel.text = nil
+        self.priceLabel.text = " "
         self.unitsLabel.text = nil
         self.quantityInput.text = nil
     }
@@ -112,7 +112,7 @@ final class ShoppingCartTableCell: UITableViewCell {
 
         self.loadImage()
         if self.delegate.showImages {
-            self.imageView?.image = UIImage.fromBundle("icon-percent")
+            self.productImage.image = UIImage.fromBundle("icon-percent")
         }
     }
 
@@ -123,8 +123,10 @@ final class ShoppingCartTableCell: UITableViewCell {
         self.quantityWrapper.isHidden = true
 
         self.priceLabel.text = "Snabble.Shoppingcart.giveaway".localized()
+
+        self.loadImage()
         if self.delegate.showImages {
-            self.imageView?.image = UIImage.fromBundle("icon-giveaway")
+            self.productImage.image = UIImage.fromBundle("icon-giveaway")
         }
     }
 
@@ -132,10 +134,13 @@ final class ShoppingCartTableCell: UITableViewCell {
         self.delegate = delegate
         self.item = item
         self.lineItems = lineItems
-        self.quantity = item.quantity
+
+        let defaultItem = lineItems.first { $0.type == .default }
+
+        self.quantity = defaultItem?.amount ?? item.quantity
 
         let product = item.product
-        self.nameLabel.text = product.name
+        self.nameLabel.text = defaultItem?.name ?? product.name
 
         self.minusButton.tag = row
         self.plusButton.tag = row
@@ -152,11 +157,15 @@ final class ShoppingCartTableCell: UITableViewCell {
         self.quantityInput.text = "\(item.quantity)"
 
         self.showQuantity()
-
-        var price = item.price
-        if let linePrice = lineItems.first(where: { $0.type == .default })?.price {
-            price = linePrice
+        if let lineItem = defaultItem {
+            self.quantityLabel.text = "\(lineItem.amount)"
+            if let total = lineItem.totalPrice {
+                let formatter = PriceFormatter(SnabbleUI.project)
+                self.priceLabel.text = formatter.format(total)
+            }
         }
+
+        let price = defaultItem?.totalPrice ?? item.price
 
         // suppress display when price == 0
         if price == 0 {
@@ -182,7 +191,6 @@ final class ShoppingCartTableCell: UITableViewCell {
             self.delegate.updateQuantity(self.quantity, at: row)
         }
 
-        // self.lineItems = []
         self.showQuantity()
     }
 
@@ -196,7 +204,7 @@ final class ShoppingCartTableCell: UITableViewCell {
         let unit = encodingUnit?.display ?? ""
         let unitDisplay = showWeight ? unit : ""
 
-        self.quantityLabel.text = "\(item.effectiveQuantity)\(unitDisplay)"
+        self.quantityLabel.text = "\(item.effectiveQuantity) \(unitDisplay)"
         self.unitsLabel.text = unitDisplay
 
         if let defaultItem = lineItems.first(where: { $0.type == .default }) {
