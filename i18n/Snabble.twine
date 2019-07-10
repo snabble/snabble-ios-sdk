@@ -114,6 +114,8 @@
         en = Deposit
     [Snabble.Shoppingcart.discounts]
         en = Total discounts
+    [Snabble.Shoppingcart.giveaways]
+        en = Free gift
 
     [Snabble.saleStop.errorMsg.title]
         en = Sorry

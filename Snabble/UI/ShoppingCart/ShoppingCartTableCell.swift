@@ -116,6 +116,18 @@ final class ShoppingCartTableCell: UITableViewCell {
         }
     }
 
+    func setGiveaway(_ lineItem: CheckoutInfo.LineItem, delegate: ShoppingCartTableDelegate) {
+        self.delegate = delegate
+
+        self.nameLabel.text = lineItem.name
+        self.quantityWrapper.isHidden = true
+
+        self.priceLabel.text = "Snabble.Shoppingcart.giveaway".localized()
+        if self.delegate.showImages {
+            self.imageView?.image = UIImage.fromBundle("icon-giveaway")
+        }
+    }
+
     func setCartItem(_ item: CartItem, _ lineItems: [CheckoutInfo.LineItem], row: Int, delegate: ShoppingCartTableDelegate) {
         self.delegate = delegate
         self.item = item

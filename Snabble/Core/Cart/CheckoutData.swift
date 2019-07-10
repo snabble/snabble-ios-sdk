@@ -143,10 +143,8 @@ public enum LineItemType: String, Codable {
     /// a price-reducing promotion like "1 € off"
     case discount
 
-    /*
-    /// a giveaway product that is automatically added - no support yet
+    /// a giveaway product that is automatically added
     case giveaway
-    */
 }
 
 extension LineItemType: UnknownCaseRepresentable {

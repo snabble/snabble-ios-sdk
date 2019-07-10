@@ -43,6 +43,9 @@ enum CartTableEntry {
     // a new main item from the backend, plus its additional items.
     case lineItem(CheckoutInfo.LineItem, [CheckoutInfo.LineItem])
 
+    // a giveaway
+    case giveaway(CheckoutInfo.LineItem)
+
     // sums up the total discounts
     case discount(Int)
 }
@@ -121,7 +124,15 @@ public final class ShoppingCartViewController: UIViewController {
             }
         }
 
-        // find all discounts and
+        // find all giveaways
+        if let lineItems = cart.backendCartInfo?.lineItems {
+            let giveaways = lineItems.filter { $0.type == .giveaway }
+            giveaways.forEach {
+                self.items.append(CartTableEntry.giveaway($0))
+            }
+        }
+
+        // find all discounts
         if let lineItems = cart.backendCartInfo?.lineItems {
             let discounts = lineItems.filter { $0.type == .discount }
             if discounts.count > 0 {
@@ -509,6 +520,8 @@ extension ShoppingCartViewController: UITableViewDelegate, UITableViewDataSource
             cell.setLineItem(item, lineItems, row: indexPath.row, delegate: self)
         case .discount(let amount):
             cell.setDiscount(amount, delegate: self)
+        case .giveaway(let lineItem):
+            cell.setGiveaway(lineItem, delegate: self)
         }
 
         return cell
@@ -535,6 +548,7 @@ extension ShoppingCartViewController: UITableViewDelegate, UITableViewDataSource
         case .cartItem: return true
         case .lineItem: return false
         case .discount: return false
+        case .giveaway: return false
         }
     }
 
