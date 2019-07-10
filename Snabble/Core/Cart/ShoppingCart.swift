@@ -65,18 +65,6 @@ public struct ScannedCode: Codable {
     }
 }
 
-/// return type for the `dataForQR` method -
-/// quantity and code sting to be embedded in a QR code
-public struct QRCodeData: Equatable {
-    public let quantity: Int
-    public let code: String
-
-    public init(_ quantity: Int, _ code: String) {
-        self.quantity = quantity
-        self.code = code
-    }
-}
-
 /// an entry in a shopping cart.
 public struct CartItem: Codable {
     /// quantity or weight
@@ -179,12 +167,6 @@ public struct CartItem: Codable {
                                            raiseOnUnderflow: false,
                                            raiseOnDivideByZero: false)
         return (total as NSDecimalNumber).rounding(accordingToBehavior: roundingHandler).intValue
-    }
-
-    /// data for embedding in a QR code
-    public var dataForQR: QRCodeData {
-        let cartItem = self.cartItem
-        return QRCodeData(cartItem.amount, cartItem.scannedCode)
     }
 
     /// formatted price display, e.g. for the confirmation dialog and the shopping cart table cell.

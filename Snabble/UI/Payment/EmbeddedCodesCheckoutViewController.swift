@@ -67,9 +67,11 @@ final class EmbeddedCodesCheckoutViewController: UIViewController {
             let (regularCodes, restrictedCodes) = self.codesForQR()
             self.codes = codeblocks.generateQrCodes(regularCodes, restrictedCodes)
         case .encodedCodesCSV:
-            self.codes = self.csvForQR()
+            let codeblocks = CodeblocksCSV(self.qrCodeConfig)
+            self.codes = codeblocks.generateQrCodes(self.cart)
         case .encodedCodesIKEA:
-            self.codes = self.codesForIKEA()
+            let codeblocks = CodeblocksIKEA(self.qrCodeConfig)
+            self.codes = codeblocks.generateQrCodes(self.cart, self.codesFor(self.cart.items))
         default:
             fatalError("payment method \(self.method) not implemented")
             break
@@ -103,13 +105,28 @@ final class EmbeddedCodesCheckoutViewController: UIViewController {
         let formattedTotal = formatter.format(total ?? 0)
 
         self.totalPriceLabel.text = "Snabble.QRCode.total".localized() + "\(formattedTotal)"
-        let explanation = self.codes.count > 1 ? "Snabble.QRCode.showTheseCodes" : "Snabble.QRCode.showThisCode"
-        self.explanation1.text = explanation.localized()
+
+        let explKey = self.codes.count > 1 ? "Snabble.QRCode.showTheseCodes" : "Snabble.QRCode.showThisCode"
+        let explanation = self.showCodesMessage(explKey)
+
+        self.explanation1.text = String(format: explanation, self.codes.count)
         self.explanation2.text = "Snabble.QRCode.priceMayDiffer".localized()
 
         if total == nil {
             self.totalPriceLabel.isHidden = true
             self.explanation2.isHidden = true
+        }
+    }
+
+    private func showCodesMessage(_ msgId: String) -> String {
+        let projectId = SnabbleUI.project.id.replacingOccurrences(of: "-", with: ".")
+        let textId = projectId + "." + msgId
+        let l10n = NSLocalizedString(textId, comment: "")
+
+        if l10n.hasPrefix(projectId) {
+            return msgId.localized()
+        } else {
+            return l10n
         }
     }
 
@@ -127,62 +144,6 @@ final class EmbeddedCodesCheckoutViewController: UIViewController {
         super.viewWillDisappear(animated)
 
         UIScreen.main.brightness = self.initialBrightness
-    }
-
-    private func divideIntoChunks(_ lines: [String], maxSize: Int) -> [[String]] {
-        let maxCodes = Float(maxSize)
-        let linesCount = Float(lines.count)
-        let chunks = (linesCount / maxCodes).rounded(.up)
-        let chunkSize = Int((linesCount / chunks).rounded(.up))
-        let blocks = stride(from: 0, to: lines.count, by: chunkSize).map { start -> [String] in
-            return Array(lines[start ..< min(start + chunkSize, lines.count)])
-        }
-        return blocks
-    }
-
-    private func codesForIKEA() -> [String] {
-        let lines = self.codesFor(self.cart.items)
-
-        let chunks = self.divideIntoChunks(lines, maxSize: self.qrCodeConfig.maxCodes)
-
-        let gs = "\u{001d}" // ASCII Group Separator
-        let blocks = chunks.enumerated().map { index, block -> String in
-            let header = "9100003"                  // AI 91 (origin type), 00003 == IKEA Store App
-            let blocks = "10" + "0\(chunks.count)"  // AI 10 (lot number), # of chunks
-
-            var result = header + gs + blocks
-
-            // family card goes into the first code
-            if let card = self.cart.customerCard, index == 0 {
-                let familyCard = "92" + card        // AI 92 (additional item id), card number
-                result += gs + familyCard
-            }
-
-            let items = block.map { "240" + $0 }    // AI 240 (additional item ids), item's scanned code
-            return result + gs + items.joined(separator: gs)
-        }
-
-        return blocks
-    }
-
-    private func csvForQR() -> [String] {
-        var lines = [String]()
-        if let card = self.cart.customerCard {
-            lines.append("1;\(card)")
-        }
-
-        lines += self.cart.items.reduce(into: [], { result, item in
-            let qrCode = item.dataForQR
-            result.append("\(qrCode.quantity);\(qrCode.code)")
-        })
-
-        let chunks = self.divideIntoChunks(lines, maxSize: self.qrCodeConfig.maxCodes)
-        // TODO: add N;M to header line, see https://github.com/snabble/docs/pull/60
-        let blocks = chunks.map {
-            return [ "snabble;" ] + $0
-        }
-
-        return blocks.map { $0.joined(separator: "\n") }
     }
 
     private func codesForQR() -> ([String],[String]) {
@@ -214,15 +175,21 @@ final class EmbeddedCodesCheckoutViewController: UIViewController {
 
     private func codesFor(_ items: [CartItem]) -> [String] {
         return items.reduce(into: [], { result, item in
-            let qrCode = item.dataForQR
+            let qrCode = QRCodeData(item)
             let arr = Array(repeating: qrCode.code, count: qrCode.quantity)
             result.append(contentsOf: arr)
         })
     }
 
     private func setButtonTitle() {
-        let title = self.pageControl.currentPage == self.codes.count - 1 ? "Snabble.QRCode.didPay" : "Snabble.QRCode.nextCode"
-        self.paidButton.setTitle(title.localized(), for: .normal)
+        var title = ""
+        if self.pageControl.currentPage == self.codes.count - 1 {
+            title = "Snabble.QRCode.didPay".localized()
+        } else {
+            title = String(format: "Snabble.QRCode.nextCode".localized(),
+                           self.pageControl.currentPage+2, self.codes.count)
+        }
+        self.paidButton.setTitle(title, for: .normal)
     }
 
     @IBAction func paidButtonTapped(_ sender: UIButton) {
