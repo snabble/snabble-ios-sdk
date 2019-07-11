@@ -81,7 +81,7 @@
                     <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="n09-LT-AVO" userLabel="QuantityWrapper">
                         <rect key="frame" x="77" y="44" width="42.5" height="21"/>
                         <subviews>
-                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="310g" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="YyS-5o-Cds" userLabel="Quantity">
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" horizontalCompressionResistancePriority="751" text="310g" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="YyS-5o-Cds" userLabel="Quantity">
                                 <rect key="frame" x="5" y="3" width="32.5" height="15"/>
                                 <constraints>
                                     <constraint firstAttribute="height" constant="15" id="cLI-HH-DeD"/>
