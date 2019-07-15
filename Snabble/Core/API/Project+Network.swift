@@ -37,10 +37,11 @@ public enum ErrorResponseType: String {
     case unknown
 
     // checkout errors
+    case invalidCartItem = "invalid_cart_item"
     case shopNotFound = "shop_not_found"
     case badShopId = "bad_shop_id"
     case noAvailableMethod = "no_available_method"
-    case invalidCartItem = "invalid_cart_item"
+    case checkoutUnavailable = "checkout_unavailable"
 }
 
 extension ErrorResponseType: UnknownCaseRepresentable {
