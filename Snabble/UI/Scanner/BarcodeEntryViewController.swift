@@ -39,7 +39,7 @@ final public class BarcodeEntryViewController: UIViewController, UISearchBarDele
     override public func viewDidLoad() {
         super.viewDidLoad()
 
-        self.emptyState = BarcodeEntryEmptyStateView( { [weak self] in self?.addEnteredCode() } )
+        self.emptyState = BarcodeEntryEmptyStateView( { [weak self] _ in self?.addEnteredCode() } )
         self.emptyState.addTo(self.tableView)
 
         self.tableView.tableFooterView = UIView(frame: CGRect.zero)
@@ -84,11 +84,11 @@ final public class BarcodeEntryViewController: UIViewController, UISearchBarDele
     public func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         let rows = filteredProducts.count
         self.emptyState.isHidden = rows > 0
-        self.emptyState.button.isHidden = true
+        self.emptyState.button1.isHidden = true
         if self.searchText.count > 0 {
             let title = String(format: "Snabble.Scanner.addCodeAsIs".localized(), self.searchText)
-            self.emptyState.button.setTitle(title, for: .normal)
-            self.emptyState.button.isHidden = false
+            self.emptyState.button1.setTitle(title, for: .normal)
+            self.emptyState.button1.isHidden = false
         }
         return rows
     }

@@ -292,6 +292,7 @@ final public class ShoppingCart {
     private(set) public var lastSaved: Date?
     private(set) public var backendCartInfo: BackendCartInfo?
     internal var checkoutInfoTask: URLSessionDataTask?
+    fileprivate var backupItems: [CartItem]?
 
     public var customerCard: String? {
         didSet {
@@ -313,6 +314,7 @@ final public class ShoppingCart {
         self.config = config
         let storage = self.loadCart()
         self.items = storage.items
+        self.backupItems = storage.backupItems
         self.backendCartInfo = storage.backendCartInfo
         self.session = storage.session
     }
@@ -339,6 +341,10 @@ final public class ShoppingCart {
     ///
     /// the newly added (or modified) item is moved to the start of the list
     public func add(_ item: CartItem) {
+        if self.items.count == 0 {
+            self.backupItems = nil
+        }
+        
         defer { self.save() }
         if let index = self.items.firstIndex(where: { $0.product.sku == item.product.sku }) {
             var existing = self.items[index]
@@ -417,6 +423,7 @@ final public class ShoppingCart {
 
     /// remove all items from the cart
     public func removeAll(endSession: Bool = false) {
+        self.backupItems = self.items
         self.items.removeAll()
         self.save()
         NotificationCenter.default.post(name: .snabbleCartUpdated, object: self)
@@ -426,22 +433,43 @@ final public class ShoppingCart {
             self.session = ""
         }
     }
+
+    public func restoreCart() {
+        guard
+            let backupItems = self.backupItems,
+            backupItems.count > 0,
+            self.items.count == 0
+        else {
+            return
+        }
+
+        self.items = backupItems
+        self.backupItems = nil
+    }
+
+    public var backupAvailable: Bool {
+        return (self.backupItems?.count ?? 0) > 0
+    }
 }
 
 fileprivate struct CartStorage: Codable {
     let items: [CartItem]
+    let backupItems: [CartItem]?
     let backendCartInfo: BackendCartInfo?
     let session: String
-    var lastSaved: Date?
+    let lastSaved: Date?
 
     init() {
         self.items = []
+        self.backupItems = nil
         self.backendCartInfo = nil
         self.session = ""
+        self.lastSaved = nil
     }
 
     init(_ shoppingCart: ShoppingCart) {
         self.items = shoppingCart.items
+        self.backupItems = shoppingCart.backupItems
         self.backendCartInfo = shoppingCart.backendCartInfo
         self.session = shoppingCart.session
         self.lastSaved = shoppingCart.lastSaved

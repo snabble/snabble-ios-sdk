@@ -51,7 +51,9 @@
         en = QR Code
     [Snabble.QRCode.total]
         en = `Total: `
-
+    [Snabble.QRCode.entry.title]
+        en = Code: %d
+        
     [Snabble.Scanner.Camera.accessDenied]
         en = Camera access denied
     [Snabble.Scanner.Camera.allowAccess]
@@ -102,6 +104,10 @@
         en = Scan products
     [Snabble.Shoppingcart.emptyState.description]
         en = Scan products to add them to your shopping cart.
+    [Snabble.Shoppingcart.emptyState.restartButtonTitle]
+        en = Start new shopping trip
+    [Snabble.Shoppingcart.emptyState.restoreButtonTitle]
+        en = Restore previous cart
     [Snabble.Shoppingcart.emptyState.title]
         en = Your Shopping Cart
     [Snabble.Shoppingcart.removeItem]
@@ -110,6 +116,10 @@
         en = Remove all products from shopping cart?
     [Snabble.Shoppingcart.deposit]
         en = Deposit
+    [Snabble.Shoppingcart.discounts]
+        en = Total discounts
+    [Snabble.Shoppingcart.giveaways]
+        en = Free gift
 
     [Snabble.saleStop.errorMsg.title]
         en = Sorry

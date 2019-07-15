@@ -133,7 +133,7 @@ public final class ShoppingCartViewController: UIViewController {
         let primaryBackgroundColor = SnabbleUI.appearance.primaryBackgroundColor
         self.view.backgroundColor = primaryBackgroundColor
 
-        self.emptyState = ShoppingCartEmptyStateView({ [weak self] in self?.showScanner() })
+        self.emptyState = ShoppingCartEmptyStateView({ [weak self] button in self?.emptyStateButtonTapped(button) })
         self.emptyState.addTo(self.view)
 
         self.tableView.register(UINib(nibName: "ShoppingCartTableCell", bundle: SnabbleBundle.main), forCellReuseIdentifier: self.itemCellIdentifier)
@@ -193,6 +193,8 @@ public final class ShoppingCartViewController: UIViewController {
         navItem.leftBarButtonItem = self.isEditing ? self.trashButton : nil
     }
 
+    private var restoreTimer: Timer?
+
     // MARK: notification handlers
     @objc private func updateShoppingCart(_ notification: Notification) {
         self.setupItems(self.shoppingCart)
@@ -200,6 +202,19 @@ public final class ShoppingCartViewController: UIViewController {
 
         self.updateTotals()
         self.getMissingImages()
+
+        if self.shoppingCart?.items.count == 0 && self.shoppingCart.backupAvailable {
+            self.emptyState?.button1.setTitle("Snabble.Shoppingcart.emptyState.restartButtonTitle".localized(), for: .normal)
+            self.emptyState?.button2.isHidden = false
+            let restoreInterval: TimeInterval = 5 * 60
+            self.restoreTimer = Timer.scheduledTimer(withTimeInterval: restoreInterval, repeats: false) { [weak self] timer in
+                UIView.animate(withDuration: 0.2) {
+                    self?.emptyState?.button1.setTitle("Snabble.Shoppingcart.emptyState.buttonTitle".localized(), for: .normal)
+                    self?.emptyState?.button2.isHidden = true
+                    self?.restoreTimer = nil
+                }
+            }
+        }
     }
 
     private func getMissingImages() {
@@ -336,8 +351,21 @@ public final class ShoppingCartViewController: UIViewController {
         }
     }
 
-    func showScanner() {
+    private func emptyStateButtonTapped(_ button: UIButton) {
+        switch button.tag {
+        case 0: self.showScanner()
+        case 1: self.restoreCart()
+        default: ()
+        }
+    }
+
+    private func showScanner() {
         self.delegate.gotoScanner()
+    }
+
+    private func restoreCart() {
+        self.shoppingCart.restoreCart()
+        self.updateView()
     }
 
     private func showProductError(_ skus: [String]) {

@@ -1,58 +1,73 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="14460.31" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" colorMatched="YES">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="14490.70" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" colorMatched="YES">
     <device id="retina4_7" orientation="portrait">
         <adaptation id="fullscreen"/>
     </device>
     <dependencies>
         <deployment identifier="iOS"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="14460.20"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="14490.49"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <objects>
         <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner" customClass="EmptyStateView" customModule="Snabble" customModuleProvider="target">
             <connections>
-                <outlet property="button" destination="HZs-9r-MmT" id="DAr-cV-KhK"/>
+                <outlet property="button1" destination="HZs-9r-MmT" id="gS8-TK-6qy"/>
+                <outlet property="button2" destination="Y6K-MM-RsL" id="KTD-lY-Odx"/>
                 <outlet property="textLabel" destination="ZQv-pz-7TU" id="1Oc-jT-tBJ"/>
             </connections>
         </placeholder>
         <placeholder placeholderIdentifier="IBFirstResponder" id="-2" customClass="UIResponder"/>
         <view contentMode="scaleToFill" id="eT1-L4-RYN">
-            <rect key="frame" x="0.0" y="0.0" width="463" height="129"/>
+            <rect key="frame" x="0.0" y="0.0" width="463" height="169"/>
             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
             <subviews>
-                <button opaque="NO" tag="3" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="HZs-9r-MmT" userLabel="button">
-                    <rect key="frame" x="162.5" y="89" width="138" height="40"/>
-                    <constraints>
-                        <constraint firstAttribute="height" constant="40" id="hfP-ot-ePk"/>
-                    </constraints>
-                    <fontDescription key="fontDescription" type="system" weight="medium" pointSize="17"/>
-                    <inset key="contentEdgeInsets" minX="8" minY="0.0" maxX="16" maxY="0.0"/>
-                    <inset key="titleEdgeInsets" minX="8" minY="0.0" maxX="-8" maxY="0.0"/>
-                    <state key="normal" title="Scan products">
-                        <color key="titleColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
-                    </state>
-                    <connections>
-                        <action selector="buttonTapped:" destination="-1" eventType="touchUpInside" id="dfd-Iw-oyU"/>
-                    </connections>
-                </button>
                 <label opaque="NO" userInteractionEnabled="NO" tag="1" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="This is your shopping cart" textAlignment="center" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="ZQv-pz-7TU" userLabel="text">
-                    <rect key="frame" x="0.0" y="0.0" width="463" height="79"/>
+                    <rect key="frame" x="0.0" y="0.0" width="463" height="69"/>
                     <fontDescription key="fontDescription" type="system" pointSize="17"/>
                     <color key="textColor" red="0.08235294118" green="0.08235294118" blue="0.08235294118" alpha="1" colorSpace="calibratedRGB"/>
                     <nil key="highlightedColor"/>
                 </label>
+                <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" translatesAutoresizingMaskIntoConstraints="NO" id="xme-fz-Q9Y">
+                    <rect key="frame" x="162.5" y="89" width="138" height="80"/>
+                    <subviews>
+                        <button opaque="NO" tag="3" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="HZs-9r-MmT" userLabel="button">
+                            <rect key="frame" x="0.0" y="0.0" width="138" height="40"/>
+                            <constraints>
+                                <constraint firstAttribute="height" constant="40" id="hfP-ot-ePk"/>
+                            </constraints>
+                            <fontDescription key="fontDescription" type="system" weight="medium" pointSize="17"/>
+                            <inset key="contentEdgeInsets" minX="8" minY="0.0" maxX="16" maxY="0.0"/>
+                            <inset key="titleEdgeInsets" minX="8" minY="0.0" maxX="-8" maxY="0.0"/>
+                            <state key="normal" title="Scan products"/>
+                            <connections>
+                                <action selector="buttonTapped:" destination="-1" eventType="touchUpInside" id="dfd-Iw-oyU"/>
+                            </connections>
+                        </button>
+                        <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Y6K-MM-RsL">
+                            <rect key="frame" x="0.0" y="40" width="138" height="40"/>
+                            <constraints>
+                                <constraint firstAttribute="height" constant="40" id="FOK-jm-Ear"/>
+                            </constraints>
+                            <fontDescription key="fontDescription" type="system" weight="medium" pointSize="17"/>
+                            <state key="normal" title="Button"/>
+                            <connections>
+                                <action selector="buttonTapped:" destination="-1" eventType="touchUpInside" id="BYy-Va-q08"/>
+                            </connections>
+                        </button>
+                    </subviews>
+                </stackView>
             </subviews>
             <constraints>
                 <constraint firstItem="ZQv-pz-7TU" firstAttribute="top" secondItem="eT1-L4-RYN" secondAttribute="top" id="3U1-V9-gEh"/>
                 <constraint firstItem="ZQv-pz-7TU" firstAttribute="leading" secondItem="eT1-L4-RYN" secondAttribute="leading" id="Ghi-3I-Ulw"/>
-                <constraint firstItem="HZs-9r-MmT" firstAttribute="centerX" secondItem="eT1-L4-RYN" secondAttribute="centerX" id="HWk-jp-PyZ"/>
-                <constraint firstItem="HZs-9r-MmT" firstAttribute="top" secondItem="ZQv-pz-7TU" secondAttribute="bottom" constant="10" id="M73-sE-f0s"/>
+                <constraint firstItem="xme-fz-Q9Y" firstAttribute="centerX" secondItem="eT1-L4-RYN" secondAttribute="centerX" id="a6f-Op-6Lq"/>
+                <constraint firstItem="xme-fz-Q9Y" firstAttribute="top" secondItem="ZQv-pz-7TU" secondAttribute="bottom" constant="20" id="hP6-BD-nIR"/>
                 <constraint firstAttribute="trailing" secondItem="ZQv-pz-7TU" secondAttribute="trailing" id="hsO-sn-lDM"/>
-                <constraint firstAttribute="bottom" secondItem="HZs-9r-MmT" secondAttribute="bottom" id="qS8-sb-Itc"/>
+                <constraint firstAttribute="bottom" secondItem="xme-fz-Q9Y" secondAttribute="bottom" id="qDc-j1-3iY"/>
             </constraints>
             <nil key="simulatedStatusBarMetrics"/>
             <freeformSimulatedSizeMetrics key="simulatedDestinationMetrics"/>
-            <point key="canvasLocation" x="31.199999999999999" y="-140.77961019490255"/>
+            <point key="canvasLocation" x="-13.6" y="-113.79310344827587"/>
         </view>
     </objects>
 </document>

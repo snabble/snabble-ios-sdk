@@ -8,9 +8,10 @@ import UIKit
 
 class EmptyStateView: NibView {
     @IBOutlet weak var textLabel: UILabel!
-    @IBOutlet weak var button: UIButton!
+    @IBOutlet weak var button1: UIButton!
+    @IBOutlet weak var button2: UIButton!
 
-    typealias Handler = () -> ()
+    typealias Handler = (UIButton) -> ()
     private let tapHandler: Handler
     
     init(_ tapHandler: @escaping Handler) {
@@ -18,6 +19,9 @@ class EmptyStateView: NibView {
         super.init(frame: CGRect.zero)
 
         self.backgroundColor = SnabbleUI.appearance.primaryBackgroundColor
+
+        self.button1.tag = 0
+        self.button2.tag = 1
     }
     
     required init?(coder aDecoder: NSCoder) {
@@ -25,7 +29,7 @@ class EmptyStateView: NibView {
     }
     
     @IBAction private func buttonTapped(_ sender: UIButton) {
-        self.tapHandler()
+        self.tapHandler(sender)
     }
 
     func addTo(_ superview: UIView) {
@@ -47,8 +51,12 @@ final class ShoppingCartEmptyStateView: EmptyStateView {
         super.init(tapHandler)
 
         self.textLabel.text = "Snabble.Shoppingcart.emptyState.description".localized()
-        self.button.setTitle("Snabble.Shoppingcart.emptyState.buttonTitle".localized(), for: .normal)
-        self.button.setTitleColor(SnabbleUI.appearance.primaryColor, for: .normal)
+        self.button1.setTitle("Snabble.Shoppingcart.emptyState.buttonTitle".localized(), for: .normal)
+        self.button1.setTitleColor(SnabbleUI.appearance.primaryColor, for: .normal)
+
+        self.button2.setTitle("Snabble.Shoppingcart.emptyState.restoreButtonTitle".localized(), for: .normal)
+        self.button2.setTitleColor(SnabbleUI.appearance.primaryColor, for: .normal)
+        self.button2.isHidden = true
     }
 
     required init?(coder aDecoder: NSCoder) {
@@ -62,8 +70,10 @@ final class BarcodeEntryEmptyStateView: EmptyStateView {
 
         self.textLabel.text = "Snabble.Scanner.enterBarcode".localized()
 
-        self.button.setTitle("", for: .normal)
-        self.button.setTitleColor(SnabbleUI.appearance.primaryColor, for: .normal)
+        self.button1.setTitle("", for: .normal)
+        self.button1.setTitleColor(SnabbleUI.appearance.primaryColor, for: .normal)
+
+        self.button2.isHidden = true
     }
 
     required init?(coder aDecoder: NSCoder) {
