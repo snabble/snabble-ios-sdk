@@ -351,9 +351,41 @@ public struct ProjectLinks: Decodable {
 
 public struct Flags: Decodable {
     public let kill: Bool
+    private let data: [String: Any]
+
+    public subscript(_ key: String) -> Any? {
+        return self.data[key]
+    }
+
+    private enum CodingKeys: String, CodingKey {
+        case kill
+    }
+
+    private struct AdditionalCodingKeys: CodingKey
+    {
+        var stringValue: String
+        var intValue: Int?
+
+        init?(stringValue: String) {
+            self.stringValue = stringValue
+        }
+
+        init?(intValue: Int) {
+            return nil
+        }
+    }
+
+    public init(from decoder: Decoder) throws {
+        let keyedContainer = try decoder.container(keyedBy: CodingKeys.self)
+        self.kill = try keyedContainer.decode(Bool.self, forKey: .kill)
+
+        let dataContainer = try decoder.container(keyedBy: AdditionalCodingKeys.self)
+        self.data = try dataContainer.decode([String: Any].self)
+    }
 
     fileprivate init() {
         self.kill = false
+        self.data = [:]
     }
 }
 
