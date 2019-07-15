@@ -8,16 +8,20 @@ import UIKit
 import QuickLook
 
 final class PreviewItem: NSObject, QLPreviewItem {
+    private let receiptUrl: URL
+    private let title: String
+
     var previewItemURL: URL? {
         return self.receiptUrl
     }
 
-    var previewItemTitle: String? { return "Beleg" }
+    var previewItemTitle: String? {
+        return self.title
+    }
 
-    private let receiptUrl: URL
-
-    init(_ receiptUrl: URL) {
+    init(_ receiptUrl: URL, _ title: String) {
         self.receiptUrl = receiptUrl
+        self.title = title
         super.init()
     }
 }
@@ -223,14 +227,20 @@ extension ReceiptsListViewController {
 
         try? fileManager.removeItem(at: targetPath)
 
+        let formatter = DateFormatter()
+        formatter.dateStyle = .medium
+        formatter.timeStyle = .none
+
+        let title = formatter.string(from: order.date)
+
         if fileManager.fileExists(atPath: targetPath.path) {
-            self.showQuicklook(targetPath)
+            self.showQuicklook(targetPath, title)
         } else {
-            self.downloadAndShow(order, project, targetPath)
+            self.downloadAndShow(order, project, targetPath, title)
         }
     }
 
-    func downloadAndShow(_ order: Order, _ project: Project, _ targetPath: URL) {
+    func downloadAndShow(_ order: Order, _ project: Project, _ targetPath: URL, _ title: String) {
         self.spinner.startAnimating()
         project.request(.get, order.links.receipt.href, timeout: 10) { request in
             guard let request = request else {
@@ -252,7 +262,7 @@ extension ReceiptsListViewController {
                 do {
                     try FileManager.default.moveItem(at: location, to: targetPath)
                     DispatchQueue.main.async {
-                        self.showQuicklook(targetPath)
+                        self.showQuicklook(targetPath, title)
                     }
                 } catch {
                     Log.error("error saving receipt: \(error)")
@@ -262,9 +272,9 @@ extension ReceiptsListViewController {
         }
     }
 
-    func showQuicklook(_ url: URL) {
+    func showQuicklook(_ url: URL, _ title: String) {
         self.quickLook.currentPreviewItemIndex = 0
-        self.previewItem = PreviewItem(url)
+        self.previewItem = PreviewItem(url, title)
         self.navigationController?.pushViewController(self.quickLook, animated: true)
         self.quickLook.reloadData()
     }
