@@ -341,7 +341,7 @@ public final class ShoppingCartViewController: UIViewController {
                     // app didn't handle the error. see if the project has a offline-capable payment method
                     let offlineMethods = SnabbleUI.project.paymentMethods.filter { $0.offline }
                     if offlineMethods.count > 0 {
-                        let info = SignedCheckoutInfo()
+                        let info = SignedCheckoutInfo(offlineMethods)
                         self.delegate.gotoPayment(info, self.shoppingCart)
                     } else {
                         self.delegate.showWarningMessage("Snabble.Payment.errorStarting".localized())

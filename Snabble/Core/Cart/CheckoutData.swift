@@ -30,8 +30,8 @@ public struct SignedCheckoutInfo: Decodable {
     var rawJson: [String: Any]? = nil
 
     // only used for the embedded codes offline payment
-    init() {
-        self.checkoutInfo = CheckoutInfo()
+    init(_ paymentMethods: [RawPaymentMethod]) {
+        self.checkoutInfo = CheckoutInfo(paymentMethods)
         self.signature = ""
         self.links = CheckoutLinks()
     }
@@ -178,9 +178,9 @@ public struct CheckoutInfo: Decodable {
         return availableMethods.compactMap { RawPaymentMethod(rawValue: $0) }
     }
 
-    fileprivate init() {
+    fileprivate init(_ paymentMethods: [RawPaymentMethod]) {
         self.price = Price()
-        self.availableMethods = [ RawPaymentMethod.encodedCodes.rawValue ]
+        self.availableMethods = paymentMethods.map { $0.rawValue }
         self.session = ""
         self.lineItems = []
     }
