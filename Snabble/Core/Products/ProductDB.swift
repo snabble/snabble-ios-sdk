@@ -677,7 +677,7 @@ extension ProductDB {
         }
 
         if !self.config.useFTS {
-            Log.warn("WARNING: productsByName called, but useFTS not set")
+            Log.warn("productsByName called, but useFTS not set")
         }
 
         return self.productsByName(db, name, filterDeposits)
