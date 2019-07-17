@@ -1,5 +1,11 @@
 ## snabble iOS SDK Changelog
 
+# v0.10.10
+
+* Fixes a bug where the `encodedCodes` payment method was used as a fallback even in stores that don't support it.
+* Adds support for accessing arbitrary additional data in the `Metadata.flags` object 
+* Changes the title of the Receipt view controller to show the receipt's date.
+
 # v0.10.9
 
 * Adds a temporary implementation for project-specific strings in `EmbeddedCodesCheckoutViewController` 
