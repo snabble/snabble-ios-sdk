@@ -11,27 +11,75 @@
     <objects>
         <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner" customClass="ScannerViewController">
             <connections>
+                <outlet property="messageLabel" destination="bOg-GN-phe" id="7cp-c0-ieb"/>
+                <outlet property="messageSeparatorHeight" destination="TI2-yJ-9oW" id="dqs-mC-4kG"/>
+                <outlet property="messageTopDistance" destination="HWc-Zk-A0q" id="gq1-ug-mYh"/>
+                <outlet property="messageWrapper" destination="f6o-K2-0vK" id="x27-in-RTW"/>
                 <outlet property="spinner" destination="N9z-bZ-BCF" id="F1a-fs-Fit"/>
                 <outlet property="view" destination="QeV-hn-is3" id="5p1-Gb-hrb"/>
             </connections>
         </placeholder>
         <placeholder placeholderIdentifier="IBFirstResponder" id="-2" customClass="UIResponder"/>
         <view contentMode="scaleToFill" id="QeV-hn-is3">
-            <rect key="frame" x="0.0" y="0.0" width="320" height="480"/>
+            <rect key="frame" x="0.0" y="0.0" width="508" height="565"/>
             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
             <subviews>
                 <activityIndicatorView hidden="YES" opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" hidesWhenStopped="YES" style="whiteLarge" translatesAutoresizingMaskIntoConstraints="NO" id="N9z-bZ-BCF">
-                    <rect key="frame" x="141.5" y="40" width="37" height="37"/>
+                    <rect key="frame" x="235.5" y="40" width="37" height="37"/>
                 </activityIndicatorView>
+                <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="f6o-K2-0vK">
+                    <rect key="frame" x="0.0" y="0.0" width="508" height="75"/>
+                    <subviews>
+                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Ich bin ein Hinweistext im Scanner. Manchmal bin ich ganz schön lang und brauche viel Platz." textAlignment="natural" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="bOg-GN-phe">
+                            <rect key="frame" x="16" y="16" width="449" height="41"/>
+                            <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                            <nil key="textColor"/>
+                            <nil key="highlightedColor"/>
+                        </label>
+                        <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="jmO-vl-XNF" userLabel="Separator">
+                            <rect key="frame" x="0.0" y="73" width="508" height="2"/>
+                            <color key="backgroundColor" white="0.66666666666666663" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                            <constraints>
+                                <constraint firstAttribute="height" constant="2" id="TI2-yJ-9oW"/>
+                            </constraints>
+                        </view>
+                        <button opaque="NO" userInteractionEnabled="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Jie-05-9Y1">
+                            <rect key="frame" x="473" y="21" width="33" height="33"/>
+                            <constraints>
+                                <constraint firstAttribute="height" constant="33" id="jG4-1S-5qR"/>
+                                <constraint firstAttribute="width" constant="33" id="u7u-v7-cDW"/>
+                            </constraints>
+                            <state key="normal" image="icon-close"/>
+                        </button>
+                    </subviews>
+                    <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                    <constraints>
+                        <constraint firstAttribute="bottom" secondItem="jmO-vl-XNF" secondAttribute="bottom" id="0vd-24-zaM"/>
+                        <constraint firstItem="jmO-vl-XNF" firstAttribute="leading" secondItem="f6o-K2-0vK" secondAttribute="leading" id="303-0W-sDF"/>
+                        <constraint firstAttribute="trailing" secondItem="Jie-05-9Y1" secondAttribute="trailing" constant="2" id="3li-Bi-HL8"/>
+                        <constraint firstAttribute="trailing" secondItem="jmO-vl-XNF" secondAttribute="trailing" id="6gb-wk-rXI"/>
+                        <constraint firstItem="Jie-05-9Y1" firstAttribute="leading" secondItem="bOg-GN-phe" secondAttribute="trailing" constant="8" id="K6Y-7k-6Ys"/>
+                        <constraint firstItem="Jie-05-9Y1" firstAttribute="centerY" secondItem="f6o-K2-0vK" secondAttribute="centerY" id="qdc-j0-Zon"/>
+                        <constraint firstItem="bOg-GN-phe" firstAttribute="top" secondItem="f6o-K2-0vK" secondAttribute="top" constant="16" id="qjR-27-1Kj"/>
+                        <constraint firstItem="bOg-GN-phe" firstAttribute="leading" secondItem="f6o-K2-0vK" secondAttribute="leading" constant="16" id="wD3-bQ-V2x"/>
+                        <constraint firstItem="jmO-vl-XNF" firstAttribute="top" secondItem="bOg-GN-phe" secondAttribute="bottom" constant="16" id="xj4-mT-Zpm"/>
+                    </constraints>
+                </view>
             </subviews>
             <constraints>
                 <constraint firstItem="N9z-bZ-BCF" firstAttribute="top" secondItem="QeV-hn-is3" secondAttribute="top" constant="40" id="02K-f3-pGk"/>
+                <constraint firstItem="f6o-K2-0vK" firstAttribute="leading" secondItem="QeV-hn-is3" secondAttribute="leading" id="44E-4a-OND"/>
+                <constraint firstItem="f6o-K2-0vK" firstAttribute="top" secondItem="QeV-hn-is3" secondAttribute="top" id="HWc-Zk-A0q"/>
+                <constraint firstAttribute="trailing" secondItem="f6o-K2-0vK" secondAttribute="trailing" id="Rxh-d4-Zb8"/>
                 <constraint firstItem="N9z-bZ-BCF" firstAttribute="centerX" secondItem="QeV-hn-is3" secondAttribute="centerX" id="tp8-Ip-mmg"/>
             </constraints>
             <nil key="simulatedStatusBarMetrics"/>
-            <nil key="simulatedTopBarMetrics"/>
-            <nil key="simulatedBottomBarMetrics"/>
-            <point key="canvasLocation" x="-39" y="27"/>
+            <simulatedNavigationBarMetrics key="simulatedTopBarMetrics" translucent="NO" prompted="NO"/>
+            <simulatedTabBarMetrics key="simulatedBottomBarMetrics" translucent="NO"/>
+            <point key="canvasLocation" x="-350.625" y="-131.25"/>
         </view>
     </objects>
+    <resources>
+        <image name="icon-close" width="24" height="24"/>
+    </resources>
 </document>
