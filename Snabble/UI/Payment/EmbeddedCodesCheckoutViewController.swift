@@ -107,7 +107,7 @@ final class EmbeddedCodesCheckoutViewController: UIViewController {
         self.totalPriceLabel.text = "Snabble.QRCode.total".localized() + "\(formattedTotal)"
 
         let explKey = self.codes.count > 1 ? "Snabble.QRCode.showTheseCodes" : "Snabble.QRCode.showThisCode"
-        let explanation = self.showCodesMessage(explKey)
+        let explanation = explKey.localized()
 
         self.explanation1.text = String(format: explanation, self.codes.count)
         self.explanation2.text = "Snabble.QRCode.priceMayDiffer".localized()
@@ -115,18 +115,6 @@ final class EmbeddedCodesCheckoutViewController: UIViewController {
         if total == nil {
             self.totalPriceLabel.isHidden = true
             self.explanation2.isHidden = true
-        }
-    }
-
-    private func showCodesMessage(_ msgId: String) -> String {
-        let projectId = SnabbleUI.project.id.replacingOccurrences(of: "-", with: ".")
-        let textId = projectId + "." + msgId
-        let l10n = NSLocalizedString(textId, comment: "")
-
-        if l10n.hasPrefix(projectId) {
-            return msgId.localized()
-        } else {
-            return l10n
         }
     }
 

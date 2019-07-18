@@ -211,12 +211,22 @@ public final class SnabbleBundle: NSObject {
 
 extension String {
     func localized() -> String {
+        // check if the app has a project-specific localization for this string
+        let projectId = SnabbleUI.project.id.replacingOccurrences(of: "-", with: ".")
+        let key = projectId + "." + self
+        let projectValue = Bundle.main.localizedString(forKey: key, value: key, table: nil)
+        if !projectValue.hasPrefix(projectId) {
+            return projectValue
+        }
+
         // check if the app has localized this string
         let upper = self.uppercased()
         let appValue = Bundle.main.localizedString(forKey: self, value: upper, table: nil)
         if appValue != upper {
             return appValue
         }
+
+        // check the SDK's localization file
         let sdkValue = SnabbleBundle.main.localizedString(forKey: self, value: upper, table: "SnabbleLocalizable")
         return sdkValue
     }
