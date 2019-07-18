@@ -80,7 +80,7 @@ public final class ReceiptsListViewController: UIViewController {
     }
 
     private func loadOrderList() {
-        OrderList.load(SnabbleUI.project) { result in
+        OrderList.load(SnabbleAPI.projects[0]) { result in
             self.orderListLoaded(result)
 
             if self.tableView.refreshControl == nil {
@@ -145,7 +145,7 @@ public final class ReceiptsListViewController: UIViewController {
     }
 
     @objc private func handleRefresh(_ sender: Any) {
-        OrderList.load(SnabbleUI.project) { result in
+        OrderList.load(SnabbleAPI.projects[0]) { result in
             self.tableView.refreshControl?.endRefreshing()
             self.orderListLoaded(result)
         }
