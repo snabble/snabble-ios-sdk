@@ -1,5 +1,11 @@
 ## snabble iOS SDK Changelog
 
+# v0.10.11
+
+* Warning messages from the scanner are now displayed on the scanner view itself. Therefore, the `ScannerDelegate` protocol no longer requires conformance to `MessageDelegate`.
+* Message localization now allows project-specific overrides.
+* Fixes a bug where downloading the receipt list sometimes failed.
+
 # v0.10.10
 
 * Fixes a bug where the `encodedCodes` payment method was used as a fallback even in stores that don't support it.
