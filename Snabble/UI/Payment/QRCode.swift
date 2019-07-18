@@ -4,6 +4,9 @@
 //  Copyright © 2019 snabble. All rights reserved.
 //
 
+import Foundation
+import CoreImage
+
 public final class QRCode {
 
     public enum CorrectionLevel: String {
@@ -45,4 +48,24 @@ public final class QRCode {
         return nil
     }
 
+    public static func generate(for string: String, size: CGSize, _ correctionLevel: CorrectionLevel = .L) -> UIImage? {
+        guard let qrCodeFilter = CIFilter(name: "CIQRCodeGenerator") else { fatalError() }
+
+        guard let data = string.data(using: .isoLatin1, allowLossyConversion: false) else {
+            return nil
+        }
+
+        qrCodeFilter.setValue(data, forKey: "inputMessage")
+        qrCodeFilter.setValue(correctionLevel.rawValue, forKey: "inputCorrectionLevel")
+
+        guard let qrOutputImage = qrCodeFilter.outputImage else {
+            return nil
+        }
+
+        let scaleX = size.width / qrOutputImage.extent.size.width
+        let scaleY = size.height / qrOutputImage.extent.size.height
+        let transformedImage = qrOutputImage.transformed(by: CGAffineTransform.init(scaleX: scaleX, y: scaleY))
+
+        return UIImage(ciImage: transformedImage)
+    }
 }
