@@ -8,7 +8,7 @@
 
 Pod::Spec.new do |s|
   s.name             = 'Snabble'
-  s.version          = '0.10.10'
+  s.version          = '0.10.11'
   s.summary          = 'The snabble iOS SDK'
 
   s.description      = <<-DESC
@@ -44,7 +44,7 @@ Pod::Spec.new do |s|
     if ENV["SNABBLE_POD"] == "dev"
       ui.script_phase = { :name => "Run twine", 
         :script => <<-SCRIPT
-        if [ "$TESTING" -ne "1" ]; then
+        if [ "$TESTING" != "1" ]; then
           if which twine >/dev/null; then
             cd $PODS_TARGET_SRCROOT
             TWINE=i18n/Snabble.twine
