@@ -1,5 +1,9 @@
 ## snabble iOS SDK Changelog
 
+# v0.10.12
+
+* Fixes a bug where a temporary database file could be kept on disk. Any such leftover files will be automatically cleaned up when the project database is initialized.
+
 # v0.10.11
 
 * Warning messages from the scanner are now displayed on the scanner view itself. Therefore, the `ScannerDelegate` protocol no longer requires conformance to `MessageDelegate`.

@@ -390,6 +390,8 @@ final class ProductDB: ProductProvider {
                 try fileManager.createDirectory(at: self.dbDirectory, withIntermediateDirectories: true, attributes: nil)
             }
 
+            self.removePreviousUpdateRemnants()
+
             let dbFile = self.dbPathname()
 
             if !fileManager.fileExists(atPath: dbFile) {
@@ -550,8 +552,8 @@ final class ProductDB: ProductProvider {
     }
 
     private func switchDatabases(_ tempDbPath: String) {
+        let fileManager = FileManager.default
         do {
-            let fileManager = FileManager.default
             let dbFile = self.dbPathname()
             let oldFile = dbFile + ".old"
             try synchronized(self) {
@@ -567,6 +569,7 @@ final class ProductDB: ProductProvider {
                 self.db = self.openDb()
             }
         } catch let error {
+            try? fileManager.removeItem(atPath: tempDbPath)
             self.logError("switchDatabases: db switch error \(error)")
         }
     }
@@ -608,6 +611,22 @@ final class ProductDB: ProductProvider {
             }
         } catch {
             Log.error("executeInitialSQL: \(error)")
+        }
+    }
+
+    // remove any temporary db files that were erroneously left on disk during previous runs
+    private func removePreviousUpdateRemnants() {
+        let fileManager = FileManager.default
+
+        guard let files = try? fileManager.contentsOfDirectory(atPath: self.dbDirectory.path) else {
+            return
+        }
+
+        for file in files {
+            if file.hasSuffix("_" + self.dbName) {
+                let fileUrl = self.dbDirectory.appendingPathComponent(file)
+                try? fileManager.removeItem(at: fileUrl)
+            }
         }
     }
 }
