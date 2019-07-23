@@ -3,7 +3,6 @@
 TODAY=$(date +%Y-%m-%d)
 CHANGELOG_DATE=$(stat -f "%Sm" -t "%Y-%m-%d" CHANGELOG.md)
 
-
 POD_VERSION=$(awk '/s.version.*=/ { print substr($3,2,length($3)-2) }' Snabble.podspec)
 
 perl -pi -e "s/= \".*\"/= \"$POD_VERSION\"/" Snabble/Core/API/APIVersion.swift
@@ -36,6 +35,10 @@ else
     echo "build failed"
     exit 1
 fi
+
+echo "updating strings file..."
+
+twine generate-localization-file i18n/Snabble.twine --lang en --format apple Snabble/UI/en.lproj/SnabbleLocalizable.strings
 
 git add .
 git commit -m "release v$POD_VERSION"
