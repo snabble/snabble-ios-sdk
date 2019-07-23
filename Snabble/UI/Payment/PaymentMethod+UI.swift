@@ -11,9 +11,7 @@ extension PaymentMethod {
     var icon: String {
         switch self {
         case .qrCodePOS: return "payment-method-checkstand"
-        case .encodedCodes: return "payment-method-checkstand"
-        case .encodedCodesCSV: return "payment-method-checkstand"
-        case .encodedCodesIKEA: return "payment-method-checkstand"
+        case .qrCodeOffline: return "payment-method-checkstand"
         case .deDirectDebit: return "payment-sepa"
         case .visa: return "payment-visa"
         case .mastercard: return "payment-mastercard"
@@ -23,7 +21,7 @@ extension PaymentMethod {
     var dataRequired: Bool {
         switch self {
         case .deDirectDebit, .visa, .mastercard: return true
-        case .qrCodePOS, .encodedCodes, .encodedCodesCSV, .encodedCodesIKEA: return false
+        case .qrCodePOS, .qrCodeOffline: return false
         }
     }
 
@@ -39,8 +37,12 @@ extension PaymentMethod {
         switch self {
         case .qrCodePOS:
             processor = QRCheckoutViewController(process!, cart, delegate)
-        case .encodedCodes, .encodedCodesCSV, .encodedCodesIKEA:
-            processor = EmbeddedCodesCheckoutViewController(process, self, cart, delegate)
+        case .qrCodeOffline:
+            if let codeConfig = SnabbleUI.project.encodedCodes {
+                processor = EmbeddedCodesCheckoutViewController(process, cart, delegate, codeConfig)
+            } else {
+                return nil
+            }
         case .deDirectDebit, .visa, .mastercard:
             processor = SepaCheckoutViewController(process!, self.data!, cart, delegate)
         }
@@ -100,10 +102,8 @@ public final class PaymentProcess {
         var result = [PaymentMethod]()
         for method in methods {
             switch method {
-            case .encodedCodes: result.append(.encodedCodes)
-            case .encodedCodesCSV: result.append(.encodedCodesCSV)
-            case .encodedCodesIKEA: result.append(.encodedCodesIKEA)
             case .qrCodePOS: result.append(.qrCodePOS)
+            case .qrCodeOffline: result.append(.qrCodeOffline)
             case .deDirectDebit:
                 let sepa = userData.filter { if case .deDirectDebit = $0 { return true } else { return false } }
                 if sepa.count > 0 {

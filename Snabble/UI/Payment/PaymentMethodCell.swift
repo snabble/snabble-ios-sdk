@@ -12,7 +12,7 @@ final class PaymentMethodCell: UICollectionViewCell {
     @IBOutlet weak var icon: UIImageView!
     @IBOutlet weak var label: UILabel!
 
-    var paymentMethod: PaymentMethod = .encodedCodes {
+    var paymentMethod: PaymentMethod = .qrCodeOffline {
         didSet {
             let image = UIImage.fromBundle(paymentMethod.icon)
             self.icon.image = image
@@ -23,7 +23,7 @@ final class PaymentMethodCell: UICollectionViewCell {
             case .deDirectDebit(let data), .visa(let data), .mastercard(let data):
                 incomplete = data == nil
 
-            case .qrCodePOS, .encodedCodes, .encodedCodesCSV, .encodedCodesIKEA:
+            case .qrCodePOS, .qrCodeOffline:
                 incomplete = false
             }
 

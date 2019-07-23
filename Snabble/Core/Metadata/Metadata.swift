@@ -76,7 +76,22 @@ public struct MetadataLinks: Decodable {
     }
 }
 
+public enum QRCodeFormat: String, Decodable {
+    case unknown
+
+    case simple
+    case csv
+    case csv_v2
+    case ikea
+}
+
+extension QRCodeFormat: UnknownCaseRepresentable {
+    public static let unknownCase = QRCodeFormat.unknown
+}
+
 public struct QRCodeConfig: Decodable {
+    let format: QRCodeFormat
+
     let prefix: String
     let separator: String
     let suffix: String
@@ -91,12 +106,15 @@ public struct QRCodeConfig: Decodable {
     let maxChars: Int?
 
     enum CodingKeys: String, CodingKey {
+        case format
         case prefix, separator, suffix, maxCodes, maxChars
         case finalCode, nextCode, nextCodeWithCheck
     }
 
     public init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
+
+        self.format = try container.decode(QRCodeFormat.self, forKey: .format)
 
         self.prefix = try container.decodeIfPresent(String.self, forKey: .prefix) ?? ""
         self.separator = try container.decodeIfPresent(String.self, forKey: .separator) ?? "\n"
@@ -109,7 +127,11 @@ public struct QRCodeConfig: Decodable {
         self.nextCodeWithCheck = try container.decodeIfPresent(String.self, forKey: .nextCodeWithCheck)
     }
 
-    init(prefix: String = "", separator: String = "\n", suffix: String = "", maxCodes: Int = 100, maxChars: Int? = nil, finalCode: String? = nil, nextCode: String? = nil, nextCodeWithCheck: String? = nil) {
+    init(format: QRCodeFormat,
+         prefix: String = "", separator: String = "\n", suffix: String = "", maxCodes: Int = 100,
+         maxChars: Int? = nil, finalCode: String? = nil, nextCode: String? = nil, nextCodeWithCheck: String? = nil)
+    {
+        self.format = format
         self.prefix = prefix
         self.separator = separator
         self.suffix = suffix
@@ -120,7 +142,6 @@ public struct QRCodeConfig: Decodable {
         self.nextCodeWithCheck = nextCodeWithCheck
     }
 
-    public static let `default` = QRCodeConfig()
 }
 
 public enum ScanFormat: String, Decodable {
