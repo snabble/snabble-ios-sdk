@@ -80,8 +80,8 @@ public enum QRCodeFormat: String, Decodable {
     case unknown
 
     case simple
-    case csv
-    case csv_v2
+    case csv_globus // simple header, deprecated
+    case csv        // new format with "x of y" header info
     case ikea
 }
 

@@ -65,14 +65,14 @@ final class EmbeddedCodesCheckoutViewController: UIViewController {
             let codeblocks = Codeblocks(self.qrCodeConfig)
             let (regularCodes, restrictedCodes) = self.codesForQR()
             self.codes = codeblocks.generateQrCodes(regularCodes, restrictedCodes)
-        case .csv, .csv_v2:
+        case .csv, .csv_globus:
             let codeblocks = CodeblocksCSV(self.qrCodeConfig)
             self.codes = codeblocks.generateQrCodes(self.cart)
         case .ikea:
             let codeblocks = CodeblocksIKEA(self.qrCodeConfig)
             self.codes = codeblocks.generateQrCodes(self.cart, self.codesFor(self.cart.items))
-        default:
-            fatalError("QR code format \(self.qrCodeConfig.format) not implemented")
+        case .unknown:
+            Log.error("unknown QR code format")
             break
         }
 
