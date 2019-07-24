@@ -46,7 +46,7 @@ struct CodeblocksCSV {
             return [ header ] + chunk
         }
 
-        return blocks.map { $0.joined(separator: "\n") }
+        return blocks.map { $0.joined(separator: self.config.separator) }
     }
 
     private func divideIntoChunks(_ lines: [String], maxCodes: Int) -> [[String]] {
