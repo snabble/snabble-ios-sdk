@@ -4,6 +4,8 @@
 //  Copyright © 2019 snabble. All rights reserved.
 //
 
+import Foundation
+
 /// quantity and code string for embedding in a QR code
 struct QRCodeData {
     public let quantity: Int
