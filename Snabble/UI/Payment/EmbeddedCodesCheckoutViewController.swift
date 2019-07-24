@@ -20,18 +20,17 @@ final class EmbeddedCodesCheckoutViewController: UIViewController {
     private weak var cart: ShoppingCart!
     private weak var delegate: PaymentDelegate!
     private var process: CheckoutProcess?
-    private var method: PaymentMethod
     private var qrCodeConfig: QRCodeConfig
 
     private var codes = [String]()
     private var itemSize = CGSize(width: 100, height: 100)
 
-    init(_ process: CheckoutProcess?, _ method: PaymentMethod, _ cart: ShoppingCart, _ delegate: PaymentDelegate) {
+    init(_ process: CheckoutProcess?, _ cart: ShoppingCart, _ delegate: PaymentDelegate, _ codeConfig: QRCodeConfig) {
         self.process = process
-        self.method = method
         self.cart = cart
         self.delegate = delegate
-        self.qrCodeConfig = SnabbleUI.project.encodedCodes ?? QRCodeConfig.default
+
+        self.qrCodeConfig = codeConfig
 
         super.init(nibName: nil, bundle: SnabbleBundle.main)
 
@@ -61,19 +60,19 @@ final class EmbeddedCodesCheckoutViewController: UIViewController {
         let nib = UINib(nibName: "QRCodeCell", bundle: SnabbleBundle.main)
         self.collectionView.register(nib, forCellWithReuseIdentifier: "qrCodeCell")
 
-        switch self.method {
-        case .encodedCodes:
+        switch self.qrCodeConfig.format {
+        case .simple:
             let codeblocks = Codeblocks(self.qrCodeConfig)
             let (regularCodes, restrictedCodes) = self.codesForQR()
             self.codes = codeblocks.generateQrCodes(regularCodes, restrictedCodes)
-        case .encodedCodesCSV:
+        case .csv, .csv_globus:
             let codeblocks = CodeblocksCSV(self.qrCodeConfig)
             self.codes = codeblocks.generateQrCodes(self.cart)
-        case .encodedCodesIKEA:
+        case .ikea:
             let codeblocks = CodeblocksIKEA(self.qrCodeConfig)
             self.codes = codeblocks.generateQrCodes(self.cart, self.codesFor(self.cart.items))
-        default:
-            fatalError("payment method \(self.method) not implemented")
+        case .unknown:
+            Log.error("unknown QR code format")
             break
         }
 

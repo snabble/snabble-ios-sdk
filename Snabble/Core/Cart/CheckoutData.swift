@@ -40,10 +40,8 @@ public struct SignedCheckoutInfo: Decodable {
 // known payment methods
 public enum RawPaymentMethod: String, CaseIterable {
     case qrCodePOS              // QR Code with a reference to snabble's backend
-    case encodedCodes           // QR Code with EANs and separators
+    case qrCodeOffline          // QR Code, offline capable, format is specified via `QRCodeConfig.format`
     case deDirectDebit          // SEPA direct debit via Telecash/First Data
-    case encodedCodesCSV        // QR Code with CSV
-    case encodedCodesIKEA       // QR Code for IKEA
     case creditCardVisa         // VISA via Telecash/First Data
     case creditCardMastercard   // MASTERCARD via Telecash/First Data
 
@@ -52,7 +50,7 @@ public enum RawPaymentMethod: String, CaseIterable {
         switch self {
         case .deDirectDebit, .creditCardVisa, .creditCardMastercard:
             return true
-        case .qrCodePOS, .encodedCodes, .encodedCodesCSV, .encodedCodesIKEA:
+        case .qrCodePOS, .qrCodeOffline:
             return false
         }
     }
@@ -60,7 +58,7 @@ public enum RawPaymentMethod: String, CaseIterable {
     /// true if this method can be used even if creating a checkout info/process fails
     public var offline: Bool {
         switch self {
-        case .encodedCodes, .encodedCodesCSV, .encodedCodesIKEA:
+        case .qrCodeOffline:
             return true
         case .qrCodePOS, .deDirectDebit, .creditCardVisa, .creditCardMastercard:
             return false
@@ -82,20 +80,16 @@ public struct PaymentMethodData {
 // payment method with associated data
 public enum PaymentMethod {
     case qrCodePOS
-    case encodedCodes
+    case qrCodeOffline
     case deDirectDebit(PaymentMethodData?)
-    case encodedCodesCSV
-    case encodedCodesIKEA
     case visa(PaymentMethodData?)
     case mastercard(PaymentMethodData?)
 
     public var rawMethod: RawPaymentMethod {
         switch self {
         case .qrCodePOS: return .qrCodePOS
-        case .encodedCodes: return .encodedCodes
+        case .qrCodeOffline: return .qrCodeOffline
         case .deDirectDebit: return .deDirectDebit
-        case .encodedCodesCSV: return .encodedCodesCSV
-        case .encodedCodesIKEA: return .encodedCodesIKEA
         case .visa: return .creditCardVisa
         case .mastercard: return .creditCardMastercard
         }
@@ -105,7 +99,7 @@ public enum PaymentMethod {
         switch self {
         case .deDirectDebit(let data), .visa(let data), .mastercard(let data):
              return data
-        case .qrCodePOS, .encodedCodes, .encodedCodesCSV, .encodedCodesIKEA:
+        case .qrCodePOS, .qrCodeOffline:
             return nil
         }
     }

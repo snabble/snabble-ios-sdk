@@ -40,12 +40,13 @@ struct CodeblocksCSV {
         })
 
         let chunks = self.divideIntoChunks(lines, maxCodes: self.config.maxCodes)
-        // TODO: add N;M to header line, see https://github.com/snabble/docs/pull/60
-        let blocks = chunks.map {
-            return [ "snabble;" ] + $0
+
+        let blocks: [[String]] = chunks.enumerated().map { index, chunk in
+            let header = self.config.format == .csv ? "snabble;\(index+1);\(chunks.count)" : "snabble;"
+            return [ header ] + chunk
         }
 
-        return blocks.map { $0.joined(separator: "\n") }
+        return blocks.map { $0.joined(separator: self.config.separator) }
     }
 
     private func divideIntoChunks(_ lines: [String], maxCodes: Int) -> [[String]] {
