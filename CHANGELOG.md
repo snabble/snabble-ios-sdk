@@ -1,5 +1,9 @@
 ## snabble iOS SDK Changelog
 
+# v0.10.13
+
+* The various offline-capable QR code payment methods (`encodedCodes`, `encodedCodesCSV` etc.) have been deprecated and were replaced by a new unified method called `qrCodeOffline`. This method is configured through the properties of the `qrCodeOffline` object in the app's metadata.
+
 # v0.10.12
 
 * Fixes a bug where a temporary database file could be kept on disk. Any such leftover files will be automatically cleaned up when the project database is initialized.
