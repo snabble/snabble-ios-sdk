@@ -198,7 +198,7 @@ public struct Project: Decodable {
     public let currencySymbol: String   // not part of JSON, derived from the locale
 
     // config for embedded QR codes
-    public let encodedCodes: QRCodeConfig?
+    public let qrCodeConfig: QRCodeConfig?
 
     public let scanFormats: [ScanFormat]
 
@@ -219,7 +219,7 @@ public struct Project: Decodable {
     enum CodingKeys: String, CodingKey {
         case id, name, links
         case currency, decimalDigits, locale, roundingMode
-        case encodedCodes
+        case qrCodeConfig = "qrCodeOffline"
         case shops, scanFormats, customerCards, codeTemplates, searchableTemplates, priceOverrideCodes, checkoutLimits
         case messages = "texts"
         case paymentMethods
@@ -238,7 +238,7 @@ public struct Project: Decodable {
         self.locale = try container.decode(.locale)
         self.roundingMode = try container.decode(.roundingMode)
 
-        self.encodedCodes = try container.decodeIfPresent(.encodedCodes)
+        self.qrCodeConfig = try container.decodeIfPresent(.qrCodeConfig)
 
         let formatter = NumberFormatter()
         formatter.locale = Locale(identifier: self.locale)
@@ -272,7 +272,7 @@ public struct Project: Decodable {
         self.decimalDigits = 0
         self.locale = ""
         self.roundingMode = .up
-        self.encodedCodes = nil
+        self.qrCodeConfig = nil
         self.currencySymbol = ""
         self.shops = []
         self.scanFormats = []
@@ -295,7 +295,7 @@ public struct Project: Decodable {
         self.decimalDigits = decimalDigits
         self.locale = locale
         self.roundingMode = .up
-        self.encodedCodes = nil
+        self.qrCodeConfig = nil
         self.currencySymbol = currencySymbol
         self.shops = []
         self.scanFormats = []
@@ -317,7 +317,7 @@ public struct Project: Decodable {
         self.decimalDigits = 0
         self.locale = ""
         self.roundingMode = .up
-        self.encodedCodes = nil
+        self.qrCodeConfig = nil
         self.currencySymbol = ""
         self.shops = []
         self.scanFormats = []

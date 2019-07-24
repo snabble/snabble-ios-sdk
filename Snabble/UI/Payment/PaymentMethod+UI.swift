@@ -38,7 +38,7 @@ extension PaymentMethod {
         case .qrCodePOS:
             processor = QRCheckoutViewController(process!, cart, delegate)
         case .qrCodeOffline:
-            if let codeConfig = SnabbleUI.project.encodedCodes {
+            if let codeConfig = SnabbleUI.project.qrCodeConfig {
                 processor = EmbeddedCodesCheckoutViewController(process, cart, delegate, codeConfig)
             } else {
                 return nil
