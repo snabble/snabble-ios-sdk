@@ -322,14 +322,14 @@ final class ProductDB: ProductProvider {
             let performSwitch: Bool
             let dataAvailable: AppDbAvailability
             switch dbResponse {
-            case .diff(let statements):
+            case .diff(let updateFile):
                 Log.info("db update: got diff")
-                performSwitch = self.copyAndUpdateDatabase(statements, tempDbPath)
+                performSwitch = self.copyAndUpdateDatabase(updateFile, tempDbPath)
                 dataAvailable = .newData
                 self.lastProductUpdate = Date()
-            case .full(let data):
+            case .full(let dbFile):
                 Log.info("db update: got full db")
-                performSwitch = self.writeFullDatabase(data, tempDbPath)
+                performSwitch = self.writeFullDatabase(dbFile, tempDbPath)
                 dataAvailable = .newData
                 self.lastProductUpdate = Date()
             case .noUpdate:
@@ -451,15 +451,18 @@ final class ProductDB: ProductProvider {
     ///   - data: the bytes to write
     /// - Returns: true if the database was written successfully and passes internal integrity checks,
     ///         false otherwise
-    private func writeFullDatabase(_ data: Data, _ tempDbPath: String) -> Bool {
+    private func writeFullDatabase(_ dbFile: URL, _ tempDbPath: String) -> Bool {
         let fileManager = FileManager.default
+        defer {
+            try? fileManager.removeItem(at: dbFile)
+        }
 
         do {
             if fileManager.fileExists(atPath: tempDbPath) {
                 try fileManager.removeItem(atPath: tempDbPath)
             }
             let tmpUrl = URL(fileURLWithPath: tempDbPath)
-            try data.write(to: tmpUrl, options: .atomic)
+            try fileManager.moveItem(at: dbFile, to: tmpUrl)
 
             // open the db and check its integrity
             let tempDb = try DatabaseQueue(path: tempDbPath)
@@ -515,9 +518,18 @@ final class ProductDB: ProductProvider {
         }
     }
 
-    private func copyAndUpdateDatabase(_ statements: String, _ tempDbPath: String) -> Bool {
+    private func copyAndUpdateDatabase(_ updateFile: URL, _ tempDbPath: String) -> Bool {
         let fileManager = FileManager.default
+        defer {
+            try? fileManager.removeItem(at: updateFile)
+        }
+
         do {
+            let update = try Data(contentsOf: updateFile)
+            guard let statements = String(bytes: update, encoding: .utf8) else {
+                return false
+            }
+
             if fileManager.fileExists(atPath: tempDbPath) {
                 try fileManager.removeItem(atPath: tempDbPath)
             }
