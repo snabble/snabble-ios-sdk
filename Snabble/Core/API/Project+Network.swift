@@ -41,6 +41,10 @@ public enum ErrorResponseType: String {
     case badShopId = "bad_shop_id"
     case noAvailableMethod = "no_available_method"
     case invalidCartItem = "invalid_cart_item"
+
+    // invalidCartItem detail types
+    case saleStop = "sale_stop"
+    case productNotFound = "product_not_found"
 }
 
 extension ErrorResponseType: UnknownCaseRepresentable {
@@ -49,48 +53,24 @@ extension ErrorResponseType: UnknownCaseRepresentable {
 
 public struct ErrorResponse: Decodable {
     public let rawType: String
-    public let details: [ErrorDetail]?
+    public let message: String?
+    public let sku: String?
+    public let details: [ErrorResponse]?
 
     enum CodingKeys: String, CodingKey {
         case rawType = "type"
-        case details
+        case details, sku, message
     }
 
     init(_ type: String) {
         self.rawType = type
         self.details = nil
+        self.message = nil
+        self.sku = nil
     }
 
     var type: ErrorResponseType {
         return ErrorResponseType(rawValue: self.rawType)
-    }
-}
-
-public enum ErrorDetailType: String {
-    case unknown
-
-    // invalidCartItem details
-    case saleStop = "sale_stop"
-    case productNotFound = "product_not_found"
-}
-
-extension ErrorDetailType: UnknownCaseRepresentable {
-    public static let unknownCase = ErrorDetailType.unknown
-}
-
-public struct ErrorDetail: Decodable {
-    public let rawType: String
-    public let message: String?
-    public let sku: String?
-
-    enum CodingKeys: String, CodingKey {
-        case rawType = "type"
-        case message
-        case sku
-    }
-
-    var type: ErrorDetailType {
-        return ErrorDetailType(rawValue: self.rawType)
     }
 }
 
