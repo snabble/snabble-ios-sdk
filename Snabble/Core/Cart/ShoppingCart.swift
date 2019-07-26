@@ -292,7 +292,9 @@ final public class ShoppingCart {
     private(set) public var lastSaved: Date?
     private(set) public var backendCartInfo: BackendCartInfo?
     internal var checkoutInfoTask: URLSessionDataTask?
+
     fileprivate var backupItems: [CartItem]?
+    fileprivate var backupSession: String?
 
     public var customerCard: String? {
         didSet {
@@ -315,6 +317,7 @@ final public class ShoppingCart {
         let storage = self.loadCart()
         self.items = storage.items
         self.backupItems = storage.backupItems
+        self.backupSession = storage.backupSession
         self.backendCartInfo = storage.backendCartInfo
         self.session = storage.session
     }
@@ -343,6 +346,7 @@ final public class ShoppingCart {
     public func add(_ item: CartItem) {
         if self.items.count == 0 {
             self.backupItems = nil
+            self.backupSession = nil
         }
         
         defer { self.save() }
@@ -424,10 +428,12 @@ final public class ShoppingCart {
     /// remove all items from the cart
     public func removeAll(endSession: Bool = false) {
         self.backupItems = self.items
+        self.backupSession = self.session
+
         self.items.removeAll()
         self.save()
         NotificationCenter.default.post(name: .snabbleCartUpdated, object: self)
-        
+
         if endSession {
             CartEvent.sessionEnd(self)
             self.session = ""
@@ -444,7 +450,11 @@ final public class ShoppingCart {
         }
 
         self.items = backupItems
+        if let backupSession = self.backupSession, self.session != "" {
+            self.session = backupSession
+        }
         self.backupItems = nil
+        self.backupSession = nil
     }
 
     public var backupAvailable: Bool {
@@ -457,6 +467,7 @@ fileprivate struct CartStorage: Codable {
     let backupItems: [CartItem]?
     let backendCartInfo: BackendCartInfo?
     let session: String
+    let backupSession: String?
     let lastSaved: Date?
 
     init() {
@@ -464,6 +475,7 @@ fileprivate struct CartStorage: Codable {
         self.backupItems = nil
         self.backendCartInfo = nil
         self.session = ""
+        self.backupSession = nil
         self.lastSaved = nil
     }
 
@@ -473,6 +485,7 @@ fileprivate struct CartStorage: Codable {
         self.backendCartInfo = shoppingCart.backendCartInfo
         self.session = shoppingCart.session
         self.lastSaved = shoppingCart.lastSaved
+        self.backupSession = shoppingCart.backupSession
     }
 }
 
