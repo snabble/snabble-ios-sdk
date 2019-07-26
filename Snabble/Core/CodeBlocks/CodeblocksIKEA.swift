@@ -3,6 +3,7 @@
 //
 //  Copyright © 2019 snabble. All rights reserved.
 //
+//  generate an ikea QR code
 
 import Foundation
 
@@ -56,6 +57,11 @@ struct CodeblocksIKEA {
 
     init(_ config: QRCodeConfig) {
         self.config = config
+    }
+
+    func generateQrCodes(_ cart: ShoppingCart) -> [String] {
+        let lines = QRCodeData.codesFor(cart.items)
+        return self.generateQrCodes(cart, lines)
     }
 
     func generateQrCodes(_ cart: ShoppingCart, _ lines: [String]) -> [String] {

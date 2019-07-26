@@ -60,21 +60,7 @@ final class EmbeddedCodesCheckoutViewController: UIViewController {
         let nib = UINib(nibName: "QRCodeCell", bundle: SnabbleBundle.main)
         self.collectionView.register(nib, forCellWithReuseIdentifier: "qrCodeCell")
 
-        switch self.qrCodeConfig.format {
-        case .simple:
-            let codeblocks = Codeblocks(self.qrCodeConfig)
-            let (regularCodes, restrictedCodes) = self.codesForQR()
-            self.codes = codeblocks.generateQrCodes(regularCodes, restrictedCodes)
-        case .csv, .csv_globus:
-            let codeblocks = CodeblocksCSV(self.qrCodeConfig)
-            self.codes = codeblocks.generateQrCodes(self.cart)
-        case .ikea:
-            let codeblocks = CodeblocksIKEA(self.qrCodeConfig)
-            self.codes = codeblocks.generateQrCodes(self.cart, self.codesFor(self.cart.items))
-        case .unknown:
-            Log.error("unknown QR code format")
-            break
-        }
+        self.codes = Codeblocks.generateQrCodes(self.cart, self.qrCodeConfig)
 
         self.pageControl.numberOfPages = self.codes.count
         self.pageControl.pageIndicatorTintColor = .lightGray
@@ -131,41 +117,6 @@ final class EmbeddedCodesCheckoutViewController: UIViewController {
         super.viewWillDisappear(animated)
 
         UIScreen.main.brightness = self.initialBrightness
-    }
-
-    private func codesForQR() -> ([String],[String]) {
-        let items = self.cart.items
-
-        if self.qrCodeConfig.nextCodeWithCheck != nil {
-            let regularItems = items.filter { return $0.product.saleRestriction == .none }
-            let restrictedItems = items.filter { return $0.product.saleRestriction != .none }
-
-            var regularCodes = [String]()
-            if let card = self.cart.customerCard {
-                regularCodes.append(card)
-            }
-            regularCodes += self.codesFor(regularItems)
-
-            let restrictedCodes = self.codesFor(restrictedItems)
-
-            return (regularCodes, restrictedCodes)
-        } else {
-            var codes = [String]()
-            if let card = self.cart.customerCard {
-                codes.append(card)
-            }
-            codes += self.codesFor(items)
-
-            return (codes, [])
-        }
-    }
-
-    private func codesFor(_ items: [CartItem]) -> [String] {
-        return items.reduce(into: [], { result, item in
-            let qrCode = QRCodeData(item)
-            let arr = Array(repeating: qrCode.code, count: qrCode.quantity)
-            result.append(contentsOf: arr)
-        })
     }
 
     private func setButtonTitle() {

@@ -3,24 +3,7 @@
 //
 //  Copyright © 2019 snabble. All rights reserved.
 //
-
-import Foundation
-
-/// quantity and code string for embedding in a QR code
-struct QRCodeData {
-    public let quantity: Int
-    public let code: String
-
-    init(_ quantity: Int, _ code: String) {
-        self.quantity = quantity
-        self.code = code
-    }
-
-    init(_ item: CartItem) {
-        let cartItem = item.cartItem
-        self.init(cartItem.amount, cartItem.scannedCode)
-    }
-}
+//  generate a csv QR code
 
 struct CodeblocksCSV {
 
