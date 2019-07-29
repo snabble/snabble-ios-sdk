@@ -525,11 +525,6 @@ final class ProductDB: ProductProvider {
         }
 
         do {
-            let update = try Data(contentsOf: updateFile)
-            guard let statements = String(bytes: update, encoding: .utf8) else {
-                return false
-            }
-
             if fileManager.fileExists(atPath: tempDbPath) {
                 try fileManager.removeItem(atPath: tempDbPath)
             }
@@ -537,6 +532,7 @@ final class ProductDB: ProductProvider {
 
             let tempDb = try DatabaseQueue(path: tempDbPath)
 
+            let statements = try String(contentsOf: updateFile, encoding: .utf8)
             try tempDb.inTransaction { db in
                 try db.execute(sql: statements)
                 return .commit
