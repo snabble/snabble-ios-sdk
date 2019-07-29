@@ -450,7 +450,7 @@ final public class ShoppingCart {
         }
 
         self.items = backupItems
-        if let backupSession = self.backupSession, self.session != "" {
+        if let backupSession = self.backupSession {
             self.session = backupSession
         }
         self.backupItems = nil
