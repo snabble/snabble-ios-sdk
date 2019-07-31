@@ -7,19 +7,19 @@
 import UIKit
 import QuickLook
 
-final class PreviewItem: NSObject, QLPreviewItem {
-    private let receiptUrl: URL
-    private let title: String
+final public class ReceiptPreviewItem: NSObject, QLPreviewItem {
+    public let receiptUrl: URL
+    public let title: String
 
-    var previewItemURL: URL? {
+    public var previewItemURL: URL? {
         return self.receiptUrl
     }
 
-    var previewItemTitle: String? {
+    public var previewItemTitle: String? {
         return self.title
     }
 
-    init(_ receiptUrl: URL, _ title: String) {
+    public init(_ receiptUrl: URL, _ title: String) {
         self.receiptUrl = receiptUrl
         self.title = title
         super.init()
@@ -221,60 +221,29 @@ extension ReceiptsListViewController: UITableViewDelegate, UITableViewDataSource
 
 extension ReceiptsListViewController {
     func showOrder(_ order: Order, _ project: Project) {
-        let fileManager = FileManager.default
-        let cacheDir = try! fileManager.url(for: .cachesDirectory, in: .userDomainMask, appropriateFor: nil, create: true)
-        let targetPath = cacheDir.appendingPathComponent("snabble-order-\(order.id).pdf")
-
-        try? fileManager.removeItem(at: targetPath)
-
-        let formatter = DateFormatter()
-        formatter.dateStyle = .medium
-        formatter.timeStyle = .none
-
-        let title = formatter.string(from: order.date)
-
-        if fileManager.fileExists(atPath: targetPath.path) {
-            self.showQuicklook(targetPath, title)
-        } else {
-            self.downloadAndShow(order, project, targetPath, title)
-        }
-    }
-
-    func downloadAndShow(_ order: Order, _ project: Project, _ targetPath: URL, _ title: String) {
         self.spinner.startAnimating()
-        project.request(.get, order.links.receipt.href, timeout: 10) { request in
-            guard let request = request else {
-                self.spinner.stopAnimating()
-                return
+
+        order.getReceipt(project) { result in
+            self.spinner.stopAnimating()
+
+            switch result {
+            case .success(let targetPath):
+                let formatter = DateFormatter()
+                formatter.dateStyle = .medium
+                formatter.timeStyle = .none
+
+                let title = formatter.string(from: order.date)
+
+                self.showQuicklook(targetPath, title)
+            case .failure(let error):
+                Log.error("error saving receipt: \(error)")
             }
-
-            let session = SnabbleAPI.urlSession()
-            let task = session.downloadTask(with: request) { location, response, error in
-                DispatchQueue.main.async {
-                    self.spinner.stopAnimating()
-                }
-
-                guard let location = location else {
-                    Log.error("error downloading receipt: \(String(describing: error))")
-                    return
-                }
-
-                do {
-                    try FileManager.default.moveItem(at: location, to: targetPath)
-                    DispatchQueue.main.async {
-                        self.showQuicklook(targetPath, title)
-                    }
-                } catch {
-                    Log.error("error saving receipt: \(error)")
-                }
-            }
-            task.resume()
         }
     }
 
     func showQuicklook(_ url: URL, _ title: String) {
         self.quickLook.currentPreviewItemIndex = 0
-        self.previewItem = PreviewItem(url, title)
+        self.previewItem = ReceiptPreviewItem(url, title)
         self.navigationController?.pushViewController(self.quickLook, animated: true)
         self.quickLook.reloadData()
     }
