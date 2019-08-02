@@ -13,6 +13,7 @@ enum EventType: String, Encodable {
     case error
     case log
     case analytics
+    case productNotFound
 }
 
 private struct Session: Encodable {
@@ -30,12 +31,18 @@ private struct Analytics: Encodable {
     let comment: String
 }
 
+private struct ProductNotFound: Encodable {
+    let scannedCode: String
+    let matched: [String: String]
+}
+
 private enum Payload: Encodable {
     case session(Session)
     case error(Message)
     case cart(Cart)
     case log(Message)
     case analytics(Analytics)
+    case productNotFound(ProductNotFound)
 
     func encode(to encoder: Encoder) throws {
         var container = encoder.singleValueContainer()
@@ -45,6 +52,7 @@ private enum Payload: Encodable {
         case .log(let msg): try container.encode(msg)
         case .cart(let cart): try container.encode(cart)
         case .analytics(let analytics): try container.encode(analytics)
+        case .productNotFound(let notFound): try container.encode(notFound)
         }
     }
 }
@@ -122,6 +130,16 @@ struct AppEvent: Encodable {
     init(_ shoppingCart: ShoppingCart) {
         let cart = shoppingCart.createCart()
         self.init(type: .cart, payload: Payload.cart(cart), project: shoppingCart.config.project, shopId: cart.shopID)
+    }
+
+    init(scannedCode: String, codes: [(String, String)], project: Project) {
+        var dict = [String: String]()
+        for (code, template) in codes {
+            dict[template] = code
+        }
+
+        let notFound = Payload.productNotFound(ProductNotFound(scannedCode: scannedCode, matched: dict))
+        self.init(type: .productNotFound, payload: notFound, project: project)
     }
 }
 

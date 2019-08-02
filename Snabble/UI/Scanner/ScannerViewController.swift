@@ -462,6 +462,8 @@ extension ScannerViewController {
 
                 completion(newResult)
             case .failure:
+                let event = AppEvent(scannedCode: code, codes: codes, project: project)
+                event.post()
                 completion(nil)
             }
         }
