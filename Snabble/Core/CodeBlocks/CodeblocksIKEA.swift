@@ -73,6 +73,11 @@ struct CodeblocksIKEA {
         var buckets = [CodeBucket]()
         var bucket = CodeBucket()
 
+        var lines = lines
+        if let finalCode = self.config.finalCode {
+            lines.append(finalCode)
+        }
+
         for (index, item) in lines.enumerated() {
             if index == 0 {
                 bucket.familyCard = cart.customerCard

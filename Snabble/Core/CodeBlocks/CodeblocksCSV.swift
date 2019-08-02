@@ -24,6 +24,10 @@ struct CodeblocksCSV {
             result.append("\(qrCode.quantity);\(qrCode.code)")
         })
 
+        if let finalCode = self.config.finalCode {
+            lines.append("1;\(finalCode)")
+        }
+
         let chunks = self.divideIntoChunks(lines, maxCodes: self.config.maxCodes)
 
         let blocks: [[String]] = chunks.enumerated().map { index, chunk in
