@@ -27,7 +27,7 @@ final public class ReceiptPreviewItem: NSObject, QLPreviewItem {
 }
 
 enum OrderEntry {
-    case pending(String)    // shop name
+    case pending(String, String)    // shop name, project id
     case done(Order)
 }
 
@@ -65,6 +65,8 @@ public final class ReceiptsListViewController: UIViewController {
     override public func viewDidLoad() {
         super.viewDidLoad()
 
+        let nib = UINib(nibName: "ReceiptCell", bundle: SnabbleBundle.main)
+        self.tableView.register(nib, forCellReuseIdentifier: "receiptCell")
         self.tableView.tableFooterView = UIView(frame: CGRect.zero)
 
         self.quickLook.dataSource = self
@@ -131,7 +133,7 @@ public final class ReceiptsListViewController: UIViewController {
 
         if let orderId = self.orderId {
             if !orderIds.contains(orderId) {
-                let pending = OrderEntry.pending(SnabbleUI.project.name)
+                let pending = OrderEntry.pending(SnabbleUI.project.name, SnabbleUI.project.id)
                 orders.insert(pending, at: 0)
             }
         }
@@ -158,46 +160,14 @@ extension ReceiptsListViewController: UITableViewDelegate, UITableViewDataSource
     }
 
     public func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: "receiptCell") ?? {
-            let c = UITableViewCell(style: .subtitle, reuseIdentifier: "receiptCell")
-            c.accessoryType = .disclosureIndicator
-            c.selectionStyle = .none
-            return c
-        }()
+        let cell = tableView.dequeueReusableCell(withIdentifier: "receiptCell", for: indexPath) as! ReceiptCell
 
         guard let orders = self.orders else {
-            return cell
+            return UITableViewCell(style: .default, reuseIdentifier: "invalidCell")
         }
 
         let orderEntry = orders[indexPath.row]
-
-        switch orderEntry {
-        case .done(let order):
-            cell.accessoryType = .disclosureIndicator
-            cell.textLabel?.text = order.shopName
-            cell.detailTextLabel?.text = ""
-
-            guard let project = SnabbleAPI.projectFor(order.project) else {
-                break
-            }
-
-            let formatter = PriceFormatter(project)
-            let price = formatter.format(order.price)
-
-            let dateFormatter = DateFormatter()
-            dateFormatter.dateStyle = .medium
-            dateFormatter.timeStyle = .short
-            let date = dateFormatter.string(from: order.date)
-            let oClock = "Snabble.Receipts.oClock".localized()
-            cell.detailTextLabel?.text = "\(price) - \(date) \(oClock)"
-
-        case .pending(let shopName):
-            cell.textLabel?.text = shopName
-            cell.detailTextLabel?.text = "Snabble.Receipts.loading".localized()
-            let spinner = UIActivityIndicatorView(style: .gray)
-            spinner.startAnimating()
-            cell.accessoryView = spinner
-        }
+        cell.show(orderEntry)
 
         return cell
     }
