@@ -19,10 +19,14 @@ fileprivate enum CodeType: Equatable {
 
     init?(_ code: String) {
         switch code {
-        case "*": self = .matchAll
-        case "ean8": self = .ean8
-        case "ean13": self = .ean13
-        case "ean14": self = .ean14
+        case "*":
+            self = .matchAll
+        case "ean8":
+            self = .ean8
+        case "ean13":
+            self = .ean13
+        case "ean14":
+            self = .ean14
         default:
             guard let len = Int(code), len > 0 else {
                 return nil
@@ -39,6 +43,30 @@ fileprivate enum CodeType: Equatable {
         case .untyped(let len): return len
         case .matchAll: return 0
         case .matchConstant(let str): return str.count
+        }
+    }
+}
+
+fileprivate enum IgnoreLength {
+    case length(Int)
+    case ignoreAll
+
+    init?(_ code: String) {
+        switch code {
+        case "*":
+            self = .ignoreAll
+        default:
+            guard let len = Int(code), len > 0 else {
+                return nil
+            }
+            self = .length(len)
+        }
+    }
+
+    var length: Int {
+        switch self {
+        case .length(let len): return len
+        case .ignoreAll: return 0
         }
     }
 }
@@ -63,7 +91,7 @@ fileprivate enum TemplateComponent {
     case price(Int)
     /// unknown plain text that will be ignored (e.g. checksums that we can't/won't verify)
     /// The value is the length of the field
-    case ignore(Int)
+    case ignore(IgnoreLength)
     /// represents the internal 5-digit-checksum for embedded data in an EAN-13, which is always one character.
     case internalChecksum
     /// represents the check digit for an EAN-8, EAN-13 or EAN-14. always one character, and must be the last component
@@ -101,6 +129,11 @@ fileprivate enum TemplateComponent {
                 case 2: self = .embedDecimal(digits[0], digits[1])
                 default: return nil
                 }
+            } else if token == "_" {
+                guard let ignoreLength = IgnoreLength(lengthPart) else {
+                    return nil
+                }
+                self = .ignore(ignoreLength)
             } else {
                 guard let len = length, len > 0 else {
                     return nil
@@ -108,7 +141,6 @@ fileprivate enum TemplateComponent {
                 switch token {
                 case "embed100": self = .embed100(len)
                 case "price": self = .price(len)
-                case "_": self = .ignore(len)
                 case "i": self = .internalChecksum
                 case "ec": self = .eanChecksum
                 default: return nil
@@ -136,7 +168,11 @@ fileprivate enum TemplateComponent {
         case .embed100(let len): return "(\\d{\(len)})"
         case .embedDecimal(let i, let f): return "(\\d{\(i+f)})"
         case .price(let len): return "(\\d{\(len)})"
-        case .ignore(let len): return "(.{\(len)})"
+        case .ignore(let len):
+            switch len {
+            case .ignoreAll: return "(.*)"
+            case .length(let len): return "(.{\(len)})"
+            }
         case .internalChecksum: return "(\\d)"
         case .eanChecksum: return "(\\d)"
         }
@@ -151,7 +187,7 @@ fileprivate enum TemplateComponent {
         case .embedDecimal(let i, let f): return i+f
         case .embed100(let len): return len
         case .price(let len): return len
-        case .ignore(let len): return len
+        case .ignore(let ignoreLength): return ignoreLength.length
         case .internalChecksum: return 1
         case .eanChecksum: return 1
         }
@@ -217,7 +253,7 @@ public struct CodeTemplate {
     public let id: String
     /// the original template string
     public let template: String
-    /// the expected length of a string that could possibly match
+    /// the expected length of a string that could possibly match (if 0, the lenth is undetermined)
     public let expectedLength: Int
     /// the parsed components in left-to-right order
     fileprivate let components: [TemplateComponent]
@@ -261,7 +297,13 @@ public struct CodeTemplate {
             return nil
         }
         self.components = components
-        self.expectedLength = components.reduce(0) { $0 + $1.length }
+
+        // if any component is a "match all", our expected length is undetermined
+        if components.first(where: { $0.length == 0 }) != nil {
+            self.expectedLength = 0
+        } else {
+            self.expectedLength = components.reduce(0) { $0 + $1.length }
+        }
 
         // further checks:
         // each component may occur 0 or 1 times, except _ (ignore) and plainText
@@ -576,8 +618,10 @@ public struct CodeMatcher {
             case .embed(let len):
                 result.append(String(repeating: "0", count: len))
                 embedSeen = true
-            case .ignore(let len):
-                result.append(String(repeating: "0", count: len))
+            case .ignore(let ignoreLength):
+                if case .length(let len) = ignoreLength {
+                    result.append(String(repeating: "0", count: len))
+                }
             default: ()
             }
         }
