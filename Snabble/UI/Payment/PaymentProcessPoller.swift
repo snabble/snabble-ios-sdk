@@ -6,7 +6,7 @@
 
 import Foundation
 
-enum PaymentEvent {
+public enum PaymentEvent {
     case approval
     case paymentSuccess
 
@@ -21,7 +21,7 @@ enum PaymentEvent {
     }
 }
 
-final class PaymentProcessPoller {
+final public class PaymentProcessPoller {
     private var timer: Timer?
 
     private let process: CheckoutProcess
@@ -35,7 +35,7 @@ final class PaymentProcessPoller {
 
     private(set) var updatedProcess: CheckoutProcess
 
-    init(_ process: CheckoutProcess, _ project: Project) {
+    public init(_ process: CheckoutProcess, _ project: Project) {
         self.process = process
         self.updatedProcess = process
         self.project = project
@@ -56,7 +56,7 @@ final class PaymentProcessPoller {
     }
 
     // wait for a number of events, and call the completion handler as soon as one (or more) are fulfilled
-    func waitFor(_ events: [PaymentEvent], completion: @escaping ([PaymentEvent: Bool]) -> () ) {
+    public func waitFor(_ events: [PaymentEvent], completion: @escaping ([PaymentEvent: Bool]) -> () ) {
         self.waitingFor = events
         self.alreadySeen = []
         self.timer = Timer.scheduledTimer(withTimeInterval: 1.0, repeats: true) { timer in
