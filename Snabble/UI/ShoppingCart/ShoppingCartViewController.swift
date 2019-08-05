@@ -214,6 +214,8 @@ public final class ShoppingCartViewController: UIViewController {
                     self?.restoreTimer = nil
                 }
             }
+        } else {
+            self.emptyState?.button2.isHidden = true
         }
     }
 
