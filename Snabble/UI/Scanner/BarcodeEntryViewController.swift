@@ -6,7 +6,7 @@
 
 import UIKit
 
-final public class BarcodeEntryViewController: UIViewController, UISearchBarDelegate, UITableViewDataSource, UITableViewDelegate {
+final public class BarcodeEntryViewController: UIViewController {
 
     @IBOutlet weak var tableView: UITableView!
     @IBOutlet weak var searchBar: UISearchBar!
@@ -21,13 +21,15 @@ final public class BarcodeEntryViewController: UIViewController, UISearchBarDele
     private var keyboardObserver: KeyboardObserver!
     private weak var delegate: AnalyticsDelegate!
     private var emptyState: EmptyStateView!
+    private var showSku = false
 
-    public init(_ productProvider: ProductProvider, delegate: AnalyticsDelegate, completion: @escaping (String, String?)->() ) {
+    public init(_ productProvider: ProductProvider, delegate: AnalyticsDelegate, showSku: Bool = false, completion: @escaping (String, String?)->() ) {
         super.init(nibName: nil, bundle: SnabbleBundle.main)
 
         self.productProvider = productProvider
         self.completion = completion
         self.delegate = delegate
+        self.showSku = showSku
 
         self.title = "Snabble.Scanner.enterBarcode".localized()
     }
@@ -60,6 +62,25 @@ final public class BarcodeEntryViewController: UIViewController, UISearchBarDele
         self.delegate.track(.viewBarcodeEntry)
     }
 
+    private func addEnteredCode() {
+        self.addCode(self.searchText, nil)
+    }
+
+    private func addCode(_ code: String, _ template: String?) {
+        // popViewController has no completion handler, so we roll our own
+        CATransaction.begin()
+        CATransaction.setCompletionBlock {
+            self.delegate.track(.barcodeSelected(code))
+            self.completion?(code, template)
+        }
+
+        let _ = self.navigationController?.popViewController(animated: false)
+        CATransaction.commit()
+    }
+
+}
+
+extension BarcodeEntryViewController: UISearchBarDelegate {
     // MARK: - search bar
     public func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
         if searchText.count > 0 {
@@ -80,7 +101,9 @@ final public class BarcodeEntryViewController: UIViewController, UISearchBarDele
         let _ = self.navigationController?.popViewController(animated: true)
     }
 
-    // MARK: - table view
+}
+
+extension BarcodeEntryViewController: UITableViewDelegate, UITableViewDataSource {
     public func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         let rows = filteredProducts.count
         self.emptyState.isHidden = rows > 0
@@ -109,6 +132,9 @@ final public class BarcodeEntryViewController: UIViewController, UISearchBarDele
         cell.textLabel?.attributedText = str
 
         cell.detailTextLabel?.text = product.name
+        if self.showSku {
+            cell.detailTextLabel?.text = "\(product.name) (\(product.sku))"
+        }
         
         return cell
     }
@@ -119,23 +145,6 @@ final public class BarcodeEntryViewController: UIViewController, UISearchBarDele
         let codeEntry = product.codes.filter { $0.code.hasPrefix(self.searchText) }.first ?? product.codes.first!
         self.addCode(codeEntry.code, codeEntry.template)
     }
-
-    func addEnteredCode() {
-        self.addCode(self.searchText, nil)
-    }
-
-    private func addCode(_ code: String, _ template: String?) {
-        // popViewController has no completion handler, so we roll our own
-        CATransaction.begin()
-        CATransaction.setCompletionBlock {
-            self.delegate.track(.barcodeSelected(code))
-            self.completion?(code, template)
-        }
-
-        let _ = self.navigationController?.popViewController(animated: false)
-        CATransaction.commit()
-    }
-    
 }
 
 extension BarcodeEntryViewController: KeyboardHandling {
