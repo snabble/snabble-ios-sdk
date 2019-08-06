@@ -5,5 +5,5 @@
 //
 
 enum APIVersion {
-    static let version = "0.10.13"
+    static let version = "0.10.14"
 }

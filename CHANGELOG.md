@@ -1,5 +1,12 @@
 ## snabble iOS SDK Changelog
 
+# v0.10.14
+
+* Decrease the memory usage when full appdb are downloaded.
+* After a payment using an offline-capable QR code is completed, the previous shopping cart can now be restored.
+* Adds support for ignoring variable-length code parts in templates using `{_:*}`
+* The `finalCode` property of `qrCodeOffline` is now supported in all code variants
+
 # v0.10.13
 
 * The various offline-capable QR code payment methods (`encodedCodes`, `encodedCodesCSV` etc.) have been deprecated and were replaced by a new unified method called `qrCodeOffline`. This method is configured through the properties of the `qrCodeOffline` object in the app's metadata.
