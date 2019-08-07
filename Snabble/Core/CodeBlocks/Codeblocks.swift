@@ -6,6 +6,103 @@
 
 import Foundation
 
+struct Codeblocks {
+    static func generateQrCodes(_ cart: ShoppingCart, _ config: QRCodeConfig) -> [String] {
+        let blocks = makeBlocks(cart, config)
+
+        blocks.forEach { assert($0.items.count <= config.maxCodes) }
+
+        let codes = blocks.enumerated().map { (index, block) in
+            block.stringify(index, blocks.count)
+        }
+
+        return codes
+    }
+
+    private static func makeBlocks(_ cart: ShoppingCart, _ config: QRCodeConfig) -> [Codeblock] {
+        if let nextWithCheck = config.nextCodeWithCheck {
+            // separate regular/restricted items
+            let regularItems = cart.items.filter { $0.product.saleRestriction == .none }
+            let restrictedItems = cart.items.filter { $0.product.saleRestriction != .none }
+
+            var customerCard = cart.customerCard
+            var regularBlocks = makeBlocks(regularItems, config, customerCard)
+            if regularBlocks.count > 0 {
+                customerCard = nil
+            }
+
+            var restrictedBlocks = makeBlocks(restrictedItems, config, customerCard)
+
+            // if there is no regular block, fake one so that we have a place to put the `nextWithCheck` code
+            if regularBlocks.count == 0 && restrictedBlocks.count > 0 {
+                let block = Codeblock(config)
+                regularBlocks = [ block ]
+            }
+
+            // if possible, merge the last regular and the last restricted block
+            if regularBlocks.count > 1 && restrictedBlocks.count > 0 && config.maxChars == nil {
+                let lastRegularIndex = regularBlocks.count - 1
+                let lastRestrictedIndex = restrictedBlocks.count - 1
+
+                if regularBlocks[lastRegularIndex].count + restrictedBlocks[lastRestrictedIndex].count <= config.effectiveMaxCodes {
+                    restrictedBlocks[lastRestrictedIndex].items.append(contentsOf: regularBlocks[lastRegularIndex].items)
+                    regularBlocks.remove(at: lastRegularIndex)
+                }
+            }
+
+            // patch the last regular block to have the `nextWithCheck` code
+            regularBlocks[regularBlocks.count - 1].endCode = nextWithCheck
+
+            // patch the last of all blocks to have the `finalCode` code
+            var allBlocks = regularBlocks + restrictedBlocks
+            allBlocks[allBlocks.count - 1].endCode = config.finalCode
+
+            return allBlocks
+        } else {
+            // all items are considered "regular"
+            var allBlocks = makeBlocks(cart.items, config, cart.customerCard)
+            allBlocks[allBlocks.count - 1].endCode = config.finalCode
+            return allBlocks
+        }
+    }
+
+    private static func makeBlocks(_ items: [CartItem], _ config: QRCodeConfig, _ customerCard: String?) -> [Codeblock] {
+        var result = [Codeblock]()
+
+        var currentBlock = Codeblock(config)
+        for (index, item) in items.enumerated() {
+            if index == 0, let card = customerCard {
+                currentBlock.cardCode = card
+            }
+
+            let cartItem = item.cartItem
+            if config.format.repeatCodes {
+                for _ in 0 ..< item.quantity {
+                    let item = CodeBlockItem(1, cartItem.scannedCode)
+                    if !currentBlock.hasRoom(for: item) {
+                        result.append(currentBlock)
+                        currentBlock = Codeblock(config)
+                    }
+                    currentBlock.items.append(item)
+                }
+            } else {
+                let item = CodeBlockItem(cartItem.amount, cartItem.scannedCode)
+                if !currentBlock.hasRoom(for: item) {
+                    result.append(currentBlock)
+                    currentBlock = Codeblock(config)
+                }
+                currentBlock.items.append(item)
+            }
+        }
+
+        if currentBlock.count > 0 {
+            result.append(currentBlock)
+        }
+
+        return result
+    }
+}
+
 private struct CodeBlockItem {
     let quantity: Int
     let code: String
@@ -116,106 +213,3 @@ private struct Codeblock {
         return header + lot + codes.joined(separator: gs)
     }
 }
-
-struct Codeblocks {
-    static func generateQrCodes(_ cart: ShoppingCart, _ config: QRCodeConfig) -> [String] {
-        let blocks = makeBlocks(cart, config)
-
-        blocks.forEach { assert($0.items.count <= config.maxCodes) }
-        
-        let codes = blocks.enumerated().map { (index, block) in
-            block.stringify(index, blocks.count)
-        }
-
-        return codes
-    }
-
-    private static func makeBlocks(_ cart: ShoppingCart, _ config: QRCodeConfig) -> [Codeblock] {
-        if let nextWithCheck = config.nextCodeWithCheck {
-            // separate regular/restricted items
-            let regularItems = cart.items.filter { $0.product.saleRestriction == .none }
-            let restrictedItems = cart.items.filter { $0.product.saleRestriction != .none }
-
-            var customerCard = cart.customerCard
-            var regularBlocks = makeBlocks(regularItems, config, customerCard)
-            if regularBlocks.count > 0 {
-                customerCard = nil
-            }
-
-            let restrictedBlocks = makeBlocks(restrictedItems, config, customerCard)
-
-            // if there is no regular block, fake one so that we have a place to put the `nextWithCheck` code
-            if regularBlocks.count == 0 && restrictedBlocks.count > 0 {
-                let block = Codeblock(config)
-                regularBlocks = [ block ]
-            }
-
-            // patch the last regular block to have the `nextWithCheck` code
-            regularBlocks[regularBlocks.count - 1].endCode = nextWithCheck
-
-            // optional TODOs:
-            // - if there is at least one regular and one restricted block, merge the last of the regular blocks into the first restricted
-            // - balance regular and restricted blocks so that they contain an equal number of lines
-
-            // patch the last of all blocks to have the `finalCode` code
-            var allBlocks = regularBlocks + restrictedBlocks
-            allBlocks[allBlocks.count - 1].endCode = config.finalCode
-
-            return allBlocks
-        } else {
-            // all items are considered "regular"
-            var allBlocks = makeBlocks(cart.items, config, cart.customerCard)
-            allBlocks[allBlocks.count - 1].endCode = config.finalCode
-            return allBlocks
-        }
-    }
-
-    private static func makeBlocks(_ items: [CartItem], _ config: QRCodeConfig, _ customerCard: String?) -> [Codeblock] {
-        var result = [Codeblock]()
-
-        var currentBlock = Codeblock(config)
-        for (index, item) in items.enumerated() {
-            if index == 0, let card = customerCard {
-                currentBlock.cardCode = card
-            }
-
-            let cartItem = item.cartItem
-            if config.format.repeatCodes {
-                for _ in 0 ..< item.quantity {
-                    let item = CodeBlockItem(1, cartItem.scannedCode)
-                    if !currentBlock.hasRoom(for: item) {
-                        result.append(currentBlock)
-                        currentBlock = Codeblock(config)
-                    }
-                    currentBlock.items.append(item)
-                }
-            } else {
-                let item = CodeBlockItem(cartItem.amount, cartItem.scannedCode)
-                if !currentBlock.hasRoom(for: item) {
-                    result.append(currentBlock)
-                    currentBlock = Codeblock(config)
-                }
-                currentBlock.items.append(item)
-            }
-        }
-
-        if currentBlock.count > 0 {
-            result.append(currentBlock)
-        }
-
-        return result
-    }
-}
-
-/*
- private func divideIntoChunks(_ lines: [String], maxCodes: Int) -> [[String]] {
- let maxCodes = Float(maxCodes)
- let linesCount = Float(lines.count)
- let chunks = (linesCount / maxCodes).rounded(.up)
- let chunkSize = Int((linesCount / chunks).rounded(.up))
- let blocks = stride(from: 0, to: lines.count, by: chunkSize).map { start -> [String] in
- return Array(lines[start ..< min(start + chunkSize, lines.count)])
- }
- return blocks
- }
- */
