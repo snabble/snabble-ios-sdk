@@ -60,7 +60,8 @@ final class EmbeddedCodesCheckoutViewController: UIViewController {
         let nib = UINib(nibName: "QRCodeCell", bundle: SnabbleBundle.main)
         self.collectionView.register(nib, forCellWithReuseIdentifier: "qrCodeCell")
 
-        self.codes = Codeblocks.generateQrCodes(self.cart, self.qrCodeConfig)
+        let generator = QRCodeGenerator(self.cart, self.qrCodeConfig)
+        self.codes = generator.generateCodes()
 
         self.pageControl.numberOfPages = self.codes.count
         self.pageControl.pageIndicatorTintColor = .lightGray
