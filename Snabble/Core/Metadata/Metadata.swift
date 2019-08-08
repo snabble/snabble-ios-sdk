@@ -83,6 +83,14 @@ public enum QRCodeFormat: String, Decodable {
     case csv_globus // simple header, deprecated
     case csv        // new format with "x of y" header info
     case ikea
+
+    var repeatCodes: Bool {
+        switch self {
+        case .csv, .csv_globus: return false
+        case .ikea, .simple: return true
+        case .unknown: return true
+        }
+    }
 }
 
 extension QRCodeFormat: UnknownCaseRepresentable {
@@ -104,6 +112,11 @@ public struct QRCodeConfig: Decodable {
 
     // when maxCodes is not sufficiently precise, maxChars imposes a string length limit
     let maxChars: Int?
+
+    var effectiveMaxCodes: Int {
+        let leaveRoom = self.nextCode != nil || self.nextCodeWithCheck != nil || self.finalCode != nil
+        return self.maxCodes - (leaveRoom ? 1 : 0)
+    }
 
     enum CodingKeys: String, CodingKey {
         case format
