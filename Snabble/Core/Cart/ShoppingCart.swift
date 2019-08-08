@@ -291,6 +291,10 @@ final public class ShoppingCart {
     private(set) public var session = ""
     private(set) public var lastSaved: Date?
     private(set) public var backendCartInfo: BackendCartInfo?
+
+    public let projectId: String
+    public let shopId: String
+
     internal var checkoutInfoTask: URLSessionDataTask?
 
     fileprivate var backupItems: [CartItem]?
@@ -304,16 +308,21 @@ final public class ShoppingCart {
 
     internal var eventTimer: Timer?
 
-    private(set) var config: CartConfig
-
     // number of seconds to wait after a local modification is sent to the backend
     private let saveDelay: TimeInterval = 1.0
+
+    private let maxAge: TimeInterval
+    private let directory: String?
 
     public static let maxAmount = 9999
 
     public init(_ config: CartConfig) {
         assert(config.project.id != "", "empty projects cannot have a shopping cart")
-        self.config = config
+        self.projectId = config.project.id
+        self.shopId = config.shop.id
+        self.maxAge = config.maxAge
+        self.directory = config.directory
+
         let storage = self.loadCart()
         self.items = storage.items
         self.backupItems = storage.backupItems
@@ -328,16 +337,11 @@ final public class ShoppingCart {
     }
 
     private func isTooOld(_ date: Date?) -> Bool {
-        if let date = date, self.config.maxAge > 0 {
+        if let date = date, self.maxAge > 0 {
             let now = Date.timeIntervalSinceReferenceDate
-            return date.timeIntervalSinceReferenceDate < now - self.config.maxAge
+            return date.timeIntervalSinceReferenceDate < now - self.maxAge
         }
         return false
-    }
-
-    /// get this cart's `shopId`
-    public var shopId: String {
-        return self.config.shop.id
     }
 
     /// add an item. if already present and not weight dependent, increase its quantity
@@ -492,21 +496,25 @@ fileprivate struct CartStorage: Codable {
 // MARK: - Persistence
 extension ShoppingCart {
 
-    private func cartUrl() -> URL {
-        let url = URL(fileURLWithPath: self.config.directory)
-        return url.appendingPathComponent(self.config.project.id + ".json")
+    private func cartUrl(_ directory: String) -> URL {
+        let url = URL(fileURLWithPath: directory)
+        return url.appendingPathComponent(self.projectId + ".json")
     }
 
     /// persist this shopping cart to disk
     fileprivate func save(postEvent: Bool = true) {
+        guard let directory = self.directory else {
+            return
+        }
+
         if postEvent {
             self.backendCartInfo = nil
         }
         
         do {
             let fileManager = FileManager.default
-            if !fileManager.fileExists(atPath: self.config.directory) {
-                try fileManager.createDirectory(atPath: self.config.directory, withIntermediateDirectories: true, attributes: nil)
+            if !fileManager.fileExists(atPath: directory) {
+                try fileManager.createDirectory(atPath: directory, withIntermediateDirectories: true, attributes: nil)
             }
 
             self.lastSaved = Date()
@@ -516,9 +524,9 @@ extension ShoppingCart {
             }
             let storage = CartStorage(self)
             let encodedItems = try JSONEncoder().encode(storage)
-            try encodedItems.write(to: self.cartUrl(), options: .atomic)
+            try encodedItems.write(to: self.cartUrl(directory), options: .atomic)
         } catch let error {
-            Log.error("error saving cart \(self.config.project.id): \(error)")
+            Log.error("error saving cart \(self.projectId): \(error)")
         }
 
         if postEvent {
@@ -531,20 +539,24 @@ extension ShoppingCart {
 
     // load this shoppping cart from disk
     private func loadCart() -> CartStorage {
+        guard let directory = self.directory else {
+            return CartStorage()
+        }
+
         let fileManager = FileManager.default
-        if !fileManager.fileExists(atPath: self.cartUrl().path) {
+        if !fileManager.fileExists(atPath: self.cartUrl(directory).path) {
             return CartStorage()
         }
         
         do {
-            let data = try Data(contentsOf: self.cartUrl())
+            let data = try Data(contentsOf: self.cartUrl(directory))
             let storage = try JSONDecoder().decode(CartStorage.self, from: data)
             if self.isTooOld(storage.lastSaved) {
                 return CartStorage()
             }
             return storage
         } catch let error {
-            Log.error("error loading cart \(self.config.project.id): \(error)")
+            Log.error("error loading cart \(self.projectId): \(error)")
             return CartStorage()
         }
     }
@@ -552,10 +564,14 @@ extension ShoppingCart {
     /// update the products in this shopping cart, e.g. after a database update was downloaded
     /// or when the customer card was changed
     public func updateProducts(_ customerCard: String? = nil) {
-        let provider = SnabbleAPI.productProvider(for: self.config.project)
+        guard let project = SnabbleAPI.projectFor(self.projectId) else {
+            return
+        }
+
+        let provider = SnabbleAPI.productProvider(for: project)
         var newItems = [CartItem]()
         for item in self.items {
-            if let newItem = CartItem(updating: item, provider, self.config.shop.id, customerCard) {
+            if let newItem = CartItem(updating: item, provider, self.shopId, customerCard) {
                 newItems.append(newItem)
             } else {
                 newItems.append(item)
@@ -579,7 +595,12 @@ extension ShoppingCart {
     }
 
     func createCheckoutInfo(userInitiated: Bool = false, completion: @escaping (Bool) -> ()) {
-        self.createCheckoutInfo(self.config.project, timeout: 2) { result in
+        guard let project = SnabbleAPI.projectFor(self.projectId) else {
+            completion(false)
+            return
+        }
+
+        self.createCheckoutInfo(project, timeout: 2) { result in
             switch result {
             case .failure(let error):
                 Log.warn("createCheckoutInfo failed: \(error)")
@@ -606,8 +627,12 @@ struct CartEvent {
         guard cart.shopId != "" else {
             return
         }
-        
-        let event = AppEvent(.sessionStart, session: cart.session, project: cart.config.project, shopId: cart.shopId)
+
+        guard let project = SnabbleAPI.projectFor(cart.projectId) else {
+            return
+        }
+
+        let event = AppEvent(.sessionStart, session: cart.session, project: project, shopId: cart.shopId)
         event.post()
     }
 
@@ -616,7 +641,11 @@ struct CartEvent {
             return
         }
 
-        let event = AppEvent(.sessionEnd, session: cart.session, project: cart.config.project, shopId: cart.shopId)
+        guard let project = SnabbleAPI.projectFor(cart.projectId) else {
+            return
+        }
+
+        let event = AppEvent(.sessionEnd, session: cart.session, project: project, shopId: cart.shopId)
         event.post()
     }
 
@@ -627,6 +656,6 @@ struct CartEvent {
 
         cart.createCheckoutInfo(completion: {_ in})
         let event = AppEvent(cart)
-        event.post()
+        event?.post()
     }
 }

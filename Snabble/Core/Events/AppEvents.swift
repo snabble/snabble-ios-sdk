@@ -127,9 +127,13 @@ struct AppEvent: Encodable {
         self.init(type: .analytics, payload: analytics, project: project)
     }
 
-    init(_ shoppingCart: ShoppingCart) {
+    init?(_ shoppingCart: ShoppingCart) {
         let cart = shoppingCart.createCart()
-        self.init(type: .cart, payload: Payload.cart(cart), project: shoppingCart.config.project, shopId: cart.shopID)
+        guard let project = SnabbleAPI.projectFor(shoppingCart.projectId) else {
+            return nil
+        }
+
+        self.init(type: .cart, payload: Payload.cart(cart), project: project, shopId: shoppingCart.shopId)
     }
 
     init(scannedCode: String, codes: [(String, String)], project: Project) {
