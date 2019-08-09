@@ -1,5 +1,5 @@
 //
-//  CartData
+//  CartData.swift
 //
 //  Copyright © 2019 snabble. All rights reserved.
 //

@@ -1,5 +1,5 @@
 //
-//  CartEvent
+//  CartEvent.swift
 //
 //  Copyright © 2019 snabble. All rights reserved.
 //
