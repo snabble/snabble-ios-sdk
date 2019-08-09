@@ -104,7 +104,7 @@ public struct QRCodeGenerator {
 
             let cartItem = item.cartItem
             if self.config.format.repeatCodes {
-                for _ in 0 ..< item.quantity {
+                for _ in 0 ..< cartItem.amount {
                     let item = CodeBlockItem(1, cartItem.scannedCode)
                     self.append(item, to: &currentBlock, &result)
                 }
