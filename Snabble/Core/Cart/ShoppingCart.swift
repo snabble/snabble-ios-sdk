@@ -277,7 +277,6 @@ public struct CartItem: Codable {
                                units: units,
                                weightUnit: encodingUnit)
     }
-
 }
 
 public struct BackendCartInfo: Codable {
@@ -286,9 +285,9 @@ public struct BackendCartInfo: Codable {
 }
 
 /// a ShoppingCart is a collection of CartItem objects
-final public class ShoppingCart {
-    private(set) public var items = [CartItem]()
-    private(set) public var session = ""
+final public class ShoppingCart: Codable {
+    private(set) public var items: [CartItem]
+    private(set) public var session: String
     private(set) public var lastSaved: Date?
     private(set) public var backendCartInfo: BackendCartInfo?
 
@@ -316,6 +315,40 @@ final public class ShoppingCart {
 
     public static let maxAmount = 9999
 
+    enum CodingKeys: String, CodingKey {
+        case items, session, lastSaved, backendCartInfo, projectId, shopId, backupItems, backupSession, customerCard, maxAge
+    }
+
+    public init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        self.items = try container.decode(.items)
+        self.session = try container.decode(.session)
+        self.lastSaved = try container.decodeIfPresent(.lastSaved)
+        self.backendCartInfo = try container.decodeIfPresent(.backendCartInfo)
+        self.projectId = try container.decode(.projectId)
+        self.shopId = try container.decode(.shopId)
+        self.backupItems = try container.decodeIfPresent(.backupItems)
+        self.backupSession = try container.decodeIfPresent(.backupSession)
+        self.customerCard = try container.decodeIfPresent(.customerCard)
+        self.maxAge = try container.decode(.maxAge)
+        self.directory = nil
+    }
+
+    public func encode(to encoder: Encoder) throws {
+        var container = encoder.container(keyedBy: CodingKeys.self)
+
+        try container.encode(self.items, forKey: .items)
+        try container.encode(self.session, forKey: .session)
+        try container.encodeIfPresent(self.lastSaved, forKey: .lastSaved)
+        try container.encodeIfPresent(self.backendCartInfo, forKey: .backendCartInfo)
+        try container.encode(self.projectId, forKey: .projectId)
+        try container.encode(self.shopId, forKey: .shopId)
+        try container.encodeIfPresent(self.backupItems, forKey: .backupItems)
+        try container.encodeIfPresent(self.backupSession, forKey: .backupSession)
+        try container.encodeIfPresent(self.customerCard, forKey: .customerCard)
+        try container.encode(self.maxAge, forKey: .maxAge)
+    }
+
     public init(_ config: CartConfig) {
         assert(config.project.id != "", "empty projects cannot have a shopping cart")
         self.projectId = config.project.id
@@ -323,23 +356,25 @@ final public class ShoppingCart {
         self.maxAge = config.maxAge
         self.directory = config.directory
 
-        let storage = self.loadCart()
-        self.items = storage.items
-        self.backupItems = storage.backupItems
-        self.backupSession = storage.backupSession
-        self.backendCartInfo = storage.backendCartInfo
-        self.session = storage.session
+        self.session = ""
+        self.items = []
+
+        if let savedCart = self.load() {
+            self.items = savedCart.items
+            self.session = savedCart.session
+            self.customerCard = savedCart.customerCard
+
+            self.backupItems = savedCart.backupItems
+            self.backupSession = savedCart.backupSession
+            self.backendCartInfo = savedCart.backendCartInfo
+        }
     }
 
     /// check if this cart is outdated (ie. it was last saved more than `config.maxAge` seconds ago)
     public var outdated: Bool {
-        return self.isTooOld(self.lastSaved)
-    }
-
-    private func isTooOld(_ date: Date?) -> Bool {
-        if let date = date, self.maxAge > 0 {
+        if let lastSaved = self.lastSaved, self.maxAge > 0 {
             let now = Date.timeIntervalSinceReferenceDate
-            return date.timeIntervalSinceReferenceDate < now - self.maxAge
+            return lastSaved.timeIntervalSinceReferenceDate < now - self.maxAge
         }
         return false
     }
@@ -464,102 +499,6 @@ final public class ShoppingCart {
     public var backupAvailable: Bool {
         return (self.backupItems?.count ?? 0) > 0
     }
-}
-
-fileprivate struct CartStorage: Codable {
-    let items: [CartItem]
-    let backupItems: [CartItem]?
-    let backendCartInfo: BackendCartInfo?
-    let session: String
-    let backupSession: String?
-    let lastSaved: Date?
-
-    init() {
-        self.items = []
-        self.backupItems = nil
-        self.backendCartInfo = nil
-        self.session = ""
-        self.backupSession = nil
-        self.lastSaved = nil
-    }
-
-    init(_ shoppingCart: ShoppingCart) {
-        self.items = shoppingCart.items
-        self.backupItems = shoppingCart.backupItems
-        self.backendCartInfo = shoppingCart.backendCartInfo
-        self.session = shoppingCart.session
-        self.lastSaved = shoppingCart.lastSaved
-        self.backupSession = shoppingCart.backupSession
-    }
-}
-
-// MARK: - Persistence
-extension ShoppingCart {
-
-    private func cartUrl(_ directory: String) -> URL {
-        let url = URL(fileURLWithPath: directory)
-        return url.appendingPathComponent(self.projectId + ".json")
-    }
-
-    /// persist this shopping cart to disk
-    fileprivate func save(postEvent: Bool = true) {
-        guard let directory = self.directory else {
-            return
-        }
-
-        if postEvent {
-            self.backendCartInfo = nil
-        }
-        
-        do {
-            let fileManager = FileManager.default
-            if !fileManager.fileExists(atPath: directory) {
-                try fileManager.createDirectory(atPath: directory, withIntermediateDirectories: true, attributes: nil)
-            }
-
-            self.lastSaved = Date()
-            if self.session == "" {
-                self.session = UUID().uuidString
-                CartEvent.sessionStart(self)
-            }
-            let storage = CartStorage(self)
-            let encodedItems = try JSONEncoder().encode(storage)
-            try encodedItems.write(to: self.cartUrl(directory), options: .atomic)
-        } catch let error {
-            Log.error("error saving cart \(self.projectId): \(error)")
-        }
-
-        if postEvent {
-            self.eventTimer?.invalidate()
-            self.eventTimer = Timer.scheduledTimer(withTimeInterval: self.saveDelay, repeats: false) { timer in
-                CartEvent.cart(self)
-            }
-        }
-    }
-
-    // load this shoppping cart from disk
-    private func loadCart() -> CartStorage {
-        guard let directory = self.directory else {
-            return CartStorage()
-        }
-
-        let fileManager = FileManager.default
-        if !fileManager.fileExists(atPath: self.cartUrl(directory).path) {
-            return CartStorage()
-        }
-        
-        do {
-            let data = try Data(contentsOf: self.cartUrl(directory))
-            let storage = try JSONDecoder().decode(CartStorage.self, from: data)
-            if self.isTooOld(storage.lastSaved) {
-                return CartStorage()
-            }
-            return storage
-        } catch let error {
-            Log.error("error loading cart \(self.projectId): \(error)")
-            return CartStorage()
-        }
-    }
 
     /// update the products in this shopping cart, e.g. after a database update was downloaded
     /// or when the customer card was changed
@@ -580,7 +519,75 @@ extension ShoppingCart {
         self.items = newItems
         self.save()
     }
+}
 
+// MARK: - Persistence
+extension ShoppingCart {
+
+    private func cartUrl(_ directory: String) -> URL {
+        let url = URL(fileURLWithPath: directory)
+        return url.appendingPathComponent(self.projectId + ".json")
+    }
+
+    /// persist this shopping cart to disk
+    private func save(postEvent: Bool = true) {
+        guard let directory = self.directory else {
+            return
+        }
+
+        if postEvent {
+            self.backendCartInfo = nil
+        }
+
+        do {
+            let fileManager = FileManager.default
+            if !fileManager.fileExists(atPath: directory) {
+                try fileManager.createDirectory(atPath: directory, withIntermediateDirectories: true, attributes: nil)
+            }
+
+            self.lastSaved = Date()
+            if self.session == "" {
+                self.session = UUID().uuidString
+                CartEvent.sessionStart(self)
+            }
+
+            let data = try JSONEncoder().encode(self)
+            try data.write(to: self.cartUrl(directory), options: .atomic)
+        } catch let error {
+            Log.error("error saving cart \(self.projectId): \(error)")
+        }
+
+        if postEvent {
+            self.eventTimer?.invalidate()
+            self.eventTimer = Timer.scheduledTimer(withTimeInterval: self.saveDelay, repeats: false) { timer in
+                CartEvent.cart(self)
+            }
+        }
+    }
+
+    // load this shoppping cart from disk
+    private func load() -> ShoppingCart? {
+        guard let directory = self.directory else {
+            return nil
+        }
+
+        let fileManager = FileManager.default
+        if !fileManager.fileExists(atPath: self.cartUrl(directory).path) {
+            return nil
+        }
+
+        do {
+            let data = try Data(contentsOf: self.cartUrl(directory))
+            let cart = try JSONDecoder().decode(ShoppingCart.self, from: data)
+            if cart.outdated {
+                return nil
+            }
+            return cart
+        } catch let error {
+            Log.error("error loading cart \(self.projectId): \(error)")
+            return nil
+        }
+    }
 }
 
 public extension Notification.Name {
