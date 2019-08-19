@@ -18,7 +18,6 @@ extension ShoppingCart {
     ///   - result: the `SignedCheckoutInfo` or the error
     public func createCheckoutInfo(_ project: Project, timeout: TimeInterval = 0, completion: @escaping (_ result: Result<SignedCheckoutInfo, SnabbleError>) -> () ) {
         // cancel any previous tasks
-
         self.eventTimer?.invalidate()
         self.checkoutInfoTask?.cancel()
 
