@@ -98,12 +98,7 @@ struct AppEvent: Encodable {
         self.projectId = project.id
         self.id = id
         self.agent = agent
-        let fmt = ISO8601DateFormatter()
-        fmt.timeZone = TimeZone.current
-        if #available(iOS 11.2, *) {
-            fmt.formatOptions.insert(.withFractionalSeconds)
-        }
-        self.timestamp = fmt.string(from: Date())
+        self.timestamp = Snabble.iso8601Formatter.string(from: Date())
     }
 
     init(_ type: EventType, session: String, project: Project, shopId: String? = nil) {

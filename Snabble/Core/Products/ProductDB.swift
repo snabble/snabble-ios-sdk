@@ -508,8 +508,7 @@ final class ProductDB: ProductProvider {
 
     private func setLastUpdate(_ dbQueue: DatabaseQueue) {
         do {
-            let fmt = ISO8601DateFormatter()
-            let now = fmt.string(from: Date())
+            let now = Snabble.iso8601Formatter.string(from: Date())
             try dbQueue.inDatabase { db in
                 try db.execute(sql: "insert or replace into metadata values(?,?)", arguments: [MetadataKeys.appLastUpdate, now])
             }
@@ -594,8 +593,7 @@ final class ProductDB: ProductProvider {
             case MetadataKeys.schemaVersionMinor:
                 self.schemaVersionMinor = Int(value) ?? 0
             case MetadataKeys.appLastUpdate:
-                let fmt = ISO8601DateFormatter()
-                if let date = fmt.date(from: value) {
+                if let date = Snabble.iso8601Formatter.date(from: value) {
                     self.lastProductUpdate = date
                 }
             default:

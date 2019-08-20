@@ -72,12 +72,7 @@ extension SignedCheckoutInfo {
 
             if processedOffline {
                 dict["processedOffline"] = true
-                let fmt = ISO8601DateFormatter()
-                fmt.timeZone = TimeZone.current
-                if #available(iOS 11.2, *) {
-                    fmt.formatOptions.insert(.withFractionalSeconds)
-                }
-                dict["finalizedAt"] = fmt.string(from: Date())
+                dict["finalizedAt"] = Snabble.iso8601Formatter.string(from: Date())
             }
 
             if let checkoutInfo = self.rawJson?["checkoutInfo"] as? [String: Any], let session = checkoutInfo["session"] as? String {

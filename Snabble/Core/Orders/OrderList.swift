@@ -34,11 +34,7 @@ public struct Order: Decodable {
         self.project = try container.decode(String.self, forKey: .project)
         self.id = try container.decode(String.self, forKey: .id)
         let date = try container.decode(String.self, forKey: .date)
-        let formatter = ISO8601DateFormatter()
-        if #available(iOS 11.2, *) {
-            formatter.formatOptions.insert(.withFractionalSeconds)
-        }
-        self.date = formatter.date(from: date) ?? Date()
+        self.date = Snabble.iso8601Formatter.date(from: date) ?? Date()
 
         self.shopId = try container.decode(String.self, forKey: .shopId)
         self.shopName = try container.decode(String.self, forKey: .shopName)
