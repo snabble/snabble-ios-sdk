@@ -161,7 +161,7 @@ public final class PaymentProcess {
         if !handled {
             if method.rawMethod.offline, let processor = method.processor(nil, self.cart, self.delegate) {
                 completion(Result.success(processor))
-                self.retryCreatingMissingCheckout(method)
+                OfflineCarts.shared.saveCartForLater(self.cart)
             } else {
                 self.delegate.showWarningMessage("Snabble.Payment.errorStarting".localized())
             }
@@ -178,17 +178,7 @@ public final class PaymentProcess {
         self.delegate.track(event)
     }
 
-    // retry creating the checkout info / checkout process that is potentially missing
-    private func retryCreatingMissingCheckout(_ method: PaymentMethod) {
-        let project = SnabbleUI.project
-        DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
-            self.cart.createCheckoutInfo(project) { result in
-                if case Result.success(let info) = result {
-                    info.createCheckoutProcess(project, paymentMethod: method) { _ in }
-                }
-            }
-        }
-    }
+    // MARK: - blur
 
     private var blurView: UIView?
 
