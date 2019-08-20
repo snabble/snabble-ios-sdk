@@ -21,51 +21,51 @@ struct SavedCart: Codable {
 }
 
 public class OfflineCarts {
-
     public static let shared = OfflineCarts()
 
-    private var savedCarts = [SavedCart]()
     private var inProgress = false
+    private var pendingCarts = 0
+    private let queue = DispatchQueue(label: "io.snabble.saved-carts", qos: .background)
 
-    private init() {
-        self.savedCarts = self.readSavedCarts()
-    }
+    private init() { }
 
     /// append a shopping cart to the list of carts that need to be sent later
     func saveCartForLater(_ cart: ShoppingCart) {
-        synchronized(self) {
-            self.savedCarts.append(SavedCart(cart))
-            self.writeSavedCarts(self.savedCarts)
-        }
+        print("saving cart for later \(cart.session) \(cart.items.count)")
+
+        var savedCarts = self.readSavedCarts()
+        savedCarts.append(SavedCart(cart))
+        self.writeSavedCarts(savedCarts)
+        self.pendingCarts = savedCarts.count
     }
 
     public var retryNeeded: Bool {
-        return self.savedCarts.count > 0
+        return self.pendingCarts > 0
     }
 
     /// retry sending saved carts to the backend
     public func retrySendingCarts() {
-        guard !self.inProgress && self.savedCarts.count > 0 else {
+        guard !self.inProgress && self.pendingCarts > 0 else {
             return
         }
-        self.inProgress = true
 
-        DispatchQueue.global(qos: .background).async {
+        self.inProgress = true
+        self.queue.async {
             self.doRetrySendingCarts()
         }
     }
 
     private func doRetrySendingCarts() {
-        let carts = synchronized(self) {
-            return self.savedCarts
-        }
+        var savedCarts = self.readSavedCarts()
 
         let group = DispatchGroup()
         var successIndices = [Int]()
 
+        print("sending \(savedCarts.count) saved carts")
         // retry the requests
-        for (index, savedCart) in carts.enumerated() {
+        for (index, savedCart) in savedCarts.enumerated() {
             let cart = savedCart.cart
+            print("sending saved cart \(cart.session) \(cart.items.count)")
             guard let project = SnabbleAPI.projectFor(cart.projectId) else {
                 continue
             }
@@ -81,13 +81,13 @@ public class OfflineCarts {
                                 successIndices.append(index)
                             }
                         case .failure(let error):
-                            self.savedCarts[index].failures += 1
+                            savedCarts[index].failures += 1
                             Log.error("error creating process: \(error)")
                         }
                         group.leave()
                     }
                 case .failure(let error):
-                    self.savedCarts[index].failures += 1
+                    savedCarts[index].failures += 1
                     Log.error("error creating info: \(error)")
                     group.leave()
                 }
@@ -98,14 +98,13 @@ public class OfflineCarts {
         group.wait()
 
         // remove all carts where the re-sending was successful or we had too many failures
-        synchronized(self) {
-            for i in (0..<self.savedCarts.count).reversed() {
-                if successIndices.contains(i) || self.savedCarts[i].failures > 3 {
-                    self.savedCarts.remove(at: i)
-                }
+        for i in (0 ..< savedCarts.count).reversed() {
+            if successIndices.contains(i) || savedCarts[i].failures > 3 {
+                savedCarts.remove(at: i)
             }
-            self.writeSavedCarts(self.savedCarts)
         }
+        self.writeSavedCarts(savedCarts)
+        self.pendingCarts = savedCarts.count
         self.inProgress = false
     }
 }
@@ -135,7 +134,7 @@ extension OfflineCarts {
 
     func writeSavedCarts(_ carts: [SavedCart]) {
         do {
-            let data = try JSONEncoder().encode(self.savedCarts)
+            let data = try JSONEncoder().encode(carts)
             try data.write(to: self.url(), options: .atomic)
         } catch {
             Log.error("saved carts: write failed \(error)")
