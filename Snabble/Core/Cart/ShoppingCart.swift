@@ -324,7 +324,10 @@ extension ShoppingCart {
     }
 
     func createCheckoutInfo(userInitiated: Bool = false, completion: @escaping (Bool) -> ()) {
-        guard let project = SnabbleAPI.projectFor(self.projectId) else {
+        guard
+            let project = SnabbleAPI.projectFor(self.projectId),
+            self.items.count > 0
+        else {
             completion(false)
             return
         }

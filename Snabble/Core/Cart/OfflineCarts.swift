@@ -31,8 +31,10 @@ public class OfflineCarts {
 
     /// append a shopping cart to the list of carts that need to be sent later
     func saveCartForLater(_ cart: ShoppingCart) {
-        print("saving cart for later \(cart.session) \(cart.items.count)")
-
+        guard cart.items.count > 0 else {
+            return
+        }
+        
         var savedCarts = self.readSavedCarts()
         savedCarts.append(SavedCart(cart))
         self.writeSavedCarts(savedCarts)
@@ -61,11 +63,9 @@ public class OfflineCarts {
         let group = DispatchGroup()
         var successIndices = [Int]()
 
-        print("sending \(savedCarts.count) saved carts")
         // retry the requests
         for (index, savedCart) in savedCarts.enumerated() {
             let cart = savedCart.cart
-            print("sending saved cart \(cart.session) \(cart.items.count)")
             guard let project = SnabbleAPI.projectFor(cart.projectId) else {
                 continue
             }
