@@ -3,6 +3,7 @@
 # v0.10.15
 
 * When creating a checkout info or checkout process fails and the payment reverts to an offline-capable QR code payment, the shopping cart is now persisted using the new `OfflineCarts` class. It is the hosting app's responsibiliy to attempt to retry posting this data to the backend at an appropriate time e.g. when it discovers that internet connectivity is restored. Use `OfflineCarts.shared.retryNeeded` to determine if there are carts pending retransmission.
+* `BarcodeEntryViewController` has a new optional constructor parameter, `showSku`. If this is true, the SKUs of matching products are displays together with the product names.
 
 # v0.10.14
 
