@@ -21,7 +21,7 @@ if [ "$TODAY" != "$CHANGELOG_DATE" ]; then
 fi
 
 echo running unit tests...
-if (cd ../iOS-whitelabel; fastlane unittests); then
+if (cd ../iOS-App; fastlane unittests); then
     echo "passed!"
 else
     echo "tests failed"
