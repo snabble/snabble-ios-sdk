@@ -21,6 +21,7 @@ final class EmbeddedCodesCheckoutViewController: UIViewController {
     private weak var delegate: PaymentDelegate!
     private var process: CheckoutProcess?
     private var qrCodeConfig: QRCodeConfig
+    private var customAppearance: CustomAppearance?
 
     private var codes = [String]()
     private var itemSize = CGSize(width: 100, height: 100)
@@ -45,16 +46,13 @@ final class EmbeddedCodesCheckoutViewController: UIViewController {
         super.viewDidLoad()
 
         self.paidButton.backgroundColor = SnabbleUI.appearance.primaryColor
+        self.paidButton.tintColor = .red // SnabbleUI.appearance.secondaryColor
         self.paidButton.makeRoundedButton()
         self.paidButton.setTitle("Snabble.QRCode.didPay".localized(), for: .normal)
         self.paidButton.alpha = 0
         self.paidButton.isUserInteractionEnabled = false
-
-        Timer.scheduledTimer(withTimeInterval: 2, repeats: false) { timer in
-            UIView.animate(withDuration: 0.2) {
-                self.paidButton.alpha = 1
-            }
-            self.paidButton.isUserInteractionEnabled = true
+        if let custom = self.customAppearance {
+            self.paidButton.setCustomAppearance(custom)
         }
 
         let nib = UINib(nibName: "QRCodeCell", bundle: SnabbleBundle.main)
@@ -111,6 +109,17 @@ final class EmbeddedCodesCheckoutViewController: UIViewController {
         if width != self.itemSize.width {
             self.itemSize = CGSize(width: width, height: width)
             self.collectionView.collectionViewLayout.invalidateLayout()
+        }
+    }
+
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+
+        Timer.scheduledTimer(withTimeInterval: 2, repeats: false) { timer in
+            UIView.animate(withDuration: 0.2) {
+                self.paidButton.alpha = 1
+            }
+            self.paidButton.isUserInteractionEnabled = true
         }
     }
 
@@ -195,5 +204,11 @@ extension EmbeddedCodesCheckoutViewController: UICollectionViewDataSource, UICol
         let newPage = Int((scrollView.contentOffset.x + self.itemSize.width/2) / self.itemSize.width)
         self.pageControl.currentPage = newPage
         self.setButtonTitle()
+    }
+}
+
+extension EmbeddedCodesCheckoutViewController: CustomizableAppearance {
+    func setCustomAppearance(_ appearance: CustomAppearance) {
+        self.customAppearance = appearance
     }
 }

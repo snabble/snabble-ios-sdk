@@ -60,6 +60,10 @@ final class ScanConfirmationView: DesignableView {
         self.plusButton.setImage(UIImage.fromBundle("icon-plus"), for: .normal)
         self.minusButton.setImage(UIImage.fromBundle("icon-minus"), for: .normal)
     }
+
+    func setCustomAppearance(_ appearance: CustomAppearance) {
+        self.cartButton.setCustomAppearance(appearance)
+    }
     
     func present(_ scannedProduct: ScannedProduct, _ scannedCode: String, cart: ShoppingCart) {
         // avoid ugly animations

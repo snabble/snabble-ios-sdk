@@ -277,3 +277,10 @@ extension ShoppingCartTableCell: UITextFieldDelegate {
     }
 
 }
+
+extension ShoppingCartTableCell: CustomizableAppearance {
+    func setCustomAppearance(_ appearance: CustomAppearance) {
+        self.quantityWrapper.backgroundColor = appearance.buttonBackgroundColor
+        self.quantityLabel.textColor = appearance.buttonTextColor
+    }
+}
