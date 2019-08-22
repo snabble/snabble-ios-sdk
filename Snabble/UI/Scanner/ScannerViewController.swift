@@ -11,10 +11,16 @@ public protocol ScannerDelegate: AnalyticsDelegate {
     func gotoShoppingCart()
 
     func scanMessageText(for: String) -> String?
+
+    func showRecommendation(_ vc: UIViewController, _ project: Project, _ shop: Shop, _ product: Product, completion: @escaping (Bool) -> () )
 }
 
 public extension ScannerDelegate {
     func scanMessageText(for: String) -> String? { return nil }
+
+    func showRecommendation(_ vc: UIViewController, _ project: Project, _ shop: Shop, _ product: Product, completion: @escaping (Bool) -> () ) {
+        completion(false)
+    }
 }
 
 public final class ScannerViewController: UIViewController {
@@ -245,26 +251,35 @@ extension ScannerViewController: AnalyticsDelegate {
 
 // MARK: - scanning confirmation delegate
 extension ScannerViewController: ScanConfirmationViewDelegate {
-    func closeConfirmation(_ msgId: String?) {
+    func closeConfirmation(_ item: CartItem?) {
         self.displayScanConfirmationView(hidden: true)
+        self.updateCartButton()
 
-        if let msgId = msgId, let msgText = self.delegate.scanMessageText(for: msgId) {
+        if let msgId = item?.product.scanMessage, let msgText = self.delegate.scanMessageText(for: msgId) {
             let alert = UIAlertController(title: "Snabble.Scanner.multiPack".localized(), message: msgText, preferredStyle: .alert)
             alert.addAction(UIAlertAction(title: "Snabble.OK".localized(), style: .default) { action in
-                self.closeConfirmation()
+                self.checkRecommendation(item)
             })
 
             self.present(alert, animated: true)
         } else {
-            self.closeConfirmation()
+            self.checkRecommendation(item)
         }
     }
 
-    private func closeConfirmation() {
+    private func checkRecommendation(_ item: CartItem?) {
+        guard let item = item else {
+            return self.restartScanner()
+        }
+
+        self.delegate.showRecommendation(self, SnabbleUI.project, self.shop, item.product) { _ in
+            self.restartScanner()
+        }
+    }
+
+    private func restartScanner() {
         self.lastScannedCode = ""
         self.barcodeDetector.startScanning()
-
-        self.updateCartButton()
     }
 }
 
