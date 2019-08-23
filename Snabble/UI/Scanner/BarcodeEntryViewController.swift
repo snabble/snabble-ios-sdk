@@ -50,8 +50,7 @@ final public class BarcodeEntryViewController: UIViewController {
         
         self.keyboardObserver = KeyboardObserver(handler: self)
         
-        let primaryBackgroundColor = SnabbleUI.appearance.primaryBackgroundColor
-        self.view.backgroundColor = primaryBackgroundColor
+        self.view.backgroundColor = SnabbleUI.appearance.backgroundColor
         self.tableView.backgroundColor = .clear
     }
     

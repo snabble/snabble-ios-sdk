@@ -21,7 +21,6 @@ final class EmbeddedCodesCheckoutViewController: UIViewController {
     private weak var delegate: PaymentDelegate!
     private var process: CheckoutProcess?
     private var qrCodeConfig: QRCodeConfig
-    private var customAppearance: CustomAppearance?
 
     private var codes = [String]()
     private var itemSize = CGSize(width: 100, height: 100)
@@ -45,15 +44,10 @@ final class EmbeddedCodesCheckoutViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        self.paidButton.backgroundColor = SnabbleUI.appearance.primaryColor
-        self.paidButton.tintColor = .red // SnabbleUI.appearance.secondaryColor
-        self.paidButton.makeRoundedButton()
+        self.paidButton.makeSnabbleButton()
         self.paidButton.setTitle("Snabble.QRCode.didPay".localized(), for: .normal)
         self.paidButton.alpha = 0
         self.paidButton.isUserInteractionEnabled = false
-        if let custom = self.customAppearance {
-            self.paidButton.setCustomAppearance(custom)
-        }
 
         let nib = UINib(nibName: "QRCodeCell", bundle: SnabbleBundle.main)
         self.collectionView.register(nib, forCellWithReuseIdentifier: "qrCodeCell")
@@ -204,11 +198,5 @@ extension EmbeddedCodesCheckoutViewController: UICollectionViewDataSource, UICol
         let newPage = Int((scrollView.contentOffset.x + self.itemSize.width/2) / self.itemSize.width)
         self.pageControl.currentPage = newPage
         self.setButtonTitle()
-    }
-}
-
-extension EmbeddedCodesCheckoutViewController: CustomizableAppearance {
-    func setCustomAppearance(_ appearance: CustomAppearance) {
-        self.customAppearance = appearance
     }
 }

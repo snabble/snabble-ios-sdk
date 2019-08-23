@@ -19,7 +19,6 @@ final class PaymentMethodSelectionViewController: UIViewController {
     private var signedCheckoutInfo: SignedCheckoutInfo
     private var paymentMethods: [PaymentMethod]
     private var itemSize = CGSize.zero
-    private var customAppearance: CustomAppearance?
 
     init(_ process: PaymentProcess, _ paymentMethods: [PaymentMethod]) {
         self.process = process
@@ -123,9 +122,6 @@ final class PaymentMethodSelectionViewController: UIViewController {
         self.process.start(method) { result in
             switch result {
             case .success(let viewController):
-                if let custom = self.customAppearance, let customizable = viewController as? CustomizableAppearance {
-                    customizable.setCustomAppearance(custom)
-                }
                 self.navigationController?.pushViewController(viewController, animated: true)
             case .failure(let error):
                 let handled = self.process.delegate.handlePaymentError(method, error)
@@ -171,11 +167,5 @@ extension PaymentMethodSelectionViewController: UICollectionViewDelegate, UIColl
                 self.startPayment(method)
             }
         }
-    }
-}
-
-extension PaymentMethodSelectionViewController: CustomizableAppearance {
-    func setCustomAppearance(_ appearance: CustomAppearance) {
-        self.customAppearance = appearance
     }
 }

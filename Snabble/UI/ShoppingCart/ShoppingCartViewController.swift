@@ -131,8 +131,7 @@ public final class ShoppingCartViewController: UIViewController {
     override public func viewDidLoad() {
         super.viewDidLoad()
 
-        let primaryBackgroundColor = SnabbleUI.appearance.primaryBackgroundColor
-        self.view.backgroundColor = primaryBackgroundColor
+        self.view.backgroundColor = SnabbleUI.appearance.backgroundColor
 
         self.emptyState = ShoppingCartEmptyStateView({ [weak self] button in self?.emptyStateButtonTapped(button) })
         self.emptyState.addTo(self.view)
@@ -154,13 +153,7 @@ public final class ShoppingCartViewController: UIViewController {
         self.tableBottomMargin.constant = 0
 
         self.checkoutButton.titleLabel?.font = UIFont.monospacedDigitSystemFont(ofSize: 17, weight: .semibold)
-        self.checkoutButton.backgroundColor = SnabbleUI.appearance.primaryColor
-        self.checkoutButton.tintColor = SnabbleUI.appearance.secondaryColor
-        self.checkoutButton.makeRoundedButton()
-
-        if let custom = self.customAppearance {
-            self.checkoutButton.setCustomAppearance(custom)
-        }
+        self.checkoutButton.makeSnabbleButton()
     }
 
     override public func viewWillAppear(_ animated: Bool) {

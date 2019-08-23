@@ -42,9 +42,7 @@ final class ScanConfirmationView: DesignableView {
         self.view.backgroundColor = .clear
         self.addCornersAndShadow(backgroundColor: .white, cornerRadius: 8)
 
-        self.cartButton.backgroundColor = SnabbleUI.appearance.primaryColor
-        self.cartButton.tintColor = SnabbleUI.appearance.secondaryColor
-        self.cartButton.makeRoundedButton()
+        self.cartButton.makeSnabbleButton()
 
         self.priceLabel.font = UIFont.monospacedDigitSystemFont(ofSize: 17, weight: .regular)
 
