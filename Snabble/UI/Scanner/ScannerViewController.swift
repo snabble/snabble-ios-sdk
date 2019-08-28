@@ -214,7 +214,9 @@ extension ScannerViewController {
             self.view.layoutIfNeeded()
         }
 
-        self.messageTimer = Timer.scheduledTimer(withTimeInterval: 7, repeats: false) { _ in
+        let millis = min(max(50 * msg.count, 2000), 7000)
+        let seconds = TimeInterval(millis) / 1000.0
+        self.messageTimer = Timer.scheduledTimer(withTimeInterval: seconds, repeats: false) { _ in
             self.hideMessage()
         }
     }
