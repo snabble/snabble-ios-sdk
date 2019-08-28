@@ -236,8 +236,7 @@ public final class ShoppingCartViewController: UIViewController {
             guard let url = URL(string: img) else {
                 continue
             }
-            let session = URLSession(configuration: .default)
-            let task = session.dataTask(with: url) { _,_,_ in }
+            let task = SnabbleAPI.defaultSession.dataTask(with: url) { _,_,_ in }
             task.resume()
         }
         self.knownImages = images

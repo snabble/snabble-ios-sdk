@@ -150,8 +150,8 @@ public final class ScannerViewController: UIViewController {
         appearance.torchButtonImage = UIImage.fromBundle("icon-light-inactive")?.recolored(with: .white)
         appearance.torchButtonActiveImage = UIImage.fromBundle("icon-light-active")
         appearance.enterButtonImage = UIImage.fromBundle("icon-entercode")?.recolored(with: .white)
-        appearance.textColor = .white
         appearance.backgroundColor = SnabbleUI.appearance.primaryColor
+        appearance.textColor = SnabbleUI.appearance.secondaryColor
         appearance.reticleCornerRadius = 3
 
         return appearance
@@ -218,7 +218,9 @@ extension ScannerViewController {
             self.view.layoutIfNeeded()
         }
 
-        self.messageTimer = Timer.scheduledTimer(withTimeInterval: 7, repeats: false) { _ in
+        let millis = min(max(50 * msg.count, 2000), 7000)
+        let seconds = TimeInterval(millis) / 1000.0
+        self.messageTimer = Timer.scheduledTimer(withTimeInterval: seconds, repeats: false) { _ in
             self.hideMessage()
         }
     }

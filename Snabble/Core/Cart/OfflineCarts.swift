@@ -25,7 +25,7 @@ public class OfflineCarts {
 
     private var inProgress = false
     private var pendingCarts = 0
-    private let queue = DispatchQueue(label: "io.snabble.saved-carts", qos: .background)
+    private let queue = DispatchQueue(label: "io.snabble.saved-carts", qos: .utility)
 
     private init() { }
 
