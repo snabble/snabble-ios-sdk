@@ -54,6 +54,7 @@ public final class ShoppingCartViewController: UIViewController {
 
     private var emptyState: ShoppingCartEmptyStateView!
     private var limitAlert: UIAlertController?
+    private var customAppearance: CustomAppearance?
 
     private let itemCellIdentifier = "itemCell"
 
@@ -130,8 +131,7 @@ public final class ShoppingCartViewController: UIViewController {
     override public func viewDidLoad() {
         super.viewDidLoad()
 
-        let primaryBackgroundColor = SnabbleUI.appearance.primaryBackgroundColor
-        self.view.backgroundColor = primaryBackgroundColor
+        self.view.backgroundColor = SnabbleUI.appearance.backgroundColor
 
         self.emptyState = ShoppingCartEmptyStateView({ [weak self] button in self?.emptyStateButtonTapped(button) })
         self.emptyState.addTo(self.view)
@@ -153,9 +153,7 @@ public final class ShoppingCartViewController: UIViewController {
         self.tableBottomMargin.constant = 0
 
         self.checkoutButton.titleLabel?.font = UIFont.monospacedDigitSystemFont(ofSize: 17, weight: .semibold)
-        self.checkoutButton.backgroundColor = SnabbleUI.appearance.primaryColor
-        self.checkoutButton.tintColor = SnabbleUI.appearance.secondaryColor
-        self.checkoutButton.makeRoundedButton()
+        self.checkoutButton.makeSnabbleButton()
     }
 
     override public func viewWillAppear(_ animated: Bool) {
@@ -169,9 +167,9 @@ public final class ShoppingCartViewController: UIViewController {
 
         self.delegate.track(.viewShoppingCart)
 
-        // WTF? without this code, the button text sometimes appears as .textColor :(
-        self.checkoutButton.tintColor = SnabbleUI.appearance.secondaryColor
-        self.checkoutButton.titleLabel?.textColor = SnabbleUI.appearance.secondaryColor
+        if let custom = self.customAppearance {
+            self.checkoutButton.setCustomAppearance(custom)
+        }
     }
     
     override public func viewWillDisappear(_ animated: Bool) {
@@ -508,6 +506,10 @@ extension ShoppingCartViewController: UITableViewDelegate, UITableViewDataSource
 
     public func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: self.itemCellIdentifier, for: indexPath) as! ShoppingCartTableCell
+        if let custom = self.customAppearance {
+            cell.setCustomAppearance(custom)
+        }
+        
         guard indexPath.row < self.items.count else {
             return cell
         }
@@ -613,3 +615,12 @@ extension ShoppingCartViewController: KeyboardHandling {
 
 }
 
+extension ShoppingCartViewController: CustomizableAppearance {
+    public func setCustomAppearance(_ appearance: CustomAppearance) {
+        self.checkoutButton?.setCustomAppearance(appearance)
+        self.customAppearance = appearance
+
+        let imgView = UIImageView(image: appearance.titleIcon)
+        self.navigationItem.titleView = imgView
+    }
+}

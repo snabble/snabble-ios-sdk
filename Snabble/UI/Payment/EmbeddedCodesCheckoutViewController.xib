@@ -113,9 +113,7 @@
                         <constraint firstAttribute="height" constant="48" id="6YG-qp-JoA"/>
                     </constraints>
                     <fontDescription key="fontDescription" type="system" weight="semibold" pointSize="17"/>
-                    <state key="normal" title="Button">
-                        <color key="titleColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
-                    </state>
+                    <state key="normal" title="Button"/>
                     <connections>
                         <action selector="paidButtonTapped:" destination="-1" eventType="touchUpInside" id="hAw-f9-bEg"/>
                     </connections>

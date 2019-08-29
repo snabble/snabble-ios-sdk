@@ -45,6 +45,7 @@ public final class ScannerViewController: UIViewController {
     private weak var delegate: ScannerDelegate!
     private var timer: Timer?
     private var barcodeDetector: BarcodeDetector
+    private var customAppearance: CustomAppearance?
 
     private var messageTimer: Timer?
 
@@ -81,6 +82,9 @@ public final class ScannerViewController: UIViewController {
         self.view.backgroundColor = .black
 
         self.scanConfirmationView = ScanConfirmationView()
+        if let custom = self.customAppearance {
+            self.scanConfirmationView.setCustomAppearance(custom)
+        }
         self.scanConfirmationView.translatesAutoresizingMaskIntoConstraints = false
         self.view.addSubview(self.scanConfirmationView)
         self.scanConfirmationView.leadingAnchor.constraint(equalTo: self.view.leadingAnchor, constant: 16).isActive = true
@@ -539,4 +543,14 @@ extension ScannerViewController: KeyboardHandling {
         }
     }
 
+}
+
+extension ScannerViewController: CustomizableAppearance {
+    public func setCustomAppearance(_ appearance: CustomAppearance) {
+        self.barcodeDetector.setCustomAppearance(appearance)
+        self.customAppearance = appearance
+
+        let imgView = UIImageView(image: appearance.titleIcon)
+        self.navigationItem.titleView = imgView
+    }
 }
