@@ -167,13 +167,9 @@ public final class ShoppingCartViewController: UIViewController {
 
         self.delegate.track(.viewShoppingCart)
 
-        // WTF? without this code, the button text sometimes appears as .textColor :(
-//        self.checkoutButton.tintColor = SnabbleUI.appearance.secondaryColor
-//        self.checkoutButton.titleLabel?.textColor = SnabbleUI.appearance.secondaryColor
-//
-//        if let custom = self.customAppearance {
-//            self.checkoutButton.setCustomAppearance(custom)
-//        }
+        if let custom = self.customAppearance {
+            self.checkoutButton.setCustomAppearance(custom)
+        }
     }
     
     override public func viewWillDisappear(_ animated: Bool) {
