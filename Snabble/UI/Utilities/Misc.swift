@@ -25,6 +25,12 @@ public struct SnabbleAppearance {
     public var textColor = UIColor.black
 
     public init() {}
+
+    @available(*, deprecated, renamed: "backgroundColor")
+    public var primaryBackgroundColor: UIColor {
+        get { return self.backgroundColor }
+        set { self.backgroundColor = newValue }
+    }
 }
 
 /// global settings for the Snabble UI classes
@@ -51,6 +57,12 @@ public final class SnabbleUI {
 }
 
 extension UIView {
+
+    @available(*, deprecated, message: "this method will be removed in a future release")
+    public func makeRoundedButton(cornerRadius: CGFloat? = nil) {
+        self.layer.cornerRadius = cornerRadius ?? 8
+    }
+
     /// add a "rounded button" appearance to this view
     public func makeSnabbleButton() {
         self.layer.cornerRadius = 8
