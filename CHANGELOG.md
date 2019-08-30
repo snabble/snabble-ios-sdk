@@ -1,5 +1,14 @@
 ## snabble iOS SDK Changelog
 
+# v0.10.16
+
+* Adds the new `CustomAppearance` struct and the `CustomizableAppearance` protocol that can be used to change button apperances in the Scanner and Shopping Cart.
+* `SnabbleAppearance.buttonBackgroundColor` is now consistently used for button backgrounds
+* The bundle selection action sheet no longer shows bundles that don't have a price
+* The SDK now allocates fewer `URLSession` instances for better HTTP/2 support
+* Reduce the number of incomplete online payment methods that are shown in the payment method selection
+* Support for Swift 4.2 is deprecated and will be removed on Oct 1st, 2019
+
 # v0.10.15
 
 * When creating a checkout info or checkout process fails and the payment reverts to an offline-capable QR code payment, the shopping cart is now persisted using the new `OfflineCarts` class. It is the hosting app's responsibiliy to attempt to retry posting this data to the backend at an appropriate time e.g. when it discovers that internet connectivity is restored. Use `OfflineCarts.shared.retryNeeded` to determine if there are carts pending retransmission.
