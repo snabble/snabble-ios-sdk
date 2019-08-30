@@ -620,7 +620,9 @@ extension ShoppingCartViewController: CustomizableAppearance {
         self.checkoutButton?.setCustomAppearance(appearance)
         self.customAppearance = appearance
 
-        let imgView = UIImageView(image: appearance.titleIcon)
-        self.navigationItem.titleView = imgView
+        if let titleIcon = appearance.titleIcon {
+            let imgView = UIImageView(image: titleIcon)
+            self.navigationItem.titleView = imgView
+        }
     }
 }

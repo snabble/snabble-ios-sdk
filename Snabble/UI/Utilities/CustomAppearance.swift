@@ -6,13 +6,11 @@
 //  "Chameleon mode" support
 
 public struct CustomAppearance {
-    public let homeBackgroundColor: UIColor
     public let buttonBackgroundColor: UIColor
     public let buttonTextColor: UIColor
-    public let titleIcon: UIImage
+    public let titleIcon: UIImage?
 
-    public init(homeBackgroundColor: UIColor, buttonBackgroundColor: UIColor, buttonTextColor: UIColor, titleIcon: UIImage) {
-        self.homeBackgroundColor = homeBackgroundColor
+    public init(buttonBackgroundColor: UIColor, buttonTextColor: UIColor, titleIcon: UIImage? = nil) {
         self.buttonBackgroundColor = buttonBackgroundColor
         self.buttonTextColor = buttonTextColor
         self.titleIcon = titleIcon
