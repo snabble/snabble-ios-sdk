@@ -150,8 +150,8 @@ public final class ScannerViewController: UIViewController {
         appearance.torchButtonImage = UIImage.fromBundle("icon-light-inactive")?.recolored(with: .white)
         appearance.torchButtonActiveImage = UIImage.fromBundle("icon-light-active")
         appearance.enterButtonImage = UIImage.fromBundle("icon-entercode")?.recolored(with: .white)
-        appearance.backgroundColor = SnabbleUI.appearance.primaryColor
-        appearance.textColor = SnabbleUI.appearance.secondaryColor
+        appearance.backgroundColor = SnabbleUI.appearance.buttonBackgroundColor
+        appearance.textColor = SnabbleUI.appearance.buttonTextColor
         appearance.reticleCornerRadius = 3
 
         return appearance

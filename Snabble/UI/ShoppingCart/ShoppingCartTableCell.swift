@@ -52,7 +52,7 @@ final class ShoppingCartTableCell: UITableViewCell {
         self.quantityLabel.textColor = SnabbleUI.appearance.secondaryColor
         self.quantityLabel.backgroundColor = .clear
 
-        self.quantityWrapper.backgroundColor = SnabbleUI.appearance.primaryColor
+        self.quantityWrapper.backgroundColor = SnabbleUI.appearance.buttonBackgroundColor
         self.quantityWrapper.layer.cornerRadius = 2
         self.quantityWrapper.layer.masksToBounds = true
 
