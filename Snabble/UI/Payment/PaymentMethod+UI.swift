@@ -44,7 +44,7 @@ extension PaymentMethod {
                 return nil
             }
         case .deDirectDebit, .visa, .mastercard:
-            processor = SepaCheckoutViewController(process!, self.data!, cart, delegate)
+            processor = OnlineCheckoutViewController(process!, self.data!, cart, delegate)
         }
         processor.hidesBottomBarWhenPushed = true
         return processor

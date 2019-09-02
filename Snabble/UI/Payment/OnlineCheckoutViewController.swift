@@ -1,12 +1,12 @@
 //
-//  SepaCheckoutViewController.swift
+//  OnlineCheckoutViewController.swift
 //
 //  Copyright © 2019 snabble. All rights reserved.
 //
 
 import UIKit
 
-final class SepaCheckoutViewController: UIViewController {
+final class OnlineCheckoutViewController: UIViewController {
 
     @IBOutlet weak var codeImage: UIImageView!
     @IBOutlet weak var explanationLabel: UILabel!
@@ -74,7 +74,7 @@ final class SepaCheckoutViewController: UIViewController {
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
 
-        self.delegate.track(.viewSepaCheckout)
+        self.delegate.track(.viewOnlineCheckout)
 
         let poller = PaymentProcessPoller(self.process, SnabbleUI.project)
 
