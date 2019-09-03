@@ -1,5 +1,10 @@
 ## snabble iOS SDK Changelog
 
+# v0.10.??
+
+* renamed `AnalyticsEvent.viewSepaCheckout` to `.viewOnlineCheckout`
+* added the optional `sorter` property to `CartConfig`. When an offline QR code is generated that does not use the `nextItemWithCheck`, this callback is used to allow the hosting app to re-order the items in the shopping cart.
+
 # v0.10.16
 
 * Adds the new `CustomAppearance` struct and the `CustomizableAppearance` protocol that can be used to change button apperances in the Scanner and Shopping Cart.
