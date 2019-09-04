@@ -286,7 +286,6 @@ final class ProductDB: ProductProvider {
         self.updateInProgress = true
         self.getAppDb(currentRevision: revision, schemaVersion: schemaVersion) { dbResponse in
             self.processAppDbResponse(dbResponse, completion)
-            self.updateInProgress = false
         }
     }
 
@@ -315,7 +314,7 @@ final class ProductDB: ProductProvider {
             self.appDbAvailability = data != nil ? .incomplete : .unknown
         }
     }
-    
+
     private func processAppDbResponse(_ dbResponse: AppDbResponse, _ completion: @escaping (_ dataAvailable: AppDbAvailability)->() ) {
         DispatchQueue.global(qos: .userInitiated).async {
             let tempDbPath = self.dbPathname(temporary: true)
@@ -361,6 +360,7 @@ final class ProductDB: ProductProvider {
             }
 
             DispatchQueue.main.async {
+                self.updateInProgress = false
                 self.appDbAvailability = dataAvailable
                 completion(dataAvailable)
             }
