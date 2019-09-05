@@ -4,6 +4,8 @@
 
 * renamed `AnalyticsEvent.viewSepaCheckout` to `.viewOnlineCheckout`
 * added the optional `sorter` property to `CartConfig`. When an offline QR code is generated that does not use the `nextItemWithCheck`, this callback is used to allow the hosting app to re-order the items in the shopping cart.
+* fixes a bug where multiple appdb updates could still run simultaneously
+* adds a few new `AnalyticsEvent`s (and deletes an old unused one)
 
 # v0.10.16
 
