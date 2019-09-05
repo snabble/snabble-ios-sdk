@@ -23,9 +23,6 @@ public enum AnalyticsEvent {
     /// the `PaymentMethodSelectionViewController` appeared
     case viewPaymentMethodSelection
 
-    /// the `CashCheckoutViewController` appeared
-    case viewCashCheckout
-
     /// the `OnlineCheckoutViewController` appeared
     case viewOnlineCheckout
 
@@ -34,6 +31,12 @@ public enum AnalyticsEvent {
 
     /// the `EmbeddedCodesCheckoutViewController` appeared
     case viewEmbeddedCodesCheckout
+
+    /// the `ReceiptListViewController` appeared
+    case viewReceiptList
+
+    /// the quicklook preview for a single receipt appeared
+    case viewReceiptDetail
 
     /// other events are tracked as a response to user actions
 

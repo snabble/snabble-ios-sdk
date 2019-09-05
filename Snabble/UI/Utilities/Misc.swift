@@ -38,6 +38,7 @@ public final class SnabbleUI {
 
     static private(set) public var appearance = SnabbleAppearance()
     static private(set) public var project = Project.none
+    static public weak var analytics: AnalyticsDelegate?
 
     /// sets the global appearance to be used. Your app must call `SnabbleUI.setup()` before instantiating any snabble view controllers
     public static func setup(_ appearance: SnabbleAppearance) {
