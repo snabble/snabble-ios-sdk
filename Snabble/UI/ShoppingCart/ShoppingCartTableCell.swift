@@ -6,7 +6,7 @@
 
 import UIKit
 
-protocol ShoppingCartTableDelegate: class {
+protocol ShoppingCartTableDelegate: AnalyticsDelegate {
     func confirmDeletion(at row: Int)
     func updateQuantity(_ quantity: Int, at row: Int)
     var showImages: Bool { get }
@@ -136,6 +136,8 @@ final class ShoppingCartTableCell: UITableViewCell {
             self.delegate.confirmDeletion(at: row)
             return
         }
+
+        self.delegate.track(.cartAmountChanged)
 
         self.item?.quantity = self.quantity
         if reload {

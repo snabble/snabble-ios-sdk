@@ -463,6 +463,10 @@ public final class ShoppingCartViewController: UIViewController {
 
 extension ShoppingCartViewController: ShoppingCartTableDelegate {
 
+    public func track(_ event: AnalyticsEvent) {
+        self.delegate.track(event)
+    }
+
     func confirmDeletion(at row: Int) {
         guard case .cartItem(let item, _) = self.items[row] else {
             return

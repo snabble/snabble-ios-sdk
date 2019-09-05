@@ -51,9 +51,15 @@ public enum AnalyticsEvent {
 
     /// product was scanned, but scan confirmation was closed w/o adding it to the cart. associated value is the product's `sku`
     case scanAborted(String)
+
+    /// a product was added to the shopping cart. associated value is the product's `sku`
+    case productAddedToCart(String)
     
     /// a barcode was selected from the autocomplete list. associated value is the selected EAN code
     case barcodeSelected(String)
+
+    /// a product's amount was changed via the +/- buttons in the shopping cart
+    case cartAmountChanged
 
     /// product was deleted from the cart. associated value is the product's `sku`
     case deletedFromCart(String)

@@ -195,7 +195,7 @@ final class ScanConfirmationView: DesignableView {
         }
 
         NotificationCenter.default.post(name: .snabbleCartUpdated, object: self)
-
+        self.delegate.track(.productAddedToCart(self.cartItem.product.sku))
         self.delegate.closeConfirmation(self.cartItem.product.scanMessage)
 
         self.quantityField.resignFirstResponder()
