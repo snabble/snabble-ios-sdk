@@ -1,5 +1,10 @@
 ## snabble iOS SDK Changelog
 
+# v0.10.18
+
+* fixes a bug where the wrong date was used as an offline saved cart's `finalizedAt`
+* adds the new `AnalyticsEvent.brightnessChanged` to enable tracking of brightness changes in the QR code dispays
+
 # v0.10.17
 
 * added the optional `sorter` property to `CartConfig`. When an offline QR code is generated that does not use the `nextItemWithCheck`, this callback is used to allow the hosting app to re-order the items in the shopping cart.
