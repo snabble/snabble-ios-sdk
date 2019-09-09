@@ -19,6 +19,7 @@ final class OnlineCheckoutViewController: UIViewController {
 
     private var process: CheckoutProcess
     private var poller: PaymentProcessPoller?
+    private var initialBrightness: CGFloat = 0
 
     init(_ process: CheckoutProcess, _ data: PaymentMethodData, _ cart: ShoppingCart, _ delegate: PaymentDelegate) {
         self.process = process
@@ -69,6 +70,12 @@ final class OnlineCheckoutViewController: UIViewController {
         }
 
         UIApplication.shared.isIdleTimerDisabled = true
+
+        self.initialBrightness = UIScreen.main.brightness
+        if self.initialBrightness < 0.5 {
+            UIScreen.main.brightness = 0.5
+            self.delegate.track(.brightnessIncreased)
+        }
     }
 
     override func viewDidAppear(_ animated: Bool) {
@@ -95,6 +102,8 @@ final class OnlineCheckoutViewController: UIViewController {
     }
 
     override func viewWillDisappear(_ animated: Bool) {
+        UIScreen.main.brightness = self.initialBrightness
+
         self.poller?.stop()
         self.poller = nil
 

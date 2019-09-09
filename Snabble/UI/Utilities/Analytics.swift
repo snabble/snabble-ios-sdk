@@ -72,4 +72,7 @@ public enum AnalyticsEvent {
 
     /// the user tapped "I have paid" on the embedded codes payment screen
     case markEmbeddedCodesPaid
+
+    /// the screen brightness needed to be increased in the checkout screen
+    case brightnessIncreased
 }

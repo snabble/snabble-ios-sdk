@@ -51,6 +51,7 @@ final class QRCheckoutViewController: UIViewController {
         self.initialBrightness = UIScreen.main.brightness
         if self.initialBrightness < 0.5 {
             UIScreen.main.brightness = 0.5
+            self.delegate.track(.brightnessIncreased)
         }
 
         let formatter = PriceFormatter(SnabbleUI.project)
