@@ -2,8 +2,9 @@
 
 # v0.10.18
 
-* fixes a bug where the wrong date was used as an offline saved cart's `finalizedAt`
-* adds the new `AnalyticsEvent.brightnessChanged` to enable tracking of brightness changes in the QR code dispays
+* Fixes a bug where the wrong date was used as an offline saved cart's `finalizedAt`
+* Adds the new `AnalyticsEvent.brightnessChanged` to enable tracking of brightness changes in the QR code displays.
+* The API's `clientId` is now stored in the keychain as well as in `Userdefaults.standard`.
 
 # v0.10.17
 
