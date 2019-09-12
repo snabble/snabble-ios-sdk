@@ -82,7 +82,19 @@ final class OnlineCheckoutViewController: UIViewController {
         super.viewDidAppear(animated)
 
         self.delegate.track(.viewOnlineCheckout)
+        self.startPoller()
+    }
 
+    override func viewWillDisappear(_ animated: Bool) {
+        UIScreen.main.brightness = self.initialBrightness
+
+        self.poller?.stop()
+        self.poller = nil
+
+        UIApplication.shared.isIdleTimerDisabled = false
+    }
+
+    private func startPoller() {
         let poller = PaymentProcessPoller(self.process, SnabbleUI.project)
 
         var events = [PaymentEvent: Bool]()
@@ -101,28 +113,30 @@ final class OnlineCheckoutViewController: UIViewController {
         self.poller = poller
     }
 
-    override func viewWillDisappear(_ animated: Bool) {
-        UIScreen.main.brightness = self.initialBrightness
-
-        self.poller?.stop()
-        self.poller = nil
-
-        self.delegate.track(.paymentCancelled)
-
-        UIApplication.shared.isIdleTimerDisabled = false
-    }
-
     @IBAction func cancelButtonTapped(_ sender: UIButton) {
         self.poller?.stop()
         self.poller = nil
 
         self.delegate.track(.paymentCancelled)
 
-        self.process.abort(SnabbleUI.project) { _ in
-            if let cartVC = self.navigationController?.viewControllers.first(where: { $0 is ShoppingCartViewController}) {
-                self.navigationController?.popToViewController(cartVC, animated: true)
-            } else {
-                self.navigationController?.popToRootViewController(animated: true)
+        self.process.abort(SnabbleUI.project) { result in
+            switch result {
+            case .success:
+                self.delegate.track(.paymentCancelled)
+                
+                if let cartVC = self.navigationController?.viewControllers.first(where: { $0 is ShoppingCartViewController}) {
+                    self.navigationController?.popToViewController(cartVC, animated: true)
+                } else {
+                    self.navigationController?.popToRootViewController(animated: true)
+                }
+            case .failure:
+                let alert = UIAlertController(title: "Snabble.Payment.cancelError.title".localized(),
+                                              message: "Snabble.Payment.cancelError.message".localized(),
+                                              preferredStyle: .alert)
+                alert.addAction(UIAlertAction(title: "Snabble.OK".localized(), style: .default) { action in
+                    self.startPoller()
+                })
+                self.present(alert, animated: true)
             }
         }
     }
