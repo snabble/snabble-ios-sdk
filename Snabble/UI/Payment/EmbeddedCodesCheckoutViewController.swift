@@ -8,6 +8,7 @@ import UIKit
 
 final class EmbeddedCodesCheckoutViewController: UIViewController {
 
+    @IBOutlet weak var checkoutIdLabel: UILabel!
     @IBOutlet weak var explanation1: UILabel!
     @IBOutlet weak var totalPriceLabel: UILabel!
     @IBOutlet weak var explanation2: UILabel!
@@ -60,6 +61,9 @@ final class EmbeddedCodesCheckoutViewController: UIViewController {
         self.pageControl.currentPageIndicatorTintColor = SnabbleUI.appearance.primaryColor
         self.collectionView.dataSource = self
         self.collectionView.delegate = self
+
+        let id = process?.links.`self`.href.suffix(4) ?? "offline"
+        self.checkoutIdLabel.text = "Snabble.Checkout.ID".localized() + ": " + id
 
         self.setButtonTitle()
     }

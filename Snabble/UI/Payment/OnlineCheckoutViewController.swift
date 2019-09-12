@@ -8,6 +8,7 @@ import UIKit
 
 final class OnlineCheckoutViewController: UIViewController {
 
+    @IBOutlet weak var checkoutIdLabel: UILabel!
     @IBOutlet weak var codeImage: UIImageView!
     @IBOutlet weak var explanationLabel: UILabel!
     @IBOutlet weak var waitLabel: UILabel!
@@ -45,8 +46,9 @@ final class OnlineCheckoutViewController: UIViewController {
         self.explanationLabel.text = "Snabble.Payment.presentCode".localized()
         self.waitLabel.text = "Snabble.Payment.waiting".localized()
 
-        let components = process.links.`self`.href.components(separatedBy: "/")
+        let components = self.process.links.`self`.href.components(separatedBy: "/")
         let id = components.last ?? "n/a"
+        self.checkoutIdLabel.text = "Snabble.Checkout.ID".localized() + ": " + String(id.suffix(4))
 
         self.codeImage.image = QRCode.generate(for: id, scale: 5)
         self.codeWidth.constant = self.codeImage.image?.size.width ?? 0
