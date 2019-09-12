@@ -1,5 +1,10 @@
 ## snabble iOS SDK Changelog
 
+# v0.10.19
+
+* Improved handling of cancelling online payments. When the `CheckoutProcess.abort` backend API call returns an error, an alert is displayed using the new i18n keys `Snabble.Payment.cancelError.title` and `Snabble.Payment.cancelError.message`.
+
+
 # v0.10.18
 
 * Fixes a bug where the wrong date was used as an offline saved cart's `finalizedAt`
