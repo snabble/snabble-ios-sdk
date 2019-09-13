@@ -308,7 +308,8 @@ extension Project {
                 let httpResponse = response as? HTTPURLResponse,
                 httpResponse.statusCode == 200 || httpResponse.statusCode == 201
             else {
-                self.logError("error getting response from \(url): \(String(describing: error))")
+                let statusCode = (response as? HTTPURLResponse)?.statusCode ?? 0
+                self.logError("error getting response from \(url): \(String(describing: error)) statusCode \(statusCode)")
                 var apiError = SnabbleError.unknown
                 if let data = rawData {
                     do {
