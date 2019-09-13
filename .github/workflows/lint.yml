@@ -2,14 +2,11 @@ on:
   push:
     branches:    
       - master
-name: Build
+name: Lint
 jobs:
   test:
-    name: Build
+    name: Lint
     runs-on: macOS-latest
-    strategy:
-        matrix:
-          destination: ['platform=iOS Simulator,OS=12.2,name=iPhone X']
     steps:
       - name: Checkout
         uses: actions/checkout@master
