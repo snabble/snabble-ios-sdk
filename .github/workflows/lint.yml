@@ -12,10 +12,11 @@ jobs:
         uses: actions/checkout@master
       - name: Lint
         run: pod lib lint --allow-warnings
-      - name: Notify slack
-        env:
-          SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
-          STATUS: ${{ job.status }}
-        uses: pullreminders/slack-action@master
+      - name: Slack Notification
+        uses: homoluctus/slatify@master
+        if: always()
         with:
-          args: "{\"channel\":\"CAEE26FV4\",\"text\":\"iOS SDK lint ${STATUS}\"}"
+          type: ${{ job.status }}
+          job_name: 'iOS SDK Lint'
+          channel: '#apps'
+          url: ${{ secrets.SLACK_WEBHOOK }}
