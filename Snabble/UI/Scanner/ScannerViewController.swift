@@ -7,19 +7,20 @@
 import UIKit
 import AVFoundation
 
+public struct ScanMessage {
+    let text: String
+    let image: UIImage?
+}
+
 public protocol ScannerDelegate: AnalyticsDelegate {
     func gotoShoppingCart()
 
-    func scanMessageText(for: String) -> String?
-
-    func showRecommendation(_ vc: UIViewController, _ project: Project, _ shop: Shop, _ product: Product, completion: @escaping (Bool) -> () )
+    func scanMessage(for project: Project, _ shop: Shop, _ product: Product) -> ScanMessage?
 }
 
 public extension ScannerDelegate {
-    func scanMessageText(for: String) -> String? { return nil }
-
-    func showRecommendation(_ vc: UIViewController, _ project: Project, _ shop: Shop, _ product: Product, completion: @escaping (Bool) -> () ) {
-        completion(false)
+    func scanMessage(for project: Project, _ shop: Shop, _ product: Product) -> ScanMessage? {
+        return nil
     }
 }
 
@@ -216,15 +217,15 @@ public final class ScannerViewController: UIViewController {
 
 extension ScannerViewController {
 
-    private func showMessage(_ msg: String) {
-        self.messageLabel.text = msg
+    private func showMessage(_ msg: ScanMessage) {
+        self.messageLabel.text = msg.text
         self.messageWrapper.isHidden = false
         self.messageTopDistance.constant = 0
         UIView.animate(withDuration: 0.2) {
             self.view.layoutIfNeeded()
         }
 
-        let millis = min(max(50 * msg.count, 2000), 7000)
+        let millis = min(max(50 * msg.text.count, 2000), 7000)
         let seconds = TimeInterval(millis) / 1000.0
         self.messageTimer = Timer.scheduledTimer(withTimeInterval: seconds, repeats: false) { _ in
             self.hideMessage()
@@ -261,32 +262,39 @@ extension ScannerViewController: ScanConfirmationViewDelegate {
         self.displayScanConfirmationView(hidden: true)
         self.updateCartButton()
 
-        if let msgId = item?.product.scanMessage, let msgText = self.delegate.scanMessageText(for: msgId) {
-            let alert = UIAlertController(title: "Snabble.Scanner.multiPack".localized(), message: msgText, preferredStyle: .alert)
-            alert.addAction(UIAlertAction(title: "Snabble.OK".localized(), style: .default) { action in
-                self.checkRecommendation(item)
-            })
-
-            self.present(alert, animated: true)
-        } else {
-            self.checkRecommendation(item)
-        }
-    }
-
-    private func checkRecommendation(_ item: CartItem?) {
-        guard let item = item else {
-            return self.restartScanner()
+        if let item = item, let msg = self.delegate.scanMessage(for: SnabbleUI.project, self.shop, item.product) {
+            self.showMessage(msg)
         }
 
-        self.delegate.showRecommendation(self, SnabbleUI.project, self.shop, item.product) { _ in
-            self.restartScanner()
-        }
-    }
-
-    private func restartScanner() {
         self.lastScannedCode = ""
         self.barcodeDetector.startScanning()
+
+//        if let msgId = item?.product.scanMessage, let msgText = self.delegate.scanMessageText(for: msgId) {
+//            let alert = UIAlertController(title: "Snabble.Scanner.multiPack".localized(), message: msgText, preferredStyle: .alert)
+//            alert.addAction(UIAlertAction(title: "Snabble.OK".localized(), style: .default) { action in
+//                self.checkRecommendation(item)
+//            })
+//
+//            self.present(alert, animated: true)
+//        } else {
+//            self.checkRecommendation(item)
+//        }
     }
+
+//    private func checkRecommendation(_ item: CartItem?) {
+//        guard let item = item else {
+//            return self.restartScanner()
+//        }
+//
+//        self.delegate.showRecommendation(self, SnabbleUI.project, self.shop, item.product) { _ in
+//            self.restartScanner()
+//        }
+//    }
+
+//    private func restartScanner() {
+//        self.lastScannedCode = ""
+//        self.barcodeDetector.startScanning()
+//    }
 }
 
 // MARK: - scanning view delegate
@@ -317,6 +325,7 @@ extension ScannerViewController {
         // Log.debug("scanned unknown code \(code)")
         self.tapticFeedback.notificationOccurred(.error)
 
+        let msg = ScanMessage(text: msg, image: nil)
         self.showMessage(msg)
         self.delegate.track(.scanUnknown(code))
 
