@@ -54,6 +54,9 @@ public protocol BarcodeDetector {
 
     /// instructs the detector to stop capturing video frames and detect barcodes
     func stopScanning()
+
+    /// sets the cart button's appearance
+    func setCustomAppearance(_ appearance: CustomAppearance)
 }
 
 public struct BarcodeDetectorAppearance {

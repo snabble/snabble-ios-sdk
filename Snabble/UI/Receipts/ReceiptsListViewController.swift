@@ -81,6 +81,12 @@ public final class ReceiptsListViewController: UIViewController {
         self.startReceiptPolling()
     }
 
+    override public func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+
+        SnabbleUI.analytics?.track(.viewReceiptList)
+    }
+
     private func loadOrderList() {
         OrderList.load(SnabbleAPI.projects[0]) { result in
             self.orderListLoaded(result)
@@ -216,6 +222,8 @@ extension ReceiptsListViewController {
         self.previewItem = ReceiptPreviewItem(url, title)
         self.navigationController?.pushViewController(self.quickLook, animated: true)
         self.quickLook.reloadData()
+
+        SnabbleUI.analytics?.track(.viewReceiptDetail)
     }
 
 }

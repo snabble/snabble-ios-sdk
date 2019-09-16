@@ -139,19 +139,29 @@ public struct SnabbleAPI {
 }
 
 extension SnabbleAPI {
+    private static let service = "io.snabble.sdk"
+    private static let key = "Snabble.api.clientId"
+
     public static var clientId: String {
-        if let id = UserDefaults.standard.string(forKey: "Snabble.api.clientId") {
-            return id
-        } else {
-            let id = UUID().uuidString.lowercased().replacingOccurrences(of: "-", with: "")
-            UserDefaults.standard.set(id, forKey: "Snabble.api.clientId")
+        var keychain = Keychain(service: service)
+
+        if let id = keychain[key] {
             return id
         }
+
+        if let id = UserDefaults.standard.string(forKey: key) {
+            keychain[key] = id
+            return id
+        }
+
+        let id = UUID().uuidString.lowercased().replacingOccurrences(of: "-", with: "")
+        keychain[key] = id
+        UserDefaults.standard.set(id, forKey: key)
+        return id
     }
 }
 
 extension SnabbleAPI {
-
     static func urlFor(_ url: String) -> URL? {
         return URL(string: self.absoluteUrl(url))
     }
@@ -224,5 +234,4 @@ extension SnabbleAPI {
             }
         }
     }
-
 }

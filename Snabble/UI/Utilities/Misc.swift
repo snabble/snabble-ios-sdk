@@ -10,14 +10,27 @@ import UIKit
 /// configuration parameters for the look of the view controllers in the Snabble SDK
 public struct SnabbleAppearance {
     public var primaryColor = UIColor.black
-    public var primaryBackgroundColor = UIColor.white
     public var secondaryColor = UIColor.white
+    public var backgroundColor = UIColor.white
+
+    // colors for buttons
     public var buttonShadowColor = UIColor.black
     public var buttonBorderColor = UIColor.black
     public var buttonBackgroundColor = UIColor.lightGray
+    public var buttonTextColor = UIColor.white
+
+    // bg color for the "stepper" buttons 
+    public var stepperButtonBackgroundColor = UIColor.lightGray
+
     public var textColor = UIColor.black
 
     public init() {}
+
+    @available(*, deprecated, renamed: "backgroundColor")
+    public var primaryBackgroundColor: UIColor {
+        get { return self.backgroundColor }
+        set { self.backgroundColor = newValue }
+    }
 }
 
 /// global settings for the Snabble UI classes
@@ -25,10 +38,17 @@ public final class SnabbleUI {
 
     static private(set) public var appearance = SnabbleAppearance()
     static private(set) public var project = Project.none
+    static public weak var analytics: AnalyticsDelegate?
 
     /// sets the global appearance to be used. Your app must call `SnabbleUI.setup()` before instantiating any snabble view controllers
     public static func setup(_ appearance: SnabbleAppearance) {
         self.appearance = appearance
+    }
+
+    /// update the global appearance
+    public static func customizeAppearance(_ custom: CustomAppearance) {
+        self.appearance.buttonBackgroundColor = custom.buttonBackgroundColor
+        self.appearance.buttonTextColor = custom.buttonTextColor
     }
 
     /// sets the project to be used
@@ -39,15 +59,22 @@ public final class SnabbleUI {
 
 extension UIView {
 
-    /// add a "rounded button" appearance to this view
+    @available(*, deprecated, message: "this method will be removed in a future release")
     public func makeRoundedButton(cornerRadius: CGFloat? = nil) {
         self.layer.cornerRadius = cornerRadius ?? 8
+    }
+
+    /// add a "rounded button" appearance to this view
+    public func makeSnabbleButton() {
+        self.layer.cornerRadius = 8
+        self.backgroundColor = SnabbleUI.appearance.buttonBackgroundColor
+        self.tintColor = SnabbleUI.appearance.buttonTextColor
     }
 
     /// add a "bordered button" appearance to this view
     public func makeBorderedButton() {
         self.layer.cornerRadius = 6
-        self.backgroundColor = SnabbleUI.appearance.buttonBackgroundColor
+        self.backgroundColor = SnabbleUI.appearance.stepperButtonBackgroundColor
         self.layer.borderWidth = 0.5
         self.layer.borderColor = SnabbleUI.appearance.buttonBorderColor.cgColor
     }

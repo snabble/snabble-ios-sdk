@@ -51,6 +51,7 @@ final class QRCheckoutViewController: UIViewController {
         self.initialBrightness = UIScreen.main.brightness
         if self.initialBrightness < 0.5 {
             UIScreen.main.brightness = 0.5
+            self.delegate.track(.brightnessIncreased)
         }
 
         let formatter = PriceFormatter(SnabbleUI.project)
@@ -69,13 +70,7 @@ final class QRCheckoutViewController: UIViewController {
         self.qrCodeView.image = QRCode.generate(for: qrCodeContent, scale: 5)
         self.qrCodeWidth.constant = self.qrCodeView.image?.size.width ?? 0
 
-        let poller = PaymentProcessPoller(self.process, SnabbleUI.project)
-        poller.waitFor([.paymentSuccess]) { events in
-            if let success = events[.paymentSuccess] {
-                self.paymentFinished(success, poller.updatedProcess)
-            }
-        }
-        self.poller = poller
+        self.startPoller()
     }
 
     override func viewDidAppear(_ animated: Bool) {
@@ -90,17 +85,38 @@ final class QRCheckoutViewController: UIViewController {
         self.poller = nil
     }
 
+    private func startPoller() {
+        let poller = PaymentProcessPoller(self.process, SnabbleUI.project)
+        poller.waitFor([.paymentSuccess]) { events in
+            if let success = events[.paymentSuccess] {
+                self.paymentFinished(success, poller.updatedProcess)
+            }
+        }
+        self.poller = poller
+    }
+
     @IBAction func cancelButtonTapped(_ sender: UIButton) {
         self.poller?.stop()
         self.poller = nil
 
-        self.delegate.track(.paymentCancelled)
+        self.process.abort(SnabbleUI.project) { result in
+            switch result {
+            case .success:
+                self.delegate.track(.paymentCancelled)
 
-        self.process.abort(SnabbleUI.project) { _ in
-            if let cartVC = self.navigationController?.viewControllers.first(where: { $0 is ShoppingCartViewController}) {
-                self.navigationController?.popToViewController(cartVC, animated: true)
-            } else {
-                self.navigationController?.popToRootViewController(animated: true)
+                if let cartVC = self.navigationController?.viewControllers.first(where: { $0 is ShoppingCartViewController}) {
+                    self.navigationController?.popToViewController(cartVC, animated: true)
+                } else {
+                    self.navigationController?.popToRootViewController(animated: true)
+                }
+            case .failure:
+                let alert = UIAlertController(title: "Snabble.Payment.cancelError.title".localized(),
+                                              message: "Snabble.Payment.cancelError.message".localized(),
+                                              preferredStyle: .alert)
+                alert.addAction(UIAlertAction(title: "Snabble.OK".localized(), style: .default) { action in
+                    self.startPoller()
+                })
+                self.present(alert, animated: true)
             }
         }
     }

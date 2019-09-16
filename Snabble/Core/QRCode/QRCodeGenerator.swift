@@ -25,7 +25,7 @@ public struct QRCodeGenerator {
     public func generateCodes() -> [String] {
         let blocks = self.makeBlocks()
 
-        blocks.forEach { assert($0.items.count <= config.maxCodes) }
+        blocks.forEach { assert($0.items.count <= self.config.maxCodes) }
 
         let codes = blocks.enumerated().map { (index, block) in
             block.stringify(index, blocks.count)
@@ -36,23 +36,24 @@ public struct QRCodeGenerator {
 
     // split the cart into as many blocks as needed
     private func makeBlocks() -> [Codeblock] {
-        if let nextWithCheck = config.nextCodeWithCheck {
+        if let nextWithCheck = self.config.nextCodeWithCheck {
             // separate regular and restricted itms
             return self.splitCart(nextWithCheck)
         }
 
         // all items are considered "regular"
-        var blocks = self.makeBlocks(cart.items, cart.customerCard)
+        let items = self.cart.sortedItems()
+        var blocks = self.makeBlocks(items, self.cart.customerCard)
 
         // patch the last block to have the `finalCode` code
-        blocks[blocks.count - 1].endCode = config.finalCode
+        blocks[blocks.count - 1].endCode = self.config.finalCode
         return self.balanceBlocks(blocks)
     }
 
     // split the cart into blocks of regular items, followed by blocks of restricted items
     private func splitCart(_ nextWithCheck: String) -> [Codeblock] {
-        let regularItems = cart.items.filter { $0.product.saleRestriction == .none }
-        let restrictedItems = cart.items.filter { $0.product.saleRestriction != .none }
+        let regularItems = self.cart.items.filter { $0.product.saleRestriction == .none }
+        let restrictedItems = self.cart.items.filter { $0.product.saleRestriction != .none }
 
         var customerCard = cart.customerCard
         var regularBlocks = self.makeBlocks(regularItems, customerCard)

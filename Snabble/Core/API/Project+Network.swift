@@ -243,7 +243,7 @@ extension Project {
     ///   - completion: called on the main thread when the result is available.
     ///   - result: the parsed result object or error
     func retry<T: Decodable>(_ retryCount: Int, _ pauseTime: TimeInterval, _ request: URLRequest, _ completion: @escaping (_ result: Result<T, SnabbleError>) -> () ) {
-        perform(request) { (result: Result<T, SnabbleError>) in
+        self.perform(request) { (result: Result<T, SnabbleError>) in
             switch result {
             case .success:
                 completion(result)
@@ -308,7 +308,8 @@ extension Project {
                 let httpResponse = response as? HTTPURLResponse,
                 httpResponse.statusCode == 200 || httpResponse.statusCode == 201
             else {
-                self.logError("error getting response from \(url): \(String(describing: error))")
+                let statusCode = (response as? HTTPURLResponse)?.statusCode ?? 0
+                self.logError("error getting response from \(url): \(String(describing: error)) statusCode \(statusCode)")
                 var apiError = SnabbleError.unknown
                 if let data = rawData {
                     do {

@@ -57,15 +57,21 @@ extension SnabbleAPI {
     }
 
     ///
-    /// create a URLSession that is suitable for making requests to the snabble servers
+    /// get a URLSession that is suitable for making requests to the snabble servers
     /// and verifies the CAs
     ///
     /// - Returns: a URLSession object
     static public func urlSession() -> URLSession {
+        return pinningSession
+    }
+
+    static let pinningSession: URLSession = {
         let checker = CertificatePinningDelegate()
         let session = URLSession(configuration: .default, delegate: checker, delegateQueue: nil)
         return session
-    }
+    }()
+
+    static let defaultSession = URLSession(configuration: .default)
 }
 
 /// handle the certificate pinning checks for our requests

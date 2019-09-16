@@ -18,7 +18,7 @@ class EmptyStateView: NibView {
         self.tapHandler = tapHandler
         super.init(frame: CGRect.zero)
 
-        self.backgroundColor = SnabbleUI.appearance.primaryBackgroundColor
+        self.backgroundColor = SnabbleUI.appearance.backgroundColor
 
         self.button1.tag = 0
         self.button2.tag = 1

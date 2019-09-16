@@ -42,9 +42,7 @@ final class ScanConfirmationView: DesignableView {
         self.view.backgroundColor = .clear
         self.addCornersAndShadow(backgroundColor: .white, cornerRadius: 8)
 
-        self.cartButton.backgroundColor = SnabbleUI.appearance.primaryColor
-        self.cartButton.tintColor = SnabbleUI.appearance.secondaryColor
-        self.cartButton.makeRoundedButton()
+        self.cartButton.makeSnabbleButton()
 
         self.priceLabel.font = UIFont.monospacedDigitSystemFont(ofSize: 17, weight: .regular)
 
@@ -59,6 +57,10 @@ final class ScanConfirmationView: DesignableView {
         self.closeButton.setImage(UIImage.fromBundle("icon-close"), for: .normal)
         self.plusButton.setImage(UIImage.fromBundle("icon-plus"), for: .normal)
         self.minusButton.setImage(UIImage.fromBundle("icon-minus"), for: .normal)
+    }
+
+    func setCustomAppearance(_ appearance: CustomAppearance) {
+        self.cartButton.setCustomAppearance(appearance)
     }
     
     func present(_ scannedProduct: ScannedProduct, _ scannedCode: String, cart: ShoppingCart) {
@@ -193,7 +195,7 @@ final class ScanConfirmationView: DesignableView {
         }
 
         NotificationCenter.default.post(name: .snabbleCartUpdated, object: self)
-
+        self.delegate.track(.productAddedToCart(self.cartItem.product.sku))
         self.delegate.closeConfirmation(self.cartItem)
 
         self.quantityField.resignFirstResponder()

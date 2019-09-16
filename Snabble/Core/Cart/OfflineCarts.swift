@@ -12,11 +12,20 @@ import Foundation
 
 struct SavedCart: Codable {
     let cart: ShoppingCart
+    let finalizedAt: Date
     var failures: Int
 
     init(_ cart: ShoppingCart) {
         self.cart = cart
+        self.finalizedAt = Date()
         self.failures = 0
+    }
+
+    init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        self.cart = try container.decode(ShoppingCart.self, forKey: .cart)
+        self.finalizedAt = try container.decodeIfPresent(Date.self, forKey: .finalizedAt) ?? Date()
+        self.failures = try container.decode(Int.self, forKey: .failures)
     }
 }
 
@@ -25,7 +34,7 @@ public class OfflineCarts {
 
     private var inProgress = false
     private var pendingCarts = 0
-    private let queue = DispatchQueue(label: "io.snabble.saved-carts", qos: .background)
+    private let queue = DispatchQueue(label: "io.snabble.saved-carts", qos: .utility)
 
     private init() { }
 
@@ -74,7 +83,7 @@ public class OfflineCarts {
             cart.createCheckoutInfo(project, timeout: 2) { result in
                 switch result {
                 case .success(let info):
-                    info.createCheckoutProcess(project, paymentMethod: .qrCodeOffline, processedOffline: true) { result in
+                    info.createCheckoutProcess(project, paymentMethod: .qrCodeOffline, finalizedAt: savedCart.finalizedAt) { result in
                         switch result {
                         case .success:
                             synchronized(self) {

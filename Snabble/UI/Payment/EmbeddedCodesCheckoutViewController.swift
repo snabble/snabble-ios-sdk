@@ -8,6 +8,7 @@ import UIKit
 
 final class EmbeddedCodesCheckoutViewController: UIViewController {
 
+    @IBOutlet weak var checkoutIdLabel: UILabel!
     @IBOutlet weak var explanation1: UILabel!
     @IBOutlet weak var totalPriceLabel: UILabel!
     @IBOutlet weak var explanation2: UILabel!
@@ -44,18 +45,10 @@ final class EmbeddedCodesCheckoutViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        self.paidButton.backgroundColor = SnabbleUI.appearance.primaryColor
-        self.paidButton.makeRoundedButton()
+        self.paidButton.makeSnabbleButton()
         self.paidButton.setTitle("Snabble.QRCode.didPay".localized(), for: .normal)
         self.paidButton.alpha = 0
         self.paidButton.isUserInteractionEnabled = false
-
-        Timer.scheduledTimer(withTimeInterval: 2, repeats: false) { timer in
-            UIView.animate(withDuration: 0.2) {
-                self.paidButton.alpha = 1
-            }
-            self.paidButton.isUserInteractionEnabled = true
-        }
 
         let nib = UINib(nibName: "QRCodeCell", bundle: SnabbleBundle.main)
         self.collectionView.register(nib, forCellWithReuseIdentifier: "qrCodeCell")
@@ -69,6 +62,9 @@ final class EmbeddedCodesCheckoutViewController: UIViewController {
         self.collectionView.dataSource = self
         self.collectionView.delegate = self
 
+        let id = process?.links.`self`.href.suffix(4) ?? "offline"
+        self.checkoutIdLabel.text = "Snabble.Checkout.ID".localized() + ": " + id
+
         self.setButtonTitle()
     }
 
@@ -80,6 +76,7 @@ final class EmbeddedCodesCheckoutViewController: UIViewController {
         self.initialBrightness = UIScreen.main.brightness
         if self.initialBrightness < 0.5 {
             UIScreen.main.brightness = 0.5
+            self.delegate.track(.brightnessIncreased)
         }
 
         let formatter = PriceFormatter(SnabbleUI.project)
@@ -111,6 +108,17 @@ final class EmbeddedCodesCheckoutViewController: UIViewController {
         if width != self.itemSize.width {
             self.itemSize = CGSize(width: width, height: width)
             self.collectionView.collectionViewLayout.invalidateLayout()
+        }
+    }
+
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+
+        Timer.scheduledTimer(withTimeInterval: 2, repeats: false) { timer in
+            UIView.animate(withDuration: 0.2) {
+                self.paidButton.alpha = 1
+            }
+            self.paidButton.isUserInteractionEnabled = true
         }
     }
 

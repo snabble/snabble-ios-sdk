@@ -20,6 +20,7 @@ final public class ShoppingCart: Codable {
 
     fileprivate var backupItems: [CartItem]?
     fileprivate var backupSession: String?
+    private let sorter: CartConfig.ItemSorter?
 
     public var customerCard: String? {
         didSet {
@@ -54,6 +55,7 @@ final public class ShoppingCart: Codable {
         self.customerCard = try container.decodeIfPresent(.customerCard)
         self.maxAge = try container.decode(.maxAge)
         self.directory = nil
+        self.sorter = nil
     }
 
     public func encode(to encoder: Encoder) throws {
@@ -77,6 +79,7 @@ final public class ShoppingCart: Codable {
         self.shopId = config.shop.id
         self.maxAge = config.maxAge
         self.directory = config.directory
+        self.sorter = config.sorter
 
         self.session = ""
         self.items = []
@@ -171,6 +174,10 @@ final public class ShoppingCart: Codable {
 
     func backendItems() -> [BackendCartItem] {
         return self.items.map { $0.cartItem }
+    }
+
+    func sortedItems() -> [CartItem] {
+        return self.sorter?(self.items) ?? self.items
     }
 
     /// return the the total price of all products. nil if unknown, i.e. when there are products with unknown prices in the cart

@@ -22,6 +22,11 @@ public struct CartConfig {
     /// the maximum age of a shopping cart, in seconds. Set this to 0 to keep carts forever
     public var maxAge: TimeInterval = 14400
 
+    /// optional: a closure that is used to sort cart items before a QR code is generated
+    /// use this to e.g. sort items by price, or move certain item types to the end of the cart
+    public typealias ItemSorter = ([CartItem]) -> [CartItem]
+    public var sorter: ItemSorter? = nil
+
     public init() {
         let docDir = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)[0]
         self.directory = docDir.path

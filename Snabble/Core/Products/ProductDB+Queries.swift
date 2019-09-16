@@ -146,7 +146,10 @@ extension ProductDB {
                     where p.bundledSku = ?
                     """, arguments: [sku])
             }
-            return rows.compactMap { self.productFromRow(dbQueue, $0, shopId) }
+            // get all bundles
+            let bundles = rows.compactMap { self.productFromRow(dbQueue, $0, shopId) }
+            // remove bundles w/o price
+            return bundles.filter { $0.listPrice != 0 }
         } catch {
             self.logError("productsBundling db error: \(error)")
         }

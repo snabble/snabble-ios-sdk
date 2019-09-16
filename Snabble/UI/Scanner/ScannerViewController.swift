@@ -51,6 +51,7 @@ public final class ScannerViewController: UIViewController {
     private weak var delegate: ScannerDelegate!
     private var timer: Timer?
     private var barcodeDetector: BarcodeDetector
+    private var customAppearance: CustomAppearance?
 
     private var messageTimer: Timer?
 
@@ -87,6 +88,9 @@ public final class ScannerViewController: UIViewController {
         self.view.backgroundColor = .black
 
         self.scanConfirmationView = ScanConfirmationView()
+        if let custom = self.customAppearance {
+            self.scanConfirmationView.setCustomAppearance(custom)
+        }
         self.scanConfirmationView.translatesAutoresizingMaskIntoConstraints = false
         self.view.addSubview(self.scanConfirmationView)
         self.scanConfirmationView.leadingAnchor.constraint(equalTo: self.view.leadingAnchor, constant: 16).isActive = true
@@ -152,8 +156,8 @@ public final class ScannerViewController: UIViewController {
         appearance.torchButtonImage = UIImage.fromBundle("icon-light-inactive")?.recolored(with: .white)
         appearance.torchButtonActiveImage = UIImage.fromBundle("icon-light-active")
         appearance.enterButtonImage = UIImage.fromBundle("icon-entercode")?.recolored(with: .white)
-        appearance.textColor = .white
-        appearance.backgroundColor = SnabbleUI.appearance.primaryColor
+        appearance.backgroundColor = SnabbleUI.appearance.buttonBackgroundColor
+        appearance.textColor = SnabbleUI.appearance.buttonTextColor
         appearance.reticleCornerRadius = 3
 
         return appearance
@@ -220,7 +224,9 @@ extension ScannerViewController {
             self.view.layoutIfNeeded()
         }
 
-        self.messageTimer = Timer.scheduledTimer(withTimeInterval: 7, repeats: false) { _ in
+        let millis = min(max(50 * msg.count, 2000), 7000)
+        let seconds = TimeInterval(millis) / 1000.0
+        self.messageTimer = Timer.scheduledTimer(withTimeInterval: seconds, repeats: false) { _ in
             self.hideMessage()
         }
     }
@@ -552,4 +558,16 @@ extension ScannerViewController: KeyboardHandling {
         }
     }
 
+}
+
+extension ScannerViewController: CustomizableAppearance {
+    public func setCustomAppearance(_ appearance: CustomAppearance) {
+        self.barcodeDetector.setCustomAppearance(appearance)
+        self.customAppearance = appearance
+
+        if let titleIcon = appearance.titleIcon {
+            let imgView = UIImageView(image: titleIcon)
+            self.navigationItem.titleView = imgView
+        }
+    }
 }

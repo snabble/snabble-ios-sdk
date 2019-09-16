@@ -15,18 +15,21 @@ final class PaymentMethodSelectionViewController: UIViewController {
     @IBOutlet weak var collectionView: UICollectionView!
     
     private weak var cart: ShoppingCart!
-    private var process: PaymentProcess
-    private var signedCheckoutInfo: SignedCheckoutInfo
-    private var paymentMethods: [PaymentMethod]
+    private let process: PaymentProcess
+    private let signedCheckoutInfo: SignedCheckoutInfo
     private var itemSize = CGSize.zero
+
+    private var paymentMethods: [PaymentMethod]
 
     init(_ process: PaymentProcess, _ paymentMethods: [PaymentMethod]) {
         self.process = process
         self.signedCheckoutInfo = process.signedCheckoutInfo
         self.cart = process.cart
-        self.paymentMethods = paymentMethods
+        self.paymentMethods = []
 
         super.init(nibName: nil, bundle: SnabbleBundle.main)
+
+        self.paymentMethods = self.filterPaymentMethods(paymentMethods)
     }
 
     required init?(coder aDecoder: NSCoder) {
@@ -63,9 +66,7 @@ final class PaymentMethodSelectionViewController: UIViewController {
 
         if !self.isBeingPresented && !self.isMovingToParent {
             // whatever was covering us has been dismissed or popped
-            let info = self.signedCheckoutInfo
-            self.paymentMethods = self.process.mergePaymentMethodList(info.checkoutInfo.paymentMethods)
-            self.collectionView.reloadData()
+            self.updatePaymentMethods()
         }
 
         if self.paymentMethods.count == 1 {
@@ -91,10 +92,32 @@ final class PaymentMethodSelectionViewController: UIViewController {
     }
 
     @objc private func paymentMethodsChanged(_ notification: Notification) {
-        let info = self.signedCheckoutInfo
-        self.paymentMethods = self.process.mergePaymentMethodList(info.checkoutInfo.paymentMethods)
+        self.updatePaymentMethods()
+    }
+
+    private func updatePaymentMethods() {
+        let infoMethods = self.signedCheckoutInfo.checkoutInfo.paymentMethods
+        let mergedMethods = self.process.mergePaymentMethodList(infoMethods)
+        self.paymentMethods = self.filterPaymentMethods(mergedMethods)
         self.collectionView.reloadData()
         self.view.setNeedsLayout()
+    }
+
+    // filter payment methods: if there is at least one online payment method with data, don't show other incomplete online methods
+    private func filterPaymentMethods(_ methods: [PaymentMethod]) -> [PaymentMethod] {
+        let onlineComplete = methods.filter { !$0.rawMethod.offline && $0.data != nil }
+        if onlineComplete.count == 0 {
+            return methods
+        }
+
+        // remove all incomplete online methods
+        var methods = methods
+        for (index, method) in methods.enumerated().reversed() {
+            if !method.rawMethod.offline && method.data == nil {
+                methods.remove(at: index)
+            }
+        }
+        return methods
     }
 
     private func updateContentInset() {

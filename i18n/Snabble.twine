@@ -199,6 +199,10 @@
         en = Show this code at a snabble monitor or to a cashier to confirm your purchase.
     [Snabble.Payment.waiting]
         en = Waiting for confirmation
+    [Snabble.Payment.cancelError.title]
+       en = Error cancelling payment
+    [Snabble.Payment.cancelError.message]
+       en = Payment cannot be cancelled at this time.
         
     [Snabble.networkError]
         en = Connection error
@@ -228,9 +232,15 @@
     [Snabble.Keyguard.requireScreenLock]
         en = You need to secure your smartphone with a screen lock to add this payment method.
         tags = android
+    [Snabble.Payment.CreditCard]
+        en = Credit card
+        tags = android
     [Snabble.Payment.CreditCard.error]
         en = There was an error processing your credit card
         tags = android
     [Snabble.Payment.CreditCard.expireDate]
         en = Expires: %@
+        tags = android
+    [Snabble.Payment.usableAt]
+        en = Usable at: %@
         tags = android

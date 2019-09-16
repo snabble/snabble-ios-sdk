@@ -1,5 +1,31 @@
 ## snabble iOS SDK Changelog
 
+# v0.10.19
+
+* Improved handling of cancelling online payments. When the `CheckoutProcess.abort` backend API call returns an error, an alert is displayed using the new i18n keys `Snabble.Payment.cancelError.title` and `Snabble.Payment.cancelError.message`.
+
+
+# v0.10.18
+
+* Fixes a bug where the wrong date was used as an offline saved cart's `finalizedAt`
+* Adds the new `AnalyticsEvent.brightnessChanged` to enable tracking of brightness changes in the QR code displays.
+* The API's `clientId` is now stored in the keychain as well as in `Userdefaults.standard`.
+
+# v0.10.17
+
+* added the optional `sorter` property to `CartConfig`. When an offline QR code is generated that does not use the `nextItemWithCheck`, this callback is used to allow the hosting app to re-order the items in the shopping cart.
+* fixes a bug where multiple appdb updates could still run simultaneously
+* added a few new `AnalyticsEvent`s, deleted an old unused one, and renamed `.viewSepaCheckout` to `.viewOnlineCheckout`
+
+# v0.10.16
+
+* Adds the new `CustomAppearance` struct and the `CustomizableAppearance` protocol that can be used to change button apperances in the Scanner and Shopping Cart.
+* `SnabbleAppearance.buttonBackgroundColor` is now consistently used for button backgrounds
+* The bundle selection action sheet no longer shows bundles that don't have a price
+* The SDK now allocates fewer `URLSession` instances for better HTTP/2 support
+* Reduce the number of incomplete online payment methods that are shown in the payment method selection
+* Support for Swift 4.2 is deprecated and will be removed on Oct 1st, 2019
+
 # v0.10.15
 
 * When creating a checkout info or checkout process fails and the payment reverts to an offline-capable QR code payment, the shopping cart is now persisted using the new `OfflineCarts` class. It is the hosting app's responsibiliy to attempt to retry posting this data to the backend at an appropriate time e.g. when it discovers that internet connectivity is restored. Use `OfflineCarts.shared.retryNeeded` to determine if there are carts pending retransmission.
