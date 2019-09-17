@@ -242,9 +242,11 @@ extension ScannerViewController {
             self.view.layoutIfNeeded()
         }
 
+        let factor = msg.imageUrl == nil ? 1.0 : 3.0
         let minMillis = msg.imageUrl == nil ? 2000 : 4000
         let millis = min(max(50 * msg.text.count, minMillis), 7000)
-        let seconds = TimeInterval(millis) / 1000.0
+        let seconds = TimeInterval(millis) / 1000.0 * factor
+        self.messageTimer?.invalidate()
         self.messageTimer = Timer.scheduledTimer(withTimeInterval: seconds, repeats: false) { _ in
             self.hideMessage()
         }
