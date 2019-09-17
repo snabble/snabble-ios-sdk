@@ -169,7 +169,7 @@ extension AppEvent {
         }
 
         // use a system default session here so we can still log pinning errors
-        let task = SnabbleAPI.defaultSession.dataTask(with: request) { rawData, response, error in
+        let task = URLSession.shared.dataTask(with: request) { rawData, response, error in
             if let error = error {
                 Log.error("posting event failed: \(error)")
             }

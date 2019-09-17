@@ -232,7 +232,7 @@ public final class ShoppingCartViewController: UIViewController {
             guard let url = URL(string: img) else {
                 continue
             }
-            let task = SnabbleAPI.defaultSession.dataTask(with: url) { _,_,_ in }
+            let task = URLSession.shared.dataTask(with: url) { _,_,_ in }
             task.resume()
         }
         self.knownImages = images

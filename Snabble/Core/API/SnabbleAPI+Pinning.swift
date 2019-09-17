@@ -70,8 +70,6 @@ extension SnabbleAPI {
         let session = URLSession(configuration: .default, delegate: checker, delegateQueue: nil)
         return session
     }()
-
-    static let defaultSession = URLSession(configuration: .default)
 }
 
 /// handle the certificate pinning checks for our requests
