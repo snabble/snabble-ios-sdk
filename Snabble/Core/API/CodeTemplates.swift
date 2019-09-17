@@ -478,7 +478,7 @@ public struct ParseResult {
         if internalChecksum {
             let embedDigits = embeddedData.map { Int(String($0))! }
             let check = EAN13.internalChecksum5(embedDigits)
-            result = String(result.prefix(6) + String(check) + result.suffix(6))
+            result = String(result.prefix(6)) + String(check) + String(result.suffix(6))
         }
         if eanChecksum, let ean = EAN13(String(result.prefix(12))) {
             return ean.code
