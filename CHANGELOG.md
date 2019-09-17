@@ -3,7 +3,7 @@
 # v0.10.19
 
 * Improved handling of cancelling online payments. When the `CheckoutProcess.abort` backend API call returns an error, an alert is displayed using the new i18n keys `Snabble.Payment.cancelError.title` and `Snabble.Payment.cancelError.message`.
-
+* Replaced `scanMessageText(for:)` in `ScannerDelegate` with `scanMessage(for:_:_:)` which returns a `ScanMessage?`. This allows apps to e.g. display product recommendations inkluding images in the scanner's message area. 
 
 # v0.10.18
 
