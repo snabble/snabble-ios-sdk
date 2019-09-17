@@ -17,6 +17,7 @@ jobs:
         if: always()
         with:
           type: ${{ job.status }}
-          job_name: 'iOS SDK Lint'
+          job_name: '*iOS SDK Lint*'
+          username: 'Github Action: Lint'
           channel: '#apps'
           url: ${{ secrets.SLACK_WEBHOOK }}
