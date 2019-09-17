@@ -7,20 +7,35 @@
 import UIKit
 import AVFoundation
 
+public struct ScanMessage {
+    public let text: String
+    public let imageUrl: String?
+
+    public init(_ text: String, _ imageUrl: String? = nil) {
+        self.text = text
+        self.imageUrl = imageUrl
+    }
+}
+
 public protocol ScannerDelegate: AnalyticsDelegate {
     func gotoShoppingCart()
 
-    func scanMessageText(for: String) -> String?
+    func scanMessage(for project: Project, _ shop: Shop, _ product: Product) -> ScanMessage?
 }
 
 public extension ScannerDelegate {
-    func scanMessageText(for: String) -> String? { return nil }
+    func scanMessage(for project: Project, _ shop: Shop, _ product: Product) -> ScanMessage? {
+        return nil
+    }
 }
 
 public final class ScannerViewController: UIViewController {
 
     @IBOutlet private weak var spinner: UIActivityIndicatorView!
 
+    @IBOutlet private weak var messageImage: UIImageView!
+    @IBOutlet private weak var messageImageWidth: NSLayoutConstraint!
+    @IBOutlet private weak var messageSpinner: UIActivityIndicatorView!
     @IBOutlet private weak var messageWrapper: UIView!
     @IBOutlet private weak var messageLabel: UILabel!
     @IBOutlet private weak var messageSeparatorHeight: NSLayoutConstraint!
@@ -210,15 +225,25 @@ public final class ScannerViewController: UIViewController {
 
 extension ScannerViewController {
 
-    private func showMessage(_ msg: String) {
-        self.messageLabel.text = msg
+    private func showMessage(_ msg: ScanMessage) {
+        self.messageLabel.text = msg.text
         self.messageWrapper.isHidden = false
         self.messageTopDistance.constant = 0
+
+        if let imgUrl = msg.imageUrl, let url = URL(string: imgUrl) {
+            self.messageImageWidth.constant = 80
+            self.loadMessageImage(url)
+        } else {
+            self.messageImageWidth.constant = 0
+            self.messageImage = nil
+        }
+
         UIView.animate(withDuration: 0.2) {
             self.view.layoutIfNeeded()
         }
 
-        let millis = min(max(50 * msg.count, 2000), 7000)
+        let minMillis = msg.imageUrl == nil ? 2000 : 4000
+        let millis = min(max(50 * msg.text.count, minMillis), 7000)
         let seconds = TimeInterval(millis) / 1000.0
         self.messageTimer = Timer.scheduledTimer(withTimeInterval: seconds, repeats: false) { _ in
             self.hideMessage()
@@ -240,6 +265,20 @@ extension ScannerViewController {
                        animations: { self.view.layoutIfNeeded() },
                        completion: { _ in self.messageWrapper.isHidden = true })
     }
+
+    private func loadMessageImage(_ url: URL) {
+        let session = URLSession.shared
+        self.messageSpinner.startAnimating()
+        let task = session.dataTask(with: url) { data, response, error in
+            if let data = data, let img = UIImage(data: data) {
+                DispatchQueue.main.async {
+                    self.messageSpinner.stopAnimating()
+                    self.messageImage.image = img
+                }
+            }
+        }
+        task.resume()
+    }
 }
 
 // MARK: - analytics delegate
@@ -251,26 +290,16 @@ extension ScannerViewController: AnalyticsDelegate {
 
 // MARK: - scanning confirmation delegate
 extension ScannerViewController: ScanConfirmationViewDelegate {
-    func closeConfirmation(_ msgId: String?) {
+    func closeConfirmation(_ item: CartItem?) {
         self.displayScanConfirmationView(hidden: true)
+        self.updateCartButton()
 
-        if let msgId = msgId, let msgText = self.delegate.scanMessageText(for: msgId) {
-            let alert = UIAlertController(title: "Snabble.Scanner.multiPack".localized(), message: msgText, preferredStyle: .alert)
-            alert.addAction(UIAlertAction(title: "Snabble.OK".localized(), style: .default) { action in
-                self.closeConfirmation()
-            })
-
-            self.present(alert, animated: true)
-        } else {
-            self.closeConfirmation()
+        if let item = item, let msg = self.delegate.scanMessage(for: SnabbleUI.project, self.shop, item.product) {
+            self.showMessage(msg)
         }
-    }
 
-    private func closeConfirmation() {
         self.lastScannedCode = ""
         self.barcodeDetector.startScanning()
-
-        self.updateCartButton()
     }
 }
 
@@ -302,6 +331,7 @@ extension ScannerViewController {
         // Log.debug("scanned unknown code \(code)")
         self.tapticFeedback.notificationOccurred(.error)
 
+        let msg = ScanMessage(msg)
         self.showMessage(msg)
         self.delegate.track(.scanUnknown(code))
 

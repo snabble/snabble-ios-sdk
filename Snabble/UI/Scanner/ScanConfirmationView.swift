@@ -7,7 +7,7 @@
 import UIKit
 
 protocol ScanConfirmationViewDelegate: AnalyticsDelegate {
-    func closeConfirmation(_ msg: String?)
+    func closeConfirmation(_ item: CartItem?)
 }
 
 final class ScanConfirmationView: DesignableView {
@@ -196,7 +196,7 @@ final class ScanConfirmationView: DesignableView {
 
         NotificationCenter.default.post(name: .snabbleCartUpdated, object: self)
         self.delegate.track(.productAddedToCart(self.cartItem.product.sku))
-        self.delegate.closeConfirmation(self.cartItem.product.scanMessage)
+        self.delegate.closeConfirmation(self.cartItem)
 
         self.quantityField.resignFirstResponder()
     }
