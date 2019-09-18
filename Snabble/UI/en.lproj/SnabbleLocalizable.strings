@@ -200,6 +200,10 @@
 
 "Snabble.Payment.waiting" = "Waiting for confirmation";
 
+"Snabble.Payment.cancelError.title" = "Error cancelling payment";
+
+"Snabble.Payment.cancelError.message" = "Payment cannot be cancelled at this time.";
+
 "Snabble.networkError" = "Connection error";
 
 
@@ -221,6 +225,10 @@
 
 "Snabble.Keyguard.requireScreenLock" = "You need to secure your smartphone with a screen lock to add this payment method.";
 
+"Snabble.Payment.CreditCard" = "Credit card";
+
 "Snabble.Payment.CreditCard.error" = "There was an error processing your credit card";
 
 "Snabble.Payment.CreditCard.expireDate" = "Expires: %@";
+
+"Snabble.Payment.usableAt" = "Usable at: %@";
