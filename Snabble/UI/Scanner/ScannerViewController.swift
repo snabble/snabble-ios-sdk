@@ -9,11 +9,19 @@ import AVFoundation
 
 public struct ScanMessage {
     public let text: String
+    public let attributedString: NSAttributedString?
     public let imageUrl: String?
 
     public init(_ text: String, _ imageUrl: String? = nil) {
         self.text = text
         self.imageUrl = imageUrl
+        self.attributedString = nil
+    }
+
+    public init(_ text: String, _ attributedString: NSAttributedString, _ imageUrl: String? = nil) {
+        self.text = text
+        self.imageUrl = imageUrl
+        self.attributedString = attributedString
     }
 }
 
@@ -226,7 +234,12 @@ public final class ScannerViewController: UIViewController {
 extension ScannerViewController {
 
     private func showMessage(_ msg: ScanMessage) {
-        self.messageLabel.text = msg.text
+        if let attributedString = msg.attributedString {
+            self.messageLabel.text = nil
+            self.messageLabel.attributedText = attributedString
+        } else {
+            self.messageLabel.text = msg.text
+        }
         self.messageWrapper.isHidden = false
         self.messageTopDistance.constant = 0
 

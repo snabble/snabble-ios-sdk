@@ -1,5 +1,9 @@
 ## snabble iOS SDK Changelog
 
+# v0.10.20
+
+* Extends the `ScanMessage` struct to add the new `attributedString` property. If it is not nil, it is used as the `attributedText` for the display and `text` is ignored.
+
 # v0.10.19
 
 * Improved handling of cancelling online payments. When the `CheckoutProcess.abort` backend API call returns an error, an alert is displayed using the new i18n keys `Snabble.Payment.cancelError.title` and `Snabble.Payment.cancelError.message`.
