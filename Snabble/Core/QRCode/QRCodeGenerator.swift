@@ -25,10 +25,16 @@ public struct QRCodeGenerator {
     public func generateCodes() -> [String] {
         let blocks = self.makeBlocks()
 
-        blocks.forEach { assert($0.items.count <= self.config.maxCodes) }
+        if self.config.maxChars == nil {
+            blocks.forEach { assert($0.items.count <= self.config.maxCodes) }
+        }
 
         let codes = blocks.enumerated().map { (index, block) in
             block.stringify(index, blocks.count)
+        }
+
+        if let maxChars = self.config.maxChars {
+            codes.forEach { assert($0.count <= maxChars) }
         }
 
         return codes
