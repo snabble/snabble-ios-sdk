@@ -248,7 +248,7 @@ extension ScannerViewController {
             self.loadMessageImage(url)
         } else {
             self.messageImageWidth.constant = 0
-            self.messageImage = nil
+            self.messageImage.image = nil
         }
 
         UIView.animate(withDuration: 0.2) {

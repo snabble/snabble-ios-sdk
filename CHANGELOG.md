@@ -1,5 +1,9 @@
 ## snabble iOS SDK Changelog
 
+# v0.10.21
+
+* Fixes a crash when `ScanMessae.imageUrl` was nil.
+
 # v0.10.20
 
 * Extends the `ScanMessage` struct to add the new `attributedString` property. If it is not nil, it is used as the `attributedText` for the display and `text` is ignored.
