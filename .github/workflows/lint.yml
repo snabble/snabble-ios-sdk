@@ -11,7 +11,9 @@ jobs:
       - name: Checkout
         uses: actions/checkout@master
       - name: Lint
-        run: pod lib lint --allow-warnings
+        run: |
+            sudo xcode-select --switch /Applications/Xcode_11.app/Contents/Developer
+            pod lib lint --allow-warnings
       - name: Slack Notification
         uses: homoluctus/slatify@master
         if: always()
