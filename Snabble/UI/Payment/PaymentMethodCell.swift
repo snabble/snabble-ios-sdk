@@ -39,7 +39,7 @@ final class PaymentMethodCell: UICollectionViewCell {
         super.awakeFromNib()
 
         self.containerView.layer.cornerRadius = 10
-        self.containerView.layer.borderColor = UIColor(white: 0, alpha: 0.25).cgColor
+        self.containerView.layer.borderColor = self.borderColor.cgColor
         self.containerView.layer.borderWidth = 1 / UIScreen.main.scale
         self.containerView.layer.masksToBounds = true
 
@@ -49,6 +49,14 @@ final class PaymentMethodCell: UICollectionViewCell {
     override func prepareForReuse() {
         super.prepareForReuse()
         self.label.textColor = nil
+    }
+
+    private var borderColor: UIColor {
+        if #available(iOS 13.0, *) {
+            return UIColor.label.withAlphaComponent(0.25)
+        } else {
+            return UIColor(white: 0, alpha: 0.25)
+        }
     }
 }
 

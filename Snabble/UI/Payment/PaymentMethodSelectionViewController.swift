@@ -41,8 +41,6 @@ final class PaymentMethodSelectionViewController: UIViewController {
 
         super.viewDidLoad()
 
-        self.view.backgroundColor = SnabbleUI.appearance.secondaryColor
-
         let formatter = PriceFormatter(SnabbleUI.project)
         let totalPrice = formatter.format(self.signedCheckoutInfo.checkoutInfo.price.price)
 

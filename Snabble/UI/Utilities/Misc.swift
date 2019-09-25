@@ -142,17 +142,29 @@ public extension UIImage {
 
     /// create a grayscale version of `self`
     func grayscale(brightness: Double = 0.0, contrast: Double = 1.0) -> UIImage? {
-        guard let ciImage = CIImage(image: self, options: nil) else {
+        guard let cgImage = self.cgImage else {
             return nil
         }
 
-        let params: [String: Any] = [ kCIInputBrightnessKey: brightness,
-                                      kCIInputContrastKey: contrast,
-                                      kCIInputSaturationKey: 0.0 ]
-        let grayscale = ciImage.applyingFilter("CIColorControls", parameters: params)
-        return UIImage(ciImage: grayscale, scale: self.scale, orientation: self.imageOrientation)
-    }
+        let inputImage = CIImage(cgImage: cgImage)
+        let filter = CIFilter(name: "CIColorControls")
+        let params: [String: Any] = [
+            kCIInputImageKey: inputImage,
+            kCIInputBrightnessKey: brightness,
+            kCIInputContrastKey: contrast,
+            kCIInputSaturationKey: 0.0
+        ]
+        filter?.setValuesForKeys(params)
 
+        guard
+            let outputImage = filter?.outputImage,
+            let filteredImage = CIContext().createCGImage(outputImage, from: outputImage.extent)
+        else {
+            return nil
+        }
+
+        return UIImage(cgImage: filteredImage, scale: self.scale, orientation: self.imageOrientation)
+    }
 }
 
 /// Base class for UIViews that can be used directy in interface builder.
