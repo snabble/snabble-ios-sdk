@@ -1,5 +1,10 @@
 ## snabble iOS SDK Changelog
 
+# v0.11.0
+
+* Swift 4.2 support has been removed
+* Support for iOS 13 dark mode has been added. This means that Xcode 11.x is required to build apps using the snabble SDK.
+
 # v0.10.21
 
 * Fixes a crash when `ScanMessae.imageUrl` was nil.

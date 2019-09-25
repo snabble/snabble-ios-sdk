@@ -8,7 +8,7 @@
 
 Pod::Spec.new do |s|
   s.name             = 'Snabble'
-  s.version          = '0.10.21'
+  s.version          = '0.11.0'
   s.summary          = 'The snabble iOS SDK'
 
   s.description      = <<-DESC
@@ -23,7 +23,7 @@ Pod::Spec.new do |s|
   s.social_media_url = 'https://twitter.com/snabble_io'
 
   s.ios.deployment_target = '10.0'
-  s.swift_versions = ['4.2', '5.0']
+  s.swift_versions = ['5.0']
 
   s.subspec 'Core' do |core|
     core.source_files = 'Snabble/Core/**/*.swift'
