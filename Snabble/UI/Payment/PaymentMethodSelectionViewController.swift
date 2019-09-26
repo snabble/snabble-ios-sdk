@@ -190,3 +190,18 @@ extension PaymentMethodSelectionViewController: UICollectionViewDelegate, UIColl
         }
     }
 }
+
+// MARK: - Appearance change
+extension PaymentMethodSelectionViewController {
+    override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
+        super.traitCollectionDidChange(previousTraitCollection)
+
+        if #available(iOS 13.0, *) {
+            guard traitCollection.hasDifferentColorAppearance(comparedTo: previousTraitCollection) else {
+                return
+            }
+
+            self.collectionView.reloadData()
+        }
+    }
+}
