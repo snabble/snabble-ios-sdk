@@ -15,10 +15,10 @@ final class OnlineCheckoutViewController: UIViewController {
     @IBOutlet weak var cancelButton: UIButton!
     @IBOutlet weak var codeWidth: NSLayoutConstraint!
     
-    private var cart: ShoppingCart
+    private let cart: ShoppingCart
     private weak var delegate: PaymentDelegate!
 
-    private var process: CheckoutProcess
+    private let process: CheckoutProcess
     private var poller: PaymentProcessPoller?
     private var initialBrightness: CGFloat = 0
 
@@ -61,6 +61,12 @@ final class OnlineCheckoutViewController: UIViewController {
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
 
+        self.initialBrightness = UIScreen.main.brightness
+        if self.autoApproved {
+            self.view.subviews.forEach { $0.isHidden = true }
+            return
+        }
+
         self.cancelButton.alpha = 0
         self.cancelButton.isUserInteractionEnabled = false
 
@@ -73,7 +79,6 @@ final class OnlineCheckoutViewController: UIViewController {
 
         UIApplication.shared.isIdleTimerDisabled = true
 
-        self.initialBrightness = UIScreen.main.brightness
         if self.initialBrightness < 0.5 {
             UIScreen.main.brightness = 0.5
             self.delegate.track(.brightnessIncreased)
@@ -84,7 +89,12 @@ final class OnlineCheckoutViewController: UIViewController {
         super.viewDidAppear(animated)
 
         self.delegate.track(.viewOnlineCheckout)
-        self.startPoller()
+
+        if self.autoApproved {
+            self.paymentFinished(true, self.process)
+        } else {
+            self.startPoller()
+        }
     }
 
     override func viewWillDisappear(_ animated: Bool) {
@@ -150,5 +160,9 @@ final class OnlineCheckoutViewController: UIViewController {
             self.cart.removeAll(endSession: true)
         }
         self.delegate.paymentFinished(success, self.cart, process)
+    }
+
+    private var autoApproved: Bool {
+        return self.process.paymentApproval == true && self.process.supervisorApproval == true
     }
 }
