@@ -170,6 +170,13 @@ public final class ShoppingCartViewController: UIViewController {
         if let custom = self.customAppearance {
             self.checkoutButton.setCustomAppearance(custom)
         }
+
+        if !self.isBeingPresented && !self.isMovingToParent {
+            // whatever was covering us has been dismissed or popped
+
+            // re-send our current cart to the backend so that the supervisor can see us shopping again
+            CartEvent.cart(self.shoppingCart)
+        }
     }
     
     override public func viewWillDisappear(_ animated: Bool) {
