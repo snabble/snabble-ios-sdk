@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="14868" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
-    <device id="retina4_7" orientation="portrait" appearance="light"/>
+    <device id="retina4_0" orientation="portrait" appearance="light"/>
     <dependencies>
         <deployment identifier="iOS"/>
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="14824"/>
@@ -10,9 +10,9 @@
     <objects>
         <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner" customClass="EmbeddedCodesCheckoutViewController" customModule="Snabble" customModuleProvider="target">
             <connections>
-                <outlet property="checkoutIdLabel" destination="MPh-iu-0DG" id="766-TH-rQO"/>
+                <outlet property="checkoutIdLabel" destination="jje-sq-VTZ" id="f8T-Yq-WQp"/>
                 <outlet property="collectionView" destination="ev5-Ha-DDh" id="duA-1w-Ixb"/>
-                <outlet property="explanation1" destination="jje-sq-VTZ" id="ZOL-Sj-KJ0"/>
+                <outlet property="explanation1" destination="MPh-iu-0DG" id="4iM-V7-6wV"/>
                 <outlet property="explanation2" destination="F9K-BY-3TG" id="FNq-k8-XgM"/>
                 <outlet property="pageControl" destination="qoR-oB-4QU" id="vnj-lV-5xK"/>
                 <outlet property="paidButton" destination="xcE-5B-t8q" id="Tvk-na-X8U"/>
@@ -22,46 +22,28 @@
         </placeholder>
         <placeholder placeholderIdentifier="IBFirstResponder" id="-2" customClass="UIResponder"/>
         <view clearsContextBeforeDrawing="NO" contentMode="scaleToFill" id="i5M-Pr-FkT">
-            <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
+            <rect key="frame" x="0.0" y="0.0" width="320" height="568"/>
             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
             <subviews>
                 <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="EIP-gZ-GFM" userLabel="Top View">
-                    <rect key="frame" x="0.0" y="0.0" width="375" height="603"/>
+                    <rect key="frame" x="0.0" y="0.0" width="320" height="504"/>
                     <subviews>
                         <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="emd-rI-ZOi" userLabel="Inner Wrapper">
-                            <rect key="frame" x="16" y="0.0" width="343" height="591"/>
+                            <rect key="frame" x="16" y="0.0" width="288" height="492"/>
                             <subviews>
-                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" text="Checkout-ID: 4711" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="MPh-iu-0DG">
-                                    <rect key="frame" x="115.5" y="8" width="112" height="127.5"/>
+                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" text="Show this code to the cashier" textAlignment="center" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="MPh-iu-0DG">
+                                    <rect key="frame" x="20" y="8" width="248" height="88"/>
+                                    <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                    <nil key="textColor"/>
+                                    <nil key="highlightedColor"/>
+                                </label>
+                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" verticalHuggingPriority="251" text="Checkout-ID: 1234" textAlignment="center" lineBreakMode="wordWrap" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="jje-sq-VTZ" userLabel="Explanation1">
+                                    <rect key="frame" x="20" y="104" width="248" height="16"/>
                                     <fontDescription key="fontDescription" type="system" pointSize="13"/>
-                                    <nil key="textColor"/>
                                     <nil key="highlightedColor"/>
                                 </label>
-                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" verticalHuggingPriority="251" text="Total Price" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="bMi-BY-Zh4">
-                                    <rect key="frame" x="130.5" y="542" width="82.5" height="21"/>
-                                    <fontDescription key="fontDescription" type="system" weight="medium" pointSize="17"/>
-                                    <nil key="textColor"/>
-                                    <nil key="highlightedColor"/>
-                                </label>
-                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" verticalHuggingPriority="251" text="Preis kann abweichen" textAlignment="center" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="F9K-BY-3TG">
-                                    <rect key="frame" x="20" y="575" width="303" height="16"/>
-                                    <fontDescription key="fontDescription" type="system" pointSize="13"/>
-                                    <nil key="textColor"/>
-                                    <nil key="highlightedColor"/>
-                                </label>
-                                <pageControl opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" hidesForSinglePage="YES" numberOfPages="3" translatesAutoresizingMaskIntoConstraints="NO" id="qoR-oB-4QU">
-                                    <rect key="frame" x="0.0" y="505" width="343" height="37"/>
-                                    <constraints>
-                                        <constraint firstAttribute="height" constant="37" id="AhD-Tk-l8Y"/>
-                                    </constraints>
-                                    <color key="pageIndicatorTintColor" systemColor="systemFillColor" red="0.47058823529411764" green="0.47058823529411764" blue="0.50196078431372548" alpha="0.20000000000000001" colorSpace="custom" customColorSpace="sRGB"/>
-                                    <color key="currentPageIndicatorTintColor" systemColor="systemTealColor" red="0.35294117647058826" green="0.78431372549019607" blue="0.98039215686274506" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
-                                    <connections>
-                                        <action selector="pageControlTapped:" destination="-1" eventType="valueChanged" id="8wu-1f-8oq"/>
-                                    </connections>
-                                </pageControl>
                                 <collectionView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" pagingEnabled="YES" showsHorizontalScrollIndicator="NO" showsVerticalScrollIndicator="NO" dataMode="none" translatesAutoresizingMaskIntoConstraints="NO" id="ev5-Ha-DDh">
-                                    <rect key="frame" x="1" y="164" width="341" height="341"/>
+                                    <rect key="frame" x="1" y="120" width="286" height="286"/>
                                     <color key="backgroundColor" systemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
                                     <constraints>
                                         <constraint firstAttribute="height" relation="greaterThanOrEqual" constant="120" id="CP2-VO-NmE"/>
@@ -74,9 +56,27 @@
                                         <inset key="sectionInset" minX="0.0" minY="0.0" maxX="0.0" maxY="0.0"/>
                                     </collectionViewFlowLayout>
                                 </collectionView>
-                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" verticalHuggingPriority="251" text="Show this Code to the Cashier" textAlignment="center" lineBreakMode="wordWrap" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="jje-sq-VTZ" userLabel="Explanation1">
-                                    <rect key="frame" x="20" y="143.5" width="303" height="20.5"/>
-                                    <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                <pageControl opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" hidesForSinglePage="YES" numberOfPages="3" translatesAutoresizingMaskIntoConstraints="NO" id="qoR-oB-4QU">
+                                    <rect key="frame" x="0.0" y="406" width="288" height="37"/>
+                                    <constraints>
+                                        <constraint firstAttribute="height" constant="37" id="AhD-Tk-l8Y"/>
+                                    </constraints>
+                                    <color key="pageIndicatorTintColor" systemColor="systemFillColor" red="0.47058823529411764" green="0.47058823529411764" blue="0.50196078431372548" alpha="0.20000000000000001" colorSpace="custom" customColorSpace="sRGB"/>
+                                    <color key="currentPageIndicatorTintColor" systemColor="systemTealColor" red="0.35294117647058826" green="0.78431372549019607" blue="0.98039215686274506" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                    <connections>
+                                        <action selector="pageControlTapped:" destination="-1" eventType="valueChanged" id="8wu-1f-8oq"/>
+                                    </connections>
+                                </pageControl>
+                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" verticalHuggingPriority="251" text="Total Price" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="bMi-BY-Zh4">
+                                    <rect key="frame" x="103" y="443" width="82.5" height="21"/>
+                                    <fontDescription key="fontDescription" type="system" weight="medium" pointSize="17"/>
+                                    <nil key="textColor"/>
+                                    <nil key="highlightedColor"/>
+                                </label>
+                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" verticalHuggingPriority="251" text="Preis kann abweichen" textAlignment="center" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="F9K-BY-3TG">
+                                    <rect key="frame" x="20" y="476" width="248" height="16"/>
+                                    <fontDescription key="fontDescription" type="system" pointSize="13"/>
+                                    <nil key="textColor"/>
                                     <nil key="highlightedColor"/>
                                 </label>
                             </subviews>
@@ -87,6 +87,7 @@
                                 <constraint firstItem="ev5-Ha-DDh" firstAttribute="leading" relation="greaterThanOrEqual" secondItem="emd-rI-ZOi" secondAttribute="leading" constant="1" id="4DV-b0-tH9"/>
                                 <constraint firstItem="jje-sq-VTZ" firstAttribute="leading" secondItem="emd-rI-ZOi" secondAttribute="leading" constant="20" id="6Ah-4u-bAV"/>
                                 <constraint firstItem="F9K-BY-3TG" firstAttribute="top" secondItem="bMi-BY-Zh4" secondAttribute="bottom" constant="12" id="BiP-rg-iAZ"/>
+                                <constraint firstItem="MPh-iu-0DG" firstAttribute="leading" secondItem="emd-rI-ZOi" secondAttribute="leading" constant="20" id="OU5-b0-VBW"/>
                                 <constraint firstItem="MPh-iu-0DG" firstAttribute="centerX" secondItem="emd-rI-ZOi" secondAttribute="centerX" id="ObJ-Ig-h3z"/>
                                 <constraint firstItem="qoR-oB-4QU" firstAttribute="top" secondItem="ev5-Ha-DDh" secondAttribute="bottom" id="P1u-2O-oQf"/>
                                 <constraint firstItem="qoR-oB-4QU" firstAttribute="leading" secondItem="emd-rI-ZOi" secondAttribute="leading" id="SF5-mO-3mU"/>
@@ -97,6 +98,7 @@
                                 <constraint firstItem="bMi-BY-Zh4" firstAttribute="centerX" secondItem="emd-rI-ZOi" secondAttribute="centerX" id="hOe-hD-Khw"/>
                                 <constraint firstAttribute="bottom" secondItem="F9K-BY-3TG" secondAttribute="bottom" id="kTm-I7-TlW"/>
                                 <constraint firstAttribute="trailing" relation="greaterThanOrEqual" secondItem="ev5-Ha-DDh" secondAttribute="trailing" constant="1" id="mn0-xI-zCf"/>
+                                <constraint firstAttribute="trailing" secondItem="MPh-iu-0DG" secondAttribute="trailing" constant="20" id="p1M-Ek-sGP"/>
                                 <constraint firstItem="jje-sq-VTZ" firstAttribute="top" secondItem="MPh-iu-0DG" secondAttribute="bottom" constant="8" id="wKE-UR-Y4F"/>
                                 <constraint firstAttribute="trailing" secondItem="F9K-BY-3TG" secondAttribute="trailing" constant="20" id="xUW-wl-baf"/>
                             </constraints>
@@ -110,7 +112,7 @@
                     </constraints>
                 </view>
                 <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="xcE-5B-t8q">
-                    <rect key="frame" x="16" y="603" width="343" height="48"/>
+                    <rect key="frame" x="16" y="504" width="288" height="48"/>
                     <constraints>
                         <constraint firstAttribute="height" constant="48" id="6YG-qp-JoA"/>
                     </constraints>
