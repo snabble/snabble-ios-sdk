@@ -41,8 +41,6 @@ final class PaymentMethodSelectionViewController: UIViewController {
 
         super.viewDidLoad()
 
-        self.view.backgroundColor = SnabbleUI.appearance.secondaryColor
-
         let formatter = PriceFormatter(SnabbleUI.project)
         let totalPrice = formatter.format(self.signedCheckoutInfo.checkoutInfo.price.price)
 
@@ -189,6 +187,21 @@ extension PaymentMethodSelectionViewController: UICollectionViewDelegate, UIColl
             if proceed {
                 self.startPayment(method)
             }
+        }
+    }
+}
+
+// MARK: - Appearance change
+extension PaymentMethodSelectionViewController {
+    override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
+        super.traitCollectionDidChange(previousTraitCollection)
+
+        if #available(iOS 13.0, *) {
+            guard traitCollection.hasDifferentColorAppearance(comparedTo: previousTraitCollection) else {
+                return
+            }
+
+            self.collectionView.reloadData()
         }
     }
 }

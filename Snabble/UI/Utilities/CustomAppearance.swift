@@ -5,16 +5,10 @@
 //
 //  "Chameleon mode" support
 
-public struct CustomAppearance {
-    public let buttonBackgroundColor: UIColor
-    public let buttonTextColor: UIColor
-    public let titleIcon: UIImage?
-
-    public init(buttonBackgroundColor: UIColor, buttonTextColor: UIColor, titleIcon: UIImage? = nil) {
-        self.buttonBackgroundColor = buttonBackgroundColor
-        self.buttonTextColor = buttonTextColor
-        self.titleIcon = titleIcon
-    }
+public protocol CustomAppearance {
+    var buttonBackgroundColor: UIColor { get }
+    var buttonTextColor: UIColor { get }
+    var titleIcon: UIImage? { get }
 }
 
 public protocol CustomizableAppearance: class {

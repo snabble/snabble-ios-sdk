@@ -1,12 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="14109" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
-    <device id="retina4_7" orientation="portrait">
-        <adaptation id="fullscreen"/>
-    </device>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="14868" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
+    <device id="retina4_7" orientation="portrait" appearance="dark"/>
     <dependencies>
         <deployment identifier="iOS"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="14088"/>
-        <capability name="Aspect ratio constraints" minToolsVersion="5.1"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="14824"/>
         <capability name="Safe area layout guides" minToolsVersion="9.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
@@ -18,14 +15,14 @@
             <autoresizingMask key="autoresizingMask"/>
             <subviews>
                 <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="UJr-1K-c99">
-                    <rect key="frame" x="82" y="88.5" width="240" height="240"/>
+                    <rect key="frame" x="82.5" y="88.5" width="240" height="240"/>
                     <constraints>
                         <constraint firstAttribute="width" secondItem="UJr-1K-c99" secondAttribute="height" multiplier="1:1" id="bLO-rj-JBB"/>
                         <constraint firstAttribute="width" constant="240" id="mkX-VX-7ub"/>
                     </constraints>
                 </imageView>
             </subviews>
-            <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+            <color key="backgroundColor" systemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
             <constraints>
                 <constraint firstItem="UJr-1K-c99" firstAttribute="centerX" secondItem="U6b-Vx-4bR" secondAttribute="centerX" id="OmM-fF-nQj"/>
                 <constraint firstItem="UJr-1K-c99" firstAttribute="centerY" secondItem="U6b-Vx-4bR" secondAttribute="centerY" id="kBV-NR-cYf"/>
