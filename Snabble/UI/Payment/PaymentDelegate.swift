@@ -32,7 +32,7 @@ public protocol PaymentDelegate: AnalyticsDelegate, MessageDelegate {
     func handlePaymentError(_ method: PaymentMethod, _ error: SnabbleError) -> Bool
 
     /// get payment data from the host app. Use this method to return e.g. encrypted SEPA data for use with .deDirectDebit to the SDK
-    func getPaymentData() -> [PaymentMethod]
+    func getPaymentData(_ methods: [PaymentMethodDescription]) -> [PaymentMethod]
 
     /// for payment methods with missing data (e.g. Telecash, but no SEPA data available), provide a `UIViewController` instance that allows the user
     /// to enter the missing data
@@ -50,7 +50,7 @@ extension PaymentDelegate {
         return false
     }
 
-    public func getPaymentData() -> [PaymentMethod] {
+    public func getPaymentData(_ methods: [PaymentMethodDescription]) -> [PaymentMethod] {
         return []
     }
 
