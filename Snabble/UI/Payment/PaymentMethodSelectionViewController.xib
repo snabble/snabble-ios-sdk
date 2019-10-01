@@ -20,7 +20,7 @@
             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
             <subviews>
                 <collectionView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" dataMode="none" translatesAutoresizingMaskIntoConstraints="NO" id="M2k-W7-qjk">
-                    <rect key="frame" x="16" y="16" width="343" height="635"/>
+                    <rect key="frame" x="0.0" y="16" width="375" height="635"/>
                     <color key="backgroundColor" systemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
                     <collectionViewFlowLayout key="collectionViewLayout" minimumLineSpacing="16" minimumInteritemSpacing="0.0" id="kc7-4d-PQw">
                         <size key="itemSize" width="50" height="120"/>
@@ -36,9 +36,9 @@
             </subviews>
             <color key="backgroundColor" systemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
             <constraints>
-                <constraint firstItem="fnl-2z-Ty3" firstAttribute="trailing" secondItem="M2k-W7-qjk" secondAttribute="trailing" constant="16" id="Usq-QU-YZq"/>
+                <constraint firstItem="fnl-2z-Ty3" firstAttribute="trailing" secondItem="M2k-W7-qjk" secondAttribute="trailing" id="Usq-QU-YZq"/>
                 <constraint firstItem="M2k-W7-qjk" firstAttribute="top" secondItem="fnl-2z-Ty3" secondAttribute="top" constant="16" id="gtf-tc-4pc"/>
-                <constraint firstItem="M2k-W7-qjk" firstAttribute="leading" secondItem="fnl-2z-Ty3" secondAttribute="leading" constant="16" id="q3B-Gn-s5B"/>
+                <constraint firstItem="M2k-W7-qjk" firstAttribute="leading" secondItem="fnl-2z-Ty3" secondAttribute="leading" id="q3B-Gn-s5B"/>
                 <constraint firstItem="fnl-2z-Ty3" firstAttribute="bottom" secondItem="M2k-W7-qjk" secondAttribute="bottom" constant="16" id="w6y-yR-IHY"/>
             </constraints>
             <viewLayoutGuide key="safeArea" id="fnl-2z-Ty3"/>
