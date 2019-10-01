@@ -64,6 +64,7 @@ final class OnlineCheckoutViewController: UIViewController {
         self.initialBrightness = UIScreen.main.brightness
         if self.autoApproved {
             self.view.subviews.forEach { $0.isHidden = true }
+            self.title = nil
             return
         }
 

@@ -15,7 +15,11 @@ extension PaymentMethod {
         case .deDirectDebit: return "payment-sepa"
         case .visa: return "payment-visa"
         case .mastercard: return "payment-mastercard"
-        case .externalBilling: return "payment-tegut"
+        case .externalBilling:
+            switch self.data?.originType {
+            case .tegutEmployeeID: return "payment-tegut"
+            default: return ""
+            }
         }
     }
 
