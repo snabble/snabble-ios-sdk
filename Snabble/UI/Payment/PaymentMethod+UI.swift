@@ -15,7 +15,7 @@ extension PaymentMethod {
         case .deDirectDebit: return "payment-sepa"
         case .visa: return "payment-visa"
         case .mastercard: return "payment-mastercard"
-        case .externalBilling: return "payment-billing"
+        case .externalBilling: return "payment-tegut"
         }
     }
 
@@ -98,11 +98,11 @@ public final class PaymentProcess {
         }
     }
 
-    func mergePaymentMethodList(_ methods: [RawPaymentMethod]) -> [PaymentMethod] {
-        let userData = self.delegate.getPaymentData()
+    func mergePaymentMethodList(_ methods: [PaymentMethodDescription]) -> [PaymentMethod] {
+        let userData = self.delegate.getPaymentData(methods)
         var result = [PaymentMethod]()
         for method in methods {
-            switch method {
+            switch method.method {
             case .qrCodePOS: result.append(.qrCodePOS)
             case .qrCodeOffline: result.append(.qrCodeOffline)
             case .deDirectDebit:

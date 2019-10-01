@@ -18,6 +18,16 @@ extension UnknownCaseRepresentable {
     }
 }
 
+/// helper struct for JSON decoding
+struct FailableDecodable<T: Decodable>: Decodable {
+    let value: T?
+
+    init(from decoder: Decoder) throws {
+        let container = try decoder.singleValueContainer()
+        self.value = try? container.decode(T.self)
+    }
+}
+
 // MARK: - Logging
 enum Log {
     static func info(_ str: String) {
