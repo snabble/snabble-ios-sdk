@@ -37,7 +37,7 @@ public struct SignedCheckoutInfo: Decodable {
     }
 }
 
-public enum AcceptedOriginType: String, Decodable {
+public enum AcceptedOriginType: String, Codable {
     case iban
     case ipgHostedDataID
     case tegutEmployeeID
@@ -88,9 +88,9 @@ public struct PaymentMethodDescription: Decodable {
 public struct PaymentMethodData {
     public let displayName: String
     public let encryptedData: String
-    public let originType: String
+    public let originType: AcceptedOriginType
 
-    public init(_ displayName: String, _ encryptedData: String, _ originType: String) {
+    public init(_ displayName: String, _ encryptedData: String, _ originType: AcceptedOriginType) {
         self.displayName = displayName
         self.encryptedData = encryptedData
         self.originType = originType

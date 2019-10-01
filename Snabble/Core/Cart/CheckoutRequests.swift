@@ -68,7 +68,7 @@ extension SignedCheckoutInfo {
 
             if let data = paymentMethod.data {
                 dict["paymentInformation"] = [
-                    "originType": data.originType,
+                    "originType": data.originType.rawValue,
                     "encryptedOrigin": data.encryptedData
                 ]
             }
