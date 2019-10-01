@@ -15,12 +15,13 @@ extension PaymentMethod {
         case .deDirectDebit: return "payment-sepa"
         case .visa: return "payment-visa"
         case .mastercard: return "payment-mastercard"
+        case .externalBilling: return "payment-billing"
         }
     }
 
     var dataRequired: Bool {
         switch self {
-        case .deDirectDebit, .visa, .mastercard: return true
+        case .deDirectDebit, .visa, .mastercard, .externalBilling: return true
         case .qrCodePOS, .qrCodeOffline: return false
         }
     }
@@ -43,7 +44,7 @@ extension PaymentMethod {
             } else {
                 return nil
             }
-        case .deDirectDebit, .visa, .mastercard:
+        case .deDirectDebit, .visa, .mastercard, .externalBilling:
             processor = OnlineCheckoutViewController(process!, self.data!, cart, delegate)
         }
         processor.hidesBottomBarWhenPushed = true
@@ -124,6 +125,11 @@ public final class PaymentProcess {
                     result.append(contentsOf: mc.reversed())
                 } else {
                     result.append(.mastercard(nil))
+                }
+            case .externalBilling:
+                let billing = userData.filter { if case .externalBilling = $0 { return true } else { return false } }
+                if billing.count > 0 {
+                    result.append(contentsOf: billing.reversed())
                 }
             }
         }

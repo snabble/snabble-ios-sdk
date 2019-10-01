@@ -20,7 +20,7 @@ final class PaymentMethodCell: UICollectionViewCell {
 
             let incomplete: Bool
             switch paymentMethod {
-            case .deDirectDebit(let data), .visa(let data), .mastercard(let data):
+            case .deDirectDebit(let data), .visa(let data), .mastercard(let data), .externalBilling(let data):
                 incomplete = data == nil
 
             case .qrCodePOS, .qrCodeOffline:
