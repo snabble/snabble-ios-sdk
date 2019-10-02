@@ -196,6 +196,8 @@ final class ScanConfirmationView: DesignableView {
 
         NotificationCenter.default.post(name: .snabbleCartUpdated, object: self)
         self.delegate.track(.productAddedToCart(self.cartItem.product.sku))
+
+        self.productNameLabel.text = nil
         self.delegate.closeConfirmation(self.cartItem)
 
         self.quantityField.resignFirstResponder()
@@ -203,6 +205,8 @@ final class ScanConfirmationView: DesignableView {
 
     @IBAction private func closeButtonTapped(_ button: UIButton) {
         self.delegate.track(.scanAborted(self.cartItem.product.sku))
+
+        self.productNameLabel.text = nil
         self.delegate.closeConfirmation(nil)
         self.quantityField.resignFirstResponder()
     }
