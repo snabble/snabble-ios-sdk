@@ -37,18 +37,25 @@ public struct SignedCheckoutInfo: Decodable {
     }
 }
 
+public enum AcceptedOriginType: String, Codable {
+    case iban
+    case ipgHostedDataID
+    case tegutEmployeeID
+}
+
 // known payment methods
-public enum RawPaymentMethod: String, CaseIterable {
+public enum RawPaymentMethod: String, CaseIterable, Decodable {
     case qrCodePOS              // QR Code with a reference to snabble's backend
     case qrCodeOffline          // QR Code, offline capable, format is specified via `QRCodeConfig.format`
     case deDirectDebit          // SEPA direct debit via Telecash/First Data
     case creditCardVisa         // VISA via Telecash/First Data
     case creditCardMastercard   // MASTERCARD via Telecash/First Data
+    case externalBilling        // external billig, e.g. via an employee id
 
     /// true if this method reqires additional data, like an IBAN or a credit card number
     public var dataRequired: Bool {
         switch self {
-        case .deDirectDebit, .creditCardVisa, .creditCardMastercard:
+        case .deDirectDebit, .creditCardVisa, .creditCardMastercard, .externalBilling:
             return true
         case .qrCodePOS, .qrCodeOffline:
             return false
@@ -60,20 +67,33 @@ public enum RawPaymentMethod: String, CaseIterable {
         switch self {
         case .qrCodeOffline:
             return true
-        case .qrCodePOS, .deDirectDebit, .creditCardVisa, .creditCardMastercard:
+        case .qrCodePOS, .deDirectDebit, .creditCardVisa, .creditCardMastercard, .externalBilling:
             return false
         }
     }
+}
+
+public struct PaymentMethodDescription: Decodable {
+
+    enum CodingKeys: String, CodingKey {
+        case method = "id"
+        case acceptedOriginTypes
+    }
+    
+    public let method: RawPaymentMethod
+    public let acceptedOriginTypes: [AcceptedOriginType]?
 }
 
 // associated data for a payment method
 public struct PaymentMethodData {
     public let displayName: String
     public let encryptedData: String
+    public let originType: AcceptedOriginType
 
-    public init(_ displayName: String, _ encryptedData: String) {
+    public init(_ displayName: String, _ encryptedData: String, _ originType: AcceptedOriginType) {
         self.displayName = displayName
         self.encryptedData = encryptedData
+        self.originType = originType
     }
 }
 
@@ -84,6 +104,7 @@ public enum PaymentMethod {
     case deDirectDebit(PaymentMethodData?)
     case visa(PaymentMethodData?)
     case mastercard(PaymentMethodData?)
+    case externalBilling(PaymentMethodData?)
 
     public var rawMethod: RawPaymentMethod {
         switch self {
@@ -92,13 +113,16 @@ public enum PaymentMethod {
         case .deDirectDebit: return .deDirectDebit
         case .visa: return .creditCardVisa
         case .mastercard: return .creditCardMastercard
+        case .externalBilling: return .externalBilling
         }
     }
 
     public var data: PaymentMethodData? {
         switch self {
         case .deDirectDebit(let data), .visa(let data), .mastercard(let data):
-             return data
+            return data
+        case .externalBilling(let data):
+            return data
         case .qrCodePOS, .qrCodeOffline:
             return nil
         }
@@ -143,9 +167,13 @@ extension LineItemType: UnknownCaseRepresentable {
 public struct CheckoutInfo: Decodable {
     /// available payment methods, as delivered by the API
     public let session: String
-    public let availableMethods: [String]
+    public let paymentMethods: [PaymentMethodDescription]
     public let lineItems: [LineItem]
     public let price: Price
+
+    enum CodingKeys: String, CodingKey {
+        case session, paymentMethods, lineItems, price
+    }
 
     public struct LineItem: Codable {
         public let id: String
@@ -167,14 +195,19 @@ public struct CheckoutInfo: Decodable {
         }
     }
 
-    /// available and implemented payment methods
-    public var paymentMethods: [RawPaymentMethod] {
-        return availableMethods.compactMap { RawPaymentMethod(rawValue: $0) }
+    public init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+
+        self.session = try container.decode(String.self, forKey: .session)
+        let paymentMethods = try container.decode([FailableDecodable<PaymentMethodDescription>].self, forKey: .paymentMethods)
+        self.paymentMethods = paymentMethods.compactMap { $0.value }
+        self.lineItems = try container.decode([LineItem].self, forKey: .lineItems)
+        self.price = try container.decode(Price.self, forKey: .price)
     }
 
     fileprivate init(_ paymentMethods: [RawPaymentMethod]) {
         self.price = Price()
-        self.availableMethods = paymentMethods.map { $0.rawValue }
+        self.paymentMethods = paymentMethods.map { PaymentMethodDescription(method: $0, acceptedOriginTypes: nil) }
         self.session = ""
         self.lineItems = []
     }

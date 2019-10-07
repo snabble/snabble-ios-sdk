@@ -14,13 +14,13 @@
             <autoresizingMask key="autoresizingMask"/>
             <subviews>
                 <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="C5O-YO-Ri8">
-                    <rect key="frame" x="0.0" y="0.0" width="491" height="120"/>
+                    <rect key="frame" x="16" y="0.0" width="459" height="120"/>
                     <subviews>
                         <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="payment-method-checkstand" translatesAutoresizingMaskIntoConstraints="NO" id="E3Q-pE-S0t">
-                            <rect key="frame" x="170.5" y="40" width="150" height="40"/>
+                            <rect key="frame" x="154.5" y="30" width="150" height="40"/>
                         </imageView>
                         <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="CR5-uy-vOC">
-                            <rect key="frame" x="229" y="88" width="33" height="16"/>
+                            <rect key="frame" x="213" y="88" width="33" height="16"/>
                             <fontDescription key="fontDescription" type="system" pointSize="13"/>
                             <nil key="textColor"/>
                             <nil key="highlightedColor"/>
@@ -30,18 +30,19 @@
                         <constraint firstAttribute="bottom" secondItem="CR5-uy-vOC" secondAttribute="bottom" constant="16" id="6Q1-PA-gQi"/>
                         <constraint firstItem="E3Q-pE-S0t" firstAttribute="centerX" secondItem="C5O-YO-Ri8" secondAttribute="centerX" id="AnO-Xd-kPK"/>
                         <constraint firstItem="CR5-uy-vOC" firstAttribute="centerX" secondItem="C5O-YO-Ri8" secondAttribute="centerX" id="Xie-Hu-QvT"/>
-                        <constraint firstItem="E3Q-pE-S0t" firstAttribute="centerY" secondItem="C5O-YO-Ri8" secondAttribute="centerY" id="kT7-dQ-ZEe"/>
+                        <constraint firstItem="E3Q-pE-S0t" firstAttribute="centerY" secondItem="C5O-YO-Ri8" secondAttribute="centerY" constant="-10" id="kT7-dQ-ZEe"/>
                     </constraints>
                 </view>
             </subviews>
             <color key="backgroundColor" systemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
             <constraints>
-                <constraint firstAttribute="trailing" secondItem="C5O-YO-Ri8" secondAttribute="trailing" id="LeT-c5-O4j"/>
-                <constraint firstItem="C5O-YO-Ri8" firstAttribute="leading" secondItem="U6b-Vx-4bR" secondAttribute="leading" id="gFc-Cz-rAr"/>
+                <constraint firstAttribute="trailing" secondItem="C5O-YO-Ri8" secondAttribute="trailing" constant="16" id="LeT-c5-O4j"/>
+                <constraint firstItem="C5O-YO-Ri8" firstAttribute="leading" secondItem="U6b-Vx-4bR" secondAttribute="leading" constant="16" id="gFc-Cz-rAr"/>
                 <constraint firstItem="C5O-YO-Ri8" firstAttribute="top" secondItem="U6b-Vx-4bR" secondAttribute="top" id="lCq-NB-yo4"/>
                 <constraint firstAttribute="bottom" secondItem="C5O-YO-Ri8" secondAttribute="bottom" id="o98-ZA-9PW"/>
             </constraints>
             <connections>
+                <outlet property="centerYOffset" destination="kT7-dQ-ZEe" id="w6F-OV-guW"/>
                 <outlet property="containerView" destination="C5O-YO-Ri8" id="b7K-23-J56"/>
                 <outlet property="icon" destination="E3Q-pE-S0t" id="4rs-RT-Gnd"/>
                 <outlet property="label" destination="CR5-uy-vOC" id="fAJ-2i-8Lk"/>
