@@ -33,9 +33,9 @@ enum OrderEntry {
 
 @objc(ReceiptsListViewController)
 public final class ReceiptsListViewController: UIViewController {
-    @IBOutlet weak var tableView: UITableView!
-    @IBOutlet weak var emptyLabel: UILabel!
-    @IBOutlet weak var spinner: UIActivityIndicatorView!
+    @IBOutlet private weak var tableView: UITableView!
+    @IBOutlet private weak var emptyLabel: UILabel!
+    @IBOutlet private weak var spinner: UIActivityIndicatorView!
     
     private var quickLook = QLPreviewController()
     private var previewItem: QLPreviewItem!
@@ -192,17 +192,20 @@ extension ReceiptsListViewController: UITableViewDelegate, UITableViewDataSource
             return
         }
 
-        self.showOrder(order, project)
+        let cell = self.tableView.cellForRow(at: indexPath)
+        let spinner = UIActivityIndicatorView(style: .gray)
+        spinner.startAnimating()
+        cell?.accessoryType = .none
+        cell?.accessoryView = spinner
+        self.showOrder(order, project, cell)
     }
 }
 
 extension ReceiptsListViewController {
-    func showOrder(_ order: Order, _ project: Project) {
-        self.spinner.startAnimating()
-
+    func showOrder(_ order: Order, _ project: Project, _ cell: UITableViewCell?) {
         order.getReceipt(project) { result in
-            self.spinner.stopAnimating()
-
+            cell?.accessoryType = .disclosureIndicator
+            cell?.accessoryView = nil
             switch result {
             case .success(let targetPath):
                 let formatter = DateFormatter()
@@ -221,8 +224,8 @@ extension ReceiptsListViewController {
     func showQuicklook(_ url: URL, _ title: String) {
         self.quickLook.currentPreviewItemIndex = 0
         self.previewItem = ReceiptPreviewItem(url, title)
-        self.navigationController?.pushViewController(self.quickLook, animated: true)
         self.quickLook.reloadData()
+        self.navigationController?.pushViewController(self.quickLook, animated: true)
 
         SnabbleUI.analytics?.track(.viewReceiptDetail)
     }
