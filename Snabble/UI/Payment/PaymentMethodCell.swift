@@ -11,6 +11,7 @@ final class PaymentMethodCell: UICollectionViewCell {
     @IBOutlet weak var containerView: UIView!
     @IBOutlet weak var icon: UIImageView!
     @IBOutlet weak var label: UILabel!
+    @IBOutlet weak var centerYOffset: NSLayoutConstraint!
 
     var paymentMethod: PaymentMethod = .qrCodeOffline {
         didSet {
@@ -20,7 +21,7 @@ final class PaymentMethodCell: UICollectionViewCell {
 
             let incomplete: Bool
             switch paymentMethod {
-            case .deDirectDebit(let data), .visa(let data), .mastercard(let data):
+            case .deDirectDebit(let data), .visa(let data), .mastercard(let data), .externalBilling(let data):
                 incomplete = data == nil
 
             case .qrCodePOS, .qrCodeOffline:
@@ -32,6 +33,8 @@ final class PaymentMethodCell: UICollectionViewCell {
                 self.label.textColor = SnabbleUI.appearance.primaryColor
                 self.label.text = "Snabble.PaymentSelection.addNow".localized()
             }
+
+            self.centerYOffset.constant = self.label.text == nil ? 0 : -10
         }
     }
 

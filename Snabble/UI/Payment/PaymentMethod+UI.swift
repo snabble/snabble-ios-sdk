@@ -15,12 +15,17 @@ extension PaymentMethod {
         case .deDirectDebit: return "payment-sepa"
         case .visa: return "payment-visa"
         case .mastercard: return "payment-mastercard"
+        case .externalBilling:
+            switch self.data?.originType {
+            case .tegutEmployeeID: return "payment-tegut"
+            default: return ""
+            }
         }
     }
 
     var dataRequired: Bool {
         switch self {
-        case .deDirectDebit, .visa, .mastercard: return true
+        case .deDirectDebit, .visa, .mastercard, .externalBilling: return true
         case .qrCodePOS, .qrCodeOffline: return false
         }
     }
@@ -43,7 +48,7 @@ extension PaymentMethod {
             } else {
                 return nil
             }
-        case .deDirectDebit, .visa, .mastercard:
+        case .deDirectDebit, .visa, .mastercard, .externalBilling:
             processor = OnlineCheckoutViewController(process!, self.data!, cart, delegate)
         }
         processor.hidesBottomBarWhenPushed = true
@@ -97,11 +102,11 @@ public final class PaymentProcess {
         }
     }
 
-    func mergePaymentMethodList(_ methods: [RawPaymentMethod]) -> [PaymentMethod] {
-        let userData = self.delegate.getPaymentData()
+    func mergePaymentMethodList(_ methods: [PaymentMethodDescription]) -> [PaymentMethod] {
+        let userData = self.delegate.getPaymentData(methods)
         var result = [PaymentMethod]()
         for method in methods {
-            switch method {
+            switch method.method {
             case .qrCodePOS: result.append(.qrCodePOS)
             case .qrCodeOffline: result.append(.qrCodeOffline)
             case .deDirectDebit:
@@ -124,6 +129,11 @@ public final class PaymentProcess {
                     result.append(contentsOf: mc.reversed())
                 } else {
                     result.append(.mastercard(nil))
+                }
+            case .externalBilling:
+                let billing = userData.filter { if case .externalBilling = $0 { return true } else { return false } }
+                if billing.count > 0 {
+                    result.append(contentsOf: billing.reversed())
                 }
             }
         }
