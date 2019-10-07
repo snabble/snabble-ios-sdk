@@ -244,3 +244,6 @@
     [Snabble.Payment.usableAt]
         en = Usable at: %@
         tags = android
+    [Snabble.CC.3dsecureHint]
+        tags = android
+        en = In order to verify your credit card, you will be redirected to your bank after entering your data. There you will be asked to approve a payment of € 1.00 to snabble. The amount will be credited to you immediately after your approval.
