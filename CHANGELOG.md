@@ -1,5 +1,11 @@
 ## snabble iOS SDK Changelog
 
+# v0.11.1
+
+* Tapping a cell in `ReceiptListViewController` now correcly highlights it.
+* Fixes a visual glitch in `ScannerViewController` when product names were extremely long (>100 characters)
+* Adds support for the new `externalBilling` payment method.
+
 # v0.11.0
 
 * Swift 4.2 support has been removed
