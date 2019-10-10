@@ -62,6 +62,16 @@ public enum RawPaymentMethod: String, CaseIterable, Decodable {
         }
     }
 
+    /// true if this method can be added in advance by the app
+    public var addableInAdvance: Bool {
+        switch self {
+        case .deDirectDebit, .creditCardVisa, .creditCardMastercard:
+            return true
+        case .qrCodePOS, .qrCodeOffline, .externalBilling:
+            return false
+        }
+    }
+
     /// true if this method can be used even if creating a checkout info/process fails
     public var offline: Bool {
         switch self {
