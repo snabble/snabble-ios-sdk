@@ -54,6 +54,7 @@ final class OnlineCheckoutViewController: UIViewController {
         self.codeWidth.constant = self.codeImage.image?.size.width ?? 0
 
         self.cancelButton.setTitle("Snabble.Cancel".localized(), for: .normal)
+        self.cancelButton.setTitleColor(SnabbleUI.appearance.primaryColor, for: .normal)
 
         self.navigationItem.hidesBackButton = true
     }
