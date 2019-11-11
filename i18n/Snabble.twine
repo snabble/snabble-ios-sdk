@@ -203,9 +203,11 @@
        en = Error cancelling payment
     [Snabble.Payment.cancelError.message]
        en = Payment cannot be cancelled at this time.
-        
+    [Snabble.Payment.addPaymentOrigin]
+       en = Transfer payment credentials to the app?
+       
     [Snabble.networkError]
-        en = Connection error
+       en = Connection error
         
 [[Android]]
     [Snabble.askForPermission]
