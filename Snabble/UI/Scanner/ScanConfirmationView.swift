@@ -149,6 +149,9 @@ final class ScanConfirmationView: DesignableView {
     private func showQuantity(updateTextField: Bool) {
         var quantity = self.cartItem.effectiveQuantity
         let product = self.cartItem.product
+
+        self.cartButton.isEnabled = quantity > 0
+
         if quantity < 1 && product.type != .userMustWeigh {
             quantity = 1
         } else if quantity > ShoppingCart.maxAmount {
@@ -159,7 +162,6 @@ final class ScanConfirmationView: DesignableView {
             self.quantityField.text = quantity == 0 ? "" : "\(quantity)"
         }
 
-        self.cartButton.isEnabled = quantity > 0
         self.minusButton.isEnabled = quantity > 1
         self.plusButton.isEnabled = quantity < ShoppingCart.maxAmount
 
