@@ -1,5 +1,9 @@
 ## snabble iOS SDK Changelog
 
+# v0.11.2
+
+* Fixes a bug where the quantity of a shopping cart entry could be set to 0.
+
 # v0.11.1
 
 * Tapping a cell in `ReceiptListViewController` now correcly highlights it.
