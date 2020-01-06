@@ -1,5 +1,10 @@
 ## snabble iOS SDK Changelog
 
+# v0.11.3
+
+* Removes the unused `secondaryColor` property from `SnabbleAppearance`
+* Fixes display of product weight in the Shopping Cart in Dark Mode
+
 # v0.11.2
 
 * Fixes a bug where the quantity of a shopping cart entry could be set to 0.
