@@ -10,7 +10,6 @@ import UIKit
 /// configuration parameters for the look of the view controllers in the Snabble SDK
 public struct SnabbleAppearance {
     public var primaryColor = UIColor.black
-    public var secondaryColor = UIColor.white
     public var backgroundColor = UIColor.white
 
     // colors for buttons

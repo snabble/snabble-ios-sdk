@@ -49,7 +49,6 @@ final class ShoppingCartTableCell: UITableViewCell {
 
         self.priceLabel.font = UIFont.monospacedDigitSystemFont(ofSize: 13, weight: .regular)
         self.quantityLabel.font = UIFont.monospacedDigitSystemFont(ofSize: 13, weight: .bold)
-        self.quantityLabel.textColor = SnabbleUI.appearance.secondaryColor
         self.quantityLabel.backgroundColor = .clear
 
         self.quantityWrapper.backgroundColor = SnabbleUI.appearance.buttonBackgroundColor
