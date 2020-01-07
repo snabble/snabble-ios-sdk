@@ -101,13 +101,22 @@ public final class ShoppingCartViewController: UIViewController {
         self.items = []
 
         // find all line items that refer to our own cart items
-        for item in cart.items {
+        for (index, cartItem) in cart.items.enumerated() {
             if let lineItems = cart.backendCartInfo?.lineItems {
-                let items = lineItems.filter { $0.id == item.uuid || $0.refersTo == item.uuid }
-                let item = CartTableEntry.cartItem(item, items)
+                let items = lineItems.filter { $0.id == cartItem.uuid || $0.refersTo == cartItem.uuid }
+
+                // if we have a single lineItem that updates this entry with another SKU,
+                // propagate the change to the shopping cart
+                if let lineItem = items.first, items.count == 1, lineItem.sku != cartItem.product.sku {
+                    let provider = SnabbleAPI.productProvider(for: SnabbleUI.project)
+                    if let replacement = CartItem(replacing: cartItem, provider, self.shoppingCart.shopId, lineItem) {
+                        cart.replaceItem(at: index, with: replacement)
+                    }
+                }
+                let item = CartTableEntry.cartItem(cartItem, items)
                 self.items.append(item)
             } else {
-                let item = CartTableEntry.cartItem(item, [])
+                let item = CartTableEntry.cartItem(cartItem, [])
                 self.items.append(item)
             }
         }
