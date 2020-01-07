@@ -73,6 +73,7 @@ final class ShoppingCartTableCell: UITableViewCell {
         self.buttonWrapper.isHidden = true
         self.weightWrapper.isHidden = true
         self.imageWrapper.isHidden = true
+        self.quantityWrapper.isHidden = false
 
         self.item = nil
         self.lineItems = []
