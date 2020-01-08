@@ -271,8 +271,13 @@ extension String {
 }
 
 extension UIImage {
-    /// get an image from our snabble bundle
+    /// get an image from either the main or our snabble bundle
     static func fromBundle(_ name: String) -> UIImage? {
+        // try the main bundle first
+        if let img = UIImage(named: name, in: Bundle.main, compatibleWith: nil) {
+            return img
+        }
+
         return UIImage(named: name, in: SnabbleBundle.main, compatibleWith: nil)
     }
 }
