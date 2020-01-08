@@ -113,6 +113,7 @@ final class ShoppingCartTableCell: UITableViewCell {
         self.loadImage()
         if self.delegate.showImages {
             self.productImage.image = UIImage.fromBundle("icon-percent")
+            self.imageWrapper.isHidden = false
         }
     }
 
@@ -127,6 +128,7 @@ final class ShoppingCartTableCell: UITableViewCell {
         self.loadImage()
         if self.delegate.showImages {
             self.productImage.image = UIImage.fromBundle("icon-giveaway")
+            self.imageWrapper.isHidden = false
         }
     }
 
