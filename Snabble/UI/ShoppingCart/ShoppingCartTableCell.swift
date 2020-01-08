@@ -112,7 +112,8 @@ final class ShoppingCartTableCell: UITableViewCell {
 
         self.loadImage()
         if self.delegate.showImages {
-            self.productImage.image = UIImage.fromBundle("icon-percent")
+            let icon = UIImage.fromBundle("icon-percent")
+            self.productImage.image = icon?.recolored(with: SnabbleUI.appearance.buttonBackgroundColor)
             self.imageWrapper.isHidden = false
         }
     }
@@ -127,7 +128,8 @@ final class ShoppingCartTableCell: UITableViewCell {
 
         self.loadImage()
         if self.delegate.showImages {
-            self.productImage.image = UIImage.fromBundle("icon-giveaway")
+            let icon = UIImage.fromBundle("icon-giveaway")
+            self.productImage.image = icon?.recolored(with: SnabbleUI.appearance.buttonBackgroundColor)
             self.imageWrapper.isHidden = false
         }
     }
