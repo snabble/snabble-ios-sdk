@@ -126,12 +126,7 @@ final class EmbeddedCodesCheckoutViewController: UIViewController {
 
     private func iconName() -> String {
         let project = SnabbleUI.project.id
-        var name = "Checkout/\(project)/checkout-offline"
-        if #available(iOS 13.0, *), UITraitCollection.current.userInterfaceStyle == .dark {
-            name += "_dark"
-        }
-
-        return name
+        return "Checkout/\(project)/checkout-offline"
     }
 
     private func setButtonTitle() {
