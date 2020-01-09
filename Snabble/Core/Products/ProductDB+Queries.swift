@@ -123,7 +123,7 @@ extension ProductDB {
         do {
             let limit = 100 //  prefix.count < 5 ? prefix.count * 100 : -1
             let depositCondition = filterDeposits ? "and isDeposit = 0" : ""
-            let templateNames = templates ?? [ "default" ]
+            let templateNames = templates ?? [ CodeTemplate.defaultName ]
             let list = templateNames.map { "\"\($0)\"" }.joined(separator: ",")
             let rows = try dbQueue.inDatabase { db in
                 return try self.fetchAll(db, ProductDB.productQuery + " " + """

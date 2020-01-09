@@ -85,7 +85,7 @@ final class ScanConfirmationView: DesignableView {
             encodingUnit: scannedProduct.encodingUnit,
             priceOverride: scannedProduct.priceOverride,
             referencePriceOverride: scannedProduct.referencePriceOverride,
-            templateId: scannedProduct.templateId ?? "default",
+            templateId: scannedProduct.templateId ?? CodeTemplate.defaultName,
             lookupCode: scannedProduct.lookupCode)
 
         self.cartItem = CartItem(1, product, scannedCode, cart.customerCard, SnabbleUI.project.roundingMode)

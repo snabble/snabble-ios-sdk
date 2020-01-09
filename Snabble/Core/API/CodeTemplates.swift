@@ -380,6 +380,10 @@ public struct CodeTemplate {
     }
 }
 
+extension CodeTemplate {
+    static let defaultName = "default"
+}
+
 /// the matcher's result
 public struct ParseResult {
     /// the template we matched against

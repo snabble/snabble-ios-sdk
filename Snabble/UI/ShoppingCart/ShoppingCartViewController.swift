@@ -42,6 +42,12 @@ enum CartTableEntry {
 
     // a new main item from the backend, plus its additional items.
     case lineItem(CheckoutInfo.LineItem, [CheckoutInfo.LineItem])
+
+    // a giveaway
+    case giveaway(CheckoutInfo.LineItem)
+
+    // sums up the total discounts
+    case discount(Int)
 }
  
 public final class ShoppingCartViewController: UIViewController {
@@ -95,13 +101,22 @@ public final class ShoppingCartViewController: UIViewController {
         self.items = []
 
         // find all line items that refer to our own cart items
-        for item in cart.items {
+        for (index, cartItem) in cart.items.enumerated() {
             if let lineItems = cart.backendCartInfo?.lineItems {
-                let items = lineItems.filter { $0.id == item.uuid ||  $0.refersTo == item.uuid }
-                let item = CartTableEntry.cartItem(item, items)
+                let items = lineItems.filter { $0.id == cartItem.uuid || $0.refersTo == cartItem.uuid }
+
+                // if we have a single lineItem that updates this entry with another SKU,
+                // propagate the change to the shopping cart
+                if let lineItem = items.first, items.count == 1, lineItem.sku != cartItem.product.sku {
+                    let provider = SnabbleAPI.productProvider(for: SnabbleUI.project)
+                    if let replacement = CartItem(replacing: cartItem, provider, self.shoppingCart.shopId, lineItem) {
+                        cart.replaceItem(at: index, with: replacement)
+                    }
+                }
+                let item = CartTableEntry.cartItem(cartItem, items)
                 self.items.append(item)
             } else {
-                let item = CartTableEntry.cartItem(item, [])
+                let item = CartTableEntry.cartItem(cartItem, [])
                 self.items.append(item)
             }
         }
@@ -115,6 +130,24 @@ public final class ShoppingCartViewController: UIViewController {
             for item in masterItems {
                 let additionalItems = lineItems.filter { $0.type != .default && $0.refersTo == item.id }
                 let item = CartTableEntry.lineItem(item, additionalItems)
+                self.items.append(item)
+            }
+        }
+
+        // find all giveaways
+        if let lineItems = cart.backendCartInfo?.lineItems {
+            let giveaways = lineItems.filter { $0.type == .giveaway }
+            giveaways.forEach {
+                self.items.append(CartTableEntry.giveaway($0))
+            }
+        }
+
+        // find all discounts
+        if let lineItems = cart.backendCartInfo?.lineItems {
+            let discounts = lineItems.filter { $0.type == .discount }
+            if discounts.count > 0 {
+                let sum = discounts.reduce(0) { $0 + $1.amount * ($1.price ?? 0) }
+                let item = CartTableEntry.discount(sum)
                 self.items.append(item)
             }
         }
@@ -226,11 +259,11 @@ public final class ShoppingCartViewController: UIViewController {
 
     private func getMissingImages() {
         let allImages: [String] = self.items.compactMap {
-            guard case .cartItem(let item) = $0 else {
+            guard case .cartItem(let item, _) = $0 else {
                 return nil
             }
 
-            return item.0.product.imageUrl
+            return item.product.imageUrl
         }
 
         let images = Set(allImages)
@@ -273,20 +306,25 @@ public final class ShoppingCartViewController: UIViewController {
     }
 
     private func updateView(at row: Int? = nil) {
+        let currentCount = self.items.count
         self.setupItems(self.shoppingCart)
-
-        if let row = row {
-            UIView.performWithoutAnimation {
-                let offset = self.tableView.contentOffset
-                let indexPath = IndexPath(row: row, section: 0)
-                self.tableView.reloadRows(at: [indexPath], with: .none)
-                self.tableView.contentOffset = offset
-            }
+        if self.items.count != currentCount {
+            self.tableView.reloadData()
         } else {
-            if self.items.count > 0 {
-                self.tableView.reloadData()
+            if let row = row {
+                UIView.performWithoutAnimation {
+                    let offset = self.tableView.contentOffset
+                    let indexPath = IndexPath(row: row, section: 0)
+                    self.tableView.reloadRows(at: [indexPath], with: .none)
+                    self.tableView.contentOffset = offset
+                }
+            } else {
+                if self.items.count > 0 {
+                    self.tableView.reloadData()
+                }
             }
         }
+
 
         self.setEditButton()
         self.setDeleteButton()
@@ -531,6 +569,10 @@ extension ShoppingCartViewController: UITableViewDelegate, UITableViewDataSource
             cell.setCartItem(item, lineItems, row: indexPath.row, delegate: self)
         case .lineItem(let item, let lineItems):
             cell.setLineItem(item, lineItems, row: indexPath.row, delegate: self)
+        case .discount(let amount):
+            cell.setDiscount(amount, delegate: self)
+        case .giveaway(let lineItem):
+            cell.setGiveaway(lineItem, delegate: self)
         }
 
         return cell
@@ -556,6 +598,8 @@ extension ShoppingCartViewController: UITableViewDelegate, UITableViewDataSource
         switch item {
         case .cartItem: return true
         case .lineItem: return false
+        case .discount: return false
+        case .giveaway: return false
         }
     }
 

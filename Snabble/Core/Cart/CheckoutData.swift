@@ -167,6 +167,12 @@ public enum LineItemType: String, Codable {
 
     /// this item contains information about deposits, e.g. for a crate of beer
     case deposit
+
+    /// a price-reducing promotion like "1 € off"
+    case discount
+
+    /// a giveaway product that is automatically added
+    case giveaway
 }
 
 extension LineItemType: UnknownCaseRepresentable {
@@ -175,10 +181,13 @@ extension LineItemType: UnknownCaseRepresentable {
 
 // CheckoutInfo
 public struct CheckoutInfo: Decodable {
-    /// available payment methods, as delivered by the API
+    /// session id
     public let session: String
+    /// available payment methods
     public let paymentMethods: [PaymentMethodDescription]
+    /// line items (only contains records with supported types)
     public let lineItems: [LineItem]
+    /// price info
     public let price: Price
 
     enum CodingKeys: String, CodingKey {
@@ -211,7 +220,8 @@ public struct CheckoutInfo: Decodable {
         self.session = try container.decode(String.self, forKey: .session)
         let paymentMethods = try container.decode([FailableDecodable<PaymentMethodDescription>].self, forKey: .paymentMethods)
         self.paymentMethods = paymentMethods.compactMap { $0.value }
-        self.lineItems = try container.decode([LineItem].self, forKey: .lineItems)
+        let lineItems = try container.decode([LineItem].self, forKey: .lineItems)
+        self.lineItems = lineItems.filter { $0.type != .unknown }
         self.price = try container.decode(Price.self, forKey: .price)
     }
 

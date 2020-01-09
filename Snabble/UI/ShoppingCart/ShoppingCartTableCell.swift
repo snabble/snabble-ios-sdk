@@ -14,24 +14,24 @@ protocol ShoppingCartTableDelegate: AnalyticsDelegate {
 
 final class ShoppingCartTableCell: UITableViewCell {
 
-    @IBOutlet weak var productImage: UIImageView!
-    @IBOutlet weak var spinner: UIActivityIndicatorView!
+    @IBOutlet private weak var productImage: UIImageView!
+    @IBOutlet private weak var spinner: UIActivityIndicatorView!
 
-    @IBOutlet weak var nameLabel: UILabel!
-    @IBOutlet weak var quantityLabel: UILabel!
-    @IBOutlet weak var priceLabel: UILabel!
+    @IBOutlet private weak var nameLabel: UILabel!
+    @IBOutlet private weak var quantityLabel: UILabel!
+    @IBOutlet private weak var priceLabel: UILabel!
 
-    @IBOutlet weak var minusButton: UIButton!
-    @IBOutlet weak var plusButton: UIButton!
+    @IBOutlet private weak var minusButton: UIButton!
+    @IBOutlet private weak var plusButton: UIButton!
 
-    @IBOutlet weak var quantityInput: UITextField!
-    @IBOutlet weak var unitsLabel: UILabel!
+    @IBOutlet private weak var quantityInput: UITextField!
+    @IBOutlet private weak var unitsLabel: UILabel!
 
-    @IBOutlet weak var buttonWrapper: UIView!
-    @IBOutlet weak var weightWrapper: UIView!
-    @IBOutlet weak var imageWrapper: UIView!
-    @IBOutlet weak var imageWrapperWidth: NSLayoutConstraint!
-    @IBOutlet weak var quantityWrapper: UIView!
+    @IBOutlet private weak var buttonWrapper: UIView!
+    @IBOutlet private weak var weightWrapper: UIView!
+    @IBOutlet private weak var imageWrapper: UIView!
+    @IBOutlet private weak var imageWrapperWidth: NSLayoutConstraint!
+    @IBOutlet private weak var quantityWrapper: UIView!
 
     private var quantity = 0
     private var item: CartItem?
@@ -73,9 +73,17 @@ final class ShoppingCartTableCell: UITableViewCell {
         self.buttonWrapper.isHidden = true
         self.weightWrapper.isHidden = true
         self.imageWrapper.isHidden = true
+        self.quantityWrapper.isHidden = false
 
         self.item = nil
         self.lineItems = []
+        self.quantity = 0
+
+        self.quantityLabel.text = nil
+        self.nameLabel.text = nil
+        self.priceLabel.text = " "
+        self.unitsLabel.text = nil
+        self.quantityInput.text = nil
     }
 
     func setLineItem(_ mainItem: CheckoutInfo.LineItem, _ lineItems: [CheckoutInfo.LineItem], row: Int, delegate: ShoppingCartTableDelegate) {
@@ -89,16 +97,54 @@ final class ShoppingCartTableCell: UITableViewCell {
         self.displayLineItemPrice(nil, mainItem, lineItems)
 
         self.quantityLabel.text = "\(mainItem.amount)"
+
+        self.loadImage()
+    }
+
+    func setDiscount(_ amount: Int, delegate: ShoppingCartTableDelegate) {
+        self.delegate = delegate
+
+        self.nameLabel.text = "Snabble.Shoppingcart.discounts".localized()
+        self.quantityWrapper.isHidden = true
+
+        let formatter = PriceFormatter(SnabbleUI.project)
+        self.priceLabel.text = formatter.format(amount)
+
+        self.loadImage()
+        if self.delegate.showImages {
+            let icon = UIImage.fromBundle("icon-percent")
+            self.productImage.image = icon?.recolored(with: SnabbleUI.appearance.buttonBackgroundColor)
+            self.imageWrapper.isHidden = false
+        }
+    }
+
+    func setGiveaway(_ lineItem: CheckoutInfo.LineItem, delegate: ShoppingCartTableDelegate) {
+        self.delegate = delegate
+
+        self.nameLabel.text = lineItem.name
+        self.quantityWrapper.isHidden = true
+
+        self.priceLabel.text = "Snabble.Shoppingcart.giveaway".localized()
+
+        self.loadImage()
+        if self.delegate.showImages {
+            let icon = UIImage.fromBundle("icon-giveaway")
+            self.productImage.image = icon?.recolored(with: SnabbleUI.appearance.buttonBackgroundColor)
+            self.imageWrapper.isHidden = false
+        }
     }
 
     func setCartItem(_ item: CartItem, _ lineItems: [CheckoutInfo.LineItem], row: Int, delegate: ShoppingCartTableDelegate) {
         self.delegate = delegate
         self.item = item
         self.lineItems = lineItems
-        self.quantity = item.quantity
+
+        let defaultItem = lineItems.first { $0.type == .default }
+
+        self.quantity = defaultItem?.amount ?? item.quantity
 
         let product = item.product
-        self.nameLabel.text = product.name
+        self.nameLabel.text = defaultItem?.name ?? product.name
 
         self.minusButton.tag = row
         self.plusButton.tag = row
@@ -108,17 +154,25 @@ final class ShoppingCartTableCell: UITableViewCell {
             self.buttonWrapper.isHidden = false
         }
 
-        let weightEntry = product.type == .userMustWeigh
-        if weightEntry {
+        if product.type == .userMustWeigh {
             self.weightWrapper.isHidden = false
             self.buttonWrapper.isHidden = true
         }
         self.quantityInput.text = "\(item.quantity)"
 
         self.showQuantity()
+        if let lineItem = defaultItem {
+            self.quantityLabel.text = "\(lineItem.amount)"
+            if let total = lineItem.totalPrice {
+                let formatter = PriceFormatter(SnabbleUI.project)
+                self.priceLabel.text = formatter.format(total)
+            }
+        }
+
+        let price = defaultItem?.totalPrice ?? item.price
 
         // suppress display when price == 0
-        if item.price == 0 {
+        if price == 0 {
             self.priceLabel.text = ""
             self.buttonWrapper.isHidden = true
         }
@@ -143,7 +197,6 @@ final class ShoppingCartTableCell: UITableViewCell {
             self.delegate.updateQuantity(self.quantity, at: row)
         }
 
-        self.lineItems = []
         self.showQuantity()
     }
 
@@ -157,7 +210,7 @@ final class ShoppingCartTableCell: UITableViewCell {
         let unit = encodingUnit?.display ?? ""
         let unitDisplay = showWeight ? unit : ""
 
-        self.quantityLabel.text = "\(item.effectiveQuantity)\(unitDisplay)"
+        self.quantityLabel.text = "\(item.effectiveQuantity) \(unitDisplay)"
         self.unitsLabel.text = unitDisplay
 
         if let defaultItem = lineItems.first(where: { $0.type == .default }) {

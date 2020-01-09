@@ -133,6 +133,12 @@ final public class ShoppingCart: Codable {
         self.save()
     }
 
+    func replaceItem(at index: Int, with replacement: CartItem) {
+        self.items.remove(at: index)
+        self.items.insert(replacement, at: index)
+        self.save()
+    }
+
     public func setQuantity(_ quantity: Int, at index: Int) {
         if self.items[index].editable {
             self.items[index].quantity = quantity

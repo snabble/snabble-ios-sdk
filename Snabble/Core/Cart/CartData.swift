@@ -108,6 +108,23 @@ public struct CartItem: Codable {
         self.uuid = item.uuid
     }
 
+    /// init with a product and a `LineItem`.
+    init?(replacing item: CartItem, _ provider: ProductProvider, _ shopId: String, _ lineItem: CheckoutInfo.LineItem) {
+        guard
+            let product = provider.productBySku(lineItem.sku, shopId),
+            let code = lineItem.scannedCode
+        else {
+            return nil
+        }
+
+        self.product = product
+        self.quantity = lineItem.amount
+        self.scannedCode = ScannedCode(scannedCode: code, templateId: CodeTemplate.defaultName, lookupCode: code)
+        self.customerCard = item.customerCard
+        self.roundingMode = item.roundingMode
+        self.uuid = lineItem.id
+    }
+
     /// can this entry be merged with another for the same SKU?
     public var canMerge: Bool {
         // yes if it is a single products with a price and we don't have any overrides from the scanned code
