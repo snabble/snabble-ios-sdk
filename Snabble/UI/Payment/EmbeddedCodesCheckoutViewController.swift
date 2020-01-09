@@ -14,6 +14,9 @@ final class EmbeddedCodesCheckoutViewController: UIViewController {
     @IBOutlet private weak var arrowWrapper: UIView!
     @IBOutlet private weak var codeWrapper: UIView!
 
+    @IBOutlet private weak var codeWidth: NSLayoutConstraint!
+    @IBOutlet private weak var codeHeight: NSLayoutConstraint!
+
     @IBOutlet private weak var codeContainer: UIView!
     @IBOutlet private weak var idWrapper: UIView!
     @IBOutlet private weak var idLabel: UILabel!
@@ -31,7 +34,7 @@ final class EmbeddedCodesCheckoutViewController: UIViewController {
     private var qrCodeConfig: QRCodeConfig
 
     private var codes = [String]()
-    private var itemSize = CGSize(width: 100, height: 100)
+    private var itemSize = CGSize.zero
 
     init(_ process: CheckoutProcess?, _ cart: ShoppingCart, _ delegate: PaymentDelegate, _ codeConfig: QRCodeConfig) {
         self.process = process
@@ -86,6 +89,7 @@ final class EmbeddedCodesCheckoutViewController: UIViewController {
     }
 
     override func viewWillAppear(_ animated: Bool) {
+        print(#function)
         super.viewWillAppear(animated)
 
         self.delegate.track(.viewEmbeddedCodesCheckout)
@@ -98,16 +102,23 @@ final class EmbeddedCodesCheckoutViewController: UIViewController {
     }
 
     override func viewDidLayoutSubviews() {
+        print(#function)
         super.viewDidLayoutSubviews()
 
-        let width = self.collectionView.frame.width
-        if width != self.itemSize.width {
-            self.itemSize = CGSize(width: width, height: width)
+        let frameWidth = self.collectionView.frame.width
+        let maxCodeSize = self.maxCodeSize(fitting: frameWidth)
+        NSLayoutConstraint.activate([
+            self.collectionView.heightAnchor.constraint(equalToConstant: maxCodeSize),
+            self.collectionView.widthAnchor.constraint(equalToConstant: maxCodeSize)
+        ])
+        if maxCodeSize != self.itemSize.width {
+            self.itemSize = CGSize(width: maxCodeSize, height: maxCodeSize)
             self.collectionView.collectionViewLayout.invalidateLayout()
         }
     }
 
     override func viewDidAppear(_ animated: Bool) {
+        print(#function)
         super.viewDidAppear(animated)
 
         Timer.scheduledTimer(withTimeInterval: 2, repeats: false) { timer in
@@ -158,6 +169,41 @@ final class EmbeddedCodesCheckoutViewController: UIViewController {
 
 }
 
+extension EmbeddedCodesCheckoutViewController {
+    private func qrCode(with code: String) -> UIImage? {
+        Log.debug("QR Code content:\n\(code)")
+        let start = Date.timeIntervalSinceReferenceDate
+        defer {
+            let elapsed = Date.timeIntervalSinceReferenceDate - start
+            NSLog("code gen took \(elapsed)")
+        }
+
+        return self.qrCode(with: code, fitting: self.collectionView.frame.width)
+    }
+
+    private func maxCodeSize(fitting width: CGFloat) -> CGFloat {
+        var maxWidth: CGFloat = 0
+        for code in self.codes {
+            if let img = self.qrCode(with: code, fitting: width) {
+                maxWidth = max(maxWidth, img.size.width)
+            }
+        }
+
+        return maxWidth
+    }
+
+    private func qrCode(with code: String, fitting width: CGFloat) -> UIImage? {
+        for scale in (1...7).reversed() {
+            if let img = QRCode.generate(for: code, scale: scale) {
+                if img.size.width <= width {
+                    return img
+                }
+            }
+        }
+        return nil
+    }
+}
+
 extension EmbeddedCodesCheckoutViewController: UICollectionViewDataSource, UICollectionViewDelegate, UICollectionViewDelegateFlowLayout {
 
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
@@ -176,24 +222,6 @@ extension EmbeddedCodesCheckoutViewController: UICollectionViewDataSource, UICol
 
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
         return self.itemSize
-    }
-
-    private func qrCode(with code: String) -> UIImage? {
-        Log.debug("QR Code content:\n\(code)")
-        let start = Date.timeIntervalSinceReferenceDate
-        defer {
-            let elapsed = Date.timeIntervalSinceReferenceDate - start
-            NSLog("code gen took \(elapsed)")
-        }
-        for scale in (1...7).reversed() {
-            if let img = QRCode.generate(for: code, scale: scale) {
-                if img.size.width <= self.collectionView.bounds.width {
-                    return img
-                }
-            }
-        }
-
-        return nil
     }
 
     @IBAction func pageControlTapped(_ pageControl: UIPageControl) {

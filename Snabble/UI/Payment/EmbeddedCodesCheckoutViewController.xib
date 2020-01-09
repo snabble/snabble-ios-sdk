@@ -85,7 +85,6 @@
                                                     </collectionViewFlowLayout>
                                                 </collectionView>
                                             </subviews>
-                                            <color key="backgroundColor" systemColor="systemTealColor" red="0.35294117650000001" green="0.7843137255" blue="0.98039215690000003" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                             <constraints>
                                                 <constraint firstItem="M1x-Rz-HWF" firstAttribute="leading" secondItem="IIw-A8-SY5" secondAttribute="leading" id="5nd-kn-KPk"/>
                                                 <constraint firstAttribute="width" secondItem="IIw-A8-SY5" secondAttribute="height" multiplier="1:1" id="Idp-Jh-ASq"/>
