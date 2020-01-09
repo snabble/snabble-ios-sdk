@@ -67,7 +67,7 @@ if [ -z "$TARGET_DIR" ]; then
         echo "PROJECT_DIR not set, assuming './Seed' as TARGET_DIR" >&2
         TARGET_DIR=./Seed
     else
-        TARGET_DIR=${PROJECT_DIR}/Knauber/Database/Seed
+        TARGET_DIR=${PROJECT_DIR}/Sources/Database/Seed
     fi
 fi
 
