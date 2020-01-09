@@ -208,9 +208,9 @@ final class ShoppingCartTableCell: UITableViewCell {
         let showWeight = item.product.referenceUnit?.hasDimension == true || item.product.type == .userMustWeigh
         let encodingUnit = item.encodingUnit ?? item.product.encodingUnit
         let unit = encodingUnit?.display ?? ""
-        let unitDisplay = showWeight ? unit : ""
+        let unitDisplay = showWeight ? " \(unit)" : ""
 
-        self.quantityLabel.text = "\(item.effectiveQuantity) \(unitDisplay)"
+        self.quantityLabel.text = "\(item.effectiveQuantity)\(unitDisplay)"
         self.unitsLabel.text = unitDisplay
 
         if let defaultItem = lineItems.first(where: { $0.type == .default }) {
