@@ -225,10 +225,10 @@ extension EAN13 {
         assert(data < 99999)
 
         let str = String(data)
-        let padding = String(repeatElement("0", count: 5 - str.count))
+        let padding = String(repeating: "0", count: 5 - str.count)
         let dataString = padding + str
 
-        let code = String(template.prefix(6) + "0" + dataString)
+        let code = String(template.prefix(6)) + "0" + dataString
 
         guard let ean = EAN13(code) else {
             return ""

@@ -18,7 +18,6 @@ extension ShoppingCart {
     ///   - result: the `SignedCheckoutInfo` or the error
     public func createCheckoutInfo(_ project: Project, timeout: TimeInterval = 0, completion: @escaping (_ result: Result<SignedCheckoutInfo, SnabbleError>) -> () ) {
         // cancel any previous tasks
-
         self.eventTimer?.invalidate()
         self.checkoutInfoTask?.cancel()
 
@@ -59,7 +58,7 @@ extension SignedCheckoutInfo {
     ///   - timeout: the timeout for the HTTP request (0 for the system default timeout)
     ///   - completion: is called on the main thread with the result of the API call,
     ///   - result: the newly created `CheckoutProcess` or the error
-    public func createCheckoutProcess(_ project: Project, paymentMethod: PaymentMethod, timeout: TimeInterval = 0, completion: @escaping (_ result: Result<CheckoutProcess, SnabbleError>) -> () ) {
+    public func createCheckoutProcess(_ project: Project, paymentMethod: PaymentMethod, timeout: TimeInterval = 0, finalizedAt: Date? = nil, completion: @escaping (_ result: Result<CheckoutProcess, SnabbleError>) -> () ) {
         do {
             // since we need to pass the originally-received SignedCheckoutInfo as-is,
             // we can't use the struct but have to build this manually:
@@ -68,11 +67,19 @@ extension SignedCheckoutInfo {
             dict["signedCheckoutInfo"] = self.rawJson
 
             if let data = paymentMethod.data {
-                dict["paymentInformation"] = [ "encryptedOrigin": data.encryptedData ]
+                dict["paymentInformation"] = [
+                    "originType": data.originType.rawValue,
+                    "encryptedOrigin": data.encryptedData
+                ]
+            }
+
+            if let finalizedAt = finalizedAt {
+                dict["processedOffline"] = true
+                dict["finalizedAt"] = Snabble.iso8601Formatter.string(from: finalizedAt)
             }
 
             if let checkoutInfo = self.rawJson?["checkoutInfo"] as? [String: Any], let session = checkoutInfo["session"] as? String {
-                Log.info("check process for session: \(session)")
+                Log.info("checkout process for session: \(session)")
             }
 
             let data = try JSONSerialization.data(withJSONObject: dict, options: [])

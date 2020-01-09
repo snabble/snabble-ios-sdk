@@ -3,7 +3,6 @@
 TODAY=$(date +%Y-%m-%d)
 CHANGELOG_DATE=$(stat -f "%Sm" -t "%Y-%m-%d" CHANGELOG.md)
 
-
 POD_VERSION=$(awk '/s.version.*=/ { print substr($3,2,length($3)-2) }' Snabble.podspec)
 
 perl -pi -e "s/= \".*\"/= \"$POD_VERSION\"/" Snabble/Core/API/APIVersion.swift
@@ -22,7 +21,7 @@ if [ "$TODAY" != "$CHANGELOG_DATE" ]; then
 fi
 
 echo running unit tests...
-if (cd ../iOS-whitelabel; fastlane unittests); then
+if (cd ../iOS-App; fastlane unittests); then
     echo "passed!"
 else
     echo "tests failed"
@@ -30,12 +29,16 @@ else
 fi
 
 echo building sample app...
-if (cd Example; xcodebuild -scheme Snabble-Example -workspace Snabble.xcworkspace build); then
+if (cd Example; pod install; xcodebuild -scheme Snabble-Example -workspace Snabble.xcworkspace build); then
     echo "passed!"
 else
     echo "build failed"
     exit 1
 fi
+
+echo "updating strings file..."
+
+twine generate-localization-file i18n/Snabble.twine --lang en --format apple Snabble/UI/en.lproj/SnabbleLocalizable.strings
 
 git add .
 git commit -m "release v$POD_VERSION"

@@ -7,7 +7,7 @@
 import UIKit
 
 protocol ScanConfirmationViewDelegate: AnalyticsDelegate {
-    func closeConfirmation(_ msg: String?)
+    func closeConfirmation(_ item: CartItem?)
 }
 
 final class ScanConfirmationView: DesignableView {
@@ -40,11 +40,9 @@ final class ScanConfirmationView: DesignableView {
         super.awakeFromNib()
 
         self.view.backgroundColor = .clear
-        self.addCornersAndShadow(backgroundColor: .white, cornerRadius: 8)
+        self.addCornersAndShadow(backgroundColor: self.background, cornerRadius: 8)
 
-        self.cartButton.backgroundColor = SnabbleUI.appearance.primaryColor
-        self.cartButton.tintColor = SnabbleUI.appearance.secondaryColor
-        self.cartButton.makeRoundedButton()
+        self.cartButton.makeSnabbleButton()
 
         self.priceLabel.font = UIFont.monospacedDigitSystemFont(ofSize: 17, weight: .regular)
 
@@ -59,6 +57,10 @@ final class ScanConfirmationView: DesignableView {
         self.closeButton.setImage(UIImage.fromBundle("icon-close"), for: .normal)
         self.plusButton.setImage(UIImage.fromBundle("icon-plus"), for: .normal)
         self.minusButton.setImage(UIImage.fromBundle("icon-minus"), for: .normal)
+    }
+
+    func setCustomAppearance(_ appearance: CustomAppearance) {
+        self.cartButton.setCustomAppearance(appearance)
     }
     
     func present(_ scannedProduct: ScannedProduct, _ scannedCode: String, cart: ShoppingCart) {
@@ -147,6 +149,9 @@ final class ScanConfirmationView: DesignableView {
     private func showQuantity(updateTextField: Bool) {
         var quantity = self.cartItem.effectiveQuantity
         let product = self.cartItem.product
+
+        self.cartButton.isEnabled = quantity > 0
+
         if quantity < 1 && product.type != .userMustWeigh {
             quantity = 1
         } else if quantity > ShoppingCart.maxAmount {
@@ -157,7 +162,6 @@ final class ScanConfirmationView: DesignableView {
             self.quantityField.text = quantity == 0 ? "" : "\(quantity)"
         }
 
-        self.cartButton.isEnabled = quantity > 0
         self.minusButton.isEnabled = quantity > 1
         self.plusButton.isEnabled = quantity < ShoppingCart.maxAmount
 
@@ -193,18 +197,29 @@ final class ScanConfirmationView: DesignableView {
         }
 
         NotificationCenter.default.post(name: .snabbleCartUpdated, object: self)
+        self.delegate.track(.productAddedToCart(self.cartItem.product.sku))
 
-        self.delegate.closeConfirmation(self.cartItem.product.scanMessage)
+        self.productNameLabel.text = nil
+        self.delegate.closeConfirmation(self.cartItem)
 
         self.quantityField.resignFirstResponder()
     }
 
     @IBAction private func closeButtonTapped(_ button: UIButton) {
         self.delegate.track(.scanAborted(self.cartItem.product.sku))
+
+        self.productNameLabel.text = nil
         self.delegate.closeConfirmation(nil)
         self.quantityField.resignFirstResponder()
     }
 
+    private var background: UIColor {
+        if #available(iOS 13.0, *) {
+            return .systemBackground
+        } else {
+            return .white
+        }
+    }
 }
 
 extension ScanConfirmationView: UITextFieldDelegate {

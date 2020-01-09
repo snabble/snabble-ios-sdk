@@ -7,31 +7,35 @@
 import UIKit
 import QuickLook
 
-final class PreviewItem: NSObject, QLPreviewItem {
-    var previewItemURL: URL? {
+final public class ReceiptPreviewItem: NSObject, QLPreviewItem {
+    public let receiptUrl: URL
+    public let title: String
+
+    public var previewItemURL: URL? {
         return self.receiptUrl
     }
 
-    var previewItemTitle: String? { return "Beleg" }
+    public var previewItemTitle: String? {
+        return self.title
+    }
 
-    private let receiptUrl: URL
-
-    init(_ receiptUrl: URL) {
+    public init(_ receiptUrl: URL, _ title: String) {
         self.receiptUrl = receiptUrl
+        self.title = title
         super.init()
     }
 }
 
 enum OrderEntry {
-    case pending(String)    // shop name
+    case pending(String, String)    // shop name, project id
     case done(Order)
 }
 
 @objc(ReceiptsListViewController)
 public final class ReceiptsListViewController: UIViewController {
-    @IBOutlet weak var tableView: UITableView!
-    @IBOutlet weak var emptyLabel: UILabel!
-    @IBOutlet weak var spinner: UIActivityIndicatorView!
+    @IBOutlet private weak var tableView: UITableView!
+    @IBOutlet private weak var emptyLabel: UILabel!
+    @IBOutlet private weak var spinner: UIActivityIndicatorView!
     
     private var quickLook = QLPreviewController()
     private var previewItem: QLPreviewItem!
@@ -61,6 +65,8 @@ public final class ReceiptsListViewController: UIViewController {
     override public func viewDidLoad() {
         super.viewDidLoad()
 
+        let nib = UINib(nibName: "ReceiptCell", bundle: SnabbleBundle.main)
+        self.tableView.register(nib, forCellReuseIdentifier: "receiptCell")
         self.tableView.tableFooterView = UIView(frame: CGRect.zero)
 
         self.quickLook.dataSource = self
@@ -75,8 +81,14 @@ public final class ReceiptsListViewController: UIViewController {
         self.startReceiptPolling()
     }
 
+    override public func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+
+        SnabbleUI.analytics?.track(.viewReceiptList)
+    }
+
     private func loadOrderList() {
-        OrderList.load(SnabbleUI.project) { result in
+        OrderList.load(SnabbleAPI.projects[0]) { result in
             self.orderListLoaded(result)
 
             if self.tableView.refreshControl == nil {
@@ -127,7 +139,7 @@ public final class ReceiptsListViewController: UIViewController {
 
         if let orderId = self.orderId {
             if !orderIds.contains(orderId) {
-                let pending = OrderEntry.pending(SnabbleUI.project.name)
+                let pending = OrderEntry.pending(SnabbleUI.project.name, SnabbleUI.project.id)
                 orders.insert(pending, at: 0)
             }
         }
@@ -141,7 +153,7 @@ public final class ReceiptsListViewController: UIViewController {
     }
 
     @objc private func handleRefresh(_ sender: Any) {
-        OrderList.load(SnabbleUI.project) { result in
+        OrderList.load(SnabbleAPI.projects[0]) { result in
             self.tableView.refreshControl?.endRefreshing()
             self.orderListLoaded(result)
         }
@@ -154,51 +166,20 @@ extension ReceiptsListViewController: UITableViewDelegate, UITableViewDataSource
     }
 
     public func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: "receiptCell") ?? {
-            let c = UITableViewCell(style: .subtitle, reuseIdentifier: "receiptCell")
-            c.accessoryType = .disclosureIndicator
-            c.selectionStyle = .none
-            return c
-        }()
+        let cell = tableView.dequeueReusableCell(withIdentifier: "receiptCell", for: indexPath) as! ReceiptCell
 
         guard let orders = self.orders else {
-            return cell
+            return UITableViewCell(style: .default, reuseIdentifier: "invalidCell")
         }
 
         let orderEntry = orders[indexPath.row]
-
-        switch orderEntry {
-        case .done(let order):
-            cell.accessoryType = .disclosureIndicator
-            cell.textLabel?.text = order.shopName
-            cell.detailTextLabel?.text = ""
-
-            guard let project = SnabbleAPI.projectFor(order.project) else {
-                break
-            }
-
-            let formatter = PriceFormatter(project)
-            let price = formatter.format(order.price)
-
-            let dateFormatter = DateFormatter()
-            dateFormatter.dateStyle = .medium
-            dateFormatter.timeStyle = .short
-            let date = dateFormatter.string(from: order.date)
-            let oClock = "Snabble.Receipts.oClock".localized()
-            cell.detailTextLabel?.text = "\(price) - \(date) \(oClock)"
-
-        case .pending(let shopName):
-            cell.textLabel?.text = shopName
-            cell.detailTextLabel?.text = "Snabble.Receipts.loading".localized()
-            let spinner = UIActivityIndicatorView(style: .gray)
-            spinner.startAnimating()
-            cell.accessoryView = spinner
-        }
+        cell.show(orderEntry)
 
         return cell
     }
 
     public func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        self.tableView.deselectRow(at: indexPath, animated: true)
         guard let orders = self.orders else {
             return
         }
@@ -211,62 +192,42 @@ extension ReceiptsListViewController: UITableViewDelegate, UITableViewDataSource
             return
         }
 
-        self.showOrder(order, project)
+        let cell = self.tableView.cellForRow(at: indexPath)
+        let spinner = UIActivityIndicatorView(style: .gray)
+        spinner.startAnimating()
+        cell?.accessoryType = .none
+        cell?.accessoryView = spinner
+        self.showOrder(order, project, cell)
     }
 }
 
 extension ReceiptsListViewController {
-    func showOrder(_ order: Order, _ project: Project) {
-        let fileManager = FileManager.default
-        let cacheDir = try! fileManager.url(for: .cachesDirectory, in: .userDomainMask, appropriateFor: nil, create: true)
-        let targetPath = cacheDir.appendingPathComponent("snabble-order-\(order.id).pdf")
+    func showOrder(_ order: Order, _ project: Project, _ cell: UITableViewCell?) {
+        order.getReceipt(project) { result in
+            cell?.accessoryType = .disclosureIndicator
+            cell?.accessoryView = nil
+            switch result {
+            case .success(let targetPath):
+                let formatter = DateFormatter()
+                formatter.dateStyle = .medium
+                formatter.timeStyle = .none
 
-        try? fileManager.removeItem(at: targetPath)
+                let title = formatter.string(from: order.date)
 
-        if fileManager.fileExists(atPath: targetPath.path) {
-            self.showQuicklook(targetPath)
-        } else {
-            self.downloadAndShow(order, project, targetPath)
+                self.showQuicklook(targetPath, title)
+            case .failure(let error):
+                Log.error("error saving receipt: \(error)")
+            }
         }
     }
 
-    func downloadAndShow(_ order: Order, _ project: Project, _ targetPath: URL) {
-        self.spinner.startAnimating()
-        project.request(.get, order.links.receipt.href, timeout: 10) { request in
-            guard let request = request else {
-                self.spinner.stopAnimating()
-                return
-            }
-
-            let session = SnabbleAPI.urlSession()
-            let task = session.downloadTask(with: request) { location, response, error in
-                DispatchQueue.main.async {
-                    self.spinner.stopAnimating()
-                }
-
-                guard let location = location else {
-                    Log.error("error downloading receipt: \(String(describing: error))")
-                    return
-                }
-
-                do {
-                    try FileManager.default.moveItem(at: location, to: targetPath)
-                    DispatchQueue.main.async {
-                        self.showQuicklook(targetPath)
-                    }
-                } catch {
-                    Log.error("error saving receipt: \(error)")
-                }
-            }
-            task.resume()
-        }
-    }
-
-    func showQuicklook(_ url: URL) {
+    func showQuicklook(_ url: URL, _ title: String) {
         self.quickLook.currentPreviewItemIndex = 0
-        self.previewItem = PreviewItem(url)
-        self.navigationController?.pushViewController(self.quickLook, animated: true)
+        self.previewItem = ReceiptPreviewItem(url, title)
         self.quickLook.reloadData()
+        self.navigationController?.pushViewController(self.quickLook, animated: true)
+
+        SnabbleUI.analytics?.track(.viewReceiptDetail)
     }
 
 }

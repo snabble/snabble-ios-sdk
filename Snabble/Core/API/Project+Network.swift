@@ -6,21 +6,6 @@
 
 import Foundation
 
-#if swift(<5.0)
-/// Implement a trivial version of `Result` when compiling in Swift 4.2 mode
-public enum Result<Success, Failure: Swift.Error> {
-    case success(Success)
-    case failure(Failure)
-
-    public func get() throws -> Success {
-        switch self {
-        case .success(let success): return success
-        case .failure(let failure): throw failure
-        }
-    }
-}
-#endif
-
 public struct SnabbleError: Decodable, Error {
     public let error: ErrorResponse
 
@@ -41,7 +26,12 @@ public enum ErrorResponseType: String {
     case shopNotFound = "shop_not_found"
     case badShopId = "bad_shop_id"
     case noAvailableMethod = "no_available_method"
+
     case checkoutUnavailable = "checkout_unavailable"
+
+    // invalidCartItem detail types
+    case saleStop = "sale_stop"
+    case productNotFound = "product_not_found"
 }
 
 extension ErrorResponseType: UnknownCaseRepresentable {
@@ -50,48 +40,24 @@ extension ErrorResponseType: UnknownCaseRepresentable {
 
 public struct ErrorResponse: Decodable {
     public let rawType: String
-    public let details: [ErrorDetail]?
+    public let message: String?
+    public let sku: String?
+    public let details: [ErrorResponse]?
 
     enum CodingKeys: String, CodingKey {
         case rawType = "type"
-        case details
+        case details, sku, message
     }
 
     init(_ type: String) {
         self.rawType = type
         self.details = nil
+        self.message = nil
+        self.sku = nil
     }
 
     var type: ErrorResponseType {
         return ErrorResponseType(rawValue: self.rawType)
-    }
-}
-
-public enum ErrorDetailType: String {
-    case unknown
-
-    // invalidCartItem details
-    case saleStop = "sale_stop"
-    case productNotFound = "product_not_found"
-}
-
-extension ErrorDetailType: UnknownCaseRepresentable {
-    public static let unknownCase = ErrorDetailType.unknown
-}
-
-public struct ErrorDetail: Decodable {
-    public let rawType: String
-    public let message: String?
-    public let sku: String?
-
-    enum CodingKeys: String, CodingKey {
-        case rawType = "type"
-        case message
-        case sku
-    }
-
-    var type: ErrorDetailType {
-        return ErrorDetailType(rawValue: self.rawType)
     }
 }
 
@@ -264,7 +230,7 @@ extension Project {
     ///   - completion: called on the main thread when the result is available.
     ///   - result: the parsed result object or error
     func retry<T: Decodable>(_ retryCount: Int, _ pauseTime: TimeInterval, _ request: URLRequest, _ completion: @escaping (_ result: Result<T, SnabbleError>) -> () ) {
-        perform(request) { (result: Result<T, SnabbleError>) in
+        self.perform(request) { (result: Result<T, SnabbleError>) in
             switch result {
             case .success:
                 completion(result)
@@ -329,7 +295,8 @@ extension Project {
                 let httpResponse = response as? HTTPURLResponse,
                 httpResponse.statusCode == 200 || httpResponse.statusCode == 201
             else {
-                self.logError("error getting response from \(url): \(String(describing: error))")
+                let statusCode = (response as? HTTPURLResponse)?.statusCode ?? 0
+                self.logError("error getting response from \(url): \(String(describing: error)) statusCode \(statusCode)")
                 var apiError = SnabbleError.unknown
                 if let data = rawData {
                     do {

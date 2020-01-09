@@ -8,6 +8,7 @@ import UIKit
 
 final class EmbeddedCodesCheckoutViewController: UIViewController {
 
+    @IBOutlet weak var checkoutIdLabel: UILabel!
     @IBOutlet weak var explanation1: UILabel!
     @IBOutlet weak var totalPriceLabel: UILabel!
     @IBOutlet weak var explanation2: UILabel!
@@ -20,18 +21,17 @@ final class EmbeddedCodesCheckoutViewController: UIViewController {
     private weak var cart: ShoppingCart!
     private weak var delegate: PaymentDelegate!
     private var process: CheckoutProcess?
-    private var method: PaymentMethod
     private var qrCodeConfig: QRCodeConfig
 
     private var codes = [String]()
     private var itemSize = CGSize(width: 100, height: 100)
 
-    init(_ process: CheckoutProcess?, _ method: PaymentMethod, _ cart: ShoppingCart, _ delegate: PaymentDelegate) {
+    init(_ process: CheckoutProcess?, _ cart: ShoppingCart, _ delegate: PaymentDelegate, _ codeConfig: QRCodeConfig) {
         self.process = process
-        self.method = method
         self.cart = cart
         self.delegate = delegate
-        self.qrCodeConfig = SnabbleUI.project.encodedCodes ?? QRCodeConfig.default
+
+        self.qrCodeConfig = codeConfig
 
         super.init(nibName: nil, bundle: SnabbleBundle.main)
 
@@ -45,43 +45,25 @@ final class EmbeddedCodesCheckoutViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        self.paidButton.backgroundColor = SnabbleUI.appearance.primaryColor
-        self.paidButton.makeRoundedButton()
+        self.paidButton.makeSnabbleButton()
         self.paidButton.setTitle("Snabble.QRCode.didPay".localized(), for: .normal)
         self.paidButton.alpha = 0
         self.paidButton.isUserInteractionEnabled = false
 
-        Timer.scheduledTimer(withTimeInterval: 2, repeats: false) { timer in
-            UIView.animate(withDuration: 0.2) {
-                self.paidButton.alpha = 1
-            }
-            self.paidButton.isUserInteractionEnabled = true
-        }
-
         let nib = UINib(nibName: "QRCodeCell", bundle: SnabbleBundle.main)
         self.collectionView.register(nib, forCellWithReuseIdentifier: "qrCodeCell")
 
-        switch self.method {
-        case .encodedCodes:
-            let codeblocks = Codeblocks(self.qrCodeConfig)
-            let (regularCodes, restrictedCodes) = self.codesForQR()
-            self.codes = codeblocks.generateQrCodes(regularCodes, restrictedCodes)
-        case .encodedCodesCSV:
-            let codeblocks = CodeblocksCSV(self.qrCodeConfig)
-            self.codes = codeblocks.generateQrCodes(self.cart)
-        case .encodedCodesIKEA:
-            let codeblocks = CodeblocksIKEA(self.qrCodeConfig)
-            self.codes = codeblocks.generateQrCodes(self.cart, self.codesFor(self.cart.items))
-        default:
-            fatalError("payment method \(self.method) not implemented")
-            break
-        }
+        let generator = QRCodeGenerator(self.cart, self.qrCodeConfig)
+        self.codes = generator.generateCodes()
 
         self.pageControl.numberOfPages = self.codes.count
         self.pageControl.pageIndicatorTintColor = .lightGray
         self.pageControl.currentPageIndicatorTintColor = SnabbleUI.appearance.primaryColor
         self.collectionView.dataSource = self
         self.collectionView.delegate = self
+
+        let id = process?.links.`self`.href.suffix(4) ?? "offline"
+        self.checkoutIdLabel.text = "Snabble.Checkout.ID".localized() + ": " + id
 
         self.setButtonTitle()
     }
@@ -94,6 +76,7 @@ final class EmbeddedCodesCheckoutViewController: UIViewController {
         self.initialBrightness = UIScreen.main.brightness
         if self.initialBrightness < 0.5 {
             UIScreen.main.brightness = 0.5
+            self.delegate.track(.brightnessIncreased)
         }
 
         let formatter = PriceFormatter(SnabbleUI.project)
@@ -107,7 +90,7 @@ final class EmbeddedCodesCheckoutViewController: UIViewController {
         self.totalPriceLabel.text = "Snabble.QRCode.total".localized() + "\(formattedTotal)"
 
         let explKey = self.codes.count > 1 ? "Snabble.QRCode.showTheseCodes" : "Snabble.QRCode.showThisCode"
-        let explanation = self.showCodesMessage(explKey)
+        let explanation = explKey.localized()
 
         self.explanation1.text = String(format: explanation, self.codes.count)
         self.explanation2.text = "Snabble.QRCode.priceMayDiffer".localized()
@@ -115,18 +98,6 @@ final class EmbeddedCodesCheckoutViewController: UIViewController {
         if total == nil {
             self.totalPriceLabel.isHidden = true
             self.explanation2.isHidden = true
-        }
-    }
-
-    private func showCodesMessage(_ msgId: String) -> String {
-        let projectId = SnabbleUI.project.id.replacingOccurrences(of: "-", with: ".")
-        let textId = projectId + "." + msgId
-        let l10n = NSLocalizedString(textId, comment: "")
-
-        if l10n.hasPrefix(projectId) {
-            return msgId.localized()
-        } else {
-            return l10n
         }
     }
 
@@ -140,45 +111,21 @@ final class EmbeddedCodesCheckoutViewController: UIViewController {
         }
     }
 
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+
+        Timer.scheduledTimer(withTimeInterval: 2, repeats: false) { timer in
+            UIView.animate(withDuration: 0.2) {
+                self.paidButton.alpha = 1
+            }
+            self.paidButton.isUserInteractionEnabled = true
+        }
+    }
+
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
 
         UIScreen.main.brightness = self.initialBrightness
-    }
-
-    private func codesForQR() -> ([String],[String]) {
-        let items = self.cart.items.sorted { $0.price < $1.price }
-
-        if self.qrCodeConfig.nextCodeWithCheck != nil {
-            let regularItems = items.filter { return $0.product.saleRestriction == .none }
-            let restrictedItems = items.filter { return $0.product.saleRestriction != .none }
-
-            var regularCodes = [String]()
-            if let card = self.cart.customerCard {
-                regularCodes.append(card)
-            }
-            regularCodes += self.codesFor(regularItems)
-
-            let restrictedCodes = self.codesFor(restrictedItems)
-
-            return (regularCodes, restrictedCodes)
-        } else {
-            var codes = [String]()
-            if let card = self.cart.customerCard {
-                codes.append(card)
-            }
-            codes += self.codesFor(items)
-
-            return (codes, [])
-        }
-    }
-
-    private func codesFor(_ items: [CartItem]) -> [String] {
-        return items.reduce(into: [], { result, item in
-            let qrCode = QRCodeData(item)
-            let arr = Array(repeating: qrCode.code, count: qrCode.quantity)
-            result.append(contentsOf: arr)
-        })
     }
 
     private func setButtonTitle() {

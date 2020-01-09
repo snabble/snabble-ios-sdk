@@ -286,7 +286,6 @@ final class ProductDB: ProductProvider {
         self.updateInProgress = true
         self.getAppDb(currentRevision: revision, schemaVersion: schemaVersion) { dbResponse in
             self.processAppDbResponse(dbResponse, completion)
-            self.updateInProgress = false
         }
     }
 
@@ -315,21 +314,21 @@ final class ProductDB: ProductProvider {
             self.appDbAvailability = data != nil ? .incomplete : .unknown
         }
     }
-    
+
     private func processAppDbResponse(_ dbResponse: AppDbResponse, _ completion: @escaping (_ dataAvailable: AppDbAvailability)->() ) {
         DispatchQueue.global(qos: .userInitiated).async {
             let tempDbPath = self.dbPathname(temporary: true)
             let performSwitch: Bool
             let dataAvailable: AppDbAvailability
             switch dbResponse {
-            case .diff(let statements):
+            case .diff(let updateFile):
                 Log.info("db update: got diff")
-                performSwitch = self.copyAndUpdateDatabase(statements, tempDbPath)
+                performSwitch = self.copyAndUpdateDatabase(updateFile, tempDbPath)
                 dataAvailable = .newData
                 self.lastProductUpdate = Date()
-            case .full(let data):
+            case .full(let dbFile):
                 Log.info("db update: got full db")
-                performSwitch = self.writeFullDatabase(data, tempDbPath)
+                performSwitch = self.writeFullDatabase(dbFile, tempDbPath)
                 dataAvailable = .newData
                 self.lastProductUpdate = Date()
             case .noUpdate:
@@ -361,6 +360,7 @@ final class ProductDB: ProductProvider {
             }
 
             DispatchQueue.main.async {
+                self.updateInProgress = false
                 self.appDbAvailability = dataAvailable
                 completion(dataAvailable)
             }
@@ -389,6 +389,8 @@ final class ProductDB: ProductProvider {
             if !fileManager.fileExists(atPath: self.dbDirectory.path) {
                 try fileManager.createDirectory(at: self.dbDirectory, withIntermediateDirectories: true, attributes: nil)
             }
+
+            self.removePreviousUpdateRemnants()
 
             let dbFile = self.dbPathname()
 
@@ -449,15 +451,18 @@ final class ProductDB: ProductProvider {
     ///   - data: the bytes to write
     /// - Returns: true if the database was written successfully and passes internal integrity checks,
     ///         false otherwise
-    private func writeFullDatabase(_ data: Data, _ tempDbPath: String) -> Bool {
+    private func writeFullDatabase(_ dbFile: URL, _ tempDbPath: String) -> Bool {
         let fileManager = FileManager.default
+        defer {
+            try? fileManager.removeItem(at: dbFile)
+        }
 
         do {
             if fileManager.fileExists(atPath: tempDbPath) {
                 try fileManager.removeItem(atPath: tempDbPath)
             }
             let tmpUrl = URL(fileURLWithPath: tempDbPath)
-            try data.write(to: tmpUrl, options: .atomic)
+            try fileManager.moveItem(at: dbFile, to: tmpUrl)
 
             // open the db and check its integrity
             let tempDb = try DatabaseQueue(path: tempDbPath)
@@ -503,8 +508,7 @@ final class ProductDB: ProductProvider {
 
     private func setLastUpdate(_ dbQueue: DatabaseQueue) {
         do {
-            let fmt = ISO8601DateFormatter()
-            let now = fmt.string(from: Date())
+            let now = Snabble.iso8601Formatter.string(from: Date())
             try dbQueue.inDatabase { db in
                 try db.execute(sql: "insert or replace into metadata values(?,?)", arguments: [MetadataKeys.appLastUpdate, now])
             }
@@ -513,8 +517,12 @@ final class ProductDB: ProductProvider {
         }
     }
 
-    private func copyAndUpdateDatabase(_ statements: String, _ tempDbPath: String) -> Bool {
+    private func copyAndUpdateDatabase(_ updateFile: URL, _ tempDbPath: String) -> Bool {
         let fileManager = FileManager.default
+        defer {
+            try? fileManager.removeItem(at: updateFile)
+        }
+
         do {
             if fileManager.fileExists(atPath: tempDbPath) {
                 try fileManager.removeItem(atPath: tempDbPath)
@@ -523,6 +531,7 @@ final class ProductDB: ProductProvider {
 
             let tempDb = try DatabaseQueue(path: tempDbPath)
 
+            let statements = try String(contentsOf: updateFile, encoding: .utf8)
             try tempDb.inTransaction { db in
                 try db.execute(sql: statements)
                 return .commit
@@ -550,8 +559,8 @@ final class ProductDB: ProductProvider {
     }
 
     private func switchDatabases(_ tempDbPath: String) {
+        let fileManager = FileManager.default
         do {
-            let fileManager = FileManager.default
             let dbFile = self.dbPathname()
             let oldFile = dbFile + ".old"
             try synchronized(self) {
@@ -567,6 +576,7 @@ final class ProductDB: ProductProvider {
                 self.db = self.openDb()
             }
         } catch let error {
+            try? fileManager.removeItem(atPath: tempDbPath)
             self.logError("switchDatabases: db switch error \(error)")
         }
     }
@@ -583,8 +593,7 @@ final class ProductDB: ProductProvider {
             case MetadataKeys.schemaVersionMinor:
                 self.schemaVersionMinor = Int(value) ?? 0
             case MetadataKeys.appLastUpdate:
-                let fmt = ISO8601DateFormatter()
-                if let date = fmt.date(from: value) {
+                if let date = Snabble.iso8601Formatter.date(from: value) {
                     self.lastProductUpdate = date
                 }
             default:
@@ -608,6 +617,22 @@ final class ProductDB: ProductProvider {
             }
         } catch {
             Log.error("executeInitialSQL: \(error)")
+        }
+    }
+
+    // remove any temporary db files that were erroneously left on disk during previous runs
+    private func removePreviousUpdateRemnants() {
+        let fileManager = FileManager.default
+
+        guard let files = try? fileManager.contentsOfDirectory(atPath: self.dbDirectory.path) else {
+            return
+        }
+
+        for file in files {
+            if file.hasSuffix("_" + self.dbName) {
+                let fileUrl = self.dbDirectory.appendingPathComponent(file)
+                try? fileManager.removeItem(at: fileUrl)
+            }
         }
     }
 }
@@ -677,7 +702,7 @@ extension ProductDB {
         }
 
         if !self.config.useFTS {
-            Log.warn("WARNING: productsByName called, but useFTS not set")
+            Log.warn("productsByName called, but useFTS not set")
         }
 
         return self.productsByName(db, name, filterDeposits)

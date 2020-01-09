@@ -7,8 +7,8 @@
 import Foundation
 
 enum AppDbResponse {
-    case diff(lines: String)
-    case full(db: Data)
+    case diff(lines: URL)
+    case full(db: URL)
     case noUpdate   // no data, used when we get http 304
     case httpError  // http or network error
     case dataError  // data error: invalid content-type, unparsable data or other weird things
@@ -104,29 +104,46 @@ class AppDBDownloadDelegate: CertificatePinningDelegate, URLSessionDownloadDeleg
         Log.info("get \(url) took \(elapsed)s")
 
         self.productDb?.downloadTask = nil
-        let fileData = try? Data(contentsOf: location)
-        if let data = fileData, let response = downloadTask.response as? HTTPURLResponse {
+        if let response = downloadTask.response as? HTTPURLResponse {
             // print("got bytes: \(data.count) \(self.bytesReceived), \(self.mbps) MB/s")
             if response.statusCode == 304 {
                 completion(.noUpdate)
                 return
             }
 
+            // move the downloaded data to our own temp file
+            let fileManager = FileManager.default
+            let tmpDir: URL
+            do {
+                tmpDir = try fileManager.url(for: .itemReplacementDirectory, in: .userDomainMask, appropriateFor: location, create: true)
+            } catch {
+                Log.error("error creating tmp dir: \(error)")
+                completion(.dataError)
+                return
+            }
+
+            let tmpFile = tmpDir.appendingPathComponent(ProcessInfo().globallyUniqueString)
+            do {
+                try fileManager.moveItem(at: location, to: tmpFile)
+            } catch {
+                Log.error("error moving \(location) to \(tmpFile): \(error)")
+                completion(.dataError)
+                return
+            }
+
             let headers = response.allHeaderFields
             if let contentType = headers["Content-Type"] as? String {
                 if contentType == ProductDB.sqliteType {
-                    completion(.full(db: data))
+                    completion(.full(db: tmpFile))
                     return
                 } else if contentType == ProductDB.sqlType {
-                    if let str = String(bytes: data, encoding: .utf8) {
-                        completion(.diff(lines: str))
-                        return
-                    }
+                    completion(.diff(lines: tmpFile))
+                    return
                 }
             }
 
-            completion(.dataError)
         }
+        completion(.dataError)
     }
 
     func urlSession(_ session: URLSession, task: URLSessionTask, didCompleteWithError error: Error?) {

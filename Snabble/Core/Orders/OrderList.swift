@@ -34,11 +34,7 @@ public struct Order: Decodable {
         self.project = try container.decode(String.self, forKey: .project)
         self.id = try container.decode(String.self, forKey: .id)
         let date = try container.decode(String.self, forKey: .date)
-        let formatter = ISO8601DateFormatter()
-        if #available(iOS 11.2, *) {
-            formatter.formatOptions.insert(.withFractionalSeconds)
-        }
-        self.date = formatter.date(from: date) ?? Date()
+        self.date = Snabble.iso8601Formatter.date(from: date) ?? Date()
 
         self.shopId = try container.decode(String.self, forKey: .shopId)
         self.shopName = try container.decode(String.self, forKey: .shopName)
@@ -49,7 +45,7 @@ public struct Order: Decodable {
 
 
 extension OrderList {
-    static func load(_ project: Project, completion: @escaping (Result<OrderList, SnabbleError>)->() ) {
+    public static func load(_ project: Project, completion: @escaping (Result<OrderList, SnabbleError>)->() ) {
         let url = SnabbleAPI.links.clientOrders.href.replacingOccurrences(of: "{clientID}", with: SnabbleAPI.clientId)
 
         project.request(.get, url, timeout: 0) { request in
@@ -60,6 +56,58 @@ extension OrderList {
             project.perform(request) { (result: Result<OrderList, SnabbleError>) in
                 completion(result)
             }
+        }
+    }
+}
+
+extension Order {
+    public func getReceipt(_ project: Project, completion: @escaping (Result<URL, Error>) -> ()) {
+        let fileManager = FileManager.default
+        let cacheDir = try! fileManager.url(for: .cachesDirectory, in: .userDomainMask, appropriateFor: nil, create: true)
+        let targetPath = cacheDir.appendingPathComponent("snabble-order-\(self.id).pdf")
+
+        // uncomment to force new downloads on every access
+        // try? fileManager.removeItem(at: targetPath)
+
+        if fileManager.fileExists(atPath: targetPath.path) {
+            completion(.success(targetPath))
+        } else {
+            self.download(project, targetPath) { result in
+                DispatchQueue.main.async {
+                    completion(result)
+                }
+            }
+        }
+    }
+
+    private func download(_ project: Project, _ targetPath: URL, completion: @escaping (Result<URL, Error>) ->() ) {
+        project.request(.get, self.links.receipt.href, timeout: 10) { request in
+            guard let request = request else {
+                completion(.failure(SnabbleError.noRequest))
+                return
+            }
+
+            let session = SnabbleAPI.urlSession()
+            let task = session.downloadTask(with: request) { location, response, error in
+                if let error = error {
+                    Log.error("error downloading receipt: \(String(describing: error))")
+                    return completion(.failure(error))
+                }
+
+                guard let location = location else {
+                    Log.error("error downloading receipt: no location?!?")
+                    return completion(.failure(SnabbleError.notFound))
+                }
+
+                do {
+                    try FileManager.default.moveItem(at: location, to: targetPath)
+                    completion(.success(targetPath))
+                } catch {
+                    Log.error("error saving receipt: \(error)")
+                    completion(.failure(SnabbleError.notFound))
+                }
+            }
+            task.resume()
         }
     }
 }

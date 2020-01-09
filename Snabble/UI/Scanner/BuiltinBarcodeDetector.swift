@@ -404,3 +404,9 @@ public struct BarcodeDetectorDecoration {
                                          fullDimmingLayer: fullDimmingLayer)
     }
 }
+
+extension BuiltinBarcodeDetector: CustomizableAppearance {
+    public func setCustomAppearance(_ appearance: CustomAppearance) {
+        self.decoration?.cartButton.setCustomAppearance(appearance)
+    }
+}

@@ -18,6 +18,16 @@ extension UnknownCaseRepresentable {
     }
 }
 
+/// helper struct for JSON decoding
+struct FailableDecodable<T: Decodable>: Decodable {
+    let value: T?
+
+    init(from decoder: Decoder) throws {
+        let container = try decoder.singleValueContainer()
+        self.value = try? container.decode(T.self)
+    }
+}
+
 // MARK: - Logging
 enum Log {
     static func info(_ str: String) {
@@ -43,3 +53,13 @@ func synchronized<T>(_ lock: Any, closure: () throws -> T) rethrows -> T {
     defer { objc_sync_exit(lock) }
     return try closure()
 }
+
+let iso8601Formatter: ISO8601DateFormatter = {
+    let fmt = ISO8601DateFormatter()
+    fmt.timeZone = TimeZone.current
+    fmt.formatOptions = .withInternetDateTime
+    if #available(iOS 11.2, *) {
+        fmt.formatOptions.insert(.withFractionalSeconds)
+    }
+    return fmt
+}()

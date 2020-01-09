@@ -1,5 +1,91 @@
 ## snabble iOS SDK Changelog
 
+# v0.11.3
+
+* Removes the unused `secondaryColor` property from `SnabbleAppearance`
+* Fixes display of product weight in the Shopping Cart in Dark Mode
+
+# v0.11.2
+
+* Fixes a bug where the quantity of a shopping cart entry could be set to 0.
+
+# v0.11.1
+
+* Tapping a cell in `ReceiptListViewController` now correcly highlights it.
+* Fixes a visual glitch in `ScannerViewController` when product names were extremely long (>100 characters)
+* Adds support for the new `externalBilling` payment method.
+
+# v0.11.0
+
+* Swift 4.2 support has been removed
+* Support for iOS 13 dark mode has been added. This means that Xcode 11.x is required to build apps using the snabble SDK.
+
+# v0.10.21
+
+* Fixes a crash when `ScanMessae.imageUrl` was nil.
+
+# v0.10.20
+
+* Extends the `ScanMessage` struct to add the new `attributedString` property. If it is not nil, it is used as the `attributedText` for the display and `text` is ignored.
+
+# v0.10.19
+
+* Improved handling of cancelling online payments. When the `CheckoutProcess.abort` backend API call returns an error, an alert is displayed using the new i18n keys `Snabble.Payment.cancelError.title` and `Snabble.Payment.cancelError.message`.
+* Replaced `scanMessageText(for:)` in `ScannerDelegate` with `scanMessage(for:_:_:)` which returns a `ScanMessage?`. This allows apps to e.g. display product recommendations inkluding images in the scanner's message area. 
+
+# v0.10.18
+
+* Fixes a bug where the wrong date was used as an offline saved cart's `finalizedAt`
+* Adds the new `AnalyticsEvent.brightnessChanged` to enable tracking of brightness changes in the QR code displays.
+* The API's `clientId` is now stored in the keychain as well as in `Userdefaults.standard`.
+
+# v0.10.17
+
+* added the optional `sorter` property to `CartConfig`. When an offline QR code is generated that does not use the `nextItemWithCheck`, this callback is used to allow the hosting app to re-order the items in the shopping cart.
+* fixes a bug where multiple appdb updates could still run simultaneously
+* added a few new `AnalyticsEvent`s, deleted an old unused one, and renamed `.viewSepaCheckout` to `.viewOnlineCheckout`
+
+# v0.10.16
+
+* Adds the new `CustomAppearance` struct and the `CustomizableAppearance` protocol that can be used to change button apperances in the Scanner and Shopping Cart.
+* `SnabbleAppearance.buttonBackgroundColor` is now consistently used for button backgrounds
+* The bundle selection action sheet no longer shows bundles that don't have a price
+* The SDK now allocates fewer `URLSession` instances for better HTTP/2 support
+* Reduce the number of incomplete online payment methods that are shown in the payment method selection
+* Support for Swift 4.2 is deprecated and will be removed on Oct 1st, 2019
+
+# v0.10.15
+
+* When creating a checkout info or checkout process fails and the payment reverts to an offline-capable QR code payment, the shopping cart is now persisted using the new `OfflineCarts` class. It is the hosting app's responsibiliy to attempt to retry posting this data to the backend at an appropriate time e.g. when it discovers that internet connectivity is restored. Use `OfflineCarts.shared.retryNeeded` to determine if there are carts pending retransmission.
+* `BarcodeEntryViewController` has a new optional constructor parameter, `showSku`. If this is true, the SKUs of matching products are displays together with the product names.
+
+# v0.10.14
+
+* Decrease the memory usage when full appdb are downloaded.
+* After a payment using an offline-capable QR code is completed, the previous shopping cart can now be restored.
+* Adds support for ignoring variable-length code parts in templates using `{_:*}`
+* The `finalCode` property of `qrCodeOffline` is now supported in all code variants
+
+# v0.10.13
+
+* The various offline-capable QR code payment methods (`encodedCodes`, `encodedCodesCSV` etc.) have been deprecated and were replaced by a new unified method called `qrCodeOffline`. This method is configured through the properties of the `qrCodeOffline` object in the app's metadata.
+
+# v0.10.12
+
+* Fixes a bug where a temporary database file could be kept on disk. Any such leftover files will be automatically cleaned up when the project database is initialized.
+
+# v0.10.11
+
+* Warning messages from the scanner are now displayed on the scanner view itself. Therefore, the `ScannerDelegate` protocol no longer requires conformance to `MessageDelegate`.
+* Message localization now allows project-specific overrides.
+* Fixes a bug where downloading the receipt list sometimes failed.
+
+# v0.10.10
+
+* Fixes a bug where the `encodedCodes` payment method was used as a fallback even in stores that don't support it.
+* Adds support for accessing arbitrary additional data in the `Metadata.flags` object 
+* Changes the title of the Receipt view controller to show the receipt's date.
+
 # v0.10.9
 
 * Adds a temporary implementation for project-specific strings in `EmbeddedCodesCheckoutViewController` 

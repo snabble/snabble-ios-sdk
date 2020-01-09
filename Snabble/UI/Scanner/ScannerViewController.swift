@@ -7,19 +7,47 @@
 import UIKit
 import AVFoundation
 
-public protocol ScannerDelegate: AnalyticsDelegate, MessageDelegate {
+public struct ScanMessage {
+    public let text: String
+    public let attributedString: NSAttributedString?
+    public let imageUrl: String?
+
+    public init(_ text: String, _ imageUrl: String? = nil) {
+        self.text = text
+        self.imageUrl = imageUrl
+        self.attributedString = nil
+    }
+
+    public init(_ text: String, _ attributedString: NSAttributedString, _ imageUrl: String? = nil) {
+        self.text = text
+        self.imageUrl = imageUrl
+        self.attributedString = attributedString
+    }
+}
+
+public protocol ScannerDelegate: AnalyticsDelegate {
     func gotoShoppingCart()
 
-    func scanMessageText(for: String) -> String?
+    func scanMessage(for project: Project, _ shop: Shop, _ product: Product) -> ScanMessage?
 }
 
 public extension ScannerDelegate {
-    func scanMessageText(for: String) -> String? { return nil }
+    func scanMessage(for project: Project, _ shop: Shop, _ product: Product) -> ScanMessage? {
+        return nil
+    }
 }
 
 public final class ScannerViewController: UIViewController {
 
     @IBOutlet private weak var spinner: UIActivityIndicatorView!
+
+    @IBOutlet private weak var messageImage: UIImageView!
+    @IBOutlet private weak var messageImageWidth: NSLayoutConstraint!
+    @IBOutlet private weak var messageSpinner: UIActivityIndicatorView!
+    @IBOutlet private weak var messageWrapper: UIView!
+    @IBOutlet private weak var messageLabel: UILabel!
+    @IBOutlet private weak var messageSeparatorHeight: NSLayoutConstraint!
+    @IBOutlet private weak var messageTopDistance: NSLayoutConstraint!
     
     private var scanConfirmationView: ScanConfirmationView!
     private var scanConfirmationViewBottom: NSLayoutConstraint!
@@ -40,6 +68,9 @@ public final class ScannerViewController: UIViewController {
     private weak var delegate: ScannerDelegate!
     private var timer: Timer?
     private var barcodeDetector: BarcodeDetector
+    private var customAppearance: CustomAppearance?
+
+    private var messageTimer: Timer?
 
     public init(_ cart: ShoppingCart, _ shop: Shop, _ detector: BarcodeDetector? = nil, delegate: ScannerDelegate) {
         let project = SnabbleUI.project
@@ -74,6 +105,9 @@ public final class ScannerViewController: UIViewController {
         self.view.backgroundColor = .black
 
         self.scanConfirmationView = ScanConfirmationView()
+        if let custom = self.customAppearance {
+            self.scanConfirmationView.setCustomAppearance(custom)
+        }
         self.scanConfirmationView.translatesAutoresizingMaskIntoConstraints = false
         self.view.addSubview(self.scanConfirmationView)
         self.scanConfirmationView.leadingAnchor.constraint(equalTo: self.view.leadingAnchor, constant: 16).isActive = true
@@ -83,12 +117,16 @@ public final class ScannerViewController: UIViewController {
         bottom.isActive = true
         bottom.constant = self.hiddenConfirmationOffset
         self.scanConfirmationViewBottom = bottom
-
         self.scanConfirmationView.delegate = self
-
         self.scanConfirmationViewBottom.constant = self.hiddenConfirmationOffset
 
         NotificationCenter.default.addObserver(self, selector: #selector(self.cartUpdated(_:)), name: .snabbleCartUpdated, object: nil)
+
+        self.messageSeparatorHeight.constant = 1.0 / UIScreen.main.scale
+
+        let msgTap = UITapGestureRecognizer(target: self, action: #selector(self.messageTapped(_:)))
+        self.messageWrapper.addGestureRecognizer(msgTap)
+        self.messageTopDistance.constant = -150
     }
 
     override public func viewWillAppear(_ animated: Bool) {
@@ -103,6 +141,7 @@ public final class ScannerViewController: UIViewController {
         self.keyboardObserver = KeyboardObserver(handler: self)
 
         self.delegate.track(.viewScanner)
+        self.view.bringSubviewToFront(self.spinner)
 
         self.barcodeDetector.startScanning()
     }
@@ -111,6 +150,8 @@ public final class ScannerViewController: UIViewController {
         super.viewDidLayoutSubviews()
 
         self.barcodeDetector.scannerDidLayoutSubviews(self.view)
+
+        self.view.bringSubviewToFront(self.messageWrapper)
         self.view.bringSubviewToFront(self.scanConfirmationView)
     }
 
@@ -123,14 +164,17 @@ public final class ScannerViewController: UIViewController {
         self.keyboardObserver = nil
     }
 
+    var msgHidden = true
+
+
     private static func scannerAppearance() -> BarcodeDetectorAppearance {
         var appearance = BarcodeDetectorAppearance()
 
         appearance.torchButtonImage = UIImage.fromBundle("icon-light-inactive")?.recolored(with: .white)
         appearance.torchButtonActiveImage = UIImage.fromBundle("icon-light-active")
         appearance.enterButtonImage = UIImage.fromBundle("icon-entercode")?.recolored(with: .white)
-        appearance.textColor = .white
-        appearance.backgroundColor = SnabbleUI.appearance.primaryColor
+        appearance.backgroundColor = SnabbleUI.appearance.buttonBackgroundColor
+        appearance.textColor = SnabbleUI.appearance.buttonTextColor
         appearance.reticleCornerRadius = 3
 
         return appearance
@@ -185,6 +229,73 @@ public final class ScannerViewController: UIViewController {
     }
 }
 
+// MARK: - message display
+
+extension ScannerViewController {
+
+    private func showMessage(_ msg: ScanMessage) {
+        if let attributedString = msg.attributedString {
+            self.messageLabel.text = nil
+            self.messageLabel.attributedText = attributedString
+        } else {
+            self.messageLabel.text = msg.text
+        }
+        self.messageWrapper.isHidden = false
+        self.messageTopDistance.constant = 0
+
+        if let imgUrl = msg.imageUrl, let url = URL(string: imgUrl) {
+            self.messageImageWidth.constant = 80
+            self.loadMessageImage(url)
+        } else {
+            self.messageImageWidth.constant = 0
+            self.messageImage.image = nil
+        }
+
+        UIView.animate(withDuration: 0.2) {
+            self.view.layoutIfNeeded()
+        }
+
+        let factor = msg.imageUrl == nil ? 1.0 : 3.0
+        let minMillis = msg.imageUrl == nil ? 2000 : 4000
+        let millis = min(max(50 * msg.text.count, minMillis), 7000)
+        let seconds = TimeInterval(millis) / 1000.0 * factor
+        self.messageTimer?.invalidate()
+        self.messageTimer = Timer.scheduledTimer(withTimeInterval: seconds, repeats: false) { _ in
+            self.hideMessage()
+        }
+    }
+
+    @objc private func messageTapped(_ gesture: UITapGestureRecognizer) {
+        guard gesture.state == .ended else {
+            return
+        }
+
+        self.hideMessage()
+    }
+
+    private func hideMessage() {
+        self.messageTopDistance.constant = -150
+
+        UIView.animate(withDuration: 0.2,
+                       animations: { self.view.layoutIfNeeded() },
+                       completion: { _ in self.messageWrapper.isHidden = true })
+    }
+
+    private func loadMessageImage(_ url: URL) {
+        let session = URLSession.shared
+        self.messageSpinner.startAnimating()
+        let task = session.dataTask(with: url) { data, response, error in
+            if let data = data, let img = UIImage(data: data) {
+                DispatchQueue.main.async {
+                    self.messageSpinner.stopAnimating()
+                    self.messageImage.image = img
+                }
+            }
+        }
+        task.resume()
+    }
+}
+
 // MARK: - analytics delegate
 extension ScannerViewController: AnalyticsDelegate {
     public func track(_ event: AnalyticsEvent) {
@@ -192,39 +303,18 @@ extension ScannerViewController: AnalyticsDelegate {
     }
 }
 
-extension ScannerViewController: MessageDelegate {
-    public func showInfoMessage(_ message: String) {
-        self.delegate.showInfoMessage(message)
-    }
-
-    public func showWarningMessage(_ message: String) {
-        self.delegate.showWarningMessage(message)
-    }
-}
-
 // MARK: - scanning confirmation delegate
 extension ScannerViewController: ScanConfirmationViewDelegate {
-    func closeConfirmation(_ msgId: String?) {
-
+    func closeConfirmation(_ item: CartItem?) {
         self.displayScanConfirmationView(hidden: true)
+        self.updateCartButton()
 
-        if let msgId = msgId, let msgText = self.delegate.scanMessageText(for: msgId) {
-            let alert = UIAlertController(title: "Snabble.Scanner.multiPack".localized(), message: msgText, preferredStyle: .alert)
-            alert.addAction(UIAlertAction(title: "Snabble.OK".localized(), style: .default) { action in
-                self.closeConfirmation()
-            })
-
-            self.present(alert, animated: true)
-        } else {
-            self.closeConfirmation()
+        if let item = item, let msg = self.delegate.scanMessage(for: SnabbleUI.project, self.shop, item.product) {
+            self.showMessage(msg)
         }
-    }
 
-    private func closeConfirmation() {
         self.lastScannedCode = ""
         self.barcodeDetector.startScanning()
-
-        self.updateCartButton()
     }
 }
 
@@ -256,7 +346,8 @@ extension ScannerViewController {
         // Log.debug("scanned unknown code \(code)")
         self.tapticFeedback.notificationOccurred(.error)
 
-        self.delegate.showWarningMessage(msg)
+        let msg = ScanMessage(msg)
+        self.showMessage(msg)
         self.delegate.track(.scanUnknown(code))
 
         self.timer?.invalidate()
@@ -270,7 +361,7 @@ extension ScannerViewController {
         self.lastScannedCode = scannedCode
 
         self.timer?.invalidate()
-        self.timer = Timer.scheduledTimer(withTimeInterval: 0.3, repeats: false) { timer in
+        self.timer = Timer.scheduledTimer(withTimeInterval: 0.5, repeats: false) { timer in
             self.spinner.startAnimating()
         }
 
@@ -422,6 +513,8 @@ extension ScannerViewController {
 
                 completion(newResult)
             case .failure:
+                let event = AppEvent(scannedCode: code, codes: codes, project: project)
+                event.post()
                 completion(nil)
             }
         }
@@ -495,4 +588,16 @@ extension ScannerViewController: KeyboardHandling {
         }
     }
 
+}
+
+extension ScannerViewController: CustomizableAppearance {
+    public func setCustomAppearance(_ appearance: CustomAppearance) {
+        self.barcodeDetector.setCustomAppearance(appearance)
+        self.customAppearance = appearance
+
+        if let titleIcon = appearance.titleIcon {
+            let imgView = UIImageView(image: titleIcon)
+            self.navigationItem.titleView = imgView
+        }
+    }
 }

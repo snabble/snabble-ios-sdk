@@ -13,6 +13,7 @@ enum EventType: String, Encodable {
     case error
     case log
     case analytics
+    case productNotFound
 }
 
 private struct Session: Encodable {
@@ -30,12 +31,18 @@ private struct Analytics: Encodable {
     let comment: String
 }
 
+private struct ProductNotFound: Encodable {
+    let scannedCode: String
+    let matched: [String: String]
+}
+
 private enum Payload: Encodable {
     case session(Session)
     case error(Message)
     case cart(Cart)
     case log(Message)
     case analytics(Analytics)
+    case productNotFound(ProductNotFound)
 
     func encode(to encoder: Encoder) throws {
         var container = encoder.singleValueContainer()
@@ -45,6 +52,7 @@ private enum Payload: Encodable {
         case .log(let msg): try container.encode(msg)
         case .cart(let cart): try container.encode(cart)
         case .analytics(let analytics): try container.encode(analytics)
+        case .productNotFound(let notFound): try container.encode(notFound)
         }
     }
 }
@@ -90,12 +98,7 @@ struct AppEvent: Encodable {
         self.projectId = project.id
         self.id = id
         self.agent = agent
-        let fmt = ISO8601DateFormatter()
-        fmt.timeZone = TimeZone.current
-        if #available(iOS 11.2, *) {
-            fmt.formatOptions.insert(.withFractionalSeconds)
-        }
-        self.timestamp = fmt.string(from: Date())
+        self.timestamp = Snabble.iso8601Formatter.string(from: Date())
     }
 
     init(_ type: EventType, session: String, project: Project, shopId: String? = nil) {
@@ -119,9 +122,23 @@ struct AppEvent: Encodable {
         self.init(type: .analytics, payload: analytics, project: project)
     }
 
-    init(_ shoppingCart: ShoppingCart) {
+    init?(_ shoppingCart: ShoppingCart) {
         let cart = shoppingCart.createCart()
-        self.init(type: .cart, payload: Payload.cart(cart), project: shoppingCart.config.project, shopId: cart.shopID)
+        guard let project = SnabbleAPI.projectFor(shoppingCart.projectId) else {
+            return nil
+        }
+
+        self.init(type: .cart, payload: Payload.cart(cart), project: project, shopId: shoppingCart.shopId)
+    }
+
+    init(scannedCode: String, codes: [(String, String)], project: Project) {
+        var dict = [String: String]()
+        for (code, template) in codes {
+            dict[template] = code
+        }
+
+        let notFound = Payload.productNotFound(ProductNotFound(scannedCode: scannedCode, matched: dict))
+        self.init(type: .productNotFound, payload: notFound, project: project)
     }
 }
 
@@ -152,8 +169,7 @@ extension AppEvent {
         }
 
         // use a system default session here so we can still log pinning errors
-        let session = URLSession(configuration: .default)
-        let task = session.dataTask(with: request) { rawData, response, error in
+        let task = URLSession.shared.dataTask(with: request) { rawData, response, error in
             if let error = error {
                 Log.error("posting event failed: \(error)")
             }

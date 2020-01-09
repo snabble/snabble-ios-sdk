@@ -6,7 +6,7 @@
 
 import UIKit
 
-protocol ShoppingCartTableDelegate: class {
+protocol ShoppingCartTableDelegate: AnalyticsDelegate {
     func confirmDeletion(at row: Int)
     func updateQuantity(_ quantity: Int, at row: Int)
     var showImages: Bool { get }
@@ -49,10 +49,9 @@ final class ShoppingCartTableCell: UITableViewCell {
 
         self.priceLabel.font = UIFont.monospacedDigitSystemFont(ofSize: 13, weight: .regular)
         self.quantityLabel.font = UIFont.monospacedDigitSystemFont(ofSize: 13, weight: .bold)
-        self.quantityLabel.textColor = SnabbleUI.appearance.secondaryColor
         self.quantityLabel.backgroundColor = .clear
 
-        self.quantityWrapper.backgroundColor = SnabbleUI.appearance.primaryColor
+        self.quantityWrapper.backgroundColor = SnabbleUI.appearance.buttonBackgroundColor
         self.quantityWrapper.layer.cornerRadius = 2
         self.quantityWrapper.layer.masksToBounds = true
 
@@ -186,6 +185,8 @@ final class ShoppingCartTableCell: UITableViewCell {
             return
         }
 
+        self.delegate.track(.cartAmountChanged)
+
         self.item?.quantity = self.quantity
         if reload {
             self.delegate.updateQuantity(self.quantity, at: row)
@@ -242,40 +243,6 @@ final class ShoppingCartTableCell: UITableViewCell {
             }
         }
     }
-    
-    private func loadImage() {
-        guard
-            let imgUrl = self.item?.product.imageUrl,
-            let url = URL(string: imgUrl)
-        else {
-            self.imageWrapperWidth.constant = self.delegate.showImages ? 61 : 0
-            self.imageWrapper.isHidden = true
-            return
-        }
-
-        self.imageWrapperWidth.constant = 61
-        self.imageWrapper.isHidden = false
-        // self.setNeedsLayout()
-
-        self.spinner.startAnimating()
-
-        self.task = URLSession.shared.dataTask(with: url) { data, response, error in
-            self.task = nil
-            DispatchQueue.main.async() {
-                self.spinner.stopAnimating()
-            }
-            guard let data = data, error == nil else {
-                return
-            }
-
-            if let image = UIImage(data: data) {
-                DispatchQueue.main.async() {
-                    self.productImage.image = image
-                }
-            }
-        }
-        self.task?.resume()
-    }
 
     @IBAction func minusButtonTapped(_ button: UIButton) {
         if self.quantity > 0 {
@@ -324,4 +291,55 @@ extension ShoppingCartTableCell: UITextFieldDelegate {
         return true
     }
 
+}
+
+extension ShoppingCartTableCell: CustomizableAppearance {
+    func setCustomAppearance(_ appearance: CustomAppearance) {
+        self.quantityWrapper.backgroundColor = appearance.buttonBackgroundColor
+        self.quantityLabel.textColor = appearance.buttonTextColor
+    }
+}
+
+// MARK: - image loading
+
+extension ShoppingCartTableCell {
+    private static var imageCache = [String: UIImage]()
+
+    private func loadImage() {
+        guard
+            let imgUrl = self.item?.product.imageUrl,
+            let url = URL(string: imgUrl)
+        else {
+            self.imageWrapperWidth.constant = self.delegate.showImages ? 61 : 0
+            self.imageWrapper.isHidden = true
+            return
+        }
+
+        self.imageWrapperWidth.constant = 61
+        self.imageWrapper.isHidden = false
+
+        if let img = ShoppingCartTableCell.imageCache[imgUrl] {
+            self.productImage.image = img
+            return
+        }
+
+        self.spinner.startAnimating()
+        self.task = URLSession.shared.dataTask(with: url) { data, response, error in
+            self.task = nil
+            DispatchQueue.main.async() {
+                self.spinner.stopAnimating()
+            }
+            guard let data = data, error == nil else {
+                return
+            }
+
+            if let image = UIImage(data: data) {
+                DispatchQueue.main.async() {
+                    ShoppingCartTableCell.imageCache[imgUrl] = image
+                    self.productImage.image = image
+                }
+            }
+        }
+        self.task?.resume()
+    }
 }

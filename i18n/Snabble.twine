@@ -104,6 +104,10 @@
         en = Scan products
     [Snabble.Shoppingcart.emptyState.description]
         en = Scan products to add them to your shopping cart.
+    [Snabble.Shoppingcart.emptyState.restartButtonTitle]
+        en = Start new shopping trip
+    [Snabble.Shoppingcart.emptyState.restoreButtonTitle]
+        en = Restore previous cart
     [Snabble.Shoppingcart.emptyState.title]
         en = Your Shopping Cart
     [Snabble.Shoppingcart.removeItem]
@@ -195,9 +199,15 @@
         en = Show this code at a snabble monitor or to a cashier to confirm your purchase.
     [Snabble.Payment.waiting]
         en = Waiting for confirmation
-        
+    [Snabble.Payment.cancelError.title]
+       en = Error cancelling payment
+    [Snabble.Payment.cancelError.message]
+       en = Payment cannot be cancelled at this time.
+    [Snabble.Payment.addPaymentOrigin]
+       en = Transfer payment credentials to the app?
+       
     [Snabble.networkError]
-        en = Connection error
+       en = Connection error
         
 [[Android]]
     [Snabble.askForPermission]
@@ -224,9 +234,18 @@
     [Snabble.Keyguard.requireScreenLock]
         en = You need to secure your smartphone with a screen lock to add this payment method.
         tags = android
+    [Snabble.Payment.CreditCard]
+        en = Credit card
+        tags = android
     [Snabble.Payment.CreditCard.error]
         en = There was an error processing your credit card
         tags = android
     [Snabble.Payment.CreditCard.expireDate]
         en = Expires: %@
         tags = android
+    [Snabble.Payment.usableAt]
+        en = Usable at: %@
+        tags = android
+    [Snabble.CC.3dsecureHint]
+        tags = android
+        en = In order to verify your credit card, you will be redirected to your bank after entering your data. There you will be asked to approve a payment of € 1.00 to snabble. The amount will be credited to you immediately after your approval.

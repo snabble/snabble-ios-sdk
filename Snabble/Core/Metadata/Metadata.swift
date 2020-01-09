@@ -76,7 +76,30 @@ public struct MetadataLinks: Decodable {
     }
 }
 
+public enum QRCodeFormat: String, Decodable {
+    case unknown
+
+    case simple
+    case csv_globus // simple header, deprecated
+    case csv        // new format with "x of y" header info
+    case ikea
+
+    var repeatCodes: Bool {
+        switch self {
+        case .csv, .csv_globus: return false
+        case .ikea, .simple: return true
+        case .unknown: return true
+        }
+    }
+}
+
+extension QRCodeFormat: UnknownCaseRepresentable {
+    public static let unknownCase = QRCodeFormat.unknown
+}
+
 public struct QRCodeConfig: Decodable {
+    let format: QRCodeFormat
+
     let prefix: String
     let separator: String
     let suffix: String
@@ -90,13 +113,21 @@ public struct QRCodeConfig: Decodable {
     // when maxCodes is not sufficiently precise, maxChars imposes a string length limit
     let maxChars: Int?
 
+    var effectiveMaxCodes: Int {
+        let leaveRoom = self.nextCode != nil || self.nextCodeWithCheck != nil || self.finalCode != nil
+        return self.maxCodes - (leaveRoom ? 1 : 0)
+    }
+
     enum CodingKeys: String, CodingKey {
+        case format
         case prefix, separator, suffix, maxCodes, maxChars
         case finalCode, nextCode, nextCodeWithCheck
     }
 
     public init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
+
+        self.format = try container.decode(QRCodeFormat.self, forKey: .format)
 
         self.prefix = try container.decodeIfPresent(String.self, forKey: .prefix) ?? ""
         self.separator = try container.decodeIfPresent(String.self, forKey: .separator) ?? "\n"
@@ -109,7 +140,11 @@ public struct QRCodeConfig: Decodable {
         self.nextCodeWithCheck = try container.decodeIfPresent(String.self, forKey: .nextCodeWithCheck)
     }
 
-    init(prefix: String = "", separator: String = "\n", suffix: String = "", maxCodes: Int = 100, maxChars: Int? = nil, finalCode: String? = nil, nextCode: String? = nil, nextCodeWithCheck: String? = nil) {
+    init(format: QRCodeFormat,
+         prefix: String = "", separator: String = "\n", suffix: String = "", maxCodes: Int = 100,
+         maxChars: Int? = nil, finalCode: String? = nil, nextCode: String? = nil, nextCodeWithCheck: String? = nil)
+    {
+        self.format = format
         self.prefix = prefix
         self.separator = separator
         self.suffix = suffix
@@ -120,7 +155,6 @@ public struct QRCodeConfig: Decodable {
         self.nextCodeWithCheck = nextCodeWithCheck
     }
 
-    public static let `default` = QRCodeConfig()
 }
 
 public enum ScanFormat: String, Decodable {
@@ -177,7 +211,7 @@ public struct Project: Decodable {
     public let currencySymbol: String   // not part of JSON, derived from the locale
 
     // config for embedded QR codes
-    public let encodedCodes: QRCodeConfig?
+    public let qrCodeConfig: QRCodeConfig?
 
     public let scanFormats: [ScanFormat]
 
@@ -198,7 +232,7 @@ public struct Project: Decodable {
     enum CodingKeys: String, CodingKey {
         case id, name, links
         case currency, decimalDigits, locale, roundingMode
-        case encodedCodes
+        case qrCodeConfig = "qrCodeOffline"
         case shops, scanFormats, customerCards, codeTemplates, searchableTemplates, priceOverrideCodes, checkoutLimits
         case messages = "texts"
         case paymentMethods
@@ -217,7 +251,7 @@ public struct Project: Decodable {
         self.locale = try container.decode(.locale)
         self.roundingMode = try container.decode(.roundingMode)
 
-        self.encodedCodes = try container.decodeIfPresent(.encodedCodes)
+        self.qrCodeConfig = try container.decodeIfPresent(.qrCodeConfig)
 
         let formatter = NumberFormatter()
         formatter.locale = Locale(identifier: self.locale)
@@ -251,7 +285,7 @@ public struct Project: Decodable {
         self.decimalDigits = 0
         self.locale = ""
         self.roundingMode = .up
-        self.encodedCodes = nil
+        self.qrCodeConfig = nil
         self.currencySymbol = ""
         self.shops = []
         self.scanFormats = []
@@ -274,7 +308,7 @@ public struct Project: Decodable {
         self.decimalDigits = decimalDigits
         self.locale = locale
         self.roundingMode = .up
-        self.encodedCodes = nil
+        self.qrCodeConfig = nil
         self.currencySymbol = currencySymbol
         self.shops = []
         self.scanFormats = []
@@ -296,7 +330,7 @@ public struct Project: Decodable {
         self.decimalDigits = 0
         self.locale = ""
         self.roundingMode = .up
-        self.encodedCodes = nil
+        self.qrCodeConfig = nil
         self.currencySymbol = ""
         self.shops = []
         self.scanFormats = []
@@ -351,9 +385,41 @@ public struct ProjectLinks: Decodable {
 
 public struct Flags: Decodable {
     public let kill: Bool
+    private let data: [String: Any]
+
+    public subscript(_ key: String) -> Any? {
+        return self.data[key]
+    }
+
+    private enum CodingKeys: String, CodingKey {
+        case kill
+    }
+
+    private struct AdditionalCodingKeys: CodingKey
+    {
+        var stringValue: String
+        var intValue: Int?
+
+        init?(stringValue: String) {
+            self.stringValue = stringValue
+        }
+
+        init?(intValue: Int) {
+            return nil
+        }
+    }
+
+    public init(from decoder: Decoder) throws {
+        let keyedContainer = try decoder.container(keyedBy: CodingKeys.self)
+        self.kill = try keyedContainer.decode(Bool.self, forKey: .kill)
+
+        let dataContainer = try decoder.container(keyedBy: AdditionalCodingKeys.self)
+        self.data = try dataContainer.decode([String: Any].self)
+    }
 
     fileprivate init() {
         self.kill = false
+        self.data = [:]
     }
 }
 

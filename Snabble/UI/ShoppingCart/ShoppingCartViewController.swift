@@ -60,6 +60,7 @@ public final class ShoppingCartViewController: UIViewController {
 
     private var emptyState: ShoppingCartEmptyStateView!
     private var limitAlert: UIAlertController?
+    private var customAppearance: CustomAppearance?
 
     private let itemCellIdentifier = "itemCell"
 
@@ -154,10 +155,9 @@ public final class ShoppingCartViewController: UIViewController {
     override public func viewDidLoad() {
         super.viewDidLoad()
 
-        let primaryBackgroundColor = SnabbleUI.appearance.primaryBackgroundColor
-        self.view.backgroundColor = primaryBackgroundColor
+        self.view.backgroundColor = SnabbleUI.appearance.backgroundColor
 
-        self.emptyState = ShoppingCartEmptyStateView({ [weak self] in self?.showScanner() })
+        self.emptyState = ShoppingCartEmptyStateView({ [weak self] button in self?.emptyStateButtonTapped(button) })
         self.emptyState.addTo(self.view)
 
         self.tableView.register(UINib(nibName: "ShoppingCartTableCell", bundle: SnabbleBundle.main), forCellReuseIdentifier: self.itemCellIdentifier)
@@ -177,9 +177,7 @@ public final class ShoppingCartViewController: UIViewController {
         self.tableBottomMargin.constant = 0
 
         self.checkoutButton.titleLabel?.font = UIFont.monospacedDigitSystemFont(ofSize: 17, weight: .semibold)
-        self.checkoutButton.backgroundColor = SnabbleUI.appearance.primaryColor
-        self.checkoutButton.tintColor = SnabbleUI.appearance.secondaryColor
-        self.checkoutButton.makeRoundedButton()
+        self.checkoutButton.makeSnabbleButton()
     }
 
     override public func viewWillAppear(_ animated: Bool) {
@@ -193,9 +191,16 @@ public final class ShoppingCartViewController: UIViewController {
 
         self.delegate.track(.viewShoppingCart)
 
-        // WTF? without this code, the button text sometimes appears as .textColor :(
-        self.checkoutButton.tintColor = SnabbleUI.appearance.secondaryColor
-        self.checkoutButton.titleLabel?.textColor = SnabbleUI.appearance.secondaryColor
+        if let custom = self.customAppearance {
+            self.checkoutButton.setCustomAppearance(custom)
+        }
+
+        if !self.isBeingPresented && !self.isMovingToParent {
+            // whatever was covering us has been dismissed or popped
+
+            // re-send our current cart to the backend so that the supervisor can see us shopping again
+            CartEvent.cart(self.shoppingCart)
+        }
     }
     
     override public func viewWillDisappear(_ animated: Bool) {
@@ -217,6 +222,8 @@ public final class ShoppingCartViewController: UIViewController {
         navItem.leftBarButtonItem = self.isEditing ? self.trashButton : nil
     }
 
+    private var restoreTimer: Timer?
+
     // MARK: notification handlers
     @objc private func updateShoppingCart(_ notification: Notification) {
         self.setupItems(self.shoppingCart)
@@ -224,6 +231,21 @@ public final class ShoppingCartViewController: UIViewController {
 
         self.updateTotals()
         self.getMissingImages()
+
+        if self.shoppingCart?.items.count == 0 && self.shoppingCart.backupAvailable {
+            self.emptyState?.button1.setTitle("Snabble.Shoppingcart.emptyState.restartButtonTitle".localized(), for: .normal)
+            self.emptyState?.button2.isHidden = false
+            let restoreInterval: TimeInterval = 5 * 60
+            self.restoreTimer = Timer.scheduledTimer(withTimeInterval: restoreInterval, repeats: false) { [weak self] timer in
+                UIView.animate(withDuration: 0.2) {
+                    self?.emptyState?.button1.setTitle("Snabble.Shoppingcart.emptyState.buttonTitle".localized(), for: .normal)
+                    self?.emptyState?.button2.isHidden = true
+                    self?.restoreTimer = nil
+                }
+            }
+        } else {
+            self.emptyState?.button2.isHidden = true
+        }
     }
 
     private func getMissingImages() {
@@ -241,8 +263,7 @@ public final class ShoppingCartViewController: UIViewController {
             guard let url = URL(string: img) else {
                 continue
             }
-            let session = URLSession(configuration: .default)
-            let task = session.dataTask(with: url) { _,_,_ in }
+            let task = URLSession.shared.dataTask(with: url) { _,_,_ in }
             task.resume()
         }
         self.knownImages = images
@@ -355,7 +376,7 @@ public final class ShoppingCartViewController: UIViewController {
                     // app didn't handle the error. see if the project has a offline-capable payment method
                     let offlineMethods = SnabbleUI.project.paymentMethods.filter { $0.offline }
                     if offlineMethods.count > 0 {
-                        let info = SignedCheckoutInfo()
+                        let info = SignedCheckoutInfo(offlineMethods)
                         self.delegate.gotoPayment(info, self.shoppingCart)
                     } else {
                         self.delegate.showWarningMessage("Snabble.Payment.errorStarting".localized())
@@ -365,8 +386,21 @@ public final class ShoppingCartViewController: UIViewController {
         }
     }
 
-    func showScanner() {
+    private func emptyStateButtonTapped(_ button: UIButton) {
+        switch button.tag {
+        case 0: self.showScanner()
+        case 1: self.restoreCart()
+        default: ()
+        }
+    }
+
+    private func showScanner() {
         self.delegate.gotoScanner()
+    }
+
+    private func restoreCart() {
+        self.shoppingCart.restoreCart()
+        self.updateView()
     }
 
     private func showProductError(_ skus: [String]) {
@@ -465,6 +499,10 @@ public final class ShoppingCartViewController: UIViewController {
 
 extension ShoppingCartViewController: ShoppingCartTableDelegate {
 
+    public func track(_ event: AnalyticsEvent) {
+        self.delegate.track(event)
+    }
+
     func confirmDeletion(at row: Int) {
         guard case .cartItem(let item, _) = self.items[row] else {
             return
@@ -508,6 +546,10 @@ extension ShoppingCartViewController: UITableViewDelegate, UITableViewDataSource
 
     public func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: self.itemCellIdentifier, for: indexPath) as! ShoppingCartTableCell
+        if let custom = self.customAppearance {
+            cell.setCustomAppearance(custom)
+        }
+        
         guard indexPath.row < self.items.count else {
             return cell
         }
@@ -619,3 +661,14 @@ extension ShoppingCartViewController: KeyboardHandling {
 
 }
 
+extension ShoppingCartViewController: CustomizableAppearance {
+    public func setCustomAppearance(_ appearance: CustomAppearance) {
+        self.checkoutButton?.setCustomAppearance(appearance)
+        self.customAppearance = appearance
+
+        if let titleIcon = appearance.titleIcon {
+            let imgView = UIImageView(image: titleIcon)
+            self.navigationItem.titleView = imgView
+        }
+    }
+}

@@ -8,7 +8,7 @@
 
 Pod::Spec.new do |s|
   s.name             = 'Snabble'
-  s.version          = '0.10.9'
+  s.version          = '0.11.3'
   s.summary          = 'The snabble iOS SDK'
 
   s.description      = <<-DESC
@@ -23,7 +23,7 @@ Pod::Spec.new do |s|
   s.social_media_url = 'https://twitter.com/snabble_io'
 
   s.ios.deployment_target = '10.0'
-  s.swift_versions = ['4.2', '5.0']
+  s.swift_versions = ['5.0']
 
   s.subspec 'Core' do |core|
     core.source_files = 'Snabble/Core/**/*.swift'
@@ -40,23 +40,5 @@ Pod::Spec.new do |s|
     ui.resource_bundles = {
       "Snabble" => [ 'Snabble.xcassets', 'Snabble/UI/*.lproj/*.strings', 'Snabble/UI/**/*.xib', 'i18n/*.twine' ]
     }
-
-    if ENV["SNABBLE_POD"] == "dev"
-      ui.script_phase = { :name => "Run twine", 
-        :script => <<-SCRIPT
-        if [ "$TESTING" -ne "1" ]; then
-          if which twine >/dev/null; then
-            cd $PODS_TARGET_SRCROOT
-            TWINE=i18n/Snabble.twine
-            if [ -r "$TWINE" ]; then
-              echo "Creating strings file"
-              twine generate-localization-file $TWINE --lang en --format apple Snabble/UI/en.lproj/SnabbleLocalizable.strings
-            fi
-          fi
-        fi
-        SCRIPT
-      }
-    end
   end
-
 end

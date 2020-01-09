@@ -23,17 +23,20 @@ public enum AnalyticsEvent {
     /// the `PaymentMethodSelectionViewController` appeared
     case viewPaymentMethodSelection
 
-    /// the `CashCheckoutViewController` appeared
-    case viewCashCheckout
-
-    /// the `SepaCheckoutViewController` appeared
-    case viewSepaCheckout
+    /// the `OnlineCheckoutViewController` appeared
+    case viewOnlineCheckout
 
     /// the `QRCodeCheckoutViewController` appeared
     case viewQRCodeCheckout
 
     /// the `EmbeddedCodesCheckoutViewController` appeared
     case viewEmbeddedCodesCheckout
+
+    /// the `ReceiptListViewController` appeared
+    case viewReceiptList
+
+    /// the quicklook preview for a single receipt appeared
+    case viewReceiptDetail
 
     /// other events are tracked as a response to user actions
 
@@ -48,9 +51,15 @@ public enum AnalyticsEvent {
 
     /// product was scanned, but scan confirmation was closed w/o adding it to the cart. associated value is the product's `sku`
     case scanAborted(String)
+
+    /// a product was added to the shopping cart. associated value is the product's `sku`
+    case productAddedToCart(String)
     
     /// a barcode was selected from the autocomplete list. associated value is the selected EAN code
     case barcodeSelected(String)
+
+    /// a product's amount was changed via the +/- buttons in the shopping cart
+    case cartAmountChanged
 
     /// product was deleted from the cart. associated value is the product's `sku`
     case deletedFromCart(String)
@@ -63,4 +72,7 @@ public enum AnalyticsEvent {
 
     /// the user tapped "I have paid" on the embedded codes payment screen
     case markEmbeddedCodesPaid
+
+    /// the screen brightness needed to be increased in the checkout screen
+    case brightnessIncreased
 }

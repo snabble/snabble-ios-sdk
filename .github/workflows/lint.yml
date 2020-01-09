@@ -1,0 +1,26 @@
+on:
+  push:
+    branches:    
+      - master
+name: Lint
+jobs:
+  test:
+    name: Lint
+    runs-on: macOS-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@master
+      - name: Lint
+        run: |
+            bundle update
+            sudo xcode-select --switch /Applications/Xcode_11.app/Contents/Developer
+            bundle exec pod lib lint --allow-warnings
+      - name: Slack Notification
+        uses: homoluctus/slatify@master
+        if: always()
+        with:
+          type: ${{ job.status }}
+          job_name: '*iOS SDK Lint*'
+          username: 'Github Action: Lint'
+          channel: '#apps'
+          url: ${{ secrets.SLACK_WEBHOOK }}

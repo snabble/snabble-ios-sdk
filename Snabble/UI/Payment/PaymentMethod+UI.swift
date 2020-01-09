@@ -11,19 +11,22 @@ extension PaymentMethod {
     var icon: String {
         switch self {
         case .qrCodePOS: return "payment-method-checkstand"
-        case .encodedCodes: return "payment-method-checkstand"
-        case .encodedCodesCSV: return "payment-method-checkstand"
-        case .encodedCodesIKEA: return "payment-method-checkstand"
+        case .qrCodeOffline: return "payment-method-checkstand"
         case .deDirectDebit: return "payment-sepa"
         case .visa: return "payment-visa"
         case .mastercard: return "payment-mastercard"
+        case .externalBilling:
+            switch self.data?.originType {
+            case .tegutEmployeeID: return "payment-tegut"
+            default: return ""
+            }
         }
     }
 
     var dataRequired: Bool {
         switch self {
-        case .deDirectDebit, .visa, .mastercard: return true
-        case .qrCodePOS, .encodedCodes, .encodedCodesCSV, .encodedCodesIKEA: return false
+        case .deDirectDebit, .visa, .mastercard, .externalBilling: return true
+        case .qrCodePOS, .qrCodeOffline: return false
         }
     }
 
@@ -39,10 +42,14 @@ extension PaymentMethod {
         switch self {
         case .qrCodePOS:
             processor = QRCheckoutViewController(process!, cart, delegate)
-        case .encodedCodes, .encodedCodesCSV, .encodedCodesIKEA:
-            processor = EmbeddedCodesCheckoutViewController(process, self, cart, delegate)
-        case .deDirectDebit, .visa, .mastercard:
-            processor = SepaCheckoutViewController(process!, self.data!, cart, delegate)
+        case .qrCodeOffline:
+            if let codeConfig = SnabbleUI.project.qrCodeConfig {
+                processor = EmbeddedCodesCheckoutViewController(process, cart, delegate, codeConfig)
+            } else {
+                return nil
+            }
+        case .deDirectDebit, .visa, .mastercard, .externalBilling:
+            processor = OnlineCheckoutViewController(process!, self.data!, cart, delegate)
         }
         processor.hidesBottomBarWhenPushed = true
         return processor
@@ -95,15 +102,13 @@ public final class PaymentProcess {
         }
     }
 
-    func mergePaymentMethodList(_ methods: [RawPaymentMethod]) -> [PaymentMethod] {
-        let userData = self.delegate.getPaymentData()
+    func mergePaymentMethodList(_ methods: [PaymentMethodDescription]) -> [PaymentMethod] {
+        let userData = self.delegate.getPaymentData(methods)
         var result = [PaymentMethod]()
         for method in methods {
-            switch method {
-            case .encodedCodes: result.append(.encodedCodes)
-            case .encodedCodesCSV: result.append(.encodedCodesCSV)
-            case .encodedCodesIKEA: result.append(.encodedCodesIKEA)
+            switch method.method {
             case .qrCodePOS: result.append(.qrCodePOS)
+            case .qrCodeOffline: result.append(.qrCodeOffline)
             case .deDirectDebit:
                 let sepa = userData.filter { if case .deDirectDebit = $0 { return true } else { return false } }
                 if sepa.count > 0 {
@@ -124,6 +129,11 @@ public final class PaymentProcess {
                     result.append(contentsOf: mc.reversed())
                 } else {
                     result.append(.mastercard(nil))
+                }
+            case .externalBilling:
+                let billing = userData.filter { if case .externalBilling = $0 { return true } else { return false } }
+                if billing.count > 0 {
+                    result.append(contentsOf: billing.reversed())
                 }
             }
         }
@@ -161,7 +171,7 @@ public final class PaymentProcess {
         if !handled {
             if method.rawMethod.offline, let processor = method.processor(nil, self.cart, self.delegate) {
                 completion(Result.success(processor))
-                self.retryCreatingMissingCheckout(method)
+                OfflineCarts.shared.saveCartForLater(self.cart)
             } else {
                 self.delegate.showWarningMessage("Snabble.Payment.errorStarting".localized())
             }
@@ -178,17 +188,7 @@ public final class PaymentProcess {
         self.delegate.track(event)
     }
 
-    // retry creating the checkout info / checkout process that is potentially missing
-    private func retryCreatingMissingCheckout(_ method: PaymentMethod) {
-        let project = SnabbleUI.project
-        DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
-            self.cart.createCheckoutInfo(project) { result in
-                if case Result.success(let info) = result {
-                    info.createCheckoutProcess(project, paymentMethod: method) { _ in }
-                }
-            }
-        }
-    }
+    // MARK: - blur
 
     private var blurView: UIView?
 
