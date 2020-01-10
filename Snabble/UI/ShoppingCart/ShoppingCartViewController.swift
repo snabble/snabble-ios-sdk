@@ -175,7 +175,7 @@ public final class ShoppingCartViewController: UIViewController {
         self.tableView.backgroundColor = UIColor.clear
 
         self.tableView.rowHeight = UITableView.automaticDimension
-        self.tableView.estimatedRowHeight = 88
+        self.tableView.estimatedRowHeight = 78
 
         let refreshControl = UIRefreshControl()
         refreshControl.addTarget(self, action: #selector(self.handleRefresh(_:)), for: .valueChanged)
@@ -585,7 +585,7 @@ extension ShoppingCartViewController: UITableViewDelegate, UITableViewDataSource
     }
 
     public func tableView(_ tableView: UITableView, estimatedHeightForRowAt indexPath: IndexPath) -> CGFloat {
-        return 74
+        return 78
     }
 
     public func tableView(_ tableView: UITableView, canEditRowAt indexPath: IndexPath) -> Bool {

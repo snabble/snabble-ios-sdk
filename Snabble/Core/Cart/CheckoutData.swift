@@ -183,10 +183,13 @@ extension LineItemType: UnknownCaseRepresentable {
 public struct CheckoutInfo: Decodable {
     /// session id
     public let session: String
+
     /// available payment methods
     public let paymentMethods: [PaymentMethodDescription]
+
     /// line items (only contains records with supported types)
     public let lineItems: [LineItem]
+
     /// price info
     public let price: Price
 
