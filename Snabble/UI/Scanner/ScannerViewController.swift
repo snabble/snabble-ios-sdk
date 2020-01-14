@@ -210,10 +210,19 @@ public final class ScannerViewController: UIViewController {
         }
     }
 
-    func updateCartButton() {
+    private func updateCartButton() {
         let items = self.shoppingCart.numberOfItems
         if items > 0 {
-            if let total = self.shoppingCart.total {
+            /// workaround for backend giving us 0 as price for price-less products :(
+            let nilPrice: Bool
+            if let items = self.shoppingCart.backendCartInfo?.lineItems, items.first(where: { $0.totalPrice == nil} ) != nil {
+                nilPrice = true
+            } else {
+                nilPrice = false
+            }
+
+            let totalPrice = nilPrice ? nil : (self.shoppingCart.backendCartInfo?.totalPrice ?? self.shoppingCart.total)
+            if let total = totalPrice {
                 let formatter = PriceFormatter(SnabbleUI.project)
                 self.barcodeDetector.cartButtonTitle = String(format: "Snabble.Scanner.goToCart".localized(), formatter.format(total))
             } else {
