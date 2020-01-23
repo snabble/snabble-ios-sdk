@@ -253,11 +253,7 @@ public struct Project: Decodable {
 
         self.qrCodeConfig = try container.decodeIfPresent(.qrCodeConfig)
 
-        let formatter = NumberFormatter()
-        formatter.locale = Locale(identifier: self.locale)
-        formatter.currencyCode = self.currency
-        formatter.numberStyle = .currency
-        self.currencySymbol = formatter.currencySymbol
+        self.currencySymbol = Self.currencySymbol(for: self.currency, locale: self.locale)
 
         self.shops = (try container.decodeIfPresent([Shop].self, forKey: .shops)) ?? [Shop.none]
 
@@ -344,6 +340,24 @@ public struct Project: Decodable {
     }
 
     static let none = Project()
+
+    // find the currencySymbol for the given currencyCode
+    private static func currencySymbol(for currencyCode: String, locale: String) -> String {
+        let formatter = NumberFormatter()
+        formatter.currencyCode = currencyCode
+        formatter.numberStyle = .currency
+
+        // AFAICT there is no API to get the symbol from the code directly, so we need to loop over
+        // all available locales to find the first that has a matching code and use its symbol :(
+        let allLocales = Locale.availableIdentifiers.lazy.map { Locale(identifier: $0) }
+        if let matchingLocale = allLocales.first(where: { $0.currencyCode == currencyCode }) {
+            formatter.locale = matchingLocale
+        } else {
+            formatter.locale = Locale(identifier: locale)
+        }
+
+        return formatter.currencySymbol
+    }
 }
 
 /// Link

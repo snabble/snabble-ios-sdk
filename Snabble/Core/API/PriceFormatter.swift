@@ -30,7 +30,6 @@ public struct PriceFormatter {
         self.formatter = fmt
     }
 
-
     public func format(_ price: Int) -> String {
         let divider = pow(10.0, self.decimalDigits)
         let decimalPrice = Decimal(price) / divider
