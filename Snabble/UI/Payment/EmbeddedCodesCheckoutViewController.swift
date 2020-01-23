@@ -14,9 +14,6 @@ final class EmbeddedCodesCheckoutViewController: UIViewController {
     @IBOutlet private weak var arrowWrapper: UIView!
     @IBOutlet private weak var codeWrapper: UIView!
 
-    @IBOutlet private weak var codeWidth: NSLayoutConstraint!
-    @IBOutlet private weak var codeHeight: NSLayoutConstraint!
-
     @IBOutlet private weak var codeContainer: UIView!
     @IBOutlet private weak var idWrapper: UIView!
     @IBOutlet private weak var idLabel: UILabel!
