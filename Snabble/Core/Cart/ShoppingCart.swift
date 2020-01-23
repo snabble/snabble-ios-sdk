@@ -200,9 +200,14 @@ final public class ShoppingCart: Codable {
     }
 
     /// remove all items from the cart
-    public func removeAll(endSession: Bool = false) {
-        self.backupItems = self.items
-        self.backupSession = self.session
+    public func removeAll(endSession: Bool = false, keepBackup: Bool = true) {
+        if keepBackup {
+            self.backupItems = self.items
+            self.backupSession = self.session
+        } else {
+            self.backupItems = nil
+            self.backupSession = nil
+        }
 
         self.items.removeAll()
         self.save()

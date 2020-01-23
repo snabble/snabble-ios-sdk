@@ -159,7 +159,7 @@ final class OnlineCheckoutViewController: UIViewController {
         self.poller = nil
         
         if success {
-            self.cart.removeAll(endSession: true)
+            self.cart.removeAll(endSession: true, keepBackup: false)
         }
         self.delegate.paymentFinished(success, self.cart, process)
     }

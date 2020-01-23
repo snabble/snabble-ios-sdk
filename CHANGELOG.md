@@ -6,6 +6,8 @@
 * Fixes display of product weight in the Shopping Cart in Dark Mode
 * Adds support for interactions with the [snabble vpos](https://github.com/snabble/docs/blob/master/api_vpos.md)
 * Allows clients apps to replace images used by the SDK's UI components. Whenever the SDK tries to load an image resource, it checks the app's main bundle for that image first, and only if no image is found takes the resource from the SDK's bundle.
+* Fixes a bug where the wrong currency symbol could be used in price display
+* "Restore Cart" is no longer available after a successful online payment.
 
 # v0.11.2
 

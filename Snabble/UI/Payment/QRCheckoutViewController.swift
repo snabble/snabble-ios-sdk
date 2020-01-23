@@ -124,6 +124,9 @@ final class QRCheckoutViewController: UIViewController {
     private func paymentFinished(_ success: Bool, _ process: CheckoutProcess) {
         self.poller = nil
 
+        if success {
+            self.cart.removeAll(endSession: true, keepBackup: false)
+        }
         self.delegate.paymentFinished(success, self.cart, process)
     }
 
