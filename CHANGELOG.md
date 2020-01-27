@@ -5,9 +5,10 @@
 * Removes the unused `secondaryColor` property from `SnabbleAppearance`
 * Fixes display of product weight in the Shopping Cart in Dark Mode
 * Adds support for interactions with the [snabble vpos](https://github.com/snabble/docs/blob/master/api_vpos.md)
-* Allows clients apps to replace images used by the SDK's UI components. Whenever the SDK tries to load an image resource, it checks the app's main bundle for that image first, and only if no image is found takes the resource from the SDK's bundle.
+* Allows host apps to replace images used by the SDK's UI components. Whenever the SDK tries to load an image resource, it checks the app's main bundle for that image first, and only if no image is found takes the resource from the SDK's bundle. All images used by the SDK have been moved to the `SnabbleSDK` folder in `Snabble.xcassets` to avoid name collisions with assets in the hosting app.
 * Fixes a bug where the wrong currency symbol could be used in price display
 * "Restore Cart" is no longer available after a successful online payment.
+* Checkout processing views for embedded codes and online payment methods have been redesigned and now show a visual indication of what the user is expected to do. The graphic resources for these views are not part of the SDK and must be provided by the host app as assets named `Checkout/<projectId>/checkout-offline` and/or `Checkout/<projectId>/checkout-online`, respectively.
 
 # v0.11.2
 
