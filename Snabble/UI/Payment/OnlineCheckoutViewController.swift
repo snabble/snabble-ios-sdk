@@ -8,13 +8,20 @@ import UIKit
 
 final class OnlineCheckoutViewController: UIViewController {
 
-    @IBOutlet weak var checkoutIdLabel: UILabel!
-    @IBOutlet weak var codeImage: UIImageView!
-    @IBOutlet weak var explanationLabel: UILabel!
-    @IBOutlet weak var waitLabel: UILabel!
-    @IBOutlet weak var cancelButton: UIButton!
-    @IBOutlet weak var codeWidth: NSLayoutConstraint!
-    
+    @IBOutlet private weak var stackView: UIStackView!
+    @IBOutlet private weak var topWrapper: UIView!
+    @IBOutlet private weak var topIcon: UIImageView!
+    @IBOutlet private weak var iconHeight: NSLayoutConstraint!
+    @IBOutlet private weak var arrowWrapper: UIView!
+    @IBOutlet private weak var spinnerWrapper: UIView!
+    @IBOutlet private weak var spinner: UIActivityIndicatorView!
+    @IBOutlet private weak var codeWrapper: UIView!
+    @IBOutlet private weak var codeImage: UIImageView!
+    @IBOutlet private weak var codeWidth: NSLayoutConstraint!
+    @IBOutlet private weak var idWrapper: UIView!
+    @IBOutlet private weak var idLabel: UILabel!
+    @IBOutlet private weak var cancelButton: UIButton!
+
     private let cart: ShoppingCart
     private weak var delegate: PaymentDelegate!
 
@@ -43,12 +50,19 @@ final class OnlineCheckoutViewController: UIViewController {
 
         self.title = "Snabble.Payment.confirm".localized()
 
-        self.explanationLabel.text = "Snabble.Payment.presentCode".localized()
-        self.waitLabel.text = "Snabble.Payment.waiting".localized()
+        if let icon = UIImage.fromBundle(self.iconName()) {
+            self.topIcon.image = icon
+            self.iconHeight.constant = icon.size.height
+        } else {
+            self.topWrapper.isHidden = true
+            self.arrowWrapper.isHidden = true
+        }
 
+        self.spinnerWrapper.isHidden = true
+        
         let components = self.process.links.`self`.href.components(separatedBy: "/")
         let id = components.last ?? "n/a"
-        self.checkoutIdLabel.text = "Snabble.Checkout.ID".localized() + ": " + String(id.suffix(4))
+        self.idLabel.text = String(id.suffix(4))
 
         self.codeImage.image = QRCode.generate(for: id, scale: 5)
         self.codeWidth.constant = self.codeImage.image?.size.width ?? 0
@@ -113,6 +127,15 @@ final class OnlineCheckoutViewController: UIViewController {
 
         var events = [PaymentEvent: Bool]()
         poller.waitFor([.approval, .paymentSuccess]) { event in
+
+            UIView.animate(withDuration: 0.25) {
+                self.arrowWrapper.isHidden = true
+                self.codeWrapper.isHidden = true
+                self.codeImage.isHidden = true
+                self.spinnerWrapper.isHidden = false
+                self.stackView.layoutIfNeeded()
+            }
+
             events.merge(event, uniquingKeysWith: { b1, b2 in b1 })
 
             if let approval = events[.approval], approval == false {
@@ -166,5 +189,10 @@ final class OnlineCheckoutViewController: UIViewController {
 
     private var autoApproved: Bool {
         return self.process.paymentApproval == true && self.process.supervisorApproval == true
+    }
+
+    private func iconName() -> String {
+        let project = SnabbleUI.project.id
+        return "Checkout/\(project)/checkout-online"
     }
 }

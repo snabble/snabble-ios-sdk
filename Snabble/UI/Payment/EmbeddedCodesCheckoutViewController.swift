@@ -8,23 +8,30 @@ import UIKit
 
 final class EmbeddedCodesCheckoutViewController: UIViewController {
 
-    @IBOutlet weak var checkoutIdLabel: UILabel!
-    @IBOutlet weak var explanation1: UILabel!
-    @IBOutlet weak var totalPriceLabel: UILabel!
-    @IBOutlet weak var explanation2: UILabel!
-    @IBOutlet weak var paidButton: UIButton!
+    @IBOutlet private weak var topWrapper: UIView!
+    @IBOutlet private weak var topIcon: UIImageView!
+    @IBOutlet private weak var iconHeight: NSLayoutConstraint!
+    @IBOutlet private weak var arrowWrapper: UIView!
+    @IBOutlet private weak var codeWrapper: UIView!
+
+    @IBOutlet private weak var codeContainer: UIView!
+    @IBOutlet private weak var idWrapper: UIView!
+    @IBOutlet private weak var idLabel: UILabel!
+    @IBOutlet private weak var pageControlWrapper: UIView!
+
+    @IBOutlet private weak var paidButton: UIButton!
+    @IBOutlet private weak var collectionView: UICollectionView!
+    @IBOutlet private weak var pageControl: UIPageControl!
 
     private var initialBrightness: CGFloat = 0
 
-    @IBOutlet weak var collectionView: UICollectionView!
-    @IBOutlet weak var pageControl: UIPageControl!
     private weak var cart: ShoppingCart!
     private weak var delegate: PaymentDelegate!
     private var process: CheckoutProcess?
     private var qrCodeConfig: QRCodeConfig
 
     private var codes = [String]()
-    private var itemSize = CGSize(width: 100, height: 100)
+    private var itemSize = CGSize.zero
 
     init(_ process: CheckoutProcess?, _ cart: ShoppingCart, _ delegate: PaymentDelegate, _ codeConfig: QRCodeConfig) {
         self.process = process
@@ -50,6 +57,14 @@ final class EmbeddedCodesCheckoutViewController: UIViewController {
         self.paidButton.alpha = 0
         self.paidButton.isUserInteractionEnabled = false
 
+        if let icon = UIImage.fromBundle(self.iconName()) {
+            self.topIcon.image = icon
+            self.iconHeight.constant = icon.size.height
+        } else {
+            self.topWrapper.isHidden = true
+            self.arrowWrapper.isHidden = true
+        }
+
         let nib = UINib(nibName: "QRCodeCell", bundle: SnabbleBundle.main)
         self.collectionView.register(nib, forCellWithReuseIdentifier: "qrCodeCell")
 
@@ -59,16 +74,19 @@ final class EmbeddedCodesCheckoutViewController: UIViewController {
         self.pageControl.numberOfPages = self.codes.count
         self.pageControl.pageIndicatorTintColor = .lightGray
         self.pageControl.currentPageIndicatorTintColor = SnabbleUI.appearance.primaryColor
+        self.pageControlWrapper.isHidden = self.codes.count == 1
+
         self.collectionView.dataSource = self
         self.collectionView.delegate = self
 
         let id = process?.links.`self`.href.suffix(4) ?? "offline"
-        self.checkoutIdLabel.text = "Snabble.Checkout.ID".localized() + ": " + id
+        self.idLabel.text = String(id)
 
         self.setButtonTitle()
     }
 
     override func viewWillAppear(_ animated: Bool) {
+        print(#function)
         super.viewWillAppear(animated)
 
         self.delegate.track(.viewEmbeddedCodesCheckout)
@@ -78,40 +96,26 @@ final class EmbeddedCodesCheckoutViewController: UIViewController {
             UIScreen.main.brightness = 0.5
             self.delegate.track(.brightnessIncreased)
         }
-
-        let formatter = PriceFormatter(SnabbleUI.project)
-
-        // if we have a valid checkoutInfo, use the total from that, else what we've calculated in the cart
-        let lineItems = self.process?.checkoutInfo.lineItems.count ?? 0
-        let total = lineItems > 0 ? self.process?.checkoutInfo.price.price : self.cart.total
-
-        let formattedTotal = formatter.format(total ?? 0)
-
-        self.totalPriceLabel.text = "Snabble.QRCode.total".localized() + "\(formattedTotal)"
-
-        let explKey = self.codes.count > 1 ? "Snabble.QRCode.showTheseCodes" : "Snabble.QRCode.showThisCode"
-        let explanation = explKey.localized()
-
-        self.explanation1.text = String(format: explanation, self.codes.count)
-        self.explanation2.text = "Snabble.QRCode.priceMayDiffer".localized()
-
-        if total == nil {
-            self.totalPriceLabel.isHidden = true
-            self.explanation2.isHidden = true
-        }
     }
 
     override func viewDidLayoutSubviews() {
+        print(#function)
         super.viewDidLayoutSubviews()
 
-        let width = self.collectionView.frame.width
-        if width != self.itemSize.width {
-            self.itemSize = CGSize(width: width, height: width)
+        let frameWidth = self.collectionView.frame.width
+        let maxCodeSize = self.maxCodeSize(fitting: frameWidth)
+        NSLayoutConstraint.activate([
+            self.collectionView.heightAnchor.constraint(equalToConstant: maxCodeSize),
+            self.collectionView.widthAnchor.constraint(equalToConstant: maxCodeSize)
+        ])
+        if maxCodeSize != self.itemSize.width {
+            self.itemSize = CGSize(width: maxCodeSize, height: maxCodeSize)
             self.collectionView.collectionViewLayout.invalidateLayout()
         }
     }
 
     override func viewDidAppear(_ animated: Bool) {
+        print(#function)
         super.viewDidAppear(animated)
 
         Timer.scheduledTimer(withTimeInterval: 2, repeats: false) { timer in
@@ -126,6 +130,11 @@ final class EmbeddedCodesCheckoutViewController: UIViewController {
         super.viewWillDisappear(animated)
 
         UIScreen.main.brightness = self.initialBrightness
+    }
+
+    private func iconName() -> String {
+        let project = SnabbleUI.project.id
+        return "Checkout/\(project)/checkout-offline"
     }
 
     private func setButtonTitle() {
@@ -157,6 +166,41 @@ final class EmbeddedCodesCheckoutViewController: UIViewController {
 
 }
 
+extension EmbeddedCodesCheckoutViewController {
+    private func qrCode(with code: String) -> UIImage? {
+        Log.debug("QR Code content:\n\(code)")
+        let start = Date.timeIntervalSinceReferenceDate
+        defer {
+            let elapsed = Date.timeIntervalSinceReferenceDate - start
+            NSLog("code gen took \(elapsed)")
+        }
+
+        return self.qrCode(with: code, fitting: self.collectionView.frame.width)
+    }
+
+    private func maxCodeSize(fitting width: CGFloat) -> CGFloat {
+        var maxWidth: CGFloat = 0
+        for code in self.codes {
+            if let img = self.qrCode(with: code, fitting: width) {
+                maxWidth = max(maxWidth, img.size.width)
+            }
+        }
+
+        return maxWidth
+    }
+
+    private func qrCode(with code: String, fitting width: CGFloat) -> UIImage? {
+        for scale in (1...7).reversed() {
+            if let img = QRCode.generate(for: code, scale: scale) {
+                if img.size.width <= width {
+                    return img
+                }
+            }
+        }
+        return nil
+    }
+}
+
 extension EmbeddedCodesCheckoutViewController: UICollectionViewDataSource, UICollectionViewDelegate, UICollectionViewDelegateFlowLayout {
 
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
@@ -175,19 +219,6 @@ extension EmbeddedCodesCheckoutViewController: UICollectionViewDataSource, UICol
 
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
         return self.itemSize
-    }
-
-    private func qrCode(with code: String) -> UIImage? {
-        Log.debug("QR Code content:\n\(code)")
-        for scale in (1...7).reversed() {
-            if let img = QRCode.generate(for: code, scale: scale) {
-                if img.size.width <= self.collectionView.bounds.width {
-                    return img
-                }
-            }
-        }
-
-        return nil
     }
 
     @IBAction func pageControlTapped(_ pageControl: UIPageControl) {
