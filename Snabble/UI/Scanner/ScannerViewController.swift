@@ -90,8 +90,8 @@ public final class ScannerViewController: UIViewController {
         self.barcodeDetector.delegate = self
 
         self.title = "Snabble.Scanner.title".localized()
-        self.tabBarItem.image = UIImage.fromBundle("icon-scan-inactive")
-        self.tabBarItem.selectedImage = UIImage.fromBundle("icon-scan-active")
+        self.tabBarItem.image = UIImage.fromBundle("SnabbleSDK/icon-scan-inactive")
+        self.tabBarItem.selectedImage = UIImage.fromBundle("SnabbleSDK/icon-scan-active")
         self.navigationItem.title = "Snabble.Scanner.scanningTitle".localized()
     }
     
@@ -170,9 +170,9 @@ public final class ScannerViewController: UIViewController {
     private static func scannerAppearance() -> BarcodeDetectorAppearance {
         var appearance = BarcodeDetectorAppearance()
 
-        appearance.torchButtonImage = UIImage.fromBundle("icon-light-inactive")?.recolored(with: .white)
-        appearance.torchButtonActiveImage = UIImage.fromBundle("icon-light-active")
-        appearance.enterButtonImage = UIImage.fromBundle("icon-entercode")?.recolored(with: .white)
+        appearance.torchButtonImage = UIImage.fromBundle("SnabbleSDK/icon-light-inactive")?.recolored(with: .white)
+        appearance.torchButtonActiveImage = UIImage.fromBundle("SnabbleSDK/icon-light-active")
+        appearance.enterButtonImage = UIImage.fromBundle("SnabbleSDK/icon-entercode")?.recolored(with: .white)
         appearance.backgroundColor = SnabbleUI.appearance.buttonBackgroundColor
         appearance.textColor = SnabbleUI.appearance.buttonTextColor
         appearance.reticleCornerRadius = 3

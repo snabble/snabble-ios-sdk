@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="15702" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="15705" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
     <device id="retina6_1" orientation="portrait" appearance="light"/>
     <dependencies>
         <deployment identifier="iOS"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="15704"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="15706"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <objects>
@@ -25,7 +25,7 @@
                                     <constraint firstAttribute="width" constant="32" id="hzE-hv-Yki"/>
                                     <constraint firstAttribute="height" constant="32" id="wwH-mw-1V1"/>
                                 </constraints>
-                                <state key="normal" image="icon-plus"/>
+                                <state key="normal" image="SnabbleSDK/icon-plus"/>
                                 <connections>
                                     <action selector="plusButtonTapped:" destination="PjZ-sP-nOK" eventType="touchUpInside" id="nFM-AS-i6P"/>
                                 </connections>
@@ -36,7 +36,7 @@
                                     <constraint firstAttribute="height" constant="32" id="Pu5-ze-k8l"/>
                                     <constraint firstAttribute="width" constant="32" id="yRk-ez-1Ua"/>
                                 </constraints>
-                                <state key="normal" image="icon-minus"/>
+                                <state key="normal" image="SnabbleSDK/icon-minus"/>
                                 <connections>
                                     <action selector="minusButtonTapped:" destination="PjZ-sP-nOK" eventType="touchUpInside" id="uaS-M8-vYj"/>
                                 </connections>
@@ -183,7 +183,7 @@
         </tableViewCell>
     </objects>
     <resources>
-        <image name="icon-minus" width="24" height="24"/>
-        <image name="icon-plus" width="24" height="24"/>
+        <image name="SnabbleSDK/icon-minus" width="24" height="24"/>
+        <image name="SnabbleSDK/icon-plus" width="24" height="24"/>
     </resources>
 </document>

@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="14868" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" colorMatched="YES">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="15705" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" colorMatched="YES">
     <device id="retina4_7" orientation="portrait" appearance="dark"/>
     <dependencies>
         <deployment identifier="iOS"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="14824"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="15706"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <objects>
@@ -33,7 +33,7 @@
                         <constraint firstAttribute="width" constant="32" id="HwA-kd-LNT"/>
                         <constraint firstAttribute="height" constant="32" id="xi9-cs-Fmc"/>
                     </constraints>
-                    <state key="normal" image="icon-close"/>
+                    <state key="normal" image="SnabbleSDK/icon-close"/>
                     <connections>
                         <action selector="closeButtonTapped:" destination="-1" eventType="touchUpInside" id="bEa-RK-48x"/>
                     </connections>
@@ -139,6 +139,6 @@
         </view>
     </objects>
     <resources>
-        <image name="icon-close" width="24" height="24"/>
+        <image name="SnabbleSDK/icon-close" width="24" height="24"/>
     </resources>
 </document>

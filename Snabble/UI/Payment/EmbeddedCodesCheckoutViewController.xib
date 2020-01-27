@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="15702" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="15705" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
     <device id="retina6_1" orientation="portrait" appearance="light"/>
     <dependencies>
         <deployment identifier="iOS"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="15704"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="15706"/>
         <capability name="Safe area layout guides" minToolsVersion="9.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
@@ -39,7 +39,7 @@
                                 <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="jZg-vE-kcn" userLabel="Top Wrapper">
                                     <rect key="frame" x="0.0" y="0.0" width="414" height="132"/>
                                     <subviews>
-                                        <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="252" image="payment-method-checkstand" translatesAutoresizingMaskIntoConstraints="NO" id="gbu-lk-I7u" userLabel="Top Icon">
+                                        <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="252" image="SnabbleSDK/payment-method-checkstand" translatesAutoresizingMaskIntoConstraints="NO" id="gbu-lk-I7u" userLabel="Top Icon">
                                             <rect key="frame" x="132" y="16" width="150" height="100"/>
                                             <constraints>
                                                 <constraint firstAttribute="height" constant="100" id="3cg-Zu-jpX"/>
@@ -57,7 +57,7 @@
                                 <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="0c6-DJ-N1R" userLabel="Arrow Wrapper">
                                     <rect key="frame" x="0.0" y="132" width="414" height="30"/>
                                     <subviews>
-                                        <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="252" image="arrow-up" translatesAutoresizingMaskIntoConstraints="NO" id="gya-en-S5G" userLabel="Arrow Icon">
+                                        <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="252" image="SnabbleSDK/arrow-up" translatesAutoresizingMaskIntoConstraints="NO" id="gya-en-S5G" userLabel="Arrow Icon">
                                             <rect key="frame" x="195" y="3" width="24" height="24"/>
                                         </imageView>
                                     </subviews>
@@ -195,7 +195,7 @@
         </view>
     </objects>
     <resources>
-        <image name="arrow-up" width="24" height="24"/>
-        <image name="payment-method-checkstand" width="150" height="40"/>
+        <image name="SnabbleSDK/arrow-up" width="24" height="24"/>
+        <image name="SnabbleSDK/payment-method-checkstand" width="150" height="40"/>
     </resources>
 </document>

@@ -86,8 +86,8 @@ public final class ShoppingCartViewController: UIViewController {
         self.delegate = delegate
 
         self.title = "Snabble.ShoppingCart.title".localized()
-        self.tabBarItem.image = UIImage.fromBundle(cart.numberOfProducts == 0 ? "icon-cart-inactive-empty" : "icon-cart-inactive-full")
-        self.tabBarItem.selectedImage = UIImage.fromBundle("icon-cart-active")
+        self.tabBarItem.image = UIImage.fromBundle(cart.numberOfProducts == 0 ? "SnabbleSDK/icon-cart-inactive-empty" : "SnabbleSDK/icon-cart-inactive-full")
+        self.tabBarItem.selectedImage = UIImage.fromBundle("SnabbleSDK/icon-cart-active")
 
         let nc = NotificationCenter.default
         nc.addObserver(self, selector: #selector(self.updateShoppingCart(_:)), name: .snabbleCartUpdated, object: nil)
@@ -181,7 +181,7 @@ public final class ShoppingCartViewController: UIViewController {
         refreshControl.addTarget(self, action: #selector(self.handleRefresh(_:)), for: .valueChanged)
         self.tableView.refreshControl = refreshControl
 
-        self.trashButton = UIBarButtonItem(image: UIImage.fromBundle("icon-trash"), style: .plain, target: self, action: #selector(self.trashButtonTapped(_:)))
+        self.trashButton = UIBarButtonItem(image: UIImage.fromBundle("SnabbleSDK/icon-trash"), style: .plain, target: self, action: #selector(self.trashButtonTapped(_:)))
 
         self.tableBottomMargin.constant = 0
 
@@ -430,7 +430,7 @@ public final class ShoppingCartViewController: UIViewController {
     public func updateTotals() {
         let count = self.shoppingCart.numberOfProducts
 
-        self.tabBarItem.image = UIImage.fromBundle(count == 0 ? "icon-cart-inactive-empty" : "icon-cart-inactive-full")
+        self.tabBarItem.image = UIImage.fromBundle(count == 0 ? "SnabbleSDK/icon-cart-inactive-empty" : "SnabbleSDK/icon-cart-inactive-full")
 
         let formatter = PriceFormatter(SnabbleUI.project)
         let title: String

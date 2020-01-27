@@ -10,14 +10,14 @@ import Foundation
 extension PaymentMethod {
     var icon: String {
         switch self {
-        case .qrCodePOS: return "payment-method-checkstand"
-        case .qrCodeOffline: return "payment-method-checkstand"
-        case .deDirectDebit: return "payment-sepa"
-        case .visa: return "payment-visa"
-        case .mastercard: return "payment-mastercard"
+        case .qrCodePOS: return "SnabbleSDK/payment-method-checkstand"
+        case .qrCodeOffline: return "SnabbleSDK/payment-method-checkstand"
+        case .deDirectDebit: return "SnabbleSDK/payment-sepa"
+        case .visa: return "SnabbleSDK/payment-visa"
+        case .mastercard: return "SnabbleSDK/payment-mastercard"
         case .externalBilling:
             switch self.data?.originType {
-            case .tegutEmployeeID: return "payment-tegut"
+            case .tegutEmployeeID: return "SnabbleSDK/payment-tegut"
             default: return ""
             }
         }

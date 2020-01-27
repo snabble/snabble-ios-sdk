@@ -54,9 +54,9 @@ final class ScanConfirmationView: DesignableView {
         self.quantityField.delegate = self
         self.quantityField.addDoneButton()
 
-        self.closeButton.setImage(UIImage.fromBundle("icon-close"), for: .normal)
-        self.plusButton.setImage(UIImage.fromBundle("icon-plus"), for: .normal)
-        self.minusButton.setImage(UIImage.fromBundle("icon-minus"), for: .normal)
+        self.closeButton.setImage(UIImage.fromBundle("SnabbleSDK/icon-close"), for: .normal)
+        self.plusButton.setImage(UIImage.fromBundle("SnabbleSDK/icon-plus"), for: .normal)
+        self.minusButton.setImage(UIImage.fromBundle("SnabbleSDK/icon-minus"), for: .normal)
     }
 
     func setCustomAppearance(_ appearance: CustomAppearance) {
