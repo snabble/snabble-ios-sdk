@@ -169,7 +169,11 @@ final class ShoppingCartTableCell: UITableViewCell {
                 if let price = lineItem.price {
                     let itemPrice = formatter.format(price)
                     let total = formatter.format(total)
-                    self.priceLabel.text = "× \(itemPrice) = \(total)"
+                    if lineItem.amount == 1 {
+                        self.priceLabel.text = total
+                    } else {
+                        self.priceLabel.text = "× \(itemPrice) = \(total)"
+                    }
                 } else {
                     self.priceLabel.text = formatter.format(total)
                 }
