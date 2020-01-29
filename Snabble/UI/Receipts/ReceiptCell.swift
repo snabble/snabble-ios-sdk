@@ -6,7 +6,7 @@
 
 import UIKit
 
-class ReceiptCell: UITableViewCell {
+final class ReceiptCell: UITableViewCell {
 
     @IBOutlet private weak var storeIcon: UIImageView!
     @IBOutlet private weak var storeName: UILabel!

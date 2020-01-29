@@ -6,7 +6,7 @@
 
 import UIKit
 
-class EmptyStateView: NibView {
+internal class EmptyStateView: NibView {
     @IBOutlet weak var textLabel: UILabel!
     @IBOutlet weak var button1: UIButton!
     @IBOutlet weak var button2: UIButton!

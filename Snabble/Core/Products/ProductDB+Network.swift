@@ -72,7 +72,7 @@ extension ProductDB {
 
 }
 
-class AppDBDownloadDelegate: CertificatePinningDelegate, URLSessionDownloadDelegate {
+final class AppDBDownloadDelegate: CertificatePinningDelegate, URLSessionDownloadDelegate {
 
     private var completion: (AppDbResponse) -> ()
     private var response: URLResponse?
