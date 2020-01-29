@@ -25,11 +25,9 @@ final class PaymentMethodSelectionViewController: UIViewController {
         self.process = process
         self.signedCheckoutInfo = process.signedCheckoutInfo
         self.cart = process.cart
-        self.paymentMethods = []
+        self.paymentMethods = paymentMethods
 
         super.init(nibName: nil, bundle: SnabbleBundle.main)
-
-        self.paymentMethods = self.filterPaymentMethods(paymentMethods)
     }
 
     required init?(coder aDecoder: NSCoder) {
@@ -96,26 +94,9 @@ final class PaymentMethodSelectionViewController: UIViewController {
     private func updatePaymentMethods() {
         let infoMethods = self.signedCheckoutInfo.checkoutInfo.paymentMethods
         let mergedMethods = self.process.mergePaymentMethodList(infoMethods)
-        self.paymentMethods = self.filterPaymentMethods(mergedMethods)
+        self.paymentMethods = self.process.filterPaymentMethods(mergedMethods)
         self.collectionView.reloadData()
         self.view.setNeedsLayout()
-    }
-
-    // filter payment methods: if there is at least one online payment method with data, don't show other incomplete online methods
-    private func filterPaymentMethods(_ methods: [PaymentMethod]) -> [PaymentMethod] {
-        let onlineComplete = methods.filter { !$0.rawMethod.offline && $0.data != nil }
-        if onlineComplete.count == 0 {
-            return methods
-        }
-
-        // remove all incomplete online methods
-        var methods = methods
-        for (index, method) in methods.enumerated().reversed() {
-            if !method.rawMethod.offline && method.data == nil {
-                methods.remove(at: index)
-            }
-        }
-        return methods
     }
 
     private func updateContentInset() {

@@ -86,7 +86,8 @@ public final class PaymentProcess {
     public func start(completion: @escaping (_ result: Result<UIViewController, SnabbleError>) -> () ) {
         let info = self.signedCheckoutInfo
 
-        let paymentMethods = self.mergePaymentMethodList(info.checkoutInfo.paymentMethods)
+        let mergedMethods = self.mergePaymentMethodList(info.checkoutInfo.paymentMethods)
+        let paymentMethods = self.filterPaymentMethods(mergedMethods)
 
         switch paymentMethods.count {
         case 0:
@@ -139,6 +140,23 @@ public final class PaymentProcess {
         }
 
         return result.reversed()
+    }
+
+    // filter payment methods: if there is at least one online payment method with data, don't show other incomplete online methods
+    func filterPaymentMethods(_ methods: [PaymentMethod]) -> [PaymentMethod] {
+        let onlineComplete = methods.filter { !$0.rawMethod.offline && $0.data != nil }
+        if onlineComplete.count == 0 {
+            return methods
+        }
+
+        // remove all incomplete online methods
+        var methods = methods
+        for (index, method) in methods.enumerated().reversed() {
+            if !method.rawMethod.offline && method.data == nil {
+                methods.remove(at: index)
+            }
+        }
+        return methods
     }
 
     func start(_ method: PaymentMethod, completion: @escaping (_ result: Result<UIViewController, SnabbleError>) -> () ) {
