@@ -10,7 +10,7 @@ public struct OrderList: Decodable {
     public let orders: [Order]
 }
 
-public struct Order: Decodable {
+public struct Order: Codable {
     public let project: String
     public let id: String
     public let date: Date
@@ -19,7 +19,7 @@ public struct Order: Decodable {
     public let price: Int
     public let links: OrderLinks
 
-    public struct OrderLinks: Decodable {
+    public struct OrderLinks: Codable {
         public let receipt: Link
     }
 

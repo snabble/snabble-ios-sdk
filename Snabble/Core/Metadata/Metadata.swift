@@ -361,7 +361,7 @@ public struct Project: Decodable {
 }
 
 /// Link
-public struct Link: Decodable {
+public struct Link: Codable {
     public let href: String
 
     /// empty instance, used for the default init of `MetadataLinks`
