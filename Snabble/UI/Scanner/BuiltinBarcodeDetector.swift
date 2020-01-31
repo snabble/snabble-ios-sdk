@@ -121,6 +121,10 @@ public final class BuiltinBarcodeDetector: NSObject, BarcodeDetector {
     }
 
     public func startScanning() {
+        guard self.decoration != nil else {
+            return
+        }
+
         self.sessionQueue.async {
             if !self.captureSession.isRunning {
                 self.captureSession.startRunning()
@@ -142,6 +146,10 @@ public final class BuiltinBarcodeDetector: NSObject, BarcodeDetector {
     }
 
     public func stopScanning() {
+        guard self.decoration != nil else {
+            return
+        }
+
         self.sessionQueue.async {
             self.captureSession.stopRunning()
         }

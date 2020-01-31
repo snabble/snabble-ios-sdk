@@ -35,6 +35,8 @@ public struct SnabbleAppearance {
 /// global settings for the Snabble UI classes
 public final class SnabbleUI {
 
+    /// set to false only if you want or need to take control of all navigation in the app (e.g. in the RN wrapper)
+    static public var implicitNavigation = true
     static private(set) public var appearance = SnabbleAppearance()
     static private(set) public var project = Project.none
     static public weak var analytics: AnalyticsDelegate?

@@ -28,6 +28,8 @@ public struct ScanMessage {
 public protocol ScannerDelegate: AnalyticsDelegate {
     func gotoShoppingCart()
 
+    func gotoBarcodeEntry()
+
     func scanMessage(for project: Project, _ shop: Shop, _ product: Product) -> ScanMessage?
 }
 
@@ -35,6 +37,8 @@ public extension ScannerDelegate {
     func scanMessage(for project: Project, _ shop: Shop, _ product: Product) -> ScanMessage? {
         return nil
     }
+
+    func gotoBarcodeEntry() { }
 }
 
 public final class ScannerViewController: UIViewController {
@@ -164,8 +168,7 @@ public final class ScannerViewController: UIViewController {
         self.keyboardObserver = nil
     }
 
-    var msgHidden = true
-
+    private var msgHidden = true
 
     private static func scannerAppearance() -> BarcodeDetectorAppearance {
         var appearance = BarcodeDetectorAppearance()
@@ -330,8 +333,12 @@ extension ScannerViewController: ScanConfirmationViewDelegate {
 // MARK: - scanning view delegate
 extension ScannerViewController: BarcodeDetectorDelegate {
     public func enterBarcode() {
-        let barcodeEntry = BarcodeEntryViewController(self.productProvider, delegate: self.delegate, completion: self.manuallyEnteredCode)
-        self.navigationController?.pushViewController(barcodeEntry, animated: true)
+        if SnabbleUI.implicitNavigation {
+            let barcodeEntry = BarcodeEntryViewController(self.productProvider, delegate: self.delegate, completion: self.handleScannedCode)
+            self.navigationController?.pushViewController(barcodeEntry, animated: true)
+        } else {
+            self.delegate.gotoBarcodeEntry()
+        }
         
         self.barcodeDetector.stopScanning()
     }
@@ -575,10 +582,6 @@ extension ScannerViewController {
         }
     }
 
-    private func manuallyEnteredCode(_ code: String, _ template: String?) {
-        self.handleScannedCode(code, template)
-    }
-
 }
 
 extension ScannerViewController: KeyboardHandling {
@@ -609,4 +612,21 @@ extension ScannerViewController: CustomizableAppearance {
             self.navigationItem.titleView = imgView
         }
     }
+}
+
+// stuff that's only used by the RN wrapper
+extension ScannerViewController {
+
+    public func setIsScanning(_ on: Bool) {
+        if on {
+            self.barcodeDetector.startScanning()
+        } else {
+            self.barcodeDetector.stopScanning()
+        }
+    }
+
+    public func setLookupcode(_ code: String) {
+        self.handleScannedCode(code)
+    }
+
 }

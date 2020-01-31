@@ -66,15 +66,21 @@ final public class BarcodeEntryViewController: UIViewController {
     }
 
     private func addCode(_ code: String, _ template: String?) {
-        // popViewController has no completion handler, so we roll our own
-        CATransaction.begin()
-        CATransaction.setCompletionBlock {
+
+        let block = {
             self.delegate.track(.barcodeSelected(code))
             self.completion?(code, template)
         }
 
-        let _ = self.navigationController?.popViewController(animated: false)
-        CATransaction.commit()
+        if SnabbleUI.implicitNavigation {
+            // popViewController has no completion handler, so we roll our own
+            CATransaction.begin()
+            CATransaction.setCompletionBlock(block)
+            let _ = self.navigationController?.popViewController(animated: false)
+            CATransaction.commit()
+        } else {
+            block()
+        }
     }
 
 }
@@ -95,11 +101,6 @@ extension BarcodeEntryViewController: UISearchBarDelegate {
         self.searchText = searchText
         self.tableView.reloadData()
     }
-
-    public func searchBarCancelButtonClicked(_ searchBar: UISearchBar) {
-        let _ = self.navigationController?.popViewController(animated: true)
-    }
-
 }
 
 extension BarcodeEntryViewController: UITableViewDelegate, UITableViewDataSource {
