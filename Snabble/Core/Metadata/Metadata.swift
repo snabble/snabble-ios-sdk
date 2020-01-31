@@ -463,14 +463,14 @@ extension RoundingMode: UnknownCaseRepresentable {
 // MARK: - shop data
 
 /// opening hours
-public struct OpeningHoursSpecification: Decodable {
+public struct OpeningHoursSpecification: Codable {
     public let opens: String
     public let closes: String
     public let dayOfWeek: String
 }
 
 /// base data for one shop
-public struct Shop: Decodable {
+public struct Shop: Codable {
     /// id of this shop, use this to initialize shopping carts
     public let id: String
     /// name of this shop
@@ -534,6 +534,26 @@ public struct Shop: Decodable {
         self.postalCode = try container.decode(.postalCode)
         self.state = try container.decode(.state)
         self.country = try container.decode(.country)
+    }
+
+    public func encode(to encoder: Encoder) throws {
+        var container = encoder.container(keyedBy: CodingKeys.self)
+
+        try container.encode(self.id, forKey: .id)
+        try container.encode(self.name, forKey: .name)
+        try container.encode(self.project, forKey: .project)
+        try container.encode(self.externalId, forKey: .externalId)
+        try container.encode(self.latitude, forKey: .latitude)
+        try container.encode(self.longitude, forKey: .longitude)
+        try container.encode(self.services, forKey: .services)
+        try container.encode(self.openingHoursSpecification, forKey: .openingHoursSpecification)
+        try container.encode(self.email, forKey: .email)
+        try container.encode(self.phone, forKey: .phone)
+        try container.encode(self.city, forKey: .city)
+        try container.encode(self.street, forKey: .street)
+        try container.encode(self.postalCode, forKey: .postalCode)
+        try container.encode(self.state, forKey: .state)
+        try container.encode(self.country, forKey: .country)
     }
 
     private init() {
