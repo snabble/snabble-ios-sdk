@@ -286,6 +286,18 @@ public final class ShoppingCartViewController: UIViewController {
     }
 
     @objc private func trashButtonTapped(_ sender: UIBarButtonItem) {
+        self.showDeleteCartAlert()
+    }
+
+    @objc private func handleRefresh(_ sender: Any) {
+        self.shoppingCart.createCheckoutInfo(userInitiated: true) { success in
+            self.tableView.refreshControl?.endRefreshing()
+            self.tableView.reloadData()
+            self.updateTotals()
+        }
+    }
+
+    public func showDeleteCartAlert() {
         let alert = UIAlertController(title: "Snabble.Shoppingcart.removeItems".localized(), message: nil, preferredStyle: .alert)
         alert.addAction(UIAlertAction(title: "Snabble.Yes".localized(), style: .destructive) { action in
             self.delegate.track(.deletedEntireCart)
@@ -295,14 +307,6 @@ public final class ShoppingCartViewController: UIViewController {
         alert.addAction(UIAlertAction(title: "Snabble.No".localized(), style: .cancel, handler: nil))
 
         self.present(alert, animated: true)
-    }
-
-    @objc private func handleRefresh(_ sender: Any) {
-        self.shoppingCart.createCheckoutInfo(userInitiated: true) { success in
-            self.tableView.refreshControl?.endRefreshing()
-            self.tableView.reloadData()
-            self.updateTotals()
-        }
     }
 
     private func updateView(at row: Int? = nil) {

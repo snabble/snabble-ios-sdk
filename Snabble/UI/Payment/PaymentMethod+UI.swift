@@ -233,3 +233,14 @@ public final class PaymentProcess {
     }
 
 }
+
+// stuff that's only used by the RN wrapper
+extension PaymentProcess {
+    public func getPaymentMethods() -> [PaymentMethod] {
+        let info = self.signedCheckoutInfo
+        let mergedMethods = self.mergePaymentMethodList(info.checkoutInfo.paymentMethods)
+        let paymentMethods = self.filterPaymentMethods(mergedMethods)
+
+        return paymentMethods
+    }
+}
