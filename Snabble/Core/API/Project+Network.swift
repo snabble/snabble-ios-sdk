@@ -104,8 +104,8 @@ extension Project {
         guard
             let url = SnabbleAPI.urlString(url, queryItems),
             let fullUrl = SnabbleAPI.urlFor(url)
-            else {
-                return completion(nil)
+        else {
+            return completion(nil)
         }
 
         self.request(method, fullUrl, json, jwtRequired, timeout, completion)
