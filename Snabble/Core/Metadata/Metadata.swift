@@ -577,19 +577,68 @@ public extension Metadata {
     static func load(from url: String, completion: @escaping (Metadata?) -> () ) {
         let project = Project.none
         project.request(.get, url, jwtRequired: false, timeout: 5) { request in
-            guard let request = request else {
+            guard let request = request, let absoluteString = request.url?.absoluteString else {
                 return completion(nil)
             }
 
-            project.perform(request) { (result: Result<Metadata, SnabbleError>) in
+            project.perform(request, returnRaw: true) { (result: Result<Metadata, SnabbleError>, raw: [String: Any]?, _) in
+                let hash = absoluteString.djb2hash
                 switch result {
                 case .success(let metadata):
                     completion(metadata)
+                    if let raw = raw {
+                        self.saveLastMetadata(raw, hash)
+                    }
                 case .failure:
+                    if let metadata = self.readLastMetadata(hash) {
+                        completion(metadata)
+                    }
                     completion(nil)
                 }
             }
         }
     }
-    
+}
+
+extension Metadata {
+    private static func readLastMetadata(_ hash: Int) -> Metadata? {
+        do {
+            let url = try self.urlForLastMetadata(hash)
+            let data = try Data(contentsOf: url)
+            let metadata = try JSONDecoder().decode(Metadata.self, from: data)
+            return metadata
+        } catch {
+            Log.error("error reading last known metadata: \(error)")
+            return nil
+        }
+    }
+
+    private static func saveLastMetadata(_ raw: [String: Any], _ hash: Int) {
+        do {
+            let data = try JSONSerialization.data(withJSONObject: raw, options: .fragmentsAllowed)
+            let url = try self.urlForLastMetadata(hash)
+            try data.write(to: url, options: .atomic)
+        } catch {
+            Log.error("error writing last known metadata: \(error)")
+        }
+    }
+
+    private static func urlForLastMetadata(_ hash: Int) throws -> URL  {
+        let fileManager = FileManager.default
+        var appSupportDir = try fileManager.url(for: .applicationSupportDirectory, in: .userDomainMask, appropriateFor: nil, create: true)
+        appSupportDir.appendPathComponent("appmetadata\(hash).json")
+        return appSupportDir
+    }
+}
+
+// a stable string hash.
+// See http://www.cse.yorku.ca/~oz/hash.html and
+// https://stackoverflow.com/questions/52440502/string-hashvalue-not-unique-after-reset-app-when-build-in-xcode-10
+private extension String {
+    var djb2hash: Int {
+        let unicodeScalars = self.unicodeScalars.map { $0.value }
+        return unicodeScalars.reduce(5381) {
+            ($0 << 5) &+ $0 &+ Int($1)
+        }
+    }
 }
