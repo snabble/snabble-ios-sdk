@@ -9,6 +9,7 @@
 * Fixes a bug where the wrong currency symbol could be used in price display
 * "Restore Cart" is no longer available after a successful online payment.
 * Checkout processing views for embedded codes and online payment methods have been redesigned and now show a visual indication of what the user is expected to do. The graphic resources for these views are not part of the SDK and must be provided by the host app as assets named `Checkout/<projectId>/checkout-offline` and/or `Checkout/<projectId>/checkout-online`, respectively.
+* App Metadata is now saved on disk, and the last known good copy is used when loading fails on app start.
 
 # v0.11.2
 
@@ -27,7 +28,7 @@
 
 # v0.10.21
 
-* Fixes a crash when `ScanMessae.imageUrl` was nil.
+* Fixes a crash when `ScanMessage.imageUrl` was nil.
 
 # v0.10.20
 
@@ -36,7 +37,7 @@
 # v0.10.19
 
 * Improved handling of cancelling online payments. When the `CheckoutProcess.abort` backend API call returns an error, an alert is displayed using the new i18n keys `Snabble.Payment.cancelError.title` and `Snabble.Payment.cancelError.message`.
-* Replaced `scanMessageText(for:)` in `ScannerDelegate` with `scanMessage(for:_:_:)` which returns a `ScanMessage?`. This allows apps to e.g. display product recommendations inkluding images in the scanner's message area. 
+* Replaced `scanMessageText(for:)` in `ScannerDelegate` with `scanMessage(for:_:_:)` which returns a `ScanMessage?`. This allows apps to e.g. display product recommendations including images in the scanner's message area. 
 
 # v0.10.18
 
