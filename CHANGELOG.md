@@ -10,6 +10,7 @@
 * "Restore Cart" is no longer available after a successful online payment.
 * Checkout processing views for embedded codes and online payment methods have been redesigned and now show a visual indication of what the user is expected to do. The graphic resources for these views are not part of the SDK and must be provided by the host app as assets named `Checkout/<projectId>/checkout-offline` and/or `Checkout/<projectId>/checkout-online`, respectively.
 * App Metadata is now saved on disk, and the last known good copy is used when loading fails on app start.
+* Minor breaking change: the `CartConfig.shop` has been removed. Use the new `CartConfig.shopId` instead (ie., instead of passing in a shop object, just use its `id` property to create a cart config).
 
 # v0.11.2
 
