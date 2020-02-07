@@ -35,6 +35,8 @@
         en = How would you like to pay %@?
     [Snabble.PaymentSelection.payNow]
         en = Pay %@ now
+    [Snabble.PaymentSelection.addNow]
+        en = Add now
     [Snabble.Payment.noMethodAvailable]
         en = Unfortunately, this purchase can't be made using the app.
     [Snabble.QRCode.didPay]
@@ -249,3 +251,9 @@
     [Snabble.CC.3dsecureHint]
         tags = android
         en = In order to verify your credit card, you will be redirected to your bank after entering your data. There you will be asked to approve a payment of € 1.00 to snabble. The amount will be credited to you immediately after your approval.
+    [Snabble.Keyguard.title]
+        en = Please unlock your device
+        tags = android
+    [Snabble.Keyguard.message]
+        en = That's how we make sure that only you have access to this payment method
+        tags = android

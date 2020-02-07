@@ -42,6 +42,8 @@
 
 "Snabble.PaymentSelection.payNow" = "Pay %@ now";
 
+"Snabble.PaymentSelection.addNow" = "Add now";
+
 "Snabble.Payment.noMethodAvailable" = "Unfortunately, this purchase can't be made using the app.";
 
 "Snabble.QRCode.didPay" = "I've paid";
@@ -236,3 +238,7 @@
 "Snabble.Payment.usableAt" = "Usable at: %@";
 
 "Snabble.CC.3dsecureHint" = "In order to verify your credit card, you will be redirected to your bank after entering your data. There you will be asked to approve a payment of € 1.00 to snabble. The amount will be credited to you immediately after your approval.";
+
+"Snabble.Keyguard.title" = "Please unlock your device";
+
+"Snabble.Keyguard.message" = "That's how we make sure that only you have access to this payment method";
