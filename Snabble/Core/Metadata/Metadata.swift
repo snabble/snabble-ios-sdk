@@ -569,7 +569,7 @@ public extension Metadata {
                         self.saveLastMetadata(raw, hash)
                     }
                 case .failure:
-                    if let metadata = self.readLastMetadata(hash) {
+                    if let metadata = self.readLastMetadata(url, hash) {
                         completion(metadata)
                     }
                     completion(nil)
@@ -580,23 +580,26 @@ public extension Metadata {
 }
 
 extension Metadata {
-    private static func readLastMetadata(_ hash: Int) -> Metadata? {
+    private static func readLastMetadata(_ url: String, _ hash: Int) -> Metadata? {
         do {
-            let url = try self.urlForLastMetadata(hash)
-            let data = try Data(contentsOf: url)
+            let fileUrl = try self.urlForLastMetadata(hash)
+            let data = try Data(contentsOf: fileUrl)
             let metadata = try JSONDecoder().decode(Metadata.self, from: data)
-            return metadata
+            // make sure the self link matches
+            if url.contains(metadata.links.`self`.href) {
+                return metadata
+            }
         } catch {
             Log.error("error reading last known metadata: \(error)")
-            return nil
         }
+        return nil
     }
 
     private static func saveLastMetadata(_ raw: [String: Any], _ hash: Int) {
         do {
             let data = try JSONSerialization.data(withJSONObject: raw, options: .fragmentsAllowed)
-            let url = try self.urlForLastMetadata(hash)
-            try data.write(to: url, options: .atomic)
+            let fileUrl = try self.urlForLastMetadata(hash)
+            try data.write(to: fileUrl, options: .atomic)
         } catch {
             Log.error("error writing last known metadata: \(error)")
         }
