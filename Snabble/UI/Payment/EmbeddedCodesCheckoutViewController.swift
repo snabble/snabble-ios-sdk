@@ -86,7 +86,6 @@ final class EmbeddedCodesCheckoutViewController: UIViewController {
     }
 
     override func viewWillAppear(_ animated: Bool) {
-        print(#function)
         super.viewWillAppear(animated)
 
         self.delegate.track(.viewEmbeddedCodesCheckout)
@@ -99,7 +98,6 @@ final class EmbeddedCodesCheckoutViewController: UIViewController {
     }
 
     override func viewDidLayoutSubviews() {
-        print(#function)
         super.viewDidLayoutSubviews()
 
         let frameWidth = self.collectionView.frame.width
@@ -115,7 +113,6 @@ final class EmbeddedCodesCheckoutViewController: UIViewController {
     }
 
     override func viewDidAppear(_ animated: Bool) {
-        print(#function)
         super.viewDidAppear(animated)
 
         Timer.scheduledTimer(withTimeInterval: 2, repeats: false) { timer in
