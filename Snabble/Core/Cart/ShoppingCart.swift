@@ -74,9 +74,10 @@ final public class ShoppingCart: Codable {
     }
 
     public init(_ config: CartConfig) {
-        assert(config.project.id != "", "empty projects cannot have a shopping cart")
+        assert(config.project.id != "" && config.project.id != Project.none.id, "empty projects cannot have a shopping cart")
+        assert(config.shopId != "", "shopId is required")
         self.projectId = config.project.id
-        self.shopId = config.shop.id
+        self.shopId = config.shopId
         self.maxAge = config.maxAge
         self.directory = config.directory
         self.sorter = config.sorter

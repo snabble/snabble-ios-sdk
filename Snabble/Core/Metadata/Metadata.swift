@@ -255,7 +255,7 @@ public struct Project: Decodable {
 
         self.currencySymbol = Self.currencySymbol(for: self.currency, locale: self.locale)
 
-        self.shops = (try container.decodeIfPresent([Shop].self, forKey: .shops)) ?? [Shop.none]
+        self.shops = (try container.decodeIfPresent([Shop].self, forKey: .shops)) ?? []
 
         let defaultFormats = [ ScanFormat.ean8.rawValue, ScanFormat.ean13.rawValue, ScanFormat.code128.rawValue ]
         let formats = (try container.decodeIfPresent([String].self, forKey: .scanFormats)) ?? defaultFormats
@@ -555,27 +555,6 @@ public struct Shop: Codable {
         try container.encode(self.state, forKey: .state)
         try container.encode(self.country, forKey: .country)
     }
-
-    private init() {
-        self.id = ""
-        self.name = ""
-        self.project = ""
-        self.latitude = 0
-        self.longitude = 0
-        self.email = ""
-        self.phone = ""
-        self.city = ""
-        self.street = ""
-        self.postalCode = ""
-        self.state = ""
-        self.country = ""
-        self.openingHoursSpecification = []
-        self.services = []
-        self.external = [:]
-        self.externalId = nil
-    }
-
-    static let none = Shop()
 }
 
 // MARK: - loading metadata
@@ -597,19 +576,71 @@ public extension Metadata {
     static func load(from url: String, completion: @escaping (Metadata?) -> () ) {
         let project = Project.none
         project.request(.get, url, jwtRequired: false, timeout: 5) { request in
-            guard let request = request else {
+            guard let request = request, let absoluteString = request.url?.absoluteString else {
                 return completion(nil)
             }
 
-            project.perform(request) { (result: Result<Metadata, SnabbleError>) in
+            project.perform(request, returnRaw: true) { (result: Result<Metadata, SnabbleError>, raw: [String: Any]?, _) in
+                let hash = absoluteString.djb2hash
                 switch result {
                 case .success(let metadata):
                     completion(metadata)
+                    if let raw = raw {
+                        self.saveLastMetadata(raw, hash)
+                    }
                 case .failure:
+                    if let metadata = self.readLastMetadata(url, hash) {
+                        completion(metadata)
+                    }
                     completion(nil)
                 }
             }
         }
     }
-    
+}
+
+extension Metadata {
+    private static func readLastMetadata(_ url: String, _ hash: Int) -> Metadata? {
+        do {
+            let fileUrl = try self.urlForLastMetadata(hash)
+            let data = try Data(contentsOf: fileUrl)
+            let metadata = try JSONDecoder().decode(Metadata.self, from: data)
+            // make sure the self link matches
+            if url.contains(metadata.links.`self`.href) {
+                return metadata
+            }
+        } catch {
+            Log.error("error reading last known metadata: \(error)")
+        }
+        return nil
+    }
+
+    private static func saveLastMetadata(_ raw: [String: Any], _ hash: Int) {
+        do {
+            let data = try JSONSerialization.data(withJSONObject: raw, options: .fragmentsAllowed)
+            let fileUrl = try self.urlForLastMetadata(hash)
+            try data.write(to: fileUrl, options: .atomic)
+        } catch {
+            Log.error("error writing last known metadata: \(error)")
+        }
+    }
+
+    private static func urlForLastMetadata(_ hash: Int) throws -> URL  {
+        let fileManager = FileManager.default
+        var appSupportDir = try fileManager.url(for: .applicationSupportDirectory, in: .userDomainMask, appropriateFor: nil, create: true)
+        appSupportDir.appendPathComponent("appmetadata\(hash).json")
+        return appSupportDir
+    }
+}
+
+// a stable string hash.
+// See http://www.cse.yorku.ca/~oz/hash.html and
+// https://stackoverflow.com/questions/52440502/string-hashvalue-not-unique-after-reset-app-when-build-in-xcode-10
+private extension String {
+    var djb2hash: Int {
+        let unicodeScalars = self.unicodeScalars.map { $0.value }
+        return unicodeScalars.reduce(5381) {
+            ($0 << 5) &+ $0 &+ Int($1)
+        }
+    }
 }

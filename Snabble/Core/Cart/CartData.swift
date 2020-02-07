@@ -16,8 +16,8 @@ public struct CartConfig {
     /// the `Project` that this cart is used in. You must always use the same snabble project for a cart.
     public var project = Project.none
 
-    /// the shop that this cart is used for
-    public var shop = Shop.none
+    /// the ID of the shop that this cart is used for
+    public var shopId = ""
 
     /// the maximum age of a shopping cart, in seconds. Set this to 0 to keep carts forever
     public var maxAge: TimeInterval = 14400
