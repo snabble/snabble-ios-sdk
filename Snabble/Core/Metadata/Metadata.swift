@@ -255,7 +255,7 @@ public struct Project: Decodable {
 
         self.currencySymbol = Self.currencySymbol(for: self.currency, locale: self.locale)
 
-        self.shops = (try container.decodeIfPresent([Shop].self, forKey: .shops)) ?? [Shop.none]
+        self.shops = (try container.decodeIfPresent([Shop].self, forKey: .shops)) ?? []
 
         let defaultFormats = [ ScanFormat.ean8.rawValue, ScanFormat.ean13.rawValue, ScanFormat.code128.rawValue ]
         let formats = (try container.decodeIfPresent([String].self, forKey: .scanFormats)) ?? defaultFormats
@@ -535,27 +535,6 @@ public struct Shop: Decodable {
         self.state = try container.decode(.state)
         self.country = try container.decode(.country)
     }
-
-    private init() {
-        self.id = ""
-        self.name = ""
-        self.project = ""
-        self.latitude = 0
-        self.longitude = 0
-        self.email = ""
-        self.phone = ""
-        self.city = ""
-        self.street = ""
-        self.postalCode = ""
-        self.state = ""
-        self.country = ""
-        self.openingHoursSpecification = []
-        self.services = []
-        self.external = [:]
-        self.externalId = nil
-    }
-
-    static let none = Shop()
 }
 
 // MARK: - loading metadata
