@@ -58,8 +58,8 @@ extension PaymentMethod {
 
 /// Manage the payment process
 public final class PaymentProcess {
-    private(set) var signedCheckoutInfo: SignedCheckoutInfo
-    private(set) var cart: ShoppingCart
+    let signedCheckoutInfo: SignedCheckoutInfo
+    let cart: ShoppingCart
     private var hudTimer: Timer?
     weak var delegate: PaymentDelegate!
 
@@ -159,7 +159,13 @@ public final class PaymentProcess {
         return methods
     }
 
-    func start(_ method: PaymentMethod, completion: @escaping (_ result: Result<UIViewController, SnabbleError>) -> () ) {
+    func start(_ method: PaymentMethod, completion: @escaping (Result<CheckoutProcess, SnabbleError>) -> () ) {
+        self.signedCheckoutInfo.createCheckoutProcess(SnabbleUI.project, paymentMethod: method, timeout: 20) { result in
+            completion(result)
+        }
+    }
+
+    func start(_ method: PaymentMethod, completion: @escaping (Result<UIViewController, SnabbleError>) -> () ) {
         UIApplication.shared.beginIgnoringInteractionEvents()
         self.startBlurOverlayTimer()
 
