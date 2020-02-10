@@ -1,7 +1,7 @@
 //
 //  CheckoutData.swift
 //
-//  Copyright © 2019 snabble. All rights reserved.
+//  Copyright © 2020 snabble. All rights reserved.
 //
 
 import Foundation
