@@ -6,7 +6,7 @@
 
 import UIKit
 
-final class EmbeddedCodesCheckoutViewController: UIViewController {
+final public class EmbeddedCodesCheckoutViewController: UIViewController {
 
     @IBOutlet private weak var topWrapper: UIView!
     @IBOutlet private weak var topIcon: UIImageView!
@@ -33,7 +33,7 @@ final class EmbeddedCodesCheckoutViewController: UIViewController {
     private var codes = [String]()
     private var itemSize = CGSize.zero
 
-    init(_ process: CheckoutProcess?, _ cart: ShoppingCart, _ delegate: PaymentDelegate, _ codeConfig: QRCodeConfig) {
+    public init(_ process: CheckoutProcess?, _ cart: ShoppingCart, _ delegate: PaymentDelegate, _ codeConfig: QRCodeConfig) {
         self.process = process
         self.cart = cart
         self.delegate = delegate
@@ -49,7 +49,7 @@ final class EmbeddedCodesCheckoutViewController: UIViewController {
         fatalError("init(coder:) has not been implemented")
     }
 
-    override func viewDidLoad() {
+    override public func viewDidLoad() {
         super.viewDidLoad()
 
         self.paidButton.makeSnabbleButton()
@@ -85,7 +85,7 @@ final class EmbeddedCodesCheckoutViewController: UIViewController {
         self.setButtonTitle()
     }
 
-    override func viewWillAppear(_ animated: Bool) {
+    override public func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
 
         self.delegate.track(.viewEmbeddedCodesCheckout)
@@ -97,7 +97,7 @@ final class EmbeddedCodesCheckoutViewController: UIViewController {
         }
     }
 
-    override func viewDidLayoutSubviews() {
+    override public func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
 
         let frameWidth = self.collectionView.frame.width
@@ -112,7 +112,7 @@ final class EmbeddedCodesCheckoutViewController: UIViewController {
         }
     }
 
-    override func viewDidAppear(_ animated: Bool) {
+    override public func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
 
         Timer.scheduledTimer(withTimeInterval: 2, repeats: false) { timer in
@@ -123,7 +123,7 @@ final class EmbeddedCodesCheckoutViewController: UIViewController {
         }
     }
 
-    override func viewWillDisappear(_ animated: Bool) {
+    override public func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
 
         UIScreen.main.brightness = self.initialBrightness
@@ -200,11 +200,11 @@ extension EmbeddedCodesCheckoutViewController {
 
 extension EmbeddedCodesCheckoutViewController: UICollectionViewDataSource, UICollectionViewDelegate, UICollectionViewDelegateFlowLayout {
 
-    func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
+    public func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         return self.codes.count
     }
 
-    func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
+    public func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "qrCodeCell", for: indexPath) as! QRCodeCell
 
         let img = self.qrCode(with: self.codes[indexPath.row])
@@ -214,7 +214,7 @@ extension EmbeddedCodesCheckoutViewController: UICollectionViewDataSource, UICol
         return cell
     }
 
-    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
+    public func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
         return self.itemSize
     }
 
@@ -227,7 +227,7 @@ extension EmbeddedCodesCheckoutViewController: UICollectionViewDataSource, UICol
     }
 
     // adjust the page control when the scrolling ends
-    func scrollViewDidEndDecelerating(_ scrollView: UIScrollView) {
+    public func scrollViewDidEndDecelerating(_ scrollView: UIScrollView) {
         let newPage = Int((scrollView.contentOffset.x + self.itemSize.width/2) / self.itemSize.width)
         self.pageControl.currentPage = newPage
         self.setButtonTitle()
