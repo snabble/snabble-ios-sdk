@@ -1,7 +1,7 @@
 //
 //  PaymentMethod+UI.swift
 //
-//  Copyright © 2019 snabble. All rights reserved.
+//  Copyright © 2020 snabble. All rights reserved.
 //
 
 import Foundation
@@ -30,11 +30,19 @@ extension PaymentMethod {
         }
     }
 
+    func canStart() -> Bool {
+        if !self.dataRequired {
+            return true
+        } else {
+            return self.data != nil
+        }
+    }
+
     func processor(_ process: CheckoutProcess?, _ cart: ShoppingCart, _ delegate: PaymentDelegate) -> UIViewController? {
         if !self.rawMethod.offline && process == nil {
             return nil
         }
-        if self.dataRequired && self.data == nil {
+        guard self.canStart() else {
             return nil
         }
 
@@ -94,8 +102,12 @@ public final class PaymentProcess {
             completion(Result.failure(SnabbleError.noPaymentAvailable))
         case 1:
             let method = paymentMethods[0]
-            self.start(method) { result in
-                completion(result)
+            if method.canStart() {
+                self.start(method) { result in
+                    completion(result)
+                }
+            } else {
+                fallthrough
             }
         default:
             let paymentSelection = PaymentMethodSelectionViewController(self, paymentMethods)

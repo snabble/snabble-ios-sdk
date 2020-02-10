@@ -1,7 +1,6 @@
 # Snabble 
 
 ![License](https://img.shields.io/github/license/mashape/apistatus.svg) 
-![Swift 4.2](https://img.shields.io/badge/Swift-4.2-green.svg)
 ![Swift 5.0](https://img.shields.io/badge/Swift-5.0-green.svg)
 [![Build](https://api.travis-ci.org/snabble/iOS-SDK.svg?branch=master)](https://travis-ci.org/snabble/iOS-SDK) 
 [![Version](https://img.shields.io/cocoapods/v/Snabble.svg)](http://cocoapods.org/pods/Snabble) 
@@ -74,4 +73,4 @@ snabble GmbH, Bonn
 
 ## License
 
-snabble is (c) 2019 snabble GmbH, Bonn. The SDK is made available under the [MIT License](https://github.com/snabble/iOS-SDK/blob/master/LICENSE).
+snabble is (c) 2020 snabble GmbH, Bonn. The SDK is made available under the [MIT License](https://github.com/snabble/iOS-SDK/blob/master/LICENSE).

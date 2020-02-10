@@ -1,7 +1,7 @@
 //
 //  PaymentMethodSelectionViewController.swift
 //
-//  Copyright © 2019 snabble. All rights reserved.
+//  Copyright © 2020 snabble. All rights reserved.
 //
 
 import UIKit
@@ -76,10 +76,6 @@ public final class PaymentMethodSelectionViewController: UIViewController {
         if !self.isBeingPresented && !self.isMovingToParent {
             // whatever was covering us has been dismissed or popped
             self.updatePaymentMethods()
-        }
-
-        if self.paymentMethods.count == 1 {
-            self.startPayment(self.paymentMethods[0])
         }
 
         let nc = NotificationCenter.default
