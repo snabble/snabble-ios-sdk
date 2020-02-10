@@ -186,7 +186,7 @@ extension PaymentMethodSelectionViewController: UICollectionViewDelegate, UIColl
     public func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         let method = self.paymentMethods[indexPath.row]
 
-        if method.data == nil {
+        if method.dataRequired && method.data == nil {
             if SnabbleUI.implicitNavigation, let entryVC = self.process.delegate.dataEntry(for: method) {
                 self.navigationController?.pushViewController(entryVC, animated: true)
             } else {
