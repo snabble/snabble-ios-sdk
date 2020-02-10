@@ -155,7 +155,7 @@ extension PaymentMethodSelectionViewController: UICollectionViewDelegate, UIColl
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         let method = self.paymentMethods[indexPath.row]
 
-        if method.data == nil, let entryVC = self.process.delegate.dataEntry(for: method) {
+        if method.data == nil, method.dataRequired, let entryVC = self.process.delegate.dataEntry(for: method) {
             self.navigationController?.pushViewController(entryVC, animated: true)
             return
         }
