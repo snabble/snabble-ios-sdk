@@ -1,5 +1,9 @@
 ## snabble iOS SDK Changelog
 
+# v0.12.0
+
+* Adds support for the upcoming React Native wrapper
+
 # v0.11.3
 
 * Removes the unused `secondaryColor` property from `SnabbleAppearance`
