@@ -65,10 +65,6 @@ final class PaymentMethodSelectionViewController: UIViewController {
             self.updatePaymentMethods()
         }
 
-        if self.paymentMethods.count == 1 {
-            self.startPayment(self.paymentMethods[0])
-        }
-
         let nc = NotificationCenter.default
         nc.addObserver(self, selector: #selector(self.shoppingCartChanged(_:)), name: .snabbleCartUpdated, object: nil)
         nc.addObserver(self, selector: #selector(self.paymentMethodsChanged(_:)), name: .paymentMethodsChanged, object: nil)
