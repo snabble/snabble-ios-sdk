@@ -44,7 +44,7 @@ final class PaymentMethodSelectionViewController: UIViewController {
 
         self.title = String(format: "Snabble.PaymentSelection.payNow".localized(), totalPrice)
 
-        let nib = UINib(nibName: "PaymentMethodCell", bundle: SnabbleBundle.main)
+        let nib = UINib(nibName: "CheckoutPaymentMethodCell", bundle: SnabbleBundle.main)
         self.collectionView.register(nib, forCellWithReuseIdentifier: "paymentCell")
     }
 
@@ -140,7 +140,7 @@ extension PaymentMethodSelectionViewController: UICollectionViewDelegate, UIColl
     }
 
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "paymentCell", for: indexPath) as! PaymentMethodCell
+        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "paymentCell", for: indexPath) as! CheckoutPaymentMethodCell
 
         let paymentMethod = self.paymentMethods[indexPath.row]
         cell.paymentMethod = paymentMethod
