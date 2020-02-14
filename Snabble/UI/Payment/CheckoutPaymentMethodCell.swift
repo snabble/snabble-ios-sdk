@@ -1,12 +1,12 @@
 //
-//  PaymentMethodCell.swift
+//  CheckoutPaymentMethodCell.swift
 //
 //  Copyright © 2020 snabble. All rights reserved.
 //
 
 import UIKit
 
-final class PaymentMethodCell: UICollectionViewCell {
+final class CheckoutPaymentMethodCell: UICollectionViewCell {
 
     @IBOutlet weak var containerView: UIView!
     @IBOutlet weak var icon: UIImageView!
