@@ -275,7 +275,7 @@ enum PaymentMethodUserData: Codable {
     }
 }
 
-struct PaymentMethodDetail: Codable {
+public struct PaymentMethodDetail: Codable {
     let methodData: PaymentMethodUserData
 
     init(_ sepaData: SepaData) {

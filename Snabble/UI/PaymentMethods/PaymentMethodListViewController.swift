@@ -46,10 +46,6 @@ extension RawPaymentMethod {
     }
 }
 
-struct MethodProjects {
-    let method: RawPaymentMethod
-    let projectNames: [String]
-}
 
 public final class PaymentMethodListViewController: UIViewController {
 
@@ -58,16 +54,18 @@ public final class PaymentMethodListViewController: UIViewController {
 
     private var paymentDetails = [PaymentMethodDetail]()
     private var initialDetails = 0
-    private var methods = [MethodProjects]()
+    private let methods: [MethodProjects]
     private weak var analyticsDelegate: AnalyticsDelegate?
+
+    public weak var navigationDelegate: PaymentMethodNavigationDelegate?
 
     public init(_ analyticsDelegate: AnalyticsDelegate) {
         self.analyticsDelegate = analyticsDelegate
+        self.methods = MethodProjects.initialize()
+
         super.init(nibName: nil, bundle: SnabbleBundle.main)
 
         self.title = "Snabble.PaymentMethods.title".localized()
-
-        self.methods = self.initializeMethods()
     }
 
     required init?(coder aDecoder: NSCoder) {
@@ -90,6 +88,14 @@ public final class PaymentMethodListViewController: UIViewController {
 
         let paymentDetails = PaymentMethodDetails.read()
         self.initialDetails = paymentDetails.count
+
+        NotificationCenter.default.addObserver(self, selector: #selector(self.methodsChanged(_:)), name: .paymentMethodsChanged, object: nil)
+
+        if !SnabbleUI.implicitNavigation && self.navigationDelegate == nil {
+            let msg = "navigationDelegate may not be nil when using explicit navigation"
+            assert(self.navigationDelegate != nil)
+            NSLog("ERROR: \(msg)")
+        }
     }
 
     override public func viewWillAppear(_ animated: Bool) {
@@ -144,8 +150,12 @@ public final class PaymentMethodListViewController: UIViewController {
             return
         }
 
-        let selection = MethodSelectionViewController(self.methods, self.analyticsDelegate)
-        self.navigationController?.pushViewController(selection, animated: true)
+        if SnabbleUI.implicitNavigation {
+            let selection = MethodSelectionViewController(self.methods, self.analyticsDelegate)
+            self.navigationController?.pushViewController(selection, animated: true)
+        } else {
+            self.navigationDelegate?.addMethod()
+        }
     }
 
     override public func setEditing(_ editing: Bool, animated: Bool) {
@@ -153,35 +163,13 @@ public final class PaymentMethodListViewController: UIViewController {
         self.tableView.isEditing = editing
     }
 
-    private func initializeMethods() -> [MethodProjects] {
-        let allPaymentMethods = SnabbleAPI.projects.reduce(into: []) { result, project in
-            result.append(contentsOf: project.paymentMethods)
-        }
-        let paymentMethods = Set(allPaymentMethods.filter({ $0.editable }))
-
-        var methodMap = [RawPaymentMethod: [String]]()
-        for pm in paymentMethods {
-            for prj in SnabbleAPI.projects {
-                if prj.paymentMethods.contains(pm) {
-                    methodMap[pm, default: []].append(prj.name)
-                }
-            }
-        }
-
-        if SnabbleAPI.debugMode {
-            RawPaymentMethod.allCases.filter{ $0.editable && methodMap[$0] == nil }.forEach {
-                methodMap[$0] = ["TEST"]
-            }
-        }
-
-        return methodMap
-            .map { MethodProjects(method: $0, projectNames: $1) }
-            .sorted { $0.method.order > $1.method.order }
-    }
-
     // checks if the device passcode and/or biometry is enabled
     private func devicePasscodeSet() -> Bool {
         return LAContext().canEvaluatePolicy(.deviceOwnerAuthentication, error: nil)
+    }
+
+    @objc private func methodsChanged(_ notification: Notification) {
+        self.updateTable()
     }
 
     private func updateTable() {
@@ -190,10 +178,12 @@ public final class PaymentMethodListViewController: UIViewController {
         self.tableView.reloadData()
         self.reloadEmptyStateForTableView(self.tableView)
 
-        if self.paymentDetails.count > 0 {
-            self.navigationItem.rightBarButtonItems = [self.addButton, self.editButtonItem]
-        } else {
-            self.navigationItem.rightBarButtonItem = self.addButton
+        if SnabbleUI.implicitNavigation {
+            if self.paymentDetails.count > 0 {
+                self.navigationItem.rightBarButtonItems = [self.addButton, self.editButtonItem]
+            } else {
+                self.navigationItem.rightBarButtonItem = self.addButton
+            }
         }
         // self.verifySerials()
     }
@@ -238,18 +228,22 @@ extension PaymentMethodListViewController: UITableViewDelegate, UITableViewDataS
     public func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         let details = self.paymentDetails[indexPath.row]
 
-        var editVC: UIViewController?
-        switch details.methodData {
-        case .sepa:
-            editVC = SepaEditViewController(details, indexPath.row, self.analyticsDelegate)
-        case .creditcard(let creditcardData):
-            editVC = CreditCardEditViewController(creditcardData, indexPath.row, self.analyticsDelegate)
-        case .tegutEmployeeCard:
-            editVC = nil
-        }
+        if SnabbleUI.implicitNavigation {
+            var editVC: UIViewController?
+            switch details.methodData {
+            case .sepa:
+                editVC = SepaEditViewController(details, indexPath.row, self.analyticsDelegate)
+            case .creditcard(let creditcardData):
+                editVC = CreditCardEditViewController(creditcardData, indexPath.row, self.analyticsDelegate)
+            case .tegutEmployeeCard:
+                editVC = nil
+            }
 
-        if let editVC = editVC {
-            self.navigationController?.pushViewController(editVC, animated: true)
+            if let editVC = editVC {
+                self.navigationController?.pushViewController(editVC, animated: true)
+            }
+        } else {
+            self.navigationDelegate?.editMethod(details, indexPath.row)
         }
     }
 
@@ -258,7 +252,6 @@ extension PaymentMethodListViewController: UITableViewDelegate, UITableViewDataS
         PaymentMethodDetails.remove(at: indexPath.row)
         self.analyticsDelegate?.track(.paymentMethodDeleted(method.rawMethod.displayName))
         NotificationCenter.default.post(name: .paymentMethodsChanged, object: self)
-        self.updateTable()
     }
 
     public func tableView(_ tableView: UITableView, moveRowAt sourceIndexPath: IndexPath, to destinationIndexPath: IndexPath) {

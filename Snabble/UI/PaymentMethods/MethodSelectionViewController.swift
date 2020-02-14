@@ -6,14 +6,16 @@
 
 import UIKit
 
-final class MethodSelectionViewController: UIViewController {
+public final class MethodSelectionViewController: UIViewController {
 
     @IBOutlet private weak var tableView: UITableView!
 
     private var methods: [MethodProjects]
     private weak var analyticsDelegate: AnalyticsDelegate?
 
-    init(_ methods: [MethodProjects], _ analyticsDelegate: AnalyticsDelegate?) {
+    public weak var navigationDelegate: PaymentMethodNavigationDelegate?
+
+    public init(_ methods: [MethodProjects], _ analyticsDelegate: AnalyticsDelegate?) {
         self.methods = methods
         self.analyticsDelegate = analyticsDelegate
 
@@ -24,7 +26,7 @@ final class MethodSelectionViewController: UIViewController {
         fatalError("init(coder:) has not been implemented")
     }
 
-    override func viewDidLoad() {
+    override public func viewDidLoad() {
         super.viewDidLoad()
 
         self.title = "Snabble.PaymentMethods.add".localized()
@@ -36,15 +38,21 @@ final class MethodSelectionViewController: UIViewController {
 
         let nib = UINib(nibName: "MethodSelectionCell", bundle: SnabbleBundle.main)
         self.tableView.register(nib, forCellReuseIdentifier: "methodCell")
+
+        if !SnabbleUI.implicitNavigation && self.navigationDelegate == nil {
+            let msg = "navigationDelegate may not be nil when using explicit navigation"
+            assert(self.navigationDelegate != nil)
+            NSLog("ERROR: \(msg)")
+        }
     }
 }
 
 extension MethodSelectionViewController: UITableViewDelegate, UITableViewDataSource {
-    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+    public func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return self.methods.count
     }
 
-    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+    public func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "methodCell", for: indexPath) as! MethodSelectionCell
 
         let method = self.methods[indexPath.row]
@@ -59,16 +67,21 @@ extension MethodSelectionViewController: UITableViewDelegate, UITableViewDataSou
         return cell
     }
 
-    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+    public func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         let method = self.methods[indexPath.row]
-        guard let vc = method.method.editViewController(self.analyticsDelegate) else {
-            return
-        }
 
-        self.navigationController?.pushViewController(vc, animated: true)
+        if SnabbleUI.implicitNavigation {
+            guard let vc = method.method.editViewController(self.analyticsDelegate) else {
+                return
+            }
+
+            self.navigationController?.pushViewController(vc, animated: true)
+        } else {
+            self.navigationDelegate?.addData(for: method.method)
+        }
     }
 
-    func tableView(_ tableView: UITableView, estimatedHeightForRowAt indexPath: IndexPath) -> CGFloat {
+    public func tableView(_ tableView: UITableView, estimatedHeightForRowAt indexPath: IndexPath) -> CGFloat {
         return 78
     }
 }

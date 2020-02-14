@@ -29,7 +29,9 @@ public final class SepaEditViewController: UIViewController {
     private var index: Int? = 0
     private weak var analyticsDelegate: AnalyticsDelegate?
 
-    init(_ detail: PaymentMethodDetail? = nil, _ index: Int? = nil, _ analyticsDelegate: AnalyticsDelegate?) {
+    public weak var navigationDelegate: PaymentMethodNavigationDelegate?
+
+    public init(_ detail: PaymentMethodDetail? = nil, _ index: Int? = nil, _ analyticsDelegate: AnalyticsDelegate?) {
         super.init(nibName: nil, bundle: SnabbleBundle.main)
         self.detail = detail
         self.index = index
@@ -98,6 +100,12 @@ public final class SepaEditViewController: UIViewController {
         } else {
             self.nameField.becomeFirstResponder()
         }
+
+        if !SnabbleUI.implicitNavigation && self.navigationDelegate == nil {
+            let msg = "navigationDelegate may not be nil when using explicit navigation"
+            assert(self.navigationDelegate != nil)
+            NSLog("ERROR: \(msg)")
+        }
     }
 
     override public func viewDidAppear(_ animated: Bool) {
@@ -153,7 +161,11 @@ public final class SepaEditViewController: UIViewController {
                 PaymentMethodDetails.save(detail)
                 self.analyticsDelegate?.track(.paymentMethodAdded(detail.rawMethod.displayName))
                 NotificationCenter.default.post(name: .paymentMethodsChanged, object: self)
-                self.navigationController?.popToInstanceOf(PaymentMethodListViewController.self, animated: true)
+                if SnabbleUI.implicitNavigation {
+                    self.navigationController?.popToInstanceOf(PaymentMethodListViewController.self, animated: true)
+                } else {
+                    self.navigationDelegate?.goBack()
+                }
             } else {
                 let tip = self.showErrorTip("Snabble.SEPA.encryptionError".localized(), self.saveButton)
                 tips.append(tip)
