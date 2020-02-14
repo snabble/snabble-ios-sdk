@@ -25,15 +25,17 @@ public final class CreditCardEditViewController: UIViewController {
     @IBOutlet private weak var explanation: UILabel!
 
     private var webView: WKWebView!
-    private let brand: CreditCardBrand
+    private var brand: CreditCardBrand?
     private var index: Int?
     private var ccNumber: String?
     private var expDate: String?
     private weak var analyticsDelegate: AnalyticsDelegate?
 
+    public weak var navigationDelegate: PaymentMethodNavigationDelegate?
+
     private var telecash: TelecashSecret?
 
-    public init(_ brand: CreditCardBrand, _ analyticsDelegate: AnalyticsDelegate?) {
+    public init(_ brand: CreditCardBrand?, _ analyticsDelegate: AnalyticsDelegate?) {
         self.brand = brand
         self.analyticsDelegate = analyticsDelegate
 
@@ -60,6 +62,7 @@ public final class CreditCardEditViewController: UIViewController {
         switch self.brand {
         case .visa: self.title = "VISA"
         case .mastercard: self.title = "Mastercard"
+        case .none: self.title = "Snabble.Payment.CreditCard".localized()
         }
 
         if self.ccNumber != nil {
@@ -75,6 +78,12 @@ public final class CreditCardEditViewController: UIViewController {
             let trash = UIImage.fromBundle("SnabbleSDK/icon-trash")
             let deleteButton = UIBarButtonItem(image: trash, style: .plain, target: self, action: #selector(self.deleteButtonTapped(_:)))
             self.navigationItem.rightBarButtonItem = deleteButton
+        }
+
+        if !SnabbleUI.implicitNavigation && self.navigationDelegate == nil {
+            let msg = "navigationDelegate may not be nil when using explicit navigation"
+            assert(self.navigationDelegate != nil)
+            NSLog("ERROR: \(msg)")
         }
     }
 
@@ -95,7 +104,11 @@ public final class CreditCardEditViewController: UIViewController {
             case .failure:
                 let alert = UIAlertController(title: "Oops", message: "Snabble.CC.noEntryPossible".localized(), preferredStyle: .alert)
                 alert.addAction(UIAlertAction(title: "Snabble.OK".localized(), style: .default) { _ in
-                    self.navigationController?.popViewController(animated: true)
+                    if SnabbleUI.implicitNavigation {
+                        self.navigationController?.popViewController(animated: true)
+                    } else {
+                        self.navigationDelegate?.goBack()
+                    }
                 })
             case .success(let telecash):
                 self.telecash = telecash
@@ -114,7 +127,7 @@ public final class CreditCardEditViewController: UIViewController {
             .replacingOccurrences(of: "{{currency}}", with: telecash.currency)
             .replacingOccurrences(of: "{{chargeTotal}}", with: telecash.chargeTotal)
             .replacingOccurrences(of: "{{hash}}", with: telecash.hash)
-            .replacingOccurrences(of: "{{paymentMethod}}", with: self.brand.paymentMethod)
+            .replacingOccurrences(of: "{{paymentMethod}}", with: self.brand?.paymentMethod ?? "")
             .replacingOccurrences(of: "{{locale}}", with: Locale.current.identifier)
             .replacingOccurrences(of: "{{header}}", with: "Snabble.CC.3dsecureHint".localized())
 
@@ -141,7 +154,7 @@ public final class CreditCardEditViewController: UIViewController {
         let alert = UIAlertController(title: nil, message: "Snabble.Payment.delete.message".localized(), preferredStyle: .alert)
         alert.addAction(UIAlertAction(title: "Snabble.Yes".localized(), style: .destructive) { action in
             PaymentMethodDetails.remove(at: index)
-            self.analyticsDelegate?.track(.paymentMethodDeleted(self.brand.rawValue))
+            self.analyticsDelegate?.track(.paymentMethodDeleted(self.brand?.rawValue ?? ""))
             self.navigationController?.popViewController(animated: true)
         })
         alert.addAction(UIAlertAction(title: "Snabble.No".localized(), style: .cancel, handler: nil))
@@ -206,7 +219,18 @@ extension CreditCardEditViewController: WKScriptMessageHandler {
             NSLog("unknown error \(failCode) \(failReason)")
         }
 
-        self.navigationController?.popToInstanceOf(PaymentMethodListViewController.self, animated: true)
+        if SnabbleUI.implicitNavigation {
+            self.navigationController?.popToInstanceOf(PaymentMethodListViewController.self, animated: true)
+        } else {
+            self.navigationDelegate?.goBack()
+        }
+    }
+}
+
+// stuff that's only used by the RN wrapper
+extension CreditCardEditViewController {
+    public func setBrand(_ brand: CreditCardBrand) {
+        self.brand = brand
     }
 }
 
