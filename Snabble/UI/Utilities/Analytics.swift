@@ -38,6 +38,12 @@ public enum AnalyticsEvent {
     /// the quicklook preview for a single receipt appeared
     case viewReceiptDetail
 
+    /// the `PaymentMethodListViewController` appeared
+    case viewPaymentMethodList
+
+    /// the `PaymentMethodDetailViewController` appeared
+    case viewPaymentMethodDetail
+
     /// other events are tracked as a response to user actions
 
     /// toggling the scanner's torch
@@ -75,4 +81,10 @@ public enum AnalyticsEvent {
 
     /// the screen brightness needed to be increased in the checkout screen
     case brightnessIncreased
+
+    /// the named payment method was added
+    case paymentMethodAdded(String?)
+
+    /// the named payment method was deleted
+    case paymentMethodDeleted(String?)
 }

@@ -322,7 +322,7 @@ extension ProductDB {
     private func logSlowQuery(_ db: Database, _ query: String, _ arguments: StatementArguments, _ start: TimeInterval) {
         let elapsed = Date.timeIntervalSinceReferenceDate - start
 
-        if _isDebugAssertConfiguration() && elapsed >= 0.01 {
+        if SnabbleAPI.debugMode && elapsed >= 0.01 {
             Log.info("slow query: \(elapsed)s for \(query) - arguments: \(String(describing: arguments))" )
             self.queryPlan(db, query, arguments)
         }

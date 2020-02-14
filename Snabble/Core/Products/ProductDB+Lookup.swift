@@ -158,7 +158,7 @@ extension ScannableCode {
     }
 }
 
-private class ResolvedProduct: Decodable {
+private final class ResolvedProduct: Decodable {
     let sku, name: String
     let description, subtitle: String?
     let imageUrl: String?

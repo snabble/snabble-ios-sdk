@@ -2,9 +2,6 @@
 # Be sure to run `pod lib lint Snabble.podspec' to ensure this is a
 # valid spec before submitting.
 #
-# Any lines starting with a # are optional, but their use is encouraged
-# To learn more about a Podspec see http://guides.cocoapods.org/syntax/podspec.html
-#
 
 Pod::Spec.new do |s|
   s.name             = 'Snabble'
@@ -22,23 +19,33 @@ Pod::Spec.new do |s|
   s.source           = { :git => 'https://github.com/snabble/iOS-SDK.git', :tag => "#{s.version}" }
   s.social_media_url = 'https://twitter.com/snabble_io'
 
-  s.ios.deployment_target = '10.0'
+  s.ios.deployment_target = '10.3'
   s.swift_versions = ['5.0']
 
   s.subspec 'Core' do |core|
     core.source_files = 'Snabble/Core/**/*.swift'
+
     core.dependency 'GRDB.swift', '~> 4'
     core.dependency 'Zip', '~> 1'
     core.dependency 'OneTimePassword', '~> 3'
     core.dependency 'TrustKit', '~> 1'
+    core.dependency 'KeychainAccess', '~> 4'
   end
 
   s.subspec 'UI' do |ui|
     ui.source_files = 'Snabble/UI/**/*.swift'
+
     ui.dependency 'Snabble/Core'
+    ui.dependency 'UIEmptyState', '~> 4'
+    ui.dependency 'EasyTipView', '~> 2'
 
     ui.resource_bundles = {
-      "Snabble" => [ 'Snabble.xcassets', 'Snabble/UI/*.lproj/*.strings', 'Snabble/UI/**/*.xib', 'i18n/*.twine' ]
+      "Snabble" => [ 
+        'Snabble.xcassets', 
+        'Snabble/UI/*.lproj/*.strings', 
+        'Snabble/UI/**/*.xib',
+        'Snabble/UI/**/*.der',
+        'i18n/*.twine' ]
     }
   end
 end

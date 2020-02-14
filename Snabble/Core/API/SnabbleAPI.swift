@@ -5,6 +5,7 @@
 //
 
 import Foundation
+import KeychainAccess
 
 /// general config data for using the snabble API.
 /// Applications must call `SnabbleAPI.setup()` with an instance of this struct before they make their first API call.
@@ -143,7 +144,7 @@ extension SnabbleAPI {
     private static let key = "Snabble.api.clientId"
 
     public static var clientId: String {
-        var keychain = Keychain(service: service)
+        let keychain = Keychain(service: service)
 
         if let id = keychain[key] {
             return id
@@ -192,6 +193,23 @@ extension SnabbleAPI {
         }
 
         return urlComponents.url?.absoluteString
+    }
+}
+
+extension SnabbleAPI {
+    static var debugMode: Bool {
+        return _isDebugAssertConfiguration()
+    }
+}
+
+extension SnabbleAPI {
+    static var serverName: String {
+        switch config.baseUrl {
+        case "https://api.snabble.io": return "prod"
+        case "https://api.snabble-staging.io": return "staging"
+        case "https://api.snabble-testing.io": return "testing"
+        default: return "unknown"
+        }
     }
 }
 

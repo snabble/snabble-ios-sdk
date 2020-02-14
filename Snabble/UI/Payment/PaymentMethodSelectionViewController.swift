@@ -25,14 +25,16 @@ public final class PaymentMethodSelectionViewController: UIViewController {
     private var itemSize = CGSize.zero
 
     private var paymentMethods: [PaymentMethod]
+    private weak var analyticsDelegate: AnalyticsDelegate?
 
     public weak var navigationDelegate: PaymentNavigationDelegate?
 
-    public init(_ process: PaymentProcess, _ paymentMethods: [PaymentMethod]) {
+    public init(_ process: PaymentProcess, _ paymentMethods: [PaymentMethod], _ analyticsDelegate: AnalyticsDelegate) {
         self.process = process
         self.signedCheckoutInfo = process.signedCheckoutInfo
         self.cart = process.cart
         self.paymentMethods = paymentMethods
+        self.analyticsDelegate = analyticsDelegate
 
         super.init(nibName: nil, bundle: SnabbleBundle.main)
     }
@@ -170,7 +172,7 @@ extension PaymentMethodSelectionViewController: UICollectionViewDelegate, UIColl
         return self.paymentMethods.count
     }
 
-    func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
+    public func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "paymentCell", for: indexPath) as! CheckoutPaymentMethodCell
 
         let paymentMethod = self.paymentMethods[indexPath.row]
@@ -187,7 +189,7 @@ extension PaymentMethodSelectionViewController: UICollectionViewDelegate, UIColl
         let method = self.paymentMethods[indexPath.row]
 
         if method.dataRequired && method.data == nil {
-            if SnabbleUI.implicitNavigation, let entryVC = self.process.delegate.dataEntry(for: method) {
+            if SnabbleUI.implicitNavigation, let entryVC = self.dataEntryController(for: method) {
                 self.navigationController?.pushViewController(entryVC, animated: true)
             } else {
                 self.navigationDelegate?.dataEntryNeeded(for: method)
@@ -199,6 +201,20 @@ extension PaymentMethodSelectionViewController: UICollectionViewDelegate, UIColl
             if proceed {
                 self.startPayment(method)
             }
+        }
+    }
+
+    private func dataEntryController(for method: PaymentMethod) -> UIViewController? {
+        switch method {
+        case .deDirectDebit:
+            return SepaEditViewController(nil, nil, self.analyticsDelegate)
+        case .visa:
+            return CreditCardEditViewController(.visa, self.analyticsDelegate)
+        case .mastercard:
+            return CreditCardEditViewController(.mastercard, self.analyticsDelegate)
+
+        case .qrCodePOS, .qrCodeOffline, .externalBilling:
+            return nil
         }
     }
 }

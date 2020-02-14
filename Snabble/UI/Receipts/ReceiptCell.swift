@@ -53,8 +53,7 @@ final class ReceiptCell: UITableViewCell {
             dateFormatter.dateStyle = .medium
             dateFormatter.timeStyle = .short
             let date = dateFormatter.string(from: order.date)
-            let oClock = "Snabble.Receipts.oClock".localized()
-            self.orderDate.text = "\(date) \(oClock)"
+            self.orderDate.text = date
 
         case .pending(let shopName, let projectId):
             self.storeName.text = shopName

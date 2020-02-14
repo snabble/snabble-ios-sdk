@@ -39,7 +39,6 @@ public final class SnabbleUI {
     static public var implicitNavigation = true
     static private(set) public var appearance = SnabbleAppearance()
     static private(set) public var project = Project.none
-    static public weak var analytics: AnalyticsDelegate?
 
     /// sets the global appearance to be used. Your app must call `SnabbleUI.setup()` before instantiating any snabble view controllers
     public static func setup(_ appearance: SnabbleAppearance) {
@@ -302,5 +301,16 @@ extension UIApplication {
 
     class func topNavigationController() -> UINavigationController? {
         return topViewController()?.navigationController
+    }
+}
+
+extension UINavigationController {
+    /// pop to the top-most instance of the given UIViewController. If none found, pop one level
+    func popToInstanceOf(_ instanceType: UIViewController.Type?, animated: Bool) {
+        if let target = self.viewControllers.first(where: { type(of: $0) == instanceType } ) {
+            self.popToViewController(target, animated: animated)
+        } else {
+            self.popViewController(animated: animated)
+        }
     }
 }

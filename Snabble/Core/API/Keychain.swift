@@ -9,7 +9,8 @@
 // based on Apple's GenericKeychain sample:
 // https://developer.apple.com/library/archive/samplecode/GenericKeychain/Introduction/Intro.html
 
-struct Keychain {
+#warning("remove this file")
+struct unused__Keychain {
     private let service: String
 
     init(service: String) {

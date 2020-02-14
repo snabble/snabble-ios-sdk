@@ -603,7 +603,7 @@ final class ProductDB: ProductProvider {
     }
 
     private func executeInitialSQL() {
-        guard _isDebugAssertConfiguration(), let statements = self.config.initialSQL, statements.count > 0 else {
+        guard SnabbleAPI.debugMode, let statements = self.config.initialSQL, statements.count > 0 else {
             return
         }
 

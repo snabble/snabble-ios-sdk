@@ -53,7 +53,7 @@ public enum RawPaymentMethod: String, CaseIterable, Decodable {
     case externalBilling        // external billig, e.g. via an employee id
 
     /// true if this method reqires additional data, like an IBAN or a credit card number
-    public var dataRequired: Bool {
+    var dataRequired: Bool {
         switch self {
         case .deDirectDebit, .creditCardVisa, .creditCardMastercard, .externalBilling:
             return true
@@ -62,8 +62,8 @@ public enum RawPaymentMethod: String, CaseIterable, Decodable {
         }
     }
 
-    /// true if this method can be added in advance by the app
-    public var addableInAdvance: Bool {
+    /// true if this method can be added/edited through SDK methods
+    var editable: Bool {
         switch self {
         case .deDirectDebit, .creditCardVisa, .creditCardMastercard:
             return true
