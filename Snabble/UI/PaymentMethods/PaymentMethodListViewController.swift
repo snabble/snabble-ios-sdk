@@ -243,7 +243,7 @@ extension PaymentMethodListViewController: UITableViewDelegate, UITableViewDataS
                 self.navigationController?.pushViewController(editVC, animated: true)
             }
         } else {
-            self.navigationDelegate?.editMethod(details, indexPath.row)
+            self.navigationDelegate?.editMethod(details.rawMethod, indexPath.row)
         }
     }
 

@@ -398,7 +398,7 @@ struct PaymentMethodDetailStorage {
 public struct PaymentMethodDetails {
     private static let storage = PaymentMethodDetailStorage()
 
-    static func read() -> [PaymentMethodDetail] {
+    public static func read() -> [PaymentMethodDetail] {
         return storage.read()
     }
 

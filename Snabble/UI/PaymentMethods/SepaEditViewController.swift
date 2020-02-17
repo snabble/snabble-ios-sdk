@@ -78,6 +78,16 @@ public final class SepaEditViewController: UIViewController {
         let abcButton = UIBarButtonItem(title: "ABC/123", style: .plain, target: self, action: #selector(self.toggleKeyboard(_:)))
         toolbar.items = [ abcButton ] + toolbar.items!
 
+        if !SnabbleUI.implicitNavigation && self.navigationDelegate == nil {
+            let msg = "navigationDelegate may not be nil when using explicit navigation"
+            assert(self.navigationDelegate != nil)
+            NSLog("ERROR: \(msg)")
+        }
+    }
+
+    override public func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+
         if let detail = self.detail {
             self.hintLabel.text = "Snabble.SEPA.editingHint".localized()
 
@@ -99,12 +109,6 @@ public final class SepaEditViewController: UIViewController {
             self.navigationItem.rightBarButtonItem = deleteButton
         } else {
             self.nameField.becomeFirstResponder()
-        }
-
-        if !SnabbleUI.implicitNavigation && self.navigationDelegate == nil {
-            let msg = "navigationDelegate may not be nil when using explicit navigation"
-            assert(self.navigationDelegate != nil)
-            NSLog("ERROR: \(msg)")
         }
     }
 
@@ -386,3 +390,10 @@ extension SepaEditViewController: UITextFieldDelegate {
     }
 }
 
+// stuff that's only used by the RN wrapper
+extension SepaEditViewController: ReactNativeWrapper {
+    public func setDetail(_ detail: PaymentMethodDetail, _ index: Int) {
+        self.detail = detail
+        self.index = index
+    }
+}

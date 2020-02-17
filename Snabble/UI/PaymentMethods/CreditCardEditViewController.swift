@@ -59,6 +59,16 @@ public final class CreditCardEditViewController: UIViewController {
     override public func viewDidLoad() {
         super.viewDidLoad()
 
+        if !SnabbleUI.implicitNavigation && self.navigationDelegate == nil {
+            let msg = "navigationDelegate may not be nil when using explicit navigation"
+            assert(self.navigationDelegate != nil)
+            NSLog("ERROR: \(msg)")
+        }
+    }
+
+    override public func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+
         switch self.brand {
         case .visa: self.title = "VISA"
         case .mastercard: self.title = "Mastercard"
@@ -78,12 +88,6 @@ public final class CreditCardEditViewController: UIViewController {
             let trash = UIImage.fromBundle("SnabbleSDK/icon-trash")
             let deleteButton = UIBarButtonItem(image: trash, style: .plain, target: self, action: #selector(self.deleteButtonTapped(_:)))
             self.navigationItem.rightBarButtonItem = deleteButton
-        }
-
-        if !SnabbleUI.implicitNavigation && self.navigationDelegate == nil {
-            let msg = "navigationDelegate may not be nil when using explicit navigation"
-            assert(self.navigationDelegate != nil)
-            NSLog("ERROR: \(msg)")
         }
     }
 
@@ -228,9 +232,20 @@ extension CreditCardEditViewController: WKScriptMessageHandler {
 }
 
 // stuff that's only used by the RN wrapper
-extension CreditCardEditViewController {
+extension CreditCardEditViewController: ReactNativeWrapper {
     public func setBrand(_ brand: CreditCardBrand) {
         self.brand = brand
+    }
+
+    public func setDetail(_ detail: PaymentMethodDetail, _ index: Int) {
+        guard case .creditcard(let data) = detail.methodData else {
+            return
+        }
+
+        self.brand = data.brand
+        self.ccNumber = data.displayName
+        self.expDate = data.expirationDate
+        self.index = index
     }
 }
 
