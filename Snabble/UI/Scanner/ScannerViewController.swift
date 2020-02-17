@@ -615,7 +615,7 @@ extension ScannerViewController: CustomizableAppearance {
 }
 
 // stuff that's only used by the RN wrapper
-extension ScannerViewController {
+extension ScannerViewController: ReactNativeWrapper {
 
     public func setIsScanning(_ on: Bool) {
         if on {
