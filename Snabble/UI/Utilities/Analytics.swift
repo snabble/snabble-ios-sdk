@@ -83,8 +83,8 @@ public enum AnalyticsEvent {
     case brightnessIncreased
 
     /// the named payment method was added
-    case paymentMethodAdded(String?)
+    case paymentMethodAdded(String)
 
     /// the named payment method was deleted
-    case paymentMethodDeleted(String?)
+    case paymentMethodDeleted(String)
 }

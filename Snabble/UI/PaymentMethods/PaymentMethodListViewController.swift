@@ -250,7 +250,7 @@ extension PaymentMethodListViewController: UITableViewDelegate, UITableViewDataS
     public func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
         let method = self.paymentDetails[indexPath.row]
         PaymentMethodDetails.remove(at: indexPath.row)
-        self.analyticsDelegate?.track(.paymentMethodDeleted(method.rawMethod.displayName))
+        self.analyticsDelegate?.track(.paymentMethodDeleted(method.rawMethod.displayName ?? ""))
         NotificationCenter.default.post(name: .paymentMethodsChanged, object: self)
     }
 

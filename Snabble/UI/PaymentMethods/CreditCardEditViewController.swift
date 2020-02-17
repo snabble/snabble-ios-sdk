@@ -31,9 +31,10 @@ public final class CreditCardEditViewController: UIViewController {
     private var expDate: String?
     private weak var analyticsDelegate: AnalyticsDelegate?
 
-    public weak var navigationDelegate: PaymentMethodNavigationDelegate?
-
     private var telecash: TelecashSecret?
+
+    public weak var navigationDelegate: PaymentMethodNavigationDelegate?
+    public var backLevels = 1
 
     public init(_ brand: CreditCardBrand?, _ analyticsDelegate: AnalyticsDelegate?) {
         self.brand = brand
@@ -212,7 +213,7 @@ extension CreditCardEditViewController: WKScriptMessageHandler {
         if responseCode == "00", let ccData = CreditCardData(cert?.data, cardHolder, cardNumber, brand, expMonth, expYear, hostedDataId, storeId) {
             let detail = PaymentMethodDetail(ccData)
             PaymentMethodDetails.save(detail)
-            self.analyticsDelegate?.track(.paymentMethodAdded(detail.rawMethod.displayName))
+            self.analyticsDelegate?.track(.paymentMethodAdded(detail.rawMethod.displayName ?? ""))
             NotificationCenter.default.post(name: .paymentMethodsChanged, object: self)
             SnabbleAPI.deletePreauth(SnabbleUI.project, orderId)
         }
@@ -226,7 +227,7 @@ extension CreditCardEditViewController: WKScriptMessageHandler {
         if SnabbleUI.implicitNavigation {
             self.navigationController?.popToInstanceOf(PaymentMethodListViewController.self, animated: true)
         } else {
-            self.navigationDelegate?.goBack()
+            self.navigationDelegate?.goBack(self.backLevels)
         }
     }
 }

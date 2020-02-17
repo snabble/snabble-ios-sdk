@@ -30,6 +30,7 @@ public final class SepaEditViewController: UIViewController {
     private weak var analyticsDelegate: AnalyticsDelegate?
 
     public weak var navigationDelegate: PaymentMethodNavigationDelegate?
+    public var backLevels = 1
 
     public init(_ detail: PaymentMethodDetail? = nil, _ index: Int? = nil, _ analyticsDelegate: AnalyticsDelegate?) {
         super.init(nibName: nil, bundle: SnabbleBundle.main)
@@ -163,12 +164,12 @@ public final class SepaEditViewController: UIViewController {
             if let cert = SnabbleAPI.certificates.first, let sepaData = SepaData(cert.data, name, iban) {
                 let detail = PaymentMethodDetail(sepaData)
                 PaymentMethodDetails.save(detail)
-                self.analyticsDelegate?.track(.paymentMethodAdded(detail.rawMethod.displayName))
+                self.analyticsDelegate?.track(.paymentMethodAdded(detail.rawMethod.displayName ?? ""))
                 NotificationCenter.default.post(name: .paymentMethodsChanged, object: self)
                 if SnabbleUI.implicitNavigation {
                     self.navigationController?.popToInstanceOf(PaymentMethodListViewController.self, animated: true)
                 } else {
-                    self.navigationDelegate?.goBack()
+                    self.navigationDelegate?.goBack(self.backLevels)
                 }
             } else {
                 let tip = self.showErrorTip("Snabble.SEPA.encryptionError".localized(), self.saveButton)
@@ -185,7 +186,7 @@ public final class SepaEditViewController: UIViewController {
         let alert = UIAlertController(title: nil, message: "Snabble.Payment.delete.message".localized(), preferredStyle: .alert)
         alert.addAction(UIAlertAction(title: "Snabble.Yes".localized(), style: .destructive) { action in
             PaymentMethodDetails.remove(at: index)
-            self.analyticsDelegate?.track(.paymentMethodDeleted(self.detail?.rawMethod.displayName))
+            self.analyticsDelegate?.track(.paymentMethodDeleted(self.detail?.rawMethod.displayName ?? ""))
             self.navigationController?.popToInstanceOf(PaymentMethodListViewController.self, animated: true)
         })
         alert.addAction(UIAlertAction(title: "Snabble.No".localized(), style: .cancel, handler: nil))
