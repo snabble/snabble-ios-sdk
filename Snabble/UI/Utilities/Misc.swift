@@ -7,56 +7,6 @@
 
 import UIKit
 
-/// configuration parameters for the look of the view controllers in the Snabble SDK
-public struct SnabbleAppearance {
-    public var primaryColor = UIColor.black
-    public var backgroundColor = UIColor.white
-
-    // colors for buttons
-    public var buttonShadowColor = UIColor.black
-    public var buttonBorderColor = UIColor.black
-    public var buttonBackgroundColor = UIColor.lightGray
-    public var buttonTextColor = UIColor.white
-
-    // bg color for the "stepper" buttons 
-    public var stepperButtonBackgroundColor = UIColor.lightGray
-
-    public var textColor = UIColor.black
-
-    public init() {}
-
-    @available(*, deprecated, renamed: "backgroundColor")
-    public var primaryBackgroundColor: UIColor {
-        get { return self.backgroundColor }
-        set { self.backgroundColor = newValue }
-    }
-}
-
-/// global settings for the Snabble UI classes
-public final class SnabbleUI {
-
-    /// set to false only if you want or need to take control of all navigation in the app (e.g. in the RN wrapper)
-    static public var implicitNavigation = true
-    static private(set) public var appearance = SnabbleAppearance()
-    static private(set) public var project = Project.none
-
-    /// sets the global appearance to be used. Your app must call `SnabbleUI.setup()` before instantiating any snabble view controllers
-    public static func setup(_ appearance: SnabbleAppearance) {
-        self.appearance = appearance
-    }
-
-    /// update the global appearance
-    public static func customizeAppearance(_ custom: CustomAppearance) {
-        self.appearance.buttonBackgroundColor = custom.buttonBackgroundColor
-        self.appearance.buttonTextColor = custom.buttonTextColor
-    }
-
-    /// sets the project to be used
-    public static func register(_ project: Project?) {
-        self.project = project ?? Project.none
-    }
-}
-
 extension UIView {
 
     @available(*, deprecated, message: "this method will be removed in a future release")

@@ -187,6 +187,8 @@ public final class ShoppingCartViewController: UIViewController {
 
         self.checkoutButton.titleLabel?.font = UIFont.monospacedDigitSystemFont(ofSize: 17, weight: .semibold)
         self.checkoutButton.makeSnabbleButton()
+
+        SnabbleUI.registerForAppearanceChange(self)
     }
 
     override public func viewWillAppear(_ animated: Bool) {
