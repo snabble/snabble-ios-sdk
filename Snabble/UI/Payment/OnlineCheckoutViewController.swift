@@ -6,7 +6,7 @@
 
 import UIKit
 
-final class OnlineCheckoutViewController: UIViewController {
+public final class OnlineCheckoutViewController: UIViewController {
 
     @IBOutlet private weak var stackView: UIStackView!
     @IBOutlet private weak var topWrapper: UIView!
@@ -29,7 +29,7 @@ final class OnlineCheckoutViewController: UIViewController {
     private var poller: PaymentProcessPoller?
     private var initialBrightness: CGFloat = 0
 
-    init(_ process: CheckoutProcess, _ data: PaymentMethodData, _ cart: ShoppingCart, _ delegate: PaymentDelegate) {
+    public init(_ process: CheckoutProcess, _ data: PaymentMethodData, _ cart: ShoppingCart, _ delegate: PaymentDelegate) {
         self.process = process
         self.cart = cart
         self.delegate = delegate
@@ -45,7 +45,7 @@ final class OnlineCheckoutViewController: UIViewController {
         UIApplication.shared.isIdleTimerDisabled = false
     }
 
-    override func viewDidLoad() {
+    override public func viewDidLoad() {
         super.viewDidLoad()
 
         self.title = "Snabble.Payment.confirm".localized()
@@ -73,7 +73,7 @@ final class OnlineCheckoutViewController: UIViewController {
         self.navigationItem.hidesBackButton = true
     }
 
-    override func viewWillAppear(_ animated: Bool) {
+    override public func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
 
         self.initialBrightness = UIScreen.main.brightness
@@ -101,7 +101,7 @@ final class OnlineCheckoutViewController: UIViewController {
         }
     }
 
-    override func viewDidAppear(_ animated: Bool) {
+    override public func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
 
         self.delegate.track(.viewOnlineCheckout)
@@ -113,7 +113,7 @@ final class OnlineCheckoutViewController: UIViewController {
         }
     }
 
-    override func viewWillDisappear(_ animated: Bool) {
+    override public func viewWillDisappear(_ animated: Bool) {
         UIScreen.main.brightness = self.initialBrightness
 
         self.poller?.stop()

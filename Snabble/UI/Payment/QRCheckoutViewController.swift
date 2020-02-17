@@ -6,7 +6,7 @@
 
 import UIKit
 
-final class QRCheckoutViewController: UIViewController {
+public final class QRCheckoutViewController: UIViewController {
 
     @IBOutlet weak var qrCodeView: UIImageView!
     @IBOutlet weak var explanation1: UILabel!
@@ -22,7 +22,7 @@ final class QRCheckoutViewController: UIViewController {
     private weak var cart: ShoppingCart!
     private weak var delegate: PaymentDelegate!
 
-    init(_ process: CheckoutProcess, _ cart: ShoppingCart, _ delegate: PaymentDelegate) {
+    public init(_ process: CheckoutProcess, _ cart: ShoppingCart, _ delegate: PaymentDelegate) {
         self.cart = cart
         self.process = process
         self.delegate = delegate
@@ -36,7 +36,7 @@ final class QRCheckoutViewController: UIViewController {
         fatalError("init(coder:) has not been implemented")
     }
 
-    override func viewDidLoad() {
+    override public func viewDidLoad() {
         super.viewDidLoad()
 
         self.navigationItem.hidesBackButton = true
@@ -45,7 +45,7 @@ final class QRCheckoutViewController: UIViewController {
         self.cancelButton.setTitle("Snabble.Cancel".localized(), for: .normal)
     }
 
-    override func viewWillAppear(_ animated: Bool) {
+    override public func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
 
         self.initialBrightness = UIScreen.main.brightness
@@ -73,13 +73,13 @@ final class QRCheckoutViewController: UIViewController {
         self.startPoller()
     }
 
-    override func viewDidAppear(_ animated: Bool) {
+    override public func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
 
         self.delegate.track(.viewQRCodeCheckout)
     }
 
-    override func viewWillDisappear(_ animated: Bool) {
+    override public func viewWillDisappear(_ animated: Bool) {
         UIScreen.main.brightness = self.initialBrightness
         self.poller?.stop()
         self.poller = nil
