@@ -345,7 +345,7 @@ struct PaymentMethodDetailStorage {
                 let methods = try JSONDecoder().decode([PaymentMethodDetail].self, from: data)
                 return methods
             } catch {
-                print("\(error)")
+                Log.error("\(error)")
             }
         }
         return []
@@ -356,7 +356,7 @@ struct PaymentMethodDetailStorage {
             let data = try JSONEncoder().encode(details)
             self.keychain[self.key] = String(bytes: data, encoding: .utf8)!
         } catch {
-            print("\(error)")
+            Log.error("\(error)")
         }
     }
 

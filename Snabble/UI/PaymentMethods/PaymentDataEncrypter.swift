@@ -29,7 +29,7 @@ struct PaymentDataEncrypter {
             self.rootCertificate = try Data(contentsOf: URL(fileURLWithPath: rootName))
             self.certificate = gatewayCert
         } catch {
-            print("can't read root certificate: \(error)")
+            Log.error("can't read root certificate: \(error)")
             return nil
         }
     }

@@ -374,7 +374,7 @@ public struct CodeTemplate {
                 return result
             }
         } catch {
-            print(error)
+            Log.error("\(error)")
         }
         return []
     }
