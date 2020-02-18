@@ -38,7 +38,7 @@ extension AVMetadataObject.ObjectType {
 
 public final class BuiltinBarcodeDetector: NSObject, BarcodeDetector {
 
-    public var delegate: BarcodeDetectorDelegate?
+    public weak var delegate: BarcodeDetectorDelegate?
 
     public var scanFormats: [ScanFormat]
 

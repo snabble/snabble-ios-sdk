@@ -98,7 +98,7 @@ public final class ScannerViewController: UIViewController {
         self.tabBarItem.selectedImage = UIImage.fromBundle("SnabbleSDK/icon-scan-active")
         self.navigationItem.title = "Snabble.Scanner.scanningTitle".localized()
     }
-    
+
     public required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
@@ -131,6 +131,8 @@ public final class ScannerViewController: UIViewController {
         let msgTap = UITapGestureRecognizer(target: self, action: #selector(self.messageTapped(_:)))
         self.messageWrapper.addGestureRecognizer(msgTap)
         self.messageTopDistance.constant = -150
+
+        SnabbleUI.registerForAppearanceChange(self)
     }
 
     override public func viewWillAppear(_ animated: Bool) {
@@ -615,7 +617,7 @@ extension ScannerViewController: CustomizableAppearance {
 }
 
 // stuff that's only used by the RN wrapper
-extension ScannerViewController {
+extension ScannerViewController: ReactNativeWrapper {
 
     public func setIsScanning(_ on: Bool) {
         if on {

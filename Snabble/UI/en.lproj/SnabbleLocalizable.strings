@@ -42,8 +42,6 @@
 
 "Snabble.PaymentSelection.payNow" = "Pay %@ now";
 
-"Snabble.PaymentSelection.addNow" = "Add now";
-
 "Snabble.Payment.noMethodAvailable" = "Unfortunately, this purchase can't be made using the app.";
 
 "Snabble.QRCode.didPay" = "I've paid";
@@ -126,7 +124,7 @@
 
 "Snabble.Shoppingcart.discounts" = "Total discounts";
 
-"Snabble.Shoppingcart.giveaways" = "Free gift";
+"Snabble.Shoppingcart.giveaway" = "Free gift";
 
 "Snabble.saleStop.errorMsg.title" = "Sorry";
 
@@ -162,7 +160,7 @@
 
 "Snabble.Receipts.title" = "Receipts";
 
-"Snabble.Receipts.noReceipt" = "No receipts found";
+"Snabble.Receipts.noReceipts" = "No receipts found";
 
 "Snabble.Receipts.oClock" = "o'clock";
 
@@ -182,11 +180,13 @@
 
 "Snabble.Payment.emptyState.message" = "You don't have any payment methods added yet. Add one now to conveniently check out.";
 
-"Snabble.Payment.emptyState.add" = "Add SEPA credentials";
+"Snabble.Payment.emptyState.add" = "Add payment method";
 
 "Snabble.Payment.delete.message" = "Are you sure you want to remove this payment method?";
 
-"Snabble.Payment.add" = "Add SEPA credentials";
+"Snabble.Payment.add" = "Add payment method";
+
+"Snabble.Payment.payAtSCO" = "Card at EC terminal";
 
 "Snabble.Checkout.verifying" = "Verifying";
 
@@ -213,32 +213,49 @@
 
 /********** Android **********/
 
-"Snabble.askForPermission" = "Ask for permission";
-
-"Snabble.Payment.aborted" = "Payment process was aborted";
-
-"Snabble.Payment.backToHome" = "Back to the homepage";
-
-"Snabble.Payment.success" = "Thank you for your purchase";
-
-"Snabble.Shoppingcart.articleRemoved" = "Article removed";
-
-"Snabble.loadingProductInformation" = "Loading product information...";
-
-"Snabble.Receipt.pdfReaderUnavailable" = "No suitable PDF reader application found";
-
-"Snabble.Keyguard.requireScreenLock" = "You need to secure your smartphone with a screen lock to add this payment method.";
-
-"Snabble.Payment.CreditCard" = "Credit card";
-
-"Snabble.Payment.CreditCard.error" = "There was an error processing your credit card";
-
-"Snabble.Payment.CreditCard.expireDate" = "Expires: %@";
-
 "Snabble.Payment.usableAt" = "Usable at: %@";
 
 "Snabble.CC.3dsecureHint" = "In order to verify your credit card, you will be redirected to your bank after entering your data. There you will be asked to approve a payment of € 1.00 to snabble. The amount will be credited to you immediately after your approval.";
 
-"Snabble.Keyguard.title" = "Please unlock your device";
+"Snabble.CC.cardNumber" = "Card number";
 
-"Snabble.Keyguard.message" = "That's how we make sure that only you have access to this payment method";
+"Snabble.CC.validUntil" = "Valid until";
+
+
+/********** Payment Methods **********/
+
+"Snabble.PaymentMethods.title" = "Payment Methods";
+
+"Snabble.PaymentMethods.add" = "Add payment method";
+
+"Snabble.PaymentMethods.noDeviceCode" = "No Code Protection";
+
+"Snabble.PaymentMethods.noCodeAlert.noBiometry" = "Your iPhone isn't protected by a code. For your own safety, please assign a code before storing your payment information.";
+
+"Snabble.PaymentMethods.noCodeAlert.biometry" = "Your iPhone isn't protected by a code or Touch ID/Face ID. For your own safety, please assign a code before storing your payment information.";
+
+"Snabble.Biometry.TouchId" = "Touch ID";
+
+"Snabble.Biometry.FaceId" = "Face ID";
+
+"Snabble.Biometry.Alert.title" = "Activate %@?";
+
+"Snabble.Biometry.Alert.message" = "Do you want to protect online payments with %@?";
+
+"Snabble.Biometry.Alert.laterButton" = "Not now";
+
+"Snabble.Biometry.enterCode" = "Enter code";
+
+"Snabble.Payment.SEPA.Title" = "SEPA direct debit";
+
+"Snabble.SEPA.editingHint" = "Your SEPA data is only stored in encrypted form and therefore cannot be edited.";
+
+"Snabble.SEPA.encryptionError" = "Error encrypting data";
+
+"Snabble.CC.editingHint" = "Your credit card data is only stored in encrypted form and therefore cannot be edited.";
+
+"Snabble.CC.noEntryPossible" = "Unfortunately you can't add credit cards at this time.";
+
+"Snabble.Payment.SEPA.missingCountry" = "Country code cannot be empty.";
+
+"Snabble.PaymentSelection.addNow" = "Add now";

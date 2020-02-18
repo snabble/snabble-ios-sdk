@@ -35,8 +35,6 @@
         en = How would you like to pay %@?
     [Snabble.PaymentSelection.payNow]
         en = Pay %@ now
-    [Snabble.PaymentSelection.addNow]
-        en = Add now
     [Snabble.Payment.noMethodAvailable]
         en = Unfortunately, this purchase can't be made using the app.
     [Snabble.QRCode.didPay]
@@ -120,7 +118,7 @@
         en = Deposit
     [Snabble.Shoppingcart.discounts]
         en = Total discounts
-    [Snabble.Shoppingcart.giveaways]
+    [Snabble.Shoppingcart.giveaway]
         en = Free gift
 
     [Snabble.saleStop.errorMsg.title]
@@ -159,7 +157,7 @@
         en = Receipt could not be downloaded
     [Snabble.Receipts.title]
         en = Receipts
-    [Snabble.Receipts.noReceipt]
+    [Snabble.Receipts.noReceipts]
         en = No receipts found
     [Snabble.Receipts.oClock]
         en = o'clock
@@ -180,12 +178,14 @@
     [Snabble.Payment.emptyState.message]
         en = You don't have any payment methods added yet. Add one now to conveniently check out.
     [Snabble.Payment.emptyState.add]
-        en = Add SEPA credentials
+        en = Add payment method
     [Snabble.Payment.delete.message]
         en = Are you sure you want to remove this payment method?
     [Snabble.Payment.add]
-        en = Add SEPA credentials
-        
+        en = Add payment method
+    [Snabble.Payment.payAtSCO]
+        en = Card at EC terminal
+
     [Snabble.Checkout.verifying]
         en = Verifying
     [Snabble.Checkout.done]
@@ -247,9 +247,7 @@
         tags = android
     [Snabble.Payment.usableAt]
         en = Usable at: %@
-        tags = android
     [Snabble.CC.3dsecureHint]
-        tags = android
         en = In order to verify your credit card, you will be redirected to your bank after entering your data. There you will be asked to approve a payment of € 1.00 to snabble. The amount will be credited to you immediately after your approval.
     [Snabble.Keyguard.title]
         en = Please unlock your device
@@ -257,3 +255,45 @@
     [Snabble.Keyguard.message]
         en = That's how we make sure that only you have access to this payment method
         tags = android
+    [Snabble.CC.cardNumber]
+        en = Card number
+    [Snabble.CC.validUntil]
+        en = Valid until
+
+[[Payment Methods]]
+    [Snabble.PaymentMethods.title]
+        en = Payment Methods
+    [Snabble.PaymentMethods.add]
+        en = Add payment method
+    [Snabble.PaymentMethods.noDeviceCode]
+        en = No Code Protection
+    [Snabble.PaymentMethods.noCodeAlert.noBiometry]
+        en = Your iPhone isn't protected by a code. For your own safety, please assign a code before storing your payment information.
+    [Snabble.PaymentMethods.noCodeAlert.biometry]
+        en = Your iPhone isn't protected by a code or Touch ID/Face ID. For your own safety, please assign a code before storing your payment information.
+    [Snabble.Biometry.TouchId]
+        en = Touch ID
+    [Snabble.Biometry.FaceId]
+        en = Face ID
+    [Snabble.Biometry.Alert.title]
+        en = Activate %@?
+    [Snabble.Biometry.Alert.message]
+        en = Do you want to protect online payments with %@?
+    [Snabble.Biometry.Alert.laterButton]
+        en = Not now
+    [Snabble.Biometry.enterCode]
+        en = Enter code
+    [Snabble.Payment.SEPA.Title]
+        en = SEPA direct debit
+    [Snabble.SEPA.editingHint]
+        en = Your SEPA data is only stored in encrypted form and therefore cannot be edited.
+    [Snabble.SEPA.encryptionError]
+        en = Error encrypting data
+    [Snabble.CC.editingHint]
+        en = Your credit card data is only stored in encrypted form and therefore cannot be edited.
+    [Snabble.CC.noEntryPossible]
+        en = Unfortunately you can't add credit cards at this time.
+    [Snabble.Payment.SEPA.missingCountry]
+        en = Country code cannot be empty.
+    [Snabble.PaymentSelection.addNow]
+        en = Add now

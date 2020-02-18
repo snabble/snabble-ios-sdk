@@ -31,7 +31,6 @@ enum OrderEntry {
     case done(Order)
 }
 
-@objc(ReceiptsListViewController)
 public final class ReceiptsListViewController: UIViewController {
     @IBOutlet private weak var tableView: UITableView!
     @IBOutlet private weak var emptyLabel: UILabel!
@@ -44,14 +43,12 @@ public final class ReceiptsListViewController: UIViewController {
     private var orders: [OrderEntry]?
     private var process: CheckoutProcess?
     private var orderId: String?
+    private weak var analyticsDelegate: AnalyticsDelegate?
 
-    public convenience init() {
-        self.init(nil)
-    }
-
-    public init(_ process: CheckoutProcess?) {
+    public init(_ process: CheckoutProcess?, _ analyticsDelegate: AnalyticsDelegate) {
         self.process = process
         self.orderId = process?.orderID
+        self.analyticsDelegate = analyticsDelegate
         
         super.init(nibName: nil, bundle: SnabbleBundle.main)
 
@@ -84,7 +81,7 @@ public final class ReceiptsListViewController: UIViewController {
     override public func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
 
-        SnabbleUI.analytics?.track(.viewReceiptList)
+        self.analyticsDelegate?.track(.viewReceiptList)
     }
 
     private func loadOrderList() {
@@ -227,7 +224,7 @@ extension ReceiptsListViewController {
         self.quickLook.reloadData()
         self.navigationController?.pushViewController(self.quickLook, animated: true)
 
-        SnabbleUI.analytics?.track(.viewReceiptDetail)
+        self.analyticsDelegate?.track(.viewReceiptDetail)
     }
 
 }

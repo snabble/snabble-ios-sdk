@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="15705" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
+    <device id="retina4_7" orientation="portrait" appearance="dark"/>
+    <dependencies>
+        <deployment identifier="iOS"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="15706"/>
+        <capability name="Safe area layout guides" minToolsVersion="9.0"/>
+        <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
+    </dependencies>
+    <objects>
+        <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner"/>
+        <placeholder placeholderIdentifier="IBFirstResponder" id="-2" customClass="UIResponder"/>
+        <tableViewCell contentMode="scaleToFill" selectionStyle="none" accessoryType="disclosureIndicator" indentationWidth="10" reuseIdentifier="methodCell" rowHeight="84" id="KGk-i7-Jjw" customClass="MethodSelectionCell" customModule="Snabble" customModuleProvider="target">
+            <rect key="frame" x="0.0" y="0.0" width="569" height="84"/>
+            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+            <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="KGk-i7-Jjw" id="H2p-sc-9uM">
+                <rect key="frame" x="0.0" y="0.0" width="538" height="84"/>
+                <autoresizingMask key="autoresizingMask"/>
+                <subviews>
+                    <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="SnabbleSDK/payment-small-mastercard" translatesAutoresizingMaskIntoConstraints="NO" id="CyO-ni-5fg">
+                        <rect key="frame" x="15" y="16" width="36" height="26"/>
+                        <constraints>
+                            <constraint firstAttribute="height" constant="26" id="2RK-Zd-tQp"/>
+                            <constraint firstAttribute="width" constant="36" id="B4l-Al-Xmo"/>
+                        </constraints>
+                    </imageView>
+                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="0Cy-3s-Fnd">
+                        <rect key="frame" x="59" y="18.5" width="476" height="21"/>
+                        <fontDescription key="fontDescription" type="system" weight="semibold" pointSize="17"/>
+                        <nil key="textColor"/>
+                        <nil key="highlightedColor"/>
+                    </label>
+                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="9CX-H9-FNo">
+                        <rect key="frame" x="15" y="50" width="520" height="18"/>
+                        <fontDescription key="fontDescription" type="system" pointSize="15"/>
+                        <nil key="textColor"/>
+                        <nil key="highlightedColor"/>
+                    </label>
+                </subviews>
+                <constraints>
+                    <constraint firstItem="CyO-ni-5fg" firstAttribute="top" secondItem="H2p-sc-9uM" secondAttribute="top" constant="16" id="0OZ-AA-tqC"/>
+                    <constraint firstItem="0Cy-3s-Fnd" firstAttribute="centerY" secondItem="CyO-ni-5fg" secondAttribute="centerY" id="1ac-yh-UIx"/>
+                    <constraint firstItem="9CX-H9-FNo" firstAttribute="leading" secondItem="CyO-ni-5fg" secondAttribute="leading" id="8uo-Ga-NvR"/>
+                    <constraint firstItem="0Cy-3s-Fnd" firstAttribute="leading" secondItem="CyO-ni-5fg" secondAttribute="trailing" constant="8" id="Cc9-Cn-pw4"/>
+                    <constraint firstAttribute="bottom" secondItem="9CX-H9-FNo" secondAttribute="bottom" constant="16" id="L5e-hl-fT5"/>
+                    <constraint firstAttribute="trailing" secondItem="9CX-H9-FNo" secondAttribute="trailing" constant="8" id="PfX-P4-cDE"/>
+                    <constraint firstAttribute="trailing" secondItem="0Cy-3s-Fnd" secondAttribute="trailing" constant="8" id="gWe-Db-w4q"/>
+                    <constraint firstItem="CyO-ni-5fg" firstAttribute="leading" secondItem="H2p-sc-9uM" secondAttribute="leadingMargin" id="kDv-4k-t7C"/>
+                    <constraint firstItem="9CX-H9-FNo" firstAttribute="top" secondItem="CyO-ni-5fg" secondAttribute="bottom" constant="8" id="xmw-Ug-8fx"/>
+                </constraints>
+            </tableViewCellContentView>
+            <color key="backgroundColor" systemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
+            <viewLayoutGuide key="safeArea" id="njF-e1-oar"/>
+            <connections>
+                <outlet property="icon" destination="CyO-ni-5fg" id="dSF-vg-er1"/>
+                <outlet property="nameLabel" destination="0Cy-3s-Fnd" id="8wr-CJ-KNm"/>
+                <outlet property="useLabel" destination="9CX-H9-FNo" id="ET1-lK-lGp"/>
+            </connections>
+            <point key="canvasLocation" x="-102.17391304347827" y="105.80357142857143"/>
+        </tableViewCell>
+    </objects>
+    <resources>
+        <image name="SnabbleSDK/payment-small-mastercard" width="36" height="26"/>
+    </resources>
+</document>

@@ -69,7 +69,7 @@ public final class PaymentProcess {
     let signedCheckoutInfo: SignedCheckoutInfo
     let cart: ShoppingCart
     private var hudTimer: Timer?
-    weak var delegate: PaymentDelegate!
+    private(set) weak var delegate: PaymentDelegate!
 
     /// create a payment process
     ///
@@ -110,13 +110,13 @@ public final class PaymentProcess {
                 fallthrough
             }
         default:
-            let paymentSelection = PaymentMethodSelectionViewController(self, paymentMethods)
+            let paymentSelection = PaymentMethodSelectionViewController(self, paymentMethods, self.delegate)
             completion(Result.success(paymentSelection))
         }
     }
 
     func mergePaymentMethodList(_ methods: [PaymentMethodDescription]) -> [PaymentMethod] {
-        let userData = self.delegate.getPaymentData(methods)
+        let userData = self.getPaymentUserData(methods)
         var result = [PaymentMethod]()
         for method in methods {
             switch method.method {
@@ -171,13 +171,53 @@ public final class PaymentProcess {
         return methods
     }
 
-    func start(_ method: PaymentMethod, completion: @escaping (Result<CheckoutProcess, SnabbleError>) -> () ) {
-        self.signedCheckoutInfo.createCheckoutProcess(SnabbleUI.project, paymentMethod: method, timeout: 20) { result in
-            completion(result)
+    private func getPaymentUserData(_ methods: [PaymentMethodDescription]) -> [PaymentMethod] {
+        var results = [PaymentMethod]()
+
+        // check the registered payment methods
+        let details = PaymentMethodDetails.read()
+        for detail in details {
+            switch detail.methodData {
+            case .sepa:
+                let useDirectDebit = methods.first { $0.method == .deDirectDebit } != nil
+                if useDirectDebit {
+                    let telecash = PaymentMethod.deDirectDebit(detail.data)
+                    results.append(telecash)
+                }
+            case .creditcard(let creditcardData):
+                let data = detail.data
+                let useVisa = methods.first { $0.method == .creditCardVisa } != nil
+                if useVisa && creditcardData.brand == .visa {
+                    let cc = PaymentMethod.visa(data)
+                    results.append(cc)
+                }
+
+                let useMastercard = methods.first { $0.method == .creditCardMastercard } != nil
+                if useMastercard && creditcardData.brand == .mastercard {
+                    let cc = PaymentMethod.mastercard(data)
+                    results.append(cc)
+                }
+            case .tegutEmployeeCard:
+                let tegut = methods.first {
+                    $0.method == .externalBilling && $0.acceptedOriginTypes?.contains(.tegutEmployeeID) == true
+                }
+
+                if tegut != nil {
+                    results.append(PaymentMethod.externalBilling(detail.data))
+                }
+            }
         }
+
+        return results
     }
 
-    func start(_ method: PaymentMethod, completion: @escaping (Result<UIViewController, SnabbleError>) -> () ) {
+    func start(_ method: PaymentMethod, completion: @escaping (Result<CheckoutProcess, SnabbleError>) -> () ) {
+           self.signedCheckoutInfo.createCheckoutProcess(SnabbleUI.project, paymentMethod: method, timeout: 20) { result in
+               completion(result)
+           }
+       }
+
+    func start(_ method: PaymentMethod, completion: @escaping (_ result: Result<UIViewController, SnabbleError>) -> () ) {
         UIApplication.shared.beginIgnoringInteractionEvents()
         self.startBlurOverlayTimer()
 
@@ -253,7 +293,7 @@ public final class PaymentProcess {
 }
 
 // stuff that's only used by the RN wrapper
-extension PaymentProcess {
+extension PaymentProcess: ReactNativeWrapper {
     public func getPaymentMethods() -> [PaymentMethod] {
         let info = self.signedCheckoutInfo
         let mergedMethods = self.mergePaymentMethodList(info.checkoutInfo.paymentMethods)
