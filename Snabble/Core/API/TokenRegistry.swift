@@ -24,12 +24,18 @@ struct TokenData {
     let project: Project
 
     init(_ response: TokenResponse, _ project: Project) {
-        self.jwt = response.token
-        let expires = Date(timeIntervalSince1970: TimeInterval(response.expiresAt))
+        let expiresAt = Date(timeIntervalSince1970: TimeInterval(response.expiresAt))
+
+        // make sure expires is at least 60s from now
+        let minDate = Date(timeIntervalSinceNow: 60)
+        let expires = max(minDate, expiresAt)
         let refreshIn = (expires.timeIntervalSinceReferenceDate - Date.timeIntervalSinceReferenceDate) / 2
+
         self.expires = expires
         self.refresh = Date(timeIntervalSinceNow: refreshIn)
+
         self.project = project
+        self.jwt = response.token
     }
 }
 
