@@ -128,7 +128,7 @@ public struct SnabbleAPI {
     }
 
     public static func productProvider(for project: Project) -> ProductProvider {
-        assert(project.id != "", "empty projects don't have a product provider")
+        assert(project.id != "" && project.id != Project.none.id, "empty projects don't have a product provider")
         if let provider = providerPool[project.id] {
             return provider
         } else {
@@ -136,6 +136,12 @@ public struct SnabbleAPI {
             providerPool[project.id] = provider
             return provider
         }
+    }
+
+    public static func removeDatabase(for project: Project) {
+        let provider = productProvider(for: project)
+        provider.removeDatabase()
+        providerPool[project.id] = nil
     }
 }
 

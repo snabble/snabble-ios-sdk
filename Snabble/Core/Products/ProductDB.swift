@@ -168,6 +168,9 @@ public protocol ProductProvider: class {
 
     var schemaVersionMajor: Int { get }
     var schemaVersionMinor: Int { get }
+
+    /// use only during development/debugging
+    func removeDatabase()
 }
 
 public extension ProductProvider {
@@ -194,6 +197,8 @@ public extension ProductProvider {
     func productByScannableCodes(_ codes: [(String, String)], _ shopId: String, completion: @escaping (_ result: Result<ScannedProduct, SnabbleError>) -> () ) {
         self.productByScannableCodes(codes, shopId, forceDownload: false, completion: completion)
     }
+
+    func removeDatabase() { }
 }
 
 
@@ -378,6 +383,17 @@ final class ProductDB: ProductProvider {
                 extendedResult = dbError.extendedResultCode.rawValue
             }
             self.logError("create FTS failed: error \(error), extended error \(extendedResult)")
+        }
+    }
+
+    public func removeDatabase() {
+        self.db = nil
+
+        let fileManager = FileManager.default
+        let dbFile = self.dbPathname()
+
+        if fileManager.fileExists(atPath: dbFile) {
+            try? fileManager.removeItem(atPath: dbFile)
         }
     }
 
