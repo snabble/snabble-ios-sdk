@@ -41,6 +41,20 @@ public struct Order: Codable {
         self.price = try container.decode(Int.self, forKey: .price)
         self.links = try container.decode(.links, as: OrderLinks.self)
     }
+
+    public func encode(to encoder: Encoder) throws {
+        var container = encoder.container(keyedBy: CodingKeys.self)
+
+        try container.encode(self.project, forKey: .project)
+        try container.encode(self.id, forKey: .id)
+        let dateStr = Snabble.iso8601Formatter.string(from: self.date)
+        try container.encode(dateStr, forKey: .date)
+
+        try container.encode(self.shopId, forKey: .shopId)
+        try container.encode(self.shopName, forKey: .shopName)
+        try container.encode(self.price, forKey: .price)
+        try container.encode(self.links, forKey: .links)
+    }
 }
 
 
