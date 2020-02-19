@@ -20,13 +20,14 @@ extension PaymentMethod {
             case .tegutEmployeeID: return "SnabbleSDK/payment-tegut"
             default: return ""
             }
+        case .gatekeeperTerminal: return "SnabbleSDK/payment-card-terminal"
         }
     }
 
     var dataRequired: Bool {
         switch self {
         case .deDirectDebit, .visa, .mastercard, .externalBilling: return true
-        case .qrCodePOS, .qrCodeOffline: return false
+        case .qrCodePOS, .qrCodeOffline, .gatekeeperTerminal: return false
         }
     }
 
@@ -57,7 +58,9 @@ extension PaymentMethod {
                 return nil
             }
         case .deDirectDebit, .visa, .mastercard, .externalBilling:
-            processor = OnlineCheckoutViewController(process!, self.data!, cart, delegate)
+            processor = OnlineCheckoutViewController(process!, cart, delegate)
+        case .gatekeeperTerminal:
+            processor = TerminalCheckoutViewController(process!, cart, delegate)
         }
         processor.hidesBottomBarWhenPushed = true
         return processor
@@ -122,6 +125,7 @@ public final class PaymentProcess {
             switch method.method {
             case .qrCodePOS: result.append(.qrCodePOS)
             case .qrCodeOffline: result.append(.qrCodeOffline)
+            case .gatekeeperTerminal: result.append(.gatekeeperTerminal)
             case .deDirectDebit:
                 let sepa = userData.filter { if case .deDirectDebit = $0 { return true } else { return false } }
                 if sepa.count > 0 {
@@ -164,7 +168,7 @@ public final class PaymentProcess {
         // remove all incomplete online methods
         var methods = methods
         for (index, method) in methods.enumerated().reversed() {
-            if !method.rawMethod.offline && method.data == nil {
+            if !method.rawMethod.offline && method.dataRequired && method.data == nil {
                 methods.remove(at: index)
             }
         }

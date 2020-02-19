@@ -1,12 +1,12 @@
 //
-//  OnlineCheckoutViewController.swift
+//  TerminalCheckoutViewController.swift
 //
 //  Copyright © 2020 snabble. All rights reserved.
 //
 
 import UIKit
 
-public final class OnlineCheckoutViewController: UIViewController {
+public final class TerminalCheckoutViewController: UIViewController {
 
     @IBOutlet private weak var stackView: UIStackView!
     @IBOutlet private weak var topWrapper: UIView!
@@ -64,7 +64,8 @@ public final class OnlineCheckoutViewController: UIViewController {
         let id = components.last ?? "n/a"
         self.idLabel.text = String(id.suffix(4))
 
-        let qrCodeContent = self.process.paymentInformation?.qrCodeContent ?? id
+        let qrCodeContent = self.process.paymentInformation?.qrCodeContent ?? "snabble:checkoutProcess:" + id
+
         self.codeImage.image = QRCode.generate(for: qrCodeContent, scale: 5)
         self.codeWidth.constant = self.codeImage.image?.size.width ?? 0
 
@@ -105,7 +106,7 @@ public final class OnlineCheckoutViewController: UIViewController {
     override public func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
 
-        self.delegate.track(.viewOnlineCheckout)
+        self.delegate.track(.viewTerminalCheckout)
 
         if self.autoApproved {
             self.paymentFinished(true, self.process)

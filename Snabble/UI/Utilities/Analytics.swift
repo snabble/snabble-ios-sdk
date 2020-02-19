@@ -26,6 +26,9 @@ public enum AnalyticsEvent {
     /// the `OnlineCheckoutViewController` appeared
     case viewOnlineCheckout
 
+    /// the `TerminalCheckoutViewController` appeared
+    case viewTerminalCheckout
+
     /// the `QRCodeCheckoutViewController` appeared
     case viewQRCodeCheckout
 

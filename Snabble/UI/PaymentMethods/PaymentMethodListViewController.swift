@@ -14,6 +14,7 @@ extension RawPaymentMethod {
         case .deDirectDebit: return "SEPA-Lastschrift"
         case .creditCardMastercard: return "Mastercard"
         case .creditCardVisa: return "VISA"
+        case .gatekeeperTerminal: return "Snabble.Payment.payAtSCO".localized()
         default: return nil
         }
     }
@@ -32,6 +33,7 @@ extension RawPaymentMethod {
         case .deDirectDebit: return UIImage.fromBundle("SnabbleSDK/payment-small-sepa")
         case .creditCardVisa: return UIImage.fromBundle("SnabbleSDK/payment-small-visa")
         case .creditCardMastercard: return UIImage.fromBundle("SnabbleSDK/payment-small-mastercard")
+        case .gatekeeperTerminal: return UIImage.fromBundle("SnabbleSDK/payment-cartd-terminal")
         default: return nil
         }
     }
@@ -41,11 +43,11 @@ extension RawPaymentMethod {
         case .deDirectDebit: return 100
         case .creditCardVisa: return 99
         case .creditCardMastercard: return 98
+        case .gatekeeperTerminal: return 97
         default: return 0
         }
     }
 }
-
 
 public final class PaymentMethodListViewController: UIViewController {
 
