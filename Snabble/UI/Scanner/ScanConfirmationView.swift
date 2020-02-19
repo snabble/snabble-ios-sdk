@@ -62,7 +62,7 @@ final class ScanConfirmationView: DesignableView {
     func setCustomAppearance(_ appearance: CustomAppearance) {
         self.cartButton.setCustomAppearance(appearance)
     }
-    
+
     func present(_ scannedProduct: ScannedProduct, _ scannedCode: String, cart: ShoppingCart) {
         // avoid ugly animations
         UIView.performWithoutAnimation {
@@ -71,6 +71,7 @@ final class ScanConfirmationView: DesignableView {
         }
     }
 
+    // swiftlint:disable:next function_body_length
     private func doPresent(_ scannedProduct: ScannedProduct, _ scannedCode: String, cart: ShoppingCart) {
         self.shoppingCart = cart
         self.alreadyInCart = false
@@ -145,7 +146,7 @@ final class ScanConfirmationView: DesignableView {
             self.quantityField.isEnabled = false
         }
     }
-    
+
     private func showQuantity(updateTextField: Bool) {
         var quantity = self.cartItem.effectiveQuantity
         let product = self.cartItem.product
@@ -189,7 +190,8 @@ final class ScanConfirmationView: DesignableView {
         let cart = self.shoppingCart!
 
         if cart.quantity(of: self.cartItem) == 0 || !self.cartItem.canMerge {
-            Log.info("adding to cart: \(self.cartItem.quantity) x \(self.cartItem.product.name), scannedCode = \(self.cartItem.scannedCode.code), embed=\(String(describing: self.cartItem.scannedCode.embeddedData))")
+            let item = self.cartItem!
+            Log.info("adding to cart: \(item.quantity) x \(item.product.name), scannedCode = \(item.scannedCode.code), embed=\(String(describing: item.scannedCode.embeddedData))")
             cart.add(self.cartItem)
         } else {
             Log.info("updating cart: set qty=\(self.cartItem.quantity) for \(self.cartItem.product.name)")

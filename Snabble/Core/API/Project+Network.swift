@@ -80,7 +80,8 @@ extension Project {
     ///   - parameters: the query parameters to append to the URL
     ///   - timeout: the timeout for the HTTP request (0 for the system default timeout)
     /// - Returns: the URLRequest
-    func request(_ method: HTTPRequestMethod, _ url: String, json: Bool = true, jwtRequired: Bool = true, parameters: [String: String]? = nil, timeout: TimeInterval, completion: @escaping (URLRequest?) -> ()) {
+    func request(_ method: HTTPRequestMethod, _ url: String, json: Bool = true, jwtRequired: Bool = true, parameters: [String: String]? = nil,
+                 timeout: TimeInterval, completion: @escaping (URLRequest?) -> Void) {
         guard
             let url = SnabbleAPI.urlString(url, parameters),
             let fullUrl = SnabbleAPI.urlFor(url)
@@ -100,7 +101,8 @@ extension Project {
     ///   - queryItems: the query parameters to append to the URL
     ///   - timeout: the timeout for the HTTP request (0 for the system default timeout)
     /// - Returns: the URLRequest
-    func request(_ method: HTTPRequestMethod, _ url: String, json: Bool = true, jwtRequired: Bool = true, queryItems: [URLQueryItem], timeout: TimeInterval, completion: @escaping (URLRequest?) -> ()) {
+    func request(_ method: HTTPRequestMethod, _ url: String, json: Bool = true, jwtRequired: Bool = true, queryItems: [URLQueryItem],
+                 timeout: TimeInterval, completion: @escaping (URLRequest?) -> Void) {
         guard
             let url = SnabbleAPI.urlString(url, queryItems),
             let fullUrl = SnabbleAPI.urlFor(url)
@@ -119,12 +121,12 @@ extension Project {
     ///   - body: the JSON data to send as the HTTP body
     ///   - timeout: the timeout for the HTTP request (0 for the system default timeout)
     /// - Returns: the URLRequest
-    func request(_ method: HTTPRequestMethod, _ url: String, body: Data, timeout: TimeInterval, completion: @escaping (URLRequest?) -> ()) {
+    func request(_ method: HTTPRequestMethod, _ url: String, body: Data, timeout: TimeInterval, completion: @escaping (URLRequest?) -> Void) {
         guard let url = SnabbleAPI.urlFor(url) else {
             return completion(nil)
         }
 
-        self.request(method, url, true, true,  timeout) { request in
+        self.request(method, url, true, true, timeout) { request in
             var urlRequest = request
             urlRequest.httpBody = body
             completion(urlRequest)
@@ -139,7 +141,7 @@ extension Project {
     ///   - body: the JSON object to send as the HTTP body
     ///   - timeout: the timeout for the HTTP request (0 for the system default timeout)
     /// - Returns: the URLRequest
-    func request<T: Encodable>(_ method: HTTPRequestMethod, _ url: String, body: T, timeout: TimeInterval = 0, _ completion: @escaping (URLRequest?) -> () ) {
+    func request<T: Encodable>(_ method: HTTPRequestMethod, _ url: String, body: T, timeout: TimeInterval = 0, _ completion: @escaping (URLRequest?) -> Void ) {
         guard let url = SnabbleAPI.urlFor(url) else {
             return completion(nil)
         }
@@ -165,7 +167,8 @@ extension Project {
     ///   - jwtRequired: if true, this request requires authorization via JWT
     ///   - timeout: the timeout for the HTTP request (0 for the system default timeout)
     /// - Returns: the URLRequest
-    func request(_ method: HTTPRequestMethod, _ url: URL, _ json: Bool, _ jwtRequired: Bool, _ timeout: TimeInterval, _ completion: @escaping (URLRequest) -> ()) {
+    // swiftlint:disable:next function_parameter_count
+    func request(_ method: HTTPRequestMethod, _ url: URL, _ json: Bool, _ jwtRequired: Bool, _ timeout: TimeInterval, _ completion: @escaping (URLRequest) -> Void) {
         var urlRequest = URLRequest(url: url)
         urlRequest.httpMethod = method.rawValue
 
@@ -181,7 +184,7 @@ extension Project {
         }
     }
 
-    func buildRequest(_ request: inout URLRequest, _ timeout: TimeInterval, _ json: Bool, _ completion: @escaping (URLRequest) -> ()) {
+    func buildRequest(_ request: inout URLRequest, _ timeout: TimeInterval, _ json: Bool, _ completion: @escaping (URLRequest) -> Void) {
         request.addValue(SnabbleAPI.clientId, forHTTPHeaderField: "Client-Id")
         if let userAgent = Project.userAgent {
             request.addValue(userAgent, forHTTPHeaderField: "User-Agent")
@@ -214,7 +217,7 @@ extension Project {
 
         var size = 0
         sysctlbyname("hw.machine", nil, &size, nil, 0)
-        var machine = [CChar](repeating: 0,  count: size)
+        var machine = [CChar](repeating: 0, count: size)
         sysctlbyname("hw.machine", &machine, &size, nil, 0)
         let hardwareString = String(cString: machine)
 
@@ -229,7 +232,7 @@ extension Project {
     ///   - request: the `URLRequest` to perform
     ///   - completion: called on the main thread when the result is available.
     ///   - result: the parsed result object or error
-    func retry<T: Decodable>(_ retryCount: Int, _ pauseTime: TimeInterval, _ request: URLRequest, _ completion: @escaping (_ result: Result<T, SnabbleError>) -> () ) {
+    func retry<T: Decodable>(_ retryCount: Int, _ pauseTime: TimeInterval, _ request: URLRequest, _ completion: @escaping (_ result: Result<T, SnabbleError>) -> Void ) {
         self.perform(request) { (result: Result<T, SnabbleError>) in
             switch result {
             case .success:
@@ -253,8 +256,8 @@ extension Project {
     ///   - completion: called on the main thread when the result is available.
     ///   - result: the parsed result object or error
     @discardableResult
-    func perform<T: Decodable>(_ request: URLRequest, _ completion: @escaping (_ result: Result<T, SnabbleError>) -> () ) -> URLSessionDataTask {
-        return self.perform(request, returnRaw: false) { result, json, headers in
+    func perform<T: Decodable>(_ request: URLRequest, _ completion: @escaping (_ result: Result<T, SnabbleError>) -> Void ) -> URLSessionDataTask {
+        return self.perform(request, returnRaw: false) { result, _, _ in
             completion(result)
         }
     }
@@ -267,8 +270,8 @@ extension Project {
     ///   - result: the parsed result object or error
     ///   - response: the HTTPURLResponse object
     @discardableResult
-    func perform<T: Decodable>(_ request: URLRequest, _ completion: @escaping (_ result: Result<T, SnabbleError>, _ response: HTTPURLResponse?) -> () ) -> URLSessionDataTask {
-        return self.perform(request, returnRaw: false) { result, json, response in
+    func perform<T: Decodable>(_ request: URLRequest, _ completion: @escaping (_ result: Result<T, SnabbleError>, _ response: HTTPURLResponse?) -> Void ) -> URLSessionDataTask {
+        return self.perform(request, returnRaw: false) { result, _, response in
             completion(result, response)
         }
     }
@@ -283,7 +286,9 @@ extension Project {
     ///   - raw: the JSON structure returned by the server, or nil if an error occurred
     ///   - response: the HTTPURLResponse object if available
     @discardableResult
-    func perform<T: Decodable>(_ request: URLRequest, returnRaw: Bool, _ completion: @escaping (_ result: Result<T, SnabbleError>, _ raw: [String: Any]?, _ response: HTTPURLResponse?) -> () ) -> URLSessionDataTask {
+    // swiftlint:disable:next function_body_length
+    func perform<T: Decodable>(_ request: URLRequest, returnRaw: Bool, _ completion: @escaping (_ result: Result<T, SnabbleError>, _ raw: [String: Any]?,
+                               _ response: HTTPURLResponse?) -> Void ) -> URLSessionDataTask {
         let start = Date.timeIntervalSinceReferenceDate
         let session = SnabbleAPI.urlSession()
         let task = session.dataTask(with: request) { rawData, response, error in
@@ -303,8 +308,7 @@ extension Project {
                         let error = try JSONDecoder().decode(SnabbleError.self, from: data)
                         self.logError("error response: \(String(describing: error))")
                         apiError = error
-                    }
-                    catch {
+                    } catch {
                         let rawResponse = String(bytes: data, encoding: .utf8)
                         self.logError("failed parsing error response: \(String(describing: rawResponse)) -> \(error)")
                     }
@@ -316,7 +320,7 @@ extension Project {
             }
 
             // handle empty response
-            if data.count == 0 {
+            if data.isEmpty {
                 DispatchQueue.main.async {
                     completion(Result.failure(SnabbleError.empty), nil, httpResponse)
                 }
@@ -359,6 +363,5 @@ extension Project {
         let event = AppEvent(log: msg, project: self)
         event.post()
     }
+
 }
-
-

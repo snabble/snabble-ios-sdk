@@ -7,11 +7,11 @@
 import Foundation
 
 /// a ShoppingCart is a collection of CartItem objects
-final public class ShoppingCart: Codable {
-    private(set) public var items: [CartItem]
-    private(set) public var session: String
-    private(set) public var lastSaved: Date?
-    private(set) public var backendCartInfo: BackendCartInfo?
+public final class ShoppingCart: Codable {
+    public private(set) var items: [CartItem]
+    public private(set) var session: String
+    public private(set) var lastSaved: Date?
+    public private(set) var backendCartInfo: BackendCartInfo?
 
     public let projectId: String
     public let shopId: String
@@ -74,8 +74,8 @@ final public class ShoppingCart: Codable {
     }
 
     public init(_ config: CartConfig) {
-        assert(config.project.id != "" && config.project.id != Project.none.id, "empty projects cannot have a shopping cart")
-        assert(config.shopId != "", "shopId is required")
+        assert(!config.project.id.isEmpty && config.project.id != Project.none.id, "empty projects cannot have a shopping cart")
+        assert(!config.shopId.isEmpty, "shopId is required")
         self.projectId = config.project.id
         self.shopId = config.shopId
         self.maxAge = config.maxAge
@@ -109,11 +109,11 @@ final public class ShoppingCart: Codable {
     ///
     /// the newly added (or modified) item is moved to the start of the list
     public func add(_ item: CartItem) {
-        if self.items.count == 0 {
+        if self.items.isEmpty {
             self.backupItems = nil
             self.backupSession = nil
         }
-        
+
         defer { self.save() }
         if let index = self.items.firstIndex(where: { $0.product.sku == item.product.sku }) {
             var existing = self.items[index]
@@ -223,8 +223,8 @@ final public class ShoppingCart: Codable {
     public func restoreCart() {
         guard
             let backupItems = self.backupItems,
-            backupItems.count > 0,
-            self.items.count == 0
+            !backupItems.isEmpty,
+            self.items.isEmpty
         else {
             return
         }
@@ -287,7 +287,7 @@ extension ShoppingCart {
             }
 
             self.lastSaved = Date()
-            if self.session == "" {
+            if self.session.isEmpty {
                 self.session = UUID().uuidString
                 CartEvent.sessionStart(self)
             }
@@ -300,7 +300,7 @@ extension ShoppingCart {
 
         if postEvent {
             self.eventTimer?.invalidate()
-            self.eventTimer = Timer.scheduledTimer(withTimeInterval: self.saveDelay, repeats: false) { timer in
+            self.eventTimer = Timer.scheduledTimer(withTimeInterval: self.saveDelay, repeats: false) { _ in
                 CartEvent.cart(self)
             }
         }
@@ -342,10 +342,10 @@ extension ShoppingCart {
         return Cart(session: self.session, shopID: self.shopId, customer: customerInfo, items: self.backendItems())
     }
 
-    func createCheckoutInfo(userInitiated: Bool = false, completion: @escaping (Bool) -> ()) {
+    func createCheckoutInfo(userInitiated: Bool = false, completion: @escaping (Bool) -> Void) {
         guard
             let project = SnabbleAPI.projectFor(self.projectId),
-            self.items.count > 0
+            !self.items.isEmpty
         else {
             completion(false)
             return

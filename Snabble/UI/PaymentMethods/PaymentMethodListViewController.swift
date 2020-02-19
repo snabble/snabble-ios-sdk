@@ -51,7 +51,7 @@ extension RawPaymentMethod {
 
 public final class PaymentMethodListViewController: UIViewController {
 
-    @IBOutlet weak var tableView: UITableView!
+    @IBOutlet private weak var tableView: UITableView!
     private var addButton: UIBarButtonItem!
 
     private var paymentDetails = [PaymentMethodDetail]()
@@ -113,7 +113,7 @@ public final class PaymentMethodListViewController: UIViewController {
                                           message: String(format: msg, biometry.name),
                                           preferredStyle: .alert)
             alert.addAction(UIAlertAction(title: "Snabble.Biometry.Alert.laterButton".localized(), style: .cancel, handler: nil))
-            alert.addAction(UIAlertAction(title: "Snabble.OK".localized(), style: .default) { action in
+            alert.addAction(UIAlertAction(title: "Snabble.OK".localized(), style: .default) { _ in
                 BiometricAuthentication.useBiometry = true
             })
 
@@ -128,11 +128,12 @@ public final class PaymentMethodListViewController: UIViewController {
         self.analyticsDelegate?.track(.viewPaymentMethodList)
     }
 
-    // support embedding in as a child viewcontroller
+    // support embedding as a child viewcontroller
     override public var navigationItem: UINavigationItem {
         return self.parent?.navigationItem ?? super.navigationItem
     }
 
+    // swiftlint:disable:next private_action
     @IBAction public func addButtonTapped(_ sender: Any) {
         self.tableView?.isEditing = false
 
@@ -181,7 +182,7 @@ public final class PaymentMethodListViewController: UIViewController {
         self.reloadEmptyStateForTableView(self.tableView)
 
         if SnabbleUI.implicitNavigation {
-            if self.paymentDetails.count > 0 {
+            if !self.paymentDetails.isEmpty {
                 self.navigationItem.rightBarButtonItems = [self.addButton, self.editButtonItem]
             } else {
                 self.navigationItem.rightBarButtonItem = self.addButton
@@ -214,6 +215,7 @@ extension PaymentMethodListViewController: UITableViewDelegate, UITableViewDataS
     }
 
     public func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        // swiftlint:disable:next force_cast
         let cell = tableView.dequeueReusableCell(withIdentifier: "cell", for: indexPath) as! PaymentMethodCell
         let detail = self.paymentDetails[indexPath.row]
         let method = self.methods.first { $0.method == detail.rawMethod }

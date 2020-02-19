@@ -9,7 +9,7 @@ import LocalAuthentication
 
 // helpful blog post: http://michael-brown.net/2018/touch-id-and-face-id-on-ios/
 
-public struct BiometricAuthentication {
+public enum BiometricAuthentication {
 
     public enum BiometryType {
         case none
@@ -36,7 +36,7 @@ public struct BiometricAuthentication {
     public static var supportedBiometry: BiometryType {
         let authContext = LAContext()
         if #available(iOS 11, *) {
-            let _ = authContext.canEvaluatePolicy(self.policy, error: nil)
+            _ = authContext.canEvaluatePolicy(self.policy, error: nil)
             switch authContext.biometryType {
             case .none:
                 return .none
@@ -52,13 +52,13 @@ public struct BiometricAuthentication {
         }
     }
 
-    static func requestAuthentication(for reason: String, _ reply: @escaping (Bool, Error?) -> () ) {
+    static func requestAuthentication(for reason: String, _ reply: @escaping (Bool, Error?) -> Void ) {
         var localAuth = self.useBiometry
 
         if localAuth {
             let authContext = LAContext()
             if #available(iOS 11, *) {
-                let _ = authContext.canEvaluatePolicy(self.policy, error: nil)
+                _ = authContext.canEvaluatePolicy(self.policy, error: nil)
                 switch authContext.biometryType {
                 case .none: localAuth = false
                 case .touchID: break
@@ -93,7 +93,7 @@ extension BiometricAuthentication {
         public static let useBiometryTouchId = "useBiometryTOUCHID"
         public static let useBiometryFaceId = "useBiometryFACEID"
     }
-    
+
     public static var useBiometry: Bool {
         get {
             let settings = UserDefaults.standard
@@ -117,7 +117,7 @@ extension BiometricAuthentication {
 
 extension BiometricAuthentication {
 
-    public static func requestAuthentication(for reason: String, _ presenter: UIViewController, _ completion: @escaping (AuthenticationResult)->() ) {
+    public static func requestAuthentication(for reason: String, _ presenter: UIViewController, _ completion: @escaping (AuthenticationResult) -> Void ) {
         guard BiometricAuthentication.useBiometry else {
             completion(.proceed)
             return

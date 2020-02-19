@@ -7,14 +7,16 @@
 import Foundation
 import CoreImage
 
-public final class QRCode {
+public enum QRCode {
 
+    // swiftlint:disable identifier_name
     public enum CorrectionLevel: String {
         case L
         case M
         case Q
         case H
     }
+    // swiftlint:enable identifier_name
 
     public static func generate(for string: String, scale: Int, _ correctionLevel: CorrectionLevel = .L) -> UIImage? {
         guard
@@ -64,7 +66,7 @@ public final class QRCode {
 
         let scaleX = size.width / qrOutputImage.extent.size.width
         let scaleY = size.height / qrOutputImage.extent.size.height
-        let transformedImage = qrOutputImage.transformed(by: CGAffineTransform.init(scaleX: scaleX, y: scaleY))
+        let transformedImage = qrOutputImage.transformed(by: CGAffineTransform(scaleX: scaleX, y: scaleY))
 
         return UIImage(ciImage: transformedImage)
     }

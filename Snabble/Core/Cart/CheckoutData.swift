@@ -27,7 +27,7 @@ public struct SignedCheckoutInfo: Decodable {
     }
 
     // not part of the Snabble API, only used internally
-    var rawJson: [String: Any]? = nil
+    var rawJson: [String: Any]?
 
     // only used for the embedded codes offline payment
     init(_ paymentMethods: [RawPaymentMethod]) {
@@ -90,7 +90,7 @@ public struct PaymentMethodDescription: Decodable {
         case method = "id"
         case acceptedOriginTypes
     }
-    
+
     public let method: RawPaymentMethod
     public let acceptedOriginTypes: [AcceptedOriginType]?
 }
@@ -293,10 +293,10 @@ struct Cart: Encodable {
         let loyaltyCard: String
 
         init?(loyaltyCard: String?) {
-            guard let c = loyaltyCard else {
+            guard let card = loyaltyCard else {
                 return nil
             }
-            self.loyaltyCard = c
+            self.loyaltyCard = card
         }
     }
 }

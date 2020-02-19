@@ -8,14 +8,14 @@ import UIKit
 
 public final class QRCheckoutViewController: UIViewController {
 
-    @IBOutlet weak var qrCodeView: UIImageView!
-    @IBOutlet weak var explanation1: UILabel!
-    @IBOutlet weak var explanation2: UILabel!
-    @IBOutlet weak var totalPriceLabel: UILabel!
-    @IBOutlet weak var qrCodeWidth: NSLayoutConstraint!
-    @IBOutlet weak var checkoutIdLabel: UILabel!
-    @IBOutlet weak var cancelButton: UIButton!
-    
+    @IBOutlet private weak var qrCodeView: UIImageView!
+    @IBOutlet private weak var explanation1: UILabel!
+    @IBOutlet private weak var explanation2: UILabel!
+    @IBOutlet private weak var totalPriceLabel: UILabel!
+    @IBOutlet private weak var qrCodeWidth: NSLayoutConstraint!
+    @IBOutlet private weak var checkoutIdLabel: UILabel!
+    @IBOutlet private weak var cancelButton: UIButton!
+
     private var initialBrightness: CGFloat = 0
     private var process: CheckoutProcess
     private var poller: PaymentProcessPoller?
@@ -95,7 +95,7 @@ public final class QRCheckoutViewController: UIViewController {
         self.poller = poller
     }
 
-    @IBAction func cancelButtonTapped(_ sender: UIButton) {
+    @IBAction private func cancelButtonTapped(_ sender: UIButton) {
         self.poller?.stop()
         self.poller = nil
 
@@ -113,7 +113,7 @@ public final class QRCheckoutViewController: UIViewController {
                 let alert = UIAlertController(title: "Snabble.Payment.cancelError.title".localized(),
                                               message: "Snabble.Payment.cancelError.message".localized(),
                                               preferredStyle: .alert)
-                alert.addAction(UIAlertAction(title: "Snabble.OK".localized(), style: .default) { action in
+                alert.addAction(UIAlertAction(title: "Snabble.OK".localized(), style: .default) { _ in
                     self.startPoller()
                 })
                 self.present(alert, animated: true)

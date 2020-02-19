@@ -168,7 +168,7 @@ struct CreditCardData: Codable, EncryptedPaymentData {
     }
 
     init?(_ gatewayCert: Data?, _ cardHolder: String, _ cardNumber: String, _ brand: String, _ expMonth: String, _ expYear: String, _ hostedDataId: String, _ storeId: String) {
-        guard cardHolder != "" && cardNumber != "" && brand != "" && expMonth != "" && expYear != "" && hostedDataId != "" else {
+        guard !cardHolder.isEmpty, !cardNumber.isEmpty, !brand.isEmpty, !expMonth.isEmpty, !expYear.isEmpty, !hostedDataId.isEmpty else {
             return nil
         }
 
@@ -395,7 +395,7 @@ struct PaymentMethodDetailStorage {
     }
 }
 
-public struct PaymentMethodDetails {
+public enum PaymentMethodDetails {
     private static let storage = PaymentMethodDetailStorage()
 
     public static func read() -> [PaymentMethodDetail] {
@@ -429,10 +429,8 @@ public struct PaymentMethodDetails {
     private static func removeExpired() {
         var details = self.read()
 
-        for (index, detail) in details.reversed().enumerated() {
-            if detail.isExpired {
-                details.remove(at: index)
-            }
+        for (index, detail) in details.reversed().enumerated() where detail.isExpired {
+            details.remove(at: index)
         }
 
         self.save(details)

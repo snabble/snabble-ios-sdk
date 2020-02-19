@@ -6,7 +6,7 @@
 
 extension ProductDB {
 
-    func resolveProductsLookup(_ url: String, _ codes: [(String, String)], _ shopId: String, completion: @escaping (_ result: Result<ScannedProduct, SnabbleError>) -> ()) {
+    func resolveProductsLookup(_ url: String, _ codes: [(String, String)], _ shopId: String, completion: @escaping (_ result: Result<ScannedProduct, SnabbleError>) -> Void) {
         let group = DispatchGroup()
         var results = [Result<ScannedProduct, SnabbleError>]()
 
@@ -45,7 +45,8 @@ extension ProductDB {
         }
     }
 
-    private func resolveProductsLookup(_ url: String, _ code: String, _ template: String, _ shopId: String, completion: @escaping (_ result: Result<ScannedProduct, SnabbleError>) -> ()) {
+    private func resolveProductsLookup(_ url: String, _ code: String, _ template: String, _ shopId: String,
+                                       completion: @escaping (_ result: Result<ScannedProduct, SnabbleError>) -> Void) {
         let session = SnabbleAPI.urlSession()
 
         // TODO: is this the right value?
@@ -95,7 +96,7 @@ extension ProductDB {
         }
     }
 
-    func resolveProductLookup(_ url: String, _ sku: String, _ shopId: String, completion: @escaping (_ result: Result<Product, SnabbleError>) -> ()) {
+    func resolveProductLookup(_ url: String, _ sku: String, _ shopId: String, completion: @escaping (_ result: Result<Product, SnabbleError>) -> Void) {
         let session = SnabbleAPI.urlSession()
 
         // TODO: is this the right value?
@@ -140,7 +141,7 @@ extension ProductDB {
         }
     }
 
-    private func returnError<T>(_ msg: String, _ completion: @escaping (_ result: Result<T, SnabbleError>) -> () ) {
+    private func returnError<T>(_ msg: String, _ completion: @escaping (_ result: Result<T, SnabbleError>) -> Void ) {
         self.logError(msg)
         DispatchQueue.main.async {
             completion(Result.failure(SnabbleError(error: ErrorResponse(msg))))
@@ -183,6 +184,7 @@ private final class ResolvedProduct: Decodable {
     }
 
     enum ResolvedSaleRestriction: String, Codable {
+        // swiftlint:disable identifier_name
         case min_age_6
         case min_age_12
         case min_age_14
@@ -190,6 +192,7 @@ private final class ResolvedProduct: Decodable {
         case min_age_18
         case min_age_21
         case fsk
+        // swiftlint:enable identifier_name
 
         func convert() -> SaleRestriction {
             switch self {
@@ -218,7 +221,7 @@ private final class ResolvedProduct: Decodable {
 
     fileprivate func convert(_ code: String, _ template: String) -> Product {
         let codes = self.codes.map { ScannableCode($0) }
-        
+
         var encodingUnit = Units.from(self.encodingUnit)
         let code = codes.first { $0.code == code && $0.template == template }
         if let encodingOverride = code?.encodingUnit {

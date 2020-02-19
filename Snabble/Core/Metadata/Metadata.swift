@@ -80,6 +80,7 @@ public enum QRCodeFormat: String, Decodable {
     case unknown
 
     case simple
+    // swiftlint:disable:next identifier_name
     case csv_globus // simple header, deprecated
     case csv        // new format with "x of y" header info
     case ikea
@@ -142,8 +143,7 @@ public struct QRCodeConfig: Decodable {
 
     init(format: QRCodeFormat,
          prefix: String = "", separator: String = "\n", suffix: String = "", maxCodes: Int = 100,
-         maxChars: Int? = nil, finalCode: String? = nil, nextCode: String? = nil, nextCodeWithCheck: String? = nil)
-    {
+         maxChars: Int? = nil, finalCode: String? = nil, nextCode: String? = nil, nextCodeWithCheck: String? = nil) {
         self.format = format
         self.prefix = prefix
         self.separator = separator
@@ -164,7 +164,7 @@ public enum ScanFormat: String, Decodable {
     case code128
     case itf14
     case code39
-    
+
     // 2d codes
     case qr
     case dataMatrix = "datamatrix"
@@ -294,31 +294,9 @@ public struct Project: Decodable {
         self.paymentMethods = []
     }
 
-    // only used for unit tests
-    internal init(decimalDigits: Int, locale: String, currency: String, currencySymbol: String) {
-        self.id = "none"
-        self.name = ""
-        self.links = ProjectLinks.empty
-        self.rawLinks = [:]
-        self.currency = currency
-        self.decimalDigits = decimalDigits
-        self.locale = locale
-        self.roundingMode = .up
-        self.qrCodeConfig = nil
-        self.currencySymbol = currencySymbol
-        self.shops = []
-        self.scanFormats = []
-        self.customerCards = CustomerCardInfo()
-        self.codeTemplates = []
-        self.searchableTemplates = nil
-        self.priceOverrideCodes = nil
-        self.checkoutLimits = nil
-        self.messages = nil
-        self.paymentMethods = []
-    }
-
-    internal init(links: ProjectLinks) {
-        self.id = "none"
+    // only used for unit tests!
+    internal init(_ id: String, links: ProjectLinks) {
+        self.id = id
         self.name = ""
         self.links = links
         self.rawLinks = [:]
@@ -409,8 +387,7 @@ public struct Flags: Decodable {
         case kill
     }
 
-    private struct AdditionalCodingKeys: CodingKey
-    {
+    private struct AdditionalCodingKeys: CodingKey {
         var stringValue: String
         var intValue: Int?
 
@@ -573,7 +550,7 @@ public extension Metadata {
         return nil
     }
 
-    static func load(from url: String, completion: @escaping (Metadata?) -> () ) {
+    static func load(from url: String, completion: @escaping (Metadata?) -> Void ) {
         let project = Project.none
         project.request(.get, url, jwtRequired: false, timeout: 5) { request in
             guard let request = request, let absoluteString = request.url?.absoluteString else {
@@ -625,7 +602,7 @@ extension Metadata {
         }
     }
 
-    private static func urlForLastMetadata(_ hash: Int) throws -> URL  {
+    private static func urlForLastMetadata(_ hash: Int) throws -> URL {
         let fileManager = FileManager.default
         var appSupportDir = try fileManager.url(for: .applicationSupportDirectory, in: .userDomainMask, appropriateFor: nil, create: true)
         appSupportDir.appendPathComponent("appmetadata\(hash).json")

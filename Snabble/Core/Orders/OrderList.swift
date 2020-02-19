@@ -57,9 +57,8 @@ public struct Order: Codable {
     }
 }
 
-
 extension OrderList {
-    public static func load(_ project: Project, completion: @escaping (Result<OrderList, SnabbleError>)->() ) {
+    public static func load(_ project: Project, completion: @escaping (Result<OrderList, SnabbleError>) -> Void ) {
         let url = SnabbleAPI.links.clientOrders.href.replacingOccurrences(of: "{clientID}", with: SnabbleAPI.clientId)
 
         project.request(.get, url, timeout: 0) { request in
@@ -75,8 +74,9 @@ extension OrderList {
 }
 
 extension Order {
-    public func getReceipt(_ project: Project, completion: @escaping (Result<URL, Error>) -> ()) {
+    public func getReceipt(_ project: Project, completion: @escaping (Result<URL, Error>) -> Void) {
         let fileManager = FileManager.default
+        // swiftlint:disable:next force_try
         let cacheDir = try! fileManager.url(for: .cachesDirectory, in: .userDomainMask, appropriateFor: nil, create: true)
         let targetPath = cacheDir.appendingPathComponent("snabble-order-\(self.id).pdf")
 
@@ -94,7 +94,7 @@ extension Order {
         }
     }
 
-    private func download(_ project: Project, _ targetPath: URL, completion: @escaping (Result<URL, Error>) ->() ) {
+    private func download(_ project: Project, _ targetPath: URL, completion: @escaping (Result<URL, Error>) -> Void ) {
         project.request(.get, self.links.receipt.href, timeout: 10) { request in
             guard let request = request else {
                 completion(.failure(SnabbleError.noRequest))
@@ -102,7 +102,7 @@ extension Order {
             }
 
             let session = SnabbleAPI.urlSession()
-            let task = session.downloadTask(with: request) { location, response, error in
+            let task = session.downloadTask(with: request) { location, _, error in
                 if let error = error {
                     Log.error("error downloading receipt: \(String(describing: error))")
                     return completion(.failure(error))

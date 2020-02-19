@@ -4,6 +4,8 @@
 //  Copyright © 2020 snabble. All rights reserved.
 //
 
+// TODO: merge this and OnlineCheckoutViewController, if possible?
+
 import UIKit
 
 public final class TerminalCheckoutViewController: UIViewController {
@@ -33,7 +35,7 @@ public final class TerminalCheckoutViewController: UIViewController {
         self.process = process
         self.cart = cart
         self.delegate = delegate
-        
+
         super.init(nibName: nil, bundle: SnabbleBundle.main)
     }
 
@@ -59,7 +61,7 @@ public final class TerminalCheckoutViewController: UIViewController {
         }
 
         self.spinnerWrapper.isHidden = true
-        
+
         let components = self.process.links.`self`.href.components(separatedBy: "/")
         let id = components.last ?? "n/a"
         self.idLabel.text = String(id.suffix(4))
@@ -88,7 +90,7 @@ public final class TerminalCheckoutViewController: UIViewController {
         self.cancelButton.alpha = 0
         self.cancelButton.isUserInteractionEnabled = false
 
-        Timer.scheduledTimer(withTimeInterval: 2, repeats: false) { timer in
+        Timer.scheduledTimer(withTimeInterval: 2, repeats: false) { _ in
             UIView.animate(withDuration: 0.2) {
                 self.cancelButton.alpha = 1
             }
@@ -138,7 +140,7 @@ public final class TerminalCheckoutViewController: UIViewController {
                 self.stackView.layoutIfNeeded()
             }
 
-            events.merge(event, uniquingKeysWith: { b1, b2 in b1 })
+            events.merge(event, uniquingKeysWith: { bool1, _ in bool1 })
 
             if let approval = events[.approval], approval == false {
                 self.paymentFinished(false, poller.updatedProcess)
@@ -152,7 +154,7 @@ public final class TerminalCheckoutViewController: UIViewController {
         self.poller = poller
     }
 
-    @IBAction func cancelButtonTapped(_ sender: UIButton) {
+    @IBAction private func cancelButtonTapped(_ sender: UIButton) {
         self.poller?.stop()
         self.poller = nil
 
@@ -162,7 +164,7 @@ public final class TerminalCheckoutViewController: UIViewController {
             switch result {
             case .success:
                 self.delegate.track(.paymentCancelled)
-                
+
                 if let cartVC = self.navigationController?.viewControllers.first(where: { $0 is ShoppingCartViewController}) {
                     self.navigationController?.popToViewController(cartVC, animated: true)
                 } else {
@@ -172,7 +174,7 @@ public final class TerminalCheckoutViewController: UIViewController {
                 let alert = UIAlertController(title: "Snabble.Payment.cancelError.title".localized(),
                                               message: "Snabble.Payment.cancelError.message".localized(),
                                               preferredStyle: .alert)
-                alert.addAction(UIAlertAction(title: "Snabble.OK".localized(), style: .default) { action in
+                alert.addAction(UIAlertAction(title: "Snabble.OK".localized(), style: .default) { _ in
                     self.startPoller()
                 })
                 self.present(alert, animated: true)
@@ -182,7 +184,7 @@ public final class TerminalCheckoutViewController: UIViewController {
 
     private func paymentFinished(_ success: Bool, _ process: CheckoutProcess) {
         self.poller = nil
-        
+
         if success {
             self.cart.removeAll(endSession: true, keepBackup: false)
         }

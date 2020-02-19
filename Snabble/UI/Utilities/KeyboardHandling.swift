@@ -69,7 +69,7 @@ final class KeyboardObserver: NSObject {
         guard let info = KeyboardInfo(notification: notification) else {
             return
         }
-        
+
         self.handler.keyboardWillHide(info)
     }
 }

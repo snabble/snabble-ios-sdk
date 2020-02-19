@@ -17,15 +17,15 @@ private enum InputField: Int {
 
 public final class SepaEditViewController: UIViewController {
 
-    @IBOutlet weak var hintLabel: UILabel!
-    @IBOutlet weak var nameLabel: UILabel!
-    @IBOutlet weak var nameField: UITextField!
-    @IBOutlet weak var ibanLabel: UILabel!
-    @IBOutlet weak var ibanCountryField: UITextField!
-    @IBOutlet weak var ibanNumberField: UITextField!
-    @IBOutlet weak var saveButton: UIButton!
+    @IBOutlet private weak var hintLabel: UILabel!
+    @IBOutlet private weak var nameLabel: UILabel!
+    @IBOutlet private weak var nameField: UITextField!
+    @IBOutlet private weak var ibanLabel: UILabel!
+    @IBOutlet private weak var ibanCountryField: UITextField!
+    @IBOutlet private weak var ibanNumberField: UITextField!
+    @IBOutlet private weak var saveButton: UIButton!
 
-    private var detail: PaymentMethodDetail? = nil
+    private var detail: PaymentMethodDetail?
     private var index: Int? = 0
     private weak var analyticsDelegate: AnalyticsDelegate?
 
@@ -98,7 +98,7 @@ public final class SepaEditViewController: UIViewController {
             self.nameField.isEnabled = false
 
             let iban = detail.displayName
-            self.ibanNumberField.text = String(iban.suffix(iban.count-2))
+            self.ibanNumberField.text = String(iban.suffix(iban.count - 2))
             self.ibanNumberField.isEnabled = false
             self.ibanNumberField.clearButtonMode = .never
 
@@ -119,7 +119,7 @@ public final class SepaEditViewController: UIViewController {
         self.analyticsDelegate?.track(.viewPaymentMethodDetail)
     }
 
-    @IBAction func saveButtonTapped(_ sender: Any) {
+    @IBAction private func saveButtonTapped(_ sender: Any) {
         guard
             let country = self.ibanCountryField?.text,
             let number = self.ibanNumberField?.text,
@@ -128,10 +128,8 @@ public final class SepaEditViewController: UIViewController {
             return
         }
 
-        for input in [ self.nameField, self.ibanCountryField, self.ibanNumberField ] {
-            if input?.isFirstResponder == true {
-                input?.resignFirstResponder()
-            }
+        for input in [ self.nameField, self.ibanCountryField, self.ibanNumberField ] where input?.isFirstResponder == true {
+            input?.resignFirstResponder()
         }
 
         let iban = self.sanitzeIban(country + number)
@@ -144,23 +142,23 @@ public final class SepaEditViewController: UIViewController {
             tips.append(tip)
         }
 
-        if name.count == 0 {
+        if name.isEmpty {
             let tip = self.showErrorTip("Snabble.Payment.SEPA.InvalidName".localized(), self.nameField)
             tips.append(tip)
         }
 
-        if country.count == 0 {
+        if country.isEmpty {
             let tip = self.showErrorTip("Snabble.Payment.SEPA.missingCountry".localized(), self.ibanCountryField)
             tips.append(tip)
         }
 
-        if tips.count > 0 {
-            Timer.scheduledTimer(withTimeInterval: 3, repeats: false) { timer in
+        if !tips.isEmpty {
+            Timer.scheduledTimer(withTimeInterval: 3, repeats: false) { _ in
                 tips.forEach { $0.dismiss() }
             }
         }
 
-        if valid && name.count > 0 {
+        if valid && !name.isEmpty {
             if let cert = SnabbleAPI.certificates.first, let sepaData = SepaData(cert.data, name, iban) {
                 let detail = PaymentMethodDetail(sepaData)
                 PaymentMethodDetails.save(detail)
@@ -184,7 +182,7 @@ public final class SepaEditViewController: UIViewController {
         }
 
         let alert = UIAlertController(title: nil, message: "Snabble.Payment.delete.message".localized(), preferredStyle: .alert)
-        alert.addAction(UIAlertAction(title: "Snabble.Yes".localized(), style: .destructive) { action in
+        alert.addAction(UIAlertAction(title: "Snabble.Yes".localized(), style: .destructive) { _ in
             PaymentMethodDetails.remove(at: index)
             self.analyticsDelegate?.track(.paymentMethodDeleted(self.detail?.rawMethod.displayName ?? ""))
             self.navigationController?.popToInstanceOf(PaymentMethodListViewController.self, animated: true)
@@ -208,15 +206,18 @@ public final class SepaEditViewController: UIViewController {
 
     // see https://en.wikipedia.org/wiki/International_Bank_Account_Number#Modulo_operation_on_IBAN
     private func verifyIban(_ iban: String) -> Bool {
-        var bytes = iban.utf8.map { $0 }
-        while bytes.count < 4 {
-            bytes.append(0)
+        var rawBytes = Array(iban.utf8)
+        while rawBytes.count < 4 {
+            rawBytes.append(0)
         }
-        let b = bytes[4..<bytes.count] + bytes[0..<4]
-        let check = b.reduce(0) { result, digit in
-            let i = Int(digit)
-            return i > 64 ? (100 * result + i - 55) % 97 : (10 * result + i - 48) % 97
+
+        let bytes = rawBytes[4 ..< rawBytes.count] + rawBytes[0 ..< 4]
+
+        let check = bytes.reduce(0) { result, digit in
+            let int = Int(digit)
+            return int > 64 ? (100 * result + int - 55) % 97 : (10 * result + int - 48) % 97
         }
+
         return check == 1
     }
 
@@ -239,10 +240,10 @@ public final class SepaEditViewController: UIViewController {
 
         let letters = CharacterSet.uppercaseLetters
         let range = country.rangeOfCharacter(from: letters)
-        let countryValid = country.count == 0 || range != nil
+        let countryValid = country.isEmpty || range != nil
         self.markTextfield(self.ibanCountryField, countryValid)
 
-        let numberValid = iban.count == 0 || verifyIban(country + iban)
+        let numberValid = iban.isEmpty || verifyIban(country + iban)
         self.markTextfield(self.ibanNumberField, numberValid)
         // self.markTextfield(self.ibanCountryField, numberValid)
     }
@@ -318,7 +319,7 @@ extension SepaEditViewController: UITextFieldDelegate {
             return false
         }
 
-        if string.count == 0 { // deletion
+        if string.isEmpty { // deletion
             return true
         }
 

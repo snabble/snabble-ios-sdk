@@ -7,7 +7,7 @@
 import UIKit
 import QuickLook
 
-final public class ReceiptPreviewItem: NSObject, QLPreviewItem {
+public final class ReceiptPreviewItem: NSObject, QLPreviewItem {
     public let receiptUrl: URL
     public let title: String
 
@@ -35,7 +35,7 @@ public final class ReceiptsListViewController: UIViewController {
     @IBOutlet private weak var tableView: UITableView!
     @IBOutlet private weak var emptyLabel: UILabel!
     @IBOutlet private weak var spinner: UIActivityIndicatorView!
-    
+
     private var quickLook = QLPreviewController()
     private var previewItem: QLPreviewItem!
 
@@ -49,7 +49,7 @@ public final class ReceiptsListViewController: UIViewController {
         self.process = process
         self.orderId = process?.orderID
         self.analyticsDelegate = analyticsDelegate
-        
+
         super.init(nibName: nil, bundle: SnabbleBundle.main)
 
         self.title = "Snabble.Receipts.title".localized()
@@ -143,7 +143,7 @@ public final class ReceiptsListViewController: UIViewController {
         self.orders = orders
 
         self.spinner.stopAnimating()
-        if orders.count == 0 {
+        if orders.isEmpty {
             self.emptyLabel.isHidden = false
         }
         self.tableView.reloadData()
@@ -163,6 +163,7 @@ extension ReceiptsListViewController: UITableViewDelegate, UITableViewDataSource
     }
 
     public func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        // swiftlint:disable:next force_cast
         let cell = tableView.dequeueReusableCell(withIdentifier: "receiptCell", for: indexPath) as! ReceiptCell
 
         guard let orders = self.orders else {

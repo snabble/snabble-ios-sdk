@@ -13,9 +13,9 @@ final class ReceiptCell: UITableViewCell {
     @IBOutlet private weak var orderDate: UILabel!
     @IBOutlet private weak var price: UILabel!
 
-    @IBOutlet weak var iconWidth: NSLayoutConstraint!
-    @IBOutlet weak var iconDistance: NSLayoutConstraint!
-    
+    @IBOutlet private weak var iconWidth: NSLayoutConstraint!
+    @IBOutlet private weak var iconDistance: NSLayoutConstraint!
+
     override func awakeFromNib() {
         super.awakeFromNib()
 

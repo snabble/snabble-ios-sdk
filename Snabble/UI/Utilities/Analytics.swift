@@ -63,7 +63,7 @@ public enum AnalyticsEvent {
 
     /// a product was added to the shopping cart. associated value is the product's `sku`
     case productAddedToCart(String)
-    
+
     /// a barcode was selected from the autocomplete list. associated value is the selected EAN code
     case barcodeSelected(String)
 

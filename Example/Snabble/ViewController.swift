@@ -10,8 +10,8 @@ import Snabble
 
 class ViewController: UIViewController {
 
-    @IBOutlet weak var buttonContainer: UIStackView!
-    @IBOutlet weak var spinner: UIActivityIndicatorView!
+    @IBOutlet private weak var buttonContainer: UIStackView!
+    @IBOutlet private weak var spinner: UIActivityIndicatorView!
 
     private var shoppingCart = ShoppingCart(CartConfig())
 
@@ -24,7 +24,7 @@ class ViewController: UIViewController {
         super.viewWillAppear(animated)
     }
 
-    @IBAction func scannerButtonTapped(_ sender: Any) {
+    @IBAction private func scannerButtonTapped(_ sender: Any) {
         let project = SnabbleAPI.projects[0]
         let shop = project.shops[0]
         let scanner = ScannerViewController(self.shoppingCart, shop, delegate: self)
@@ -32,7 +32,7 @@ class ViewController: UIViewController {
         self.navigationController?.pushViewController(scanner, animated: true)
     }
 
-    @IBAction func shoppingCartButtonTapped(_ sender: Any) {
+    @IBAction private func shoppingCartButtonTapped(_ sender: Any) {
         self.gotoShoppingCart()
     }
 
@@ -50,7 +50,7 @@ class ViewController: UIViewController {
 
             // initialize the product database for this project
             let productProvider = SnabbleAPI.productProvider(for: project)
-            productProvider.setup() { _ in
+            productProvider.setup { _ in
                 self.spinner.stopAnimating()
                 self.buttonContainer.isHidden = false
 
@@ -81,8 +81,8 @@ extension ViewController: ShoppingCartDelegate {
 
         process.start { result in
             switch result {
-            case .success(let vc):
-                self.navigationController?.pushViewController(vc, animated: true)
+            case .success(let viewController):
+                self.navigationController?.pushViewController(viewController, animated: true)
             case .failure(let error):
                 self.showWarningMessage("Error creating payment process: \(error))")
             }
@@ -129,4 +129,3 @@ extension ViewController: PaymentDelegate {
         return false
     }
 }
-

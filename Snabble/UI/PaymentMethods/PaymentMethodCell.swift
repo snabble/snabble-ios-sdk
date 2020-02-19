@@ -32,7 +32,7 @@ final class PaymentMethodCell: UITableViewCell {
         self.name.text = detail.displayName
         self.icon.image = detail.icon
 
-        if let names = projectNames, names.count > 0 {
+        if let names = projectNames, !names.isEmpty {
             let retailers = names.joined(separator: ", ")
             let fmt = "Snabble.Payment.usableAt".localized()
             self.useLabel.text = String(format: fmt, retailers)

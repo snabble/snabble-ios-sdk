@@ -15,16 +15,16 @@ public struct MethodProjects {
         let paymentMethods = Set(allPaymentMethods.filter({ $0.editable }))
 
         var methodMap = [RawPaymentMethod: [String]]()
-        for pm in paymentMethods {
+        for method in paymentMethods {
             for prj in SnabbleAPI.projects {
-                if prj.paymentMethods.contains(pm) {
-                    methodMap[pm, default: []].append(prj.name)
+                if prj.paymentMethods.contains(method) {
+                    methodMap[method, default: []].append(prj.name)
                 }
             }
         }
 
         if SnabbleAPI.debugMode {
-            RawPaymentMethod.allCases.filter{ $0.editable && methodMap[$0] == nil }.forEach {
+            RawPaymentMethod.allCases.filter { $0.editable && methodMap[$0] == nil }.forEach {
                 methodMap[$0] = ["TEST"]
             }
         }

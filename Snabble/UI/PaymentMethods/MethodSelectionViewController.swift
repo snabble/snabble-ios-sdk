@@ -53,16 +53,16 @@ extension MethodSelectionViewController: UITableViewDelegate, UITableViewDataSou
     }
 
     public func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        // swiftlint:disable:next force_cast
         let cell = tableView.dequeueReusableCell(withIdentifier: "methodCell", for: indexPath) as! MethodSelectionCell
 
         let method = self.methods[indexPath.row]
 
-        cell.icon.image = method.method.icon
-        cell.nameLabel.text = method.method.displayName
-
-        let retailers =  method.projectNames.joined(separator: ", ")
+        let retailers = method.projectNames.joined(separator: ", ")
         let fmt = "Snabble.Payment.usableAt".localized()
-        cell.useLabel.text = String(format: fmt, retailers)
+        let useableAt = String(format: fmt, retailers)
+
+        cell.setMethod(method.method, useableAt)
 
         return cell
     }
@@ -71,11 +71,11 @@ extension MethodSelectionViewController: UITableViewDelegate, UITableViewDataSou
         let method = self.methods[indexPath.row]
 
         if SnabbleUI.implicitNavigation {
-            guard let vc = method.method.editViewController(self.analyticsDelegate) else {
+            guard let editVC = method.method.editViewController(self.analyticsDelegate) else {
                 return
             }
 
-            self.navigationController?.pushViewController(vc, animated: true)
+            self.navigationController?.pushViewController(editVC, animated: true)
         } else {
             self.navigationDelegate?.addData(for: method.method)
         }

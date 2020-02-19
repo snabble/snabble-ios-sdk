@@ -17,7 +17,7 @@ import Foundation
 // length and formatting info for SEPA IBANs
 // see https://en.wikipedia.org/wiki/International_Bank_Account_Number#IBAN_formats_by_country
 
-struct IBAN {
+enum IBAN {
     private static let info: [String: (Int, String)] = [
         "AD": (24, "•• •••• •••• •••• •••• ••••"),
         "AT": (20, "•• •••• •••• •••• ••••"),
@@ -57,7 +57,7 @@ struct IBAN {
         "SE": (24, "•• •••• •••• •••• •••• ••••"),
         "CH": (21, "•• •••• •••• •••• •••• •"),
         "GB": (22, "•• •••• •••• •••• •••• ••"),
-        "VA": (22, "•• •••• •••• •••• •••• ••"),
+        "VA": (22, "•• •••• •••• •••• •••• ••")
     ]
 
     static func length(_ country: String) -> Int? {

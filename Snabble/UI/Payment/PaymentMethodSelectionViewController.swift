@@ -17,8 +17,8 @@ public protocol PaymentNavigationDelegate: class {
 
 public final class PaymentMethodSelectionViewController: UIViewController {
 
-    @IBOutlet weak var collectionView: UICollectionView!
-    
+    @IBOutlet private weak var collectionView: UICollectionView!
+
     private weak var cart: ShoppingCart!
     private let process: PaymentProcess
     private let signedCheckoutInfo: SignedCheckoutInfo
@@ -118,19 +118,19 @@ public final class PaymentMethodSelectionViewController: UIViewController {
         let numRows = self.paymentMethods.count
         var contentInsetTop = self.collectionView.bounds.size.height
 
-        for i in 0 ..< numRows {
-            let attributes = self.collectionView.layoutAttributesForItem(at: IndexPath(item: i, section: 0))
+        for row in 0 ..< numRows {
+            let attributes = self.collectionView.layoutAttributesForItem(at: IndexPath(item: row, section: 0))
             let rowRect = attributes?.frame ?? CGRect.zero
-            contentInsetTop -= rowRect.size.height + (i > 0 ? 16 : 0)
+            contentInsetTop -= rowRect.size.height + (row > 0 ? 16 : 0)
             if contentInsetTop <= 0 {
                 contentInsetTop = 0
             }
         }
 
-        self.collectionView.contentInset = UIEdgeInsets.init(top: contentInsetTop, left: 0, bottom: 0, right: 0)
+        self.collectionView.contentInset = UIEdgeInsets(top: contentInsetTop, left: 0, bottom: 0, right: 0)
         if contentInsetTop == 0 {
             // scroll so that the last entry is fully visible
-            let last = IndexPath(item: numRows-1, section: 0)
+            let last = IndexPath(item: numRows - 1, section: 0)
             self.collectionView.scrollToItem(at: last, at: .bottom, animated: false)
         }
     }
@@ -173,11 +173,12 @@ extension PaymentMethodSelectionViewController: UICollectionViewDelegate, UIColl
     }
 
     public func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
+        // swiftlint:disable:next force_cast
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "paymentCell", for: indexPath) as! CheckoutPaymentMethodCell
 
         let paymentMethod = self.paymentMethods[indexPath.row]
         cell.paymentMethod = paymentMethod
-        
+
         return cell
     }
 
@@ -196,7 +197,7 @@ extension PaymentMethodSelectionViewController: UICollectionViewDelegate, UIColl
             }
             return
         }
-        
+
         self.process.delegate.startPayment(method, self) { proceed in
             if proceed {
                 self.startPayment(method)

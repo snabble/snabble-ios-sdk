@@ -32,12 +32,12 @@ public struct SnabbleAppearance {
 }
 
 /// global settings for the Snabble UI classes
-public final class SnabbleUI {
+public enum SnabbleUI {
 
     /// set to false only if you want or need to take control of all navigation in the app (e.g. in the RN wrapper)
-    static public var implicitNavigation = true
-    static private(set) public var appearance = SnabbleAppearance()
-    static private(set) public var project = Project.none
+    public static var implicitNavigation = true
+    public private(set) static var appearance = SnabbleAppearance()
+    public private(set) static var project = Project.none
 
     /// sets the global appearance to be used. Your app must call `SnabbleUI.setup()` before instantiating any snabble view controllers
     public static func setup(_ appearance: SnabbleAppearance) {

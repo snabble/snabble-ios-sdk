@@ -4,7 +4,6 @@
 //  Copyright © 2020 snabble. All rights reserved.
 //
 
-
 /// a generic EAN code (EAN-8, EAN-13 or EAN-14)
 public protocol EANCode {
     /// the full code, including the check digit
@@ -26,7 +25,6 @@ extension EANCode {
         return self.digits.last ?? 0
     }
 }
-
 
 /// methods for parsing and encoding an EAN-8, EAN-13 or EAN-14
 public enum EAN {
@@ -197,10 +195,10 @@ extension EAN13 {
         return check
     }
 
-    private static let check2minus = [ 0:0, 1:2, 2:4, 3:6, 4:8, 5:9, 6:1, 7:3, 8:5, 9:7 ]
-    private static let check3      = [ 0:0, 1:3, 2:6, 3:9, 4:2, 5:5, 6:8, 7:1, 8:4, 9:7 ]
-    private static let check5plus  = [ 0:0, 1:5, 2:1, 3:6, 4:2, 5:7, 6:3, 7:8, 8:4, 9:9 ]
-    private static let check5minus = [ 0:0, 1:5, 2:9, 3:4, 4:8, 5:3, 6:7, 7:2, 8:6, 9:1 ]
+    private static let check2minus = [ 0: 0, 1: 2, 2: 4, 3: 6, 4: 8, 5: 9, 6: 1, 7: 3, 8: 5, 9: 7 ]
+    private static let check3      = [ 0: 0, 1: 3, 2: 6, 3: 9, 4: 2, 5: 5, 6: 8, 7: 1, 8: 4, 9: 7 ]
+    private static let check5plus  = [ 0: 0, 1: 5, 2: 1, 3: 6, 4: 2, 5: 7, 6: 3, 7: 8, 8: 4, 9: 9 ]
+    private static let check5minus = [ 0: 0, 1: 5, 2: 9, 3: 4, 4: 8, 5: 3, 6: 7, 7: 2, 8: 6, 9: 1 ]
     private static let check5minusReverse = Dictionary(uniqueKeysWithValues: check5minus.map { ($1, $0) })
 
     private static func weightedProduct5digits(_ index: Int, _ digit: Int) -> Int {
@@ -214,14 +212,14 @@ extension EAN13 {
 
     private static func weightedProduct4digits(_ index: Int, _ digit: Int) -> Int {
         switch index {
-        case 0,1 : return EAN13.check2minus[digit] ?? -1
+        case 0, 1: return EAN13.check2minus[digit] ?? -1
         case 2: return EAN13.check3[digit] ?? -1
         case 3: return EAN13.check5minus[digit] ?? -1
         default: return -1
         }
     }
 
-    static public func embedDataInEan(_ template: String, data: Int) -> String {
+    public static func embedDataInEan(_ template: String, data: Int) -> String {
         assert(data < 99999)
 
         let str = String(data)
@@ -283,7 +281,6 @@ public struct EAN14: EANCode {
         return check
     }
 }
-
 
 // MARK: - bitwise encoding
 
@@ -362,24 +359,24 @@ extension EAN {
 
 /// various bit constants for EAN encoding
 /// see https://en.wikipedia.org/wiki/International_Article_Number#How_the_13-digit_EAN-13_is_encoded
-struct EANBits {
-    static let blankBits = [0,0,0,0,0,0,0,0,0]
-    static let borderBits = [1,0,1]
-    static let separatorBits = [0,1,0,1,0]
+enum EANBits {
+    static let blankBits = [0, 0, 0, 0, 0, 0, 0, 0, 0]
+    static let borderBits = [1, 0, 1]
+    static let separatorBits = [0, 1, 0, 1, 0]
     static let oddLeftBits = [
-        [0,0,0,1,1,0,1], [0,0,1,1,0,0,1], [0,0,1,0,0,1,1], [0,1,1,1,1,0,1], [0,1,0,0,0,1,1],
-        [0,1,1,0,0,0,1], [0,1,0,1,1,1,1], [0,1,1,1,0,1,1], [0,1,1,0,1,1,1], [0,0,0,1,0,1,1]
+        [0, 0, 0, 1, 1, 0, 1], [0, 0, 1, 1, 0, 0, 1], [0, 0, 1, 0, 0, 1, 1], [0, 1, 1, 1, 1, 0, 1], [0, 1, 0, 0, 0, 1, 1],
+        [0, 1, 1, 0, 0, 0, 1], [0, 1, 0, 1, 1, 1, 1], [0, 1, 1, 1, 0, 1, 1], [0, 1, 1, 0, 1, 1, 1], [0, 0, 0, 1, 0, 1, 1]
     ]
     static let evenLeftBits = [
-        [0,1,0,0,1,1,1], [0,1,1,0,0,1,1], [0,0,1,1,0,1,1], [0,1,0,0,0,0,1], [0,0,1,1,1,0,1],
-        [0,1,1,1,0,0,1], [0,0,0,0,1,0,1], [0,0,1,0,0,0,1], [0,0,0,1,0,0,1], [0,0,1,0,1,1,1]
+        [0, 1, 0, 0, 1, 1, 1], [0, 1, 1, 0, 0, 1, 1], [0, 0, 1, 1, 0, 1, 1], [0, 1, 0, 0, 0, 0, 1], [0, 0, 1, 1, 1, 0, 1],
+        [0, 1, 1, 1, 0, 0, 1], [0, 0, 0, 0, 1, 0, 1], [0, 0, 1, 0, 0, 0, 1], [0, 0, 0, 1, 0, 0, 1], [0, 0, 1, 0, 1, 1, 1]
     ]
     static let rightBits = [
-        [1,1,1,0,0,1,0], [1,1,0,0,1,1,0], [1,1,0,1,1,0,0], [1,0,0,0,0,1,0], [1,0,1,1,1,0,0],
-        [1,0,0,1,1,1,0], [1,0,1,0,0,0,0], [1,0,0,0,1,0,0], [1,0,0,1,0,0,0], [1,1,1,0,1,0,0]
+        [1, 1, 1, 0, 0, 1, 0], [1, 1, 0, 0, 1, 1, 0], [1, 1, 0, 1, 1, 0, 0], [1, 0, 0, 0, 0, 1, 0], [1, 0, 1, 1, 1, 0, 0],
+        [1, 0, 0, 1, 1, 1, 0], [1, 0, 1, 0, 0, 0, 0], [1, 0, 0, 0, 1, 0, 0], [1, 0, 0, 1, 0, 0, 0], [1, 1, 1, 0, 1, 0, 0]
     ]
     static let parityBits = [
-        [0,0,0,0,0,0], [0,0,1,0,1,1], [0,0,1,1,0,1], [0,0,1,1,1,0], [0,1,0,0,1,1],
-        [0,1,1,0,0,1], [0,1,1,1,0,0], [0,1,0,1,0,1], [0,1,0,1,1,0], [0,1,1,0,1,0]
+        [0, 0, 0, 0, 0, 0], [0, 0, 1, 0, 1, 1], [0, 0, 1, 1, 0, 1], [0, 0, 1, 1, 1, 0], [0, 1, 0, 0, 1, 1],
+        [0, 1, 1, 0, 0, 1], [0, 1, 1, 1, 0, 0], [0, 1, 0, 1, 0, 1], [0, 1, 0, 1, 1, 0], [0, 1, 1, 0, 1, 0]
     ]
 }

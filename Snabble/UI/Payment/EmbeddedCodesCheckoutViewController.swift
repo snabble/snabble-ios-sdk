@@ -6,7 +6,7 @@
 
 import UIKit
 
-final public class EmbeddedCodesCheckoutViewController: UIViewController {
+public final class EmbeddedCodesCheckoutViewController: UIViewController {
 
     @IBOutlet private weak var topWrapper: UIView!
     @IBOutlet private weak var topIcon: UIImageView!
@@ -115,7 +115,7 @@ final public class EmbeddedCodesCheckoutViewController: UIViewController {
     override public func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
 
-        Timer.scheduledTimer(withTimeInterval: 2, repeats: false) { timer in
+        Timer.scheduledTimer(withTimeInterval: 2, repeats: false) { _ in
             UIView.animate(withDuration: 0.2) {
                 self.paidButton.alpha = 1
             }
@@ -140,12 +140,12 @@ final public class EmbeddedCodesCheckoutViewController: UIViewController {
             title = "Snabble.QRCode.didPay".localized()
         } else {
             title = String(format: "Snabble.QRCode.nextCode".localized(),
-                           self.pageControl.currentPage+2, self.codes.count)
+                           self.pageControl.currentPage + 2, self.codes.count)
         }
         self.paidButton.setTitle(title, for: .normal)
     }
 
-    @IBAction func paidButtonTapped(_ sender: UIButton) {
+    @IBAction private func paidButtonTapped(_ sender: UIButton) {
         if self.pageControl.currentPage != self.codes.count - 1 {
             self.pageControl.currentPage += 1
             let indexPath = IndexPath(item: pageControl.currentPage, section: 0)
@@ -205,11 +205,11 @@ extension EmbeddedCodesCheckoutViewController: UICollectionViewDataSource, UICol
     }
 
     public func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
+        // swiftlint:disable:next force_cast
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "qrCodeCell", for: indexPath) as! QRCodeCell
 
         let img = self.qrCode(with: self.codes[indexPath.row])
-        cell.imageView.image = img
-        cell.imageWidth.constant = img?.size.width ?? 0
+        cell.setImage(img)
 
         return cell
     }
@@ -218,7 +218,7 @@ extension EmbeddedCodesCheckoutViewController: UICollectionViewDataSource, UICol
         return self.itemSize
     }
 
-    @IBAction func pageControlTapped(_ pageControl: UIPageControl) {
+    @IBAction private func pageControlTapped(_ pageControl: UIPageControl) {
         if pageControl.currentPage < self.codes.count {
             let indexPath = IndexPath(item: pageControl.currentPage, section: 0)
             self.collectionView.scrollToItem(at: indexPath, at: .left, animated: true)
@@ -228,7 +228,7 @@ extension EmbeddedCodesCheckoutViewController: UICollectionViewDataSource, UICol
 
     // adjust the page control when the scrolling ends
     public func scrollViewDidEndDecelerating(_ scrollView: UIScrollView) {
-        let newPage = Int((scrollView.contentOffset.x + self.itemSize.width/2) / self.itemSize.width)
+        let newPage = Int((scrollView.contentOffset.x + self.itemSize.width / 2) / self.itemSize.width)
         self.pageControl.currentPage = newPage
         self.setButtonTitle()
     }

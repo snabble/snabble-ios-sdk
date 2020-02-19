@@ -8,10 +8,10 @@ import UIKit
 
 final class CheckoutPaymentMethodCell: UICollectionViewCell {
 
-    @IBOutlet weak var containerView: UIView!
-    @IBOutlet weak var icon: UIImageView!
-    @IBOutlet weak var label: UILabel!
-    @IBOutlet weak var centerYOffset: NSLayoutConstraint!
+    @IBOutlet private weak var containerView: UIView!
+    @IBOutlet private weak var icon: UIImageView!
+    @IBOutlet private weak var label: UILabel!
+    @IBOutlet private weak var centerYOffset: NSLayoutConstraint!
 
     var paymentMethod: PaymentMethod = .qrCodeOffline {
         didSet {
@@ -52,7 +52,7 @@ final class CheckoutPaymentMethodCell: UICollectionViewCell {
     override func prepareForReuse() {
         super.prepareForReuse()
         self.label.textColor = nil
-        
+
         self.containerView.layer.borderColor = self.borderColor.cgColor
     }
 
@@ -64,5 +64,3 @@ final class CheckoutPaymentMethodCell: UICollectionViewCell {
         }
     }
 }
-
-

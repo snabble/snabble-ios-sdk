@@ -7,7 +7,6 @@
 import Foundation
 import GRDB
 
-
 // MARK: - low-level db queries
 extension ProductDB {
 
@@ -198,6 +197,7 @@ extension ProductDB {
         Log.debug("update took \(elapsed)")
     }
 
+    // swiftlint:disable:next function_body_length
     private func productFromRow(_ dbQueue: DatabaseQueue, _ row: Row?, _ shopId: String?) -> Product? {
         guard
             let row = row,
@@ -232,29 +232,29 @@ extension ProductDB {
             encodingUnit = encodingOverride
         }
 
-        let p = Product(sku: sku,
-                        name: row["name"],
-                        description: row["description"],
-                        subtitle: row["subtitle"],
-                        imageUrl: row["imageUrl"],
-                        basePrice: priceRow["basePrice"],
-                        listPrice: priceRow["listPrice"],
-                        discountedPrice: priceRow["discountedPrice"],
-                        customerCardPrice: priceRow["customerCardPrice"],
-                        type: ProductType(rawValue: row["weighing"]),
-                        codes: codes,
-                        depositSku: depositSku,
-                        bundledSku: row["bundledSku"],
-                        isDeposit: row["isDeposit"] == 1,
-                        deposit: depositPrice,
-                        saleRestriction: SaleRestriction(row["saleRestriction"]),
-                        saleStop: row["saleStop"] ?? false,
-                        bundles: bundles,
-                        referenceUnit: referenceUnit,
-                        encodingUnit: encodingUnit,
-                        scanMessage: row["scanMessage"])
+        let product = Product(sku: sku,
+                              name: row["name"],
+                              description: row["description"],
+                              subtitle: row["subtitle"],
+                              imageUrl: row["imageUrl"],
+                              basePrice: priceRow["basePrice"],
+                              listPrice: priceRow["listPrice"],
+                              discountedPrice: priceRow["discountedPrice"],
+                              customerCardPrice: priceRow["customerCardPrice"],
+                              type: ProductType(rawValue: row["weighing"]),
+                              codes: codes,
+                              depositSku: depositSku,
+                              bundledSku: row["bundledSku"],
+                              isDeposit: row["isDeposit"] == 1,
+                              deposit: depositPrice,
+                              saleRestriction: SaleRestriction(row["saleRestriction"]),
+                              saleStop: row["saleStop"] ?? false,
+                              bundles: bundles,
+                              referenceUnit: referenceUnit,
+                              encodingUnit: encodingUnit,
+                              scanMessage: row["scanMessage"])
 
-        return p
+        return product
     }
 
     private func getPriceRowForSku(_ dbQueue: DatabaseQueue, _ sku: String, _ shopId: String) -> Row? {
@@ -290,13 +290,15 @@ extension ProductDB {
         let transmits = rawTransmits.components(separatedBy: ",")
         let units = rawUnits.components(separatedBy: ",")
 
-        assert(codes.count == templates.count); assert(codes.count == transmits.count); assert(codes.count == units.count);
+        assert(codes.count == templates.count)
+        assert(codes.count == transmits.count)
+        assert(codes.count == units.count)
 
         var scannableCodes = [ScannableCode]()
-        for i in 0 ..< codes.count {
-            let transmissionCode = transmits[i].count == 0 ? nil : transmits[i]
-            let c = ScannableCode(codes[i], templates[i], transmissionCode, Units.from(units[i]))
-            scannableCodes.append(c)
+        for idx in 0 ..< codes.count {
+            let transmissionCode = transmits[idx].isEmpty ? nil : transmits[idx]
+            let code = ScannableCode(codes[idx], templates[idx], transmissionCode, Units.from(units[idx]))
+            scannableCodes.append(code)
         }
         return scannableCodes
     }

@@ -52,11 +52,11 @@ public final class CreditCardEditViewController: UIViewController {
 
         super.init(nibName: nil, bundle: SnabbleBundle.main)
     }
-    
+
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
-    
+
     override public func viewDidLoad() {
         super.viewDidLoad()
 
@@ -157,7 +157,7 @@ public final class CreditCardEditViewController: UIViewController {
         }
 
         let alert = UIAlertController(title: nil, message: "Snabble.Payment.delete.message".localized(), preferredStyle: .alert)
-        alert.addAction(UIAlertAction(title: "Snabble.Yes".localized(), style: .destructive) { action in
+        alert.addAction(UIAlertAction(title: "Snabble.Yes".localized(), style: .destructive) { _ in
             PaymentMethodDetails.remove(at: index)
             self.analyticsDelegate?.track(.paymentMethodDeleted(self.brand?.rawValue ?? ""))
             self.navigationController?.popViewController(animated: true)
@@ -168,6 +168,7 @@ public final class CreditCardEditViewController: UIViewController {
 }
 
 extension CreditCardEditViewController: WKScriptMessageHandler {
+    // swiftlint:disable:next cyclomatic_complexity function_body_length
     public func userContentController(_ userContentController: WKUserContentController, didReceive message: WKScriptMessage) {
         guard
             message.name == "callbackHandler",
@@ -216,11 +217,9 @@ extension CreditCardEditViewController: WKScriptMessageHandler {
             self.analyticsDelegate?.track(.paymentMethodAdded(detail.rawMethod.displayName ?? ""))
             NotificationCenter.default.post(name: .paymentMethodsChanged, object: self)
             SnabbleAPI.deletePreauth(SnabbleUI.project, orderId)
-        }
-        else if failCode == "5993" {
+        } else if failCode == "5993" {
             NSLog("cancelled by user")
-        }
-        else {
+        } else {
             NSLog("unknown error \(failCode) \(failReason)")
         }
 
