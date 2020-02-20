@@ -402,10 +402,6 @@ public enum PaymentMethodDetails {
         return storage.read()
     }
 
-    public static var count: Int {
-        return read().count
-    }
-
     static func save(_ details: [PaymentMethodDetail]) {
         storage.save(details)
     }
