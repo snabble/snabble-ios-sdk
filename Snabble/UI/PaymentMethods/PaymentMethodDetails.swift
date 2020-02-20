@@ -214,7 +214,8 @@ struct CreditCardData: Codable, EncryptedPaymentData {
         self.brand = try container.decode(CreditCardBrand.self, forKey: .brand)
         self.expirationMonth = try container.decode(String.self, forKey: .expirationMonth)
         self.expirationYear = try container.decode(String.self, forKey: .expirationYear)
-        self.version = try container.decode(Int.self, forKey: .version)
+        let version = try container.decodeIfPresent(Int.self, forKey: .version)
+        self.version = version ?? CreditCardRequestOrigin.version
     }
 
     var expirationDate: String {
