@@ -155,8 +155,12 @@ struct CreditCardData: Codable, EncryptedPaymentData {
     let brand: CreditCardBrand
     let expirationMonth: String
     let expirationYear: String
+    let version: Int
 
     private struct CreditCardRequestOrigin: PaymentRequestOrigin {
+        // bump this when we add properties to that might require invaliding previous versions
+        static let version = 1
+
         let hostedDataID: String
         let hostedDataStoreID: String
         let cardType: String
@@ -164,7 +168,7 @@ struct CreditCardData: Codable, EncryptedPaymentData {
 
     enum CodingKeys: String, CodingKey {
         case encryptedPaymentData, serial, displayName, originType
-        case cardHolder, brand, expirationMonth, expirationYear
+        case cardHolder, brand, expirationMonth, expirationYear, version
     }
 
     init?(_ gatewayCert: Data?, _ cardHolder: String, _ cardNumber: String, _ brand: String, _ expMonth: String, _ expYear: String, _ hostedDataId: String, _ storeId: String) {
@@ -176,6 +180,7 @@ struct CreditCardData: Codable, EncryptedPaymentData {
             return nil
         }
 
+        self.version = CreditCardRequestOrigin.version
         self.displayName = cardNumber
         self.cardHolder = cardHolder
         self.brand = brand
@@ -209,6 +214,7 @@ struct CreditCardData: Codable, EncryptedPaymentData {
         self.brand = try container.decode(CreditCardBrand.self, forKey: .brand)
         self.expirationMonth = try container.decode(String.self, forKey: .expirationMonth)
         self.expirationYear = try container.decode(String.self, forKey: .expirationYear)
+        self.version = try container.decode(Int.self, forKey: .version)
     }
 
     var expirationDate: String {
