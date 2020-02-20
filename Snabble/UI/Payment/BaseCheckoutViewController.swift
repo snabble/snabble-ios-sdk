@@ -102,7 +102,6 @@ public class BaseCheckoutViewController: UIViewController {
         }
 
         self.setSpinnerAppearance()
-        self.spinnerWrapper.isHidden = false
     }
 
     override public func viewDidAppear(_ animated: Bool) {
