@@ -140,14 +140,6 @@ public enum PaymentMethod {
             return nil
         }
     }
-
-    public var displayName: String? {
-        if let dataName = self.data?.displayName {
-            return dataName
-        }
-
-        return self.rawMethod.displayName
-    }
 }
 
 public enum PaymentState: String, Decodable {

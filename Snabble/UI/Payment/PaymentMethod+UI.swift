@@ -65,6 +65,14 @@ extension PaymentMethod {
         processor.hidesBottomBarWhenPushed = true
         return processor
     }
+
+    public var displayName: String? {
+        if let dataName = self.data?.displayName {
+            return dataName
+        }
+
+        return self.rawMethod.displayName
+    }
 }
 
 /// Manage the payment process
