@@ -8,7 +8,7 @@ import GRDB
 import Zip
 
 /// keys of well-known entries in the metadata table
-public struct MetadataKeys {
+public enum MetadataKeys {
     public static let revision = "revision"
     public static let schemaVersionMajor = "schemaVersionMajor"
     public static let schemaVersionMinor = "schemaVersionMinor"
@@ -85,7 +85,7 @@ public protocol ProductProvider: class {
     /// - parameter completion: This is called asynchronously on the main thread after the automatic database update check has finished
     ///   (i.e., only if `update` is true)
     /// - parameter dataAvailable: indicates if new data is available
-    func setup(update: Bool, forceFullDownload: Bool, completion: @escaping ((_ dataAvailable: AppDbAvailability) -> ()))
+    func setup(update: Bool, forceFullDownload: Bool, completion: @escaping ((_ dataAvailable: AppDbAvailability) -> Void))
 
     /// Attempt to update the product database
     ///
@@ -93,14 +93,14 @@ public protocol ProductProvider: class {
     /// - parameter completion: This is called asynchronously on the main thread after the automatic database update check has finished
     ///   (i.e., only if `update` is true)
     /// - parameter dataAvailable: indicates if new data is available
-    func updateDatabase(forceFullDownload: Bool, completion: @escaping (_ dataAvailable: AppDbAvailability) -> ())
+    func updateDatabase(forceFullDownload: Bool, completion: @escaping (_ dataAvailable: AppDbAvailability) -> Void)
 
     /// attempt to resume a previously interrupted update of the product database
     /// calling this method when there is no previous resumable download has no effect.
     ///
     /// - parameter completion: This is called asynchronously on the main thread after the database update check has finished
     /// - parameter dataAvailable: indicates if new data is available
-    func resumeIncompleteUpdate(completion: @escaping (_ dataAvailable: AppDbAvailability) -> ())
+    func resumeIncompleteUpdate(completion: @escaping (_ dataAvailable: AppDbAvailability) -> Void)
 
     /// stop the currently running product database update, if one is in progress.
     ///
@@ -151,7 +151,7 @@ public protocol ProductProvider: class {
     ///   - sku: the sku to look for
     ///   - forceDownload: if true, skip the lookup in the local DB
     ///   - result: the product found or the error
-    func productBySku(_ sku: String, _ shopId: String, forceDownload: Bool, completion: @escaping (_ result: Result<Product, SnabbleError>) -> () )
+    func productBySku(_ sku: String, _ shopId: String, forceDownload: Bool, completion: @escaping (_ result: Result<Product, SnabbleError>) -> Void )
 
     /// asynchronously get a product by (one of) its scannable codes
     ///
@@ -159,7 +159,8 @@ public protocol ProductProvider: class {
     ///   - codes: the code/template pairs to look for
     ///   - forceDownload: if true, skip the lookup in the local DB
     ///   - result: the lookup result or the error
-    func productByScannableCodes(_ codes: [(String, String)], _ shopId: String, forceDownload: Bool, completion: @escaping (_ result: Result<ScannedProduct, SnabbleError>) -> () )
+    func productByScannableCodes(_ codes: [(String, String)], _ shopId: String, forceDownload: Bool,
+                                 completion: @escaping (_ result: Result<ScannedProduct, SnabbleError>) -> Void )
 
     var revision: Int64 { get }
     var lastProductUpdate: Date { get }
@@ -168,18 +169,21 @@ public protocol ProductProvider: class {
 
     var schemaVersionMajor: Int { get }
     var schemaVersionMinor: Int { get }
+
+    /// use only during development/debugging
+    func removeDatabase()
 }
 
 public extension ProductProvider {
-    func setup(completion: @escaping (AppDbAvailability) -> () ) {
+    func setup(completion: @escaping (AppDbAvailability) -> Void ) {
         self.setup(update: true, forceFullDownload: false, completion: completion)
     }
 
-    func updateDatabase(completion: @escaping (AppDbAvailability) -> ()) {
+    func updateDatabase(completion: @escaping (AppDbAvailability) -> Void) {
         self.updateDatabase(forceFullDownload: false, completion: completion)
     }
 
-    func productBySku(_ sku: String, _ shopId: String, completion: @escaping (_ result: Result<Product, SnabbleError>) -> () ) {
+    func productBySku(_ sku: String, _ shopId: String, completion: @escaping (_ result: Result<Product, SnabbleError>) -> Void ) {
         self.productBySku(sku, shopId, forceDownload: false, completion: completion)
     }
 
@@ -191,11 +195,12 @@ public extension ProductProvider {
         return self.productsByName(name, filterDeposits: true)
     }
 
-    func productByScannableCodes(_ codes: [(String, String)], _ shopId: String, completion: @escaping (_ result: Result<ScannedProduct, SnabbleError>) -> () ) {
+    func productByScannableCodes(_ codes: [(String, String)], _ shopId: String, completion: @escaping (_ result: Result<ScannedProduct, SnabbleError>) -> Void ) {
         self.productByScannableCodes(codes, shopId, forceDownload: false, completion: completion)
     }
-}
 
+    func removeDatabase() { }
+}
 
 final class ProductDB: ProductProvider {
     internal let supportedSchemaVersion = "1"
@@ -207,17 +212,17 @@ final class ProductDB: ProductProvider {
     let project: Project
 
     /// revision of the current local product database
-    private(set) public var revision: Int64 = 0
+    public private(set) var revision: Int64 = 0
 
     /// major schema version of the current local database
-    private(set) public var schemaVersionMajor = 0
+    public private(set) var schemaVersionMajor = 0
     /// minor schema version of the current local database
-    private(set) public var schemaVersionMinor = 0
+    public private(set) var schemaVersionMinor = 0
 
     /// date of last successful product update (i.e, whenever we last got a HTTP status 200 or 304)
-    private(set) public var lastProductUpdate = Date(timeIntervalSinceReferenceDate: 0)
+    public private(set) var lastProductUpdate = Date(timeIntervalSinceReferenceDate: 0)
 
-    private(set) public var appDbAvailability = AppDbAvailability.unknown
+    public private(set) var appDbAvailability = AppDbAvailability.unknown
 
     private var updateInProgress = false
 
@@ -251,7 +256,7 @@ final class ProductDB: ProductProvider {
     ///   - completion: This is called asynchronously on the main thread after the automatic database update check has finished
     ///     (i.e., only if `update` is true)
     ///   - dataAvailable: indicates if the database was updated
-    public func setup(update: Bool = true, forceFullDownload: Bool = false, completion: @escaping (_ dataAvailable: AppDbAvailability) -> () ) {
+    public func setup(update: Bool = true, forceFullDownload: Bool = false, completion: @escaping (_ dataAvailable: AppDbAvailability) -> Void ) {
         self.db = self.openDb()
 
         if let seedRevision = self.config.seedRevision, seedRevision > self.revision {
@@ -275,7 +280,7 @@ final class ProductDB: ProductProvider {
     ///   - forceFullDownload: if true, force a full download of the product database
     ///   - completion: This is called asynchronously on the main thread, after the update check has finished.
     ///   - dataAvailable: indicates if new data is available
-    public func updateDatabase(forceFullDownload: Bool, completion: @escaping (_ dataAvailable: AppDbAvailability)->() ) {
+    public func updateDatabase(forceFullDownload: Bool, completion: @escaping (_ dataAvailable: AppDbAvailability) -> Void ) {
         let schemaVersion = "\(self.schemaVersionMajor).\(self.schemaVersionMinor)"
         let revision = (forceFullDownload || !self.hasDatabase()) ? 0 : self.revision
 
@@ -289,11 +294,11 @@ final class ProductDB: ProductProvider {
         }
     }
 
-    public func resumeIncompleteUpdate(completion: @escaping (_ dataAvailable: AppDbAvailability)->() ) {
+    public func resumeIncompleteUpdate(completion: @escaping (_ dataAvailable: AppDbAvailability) -> Void ) {
         guard self.appDbAvailability == .incomplete else {
             return
         }
-        
+
         guard self.resumeData != nil else {
             Log.warn("resumeAbortedUpdate called without resumeData?!?")
             return
@@ -315,7 +320,7 @@ final class ProductDB: ProductProvider {
         }
     }
 
-    private func processAppDbResponse(_ dbResponse: AppDbResponse, _ completion: @escaping (_ dataAvailable: AppDbAvailability)->() ) {
+    private func processAppDbResponse(_ dbResponse: AppDbResponse, _ completion: @escaping (_ dataAvailable: AppDbAvailability) -> Void ) {
         DispatchQueue.global(qos: .userInitiated).async {
             let tempDbPath = self.dbPathname(temporary: true)
             let performSwitch: Bool
@@ -378,6 +383,17 @@ final class ProductDB: ProductProvider {
                 extendedResult = dbError.extendedResultCode.rawValue
             }
             self.logError("create FTS failed: error \(error), extended error \(extendedResult)")
+        }
+    }
+
+    public func removeDatabase() {
+        self.db = nil
+
+        let fileManager = FileManager.default
+        let dbFile = self.dbPathname()
+
+        if fileManager.fileExists(atPath: dbFile) {
+            try? fileManager.removeItem(atPath: dbFile)
         }
     }
 
@@ -603,7 +619,7 @@ final class ProductDB: ProductProvider {
     }
 
     private func executeInitialSQL() {
-        guard _isDebugAssertConfiguration(), let statements = self.config.initialSQL, statements.count > 0 else {
+        guard SnabbleAPI.debugMode, let statements = self.config.initialSQL, !statements.isEmpty else {
             return
         }
 
@@ -659,7 +675,7 @@ extension ProductDB {
     /// - Parameter skus: SKUs of the products to get
     /// - Returns: an array of `Product`
     public func productsBySku(_ skus: [String], _ shopId: String) -> [Product] {
-        guard let db = self.db, skus.count > 0 else {
+        guard let db = self.db, !skus.isEmpty else {
             return []
         }
 
@@ -741,7 +757,7 @@ extension ProductDB {
     ///   - forceDownload: if true, skip the lookup in the local DB
     ///   - product: the product found, or nil.
     ///   - error: whether an error occurred during the lookup.
-    public func productBySku(_ sku: String, _ shopId: String, forceDownload: Bool, completion: @escaping (_ result: Result<Product, SnabbleError>) -> ()) {
+    public func productBySku(_ sku: String, _ shopId: String, forceDownload: Bool, completion: @escaping (_ result: Result<Product, SnabbleError>) -> Void) {
         if self.lookupLocally(forceDownload), let product = self.productBySku(sku, shopId) {
             DispatchQueue.main.async {
                 completion(Result.success(product))
@@ -766,7 +782,8 @@ extension ProductDB {
     ///   - forceDownload: if true, skip the lookup in the local DB
     ///   - product: the product found, or nil.
     ///   - error: whether an error occurred during the lookup.
-    public func productByScannableCodes(_ codes: [(String, String)], _ shopId: String, forceDownload: Bool, completion: @escaping (_ result: Result<ScannedProduct, SnabbleError>) -> ()) {
+    public func productByScannableCodes(_ codes: [(String, String)], _ shopId: String, forceDownload: Bool,
+                                        completion: @escaping (_ result: Result<ScannedProduct, SnabbleError>) -> Void) {
         if self.lookupLocally(forceDownload), let result = self.productByScannableCodes(codes, shopId) {
             DispatchQueue.main.async {
                 completion(Result.success(result))

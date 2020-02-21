@@ -7,13 +7,15 @@
 import UIKit
 
 internal class EmptyStateView: NibView {
+    // swiftlint:disable private_outlet
     @IBOutlet weak var textLabel: UILabel!
     @IBOutlet weak var button1: UIButton!
     @IBOutlet weak var button2: UIButton!
+    // swiftlint:enable private_outlet
 
-    typealias Handler = (UIButton) -> ()
+    typealias Handler = (UIButton) -> Void
     private let tapHandler: Handler
-    
+
     init(_ tapHandler: @escaping Handler) {
         self.tapHandler = tapHandler
         super.init(frame: CGRect.zero)
@@ -23,11 +25,11 @@ internal class EmptyStateView: NibView {
         self.button1.tag = 0
         self.button2.tag = 1
     }
-    
+
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
-    
+
     @IBAction private func buttonTapped(_ sender: UIButton) {
         self.tapHandler(sender)
     }

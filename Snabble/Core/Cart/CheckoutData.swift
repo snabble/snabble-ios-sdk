@@ -27,7 +27,7 @@ public struct SignedCheckoutInfo: Decodable {
     }
 
     // not part of the Snabble API, only used internally
-    var rawJson: [String: Any]? = nil
+    var rawJson: [String: Any]?
 
     // only used for the embedded codes offline payment
     init(_ paymentMethods: [RawPaymentMethod]) {
@@ -51,23 +51,24 @@ public enum RawPaymentMethod: String, CaseIterable, Decodable {
     case creditCardVisa         // VISA via Telecash/First Data
     case creditCardMastercard   // MASTERCARD via Telecash/First Data
     case externalBilling        // external billig, e.g. via an employee id
+    case gatekeeperTerminal
 
     /// true if this method reqires additional data, like an IBAN or a credit card number
-    public var dataRequired: Bool {
+    var dataRequired: Bool {
         switch self {
         case .deDirectDebit, .creditCardVisa, .creditCardMastercard, .externalBilling:
             return true
-        case .qrCodePOS, .qrCodeOffline:
+        case .qrCodePOS, .qrCodeOffline, .gatekeeperTerminal:
             return false
         }
     }
 
-    /// true if this method can be added in advance by the app
-    public var addableInAdvance: Bool {
+    /// true if this method can be added/edited through SDK methods
+    var editable: Bool {
         switch self {
         case .deDirectDebit, .creditCardVisa, .creditCardMastercard:
             return true
-        case .qrCodePOS, .qrCodeOffline, .externalBilling:
+        case .qrCodePOS, .qrCodeOffline, .externalBilling, .gatekeeperTerminal:
             return false
         }
     }
@@ -77,7 +78,7 @@ public enum RawPaymentMethod: String, CaseIterable, Decodable {
         switch self {
         case .qrCodeOffline:
             return true
-        case .qrCodePOS, .deDirectDebit, .creditCardVisa, .creditCardMastercard, .externalBilling:
+        case .qrCodePOS, .deDirectDebit, .creditCardVisa, .creditCardMastercard, .externalBilling, .gatekeeperTerminal:
             return false
         }
     }
@@ -89,7 +90,7 @@ public struct PaymentMethodDescription: Decodable {
         case method = "id"
         case acceptedOriginTypes
     }
-    
+
     public let method: RawPaymentMethod
     public let acceptedOriginTypes: [AcceptedOriginType]?
 }
@@ -115,6 +116,7 @@ public enum PaymentMethod {
     case visa(PaymentMethodData?)
     case mastercard(PaymentMethodData?)
     case externalBilling(PaymentMethodData?)
+    case gatekeeperTerminal
 
     public var rawMethod: RawPaymentMethod {
         switch self {
@@ -124,6 +126,7 @@ public enum PaymentMethod {
         case .visa: return .creditCardVisa
         case .mastercard: return .creditCardMastercard
         case .externalBilling: return .externalBilling
+        case .gatekeeperTerminal: return .gatekeeperTerminal
         }
     }
 
@@ -133,13 +136,17 @@ public enum PaymentMethod {
             return data
         case .externalBilling(let data):
             return data
-        case .qrCodePOS, .qrCodeOffline:
+        case .qrCodePOS, .qrCodeOffline, .gatekeeperTerminal:
             return nil
         }
     }
 
     public var displayName: String? {
-        return self.data?.displayName
+        if let dataName = self.data?.displayName {
+            return dataName
+        }
+
+        return self.rawMethod.displayName
     }
 }
 
@@ -286,10 +293,10 @@ struct Cart: Encodable {
         let loyaltyCard: String
 
         init?(loyaltyCard: String?) {
-            guard let c = loyaltyCard else {
+            guard let card = loyaltyCard else {
                 return nil
             }
-            self.loyaltyCard = c
+            self.loyaltyCard = card
         }
     }
 }

@@ -69,7 +69,7 @@ final class KeyboardObserver: NSObject {
         guard let info = KeyboardInfo(notification: notification) else {
             return
         }
-        
+
         self.handler.keyboardWillHide(info)
     }
 }
@@ -77,14 +77,14 @@ final class KeyboardObserver: NSObject {
 extension UITextField {
 
     @discardableResult
-    func addDoneButton() -> UIBarButtonItem {
+    func addDoneButton() -> UIToolbar {
         let keyboardToolbar = UIToolbar()
         keyboardToolbar.sizeToFit()
         let flexSpace = UIBarButtonItem(barButtonSystemItem: .flexibleSpace, target: nil, action: nil)
         let doneButton = UIBarButtonItem(barButtonSystemItem: .done, target: self, action: #selector(UITextField.endEditing(_:)))
         keyboardToolbar.items = [ flexSpace, doneButton ]
         self.inputAccessoryView = keyboardToolbar
-        return doneButton
+        return keyboardToolbar
     }
 
 }

@@ -7,9 +7,9 @@
 import Foundation
 
 // MARK: send events
-struct CartEvent {
+enum CartEvent {
     static func sessionStart(_ cart: ShoppingCart) {
-        guard cart.shopId != "" else {
+        guard !cart.shopId.isEmpty else {
             return
         }
 
@@ -22,7 +22,7 @@ struct CartEvent {
     }
 
     static func sessionEnd(_ cart: ShoppingCart) {
-        guard cart.shopId != "" else {
+        guard !cart.shopId.isEmpty else {
             return
         }
 
@@ -35,7 +35,7 @@ struct CartEvent {
     }
 
     static func cart(_ cart: ShoppingCart) {
-        if cart.shopId == "" || (cart.items.count == 0 && cart.session == "") {
+        if cart.shopId.isEmpty || (cart.items.isEmpty && cart.session.isEmpty) {
             return
         }
 

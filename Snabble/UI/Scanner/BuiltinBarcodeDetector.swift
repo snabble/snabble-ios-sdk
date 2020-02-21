@@ -38,7 +38,7 @@ extension AVMetadataObject.ObjectType {
 
 public final class BuiltinBarcodeDetector: NSObject, BarcodeDetector {
 
-    public var delegate: BarcodeDetectorDelegate?
+    public weak var delegate: BarcodeDetectorDelegate?
 
     public var scanFormats: [ScanFormat]
 
@@ -60,7 +60,7 @@ public final class BuiltinBarcodeDetector: NSObject, BarcodeDetector {
     private var decoration: BarcodeDetectorDecoration?
     private var frameTimer: Timer?
 
-    required public init(_ appearance: BarcodeDetectorAppearance) {
+    public required init(_ appearance: BarcodeDetectorAppearance) {
         self.appearance = appearance
         self.sessionQueue = DispatchQueue(label: "io.snabble.scannerQueue")
         self.captureSession = AVCaptureSession()
@@ -121,6 +121,10 @@ public final class BuiltinBarcodeDetector: NSObject, BarcodeDetector {
     }
 
     public func startScanning() {
+        guard self.decoration != nil else {
+            return
+        }
+
         self.sessionQueue.async {
             if !self.captureSession.isRunning {
                 self.captureSession.startRunning()
@@ -142,6 +146,10 @@ public final class BuiltinBarcodeDetector: NSObject, BarcodeDetector {
     }
 
     public func stopScanning() {
+        guard self.decoration != nil else {
+            return
+        }
+
         self.sessionQueue.async {
             self.captureSession.stopRunning()
         }
@@ -189,17 +197,16 @@ public final class BuiltinBarcodeDetector: NSObject, BarcodeDetector {
             let alert = UIAlertController(title: title, message: msg, preferredStyle: .alert)
             alert.addAction(UIAlertAction(title: "Snabble.Cancel".localized(), style: .cancel) { _ in
             })
-            alert.addAction(UIAlertAction(title: "Snabble.Settings".localized(), style: .default) { action in
+            alert.addAction(UIAlertAction(title: "Snabble.Settings".localized(), style: .default) { _ in
                 UIApplication.shared.open(URL(string: UIApplication.openSettingsURLString)!)
             })
             self.delegate?.present(alert, animated: true, completion: nil)
 
         case .notDetermined:
-            AVCaptureDevice.requestAccess(for: .video) { granted in }
+            AVCaptureDevice.requestAccess(for: .video) { _ in }
 
         default:
             assertionFailure("unhandled av auth status \(currentStatus.rawValue)")
-            break
         }
     }
 
@@ -278,7 +285,7 @@ extension BuiltinBarcodeDetector: AVCaptureMetadataOutputObjectsDelegate {
             }
 
             self.frameTimer?.invalidate()
-            self.frameTimer = Timer.scheduledTimer(withTimeInterval: 1.5, repeats: false) { timer in
+            self.frameTimer = Timer.scheduledTimer(withTimeInterval: 1.5, repeats: false) { _ in
                 self.decoration?.frameView.isHidden = true
             }
         }
@@ -309,9 +316,11 @@ public struct BarcodeDetectorDecoration {
     /// add the standard overlay decoration for the product scanner
     ///
     /// - Parameters:
-    ///   - cameraPreview: the view to add the decoration to. Note that the decoration is added based on that view's frame/bounds, and therefore this should only be called after the view has been laid out.
+    ///   - cameraPreview: the view to add the decoration to. Note that the decoration is added based on that view's frame/bounds,
+    ///     and therefore this should only be called after the view has been laid out.
     ///   - appearance: the appearance to use
     /// - Returns: a `BarcodeDetectorDecoration` instance that contains all views and buttons that were created
+    // swiftlint:disable:next function_body_length
     public static func add(to cameraPreview: UIView, appearance: BarcodeDetectorAppearance) -> BarcodeDetectorDecoration {
         // the reticle itself
         let reticle = UIView(frame: .zero)
@@ -368,7 +377,7 @@ public struct BarcodeDetectorDecoration {
 
         // torch button
         let torchButton = UIButton(type: .custom)
-        torchButton.frame = CGRect(origin: CGPoint(x: 48+16, y: 0), size: CGSize(width: 48, height: 48))
+        torchButton.frame = CGRect(origin: CGPoint(x: 48 + 16, y: 0), size: CGSize(width: 48, height: 48))
         torchButton.setImage(appearance.torchButtonImage, for: .normal)
         torchButton.layer.cornerRadius = 8
         torchButton.layer.borderColor = appearance.borderColor.cgColor
@@ -377,8 +386,8 @@ public struct BarcodeDetectorDecoration {
 
         // cart button
         let cartButton = UIButton(type: .system)
-        let cartWidth = cameraPreview.frame.width - 2*48 - 4*16
-        cartButton.frame = CGRect(origin: CGPoint(x: 48+16+48+16, y: 0), size: CGSize(width: cartWidth, height: 48))
+        let cartWidth = cameraPreview.frame.width - 2 * 48 - 4 * 16
+        cartButton.frame = CGRect(origin: CGPoint(x: 48 + 16 + 48 + 16, y: 0), size: CGSize(width: cartWidth, height: 48))
         cartButton.layer.cornerRadius = 8
         cartButton.backgroundColor = appearance.backgroundColor
         cartButton.setTitleColor(appearance.textColor, for: .normal)

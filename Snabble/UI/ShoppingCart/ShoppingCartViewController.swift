@@ -49,7 +49,7 @@ enum CartTableEntry {
     // sums up the total discounts
     case discount(Int)
 }
- 
+
 public final class ShoppingCartViewController: UIViewController {
 
     @IBOutlet private weak var tableView: UITableView!
@@ -79,7 +79,7 @@ public final class ShoppingCartViewController: UIViewController {
 
     private var knownImages = Set<String>()
     internal var showImages = false
-    
+
     public init(_ cart: ShoppingCart, delegate: ShoppingCartDelegate) {
         super.init(nibName: nil, bundle: SnabbleBundle.main)
 
@@ -145,7 +145,7 @@ public final class ShoppingCartViewController: UIViewController {
         // find all discounts
         if let lineItems = cart.backendCartInfo?.lineItems {
             let discounts = lineItems.filter { $0.type == .discount }
-            if discounts.count > 0 {
+            if !discounts.isEmpty {
                 let sum = discounts.reduce(0) { $0 + $1.amount * ($1.price ?? 0) }
                 let item = CartTableEntry.discount(sum)
                 self.items.append(item)
@@ -157,7 +157,7 @@ public final class ShoppingCartViewController: UIViewController {
         self.showImages = imgIndex != nil
     }
 
-    required public init?(coder aDecoder: NSCoder) {
+    public required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
 
@@ -187,11 +187,13 @@ public final class ShoppingCartViewController: UIViewController {
 
         self.checkoutButton.titleLabel?.font = UIFont.monospacedDigitSystemFont(ofSize: 17, weight: .semibold)
         self.checkoutButton.makeSnabbleButton()
+
+        SnabbleUI.registerForAppearanceChange(self)
     }
 
     override public func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        
+
         self.updateView()
     }
 
@@ -211,7 +213,7 @@ public final class ShoppingCartViewController: UIViewController {
             CartEvent.cart(self.shoppingCart)
         }
     }
-    
+
     override public func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
         // turn off table editing, and re-enable everything that is disabled while editing
@@ -225,7 +227,7 @@ public final class ShoppingCartViewController: UIViewController {
         let items = self.items.count
         navItem.rightBarButtonItem = items == 0 ? nil : self.editButtonItem
     }
-    
+
     private func setDeleteButton() {
         let navItem = self.navigationItem
         navItem.leftBarButtonItem = self.isEditing ? self.trashButton : nil
@@ -241,11 +243,11 @@ public final class ShoppingCartViewController: UIViewController {
         self.updateTotals()
         self.getMissingImages()
 
-        if self.shoppingCart?.items.count == 0 && self.shoppingCart.backupAvailable {
+        if self.shoppingCart?.items.isEmpty == true && self.shoppingCart.backupAvailable {
             self.emptyState?.button1.setTitle("Snabble.Shoppingcart.emptyState.restartButtonTitle".localized(), for: .normal)
             self.emptyState?.button2.isHidden = false
             let restoreInterval: TimeInterval = 5 * 60
-            self.restoreTimer = Timer.scheduledTimer(withTimeInterval: restoreInterval, repeats: false) { [weak self] timer in
+            self.restoreTimer = Timer.scheduledTimer(withTimeInterval: restoreInterval, repeats: false) { [weak self] _ in
                 UIView.animate(withDuration: 0.2) {
                     self?.emptyState?.button1.setTitle("Snabble.Shoppingcart.emptyState.buttonTitle".localized(), for: .normal)
                     self?.emptyState?.button2.isHidden = true
@@ -272,7 +274,7 @@ public final class ShoppingCartViewController: UIViewController {
             guard let url = URL(string: img) else {
                 continue
             }
-            let task = URLSession.shared.dataTask(with: url) { _,_,_ in }
+            let task = URLSession.shared.dataTask(with: url) { _, _, _ in }
             task.resume()
         }
         self.knownImages = images
@@ -286,8 +288,20 @@ public final class ShoppingCartViewController: UIViewController {
     }
 
     @objc private func trashButtonTapped(_ sender: UIBarButtonItem) {
+        self.showDeleteCartAlert()
+    }
+
+    @objc private func handleRefresh(_ sender: Any) {
+        self.shoppingCart.createCheckoutInfo(userInitiated: true) { _ in
+            self.tableView.refreshControl?.endRefreshing()
+            self.tableView.reloadData()
+            self.updateTotals()
+        }
+    }
+
+    public func showDeleteCartAlert() {
         let alert = UIAlertController(title: "Snabble.Shoppingcart.removeItems".localized(), message: nil, preferredStyle: .alert)
-        alert.addAction(UIAlertAction(title: "Snabble.Yes".localized(), style: .destructive) { action in
+        alert.addAction(UIAlertAction(title: "Snabble.Yes".localized(), style: .destructive) { _ in
             self.delegate.track(.deletedEntireCart)
             self.shoppingCart.removeAll()
             self.updateView()
@@ -295,14 +309,6 @@ public final class ShoppingCartViewController: UIViewController {
         alert.addAction(UIAlertAction(title: "Snabble.No".localized(), style: .cancel, handler: nil))
 
         self.present(alert, animated: true)
-    }
-
-    @objc private func handleRefresh(_ sender: Any) {
-        self.shoppingCart.createCheckoutInfo(userInitiated: true) { success in
-            self.tableView.refreshControl?.endRefreshing()
-            self.tableView.reloadData()
-            self.updateTotals()
-        }
     }
 
     private func updateView(at row: Int? = nil) {
@@ -319,16 +325,15 @@ public final class ShoppingCartViewController: UIViewController {
                     self.tableView.contentOffset = offset
                 }
             } else {
-                if self.items.count > 0 {
+                if !self.items.isEmpty {
                     self.tableView.reloadData()
                 }
             }
         }
 
-
         self.setEditButton()
         self.setDeleteButton()
-        self.emptyState.isHidden = self.items.count > 0
+        self.emptyState.isHidden = !self.items.isEmpty
 
         // ugly workaround for visual glitch :(
         let items = self.items.count
@@ -341,7 +346,7 @@ public final class ShoppingCartViewController: UIViewController {
         self.updateTotals()
     }
 
-    @IBAction func checkoutTapped(_ sender: UIButton) {
+    @IBAction private func checkoutTapped(_ sender: UIButton) {
         self.startCheckout()
     }
 
@@ -384,7 +389,7 @@ public final class ShoppingCartViewController: UIViewController {
 
                     // app didn't handle the error. see if the project has a offline-capable payment method
                     let offlineMethods = SnabbleUI.project.paymentMethods.filter { $0.offline }
-                    if offlineMethods.count > 0 {
+                    if !offlineMethods.isEmpty {
                         let info = SignedCheckoutInfo(offlineMethods)
                         self.delegate.gotoPayment(info, self.shoppingCart)
                     } else {
@@ -428,26 +433,26 @@ public final class ShoppingCartViewController: UIViewController {
     }
 
     public func updateTotals() {
-        let count = self.shoppingCart.numberOfProducts
+        let numProducts = self.shoppingCart.numberOfProducts
 
-        self.tabBarItem.image = UIImage.fromBundle(count == 0 ? "SnabbleSDK/icon-cart-inactive-empty" : "SnabbleSDK/icon-cart-inactive-full")
+        self.tabBarItem.image = UIImage.fromBundle(numProducts == 0 ? "SnabbleSDK/icon-cart-inactive-empty" : "SnabbleSDK/icon-cart-inactive-full")
 
         let formatter = PriceFormatter(SnabbleUI.project)
         let title: String
 
         /// workaround for backend giving us 0 as price for price-less products :(
         let nilPrice: Bool
-        if let items = self.shoppingCart.backendCartInfo?.lineItems, items.first(where: { $0.totalPrice == nil} ) != nil {
+        if let items = self.shoppingCart.backendCartInfo?.lineItems, items.first(where: { $0.totalPrice == nil }) != nil {
             nilPrice = true
         } else {
             nilPrice = false
         }
 
         let totalPrice = nilPrice ? nil : (self.shoppingCart.backendCartInfo?.totalPrice ?? self.shoppingCart.total)
-        if let total = totalPrice, count > 0 {
+        if let total = totalPrice, numProducts > 0 {
             let formattedTotal = formatter.format(total)
-            let fmt = count == 1 ? "Snabble.Shoppingcart.buyProducts.one" : "Snabble.Shoppingcart.buyProducts"
-            title = String(format: fmt.localized(), count, formattedTotal)
+            let fmt = numProducts == 1 ? "Snabble.Shoppingcart.buyProducts.one" : "Snabble.Shoppingcart.buyProducts"
+            title = String(format: fmt.localized(), numProducts, formattedTotal)
             self.checkCheckoutLimits(total)
         } else {
             title = "Snabble.Shoppingcart.buyProducts.now".localized()
@@ -458,7 +463,7 @@ public final class ShoppingCartViewController: UIViewController {
             self.checkoutButton?.layoutIfNeeded()
         }
 
-        self.checkoutButton?.isHidden = count == 0
+        self.checkoutButton?.isHidden = numProducts == 0
     }
 
     private var notAllMethodsAvailableShown = false
@@ -498,7 +503,7 @@ public final class ShoppingCartViewController: UIViewController {
         }
 
         let alert = UIAlertController(title: "Snabble.limitsAlert.title".localized(), message: msg, preferredStyle: .alert)
-        alert.addAction(UIAlertAction(title: "Snabble.OK".localized(), style: .default) { action in
+        alert.addAction(UIAlertAction(title: "Snabble.OK".localized(), style: .default) { _ in
             self.limitAlert = nil
         })
         UIApplication.topViewController()?.present(alert, animated: true)
@@ -522,11 +527,11 @@ extension ShoppingCartViewController: ShoppingCartTableDelegate {
         let msg = String(format: "Snabble.Shoppingcart.removeItem".localized(), product.name)
         let alert = UIAlertController(title: nil, message: msg, preferredStyle: .alert)
 
-        alert.addAction(UIAlertAction(title: "Snabble.Yes".localized(), style: .destructive) { action in
+        alert.addAction(UIAlertAction(title: "Snabble.Yes".localized(), style: .destructive) { _ in
             self.deleteRow(row)
         })
 
-        alert.addAction(UIAlertAction(title: "Snabble.No".localized(), style: .cancel) { action in
+        alert.addAction(UIAlertAction(title: "Snabble.No".localized(), style: .cancel) { _ in
             self.shoppingCart.setQuantity(1, at: row)
             let indexPath = IndexPath(row: row, section: 0)
             self.tableView.reloadRows(at: [indexPath], with: .none)
@@ -554,11 +559,12 @@ extension ShoppingCartViewController: UITableViewDelegate, UITableViewDataSource
     }
 
     public func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        // swiftlint:disable:next force_cast
         let cell = tableView.dequeueReusableCell(withIdentifier: self.itemCellIdentifier, for: indexPath) as! ShoppingCartTableCell
         if let custom = self.customAppearance {
             cell.setCustomAppearance(custom)
         }
-        
+
         guard indexPath.row < self.items.count else {
             return cell
         }

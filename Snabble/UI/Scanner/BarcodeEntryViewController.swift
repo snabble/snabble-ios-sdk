@@ -6,15 +6,15 @@
 
 import UIKit
 
-final public class BarcodeEntryViewController: UIViewController {
+public final class BarcodeEntryViewController: UIViewController {
 
-    @IBOutlet weak var tableView: UITableView!
-    @IBOutlet weak var searchBar: UISearchBar!
-    @IBOutlet weak var bottomMargin: NSLayoutConstraint!
+    @IBOutlet private weak var tableView: UITableView!
+    @IBOutlet private weak var searchBar: UISearchBar!
+    @IBOutlet private weak var bottomMargin: NSLayoutConstraint!
 
     private weak var productProvider: ProductProvider!
 
-    private var completion: ((String, String?)->Void)!
+    private var completion: ((String, String?) -> Void)!
 
     private var filteredProducts = [Product]()
     private var searchText = ""
@@ -23,7 +23,7 @@ final public class BarcodeEntryViewController: UIViewController {
     private var emptyState: EmptyStateView!
     private var showSku = false
 
-    public init(_ productProvider: ProductProvider, delegate: AnalyticsDelegate, showSku: Bool = false, completion: @escaping (String, String?)->() ) {
+    public init(_ productProvider: ProductProvider, delegate: AnalyticsDelegate, showSku: Bool = false, completion: @escaping (String, String?) -> Void ) {
         super.init(nibName: nil, bundle: SnabbleBundle.main)
 
         self.productProvider = productProvider
@@ -41,19 +41,19 @@ final public class BarcodeEntryViewController: UIViewController {
     override public func viewDidLoad() {
         super.viewDidLoad()
 
-        self.emptyState = BarcodeEntryEmptyStateView( { [weak self] _ in self?.addEnteredCode() } )
+        self.emptyState = BarcodeEntryEmptyStateView({ [weak self] _ in self?.addEnteredCode() })
         self.emptyState.addTo(self.tableView)
 
         self.tableView.tableFooterView = UIView(frame: CGRect.zero)
 
         self.searchBar.placeholder = "Snabble.Scanner.enterBarcode".localized()
-        
+
         self.keyboardObserver = KeyboardObserver(handler: self)
-        
+
         self.view.backgroundColor = SnabbleUI.appearance.backgroundColor
         self.tableView.backgroundColor = .clear
     }
-    
+
     override public func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         self.searchBar.becomeFirstResponder()
@@ -66,15 +66,21 @@ final public class BarcodeEntryViewController: UIViewController {
     }
 
     private func addCode(_ code: String, _ template: String?) {
-        // popViewController has no completion handler, so we roll our own
-        CATransaction.begin()
-        CATransaction.setCompletionBlock {
+
+        let block = {
             self.delegate.track(.barcodeSelected(code))
             self.completion?(code, template)
         }
 
-        let _ = self.navigationController?.popViewController(animated: false)
-        CATransaction.commit()
+        if SnabbleUI.implicitNavigation {
+            // popViewController has no completion handler, so we roll our own
+            CATransaction.begin()
+            CATransaction.setCompletionBlock(block)
+            _ = self.navigationController?.popViewController(animated: false)
+            CATransaction.commit()
+        } else {
+            block()
+        }
     }
 
 }
@@ -82,12 +88,12 @@ final public class BarcodeEntryViewController: UIViewController {
 extension BarcodeEntryViewController: UISearchBarDelegate {
     // MARK: - search bar
     public func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
-        if searchText.count > 0 {
+        if !searchText.isEmpty {
             let products = self.productProvider.productsByScannableCodePrefix(searchText, filterDeposits: true, templates: SnabbleUI.project.searchableTemplates)
-            self.filteredProducts = products.sorted { p1, p2 in
-                let c1 = p1.codes.filter { $0.code.hasPrefix(searchText) }.first ?? p1.codes.first!
-                let c2 = p2.codes.filter { $0.code.hasPrefix(searchText) }.first ?? p2.codes.first!
-                return c1.code < c2.code
+            self.filteredProducts = products.sorted { prod1, prod2 in
+                let code1 = prod1.codes.filter { $0.code.hasPrefix(searchText) }.first ?? prod1.codes.first!
+                let code2 = prod2.codes.filter { $0.code.hasPrefix(searchText) }.first ?? prod2.codes.first!
+                return code1.code < code2.code
             }
         } else {
             self.filteredProducts.removeAll()
@@ -95,11 +101,6 @@ extension BarcodeEntryViewController: UISearchBarDelegate {
         self.searchText = searchText
         self.tableView.reloadData()
     }
-
-    public func searchBarCancelButtonClicked(_ searchBar: UISearchBar) {
-        let _ = self.navigationController?.popViewController(animated: true)
-    }
-
 }
 
 extension BarcodeEntryViewController: UITableViewDelegate, UITableViewDataSource {
@@ -107,37 +108,37 @@ extension BarcodeEntryViewController: UITableViewDelegate, UITableViewDataSource
         let rows = filteredProducts.count
         self.emptyState.isHidden = rows > 0
         self.emptyState.button1.isHidden = true
-        if self.searchText.count > 0 {
+        if !self.searchText.isEmpty {
             let title = String(format: "Snabble.Scanner.addCodeAsIs".localized(), self.searchText)
             self.emptyState.button1.setTitle(title, for: .normal)
             self.emptyState.button1.isHidden = false
         }
         return rows
     }
-    
+
     public func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let identifier = "barcodeCell"
         let cell = tableView.dequeueReusableCell(withIdentifier: identifier) ?? {
-            let c = UITableViewCell(style: .subtitle, reuseIdentifier: identifier)
-            c.selectionStyle = .none
-            return c
+            let cell = UITableViewCell(style: .subtitle, reuseIdentifier: identifier)
+            cell.selectionStyle = .none
+            return cell
         }()
-        
+
         let product = self.filteredProducts[indexPath.row]
         let codeEntry = product.codes.filter { $0.code.hasPrefix(self.searchText) }.first ?? product.codes.first!
         let str = NSMutableAttributedString(string: codeEntry.code)
         let boldFont = UIFont.systemFont(ofSize: cell.textLabel?.font.pointSize ?? 0, weight: .medium)
-        str.addAttributes([NSAttributedString.Key.font : boldFont], range: NSMakeRange(0, self.searchText.count))
+        str.addAttributes([NSAttributedString.Key.font: boldFont], range: NSRange(location: 0, length: self.searchText.count))
         cell.textLabel?.attributedText = str
 
         cell.detailTextLabel?.text = product.name
         if self.showSku {
             cell.detailTextLabel?.text = "\(product.name) (\(product.sku))"
         }
-        
+
         return cell
     }
-    
+
     public func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         let product = self.filteredProducts[indexPath.row]
 

@@ -7,7 +7,7 @@
 import UIKit
 import QuickLook
 
-final public class ReceiptPreviewItem: NSObject, QLPreviewItem {
+public final class ReceiptPreviewItem: NSObject, QLPreviewItem {
     public let receiptUrl: URL
     public let title: String
 
@@ -31,12 +31,11 @@ enum OrderEntry {
     case done(Order)
 }
 
-@objc(ReceiptsListViewController)
 public final class ReceiptsListViewController: UIViewController {
     @IBOutlet private weak var tableView: UITableView!
     @IBOutlet private weak var emptyLabel: UILabel!
     @IBOutlet private weak var spinner: UIActivityIndicatorView!
-    
+
     private var quickLook = QLPreviewController()
     private var previewItem: QLPreviewItem!
 
@@ -44,15 +43,13 @@ public final class ReceiptsListViewController: UIViewController {
     private var orders: [OrderEntry]?
     private var process: CheckoutProcess?
     private var orderId: String?
+    private weak var analyticsDelegate: AnalyticsDelegate?
 
-    public convenience init() {
-        self.init(nil)
-    }
-
-    public init(_ process: CheckoutProcess?) {
+    public init(_ process: CheckoutProcess?, _ analyticsDelegate: AnalyticsDelegate) {
         self.process = process
         self.orderId = process?.orderID
-        
+        self.analyticsDelegate = analyticsDelegate
+
         super.init(nibName: nil, bundle: SnabbleBundle.main)
 
         self.title = "Snabble.Receipts.title".localized()
@@ -84,7 +81,7 @@ public final class ReceiptsListViewController: UIViewController {
     override public func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
 
-        SnabbleUI.analytics?.track(.viewReceiptList)
+        self.analyticsDelegate?.track(.viewReceiptList)
     }
 
     private func loadOrderList() {
@@ -146,7 +143,7 @@ public final class ReceiptsListViewController: UIViewController {
         self.orders = orders
 
         self.spinner.stopAnimating()
-        if orders.count == 0 {
+        if orders.isEmpty {
             self.emptyLabel.isHidden = false
         }
         self.tableView.reloadData()
@@ -166,6 +163,7 @@ extension ReceiptsListViewController: UITableViewDelegate, UITableViewDataSource
     }
 
     public func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        // swiftlint:disable:next force_cast
         let cell = tableView.dequeueReusableCell(withIdentifier: "receiptCell", for: indexPath) as! ReceiptCell
 
         guard let orders = self.orders else {
@@ -227,7 +225,7 @@ extension ReceiptsListViewController {
         self.quickLook.reloadData()
         self.navigationController?.pushViewController(self.quickLook, animated: true)
 
-        SnabbleUI.analytics?.track(.viewReceiptDetail)
+        self.analyticsDelegate?.track(.viewReceiptDetail)
     }
 
 }

@@ -163,13 +163,12 @@ extension AppEvent {
             if let userAgent = Project.userAgent {
                 request.addValue(userAgent, forHTTPHeaderField: "User-Agent")
             }
-        }
-        catch {
+        } catch {
             Log.error("\(error)")
         }
 
         // use a system default session here so we can still log pinning errors
-        let task = URLSession.shared.dataTask(with: request) { rawData, response, error in
+        let task = URLSession.shared.dataTask(with: request) { _, _, error in
             if let error = error {
                 Log.error("posting event failed: \(error)")
             }

@@ -5,6 +5,7 @@
 //
 
 import Foundation
+import KeychainAccess
 
 /// general config data for using the snabble API.
 /// Applications must call `SnabbleAPI.setup()` with an instance of this struct before they make their first API call.
@@ -35,9 +36,10 @@ public struct SnabbleAPIConfig {
 
     // debug mode only:
     // SQL statements that are executed just before the product database is opened
-    public var initialSQL: [String]? = nil
+    public var initialSQL: [String]?
 
-    public init(appId: String, baseUrl: String, secret: String, appVersion: String? = nil, useFTS: Bool = false, seedDatabase: String? = nil, seedRevision: Int64? = nil, seedMetadata: String? = nil) {
+    public init(appId: String, baseUrl: String, secret: String, appVersion: String? = nil, useFTS: Bool = false,
+                seedDatabase: String? = nil, seedRevision: Int64? = nil, seedMetadata: String? = nil) {
         self.appId = appId
         self.baseUrl = baseUrl
         self.secret = secret
@@ -51,8 +53,8 @@ public struct SnabbleAPIConfig {
     static let none = SnabbleAPIConfig(appId: "none", baseUrl: "", secret: "")
 }
 
-public struct SnabbleAPI {
-    private(set) public static var config = SnabbleAPIConfig.none
+public enum SnabbleAPI {
+    public private(set) static var config = SnabbleAPIConfig.none
     static var tokenRegistry = TokenRegistry("", "")
     static var metadata = Metadata.none
 
@@ -61,7 +63,7 @@ public struct SnabbleAPI {
     public static var certificates: [GatewayCertificate] {
         return self.metadata.gatewayCertificates
     }
-    
+
     public static var projects: [Project] {
         return self.metadata.projects
     }
@@ -78,7 +80,7 @@ public struct SnabbleAPI {
         return self.metadata.projects.first { $0.id == projectId }
     }
 
-    public static func setup(_ config: SnabbleAPIConfig, completion: @escaping ()->() ) {
+    public static func setup(_ config: SnabbleAPIConfig, completion: @escaping () -> Void ) {
         self.config = config
         self.initializeTrustKit()
 
@@ -94,7 +96,7 @@ public struct SnabbleAPI {
         self.loadMetadata(completion: completion)
     }
 
-    public static func loadMetadata(completion: @escaping ()->() ) {
+    public static func loadMetadata(completion: @escaping () -> Void ) {
         let bundleVersion = Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String ?? "0.0"
         let appVersion = config.appVersion ?? bundleVersion
         let version = appVersion.addingPercentEncoding(withAllowedCharacters: .urlPathAllowed) ?? appVersion
@@ -122,12 +124,12 @@ public struct SnabbleAPI {
         }
     }
 
-    public static func getToken(for project: Project, completion: @escaping (String?)->() ) {
+    public static func getToken(for project: Project, completion: @escaping (String?) -> Void ) {
         self.tokenRegistry.getToken(for: project, completion: completion)
     }
 
     public static func productProvider(for project: Project) -> ProductProvider {
-        assert(project.id != "", "empty projects don't have a product provider")
+        assert(!project.id.isEmpty && project.id != Project.none.id, "empty projects don't have a product provider")
         if let provider = providerPool[project.id] {
             return provider
         } else {
@@ -136,6 +138,12 @@ public struct SnabbleAPI {
             return provider
         }
     }
+
+    public static func removeDatabase(for project: Project) {
+        let provider = productProvider(for: project)
+        provider.removeDatabase()
+        providerPool[project.id] = nil
+    }
 }
 
 extension SnabbleAPI {
@@ -143,7 +151,7 @@ extension SnabbleAPI {
     private static let key = "Snabble.api.clientId"
 
     public static var clientId: String {
-        var keychain = Keychain(service: service)
+        let keychain = Keychain(service: service)
 
         if let id = keychain[key] {
             return id
@@ -175,8 +183,8 @@ extension SnabbleAPI {
     }
 
     static func urlString(_ url: String, _ parameters: [String: String]?) -> String? {
-        let queryItems = parameters?.map { (k, v) in
-            URLQueryItem(name: k, value: v)
+        let queryItems = parameters?.map { (key, value) in
+            URLQueryItem(name: key, value: value)
         }
         return urlString(url, queryItems ?? [])
     }
@@ -195,6 +203,30 @@ extension SnabbleAPI {
     }
 }
 
+extension SnabbleAPI {
+    static var debugMode: Bool {
+        return _isDebugAssertConfiguration()
+    }
+}
+
+extension SnabbleAPI {
+    static var serverName: String {
+        switch config.baseUrl {
+        case "https://api.snabble.io":
+            return "prod"
+        case "https://api.snabble-staging.io":
+            return "staging"
+        case "https://api.snabble-testing.io":
+            return "testing"
+        default:
+            if SnabbleAPI.debugMode {
+                fatalError("API config not correctly initialized")
+            }
+            return "prod"
+        }
+    }
+}
+
 // MARK: - telecash
 
 public struct TelecashSecret: Decodable {
@@ -207,7 +239,7 @@ public struct TelecashSecret: Decodable {
 }
 
 extension SnabbleAPI {
-    public static func getTelecashSecret(_ project: Project, completion: @escaping (Result<TelecashSecret, SnabbleError>)->() ) {
+    public static func getTelecashSecret(_ project: Project, completion: @escaping (Result<TelecashSecret, SnabbleError>) -> Void ) {
         project.request(.get, SnabbleAPI.metadata.links.telecashSecret.href, timeout: 5) { request in
             guard let request = request else {
                 return completion(Result.failure(SnabbleError.noRequest))
@@ -222,7 +254,7 @@ extension SnabbleAPI {
     public static func deletePreauth(_ project: Project, _ orderId: String) {
         let url = SnabbleAPI.metadata.links.telecashPreauth.href
                     .replacingOccurrences(of: "{orderID}", with: orderId)
-        
+
         project.request(.delete, url, timeout: 5) { request in
             guard let request = request else {
                 return

@@ -21,12 +21,12 @@ extension ProductDB {
     fileprivate static let sqliteType = "application/vnd+snabble.appdb+sqlite3"
     private static let contentTypes = "\(sqlType),\(sqliteType)"
 
-    func appDbSession(_ completion: @escaping (AppDbResponse) -> ()) -> URLSession {
+    func appDbSession(_ completion: @escaping (AppDbResponse) -> Void) -> URLSession {
         let delegate = AppDBDownloadDelegate(self, completion)
         return URLSession(configuration: .default, delegate: delegate, delegateQueue: nil)
     }
 
-    func getAppDb(currentRevision: Int64, schemaVersion: String, forceFullDb: Bool = false, completion: @escaping (AppDbResponse) -> () ) {
+    func getAppDb(currentRevision: Int64, schemaVersion: String, forceFullDb: Bool = false, completion: @escaping (AppDbResponse) -> Void ) {
         let parameters = [
             "havingRevision": "\(currentRevision)",
             "schemaVersion": schemaVersion
@@ -52,7 +52,7 @@ extension ProductDB {
         }
     }
 
-    func resumeAppDbDownload(_ completion: @escaping (AppDbResponse) -> () ) {
+    func resumeAppDbDownload(_ completion: @escaping (AppDbResponse) -> Void ) {
         guard let resumeData = self.resumeData else {
             return
         }
@@ -63,7 +63,7 @@ extension ProductDB {
         }
 
         Log.info("resuming download of appdb")
-        
+
         let session = self.appDbSession(completion)
         let task = session.downloadTask(withResumeData: resumeData)
         task.resume()
@@ -74,14 +74,14 @@ extension ProductDB {
 
 final class AppDBDownloadDelegate: CertificatePinningDelegate, URLSessionDownloadDelegate {
 
-    private var completion: (AppDbResponse) -> ()
+    private var completion: (AppDbResponse) -> Void
     private var response: URLResponse?
     private weak var productDb: ProductDB?
     private let start = Date.timeIntervalSinceReferenceDate
     private var bytesReceived: Int64 = 0
     private var mbps = 0.0 // megabytes/second
 
-    init(_ productDb: ProductDB, _ completion: @escaping (AppDbResponse) -> ()) {
+    init(_ productDb: ProductDB, _ completion: @escaping (AppDbResponse) -> Void) {
         self.productDb = productDb
         self.completion = completion
     }
@@ -97,8 +97,10 @@ final class AppDBDownloadDelegate: CertificatePinningDelegate, URLSessionDownloa
         }
         // print("download progress: \(totalBytesWritten ) \(self.mbps)")
     }
-    
+
     func urlSession(_ session: URLSession, downloadTask: URLSessionDownloadTask, didFinishDownloadingTo location: URL) {
+        session.finishTasksAndInvalidate()
+
         let url = downloadTask.currentRequest?.url?.absoluteString ?? "n/a"
         let elapsed = Date.timeIntervalSinceReferenceDate - self.start
         Log.info("get \(url) took \(elapsed)s")
@@ -147,6 +149,8 @@ final class AppDBDownloadDelegate: CertificatePinningDelegate, URLSessionDownloa
     }
 
     func urlSession(_ session: URLSession, task: URLSessionTask, didCompleteWithError error: Error?) {
+        session.finishTasksAndInvalidate()
+
         self.productDb?.resumeData = nil
         self.productDb?.downloadTask = nil
         guard let error = error as NSError? else {

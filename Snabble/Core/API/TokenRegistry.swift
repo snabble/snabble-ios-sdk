@@ -56,7 +56,7 @@ final class TokenRegistry {
         nc.addObserver(self, selector: #selector(appEnteredBackground(_:)), name: UIApplication.didEnterBackgroundNotification, object: nil)
     }
 
-    func getToken(for project: Project, completion: @escaping (String?)->() ) {
+    func getToken(for project: Project, completion: @escaping (String?) -> Void ) {
         if let jwt = self.token(for: project) {
             return completion(jwt)
         }
@@ -88,7 +88,7 @@ final class TokenRegistry {
     // only for unit testing
     func storeToken(_ projectId: String, _ jwt: String) {
         let now = Int64(Date().timeIntervalSince1970)
-        let tokenResponse = TokenResponse(id: projectId, token: jwt, issuedAt: now , expiresAt: now + 3600)
+        let tokenResponse = TokenResponse(id: projectId, token: jwt, issuedAt: now, expiresAt: now + 3600)
         let tokenData = TokenData(tokenResponse, Project.none)
 
         self.registry[projectId] = tokenData
@@ -114,7 +114,7 @@ final class TokenRegistry {
         let refreshIn = earliest.refresh.timeIntervalSinceReferenceDate - now.timeIntervalSinceReferenceDate
         // Log.debug("run refresh in \(refreshIn)s")
         self.refreshTimer?.invalidate()
-        self.refreshTimer = Timer.scheduledTimer(withTimeInterval: refreshIn, repeats: false) { timer in
+        self.refreshTimer = Timer.scheduledTimer(withTimeInterval: refreshIn, repeats: false) { _ in
             self.refreshTokens()
         }
     }
@@ -123,16 +123,14 @@ final class TokenRegistry {
         let now = Date.timeIntervalSinceReferenceDate - 5
 
         let group = DispatchGroup()
-        for tokenData in self.registry.values {
-            if tokenData.refresh.timeIntervalSinceReferenceDate > now {
-                group.enter()
-                let project = tokenData.project
-                self.retrieveToken(for: project) { tokenData in
-                    if let tokenData = tokenData {
-                        self.registry[project.id] = tokenData
-                    }
-                    group.leave()
+        for tokenData in self.registry.values where tokenData.refresh.timeIntervalSinceReferenceDate > now {
+            group.enter()
+            let project = tokenData.project
+            self.retrieveToken(for: project) { tokenData in
+                if let tokenData = tokenData {
+                    self.registry[project.id] = tokenData
                 }
+                group.leave()
             }
         }
 
@@ -141,7 +139,7 @@ final class TokenRegistry {
         }
     }
 
-    private func retrieveToken(for project: Project, _ date: Date? = nil, completion: @escaping (TokenData?) -> () ) {
+    private func retrieveToken(for project: Project, _ date: Date? = nil, completion: @escaping (TokenData?) -> Void ) {
         let parameters = [ "role": "retailerApp" ]
 
         let url = project.links.tokens.href
@@ -173,7 +171,7 @@ final class TokenRegistry {
         }
     }
 
-    private func retryWithServerDate(_ project: Project, _ response: HTTPURLResponse, completion: @escaping (TokenData?) -> () ) {
+    private func retryWithServerDate(_ project: Project, _ response: HTTPURLResponse, completion: @escaping (TokenData?) -> Void ) {
         // not authorized. try again with the content of the the server's "Date" header
         if let serverDate = response.allHeaderFields["Date"] as? String {
             let formatter = DateFormatter()
@@ -201,10 +199,9 @@ final class TokenRegistry {
         let token = Token(name: "", issuer: "", generator: generator)
         do {
             return try token.generator.password(at: date ?? Date())
-        }
-        catch {
+        } catch {
             return nil
         }
     }
-    
+
 }

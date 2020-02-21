@@ -83,7 +83,7 @@ public struct BarcodeDetectorAppearance {
 
     /// width of the reticle's border, default 0.5
     public var reticleBorderWidth: CGFloat = 0.5
-    
+
     /// corner radius of the reticle's border, default 0
     public var reticleCornerRadius: CGFloat = 0
 

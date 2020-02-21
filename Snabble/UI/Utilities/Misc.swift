@@ -7,55 +7,6 @@
 
 import UIKit
 
-/// configuration parameters for the look of the view controllers in the Snabble SDK
-public struct SnabbleAppearance {
-    public var primaryColor = UIColor.black
-    public var backgroundColor = UIColor.white
-
-    // colors for buttons
-    public var buttonShadowColor = UIColor.black
-    public var buttonBorderColor = UIColor.black
-    public var buttonBackgroundColor = UIColor.lightGray
-    public var buttonTextColor = UIColor.white
-
-    // bg color for the "stepper" buttons 
-    public var stepperButtonBackgroundColor = UIColor.lightGray
-
-    public var textColor = UIColor.black
-
-    public init() {}
-
-    @available(*, deprecated, renamed: "backgroundColor")
-    public var primaryBackgroundColor: UIColor {
-        get { return self.backgroundColor }
-        set { self.backgroundColor = newValue }
-    }
-}
-
-/// global settings for the Snabble UI classes
-public final class SnabbleUI {
-
-    static private(set) public var appearance = SnabbleAppearance()
-    static private(set) public var project = Project.none
-    static public weak var analytics: AnalyticsDelegate?
-
-    /// sets the global appearance to be used. Your app must call `SnabbleUI.setup()` before instantiating any snabble view controllers
-    public static func setup(_ appearance: SnabbleAppearance) {
-        self.appearance = appearance
-    }
-
-    /// update the global appearance
-    public static func customizeAppearance(_ custom: CustomAppearance) {
-        self.appearance.buttonBackgroundColor = custom.buttonBackgroundColor
-        self.appearance.buttonTextColor = custom.buttonTextColor
-    }
-
-    /// sets the project to be used
-    public static func register(_ project: Project?) {
-        self.project = project ?? Project.none
-    }
-}
-
 extension UIView {
 
     @available(*, deprecated, message: "this method will be removed in a future release")
@@ -180,7 +131,7 @@ open class NibView: UIView {
         self.awakeFromNib()
     }
 
-    required public init?(coder aDecoder: NSCoder) {
+    public required init?(coder aDecoder: NSCoder) {
         super.init(coder: aDecoder)
         nibSetup(self.nibName)
         self.awakeFromNib()
@@ -188,6 +139,7 @@ open class NibView: UIView {
 
     func nibSetup(_ nibName: String) {
         let nib = self.getNib(for: nibName)
+        // swiftlint:disable:next force_cast
         self.view = (nib.instantiate(withOwner: self, options: nil)[0] as! UIView)
 
         // use bounds not frame or it'll be offset
@@ -195,7 +147,7 @@ open class NibView: UIView {
 
         // Add custom subview on top of our view
         self.addSubview(self.view)
-        
+
         // Make the view stretch with the containing view
         // view.autoresizingMask = [UIViewAutoresizing.flexibleWidth, UIViewAutoresizing.flexibleHeight]
         self.translatesAutoresizingMaskIntoConstraints = false
@@ -235,7 +187,7 @@ final class InsetLabel: UILabel {
 
     override var intrinsicContentSize: CGSize {
         let size = super.intrinsicContentSize
-        return CGSize(width: size.width+leftInset+rightInset, height: size.height+topInset+bottomInset)
+        return CGSize(width: size.width + leftInset + rightInset, height: size.height + topInset + bottomInset)
     }
 }
 
@@ -300,5 +252,16 @@ extension UIApplication {
 
     class func topNavigationController() -> UINavigationController? {
         return topViewController()?.navigationController
+    }
+}
+
+extension UINavigationController {
+    /// pop to the top-most instance of the given UIViewController. If none found, pop one level
+    func popToInstanceOf(_ instanceType: UIViewController.Type?, animated: Bool) {
+        if let target = self.viewControllers.first(where: { type(of: $0) == instanceType }) {
+            self.popToViewController(target, animated: animated)
+        } else {
+            self.popViewController(animated: animated)
+        }
     }
 }

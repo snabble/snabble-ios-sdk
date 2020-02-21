@@ -47,7 +47,7 @@ extension SnabbleAPI {
             ]
         ]
 
-        TrustKit.initSharedInstance(withConfiguration:trustKitConfig)
+        TrustKit.initSharedInstance(withConfiguration: trustKitConfig)
 
         TrustKit.sharedInstance().pinningValidatorCallback = { result, hostname, policy in
             if result.finalTrustDecision != .shouldAllowConnection {
@@ -61,7 +61,7 @@ extension SnabbleAPI {
     /// and verifies the CAs
     ///
     /// - Returns: a URLSession object
-    static public func urlSession() -> URLSession {
+    public static func urlSession() -> URLSession {
         return pinningSession
     }
 
@@ -74,7 +74,8 @@ extension SnabbleAPI {
 
 /// handle the certificate pinning checks for our requests
 internal class CertificatePinningDelegate: NSObject, URLSessionDelegate {
-    func urlSession(_ session: URLSession, didReceive challenge: URLAuthenticationChallenge, completionHandler: @escaping (URLSession.AuthChallengeDisposition, URLCredential?) -> Void) {
+    func urlSession(_ session: URLSession, didReceive challenge: URLAuthenticationChallenge,
+                    completionHandler: @escaping (URLSession.AuthChallengeDisposition, URLCredential?) -> Void) {
         let handled = TrustKit.sharedInstance().pinningValidator.handle(challenge, completionHandler: completionHandler)
         if !handled {
             completionHandler(.performDefaultHandling, nil)

@@ -6,7 +6,7 @@
 
 import UIKit
 
-final class EmbeddedCodesCheckoutViewController: UIViewController {
+public final class EmbeddedCodesCheckoutViewController: UIViewController {
 
     @IBOutlet private weak var topWrapper: UIView!
     @IBOutlet private weak var topIcon: UIImageView!
@@ -33,7 +33,7 @@ final class EmbeddedCodesCheckoutViewController: UIViewController {
     private var codes = [String]()
     private var itemSize = CGSize.zero
 
-    init(_ process: CheckoutProcess?, _ cart: ShoppingCart, _ delegate: PaymentDelegate, _ codeConfig: QRCodeConfig) {
+    public init(_ process: CheckoutProcess?, _ cart: ShoppingCart, _ delegate: PaymentDelegate, _ codeConfig: QRCodeConfig) {
         self.process = process
         self.cart = cart
         self.delegate = delegate
@@ -49,7 +49,7 @@ final class EmbeddedCodesCheckoutViewController: UIViewController {
         fatalError("init(coder:) has not been implemented")
     }
 
-    override func viewDidLoad() {
+    override public func viewDidLoad() {
         super.viewDidLoad()
 
         self.paidButton.makeSnabbleButton()
@@ -85,7 +85,7 @@ final class EmbeddedCodesCheckoutViewController: UIViewController {
         self.setButtonTitle()
     }
 
-    override func viewWillAppear(_ animated: Bool) {
+    override public func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
 
         self.delegate.track(.viewEmbeddedCodesCheckout)
@@ -97,7 +97,7 @@ final class EmbeddedCodesCheckoutViewController: UIViewController {
         }
     }
 
-    override func viewDidLayoutSubviews() {
+    override public func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
 
         let frameWidth = self.collectionView.frame.width
@@ -112,10 +112,10 @@ final class EmbeddedCodesCheckoutViewController: UIViewController {
         }
     }
 
-    override func viewDidAppear(_ animated: Bool) {
+    override public func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
 
-        Timer.scheduledTimer(withTimeInterval: 2, repeats: false) { timer in
+        Timer.scheduledTimer(withTimeInterval: 2, repeats: false) { _ in
             UIView.animate(withDuration: 0.2) {
                 self.paidButton.alpha = 1
             }
@@ -123,7 +123,7 @@ final class EmbeddedCodesCheckoutViewController: UIViewController {
         }
     }
 
-    override func viewWillDisappear(_ animated: Bool) {
+    override public func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
 
         UIScreen.main.brightness = self.initialBrightness
@@ -140,12 +140,12 @@ final class EmbeddedCodesCheckoutViewController: UIViewController {
             title = "Snabble.QRCode.didPay".localized()
         } else {
             title = String(format: "Snabble.QRCode.nextCode".localized(),
-                           self.pageControl.currentPage+2, self.codes.count)
+                           self.pageControl.currentPage + 2, self.codes.count)
         }
         self.paidButton.setTitle(title, for: .normal)
     }
 
-    @IBAction func paidButtonTapped(_ sender: UIButton) {
+    @IBAction private func paidButtonTapped(_ sender: UIButton) {
         if self.pageControl.currentPage != self.codes.count - 1 {
             self.pageControl.currentPage += 1
             let indexPath = IndexPath(item: pageControl.currentPage, section: 0)
@@ -200,25 +200,25 @@ extension EmbeddedCodesCheckoutViewController {
 
 extension EmbeddedCodesCheckoutViewController: UICollectionViewDataSource, UICollectionViewDelegate, UICollectionViewDelegateFlowLayout {
 
-    func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
+    public func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         return self.codes.count
     }
 
-    func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
+    public func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
+        // swiftlint:disable:next force_cast
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "qrCodeCell", for: indexPath) as! QRCodeCell
 
         let img = self.qrCode(with: self.codes[indexPath.row])
-        cell.imageView.image = img
-        cell.imageWidth.constant = img?.size.width ?? 0
+        cell.setImage(img)
 
         return cell
     }
 
-    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
+    public func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
         return self.itemSize
     }
 
-    @IBAction func pageControlTapped(_ pageControl: UIPageControl) {
+    @IBAction private func pageControlTapped(_ pageControl: UIPageControl) {
         if pageControl.currentPage < self.codes.count {
             let indexPath = IndexPath(item: pageControl.currentPage, section: 0)
             self.collectionView.scrollToItem(at: indexPath, at: .left, animated: true)
@@ -227,8 +227,8 @@ extension EmbeddedCodesCheckoutViewController: UICollectionViewDataSource, UICol
     }
 
     // adjust the page control when the scrolling ends
-    func scrollViewDidEndDecelerating(_ scrollView: UIScrollView) {
-        let newPage = Int((scrollView.contentOffset.x + self.itemSize.width/2) / self.itemSize.width)
+    public func scrollViewDidEndDecelerating(_ scrollView: UIScrollView) {
+        let newPage = Int((scrollView.contentOffset.x + self.itemSize.width / 2) / self.itemSize.width)
         self.pageControl.currentPage = newPage
         self.setButtonTitle()
     }

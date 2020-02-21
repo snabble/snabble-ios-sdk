@@ -26,6 +26,9 @@ public enum AnalyticsEvent {
     /// the `OnlineCheckoutViewController` appeared
     case viewOnlineCheckout
 
+    /// the `TerminalCheckoutViewController` appeared
+    case viewTerminalCheckout
+
     /// the `QRCodeCheckoutViewController` appeared
     case viewQRCodeCheckout
 
@@ -37,6 +40,12 @@ public enum AnalyticsEvent {
 
     /// the quicklook preview for a single receipt appeared
     case viewReceiptDetail
+
+    /// the `PaymentMethodListViewController` appeared
+    case viewPaymentMethodList
+
+    /// the `PaymentMethodDetailViewController` appeared
+    case viewPaymentMethodDetail
 
     /// other events are tracked as a response to user actions
 
@@ -54,7 +63,7 @@ public enum AnalyticsEvent {
 
     /// a product was added to the shopping cart. associated value is the product's `sku`
     case productAddedToCart(String)
-    
+
     /// a barcode was selected from the autocomplete list. associated value is the selected EAN code
     case barcodeSelected(String)
 
@@ -75,4 +84,10 @@ public enum AnalyticsEvent {
 
     /// the screen brightness needed to be increased in the checkout screen
     case brightnessIncreased
+
+    /// the named payment method was added
+    case paymentMethodAdded(String)
+
+    /// the named payment method was deleted
+    case paymentMethodDeleted(String)
 }

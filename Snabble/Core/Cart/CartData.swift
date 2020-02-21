@@ -25,7 +25,7 @@ public struct CartConfig {
     /// optional: a closure that is used to sort cart items before a QR code is generated
     /// use this to e.g. sort items by price, or move certain item types to the end of the cart
     public typealias ItemSorter = ([CartItem]) -> [CartItem]
-    public var sorter: ItemSorter? = nil
+    public var sorter: ItemSorter?
 
     public init() {
         let docDir = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)[0]
@@ -58,7 +58,8 @@ public struct ScannedCode: Codable {
         return self.transmissionCode ?? self.scannedCode
     }
 
-    public init(scannedCode: String, transmissionCode: String? = nil, embeddedData: Int? = nil, encodingUnit: Units? = nil, priceOverride: Int? = nil, referencePriceOverride: Int? = nil, templateId: String, lookupCode: String) {
+    public init(scannedCode: String, transmissionCode: String? = nil, embeddedData: Int? = nil, encodingUnit: Units? = nil,
+                priceOverride: Int? = nil, referencePriceOverride: Int? = nil, templateId: String, lookupCode: String) {
         self.scannedCode = scannedCode
         self.transmissionCode = transmissionCode
         self.embeddedData = embeddedData
@@ -73,7 +74,7 @@ public struct ScannedCode: Codable {
 /// an entry in a shopping cart.
 public struct CartItem: Codable {
     /// quantity or weight
-    internal(set) public var quantity: Int
+    public internal(set) var quantity: Int
     /// the product
     public let product: Product
     /// the scanned code
@@ -247,9 +248,9 @@ public struct CartItem: Codable {
     /// get a copy of this data suitable for transferring to the backend
     var cartItem: BackendCartItem {
         var quantity = self.quantity
-        var units: Int? = nil
-        var price: Int? = nil
-        var weight: Int? = nil
+        var units: Int?
+        var price: Int?
+        var weight: Int?
         var code = self.scannedCode.code
         let encodingUnit = self.encodingUnit
 

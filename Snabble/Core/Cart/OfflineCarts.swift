@@ -40,10 +40,10 @@ public class OfflineCarts {
 
     /// append a shopping cart to the list of carts that need to be sent later
     func saveCartForLater(_ cart: ShoppingCart) {
-        guard cart.items.count > 0 else {
+        guard !cart.items.isEmpty else {
             return
         }
-        
+
         var savedCarts = self.readSavedCarts()
         savedCarts.append(SavedCart(cart))
         self.writeSavedCarts(savedCarts)
@@ -107,9 +107,9 @@ public class OfflineCarts {
         group.wait()
 
         // remove all carts where the re-sending was successful or we had too many failures
-        for i in (0 ..< savedCarts.count).reversed() {
-            if successIndices.contains(i) || savedCarts[i].failures > 3 {
-                savedCarts.remove(at: i)
+        for idx in (0 ..< savedCarts.count).reversed() {
+            if successIndices.contains(idx) || savedCarts[idx].failures > 3 {
+                savedCarts.remove(at: idx)
             }
         }
         self.writeSavedCarts(savedCarts)

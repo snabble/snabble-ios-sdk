@@ -20,13 +20,14 @@ extension PaymentMethod {
             case .tegutEmployeeID: return "SnabbleSDK/payment-tegut"
             default: return ""
             }
+        case .gatekeeperTerminal: return "SnabbleSDK/payment-card-terminal"
         }
     }
 
     var dataRequired: Bool {
         switch self {
         case .deDirectDebit, .visa, .mastercard, .externalBilling: return true
-        case .qrCodePOS, .qrCodeOffline: return false
+        case .qrCodePOS, .qrCodeOffline, .gatekeeperTerminal: return false
         }
     }
 
@@ -57,7 +58,9 @@ extension PaymentMethod {
                 return nil
             }
         case .deDirectDebit, .visa, .mastercard, .externalBilling:
-            processor = OnlineCheckoutViewController(process!, self.data!, cart, delegate)
+            processor = OnlineCheckoutViewController(process!, cart, delegate)
+        case .gatekeeperTerminal:
+            processor = TerminalCheckoutViewController(process!, cart, delegate)
         }
         processor.hidesBottomBarWhenPushed = true
         return processor
@@ -66,10 +69,10 @@ extension PaymentMethod {
 
 /// Manage the payment process
 public final class PaymentProcess {
-    private(set) var signedCheckoutInfo: SignedCheckoutInfo
-    private(set) var cart: ShoppingCart
+    let signedCheckoutInfo: SignedCheckoutInfo
+    let cart: ShoppingCart
     private var hudTimer: Timer?
-    weak var delegate: PaymentDelegate!
+    private(set) weak var delegate: PaymentDelegate!
 
     /// create a payment process
     ///
@@ -91,7 +94,7 @@ public final class PaymentProcess {
     /// - Parameters:
     ///   - completion: a closure called when the payment method has been determined.
     ///   - result: the view controller to present for this payment process or the error
-    public func start(completion: @escaping (_ result: Result<UIViewController, SnabbleError>) -> () ) {
+    public func start(completion: @escaping (_ result: Result<UIViewController, SnabbleError>) -> Void ) {
         let info = self.signedCheckoutInfo
 
         let mergedMethods = self.mergePaymentMethodList(info.checkoutInfo.paymentMethods)
@@ -110,42 +113,44 @@ public final class PaymentProcess {
                 fallthrough
             }
         default:
-            let paymentSelection = PaymentMethodSelectionViewController(self, paymentMethods)
+            let paymentSelection = PaymentMethodSelectionViewController(self, paymentMethods, self.delegate)
             completion(Result.success(paymentSelection))
         }
     }
 
+    // swiftlint:disable:next cyclomatic_complexity
     func mergePaymentMethodList(_ methods: [PaymentMethodDescription]) -> [PaymentMethod] {
-        let userData = self.delegate.getPaymentData(methods)
+        let userData = self.getPaymentUserData(methods)
         var result = [PaymentMethod]()
         for method in methods {
             switch method.method {
             case .qrCodePOS: result.append(.qrCodePOS)
             case .qrCodeOffline: result.append(.qrCodeOffline)
+            case .gatekeeperTerminal: result.append(.gatekeeperTerminal)
             case .deDirectDebit:
                 let sepa = userData.filter { if case .deDirectDebit = $0 { return true } else { return false } }
-                if sepa.count > 0 {
+                if !sepa.isEmpty {
                     result.append(contentsOf: sepa.reversed())
                 } else {
                     result.append(.deDirectDebit(nil))
                 }
             case .creditCardVisa:
                 let visa = userData.filter { if case .visa = $0 { return true } else { return false } }
-                if visa.count > 0 {
+                if !visa.isEmpty {
                     result.append(contentsOf: visa.reversed())
                 } else {
                     result.append(.visa(nil))
                 }
             case .creditCardMastercard:
                 let mc = userData.filter { if case .mastercard = $0 { return true } else { return false } }
-                if mc.count > 0 {
+                if !mc.isEmpty {
                     result.append(contentsOf: mc.reversed())
                 } else {
                     result.append(.mastercard(nil))
                 }
             case .externalBilling:
                 let billing = userData.filter { if case .externalBilling = $0 { return true } else { return false } }
-                if billing.count > 0 {
+                if !billing.isEmpty {
                     result.append(contentsOf: billing.reversed())
                 }
             }
@@ -157,21 +162,67 @@ public final class PaymentProcess {
     // filter payment methods: if there is at least one online payment method with data, don't show other incomplete online methods
     func filterPaymentMethods(_ methods: [PaymentMethod]) -> [PaymentMethod] {
         let onlineComplete = methods.filter { !$0.rawMethod.offline && $0.data != nil }
-        if onlineComplete.count == 0 {
+        if onlineComplete.isEmpty {
             return methods
         }
 
         // remove all incomplete online methods
         var methods = methods
         for (index, method) in methods.enumerated().reversed() {
-            if !method.rawMethod.offline && method.data == nil {
+            if !method.rawMethod.offline && method.dataRequired && method.data == nil {
                 methods.remove(at: index)
             }
         }
         return methods
     }
 
-    func start(_ method: PaymentMethod, completion: @escaping (_ result: Result<UIViewController, SnabbleError>) -> () ) {
+    private func getPaymentUserData(_ methods: [PaymentMethodDescription]) -> [PaymentMethod] {
+        var results = [PaymentMethod]()
+
+        // check the registered payment methods
+        let details = PaymentMethodDetails.read()
+        for detail in details {
+            switch detail.methodData {
+            case .sepa:
+                let useDirectDebit = methods.first { $0.method == .deDirectDebit } != nil
+                if useDirectDebit {
+                    let telecash = PaymentMethod.deDirectDebit(detail.data)
+                    results.append(telecash)
+                }
+            case .creditcard(let creditcardData):
+                let data = detail.data
+                let useVisa = methods.first { $0.method == .creditCardVisa } != nil
+                if useVisa && creditcardData.brand == .visa {
+                    let visa = PaymentMethod.visa(data)
+                    results.append(visa)
+                }
+
+                let useMastercard = methods.first { $0.method == .creditCardMastercard } != nil
+                if useMastercard && creditcardData.brand == .mastercard {
+                    let mc = PaymentMethod.mastercard(data)
+                    results.append(mc)
+                }
+            case .tegutEmployeeCard:
+                let tegut = methods.first {
+                    $0.method == .externalBilling && $0.acceptedOriginTypes?.contains(.tegutEmployeeID) == true
+                }
+
+                if tegut != nil {
+                    results.append(PaymentMethod.externalBilling(detail.data))
+                }
+            }
+        }
+
+        return results
+    }
+
+    func start(_ method: PaymentMethod, completion: @escaping (Result<CheckoutProcess, SnabbleError>) -> Void ) {
+           self.signedCheckoutInfo.createCheckoutProcess(SnabbleUI.project, paymentMethod: method, timeout: 20) { result in
+               completion(result)
+           }
+       }
+
+    func start(_ method: PaymentMethod, completion: @escaping (_ result: Result<UIViewController, SnabbleError>) -> Void ) {
         UIApplication.shared.beginIgnoringInteractionEvents()
         self.startBlurOverlayTimer()
 
@@ -193,7 +244,7 @@ public final class PaymentProcess {
         }
     }
 
-    private func startFailed(_ method: PaymentMethod, _ error: SnabbleError?, _ completion: @escaping (_ result: Result<UIViewController, SnabbleError>) -> () ) {
+    private func startFailed(_ method: PaymentMethod, _ error: SnabbleError?, _ completion: @escaping (_ result: Result<UIViewController, SnabbleError>) -> Void ) {
         var handled = false
         if let error = error {
             handled = self.delegate.handlePaymentError(method, error)
@@ -244,4 +295,15 @@ public final class PaymentProcess {
         self.blurView = nil
     }
 
+}
+
+// stuff that's only used by the RN wrapper
+extension PaymentProcess: ReactNativeWrapper {
+    public func getPaymentMethods() -> [PaymentMethod] {
+        let info = self.signedCheckoutInfo
+        let mergedMethods = self.mergePaymentMethodList(info.checkoutInfo.paymentMethods)
+        let paymentMethods = self.filterPaymentMethods(mergedMethods)
+
+        return paymentMethods
+    }
 }

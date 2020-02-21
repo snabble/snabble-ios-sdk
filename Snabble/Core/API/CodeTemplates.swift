@@ -9,7 +9,7 @@ import Foundation
 // template parsing and matching, see
 // https://github.com/snabble/product-ng/blob/master/code-templates.md
 
-fileprivate enum CodeType: Equatable {
+private enum CodeType: Equatable {
     case ean8
     case ean13
     case ean14
@@ -47,7 +47,7 @@ fileprivate enum CodeType: Equatable {
     }
 }
 
-fileprivate enum IgnoreLength {
+private enum IgnoreLength {
     case length(Int)
     case ignoreAll
 
@@ -72,7 +72,7 @@ fileprivate enum IgnoreLength {
 }
 
 /// the constituent parts of a template
-fileprivate enum TemplateComponent {
+private enum TemplateComponent {
     /// known plain text that will be ignored (e.g. "01" from "01{code:ean14}". The value is the actual string
     case plainText(String)
     /// the code part of the template. this is what we will use to look up products in the database
@@ -98,6 +98,7 @@ fileprivate enum TemplateComponent {
     case eanChecksum
 
     /// parse one template component. properties look like "{name:length}", everything else is considered plain text
+    // swiftlint:disable:next cyclomatic_complexity
     init?(_ str: String) {
         if str.prefix(1) == "{" {
             // strip off the braces
@@ -166,7 +167,7 @@ fileprivate enum TemplateComponent {
             }
         case .embed(let len): return "(\\d{\(len)})"
         case .embed100(let len): return "(\\d{\(len)})"
-        case .embedDecimal(let i, let f): return "(\\d{\(i+f)})"
+        case .embedDecimal(let intDigits, let fractionDigits): return "(\\d{\(intDigits + fractionDigits)})"
         case .price(let len): return "(\\d{\(len)})"
         case .ignore(let len):
             switch len {
@@ -184,7 +185,7 @@ fileprivate enum TemplateComponent {
         case .plainText(let str): return str.count
         case .code(let codeType): return codeType.length
         case .embed(let len): return len
-        case .embedDecimal(let i, let f): return i+f
+        case .embedDecimal(let intDigits, let fractionDigits): return intDigits + fractionDigits
         case .embed100(let len): return len
         case .price(let len): return len
         case .ignore(let ignoreLength): return ignoreLength.length
@@ -258,23 +259,26 @@ public struct CodeTemplate {
     /// the parsed components in left-to-right order
     fileprivate let components: [TemplateComponent]
 
+    // swiftlint:disable force_try
     /// RE for a token
     private static let token = try! NSRegularExpression(pattern: "^(\\{.*?\\})", options: [])
     /// RE for plaintext
     private static let plaintext = try! NSRegularExpression(pattern: "^([^{^}]+)", options: [])
     private static let regexps = [ token, plaintext ]
+    // swiftlint:enable force_try
 
+    // swiftlint:disable:next cyclomatic_complexity function_body_length
     init?(_ id: String, _ template: String) {
         self.id = id
         self.template = template
         var str = template
 
         var components = [TemplateComponent]()
-        while str.count > 0 {
+        while !str.isEmpty {
             var foundMatch = false
-            for re in CodeTemplate.regexps {
-                let result = re.matches(in: str, options: [], range: NSRange(location: 0, length: str.count))
-                if result.count == 0 {
+            for regExp in CodeTemplate.regexps {
+                let result = regExp.matches(in: str, options: [], range: NSRange(location: 0, length: str.count))
+                if result.isEmpty {
                     continue
                 }
                 let range = result[0].range(at: 0)
@@ -293,7 +297,7 @@ public struct CodeTemplate {
             }
         }
 
-        guard components.count > 0 else {
+        guard !components.isEmpty else {
             return nil
         }
         self.components = components
@@ -365,8 +369,8 @@ public struct CodeTemplate {
             let matches = regex.matches(in: text, options: [], range: range)
             if let match = matches.first {
                 var result = [String]()
-                for r in 1 ..< match.numberOfRanges {
-                    if let range = Range(match.range(at: r), in: text) {
+                for range in 1 ..< match.numberOfRanges {
+                    if let range = Range(match.range(at: range), in: text) {
                         let str = String(text[range])
                         result.append(str)
                     }
@@ -374,7 +378,7 @@ public struct CodeTemplate {
                 return result
             }
         } catch {
-            print(error)
+            Log.error("\(error)")
         }
         return []
     }
@@ -445,13 +449,13 @@ public struct ParseResult {
     public var embeddedDecimal: EmbeddedDecimal? {
         guard
             let entry = self.entries.first(where: { $0.templateComponent.isDecimal }),
-            case .embedDecimal(let i, let f) = entry.templateComponent,
+            case .embedDecimal(let intDigits, let fractionDigits) = entry.templateComponent,
             let value = Int(entry.value)
         else {
             return nil
         }
 
-        return EmbeddedDecimal(integerDigits: i, fractionDigits: f, value: value)
+        return EmbeddedDecimal(integerDigits: intDigits, fractionDigits: fractionDigits, value: value)
     }
 
     /// embed data into a scanned code in place of the `embed` placeholder
@@ -531,7 +535,7 @@ public struct OverrideLookup {
     public let embeddedData: Int?
 }
 
-public struct CodeMatcher {
+public enum CodeMatcher {
     private static var templates = [String: [String: CodeTemplate]]()
 
     static func addTemplate(_ projectId: String, _ id: String, _ template: String) {
@@ -564,7 +568,7 @@ public struct CodeMatcher {
     }
 
     public static func matchOverride(_ code: String, _ overrides: [PriceOverrideCode]?, _ projectId: String) -> OverrideLookup? {
-        guard let overrides = overrides, overrides.count > 0 else {
+        guard let overrides = overrides, !overrides.isEmpty else {
             return nil
         }
 
@@ -595,6 +599,7 @@ public struct CodeMatcher {
         }
     }
 
+    // swiftlint:disable:next cyclomatic_complexity
     public static func createInstoreEan(_ templateId: String, _ code: String, _ data: Int, _ projectId: String? = nil) -> String? {
         guard let template = self.findTemplate(templateId, projectId) else {
             return nil
@@ -606,8 +611,8 @@ public struct CodeMatcher {
 
         var result = ""
         var embedSeen = false
-        for c in template.components {
-            switch c {
+        for component in template.components {
+            switch component {
             case .plainText(let str):
                 result.append(str)
             case .code(let type):

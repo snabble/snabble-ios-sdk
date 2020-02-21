@@ -63,19 +63,19 @@ public struct QRCodeGenerator {
 
         var customerCard = cart.customerCard
         var regularBlocks = self.makeBlocks(regularItems, customerCard)
-        if regularBlocks.count > 0 {
+        if !regularBlocks.isEmpty {
             customerCard = nil
         }
         var restrictedBlocks = self.makeBlocks(restrictedItems, customerCard)
 
         // if there is no regular block, fake one so that we have a place to put the `nextWithCheck` code
-        if regularBlocks.count == 0 && restrictedBlocks.count > 0 {
+        if regularBlocks.isEmpty && !restrictedBlocks.isEmpty {
             let block = Codeblock(self.config)
             regularBlocks = [ block ]
         }
 
         // if possible, merge the last regular and the last restricted block
-        if regularBlocks.count > 1 && restrictedBlocks.count > 0 && self.config.maxChars == nil {
+        if regularBlocks.count > 1 && !restrictedBlocks.isEmpty && self.config.maxChars == nil {
             let lastRegularIndex = regularBlocks.count - 1
             let lastRestrictedIndex = restrictedBlocks.count - 1
 
@@ -121,6 +121,7 @@ public struct QRCodeGenerator {
             }
         }
 
+        // swiftlint:disable:next empty_count
         if currentBlock.count > 0 {
             result.append(currentBlock)
         }
@@ -144,15 +145,15 @@ public struct QRCodeGenerator {
         }
 
         let items = blocks.flatMap { $0.items }
-        guard items.count > 0 else {
+        guard !items.isEmpty else {
             return blocks
         }
 
         let chunks = self.divideIntoChunks(items, self.config.effectiveMaxCodes)
         if chunks.count == blocks.count && chunks[0].count < blocks[0].count - 3 {
             var newBlocks = blocks
-            for i in 0 ..< chunks.count {
-                newBlocks[i].items = chunks[i]
+            for idx in 0 ..< chunks.count {
+                newBlocks[idx].items = chunks[idx]
             }
             return newBlocks
         } else {
@@ -256,7 +257,7 @@ private struct Codeblock {
             codes.append("1;\(end)")
         }
 
-        let header = self.config.format == .csv ? "snabble;\(index+1);\(total)" : "snabble;"
+        let header = self.config.format == .csv ? "snabble;\(index + 1);\(total)" : "snabble;"
 
         return header + self.config.separator + codes.joined(separator: self.config.separator)
     }
@@ -276,14 +277,14 @@ private struct Codeblock {
             codes.append("240" + end)
         }
 
-        let gs = "\u{1d}" // ascii GROUP SEPARATOR, 0x1d
+        let sep = "\u{1d}" // ascii GROUP SEPARATOR, 0x1d
 
         // AI 91 (origin type), 00003 == IKEA Store App
-        let header = "9100003" + gs
+        let header = "9100003" + sep
 
         // AI 10 (lot number), # of chunks
-        let lot = "10" + Codeblock.formatter.string(for: total)! + gs
+        let lot = "10" + Codeblock.formatter.string(for: total)! + sep
 
-        return header + lot + codes.joined(separator: gs)
+        return header + lot + codes.joined(separator: sep)
     }
 }

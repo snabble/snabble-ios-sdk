@@ -13,9 +13,9 @@ final class ReceiptCell: UITableViewCell {
     @IBOutlet private weak var orderDate: UILabel!
     @IBOutlet private weak var price: UILabel!
 
-    @IBOutlet weak var iconWidth: NSLayoutConstraint!
-    @IBOutlet weak var iconDistance: NSLayoutConstraint!
-    
+    @IBOutlet private weak var iconWidth: NSLayoutConstraint!
+    @IBOutlet private weak var iconDistance: NSLayoutConstraint!
+
     override func awakeFromNib() {
         super.awakeFromNib()
 
@@ -53,8 +53,7 @@ final class ReceiptCell: UITableViewCell {
             dateFormatter.dateStyle = .medium
             dateFormatter.timeStyle = .short
             let date = dateFormatter.string(from: order.date)
-            let oClock = "Snabble.Receipts.oClock".localized()
-            self.orderDate.text = "\(date) \(oClock)"
+            self.orderDate.text = date
 
         case .pending(let shopName, let projectId):
             self.storeName.text = shopName

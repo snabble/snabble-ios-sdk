@@ -10,22 +10,31 @@ public extension Notification.Name {
     static let paymentMethodsChanged = Notification.Name("paymentMethodsChanged")
 }
 
-final class PaymentMethodSelectionViewController: UIViewController {
+public protocol PaymentNavigationDelegate: class {
+    func processStarted(_ method: PaymentMethod, _ process: CheckoutProcess)
+    func dataEntryNeeded(for method: PaymentMethod)
+}
 
-    @IBOutlet weak var collectionView: UICollectionView!
-    
+public final class PaymentMethodSelectionViewController: UIViewController {
+
+    @IBOutlet private weak var collectionView: UICollectionView!
+
     private weak var cart: ShoppingCart!
     private let process: PaymentProcess
     private let signedCheckoutInfo: SignedCheckoutInfo
     private var itemSize = CGSize.zero
 
     private var paymentMethods: [PaymentMethod]
+    private weak var analyticsDelegate: AnalyticsDelegate?
 
-    init(_ process: PaymentProcess, _ paymentMethods: [PaymentMethod]) {
+    public weak var navigationDelegate: PaymentNavigationDelegate?
+
+    public init(_ process: PaymentProcess, _ paymentMethods: [PaymentMethod], _ analyticsDelegate: AnalyticsDelegate) {
         self.process = process
         self.signedCheckoutInfo = process.signedCheckoutInfo
         self.cart = process.cart
         self.paymentMethods = paymentMethods
+        self.analyticsDelegate = analyticsDelegate
 
         super.init(nibName: nil, bundle: SnabbleBundle.main)
     }
@@ -34,7 +43,7 @@ final class PaymentMethodSelectionViewController: UIViewController {
         fatalError("init(coder:) has not been implemented")
     }
 
-    override func viewDidLoad() {
+    override public func viewDidLoad() {
         self.title = "Snabble.PaymentSelection.title".localized()
 
         super.viewDidLoad()
@@ -46,9 +55,15 @@ final class PaymentMethodSelectionViewController: UIViewController {
 
         let nib = UINib(nibName: "CheckoutPaymentMethodCell", bundle: SnabbleBundle.main)
         self.collectionView.register(nib, forCellWithReuseIdentifier: "paymentCell")
+
+        if !SnabbleUI.implicitNavigation && self.navigationDelegate == nil {
+            let msg = "navigationDelegate may not be nil when using explicit navigation"
+            assert(self.navigationDelegate != nil)
+            NSLog("ERROR: \(msg)")
+        }
     }
 
-    override func viewDidLayoutSubviews() {
+    override public func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
 
         let width = self.collectionView.frame.width
@@ -57,7 +72,7 @@ final class PaymentMethodSelectionViewController: UIViewController {
         self.updateContentInset()
     }
 
-    override func viewWillAppear(_ animated: Bool) {
+    override public func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
 
         if !self.isBeingPresented && !self.isMovingToParent {
@@ -70,13 +85,17 @@ final class PaymentMethodSelectionViewController: UIViewController {
         nc.addObserver(self, selector: #selector(self.paymentMethodsChanged(_:)), name: .paymentMethodsChanged, object: nil)
     }
 
-    override func viewDidAppear(_ animated: Bool) {
+    override public func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
 
         self.process.track(.viewPaymentMethodSelection)
     }
 
     @objc private func shoppingCartChanged(_ notification: Notification) {
+        guard SnabbleUI.implicitNavigation else {
+            return
+        }
+
         // if we're the top VC and not already disappearing, pop.
         if let top = self.navigationController?.topViewController as? PaymentMethodSelectionViewController, !top.isMovingFromParent {
             self.navigationController?.popViewController(animated: false)
@@ -99,32 +118,46 @@ final class PaymentMethodSelectionViewController: UIViewController {
         let numRows = self.paymentMethods.count
         var contentInsetTop = self.collectionView.bounds.size.height
 
-        for i in 0 ..< numRows {
-            let attributes = self.collectionView.layoutAttributesForItem(at: IndexPath(item: i, section: 0))
+        for row in 0 ..< numRows {
+            let attributes = self.collectionView.layoutAttributesForItem(at: IndexPath(item: row, section: 0))
             let rowRect = attributes?.frame ?? CGRect.zero
-            contentInsetTop -= rowRect.size.height + (i > 0 ? 16 : 0)
+            contentInsetTop -= rowRect.size.height + (row > 0 ? 16 : 0)
             if contentInsetTop <= 0 {
                 contentInsetTop = 0
             }
         }
 
-        self.collectionView.contentInset = UIEdgeInsets.init(top: contentInsetTop, left: 0, bottom: 0, right: 0)
+        self.collectionView.contentInset = UIEdgeInsets(top: contentInsetTop, left: 0, bottom: 0, right: 0)
         if contentInsetTop == 0 {
             // scroll so that the last entry is fully visible
-            let last = IndexPath(item: numRows-1, section: 0)
+            let last = IndexPath(item: numRows - 1, section: 0)
             self.collectionView.scrollToItem(at: last, at: .bottom, animated: false)
         }
     }
 
     fileprivate func startPayment(_ method: PaymentMethod) {
-        self.process.start(method) { result in
-            switch result {
-            case .success(let viewController):
-                self.navigationController?.pushViewController(viewController, animated: true)
-            case .failure(let error):
-                let handled = self.process.delegate.handlePaymentError(method, error)
-                if !handled {
-                    self.process.delegate.showWarningMessage("Snabble.Payment.errorStarting".localized())
+        if SnabbleUI.implicitNavigation {
+            self.process.start(method) { (result: Result<UIViewController, SnabbleError>) in
+                switch result {
+                case .success(let viewController):
+                    self.navigationController?.pushViewController(viewController, animated: true)
+                case .failure(let error):
+                    let handled = self.process.delegate.handlePaymentError(method, error)
+                    if !handled {
+                        self.process.delegate.showWarningMessage("Snabble.Payment.errorStarting".localized())
+                    }
+                }
+            }
+        } else {
+            self.process.start(method) { (result: Result<CheckoutProcess, SnabbleError>) in
+                switch result {
+                case .success(let process):
+                    self.navigationDelegate?.processStarted(method, process)
+                case .failure(let error):
+                    let handled = self.process.delegate.handlePaymentError(method, error)
+                    if !handled {
+                        self.process.delegate.showWarningMessage("Snabble.Payment.errorStarting".localized())
+                    }
                 }
             }
         }
@@ -135,42 +168,61 @@ final class PaymentMethodSelectionViewController: UIViewController {
 // MARK: - collection view delegates
 extension PaymentMethodSelectionViewController: UICollectionViewDelegate, UICollectionViewDataSource, UICollectionViewDelegateFlowLayout {
 
-    func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
+    public func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         return self.paymentMethods.count
     }
 
-    func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
+    public func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
+        // swiftlint:disable:next force_cast
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "paymentCell", for: indexPath) as! CheckoutPaymentMethodCell
 
         let paymentMethod = self.paymentMethods[indexPath.row]
         cell.paymentMethod = paymentMethod
-        
+
         return cell
     }
 
-    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
+    public func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
         return self.itemSize
     }
 
-    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+    public func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         let method = self.paymentMethods[indexPath.row]
 
-        if method.data == nil, method.dataRequired, let entryVC = self.process.delegate.dataEntry(for: method) {
-            self.navigationController?.pushViewController(entryVC, animated: true)
+        if method.dataRequired && method.data == nil {
+            if SnabbleUI.implicitNavigation, let entryVC = self.dataEntryController(for: method) {
+                self.navigationController?.pushViewController(entryVC, animated: true)
+            } else {
+                self.navigationDelegate?.dataEntryNeeded(for: method)
+            }
             return
         }
-        
+
         self.process.delegate.startPayment(method, self) { proceed in
             if proceed {
                 self.startPayment(method)
             }
         }
     }
+
+    private func dataEntryController(for method: PaymentMethod) -> UIViewController? {
+        switch method {
+        case .deDirectDebit:
+            return SepaEditViewController(nil, nil, self.analyticsDelegate)
+        case .visa:
+            return CreditCardEditViewController(.visa, self.analyticsDelegate)
+        case .mastercard:
+            return CreditCardEditViewController(.mastercard, self.analyticsDelegate)
+
+        case .qrCodePOS, .qrCodeOffline, .externalBilling, .gatekeeperTerminal:
+            return nil
+        }
+    }
 }
 
 // MARK: - Appearance change
 extension PaymentMethodSelectionViewController {
-    override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
+    override public func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
         super.traitCollectionDidChange(previousTraitCollection)
 
         if #available(iOS 13.0, *) {

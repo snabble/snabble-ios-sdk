@@ -10,7 +10,7 @@ public struct OrderList: Decodable {
     public let orders: [Order]
 }
 
-public struct Order: Decodable {
+public struct Order: Codable {
     public let project: String
     public let id: String
     public let date: Date
@@ -19,7 +19,7 @@ public struct Order: Decodable {
     public let price: Int
     public let links: OrderLinks
 
-    public struct OrderLinks: Decodable {
+    public struct OrderLinks: Codable {
         public let receipt: Link
     }
 
@@ -41,11 +41,24 @@ public struct Order: Decodable {
         self.price = try container.decode(Int.self, forKey: .price)
         self.links = try container.decode(.links, as: OrderLinks.self)
     }
+
+    public func encode(to encoder: Encoder) throws {
+        var container = encoder.container(keyedBy: CodingKeys.self)
+
+        try container.encode(self.project, forKey: .project)
+        try container.encode(self.id, forKey: .id)
+        let dateStr = Snabble.iso8601Formatter.string(from: self.date)
+        try container.encode(dateStr, forKey: .date)
+
+        try container.encode(self.shopId, forKey: .shopId)
+        try container.encode(self.shopName, forKey: .shopName)
+        try container.encode(self.price, forKey: .price)
+        try container.encode(self.links, forKey: .links)
+    }
 }
 
-
 extension OrderList {
-    public static func load(_ project: Project, completion: @escaping (Result<OrderList, SnabbleError>)->() ) {
+    public static func load(_ project: Project, completion: @escaping (Result<OrderList, SnabbleError>) -> Void ) {
         let url = SnabbleAPI.links.clientOrders.href.replacingOccurrences(of: "{clientID}", with: SnabbleAPI.clientId)
 
         project.request(.get, url, timeout: 0) { request in
@@ -61,8 +74,9 @@ extension OrderList {
 }
 
 extension Order {
-    public func getReceipt(_ project: Project, completion: @escaping (Result<URL, Error>) -> ()) {
+    public func getReceipt(_ project: Project, completion: @escaping (Result<URL, Error>) -> Void) {
         let fileManager = FileManager.default
+        // swiftlint:disable:next force_try
         let cacheDir = try! fileManager.url(for: .cachesDirectory, in: .userDomainMask, appropriateFor: nil, create: true)
         let targetPath = cacheDir.appendingPathComponent("snabble-order-\(self.id).pdf")
 
@@ -80,7 +94,7 @@ extension Order {
         }
     }
 
-    private func download(_ project: Project, _ targetPath: URL, completion: @escaping (Result<URL, Error>) ->() ) {
+    private func download(_ project: Project, _ targetPath: URL, completion: @escaping (Result<URL, Error>) -> Void ) {
         project.request(.get, self.links.receipt.href, timeout: 10) { request in
             guard let request = request else {
                 completion(.failure(SnabbleError.noRequest))
@@ -88,7 +102,7 @@ extension Order {
             }
 
             let session = SnabbleAPI.urlSession()
-            let task = session.downloadTask(with: request) { location, response, error in
+            let task = session.downloadTask(with: request) { location, _, error in
                 if let error = error {
                     Log.error("error downloading receipt: \(String(describing: error))")
                     return completion(.failure(error))

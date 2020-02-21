@@ -67,7 +67,7 @@ public enum SaleRestriction: Codable {
 }
 
 extension SaleRestriction: Equatable {
-    public static func==(_ lhs: SaleRestriction, _ rhs: SaleRestriction) -> Bool {
+    public static func == (_ lhs: SaleRestriction, _ rhs: SaleRestriction) -> Bool {
         switch (lhs, rhs) {
         case (.none, .none): return true
         case (.age(let age1), .age(let age2)): return age1 == age2

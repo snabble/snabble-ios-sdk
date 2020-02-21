@@ -56,7 +56,8 @@ final class ShoppingCartTableCell: UITableViewCell {
         self.quantityWrapper.layer.masksToBounds = true
 
         self.quantityInput.tintColor = SnabbleUI.appearance.primaryColor
-        self.doneButton = self.quantityInput.addDoneButton()
+        let toolbar = self.quantityInput.addDoneButton()
+        self.doneButton = toolbar.items?.last
         self.quantityInput.delegate = self
 
         self.prepareForReuse()
@@ -260,20 +261,20 @@ final class ShoppingCartTableCell: UITableViewCell {
         }
     }
 
-    @IBAction func minusButtonTapped(_ button: UIButton) {
+    @IBAction private func minusButtonTapped(_ button: UIButton) {
         if self.quantity > 0 {
             self.quantity -= 1
             self.updateQuantity(at: button.tag)
         }
     }
 
-    @IBAction func plusButtonTapped(_ button: UIButton) {
+    @IBAction private func plusButtonTapped(_ button: UIButton) {
         if self.item?.product.type == .userMustWeigh {
             // treat this as the "OK" button
             self.quantityInput.resignFirstResponder()
             return
         }
-        
+
         if self.quantity < ShoppingCart.maxAmount {
             self.quantity += 1
             self.updateQuantity(at: button.tag)
@@ -340,9 +341,9 @@ extension ShoppingCartTableCell {
         }
 
         self.spinner.startAnimating()
-        self.task = URLSession.shared.dataTask(with: url) { data, response, error in
+        self.task = URLSession.shared.dataTask(with: url) { data, _, error in
             self.task = nil
-            DispatchQueue.main.async() {
+            DispatchQueue.main.async {
                 self.spinner.stopAnimating()
             }
             guard let data = data, error == nil else {
@@ -350,7 +351,7 @@ extension ShoppingCartTableCell {
             }
 
             if let image = UIImage(data: data) {
-                DispatchQueue.main.async() {
+                DispatchQueue.main.async {
                     ShoppingCartTableCell.imageCache[imgUrl] = image
                     self.productImage.image = image
                 }

@@ -21,14 +21,14 @@ public enum PaymentEvent {
     }
 }
 
-final public class PaymentProcessPoller {
+public final class PaymentProcessPoller {
     private var timer: Timer?
 
     private let process: CheckoutProcess
     private let project: Project
 
     private var task: URLSessionDataTask?
-    private var completion: ((Bool) -> ())?
+    private var completion: ((Bool) -> Void)?
 
     private var waitingFor = [PaymentEvent]()
     private var alreadySeen = [PaymentEvent]()
@@ -56,22 +56,22 @@ final public class PaymentProcessPoller {
     }
 
     // wait for a number of events, and call the completion handler as soon as one (or more) are fulfilled
-    public func waitFor(_ events: [PaymentEvent], completion: @escaping ([PaymentEvent: Bool]) -> () ) {
+    public func waitFor(_ events: [PaymentEvent], completion: @escaping ([PaymentEvent: Bool]) -> Void ) {
         self.waitingFor = events
         self.alreadySeen = []
-        self.timer = Timer.scheduledTimer(withTimeInterval: 1.0, repeats: true) { timer in
+        self.timer = Timer.scheduledTimer(withTimeInterval: 1.0, repeats: true) { _ in
             self.checkEvents(events, completion)
         }
     }
 
-    private func checkEvents(_ events: [PaymentEvent], _ completion: @escaping ([PaymentEvent: Bool]) -> () ) {
-        self.process.update(self.project, taskCreated: { self.task = $0 }) { result in
+    private func checkEvents(_ events: [PaymentEvent], _ completion: @escaping ([PaymentEvent: Bool]) -> Void ) {
+        self.process.update(self.project, taskCreated: { self.task = $0 }, completion: { result in
             guard case Result.success(let process) = result else {
                 return
             }
 
             self.updatedProcess = process
-            
+
             var seenNow = [PaymentEvent: Bool]()
             var abort = false
             for event in self.waitingFor {
@@ -79,7 +79,7 @@ final public class PaymentProcessPoller {
                     continue
                 }
 
-                var result: (event: PaymentEvent, ok: Bool)? = nil
+                var result: (event: PaymentEvent, ok: Bool)?
                 switch event {
                 case .approval: result = self.checkApproval(process)
                 case .paymentSuccess: result = self.checkPayment(process)
@@ -95,7 +95,7 @@ final public class PaymentProcessPoller {
                 }
             }
 
-            if seenNow.count > 0 {
+            if !seenNow.isEmpty {
                 completion(seenNow)
             }
 
@@ -103,7 +103,7 @@ final public class PaymentProcessPoller {
                 self.timer?.invalidate()
                 self.timer = nil
             }
-        }
+        })
     }
 
     private func checkApproval(_ process: CheckoutProcess) -> (PaymentEvent, Bool)? {
