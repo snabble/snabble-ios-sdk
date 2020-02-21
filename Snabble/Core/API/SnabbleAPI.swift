@@ -219,7 +219,10 @@ extension SnabbleAPI {
         case "https://api.snabble-testing.io":
             return "testing"
         default:
-            fatalError("API config not correctly initialized")
+            if SnabbleAPI.debugMode {
+                fatalError("API config not correctly initialized")
+            }
+            return "prod"
         }
     }
 }
