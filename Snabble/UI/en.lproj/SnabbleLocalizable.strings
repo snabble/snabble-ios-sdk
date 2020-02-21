@@ -213,6 +213,8 @@
 
 /********** Android **********/
 
+"Snabble.Payment.CreditCard" = "Credit card";
+
 "Snabble.Payment.usableAt" = "Usable at: %@";
 
 "Snabble.CC.3dsecureHint" = "In order to verify your credit card, you will be redirected to your bank after entering your data. There you will be asked to approve a payment of € 1.00 to snabble. The amount will be credited to you immediately after your approval.";

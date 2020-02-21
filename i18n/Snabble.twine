@@ -238,7 +238,6 @@
         tags = android
     [Snabble.Payment.CreditCard]
         en = Credit card
-        tags = android
     [Snabble.Payment.CreditCard.error]
         en = There was an error processing your credit card
         tags = android
