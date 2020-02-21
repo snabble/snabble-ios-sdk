@@ -5,9 +5,6 @@
 * Adds support for the upcoming React Native wrapper
 * Adding and editing of payment method data (ie, SEPA and credit card data) is now part of the SDK. Use `PaymentMethodListViewController` as a starting point for letting users enter their payment data.
 * Support for handling custom appearance (aka "chameleon mode") is now part of the SDK. See `SnabbleUI.registerForAppearanceChange()` and `SnabbleUI.setCustomAppearance()`
-
-# v0.11.3
-
 * Removes the unused `secondaryColor` property from `SnabbleAppearance`
 * Fixes display of product weight in the Shopping Cart in Dark Mode
 * Adds support for interactions with the [snabble vpos](https://github.com/snabble/docs/blob/master/api_vpos.md)
