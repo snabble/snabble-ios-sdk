@@ -212,10 +212,14 @@ extension SnabbleAPI {
 extension SnabbleAPI {
     static var serverName: String {
         switch config.baseUrl {
-        case "https://api.snabble.io": return "prod"
-        case "https://api.snabble-staging.io": return "staging"
-        case "https://api.snabble-testing.io": return "testing"
-        default: return "unknown"
+        case "https://api.snabble.io":
+            return "prod"
+        case "https://api.snabble-staging.io":
+            return "staging"
+        case "https://api.snabble-testing.io":
+            return "testing"
+        default:
+            fatalError("API config not correctly initialized")
         }
     }
 }
