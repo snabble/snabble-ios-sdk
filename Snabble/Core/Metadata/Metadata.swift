@@ -157,7 +157,7 @@ public struct QRCodeConfig: Decodable {
 
 }
 
-public enum ScanFormat: String, Decodable {
+public enum ScanFormat: String, Decodable, CaseIterable {
     // 1d codes
     case ean13      // includes UPC-A
     case ean8
