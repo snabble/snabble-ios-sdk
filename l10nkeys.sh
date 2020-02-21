@@ -35,3 +35,17 @@ echo
 grep ^\" ../iOS-App/Sources/de.lproj/Localizable.strings | sed 's/\"\(.*\)\" = \".*/\1/' | sort | uniq >$STR_DE_KEYS
 echo "keys used in code but not found in the app's de strings file:"
 comm -23 $CODE_KEYS $STR_DE_KEYS
+
+# check keys in knauber's de strings files
+
+echo
+grep ^\" ../knauber-ios/Sources/de.lproj/Localizable.strings | sed 's/\"\(.*\)\" = \".*/\1/' | sort | uniq >$STR_DE_KEYS
+echo "keys used in code but not found in knauber's de strings file:"
+comm -23 $CODE_KEYS $STR_DE_KEYS
+
+# check keys in wasgau's de strings files
+
+echo
+grep ^\" ../wasgau-ios/Sources/de.lproj/Localizable.strings | sed 's/\"\(.*\)\" = \".*/\1/' | sort | uniq >$STR_DE_KEYS
+echo "keys used in code but not found in wasgau's de strings file:"
+comm -23 $CODE_KEYS $STR_DE_KEYS
