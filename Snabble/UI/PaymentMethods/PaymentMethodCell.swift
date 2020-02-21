@@ -37,7 +37,7 @@ final class PaymentMethodCell: UITableViewCell {
             let fmt = "Snabble.Payment.usableAt".localized()
             self.useLabel.text = String(format: fmt, retailers)
         } else {
-            self.useLabel.text = " "
+            self.useLabel.text = nil
         }
 
         if detail.originType == .tegutEmployeeID {

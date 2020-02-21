@@ -56,6 +56,7 @@ public final class PaymentMethodListViewController: UIViewController {
 
     private var paymentDetails = [PaymentMethodDetail]()
     private var initialDetails = 0
+    private let showUsable: Bool
     private let methods: [MethodProjects]
     private weak var analyticsDelegate: AnalyticsDelegate?
 
@@ -64,6 +65,7 @@ public final class PaymentMethodListViewController: UIViewController {
     public init(_ analyticsDelegate: AnalyticsDelegate) {
         self.analyticsDelegate = analyticsDelegate
         self.methods = MethodProjects.initialize()
+        self.showUsable = SnabbleAPI.projects.count > 1
 
         super.init(nibName: nil, bundle: SnabbleBundle.main)
 
@@ -220,11 +222,15 @@ extension PaymentMethodListViewController: UITableViewDelegate, UITableViewDataS
         let detail = self.paymentDetails[indexPath.row]
         let method = self.methods.first { $0.method == detail.rawMethod }
 
-        if method == nil {
-            let projects = SnabbleAPI.projects.filter { $0.paymentMethods.contains(detail.rawMethod) }.map { $0.name }
-            cell.setDetail(detail, projects)
+        if self.showUsable {
+            if method == nil {
+                let projects = SnabbleAPI.projects.filter { $0.paymentMethods.contains(detail.rawMethod) }.map { $0.name }
+                cell.setDetail(detail, projects)
+            } else {
+                cell.setDetail(detail, method?.projectNames)
+            }
         } else {
-            cell.setDetail(detail, method?.projectNames)
+            cell.setDetail(detail, nil)
         }
         return cell
     }
