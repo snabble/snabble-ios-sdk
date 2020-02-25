@@ -91,7 +91,7 @@ final class ScanConfirmationView: DesignableView {
 
         self.cartItem = CartItem(1, product, scannedCode, cart.customerCard, SnabbleUI.project.roundingMode)
 
-        let cartQuantity = self.shoppingCart.quantity(of: cartItem)
+        let cartQuantity = self.cartItem.canMerge ? self.shoppingCart.quantity(of: self.cartItem) : 0
         self.alreadyInCart = cartQuantity > 0
 
         var quantity = cartQuantity + 1

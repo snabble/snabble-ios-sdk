@@ -115,7 +115,7 @@ public final class ShoppingCart: Codable {
         }
 
         defer { self.save() }
-        if let index = self.items.firstIndex(where: { $0.product.sku == item.product.sku }) {
+        if item.canMerge, let index = self.items.firstIndex(where: { $0.product.sku == item.product.sku }) {
             var existing = self.items[index]
             if existing.canMerge {
                 existing.quantity += item.quantity
