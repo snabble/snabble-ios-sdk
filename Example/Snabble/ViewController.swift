@@ -56,7 +56,7 @@ class ViewController: UIViewController {
 
                 var cartConfig = CartConfig()
                 cartConfig.project = project
-                cartConfig.shop = project.shops[0]
+                cartConfig.shopId = project.shops[0].id
                 self.shoppingCart = ShoppingCart(cartConfig)
             }
         }
