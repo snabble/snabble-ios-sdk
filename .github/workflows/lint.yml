@@ -4,7 +4,7 @@ on:
       - master
 name: Lint
 jobs:
-  test:
+  lint:
     name: Lint
     runs-on: macOS-latest
     steps:

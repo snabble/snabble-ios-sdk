@@ -1,0 +1,24 @@
+on:
+  push:
+    tags:    
+      - 0.*
+name: Publish
+jobs:
+  publish:
+    name: Publish
+    runs-on: macOS-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@master
+      - name: Publish
+        env: COCOAPODS_TRUNK_TOKEN: ${{ secrets.COCOAPODS_TRUNK_TOKEN }}
+        run: pod trunk push Snabble.podspec
+      - name: Slack Notification
+        uses: homoluctus/slatify@master
+        if: always()
+        with:
+          type: ${{ job.status }}
+          job_name: '*iOS SDK Publish*'
+          username: 'Github Action: Publish'
+          channel: '#apps'
+          url: ${{ secrets.SLACK_WEBHOOK }}
