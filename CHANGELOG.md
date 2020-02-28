@@ -1,5 +1,9 @@
 ## snabble iOS SDK Changelog
 
+# v0.12.1
+
+* Exposes parts of the `Cart.Item` struct for the RN wrapper.
+
 # v0.12.0
 
 * Adds support for the upcoming React Native wrapper
