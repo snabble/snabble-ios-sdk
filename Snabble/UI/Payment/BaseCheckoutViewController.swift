@@ -225,7 +225,7 @@ extension BaseCheckoutViewController {
     }
 
     private func setSpinnerAppearance() {
-        if #available(iOS 12.0, *) {
+        if #available(iOS 13.0, *) {
             if self.traitCollection.userInterfaceStyle == .dark {
                 self.spinner.style = .white
             } else {
