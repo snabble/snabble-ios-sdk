@@ -246,7 +246,7 @@ public struct CartItem: Codable {
     }
 
     /// get a copy of this data suitable for transferring to the backend
-    var cartItem: BackendCartItem {
+    public var cartItem: BackendCartItem {
         var quantity = self.quantity
         var units: Int?
         var price: Int?

@@ -263,17 +263,17 @@ public struct CheckoutProcess: Decodable {
 // MARK: - data we send to the server
 
 /// Cart
-struct Cart: Encodable {
+public struct Cart: Encodable {
     let session: String
     let shopID: String
     let customer: CustomerInfo?
     let items: [Item]
 
-    struct Item: Encodable {
+    public struct Item: Encodable {
         let id: String
         let sku: String
-        let amount: Int
-        let scannedCode: String
+        public let amount: Int
+        public let scannedCode: String
 
         let price: Int?
         let weight: Int?
@@ -293,7 +293,7 @@ struct Cart: Encodable {
     }
 }
 
-typealias BackendCartItem = Cart.Item
+public typealias BackendCartItem = Cart.Item
 
 /// AbortRequest
 struct AbortRequest: Encodable {
