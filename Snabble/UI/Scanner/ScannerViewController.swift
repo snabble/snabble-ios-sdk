@@ -11,17 +11,24 @@ public struct ScanMessage {
     public let text: String
     public let attributedString: NSAttributedString?
     public let imageUrl: String?
+    // when to dismiss the message
+    // nil - time is based on message length
+    // 0 - no autodismiss
+    // other values - dismiss after X seconds
+    public let dismissTime: TimeInterval?
 
-    public init(_ text: String, _ imageUrl: String? = nil) {
+    public init(_ text: String, _ imageUrl: String? = nil, _ dismissTime: TimeInterval? = nil) {
         self.text = text
         self.imageUrl = imageUrl
         self.attributedString = nil
+        self.dismissTime = dismissTime
     }
 
-    public init(_ text: String, _ attributedString: NSAttributedString, _ imageUrl: String? = nil) {
+    public init(_ text: String, _ attributedString: NSAttributedString, _ imageUrl: String? = nil, _ dismissTime: TimeInterval? = nil) {
         self.text = text
         self.imageUrl = imageUrl
         self.attributedString = attributedString
+        self.dismissTime = dismissTime
     }
 }
 
@@ -269,13 +276,21 @@ extension ScannerViewController {
             self.view.layoutIfNeeded()
         }
 
-        let factor = msg.imageUrl == nil ? 1.0 : 3.0
-        let minMillis = msg.imageUrl == nil ? 2000 : 4000
-        let millis = min(max(50 * msg.text.count, minMillis), 7000)
-        let seconds = TimeInterval(millis) / 1000.0 * factor
-        self.messageTimer?.invalidate()
-        self.messageTimer = Timer.scheduledTimer(withTimeInterval: seconds, repeats: false) { _ in
-            self.hideMessage()
+        let seconds: TimeInterval?
+        if let dismissTime = msg.dismissTime {
+            seconds = dismissTime > 0 ? dismissTime : nil
+        } else {
+            let factor = msg.imageUrl == nil ? 1.0 : 3.0
+            let minMillis = msg.imageUrl == nil ? 2000 : 4000
+            let millis = min(max(50 * msg.text.count, minMillis), 7000)
+            seconds = TimeInterval(millis) / 1000.0 * factor
+        }
+
+        if let seconds = seconds {
+            self.messageTimer?.invalidate()
+            self.messageTimer = Timer.scheduledTimer(withTimeInterval: seconds, repeats: false) { _ in
+                self.hideMessage()
+            }
         }
     }
 
