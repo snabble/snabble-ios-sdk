@@ -21,13 +21,14 @@ extension PaymentMethod {
             default: return ""
             }
         case .gatekeeperTerminal: return "SnabbleSDK/payment-card-terminal"
+        case .customerCardPOS: return "SnabbleSDK/payment-method-checkstand"
         }
     }
 
     var dataRequired: Bool {
         switch self {
         case .deDirectDebit, .visa, .mastercard, .externalBilling: return true
-        case .qrCodePOS, .qrCodeOffline, .gatekeeperTerminal: return false
+        case .qrCodePOS, .qrCodeOffline, .gatekeeperTerminal, .customerCardPOS: return false
         }
     }
 
@@ -60,6 +61,9 @@ extension PaymentMethod {
         case .deDirectDebit, .visa, .mastercard, .externalBilling:
             processor = OnlineCheckoutViewController(process!, cart, delegate)
         case .gatekeeperTerminal:
+            processor = TerminalCheckoutViewController(process!, cart, delegate)
+        case .customerCardPOS:
+            #warning("fixme")
             processor = TerminalCheckoutViewController(process!, cart, delegate)
         }
         processor.hidesBottomBarWhenPushed = true
@@ -135,6 +139,7 @@ public final class PaymentProcess {
             case .qrCodePOS: result.append(.qrCodePOS)
             case .qrCodeOffline: result.append(.qrCodeOffline)
             case .gatekeeperTerminal: result.append(.gatekeeperTerminal)
+            case .customerCartPOS: result.append(.customerCardPOS)
             case .deDirectDebit:
                 let sepa = userData.filter { if case .deDirectDebit = $0 { return true } else { return false } }
                 if !sepa.isEmpty {
