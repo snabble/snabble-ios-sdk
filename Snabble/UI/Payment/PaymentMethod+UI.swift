@@ -63,8 +63,7 @@ extension PaymentMethod {
         case .gatekeeperTerminal:
             processor = TerminalCheckoutViewController(process!, cart, delegate)
         case .customerCardPOS:
-            #warning("fixme")
-            processor = TerminalCheckoutViewController(process!, cart, delegate)
+            processor = CustomerCardCheckoutViewController(process!, cart, delegate)
         }
         processor.hidesBottomBarWhenPushed = true
         return processor

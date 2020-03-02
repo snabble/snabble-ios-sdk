@@ -35,6 +35,9 @@ public enum AnalyticsEvent {
     /// the `EmbeddedCodesCheckoutViewController` appeared
     case viewEmbeddedCodesCheckout
 
+    /// the `CustomerCardCheckoutViewController` appeared
+    case viewCustomerCardCheckout
+
     /// the `ReceiptListViewController` appeared
     case viewReceiptList
 
