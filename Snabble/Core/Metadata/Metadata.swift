@@ -609,15 +609,3 @@ extension Metadata {
         return appSupportDir
     }
 }
-
-// a stable string hash.
-// See http://www.cse.yorku.ca/~oz/hash.html and
-// https://stackoverflow.com/questions/52440502/string-hashvalue-not-unique-after-reset-app-when-build-in-xcode-10
-private extension String {
-    var djb2hash: Int {
-        let unicodeScalars = self.unicodeScalars.map { $0.value }
-        return unicodeScalars.reduce(5381) {
-            ($0 << 5) &+ $0 &+ Int($1)
-        }
-    }
-}

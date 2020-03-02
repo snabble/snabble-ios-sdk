@@ -53,6 +53,10 @@ public enum SnabbleUI {
     /// sets the project to be used
     public static func register(_ project: Project?) {
         self.project = project ?? Project.none
+
+        if let project = project, project.id != Project.none.id {
+            AssetManager.instance.initialize(for: project.id, scale: Int(UIScreen.main.scale))
+        }
     }
 
     // MARK: - custom appearance handling
