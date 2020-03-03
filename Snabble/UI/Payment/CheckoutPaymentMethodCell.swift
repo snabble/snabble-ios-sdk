@@ -24,7 +24,7 @@ final class CheckoutPaymentMethodCell: UICollectionViewCell {
             case .deDirectDebit(let data), .visa(let data), .mastercard(let data), .externalBilling(let data):
                 incomplete = data == nil
 
-            case .qrCodePOS, .qrCodeOffline, .gatekeeperTerminal:
+            case .qrCodePOS, .qrCodeOffline, .gatekeeperTerminal, .customerCardPOS:
                 incomplete = false
             }
 

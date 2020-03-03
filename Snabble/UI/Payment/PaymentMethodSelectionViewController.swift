@@ -214,7 +214,7 @@ extension PaymentMethodSelectionViewController: UICollectionViewDelegate, UIColl
         case .mastercard:
             return CreditCardEditViewController(.mastercard, self.analyticsDelegate)
 
-        case .qrCodePOS, .qrCodeOffline, .externalBilling, .gatekeeperTerminal:
+        case .qrCodePOS, .qrCodeOffline, .externalBilling, .gatekeeperTerminal, .customerCardPOS:
             return nil
         }
     }

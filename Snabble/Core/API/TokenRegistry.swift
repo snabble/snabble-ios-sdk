@@ -65,7 +65,7 @@ final class TokenRegistry {
         self.retrieveToken(for: project) { tokenData in
             if let tokenData = tokenData {
                 self.registry[project.id] = tokenData
-                self.startRefreshTimer()
+                // self.startRefreshTimer()
                 completion(tokenData.jwt)
             } else {
                 completion(nil)
@@ -114,7 +114,7 @@ final class TokenRegistry {
         let refreshIn = earliest.refresh.timeIntervalSinceReferenceDate - now.timeIntervalSinceReferenceDate
         // Log.debug("run refresh in \(refreshIn)s")
         self.refreshTimer?.invalidate()
-        self.refreshTimer = Timer.scheduledTimer(withTimeInterval: refreshIn, repeats: false) { _ in
+        self.refreshTimer = Timer.scheduledTimer(withTimeInterval: max(1, refreshIn), repeats: false) { _ in
             self.refreshTokens()
         }
     }
