@@ -14,10 +14,7 @@ public final class CustomerCardCheckoutViewController: UIViewController {
     @IBOutlet private weak var arrowWrapper: UIView!
     @IBOutlet private weak var codeWrapper: UIView!
 
-    @IBOutlet private weak var codeContainer: UIView!
     @IBOutlet private weak var eanView: EANView!
-    @IBOutlet private weak var idWrapper: UIView!
-    @IBOutlet private weak var idLabel: UILabel!
 
     @IBOutlet private weak var paidButton: UIButton!
 
@@ -34,7 +31,7 @@ public final class CustomerCardCheckoutViewController: UIViewController {
 
         super.init(nibName: nil, bundle: SnabbleBundle.main)
 
-        self.title = "Snabble.QRCode.title".localized()
+        self.title = "Snabble.Checkout.payAtCashRegister".localized()
     }
 
     required init?(coder aDecoder: NSCoder) {
@@ -56,9 +53,6 @@ public final class CustomerCardCheckoutViewController: UIViewController {
             self.topWrapper.isHidden = true
             self.arrowWrapper.isHidden = true
         }
-
-        let id = process?.links.`self`.href.suffix(4) ?? "offline"
-        self.idLabel.text = String(id)
     }
 
     override public func viewWillAppear(_ animated: Bool) {

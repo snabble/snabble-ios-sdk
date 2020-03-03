@@ -14,8 +14,6 @@
                 <outlet property="codeWrapper" destination="4si-t7-uZk" id="BQL-4s-PWp"/>
                 <outlet property="eanView" destination="KlQ-wK-hiy" id="wPT-KF-phM"/>
                 <outlet property="iconHeight" destination="3cg-Zu-jpX" id="bO7-Tb-1qT"/>
-                <outlet property="idLabel" destination="gnb-7a-j7y" id="D0s-Gg-wFd"/>
-                <outlet property="idWrapper" destination="Lkr-Uv-iYJ" id="q1M-oY-1MJ"/>
                 <outlet property="paidButton" destination="xcE-5B-t8q" id="Tvk-na-X8U"/>
                 <outlet property="topIcon" destination="gbu-lk-I7u" id="7de-j3-1lt"/>
                 <outlet property="topWrapper" destination="jZg-vE-kcn" id="p28-Ep-MIO"/>
@@ -31,7 +29,7 @@
                     <rect key="frame" x="0.0" y="44" width="414" height="754"/>
                     <subviews>
                         <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" distribution="equalSpacing" translatesAutoresizingMaskIntoConstraints="NO" id="oip-A2-TZM">
-                            <rect key="frame" x="0.0" y="224.5" width="414" height="305"/>
+                            <rect key="frame" x="0.0" y="235" width="414" height="284"/>
                             <subviews>
                                 <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="jZg-vE-kcn" userLabel="Top Wrapper">
                                     <rect key="frame" x="0.0" y="0.0" width="414" height="132"/>
@@ -68,10 +66,6 @@
                                 <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="4si-t7-uZk" userLabel="Code Wrapper">
                                     <rect key="frame" x="0.0" y="162" width="414" height="122"/>
                                     <subviews>
-                                        <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="RX2-jM-dL1" userLabel="Code Margins">
-                                            <rect key="frame" x="16" y="0.0" width="382" height="122"/>
-                                            <color key="backgroundColor" systemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
-                                        </view>
                                         <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="KlQ-wK-hiy" customClass="EANView" customModule="Snabble" customModuleProvider="target">
                                             <rect key="frame" x="94" y="16" width="226" height="90"/>
                                             <color key="backgroundColor" systemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
@@ -81,7 +75,7 @@
                                             </constraints>
                                             <userDefinedRuntimeAttributes>
                                                 <userDefinedRuntimeAttribute type="number" keyPath="scale">
-                                                    <integer key="value" value="1"/>
+                                                    <integer key="value" value="2"/>
                                                 </userDefinedRuntimeAttribute>
                                                 <userDefinedRuntimeAttribute type="string" keyPath="barcode" value="2001235001297"/>
                                             </userDefinedRuntimeAttributes>
@@ -89,31 +83,9 @@
                                     </subviews>
                                     <color key="backgroundColor" systemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
                                     <constraints>
-                                        <constraint firstItem="RX2-jM-dL1" firstAttribute="top" secondItem="4si-t7-uZk" secondAttribute="top" id="7Sn-OU-4KG"/>
                                         <constraint firstItem="KlQ-wK-hiy" firstAttribute="centerX" secondItem="4si-t7-uZk" secondAttribute="centerX" id="9uf-gM-XzT"/>
-                                        <constraint firstItem="RX2-jM-dL1" firstAttribute="leading" secondItem="4si-t7-uZk" secondAttribute="leading" priority="999" constant="16" id="Wl6-Cm-DJR"/>
-                                        <constraint firstAttribute="bottom" secondItem="RX2-jM-dL1" secondAttribute="bottom" id="XEv-zK-yl0"/>
                                         <constraint firstItem="KlQ-wK-hiy" firstAttribute="top" secondItem="4si-t7-uZk" secondAttribute="top" constant="16" id="ZNF-e7-vhv"/>
-                                        <constraint firstAttribute="trailing" secondItem="RX2-jM-dL1" secondAttribute="trailing" priority="999" constant="16" id="eOA-a5-Cwn"/>
                                         <constraint firstAttribute="bottom" secondItem="KlQ-wK-hiy" secondAttribute="bottom" constant="16" id="jWB-lO-sSd"/>
-                                        <constraint firstItem="RX2-jM-dL1" firstAttribute="centerX" secondItem="4si-t7-uZk" secondAttribute="centerX" id="lct-g2-63k"/>
-                                    </constraints>
-                                </view>
-                                <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="Lkr-Uv-iYJ" userLabel="ID Wrapper">
-                                    <rect key="frame" x="0.0" y="284" width="414" height="21"/>
-                                    <subviews>
-                                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="3CBA" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="gnb-7a-j7y" userLabel="ID Label">
-                                            <rect key="frame" x="190" y="2.5" width="34.5" height="16"/>
-                                            <fontDescription key="fontDescription" type="system" pointSize="13"/>
-                                            <nil key="textColor"/>
-                                            <nil key="highlightedColor"/>
-                                        </label>
-                                    </subviews>
-                                    <color key="backgroundColor" systemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
-                                    <constraints>
-                                        <constraint firstItem="gnb-7a-j7y" firstAttribute="centerY" secondItem="Lkr-Uv-iYJ" secondAttribute="centerY" id="YL0-hv-AJn"/>
-                                        <constraint firstItem="gnb-7a-j7y" firstAttribute="centerX" secondItem="Lkr-Uv-iYJ" secondAttribute="centerX" id="eJA-YU-rxe"/>
-                                        <constraint firstAttribute="height" constant="21" id="qSf-Pf-qRK"/>
                                     </constraints>
                                 </view>
                             </subviews>
