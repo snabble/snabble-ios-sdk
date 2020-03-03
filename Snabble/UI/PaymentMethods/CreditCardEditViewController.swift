@@ -147,6 +147,7 @@ public final class CreditCardEditViewController: UIViewController {
         config.userContentController = contentController
 
         self.webView = WKWebView(frame: self.containerView.bounds, configuration: config)
+        self.webView.navigationDelegate = self
 
         self.containerView.addSubview(self.webView)
     }
@@ -164,6 +165,18 @@ public final class CreditCardEditViewController: UIViewController {
         })
         alert.addAction(UIAlertAction(title: "Snabble.No".localized(), style: .cancel, handler: nil))
         self.present(alert, animated: true)
+    }
+}
+
+extension CreditCardEditViewController: WKNavigationDelegate {
+    public func webView(_ webView: WKWebView, decidePolicyFor navigationAction: WKNavigationAction, decisionHandler: @escaping (WKNavigationActionPolicy) -> Void) {
+        if navigationAction.navigationType == .linkActivated, let url = navigationAction.request.url {
+            UIApplication.shared.open(url)
+            decisionHandler(.cancel)
+            return
+        }
+
+        decisionHandler(.allow)
     }
 }
 
