@@ -138,7 +138,7 @@ public final class PaymentProcess {
             case .qrCodePOS: result.append(.qrCodePOS)
             case .qrCodeOffline: result.append(.qrCodeOffline)
             case .gatekeeperTerminal: result.append(.gatekeeperTerminal)
-            case .customerCartPOS: result.append(.customerCardPOS)
+            case .customerCardPOS: result.append(.customerCardPOS)
             case .deDirectDebit:
                 let sepa = userData.filter { if case .deDirectDebit = $0 { return true } else { return false } }
                 if !sepa.isEmpty {

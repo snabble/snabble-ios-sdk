@@ -52,12 +52,12 @@ public enum RawPaymentMethod: String, CaseIterable, Decodable {
     case creditCardMastercard   // MASTERCARD via Telecash/First Data
     case externalBilling        // external billig, e.g. via an employee id
     case gatekeeperTerminal
-    case customerCartPOS        // payment via customer card invoice
+    case customerCardPOS        // payment via customer card invoice
 
     /// true if this method reqires additional data, like an IBAN or a credit card number
     var dataRequired: Bool {
         switch self {
-        case .deDirectDebit, .creditCardVisa, .creditCardMastercard, .externalBilling, .customerCartPOS:
+        case .deDirectDebit, .creditCardVisa, .creditCardMastercard, .externalBilling, .customerCardPOS:
             return true
         case .qrCodePOS, .qrCodeOffline, .gatekeeperTerminal:
             return false
@@ -69,7 +69,7 @@ public enum RawPaymentMethod: String, CaseIterable, Decodable {
         switch self {
         case .deDirectDebit, .creditCardVisa, .creditCardMastercard:
             return true
-        case .qrCodePOS, .qrCodeOffline, .externalBilling, .gatekeeperTerminal, .customerCartPOS:
+        case .qrCodePOS, .qrCodeOffline, .externalBilling, .gatekeeperTerminal, .customerCardPOS:
             return false
         }
     }
@@ -81,7 +81,7 @@ public enum RawPaymentMethod: String, CaseIterable, Decodable {
             return true
         case .qrCodePOS, .deDirectDebit, .creditCardVisa,
              .creditCardMastercard, .externalBilling,
-             .gatekeeperTerminal, .customerCartPOS:
+             .gatekeeperTerminal, .customerCardPOS:
             return false
         }
     }
@@ -131,7 +131,7 @@ public enum PaymentMethod {
         case .mastercard: return .creditCardMastercard
         case .externalBilling: return .externalBilling
         case .gatekeeperTerminal: return .gatekeeperTerminal
-        case .customerCardPOS: return .customerCartPOS
+        case .customerCardPOS: return .customerCardPOS
         }
     }
 
