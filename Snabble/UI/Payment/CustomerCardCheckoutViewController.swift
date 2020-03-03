@@ -41,6 +41,8 @@ public final class CustomerCardCheckoutViewController: UIViewController {
     override public func viewDidLoad() {
         super.viewDidLoad()
 
+        self.eanView.barcode = self.cart.customerCard
+
         self.paidButton.makeSnabbleButton()
         self.paidButton.setTitle("Snabble.QRCode.didPay".localized(), for: .normal)
         self.paidButton.alpha = 0
