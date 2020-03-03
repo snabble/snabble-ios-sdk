@@ -55,7 +55,7 @@ public enum SnabbleUI {
         self.project = project ?? Project.none
 
         if let project = project, project.id != Project.none.id {
-            AssetManager.instance.initialize(for: project.id, scale: Int(UIScreen.main.scale))
+            AssetManager.instance.initialize(for: project.id)
         }
     }
 

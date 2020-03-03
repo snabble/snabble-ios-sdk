@@ -7,35 +7,48 @@
 //
 
 import Foundation
+import UIKit
 
 struct Manifest: Codable {
     let projectId: String
-    fileprivate let files: [File]
+    let files: [File]
 
-    func fileUrl(for name: String, at scale: Int) -> URL? {
-        if #available(iOS 13.0, *), UIScreen.main.traitCollection.userInterfaceStyle == .dark {
-            if let file = self.pickVariant(for: name + "_dark", at: scale) {
-                return file
-            }
-        }
-
-        return self.pickVariant(for: name, at: scale)
+    struct File: Codable {
+        let name: String
+        let variants: Variants
     }
 
-    private func pickVariant(for name: String, at scale: Int) -> URL? {
+    // swiftlint:disable identifier_name nesting
+    struct Variants: Codable {
+        let x1: String
+        let x2, x3: String?
+
+        enum CodingKeys: String, CodingKey {
+            case x1 = "1x"
+            case x2 = "2x"
+            case x3 = "3x"
+        }
+    }
+    // swiftlint:enable identifier_name nesting
+}
+
+extension Manifest {
+    func remoteURL(for name: String, at scale: CGFloat) -> URL? {
         guard let file = self.files.first(where: { $0.name == "\(name).png" }) else {
             return nil
         }
 
-        return file.variantURL(for: scale)
+        return file.remoteURL(for: scale)
     }
 }
 
-private struct File: Codable {
-    let name: String
-    let variants: Variants
+extension Manifest.File {
+    // where can we download this thing from?
+    func remoteURL(for scale: CGFloat) -> URL? {
+        return SnabbleAPI.urlFor(self.variant(for: scale))
+    }
 
-    func variantURL(for scale: Int) -> URL {
+    private func variant(for scale: CGFloat) -> String {
         switch scale {
         case 2: return self.variants.x2 ?? self.variants.x1
         case 3: return self.variants.x3 ?? self.variants.x1
@@ -43,31 +56,46 @@ private struct File: Codable {
         }
     }
 
-    func localPath() -> String {
+    // filename for our local filesystem copy (usually in .cachesDirectory)
+    func localName(_ projectId: String, _ scale: CGFloat) -> String {
+        let name = "\(self.name)-\(projectId)-\(self.variant(for: scale).sha1)"
+        return name
+    }
+
+    // full path for our local filesystem copy
+    func localPath(_ projectId: String, _ scale: CGFloat) -> URL {
         let fileManager = FileManager.default
-        var cacheDirUrl = try! fileManager.url(for: .cachesDirectory, in: .userDomainMask, appropriateFor: nil, create: true)
+        // swiftlint:disable:next force_try
+        let cacheDirUrl = try! fileManager.url(for: .cachesDirectory, in: .userDomainMask, appropriateFor: nil, create: true)
+        return cacheDirUrl.appendingPathComponent(self.localName(projectId, scale))
+    }
 
-        cacheDirUrl.appendPathComponent(self.name)
+    // where we store information about this file in UserDefaults
+    func defaultsKey(_ projectId: String) -> String {
+        return "io.snabble.sdk.asset.\(projectId).\(self.basename())"
+    }
+
+    private func basename() -> String {
+        let parts = self.name.components(separatedBy: ".")
+        if parts.count > 1 {
+            return parts.dropLast().joined(separator: ".")
+        } else {
+            return self.name
+        }
     }
 }
-
-// swiftlint:disable identifier_name
-private struct Variants: Codable {
-    let x1: URL
-    let x2, x3: URL?
-
-    enum CodingKeys: String, CodingKey {
-        case x1 = "1x"
-        case x2 = "2x"
-        case x3 = "3x"
-    }
-}
-// swiftlint:enable identifier_name
 
 class AssetManager {
     static let instance = AssetManager()
 
-    private init() {}
+    private var manifest: Manifest?
+    private var projectId: String
+    private let scale: CGFloat
+
+    private init() {
+        self.projectId = ""
+        self.scale = UIScreen.main.scale
+    }
 
     func getImage(named name: String) -> UIImage? {
         let settings = UserDefaults.standard
@@ -75,6 +103,7 @@ class AssetManager {
         let key = "io.snabble.sdk.asset.\(name)"
         if let localFilename = settings.string(forKey: key) {
             let fileManager = FileManager.default
+            // swiftlint:disable:next force_try
             let cacheDirUrl = try! fileManager.url(for: .cachesDirectory, in: .userDomainMask, appropriateFor: nil, create: true)
             let fileUrl = cacheDirUrl.appendingPathComponent(localFilename)
             if let data = try? Data(contentsOf: fileUrl) {
@@ -82,14 +111,16 @@ class AssetManager {
             }
         }
 
-        #warning("download asset here")
+        // TODO download asset here
         return nil
     }
 
-    func initialize(for projectId: String, scale: Int) {
+    func initialize(for projectId: String) {
+        self.projectId = projectId
+
         let baseUrl = SnabbleAPI.config.baseUrl
 
-        #warning("pass manifest URL as parameter")
+        // TODO pass manifest URL as parameter
         var components = URLComponents(string: "\(baseUrl)/\(projectId)/assets/manifest.json")
         components?.queryItems = [
             URLQueryItem(name: "type", value: "png"),
@@ -108,7 +139,7 @@ class AssetManager {
             do {
                 let manifest = try JSONDecoder().decode(Manifest.self, from: data)
                 for file in manifest.files.filter({ $0.name.hasSuffix(".png") }) {
-                    self.downloadIfMissing(file, scale, projectId)
+                    self.downloadIfMissing(file)
                 }
             } catch {
                 print(error)
@@ -117,31 +148,22 @@ class AssetManager {
         task.resume()
     }
 
-    private func downloadIfMissing(_ file: File, _ scale: Int, _ projectId: String) {
-        guard
-            let fileUrl = file.variantURL(for: scale),
-            let fileComponents = URLComponents(url: fileUrl, resolvingAgainstBaseURL: false)
-        else {
-            return
-        }
-
-        let fileManager = FileManager.default
+    private func downloadIfMissing(_ file: Manifest.File) {
         do {
+            let fileManager = FileManager.default
             let cacheDirUrl = try fileManager.url(for: .cachesDirectory, in: .userDomainMask, appropriateFor: nil, create: true)
-            let fullUrl = cacheDirUrl.appendingPathComponent(fileComponents.path + "_" + (fileComponents.query ?? ""))
+            let localName = file.localName(self.projectId, self.scale)
+            let fullUrl = cacheDirUrl.appendingPathComponent(localName)
 
             // uncomment to force download
             try? fileManager.removeItem(at: fullUrl)
 
-            // create target dir if necessary
-            self.createTargetDir(fullUrl)
-
             if !fileManager.fileExists(atPath: fullUrl.path) {
-                let downloadDelegate = DownloadDelegate(targetLocation: fullUrl)
+                let downloadDelegate = DownloadDelegate(localName: localName, key: file.defaultsKey(self.projectId))
                 let session = URLSession(configuration: .default, delegate: downloadDelegate, delegateQueue: nil)
 
-                if let assetUrl = SnabbleAPI.urlFor(fileUrl.absoluteString) {
-                    let task = session.downloadTask(with: assetUrl)
+                if let remoteUrl = file.remoteURL(for: self.scale) {
+                    let task = session.downloadTask(with: remoteUrl)
                     task.resume()
                 }
             }
@@ -170,16 +192,32 @@ class AssetManager {
 
 private final class DownloadDelegate: NSObject, URLSessionDownloadDelegate {
 
-    private let targetLocation: URL
+    private let localName: String
+    private let key: String
 
-    init(targetLocation: URL) {
-        self.targetLocation = targetLocation
+    init(localName: String, key: String) {
+        self.localName = localName
+        self.key = key
     }
 
     func urlSession(_ session: URLSession, downloadTask: URLSessionDownloadTask, didFinishDownloadingTo location: URL) {
         do {
-            print("move file to \(self.targetLocation.path)")
-            try FileManager.default.moveItem(at: location, to: self.targetLocation)
+            let fileManager = FileManager.default
+
+            let cacheDirUrl = try fileManager.url(for: .cachesDirectory, in: .userDomainMask, appropriateFor: nil, create: true)
+            let targetLocation = cacheDirUrl.appendingPathComponent(self.localName)
+            print("move file to \(targetLocation.path)")
+
+            try fileManager.moveItem(at: location, to: targetLocation)
+
+            let settings = UserDefaults.standard
+            let oldLocalfile = settings.string(forKey: self.key)
+            settings.set(self.localName, forKey: self.key)
+
+            if let oldLocal = oldLocalfile {
+                let oldUrl = cacheDirUrl.appendingPathComponent(oldLocal)
+                try? fileManager.removeItem(at: oldUrl)
+            }
         } catch {
             print(error)
         }
