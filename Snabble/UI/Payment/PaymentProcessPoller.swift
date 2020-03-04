@@ -64,10 +64,15 @@ public final class PaymentProcessPoller {
         }
     }
 
+    // swiftlint:disable:next cyclomatic_complexity
     private func checkEvents(_ events: [PaymentEvent], _ completion: @escaping ([PaymentEvent: Bool]) -> Void ) {
         self.process.update(self.project, taskCreated: { self.task = $0 }, completion: { result in
             guard case Result.success(let process) = result else {
                 return
+            }
+
+            if let candidateLink = process.paymentResult?["originCandidateLink"] as? String {
+                OriginPoller.shared.startPolling(self.project, candidateLink)
             }
 
             self.updatedProcess = process
@@ -138,4 +143,69 @@ public final class PaymentProcessPoller {
         return (.receipt, true)
     }
 
+}
+
+extension Notification.Name {
+    public static let snabbleOriginCandidateReceived = Notification.Name("snabbleOriginCandidateReceived")
+}
+
+class OriginPoller {
+    static let shared = OriginPoller()
+
+    private var project: Project?
+    private var timer: Timer?
+    private var candidates = Set<String>()
+
+    private init() {}
+
+    func startPolling(_ project: Project, _ url: String) {
+        if self.project == nil && !self.candidates.contains(url) {
+            self.project = project
+
+            self.checkCandidate(url)
+        }
+    }
+
+    private func stopPolling() {
+        self.timer?.invalidate()
+        self.timer = nil
+        self.project = nil
+    }
+
+    private func checkCandidate(_ url: String) {
+        self.project?.request(.get, url, timeout: 2) { request in
+            guard let request = request else {
+                return self.stopPolling()
+            }
+
+            self.project?.perform(request) { (result: Result<OriginCandidate, SnabbleError>, response) in
+                if response?.statusCode == 404 {
+                    return self.stopPolling()
+                }
+
+                var continuePolling = true
+                switch result {
+                case .failure(let error):
+                    Log.error("error getting originCandidate: \(error)")
+                case .success(let candidate):
+                    let valid = candidate.isValid
+                    if valid {
+                        Log.debug("got valid candidate, posting notification")
+                        self.candidates.insert(url)
+                        let nc = NotificationCenter.default
+                        nc.post(name: .snabbleOriginCandidateReceived, object: nil, userInfo: [ "candidate": candidate ])
+                    }
+                    continuePolling = !valid
+                }
+
+                if continuePolling {
+                    self.timer = Timer.scheduledTimer(withTimeInterval: 1, repeats: false) { _ in
+                        self.checkCandidate(url)
+                    }
+                } else {
+                    self.stopPolling()
+                }
+            }
+        }
+    }
 }

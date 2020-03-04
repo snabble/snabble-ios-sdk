@@ -27,16 +27,26 @@ public final class SepaEditViewController: UIViewController {
 
     private var detail: PaymentMethodDetail?
     private var index: Int? = 0
+    private var origin: OriginCandidate?
     private weak var analyticsDelegate: AnalyticsDelegate?
 
     public weak var navigationDelegate: PaymentMethodNavigationDelegate?
     public var backLevels = 1
 
-    public init(_ detail: PaymentMethodDetail? = nil, _ index: Int? = nil, _ analyticsDelegate: AnalyticsDelegate?) {
+    public init(_ detail: PaymentMethodDetail?, _ index: Int?, _ analyticsDelegate: AnalyticsDelegate?) {
         super.init(nibName: nil, bundle: SnabbleBundle.main)
+
         self.detail = detail
         self.index = index
         self.analyticsDelegate = analyticsDelegate
+
+        self.title = "Snabble.Payment.SEPA.Title".localized()
+    }
+
+    public init(_ origin: OriginCandidate, _ analyticsDelegate: AnalyticsDelegate?) {
+        super.init(nibName: nil, bundle: SnabbleBundle.main)
+
+        self.origin = origin
 
         self.title = "Snabble.Payment.SEPA.Title".localized()
     }
@@ -108,6 +118,16 @@ public final class SepaEditViewController: UIViewController {
             let trash = UIImage.fromBundle("SnabbleSDK/icon-trash")
             let deleteButton = UIBarButtonItem(image: trash, style: .plain, target: self, action: #selector(self.deleteButtonTapped(_:)))
             self.navigationItem.rightBarButtonItem = deleteButton
+        } else if let originIban = self.origin?.origin {
+            let country = String(originIban.prefix(2))
+            self.ibanCountryField.text = country
+            self.ibanCountryField.isEnabled = false
+
+            let iban = self.formattedIban(country, originIban)
+            self.ibanNumberField.text = iban
+            self.ibanNumberField.isEnabled = false
+
+            self.hintLabel.text = "NB: Hier muss noch ein schlauer Text hin!!!!1!elf!"
         } else {
             self.nameField.becomeFirstResponder()
         }
@@ -164,6 +184,7 @@ public final class SepaEditViewController: UIViewController {
                 PaymentMethodDetails.save(detail)
                 self.analyticsDelegate?.track(.paymentMethodAdded(detail.rawMethod.displayName ?? ""))
                 NotificationCenter.default.post(name: .paymentMethodsChanged, object: self)
+                #warning("promote the candidate if we have a link")
                 if SnabbleUI.implicitNavigation {
                     self.navigationController?.popToInstanceOf(PaymentMethodListViewController.self, animated: true)
                 } else {
