@@ -85,8 +85,8 @@ extension Manifest.File {
     }
 }
 
-class AssetManager {
-    static let instance = AssetManager()
+public class AssetManager {
+    public static let instance = AssetManager()
 
     private var manifest: Manifest?
     private var projectId: String
@@ -97,11 +97,18 @@ class AssetManager {
         self.scale = UIScreen.main.scale
     }
 
-    func getImage(named name: String) -> UIImage? {
-        let settings = UserDefaults.standard
+    public func getImage(named name: String) -> UIImage? {
+        var name = name
+        if #available(iOS 13.0, *), UIScreen.main.traitCollection.userInterfaceStyle == .dark {
+            name += "_dark"
+        }
 
-        let key = "io.snabble.sdk.asset.\(name)"
-        if let localFilename = settings.string(forKey: key) {
+        guard let file = self.manifest?.files.first(where: { $0.name == name + ".png" }) else {
+            return nil
+        }
+
+        let settings = UserDefaults.standard
+        if let localFilename = settings.string(forKey: file.defaultsKey(projectId)) {
             let fileManager = FileManager.default
             // swiftlint:disable:next force_try
             let cacheDirUrl = try! fileManager.url(for: .cachesDirectory, in: .userDomainMask, appropriateFor: nil, create: true)
@@ -111,7 +118,7 @@ class AssetManager {
             }
         }
 
-        // TODO download asset here
+        self.downloadIfMissing(file)
         return nil
     }
 
@@ -141,6 +148,7 @@ class AssetManager {
                 for file in manifest.files.filter({ $0.name.hasSuffix(".png") }) {
                     self.downloadIfMissing(file)
                 }
+                self.manifest = manifest
             } catch {
                 print(error)
             }
@@ -155,8 +163,9 @@ class AssetManager {
             let localName = file.localName(self.projectId, self.scale)
             let fullUrl = cacheDirUrl.appendingPathComponent(localName)
 
+            print("check d/l for \(file.name): \(localName) \(file.defaultsKey(self.projectId))")
             // uncomment to force download
-            try? fileManager.removeItem(at: fullUrl)
+            // try? fileManager.removeItem(at: fullUrl)
 
             if !fileManager.fileExists(atPath: fullUrl.path) {
                 let downloadDelegate = DownloadDelegate(localName: localName, key: file.defaultsKey(self.projectId))
@@ -214,7 +223,7 @@ private final class DownloadDelegate: NSObject, URLSessionDownloadDelegate {
             let oldLocalfile = settings.string(forKey: self.key)
             settings.set(self.localName, forKey: self.key)
 
-            if let oldLocal = oldLocalfile {
+            if let oldLocal = oldLocalfile, oldLocal != self.localName {
                 let oldUrl = cacheDirUrl.appendingPathComponent(oldLocal)
                 try? fileManager.removeItem(at: oldUrl)
             }
