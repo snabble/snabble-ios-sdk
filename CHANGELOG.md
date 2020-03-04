@@ -3,6 +3,7 @@
 # v0.12.2
 
 * Adds support for the new "CustomerCardPOS" payment method
+* Links in the credit card entry form are now opened in Safari
 
 # v0.12.1
 
