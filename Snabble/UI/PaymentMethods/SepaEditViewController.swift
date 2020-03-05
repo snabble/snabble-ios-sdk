@@ -119,6 +119,8 @@ public final class SepaEditViewController: UIViewController {
             let deleteButton = UIBarButtonItem(image: trash, style: .plain, target: self, action: #selector(self.deleteButtonTapped(_:)))
             self.navigationItem.rightBarButtonItem = deleteButton
         } else if let originIban = self.origin?.origin {
+            self.nameField.returnKeyType = .done
+
             let country = String(originIban.prefix(2))
             self.ibanCountryField.text = country
             self.ibanCountryField.isEnabled = false
@@ -127,7 +129,7 @@ public final class SepaEditViewController: UIViewController {
             self.ibanNumberField.text = iban
             self.ibanNumberField.isEnabled = false
 
-            self.hintLabel.text = "NB: Hier muss noch ein schlauer Text hin!!!!1!elf!"
+            self.hintLabel.text = "Snabble.SEPA.scoTransferHint".localized()
         } else {
             self.nameField.becomeFirstResponder()
         }
@@ -184,16 +186,43 @@ public final class SepaEditViewController: UIViewController {
                 PaymentMethodDetails.save(detail)
                 self.analyticsDelegate?.track(.paymentMethodAdded(detail.rawMethod.displayName ?? ""))
                 NotificationCenter.default.post(name: .paymentMethodsChanged, object: self)
-                #warning("promote the candidate if we have a link")
-                if SnabbleUI.implicitNavigation {
-                    self.navigationController?.popToInstanceOf(PaymentMethodListViewController.self, animated: true)
+
+                if let promote = self.origin?.links?.promote.href {
+                    self.promoteCandidate(promote, sepaData.encryptedPaymentData)
                 } else {
-                    self.navigationDelegate?.goBack(self.backLevels)
+                    self.goBack()
                 }
             } else {
                 let tip = self.showErrorTip("Snabble.SEPA.encryptionError".localized(), self.saveButton)
                 tips.append(tip)
             }
+        }
+    }
+
+    private struct Empty: Decodable {}
+
+    private func promoteCandidate(_ url: String, _ encryptedOrigin: String) {
+        let project = SnabbleUI.project
+
+        let origin = [ "origin": encryptedOrigin ]
+        project.request(.post, url, body: origin, timeout: 2) { request in
+            guard let request = request else {
+                return
+            }
+
+            project.perform(request) { (_: Result<Empty, SnabbleError>, response) in
+                if response?.statusCode == 201 { // created
+                    self.goBack()
+                }
+            }
+        }
+    }
+
+    private func goBack() {
+        if SnabbleUI.implicitNavigation {
+            self.navigationController?.popToInstanceOf(PaymentMethodListViewController.self, animated: true)
+        } else {
+            self.navigationDelegate?.goBack(self.backLevels)
         }
     }
 
@@ -327,7 +356,7 @@ extension SepaEditViewController: UITextFieldDelegate {
 
     public func textFieldShouldReturn(_ textField: UITextField) -> Bool {
         let nextTag = textField.tag + 1
-        if let nextTextField = self.view.viewWithTag(nextTag) {
+        if let nextTextField = self.view.viewWithTag(nextTag) as? UITextField, nextTextField.isEnabled {
             nextTextField.becomeFirstResponder()
         } else {
             textField.resignFirstResponder()
