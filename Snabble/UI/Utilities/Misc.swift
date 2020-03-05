@@ -220,6 +220,10 @@ extension String {
         let sdkValue = SnabbleBundle.main.localizedString(forKey: self, value: upper, table: "SnabbleLocalizable")
         return sdkValue
     }
+
+    public func snabbleLocalized() -> String {
+        return self.localized()
+    }
 }
 
 extension UIImage {

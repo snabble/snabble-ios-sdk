@@ -27,7 +27,7 @@ public final class SepaEditViewController: UIViewController {
 
     private var detail: PaymentMethodDetail?
     private var index: Int? = 0
-    private var origin: OriginCandidate?
+    private var candidate: OriginCandidate?
     private weak var analyticsDelegate: AnalyticsDelegate?
 
     public weak var navigationDelegate: PaymentMethodNavigationDelegate?
@@ -43,10 +43,10 @@ public final class SepaEditViewController: UIViewController {
         self.title = "Snabble.Payment.SEPA.Title".localized()
     }
 
-    public init(_ origin: OriginCandidate, _ analyticsDelegate: AnalyticsDelegate?) {
+    public init(_ candidate: OriginCandidate, _ analyticsDelegate: AnalyticsDelegate?) {
         super.init(nibName: nil, bundle: SnabbleBundle.main)
 
-        self.origin = origin
+        self.candidate = candidate
 
         self.title = "Snabble.Payment.SEPA.Title".localized()
     }
@@ -118,7 +118,7 @@ public final class SepaEditViewController: UIViewController {
             let trash = UIImage.fromBundle("SnabbleSDK/icon-trash")
             let deleteButton = UIBarButtonItem(image: trash, style: .plain, target: self, action: #selector(self.deleteButtonTapped(_:)))
             self.navigationItem.rightBarButtonItem = deleteButton
-        } else if let originIban = self.origin?.origin {
+        } else if let originIban = self.candidate?.origin {
             self.nameField.returnKeyType = .done
 
             let country = String(originIban.prefix(2))
@@ -187,7 +187,7 @@ public final class SepaEditViewController: UIViewController {
                 self.analyticsDelegate?.track(.paymentMethodAdded(detail.rawMethod.displayName ?? ""))
                 NotificationCenter.default.post(name: .paymentMethodsChanged, object: self)
 
-                if let promote = self.origin?.links?.promote.href {
+                if let promote = self.candidate?.links?.promote.href {
                     self.promoteCandidate(promote, sepaData.encryptedPaymentData)
                 } else {
                     self.goBack()
@@ -447,5 +447,7 @@ extension SepaEditViewController: ReactNativeWrapper {
     public func setDetail(_ detail: PaymentMethodDetail, _ index: Int) {
         self.detail = detail
         self.index = index
+
+        self.candidate = nil
     }
 }
