@@ -190,7 +190,6 @@ class OriginPoller {
                 case .success(let candidate):
                     let valid = candidate.isValid
                     if valid {
-                        Log.debug("got valid candidate, posting notification")
                         self.candidates.insert(url)
                         let nc = NotificationCenter.default
                         nc.post(name: .snabbleOriginCandidateReceived, object: nil, userInfo: [ "candidate": candidate ])
