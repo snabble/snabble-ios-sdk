@@ -266,4 +266,4 @@
 
 "Snabble.SEPA.ibanTransferAlert.title" = "Save IBAN";
 
-"Snabble.SEPA.ibanTransferAlert.message" = "Would you like to add IBAN %@ to your payment mehtods?";
+"Snabble.SEPA.ibanTransferAlert.message" = "Would you like to add IBAN %@ to your payment methods?";

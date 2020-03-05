@@ -301,4 +301,4 @@
     [Snabble.SEPA.ibanTransferAlert.title]
         en = Save IBAN
     [Snabble.SEPA.ibanTransferAlert.message]
-        en = Would you like to add IBAN %@ to your payment mehtods?
+        en = Would you like to add IBAN %@ to your payment methods?
