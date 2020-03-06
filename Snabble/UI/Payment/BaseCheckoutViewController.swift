@@ -25,7 +25,7 @@ public class BaseCheckoutViewController: UIViewController {
     private let cart: ShoppingCart
     private weak var delegate: PaymentDelegate!
 
-    private let process: CheckoutProcess
+    let process: CheckoutProcess
     private var poller: PaymentProcessPoller?
     private var initialBrightness: CGFloat = 0
 
@@ -125,22 +125,34 @@ public class BaseCheckoutViewController: UIViewController {
         UIApplication.shared.isIdleTimerDisabled = false
     }
 
-    // child classes must override this
-    public func qrCodeContent(_ process: CheckoutProcess, _ id: String) -> String {
+    // MARK: - child classes must override these methods
+
+    func qrCodeContent(_ process: CheckoutProcess, _ id: String) -> String {
         fatalError("child classes must override this")
     }
 
-    // child classes must override this
     var viewEvent: AnalyticsEvent {
         fatalError("child classes must override this")
     }
 
+    var waitForEvents: [PaymentEvent] {
+        fatalError("child classes must override this")
+    }
+
+    var autoApproved: Bool {
+        fatalError("child classes must override this")
+    }
+
+    // MARK: - event polling
     private func startPoller() {
         let poller = PaymentProcessPoller(self.process, SnabbleUI.project)
 
         var events = [PaymentEvent: Bool]()
-        poller.waitFor([.approval, .paymentSuccess]) { event in
 
+        let waitForEvents = self.waitForEvents
+        let waitForApproval = waitForEvents.contains(.approval)
+
+        poller.waitFor(waitForEvents) { event in
             UIView.animate(withDuration: 0.25) {
                 self.arrowWrapper.isHidden = true
                 self.codeWrapper.isHidden = true
@@ -151,13 +163,19 @@ public class BaseCheckoutViewController: UIViewController {
 
             events.merge(event, uniquingKeysWith: { bool1, _ in bool1 })
 
-            if let approval = events[.approval], approval == false {
-                self.paymentFinished(false, poller.updatedProcess)
-                return
-            }
+            if waitForApproval {
+                if let approval = events[.approval], approval == false {
+                    self.paymentFinished(false, poller.updatedProcess)
+                    return
+                }
 
-            if let approval = events[.approval], let paymentSuccess = events[.paymentSuccess] {
-                self.paymentFinished(approval && paymentSuccess, poller.updatedProcess)
+                if let approval = events[.approval], let paymentSuccess = events[.paymentSuccess] {
+                    self.paymentFinished(approval && paymentSuccess, poller.updatedProcess)
+                }
+            } else {
+                if let paymentSuccess = events[.paymentSuccess] {
+                    self.paymentFinished(paymentSuccess, poller.updatedProcess)
+                }
             }
         }
         self.poller = poller
@@ -198,10 +216,6 @@ public class BaseCheckoutViewController: UIViewController {
             self.cart.removeAll(endSession: true, keepBackup: false)
         }
         self.delegate.paymentFinished(success, self.cart, process)
-    }
-
-    private var autoApproved: Bool {
-        return self.process.paymentApproval == true && self.process.supervisorApproval == true
     }
 
     private func iconName() -> String {

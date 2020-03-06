@@ -22,4 +22,12 @@ public final class OnlineCheckoutViewController: BaseCheckoutViewController {
     override public func qrCodeContent(_ process: CheckoutProcess, _ id: String) -> String {
         return process.paymentInformation?.qrCodeContent ?? id
     }
+
+    override var waitForEvents: [PaymentEvent] {
+        return [.approval, .paymentSuccess]
+    }
+
+    override var autoApproved: Bool {
+        return self.process.paymentApproval == true && self.process.supervisorApproval == true
+    }
 }
