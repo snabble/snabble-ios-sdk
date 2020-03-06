@@ -4,6 +4,7 @@
 
 * Adds support for the new "CustomerCardPOS" payment method
 * Links in the credit card entry form are now opened in Safari
+* Adds support for adding IBAN data used at a snabble SCO as a payment method
 
 # v0.12.1
 
