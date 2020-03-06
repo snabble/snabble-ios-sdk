@@ -20,8 +20,9 @@ struct Manifest: Codable {
 
     // swiftlint:disable identifier_name nesting
     struct Variants: Codable {
-        let x1: String
-        let x2, x3: String?
+        let x1: String?
+        let x2: String?
+        let x3: String?
 
         enum CodingKeys: String, CodingKey {
             case x1 = "1x"
@@ -45,10 +46,13 @@ extension Manifest {
 extension Manifest.File {
     // where can we download this thing from?
     func remoteURL(for scale: CGFloat) -> URL? {
-        return SnabbleAPI.urlFor(self.variant(for: scale))
+        guard let variant = self.variant(for: scale) else {
+            return nil
+        }
+        return SnabbleAPI.urlFor(variant)
     }
 
-    private func variant(for scale: CGFloat) -> String {
+    private func variant(for scale: CGFloat) -> String? {
         switch scale {
         case 2: return self.variants.x2 ?? self.variants.x1
         case 3: return self.variants.x3 ?? self.variants.x1
@@ -57,17 +61,25 @@ extension Manifest.File {
     }
 
     // filename for our local filesystem copy (usually in .cachesDirectory)
-    func localName(_ projectId: String, _ scale: CGFloat) -> String {
-        let name = "\(self.name)-\(projectId)-\(self.variant(for: scale).sha1)"
+    func localName(_ projectId: String, _ scale: CGFloat) -> String? {
+        guard let variant = self.variant(for: scale) else {
+            return nil
+        }
+
+        let name = "\(self.name)-\(projectId)-\(variant.sha1)"
         return name
     }
 
     // full path for our local filesystem copy
-    func localPath(_ projectId: String, _ scale: CGFloat) -> URL {
+    func localPath(_ projectId: String, _ scale: CGFloat) -> URL? {
+        guard let localName = self.localName(projectId, scale) else {
+            return nil
+        }
+
         let fileManager = FileManager.default
         // swiftlint:disable:next force_try
         let cacheDirUrl = try! fileManager.url(for: .cachesDirectory, in: .userDomainMask, appropriateFor: nil, create: true)
-        return cacheDirUrl.appendingPathComponent(self.localName(projectId, scale))
+        return cacheDirUrl.appendingPathComponent(localName)
     }
 
     // where we store information about this file in UserDefaults
@@ -131,7 +143,7 @@ public class AssetManager {
         var components = URLComponents(string: "\(baseUrl)/\(projectId)/assets/manifest.json")
         components?.queryItems = [
             URLQueryItem(name: "type", value: "png"),
-            URLQueryItem(name: "scale", value: "\(scale)")
+            URLQueryItem(name: "variant", value: "\(Int(scale))x")
         ]
         guard let url = components?.url else {
             return
@@ -160,7 +172,11 @@ public class AssetManager {
         do {
             let fileManager = FileManager.default
             let cacheDirUrl = try fileManager.url(for: .cachesDirectory, in: .userDomainMask, appropriateFor: nil, create: true)
-            let localName = file.localName(self.projectId, self.scale)
+
+            guard let localName = file.localName(self.projectId, self.scale) else {
+                return
+            }
+
             let fullUrl = cacheDirUrl.appendingPathComponent(localName)
 
             print("check d/l for \(file.name): \(localName) \(file.defaultsKey(self.projectId))")
