@@ -27,16 +27,26 @@ public final class SepaEditViewController: UIViewController {
 
     private var detail: PaymentMethodDetail?
     private var index: Int? = 0
+    private var candidate: OriginCandidate?
     private weak var analyticsDelegate: AnalyticsDelegate?
 
     public weak var navigationDelegate: PaymentMethodNavigationDelegate?
     public var backLevels = 1
 
-    public init(_ detail: PaymentMethodDetail? = nil, _ index: Int? = nil, _ analyticsDelegate: AnalyticsDelegate?) {
+    public init(_ detail: PaymentMethodDetail?, _ index: Int?, _ analyticsDelegate: AnalyticsDelegate?) {
         super.init(nibName: nil, bundle: SnabbleBundle.main)
+
         self.detail = detail
         self.index = index
         self.analyticsDelegate = analyticsDelegate
+
+        self.title = "Snabble.Payment.SEPA.Title".localized()
+    }
+
+    public init(_ candidate: OriginCandidate, _ analyticsDelegate: AnalyticsDelegate?) {
+        super.init(nibName: nil, bundle: SnabbleBundle.main)
+
+        self.candidate = candidate
 
         self.title = "Snabble.Payment.SEPA.Title".localized()
     }
@@ -108,6 +118,18 @@ public final class SepaEditViewController: UIViewController {
             let trash = UIImage.fromBundle("SnabbleSDK/icon-trash")
             let deleteButton = UIBarButtonItem(image: trash, style: .plain, target: self, action: #selector(self.deleteButtonTapped(_:)))
             self.navigationItem.rightBarButtonItem = deleteButton
+        } else if let originIban = self.candidate?.origin {
+            self.nameField.returnKeyType = .done
+
+            let country = String(originIban.prefix(2))
+            self.ibanCountryField.text = country
+            self.ibanCountryField.isEnabled = false
+
+            let iban = self.formattedIban(country, originIban)
+            self.ibanNumberField.text = iban
+            self.ibanNumberField.isEnabled = false
+
+            self.hintLabel.text = "Snabble.SEPA.scoTransferHint".localized()
         } else {
             self.nameField.becomeFirstResponder()
         }
@@ -164,15 +186,43 @@ public final class SepaEditViewController: UIViewController {
                 PaymentMethodDetails.save(detail)
                 self.analyticsDelegate?.track(.paymentMethodAdded(detail.rawMethod.displayName ?? ""))
                 NotificationCenter.default.post(name: .paymentMethodsChanged, object: self)
-                if SnabbleUI.implicitNavigation {
-                    self.navigationController?.popToInstanceOf(PaymentMethodListViewController.self, animated: true)
+
+                if let promote = self.candidate?.links?.promote.href {
+                    self.promoteCandidate(promote, sepaData.encryptedPaymentData)
                 } else {
-                    self.navigationDelegate?.goBack(self.backLevels)
+                    self.goBack()
                 }
             } else {
                 let tip = self.showErrorTip("Snabble.SEPA.encryptionError".localized(), self.saveButton)
                 tips.append(tip)
             }
+        }
+    }
+
+    private struct Empty: Decodable {}
+
+    private func promoteCandidate(_ url: String, _ encryptedOrigin: String) {
+        let project = SnabbleUI.project
+
+        let origin = [ "origin": encryptedOrigin ]
+        project.request(.post, url, body: origin, timeout: 2) { request in
+            guard let request = request else {
+                return
+            }
+
+            project.perform(request) { (_: Result<Empty, SnabbleError>, response) in
+                if response?.statusCode == 201 { // created
+                    self.goBack()
+                }
+            }
+        }
+    }
+
+    private func goBack() {
+        if SnabbleUI.implicitNavigation {
+            self.navigationController?.popToInstanceOf(PaymentMethodListViewController.self, animated: true)
+        } else {
+            self.navigationDelegate?.goBack(self.backLevels)
         }
     }
 
@@ -306,7 +356,7 @@ extension SepaEditViewController: UITextFieldDelegate {
 
     public func textFieldShouldReturn(_ textField: UITextField) -> Bool {
         let nextTag = textField.tag + 1
-        if let nextTextField = self.view.viewWithTag(nextTag) {
+        if let nextTextField = self.view.viewWithTag(nextTag) as? UITextField, nextTextField.isEnabled {
             nextTextField.becomeFirstResponder()
         } else {
             textField.resignFirstResponder()
@@ -397,5 +447,7 @@ extension SepaEditViewController: ReactNativeWrapper {
     public func setDetail(_ detail: PaymentMethodDetail, _ index: Int) {
         self.detail = detail
         self.index = index
+
+        self.candidate = nil
     }
 }

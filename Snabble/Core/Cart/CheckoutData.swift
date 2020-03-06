@@ -252,6 +252,7 @@ public struct CheckoutProcess: Decodable {
     public let paymentInformation: PaymentInformation?
     public let paymentState: PaymentState
     public let orderID: String?
+    public let paymentResult: [String: Any]?
 
     public struct ProcessLinks: Decodable {
         public let `self`: Link
@@ -262,6 +263,28 @@ public struct CheckoutProcess: Decodable {
     public struct PaymentInformation: Decodable {
         /// for method == .qrCodePOS
         public let qrCodeContent: String?
+    }
+
+    enum CodingKeys: String, CodingKey {
+        case links, supervisorApproval, paymentApproval, aborted
+        case checkoutInfo, paymentMethod, modified, paymentInformation
+        case paymentState, orderID, paymentResult
+    }
+
+    public init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+
+        self.links = try container.decode(ProcessLinks.self, forKey: .links)
+        self.supervisorApproval = try container.decodeIfPresent(Bool.self, forKey: .supervisorApproval)
+        self.paymentApproval = try container.decodeIfPresent(Bool.self, forKey: .paymentApproval)
+        self.aborted = try container.decode(Bool.self, forKey: .aborted)
+        self.checkoutInfo = try container.decode(CheckoutInfo.self, forKey: .checkoutInfo)
+        self.paymentMethod = try container.decode(String.self, forKey: .paymentMethod)
+        self.modified = try container.decode(Bool.self, forKey: .modified)
+        self.paymentInformation = try container.decodeIfPresent(PaymentInformation.self, forKey: .paymentInformation)
+        self.paymentState = try container.decode(PaymentState.self, forKey: .paymentState)
+        self.orderID = try container.decodeIfPresent(String.self, forKey: .orderID)
+        self.paymentResult = try container.decodeIfPresent([String: Any].self, forKey: .paymentResult)
     }
 }
 
@@ -303,4 +326,23 @@ public typealias BackendCartItem = Cart.Item
 /// AbortRequest
 struct AbortRequest: Encodable {
     let aborted: Bool
+}
+
+public enum CandidateType: String, Decodable {
+    case debitCardIban = "debit_card_iban"
+}
+
+public struct OriginCandidate: Decodable {
+    public let links: CandidateLinks?
+    public let origin: String?
+    public let type: CandidateType?
+
+    public struct CandidateLinks: Decodable {
+        public let `self`: Link
+        public let promote: Link
+    }
+
+    public var isValid: Bool {
+        return self.links?.promote != nil && self.origin != nil && self.type != nil
+    }
 }

@@ -130,6 +130,7 @@ public final class ScannerViewController: UIViewController {
         self.scanConfirmationViewBottom = bottom
         self.scanConfirmationView.delegate = self
         self.scanConfirmationViewBottom.constant = self.hiddenConfirmationOffset
+        self.scanConfirmationView.isHidden = true
 
         NotificationCenter.default.addObserver(self, selector: #selector(self.cartUpdated(_:)), name: .snabbleCartUpdated, object: nil)
 
@@ -208,6 +209,8 @@ public final class ScannerViewController: UIViewController {
         self.confirmationVisible = !hidden
         self.barcodeDetector.reticleVisible = hidden
 
+        self.scanConfirmationView.isHidden = false
+
         if setBottomOffset {
             self.scanConfirmationViewBottom.constant = hidden ? self.hiddenConfirmationOffset : self.visibleConfirmationOffset
             UIView.animate(withDuration: 0.25,
@@ -218,7 +221,12 @@ public final class ScannerViewController: UIViewController {
                            animations: {
                                 self.view.layoutIfNeeded()
                            },
-                           completion: { _ in })
+                           completion: { _ in
+                                self.scanConfirmationView.isHidden = hidden
+                           }
+            )
+        } else {
+            self.scanConfirmationView.isHidden = hidden
         }
     }
 

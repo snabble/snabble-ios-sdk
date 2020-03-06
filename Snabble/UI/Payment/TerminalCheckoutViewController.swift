@@ -22,4 +22,12 @@ public final class TerminalCheckoutViewController: BaseCheckoutViewController {
     override public func qrCodeContent(_ process: CheckoutProcess, _ id: String) -> String {
         return process.paymentInformation?.qrCodeContent ?? "snabble:checkoutProcess:" + id
     }
+
+    override var waitForEvents: [PaymentEvent] {
+        return [.paymentSuccess]
+    }
+
+    override var autoApproved: Bool {
+        return false
+    }
 }
