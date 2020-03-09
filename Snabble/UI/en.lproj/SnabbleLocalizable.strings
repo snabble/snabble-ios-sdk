@@ -264,6 +264,6 @@
 
 "Snabble.SEPA.scoTransferHint" = "Please enter the name from the card to save it for future payments.";
 
-"Snabble.SEPA.ibanTransferAlert.title" = "Save IBAN";
+"Snabble.SEPA.ibanTransferAlert.title" = "Save payment data";
 
-"Snabble.SEPA.ibanTransferAlert.message" = "Would you like to add IBAN %@ to your payment methods?";
+"Snabble.SEPA.ibanTransferAlert.message" = "Would you like to save this account information (IBAN: %@) for future purchases?";

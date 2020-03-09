@@ -299,6 +299,6 @@
     [Snabble.SEPA.scoTransferHint]
         en = Please enter the name from the card to save it for future payments.
     [Snabble.SEPA.ibanTransferAlert.title]
-        en = Save IBAN
+        en = Save payment data
     [Snabble.SEPA.ibanTransferAlert.message]
-        en = Would you like to add IBAN %@ to your payment methods?
+        en = Would you like to save this account information (IBAN: %@) for future purchases?
