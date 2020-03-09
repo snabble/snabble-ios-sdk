@@ -353,6 +353,7 @@ public struct ProjectLinks: Decodable {
     public let tokens: Link
     public let resolvedProductBySku: Link?
     public let resolvedProductLookUp: Link?
+    public let assetsManifest: Link?
 
     public static let empty = ProjectLinks()
 
@@ -361,8 +362,10 @@ public struct ProjectLinks: Decodable {
         self.appEvents = Link.empty
         self.checkoutInfo = Link.empty
         self.tokens = Link.empty
-        self.resolvedProductBySku = Link.empty
-        self.resolvedProductLookUp = Link.empty
+
+        self.resolvedProductBySku = nil
+        self.resolvedProductLookUp = nil
+        self.assetsManifest = nil
     }
 
     init(appdb: Link, appEvents: Link, checkoutInfo: Link, tokens: Link, resolvedProductBySku: Link, resolvedProductLookUp: Link) {
@@ -372,6 +375,8 @@ public struct ProjectLinks: Decodable {
         self.tokens = tokens
         self.resolvedProductBySku = resolvedProductBySku
         self.resolvedProductLookUp = resolvedProductLookUp
+
+        self.assetsManifest = nil
     }
 }
 

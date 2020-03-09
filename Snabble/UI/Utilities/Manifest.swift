@@ -134,18 +134,22 @@ public class AssetManager {
         return nil
     }
 
-    func initialize(for projectId: String) {
+    func initialize(for projectId: String, _ manifestUrl: String) {
         self.projectId = projectId
 
-        let baseUrl = SnabbleAPI.config.baseUrl
+        guard
+            let manifestUrl = SnabbleAPI.urlFor(manifestUrl),
+            var components = URLComponents(url: manifestUrl, resolvingAgainstBaseURL: false)
+        else {
+            return
+        }
 
-        // TODO pass manifest URL as parameter
-        var components = URLComponents(string: "\(baseUrl)/\(projectId)/assets/manifest.json")
-        components?.queryItems = [
+        components.queryItems = [
             URLQueryItem(name: "type", value: "png"),
             URLQueryItem(name: "variant", value: "\(Int(scale))x")
         ]
-        guard let url = components?.url else {
+
+        guard let url = components.url else {
             return
         }
 

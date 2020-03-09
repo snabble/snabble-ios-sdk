@@ -54,8 +54,8 @@ public enum SnabbleUI {
     public static func register(_ project: Project?) {
         self.project = project ?? Project.none
 
-        if let project = project, project.id != Project.none.id {
-            AssetManager.instance.initialize(for: project.id)
+        if let project = project, project.id != Project.none.id, let manifestUrl = project.links.assetsManifest?.href {
+            AssetManager.instance.initialize(for: project.id, manifestUrl)
         }
     }
 
