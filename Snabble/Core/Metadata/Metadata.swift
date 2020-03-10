@@ -353,6 +353,7 @@ public struct ProjectLinks: Decodable {
     public let tokens: Link
     public let resolvedProductBySku: Link?
     public let resolvedProductLookUp: Link?
+    public let assetsManifest: Link?
 
     public static let empty = ProjectLinks()
 
@@ -361,8 +362,10 @@ public struct ProjectLinks: Decodable {
         self.appEvents = Link.empty
         self.checkoutInfo = Link.empty
         self.tokens = Link.empty
-        self.resolvedProductBySku = Link.empty
-        self.resolvedProductLookUp = Link.empty
+
+        self.resolvedProductBySku = nil
+        self.resolvedProductLookUp = nil
+        self.assetsManifest = nil
     }
 
     init(appdb: Link, appEvents: Link, checkoutInfo: Link, tokens: Link, resolvedProductBySku: Link, resolvedProductLookUp: Link) {
@@ -372,6 +375,8 @@ public struct ProjectLinks: Decodable {
         self.tokens = tokens
         self.resolvedProductBySku = resolvedProductBySku
         self.resolvedProductLookUp = resolvedProductLookUp
+
+        self.assetsManifest = nil
     }
 }
 
@@ -607,17 +612,5 @@ extension Metadata {
         var appSupportDir = try fileManager.url(for: .applicationSupportDirectory, in: .userDomainMask, appropriateFor: nil, create: true)
         appSupportDir.appendPathComponent("appmetadata\(hash).json")
         return appSupportDir
-    }
-}
-
-// a stable string hash.
-// See http://www.cse.yorku.ca/~oz/hash.html and
-// https://stackoverflow.com/questions/52440502/string-hashvalue-not-unique-after-reset-app-when-build-in-xcode-10
-private extension String {
-    var djb2hash: Int {
-        let unicodeScalars = self.unicodeScalars.map { $0.value }
-        return unicodeScalars.reduce(5381) {
-            ($0 << 5) &+ $0 &+ Int($1)
-        }
     }
 }

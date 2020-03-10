@@ -57,7 +57,7 @@ public final class EmbeddedCodesCheckoutViewController: UIViewController {
         self.paidButton.alpha = 0
         self.paidButton.isUserInteractionEnabled = false
 
-        if let icon = UIImage.fromBundle(self.iconName()) {
+        if let icon = AssetManager.instance.getAsset("checkout-offline", "Checkout/(SnabbleUI.project.id)") {
             self.topIcon.image = icon
             self.iconHeight.constant = icon.size.height
         } else {
@@ -127,11 +127,6 @@ public final class EmbeddedCodesCheckoutViewController: UIViewController {
         super.viewWillDisappear(animated)
 
         UIScreen.main.brightness = self.initialBrightness
-    }
-
-    private func iconName() -> String {
-        let project = SnabbleUI.project.id
-        return "Checkout/\(project)/checkout-offline"
     }
 
     private func setButtonTitle() {
