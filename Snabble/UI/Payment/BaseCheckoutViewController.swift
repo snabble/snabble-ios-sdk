@@ -50,7 +50,7 @@ public class BaseCheckoutViewController: UIViewController {
 
         self.title = "Snabble.Payment.confirm".localized()
 
-        if let icon = UIImage.fromBundle(self.iconName()) {
+        if let icon = AssetManager.instance.getAsset("checkout-online", "Checkout/\(SnabbleUI.project.id)") {
             self.topIcon.image = icon
             self.iconHeight.constant = icon.size.height
         } else {
@@ -216,11 +216,6 @@ public class BaseCheckoutViewController: UIViewController {
             self.cart.removeAll(endSession: true, keepBackup: false)
         }
         self.delegate.paymentFinished(success, self.cart, process)
-    }
-
-    private func iconName() -> String {
-        let project = SnabbleUI.project.id
-        return "Checkout/\(project)/checkout-online"
     }
 }
 

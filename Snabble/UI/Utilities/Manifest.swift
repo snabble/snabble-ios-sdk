@@ -111,7 +111,15 @@ public class AssetManager {
         self.scale = UIScreen.main.scale
     }
 
-    public func getImage(named name: String) -> UIImage? {
+    func getAsset(_ name: String, _ bundlePath: String) -> UIImage? {
+        if let image = self.getImage(named: name) {
+            return image
+        } else {
+            return UIImage.fromBundle(bundlePath + "/" + name)
+        }
+    }
+
+    func getImage(named name: String) -> UIImage? {
         var name = name
         if #available(iOS 13.0, *), UIScreen.main.traitCollection.userInterfaceStyle == .dark {
             name += "_dark"
@@ -128,7 +136,7 @@ public class AssetManager {
             let cacheDirUrl = try! fileManager.url(for: .cachesDirectory, in: .userDomainMask, appropriateFor: nil, create: true)
             let fileUrl = cacheDirUrl.appendingPathComponent(localFilename)
             if let data = try? Data(contentsOf: fileUrl) {
-                return UIImage(data: data)
+                return UIImage(data: data, scale: self.scale)
             }
         }
 
