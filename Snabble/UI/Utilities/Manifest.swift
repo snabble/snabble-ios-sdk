@@ -97,17 +97,15 @@ extension Manifest.File {
     }
 }
 
-public class AssetManager {
+public final class AssetManager {
     public static let instance = AssetManager()
 
-    private var manifest: Manifest?
-    private var projectId: String
+    private var manifests = [String: Manifest]()
     private let scale: CGFloat
 
     private var redownloadTimer: Timer?
 
     private init() {
-        self.projectId = ""
         self.scale = UIScreen.main.scale
     }
 
@@ -125,7 +123,11 @@ public class AssetManager {
             name += "_dark"
         }
 
-        guard let file = self.manifest?.files.first(where: { $0.name == name + ".png" }) else {
+        let projectId = SnabbleUI.project.id
+        guard
+            let manifest = self.manifests[projectId],
+            let file = manifest.files.first(where: { $0.name == name + ".png" })
+        else {
             return nil
         }
 
@@ -140,13 +142,27 @@ public class AssetManager {
             }
         }
 
-        self.downloadIfMissing(file)
+        self.downloadIfMissing(projectId, file)
         return nil
     }
 
-    func initialize(for projectId: String, _ manifestUrl: String) {
-        self.projectId = projectId
+    public func initialize(for projects: [Project]) {
+        let group = DispatchGroup()
+        for project in projects {
+            if let manifestUrl = project.links.assetsManifest?.href {
+                group.enter()
+                self.initialize(for: project.id, manifestUrl, downloadFiles: false) {
+                    group.leave()
+                }
+            }
+        }
 
+        group.notify(queue: DispatchQueue.main) {
+            print("all manifests downloaded!")
+        }
+    }
+
+    func initialize(for projectId: String, _ manifestUrl: String, downloadFiles: Bool, completion: @escaping () -> Void) {
         guard
             let manifestUrl = SnabbleAPI.urlFor(manifestUrl),
             var components = URLComponents(url: manifestUrl, resolvingAgainstBaseURL: false)
@@ -169,18 +185,24 @@ public class AssetManager {
         }
 
         let session = URLSession.shared
+        let start = Date.timeIntervalSinceReferenceDate
         let task = session.dataTask(with: url) { data, _, error in
+            let elapsed = Date.timeIntervalSinceReferenceDate - start
+            Log.info("get \(url) took \(elapsed)s")
             guard let data = data else {
-                print("Error downloading asset manifest: \(String(describing: error))")
+                Log.error("Error downloading asset manifest: \(String(describing: error))")
                 return
             }
             do {
                 let manifest = try JSONDecoder().decode(Manifest.self, from: data)
-                self.manifest = manifest
-                self.downloadAllMissingFiles()
+                self.manifests[projectId] = manifest
+                if downloadFiles {
+                    self.downloadAllMissingFiles(projectId)
+                }
             } catch {
-                print(error)
+                Log.error("Error parsing manifest: \(error)")
             }
+            completion()
         }
         task.resume()
     }
@@ -190,39 +212,40 @@ public class AssetManager {
 
         DispatchQueue.main.async {
             self.redownloadTimer = Timer.scheduledTimer(withTimeInterval: 5, repeats: false) { _ in
-                self.downloadAllMissingFiles()
+                for projectId in self.manifests.keys {
+                    self.downloadAllMissingFiles(projectId)
+                }
                 self.redownloadTimer = nil
             }
         }
     }
 
-    private func downloadAllMissingFiles() {
-        guard let manifest = self.manifest else {
+    private func downloadAllMissingFiles(_ projectId: String) {
+        guard let manifest = self.manifests[projectId] else {
             return
         }
 
         for file in manifest.files.filter({ $0.name.hasSuffix(".png") }) {
-            self.downloadIfMissing(file)
+            self.downloadIfMissing(projectId, file)
         }
     }
 
-    private func downloadIfMissing(_ file: Manifest.File) {
+    private func downloadIfMissing(_ projectId: String, _ file: Manifest.File) {
         do {
             let fileManager = FileManager.default
             let cacheDirUrl = try fileManager.url(for: .cachesDirectory, in: .userDomainMask, appropriateFor: nil, create: true)
 
-            guard let localName = file.localName(self.projectId, self.scale) else {
+            guard let localName = file.localName(projectId, self.scale) else {
                 return
             }
 
             let fullUrl = cacheDirUrl.appendingPathComponent(localName)
 
-            // print("check d/l for \(file.name): \(localName) \(file.defaultsKey(self.projectId))")
             // uncomment to force download
-            try? fileManager.removeItem(at: fullUrl)
+            // try? fileManager.removeItem(at: fullUrl)
 
             if !fileManager.fileExists(atPath: fullUrl.path) {
-                let downloadDelegate = DownloadDelegate(localName: localName, key: file.defaultsKey(self.projectId))
+                let downloadDelegate = DownloadDelegate(localName: localName, key: file.defaultsKey(projectId))
                 let session = URLSession(configuration: .default, delegate: downloadDelegate, delegateQueue: nil)
 
                 if let remoteUrl = file.remoteURL(for: self.scale) {
@@ -231,24 +254,7 @@ public class AssetManager {
                 }
             }
         } catch {
-            print(error)
-        }
-    }
-
-    private func createTargetDir(_ url: URL) {
-        var components = URLComponents(url: url, resolvingAgainstBaseURL: false)
-        components?.queryItems = nil
-
-        if let dir = components?.url?.deletingLastPathComponent().path {
-            do {
-                let fileManager = FileManager.default
-
-                if !fileManager.fileExists(atPath: dir) {
-                    try fileManager.createDirectory(atPath: dir, withIntermediateDirectories: true, attributes: nil)
-                }
-            } catch {
-                print(error)
-            }
+            Log.error("Error downloading file: \(error)")
         }
     }
 }
@@ -269,6 +275,7 @@ private final class DownloadDelegate: NSObject, URLSessionDownloadDelegate {
 
             let cacheDirUrl = try fileManager.url(for: .cachesDirectory, in: .userDomainMask, appropriateFor: nil, create: true)
             let targetLocation = cacheDirUrl.appendingPathComponent(self.localName)
+            print("download for \(localName) finished")
             // print("move file to \(targetLocation.path)")
 
             try fileManager.moveItem(at: location, to: targetLocation)
@@ -282,7 +289,7 @@ private final class DownloadDelegate: NSObject, URLSessionDownloadDelegate {
                 try? fileManager.removeItem(at: oldUrl)
             }
         } catch {
-            print(error)
+            Log.error("Error downloading asset for key \(self.key): \(error)")
             AssetManager.instance.rescheduleDownloads()
         }
         session.finishTasksAndInvalidate()
@@ -294,7 +301,7 @@ private final class DownloadDelegate: NSObject, URLSessionDownloadDelegate {
         }
 
         if let url = task.currentRequest?.url?.absoluteString {
-            print("downloading \(url) failed: \(error)")
+            Log.error("downloading \(url) failed: \(error)")
         }
 
         AssetManager.instance.rescheduleDownloads()
