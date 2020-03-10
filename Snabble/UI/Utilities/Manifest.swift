@@ -219,7 +219,7 @@ public class AssetManager {
 
             // print("check d/l for \(file.name): \(localName) \(file.defaultsKey(self.projectId))")
             // uncomment to force download
-            try? fileManager.removeItem(at: fullUrl)
+            // try? fileManager.removeItem(at: fullUrl)
 
             if !fileManager.fileExists(atPath: fullUrl.path) {
                 let downloadDelegate = DownloadDelegate(localName: localName, key: file.defaultsKey(self.projectId))
