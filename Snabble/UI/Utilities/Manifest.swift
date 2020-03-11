@@ -13,13 +13,13 @@ struct Manifest: Codable {
     let projectId: String
     let files: [File]
 
-    struct File: Codable {
+    struct File: Codable, Hashable {
         let name: String
         let variants: Variants
     }
 
     // swiftlint:disable identifier_name nesting
-    struct Variants: Codable {
+    struct Variants: Codable, Hashable {
         let x1: String?
         let x2: String?
         let x3: String?
@@ -104,6 +104,7 @@ public final class AssetManager {
     private let scale: CGFloat
 
     private var redownloadTimer: Timer?
+    private var downloadingFiles = Set<Manifest.File>()
 
     private init() {
         self.scale = UIScreen.main.scale
@@ -117,13 +118,16 @@ public final class AssetManager {
         }
     }
 
-    func getImage(named name: String) -> UIImage? {
+    private func getImage(named name: String) -> UIImage? {
+        return getImage(named: name, projectId: SnabbleUI.project.id)
+    }
+
+    private func getImage(named name: String, projectId: String) -> UIImage? {
         var name = name
         if #available(iOS 13.0, *), UIScreen.main.traitCollection.userInterfaceStyle == .dark {
             name += "_dark"
         }
 
-        let projectId = SnabbleUI.project.id
         guard
             let manifest = self.manifests[projectId],
             let file = manifest.files.first(where: { $0.name == name + ".png" })
@@ -146,7 +150,7 @@ public final class AssetManager {
         return nil
     }
 
-    public func initialize(for projects: [Project]) {
+    public func initialize(for projects: [Project], initialDownload: [String]) {
         let group = DispatchGroup()
         for project in projects {
             if let manifestUrl = project.links.assetsManifest?.href {
@@ -157,8 +161,20 @@ public final class AssetManager {
             }
         }
 
+        // all manifests downloaded, get all files from the initialDownload list
         group.notify(queue: DispatchQueue.main) {
-            print("all manifests downloaded!")
+            for project in projects {
+                guard let manifest = self.manifests[project.id] else {
+                    continue
+                }
+
+                for name in initialDownload {
+                    let files = manifest.files.filter { $0.name == name + ".png" || $0.name == name + "_dark.png" }
+                    for file in files {
+                        self.downloadIfMissing(project.id, file)
+                    }
+                }
+            }
         }
     }
 
@@ -242,7 +258,8 @@ public final class AssetManager {
             let fullUrl = cacheDirUrl.appendingPathComponent(localName)
 
             // uncomment to force download
-            // try? fileManager.removeItem(at: fullUrl)
+            #warning("removeme")
+            try? fileManager.removeItem(at: fullUrl)
 
             if !fileManager.fileExists(atPath: fullUrl.path) {
                 let downloadDelegate = DownloadDelegate(localName: localName, key: file.defaultsKey(projectId))
