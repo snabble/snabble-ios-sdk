@@ -77,9 +77,8 @@ extension Manifest.File {
         }
 
         let fileManager = FileManager.default
-        // swiftlint:disable:next force_try
-        let cacheDirUrl = try! fileManager.url(for: .cachesDirectory, in: .userDomainMask, appropriateFor: nil, create: true)
-        return cacheDirUrl.appendingPathComponent(localName)
+        let cacheDirUrl = try? fileManager.url(for: .cachesDirectory, in: .userDomainMask, appropriateFor: nil, create: true)
+        return cacheDirUrl?.appendingPathComponent(localName)
     }
 
     // where we store information about this file in UserDefaults
@@ -110,6 +109,19 @@ public final class AssetManager {
         self.scale = UIScreen.main.scale
     }
 
+    func getAsset(_ name: String, _ bundlePath: String, completion: @escaping (UIImage?) -> Void) {
+        if let image = self.getAsset(name, bundlePath) {
+            completion(image)
+        } else {
+            let projectId = SnabbleUI.project.id
+            if let file = self.fileFor(name: name, projectId) {
+                self.downloadIfMissing(projectId, file)
+            } else {
+                completion(nil)
+            }
+        }
+    }
+
     func getAsset(_ name: String, _ bundlePath: String) -> UIImage? {
         if let image = self.getImage(named: name) {
             return image
@@ -123,15 +135,7 @@ public final class AssetManager {
     }
 
     private func getImage(named name: String, projectId: String) -> UIImage? {
-        var name = name
-        if #available(iOS 13.0, *), UIScreen.main.traitCollection.userInterfaceStyle == .dark {
-            name += "_dark"
-        }
-
-        guard
-            let manifest = self.manifests[projectId],
-            let file = manifest.files.first(where: { $0.name == name + ".png" })
-        else {
+        guard let file = self.fileFor(name: name, projectId) else {
             return nil
         }
 
@@ -146,8 +150,23 @@ public final class AssetManager {
             }
         }
 
-        self.downloadIfMissing(projectId, file)
         return nil
+    }
+
+    private func fileFor(name: String, _ projectId: String) -> Manifest.File? {
+        var name = name
+        if #available(iOS 13.0, *), UIScreen.main.traitCollection.userInterfaceStyle == .dark {
+            name += "_dark"
+        }
+
+        guard
+            let manifest = self.manifests[projectId],
+            let file = manifest.files.first(where: { $0.name == name + ".png" })
+        else {
+            return nil
+        }
+
+        return file
     }
 
     public func initialize(for projects: [Project], initialDownload: [String]) {
@@ -155,7 +174,7 @@ public final class AssetManager {
         for project in projects {
             if let manifestUrl = project.links.assetsManifest?.href {
                 group.enter()
-                self.initialize(for: project.id, manifestUrl, downloadFiles: false) {
+                self.initialize(for: project.id, manifestUrl, downloadFiles: true) {
                     group.leave()
                 }
             }
@@ -262,16 +281,23 @@ public final class AssetManager {
             try? fileManager.removeItem(at: fullUrl)
 
             if !fileManager.fileExists(atPath: fullUrl.path) {
-                let downloadDelegate = DownloadDelegate(localName: localName, key: file.defaultsKey(projectId))
+                let downloadDelegate = DownloadDelegate(localName, file.defaultsKey(projectId), file)
                 let session = URLSession(configuration: .default, delegate: downloadDelegate, delegateQueue: nil)
 
                 if let remoteUrl = file.remoteURL(for: self.scale) {
                     let task = session.downloadTask(with: remoteUrl)
+                    self.downloadingFiles.insert(file)
                     task.resume()
                 }
             }
         } catch {
             Log.error("Error downloading file: \(error)")
+        }
+    }
+
+    func downloadIsFinished(for file: Manifest.File) {
+        DispatchQueue.main.async {
+            self.downloadingFiles.remove(file)
         }
     }
 }
@@ -280,10 +306,12 @@ private final class DownloadDelegate: NSObject, URLSessionDownloadDelegate {
 
     private let localName: String
     private let key: String
+    private let file: Manifest.File
 
-    init(localName: String, key: String) {
+    init(_ localName: String, _ key: String, _ file: Manifest.File) {
         self.localName = localName
         self.key = key
+        self.file = file
     }
 
     func urlSession(_ session: URLSession, downloadTask: URLSessionDownloadTask, didFinishDownloadingTo location: URL) {
@@ -293,9 +321,10 @@ private final class DownloadDelegate: NSObject, URLSessionDownloadDelegate {
             let cacheDirUrl = try fileManager.url(for: .cachesDirectory, in: .userDomainMask, appropriateFor: nil, create: true)
             let targetLocation = cacheDirUrl.appendingPathComponent(self.localName)
             print("download for \(localName) finished")
-            // print("move file to \(targetLocation.path)")
+            print("move file to \(targetLocation.path)")
 
             try fileManager.moveItem(at: location, to: targetLocation)
+            AssetManager.instance.downloadIsFinished(for: self.file)
 
             let settings = UserDefaults.standard
             let oldLocalfile = settings.string(forKey: self.key)
@@ -321,6 +350,7 @@ private final class DownloadDelegate: NSObject, URLSessionDownloadDelegate {
             Log.error("downloading \(url) failed: \(error)")
         }
 
+        AssetManager.instance.downloadIsFinished(for: self.file)
         AssetManager.instance.rescheduleDownloads()
         session.invalidateAndCancel()
     }
