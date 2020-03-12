@@ -179,35 +179,15 @@ public final class AssetManager {
         return file
     }
 
-    public func initialize(for projects: [Project], initialDownload: [String]) {
-        let group = DispatchGroup()
+    public func initialize(for projects: [Project]) {
         for project in projects {
             if let manifestUrl = project.links.assetsManifest?.href {
-                group.enter()
-                self.initialize(for: project.id, manifestUrl, downloadFiles: false) {
-                    group.leave()
-                }
+                self.initialize(for: project.id, manifestUrl, downloadFiles: false)
             }
-        }
-
-        // all manifests downloaded, get all files from the initialDownload list
-        group.notify(queue: DispatchQueue.main) {
-//            for project in projects {
-//                guard let manifest = self.manifests[project.id] else {
-//                    continue
-//                }
-//
-//                for name in initialDownload {
-//                    let files = manifest.files.filter { $0.name == name + ".png" || $0.name == name + "_dark.png" }
-//                    for file in files {
-//                        self.downloadIfMissing(project.id, file, completion: { _ in })
-//                    }
-//                }
-//            }
         }
     }
 
-    func initialize(for projectId: String, _ manifestUrl: String, downloadFiles: Bool, completion: @escaping () -> Void) {
+    func initialize(for projectId: String, _ manifestUrl: String, downloadFiles: Bool) {
         guard
             let manifestUrl = SnabbleAPI.urlFor(manifestUrl),
             var components = URLComponents(url: manifestUrl, resolvingAgainstBaseURL: false)
@@ -239,6 +219,7 @@ public final class AssetManager {
                 Log.error("Error downloading asset manifest: \(String(describing: error))")
                 return
             }
+
             do {
                 let manifest = try JSONDecoder().decode(Manifest.self, from: data)
                 self.manifests[projectId] = manifest
@@ -248,7 +229,6 @@ public final class AssetManager {
             } catch {
                 Log.error("Error parsing manifest: \(error)")
             }
-            completion()
         }
         task.resume()
     }
@@ -284,10 +264,8 @@ public final class AssetManager {
         let fullUrl = AssetManager.cacheDirectory.appendingPathComponent(localName)
 
         let fileManager = FileManager.default
-
         // uncomment to force download
-        #warning("removeme")
-        try? fileManager.removeItem(at: fullUrl)
+        // try? fileManager.removeItem(at: fullUrl)
 
         if !fileManager.fileExists(atPath: fullUrl.path) {
             let downloadDelegate = DownloadDelegate(localName, file.defaultsKey(projectId), completion)

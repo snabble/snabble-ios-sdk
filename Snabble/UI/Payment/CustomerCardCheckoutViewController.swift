@@ -48,10 +48,9 @@ public final class CustomerCardCheckoutViewController: UIViewController {
         self.paidButton.alpha = 0
         self.paidButton.isUserInteractionEnabled = false
 
-        #warning("fixme too")
         self.arrowWrapper.isHidden = true
         self.topWrapper.isHidden = true
-        AssetManager.instance.getAsset("checkout-offline", "Checkout/\(SnabbleUI.project.id)") { img in
+        AssetManager.instance.getAsset("checkout-offline", "Checkout/\(SnabbleUI.project.id)/checkout-offline") { img in
             if let img = img {
                 self.topIcon.image = img
                 self.iconHeight.constant = img.size.height
@@ -59,14 +58,6 @@ public final class CustomerCardCheckoutViewController: UIViewController {
                 self.arrowWrapper.isHidden = false
             }
         }
-
-//        if let icon = AssetManager.instance.getAsset("checkout-offline", "Checkout/\(SnabbleUI.project.id)") {
-//            self.topIcon.image = icon
-//            self.iconHeight.constant = icon.size.height
-//        } else {
-//            self.topWrapper.isHidden = true
-//            self.arrowWrapper.isHidden = true
-//        }
     }
 
     override public func viewWillAppear(_ animated: Bool) {
