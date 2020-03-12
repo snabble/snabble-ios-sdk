@@ -152,17 +152,13 @@ extension AppEvent {
         else {
             return
         }
-        var request = URLRequest(url: url)
+        // var request = URLRequest(url: url)
+        var request = SnabbleAPI.request(url: url, json: true)
         request.httpMethod = "POST"
 
         do {
             request.httpBody = try JSONEncoder().encode(self)
             request.addValue(token, forHTTPHeaderField: "Client-Token")
-            request.addValue("application/json", forHTTPHeaderField: "Accept")
-            request.addValue("application/json", forHTTPHeaderField: "Content-Type")
-            if let userAgent = Project.userAgent {
-                request.addValue(userAgent, forHTTPHeaderField: "User-Agent")
-            }
         } catch {
             Log.error("\(error)")
         }

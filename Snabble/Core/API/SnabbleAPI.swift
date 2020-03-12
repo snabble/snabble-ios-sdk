@@ -267,3 +267,49 @@ extension SnabbleAPI {
         }
     }
 }
+
+// MARK: - networking stuff
+extension SnabbleAPI {
+    static func request(url: URL, timeout: TimeInterval = 0, json: Bool = true) -> URLRequest {
+        var request = URLRequest(url: url)
+        request.addValue(SnabbleAPI.clientId, forHTTPHeaderField: "Client-Id")
+
+        if let userAgent = SnabbleAPI.userAgent {
+            request.addValue(userAgent, forHTTPHeaderField: "User-Agent")
+        }
+
+        if timeout > 0 {
+            request.timeoutInterval = timeout
+        }
+
+        if json {
+            request.addValue("application/json", forHTTPHeaderField: "Accept")
+            request.addValue("application/json", forHTTPHeaderField: "Content-Type")
+        }
+
+        return request
+    }
+
+    private static let userAgent: String? = {
+        guard
+            let bundleDict = Bundle.main.infoDictionary,
+            let appName = bundleDict["CFBundleName"] as? String,
+            let appVersion = bundleDict["CFBundleShortVersionString"] as? String,
+            let appBuild = bundleDict["CFBundleVersion"] as? String
+        else {
+            return nil
+        }
+
+        let appDescriptor = appName + "/" + appVersion + "(" + appBuild + ")"
+
+        let osDescriptor = "iOS/" + UIDevice.current.systemVersion
+
+        var size = 0
+        sysctlbyname("hw.machine", nil, &size, nil, 0)
+        var machine = [CChar](repeating: 0, count: size)
+        sysctlbyname("hw.machine", &machine, &size, nil, 0)
+        let hardwareString = String(cString: machine)
+
+        return appDescriptor + " " + osDescriptor + " (" + hardwareString + ") SDK/\(APIVersion.version)"
+    }()
+}
