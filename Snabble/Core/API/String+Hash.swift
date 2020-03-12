@@ -4,7 +4,7 @@
 //  Copyright © 2020 snabble. All rights reserved.
 //
 
-// string hashes
+// assorted string hashes
 
 import CommonCrypto
 
@@ -30,4 +30,13 @@ extension String {
         return hexBytes.joined()
     }
 
+    var sha256: String {
+        let data = Data(self.utf8)
+        var digest = [UInt8](repeating: 0, count: Int(CC_SHA256_DIGEST_LENGTH))
+        data.withUnsafeBytes {
+            _ = CC_SHA256($0.baseAddress, CC_LONG(data.count), &digest)
+        }
+        let hexBytes = digest.map { String(format: "%02hhx", $0) }
+        return hexBytes.joined()
+    }
 }
