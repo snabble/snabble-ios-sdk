@@ -50,13 +50,14 @@ public class BaseCheckoutViewController: UIViewController {
 
         self.title = "Snabble.Payment.confirm".localized()
 
-        if let icon = AssetManager.instance.getAsset("checkout-online", "Checkout/\(SnabbleUI.project.id)") {
-            self.topIcon.image = icon
-            self.iconHeight.constant = icon.size.height
-        } else {
-            self.topWrapper.isHidden = true
-            self.arrowWrapper.isHidden = true
-        }
+        #warning("fixme")
+//        if let icon = AssetManager.instance.getAsset("checkout-online", "Checkout/\(SnabbleUI.project.id)") {
+//            self.topIcon.image = icon
+//            self.iconHeight.constant = icon.size.height
+//        } else {
+//            self.topWrapper.isHidden = true
+//            self.arrowWrapper.isHidden = true
+//        }
 
         self.spinnerWrapper.isHidden = true
 
