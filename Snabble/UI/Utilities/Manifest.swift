@@ -9,6 +9,15 @@
 import Foundation
 import UIKit
 
+public enum ImageAsset: String {
+    // store icon, 24x24
+    case storeIcon = "icon"
+
+    // checkout
+    case checkoutOnline = "checkout-online"
+    case checkoutOffline = "checkout-offline"
+}
+
 struct Manifest: Codable {
     let projectId: String
     let files: [File]
@@ -112,8 +121,9 @@ public final class AssetManager {
     ///   - bundlePath: bundle path of the fallback to use, e.g. "Checkout/$PROJECTID/checkout-offline"
     ///   - projectId: the project id. If nil, use `SnabbleUI.project.id`
     ///   - completion: called when the image has been retrieved
-    func getAsset(_ name: String, _ bundlePath: String, _ projectId: String? = nil, completion: @escaping (UIImage?) -> Void) {
+    public func getAsset(_ asset: ImageAsset, bundlePath: String? = nil, projectId: String? = nil, completion: @escaping (UIImage?) -> Void) {
         let projectId = projectId ?? SnabbleUI.project.id
+        let name = asset.rawValue
         if let image = self.getLocallyCachedImage(named: name, projectId) {
             completion(image)
         } else {
@@ -306,8 +316,8 @@ private final class DownloadDelegate: NSObject, URLSessionDownloadDelegate {
         do {
             let cacheDirUrl = AssetManager.cacheDirectory
             let targetLocation = cacheDirUrl.appendingPathComponent(self.localName)
-            print("download for \(localName) finished")
-            print("move file to \(targetLocation.path)")
+            // print("download for \(localName) finished")
+            // print("move file to \(targetLocation.path)")
 
             let fileManager = FileManager.default
             try fileManager.moveItem(at: location, to: targetLocation)

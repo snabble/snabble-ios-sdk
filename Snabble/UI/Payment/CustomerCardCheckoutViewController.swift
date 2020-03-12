@@ -50,7 +50,7 @@ public final class CustomerCardCheckoutViewController: UIViewController {
 
         self.arrowWrapper.isHidden = true
         self.topWrapper.isHidden = true
-        AssetManager.instance.getAsset("checkout-offline", "Checkout/\(SnabbleUI.project.id)/checkout-offline") { img in
+        AssetManager.instance.getAsset(.checkoutOffline, bundlePath: "Checkout/\(SnabbleUI.project.id)/checkout-offline") { img in
             if let img = img {
                 self.topIcon.image = img
                 self.iconHeight.constant = img.size.height
