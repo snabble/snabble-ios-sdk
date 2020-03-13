@@ -148,24 +148,39 @@ public enum SnabbleAPI {
 
 extension SnabbleAPI {
     private static let service = "io.snabble.sdk"
-    private static let key = "Snabble.api.clientId"
+    private static let idKey = "Snabble.api.clientId"
+    private static let appUserKey = "Snabble.api.appUserId"
 
     public static var clientId: String {
         let keychain = Keychain(service: service)
 
-        if let id = keychain[key] {
+        if let id = keychain[idKey] {
             return id
         }
 
-        if let id = UserDefaults.standard.string(forKey: key) {
-            keychain[key] = id
+        if let id = UserDefaults.standard.string(forKey: idKey) {
+            keychain[idKey] = id
             return id
         }
 
         let id = UUID().uuidString.lowercased().replacingOccurrences(of: "-", with: "")
-        keychain[key] = id
-        UserDefaults.standard.set(id, forKey: key)
+        keychain[idKey] = id
+        UserDefaults.standard.set(id, forKey: idKey)
         return id
+    }
+
+    public static var appUser: String? {
+        get {
+            let keychain = Keychain(service: service)
+            return keychain[appUserKey]
+        }
+
+        set {
+            let keychain = Keychain(service: service)
+            keychain[appUserKey] = newValue
+
+            self.tokenRegistry.invalidateAllTokens()
+        }
     }
 }
 
