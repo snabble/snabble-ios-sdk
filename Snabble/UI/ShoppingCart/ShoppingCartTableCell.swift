@@ -162,27 +162,8 @@ final class ShoppingCartTableCell: UITableViewCell {
         self.quantityInput.text = "\(item.quantity)"
 
         self.showQuantity()
-        if let lineItem = defaultItem {
-            self.quantityLabel.text = "\(lineItem.amount)"
-            if let total = lineItem.totalPrice {
-                let formatter = PriceFormatter(SnabbleUI.project)
-
-                if let price = lineItem.price {
-                    let itemPrice = formatter.format(price)
-                    let total = formatter.format(total)
-                    if lineItem.amount == 1 {
-                        self.priceLabel.text = total
-                    } else {
-                        self.priceLabel.text = "× \(itemPrice) = \(total)"
-                    }
-                } else {
-                    self.priceLabel.text = formatter.format(total)
-                }
-            }
-        }
 
         let price = defaultItem?.totalPrice ?? item.price
-
         // suppress display when price == 0
         if price == 0 {
             self.priceLabel.text = ""
@@ -226,6 +207,7 @@ final class ShoppingCartTableCell: UITableViewCell {
         self.unitsLabel.text = unitDisplay
 
         if let defaultItem = lineItems.first(where: { $0.type == .default }) {
+            self.quantityLabel.text = "\(defaultItem.amount)\(unitDisplay)"
             self.displayLineItemPrice(item.product, defaultItem, lineItems)
         } else {
             let formatter = PriceFormatter(SnabbleUI.project)

@@ -37,7 +37,7 @@ extension ShoppingCartDelegate {
 }
 
 enum CartTableEntry {
-    // out main item and any additional line items referring to it
+    // our main item and any additional line items referring to it
     case cartItem(CartItem, [CheckoutInfo.LineItem])
 
     // a new main item from the backend, plus its additional items.
