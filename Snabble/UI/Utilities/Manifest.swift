@@ -12,6 +12,8 @@ import UIKit
 public enum ImageAsset: String {
     // store icon, 24x24
     case storeIcon = "icon"
+    // store logo
+    case storeLogo = "logo"
 
     // checkout
     case checkoutOnline = "checkout-online"
