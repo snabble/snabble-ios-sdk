@@ -1,8 +1,6 @@
 //
-//  Manifest.swift
-//  SnabbleApp
+//  AssetManager.swift
 //
-//  Created by Gereon Steffens on 28.01.20.
 //  Copyright © 2020 snabble. All rights reserved.
 //
 
