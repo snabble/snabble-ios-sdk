@@ -95,6 +95,8 @@ public final class ShoppingCartViewController: UIViewController {
         self.keyboardObserver = KeyboardObserver(handler: self)
 
         self.shoppingCart = cart
+
+        SnabbleUI.registerForAppearanceChange(self)
     }
 
     private func setupItems(_ cart: ShoppingCart) {
@@ -187,8 +189,6 @@ public final class ShoppingCartViewController: UIViewController {
 
         self.checkoutButton.titleLabel?.font = UIFont.monospacedDigitSystemFont(ofSize: 17, weight: .semibold)
         self.checkoutButton.makeSnabbleButton()
-
-        SnabbleUI.registerForAppearanceChange(self)
     }
 
     override public func viewWillAppear(_ animated: Bool) {
@@ -681,9 +681,11 @@ extension ShoppingCartViewController: CustomizableAppearance {
         self.checkoutButton?.setCustomAppearance(appearance)
         self.customAppearance = appearance
 
-        if let titleIcon = appearance.titleIcon {
-            let imgView = UIImageView(image: titleIcon)
-            self.navigationItem.titleView = imgView
+        SnabbleUI.getAsset(.storeLogoSmall) { img in
+            if let image = img ?? appearance.titleIcon {
+                let imgView = UIImageView(image: image)
+                self.navigationItem.titleView = imgView
+            }
         }
     }
 }

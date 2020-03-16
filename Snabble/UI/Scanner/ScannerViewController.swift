@@ -104,6 +104,8 @@ public final class ScannerViewController: UIViewController {
         self.tabBarItem.image = UIImage.fromBundle("SnabbleSDK/icon-scan-inactive")
         self.tabBarItem.selectedImage = UIImage.fromBundle("SnabbleSDK/icon-scan-active")
         self.navigationItem.title = "Snabble.Scanner.scanningTitle".localized()
+
+        SnabbleUI.registerForAppearanceChange(self)
     }
 
     public required init?(coder aDecoder: NSCoder) {
@@ -139,8 +141,6 @@ public final class ScannerViewController: UIViewController {
         let msgTap = UITapGestureRecognizer(target: self, action: #selector(self.messageTapped(_:)))
         self.messageWrapper.addGestureRecognizer(msgTap)
         self.messageTopDistance.constant = -150
-
-        SnabbleUI.registerForAppearanceChange(self)
     }
 
     override public func viewWillAppear(_ animated: Bool) {
@@ -634,9 +634,11 @@ extension ScannerViewController: CustomizableAppearance {
         self.barcodeDetector.setCustomAppearance(appearance)
         self.customAppearance = appearance
 
-        if let titleIcon = appearance.titleIcon {
-            let imgView = UIImageView(image: titleIcon)
-            self.navigationItem.titleView = imgView
+        SnabbleUI.getAsset(.storeLogoSmall) { img in
+            if let image = img ?? appearance.titleIcon {
+                let imgView = UIImageView(image: image)
+                self.navigationItem.titleView = imgView
+            }
         }
     }
 }
