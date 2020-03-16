@@ -73,7 +73,7 @@ final class ReceiptCell: UITableViewCell {
     private func showIcon(_ projectId: String) {
         self.projectId = projectId
 
-        AssetManager.instance.getAsset(.storeIcon, projectId: projectId) { img in
+        SnabbleUI.getAsset(.storeIcon, projectId: projectId) { img in
             if let img = img, self.projectId == projectId {
                 self.updateImage(img)
             } else {

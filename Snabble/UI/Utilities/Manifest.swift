@@ -14,10 +14,27 @@ public enum ImageAsset: String {
     case storeIcon = "icon"
     // store logo
     case storeLogo = "logo"
+    // customer/loyalty card
+    case customerCard = "loyaltycard"
 
     // checkout
     case checkoutOnline = "checkout-online"
     case checkoutOffline = "checkout-offline"
+}
+
+extension SnabbleUI {
+    public static func initializeAssets(for projects: [Project]) {
+        AssetManager.instance.initialize(projects)
+    }
+
+    public static func initializeAssets(for projectId: String, _ manifestUrl: String, downloadFiles: Bool) {
+        AssetManager.instance.initialize(projectId, manifestUrl, downloadFiles)
+    }
+
+    public static func getAsset(_ asset: ImageAsset, bundlePath: String? = nil, projectId: String? = nil, completion: @escaping (UIImage?) -> Void) {
+        AssetManager.instance.getAsset(asset, bundlePath, projectId, completion)
+    }
+
 }
 
 struct Manifest: Codable {
@@ -105,8 +122,8 @@ extension Manifest.File {
     }
 }
 
-public final class AssetManager {
-    public static let instance = AssetManager()
+final class AssetManager {
+    static let instance = AssetManager()
 
     private var manifests = [String: Manifest]()
     private let scale: CGFloat
@@ -123,7 +140,7 @@ public final class AssetManager {
     ///   - bundlePath: bundle path of the fallback to use, e.g. "Checkout/$PROJECTID/checkout-offline"
     ///   - projectId: the project id. If nil, use `SnabbleUI.project.id`
     ///   - completion: called when the image has been retrieved
-    public func getAsset(_ asset: ImageAsset, bundlePath: String? = nil, projectId: String? = nil, completion: @escaping (UIImage?) -> Void) {
+    func getAsset(_ asset: ImageAsset, _ bundlePath: String?, _ projectId: String?, _ completion: @escaping (UIImage?) -> Void) {
         let projectId = projectId ?? SnabbleUI.project.id
         let name = asset.rawValue
         if let image = self.getLocallyCachedImage(named: name, projectId) {
@@ -191,15 +208,15 @@ public final class AssetManager {
         return file
     }
 
-    public func initialize(for projects: [Project]) {
+    func initialize(_ projects: [Project]) {
         for project in projects {
             if let manifestUrl = project.links.assetsManifest?.href {
-                self.initialize(for: project.id, manifestUrl, downloadFiles: false)
+                self.initialize(project.id, manifestUrl, false)
             }
         }
     }
 
-    func initialize(for projectId: String, _ manifestUrl: String, downloadFiles: Bool) {
+    func initialize(_ projectId: String, _ manifestUrl: String, _ downloadFiles: Bool) {
         guard
             let manifestUrl = SnabbleAPI.urlFor(manifestUrl),
             var components = URLComponents(url: manifestUrl, resolvingAgainstBaseURL: false)
@@ -224,11 +241,18 @@ public final class AssetManager {
         let session = URLSession.shared
         let start = Date.timeIntervalSinceReferenceDate
         let request = SnabbleAPI.request(url: url, json: true)
-        let task = session.dataTask(with: request) { data, _, error in
+        let task = session.dataTask(with: request) { data, response, error in
             let elapsed = Date.timeIntervalSinceReferenceDate - start
             Log.info("get \(url) took \(elapsed)s")
-            guard let data = data else {
-                Log.error("Error downloading asset manifest: \(String(describing: error))")
+
+            if let error = error {
+                Log.error("Error downloading asset manifest: \(error)")
+                return
+            }
+
+            let statusCode = (response as? HTTPURLResponse)?.statusCode ?? 0
+            guard statusCode == 200, let data = data else {
+                Log.error("Error downloading asset manifest for \(projectId): \(statusCode)")
                 return
             }
 
@@ -336,7 +360,7 @@ private final class DownloadDelegate: NSObject, URLSessionDownloadDelegate {
                 self.completion(targetLocation)
             }
         } catch {
-            Log.error("Error downloading asset for key \(self.key): \(error)")
+            Log.error("Error saving asset for key \(self.key): \(error)")
             self.completion(nil)
             AssetManager.instance.rescheduleDownloads()
         }

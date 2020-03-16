@@ -52,7 +52,7 @@ public class BaseCheckoutViewController: UIViewController {
 
         self.topWrapper.isHidden = true
         self.arrowWrapper.isHidden = true
-        AssetManager.instance.getAsset(.checkoutOnline, bundlePath: "Checkout/\(SnabbleUI.project.id)/checkout-online") { img in
+        SnabbleUI.getAsset(.checkoutOnline, bundlePath: "Checkout/\(SnabbleUI.project.id)/checkout-online") { img in
             if let img = img {
                 self.topIcon.image = img
                 self.iconHeight.constant = img.size.height

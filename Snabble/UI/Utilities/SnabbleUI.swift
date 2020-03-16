@@ -55,7 +55,7 @@ public enum SnabbleUI {
         self.project = project ?? Project.none
 
         if let project = project, project.id != Project.none.id, let manifestUrl = project.links.assetsManifest?.href {
-            AssetManager.instance.initialize(for: project.id, manifestUrl, downloadFiles: true)
+            SnabbleUI.initializeAssets(for: project.id, manifestUrl, downloadFiles: true)
         }
     }
 
