@@ -16,6 +16,8 @@ final class ReceiptCell: UITableViewCell {
     @IBOutlet private weak var iconWidth: NSLayoutConstraint!
     @IBOutlet private weak var iconDistance: NSLayoutConstraint!
 
+    private var projectId = ""
+
     override func awakeFromNib() {
         super.awakeFromNib()
 
@@ -32,6 +34,8 @@ final class ReceiptCell: UITableViewCell {
 
         self.iconWidth.constant = 0
         self.iconDistance.constant = 0
+
+        self.projectId = ""
     }
 
     func show(_ orderEntry: OrderEntry) {
@@ -67,7 +71,19 @@ final class ReceiptCell: UITableViewCell {
     }
 
     private func showIcon(_ projectId: String) {
-        let img = UIImage(named: projectId)
+        self.projectId = projectId
+
+        SnabbleUI.getAsset(.storeIcon, projectId: projectId) { img in
+            if let img = img, self.projectId == projectId {
+                self.updateImage(img)
+            } else {
+                let img = UIImage(named: projectId)
+                self.updateImage(img)
+            }
+        }
+    }
+
+    private func updateImage(_ img: UIImage?) {
         self.storeIcon.image = img
         if img != nil {
             self.iconWidth.constant = 24

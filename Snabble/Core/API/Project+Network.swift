@@ -169,7 +169,7 @@ extension Project {
     /// - Returns: the URLRequest
     // swiftlint:disable:next function_parameter_count
     func request(_ method: HTTPRequestMethod, _ url: URL, _ json: Bool, _ jwtRequired: Bool, _ timeout: TimeInterval, _ completion: @escaping (URLRequest) -> Void) {
-        var urlRequest = URLRequest(url: url)
+        var urlRequest = SnabbleAPI.request(url: url, timeout: timeout, json: json)
         urlRequest.httpMethod = method.rawValue
 
         if jwtRequired {
@@ -177,52 +177,12 @@ extension Project {
                 if let token = token {
                     urlRequest.addValue(token, forHTTPHeaderField: "Client-Token")
                 }
-                self.buildRequest(&urlRequest, timeout, json, completion)
+                completion(urlRequest)
             }
         } else {
-            self.buildRequest(&urlRequest, timeout, json, completion)
+            completion(urlRequest)
         }
     }
-
-    func buildRequest(_ request: inout URLRequest, _ timeout: TimeInterval, _ json: Bool, _ completion: @escaping (URLRequest) -> Void) {
-        request.addValue(SnabbleAPI.clientId, forHTTPHeaderField: "Client-Id")
-        if let userAgent = Project.userAgent {
-            request.addValue(userAgent, forHTTPHeaderField: "User-Agent")
-        }
-
-        if timeout > 0 {
-            request.timeoutInterval = timeout
-        }
-
-        if json {
-            request.addValue("application/json", forHTTPHeaderField: "Accept")
-            request.addValue("application/json", forHTTPHeaderField: "Content-Type")
-        }
-        completion(request)
-    }
-
-    internal static let userAgent: String? = {
-        guard
-            let bundleDict = Bundle.main.infoDictionary,
-            let appName = bundleDict["CFBundleName"] as? String,
-            let appVersion = bundleDict["CFBundleShortVersionString"] as? String,
-            let appBuild = bundleDict["CFBundleVersion"] as? String
-        else {
-            return nil
-        }
-
-        let appDescriptor = appName + "/" + appVersion + "(" + appBuild + ")"
-
-        let osDescriptor = "iOS/" + UIDevice.current.systemVersion
-
-        var size = 0
-        sysctlbyname("hw.machine", nil, &size, nil, 0)
-        var machine = [CChar](repeating: 0, count: size)
-        sysctlbyname("hw.machine", &machine, &size, nil, 0)
-        let hardwareString = String(cString: machine)
-
-        return appDescriptor + " " + osDescriptor + " (" + hardwareString + ") SDK/\(APIVersion.version)"
-    }()
 
     /// perfom an API Request
     ///
