@@ -180,7 +180,7 @@ public final class ScannerViewController: UIViewController {
 
     private var msgHidden = true
 
-    private static func scannerAppearance() -> BarcodeDetectorAppearance {
+    public static func scannerAppearance() -> BarcodeDetectorAppearance {
         var appearance = BarcodeDetectorAppearance()
 
         appearance.torchButtonImage = UIImage.fromBundle("SnabbleSDK/icon-light-inactive")?.recolored(with: .white)
