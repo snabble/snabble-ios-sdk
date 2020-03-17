@@ -24,6 +24,15 @@ public protocol BarcodeDetectorDelegate: class {
     func present(_ viewControllerToPresent: UIViewController, animated flag: Bool, completion: (() -> Void)?)
 }
 
+public protocol BarcodeDetectorMessageDelegate: class {
+    /// show a message covering the entire screen (used by the "battery saver" function e.g. in the Cortex Decoder implementation)
+    /// `completion` is invoked when the user dimisses the message
+    func showMessage(_ msg: String, completion: @escaping () -> Void)
+
+    /// dismiss any message that might still be on-screen
+    func dismiss()
+}
+
 public protocol BarcodeDetector {
     /// the `BarcodeDetectorDelegate`. Implementations should make this `weak`
     var delegate: BarcodeDetectorDelegate? { get set }
