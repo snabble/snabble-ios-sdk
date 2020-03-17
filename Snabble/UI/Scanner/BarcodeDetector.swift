@@ -37,9 +37,6 @@ public protocol BarcodeDetector {
     /// controls the visibility of the reticle
     var reticleVisible: Bool { get set }
 
-    /// creates a BarcodeDetector instance with the given visual parameters
-    init(_ appearance: BarcodeDetectorAppearance)
-
     /// this must be called from `viewWillAppear()` of the hosting view controller
     /// use this method to initialize the detector as well as the camera
     func scannerWillAppear()
