@@ -177,7 +177,7 @@ final class TokenRegistry {
         print("\(#function)")
         let url = SnabbleAPI.metadata.links.createAppUser.href
         let parameters = [ "project": project.id ]
-        project.request(.get, url, jwtRequired: false, parameters: parameters, timeout: 5) { request in
+        project.request(.post, url, jwtRequired: false, parameters: parameters, timeout: 5) { request in
             guard
                 var request = request,
                 let password = self.generatePassword(date),
