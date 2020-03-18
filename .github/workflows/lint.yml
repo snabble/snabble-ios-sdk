@@ -26,7 +26,6 @@ jobs:
       - name: Lint
         run: |
             sudo xcode-select --switch /Applications/Xcode_11.3.1.app/Contents/Developer
-            bundle install
             bundle exec pod lib lint --allow-warnings
 
       - name: Slack Notification
