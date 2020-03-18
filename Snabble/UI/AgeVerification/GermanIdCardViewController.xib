@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="15705" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
+    <device id="retina4_0" orientation="portrait" appearance="dark"/>
+    <dependencies>
+        <deployment identifier="iOS"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="15706"/>
+        <capability name="Safe area layout guides" minToolsVersion="9.0"/>
+        <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
+    </dependencies>
+    <objects>
+        <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner" customClass="GermanIdCardViewController" customModule="Snabble" customModuleProvider="target">
+            <connections>
+                <outlet property="saveButton" destination="ebc-Xn-Xpd" id="Adx-Qn-OXA"/>
+                <outlet property="scrollView" destination="rBb-16-TJx" id="Hk1-P7-Rvp"/>
+                <outlet property="textField" destination="ddR-Jd-n52" id="D6C-wB-u1b"/>
+                <outlet property="view" destination="i5M-Pr-FkT" id="sfx-zR-JGt"/>
+            </connections>
+        </placeholder>
+        <placeholder placeholderIdentifier="IBFirstResponder" id="-2" customClass="UIResponder"/>
+        <view clearsContextBeforeDrawing="NO" contentMode="scaleToFill" id="i5M-Pr-FkT">
+            <rect key="frame" x="0.0" y="0.0" width="320" height="568"/>
+            <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+            <subviews>
+                <scrollView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="rBb-16-TJx">
+                    <rect key="frame" x="0.0" y="0.0" width="320" height="568"/>
+                    <subviews>
+                        <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="fCI-vx-QVU" userLabel="Content View">
+                            <rect key="frame" x="0.0" y="0.0" width="320" height="420.5"/>
+                            <subviews>
+                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" textAlignment="natural" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="ybl-iT-Ixm" userLabel="Blurb">
+                                    <rect key="frame" x="16" y="16" width="288" height="62.5"/>
+                                    <string key="text">Für den Kauf bestimmter Artikel, wie z.B. Alkohol, ist ein Altersnachweis notwendig. Gib dazu die 7-stellige Zahl von der Rückseite deines Personalausweises ein.</string>
+                                    <fontDescription key="fontDescription" type="system" pointSize="13"/>
+                                    <nil key="textColor"/>
+                                    <nil key="highlightedColor"/>
+                                </label>
+                                <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="SnabbleSDK/personalausweis" translatesAutoresizingMaskIntoConstraints="NO" id="odX-kZ-Hvl" userLabel="Perso">
+                                    <rect key="frame" x="16" y="94.5" width="288" height="182"/>
+                                    <constraints>
+                                        <constraint firstAttribute="width" secondItem="odX-kZ-Hvl" secondAttribute="height" multiplier="49:31" id="Pqk-FW-4qe"/>
+                                        <constraint firstAttribute="width" relation="lessThanOrEqual" constant="343" id="Wa7-bw-3SG"/>
+                                    </constraints>
+                                </imageView>
+                                <textField opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" placeholder="7 Ziffern" textAlignment="natural" minimumFontSize="17" clearButtonMode="whileEditing" translatesAutoresizingMaskIntoConstraints="NO" id="ddR-Jd-n52">
+                                    <rect key="frame" x="16" y="292.5" width="288" height="48"/>
+                                    <constraints>
+                                        <constraint firstAttribute="height" constant="48" id="QtA-S7-vbw"/>
+                                    </constraints>
+                                    <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                    <textInputTraits key="textInputTraits" keyboardType="numberPad"/>
+                                </textField>
+                                <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="ebc-Xn-Xpd">
+                                    <rect key="frame" x="16" y="356.5" width="288" height="48"/>
+                                    <constraints>
+                                        <constraint firstAttribute="height" constant="48" id="2Ar-Ir-Fcb"/>
+                                    </constraints>
+                                    <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                    <state key="normal" title="Speichern"/>
+                                    <connections>
+                                        <action selector="saveButtonTapped:" destination="-1" eventType="touchUpInside" id="Och-Bd-a4o"/>
+                                    </connections>
+                                </button>
+                            </subviews>
+                            <color key="backgroundColor" systemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
+                            <constraints>
+                                <constraint firstItem="odX-kZ-Hvl" firstAttribute="leading" relation="greaterThanOrEqual" secondItem="fCI-vx-QVU" secondAttribute="leading" constant="16" id="3N5-sp-h19"/>
+                                <constraint firstItem="ybl-iT-Ixm" firstAttribute="top" secondItem="fCI-vx-QVU" secondAttribute="top" constant="16" id="97m-jm-2pc"/>
+                                <constraint firstItem="ebc-Xn-Xpd" firstAttribute="top" secondItem="ddR-Jd-n52" secondAttribute="bottom" constant="16" id="AxA-IP-34M"/>
+                                <constraint firstAttribute="trailing" secondItem="ddR-Jd-n52" secondAttribute="trailing" constant="16" id="Hwj-eO-2du"/>
+                                <constraint firstItem="ebc-Xn-Xpd" firstAttribute="leading" secondItem="fCI-vx-QVU" secondAttribute="leading" constant="16" id="ae5-JT-pRD"/>
+                                <constraint firstItem="ddR-Jd-n52" firstAttribute="leading" secondItem="fCI-vx-QVU" secondAttribute="leading" constant="16" id="btj-DC-NnT"/>
+                                <constraint firstAttribute="trailing" relation="greaterThanOrEqual" secondItem="odX-kZ-Hvl" secondAttribute="trailing" constant="16" id="gGT-CX-3dI"/>
+                                <constraint firstAttribute="trailing" secondItem="ybl-iT-Ixm" secondAttribute="trailing" constant="16" id="jiA-sR-cOS"/>
+                                <constraint firstItem="odX-kZ-Hvl" firstAttribute="top" secondItem="ybl-iT-Ixm" secondAttribute="bottom" constant="16" id="k7m-gQ-KPt"/>
+                                <constraint firstAttribute="trailing" secondItem="ebc-Xn-Xpd" secondAttribute="trailing" constant="16" id="lYk-ue-Zvs"/>
+                                <constraint firstItem="ybl-iT-Ixm" firstAttribute="leading" secondItem="fCI-vx-QVU" secondAttribute="leading" constant="16" id="oIN-IV-3mj"/>
+                                <constraint firstItem="odX-kZ-Hvl" firstAttribute="centerX" secondItem="fCI-vx-QVU" secondAttribute="centerX" id="ups-ib-UZH"/>
+                                <constraint firstAttribute="bottom" secondItem="ebc-Xn-Xpd" secondAttribute="bottom" constant="16" id="yNn-0O-OIe"/>
+                                <constraint firstItem="ddR-Jd-n52" firstAttribute="top" secondItem="odX-kZ-Hvl" secondAttribute="bottom" constant="16" id="zmB-Yd-TD3"/>
+                            </constraints>
+                        </view>
+                    </subviews>
+                    <constraints>
+                        <constraint firstItem="fCI-vx-QVU" firstAttribute="top" secondItem="rBb-16-TJx" secondAttribute="top" id="2nS-Id-KZt"/>
+                        <constraint firstItem="fCI-vx-QVU" firstAttribute="leading" secondItem="rBb-16-TJx" secondAttribute="leading" id="MZj-bU-Lxn"/>
+                        <constraint firstAttribute="bottom" secondItem="fCI-vx-QVU" secondAttribute="bottom" id="Tho-Mr-gaj"/>
+                        <constraint firstAttribute="trailing" secondItem="fCI-vx-QVU" secondAttribute="trailing" id="qfo-5r-FHx"/>
+                    </constraints>
+                </scrollView>
+            </subviews>
+            <color key="backgroundColor" systemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
+            <constraints>
+                <constraint firstItem="rBb-16-TJx" firstAttribute="top" secondItem="fnl-2z-Ty3" secondAttribute="top" id="NZ9-TY-QBf"/>
+                <constraint firstItem="rBb-16-TJx" firstAttribute="leading" secondItem="fnl-2z-Ty3" secondAttribute="leading" id="OnY-pK-ygW"/>
+                <constraint firstItem="fnl-2z-Ty3" firstAttribute="trailing" secondItem="rBb-16-TJx" secondAttribute="trailing" id="Vcd-U2-Bid"/>
+                <constraint firstItem="fnl-2z-Ty3" firstAttribute="bottom" secondItem="rBb-16-TJx" secondAttribute="bottom" id="kTA-eN-748"/>
+                <constraint firstItem="fCI-vx-QVU" firstAttribute="width" secondItem="i5M-Pr-FkT" secondAttribute="width" id="w6t-7x-dBg"/>
+            </constraints>
+            <viewLayoutGuide key="safeArea" id="fnl-2z-Ty3"/>
+            <point key="canvasLocation" x="138.75" y="153.16901408450704"/>
+        </view>
+    </objects>
+    <resources>
+        <image name="SnabbleSDK/personalausweis" width="343" height="217"/>
+    </resources>
+</document>
