@@ -59,9 +59,20 @@ public struct Order: Codable {
 
 extension OrderList {
     public static func load(_ project: Project, completion: @escaping (Result<OrderList, SnabbleError>) -> Void ) {
-        let url = SnabbleAPI.links.clientOrders.href.replacingOccurrences(of: "{clientID}", with: SnabbleAPI.clientId)
+        var url: String?
+        if let clientOrdersUrl = SnabbleAPI.links.clientOrders?.href {
+            url = clientOrdersUrl.replacingOccurrences(of: "{clientID}", with: SnabbleAPI.clientId)
+        }
 
-        project.request(.get, url, timeout: 0) { request in
+        if let appUserId = SnabbleAPI.appUserId {
+            url = SnabbleAPI.links.appUserOrders.href.replacingOccurrences(of: "{appUserID}", with: appUserId.userId)
+        }
+
+        guard let ordersUrl = url else {
+            return completion(Result.failure(SnabbleError.noRequest))
+        }
+
+        project.request(.get, ordersUrl, timeout: 0) { request in
             guard let request = request else {
                 return completion(Result.failure(SnabbleError.noRequest))
             }

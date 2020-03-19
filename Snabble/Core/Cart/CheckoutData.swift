@@ -296,6 +296,8 @@ public struct Cart: Encodable {
     let shopID: String
     let customer: CustomerInfo?
     let items: [Item]
+    let clientID: String
+    let appUserID: String?
 
     public struct Item: Encodable {
         let id: String

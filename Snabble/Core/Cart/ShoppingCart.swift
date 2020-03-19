@@ -338,8 +338,12 @@ public extension Notification.Name {
 // MARK: backend connection
 extension ShoppingCart {
     func createCart() -> Cart {
-        let customerInfo = Cart.CustomerInfo(loyaltyCard: self.customerCard)
-        return Cart(session: self.session, shopID: self.shopId, customer: customerInfo, items: self.backendItems())
+        return Cart(session: self.session,
+                    shopID: self.shopId,
+                    customer: Cart.CustomerInfo(loyaltyCard: self.customerCard),
+                    items: self.backendItems(),
+                    clientID: SnabbleAPI.clientId,
+                    appUserID: SnabbleAPI.appUserId?.userId)
     }
 
     func createCheckoutInfo(userInitiated: Bool = false, completion: @escaping (Bool) -> Void) {

@@ -146,26 +146,73 @@ public enum SnabbleAPI {
     }
 }
 
+public struct AppUserId {
+    let userId: String
+    let secret: String
+
+    public init(userId: String, secret: String) {
+        self.userId = userId
+        self.secret = secret
+    }
+
+    public init?(_ string: String?) {
+        guard
+            let components = string?.split(separator: ":"),
+            components.count == 2
+        else {
+            return nil
+        }
+
+        self.userId = String(components[0])
+        self.secret = String(components[1])
+    }
+
+    public var combined: String {
+        return "\(self.userId):\(self.secret)"
+    }
+}
+
 extension SnabbleAPI {
     private static let service = "io.snabble.sdk"
-    private static let key = "Snabble.api.clientId"
+
+    // MARK: - client id
+    private static let idKey = "Snabble.api.clientId"
 
     public static var clientId: String {
         let keychain = Keychain(service: service)
 
-        if let id = keychain[key] {
+        if let id = keychain[idKey] {
             return id
         }
 
-        if let id = UserDefaults.standard.string(forKey: key) {
-            keychain[key] = id
+        if let id = UserDefaults.standard.string(forKey: idKey) {
+            keychain[idKey] = id
             return id
         }
 
         let id = UUID().uuidString.lowercased().replacingOccurrences(of: "-", with: "")
-        keychain[key] = id
-        UserDefaults.standard.set(id, forKey: key)
+        keychain[idKey] = id
+        UserDefaults.standard.set(id, forKey: idKey)
         return id
+    }
+
+    // MARK: - app user id
+    private static var appUserKey: String {
+        return "Snabble.api.appUserId.\(SnabbleAPI.config.appId)"
+    }
+
+    public static var appUserId: AppUserId? {
+        get {
+            let keychain = Keychain(service: service)
+            return AppUserId(keychain[appUserKey])
+        }
+
+        set {
+            let keychain = Keychain(service: service)
+            keychain[appUserKey] = newValue?.combined
+
+            self.tokenRegistry.invalidateAllTokens()
+        }
     }
 }
 

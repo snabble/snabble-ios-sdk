@@ -41,17 +41,17 @@ final class ReceiptCell: UITableViewCell {
     func show(_ orderEntry: OrderEntry) {
         switch orderEntry {
         case .done(let order):
-            guard let project = SnabbleAPI.projectFor(order.project) else {
-                return
+            if let project = SnabbleAPI.projectFor(order.project) {
+                let formatter = PriceFormatter(project)
+                self.price.text = formatter.format(order.price)
+            } else {
+                let formatter = PriceFormatter(2, "de_DE", "EUR", "€")
+                self.price.text = formatter.format(order.price)
             }
 
-            self.accessoryType = .disclosureIndicator
             self.storeName.text = order.shopName
 
             self.showIcon(order.project)
-
-            let formatter = PriceFormatter(project)
-            self.price.text = formatter.format(order.price)
 
             let dateFormatter = DateFormatter()
             dateFormatter.dateStyle = .medium

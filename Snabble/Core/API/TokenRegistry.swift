@@ -9,7 +9,17 @@ import OneTimePassword
 import Base32
 
 // backend response
-struct TokenResponse: Decodable {
+private struct AppUserResponse: Decodable {
+    let appUser: AppUser
+    let token: TokenResponse
+
+    struct AppUser: Decodable {
+        let id: String
+        let secret: String
+    }
+}
+
+private struct TokenResponse: Decodable {
     let id: String
     let token: String
     let issuedAt: Int64
@@ -17,7 +27,7 @@ struct TokenResponse: Decodable {
 }
 
 // stored in our token registry
-struct TokenData {
+private struct TokenData {
     let jwt: String
     let expires: Date
     let refresh: Date
@@ -94,6 +104,21 @@ final class TokenRegistry {
         self.registry[projectId] = tokenData
     }
 
+    // invalidate all tokens - called when the appUser changes
+    func invalidateAllTokens() {
+        self.refreshTimer?.invalidate()
+        self.refreshTimer = nil
+
+        let activeIds = self.registry.keys
+        self.registry.removeAll()
+
+        for projectId in activeIds {
+            if let project = SnabbleAPI.projectFor(projectId) {
+                self.getToken(for: project, completion: {_ in })
+            }
+        }
+    }
+
     @objc private func appEnteredForeground(_ notification: Notification) {
         // Log.debug("app going to fg, start refresh")
         self.startRefreshTimer()
@@ -140,7 +165,47 @@ final class TokenRegistry {
         }
     }
 
-    private func retrieveToken(for project: Project, _ date: Date? = nil, completion: @escaping (TokenData?) -> Void ) {
+    private func retrieveToken(for project: Project, _ date: Date? = nil, completion: @escaping (TokenData?) -> Void) {
+        if let appUserId = SnabbleAPI.appUserId {
+            self.retrieveTokenForUser(for: project, appUserId, date, completion: completion)
+        } else {
+            self.retrieveAppUserAndToken(for: project, date, completion: completion)
+        }
+    }
+
+    private func retrieveAppUserAndToken(for project: Project, _ date: Date? = nil, completion: @escaping (TokenData?) -> Void) {
+        let url = SnabbleAPI.metadata.links.createAppUser.href
+        let parameters = [ "project": project.id ]
+        project.request(.post, url, jwtRequired: false, parameters: parameters, timeout: 5) { request in
+            guard
+                var request = request,
+                let password = self.generatePassword(date),
+                let data = "\(self.appId):\(password)".data(using: .utf8)
+            else {
+                return completion(nil)
+            }
+
+            let base64 = data.base64EncodedString()
+            request.addValue("Basic \(base64)", forHTTPHeaderField: "Authorization")
+            request.cachePolicy = .reloadIgnoringCacheData
+
+            project.perform(request) { (result: Result<AppUserResponse, SnabbleError>, httpResponse) in
+                switch result {
+                case .success(let appUserData):
+                    SnabbleAPI.appUserId = AppUserId(userId: appUserData.appUser.id, secret: appUserData.appUser.secret)
+                    completion(TokenData(appUserData.token, project))
+                case .failure:
+                    if let response = httpResponse, response.statusCode == 403, date == nil {
+                        self.retryWithServerDate(project, response, completion: completion)
+                        return
+                    }
+                    completion(nil)
+                }
+            }
+        }
+    }
+
+    private func retrieveTokenForUser(for project: Project, _ appUserId: AppUserId, _ date: Date? = nil, completion: @escaping (TokenData?) -> Void ) {
         let parameters = [ "role": "retailerApp" ]
 
         let url = project.links.tokens.href
@@ -148,7 +213,7 @@ final class TokenRegistry {
             guard
                 var request = request,
                 let password = self.generatePassword(date),
-                let data = "\(self.appId):\(password)".data(using: .utf8)
+                let data = "\(self.appId):\(password):\(appUserId.userId):\(appUserId.secret)".data(using: .utf8)
             else {
                 return completion(nil)
             }
