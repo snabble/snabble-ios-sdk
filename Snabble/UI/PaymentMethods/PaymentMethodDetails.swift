@@ -228,10 +228,36 @@ struct CreditCardData: Codable, EncryptedPaymentData {
         self.version = version ?? CreditCardRequestOrigin.version
     }
 
+    // the card's expiration date as a YYYY/MM/DD string with the last day of the month,
+    // e.g. 2020/02/29 for expirationDate == 02/20202
     var validUntil: String? {
-        return "\(self.expirationYear)/\(self.expirationMonth)/01"
+        guard
+            let year = Int(self.expirationYear),
+            let month = Int(self.expirationMonth)
+        else {
+            return nil
+        }
+
+        let calendar = Calendar(identifier: .gregorian)
+        var dateComponents = DateComponents()
+        dateComponents.calendar = calendar
+        dateComponents.year = year
+        dateComponents.month = month
+
+        guard
+            let firstDate = dateComponents.date,
+            let lastDate = calendar.date(byAdding: DateComponents(month: 1, day: -1), to: firstDate)
+        else {
+            return nil
+        }
+
+        let dateFormatter = DateFormatter()
+        dateFormatter.dateFormat = "yyyy/MM/dd"
+
+        return dateFormatter.string(from: lastDate)
     }
 
+    // the card's expiration date as usally displayed, e.g. 09/2020
     var expirationDate: String {
         return "\(self.expirationMonth)/\(self.expirationYear)"
     }
