@@ -21,8 +21,7 @@ extension ShoppingCart {
         self.eventTimer?.invalidate()
         self.checkoutInfoTask?.cancel()
 
-        let customerInfo = Cart.CustomerInfo(loyaltyCard: self.customerCard)
-        let cart = Cart(session: self.session, shopID: self.shopId, customer: customerInfo, items: self.backendItems())
+        let cart = self.createCart()
 
         Log.info("create checkout session: \(cart.session)")
 
