@@ -20,6 +20,9 @@ protocol EncryptedPaymentData {
     // check if this payment method data is expired
     var isExpired: Bool { get }
 
+    // if known, date until this method is valid. This is a string in the format "YYYY/MM/DD"
+    var validUntil: String? { get }
+
     var originType: AcceptedOriginType { get }
 }
 
@@ -35,6 +38,8 @@ struct SepaData: Codable, EncryptedPaymentData {
     let originType: AcceptedOriginType
 
     let isExpired = false
+
+    let validUntil: String? = nil
 
     enum CodingKeys: String, CodingKey {
         case encryptedPaymentData, serial, displayName, originType
@@ -83,6 +88,8 @@ struct TegutEmployeeData: Codable, EncryptedPaymentData {
     let displayName: String
 
     let isExpired = false
+
+    let validUntil: String? = nil
 
     let originType: AcceptedOriginType
 
@@ -218,6 +225,10 @@ struct CreditCardData: Codable, EncryptedPaymentData {
         self.version = version ?? CreditCardRequestOrigin.version
     }
 
+    var validUntil: String? {
+        return "\(self.expirationYear)/\(self.expirationMonth)/01"
+    }
+
     var expirationDate: String {
         return "\(self.expirationMonth)/\(self.expirationYear)"
     }
@@ -305,12 +316,16 @@ public struct PaymentMethodDetail: Codable {
         return self.methodData.data.encryptedPaymentData
     }
 
+    var validUntil: String? {
+        return self.methodData.data.validUntil
+    }
+
     var serial: String {
         return self.methodData.data.serial
     }
 
     public var data: Snabble.PaymentMethodData {
-        return Snabble.PaymentMethodData(self.displayName, self.encryptedData, self.originType)
+        return Snabble.PaymentMethodData(self.displayName, self.encryptedData, self.originType, self.validUntil)
     }
 
     var isExpired: Bool {

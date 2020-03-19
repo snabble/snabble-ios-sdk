@@ -103,11 +103,13 @@ public struct PaymentMethodData {
     public let displayName: String
     public let encryptedData: String
     public let originType: AcceptedOriginType
+    public let validUntil: String?
 
-    public init(_ displayName: String, _ encryptedData: String, _ originType: AcceptedOriginType) {
+    public init(_ displayName: String, _ encryptedData: String, _ originType: AcceptedOriginType, _ validUntil: String?) {
         self.displayName = displayName
         self.encryptedData = encryptedData
         self.originType = originType
+        self.validUntil = validUntil
     }
 }
 
@@ -142,6 +144,24 @@ public enum PaymentMethod {
         case .externalBilling(let data):
             return data
         case .qrCodePOS, .qrCodeOffline, .gatekeeperTerminal, .customerCardPOS:
+            return nil
+        }
+    }
+
+    public var cardNumber: String? {
+        switch self {
+        case .visa(let data), .mastercard(let data):
+            return data?.displayName
+        case .qrCodePOS, .qrCodeOffline, .deDirectDebit, .externalBilling, .gatekeeperTerminal, .customerCardPOS:
+            return nil
+        }
+    }
+
+    public var validUntil: String? {
+        switch self {
+        case .visa(let data), .mastercard(let data):
+            return data?.validUntil
+        case .qrCodePOS, .qrCodeOffline, .deDirectDebit, .externalBilling, .gatekeeperTerminal, .customerCardPOS:
             return nil
         }
     }

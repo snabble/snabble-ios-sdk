@@ -67,10 +67,18 @@ extension SignedCheckoutInfo {
             dict["signedCheckoutInfo"] = self.rawJson
 
             if let data = paymentMethod.data {
-                dict["paymentInformation"] = [
+                var paymentInformation = [
                     "originType": data.originType.rawValue,
                     "encryptedOrigin": data.encryptedData
                 ]
+                if let cardNumber = paymentMethod.cardNumber {
+                    paymentInformation["cardNumber"] = cardNumber
+                }
+                if let validUntil = paymentMethod.validUntil {
+                    paymentInformation["validUntil"] = validUntil
+                }
+
+                dict["paymentInformation"] = paymentInformation
             }
 
             if let finalizedAt = finalizedAt {
