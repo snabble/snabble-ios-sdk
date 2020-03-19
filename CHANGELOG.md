@@ -3,6 +3,7 @@
 # v0.12.2
 
 * Adds support for the new "CustomerCardPOS" payment method
+* Adds support for the new "CreditCardAmericanExpress" payment method
 * Links in the credit card entry form are now opened in Safari
 * Adds support for adding IBAN data used at a snabble SCO as a payment method
 * Fixes a bug where refreshing auth tokens could happen way too often
