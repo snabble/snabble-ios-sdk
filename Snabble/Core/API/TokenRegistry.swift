@@ -9,7 +9,7 @@ import OneTimePassword
 import Base32
 
 // backend response
-struct AppUserResponse: Decodable {
+private struct AppUserResponse: Decodable {
     let appUser: AppUser
     let token: TokenResponse
 
@@ -19,7 +19,7 @@ struct AppUserResponse: Decodable {
     }
 }
 
-struct TokenResponse: Decodable {
+private struct TokenResponse: Decodable {
     let id: String
     let token: String
     let issuedAt: Int64
@@ -27,7 +27,7 @@ struct TokenResponse: Decodable {
 }
 
 // stored in our token registry
-struct TokenData {
+private struct TokenData {
     let jwt: String
     let expires: Date
     let refresh: Date
@@ -166,15 +166,14 @@ final class TokenRegistry {
     }
 
     private func retrieveToken(for project: Project, _ date: Date? = nil, completion: @escaping (TokenData?) -> Void) {
-        if let appUser = SnabbleAPI.appUser {
-            self.retrieveTokenForUser(for: project, appUser, date, completion: completion)
+        if let appUserId = SnabbleAPI.appUserId {
+            self.retrieveTokenForUser(for: project, appUserId, date, completion: completion)
         } else {
             self.retrieveAppUserAndToken(for: project, date, completion: completion)
         }
     }
 
     private func retrieveAppUserAndToken(for project: Project, _ date: Date? = nil, completion: @escaping (TokenData?) -> Void) {
-        print("\(#function)")
         let url = SnabbleAPI.metadata.links.createAppUser.href
         let parameters = [ "project": project.id ]
         project.request(.post, url, jwtRequired: false, parameters: parameters, timeout: 5) { request in
@@ -193,7 +192,7 @@ final class TokenRegistry {
             project.perform(request) { (result: Result<AppUserResponse, SnabbleError>, httpResponse) in
                 switch result {
                 case .success(let appUserData):
-                    SnabbleAPI.appUser = "\(appUserData.appUser.id):\(appUserData.appUser.secret)"
+                    SnabbleAPI.appUserId = AppUserId(userId: appUserData.appUser.id, secret: appUserData.appUser.secret)
                     completion(TokenData(appUserData.token, project))
                 case .failure:
                     if let response = httpResponse, response.statusCode == 403, date == nil {
@@ -206,8 +205,7 @@ final class TokenRegistry {
         }
     }
 
-    private func retrieveTokenForUser(for project: Project, _ appUser: String, _ date: Date? = nil, completion: @escaping (TokenData?) -> Void ) {
-        print("\(#function) \(appUser)")
+    private func retrieveTokenForUser(for project: Project, _ appUserId: AppUserId, _ date: Date? = nil, completion: @escaping (TokenData?) -> Void ) {
         let parameters = [ "role": "retailerApp" ]
 
         let url = project.links.tokens.href
@@ -215,7 +213,7 @@ final class TokenRegistry {
             guard
                 var request = request,
                 let password = self.generatePassword(date),
-                let data = "\(self.appId):\(password):\(appUser)".data(using: .utf8)
+                let data = "\(self.appId):\(password):\(appUserId.userId):\(appUserId.secret)".data(using: .utf8)
             else {
                 return completion(nil)
             }

@@ -183,12 +183,11 @@ extension ReceiptsListViewController: UITableViewDelegate, UITableViewDataSource
         }
 
         let orderEntry = orders[indexPath.row]
-        guard
-            case .done(let order) = orderEntry,
-            let project = SnabbleAPI.projectFor(order.project)
-        else {
+        guard case .done(let order) = orderEntry else {
             return
         }
+
+        let project = SnabbleAPI.projectFor(order.project) ?? SnabbleAPI.projects[0]
 
         let cell = self.tableView.cellForRow(at: indexPath)
         let spinner = UIActivityIndicatorView(style: .gray)
