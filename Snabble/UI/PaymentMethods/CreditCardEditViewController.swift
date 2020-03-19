@@ -10,6 +10,7 @@ import WebKit
 // sample data for testing:
 // Visa: 4921 8180 8989 8988, Exp. 12/2020, CVV: any 3-digit number
 // MasterCard: 5404 1070 0002 0010, Exp. 12/2020, CVV: any 3-digit number
+// Amex: 3782 8224 6310 005, Exp 12/2020, CVC: 123
 
 public final class CreditCardEditViewController: UIViewController {
 
@@ -73,6 +74,7 @@ public final class CreditCardEditViewController: UIViewController {
         switch self.brand {
         case .visa: self.title = "VISA"
         case .mastercard: self.title = "Mastercard"
+        case .amex: self.title = "American Express"
         case .none: self.title = "Snabble.Payment.CreditCard".localized()
         }
 

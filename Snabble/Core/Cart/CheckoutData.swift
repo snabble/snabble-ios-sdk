@@ -50,6 +50,7 @@ public enum RawPaymentMethod: String, CaseIterable, Decodable {
     case deDirectDebit          // SEPA direct debit via Telecash/First Data
     case creditCardVisa         // VISA via Telecash/First Data
     case creditCardMastercard   // MASTERCARD via Telecash/First Data
+    case creditCardAmericanExpress // AMERICAN EXPRESS via Telecash/First Data
     case externalBilling        // external billig, e.g. via an employee id
     case gatekeeperTerminal
     case customerCardPOS        // payment via customer card invoice
@@ -57,7 +58,7 @@ public enum RawPaymentMethod: String, CaseIterable, Decodable {
     /// true if this method reqires additional data, like an IBAN or a credit card number
     var dataRequired: Bool {
         switch self {
-        case .deDirectDebit, .creditCardVisa, .creditCardMastercard, .externalBilling, .customerCardPOS:
+        case .deDirectDebit, .creditCardVisa, .creditCardMastercard, .creditCardAmericanExpress, .externalBilling, .customerCardPOS:
             return true
         case .qrCodePOS, .qrCodeOffline, .gatekeeperTerminal:
             return false
@@ -67,7 +68,7 @@ public enum RawPaymentMethod: String, CaseIterable, Decodable {
     /// true if this method can be added/edited through SDK methods
     var editable: Bool {
         switch self {
-        case .deDirectDebit, .creditCardVisa, .creditCardMastercard:
+        case .deDirectDebit, .creditCardVisa, .creditCardMastercard, .creditCardAmericanExpress:
             return true
         case .qrCodePOS, .qrCodeOffline, .externalBilling, .gatekeeperTerminal, .customerCardPOS:
             return false
@@ -79,9 +80,9 @@ public enum RawPaymentMethod: String, CaseIterable, Decodable {
         switch self {
         case .qrCodeOffline:
             return true
-        case .qrCodePOS, .deDirectDebit, .creditCardVisa,
-             .creditCardMastercard, .externalBilling,
-             .gatekeeperTerminal, .customerCardPOS:
+        case .qrCodePOS, .deDirectDebit,
+             .creditCardVisa, .creditCardMastercard, .creditCardAmericanExpress,
+             .externalBilling, .gatekeeperTerminal, .customerCardPOS:
             return false
         }
     }
@@ -120,6 +121,7 @@ public enum PaymentMethod {
     case deDirectDebit(PaymentMethodData?)
     case visa(PaymentMethodData?)
     case mastercard(PaymentMethodData?)
+    case americanExpress(PaymentMethodData?)
     case externalBilling(PaymentMethodData?)
     case gatekeeperTerminal
     case customerCardPOS
@@ -131,6 +133,7 @@ public enum PaymentMethod {
         case .deDirectDebit: return .deDirectDebit
         case .visa: return .creditCardVisa
         case .mastercard: return .creditCardMastercard
+        case .americanExpress: return .creditCardAmericanExpress
         case .externalBilling: return .externalBilling
         case .gatekeeperTerminal: return .gatekeeperTerminal
         case .customerCardPOS: return .customerCardPOS
@@ -139,7 +142,7 @@ public enum PaymentMethod {
 
     public var data: PaymentMethodData? {
         switch self {
-        case .deDirectDebit(let data), .visa(let data), .mastercard(let data):
+        case .deDirectDebit(let data), .visa(let data), .mastercard(let data), .americanExpress(let data):
             return data
         case .externalBilling(let data):
             return data
@@ -150,7 +153,7 @@ public enum PaymentMethod {
 
     public var cardNumber: String? {
         switch self {
-        case .visa(let data), .mastercard(let data):
+        case .visa(let data), .mastercard(let data), .americanExpress(let data):
             return data?.displayName
         case .qrCodePOS, .qrCodeOffline, .deDirectDebit, .externalBilling, .gatekeeperTerminal, .customerCardPOS:
             return nil
@@ -159,7 +162,7 @@ public enum PaymentMethod {
 
     public var validUntil: String? {
         switch self {
-        case .visa(let data), .mastercard(let data):
+        case .visa(let data), .mastercard(let data), .americanExpress(let data):
             return data?.validUntil
         case .qrCodePOS, .qrCodeOffline, .deDirectDebit, .externalBilling, .gatekeeperTerminal, .customerCardPOS:
             return nil

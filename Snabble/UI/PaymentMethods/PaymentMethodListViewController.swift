@@ -14,8 +14,11 @@ extension RawPaymentMethod {
         case .deDirectDebit: return "SEPA-Lastschrift"
         case .creditCardMastercard: return "Mastercard"
         case .creditCardVisa: return "VISA"
+        case .creditCardAmericanExpress: return "American Express"
         case .gatekeeperTerminal: return "Snabble.Payment.payAtSCO".localized()
-        default: return nil
+
+        case .qrCodePOS, .qrCodeOffline, .externalBilling, .customerCardPOS:
+            return nil
         }
     }
 
@@ -24,7 +27,10 @@ extension RawPaymentMethod {
         case .deDirectDebit: return SepaEditViewController(nil, nil, analyticsDelegate)
         case .creditCardMastercard: return CreditCardEditViewController(.mastercard, analyticsDelegate)
         case .creditCardVisa: return CreditCardEditViewController(.visa, analyticsDelegate)
-        default: return nil
+        case .creditCardAmericanExpress: return CreditCardEditViewController(.amex, analyticsDelegate)
+
+        case .qrCodePOS, .qrCodeOffline, .externalBilling, .customerCardPOS, .gatekeeperTerminal:
+            return nil
         }
     }
 
@@ -33,8 +39,11 @@ extension RawPaymentMethod {
         case .deDirectDebit: return UIImage.fromBundle("SnabbleSDK/payment-small-sepa")
         case .creditCardVisa: return UIImage.fromBundle("SnabbleSDK/payment-small-visa")
         case .creditCardMastercard: return UIImage.fromBundle("SnabbleSDK/payment-small-mastercard")
+        case .creditCardAmericanExpress: return UIImage.fromBundle("SnabbleSDK/payment-small-amex")
         case .gatekeeperTerminal: return UIImage.fromBundle("SnabbleSDK/payment-cartd-terminal")
-        default: return nil
+
+        case .qrCodePOS, .qrCodeOffline, .externalBilling, .customerCardPOS:
+            return nil
         }
     }
 
@@ -43,8 +52,11 @@ extension RawPaymentMethod {
         case .deDirectDebit: return 100
         case .creditCardVisa: return 99
         case .creditCardMastercard: return 98
-        case .gatekeeperTerminal: return 97
-        default: return 0
+        case .creditCardAmericanExpress: return 97
+        case .gatekeeperTerminal: return 96
+
+        case .qrCodePOS, .qrCodeOffline, .externalBilling, .customerCardPOS:
+            return 0
         }
     }
 }

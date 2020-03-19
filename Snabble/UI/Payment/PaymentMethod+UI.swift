@@ -15,6 +15,7 @@ extension PaymentMethod {
         case .deDirectDebit: return "SnabbleSDK/payment-sepa"
         case .visa: return "SnabbleSDK/payment-visa"
         case .mastercard: return "SnabbleSDK/payment-mastercard"
+        case .americanExpress: return "SnabbleSDK/payment-amex"
         case .externalBilling:
             switch self.data?.originType {
             case .tegutEmployeeID: return "SnabbleSDK/payment-tegut"
@@ -27,7 +28,7 @@ extension PaymentMethod {
 
     var dataRequired: Bool {
         switch self {
-        case .deDirectDebit, .visa, .mastercard, .externalBilling: return true
+        case .deDirectDebit, .visa, .mastercard, .americanExpress, .externalBilling: return true
         case .qrCodePOS, .qrCodeOffline, .gatekeeperTerminal, .customerCardPOS: return false
         }
     }
@@ -58,7 +59,7 @@ extension PaymentMethod {
             } else {
                 return nil
             }
-        case .deDirectDebit, .visa, .mastercard, .externalBilling:
+        case .deDirectDebit, .visa, .mastercard, .americanExpress, .externalBilling:
             processor = OnlineCheckoutViewController(process!, cart, delegate)
         case .gatekeeperTerminal:
             processor = TerminalCheckoutViewController(process!, cart, delegate)
@@ -160,6 +161,13 @@ public final class PaymentProcess {
                 } else {
                     result.append(.mastercard(nil))
                 }
+            case .creditCardAmericanExpress:
+                let amex = userData.filter { if case .americanExpress = $0 { return true } else { return false } }
+                if !amex.isEmpty {
+                    result.append(contentsOf: amex.reversed())
+                } else {
+                    result.append(.americanExpress(nil))
+                }
             case .externalBilling:
                 let billing = userData.filter { if case .externalBilling = $0 { return true } else { return false } }
                 if !billing.isEmpty {
@@ -213,6 +221,12 @@ public final class PaymentProcess {
                 if useMastercard && creditcardData.brand == .mastercard {
                     let mc = PaymentMethod.mastercard(data)
                     results.append(mc)
+                }
+
+                let useAmex = methods.first { $0.method == .creditCardAmericanExpress } != nil
+                if useAmex && creditcardData.brand == .amex {
+                    let amex = PaymentMethod.americanExpress(data)
+                    results.append(amex)
                 }
             case .tegutEmployeeCard:
                 let tegut = methods.first {

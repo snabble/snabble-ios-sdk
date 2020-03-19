@@ -15,6 +15,7 @@ extension PaymentMethodDetail {
             switch creditcardData.brand {
             case .visa: return UIImage.fromBundle("SnabbleSDK/payment-small-visa")
             case .mastercard: return UIImage.fromBundle("SnabbleSDK/payment-small-mastercard")
+            case .amex: return UIImage.fromBundle("SnabbleSDK/payment-small-amex")
             }
         case .tegutEmployeeCard:
             return UIImage.fromBundle("SnabbleSDK/payment-small-tegut")

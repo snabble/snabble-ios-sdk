@@ -134,12 +134,14 @@ public enum CreditCardBrand: String, Codable {
     // 1st mapping: from the reponse of the IPG card entry form
     case visa
     case mastercard
+    case amex
 
     // 2nd mapping: to the `cardType` property of the encrypted payment data
     var cardType: String {
         switch self {
         case .visa: return "creditCardVisa"
         case .mastercard: return "creditCardMastercard"
+        case .amex: return "creditCardAmericanExpress"
         }
     }
 
@@ -148,6 +150,7 @@ public enum CreditCardBrand: String, Codable {
         switch self {
         case .visa: return "V"
         case .mastercard: return "M"
+        case .amex: return "A"
         }
     }
 }
@@ -339,6 +342,7 @@ public struct PaymentMethodDetail: Codable {
             switch creditcardData.brand {
             case .mastercard: return .creditCardMastercard
             case .visa: return .creditCardVisa
+            case .amex: return .creditCardAmericanExpress
             }
         case .tegutEmployeeCard:
             return .externalBilling
