@@ -90,7 +90,7 @@ public final class ShoppingCartViewController: UIViewController {
         self.tabBarItem.selectedImage = UIImage.fromBundle("SnabbleSDK/icon-cart-active")
 
         let nc = NotificationCenter.default
-        nc.addObserver(self, selector: #selector(self.updateShoppingCart(_:)), name: .snabbleCartUpdated, object: nil)
+        nc.addObserver(self, selector: #selector(self.shoppingCartUpdated(_:)), name: .snabbleCartUpdated, object: nil)
 
         self.keyboardObserver = KeyboardObserver(handler: self)
 
@@ -236,7 +236,12 @@ public final class ShoppingCartViewController: UIViewController {
     private var restoreTimer: Timer?
 
     // MARK: notification handlers
-    @objc private func updateShoppingCart(_ notification: Notification) {
+    @objc private func shoppingCartUpdated(_ notification: Notification) {
+        // ignore notifcation sent from this class
+        if let object = notification.object as? ShoppingCartViewController, object == self {
+            return
+        }
+
         self.setupItems(self.shoppingCart)
         self.tableView?.reloadData()
 
@@ -546,6 +551,7 @@ extension ShoppingCartViewController: ShoppingCartTableDelegate {
         }
 
         self.shoppingCart.setQuantity(quantity, at: row)
+        NotificationCenter.default.post(name: .snabbleCartUpdated, object: self)
         self.updateView(at: row)
     }
 }
@@ -630,6 +636,7 @@ extension ShoppingCartViewController: UITableViewDelegate, UITableViewDataSource
 
         CATransaction.setCompletionBlock {
             self.shoppingCart.remove(at: row)
+            NotificationCenter.default.post(name: .snabbleCartUpdated, object: self)
             self.updateView()
         }
 
