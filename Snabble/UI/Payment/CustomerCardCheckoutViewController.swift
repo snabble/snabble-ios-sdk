@@ -91,7 +91,6 @@ public final class CustomerCardCheckoutViewController: UIViewController {
 
     @IBAction private func paidButtonTapped(_ sender: UIButton) {
         self.cart.removeAll(endSession: true)
-        NotificationCenter.default.post(name: .snabbleCartUpdated, object: self)
 
         self.delegate.paymentFinished(true, self.cart, self.process)
     }
