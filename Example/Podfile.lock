@@ -7,16 +7,16 @@ PODS:
   - KeychainAccess (4.1.0)
   - OneTimePassword (3.2.0):
     - Base32 (~> 1.1.2)
-  - Snabble (0.12.1):
-    - Snabble/Core (= 0.12.1)
-    - Snabble/UI (= 0.12.1)
-  - Snabble/Core (0.12.1):
+  - Snabble (0.12.2):
+    - Snabble/Core (= 0.12.2)
+    - Snabble/UI (= 0.12.2)
+  - Snabble/Core (0.12.2):
     - GRDB.swift (~> 4)
     - KeychainAccess (~> 4)
     - OneTimePassword (~> 3)
     - TrustKit (~> 1)
     - Zip (~> 1)
-  - Snabble/UI (0.12.1):
+  - Snabble/UI (0.12.2):
     - EasyTipView (~> 2)
     - Snabble/Core
     - UIEmptyState (~> 4)
@@ -48,11 +48,11 @@ SPEC CHECKSUMS:
   GRDB.swift: 36cc43ed73d44dee5cc74cd2a347d37ddbaa8718
   KeychainAccess: 445e28864fe6d3458b41fa211bcdc39890e8bd5a
   OneTimePassword: c00ecc908e67e6c5bfda9d50b0b2e4696d0b066e
-  Snabble: 3883104ac1e460b38574ad0ea7e67ad129bd4220
+  Snabble: 7abd9a9c571804f5ac751d69a2d6a804d17c3184
   TrustKit: 578f77c59a23167e55b523d460bb495114ed0de7
   UIEmptyState: 767376694d9402452fb3c0a5a5283176c6a53c92
   Zip: 8877eede3dda76bcac281225c20e71c25270774c
 
 PODFILE CHECKSUM: 20f1e2d354ddfb8816a4ad4a199d8bf89e0161ed
 
-COCOAPODS: 1.9.0
+COCOAPODS: 1.9.1
