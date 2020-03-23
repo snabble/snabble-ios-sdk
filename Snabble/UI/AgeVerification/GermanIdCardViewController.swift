@@ -15,6 +15,23 @@ public final class GermanIdCardViewController: UIViewController {
     private var keyboardObserver: KeyboardObserver!
     private var toolbarHeight: CGFloat = 0
 
+    private let settingsKey = "germanIdCardBirthdate"
+
+    private var savedBirthDate: String? {
+        get {
+            return UserDefaults.standard.string(forKey: self.settingsKey)
+        }
+
+        set {
+            UserDefaults.standard.set(newValue, forKey: self.settingsKey)
+            if let val = newValue {
+                AgeVerification.setUsersBirthday(String(val.prefix(6)))
+            } else {
+                AgeVerification.setUsersBirthday(nil)
+            }
+        }
+    }
+
     public init() {
         super.init(nibName: nil, bundle: SnabbleBundle.main)
 
@@ -33,14 +50,20 @@ public final class GermanIdCardViewController: UIViewController {
         self.saveButton.makeSnabbleButton()
         self.saveButton.isEnabled = false
 
+        if let birthdate = self.savedBirthDate {
+            self.textField.text = self.savedBirthDate
+            self.saveButton.isEnabled = self.isValidBirthDate(birthdate)
+        }
+
         self.textField.delegate = self
         let toolbar = self.textField.addDoneButton()
         self.toolbarHeight = toolbar.frame.height
     }
 
     @IBAction private func saveButtonTapped(_ sender: UIButton) {
-        // TODO: save the birthday info somewhere
-        print(#function)
+        self.savedBirthDate = self.textField.text
+
+        self.navigationController?.popViewController(animated: true)
     }
 }
 
@@ -51,8 +74,6 @@ extension GermanIdCardViewController: UITextFieldDelegate {
         }
 
         let newText = text.replacingCharacters(in: range, with: string)
-
-        print(newText)
 
         let isValid = self.isValidBirthDate(newText)
 

@@ -7,6 +7,7 @@
 * Links in the credit card entry form are now opened in Safari
 * Adds support for adding IBAN data used at a snabble SCO as a payment method
 * Fixes a bug where refreshing auth tokens could happen way too often
+* Adds support for getting and setting the appUserId
 
 # v0.12.1
 
