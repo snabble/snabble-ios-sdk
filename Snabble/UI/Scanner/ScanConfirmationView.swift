@@ -71,7 +71,6 @@ final class ScanConfirmationView: DesignableView {
         }
     }
 
-    // swiftlint:disable:next function_body_length
     private func doPresent(_ scannedProduct: ScannedProduct, _ scannedCode: String, cart: ShoppingCart) {
         self.shoppingCart = cart
         self.alreadyInCart = false

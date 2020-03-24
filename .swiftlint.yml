@@ -30,6 +30,8 @@ line_length: 180
 
 file_length: 900
 
+function_body_length: 50
+
 type_body_length: 
  - 300
  - 400

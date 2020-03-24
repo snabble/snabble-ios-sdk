@@ -6,7 +6,6 @@
 
 import UIKit
 import EasyTipView
-import LocalAuthentication
 
 // tags for the input fields, determines tabbing order (starts at `name`)
 private enum InputField: Int {

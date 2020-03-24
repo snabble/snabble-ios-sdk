@@ -20,9 +20,6 @@ protocol EncryptedPaymentData {
     // check if this payment method data is expired
     var isExpired: Bool { get }
 
-    // if known, date until this method is valid. This is a string in the format "YYYY/MM/DD"
-    var validUntil: String? { get }
-
     var originType: AcceptedOriginType { get }
 }
 
@@ -35,11 +32,9 @@ struct SepaData: Codable, EncryptedPaymentData {
     // name of this payment method for display in table
     let displayName: String
 
-    let originType: AcceptedOriginType
+    let originType = AcceptedOriginType.iban
 
     let isExpired = false
-
-    let validUntil: String? = nil
 
     enum CodingKeys: String, CodingKey {
         case encryptedPaymentData, serial, displayName, originType
@@ -64,7 +59,6 @@ struct SepaData: Codable, EncryptedPaymentData {
         self.serial = serial
 
         self.displayName = IBAN.displayName(iban)
-        self.originType = .iban
     }
 
     init(from decoder: Decoder) throws {
@@ -72,9 +66,6 @@ struct SepaData: Codable, EncryptedPaymentData {
         self.encryptedPaymentData = try container.decode(String.self, forKey: .encryptedPaymentData)
         self.serial = try container.decode(String.self, forKey: .serial)
         self.displayName = try container.decode(String.self, forKey: .displayName)
-
-        let originType = try container.decodeIfPresent(AcceptedOriginType.self, forKey: .originType)
-        self.originType = originType ?? .iban
     }
 }
 
@@ -89,9 +80,7 @@ struct TegutEmployeeData: Codable, EncryptedPaymentData {
 
     let isExpired = false
 
-    let validUntil: String? = nil
-
-    let originType: AcceptedOriginType
+    let originType = AcceptedOriginType.tegutEmployeeID
 
     enum CodingKeys: String, CodingKey {
         case encryptedPaymentData, serial, displayName, originType
@@ -115,7 +104,6 @@ struct TegutEmployeeData: Codable, EncryptedPaymentData {
         self.serial = serial
 
         self.displayName = name
-        self.originType = .tegutEmployeeID
     }
 
     init(from decoder: Decoder) throws {
@@ -123,9 +111,6 @@ struct TegutEmployeeData: Codable, EncryptedPaymentData {
         self.encryptedPaymentData = try container.decode(String.self, forKey: .encryptedPaymentData)
         self.serial = try container.decode(String.self, forKey: .serial)
         self.displayName = try container.decode(String.self, forKey: .displayName)
-
-        let originType = try container.decodeIfPresent(AcceptedOriginType.self, forKey: .originType)
-        self.originType = originType ?? .tegutEmployeeID
     }
 }
 
@@ -159,7 +144,7 @@ struct CreditCardData: Codable, EncryptedPaymentData {
     let encryptedPaymentData: String
     let serial: String
     let displayName: String
-    let originType: AcceptedOriginType
+    let originType = AcceptedOriginType.ipgHostedDataID
 
     let cardHolder: String
     let brand: CreditCardBrand
@@ -208,7 +193,6 @@ struct CreditCardData: Codable, EncryptedPaymentData {
 
         self.encryptedPaymentData = cipherText
         self.serial = serial
-        self.originType = .ipgHostedDataID
     }
 
     init(from decoder: Decoder) throws {
@@ -216,9 +200,6 @@ struct CreditCardData: Codable, EncryptedPaymentData {
         self.encryptedPaymentData = try container.decode(String.self, forKey: .encryptedPaymentData)
         self.serial = try container.decode(String.self, forKey: .serial)
         self.displayName = try container.decode(String.self, forKey: .displayName)
-
-        let originType = try container.decodeIfPresent(AcceptedOriginType.self, forKey: .originType)
-        self.originType = originType ?? .ipgHostedDataID
 
         self.cardHolder = try container.decode(String.self, forKey: .cardHolder)
         self.brand = try container.decode(CreditCardBrand.self, forKey: .brand)
@@ -230,7 +211,7 @@ struct CreditCardData: Codable, EncryptedPaymentData {
 
     // the card's expiration date as a YYYY/MM/DD string with the last day of the month,
     // e.g. 2020/02/29 for expirationDate == 02/20202
-    var validUntil: String? {
+    private var validUntil: String? {
         guard
             let year = Int(self.expirationYear),
             let month = Int(self.expirationMonth)
@@ -257,6 +238,18 @@ struct CreditCardData: Codable, EncryptedPaymentData {
         return dateFormatter.string(from: lastDate)
     }
 
+    var additionalData: [String: String] {
+        var data = [
+            "cardNumber": self.displayName
+        ]
+
+        if let validUntil = self.validUntil {
+            data["validUntil"] = validUntil
+        }
+
+        return data
+    }
+
     // the card's expiration date as usally displayed, e.g. 09/2020
     var expirationDate: String {
         return "\(self.expirationMonth)/\(self.expirationYear)"
@@ -278,6 +271,77 @@ struct CreditCardData: Codable, EncryptedPaymentData {
     }
 }
 
+struct PaydirektData: Codable, EncryptedPaymentData {
+    // encrypted JSON string
+    let encryptedPaymentData: String
+    // serial # of the certificate used to encrypt
+    let serial: String
+
+    // name of this payment method for display in table
+    let displayName: String
+
+    let isExpired = false
+
+    let originType = AcceptedOriginType.paydirektCustomerAuthorization
+
+    let deviceId: String
+    let deviceName: String
+    let deviceFingerprint: String
+    let deviceIpAddress: String
+
+    enum CodingKeys: String, CodingKey {
+        case encryptedPaymentData, serial, displayName, originType, deviceId, deviceName
+        case deviceFingerprint, deviceIpAddress
+    }
+
+    private struct PaydirektOrigin: PaymentRequestOrigin {
+        let clientID: String
+        let customerAuthorizationURI: String
+    }
+
+    init?(_ gatewayCert: Data?, _ authorizationURI: String, _ auth: PaydirektAuthorization) {
+        let requestOrigin = PaydirektOrigin(clientID: SnabbleAPI.clientId, customerAuthorizationURI: authorizationURI)
+
+        guard
+            let encrypter = PaymentDataEncrypter(gatewayCert),
+            let (cipherText, serial) = encrypter.encrypt(requestOrigin)
+        else {
+            return nil
+        }
+
+        self.encryptedPaymentData = cipherText
+        self.serial = serial
+
+        self.displayName = "paydirekt"
+
+        self.deviceId = auth.id
+        self.deviceName = auth.name
+        self.deviceFingerprint = auth.fingerprint
+        self.deviceIpAddress = auth.ipAddress
+    }
+
+    init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        self.encryptedPaymentData = try container.decode(String.self, forKey: .encryptedPaymentData)
+        self.serial = try container.decode(String.self, forKey: .serial)
+        self.displayName = try container.decode(String.self, forKey: .displayName)
+
+        self.deviceId = try container.decode(String.self, forKey: .deviceId)
+        self.deviceName = try container.decode(String.self, forKey: .deviceName)
+        self.deviceFingerprint = try container.decode(String.self, forKey: .deviceFingerprint)
+        self.deviceIpAddress = try container.decode(String.self, forKey: .deviceIpAddress)
+    }
+
+    var additionalData: [String: String] {
+        return [
+            "deviceID": self.deviceId,
+            "deviceName": self.deviceName,
+            "deviceFingerprint": self.deviceFingerprint,
+            "deviceIPAddress": self.deviceIpAddress
+        ]
+    }
+}
+
 enum PaymentMethodError: Error {
     case unknownMethodError(String)
 }
@@ -286,9 +350,10 @@ enum PaymentMethodUserData: Codable {
     case sepa(SepaData)
     case creditcard(CreditCardData)
     case tegutEmployeeCard(TegutEmployeeData)
+    case paydirektAuthorization(PaydirektData)
 
     enum CodingKeys: String, CodingKey {
-        case sepa, creditcard, tegutEmployeeCard
+        case sepa, creditcard, tegutEmployeeCard, paydirektAuthorization
     }
 
     var data: EncryptedPaymentData {
@@ -296,6 +361,15 @@ enum PaymentMethodUserData: Codable {
         case .sepa(let sepadata): return sepadata
         case .creditcard(let creditcardData): return creditcardData
         case .tegutEmployeeCard(let tegutData): return tegutData
+        case .paydirektAuthorization(let paydirektData): return paydirektData
+        }
+    }
+
+    var additionalData: [String: String] {
+        switch self {
+        case .paydirektAuthorization(let data): return data.additionalData
+        case .creditcard(let data): return data.additionalData
+        default: return [:]
         }
     }
 
@@ -307,6 +381,8 @@ enum PaymentMethodUserData: Codable {
             self = .creditcard(creditcard)
         } else if let tegutData = try container.decodeIfPresent(TegutEmployeeData.self, forKey: .tegutEmployeeCard) {
             self = .tegutEmployeeCard(tegutData)
+        } else if let paydirektData = try container.decodeIfPresent(PaydirektData.self, forKey: .paydirektAuthorization) {
+            self = .paydirektAuthorization(paydirektData)
         } else {
             throw PaymentMethodError.unknownMethodError("unknown payment method")
         }
@@ -318,6 +394,7 @@ enum PaymentMethodUserData: Codable {
         case .sepa(let sepaData): try container.encode(sepaData, forKey: .sepa)
         case .creditcard(let creditcardData): try container.encode(creditcardData, forKey: .creditcard)
         case .tegutEmployeeCard(let tegutData): try container.encode(tegutData, forKey: .tegutEmployeeCard)
+        case .paydirektAuthorization(let paydirektData): try container.encode(paydirektData, forKey: .paydirektAuthorization)
         }
     }
 }
@@ -337,6 +414,10 @@ public struct PaymentMethodDetail: Codable {
         self.methodData = PaymentMethodUserData.tegutEmployeeCard(tegutData)
     }
 
+    init(_ paydirektData: PaydirektData) {
+        self.methodData = PaymentMethodUserData.paydirektAuthorization(paydirektData)
+    }
+
     var displayName: String {
         return self.methodData.data.displayName
     }
@@ -345,8 +426,8 @@ public struct PaymentMethodDetail: Codable {
         return self.methodData.data.encryptedPaymentData
     }
 
-    var validUntil: String? {
-        return self.methodData.data.validUntil
+    var additionalData: [String: String] {
+        return self.methodData.additionalData
     }
 
     var serial: String {
@@ -354,7 +435,7 @@ public struct PaymentMethodDetail: Codable {
     }
 
     public var data: Snabble.PaymentMethodData {
-        return Snabble.PaymentMethodData(self.displayName, self.encryptedData, self.originType, self.validUntil)
+        return Snabble.PaymentMethodData(self.displayName, self.encryptedData, self.originType, self.additionalData)
     }
 
     var isExpired: Bool {
@@ -372,11 +453,13 @@ public struct PaymentMethodDetail: Codable {
             }
         case .tegutEmployeeCard:
             return .externalBilling
+        case .paydirektAuthorization:
+            return .paydirektOneKlick
         }
     }
 
     var originType: AcceptedOriginType {
-        return methodData.data.originType
+        return self.methodData.data.originType
     }
 }
 

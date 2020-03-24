@@ -16,6 +16,7 @@ extension RawPaymentMethod {
         case .creditCardVisa: return "VISA"
         case .creditCardAmericanExpress: return "American Express"
         case .gatekeeperTerminal: return "Snabble.Payment.payAtSCO".localized()
+        case .paydirektOneKlick: return "paydirekt"
 
         case .qrCodePOS, .qrCodeOffline, .externalBilling, .customerCardPOS:
             return nil
@@ -28,6 +29,7 @@ extension RawPaymentMethod {
         case .creditCardMastercard: return CreditCardEditViewController(.mastercard, analyticsDelegate)
         case .creditCardVisa: return CreditCardEditViewController(.visa, analyticsDelegate)
         case .creditCardAmericanExpress: return CreditCardEditViewController(.amex, analyticsDelegate)
+        case .paydirektOneKlick: return PaydirektEditViewController(nil, nil, analyticsDelegate)
 
         case .qrCodePOS, .qrCodeOffline, .externalBilling, .customerCardPOS, .gatekeeperTerminal:
             return nil
@@ -40,7 +42,8 @@ extension RawPaymentMethod {
         case .creditCardVisa: return UIImage.fromBundle("SnabbleSDK/payment-small-visa")
         case .creditCardMastercard: return UIImage.fromBundle("SnabbleSDK/payment-small-mastercard")
         case .creditCardAmericanExpress: return UIImage.fromBundle("SnabbleSDK/payment-small-amex")
-        case .gatekeeperTerminal: return UIImage.fromBundle("SnabbleSDK/payment-cartd-terminal")
+        case .gatekeeperTerminal: return UIImage.fromBundle("SnabbleSDK/payment-card-terminal")
+        case .paydirektOneKlick: return UIImage.fromBundle("SnabbleSDK/payment-small-paydirekt")
 
         case .qrCodePOS, .qrCodeOffline, .externalBilling, .customerCardPOS:
             return nil
@@ -53,7 +56,8 @@ extension RawPaymentMethod {
         case .creditCardVisa: return 99
         case .creditCardMastercard: return 98
         case .creditCardAmericanExpress: return 97
-        case .gatekeeperTerminal: return 96
+        case .paydirektOneKlick: return 80
+        case .gatekeeperTerminal: return 70
 
         case .qrCodePOS, .qrCodeOffline, .externalBilling, .customerCardPOS:
             return 0
@@ -257,6 +261,8 @@ extension PaymentMethodListViewController: UITableViewDelegate, UITableViewDataS
                 editVC = SepaEditViewController(details, indexPath.row, self.analyticsDelegate)
             case .creditcard(let creditcardData):
                 editVC = CreditCardEditViewController(creditcardData, indexPath.row, self.analyticsDelegate)
+            case .paydirektAuthorization(let paydirektData):
+                editVC = PaydirektEditViewController(paydirektData, indexPath.row, self.analyticsDelegate)
             case .tegutEmployeeCard:
                 editVC = nil
             }

@@ -71,11 +71,9 @@ extension SignedCheckoutInfo {
                     "originType": data.originType.rawValue,
                     "encryptedOrigin": data.encryptedData
                 ]
-                if let cardNumber = paymentMethod.cardNumber {
-                    paymentInformation["cardNumber"] = cardNumber
-                }
-                if let validUntil = paymentMethod.validUntil {
-                    paymentInformation["validUntil"] = validUntil
+
+                for (key, value) in paymentMethod.additionalData {
+                    paymentInformation[key] = value
                 }
 
                 dict["paymentInformation"] = paymentInformation

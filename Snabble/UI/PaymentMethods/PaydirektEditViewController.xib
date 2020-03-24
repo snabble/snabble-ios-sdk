@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="16096" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
+    <device id="retina5_9" orientation="portrait" appearance="light"/>
+    <dependencies>
+        <deployment identifier="iOS"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="16086"/>
+        <capability name="Safe area layout guides" minToolsVersion="9.0"/>
+        <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
+    </dependencies>
+    <objects>
+        <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner" customClass="PaydirektEditViewController" customModule="Snabble" customModuleProvider="target">
+            <connections>
+                <outlet property="deleteButton" destination="AJT-Ep-eeV" id="13A-Qp-Fa5"/>
+                <outlet property="displayView" destination="znn-gi-enF" id="3ga-v2-a3A"/>
+                <outlet property="view" destination="i5M-Pr-FkT" id="sfx-zR-JGt"/>
+                <outlet property="webViewWrapper" destination="BDq-ra-UJF" id="E1r-5d-K5X"/>
+            </connections>
+        </placeholder>
+        <placeholder placeholderIdentifier="IBFirstResponder" id="-2" customClass="UIResponder"/>
+        <view clearsContextBeforeDrawing="NO" contentMode="scaleToFill" id="i5M-Pr-FkT">
+            <rect key="frame" x="0.0" y="0.0" width="375" height="812"/>
+            <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+            <subviews>
+                <view hidden="YES" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="BDq-ra-UJF" userLabel="Web view wrapper">
+                    <rect key="frame" x="0.0" y="44" width="375" height="734"/>
+                    <color key="backgroundColor" systemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
+                </view>
+                <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="znn-gi-enF" userLabel="Display view">
+                    <rect key="frame" x="0.0" y="44" width="375" height="734"/>
+                    <subviews>
+                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" textAlignment="natural" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="La0-63-VD0">
+                            <rect key="frame" x="16" y="16.000000000000007" width="343" height="101.66666666666669"/>
+                            <string key="text">Die Autorisierung für Zahlungen mit paydirekt ist in der App gespeichert. Du kannst sie hier auch wieder entfernen, um sie vollständig zu löschen logge dich bitte ein dein paydirekt-Konto ein.</string>
+                            <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                            <nil key="textColor"/>
+                            <nil key="highlightedColor"/>
+                        </label>
+                        <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="AJT-Ep-eeV">
+                            <rect key="frame" x="16" y="670" width="343" height="48"/>
+                            <constraints>
+                                <constraint firstAttribute="height" constant="48" id="ygD-Vr-Lae"/>
+                            </constraints>
+                            <fontDescription key="fontDescription" type="system" weight="semibold" pointSize="17"/>
+                            <state key="normal" title="Autorisierung löschen"/>
+                            <connections>
+                                <action selector="deleteTapped:" destination="-1" eventType="touchUpInside" id="qo0-QA-fQh"/>
+                            </connections>
+                        </button>
+                        <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="i1h-gJ-Pau">
+                            <rect key="frame" x="16" y="125.66666666666666" width="107" height="30"/>
+                            <state key="normal" title="Zu paydirekt.de">
+                                <color key="titleColor" systemColor="linkColor" red="0.0" green="0.47843137250000001" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                            </state>
+                            <connections>
+                                <action selector="paydirektTapped:" destination="-1" eventType="touchUpInside" id="AUd-fs-t4q"/>
+                            </connections>
+                        </button>
+                    </subviews>
+                    <color key="backgroundColor" systemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
+                    <constraints>
+                        <constraint firstAttribute="trailing" secondItem="La0-63-VD0" secondAttribute="trailing" constant="16" id="Hwz-81-n1j"/>
+                        <constraint firstItem="AJT-Ep-eeV" firstAttribute="leading" secondItem="znn-gi-enF" secondAttribute="leading" constant="16" id="QWc-ca-2B2"/>
+                        <constraint firstAttribute="trailing" secondItem="AJT-Ep-eeV" secondAttribute="trailing" constant="16" id="S9m-4G-Hd6"/>
+                        <constraint firstAttribute="bottom" secondItem="AJT-Ep-eeV" secondAttribute="bottom" constant="16" id="Xd8-Ux-gOO"/>
+                        <constraint firstItem="La0-63-VD0" firstAttribute="leading" secondItem="znn-gi-enF" secondAttribute="leading" constant="16" id="idU-pZ-FO9"/>
+                        <constraint firstItem="La0-63-VD0" firstAttribute="top" secondItem="znn-gi-enF" secondAttribute="top" constant="16" id="iep-mx-Fat"/>
+                        <constraint firstItem="i1h-gJ-Pau" firstAttribute="leading" secondItem="znn-gi-enF" secondAttribute="leading" constant="16" id="qfE-7a-YBE"/>
+                        <constraint firstItem="i1h-gJ-Pau" firstAttribute="top" secondItem="La0-63-VD0" secondAttribute="bottom" constant="8" id="sIR-tU-fXW"/>
+                    </constraints>
+                </view>
+            </subviews>
+            <color key="backgroundColor" systemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
+            <constraints>
+                <constraint firstItem="znn-gi-enF" firstAttribute="leading" secondItem="fnl-2z-Ty3" secondAttribute="leading" id="Bka-iv-BiX"/>
+                <constraint firstItem="BDq-ra-UJF" firstAttribute="trailing" secondItem="fnl-2z-Ty3" secondAttribute="trailing" id="ICp-VP-Kh3"/>
+                <constraint firstItem="BDq-ra-UJF" firstAttribute="bottom" secondItem="fnl-2z-Ty3" secondAttribute="bottom" id="OZ0-Xc-LB4"/>
+                <constraint firstItem="BDq-ra-UJF" firstAttribute="leading" secondItem="fnl-2z-Ty3" secondAttribute="leading" id="caY-l5-AJO"/>
+                <constraint firstItem="znn-gi-enF" firstAttribute="trailing" secondItem="fnl-2z-Ty3" secondAttribute="trailing" id="eGK-SG-gNl"/>
+                <constraint firstItem="BDq-ra-UJF" firstAttribute="top" secondItem="fnl-2z-Ty3" secondAttribute="top" id="eun-Es-spm"/>
+                <constraint firstItem="znn-gi-enF" firstAttribute="bottom" secondItem="fnl-2z-Ty3" secondAttribute="bottom" id="r4N-Ju-IhA"/>
+                <constraint firstItem="znn-gi-enF" firstAttribute="top" secondItem="fnl-2z-Ty3" secondAttribute="top" id="vpg-KU-evh"/>
+            </constraints>
+            <viewLayoutGuide key="safeArea" id="fnl-2z-Ty3"/>
+            <point key="canvasLocation" x="136.875" y="153.75"/>
+        </view>
+    </objects>
+</document>

@@ -111,11 +111,7 @@ public final class CreditCardEditViewController: UIViewController {
             case .failure:
                 let alert = UIAlertController(title: "Oops", message: "Snabble.CC.noEntryPossible".localized(), preferredStyle: .alert)
                 alert.addAction(UIAlertAction(title: "Snabble.OK".localized(), style: .default) { _ in
-                    if SnabbleUI.implicitNavigation {
-                        self.navigationController?.popViewController(animated: true)
-                    } else {
-                        self.navigationDelegate?.goBack()
-                    }
+                    self.goBack()
                 })
             case .success(let telecash):
                 self.telecash = telecash
@@ -124,6 +120,14 @@ public final class CreditCardEditViewController: UIViewController {
         }
 
         self.analyticsDelegate?.track(.viewPaymentMethodDetail)
+    }
+
+    private func goBack() {
+        if SnabbleUI.implicitNavigation {
+            self.navigationController?.popViewController(animated: true)
+        } else {
+            self.navigationDelegate?.goBack()
+        }
     }
 
     private func prepareAndInjectPage(_ telecash: TelecashSecret) {
@@ -163,7 +167,7 @@ public final class CreditCardEditViewController: UIViewController {
         alert.addAction(UIAlertAction(title: "Snabble.Yes".localized(), style: .destructive) { _ in
             PaymentMethodDetails.remove(at: index)
             self.analyticsDelegate?.track(.paymentMethodDeleted(self.brand?.rawValue ?? ""))
-            self.navigationController?.popViewController(animated: true)
+            self.goBack()
         })
         alert.addAction(UIAlertAction(title: "Snabble.No".localized(), style: .cancel, handler: nil))
         self.present(alert, animated: true)
@@ -183,7 +187,7 @@ extension CreditCardEditViewController: WKNavigationDelegate {
 }
 
 extension CreditCardEditViewController: WKScriptMessageHandler {
-    // swiftlint:disable:next cyclomatic_complexity function_body_length
+    // swiftlint:disable:next cyclomatic_complexity
     public func userContentController(_ userContentController: WKUserContentController, didReceive message: WKScriptMessage) {
         guard
             message.name == "callbackHandler",
