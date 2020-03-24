@@ -198,7 +198,7 @@ extension SnabbleAPI {
 
     // MARK: - app user id
     private static var appUserKey: String {
-        return "Snabble.api.appUserId.\(SnabbleAPI.config.appId)"
+        return "Snabble.api.appUserId.\(SnabbleAPI.serverName).\(SnabbleAPI.config.appId)"
     }
 
     public static var appUserId: AppUserId? {
