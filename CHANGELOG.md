@@ -1,5 +1,9 @@
 ## snabble iOS SDK Changelog
 
+# v0.12.3
+
+* Fixes a bug where switching between the snabble server environments would lead do "unauthorized" errors
+
 # v0.12.2
 
 * Adds support for the new "CustomerCardPOS" payment method
