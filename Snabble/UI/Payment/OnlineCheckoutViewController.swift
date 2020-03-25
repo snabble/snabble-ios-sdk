@@ -26,8 +26,4 @@ public final class OnlineCheckoutViewController: BaseCheckoutViewController {
     override var waitForEvents: [PaymentEvent] {
         return [.approval, .paymentSuccess]
     }
-
-    override var autoApproved: Bool {
-        return self.process.paymentApproval == true && self.process.supervisorApproval == true
-    }
 }

@@ -88,11 +88,6 @@ public class BaseCheckoutViewController: UIViewController {
         super.viewWillAppear(animated)
 
         self.initialBrightness = UIScreen.main.brightness
-        if self.autoApproved {
-            self.view.subviews.forEach { $0.isHidden = true }
-            self.title = nil
-            return
-        }
 
         self.cancelButton.alpha = 0
         self.cancelButton.isUserInteractionEnabled = false
@@ -112,6 +107,11 @@ public class BaseCheckoutViewController: UIViewController {
         }
 
         self.setSpinnerAppearance()
+
+        if self.process.supervisorApproval == true {
+            self.topWrapper.isHidden = true
+            self.showOnlySpinner()
+        }
     }
 
     override public func viewDidAppear(_ animated: Bool) {
@@ -119,11 +119,7 @@ public class BaseCheckoutViewController: UIViewController {
 
         self.delegate.track(self.viewEvent)
 
-        if self.autoApproved {
-            self.paymentFinished(true, self.process)
-        } else {
-            self.startPoller()
-        }
+        self.startPoller()
     }
 
     override public func viewWillDisappear(_ animated: Bool) {
@@ -149,10 +145,6 @@ public class BaseCheckoutViewController: UIViewController {
         fatalError("child classes must override this")
     }
 
-    var autoApproved: Bool {
-        fatalError("child classes must override this")
-    }
-
     // MARK: - event polling
     private func startPoller() {
         let poller = PaymentProcessPoller(self.process, SnabbleUI.project)
@@ -164,11 +156,7 @@ public class BaseCheckoutViewController: UIViewController {
 
         poller.waitFor(waitForEvents) { event in
             UIView.animate(withDuration: 0.25) {
-                self.arrowWrapper.isHidden = true
-                self.codeWrapper.isHidden = true
-                self.codeImage.isHidden = true
-                self.spinnerWrapper.isHidden = false
-                self.stackView.layoutIfNeeded()
+                self.showOnlySpinner()
             }
 
             events.merge(event, uniquingKeysWith: { bool1, _ in bool1 })
@@ -189,6 +177,14 @@ public class BaseCheckoutViewController: UIViewController {
             }
         }
         self.poller = poller
+    }
+
+    private func showOnlySpinner() {
+        self.arrowWrapper.isHidden = true
+        self.codeWrapper.isHidden = true
+        self.codeImage.isHidden = true
+        self.spinnerWrapper.isHidden = false
+        self.stackView.layoutIfNeeded()
     }
 
     @IBAction private func cancelButtonTapped(_ sender: UIButton) {

@@ -26,8 +26,4 @@ public final class TerminalCheckoutViewController: BaseCheckoutViewController {
     override var waitForEvents: [PaymentEvent] {
         return [.paymentSuccess]
     }
-
-    override var autoApproved: Bool {
-        return false
-    }
 }
