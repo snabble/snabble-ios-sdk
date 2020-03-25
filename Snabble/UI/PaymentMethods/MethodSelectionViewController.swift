@@ -10,6 +10,7 @@ public final class MethodSelectionViewController: UIViewController {
 
     @IBOutlet private weak var tableView: UITableView!
 
+    private var showUsable: Bool
     private var methods: [MethodProjects]
     private weak var analyticsDelegate: AnalyticsDelegate?
 
@@ -18,6 +19,7 @@ public final class MethodSelectionViewController: UIViewController {
     public init(_ methods: [MethodProjects], _ analyticsDelegate: AnalyticsDelegate?) {
         self.methods = methods
         self.analyticsDelegate = analyticsDelegate
+        self.showUsable = SnabbleAPI.projects.count > 1
 
         super.init(nibName: nil, bundle: SnabbleBundle.main)
     }
@@ -60,9 +62,9 @@ extension MethodSelectionViewController: UITableViewDelegate, UITableViewDataSou
 
         let retailers = method.projectNames.joined(separator: ", ")
         let fmt = "Snabble.Payment.usableAt".localized()
-        let useableAt = String(format: fmt, retailers)
+        let usableAt = String(format: fmt, retailers)
 
-        cell.setMethod(method.method, useableAt)
+        cell.setMethod(method.method, self.showUsable ? usableAt : nil)
 
         return cell
     }
@@ -81,7 +83,7 @@ extension MethodSelectionViewController: UITableViewDelegate, UITableViewDataSou
         }
     }
 
-    public func tableView(_ tableView: UITableView, estimatedHeightForRowAt indexPath: IndexPath) -> CGFloat {
-        return 78
-    }
+//    public func tableView(_ tableView: UITableView, estimatedHeightForRowAt indexPath: IndexPath) -> CGFloat {
+//        return 78
+//    }
 }

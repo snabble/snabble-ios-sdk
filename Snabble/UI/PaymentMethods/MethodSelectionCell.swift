@@ -16,7 +16,7 @@ final class MethodSelectionCell: UITableViewCell {
         super.awakeFromNib()
     }
 
-    func setMethod(_ method: RawPaymentMethod, _ useableAt: String) {
+    func setMethod(_ method: RawPaymentMethod, _ useableAt: String?) {
         self.icon.image = method.icon
         self.nameLabel.text = method.displayName
         self.useLabel.text = useableAt
