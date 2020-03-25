@@ -4,10 +4,6 @@
 //  Copyright © 2020 snabble. All rights reserved.
 //
 
-// MIGRATION TODOS
-// l10n
-// analytics -> static calls in delegate calls ändern
-
 import Foundation
 
 // sample IBANs from https://www.iban.com/structure

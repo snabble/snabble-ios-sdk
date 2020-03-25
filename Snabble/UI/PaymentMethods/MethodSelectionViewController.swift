@@ -83,7 +83,7 @@ extension MethodSelectionViewController: UITableViewDelegate, UITableViewDataSou
         }
     }
 
-//    public func tableView(_ tableView: UITableView, estimatedHeightForRowAt indexPath: IndexPath) -> CGFloat {
-//        return 78
-//    }
+    public func tableView(_ tableView: UITableView, estimatedHeightForRowAt indexPath: IndexPath) -> CGFloat {
+        return 78
+    }
 }

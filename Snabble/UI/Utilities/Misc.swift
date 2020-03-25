@@ -127,13 +127,13 @@ open class NibView: UIView {
 
     override public init(frame: CGRect) {
         super.init(frame: frame)
-        nibSetup(self.nibName)
+        self.nibSetup(self.nibName)
         self.awakeFromNib()
     }
 
     public required init?(coder aDecoder: NSCoder) {
         super.init(coder: aDecoder)
-        nibSetup(self.nibName)
+        self.nibSetup(self.nibName)
         self.awakeFromNib()
     }
 
@@ -160,16 +160,20 @@ open class NibView: UIView {
 
     func getNib(for name: String) -> UINib {
         let bundle = Bundle(for: type(of: self))
-        if bundle.path(forResource: name, ofType: "nib") != nil {
+        if bundle.path(forResource: name, ofType: "xib") != nil {
             return UINib(nibName: name, bundle: bundle)
         } else {
-            return UINib(nibName: name, bundle: SnabbleBundle.main)
+            return UINib(nibName: name, bundle: self.nibBundle)
         }
     }
 
     // override this if the name of the .xib file is not $CLASSNAME.xib
     open var nibName: String {
         return String(describing: type(of: self))
+    }
+
+    open var nibBundle: Bundle {
+        return SnabbleBundle.main
     }
 }
 
