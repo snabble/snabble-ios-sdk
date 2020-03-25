@@ -48,6 +48,11 @@ public extension ScannerDelegate {
     func gotoBarcodeEntry() { }
 }
 
+public extension Notification.Name {
+    static let snabbleShowScanConfirmation = Notification.Name("snabbleShowScanConfirmation")
+    static let snabbleHideScanConfirmation = Notification.Name("snabbleHideScanConfirmation")
+}
+
 public final class ScannerViewController: UIViewController {
 
     @IBOutlet private weak var spinner: UIActivityIndicatorView!
@@ -199,6 +204,8 @@ public final class ScannerViewController: UIViewController {
         self.confirmationVisible = true
         self.scanConfirmationView.present(scannedProduct, scannedCode, cart: self.shoppingCart)
         self.displayScanConfirmationView(hidden: false, setBottomOffset: self.productType != .userMustWeigh)
+
+        NotificationCenter.default.post(name: .snabbleShowScanConfirmation, object: nil)
     }
 
     private func displayScanConfirmationView(hidden: Bool, setBottomOffset: Bool = true) {

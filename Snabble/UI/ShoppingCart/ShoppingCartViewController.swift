@@ -307,13 +307,17 @@ public final class ShoppingCartViewController: UIViewController {
     public func showDeleteCartAlert() {
         let alert = UIAlertController(title: "Snabble.Shoppingcart.removeItems".localized(), message: nil, preferredStyle: .alert)
         alert.addAction(UIAlertAction(title: "Snabble.Yes".localized(), style: .destructive) { _ in
-            self.delegate.track(.deletedEntireCart)
-            self.shoppingCart.removeAll()
-            self.updateView()
+            self.deleteCart()
         })
         alert.addAction(UIAlertAction(title: "Snabble.No".localized(), style: .cancel, handler: nil))
 
         self.present(alert, animated: true)
+    }
+
+    public func deleteCart() {
+        self.delegate.track(.deletedEntireCart)
+        self.shoppingCart.removeAll()
+        self.updateView()
     }
 
     private func updateView(at row: Int? = nil) {

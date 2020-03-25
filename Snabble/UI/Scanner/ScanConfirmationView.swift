@@ -205,6 +205,13 @@ final class ScanConfirmationView: DesignableView {
         self.delegate.closeConfirmation(self.cartItem)
 
         self.quantityField.resignFirstResponder()
+
+        let userInfo: [String: Any] = [
+            "scannedCode": self.cartItem.scannedCode.code,
+            "sku": self.cartItem.product.sku,
+            "name": self.cartItem.product.name
+        ]
+        NotificationCenter.default.post(name: .snabbleHideScanConfirmation, object: nil, userInfo: userInfo)
     }
 
     @IBAction private func closeButtonTapped(_ button: UIButton) {
@@ -213,6 +220,8 @@ final class ScanConfirmationView: DesignableView {
         self.productNameLabel.text = nil
         self.delegate.closeConfirmation(nil)
         self.quantityField.resignFirstResponder()
+
+        NotificationCenter.default.post(name: .snabbleHideScanConfirmation, object: nil)
     }
 
     private var background: UIColor {
