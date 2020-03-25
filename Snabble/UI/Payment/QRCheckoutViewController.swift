@@ -21,6 +21,7 @@ public final class QRCheckoutViewController: UIViewController {
     private var poller: PaymentProcessPoller?
     private weak var cart: ShoppingCart!
     private weak var delegate: PaymentDelegate!
+    public weak var navigationDelegate: CheckoutNavigationDelegate?
 
     public init(_ process: CheckoutProcess, _ cart: ShoppingCart, _ delegate: PaymentDelegate) {
         self.cart = cart
@@ -71,6 +72,12 @@ public final class QRCheckoutViewController: UIViewController {
         self.qrCodeWidth.constant = self.qrCodeView.image?.size.width ?? 0
 
         self.startPoller()
+
+        if !SnabbleUI.implicitNavigation && self.navigationDelegate == nil {
+            let msg = "navigationDelegate may not be nil when using explicit navigation"
+            assert(self.navigationDelegate != nil)
+            NSLog("ERROR: \(msg)")
+        }
     }
 
     override public func viewDidAppear(_ animated: Bool) {
@@ -104,10 +111,14 @@ public final class QRCheckoutViewController: UIViewController {
             case .success:
                 self.delegate.track(.paymentCancelled)
 
-                if let cartVC = self.navigationController?.viewControllers.first(where: { $0 is ShoppingCartViewController}) {
-                    self.navigationController?.popToViewController(cartVC, animated: true)
+                if SnabbleUI.implicitNavigation {
+                    if let cartVC = self.navigationController?.viewControllers.first(where: { $0 is ShoppingCartViewController}) {
+                        self.navigationController?.popToViewController(cartVC, animated: true)
+                    } else {
+                        self.navigationController?.popToRootViewController(animated: true)
+                    }
                 } else {
-                    self.navigationController?.popToRootViewController(animated: true)
+                    self.navigationDelegate?.checkoutCancelled()
                 }
             case .failure:
                 let alert = UIAlertController(title: "Snabble.Payment.cancelError.title".localized(),
