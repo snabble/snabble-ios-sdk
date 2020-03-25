@@ -134,7 +134,7 @@ public final class CreditCardEditViewController: UIViewController {
             .replacingOccurrences(of: "{{currency}}", with: telecash.currency)
             .replacingOccurrences(of: "{{chargeTotal}}", with: telecash.chargeTotal)
             .replacingOccurrences(of: "{{hash}}", with: telecash.hash)
-            .replacingOccurrences(of: "{{paymentMethod}}", with: self.brand?.paymentMethod ?? "")
+            .replacingOccurrences(of: "{{paymentMethod}}", with: self.brand?.paymentMethod ?? "V")
             .replacingOccurrences(of: "{{locale}}", with: Locale.current.identifier)
             .replacingOccurrences(of: "{{header}}", with: "Snabble.CC.3dsecureHint".localized())
 
