@@ -160,7 +160,7 @@ open class NibView: UIView {
 
     func getNib(for name: String) -> UINib {
         let bundle = Bundle(for: type(of: self))
-        if bundle.path(forResource: name, ofType: "xib") != nil {
+        if bundle.path(forResource: name, ofType: "nib") != nil {
             return UINib(nibName: name, bundle: bundle)
         } else {
             return UINib(nibName: name, bundle: self.nibBundle)
@@ -268,12 +268,25 @@ extension UIApplication {
 }
 
 extension UINavigationController {
-    /// pop to the top-most instance of the given UIViewController. If none found, pop one level
-    func popToInstanceOf(_ instanceType: UIViewController.Type?, animated: Bool) {
-        if let target = self.viewControllers.first(where: { type(of: $0) == instanceType }) {
+    /// pop to the top-most instance of the given UIViewController, or one where it is a child viewController
+    /// If none found, pop one level
+    func popToInstanceOf(_ instanceType: UIViewController.Type, animated: Bool) {
+        if let target = self.findTarget(of: instanceType) {
             self.popToViewController(target, animated: animated)
         } else {
             self.popViewController(animated: animated)
         }
+    }
+
+    private func findTarget(of instanceType: UIViewController.Type) -> UIViewController? {
+        if let instance = self.viewControllers.first(where: { type(of: $0) == instanceType }) {
+            return instance
+        }
+
+        if let parent = self.viewControllers.flatMap({ $0.children }).first(where: { type(of: $0) == instanceType })?.parent {
+            return parent
+        }
+
+        return nil
     }
 }
