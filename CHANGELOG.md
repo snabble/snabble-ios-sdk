@@ -1,5 +1,10 @@
 ## snabble iOS SDK Changelog
 
+# v0.12.4
+
+* Adds notifications for the appearance/disappearance of the scan confirmation dialog
+* Suppress the "usable at" indication in single-project apps
+
 # v0.12.3
 
 * Fixes a bug where switching between the snabble server environments would lead do "unauthorized" errors
