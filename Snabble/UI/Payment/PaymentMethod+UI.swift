@@ -23,12 +23,13 @@ extension PaymentMethod {
             }
         case .gatekeeperTerminal: return "SnabbleSDK/payment-card-terminal"
         case .customerCardPOS: return "SnabbleSDK/payment-method-checkstand"
+        case .paydirektOneKlick: return "SnabbleSDK/payment-method-paydirekt"
         }
     }
 
     var dataRequired: Bool {
         switch self {
-        case .deDirectDebit, .visa, .mastercard, .americanExpress, .externalBilling: return true
+        case .deDirectDebit, .visa, .mastercard, .americanExpress, .externalBilling, .paydirektOneKlick: return true
         case .qrCodePOS, .qrCodeOffline, .gatekeeperTerminal, .customerCardPOS: return false
         }
     }
@@ -59,7 +60,7 @@ extension PaymentMethod {
             } else {
                 return nil
             }
-        case .deDirectDebit, .visa, .mastercard, .americanExpress, .externalBilling:
+        case .deDirectDebit, .visa, .mastercard, .americanExpress, .externalBilling, .paydirektOneKlick:
             processor = OnlineCheckoutViewController(process!, cart, delegate)
         case .gatekeeperTerminal:
             processor = TerminalCheckoutViewController(process!, cart, delegate)
@@ -173,6 +174,11 @@ public final class PaymentProcess {
                 if !billing.isEmpty {
                     result.append(contentsOf: billing.reversed())
                 }
+            case .paydirektOneKlick:
+                let paydirekt = userData.filter { if case .paydirektOneKlick = $0 { return true } else { return false } }
+                if !paydirekt.isEmpty {
+                    result.append(contentsOf: paydirekt.reversed())
+                }
             }
         }
 
@@ -196,6 +202,7 @@ public final class PaymentProcess {
         return methods
     }
 
+    // swiftlint:disable:next cyclomatic_complexity
     private func getPaymentUserData(_ methods: [PaymentMethodDescription]) -> [PaymentMethod] {
         var results = [PaymentMethod]()
 
@@ -235,6 +242,12 @@ public final class PaymentProcess {
 
                 if tegut != nil {
                     results.append(PaymentMethod.externalBilling(detail.data))
+                }
+            case .paydirektAuthorization:
+                let usePaydirekt = methods.first { $0.method == .paydirektOneKlick } != nil
+                if usePaydirekt {
+                    let paydirekt = PaymentMethod.paydirektOneKlick(detail.data)
+                    results.append(paydirekt)
                 }
             }
         }

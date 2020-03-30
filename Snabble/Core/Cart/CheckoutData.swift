@@ -41,6 +41,7 @@ public enum AcceptedOriginType: String, Codable {
     case iban
     case ipgHostedDataID
     case tegutEmployeeID
+    case paydirektCustomerAuthorization
 }
 
 // known payment methods
@@ -54,11 +55,12 @@ public enum RawPaymentMethod: String, CaseIterable, Decodable {
     case externalBilling        // external billig, e.g. via an employee id
     case gatekeeperTerminal
     case customerCardPOS        // payment via customer card invoice
+    case paydirektOneKlick
 
     /// true if this method reqires additional data, like an IBAN or a credit card number
     var dataRequired: Bool {
         switch self {
-        case .deDirectDebit, .creditCardVisa, .creditCardMastercard, .creditCardAmericanExpress, .externalBilling, .customerCardPOS:
+        case .deDirectDebit, .creditCardVisa, .creditCardMastercard, .creditCardAmericanExpress, .externalBilling, .customerCardPOS, .paydirektOneKlick:
             return true
         case .qrCodePOS, .qrCodeOffline, .gatekeeperTerminal:
             return false
@@ -68,7 +70,7 @@ public enum RawPaymentMethod: String, CaseIterable, Decodable {
     /// true if this method can be added/edited through SDK methods
     var editable: Bool {
         switch self {
-        case .deDirectDebit, .creditCardVisa, .creditCardMastercard, .creditCardAmericanExpress:
+        case .deDirectDebit, .creditCardVisa, .creditCardMastercard, .creditCardAmericanExpress, .paydirektOneKlick:
             return true
         case .qrCodePOS, .qrCodeOffline, .externalBilling, .gatekeeperTerminal, .customerCardPOS:
             return false
@@ -82,7 +84,7 @@ public enum RawPaymentMethod: String, CaseIterable, Decodable {
             return true
         case .qrCodePOS, .deDirectDebit,
              .creditCardVisa, .creditCardMastercard, .creditCardAmericanExpress,
-             .externalBilling, .gatekeeperTerminal, .customerCardPOS:
+             .externalBilling, .gatekeeperTerminal, .customerCardPOS, .paydirektOneKlick:
             return false
         }
     }
@@ -104,13 +106,13 @@ public struct PaymentMethodData {
     public let displayName: String
     public let encryptedData: String
     public let originType: AcceptedOriginType
-    public let validUntil: String?
+    public let additionalData: [String: String]
 
-    public init(_ displayName: String, _ encryptedData: String, _ originType: AcceptedOriginType, _ validUntil: String?) {
+    public init(_ displayName: String, _ encryptedData: String, _ originType: AcceptedOriginType, _ additionalData: [String: String]) {
         self.displayName = displayName
         self.encryptedData = encryptedData
         self.originType = originType
-        self.validUntil = validUntil
+        self.additionalData = additionalData
     }
 }
 
@@ -125,6 +127,7 @@ public enum PaymentMethod {
     case externalBilling(PaymentMethodData?)
     case gatekeeperTerminal
     case customerCardPOS
+    case paydirektOneKlick(PaymentMethodData?)
 
     public var rawMethod: RawPaymentMethod {
         switch self {
@@ -137,6 +140,7 @@ public enum PaymentMethod {
         case .externalBilling: return .externalBilling
         case .gatekeeperTerminal: return .gatekeeperTerminal
         case .customerCardPOS: return .customerCardPOS
+        case .paydirektOneKlick: return .paydirektOneKlick
         }
     }
 
@@ -146,26 +150,19 @@ public enum PaymentMethod {
             return data
         case .externalBilling(let data):
             return data
+        case .paydirektOneKlick(let data):
+            return data
         case .qrCodePOS, .qrCodeOffline, .gatekeeperTerminal, .customerCardPOS:
             return nil
         }
     }
 
-    public var cardNumber: String? {
+    public var additionalData: [String: String] {
         switch self {
-        case .visa(let data), .mastercard(let data), .americanExpress(let data):
-            return data?.displayName
-        case .qrCodePOS, .qrCodeOffline, .deDirectDebit, .externalBilling, .gatekeeperTerminal, .customerCardPOS:
-            return nil
-        }
-    }
-
-    public var validUntil: String? {
-        switch self {
-        case .visa(let data), .mastercard(let data), .americanExpress(let data):
-            return data?.validUntil
-        case .qrCodePOS, .qrCodeOffline, .deDirectDebit, .externalBilling, .gatekeeperTerminal, .customerCardPOS:
-            return nil
+        case .visa(let data), .mastercard(let data), .americanExpress(let data), .paydirektOneKlick(let data):
+            return data?.additionalData ?? [:]
+        case .deDirectDebit, .qrCodePOS, .qrCodeOffline, .externalBilling, .gatekeeperTerminal, .customerCardPOS:
+            return [:]
         }
     }
 }

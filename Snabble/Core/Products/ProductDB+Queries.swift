@@ -197,7 +197,6 @@ extension ProductDB {
         Log.debug("update took \(elapsed)")
     }
 
-    // swiftlint:disable:next function_body_length
     private func productFromRow(_ dbQueue: DatabaseQueue, _ row: Row?, _ shopId: String?) -> Product? {
         guard
             let row = row,

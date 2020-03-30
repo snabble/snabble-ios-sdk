@@ -215,6 +215,8 @@ extension PaymentMethodSelectionViewController: UICollectionViewDelegate, UIColl
             return CreditCardEditViewController(.mastercard, self.analyticsDelegate)
         case .americanExpress:
             return CreditCardEditViewController(.amex, self.analyticsDelegate)
+        case .paydirektOneKlick:
+            return PaydirektEditViewController(nil, nil, self.analyticsDelegate)
 
         case .qrCodePOS, .qrCodeOffline, .externalBilling, .gatekeeperTerminal, .customerCardPOS:
             return nil

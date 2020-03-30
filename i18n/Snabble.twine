@@ -302,3 +302,13 @@
         en = Save payment data
     [Snabble.SEPA.ibanTransferAlert.message]
         en = Would you like to save this account information (IBAN: %@) for future purchases?
+    [Snabble.paydirekt.authorizationFailed.title]
+        en = Authorization failed
+    [Snabble.paydirekt.authorizationFailed.message]
+        en = Please try again later
+    [Snabble.paydirekt.savedAuthorization]
+        en = The paydirekt authorization is saved in the app. You can delete it here; to fully remove it please log in to your paydirekt account.
+    [Snabble.paydirekt.deleteAuthorization]
+        en = Delete Authorization
+    [Snabble.paydirekt.gotoWebsite]
+        en = Goto paydirekt.de

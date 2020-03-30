@@ -17,6 +17,8 @@ extension PaymentMethodDetail {
             case .mastercard: return UIImage.fromBundle("SnabbleSDK/payment-small-mastercard")
             case .amex: return UIImage.fromBundle("SnabbleSDK/payment-small-amex")
             }
+        case .paydirektAuthorization:
+            return UIImage.fromBundle("SnabbleSDK/payment-small-paydirekt")
         case .tegutEmployeeCard:
             return UIImage.fromBundle("SnabbleSDK/payment-small-tegut")
         }

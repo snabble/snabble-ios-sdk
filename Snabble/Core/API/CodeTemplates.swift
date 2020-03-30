@@ -267,7 +267,7 @@ public struct CodeTemplate {
     private static let regexps = [ token, plaintext ]
     // swiftlint:enable force_try
 
-    // swiftlint:disable:next cyclomatic_complexity function_body_length
+    // swiftlint:disable:next cyclomatic_complexity
     init?(_ id: String, _ template: String) {
         self.id = id
         self.template = template

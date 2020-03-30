@@ -274,47 +274,6 @@ extension SnabbleAPI {
     }
 }
 
-// MARK: - telecash
-
-public struct TelecashSecret: Decodable {
-    public let hash: String
-    public let storeId: String
-    public let date: String
-    public let currency: String
-    public let chargeTotal: String
-    public let url: String
-}
-
-extension SnabbleAPI {
-    public static func getTelecashSecret(_ project: Project, completion: @escaping (Result<TelecashSecret, SnabbleError>) -> Void ) {
-        project.request(.get, SnabbleAPI.metadata.links.telecashSecret.href, timeout: 5) { request in
-            guard let request = request else {
-                return completion(Result.failure(SnabbleError.noRequest))
-            }
-
-            project.perform(request) { (_ result: Result<TelecashSecret, SnabbleError>) in
-                completion(result)
-            }
-        }
-    }
-
-    public static func deletePreauth(_ project: Project, _ orderId: String) {
-        let url = SnabbleAPI.metadata.links.telecashPreauth.href
-                    .replacingOccurrences(of: "{orderID}", with: orderId)
-
-        project.request(.delete, url, timeout: 5) { request in
-            guard let request = request else {
-                return
-            }
-
-            struct DeleteResponse: Decodable {}
-            project.perform(request) { (_ result: Result<DeleteResponse, SnabbleError>) in
-                print(result)
-            }
-        }
-    }
-}
-
 // MARK: - networking stuff
 extension SnabbleAPI {
     static func request(url: URL, timeout: TimeInterval = 0, json: Bool = true) -> URLRequest {

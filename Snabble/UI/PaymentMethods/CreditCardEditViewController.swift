@@ -12,6 +12,15 @@ import WebKit
 // MasterCard: 5404 1070 0002 0010, Exp. 12/2020, CVV: any 3-digit number
 // Amex: 3782 8224 6310 005, Exp 12/2020, CVC: 123
 
+private struct TelecashSecret: Decodable {
+    public let hash: String
+    public let storeId: String
+    public let date: String
+    public let currency: String
+    public let chargeTotal: String
+    public let url: String
+}
+
 public final class CreditCardEditViewController: UIViewController {
 
     @IBOutlet private weak var containerView: UIView!
@@ -105,17 +114,13 @@ public final class CreditCardEditViewController: UIViewController {
         self.containerView.bringSubviewToFront(self.spinner)
 
         self.spinner.startAnimating()
-        SnabbleAPI.getTelecashSecret(SnabbleAPI.projects[0]) { result in
+        self.getTelecashSecret(SnabbleAPI.projects[0]) { result in
             self.spinner.stopAnimating()
             switch result {
             case .failure:
                 let alert = UIAlertController(title: "Oops", message: "Snabble.CC.noEntryPossible".localized(), preferredStyle: .alert)
                 alert.addAction(UIAlertAction(title: "Snabble.OK".localized(), style: .default) { _ in
-                    if SnabbleUI.implicitNavigation {
-                        self.navigationController?.popViewController(animated: true)
-                    } else {
-                        self.navigationDelegate?.goBack()
-                    }
+                    self.goBack()
                 })
             case .success(let telecash):
                 self.telecash = telecash
@@ -124,6 +129,14 @@ public final class CreditCardEditViewController: UIViewController {
         }
 
         self.analyticsDelegate?.track(.viewPaymentMethodDetail)
+    }
+
+    private func goBack() {
+        if SnabbleUI.implicitNavigation {
+            self.navigationController?.popViewController(animated: true)
+        } else {
+            self.navigationDelegate?.goBack()
+        }
     }
 
     private func prepareAndInjectPage(_ telecash: TelecashSecret) {
@@ -163,7 +176,7 @@ public final class CreditCardEditViewController: UIViewController {
         alert.addAction(UIAlertAction(title: "Snabble.Yes".localized(), style: .destructive) { _ in
             PaymentMethodDetails.remove(at: index)
             self.analyticsDelegate?.track(.paymentMethodDeleted(self.brand?.rawValue ?? ""))
-            self.navigationController?.popViewController(animated: true)
+            self.goBack()
         })
         alert.addAction(UIAlertAction(title: "Snabble.No".localized(), style: .cancel, handler: nil))
         self.present(alert, animated: true)
@@ -183,7 +196,7 @@ extension CreditCardEditViewController: WKNavigationDelegate {
 }
 
 extension CreditCardEditViewController: WKScriptMessageHandler {
-    // swiftlint:disable:next cyclomatic_complexity function_body_length
+    // swiftlint:disable:next cyclomatic_complexity
     public func userContentController(_ userContentController: WKUserContentController, didReceive message: WKScriptMessage) {
         guard
             message.name == "callbackHandler",
@@ -231,7 +244,7 @@ extension CreditCardEditViewController: WKScriptMessageHandler {
             PaymentMethodDetails.save(detail)
             self.analyticsDelegate?.track(.paymentMethodAdded(detail.rawMethod.displayName ?? ""))
             NotificationCenter.default.post(name: .paymentMethodsChanged, object: self)
-            SnabbleAPI.deletePreauth(SnabbleUI.project, orderId)
+            self.deletePreauth(SnabbleUI.project, orderId)
         } else if failCode == "5993" {
             NSLog("cancelled by user")
         } else {
@@ -242,6 +255,46 @@ extension CreditCardEditViewController: WKScriptMessageHandler {
             self.navigationController?.popToInstanceOf(PaymentMethodListViewController.self, animated: true)
         } else {
             self.navigationDelegate?.goBack(self.backLevels)
+        }
+    }
+}
+
+extension CreditCardEditViewController {
+
+    private func getTelecashSecret(_ project: Project, completion: @escaping (Result<TelecashSecret, SnabbleError>) -> Void ) {
+        guard let url = SnabbleAPI.metadata.links.telecashSecret?.href else {
+            Log.error("no telecashSecret in metadata")
+            return completion(Result.failure(SnabbleError.unknown))
+        }
+
+        project.request(.get, url, timeout: 5) { request in
+            guard let request = request else {
+                return completion(Result.failure(SnabbleError.noRequest))
+            }
+
+            project.perform(request) { (_ result: Result<TelecashSecret, SnabbleError>) in
+                completion(result)
+            }
+        }
+    }
+
+    private func deletePreauth(_ project: Project, _ orderId: String) {
+        guard let preauthUrl = SnabbleAPI.metadata.links.telecashPreauth?.href else {
+            Log.error("no telecashPreauth in metadata")
+            return
+        }
+
+        let url = preauthUrl.replacingOccurrences(of: "{orderID}", with: orderId)
+
+        project.request(.delete, url, timeout: 5) { request in
+            guard let request = request else {
+                return
+            }
+
+            struct DeleteResponse: Decodable {}
+            project.perform(request) { (_ result: Result<DeleteResponse, SnabbleError>) in
+                print(result)
+            }
         }
     }
 }
