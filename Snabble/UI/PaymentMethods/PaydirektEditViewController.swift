@@ -39,7 +39,7 @@ private enum RedirectStatus: String {
     static let host = "snabble-paydirekt"
 
     var url: String {
-        return URL(string: "\(RedirectStatus.host)://\(self.rawValue)")!.absoluteString
+        return "\(RedirectStatus.host)://\(self.rawValue)"
     }
 }
 
@@ -47,6 +47,8 @@ public final class PaydirektEditViewController: UIViewController {
 
     @IBOutlet private weak var webViewWrapper: UIView!
     @IBOutlet private weak var displayView: UIView!
+    @IBOutlet private weak var displayLabel: UILabel!
+    @IBOutlet private weak var openButton: UIButton!
     @IBOutlet private weak var deleteButton: UIButton!
 
     private var webView: WKWebView?
@@ -62,7 +64,7 @@ public final class PaydirektEditViewController: UIViewController {
         id: UIDevice.current.identifierForVendor?.uuidString ?? "",
         name: UIDevice.current.name,
         ipAddress: "127.0.0.1",
-        fingerprint: "123-456",
+        fingerprint: "167-671",
         redirectUrlAfterSuccess: RedirectStatus.success.url,
         redirectUrlAfterCancellation: RedirectStatus.cancelled.url,
         redirectUrlAfterFailure: RedirectStatus.failure.url
@@ -87,12 +89,17 @@ public final class PaydirektEditViewController: UIViewController {
 
         self.webView = self.addWebView(to: self.webViewWrapper)
 
+        self.displayLabel.text = "Snabble.paydirekt.savedAuthorization".localized()
+
         self.deleteButton.makeSnabbleButton()
+        self.deleteButton.setTitle("Snabble.paydirekt.deleteAuthorization".localized(), for: .normal)
+
+        self.openButton.setTitle("Snabble.paydirekt.gotoWebsite".localized(), for: .normal)
 
         if !SnabbleUI.implicitNavigation && self.navigationDelegate == nil {
             let msg = "navigationDelegate may not be nil when using explicit navigation"
             assert(self.navigationDelegate != nil)
-            NSLog("ERROR: \(msg)")
+            Log.error(msg)
         }
     }
 
@@ -112,6 +119,7 @@ public final class PaydirektEditViewController: UIViewController {
     private func startAuthorization() {
         let project = SnabbleUI.project
 
+        #warning("TODO: get the url from metadata")
         project.request(.post, "/payment/paydirekt/customerAuthorization", body: authData) { request in
             guard let request = request else {
                 return
@@ -207,8 +215,8 @@ extension PaydirektEditViewController: WKNavigationDelegate {
                 self.goBack()
             case RedirectStatus.failure.url:
                 self.clientAuthorization = nil
-                let alert = UIAlertController(title: "Autorisierung fehlgeschlagen",
-                                              message: "Bitte später nochmal probieren",
+                let alert = UIAlertController(title: "Snabble.paydirekt.authorizationFailed.title".localized(),
+                                              message: "Snabble.paydirekt.authorizationFailed.message".localized(),
                                               preferredStyle: .alert)
 
                 self.present(alert, animated: true)
