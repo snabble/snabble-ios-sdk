@@ -65,18 +65,21 @@ public struct GatewayCertificate: Decodable {
 public struct MetadataLinks: Decodable {
     public let clientOrders: Link?
     public let appUserOrders: Link
-    public let telecashSecret: Link
-    public let telecashPreauth: Link
+    public let telecashSecret: Link?
+    public let telecashPreauth: Link?
+    public let paydirektCustomerAuthorization: Link?
     public let createAppUser: Link
     public let `self`: Link
 
     fileprivate init() {
         self.clientOrders = nil
         self.appUserOrders = Link.empty
-        self.telecashSecret = Link.empty
-        self.telecashPreauth = Link.empty
         self.createAppUser = Link.empty
         self.`self` = Link.empty
+
+        self.telecashSecret = nil
+        self.telecashPreauth = nil
+        self.paydirektCustomerAuthorization = nil
     }
 }
 
