@@ -331,21 +331,29 @@ private final class DownloadDelegate: NSObject, URLSessionDownloadDelegate {
     private let localName: String
     private let key: String
     private let completion: (URL?) -> Void
+    private let startDate: TimeInterval
 
     init(_ localName: String, _ key: String, _ completion: @escaping (URL?) -> Void) {
         self.localName = localName
         self.key = key
         self.completion = completion
+        self.startDate = Date.timeIntervalSinceReferenceDate
+        // print("start download for \(self.localName)")
     }
 
     func urlSession(_ session: URLSession, downloadTask: URLSessionDownloadTask, didFinishDownloadingTo location: URL) {
         do {
             let cacheDirUrl = AssetManager.cacheDirectory
             let targetLocation = cacheDirUrl.appendingPathComponent(self.localName)
-            // print("download for \(localName) finished")
+            // let elapsed = Date.timeIntervalSinceReferenceDate - self.startDate
+            // print("download for \(self.localName) finished \(elapsed)s")
             // print("move file to \(targetLocation.path)")
 
             let fileManager = FileManager.default
+            if fileManager.fileExists(atPath: targetLocation.path) {
+                try? fileManager.removeItem(at: targetLocation)
+            }
+
             try fileManager.moveItem(at: location, to: targetLocation)
 
             let settings = UserDefaults.standard
@@ -356,7 +364,7 @@ private final class DownloadDelegate: NSObject, URLSessionDownloadDelegate {
                 let oldUrl = cacheDirUrl.appendingPathComponent(oldLocal)
                 try? fileManager.removeItem(at: oldUrl)
             }
-            DispatchQueue.main.asyncAfter(deadline: .now() + 10) {
+            DispatchQueue.main.asyncAfter(deadline: .now()) {
                 self.completion(targetLocation)
             }
         } catch {
