@@ -167,14 +167,6 @@ final class AssetManager {
         }
     }
 
-//    private func getAsset(_ name: String, _ bundlePath: String, _ projectId: String) -> UIImage? {
-//        if let image = self.getImage(named: name, projectId: projectId) {
-//            return image
-//        } else {
-//            return UIImage.fromBundle(bundlePath + "/" + name)
-//        }
-//    }
-
     private func getLocallyCachedImage(named name: String, _ projectId: String) -> UIImage? {
         guard let file = self.fileFor(name: name, projectId) else {
             return nil
@@ -273,7 +265,7 @@ final class AssetManager {
         self.redownloadTimer?.invalidate()
 
         DispatchQueue.main.async {
-            self.redownloadTimer = Timer.scheduledTimer(withTimeInterval: 5, repeats: false) { _ in
+            self.redownloadTimer = Timer.scheduledTimer(withTimeInterval: 10, repeats: false) { _ in
                 for projectId in self.manifests.keys {
                     self.downloadAllMissingFiles(projectId)
                 }
@@ -287,7 +279,8 @@ final class AssetManager {
             return
         }
 
-        for file in manifest.files.filter({ $0.name.hasSuffix(".png") }) {
+        // initially download all PNGs in the toplevel directory (ie. no "/" in the `name`)
+        for file in manifest.files.filter({ $0.name.hasSuffix(".png") && !$0.name.contains("/") }) {
             self.downloadIfMissing(projectId, file, completion: { _ in })
         }
     }
@@ -344,6 +337,13 @@ private final class DownloadDelegate: NSObject, URLSessionDownloadDelegate {
     func urlSession(_ session: URLSession, downloadTask: URLSessionDownloadTask, didFinishDownloadingTo location: URL) {
         do {
             let cacheDirUrl = AssetManager.cacheDirectory
+
+            if self.localName.contains("/") {
+                // make sure any reqired subdirectories exist
+                let dirname = (self.localName as NSString).deletingLastPathComponent
+                let dir = cacheDirUrl.appendingPathComponent(dirname)
+                try? FileManager.default.createDirectory(at: dir, withIntermediateDirectories: true)
+            }
             let targetLocation = cacheDirUrl.appendingPathComponent(self.localName)
             // let elapsed = Date.timeIntervalSinceReferenceDate - self.startDate
             // print("download for \(self.localName) finished \(elapsed)s")

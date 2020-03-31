@@ -1,5 +1,10 @@
 ## snabble iOS SDK Changelog
 
+# v0.12.5
+
+* Adds preliminary support for paydirekt.de
+* Fixes a bug where too many files were downloaded from the snabble asset server after checkin
+
 # v0.12.4
 
 * Adds notifications for the appearance/disappearance of the scan confirmation dialog

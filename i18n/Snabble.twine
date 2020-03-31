@@ -307,8 +307,8 @@
     [Snabble.paydirekt.authorizationFailed.message]
         en = Please try again later
     [Snabble.paydirekt.savedAuthorization]
-        en = The paydirekt authorization is saved in the app. You can delete it here; to fully remove it please log in to your paydirekt account.
+        en = You've successfully authorized this app for paydirekt. To remove this authorization, you need to log in to your paydirekt account. If you do not want to use this payment method anymore, you can remove it here.
     [Snabble.paydirekt.deleteAuthorization]
-        en = Delete Authorization
+        en = Delete method
     [Snabble.paydirekt.gotoWebsite]
-        en = Goto paydirekt.de
+        en = Go to paydirekt.de
