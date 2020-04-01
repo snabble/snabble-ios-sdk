@@ -565,8 +565,12 @@ public extension Metadata {
     static func load(from url: String, completion: @escaping (Metadata?) -> Void ) {
         let project = Project.none
         project.request(.get, url, jwtRequired: false, timeout: 5) { request in
-            guard let request = request, let absoluteString = request.url?.absoluteString else {
+            guard var request = request, let absoluteString = request.url?.absoluteString else {
                 return completion(nil)
+            }
+
+            if SnabbleAPI.debugMode {
+                request.cachePolicy = .reloadIgnoringCacheData
             }
 
             project.perform(request, returnRaw: true) { (result: Result<Metadata, SnabbleError>, raw: [String: Any]?, _) in

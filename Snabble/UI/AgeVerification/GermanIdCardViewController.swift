@@ -35,7 +35,7 @@ public final class GermanIdCardViewController: UIViewController {
     public init() {
         super.init(nibName: nil, bundle: SnabbleBundle.main)
 
-        self.title = "Altersnachweis".localized()
+        self.title = "Altersnachweis"
 
         self.keyboardObserver = KeyboardObserver(handler: self)
     }
@@ -60,10 +60,48 @@ public final class GermanIdCardViewController: UIViewController {
         self.toolbarHeight = toolbar.frame.height
     }
 
+    private struct Birthdate: Codable {
+        let dayOfBirth: String
+    }
+
     @IBAction private func saveButtonTapped(_ sender: UIButton) {
         self.savedBirthDate = self.textField.text
 
-        self.navigationController?.popViewController(animated: true)
+        guard
+            let appUserId = SnabbleAPI.appUserId?.userId,
+            let birthday = AgeVerification.getUsersBirthday()
+        else {
+            return
+        }
+
+        let formatter = DateFormatter()
+        formatter.calendar = Calendar(identifier: .gregorian)
+        formatter.dateFormat = "yyyy/MM/dd"
+        formatter.timeZone = TimeZone(identifier: "UTC")
+
+        let project = SnabbleUI.project
+        let birthdate = Birthdate(dayOfBirth: formatter.string(from: birthday))
+        #warning("remove DIY url")
+        project.request(.patch, "/apps/users/\(appUserId)", body: birthdate) { request in
+            guard let request = request else {
+                Log.error("no request for user's age")
+                return
+            }
+
+            project.perform(request) { (result: Result<Birthdate, SnabbleError>) in
+                switch result {
+                case .success(let birthdate):
+                    Log.debug("saved dayOfBirth: \(birthdate)")
+                    self.navigationController?.popViewController(animated: true)
+                case .failure(let error):
+                    print("\(error)")
+                    let alert = UIAlertController(title: "Fehler beim Speichern", message: "Geburtsdatum konnte nicht gespeichert werden.", preferredStyle: .alert)
+                    alert.addAction(UIAlertAction(title: "OK", style: .default, handler: nil))
+
+                    self.present(alert, animated: true)
+                }
+            }
+        }
     }
 }
 

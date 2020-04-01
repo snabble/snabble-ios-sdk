@@ -260,7 +260,46 @@ public struct CheckoutInfo: Decodable {
     }
 }
 
-/// Checkout Process
+// MARK: - process checks
+public enum CheckState: String, Codable {
+    case unknown
+
+    case pending
+    case successful
+    case failed
+}
+
+extension CheckState: UnknownCaseRepresentable {
+    public static let unknownCase = CheckState.unknown
+}
+
+public enum CheckType: String, Codable {
+    case minAge = "min_age"
+}
+
+public struct CheckoutCheck: Decodable {
+    public let id: String
+    public let links: CheckLinks
+
+    public let state: CheckState
+    public let type: CheckType
+
+    // type-specific properties
+    public let requiredAge: Int? // set for min_age
+
+    public struct CheckLinks: Decodable {
+        public let `self`: Link
+    }
+}
+
+public struct AgeCheckData: Encodable {
+    public let requiredAge: Int
+    public let state: CheckState
+    public let type: CheckType
+    public let dayOfBirth: String // YYYY/MM/DD
+}
+
+// MARK: - Checkout Process
 public struct CheckoutProcess: Decodable {
     public let links: ProcessLinks
     public let supervisorApproval: Bool?
@@ -273,6 +312,7 @@ public struct CheckoutProcess: Decodable {
     public let paymentState: PaymentState
     public let orderID: String?
     public let paymentResult: [String: Any]?
+    public let checks: [CheckoutCheck]
 
     public struct ProcessLinks: Decodable {
         public let `self`: Link
@@ -289,6 +329,7 @@ public struct CheckoutProcess: Decodable {
         case links, supervisorApproval, paymentApproval, aborted
         case checkoutInfo, paymentMethod, modified, paymentInformation
         case paymentState, orderID, paymentResult
+        case checks
     }
 
     public init(from decoder: Decoder) throws {
@@ -305,6 +346,10 @@ public struct CheckoutProcess: Decodable {
         self.paymentState = try container.decode(PaymentState.self, forKey: .paymentState)
         self.orderID = try container.decodeIfPresent(String.self, forKey: .orderID)
         self.paymentResult = try container.decodeIfPresent([String: Any].self, forKey: .paymentResult)
+
+        let rawChecks = try container.decodeIfPresent([FailableDecodable<CheckoutCheck>].self, forKey: .checks)
+        let checks = rawChecks?.compactMap { $0.value } ?? []
+        self.checks = checks.filter { $0.state != .unknown }
     }
 }
 
