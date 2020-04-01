@@ -147,7 +147,7 @@ public enum SnabbleAPI {
 }
 
 public struct AppUserId {
-    let userId: String
+    public let userId: String
     let secret: String
 
     public init(userId: String, secret: String) {
@@ -210,6 +210,7 @@ extension SnabbleAPI {
         set {
             let keychain = Keychain(service: service)
             keychain[appUserKey] = newValue?.combined
+            UserDefaults.standard.set(newValue?.userId, forKey: "Snabble.api.appUserId")
 
             self.tokenRegistry.invalidateAllTokens()
         }
