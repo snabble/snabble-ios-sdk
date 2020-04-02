@@ -53,7 +53,6 @@ public enum RawPaymentMethod: String, CaseIterable, Decodable {
     case creditCardMastercard   // MASTERCARD via Telecash/First Data
     case creditCardAmericanExpress // AMERICAN EXPRESS via Telecash/First Data
     case externalBilling        // external billing, e.g. via an employee id
-    case gatekeeperExternalBilling  // external billing via employee id and gatekeeper
     case gatekeeperTerminal
     case customerCardPOS        // payment via customer card invoice
     case paydirektOneKlick
@@ -62,8 +61,7 @@ public enum RawPaymentMethod: String, CaseIterable, Decodable {
     var dataRequired: Bool {
         switch self {
         case .deDirectDebit, .creditCardVisa, .creditCardMastercard, .creditCardAmericanExpress,
-             .externalBilling, .gatekeeperExternalBilling,
-             .customerCardPOS, .paydirektOneKlick:
+             .externalBilling, .customerCardPOS, .paydirektOneKlick:
             return true
         case .qrCodePOS, .qrCodeOffline, .gatekeeperTerminal:
             return false
@@ -75,7 +73,7 @@ public enum RawPaymentMethod: String, CaseIterable, Decodable {
         switch self {
         case .deDirectDebit, .creditCardVisa, .creditCardMastercard, .creditCardAmericanExpress, .paydirektOneKlick:
             return true
-        case .qrCodePOS, .qrCodeOffline, .externalBilling, .gatekeeperExternalBilling, .gatekeeperTerminal, .customerCardPOS:
+        case .qrCodePOS, .qrCodeOffline, .externalBilling, .gatekeeperTerminal, .customerCardPOS:
             return false
         }
     }
@@ -87,7 +85,7 @@ public enum RawPaymentMethod: String, CaseIterable, Decodable {
             return true
         case .qrCodePOS, .deDirectDebit,
              .creditCardVisa, .creditCardMastercard, .creditCardAmericanExpress,
-             .externalBilling, .gatekeeperExternalBilling, .gatekeeperTerminal, .customerCardPOS, .paydirektOneKlick:
+             .externalBilling, .gatekeeperTerminal, .customerCardPOS, .paydirektOneKlick:
             return false
         }
     }
@@ -128,7 +126,6 @@ public enum PaymentMethod {
     case mastercard(PaymentMethodData?)
     case americanExpress(PaymentMethodData?)
     case externalBilling(PaymentMethodData?)
-    case gatekeeperExternalBilling(PaymentMethodData?)
     case gatekeeperTerminal
     case customerCardPOS
     case paydirektOneKlick(PaymentMethodData?)
@@ -142,7 +139,6 @@ public enum PaymentMethod {
         case .mastercard: return .creditCardMastercard
         case .americanExpress: return .creditCardAmericanExpress
         case .externalBilling: return .externalBilling
-        case .gatekeeperExternalBilling: return .gatekeeperExternalBilling
         case .gatekeeperTerminal: return .gatekeeperTerminal
         case .customerCardPOS: return .customerCardPOS
         case .paydirektOneKlick: return .paydirektOneKlick
@@ -153,7 +149,7 @@ public enum PaymentMethod {
         switch self {
         case .deDirectDebit(let data), .visa(let data), .mastercard(let data), .americanExpress(let data):
             return data
-        case .externalBilling(let data), .gatekeeperExternalBilling(let data):
+        case .externalBilling(let data):
             return data
         case .paydirektOneKlick(let data):
             return data
@@ -166,7 +162,7 @@ public enum PaymentMethod {
         switch self {
         case .visa(let data), .mastercard(let data), .americanExpress(let data), .paydirektOneKlick(let data):
             return data?.additionalData ?? [:]
-        case .deDirectDebit, .qrCodePOS, .qrCodeOffline, .externalBilling, .gatekeeperExternalBilling, .gatekeeperTerminal, .customerCardPOS:
+        case .deDirectDebit, .qrCodePOS, .qrCodeOffline, .externalBilling, .gatekeeperTerminal, .customerCardPOS:
             return [:]
         }
     }

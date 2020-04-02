@@ -16,7 +16,7 @@ extension PaymentMethod {
         case .visa: return "SnabbleSDK/payment-visa"
         case .mastercard: return "SnabbleSDK/payment-mastercard"
         case .americanExpress: return "SnabbleSDK/payment-amex"
-        case .externalBilling, .gatekeeperExternalBilling:
+        case .externalBilling:
             switch self.data?.originType {
             case .tegutEmployeeID: return "SnabbleSDK/payment-tegut"
             default: return ""
@@ -30,7 +30,7 @@ extension PaymentMethod {
     var dataRequired: Bool {
         switch self {
         case .deDirectDebit, .visa, .mastercard, .americanExpress,
-             .externalBilling, .gatekeeperExternalBilling, .paydirektOneKlick:
+             .externalBilling, .paydirektOneKlick:
             return true
         case .qrCodePOS, .qrCodeOffline, .gatekeeperTerminal, .customerCardPOS:
             return false
@@ -65,7 +65,7 @@ extension PaymentMethod {
             }
         case .deDirectDebit, .visa, .mastercard, .americanExpress, .externalBilling, .paydirektOneKlick:
             processor = OnlineCheckoutViewController(process!, cart, delegate)
-        case .gatekeeperTerminal, .gatekeeperExternalBilling:
+        case .gatekeeperTerminal:
             processor = TerminalCheckoutViewController(process!, cart, delegate)
         case .customerCardPOS:
             processor = CustomerCardCheckoutViewController(process!, cart, delegate)
@@ -172,7 +172,7 @@ public final class PaymentProcess {
                 } else {
                     result.append(.americanExpress(nil))
                 }
-            case .externalBilling, .gatekeeperExternalBilling:
+            case .externalBilling:
                 let billing = userData.filter { if case .externalBilling = $0 { return true } else { return false } }
                 if !billing.isEmpty {
                     result.append(contentsOf: billing.reversed())
@@ -242,7 +242,6 @@ public final class PaymentProcess {
                 let tegut = methods.first {
                     $0.method == .externalBilling && $0.acceptedOriginTypes?.contains(.tegutEmployeeID) == true
                 }
-
                 if tegut != nil {
                     results.append(PaymentMethod.externalBilling(detail.data))
                 }

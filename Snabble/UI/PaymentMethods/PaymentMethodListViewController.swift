@@ -15,7 +15,7 @@ extension RawPaymentMethod {
         case .creditCardMastercard: return "Mastercard"
         case .creditCardVisa: return "VISA"
         case .creditCardAmericanExpress: return "American Express"
-        case .gatekeeperTerminal, .gatekeeperExternalBilling:
+        case .gatekeeperTerminal:
             return "Snabble.Payment.payAtSCO".localized()
         case .paydirektOneKlick:
             return "paydirekt"
@@ -33,7 +33,7 @@ extension RawPaymentMethod {
         case .creditCardAmericanExpress: return CreditCardEditViewController(.amex, analyticsDelegate)
         case .paydirektOneKlick: return PaydirektEditViewController(nil, nil, analyticsDelegate)
 
-        case .qrCodePOS, .qrCodeOffline, .externalBilling, .customerCardPOS, .gatekeeperTerminal, .gatekeeperExternalBilling:
+        case .qrCodePOS, .qrCodeOffline, .externalBilling, .customerCardPOS, .gatekeeperTerminal:
             return nil
         }
     }
@@ -47,7 +47,7 @@ extension RawPaymentMethod {
         case .gatekeeperTerminal: return UIImage.fromBundle("SnabbleSDK/payment-card-terminal")
         case .paydirektOneKlick: return UIImage.fromBundle("SnabbleSDK/payment-small-paydirekt")
 
-        case .qrCodePOS, .qrCodeOffline, .externalBilling, .customerCardPOS, .gatekeeperExternalBilling:
+        case .qrCodePOS, .qrCodeOffline, .externalBilling, .customerCardPOS:
             return nil
         }
     }
@@ -61,7 +61,7 @@ extension RawPaymentMethod {
         case .paydirektOneKlick: return 80
         case .gatekeeperTerminal: return 70
 
-        case .qrCodePOS, .qrCodeOffline, .externalBilling, .gatekeeperExternalBilling, .customerCardPOS:
+        case .qrCodePOS, .qrCodeOffline, .externalBilling, .customerCardPOS:
             return 0
         }
     }
