@@ -256,10 +256,17 @@ public final class PaymentProcess {
     }
 
     func start(_ method: PaymentMethod, completion: @escaping (Result<CheckoutProcess, SnabbleError>) -> Void ) {
-           self.signedCheckoutInfo.createCheckoutProcess(SnabbleUI.project, paymentMethod: method, timeout: 20) { result in
-               completion(result)
-           }
-       }
+        self.signedCheckoutInfo.createCheckoutProcess(SnabbleUI.project, paymentMethod: method, timeout: 20) { result in
+            if case let Result.success(process) = result {
+                let checker = CheckoutChecks(process)
+                let stopProcess = checker.handleChecks()
+                if stopProcess {
+                    return
+                }
+            }
+            completion(result)
+        }
+    }
 
     func start(_ method: PaymentMethod, completion: @escaping (_ result: Result<UIViewController, SnabbleError>) -> Void ) {
         UIApplication.shared.beginIgnoringInteractionEvents()
@@ -272,12 +279,13 @@ public final class PaymentProcess {
             self.hideBlurOverlay()
             switch result {
             case .success(let process):
-                if !process.checks.isEmpty {
-                    let stopProcess = self.handleChecks(process)
-                    if stopProcess {
-                        return
-                    }
+                let checker = CheckoutChecks(process)
+
+                let stopProcess = checker.handleChecks()
+                if stopProcess {
+                    return
                 }
+
                 if let processor = method.processor(process, self.cart, self.delegate) {
                     completion(Result.success(processor))
                 } else {
@@ -286,48 +294,6 @@ public final class PaymentProcess {
             case .failure(let error):
                 self.startFailed(method, error, completion)
             }
-        }
-    }
-
-    private func handleChecks(_ process: CheckoutProcess) -> Bool {
-        var stopProcess = false
-        for check in process.checks {
-            stopProcess = stopProcess || self.performCheck(check)
-        }
-        return stopProcess
-    }
-
-    private func performCheck(_ check: CheckoutCheck) -> Bool {
-        guard check.type == .minAge else {
-            return false
-        }
-
-        switch check.state {
-        case .pending:
-            let alert = UIAlertController(title: "Altersverifikation erforderlich",
-                                          message: "Bitte verifiziere in den App-Einstellungen erst dein Alter.",
-                                          preferredStyle: .alert)
-            alert.addAction(UIAlertAction(title: "OK", style: .default) { _ in
-                let germanIdCard = GermanIdCardViewController()
-                UIApplication.topViewController()?.navigationController?.pushViewController(germanIdCard, animated: true)
-            })
-            alert.addAction(UIAlertAction(title: "Abbrechen", style: .cancel, handler: nil))
-            let topViewController = UIApplication.topViewController()
-            topViewController?.present(alert, animated: true)
-            return true
-        case .failed:
-            let alert = UIAlertController(title: "Du bist nicht alt genug",
-                                          message: "Einige Artikel in deinem Warenkorb unterliegen einer Altersbeschränkung, du darfst sie leider nicht kaufen.",
-                                          preferredStyle: .alert)
-            alert.addAction(UIAlertAction(title: "OK", style: .default) { _ in
-                print("goto settings")
-            })
-            alert.addAction(UIAlertAction(title: "Abbrechen", style: .cancel, handler: nil))
-            let topViewController = UIApplication.topViewController()
-            topViewController?.present(alert, animated: true)
-            return true
-        case .successful, .unknown:
-            return false
         }
     }
 
