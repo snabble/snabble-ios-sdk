@@ -11,7 +11,10 @@ public final class GermanIdCardViewController: UIViewController {
     @IBOutlet private var saveButton: UIButton!
     @IBOutlet private var textField: UITextField!
     @IBOutlet private var scrollView: UIScrollView!
+    @IBOutlet private var blurbLabel: UILabel!
 
+    public weak var navigationDelegate: PaymentMethodNavigationDelegate?
+    
     private var keyboardObserver: KeyboardObserver!
     private var toolbarHeight: CGFloat = 0
 
@@ -35,7 +38,7 @@ public final class GermanIdCardViewController: UIViewController {
     public init() {
         super.init(nibName: nil, bundle: SnabbleBundle.main)
 
-        self.title = "Altersnachweis"
+        self.title = "Snabble.ageVerification.title".localized()
 
         self.keyboardObserver = KeyboardObserver(handler: self)
     }
@@ -47,17 +50,27 @@ public final class GermanIdCardViewController: UIViewController {
     override public func viewDidLoad() {
         super.viewDidLoad()
 
+        self.blurbLabel.text = "Snabble.ageVerification.explanation".localized()
+
         self.saveButton.makeSnabbleButton()
         self.saveButton.isEnabled = false
+        self.saveButton.setTitle("Snabble.Save".localized(), for: .normal)
 
         if let birthdate = self.savedBirthDate {
             self.textField.text = self.savedBirthDate
             self.saveButton.isEnabled = self.isValidBirthDate(birthdate)
         }
 
+        self.textField.placeholder = "Snabble.ageVerification.placeholder".localized()
         self.textField.delegate = self
         let toolbar = self.textField.addDoneButton()
         self.toolbarHeight = toolbar.frame.height
+
+        if !SnabbleUI.implicitNavigation && self.navigationDelegate == nil {
+            let msg = "navigationDelegate may not be nil when using explicit navigation"
+            assert(self.navigationDelegate != nil, msg)
+            Log.error(msg)
+        }
     }
 
     private struct Birthdate: Codable {
@@ -92,7 +105,7 @@ public final class GermanIdCardViewController: UIViewController {
                 switch result {
                 case .success(let birthdate):
                     Log.debug("saved dayOfBirth: \(birthdate)")
-                    self.navigationController?.popViewController(animated: true)
+                    self.goBack()
                 case .failure(let error):
                     print("\(error)")
                     let alert = UIAlertController(title: "Fehler beim Speichern", message: "Geburtsdatum konnte nicht gespeichert werden.", preferredStyle: .alert)
@@ -101,6 +114,14 @@ public final class GermanIdCardViewController: UIViewController {
                     self.present(alert, animated: true)
                 }
             }
+        }
+    }
+
+    private func goBack() {
+        if SnabbleUI.implicitNavigation {
+            self.navigationController?.popViewController(animated: true)
+        } else {
+            self.navigationDelegate?.goBack()
         }
     }
 }
