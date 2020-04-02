@@ -225,7 +225,7 @@ extension PaymentMethodSelectionViewController: UICollectionViewDelegate, UIColl
         case .paydirektOneKlick:
             return PaydirektEditViewController(nil, nil, self.analyticsDelegate)
 
-        case .qrCodePOS, .qrCodeOffline, .externalBilling, .gatekeeperTerminal, .customerCardPOS:
+        case .qrCodePOS, .qrCodeOffline, .externalBilling, .gatekeeperExternalBilling, .gatekeeperTerminal, .customerCardPOS:
             return nil
         }
     }

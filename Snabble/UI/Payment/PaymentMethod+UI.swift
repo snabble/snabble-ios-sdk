@@ -16,7 +16,7 @@ extension PaymentMethod {
         case .visa: return "SnabbleSDK/payment-visa"
         case .mastercard: return "SnabbleSDK/payment-mastercard"
         case .americanExpress: return "SnabbleSDK/payment-amex"
-        case .externalBilling:
+        case .externalBilling, .gatekeeperExternalBilling:
             switch self.data?.originType {
             case .tegutEmployeeID: return "SnabbleSDK/payment-tegut"
             default: return ""
@@ -29,8 +29,11 @@ extension PaymentMethod {
 
     var dataRequired: Bool {
         switch self {
-        case .deDirectDebit, .visa, .mastercard, .americanExpress, .externalBilling, .paydirektOneKlick: return true
-        case .qrCodePOS, .qrCodeOffline, .gatekeeperTerminal, .customerCardPOS: return false
+        case .deDirectDebit, .visa, .mastercard, .americanExpress,
+             .externalBilling, .gatekeeperExternalBilling, .paydirektOneKlick:
+            return true
+        case .qrCodePOS, .qrCodeOffline, .gatekeeperTerminal, .customerCardPOS:
+            return false
         }
     }
 
@@ -62,7 +65,7 @@ extension PaymentMethod {
             }
         case .deDirectDebit, .visa, .mastercard, .americanExpress, .externalBilling, .paydirektOneKlick:
             processor = OnlineCheckoutViewController(process!, cart, delegate)
-        case .gatekeeperTerminal:
+        case .gatekeeperTerminal, .gatekeeperExternalBilling:
             processor = TerminalCheckoutViewController(process!, cart, delegate)
         case .customerCardPOS:
             processor = CustomerCardCheckoutViewController(process!, cart, delegate)
@@ -169,7 +172,7 @@ public final class PaymentProcess {
                 } else {
                     result.append(.americanExpress(nil))
                 }
-            case .externalBilling:
+            case .externalBilling, .gatekeeperExternalBilling:
                 let billing = userData.filter { if case .externalBilling = $0 { return true } else { return false } }
                 if !billing.isEmpty {
                     result.append(contentsOf: billing.reversed())
