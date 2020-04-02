@@ -16,7 +16,13 @@ struct CheckoutChecks {
         self.process = process
     }
 
-    // handle all checks required by the process, and return a Bool indicating whether the process can continue
+    // check if any of the checks failed, return true if so
+    func failed() -> Bool {
+        let failed = self.process.checks.firstIndex { $0.state == .failed }
+        return failed != nil
+    }
+
+    // handle all checks required by the process, and return a Bool indicating whether the process should be stopped
     func handleChecks() -> Bool {
         if self.process.checks.isEmpty {
             return false
@@ -30,10 +36,12 @@ struct CheckoutChecks {
     }
 
     private func performCheck(_ check: CheckoutCheck) -> Bool {
-        guard check.type == .minAge else {
-            return false
+        switch check.type {
+        case .minAge: return self.performAgeCheck(check)
         }
+    }
 
+    private func performAgeCheck(_ check: CheckoutCheck) -> Bool {
         switch check.state {
         case .pending:
             let alert = UIAlertController(title: "Snabble.ageVerification.pending.title".localized(),

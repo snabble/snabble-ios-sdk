@@ -14,7 +14,7 @@ public final class GermanIdCardViewController: UIViewController {
     @IBOutlet private var blurbLabel: UILabel!
 
     public weak var navigationDelegate: PaymentMethodNavigationDelegate?
-    
+
     private var keyboardObserver: KeyboardObserver!
     private var toolbarHeight: CGFloat = 0
 
