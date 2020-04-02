@@ -98,7 +98,7 @@ public final class PaydirektEditViewController: UIViewController {
 
         if !SnabbleUI.implicitNavigation && self.navigationDelegate == nil {
             let msg = "navigationDelegate may not be nil when using explicit navigation"
-            assert(self.navigationDelegate != nil)
+            assert(self.navigationDelegate != nil, msg)
             Log.error(msg)
         }
     }

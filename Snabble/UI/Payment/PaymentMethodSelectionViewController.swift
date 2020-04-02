@@ -58,8 +58,8 @@ public final class PaymentMethodSelectionViewController: UIViewController {
 
         if !SnabbleUI.implicitNavigation && self.navigationDelegate == nil {
             let msg = "navigationDelegate may not be nil when using explicit navigation"
-            assert(self.navigationDelegate != nil)
-            NSLog("ERROR: \(msg)")
+            assert(self.navigationDelegate != nil, msg)
+            Log.error(msg)
         }
     }
 
