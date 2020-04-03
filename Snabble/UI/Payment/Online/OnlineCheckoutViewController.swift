@@ -1,12 +1,10 @@
 //
-//  TerminalCheckoutViewController.swift
+//  OnlineCheckoutViewController.swift
 //
 //  Copyright © 2020 snabble. All rights reserved.
 //
 
-import UIKit
-
-public final class TerminalCheckoutViewController: BaseCheckoutViewController {
+public final class OnlineCheckoutViewController: BaseCheckoutViewController {
     override public init(_ process: CheckoutProcess, _ cart: ShoppingCart, _ delegate: PaymentDelegate) {
         super.init(process, cart, delegate)
     }
@@ -16,14 +14,14 @@ public final class TerminalCheckoutViewController: BaseCheckoutViewController {
     }
 
     override var viewEvent: AnalyticsEvent {
-        return .viewTerminalCheckout
+        return .viewOnlineCheckout
     }
 
     override public func qrCodeContent(_ process: CheckoutProcess, _ id: String) -> String {
-        return process.paymentInformation?.qrCodeContent ?? "snabble:checkoutProcess:" + id
+        return process.paymentInformation?.qrCodeContent ?? id
     }
 
-    override var waitForEvents: [PaymentEvent] {
-        return [.paymentSuccess]
+    override public func showQrCode(_ process: CheckoutProcess) -> Bool {
+        return process.supervisorApproval == nil
     }
 }

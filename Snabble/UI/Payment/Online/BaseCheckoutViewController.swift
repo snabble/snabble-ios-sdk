@@ -26,9 +26,11 @@ public class BaseCheckoutViewController: UIViewController {
     private weak var delegate: PaymentDelegate!
     public weak var navigationDelegate: CheckoutNavigationDelegate?
 
-    let process: CheckoutProcess
-    private var poller: PaymentProcessPoller?
+    private let process: CheckoutProcess
     private var initialBrightness: CGFloat = 0
+
+    private var sessionTask: URLSessionTask?
+    private var processTimer: Timer?
 
     init(_ process: CheckoutProcess, _ cart: ShoppingCart, _ delegate: PaymentDelegate) {
         self.process = process
@@ -108,10 +110,7 @@ public class BaseCheckoutViewController: UIViewController {
 
         self.setSpinnerAppearance()
 
-        if self.process.supervisorApproval == true {
-            self.topWrapper.isHidden = true
-            self.showOnlySpinner()
-        }
+        _ = self.updateView(self.process)
     }
 
     override public func viewDidAppear(_ animated: Bool) {
@@ -119,19 +118,21 @@ public class BaseCheckoutViewController: UIViewController {
 
         self.delegate.track(self.viewEvent)
 
-        self.startPoller()
+        self.startTimer()
     }
 
     override public func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
+
         UIScreen.main.brightness = self.initialBrightness
-
-        self.poller?.stop()
-        self.poller = nil
-
         UIApplication.shared.isIdleTimerDisabled = false
     }
 
     // MARK: - child classes must override these methods
+
+    func showQrCode(_ process: CheckoutProcess) -> Bool {
+        fatalError("child classes must override this")
+    }
 
     func qrCodeContent(_ process: CheckoutProcess, _ id: String) -> String {
         fatalError("child classes must override this")
@@ -141,57 +142,84 @@ public class BaseCheckoutViewController: UIViewController {
         fatalError("child classes must override this")
     }
 
-    var waitForEvents: [PaymentEvent] {
-        fatalError("child classes must override this")
-    }
-
-    // MARK: - event polling
-    private func startPoller() {
-        let poller = PaymentProcessPoller(self.process, SnabbleUI.project)
-
-        var events = [PaymentEvent: Bool]()
-
-        let waitForEvents = self.waitForEvents
-        let waitForApproval = waitForEvents.contains(.approval)
-
-        poller.waitFor(waitForEvents) { event in
-            UIView.animate(withDuration: 0.25) {
-                self.showOnlySpinner()
-            }
-
-            events.merge(event, uniquingKeysWith: { bool1, _ in bool1 })
-
-            if waitForApproval {
-                if let approval = events[.approval], approval == false {
-                    self.paymentFinished(false, poller.updatedProcess)
-                    return
-                }
-
-                if let approval = events[.approval], let paymentSuccess = events[.paymentSuccess] {
-                    self.paymentFinished(approval && paymentSuccess, poller.updatedProcess)
-                }
-            } else {
-                if let paymentSuccess = events[.paymentSuccess] {
-                    self.paymentFinished(paymentSuccess, poller.updatedProcess)
-                }
-            }
+    // MARK: - polling timer
+    private func startTimer() {
+        self.processTimer = Timer.scheduledTimer(withTimeInterval: 1, repeats: false) { _ in
+            let project = SnabbleUI.project
+            self.process.update(project,
+                                taskCreated: { self.sessionTask = $0 },
+                                completion: { self.update($0) })
         }
-        self.poller = poller
     }
 
-    private func showOnlySpinner() {
-        self.arrowWrapper.isHidden = true
-        self.codeWrapper.isHidden = true
-        self.codeImage.isHidden = true
-        self.spinnerWrapper.isHidden = false
+    private func stopTimer() {
+        self.processTimer?.invalidate()
+        self.processTimer = nil
+
+        self.sessionTask?.cancel()
+        self.sessionTask = nil
+    }
+
+    // MARK: - process updates
+    private func update(_ result: Result<CheckoutProcess, SnabbleError>) {
+        var continuePolling = true
+        switch result {
+        case .success(let process):
+            continuePolling = self.updateView(process)
+        case .failure(let error):
+            print(error)
+        }
+
+        if continuePolling {
+            self.startTimer()
+        }
+    }
+
+    // update our view according to the `process`.
+    // Return true if we should keep checking the process, false otherwise
+    private func updateView(_ process: CheckoutProcess) -> Bool {
+        // figure out failure conditions first
+        let approvalDenied = process.supervisorApproval == false || process.paymentApproval == false
+        let checkFailed = process.checks.first { $0.state == .failed } != nil
+        if approvalDenied || checkFailed {
+            self.paymentFinished(false, process)
+            return false
+        }
+
+        if let candidateLink = process.paymentResult?["originCandidateLink"] as? String {
+            OriginPoller.shared.startPolling(SnabbleUI.project, candidateLink)
+        }
+
+        let showQr = self.showQrCode(process)
+        self.updateQRCode(show: showQr)
+
+        switch process.paymentState {
+        case .successful:
+            self.paymentFinished(true, process)
+            return false
+        case .failed:
+            self.paymentFinished(false, process)
+            return false
+        case .transferred, .pending, .processing, .unknown: ()
+            return true
+        }
+    }
+
+    private func updateQRCode(show: Bool) {
+        self.topWrapper.isHidden = !show
+        if self.topIcon.image != nil {
+            self.arrowWrapper.isHidden = !show
+        }
+        self.codeWrapper.isHidden = !show
+        self.spinnerWrapper.isHidden = show
+
         self.stackView.layoutIfNeeded()
     }
 
     @IBAction private func cancelButtonTapped(_ sender: UIButton) {
-        self.poller?.stop()
-        self.poller = nil
-
         self.delegate.track(.paymentCancelled)
+
+        self.stopTimer()
 
         self.process.abort(SnabbleUI.project) { result in
             switch result {
@@ -212,7 +240,7 @@ public class BaseCheckoutViewController: UIViewController {
                                               message: "Snabble.Payment.cancelError.message".localized(),
                                               preferredStyle: .alert)
                 alert.addAction(UIAlertAction(title: "Snabble.OK".localized(), style: .default) { _ in
-                    self.startPoller()
+
                 })
                 self.present(alert, animated: true)
             }
@@ -220,8 +248,6 @@ public class BaseCheckoutViewController: UIViewController {
     }
 
     private func paymentFinished(_ success: Bool, _ process: CheckoutProcess) {
-        self.poller = nil
-
         if success {
             self.cart.removeAll(endSession: true, keepBackup: false)
         }
