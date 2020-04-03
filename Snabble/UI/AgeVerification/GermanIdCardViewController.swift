@@ -11,6 +11,9 @@ public final class GermanIdCardViewController: UIViewController {
     @IBOutlet private var saveButton: UIButton!
     @IBOutlet private var textField: UITextField!
     @IBOutlet private var scrollView: UIScrollView!
+    @IBOutlet private var blurbLabel: UILabel!
+
+    public weak var navigationDelegate: PaymentMethodNavigationDelegate?
 
     private var keyboardObserver: KeyboardObserver!
     private var toolbarHeight: CGFloat = 0
@@ -35,7 +38,7 @@ public final class GermanIdCardViewController: UIViewController {
     public init() {
         super.init(nibName: nil, bundle: SnabbleBundle.main)
 
-        self.title = "Altersnachweis".localized()
+        self.title = "Snabble.ageVerification.title".localized()
 
         self.keyboardObserver = KeyboardObserver(handler: self)
     }
@@ -47,23 +50,81 @@ public final class GermanIdCardViewController: UIViewController {
     override public func viewDidLoad() {
         super.viewDidLoad()
 
+        self.blurbLabel.text = "Snabble.ageVerification.explanation".localized()
+
         self.saveButton.makeSnabbleButton()
         self.saveButton.isEnabled = false
+        self.saveButton.setTitle("Snabble.Save".localized(), for: .normal)
 
         if let birthdate = self.savedBirthDate {
             self.textField.text = self.savedBirthDate
             self.saveButton.isEnabled = self.isValidBirthDate(birthdate)
         }
 
+        self.textField.placeholder = "Snabble.ageVerification.placeholder".localized()
         self.textField.delegate = self
         let toolbar = self.textField.addDoneButton()
         self.toolbarHeight = toolbar.frame.height
+
+        if !SnabbleUI.implicitNavigation && self.navigationDelegate == nil {
+            let msg = "navigationDelegate may not be nil when using explicit navigation"
+            assert(self.navigationDelegate != nil, msg)
+            Log.error(msg)
+        }
+    }
+
+    private struct Birthdate: Codable {
+        let dayOfBirth: String
     }
 
     @IBAction private func saveButtonTapped(_ sender: UIButton) {
         self.savedBirthDate = self.textField.text
 
-        self.navigationController?.popViewController(animated: true)
+        guard
+            let appUserId = SnabbleAPI.appUserId?.userId,
+            let birthday = AgeVerification.getUsersBirthday()
+        else {
+            return
+        }
+
+        let formatter = DateFormatter()
+        formatter.calendar = Calendar(identifier: .gregorian)
+        formatter.dateFormat = "yyyy/MM/dd"
+        formatter.timeZone = TimeZone(identifier: "UTC")
+
+        let project = SnabbleUI.project
+        let birthdate = Birthdate(dayOfBirth: formatter.string(from: birthday))
+        let url = SnabbleAPI.metadata.links.appUser.href.replacingOccurrences(of: "{appUserID}", with: appUserId)
+        project.request(.patch, url, body: birthdate) { request in
+            guard let request = request else {
+                Log.error("no request for user's age")
+                return
+            }
+
+            project.perform(request) { (result: Result<Birthdate, SnabbleError>) in
+                switch result {
+                case .success(let birthdate):
+                    Log.debug("saved dayOfBirth: \(birthdate)")
+                    self.goBack()
+                case .failure(let error):
+                    print("\(error)")
+                    let alert = UIAlertController(title: "Fehler beim Speichern",
+                                                  message: "Geburtsdatum konnte nicht gespeichert werden.",
+                                                  preferredStyle: .alert)
+                    alert.addAction(UIAlertAction(title: "OK", style: .default, handler: nil))
+
+                    self.present(alert, animated: true)
+                }
+            }
+        }
+    }
+
+    private func goBack() {
+        if SnabbleUI.implicitNavigation {
+            self.navigationController?.popViewController(animated: true)
+        } else {
+            self.navigationDelegate?.goBack()
+        }
     }
 }
 

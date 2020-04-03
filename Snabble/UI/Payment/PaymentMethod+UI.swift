@@ -29,8 +29,11 @@ extension PaymentMethod {
 
     var dataRequired: Bool {
         switch self {
-        case .deDirectDebit, .visa, .mastercard, .americanExpress, .externalBilling, .paydirektOneKlick: return true
-        case .qrCodePOS, .qrCodeOffline, .gatekeeperTerminal, .customerCardPOS: return false
+        case .deDirectDebit, .visa, .mastercard, .americanExpress,
+             .externalBilling, .paydirektOneKlick:
+            return true
+        case .qrCodePOS, .qrCodeOffline, .gatekeeperTerminal, .customerCardPOS:
+            return false
         }
     }
 
@@ -239,7 +242,6 @@ public final class PaymentProcess {
                 let tegut = methods.first {
                     $0.method == .externalBilling && $0.acceptedOriginTypes?.contains(.tegutEmployeeID) == true
                 }
-
                 if tegut != nil {
                     results.append(PaymentMethod.externalBilling(detail.data))
                 }
@@ -256,10 +258,17 @@ public final class PaymentProcess {
     }
 
     func start(_ method: PaymentMethod, completion: @escaping (Result<CheckoutProcess, SnabbleError>) -> Void ) {
-           self.signedCheckoutInfo.createCheckoutProcess(SnabbleUI.project, paymentMethod: method, timeout: 20) { result in
-               completion(result)
-           }
-       }
+        self.signedCheckoutInfo.createCheckoutProcess(SnabbleUI.project, paymentMethod: method, timeout: 20) { result in
+            if case let Result.success(process) = result {
+                let checker = CheckoutChecks(process)
+                let stopProcess = checker.handleChecks()
+                if stopProcess {
+                    return
+                }
+            }
+            completion(result)
+        }
+    }
 
     func start(_ method: PaymentMethod, completion: @escaping (_ result: Result<UIViewController, SnabbleError>) -> Void ) {
         UIApplication.shared.beginIgnoringInteractionEvents()
@@ -272,6 +281,13 @@ public final class PaymentProcess {
             self.hideBlurOverlay()
             switch result {
             case .success(let process):
+                let checker = CheckoutChecks(process)
+
+                let stopProcess = checker.handleChecks()
+                if stopProcess {
+                    return
+                }
+
                 if let processor = method.processor(process, self.cart, self.delegate) {
                     completion(Result.success(processor))
                 } else {

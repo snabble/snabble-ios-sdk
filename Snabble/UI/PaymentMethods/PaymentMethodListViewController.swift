@@ -15,8 +15,10 @@ extension RawPaymentMethod {
         case .creditCardMastercard: return "Mastercard"
         case .creditCardVisa: return "VISA"
         case .creditCardAmericanExpress: return "American Express"
-        case .gatekeeperTerminal: return "Snabble.Payment.payAtSCO".localized()
-        case .paydirektOneKlick: return "paydirekt"
+        case .gatekeeperTerminal:
+            return "Snabble.Payment.payAtSCO".localized()
+        case .paydirektOneKlick:
+            return "paydirekt"
 
         case .qrCodePOS, .qrCodeOffline, .externalBilling, .customerCardPOS:
             return nil
@@ -113,8 +115,8 @@ public final class PaymentMethodListViewController: UIViewController {
 
         if !SnabbleUI.implicitNavigation && self.navigationDelegate == nil {
             let msg = "navigationDelegate may not be nil when using explicit navigation"
-            assert(self.navigationDelegate != nil)
-            NSLog("ERROR: \(msg)")
+            assert(self.navigationDelegate != nil, msg)
+            Log.error(msg)
         }
     }
 

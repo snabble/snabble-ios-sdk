@@ -23,7 +23,8 @@ final class CheckoutPaymentMethodCell: UICollectionViewCell {
             switch paymentMethod {
             case .deDirectDebit(let data),
                  .visa(let data), .mastercard(let data), .americanExpress(let data),
-                 .externalBilling(let data), .paydirektOneKlick(let data):
+                 .externalBilling(let data),
+                 .paydirektOneKlick(let data):
                 incomplete = data == nil
 
             case .qrCodePOS, .qrCodeOffline, .gatekeeperTerminal, .customerCardPOS:

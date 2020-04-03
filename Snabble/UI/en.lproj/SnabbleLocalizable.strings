@@ -277,3 +277,17 @@
 "Snabble.paydirekt.deleteAuthorization" = "Delete method";
 
 "Snabble.paydirekt.gotoWebsite" = "Go to paydirekt.de";
+
+"Snabble.ageVerification.title" = "Age verification";
+
+"Snabble.ageVerification.explanation" = "To purchase certain products like alcoholic beverages, verifying your age is required. Enter the 7-digit Number from the back side of your ID card.";
+
+"Snabble.ageVerification.placeholder" = "7 Digits";
+
+"Snabble.ageVerification.pending.title" = "Age verification required";
+
+"Snabble.ageVerification.pending.message" = "Some products in your cart have an age restriction. Please verify your age before continuing.";
+
+"Snabble.ageVerification.failed.title" = "Age restriction";
+
+"Snabble.ageVerification.failed.message" = "Some products in your cart have an age restriction, unfortunately you can't purchase them.";

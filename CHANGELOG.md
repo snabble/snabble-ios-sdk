@@ -1,5 +1,7 @@
 ## snabble iOS SDK Changelog
 
+* Adds support for age verification checks during checkout
+
 # v0.12.5
 
 * Adds preliminary support for paydirekt.de

@@ -29,6 +29,8 @@ public final class PaymentMethodSelectionViewController: UIViewController {
 
     public weak var navigationDelegate: PaymentNavigationDelegate?
 
+    private var contentInsetUpdated = false
+
     public init(_ process: PaymentProcess, _ paymentMethods: [PaymentMethod], _ analyticsDelegate: AnalyticsDelegate) {
         self.process = process
         self.signedCheckoutInfo = process.signedCheckoutInfo
@@ -58,8 +60,8 @@ public final class PaymentMethodSelectionViewController: UIViewController {
 
         if !SnabbleUI.implicitNavigation && self.navigationDelegate == nil {
             let msg = "navigationDelegate may not be nil when using explicit navigation"
-            assert(self.navigationDelegate != nil)
-            NSLog("ERROR: \(msg)")
+            assert(self.navigationDelegate != nil, msg)
+            Log.error(msg)
         }
     }
 
@@ -88,7 +90,14 @@ public final class PaymentMethodSelectionViewController: UIViewController {
     override public func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
 
+        self.contentInsetUpdated = true
         self.process.track(.viewPaymentMethodSelection)
+    }
+
+    override public func viewDidDisappear(_ animated: Bool) {
+        super.viewDidDisappear(animated)
+
+        self.contentInsetUpdated = false
     }
 
     @objc private func shoppingCartChanged(_ notification: Notification) {
@@ -115,6 +124,10 @@ public final class PaymentMethodSelectionViewController: UIViewController {
     }
 
     private func updateContentInset() {
+        guard !self.contentInsetUpdated else {
+            return
+        }
+
         let numRows = self.paymentMethods.count
         var contentInsetTop = self.collectionView.bounds.size.height
 

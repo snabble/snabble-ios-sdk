@@ -312,3 +312,18 @@
         en = Delete method
     [Snabble.paydirekt.gotoWebsite]
         en = Go to paydirekt.de
+
+    [Snabble.ageVerification.title]
+        en = Age verification
+    [Snabble.ageVerification.explanation]
+        en = To purchase certain products like alcoholic beverages, verifying your age is required. Enter the 7-digit Number from the back side of your ID card.
+    [Snabble.ageVerification.placeholder]
+        en = 7 Digits
+    [Snabble.ageVerification.pending.title]
+        en = Age verification required
+    [Snabble.ageVerification.pending.message]
+        en = Some products in your cart have an age restriction. Please verify your age before continuing.
+    [Snabble.ageVerification.failed.title]
+        en = Age restriction
+    [Snabble.ageVerification.failed.message]
+        en = Some products in your cart have an age restriction, unfortunately you can't purchase them.

@@ -149,7 +149,7 @@ extension Notification.Name {
     public static let snabbleOriginCandidateReceived = Notification.Name("snabbleOriginCandidateReceived")
 }
 
-class OriginPoller {
+final class OriginPoller {
     static let shared = OriginPoller()
 
     private var project: Project?

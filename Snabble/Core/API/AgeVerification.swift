@@ -11,14 +11,14 @@ enum AgeVerification {
 }
 
 extension AgeVerification {
-    static var formatter: DateFormatter {
+    static let formatter: DateFormatter = {
         let fmt = DateFormatter()
         fmt.calendar = Calendar(identifier: .gregorian)
         fmt.dateFormat = "yyMMdd"
         fmt.timeZone = TimeZone(identifier: "UTC")
 
         return fmt
-    }
+    }()
 
     static func setUsersBirthday(_ birthdate: String?) {
         guard let birthdate = birthdate else {
