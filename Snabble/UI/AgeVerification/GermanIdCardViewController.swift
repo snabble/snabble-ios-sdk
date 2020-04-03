@@ -94,8 +94,8 @@ public final class GermanIdCardViewController: UIViewController {
 
         let project = SnabbleUI.project
         let birthdate = Birthdate(dayOfBirth: formatter.string(from: birthday))
-        #warning("remove DIY url")
-        project.request(.patch, "/apps/users/\(appUserId)", body: birthdate) { request in
+        let url = SnabbleAPI.metadata.links.appUser.href.replacingOccurrences(of: "{appUserID}", with: appUserId)
+        project.request(.patch, url, body: birthdate) { request in
             guard let request = request else {
                 Log.error("no request for user's age")
                 return
@@ -108,7 +108,9 @@ public final class GermanIdCardViewController: UIViewController {
                     self.goBack()
                 case .failure(let error):
                     print("\(error)")
-                    let alert = UIAlertController(title: "Fehler beim Speichern", message: "Geburtsdatum konnte nicht gespeichert werden.", preferredStyle: .alert)
+                    let alert = UIAlertController(title: "Fehler beim Speichern",
+                                                  message: "Geburtsdatum konnte nicht gespeichert werden.",
+                                                  preferredStyle: .alert)
                     alert.addAction(UIAlertAction(title: "OK", style: .default, handler: nil))
 
                     self.present(alert, animated: true)
