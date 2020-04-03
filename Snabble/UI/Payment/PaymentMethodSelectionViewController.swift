@@ -94,6 +94,12 @@ public final class PaymentMethodSelectionViewController: UIViewController {
         self.process.track(.viewPaymentMethodSelection)
     }
 
+    override public func viewDidDisappear(_ animated: Bool) {
+        super.viewDidDisappear(animated)
+
+        self.contentInsetUpdated = false
+    }
+
     @objc private func shoppingCartChanged(_ notification: Notification) {
         guard SnabbleUI.implicitNavigation else {
             return
