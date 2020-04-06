@@ -1,5 +1,7 @@
 ## snabble iOS SDK Changelog
 
+# v0.12.6
+
 * Adds support for age verification checks during checkout
 
 # v0.12.5

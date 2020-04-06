@@ -4,23 +4,24 @@
 #
 
 Pod::Spec.new do |s|
-  s.name             = 'Snabble'
-  s.version          = '0.12.6'
-  s.summary          = 'The snabble iOS SDK'
+  s.name = 'Snabble'
+  s.version = '0.12.6'
+  s.summary = 'The snabble iOS SDK'
 
-  s.description      = <<-DESC
+  s.description = <<-DESC
   snabble - the self-scanning and checkout platform
   The SDK provides scanning, checkout and payment services and UI components based on the snabble SaaS platform.
   DESC
 
-  s.homepage         = 'https://snabble.io/'
-  s.license          = { :type => 'MIT', :file => 'LICENSE' }
-  s.author           = { 'snabble GmbH' => 'info@snabble.io' }
-  s.source           = { :git => 'https://github.com/snabble/iOS-SDK.git', :tag => "#{s.version}" }
+  s.homepage = 'https://snabble.io/'
+  s.license = { :type => 'MIT', :file => 'LICENSE' }
+  s.author = { 'snabble GmbH' => 'info@snabble.io' }
+  s.source = { :git => 'https://github.com/snabble/iOS-SDK.git', :tag => "#{s.version}" }
   s.social_media_url = 'https://twitter.com/snabble_io'
 
+  s.platform = :ios
   s.ios.deployment_target = '10.3'
-  s.swift_versions = ['5.0']
+  s.swift_versions = [ '5.0' ]
 
   s.subspec 'Core' do |core|
     core.source_files = 'Snabble/Core/**/*.swift'
