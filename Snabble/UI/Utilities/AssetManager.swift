@@ -23,18 +23,23 @@ public enum ImageAsset: String {
 }
 
 extension SnabbleUI {
-    public static func initializeAssets(for projects: [Project]) {
-        AssetManager.instance.initialize(projects)
+    // download manifests for all projects, calls `completion` when all downloads are done
+    public static func initializeAssets(for projects: [Project], completion: @escaping () -> Void) {
+        AssetManager.instance.initialize(projects, completion)
     }
 
     public static func initializeAssets(for projectId: String, _ manifestUrl: String, downloadFiles: Bool) {
-        AssetManager.instance.initialize(projectId, manifestUrl, downloadFiles)
+        AssetManager.instance.initialize(projectId, manifestUrl, downloadFiles, completion: { })
     }
 
     public static func getAsset(_ asset: ImageAsset, bundlePath: String? = nil, projectId: String? = nil, completion: @escaping (UIImage?) -> Void) {
         AssetManager.instance.getAsset(asset, bundlePath, projectId, completion)
     }
 
+    // use this only for debugging
+    public static func clearAssets() {
+        AssetManager.instance.clearAssets()
+    }
 }
 
 struct Manifest: Codable {
@@ -94,7 +99,7 @@ extension Manifest.File {
             return nil
         }
 
-        let name = "\(self.name)-\(projectId)-\(variant.sha1)"
+        let name = "\(self.name)-\(variant.sha1)"
         return name
     }
 
@@ -104,7 +109,8 @@ extension Manifest.File {
             return nil
         }
 
-        return AssetManager.cacheDirectory.appendingPathComponent(localName)
+        let cacheUrl = AssetManager.instance.cacheDirectory(projectId)
+        return cacheUrl.appendingPathComponent(localName)
     }
 
     // where we store information about this file in UserDefaults
@@ -174,7 +180,8 @@ final class AssetManager {
 
         let settings = UserDefaults.standard
         if let localFilename = settings.string(forKey: file.defaultsKey(projectId)) {
-            let fileUrl = AssetManager.cacheDirectory.appendingPathComponent(localFilename)
+            let cacheUrl = self.cacheDirectory(projectId)
+            let fileUrl = cacheUrl.appendingPathComponent(localFilename)
             if let data = try? Data(contentsOf: fileUrl) {
                 return UIImage(data: data, scale: self.scale)
             }
@@ -200,15 +207,23 @@ final class AssetManager {
         return file
     }
 
-    func initialize(_ projects: [Project]) {
+    func initialize(_ projects: [Project], _ completion: @escaping () -> Void) {
+        let group = DispatchGroup()
         for project in projects {
             if let manifestUrl = project.links.assetsManifest?.href {
-                self.initialize(project.id, manifestUrl, false)
+                group.enter()
+                self.initialize(project.id, manifestUrl, false) {
+                    group.leave()
+                }
             }
+        }
+
+        group.notify(queue: DispatchQueue.main) {
+            completion()
         }
     }
 
-    func initialize(_ projectId: String, _ manifestUrl: String, _ downloadFiles: Bool) {
+    func initialize(_ projectId: String, _ manifestUrl: String, _ downloadFiles: Bool, completion: @escaping () -> Void) {
         guard
             let manifestUrl = SnabbleAPI.urlFor(manifestUrl),
             var components = URLComponents(url: manifestUrl, resolvingAgainstBaseURL: false)
@@ -236,6 +251,8 @@ final class AssetManager {
         let task = session.dataTask(with: request) { data, response, error in
             let elapsed = Date.timeIntervalSinceReferenceDate - start
             Log.info("get \(url) took \(elapsed)s")
+
+            defer { completion() }
 
             if let error = error {
                 Log.error("Error downloading asset manifest: \(error)")
@@ -290,14 +307,15 @@ final class AssetManager {
             return
         }
 
-        let fullUrl = AssetManager.cacheDirectory.appendingPathComponent(localName)
+        let cacheUrl = AssetManager.instance.cacheDirectory(projectId)
+        let fullUrl = cacheUrl.appendingPathComponent(localName)
 
         let fileManager = FileManager.default
         // uncomment to force download
         // try? fileManager.removeItem(at: fullUrl)
 
         if !fileManager.fileExists(atPath: fullUrl.path) {
-            let downloadDelegate = DownloadDelegate(localName, file.defaultsKey(projectId), completion)
+            let downloadDelegate = DownloadDelegate(projectId, localName, file.defaultsKey(projectId), completion)
             let session = URLSession(configuration: .default, delegate: downloadDelegate, delegateQueue: nil)
 
             if let remoteUrl = file.remoteURL(for: self.scale) {
@@ -308,35 +326,48 @@ final class AssetManager {
         }
     }
 
-    static var cacheDirectory: URL {
+    func cacheDirectory(_ projectId: String) -> URL {
         let fileManager = FileManager.default
         // swiftlint:disable:next force_try
-        let cacheDirUrl = try! fileManager.url(for: .cachesDirectory, in: .userDomainMask, appropriateFor: nil, create: true)
-        let subdir = cacheDirUrl.appendingPathComponent("assets")
-        try? fileManager.createDirectory(at: subdir, withIntermediateDirectories: true, attributes: nil)
+        var url = try! fileManager.url(for: .cachesDirectory, in: .userDomainMask, appropriateFor: nil, create: true)
+        url.appendPathComponent("assets")
+        url.appendPathComponent(projectId)
+        try? fileManager.createDirectory(at: url, withIntermediateDirectories: true, attributes: nil)
 
-        return subdir
+        return url
+    }
+
+    // remove all asset directories. use this only for debugging/during development
+    func clearAssets() {
+        let fileManager = FileManager.default
+
+        for project in SnabbleAPI.projects {
+            let url = self.cacheDirectory(project.id)
+            try? fileManager.removeItem(at: url)
+        }
     }
 }
 
 private final class DownloadDelegate: NSObject, URLSessionDownloadDelegate {
 
+    private let projectId: String
     private let localName: String
     private let key: String
     private let completion: (URL?) -> Void
     private let startDate: TimeInterval
 
-    init(_ localName: String, _ key: String, _ completion: @escaping (URL?) -> Void) {
+    init(_ projectId: String, _ localName: String, _ key: String, _ completion: @escaping (URL?) -> Void) {
+        self.projectId = projectId
         self.localName = localName
         self.key = key
         self.completion = completion
         self.startDate = Date.timeIntervalSinceReferenceDate
-        // print("start download for \(self.localName)")
+        Log.info("start download for \(self.projectId)/\(self.localName)")
     }
 
     func urlSession(_ session: URLSession, downloadTask: URLSessionDownloadTask, didFinishDownloadingTo location: URL) {
         do {
-            let cacheDirUrl = AssetManager.cacheDirectory
+            let cacheDirUrl = AssetManager.instance.cacheDirectory(self.projectId)
 
             if self.localName.contains("/") {
                 // make sure any reqired subdirectories exist
