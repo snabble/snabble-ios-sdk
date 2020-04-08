@@ -1,5 +1,9 @@
 ## snabble iOS SDK Changelog
 
+# v0.12.7
+
+* Fixes a possible crash when online payments were successful before the `viewDidAppear()` was called
+
 # v0.12.6
 
 * Adds support for age verification checks during checkout
