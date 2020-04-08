@@ -23,7 +23,7 @@ public class BaseCheckoutViewController: UIViewController {
     @IBOutlet private weak var cancelButton: UIButton!
 
     private let cart: ShoppingCart
-    private weak var delegate: PaymentDelegate!
+    private weak var delegate: PaymentDelegate?
     public weak var navigationDelegate: CheckoutNavigationDelegate?
 
     private let process: CheckoutProcess
@@ -105,20 +105,23 @@ public class BaseCheckoutViewController: UIViewController {
 
         if self.initialBrightness < 0.5 {
             UIScreen.main.brightness = 0.5
-            self.delegate.track(.brightnessIncreased)
+            self.delegate?.track(.brightnessIncreased)
         }
 
         self.setSpinnerAppearance()
 
-        _ = self.updateView(self.process)
+        self.updateQRCode(self.process)
     }
 
     override public func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
 
-        self.delegate.track(self.viewEvent)
+        self.delegate?.track(self.viewEvent)
 
-        self.startTimer()
+        let needsPolling = self.updateView(self.process)
+        if needsPolling {
+            self.startTimer()
+        }
     }
 
     override public func viewWillDisappear(_ animated: Bool) {
@@ -190,8 +193,7 @@ public class BaseCheckoutViewController: UIViewController {
             OriginPoller.shared.startPolling(SnabbleUI.project, candidateLink)
         }
 
-        let showQr = self.showQrCode(process)
-        self.updateQRCode(show: showQr)
+        self.updateQRCode(process)
 
         switch process.paymentState {
         case .successful:
@@ -205,7 +207,9 @@ public class BaseCheckoutViewController: UIViewController {
         }
     }
 
-    private func updateQRCode(show: Bool) {
+    private func updateQRCode(_ process: CheckoutProcess) {
+        let show = self.showQrCode(process)
+
         self.topWrapper.isHidden = !show
         if self.topIcon.image != nil {
             self.arrowWrapper.isHidden = !show
@@ -217,14 +221,14 @@ public class BaseCheckoutViewController: UIViewController {
     }
 
     @IBAction private func cancelButtonTapped(_ sender: UIButton) {
-        self.delegate.track(.paymentCancelled)
+        self.delegate?.track(.paymentCancelled)
 
         self.stopTimer()
 
         self.process.abort(SnabbleUI.project) { result in
             switch result {
             case .success:
-                self.delegate.track(.paymentCancelled)
+                self.delegate?.track(.paymentCancelled)
 
                 if SnabbleUI.implicitNavigation {
                     if let cartVC = self.navigationController?.viewControllers.first(where: { $0 is ShoppingCartViewController}) {
@@ -251,7 +255,7 @@ public class BaseCheckoutViewController: UIViewController {
         if success {
             self.cart.removeAll(endSession: true, keepBackup: false)
         }
-        self.delegate.paymentFinished(success, self.cart, process)
+        self.delegate?.paymentFinished(success, self.cart, process)
     }
 }
 
