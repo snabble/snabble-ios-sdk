@@ -1,5 +1,9 @@
 ## snabble iOS SDK Changelog
 
+# v0.12.8
+
+* When changing the appUserId, any cached receipt PDFs are deleted
+
 # v0.12.7
 
 * Fixes a possible crash when online payments were successful before the `viewDidAppear()` was called
