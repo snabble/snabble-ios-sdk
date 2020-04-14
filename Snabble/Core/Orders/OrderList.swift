@@ -82,6 +82,25 @@ extension OrderList {
             }
         }
     }
+
+    static func clearCache() {
+        let fileManager = FileManager.default
+        // swiftlint:disable:next force_try
+        let cacheDir = try! fileManager.url(for: .cachesDirectory, in: .userDomainMask, appropriateFor: nil, create: true)
+
+        do {
+            let files = try fileManager.contentsOfDirectory(atPath: cacheDir.path)
+            for file in files {
+                if file.hasPrefix("snabble-order-") && file.hasSuffix(".pdf") {
+                    let fullPath = cacheDir.appendingPathComponent(file)
+                    try fileManager.removeItem(atPath: fullPath.path)
+                    print("deleted \(file)")
+                }
+            }
+        } catch {
+            print(error)
+        }
+    }
 }
 
 extension Order {

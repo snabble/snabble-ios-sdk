@@ -213,6 +213,7 @@ extension SnabbleAPI {
             UserDefaults.standard.set(newValue?.userId, forKey: "Snabble.api.appUserId")
 
             self.tokenRegistry.invalidateAllTokens()
+            OrderList.clearCache()
         }
     }
 }
