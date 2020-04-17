@@ -100,6 +100,16 @@
         en = Buy %d products for %@
     [Snabble.Shoppingcart.buyProducts.now]
         en = Pay now
+    [Snabble.Shoppingcart.numberOfItems.one]
+        en = %d product
+    [Snabble.Shoppingcart.numberOfItems]
+        en = %d products
+    [Snabble.Shoppingcart.howToPay]
+        en = How would you like to pay?
+    [Snabble.Shoppingcart.notForVendor]
+        en = Not supported by this retailer
+    [Snabble.Shoppingcart.notFotThisPurchase]
+        en = Not available for this purchase
     [Snabble.Shoppingcart.emptyState.buttonTitle]
         en = Scan products
     [Snabble.Shoppingcart.emptyState.description]
@@ -185,6 +195,12 @@
         en = Add payment method
     [Snabble.Payment.payAtSCO]
         en = Card at EC terminal
+    [Snabble.Payment.payAtCashDesk]
+        en = Cash desk
+    [Snabble.Payment.payViaInvoice]
+        en = via Invoice
+    [Snabble.Payment.payUsingCustomerCard]
+        en = using Customer Card
 
     [Snabble.Checkout.verifying]
         en = Verifying

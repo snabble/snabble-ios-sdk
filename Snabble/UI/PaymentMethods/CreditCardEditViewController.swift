@@ -196,7 +196,7 @@ extension CreditCardEditViewController: WKNavigationDelegate {
 }
 
 extension CreditCardEditViewController: WKScriptMessageHandler {
-    // swiftlint:disable:next cyclomatic_complexity
+
     public func userContentController(_ userContentController: WKUserContentController, didReceive message: WKScriptMessage) {
         guard
             message.name == "callbackHandler",
@@ -242,8 +242,7 @@ extension CreditCardEditViewController: WKScriptMessageHandler {
         if responseCode == "00", let ccData = CreditCardData(cert?.data, cardHolder, cardNumber, brand, expMonth, expYear, hostedDataId, storeId) {
             let detail = PaymentMethodDetail(ccData)
             PaymentMethodDetails.save(detail)
-            self.analyticsDelegate?.track(.paymentMethodAdded(detail.rawMethod.displayName ?? ""))
-            NotificationCenter.default.post(name: .paymentMethodsChanged, object: self)
+            self.analyticsDelegate?.track(.paymentMethodAdded(detail.rawMethod.displayName))
             self.deletePreauth(SnabbleUI.project, orderId)
         } else if failCode == "5993" {
             NSLog("cancelled by user")

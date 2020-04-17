@@ -37,7 +37,7 @@ extension PaymentMethod {
         }
     }
 
-    func canStart() -> Bool {
+    public func canStart() -> Bool {
         if !self.dataRequired {
             return true
         } else {
@@ -102,39 +102,6 @@ public final class PaymentProcess {
         self.delegate = delegate
     }
 
-    /// start a payment process
-    ///
-    /// if the checkout allows multiple payment methods, offer a selection
-    /// otherwise, directly create the corresponding view controller for the selected payment method
-    ///
-    /// - Parameters:
-    ///   - completion: a closure called when the payment method has been determined.
-    ///   - result: the view controller to present for this payment process or the error
-    public func start(completion: @escaping (_ result: Result<UIViewController, SnabbleError>) -> Void ) {
-        let info = self.signedCheckoutInfo
-
-        let mergedMethods = self.mergePaymentMethodList(info.checkoutInfo.paymentMethods)
-        let paymentMethods = self.filterPaymentMethods(mergedMethods)
-
-        switch paymentMethods.count {
-        case 0:
-            completion(Result.failure(SnabbleError.noPaymentAvailable))
-        case 1:
-            let method = paymentMethods[0]
-            if method.canStart() {
-                self.start(method) { result in
-                    completion(result)
-                }
-            } else {
-                fallthrough
-            }
-        default:
-            let paymentSelection = PaymentMethodSelectionViewController(self, paymentMethods, self.delegate)
-            completion(Result.success(paymentSelection))
-        }
-    }
-
-    // swiftlint:disable:next cyclomatic_complexity
     func mergePaymentMethodList(_ methods: [PaymentMethodDescription]) -> [PaymentMethod] {
         let userData = self.getPaymentUserData(methods)
         var result = [PaymentMethod]()
@@ -205,7 +172,6 @@ public final class PaymentProcess {
         return methods
     }
 
-    // swiftlint:disable:next cyclomatic_complexity
     private func getPaymentUserData(_ methods: [PaymentMethodDescription]) -> [PaymentMethod] {
         var results = [PaymentMethod]()
 
@@ -257,46 +223,45 @@ public final class PaymentProcess {
         return results
     }
 
-    func start(_ method: PaymentMethod, completion: @escaping (RawResult<CheckoutProcess, SnabbleError>) -> Void ) {
-        self.signedCheckoutInfo.createCheckoutProcess(SnabbleUI.project, paymentMethod: method, timeout: 20) { result in
-            if case let Result.success(process) = result.result {
-                let checker = CheckoutChecks(process)
-                let stopProcess = checker.handleChecks()
-                if stopProcess {
-                    return
-                }
-            }
-            completion(result)
+    public func makePaymentMethod(_ rawMethod: RawPaymentMethod, _ detail: PaymentMethodDetail?) -> PaymentMethod? {
+        if let detail = detail, detail.rawMethod != rawMethod {
+            Log.error("payment method mismatch: \(detail.rawMethod) != \(rawMethod)")
+            assert(detail.rawMethod == rawMethod)
+            return nil
         }
-    }
 
-    func start(_ method: PaymentMethod, completion: @escaping (_ result: Result<UIViewController, SnabbleError>) -> Void ) {
-        UIApplication.shared.beginIgnoringInteractionEvents()
-        self.startBlurOverlayTimer()
-
-        self.signedCheckoutInfo.createCheckoutProcess(SnabbleUI.project, paymentMethod: method, timeout: 20) { result in
-            self.hudTimer?.invalidate()
-            self.hudTimer = nil
-            UIApplication.shared.endIgnoringInteractionEvents()
-            self.hideBlurOverlay()
-            switch result.result {
-            case .success(let process):
-                let checker = CheckoutChecks(process)
-
-                let stopProcess = checker.handleChecks()
-                if stopProcess {
-                    return
-                }
-
-                if let processor = method.processor(process, result.rawJson, self.cart, self.delegate) {
-                    completion(Result.success(processor))
-                } else {
-                    self.delegate.showWarningMessage("Snabble.Payment.errorStarting".localized())
-                }
-            case .failure(let error):
-                self.startFailed(method, error, completion)
+        switch rawMethod {
+        case .qrCodePOS: return .qrCodePOS
+        case .qrCodeOffline: return .qrCodeOffline
+        case .gatekeeperTerminal: return .gatekeeperTerminal
+        case .customerCardPOS: return .customerCardPOS
+        case .deDirectDebit:
+            if let data = detail?.data {
+                return .deDirectDebit(data)
+            }
+        case .creditCardVisa:
+            if let data = detail?.data {
+                return .visa(data)
+            }
+        case .creditCardMastercard:
+            if let data = detail?.data {
+                return .mastercard(data)
+            }
+        case .creditCardAmericanExpress:
+            if let data = detail?.data {
+                return .americanExpress(data)
+            }
+        case .externalBilling:
+            if let data = detail?.data {
+                return .externalBilling(data)
+            }
+        case .paydirektOneKlick:
+            if let data = detail?.data {
+                return .paydirektOneKlick(data)
             }
         }
+
+        return nil
     }
 
     private func startFailed(_ method: PaymentMethod, _ error: SnabbleError?, _ completion: @escaping (_ result: Result<UIViewController, SnabbleError>) -> Void ) {
@@ -349,7 +314,71 @@ public final class PaymentProcess {
         self.blurView?.removeFromSuperview()
         self.blurView = nil
     }
+}
 
+// MARK: - start payment
+extension PaymentProcess {
+
+    public func start(_ method: PaymentMethod, completion: @escaping (RawResult<CheckoutProcess, SnabbleError>) -> Void ) {
+        self.signedCheckoutInfo.createCheckoutProcess(SnabbleUI.project, paymentMethod: method, timeout: 20) { result in
+            if case let Result.success(process) = result.result {
+                let checker = CheckoutChecks(process)
+                let stopProcess = checker.handleChecks()
+                if stopProcess {
+                    return
+                }
+            }
+            completion(result)
+        }
+    }
+
+    /// start a payment process with the given payment method
+    ///
+    /// - Parameters:
+    ///   - method: the payment method to use
+    ///   - detail: the details for that payment method (e.g., the encrypted IBAN for SEPA)
+    ///   - completion: a closure called when the payment method has been determined.
+    ///   - result: the view controller to present for this payment process or the error
+    public func start(_ method: RawPaymentMethod, _ detail: PaymentMethodDetail?, completion: @escaping (_ result: Result<UIViewController, SnabbleError>) -> Void ) {
+
+        guard
+            let method = self.makePaymentMethod(method, detail),
+            method.canStart()
+        else {
+            return completion(Result.failure(SnabbleError.noPaymentAvailable))
+        }
+
+        self.start(method, completion)
+    }
+
+    func start(_ method: PaymentMethod, _ completion: @escaping (_ result: Result<UIViewController, SnabbleError>) -> Void ) {
+        UIApplication.shared.beginIgnoringInteractionEvents()
+        self.startBlurOverlayTimer()
+
+        self.signedCheckoutInfo.createCheckoutProcess(SnabbleUI.project, paymentMethod: method, timeout: 20) { result in
+            self.hudTimer?.invalidate()
+            self.hudTimer = nil
+            UIApplication.shared.endIgnoringInteractionEvents()
+            self.hideBlurOverlay()
+            switch result.result {
+            case .success(let process):
+                let checker = CheckoutChecks(process)
+
+                let stopProcess = checker.handleChecks()
+                if stopProcess {
+                    return
+                }
+
+                if let processor = method.processor(process, result.rawJson, self.cart, self.delegate) {
+                    completion(Result.success(processor))
+                } else {
+                    self.delegate.showWarningMessage("Snabble.Payment.errorStarting".localized())
+                }
+            case .failure(let error):
+                self.startFailed(method, error, completion)
+            }
+        }
+    }
 }
 
 // stuff that's only used by the RN wrapper

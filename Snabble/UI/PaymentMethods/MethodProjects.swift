@@ -23,14 +23,8 @@ public struct MethodProjects {
             }
         }
 
-        if SnabbleAPI.debugMode {
-            RawPaymentMethod.allCases.filter { $0.editable && methodMap[$0] == nil }.forEach {
-                methodMap[$0] = ["TEST"]
-            }
-        }
-
         return methodMap
             .map { MethodProjects(method: $0, projectNames: $1) }
-            .sorted { $0.method.order > $1.method.order }
+            .sorted { $0.method.displayName < $1.method.displayName }
     }
 }

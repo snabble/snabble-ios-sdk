@@ -498,7 +498,6 @@ extension ScannerViewController {
         self.present(alert, animated: true)
     }
 
-    // swiftlint:disable:next cyclomatic_complexity
     private func productForCode(_ code: String, _ template: String?, completion: @escaping (ScannedProduct?) -> Void ) {
         // if we were given a template from the barcode entry, use that to lookup the product directly
         if let template = template {

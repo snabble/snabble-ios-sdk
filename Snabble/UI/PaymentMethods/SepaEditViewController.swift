@@ -183,8 +183,7 @@ public final class SepaEditViewController: UIViewController {
             if let cert = SnabbleAPI.certificates.first, let sepaData = SepaData(cert.data, name, iban) {
                 let detail = PaymentMethodDetail(sepaData)
                 PaymentMethodDetails.save(detail)
-                self.analyticsDelegate?.track(.paymentMethodAdded(detail.rawMethod.displayName ?? ""))
-                NotificationCenter.default.post(name: .paymentMethodsChanged, object: self)
+                self.analyticsDelegate?.track(.paymentMethodAdded(detail.rawMethod.displayName))
 
                 if let promote = self.candidate?.links?.promote.href {
                     self.promoteCandidate(promote, sepaData.encryptedPaymentData)

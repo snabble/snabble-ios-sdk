@@ -8,19 +8,11 @@ import UIKit
 
 extension PaymentMethodDetail {
     var icon: UIImage? {
-        switch methodData.self {
-        case .sepa:
-            return UIImage.fromBundle("SnabbleSDK/payment-small-sepa")
-        case .creditcard(let creditcardData):
-            switch creditcardData.brand {
-            case .visa: return UIImage.fromBundle("SnabbleSDK/payment-small-visa")
-            case .mastercard: return UIImage.fromBundle("SnabbleSDK/payment-small-mastercard")
-            case .amex: return UIImage.fromBundle("SnabbleSDK/payment-small-amex")
-            }
-        case .paydirektAuthorization:
-            return UIImage.fromBundle("SnabbleSDK/payment-small-paydirekt")
+        switch self.methodData {
         case .tegutEmployeeCard:
-            return UIImage.fromBundle("SnabbleSDK/payment-small-tegut")
+            return UIImage.fromBundle("SnabbleSDK/payment/payment-tegut")
+        default:
+            return self.rawMethod.icon
         }
     }
 }

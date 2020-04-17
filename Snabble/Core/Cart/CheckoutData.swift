@@ -57,6 +57,18 @@ public enum RawPaymentMethod: String, CaseIterable, Decodable {
     case customerCardPOS        // payment via customer card invoice
     case paydirektOneKlick
 
+    static let orderedMethods: [RawPaymentMethod] = [
+        // customer-specific methods
+        .customerCardPOS, .externalBilling,
+
+        // online methods, alphabetically
+        .creditCardAmericanExpress, .creditCardMastercard, .paydirektOneKlick, .deDirectDebit, .creditCardVisa,
+
+        // SCO / cashier
+        .gatekeeperTerminal,
+        .qrCodePOS, .qrCodeOffline
+    ]
+
     /// true if this method reqires additional data, like an IBAN or a credit card number
     var dataRequired: Bool {
         switch self {

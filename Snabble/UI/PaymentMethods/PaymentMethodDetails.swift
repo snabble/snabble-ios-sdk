@@ -82,8 +82,10 @@ struct TegutEmployeeData: Codable, EncryptedPaymentData {
 
     let originType = AcceptedOriginType.tegutEmployeeID
 
+    let cardNumber: String
+
     enum CodingKeys: String, CodingKey {
-        case encryptedPaymentData, serial, displayName, originType
+        case encryptedPaymentData, serial, displayName, originType, cardNumber
     }
 
     private struct CardNumberOrigin: PaymentRequestOrigin {
@@ -104,6 +106,7 @@ struct TegutEmployeeData: Codable, EncryptedPaymentData {
         self.serial = serial
 
         self.displayName = name
+        self.cardNumber = number
     }
 
     init(from decoder: Decoder) throws {
@@ -111,6 +114,7 @@ struct TegutEmployeeData: Codable, EncryptedPaymentData {
         self.encryptedPaymentData = try container.decode(String.self, forKey: .encryptedPaymentData)
         self.serial = try container.decode(String.self, forKey: .serial)
         self.displayName = try container.decode(String.self, forKey: .displayName)
+        self.cardNumber = (try? container.decodeIfPresent(String.self, forKey: .cardNumber)) ?? ""
     }
 }
 

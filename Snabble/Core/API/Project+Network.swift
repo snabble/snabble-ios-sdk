@@ -69,8 +69,8 @@ enum HTTPRequestMethod: String {
 
 /// for those API calls where we need both the decoded result as well as the raw json data as a dictionary
 public struct RawResult<T, E: Swift.Error> {
-    let result: Result<T, E>
-    let rawJson: [String: Any]?
+    public let result: Result<T, E>
+    public let rawJson: [String: Any]?
 
     public init(_ value: T, rawJson: [String: Any]? = nil) {
         self.result = Result.success(value)
