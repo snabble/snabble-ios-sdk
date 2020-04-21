@@ -122,7 +122,7 @@ public final class PaydirektEditViewController: UIViewController {
             return
         }
 
-        let project = SnabbleUI.project
+        let project = SnabbleAPI.projects[0]
         project.request(.post, authUrl, body: authData) { request in
             guard let request = request else {
                 return
