@@ -232,6 +232,7 @@ public struct CheckoutInfo: Decodable {
         public let scannedCode: String?
         public let type: LineItemType
         public let refersTo: String?
+        public let fulfillmentType: String?
     }
 
     public struct Price: Decodable {
@@ -293,6 +294,30 @@ public struct CheckoutCheck: Decodable {
     }
 }
 
+public enum FulfillmentState: String, Decodable {
+    case unknown
+
+    case open, allocating, allocated, processing, processed, aborted, allocationFailed, allocationTimedOut, failed
+}
+
+extension FulfillmentState: UnknownCaseRepresentable {
+    public static let unknownCase = FulfillmentState.unknown
+}
+
+public struct Fulfillment: Decodable {
+    public let id: String
+    public let refersTo: [String]
+    public let type: String
+    public let state: FulfillmentState
+    public let errors: [FulfillmentError]?
+
+    public struct FulfillmentError: Decodable {
+        public let type: String
+        public let refersTo: String?
+        public let message: String
+    }
+}
+
 public struct AgeCheckData: Encodable {
     public let requiredAge: Int
     public let state: CheckState
@@ -313,7 +338,13 @@ public struct CheckoutProcess: Decodable {
     public let paymentState: PaymentState
     public let orderID: String?
     public let paymentResult: [String: Any]?
+    public let pricing: Pricing
     public let checks: [CheckoutCheck]
+    public let fulfillments: [Fulfillment]
+
+    public struct Pricing: Decodable {
+        public let lineItems: [CheckoutInfo.LineItem]
+    }
 
     public struct ProcessLinks: Decodable {
         public let `self`: Link
@@ -330,7 +361,7 @@ public struct CheckoutProcess: Decodable {
         case links, supervisorApproval, paymentApproval, aborted
         case checkoutInfo, paymentMethod, modified, paymentInformation
         case paymentState, orderID, paymentResult
-        case checks
+        case checks, fulfillments, pricing
     }
 
     public init(from decoder: Decoder) throws {
@@ -347,10 +378,15 @@ public struct CheckoutProcess: Decodable {
         self.paymentState = try container.decode(PaymentState.self, forKey: .paymentState)
         self.orderID = try container.decodeIfPresent(String.self, forKey: .orderID)
         self.paymentResult = try container.decodeIfPresent([String: Any].self, forKey: .paymentResult)
+        self.pricing = try container.decode(Pricing.self, forKey: .pricing)
 
         let rawChecks = try container.decodeIfPresent([FailableDecodable<CheckoutCheck>].self, forKey: .checks)
         let checks = rawChecks?.compactMap { $0.value } ?? []
         self.checks = checks.filter { $0.state != .unknown }
+
+        let rawFulfillments = try container.decodeIfPresent([FailableDecodable<Fulfillment>].self, forKey: .fulfillments)
+        let fulfillments = rawFulfillments?.compactMap { $0.value } ?? []
+        self.fulfillments = fulfillments.filter { $0.state != .unknown }
     }
 }
 
