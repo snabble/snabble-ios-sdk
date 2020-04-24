@@ -170,7 +170,7 @@ public class BaseCheckoutViewController: UIViewController {
         case .success(let process):
             continuePolling = self.updateView(process)
         case .failure(let error):
-            print(error)
+            Log.error(String(describing: error))
         }
 
         if continuePolling {
@@ -193,6 +193,10 @@ public class BaseCheckoutViewController: UIViewController {
             OriginPoller.shared.startPolling(SnabbleUI.project, candidateLink)
         }
 
+        if !process.fulfillments.isEmpty {
+            FulfillmentPoller.shared.startPolling(SnabbleUI.project, process)
+        }
+
         self.updateQRCode(process)
 
         switch process.paymentState {
@@ -202,7 +206,14 @@ public class BaseCheckoutViewController: UIViewController {
         case .failed:
             self.paymentFinished(false, process)
             return false
-        case .transferred, .pending, .processing, .unknown: ()
+        case .pending:
+            let states = Set(process.fulfillments.map { $0.state })
+            if !FulfillmentState.failureStates.isDisjoint(with: states) {
+                self.paymentFinished(false, process)
+                return false
+            }
+            return true
+        case .transferred, .processing, .unknown: ()
             return true
         }
     }

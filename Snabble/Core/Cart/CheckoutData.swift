@@ -298,6 +298,9 @@ public enum FulfillmentState: String, Decodable {
     case unknown
 
     case open, allocating, allocated, processing, processed, aborted, allocationFailed, allocationTimedOut, failed
+
+    static let endStates: Set<FulfillmentState> = [ .processed, .aborted, .allocationFailed, .allocationTimedOut, .failed ]
+    static let failureStates: Set<FulfillmentState> = [ .aborted, .allocationFailed, .allocationTimedOut, .failed ]
 }
 
 extension FulfillmentState: UnknownCaseRepresentable {
