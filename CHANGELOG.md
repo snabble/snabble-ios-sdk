@@ -1,5 +1,9 @@
 ## snabble iOS SDK Changelog
 
+# v0.12.9
+
+* Adds support for the `fulfillments` property of the `CheckoutProcess`
+
 # v0.12.8
 
 * When changing the appUserId, any cached receipt PDFs are deleted
