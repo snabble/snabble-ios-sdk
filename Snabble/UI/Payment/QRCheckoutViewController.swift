@@ -17,15 +17,17 @@ public final class QRCheckoutViewController: UIViewController {
     @IBOutlet private weak var cancelButton: UIButton!
 
     private var initialBrightness: CGFloat = 0
-    private var process: CheckoutProcess
+    private let process: CheckoutProcess
+    private let rawJson: [String: Any]?
     private var poller: PaymentProcessPoller?
     private weak var cart: ShoppingCart!
     private weak var delegate: PaymentDelegate!
     public weak var navigationDelegate: CheckoutNavigationDelegate?
 
-    public init(_ process: CheckoutProcess, _ cart: ShoppingCart, _ delegate: PaymentDelegate) {
+    public init(_ process: CheckoutProcess, _ rawJson: [String: Any]?, _ cart: ShoppingCart, _ delegate: PaymentDelegate) {
         self.cart = cart
         self.process = process
+        self.rawJson = rawJson
         self.delegate = delegate
 
         super.init(nibName: nil, bundle: SnabbleBundle.main)
@@ -93,10 +95,10 @@ public final class QRCheckoutViewController: UIViewController {
     }
 
     private func startPoller() {
-        let poller = PaymentProcessPoller(self.process, SnabbleUI.project)
+        let poller = PaymentProcessPoller(self.process, self.rawJson, SnabbleUI.project)
         poller.waitFor([.paymentSuccess]) { events in
             if let success = events[.paymentSuccess] {
-                self.paymentFinished(success, poller.updatedProcess)
+                self.paymentFinished(success, poller.updatedProcess, poller.rawJson)
             }
         }
         self.poller = poller
@@ -132,13 +134,13 @@ public final class QRCheckoutViewController: UIViewController {
         }
     }
 
-    private func paymentFinished(_ success: Bool, _ process: CheckoutProcess) {
+    private func paymentFinished(_ success: Bool, _ process: CheckoutProcess, _ rawJson: [String: Any]?) {
         self.poller = nil
 
         if success {
             self.cart.removeAll(endSession: true, keepBackup: false)
         }
-        self.delegate.paymentFinished(success, self.cart, process)
+        self.delegate.paymentFinished(success, self.cart, process, rawJson)
     }
 
 }

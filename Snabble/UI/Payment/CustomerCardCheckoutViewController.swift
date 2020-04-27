@@ -23,9 +23,11 @@ public final class CustomerCardCheckoutViewController: UIViewController {
     private weak var cart: ShoppingCart!
     private weak var delegate: PaymentDelegate!
     private var process: CheckoutProcess?
+    private var rawJson: [String: Any]?
 
-    public init(_ process: CheckoutProcess?, _ cart: ShoppingCart, _ delegate: PaymentDelegate) {
+    public init(_ process: CheckoutProcess?, _ rawJson: [String: Any]?, _ cart: ShoppingCart, _ delegate: PaymentDelegate) {
         self.process = process
+        self.rawJson = rawJson
         self.cart = cart
         self.delegate = delegate
 
@@ -92,7 +94,7 @@ public final class CustomerCardCheckoutViewController: UIViewController {
     @IBAction private func paidButtonTapped(_ sender: UIButton) {
         self.cart.removeAll(endSession: true)
 
-        self.delegate.paymentFinished(true, self.cart, self.process)
+        self.delegate.paymentFinished(true, self.cart, self.process, self.rawJson)
     }
 
 }

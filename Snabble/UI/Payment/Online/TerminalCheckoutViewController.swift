@@ -7,8 +7,8 @@
 import UIKit
 
 public final class TerminalCheckoutViewController: BaseCheckoutViewController {
-    override public init(_ process: CheckoutProcess, _ cart: ShoppingCart, _ delegate: PaymentDelegate) {
-        super.init(process, cart, delegate)
+    override public init(_ process: CheckoutProcess, _ rawJson: [String: Any]?, _ cart: ShoppingCart, _ delegate: PaymentDelegate) {
+        super.init(process, rawJson, cart, delegate)
     }
 
     required init?(coder: NSCoder) {

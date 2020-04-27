@@ -162,8 +162,8 @@ public final class PaymentMethodSelectionViewController: UIViewController {
                 }
             }
         } else {
-            self.process.start(method) { (result: Result<CheckoutProcess, SnabbleError>) in
-                switch result {
+            self.process.start(method) { (result: RawResult<CheckoutProcess, SnabbleError>) in
+                switch result.result {
                 case .success(let process):
                     self.navigationDelegate?.processStarted(method, process)
                 case .failure(let error):

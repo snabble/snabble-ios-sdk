@@ -31,16 +31,17 @@ extension ShoppingCart {
                 return completion(Result.failure(SnabbleError.noRequest))
             }
 
-            let task = project.perform(request, returnRaw: true) { (_ result: Result<SignedCheckoutInfo, SnabbleError>, json, _) in
+            let task = project.performRaw(request) { (_ result: RawResult<SignedCheckoutInfo, SnabbleError>) in
                 self.checkoutInfoTask = nil
-                switch result {
+                switch result.result {
                 case .success(var value):
-                    value.rawJson = json
+                    value.rawJson = result.rawJson
                     completion(Result.success(value))
                 case .failure:
-                    completion(result)
+                    completion(result.result)
                 }
             }
+
             self.checkoutInfoTask = task
         }
     }
@@ -58,7 +59,7 @@ extension SignedCheckoutInfo {
     ///   - completion: is called on the main thread with the result of the API call,
     ///   - result: the newly created `CheckoutProcess` or the error
     public func createCheckoutProcess(_ project: Project, paymentMethod: PaymentMethod, timeout: TimeInterval = 0, finalizedAt: Date? = nil,
-                                      completion: @escaping (_ result: Result<CheckoutProcess, SnabbleError>) -> Void ) {
+                                      completion: @escaping (_ result: RawResult<CheckoutProcess, SnabbleError>) -> Void ) {
         do {
             // since we need to pass the originally-received SignedCheckoutInfo as-is,
             // we can't use the struct but have to build this manually:
@@ -91,10 +92,10 @@ extension SignedCheckoutInfo {
             let data = try JSONSerialization.data(withJSONObject: dict, options: [])
             project.request(.post, self.links.checkoutProcess.href, body: data, timeout: timeout) { request in
                 guard let request = request else {
-                    return completion(Result.failure(SnabbleError.noRequest))
+                    return completion(RawResult.failure(SnabbleError.noRequest))
                 }
 
-                project.perform(request, completion)
+                project.performRaw(request, completion)
             }
         } catch {
             Log.error("error serializing request body: \(error)")
@@ -108,7 +109,7 @@ extension CheckoutProcess {
     /// get the current state of this checkout process
     ///
     /// - Parameters:
-    ///   - the project for this request
+    ///   - project: the project for this request
     ///   - timeout: the timeout for the HTTP request (0 for the system default timeout)
     ///   - taskCreated: is called with the `URLSessionTask` created for the request
     ///   - task: the `URLSessionTask`
@@ -117,14 +118,18 @@ extension CheckoutProcess {
     public func update(_ project: Project,
                        timeout: TimeInterval = 0,
                        taskCreated: @escaping (_ task: URLSessionDataTask) -> Void,
-                       completion: @escaping (_ result: Result<CheckoutProcess, SnabbleError>) -> Void ) {
+                       completion: @escaping (_ result: RawResult<CheckoutProcess, SnabbleError>) -> Void ) {
 
         project.request(.get, self.links.`self`.href, timeout: timeout) { request in
             guard let request = request else {
-                return completion(Result.failure(SnabbleError.noRequest))
+                let rawResult = RawResult<CheckoutProcess, SnabbleError>.failure(SnabbleError.noRequest)
+                return completion(rawResult)
             }
 
-            let task = project.perform(request, completion)
+            let task = project.performRaw(request) { (_ result: RawResult<CheckoutProcess, SnabbleError>) in
+                completion(result)
+            }
+
             taskCreated(task)
         }
     }

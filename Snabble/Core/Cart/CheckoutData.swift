@@ -297,10 +297,17 @@ public struct CheckoutCheck: Decodable {
 public enum FulfillmentState: String, Decodable {
     case unknown
 
-    case open, allocating, allocated, processing, processed, aborted, allocationFailed, allocationTimedOut, failed
+    // working
+    case open, allocating, allocated, processing
+    // finished successfully
+    case processed
+    // finished with error
+    case aborted, allocationFailed, allocationTimedOut, failed
+
+    static let workingStates: Set<FulfillmentState> = [ .open, .allocating, .allocated, .processing ]
+    static let failureStates: Set<FulfillmentState> = [ .aborted, .allocationFailed, .allocationTimedOut, .failed ]
 
     static let endStates: Set<FulfillmentState> = [ .processed, .aborted, .allocationFailed, .allocationTimedOut, .failed ]
-    static let failureStates: Set<FulfillmentState> = [ .aborted, .allocationFailed, .allocationTimedOut, .failed ]
 }
 
 extension FulfillmentState: UnknownCaseRepresentable {
@@ -390,6 +397,11 @@ public struct CheckoutProcess: Decodable {
         let rawFulfillments = try container.decodeIfPresent([FailableDecodable<Fulfillment>].self, forKey: .fulfillments)
         let fulfillments = rawFulfillments?.compactMap { $0.value } ?? []
         self.fulfillments = fulfillments.filter { $0.state != .unknown }
+    }
+
+    func fulfillmentsDone() -> Bool {
+        let states = self.fulfillments.map { $0.state }
+        return Set(states).isDisjoint(with: FulfillmentState.workingStates)
     }
 }
 

@@ -23,17 +23,19 @@ public class BaseCheckoutViewController: UIViewController {
     @IBOutlet private weak var cancelButton: UIButton!
 
     private let cart: ShoppingCart
-    private weak var delegate: PaymentDelegate?
+    private weak var delegate: PaymentDelegate!
     public weak var navigationDelegate: CheckoutNavigationDelegate?
 
     private let process: CheckoutProcess
+    private let rawJson: [String: Any]?
     private var initialBrightness: CGFloat = 0
 
     private var sessionTask: URLSessionTask?
     private var processTimer: Timer?
 
-    init(_ process: CheckoutProcess, _ cart: ShoppingCart, _ delegate: PaymentDelegate) {
+    init(_ process: CheckoutProcess, _ rawJson: [String: Any]?, _ cart: ShoppingCart, _ delegate: PaymentDelegate) {
         self.process = process
+        self.rawJson = rawJson
         self.cart = cart
         self.delegate = delegate
 
@@ -118,7 +120,7 @@ public class BaseCheckoutViewController: UIViewController {
 
         self.delegate?.track(self.viewEvent)
 
-        let needsPolling = self.updateView(self.process)
+        let needsPolling = self.updateView(self.process, self.rawJson)
         if needsPolling {
             self.startTimer()
         }
@@ -164,11 +166,11 @@ public class BaseCheckoutViewController: UIViewController {
     }
 
     // MARK: - process updates
-    private func update(_ result: Result<CheckoutProcess, SnabbleError>) {
+    private func update(_ result: RawResult<CheckoutProcess, SnabbleError>) {
         var continuePolling = true
-        switch result {
+        switch result.result {
         case .success(let process):
-            continuePolling = self.updateView(process)
+            continuePolling = self.updateView(process, result.rawJson)
         case .failure(let error):
             Log.error(String(describing: error))
         }
@@ -180,12 +182,12 @@ public class BaseCheckoutViewController: UIViewController {
 
     // update our view according to the `process`.
     // Return true if we should keep checking the process, false otherwise
-    private func updateView(_ process: CheckoutProcess) -> Bool {
+    private func updateView(_ process: CheckoutProcess, _ rawJson: [String: Any]?) -> Bool {
         // figure out failure conditions first
         let approvalDenied = process.supervisorApproval == false || process.paymentApproval == false
         let checkFailed = process.checks.first { $0.state == .failed } != nil
         if approvalDenied || checkFailed {
-            self.paymentFinished(false, process)
+            self.paymentFinished(false, process, rawJson)
             return false
         }
 
@@ -193,23 +195,19 @@ public class BaseCheckoutViewController: UIViewController {
             OriginPoller.shared.startPolling(SnabbleUI.project, candidateLink)
         }
 
-        if !process.fulfillments.isEmpty {
-            FulfillmentPoller.shared.startPolling(SnabbleUI.project, process)
-        }
-
         self.updateQRCode(process)
 
         switch process.paymentState {
         case .successful:
-            self.paymentFinished(true, process)
+            self.paymentFinished(true, process, rawJson)
             return false
         case .failed:
-            self.paymentFinished(false, process)
+            self.paymentFinished(false, process, rawJson)
             return false
         case .pending:
             let states = Set(process.fulfillments.map { $0.state })
             if !FulfillmentState.failureStates.isDisjoint(with: states) {
-                self.paymentFinished(false, process)
+                self.paymentFinished(false, process, rawJson)
                 return false
             }
             return true
@@ -262,11 +260,16 @@ public class BaseCheckoutViewController: UIViewController {
         }
     }
 
-    private func paymentFinished(_ success: Bool, _ process: CheckoutProcess) {
+    private func paymentFinished(_ success: Bool, _ process: CheckoutProcess, _ rawJson: [String: Any]?) {
         if success {
             self.cart.removeAll(endSession: true, keepBackup: false)
+
+            // poll fulfillments if there are any in a non-finished state
+            if !process.fulfillmentsDone() {
+                FulfillmentPoller.shared.startPolling(SnabbleUI.project, process)
+            }
         }
-        self.delegate?.paymentFinished(success, self.cart, process)
+        self.delegate?.paymentFinished(success, self.cart, process, rawJson)
     }
 }
 

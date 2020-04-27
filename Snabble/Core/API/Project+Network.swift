@@ -69,6 +69,26 @@ enum HTTPRequestMethod: String {
     case delete = "DELETE"
 }
 
+/// for those API calls where we need both the decoded result as well as the raw json data as a dictionary
+public struct RawResult<T, E: Swift.Error> {
+    let result: Result<T, E>
+    let rawJson: [String: Any]?
+
+    public init(_ value: T, rawJson: [String: Any]? = nil) {
+        self.result = Result.success(value)
+        self.rawJson = rawJson
+    }
+
+    public init(_ result: Result<T, E>, rawJson: [String: Any]? = nil) {
+        self.result = result
+        self.rawJson = rawJson
+    }
+
+    public static func failure(_ error: E) -> RawResult {
+        return RawResult(Result.failure(error), rawJson: nil)
+    }
+}
+
 extension Project {
 
     /// create an URLRequest
@@ -227,6 +247,20 @@ extension Project {
     /// - Parameters:
     ///   - request: the `URLRequest` to perform
     ///   - completion: called on the main thread when the result is available.
+    ///   - result: the parsed result object plus its raw JSON data, or error
+    @discardableResult
+    func performRaw<T: Decodable>(_ request: URLRequest, _ completion: @escaping (_ result: RawResult<T, SnabbleError>) -> Void ) -> URLSessionDataTask {
+        return self.perform(request, returnRaw: true) { (_ result: Result<T, SnabbleError>, _ raw: [String: Any]?, _) in
+            let rawResult = RawResult(result, rawJson: raw)
+            completion(rawResult)
+        }
+    }
+
+    /// perfom an API Request
+    ///
+    /// - Parameters:
+    ///   - request: the `URLRequest` to perform
+    ///   - completion: called on the main thread when the result is available.
     ///   - result: the parsed result object or error
     ///   - response: the HTTPURLResponse object
     @discardableResult
@@ -246,7 +280,7 @@ extension Project {
     ///   - raw: the JSON structure returned by the server, or nil if an error occurred
     ///   - response: the HTTPURLResponse object if available
     @discardableResult
-    func perform<T: Decodable>(_ request: URLRequest, returnRaw: Bool, _ completion: @escaping (_ result: Result<T, SnabbleError>, _ raw: [String: Any]?,
+    private func perform<T: Decodable>(_ request: URLRequest, returnRaw: Bool, _ completion: @escaping (_ result: Result<T, SnabbleError>, _ raw: [String: Any]?,
                                _ response: HTTPURLResponse?) -> Void ) -> URLSessionDataTask {
         let start = Date.timeIntervalSinceReferenceDate
         let session = SnabbleAPI.urlSession()

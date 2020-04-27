@@ -34,10 +34,12 @@ public final class PaymentProcessPoller {
     private var alreadySeen = [PaymentEvent]()
 
     private(set) var updatedProcess: CheckoutProcess
+    private(set) var rawJson: [String: Any]?
 
-    public init(_ process: CheckoutProcess, _ project: Project) {
+    public init(_ process: CheckoutProcess, _ rawJson: [String: Any]?, _ project: Project) {
         self.process = process
         self.updatedProcess = process
+        self.rawJson = rawJson
         self.project = project
     }
 
@@ -67,7 +69,7 @@ public final class PaymentProcessPoller {
     // swiftlint:disable:next cyclomatic_complexity
     private func checkEvents(_ events: [PaymentEvent], _ completion: @escaping ([PaymentEvent: Bool]) -> Void ) {
         self.process.update(self.project, taskCreated: { self.task = $0 }, completion: { result in
-            guard case Result.success(let process) = result else {
+            guard case Result.success(let process) = result.result else {
                 return
             }
 
@@ -76,6 +78,7 @@ public final class PaymentProcessPoller {
             }
 
             self.updatedProcess = process
+            self.rawJson = result.rawJson
 
             var seenNow = [PaymentEvent: Bool]()
             var abort = false
@@ -261,9 +264,9 @@ final class FulfillmentPoller {
     }
 
     // MARK: - process updates
-    private func update(_ result: Result<CheckoutProcess, SnabbleError>) {
+    private func update(_ result: RawResult<CheckoutProcess, SnabbleError>) {
         var continuePolling = true
-        switch result {
+        switch result.result {
         case .success(let process):
             continuePolling = self.checkFulfillmentStatus(process)
         case .failure(let error):

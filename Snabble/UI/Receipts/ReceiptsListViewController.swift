@@ -101,7 +101,7 @@ public final class ReceiptsListViewController: UIViewController {
             return
         }
 
-        let poller = PaymentProcessPoller(process, SnabbleUI.project)
+        let poller = PaymentProcessPoller(process, nil, SnabbleUI.project)
 
         poller.waitFor([.receipt]) { result in
             self.orderId = poller.updatedProcess.orderID

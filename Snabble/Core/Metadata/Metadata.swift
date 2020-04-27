@@ -575,12 +575,12 @@ public extension Metadata {
                 request.cachePolicy = .reloadIgnoringCacheData
             }
 
-            project.perform(request, returnRaw: true) { (result: Result<Metadata, SnabbleError>, raw: [String: Any]?, _) in
+            project.performRaw(request) { (result: RawResult<Metadata, SnabbleError>) in
                 let hash = absoluteString.djb2hash
-                switch result {
+                switch result.result {
                 case .success(let metadata):
                     completion(metadata)
-                    if let raw = raw {
+                    if let raw = result.rawJson {
                         self.saveLastMetadata(raw, hash)
                     }
                 case .failure:

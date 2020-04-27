@@ -84,7 +84,7 @@ public class OfflineCarts {
                 switch result {
                 case .success(let info):
                     info.createCheckoutProcess(project, paymentMethod: .qrCodeOffline, finalizedAt: savedCart.finalizedAt) { result in
-                        switch result {
+                        switch result.result {
                         case .success:
                             synchronized(self) {
                                 successIndices.append(index)

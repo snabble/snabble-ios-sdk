@@ -45,7 +45,7 @@ extension PaymentMethod {
         }
     }
 
-    func processor(_ process: CheckoutProcess?, _ cart: ShoppingCart, _ delegate: PaymentDelegate) -> UIViewController? {
+    func processor(_ process: CheckoutProcess?, _ rawJson: [String: Any]?, _ cart: ShoppingCart, _ delegate: PaymentDelegate) -> UIViewController? {
         if !self.rawMethod.offline && process == nil {
             return nil
         }
@@ -56,19 +56,19 @@ extension PaymentMethod {
         let processor: UIViewController
         switch self {
         case .qrCodePOS:
-            processor = QRCheckoutViewController(process!, cart, delegate)
+            processor = QRCheckoutViewController(process!, rawJson, cart, delegate)
         case .qrCodeOffline:
             if let codeConfig = SnabbleUI.project.qrCodeConfig {
-                processor = EmbeddedCodesCheckoutViewController(process, cart, delegate, codeConfig)
+                processor = EmbeddedCodesCheckoutViewController(process, rawJson, cart, delegate, codeConfig)
             } else {
                 return nil
             }
         case .deDirectDebit, .visa, .mastercard, .americanExpress, .externalBilling, .paydirektOneKlick:
-            processor = OnlineCheckoutViewController(process!, cart, delegate)
+            processor = OnlineCheckoutViewController(process!, rawJson, cart, delegate)
         case .gatekeeperTerminal:
-            processor = TerminalCheckoutViewController(process!, cart, delegate)
+            processor = TerminalCheckoutViewController(process!, rawJson, cart, delegate)
         case .customerCardPOS:
-            processor = CustomerCardCheckoutViewController(process!, cart, delegate)
+            processor = CustomerCardCheckoutViewController(process!, rawJson, cart, delegate)
         }
         processor.hidesBottomBarWhenPushed = true
         return processor
@@ -257,9 +257,9 @@ public final class PaymentProcess {
         return results
     }
 
-    func start(_ method: PaymentMethod, completion: @escaping (Result<CheckoutProcess, SnabbleError>) -> Void ) {
+    func start(_ method: PaymentMethod, completion: @escaping (RawResult<CheckoutProcess, SnabbleError>) -> Void ) {
         self.signedCheckoutInfo.createCheckoutProcess(SnabbleUI.project, paymentMethod: method, timeout: 20) { result in
-            if case let Result.success(process) = result {
+            if case let Result.success(process) = result.result {
                 let checker = CheckoutChecks(process)
                 let stopProcess = checker.handleChecks()
                 if stopProcess {
@@ -279,7 +279,7 @@ public final class PaymentProcess {
             self.hudTimer = nil
             UIApplication.shared.endIgnoringInteractionEvents()
             self.hideBlurOverlay()
-            switch result {
+            switch result.result {
             case .success(let process):
                 let checker = CheckoutChecks(process)
 
@@ -288,7 +288,7 @@ public final class PaymentProcess {
                     return
                 }
 
-                if let processor = method.processor(process, self.cart, self.delegate) {
+                if let processor = method.processor(process, result.rawJson, self.cart, self.delegate) {
                     completion(Result.success(processor))
                 } else {
                     self.delegate.showWarningMessage("Snabble.Payment.errorStarting".localized())
@@ -305,7 +305,7 @@ public final class PaymentProcess {
             handled = self.delegate.handlePaymentError(method, error)
         }
         if !handled {
-            if method.rawMethod.offline, let processor = method.processor(nil, self.cart, self.delegate) {
+            if method.rawMethod.offline, let processor = method.processor(nil, nil, self.cart, self.delegate) {
                 completion(Result.success(processor))
                 OfflineCarts.shared.saveCartForLater(self.cart)
             } else {
