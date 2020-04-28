@@ -3,6 +3,7 @@
 # v0.12.9
 
 * Adds support for the `fulfillments` property of the `CheckoutProcess`
+* Minor breaking change: `PaymentDelegate.paymentFinished()` now has an additional parameter `rawJson`, containing the raw JSON representation of the `CheckoutProcess`.
 
 # v0.12.8
 

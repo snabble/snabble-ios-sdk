@@ -214,7 +214,7 @@ final class OriginPoller {
 }
 
 extension Notification.Name {
-    static let snabbleFullfillmentsDone = Notification.Name("snabbleFullfillmentsDone")
+    public static let snabbleFulfillmentsDone = Notification.Name("snabbleFulfillmentsDone")
 }
 
 final class FulfillmentPoller {
@@ -268,7 +268,7 @@ final class FulfillmentPoller {
         var continuePolling = true
         switch result.result {
         case .success(let process):
-            continuePolling = self.checkFulfillmentStatus(process)
+            continuePolling = self.checkFulfillmentStatus(process, result.rawJson)
         case .failure(let error):
             Log.error(String(describing: error))
         }
@@ -280,7 +280,7 @@ final class FulfillmentPoller {
         }
     }
 
-    func checkFulfillmentStatus(_ process: CheckoutProcess) -> Bool {
+    func checkFulfillmentStatus(_ process: CheckoutProcess, _ rawJson: [String: Any]?) -> Bool {
         let fulfillments = process.fulfillments
         let count = fulfillments.count
 
@@ -292,11 +292,12 @@ final class FulfillmentPoller {
         if ended == count {
             let userInfo: [AnyHashable: Any] = [
                 "checkoutProcess": process,
+                "checkoutProcessJson": rawJson ?? [:],
                 "successCount": succeeded,
                 "failedCount": failed
             ]
             Log.debug("fulfillment poller done, success=\(succeeded) failed=\(failed)")
-            NotificationCenter.default.post(name: .snabbleFullfillmentsDone, object: self, userInfo: userInfo)
+            NotificationCenter.default.post(name: .snabbleFulfillmentsDone, object: self, userInfo: userInfo)
             return false
         } else {
             Log.debug("fulfillment poller: waiting for \(count), ended so far=\(ended)")

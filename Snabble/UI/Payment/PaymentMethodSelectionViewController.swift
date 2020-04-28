@@ -11,7 +11,7 @@ public extension Notification.Name {
 }
 
 public protocol PaymentNavigationDelegate: class {
-    func processStarted(_ method: PaymentMethod, _ process: CheckoutProcess)
+    func processStarted(_ method: PaymentMethod, _ process: CheckoutProcess, _ rawJson: [String: Any]?)
     func dataEntryNeeded(for method: PaymentMethod)
 }
 
@@ -165,7 +165,7 @@ public final class PaymentMethodSelectionViewController: UIViewController {
             self.process.start(method) { (result: RawResult<CheckoutProcess, SnabbleError>) in
                 switch result.result {
                 case .success(let process):
-                    self.navigationDelegate?.processStarted(method, process)
+                    self.navigationDelegate?.processStarted(method, process, result.rawJson)
                 case .failure(let error):
                     let handled = self.process.delegate.handlePaymentError(method, error)
                     if !handled {
