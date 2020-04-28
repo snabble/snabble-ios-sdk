@@ -366,7 +366,7 @@ extension ScannerViewController: ScanConfirmationViewDelegate {
 extension ScannerViewController: BarcodeDetectorDelegate {
     public func enterBarcode() {
         if SnabbleUI.implicitNavigation {
-            let barcodeEntry = BarcodeEntryViewController(self.productProvider, delegate: self.delegate, completion: self.handleScannedCode)
+            let barcodeEntry = BarcodeEntryViewController(self.productProvider, self.shop.id, delegate: self.delegate, completion: self.handleScannedCode)
             self.navigationController?.pushViewController(barcodeEntry, animated: true)
         } else {
             self.delegate.gotoBarcodeEntry()

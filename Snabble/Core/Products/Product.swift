@@ -7,14 +7,20 @@
 import Foundation
 
 /// type of product: normal single items, pre-weighed by the seller, or to-be-weighed by the customer
-public enum ProductType: Int, Codable {
+public enum ProductType: Int, Codable, UnknownCaseRepresentable {
     case singleItem
     case preWeighed
     case userMustWeigh
+
+    public static let unknownCase = ProductType.singleItem
 }
 
-extension ProductType: UnknownCaseRepresentable {
-    public static let unknownCase = ProductType.singleItem
+public enum ProductAvailability: Int, Codable, UnknownCaseRepresentable {
+    case inStock
+    case listed
+    case notAvailable
+
+    public static let unknownCase = ProductAvailability.inStock
 }
 
 public enum SaleRestriction: Codable {
@@ -159,6 +165,8 @@ public struct Product: Codable {
     /// (i.e. to remind users that this product consists of multiple packages where only one can be or needs to be scanned)
     public let scanMessage: String?
 
+    public let availability: ProductAvailability
+
     /// convenience accessor for the price
     public func price(_ customerCard: String?) -> Int {
         if customerCard != nil {
@@ -209,6 +217,7 @@ public struct Product: Codable {
         self.referenceUnit = try container.decodeIfPresent(.referenceUnit)
         self.encodingUnit = try container.decodeIfPresent(.encodingUnit)
         self.scanMessage = try container.decodeIfPresent(.scanMessage)
+        self.availability = try container.decodeIfPresent(.availability) ?? .inStock
     }
 
     init(sku: String,
@@ -231,7 +240,8 @@ public struct Product: Codable {
          bundles: [Product] = [],
          referenceUnit: Units? = nil,
          encodingUnit: Units? = nil,
-         scanMessage: String? = nil) {
+         scanMessage: String? = nil,
+         availability: ProductAvailability = .inStock) {
         self.sku = sku
         self.name = name
         self.description = description
@@ -253,5 +263,6 @@ public struct Product: Codable {
         self.referenceUnit = referenceUnit
         self.encodingUnit = encodingUnit
         self.scanMessage = scanMessage
+        self.availability = availability
     }
 }
