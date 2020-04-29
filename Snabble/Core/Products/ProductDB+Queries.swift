@@ -18,9 +18,8 @@ extension ProductDB {
             (select group_concat(sc.template) from scannableCodes sc where sc.sku = p.sku) as templates,
             (select group_concat(ifnull(sc.encodingUnit, "")) from scannableCodes sc where sc.sku = p.sku) as encodingUnits,
             (select group_concat(ifnull(sc.transmissionCode, "")) from scannableCodes sc where sc.sku = p.sku) as transmissionCodes,
-            ifnull(a.available, 0) as availability
+            ifnull((select a.available from availabilities a where a.sku = p.sku and a.shopID = ?), 0) as availability
         from products p
-        left join availabilities a on a.sku = p.sku and a.shopID = ?
         """
 
     static let productQueryUnitsX = """
@@ -31,10 +30,9 @@ extension ProductDB {
             (select group_concat(sc.template) from scannableCodes sc where sc.sku = p.sku) as templates,
             (select group_concat(ifnull(sc.encodingUnit, "")) from scannableCodes sc where sc.sku = p.sku) as encodingUnits,
             (select group_concat(ifnull(sc.transmissionCode, "")) from scannableCodes sc where sc.sku = p.sku) as transmissionCodes,
-            ifnull(a.available, 0) as availability
+            ifnull((select a.available from availabilities a where a.sku = p.sku and a.shopID = ?), 0) as availability
         from products p
         join scannableCodes s on s.sku = p.sku
-        left join availabilities a on a.sku = p.sku and a.shopID = ?
         where s.code = ? and s.template = ?
         """
 
