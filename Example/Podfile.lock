@@ -1,22 +1,22 @@
 PODS:
   - Base32 (1.1.2)
   - EasyTipView (2.0.4)
-  - GRDB.swift (4.12.0):
-    - GRDB.swift/standard (= 4.12.0)
-  - GRDB.swift/standard (4.12.0)
+  - GRDB.swift (4.14.0):
+    - GRDB.swift/standard (= 4.14.0)
+  - GRDB.swift/standard (4.14.0)
   - KeychainAccess (4.1.0)
   - OneTimePassword (3.2.0):
     - Base32 (~> 1.1.2)
-  - Snabble (0.12.8):
-    - Snabble/Core (= 0.12.8)
-    - Snabble/UI (= 0.12.8)
-  - Snabble/Core (0.12.8):
+  - Snabble (0.12.9):
+    - Snabble/Core (= 0.12.9)
+    - Snabble/UI (= 0.12.9)
+  - Snabble/Core (0.12.9):
     - GRDB.swift (~> 4)
     - KeychainAccess (~> 4)
     - OneTimePassword (~> 3)
     - TrustKit (~> 1)
     - Zip (~> 1)
-  - Snabble/UI (0.12.8):
+  - Snabble/UI (0.12.9):
     - EasyTipView (~> 2)
     - Snabble/Core
     - UIEmptyState (~> 4)
@@ -45,10 +45,10 @@ EXTERNAL SOURCES:
 SPEC CHECKSUMS:
   Base32: 163c298644d184e89ca4e00a996bad6bf5166390
   EasyTipView: 4f8beae0a82db2ca4a9b5fd658785fc5f61d296b
-  GRDB.swift: 0a48d51f7152fbe5eb702ce978864a55def0c586
+  GRDB.swift: 8cc3ab7c8b8b4ac1761deb8dca4b51c1c9d429f8
   KeychainAccess: 445e28864fe6d3458b41fa211bcdc39890e8bd5a
   OneTimePassword: c00ecc908e67e6c5bfda9d50b0b2e4696d0b066e
-  Snabble: abd3438295918d771cd28de6dd819ff1fad17cc4
+  Snabble: 46db89ccb36037fe23de212f1adf6c7cc29cd4c4
   TrustKit: 073855e3adecd317417bda4ac9e9ac54a2e3b9f2
   UIEmptyState: 767376694d9402452fb3c0a5a5283176c6a53c92
   Zip: 8877eede3dda76bcac281225c20e71c25270774c
