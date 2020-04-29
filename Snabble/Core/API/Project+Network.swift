@@ -18,7 +18,7 @@ public struct SnabbleError: Decodable, Error {
     static let noPaymentAvailable = SnabbleError(error: ErrorResponse("no payment method available"))
 }
 
-public enum ErrorResponseType: String {
+public enum ErrorResponseType: String, UnknownCaseRepresentable {
     case unknown
 
     // checkout errors
@@ -32,9 +32,7 @@ public enum ErrorResponseType: String {
     // invalidCartItem detail types
     case saleStop = "sale_stop"
     case productNotFound = "product_not_found"
-}
 
-extension ErrorResponseType: UnknownCaseRepresentable {
     public static let unknownCase = ErrorResponseType.unknown
 }
 

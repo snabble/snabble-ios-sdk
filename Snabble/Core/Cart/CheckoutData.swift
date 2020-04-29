@@ -168,7 +168,7 @@ public enum PaymentMethod {
     }
 }
 
-public enum PaymentState: String, Decodable {
+public enum PaymentState: String, Decodable, UnknownCaseRepresentable {
     case unknown
 
     case pending
@@ -176,14 +176,13 @@ public enum PaymentState: String, Decodable {
     case transferred
     case successful
     case failed
-}
 
-extension PaymentState: UnknownCaseRepresentable {
     public static let unknownCase = PaymentState.unknown
 }
 
-/// line items can be added by the backend. if they refer back to a shopping cart item via their `refersTo` property, the `type` describes the relationsip
-public enum LineItemType: String, Codable {
+/// line items can be added by the backend.
+/// If they refer back to a shopping cart item via their `refersTo` property, the `type` describes the relationship
+public enum LineItemType: String, Codable, UnknownCaseRepresentable {
     /// not actually sent by the backend
     case unknown
 
@@ -198,9 +197,7 @@ public enum LineItemType: String, Codable {
 
     /// a giveaway product that is automatically added
     case giveaway
-}
 
-extension LineItemType: UnknownCaseRepresentable {
     public static let unknownCase = LineItemType.unknown
 }
 
@@ -263,15 +260,13 @@ public struct CheckoutInfo: Decodable {
 }
 
 // MARK: - process checks
-public enum CheckState: String, Codable {
+public enum CheckState: String, Codable, UnknownCaseRepresentable {
     case unknown
 
     case pending
     case successful
     case failed
-}
 
-extension CheckState: UnknownCaseRepresentable {
     public static let unknownCase = CheckState.unknown
 }
 
@@ -294,7 +289,7 @@ public struct CheckoutCheck: Decodable {
     }
 }
 
-public enum FulfillmentState: String, Decodable {
+public enum FulfillmentState: String, Decodable, UnknownCaseRepresentable {
     case unknown
 
     // working
@@ -308,9 +303,7 @@ public enum FulfillmentState: String, Decodable {
     static let failureStates: Set<FulfillmentState> = [ .aborted, .allocationFailed, .allocationTimedOut, .failed ]
 
     static let endStates: Set<FulfillmentState> = [ .processed, .aborted, .allocationFailed, .allocationTimedOut, .failed ]
-}
 
-extension FulfillmentState: UnknownCaseRepresentable {
     public static let unknownCase = FulfillmentState.unknown
 }
 

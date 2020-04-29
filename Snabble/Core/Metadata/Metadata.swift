@@ -85,7 +85,7 @@ public struct MetadataLinks: Decodable {
     }
 }
 
-public enum QRCodeFormat: String, Decodable {
+public enum QRCodeFormat: String, Decodable, UnknownCaseRepresentable {
     case unknown
 
     case simple
@@ -101,9 +101,7 @@ public enum QRCodeFormat: String, Decodable {
         case .unknown: return true
         }
     }
-}
 
-extension QRCodeFormat: UnknownCaseRepresentable {
     public static let unknownCase = QRCodeFormat.unknown
 }
 
@@ -428,7 +426,7 @@ public struct Flags: Decodable {
     }
 }
 
-public enum RoundingMode: String, Codable {
+public enum RoundingMode: String, Codable, UnknownCaseRepresentable {
     /// always round up
     case up
     /// always round down
@@ -445,9 +443,7 @@ public enum RoundingMode: String, Codable {
         case .commercial: return .plain
         }
     }
-}
 
-extension RoundingMode: UnknownCaseRepresentable {
     public static let unknownCase = RoundingMode.up
 }
 
