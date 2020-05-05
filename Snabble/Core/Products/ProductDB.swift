@@ -12,6 +12,7 @@ public enum MetadataKeys {
     public static let revision = "revision"
     public static let schemaVersionMajor = "schemaVersionMajor"
     public static let schemaVersionMinor = "schemaVersionMinor"
+    public static let defaultAvailability = "defaultAvailability"
 
     fileprivate static let appLastUpdate = "app_lastUpdate"
 }
@@ -218,6 +219,8 @@ final class ProductDB: ProductProvider {
     public private(set) var schemaVersionMajor = 0
     /// minor schema version of the current local database
     public private(set) var schemaVersionMinor = 0
+    /// default availabilty (if no record in `availabilities` is found
+    public private(set) var defaultAvailability = 0
 
     /// date of last successful product update (i.e, whenever we last got a HTTP status 200 or 304)
     public private(set) var lastProductUpdate = Date(timeIntervalSinceReferenceDate: 0)
@@ -612,6 +615,8 @@ final class ProductDB: ProductProvider {
                 if let date = Snabble.iso8601Formatter.date(from: value) {
                     self.lastProductUpdate = date
                 }
+            case MetadataKeys.defaultAvailability:
+                self.defaultAvailability = Int(value) ?? 0
             default:
                 break
             }

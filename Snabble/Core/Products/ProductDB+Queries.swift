@@ -10,7 +10,7 @@ import GRDB
 // MARK: - low-level db queries
 extension ProductDB {
 
-    static let productQueryX = """
+    static let productQuery = """
         select
             p.*, 0 as listPrice, null as discountedPrice, null as customerCardPrice, null as basePrice,
             null as code_encodingUnit,
@@ -18,11 +18,11 @@ extension ProductDB {
             (select group_concat(sc.template) from scannableCodes sc where sc.sku = p.sku) as templates,
             (select group_concat(ifnull(sc.encodingUnit, "")) from scannableCodes sc where sc.sku = p.sku) as encodingUnits,
             (select group_concat(ifnull(sc.transmissionCode, "")) from scannableCodes sc where sc.sku = p.sku) as transmissionCodes,
-            ifnull((select a.available from availabilities a where a.sku = p.sku and a.shopID = ?), 0) as availability
+            ifnull((select a.available from availabilities a where a.sku = p.sku and a.shopID = ?), ?) as availability
         from products p
         """
 
-    static let productQueryUnitsX = """
+    static let productQueryUnits = """
         select
             p.*, 0 as listPrice, null as discountedPrice, null as customerCardPrice, null as basePrice,
             s.encodingUnit as code_encodingUnit,
@@ -30,7 +30,7 @@ extension ProductDB {
             (select group_concat(sc.template) from scannableCodes sc where sc.sku = p.sku) as templates,
             (select group_concat(ifnull(sc.encodingUnit, "")) from scannableCodes sc where sc.sku = p.sku) as encodingUnits,
             (select group_concat(ifnull(sc.transmissionCode, "")) from scannableCodes sc where sc.sku = p.sku) as transmissionCodes,
-            ifnull((select a.available from availabilities a where a.sku = p.sku and a.shopID = ?), 0) as availability
+            ifnull((select a.available from availabilities a where a.sku = p.sku and a.shopID = ?), ?) as availability
         from products p
         join scannableCodes s on s.sku = p.sku
         where s.code = ? and s.template = ?
@@ -39,7 +39,9 @@ extension ProductDB {
     func productBySku(_ dbQueue: DatabaseQueue, _ sku: String, _ shopId: String) -> Product? {
         do {
             let row = try dbQueue.inDatabase { db in
-                return try self.fetchOne(db, ProductDB.productQueryX + " where p.sku = ?", arguments: [shopId, sku])
+                return try self.fetchOne(db,
+                    ProductDB.productQuery + " where p.sku = ?",
+                    arguments: [shopId, self.defaultAvailability, sku])
             }
             return self.productFromRow(dbQueue, row, shopId)
         } catch {
@@ -52,7 +54,9 @@ extension ProductDB {
         do {
             let list = skus.map { "\"\($0)\"" }.joined(separator: ",")
             let rows = try dbQueue.inDatabase { db in
-                return try self.fetchAll(db, ProductDB.productQueryX + " where p.sku in (\(list))", arguments: [shopId])
+                return try self.fetchAll(db,
+                    ProductDB.productQuery + " where p.sku in (\(list))",
+                    arguments: [shopId, self.defaultAvailability])
             }
             return rows.compactMap { self.productFromRow(dbQueue, $0, shopId) }
         } catch {
@@ -64,11 +68,13 @@ extension ProductDB {
     func discountedProducts(_ dbQueue: DatabaseQueue, _ shopId: String) -> [Product] {
         do {
             let rows = try dbQueue.inDatabase { db in
-                return try self.fetchAll(db, ProductDB.productQueryX + " " + """
+                return try self.fetchAll(db,
+                    ProductDB.productQuery + " " + """
                     left outer join prices pr1 on pr1.sku = p.sku and pr1.pricingCategory = ifnull((select pricingCategory from shops where shops.id = ?), 0)
                     left outer join prices pr2 on pr2.sku = p.sku and pr2.pricingCategory = 0
                     where p.imageUrl is not null and ifnull(pr1.discountedPrice, pr2.discountedPrice) is not null
-                    """, arguments: [shopId, shopId])
+                    """,
+                    arguments: [shopId, self.defaultAvailability, shopId])
                 }
             return rows.compactMap { self.productFromRow(dbQueue, $0, shopId) }
         } catch {
@@ -90,7 +96,9 @@ extension ProductDB {
     private func productByScannableCode(_ dbQueue: DatabaseQueue, _ code: String, _ template: String, _ shopId: String) -> ScannedProduct? {
         do {
             let row = try dbQueue.inDatabase { db in
-                return try self.fetchOne(db, ProductDB.productQueryUnitsX, arguments: [shopId, code, template])
+                return try self.fetchOne(db,
+                    ProductDB.productQueryUnits,
+                    arguments: [shopId, self.defaultAvailability, code, template])
             }
             if let product = self.productFromRow(dbQueue, row, shopId) {
                 let codeEntry = product.codes.first { $0.code == code }
@@ -109,9 +117,11 @@ extension ProductDB {
             let limit = name.count < 5 ? name.count * 100 : -1
             let depositCondition = filterDeposits ? "and isDeposit = 0" : ""
             let rows = try dbQueue.inDatabase { db in
-                return try self.fetchAll(db, ProductDB.productQueryX + " " + """
+                return try self.fetchAll(db,
+                    ProductDB.productQuery + " " + """
                     where p.sku in (select sku from searchByName where foldedName match ? limit ?) \(depositCondition)
-                    """, arguments: [shopId, name + "*", limit])
+                    """,
+                    arguments: [shopId, self.defaultAvailability, name + "*", limit])
             }
             return rows.compactMap { self.productFromRow(dbQueue, $0, shopId) }
         } catch {
@@ -127,14 +137,16 @@ extension ProductDB {
             let templateNames = templates ?? [ CodeTemplate.defaultName ]
             let list = templateNames.map { "\"\($0)\"" }.joined(separator: ",")
             let rows = try dbQueue.inDatabase { db in
-                return try self.fetchAll(db, ProductDB.productQueryX + " " + """
+                return try self.fetchAll(db,
+                    ProductDB.productQuery + " " + """
                     join scannableCodes s on s.sku = p.sku
                     where s.template in (\(list)) and
                         (s.code glob ?) \(depositCondition) and
                         p.weighing != \(ProductType.preWeighed.rawValue)
                         and availability != \(ProductAvailability.notAvailable.rawValue)
                     limit ?
-                    """, arguments: [ shopId, prefix + "*", limit])
+                    """,
+                    arguments: [ shopId, self.defaultAvailability, prefix + "*", limit])
             }
             return rows.compactMap { self.productFromRow(dbQueue, $0, shopId) }
         } catch {
@@ -146,9 +158,9 @@ extension ProductDB {
     func productsBundling(_ dbQueue: DatabaseQueue, _ sku: String, _ shopId: String) -> [Product] {
         do {
             let rows = try dbQueue.inDatabase { db in
-                return try self.fetchAll(db, ProductDB.productQueryX + " " + """
-                    where p.bundledSku = ?
-                    """, arguments: [shopId, sku])
+                return try self.fetchAll(db,
+                    ProductDB.productQuery + " where p.bundledSku = ?",
+                    arguments: [shopId, self.defaultAvailability, sku])
             }
             // get all bundles
             let bundles = rows.compactMap { self.productFromRow(dbQueue, $0, shopId) }
