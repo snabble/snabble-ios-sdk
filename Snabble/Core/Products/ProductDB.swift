@@ -220,7 +220,7 @@ final class ProductDB: ProductProvider {
     /// minor schema version of the current local database
     public private(set) var schemaVersionMinor = 0
     /// default availabilty (if no record in `availabilities` is found
-    public private(set) var defaultAvailability = 0
+    public private(set) var defaultAvailability = ProductAvailability.inStock
 
     /// date of last successful product update (i.e, whenever we last got a HTTP status 200 or 304)
     public private(set) var lastProductUpdate = Date(timeIntervalSinceReferenceDate: 0)
@@ -616,7 +616,7 @@ final class ProductDB: ProductProvider {
                     self.lastProductUpdate = date
                 }
             case MetadataKeys.defaultAvailability:
-                self.defaultAvailability = Int(value) ?? 0
+                self.defaultAvailability = ProductAvailability(rawValue: Int(value) ?? 0)
             default:
                 break
             }

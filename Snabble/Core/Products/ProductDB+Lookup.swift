@@ -176,11 +176,26 @@ private final class ResolvedProduct: Decodable {
     let referenceUnit: String?
     let encodingUnit: String?
     let scanMessage: String?
+    let availability: ResolvedProductAvailability?
 
     enum ResolvedProductType: String, Codable {
         case `default`
         case weighable
         case deposit
+    }
+
+    enum ResolvedProductAvailability: String, Codable {
+        case inStock
+        case listed
+        case notAvailable
+
+        func convert() -> ProductAvailability {
+            switch self {
+            case .inStock: return .inStock
+            case .listed: return .listed
+            case .notAvailable: return .notAvailable
+            }
+        }
     }
 
     enum ResolvedSaleRestriction: String, Codable {
@@ -260,7 +275,8 @@ private final class ResolvedProduct: Decodable {
                               bundles: self.bundles?.compactMap { $0.convert() } ?? [],
                               referenceUnit: Units.from(self.referenceUnit),
                               encodingUnit: encodingUnit,
-                              scanMessage: self.scanMessage)
+                              scanMessage: self.scanMessage,
+                              availability: self.availability?.convert() ?? .inStock)
 
         return product
     }

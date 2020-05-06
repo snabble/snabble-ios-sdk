@@ -7,6 +7,8 @@
 import Foundation
 import GRDB
 
+extension ProductAvailability: DatabaseValueConvertible { }
+
 // MARK: - low-level db queries
 extension ProductDB {
 
@@ -140,9 +142,9 @@ extension ProductDB {
                 return try self.fetchAll(db,
                     ProductDB.productQuery + " " + """
                     join scannableCodes s on s.sku = p.sku
-                    where s.template in (\(list)) and
-                        (s.code glob ?) \(depositCondition) and
-                        p.weighing != \(ProductType.preWeighed.rawValue)
+                    where s.template in (\(list))
+                        and (s.code glob ?) \(depositCondition)
+                        and p.weighing != \(ProductType.preWeighed.rawValue)
                         and availability != \(ProductAvailability.notAvailable.rawValue)
                     limit ?
                     """,

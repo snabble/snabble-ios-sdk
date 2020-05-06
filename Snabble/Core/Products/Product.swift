@@ -15,6 +15,7 @@ public enum ProductType: Int, Codable, UnknownCaseRepresentable {
     public static let unknownCase = ProductType.singleItem
 }
 
+/// product availability. searching for barcodes will not show products where `availability == .notAvailable`
 public enum ProductAvailability: Int, Codable, UnknownCaseRepresentable {
     case inStock
     case listed
