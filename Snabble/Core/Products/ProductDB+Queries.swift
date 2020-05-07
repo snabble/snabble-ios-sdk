@@ -20,7 +20,7 @@ extension ProductDB {
             (select group_concat(sc.template) from scannableCodes sc where sc.sku = p.sku) as templates,
             (select group_concat(ifnull(sc.encodingUnit, "")) from scannableCodes sc where sc.sku = p.sku) as encodingUnits,
             (select group_concat(ifnull(sc.transmissionCode, "")) from scannableCodes sc where sc.sku = p.sku) as transmissionCodes,
-            ifnull((select a.available from availabilities a where a.sku = p.sku and a.shopID = ?), ?) as availability
+            ifnull((select a.value from availabilities a where a.sku = p.sku and a.shopID = ?), ?) as availability
         from products p
         """
 
@@ -32,7 +32,7 @@ extension ProductDB {
             (select group_concat(sc.template) from scannableCodes sc where sc.sku = p.sku) as templates,
             (select group_concat(ifnull(sc.encodingUnit, "")) from scannableCodes sc where sc.sku = p.sku) as encodingUnits,
             (select group_concat(ifnull(sc.transmissionCode, "")) from scannableCodes sc where sc.sku = p.sku) as transmissionCodes,
-            ifnull((select a.available from availabilities a where a.sku = p.sku and a.shopID = ?), ?) as availability
+            ifnull((select a.value from availabilities a where a.sku = p.sku and a.shopID = ?), ?) as availability
         from products p
         join scannableCodes s on s.sku = p.sku
         where s.code = ? and s.template = ?
@@ -49,6 +49,7 @@ extension ProductDB {
         } catch {
             self.logError("productBySku db error: \(error)")
         }
+
         return nil
     }
 
