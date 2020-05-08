@@ -165,10 +165,14 @@ final class TokenRegistry {
         }
     }
 
+    private var verboseToken = false
+
     private func retrieveToken(for project: Project, _ date: Date? = nil, completion: @escaping (TokenData?) -> Void) {
         if let appUserId = SnabbleAPI.appUserId {
+            if verboseToken { Log.debug("retrieveToken p=\(project.id) au=\(appUserId), date=\(String(describing: date))") }
             self.retrieveTokenForUser(for: project, appUserId, date, completion: completion)
         } else {
+            if verboseToken { Log.debug("retrieveToken+User p=\(project.id) date=\(String(describing: date))") }
             self.retrieveAppUserAndToken(for: project, date, completion: completion)
         }
     }
@@ -192,9 +196,13 @@ final class TokenRegistry {
             project.perform(request) { (result: Result<AppUserResponse, SnabbleError>, httpResponse) in
                 switch result {
                 case .success(let appUserData):
+                    if self.verboseToken { Log.debug("retrieveAppUserAndToken succeeded") }
+                    self.verboseToken = false
                     SnabbleAPI.appUserId = AppUserId(userId: appUserData.appUser.id, secret: appUserData.appUser.secret)
                     completion(TokenData(appUserData.token, project))
                 case .failure:
+                    self.verboseToken = true
+                    if self.verboseToken { Log.debug("retrieveAppUserAndToken failed") }
                     if let response = httpResponse, response.statusCode == 403, date == nil {
                         self.retryWithServerDate(project, response, completion: completion)
                         return
@@ -225,8 +233,12 @@ final class TokenRegistry {
             project.perform(request) { (result: Result<TokenResponse, SnabbleError>, httpResponse) in
                 switch result {
                 case .success(let token):
+                    if self.verboseToken { Log.debug("retrieveTokenForUser succeeded") }
+                    self.verboseToken = false
                     completion(TokenData(token, project))
                 case .failure:
+                    self.verboseToken = true
+                    if self.verboseToken { Log.debug("retrieveTokenForUser failed") }
                     if let response = httpResponse, response.statusCode == 403, date == nil {
                         self.retryWithServerDate(project, response, completion: completion)
                         return
@@ -245,6 +257,7 @@ final class TokenRegistry {
             formatter.locale = Locale(identifier: "en_US_Posix")
             formatter.timeZone = TimeZone(secondsFromGMT: 0)
             if let date = formatter.date(from: serverDate) {
+                if self.verboseToken { Log.debug("retry w/server date: \(date)") }
                 self.retrieveToken(for: project, date, completion: completion)
             } else {
                 completion(nil)
