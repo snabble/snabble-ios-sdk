@@ -1,6 +1,10 @@
 ## snabble iOS SDK Changelog
 
-# V0.12.10
+# v0.12.11
+
+* Fixes display of the nav bar title in `ScannerViewController` and `ShoppingCartViewController` when switching between dark and light appearance.
+
+# v0.12.10
 
 * The status bar's appearance can now be controlled via `CustomAppearance` 
 
