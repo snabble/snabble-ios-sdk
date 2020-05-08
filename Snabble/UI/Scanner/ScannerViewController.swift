@@ -650,6 +650,16 @@ extension ScannerViewController: CustomizableAppearance {
     }
 }
 
+extension ScannerViewController {
+    override public func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
+        super.traitCollectionDidChange(previousTraitCollection)
+
+        if let appearance = self.customAppearance {
+            self.setCustomAppearance(appearance)
+        }
+    }
+}
+
 // stuff that's only used by the RN wrapper
 extension ScannerViewController: ReactNativeWrapper {
 
