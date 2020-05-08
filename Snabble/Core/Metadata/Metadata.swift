@@ -277,7 +277,7 @@ public struct Project: Decodable {
         self.checkoutLimits = try container.decodeIfPresent(CheckoutLimits.self, forKey: .checkoutLimits)
         self.messages = try container.decodeIfPresent(ProjectMessages.self, forKey: .messages)
 
-        let paymentMethods = try container.decode([String].self, forKey: .paymentMethods)
+        let paymentMethods = try container.decodeIfPresent([String].self, forKey: .paymentMethods) ?? []
         self.paymentMethods = paymentMethods.compactMap { RawPaymentMethod(rawValue: $0) }
     }
 

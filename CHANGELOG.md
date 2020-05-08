@@ -1,5 +1,9 @@
 ## snabble iOS SDK Changelog
 
+# V0.12.10
+
+* The status bar's appearance can now be controlled via `CustomAppearance` 
+
 # v0.12.9
 
 * Adds support for the `fulfillments` property of the `CheckoutProcess`
