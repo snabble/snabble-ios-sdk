@@ -169,10 +169,10 @@ final class TokenRegistry {
 
     private func retrieveToken(for project: Project, _ date: Date? = nil, completion: @escaping (TokenData?) -> Void) {
         if let appUserId = SnabbleAPI.appUserId {
-            if verboseToken { Log.debug("retrieveToken p=\(project.id) au=\(appUserId), date=\(String(describing: date))") }
+            if verboseToken { Log.debug("retrieveToken p=\(project.id) app=\(self.appId) client=\(SnabbleAPI.clientId) au=\(appUserId), date=\(String(describing: date))") }
             self.retrieveTokenForUser(for: project, appUserId, date, completion: completion)
         } else {
-            if verboseToken { Log.debug("retrieveToken+User p=\(project.id) date=\(String(describing: date))") }
+            if verboseToken { Log.debug("retrieveToken+User p=\(project.id) app=\(self.appId) client=\(SnabbleAPI.clientId) date=\(String(describing: date))") }
             self.retrieveAppUserAndToken(for: project, date, completion: completion)
         }
     }
@@ -201,7 +201,7 @@ final class TokenRegistry {
                     SnabbleAPI.appUserId = AppUserId(userId: appUserData.appUser.id, secret: appUserData.appUser.secret)
                     completion(TokenData(appUserData.token, project))
                 case .failure:
-                    self.verboseToken = true
+                    self.verboseToken = true && SnabbleAPI.debugMode
                     if self.verboseToken { Log.debug("retrieveAppUserAndToken failed") }
                     if let response = httpResponse, response.statusCode == 403, date == nil {
                         self.retryWithServerDate(project, response, completion: completion)
@@ -237,7 +237,7 @@ final class TokenRegistry {
                     self.verboseToken = false
                     completion(TokenData(token, project))
                 case .failure:
-                    self.verboseToken = true
+                    self.verboseToken = true && SnabbleAPI.debugMode
                     if self.verboseToken { Log.debug("retrieveTokenForUser failed") }
                     if let response = httpResponse, response.statusCode == 403, date == nil {
                         self.retryWithServerDate(project, response, completion: completion)
@@ -277,7 +277,10 @@ final class TokenRegistry {
 
         let token = Token(name: "", issuer: "", generator: generator)
         do {
-            return try token.generator.password(at: date ?? Date())
+            let date = date ?? Date()
+            let pass = try token.generator.password(at: date)
+            if self.verboseToken { Log.debug("TOTP for \(date) = \(pass)") }
+            return pass
         } catch {
             return nil
         }
