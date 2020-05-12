@@ -255,6 +255,10 @@ private final class ResolvedProduct: Decodable {
     private func convert(_ codes: [ScannableCode], _ encodingUnit: Units?) -> Product {
         let type = ProductType(rawValue: self.weighing)
 
+        let bundles = self.bundles?
+            .compactMap { $0.convert() }
+            .filter { $0.availability != .notAvailable }
+
         let product = Product(sku: self.sku,
                               name: self.name,
                               description: self.description,
@@ -272,7 +276,7 @@ private final class ResolvedProduct: Decodable {
                               deposit: self.deposit?.price.listPrice,
                               saleRestriction: self.saleRestriction?.convert() ?? .none,
                               saleStop: self.saleStop ?? false,
-                              bundles: self.bundles?.compactMap { $0.convert() } ?? [],
+                              bundles: bundles ?? [],
                               referenceUnit: Units.from(self.referenceUnit),
                               encodingUnit: encodingUnit,
                               scanMessage: self.scanMessage,
