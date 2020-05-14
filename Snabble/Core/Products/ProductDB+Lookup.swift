@@ -176,11 +176,26 @@ private final class ResolvedProduct: Decodable {
     let referenceUnit: String?
     let encodingUnit: String?
     let scanMessage: String?
+    let availability: ResolvedProductAvailability?
 
     enum ResolvedProductType: String, Codable {
         case `default`
         case weighable
         case deposit
+    }
+
+    enum ResolvedProductAvailability: String, Codable {
+        case inStock
+        case listed
+        case notAvailable
+
+        func convert() -> ProductAvailability {
+            switch self {
+            case .inStock: return .inStock
+            case .listed: return .listed
+            case .notAvailable: return .notAvailable
+            }
+        }
     }
 
     enum ResolvedSaleRestriction: String, Codable {
@@ -240,6 +255,10 @@ private final class ResolvedProduct: Decodable {
     private func convert(_ codes: [ScannableCode], _ encodingUnit: Units?) -> Product {
         let type = ProductType(rawValue: self.weighing)
 
+        let bundles = self.bundles?
+            .compactMap { $0.convert() }
+            .filter { $0.availability != .notAvailable }
+
         let product = Product(sku: self.sku,
                               name: self.name,
                               description: self.description,
@@ -257,10 +276,11 @@ private final class ResolvedProduct: Decodable {
                               deposit: self.deposit?.price.listPrice,
                               saleRestriction: self.saleRestriction?.convert() ?? .none,
                               saleStop: self.saleStop ?? false,
-                              bundles: self.bundles?.compactMap { $0.convert() } ?? [],
+                              bundles: bundles ?? [],
                               referenceUnit: Units.from(self.referenceUnit),
                               encodingUnit: encodingUnit,
-                              scanMessage: self.scanMessage)
+                              scanMessage: self.scanMessage,
+                              availability: self.availability?.convert() ?? .inStock)
 
         return product
     }

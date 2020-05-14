@@ -13,8 +13,9 @@ public final class BarcodeEntryViewController: UIViewController {
     @IBOutlet private weak var bottomMargin: NSLayoutConstraint!
 
     private weak var productProvider: ProductProvider!
+    private let shopId: String
 
-    private var completion: ((String, String?) -> Void)!
+    private let completion: ((String, String?) -> Void)
 
     private var filteredProducts = [Product]()
     private var searchText = ""
@@ -23,13 +24,15 @@ public final class BarcodeEntryViewController: UIViewController {
     private var emptyState: EmptyStateView!
     private var showSku = false
 
-    public init(_ productProvider: ProductProvider, delegate: AnalyticsDelegate, showSku: Bool = false, completion: @escaping (String, String?) -> Void ) {
-        super.init(nibName: nil, bundle: SnabbleBundle.main)
+    public init(_ productProvider: ProductProvider, _ shopId: String, delegate: AnalyticsDelegate, showSku: Bool = false, completion: @escaping (String, String?) -> Void ) {
 
         self.productProvider = productProvider
+        self.shopId = shopId
         self.completion = completion
         self.delegate = delegate
         self.showSku = showSku
+
+        super.init(nibName: nil, bundle: SnabbleBundle.main)
 
         self.title = "Snabble.Scanner.enterBarcode".localized()
     }
@@ -69,7 +72,7 @@ public final class BarcodeEntryViewController: UIViewController {
 
         let block = {
             self.delegate.track(.barcodeSelected(code))
-            self.completion?(code, template)
+            self.completion(code, template)
         }
 
         if SnabbleUI.implicitNavigation {
@@ -89,7 +92,10 @@ extension BarcodeEntryViewController: UISearchBarDelegate {
     // MARK: - search bar
     public func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
         if !searchText.isEmpty {
-            let products = self.productProvider.productsByScannableCodePrefix(searchText, filterDeposits: true, templates: SnabbleUI.project.searchableTemplates)
+            let products = self.productProvider.productsByScannableCodePrefix(searchText,
+                                                                              filterDeposits: true,
+                                                                              templates: SnabbleUI.project.searchableTemplates,
+                                                                              shopId: self.shopId)
             self.filteredProducts = products.sorted { prod1, prod2 in
                 let code1 = prod1.codes.filter { $0.code.hasPrefix(searchText) }.first ?? prod1.codes.first!
                 let code2 = prod2.codes.filter { $0.code.hasPrefix(searchText) }.first ?? prod2.codes.first!

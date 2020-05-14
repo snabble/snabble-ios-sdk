@@ -12,6 +12,7 @@ public enum MetadataKeys {
     public static let revision = "revision"
     public static let schemaVersionMajor = "schemaVersionMajor"
     public static let schemaVersionMinor = "schemaVersionMinor"
+    public static let defaultAvailability = "defaultAvailability"
 
     fileprivate static let appLastUpdate = "app_lastUpdate"
 }
@@ -141,7 +142,7 @@ public protocol ProductProvider: class {
     ///   - templates: if set, the search matches any of the templates passed. if nil, only the built-in `default` template is matched
     /// - Returns: an array of matching `Product`s
     ///   NB: the returned products do not have price information
-    func productsByScannableCodePrefix(_ prefix: String, filterDeposits: Bool, templates: [String]?) -> [Product]
+    func productsByScannableCodePrefix(_ prefix: String, filterDeposits: Bool, templates: [String]?, shopId: String) -> [Product]
 
     // MARK: - asynchronous variants of the product lookup methods
 
@@ -187,8 +188,8 @@ public extension ProductProvider {
         self.productBySku(sku, shopId, forceDownload: false, completion: completion)
     }
 
-    func productsByScannableCodePrefix(_ prefix: String) -> [Product] {
-        return self.productsByScannableCodePrefix(prefix, filterDeposits: true, templates: nil)
+    func productsByScannableCodePrefix(_ prefix: String, _ shopId: String) -> [Product] {
+        return self.productsByScannableCodePrefix(prefix, filterDeposits: true, templates: nil, shopId: shopId)
     }
 
     func productsByName(_ name: String) -> [Product] {
@@ -218,6 +219,8 @@ final class ProductDB: ProductProvider {
     public private(set) var schemaVersionMajor = 0
     /// minor schema version of the current local database
     public private(set) var schemaVersionMinor = 0
+    /// default availabilty (if no record in `availabilities` is found
+    public private(set) var defaultAvailability = ProductAvailability.inStock
 
     /// date of last successful product update (i.e, whenever we last got a HTTP status 200 or 304)
     public private(set) var lastProductUpdate = Date(timeIntervalSinceReferenceDate: 0)
@@ -612,6 +615,8 @@ final class ProductDB: ProductProvider {
                 if let date = Snabble.iso8601Formatter.date(from: value) {
                     self.lastProductUpdate = date
                 }
+            case MetadataKeys.defaultAvailability:
+                self.defaultAvailability = ProductAvailability(rawValue: Int(value) ?? 0)
             default:
                 break
             }
@@ -721,7 +726,7 @@ extension ProductDB {
             Log.warn("productsByName called, but useFTS not set")
         }
 
-        return self.productsByName(db, name, filterDeposits)
+        return self.productsByName(db, name, filterDeposits, "")
     }
 
     ///
@@ -731,12 +736,12 @@ extension ProductDB {
     ///   - prefix: the prefix to search for
     ///   - filterDeposits: if true, products with `isDeposit==true` are not returned
     /// - Returns: an array of matching Products
-    public func productsByScannableCodePrefix(_ prefix: String, filterDeposits: Bool, templates: [String]?) -> [Product] {
+    public func productsByScannableCodePrefix(_ prefix: String, filterDeposits: Bool, templates: [String]?, shopId: String) -> [Product] {
         guard let db = self.db else {
             return []
         }
 
-        return self.productsByScannableCodePrefix(db, prefix, filterDeposits, templates)
+        return self.productsByScannableCodePrefix(db, prefix, filterDeposits, templates, shopId)
     }
 
     // MARK: - asynchronous requests
