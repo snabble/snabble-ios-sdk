@@ -2,6 +2,7 @@
 
 # v0.12.11
 
+* Adds support for the `availabilities` table that was added in appdb schema v1.20. Searching for barcodes will now only return results that are marked as `listed` or `inStock`.
 * Fixes display of the nav bar title in `ScannerViewController` and `ShoppingCartViewController` when switching between dark and light appearance.
 
 # v0.12.10
