@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="15705" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="16096" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
     <device id="retina4_7" orientation="portrait" appearance="dark"/>
     <dependencies>
         <deployment identifier="iOS"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="15706"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="16087"/>
         <capability name="Safe area layout guides" minToolsVersion="9.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
@@ -18,14 +18,14 @@
                 <autoresizingMask key="autoresizingMask"/>
                 <subviews>
                     <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="SnabbleSDK/payment-small-sepa" translatesAutoresizingMaskIntoConstraints="NO" id="h37-18-drJ">
-                        <rect key="frame" x="15" y="11" width="36" height="26"/>
+                        <rect key="frame" x="15" y="11" width="38" height="24"/>
                         <constraints>
-                            <constraint firstAttribute="height" constant="26" id="X7L-AX-h0l"/>
-                            <constraint firstAttribute="width" constant="36" id="kfR-0F-mHn"/>
+                            <constraint firstAttribute="height" constant="24" id="X7L-AX-h0l"/>
+                            <constraint firstAttribute="width" constant="38" id="kfR-0F-mHn"/>
                         </constraints>
                     </imageView>
                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="rrV-xG-ZB6">
-                        <rect key="frame" x="59" y="13.5" width="307" height="21"/>
+                        <rect key="frame" x="61" y="12.5" width="305" height="21"/>
                         <fontDescription key="fontDescription" type="system" pointSize="17"/>
                         <nil key="textColor"/>
                         <nil key="highlightedColor"/>
@@ -45,7 +45,7 @@
                     <constraint firstItem="h37-18-drJ" firstAttribute="leading" secondItem="H2p-sc-9uM" secondAttribute="leadingMargin" id="chq-x3-o5Z"/>
                     <constraint firstItem="rrV-xG-ZB6" firstAttribute="centerY" secondItem="h37-18-drJ" secondAttribute="centerY" id="kGK-8h-PuR"/>
                     <constraint firstAttribute="bottom" secondItem="XbP-jc-XXZ" secondAttribute="bottom" constant="8" id="nLB-Ou-hBA"/>
-                    <constraint firstItem="XbP-jc-XXZ" firstAttribute="top" secondItem="h37-18-drJ" secondAttribute="bottom" constant="8" id="y6U-wF-xhy"/>
+                    <constraint firstItem="XbP-jc-XXZ" firstAttribute="top" secondItem="h37-18-drJ" secondAttribute="bottom" constant="10" id="y6U-wF-xhy"/>
                     <constraint firstItem="h37-18-drJ" firstAttribute="top" secondItem="H2p-sc-9uM" secondAttribute="topMargin" id="yo7-SO-Ifk"/>
                 </constraints>
             </tableViewCellContentView>
