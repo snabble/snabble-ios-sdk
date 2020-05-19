@@ -88,7 +88,6 @@ extension ViewController: ShoppingCartDelegate {
                 self.navigationController?.pushViewController(viewController, animated: true)
             case .failure(let error):
                 self.showWarningMessage("Error creating payment process: \(error))")
-                break
             }
         }
     }
