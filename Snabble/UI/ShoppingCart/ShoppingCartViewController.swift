@@ -14,7 +14,7 @@ public protocol ShoppingCartDelegate: AnalyticsDelegate, MessageDelegate {
 
     /// called when the user wants to initiate payment.
     /// Implementations should usually create a `PaymentProcess` instance and invoke its `start` method
-    func gotoPayment(_ info: SignedCheckoutInfo, _ cart: ShoppingCart)
+    func gotoPayment(_ method: RawPaymentMethod, _ detail: PaymentMethodDetail?, _ info: SignedCheckoutInfo, _ cart: ShoppingCart)
 
     /// called when the "Scan Products" button in the cart's empty state is tapped
     func gotoScanner()
@@ -54,8 +54,26 @@ public final class ShoppingCartViewController: UIViewController {
 
     @IBOutlet private weak var tableView: UITableView!
     @IBOutlet private weak var tableBottomMargin: NSLayoutConstraint!
+
+    @IBOutlet private weak var bottomWrapper: UIView!
     @IBOutlet private weak var checkoutButton: UIButton!
 
+    @IBOutlet private weak var methodSelectionView: UIView!
+    @IBOutlet private weak var methodIcon: UIImageView!
+    @IBOutlet private weak var methodSpinner: UIActivityIndicatorView!
+
+    @IBOutlet private weak var bottomSeparator: UIView!
+    @IBOutlet private weak var bottomSeparatorHeight: NSLayoutConstraint!
+    @IBOutlet private weak var itemCountLabel: UILabel!
+    @IBOutlet private weak var totalPriceLabel: UILabel!
+
+    public weak var paymentMethodNavigationDelegate: PaymentMethodNavigationDelegate? {
+        didSet {
+            self.methodSelector?.paymentMethodNavigationDelegate = self.paymentMethodNavigationDelegate
+        }
+    }
+
+    private var methodSelector: PaymentMethodSelector?
     private var trashButton: UIBarButtonItem!
 
     private var emptyState: ShoppingCartEmptyStateView!
@@ -99,72 +117,15 @@ public final class ShoppingCartViewController: UIViewController {
         SnabbleUI.registerForAppearanceChange(self)
     }
 
-    private func setupItems(_ cart: ShoppingCart) {
-        self.items = []
-
-        // find all line items that refer to our own cart items
-        for (index, cartItem) in cart.items.enumerated() {
-            if let lineItems = cart.backendCartInfo?.lineItems {
-                let items = lineItems.filter { $0.id == cartItem.uuid || $0.refersTo == cartItem.uuid }
-
-                // if we have a single lineItem that updates this entry with another SKU,
-                // propagate the change to the shopping cart
-                if let lineItem = items.first, items.count == 1, lineItem.sku != cartItem.product.sku {
-                    let provider = SnabbleAPI.productProvider(for: SnabbleUI.project)
-                    if let replacement = CartItem(replacing: cartItem, provider, self.shoppingCart.shopId, lineItem) {
-                        cart.replaceItem(at: index, with: replacement)
-                    }
-                }
-                let item = CartTableEntry.cartItem(cartItem, items)
-                self.items.append(item)
-            } else {
-                let item = CartTableEntry.cartItem(cartItem, [])
-                self.items.append(item)
-            }
-        }
-
-        // now gather the remaining lineItems. find the "master" items first
-        if let lineItems = cart.backendCartInfo?.lineItems {
-            let cartIds = Set(cart.items.map { $0.uuid })
-
-            let masterItems = lineItems.filter { $0.type == .default && !cartIds.contains($0.id) }
-
-            for item in masterItems {
-                let additionalItems = lineItems.filter { $0.type != .default && $0.refersTo == item.id }
-                let item = CartTableEntry.lineItem(item, additionalItems)
-                self.items.append(item)
-            }
-        }
-
-        // find all giveaways
-        if let lineItems = cart.backendCartInfo?.lineItems {
-            let giveaways = lineItems.filter { $0.type == .giveaway }
-            giveaways.forEach {
-                self.items.append(CartTableEntry.giveaway($0))
-            }
-        }
-
-        // find all discounts
-        if let lineItems = cart.backendCartInfo?.lineItems {
-            let discounts = lineItems.filter { $0.type == .discount }
-            if !discounts.isEmpty {
-                let sum = discounts.reduce(0) { $0 + $1.amount * ($1.price ?? 0) }
-                let item = CartTableEntry.discount(sum)
-                self.items.append(item)
-            }
-        }
-
-        // check if any of the cart items's products has an associated image
-        let imgIndex = cart.items.firstIndex { $0.product.imageUrl != nil }
-        self.showImages = imgIndex != nil
-    }
-
     public required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
 
     override public func viewDidLoad() {
         super.viewDidLoad()
+
+        self.methodSelector = PaymentMethodSelector(self, self.methodSelectionView, self.methodIcon, self.methodSpinner, self.shoppingCart)
+        self.methodSelector?.paymentMethodNavigationDelegate = self.paymentMethodNavigationDelegate
 
         self.view.backgroundColor = SnabbleUI.appearance.backgroundColor
 
@@ -187,8 +148,17 @@ public final class ShoppingCartViewController: UIViewController {
 
         self.tableBottomMargin.constant = 0
 
-        self.checkoutButton.titleLabel?.font = UIFont.monospacedDigitSystemFont(ofSize: 17, weight: .semibold)
+        self.checkoutButton.setTitle("Snabble.Shoppingcart.buyProducts.now".localized(), for: .normal)
         self.checkoutButton.makeSnabbleButton()
+
+        self.methodSelectionView.layer.masksToBounds = true
+        self.methodSelectionView.layer.cornerRadius = 8
+        self.methodSelectionView.layer.borderColor = UIColor.lightGray.cgColor
+        self.methodSelectionView.layer.borderWidth = 1 / UIScreen.main.scale
+
+        self.bottomSeparatorHeight.constant = 1 / UIScreen.main.scale
+
+        self.totalPriceLabel.font = UIFont.monospacedDigitSystemFont(ofSize: 22, weight: .bold)
     }
 
     override public func viewWillAppear(_ animated: Bool) {
@@ -355,13 +325,78 @@ public final class ShoppingCartViewController: UIViewController {
         self.updateTotals()
     }
 
+    private func setupItems(_ cart: ShoppingCart) {
+        self.items = []
+
+        // find all line items that refer to our own cart items
+        for (index, cartItem) in cart.items.enumerated() {
+            if let lineItems = cart.backendCartInfo?.lineItems {
+                let items = lineItems.filter { $0.id == cartItem.uuid || $0.refersTo == cartItem.uuid }
+
+                // if we have a single lineItem that updates this entry with another SKU,
+                // propagate the change to the shopping cart
+                if let lineItem = items.first, items.count == 1, lineItem.sku != cartItem.product.sku {
+                    let provider = SnabbleAPI.productProvider(for: SnabbleUI.project)
+                    if let replacement = CartItem(replacing: cartItem, provider, self.shoppingCart.shopId, lineItem) {
+                        cart.replaceItem(at: index, with: replacement)
+                    }
+                }
+                let item = CartTableEntry.cartItem(cartItem, items)
+                self.items.append(item)
+            } else {
+                let item = CartTableEntry.cartItem(cartItem, [])
+                self.items.append(item)
+            }
+        }
+
+        // now gather the remaining lineItems. find the "master" items first
+        if let lineItems = cart.backendCartInfo?.lineItems {
+            let cartIds = Set(cart.items.map { $0.uuid })
+
+            let masterItems = lineItems.filter { $0.type == .default && !cartIds.contains($0.id) }
+
+            for item in masterItems {
+                let additionalItems = lineItems.filter { $0.type != .default && $0.refersTo == item.id }
+                let item = CartTableEntry.lineItem(item, additionalItems)
+                self.items.append(item)
+            }
+        }
+
+        // find all giveaways
+        if let lineItems = cart.backendCartInfo?.lineItems {
+            let giveaways = lineItems.filter { $0.type == .giveaway }
+            giveaways.forEach {
+                self.items.append(CartTableEntry.giveaway($0))
+            }
+        }
+
+        // find all discounts
+        if let lineItems = cart.backendCartInfo?.lineItems {
+            let discounts = lineItems.filter { $0.type == .discount }
+            if !discounts.isEmpty {
+                let sum = discounts.reduce(0) { $0 + $1.amount * ($1.price ?? 0) }
+                let item = CartTableEntry.discount(sum)
+                self.items.append(item)
+            }
+        }
+
+        // check if any of the cart items's products has an associated image
+        let imgIndex = cart.items.firstIndex { $0.product.imageUrl != nil }
+        self.showImages = imgIndex != nil
+    }
+
     @IBAction private func checkoutTapped(_ sender: UIButton) {
-        self.startCheckout()
+        if self.methodSelector?.methodTap?.isEnabled == true {
+            self.startCheckout()
+        }
     }
 
     private func startCheckout() {
         let project = SnabbleUI.project
-        guard self.delegate.checkoutAllowed(project) else {
+        guard
+            self.delegate.checkoutAllowed(project),
+            let paymentMethod = self.methodSelector?.selectedPaymentMethod
+        else {
             return
         }
 
@@ -382,7 +417,7 @@ public final class ShoppingCartViewController: UIViewController {
 
             switch result {
             case .success(let info):
-                self.delegate.gotoPayment(info, self.shoppingCart)
+                self.delegate.gotoPayment(paymentMethod, self.methodSelector?.selectedPaymentDetail, info, self.shoppingCart)
             case .failure(let error):
                 let handled = self.delegate.handleCheckoutError(error)
                 if !handled {
@@ -400,7 +435,7 @@ public final class ShoppingCartViewController: UIViewController {
                     let offlineMethods = SnabbleUI.project.paymentMethods.filter { $0.offline }
                     if !offlineMethods.isEmpty {
                         let info = SignedCheckoutInfo(offlineMethods)
-                        self.delegate.gotoPayment(info, self.shoppingCart)
+                        self.delegate.gotoPayment(paymentMethod, self.methodSelector?.selectedPaymentDetail, info, self.shoppingCart)
                     } else {
                         self.delegate.showWarningMessage("Snabble.Payment.errorStarting".localized())
                     }
@@ -447,7 +482,6 @@ public final class ShoppingCartViewController: UIViewController {
         self.tabBarItem.image = UIImage.fromBundle(numProducts == 0 ? "SnabbleSDK/icon-cart-inactive-empty" : "SnabbleSDK/icon-cart-inactive-full")
 
         let formatter = PriceFormatter(SnabbleUI.project)
-        let title: String
 
         /// workaround for backend giving us 0 as price for price-less products :(
         let nilPrice: Bool
@@ -460,19 +494,18 @@ public final class ShoppingCartViewController: UIViewController {
         let totalPrice = nilPrice ? nil : (self.shoppingCart.backendCartInfo?.totalPrice ?? self.shoppingCart.total)
         if let total = totalPrice, numProducts > 0 {
             let formattedTotal = formatter.format(total)
-            let fmt = numProducts == 1 ? "Snabble.Shoppingcart.buyProducts.one" : "Snabble.Shoppingcart.buyProducts"
-            title = String(format: fmt.localized(), numProducts, formattedTotal)
             self.checkCheckoutLimits(total)
+            self.totalPriceLabel?.text = formattedTotal
         } else {
-            title = "Snabble.Shoppingcart.buyProducts.now".localized()
+            self.totalPriceLabel?.text = ""
         }
 
-        UIView.performWithoutAnimation {
-            self.checkoutButton?.setTitle(title, for: .normal)
-            self.checkoutButton?.layoutIfNeeded()
-        }
+        let fmt = numProducts == 1 ? "Snabble.Shoppingcart.numberOfItems.one" : "Snabble.Shoppingcart.numberOfItems"
+        self.itemCountLabel?.text = String(format: fmt.localized(), numProducts)
 
-        self.checkoutButton?.isHidden = numProducts == 0
+        self.bottomWrapper?.isHidden = numProducts == 0
+
+        self.methodSelector?.updateAvailablePaymentMethods()
     }
 
     private var notAllMethodsAvailableShown = false

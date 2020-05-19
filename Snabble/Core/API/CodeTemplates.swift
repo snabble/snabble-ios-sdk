@@ -98,7 +98,6 @@ private enum TemplateComponent {
     case eanChecksum
 
     /// parse one template component. properties look like "{name:length}", everything else is considered plain text
-    // swiftlint:disable:next cyclomatic_complexity
     init?(_ str: String) {
         if str.prefix(1) == "{" {
             // strip off the braces
@@ -267,7 +266,6 @@ public struct CodeTemplate {
     private static let regexps = [ token, plaintext ]
     // swiftlint:enable force_try
 
-    // swiftlint:disable:next cyclomatic_complexity
     init?(_ id: String, _ template: String) {
         self.id = id
         self.template = template
@@ -599,7 +597,6 @@ public enum CodeMatcher {
         }
     }
 
-    // swiftlint:disable:next cyclomatic_complexity
     public static func createInstoreEan(_ templateId: String, _ code: String, _ data: Int, _ projectId: String? = nil) -> String? {
         guard let template = self.findTemplate(templateId, projectId) else {
             return nil

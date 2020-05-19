@@ -12,6 +12,7 @@ public final class ShoppingCart: Codable {
     public private(set) var session: String
     public private(set) var lastSaved: Date?
     public private(set) var backendCartInfo: BackendCartInfo?
+    public private(set) var paymentMethods: [PaymentMethodDescription]?
 
     public let projectId: String
     public let shopId: String
@@ -238,7 +239,10 @@ public final class ShoppingCart: Codable {
     }
 
     public var backupAvailable: Bool {
-        return (self.backupItems?.count ?? 0) > 0
+        guard let backupItems = self.backupItems else {
+            return false
+        }
+        return !backupItems.isEmpty
     }
 
     /// update the products in this shopping cart, e.g. after a database update was downloaded
@@ -332,6 +336,7 @@ extension ShoppingCart {
 }
 
 public extension Notification.Name {
+    static let snabbleCartUpdating = Notification.Name("snabbleCartUpdating")
     static let snabbleCartUpdated = Notification.Name("snabbleCartUpdated")
 }
 
@@ -355,17 +360,23 @@ extension ShoppingCart {
             return
         }
 
+        if !userInitiated {
+            NotificationCenter.default.post(name: .snabbleCartUpdating, object: self)
+        }
+
         self.createCheckoutInfo(project, timeout: 2) { result in
             switch result {
             case .failure(let error):
                 Log.warn("createCheckoutInfo failed: \(error)")
                 self.backendCartInfo = nil
+                self.paymentMethods = nil
                 completion(false)
             case .success(let info):
                 let session = info.checkoutInfo.session
                 Log.info("createCheckoutInfo succeeded: \(session)")
                 let totalPrice = info.checkoutInfo.price.price
                 self.backendCartInfo = BackendCartInfo(lineItems: info.checkoutInfo.lineItems, totalPrice: totalPrice)
+                self.paymentMethods = info.checkoutInfo.paymentMethods
                 self.save(postEvent: false)
                 completion(true)
             }

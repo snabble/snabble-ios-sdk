@@ -23,12 +23,6 @@ public struct SnabbleAppearance {
     public var textColor = UIColor.black
 
     public init() {}
-
-    @available(*, deprecated, renamed: "backgroundColor")
-    public var primaryBackgroundColor: UIColor {
-        get { return self.backgroundColor }
-        set { self.backgroundColor = newValue }
-    }
 }
 
 /// global settings for the Snabble UI classes

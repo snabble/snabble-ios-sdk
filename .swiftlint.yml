@@ -3,6 +3,11 @@ excluded:
 
 disabled_rules:
  - todo
+ - cyclomatic_complexity
+ - type_body_length
+ - line_length
+ - function_body_length
+ - file_length
 
 opt_in_rules:
  - private_outlet
@@ -25,16 +30,6 @@ opt_in_rules:
  - toggle_bool
  - unused_import
  - yoda_condition
-
-line_length: 180
-
-file_length: 900
-
-function_body_length: 50
-
-type_body_length: 
- - 300
- - 400
 
 identifier_name:
   min_length: 3

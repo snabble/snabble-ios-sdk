@@ -9,19 +9,26 @@ import UIEmptyState
 import LocalAuthentication
 
 extension RawPaymentMethod {
-    var displayName: String? {
+    var displayName: String {
         switch self {
-        case .deDirectDebit: return "SEPA-Lastschrift"
-        case .creditCardMastercard: return "Mastercard"
-        case .creditCardVisa: return "VISA"
-        case .creditCardAmericanExpress: return "American Express"
+        case .deDirectDebit:
+            return "SEPA-Lastschrift"
+        case .creditCardMastercard:
+            return "Mastercard"
+        case .creditCardVisa:
+            return "VISA"
+        case .creditCardAmericanExpress:
+            return "American Express"
         case .gatekeeperTerminal:
             return "Snabble.Payment.payAtSCO".localized()
         case .paydirektOneKlick:
             return "paydirekt"
-
-        case .qrCodePOS, .qrCodeOffline, .externalBilling, .customerCardPOS:
-            return nil
+        case .qrCodePOS, .qrCodeOffline:
+            return "Snabble.Payment.payAtCashDesk".localized()
+        case .externalBilling:
+            return "Snabble.Payment.payViaInvoice".localized()
+        case .customerCardPOS:
+            return "Snabble.Payment.payUsingCustomerCard".localized()
         }
     }
 
@@ -40,29 +47,15 @@ extension RawPaymentMethod {
 
     var icon: UIImage? {
         switch self {
-        case .deDirectDebit: return UIImage.fromBundle("SnabbleSDK/payment-small-sepa")
-        case .creditCardVisa: return UIImage.fromBundle("SnabbleSDK/payment-small-visa")
-        case .creditCardMastercard: return UIImage.fromBundle("SnabbleSDK/payment-small-mastercard")
-        case .creditCardAmericanExpress: return UIImage.fromBundle("SnabbleSDK/payment-small-amex")
-        case .gatekeeperTerminal: return UIImage.fromBundle("SnabbleSDK/payment-card-terminal")
-        case .paydirektOneKlick: return UIImage.fromBundle("SnabbleSDK/payment-small-paydirekt")
+        case .deDirectDebit: return UIImage.fromBundle("SnabbleSDK/payment/payment-sepa")
+        case .creditCardVisa: return UIImage.fromBundle("SnabbleSDK/payment/payment-visa")
+        case .creditCardMastercard: return UIImage.fromBundle("SnabbleSDK/payment/payment-mastercard")
+        case .creditCardAmericanExpress: return UIImage.fromBundle("SnabbleSDK/payment/payment-amex")
+        case .gatekeeperTerminal: return UIImage.fromBundle("SnabbleSDK/payment/payment-sco")
+        case .paydirektOneKlick: return UIImage.fromBundle("SnabbleSDK/payment/payment-paydirekt")
 
         case .qrCodePOS, .qrCodeOffline, .externalBilling, .customerCardPOS:
-            return nil
-        }
-    }
-
-    var order: Int {
-        switch self {
-        case .deDirectDebit: return 100
-        case .creditCardVisa: return 99
-        case .creditCardMastercard: return 98
-        case .creditCardAmericanExpress: return 97
-        case .paydirektOneKlick: return 80
-        case .gatekeeperTerminal: return 70
-
-        case .qrCodePOS, .qrCodeOffline, .externalBilling, .customerCardPOS:
-            return 0
+            return UIImage.fromBundle("SnabbleSDK/payment/payment-pos")
         }
     }
 }
@@ -111,8 +104,6 @@ public final class PaymentMethodListViewController: UIViewController {
         let paymentDetails = PaymentMethodDetails.read()
         self.initialDetails = paymentDetails.count
 
-        NotificationCenter.default.addObserver(self, selector: #selector(self.methodsChanged(_:)), name: .paymentMethodsChanged, object: nil)
-
         if !SnabbleUI.implicitNavigation && self.navigationDelegate == nil {
             let msg = "navigationDelegate may not be nil when using explicit navigation"
             assert(self.navigationDelegate != nil, msg)
@@ -153,8 +144,11 @@ public final class PaymentMethodListViewController: UIViewController {
         return self.parent?.navigationItem ?? super.navigationItem
     }
 
-    // swiftlint:disable:next private_action
-    @IBAction public func addButtonTapped(_ sender: Any) {
+    @IBAction private func addButtonTapped(_ sender: Any) {
+        self.addPaymentMethod()
+    }
+
+    public func addPaymentMethod() {
         self.tableView?.isEditing = false
 
         if !self.devicePasscodeSet() {
@@ -189,10 +183,6 @@ public final class PaymentMethodListViewController: UIViewController {
     // checks if the device passcode and/or biometry is enabled
     private func devicePasscodeSet() -> Bool {
         return LAContext().canEvaluatePolicy(.deviceOwnerAuthentication, error: nil)
-    }
-
-    @objc private func methodsChanged(_ notification: Notification) {
-        self.updateTable()
     }
 
     private func updateTable() {
@@ -280,8 +270,7 @@ extension PaymentMethodListViewController: UITableViewDelegate, UITableViewDataS
     public func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
         let method = self.paymentDetails[indexPath.row]
         PaymentMethodDetails.remove(at: indexPath.row)
-        self.analyticsDelegate?.track(.paymentMethodDeleted(method.rawMethod.displayName ?? ""))
-        NotificationCenter.default.post(name: .paymentMethodsChanged, object: self)
+        self.analyticsDelegate?.track(.paymentMethodDeleted(method.rawMethod.displayName))
     }
 
     public func tableView(_ tableView: UITableView, moveRowAt sourceIndexPath: IndexPath, to destinationIndexPath: IndexPath) {

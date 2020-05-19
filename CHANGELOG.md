@@ -1,5 +1,11 @@
 ## snabble iOS SDK Changelog
 
+# v0.13.0
+
+* Adds a new UI for payment method selection, integrated into the shopping cart. 
+* The previously used `PaymentMethodSelectionViewController` has been removed, and `ShoppingCartDelegate.gotoPayment` has a new signature.
+* Removes all previously methods/properties that were marked as `deprecated`.
+
 # v0.12.11
 
 * Adds support for the `availabilities` table that was added in appdb schema v1.20. Searching for barcodes will now only return results that are marked as `listed` or `inStock`.

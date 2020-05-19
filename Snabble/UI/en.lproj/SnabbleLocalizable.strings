@@ -106,6 +106,16 @@
 
 "Snabble.Shoppingcart.buyProducts.now" = "Pay now";
 
+"Snabble.Shoppingcart.numberOfItems.one" = "%d product";
+
+"Snabble.Shoppingcart.numberOfItems" = "%d products";
+
+"Snabble.Shoppingcart.howToPay" = "How would you like to pay?";
+
+"Snabble.Shoppingcart.notForVendor" = "Not supported by this retailer";
+
+"Snabble.Shoppingcart.notFotThisPurchase" = "Not available for this purchase";
+
 "Snabble.Shoppingcart.emptyState.buttonTitle" = "Scan products";
 
 "Snabble.Shoppingcart.emptyState.description" = "Scan products to add them to your shopping cart.";
@@ -187,6 +197,12 @@
 "Snabble.Payment.add" = "Add payment method";
 
 "Snabble.Payment.payAtSCO" = "Card at EC terminal";
+
+"Snabble.Payment.payAtCashDesk" = "Cash desk";
+
+"Snabble.Payment.payViaInvoice" = "via Invoice";
+
+"Snabble.Payment.payUsingCustomerCard" = "using Customer Card";
 
 "Snabble.Checkout.verifying" = "Verifying";
 
