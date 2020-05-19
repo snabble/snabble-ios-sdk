@@ -76,15 +76,19 @@ extension ViewController: ScannerDelegate {
 }
 
 extension ViewController: ShoppingCartDelegate {
-    func gotoPayment(_ info: SignedCheckoutInfo, _ cart: ShoppingCart) {
-        let process = PaymentProcess(info, cart, delegate: self)
+    func gotoPayment(_ method: RawPaymentMethod, _ detail: PaymentMethodDetail?, _ info: SignedCheckoutInfo, _ cart: ShoppingCart) {
+        guard !info.checkoutInfo.paymentMethods.isEmpty else {
+            return
+        }
 
-        process.start { result in
+        let process = PaymentProcess(info, cart, delegate: self)
+        process.start(method, detail) { result in
             switch result {
             case .success(let viewController):
                 self.navigationController?.pushViewController(viewController, animated: true)
             case .failure(let error):
                 self.showWarningMessage("Error creating payment process: \(error))")
+                break
             }
         }
     }
