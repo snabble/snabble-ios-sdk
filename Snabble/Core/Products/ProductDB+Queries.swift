@@ -228,12 +228,6 @@ extension ProductDB {
         // if we have a shopId, get the price
         let priceRow: Row
 
-//        if let shopId = shopId, let pRow = self.getPriceRowForSku(dbQueue, sku, shopId) {
-//            priceRow = pRow
-//        } else {
-//            priceRow = row
-//        }
-
         if let pRow = self.getPriceRowForSku(dbQueue, sku, shopId) {
             priceRow = pRow
         } else {
