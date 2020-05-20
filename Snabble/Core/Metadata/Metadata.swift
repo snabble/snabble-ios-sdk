@@ -164,6 +164,13 @@ public struct QRCodeConfig: Decodable {
 
 }
 
+public enum BarcodeDetectorType: String, Decodable, UnknownCaseRepresentable {
+    case `default`
+    case cortex
+
+    public static let unknownCase = BarcodeDetectorType.default
+}
+
 public enum ScanFormat: String, Decodable, CaseIterable {
     // 1d codes
     case ean13      // includes UPC-A
@@ -221,6 +228,7 @@ public struct Project: Decodable {
     public let qrCodeConfig: QRCodeConfig?
 
     public let scanFormats: [ScanFormat]
+    public let barcodeDetector: BarcodeDetectorType
 
     public let shops: [Shop]
 
@@ -240,7 +248,8 @@ public struct Project: Decodable {
         case id, name, links
         case currency, decimalDigits, locale, roundingMode
         case qrCodeConfig = "qrCodeOffline"
-        case shops, scanFormats, customerCards, codeTemplates, searchableTemplates, priceOverrideCodes, checkoutLimits
+        case shops, scanFormats, barcodeDetector
+        case customerCards, codeTemplates, searchableTemplates, priceOverrideCodes, checkoutLimits
         case messages = "texts"
         case paymentMethods
     }
@@ -267,6 +276,8 @@ public struct Project: Decodable {
         let defaultFormats = [ ScanFormat.ean8.rawValue, ScanFormat.ean13.rawValue, ScanFormat.code128.rawValue ]
         let formats = (try container.decodeIfPresent([String].self, forKey: .scanFormats)) ?? defaultFormats
         self.scanFormats = formats.compactMap { ScanFormat(rawValue: $0) }
+        let detector = try container.decodeIfPresent(String.self, forKey: .barcodeDetector)
+        self.barcodeDetector = BarcodeDetectorType(rawValue: detector ?? "")
         self.customerCards = try container.decodeIfPresent(CustomerCardInfo.self, forKey: .customerCards)
         let templates = try container.decodeIfPresent([String: String].self, forKey: .codeTemplates)
         self.codeTemplates = TemplateDefinition.arrayFrom(templates)
@@ -292,6 +303,7 @@ public struct Project: Decodable {
         self.currencySymbol = ""
         self.shops = []
         self.scanFormats = []
+        self.barcodeDetector = .default
         self.customerCards = CustomerCardInfo()
         self.codeTemplates = []
         self.searchableTemplates = nil
@@ -315,6 +327,7 @@ public struct Project: Decodable {
         self.currencySymbol = ""
         self.shops = []
         self.scanFormats = []
+        self.barcodeDetector = .default
         self.customerCards = CustomerCardInfo()
         self.codeTemplates = []
         self.searchableTemplates = nil
@@ -389,6 +402,9 @@ public struct ProjectLinks: Decodable {
 
 public struct Flags: Decodable {
     public let kill: Bool
+    public let cortexDecoderCustomerID: String?
+    public let cortexDecoderLicenseKey: String?
+
     private let data: [String: Any]
 
     public subscript(_ key: String) -> Any? {
@@ -397,6 +413,8 @@ public struct Flags: Decodable {
 
     private enum CodingKeys: String, CodingKey {
         case kill
+        case cortexDecoderCustomerID
+        case cortexDecoderLicenseKey
     }
 
     private struct AdditionalCodingKeys: CodingKey {
@@ -415,6 +433,8 @@ public struct Flags: Decodable {
     public init(from decoder: Decoder) throws {
         let keyedContainer = try decoder.container(keyedBy: CodingKeys.self)
         self.kill = try keyedContainer.decode(Bool.self, forKey: .kill)
+        self.cortexDecoderCustomerID = try keyedContainer.decodeIfPresent(String.self, forKey: .cortexDecoderCustomerID)
+        self.cortexDecoderLicenseKey = try keyedContainer.decodeIfPresent(String.self, forKey: .cortexDecoderLicenseKey)
 
         let dataContainer = try decoder.container(keyedBy: AdditionalCodingKeys.self)
         self.data = try dataContainer.decode([String: Any].self)
@@ -422,6 +442,8 @@ public struct Flags: Decodable {
 
     fileprivate init() {
         self.kill = false
+        self.cortexDecoderCustomerID = nil
+        self.cortexDecoderLicenseKey = nil
         self.data = [:]
     }
 }
