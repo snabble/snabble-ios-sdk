@@ -76,7 +76,7 @@ final class PaymentMethodSelector {
             self.setDefaultPaymentMethod()
         }
 
-        self.methodSelectionView.isHidden = paymentMethods.count == 1
+        self.methodSelectionView.isHidden = paymentMethods.count < 2
     }
 
     private func setSelectedPayment(_ method: RawPaymentMethod?, detail: PaymentMethodDetail?) {
@@ -90,7 +90,7 @@ final class PaymentMethodSelector {
 
     private func setDefaultPaymentMethod() {
         let count = self.shoppingCart.paymentMethods?.count ?? 0
-        self.methodSelectionView.isHidden = count == 1
+        self.methodSelectionView.isHidden = count < 2
 
         let userMethods = PaymentMethodDetails.read()
 
