@@ -8,24 +8,6 @@ import Foundation
 
 /// map payment methods to icons and the UIViewControllers that implement them
 extension PaymentMethod {
-    var icon: String {
-        switch self {
-        case .qrCodePOS: return "SnabbleSDK/payment-method-checkstand"
-        case .qrCodeOffline: return "SnabbleSDK/payment-method-checkstand"
-        case .deDirectDebit: return "SnabbleSDK/payment-sepa"
-        case .visa: return "SnabbleSDK/payment-visa"
-        case .mastercard: return "SnabbleSDK/payment-mastercard"
-        case .americanExpress: return "SnabbleSDK/payment-amex"
-        case .externalBilling:
-            switch self.data?.originType {
-            case .tegutEmployeeID: return "SnabbleSDK/payment-tegut"
-            default: return ""
-            }
-        case .gatekeeperTerminal: return "SnabbleSDK/payment-card-terminal"
-        case .customerCardPOS: return "SnabbleSDK/payment-method-checkstand"
-        case .paydirektOneKlick: return "SnabbleSDK/payment-method-paydirekt"
-        }
-    }
 
     var dataRequired: Bool {
         switch self {

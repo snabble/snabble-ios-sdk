@@ -17,7 +17,7 @@
                 <rect key="frame" x="0.0" y="0.0" width="377" height="83"/>
                 <autoresizingMask key="autoresizingMask"/>
                 <subviews>
-                    <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="SnabbleSDK/payment-small-sepa" translatesAutoresizingMaskIntoConstraints="NO" id="h37-18-drJ">
+                    <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="SnabbleSDK/payment/payment-sepa" translatesAutoresizingMaskIntoConstraints="NO" id="h37-18-drJ">
                         <rect key="frame" x="15" y="11" width="38" height="24"/>
                         <constraints>
                             <constraint firstAttribute="height" constant="24" id="X7L-AX-h0l"/>
@@ -60,6 +60,6 @@
         </tableViewCell>
     </objects>
     <resources>
-        <image name="SnabbleSDK/payment-small-sepa" width="36" height="26"/>
+        <image name="SnabbleSDK/payment/payment-sepa" width="38" height="24"/>
     </resources>
 </document>
