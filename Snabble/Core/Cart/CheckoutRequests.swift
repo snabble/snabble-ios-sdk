@@ -17,10 +17,9 @@ extension ShoppingCart {
     ///   - completion: is called on the main thread with the result of the API call
     ///   - result: the `SignedCheckoutInfo` or the error
     public func createCheckoutInfo(_ project: Project, timeout: TimeInterval = 0, completion: @escaping (_ result: Result<SignedCheckoutInfo, SnabbleError>) -> Void ) {
-        // cancel any previous tasks
         self.eventTimer?.invalidate()
-        self.checkoutInfoTask?.cancel()
-        self.checkoutInfoTask = nil
+        // cancel any previous tasks
+        self.cancelPendingCheckoutInfoRequest()
 
         let cart = self.createCart()
 
@@ -46,6 +45,11 @@ extension ShoppingCart {
 
             self.checkoutInfoTask = task
         }
+    }
+
+    func cancelPendingCheckoutInfoRequest() {
+        self.checkoutInfoTask?.cancel()
+        self.checkoutInfoTask = nil
     }
 
 }

@@ -207,6 +207,8 @@ public final class ShoppingCartViewController: UIViewController {
 
     // MARK: notification handlers
     @objc private func shoppingCartUpdated(_ notification: Notification) {
+        self.shoppingCart.cancelPendingCheckoutInfoRequest()
+
         // ignore notifcation sent from this class
         if let object = notification.object as? ShoppingCartViewController, object == self {
             return

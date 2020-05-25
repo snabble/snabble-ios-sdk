@@ -6,7 +6,7 @@
 
 import Foundation
 
-public struct SnabbleError: Decodable, Error {
+public struct SnabbleError: Decodable, Error, Equatable {
     public let error: ErrorResponse
 
     static let unknown = SnabbleError(error: ErrorResponse("unknown"))
@@ -37,7 +37,7 @@ public enum ErrorResponseType: String, UnknownCaseRepresentable {
     public static let unknownCase = ErrorResponseType.unknown
 }
 
-public struct ErrorResponse: Decodable {
+public struct ErrorResponse: Decodable, Equatable {
     public let rawType: String
     public let message: String?
     public let sku: String?

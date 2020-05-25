@@ -368,8 +368,10 @@ extension ShoppingCart {
             switch result {
             case .failure(let error):
                 Log.warn("createCheckoutInfo failed: \(error)")
-                self.backendCartInfo = nil
-                self.paymentMethods = nil
+                if error != SnabbleError.cancelled {
+                    self.backendCartInfo = nil
+                    self.paymentMethods = nil
+                }
                 completion(false)
             case .success(let info):
                 let session = info.checkoutInfo.session
