@@ -233,7 +233,7 @@ final class PaymentMethodSelector {
             }
 
             if cartMethod == nil {
-                let title = self.title(method.displayName, "Snabble.Shoppingcart.notFotThisPurchase".localized(), self.subTitleColor)
+                let title = self.title(method.displayName, "Snabble.Shoppingcart.notForThisPurchase".localized(), self.subTitleColor)
                 let action = PaymentMethodAction(title, method, nil, false)
                 return [action]
             } else if !userMethods.isEmpty {
