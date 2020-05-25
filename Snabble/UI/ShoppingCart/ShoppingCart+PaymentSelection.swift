@@ -74,6 +74,8 @@ final class PaymentMethodSelector {
         let found = paymentMethods.contains { $0.method == self.selectedPaymentMethod }
         if !found {
             self.setDefaultPaymentMethod()
+        } else {
+            self.setSelectedPayment(self.selectedPaymentMethod, detail: self.selectedPaymentDetail)
         }
 
         self.methodSelectionView.isHidden = paymentMethods.count < 2

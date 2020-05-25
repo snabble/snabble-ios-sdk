@@ -14,6 +14,7 @@ public struct SnabbleError: Decodable, Error {
     static let invalid = SnabbleError(error: ErrorResponse("invalid"))
     static let noRequest = SnabbleError(error: ErrorResponse("no request"))
     static let notFound = SnabbleError(error: ErrorResponse("not found"))
+    static let cancelled = SnabbleError(error: ErrorResponse("cancelled"))
 
     static let noPaymentAvailable = SnabbleError(error: ErrorResponse("no payment method available"))
 }
@@ -293,7 +294,11 @@ extension Project {
             else {
                 let statusCode = (response as? HTTPURLResponse)?.statusCode ?? 0
                 self.logError("error getting response from \(url): \(String(describing: error)) statusCode \(statusCode)")
+
                 var apiError = SnabbleError.unknown
+                if let urlError = error as? URLError, urlError.code == .cancelled {
+                    apiError = SnabbleError.cancelled
+                }
                 if let data = rawData {
                     do {
                         let error = try JSONDecoder().decode(SnabbleError.self, from: data)

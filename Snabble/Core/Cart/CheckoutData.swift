@@ -237,11 +237,14 @@ public struct CheckoutInfo: Decodable {
         public let name: String
         public let amount: Int
         public let price: Int?
+        public let weight: Int?
         public let totalPrice: Int?
         public let scannedCode: String?
         public let type: LineItemType
         public let refersTo: String?
         public let fulfillmentType: String?
+        public let weightUnit: Units?
+        public let referenceUnit: Units?
     }
 
     public struct Price: Decodable {

@@ -20,6 +20,7 @@ extension ShoppingCart {
         // cancel any previous tasks
         self.eventTimer?.invalidate()
         self.checkoutInfoTask?.cancel()
+        self.checkoutInfoTask = nil
 
         let cart = self.createCart()
 
@@ -37,7 +38,8 @@ extension ShoppingCart {
                 case .success(var value):
                     value.rawJson = result.rawJson
                     completion(Result.success(value))
-                case .failure:
+                case .failure(let error):
+                    Log.error("\(error)")
                     completion(result.result)
                 }
             }

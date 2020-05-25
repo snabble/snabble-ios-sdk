@@ -142,7 +142,7 @@ final class ShoppingCartTableCell: UITableViewCell {
 
         let defaultItem = lineItems.first { $0.type == .default }
 
-        self.quantity = defaultItem?.amount ?? item.quantity
+        self.quantity = defaultItem?.weight ?? defaultItem?.amount ?? item.quantity
 
         let product = item.product
         self.nameLabel.text = defaultItem?.name ?? product.name
@@ -207,7 +207,8 @@ final class ShoppingCartTableCell: UITableViewCell {
         self.unitsLabel.text = unitDisplay
 
         if let defaultItem = lineItems.first(where: { $0.type == .default }) {
-            self.quantityLabel.text = "\(defaultItem.amount)\(unitDisplay)"
+            let amount = defaultItem.weight ?? defaultItem.amount
+            self.quantityLabel.text = "\(amount)\(unitDisplay)"
             self.displayLineItemPrice(item.product, defaultItem, lineItems)
         } else {
             let formatter = PriceFormatter(SnabbleUI.project)
@@ -286,7 +287,9 @@ extension ShoppingCartTableCell: UITextFieldDelegate {
     }
 
     func textFieldShouldEndEditing(_ textField: UITextField) -> Bool {
-        self.updateQuantity(at: textField.tag)
+        DispatchQueue.main.async {
+            self.updateQuantity(at: textField.tag)
+        }
         return true
     }
 
