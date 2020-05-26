@@ -271,6 +271,7 @@ extension PaymentMethodListViewController: UITableViewDelegate, UITableViewDataS
         let method = self.paymentDetails[indexPath.row]
         PaymentMethodDetails.remove(at: indexPath.row)
         self.analyticsDelegate?.track(.paymentMethodDeleted(method.rawMethod.displayName))
+        self.updateTable()
     }
 
     public func tableView(_ tableView: UITableView, moveRowAt sourceIndexPath: IndexPath, to destinationIndexPath: IndexPath) {
