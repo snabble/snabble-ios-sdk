@@ -60,6 +60,10 @@ final class PaymentMethodSelector {
             self.methodSpinner.style = .medium
         }
 
+        // hide selection if the project only has one method and we have no payment method data
+        let details = PaymentMethodDetails.read()
+        self.methodSelectionView.isHidden = SnabbleUI.project.paymentMethods.count < 2 && details.isEmpty
+
         self.setDefaultPaymentMethod()
     }
 
@@ -77,8 +81,6 @@ final class PaymentMethodSelector {
         } else {
             self.setSelectedPayment(self.selectedPaymentMethod, detail: self.selectedPaymentDetail)
         }
-
-        self.methodSelectionView.isHidden = paymentMethods.count < 2
     }
 
     private func setSelectedPayment(_ method: RawPaymentMethod?, detail: PaymentMethodDetail?) {
@@ -91,9 +93,6 @@ final class PaymentMethodSelector {
     }
 
     private func setDefaultPaymentMethod() {
-        let count = self.shoppingCart.paymentMethods?.count ?? 0
-        self.methodSelectionView.isHidden = count < 2
-
         let userMethods = PaymentMethodDetails.read()
 
         for method in RawPaymentMethod.allCases {
@@ -121,8 +120,11 @@ final class PaymentMethodSelector {
         let title = "Snabble.Shoppingcart.howToPay".localized()
         let sheet = AlertController(title: title, message: nil, preferredStyle: .actionSheet)
 
-        let allProjectMethods = Set(SnabbleAPI.projects.flatMap { $0.paymentMethods })
-        let allMethods = RawPaymentMethod.orderedMethods.filter { allProjectMethods.contains($0) }
+        // combine all payment methods of all projects
+        let allAppMethods = Set(SnabbleAPI.projects.flatMap { $0.paymentMethods })
+        // and get them in the desired display order
+        let allMethods = RawPaymentMethod.orderedMethods.filter { allAppMethods.contains($0) }
+
         var actions = [PaymentMethodAction]()
         for method in allMethods {
             actions.append(contentsOf: self.actionsFor(method))
@@ -165,7 +167,7 @@ final class PaymentMethodSelector {
         }
         add.imageView.image = UIImage.fromBundle("SnabbleSDK/payment/payment-add")
 
-        let dataRequiring = self.shoppingCart.paymentMethods?.filter { $0.method.dataRequired }.map { $0.method } ?? []
+        let dataRequiring = SnabbleUI.project.paymentMethods.filter { $0.dataRequired }
         let userMethods = Set(PaymentMethodDetails.read().map { $0.rawMethod })
         let requiring = Set(dataRequiring).subtracting(userMethods)
 
@@ -197,17 +199,13 @@ final class PaymentMethodSelector {
         let isProjectMethod = SnabbleUI.project.paymentMethods.contains(method)
         let cartMethod = self.shoppingCart.paymentMethods?.first { $0.method == method }
         let userMethods = PaymentMethodDetails.read().filter { $0.rawMethod == method }
-        let isUserMethod = userMethods.contains { $0.rawMethod == method }
+        let isUserMethod = !userMethods.isEmpty
 
         var detailText: String?
 
         switch method {
         case .externalBilling, .customerCardPOS:
-            if !isProjectMethod {
-                return []
-            }
-
-            if userMethods.isEmpty {
+            if !isProjectMethod || userMethods.isEmpty {
                 return []
             }
 
@@ -232,7 +230,7 @@ final class PaymentMethodSelector {
                 }
             }
 
-            if cartMethod == nil {
+            if cartMethod == nil && isUserMethod {
                 let title = self.title(method.displayName, "Snabble.Shoppingcart.notForThisPurchase".localized(), self.subTitleColor)
                 let action = PaymentMethodAction(title, method, nil, false)
                 return [action]

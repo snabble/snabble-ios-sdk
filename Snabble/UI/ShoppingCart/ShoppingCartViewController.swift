@@ -124,9 +124,6 @@ public final class ShoppingCartViewController: UIViewController {
     override public func viewDidLoad() {
         super.viewDidLoad()
 
-        self.methodSelector = PaymentMethodSelector(self, self.methodSelectionView, self.methodIcon, self.methodSpinner, self.shoppingCart)
-        self.methodSelector?.paymentMethodNavigationDelegate = self.paymentMethodNavigationDelegate
-
         self.view.backgroundColor = SnabbleUI.appearance.backgroundColor
 
         self.emptyState = ShoppingCartEmptyStateView({ [weak self] button in self?.emptyStateButtonTapped(button) })
@@ -165,6 +162,9 @@ public final class ShoppingCartViewController: UIViewController {
         super.viewWillAppear(animated)
 
         self.updateView()
+
+        self.methodSelector = PaymentMethodSelector(self, self.methodSelectionView, self.methodIcon, self.methodSpinner, self.shoppingCart)
+        self.methodSelector?.paymentMethodNavigationDelegate = self.paymentMethodNavigationDelegate
     }
 
     override public func viewDidAppear(_ animated: Bool) {
