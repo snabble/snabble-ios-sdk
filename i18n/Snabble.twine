@@ -108,7 +108,7 @@
         en = How would you like to pay?
     [Snabble.Shoppingcart.notForVendor]
         en = Not supported by this retailer
-    [Snabble.Shoppingcart.notFotThisPurchase]
+    [Snabble.Shoppingcart.notForThisPurchase]
         en = Not available for this purchase
     [Snabble.Shoppingcart.emptyState.buttonTitle]
         en = Scan products

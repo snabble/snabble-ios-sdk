@@ -114,7 +114,7 @@
 
 "Snabble.Shoppingcart.notForVendor" = "Not supported by this retailer";
 
-"Snabble.Shoppingcart.notFotThisPurchase" = "Not available for this purchase";
+"Snabble.Shoppingcart.notForThisPurchase" = "Not available for this purchase";
 
 "Snabble.Shoppingcart.emptyState.buttonTitle" = "Scan products";
 
