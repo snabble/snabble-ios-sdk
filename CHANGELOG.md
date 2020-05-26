@@ -1,10 +1,11 @@
 ## snabble iOS SDK Changelog
 
-# v0.13.2
+# v0.13.4
 
 * Adds a new UI for payment method selection, integrated into the shopping cart. 
 * The previously used `PaymentMethodSelectionViewController` has been removed, and `ShoppingCartDelegate.gotoPayment` has a new signature.
-* Removes all previously methods/properties that were marked as `deprecated`.
+* Removes all methods/properties that were previously marked as `deprecated`.
+* Fixes a potential crash bug when deleting a payment method
 
 # v0.12.11
 

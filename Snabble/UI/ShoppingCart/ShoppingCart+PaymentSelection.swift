@@ -60,11 +60,14 @@ final class PaymentMethodSelector {
             self.methodSpinner.style = .medium
         }
 
+        self.updateSelectionVisibility()
+        self.setDefaultPaymentMethod()
+    }
+
+    func updateSelectionVisibility() {
         // hide selection if the project only has one method and we have no payment method data
         let details = PaymentMethodDetails.read()
         self.methodSelectionView.isHidden = SnabbleUI.project.paymentMethods.count < 2 && details.isEmpty
-
-        self.setDefaultPaymentMethod()
     }
 
     @objc private func shoppingCartUpdating(_ notification: Notification) {
