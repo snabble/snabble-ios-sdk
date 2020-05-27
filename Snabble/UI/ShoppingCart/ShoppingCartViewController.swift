@@ -472,7 +472,7 @@ public final class ShoppingCartViewController: UIViewController {
         }
 
         let start = offendingProducts.count == 1 ? "Snabble.saleStop.errorMsg.one" : "Snabble.saleStop.errorMsg"
-        let msg = start.localized() + "\n" + offendingProducts.joined(separator: "\n")
+        let msg = start.localized() + "\n\n" + offendingProducts.joined(separator: "\n")
         let alert = UIAlertController(title: "Snabble.saleStop.errorMsg.title".localized(), message: msg, preferredStyle: .alert)
         alert.addAction(UIAlertAction(title: "Snabble.OK".localized(), style: .default, handler: nil))
         self.present(alert, animated: true)
