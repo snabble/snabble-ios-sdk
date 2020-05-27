@@ -93,11 +93,13 @@ final class PaymentMethodSelector {
         self.methodIcon.image = detail?.icon ?? method?.icon
         self.methodTap?.isEnabled = true
         self.methodSpinner.stopAnimating()
+        self.methodTap.isEnabled = true
     }
 
     private func setDefaultPaymentMethod() {
         let userMethods = PaymentMethodDetails.read()
 
+        // prefer in-app payment methods like SEPA or CC
         for method in RawPaymentMethod.allCases {
             let ok = self.shoppingCart.paymentMethods?.contains { $0.method == method }
             if ok == true, let userMethod = userMethods.first(where: { $0.rawMethod == method }) {
@@ -106,10 +108,19 @@ final class PaymentMethodSelector {
             }
         }
 
-        let methods: [RawPaymentMethod] = [ .gatekeeperTerminal, .qrCodeOffline, .qrCodePOS, .customerCardPOS ]
+        let fallbackMethods: [RawPaymentMethod] = [ .gatekeeperTerminal, .qrCodeOffline, .qrCodePOS, .customerCardPOS ]
 
-        for method in methods {
+        // check if one of the fallbacks matches the cart
+        for method in fallbackMethods {
             if self.shoppingCart.paymentMethods?.first(where: { $0.method == method }) != nil {
+                self.setSelectedPayment(method, detail: nil)
+                return
+            }
+        }
+
+        // check if one of the fallbacks matches the project
+        for method in fallbackMethods {
+            if SnabbleUI.project.paymentMethods.contains(method) {
                 self.setSelectedPayment(method, detail: nil)
                 return
             }
@@ -117,6 +128,7 @@ final class PaymentMethodSelector {
 
         self.methodIcon.image = nil
         self.methodSpinner.startAnimating()
+        self.methodTap.isEnabled = false
     }
 
     @objc private func methodSelectionTapped(_ gesture: UITapGestureRecognizer) {

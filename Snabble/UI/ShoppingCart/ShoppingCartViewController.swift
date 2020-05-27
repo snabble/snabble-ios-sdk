@@ -390,9 +390,7 @@ public final class ShoppingCartViewController: UIViewController {
     }
 
     @IBAction private func checkoutTapped(_ sender: UIButton) {
-        if self.methodSelector?.methodTap?.isEnabled == true {
-            self.startCheckout()
-        }
+        self.startCheckout()
     }
 
     private func startCheckout() {
@@ -511,8 +509,8 @@ public final class ShoppingCartViewController: UIViewController {
 
         self.methodSelector?.updateAvailablePaymentMethods()
 
-        let possibleMethods = self.shoppingCart.paymentMethods?.count ?? 0
-        self.checkoutButton?.isEnabled = possibleMethods > 0
+        // let possibleMethods = self.shoppingCart.paymentMethods?.count ?? 0
+        // self.checkoutButton?.isEnabled = possibleMethods > 0
     }
 
     private var notAllMethodsAvailableShown = false
