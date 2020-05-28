@@ -23,6 +23,10 @@ final class PaymentMethodCell: UITableViewCell {
     @IBOutlet private weak var useLabel: UILabel!
     @IBOutlet private weak var icon: UIImageView!
 
+    override func prepareForReuse() {
+        self.useLabel.isHidden = false
+    }
+
     func setDetail(_ detail: PaymentMethodDetail, _ projectNames: [String]?) {
         self.name.text = detail.displayName
         self.icon.image = detail.icon
@@ -32,7 +36,7 @@ final class PaymentMethodCell: UITableViewCell {
             let fmt = "Snabble.Payment.usableAt".localized()
             self.useLabel.text = String(format: fmt, retailers)
         } else {
-            self.useLabel.text = nil
+            self.useLabel.isHidden = true
         }
 
         if detail.originType == .tegutEmployeeID {

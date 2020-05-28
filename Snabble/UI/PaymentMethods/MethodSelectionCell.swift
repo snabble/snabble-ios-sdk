@@ -20,5 +20,6 @@ final class MethodSelectionCell: UITableViewCell {
         self.icon.image = method.icon
         self.nameLabel.text = method.displayName
         self.useLabel.text = useableAt
+        self.useLabel.isHidden = useableAt == nil
     }
 }
