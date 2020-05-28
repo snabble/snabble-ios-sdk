@@ -100,7 +100,7 @@ public enum SnabbleAPI {
         let bundleVersion = Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String ?? "0.0"
         let appVersion = config.appVersion ?? bundleVersion
         let version = appVersion.addingPercentEncoding(withAllowedCharacters: .urlPathAllowed) ?? appVersion
-        let metadataURL = config.baseUrl + "/metadata/app/\(config.appId)/ios/\(version)"
+        let metadataURL = "/metadata/app/\(config.appId)/ios/\(version)"
 
         Metadata.load(from: metadataURL) { metadata in
             if let metadata = metadata {
