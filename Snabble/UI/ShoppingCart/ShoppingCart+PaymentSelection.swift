@@ -68,6 +68,18 @@ final class PaymentMethodSelector {
         // hide selection if the project only has one method and we have no payment method data
         let details = PaymentMethodDetails.read()
         self.methodSelectionView.isHidden = SnabbleUI.project.paymentMethods.count < 2 && details.isEmpty
+
+        if let selectedMethod = self.selectedPaymentMethod, let selectedDetail = self.selectedPaymentDetail {
+            // check if the selected method is still valid
+            let allMethods = PaymentMethodDetails.read()
+            let method = allMethods.first { $0 == selectedDetail }
+            if method != nil {
+                assert(method?.rawMethod == selectedMethod)
+            } else {
+                // method no longer valid, select a new default
+                self.setDefaultPaymentMethod()
+            }
+        }
     }
 
     @objc private func shoppingCartUpdating(_ notification: Notification) {

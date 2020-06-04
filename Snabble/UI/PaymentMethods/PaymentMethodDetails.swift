@@ -23,7 +23,7 @@ protocol EncryptedPaymentData {
     var originType: AcceptedOriginType { get }
 }
 
-struct SepaData: Codable, EncryptedPaymentData {
+struct SepaData: Codable, EncryptedPaymentData, Equatable {
     // encrypted JSON string
     let encryptedPaymentData: String
     // serial # of the certificate used to encrypt
@@ -69,7 +69,7 @@ struct SepaData: Codable, EncryptedPaymentData {
     }
 }
 
-struct TegutEmployeeData: Codable, EncryptedPaymentData {
+struct TegutEmployeeData: Codable, EncryptedPaymentData, Equatable {
     // encrypted JSON string
     let encryptedPaymentData: String
     // serial # of the certificate used to encrypt
@@ -144,7 +144,7 @@ public enum CreditCardBrand: String, Codable {
     }
 }
 
-struct CreditCardData: Codable, EncryptedPaymentData {
+struct CreditCardData: Codable, EncryptedPaymentData, Equatable {
     let encryptedPaymentData: String
     let serial: String
     let displayName: String
@@ -275,7 +275,7 @@ struct CreditCardData: Codable, EncryptedPaymentData {
     }
 }
 
-struct PaydirektData: Codable, EncryptedPaymentData {
+struct PaydirektData: Codable, EncryptedPaymentData, Equatable {
     // encrypted JSON string
     let encryptedPaymentData: String
     // serial # of the certificate used to encrypt
@@ -350,7 +350,7 @@ enum PaymentMethodError: Error {
     case unknownMethodError(String)
 }
 
-enum PaymentMethodUserData: Codable {
+enum PaymentMethodUserData: Codable, Equatable {
     case sepa(SepaData)
     case creditcard(CreditCardData)
     case tegutEmployeeCard(TegutEmployeeData)
@@ -403,7 +403,7 @@ enum PaymentMethodUserData: Codable {
     }
 }
 
-public struct PaymentMethodDetail: Codable {
+public struct PaymentMethodDetail: Codable, Equatable {
     let methodData: PaymentMethodUserData
 
     init(_ sepaData: SepaData) {
