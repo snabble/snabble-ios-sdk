@@ -304,8 +304,10 @@ extension ShoppingCart {
 
         if postEvent {
             self.eventTimer?.invalidate()
-            self.eventTimer = Timer.scheduledTimer(withTimeInterval: self.saveDelay, repeats: false) { _ in
-                CartEvent.cart(self)
+            DispatchQueue.main.async {
+                self.eventTimer = Timer.scheduledTimer(withTimeInterval: self.saveDelay, repeats: false) { _ in
+                    CartEvent.cart(self)
+                }
             }
         }
     }
