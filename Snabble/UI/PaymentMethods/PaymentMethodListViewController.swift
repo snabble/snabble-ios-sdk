@@ -32,13 +32,13 @@ extension RawPaymentMethod {
         }
     }
 
-    func editViewController(_ analyticsDelegate: AnalyticsDelegate?) -> UIViewController? {
+    func editViewController(_ showFromCart: Bool, _ analyticsDelegate: AnalyticsDelegate?) -> UIViewController? {
         switch self {
-        case .deDirectDebit: return SepaEditViewController(nil, nil, analyticsDelegate)
-        case .creditCardMastercard: return CreditCardEditViewController(.mastercard, analyticsDelegate)
-        case .creditCardVisa: return CreditCardEditViewController(.visa, analyticsDelegate)
-        case .creditCardAmericanExpress: return CreditCardEditViewController(.amex, analyticsDelegate)
-        case .paydirektOneKlick: return PaydirektEditViewController(nil, nil, analyticsDelegate)
+        case .deDirectDebit: return SepaEditViewController(nil, nil, showFromCart, analyticsDelegate)
+        case .creditCardMastercard: return CreditCardEditViewController(.mastercard, showFromCart, analyticsDelegate)
+        case .creditCardVisa: return CreditCardEditViewController(.visa, showFromCart, analyticsDelegate)
+        case .creditCardAmericanExpress: return CreditCardEditViewController(.amex, showFromCart, analyticsDelegate)
+        case .paydirektOneKlick: return PaydirektEditViewController(nil, nil, showFromCart, analyticsDelegate)
 
         case .qrCodePOS, .qrCodeOffline, .externalBilling, .customerCardPOS, .gatekeeperTerminal:
             return nil
@@ -168,7 +168,7 @@ public final class PaymentMethodListViewController: UIViewController {
         }
 
         if SnabbleUI.implicitNavigation {
-            let selection = MethodSelectionViewController(self.methods, self.analyticsDelegate)
+            let selection = MethodSelectionViewController(self.methods, showFromCart: false, self.analyticsDelegate)
             self.navigationController?.pushViewController(selection, animated: true)
         } else {
             self.navigationDelegate?.addMethod()
@@ -250,11 +250,11 @@ extension PaymentMethodListViewController: UITableViewDelegate, UITableViewDataS
             var editVC: UIViewController?
             switch details.methodData {
             case .sepa:
-                editVC = SepaEditViewController(details, indexPath.row, self.analyticsDelegate)
+                editVC = SepaEditViewController(details, indexPath.row, false, self.analyticsDelegate)
             case .creditcard(let creditcardData):
-                editVC = CreditCardEditViewController(creditcardData, indexPath.row, self.analyticsDelegate)
+                editVC = CreditCardEditViewController(creditcardData, indexPath.row, false, self.analyticsDelegate)
             case .paydirektAuthorization(let paydirektData):
-                editVC = PaydirektEditViewController(paydirektData, indexPath.row, self.analyticsDelegate)
+                editVC = PaydirektEditViewController(paydirektData, indexPath.row, false, self.analyticsDelegate)
             case .tegutEmployeeCard:
                 editVC = nil
             }

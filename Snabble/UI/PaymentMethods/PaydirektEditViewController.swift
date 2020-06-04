@@ -54,6 +54,7 @@ public final class PaydirektEditViewController: UIViewController {
     private var webView: WKWebView?
     private var detail: PaydirektData?
     private var index: Int? = 0
+    private let showFromCart: Bool
     private weak var analyticsDelegate: AnalyticsDelegate?
     private var clientAuthorization: String?
 
@@ -70,12 +71,13 @@ public final class PaydirektEditViewController: UIViewController {
         redirectUrlAfterFailure: RedirectStatus.failure.url
     )
 
-    init(_ detail: PaydirektData?, _ index: Int?, _ analyticsDelegate: AnalyticsDelegate?) {
-        super.init(nibName: nil, bundle: SnabbleBundle.main)
-
+    init(_ detail: PaydirektData?, _ index: Int?, _ showFromCart: Bool, _ analyticsDelegate: AnalyticsDelegate?) {
         self.detail = detail
         self.index = index
+        self.showFromCart = showFromCart
         self.analyticsDelegate = analyticsDelegate
+
+        super.init(nibName: nil, bundle: SnabbleBundle.main)
 
         self.title = "paydirekt"
     }
@@ -237,7 +239,11 @@ extension PaydirektEditViewController: WKNavigationDelegate {
 
     private func goBack() {
         if SnabbleUI.implicitNavigation {
-            self.navigationController?.popToInstanceOf(PaymentMethodListViewController.self, animated: true)
+            if self.showFromCart {
+                self.navigationController?.popToRootViewController(animated: true)
+            } else {
+                self.navigationController?.popToInstanceOf(PaymentMethodListViewController.self, animated: true)
+            }
         } else {
             self.navigationDelegate?.goBack()
         }

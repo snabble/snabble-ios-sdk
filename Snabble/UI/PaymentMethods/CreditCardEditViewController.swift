@@ -39,6 +39,7 @@ public final class CreditCardEditViewController: UIViewController {
     private var index: Int?
     private var ccNumber: String?
     private var expDate: String?
+    private let showFromCart: Bool
     private weak var analyticsDelegate: AnalyticsDelegate?
 
     private var telecash: TelecashSecret?
@@ -46,18 +47,20 @@ public final class CreditCardEditViewController: UIViewController {
     public weak var navigationDelegate: PaymentMethodNavigationDelegate?
     public var backLevels = 1
 
-    public init(_ brand: CreditCardBrand?, _ analyticsDelegate: AnalyticsDelegate?) {
+    public init(_ brand: CreditCardBrand?, _ showFromCart: Bool, _ analyticsDelegate: AnalyticsDelegate?) {
         self.brand = brand
+        self.showFromCart = showFromCart
         self.analyticsDelegate = analyticsDelegate
 
         super.init(nibName: nil, bundle: SnabbleBundle.main)
     }
 
-    init(_ creditcardData: CreditCardData, _ index: Int, _ analyticsDelegate: AnalyticsDelegate?) {
+    init(_ creditcardData: CreditCardData, _ index: Int, _ showFromCart: Bool, _ analyticsDelegate: AnalyticsDelegate?) {
         self.brand = creditcardData.brand
         self.index = index
         self.ccNumber = creditcardData.displayName
         self.expDate = creditcardData.expirationDate
+        self.showFromCart = showFromCart
         self.analyticsDelegate = analyticsDelegate
 
         super.init(nibName: nil, bundle: SnabbleBundle.main)
@@ -133,7 +136,11 @@ public final class CreditCardEditViewController: UIViewController {
 
     private func goBack() {
         if SnabbleUI.implicitNavigation {
-            self.navigationController?.popViewController(animated: true)
+            if self.showFromCart {
+                self.navigationController?.popToRootViewController(animated: true)
+            } else {
+                self.navigationController?.popToInstanceOf(PaymentMethodListViewController.self, animated: true)
+            }
         } else {
             self.navigationDelegate?.goBack()
         }

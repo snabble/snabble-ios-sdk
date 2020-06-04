@@ -11,13 +11,15 @@ public final class MethodSelectionViewController: UIViewController {
     @IBOutlet private weak var tableView: UITableView!
 
     private var showUsable: Bool
+    private let showFromCart: Bool
     private var methods: [MethodProjects]
     private weak var analyticsDelegate: AnalyticsDelegate?
 
     public weak var navigationDelegate: PaymentMethodNavigationDelegate?
 
-    public init(_ methods: [MethodProjects], _ analyticsDelegate: AnalyticsDelegate?) {
+    public init(_ methods: [MethodProjects], showFromCart: Bool, _ analyticsDelegate: AnalyticsDelegate?) {
         self.methods = methods
+        self.showFromCart = showFromCart
         self.analyticsDelegate = analyticsDelegate
         self.showUsable = SnabbleAPI.projects.count > 1
 
@@ -73,7 +75,7 @@ extension MethodSelectionViewController: UITableViewDelegate, UITableViewDataSou
         let method = self.methods[indexPath.row]
 
         if SnabbleUI.implicitNavigation {
-            guard let editVC = method.method.editViewController(self.analyticsDelegate) else {
+            guard let editVC = method.method.editViewController(self.showFromCart, self.analyticsDelegate) else {
                 return
             }
 

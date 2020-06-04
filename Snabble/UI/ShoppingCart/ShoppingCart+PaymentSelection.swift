@@ -183,7 +183,7 @@ final class PaymentMethodSelector {
         let addTitle = NSAttributedString(string: "Snabble.Payment.add".localized(), attributes: titleAttrs)
         let add = AlertAction(attributedTitle: addTitle, style: .normal) { _ in
             let methods = MethodProjects.initialize()
-            let selection = MethodSelectionViewController(methods, self.parentVC)
+            let selection = MethodSelectionViewController(methods, showFromCart: true, self.parentVC)
             if SnabbleUI.implicitNavigation {
                 self.parentVC.navigationController?.pushViewController(selection, animated: true)
             } else {
