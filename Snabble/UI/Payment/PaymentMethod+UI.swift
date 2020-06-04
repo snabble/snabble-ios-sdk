@@ -205,47 +205,6 @@ public final class PaymentProcess {
         return results
     }
 
-    public func makePaymentMethod(_ rawMethod: RawPaymentMethod, _ detail: PaymentMethodDetail?) -> PaymentMethod? {
-        if let detail = detail, detail.rawMethod != rawMethod {
-            Log.error("payment method mismatch: \(detail.rawMethod) != \(rawMethod)")
-            assert(detail.rawMethod == rawMethod)
-            return nil
-        }
-
-        switch rawMethod {
-        case .qrCodePOS: return .qrCodePOS
-        case .qrCodeOffline: return .qrCodeOffline
-        case .gatekeeperTerminal: return .gatekeeperTerminal
-        case .customerCardPOS: return .customerCardPOS
-        case .deDirectDebit:
-            if let data = detail?.data {
-                return .deDirectDebit(data)
-            }
-        case .creditCardVisa:
-            if let data = detail?.data {
-                return .visa(data)
-            }
-        case .creditCardMastercard:
-            if let data = detail?.data {
-                return .mastercard(data)
-            }
-        case .creditCardAmericanExpress:
-            if let data = detail?.data {
-                return .americanExpress(data)
-            }
-        case .externalBilling:
-            if let data = detail?.data {
-                return .externalBilling(data)
-            }
-        case .paydirektOneKlick:
-            if let data = detail?.data {
-                return .paydirektOneKlick(data)
-            }
-        }
-
-        return nil
-    }
-
     private func startFailed(_ method: PaymentMethod, _ error: SnabbleError?, _ completion: @escaping (_ result: Result<UIViewController, SnabbleError>) -> Void ) {
         var handled = false
         if let error = error {
@@ -317,14 +276,14 @@ extension PaymentProcess {
     /// start a payment process with the given payment method
     ///
     /// - Parameters:
-    ///   - method: the payment method to use
+    ///   - rawMethod: the payment method to use
     ///   - detail: the details for that payment method (e.g., the encrypted IBAN for SEPA)
     ///   - completion: a closure called when the payment method has been determined.
     ///   - result: the view controller to present for this payment process or the error
-    public func start(_ method: RawPaymentMethod, _ detail: PaymentMethodDetail?, completion: @escaping (_ result: Result<UIViewController, SnabbleError>) -> Void ) {
+    public func start(_ rawMethod: RawPaymentMethod, _ detail: PaymentMethodDetail?, completion: @escaping (_ result: Result<UIViewController, SnabbleError>) -> Void ) {
 
         guard
-            let method = self.makePaymentMethod(method, detail),
+            let method = PaymentMethod.make(rawMethod, detail),
             method.canStart()
         else {
             return completion(Result.failure(SnabbleError.noPaymentAvailable))
