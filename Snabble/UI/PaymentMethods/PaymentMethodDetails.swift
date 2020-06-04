@@ -403,6 +403,49 @@ enum PaymentMethodUserData: Codable, Equatable {
     }
 }
 
+public extension PaymentMethod {
+    static func make(_ rawMethod: RawPaymentMethod, _ detail: PaymentMethodDetail?) -> PaymentMethod? {
+        if let detail = detail, detail.rawMethod != rawMethod {
+            Log.error("payment method mismatch: \(detail.rawMethod) != \(rawMethod)")
+            assert(detail.rawMethod == rawMethod)
+            return nil
+        }
+
+        switch rawMethod {
+        case .qrCodePOS: return .qrCodePOS
+        case .qrCodeOffline: return .qrCodeOffline
+        case .gatekeeperTerminal: return .gatekeeperTerminal
+        case .customerCardPOS: return .customerCardPOS
+        case .deDirectDebit:
+            if let data = detail?.data {
+                return .deDirectDebit(data)
+            }
+        case .creditCardVisa:
+            if let data = detail?.data {
+                return .visa(data)
+            }
+        case .creditCardMastercard:
+            if let data = detail?.data {
+                return .mastercard(data)
+            }
+        case .creditCardAmericanExpress:
+            if let data = detail?.data {
+                return .americanExpress(data)
+            }
+        case .externalBilling:
+            if let data = detail?.data {
+                return .externalBilling(data)
+            }
+        case .paydirektOneKlick:
+            if let data = detail?.data {
+                return .paydirektOneKlick(data)
+            }
+        }
+
+        return nil
+    }
+}
+
 public struct PaymentMethodDetail: Codable, Equatable {
     let methodData: PaymentMethodUserData
 
@@ -471,6 +514,8 @@ extension Notification.Name {
     /// new payment method.
     /// `userInfo["detail"]` contains a `PaymentMethodDetail` instance
     static let snabblePaymentMethodAdded = Notification.Name("snabblePaymentMethodAdded")
+
+    static let snabblePaymentMethodDeleted = Notification.Name("snabblePaymentMethodDeleted")
 }
 
 struct PaymentMethodDetailStorage {
@@ -527,6 +572,8 @@ struct PaymentMethodDetailStorage {
         var details = self.read()
         details.remove(at: index)
         self.save(details)
+
+        NotificationCenter.default.post(name: .snabblePaymentMethodDeleted, object: nil)
     }
 
     func removeAll() {

@@ -109,6 +109,13 @@ public final class PaymentMethodListViewController: UIViewController {
             assert(self.navigationDelegate != nil, msg)
             Log.error(msg)
         }
+
+        let nc = NotificationCenter.default
+        nc.addObserver(forName: .snabblePaymentMethodAdded, object: nil, queue: OperationQueue.main) { _ in
+            DispatchQueue.main.async {
+                self.updateTable()
+            }
+        }
     }
 
     override public func viewWillAppear(_ animated: Bool) {

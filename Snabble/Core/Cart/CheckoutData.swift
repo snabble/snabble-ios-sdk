@@ -178,47 +178,6 @@ public enum PaymentMethod {
             return [:]
         }
     }
-
-    public static func make(_ rawMethod: RawPaymentMethod, _ detail: PaymentMethodDetail?) -> PaymentMethod? {
-        if let detail = detail, detail.rawMethod != rawMethod {
-            Log.error("payment method mismatch: \(detail.rawMethod) != \(rawMethod)")
-            assert(detail.rawMethod == rawMethod)
-            return nil
-        }
-
-        switch rawMethod {
-        case .qrCodePOS: return .qrCodePOS
-        case .qrCodeOffline: return .qrCodeOffline
-        case .gatekeeperTerminal: return .gatekeeperTerminal
-        case .customerCardPOS: return .customerCardPOS
-        case .deDirectDebit:
-            if let data = detail?.data {
-                return .deDirectDebit(data)
-            }
-        case .creditCardVisa:
-            if let data = detail?.data {
-                return .visa(data)
-            }
-        case .creditCardMastercard:
-            if let data = detail?.data {
-                return .mastercard(data)
-            }
-        case .creditCardAmericanExpress:
-            if let data = detail?.data {
-                return .americanExpress(data)
-            }
-        case .externalBilling:
-            if let data = detail?.data {
-                return .externalBilling(data)
-            }
-        case .paydirektOneKlick:
-            if let data = detail?.data {
-                return .paydirektOneKlick(data)
-            }
-        }
-
-        return nil
-    }
 }
 
 public enum PaymentState: String, Decodable, UnknownCaseRepresentable {

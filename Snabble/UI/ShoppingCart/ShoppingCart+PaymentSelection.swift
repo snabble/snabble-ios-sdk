@@ -69,6 +69,10 @@ final class PaymentMethodSelector {
 
             self.selectMethodIfValid(detail)
         }
+
+        nc.addObserver(forName: .snabblePaymentMethodDeleted, object: nil, queue: OperationQueue.main) { _ in
+            self.selectMethodIfValid()
+        }
     }
 
     func updateSelectionVisibility() {
@@ -89,10 +93,21 @@ final class PaymentMethodSelector {
         }
     }
 
-    private func selectMethodIfValid(_ detail: PaymentMethodDetail) {
-        let ok = self.shoppingCart.paymentMethods?.contains { $0.method == detail.rawMethod }
-        if ok == true {
-            self.setSelectedPayment(detail.rawMethod, detail: detail)
+    private func selectMethodIfValid(_ detail: PaymentMethodDetail? = nil) {
+        if let detail = detail {
+            // method was added, check if we can use it
+            let ok = self.shoppingCart.paymentMethods?.contains { $0.method == detail.rawMethod }
+            if ok == true {
+                self.setSelectedPayment(detail.rawMethod, detail: detail)
+            }
+        } else {
+            // method was deleted, check if it was the selected one
+            if let selectedDetail = self.selectedPaymentDetail {
+                let allMethods = PaymentMethodDetails.read()
+                if allMethods.firstIndex(of: selectedDetail) == nil {
+                    self.setDefaultPaymentMethod()
+                }
+            }
         }
     }
 
