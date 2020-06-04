@@ -53,15 +53,22 @@ final class PaymentMethodSelector {
         self.methodTap = tap
         self.methodSelectionView.addGestureRecognizer(tap)
 
-        let nc = NotificationCenter.default
-        nc.addObserver(self, selector: #selector(self.shoppingCartUpdating(_:)), name: .snabbleCartUpdating, object: nil)
-
         if #available(iOS 13.0, *) {
             self.methodSpinner.style = .medium
         }
 
         self.updateSelectionVisibility()
         self.setDefaultPaymentMethod()
+
+        let nc = NotificationCenter.default
+        nc.addObserver(self, selector: #selector(self.shoppingCartUpdating(_:)), name: .snabbleCartUpdating, object: nil)
+        nc.addObserver(forName: .snabblePaymentMethodAdded, object: nil, queue: OperationQueue.main) { notification in
+            guard let detail = notification.userInfo?["detail"] as? PaymentMethodDetail else {
+                return
+            }
+
+            self.selectMethodIfValid(detail)
+        }
     }
 
     func updateSelectionVisibility() {
@@ -79,6 +86,13 @@ final class PaymentMethodSelector {
                 // method no longer valid, select a new default
                 self.setDefaultPaymentMethod()
             }
+        }
+    }
+
+    private func selectMethodIfValid(_ detail: PaymentMethodDetail) {
+        let ok = self.shoppingCart.paymentMethods?.contains { $0.method == detail.rawMethod }
+        if ok == true {
+            self.setSelectedPayment(detail.rawMethod, detail: detail)
         }
     }
 

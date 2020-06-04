@@ -467,6 +467,12 @@ public struct PaymentMethodDetail: Codable, Equatable {
     }
 }
 
+extension Notification.Name {
+    /// new payment method.
+    /// `userInfo["detail"]` contains a `PaymentMethodDetail` instance
+    static let snabblePaymentMethodAdded = Notification.Name("snabblePaymentMethodAdded")
+}
+
 struct PaymentMethodDetailStorage {
     enum SettingsKeys {
         static let paymentMethods = "paymentMethods"
@@ -509,6 +515,12 @@ struct PaymentMethodDetailStorage {
         }
 
         self.save(details)
+
+        // if the method was newly added, post a notification
+        if index == nil {
+            let nc = NotificationCenter.default
+            nc.post(name: .snabblePaymentMethodAdded, object: nil, userInfo: [ "detail" : detail ])
+        }
     }
 
     func remove(at index: Int) {
