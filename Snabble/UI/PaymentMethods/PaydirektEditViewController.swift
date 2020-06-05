@@ -59,7 +59,6 @@ public final class PaydirektEditViewController: UIViewController {
     private var clientAuthorization: String?
 
     public weak var navigationDelegate: PaymentMethodNavigationDelegate?
-    public var backLevels = 1
 
     private let authData = PaydirektAuthorization(
         id: UIDevice.current.identifierForVendor?.uuidString ?? "",
@@ -245,7 +244,11 @@ extension PaydirektEditViewController: WKNavigationDelegate {
                 self.navigationController?.popToInstanceOf(PaymentMethodListViewController.self, animated: true)
             }
         } else {
-            self.navigationDelegate?.goBack()
+            if self.showFromCart {
+                self.navigationDelegate?.goBackToCart()
+            } else {
+                self.navigationDelegate?.goBack()
+            }
         }
     }
 }

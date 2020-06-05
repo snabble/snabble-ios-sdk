@@ -223,7 +223,7 @@ final class PaymentMethodSelector {
             } else {
                 let msg = "navigationDelegate may not be nil when using explicit navigation"
                 assert(self.paymentMethodNavigationDelegate != nil, msg)
-                self.paymentMethodNavigationDelegate?.addMethod()
+                self.paymentMethodNavigationDelegate?.addMethod(fromCart: true)
             }
         }
         add.imageView.image = UIImage.fromBundle("SnabbleSDK/payment/payment-add")

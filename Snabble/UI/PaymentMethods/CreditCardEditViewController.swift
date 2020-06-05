@@ -45,7 +45,6 @@ public final class CreditCardEditViewController: UIViewController {
     private var telecash: TelecashSecret?
 
     public weak var navigationDelegate: PaymentMethodNavigationDelegate?
-    public var backLevels = 1
 
     public init(_ brand: CreditCardBrand?, _ showFromCart: Bool, _ analyticsDelegate: AnalyticsDelegate?) {
         self.brand = brand
@@ -142,7 +141,11 @@ public final class CreditCardEditViewController: UIViewController {
                 self.navigationController?.popToInstanceOf(PaymentMethodListViewController.self, animated: true)
             }
         } else {
-            self.navigationDelegate?.goBack(self.backLevels)
+            if self.showFromCart {
+                self.navigationDelegate?.goBackToCart()
+            } else {
+                self.navigationDelegate?.goBack()
+            }
         }
     }
 

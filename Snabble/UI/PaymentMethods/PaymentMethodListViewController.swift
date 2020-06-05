@@ -178,7 +178,7 @@ public final class PaymentMethodListViewController: UIViewController {
             let selection = MethodSelectionViewController(self.methods, showFromCart: false, self.analyticsDelegate)
             self.navigationController?.pushViewController(selection, animated: true)
         } else {
-            self.navigationDelegate?.addMethod()
+            self.navigationDelegate?.addMethod(fromCart: false)
         }
     }
 

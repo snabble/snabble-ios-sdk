@@ -31,7 +31,6 @@ public final class SepaEditViewController: UIViewController {
     private weak var analyticsDelegate: AnalyticsDelegate?
 
     public weak var navigationDelegate: PaymentMethodNavigationDelegate?
-    public var backLevels = 1
 
     public init(_ detail: PaymentMethodDetail?, _ index: Int?, _ showFromCart: Bool, _ analyticsDelegate: AnalyticsDelegate?) {
         self.detail = detail
@@ -227,7 +226,11 @@ public final class SepaEditViewController: UIViewController {
                 self.navigationController?.popToInstanceOf(PaymentMethodListViewController.self, animated: true)
             }
         } else {
-            self.navigationDelegate?.goBack(self.backLevels)
+            if self.showFromCart {
+                self.navigationDelegate?.goBackToCart()
+            } else {
+                self.navigationDelegate?.goBack()
+            }
         }
     }
 
