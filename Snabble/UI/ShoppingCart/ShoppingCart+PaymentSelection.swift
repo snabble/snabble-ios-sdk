@@ -24,7 +24,7 @@ private struct PaymentMethodAction {
 }
 
 final class PaymentMethodSelector {
-    private var parentVC: UIViewController & AnalyticsDelegate
+    private weak var parentVC: (UIViewController & AnalyticsDelegate)?
     private var methodSelectionView: UIView
     private var methodIcon: UIImageView
     private var methodSpinner: UIActivityIndicatorView
@@ -62,16 +62,16 @@ final class PaymentMethodSelector {
 
         let nc = NotificationCenter.default
         nc.addObserver(self, selector: #selector(self.shoppingCartUpdating(_:)), name: .snabbleCartUpdating, object: nil)
-        nc.addObserver(forName: .snabblePaymentMethodAdded, object: nil, queue: OperationQueue.main) { notification in
+        _ = nc.addObserver(forName: .snabblePaymentMethodAdded, object: nil, queue: OperationQueue.main) { [weak self] notification in
             guard let detail = notification.userInfo?["detail"] as? PaymentMethodDetail else {
                 return
             }
 
-            self.selectMethodIfValid(detail)
+            self?.selectMethodIfValid(detail)
         }
 
-        nc.addObserver(forName: .snabblePaymentMethodDeleted, object: nil, queue: OperationQueue.main) { _ in
-            self.selectMethodIfValid()
+        _ = nc.addObserver(forName: .snabblePaymentMethodDeleted, object: nil, queue: OperationQueue.main) { [weak self] _ in
+            self?.selectMethodIfValid()
         }
     }
 
@@ -214,7 +214,7 @@ final class PaymentMethodSelector {
             let methods = MethodProjects.initialize()
             let selection = MethodSelectionViewController(methods, showFromCart: true, self.parentVC)
             if SnabbleUI.implicitNavigation {
-                self.parentVC.navigationController?.pushViewController(selection, animated: true)
+                self.parentVC?.navigationController?.pushViewController(selection, animated: true)
             } else {
                 let msg = "navigationDelegate may not be nil when using explicit navigation"
                 assert(self.paymentMethodNavigationDelegate != nil, msg)
@@ -248,7 +248,7 @@ final class PaymentMethodSelector {
             return true
         }
 
-        self.parentVC.present(sheet, animated: true)
+        self.parentVC?.present(sheet, animated: true)
     }
 
     private func actionsFor(_ method: RawPaymentMethod) -> [PaymentMethodAction] {

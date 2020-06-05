@@ -111,9 +111,9 @@ public final class PaymentMethodListViewController: UIViewController {
         }
 
         let nc = NotificationCenter.default
-        nc.addObserver(forName: .snabblePaymentMethodAdded, object: nil, queue: OperationQueue.main) { _ in
+        _ = nc.addObserver(forName: .snabblePaymentMethodAdded, object: nil, queue: OperationQueue.main) { [weak self] _ in
             DispatchQueue.main.async {
-                self.updateTable()
+                self?.updateTable()
             }
         }
     }

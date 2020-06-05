@@ -564,7 +564,7 @@ struct PaymentMethodDetailStorage {
         // if the method was newly added, post a notification
         if index == nil {
             let nc = NotificationCenter.default
-            nc.post(name: .snabblePaymentMethodAdded, object: nil, userInfo: [ "detail" : detail ])
+            nc.post(name: .snabblePaymentMethodAdded, object: nil, userInfo: [ "detail": detail ])
         }
     }
 
