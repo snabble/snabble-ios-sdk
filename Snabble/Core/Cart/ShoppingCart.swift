@@ -32,7 +32,7 @@ public final class ShoppingCart: Codable {
     internal var eventTimer: Timer?
 
     // number of seconds to wait after a local modification is sent to the backend
-    private let saveDelay: TimeInterval = 1.0
+    private let saveDelay: TimeInterval = 0.5
 
     private let maxAge: TimeInterval
     private let directory: String?
@@ -262,7 +262,8 @@ public final class ShoppingCart: Codable {
             }
         }
         self.items = newItems
-        self.save()
+        self.save(postEvent: false)
+        CartEvent.cart(self)
     }
 }
 

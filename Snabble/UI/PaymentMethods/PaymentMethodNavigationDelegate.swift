@@ -11,6 +11,8 @@ public protocol PaymentMethodNavigationDelegate: class {
 
     func goBack()
     func goBack(_ levels: Int)
+
+    func goBackToCart()
 }
 
 public extension PaymentMethodNavigationDelegate {

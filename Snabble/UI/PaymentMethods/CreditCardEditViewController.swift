@@ -142,7 +142,7 @@ public final class CreditCardEditViewController: UIViewController {
                 self.navigationController?.popToInstanceOf(PaymentMethodListViewController.self, animated: true)
             }
         } else {
-            self.navigationDelegate?.goBack()
+            self.navigationDelegate?.goBack(self.backLevels)
         }
     }
 
@@ -257,11 +257,7 @@ extension CreditCardEditViewController: WKScriptMessageHandler {
             NSLog("unknown error \(failCode) \(failReason)")
         }
 
-        if SnabbleUI.implicitNavigation {
-            self.navigationController?.popToInstanceOf(PaymentMethodListViewController.self, animated: true)
-        } else {
-            self.navigationDelegate?.goBack(self.backLevels)
-        }
+        self.goBack()
     }
 }
 

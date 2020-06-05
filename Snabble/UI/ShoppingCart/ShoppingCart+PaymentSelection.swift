@@ -140,10 +140,15 @@ final class PaymentMethodSelector {
     private func setDefaultPaymentMethod() {
         let userMethods = PaymentMethodDetails.read()
 
+        let projectMethods = SnabbleUI.project.paymentMethods
+        let cartMethods = self.shoppingCart.paymentMethods?.map { $0.method } ?? []
+         let availableMethods = cartMethods.isEmpty ? projectMethods : cartMethods
+
         // prefer in-app payment methods like SEPA or CC
-        for method in RawPaymentMethod.allCases {
-            let ok = self.shoppingCart.paymentMethods?.contains { $0.method == method }
-            if ok == true, let userMethod = userMethods.first(where: { $0.rawMethod == method }) {
+        for method in RawPaymentMethod.orderedMethods {
+            let found = availableMethods.contains(method)
+            let userMethod = userMethods.first { $0.rawMethod == method }
+            if found, let userMethod = userMethod {
                 self.setSelectedPayment(method, detail: userMethod)
                 return
             }
@@ -153,16 +158,16 @@ final class PaymentMethodSelector {
 
         // check if one of the fallbacks matches the cart
         for method in fallbackMethods {
-            if self.shoppingCart.paymentMethods?.first(where: { $0.method == method }) != nil {
+            if availableMethods.contains(method) {
                 self.setSelectedPayment(method, detail: nil)
                 return
             }
         }
 
         // check if one of the fallbacks matches the project
-        for method in fallbackMethods {
-            if SnabbleUI.project.paymentMethods.contains(method) {
-                self.setSelectedPayment(method, detail: nil)
+        for fallback in fallbackMethods {
+            if projectMethods.contains(fallback) {
+                self.setSelectedPayment(fallback, detail: nil)
                 return
             }
         }
