@@ -309,8 +309,7 @@ extension SnabbleAPI {
         }
 
         let appDescriptor = appName + "/" + appVersion + "(" + appBuild + ")"
-
-        let osDescriptor = "iOS/" + UIDevice.current.systemVersion
+        let osDescriptor = "\(UIDevice.current.systemName)/\(UIDevice.current.systemVersion)"
 
         var size = 0
         sysctlbyname("hw.machine", nil, &size, nil, 0)
@@ -318,6 +317,6 @@ extension SnabbleAPI {
         sysctlbyname("hw.machine", &machine, &size, nil, 0)
         let hardwareString = String(cString: machine)
 
-        return appDescriptor + " " + osDescriptor + " (" + hardwareString + ") SDK/\(APIVersion.version)"
+        return "\(appDescriptor) \(osDescriptor) (\(hardwareString)) SDK/\(APIVersion.version)"
     }()
 }

@@ -124,10 +124,11 @@ final class ScanConfirmationView: DesignableView {
         let cartTitle = self.alreadyInCart ? "Snabble.Scanner.updateCart" : "Snabble.Scanner.addToCart"
         self.cartButton.setTitle(cartTitle.localized(), for: .normal)
 
-        if product.discountedPrice != nil {
+        if product.discountedPrice != nil && product.discountedPrice != product.listPrice {
             let formatter = PriceFormatter(SnabbleUI.project)
             let originalPrice = formatter.format(product.listPrice)
-            let str = NSAttributedString(string: originalPrice, attributes: [NSAttributedString.Key.strikethroughStyle: NSUnderlineStyle.single.rawValue])
+            let str = NSAttributedString(string: originalPrice,
+                                         attributes: [.strikethroughStyle: NSUnderlineStyle.single.rawValue])
             self.originalPriceLabel.attributedText = str
         } else {
             self.originalPriceLabel.text = nil
