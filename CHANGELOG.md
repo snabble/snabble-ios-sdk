@@ -6,6 +6,7 @@
 * The previously used `PaymentMethodSelectionViewController` has been removed, and `ShoppingCartDelegate.gotoPayment` has a new signature.
 * Removes all methods/properties that were previously marked as `deprecated`.
 * Fixes a potential crash bug when deleting a payment method
+* The scanner confirmation dialog now only shows a strike price if the discounted price is different from the list price.
 
 # v0.12.11
 
