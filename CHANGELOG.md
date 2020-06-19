@@ -1,5 +1,9 @@
 ## snabble iOS SDK Changelog
 
+# v0.13.8
+
+* Fixes a bug where polling for the payment status didn't continue after a failed attempt at payment cancellation.
+
 # v0.13.7
 
 * Adds a new UI for payment method selection, integrated into the shopping cart. 
