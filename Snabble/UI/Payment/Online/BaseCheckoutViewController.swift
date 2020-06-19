@@ -253,7 +253,7 @@ public class BaseCheckoutViewController: UIViewController {
                                               message: "Snabble.Payment.cancelError.message".localized(),
                                               preferredStyle: .alert)
                 alert.addAction(UIAlertAction(title: "Snabble.OK".localized(), style: .default) { _ in
-
+                    self.startTimer()
                 })
                 self.present(alert, animated: true)
             }
