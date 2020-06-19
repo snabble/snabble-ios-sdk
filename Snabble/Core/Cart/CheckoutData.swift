@@ -238,6 +238,7 @@ public struct CheckoutInfo: Decodable {
         public let amount: Int
         public let price: Int?
         public let weight: Int?
+        public let units: Int?
         public let totalPrice: Int?
         public let scannedCode: String?
         public let type: LineItemType
@@ -245,6 +246,14 @@ public struct CheckoutInfo: Decodable {
         public let fulfillmentType: String?
         public let weightUnit: Units?
         public let referenceUnit: Units?
+
+        /// price pre-multiplied with units, if present
+        public var itemPrice: Int? {
+            guard let price = self.price else {
+                return nil
+            }
+            return (self.units ?? 1) * price
+        }
     }
 
     public struct Price: Decodable {

@@ -1,5 +1,9 @@
 ## snabble iOS SDK Changelog
 
+# v0.13.9
+
+* Fixes a bug where VPoS price information with non-null `units` was displayed incorrectly
+
 # v0.13.8
 
 * Fixes a bug where polling for the payment status didn't continue after a failed attempt at payment cancellation.

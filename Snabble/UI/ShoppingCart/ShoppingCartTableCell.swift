@@ -220,14 +220,14 @@ final class ShoppingCartTableCell: UITableViewCell {
         let formatter = PriceFormatter(SnabbleUI.project)
 
         if let depositTotal = lineItems.first(where: { $0.type == .deposit })?.totalPrice {
-            let single = formatter.format(mainItem.price ?? 0)
+            let single = formatter.format(mainItem.itemPrice ?? 0)
             let deposit = formatter.format(depositTotal)
             let total = formatter.format((mainItem.totalPrice ?? 0) + depositTotal)
             self.priceLabel.text = "× \(single) + \(deposit) = \(total)"
         } else {
             let showUnit = product?.referenceUnit?.hasDimension == true || product?.type == .userMustWeigh
             if showUnit {
-                let single = formatter.format(mainItem.price ?? 0)
+                let single = formatter.format(mainItem.itemPrice ?? 0)
                 let unit = product?.referenceUnit?.display ?? ""
                 let total = formatter.format(mainItem.totalPrice ?? 0)
                 self.priceLabel.text = "× \(single)/\(unit) = \(total)"
@@ -236,7 +236,7 @@ final class ShoppingCartTableCell: UITableViewCell {
                     let total = formatter.format(mainItem.totalPrice ?? 0)
                     self.priceLabel.text = "\(total)"
                 } else {
-                    let single = formatter.format(mainItem.price ?? 0)
+                    let single = formatter.format(mainItem.itemPrice ?? 0)
                     let total = formatter.format(mainItem.totalPrice ?? 0)
                     self.priceLabel.text = "× \(single) = \(total)"
                 }
