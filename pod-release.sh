@@ -43,6 +43,6 @@ twine generate-localization-file i18n/Snabble.twine --lang en --format apple Sna
 git add .
 git commit -m "release v$POD_VERSION"
 git tag $POD_VERSION
-git push origin master --tags
+git push origin main --tags
 # unset SNABBLE_DEV
 # pod trunk push Snabble.podspec --allow-warnings
