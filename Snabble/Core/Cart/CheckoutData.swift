@@ -258,9 +258,11 @@ public struct CheckoutInfo: Decodable {
 
     public struct Price: Decodable {
         public let price: Int
+        public let netPrice: Int
 
         fileprivate init() {
             self.price = 0
+            self.netPrice = 0
         }
     }
 

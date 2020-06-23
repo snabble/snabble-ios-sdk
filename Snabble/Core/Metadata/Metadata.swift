@@ -478,6 +478,11 @@ public struct OpeningHoursSpecification: Codable {
     public let dayOfWeek: String
 }
 
+/// customer networks
+public struct CustomerNetworks: Codable {
+    public let ssid: String
+}
+
 /// base data for one shop
 public struct Shop: Codable {
     /// id of this shop, use this to initialize shopping carts
@@ -517,11 +522,14 @@ public struct Shop: Codable {
     /// country
     public let country: String
 
+    public let customerNetworks: [CustomerNetworks]?
+
     enum CodingKeys: String, CodingKey {
         case id, name, project, externalId, external
         case latitude = "lat", longitude = "lon"
         case services, openingHoursSpecification, email, phone, city, street
         case postalCode = "zip", state, country
+        case customerNetworks
     }
 
     public init(from decoder: Decoder) throws {
@@ -543,6 +551,7 @@ public struct Shop: Codable {
         self.postalCode = try container.decode(.postalCode)
         self.state = try container.decode(.state)
         self.country = try container.decode(.country)
+        self.customerNetworks = try container.decodeIfPresent(.customerNetworks)
     }
 
     public func encode(to encoder: Encoder) throws {
@@ -563,6 +572,7 @@ public struct Shop: Codable {
         try container.encode(self.postalCode, forKey: .postalCode)
         try container.encode(self.state, forKey: .state)
         try container.encode(self.country, forKey: .country)
+        try container.encode(self.customerNetworks, forKey: .customerNetworks)
     }
 }
 
