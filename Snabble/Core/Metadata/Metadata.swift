@@ -646,6 +646,7 @@ extension Metadata {
 
     private static func saveLastMetadata(_ raw: [String: Any], _ hash: Int) {
         do {
+            removePreviousMetadataFiles()
             let data = try JSONSerialization.data(withJSONObject: raw, options: .fragmentsAllowed)
             let fileUrl = try self.urlForLastMetadata(hash)
             try data.write(to: fileUrl, options: .atomic)
@@ -659,5 +660,22 @@ extension Metadata {
         var appSupportDir = try fileManager.url(for: .applicationSupportDirectory, in: .userDomainMask, appropriateFor: nil, create: true)
         appSupportDir.appendPathComponent("appmetadata\(hash).json")
         return appSupportDir
+    }
+
+    private static func removePreviousMetadataFiles() {
+        do {
+            let fileManager = FileManager.default
+            let appSupportDir = try fileManager.url(for: .applicationSupportDirectory, in: .userDomainMask, appropriateFor: nil, create: true)
+
+            let files = try fileManager.contentsOfDirectory(atPath: appSupportDir.path)
+            for file in files {
+                if file.hasPrefix("appmetadata") && file.hasSuffix(".json") {
+                    let url = appSupportDir.appendingPathComponent(file)
+                    try fileManager.removeItem(at: url)
+                }
+            }
+        } catch {
+            Log.error("error removing old metadata files: \(error)")
+        }
     }
 }
