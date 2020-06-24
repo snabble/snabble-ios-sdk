@@ -3,6 +3,7 @@
 # v0.13.9
 
 * Fixes a bug where VPoS price information with non-null `units` was displayed incorrectly
+* Adds support for the `displayNetPrice` project setting
 
 # v0.13.8
 

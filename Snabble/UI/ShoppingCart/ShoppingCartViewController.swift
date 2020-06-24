@@ -341,6 +341,7 @@ public final class ShoppingCartViewController: UIViewController {
                 // propagate the change to the shopping cart
                 if let lineItem = items.first, items.count == 1, lineItem.sku != cartItem.product.sku {
                     let provider = SnabbleAPI.productProvider(for: SnabbleUI.project)
+                    // TODO: don't rely on products being available locally!
                     if let replacement = CartItem(replacing: cartItem, provider, self.shoppingCart.shopId, lineItem) {
                         cart.replaceItem(at: index, with: replacement)
                     }
