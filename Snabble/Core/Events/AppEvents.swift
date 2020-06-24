@@ -146,30 +146,33 @@ extension AppEvent {
 
     func post() {
         // use URLRequest/URLSession directly to avoid error logging loops when posting the event fails
-        guard
-            let url = SnabbleAPI.urlFor(self.project.links.appEvents.href),
-            let token = SnabbleAPI.tokenRegistry.token(for: self.project)
-        else {
+        guard let url = SnabbleAPI.urlFor(self.project.links.appEvents.href) else {
             return
         }
-        // var request = URLRequest(url: url)
-        var request = SnabbleAPI.request(url: url, json: true)
-        request.httpMethod = "POST"
 
-        do {
-            request.httpBody = try JSONEncoder().encode(self)
-            request.addValue(token, forHTTPHeaderField: "Client-Token")
-        } catch {
-            Log.error("\(error)")
-        }
-
-        // use a system default session here so we can still log pinning errors
-        let task = URLSession.shared.dataTask(with: request) { _, _, error in
-            if let error = error {
-                Log.error("posting event failed: \(error)")
+        SnabbleAPI.tokenRegistry.getExistingToken(for: self.project) { token in
+            guard let token = token else {
+                return
             }
+
+            var request = SnabbleAPI.request(url: url, json: true)
+            request.httpMethod = "POST"
+
+            do {
+                request.httpBody = try JSONEncoder().encode(self)
+                request.addValue(token, forHTTPHeaderField: "Client-Token")
+            } catch {
+                Log.error("\(error)")
+            }
+
+            // use a system default session here so we can still log pinning errors
+            let task = URLSession.shared.dataTask(with: request) { _, _, error in
+                if let error = error {
+                    Log.error("posting event failed: \(error)")
+                }
+            }
+            task.resume()
         }
-        task.resume()
     }
 
 }
