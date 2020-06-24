@@ -305,4 +305,11 @@ public struct CartItem: Codable {
 public struct BackendCartInfo: Codable {
     public let lineItems: [CheckoutInfo.LineItem]
     public let totalPrice: Int
+    public let netPrice: Int
+
+    init(_ info: CheckoutInfo) {
+        self.lineItems = info.lineItems
+        self.totalPrice = info.price.price
+        self.netPrice = info.price.netPrice
+    }
 }

@@ -379,8 +379,7 @@ extension ShoppingCart {
             case .success(let info):
                 let session = info.checkoutInfo.session
                 Log.info("createCheckoutInfo succeeded: \(session)")
-                let totalPrice = info.checkoutInfo.price.price
-                self.backendCartInfo = BackendCartInfo(lineItems: info.checkoutInfo.lineItems, totalPrice: totalPrice)
+                self.backendCartInfo = BackendCartInfo(info.checkoutInfo)
                 self.paymentMethods = info.checkoutInfo.paymentMethods
                 self.save(postEvent: false)
                 completion(true)

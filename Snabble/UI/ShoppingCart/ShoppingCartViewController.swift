@@ -485,15 +485,19 @@ public final class ShoppingCartViewController: UIViewController {
 
         let formatter = PriceFormatter(SnabbleUI.project)
 
+        let backendCartInfo = self.shoppingCart.backendCartInfo
+
         /// workaround for backend giving us 0 as price for price-less products :(
         let nilPrice: Bool
-        if let items = self.shoppingCart.backendCartInfo?.lineItems, items.first(where: { $0.totalPrice == nil }) != nil {
+        if let items = backendCartInfo?.lineItems, items.first(where: { $0.totalPrice == nil }) != nil {
             nilPrice = true
         } else {
             nilPrice = false
         }
 
-        let totalPrice = nilPrice ? nil : (self.shoppingCart.backendCartInfo?.totalPrice ?? self.shoppingCart.total)
+        let cartTotal = SnabbleUI.project.displayNetPrice ? backendCartInfo?.netPrice : backendCartInfo?.totalPrice
+
+        let totalPrice = nilPrice ? nil : (cartTotal ?? self.shoppingCart.total)
         if let total = totalPrice, numProducts > 0 {
             let formattedTotal = formatter.format(total)
             self.checkCheckoutLimits(total)
