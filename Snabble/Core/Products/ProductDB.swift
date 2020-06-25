@@ -578,22 +578,25 @@ final class ProductDB: ProductProvider {
     }
 
     private func switchDatabases(_ tempDbPath: String) {
+        let mutex = Mutex()
+        mutex.lock()
+        defer { mutex.unlock() }
+
         let fileManager = FileManager.default
         do {
             let dbFile = self.dbPathname()
             let oldFile = dbFile + ".old"
-            try synchronized(self) {
-                self.db = nil
-                if fileManager.fileExists(atPath: oldFile) {
-                    try fileManager.removeItem(atPath: oldFile)
-                }
-                if fileManager.fileExists(atPath: dbFile) {
-                    try fileManager.moveItem(atPath: dbFile, toPath: oldFile)
-                }
-                try fileManager.moveItem(atPath: tempDbPath, toPath: dbFile)
-                try? fileManager.removeItem(atPath: oldFile)
-                self.db = self.openDb()
+
+            self.db = nil
+            if fileManager.fileExists(atPath: oldFile) {
+                try fileManager.removeItem(atPath: oldFile)
             }
+            if fileManager.fileExists(atPath: dbFile) {
+                try fileManager.moveItem(atPath: dbFile, toPath: oldFile)
+            }
+            try fileManager.moveItem(atPath: tempDbPath, toPath: dbFile)
+            try? fileManager.removeItem(atPath: oldFile)
+            self.db = self.openDb()
         } catch let error {
             try? fileManager.removeItem(atPath: tempDbPath)
             self.logError("switchDatabases: db switch error \(error)")

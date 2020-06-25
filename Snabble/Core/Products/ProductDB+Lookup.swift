@@ -9,14 +9,15 @@ extension ProductDB {
     func resolveProductsLookup(_ url: String, _ codes: [(String, String)], _ shopId: String, completion: @escaping (_ result: Result<ScannedProduct, SnabbleError>) -> Void) {
         let group = DispatchGroup()
         var results = [Result<ScannedProduct, SnabbleError>]()
+        let mutex = Mutex()
 
         // lookup each code/template
         for (code, template) in codes {
             group.enter()
             self.resolveProductsLookup(url, code, template, shopId) { result in
-                synchronized(self) {
-                    results.append(result)
-                }
+                mutex.lock()
+                results.append(result)
+                mutex.unlock()
                 group.leave()
             }
         }

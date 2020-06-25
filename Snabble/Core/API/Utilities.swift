@@ -47,13 +47,6 @@ enum Log {
     }
 }
 
-/// run `closure` synchronized using `lock`
-func synchronized<T>(_ lock: Any, closure: () throws -> T) rethrows -> T {
-    objc_sync_enter(lock)
-    defer { objc_sync_exit(lock) }
-    return try closure()
-}
-
 let iso8601Formatter: ISO8601DateFormatter = {
     let fmt = ISO8601DateFormatter()
     fmt.timeZone = TimeZone(identifier: "UTC") ?? TimeZone.current

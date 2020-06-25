@@ -70,6 +70,7 @@ public class OfflineCarts {
         var savedCarts = self.readSavedCarts()
 
         let group = DispatchGroup()
+        let mutex = Mutex()
         var successIndices = [Int]()
 
         // retry the requests
@@ -86,17 +87,21 @@ public class OfflineCarts {
                     info.createCheckoutProcess(project, paymentMethod: .qrCodeOffline, finalizedAt: savedCart.finalizedAt) { result in
                         switch result.result {
                         case .success:
-                            synchronized(self) {
-                                successIndices.append(index)
-                            }
+                            mutex.lock()
+                            successIndices.append(index)
+                            mutex.unlock()
                         case .failure(let error):
+                            mutex.lock()
                             savedCarts[index].failures += 1
+                            mutex.unlock()
                             Log.error("error creating process: \(error)")
                         }
                         group.leave()
                     }
                 case .failure(let error):
+                    mutex.lock()
                     savedCarts[index].failures += 1
+                    mutex.unlock()
                     Log.error("error creating info: \(error)")
                     group.leave()
                 }
