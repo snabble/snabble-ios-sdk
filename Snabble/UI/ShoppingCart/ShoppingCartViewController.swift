@@ -332,6 +332,8 @@ public final class ShoppingCartViewController: UIViewController {
     private func setupItems(_ cart: ShoppingCart) {
         self.items = []
 
+        var pendingLookups = [PendingLookup]()
+
         // find all line items that refer to our own cart items
         for (index, cartItem) in cart.items.enumerated() {
             if let lineItems = cart.backendCartInfo?.lineItems {
@@ -341,9 +343,11 @@ public final class ShoppingCartViewController: UIViewController {
                 // propagate the change to the shopping cart
                 if let lineItem = items.first, items.count == 1, lineItem.sku != cartItem.product.sku {
                     let provider = SnabbleAPI.productProvider(for: SnabbleUI.project)
-                    // TODO: don't rely on products being available locally!
-                    if let replacement = CartItem(replacing: cartItem, provider, self.shoppingCart.shopId, lineItem) {
+                    let product = provider.productBySku(lineItem.sku, self.shoppingCart.shopId)
+                    if let product = product, let replacement = CartItem(replacing: cartItem, product, self.shoppingCart.shopId, lineItem) {
                         cart.replaceItem(at: index, with: replacement)
+                    } else {
+                        pendingLookups.append(PendingLookup(index, cartItem, lineItem))
                     }
                 }
                 let item = CartTableEntry.cartItem(cartItem, items)
@@ -352,6 +356,11 @@ public final class ShoppingCartViewController: UIViewController {
                 let item = CartTableEntry.cartItem(cartItem, [])
                 self.items.append(item)
             }
+        }
+
+        // perform any pending lookups
+        if !pendingLookups.isEmpty {
+            self.performPendingLookups(pendingLookups, self.shoppingCart.lastSaved)
         }
 
         // now gather the remaining lineItems. find the "master" items first
@@ -513,9 +522,6 @@ public final class ShoppingCartViewController: UIViewController {
         self.bottomWrapper?.isHidden = numProducts == 0
 
         self.methodSelector?.updateAvailablePaymentMethods()
-
-        // let possibleMethods = self.shoppingCart.paymentMethods?.count ?? 0
-        // self.checkoutButton?.isEnabled = possibleMethods > 0
     }
 
     private var notAllMethodsAvailableShown = false
@@ -730,6 +736,7 @@ extension ShoppingCartViewController: KeyboardHandling {
 
 }
 
+// MARK: - appearance
 extension ShoppingCartViewController: CustomizableAppearance {
     public func setCustomAppearance(_ appearance: CustomAppearance) {
         self.checkoutButton?.setCustomAppearance(appearance)
@@ -750,6 +757,65 @@ extension ShoppingCartViewController {
 
         if let appearance = self.customAppearance {
             self.setCustomAppearance(appearance)
+        }
+    }
+}
+
+// MARK: - pending lookups
+
+extension ShoppingCartViewController {
+    private struct PendingLookup {
+        let index: Int
+        let cartItem: CartItem
+        let lineItem: CheckoutInfo.LineItem
+
+        init(_ index: Int, _ cartItem: CartItem, _ lineItem: CheckoutInfo.LineItem) {
+            self.index = index
+            self.cartItem = cartItem
+            self.lineItem = lineItem
+        }
+    }
+
+    private func performPendingLookups(_ lookups: [PendingLookup], _ lastSaved: Date?) {
+        let group = DispatchGroup()
+
+        var replacements = [(Int, CartItem?)]()
+        let mutex = Mutex()
+
+        let provider = SnabbleAPI.productProvider(for: SnabbleUI.project)
+        for lookup in lookups {
+            group.enter()
+
+            provider.productBySku(lookup.lineItem.sku, self.shoppingCart.shopId) { result in
+                switch result {
+                case .failure(let error):
+                    Log.error("error in pending lookup for \(lookup.lineItem.sku): \(error)")
+                case .success(let product):
+                    let replacement = CartItem(replacing: lookup.cartItem, product, self.shoppingCart.shopId, lookup.lineItem)
+                    mutex.lock()
+                    replacements.append((lookup.index, replacement))
+                    mutex.unlock()
+                }
+                group.leave()
+            }
+        }
+
+        // when all lookups are finished:
+        group.notify(queue: DispatchQueue.main) {
+            guard !replacements.isEmpty, self.shoppingCart.lastSaved == lastSaved else {
+                Log.warn("no replacements, or cart was modified during retrieval")
+                return
+            }
+
+            for (index, item) in replacements {
+                if let item = item {
+                    self.shoppingCart.replaceItem(at: index, with: item)
+                } else {
+                    Log.warn("no replacement for item #\(index) found")
+                }
+            }
+            self.tableView?.reloadData()
+            self.updateTotals()
         }
     }
 }

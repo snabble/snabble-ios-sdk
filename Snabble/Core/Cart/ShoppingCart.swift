@@ -255,7 +255,7 @@ public final class ShoppingCart: Codable {
         let provider = SnabbleAPI.productProvider(for: project)
         var newItems = [CartItem]()
         for item in self.items {
-            // TODO: don't rely on on products being available locally
+            // TODO: don't rely on on products being available locally?
             if let newItem = CartItem(updating: item, provider, self.shopId, customerCard) {
                 newItems.append(newItem)
             } else {

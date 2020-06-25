@@ -109,12 +109,9 @@ public struct CartItem: Codable {
         self.uuid = item.uuid
     }
 
-    /// init with a product and a `LineItem`.
-    init?(replacing item: CartItem, _ provider: ProductProvider, _ shopId: String, _ lineItem: CheckoutInfo.LineItem) {
-        guard
-            let product = provider.productBySku(lineItem.sku, shopId),
-            let code = lineItem.scannedCode
-        else {
+    /// init with a lookup product and a `LineItem`
+    init?(replacing item: CartItem, _ product: Product, _ shopId: String, _ lineItem: CheckoutInfo.LineItem) {
+        guard let code = lineItem.scannedCode else {
             return nil
         }
 
