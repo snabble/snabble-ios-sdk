@@ -54,11 +54,14 @@ final class TokenRegistry {
     private let appId: String
     private let secret: String
 
+    private var verboseToken = false
+
     private var projectTokens = [String: TokenData]()
     private var refreshTimer: Timer?
 
-    private var queue = DispatchQueue(label: "io.snabble.tokenRegistry")
-    private var pendingHandlers = [String: [(String?) -> Void] ]()
+    private typealias Handlers = [(String?) -> Void]
+    private var pendingHandlers = [String: Handlers ]()
+    private var lock = ReadWriteLock()
 
     init(_ appId: String, _ secret: String) {
         self.appId = appId
@@ -69,48 +72,53 @@ final class TokenRegistry {
         nc.addObserver(self, selector: #selector(appEnteredBackground(_:)), name: UIApplication.didEnterBackgroundNotification, object: nil)
     }
 
-    /// get the JWT for `project`, retrieving a new one if not token existed or it was expired
+    /// get the JWT for `project`, retrieving a new one if no token existed or it was expired
     func getToken(for project: Project, completion: @escaping (String?) -> Void) {
-        self.queue.async { [weak self] in
-            if let jwt = self?.token(for: project.id) {
-                return completion(jwt)
-            }
-
-            self?.performTokenRetrieval(for: project.id, completion)
+        if let jwt = self.token(for: project.id) {
+            return completion(jwt)
         }
+
+        self.performTokenRetrieval(for: project.id, completion)
     }
 
     /// get the JWT for `project` if it exists and isn't expired.
     /// this method does NOT fetch new tokens
     func getExistingToken(for project: Project, completion: @escaping (String?) -> Void) {
-        self.queue.async { [weak self] in
-            completion(self?.token(for: project.id))
-        }
+        completion(self.token(for: project.id))
     }
 
     private func performTokenRetrieval(for projectId: String, _ completion: @escaping (String?) -> Void) {
         // no token in our registry, go fetch it
-        self.pendingHandlers[projectId, default: []].append(completion)
+        let count: Int? = lock.writing {
+            self.pendingHandlers[projectId, default: []].append(completion)
+            return self.pendingHandlers[projectId]?.count
+        }
 
-        if self.pendingHandlers[projectId]?.count == 1 {
-            self.retrieveToken(for: projectId) { tokenData in
-                self.queue.async {
-                    if let tokenData = tokenData {
-                        self.projectTokens[projectId] = tokenData
-                        self.startRefreshTimer()
-                    }
+        guard count == 1 else {
+            return
+        }
 
-                    self.pendingHandlers[projectId]?.forEach { handler in
-                        handler(tokenData?.jwt)
-                    }
-                    self.pendingHandlers[projectId] = []
+        self.retrieveToken(for: projectId) { tokenData in
+            let handlers: Handlers? = self.lock.writing {
+                if let tokenData = tokenData {
+                    self.projectTokens[projectId] = tokenData
+                    self.startRefreshTimer()
                 }
+
+                return self.pendingHandlers.removeValue(forKey: projectId)
+            }
+
+            handlers?.forEach { handler in
+                handler(tokenData?.jwt)
             }
         }
     }
 
     // raw, synchronous token access. externally only used by AppEvent.post() to avoid endless loops
     private func token(for projectId: String) -> String? {
+        lock.readLock()
+        defer { lock.unlock() }
+
         if let token = self.projectTokens[projectId] {
             // we already have a token. return it if it's still valid
             let now = Date()
@@ -126,14 +134,15 @@ final class TokenRegistry {
         self.refreshTimer?.invalidate()
         self.refreshTimer = nil
 
-        self.queue.async {
-            let activeIds = self.projectTokens.keys
+        let activeIds: [String] = lock.writing {
+            let activeIds = Array(self.projectTokens.keys)
             self.projectTokens.removeAll()
+            return activeIds
+        }
 
-            for projectId in activeIds {
-                if let project = SnabbleAPI.projectFor(projectId) {
-                    self.getToken(for: project, completion: { _ in })
-                }
+        for projectId in activeIds {
+            if let project = SnabbleAPI.projectFor(projectId) {
+                self.getToken(for: project, completion: { _ in })
             }
         }
     }
@@ -150,19 +159,22 @@ final class TokenRegistry {
     }
 
     private func startRefreshTimer() {
-        self.queue.async {
-            guard let earliest = self.projectTokens.values.min(by: { $0.refresh < $1.refresh }) else {
-                return
-            }
+        let minRefresh = lock.reading {
+            self.projectTokens.values.min(by: { $0.refresh < $1.refresh })
+        }
 
-            let now = Date.timeIntervalSinceReferenceDate
-            let refreshIn = earliest.refresh.timeIntervalSinceReferenceDate - now
-            if self.verboseToken { Log.debug("start refresh timer: run refresh in \(refreshIn)s") }
-            DispatchQueue.main.async {
-                self.refreshTimer?.invalidate()
-                self.refreshTimer = Timer.scheduledTimer(withTimeInterval: max(1, refreshIn), repeats: false) { _ in
-                    self.refreshTokens()
-                }
+        guard let earliest = minRefresh else {
+            return
+        }
+
+        let now = Date.timeIntervalSinceReferenceDate
+        let refreshIn = earliest.refresh.timeIntervalSinceReferenceDate - now
+
+        if self.verboseToken { Log.debug("start refresh timer: run refresh in \(refreshIn)s") }
+        DispatchQueue.main.async {
+            self.refreshTimer?.invalidate()
+            self.refreshTimer = Timer.scheduledTimer(withTimeInterval: max(1, refreshIn), repeats: false) { _ in
+                self.refreshTokens()
             }
         }
     }
@@ -172,19 +184,19 @@ final class TokenRegistry {
 
         let group = DispatchGroup()
 
-        self.queue.async {
-            for tokenData in self.projectTokens.values where tokenData.refresh.timeIntervalSinceReferenceDate < now {
-                group.enter()
-                let projectId = tokenData.projectId
-                // Log.debug("refresh token for \(project.id)")
-                self.retrieveToken(for: projectId) { tokenData in
-                    self.queue.async {
-                        if let tokenData = tokenData {
-                            self.projectTokens[projectId] = tokenData
-                        }
-                        group.leave()
-                    }
+        let values = lock.reading { self.projectTokens.values }
+
+        for tokenData in values where tokenData.refresh.timeIntervalSinceReferenceDate < now {
+            group.enter()
+            let projectId = tokenData.projectId
+            // Log.debug("refresh token for \(project.id)")
+            self.retrieveToken(for: projectId) { tokenData in
+                if let tokenData = tokenData {
+                    self.lock.writeLock()
+                    self.projectTokens[projectId] = tokenData
+                    self.lock.unlock()
                 }
+                group.leave()
             }
         }
 
@@ -192,8 +204,6 @@ final class TokenRegistry {
             self.startRefreshTimer()
         }
     }
-
-    private var verboseToken = false
 
     private func retrieveToken(for projectId: String, _ date: Date? = nil, completion: @escaping (TokenData?) -> Void) {
         if let appUserId = SnabbleAPI.appUserId {

@@ -31,6 +31,18 @@ final class ReadWriteLock {
     func unlock() {
         pthread_rwlock_unlock(&lock)
     }
+
+    func reading<T>(closure: () -> T) -> T {
+        self.readLock()
+        defer { self.unlock() }
+        return closure()
+    }
+
+    func writing<T>(closure: () -> T) -> T {
+        self.writeLock()
+        defer { self.unlock() }
+        return closure()
+    }
 }
 
 final class Mutex {
@@ -55,5 +67,11 @@ final class Mutex {
 
     func trylock() {
         pthread_mutex_trylock(&mutex)
+    }
+
+    func run<T>(closure: () -> T) -> T {
+        self.lock()
+        defer { self.unlock() }
+        return closure()
     }
 }
