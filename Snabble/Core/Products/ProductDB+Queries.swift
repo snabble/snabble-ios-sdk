@@ -18,8 +18,8 @@ extension ProductDB {
             null as code_encodingUnit,
             (select group_concat(sc.code) from scannableCodes sc where sc.sku = p.sku) as codes,
             (select group_concat(sc.template) from scannableCodes sc where sc.sku = p.sku) as templates,
-            (select group_concat(ifnull(sc.encodingUnit, "")) from scannableCodes sc where sc.sku = p.sku) as encodingUnits,
-            (select group_concat(ifnull(sc.transmissionCode, "")) from scannableCodes sc where sc.sku = p.sku) as transmissionCodes,
+            (select group_concat(ifnull(sc.encodingUnit, '')) from scannableCodes sc where sc.sku = p.sku) as encodingUnits,
+            (select group_concat(ifnull(sc.transmissionCode, '')) from scannableCodes sc where sc.sku = p.sku) as transmissionCodes,
             ifnull((select a.value from availabilities a where a.sku = p.sku and a.shopID = ?), ?) as availability
         from products p
         """
@@ -30,8 +30,8 @@ extension ProductDB {
             s.encodingUnit as code_encodingUnit,
             (select group_concat(sc.code) from scannableCodes sc where sc.sku = p.sku) as codes,
             (select group_concat(sc.template) from scannableCodes sc where sc.sku = p.sku) as templates,
-            (select group_concat(ifnull(sc.encodingUnit, "")) from scannableCodes sc where sc.sku = p.sku) as encodingUnits,
-            (select group_concat(ifnull(sc.transmissionCode, "")) from scannableCodes sc where sc.sku = p.sku) as transmissionCodes,
+            (select group_concat(ifnull(sc.encodingUnit, '')) from scannableCodes sc where sc.sku = p.sku) as encodingUnits,
+            (select group_concat(ifnull(sc.transmissionCode, '')) from scannableCodes sc where sc.sku = p.sku) as transmissionCodes,
             ifnull((select a.value from availabilities a where a.sku = p.sku and a.shopID = ?), ?) as availability
         from products p
         join scannableCodes s on s.sku = p.sku
@@ -55,7 +55,7 @@ extension ProductDB {
 
     func productsBySku(_ dbQueue: DatabaseQueue, _ skus: [String], _ shopId: String) -> [Product] {
         do {
-            let list = skus.map { "\"\($0)\"" }.joined(separator: ",")
+            let list = skus.map { "\'\($0)\'" }.joined(separator: ",")
             let rows = try dbQueue.inDatabase { db in
                 return try self.fetchAll(db,
                     ProductDB.productQuery + " where p.sku in (\(list))",
@@ -124,7 +124,7 @@ extension ProductDB {
                     ProductDB.productQuery + " " + """
                     where p.sku in (select sku from searchByName where foldedName match ? limit ?) \(depositCondition)
                     """,
-                    arguments: [shopId, self.defaultAvailability, name + "*", limit])
+                    arguments: [shopId, self.defaultAvailability, "\(name)*", limit])
             }
             return rows.compactMap { self.productFromRow(dbQueue, $0, shopId) }
         } catch {
@@ -138,7 +138,7 @@ extension ProductDB {
             let limit = 100 //  prefix.count < 5 ? prefix.count * 100 : -1
             let depositCondition = filterDeposits ? "and isDeposit = 0" : ""
             let templateNames = templates ?? [ CodeTemplate.defaultName ]
-            let list = templateNames.map { "\"\($0)\"" }.joined(separator: ",")
+            let list = templateNames.map { "\'\($0)\'" }.joined(separator: " , ")
             let rows = try dbQueue.inDatabase { db in
                 return try self.fetchAll(db,
                     ProductDB.productQuery + " " + """
@@ -149,7 +149,7 @@ extension ProductDB {
                         and availability != \(ProductAvailability.notAvailable.rawValue)
                     limit ?
                     """,
-                    arguments: [ shopId, self.defaultAvailability, prefix + "*", limit])
+                    arguments: [ shopId, self.defaultAvailability, "\(prefix)*", limit])
             }
             return rows.compactMap { self.productFromRow(dbQueue, $0, shopId) }
         } catch {
