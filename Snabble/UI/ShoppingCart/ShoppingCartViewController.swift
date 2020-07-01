@@ -91,7 +91,7 @@ public final class ShoppingCartViewController: UIViewController {
     }
 
     private var keyboardObserver: KeyboardObserver!
-    private weak var delegate: ShoppingCartDelegate!
+    private weak var delegate: ShoppingCartDelegate?
 
     private var items = [CartTableEntry]()
 
@@ -172,7 +172,7 @@ public final class ShoppingCartViewController: UIViewController {
     override public func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
 
-        self.delegate.track(.viewShoppingCart)
+        self.delegate?.track(.viewShoppingCart)
 
         if let custom = self.customAppearance {
             self.checkoutButton.setCustomAppearance(custom)
@@ -289,7 +289,7 @@ public final class ShoppingCartViewController: UIViewController {
     }
 
     public func deleteCart() {
-        self.delegate.track(.deletedEntireCart)
+        self.delegate?.track(.deletedEntireCart)
         self.shoppingCart.removeAll()
         self.updateView()
     }
@@ -406,7 +406,7 @@ public final class ShoppingCartViewController: UIViewController {
     private func startCheckout() {
         let project = SnabbleUI.project
         guard
-            self.delegate.checkoutAllowed(project),
+            self.delegate?.checkoutAllowed(project) == true,
             let paymentMethod = self.methodSelector?.selectedPaymentMethod
         else {
             return
@@ -429,9 +429,9 @@ public final class ShoppingCartViewController: UIViewController {
 
             switch result {
             case .success(let info):
-                self.delegate.gotoPayment(paymentMethod, self.methodSelector?.selectedPaymentDetail, info, self.shoppingCart)
+                self.delegate?.gotoPayment(paymentMethod, self.methodSelector?.selectedPaymentDetail, info, self.shoppingCart)
             case .failure(let error):
-                let handled = self.delegate.handleCheckoutError(error)
+                let handled = self.delegate?.handleCheckoutError(error) ?? false
                 if !handled {
                     if let offendingSkus = error.error.details?.compactMap({ $0.sku }) {
                         self.showProductError(offendingSkus)
@@ -439,7 +439,7 @@ public final class ShoppingCartViewController: UIViewController {
                     }
 
                     if error.error.type == .noAvailableMethod {
-                        self.delegate.showWarningMessage("Snabble.Payment.noMethodAvailable".localized())
+                        self.delegate?.showWarningMessage("Snabble.Payment.noMethodAvailable".localized())
                         return
                     }
 
@@ -447,9 +447,9 @@ public final class ShoppingCartViewController: UIViewController {
                     let offlineMethods = SnabbleUI.project.paymentMethods.filter { $0.offline }
                     if !offlineMethods.isEmpty {
                         let info = SignedCheckoutInfo(offlineMethods)
-                        self.delegate.gotoPayment(paymentMethod, self.methodSelector?.selectedPaymentDetail, info, self.shoppingCart)
+                        self.delegate?.gotoPayment(paymentMethod, self.methodSelector?.selectedPaymentDetail, info, self.shoppingCart)
                     } else {
-                        self.delegate.showWarningMessage("Snabble.Payment.errorStarting".localized())
+                        self.delegate?.showWarningMessage("Snabble.Payment.errorStarting".localized())
                     }
                 }
             }
@@ -465,7 +465,7 @@ public final class ShoppingCartViewController: UIViewController {
     }
 
     private func showScanner() {
-        self.delegate.gotoScanner()
+        self.delegate?.gotoScanner()
     }
 
     private func restoreCart() {
@@ -572,7 +572,7 @@ public final class ShoppingCartViewController: UIViewController {
 extension ShoppingCartViewController: ShoppingCartTableDelegate {
 
     public func track(_ event: AnalyticsEvent) {
-        self.delegate.track(event)
+        self.delegate?.track(event)
     }
 
     func confirmDeletion(at row: Int) {
@@ -677,7 +677,7 @@ extension ShoppingCartViewController: UITableViewDelegate, UITableViewDataSource
         }
 
         let product = item.product
-        self.delegate.track(.deletedFromCart(product.sku))
+        self.delegate?.track(.deletedFromCart(product.sku))
 
         self.items.remove(at: row)
 
