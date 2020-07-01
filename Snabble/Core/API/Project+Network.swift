@@ -293,7 +293,19 @@ extension Project {
                 httpResponse.statusCode == 200 || httpResponse.statusCode == 201
             else {
                 let statusCode = (response as? HTTPURLResponse)?.statusCode ?? 0
-                self.logError("error getting response from \(url): \(String(describing: error)) statusCode \(statusCode)")
+
+                let cancelled: Bool = {
+                    if let urlError = error as? URLError, urlError.code == .cancelled {
+                        return true
+                    }
+                    return false
+                }()
+
+                if !cancelled {
+                    self.logError("error getting response from \(url): \(String(describing: error)) statusCode \(statusCode)")
+                } else {
+                    Log.error("request was cancelled: \(url)")
+                }
 
                 var apiError = SnabbleError.unknown
                 if let urlError = error as? URLError, urlError.code == .cancelled {
