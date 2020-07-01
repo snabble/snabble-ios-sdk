@@ -4,6 +4,8 @@
 
 * Fixes a bug where VPoS price information with non-null `units` was displayed incorrectly
 * Adds support for the `displayNetPrice` project setting
+* Adds support for the `customerNetworks` store data property
+* Fixes a rare crash in `ShoppingCartViewController.startCheckout()`
 
 # v0.13.8
 
