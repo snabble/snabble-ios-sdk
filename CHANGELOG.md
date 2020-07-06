@@ -1,5 +1,9 @@
 ## snabble iOS SDK Changelog
 
+# v0.13.11
+
+* Fixes a bug `displayNetPrice` did not actually show the net price
+
 # v0.13.10
 
 * Internal changes `PaydirektEditViewController` so that it is usable from the RN wrapper
