@@ -248,7 +248,11 @@ public final class ScannerViewController: UIViewController {
                 nilPrice = false
             }
 
-            let totalPrice = nilPrice ? nil : (self.shoppingCart.backendCartInfo?.totalPrice ?? self.shoppingCart.total)
+            let backendTotal = SnabbleUI.project.displayNetPrice ?
+                self.shoppingCart.backendCartInfo?.netPrice :
+                self.shoppingCart.backendCartInfo?.totalPrice
+
+            let totalPrice = nilPrice ? nil : (backendTotal ?? self.shoppingCart.total)
             if let total = totalPrice {
                 let formatter = PriceFormatter(SnabbleUI.project)
                 self.barcodeDetector.cartButtonTitle = String(format: "Snabble.Scanner.goToCart".localized(), formatter.format(total))
