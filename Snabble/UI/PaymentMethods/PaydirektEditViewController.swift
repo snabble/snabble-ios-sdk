@@ -52,7 +52,7 @@ public final class PaydirektEditViewController: UIViewController {
     @IBOutlet private weak var deleteButton: UIButton!
 
     private var webView: WKWebView?
-    private var detail: PaydirektData?
+    private var detail: PaymentMethodDetail?
     private var index: Int? = 0
     private let showFromCart: Bool
     private weak var analyticsDelegate: AnalyticsDelegate?
@@ -70,7 +70,7 @@ public final class PaydirektEditViewController: UIViewController {
         redirectUrlAfterFailure: RedirectStatus.failure.url
     )
 
-    init(_ detail: PaydirektData?, _ index: Int?, _ showFromCart: Bool, _ analyticsDelegate: AnalyticsDelegate?) {
+    public init(_ detail: PaymentMethodDetail?, _ index: Int?, _ showFromCart: Bool, _ analyticsDelegate: AnalyticsDelegate?) {
         self.detail = detail
         self.index = index
         self.showFromCart = showFromCart
@@ -256,11 +256,7 @@ extension PaydirektEditViewController: WKNavigationDelegate {
 // stuff that's only used by the RN wrapper
 extension PaydirektEditViewController: ReactNativeWrapper {
     public func setDetail(_ detail: PaymentMethodDetail, _ index: Int) {
-        guard case .paydirektAuthorization(let data) = detail.methodData else {
-            return
-        }
-
-        self.detail = data
+        self.detail = detail
         self.index = index
     }
 }

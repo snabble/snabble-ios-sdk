@@ -260,8 +260,8 @@ extension PaymentMethodListViewController: UITableViewDelegate, UITableViewDataS
                 editVC = SepaEditViewController(details, indexPath.row, false, self.analyticsDelegate)
             case .creditcard(let creditcardData):
                 editVC = CreditCardEditViewController(creditcardData, indexPath.row, false, self.analyticsDelegate)
-            case .paydirektAuthorization(let paydirektData):
-                editVC = PaydirektEditViewController(paydirektData, indexPath.row, false, self.analyticsDelegate)
+            case .paydirektAuthorization:
+                editVC = PaydirektEditViewController(details, indexPath.row, false, self.analyticsDelegate)
             case .tegutEmployeeCard:
                 editVC = nil
             }
