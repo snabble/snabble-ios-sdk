@@ -1,5 +1,9 @@
 ## snabble iOS SDK Changelog
 
+# v0.13.10
+
+* Internal changes `PaydirektEditViewController` so that it is usable from the RN wrapper
+
 # v0.13.9
 
 * Fixes a bug where VPoS price information with non-null `units` was displayed incorrectly
