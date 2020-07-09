@@ -20,7 +20,7 @@ public struct Order: Codable {
     public let links: OrderLinks
 
     public struct OrderLinks: Codable {
-        public let receipt: Link
+        public let receipt: Link?
     }
 
     enum CodingKeys: String, CodingKey {
@@ -125,7 +125,12 @@ extension Order {
     }
 
     private func download(_ project: Project, _ targetPath: URL, completion: @escaping (Result<URL, Error>) -> Void ) {
-        project.request(.get, self.links.receipt.href, timeout: 10) { request in
+        guard let link = self.links.receipt?.href else {
+            Log.error("error downloading receipt: no receipt link?!?")
+            return completion(.failure(SnabbleError.notFound))
+        }
+
+        project.request(.get, link, timeout: 10) { request in
             guard let request = request else {
                 completion(.failure(SnabbleError.noRequest))
                 return

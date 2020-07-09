@@ -124,7 +124,9 @@ public final class ReceiptsListViewController: UIViewController {
     }
 
     private func updateDisplay(_ orderList: OrderList) {
-        var orders = orderList.orders.map { OrderEntry.done($0) }
+        var orders = orderList.orders
+            .filter { $0.links.receipt?.href != nil }
+            .map { OrderEntry.done($0) }
 
         let orderIds: [String] = orders.compactMap {
             if case .done(let entry) = $0 {
