@@ -8,6 +8,10 @@ import Foundation
 
 public struct OrderList: Decodable {
     public let orders: [Order]
+
+    public var receipts: [Order] {
+        return orders.filter { $0.links.receipt?.href != nil }
+    }
 }
 
 public struct Order: Codable {
