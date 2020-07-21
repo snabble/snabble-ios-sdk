@@ -178,6 +178,7 @@ private final class ResolvedProduct: Decodable {
     let encodingUnit: String?
     let scanMessage: String?
     let availability: ResolvedProductAvailability?
+    let notForSale: Bool?
 
     enum ResolvedProductType: String, Codable {
         case `default`
@@ -281,7 +282,8 @@ private final class ResolvedProduct: Decodable {
                               referenceUnit: Units.from(self.referenceUnit),
                               encodingUnit: encodingUnit,
                               scanMessage: self.scanMessage,
-                              availability: self.availability?.convert() ?? .inStock)
+                              availability: self.availability?.convert() ?? .inStock,
+                              notForSale: self.notForSale ?? false)
 
         return product
     }

@@ -273,7 +273,8 @@ extension ProductDB {
                               referenceUnit: referenceUnit,
                               encodingUnit: encodingUnit,
                               scanMessage: row["scanMessage"],
-                              availability: ProductAvailability(rawValue: row["availability"]))
+                              availability: ProductAvailability(rawValue: row["availability"]),
+                              notForSale: row["notForSale"])
 
         return product
     }

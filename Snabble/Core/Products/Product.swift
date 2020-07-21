@@ -154,6 +154,8 @@ public struct Product: Codable {
 
     public let saleStop: Bool
 
+    public let notForSale: Bool
+
     /// for products with unit-dependent prices.
     /// `referenceUnit` specifies the Unit that the product's list price refers to, e.g. `.kilogram`.
     public let referenceUnit: Units?
@@ -207,6 +209,7 @@ public struct Product: Codable {
         self.encodingUnit = try container.decodeIfPresent(.encodingUnit)
         self.scanMessage = try container.decodeIfPresent(.scanMessage)
         self.availability = try container.decodeIfPresent(.availability) ?? .inStock
+        self.notForSale = try container.decodeIfPresent(.notForSale) ?? false
     }
 
     init(sku: String,
@@ -230,7 +233,8 @@ public struct Product: Codable {
          referenceUnit: Units? = nil,
          encodingUnit: Units? = nil,
          scanMessage: String? = nil,
-         availability: ProductAvailability = .inStock) {
+         availability: ProductAvailability = .inStock,
+         notForSale: Bool) {
         self.sku = sku
         self.name = name
         self.description = description
@@ -253,5 +257,6 @@ public struct Product: Codable {
         self.encodingUnit = encodingUnit
         self.scanMessage = scanMessage
         self.availability = availability
+        self.notForSale = notForSale
     }
 }

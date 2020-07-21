@@ -439,6 +439,12 @@ extension ScannerViewController {
                 return
             }
 
+            // check for not-for-sale
+            if product.notForSale {
+                self.showNotForSale(scannedProduct.product, scannedCode)
+                return
+            }
+
             // handle scanning the shelf code of a pre-weighed product (no data or 0 encoded in the EAN)
             if product.type == .preWeighed && (embeddedData == nil || embeddedData == 0) {
                 let msg = "Snabble.Scanner.scannedShelfCode".localized()
@@ -468,6 +474,16 @@ extension ScannerViewController {
         })
 
         self.present(alert, animated: true)
+    }
+
+    private func showNotForSale(_ product: Product, _ scannedCode: String) {
+        if let msg = self.delegate.scanMessage(for: SnabbleUI.project, self.shop, product) {
+            self.tapticFeedback.notificationOccurred(.error)
+            self.showMessage(msg)
+        } else {
+            self.scannedUnknown("Snabble.Scanner.unknownBarcode".localized(), scannedCode)
+        }
+        self.barcodeDetector.startScanning()
     }
 
     private func showBundleSelection(for scannedProduct: ScannedProduct, _ scannedCode: String) {
