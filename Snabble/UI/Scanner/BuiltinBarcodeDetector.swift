@@ -155,20 +155,24 @@ public final class BuiltinBarcodeDetector: NSObject, BarcodeDetector {
         }
     }
 
+    public func requestCameraPermission() {
+        let authorizationStatus = AVCaptureDevice.authorizationStatus(for: .video)
+        if authorizationStatus != .authorized {
+            self.requestCameraPermission(currentStatus: authorizationStatus)
+        }
+    }
+
     // MARK: - private implementation
 
     private func initializeCamera() -> AVCaptureDevice? {
         // get the back camera device
-        guard let camera = AVCaptureDevice.default(.builtInWideAngleCamera, for: AVMediaType.video, position: .back) else {
+        guard let camera = AVCaptureDevice.default(.builtInWideAngleCamera, for: .video, position: .back) else {
             print("no camera found")
             return nil
         }
 
         // camera found, are we allowed to access it?
-        let authorizationStatus = AVCaptureDevice.authorizationStatus(for: .video)
-        if authorizationStatus != .authorized {
-            self.requestCameraPermission(currentStatus: authorizationStatus)
-        }
+        self.requestCameraPermission()
 
         // set focus/low light properties of the camera
         do {
@@ -195,12 +199,13 @@ public final class BuiltinBarcodeDetector: NSObject, BarcodeDetector {
             let title = "Snabble.Scanner.Camera.accessDenied".localized()
             let msg = "Snabble.Scanner.Camera.allowAccess".localized()
             let alert = UIAlertController(title: title, message: msg, preferredStyle: .alert)
-            alert.addAction(UIAlertAction(title: "Snabble.Cancel".localized(), style: .cancel) { _ in
-            })
+            alert.addAction(UIAlertAction(title: "Snabble.Cancel".localized(), style: .cancel, handler: nil))
             alert.addAction(UIAlertAction(title: "Snabble.Settings".localized(), style: .default) { _ in
                 UIApplication.shared.open(URL(string: UIApplication.openSettingsURLString)!)
             })
-            self.delegate?.present(alert, animated: true, completion: nil)
+            DispatchQueue.main.async {
+                self.delegate?.present(alert, animated: true, completion: nil)
+            }
 
         case .notDetermined:
             AVCaptureDevice.requestAccess(for: .video) { _ in }

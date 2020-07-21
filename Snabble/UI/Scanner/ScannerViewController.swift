@@ -684,6 +684,7 @@ extension ScannerViewController: ReactNativeWrapper {
 
     public func setIsScanning(_ on: Bool) {
         if on {
+            self.barcodeDetector.requestCameraPermission()
             self.barcodeDetector.startScanning()
         } else {
             self.barcodeDetector.stopScanning()

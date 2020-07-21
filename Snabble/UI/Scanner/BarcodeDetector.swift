@@ -63,6 +63,8 @@ public protocol BarcodeDetector {
 
     /// sets the cart button's appearance
     func setCustomAppearance(_ appearance: CustomAppearance)
+
+    func requestCameraPermission()
 }
 
 public struct BarcodeDetectorAppearance {
