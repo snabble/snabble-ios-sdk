@@ -1,5 +1,9 @@
 ## snabble iOS SDK Changelog
 
+# v0.13.12
+
+* add support for the new `notForSale` product property
+
 # v0.13.11
 
 * Fixes a bug `displayNetPrice` did not actually show the net price

@@ -234,7 +234,7 @@ public struct Product: Codable {
          encodingUnit: Units? = nil,
          scanMessage: String? = nil,
          availability: ProductAvailability = .inStock,
-         notForSale: Bool) {
+         notForSale: Bool = false) {
         self.sku = sku
         self.name = name
         self.description = description
