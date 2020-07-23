@@ -68,12 +68,15 @@ extension ProductDB {
         return []
     }
 
+    @available(*, deprecated, message: "will be removed in a future version of the SDK")
     func discountedProducts(_ dbQueue: DatabaseQueue, _ shopId: String) -> [Product] {
+        let priority = self.schemaVersionMinor >= 22 ? "order by priority desc limit 1" : ""
+        let categoryQuery = "select pricingCategory from shops where shops.id = ? \(priority)"
         do {
             let rows = try dbQueue.inDatabase { db in
                 return try self.fetchAll(db,
                     ProductDB.productQuery + " " + """
-                    left outer join prices pr1 on pr1.sku = p.sku and pr1.pricingCategory = ifnull((select pricingCategory from shops where shops.id = ?), 0)
+                    left outer join prices pr1 on pr1.sku = p.sku and pr1.pricingCategory = ifnull((\(categoryQuery)), 0)
                     left outer join prices pr2 on pr2.sku = p.sku and pr2.pricingCategory = 0
                     where p.imageUrl is not null and ifnull(pr1.discountedPrice, pr2.discountedPrice) is not null
                     """,
@@ -280,10 +283,14 @@ extension ProductDB {
     }
 
     private func getPriceRowForSku(_ dbQueue: DatabaseQueue, _ sku: String, _ shopId: String) -> Row? {
+        let priority = self.schemaVersionMinor >= 22 ? "order by priority desc limit 1" : ""
+        let subQuery = "select pricingCategory from shops where shops.id = ? \(priority)"
+        let priceQuery = "select * from prices where pricingCategory = ifnull((\(subQuery)), 0) and sku = ?"
+
         do {
             let row = try dbQueue.inDatabase { db in
                 return try self.fetchOne(db,
-                    "select * from prices where pricingCategory = ifnull((select pricingCategory from shops where shops.id = ?), 0) and sku = ?",
+                    priceQuery,
                     arguments: [shopId, sku])
             }
             if row != nil {

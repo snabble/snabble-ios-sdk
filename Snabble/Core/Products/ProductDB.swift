@@ -123,6 +123,7 @@ public protocol ProductProvider: class {
     /// returns a list of all products that have a discounted price and a valid image URL
     ///
     /// - Returns: an array of `Product`
+    @available(*, deprecated, message: "will be removed in a future version of the SDK")
     func discountedProducts(_ shopId: String) -> [Product]
 
     /// get products matching `name`
@@ -695,6 +696,7 @@ extension ProductDB {
     /// returns a list of all products that have a discounted price and a valid image URL
     ///
     /// - Returns: an array of `Product`
+    @available(*, deprecated, message: "will be removed in a future version of the SDK")
     public func discountedProducts(_ shopId: String) -> [Product] {
         guard let db = self.db else {
             return []
