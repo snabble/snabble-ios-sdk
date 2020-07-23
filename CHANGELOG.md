@@ -1,16 +1,21 @@
 ## snabble iOS SDK Changelog
 
+# v0.13.13
+
+* Add support for the new price category priorities
+* The `ProductDB.discountedProducts` method is deprecated and will be removed in a future version of the SDK
+
 # v0.13.12
 
-* add support for the new `notForSale` product property
+* Add support for the new `notForSale` product property
 
 # v0.13.11
 
-* Fixes a bug `displayNetPrice` did not actually show the net price
+* Fixes a bug where `displayNetPrice` did not actually show the net price
 
 # v0.13.10
 
-* Internal changes `PaydirektEditViewController` so that it is usable from the RN wrapper
+* Internal changes to `PaydirektEditViewController` so that it is usable from the RN wrapper
 
 # v0.13.9
 
