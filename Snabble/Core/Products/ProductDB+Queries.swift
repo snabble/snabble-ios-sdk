@@ -283,10 +283,22 @@ extension ProductDB {
     }
 
     private func getPriceRowForSku(_ dbQueue: DatabaseQueue, _ sku: String, _ shopId: String) -> Row? {
-        let priority = self.schemaVersionMinor >= 22 ? "order by priority desc limit 1" : ""
-        let subQuery = "select pricingCategory from shops where shops.id = ? \(priority)"
-        let priceQuery = "select * from prices where pricingCategory = ifnull((\(subQuery)), 0) and sku = ?"
-
+        let priceQuery: String
+        if self.schemaVersionMinor >= 22 {
+            // find the highest priority category that has a price
+            priceQuery = """
+                select * from prices
+                join shops on shops.pricingCategory = prices.pricingCategory
+                where shops.id = ? and sku = ?
+                order by priority desc
+                limit 1
+            """
+        } else {
+            priceQuery = """
+                select * from prices
+                where pricingCategory = ifnull((select pricingCategory from shops where shops.id = ?),0) and sku = ?
+            """
+        }
         do {
             let row = try dbQueue.inDatabase { db in
                 return try self.fetchOne(db,
