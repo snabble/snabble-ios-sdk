@@ -1,6 +1,6 @@
 ## snabble iOS SDK Changelog
 
-# v0.13.13
+# v0.13.14
 
 * Add support for the new price category priorities
 * The `ProductDB.discountedProducts` method is deprecated and will be removed in a future version of the SDK
