@@ -422,7 +422,9 @@ public final class ShoppingCartViewController: UIViewController {
         spinner.centerYAnchor.constraint(equalTo: button.centerYAnchor).isActive = true
         button.isEnabled = false
 
-        self.shoppingCart.createCheckoutInfo(SnabbleUI.project, timeout: 10) { result in
+        let offlineMethods = SnabbleUI.project.paymentMethods.filter { $0.offline }
+        let timeout: TimeInterval = offlineMethods.contains(paymentMethod) ? 3 : 10
+        self.shoppingCart.createCheckoutInfo(SnabbleUI.project, timeout: timeout) { result in
             spinner.stopAnimating()
             spinner.removeFromSuperview()
             button.isEnabled = true
@@ -444,7 +446,6 @@ public final class ShoppingCartViewController: UIViewController {
                     }
 
                     // app didn't handle the error. see if the project has a offline-capable payment method
-                    let offlineMethods = SnabbleUI.project.paymentMethods.filter { $0.offline }
                     if !offlineMethods.isEmpty {
                         let info = SignedCheckoutInfo(offlineMethods)
                         self.delegate?.gotoPayment(paymentMethod, self.methodSelector?.selectedPaymentDetail, info, self.shoppingCart)
