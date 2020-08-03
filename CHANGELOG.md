@@ -1,5 +1,10 @@
 ## snabble iOS SDK Changelog
 
+# v0.13.15
+
+* Fixes a bug where receipts with empty PDF links were still displayed
+* Reduces the timeout for creating the `CheckoutInfo` for offline payment methods to 3 seconds
+
 # v0.13.14
 
 * Add support for the new price category priorities
