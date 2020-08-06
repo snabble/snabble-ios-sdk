@@ -261,6 +261,13 @@ final class ProductDB: ProductProvider {
     ///     (i.e., only if `update` is true)
     ///   - dataAvailable: indicates if the database was updated
     public func setup(update: Bool = true, forceFullDownload: Bool = false, completion: @escaping (_ dataAvailable: AppDbAvailability) -> Void ) {
+        // remove comments to simulate first app installation
+//        let dbFile = self.dbPathname()
+//        let fileManager = FileManager.default
+//        if fileManager.fileExists(atPath: dbFile) {
+//            try? fileManager.removeItem(atPath: dbFile)
+//        }
+
         self.db = self.openDb()
 
         if let seedRevision = self.config.seedRevision, seedRevision > self.revision {
@@ -414,23 +421,17 @@ final class ProductDB: ProductProvider {
 
             let dbFile = self.dbPathname()
 
+            // copy our seed database to the app support directory if the file doesn't exist
+            if !fileManager.fileExists(atPath: dbFile) {
+                self.unzipSeed()
+            }
+
             if !fileManager.fileExists(atPath: dbFile) {
                 Log.info("no sqlite file found at \(dbFile)")
                 return nil
             }
 
             Log.info("using sqlite db: \(dbFile)")
-
-            // remove comments to simulate first app installation
-//            if fileManager.fileExists(atPath: dbFile) {
-//                try fileManager.removeItem(atPath: dbFile)
-//            }
-
-            // copy our seed database to the app support directory if the file doesn't exist
-            if !fileManager.fileExists(atPath: dbFile) {
-                self.unzipSeed()
-            }
-
             var config = Configuration()
             config.readonly = true
             let db = try DatabaseQueue(path: dbFile, configuration: config)
@@ -443,25 +444,27 @@ final class ProductDB: ProductProvider {
     }
 
     private func unzipSeed() {
-        if let seedPath = self.config.seedDatabase {
-            Log.info("unzipping seed database")
-            do {
-                let seedUrl = URL(fileURLWithPath: seedPath)
-                try Zip.unzipFile(seedUrl, destination: self.dbDirectory, overwrite: true, password: nil)
-            } catch let error {
-                self.logError("error while unzipping seed: \(error)")
-            }
+        guard let seedPath = self.config.seedDatabase else {
+            return
+        }
 
-            if self.config.useFTS {
-                self.createFulltextIndex(self.dbPathname())
-            }
+        Log.info("unzipping seed database")
+        do {
+            let seedUrl = URL(fileURLWithPath: seedPath)
+            try Zip.unzipFile(seedUrl, destination: self.dbDirectory, overwrite: true, password: nil)
+        } catch let error {
+            self.logError("error while unzipping seed: \(error)")
+        }
 
-            do {
-                let dbQueue = try DatabaseQueue(path: self.dbPathname())
-                self.setLastUpdate(dbQueue)
-            } catch {
-                self.logError("error updating metadata: \(error)")
-            }
+        if self.config.useFTS {
+            self.createFulltextIndex(self.dbPathname())
+        }
+
+        do {
+            let dbQueue = try DatabaseQueue(path: self.dbPathname())
+            self.setLastUpdate(dbQueue)
+        } catch {
+            self.logError("error updating metadata: \(error)")
         }
     }
 
