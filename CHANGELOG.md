@@ -3,6 +3,7 @@
 # v0.14.0
 
 * Breaking change: all methods for looking up products have been changed to deliver their result via a `Result<Product, ProductLookupError>` or `Result<ScannedProduct, ProductLookupError>` value.
+* Deployment target of the SDK was changed to iOS 12 and later
 
 # v0.13.15
 

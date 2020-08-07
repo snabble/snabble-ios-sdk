@@ -20,7 +20,7 @@ Pod::Spec.new do |s|
   s.social_media_url = 'https://twitter.com/snabble_io'
 
   s.platform = :ios
-  s.ios.deployment_target = '10.3'
+  s.ios.deployment_target = '12.0'
   s.swift_versions = [ '5.0' ]
 
   s.subspec 'Core' do |core|

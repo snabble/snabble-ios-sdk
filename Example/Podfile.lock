@@ -8,16 +8,16 @@ PODS:
   - OneTimePassword (3.2.0):
     - Base32 (~> 1.1.2)
   - SDCAlertView (11.1.2)
-  - Snabble (0.13.15):
-    - Snabble/Core (= 0.13.15)
-    - Snabble/UI (= 0.13.15)
-  - Snabble/Core (0.13.15):
+  - Snabble (0.14.0):
+    - Snabble/Core (= 0.14.0)
+    - Snabble/UI (= 0.14.0)
+  - Snabble/Core (0.14.0):
     - GRDB.swift (~> 4)
     - KeychainAccess (~> 4)
     - OneTimePassword (~> 3)
     - TrustKit (~> 1)
     - Zip (~> 1)
-  - Snabble/UI (0.13.15):
+  - Snabble/UI (0.14.0):
     - EasyTipView (~> 2)
     - SDCAlertView (~> 11.1)
     - Snabble/Core
@@ -52,11 +52,11 @@ SPEC CHECKSUMS:
   KeychainAccess: 3f760109aa99b05d0f231e28b22642da7153e38a
   OneTimePassword: c00ecc908e67e6c5bfda9d50b0b2e4696d0b066e
   SDCAlertView: 26b5dabdd3c2e6f16c88bad231c84447fa42b0dc
-  Snabble: 5b7932148d337010c527b5c6d6f7199015994ece
+  Snabble: 0026b3a3f2e5ebc77ce01ea00f0bf94605090b5c
   TrustKit: 073855e3adecd317417bda4ac9e9ac54a2e3b9f2
   UIEmptyState: 767376694d9402452fb3c0a5a5283176c6a53c92
   Zip: 8877eede3dda76bcac281225c20e71c25270774c
 
-PODFILE CHECKSUM: 20f1e2d354ddfb8816a4ad4a199d8bf89e0161ed
+PODFILE CHECKSUM: fa5d7ef3ccb696fe5abe67cfcf36a0a7c0c77338
 
 COCOAPODS: 1.9.3
