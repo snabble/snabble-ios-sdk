@@ -1,5 +1,9 @@
 ## snabble iOS SDK Changelog
 
+# v0.14.0
+
+* Breaking change: all methods for looking up products have been changed to deliver their result via a `Result<Product, ProductLookupError>` or `Result<ScannedProduct, ProductLookupError>` value.
+
 # v0.13.15
 
 * Fixes a bug where receipts with empty PDF links were still displayed
