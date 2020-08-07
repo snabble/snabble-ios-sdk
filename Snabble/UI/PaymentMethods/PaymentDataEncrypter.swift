@@ -55,7 +55,8 @@ struct PaymentDataEncrypter {
             return nil
         }
 
-        let serial = SecCertificateCopySerialNumber(cert)
+        var error: Unmanaged<CFError>?
+        let serial = SecCertificateCopySerialNumberData(cert, &error)
         if let serial = serial as Data? {
             let hex = serial.map { String(format: "%02hhx", $0) }.joined()
             return hex

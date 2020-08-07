@@ -125,18 +125,13 @@ extension BiometricAuthentication {
 
         BiometricAuthentication.requestAuthentication(for: reason) { success, error in
             if let error = error as? LAError {
-                let cancelCodes = [ LAError.Code.userCancel.rawValue, LAError.Code.appCancel.rawValue, LAError.Code.systemCancel.rawValue ]
-                if cancelCodes.contains(error.errorCode) {
+                let cancelCodes = [ LAError.Code.userCancel, LAError.Code.appCancel, LAError.Code.systemCancel ]
+                if cancelCodes.contains(error.code) {
                     completion(.cancelled)
                     return
                 }
 
-                var lockoutCodes = [ LAError.Code.touchIDLockout.rawValue ]
-                if #available(iOS 11.0, *) {
-                    lockoutCodes.append(LAError.Code.biometryLockout.rawValue)
-                }
-
-                if lockoutCodes.contains(error.errorCode) {
+                if error.code == .biometryLockout {
                     completion(.locked)
                     return
                 }
