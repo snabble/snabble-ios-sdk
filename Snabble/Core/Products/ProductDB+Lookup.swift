@@ -1,14 +1,14 @@
 //
-//  ProductDbNetwork.swift
+//  ProductDB+Lookup.swift
 //
 //  Copyright © 2020 snabble. All rights reserved.
 //
 
 extension ProductDB {
 
-    func resolveProductsLookup(_ url: String, _ codes: [(String, String)], _ shopId: String, completion: @escaping (_ result: Result<ScannedProduct, SnabbleError>) -> Void) {
+    func resolveProductsLookup(_ url: String, _ codes: [(String, String)], _ shopId: String, completion: @escaping (_ result: Result<ScannedProduct, ProductLookupError>) -> Void) {
         let group = DispatchGroup()
-        var results = [Result<ScannedProduct, SnabbleError>]()
+        var results = [Result<ScannedProduct, ProductLookupError>]()
         let mutex = Mutex()
 
         // lookup each code/template
@@ -47,7 +47,7 @@ extension ProductDB {
     }
 
     private func resolveProductsLookup(_ url: String, _ code: String, _ template: String, _ shopId: String,
-                                       completion: @escaping (_ result: Result<ScannedProduct, SnabbleError>) -> Void) {
+                                       completion: @escaping (_ result: Result<ScannedProduct, ProductLookupError>) -> Void) {
         let session = SnabbleAPI.urlSession()
 
         // TODO: is this the right value?
@@ -62,19 +62,23 @@ extension ProductDB {
 
         self.project.request(.get, url, parameters: parameters, timeout: timeoutInterval) { request in
             guard let request = request else {
-                return completion(Result.failure(SnabbleError.noRequest))
+                return completion(Result.failure(.notFound))
             }
 
             let task = session.dataTask(with: request) { data, response, error in
-                if let data = data, let response = response as? HTTPURLResponse {
-                    if response.statusCode == 404 {
-                        DispatchQueue.main.async {
-                            Log.info("online product lookup for \(query): not found")
-                            completion(Result.failure(SnabbleError.notFound))
-                        }
-                        return
-                    }
+                if let lookupError = ProductLookupError.from(error) {
+                    let msg = "error getting product from \(url): \(String(describing: error))"
+                    self.returnError(msg, lookupError, completion)
+                    return
+                }
 
+                if let lookupError = ProductLookupError.from(response) {
+                    let msg = "error getting product from \(url): \(lookupError)"
+                    self.returnError(msg, lookupError, completion)
+                    return
+                }
+
+                if let data = data {
                     do {
                         Log.info("online product lookup for \(query) succeeded")
                         let resolvedProduct = try JSONDecoder().decode(ResolvedProduct.self, from: data)
@@ -82,22 +86,24 @@ extension ProductDB {
 
                         let codeEntry = product.codes.first { $0.code == code }
                         let transmissionCode = codeEntry?.transmissionCode
-                        let lookupResult = ScannedProduct(product, code, transmissionCode, template
-                        )
+                        let lookupResult = ScannedProduct(product, code, transmissionCode, template)
                         completion(Result.success(lookupResult))
                     } catch let error {
-                        self.returnError("product parse error: \(error)", completion)
+                        let msg = "product parse error: \(error)"
+                        self.returnError(msg, .notFound, completion)
                     }
-                } else {
-                    self.returnError("error getting product from \(url): \(String(describing: error))", completion)
+                    return
                 }
+
+                let msg = "error getting product from \(url): \(String(describing: error))"
+                self.returnError(msg, .notFound, completion)
             }
 
             task.resume()
         }
     }
 
-    func resolveProductLookup(_ url: String, _ sku: String, _ shopId: String, completion: @escaping (_ result: Result<Product, SnabbleError>) -> Void) {
+    func resolveProductLookup(_ url: String, _ sku: String, _ shopId: String, completion: @escaping (_ result: Result<Product, ProductLookupError>) -> Void) {
         let session = SnabbleAPI.urlSession()
 
         // TODO: is this the right value?
@@ -112,40 +118,47 @@ extension ProductDB {
 
         self.project.request(.get, requestUrl, parameters: parameters, timeout: timeoutInterval) { request in
             guard let request = request else {
-                return completion(Result.failure(SnabbleError.noRequest))
+                return completion(Result.failure(.notFound))
             }
 
             let task = session.dataTask(with: request) { data, response, error in
-                if let data = data, let response = response as? HTTPURLResponse {
-                    if response.statusCode == 404 {
-                        DispatchQueue.main.async {
-                            Log.info("online product lookup for \(query): not found")
-                            completion(Result.failure(SnabbleError.notFound))
-                        }
-                        return
-                    }
+                if let lookupError = ProductLookupError.from(error) {
+                    let msg = "error getting product from \(url): \(String(describing: error))"
+                    self.returnError(msg, lookupError, completion)
+                    return
+                }
 
+                if let lookupError = ProductLookupError.from(response) {
+                    let msg = "error getting product from \(url): \(lookupError)"
+                    self.returnError(msg, lookupError, completion)
+                    return
+                }
+
+                if let data = data {
                     do {
                         Log.info("online product lookup for \(query) succeeded")
                         let resolvedProduct = try JSONDecoder().decode(ResolvedProduct.self, from: data)
                         let product = resolvedProduct.convert()
                         completion(Result.success(product))
                     } catch let error {
-                        self.returnError("product parse error: \(error)", completion)
+                        let msg = "product parse error: \(error)"
+                        self.returnError(msg, .notFound, completion)
                     }
-                } else {
-                    self.returnError("error getting product from \(url): \(String(describing: error))", completion)
+                    return
                 }
+
+                let msg = "error getting product from \(url): \(String(describing: error))"
+                self.returnError(msg, .notFound, completion)
             }
 
             task.resume()
         }
     }
 
-    private func returnError<T>(_ msg: String, _ completion: @escaping (_ result: Result<T, SnabbleError>) -> Void ) {
+    private func returnError<T>(_ msg: String, _ error: ProductLookupError, _ completion: @escaping (_ result: Result<T, ProductLookupError>) -> Void ) {
         self.logError(msg)
         DispatchQueue.main.async {
-            completion(Result.failure(SnabbleError(error: ErrorResponse(msg))))
+            completion(.failure(error))
         }
     }
 

@@ -153,7 +153,7 @@ public protocol ProductProvider: class {
     ///   - sku: the sku to look for
     ///   - forceDownload: if true, skip the lookup in the local DB
     ///   - result: the product found or the error
-    func productBySku(_ sku: String, _ shopId: String, forceDownload: Bool, completion: @escaping (_ result: Result<Product, SnabbleError>) -> Void )
+    func productBySku(_ sku: String, _ shopId: String, forceDownload: Bool, completion: @escaping (_ result: Result<Product, ProductLookupError>) -> Void )
 
     /// asynchronously get a product by (one of) its scannable codes
     ///
@@ -162,7 +162,7 @@ public protocol ProductProvider: class {
     ///   - forceDownload: if true, skip the lookup in the local DB
     ///   - result: the lookup result or the error
     func productByScannableCodes(_ codes: [(String, String)], _ shopId: String, forceDownload: Bool,
-                                 completion: @escaping (_ result: Result<ScannedProduct, SnabbleError>) -> Void )
+                                 completion: @escaping (_ result: Result<ScannedProduct, ProductLookupError>) -> Void )
 
     var revision: Int64 { get }
     var lastProductUpdate: Date { get }
@@ -185,7 +185,7 @@ public extension ProductProvider {
         self.updateDatabase(forceFullDownload: false, completion: completion)
     }
 
-    func productBySku(_ sku: String, _ shopId: String, completion: @escaping (_ result: Result<Product, SnabbleError>) -> Void ) {
+    func productBySku(_ sku: String, _ shopId: String, completion: @escaping (_ result: Result<Product, ProductLookupError>) -> Void ) {
         self.productBySku(sku, shopId, forceDownload: false, completion: completion)
     }
 
@@ -197,7 +197,7 @@ public extension ProductProvider {
         return self.productsByName(name, filterDeposits: true)
     }
 
-    func productByScannableCodes(_ codes: [(String, String)], _ shopId: String, completion: @escaping (_ result: Result<ScannedProduct, SnabbleError>) -> Void ) {
+    func productByScannableCodes(_ codes: [(String, String)], _ shopId: String, completion: @escaping (_ result: Result<ScannedProduct, ProductLookupError>) -> Void ) {
         self.productByScannableCodes(codes, shopId, forceDownload: false, completion: completion)
     }
 
@@ -770,7 +770,7 @@ extension ProductDB {
     ///   - forceDownload: if true, skip the lookup in the local DB
     ///   - product: the product found, or nil.
     ///   - error: whether an error occurred during the lookup.
-    public func productBySku(_ sku: String, _ shopId: String, forceDownload: Bool, completion: @escaping (_ result: Result<Product, SnabbleError>) -> Void) {
+    public func productBySku(_ sku: String, _ shopId: String, forceDownload: Bool, completion: @escaping (_ result: Result<Product, ProductLookupError>) -> Void) {
         if self.lookupLocally(forceDownload), let product = self.productBySku(sku, shopId) {
             DispatchQueue.main.async {
                 completion(Result.success(product))
@@ -781,7 +781,7 @@ extension ProductDB {
         if let url = self.project.links.resolvedProductBySku?.href {
             self.resolveProductLookup(url, sku, shopId, completion: completion)
         } else {
-            completion(Result.failure(SnabbleError.notFound))
+            completion(Result.failure(.notFound))
         }
     }
 
@@ -796,7 +796,7 @@ extension ProductDB {
     ///   - product: the product found, or nil.
     ///   - error: whether an error occurred during the lookup.
     public func productByScannableCodes(_ codes: [(String, String)], _ shopId: String, forceDownload: Bool,
-                                        completion: @escaping (_ result: Result<ScannedProduct, SnabbleError>) -> Void) {
+                                        completion: @escaping (_ result: Result<ScannedProduct, ProductLookupError>) -> Void) {
         if self.lookupLocally(forceDownload), let result = self.productByScannableCodes(codes, shopId) {
             DispatchQueue.main.async {
                 completion(Result.success(result))
@@ -807,7 +807,7 @@ extension ProductDB {
         if let url = self.project.links.resolvedProductLookUp?.href {
             self.resolveProductsLookup(url, codes, shopId, completion: completion)
         } else {
-            completion(Result.failure(SnabbleError.notFound))
+            completion(Result.failure(.notFound))
         }
     }
 

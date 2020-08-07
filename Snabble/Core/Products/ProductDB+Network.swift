@@ -1,5 +1,5 @@
 //
-//  ProductDbNetwork.swift
+//  ProductDB+Network.swift
 //
 //  Copyright © 2020 snabble. All rights reserved.
 //

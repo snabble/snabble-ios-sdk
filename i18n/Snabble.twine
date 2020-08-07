@@ -72,8 +72,10 @@
         en = Torch
     [Snabble.Scanner.networkError]
         en = Product could not be searched online. Please check your internet connection.
+    [Snabble.Scanner.serverError]
+        en = Could not retrieve product data.
     [Snabble.Scanner.unknownBarcode]
-        en = Price information is not available for this product
+        en = Price information is not available for this product.
     [Snabble.Scanner.updateCart]
         en = Update Cart
     [Snabble.Scanner.addToCart]
@@ -343,3 +345,6 @@
         en = Age restriction
     [Snabble.ageVerification.failed.message]
         en = Some products in your cart have an age restriction, unfortunately you can't purchase them.
+    [Snabble.Payment.offlineHint]
+        en = You are currently offline and some payment methods may not be available
+    

@@ -419,15 +419,18 @@ extension ScannerViewController {
 
         self.barcodeDetector.stopScanning()
 
-        self.productForCode(scannedCode, template) { scannedProduct in
+        self.productForCode(scannedCode, template) { scannedResult in
             self.timer?.invalidate()
             self.timer = nil
             self.spinner.stopAnimating()
 
-            guard let scannedProduct = scannedProduct else {
-                self.scannedUnknown("Snabble.Scanner.unknownBarcode".localized(), scannedCode)
-                self.barcodeDetector.startScanning()
+            let scannedProduct: ScannedProduct
+            switch scannedResult {
+            case .failure(let error):
+                self.showScanLookupError(error, scannedCode)
                 return
+            case .success(let product):
+                scannedProduct = product
             }
 
             let product = scannedProduct.product
@@ -464,6 +467,18 @@ extension ScannerViewController {
                 self.showBundleSelection(for: scannedProduct, scannedCode)
             }
         }
+    }
+
+    private func showScanLookupError(_ error: ProductLookupError, _ scannedCode: String) {
+        let msg: String
+        switch error {
+        case .notFound: msg = "Snabble.Scanner.unknownBarcode".localized()
+        case .networkError: msg = "Snabble.Scanner.networkError".localized()
+        case .serverError: msg = "Snabble.Scanner.serverError".localized()
+        }
+
+        self.scannedUnknown(msg, scannedCode)
+        self.barcodeDetector.startScanning()
     }
 
     private func showSaleStop() {
@@ -518,7 +533,7 @@ extension ScannerViewController {
         self.present(alert, animated: true)
     }
 
-    private func productForCode(_ code: String, _ template: String?, completion: @escaping (ScannedProduct?) -> Void ) {
+    private func productForCode(_ code: String, _ template: String?, completion: @escaping (Result<ScannedProduct, ProductLookupError>) -> Void ) {
         // if we were given a template from the barcode entry, use that to lookup the product directly
         if let template = template {
             return self.lookupProduct(code, template, nil, completion)
@@ -533,7 +548,7 @@ extension ScannerViewController {
         // then, check our regular templates
         let matches = CodeMatcher.match(code, project.id)
         guard !matches.isEmpty else {
-            return completion(nil)
+            return completion(.failure(.notFound))
         }
 
         let lookupCodes = matches.map { $0.lookupCode }
@@ -544,7 +559,7 @@ extension ScannerViewController {
             switch result {
             case .success(let lookupResult):
                 guard let parseResult = matches.first(where: { $0.template.id == lookupResult.templateId }) else {
-                    completion(nil)
+                    completion(.failure(.notFound))
                     return
                 }
 
@@ -580,16 +595,16 @@ extension ScannerViewController {
                                                embeddedData, encodingUnit, newResult.referencePriceOverride)
                 }
 
-                completion(newResult)
-            case .failure:
+                completion(.success(newResult))
+            case .failure(let error):
                 let event = AppEvent(scannedCode: code, codes: codes, project: project)
                 event.post()
-                completion(nil)
+                completion(.failure(error))
             }
         }
     }
 
-    private func productForOverrideCode(_ match: OverrideLookup, completion: @escaping (ScannedProduct?) -> Void ) {
+    private func productForOverrideCode(_ match: OverrideLookup, completion: @escaping (Result<ScannedProduct, ProductLookupError>) -> Void ) {
         let code = match.lookupCode
 
         if let template = match.lookupTemplate {
@@ -599,7 +614,7 @@ extension ScannerViewController {
         let matches = CodeMatcher.match(code, SnabbleUI.project.id)
 
         guard !matches.isEmpty else {
-            return completion(nil)
+            return completion(.failure(.notFound))
         }
 
         let lookupCodes = matches.map { $0.lookupCode }
@@ -609,14 +624,14 @@ extension ScannerViewController {
             switch result {
             case .success(let lookupResult):
                 let newResult = ScannedProduct(lookupResult.product, code, match.transmissionCode, lookupResult.templateId, nil, .price, priceOverride: match.embeddedData)
-                completion(newResult)
-            case .failure:
-                completion(nil)
+                completion(.success(newResult))
+            case .failure(let error):
+                completion(.failure(error))
             }
         }
     }
 
-    private func lookupProduct(_ code: String, _ template: String, _ priceOverride: Int?, _ completion: @escaping (ScannedProduct?) -> Void ) {
+    private func lookupProduct(_ code: String, _ template: String, _ priceOverride: Int?, _ completion: @escaping (Result<ScannedProduct, ProductLookupError>) -> Void ) {
         let codes = [(code, template)]
         self.productProvider.productByScannableCodes(codes, self.shop.id) { result in
             switch result {
@@ -628,9 +643,9 @@ extension ScannerViewController {
                 } else {
                     scannedProduct = ScannedProduct(lookupResult.product, code, transmissionCode, template)
                 }
-                completion(scannedProduct)
-            case .failure:
-                completion(nil)
+                completion(.success(scannedProduct))
+            case .failure(let error):
+                completion(.failure(error))
             }
         }
     }

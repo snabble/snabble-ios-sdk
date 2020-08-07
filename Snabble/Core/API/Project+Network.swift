@@ -19,6 +19,38 @@ public struct SnabbleError: Decodable, Error, Equatable {
     static let noPaymentAvailable = SnabbleError(error: ErrorResponse("no payment method available"))
 }
 
+public enum ProductLookupError: Error {
+    case notFound
+    case networkError(URLError.Code)
+    case serverError(Int)
+
+    var statusCode: Int? {
+        switch self {
+        case .serverError(let statusCode): return statusCode
+        default: return nil
+        }
+    }
+
+    static func from(_ response: URLResponse?) -> ProductLookupError? {
+        guard let response = response as? HTTPURLResponse else {
+            return nil
+        }
+
+        switch response.statusCode {
+        case 200: return nil
+        case 404: return .notFound
+        default: return .serverError(response.statusCode)
+        }
+    }
+
+    static func from(_ error: Error?) -> ProductLookupError? {
+        guard let error = error as? URLError else {
+            return nil
+        }
+        return .networkError(error.code)
+    }
+}
+
 public enum ErrorResponseType: String, UnknownCaseRepresentable {
     case unknown
 
