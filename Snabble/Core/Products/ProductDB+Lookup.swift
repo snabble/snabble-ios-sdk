@@ -87,7 +87,11 @@ extension ProductDB {
                         let codeEntry = product.codes.first { $0.code == code }
                         let transmissionCode = codeEntry?.transmissionCode
                         let lookupResult = ScannedProduct(product, code, transmissionCode, template)
-                        completion(Result.success(lookupResult))
+                        if lookupResult.product.availability == .notAvailable {
+                            completion(.failure(.notFound))
+                        } else {
+                            completion(.success(lookupResult))
+                        }
                     } catch let error {
                         let msg = "product parse error: \(error)"
                         self.returnError(msg, .notFound, completion)
@@ -118,7 +122,7 @@ extension ProductDB {
 
         self.project.request(.get, requestUrl, parameters: parameters, timeout: timeoutInterval) { request in
             guard let request = request else {
-                return completion(Result.failure(.notFound))
+                return completion(.failure(.notFound))
             }
 
             let task = session.dataTask(with: request) { data, response, error in
@@ -139,7 +143,11 @@ extension ProductDB {
                         Log.info("online product lookup for \(query) succeeded")
                         let resolvedProduct = try JSONDecoder().decode(ResolvedProduct.self, from: data)
                         let product = resolvedProduct.convert()
-                        completion(Result.success(product))
+                        if product.availability == .notAvailable {
+                            completion(.failure(.notFound))
+                        } else {
+                            completion(.success(product))
+                        }
                     } catch let error {
                         let msg = "product parse error: \(error)"
                         self.returnError(msg, .notFound, completion)

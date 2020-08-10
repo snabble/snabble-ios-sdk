@@ -773,7 +773,11 @@ extension ProductDB {
     public func productBySku(_ sku: String, _ shopId: String, forceDownload: Bool, completion: @escaping (_ result: Result<Product, ProductLookupError>) -> Void) {
         if self.lookupLocally(forceDownload), let product = self.productBySku(sku, shopId) {
             DispatchQueue.main.async {
-                completion(Result.success(product))
+                if product.availability == .notAvailable {
+                    completion(.failure(.notFound))
+                } else {
+                    completion(.success(product))
+                }
             }
             return
         }
@@ -781,7 +785,7 @@ extension ProductDB {
         if let url = self.project.links.resolvedProductBySku?.href {
             self.resolveProductLookup(url, sku, shopId, completion: completion)
         } else {
-            completion(Result.failure(.notFound))
+            completion(.failure(.notFound))
         }
     }
 
@@ -799,7 +803,11 @@ extension ProductDB {
                                         completion: @escaping (_ result: Result<ScannedProduct, ProductLookupError>) -> Void) {
         if self.lookupLocally(forceDownload), let result = self.productByScannableCodes(codes, shopId) {
             DispatchQueue.main.async {
-                completion(Result.success(result))
+                if result.product.availability == .notAvailable {
+                    completion(.failure(.notFound))
+                } else {
+                    completion(.success(result))
+                }
             }
             return
         }
@@ -807,7 +815,7 @@ extension ProductDB {
         if let url = self.project.links.resolvedProductLookUp?.href {
             self.resolveProductsLookup(url, codes, shopId, completion: completion)
         } else {
-            completion(Result.failure(.notFound))
+            completion(.failure(.notFound))
         }
     }
 

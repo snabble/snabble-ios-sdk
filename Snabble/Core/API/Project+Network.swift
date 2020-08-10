@@ -354,7 +354,7 @@ extension Project {
                     }
                 }
                 DispatchQueue.main.async {
-                    completion(Result.failure(apiError), nil, response as? HTTPURLResponse)
+                    completion(.failure(apiError), nil, response as? HTTPURLResponse)
                 }
                 return
             }
@@ -362,7 +362,7 @@ extension Project {
             // handle empty response
             if data.isEmpty {
                 DispatchQueue.main.async {
-                    completion(Result.failure(SnabbleError.empty), nil, httpResponse)
+                    completion(.failure(SnabbleError.empty), nil, httpResponse)
                 }
                 return
             }
@@ -373,14 +373,14 @@ extension Project {
                     json = try JSONSerialization.jsonObject(with: data, options: .allowFragments) as? [String: Any]
                 }
                 DispatchQueue.main.async {
-                    completion(Result.success(result), json, httpResponse)
+                    completion(.success(result), json, httpResponse)
                 }
             } catch {
                 Log.error("error parsing response from \(url): \(error)")
                 let body = String(bytes: data, encoding: .utf8) ?? ""
                 Log.error("raw response body: \(body)")
                 DispatchQueue.main.async {
-                    completion(Result.failure(SnabbleError.invalid), nil, httpResponse)
+                    completion(.failure(SnabbleError.invalid), nil, httpResponse)
                 }
             }
         }

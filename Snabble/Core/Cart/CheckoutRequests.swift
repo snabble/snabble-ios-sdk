@@ -36,7 +36,7 @@ extension ShoppingCart {
                 switch result.result {
                 case .success(var value):
                     value.rawJson = result.rawJson
-                    completion(Result.success(value))
+                    completion(.success(value))
                 case .failure(let error):
                     Log.error("\(error)")
                     completion(result.result)

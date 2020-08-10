@@ -212,7 +212,7 @@ public final class PaymentProcess {
         }
         if !handled {
             if method.rawMethod.offline, let processor = method.processor(nil, nil, self.cart, self.delegate) {
-                completion(Result.success(processor))
+                completion(.success(processor))
                 OfflineCarts.shared.saveCartForLater(self.cart)
             } else {
                 self.delegate.showWarningMessage("Snabble.Payment.errorStarting".localized())
@@ -311,7 +311,7 @@ extension PaymentProcess {
                 }
 
                 if let processor = method.processor(process, result.rawJson, self.cart, self.delegate) {
-                    completion(Result.success(processor))
+                    completion(.success(processor))
                 } else {
                     self.delegate.showWarningMessage("Snabble.Payment.errorStarting".localized())
                 }

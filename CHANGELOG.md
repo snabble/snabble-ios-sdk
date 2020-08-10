@@ -4,6 +4,7 @@
 
 * Breaking change: all methods for looking up products have been changed to deliver their result via a `Result<Product, ProductLookupError>` or `Result<ScannedProduct, ProductLookupError>` value.
 * Deployment target of the SDK was changed to iOS 12 and later
+* Fixes a bug where products marked as unvailable could still be scanned and added to the shopping cart
 
 # v0.13.15
 
