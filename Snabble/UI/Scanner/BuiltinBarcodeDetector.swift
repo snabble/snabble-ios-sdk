@@ -50,17 +50,19 @@ public final class BuiltinBarcodeDetector: NSObject, BarcodeDetector {
         didSet { self.toggleReticleVisibility() }
     }
 
+    public var rectangleOfInterest: CGRect = .zero
+
     private var camera: AVCaptureDevice?
     private var captureSession: AVCaptureSession
     private var previewLayer: AVCaptureVideoPreviewLayer?
     private var metadataOutput: AVCaptureMetadataOutput
     private var sessionQueue: DispatchQueue
 
-    private var appearance: BarcodeDetectorAppearance
+    private var appearance: BarcodeDetectorAppearance?
     private var decoration: BarcodeDetectorDecoration?
     private var frameTimer: Timer?
 
-    public required init(_ appearance: BarcodeDetectorAppearance) {
+    public required init(_ appearance: BarcodeDetectorAppearance? = nil) {
         self.appearance = appearance
         self.sessionQueue = DispatchQueue(label: "io.snabble.scannerQueue")
         self.captureSession = AVCaptureSession()
@@ -93,52 +95,44 @@ public final class BuiltinBarcodeDetector: NSObject, BarcodeDetector {
     }
 
     public func scannerDidLayoutSubviews(_ cameraPreview: UIView) {
-        guard self.decoration == nil else {
-            return
-        }
-
         if let previewLayer = self.previewLayer {
             previewLayer.frame = cameraPreview.bounds
             cameraPreview.layer.addSublayer(previewLayer)
         }
 
         // add the preview layer's decoration
-        let decoration = BarcodeDetectorDecoration.add(to: cameraPreview, appearance: self.appearance)
+        if let appearance = self.appearance {
+            let decoration = BarcodeDetectorDecoration.add(to: cameraPreview, appearance: appearance)
 
-        decoration.torchButton.addTarget(self, action: #selector(self.torchButtonTapped(_:)), for: .touchUpInside)
+            decoration.torchButton.addTarget(self, action: #selector(self.torchButtonTapped(_:)), for: .touchUpInside)
 
-        if let camera = self.camera {
-            let torchToggleSupported = camera.isTorchModeSupported(.on) && camera.isTorchModeSupported(.off)
-            decoration.torchButton.isHidden = !torchToggleSupported
+            if let camera = self.camera {
+                let torchToggleSupported = camera.isTorchModeSupported(.on) && camera.isTorchModeSupported(.off)
+                decoration.torchButton.isHidden = !torchToggleSupported
+            }
+
+            decoration.enterButton.addTarget(self, action: #selector(self.enterButtonTapped(_:)), for: .touchUpInside)
+            decoration.cartButton.addTarget(self, action: #selector(self.cartButtonTapped(_:)), for: .touchUpInside)
+
+            self.decoration = decoration
         }
-
-        decoration.enterButton.addTarget(self, action: #selector(self.enterButtonTapped(_:)), for: .touchUpInside)
-        decoration.cartButton.addTarget(self, action: #selector(self.cartButtonTapped(_:)), for: .touchUpInside)
-
-        self.decoration = decoration
-
         self.updateCartButtonTitle()
     }
 
     public func startScanning() {
-        guard self.decoration != nil else {
-            return
-        }
-
         self.sessionQueue.async {
             if !self.captureSession.isRunning {
+                self.captureSession.commitConfiguration()
                 self.captureSession.startRunning()
 
                 // set the ROI matching the reticle on first start
-                guard
-                    let previewLayer = self.previewLayer,
-                    let reticle = self.decoration?.reticle
-                else {
+                guard let previewLayer = self.previewLayer else {
                     return
                 }
 
                 DispatchQueue.main.async {
-                    let rectangleOfInterest = previewLayer.metadataOutputRectConverted(fromLayerRect: reticle.frame)
+                    let frame = self.decoration?.reticle.frame ?? self.rectangleOfInterest
+                    let rectangleOfInterest = previewLayer.metadataOutputRectConverted(fromLayerRect: frame)
                     self.metadataOutput.rectOfInterest = rectangleOfInterest
                 }
             }
@@ -162,9 +156,16 @@ public final class BuiltinBarcodeDetector: NSObject, BarcodeDetector {
         }
     }
 
+    public func setTorch(_ on: Bool) {
+        try? camera?.lockForConfiguration()
+        defer { camera?.unlockForConfiguration() }
+        camera?.torchMode = on ? .on : .off
+    }
+
     // MARK: - private implementation
 
     private func initializeCamera() -> AVCaptureDevice? {
+        NSLog(#function)
         // get the back camera device
         guard let camera = AVCaptureDevice.default(.builtInWideAngleCamera, for: .video, position: .back) else {
             print("no camera found")
@@ -243,9 +244,13 @@ public final class BuiltinBarcodeDetector: NSObject, BarcodeDetector {
     }
 
     private func torchImage(for torchMode: AVCaptureDevice.TorchMode) -> UIImage? {
+        guard let appearance = appearance else {
+            return nil
+        }
+
         switch torchMode {
-        case .on: return self.appearance.torchButtonActiveImage ?? self.appearance.torchButtonImage
-        default: return self.appearance.torchButtonImage
+        case .on: return appearance.torchButtonActiveImage ?? appearance.torchButtonImage
+        default: return appearance.torchButtonImage
         }
     }
 
