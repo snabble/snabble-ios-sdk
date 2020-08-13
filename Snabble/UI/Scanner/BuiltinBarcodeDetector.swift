@@ -51,6 +51,7 @@ public final class BuiltinBarcodeDetector: NSObject, BarcodeDetector {
     }
 
     public var rectangleOfInterest: CGRect = .zero
+    public var continuousScanning: Bool = false
 
     private var camera: AVCaptureDevice?
     private var captureSession: AVCaptureSession

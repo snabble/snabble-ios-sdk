@@ -49,6 +49,9 @@ public protocol BarcodeDetector {
     /// the "rectangle of interest" aka ROI as normalized coordinates, i.e. (0,0),(1,1) is the whole screen
     var rectangleOfInterest: CGRect { get set }
 
+    /// continue scanning after invoking the `scannedCode` callback
+    var continuousScanning: Bool { get set }
+
     /// this must be called from `viewWillAppear()` of the hosting view controller
     /// use this method to initialize the detector as well as the camera
     func scannerWillAppear()
