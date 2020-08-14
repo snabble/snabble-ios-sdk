@@ -158,7 +158,7 @@ public struct EAN13: EANCode {
     /// calculate the check digit for an EAN-13
     ///
     /// - Parameter code: a 12 or 13 digit string representing an EAN-13
-    /// - Returns: the check digit for that EAN-8, or nil if `code` is not a valid EAN-13
+    /// - Returns: the check digit for that EAN-13, or nil if `code` is not a valid EAN-13
     public static func checkDigit(for code: String) -> Int? {
         let digits = code.compactMap { Int(String($0)) }
         guard digits.count > 11 else {
