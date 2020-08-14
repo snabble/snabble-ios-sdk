@@ -120,7 +120,13 @@ public final class BuiltinBarcodeDetector: NSObject, BarcodeDetector {
         self.updateCartButtonTitle()
     }
 
-    public func startScanning() {
+    public func pauseScanning() {
+        self.sessionQueue.async {
+            self.captureSession.stopRunning()
+        }
+    }
+
+    public func resumeScanning() {
         self.sessionQueue.async {
             if !self.captureSession.isRunning {
                 self.captureSession.commitConfiguration()
@@ -140,14 +146,12 @@ public final class BuiltinBarcodeDetector: NSObject, BarcodeDetector {
         }
     }
 
-    public func stopScanning() {
-        guard self.decoration != nil else {
-            return
-        }
+    public func startScanning() {
+        self.resumeScanning()
+    }
 
-        self.sessionQueue.async {
-            self.captureSession.stopRunning()
-        }
+    public func stopScanning() {
+        self.pauseScanning()
     }
 
     public func requestCameraPermission() {
@@ -166,7 +170,6 @@ public final class BuiltinBarcodeDetector: NSObject, BarcodeDetector {
     // MARK: - private implementation
 
     private func initializeCamera() -> AVCaptureDevice? {
-        NSLog(#function)
         // get the back camera device
         guard let camera = AVCaptureDevice.default(.builtInWideAngleCamera, for: .video, position: .back) else {
             print("no camera found")
@@ -422,6 +425,17 @@ public struct BarcodeDetectorDecoration {
                                          frameView: frameView,
                                          reticleDimmingLayer: borderLayer,
                                          fullDimmingLayer: fullDimmingLayer)
+    }
+
+    public func removeFromSuperview() {
+        self.reticle.removeFromSuperview()
+        self.bottomBar.removeFromSuperview()
+        self.enterButton.removeFromSuperview()
+        self.torchButton.removeFromSuperview()
+        self.cartButton.removeFromSuperview()
+        self.frameView.removeFromSuperview()
+        self.reticleDimmingLayer.removeFromSuperlayer()
+        self.fullDimmingLayer.removeFromSuperlayer()
     }
 }
 

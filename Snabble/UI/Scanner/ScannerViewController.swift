@@ -362,7 +362,7 @@ extension ScannerViewController: ScanConfirmationViewDelegate {
         }
 
         self.lastScannedCode = ""
-        self.barcodeDetector.startScanning()
+        self.barcodeDetector.resumeScanning()
     }
 }
 
@@ -376,7 +376,7 @@ extension ScannerViewController: BarcodeDetectorDelegate {
             self.delegate.gotoBarcodeEntry()
         }
 
-        self.barcodeDetector.stopScanning()
+        self.barcodeDetector.pauseScanning()
     }
 
     public func scannedCode(_ code: String, _ format: ScanFormat) {
@@ -417,7 +417,7 @@ extension ScannerViewController {
             self.spinner.startAnimating()
         }
 
-        self.barcodeDetector.stopScanning()
+        self.barcodeDetector.pauseScanning()
 
         self.productForCode(scannedCode, template) { scannedResult in
             self.timer?.invalidate()
@@ -452,7 +452,7 @@ extension ScannerViewController {
             if product.type == .preWeighed && (embeddedData == nil || embeddedData == 0) {
                 let msg = "Snabble.Scanner.scannedShelfCode".localized()
                 self.scannedUnknown(msg, scannedCode)
-                self.barcodeDetector.startScanning()
+                self.barcodeDetector.resumeScanning()
                 return
             }
 
@@ -478,14 +478,14 @@ extension ScannerViewController {
         }
 
         self.scannedUnknown(msg, scannedCode)
-        self.barcodeDetector.startScanning()
+        self.barcodeDetector.resumeScanning()
     }
 
     private func showSaleStop() {
         let alert = UIAlertController(title: "Snabble.saleStop.errorMsg.title".localized(), message: "Snabble.saleStop.errorMsg.scan".localized(), preferredStyle: .alert)
 
         alert.addAction(UIAlertAction(title: "Snabble.OK".localized(), style: .default) { _ in
-            self.barcodeDetector.startScanning()
+            self.barcodeDetector.resumeScanning()
         })
 
         self.present(alert, animated: true)
@@ -498,7 +498,7 @@ extension ScannerViewController {
         } else {
             self.scannedUnknown("Snabble.Scanner.unknownBarcode".localized(), scannedCode)
         }
-        self.barcodeDetector.startScanning()
+        self.barcodeDetector.resumeScanning()
     }
 
     private func showBundleSelection(for scannedProduct: ScannedProduct, _ scannedCode: String) {
@@ -520,7 +520,7 @@ extension ScannerViewController {
         }
 
         alert.addAction(UIAlertAction(title: "Snabble.Cancel".localized(), style: .cancel) { _ in
-            self.barcodeDetector.startScanning()
+            self.barcodeDetector.resumeScanning()
         })
 
         // HACK: set the action sheet buttons background

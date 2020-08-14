@@ -61,10 +61,16 @@ public protocol BarcodeDetector {
     /// and a barcode detector instance can place its preview layer/view at these coordinates
     func scannerDidLayoutSubviews(_ cameraPreview: UIView)
 
-    /// instructs the detector to start capturing video frames and detect barcodes
+    /// instructs the detector to restart capturing video frames and detect barcodes
+    func pauseScanning()
+
+    /// instructs the detector to temporarily stop capturing video frames and detect barcodes
+    func resumeScanning()
+
+    /// starts the scanning process, called initially when the scanner moves on-screen
     func startScanning()
 
-    /// instructs the detector to stop capturing video frames and detect barcodes
+    /// stops the scanning process, called when the scanner moves off-screen
     func stopScanning()
 
     /// sets the cart button's appearance
