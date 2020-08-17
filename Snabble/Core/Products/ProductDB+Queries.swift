@@ -79,7 +79,7 @@ extension ProductDB {
                     left outer join prices pr1 on pr1.sku = p.sku and pr1.pricingCategory = ifnull((\(categoryQuery)), 0)
                     left outer join prices pr2 on pr2.sku = p.sku and pr2.pricingCategory = 0
                     where p.imageUrl is not null and ifnull(pr1.discountedPrice, pr2.discountedPrice) is not null
-                    and p.availability != \(ProductAvailability.notAvailable.rawValue)
+                    and availability != \(ProductAvailability.notAvailable.rawValue)
                     """,
                     arguments: [shopId, self.defaultAvailability, shopId])
                 }
