@@ -290,6 +290,7 @@ public enum CheckState: String, Codable, UnknownCaseRepresentable {
     case unknown
 
     case pending
+    case postponed
     case successful
     case failed
 

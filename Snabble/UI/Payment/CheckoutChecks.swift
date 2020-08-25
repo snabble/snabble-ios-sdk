@@ -70,7 +70,7 @@ struct CheckoutChecks {
             let topViewController = UIApplication.topViewController()
             topViewController?.present(alert, animated: true)
             return true
-        case .successful, .unknown:
+        case .successful, .postponed, .unknown:
             return false
         }
     }
