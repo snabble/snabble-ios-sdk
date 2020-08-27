@@ -103,6 +103,7 @@ final class TokenRegistry {
                 if let tokenData = tokenData {
                     self.projectTokens[projectId] = tokenData
                     self.startRefreshTimer()
+                    SnabbleAPI.fetchAppUserData(projectId)
                 }
 
                 return self.pendingHandlers.removeValue(forKey: projectId)

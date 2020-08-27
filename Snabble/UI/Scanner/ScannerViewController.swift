@@ -353,16 +353,40 @@ extension ScannerViewController: AnalyticsDelegate {
 
 // MARK: - scanning confirmation delegate
 extension ScannerViewController: ScanConfirmationViewDelegate {
+
     func closeConfirmation(_ item: CartItem?) {
         self.displayScanConfirmationView(hidden: true)
         self.updateCartButton()
 
-        if let item = item, let msg = self.delegate.scanMessage(for: SnabbleUI.project, self.shop, item.product) {
-            self.showMessage(msg)
+        if let item = item {
+            if let msg = self.ageCheckRequired(item) {
+                self.showMessage(msg)
+            } else if let msg = self.delegate.scanMessage(for: SnabbleUI.project, self.shop, item.product) {
+                self.showMessage(msg)
+            }
         }
 
         self.lastScannedCode = ""
         self.barcodeDetector.resumeScanning()
+    }
+
+    private func ageCheckRequired(_ item: CartItem) -> ScanMessage? {
+        let userAge = SnabbleAPI.appUserData?.age ?? 0
+
+        switch item.product.saleRestriction {
+        case .none:
+            print("kein minAge/fsk")
+            return nil
+        case .fsk:
+            print("fsk - kontrolle!")
+        case .age(let minAge):
+            if userAge >= minAge {
+                return nil
+            }
+            print("zu jung oder unbekannt - kontrolle!")
+        }
+
+        return ScanMessage("Snabble.Scanner.scannedAgeRestrictedProduct".localized())
     }
 }
 

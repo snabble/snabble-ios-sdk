@@ -53,9 +53,9 @@ final class KeyboardObserver: NSObject {
         nc.addObserver(self, selector: #selector(self.keyboardWillHide(_:)), name: UIResponder.keyboardWillHideNotification, object: nil)
     }
 
-    deinit {
-        NotificationCenter.default.removeObserver(self)
-    }
+//    deinit {
+//        NotificationCenter.default.removeObserver(self)
+//    }
 
     @objc func keyboardWillShow(_ notification: Notification) {
         guard let info = KeyboardInfo(notification: notification) else {

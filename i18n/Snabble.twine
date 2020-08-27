@@ -64,6 +64,8 @@
         en = Enter\nBarcode
     [Snabble.Scanner.scannedShelfCode]
         en = Please scan the article's barcode instead
+    [Snabble.Scanner.scannedAgeRestrictedProduct]
+        en = This is an age-restricted product, your age will be verified during checkout.
     [Snabble.Scanner.scanningTitle]
         en = Scan Barcode
     [Snabble.Scanner.title]

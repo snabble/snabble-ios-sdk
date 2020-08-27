@@ -105,6 +105,7 @@ public final class GermanIdCardViewController: UIViewController {
                 switch result {
                 case .success(let birthdate):
                     Log.debug("saved dayOfBirth: \(birthdate)")
+                    SnabbleAPI.fetchAppUserData(project.id)
                     self.goBack()
                 case .failure(let error):
                     print("\(error)")

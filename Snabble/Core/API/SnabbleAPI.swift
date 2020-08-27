@@ -320,3 +320,65 @@ extension SnabbleAPI {
         return "\(appDescriptor) \(osDescriptor) (\(hardwareString)) SDK/\(APIVersion.version)"
     }()
 }
+
+// MARK: - age data
+extension SnabbleAPI {
+
+    struct AppUserData: Codable {
+        let id: String
+        let dayOfBirth: String?
+        let bornBeforeOrOn: String?
+
+        var age: Int? {
+            guard let birthDate = dayOfBirth ?? bornBeforeOrOn else {
+                return nil
+            }
+
+            let cal = Calendar(identifier: .gregorian)
+            let formatter = DateFormatter()
+            formatter.calendar = cal
+            formatter.dateFormat = "yyyy/MM/dd"
+            formatter.timeZone = TimeZone(identifier: "UTC")
+
+            guard let date = formatter.date(from: birthDate) else {
+                return nil
+            }
+
+            let today = Date()
+            let years = cal.dateComponents([.year], from: date, to: today)
+
+            return years.year
+        }
+    }
+
+    static var appUserData: AppUserData?
+
+    static func fetchAppUserData(_ projectId: String? = nil) {
+        let projectId = projectId ?? SnabbleUI.project.id
+        guard
+            let project = SnabbleAPI.projectFor(projectId),
+            let appUserId = SnabbleAPI.appUserId
+        else {
+            return
+        }
+
+        let url = SnabbleAPI.links.appUser.href.replacingOccurrences(of: "{appUserID}", with: appUserId.userId)
+        project.request(.get, url, timeout: 2) { request in
+            guard let request = request else {
+                return
+            }
+
+            project.perform(request) { (result: Result<AppUserData, SnabbleError>) in
+                switch result {
+                case .success(let userData):
+                    DispatchQueue.main.async {
+                        SnabbleAPI.appUserData = userData
+                    }
+                case .failure(let error):
+                    print(error)
+                }
+            }
+        }
+    }
+
+}

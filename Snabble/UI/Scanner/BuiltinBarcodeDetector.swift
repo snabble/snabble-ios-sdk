@@ -96,6 +96,10 @@ public final class BuiltinBarcodeDetector: NSObject, BarcodeDetector {
     }
 
     public func scannerDidLayoutSubviews(_ cameraPreview: UIView) {
+        guard self.decoration == nil else {
+            return
+        }
+
         if let previewLayer = self.previewLayer {
             previewLayer.frame = cameraPreview.bounds
             cameraPreview.layer.addSublayer(previewLayer)

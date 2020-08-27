@@ -269,6 +269,8 @@ public class BaseCheckoutViewController: UIViewController {
                 FulfillmentPoller.shared.startPolling(SnabbleUI.project, process)
             }
         }
+
+        SnabbleAPI.fetchAppUserData()
         self.delegate?.paymentFinished(success, self.cart, process, rawJson)
     }
 }
