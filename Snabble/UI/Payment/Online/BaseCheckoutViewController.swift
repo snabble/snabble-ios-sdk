@@ -270,7 +270,7 @@ public class BaseCheckoutViewController: UIViewController {
             }
         }
 
-        SnabbleAPI.fetchAppUserData()
+        SnabbleAPI.fetchAppUserData(SnabbleUI.project.id)
         self.delegate?.paymentFinished(success, self.cart, process, rawJson)
     }
 }

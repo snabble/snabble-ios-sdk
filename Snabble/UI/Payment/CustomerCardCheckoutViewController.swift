@@ -94,7 +94,7 @@ public final class CustomerCardCheckoutViewController: UIViewController {
     @IBAction private func paidButtonTapped(_ sender: UIButton) {
         self.cart.removeAll(endSession: true)
 
-        SnabbleAPI.fetchAppUserData()
+        SnabbleAPI.fetchAppUserData(SnabbleUI.project.id)
         self.delegate.paymentFinished(true, self.cart, self.process, self.rawJson)
     }
 

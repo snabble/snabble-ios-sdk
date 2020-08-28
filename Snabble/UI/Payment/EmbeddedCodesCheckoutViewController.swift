@@ -156,7 +156,7 @@ public final class EmbeddedCodesCheckoutViewController: UIViewController {
             self.delegate.track(.markEmbeddedCodesPaid)
             self.cart.removeAll(endSession: true)
 
-            SnabbleAPI.fetchAppUserData()
+            SnabbleAPI.fetchAppUserData(SnabbleUI.project.id)
             self.delegate.paymentFinished(true, self.cart, self.process, self.rawJson)
         }
     }

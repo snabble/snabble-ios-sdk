@@ -141,7 +141,7 @@ public final class QRCheckoutViewController: UIViewController {
             self.cart.removeAll(endSession: true, keepBackup: false)
         }
 
-        SnabbleAPI.fetchAppUserData()
+        SnabbleAPI.fetchAppUserData(SnabbleUI.project.id)
         self.delegate.paymentFinished(success, self.cart, process, rawJson)
     }
 

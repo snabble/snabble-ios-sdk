@@ -353,8 +353,7 @@ extension SnabbleAPI {
 
     static var appUserData: AppUserData?
 
-    static func fetchAppUserData(_ projectId: String? = nil) {
-        let projectId = projectId ?? SnabbleUI.project.id
+    static func fetchAppUserData(_ projectId: String) {
         guard
             let project = SnabbleAPI.projectFor(projectId),
             let appUserId = SnabbleAPI.appUserId
