@@ -706,10 +706,6 @@ extension ShoppingCartViewController: UITableViewDelegate, UITableViewDataSource
 extension ShoppingCartViewController: KeyboardHandling {
 
     func keyboardWillShow(_ info: KeyboardInfo) {
-        guard self.view.window != nil else {
-            return
-        }
-
         // compensate for the opaque tab bar
         let tabBarHeight = self.tabBarController?.tabBar.frame.height ?? 0
         self.tableBottomMargin.constant = info.keyboardHeight - tabBarHeight
@@ -722,10 +718,6 @@ extension ShoppingCartViewController: KeyboardHandling {
     }
 
     func keyboardWillHide(_ info: KeyboardInfo) {
-        guard self.view.window != nil else {
-            return
-        }
-
         self.tableBottomMargin.constant = 0
         UIView.animate(withDuration: info.animationDuration) {
             self.view.layoutIfNeeded()
