@@ -208,6 +208,19 @@ final class AssetManager {
     }
 
     func initialize(_ projects: [Project], _ completion: @escaping () -> Void) {
+        let settingsKey = "Snabble.api.manifests"
+        let settings = UserDefaults.standard
+
+        // pre-initialize with data from last download
+        if let manifestData = settings.object(forKey: settingsKey) as? Data {
+            do {
+                let manifests = try JSONDecoder().decode([String: Manifest].self, from: manifestData)
+                self.manifests = manifests
+            } catch {
+                print(error)
+            }
+        }
+
         let group = DispatchGroup()
         for project in projects {
             if let manifestUrl = project.links.assetsManifest?.href {
@@ -219,6 +232,14 @@ final class AssetManager {
         }
 
         group.notify(queue: DispatchQueue.main) {
+            // save manifests for next start
+            do {
+                let manifestData = try JSONEncoder().encode(self.manifests)
+                settings.set(manifestData, forKey: settingsKey)
+            } catch {
+                print(error)
+            }
+
             completion()
         }
     }
