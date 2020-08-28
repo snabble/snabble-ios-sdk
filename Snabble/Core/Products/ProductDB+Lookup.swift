@@ -85,8 +85,9 @@ extension ProductDB {
                         let product = resolvedProduct.convert(code, template)
 
                         let codeEntry = product.codes.first { $0.code == code }
-                        let transmissionCode = codeEntry?.transmissionCode
-                        let lookupResult = ScannedProduct(product, code, transmissionCode, template)
+                        let lookupResult = ScannedProduct(product, code, codeEntry?.transmissionCode,
+                                                          template: template,
+                                                          specifiedQuantity: codeEntry?.specifiedQuantity)
                         if lookupResult.product.availability == .notAvailable {
                             completion(.failure(.notFound))
                         } else {
@@ -172,15 +173,6 @@ extension ProductDB {
 
 }
 
-extension ScannableCode {
-    fileprivate init(_ resolved: ResolvedProduct.ResolvedProductCode) {
-        self.code = resolved.code
-        self.template = resolved.template
-        self.transmissionCode = resolved.transmissionCode
-        self.encodingUnit = Units.from(resolved.encodingUnit)
-    }
-}
-
 private final class ResolvedProduct: Decodable {
     let sku, name: String
     let description, subtitle: String?
@@ -248,6 +240,8 @@ private final class ResolvedProduct: Decodable {
     struct ResolvedProductCode: Codable {
         let code, template: String
         let transmissionCode, encodingUnit: String?
+        let isPrimary: Bool?
+        let specifiedQuantity: Int?
     }
 
     struct Price: Codable {
@@ -257,8 +251,22 @@ private final class ResolvedProduct: Decodable {
         let customerCardPrice: Int?
     }
 
+    fileprivate func convert(resolvedCodes: [ResolvedProduct.ResolvedProductCode]) -> [ScannableCode] {
+        var primaryTransmission: String?
+        if let primaryIndex = resolvedCodes.firstIndex(where: { $0.isPrimary == true }) {
+            let transmit = resolvedCodes[primaryIndex].transmissionCode
+            let code = resolvedCodes[primaryIndex].code
+            primaryTransmission = transmit ?? code
+        }
+
+        return resolvedCodes.map {
+            ScannableCode($0.code, $0.template, primaryTransmission ?? $0.transmissionCode,
+                          Units.from($0.encodingUnit), $0.specifiedQuantity)
+        }
+    }
+
     fileprivate func convert(_ code: String, _ template: String) -> Product {
-        let codes = self.codes.map { ScannableCode($0) }
+        let codes = self.convert(resolvedCodes: self.codes)
 
         var encodingUnit = Units.from(self.encodingUnit)
         let code = codes.first { $0.code == code && $0.template == template }
@@ -270,7 +278,7 @@ private final class ResolvedProduct: Decodable {
     }
 
     fileprivate func convert() -> Product {
-        let codes = self.codes.map { ScannableCode($0) }
+        let codes = self.convert(resolvedCodes: self.codes)
 
         return self.convert(codes, Units.from(self.encodingUnit))
     }

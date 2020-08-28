@@ -375,15 +375,13 @@ extension ScannerViewController: ScanConfirmationViewDelegate {
 
         switch item.product.saleRestriction {
         case .none:
-            print("kein minAge/fsk")
             return nil
         case .fsk:
-            print("fsk - kontrolle!")
+            break
         case .age(let minAge):
             if userAge >= minAge {
                 return nil
             }
-            print("zu jung oder unbekannt - kontrolle!")
         }
 
         return ScanMessage("Snabble.Scanner.scannedAgeRestrictedProduct".localized())
@@ -538,7 +536,9 @@ extension ScannerViewController {
                 let bundleCode = bundle.codes.first?.code
                 let transmissionCode = bundle.codes.first?.transmissionCode ?? bundleCode
                 let lookupCode = transmissionCode ?? scannedCode
-                let scannedBundle = ScannedProduct(bundle, lookupCode, transmissionCode)
+                let specifiedQuantity = bundle.codes.first?.specifiedQuantity
+                let scannedBundle = ScannedProduct(bundle, lookupCode, transmissionCode,
+                                                   specifiedQuantity: specifiedQuantity)
                 self.showConfirmation(for: scannedBundle, transmissionCode ?? scannedCode)
             })
         }
@@ -591,10 +591,11 @@ extension ScannerViewController {
                 var newResult = ScannedProduct(lookupResult.product,
                                                parseResult.lookupCode,
                                                scannedCode,
-                                               lookupResult.templateId,
-                                               parseResult.embeddedData,
-                                               lookupResult.encodingUnit,
-                                               parseResult.referencePrice)
+                                               template: lookupResult.templateId,
+                                               embeddedData: parseResult.embeddedData,
+                                               encodingUnit: lookupResult.encodingUnit,
+                                               referencePriceOverride: parseResult.referencePrice,
+                                               specifiedQuantity: lookupResult.specifiedQuantity)
 
                 if let decimalData = parseResult.embeddedDecimal {
                     var encodingUnit = lookupResult.product.encodingUnit
@@ -615,8 +616,12 @@ extension ScannerViewController {
                         }
                     }
 
-                    newResult = ScannedProduct(lookupResult.product, parseResult.lookupCode, scannedCode, lookupResult.templateId,
-                                               embeddedData, encodingUnit, newResult.referencePriceOverride)
+                    newResult = ScannedProduct(lookupResult.product, parseResult.lookupCode, scannedCode,
+                                               template: lookupResult.templateId,
+                                               embeddedData: embeddedData,
+                                               encodingUnit: encodingUnit,
+                                               referencePriceOverride: newResult.referencePriceOverride,
+                                               specifiedQuantity: lookupResult.specifiedQuantity)
                 }
 
                 completion(.success(newResult))
@@ -647,7 +652,12 @@ extension ScannerViewController {
         self.productProvider.productByScannableCodes(codes, self.shop.id) { result in
             switch result {
             case .success(let lookupResult):
-                let newResult = ScannedProduct(lookupResult.product, code, match.transmissionCode, lookupResult.templateId, nil, .price, priceOverride: match.embeddedData)
+                let newResult = ScannedProduct(lookupResult.product, code, match.transmissionCode,
+                                               template: lookupResult.templateId,
+                                               embeddedData: nil,
+                                               encodingUnit: .price,
+                                               specifiedQuantity: lookupResult.specifiedQuantity,
+                                               priceOverride: match.embeddedData)
                 completion(.success(newResult))
             case .failure(let error):
                 completion(.failure(error))
@@ -663,9 +673,17 @@ extension ScannerViewController {
                 let transmissionCode = lookupResult.product.codes[0].transmissionCode
                 let scannedProduct: ScannedProduct
                 if let priceOverride = priceOverride {
-                    scannedProduct = ScannedProduct(lookupResult.product, code, transmissionCode, template, nil, .price, nil, priceOverride: priceOverride)
+                    scannedProduct = ScannedProduct(lookupResult.product, code, transmissionCode,
+                                                    template: template,
+                                                    embeddedData: nil,
+                                                    encodingUnit: .price,
+                                                    referencePriceOverride: nil,
+                                                    specifiedQuantity: lookupResult.specifiedQuantity,
+                                                    priceOverride: priceOverride)
                 } else {
-                    scannedProduct = ScannedProduct(lookupResult.product, code, transmissionCode, template)
+                    scannedProduct = ScannedProduct(lookupResult.product, code, transmissionCode,
+                                                    template: template,
+                                                    specifiedQuantity: lookupResult.specifiedQuantity)
                 }
                 completion(.success(scannedProduct))
             case .failure(let error):

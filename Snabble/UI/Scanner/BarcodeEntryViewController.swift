@@ -69,7 +69,6 @@ public final class BarcodeEntryViewController: UIViewController {
     }
 
     private func addCode(_ code: String, _ template: String?) {
-
         let block = {
             self.delegate.track(.barcodeSelected(code))
             self.completion(code, template)
