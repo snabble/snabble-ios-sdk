@@ -110,8 +110,6 @@ public final class ShoppingCartViewController: UIViewController {
         let nc = NotificationCenter.default
         nc.addObserver(self, selector: #selector(self.shoppingCartUpdated(_:)), name: .snabbleCartUpdated, object: nil)
 
-        self.keyboardObserver = KeyboardObserver(handler: self)
-
         self.shoppingCart = cart
 
         SnabbleUI.registerForAppearanceChange(self)
@@ -123,6 +121,8 @@ public final class ShoppingCartViewController: UIViewController {
 
     override public func viewDidLoad() {
         super.viewDidLoad()
+
+        self.keyboardObserver = KeyboardObserver(handler: self)
 
         self.methodSelector = PaymentMethodSelector(self, self.methodSelectionView, self.methodIcon, self.methodSpinner, self.shoppingCart)
         self.methodSelector?.paymentMethodNavigationDelegate = self.paymentMethodNavigationDelegate
@@ -708,7 +708,7 @@ extension ShoppingCartViewController: KeyboardHandling {
     func keyboardWillShow(_ info: KeyboardInfo) {
         // compensate for the opaque tab bar
         let tabBarHeight = self.tabBarController?.tabBar.frame.height ?? 0
-        self.tableBottomMargin.constant = info.keyboardHeight - tabBarHeight
+        self.tableBottomMargin?.constant = info.keyboardHeight - tabBarHeight
         UIView.animate(withDuration: info.animationDuration) {
             self.view.layoutIfNeeded()
         }
@@ -718,7 +718,7 @@ extension ShoppingCartViewController: KeyboardHandling {
     }
 
     func keyboardWillHide(_ info: KeyboardInfo) {
-        self.tableBottomMargin.constant = 0
+        self.tableBottomMargin?.constant = 0
         UIView.animate(withDuration: info.animationDuration) {
             self.view.layoutIfNeeded()
         }
