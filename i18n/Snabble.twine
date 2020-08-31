@@ -48,7 +48,9 @@
     [Snabble.QRCode.showTheseCodes]
         en = Show these codes to the cashier
     [Snabble.QRCode.title]
-        en = QR Code
+        en = Pay at cash desk
+    [Snabble.QRCode.message]
+        en = Please show QR code at a cash desk
     [Snabble.QRCode.total]
         en = `Total: `
     [Snabble.QRCode.entry.title]

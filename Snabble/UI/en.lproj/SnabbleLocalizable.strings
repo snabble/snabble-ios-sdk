@@ -54,7 +54,9 @@
 
 "Snabble.QRCode.showTheseCodes" = "Show these codes to the cashier";
 
-"Snabble.QRCode.title" = "QR Code";
+"Snabble.QRCode.title" = "Pay at cash desk";
+
+"Snabble.QRCode.message" = "Please show QR code at a cash desk";
 
 "Snabble.QRCode.total" = "Total: ";
 
@@ -69,6 +71,8 @@
 "Snabble.Scanner.enterCodeButton" = "Enter\nBarcode";
 
 "Snabble.Scanner.scannedShelfCode" = "Please scan the article's barcode instead";
+
+"Snabble.Scanner.scannedAgeRestrictedProduct" = "This is an age-restricted product, your age will be verified during checkout.";
 
 "Snabble.Scanner.scanningTitle" = "Scan Barcode";
 
