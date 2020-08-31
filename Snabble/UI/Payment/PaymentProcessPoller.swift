@@ -36,6 +36,8 @@ public final class PaymentProcessPoller {
     private(set) var updatedProcess: CheckoutProcess
     private(set) var rawJson: [String: Any]?
 
+    private(set) var failureCause: FailureCause?
+
     public init(_ process: CheckoutProcess, _ rawJson: [String: Any]?, _ project: Project) {
         self.process = process
         self.updatedProcess = process
@@ -74,6 +76,10 @@ public final class PaymentProcessPoller {
 
             if let candidateLink = process.paymentResult?["originCandidateLink"] as? String {
                 OriginPoller.shared.startPolling(self.project, candidateLink)
+            }
+
+            if let failureCause = process.paymentResult?["failureCause"] as? String {
+                self.failureCause = FailureCause(rawValue: failureCause)
             }
 
             self.updatedProcess = process

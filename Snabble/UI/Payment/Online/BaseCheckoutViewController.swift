@@ -195,6 +195,8 @@ public class BaseCheckoutViewController: UIViewController {
             OriginPoller.shared.startPolling(SnabbleUI.project, candidateLink)
         }
 
+        let failureCause = FailureCause(rawValue: process.paymentResult?["failureCause"] as? String ?? "")
+
         self.updateQRCode(process)
 
         switch process.paymentState {
@@ -202,7 +204,11 @@ public class BaseCheckoutViewController: UIViewController {
             self.paymentFinished(true, process, rawJson)
             return false
         case .failed:
-            self.paymentFinished(false, process, rawJson)
+            if failureCause == .terminalAbort {
+                self.paymentCancelled()
+            } else {
+                self.paymentFinished(false, process, rawJson)
+            }
             return false
         case .pending:
             let states = Set(process.fulfillments.map { $0.state })
@@ -219,7 +225,6 @@ public class BaseCheckoutViewController: UIViewController {
     private func updateQRCode(_ process: CheckoutProcess) {
         let show = self.showQrCode(process)
 
-        self.topWrapper.isHidden = !show
         if self.topIcon.image != nil {
             self.arrowWrapper.isHidden = !show
         }
@@ -237,17 +242,7 @@ public class BaseCheckoutViewController: UIViewController {
         self.process.abort(SnabbleUI.project) { result in
             switch result {
             case .success:
-                self.delegate?.track(.paymentCancelled)
-
-                if SnabbleUI.implicitNavigation {
-                    if let cartVC = self.navigationController?.viewControllers.first(where: { $0 is ShoppingCartViewController}) {
-                        self.navigationController?.popToViewController(cartVC, animated: true)
-                    } else {
-                        self.navigationController?.popToRootViewController(animated: true)
-                    }
-                } else {
-                    self.navigationDelegate?.checkoutCancelled()
-                }
+                self.paymentCancelled()
             case .failure:
                 let alert = UIAlertController(title: "Snabble.Payment.cancelError.title".localized(),
                                               message: "Snabble.Payment.cancelError.message".localized(),
@@ -257,6 +252,21 @@ public class BaseCheckoutViewController: UIViewController {
                 })
                 self.present(alert, animated: true)
             }
+        }
+    }
+
+    // payment was cancelled, return to the shopping cart
+    private func paymentCancelled() {
+        self.stopTimer()
+
+        if SnabbleUI.implicitNavigation {
+            if let cartVC = self.navigationController?.viewControllers.first(where: { $0 is ShoppingCartViewController}) {
+                self.navigationController?.popToViewController(cartVC, animated: true)
+            } else {
+                self.navigationController?.popToRootViewController(animated: true)
+            }
+        } else {
+            self.navigationDelegate?.checkoutCancelled()
         }
     }
 

@@ -8,20 +8,22 @@ import UIKit
 
 public final class EmbeddedCodesCheckoutViewController: UIViewController {
 
-    @IBOutlet private weak var topWrapper: UIView!
-    @IBOutlet private weak var topIcon: UIImageView!
-    @IBOutlet private weak var iconHeight: NSLayoutConstraint!
-    @IBOutlet private weak var arrowWrapper: UIView!
-    @IBOutlet private weak var codeWrapper: UIView!
+    @IBOutlet private var topWrapper: UIView!
+    @IBOutlet private var topIcon: UIImageView!
+    @IBOutlet private var iconHeight: NSLayoutConstraint!
+    @IBOutlet private var arrowWrapper: UIView!
+    @IBOutlet private var codeWrapper: UIView!
 
-    @IBOutlet private weak var codeContainer: UIView!
-    @IBOutlet private weak var idWrapper: UIView!
-    @IBOutlet private weak var idLabel: UILabel!
-    @IBOutlet private weak var pageControlWrapper: UIView!
+    @IBOutlet private var codeContainer: UIView!
+    @IBOutlet private var idWrapper: UIView!
+    @IBOutlet private var idLabel: UILabel!
+    @IBOutlet private var pageControlWrapper: UIView!
+    @IBOutlet private var messageWrapper: UIView!
+    @IBOutlet private var messageLabel: UILabel!
 
-    @IBOutlet private weak var paidButton: UIButton!
-    @IBOutlet private weak var collectionView: UICollectionView!
-    @IBOutlet private weak var pageControl: UIPageControl!
+    @IBOutlet private var paidButton: UIButton!
+    @IBOutlet private var collectionView: UICollectionView!
+    @IBOutlet private var pageControl: UIPageControl!
 
     private var initialBrightness: CGFloat = 0
 
@@ -69,6 +71,10 @@ public final class EmbeddedCodesCheckoutViewController: UIViewController {
                 self.arrowWrapper.isHidden = false
             }
         }
+
+        let msg = "Snabble.QRCode.message".localized()
+        self.messageLabel.text = msg
+        self.messageWrapper.isHidden = msg.isEmpty
 
         let nib = UINib(nibName: "QRCodeCell", bundle: SnabbleBundle.main)
         self.collectionView.register(nib, forCellWithReuseIdentifier: "qrCodeCell")

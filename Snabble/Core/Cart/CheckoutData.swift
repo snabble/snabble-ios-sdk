@@ -355,6 +355,11 @@ public struct AgeCheckData: Encodable {
     public let dayOfBirth: String // YYYY/MM/DD
 }
 
+// known values from checkoutProcess.paymentResults["failureCause"]
+public enum FailureCause: String {
+    case terminalAbort
+}
+
 // MARK: - Checkout Process
 public struct CheckoutProcess: Decodable {
     public let links: ProcessLinks
