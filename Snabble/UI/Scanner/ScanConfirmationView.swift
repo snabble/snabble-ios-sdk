@@ -93,7 +93,8 @@ final class ScanConfirmationView: DesignableView {
         let cartQuantity = self.cartItem.canMerge ? self.shoppingCart.quantity(of: self.cartItem) : 0
         self.alreadyInCart = cartQuantity > 0
 
-        var quantity = cartQuantity + 1
+        let initialQuantity = scannedProduct.specifiedQuantity ?? 1
+        var quantity = cartQuantity + initialQuantity
         if product.type == .userMustWeigh {
             quantity = 0
         }

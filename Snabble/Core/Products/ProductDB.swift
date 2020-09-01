@@ -35,22 +35,26 @@ public struct ScannedProduct {
     public let priceOverride: Int?
     /// the lookup code we used to find the product in the database
     public let lookupCode: String
+    /// the specified quantity
+    public let specifiedQuantity: Int?
 
     public init(_ product: Product,
                 _ lookupCode: String,
                 _ transmissionCode: String?,
-                _ templateId: String? = nil,
-                _ embeddedData: Int? = nil,
-                _ encodingUnit: Units? = nil,
-                _ referencePriceOverride: Int? = nil,
+                template: String? = nil,
+                embeddedData: Int? = nil,
+                encodingUnit: Units? = nil,
+                referencePriceOverride: Int? = nil,
+                specifiedQuantity: Int?,
                 priceOverride: Int? = nil) {
         self.product = product
         self.lookupCode = lookupCode
         self.transmissionCode = transmissionCode
-        self.templateId = templateId
+        self.templateId = template
         self.embeddedData = embeddedData
         self.encodingUnit = encodingUnit ?? product.encodingUnit
         self.referencePriceOverride = referencePriceOverride
+        self.specifiedQuantity = specifiedQuantity
         self.priceOverride = priceOverride
     }
 }

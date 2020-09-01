@@ -20,6 +20,8 @@ extension ProductDB {
             (select group_concat(sc.template) from scannableCodes sc where sc.sku = p.sku) as templates,
             (select group_concat(ifnull(sc.encodingUnit, '')) from scannableCodes sc where sc.sku = p.sku) as encodingUnits,
             (select group_concat(ifnull(sc.transmissionCode, '')) from scannableCodes sc where sc.sku = p.sku) as transmissionCodes,
+            (select group_concat(ifnull(sc.isPrimary, '')) from scannableCodes sc where sc.sku = p.sku) as isPrimary,
+            (select group_concat(ifnull(sc.specifiedQuantity, '')) from scannableCodes sc where sc.sku = p.sku) as specifiedQuantity,
             ifnull((select a.value from availabilities a where a.sku = p.sku and a.shopID = ?), ?) as availability
         from products p
         """
@@ -32,6 +34,8 @@ extension ProductDB {
             (select group_concat(sc.template) from scannableCodes sc where sc.sku = p.sku) as templates,
             (select group_concat(ifnull(sc.encodingUnit, '')) from scannableCodes sc where sc.sku = p.sku) as encodingUnits,
             (select group_concat(ifnull(sc.transmissionCode, '')) from scannableCodes sc where sc.sku = p.sku) as transmissionCodes,
+            (select group_concat(ifnull(sc.isPrimary, '')) from scannableCodes sc where sc.sku = p.sku) as isPrimary,
+            (select group_concat(ifnull(sc.specifiedQuantity, '')) from scannableCodes sc where sc.sku = p.sku) as specifiedQuantity,
             ifnull((select a.value from availabilities a where a.sku = p.sku and a.shopID = ?), ?) as availability
         from products p
         join scannableCodes s on s.sku = p.sku
@@ -70,8 +74,7 @@ extension ProductDB {
 
     @available(*, deprecated, message: "will be removed in a future version of the SDK")
     func discountedProducts(_ dbQueue: DatabaseQueue, _ shopId: String) -> [Product] {
-        let priority = self.schemaVersionMinor >= 22 ? "order by priority desc limit 1" : ""
-        let categoryQuery = "select pricingCategory from shops where shops.id = ? \(priority)"
+        let categoryQuery = "select pricingCategory from shops where shops.id = ? order by priority desc limit 1"
         do {
             let rows = try dbQueue.inDatabase { db in
                 return try self.fetchAll(db,
@@ -110,7 +113,10 @@ extension ProductDB {
             if let product = self.productFromRow(dbQueue, row, shopId) {
                 let codeEntry = product.codes.first { $0.code == code }
                 let transmissionCode = codeEntry?.transmissionCode
-                return ScannedProduct(product, code, transmissionCode, template)
+                let specifiedQuantity = codeEntry?.specifiedQuantity
+                return ScannedProduct(product, code, transmissionCode,
+                                      template: template,
+                                      specifiedQuantity: specifiedQuantity)
             }
         } catch {
             self.logError("productByScannableCode db error: \(error)")
@@ -248,7 +254,7 @@ extension ProductDB {
 
         let bundles = self.productsBundling(dbQueue, sku, shopId)
 
-        let codes = self.buildCodes(row["codes"], row["templates"], row["transmissionCodes"], rawUnits: row["encodingUnits"])
+        let codes = self.buildCodes(row)
 
         let referenceUnit = Units.from(row["referenceUnit"] as? String)
         var encodingUnit = Units.from(row["encodingUnit"] as? String)
@@ -284,22 +290,14 @@ extension ProductDB {
     }
 
     private func getPriceRowForSku(_ dbQueue: DatabaseQueue, _ sku: String, _ shopId: String) -> Row? {
-        let priceQuery: String
-        if self.schemaVersionMinor >= 22 {
-            // find the highest priority category that has a price
-            priceQuery = """
-                select * from prices
-                join shops on shops.pricingCategory = prices.pricingCategory
-                where shops.id = ? and sku = ?
-                order by priority desc
-                limit 1
-            """
-        } else {
-            priceQuery = """
-                select * from prices
-                where pricingCategory = ifnull((select pricingCategory from shops where shops.id = ?),0) and sku = ?
-            """
-        }
+        // find the highest priority category that has a price
+        let priceQuery = """
+            select * from prices
+            join shops on shops.pricingCategory = prices.pricingCategory
+            where shops.id = ? and sku = ?
+            order by priority desc
+            limit 1
+        """
         do {
             let row = try dbQueue.inDatabase { db in
                 return try self.fetchOne(db,
@@ -322,8 +320,15 @@ extension ProductDB {
         return nil
     }
 
-    private func buildCodes(_ rawCodes: String?, _ rawTemplates: String?, _ rawTransmits: String?, rawUnits: String?) -> [ScannableCode] {
-        guard let rawCodes = rawCodes, let rawTransmits = rawTransmits, let rawTemplates = rawTemplates, let rawUnits = rawUnits  else {
+    private func buildCodes(_ row: Row) -> [ScannableCode] {
+        guard
+            let rawCodes = row["codes"] as? String,
+            let rawTransmits = row["transmissionCodes"] as? String,
+            let rawTemplates = row["templates"] as? String,
+            let rawUnits = row["encodingUnits"] as? String,
+            let rawPrimary = row["isPrimary"] as? String,
+            let rawSpecifiedQuantity = row["specifiedQuantity"] as? String
+        else {
             return []
         }
 
@@ -331,15 +336,28 @@ extension ProductDB {
         let templates = rawTemplates.components(separatedBy: ",")
         let transmits = rawTransmits.components(separatedBy: ",")
         let units = rawUnits.components(separatedBy: ",")
+        let primary = rawPrimary.components(separatedBy: ",")
+        let specifiedQuantity = rawSpecifiedQuantity.components(separatedBy: ",").map { Int($0) }
 
         assert(codes.count == templates.count)
         assert(codes.count == transmits.count)
         assert(codes.count == units.count)
+        assert(codes.count == primary.count)
+        assert(codes.count == specifiedQuantity.count)
+
+        var primaryTransmission: String?
+        if let primaryIndex = primary.firstIndex(where: { $0 == "1" }) {
+            let transmit = transmits[primaryIndex].isEmpty ? nil : transmits[primaryIndex]
+            let code = codes[primaryIndex].isEmpty ? nil : codes[primaryIndex]
+            primaryTransmission = transmit ?? code
+        }
 
         var scannableCodes = [ScannableCode]()
         for idx in 0 ..< codes.count {
-            let transmissionCode = transmits[idx].isEmpty ? nil : transmits[idx]
-            let code = ScannableCode(codes[idx], templates[idx], transmissionCode, Units.from(units[idx]))
+            let transmit = transmits[idx].isEmpty ? nil : transmits[idx]
+            let code = ScannableCode(codes[idx], templates[idx],
+                                     primaryTransmission ?? transmit,
+                                     Units.from(units[idx]), specifiedQuantity[idx])
             scannableCodes.append(code)
         }
         return scannableCodes
