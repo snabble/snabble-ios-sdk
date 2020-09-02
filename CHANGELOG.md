@@ -3,6 +3,8 @@
 # v0.14.1
 
 * Scanning an age-restricted product now shows a corresponding message if the user's age is unknown.
+* Add support for the new `isPrimary` and `specifiedQuantity` attributes that were added in db schema 1.24
+* Minor layout changes to the online and embedded code checkout views.
 
 # v0.14.0
 
