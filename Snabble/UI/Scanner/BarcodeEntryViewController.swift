@@ -95,7 +95,7 @@ extension BarcodeEntryViewController: UISearchBarDelegate {
                                                                               filterDeposits: true,
                                                                               templates: SnabbleUI.project.searchableTemplates,
                                                                               shopId: self.shopId)
-            self.filteredProducts = products.sorted { prod1, prod2 in
+            self.filteredProducts = removeDuplicates(products).sorted { prod1, prod2 in
                 let code1 = prod1.codes.filter { $0.code.hasPrefix(searchText) }.first ?? prod1.codes.first!
                 let code2 = prod2.codes.filter { $0.code.hasPrefix(searchText) }.first ?? prod2.codes.first!
                 return code1.code < code2.code
@@ -105,6 +105,14 @@ extension BarcodeEntryViewController: UISearchBarDelegate {
         }
         self.searchText = searchText
         self.tableView.reloadData()
+    }
+
+    private func removeDuplicates(_ products: [Product]) -> [Product] {
+        var skusAdded = [String: Bool]()
+
+        return products.filter {
+            skusAdded.updateValue(true, forKey: $0.sku) == nil
+        }
     }
 }
 
