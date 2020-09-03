@@ -211,6 +211,8 @@ public final class ShoppingCartViewController: UIViewController {
     @objc private func shoppingCartUpdated(_ notification: Notification) {
         self.shoppingCart.cancelPendingCheckoutInfoRequest()
 
+        self.configureEmptyState()
+
         // ignore notifcation sent from this class
         if let object = notification.object as? ShoppingCartViewController, object == self {
             return
@@ -221,7 +223,9 @@ public final class ShoppingCartViewController: UIViewController {
 
         self.updateTotals()
         self.getMissingImages()
+    }
 
+    private func configureEmptyState() {
         if self.shoppingCart?.items.isEmpty == true && self.shoppingCart.backupAvailable {
             self.emptyState?.button1.setTitle("Snabble.Shoppingcart.emptyState.restartButtonTitle".localized(), for: .normal)
             self.emptyState?.button2.isHidden = false
@@ -235,6 +239,8 @@ public final class ShoppingCartViewController: UIViewController {
             }
         } else {
             self.emptyState?.button2.isHidden = true
+            self.restoreTimer?.invalidate()
+            self.restoreTimer = nil
         }
     }
 
