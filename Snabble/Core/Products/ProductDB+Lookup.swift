@@ -67,13 +67,13 @@ extension ProductDB {
 
             let task = session.dataTask(with: request) { data, response, error in
                 if let lookupError = ProductLookupError.from(error) {
-                    let msg = "error getting product from \(url): \(String(describing: error))"
+                    let msg = "error getting product from \(url) \(query): \(String(describing: error))"
                     self.returnError(msg, lookupError, completion)
                     return
                 }
 
                 if let lookupError = ProductLookupError.from(response) {
-                    let msg = "error getting product from \(url): \(lookupError)"
+                    let msg = "error getting product from \(url) \(query): \(lookupError)"
                     self.returnError(msg, lookupError, completion)
                     return
                 }
@@ -128,13 +128,13 @@ extension ProductDB {
 
             let task = session.dataTask(with: request) { data, response, error in
                 if let lookupError = ProductLookupError.from(error) {
-                    let msg = "error getting product from \(url): \(String(describing: error))"
+                    let msg = "error getting product from \(url) \(query): \(String(describing: error))"
                     self.returnError(msg, lookupError, completion)
                     return
                 }
 
                 if let lookupError = ProductLookupError.from(response) {
-                    let msg = "error getting product from \(url): \(lookupError)"
+                    let msg = "error getting product from \(url) \(query): \(lookupError)"
                     self.returnError(msg, lookupError, completion)
                     return
                 }
