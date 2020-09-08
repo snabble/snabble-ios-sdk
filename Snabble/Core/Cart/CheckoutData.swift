@@ -358,6 +358,8 @@ public struct AgeCheckData: Encodable {
 // known values from checkoutProcess.paymentResults["failureCause"]
 public enum FailureCause: String {
     case terminalAbort
+    case ageVerificationFailed
+    case ageVerificationNotSupportedByCard
 }
 
 // MARK: - Checkout Process
