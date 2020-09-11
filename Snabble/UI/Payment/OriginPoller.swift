@@ -61,7 +61,6 @@ final class OriginPoller {
                         self.checkCandidate(url)
                     }
                 } else {
-                    self.candidates.remove(url)
                     self.stopPolling()
                 }
             }
