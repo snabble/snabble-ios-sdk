@@ -76,6 +76,10 @@ extension SnabbleAPI {
 internal class CertificatePinningDelegate: NSObject, URLSessionDelegate {
     func urlSession(_ session: URLSession, didReceive challenge: URLAuthenticationChallenge,
                     completionHandler: @escaping (URLSession.AuthChallengeDisposition, URLCredential?) -> Void) {
+        guard SnabbleAPI.config.useCertificatePinning else {
+            return completionHandler(.performDefaultHandling, nil)
+        }
+
         let handled = TrustKit.sharedInstance().pinningValidator.handle(challenge, completionHandler: completionHandler)
         if !handled {
             completionHandler(.performDefaultHandling, nil)

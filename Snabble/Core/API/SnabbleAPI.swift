@@ -23,6 +23,10 @@ public struct SnabbleAPIConfig {
     /// set this to true if you want to use the `productsByName` method of `ProductDB`
     public var useFTS = false
 
+    /// set to false to disable certificate pinning for requests to the snabble API server
+    /// NOTE: this setting is intended for debugging purposes only and is ignored in Release builds
+    public var useCertificatePinning = true
+
     /// if the app comes with a zipped seed database, set this to the path in the Bundle
     public var seedDatabase: String?
     /// if the app comes with a zipped seed database, set this to the db revision of the seed
@@ -38,13 +42,15 @@ public struct SnabbleAPIConfig {
     // SQL statements that are executed just before the product database is opened
     public var initialSQL: [String]?
 
-    public init(appId: String, baseUrl: String, secret: String, appVersion: String? = nil, useFTS: Bool = false,
+    public init(appId: String, baseUrl: String, secret: String, appVersion: String? = nil,
+                useFTS: Bool = false, useCertificatePinning: Bool = true,
                 seedDatabase: String? = nil, seedRevision: Int64? = nil, seedMetadata: String? = nil) {
         self.appId = appId
         self.baseUrl = baseUrl
         self.secret = secret
         self.appVersion = appVersion
         self.useFTS = useFTS
+        self.useCertificatePinning = useCertificatePinning
         self.seedDatabase = seedDatabase
         self.seedRevision = seedRevision
         self.seedMetadata = seedMetadata
@@ -82,7 +88,11 @@ public enum SnabbleAPI {
 
     public static func setup(_ config: SnabbleAPIConfig, completion: @escaping () -> Void ) {
         self.config = config
-        self.initializeTrustKit()
+        self.config.useCertificatePinning = !self.debugMode || config.useCertificatePinning
+
+        if self.config.useCertificatePinning {
+            self.initializeTrustKit()
+        }
 
         self.providerPool.removeAll()
         self.tokenRegistry = TokenRegistry(config.appId, config.secret)
