@@ -13,7 +13,7 @@ class ViewController: UIViewController {
     @IBOutlet private weak var buttonContainer: UIStackView!
     @IBOutlet private weak var spinner: UIActivityIndicatorView!
 
-    private var shoppingCart = ShoppingCart(CartConfig())
+    private var shoppingCart: ShoppingCart?
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -25,9 +25,13 @@ class ViewController: UIViewController {
     }
 
     @IBAction private func scannerButtonTapped(_ sender: Any) {
+        guard let shoppingCart = self.shoppingCart else {
+            return
+        }
+
         let project = SnabbleAPI.projects[0]
         let shop = project.shops[0]
-        let scanner = ScannerViewController(self.shoppingCart, shop, delegate: self)
+        let scanner = ScannerViewController(shoppingCart, shop, delegate: self)
         scanner.navigationItem.leftBarButtonItem = nil
         self.navigationController?.pushViewController(scanner, animated: true)
     }
@@ -65,8 +69,12 @@ class ViewController: UIViewController {
 
 extension ViewController: ScannerDelegate {
     func gotoShoppingCart() {
-        let shoppingCart = ShoppingCartViewController(self.shoppingCart, delegate: self)
-        self.navigationController?.pushViewController(shoppingCart, animated: true)
+        guard let shoppingCart = self.shoppingCart else {
+            return
+        }
+
+        let shoppingCartVC = ShoppingCartViewController(shoppingCart, delegate: self)
+        self.navigationController?.pushViewController(shoppingCartVC, animated: true)
     }
 
     // called when the scanner needs to close itself
