@@ -1,5 +1,11 @@
 ## snabble iOS SDK Changelog
 
+# v0.14.2
+
+* Fixes a bug where the notification to import IBAN data from the SCO could be sent twice
+* Fix shopping cart initialization in the Sample app
+* Add the `useCertificatePinning` property to the API config
+
 # v0.14.1
 
 * Scanning an age-restricted product now shows a corresponding message if the user's age is unknown.
