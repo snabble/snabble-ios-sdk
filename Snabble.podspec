@@ -38,7 +38,6 @@ Pod::Spec.new do |s|
 
     ui.dependency 'Snabble/Core'
     ui.dependency 'UIEmptyState', '~> 4'
-    ui.dependency 'EasyTipView', '~> 2'
     ui.dependency 'SDCAlertView', '~> 11.1'
 
     ui.resource_bundles = {

@@ -5,7 +5,6 @@
 //
 
 import UIKit
-import EasyTipView
 
 // tags for the input fields, determines tabbing order (starts at `name`)
 private enum InputField: Int {
@@ -158,26 +157,30 @@ public final class SepaEditViewController: UIViewController {
         let iban = self.sanitzeIban(country + number)
         let valid = self.verifyIban(iban)
 
-        var tips = [EasyTipView]()
+        var showError = false
         if !valid {
-            self.ibanNumberField.textColor = .red
-            let tip = self.showErrorTip("Snabble.Payment.SEPA.InvalidIBAN".localized(), self.ibanNumberField)
-            tips.append(tip)
+            self.ibanNumberField.textColor = .systemRed
+            self.ibanLabel.textColor = .systemRed
+            self.ibanLabel.text = "Snabble.Payment.SEPA.InvalidIBAN".localized()
+            showError = true
         }
-
         if name.isEmpty {
-            let tip = self.showErrorTip("Snabble.Payment.SEPA.InvalidName".localized(), self.nameField)
-            tips.append(tip)
+            self.nameField.textColor = .systemRed
+            self.nameLabel.textColor = .systemRed
+            self.nameLabel.text = "Snabble.Payment.SEPA.InvalidName".localized()
+            showError = true
         }
-
         if country.isEmpty {
-            let tip = self.showErrorTip("Snabble.Payment.SEPA.missingCountry".localized(), self.ibanCountryField)
-            tips.append(tip)
+            self.ibanCountryField.textColor = .systemRed
+            self.ibanLabel.textColor = .systemRed
+            self.ibanLabel.text = "Snabble.Payment.SEPA.missingCountry".localized()
+            showError = true
         }
 
-        if !tips.isEmpty {
+        if showError {
             Timer.scheduledTimer(withTimeInterval: 3, repeats: false) { _ in
-                tips.forEach { $0.dismiss() }
+                self.fadeText(self.ibanLabel, "Snabble.Payment.SEPA.IBAN".localized())
+                self.fadeText(self.nameLabel, "Snabble.Payment.SEPA.Name".localized())
             }
         }
 
@@ -193,8 +196,10 @@ public final class SepaEditViewController: UIViewController {
                     self.goBack()
                 }
             } else {
-                let tip = self.showErrorTip("Snabble.SEPA.encryptionError".localized(), self.saveButton)
-                tips.append(tip)
+                let alert = UIAlertController(title: nil, message: "Snabble.SEPA.encryptionError".localized(), preferredStyle: .alert)
+                alert.addAction(UIAlertAction(title: "Snabble.OK".localized(), style: .default, handler: nil))
+
+                self.present(alert, animated: true)
             }
         }
     }
@@ -299,29 +304,18 @@ public final class SepaEditViewController: UIViewController {
         let letters = CharacterSet.uppercaseLetters
         let range = country.rangeOfCharacter(from: letters)
         let countryValid = country.isEmpty || range != nil
-        self.markTextfield(self.ibanCountryField, countryValid)
+        self.markTextfield(self.ibanCountryField, self.ibanLabel, countryValid)
 
         let numberValid = iban.isEmpty || verifyIban(country + iban)
-        self.markTextfield(self.ibanNumberField, numberValid)
-        // self.markTextfield(self.ibanCountryField, numberValid)
+        self.markTextfield(self.ibanNumberField, self.ibanLabel, numberValid)
     }
 
-    private func markTextfield(_ textField: UITextField, _ valid: Bool) {
+    private func markTextfield(_ textField: UITextField, _ label: UILabel, _ valid: Bool) {
         textField.textColor = valid ? self.black : .systemRed
+        label.textColor = valid ? self.black : .systemRed
 
         let borderColor: UIColor = valid ? .clear : .systemRed
         textField.layer.borderColor = borderColor.cgColor
-    }
-
-    private func showErrorTip(_ text: String, _ view: UIView) -> EasyTipView {
-        var preferences = EasyTipView.Preferences()
-        preferences.drawing.foregroundColor = .white
-        preferences.drawing.backgroundColor = .systemRed
-        preferences.drawing.arrowPosition = .bottom
-
-        let tip = EasyTipView(text: text, preferences: preferences)
-        tip.show(forView: view)
-        return tip
     }
 
     private var black: UIColor {
@@ -330,6 +324,14 @@ public final class SepaEditViewController: UIViewController {
         } else {
             return .black
         }
+    }
+
+    private func fadeText(_ label: UILabel, _ text: String) {
+        UIView.transition(with: label,
+                          duration: 0.25,
+                          options: .transitionCrossDissolve,
+                          animations: { label.text = text },
+                          completion: nil)
     }
 }
 
@@ -341,8 +343,8 @@ extension SepaEditViewController: UITextFieldDelegate {
         }
 
         switch textField.tag {
-        case InputField.name.rawValue: // name field - do nothing
-            break
+        case InputField.name.rawValue:
+            self.markTextfield(self.nameField, self.nameLabel, !text.isEmpty)
         case InputField.country.rawValue: // country field - uppercase
             textField.text = text.uppercased()
             self.markTextfields()
