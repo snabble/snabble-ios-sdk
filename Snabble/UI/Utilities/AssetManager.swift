@@ -25,20 +25,32 @@ public enum ImageAsset: String {
 extension SnabbleUI {
     // download manifests for all projects, calls `completion` when all downloads are done
     public static func initializeAssets(for projects: [Project], completion: @escaping () -> Void) {
-        AssetManager.instance.initialize(projects, completion)
+        AssetManager.shared.initialize(projects, completion)
     }
 
     public static func initializeAssets(for projectId: String, _ manifestUrl: String, downloadFiles: Bool) {
-        AssetManager.instance.initialize(projectId, manifestUrl, downloadFiles, completion: { })
+        AssetManager.shared.initialize(projectId, manifestUrl, downloadFiles, pngOnly: true, completion: { })
     }
 
     public static func getAsset(_ asset: ImageAsset, bundlePath: String? = nil, projectId: String? = nil, completion: @escaping (UIImage?) -> Void) {
-        AssetManager.instance.getAsset(asset, bundlePath, projectId, completion)
+        AssetManager.shared.getAsset(asset, bundlePath, projectId, completion)
     }
 
     // use this only for debugging
     public static func clearAssets() {
-        AssetManager.instance.clearAssets()
+        AssetManager.shared.clearAssets()
+    }
+}
+
+extension SnabbleAPI {
+    public static func initializeAppAssets(_ completion: @escaping () -> Void) {
+        let appId = self.config.appId
+        let manifestUrl = "/\(appId)/assets/manifest.json"
+        AssetManager.shared.initialize(appId, manifestUrl, true, pngOnly: false, completion: completion)
+    }
+
+    public static func getAsset(_ name: String, _ completion: @escaping (Data?, String?) -> Void) {
+        AssetManager.shared.getRawAsset(name, self.config.appId, completion)
     }
 }
 
@@ -94,23 +106,13 @@ extension Manifest.File {
     }
 
     // filename for our local filesystem copy (usually in .cachesDirectory)
-    func localName(_ projectId: String, _ scale: CGFloat) -> String? {
+    func localName(_ scale: CGFloat) -> String? {
         guard let variant = self.variant(for: scale) else {
             return nil
         }
 
         let name = "\(self.name)-\(variant.sha1)"
         return name
-    }
-
-    // full path for our local filesystem copy
-    func localPath(_ projectId: String, _ scale: CGFloat) -> URL? {
-        guard let localName = self.localName(projectId, scale) else {
-            return nil
-        }
-
-        let cacheUrl = AssetManager.instance.cacheDirectory(projectId)
-        return cacheUrl.appendingPathComponent(localName)
     }
 
     // where we store information about this file in UserDefaults
@@ -129,7 +131,7 @@ extension Manifest.File {
 }
 
 final class AssetManager {
-    static let instance = AssetManager()
+    static let shared = AssetManager()
 
     private var manifests = [String: Manifest]()
     private let scale: CGFloat
@@ -173,7 +175,35 @@ final class AssetManager {
         }
     }
 
+    func getRawAsset(_ name: String, _ projectId: String, _ completion: @escaping (Data?, String?) -> Void) {
+        guard let file = self.fileFor(name: name, projectId) else {
+            return completion(nil, nil)
+        }
+
+        let localName = file.localName(self.scale)
+
+        if let data = self.getLocallyCachedData(named: name, projectId) {
+            completion(data, localName)
+        } else {
+            self.downloadIfMissing(projectId, file) { fileUrl in
+                if let fileUrl = fileUrl, let data = try? Data(contentsOf: fileUrl) {
+                    completion(data, localName)
+                } else {
+                    completion(nil, nil)
+                }
+            }
+        }
+    }
+
     private func getLocallyCachedImage(named name: String, _ projectId: String) -> UIImage? {
+        guard let data = getLocallyCachedData(named: name, projectId) else {
+            return nil
+        }
+
+        return UIImage(data: data, scale: self.scale)
+    }
+
+    private func getLocallyCachedData(named name: String, _ projectId: String) -> Data? {
         guard let file = self.fileFor(name: name, projectId) else {
             return nil
         }
@@ -182,9 +212,7 @@ final class AssetManager {
         if let localFilename = settings.string(forKey: file.defaultsKey(projectId)) {
             let cacheUrl = self.cacheDirectory(projectId)
             let fileUrl = cacheUrl.appendingPathComponent(localFilename)
-            if let data = try? Data(contentsOf: fileUrl) {
-                return UIImage(data: data, scale: self.scale)
-            }
+            return try? Data(contentsOf: fileUrl)
         }
 
         return nil
@@ -195,10 +223,16 @@ final class AssetManager {
             return nil
         }
 
+        // if we find an exact match for the name, use that
+        if let file = manifest.files.first(where: { $0.name == name }) {
+            return file
+        }
+
+        // else we assume it's a name without file extension
+
         // in dark mode, check if we have a _dark version, and if so, use that
         if #available(iOS 13.0, *), UIScreen.main.traitCollection.userInterfaceStyle == .dark {
-            let file = manifest.files.first(where: { $0.name == name + "_dark.png" })
-            if file != nil {
+            if let file = manifest.files.first(where: { $0.name == name + "_dark.png" }) {
                 return file
             }
         }
@@ -225,7 +259,7 @@ final class AssetManager {
         for project in projects {
             if let manifestUrl = project.links.assetsManifest?.href {
                 group.enter()
-                self.initialize(project.id, manifestUrl, false) {
+                self.initialize(project.id, manifestUrl, false, pngOnly: true) {
                     group.leave()
                 }
             }
@@ -244,7 +278,7 @@ final class AssetManager {
         }
     }
 
-    func initialize(_ projectId: String, _ manifestUrl: String, _ downloadFiles: Bool, completion: @escaping () -> Void) {
+    func initialize(_ projectId: String, _ manifestUrl: String, _ downloadFiles: Bool, pngOnly: Bool, completion: @escaping () -> Void) {
         guard
             let manifestUrl = SnabbleAPI.urlFor(manifestUrl),
             var components = URLComponents(url: manifestUrl, resolvingAgainstBaseURL: false)
@@ -258,9 +292,11 @@ final class AssetManager {
         let variant = fmt.string(for: self.scale)!
 
         components.queryItems = [
-            URLQueryItem(name: "type", value: "png"),
             URLQueryItem(name: "variant", value: "\(variant)x")
         ]
+        if pngOnly {
+            components.queryItems?.append(URLQueryItem(name: "type", value: "png"))
+        }
 
         guard let url = components.url else {
             return
@@ -318,18 +354,18 @@ final class AssetManager {
             return
         }
 
-        // initially download all PNGs in the toplevel directory (ie. no "/" in the `name`)
-        for file in manifest.files.filter({ $0.name.hasSuffix(".png") && !$0.name.contains("/") }) {
+        // initially download all files in the toplevel directory (ie. no "/" in the `name`)
+        for file in manifest.files.filter({ !$0.name.contains("/") }) {
             self.downloadIfMissing(projectId, file, completion: { _ in })
         }
     }
 
     private func downloadIfMissing(_ projectId: String, _ file: Manifest.File, completion: @escaping (URL?) -> Void) {
-        guard let localName = file.localName(projectId, self.scale) else {
+        guard let localName = file.localName(self.scale) else {
             return
         }
 
-        let cacheUrl = AssetManager.instance.cacheDirectory(projectId)
+        let cacheUrl = AssetManager.shared.cacheDirectory(projectId)
         let fullUrl = cacheUrl.appendingPathComponent(localName)
 
         let fileManager = FileManager.default
@@ -389,7 +425,7 @@ private final class DownloadDelegate: NSObject, URLSessionDownloadDelegate {
 
     func urlSession(_ session: URLSession, downloadTask: URLSessionDownloadTask, didFinishDownloadingTo location: URL) {
         do {
-            let cacheDirUrl = AssetManager.instance.cacheDirectory(self.projectId)
+            let cacheDirUrl = AssetManager.shared.cacheDirectory(self.projectId)
 
             if self.localName.contains("/") {
                 // make sure any reqired subdirectories exist
@@ -423,7 +459,7 @@ private final class DownloadDelegate: NSObject, URLSessionDownloadDelegate {
         } catch {
             Log.error("Error saving asset for key \(self.key): \(error)")
             self.completion(nil)
-            AssetManager.instance.rescheduleDownloads()
+            AssetManager.shared.rescheduleDownloads()
         }
         session.finishTasksAndInvalidate()
     }
@@ -438,7 +474,7 @@ private final class DownloadDelegate: NSObject, URLSessionDownloadDelegate {
         }
 
         self.completion(nil)
-        AssetManager.instance.rescheduleDownloads()
+        AssetManager.shared.rescheduleDownloads()
         session.invalidateAndCancel()
     }
 }
