@@ -35,6 +35,11 @@ This is because one of the dependencies we use ([GRDB.swift](https://github.com/
 build using Carthage, as documented in their [README](https://github.com/groue/GRDB.swift#carthage). 
 If and when this issue gets resolved, you should be able to use the provided `Cartfile`.
 
+### SPM
+
+SPM is currently unsupported, as some of our dependencies do not support it (yet). 
+As soon as they do, we will look into SPM support again.
+
 ### Manually
 
 Build the example project, as described below, and copy the following frameworks and bundles to your app's target:

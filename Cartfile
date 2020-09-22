@@ -4,5 +4,5 @@ github "https://github.com/marmelroy/Zip" ~> 1
 github "https://github.com/datatheorem/TrustKit" ~> 1
 github "https://github.com/kishikawakatsumi/KeychainAccess" ~> 4
 
-github "https://github.com/teodorpatras/EasyTipView" ~> 2
 github "https://github.com/luispadron/UIEmptyState" ~> 4
+github "https://github.com/sberrevoets/SDCAlertView" ~> 11
