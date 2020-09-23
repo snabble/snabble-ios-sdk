@@ -70,7 +70,7 @@ public struct GS1Code {
     }
 
     public func weight(in unit: Units) -> Decimal? {
-        guard let rawWeight = firstDecimal(matching: "310") else {
+        guard let rawWeight = firstDecimal(matching: "310"), unit.quantity == .mass else {
             return nil
         }
 
@@ -84,7 +84,7 @@ public struct GS1Code {
     }
 
     public func length(in unit: Units) -> Decimal? {
-        guard let rawLength = firstDecimal(matching: "311") else {
+        guard let rawLength = firstDecimal(matching: "311"), unit.quantity == .distance else {
             return nil
         }
 
@@ -93,6 +93,47 @@ public struct GS1Code {
         case .decimeter: return rawLength * Decimal(10)
         case .centimeter: return rawLength * Decimal(100)
         case .millimeter: return rawLength * Decimal(1000)
+        default: return nil
+        }
+    }
+
+    public func area(in unit: Units) -> Decimal? {
+        guard let rawArea = firstDecimal(matching: "314"), unit.quantity == .area else {
+            return nil
+        }
+
+        switch unit {
+        case .squareMeter: return rawArea
+        case .squareMeterTenth: return rawArea * Decimal(10)
+        case .squareDecimeter: return rawArea * Decimal(100)
+        case .squareDecimeterTenth: return rawArea * Decimal(1000)
+        case .squareCentimeter: return rawArea * Decimal(10000)
+        default: return nil
+        }
+    }
+
+    public func liters(in unit: Units) -> Decimal? {
+        guard let rawLiters = firstDecimal(matching: "315"), unit.quantity == .volume else {
+            return nil
+        }
+
+        switch unit {
+        case .liter: return rawLiters
+        case .deciliter: return rawLiters * Decimal(10)
+        case .centiliter: return rawLiters * Decimal(100)
+        case .milliliter: return rawLiters * Decimal(1000)
+        default: return nil
+        }
+    }
+
+    public func volume(in unit: Units) -> Decimal? {
+        guard let rawVolume = firstDecimal(matching: "316"), unit.quantity == .capacity else {
+            return nil
+        }
+
+        switch unit {
+        case .cubicMeter: return rawVolume
+        case .cubicCentimeter: return rawVolume * Decimal(1_000_000)
         default: return nil
         }
     }
@@ -116,6 +157,24 @@ public struct GS1Code {
         }
 
         return nil
+    }
+
+    public func price(_ digits: Int) -> (price: Int, currency: String?)? {
+        guard let price = self.price else {
+            return nil
+        }
+
+        let newPrice: Decimal
+
+        // number of decimal digits in the data
+        let priceDigits = -price.price.exponent
+        if priceDigits == 0 || priceDigits >= digits {
+            newPrice = price.price * pow(Decimal(10), digits)
+        } else {
+            newPrice = price.price * pow(Decimal(10), digits - priceDigits)
+        }
+
+        return ((newPrice as NSDecimalNumber).intValue, price.currency)
     }
 
     private func firstDecimal(matching prefix: String) -> Decimal? {

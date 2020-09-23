@@ -36,8 +36,8 @@ public enum Units: String, Codable, Equatable {
     case squareCentimeter = "cm2"       // 10000
 
     // volumes
-    case cubicMeter = "m3"
-    case cubicCentimeter = "cm3"
+    case cubicMeter = "m3"          // 1
+    case cubicCentimeter = "cm3"    // 1_000_000
 
     // mass
     case tonne = "t"            // 0.001
