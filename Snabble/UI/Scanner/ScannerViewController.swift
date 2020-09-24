@@ -483,7 +483,7 @@ extension ScannerViewController {
             self.delegate.track(.scanProduct(scannedProduct.transmissionCode ?? scannedCode))
             self.productType = product.type
 
-            if product.bundles.isEmpty {
+            if product.bundles.isEmpty || scannedProduct.priceOverride != nil {
                 self.showConfirmation(for: scannedProduct, scannedCode)
             } else {
                 self.showBundleSelection(for: scannedProduct, scannedCode)

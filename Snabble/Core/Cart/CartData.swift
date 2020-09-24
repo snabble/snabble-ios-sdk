@@ -154,7 +154,8 @@ public struct CartItem: Codable {
     /// total price of this cart item
     public var price: Int {
         if let override = self.scannedCode.priceOverride {
-            return override
+            let deposit = self.product.deposit ?? 0
+            return override + deposit
         }
         if let embed = self.scannedCode.embeddedData, let encodingUnit = self.encodingUnit, let referenceUnit = self.product.referenceUnit {
             if case .price = encodingUnit {
@@ -207,7 +208,8 @@ public struct CartItem: Codable {
         }
 
         if let deposit = self.product.deposit {
-            let itemPrice = formatter.format(self.product.price(self.customerCard))
+            let price = self.scannedCode.priceOverride ?? self.product.price(self.customerCard)
+            let itemPrice = formatter.format(price)
             let depositPrice = formatter.format(deposit * self.quantity)
             return "× \(itemPrice) + \(depositPrice) = \(total)"
         }
