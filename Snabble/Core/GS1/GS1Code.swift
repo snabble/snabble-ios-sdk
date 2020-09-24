@@ -68,11 +68,11 @@ public struct GS1Code {
 // MARK: - accessors for often-used AIs
 extension GS1Code {
 
-    public var gtin: String? {
+    var gtin: String? {
         return valueForAI("01")
     }
 
-    public func weight(in unit: Units) -> Decimal? {
+    func weight(in unit: Units) -> Decimal? {
         guard let rawWeight = firstDecimal(matching: "310"), unit.quantity == .mass else {
             return nil
         }
@@ -86,11 +86,11 @@ extension GS1Code {
         }
     }
 
-    public var weight: Int? {
+    var weight: Int? {
         return (weight(in: .gram) as NSDecimalNumber?)?.intValue
     }
 
-    public func length(in unit: Units) -> Decimal? {
+    func length(in unit: Units) -> Decimal? {
         guard let rawLength = firstDecimal(matching: "311"), unit.quantity == .distance else {
             return nil
         }
@@ -104,11 +104,11 @@ extension GS1Code {
         }
     }
 
-    public var length: Int? {
+    var length: Int? {
         return (length(in: .millimeter) as NSDecimalNumber?)?.intValue
     }
 
-    public func area(in unit: Units) -> Decimal? {
+    func area(in unit: Units) -> Decimal? {
         guard let rawArea = firstDecimal(matching: "314"), unit.quantity == .area else {
             return nil
         }
@@ -123,11 +123,11 @@ extension GS1Code {
         }
     }
 
-    public var area: Int? {
+    var area: Int? {
         return (area(in: .squareCentimeter) as NSDecimalNumber?)?.intValue
     }
 
-    public func liters(in unit: Units) -> Decimal? {
+    func liters(in unit: Units) -> Decimal? {
         guard let rawLiters = firstDecimal(matching: "315"), unit.quantity == .volume else {
             return nil
         }
@@ -141,11 +141,11 @@ extension GS1Code {
         }
     }
 
-    public var liters: Int? {
+    var liters: Int? {
         return (liters(in: .milliliter) as NSDecimalNumber?)?.intValue
     }
 
-    public func volume(in unit: Units) -> Decimal? {
+    func volume(in unit: Units) -> Decimal? {
         guard let rawVolume = firstDecimal(matching: "316"), unit.quantity == .capacity else {
             return nil
         }
@@ -157,18 +157,18 @@ extension GS1Code {
         }
     }
 
-    public var volume: Int? {
+    var volume: Int? {
         return (volume(in: .cubicCentimeter) as NSDecimalNumber?)?.intValue
     }
 
-    public var amount: Int? {
+    var amount: Int? {
         guard let amount = valueForAI("30") else {
             return nil
         }
         return Int(amount)
     }
 
-    public var price: (price: Decimal, currency: String?)? {
+    var price: (price: Decimal, currency: String?)? {
         // try "amount payable (single monetary area)" first
         if let price = firstDecimal(matching: "392") {
             return (price, nil)
@@ -182,7 +182,7 @@ extension GS1Code {
         return nil
     }
 
-    public func price(_ digits: Int) -> Int? {
+    func price(_ digits: Int) -> Int? {
         guard let price = self.price else {
             return nil
         }
