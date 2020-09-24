@@ -15,7 +15,7 @@ public final class BarcodeEntryViewController: UIViewController {
     private weak var productProvider: ProductProvider!
     private let shopId: String
 
-    private let completion: ((String, String?) -> Void)
+    private let completion: ((String, ScanFormat?, String?) -> Void)
 
     private var filteredProducts = [Product]()
     private var searchText = ""
@@ -24,7 +24,7 @@ public final class BarcodeEntryViewController: UIViewController {
     private var emptyState: EmptyStateView!
     private var showSku = false
 
-    public init(_ productProvider: ProductProvider, _ shopId: String, delegate: AnalyticsDelegate, showSku: Bool = false, completion: @escaping (String, String?) -> Void ) {
+    public init(_ productProvider: ProductProvider, _ shopId: String, delegate: AnalyticsDelegate, showSku: Bool = false, completion: @escaping (String, ScanFormat?, String?) -> Void ) {
 
         self.productProvider = productProvider
         self.shopId = shopId
@@ -71,7 +71,7 @@ public final class BarcodeEntryViewController: UIViewController {
     private func addCode(_ code: String, _ template: String?) {
         let block = {
             self.delegate.track(.barcodeSelected(code))
-            self.completion(code, template)
+            self.completion(code, nil, template)
         }
 
         if SnabbleUI.implicitNavigation {

@@ -63,7 +63,10 @@ public struct GS1Code {
         self.skipped = skipped
     }
 
-    // MARK: - convenience accessors for often-used AIs
+}
+
+// MARK: - accessors for often-used AIs
+extension GS1Code {
 
     public var gtin: String? {
         return valueForAI("01")
@@ -83,6 +86,10 @@ public struct GS1Code {
         }
     }
 
+    public var weight: Int? {
+        return (weight(in: .gram) as NSDecimalNumber?)?.intValue
+    }
+
     public func length(in unit: Units) -> Decimal? {
         guard let rawLength = firstDecimal(matching: "311"), unit.quantity == .distance else {
             return nil
@@ -95,6 +102,10 @@ public struct GS1Code {
         case .millimeter: return rawLength * Decimal(1000)
         default: return nil
         }
+    }
+
+    public var length: Int? {
+        return (length(in: .millimeter) as NSDecimalNumber?)?.intValue
     }
 
     public func area(in unit: Units) -> Decimal? {
@@ -112,6 +123,10 @@ public struct GS1Code {
         }
     }
 
+    public var area: Int? {
+        return (area(in: .squareCentimeter) as NSDecimalNumber?)?.intValue
+    }
+
     public func liters(in unit: Units) -> Decimal? {
         guard let rawLiters = firstDecimal(matching: "315"), unit.quantity == .volume else {
             return nil
@@ -126,6 +141,10 @@ public struct GS1Code {
         }
     }
 
+    public var liters: Int? {
+        return (liters(in: .milliliter) as NSDecimalNumber?)?.intValue
+    }
+
     public func volume(in unit: Units) -> Decimal? {
         guard let rawVolume = firstDecimal(matching: "316"), unit.quantity == .capacity else {
             return nil
@@ -136,6 +155,10 @@ public struct GS1Code {
         case .cubicCentimeter: return rawVolume * Decimal(1_000_000)
         default: return nil
         }
+    }
+
+    public var volume: Int? {
+        return (volume(in: .cubicCentimeter) as NSDecimalNumber?)?.intValue
     }
 
     public var amount: Int? {
@@ -159,7 +182,7 @@ public struct GS1Code {
         return nil
     }
 
-    public func price(_ digits: Int) -> (price: Int, currency: String?)? {
+    public func price(_ digits: Int) -> Int? {
         guard let price = self.price else {
             return nil
         }
@@ -174,7 +197,23 @@ public struct GS1Code {
             newPrice = price.price * pow(Decimal(10), digits - priceDigits)
         }
 
-        return ((newPrice as NSDecimalNumber).intValue, price.currency)
+        return (newPrice as NSDecimalNumber).intValue
+    }
+
+    func getEmbeddedData(for encodingUnit: Units?, _ digits: Int) -> (Int?, Units?) {
+        guard let encodingUnit = encodingUnit else {
+            return (nil, nil)
+        }
+
+        switch encodingUnit.quantity {
+        case .volume: return (self.liters, .milliliter)
+        case .capacity: return (self.volume, .cubicCentimeter)
+        case .area: return (self.area, .squareCentimeter)
+        case .distance: return (self.length, .millimeter)
+        case .mass: return (self.weight, .gram)
+        case .count: return (self.amount, .piece)
+        case .amount: return (self.price(digits), .price)
+        }
     }
 
     private func firstDecimal(matching prefix: String) -> Decimal? {
