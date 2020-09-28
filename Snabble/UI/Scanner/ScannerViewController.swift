@@ -406,7 +406,7 @@ extension ScannerViewController: BarcodeDetectorDelegate {
             return
         }
 
-        self.handleScannedCode(code)
+        self.handleScannedCode(code, format)
     }
 
     public func gotoShoppingCart() {
@@ -430,7 +430,7 @@ extension ScannerViewController {
         }
     }
 
-    private func handleScannedCode(_ scannedCode: String, _ template: String? = nil) {
+    private func handleScannedCode(_ scannedCode: String, _ format: ScanFormat?, _ template: String? = nil) {
         // Log.debug("handleScannedCode \(scannedCode) \(self.lastScannedCode)")
         self.lastScannedCode = scannedCode
 
@@ -441,7 +441,7 @@ extension ScannerViewController {
 
         self.barcodeDetector.pauseScanning()
 
-        self.productForCode(scannedCode, template) { scannedResult in
+        self.productForCode(scannedCode, format, template) { scannedResult in
             self.timer?.invalidate()
             self.timer = nil
             self.spinner.stopAnimating()
@@ -483,7 +483,7 @@ extension ScannerViewController {
             self.delegate.track(.scanProduct(scannedProduct.transmissionCode ?? scannedCode))
             self.productType = product.type
 
-            if product.bundles.isEmpty {
+            if product.bundles.isEmpty || scannedProduct.priceOverride != nil {
                 self.showConfirmation(for: scannedProduct, scannedCode)
             } else {
                 self.showBundleSelection(for: scannedProduct, scannedCode)
@@ -557,7 +557,10 @@ extension ScannerViewController {
         self.present(alert, animated: true)
     }
 
-    private func productForCode(_ code: String, _ template: String?, completion: @escaping (Result<ScannedProduct, ProductLookupError>) -> Void ) {
+    private func productForCode(_ code: String,
+                                _ format: ScanFormat?,
+                                _ template: String?,
+                                completion: @escaping (Result<ScannedProduct, ProductLookupError>) -> Void ) {
         // if we were given a template from the barcode entry, use that to lookup the product directly
         if let template = template {
             return self.lookupProduct(code, template, nil, completion)
@@ -626,7 +629,49 @@ extension ScannerViewController {
 
                 completion(.success(newResult))
             case .failure(let error):
-                let event = AppEvent(scannedCode: code, codes: codes, project: project)
+                if error == .notFound, format == .code128, let gs1 = self.checkValidGS1(code) {
+                    return self.productForGS1(gs1, code, completion: completion)
+                } else {
+                    let event = AppEvent(scannedCode: code, codes: codes, project: project)
+                    event.post()
+                    completion(.failure(error))
+                }
+            }
+        }
+    }
+
+    private func checkValidGS1(_ code: String) -> GS1Code? {
+        let gs1 = GS1Code(code)
+        if gs1.gtin != nil {
+            return gs1
+        }
+        return nil
+    }
+
+    private func productForGS1(_ gs1: GS1Code,
+                               _ originalCode: String,
+                               completion: @escaping (Result<ScannedProduct, ProductLookupError>) -> Void ) {
+        guard let gtin = gs1.gtin else {
+            return completion(.failure(.notFound))
+        }
+
+        let codes = [(gtin, CodeTemplate.defaultName)]
+        self.productProvider.productByScannableCodes(codes, self.shop.id) { result in
+            switch result {
+            case .success(let lookupResult):
+                let priceDigits = SnabbleUI.project.decimalDigits
+                let (embeddedData, encodingUnit) = gs1.getEmbeddedData(for: lookupResult.encodingUnit, priceDigits)
+                let result = ScannedProduct(lookupResult.product,
+                                            gtin,
+                                            originalCode,
+                                            template: CodeTemplate.defaultName,
+                                            embeddedData: embeddedData,
+                                            encodingUnit: encodingUnit,
+                                            referencePriceOverride: nil,
+                                            specifiedQuantity: lookupResult.specifiedQuantity)
+                completion(.success(result))
+            case .failure(let error):
+                let event = AppEvent(scannedCode: originalCode, codes: codes, project: SnabbleUI.project)
                 event.post()
                 completion(.failure(error))
             }
@@ -749,7 +794,7 @@ extension ScannerViewController: ReactNativeWrapper {
     }
 
     public func setLookupcode(_ code: String) {
-        self.handleScannedCode(code)
+        self.handleScannedCode(code, nil)
     }
 
 }

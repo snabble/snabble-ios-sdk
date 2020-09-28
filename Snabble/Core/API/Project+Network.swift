@@ -19,7 +19,7 @@ public struct SnabbleError: Decodable, Error, Equatable {
     static let noPaymentAvailable = SnabbleError(error: ErrorResponse("no payment method available"))
 }
 
-public enum ProductLookupError: Error {
+public enum ProductLookupError: Error, Equatable {
     case notFound
     case networkError(URLError.Code)
     case serverError(Int)
