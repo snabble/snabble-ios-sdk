@@ -5,6 +5,8 @@
 * Fixes a bug where the notification to import IBAN data from the SCO could be sent twice
 * Fix shopping cart initialization in the Sample app
 * Add the `useCertificatePinning` property to the API config
+* Adds support for decoding GS1 Codes to determine e.g. embedded weights
+* Fixes a bug where codes with price overrides for products in bundles were handled incorrectly
 
 # v0.14.1
 
