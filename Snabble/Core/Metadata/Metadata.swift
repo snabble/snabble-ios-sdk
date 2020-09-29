@@ -11,10 +11,11 @@ public struct Metadata: Decodable {
     public let projects: [Project]
     public let gatewayCertificates: [GatewayCertificate]
     public let links: MetadataLinks
+    public let terms: Terms?
 
     enum CodingKeys: String, CodingKey {
         case flags = "metadata"
-        case projects, gatewayCertificates, links, templates
+        case projects, gatewayCertificates, links, templates, terms
     }
 
     private init() {
@@ -22,6 +23,7 @@ public struct Metadata: Decodable {
         self.projects = [ Project.none ]
         self.gatewayCertificates = []
         self.links = MetadataLinks()
+        self.terms = nil
     }
 
     static let none = Metadata()
@@ -34,6 +36,23 @@ public struct Metadata: Decodable {
         let certs = try container.decodeIfPresent([GatewayCertificate].self, forKey: .gatewayCertificates)
         self.gatewayCertificates = certs ?? []
         self.links = try container.decode(MetadataLinks.self, forKey: .links)
+        self.terms = try container.decodeIfPresent(Terms.self, forKey: .terms)
+    }
+}
+
+public struct Terms: Decodable {
+    public let updatedAt: String
+    public let version: String
+    public let variants: [TermVariant]
+
+    public struct TermVariant: Decodable {
+        public let isDefault: Bool?
+        public let language: String
+        public let links: TermVariantLink
+    }
+
+    public struct TermVariantLink: Decodable {
+        public let content: Link
     }
 }
 
@@ -66,6 +85,7 @@ public struct MetadataLinks: Decodable {
     public let clientOrders: Link?
     public let appUser: Link
     public let appUserOrders: Link
+    public let consents: Link?
     public let telecashSecret: Link?
     public let telecashPreauth: Link?
     public let paydirektCustomerAuthorization: Link?
@@ -79,6 +99,7 @@ public struct MetadataLinks: Decodable {
         self.createAppUser = Link.empty
         self.`self` = Link.empty
 
+        self.consents = Link.empty
         self.telecashSecret = nil
         self.telecashPreauth = nil
         self.paydirektCustomerAuthorization = nil

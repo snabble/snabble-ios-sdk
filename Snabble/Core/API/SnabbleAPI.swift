@@ -82,6 +82,10 @@ public enum SnabbleAPI {
         return self.metadata.links
     }
 
+    public static var terms: Terms? {
+        return self.metadata.terms
+    }
+
     public static func projectFor(_ projectId: String) -> Project? {
         return self.metadata.projects.first { $0.id == projectId }
     }
@@ -229,7 +233,7 @@ extension SnabbleAPI {
 }
 
 extension SnabbleAPI {
-    static func urlFor(_ url: String) -> URL? {
+    public static func urlFor(_ url: String) -> URL? {
         return URL(string: self.absoluteUrl(url))
     }
 
@@ -390,4 +394,38 @@ extension SnabbleAPI {
         }
     }
 
+    private struct TermsVersion: Encodable {
+        let version: String
+    }
+
+    private struct TermsResponse: Decodable {}
+
+    public static func saveTermsConsent(_ version: String, completion: @escaping (Bool) -> Void) {
+        print(#function)
+        guard
+            let appUserId = SnabbleAPI.appUserId,
+            let consents = SnabbleAPI.links.consents?.href
+        else {
+            return
+        }
+
+        let url = consents.replacingOccurrences(of: "{appUserID}", with: appUserId.userId)
+
+        let project = SnabbleAPI.projects[0]
+        let termsVersion = TermsVersion(version: version)
+        project.request(.post, url, body: termsVersion) { request in
+            guard let request = request else {
+                return
+            }
+
+            project.perform(request) { (result: Result<TermsResponse, SnabbleError>) in
+                switch result {
+                case .success:
+                    completion(true)
+                case .failure(let error):
+                    completion(error == SnabbleError.empty)
+                }
+            }
+        }
+    }
 }
