@@ -1,5 +1,9 @@
 ## snabble iOS SDK Changelog
 
+# v0.14.3
+
+* Adds support for the new `terms` object in an app's metadata.
+
 # v0.14.2
 
 * Fixes a bug where the notification to import IBAN data from the SCO could be sent twice
