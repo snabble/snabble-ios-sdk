@@ -11,6 +11,7 @@ public enum ProductType: Int, Codable, UnknownCaseRepresentable {
     case singleItem
     case preWeighed
     case userMustWeigh
+    case depositReturnVoucher
 
     public static let unknownCase = ProductType.singleItem
 }

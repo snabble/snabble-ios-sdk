@@ -273,7 +273,7 @@ public final class ScannerViewController: UIViewController {
 
 extension ScannerViewController {
 
-    private func showMessage(_ msg: ScanMessage) {
+    func showMessage(_ msg: ScanMessage) {
         if let attributedString = msg.attributedString {
             self.messageLabel.text = nil
             self.messageLabel.attributedText = attributedString

@@ -529,6 +529,8 @@ public final class ShoppingCartViewController: UIViewController {
         self.bottomWrapper?.isHidden = numProducts == 0
 
         self.methodSelector?.updateAvailablePaymentMethods()
+
+        self.checkoutButton?.isEnabled = (totalPrice ?? -1) >= 0
     }
 
     private var notAllMethodsAvailableShown = false

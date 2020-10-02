@@ -156,6 +156,7 @@ extension ProductDB {
                     where s.template in (\(list))
                         and (s.code glob ?) \(depositCondition)
                         and p.weighing != \(ProductType.preWeighed.rawValue)
+                        and p.weighing != \(ProductType.depositReturnVoucher.rawValue)
                         and availability != \(ProductAvailability.notAvailable.rawValue)
                     limit ?
                     """,
