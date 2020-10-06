@@ -103,6 +103,8 @@ final class PaymentMethodSelector {
         } else {
             // method was deleted, check if it was the selected one
             if let selectedDetail = self.selectedPaymentDetail {
+                self.selectedPaymentDetail = nil
+                self.selectedPaymentMethod = nil
                 let allMethods = PaymentMethodDetails.read()
                 if allMethods.firstIndex(of: selectedDetail) == nil {
                     self.setDefaultPaymentMethod()
@@ -142,7 +144,7 @@ final class PaymentMethodSelector {
 
         let projectMethods = SnabbleUI.project.paymentMethods
         let cartMethods = self.shoppingCart.paymentMethods?.map { $0.method } ?? []
-         let availableMethods = cartMethods.isEmpty ? projectMethods : cartMethods
+        let availableMethods = cartMethods.isEmpty ? projectMethods : cartMethods
 
         // prefer in-app payment methods like SEPA or CC
         for method in RawPaymentMethod.orderedMethods {
@@ -172,9 +174,7 @@ final class PaymentMethodSelector {
             }
         }
 
-        self.methodIcon.image = nil
-        self.methodSpinner.startAnimating()
-        self.methodTap.isEnabled = false
+        self.methodSelectionView.isHidden = true
     }
 
     @objc private func methodSelectionTapped(_ gesture: UITapGestureRecognizer) {
