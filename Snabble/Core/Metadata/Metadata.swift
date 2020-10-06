@@ -231,6 +231,15 @@ public struct CheckoutLimits: Decodable {
 public struct ProjectMessages: Decodable {
     public let sepaMandate: String?
     public let sepaMandateShort: String?
+    public let companyNotice: String?
+}
+
+public struct Company: Decodable {
+    public let name: String
+    public let city: String
+    public let country: String
+    public let street: String?
+    public let zip: String?
 }
 
 public struct Project: Decodable {
@@ -267,6 +276,8 @@ public struct Project: Decodable {
 
     public let displayNetPrice: Bool
 
+    public let company: Company?
+
     enum CodingKeys: String, CodingKey {
         case id, name, links
         case currency, decimalDigits, locale, roundingMode
@@ -276,6 +287,7 @@ public struct Project: Decodable {
         case messages = "texts"
         case paymentMethods
         case displayNetPrice
+        case company
     }
 
     public init(from decoder: Decoder) throws {
@@ -313,6 +325,7 @@ public struct Project: Decodable {
         let paymentMethods = try container.decodeIfPresent([String].self, forKey: .paymentMethods) ?? []
         self.paymentMethods = paymentMethods.compactMap { RawPaymentMethod(rawValue: $0) }
         self.displayNetPrice = try container.decodeIfPresent(Bool.self, forKey: .displayNetPrice) ?? false
+        self.company = try container.decodeIfPresent(Company.self, forKey: .company)
     }
 
     private init() {
@@ -337,6 +350,7 @@ public struct Project: Decodable {
         self.messages = nil
         self.paymentMethods = []
         self.displayNetPrice = false
+        self.company = nil
     }
 
     // only used for unit tests!
@@ -362,6 +376,7 @@ public struct Project: Decodable {
         self.messages = nil
         self.paymentMethods = []
         self.displayNetPrice = false
+        self.company = nil
     }
 
     static let none = Project()

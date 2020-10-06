@@ -362,6 +362,11 @@ public enum FailureCause: String {
     case ageVerificationNotSupportedByCard
 }
 
+public struct ExitToken: Decodable {
+    public let format: String // qrCode or code128
+    public let value: String
+}
+
 // MARK: - Checkout Process
 public struct CheckoutProcess: Decodable {
     public let links: ProcessLinks
@@ -378,6 +383,7 @@ public struct CheckoutProcess: Decodable {
     public let pricing: Pricing
     public let checks: [CheckoutCheck]
     public let fulfillments: [Fulfillment]
+    public let exitToken: ExitToken?
 
     public struct Pricing: Decodable {
         public let lineItems: [CheckoutInfo.LineItem]
@@ -398,7 +404,7 @@ public struct CheckoutProcess: Decodable {
         case links, supervisorApproval, paymentApproval, aborted
         case checkoutInfo, paymentMethod, modified, paymentInformation
         case paymentState, orderID, paymentResult
-        case checks, fulfillments, pricing
+        case checks, fulfillments, pricing, exitToken
     }
 
     public init(from decoder: Decoder) throws {
@@ -424,6 +430,7 @@ public struct CheckoutProcess: Decodable {
         let rawFulfillments = try container.decodeIfPresent([FailableDecodable<Fulfillment>].self, forKey: .fulfillments)
         let fulfillments = rawFulfillments?.compactMap { $0.value } ?? []
         self.fulfillments = fulfillments.filter { $0.state != .unknown }
+        self.exitToken = try container.decodeIfPresent(ExitToken.self, forKey: .exitToken)
     }
 
     func fulfillmentsDone() -> Bool {
