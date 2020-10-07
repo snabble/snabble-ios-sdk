@@ -3,6 +3,10 @@
 # v0.14.3
 
 * Adds support for the new `terms` object in an app's metadata.
+* Adds support for the new `company` object in a project's metadata.
+* Adds support for the new `exitToken` object in a checkout process.
+* Adds support for the new product type `depositReturnVoucher`.
+* When a project does not offer any offline payment methods, new payment method details can now be added during checkout.
 
 # v0.14.2
 
