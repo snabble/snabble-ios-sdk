@@ -472,10 +472,11 @@ final class ProductDB: ProductProvider {
         }
     }
 
-    /// create a new temporary database file from `data`
+    /// create a new temporary database file from `dbFile`
     ///
     /// - Parameters:
-    ///   - data: the bytes to write
+    ///   - dbFile: the file to copy from
+    ///   - tempDbPath: the filename to copy to
     /// - Returns: true if the database was written successfully and passes internal integrity checks,
     ///         false otherwise
     private func writeFullDatabase(_ dbFile: URL, _ tempDbPath: String) -> Bool {

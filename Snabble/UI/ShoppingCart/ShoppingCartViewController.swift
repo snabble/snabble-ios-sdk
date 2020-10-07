@@ -415,6 +415,17 @@ public final class ShoppingCartViewController: UIViewController {
             self.delegate?.checkoutAllowed(project) == true,
             let paymentMethod = self.methodSelector?.selectedPaymentMethod
         else {
+            // no payment method selected -> show the "add method" view
+            let methods = MethodProjects.initialize()
+            let selection = MethodSelectionViewController(methods, showFromCart: true, self)
+            if SnabbleUI.implicitNavigation {
+                self.navigationController?.pushViewController(selection, animated: true)
+            } else {
+                let msg = "navigationDelegate may not be nil when using explicit navigation"
+                assert(self.paymentMethodNavigationDelegate != nil, msg)
+                self.paymentMethodNavigationDelegate?.addMethod(fromCart: true)
+            }
+
             return
         }
 
@@ -529,6 +540,8 @@ public final class ShoppingCartViewController: UIViewController {
         self.bottomWrapper?.isHidden = numProducts == 0
 
         self.methodSelector?.updateAvailablePaymentMethods()
+
+        self.checkoutButton?.isEnabled = (totalPrice ?? -1) >= 0
     }
 
     private var notAllMethodsAvailableShown = false

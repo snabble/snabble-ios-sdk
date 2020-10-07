@@ -8,6 +8,7 @@ import UIKit
 
 protocol ScanConfirmationViewDelegate: AnalyticsDelegate {
     func closeConfirmation(_ item: CartItem?)
+    func showMessage(_ msg: ScanMessage)
 }
 
 final class ScanConfirmationView: DesignableView {
@@ -78,10 +79,15 @@ final class ScanConfirmationView: DesignableView {
         let product = scannedProduct.product
         self.productNameLabel.text = product.name
 
+        var embeddedData = scannedProduct.embeddedData
+        if let embed = embeddedData, product.type == .depositReturnVoucher, scannedProduct.encodingUnit == .price {
+            embeddedData = -1 * embed
+        }
+
         let scannedCode = ScannedCode(
             scannedCode: scannedCode,
             transmissionCode: scannedProduct.transmissionCode,
-            embeddedData: scannedProduct.embeddedData,
+            embeddedData: embeddedData,
             encodingUnit: scannedProduct.encodingUnit,
             priceOverride: scannedProduct.priceOverride,
             referencePriceOverride: scannedProduct.referencePriceOverride,
@@ -189,6 +195,16 @@ final class ScanConfirmationView: DesignableView {
 
     @IBAction private func cartTapped(_ button: UIButton) {
         let cart = self.shoppingCart!
+
+        if self.cartItem.product.type == .depositReturnVoucher {
+            // check if we already have this exact scanned code in the cart
+            let index = cart.items.firstIndex(where: { $0.scannedCode.code == self.cartItem.scannedCode.code })
+            if index != nil {
+                let msg = ScanMessage("Snabble.Scanner.duplicateDepositScanned".localized())
+                self.delegate?.showMessage(msg)
+                return
+            }
+        }
 
         if cart.quantity(of: self.cartItem) == 0 || !self.cartItem.canMerge {
             let item = self.cartItem!

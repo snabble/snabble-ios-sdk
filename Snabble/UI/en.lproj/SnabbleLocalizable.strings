@@ -74,6 +74,8 @@
 
 "Snabble.Scanner.scannedAgeRestrictedProduct" = "This is an age-restricted product, your age will be verified during checkout.";
 
+"Snabble.Scanner.duplicateDepositScanned" = "Each deposit slip can only be scanned once.";
+
 "Snabble.Scanner.scanningTitle" = "Scan Barcode";
 
 "Snabble.Scanner.title" = "Scanner";
