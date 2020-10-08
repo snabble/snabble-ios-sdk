@@ -294,11 +294,26 @@ public enum CheckState: String, Codable, UnknownCaseRepresentable {
     case successful
     case failed
 
-    public static let unknownCase = CheckState.unknown
+    public static let unknownCase = Self.unknown
 }
 
-public enum CheckType: String, Codable {
+public enum CheckType: String, Codable, UnknownCaseRepresentable {
+    case unknown
+
     case minAge = "min_age"
+
+    public static let unknownCase = Self.unknown
+}
+
+public enum CheckPerformer: String, Decodable, UnknownCaseRepresentable {
+    case unknown
+
+    case app
+    case backend
+    case supervisor
+    case payment
+
+    public static let unknownCase = Self.unknown
 }
 
 public struct CheckoutCheck: Decodable {
@@ -309,7 +324,10 @@ public struct CheckoutCheck: Decodable {
     public let type: CheckType
 
     // type-specific properties
-    public let requiredAge: Int? // set for min_age
+
+    // properties for min_age
+    public let requiredAge: Int?
+    public let performedBy: CheckPerformer?
 
     public struct CheckLinks: Decodable {
         public let `self`: Link

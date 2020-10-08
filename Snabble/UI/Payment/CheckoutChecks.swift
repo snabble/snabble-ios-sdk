@@ -37,11 +37,28 @@ struct CheckoutChecks {
 
     private func performCheck(_ check: CheckoutCheck) -> Bool {
         switch check.type {
+        case .unknown: return false
         case .minAge: return self.performAgeCheck(check)
         }
     }
 
     private func performAgeCheck(_ check: CheckoutCheck) -> Bool {
+        switch check.performedBy {
+        case .app:
+            // DIY
+            return performAppAgeCheck(check)
+        case .none, .unknown, .backend, .payment, .supervisor:
+            // check for failure, else continue waiting
+            switch check.state {
+            case .failed:
+                return true
+            case .pending, .successful, .postponed, .unknown:
+                return false
+            }
+        }
+    }
+
+    private func performAppAgeCheck(_ check: CheckoutCheck) -> Bool {
         switch check.state {
         case .pending:
             let alert = UIAlertController(title: "Snabble.ageVerification.pending.title".localized(),
