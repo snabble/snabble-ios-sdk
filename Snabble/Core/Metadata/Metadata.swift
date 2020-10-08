@@ -192,7 +192,9 @@ public enum BarcodeDetectorType: String, Decodable, UnknownCaseRepresentable {
     public static let unknownCase = BarcodeDetectorType.default
 }
 
-public enum ScanFormat: String, Decodable, CaseIterable {
+public enum ScanFormat: String, Codable, CaseIterable, UnknownCaseRepresentable {
+    case unknown
+
     // 1d codes
     case ean13      // includes UPC-A
     case ean8
@@ -203,6 +205,8 @@ public enum ScanFormat: String, Decodable, CaseIterable {
     // 2d codes
     case qr
     case dataMatrix = "datamatrix"
+
+    public static let unknownCase = Self.unknown
 }
 
 public struct CustomerCardInfo: Decodable {

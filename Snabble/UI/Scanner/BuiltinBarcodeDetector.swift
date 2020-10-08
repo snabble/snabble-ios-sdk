@@ -11,7 +11,7 @@ extension ScanFormat {
     var avType: AVMetadataObject.ObjectType {
         switch self {
         case .ean8: return .ean8
-        case .ean13: return .ean13
+        case .unknown, .ean13: return .ean13
         case .code128: return .code128
         case .code39: return .code39
         case .itf14: return .itf14

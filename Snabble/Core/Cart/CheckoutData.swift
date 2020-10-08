@@ -380,8 +380,8 @@ public enum FailureCause: String {
     case ageVerificationNotSupportedByCard
 }
 
-public struct ExitToken: Decodable {
-    public let format: String // qrCode or code128
+public struct ExitToken: Codable {
+    public let format: ScanFormat
     public let value: String
 }
 
