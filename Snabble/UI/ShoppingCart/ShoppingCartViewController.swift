@@ -406,6 +406,7 @@ public final class ShoppingCartViewController: UIViewController {
     }
 
     @IBAction private func checkoutTapped(_ sender: UIButton) {
+        self.isEditing = false
         self.startCheckout()
     }
 
