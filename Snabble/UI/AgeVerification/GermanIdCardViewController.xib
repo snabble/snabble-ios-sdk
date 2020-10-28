@@ -1,10 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="16096" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="17156" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
     <device id="retina4_0" orientation="portrait" appearance="dark"/>
     <dependencies>
         <deployment identifier="iOS"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="16086"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="17126"/>
         <capability name="Safe area layout guides" minToolsVersion="9.0"/>
+        <capability name="System colors in document resources" minToolsVersion="11.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <objects>
@@ -50,7 +51,7 @@
                                     <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                     <textInputTraits key="textInputTraits" keyboardType="numberPad"/>
                                 </textField>
-                                <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="ebc-Xn-Xpd">
+                                <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="ebc-Xn-Xpd">
                                     <rect key="frame" x="16" y="356.5" width="288" height="48"/>
                                     <constraints>
                                         <constraint firstAttribute="height" constant="48" id="2Ar-Ir-Fcb"/>
@@ -62,7 +63,7 @@
                                     </connections>
                                 </button>
                             </subviews>
-                            <color key="backgroundColor" systemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
+                            <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                             <constraints>
                                 <constraint firstItem="odX-kZ-Hvl" firstAttribute="leading" relation="greaterThanOrEqual" secondItem="fCI-vx-QVU" secondAttribute="leading" constant="16" id="3N5-sp-h19"/>
                                 <constraint firstItem="ybl-iT-Ixm" firstAttribute="top" secondItem="fCI-vx-QVU" secondAttribute="top" constant="16" id="97m-jm-2pc"/>
@@ -89,7 +90,8 @@
                     </constraints>
                 </scrollView>
             </subviews>
-            <color key="backgroundColor" systemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
+            <viewLayoutGuide key="safeArea" id="fnl-2z-Ty3"/>
+            <color key="backgroundColor" systemColor="systemBackgroundColor"/>
             <constraints>
                 <constraint firstItem="rBb-16-TJx" firstAttribute="top" secondItem="fnl-2z-Ty3" secondAttribute="top" id="NZ9-TY-QBf"/>
                 <constraint firstItem="rBb-16-TJx" firstAttribute="leading" secondItem="fnl-2z-Ty3" secondAttribute="leading" id="OnY-pK-ygW"/>
@@ -97,11 +99,13 @@
                 <constraint firstItem="fnl-2z-Ty3" firstAttribute="bottom" secondItem="rBb-16-TJx" secondAttribute="bottom" id="kTA-eN-748"/>
                 <constraint firstItem="fCI-vx-QVU" firstAttribute="width" secondItem="i5M-Pr-FkT" secondAttribute="width" id="w6t-7x-dBg"/>
             </constraints>
-            <viewLayoutGuide key="safeArea" id="fnl-2z-Ty3"/>
             <point key="canvasLocation" x="138.75" y="153.16901408450704"/>
         </view>
     </objects>
     <resources>
         <image name="SnabbleSDK/personalausweis" width="343" height="217"/>
+        <systemColor name="systemBackgroundColor">
+            <color white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+        </systemColor>
     </resources>
 </document>

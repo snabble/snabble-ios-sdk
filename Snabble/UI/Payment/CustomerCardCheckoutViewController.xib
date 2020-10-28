@@ -1,10 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="15705" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="17156" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
     <device id="retina6_1" orientation="portrait" appearance="light"/>
     <dependencies>
         <deployment identifier="iOS"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="15706"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="17126"/>
         <capability name="Safe area layout guides" minToolsVersion="9.0"/>
+        <capability name="System colors in document resources" minToolsVersion="11.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <objects>
@@ -41,7 +42,7 @@
                                             </constraints>
                                         </imageView>
                                     </subviews>
-                                    <color key="backgroundColor" systemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
+                                    <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                                     <constraints>
                                         <constraint firstItem="gbu-lk-I7u" firstAttribute="top" secondItem="jZg-vE-kcn" secondAttribute="top" constant="16" id="136-X4-RDT"/>
                                         <constraint firstItem="gbu-lk-I7u" firstAttribute="centerX" secondItem="jZg-vE-kcn" secondAttribute="centerX" id="6J5-uU-XBP"/>
@@ -56,7 +57,7 @@
                                             <rect key="frame" x="195" y="3" width="24" height="24"/>
                                         </imageView>
                                     </subviews>
-                                    <color key="backgroundColor" systemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
+                                    <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                                     <constraints>
                                         <constraint firstItem="gya-en-S5G" firstAttribute="centerY" secondItem="0c6-DJ-N1R" secondAttribute="centerY" id="32H-2d-eZZ"/>
                                         <constraint firstAttribute="height" constant="30" id="eWE-FZ-Qt1"/>
@@ -68,7 +69,7 @@
                                     <subviews>
                                         <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="KlQ-wK-hiy" customClass="EANView" customModule="Snabble" customModuleProvider="target">
                                             <rect key="frame" x="94" y="16" width="226" height="90"/>
-                                            <color key="backgroundColor" systemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
+                                            <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                                             <constraints>
                                                 <constraint firstAttribute="width" constant="226" id="Adz-PT-e0L"/>
                                                 <constraint firstAttribute="height" constant="90" id="iq7-lT-wNU"/>
@@ -81,7 +82,7 @@
                                             </userDefinedRuntimeAttributes>
                                         </view>
                                     </subviews>
-                                    <color key="backgroundColor" systemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
+                                    <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                                     <constraints>
                                         <constraint firstItem="KlQ-wK-hiy" firstAttribute="centerX" secondItem="4si-t7-uZk" secondAttribute="centerX" id="9uf-gM-XzT"/>
                                         <constraint firstItem="KlQ-wK-hiy" firstAttribute="top" secondItem="4si-t7-uZk" secondAttribute="top" constant="16" id="ZNF-e7-vhv"/>
@@ -99,7 +100,7 @@
                         <constraint firstItem="oip-A2-TZM" firstAttribute="centerY" secondItem="1XK-Co-A0T" secondAttribute="centerY" id="gvG-Gi-Cn0"/>
                     </constraints>
                 </view>
-                <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="xcE-5B-t8q">
+                <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="xcE-5B-t8q">
                     <rect key="frame" x="16" y="798" width="382" height="48"/>
                     <constraints>
                         <constraint firstAttribute="height" constant="48" id="6YG-qp-JoA"/>
@@ -111,7 +112,8 @@
                     </connections>
                 </button>
             </subviews>
-            <color key="backgroundColor" systemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
+            <viewLayoutGuide key="safeArea" id="hlh-RL-0Du"/>
+            <color key="backgroundColor" systemColor="systemBackgroundColor"/>
             <constraints>
                 <constraint firstAttribute="trailing" secondItem="xcE-5B-t8q" secondAttribute="trailing" constant="16" id="3eV-oY-gH8"/>
                 <constraint firstItem="xcE-5B-t8q" firstAttribute="leading" secondItem="i5M-Pr-FkT" secondAttribute="leading" constant="16" id="42G-qz-baI"/>
@@ -123,12 +125,14 @@
             </constraints>
             <nil key="simulatedTopBarMetrics"/>
             <nil key="simulatedBottomBarMetrics"/>
-            <viewLayoutGuide key="safeArea" id="hlh-RL-0Du"/>
             <point key="canvasLocation" x="86.25" y="161.61971830985917"/>
         </view>
     </objects>
     <resources>
         <image name="SnabbleSDK/arrow-up" width="24" height="24"/>
         <image name="SnabbleSDK/payment-method-checkstand" width="150" height="40"/>
+        <systemColor name="systemBackgroundColor">
+            <color white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+        </systemColor>
     </resources>
 </document>
