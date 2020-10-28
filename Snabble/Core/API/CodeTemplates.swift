@@ -576,9 +576,8 @@ public enum CodeMatcher {
 
         let templates = overrides.compactMap { candidates[$0.id] }
         guard
-            let template = templates.first,
-            let result = template.match(code),
-            let overrideCode = overrides.first(where: { $0.id == template.id })
+            let result = templates.compactMap({ $0.match(code) }).first,
+            let overrideCode = overrides.first(where: { $0.id == result.template.id })
         else {
             return nil
         }

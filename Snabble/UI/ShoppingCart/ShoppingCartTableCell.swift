@@ -207,7 +207,8 @@ final class ShoppingCartTableCell: UITableViewCell {
         self.unitsLabel.text = unitDisplay
 
         if let defaultItem = lineItems.first(where: { $0.type == .default }) {
-            let amount = defaultItem.weight ?? defaultItem.amount
+            let units = defaultItem.units ?? 1
+            let amount = defaultItem.weight ?? (defaultItem.amount * units)
             self.quantityLabel.text = "\(amount)\(unitDisplay)"
             self.displayLineItemPrice(item.product, defaultItem, lineItems)
         } else {
@@ -232,11 +233,13 @@ final class ShoppingCartTableCell: UITableViewCell {
                 let total = formatter.format(mainItem.totalPrice ?? 0)
                 self.priceLabel.text = "× \(single)/\(unit) = \(total)"
             } else {
-                if mainItem.amount == 1 {
+                let units = mainItem.units ?? 1
+                let amount = mainItem.amount * units
+                if amount == 1 {
                     let total = formatter.format(mainItem.totalPrice ?? 0)
                     self.priceLabel.text = "\(total)"
                 } else {
-                    let single = formatter.format(mainItem.itemPrice ?? 0)
+                    let single = formatter.format(mainItem.price ?? 0)
                     let total = formatter.format(mainItem.totalPrice ?? 0)
                     self.priceLabel.text = "× \(single) = \(total)"
                 }

@@ -234,7 +234,7 @@ public struct CheckoutInfo: Decodable {
     public struct LineItem: Codable {
         public let id: String
         public let sku: String
-        public let name: String
+        public let name: String?
         public let amount: Int
         public let price: Int?
         public let weight: Int?
