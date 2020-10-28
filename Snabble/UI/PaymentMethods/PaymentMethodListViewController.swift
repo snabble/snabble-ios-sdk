@@ -317,4 +317,10 @@ extension PaymentMethodListViewController: UIEmptyStateDelegate, UIEmptyStateDat
         self.addButtonTapped(button)
     }
 
+    public func emptyStateViewWillShow(view: UIView) {
+        if let emptyView = view as? UIEmptyStateView {
+            emptyView.contentView.backgroundColor = .clear
+        }
+    }
+
 }
