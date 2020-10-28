@@ -7,6 +7,7 @@
 * Adds support for the new `exitToken` object in a checkout process.
 * Adds support for the new product type `depositReturnVoucher`.
 * When a project does not offer any offline payment methods, new payment method details can now be added during checkout.
+* Fixes a bug where price override codes were sometimes not correctly parsed
 
 # v0.14.2
 
