@@ -3,26 +3,26 @@ PODS:
   - GRDB.swift (4.14.0):
     - GRDB.swift/standard (= 4.14.0)
   - GRDB.swift/standard (4.14.0)
-  - KeychainAccess (4.2.0)
+  - KeychainAccess (4.2.1)
   - OneTimePassword (3.2.0):
     - Base32 (~> 1.1.2)
   - SDCAlertView (11.1.2)
-  - Snabble (0.14.2):
-    - Snabble/Core (= 0.14.2)
-    - Snabble/UI (= 0.14.2)
-  - Snabble/Core (0.14.2):
+  - Snabble (0.14.3):
+    - Snabble/Core (= 0.14.3)
+    - Snabble/UI (= 0.14.3)
+  - Snabble/Core (0.14.3):
     - GRDB.swift (~> 4)
     - KeychainAccess (~> 4)
     - OneTimePassword (~> 3)
     - TrustKit (~> 1)
-    - Zip (~> 1)
-  - Snabble/UI (0.14.2):
+    - Zip (~> 2)
+  - Snabble/UI (0.14.3):
     - SDCAlertView (~> 11.1)
     - Snabble/Core
     - UIEmptyState (~> 4)
-  - TrustKit (1.6.5)
+  - TrustKit (1.7.0)
   - UIEmptyState (4.0.1)
-  - Zip (1.1.0)
+  - Zip (2.1.1)
 
 DEPENDENCIES:
   - Snabble (from `../`)
@@ -45,14 +45,14 @@ EXTERNAL SOURCES:
 SPEC CHECKSUMS:
   Base32: 163c298644d184e89ca4e00a996bad6bf5166390
   GRDB.swift: 8cc3ab7c8b8b4ac1761deb8dca4b51c1c9d429f8
-  KeychainAccess: 3f760109aa99b05d0f231e28b22642da7153e38a
+  KeychainAccess: 9b07f665298d13c3a85881bd3171f6f49b8151c1
   OneTimePassword: c00ecc908e67e6c5bfda9d50b0b2e4696d0b066e
   SDCAlertView: 26b5dabdd3c2e6f16c88bad231c84447fa42b0dc
-  Snabble: 40311794992c0a5a9ccb8c874796812ca3902005
-  TrustKit: 073855e3adecd317417bda4ac9e9ac54a2e3b9f2
+  Snabble: d009f12383b18ac53063c16cef0a205e46849742
+  TrustKit: dac38bb37e49bdfeca41b1a19d020da38017b51c
   UIEmptyState: 767376694d9402452fb3c0a5a5283176c6a53c92
-  Zip: 8877eede3dda76bcac281225c20e71c25270774c
+  Zip: 414f59909701fda9a84ab774ebe0f5449b1082cc
 
 PODFILE CHECKSUM: fa5d7ef3ccb696fe5abe67cfcf36a0a7c0c77338
 
-COCOAPODS: 1.9.3
+COCOAPODS: 1.10.0
