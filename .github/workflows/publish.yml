@@ -9,11 +9,16 @@ jobs:
     runs-on: macOS-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@master
+        uses: actions/checkout@v2
+
+      - name: Setup
+        run: sudo xcode-select --switch /Applications/Xcode_12.1.app/Contents/Developer
+
       - name: Publish
         env:
           COCOAPODS_TRUNK_TOKEN: ${{ secrets.COCOAPODS_TRUNK_TOKEN }}
-        run: pod trunk push Snabble.podspec --allow-warnings
+        run: pod trunk push Snabble.podspec
+
       - name: Slack Notification
         uses: homoluctus/slatify@master
         if: always()

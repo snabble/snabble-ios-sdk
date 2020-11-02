@@ -1,5 +1,9 @@
 ## snabble iOS SDK Changelog
 
+# v0.14.4
+
+* Due to compatibility issues, the update of the `Zip` dependency to v2 was reverted. For the remainder of 2020, snabble will continue to use v1 of the library. The update to v2 will be re-introduced in January 2021.
+
 # v0.14.3
 
 * Adds support for the new `terms` object in an app's metadata.

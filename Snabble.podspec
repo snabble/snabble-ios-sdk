@@ -5,7 +5,7 @@
 
 Pod::Spec.new do |s|
   s.name = 'Snabble'
-  s.version = '0.14.3'
+  s.version = '0.14.4'
   s.summary = 'The snabble iOS SDK'
 
   s.description = <<-DESC
@@ -27,7 +27,7 @@ Pod::Spec.new do |s|
     core.source_files = 'Snabble/Core/**/*.swift'
 
     core.dependency 'GRDB.swift', '~> 4'
-    core.dependency 'Zip', '~> 2'
+    core.dependency 'Zip', '~> 1'
     core.dependency 'OneTimePassword', '~> 3'
     core.dependency 'TrustKit', '~> 1'
     core.dependency 'KeychainAccess', '~> 4'
