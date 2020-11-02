@@ -261,13 +261,16 @@ public final class PaymentProcess {
 extension PaymentProcess {
 
     public func start(_ method: PaymentMethod, completion: @escaping (RawResult<CheckoutProcess, SnabbleError>) -> Void ) {
-        self.signedCheckoutInfo.createCheckoutProcess(SnabbleUI.project, paymentMethod: method, timeout: 20) { result in
-            if case let Result.success(process) = result.result {
+        self.signedCheckoutInfo.createCheckoutProcess(SnabbleUI.project, id: self.cart.uuid, paymentMethod: method, timeout: 20) { result in
+            switch result.result {
+            case .success(let process):
                 let checker = CheckoutChecks(process)
                 let stopProcess = checker.handleChecks()
                 if stopProcess {
                     return
                 }
+            case .failure:
+                self.cart.generateNewUuid()
             }
             completion(result)
         }
@@ -296,7 +299,7 @@ extension PaymentProcess {
         UIApplication.shared.beginIgnoringInteractionEvents()
         self.startBlurOverlayTimer()
 
-        self.signedCheckoutInfo.createCheckoutProcess(SnabbleUI.project, paymentMethod: method, timeout: 20) { result in
+        self.signedCheckoutInfo.createCheckoutProcess(SnabbleUI.project, id: self.cart.uuid, paymentMethod: method, timeout: 20) { result in
             self.hudTimer?.invalidate()
             self.hudTimer = nil
             UIApplication.shared.endIgnoringInteractionEvents()
@@ -316,6 +319,7 @@ extension PaymentProcess {
                     self.delegate.showWarningMessage("Snabble.Payment.errorStarting".localized())
                 }
             case .failure(let error):
+                self.cart.generateNewUuid()
                 self.startFailed(method, error, completion)
             }
         }

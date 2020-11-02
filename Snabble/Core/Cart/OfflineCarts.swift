@@ -84,7 +84,7 @@ public class OfflineCarts {
             cart.createCheckoutInfo(project, timeout: 2) { result in
                 switch result {
                 case .success(let info):
-                    info.createCheckoutProcess(project, paymentMethod: .qrCodeOffline, finalizedAt: savedCart.finalizedAt) { result in
+                    info.createCheckoutProcess(project, id: cart.uuid, paymentMethod: .qrCodeOffline, finalizedAt: savedCart.finalizedAt) { result in
                         switch result.result {
                         case .success:
                             mutex.lock()
