@@ -104,7 +104,17 @@ extension SignedCheckoutInfo {
 
                 project.performRaw(request) { (result: RawResult<CheckoutProcess, SnabbleError>) in
                     // TODO: GET the checkout when PUT gave us a 403
-                    completion(result)
+                    switch result.result {
+                    case .success:
+                        completion(result)
+                    case .failure:
+                        if result.statusCode == 403 {
+                            // GET
+                            #warning("get")
+                        } else {
+                            completion(result)
+                        }
+                    }
                 }
             }
         } catch {
