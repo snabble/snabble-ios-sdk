@@ -260,6 +260,7 @@ final class PaymentMethodSelector {
     private func actionsFor(_ method: RawPaymentMethod) -> [PaymentMethodAction] {
         let isProjectMethod = SnabbleUI.project.paymentMethods.contains(method)
         let cartMethod = self.shoppingCart.paymentMethods?.first { $0.method == method }
+        let isCartMethod = cartMethod != nil
         let userMethods = PaymentMethodDetails.read().filter { $0.rawMethod == method }
         let isUserMethod = !userMethods.isEmpty
 
@@ -272,12 +273,18 @@ final class PaymentMethodSelector {
             }
 
             let actions = userMethods.map { userMethod -> PaymentMethodAction in
+                var color = self.textColor
                 if case let PaymentMethodUserData.tegutEmployeeCard(data) = userMethod.methodData {
                     detailText = data.cardNumber
                 }
 
-                let title = self.title(userMethod.displayName, detailText, self.textColor)
-                return PaymentMethodAction(title, method, userMethod, true)
+                if !isCartMethod {
+                    detailText = "Snabble.Shoppingcart.notForThisPurchase".localized()
+                    color = self.subTitleColor
+                }
+
+                let title = self.title(userMethod.displayName, detailText, color)
+                return PaymentMethodAction(title, method, userMethod, isCartMethod)
             }
             return actions
 
@@ -292,7 +299,7 @@ final class PaymentMethodSelector {
                 }
             }
 
-            if cartMethod == nil && isUserMethod {
+            if !isCartMethod && isUserMethod {
                 let title = self.title(method.displayName, "Snabble.Shoppingcart.notForThisPurchase".localized(), self.subTitleColor)
                 let action = PaymentMethodAction(title, method, nil, false)
                 return [action]
