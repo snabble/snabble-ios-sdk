@@ -629,7 +629,7 @@ extension ScannerViewController {
 
                 completion(.success(newResult))
             case .failure(let error):
-                if error == .notFound, format == .code128, let gs1 = self.checkValidGS1(code) {
+                if error == .notFound, let gs1 = self.checkValidGS1(code) {
                     return self.productForGS1(gs1, code, completion: completion)
                 } else {
                     let event = AppEvent(scannedCode: code, codes: codes, project: project)
