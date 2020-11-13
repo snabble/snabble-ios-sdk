@@ -8,6 +8,7 @@ disabled_rules:
  - line_length
  - function_body_length
  - file_length
+ - inclusive_language
 
 opt_in_rules:
  - private_outlet
