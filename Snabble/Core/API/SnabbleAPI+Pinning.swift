@@ -12,14 +12,29 @@ import TrustKit
 extension SnabbleAPI {
 
     private static let CAHashes = [
-        // let's encrypt
-        "YLh1dUR9y6Kja30RrAn7JKnbQG/uEtLMkBgFF2Fuihg=", "sRHdihwgkaib1P1gxX8HFszlD+7/gTfNvuAybgLPNis=",
+        // Let's Encrypt X3 cross-signed
+        "YLh1dUR9y6Kja30RrAn7JKnbQG/uEtLMkBgFF2Fuihg=",
+        // Let's Encrypt X4 cross-signed
+        "sRHdihwgkaib1P1gxX8HFszlD+7/gTfNvuAybgLPNis=",
+        // Let's Encrypt E1
+        "J2/oqMTsdhFWW/n85tys6b4yDBtb6idZayIEBx7QTxA=",
+        // Let's Encrypt E2
+        "vZNucrIS7293MQLGt304+UKXMi78JTlrwyeUIuDIknA=",
+        // Let's Encrypt R3 cross-signed
+        "jQJTbIh0grw0/1TkHSumWb+Fs0Ggogr621gT3PvPKG0=",
+        // Let's Encrypt R4 cross-signed
+        "5VReIRNHJBiRxVSgOTTN6bdJZkpZ0m1hX+WPd5kPLQM=",
+
         // backup CAs
-        "C5+lpZ7tcVwmwQIMcRtPbsQtWLABXhQzejna0wHFr8M=", "lCppFqbkrlJ3EcVFAkeip0+44VaoJUymbnOaEUk7tEU=",
-        "r/mIkG3eEpVdm+u/ko/cwxzOMo1bk4TyHIlByibiA5E=", "i7WTqTvh0OioIruIfFR4kMPnBqrS2rdiVPl/s2uC/CY=",
-        "WoiWRyIOVNa9ihaBciRSC7XHjliYS9VwUGOIud4PB18=", "h6801m+z8v3zbgkRHpq6L29Esgfzhj89C1SyUCOQmqU=",
-        "q5hJUnat8eyv8o81xTBIeB5cFxjaucjmelBPT2pRMo8=", "47DEQpj8HBSa+/TImW+5JCeuQeRkm5NMpJWZG3hSuFU=",
-        "SQVGZiOrQXi+kqxcvWWE96HhfydlLVqFr4lQTqI5qqo="
+        "C5+lpZ7tcVwmwQIMcRtPbsQtWLABXhQzejna0wHFr8M=", // ISRG Root X1
+        "lCppFqbkrlJ3EcVFAkeip0+44VaoJUymbnOaEUk7tEU=", // AddTrust External Root
+        "r/mIkG3eEpVdm+u/ko/cwxzOMo1bk4TyHIlByibiA5E=", // DigiCert Global Root
+        "i7WTqTvh0OioIruIfFR4kMPnBqrS2rdiVPl/s2uC/CY=", // DigiCert Global Root G2
+        "WoiWRyIOVNa9ihaBciRSC7XHjliYS9VwUGOIud4PB18=", // DigiCert HA Root
+        "h6801m+z8v3zbgkRHpq6L29Esgfzhj89C1SyUCOQmqU=", // GeoTrust Global
+        "q5hJUnat8eyv8o81xTBIeB5cFxjaucjmelBPT2pRMo8=", // GeoTrust PCA G3 Root
+        "47DEQpj8HBSa+/TImW+5JCeuQeRkm5NMpJWZG3hSuFU=", // GeoTrust PCA G4
+        "SQVGZiOrQXi+kqxcvWWE96HhfydlLVqFr4lQTqI5qqo="  // GeoTrust PCA
     ]
 
     static func initializeTrustKit() {
@@ -49,7 +64,7 @@ extension SnabbleAPI {
 
         TrustKit.initSharedInstance(withConfiguration: trustKitConfig)
 
-        TrustKit.sharedInstance().pinningValidatorCallback = { result, hostname, policy in
+        TrustKit.sharedInstance().pinningValidatorCallback = { result, hostname, _ in
             if result.finalTrustDecision != .shouldAllowConnection {
                 Log.error("untrusted connection to \(hostname) denied: eval=\(result.evaluationResult.rawValue) final=\(result.finalTrustDecision.rawValue)")
             }
