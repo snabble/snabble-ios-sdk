@@ -42,19 +42,19 @@ extension SnabbleAPI {
             kTSKSwizzleNetworkDelegates: false,
             kTSKPinnedDomains: [
                 "snabble.io": [
-                    kTSKExpirationDate: "2021-03-17",
+                    kTSKExpirationDate: "2025-09-15",
                     kTSKIncludeSubdomains: true,
                     kTSKDisableDefaultReportUri: true,
                     kTSKPublicKeyHashes: SnabbleAPI.CAHashes
                 ],
                 "snabble-testing.io": [
-                    kTSKExpirationDate: "2021-03-17",
+                    kTSKExpirationDate: "2025-09-15",
                     kTSKIncludeSubdomains: true,
                     kTSKDisableDefaultReportUri: true,
                     kTSKPublicKeyHashes: SnabbleAPI.CAHashes
                 ],
                 "snabble-staging.io": [
-                    kTSKExpirationDate: "2021-03-17",
+                    kTSKExpirationDate: "2025-09-15",
                     kTSKIncludeSubdomains: true,
                     kTSKDisableDefaultReportUri: true,
                     kTSKPublicKeyHashes: SnabbleAPI.CAHashes
