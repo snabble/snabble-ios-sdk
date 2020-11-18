@@ -1,5 +1,10 @@
 ## snabble iOS SDK Changelog
 
+# v0.14.6
+
+* Updates the CA hashes that are used for certificate pinning
+* Scanning GS1 codes no longer requires use of Code128
+
 # v0.14.5
 
 * Fixes a bug where payment methods could be erroneously shown as valid for a purchase.
