@@ -111,6 +111,7 @@ public final class QRCheckoutViewController: UIViewController {
         self.process.abort(SnabbleUI.project) { result in
             switch result {
             case .success:
+                self.cart.generateNewUuid()
                 self.delegate.track(.paymentCancelled)
 
                 if SnabbleUI.implicitNavigation {
@@ -139,6 +140,8 @@ public final class QRCheckoutViewController: UIViewController {
 
         if success {
             self.cart.removeAll(endSession: true, keepBackup: false)
+        } else {
+            self.cart.generateNewUuid()
         }
 
         SnabbleAPI.fetchAppUserData(SnabbleUI.project.id)

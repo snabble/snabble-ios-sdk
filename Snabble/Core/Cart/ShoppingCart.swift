@@ -17,6 +17,8 @@ public final class ShoppingCart: Codable {
     public let projectId: String
     public let shopId: String
 
+    public private(set) var uuid: String
+
     internal var checkoutInfoTask: URLSessionDataTask?
 
     fileprivate var backupItems: [CartItem]?
@@ -40,7 +42,7 @@ public final class ShoppingCart: Codable {
     public static let maxAmount = 9999
 
     enum CodingKeys: String, CodingKey {
-        case items, session, lastSaved, backendCartInfo, projectId, shopId, backupItems, backupSession, customerCard, maxAge
+        case items, session, lastSaved, backendCartInfo, projectId, shopId, uuid, backupItems, backupSession, customerCard, maxAge
     }
 
     public init(from decoder: Decoder) throws {
@@ -51,6 +53,7 @@ public final class ShoppingCart: Codable {
         self.backendCartInfo = try container.decodeIfPresent(.backendCartInfo)
         self.projectId = try container.decode(.projectId)
         self.shopId = try container.decode(.shopId)
+        self.uuid = try container.decodeIfPresent(.uuid) ?? UUID().uuidString
         self.backupItems = try container.decodeIfPresent(.backupItems)
         self.backupSession = try container.decodeIfPresent(.backupSession)
         self.customerCard = try container.decodeIfPresent(.customerCard)
@@ -68,6 +71,7 @@ public final class ShoppingCart: Codable {
         try container.encodeIfPresent(self.backendCartInfo, forKey: .backendCartInfo)
         try container.encode(self.projectId, forKey: .projectId)
         try container.encode(self.shopId, forKey: .shopId)
+        try container.encode(self.uuid, forKey: .uuid)
         try container.encodeIfPresent(self.backupItems, forKey: .backupItems)
         try container.encodeIfPresent(self.backupSession, forKey: .backupSession)
         try container.encodeIfPresent(self.customerCard, forKey: .customerCard)
@@ -84,12 +88,15 @@ public final class ShoppingCart: Codable {
         self.sorter = config.sorter
 
         self.session = ""
+        self.uuid = ""
         self.items = []
+        self.generateNewUuid()
 
         if let savedCart = self.load() {
             self.items = savedCart.items
             self.session = savedCart.session
             self.customerCard = savedCart.customerCard
+            self.uuid = savedCart.uuid
 
             self.backupItems = savedCart.backupItems
             self.backupSession = savedCart.backupSession
@@ -266,6 +273,11 @@ public final class ShoppingCart: Codable {
         self.save(postEvent: false)
         CartEvent.cart(self)
     }
+
+    func generateNewUuid() {
+        self.uuid = UUID().uuidString
+        print("new cart uuid: \(self.uuid)")
+    }
 }
 
 // MARK: - Persistence
@@ -278,30 +290,29 @@ extension ShoppingCart {
 
     /// persist this shopping cart to disk
     private func save(postEvent: Bool = true) {
-        guard let directory = self.directory else {
-            return
-        }
-
         if postEvent {
             self.backendCartInfo = nil
+            self.generateNewUuid()
         }
 
-        do {
-            let fileManager = FileManager.default
-            if !fileManager.fileExists(atPath: directory) {
-                try fileManager.createDirectory(atPath: directory, withIntermediateDirectories: true, attributes: nil)
-            }
+        if let directory = self.directory {
+            do {
+                let fileManager = FileManager.default
+                if !fileManager.fileExists(atPath: directory) {
+                    try fileManager.createDirectory(atPath: directory, withIntermediateDirectories: true, attributes: nil)
+                }
 
-            self.lastSaved = Date()
-            if self.session.isEmpty {
-                self.session = UUID().uuidString
-                CartEvent.sessionStart(self)
-            }
+                self.lastSaved = Date()
+                if self.session.isEmpty {
+                    self.session = UUID().uuidString
+                    CartEvent.sessionStart(self)
+                }
 
-            let data = try JSONEncoder().encode(self)
-            try data.write(to: self.cartUrl(directory), options: .atomic)
-        } catch let error {
-            Log.error("error saving cart \(self.projectId): \(error)")
+                let data = try JSONEncoder().encode(self)
+                try data.write(to: self.cartUrl(directory), options: .atomic)
+            } catch let error {
+                Log.error("error saving cart \(self.projectId): \(error)")
+            }
         }
 
         if postEvent {
