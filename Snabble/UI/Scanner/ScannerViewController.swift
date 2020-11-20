@@ -660,7 +660,8 @@ extension ScannerViewController {
             switch result {
             case .success(let lookupResult):
                 let priceDigits = SnabbleUI.project.decimalDigits
-                let (embeddedData, encodingUnit) = gs1.getEmbeddedData(for: lookupResult.encodingUnit, priceDigits)
+                let roundingMode = SnabbleUI.project.roundingMode
+                let (embeddedData, encodingUnit) = gs1.getEmbeddedData(for: lookupResult.encodingUnit, priceDigits, roundingMode)
                 let result = ScannedProduct(lookupResult.product,
                                             gtin,
                                             originalCode,

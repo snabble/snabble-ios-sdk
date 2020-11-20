@@ -182,25 +182,31 @@ extension GS1Code {
         return nil
     }
 
-    func price(_ digits: Int) -> Int? {
-        guard let price = self.price else {
+    func price(_ digits: Int, _ roundingMode: RoundingMode) -> Int? {
+        guard let priceData = self.price else {
             return nil
         }
 
+        let price = priceData.price
         let newPrice: Decimal
-
-        // number of decimal digits in the data
-        let priceDigits = -price.price.exponent
-        if priceDigits == 0 || priceDigits >= digits {
-            newPrice = price.price * pow(Decimal(10), digits)
+        if price.exponent <= 0 {
+            newPrice = price * pow(Decimal(10), digits)
         } else {
-            newPrice = price.price * pow(Decimal(10), digits - priceDigits)
+            newPrice = price * pow(Decimal(10), digits - price.exponent)
         }
 
-        return (newPrice as NSDecimalNumber).intValue
+        let roundingHandler = NSDecimalNumberHandler(roundingMode: roundingMode.mode,
+                                                     scale: 0,
+                                                     raiseOnExactness: false,
+                                                     raiseOnOverflow: false,
+                                                     raiseOnUnderflow: false,
+                                                     raiseOnDivideByZero: false)
+
+        let rounded = (newPrice as NSDecimalNumber).rounding(accordingToBehavior: roundingHandler)
+        return rounded.intValue
     }
 
-    func getEmbeddedData(for encodingUnit: Units?, _ digits: Int) -> (Int?, Units?) {
+    func getEmbeddedData(for encodingUnit: Units?, _ digits: Int, _ roundingMode: RoundingMode) -> (Int?, Units?) {
         guard let encodingUnit = encodingUnit else {
             return (nil, nil)
         }
@@ -212,7 +218,7 @@ extension GS1Code {
         case .distance: return (self.length, .millimeter)
         case .mass: return (self.weight, .gram)
         case .count: return (self.amount, .piece)
-        case .amount: return (self.price(digits), .price)
+        case .amount: return (self.price(digits, roundingMode), .price)
         }
     }
 
