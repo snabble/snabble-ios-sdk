@@ -53,76 +53,30 @@ public enum BiometricAuthentication {
     }
 
     static func requestAuthentication(for reason: String, _ reply: @escaping (Bool, Error?) -> Void ) {
-        var localAuth = self.useBiometry
+        let authContext = LAContext()
+        let canEvaluate = authContext.canEvaluatePolicy(self.policy, error: nil)
 
-        if localAuth {
-            let authContext = LAContext()
-            if #available(iOS 11, *) {
-                _ = authContext.canEvaluatePolicy(self.policy, error: nil)
-                switch authContext.biometryType {
-                case .none: localAuth = false
-                case .touchID: break
-                case .faceID: break
-                @unknown default: localAuth = false
+        if canEvaluate && (authContext.biometryType == .touchID || authContext.biometryType == .faceID) {
+            authContext.localizedFallbackTitle = "Snabble.Biometry.enterCode".localized()
+            authContext.evaluatePolicy(policy, localizedReason: reason) { success, error in
+                if let error = error {
+                    NSLog("local authentication error: \(error)")
                 }
-            } else {
-                localAuth = authContext.canEvaluatePolicy(policy, error: nil)
-            }
-
-            if localAuth {
-                authContext.localizedFallbackTitle = "Snabble.Biometry.enterCode".localized()
-                authContext.evaluatePolicy(policy, localizedReason: reason) { success, error in
-                    if let error = error {
-                        NSLog("local authentication error: \(error)")
-                    }
-                    DispatchQueue.main.async {
-                        reply(success, error)
-                    }
+                DispatchQueue.main.async {
+                    reply(success, error)
                 }
             }
         } else {
-            reply(true, nil)
-        }
-    }
-}
-
-// MARK: - user preferences
-extension BiometricAuthentication {
-
-    public enum SettingsKeys {
-        public static let useBiometryTouchId = "useBiometryTOUCHID"
-        public static let useBiometryFaceId = "useBiometryFACEID"
-    }
-
-    public static var useBiometry: Bool {
-        get {
-            let settings = UserDefaults.standard
-            switch BiometricAuthentication.supportedBiometry {
-            case .faceID: return settings.bool(forKey: SettingsKeys.useBiometryFaceId)
-            case .touchID: return settings.bool(forKey: SettingsKeys.useBiometryTouchId)
-            case .none: return false
-            }
-        }
-        set {
-            let settings = UserDefaults.standard
-            switch BiometricAuthentication.supportedBiometry {
-            case .faceID: settings.set(newValue, forKey: SettingsKeys.useBiometryFaceId)
-            case .touchID: settings.set(newValue, forKey: SettingsKeys.useBiometryTouchId)
-            case .none: ()
+            DispatchQueue.main.async {
+                reply(false, nil)
             }
         }
     }
-
 }
 
 extension BiometricAuthentication {
 
     public static func requestAuthentication(for reason: String, _ presenter: UIViewController, _ completion: @escaping (AuthenticationResult) -> Void ) {
-        guard BiometricAuthentication.useBiometry else {
-            completion(.proceed)
-            return
-        }
-
         BiometricAuthentication.requestAuthentication(for: reason) { success, error in
             if let error = error as? LAError {
                 let cancelCodes = [ LAError.Code.userCancel, LAError.Code.appCancel, LAError.Code.systemCancel ]

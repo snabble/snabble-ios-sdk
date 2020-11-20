@@ -66,7 +66,6 @@ public final class PaymentMethodListViewController: UIViewController {
     private var addButton: UIBarButtonItem!
 
     private var paymentDetails = [PaymentMethodDetail]()
-    private var initialDetails = 0
     private let showUsable: Bool
     private let methods: [MethodProjects]
     private weak var analyticsDelegate: AnalyticsDelegate?
@@ -101,9 +100,6 @@ public final class PaymentMethodListViewController: UIViewController {
 
         self.addButton = UIBarButtonItem(barButtonSystemItem: .add, target: self, action: #selector(addButtonTapped(_:)))
 
-        let paymentDetails = PaymentMethodDetails.read()
-        self.initialDetails = paymentDetails.count
-
         if !SnabbleUI.implicitNavigation && self.navigationDelegate == nil {
             let msg = "navigationDelegate may not be nil when using explicit navigation"
             assert(self.navigationDelegate != nil, msg)
@@ -122,22 +118,6 @@ public final class PaymentMethodListViewController: UIViewController {
         super.viewWillAppear(animated)
 
         self.updateTable()
-
-        let biometry = BiometricAuthentication.supportedBiometry
-        if self.initialDetails == 0 && self.initialDetails != self.paymentDetails.count && biometry != .none && !BiometricAuthentication.useBiometry {
-            let title = "Snabble.Biometry.Alert.title".localized()
-            let msg = "Snabble.Biometry.Alert.message".localized()
-            let alert = UIAlertController(title: String(format: title, biometry.name),
-                                          message: String(format: msg, biometry.name),
-                                          preferredStyle: .alert)
-            alert.addAction(UIAlertAction(title: "Snabble.Biometry.Alert.laterButton".localized(), style: .cancel, handler: nil))
-            alert.addAction(UIAlertAction(title: "Snabble.OK".localized(), style: .default) { _ in
-                BiometricAuthentication.useBiometry = true
-            })
-
-            self.present(alert, animated: true)
-            self.initialDetails = self.paymentDetails.count
-        }
     }
 
     override public func viewDidAppear(_ animated: Bool) {
