@@ -56,8 +56,8 @@ public struct AESCrypt {
 
     public static func decryptString(_ string: String, _ keyBytes: String, _ ivBytes: String) -> String? {
         guard
-            let keyBytes = Data(base64Encoded: keyBytes),
-            let ivBytes = Data(base64Encoded: ivBytes)
+            let keyBytes = Data(base64Encoded: keyBytes, options: .ignoreUnknownCharacters),
+            let ivBytes = Data(base64Encoded: ivBytes, options: .ignoreUnknownCharacters)
         else {
             return nil
         }

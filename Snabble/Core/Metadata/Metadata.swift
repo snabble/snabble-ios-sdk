@@ -77,7 +77,7 @@ public struct GatewayCertificate: Decodable {
     public let validUntil: String // iso8601 date
 
     public var data: Data? {
-        return Data(base64Encoded: self.value)
+        return Data(base64Encoded: self.value, options: .ignoreUnknownCharacters)
     }
 }
 
