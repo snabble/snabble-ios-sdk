@@ -117,12 +117,34 @@ extension ProductDB {
                 return ScannedProduct(product, code, transmissionCode,
                                       template: template,
                                       specifiedQuantity: specifiedQuantity)
+            } else {
+                // check if this was an UPC-A (eg. EAN-13 with a leading zero), and if so,
+                // try again with the 12-digit version
+                if let upcCode = self.extractUpcA(from: code) {
+                    return self.productByScannableCode(dbQueue, upcCode, template, shopId)
+                }
+
             }
         } catch {
             self.logError("productByScannableCode db error: \(error)")
         }
 
         return nil
+    }
+
+
+    /// check if `code` is a potential 12-digit UPC-A code embedded in an EAN-13 or GTIN-14
+    /// - Parameter code: the code to test
+    /// - Returns: the `code` shortened to 12-digits, or nil
+    private func extractUpcA(from code: String) -> String? {
+        switch code.count {
+        case 13 where code.hasPrefix("0"):
+            return String(code.suffix(12))
+        case 14 where code.hasPrefix("00"):
+            return String(code.suffix(12))
+        default:
+            return nil
+        }
     }
 
     func productsByName(_ dbQueue: DatabaseQueue, _ name: String, _ filterDeposits: Bool, _ shopId: String) -> [Product] {
