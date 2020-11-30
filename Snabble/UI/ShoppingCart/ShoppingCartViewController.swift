@@ -430,6 +430,12 @@ public final class ShoppingCartViewController: UIViewController {
             return
         }
 
+        // no detail data, and there is an editing VC? Show that instead of continuing
+        if self.methodSelector?.selectedPaymentDetail == nil, let editVC = paymentMethod.editViewController(true, self) {
+            self.navigationController?.pushViewController(editVC, animated: true)
+            return
+        }
+
         let button = self.checkoutButton!
 
         let spinner = UIActivityIndicatorView(style: .white)

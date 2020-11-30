@@ -69,6 +69,11 @@ public enum RawPaymentMethod: String, CaseIterable, Decodable {
         .qrCodePOS, .qrCodeOffline
     ]
 
+    // roughly sorted by popularity
+    static let preferredOnlineMethods: [RawPaymentMethod] = [
+        .deDirectDebit, .creditCardVisa, .creditCardMastercard, .creditCardAmericanExpress, .paydirektOneKlick
+    ]
+
     /// true if this method reqires additional data, like an IBAN or a credit card number
     var dataRequired: Bool {
         switch self {

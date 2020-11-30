@@ -118,6 +118,8 @@
         en = Not supported by this retailer
     [Snabble.Shoppingcart.notForThisPurchase]
         en = Not available for this purchase
+    [Snabble.Shoppingcart.noPaymentData]
+        en = Not yet entered
     [Snabble.Shoppingcart.emptyState.buttonTitle]
         en = Scan products
     [Snabble.Shoppingcart.emptyState.description]
