@@ -122,14 +122,6 @@ public protocol ProductProvider: class {
     /// get a list of products by their SKUs
     func productsBySku(_ skus: [String], _ shopId: String) -> [Product]
 
-    /// get discounted products
-    ///
-    /// returns a list of all products that have a discounted price and a valid image URL
-    ///
-    /// - Returns: an array of `Product`
-    @available(*, deprecated, message: "will be removed in a future version of the SDK")
-    func discountedProducts(_ shopId: String) -> [Product]
-
     /// get products matching `name`
     ///
     /// The project's `useFTS` flag must be `true` for this to work.
@@ -697,20 +689,6 @@ extension ProductDB {
         }
 
         return self.productsBySku(db, skus, shopId)
-    }
-
-    /// get discounted products
-    ///
-    /// returns a list of all products that have a discounted price and a valid image URL
-    ///
-    /// - Returns: an array of `Product`
-    @available(*, deprecated, message: "will be removed in a future version of the SDK")
-    public func discountedProducts(_ shopId: String) -> [Product] {
-        guard let db = self.db else {
-            return []
-        }
-
-        return self.discountedProducts(db, shopId)
     }
 
     /// get a product by one of its scannable codes/template pairs

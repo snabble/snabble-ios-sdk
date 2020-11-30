@@ -72,27 +72,6 @@ extension ProductDB {
         return []
     }
 
-    @available(*, deprecated, message: "will be removed in a future version of the SDK")
-    func discountedProducts(_ dbQueue: DatabaseQueue, _ shopId: String) -> [Product] {
-        let categoryQuery = "select pricingCategory from shops where shops.id = ? order by priority desc limit 1"
-        do {
-            let rows = try dbQueue.inDatabase { db in
-                return try self.fetchAll(db,
-                    ProductDB.productQuery + " " + """
-                    left outer join prices pr1 on pr1.sku = p.sku and pr1.pricingCategory = ifnull((\(categoryQuery)), 0)
-                    left outer join prices pr2 on pr2.sku = p.sku and pr2.pricingCategory = 0
-                    where p.imageUrl is not null and ifnull(pr1.discountedPrice, pr2.discountedPrice) is not null
-                    and availability != \(ProductAvailability.notAvailable.rawValue)
-                    """,
-                    arguments: [shopId, self.defaultAvailability, shopId])
-                }
-            return rows.compactMap { self.productFromRow(dbQueue, $0, shopId) }
-        } catch {
-            self.logError("discountedProducts db error: \(error)")
-        }
-        return []
-    }
-
     func productByScannableCodes(_ dbQueue: DatabaseQueue, _ codes: [(String, String)], _ shopId: String) -> ScannedProduct? {
         for (code, template) in codes {
             if let result = self.productByScannableCode(dbQueue, code, template, shopId) {
