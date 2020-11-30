@@ -1,5 +1,13 @@
 ## snabble iOS SDK Changelog
 
+# v0.14.7
+
+* Removes the deprecated `discountedProducts()` method
+* Fixes a bug where invalid price info could be extracted from a GS1 code
+* Adds better support for UPC-A codes
+* Checkout processes now have a locally generated ID
+* Biometry/PIN protection is now enforced for all online payments
+
 # v0.14.6
 
 * Updates the CA hashes that are used for certificate pinning
