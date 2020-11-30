@@ -51,8 +51,7 @@ let iso8601Formatter: ISO8601DateFormatter = {
     let fmt = ISO8601DateFormatter()
     fmt.timeZone = TimeZone(identifier: "UTC") ?? TimeZone.current
     fmt.formatOptions = .withInternetDateTime
-    if #available(iOS 11.2, *) {
-        fmt.formatOptions.insert(.withFractionalSeconds)
-    }
+    fmt.formatOptions.insert(.withFractionalSeconds)
+
     return fmt
 }()

@@ -35,20 +35,16 @@ public enum BiometricAuthentication {
 
     public static var supportedBiometry: BiometryType {
         let authContext = LAContext()
-        if #available(iOS 11, *) {
-            _ = authContext.canEvaluatePolicy(self.policy, error: nil)
-            switch authContext.biometryType {
-            case .none:
-                return .none
-            case .touchID:
-                return .touchID
-            case .faceID:
-                return .faceID
-            @unknown default:
-                return .none
-            }
-        } else {
-            return authContext.canEvaluatePolicy(self.policy, error: nil) ? .touchID : .none
+        _ = authContext.canEvaluatePolicy(self.policy, error: nil)
+        switch authContext.biometryType {
+        case .none:
+            return .none
+        case .touchID:
+            return .touchID
+        case .faceID:
+            return .faceID
+        @unknown default:
+            return .none
         }
     }
 

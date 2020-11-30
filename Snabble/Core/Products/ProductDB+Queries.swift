@@ -118,8 +118,8 @@ extension ProductDB {
                                       template: template,
                                       specifiedQuantity: specifiedQuantity)
             } else {
-                // check if this was an UPC-A (eg. EAN-13 with a leading zero), and if so,
-                // try again with the 12-digit version
+                // check if this was an UPC-A (eg. EAN-13 with a leading zero),
+                // and if so, try again with the 12-digit version
                 if let upcCode = self.extractUpcA(from: code) {
                     return self.productByScannableCode(dbQueue, upcCode, template, shopId)
                 }
@@ -132,10 +132,9 @@ extension ProductDB {
         return nil
     }
 
-
     /// check if `code` is a potential 12-digit UPC-A code embedded in an EAN-13 or GTIN-14
     /// - Parameter code: the code to test
-    /// - Returns: the `code` shortened to 12-digits, or nil
+    /// - Returns: the `code` shortened to 12 digits, or nil
     private func extractUpcA(from code: String) -> String? {
         switch code.count {
         case 13 where code.hasPrefix("0"):
