@@ -242,7 +242,7 @@ public class BaseCheckoutViewController: UIViewController {
         self.process.abort(SnabbleUI.project) { result in
             switch result {
             case .success:
-                self.cart.generateNewUuid()
+                self.cart.generateNewUUID()
                 self.paymentCancelled()
             case .failure:
                 let alert = UIAlertController(title: "Snabble.Payment.cancelError.title".localized(),
@@ -280,7 +280,7 @@ public class BaseCheckoutViewController: UIViewController {
                 FulfillmentPoller.shared.startPolling(SnabbleUI.project, process)
             }
         } else {
-            self.cart.generateNewUuid()
+            self.cart.generateNewUUID()
         }
 
         SnabbleAPI.fetchAppUserData(SnabbleUI.project.id)

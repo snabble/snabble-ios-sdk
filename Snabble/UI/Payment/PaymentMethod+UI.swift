@@ -270,7 +270,7 @@ extension PaymentProcess {
                     return
                 }
             case .failure:
-                self.cart.generateNewUuid()
+                self.cart.generateNewUUID()
             }
             completion(result)
         }
@@ -319,7 +319,7 @@ extension PaymentProcess {
                     self.delegate.showWarningMessage("Snabble.Payment.errorStarting".localized())
                 }
             case .failure(let error):
-                self.cart.generateNewUuid()
+                self.cart.generateNewUUID()
                 self.startFailed(method, error, completion)
             }
         }

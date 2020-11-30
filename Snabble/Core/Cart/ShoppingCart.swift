@@ -90,7 +90,7 @@ public final class ShoppingCart: Codable {
         self.session = ""
         self.uuid = ""
         self.items = []
-        self.generateNewUuid()
+        self.generateNewUUID()
 
         if let savedCart = self.load() {
             self.items = savedCart.items
@@ -274,9 +274,8 @@ public final class ShoppingCart: Codable {
         CartEvent.cart(self)
     }
 
-    func generateNewUuid() {
+    func generateNewUUID() {
         self.uuid = UUID().uuidString
-        print("new cart uuid: \(self.uuid)")
     }
 }
 
@@ -292,7 +291,7 @@ extension ShoppingCart {
     private func save(postEvent: Bool = true) {
         if postEvent {
             self.backendCartInfo = nil
-            self.generateNewUuid()
+            self.generateNewUUID()
         }
 
         if let directory = self.directory {
