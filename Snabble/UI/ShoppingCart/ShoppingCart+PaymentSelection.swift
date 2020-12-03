@@ -12,13 +12,15 @@ private struct PaymentMethodAction {
     let icon: UIImage?
     let method: RawPaymentMethod
     let methodDetail: PaymentMethodDetail?
+    let selectable: Bool
     let active: Bool
 
-    init(_ title: NSAttributedString, _ method: RawPaymentMethod, _ methodDetail: PaymentMethodDetail?, _ active: Bool) {
+    init(_ title: NSAttributedString, _ method: RawPaymentMethod, _ methodDetail: PaymentMethodDetail?, selectable: Bool, active: Bool) {
         self.title = title
         self.method = method
         self.methodDetail = methodDetail
         self.icon = methodDetail?.icon ?? method.icon
+        self.selectable = selectable
         self.active = active
     }
 }
@@ -134,7 +136,11 @@ final class PaymentMethodSelector {
         self.selectedPaymentMethod = method
         self.selectedPaymentDetail = detail
 
-        self.methodIcon.image = detail?.icon ?? method?.icon
+        let icon = detail?.icon ?? method?.icon
+        self.methodIcon.image = icon
+        if method?.dataRequired == true && detail == nil {
+            self.methodIcon.image = icon?.grayscale()
+        }
         self.methodTap?.isEnabled = true
         self.methodSpinner.stopAnimating()
         self.methodTap.isEnabled = true
@@ -153,6 +159,14 @@ final class PaymentMethodSelector {
             let userMethod = userMethods.first { $0.rawMethod == method }
             if found, let userMethod = userMethod {
                 self.setSelectedPayment(method, detail: userMethod)
+                return
+            }
+        }
+
+        // prefer in-app payment methods like SEPA or CC, even if we have no user data yet
+        for method in RawPaymentMethod.preferredOnlineMethods {
+            if availableMethods.contains(method) {
+                self.setSelectedPayment(method, detail: nil)
                 return
             }
         }
@@ -197,14 +211,14 @@ final class PaymentMethodSelector {
         // add an action for each method
         for actionData in actions {
             let action = AlertAction(attributedTitle: actionData.title, style: .normal) { _ in
-                if actionData.active {
+                if actionData.selectable {
                     self.setSelectedPayment(actionData.method, detail: actionData.methodDetail)
                 }
             }
             let icon = actionData.active ? actionData.icon : actionData.icon?.grayscale()
             action.imageView.image = icon
             if actionData.active {
-                iconMap[action] = actionData.icon
+                iconMap[action] = icon
             }
 
             sheet.addAction(action)
@@ -284,7 +298,7 @@ final class PaymentMethodSelector {
                 }
 
                 let title = self.title(userMethod.displayName, detailText, color)
-                return PaymentMethodAction(title, method, userMethod, isCartMethod)
+                return PaymentMethodAction(title, method, userMethod, selectable: true, active: isCartMethod)
             }
             return actions
 
@@ -292,7 +306,7 @@ final class PaymentMethodSelector {
             if !isProjectMethod {
                 if isUserMethod {
                     let title = self.title(method.displayName, "Snabble.Shoppingcart.notForVendor".localized(), self.subTitleColor)
-                    let action = PaymentMethodAction(title, method, nil, false)
+                    let action = PaymentMethodAction(title, method, nil, selectable: false, active: false)
                     return [action]
                 } else {
                     return []
@@ -301,16 +315,18 @@ final class PaymentMethodSelector {
 
             if !isCartMethod && isUserMethod {
                 let title = self.title(method.displayName, "Snabble.Shoppingcart.notForThisPurchase".localized(), self.subTitleColor)
-                let action = PaymentMethodAction(title, method, nil, false)
+                let action = PaymentMethodAction(title, method, nil, selectable: false, active: false)
                 return [action]
             } else if !userMethods.isEmpty {
                 let actions = userMethods.map { userMethod -> PaymentMethodAction in
                     let title = self.title(method.displayName, userMethod.displayName, self.textColor)
-                    return PaymentMethodAction(title, method, userMethod, true)
+                    return PaymentMethodAction(title, method, userMethod, selectable: true, active: true)
                 }
                 return actions
             } else {
-                return []
+                let title = self.title(method.displayName, "Snabble.Shoppingcart.noPaymentData".localized(), self.textColor)
+                let action = PaymentMethodAction(title, method, nil, selectable: true, active: false)
+                return [action]
             }
 
         case .qrCodePOS, .qrCodeOffline, .gatekeeperTerminal:
@@ -320,7 +336,7 @@ final class PaymentMethodSelector {
         }
 
         let title = self.title(method.displayName, detailText, self.textColor)
-        let action = PaymentMethodAction(title, method, nil, true)
+        let action = PaymentMethodAction(title, method, nil, selectable: true, active: true)
 
         return [action]
     }
