@@ -124,6 +124,8 @@
 
 "Snabble.Shoppingcart.notForThisPurchase" = "Not available for this purchase";
 
+"Snabble.Shoppingcart.noPaymentData" = "Not yet entered";
+
 "Snabble.Shoppingcart.emptyState.buttonTitle" = "Scan products";
 
 "Snabble.Shoppingcart.emptyState.description" = "Scan products to add them to your shopping cart.";

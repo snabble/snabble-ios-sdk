@@ -7,6 +7,7 @@
 * Adds better support for UPC-A codes
 * Checkout processes now have a locally generated ID
 * Biometry/PIN protection is now enforced for all online payments
+* Payment method selection now prefers SEPA (or other online payment methods), even if there is no detail data available yet
 
 # v0.14.6
 

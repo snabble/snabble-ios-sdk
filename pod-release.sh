@@ -6,7 +6,7 @@ CHANGELOG_DATE=$(stat -f "%Sm" -t "%Y-%m-%d" CHANGELOG.md)
 POD_VERSION=$(awk '/s.version.*=/ { print substr($3,2,length($3)-2) }' Snabble.podspec)
 
 perl -pi -e "s/= \".*\"/= \"$POD_VERSION\"/" Snabble/Core/API/APIVersion.swift
-SDK_VERSION=$(awk '/version =/ { print substr($5,2,length($5)-2) }' Snabble/Core/API/APIVersion.swift)
+SDK_VERSION=$(awk '/version =/ { print substr($6,2,length($6)-2) }' Snabble/Core/API/APIVersion.swift)
 
 trap "exit" INT
 
