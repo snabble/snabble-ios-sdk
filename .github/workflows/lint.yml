@@ -1,12 +1,16 @@
 on:
   push:
-    branches:    
-      - main
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+env:
+  DEVELOPER_DIR: /Applications/Xcode_12.2.app/Contents/Developer
+
 name: Lint
 jobs:
   lint:
     name: Lint
-    runs-on: macOS-latest
+    runs-on: macos-latest
     steps:
       - name: Checkout
         uses: actions/checkout@master
@@ -24,9 +28,7 @@ jobs:
             bundle install --jobs 4 --retry 3
 
       - name: Lint
-        run: |
-            sudo xcode-select --switch /Applications/Xcode_12.1.app/Contents/Developer
-            bundle exec pod lib lint --allow-warnings
+        run: bundle exec pod lib lint --allow-warnings
 
       - name: Slack Notification
         uses: homoluctus/slatify@master
