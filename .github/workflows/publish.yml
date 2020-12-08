@@ -1,18 +1,18 @@
 on:
   push:
-    tags:    
+    tags:
       - 0.*
+env:
+  DEVELOPER_DIR: /Applications/Xcode_12.2.app/Contents/Developer
+
 name: Publish
 jobs:
   publish:
     name: Publish
-    runs-on: macOS-latest
+    runs-on: macos-latest
     steps:
       - name: Checkout
         uses: actions/checkout@v2
-
-      - name: Setup
-        run: sudo xcode-select --switch /Applications/Xcode_12.1.app/Contents/Developer
 
       - name: Publish
         env:
