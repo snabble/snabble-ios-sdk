@@ -432,7 +432,13 @@ public final class ShoppingCartViewController: UIViewController {
 
         // no detail data, and there is an editing VC? Show that instead of continuing
         if self.methodSelector?.selectedPaymentDetail == nil, let editVC = paymentMethod.editViewController(true, self) {
-            self.navigationController?.pushViewController(editVC, animated: true)
+            if SnabbleUI.implicitNavigation {
+                self.navigationController?.pushViewController(editVC, animated: true)
+            } else {
+                let msg = "navigationDelegate may not be nil when using explicit navigation"
+                assert(self.paymentMethodNavigationDelegate != nil, msg)
+                self.paymentMethodNavigationDelegate?.addData(for: paymentMethod)
+            }
             return
         }
 
@@ -548,7 +554,7 @@ public final class ShoppingCartViewController: UIViewController {
 
         self.methodSelector?.updateAvailablePaymentMethods()
 
-        self.checkoutButton?.isEnabled = (totalPrice ?? -1) >= 0
+        self.checkoutButton?.isEnabled = (totalPrice ?? 0) >= 0
     }
 
     private var notAllMethodsAvailableShown = false
