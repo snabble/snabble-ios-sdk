@@ -501,6 +501,7 @@ public final class ShoppingCartViewController: UIViewController {
 
     private func restoreCart() {
         self.shoppingCart.restoreCart()
+        NotificationCenter.default.post(name: .snabbleCartUpdated, object: self)
         self.updateView()
     }
 
