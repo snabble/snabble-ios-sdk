@@ -12,10 +12,11 @@ public struct Metadata: Decodable {
     public let gatewayCertificates: [GatewayCertificate]
     public let links: MetadataLinks
     public let terms: Terms?
+    public let brands: [Brand]?
 
     enum CodingKeys: String, CodingKey {
         case flags = "metadata"
-        case projects, gatewayCertificates, links, templates, terms
+        case projects, gatewayCertificates, links, templates, terms, brands
     }
 
     private init() {
@@ -24,6 +25,7 @@ public struct Metadata: Decodable {
         self.gatewayCertificates = []
         self.links = MetadataLinks()
         self.terms = nil
+        self.brands = nil
     }
 
     static let none = Metadata()
@@ -37,7 +39,13 @@ public struct Metadata: Decodable {
         self.gatewayCertificates = certs ?? []
         self.links = try container.decode(MetadataLinks.self, forKey: .links)
         self.terms = try container.decodeIfPresent(Terms.self, forKey: .terms)
+        self.brands = try container.decodeIfPresent([Brand].self, forKey: .brands)
     }
+}
+
+public struct Brand: Decodable {
+    public let id: String
+    public let name: String
 }
 
 public struct Terms: Decodable {
@@ -281,6 +289,7 @@ public struct Project: Decodable {
     public let displayNetPrice: Bool
 
     public let company: Company?
+    public let brandId: String?
 
     enum CodingKeys: String, CodingKey {
         case id, name, links
@@ -292,6 +301,7 @@ public struct Project: Decodable {
         case paymentMethods
         case displayNetPrice
         case company
+        case brandId = "brandID"
     }
 
     public init(from decoder: Decoder) throws {
@@ -330,6 +340,8 @@ public struct Project: Decodable {
         self.paymentMethods = paymentMethods.compactMap { RawPaymentMethod(rawValue: $0) }
         self.displayNetPrice = try container.decodeIfPresent(Bool.self, forKey: .displayNetPrice) ?? false
         self.company = try container.decodeIfPresent(Company.self, forKey: .company)
+        let brandId = try container.decodeIfPresent(String.self, forKey: .brandId) ?? ""
+        self.brandId = brandId.isEmpty ? nil : brandId
     }
 
     private init() {
@@ -355,6 +367,7 @@ public struct Project: Decodable {
         self.paymentMethods = []
         self.displayNetPrice = false
         self.company = nil
+        self.brandId = nil
     }
 
     // only used for unit tests!
@@ -381,6 +394,7 @@ public struct Project: Decodable {
         self.paymentMethods = []
         self.displayNetPrice = false
         self.company = nil
+        self.brandId = nil
     }
 
     static let none = Project()
