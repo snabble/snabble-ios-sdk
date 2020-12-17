@@ -32,7 +32,7 @@ final class InformationButtonView: UIView {
         stackView.axis = .vertical
         stackView.spacing = 8
         stackView.translatesAutoresizingMaskIntoConstraints = false
-        
+
         super.init(frame: frame)
 
         backgroundColor = .clear
