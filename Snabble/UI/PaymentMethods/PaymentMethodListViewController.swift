@@ -5,7 +5,6 @@
 //
 
 import UIKit
-import UIEmptyState
 import LocalAuthentication
 
 extension RawPaymentMethod {
@@ -63,6 +62,7 @@ extension RawPaymentMethod {
 public final class PaymentMethodListViewController: UIViewController {
 
     @IBOutlet private weak var tableView: UITableView!
+    private(set) weak var emptyView: UIView?
     private var addButton: UIBarButtonItem!
 
     private var paymentDetails = [PaymentMethodDetail]()
@@ -91,8 +91,6 @@ public final class PaymentMethodListViewController: UIViewController {
 
         self.tableView.delegate = self
         self.tableView.dataSource = self
-        self.emptyStateDataSource = self
-        self.emptyStateDelegate = self
 
         self.tableView.tableFooterView = UIView(frame: CGRect.zero)
         let nib = UINib(nibName: "PaymentMethodCell", bundle: SnabbleBundle.main)
@@ -176,7 +174,6 @@ public final class PaymentMethodListViewController: UIViewController {
         self.paymentDetails = PaymentMethodDetails.read()
 
         self.tableView.reloadData()
-        self.reloadEmptyStateForTableView(self.tableView)
 
         if SnabbleUI.implicitNavigation {
             if !self.paymentDetails.isEmpty {
@@ -207,8 +204,22 @@ public final class PaymentMethodListViewController: UIViewController {
 }
 
 extension PaymentMethodListViewController: UITableViewDelegate, UITableViewDataSource {
+    private func showEmptyView() {
+        let view = InformationButtonView(frame: tableView.bounds)
+        let viewModel = InformationButtonView.ViewModel(title: "Snabble.Payment.emptyState.message".localized(),
+                                                        buttonTitle: "Snabble.Payment.emptyState.add".localized())
+        view.configure(with: viewModel)
+        view.button?.addTarget(self, action: #selector(addButtonTapped(_:)), for: .touchUpInside)
+        tableView.backgroundView = view
+    }
+
+    private func hideEmptyView() {
+        tableView.backgroundView = nil
+    }
+
     public func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return self.paymentDetails.count
+        paymentDetails.count == 0 ? showEmptyView() : hideEmptyView()
+        return paymentDetails.count
     }
 
     public func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
@@ -271,36 +282,4 @@ extension PaymentMethodListViewController: UITableViewDelegate, UITableViewDataS
     public func tableView(_ tableView: UITableView, estimatedHeightForRowAt indexPath: IndexPath) -> CGFloat {
         return 80
     }
-}
-
-extension PaymentMethodListViewController: UIEmptyStateDelegate, UIEmptyStateDataSource {
-
-    public var emptyStateTitle: NSAttributedString {
-        return NSAttributedString(string: "Snabble.Payment.emptyState.message".localized(),
-                                  attributes: [ .font: UIFont.systemFont(ofSize: 17, weight: .regular) ])
-    }
-
-    public var emptyStateButtonTitle: NSAttributedString? {
-        return NSAttributedString(string: "Snabble.Payment.emptyState.add".localized(),
-                                  attributes: [ .font: UIFont.systemFont(ofSize: 17, weight: .medium) ])
-    }
-
-    public var emptyStateButtonSize: CGSize? {
-        return CGSize(width: self.view.bounds.width - 32, height: 30)
-    }
-
-    public var emptyStateViewCanAnimate: Bool {
-        return false
-    }
-
-    public func emptyStatebuttonWasTapped(button: UIButton) {
-        self.addButtonTapped(button)
-    }
-
-    public func emptyStateViewWillShow(view: UIView) {
-        if let emptyView = view as? UIEmptyStateView {
-            emptyView.contentView.backgroundColor = .clear
-        }
-    }
-
 }

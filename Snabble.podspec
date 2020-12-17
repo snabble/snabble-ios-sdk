@@ -5,7 +5,7 @@
 
 Pod::Spec.new do |s|
   s.name = 'Snabble'
-  s.version = '0.14.9'
+  s.version = '0.14.10'
   s.summary = 'The snabble iOS SDK'
 
   s.description = <<-DESC
@@ -37,7 +37,6 @@ Pod::Spec.new do |s|
     ui.source_files = 'Snabble/UI/**/*.swift'
 
     ui.dependency 'Snabble/Core'
-    ui.dependency 'UIEmptyState', '~> 4'
     ui.dependency 'SDCAlertView', '~> 11.1'
 
     ui.resource_bundles = {
