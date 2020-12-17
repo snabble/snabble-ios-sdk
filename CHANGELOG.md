@@ -1,6 +1,6 @@
 ## snabble iOS SDK Changelog
 
-# v0.14.10
+# [unreleased]
 
 * Remove `UIEmptyState` pod as dependency #6
 
