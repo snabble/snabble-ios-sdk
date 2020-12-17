@@ -217,7 +217,7 @@ extension PaymentMethodListViewController: UITableViewDelegate, UITableViewDataS
     }
 
     public func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        paymentDetails.count == 0 ? showEmptyView() : hideEmptyView()
+        paymentDetails.isEmpty ? showEmptyView() : hideEmptyView()
         return paymentDetails.count
     }
 
