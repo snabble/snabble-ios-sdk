@@ -86,6 +86,10 @@ public enum SnabbleAPI {
         return self.metadata.terms
     }
 
+    public static var brands: [Brand]? {
+        return self.metadata.brands
+    }
+
     public static func projectFor(_ projectId: String) -> Project? {
         return self.metadata.projects.first { $0.id == projectId }
     }
