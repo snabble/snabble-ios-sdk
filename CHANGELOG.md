@@ -1,5 +1,9 @@
 ## snabble iOS SDK Changelog
 
+# v0.14.8
+
+* Adds support for grouping multiple projects by their common `brand`.
+
 # v0.14.7
 
 * Removes the deprecated `discountedProducts()` method
