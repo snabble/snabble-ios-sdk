@@ -62,7 +62,6 @@ extension RawPaymentMethod {
 public final class PaymentMethodListViewController: UIViewController {
 
     @IBOutlet private weak var tableView: UITableView!
-    private(set) weak var emptyView: UIView?
     private var addButton: UIBarButtonItem!
 
     private var paymentDetails = [PaymentMethodDetail]()
