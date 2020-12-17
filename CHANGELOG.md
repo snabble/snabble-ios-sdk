@@ -2,7 +2,7 @@
 
 # [unreleased]
 
-- adds localizable strings for `de` `sk`, and `hu`
+- adds localizable strings for `de` `sk`, and `hu` #5
 
 # v0.14.7
 
