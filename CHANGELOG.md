@@ -1,5 +1,9 @@
 ## snabble iOS SDK Changelog
 
+# [unreleased]
+
+* Remove `UIEmptyState` pod as dependency #6
+
 # v0.14.8
 
 * Adds support for grouping multiple projects by their common `brand`.

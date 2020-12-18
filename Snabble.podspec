@@ -37,7 +37,6 @@ Pod::Spec.new do |s|
     ui.source_files = 'Snabble/UI/**/*.swift'
 
     ui.dependency 'Snabble/Core'
-    ui.dependency 'UIEmptyState', '~> 4'
     ui.dependency 'SDCAlertView', '~> 11.1'
 
     ui.resource_bundles = {
