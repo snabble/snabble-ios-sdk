@@ -3,6 +3,7 @@
 # [unreleased]
 
 - adds localizable strings for `de` `sk`, and `hu` #5
+* Remove `UIEmptyState` pod as dependency #6
 
 # v0.14.8
 
