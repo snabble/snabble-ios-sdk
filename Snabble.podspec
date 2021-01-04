@@ -27,7 +27,7 @@ Pod::Spec.new do |s|
     core.source_files = 'Snabble/Core/**/*.swift'
 
     core.dependency 'GRDB.swift', '~> 5'
-    core.dependency 'Zip', '~> 1'
+    core.dependency 'Zip', '~> 2'
     core.dependency 'OneTimePassword', '~> 3'
     core.dependency 'TrustKit', '~> 1'
     core.dependency 'KeychainAccess', '~> 4'
@@ -40,9 +40,9 @@ Pod::Spec.new do |s|
     ui.dependency 'SDCAlertView', '~> 11.1'
 
     ui.resource_bundles = {
-      "Snabble" => [ 
-        'Snabble.xcassets', 
-        'Snabble/UI/*.lproj/*.strings', 
+      "Snabble" => [
+        'Snabble.xcassets',
+        'Snabble/UI/*.lproj/*.strings',
         'Snabble/UI/**/*.xib',
         'Snabble/UI/**/*.der',
         'i18n/*.twine' ]
