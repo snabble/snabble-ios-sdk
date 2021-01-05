@@ -196,7 +196,7 @@ extension ReceiptsListViewController: UITableViewDelegate, UITableViewDataSource
 
 extension ReceiptsListViewController {
     func showOrder(_ order: Order, for project: Project, receiptReceived: @escaping (Result<URL, Error>) -> Void) {
-        order.getReceipt(project) { [self] result in
+        order.getReceipt(project) { [weak self] result in
             receiptReceived(result)
 
             switch result {
@@ -207,7 +207,7 @@ extension ReceiptsListViewController {
 
                 let title = formatter.string(from: order.date)
 
-                showQuicklook(for: targetURL, with: title)
+                self?.showQuicklook(for: targetURL, with: title)
             case .failure(let error):
                 Log.error("error saving receipt: \(error)")
             }
