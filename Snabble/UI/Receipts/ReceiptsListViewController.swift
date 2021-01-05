@@ -36,7 +36,7 @@ public final class ReceiptsListViewController: UIViewController {
     @IBOutlet private weak var emptyLabel: UILabel!
     @IBOutlet private weak var spinner: UIActivityIndicatorView!
 
-    private var previewItem: QLPreviewItem!
+    private var quickLookDataSources: [QuicklookPreviewControllerDataSource] = []
 
     private var orderList: OrderList?
     private var orders: [OrderEntry]?
@@ -215,23 +215,40 @@ extension ReceiptsListViewController {
     }
 
     private func showQuicklook(for url: URL, with title: String) {
-        previewItem = ReceiptPreviewItem(url, title)
+        let receiptPreviewItem = ReceiptPreviewItem(url, title)
+        let dataSource = QuicklookPreviewControllerDataSource(item: receiptPreviewItem)
 
-        let quickLook = QLPreviewController()
-        quickLook.dataSource = self
-        navigationController?.pushViewController(quickLook, animated: true)
+        let previewController = QLPreviewController()
+        previewController.dataSource = dataSource
+        previewController.delegate = self
+        navigationController?.pushViewController(previewController, animated: true)
+
+        self.quickLookDataSources.append(dataSource)
 
         analyticsDelegate?.track(.viewReceiptDetail)
     }
-
 }
 
-extension ReceiptsListViewController: QLPreviewControllerDataSource {
+class QuicklookPreviewControllerDataSource: QLPreviewControllerDataSource {
+    let item: QLPreviewItem
+
+    init(item: QLPreviewItem) {
+        self.item = item
+    }
+
     public func numberOfPreviewItems(in controller: QLPreviewController) -> Int {
         1
     }
 
     public func previewController(_ controller: QLPreviewController, previewItemAt index: Int) -> QLPreviewItem {
-        previewItem
+        item
+    }
+}
+
+extension ReceiptsListViewController: QLPreviewControllerDelegate {
+    public func previewControllerDidDismiss(_ controller: QLPreviewController) {
+        quickLookDataSources.removeAll {
+            $0.item.isEqual(controller.currentPreviewItem)
+        }
     }
 }
