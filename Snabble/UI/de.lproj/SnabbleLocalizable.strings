@@ -1,6 +1,337 @@
-/**
- * snabble SDK - SnabbleLocalizable.strings
- * Language: de
- */
+"Snabble.ageVerification.explanation" = "Für den Kauf bestimmter Artikel, wie z.B. Alkohol, ist ein Altersnachweis notwendig. Gib dazu die 7-stellige Zahl von der Rückseite deines Personalausweises ein.";
 
-// this file is intentionally empty to make it easier to catch missing localization entries for german
+"Snabble.ageVerification.failed.message" = "Einige Artikel in deinem Warenkorb unterliegen einer Altersbeschränkung, du darfst sie leider nicht kaufen.";
+
+"Snabble.ageVerification.failed.title" = "Du bist nicht alt genug";
+
+"Snabble.ageVerification.pending.message" = "Einige Artikel in deinem Warenkorb unterliegen einer Altersbeschränkung. Bitte verifiziere dein Alter, um den Einkauf fortzusetzen.";
+
+"Snabble.ageVerification.pending.title" = "Altersverifikation erforderlich";
+
+"Snabble.ageVerification.placeholder" = "7 Ziffern";
+
+/* ********* Age Verification ********* */
+"Snabble.ageVerification.title" = "Altersnachweis";
+
+"Snabble.askForPermission" = "Um Erlaubnis fragen";
+
+"Snabble.Biometry.Alert.laterButton" = "Nicht jetzt";
+
+"Snabble.Biometry.Alert.message" = "Möchtest du deine Online-Zahlungen mit %@ schützen?";
+
+"Snabble.Biometry.Alert.title" = "%@ aktivieren?";
+
+"Snabble.Biometry.enterCode" = "Code eingeben";
+
+"Snabble.Biometry.FaceId" = "Face-ID";
+
+/* ********* iOS Biometry *********, iOS only, this is used for the iOS-specific biometry settings views */
+"Snabble.Biometry.TouchId" = "Touch-ID";
+
+/* ********* Snabble ********* */
+"Snabble.Cancel" = "Abbrechen";
+
+"Snabble.CC.3dsecureHint" = "Zur Verifizierung deiner Kreditkarte wirst du nach Eingabe der Daten zu deiner Bank weitergeleitet. Dort wirst du gebeten, einer Zahlung von 1,00 € an snabble zuzustimmen. Der Betrag wird dir nach deiner Zustimmung sofort wieder gutgeschrieben.";
+
+"Snabble.CC.cardNumber" = "Kartennummer";
+
+"Snabble.CC.editingHint" = "Deine Kreditkarten-Daten werden von uns nur verschlüsselt gespeichert und können daher nicht bearbeitet werden.";
+
+"Snabble.CC.noEntryPossible" = "Leider können im Moment keine Kreditkarten hinterlegt werden.";
+
+"Snabble.CC.validUntil" = "Gültig bis";
+
+"Snabble.Checkout.done" = "Fertig!";
+
+"Snabble.Checkout.error" = "Es ist ein Fehler aufgetreten";
+
+"Snabble.Checkout.ID" = "Checkout-ID";
+
+"Snabble.Checkout.payAtCashRegister" = "An der Kasse zahlen";
+
+"Snabble.Checkout.title" = "Bezahlen";
+
+"Snabble.Checkout.verifying" = "Verifiziere";
+
+"Snabble.Delete" = "Löschen";
+
+"Snabble.Done" = "Fertig";
+
+"Snabble.Edit" = "Bearbeiten";
+
+"Snabble.goToSettings" = "Zu den Einstellungen";
+
+"Snabble.Hints.closedBags" = "Weiter so! Bitte mache es dem Kassenpersonal leicht und packe deine Artikel nicht direkt in geschlossene Taschen. Danke!";
+
+"Snabble.Hints.continueScanning" = "Weiter scannen";
+
+"Snabble.Hints.title" = "Hinweis von %@";
+
+"Snabble.Keyguard.message" = "Dadurch stellen wir sicher, dass nur du selbst Zugriff auf dieses Bezahlverfahren hast";
+
+"Snabble.Keyguard.requireScreenLock" = "Du musst dein Smartphone mit einer Display-Sperre schützen, um diese Bezahlmethode hinzuzufügen.";
+
+/* SECTION: Android KeyStore */
+"Snabble.Keyguard.title" = "Bitte entsperre dein Smartphone";
+
+"Snabble.limitsAlert.checkoutNotAvailable" = "Ab einem Warenwert von %@ ist der Einkauf per App leider nicht mehr möglich.";
+
+"Snabble.limitsAlert.notAllMethodsAvailable" = "Ab einem Warenwert von %@ stehen nicht mehr alle Zahlungsmethoden zur Verfügung";
+
+"Snabble.limitsAlert.title" = "Bitte beachten";
+
+"Snabble.loadingProductInformation" = "Lade Produkt-Informationen…";
+
+"Snabble.networkError" = "Netzwerkverbindungsfehler";
+
+"Snabble.No" = "Nein";
+
+"Snabble.OK" = "OK";
+
+"Snabble.paydirekt.authorizationFailed.message" = "Bitte versuche es später nochmal";
+
+"Snabble.paydirekt.authorizationFailed.title" = "Autorisierung fehlgeschlagen";
+
+"Snabble.paydirekt.deleteAuthorization" = "Bezahlmethode löschen";
+
+"Snabble.paydirekt.gotoWebsite" = "Zu paydirekt.de";
+
+"Snabble.paydirekt.savedAuthorization" = "Du hast die snabble-App erfolgreich für paydirekt autorisiert. Um dies rückgängig zu machen, musst du dich bei deinem paydirekt-Konto auf der Webseite anmelden. Möchtest du paydirekt nicht mehr als Bezahlmethode angezeigt bekommen, kannst du sie hier einfach entfernen.";
+
+/* SECTION: SnabbleAndroid */
+"Snabble.Payment.aborted" = "Der Bezahlvorgang wurde abgebrochen";
+
+"Snabble.Payment.add" = "Bezahlverfahren hinzufügen";
+
+"Snabble.Payment.addPaymentOrigin" = "Zahlungsinformationen in die App übertragen?";
+
+"Snabble.Payment.backToHome" = "Zurück zur Startseite";
+
+"Snabble.Payment.cancelError.message" = "Die Zahlung kann jetzt nicht abgebrochen werden.";
+
+"Snabble.Payment.cancelError.title" = "Abbrechen nicht möglich";
+
+"Snabble.Payment.confirm" = "Einkauf bestätigen";
+
+"Snabble.Payment.CreditCard" = "Kreditkarte";
+
+"Snabble.Payment.delete.message" = "Möchtest Du diese Zahlungsmethode wirklich entfernen?";
+
+"Snabble.Payment.emptyState.add" = "Bezahlverfahren hinzufügen";
+
+"Snabble.Payment.emptyState.message" = "Noch kein Bezahlverfahren hinterlegt.";
+
+"Snabble.Payment.errorStarting" = "Fehler beim Anlegen des Bezahlprozesses";
+
+"Snabble.Payment.noMethodAvailable" = "Leider kann dieser Einkauf nicht mit der App durchgeführt werden.";
+
+"Snabble.Payment.offlineHint" = "Du bist derzeit offline und einige Zahlungsmethoden sind möglicherweise nicht verfügbar";
+
+"Snabble.Payment.payAtCashDesk" = "Kasse";
+
+"Snabble.Payment.payAtSCO" = "Karte an EC-Terminal";
+
+"Snabble.Payment.payUsingCustomerCard" = "mit Kundenkarte";
+
+"Snabble.Payment.payViaInvoice" = "auf Rechnung";
+
+"Snabble.Payment.presentCode" = "Halte diesen Code an einem snabble-Monitor vor oder zeige ihn einem Mitarbeiter, um deinen Einkauf zu bestätigen.";
+
+"Snabble.Payment.SEPA.hint" = "Hinweis: Um dich und unsere Händler vor Missbrauch zu schützen, wird sich der Händler bei deiner ersten Zahlung per SEPA-Lastschrift deine Bankkarte zeigen lassen.";
+
+"Snabble.Payment.SEPA.IBAN" = "IBAN";
+
+"Snabble.Payment.SEPA.InvalidIBAN" = "Die eingegebene IBAN ist ungültig.";
+
+"Snabble.Payment.SEPA.InvalidName" = "Bitte gib einen Namen ein.";
+
+"Snabble.Payment.SEPA.missingCountry" = "Ländercode darf nicht leer sein.";
+
+"Snabble.Payment.SEPA.Name" = "Name";
+
+/* ********* iOS SEPA and Creditcard Data *********, iOS only, this is used for the iOS-specific SEPA data entry and payment */
+"Snabble.Payment.SEPA.Title" = "SEPA-Lastschrift";
+
+"Snabble.Payment.success" = "Vielen Dank für deinen Einkauf";
+
+"Snabble.Payment.usableAt" = "Verwendbar bei: %@";
+
+"Snabble.Payment.waiting" = "Warte auf Bestätigung";
+
+"Snabble.PaymentError.title" = "Ein Fehler ist aufgetreten";
+
+"Snabble.PaymentError.tryAgain" = "Nochmal versuchen";
+
+"Snabble.PaymentMethods.add" = "Bezahlverfahren hinzufügen";
+
+"Snabble.PaymentMethods.noCodeAlert.biometry" = "Dein iPhone ist weder durch einen Code noch durch Touch ID/Face ID geschützt. Bitte richte zu deiner Sicherheit zuerst diesen Schutz sein, bevor du deine IBAN eingibst.";
+
+"Snabble.PaymentMethods.noCodeAlert.noBiometry" = "Dein iPhone ist nicht durch einen Code geschützt. Bitte richte zu deiner Sicherheit zuerst diesen Schutz sein, bevor du deine IBAN eingibst.";
+
+"Snabble.PaymentMethods.noDeviceCode" = "Ungeschütztes iPhone";
+
+/* ********* iOS Payment Methods ********* */
+"Snabble.PaymentMethods.title" = "Bezahlverfahren";
+
+"Snabble.PaymentSelection.addNow" = "Jetzt hinzufügen";
+
+"Snabble.PaymentSelection.howToPay" = "Wie möchtest du %@ bezahlen?";
+
+"Snabble.PaymentSelection.payNow" = "Jetzt %@ zahlen";
+
+"Snabble.PaymentSelection.title" = "Bezahlen";
+
+"Snabble.PaymentStatus.step1" = "Lokalisierung im Kassenbereich";
+
+"Snabble.PaymentStatus.step2" = "Freigabe deines Einkaufs";
+
+"Snabble.PaymentStatus.step3" = "Freigabe deiner Zahlung";
+
+"Snabble.pleaseWait" = "Bitte warten…";
+
+"Snabble.QRCode.didPay" = "Fertig";
+
+"Snabble.QRCode.entry.title" = "Code: %d";
+
+"Snabble.QRCode.message" = "Bitte QR-Code an der Kasse vorhalten";
+
+"Snabble.QRCode.nextCode" = "Weiter zu Code %1$d von %2$d";
+
+"Snabble.QRCode.priceMayDiffer" = "Der genaue Preis wird von der Kasse berechnet und kann vom hier angezeigten abweichen.";
+
+"Snabble.QRCode.showTheseCodes" = "Bitte zeige diese %d Codes nacheinander an der Kasse";
+
+"Snabble.QRCode.showThisCode" = "Bitte zeige diesen Code an der Kasse";
+
+"Snabble.QRCode.title" = "An der Kasse zahlen";
+
+"Snabble.QRCode.total" = "Gesamtsumme:\u0020";
+
+"Snabble.Receipts.loading" = "(wird geladen)";
+
+"Snabble.Receipts.noReceipts" = "Du hast noch nicht mit snabble eingekauft";
+
+"Snabble.Receipts.oClock" = "Uhr";
+
+"Snabble.Receipts.title" = "Vorherige Einkäufe";
+
+"Snabble.remove" = "Entfernen";
+
+"Snabble.saleStop.errorMsg" = "Diese Produkte können derzeit leider nicht mit der App bezahlt werden, bitte bezahle sie wie gewohnt an der Kasse:";
+
+"Snabble.saleStop.errorMsg.one" = "Dieses Produkt kann derzeit leider nicht mit der App bezahlt werden, bitte bezahle es wie gewohnt an der Kasse:";
+
+"Snabble.saleStop.errorMsg.scan" = "Dieses Produkt kann derzeit leider nicht mit der App bezahlt werden, bitte bezahle es wie gewohnt an der Kasse.";
+
+"Snabble.saleStop.errorMsg.title" = "Entschuldigung";
+
+"Snabble.Save" = "Speichern";
+
+"Snabble.Scanner.addCodeAsIs" = "%@ so hinzufügen";
+
+"Snabble.Scanner.addToCart" = "In den Warenkorb";
+
+"Snabble.Scanner.batterySaverHint" = "Scanner angehalten. Bitte tippe irgendwo auf den Bildschirm, um fortzufahren.";
+
+"Snabble.Scanner.BundleDialog.headline" = "Verpackungseinheit auswählen";
+
+"Snabble.Scanner.Camera.accessDenied" = "Kamerazugriff verweigert";
+
+"Snabble.Scanner.Camera.allowAccess" = "Entschuldigung, wir benötigen Zugriff auf deine Kamera, um mit ihr Barcodes zu scannen. Bitte erlaube die Nutzung in den Einstellungen und kehre dann hierher zurück.";
+
+"Snabble.Scanner.duplicateDepositScanned" = "Jeder Pfandbon kann nur einmal gescannt werden.";
+
+"Snabble.Scanner.enterBarcode" = "Barcode eingeben";
+
+"Snabble.Scanner.enterCodeButton" = "Barcode\neingeben";
+
+"Snabble.Scanner.goToCart" = "Warenkorb: %@";
+
+"Snabble.Scanner.goToCart.empty" = "Warenkorb";
+
+"Snabble.Scanner.introText" = "Scanne Barcodes von Produkten und lege sie in deinen Warenkorb.";
+
+"Snabble.Scanner.multiPack" = "Nicht vergessen!";
+
+"Snabble.Scanner.networkError" = "Das Produkt konnte nicht angefragt werden. Bitte überprüfe deine Internetverbindung.";
+
+"Snabble.Scanner.noMatchesFound" = "Artikel nicht gefunden";
+
+"Snabble.Scanner.plusDeposit" = "+ %@ Pfand";
+
+"Snabble.Scanner.scannedAgeRestrictedProduct" = "Dieses Produkt unterliegt einer Altersbeschränkung. Dein Alter wird daher bei der Zahlung überprüft werden.";
+
+"Snabble.Scanner.scannedShelfCode" = "Bitte wiege das Produkt und scanne dann den Barcode auf dem Aufkleber";
+
+"Snabble.Scanner.scanningTitle" = "Barcode scannen";
+
+"Snabble.Scanner.serverError" = "Das Produkt konnte nicht angefragt werden.";
+
+"Snabble.Scanner.start" = "Scanner starten";
+
+"Snabble.Scanner.title" = "Scanner";
+
+"Snabble.Scanner.torchButton" = "Licht";
+
+"Snabble.Scanner.unknownBarcode" = "Für dieses Produkt sind leider keine Preisinformationen verfügbar.";
+
+"Snabble.Scanner.updateCart" = "Warenkorb aktualisieren";
+
+"Snabble.SEPA.editingHint" = "Deine SEPA-Daten werden von uns nur verschlüsselt gespeichert und können daher nicht bearbeitet werden.";
+
+"Snabble.SEPA.encryptionError" = "Fehler bei der Verschlüsselung";
+
+"Snabble.SEPA.ibanTransferAlert.message" = "Möchtest du diese Kontodaten (IBAN: %@) für zukünftige Einkäufe speichern?";
+
+"Snabble.SEPA.ibanTransferAlert.title" = "Kontodaten speichern";
+
+"Snabble.SEPA.scoTransferHint" = "Bitte gib noch den Namen auf der Karte ein um sie für Zahlungen direkt mit der App speichern zu können.";
+
+"Snabble.Settings" = "Einstellungen";
+
+"Snabble.Shoppingcart.articleRemoved" = "Artikel entfernt";
+
+"Snabble.Shoppingcart.buyProducts" = "%1$d Artikel für %2$@ kaufen";
+
+"Snabble.Shoppingcart.buyProducts.now" = "Jetzt bezahlen";
+
+"Snabble.Shoppingcart.buyProducts.one" = "%1$d Artikel für %2$@ kaufen";
+
+"Snabble.Shoppingcart.deposit" = "Pfand";
+
+"Snabble.Shoppingcart.discounts" = "Rabatte insgesamt";
+
+"Snabble.Shoppingcart.emptyState.buttonTitle" = "Jetzt scannen";
+
+"Snabble.Shoppingcart.emptyState.description" = "Dein Warenkorb ist leer. Scanne Barcodes von Artikeln, die du kaufen möchtest.";
+
+"Snabble.Shoppingcart.emptyState.restartButtonTitle" = "Neuen Einkauf beginnen";
+
+"Snabble.Shoppingcart.emptyState.restoreButtonTitle" = "Vorherigen Warenkorb wiederherstellen";
+
+"Snabble.Shoppingcart.emptyState.title" = "Dein Warenkorb ist noch leer";
+
+"Snabble.Shoppingcart.giveaway" = "Kostenloses Geschenk";
+
+"Snabble.Shoppingcart.howToPay" = "Wie möchtest du bezahlen?";
+
+"Snabble.Shoppingcart.noPaymentData" = "Noch nicht hinterlegt";
+
+"Snabble.Shoppingcart.notForThisPurchase" = "Für diesen Einkauf nicht verfügbar";
+
+"Snabble.Shoppingcart.notForVendor" = "Vom Händler nicht unterstützt";
+
+"Snabble.Shoppingcart.numberOfItems" = "%d Artikel";
+
+"Snabble.Shoppingcart.numberOfItems.one" = "%d Artikel";
+
+"Snabble.Shoppingcart.removeItem" = "%@ wirklich entfernen?";
+
+"Snabble.Shoppingcart.removeItems" = "Wirklich alle Produkte aus dem Warenkorb entfernen?";
+
+"Snabble.ShoppingCart.title" = "Warenkorb";
+
+"Snabble.undo" = "Rückgängig";
+
+"Snabble.Yes" = "Ja";
+

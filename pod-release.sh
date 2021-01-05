@@ -37,8 +37,7 @@ else
 fi
 
 echo "updating strings file..."
-
-twine generate-localization-file i18n/Snabble.twine --lang en --format apple Snabble/UI/en.lproj/SnabbleLocalizable.strings --tags ios --untagged
+phrase pull
 
 git add .
 git commit -m "release v$POD_VERSION"
