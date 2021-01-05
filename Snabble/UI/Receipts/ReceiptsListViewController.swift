@@ -223,7 +223,7 @@ extension ReceiptsListViewController {
         previewController.delegate = self
         navigationController?.pushViewController(previewController, animated: true)
 
-        self.quickLookDataSources.append(dataSource)
+        quickLookDataSources.append(dataSource)
 
         analyticsDelegate?.track(.viewReceiptDetail)
     }
