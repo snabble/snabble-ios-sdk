@@ -63,6 +63,6 @@ extension Identifier: Hashable {
 
 extension Identifier: CustomStringConvertible {
     public var description: String {
-        "identifier: \(rawValue)"
+        rawValue
     }
 }
