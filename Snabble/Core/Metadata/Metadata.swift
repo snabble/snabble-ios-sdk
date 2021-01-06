@@ -43,8 +43,8 @@ public struct Metadata: Decodable {
     }
 }
 
-public struct Brand: Decodable {
-    public let id: String
+public struct Brand: Decodable, AnyIdentifiable {
+    public let id: Identifier<Brand>
     public let name: String
 }
 
@@ -289,7 +289,7 @@ public struct Project: Decodable {
     public let displayNetPrice: Bool
 
     public let company: Company?
-    public let brandId: String?
+    public let brandId: Identifier<Brand>?
 
     enum CodingKeys: String, CodingKey {
         case id, name, links
@@ -341,7 +341,7 @@ public struct Project: Decodable {
         self.displayNetPrice = try container.decodeIfPresent(Bool.self, forKey: .displayNetPrice) ?? false
         self.company = try container.decodeIfPresent(Company.self, forKey: .company)
         let brandId = try container.decodeIfPresent(String.self, forKey: .brandId) ?? ""
-        self.brandId = brandId.isEmpty ? nil : brandId
+        self.brandId = brandId.isEmpty ? nil : Identifier<Brand>(rawValue: brandId)
     }
 
     private init() {
