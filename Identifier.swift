@@ -13,7 +13,7 @@ public protocol AnyIdentifiable {
 
 public struct Identifier<Value: AnyIdentifiable> {
     public typealias RawIdentifier = String
-    
+
     public let rawValue: RawIdentifier
 
     public init(rawValue: RawIdentifier) {
@@ -44,5 +44,13 @@ extension Identifier: Hashable {
 
     public func hash(into hasher: inout Hasher) {
         hasher.combine(rawValue)
+    }
+}
+
+// MARK: - CustomStringConvertible
+
+extension Identifier: CustomStringConvertible {
+    public var description: String {
+        "identifier: \(rawValue)"
     }
 }
