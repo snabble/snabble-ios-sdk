@@ -534,9 +534,9 @@ public struct OverrideLookup {
 }
 
 public enum CodeMatcher {
-    private static var templates = [String: [String: CodeTemplate]]()
+    private static var templates = [Identifier<Project>: [String: CodeTemplate]]()
 
-    static func addTemplate(_ projectId: String, _ id: String, _ template: String) {
+    static func addTemplate(_ projectId: Identifier<Project>, _ id: String, _ template: String) {
         // print("add template \(projectId) \(id) \(template)")
         guard let tmpl = CodeTemplate(id, template) else {
             Log.warn("ignoring invalid template: \(id) \(template) for \(projectId)")
@@ -551,7 +551,7 @@ public enum CodeMatcher {
         CodeMatcher.templates = [:]
     }
 
-    public static func match(_ code: String, _ projectId: String) -> [ParseResult] {
+    public static func match(_ code: String, _ projectId: Identifier<Project>) -> [ParseResult] {
         guard let templates = CodeMatcher.templates[projectId] else {
             return []
         }
@@ -565,7 +565,7 @@ public enum CodeMatcher {
         return results
     }
 
-    public static func matchOverride(_ code: String, _ overrides: [PriceOverrideCode]?, _ projectId: String) -> OverrideLookup? {
+    public static func matchOverride(_ code: String, _ overrides: [PriceOverrideCode]?, _ projectId: Identifier<Project>) -> OverrideLookup? {
         guard let overrides = overrides, !overrides.isEmpty else {
             return nil
         }
@@ -596,7 +596,7 @@ public enum CodeMatcher {
         }
     }
 
-    public static func createInstoreEan(_ templateId: String, _ code: String, _ data: Int, _ projectId: String? = nil) -> String? {
+    public static func createInstoreEan(_ templateId: String, _ code: String, _ data: Int, _ projectId: Identifier<Project>? = nil) -> String? {
         guard let template = self.findTemplate(templateId, projectId) else {
             return nil
         }
@@ -639,7 +639,7 @@ public enum CodeMatcher {
         return ean?.code
     }
 
-    private static func findTemplate(_ templateId: String, _ projectId: String?) -> CodeTemplate? {
+    private static func findTemplate(_ templateId: String, _ projectId: Identifier<Project>?) -> CodeTemplate? {
         if let projectId = projectId {
             return CodeMatcher.templates[projectId]?[templateId]
         } else {

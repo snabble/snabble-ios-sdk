@@ -35,6 +35,14 @@ extension Identifier: Codable {
     }
 }
 
+// MARK: - ExpressibleByStringLiteral
+
+extension Identifier: ExpressibleByStringLiteral {
+    public init(stringLiteral value: String) {
+        self.init(rawValue: value)
+    }
+}
+
 // MARK: - Hashable
 
 extension Identifier: Hashable {

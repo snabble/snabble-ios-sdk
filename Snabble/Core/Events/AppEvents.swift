@@ -61,7 +61,7 @@ struct AppEvent: Encodable {
     private let type: EventType
     private let appId: String
     private let payload: Payload
-    private let projectId: String
+    private let projectId: Identifier<Project>
     private let timestamp: String
 
     private let shopId: String?

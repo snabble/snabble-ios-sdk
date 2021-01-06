@@ -31,9 +31,9 @@ private struct TokenData {
     let jwt: String
     let expires: Date
     let refresh: Date
-    let projectId: String
+    let projectId: Identifier<Project>
 
-    init(_ response: TokenResponse, _ projectId: String) {
+    init(_ response: TokenResponse, _ projectId: Identifier<Project>) {
         let expiresAt = Date(timeIntervalSince1970: TimeInterval(response.expiresAt))
 
         // make sure expires is at least 60s from now
@@ -56,11 +56,11 @@ final class TokenRegistry {
 
     private var verboseToken = false
 
-    private var projectTokens = [String: TokenData]()
+    private var projectTokens = [Identifier<Project>: TokenData]()
     private var refreshTimer: Timer?
 
     private typealias Handlers = [(String?) -> Void]
-    private var pendingHandlers = [String: Handlers ]()
+    private var pendingHandlers = [Identifier<Project>: Handlers ]()
     private var lock = ReadWriteLock()
 
     init(_ appId: String, _ secret: String) {
@@ -87,7 +87,7 @@ final class TokenRegistry {
         completion(self.token(for: project.id))
     }
 
-    private func performTokenRetrieval(for projectId: String, _ completion: @escaping (String?) -> Void) {
+    private func performTokenRetrieval(for projectId: Identifier<Project>, _ completion: @escaping (String?) -> Void) {
         // no token in our registry, go fetch it
         let count: Int? = lock.writing {
             self.pendingHandlers[projectId, default: []].append(completion)
@@ -116,7 +116,7 @@ final class TokenRegistry {
     }
 
     // raw, synchronous token access. externally only used by AppEvent.post() to avoid endless loops
-    private func token(for projectId: String) -> String? {
+    private func token(for projectId: Identifier<Project>) -> String? {
         lock.readLock()
         defer { lock.unlock() }
 
@@ -135,7 +135,7 @@ final class TokenRegistry {
         self.refreshTimer?.invalidate()
         self.refreshTimer = nil
 
-        let activeIds: [String] = lock.writing {
+        let activeIds: [Identifier<Project>] = lock.writing {
             let activeIds = Array(self.projectTokens.keys)
             self.projectTokens.removeAll()
             return activeIds
@@ -206,23 +206,23 @@ final class TokenRegistry {
         }
     }
 
-    private func retrieveToken(for projectId: String, _ date: Date? = nil, completion: @escaping (TokenData?) -> Void) {
+    private func retrieveToken(for projectId: Identifier<Project>, _ date: Date? = nil, completion: @escaping (TokenData?) -> Void) {
         if let appUserId = SnabbleAPI.appUserId {
-            if verboseToken { Log.debug("retrieveToken p=\(projectId) app=\(self.appId) client=\(SnabbleAPI.clientId) au=\(appUserId), date=\(String(describing: date))") }
+            if verboseToken { Log.debug("retrieveToken p=\(projectId.rawValue) app=\(self.appId) client=\(SnabbleAPI.clientId) au=\(appUserId), date=\(String(describing: date))") }
             self.retrieveTokenForUser(for: projectId, appUserId, date, completion: completion)
         } else {
-            if verboseToken { Log.debug("retrieveToken+User p=\(projectId) app=\(self.appId) client=\(SnabbleAPI.clientId) date=\(String(describing: date))") }
+            if verboseToken { Log.debug("retrieveToken+User p=\(projectId.rawValue) app=\(self.appId) client=\(SnabbleAPI.clientId) date=\(String(describing: date))") }
             self.retrieveAppUserAndToken(for: projectId, date, completion: completion)
         }
     }
 
-    private func retrieveAppUserAndToken(for projectId: String, _ date: Date? = nil, completion: @escaping (TokenData?) -> Void) {
+    private func retrieveAppUserAndToken(for projectId: Identifier<Project>, _ date: Date? = nil, completion: @escaping (TokenData?) -> Void) {
         guard let project = SnabbleAPI.projectFor(projectId) else {
             return completion(nil)
         }
 
         let url = SnabbleAPI.metadata.links.createAppUser.href
-        let parameters = [ "project": projectId ]
+        let parameters = [ "project": projectId.rawValue ]
         project.request(.post, url, jwtRequired: false, parameters: parameters, timeout: 5) { request in
             guard
                 var request = request,
@@ -256,7 +256,7 @@ final class TokenRegistry {
         }
     }
 
-    private func retrieveTokenForUser(for projectId: String, _ appUserId: AppUserId, _ date: Date? = nil, completion: @escaping (TokenData?) -> Void ) {
+    private func retrieveTokenForUser(for projectId: Identifier<Project>, _ appUserId: AppUserId, _ date: Date? = nil, completion: @escaping (TokenData?) -> Void ) {
         guard let project = SnabbleAPI.projectFor(projectId) else {
             return completion(nil)
         }
@@ -296,7 +296,7 @@ final class TokenRegistry {
         }
     }
 
-    private func retryWithServerDate(_ projectId: String, _ response: HTTPURLResponse, completion: @escaping (TokenData?) -> Void ) {
+    private func retryWithServerDate(_ projectId: Identifier<Project>, _ response: HTTPURLResponse, completion: @escaping (TokenData?) -> Void ) {
         // not authorized. try again with the content of the the server's "Date" header
         if let serverDate = response.allHeaderFields["Date"] as? String {
             let formatter = DateFormatter()

@@ -64,7 +64,7 @@ public enum SnabbleAPI {
     static var tokenRegistry = TokenRegistry("", "")
     static var metadata = Metadata.none
 
-    private static var providerPool = [String: ProductProvider]()
+    private static var providerPool = [Identifier<Project>: ProductProvider]()
 
     public static var certificates: [GatewayCertificate] {
         return self.metadata.gatewayCertificates
@@ -90,7 +90,7 @@ public enum SnabbleAPI {
         return self.metadata.brands
     }
 
-    public static func projectFor(_ projectId: String) -> Project? {
+    public static func projectFor(_ projectId: Identifier<Project>) -> Project? {
         return self.metadata.projects.first { $0.id == projectId }
     }
 
@@ -147,7 +147,7 @@ public enum SnabbleAPI {
     }
 
     public static func productProvider(for project: Project) -> ProductProvider {
-        assert(!project.id.isEmpty && project.id != Project.none.id, "empty projects don't have a product provider")
+        assert(!project.id.rawValue.isEmpty && project.id != Project.none.id, "empty projects don't have a product provider")
         if let provider = providerPool[project.id] {
             return provider
         } else {
@@ -371,7 +371,7 @@ extension SnabbleAPI {
 
     static var appUserData: AppUserData?
 
-    static func fetchAppUserData(_ projectId: String) {
+    static func fetchAppUserData(_ projectId: Identifier<Project>) {
         guard
             let project = SnabbleAPI.projectFor(projectId),
             let appUserId = SnabbleAPI.appUserId

@@ -28,11 +28,11 @@ extension SnabbleUI {
         AssetManager.shared.initialize(projects, completion)
     }
 
-    public static func initializeAssets(for projectId: String, _ manifestUrl: String, downloadFiles: Bool) {
+    public static func initializeAssets(for projectId: Identifier<Project>, _ manifestUrl: String, downloadFiles: Bool) {
         AssetManager.shared.initialize(projectId, manifestUrl, downloadFiles, pngOnly: true, completion: { })
     }
 
-    public static func getAsset(_ asset: ImageAsset, bundlePath: String? = nil, projectId: String? = nil, completion: @escaping (UIImage?) -> Void) {
+    public static func getAsset(_ asset: ImageAsset, bundlePath: String? = nil, projectId: Identifier<Project>? = nil, completion: @escaping (UIImage?) -> Void) {
         AssetManager.shared.getAsset(asset, bundlePath, projectId, completion)
     }
 
@@ -42,20 +42,8 @@ extension SnabbleUI {
     }
 }
 
-extension SnabbleAPI {
-    public static func initializeAppAssets(_ completion: @escaping () -> Void) {
-        let appId = self.config.appId
-        let manifestUrl = "/\(appId)/assets/manifest.json"
-        AssetManager.shared.initialize(appId, manifestUrl, true, pngOnly: false, completion: completion)
-    }
-
-    public static func getAsset(_ name: String, _ completion: @escaping (Data?, String?) -> Void) {
-        AssetManager.shared.getRawAsset(name, self.config.appId, completion)
-    }
-}
-
 struct Manifest: Codable {
-    let projectId: String
+    let projectId: Identifier<Project>
     let files: [File]
 
     struct File: Codable, Hashable {
@@ -116,8 +104,8 @@ extension Manifest.File {
     }
 
     // where we store information about this file in UserDefaults
-    func defaultsKey(_ projectId: String) -> String {
-        return "io.snabble.sdk.asset.\(projectId).\(self.basename())"
+    func defaultsKey(_ projectId: Identifier<Project>) -> String {
+        return "io.snabble.sdk.asset.\(projectId.rawValue).\(self.basename())"
     }
 
     private func basename() -> String {
@@ -133,7 +121,7 @@ extension Manifest.File {
 final class AssetManager {
     static let shared = AssetManager()
 
-    private var manifests = [String: Manifest]()
+    private var manifests = [Identifier<Project>: Manifest]()
     private let scale: CGFloat
 
     private var redownloadTimer: Timer?
@@ -148,7 +136,7 @@ final class AssetManager {
     ///   - bundlePath: bundle path of the fallback to use, e.g. "Checkout/$PROJECTID/checkout-offline"
     ///   - projectId: the project id. If nil, use `SnabbleUI.project.id`
     ///   - completion: called when the image has been retrieved
-    func getAsset(_ asset: ImageAsset, _ bundlePath: String?, _ projectId: String?, _ completion: @escaping (UIImage?) -> Void) {
+    func getAsset(_ asset: ImageAsset, _ bundlePath: String?, _ projectId: Identifier<Project>?, _ completion: @escaping (UIImage?) -> Void) {
         let projectId = projectId ?? SnabbleUI.project.id
         let name = asset.rawValue
         if let image = self.getLocallyCachedImage(named: name, projectId) {
@@ -175,7 +163,7 @@ final class AssetManager {
         }
     }
 
-    func getRawAsset(_ name: String, _ projectId: String, _ completion: @escaping (Data?, String?) -> Void) {
+    func getRawAsset(_ name: String, _ projectId: Identifier<Project>, _ completion: @escaping (Data?, String?) -> Void) {
         guard let file = self.fileFor(name: name, projectId) else {
             return completion(nil, nil)
         }
@@ -195,7 +183,7 @@ final class AssetManager {
         }
     }
 
-    private func getLocallyCachedImage(named name: String, _ projectId: String) -> UIImage? {
+    private func getLocallyCachedImage(named name: String, _ projectId: Identifier<Project>) -> UIImage? {
         guard let data = getLocallyCachedData(named: name, projectId) else {
             return nil
         }
@@ -203,7 +191,7 @@ final class AssetManager {
         return UIImage(data: data, scale: self.scale)
     }
 
-    private func getLocallyCachedData(named name: String, _ projectId: String) -> Data? {
+    private func getLocallyCachedData(named name: String, _ projectId: Identifier<Project>) -> Data? {
         guard let file = self.fileFor(name: name, projectId) else {
             return nil
         }
@@ -218,7 +206,7 @@ final class AssetManager {
         return nil
     }
 
-    private func fileFor(name: String, _ projectId: String) -> Manifest.File? {
+    private func fileFor(name: String, _ projectId: Identifier<Project>) -> Manifest.File? {
         guard let manifest = self.manifests[projectId] else {
             return nil
         }
@@ -248,7 +236,7 @@ final class AssetManager {
         // pre-initialize with data from last download
         if let manifestData = settings.object(forKey: settingsKey) as? Data {
             do {
-                let manifests = try JSONDecoder().decode([String: Manifest].self, from: manifestData)
+                let manifests = try JSONDecoder().decode([Identifier<Project>: Manifest].self, from: manifestData)
                 self.manifests = manifests
             } catch {
                 print(error)
@@ -278,7 +266,7 @@ final class AssetManager {
         }
     }
 
-    func initialize(_ projectId: String, _ manifestUrl: String, _ downloadFiles: Bool, pngOnly: Bool, completion: @escaping () -> Void) {
+    func initialize(_ projectId: Identifier<Project>, _ manifestUrl: String, _ downloadFiles: Bool, pngOnly: Bool, completion: @escaping () -> Void) {
         guard
             let manifestUrl = SnabbleAPI.urlFor(manifestUrl),
             var components = URLComponents(url: manifestUrl, resolvingAgainstBaseURL: false)
@@ -349,7 +337,7 @@ final class AssetManager {
         }
     }
 
-    private func downloadAllMissingFiles(_ projectId: String) {
+    private func downloadAllMissingFiles(_ projectId: Identifier<Project>) {
         guard let manifest = self.manifests[projectId] else {
             return
         }
@@ -360,7 +348,7 @@ final class AssetManager {
         }
     }
 
-    private func downloadIfMissing(_ projectId: String, _ file: Manifest.File, completion: @escaping (URL?) -> Void) {
+    private func downloadIfMissing(_ projectId: Identifier<Project>, _ file: Manifest.File, completion: @escaping (URL?) -> Void) {
         guard let localName = file.localName(self.scale) else {
             return
         }
@@ -384,12 +372,12 @@ final class AssetManager {
         }
     }
 
-    func cacheDirectory(_ projectId: String) -> URL {
+    func cacheDirectory(_ projectId: Identifier<Project>) -> URL {
         let fileManager = FileManager.default
         // swiftlint:disable:next force_try
         var url = try! fileManager.url(for: .cachesDirectory, in: .userDomainMask, appropriateFor: nil, create: true)
         url.appendPathComponent("assets")
-        url.appendPathComponent(projectId)
+        url.appendPathComponent(projectId.rawValue)
         try? fileManager.createDirectory(at: url, withIntermediateDirectories: true, attributes: nil)
 
         return url
@@ -408,13 +396,13 @@ final class AssetManager {
 
 private final class DownloadDelegate: NSObject, URLSessionDownloadDelegate {
 
-    private let projectId: String
+    private let projectId: Identifier<Project>
     private let localName: String
     private let key: String
     private let completion: (URL?) -> Void
     private let startDate: TimeInterval
 
-    init(_ projectId: String, _ localName: String, _ key: String, _ completion: @escaping (URL?) -> Void) {
+    init(_ projectId: Identifier<Project>, _ localName: String, _ key: String, _ completion: @escaping (URL?) -> Void) {
         self.projectId = projectId
         self.localName = localName
         self.key = key

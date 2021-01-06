@@ -236,7 +236,7 @@ final class ProductDB: ProductProvider {
         self.project = project
 
         let appSupportDir = FileManager.default.urls(for: .applicationSupportDirectory, in: .userDomainMask)[0]
-        self.dbDirectory = appSupportDir.appendingPathComponent(project.id, isDirectory: true)
+        self.dbDirectory = appSupportDir.appendingPathComponent(project.id.rawValue, isDirectory: true)
     }
 
     private func dbPathname(temporary: Bool = false) -> String {
