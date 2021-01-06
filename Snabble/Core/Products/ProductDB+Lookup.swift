@@ -58,7 +58,7 @@ extension ProductDB {
             "template": template,
             "shopID": shopId.rawValue
         ]
-        let query = "code=\(code) template=\(template) shop=\(shopId)"
+        let query = "code=\(code) template=\(template) shop=\(shopId.rawValue)"
 
         self.project.request(.get, url, parameters: parameters, timeout: timeoutInterval) { request in
             guard let request = request else {
