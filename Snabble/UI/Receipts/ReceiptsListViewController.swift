@@ -36,8 +36,7 @@ public final class ReceiptsListViewController: UIViewController {
     @IBOutlet private weak var emptyLabel: UILabel!
     @IBOutlet private weak var spinner: UIActivityIndicatorView!
 
-    private var quickLook = QLPreviewController()
-    private var previewItem: QLPreviewItem!
+    private var quickLookDataSources: [QuicklookPreviewControllerDataSource] = []
 
     private var orderList: OrderList?
     private var orders: [OrderEntry]?
@@ -65,9 +64,6 @@ public final class ReceiptsListViewController: UIViewController {
         let nib = UINib(nibName: "ReceiptCell", bundle: SnabbleBundle.main)
         self.tableView.register(nib, forCellReuseIdentifier: "receiptCell")
         self.tableView.tableFooterView = UIView(frame: CGRect.zero)
-
-        self.quickLook.dataSource = self
-        self.quickLook.delegate = self
 
         self.emptyLabel.text = "Snabble.Receipts.noReceipts".localized()
         self.emptyLabel.isHidden = true
@@ -177,7 +173,7 @@ extension ReceiptsListViewController: UITableViewDelegate, UITableViewDataSource
     }
 
     public func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        self.tableView.deselectRow(at: indexPath, animated: true)
+        tableView.deselectRow(at: indexPath, animated: true)
         guard let orders = self.orders else {
             return
         }
@@ -187,54 +183,72 @@ extension ReceiptsListViewController: UITableViewDelegate, UITableViewDataSource
             return
         }
 
-        let project = SnabbleAPI.projectFor(order.project) ?? SnabbleAPI.projects[0]
-
-        let cell = self.tableView.cellForRow(at: indexPath)
-        let spinner = UIActivityIndicatorView(style: .gray)
         spinner.startAnimating()
-        cell?.accessoryType = .none
-        cell?.accessoryView = spinner
-        self.showOrder(order, project, cell)
+        tableView.allowsSelection = false
+
+        let project = SnabbleAPI.projectFor(order.project) ?? SnabbleAPI.projects[0]
+        showOrder(order, for: project) { [weak self] _ in
+            self?.spinner.stopAnimating()
+            tableView.allowsSelection = true
+        }
     }
 }
 
 extension ReceiptsListViewController {
-    func showOrder(_ order: Order, _ project: Project, _ cell: UITableViewCell?) {
-        order.getReceipt(project) { result in
-            cell?.accessoryType = .disclosureIndicator
-            cell?.accessoryView = nil
+    func showOrder(_ order: Order, for project: Project, receiptReceived: @escaping (Result<URL, Error>) -> Void) {
+        order.getReceipt(project) { [weak self] result in
+            receiptReceived(result)
+
             switch result {
-            case .success(let targetPath):
+            case .success(let targetURL):
                 let formatter = DateFormatter()
                 formatter.dateStyle = .medium
                 formatter.timeStyle = .none
 
                 let title = formatter.string(from: order.date)
 
-                self.showQuicklook(targetPath, title)
+                self?.showQuicklook(for: targetURL, with: title)
             case .failure(let error):
                 Log.error("error saving receipt: \(error)")
             }
         }
     }
 
-    func showQuicklook(_ url: URL, _ title: String) {
-        self.quickLook.currentPreviewItemIndex = 0
-        self.previewItem = ReceiptPreviewItem(url, title)
-        self.quickLook.reloadData()
-        self.navigationController?.pushViewController(self.quickLook, animated: true)
+    private func showQuicklook(for url: URL, with title: String) {
+        let receiptPreviewItem = ReceiptPreviewItem(url, title)
+        let dataSource = QuicklookPreviewControllerDataSource(item: receiptPreviewItem)
 
-        self.analyticsDelegate?.track(.viewReceiptDetail)
+        let previewController = QLPreviewController()
+        previewController.dataSource = dataSource
+        previewController.delegate = self
+        navigationController?.pushViewController(previewController, animated: true)
+
+        quickLookDataSources.append(dataSource)
+
+        analyticsDelegate?.track(.viewReceiptDetail)
     }
-
 }
 
-extension ReceiptsListViewController: QLPreviewControllerDelegate, QLPreviewControllerDataSource {
+class QuicklookPreviewControllerDataSource: QLPreviewControllerDataSource {
+    let item: QLPreviewItem
+
+    init(item: QLPreviewItem) {
+        self.item = item
+    }
+
     public func numberOfPreviewItems(in controller: QLPreviewController) -> Int {
-        return 1
+        1
     }
 
     public func previewController(_ controller: QLPreviewController, previewItemAt index: Int) -> QLPreviewItem {
-        return self.previewItem
+        item
+    }
+}
+
+extension ReceiptsListViewController: QLPreviewControllerDelegate {
+    public func previewControllerDidDismiss(_ controller: QLPreviewController) {
+        quickLookDataSources.removeAll {
+            $0.item.isEqual(controller.currentPreviewItem)
+        }
     }
 }
