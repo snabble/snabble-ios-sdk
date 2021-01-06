@@ -19,6 +19,10 @@ public struct Identifier<Value: AnyIdentifiable> {
     public init(rawValue: RawIdentifier) {
         self.rawValue = rawValue
     }
+
+    public var isEmpty: Bool {
+        rawValue.isEmpty
+    }
 }
 
 // MARK: - Codable
