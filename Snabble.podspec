@@ -44,8 +44,8 @@ Pod::Spec.new do |s|
         'Snabble.xcassets',
         'Snabble/UI/*.lproj/*.strings',
         'Snabble/UI/**/*.xib',
-        'Snabble/UI/**/*.der',
-        'i18n/*.twine' ]
+        'Snabble/UI/**/*.der'
+      ]
     }
   end
 end
