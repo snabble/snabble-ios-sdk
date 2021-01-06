@@ -544,9 +544,9 @@ public struct CustomerNetworks: Codable {
 }
 
 /// base data for one shop
-public struct Shop: Codable {
+public struct Shop: Codable, AnyIdentifiable {
     /// id of this shop, use this to initialize shopping carts
-    public let id: String
+    public let id: Identifier<Shop>
     /// name of this shop
     public let name: String
     /// snabble project identifier of this shop

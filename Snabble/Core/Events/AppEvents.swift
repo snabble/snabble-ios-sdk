@@ -64,7 +64,7 @@ struct AppEvent: Encodable {
     private let projectId: Identifier<Project>
     private let timestamp: String
 
-    private let shopId: String?
+    private let shopId: Identifier<Shop>?
     private let id: String?
     private let agent: String?
 
@@ -89,7 +89,7 @@ struct AppEvent: Encodable {
     }
 
     private init(type: EventType, payload: Payload, project: Project,
-                 shopId: String? = nil, id: String? = nil, agent: String? = nil) {
+                 shopId: Identifier<Shop>? = nil, id: String? = nil, agent: String? = nil) {
         self.type = type
         self.appId = SnabbleAPI.clientId
         self.payload = payload
@@ -101,18 +101,18 @@ struct AppEvent: Encodable {
         self.timestamp = Snabble.iso8601Formatter.string(from: Date())
     }
 
-    init(_ type: EventType, session: String, project: Project, shopId: String? = nil) {
+    init(_ type: EventType, session: String, project: Project, shopId: Identifier<Shop>? = nil) {
         assert(type == .sessionStart || type == .sessionEnd, "session events must have a session type")
         let session = Payload.session(Session(session: session))
         self.init(type: type, payload: session, project: project, shopId: shopId)
     }
 
-    init(error: String, project: Project, session: String? = nil, shopId: String? = nil) {
+    init(error: String, project: Project, session: String? = nil, shopId: Identifier<Shop>? = nil) {
         let error = Payload.error(Message(message: error, session: session))
         self.init(type: .error, payload: error, project: project, shopId: shopId)
     }
 
-    init(log: String, project: Project, session: String? = nil, shopId: String? = nil) {
+    init(log: String, project: Project, session: String? = nil, shopId: Identifier<Shop>? = nil) {
         let log = Payload.log(Message(message: log, session: session))
         self.init(type: .log, payload: log, project: project, shopId: shopId)
     }

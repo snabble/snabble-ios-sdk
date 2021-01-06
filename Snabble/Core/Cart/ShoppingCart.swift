@@ -15,7 +15,7 @@ public final class ShoppingCart: Codable {
     public private(set) var paymentMethods: [PaymentMethodDescription]?
 
     public let projectId: Identifier<Project>
-    public let shopId: String
+    public let shopId: Identifier<Shop>
 
     public private(set) var uuid: String
 
