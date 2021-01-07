@@ -17,7 +17,7 @@ public struct CartConfig {
     public var project = Project.none
 
     /// the ID of the shop that this cart is used for
-    public var shopId = ""
+    public var shopId: Identifier<Shop> = ""
 
     /// the maximum age of a shopping cart, in seconds. Set this to 0 to keep carts forever
     public var maxAge: TimeInterval = 14400
@@ -96,7 +96,7 @@ public struct CartItem: Codable {
     }
 
     /// init with a freshly retrieved copy of `item.product`.
-    init?(updating item: CartItem, _ provider: ProductProvider, _ shopId: String, _ customerCard: String?) {
+    init?(updating item: CartItem, _ provider: ProductProvider, _ shopId: Identifier<Shop>, _ customerCard: String?) {
         guard let product = provider.productBySku(item.product.sku, shopId) else {
             return nil
         }
@@ -110,7 +110,7 @@ public struct CartItem: Codable {
     }
 
     /// init with a lookup product and a `LineItem`
-    init?(replacing item: CartItem, _ product: Product, _ shopId: String, _ lineItem: CheckoutInfo.LineItem) {
+    init?(replacing item: CartItem, _ product: Product, _ shopId: Identifier<Shop>, _ lineItem: CheckoutInfo.LineItem) {
         guard let code = lineItem.scannedCode else {
             return nil
         }

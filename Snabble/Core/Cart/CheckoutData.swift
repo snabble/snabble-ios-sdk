@@ -467,7 +467,7 @@ public struct CheckoutProcess: Decodable {
 /// Cart
 public struct Cart: Encodable {
     let session: String
-    let shopID: String
+    let shopID: Identifier<Shop>
     let customer: CustomerInfo?
     let items: [Item]
     let clientID: String

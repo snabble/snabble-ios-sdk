@@ -27,7 +27,7 @@ public final class ReceiptPreviewItem: NSObject, QLPreviewItem {
 }
 
 enum OrderEntry {
-    case pending(String, String)    // shop name, project id
+    case pending(String, Identifier<Project>)    // shop name, project id
     case done(Order)
 }
 
@@ -186,7 +186,7 @@ extension ReceiptsListViewController: UITableViewDelegate, UITableViewDataSource
         spinner.startAnimating()
         tableView.allowsSelection = false
 
-        let project = SnabbleAPI.projectFor(order.project) ?? SnabbleAPI.projects[0]
+        let project = SnabbleAPI.projectFor(order.projectId) ?? SnabbleAPI.projects[0]
         showOrder(order, for: project) { [weak self] _ in
             self?.spinner.stopAnimating()
             tableView.allowsSelection = true

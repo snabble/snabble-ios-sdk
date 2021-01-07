@@ -6,7 +6,7 @@
 
 extension ProductDB {
 
-    func resolveProductsLookup(_ url: String, _ codes: [(String, String)], _ shopId: String, completion: @escaping (_ result: Result<ScannedProduct, ProductLookupError>) -> Void) {
+    func resolveProductsLookup(_ url: String, _ codes: [(String, String)], _ shopId: Identifier<Shop>, completion: @escaping (_ result: Result<ScannedProduct, ProductLookupError>) -> Void) {
         let group = DispatchGroup()
         var results = [Result<ScannedProduct, ProductLookupError>]()
         let mutex = Mutex()
@@ -46,7 +46,7 @@ extension ProductDB {
         }
     }
 
-    private func resolveProductsLookup(_ url: String, _ code: String, _ template: String, _ shopId: String,
+    private func resolveProductsLookup(_ url: String, _ code: String, _ template: String, _ shopId: Identifier<Shop>,
                                        completion: @escaping (_ result: Result<ScannedProduct, ProductLookupError>) -> Void) {
         let session = SnabbleAPI.urlSession()
 
@@ -56,9 +56,9 @@ extension ProductDB {
         let parameters = [
             "code": code,
             "template": template,
-            "shopID": shopId
+            "shopID": shopId.rawValue
         ]
-        let query = "code=\(code) template=\(template) shop=\(shopId)"
+        let query = "code=\(code) template=\(template) shop=\(shopId.rawValue)"
 
         self.project.request(.get, url, parameters: parameters, timeout: timeoutInterval) { request in
             guard let request = request else {
@@ -108,16 +108,16 @@ extension ProductDB {
         }
     }
 
-    func resolveProductLookup(_ url: String, _ sku: String, _ shopId: String, completion: @escaping (_ result: Result<Product, ProductLookupError>) -> Void) {
+    func resolveProductLookup(_ url: String, _ sku: String, _ shopId: Identifier<Shop>, completion: @escaping (_ result: Result<Product, ProductLookupError>) -> Void) {
         let session = SnabbleAPI.urlSession()
 
         // TODO: is this the right value?
         let timeoutInterval: TimeInterval = 5
 
         let parameters = [
-            "shopID": shopId
+            "shopID": shopId.rawValue
         ]
-        let query = "sku=\(sku) shop=\(shopId)"
+        let query = "sku=\(sku) shop=\(shopId.rawValue)"
 
         let requestUrl = url.replacingOccurrences(of: "{sku}", with: sku)
 

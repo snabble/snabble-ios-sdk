@@ -16,7 +16,7 @@ final class ReceiptCell: UITableViewCell {
     @IBOutlet private weak var iconWidth: NSLayoutConstraint!
     @IBOutlet private weak var iconDistance: NSLayoutConstraint!
 
-    private var projectId = ""
+    private var projectId: Identifier<Project>?
 
     override func awakeFromNib() {
         super.awakeFromNib()
@@ -35,13 +35,13 @@ final class ReceiptCell: UITableViewCell {
         self.iconWidth.constant = 0
         self.iconDistance.constant = 0
 
-        self.projectId = ""
+        self.projectId = nil
     }
 
     func show(_ orderEntry: OrderEntry) {
         switch orderEntry {
         case .done(let order):
-            if let project = SnabbleAPI.projectFor(order.project) {
+            if let project = SnabbleAPI.projectFor(order.projectId) {
                 let formatter = PriceFormatter(project)
                 self.price.text = formatter.format(order.price)
             } else {
@@ -51,7 +51,7 @@ final class ReceiptCell: UITableViewCell {
 
             self.storeName.text = order.shopName
 
-            self.showIcon(order.project)
+            self.showIcon(order.projectId)
 
             let dateFormatter = DateFormatter()
             dateFormatter.dateStyle = .medium
@@ -70,15 +70,14 @@ final class ReceiptCell: UITableViewCell {
         }
     }
 
-    private func showIcon(_ projectId: String) {
+    private func showIcon(_ projectId: Identifier<Project>) {
         self.projectId = projectId
 
-        SnabbleUI.getAsset(.storeIcon, projectId: projectId) { img in
-            if let img = img, self.projectId == projectId {
-                self.updateImage(img)
+        SnabbleUI.getAsset(.storeIcon, projectId: projectId) { [weak self] img in
+            if let img = img, self?.projectId == projectId {
+                self?.updateImage(img)
             } else {
-                let img = UIImage(named: projectId)
-                self.updateImage(img)
+                self?.updateImage(UIImage(named: projectId.rawValue))
             }
         }
     }

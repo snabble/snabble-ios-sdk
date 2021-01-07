@@ -201,7 +201,7 @@ public final class SnabbleBundle: NSObject {
 extension String {
     func localized() -> String {
         // check if the app has a project-specific localization for this string
-        let projectId = SnabbleUI.project.id.replacingOccurrences(of: "-", with: ".")
+        let projectId = SnabbleUI.project.id.rawValue.replacingOccurrences(of: "-", with: ".")
         let key = projectId + "." + self
         let projectValue = Bundle.main.localizedString(forKey: key, value: key, table: nil)
         if !projectValue.hasPrefix(projectId) {

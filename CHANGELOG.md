@@ -2,7 +2,8 @@
 
 # [unreleased]
 
-- adds localizable strings for `de` `sk`, and `hu` #5
+* Adds localizable strings for `de` `sk`, and `hu` #5
+* Adds Identifier for Brand, Project and Shop identifiers #9
 * Remove `UIEmptyState` pod as dependency #6
 
 # v0.14.8

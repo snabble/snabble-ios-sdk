@@ -20,7 +20,7 @@ public struct OrderList: Decodable {
 }
 
 public struct Order: Codable {
-    public let project: String
+    public let projectId: Identifier<Project>
     public let id: String
     public let date: Date
     public let shopId: String
@@ -33,14 +33,14 @@ public struct Order: Codable {
     }
 
     enum CodingKeys: String, CodingKey {
-        case project, id, date, shopName, price, links
+        case projectId = "project", id, date, shopName, price, links
         case shopId = "shopID"
     }
 
     public init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
 
-        self.project = try container.decode(String.self, forKey: .project)
+        self.projectId = try container.decode(Identifier<Project>.self, forKey: .projectId)
         self.id = try container.decode(String.self, forKey: .id)
         let date = try container.decode(String.self, forKey: .date)
         self.date = Snabble.iso8601Formatter.date(from: date) ?? Date()
@@ -54,7 +54,7 @@ public struct Order: Codable {
     public func encode(to encoder: Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
 
-        try container.encode(self.project, forKey: .project)
+        try container.encode(self.projectId, forKey: .projectId)
         try container.encode(self.id, forKey: .id)
         let dateStr = Snabble.iso8601Formatter.string(from: self.date)
         try container.encode(dateStr, forKey: .date)

@@ -14,8 +14,8 @@ public final class ShoppingCart: Codable {
     public private(set) var backendCartInfo: BackendCartInfo?
     public private(set) var paymentMethods: [PaymentMethodDescription]?
 
-    public let projectId: String
-    public let shopId: String
+    public let projectId: Identifier<Project>
+    public let shopId: Identifier<Shop>
 
     public private(set) var uuid: String
 
@@ -79,7 +79,7 @@ public final class ShoppingCart: Codable {
     }
 
     public init(_ config: CartConfig) {
-        assert(!config.project.id.isEmpty && config.project.id != Project.none.id, "empty projects cannot have a shopping cart")
+        assert(!config.project.id.rawValue.isEmpty && config.project.id != Project.none.id, "empty projects cannot have a shopping cart")
         assert(!config.shopId.isEmpty, "shopId is required")
         self.projectId = config.project.id
         self.shopId = config.shopId
@@ -284,7 +284,7 @@ extension ShoppingCart {
 
     private func cartUrl(_ directory: String) -> URL {
         let url = URL(fileURLWithPath: directory)
-        return url.appendingPathComponent(self.projectId + ".json")
+        return url.appendingPathComponent(self.projectId.rawValue + ".json")
     }
 
     /// persist this shopping cart to disk

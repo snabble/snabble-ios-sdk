@@ -43,8 +43,8 @@ public struct Metadata: Decodable {
     }
 }
 
-public struct Brand: Decodable {
-    public let id: String
+public struct Brand: Decodable, Identifiable {
+    public let id: Identifier<Brand>
     public let name: String
 }
 
@@ -254,8 +254,8 @@ public struct Company: Decodable {
     public let zip: String?
 }
 
-public struct Project: Decodable {
-    public let id: String
+public struct Project: Decodable, Identifiable {
+    public let id: Identifier<Project>
     public let name: String
     public let links: ProjectLinks
     public let rawLinks: [String: Link]
@@ -289,7 +289,7 @@ public struct Project: Decodable {
     public let displayNetPrice: Bool
 
     public let company: Company?
-    public let brandId: String?
+    public let brandId: Identifier<Brand>?
 
     enum CodingKeys: String, CodingKey {
         case id, name, links
@@ -307,7 +307,7 @@ public struct Project: Decodable {
     public init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
 
-        self.id = try container.decode(String.self, forKey: .id)
+        self.id = try container.decode(Identifier<Project>.self, forKey: .id)
         self.name = try container.decode(String.self, forKey: .name)
         self.links = try container.decode(ProjectLinks.self, forKey: .links)
         self.rawLinks = try container.decode([String: Link].self, forKey: .links)
@@ -341,11 +341,11 @@ public struct Project: Decodable {
         self.displayNetPrice = try container.decodeIfPresent(Bool.self, forKey: .displayNetPrice) ?? false
         self.company = try container.decodeIfPresent(Company.self, forKey: .company)
         let brandId = try container.decodeIfPresent(String.self, forKey: .brandId) ?? ""
-        self.brandId = brandId.isEmpty ? nil : brandId
+        self.brandId = brandId.isEmpty ? nil : Identifier<Brand>(rawValue: brandId)
     }
 
     private init() {
-        self.id = "none"
+        self.id = Identifier<Project>(rawValue: "none")
         self.name = ""
         self.links = ProjectLinks.empty
         self.rawLinks = [:]
@@ -372,7 +372,7 @@ public struct Project: Decodable {
 
     // only used for unit tests!
     internal init(_ id: String, links: ProjectLinks) {
-        self.id = id
+        self.id = .init(rawValue: id)
         self.name = ""
         self.links = links
         self.rawLinks = [:]
@@ -544,13 +544,13 @@ public struct CustomerNetworks: Codable {
 }
 
 /// base data for one shop
-public struct Shop: Codable {
+public struct Shop: Codable, Identifiable {
     /// id of this shop, use this to initialize shopping carts
-    public let id: String
+    public let id: Identifier<Shop>
     /// name of this shop
     public let name: String
     /// snabble project identifier of this shop
-    public let project: String
+    public let projectId: Identifier<Project>
 
     /// externally provided identifier
     public let externalId: String?
@@ -585,7 +585,7 @@ public struct Shop: Codable {
     public let customerNetworks: [CustomerNetworks]?
 
     enum CodingKeys: String, CodingKey {
-        case id, name, project, externalId, external
+        case id, name, projectId = "project", externalId, external
         case latitude = "lat", longitude = "lon"
         case services, openingHoursSpecification, email, phone, city, street
         case postalCode = "zip", state, country
@@ -597,7 +597,7 @@ public struct Shop: Codable {
 
         self.id = try container.decode(.id)
         self.name = try container.decode(.name)
-        self.project = try container.decode(.project)
+        self.projectId = try container.decode(.projectId)
         self.externalId = try container.decode(.externalId)
         self.external = try container.decodeIfPresent([String: Any].self, forKey: .external)
         self.latitude = try container.decode(.latitude)
@@ -619,7 +619,7 @@ public struct Shop: Codable {
 
         try container.encode(self.id, forKey: .id)
         try container.encode(self.name, forKey: .name)
-        try container.encode(self.project, forKey: .project)
+        try container.encode(self.projectId, forKey: .projectId)
         try container.encode(self.externalId, forKey: .externalId)
         try container.encode(self.latitude, forKey: .latitude)
         try container.encode(self.longitude, forKey: .longitude)

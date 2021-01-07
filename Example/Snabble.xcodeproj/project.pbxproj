@@ -218,7 +218,6 @@
 				"${BUILT_PRODUCTS_DIR}/SDCAlertView/SDCAlertView.framework",
 				"${BUILT_PRODUCTS_DIR}/Snabble/Snabble.framework",
 				"${BUILT_PRODUCTS_DIR}/TrustKit/TrustKit.framework",
-				"${BUILT_PRODUCTS_DIR}/UIEmptyState/UIEmptyState.framework",
 				"${BUILT_PRODUCTS_DIR}/Zip/Zip.framework",
 			);
 			name = "[CP] Embed Pods Frameworks";
@@ -230,7 +229,6 @@
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/SDCAlertView.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Snabble.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/TrustKit.framework",
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/UIEmptyState.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Zip.framework",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
