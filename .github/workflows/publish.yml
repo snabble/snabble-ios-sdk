@@ -17,7 +17,7 @@ jobs:
       - name: Publish
         env:
           COCOAPODS_TRUNK_TOKEN: ${{ secrets.COCOAPODS_TRUNK_TOKEN }}
-        run: pod trunk push Snabble.podspec
+        run: pod trunk push Snabble.podspec --allow-warnings
 
       - name: Slack Notification
         uses: homoluctus/slatify@master
