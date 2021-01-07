@@ -1,8 +1,7 @@
 github "https://github.com/mattrubin/OneTimePassword" ~> 3
-github "https://github.com/groue/GRDB.swift" ~> 4
-github "https://github.com/marmelroy/Zip" ~> 1
+github "https://github.com/groue/GRDB.swift" ~> 5
+github "https://github.com/marmelroy/Zip" ~> 2
 github "https://github.com/datatheorem/TrustKit" ~> 1
 github "https://github.com/kishikawakatsumi/KeychainAccess" ~> 4
 
-github "https://github.com/luispadron/UIEmptyState" ~> 4
 github "https://github.com/sberrevoets/SDCAlertView" ~> 11
