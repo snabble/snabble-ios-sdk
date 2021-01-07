@@ -7,11 +7,11 @@
 
 import Foundation
 
-public protocol AnyIdentifiable: Identifiable {
+public protocol Identifiable: Swift.Identifiable {
     var id: Identifier<Self> { get }
 }
 
-public struct Identifier<Value: AnyIdentifiable> {
+public struct Identifier<Value: Identifiable> {
     public typealias RawIdentifier = String
 
     public let rawValue: RawIdentifier

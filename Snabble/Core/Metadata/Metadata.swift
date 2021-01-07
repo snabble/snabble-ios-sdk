@@ -43,7 +43,7 @@ public struct Metadata: Decodable {
     }
 }
 
-public struct Brand: Decodable, AnyIdentifiable {
+public struct Brand: Decodable, Identifiable {
     public let id: Identifier<Brand>
     public let name: String
 }
@@ -254,7 +254,7 @@ public struct Company: Decodable {
     public let zip: String?
 }
 
-public struct Project: Decodable, AnyIdentifiable {
+public struct Project: Decodable, Identifiable {
     public let id: Identifier<Project>
     public let name: String
     public let links: ProjectLinks
@@ -544,7 +544,7 @@ public struct CustomerNetworks: Codable {
 }
 
 /// base data for one shop
-public struct Shop: Codable, AnyIdentifiable {
+public struct Shop: Codable, Identifiable {
     /// id of this shop, use this to initialize shopping carts
     public let id: Identifier<Shop>
     /// name of this shop
