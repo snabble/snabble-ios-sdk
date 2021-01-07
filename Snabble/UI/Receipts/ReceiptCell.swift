@@ -41,7 +41,7 @@ final class ReceiptCell: UITableViewCell {
     func show(_ orderEntry: OrderEntry) {
         switch orderEntry {
         case .done(let order):
-            if let project = SnabbleAPI.projectFor(order.projectId) {
+            if let project = SnabbleAPI.project(for: order.projectId) {
                 let formatter = PriceFormatter(project)
                 self.price.text = formatter.format(order.price)
             } else {

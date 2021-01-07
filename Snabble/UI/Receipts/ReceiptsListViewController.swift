@@ -186,7 +186,7 @@ extension ReceiptsListViewController: UITableViewDelegate, UITableViewDataSource
         spinner.startAnimating()
         tableView.allowsSelection = false
 
-        let project = SnabbleAPI.projectFor(order.projectId) ?? SnabbleAPI.projects[0]
+        let project = SnabbleAPI.project(for: order.projectId) ?? SnabbleAPI.projects[0]
         showOrder(order, for: project) { [weak self] _ in
             self?.spinner.stopAnimating()
             tableView.allowsSelection = true

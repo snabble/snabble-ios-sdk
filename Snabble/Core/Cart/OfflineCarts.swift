@@ -76,7 +76,7 @@ public class OfflineCarts {
         // retry the requests
         for (index, savedCart) in savedCarts.enumerated() {
             let cart = savedCart.cart
-            guard let project = SnabbleAPI.projectFor(cart.projectId) else {
+            guard let project = SnabbleAPI.project(for: cart.projectId) else {
                 continue
             }
 

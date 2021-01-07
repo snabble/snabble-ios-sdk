@@ -124,7 +124,7 @@ struct AppEvent: Encodable {
 
     init?(_ shoppingCart: ShoppingCart) {
         let cart = shoppingCart.createCart()
-        guard let project = SnabbleAPI.projectFor(shoppingCart.projectId) else {
+        guard let project = SnabbleAPI.project(for: shoppingCart.projectId) else {
             return nil
         }
 

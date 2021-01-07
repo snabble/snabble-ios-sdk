@@ -13,7 +13,7 @@ enum CartEvent {
             return
         }
 
-        guard let project = SnabbleAPI.projectFor(cart.projectId) else {
+        guard let project = SnabbleAPI.project(for: cart.projectId) else {
             return
         }
 
@@ -26,7 +26,7 @@ enum CartEvent {
             return
         }
 
-        guard let project = SnabbleAPI.projectFor(cart.projectId) else {
+        guard let project = SnabbleAPI.project(for: cart.projectId) else {
             return
         }
 

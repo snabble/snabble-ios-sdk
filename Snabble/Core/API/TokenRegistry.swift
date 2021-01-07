@@ -142,7 +142,7 @@ final class TokenRegistry {
         }
 
         for projectId in activeIds {
-            if let project = SnabbleAPI.projectFor(projectId) {
+            if let project = SnabbleAPI.project(for: projectId) {
                 self.getToken(for: project, completion: { _ in })
             }
         }
@@ -217,7 +217,7 @@ final class TokenRegistry {
     }
 
     private func retrieveAppUserAndToken(for projectId: Identifier<Project>, _ date: Date? = nil, completion: @escaping (TokenData?) -> Void) {
-        guard let project = SnabbleAPI.projectFor(projectId) else {
+        guard let project = SnabbleAPI.project(for: projectId) else {
             return completion(nil)
         }
 
@@ -257,7 +257,7 @@ final class TokenRegistry {
     }
 
     private func retrieveTokenForUser(for projectId: Identifier<Project>, _ appUserId: AppUserId, _ date: Date? = nil, completion: @escaping (TokenData?) -> Void ) {
-        guard let project = SnabbleAPI.projectFor(projectId) else {
+        guard let project = SnabbleAPI.project(for: projectId) else {
             return completion(nil)
         }
 

@@ -90,7 +90,7 @@ public enum SnabbleAPI {
         return self.metadata.brands
     }
 
-    public static func projectFor(_ projectId: Identifier<Project>) -> Project? {
+    public static func project(for projectId: Identifier<Project>) -> Project? {
         return self.metadata.projects.first { $0.id == projectId }
     }
 
@@ -373,7 +373,7 @@ extension SnabbleAPI {
 
     static func fetchAppUserData(_ projectId: Identifier<Project>) {
         guard
-            let project = SnabbleAPI.projectFor(projectId),
+            let project = SnabbleAPI.project(for: projectId),
             let appUserId = SnabbleAPI.appUserId
         else {
             return

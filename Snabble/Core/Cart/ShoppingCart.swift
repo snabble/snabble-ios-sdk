@@ -255,7 +255,7 @@ public final class ShoppingCart: Codable {
     /// update the products in this shopping cart, e.g. after a database update was downloaded
     /// or when the customer card was changed
     public func updateProducts(_ customerCard: String? = nil) {
-        guard let project = SnabbleAPI.projectFor(self.projectId) else {
+        guard let project = SnabbleAPI.project(for: self.projectId) else {
             return
         }
 
@@ -367,7 +367,7 @@ extension ShoppingCart {
 
     func createCheckoutInfo(userInitiated: Bool = false, completion: @escaping (Bool) -> Void) {
         guard
-            let project = SnabbleAPI.projectFor(self.projectId),
+            let project = SnabbleAPI.project(for: self.projectId),
             !self.items.isEmpty
         else {
             completion(false)
