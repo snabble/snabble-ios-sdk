@@ -7,7 +7,7 @@
 
 import Foundation
 
-public protocol AnyIdentifiable {
+public protocol AnyIdentifiable: Identifiable {
     var id: Identifier<Self> { get }
 }
 
