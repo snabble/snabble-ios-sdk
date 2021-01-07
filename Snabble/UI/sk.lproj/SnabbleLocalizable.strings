@@ -1,10 +1,10 @@
-"Snabble.ageVerification.explanation" = "Na kúpu určitých produktov (napr. alkoholických produktov) je potrebné potvrdenie veku. Za týmto účelom zadaj 7-miestne číslo na zadnej strane svojho občianskeho preukazu.";
+"Snabble.ageVerification.explanation" = "To purchase certain products like alcoholic beverages, verifying your age is required. Enter the 7-digit Number from the back side of your ID card.";
 
 "Snabble.ageVerification.failed.message" = "Pre niektoré produkty v tvojom košíku platí vekový limit a tieto žiaľ nemôžeš kúpiť.";
 
 "Snabble.ageVerification.failed.title" = "Nespĺňaš vekový limit";
 
-"Snabble.ageVerification.pending.message" = "Pre niektoré produkty v tvojom košíku platí vekový limit. Za účelom pokračovania v nákupe vykonaj overenie tvojho veku.";
+"Snabble.ageVerification.pending.message" = "Some products in your cart have an age restriction. Please verify your age before continuing.";
 
 "Snabble.ageVerification.pending.title" = "Overenie veku bolo úspešné";
 
@@ -31,7 +31,7 @@
 /* ********* Snabble ********* */
 "Snabble.Cancel" = "Zrušiť";
 
-"Snabble.CC.3dsecureHint" = "Za účelom overenia kreditnej karty budeš po zadaní údajov presmerovaný/presmerovaná na tvoju banku. Tam budeš požiadaný o súhlas s platbou 1,00 € pre snabble. Po súhlase ti bude suma okamžite opäť pripísaná na účet.";
+"Snabble.CC.3dsecureHint" = "Na overenie tvojej platobnej karty budeš po zadaní údajov presmerovaný/presmerovaná na svoju banku.  Ihneď po tvojom schválení ti bude suma pripísaná.";
 
 "Snabble.CC.cardNumber" = "Číslo karty";
 
@@ -61,7 +61,7 @@
 
 "Snabble.goToSettings" = "Prejsť na nastavenia";
 
-"Snabble.Hints.closedBags" = "Len tak ďalej! Prosím, uľahči prácu pokladníkom a nevkladaj svoje produkty priamo do uzavretých tašiek. Ďakujeme!";
+"Snabble.Hints.closedBags" = "  Ďakujem!";
 
 "Snabble.Hints.continueScanning" = "Pokračovať v skenovaní";
 
@@ -96,7 +96,7 @@
 
 "Snabble.paydirekt.gotoWebsite" = "Prejsť na paydirekt.de";
 
-"Snabble.paydirekt.savedAuthorization" = "Autorizácia aplikácie snabble pre paydirekt bola úspešná. Ak chceš autorizáciu zrušiť, musíš sa prihlásiť do svojho konta paydirekt na webovej stránke. Pokiaľ nechceš, aby paydirekt bol v budúcnosti zobrazovaný ako spôsob platby, tu ho môžeš jednoducho odstrániť.";
+"Snabble.paydirekt.savedAuthorization" = "You've successfully authorized snabble for paydirekt. To remove this authorization, you need to log in to your paydirekt account. If you do not want to use this payment method anymore, you can remove it here.";
 
 /* SECTION: SnabbleAndroid */
 "Snabble.Payment.aborted" = "Platobný proces bol prerušený";
@@ -114,6 +114,10 @@
 "Snabble.Payment.confirm" = "Potvrdiť nákup";
 
 "Snabble.Payment.CreditCard" = "Kreditná karta";
+
+"Snabble.Payment.CreditCard.error" = "There was an error processing your credit card";
+
+"Snabble.Payment.CreditCard.expireDate" = "Expires: %@";
 
 "Snabble.Payment.delete.message" = "Naozaj chceš odstrániť tento spôsob platby?";
 
@@ -137,7 +141,7 @@
 
 "Snabble.Payment.presentCode" = "Za účelom potvrdenia nákupu prilož tento kód pred snabble monitor alebo ho ukáž zamestnancovi.";
 
-"Snabble.Payment.SEPA.hint" = "Poznámka: Za účelom tvojej ochrany a ochrany našich obchodníkov pred zneužitím si obchodník pri tvojej prvej platbe prostredníctvom SEPA inkasa vyžiada tvoju bankovú kartu.";
+"Snabble.Payment.SEPA.hint" = "Note: In order to protect you and our merchants against misuse, the merchant will have your bank card shown on your first payment by SEPA direct debit.";
 
 "Snabble.Payment.SEPA.IBAN" = "IBAN";
 
@@ -164,9 +168,9 @@
 
 "Snabble.PaymentMethods.add" = "Pridať spôsob platby";
 
-"Snabble.PaymentMethods.noCodeAlert.biometry" = "Tvoj iPhone nie je chránený ani kódom, ani funkciou Touch ID/Face ID. V záujme svojej ochrany pred zadaním svojho čísla IBAN najprv nastav túto ochranu.";
+"Snabble.PaymentMethods.noCodeAlert.biometry" = "Your iPhone isn't protected by a code or Touch ID/Face ID. For your own safety, please assign a code before storing your payment information.";
 
-"Snabble.PaymentMethods.noCodeAlert.noBiometry" = "Tvoj iPhone nie je chránený kódom. V záujme svojej ochrany pred zadaním svojho čísla IBAN najprv nastav túto ochranu.";
+"Snabble.PaymentMethods.noCodeAlert.noBiometry" = "Your iPhone isn't protected by a code. For your own safety, please assign a code before storing your payment information.";
 
 "Snabble.PaymentMethods.noDeviceCode" = "Nepodporovaný iPhone";
 
@@ -231,13 +235,13 @@
 
 "Snabble.Scanner.addToCart" = "Pridať do košíka";
 
-"Snabble.Scanner.batterySaverHint" = "Činnosť skenera bola prerušená. Pre pokračovanie sa dotkni obrazovky, prosím.";
+"Snabble.Scanner.batterySaverHint" = "Scanner stopped. Tap anywhere on the screen to continue.";
 
 "Snabble.Scanner.BundleDialog.headline" = "Výber jednotky balenia";
 
 "Snabble.Scanner.Camera.accessDenied" = "Prístup k fotoaparátu bol zamietnutý";
 
-"Snabble.Scanner.Camera.allowAccess" = "Na skenovanie čiarových kódov potrebujeme prístup k fotoaparátu. Povoľ prístup v nastaveniach a vráť sa sem opäť.";
+"Snabble.Scanner.Camera.allowAccess" = "Sorry, we'll need to access your camera to scan barcodes. Please allow this in the settings and return here.";
 
 "Snabble.Scanner.duplicateDepositScanned" = "Každý doklad o zálohe môže byť naskenovaný len raz.";
 
@@ -253,13 +257,13 @@
 
 "Snabble.Scanner.multiPack" = "Nezabudni!";
 
-"Snabble.Scanner.networkError" = "Produkt nie je možné nájsť. Prosím, skontroluj svoje internetové pripojenie.";
+"Snabble.Scanner.networkError" = "Produkt sa nepodarilo nájsť.";
 
 "Snabble.Scanner.noMatchesFound" = "Položka nebola nájdená";
 
 "Snabble.Scanner.plusDeposit" = "+ %@ záloha";
 
-"Snabble.Scanner.scannedAgeRestrictedProduct" = "Na tento produkt sa vzťahuje vekový limit, preto bude pri platbe skontrolovaný tvoj vek.";
+"Snabble.Scanner.scannedAgeRestrictedProduct" = "Na tento produkt sa vzťahuje vekový limit,  preto bude pri platbe skontrolovaný tvoj vek.";
 
 "Snabble.Scanner.scannedShelfCode" = "Odváž produkt a naskenuj čiarový kód na etikete";
 
@@ -303,7 +307,7 @@
 
 "Snabble.Shoppingcart.emptyState.buttonTitle" = "Skenovať teraz";
 
-"Snabble.Shoppingcart.emptyState.description" = "Košík je prázdny. Naskenuj čiarové kódy produktov, ktoré si chceš kúpiť.";
+"Snabble.Shoppingcart.emptyState.description" = "Visit a store that supports snabble and scan the barcodes of products you wish to purchase.";
 
 "Snabble.Shoppingcart.emptyState.restartButtonTitle" = "Začať nový nákup";
 

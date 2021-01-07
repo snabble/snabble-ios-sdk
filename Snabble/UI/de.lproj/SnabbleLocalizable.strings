@@ -115,6 +115,10 @@
 
 "Snabble.Payment.CreditCard" = "Kreditkarte";
 
+"Snabble.Payment.CreditCard.error" = "Bei der Verarbeitung Ihrer Kreditkarte ist ein Fehler aufgetreten";
+
+"Snabble.Payment.CreditCard.expireDate" = "Läuft ab: %@";
+
 "Snabble.Payment.delete.message" = "Möchtest Du diese Zahlungsmethode wirklich entfernen?";
 
 "Snabble.Payment.emptyState.add" = "Bezahlverfahren hinzufügen";

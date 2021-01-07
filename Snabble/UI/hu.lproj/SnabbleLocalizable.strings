@@ -115,6 +115,10 @@
 
 "Snabble.Payment.CreditCard" = "Hitelkártya";
 
+"Snabble.Payment.CreditCard.error" = "There was an error processing your credit card";
+
+"Snabble.Payment.CreditCard.expireDate" = "Expires: %@";
+
 "Snabble.Payment.delete.message" = "Tényleg elmented ezt a fizetési módot?";
 
 "Snabble.Payment.emptyState.add" = "Fizetési mód hozzáadása";

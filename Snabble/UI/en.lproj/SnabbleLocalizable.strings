@@ -115,6 +115,10 @@
 
 "Snabble.Payment.CreditCard" = "Credit card";
 
+"Snabble.Payment.CreditCard.error" = "There was an error processing your credit card";
+
+"Snabble.Payment.CreditCard.expireDate" = "Expires: %@";
+
 "Snabble.Payment.delete.message" = "Are you sure you want to remove this payment method?";
 
 "Snabble.Payment.emptyState.add" = "Add payment method";

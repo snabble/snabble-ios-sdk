@@ -1,14 +1,16 @@
 ## snabble iOS SDK Changelog
 
-# [unreleased]
+# v0.15.0
 
-* Adds localizable strings for `de` `sk`, and `hu` #5
-* Adds Identifier for Brand, Project and Shop identifiers #9
-* Remove `UIEmptyState` pod as dependency #6
+- Adds localizable strings for `de` `sk`, and `hu` #5
+- Adds `Identifier` for Brand, Project and Shop identifiers #9
+- Remove `UIEmptyState` pod as dependency #6
+- Updated the `Zip` dependency to v2.x
+- Fixes a bug where double-tapping on a receipt could result in a crash
 
 # v0.14.8
 
-* Adds support for grouping multiple projects by their common `brand`.
+- Adds support for grouping multiple projects by their common `brand`.
 
 # v0.14.7
 
