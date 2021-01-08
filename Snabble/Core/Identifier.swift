@@ -7,7 +7,7 @@
 
 import Foundation
 
-public protocol Identifiable: Swift.Identifiable {
+public protocol Identifiable {
     var id: Identifier<Self> { get }
 }
 
