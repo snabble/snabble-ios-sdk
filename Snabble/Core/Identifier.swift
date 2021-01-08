@@ -11,7 +11,7 @@ public protocol Identifiable {
     var id: Identifier<Self> { get }
 }
 
-public struct Identifier<Value: Identifiable> {
+public struct Identifier<Value: Snabble.Identifiable> {
     public typealias RawIdentifier = String
 
     public let rawValue: RawIdentifier
