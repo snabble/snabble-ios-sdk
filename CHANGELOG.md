@@ -1,5 +1,9 @@
 ## snabble iOS SDK Changelog
 
+# v0.15.1
+
+- Removes the conformance to `Swift.Identifiable` from the SDK's `Identifiable`
+
 # v0.15.0
 
 - Adds localizable strings for `de` `sk`, and `hu` #5
