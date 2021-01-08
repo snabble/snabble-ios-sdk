@@ -9,7 +9,6 @@ public protocol CustomAppearance {
     var buttonBackgroundColor: UIColor { get }
     var buttonTextColor: UIColor { get }
     var titleIcon: UIImage? { get }
-    var statusBarStyle: UIStatusBarStyle { get }
 }
 
 public protocol CustomizableAppearance: class {
