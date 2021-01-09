@@ -37,14 +37,14 @@ extension Identifier: Codable {
 // MARK: - ExpressibleByStringLiteral
 
 extension Identifier: ExpressibleByUnicodeScalarLiteral where Value.RawIdentifier == String {
-    public init(unicodeScalarLiteral value: Value.RawIdentifier) {
-        rawValue = value
+    public init(unicodeScalarLiteral value: UnicodeScalar) {
+        rawValue = String(describing: Character(value))
     }
 }
 
 extension Identifier: ExpressibleByExtendedGraphemeClusterLiteral where Value.RawIdentifier == String {
-    public init(extendedGraphemeClusterLiteral value: Value.RawIdentifier) {
-        rawValue = value
+    public init(extendedGraphemeClusterLiteral value: Character) {
+        rawValue = String(describing: value)
     }
 }
 
