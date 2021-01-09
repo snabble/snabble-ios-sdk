@@ -80,7 +80,7 @@ public final class ShoppingCart: Codable {
 
     public init(_ config: CartConfig) {
         assert(!config.project.id.rawValue.isEmpty && config.project.id != Project.none.id, "empty projects cannot have a shopping cart")
-        assert(!config.shopId.isEmpty, "shopId is required")
+        assert(!config.shopId.rawValue.isEmpty, "shopId is required")
         self.projectId = config.project.id
         self.shopId = config.shopId
         self.maxAge = config.maxAge

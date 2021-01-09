@@ -8,20 +8,15 @@
 import Foundation
 
 public protocol Identifiable {
+    associatedtype RawIdentifier: Codable & Hashable = String
     var id: Identifier<Self> { get }
 }
 
 public struct Identifier<Value: Snabble.Identifiable>: RawRepresentable {
-    public typealias RawIdentifier = String
+    public let rawValue: Value.RawIdentifier
 
-    public let rawValue: RawIdentifier
-
-    public init(rawValue: RawIdentifier) {
+    public init(rawValue: Value.RawIdentifier) {
         self.rawValue = rawValue
-    }
-
-    public var isEmpty: Bool {
-        rawValue.isEmpty
     }
 }
 
@@ -30,7 +25,7 @@ public struct Identifier<Value: Snabble.Identifiable>: RawRepresentable {
 extension Identifier: Codable {
     public init(from decoder: Decoder) throws {
         let container = try decoder.singleValueContainer()
-        let rawValue = try container.decode(RawIdentifier.self)
+        let rawValue = try container.decode(Value.RawIdentifier.self)
         self.init(rawValue: rawValue)
     }
     public func encode(to encoder: Encoder) throws {
@@ -41,9 +36,29 @@ extension Identifier: Codable {
 
 // MARK: - ExpressibleByStringLiteral
 
-extension Identifier: ExpressibleByStringLiteral {
-    public init(stringLiteral value: String) {
-        self.init(rawValue: value)
+extension Identifier: ExpressibleByUnicodeScalarLiteral where Value.RawIdentifier == String {
+    public init(unicodeScalarLiteral value: Value.RawIdentifier) {
+        rawValue = value
+    }
+}
+
+extension Identifier: ExpressibleByExtendedGraphemeClusterLiteral where Value.RawIdentifier == String {
+    public init(extendedGraphemeClusterLiteral value: Value.RawIdentifier) {
+        rawValue = value
+    }
+}
+
+extension Identifier: ExpressibleByStringLiteral where Value.RawIdentifier == String {
+    public init(stringLiteral value: Value.RawIdentifier) {
+        rawValue = value
+    }
+}
+
+// MARK: - ExpressibleByIntegerLiteral
+
+extension Identifier: ExpressibleByIntegerLiteral where Value.RawIdentifier == Int {
+    public init(integerLiteral value: Value.RawIdentifier) {
+        rawValue = value
     }
 }
 
@@ -59,6 +74,10 @@ extension Identifier: Hashable {
 
 extension Identifier: CustomStringConvertible {
     public var description: String {
-        rawValue
+        if let stringValue = rawValue as? String {
+            return stringValue
+        } else {
+            return "\(rawValue)"
+        }
     }
 }
