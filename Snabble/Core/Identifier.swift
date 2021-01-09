@@ -11,7 +11,7 @@ public protocol Identifiable {
     var id: Identifier<Self> { get }
 }
 
-public struct Identifier<Value: Snabble.Identifiable> {
+public struct Identifier<Value: Snabble.Identifiable>: RawRepresentable {
     public typealias RawIdentifier = String
 
     public let rawValue: RawIdentifier
@@ -50,10 +50,6 @@ extension Identifier: ExpressibleByStringLiteral {
 // MARK: - Hashable
 
 extension Identifier: Hashable {
-    public static func == (lhs: Identifier<Value>, rhs: Identifier<Value>) -> Bool {
-        lhs.rawValue == rhs.rawValue
-    }
-
     public func hash(into hasher: inout Hasher) {
         hasher.combine(rawValue)
     }
