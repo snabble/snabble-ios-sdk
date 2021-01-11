@@ -44,11 +44,6 @@ public enum SnabbleUI {
         customizableAppearances.reap()
         customizableAppearances.addObject(appearance)
     }
-
-    static func unregisterForAppearanceChange(_ appearance: CustomizableAppearance) {
-        customizableAppearances.reap()
-        customizableAppearances.removeObject(appearance)
-    }
 }
 
 private struct SnabbleAppearance: CustomAppearance {

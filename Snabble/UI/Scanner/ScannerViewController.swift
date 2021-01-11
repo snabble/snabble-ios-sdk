@@ -113,10 +113,6 @@ public final class ScannerViewController: UIViewController {
         SnabbleUI.registerForAppearanceChange(self)
     }
 
-    deinit {
-        SnabbleUI.unregisterForAppearanceChange(self)
-    }
-
     public required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
