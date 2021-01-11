@@ -6,56 +6,6 @@
 
 import UIKit
 
-/// configuration parameters for the look of the view controllers in the Snabble SDK
-public struct SnabbleAppearance: CustomAppearance {
-    public var primaryColor: UIColor = .black
-    public var backgroundColor: UIColor = .white
-
-    // colors for buttons
-    public var buttonShadowColor: UIColor = .black
-    public var buttonBorderColor: UIColor = .black
-
-    public var buttonBackgroundColor: UIColor {
-        get {
-            guard let customAppearance = customAppearance else {
-                return _buttonBackgroundColor
-            }
-            return customAppearance.buttonBackgroundColor
-        }
-        set {
-            _buttonBackgroundColor = newValue
-        }
-    }
-
-    public var buttonTextColor: UIColor {
-        get {
-            guard let customAppearance = customAppearance else {
-                return _buttonTextColor
-            }
-            return customAppearance.buttonTextColor
-        }
-        set {
-            _buttonTextColor = newValue
-        }
-    }
-
-    // bg color for the "stepper" buttons
-    public var stepperButtonBackgroundColor: UIColor = .lightGray
-
-    public var textColor: UIColor = .black
-
-    public init() {}
-
-    fileprivate var customAppearance: CustomAppearance?
-
-    public var titleIcon: UIImage? {
-        customAppearance?.titleIcon
-    }
-
-    private var _buttonBackgroundColor: UIColor = .lightGray
-    private var _buttonTextColor: UIColor = .white
-}
-
 /// global settings for the Snabble UI classes
 public enum SnabbleUI {
 
@@ -64,19 +14,13 @@ public enum SnabbleUI {
 
     public private(set) static var project = Project.none
 
-    private(set) static var appearance = SnabbleAppearance()
-    public static var customAppearance: CustomAppearance? {
+    /// sets custom appearance
+    public static var appearance: CustomAppearance = SnabbleAppearance() {
         didSet {
-            appearance.customAppearance = customAppearance
             customizableAppearances.objects.forEach {
                 $0.setCustomAppearance(appearance)
             }
         }
-    }
-
-    /// sets the global appearance to be used. Your app must call `SnabbleUI.setup()` before instantiating any snabble view controllers
-    public static func setup(_ appearance: SnabbleAppearance) {
-        self.appearance = appearance
     }
 
     /// sets the project to be used
@@ -101,6 +45,26 @@ public enum SnabbleUI {
         customizableAppearances.reap()
         customizableAppearances.removeObject(appearance)
     }
+}
+
+private struct SnabbleAppearance: CustomAppearance {
+    public var primaryColor: UIColor = .black
+    public var backgroundColor: UIColor = .white
+
+    // colors for buttons
+    public var buttonShadowColor: UIColor = .black
+    public var buttonBorderColor: UIColor = .black
+    public var buttonBackgroundColor: UIColor = .lightGray
+    public var buttonTextColor: UIColor = .white
+
+    // bg color for the "stepper" buttons
+    public var stepperButtonBackgroundColor: UIColor = .lightGray
+
+    public var textColor: UIColor = .black
+
+    public init() {}
+
+    public var titleIcon: UIImage?
 }
 
 // since we can't have NSHashTable<CustomizableAppearance>, roll our own primitive weak wrapper

@@ -6,8 +6,16 @@
 //  "Chameleon mode" support
 
 public protocol CustomAppearance {
+    var primaryColor: UIColor { get }
+    var backgroundColor: UIColor { get }
+
+    var buttonBorderColor: UIColor { get }
+    var buttonShadowColor: UIColor { get }
     var buttonBackgroundColor: UIColor { get }
     var buttonTextColor: UIColor { get }
+
+    var stepperButtonBackgroundColor: UIColor { get }
+
     var titleIcon: UIImage? { get }
 }
 
