@@ -64,7 +64,7 @@ public enum SnabbleUI {
 
     public private(set) static var project = Project.none
 
-    public private(set) static var appearance = SnabbleAppearance()
+    private(set) static var appearance = SnabbleAppearance()
     public static var customAppearance: CustomAppearance? {
         didSet {
             appearance.customAppearance = customAppearance
@@ -92,11 +92,12 @@ public enum SnabbleUI {
 
     private static var customizableAppearances: WeakCustomizableAppearanceSet = .init()
 
-    public static func registerForAppearanceChange(_ appearance: CustomizableAppearance) {
+    static func registerForAppearanceChange(_ appearance: CustomizableAppearance) {
         customizableAppearances.reap()
         customizableAppearances.addObject(appearance)
     }
-    public static func unregisterForAppearanceChange(_ appearance: CustomizableAppearance) {
+
+    static func unregisterForAppearanceChange(_ appearance: CustomizableAppearance) {
         customizableAppearances.reap()
         customizableAppearances.removeObject(appearance)
     }
