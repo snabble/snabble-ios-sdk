@@ -12,7 +12,7 @@ public protocol Identifiable {
     var id: Identifier<Self> { get }
 }
 
-public struct Identifier<Value: Snabble.Identifiable>: RawRepresentable {
+public struct Identifier<Value: Identifiable>: RawRepresentable {
     public let rawValue: Value.RawIdentifier
 
     public init(rawValue: Value.RawIdentifier) {
@@ -74,10 +74,6 @@ extension Identifier: Hashable {
 
 extension Identifier: CustomStringConvertible {
     public var description: String {
-        if let stringValue = rawValue as? String {
-            return stringValue
-        } else {
-            return "\(rawValue)"
-        }
+        String(describing: rawValue)
     }
 }
