@@ -11,7 +11,7 @@ public protocol CustomAppearance {
     var titleIcon: UIImage? { get }
 }
 
-public protocol CustomizableAppearance: class {
+public protocol CustomizableAppearance: AnyObject {
     func setCustomAppearance(_ appearance: CustomAppearance)
 }
 
