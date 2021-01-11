@@ -6,43 +6,26 @@
 
 import UIKit
 
-/// configuration parameters for the look of the view controllers in the Snabble SDK
-public struct SnabbleAppearance {
-    public var primaryColor = UIColor.black
-    public var backgroundColor = UIColor.white
-
-    // colors for buttons
-    public var buttonShadowColor = UIColor.black
-    public var buttonBorderColor = UIColor.black
-    public var buttonBackgroundColor = UIColor.lightGray
-    public var buttonTextColor = UIColor.white
-
-    // bg color for the "stepper" buttons
-    public var stepperButtonBackgroundColor = UIColor.lightGray
-
-    public var textColor = UIColor.black
-
-    public init() {}
-}
-
 /// global settings for the Snabble UI classes
 public enum SnabbleUI {
 
     /// set to false only if you want or need to take control of all navigation in the app (e.g. in the RN wrapper)
     public static var implicitNavigation = true
-    public private(set) static var appearance = SnabbleAppearance()
-    public private(set) static var project = Project.none
 
-    /// sets the global appearance to be used. Your app must call `SnabbleUI.setup()` before instantiating any snabble view controllers
-    public static func setup(_ appearance: SnabbleAppearance) {
+    public private(set) static var appearance: CustomAppearance = SnabbleAppearance() {
+        didSet {
+            customizableAppearances.objects.forEach {
+                $0.setCustomAppearance(appearance)
+            }
+        }
+    }
+
+    /// sets the global appearance to be used. Your app must call `SnabbleUI.setAppearance(_:)` before instantiating any snabble view controllers
+    public static func setAppearance(_ appearance: CustomAppearance) {
         self.appearance = appearance
     }
 
-    /// update the global appearance
-    public static func customizeAppearance(_ custom: CustomAppearance) {
-        self.appearance.buttonBackgroundColor = custom.buttonBackgroundColor
-        self.appearance.buttonTextColor = custom.buttonTextColor
-    }
+    public private(set) static var project = Project.none
 
     /// sets the project to be used
     public static func register(_ project: Project?) {
@@ -55,27 +38,80 @@ public enum SnabbleUI {
 
     // MARK: - custom appearance handling
 
-    private static var appearanceVCs = [CustomizableAppearanceWrapper]()
+    private static var customizableAppearances: WeakCustomizableAppearanceSet = .init()
 
-    public static func registerForAppearanceChange(_ viewController: CustomizableAppearance) {
-        self.appearanceVCs = self.appearanceVCs.filter { $0.ca != nil }
-        let wrapper = CustomizableAppearanceWrapper(viewController)
-        self.appearanceVCs.append(wrapper)
-    }
-
-    public static func setCustomAppearance(_ appearance: CustomAppearance) {
-        SnabbleUI.customizeAppearance(appearance)
-        self.appearanceVCs.forEach {
-            $0.ca?.setCustomAppearance(appearance)
-        }
+    public static func registerForAppearanceChange(_ appearance: CustomizableAppearance) {
+        customizableAppearances.reap()
+        customizableAppearances.addObject(appearance)
     }
 }
 
-// since we can't have NSHashTable<CustomizableAppearance>, roll our own primitive weak wrapper
-private class CustomizableAppearanceWrapper {
-    private(set) weak var ca: CustomizableAppearance?
+private struct SnabbleAppearance: CustomAppearance {
+    var primaryColor: UIColor = .black
+    var backgroundColor: UIColor = .white
 
-    init(_ ca: CustomizableAppearance) {
-        self.ca = ca
+    // colors for buttons
+    var buttonShadowColor: UIColor = .black
+    var buttonBorderColor: UIColor = .black
+    var buttonBackgroundColor: UIColor = .lightGray
+    var buttonTextColor: UIColor = .white
+
+    // bg color for the "stepper" buttons
+    var stepperButtonBackgroundColor: UIColor = .lightGray
+
+    var textColor: UIColor = .black
+
+    var titleIcon: UIImage?
+}
+
+// since we can't have NSHashTable<CustomizableAppearance>, roll our own primitive weak wrapper
+private class WeakCustomizableAppearance: Equatable, Hashable {
+    private(set) weak var object: CustomizableAppearance?
+    private let hashKey: Int
+
+    init(_ object: CustomizableAppearance) {
+        self.object = object
+        self.hashKey = ObjectIdentifier(object).hashValue
+    }
+
+    static func == (lhs: WeakCustomizableAppearance, rhs: WeakCustomizableAppearance) -> Bool {
+        if lhs.object == nil || rhs.object == nil { return false }
+        return lhs.object === rhs.object
+    }
+
+    func hash(into hasher: inout Hasher) {
+        hasher.combine(hashKey)
+    }
+}
+
+private class WeakCustomizableAppearanceSet {
+    private var _objects: Set<WeakCustomizableAppearance>
+
+    init() {
+        _objects = Set<WeakCustomizableAppearance>([])
+    }
+
+    init(_ objects: [CustomizableAppearance]) {
+        _objects = Set<WeakCustomizableAppearance>(objects.map { WeakCustomizableAppearance($0) })
+    }
+
+    var objects: [CustomizableAppearance] {
+        _objects.compactMap { $0.object }
+    }
+
+    func contains(_ object: CustomizableAppearance) -> Bool {
+        _objects.contains(WeakCustomizableAppearance(object))
+    }
+
+    func addObject(_ object: CustomizableAppearance) {
+        _objects.insert(WeakCustomizableAppearance(object))
+    }
+
+    func removeObject(_ object: CustomizableAppearance) {
+        _objects.remove(WeakCustomizableAppearance(object))
+    }
+
+    func reap () {
+        _objects = _objects.filter { $0.object != nil }
     }
 }
