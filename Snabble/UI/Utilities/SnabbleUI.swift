@@ -48,23 +48,21 @@ public enum SnabbleUI {
 }
 
 private struct SnabbleAppearance: CustomAppearance {
-    public var primaryColor: UIColor = .black
-    public var backgroundColor: UIColor = .white
+    var primaryColor: UIColor = .black
+    var backgroundColor: UIColor = .white
 
     // colors for buttons
-    public var buttonShadowColor: UIColor = .black
-    public var buttonBorderColor: UIColor = .black
-    public var buttonBackgroundColor: UIColor = .lightGray
-    public var buttonTextColor: UIColor = .white
+    var buttonShadowColor: UIColor = .black
+    var buttonBorderColor: UIColor = .black
+    var buttonBackgroundColor: UIColor = .lightGray
+    var buttonTextColor: UIColor = .white
 
     // bg color for the "stepper" buttons
-    public var stepperButtonBackgroundColor: UIColor = .lightGray
+    var stepperButtonBackgroundColor: UIColor = .lightGray
 
-    public var textColor: UIColor = .black
+    var textColor: UIColor = .black
 
-    public init() {}
-
-    public var titleIcon: UIImage?
+    var titleIcon: UIImage?
 }
 
 // since we can't have NSHashTable<CustomizableAppearance>, roll our own primitive weak wrapper
