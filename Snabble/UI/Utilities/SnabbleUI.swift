@@ -12,7 +12,7 @@ public enum SnabbleUI {
     /// set to false only if you want or need to take control of all navigation in the app (e.g. in the RN wrapper)
     public static var implicitNavigation = true
 
-    public private(set) static var appearance: CustomAppearance = SnabbleAppearance() {
+    private(set) static var appearance: CustomAppearance = SnabbleAppearance() {
         didSet {
             customizableAppearances.objects.forEach {
                 $0.setCustomAppearance(appearance)
@@ -25,7 +25,7 @@ public enum SnabbleUI {
         self.appearance = appearance
     }
 
-    public private(set) static var project = Project.none
+    private(set) static var project: Project = .none
 
     /// sets the project to be used
     public static func register(_ project: Project?) {
