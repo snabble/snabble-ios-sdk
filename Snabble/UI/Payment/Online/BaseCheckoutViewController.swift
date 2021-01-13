@@ -279,10 +279,23 @@ public class BaseCheckoutViewController: UIViewController {
             if !process.fulfillmentsDone() {
                 FulfillmentPoller.shared.startPolling(SnabbleUI.project, process)
             }
+
+            // if we're using exit tokens, wait for a valid token
+            let waitForToken = process.exitToken != nil && process.exitToken?.value == nil
+            if waitForToken {
+                ExitTokenPoller.shared.startPolling(SnabbleUI.project, process) { process, rawJson in
+                    self.paymentFinalized(success, process, rawJson)
+                }
+                return
+            }
         } else {
             self.cart.generateNewUUID()
         }
 
+        self.paymentFinalized(success, process, rawJson)
+    }
+
+    private func paymentFinalized(_ success: Bool, _ process: CheckoutProcess, _ rawJson: [String: Any]?) {
         SnabbleAPI.fetchAppUserData(SnabbleUI.project.id)
         self.delegate?.paymentFinished(success, self.cart, process, rawJson)
     }
