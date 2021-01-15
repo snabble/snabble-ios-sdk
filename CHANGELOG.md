@@ -1,5 +1,9 @@
 ## snabble iOS SDK Changelog
 
+# v0.15.2
+
+- Fixes a problem where the code for an exit gate would sometimes be missed.
+
 # v0.15.1
 
 - Removes the conformance to `Swift.Identifiable` from the SDK's `Identifiable`
