@@ -20,12 +20,16 @@ final class FulfillmentPoller {
     private init() {}
 
     func startPolling(_ project: Project, _ process: CheckoutProcess) {
-        if self.process == nil && self.process == nil {
-            self.project = project
-            self.process = process
-
-            self.startTimer()
+        let allowStart = self.process == nil && self.project == nil
+        assert(allowStart, "FulfillmentPoller already running")
+        guard allowStart else {
+            return
         }
+
+        self.project = project
+        self.process = process
+
+        self.startTimer()
     }
 
     // MARK: - polling timer

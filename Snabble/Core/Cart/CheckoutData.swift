@@ -386,8 +386,8 @@ public enum FailureCause: String {
 }
 
 public struct ExitToken: Codable {
-    public let format: ScanFormat
-    public let value: String
+    public let format: ScanFormat?
+    public let value: String?
 }
 
 // MARK: - Checkout Process

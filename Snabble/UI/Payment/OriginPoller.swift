@@ -18,11 +18,14 @@ final class OriginPoller {
     private init() {}
 
     func startPolling(_ project: Project, _ url: String) {
-        if self.project == nil && !self.candidates.contains(url) {
-            self.project = project
-
-            self.checkCandidate(url)
+        let allowStart = self.project == nil && !self.candidates.contains(url)
+        assert(allowStart, "OriginPoller for \(url) already running")
+        guard allowStart else {
+            return
         }
+
+        self.project = project
+        self.checkCandidate(url)
     }
 
     private func stopPolling() {
