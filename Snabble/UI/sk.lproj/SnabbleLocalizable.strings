@@ -53,7 +53,7 @@
 
 "Snabble.Checkout.verifying" = "Overujem";
 
-"Snabble.Delete" = "Delete";
+"Snabble.Delete" = "Vymazať";
 
 "Snabble.Done" = "Hotovo";
 
@@ -61,7 +61,7 @@
 
 "Snabble.goToSettings" = "Prejsť na nastavenia";
 
-"Snabble.Hints.closedBags" = "Len tak ďalej! Prosím, uľahči prácu pokladníkom a nevkladaj svoje produkty priamo do uzavretých tašiek. Ďakujeme!";
+"Snabble.Hints.closedBags" = "Len tak ďalej! Prosím, uľahči prácu pokladníkom a nevkladaj svoje produkty priamo do uzavretých tašiek. Ďakujem!";
 
 "Snabble.Hints.continueScanning" = "Pokračovať v skenovaní";
 
@@ -115,9 +115,9 @@
 
 "Snabble.Payment.CreditCard" = "Kreditná karta";
 
-"Snabble.Payment.CreditCard.error" = "There was an error processing your credit card";
+"Snabble.Payment.CreditCard.error" = "Pri spracovaní Vašej platobnej karty sa vyskytla chyba";
 
-"Snabble.Payment.CreditCard.expireDate" = "Expires: %@";
+"Snabble.Payment.CreditCard.expireDate" = "Platnosť do: %@";
 
 "Snabble.Payment.delete.message" = "Naozaj chceš odstrániť tento spôsob platby?";
 
@@ -199,7 +199,7 @@
 
 "Snabble.QRCode.message" = "Predlož QR kód pri pokladni, prosím";
 
-"Snabble.QRCode.nextCode" = "Ďalej na kód %1$d z %2$d";
+"Snabble.QRCode.nextCode" = "Prejsť na kód %1$d z %2$d";
 
 "Snabble.QRCode.priceMayDiffer" = "Presná cena bude vypočítaná pri pokladni a môže sa líšiť od ceny, ktorá je tu zobrazená.";
 
@@ -263,13 +263,13 @@
 
 "Snabble.Scanner.plusDeposit" = "+ %@ záloha";
 
-"Snabble.Scanner.scannedAgeRestrictedProduct" = "Na tento produkt sa vzťahuje vekový limit, preto bude pri platbe skontrolovaný tvoj vek.";
+"Snabble.Scanner.scannedAgeRestrictedProduct" = "Na tento produkt sa vzťahuje vekový limit. Preto bude tvoj vek pri platbe skontrolovaný.";
 
 "Snabble.Scanner.scannedShelfCode" = "Odváž produkt a naskenuj čiarový kód na etikete";
 
 "Snabble.Scanner.scanningTitle" = "Naskenovať čiarový kód";
 
-"Snabble.Scanner.serverError" = "Produkt sa nepodarilo nájsť.";
+"Snabble.Scanner.serverError" = "Produkt nie je možné nájsť.";
 
 "Snabble.Scanner.start" = "Spusti skener";
 
@@ -295,11 +295,11 @@
 
 "Snabble.Shoppingcart.articleRemoved" = "Položka bola odstránená";
 
-"Snabble.Shoppingcart.buyProducts" = "Kúpiť %1$d produkty za %2$@";
+"Snabble.Shoppingcart.buyProducts" = "Kúpiť %1$d položky/položiek za %2$@";
 
 "Snabble.Shoppingcart.buyProducts.now" = "Zaplatiť teraz";
 
-"Snabble.Shoppingcart.buyProducts.one" = "Kúpiť %1$d produkty za %2$@";
+"Snabble.Shoppingcart.buyProducts.one" = "Kúpiť %1$d položku za %2$@";
 
 "Snabble.Shoppingcart.deposit" = "Záloha";
 
