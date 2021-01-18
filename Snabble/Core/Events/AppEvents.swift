@@ -117,7 +117,7 @@ struct AppEvent: Encodable {
         self.init(type: .log, payload: log, project: project, shopId: shopId)
     }
 
-    init(key: String, value: String, comment: String = "", project: Project) {
+    init(key: String, value: String, comment: String = "", project: Project, shopId: Identifier<Shop>? = nil) {
         let analytics = Payload.analytics(Analytics(key: key, value: value, comment: comment))
         self.init(type: .analytics, payload: analytics, project: project)
     }
@@ -178,8 +178,8 @@ extension AppEvent {
 }
 
 public enum RatingEvent {
-    public static func track(_ project: Project, _ value: Int, _ comment: String?) {
-        let event = AppEvent(key: "rating", value: "\(value)", comment: comment ?? "", project: project)
+    public static func track(_ project: Project, _ value: Int, _ comment: String?, _ shopId: Identifier<Shop>?) {
+        let event = AppEvent(key: "rating", value: "\(value)", comment: comment ?? "", project: project, shopId: shopId)
         event.post()
     }
 }
