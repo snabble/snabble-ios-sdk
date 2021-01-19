@@ -15,20 +15,8 @@ jobs:
       - name: Checkout
         uses: actions/checkout@master
 
-      - name: Gem Cache
-        uses: actions/cache@v2
-        with:
-          path: vendor/bundle
-          key: ${{ runner.os }}-gems-${{ hashFiles('**/Gemfile.lock') }}
-          restore-keys: ${{ runner.os }}-gems-
-
-      - name: Bundler
-        run: |
-            bundle config path vendor/bundle
-            bundle install --jobs 4 --retry 3
-
       - name: Lint
-        run: bundle exec pod lib lint --allow-warnings
+        run: pod lib lint --allow-warnings
 
       - name: Slack Notification
         uses: homoluctus/slatify@master
