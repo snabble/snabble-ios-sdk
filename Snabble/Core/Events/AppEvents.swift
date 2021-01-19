@@ -119,7 +119,7 @@ struct AppEvent: Encodable {
 
     init(key: String, value: String, comment: String = "", project: Project, shopId: Identifier<Shop>? = nil) {
         let analytics = Payload.analytics(Analytics(key: key, value: value, comment: comment))
-        self.init(type: .analytics, payload: analytics, project: project)
+        self.init(type: .analytics, payload: analytics, project: project, shopId: shopId)
     }
 
     init?(_ shoppingCart: ShoppingCart) {
