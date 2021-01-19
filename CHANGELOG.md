@@ -1,5 +1,9 @@
 ## snabble iOS SDK Changelog
 
+# v0.15.3
+- fixes out-of-range Crash (#16)
+- add shop identifier to rating event (#15)
+
 # v0.15.2
 
 - Fixes a problem where the code for an exit gate would sometimes be missed.
