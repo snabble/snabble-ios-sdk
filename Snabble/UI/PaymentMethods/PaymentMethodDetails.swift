@@ -622,11 +622,7 @@ public enum PaymentMethodDetails {
 
     private static func removeExpired() {
         var details = self.read()
-
-        for (index, detail) in details.reversed().enumerated() where detail.isExpired {
-            details.remove(at: index)
-        }
-
+        details.removeAll(where: \.isExpired)
         self.save(details)
     }
 }
