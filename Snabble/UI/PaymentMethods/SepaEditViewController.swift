@@ -311,19 +311,11 @@ public final class SepaEditViewController: UIViewController {
     }
 
     private func markTextfield(_ textField: UITextField, _ label: UILabel, _ valid: Bool) {
-        textField.textColor = valid ? self.black : .systemRed
-        label.textColor = valid ? self.black : .systemRed
+        textField.textColor = valid ? .label : .systemRed
+        label.textColor = valid ? .label : .systemRed
 
         let borderColor: UIColor = valid ? .clear : .systemRed
         textField.layer.borderColor = borderColor.cgColor
-    }
-
-    private var black: UIColor {
-        if #available(iOS 13.0, *) {
-            return .label
-        } else {
-            return .black
-        }
     }
 
     private func fadeText(_ label: UILabel, _ text: String) {

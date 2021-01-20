@@ -227,7 +227,7 @@ final class PaymentMethodSelector {
         // add the "add method" action
         let titleAttrs: [NSAttributedString.Key: Any] = [
             .font: UIFont.systemFont(ofSize: 17),
-            .foregroundColor: self.textColor
+            .foregroundColor: UIColor.label
         ]
         let addTitle = NSAttributedString(string: "Snabble.Payment.add".localized(), attributes: titleAttrs)
         let add = AlertAction(attributedTitle: addTitle, style: .normal) { _ in
@@ -254,7 +254,7 @@ final class PaymentMethodSelector {
         // add the cancel action
         let cancelAttrs: [NSAttributedString.Key: Any] = [
             .font: UIFont.systemFont(ofSize: 17, weight: .medium),
-            .foregroundColor: self.textColor
+            .foregroundColor: UIColor.label
         ]
         let cancelTitle = NSAttributedString(string: "Snabble.Cancel".localized(), attributes: cancelAttrs)
         sheet.addAction(AlertAction(attributedTitle: cancelTitle, style: .preferred))
@@ -287,14 +287,14 @@ final class PaymentMethodSelector {
             }
 
             let actions = userMethods.map { userMethod -> PaymentMethodAction in
-                var color = self.textColor
+                var color: UIColor = .label
                 if case let PaymentMethodUserData.tegutEmployeeCard(data) = userMethod.methodData {
                     detailText = data.cardNumber
                 }
 
                 if !isCartMethod {
                     detailText = "Snabble.Shoppingcart.notForThisPurchase".localized()
-                    color = self.subTitleColor
+                    color = .secondaryLabel
                 }
 
                 let title = self.title(userMethod.displayName, detailText, color)
@@ -305,7 +305,7 @@ final class PaymentMethodSelector {
         case .creditCardAmericanExpress, .creditCardVisa, .creditCardMastercard, .deDirectDebit, .paydirektOneKlick:
             if !isProjectMethod {
                 if isUserMethod {
-                    let title = self.title(method.displayName, "Snabble.Shoppingcart.notForVendor".localized(), self.subTitleColor)
+                    let title = self.title(method.displayName, "Snabble.Shoppingcart.notForVendor".localized(), .secondaryLabel)
                     let action = PaymentMethodAction(title, method, nil, selectable: false, active: false)
                     return [action]
                 } else {
@@ -314,17 +314,17 @@ final class PaymentMethodSelector {
             }
 
             if !isCartMethod && isUserMethod {
-                let title = self.title(method.displayName, "Snabble.Shoppingcart.notForThisPurchase".localized(), self.subTitleColor)
+                let title = self.title(method.displayName, "Snabble.Shoppingcart.notForThisPurchase".localized(), .secondaryLabel)
                 let action = PaymentMethodAction(title, method, nil, selectable: false, active: false)
                 return [action]
             } else if !userMethods.isEmpty {
                 let actions = userMethods.map { userMethod -> PaymentMethodAction in
-                    let title = self.title(method.displayName, userMethod.displayName, self.textColor)
+                    let title = self.title(method.displayName, userMethod.displayName, .label)
                     return PaymentMethodAction(title, method, userMethod, selectable: true, active: true)
                 }
                 return actions
             } else {
-                let title = self.title(method.displayName, "Snabble.Shoppingcart.noPaymentData".localized(), self.textColor)
+                let title = self.title(method.displayName, "Snabble.Shoppingcart.noPaymentData".localized(), .label)
                 let action = PaymentMethodAction(title, method, nil, selectable: true, active: false)
                 return [action]
             }
@@ -335,7 +335,7 @@ final class PaymentMethodSelector {
             }
         }
 
-        let title = self.title(method.displayName, detailText, self.textColor)
+        let title = self.title(method.displayName, detailText, .label)
         let action = PaymentMethodAction(title, method, nil, selectable: true, active: true)
 
         return [action]
@@ -353,28 +353,12 @@ final class PaymentMethodSelector {
         if let subtitleText = subtitleText {
             let subtitleAttributes: [NSAttributedString.Key: Any] = [
                 .font: UIFont.systemFont(ofSize: 13),
-                .foregroundColor: self.subTitleColor
+                .foregroundColor: UIColor.secondaryLabel
             ]
             let subTitle = NSAttributedString(string: subtitleText, attributes: subtitleAttributes)
             title.append(subTitle)
         }
 
         return title
-    }
-
-    private var textColor: UIColor {
-        if #available(iOS 13.0, *) {
-            return .label
-        } else {
-            return .black
-        }
-    }
-
-    private var subTitleColor: UIColor {
-        if #available(iOS 13.0, *) {
-            return UIColor.secondaryLabel
-        } else {
-            return .lightGray
-        }
     }
 }
