@@ -41,7 +41,7 @@ final class ScanConfirmationView: DesignableView {
         super.awakeFromNib()
 
         self.view.backgroundColor = .clear
-        self.addCornersAndShadow(backgroundColor: self.background, cornerRadius: 8)
+        self.addCornersAndShadow(backgroundColor: .systemBackground, cornerRadius: 8)
 
         self.cartButton.makeSnabbleButton()
 
@@ -239,14 +239,6 @@ final class ScanConfirmationView: DesignableView {
         self.quantityField.resignFirstResponder()
 
         NotificationCenter.default.post(name: .snabbleHideScanConfirmation, object: nil)
-    }
-
-    private var background: UIColor {
-        if #available(iOS 13.0, *) {
-            return .systemBackground
-        } else {
-            return .white
-        }
     }
 }
 
