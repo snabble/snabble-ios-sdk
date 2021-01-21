@@ -84,7 +84,7 @@ public final class EmbeddedCodesCheckoutViewController: UIViewController {
 
         self.pageControl.numberOfPages = self.codes.count
         self.pageControl.pageIndicatorTintColor = .lightGray
-        self.pageControl.currentPageIndicatorTintColor = SnabbleUI.appearance.primaryColor
+        self.pageControl.currentPageIndicatorTintColor = .label
         self.pageControlWrapper.isHidden = self.codes.count == 1
 
         self.collectionView.dataSource = self

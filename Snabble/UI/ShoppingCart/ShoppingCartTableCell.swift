@@ -51,11 +51,11 @@ final class ShoppingCartTableCell: UITableViewCell {
         self.quantityLabel.font = UIFont.monospacedDigitSystemFont(ofSize: 13, weight: .bold)
         self.quantityLabel.backgroundColor = .clear
 
-        self.quantityWrapper.backgroundColor = SnabbleUI.appearance.buttonBackgroundColor
+        self.quantityWrapper.backgroundColor = SnabbleUI.appearance.accentColor
         self.quantityWrapper.layer.cornerRadius = 2
         self.quantityWrapper.layer.masksToBounds = true
 
-        self.quantityInput.tintColor = SnabbleUI.appearance.primaryColor
+        self.quantityInput.tintColor = .label
         let toolbar = self.quantityInput.addDoneButton()
         self.doneButton = toolbar.items?.last
         self.quantityInput.delegate = self
@@ -114,7 +114,7 @@ final class ShoppingCartTableCell: UITableViewCell {
         self.loadImage()
         if self.delegate.showImages {
             let icon = UIImage.fromBundle("SnabbleSDK/icon-percent")
-            self.productImage.image = icon?.recolored(with: SnabbleUI.appearance.buttonBackgroundColor)
+            self.productImage.image = icon?.recolored(with: SnabbleUI.appearance.accentColor)
             self.imageWrapper.isHidden = false
         }
     }
@@ -130,7 +130,7 @@ final class ShoppingCartTableCell: UITableViewCell {
         self.loadImage()
         if self.delegate.showImages {
             let icon = UIImage.fromBundle("SnabbleSDK/icon-giveaway")
-            self.productImage.image = icon?.recolored(with: SnabbleUI.appearance.buttonBackgroundColor)
+            self.productImage.image = icon?.recolored(with: SnabbleUI.appearance.accentColor)
             self.imageWrapper.isHidden = false
         }
     }
@@ -300,8 +300,8 @@ extension ShoppingCartTableCell: UITextFieldDelegate {
 
 extension ShoppingCartTableCell: CustomizableAppearance {
     func setCustomAppearance(_ appearance: CustomAppearance) {
-        self.quantityWrapper.backgroundColor = appearance.buttonBackgroundColor
-        self.quantityLabel.textColor = appearance.buttonTextColor
+        self.quantityWrapper.backgroundColor = appearance.accentColor
+        self.quantityLabel.textColor = appearance.accentContrastColor
     }
 }
 

@@ -6,17 +6,17 @@
 //  "Chameleon mode" support
 
 public protocol CustomAppearance {
-    var primaryColor: UIColor { get }
-    var backgroundColor: UIColor { get }
-
-    var buttonBorderColor: UIColor { get }
-    var buttonShadowColor: UIColor { get }
-    var buttonBackgroundColor: UIColor { get }
-    var buttonTextColor: UIColor { get }
-
-    var stepperButtonBackgroundColor: UIColor { get }
+    var accentColor: UIColor { get }
+    var accentContrastColor: UIColor { get }
 
     var titleIcon: UIImage? { get }
+}
+
+public extension CustomAppearance {
+    var accentColor: UIColor { UIColor(rgbValue: 0x0077bb) }
+    var accentContrastColor: UIColor { .white }
+
+    var titleIcon: UIImage? { nil }
 }
 
 public protocol CustomizableAppearance: AnyObject {
@@ -25,7 +25,7 @@ public protocol CustomizableAppearance: AnyObject {
 
 extension UIButton: CustomizableAppearance {
     public func setCustomAppearance(_ appearance: CustomAppearance) {
-        self.backgroundColor = appearance.buttonBackgroundColor
-        self.tintColor = appearance.buttonTextColor
+        self.backgroundColor = appearance.accentColor
+        self.tintColor = appearance.accentContrastColor
     }
 }

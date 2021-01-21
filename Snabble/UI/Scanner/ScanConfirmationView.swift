@@ -51,7 +51,7 @@ final class ScanConfirmationView: DesignableView {
         self.plusButton.makeBorderedButton()
 
         self.quantityField.font = UIFont.monospacedDigitSystemFont(ofSize: 21, weight: .regular)
-        self.quantityField.tintColor = SnabbleUI.appearance.primaryColor
+        self.quantityField.tintColor = .label
         self.quantityField.delegate = self
         self.quantityField.addDoneButton()
 
