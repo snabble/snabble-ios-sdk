@@ -6,8 +6,6 @@
 //  "Chameleon mode" support
 
 public protocol CustomAppearance {
-    var backgroundColor: UIColor { get }
-
     var buttonBorderColor: UIColor { get }
     var buttonShadowColor: UIColor { get }
 
@@ -18,7 +16,6 @@ public protocol CustomAppearance {
 }
 
 public extension CustomAppearance {
-    var backgroundColor: UIColor { .systemBackground }
     var buttonBackgroundColor: UIColor { UIColor(rgbValue: 0x0077bb) }
     var buttonTextColor: UIColor { .white }
     var buttonShadowColor: UIColor { UIColor(rgbaValue: 0x2222223f) }

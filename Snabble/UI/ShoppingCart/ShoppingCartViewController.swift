@@ -127,7 +127,7 @@ public final class ShoppingCartViewController: UIViewController {
         self.methodSelector = PaymentMethodSelector(self, self.methodSelectionView, self.methodIcon, self.methodSpinner, self.shoppingCart)
         self.methodSelector?.paymentMethodNavigationDelegate = self.paymentMethodNavigationDelegate
 
-        self.view.backgroundColor = SnabbleUI.appearance.backgroundColor
+        self.view.backgroundColor = .systemBackground
 
         self.emptyState = ShoppingCartEmptyStateView({ [weak self] button in self?.emptyStateButtonTapped(button) })
         self.emptyState.addTo(self.view)
