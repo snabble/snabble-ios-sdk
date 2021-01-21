@@ -13,7 +13,7 @@ extension UIView {
     public func makeSnabbleButton() {
         self.layer.cornerRadius = 8
         self.backgroundColor = SnabbleUI.appearance.accentColor
-        self.tintColor = SnabbleUI.appearance.buttonTextColor
+        self.tintColor = SnabbleUI.appearance.accentContrastColor
     }
 
     /// add a "bordered button" appearance to this view
@@ -21,12 +21,12 @@ extension UIView {
         self.layer.cornerRadius = 6
         self.backgroundColor = .secondarySystemBackground
         self.layer.borderWidth = 0.5
-        self.layer.borderColor = SnabbleUI.appearance.buttonBorderColor.cgColor
+        self.layer.borderColor = UIColor.borderColor.cgColor
     }
 
     /// add a "rounded card" appearance to this view
     public func addCornersAndShadow(backgroundColor: UIColor, cornerRadius: CGFloat) {
-        self.layer.shadowColor = SnabbleUI.appearance.buttonShadowColor.cgColor
+        self.layer.shadowColor = UIColor.shadowColor.cgColor
         self.layer.shadowOffset = CGSize(width: 0, height: 1)
         self.layer.shadowOpacity = 0.5
         self.layer.shadowRadius = 2.0

@@ -301,7 +301,7 @@ extension ShoppingCartTableCell: UITextFieldDelegate {
 extension ShoppingCartTableCell: CustomizableAppearance {
     func setCustomAppearance(_ appearance: CustomAppearance) {
         self.quantityWrapper.backgroundColor = appearance.accentColor
-        self.quantityLabel.textColor = appearance.buttonTextColor
+        self.quantityLabel.textColor = appearance.accentContrastColor
     }
 }
 
