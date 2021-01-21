@@ -63,8 +63,6 @@ private struct SnabbleAppearance: CustomAppearance {
     // bg color for the "stepper" buttons
     var stepperButtonBackgroundColor: UIColor = .lightGray
 
-    var textColor: UIColor = .black
-
     var titleIcon: UIImage?
 }
 
