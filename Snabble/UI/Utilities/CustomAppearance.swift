@@ -6,7 +6,7 @@
 //  "Chameleon mode" support
 
 public protocol CustomAppearance {
-    var buttonBackgroundColor: UIColor { get }
+    var accentColor: UIColor { get }
     var buttonTextColor: UIColor { get }
 
     var buttonBorderColor: UIColor { get }
@@ -16,7 +16,7 @@ public protocol CustomAppearance {
 }
 
 public extension CustomAppearance {
-    var buttonBackgroundColor: UIColor { UIColor(rgbValue: 0x0077bb) }
+    var accentColor: UIColor { UIColor(rgbValue: 0x0077bb) }
     var buttonTextColor: UIColor { .white }
 
     var buttonShadowColor: UIColor { UIColor(rgbaValue: 0x2222223f) }
@@ -30,7 +30,7 @@ public protocol CustomizableAppearance: AnyObject {
 
 extension UIButton: CustomizableAppearance {
     public func setCustomAppearance(_ appearance: CustomAppearance) {
-        self.backgroundColor = appearance.buttonBackgroundColor
+        self.backgroundColor = appearance.accentColor
         self.tintColor = appearance.buttonTextColor
     }
 }

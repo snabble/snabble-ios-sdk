@@ -12,7 +12,7 @@ extension UIView {
     /// add a "rounded button" appearance to this view
     public func makeSnabbleButton() {
         self.layer.cornerRadius = 8
-        self.backgroundColor = SnabbleUI.appearance.buttonBackgroundColor
+        self.backgroundColor = SnabbleUI.appearance.accentColor
         self.tintColor = SnabbleUI.appearance.buttonTextColor
     }
 
