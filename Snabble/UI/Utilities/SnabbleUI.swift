@@ -50,21 +50,8 @@ public enum SnabbleUI {
     }
 }
 
-private struct SnabbleAppearance: CustomAppearance {
-    var primaryColor: UIColor = .black
-    var backgroundColor: UIColor = .white
-
-    // colors for buttons
-    var buttonShadowColor: UIColor = .black
-    var buttonBorderColor: UIColor = .black
-    var buttonBackgroundColor: UIColor = .lightGray
-    var buttonTextColor: UIColor = .white
-
-    // bg color for the "stepper" buttons
-    var stepperButtonBackgroundColor: UIColor = .lightGray
-
-    var titleIcon: UIImage?
-}
+// Uses default implementations of the procotol
+private struct SnabbleAppearance: CustomAppearance {}
 
 // since we can't have NSHashTable<CustomizableAppearance>, roll our own primitive weak wrapper
 private class WeakCustomizableAppearance: Equatable, Hashable {

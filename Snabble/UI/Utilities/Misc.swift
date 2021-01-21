@@ -19,7 +19,7 @@ extension UIView {
     /// add a "bordered button" appearance to this view
     public func makeBorderedButton() {
         self.layer.cornerRadius = 6
-        self.backgroundColor = SnabbleUI.appearance.stepperButtonBackgroundColor
+        self.backgroundColor = .secondarySystemBackground
         self.layer.borderWidth = 0.5
         self.layer.borderColor = SnabbleUI.appearance.buttonBorderColor.cgColor
     }

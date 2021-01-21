@@ -54,10 +54,10 @@ final class ShoppingCartEmptyStateView: EmptyStateView {
 
         self.textLabel.text = "Snabble.Shoppingcart.emptyState.description".localized()
         self.button1.setTitle("Snabble.Shoppingcart.emptyState.buttonTitle".localized(), for: .normal)
-        self.button1.setTitleColor(SnabbleUI.appearance.primaryColor, for: .normal)
+        self.button1.setTitleColor(.label, for: .normal)
 
         self.button2.setTitle("Snabble.Shoppingcart.emptyState.restoreButtonTitle".localized(), for: .normal)
-        self.button2.setTitleColor(SnabbleUI.appearance.primaryColor, for: .normal)
+        self.button2.setTitleColor(.label, for: .normal)
         self.button2.isHidden = true
     }
 
@@ -73,7 +73,7 @@ final class BarcodeEntryEmptyStateView: EmptyStateView {
         self.textLabel.text = "Snabble.Scanner.enterBarcode".localized()
 
         self.button1.setTitle("", for: .normal)
-        self.button1.setTitleColor(SnabbleUI.appearance.primaryColor, for: .normal)
+        self.button1.setTitleColor(.label, for: .normal)
 
         self.button2.isHidden = true
     }

@@ -55,7 +55,7 @@ final class ShoppingCartTableCell: UITableViewCell {
         self.quantityWrapper.layer.cornerRadius = 2
         self.quantityWrapper.layer.masksToBounds = true
 
-        self.quantityInput.tintColor = SnabbleUI.appearance.primaryColor
+        self.quantityInput.tintColor = .label
         let toolbar = self.quantityInput.addDoneButton()
         self.doneButton = toolbar.items?.last
         self.quantityInput.delegate = self
