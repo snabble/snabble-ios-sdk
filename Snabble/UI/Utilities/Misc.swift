@@ -13,7 +13,7 @@ extension UIView {
     public func makeSnabbleButton() {
         self.layer.cornerRadius = 8
         self.backgroundColor = SnabbleUI.appearance.accentColor
-        self.tintColor = SnabbleUI.appearance.accentContrastColor
+        self.tintColor = SnabbleUI.appearance.accentColor.contrast
     }
 
     /// add a "bordered button" appearance to this view

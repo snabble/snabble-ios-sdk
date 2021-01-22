@@ -18,6 +18,7 @@ public enum SnabbleUI {
 
     private(set) static var appearance: CustomAppearance = SnabbleAppearance() {
         didSet {
+            UIColor.contrasts = appearance.contrastColors
             customizableAppearances.objects.forEach {
                 $0.setCustomAppearance(appearance)
             }
