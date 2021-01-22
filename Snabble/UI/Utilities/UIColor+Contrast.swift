@@ -16,9 +16,13 @@ extension UIColor {
 
 public extension UIColor {
     var contrast: UIColor {
-        guard let contrasts = Self.contrasts else {
+        guard let contrasts = Self.contrasts, !contrasts.isEmpty else {
             return Self.getTextColor(onBackgroundColor: self) ?? .defaultContrast
         }
-        return Self.getTextColor(fromColors: contrasts, withFont: .systemFont(ofSize: 17), onBackgroundColor: self) ?? .defaultContrast
+        return Self.getTextColor(
+            fromColors: contrasts,
+            withFont: .systemFont(ofSize: 17), // default Font
+            onBackgroundColor: self
+        ) ?? contrasts.first ?? .defaultContrast
     }
 }
