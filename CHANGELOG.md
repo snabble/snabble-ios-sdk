@@ -1,5 +1,9 @@
 ## snabble iOS SDK Changelog
 
+# v0.15.4
+
+- `CustomAppearance` now relies on an `accentColor` and possibly a `secondaryAccentColor` for customization of UI elements.
+
 # v0.15.3
 - fixes out-of-range Crash (#16)
 - add shop identifier to rating event (#15)
