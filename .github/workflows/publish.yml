@@ -2,8 +2,6 @@ on:
   push:
     tags:
       - 0.*
-env:
-  DEVELOPER_DIR: /Applications/Xcode_12.3.app/Contents/Developer
 
 name: Publish
 jobs:
