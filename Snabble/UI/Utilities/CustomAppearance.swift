@@ -13,9 +13,3 @@ public protocol CustomAppearance {
 
     var contrastColors: [UIColor]? { get }
 }
-
-public extension CustomAppearance {
-    var accentColor: UIColor { UIColor(rgbValue: 0x0077bb) }
-    var titleIcon: UIImage? { nil }
-    var contrastColors: [UIColor]? { nil }
-}

@@ -52,7 +52,11 @@ public enum SnabbleUI {
 }
 
 // Uses default implementations of the procotol
-private struct SnabbleAppearance: CustomAppearance {}
+private struct SnabbleAppearance: CustomAppearance {
+    var accentColor: UIColor { UIColor(rgbValue: 0x0077bb) }
+    var titleIcon: UIImage? { nil }
+    var contrastColors: [UIColor]? { nil }
+}
 
 // since we can't have NSHashTable<CustomizableAppearance>, roll our own primitive weak wrapper
 private class WeakCustomizableAppearance: Equatable, Hashable {
