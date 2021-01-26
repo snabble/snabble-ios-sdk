@@ -274,7 +274,7 @@ public struct CartItem: Codable {
             quantity = 1
         }
 
-        if let unit = encodingUnit, let embed = self.scannedCode.embeddedData, embed > 0 {
+        if let unit = encodingUnit, let embed = self.scannedCode.embeddedData {
             switch unit {
             case .piece: units = embed
             case .price: price = embed
