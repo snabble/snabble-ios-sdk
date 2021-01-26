@@ -470,9 +470,14 @@ public final class ShoppingCartViewController: UIViewController {
                         return
                     }
 
-                    if error.error.type == .noAvailableMethod {
+                    switch error.error.type {
+                    case .noAvailableMethod:
                         self.delegate?.showWarningMessage("Snabble.Payment.noMethodAvailable".localized())
                         return
+                    case .invalidDepositVoucher:
+                        self.delegate?.showWarningMessage("Snabble.invalidDepositVoucher.errorMsg".localized())
+                        return
+                    default: ()
                     }
 
                     // app didn't handle the error. see if the project has a offline-capable payment method
