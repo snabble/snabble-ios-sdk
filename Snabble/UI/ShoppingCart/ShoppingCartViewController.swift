@@ -477,7 +477,8 @@ public final class ShoppingCartViewController: UIViewController {
                     case .invalidDepositVoucher:
                         self.delegate?.showWarningMessage("Snabble.invalidDepositVoucher.errorMsg".localized())
                         return
-                    default: ()
+                    default:
+                        ()
                     }
 
                     // app didn't handle the error. see if the project has a offline-capable payment method
