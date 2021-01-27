@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="17156" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
-    <device id="retina6_1" orientation="portrait" appearance="light"/>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="17701" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
+    <device id="retina4_0" orientation="portrait" appearance="light"/>
     <dependencies>
         <deployment identifier="iOS"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="17126"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="17703"/>
         <capability name="Safe area layout guides" minToolsVersion="9.0"/>
         <capability name="System colors in document resources" minToolsVersion="11.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
@@ -13,6 +13,8 @@
             <connections>
                 <outlet property="arrowWrapper" destination="0c6-DJ-N1R" id="wN6-p3-iwU"/>
                 <outlet property="codeContainer" destination="IIw-A8-SY5" id="2Fp-jW-F3e"/>
+                <outlet property="codeCountLabel" destination="nBt-0w-QDT" id="EFr-Ic-fPt"/>
+                <outlet property="codeCountWrapper" destination="Ecn-wi-XIU" id="Ga1-Lx-o6O"/>
                 <outlet property="codeWrapper" destination="4si-t7-uZk" id="BQL-4s-PWp"/>
                 <outlet property="collectionView" destination="M1x-Rz-HWF" id="NFT-Yv-74N"/>
                 <outlet property="iconHeight" destination="3cg-Zu-jpX" id="bO7-Tb-1qT"/>
@@ -30,20 +32,20 @@
         </placeholder>
         <placeholder placeholderIdentifier="IBFirstResponder" id="-2" customClass="UIResponder"/>
         <view clearsContextBeforeDrawing="NO" contentMode="scaleToFill" id="i5M-Pr-FkT">
-            <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
+            <rect key="frame" x="0.0" y="0.0" width="320" height="568"/>
             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
             <subviews>
                 <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="1XK-Co-A0T">
-                    <rect key="frame" x="0.0" y="44" width="414" height="754"/>
+                    <rect key="frame" x="0.0" y="0.0" width="320" height="504"/>
                     <subviews>
                         <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" distribution="equalSpacing" translatesAutoresizingMaskIntoConstraints="NO" id="oip-A2-TZM">
-                            <rect key="frame" x="0.0" y="63.5" width="414" height="627"/>
+                            <rect key="frame" x="0.0" y="0.0" width="320" height="504"/>
                             <subviews>
                                 <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="jZg-vE-kcn" userLabel="Top Wrapper">
-                                    <rect key="frame" x="0.0" y="0.0" width="414" height="132"/>
+                                    <rect key="frame" x="0.0" y="0.0" width="320" height="132"/>
                                     <subviews>
                                         <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="252" image="SnabbleSDK/payment-method-checkstand" translatesAutoresizingMaskIntoConstraints="NO" id="gbu-lk-I7u" userLabel="Top Icon">
-                                            <rect key="frame" x="132" y="16" width="150" height="100"/>
+                                            <rect key="frame" x="85" y="16" width="150" height="100"/>
                                             <constraints>
                                                 <constraint firstAttribute="height" constant="100" id="3cg-Zu-jpX"/>
                                             </constraints>
@@ -58,10 +60,10 @@
                                     </constraints>
                                 </view>
                                 <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="8Ve-gn-B8T" userLabel="Message Wrapper">
-                                    <rect key="frame" x="0.0" y="132" width="414" height="25"/>
+                                    <rect key="frame" x="0.0" y="132" width="320" height="25"/>
                                     <subviews>
-                                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Bitte QR-Code an der Kasse vorhalten" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="ehg-9w-zCp" userLabel="ID Label">
-                                            <rect key="frame" x="62" y="2.5" width="290.5" height="20.5"/>
+                                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Bitte QR-Code an der Kasse vorhalten" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="ehg-9w-zCp" userLabel="Message">
+                                            <rect key="frame" x="15.5" y="2.5" width="289" height="20.5"/>
                                             <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                             <nil key="textColor"/>
                                             <nil key="highlightedColor"/>
@@ -75,10 +77,10 @@
                                     </constraints>
                                 </view>
                                 <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="0c6-DJ-N1R" userLabel="Arrow Wrapper">
-                                    <rect key="frame" x="0.0" y="157" width="414" height="30"/>
+                                    <rect key="frame" x="0.0" y="157" width="320" height="30"/>
                                     <subviews>
                                         <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="252" image="SnabbleSDK/arrow-up" translatesAutoresizingMaskIntoConstraints="NO" id="gya-en-S5G" userLabel="Arrow Icon">
-                                            <rect key="frame" x="195" y="3" width="24" height="24"/>
+                                            <rect key="frame" x="148" y="3" width="24" height="24"/>
                                         </imageView>
                                     </subviews>
                                     <color key="backgroundColor" systemColor="systemBackgroundColor"/>
@@ -88,17 +90,34 @@
                                         <constraint firstItem="gya-en-S5G" firstAttribute="centerX" secondItem="0c6-DJ-N1R" secondAttribute="centerX" id="ib1-5Q-80c"/>
                                     </constraints>
                                 </view>
+                                <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="Ecn-wi-XIU" userLabel="Code X Wrapper">
+                                    <rect key="frame" x="0.0" y="187" width="320" height="25"/>
+                                    <subviews>
+                                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Code X von Y" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="nBt-0w-QDT" userLabel="Code X of Y">
+                                            <rect key="frame" x="108.5" y="2.5" width="103.5" height="20.5"/>
+                                            <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                            <nil key="textColor"/>
+                                            <nil key="highlightedColor"/>
+                                        </label>
+                                    </subviews>
+                                    <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+                                    <constraints>
+                                        <constraint firstItem="nBt-0w-QDT" firstAttribute="centerY" secondItem="Ecn-wi-XIU" secondAttribute="centerY" id="LJo-Pr-vg7"/>
+                                        <constraint firstItem="nBt-0w-QDT" firstAttribute="centerX" secondItem="Ecn-wi-XIU" secondAttribute="centerX" id="Lec-0P-wnz"/>
+                                        <constraint firstAttribute="height" constant="25" id="r3K-B4-u8U"/>
+                                    </constraints>
+                                </view>
                                 <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="4si-t7-uZk" userLabel="Code Wrapper">
-                                    <rect key="frame" x="0.0" y="187" width="414" height="382"/>
+                                    <rect key="frame" x="0.0" y="212" width="320" height="234"/>
                                     <subviews>
                                         <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="RX2-jM-dL1" userLabel="Code Margins">
-                                            <rect key="frame" x="16" y="0.0" width="382" height="382"/>
+                                            <rect key="frame" x="43" y="0.0" width="234" height="234"/>
                                             <subviews>
                                                 <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="IIw-A8-SY5" userLabel="Code Container">
-                                                    <rect key="frame" x="0.0" y="0.0" width="382" height="382"/>
+                                                    <rect key="frame" x="0.0" y="0.0" width="234" height="234"/>
                                                     <subviews>
                                                         <collectionView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" pagingEnabled="YES" showsHorizontalScrollIndicator="NO" showsVerticalScrollIndicator="NO" dataMode="none" translatesAutoresizingMaskIntoConstraints="NO" id="M1x-Rz-HWF">
-                                                            <rect key="frame" x="0.0" y="0.0" width="382" height="382"/>
+                                                            <rect key="frame" x="0.0" y="0.0" width="234" height="234"/>
                                                             <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                                                             <collectionViewFlowLayout key="collectionViewLayout" scrollDirection="horizontal" minimumLineSpacing="0.0" minimumInteritemSpacing="0.0" id="05B-1b-lSw">
                                                                 <size key="itemSize" width="50" height="50"/>
@@ -138,10 +157,10 @@
                                     </constraints>
                                 </view>
                                 <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="Lkr-Uv-iYJ" userLabel="ID Wrapper">
-                                    <rect key="frame" x="0.0" y="569" width="414" height="21"/>
+                                    <rect key="frame" x="0.0" y="446" width="320" height="21"/>
                                     <subviews>
                                         <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="3CBA" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="gnb-7a-j7y" userLabel="ID Label">
-                                            <rect key="frame" x="190" y="2.5" width="34.5" height="16"/>
+                                            <rect key="frame" x="143" y="2.5" width="34.5" height="16"/>
                                             <fontDescription key="fontDescription" type="system" pointSize="13"/>
                                             <nil key="textColor"/>
                                             <nil key="highlightedColor"/>
@@ -155,10 +174,10 @@
                                     </constraints>
                                 </view>
                                 <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="FMy-fu-LtF" userLabel="Pager Wrapper">
-                                    <rect key="frame" x="0.0" y="590" width="414" height="37"/>
+                                    <rect key="frame" x="0.0" y="467" width="320" height="37"/>
                                     <subviews>
                                         <pageControl opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" numberOfPages="3" translatesAutoresizingMaskIntoConstraints="NO" id="UfU-k2-DxO">
-                                            <rect key="frame" x="8" y="0.0" width="398" height="37"/>
+                                            <rect key="frame" x="8" y="5" width="304" height="27.5"/>
                                             <color key="pageIndicatorTintColor" white="0.66666666666666663" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                             <color key="currentPageIndicatorTintColor" white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                             <connections>
@@ -187,7 +206,7 @@
                     </constraints>
                 </view>
                 <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="xcE-5B-t8q">
-                    <rect key="frame" x="16" y="798" width="382" height="48"/>
+                    <rect key="frame" x="16" y="504" width="288" height="48"/>
                     <constraints>
                         <constraint firstAttribute="height" constant="48" id="6YG-qp-JoA"/>
                     </constraints>

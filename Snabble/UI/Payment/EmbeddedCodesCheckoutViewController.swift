@@ -20,6 +20,8 @@ public final class EmbeddedCodesCheckoutViewController: UIViewController {
     @IBOutlet private var pageControlWrapper: UIView!
     @IBOutlet private var messageWrapper: UIView!
     @IBOutlet private var messageLabel: UILabel!
+    @IBOutlet private var codeCountWrapper: UIView!
+    @IBOutlet private var codeCountLabel: UILabel!
 
     @IBOutlet private var paidButton: UIButton!
     @IBOutlet private var collectionView: UICollectionView!
@@ -42,7 +44,9 @@ public final class EmbeddedCodesCheckoutViewController: UIViewController {
         self.cart = cart
         self.delegate = delegate
 
-        self.qrCodeConfig = codeConfig
+        #warning("REMOVEME")
+        let code = QRCodeConfig(format: codeConfig.format, prefix: codeConfig.prefix, separator: codeConfig.separator, suffix: codeConfig.suffix, maxCodes: codeConfig.maxCodes, maxChars: 64, finalCode: codeConfig.finalCode, nextCode: codeConfig.nextCode, nextCodeWithCheck: codeConfig.nextCodeWithCheck)
+        self.qrCodeConfig = code
 
         super.init(nibName: nil, bundle: SnabbleBundle.main)
 
@@ -81,6 +85,10 @@ public final class EmbeddedCodesCheckoutViewController: UIViewController {
 
         let generator = QRCodeGenerator(self.cart, self.qrCodeConfig)
         self.codes = generator.generateCodes()
+
+        let codeXofY = String(format: "Snabble.QRCode.codeXofY".localized(), 1, self.codes.count)
+        self.codeCountLabel.text = codeXofY
+        self.codeCountWrapper.isHidden = self.codes.count == 1
 
         self.pageControl.numberOfPages = self.codes.count
         self.pageControl.pageIndicatorTintColor = .lightGray
@@ -149,6 +157,9 @@ public final class EmbeddedCodesCheckoutViewController: UIViewController {
                            self.pageControl.currentPage + 2, self.codes.count)
         }
         self.paidButton.setTitle(title, for: .normal)
+
+        let codeXofY = String(format: "Snabble.QRCode.codeXofY".localized(), self.pageControl.currentPage + 1, self.codes.count)
+        self.codeCountLabel.text = codeXofY
     }
 
     @IBAction private func paidButtonTapped(_ sender: UIButton) {
