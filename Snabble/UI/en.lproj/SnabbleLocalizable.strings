@@ -67,6 +67,8 @@
 
 "Snabble.Hints.title" = "Info from %@";
 
+"Snabble.invalidDepositVoucher.errorMsg" = "Deposit return vouchers can be redeemed only once.";
+
 "Snabble.Keyguard.message" = "That's how we make sure that only you have access to this payment method";
 
 "Snabble.Keyguard.requireScreenLock" = "You need to secure your smartphone with a screen lock to add this payment method.";

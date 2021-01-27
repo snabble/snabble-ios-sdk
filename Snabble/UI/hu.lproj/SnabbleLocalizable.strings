@@ -67,6 +67,8 @@
 
 "Snabble.Hints.title" = "%@ megjegyzése";
 
+"Snabble.invalidDepositVoucher.errorMsg" = "Deposit return vouchers can be redeemed only once.";
+
 "Snabble.Keyguard.message" = "Ezzel garantálható, hogy csak te férj ehhez a fizetési eljáráshoz";
 
 "Snabble.Keyguard.requireScreenLock" = "E fizetési mód hozzáadásához képernyőzárral kell védened az okostelefonod.";

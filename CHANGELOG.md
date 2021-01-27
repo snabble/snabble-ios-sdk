@@ -1,5 +1,9 @@
 ## snabble iOS SDK Changelog
 
+# v0.15.5 (unreleased)
+
+- Improves support for deposit return vouchers
+
 # v0.15.4
 
 - `CustomAppearance` now relies on an `accentColor` and possibly a `secondaryAccentColor` for customization of UI elements.

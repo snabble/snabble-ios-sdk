@@ -13,6 +13,7 @@ public final class ShoppingCart: Codable {
     public private(set) var lastSaved: Date?
     public private(set) var backendCartInfo: BackendCartInfo?
     public private(set) var paymentMethods: [PaymentMethodDescription]?
+    public private(set) var lastCheckoutInfoError: SnabbleError?
 
     public let projectId: Identifier<Project>
     public let shopId: Identifier<Shop>
@@ -60,6 +61,7 @@ public final class ShoppingCart: Codable {
         self.maxAge = try container.decode(.maxAge)
         self.directory = nil
         self.sorter = nil
+        self.lastCheckoutInfoError = nil
     }
 
     public func encode(to encoder: Encoder) throws {
@@ -385,6 +387,7 @@ extension ShoppingCart {
                 if error != SnabbleError.cancelled {
                     self.backendCartInfo = nil
                     self.paymentMethods = nil
+                    self.lastCheckoutInfoError = error
                 }
                 completion(false)
             case .success(let info):
@@ -392,6 +395,7 @@ extension ShoppingCart {
                 Log.info("createCheckoutInfo succeeded: \(session)")
                 self.backendCartInfo = BackendCartInfo(info.checkoutInfo)
                 self.paymentMethods = info.checkoutInfo.paymentMethods
+                self.lastCheckoutInfoError = nil
                 self.save(postEvent: false)
                 completion(true)
             }

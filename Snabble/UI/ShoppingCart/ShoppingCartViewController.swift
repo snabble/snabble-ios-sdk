@@ -218,6 +218,20 @@ public final class ShoppingCartViewController: UIViewController {
             return
         }
 
+        // if we're on-screen, check for errors from the last checkoutInfo creation/update
+        if self.view.window != nil, let error = self.shoppingCart.lastCheckoutInfoError {
+            switch error.error.type {
+            case .saleStop:
+                if let offendingSkus = error.error.details?.compactMap({ $0.sku }) {
+                    self.showProductError(offendingSkus)
+                }
+            case .invalidDepositVoucher:
+                self.showVoucherError()
+            default:
+                ()
+            }
+        }
+
         self.setupItems(self.shoppingCart)
         self.tableView?.reloadData()
 
@@ -470,17 +484,18 @@ public final class ShoppingCartViewController: UIViewController {
                         return
                     }
 
-                    if error.error.type == .noAvailableMethod {
+                    switch error.error.type {
+                    case .noAvailableMethod:
                         self.delegate?.showWarningMessage("Snabble.Payment.noMethodAvailable".localized())
-                        return
-                    }
-
-                    // app didn't handle the error. see if the project has a offline-capable payment method
-                    if !offlineMethods.isEmpty {
-                        let info = SignedCheckoutInfo(offlineMethods)
-                        self.delegate?.gotoPayment(paymentMethod, self.methodSelector?.selectedPaymentDetail, info, self.shoppingCart)
-                    } else {
-                        self.delegate?.showWarningMessage("Snabble.Payment.errorStarting".localized())
+                    case .invalidDepositVoucher:
+                        self.delegate?.showWarningMessage("Snabble.invalidDepositVoucher.errorMsg".localized())
+                    default:
+                        if !offlineMethods.isEmpty {
+                            let info = SignedCheckoutInfo(offlineMethods)
+                            self.delegate?.gotoPayment(paymentMethod, self.methodSelector?.selectedPaymentDetail, info, self.shoppingCart)
+                        } else {
+                            self.delegate?.showWarningMessage("Snabble.Payment.errorStarting".localized())
+                        }
                     }
                 }
             }
@@ -516,6 +531,12 @@ public final class ShoppingCartViewController: UIViewController {
         let start = offendingProducts.count == 1 ? "Snabble.saleStop.errorMsg.one" : "Snabble.saleStop.errorMsg"
         let msg = start.localized() + "\n\n" + offendingProducts.joined(separator: "\n")
         let alert = UIAlertController(title: "Snabble.saleStop.errorMsg.title".localized(), message: msg, preferredStyle: .alert)
+        alert.addAction(UIAlertAction(title: "Snabble.OK".localized(), style: .default, handler: nil))
+        self.present(alert, animated: true)
+    }
+
+    private func showVoucherError() {
+        let alert = UIAlertController(title: "Snabble.invalidDepositVoucher.errorMsg".localized(), message: nil, preferredStyle: .alert)
         alert.addAction(UIAlertAction(title: "Snabble.OK".localized(), style: .default, handler: nil))
         self.present(alert, animated: true)
     }
