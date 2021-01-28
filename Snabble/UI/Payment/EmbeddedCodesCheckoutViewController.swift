@@ -12,21 +12,27 @@ public final class EmbeddedCodesCheckoutViewController: UIViewController {
     @IBOutlet private var topWrapper: UIView!
     @IBOutlet private var topIcon: UIImageView!
     @IBOutlet private var iconHeight: NSLayoutConstraint!
+
     @IBOutlet private var arrowWrapper: UIView!
 
     @IBOutlet private var idWrapper: UIView!
     @IBOutlet private var idLabel: UILabel!
-    @IBOutlet private var pageControlWrapper: UIView!
+
     @IBOutlet private var messageWrapper: UIView!
     @IBOutlet private var messageLabel: UILabel!
+
     @IBOutlet private var codeCountWrapper: UIView!
     @IBOutlet private var codeCountLabel: UILabel!
 
     @IBOutlet private var paidButton: UIButton!
-    @IBOutlet private var collectionView: UICollectionView!
+
+    @IBOutlet private var pageControlWrapper: UIView!
     @IBOutlet private var pageControl: UIPageControl!
+
     @IBOutlet private var codeContainer: UIView!
     @IBOutlet private var codeContainerWidth: NSLayoutConstraint!
+
+    @IBOutlet private var collectionView: UICollectionView!
     @IBOutlet private var collectionViewWidth: NSLayoutConstraint!
 
     private var initialBrightness: CGFloat = 0
@@ -46,9 +52,7 @@ public final class EmbeddedCodesCheckoutViewController: UIViewController {
         self.cart = cart
         self.delegate = delegate
 
-        #warning("REMOVEME")
-        let code = QRCodeConfig(format: codeConfig.format, prefix: codeConfig.prefix, separator: codeConfig.separator, suffix: codeConfig.suffix, maxCodes: 2, maxChars: codeConfig.maxChars, finalCode: codeConfig.finalCode, nextCode: codeConfig.nextCode, nextCodeWithCheck: codeConfig.nextCodeWithCheck)
-        self.qrCodeConfig = code
+        self.qrCodeConfig = codeConfig
 
         super.init(nibName: nil, bundle: SnabbleBundle.main)
 
@@ -157,19 +161,20 @@ public final class EmbeddedCodesCheckoutViewController: UIViewController {
             .iPhone6, .iPhone6s, .iPhone7, .iPhone8, .iPhoneSE2
         ]
 
+        let smallSimulators = smallDevices.map { Device.simulator($0) }
+        let mediumSimulators = mediumDevices.map { Device.simulator($0) }
+
         let device = Device.current
 
         self.codeContainerWidth.isActive = false
-        let small = smallDevices + smallDevices.map { .simulator($0) }
-        let medium = mediumDevices + mediumDevices.map { .simulator($0) }
 
         let multiplier: CGFloat
-        if device.isOneOf(small) {
+        if device.isOneOf(smallDevices) || device.isOneOf(smallSimulators) {
             // hide project graphic + arrow
             self.topWrapper.isHidden = true
             self.arrowWrapper.isHidden = true
             multiplier = 0.8
-        } else if device.isOneOf(medium) {
+        } else if device.isOneOf(mediumDevices) || device.isOneOf(mediumSimulators) {
             // hide arrow, project graphic will likely scale
             self.arrowWrapper.isHidden = true
             multiplier = 0.7
@@ -177,6 +182,7 @@ public final class EmbeddedCodesCheckoutViewController: UIViewController {
             // all other devices: scale project graphic if needed
             multiplier = 0.6
         }
+
         NSLayoutConstraint.activate([
             self.codeContainer.widthAnchor.constraint(equalTo: self.view.widthAnchor, multiplier: multiplier, constant: 0)
         ])
@@ -192,7 +198,8 @@ public final class EmbeddedCodesCheckoutViewController: UIViewController {
         }
         self.paidButton.setTitle(title, for: .normal)
 
-        let codeXofY = String(format: "Snabble.QRCode.codeXofY".localized(), self.pageControl.currentPage + 1, self.codes.count)
+        let codeXofY = String(format: "Snabble.QRCode.codeXofY".localized(),
+                              self.pageControl.currentPage + 1, self.codes.count)
         self.codeCountLabel.text = codeXofY
     }
 
