@@ -150,6 +150,9 @@ public struct QRCodeConfig: Decodable {
     // when maxCodes is not sufficiently precise, maxChars imposes a string length limit
     let maxChars: Int?
 
+    // the maximum number of characters/bytes that can be encoded in one QR code
+    static let qrCodeMax = 2953
+
     var effectiveMaxCodes: Int {
         let leaveRoom = self.nextCode != nil || self.nextCodeWithCheck != nil || self.finalCode != nil
         return self.maxCodes - (leaveRoom ? 1 : 0)
@@ -171,26 +174,41 @@ public struct QRCodeConfig: Decodable {
         self.suffix = try container.decodeIfPresent(String.self, forKey: .suffix) ?? ""
         self.maxCodes = try container.decodeIfPresent(Int.self, forKey: .maxCodes) ?? 100
 
-        self.maxChars = try container.decodeIfPresent(Int.self, forKey: .maxChars)
+        if let maxChars = try container.decodeIfPresent(Int.self, forKey: .maxChars) {
+            self.maxChars = min(maxChars, Self.qrCodeMax)
+        } else {
+            self.maxChars = nil
+        }
+
         self.finalCode = try container.decodeIfPresent(String.self, forKey: .finalCode)
         self.nextCode = try container.decodeIfPresent(String.self, forKey: .nextCode)
         self.nextCodeWithCheck = try container.decodeIfPresent(String.self, forKey: .nextCodeWithCheck)
     }
 
     init(format: QRCodeFormat,
-         prefix: String = "", separator: String = "\n", suffix: String = "", maxCodes: Int = 100,
-         maxChars: Int? = nil, finalCode: String? = nil, nextCode: String? = nil, nextCodeWithCheck: String? = nil) {
+         prefix: String = "",
+         separator: String = "\n",
+         suffix: String = "",
+         maxCodes: Int = 100,
+         maxChars: Int? = nil,
+         finalCode: String? = nil,
+         nextCode: String? = nil,
+         nextCodeWithCheck: String? = nil
+    ) {
         self.format = format
         self.prefix = prefix
         self.separator = separator
         self.suffix = suffix
         self.maxCodes = maxCodes
-        self.maxChars = maxChars
+        if let maxChars = maxChars {
+            self.maxChars = min(maxChars, Self.qrCodeMax)
+        } else {
+            self.maxChars = nil
+        }
         self.finalCode = finalCode
         self.nextCode = nextCode
         self.nextCodeWithCheck = nextCodeWithCheck
     }
-
 }
 
 public enum BarcodeDetectorType: String, Decodable, UnknownCaseRepresentable {
