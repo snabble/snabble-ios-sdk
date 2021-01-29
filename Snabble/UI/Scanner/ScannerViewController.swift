@@ -544,6 +544,7 @@ extension ScannerViewController {
         }
 
         alert.addAction(UIAlertAction(title: "Snabble.Cancel".localized(), style: .cancel) { _ in
+            self.lastScannedCode = ""
             self.barcodeDetector.resumeScanning()
         })
 
