@@ -15,7 +15,7 @@
                 <outlet property="codeContainer" destination="SVT-KJ-2fD" id="Lz6-rf-0gQ"/>
                 <outlet property="codeContainerWidth" destination="WrY-nw-qYf" id="1Pt-2r-N4I"/>
                 <outlet property="codeCountLabel" destination="nBt-0w-QDT" id="EFr-Ic-fPt"/>
-                <outlet property="codeCountWrapper" destination="4si-t7-uZk" id="AKT-4a-Ghu"/>
+                <outlet property="codeCountWrapper" destination="Ecn-wi-XIU" id="RK6-Vc-U3N"/>
                 <outlet property="collectionView" destination="M1x-Rz-HWF" id="NFT-Yv-74N"/>
                 <outlet property="collectionViewWidth" destination="1zB-YR-dy3" id="JvA-vZ-BVh"/>
                 <outlet property="iconHeight" destination="3cg-Zu-jpX" id="bO7-Tb-1qT"/>
