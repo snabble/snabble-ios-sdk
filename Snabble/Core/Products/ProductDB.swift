@@ -73,7 +73,7 @@ public enum AppDbAvailability {
     case inProgress
 }
 
-public protocol ProductProvider: class {
+public protocol ProductProvider: AnyObject {
     /// initialize a ProductDB instance with the given configuration
     /// - parameter config: a `SnabbleAPIConfig` object
     /// - parameter project: the snabble `Project`

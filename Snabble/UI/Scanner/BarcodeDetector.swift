@@ -7,7 +7,7 @@
 import Foundation
 import UIKit
 
-public protocol BarcodeDetectorDelegate: class {
+public protocol BarcodeDetectorDelegate: AnyObject {
     /// callback for a successful scan
     func scannedCode(_ code: String, _ format: ScanFormat)
 
@@ -24,7 +24,7 @@ public protocol BarcodeDetectorDelegate: class {
     func present(_ viewControllerToPresent: UIViewController, animated flag: Bool, completion: (() -> Void)?)
 }
 
-public protocol BarcodeDetectorMessageDelegate: class {
+public protocol BarcodeDetectorMessageDelegate: AnyObject {
     /// show a message covering the entire screen (used by the "battery saver" function e.g. in the Cortex Decoder implementation)
     /// `completion` is invoked when the user dimisses the message
     func showMessage(_ msg: String, completion: @escaping () -> Void)

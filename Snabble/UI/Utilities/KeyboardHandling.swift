@@ -32,7 +32,7 @@ struct KeyboardInfo {
     }
 }
 
-protocol KeyboardHandling: class {
+protocol KeyboardHandling: AnyObject {
 
     func keyboardWillShow(_ info: KeyboardInfo)
 

@@ -4,7 +4,7 @@
 //  Copyright © 2020 snabble. All rights reserved.
 //
 
-public protocol PaymentMethodNavigationDelegate: class {
+public protocol PaymentMethodNavigationDelegate: AnyObject {
     func addMethod(fromCart: Bool)
 
     func addData(for method: RawPaymentMethod)
