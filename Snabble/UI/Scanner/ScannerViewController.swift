@@ -73,7 +73,7 @@ public final class ScannerViewController: UIViewController {
     private var shoppingCart: ShoppingCart
     private var shop: Shop
 
-    private var lastScannedCode = ""
+    private var lastScannedCode: String?
     private var confirmationVisible = false
     private var productType: ProductType?
 
@@ -366,7 +366,7 @@ extension ScannerViewController: ScanConfirmationViewDelegate {
             }
         }
 
-        self.lastScannedCode = ""
+        self.lastScannedCode = nil
         self.barcodeDetector.resumeScanning()
     }
 
@@ -426,7 +426,7 @@ extension ScannerViewController {
 
         self.timer?.invalidate()
         self.timer = Timer.scheduledTimer(withTimeInterval: 3, repeats: false) { _ in
-            self.lastScannedCode = ""
+            self.lastScannedCode = nil
         }
     }
 
@@ -544,6 +544,7 @@ extension ScannerViewController {
         }
 
         alert.addAction(UIAlertAction(title: "Snabble.Cancel".localized(), style: .cancel) { _ in
+            self.lastScannedCode = nil
             self.barcodeDetector.resumeScanning()
         })
 
