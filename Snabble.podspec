@@ -40,6 +40,7 @@ Pod::Spec.new do |s|
     ui.dependency 'SDCAlertView', '~> 12'
     ui.dependency 'ColorCompatibility'
     ui.dependency 'Capable/Colors'
+    ui.dependency 'DeviceKit', '~> 4'
 
     ui.resource_bundles = {
       "Snabble" => [

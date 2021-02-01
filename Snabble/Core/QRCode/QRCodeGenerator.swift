@@ -201,11 +201,13 @@ private struct Codeblock {
     }
 
     func hasRoom(for item: CodeBlockItem) -> Bool {
+        let str = self.stringify(1, 10)
         if let maxChars = self.config.maxChars {
-            let str = self.stringify(1, 10)
             return str.count + self.codeLength(item) < maxChars
         } else {
-            return self.count < self.config.effectiveMaxCodes
+            let countOK = self.count < self.config.effectiveMaxCodes
+            let charsOK = str.count + self.codeLength(item) <= QRCodeConfig.qrCodeMax
+            return countOK && charsOK
         }
     }
 

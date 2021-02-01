@@ -5,25 +5,35 @@
 //
 
 import UIKit
+import DeviceKit
 
 public final class EmbeddedCodesCheckoutViewController: UIViewController {
 
     @IBOutlet private var topWrapper: UIView!
     @IBOutlet private var topIcon: UIImageView!
     @IBOutlet private var iconHeight: NSLayoutConstraint!
-    @IBOutlet private var arrowWrapper: UIView!
-    @IBOutlet private var codeWrapper: UIView!
 
-    @IBOutlet private var codeContainer: UIView!
+    @IBOutlet private var arrowWrapper: UIView!
+
     @IBOutlet private var idWrapper: UIView!
     @IBOutlet private var idLabel: UILabel!
-    @IBOutlet private var pageControlWrapper: UIView!
+
     @IBOutlet private var messageWrapper: UIView!
     @IBOutlet private var messageLabel: UILabel!
 
+    @IBOutlet private var codeCountWrapper: UIView!
+    @IBOutlet private var codeCountLabel: UILabel!
+
     @IBOutlet private var paidButton: UIButton!
-    @IBOutlet private var collectionView: UICollectionView!
+
+    @IBOutlet private var pageControlWrapper: UIView!
     @IBOutlet private var pageControl: UIPageControl!
+
+    @IBOutlet private var codeContainer: UIView!
+    @IBOutlet private var codeContainerWidth: NSLayoutConstraint!
+
+    @IBOutlet private var collectionView: UICollectionView!
+    @IBOutlet private var collectionViewWidth: NSLayoutConstraint!
 
     private var initialBrightness: CGFloat = 0
 
@@ -82,6 +92,8 @@ public final class EmbeddedCodesCheckoutViewController: UIViewController {
         let generator = QRCodeGenerator(self.cart, self.qrCodeConfig)
         self.codes = generator.generateCodes()
 
+        self.codeCountWrapper.isHidden = self.codes.count == 1
+
         self.pageControl.numberOfPages = self.codes.count
         self.pageControl.pageIndicatorTintColor = .lightGray
         self.pageControl.currentPageIndicatorTintColor = .label
@@ -94,6 +106,7 @@ public final class EmbeddedCodesCheckoutViewController: UIViewController {
         self.idLabel.text = String(id)
 
         self.setButtonTitle()
+        self.configureViewForDevice()
     }
 
     override public func viewWillAppear(_ animated: Bool) {
@@ -111,15 +124,15 @@ public final class EmbeddedCodesCheckoutViewController: UIViewController {
     override public func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
 
-        let frameWidth = self.collectionView.frame.width
+        let frameWidth = self.codeContainer.frame.width
         let maxCodeSize = self.maxCodeSize(fitting: frameWidth)
-        NSLayoutConstraint.activate([
-            self.collectionView.heightAnchor.constraint(equalToConstant: maxCodeSize),
-            self.collectionView.widthAnchor.constraint(equalToConstant: maxCodeSize)
-        ])
+
+        self.collectionViewWidth.constant = maxCodeSize
+
         if maxCodeSize != self.itemSize.width {
             self.itemSize = CGSize(width: maxCodeSize, height: maxCodeSize)
             self.collectionView.collectionViewLayout.invalidateLayout()
+            self.collectionView.reloadData()
         }
     }
 
@@ -140,6 +153,41 @@ public final class EmbeddedCodesCheckoutViewController: UIViewController {
         UIScreen.main.brightness = self.initialBrightness
     }
 
+    private func configureViewForDevice() {
+        let smallDevices: [Device] = [
+            .iPhone5s, .iPhoneSE, .iPodTouch6, .iPodTouch7
+        ]
+        let mediumDevices: [Device] = [
+            .iPhone6, .iPhone6s, .iPhone7, .iPhone8, .iPhoneSE2
+        ]
+
+        let smallSimulators = smallDevices.map { Device.simulator($0) }
+        let mediumSimulators = mediumDevices.map { Device.simulator($0) }
+
+        let device = Device.current
+
+        self.codeContainerWidth.isActive = false
+
+        let multiplier: CGFloat
+        if device.isOneOf(smallDevices) || device.isOneOf(smallSimulators) {
+            // hide project graphic + arrow
+            self.topWrapper.isHidden = true
+            self.arrowWrapper.isHidden = true
+            multiplier = 0.8
+        } else if device.isOneOf(mediumDevices) || device.isOneOf(mediumSimulators) {
+            // hide arrow, project graphic will likely scale
+            self.arrowWrapper.isHidden = true
+            multiplier = 0.7
+        } else {
+            // all other devices: scale project graphic if needed
+            multiplier = 0.6
+        }
+
+        NSLayoutConstraint.activate([
+            self.codeContainer.widthAnchor.constraint(equalTo: self.view.widthAnchor, multiplier: multiplier, constant: 0)
+        ])
+    }
+
     private func setButtonTitle() {
         var title = ""
         if self.pageControl.currentPage == self.codes.count - 1 {
@@ -149,6 +197,10 @@ public final class EmbeddedCodesCheckoutViewController: UIViewController {
                            self.pageControl.currentPage + 2, self.codes.count)
         }
         self.paidButton.setTitle(title, for: .normal)
+
+        let codeXofY = String(format: "Snabble.QRCode.codeXofY".localized(),
+                              self.pageControl.currentPage + 1, self.codes.count)
+        self.codeCountLabel.text = codeXofY
     }
 
     @IBAction private func paidButtonTapped(_ sender: UIButton) {
@@ -171,13 +223,7 @@ public final class EmbeddedCodesCheckoutViewController: UIViewController {
 
 extension EmbeddedCodesCheckoutViewController {
     private func qrCode(with code: String) -> UIImage? {
-        Log.debug("QR Code content:\n\(code)")
-        let start = Date.timeIntervalSinceReferenceDate
-        defer {
-            let elapsed = Date.timeIntervalSinceReferenceDate - start
-            NSLog("code gen took \(elapsed)")
-        }
-
+        // Log.debug("QR Code content:\n\(code)")
         return self.qrCode(with: code, fitting: self.collectionView.frame.width)
     }
 
