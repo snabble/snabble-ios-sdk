@@ -1,8 +1,9 @@
 ## snabble iOS SDK Changelog
 
-# v0.15.5 (unreleased)
+# v0.15.5
 
 - Improves support for deposit return vouchers
+- Checkout using embedded QR codes on very small devices now uses more screen space for the QR code itself
 
 # v0.15.4
 
