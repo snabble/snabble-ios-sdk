@@ -8,9 +8,7 @@ import UIKit
 import WebKit
 
 // sample data for testing:
-// Visa: 4921 8180 8989 8988, Exp. 12/2020, CVV: any 3-digit number
-// MasterCard: 5404 1070 0002 0010, Exp. 12/2020, CVV: any 3-digit number
-// Amex: 3782 8224 6310 005, Exp 12/2020, CVC: 123
+// Visa: 4242 4242 4242 4242, Expiry: anytime in the future, CVV: any 3-digit number
 
 private struct TelecashSecret: Decodable {
     public let hash: String
@@ -40,27 +38,30 @@ public final class CreditCardEditViewController: UIViewController {
     private var ccNumber: String?
     private var expDate: String?
     private let showFromCart: Bool
+    private let projectId: Identifier<Project>?
     private weak var analyticsDelegate: AnalyticsDelegate?
 
     private var telecash: TelecashSecret?
 
     public weak var navigationDelegate: PaymentMethodNavigationDelegate?
 
-    public init(_ brand: CreditCardBrand?, _ showFromCart: Bool, _ analyticsDelegate: AnalyticsDelegate?) {
+    public init(brand: CreditCardBrand?, _ projectId: Identifier<Project>, _ showFromCart: Bool, _ analyticsDelegate: AnalyticsDelegate?) {
         self.brand = brand
         self.showFromCart = showFromCart
         self.analyticsDelegate = analyticsDelegate
+        self.projectId = projectId
 
         super.init(nibName: nil, bundle: SnabbleBundle.main)
     }
 
-    init(_ creditcardData: CreditCardData, _ index: Int, _ showFromCart: Bool, _ analyticsDelegate: AnalyticsDelegate?) {
-        self.brand = creditcardData.brand
+    init(_ data: CreditCardData, _ index: Int, _ showFromCart: Bool, _ analyticsDelegate: AnalyticsDelegate?) {
+        self.brand = data.brand
         self.index = index
-        self.ccNumber = creditcardData.displayName
-        self.expDate = creditcardData.expirationDate
+        self.ccNumber = data.displayName
+        self.expDate = data.expirationDate
         self.showFromCart = showFromCart
         self.analyticsDelegate = analyticsDelegate
+        self.projectId = nil
 
         super.init(nibName: nil, bundle: SnabbleBundle.main)
     }
@@ -212,12 +213,14 @@ extension CreditCardEditViewController: WKScriptMessageHandler {
             message.name == "callbackHandler",
             let body = message.body as? [String: Any],
             let eventData = body["elementArr"] as? [[String: String]],
-            let storeId = self.telecash?.storeId
+            let storeId = self.telecash?.storeId,
+            let projectId = self.projectId
         else {
             return
         }
 
         var hostedDataId = ""
+        var schemeTransactionId = ""
         var cardNumber = ""
         var cardHolder = ""
         var brand = ""
@@ -233,8 +236,11 @@ extension CreditCardEditViewController: WKScriptMessageHandler {
                 continue
             }
 
+            print("got \(name) \(value)")
+
             switch name {
             case "hosteddataid": hostedDataId = value
+            case "schemeTransactionId": schemeTransactionId = value
             case "cardnumber": cardNumber = value
             case "bname": cardHolder = value
             case "ccbrand": brand = value
@@ -249,7 +255,16 @@ extension CreditCardEditViewController: WKScriptMessageHandler {
         }
 
         let cert = SnabbleAPI.certificates.first
-        if responseCode == "00", let ccData = CreditCardData(cert?.data, cardHolder, cardNumber, brand, expMonth, expYear, hostedDataId, storeId) {
+        if responseCode == "00", let ccData = CreditCardData(gatewayCert: cert?.data,
+                                                             cardHolder: cardHolder,
+                                                             cardNumber: cardNumber,
+                                                             brand: brand,
+                                                             expMonth: expMonth,
+                                                             expYear: expYear,
+                                                             hostedDataId: hostedDataId,
+                                                             storeId: storeId,
+                                                             projectId: projectId,
+                                                             schemeTransactionId: schemeTransactionId) {
             let detail = PaymentMethodDetail(ccData)
             PaymentMethodDetails.save(detail)
             self.analyticsDelegate?.track(.paymentMethodAdded(detail.rawMethod.displayName))
@@ -257,7 +272,7 @@ extension CreditCardEditViewController: WKScriptMessageHandler {
         } else if failCode == "5993" {
             NSLog("cancelled by user")
         } else {
-            NSLog("unknown error \(failCode) \(failReason)")
+            NSLog("unknown error response_code=\(responseCode) fail_rc=\(failCode) fail_reason=\(failReason)")
         }
 
         self.goBack()
@@ -359,6 +374,8 @@ extension CreditCardEditViewController {
                 <input type="hidden" name="assignToken" value="true"/>
                 <input type="hidden" name="hostURI" value="*"/>
                 <input type="hidden" name="language" value="{{locale}}"/>
+                <input type="hidden" name="authenticateTransaction" value="true"/>
+                <input type="hidden" name="threeDSRequestorChallengeIndicator" value="04"/>
             </form>
             <script>
             window.addEventListener("message", function receiveMessage(event) {

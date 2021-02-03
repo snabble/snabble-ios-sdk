@@ -432,7 +432,7 @@ public final class ShoppingCartViewController: UIViewController {
         else {
             // no payment method selected -> show the "add method" view
             let methods = MethodProjects.initialize()
-            let selection = MethodSelectionViewController(methods, showFromCart: true, self)
+            let selection = MethodSelectionViewController(with: project.id, methods, showFromCart: true, self)
             if SnabbleUI.implicitNavigation {
                 self.navigationController?.pushViewController(selection, animated: true)
             } else {
@@ -445,7 +445,8 @@ public final class ShoppingCartViewController: UIViewController {
         }
 
         // no detail data, and there is an editing VC? Show that instead of continuing
-        if self.methodSelector?.selectedPaymentDetail == nil, let editVC = paymentMethod.editViewController(true, self) {
+        if self.methodSelector?.selectedPaymentDetail == nil,
+           let editVC = paymentMethod.editViewController(with: project.id, showFromCart: true, self) {
             if SnabbleUI.implicitNavigation {
                 self.navigationController?.pushViewController(editVC, animated: true)
             } else {
