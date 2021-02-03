@@ -155,23 +155,46 @@ struct CreditCardData: Codable, EncryptedPaymentData, Equatable {
     let expirationMonth: String
     let expirationYear: String
     let version: Int
+    let projectId: Identifier<Project>?
 
-    private struct CreditCardRequestOrigin: PaymentRequestOrigin {
-        // bump this when we add properties to that might require invaliding previous versions
-        static let version = 1
+    struct CreditCardRequestOrigin: PaymentRequestOrigin {
+        // bump this when we add properties to the struct that might require invaliding previous versions
+        static let version = 2
 
         let hostedDataID: String
         let hostedDataStoreID: String
         let cardType: String
+
+        // new in v2
+        let projectID: String
+        let schemeTransactionID: String
     }
 
     enum CodingKeys: String, CodingKey {
         case encryptedPaymentData, serial, displayName, originType
-        case cardHolder, brand, expirationMonth, expirationYear, version
+        case cardHolder, brand, expirationMonth, expirationYear, version, projectId
     }
 
-    init?(_ gatewayCert: Data?, _ cardHolder: String, _ cardNumber: String, _ brand: String, _ expMonth: String, _ expYear: String, _ hostedDataId: String, _ storeId: String) {
-        guard !cardHolder.isEmpty, !cardNumber.isEmpty, !brand.isEmpty, !expMonth.isEmpty, !expYear.isEmpty, !hostedDataId.isEmpty else {
+    init?(gatewayCert: Data?,
+          cardHolder: String,
+          cardNumber: String,
+          brand: String,
+          expMonth: String,
+          expYear: String,
+          hostedDataId: String,
+          storeId: String,
+          projectId: Identifier<Project>,
+          schemeTransactionId: String
+    ) {
+        guard
+            !cardHolder.isEmpty,
+            !cardNumber.isEmpty,
+            !brand.isEmpty,
+            !expMonth.isEmpty,
+            !expYear.isEmpty,
+            !hostedDataId.isEmpty,
+            !schemeTransactionId.isEmpty
+        else {
             return nil
         }
 
@@ -185,8 +208,13 @@ struct CreditCardData: Codable, EncryptedPaymentData, Equatable {
         self.brand = brand
         self.expirationYear = expYear
         self.expirationMonth = expMonth
+        self.projectId = projectId
 
-        let requestOrigin = CreditCardRequestOrigin(hostedDataID: hostedDataId, hostedDataStoreID: storeId, cardType: brand.cardType)
+        let requestOrigin = CreditCardRequestOrigin(hostedDataID: hostedDataId,
+                                                    hostedDataStoreID: storeId,
+                                                    cardType: brand.cardType,
+                                                    projectID: projectId.rawValue,
+                                                    schemeTransactionID: schemeTransactionId)
 
         guard
             let encrypter = PaymentDataEncrypter(gatewayCert),
@@ -211,6 +239,8 @@ struct CreditCardData: Codable, EncryptedPaymentData, Equatable {
         self.expirationYear = try container.decode(String.self, forKey: .expirationYear)
         let version = try container.decodeIfPresent(Int.self, forKey: .version)
         self.version = version ?? CreditCardRequestOrigin.version
+        let projectId = try container.decodeIfPresent(Identifier<Project>.self, forKey: .projectId)
+        self.projectId = projectId ?? ""
     }
 
     // the card's expiration date as a YYYY/MM/DD string with the last day of the month,
@@ -508,6 +538,15 @@ public struct PaymentMethodDetail: Codable, Equatable {
     var originType: AcceptedOriginType {
         return self.methodData.data.originType
     }
+
+    var projectId: Identifier<Project>? {
+        switch self.methodData {
+        case .creditcard(let creditCardData):
+            return creditCardData.projectId
+        default:
+            return nil
+        }
+    }
 }
 
 extension Notification.Name {
@@ -612,18 +651,43 @@ public enum PaymentMethodDetails {
         storage.remove(at: index)
     }
 
-    public static func startup(_ firstStart: Bool) {
+    //
+    /// initialize the storage for payment methods
+    /// - Parameter firstStart: when `true` (on the first start of the app), remove all stored payment methods
+    /// - Returns: true when any obsolete payment methods had to be removed
+    ///
+    /// This method silently removes any payment methods that have expired, most notably credit cards past
+    /// their expiration date.
+    public static func startup(_ firstStart: Bool) -> Bool {
         if firstStart {
             storage.removeAll()
         }
 
         removeExpired()
+
+        return removeObsoleted()
     }
 
     private static func removeExpired() {
         var details = self.read()
         details.removeAll(where: \.isExpired)
         self.save(details)
+    }
+
+    private static func removeObsoleted() -> Bool {
+        var details = self.read()
+        let initialCount = details.count
+        details.removeAll { detail -> Bool in
+            switch detail.methodData {
+            case .creditcard(let creditcardData):
+                return creditcardData.version < CreditCardData.CreditCardRequestOrigin.version
+            default:
+                return false
+            }
+        }
+
+        self.save(details)
+        return initialCount != details.count
     }
 }
 

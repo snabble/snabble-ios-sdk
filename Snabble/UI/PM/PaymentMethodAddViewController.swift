@@ -198,11 +198,10 @@ extension PaymentMethodAddViewController: UITableViewDelegate, UITableViewDataSo
         var navigationTarget: UIViewController?
 
         if let projectId = target.projectId, self.brandId != nil {
-            _ = projectId // TODO: pass to selection
             let methods = MethodProjects.initialize()
-            navigationTarget = MethodSelectionViewController(methods, showFromCart: false, self.analyticsDelegate)
+            navigationTarget = MethodSelectionViewController(with: projectId, methods, showFromCart: false, self.analyticsDelegate)
         } else if let method = target.method {
-            navigationTarget = method.editViewController(false, self.analyticsDelegate)
+            navigationTarget = method.editViewController(with: target.projectId, showFromCart: false, self.analyticsDelegate)
         } else if let brandId = target.brandId {
             navigationTarget = PaymentMethodAddViewController(brandId: brandId, self.analyticsDelegate)
         }

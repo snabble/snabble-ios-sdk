@@ -31,17 +31,30 @@ extension RawPaymentMethod {
         }
     }
 
-    func editViewController(_ showFromCart: Bool, _ analyticsDelegate: AnalyticsDelegate?) -> UIViewController? {
+    func editViewController(with projectId: Identifier<Project>?, showFromCart: Bool, _ analyticsDelegate: AnalyticsDelegate?) -> UIViewController? {
         switch self {
-        case .deDirectDebit: return SepaEditViewController(nil, nil, showFromCart, analyticsDelegate)
-        case .creditCardMastercard: return CreditCardEditViewController(.mastercard, showFromCart, analyticsDelegate)
-        case .creditCardVisa: return CreditCardEditViewController(.visa, showFromCart, analyticsDelegate)
-        case .creditCardAmericanExpress: return CreditCardEditViewController(.amex, showFromCart, analyticsDelegate)
-        case .paydirektOneKlick: return PaydirektEditViewController(nil, nil, showFromCart, analyticsDelegate)
+        case .deDirectDebit:
+            return SepaEditViewController(nil, nil, showFromCart, analyticsDelegate)
+        case .paydirektOneKlick:
+            return PaydirektEditViewController(nil, nil, showFromCart, analyticsDelegate)
+
+        case .creditCardMastercard:
+            if let projectId = projectId {
+                return CreditCardEditViewController(brand: .mastercard, projectId, showFromCart, analyticsDelegate)
+            }
+        case .creditCardVisa:
+            if let projectId = projectId {
+                return CreditCardEditViewController(brand: .visa, projectId, showFromCart, analyticsDelegate)
+            }
+        case .creditCardAmericanExpress:
+            if let projectId = projectId {
+                return CreditCardEditViewController(brand: .amex, projectId, showFromCart, analyticsDelegate)
+            }
 
         case .qrCodePOS, .qrCodeOffline, .externalBilling, .customerCardPOS, .gatekeeperTerminal:
-            return nil
+            ()
         }
+        return nil
     }
 
     var icon: UIImage? {
@@ -152,7 +165,8 @@ public final class PaymentMethodListViewController: UIViewController {
         }
 
         if SnabbleUI.implicitNavigation {
-            let selection = MethodSelectionViewController(self.methods, showFromCart: false, self.analyticsDelegate)
+            let projectId = SnabbleUI.project.id
+            let selection = MethodSelectionViewController(with: projectId, self.methods, showFromCart: false, self.analyticsDelegate)
             self.navigationController?.pushViewController(selection, animated: true)
         } else {
             self.navigationDelegate?.addMethod(fromCart: false)
