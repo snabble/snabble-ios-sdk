@@ -144,6 +144,47 @@ public enum CreditCardBrand: String, Codable {
     }
 }
 
+// response data from the telecash IPG Connect API
+struct ConnectGatewayResponse {
+    var hostedDataId: String { data["hosteddataid"] ?? "" }
+    var schemeTransactionId: String { data["schemeTransactionId"] ?? "" }
+    var cardNumber: String { data["cardnumber"] ?? "" }
+    var cardHolder: String { data["bname"] ?? "" }
+    var brand: String { data["ccbrand"] ?? "" }
+    var expMonth: String { data["expmonth"] ?? "" }
+    var expYear: String { data["expyear"] ?? "" }
+    var responseCode: String { data["processor_response_code"] ?? "" }
+    var failReason: String { data["fail_reason"] ?? "" }
+    var failCode: String { data["fail_rc"] ?? "" }
+    var orderId: String { data["oid"] ?? "" }
+
+    private var data = [String: String]()
+
+    init?(response: [[String: String]]) {
+        for entry in response {
+            if let name = entry["name"], let value = entry["value"] {
+                data[name] = value
+            }
+        }
+
+        if !isValid {
+            return nil
+        }
+    }
+
+    var isValid: Bool {
+        return
+            responseCode == "00"
+            && !cardHolder.isEmpty
+            && !cardNumber.isEmpty
+            && !brand.isEmpty
+            && !expMonth.isEmpty
+            && !expYear.isEmpty
+            && !hostedDataId.isEmpty
+            && !schemeTransactionId.isEmpty
+    }
+}
+
 struct CreditCardData: Codable, EncryptedPaymentData, Equatable {
     let encryptedPaymentData: String
     let serial: String
@@ -175,49 +216,31 @@ struct CreditCardData: Codable, EncryptedPaymentData, Equatable {
         case cardHolder, brand, expirationMonth, expirationYear, version, projectId
     }
 
-    init?(gatewayCert: Data?,
-          cardHolder: String,
-          cardNumber: String,
-          brand: String,
-          expMonth: String,
-          expYear: String,
-          hostedDataId: String,
-          storeId: String,
-          projectId: Identifier<Project>,
-          schemeTransactionId: String
-    ) {
-        guard
-            !cardHolder.isEmpty,
-            !cardNumber.isEmpty,
-            !brand.isEmpty,
-            !expMonth.isEmpty,
-            !expYear.isEmpty,
-            !hostedDataId.isEmpty,
-            !schemeTransactionId.isEmpty
-        else {
+    init?(_ response: ConnectGatewayResponse, _ projectId: Identifier<Project>, _ storeId: String, certificate: Data?) {
+        guard response.isValid else {
             return nil
         }
 
-        guard let brand = CreditCardBrand(rawValue: brand.lowercased()) else {
+        guard let brand = CreditCardBrand(rawValue: response.brand.lowercased()) else {
             return nil
         }
 
         self.version = CreditCardRequestOrigin.version
-        self.displayName = cardNumber
-        self.cardHolder = cardHolder
+        self.displayName = response.cardNumber
+        self.cardHolder = response.cardHolder
         self.brand = brand
-        self.expirationYear = expYear
-        self.expirationMonth = expMonth
+        self.expirationYear = response.expYear
+        self.expirationMonth = response.expMonth
         self.projectId = projectId
 
-        let requestOrigin = CreditCardRequestOrigin(hostedDataID: hostedDataId,
+        let requestOrigin = CreditCardRequestOrigin(hostedDataID: response.hostedDataId,
                                                     hostedDataStoreID: storeId,
                                                     cardType: brand.cardType,
                                                     projectID: projectId.rawValue,
-                                                    schemeTransactionID: schemeTransactionId)
+                                                    schemeTransactionID: response.schemeTransactionId)
 
         guard
-            let encrypter = PaymentDataEncrypter(gatewayCert),
+            let encrypter = PaymentDataEncrypter(certificate),
             let (cipherText, serial) = encrypter.encrypt(requestOrigin)
         else {
             return nil
