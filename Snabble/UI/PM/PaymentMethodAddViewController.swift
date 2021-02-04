@@ -1,7 +1,7 @@
 //
 //  PaymentMethodAddViewController.swift
 //
-//  Copyright © 2020 snabble. All rights reserved.
+//  Copyright © 2021 snabble. All rights reserved.
 //
 
 import UIKit
@@ -31,7 +31,7 @@ struct MethodEntry {
     }
 }
 
-public class PaymentMethodAddViewController: UIViewController {
+public final class PaymentMethodAddViewController: UIViewController {
 
     private var entries = [[MethodEntry]]()
     private var brandId: Identifier<Brand>?
@@ -81,48 +81,48 @@ public class PaymentMethodAddViewController: UIViewController {
         super.viewWillAppear(animated)
 
         if let brandId = self.brandId {
-            self.entries = getProjectTargets(for: brandId)
+            self.entries = getProjectEntries(for: brandId)
         } else {
-            self.entries = getAllTargets()
+            self.entries = getAllEntries()
         }
 
         self.tableView.reloadData()
     }
 
-    private func getProjectTargets(for brandId: Identifier<Brand>) -> [[MethodEntry]] {
-        let projectTargets = SnabbleAPI.projects
+    private func getProjectEntries(for brandId: Identifier<Brand>) -> [[MethodEntry]] {
+        let projectsEntries = SnabbleAPI.projects
             .filter { $0.brandId == brandId }
             .sorted { $0.name < $1.name }
             .map { MethodEntry(project: $0, count: self.methodCount(for: $0.id)) }
 
-        var targets = [[MethodEntry]]()
-        targets.append(projectTargets)
-        return targets
+        var entries = [[MethodEntry]]()
+        entries.append(projectsEntries)
+        return entries
     }
 
-    private func getAllTargets() -> [[MethodEntry]] {
+    private func getAllEntries() -> [[MethodEntry]] {
         if SnabbleAPI.projects.count == 1 {
-            return getSingleProjectTargets()
+            return getSingleProjectEntries()
         } else {
-            return getMultiProjectTargets()
+            return getMultiProjectEntries()
         }
     }
 
-    private func getSingleProjectTargets() -> [[MethodEntry]] {
-        let allTargets = SnabbleAPI.projects
+    private func getSingleProjectEntries() -> [[MethodEntry]] {
+        let allEntries = SnabbleAPI.projects
             .flatMap { $0.paymentMethods }
             .filter { $0.editable }
             .sorted { $0.displayName < $1.displayName }
             .map { MethodEntry(method: $0, count: methodCount(for: $0)) }
 
-        var targets = [[MethodEntry]]()
-        targets.append(allTargets)
-        return targets
+        var entries = [[MethodEntry]]()
+        entries.append(allEntries)
+        return entries
     }
 
-    private func getMultiProjectTargets() -> [[MethodEntry]] {
-        // all targets where credit cards are accepted
-        var allTargets = SnabbleAPI.projects
+    private func getMultiProjectEntries() -> [[MethodEntry]] {
+        // all entries where credit cards are accepted
+        var allEntries = SnabbleAPI.projects
             .filter { !$0.shops.isEmpty }
             .filter {
                 $0.paymentMethods.contains(.creditCardAmericanExpress)
@@ -131,11 +131,11 @@ public class PaymentMethodAddViewController: UIViewController {
             }
             .map { MethodEntry(project: $0, count: self.methodCount(for: $0.id)) }
 
-        // merge targets belonging to the same brand
-        let targetsByBrand = Dictionary(grouping: allTargets, by: { $0.brandId })
+        // merge entries belonging to the same brand
+        let entriesByBrand = Dictionary(grouping: allEntries, by: { $0.brandId })
 
-        for (brandId, targets) in targetsByBrand {
-            guard let brandId = brandId, targets.count > 1, var first = targets.first else {
+        for (brandId, entries) in entriesByBrand {
+            guard let brandId = brandId, entries.count > 1, var first = entries.first else {
                 continue
             }
 
@@ -143,14 +143,14 @@ public class PaymentMethodAddViewController: UIViewController {
             if let brand = SnabbleAPI.brands?.first(where: { $0.id == brandId }) {
                 first.name = brand.name
             }
-            first.count = targets.reduce(0) { $0 + self.methodCount(for: $1.projectId) }
+            first.count = entries.reduce(0) { $0 + self.methodCount(for: $1.projectId) }
 
-            // and replace all matching targets with `first`
-            allTargets.removeAll(where: { $0.brandId == brandId })
-            allTargets.append(first)
+            // and replace all matching entries with `first`
+            allEntries.removeAll(where: { $0.brandId == brandId })
+            allEntries.append(first)
         }
 
-        allTargets.sort { $0.name < $1.name }
+        allEntries.sort { $0.name < $1.name }
 
         let allMethods = Set(SnabbleAPI.projects.flatMap { $0.paymentMethods }.filter { $0.editable })
 
@@ -162,14 +162,14 @@ public class PaymentMethodAddViewController: UIViewController {
         var generalMethods = Array(allMethods.subtracting(creditCards))
         generalMethods.sort { $0.displayName < $1.displayName }
 
-        var targets = [[MethodEntry]]()
+        var entries = [[MethodEntry]]()
         if !generalMethods.isEmpty {
-            targets.append(generalMethods.map { MethodEntry(method: $0, count: methodCount(for: $0)) })
+            entries.append(generalMethods.map { MethodEntry(method: $0, count: methodCount(for: $0)) })
         }
 
-        targets.append(allTargets)
+        entries.append(allEntries)
 
-        return targets
+        return entries
     }
 
     private func methodCount(for projectId: Identifier<Project>?) -> Int {
@@ -207,8 +207,7 @@ extension PaymentMethodAddViewController: UITableViewDelegate, UITableViewDataSo
         // swiftlint:disable:next force_cast
         let cell = tableView.dequeueReusableCell(withIdentifier: "cell", for: indexPath) as! PaymentMethodAddCell
 
-        let target = entries[indexPath.section][indexPath.row]
-        cell.entry = target
+        cell.entry = entries[indexPath.section][indexPath.row]
 
         return cell
     }
@@ -228,16 +227,30 @@ extension PaymentMethodAddViewController: UITableViewDelegate, UITableViewDataSo
     public func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
 
-        let target = entries[indexPath.section][indexPath.row]
+        let entry = entries[indexPath.section][indexPath.row]
 
         var navigationTarget: UIViewController?
 
-        if let projectId = target.projectId, self.brandId != nil {
-            let methods = MethodProjects.initialize()
-            navigationTarget = MethodSelectionViewController(with: projectId, methods, showFromCart: false, self.analyticsDelegate)
-        } else if let method = target.method {
-            navigationTarget = method.editViewController(with: target.projectId, showFromCart: false, self.analyticsDelegate)
-        } else if let brandId = target.brandId {
+        if self.brandId != nil, let projectId = entry.projectId {
+            // show/add methods for this specific project
+            // swiftlint:disable:next empty_count
+            if entry.count == 0 {
+                #warning("TODO: action sheet")
+                let methods = MethodProjects.initialize()
+                navigationTarget = MethodSelectionViewController(with: projectId, methods, showFromCart: false, self.analyticsDelegate)
+            } else {
+                navigationTarget = PaymentMethodListViewControllerNew(for: projectId, showFromCart: false, self.analyticsDelegate)
+            }
+        } else if let method = entry.method {
+            // show/add retailer-independent methods
+            // swiftlint:disable:next empty_count
+            if entry.count == 0 {
+                navigationTarget = method.editViewController(with: entry.projectId, showFromCart: false, self.analyticsDelegate)
+            } else {
+                navigationTarget = PaymentMethodListViewControllerNew(method: method, showFromCart: false, self.analyticsDelegate)
+            }
+        } else if let brandId = entry.brandId {
+            // drill-down to the individual projects in this brand
             navigationTarget = PaymentMethodAddViewController(brandId: brandId, self.analyticsDelegate)
         }
 
@@ -248,7 +261,7 @@ extension PaymentMethodAddViewController: UITableViewDelegate, UITableViewDataSo
     }
 }
 
-private class PaymentMethodAddCell: UITableViewCell {
+private final class PaymentMethodAddCell: UITableViewCell {
     private var icon: UIImageView
     private var iconWidth: NSLayoutConstraint
     private var nameLabel: UILabel
