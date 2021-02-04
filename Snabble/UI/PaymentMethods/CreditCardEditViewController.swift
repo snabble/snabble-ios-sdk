@@ -10,6 +10,7 @@ import WebKit
 // sample data for testing:
 // Visa: 4242 4242 4242 4242, Expiry: anytime in the future, CVV: any 3-digit number
 
+// response object for the `telecashSecret` endpoint
 private struct TelecashSecret: Decodable {
     public let hash: String
     public let storeId: String
@@ -161,6 +162,7 @@ public final class CreditCardEditViewController: UIViewController {
             .replacingOccurrences(of: "{{paymentMethod}}", with: self.brand?.paymentMethod ?? "V")
             .replacingOccurrences(of: "{{locale}}", with: Locale.current.identifier)
             .replacingOccurrences(of: "{{header}}", with: "Snabble.CC.3dsecureHint".localized())
+            .replacingOccurrences(of: "{{hostedDataId}}", with: UUID().uuidString)
 
         self.webView.loadHTMLString(page, baseURL: nil)
     }
@@ -214,65 +216,24 @@ extension CreditCardEditViewController: WKScriptMessageHandler {
             let body = message.body as? [String: Any],
             let eventData = body["elementArr"] as? [[String: String]],
             let storeId = self.telecash?.storeId,
-            let projectId = self.projectId
+            let projectId = self.projectId,
+            let project = SnabbleAPI.project(for: projectId),
+            let connectResponse = ConnectGatewayResponse(response: eventData),
+            let cert = SnabbleAPI.certificates.first
         else {
+            self.goBack()
             return
         }
 
-        var hostedDataId = ""
-        var schemeTransactionId = ""
-        var cardNumber = ""
-        var cardHolder = ""
-        var brand = ""
-        var expMonth = ""
-        var expYear = ""
-        var responseCode = ""
-        var failReason = ""
-        var failCode = ""
-        var orderId = ""
-
-        for entry in eventData {
-            guard let name = entry["name"], let value = entry["value"] else {
-                continue
-            }
-
-            print("got \(name) \(value)")
-
-            switch name {
-            case "hosteddataid": hostedDataId = value
-            case "schemeTransactionId": schemeTransactionId = value
-            case "cardnumber": cardNumber = value
-            case "bname": cardHolder = value
-            case "ccbrand": brand = value
-            case "expmonth": expMonth = value
-            case "expyear": expYear = value
-            case "processor_response_code": responseCode = value
-            case "fail_reason": failReason = value
-            case "fail_rc": failCode = value
-            case "oid": orderId = value
-            default: ()
-            }
-        }
-
-        let cert = SnabbleAPI.certificates.first
-        if responseCode == "00", let ccData = CreditCardData(gatewayCert: cert?.data,
-                                                             cardHolder: cardHolder,
-                                                             cardNumber: cardNumber,
-                                                             brand: brand,
-                                                             expMonth: expMonth,
-                                                             expYear: expYear,
-                                                             hostedDataId: hostedDataId,
-                                                             storeId: storeId,
-                                                             projectId: projectId,
-                                                             schemeTransactionId: schemeTransactionId) {
+        if let ccData = CreditCardData(connectResponse, projectId, storeId, certificate: cert.data) {
             let detail = PaymentMethodDetail(ccData)
             PaymentMethodDetails.save(detail)
             self.analyticsDelegate?.track(.paymentMethodAdded(detail.rawMethod.displayName))
-            self.deletePreauth(SnabbleUI.project, orderId)
-        } else if failCode == "5993" {
+            self.deletePreauth(project, connectResponse.orderId)
+        } else if connectResponse.failCode == "5993" {
             NSLog("cancelled by user")
         } else {
-            NSLog("unknown error response_code=\(responseCode) fail_rc=\(failCode) fail_reason=\(failReason)")
+            NSLog("unknown error response_code=\(connectResponse.responseCode) fail_rc=\(connectResponse.failCode) fail_reason=\(connectResponse.failReason)")
         }
 
         self.goBack()
@@ -371,11 +332,12 @@ extension CreditCardEditViewController {
                 <input type="hidden" name="responseFailURL" value="about:blank"/>
                 <input type="hidden" name="responseSuccessURL" value="about:blank"/>
                 <input type="hidden" name="checkoutoption" value="simpleform"/>
-                <input type="hidden" name="assignToken" value="true"/>
+                <input type="hidden" name="assignToken" value="false"/>
                 <input type="hidden" name="hostURI" value="*"/>
                 <input type="hidden" name="language" value="{{locale}}"/>
                 <input type="hidden" name="authenticateTransaction" value="true"/>
                 <input type="hidden" name="threeDSRequestorChallengeIndicator" value="04"/>
+                <input type="hidden" name="hosteddataid" value="{{hostedDataId}}"/>
             </form>
             <script>
             window.addEventListener("message", function receiveMessage(event) {
