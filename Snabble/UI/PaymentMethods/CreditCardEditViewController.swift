@@ -8,7 +8,12 @@ import UIKit
 import WebKit
 
 // sample data for testing:
-// Visa: 4242 4242 4242 4242, Expiry: anytime in the future, CVV: any 3-digit number
+//
+// Visa: 4242 4242 4242 4242, Expiry: any future date, CVV: any 3-digit number
+// Mastercard: 5555 5555 5555 4444, Expiry: any future date, CVV: any 3-digit number
+// Amex: 3714 4963 5398 431, Expiry: any future date, CVV: any 4-digit number
+//
+// see https://stripe.com/docs/testing
 
 // response object for the `telecashSecret` endpoint
 private struct TelecashSecret: Decodable {
