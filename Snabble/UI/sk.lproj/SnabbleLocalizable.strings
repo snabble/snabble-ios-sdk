@@ -67,7 +67,7 @@
 
 "Snabble.Hints.title" = "Poznámka od %@";
 
-"Snabble.invalidDepositVoucher.errorMsg" = "Deposit return vouchers can be redeemed only once.";
+"Snabble.invalidDepositVoucher.errorMsg" = "Poukážky za vratné produkty môžu byť uplatnené len jedenkrát.";
 
 "Snabble.Keyguard.message" = "Tým zabezpečíme, že k tomuto spôsobu platby budeš mať prístup len ty sám/sama";
 
@@ -170,6 +170,12 @@
 
 "Snabble.PaymentMethods.add" = "Pridať spôsob platby";
 
+"Snabble.PaymentMethods.choose" = "Which payment method to add?";
+
+"Snabble.PaymentMethods.forAllRetailers" = "For all retailers";
+
+"Snabble.PaymentMethods.forSingleRetailer" = "For specific retailer";
+
 "Snabble.PaymentMethods.noCodeAlert.biometry" = "Tvoj iPhone nie je chránený ani kódom, ani funkciou Touch ID/Face ID. V záujme svojej ochrany pred zadaním svojho čísla IBAN najprv nastav túto ochranu.";
 
 "Snabble.PaymentMethods.noCodeAlert.noBiometry" = "Tvoj iPhone nie je chránený kódom. V záujme svojej ochrany pred zadaním svojho čísla IBAN najprv nastav túto ochranu.";
@@ -195,7 +201,7 @@
 
 "Snabble.pleaseWait" = "Čakaj, prosím...";
 
-"Snabble.QRCode.codeXofY" = "Code %1$d of %2$d";
+"Snabble.QRCode.codeXofY" = "Kód %1$d z %2$d";
 
 "Snabble.QRCode.didPay" = "Hotovo";
 
