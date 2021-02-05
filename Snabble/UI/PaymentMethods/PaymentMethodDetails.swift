@@ -499,22 +499,27 @@ public extension PaymentMethod {
     }
 }
 
-public struct PaymentMethodDetail: Codable, Equatable {
+public struct PaymentMethodDetail: Equatable {
+    let id: UUID
     let methodData: PaymentMethodUserData
 
     init(_ sepaData: SepaData) {
+        self.id = UUID()
         self.methodData = PaymentMethodUserData.sepa(sepaData)
     }
 
     init(_ creditcardData: CreditCardData) {
+        self.id = UUID()
         self.methodData = PaymentMethodUserData.creditcard(creditcardData)
     }
 
     init(_ tegutData: TegutEmployeeData) {
+        self.id = UUID()
         self.methodData = PaymentMethodUserData.tegutEmployeeCard(tegutData)
     }
 
     init(_ paydirektData: PaydirektData) {
+        self.id = UUID()
         self.methodData = PaymentMethodUserData.paydirektAuthorization(paydirektData)
     }
 
@@ -572,6 +577,19 @@ public struct PaymentMethodDetail: Codable, Equatable {
     }
 }
 
+extension PaymentMethodDetail: Codable {
+    enum CodingKeys: String, CodingKey {
+        case id, methodData
+    }
+
+    public init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+
+        self.id = try container.decodeIfPresent(UUID.self, forKey: .id) ?? UUID()
+        self.methodData = try container.decode(PaymentMethodUserData.self, forKey: .methodData)
+    }
+}
+
 extension Notification.Name {
     /// new payment method.
     /// `userInfo["detail"]` contains a `PaymentMethodDetail` instance
@@ -612,11 +630,13 @@ struct PaymentMethodDetailStorage {
         }
     }
 
-    func save(_ detail: PaymentMethodDetail, at index: Int?) {
+    func save(_ detail: PaymentMethodDetail) {
         var details = self.read()
 
-        if let index = index {
-            details[index] = detail
+        let index = details.firstIndex { $0.id == detail.id }
+
+        if let idx = index {
+            details[idx] = detail
         } else {
             details.append(detail)
         }
@@ -630,9 +650,9 @@ struct PaymentMethodDetailStorage {
         }
     }
 
-    func remove(at index: Int) {
+    func remove(_ detail: PaymentMethodDetail) {
         var details = self.read()
-        details.remove(at: index)
+        details.removeAll { $0.id == detail.id }
         self.save(details)
 
         NotificationCenter.default.post(name: .snabblePaymentMethodDeleted, object: nil)
@@ -666,12 +686,12 @@ public enum PaymentMethodDetails {
         storage.save(details)
     }
 
-    static func save(_ detail: PaymentMethodDetail, at index: Int? = nil) {
-        storage.save(detail, at: index)
+    static func save(_ detail: PaymentMethodDetail) {
+        storage.save(detail)
     }
 
-    static func remove(at index: Int) {
-        storage.remove(at: index)
+    static func remove(_ detail: PaymentMethodDetail) {
+        storage.remove(detail)
     }
 
     //

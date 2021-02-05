@@ -24,16 +24,14 @@ public final class SepaEditViewController: UIViewController {
     @IBOutlet private weak var saveButton: UIButton!
 
     private var detail: PaymentMethodDetail?
-    private var index: Int? = 0
     private var candidate: OriginCandidate?
     private let showFromCart: Bool
     private weak var analyticsDelegate: AnalyticsDelegate?
 
     public weak var navigationDelegate: PaymentMethodNavigationDelegate?
 
-    public init(_ detail: PaymentMethodDetail?, _ index: Int?, _ showFromCart: Bool, _ analyticsDelegate: AnalyticsDelegate?) {
+    public init(_ detail: PaymentMethodDetail?, _ showFromCart: Bool, _ analyticsDelegate: AnalyticsDelegate?) {
         self.detail = detail
-        self.index = index
         self.showFromCart = showFromCart
         self.analyticsDelegate = analyticsDelegate
 
@@ -240,14 +238,14 @@ public final class SepaEditViewController: UIViewController {
     }
 
     @objc private func deleteButtonTapped(_ sender: Any) {
-        guard let index = self.index else {
+        guard let detail = self.detail else {
             return
         }
 
         let alert = UIAlertController(title: nil, message: "Snabble.Payment.delete.message".localized(), preferredStyle: .alert)
         alert.addAction(UIAlertAction(title: "Snabble.Yes".localized(), style: .destructive) { _ in
-            PaymentMethodDetails.remove(at: index)
-            self.analyticsDelegate?.track(.paymentMethodDeleted(self.detail?.rawMethod.displayName ?? ""))
+            PaymentMethodDetails.remove(detail)
+            self.analyticsDelegate?.track(.paymentMethodDeleted(detail.rawMethod.displayName))
             self.navigationController?.popToInstanceOf(PaymentMethodListViewController.self, animated: true)
         })
         alert.addAction(UIAlertAction(title: "Snabble.No".localized(), style: .cancel, handler: nil))
@@ -446,9 +444,8 @@ extension SepaEditViewController: UITextFieldDelegate {
 
 // stuff that's only used by the RN wrapper
 extension SepaEditViewController: ReactNativeWrapper {
-    public func setDetail(_ detail: PaymentMethodDetail, _ index: Int) {
+    public func setDetail(_ detail: PaymentMethodDetail) {
         self.detail = detail
-        self.index = index
 
         self.candidate = nil
     }
