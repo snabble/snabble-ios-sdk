@@ -39,8 +39,9 @@ public final class CreditCardEditViewController: UIViewController {
     @IBOutlet private weak var explanation: UILabel!
 
     private var webView: WKWebView!
+
+    private var detail: PaymentMethodDetail?
     private var brand: CreditCardBrand?
-    private var index: Int?
     private var ccNumber: String?
     private var expDate: String?
     private let showFromCart: Bool
@@ -60,11 +61,13 @@ public final class CreditCardEditViewController: UIViewController {
         super.init(nibName: nil, bundle: SnabbleBundle.main)
     }
 
-    init(_ data: CreditCardData, _ index: Int, _ showFromCart: Bool, _ analyticsDelegate: AnalyticsDelegate?) {
-        self.brand = data.brand
-        self.index = index
-        self.ccNumber = data.displayName
-        self.expDate = data.expirationDate
+    init(_ detail: PaymentMethodDetail, _ showFromCart: Bool, _ analyticsDelegate: AnalyticsDelegate?) {
+        if case .creditcard(let data) = detail.methodData {
+            self.brand = data.brand
+            self.ccNumber = data.displayName
+            self.expDate = data.expirationDate
+            self.detail = detail
+        }
         self.showFromCart = showFromCart
         self.analyticsDelegate = analyticsDelegate
         self.projectId = nil
@@ -115,7 +118,7 @@ public final class CreditCardEditViewController: UIViewController {
     override public func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
 
-        guard self.index == nil else {
+        guard self.detail == nil else {
             return
         }
 
@@ -186,13 +189,13 @@ public final class CreditCardEditViewController: UIViewController {
     }
 
     @objc private func deleteButtonTapped(_ sender: Any) {
-        guard let index = self.index else {
+        guard let detail = self.detail else {
             return
         }
 
         let alert = UIAlertController(title: nil, message: "Snabble.Payment.delete.message".localized(), preferredStyle: .alert)
         alert.addAction(UIAlertAction(title: "Snabble.Yes".localized(), style: .destructive) { _ in
-            PaymentMethodDetails.remove(at: index)
+            PaymentMethodDetails.remove(detail)
             self.analyticsDelegate?.track(.paymentMethodDeleted(self.brand?.rawValue ?? ""))
             self.goBack()
         })
@@ -291,15 +294,15 @@ extension CreditCardEditViewController: ReactNativeWrapper {
         self.brand = brand
     }
 
-    public func setDetail(_ detail: PaymentMethodDetail, _ index: Int) {
+    public func setDetail(_ detail: PaymentMethodDetail) {
         guard case .creditcard(let data) = detail.methodData else {
             return
         }
 
+        self.detail = detail
         self.brand = data.brand
         self.ccNumber = data.displayName
         self.expDate = data.expirationDate
-        self.index = index
     }
 }
 

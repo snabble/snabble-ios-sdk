@@ -34,9 +34,9 @@ extension RawPaymentMethod {
     func editViewController(with projectId: Identifier<Project>?, showFromCart: Bool, _ analyticsDelegate: AnalyticsDelegate?) -> UIViewController? {
         switch self {
         case .deDirectDebit:
-            return SepaEditViewController(nil, nil, showFromCart, analyticsDelegate)
+            return SepaEditViewController(nil, showFromCart, analyticsDelegate)
         case .paydirektOneKlick:
-            return PaydirektEditViewController(nil, nil, showFromCart, analyticsDelegate)
+            return PaydirektEditViewController(nil, showFromCart, analyticsDelegate)
 
         case .creditCardMastercard:
             if let projectId = projectId {
@@ -255,17 +255,17 @@ extension PaymentMethodListViewController: UITableViewDelegate, UITableViewDataS
     }
 
     public func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        let details = self.paymentDetails[indexPath.row]
+        let detail = self.paymentDetails[indexPath.row]
 
         if SnabbleUI.implicitNavigation {
             var editVC: UIViewController?
-            switch details.methodData {
+            switch detail.methodData {
             case .sepa:
-                editVC = SepaEditViewController(details, indexPath.row, false, self.analyticsDelegate)
-            case .creditcard(let creditcardData):
-                editVC = CreditCardEditViewController(creditcardData, indexPath.row, false, self.analyticsDelegate)
+                editVC = SepaEditViewController(detail, false, self.analyticsDelegate)
+            case .creditcard:
+                editVC = CreditCardEditViewController(detail, false, self.analyticsDelegate)
             case .paydirektAuthorization:
-                editVC = PaydirektEditViewController(details, indexPath.row, false, self.analyticsDelegate)
+                editVC = PaydirektEditViewController(detail, false, self.analyticsDelegate)
             case .tegutEmployeeCard:
                 editVC = nil
             }
@@ -274,13 +274,13 @@ extension PaymentMethodListViewController: UITableViewDelegate, UITableViewDataS
                 self.navigationController?.pushViewController(editVC, animated: true)
             }
         } else {
-            self.navigationDelegate?.editMethod(details.rawMethod, indexPath.row)
+            self.navigationDelegate?.editMethod(detail.rawMethod)
         }
     }
 
     public func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
         let method = self.paymentDetails[indexPath.row]
-        PaymentMethodDetails.remove(at: indexPath.row)
+        PaymentMethodDetails.remove(method)
         self.analyticsDelegate?.track(.paymentMethodDeleted(method.rawMethod.displayName))
         self.updateTable()
     }
