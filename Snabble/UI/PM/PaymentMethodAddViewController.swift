@@ -6,6 +6,7 @@
 
 import UIKit
 import ColorCompatibility
+import SDCAlertView
 
 struct MethodEntry {
     var name: String
@@ -22,11 +23,11 @@ struct MethodEntry {
         self.count = count
     }
 
-    init(method: RawPaymentMethod, count: Int) {
+    init(method: RawPaymentMethod, count: Int, for project: Project? = nil) {
         self.name = method.displayName
         self.method = method
         self.brandId = nil
-        self.projectId = nil
+        self.projectId = project?.id
         self.count = count
     }
 }
@@ -113,7 +114,7 @@ public final class PaymentMethodAddViewController: UIViewController {
             .flatMap { $0.paymentMethods }
             .filter { $0.editable }
             .sorted { $0.displayName < $1.displayName }
-            .map { MethodEntry(method: $0, count: methodCount(for: $0)) }
+            .map { MethodEntry(method: $0, count: methodCount(for: $0), for: SnabbleAPI.projects[0]) }
 
         var entries = [[MethodEntry]]()
         entries.append(allEntries)
@@ -124,11 +125,7 @@ public final class PaymentMethodAddViewController: UIViewController {
         // all entries where credit cards are accepted
         var allEntries = SnabbleAPI.projects
             .filter { !$0.shops.isEmpty }
-            .filter {
-                $0.paymentMethods.contains(.creditCardAmericanExpress)
-                    || $0.paymentMethods.contains(.creditCardMastercard)
-                    || $0.paymentMethods.contains(.creditCardVisa)
-            }
+            .filter { $0.paymentMethods.firstIndex { $0.isProjectSpecific } != nil }
             .map { MethodEntry(project: $0, count: self.methodCount(for: $0.id)) }
 
         // merge entries belonging to the same brand
@@ -154,10 +151,9 @@ public final class PaymentMethodAddViewController: UIViewController {
 
         let allMethods = Set(SnabbleAPI.projects.flatMap { $0.paymentMethods }.filter { $0.editable })
 
-        var creditCards: [RawPaymentMethod] = allMethods.filter {
-            $0 == .creditCardVisa || $0 == .creditCardMastercard || $0 == .creditCardAmericanExpress
-        }
-        creditCards.sort { $0.displayName < $1.displayName }
+        let creditCards = allMethods
+            .filter { $0.isProjectSpecific }
+            .sorted { $0.displayName < $1.displayName }
 
         var generalMethods = Array(allMethods.subtracting(creditCards))
         generalMethods.sort { $0.displayName < $1.displayName }
@@ -218,8 +214,8 @@ extension PaymentMethodAddViewController: UITableViewDelegate, UITableViewDataSo
         }
 
         switch section {
-        case 0: return "Händlerübergreifend"
-        case 1: return "Für einzelnen Händler"
+        case 0: return "Snabble.PaymentMethods.forAllRetailers".localized()
+        case 1: return "Snabble.PaymentMethods.forSingleRetailer".localized()
         default: return nil
         }
     }
@@ -231,33 +227,65 @@ extension PaymentMethodAddViewController: UITableViewDelegate, UITableViewDataSo
 
         var navigationTarget: UIViewController?
 
-        if self.brandId != nil, let projectId = entry.projectId {
-            // show/add methods for this specific project
-            // swiftlint:disable:next empty_count
-            if entry.count == 0 {
-                #warning("TODO: action sheet")
-                let methods = MethodProjects.initialize()
-                navigationTarget = MethodSelectionViewController(with: projectId, methods, showFromCart: false, self.analyticsDelegate)
-            } else {
-                navigationTarget = PaymentMethodListViewControllerNew(for: projectId, showFromCart: false, self.analyticsDelegate)
-            }
+        if let brandId = entry.brandId, self.brandId == nil {
+            // from the starting view, drill-down to the individual projects in this brand
+            navigationTarget = PaymentMethodAddViewController(brandId: brandId, self.analyticsDelegate)
         } else if let method = entry.method {
             // show/add retailer-independent methods
             // swiftlint:disable:next empty_count
             if entry.count == 0 {
                 navigationTarget = method.editViewController(with: entry.projectId, showFromCart: false, self.analyticsDelegate)
             } else {
-                navigationTarget = PaymentMethodListViewControllerNew(method: method, showFromCart: false, self.analyticsDelegate)
+                navigationTarget = PaymentMethodListViewControllerNew(method: method, for: entry.projectId, showFromCart: false, self.analyticsDelegate)
             }
-        } else if let brandId = entry.brandId {
-            // drill-down to the individual projects in this brand
-            navigationTarget = PaymentMethodAddViewController(brandId: brandId, self.analyticsDelegate)
+        } else if let projectId = entry.projectId {
+            // show/add methods for this specific project
+            // swiftlint:disable:next empty_count
+            if entry.count == 0 {
+                self.addMethod(for: projectId)
+            } else {
+                navigationTarget = PaymentMethodListViewControllerNew(for: projectId, showFromCart: false, self.analyticsDelegate)
+            }
         }
 
         if let viewController = navigationTarget {
             #warning("RN navigation")
             self.navigationController?.pushViewController(viewController, animated: true)
         }
+    }
+
+    private func addMethod(for projectId: Identifier<Project>) {
+        guard let project = SnabbleAPI.project(for: projectId) else {
+            return
+        }
+
+        let methods = project.paymentMethods
+            .filter { $0.isProjectSpecific }
+            .sorted { $0.displayName < $1.displayName }
+
+        let sheet = AlertController(title: "Snabble.PaymentMethods.choose".localized(), message: nil, preferredStyle: .actionSheet)
+        methods.forEach { method in
+            let title = NSAttributedString(string: method.displayName, attributes: [
+                .foregroundColor: UIColor.label,
+                .font: UIFont.systemFont(ofSize: 17)
+            ])
+            let action = AlertAction(attributedTitle: title, style: .normal) { [self] _ in
+                if let controller = method.editViewController(with: projectId, showFromCart: false, analyticsDelegate) {
+                    #warning("RN navigation")
+                    navigationController?.pushViewController(controller, animated: true)
+                }
+            }
+            action.imageView.image = method.icon
+            sheet.addAction(action)
+        }
+
+        let cancelTitle = NSAttributedString(string: "Snabble.Cancel".localized(), attributes: [
+            .font: UIFont.systemFont(ofSize: 17, weight: .medium),
+            .foregroundColor: UIColor.label
+        ])
+        sheet.addAction(AlertAction(attributedTitle: cancelTitle, style: .preferred, handler: nil))
+
+        self.present(sheet, animated: true)
     }
 }
 
@@ -272,7 +300,7 @@ private final class PaymentMethodAddCell: UITableViewCell {
             icon.image = entry?.method?.icon
             nameLabel.text = entry?.name
 
-            if let projectId = entry?.projectId {
+            if let projectId = entry?.projectId, entry?.method == nil {
                 SnabbleUI.getAsset(.storeIcon, projectId: projectId) { img in
                     self.icon.image = img
                     self.iconWidth.constant = 24
