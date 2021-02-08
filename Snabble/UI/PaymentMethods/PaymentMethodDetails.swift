@@ -160,15 +160,11 @@ struct ConnectGatewayResponse {
 
     private var data = [String: String]()
 
-    init?(response: [[String: String]]) {
+    init(response: [[String: String]]) {
         for entry in response {
             if let name = entry["name"], let value = entry["value"] {
                 data[name] = value
             }
-        }
-
-        if !isValid {
-            return nil
         }
     }
 
