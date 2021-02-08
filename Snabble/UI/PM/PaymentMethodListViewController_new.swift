@@ -9,9 +9,7 @@
 import UIKit
 import SDCAlertView
 
-public final class PaymentMethodListViewControllerNew: UIViewController {
-    private var tableView = UITableView(frame: .zero, style: .grouped)
-
+public final class PaymentMethodListViewControllerNew: UITableViewController {
     private var details = [[PaymentMethodDetail]]()
     private let showFromCart: Bool
     private weak var analyticsDelegate: AnalyticsDelegate?
@@ -27,7 +25,7 @@ public final class PaymentMethodListViewControllerNew: UIViewController {
         self.method = method
         self.availableMethods = [ method ]
 
-        super.init(nibName: nil, bundle: nil)
+        super.init(style: .grouped)
     }
 
     public init(for projectId: Identifier<Project>, showFromCart: Bool, _ analyticsDelegate: AnalyticsDelegate?) {
@@ -40,7 +38,7 @@ public final class PaymentMethodListViewControllerNew: UIViewController {
             .flatMap { $0.paymentMethods }
             .filter { $0.isProjectSpecific }
 
-        super.init(nibName: nil, bundle: nil)
+        super.init(style: .grouped)
     }
 
     required init?(coder: NSCoder) {
@@ -55,20 +53,9 @@ public final class PaymentMethodListViewControllerNew: UIViewController {
         let addButton = UIBarButtonItem(barButtonSystemItem: .add, target: self, action: #selector(addMethod))
         self.navigationItem.rightBarButtonItem = addButton
 
-        tableView.translatesAutoresizingMaskIntoConstraints = false
-        tableView.delegate = self
-        tableView.dataSource = self
         tableView.tableFooterView = UIView(frame: .zero)
         tableView.rowHeight = 44
         tableView.register(PaymentMethodListCell.self, forCellReuseIdentifier: "cell")
-        self.view.addSubview(tableView)
-
-        NSLayoutConstraint.activate([
-            self.view.topAnchor.constraint(equalTo: tableView.topAnchor),
-            self.view.bottomAnchor.constraint(equalTo: tableView.bottomAnchor),
-            self.view.leftAnchor.constraint(equalTo: tableView.leftAnchor),
-            self.view.rightAnchor.constraint(equalTo: tableView.rightAnchor)
-        ])
     }
 
     override public func viewWillAppear(_ animated: Bool) {
@@ -141,16 +128,17 @@ public final class PaymentMethodListViewControllerNew: UIViewController {
     }
 }
 
-extension PaymentMethodListViewControllerNew: UITableViewDelegate, UITableViewDataSource {
-    public func numberOfSections(in tableView: UITableView) -> Int {
+// MARK: - table view delegate & data source
+extension PaymentMethodListViewControllerNew {
+    override public func numberOfSections(in tableView: UITableView) -> Int {
         return details.count
     }
 
-    public func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+    override public func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return details[section].count
     }
 
-    public func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+    override public func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         // swiftlint:disable:next force_cast
         let cell = tableView.dequeueReusableCell(withIdentifier: "cell", for: indexPath) as! PaymentMethodListCell
 
@@ -159,7 +147,7 @@ extension PaymentMethodListViewControllerNew: UITableViewDelegate, UITableViewDa
         return cell
     }
 
-    public func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+    override public func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
 
         let detail = details[indexPath.section][indexPath.row]
@@ -182,7 +170,7 @@ extension PaymentMethodListViewControllerNew: UITableViewDelegate, UITableViewDa
         }
     }
 
-    public func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
+    override public func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
         guard editingStyle == .delete else {
             return
         }
@@ -193,7 +181,7 @@ extension PaymentMethodListViewControllerNew: UITableViewDelegate, UITableViewDa
         tableView.deleteRows(at: [indexPath], with: .automatic)
     }
 
-    public func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
+    override public func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
         return details[section].first?.rawMethod.displayName
     }
 }
@@ -220,13 +208,13 @@ private final class PaymentMethodListCell: UITableViewCell {
         contentView.addSubview(icon)
 
         NSLayoutConstraint.activate([
-            icon.leftAnchor.constraint(equalTo: contentView.leftAnchor, constant: 16),
+            icon.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 16),
             icon.centerYAnchor.constraint(equalTo: contentView.centerYAnchor),
             icon.widthAnchor.constraint(equalToConstant: 38),
 
-            nameLabel.leftAnchor.constraint(equalTo: icon.rightAnchor, constant: 16),
+            nameLabel.leadingAnchor.constraint(equalTo: icon.trailingAnchor, constant: 16),
             nameLabel.centerYAnchor.constraint(equalTo: contentView.centerYAnchor),
-            nameLabel.rightAnchor.constraint(equalTo: contentView.rightAnchor, constant: -16)
+            nameLabel.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -16)
         ])
     }
 

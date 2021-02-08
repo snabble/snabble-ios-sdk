@@ -8,7 +8,7 @@ import UIKit
 import ColorCompatibility
 import SDCAlertView
 
-struct MethodEntry {
+private struct MethodEntry {
     var name: String
     let method: RawPaymentMethod?
     let brandId: Identifier<Brand>?
@@ -32,25 +32,24 @@ struct MethodEntry {
     }
 }
 
-public final class PaymentMethodAddViewController: UIViewController {
+public final class PaymentMethodAddViewController: UITableViewController {
 
     private var entries = [[MethodEntry]]()
     private var brandId: Identifier<Brand>?
     private weak var analyticsDelegate: AnalyticsDelegate?
 
-    private var tableView = UITableView(frame: .zero, style: .grouped)
-
     public init(_ analyticsDelegate: AnalyticsDelegate?) {
         self.analyticsDelegate = analyticsDelegate
+        self.brandId = nil
 
-        super.init(nibName: nil, bundle: nil)
+        super.init(style: .grouped)
     }
 
     init(brandId: Identifier<Brand>, _ analyticsDelegate: AnalyticsDelegate?) {
         self.analyticsDelegate = analyticsDelegate
         self.brandId = brandId
 
-        super.init(nibName: nil, bundle: nil)
+        super.init(style: .grouped)
     }
 
     required init?(coder: NSCoder) {
@@ -62,32 +61,21 @@ public final class PaymentMethodAddViewController: UIViewController {
 
         self.title = "Snabble.PaymentMethods.title".localized()
 
-        tableView.translatesAutoresizingMaskIntoConstraints = false
-        tableView.delegate = self
-        tableView.dataSource = self
         tableView.tableFooterView = UIView(frame: .zero)
         tableView.rowHeight = 44
         tableView.register(PaymentMethodAddCell.self, forCellReuseIdentifier: "cell")
-        self.view.addSubview(tableView)
-
-        NSLayoutConstraint.activate([
-            self.view.topAnchor.constraint(equalTo: tableView.topAnchor),
-            self.view.bottomAnchor.constraint(equalTo: tableView.bottomAnchor),
-            self.view.leftAnchor.constraint(equalTo: tableView.leftAnchor),
-            self.view.rightAnchor.constraint(equalTo: tableView.rightAnchor)
-        ])
     }
 
     override public func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
 
         if let brandId = self.brandId {
-            self.entries = getProjectEntries(for: brandId)
+            entries = getProjectEntries(for: brandId)
         } else {
-            self.entries = getAllEntries()
+            entries = getAllEntries()
         }
 
-        self.tableView.reloadData()
+        tableView.reloadData()
     }
 
     private func getProjectEntries(for brandId: Identifier<Brand>) -> [[MethodEntry]] {
@@ -190,16 +178,17 @@ public final class PaymentMethodAddViewController: UIViewController {
     }
 }
 
-extension PaymentMethodAddViewController: UITableViewDelegate, UITableViewDataSource {
-    public func numberOfSections(in tableView: UITableView) -> Int {
+// MARK: - table view delegate & data source
+extension PaymentMethodAddViewController {
+    override public func numberOfSections(in tableView: UITableView) -> Int {
         return entries.count
     }
 
-    public func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+    override public func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return entries[section].count
     }
 
-    public func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+    override public func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         // swiftlint:disable:next force_cast
         let cell = tableView.dequeueReusableCell(withIdentifier: "cell", for: indexPath) as! PaymentMethodAddCell
 
@@ -208,7 +197,7 @@ extension PaymentMethodAddViewController: UITableViewDelegate, UITableViewDataSo
         return cell
     }
 
-    public func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
+    override public func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
         if entries.count == 1 {
             return nil
         }
@@ -220,7 +209,7 @@ extension PaymentMethodAddViewController: UITableViewDelegate, UITableViewDataSo
         }
     }
 
-    public func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+    override public func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
 
         let entry = entries[indexPath.section][indexPath.row]
@@ -291,7 +280,6 @@ extension PaymentMethodAddViewController: UITableViewDelegate, UITableViewDataSo
 
 private final class PaymentMethodAddCell: UITableViewCell {
     private var icon: UIImageView
-    private var iconWidth: NSLayoutConstraint
     private var nameLabel: UILabel
     private var countLabel: UILabel
 
@@ -300,10 +288,12 @@ private final class PaymentMethodAddCell: UITableViewCell {
             icon.image = entry?.method?.icon
             nameLabel.text = entry?.name
 
+            icon.setContentHuggingPriority(.required, for: .horizontal)
+            nameLabel.setContentHuggingPriority(.defaultLow, for: .horizontal)
+
             if let projectId = entry?.projectId, entry?.method == nil {
                 SnabbleUI.getAsset(.storeIcon, projectId: projectId) { img in
                     self.icon.image = img
-                    self.iconWidth.constant = 24
                 }
             }
             if let count = entry?.count {
@@ -316,7 +306,6 @@ private final class PaymentMethodAddCell: UITableViewCell {
 
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         icon = UIImageView()
-        iconWidth = NSLayoutConstraint(item: icon, attribute: .width, relatedBy: .equal, toItem: .none, attribute: .notAnAttribute, multiplier: 1, constant: 38)
         nameLabel = UILabel()
         nameLabel.setContentCompressionResistancePriority(.defaultLow, for: .horizontal)
         countLabel = UILabel()
@@ -335,16 +324,15 @@ private final class PaymentMethodAddCell: UITableViewCell {
         self.accessoryType = .disclosureIndicator
 
         NSLayoutConstraint.activate([
-            icon.leftAnchor.constraint(equalTo: contentView.leftAnchor, constant: 16),
+            icon.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 16),
             icon.centerYAnchor.constraint(equalTo: contentView.centerYAnchor),
             icon.heightAnchor.constraint(equalToConstant: 24),
-            iconWidth,
 
-            nameLabel.leftAnchor.constraint(equalTo: icon.rightAnchor, constant: 16),
+            nameLabel.leadingAnchor.constraint(equalTo: icon.trailingAnchor, constant: 16),
             nameLabel.centerYAnchor.constraint(equalTo: contentView.centerYAnchor),
 
-            countLabel.leftAnchor.constraint(equalTo: nameLabel.rightAnchor, constant: 16),
-            countLabel.rightAnchor.constraint(equalTo: contentView.rightAnchor, constant: -8),
+            countLabel.leadingAnchor.constraint(equalTo: nameLabel.trailingAnchor, constant: 16),
+            countLabel.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -8),
             countLabel.centerYAnchor.constraint(equalTo: contentView.centerYAnchor)
         ])
     }
@@ -354,7 +342,6 @@ private final class PaymentMethodAddCell: UITableViewCell {
 
         icon.image = nil
         nameLabel.text = nil
-        iconWidth.constant = 38
     }
 
     required init?(coder: NSCoder) {
