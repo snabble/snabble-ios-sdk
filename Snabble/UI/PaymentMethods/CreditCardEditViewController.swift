@@ -226,12 +226,12 @@ extension CreditCardEditViewController: WKScriptMessageHandler {
             let storeId = self.telecash?.storeId,
             let projectId = self.projectId,
             let project = SnabbleAPI.project(for: projectId),
-            let connectResponse = ConnectGatewayResponse(response: eventData),
             let cert = SnabbleAPI.certificates.first
         else {
-            self.goBack()
-            return
+            return self.showError()
         }
+
+        let connectResponse = ConnectGatewayResponse(response: eventData)
 
         if let ccData = CreditCardData(connectResponse, projectId, storeId, certificate: cert.data) {
             let detail = PaymentMethodDetail(ccData)
@@ -242,9 +242,19 @@ extension CreditCardEditViewController: WKScriptMessageHandler {
             NSLog("cancelled by user")
         } else {
             NSLog("unknown error response_code=\(connectResponse.responseCode) fail_rc=\(connectResponse.failCode) fail_reason=\(connectResponse.failReason)")
+            return self.showError()
         }
 
         self.goBack()
+    }
+
+    private func showError() {
+        let alert = UIAlertController(title: "Snabble.Payment.CreditCard.error".localized(), message: nil, preferredStyle: .alert)
+        alert.addAction(UIAlertAction(title: "Snabble.OK".localized(), style: .default) { _ in
+            self.goBack()
+        })
+
+        self.present(alert, animated: true)
     }
 }
 
