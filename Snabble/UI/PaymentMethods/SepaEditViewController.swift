@@ -226,7 +226,7 @@ public final class SepaEditViewController: UIViewController {
             if self.showFromCart {
                 self.navigationController?.popToRootViewController(animated: true)
             } else {
-                self.navigationController?.popToInstanceOf(PaymentMethodListViewController.self, animated: true)
+                self.navigationController?.popViewController(animated: true)
             }
         } else {
             if self.showFromCart {
@@ -246,9 +246,10 @@ public final class SepaEditViewController: UIViewController {
         alert.addAction(UIAlertAction(title: "Snabble.Yes".localized(), style: .destructive) { _ in
             PaymentMethodDetails.remove(detail)
             self.analyticsDelegate?.track(.paymentMethodDeleted(detail.rawMethod.displayName))
-            self.navigationController?.popToInstanceOf(PaymentMethodListViewController.self, animated: true)
+            self.navigationController?.popViewController(animated: true)
         })
         alert.addAction(UIAlertAction(title: "Snabble.No".localized(), style: .cancel, handler: nil))
+
         self.present(alert, animated: true)
     }
 

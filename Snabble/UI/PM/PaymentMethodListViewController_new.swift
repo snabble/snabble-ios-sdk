@@ -9,6 +9,8 @@
 import UIKit
 import SDCAlertView
 
+#warning("add analytics")
+
 public final class PaymentMethodListViewControllerNew: UITableViewController {
     private var details = [[PaymentMethodDetail]]()
     private let showFromCart: Bool
@@ -121,7 +123,8 @@ public final class PaymentMethodListViewControllerNew: UITableViewController {
     }
 
     private func showEditController(for method: RawPaymentMethod) {
-        if let controller = method.editViewController(with: projectId, showFromCart: showFromCart, analyticsDelegate) {
+        if method.isAddingAllowed(showAlertOn: self),
+           let controller = method.editViewController(with: projectId, showFromCart: showFromCart, analyticsDelegate) {
             #warning("RN navigation")
             navigationController?.pushViewController(controller, animated: true)
         }

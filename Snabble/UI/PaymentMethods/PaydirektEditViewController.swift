@@ -239,7 +239,7 @@ extension PaydirektEditViewController: WKNavigationDelegate {
             if self.showFromCart {
                 self.navigationController?.popToRootViewController(animated: true)
             } else {
-                self.navigationController?.popToInstanceOf(PaymentMethodListViewController.self, animated: true)
+                self.navigationController?.popViewController(animated: true)
             }
         } else {
             if self.showFromCart {
