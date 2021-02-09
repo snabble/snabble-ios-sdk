@@ -176,9 +176,9 @@
 
 "Snabble.PaymentMethods.forSingleRetailer" = "Für einzelne Händler";
 
-"Snabble.PaymentMethods.noCodeAlert.biometry" = "Dein iPhone ist weder durch einen Code noch durch Touch ID/Face ID geschützt. Bitte richte zu deiner Sicherheit zuerst diesen Schutz sein, bevor du deine IBAN eingibst.";
+"Snabble.PaymentMethods.noCodeAlert.biometry" = "Dein iPhone ist weder durch einen Code noch durch Touch ID/Face ID geschützt. Bitte richte zu deiner Sicherheit zuerst diesen Schutz sein, bevor du deine IBAN oder Kreditkarte eingibst.";
 
-"Snabble.PaymentMethods.noCodeAlert.noBiometry" = "Dein iPhone ist nicht durch einen Code geschützt. Bitte richte zu deiner Sicherheit zuerst diesen Schutz sein, bevor du deine IBAN eingibst.";
+"Snabble.PaymentMethods.noCodeAlert.noBiometry" = "Dein iPhone ist nicht durch einen Code geschützt. Bitte richte zu deiner Sicherheit zuerst diesen Schutz sein, bevor du deine IBAN oder Kreditkarte eingibst.";
 
 "Snabble.PaymentMethods.noDeviceCode" = "Ungeschütztes iPhone";
 
