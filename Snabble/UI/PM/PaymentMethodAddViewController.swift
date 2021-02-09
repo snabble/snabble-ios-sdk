@@ -288,9 +288,6 @@ private final class PaymentMethodAddCell: UITableViewCell {
             icon.image = entry?.method?.icon
             nameLabel.text = entry?.name
 
-            icon.setContentHuggingPriority(.required, for: .horizontal)
-            nameLabel.setContentHuggingPriority(.defaultLow, for: .horizontal)
-
             if let projectId = entry?.projectId, entry?.method == nil {
                 SnabbleUI.getAsset(.storeIcon, projectId: projectId) { img in
                     self.icon.image = img
@@ -307,22 +304,25 @@ private final class PaymentMethodAddCell: UITableViewCell {
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         icon = UIImageView()
         nameLabel = UILabel()
-        nameLabel.setContentCompressionResistancePriority(.defaultLow, for: .horizontal)
         countLabel = UILabel()
-        countLabel.font = UIFont.systemFont(ofSize: 15, weight: .regular)
-        countLabel.textColor = ColorCompatibility.systemGray2
-
         super.init(style: style, reuseIdentifier: reuseIdentifier)
 
         icon.translatesAutoresizingMaskIntoConstraints = false
         nameLabel.translatesAutoresizingMaskIntoConstraints = false
         countLabel.translatesAutoresizingMaskIntoConstraints = false
+
         contentView.addSubview(icon)
         contentView.addSubview(nameLabel)
         contentView.addSubview(countLabel)
 
+        countLabel.font = UIFont.systemFont(ofSize: 15, weight: .regular)
+        countLabel.textColor = ColorCompatibility.systemGray2
+
         self.accessoryType = .disclosureIndicator
 
+        icon.setContentHuggingPriority(.defaultHigh, for: .horizontal)
+        nameLabel.setContentHuggingPriority(.defaultLow, for: .horizontal)
+        countLabel.setContentHuggingPriority(.defaultHigh, for: .horizontal)
         NSLayoutConstraint.activate([
             icon.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 16),
             icon.centerYAnchor.constraint(equalTo: contentView.centerYAnchor),
