@@ -15,14 +15,20 @@ import WebKit
 //
 // see https://stripe.com/docs/testing
 
-// response object for the `telecashSecret` endpoint
-private struct TelecashSecret: Decodable {
-    public let hash: String
-    public let storeId: String
-    public let date: String
-    public let currency: String
-    public let chargeTotal: String
-    public let url: String
+// response object for the `telecashVaultItems` endpoint (POST w/empty body)
+private struct TelecashVaultItem: Decodable {
+    let chargeTotal: String
+    let currency: String
+    let date: String
+    let hash: String
+    let links: TelecashVaultItemLinks
+    let orderId: String
+    let storeId: String
+    let url: String // DELETE this to cancel the pre-auth
+
+    struct TelecashVaultItemLinks: Decodable {
+        let `self`: Link
+    }
 }
 
 public final class CreditCardEditViewController: UIViewController {
@@ -48,7 +54,7 @@ public final class CreditCardEditViewController: UIViewController {
     private let projectId: Identifier<Project>?
     private weak var analyticsDelegate: AnalyticsDelegate?
 
-    private var telecash: TelecashSecret?
+    private var vaultItem: TelecashVaultItem?
 
     public weak var navigationDelegate: PaymentMethodNavigationDelegate?
 
@@ -57,6 +63,7 @@ public final class CreditCardEditViewController: UIViewController {
         self.showFromCart = showFromCart
         self.analyticsDelegate = analyticsDelegate
         self.projectId = projectId
+        print("cc edit for \(projectId)")
 
         super.init(nibName: nil, bundle: SnabbleBundle.main)
     }
@@ -118,7 +125,11 @@ public final class CreditCardEditViewController: UIViewController {
     override public func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
 
-        guard self.detail == nil else {
+        guard
+            self.detail == nil,
+            let projectId = self.projectId,
+            let project = SnabbleAPI.project(for: projectId)
+        else {
             return
         }
 
@@ -126,7 +137,7 @@ public final class CreditCardEditViewController: UIViewController {
         self.containerView.bringSubviewToFront(self.spinner)
 
         self.spinner.startAnimating()
-        self.getTelecashSecret(SnabbleAPI.projects[0]) { result in
+        self.getTelecashVaultItem(for: project) { result in
             self.spinner.stopAnimating()
             switch result {
             case .failure:
@@ -134,9 +145,9 @@ public final class CreditCardEditViewController: UIViewController {
                 alert.addAction(UIAlertAction(title: "Snabble.OK".localized(), style: .default) { _ in
                     self.goBack()
                 })
-            case .success(let telecash):
-                self.telecash = telecash
-                self.prepareAndInjectPage(telecash)
+            case .success(let vaultItem):
+                self.vaultItem = vaultItem
+                self.prepareAndInjectPage(vaultItem)
             }
         }
 
@@ -159,18 +170,19 @@ public final class CreditCardEditViewController: UIViewController {
         }
     }
 
-    private func prepareAndInjectPage(_ telecash: TelecashSecret) {
+    private func prepareAndInjectPage(_ vaultItem: TelecashVaultItem) {
         let page = CreditCardEditViewController.pageTemplate
-            .replacingOccurrences(of: "{{url}}", with: telecash.url)
-            .replacingOccurrences(of: "{{date}}", with: telecash.date)
-            .replacingOccurrences(of: "{{storeId}}", with: telecash.storeId)
-            .replacingOccurrences(of: "{{currency}}", with: telecash.currency)
-            .replacingOccurrences(of: "{{chargeTotal}}", with: telecash.chargeTotal)
-            .replacingOccurrences(of: "{{hash}}", with: telecash.hash)
+            .replacingOccurrences(of: "{{url}}", with: vaultItem.url)
+            .replacingOccurrences(of: "{{date}}", with: vaultItem.date)
+            .replacingOccurrences(of: "{{storeId}}", with: vaultItem.storeId)
+            .replacingOccurrences(of: "{{currency}}", with: vaultItem.currency)
+            .replacingOccurrences(of: "{{chargeTotal}}", with: vaultItem.chargeTotal)
+            .replacingOccurrences(of: "{{hash}}", with: vaultItem.hash)
             .replacingOccurrences(of: "{{paymentMethod}}", with: self.brand?.paymentMethod ?? "V")
             .replacingOccurrences(of: "{{locale}}", with: Locale.current.identifier)
             .replacingOccurrences(of: "{{header}}", with: "Snabble.CC.3dsecureHint".localized())
             .replacingOccurrences(of: "{{hostedDataId}}", with: UUID().uuidString)
+            .replacingOccurrences(of: "{{orderId}}", with: vaultItem.orderId)
 
         self.webView.loadHTMLString(page, baseURL: nil)
     }
@@ -223,7 +235,7 @@ extension CreditCardEditViewController: WKScriptMessageHandler {
             message.name == "callbackHandler",
             let body = message.body as? [String: Any],
             let eventData = body["elementArr"] as? [[String: String]],
-            let storeId = self.telecash?.storeId,
+            let storeId = self.vaultItem?.storeId,
             let projectId = self.projectId,
             let project = SnabbleAPI.project(for: projectId),
             let cert = SnabbleAPI.certificates.first
@@ -237,7 +249,7 @@ extension CreditCardEditViewController: WKScriptMessageHandler {
             let detail = PaymentMethodDetail(ccData)
             PaymentMethodDetails.save(detail)
             self.analyticsDelegate?.track(.paymentMethodAdded(detail.rawMethod.displayName))
-            self.deletePreauth(project, connectResponse.orderId)
+            self.deletePreauth(project, self.vaultItem?.links.`self`.href)
         } else if connectResponse.failCode == "5993" {
             NSLog("cancelled by user")
         } else {
@@ -260,30 +272,27 @@ extension CreditCardEditViewController: WKScriptMessageHandler {
 
 extension CreditCardEditViewController {
 
-    private func getTelecashSecret(_ project: Project, completion: @escaping (Result<TelecashSecret, SnabbleError>) -> Void ) {
-        guard let url = SnabbleAPI.metadata.links.telecashSecret?.href else {
-            Log.error("no telecashSecret in metadata")
+    private func getTelecashVaultItem(for project: Project, completion: @escaping (Result<TelecashVaultItem, SnabbleError>) -> Void ) {
+        guard let url = project.links.telecashVaultItems?.href else {
+            Log.error("no telecashVaultItems in metadata")
             return completion(Result.failure(SnabbleError.unknown))
         }
 
-        project.request(.get, url, timeout: 5) { request in
+        project.request(.post, url, timeout: 5) { request in
             guard let request = request else {
                 return completion(Result.failure(SnabbleError.noRequest))
             }
 
-            project.perform(request) { (_ result: Result<TelecashSecret, SnabbleError>) in
+            project.perform(request) { (_ result: Result<TelecashVaultItem, SnabbleError>) in
                 completion(result)
             }
         }
     }
 
-    private func deletePreauth(_ project: Project, _ orderId: String) {
-        guard let preauthUrl = SnabbleAPI.metadata.links.telecashPreauth?.href else {
-            Log.error("no telecashPreauth in metadata")
+    private func deletePreauth(_ project: Project, _ url: String?) {
+        guard let url = url else {
             return
         }
-
-        let url = preauthUrl.replacingOccurrences(of: "{orderID}", with: orderId)
 
         project.request(.delete, url, timeout: 5) { request in
             guard let request = request else {
@@ -356,6 +365,7 @@ extension CreditCardEditViewController {
                 <input type="hidden" name="authenticateTransaction" value="true"/>
                 <input type="hidden" name="threeDSRequestorChallengeIndicator" value="04"/>
                 <input type="hidden" name="hosteddataid" value="{{hostedDataId}}"/>
+                <input type="hidden" name="oid" value="{{orderId}}"/>
             </form>
             <script>
             window.addEventListener("message", function receiveMessage(event) {
