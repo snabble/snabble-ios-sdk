@@ -72,6 +72,7 @@ extension RawPaymentMethod {
     }
 }
 
+@available(*, deprecated)
 public final class PaymentMethodListViewController: UIViewController {
 
     @IBOutlet private weak var tableView: UITableView!

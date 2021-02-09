@@ -4,6 +4,7 @@
 //  Copyright © 2020 snabble. All rights reserved.
 //
 
+@available(*, deprecated)
 public struct MethodProjects {
     public let method: RawPaymentMethod
     public let projectNames: [String]

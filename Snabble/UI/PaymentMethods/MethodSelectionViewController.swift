@@ -6,6 +6,7 @@
 
 import UIKit
 
+@available(*, deprecated)
 public final class MethodSelectionViewController: UIViewController {
 
     @IBOutlet private weak var tableView: UITableView!
