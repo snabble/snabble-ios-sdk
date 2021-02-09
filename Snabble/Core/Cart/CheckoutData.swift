@@ -95,6 +95,16 @@ public enum RawPaymentMethod: String, CaseIterable, Decodable {
         }
     }
 
+    /// true if editing/entering this method requires a device passcode or biometry
+    var codeRequired: Bool {
+        switch self {
+        case .deDirectDebit, .creditCardVisa, .creditCardMastercard, .creditCardAmericanExpress, .paydirektOneKlick:
+            return true
+        case .qrCodePOS, .qrCodeOffline, .externalBilling, .gatekeeperTerminal, .customerCardPOS:
+            return false
+        }
+    }
+
     /// true if this method requires project-specific data
     /// currently, this is set for all creditcards, where we need strong customer authorization per project
     var isProjectSpecific: Bool {
