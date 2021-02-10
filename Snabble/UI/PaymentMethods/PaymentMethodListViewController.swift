@@ -14,9 +14,17 @@ public final class PaymentMethodListViewController: UITableViewController {
 
     public weak var navigationDelegate: PaymentMethodNavigationDelegate?
 
-    private let projectId: Identifier<Project>?
-    private let method: RawPaymentMethod?
-    private let availableMethods: [RawPaymentMethod]
+    private var method: RawPaymentMethod?
+    private var projectId: Identifier<Project>? {
+        didSet {
+            self.availableMethods = SnabbleAPI.projects
+                .filter { $0.id == projectId }
+                .flatMap { $0.paymentMethods }
+                .filter { $0.isProjectSpecific }
+        }
+    }
+
+    private var availableMethods: [RawPaymentMethod]
 
     public init(method: RawPaymentMethod, for projectId: Identifier<Project>?, showFromCart: Bool, _ analyticsDelegate: AnalyticsDelegate?) {
         self.showFromCart = showFromCart
@@ -28,15 +36,12 @@ public final class PaymentMethodListViewController: UITableViewController {
         super.init(style: .grouped)
     }
 
-    public init(for projectId: Identifier<Project>, showFromCart: Bool, _ analyticsDelegate: AnalyticsDelegate?) {
+    public init(for projectId: Identifier<Project>?, showFromCart: Bool, _ analyticsDelegate: AnalyticsDelegate?) {
         self.showFromCart = showFromCart
         self.analyticsDelegate = analyticsDelegate
+        self.availableMethods = []
         self.projectId = projectId
         self.method = nil
-        self.availableMethods = SnabbleAPI.projects
-            .filter { $0.id == projectId }
-            .flatMap { $0.paymentMethods }
-            .filter { $0.isProjectSpecific }
 
         super.init(style: .grouped)
     }
@@ -129,8 +134,11 @@ public final class PaymentMethodListViewController: UITableViewController {
     private func showEditController(for method: RawPaymentMethod) {
         if method.isAddingAllowed(showAlertOn: self),
            let controller = method.editViewController(with: projectId, showFromCart: showFromCart, analyticsDelegate) {
-            #warning("RN navigation")
-            navigationController?.pushViewController(controller, animated: true)
+            if SnabbleUI.implicitNavigation {
+                navigationController?.pushViewController(controller, animated: true)
+            } else {
+                navigationDelegate?.addData(for: method, in: self.projectId)
+            }
         }
     }
 }
@@ -172,8 +180,11 @@ extension PaymentMethodListViewController {
         }
 
         if let controller = editVC {
-            #warning("RN navigation")
-            self.navigationController?.pushViewController(controller, animated: true)
+            if SnabbleUI.implicitNavigation {
+                self.navigationController?.pushViewController(controller, animated: true)
+            } else {
+                navigationDelegate?.editMethod(detail)
+            }
         }
     }
 
@@ -227,5 +238,18 @@ private final class PaymentMethodListCell: UITableViewCell {
 
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
+    }
+}
+
+// stuff that's only used by the RN wrapper
+extension PaymentMethodListViewController: ReactNativeWrapper {
+    public func setMethod(_ method: RawPaymentMethod) {
+        self.method = method
+
+        self.availableMethods = [ method ]
+    }
+
+    public func setProjectId(_ projectId: Identifier<Project>) {
+        self.projectId = projectId
     }
 }

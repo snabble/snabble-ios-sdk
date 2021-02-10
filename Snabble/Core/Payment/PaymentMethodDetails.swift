@@ -496,7 +496,7 @@ public extension PaymentMethod {
 }
 
 public struct PaymentMethodDetail: Equatable {
-    let id: UUID
+    public let id: UUID
     let methodData: PaymentMethodUserData
 
     init(_ sepaData: SepaData) {
@@ -519,19 +519,19 @@ public struct PaymentMethodDetail: Equatable {
         self.methodData = PaymentMethodUserData.paydirektAuthorization(paydirektData)
     }
 
-    var displayName: String {
+    public var displayName: String {
         return self.methodData.data.displayName
     }
 
-    var encryptedData: String {
+    public var encryptedData: String {
         return self.methodData.data.encryptedPaymentData
     }
 
-    var additionalData: [String: String] {
+    public var additionalData: [String: String] {
         return self.methodData.additionalData
     }
 
-    var serial: String {
+    public var serial: String {
         return self.methodData.data.serial
     }
 
@@ -539,11 +539,11 @@ public struct PaymentMethodDetail: Equatable {
         return Snabble.PaymentMethodData(self.displayName, self.encryptedData, self.originType, self.additionalData)
     }
 
-    var isExpired: Bool {
+    public var isExpired: Bool {
         return self.methodData.data.isExpired
     }
 
-    var rawMethod: RawPaymentMethod {
+    public var rawMethod: RawPaymentMethod {
         switch self.methodData {
         case .sepa: return .deDirectDebit
         case .creditcard(let creditcardData):
@@ -559,11 +559,11 @@ public struct PaymentMethodDetail: Equatable {
         }
     }
 
-    var originType: AcceptedOriginType {
+    public var originType: AcceptedOriginType {
         return self.methodData.data.originType
     }
 
-    var projectId: Identifier<Project>? {
+    public var projectId: Identifier<Project>? {
         switch self.methodData {
         case .creditcard(let creditCardData):
             return creditCardData.projectId

@@ -7,7 +7,6 @@
 import UIKit
 import ColorCompatibility
 import SDCAlertView
-import LocalAuthentication
 
 private struct MethodEntry {
     var name: String
@@ -236,10 +235,18 @@ extension PaymentMethodAddViewController {
             // swiftlint:disable:next empty_count
             if entry.count == 0 {
                 if method.isAddingAllowed(showAlertOn: self) {
-                    navigationTarget = method.editViewController(with: entry.projectId, showFromCart: false, self.analyticsDelegate)
+                    if SnabbleUI.implicitNavigation {
+                        navigationTarget = method.editViewController(with: entry.projectId, showFromCart: false, self.analyticsDelegate)
+                    } else {
+                        navigationDelegate?.addData(for: method, in: entry.projectId)
+                    }
                 }
             } else {
-                navigationTarget = PaymentMethodListViewController(method: method, for: entry.projectId, showFromCart: self.showFromCart, self.analyticsDelegate)
+                if SnabbleUI.implicitNavigation {
+                    navigationTarget = PaymentMethodListViewController(method: method, for: entry.projectId, showFromCart: self.showFromCart, self.analyticsDelegate)
+                } else {
+                    navigationDelegate?.showData(for: method, in: entry.projectId)
+                }
             }
         } else if let projectId = entry.projectId {
             // show/add methods for this specific project
@@ -247,12 +254,15 @@ extension PaymentMethodAddViewController {
             if entry.count == 0 {
                 self.addMethod(for: projectId)
             } else {
-                navigationTarget = PaymentMethodListViewController(for: projectId, showFromCart: self.showFromCart, self.analyticsDelegate)
+                if SnabbleUI.implicitNavigation {
+                    navigationTarget = PaymentMethodListViewController(for: projectId, showFromCart: self.showFromCart, self.analyticsDelegate)
+                } else {
+                    navigationDelegate?.showData(for: projectId)
+                }
             }
         }
 
         if let viewController = navigationTarget {
-            #warning("RN navigation")
             self.navigationController?.pushViewController(viewController, animated: true)
         }
     }
@@ -275,8 +285,11 @@ extension PaymentMethodAddViewController {
             let action = AlertAction(attributedTitle: title, style: .normal) { [self] _ in
                 if method.isAddingAllowed(showAlertOn: self),
                    let controller = method.editViewController(with: projectId, showFromCart: self.showFromCart, analyticsDelegate) {
-                    #warning("RN navigation")
-                    navigationController?.pushViewController(controller, animated: true)
+                    if SnabbleUI.implicitNavigation {
+                        navigationController?.pushViewController(controller, animated: true)
+                    } else {
+                        navigationDelegate?.addData(for: method, in: projectId)
+                    }
                 }
             }
             action.imageView.image = method.icon

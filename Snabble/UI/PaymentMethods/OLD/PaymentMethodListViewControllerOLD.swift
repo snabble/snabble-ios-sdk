@@ -210,7 +210,7 @@ extension PaymentMethodListViewControllerOLD: UITableViewDelegate, UITableViewDa
                 self.navigationController?.pushViewController(editVC, animated: true)
             }
         } else {
-            self.navigationDelegate?.editMethod(detail.rawMethod)
+            self.navigationDelegate?.editMethod(detail)
         }
     }
 

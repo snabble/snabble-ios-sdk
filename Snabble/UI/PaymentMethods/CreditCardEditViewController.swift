@@ -35,19 +35,19 @@ public final class CreditCardEditViewController: UIViewController {
     private var ccNumber: String?
     private var expDate: String?
     private let showFromCart: Bool
-    private let projectId: Identifier<Project>?
+    private var projectId: Identifier<Project>?
     private weak var analyticsDelegate: AnalyticsDelegate?
 
     private var vaultItem: TelecashVaultItem?
 
     public weak var navigationDelegate: PaymentMethodNavigationDelegate?
 
-    public init(brand: CreditCardBrand?, _ projectId: Identifier<Project>, _ showFromCart: Bool, _ analyticsDelegate: AnalyticsDelegate?) {
+    public init(brand: CreditCardBrand?, _ projectId: Identifier<Project>?, _ showFromCart: Bool, _ analyticsDelegate: AnalyticsDelegate?) {
         self.brand = brand
         self.showFromCart = showFromCart
         self.analyticsDelegate = analyticsDelegate
         self.projectId = projectId
-        print("cc edit for \(projectId)")
+        print("cc edit for \(String(describing: projectId))")
 
         super.init(nibName: nil, bundle: SnabbleBundle.main)
     }
@@ -295,6 +295,10 @@ extension CreditCardEditViewController {
 extension CreditCardEditViewController: ReactNativeWrapper {
     public func setBrand(_ brand: CreditCardBrand) {
         self.brand = brand
+    }
+
+    public func setProjectId(_ projectId: String) {
+        self.projectId = Identifier<Project>(rawValue: projectId)
     }
 
     public func setDetail(_ detail: PaymentMethodDetail) {

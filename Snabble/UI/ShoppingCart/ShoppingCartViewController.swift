@@ -452,7 +452,7 @@ public final class ShoppingCartViewController: UIViewController {
             } else {
                 let msg = "navigationDelegate may not be nil when using explicit navigation"
                 assert(self.paymentMethodNavigationDelegate != nil, msg)
-                self.paymentMethodNavigationDelegate?.addData(for: paymentMethod)
+                self.paymentMethodNavigationDelegate?.addData(for: paymentMethod, in: project.id)
             }
             return
         }

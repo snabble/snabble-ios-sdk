@@ -84,7 +84,7 @@ extension MethodSelectionViewControllerOLD: UITableViewDelegate, UITableViewData
 
             self.navigationController?.pushViewController(editVC, animated: true)
         } else {
-            self.navigationDelegate?.addData(for: method.method)
+            self.navigationDelegate?.addData(for: method.method, in: nil)
         }
     }
 
