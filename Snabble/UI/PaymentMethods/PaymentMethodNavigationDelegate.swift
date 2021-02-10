@@ -1,5 +1,5 @@
 //
-//  PaymentMethodListViewController.swift
+//  PaymentMethodNavigationDelegate.swift
 //
 //  Copyright © 2020 snabble. All rights reserved.
 //

@@ -7,7 +7,7 @@
 import UIKit
 
 @available(*, deprecated)
-public final class MethodSelectionViewController: UIViewController {
+public final class MethodSelectionViewControllerOLD: UIViewController {
 
     @IBOutlet private weak var tableView: UITableView!
 
@@ -54,7 +54,7 @@ public final class MethodSelectionViewController: UIViewController {
     }
 }
 
-extension MethodSelectionViewController: UITableViewDelegate, UITableViewDataSource {
+extension MethodSelectionViewControllerOLD: UITableViewDelegate, UITableViewDataSource {
     public func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return self.methods.count
     }

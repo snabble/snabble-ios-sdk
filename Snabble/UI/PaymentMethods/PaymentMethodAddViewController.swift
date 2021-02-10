@@ -9,8 +9,6 @@ import ColorCompatibility
 import SDCAlertView
 import LocalAuthentication
 
-#warning("add analytics")
-
 private struct MethodEntry {
     var name: String
     let method: RawPaymentMethod?
@@ -35,38 +33,14 @@ private struct MethodEntry {
     }
 }
 
-extension RawPaymentMethod {
-    func isAddingAllowed(showAlertOn viewController: UIViewController) -> Bool {
-        if self.codeRequired && !devicePasscodeSet() {
-            let mode = BiometricAuthentication.supportedBiometry
-            let msg = mode == .none ?
-                "Snabble.PaymentMethods.noCodeAlert.noBiometry".localized()
-                : "Snabble.PaymentMethods.noCodeAlert.biometry".localized()
-
-            let alert = UIAlertController(title: "Snabble.PaymentMethods.noDeviceCode".localized(),
-                                          message: msg,
-                                          preferredStyle: .alert)
-
-            alert.addAction(UIAlertAction(title: "Snabble.OK".localized(), style: .default, handler: nil))
-            viewController.present(alert, animated: true)
-            return false
-        } else {
-            return true
-        }
-    }
-
-    // checks if the device passcode and/or biometry is enabled
-    private func devicePasscodeSet() -> Bool {
-        return LAContext().canEvaluatePolicy(.deviceOwnerAuthentication, error: nil)
-    }
-}
-
 public final class PaymentMethodAddViewController: UITableViewController {
 
     private var entries = [[MethodEntry]]()
     private var brandId: Identifier<Brand>?
     private let showFromCart: Bool
     private weak var analyticsDelegate: AnalyticsDelegate?
+
+    public weak var navigationDelegate: PaymentMethodNavigationDelegate?
 
     public init(showFromCart: Bool, _ analyticsDelegate: AnalyticsDelegate?) {
         self.showFromCart = showFromCart
@@ -108,6 +82,12 @@ public final class PaymentMethodAddViewController: UITableViewController {
         }
 
         tableView.reloadData()
+    }
+
+    override public func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+
+        self.analyticsDelegate?.track(.viewPaymentMethodList)
     }
 
     private func getProjectEntries(for brandId: Identifier<Brand>) -> [[MethodEntry]] {
@@ -259,7 +239,7 @@ extension PaymentMethodAddViewController {
                     navigationTarget = method.editViewController(with: entry.projectId, showFromCart: false, self.analyticsDelegate)
                 }
             } else {
-                navigationTarget = PaymentMethodListViewControllerNew(method: method, for: entry.projectId, showFromCart: self.showFromCart, self.analyticsDelegate)
+                navigationTarget = PaymentMethodListViewController(method: method, for: entry.projectId, showFromCart: self.showFromCart, self.analyticsDelegate)
             }
         } else if let projectId = entry.projectId {
             // show/add methods for this specific project
@@ -267,7 +247,7 @@ extension PaymentMethodAddViewController {
             if entry.count == 0 {
                 self.addMethod(for: projectId)
             } else {
-                navigationTarget = PaymentMethodListViewControllerNew(for: projectId, showFromCart: self.showFromCart, self.analyticsDelegate)
+                navigationTarget = PaymentMethodListViewController(for: projectId, showFromCart: self.showFromCart, self.analyticsDelegate)
             }
         }
 

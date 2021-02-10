@@ -6,17 +6,6 @@
 
 import UIKit
 
-extension PaymentMethodDetail {
-    var icon: UIImage? {
-        switch self.methodData {
-        case .tegutEmployeeCard:
-            return UIImage.fromBundle("SnabbleSDK/payment/payment-tegut")
-        default:
-            return self.rawMethod.icon
-        }
-    }
-}
-
 final class PaymentMethodCell: UITableViewCell {
 
     @IBOutlet private weak var name: UILabel!

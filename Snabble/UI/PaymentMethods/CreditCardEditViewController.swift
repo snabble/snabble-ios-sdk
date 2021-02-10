@@ -15,22 +15,6 @@ import WebKit
 //
 // see https://stripe.com/docs/testing
 
-// response object for the `telecashVaultItems` endpoint (POST w/empty body)
-private struct TelecashVaultItem: Decodable {
-    let chargeTotal: String
-    let currency: String
-    let date: String
-    let hash: String
-    let links: TelecashVaultItemLinks
-    let orderId: String
-    let storeId: String
-    let url: String // DELETE this to cancel the pre-auth
-
-    struct TelecashVaultItemLinks: Decodable {
-        let `self`: Link
-    }
-}
-
 public final class CreditCardEditViewController: UIViewController {
 
     @IBOutlet private weak var containerView: UIView!
