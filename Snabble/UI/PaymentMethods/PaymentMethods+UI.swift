@@ -18,7 +18,7 @@ extension PaymentMethodDetail {
 }
 
 extension RawPaymentMethod {
-    var displayName: String {
+    public var displayName: String {
         switch self {
         case .deDirectDebit:
             return "SEPA-Lastschrift"
@@ -41,7 +41,7 @@ extension RawPaymentMethod {
         }
     }
 
-    var icon: UIImage? {
+    public var icon: UIImage? {
         switch self {
         case .deDirectDebit: return UIImage.fromBundle("SnabbleSDK/payment/payment-sepa")
         case .creditCardVisa: return UIImage.fromBundle("SnabbleSDK/payment/payment-visa")

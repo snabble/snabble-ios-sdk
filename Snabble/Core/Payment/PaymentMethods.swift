@@ -67,7 +67,7 @@ public enum RawPaymentMethod: String, CaseIterable, Decodable {
 
     /// true if this method requires project-specific data
     /// currently, this is set for all creditcards, where we need strong customer authorization per project
-    var isProjectSpecific: Bool {
+    public var isProjectSpecific: Bool {
         switch self {
         case .creditCardVisa, .creditCardMastercard, .creditCardAmericanExpress:
             return true
