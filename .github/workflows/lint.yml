@@ -23,5 +23,5 @@ jobs:
           type: ${{ job.status }}
           job_name: '*iOS SDK Lint*'
           username: 'Github Action: Lint'
-          channel: '#apps'
+          channel: '#app-actions'
           url: ${{ secrets.SLACK_WEBHOOK }}

@@ -24,5 +24,5 @@ jobs:
           type: ${{ job.status }}
           job_name: '*iOS SDK Publish*'
           username: 'Github Action: Publish'
-          channel: '#apps'
+          channel: '#app-actions'
           url: ${{ secrets.SLACK_WEBHOOK }}
