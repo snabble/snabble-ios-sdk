@@ -258,4 +258,10 @@ extension PaymentMethodListViewController: ReactNativeWrapper {
     public func setProjectId(_ projectId: Identifier<Project>) {
         self.projectId = projectId
     }
+
+    public func setIsFocused(_ focused: Bool) {
+        if focused {
+            self.viewWillAppear(true)
+        }
+    }
 }

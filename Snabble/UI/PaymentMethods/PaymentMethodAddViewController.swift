@@ -321,6 +321,12 @@ extension PaymentMethodAddViewController: ReactNativeWrapper {
     public func setBrandId(_ brandId: Identifier<Brand>) {
         self.brandId = brandId
     }
+
+    public func setIsFocused(_ focused: Bool) {
+        if focused {
+            self.viewWillAppear(true)
+        }
+    }
 }
 
 private final class PaymentMethodAddCell: UITableViewCell {
