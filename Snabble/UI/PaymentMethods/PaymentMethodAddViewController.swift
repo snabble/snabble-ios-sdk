@@ -86,6 +86,11 @@ public final class PaymentMethodAddViewController: UITableViewController {
             entries = getAllEntries()
         }
 
+        // special case: remove externalBilling entries where we have no data
+        for idx in 0..<entries.count {
+            entries[idx].removeAll { $0.method == .externalBilling && $0.count == 0 }
+        }
+
         tableView.reloadData()
     }
 

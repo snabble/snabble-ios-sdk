@@ -45,12 +45,13 @@ public enum RawPaymentMethod: String, CaseIterable, Decodable {
         }
     }
 
-    /// true if this method can be added/edited through SDK methods
+    /// true if this method is shown/edited on the PaymentMethod[Add|List]ViewControllers
     var editable: Bool {
         switch self {
-        case .deDirectDebit, .creditCardVisa, .creditCardMastercard, .creditCardAmericanExpress, .paydirektOneKlick:
+        case .deDirectDebit, .externalBilling, .paydirektOneKlick,
+             .creditCardVisa, .creditCardMastercard, .creditCardAmericanExpress:
             return true
-        case .qrCodePOS, .qrCodeOffline, .externalBilling, .gatekeeperTerminal, .customerCardPOS:
+        case .qrCodePOS, .qrCodeOffline, .gatekeeperTerminal, .customerCardPOS:
             return false
         }
     }
@@ -67,11 +68,12 @@ public enum RawPaymentMethod: String, CaseIterable, Decodable {
 
     /// true if this method requires project-specific data
     /// currently, this is set for all creditcards, where we need strong customer authorization per project
+    /// and for `externalBilling` where we need project-specific billing data
     public var isProjectSpecific: Bool {
         switch self {
-        case .creditCardVisa, .creditCardMastercard, .creditCardAmericanExpress:
+        case .creditCardVisa, .creditCardMastercard, .creditCardAmericanExpress, .externalBilling:
             return true
-        case .deDirectDebit, .qrCodePOS, .qrCodeOffline, .externalBilling, .gatekeeperTerminal, .customerCardPOS, .paydirektOneKlick:
+        case .deDirectDebit, .qrCodePOS, .qrCodeOffline, .gatekeeperTerminal, .customerCardPOS, .paydirektOneKlick:
             return false
         }
     }

@@ -74,11 +74,19 @@ public final class PaymentMethodListViewController: UITableViewController {
 
         self.details = []
 
-        if let projectId = self.projectId {
+        if let method = self.method {
+            let details = PaymentMethodDetails.read()
+                .filter { $0.rawMethod == method }
+                .sorted { $0.displayName < $1.displayName }
+
+            self.details = [ details ]
+        } else if let projectId = self.projectId {
             let details = PaymentMethodDetails.read().filter { detail in
                 switch detail.methodData {
                 case .creditcard(let creditcardData):
                     return creditcardData.projectId == projectId
+                case .tegutEmployeeCard:
+                    return true
                 default:
                     return false
                 }
@@ -90,12 +98,6 @@ public final class PaymentMethodListViewController: UITableViewController {
                 .forEach {
                     self.details.append($0)
                 }
-        } else if let method = self.method {
-            let details = PaymentMethodDetails.read()
-                .filter { $0.rawMethod == method }
-                .sorted { $0.displayName < $1.displayName }
-
-            self.details = [ details ]
         }
 
         self.tableView.reloadData()
@@ -215,6 +217,12 @@ private final class PaymentMethodListCell: UITableViewCell {
         didSet {
             self.nameLabel.text = method?.displayName
             self.icon.image = method?.icon
+
+            if method?.originType == .tegutEmployeeID {
+                self.accessoryType = .none
+            } else {
+                self.accessoryType = .disclosureIndicator
+            }
         }
     }
 
@@ -244,6 +252,13 @@ private final class PaymentMethodListCell: UITableViewCell {
 
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
+    }
+
+    override func prepareForReuse() {
+        super.prepareForReuse()
+
+        nameLabel.text = nil
+        icon.image = nil
     }
 }
 

@@ -84,15 +84,17 @@ struct TegutEmployeeData: Codable, EncryptedPaymentData, Equatable {
 
     let cardNumber: String
 
+    let projectId: Identifier<Project>
+
     enum CodingKeys: String, CodingKey {
-        case encryptedPaymentData, serial, displayName, originType, cardNumber
+        case encryptedPaymentData, serial, displayName, originType, cardNumber, projectId
     }
 
     private struct CardNumberOrigin: PaymentRequestOrigin {
         let cardNumber: String
     }
 
-    init?(_ gatewayCert: Data?, _ number: String, _ name: String) {
+    init?(_ gatewayCert: Data?, _ number: String, _ name: String, _ projectId: Identifier<Project>) {
         let requestOrigin = CardNumberOrigin(cardNumber: number)
 
         guard
@@ -107,6 +109,7 @@ struct TegutEmployeeData: Codable, EncryptedPaymentData, Equatable {
 
         self.displayName = name
         self.cardNumber = number
+        self.projectId = projectId
     }
 
     init(from decoder: Decoder) throws {
@@ -115,6 +118,8 @@ struct TegutEmployeeData: Codable, EncryptedPaymentData, Equatable {
         self.serial = try container.decode(String.self, forKey: .serial)
         self.displayName = try container.decode(String.self, forKey: .displayName)
         self.cardNumber = (try? container.decodeIfPresent(String.self, forKey: .cardNumber)) ?? ""
+        let projectId = try container.decodeIfPresent(Identifier<Project>.self, forKey: .projectId)
+        self.projectId = projectId ?? ""
     }
 }
 
@@ -320,7 +325,7 @@ struct CreditCardData: Codable, EncryptedPaymentData, Equatable {
 
         let date = year * 100 + month
         let expiration = expYear * 100 + expMonth
-        return expiration <= date
+        return expiration < date
     }
 }
 
@@ -604,6 +609,50 @@ struct PaymentMethodDetailStorage {
         return SettingsKeys.paymentMethods + "." + SnabbleAPI.serverName + "." + SnabbleAPI.config.appId
     }
 
+    init() {
+        // self.keychain[self.key] = mockData
+    }
+
+    private let mockData = """
+    [
+        {
+            "id":"FA5906D2-AE6B-4464-B3C4-5A696C7D34EC",
+            "methodData":{
+                "creditcard":{
+                    "serial":"6b441e012fea4a7b8645166ec3ad280db470abdb",
+                    "displayName":"(VISA) ... 4242",
+                    "cardHolder":"Asd asd",
+                    "version":2,
+                    "projectId":"tegut-eixae6",
+                    "brand":"visa",
+                    "expirationMonth":"02",
+                    "originType":
+                    "ipgHostedDataID",
+                    "encryptedPaymentData": "EcDZg=",
+                    "expirationYear":"2021"
+                }
+            }
+        },
+        {
+            "id":"FA5906D2-AE6B-4464-B3C4-5A696C7D34ED",
+            "methodData":{
+                "creditcard":{
+                    "serial":"6b441e012fea4a7b8645166ec3ad280db470abdb",
+                    "displayName":"(VISA) ... 4242",
+                    "cardHolder":"Asd asd",
+                    "version":1,
+                    "brand":"visa",
+                    "expirationMonth":"02",
+                    "originType":
+                    "ipgHostedDataID",
+                    "encryptedPaymentData": "EcDZg=",
+                    "expirationYear":"2021"
+                }
+            }
+        }
+    ]
+    """
+
     func read() -> [PaymentMethodDetail] {
         if let methodsJSON = self.keychain[self.key] {
             do {
@@ -732,10 +781,10 @@ public enum PaymentMethodDetails {
 
 // extensions for employee cards that can be used as payment methods
 extension PaymentMethodDetails {
-    public static func addTegutEmployeeCard(_ number: String, _ name: String) {
+    public static func addTegutEmployeeCard(_ number: String, _ name: String, _ projectId: Identifier<Project>) {
         guard
             let cert = SnabbleAPI.certificates.first,
-            let employeeData = TegutEmployeeData(cert.data, number, name)
+            let employeeData = TegutEmployeeData(cert.data, number, name, projectId)
         else {
             return
         }
