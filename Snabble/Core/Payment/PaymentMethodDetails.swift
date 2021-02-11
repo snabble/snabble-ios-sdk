@@ -609,50 +609,6 @@ struct PaymentMethodDetailStorage {
         return SettingsKeys.paymentMethods + "." + SnabbleAPI.serverName + "." + SnabbleAPI.config.appId
     }
 
-    init() {
-        // self.keychain[self.key] = mockData
-    }
-
-    private let mockData = """
-    [
-        {
-            "id":"FA5906D2-AE6B-4464-B3C4-5A696C7D34EC",
-            "methodData":{
-                "creditcard":{
-                    "serial":"6b441e012fea4a7b8645166ec3ad280db470abdb",
-                    "displayName":"(VISA) ... 4242",
-                    "cardHolder":"Asd asd",
-                    "version":2,
-                    "projectId":"tegut-eixae6",
-                    "brand":"visa",
-                    "expirationMonth":"02",
-                    "originType":
-                    "ipgHostedDataID",
-                    "encryptedPaymentData": "EcDZg=",
-                    "expirationYear":"2021"
-                }
-            }
-        },
-        {
-            "id":"FA5906D2-AE6B-4464-B3C4-5A696C7D34ED",
-            "methodData":{
-                "creditcard":{
-                    "serial":"6b441e012fea4a7b8645166ec3ad280db470abdb",
-                    "displayName":"(VISA) ... 4242",
-                    "cardHolder":"Asd asd",
-                    "version":1,
-                    "brand":"visa",
-                    "expirationMonth":"02",
-                    "originType":
-                    "ipgHostedDataID",
-                    "encryptedPaymentData": "EcDZg=",
-                    "expirationYear":"2021"
-                }
-            }
-        }
-    ]
-    """
-
     func read() -> [PaymentMethodDetail] {
         if let methodsJSON = self.keychain[self.key] {
             do {
