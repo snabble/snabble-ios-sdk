@@ -18,7 +18,7 @@ jobs:
         run: pod trunk push Snabble.podspec --allow-warnings
 
       - name: Slack Notification
-        uses: homoluctus/slatify@master
+        uses: lazy-actions/slatify@master
         if: always()
         with:
           type: ${{ job.status }}
