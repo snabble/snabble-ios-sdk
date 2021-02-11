@@ -61,6 +61,12 @@ public final class PaymentMethodListViewController: UITableViewController {
         tableView.tableFooterView = UIView(frame: .zero)
         tableView.rowHeight = 44
         tableView.register(PaymentMethodListCell.self, forCellReuseIdentifier: "cell")
+
+        if !SnabbleUI.implicitNavigation && self.navigationDelegate == nil {
+            let msg = "navigationDelegate may not be nil when using explicit navigation"
+            assert(self.navigationDelegate != nil, msg)
+            Log.error(msg)
+        }
     }
 
     override public func viewWillAppear(_ animated: Bool) {

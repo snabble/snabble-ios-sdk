@@ -69,6 +69,12 @@ public final class PaymentMethodAddViewController: UITableViewController {
         tableView.tableFooterView = UIView(frame: .zero)
         tableView.rowHeight = 44
         tableView.register(PaymentMethodAddCell.self, forCellReuseIdentifier: "cell")
+
+        if !SnabbleUI.implicitNavigation && self.navigationDelegate == nil {
+            let msg = "navigationDelegate may not be nil when using explicit navigation"
+            assert(self.navigationDelegate != nil, msg)
+            Log.error(msg)
+        }
     }
 
     override public func viewWillAppear(_ animated: Bool) {
@@ -229,7 +235,11 @@ extension PaymentMethodAddViewController {
 
         if let brandId = entry.brandId, self.brandId == nil {
             // from the starting view, drill-down to the individual projects in this brand
-            navigationTarget = PaymentMethodAddViewController(brandId: brandId, showFromCart: self.showFromCart, self.analyticsDelegate)
+            if SnabbleUI.implicitNavigation {
+                navigationTarget = PaymentMethodAddViewController(brandId: brandId, showFromCart: self.showFromCart, self.analyticsDelegate)
+            } else {
+                navigationDelegate?.showRetailers(for: brandId)
+            }
         } else if let method = entry.method {
             // show/add retailer-independent methods
             // swiftlint:disable:next empty_count
@@ -306,6 +316,13 @@ extension PaymentMethodAddViewController {
     }
 }
 
+// stuff that's only used by the RN wrapper
+extension PaymentMethodAddViewController: ReactNativeWrapper {
+    public func setBrandId(_ brandId: Identifier<Brand>) {
+        self.brandId = brandId
+    }
+}
+
 private final class PaymentMethodAddCell: UITableViewCell {
     private var icon: UIImageView
     private var nameLabel: UILabel
@@ -348,6 +365,9 @@ private final class PaymentMethodAddCell: UITableViewCell {
 
         self.accessoryType = .disclosureIndicator
 
+        let noImageWidthConstraint = icon.widthAnchor.constraint(equalToConstant: 0)
+        noImageWidthConstraint.priority = .defaultHigh
+
         icon.setContentHuggingPriority(.defaultHigh, for: .horizontal)
         nameLabel.setContentHuggingPriority(.defaultLow, for: .horizontal)
         countLabel.setContentHuggingPriority(.defaultHigh, for: .horizontal)
@@ -355,6 +375,7 @@ private final class PaymentMethodAddCell: UITableViewCell {
             icon.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 16),
             icon.centerYAnchor.constraint(equalTo: contentView.centerYAnchor),
             icon.heightAnchor.constraint(equalToConstant: 24),
+            noImageWidthConstraint,
 
             nameLabel.leadingAnchor.constraint(equalTo: icon.trailingAnchor, constant: 16),
             nameLabel.centerYAnchor.constraint(equalTo: contentView.centerYAnchor),

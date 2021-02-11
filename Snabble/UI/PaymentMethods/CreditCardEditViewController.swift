@@ -47,7 +47,6 @@ public final class CreditCardEditViewController: UIViewController {
         self.showFromCart = showFromCart
         self.analyticsDelegate = analyticsDelegate
         self.projectId = projectId
-        print("cc edit for \(String(describing: projectId))")
 
         super.init(nibName: nil, bundle: SnabbleBundle.main)
     }

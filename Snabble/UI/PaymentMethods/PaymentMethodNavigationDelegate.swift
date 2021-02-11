@@ -9,9 +9,11 @@ public protocol PaymentMethodNavigationDelegate: AnyObject {
 
     func addData(for method: RawPaymentMethod, in projectId: Identifier<Project>?)
 
+    func showRetailers(for brandId: Identifier<Brand>)
+
     func showData(for projectId: Identifier<Project>)
     func showData(for method: RawPaymentMethod, in projectId: Identifier<Project>?)
-    
+
     func editMethod(_ detail: PaymentMethodDetail)
 
     func goBack()
