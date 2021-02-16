@@ -17,10 +17,7 @@ public final class PaymentMethodListViewController: UITableViewController {
     private var method: RawPaymentMethod?
     private var projectId: Identifier<Project>? {
         didSet {
-            self.availableMethods = SnabbleAPI.projects
-                .filter { $0.id == projectId }
-                .flatMap { $0.paymentMethods }
-                .filter { $0.isProjectSpecific }
+            updateAvailableMethods()
         }
     }
 
@@ -34,6 +31,8 @@ public final class PaymentMethodListViewController: UITableViewController {
         self.availableMethods = [ method ]
 
         super.init(style: .grouped)
+
+        updateAvailableMethods()
     }
 
     public init(for projectId: Identifier<Project>?, showFromCart: Bool, _ analyticsDelegate: AnalyticsDelegate?) {
@@ -44,6 +43,8 @@ public final class PaymentMethodListViewController: UITableViewController {
         self.method = nil
 
         super.init(style: .grouped)
+
+        updateAvailableMethods()
     }
 
     required init?(coder: NSCoder) {
@@ -107,6 +108,13 @@ public final class PaymentMethodListViewController: UITableViewController {
         super.viewDidAppear(animated)
 
         self.analyticsDelegate?.track(.viewPaymentMethodList)
+    }
+
+    private func updateAvailableMethods() {
+        self.availableMethods = SnabbleAPI.projects
+            .filter { $0.id == projectId }
+            .flatMap { $0.paymentMethods }
+            .filter { $0.isProjectSpecific }
     }
 
     @objc private func addMethod() {
