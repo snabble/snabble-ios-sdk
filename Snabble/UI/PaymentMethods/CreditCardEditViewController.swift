@@ -128,6 +128,7 @@ public final class CreditCardEditViewController: UIViewController {
                 alert.addAction(UIAlertAction(title: "Snabble.OK".localized(), style: .default) { _ in
                     self.goBack()
                 })
+                self.present(alert, animated: true)
             case .success(let vaultItem):
                 self.vaultItem = vaultItem
                 self.prepareAndInjectPage(vaultItem)
