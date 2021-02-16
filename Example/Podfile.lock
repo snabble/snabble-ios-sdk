@@ -2,24 +2,24 @@ PODS:
   - Base32 (1.1.2)
   - Capable/Colors (1.1.4)
   - ColorCompatibility (1.1.0)
-  - DeviceKit (4.2.1)
-  - GRDB.swift (5.3.0):
-    - GRDB.swift/standard (= 5.3.0)
-  - GRDB.swift/standard (5.3.0)
+  - DeviceKit (4.3.0)
+  - GRDB.swift (5.4.0):
+    - GRDB.swift/standard (= 5.4.0)
+  - GRDB.swift/standard (5.4.0)
   - KeychainAccess (4.2.1)
   - OneTimePassword (3.2.0):
     - Base32 (~> 1.1.2)
   - SDCAlertView (12.0.1)
-  - Snabble (0.15.5):
-    - Snabble/Core (= 0.15.5)
-    - Snabble/UI (= 0.15.5)
-  - Snabble/Core (0.15.5):
+  - Snabble (0.16.0):
+    - Snabble/Core (= 0.16.0)
+    - Snabble/UI (= 0.16.0)
+  - Snabble/Core (0.16.0):
     - GRDB.swift (~> 5)
     - KeychainAccess (~> 4)
     - OneTimePassword (~> 3)
     - TrustKit (~> 1)
     - Zip (~> 2)
-  - Snabble/UI (0.15.5):
+  - Snabble/UI (0.16.0):
     - Capable/Colors
     - ColorCompatibility
     - DeviceKit (~> 4)
@@ -52,12 +52,12 @@ SPEC CHECKSUMS:
   Base32: 163c298644d184e89ca4e00a996bad6bf5166390
   Capable: 9f420f2a80a12144814ea2f0ba196516a0827ca1
   ColorCompatibility: 7257750b5ac742db9c8b593966c6f8e06992149b
-  DeviceKit: cadb5ff25d45fe186778bf2d0fd2ea4750542189
-  GRDB.swift: 6d44795b19d716e9f09f19018c3bde5b71b67ae9
+  DeviceKit: 7decde449c308ac7e816e2184ded1c7c596fb885
+  GRDB.swift: c74796da647a0b80f17de6eb84e0c5f4fe4d32b9
   KeychainAccess: 9b07f665298d13c3a85881bd3171f6f49b8151c1
   OneTimePassword: c00ecc908e67e6c5bfda9d50b0b2e4696d0b066e
   SDCAlertView: d6070733e6ce72360dde3f84a2f9eafcda25ed49
-  Snabble: 70663637f55373c934a8b258c1561dd28709af3e
+  Snabble: a0d4a881e0058c685ae5dcd071aa42e759966740
   TrustKit: dac38bb37e49bdfeca41b1a19d020da38017b51c
   Zip: 414f59909701fda9a84ab774ebe0f5449b1082cc
 
