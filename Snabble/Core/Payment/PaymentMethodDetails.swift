@@ -45,11 +45,11 @@ struct SepaData: Codable, EncryptedPaymentData, Equatable {
         let iban: String
     }
 
-    init?(_ gatewayCert: Data?, _ name: String, _ iban: String) {
+    init?(_ gatewayCert: Data?, _ name: String, _ iban: String, _ rootPath: String?) {
         let requestOrigin = DirectDebitRequestOrigin(name: name, iban: iban)
 
         guard
-            let encrypter = PaymentDataEncrypter(gatewayCert),
+            let encrypter = PaymentDataEncrypter(gatewayCert, rootPath),
             let (cipherText, serial) = encrypter.encrypt(requestOrigin)
         else {
             return nil
@@ -94,11 +94,15 @@ struct TegutEmployeeData: Codable, EncryptedPaymentData, Equatable {
         let cardNumber: String
     }
 
-    init?(_ gatewayCert: Data?, _ number: String, _ name: String, _ projectId: Identifier<Project>) {
+    init?(_ gatewayCert: Data?,
+          _ number: String,
+          _ name: String,
+          _ projectId: Identifier<Project>,
+          _ rootPath: String?) {
         let requestOrigin = CardNumberOrigin(cardNumber: number)
 
         guard
-            let encrypter = PaymentDataEncrypter(gatewayCert),
+            let encrypter = PaymentDataEncrypter(gatewayCert, rootPath),
             let (cipherText, serial) = encrypter.encrypt(requestOrigin)
         else {
             return nil
@@ -217,7 +221,7 @@ struct CreditCardData: Codable, EncryptedPaymentData, Equatable {
         case cardHolder, brand, expirationMonth, expirationYear, version, projectId
     }
 
-    init?(_ response: ConnectGatewayResponse, _ projectId: Identifier<Project>, _ storeId: String, certificate: Data?) {
+    init?(_ response: ConnectGatewayResponse, _ projectId: Identifier<Project>, _ storeId: String, certificate: Data?, _ rootPath: String?) {
         guard response.isValid else {
             return nil
         }
@@ -241,7 +245,7 @@ struct CreditCardData: Codable, EncryptedPaymentData, Equatable {
                                                     schemeTransactionID: response.schemeTransactionId)
 
         guard
-            let encrypter = PaymentDataEncrypter(certificate),
+            let encrypter = PaymentDataEncrypter(certificate, rootPath),
             let (cipherText, serial) = encrypter.encrypt(requestOrigin)
         else {
             return nil
@@ -357,11 +361,11 @@ struct PaydirektData: Codable, EncryptedPaymentData, Equatable {
         let customerAuthorizationURI: String
     }
 
-    init?(_ gatewayCert: Data?, _ authorizationURI: String, _ auth: PaydirektAuthorization) {
+    init?(_ gatewayCert: Data?, _ authorizationURI: String, _ auth: PaydirektAuthorization, _ rootPath: String?) {
         let requestOrigin = PaydirektOrigin(clientID: SnabbleAPI.clientId, customerAuthorizationURI: authorizationURI)
 
         guard
-            let encrypter = PaymentDataEncrypter(gatewayCert),
+            let encrypter = PaymentDataEncrypter(gatewayCert, rootPath),
             let (cipherText, serial) = encrypter.encrypt(requestOrigin)
         else {
             return nil
@@ -737,10 +741,10 @@ public enum PaymentMethodDetails {
 
 // extensions for employee cards that can be used as payment methods
 extension PaymentMethodDetails {
-    public static func addTegutEmployeeCard(_ number: String, _ name: String, _ projectId: Identifier<Project>) {
+    public static func addTegutEmployeeCard(_ number: String, _ name: String, _ projectId: Identifier<Project>, _ rootPath: String?) {
         guard
             let cert = SnabbleAPI.certificates.first,
-            let employeeData = TegutEmployeeData(cert.data, number, name, projectId)
+            let employeeData = TegutEmployeeData(cert.data, number, name, projectId, rootPath)
         else {
             return
         }

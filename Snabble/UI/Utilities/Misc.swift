@@ -196,6 +196,11 @@ public final class SnabbleBundle: NSObject {
     private static let frameworkBundle = Bundle(for: SnabbleBundle.self)
     static let path = frameworkBundle.path(forResource: "Snabble", ofType: "bundle")!
     public static let main = Bundle(path: path)!
+
+    public static func rootCaPath() -> String? {
+        let name = SnabbleAPI.serverName + "-ca"
+        return main.path(forResource: name, ofType: "der")
+    }
 }
 
 extension String {

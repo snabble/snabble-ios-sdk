@@ -7,20 +7,6 @@
 import UIKit
 import WebKit
 
-// TODO: remove ipAddress and fingerprint
-// TODO: if there are multiple bank accounts in one PD account, how/where do we figure out which account to use?
-
-struct PaydirektAuthorization: Encodable {
-    let id: String
-    let name: String
-    let ipAddress: String
-    let fingerprint: String
-
-    let redirectUrlAfterSuccess: String
-    let redirectUrlAfterCancellation: String
-    let redirectUrlAfterFailure: String
-}
-
 private struct PaydirektAuthorizationResult: Decodable {
     let id: String
     let links: AuthLinks
@@ -201,12 +187,13 @@ extension PaydirektEditViewController: WKNavigationDelegate {
 
         // handle our redirect URLs
         if let requestUrl = navigationAction.request.url?.absoluteString {
+            let rootPath = SnabbleBundle.rootCaPath()
             switch requestUrl {
             case RedirectStatus.success.url:
                 guard
                     let cert = SnabbleAPI.certificates.first,
                     let auth = self.clientAuthorization,
-                    let data = PaydirektData(cert.data, auth, self.authData)
+                    let data = PaydirektData(cert.data, auth, self.authData, rootPath)
                 else {
                     return
                 }
