@@ -13,7 +13,7 @@ import Foundation
 // length and formatting info for SEPA IBANs
 // see https://en.wikipedia.org/wiki/International_Bank_Account_Number#IBAN_formats_by_country
 
-enum IBAN {
+public enum IBAN {
     private static let info: [String: (Int, String)] = [
         "AD": (24, "•• •••• •••• •••• •••• ••••"),
         "AT": (20, "•• •••• •••• •••• ••••"),
@@ -56,15 +56,15 @@ enum IBAN {
         "VA": (22, "•• •••• •••• •••• •••• ••")
     ]
 
-    static func length(_ country: String) -> Int? {
+    public static func length(_ country: String) -> Int? {
         return info[country]?.0
     }
 
-    static func placeholder(_ country: String) -> String? {
+    public static func placeholder(_ country: String) -> String? {
         return self.info[country]?.1
     }
 
-    static func displayName(_ iban: String) -> String {
+    public static func displayName(_ iban: String) -> String {
         let country = String(iban.prefix(2))
         let prefix = String(iban.prefix(4))
         let suffix = String(iban.suffix(2))
