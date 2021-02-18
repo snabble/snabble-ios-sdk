@@ -231,9 +231,8 @@ final class PaymentMethodSelector {
         ]
         let addTitle = NSAttributedString(string: "Snabble.Payment.add".localized(), attributes: titleAttrs)
         let add = AlertAction(attributedTitle: addTitle, style: .normal) { _ in
-            let methods = MethodProjects.initialize()
-            let selection = MethodSelectionViewController(methods, showFromCart: true, self.parentVC)
             if SnabbleUI.implicitNavigation {
+                let selection = PaymentMethodAddViewController(showFromCart: true, self.parentVC)
                 self.parentVC?.navigationController?.pushViewController(selection, animated: true)
             } else {
                 let msg = "navigationDelegate may not be nil when using explicit navigation"

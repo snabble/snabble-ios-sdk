@@ -67,7 +67,7 @@
 
 "Snabble.Hints.title" = "%@ megjegyzése";
 
-"Snabble.invalidDepositVoucher.errorMsg" = "Deposit return vouchers can be redeemed only once.";
+"Snabble.invalidDepositVoucher.errorMsg" = "Az üvegvisszaváltó blokkot csak egyszer lehet beváltani.";
 
 "Snabble.Keyguard.message" = "Ezzel garantálható, hogy csak te férj ehhez a fizetési eljáráshoz";
 
@@ -170,6 +170,12 @@
 
 "Snabble.PaymentMethods.add" = "Fizetési mód hozzáadása";
 
+"Snabble.PaymentMethods.choose" = "Which payment method to add?";
+
+"Snabble.PaymentMethods.forAllRetailers" = "For all retailers";
+
+"Snabble.PaymentMethods.forSingleRetailer" = "For specific retailer";
+
 "Snabble.PaymentMethods.noCodeAlert.biometry" = "Az iPhone-od nem védi se kód, se Touch ID/Face ID. Biztonságod érdekében először ezt állítsd be, és csak ezt követően add meg IBAN-kódod.";
 
 "Snabble.PaymentMethods.noCodeAlert.noBiometry" = "Az iPhone-od nem védi kód. Biztonságod érdekében először ezt állítsd be, és csak ezt követően add meg IBAN-kódod.";
@@ -195,7 +201,7 @@
 
 "Snabble.pleaseWait" = "Kérlek, várj...";
 
-"Snabble.QRCode.codeXofY" = "Code %1$d of %2$d";
+"Snabble.QRCode.codeXofY" = "%1$d / %2$d kód";
 
 "Snabble.QRCode.didPay" = "Kész";
 

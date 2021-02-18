@@ -1,5 +1,9 @@
 ## snabble iOS SDK Changelog
 
+# v0.16.0 [unreleased]
+
+- Changed the UI and the internal handling of payment methods to conform with PSD2 regulations
+
 # v0.15.5
 
 - Improves support for deposit return vouchers

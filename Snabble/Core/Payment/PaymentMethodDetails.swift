@@ -84,15 +84,17 @@ struct TegutEmployeeData: Codable, EncryptedPaymentData, Equatable {
 
     let cardNumber: String
 
+    let projectId: Identifier<Project>
+
     enum CodingKeys: String, CodingKey {
-        case encryptedPaymentData, serial, displayName, originType, cardNumber
+        case encryptedPaymentData, serial, displayName, originType, cardNumber, projectId
     }
 
     private struct CardNumberOrigin: PaymentRequestOrigin {
         let cardNumber: String
     }
 
-    init?(_ gatewayCert: Data?, _ number: String, _ name: String) {
+    init?(_ gatewayCert: Data?, _ number: String, _ name: String, _ projectId: Identifier<Project>) {
         let requestOrigin = CardNumberOrigin(cardNumber: number)
 
         guard
@@ -107,6 +109,7 @@ struct TegutEmployeeData: Codable, EncryptedPaymentData, Equatable {
 
         self.displayName = name
         self.cardNumber = number
+        self.projectId = projectId
     }
 
     init(from decoder: Decoder) throws {
@@ -115,6 +118,8 @@ struct TegutEmployeeData: Codable, EncryptedPaymentData, Equatable {
         self.serial = try container.decode(String.self, forKey: .serial)
         self.displayName = try container.decode(String.self, forKey: .displayName)
         self.cardNumber = (try? container.decodeIfPresent(String.self, forKey: .cardNumber)) ?? ""
+        let projectId = try container.decodeIfPresent(Identifier<Project>.self, forKey: .projectId)
+        self.projectId = projectId ?? ""
     }
 }
 
@@ -144,6 +149,105 @@ public enum CreditCardBrand: String, Codable {
     }
 }
 
+// response data from the telecash IPG Connect API
+struct ConnectGatewayResponse: Decodable {
+    enum Error: Swift.Error {
+        case gateway(reason: String, code: String)
+        case responseCode(String)
+        case empty(variableLabel: String?)
+    }
+
+    enum CodingKeys: String, CodingKey {
+        case responseCode = "processor_response_code"
+
+        case hostedDataId = "hosteddataid"
+        case schemeTransactionId = "schemeTransactionId"
+
+        case cardNumber = "cardnumber"
+        case cardHolder = "bname"
+        case brand = "ccbrand"
+        case expMonth = "expmonth"
+        case expYear = "expyear"
+
+        case orderId = "oid"
+
+        case failReason = "fail_reason"
+        case failCode = "fail_rc"
+    }
+
+    let hostedDataId: String
+    let schemeTransactionId: String
+    let cardNumber: String
+    let cardHolder: String
+    let brand: String
+    let expMonth: String
+    let expYear: String
+    let responseCode: String
+    let orderId: String
+
+    init(response: [[String: String]]) throws {
+        let reducedResponse = response.reduce([:], { (result: [String: String], element: [String: String]) in
+            guard let name = element["name"], let value = element["value"], !value.isEmpty else {
+                return result
+            }
+            var result = result
+            result[name] = value
+            return result
+        })
+        let jsonDecoder = JSONDecoder()
+        let jsonData = try JSONSerialization.data(withJSONObject: reducedResponse, options: .fragmentsAllowed)
+        let instance = try jsonDecoder.decode(Self.self, from: jsonData)
+
+        hostedDataId = instance.hostedDataId
+        schemeTransactionId = instance.schemeTransactionId
+        cardNumber = instance.cardNumber
+        cardHolder = instance.cardHolder
+        brand = instance.brand
+        expMonth = instance.expMonth
+        expYear = instance.expYear
+        responseCode = instance.responseCode
+        orderId = instance.orderId
+    }
+
+    init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+
+        let failReason = try container.decodeIfPresent(String.self, forKey: .failReason)
+        let failCode = try container.decodeIfPresent(String.self, forKey: .failCode)
+
+        if let failReason = failReason, let failCode = failCode, !failCode.isEmpty {
+            throw Error.gateway(reason: failReason, code: failCode)
+        }
+
+        hostedDataId = try container.decode(String.self, forKey: .hostedDataId)
+        schemeTransactionId = try container.decode(String.self, forKey: .schemeTransactionId)
+        cardNumber = try container.decode(String.self, forKey: .cardNumber)
+        cardHolder = try container.decode(String.self, forKey: .cardHolder)
+        brand = try container.decode(String.self, forKey: .brand)
+        expMonth = try container.decode(String.self, forKey: .expMonth)
+        expYear = try container.decode(String.self, forKey: .expYear)
+        responseCode = try container.decode(String.self, forKey: .responseCode)
+        orderId = try container.decode(String.self, forKey: .orderId)
+
+        // Validation
+
+        guard responseCode == "00" else {
+            throw Error.responseCode(responseCode)
+        }
+
+        try Mirror(reflecting: self)
+            .children
+            .filter { $0.value is String }
+            .forEach {
+                if let value = $0.value as? String {
+                    guard !value.isEmpty else {
+                        throw Error.empty(variableLabel: $0.label)
+                    }
+                }
+            }
+    }
+}
+
 struct CreditCardData: Codable, EncryptedPaymentData, Equatable {
     let encryptedPaymentData: String
     let serial: String
@@ -155,41 +259,47 @@ struct CreditCardData: Codable, EncryptedPaymentData, Equatable {
     let expirationMonth: String
     let expirationYear: String
     let version: Int
+    let projectId: Identifier<Project>?
 
-    private struct CreditCardRequestOrigin: PaymentRequestOrigin {
-        // bump this when we add properties to that might require invaliding previous versions
-        static let version = 1
+    struct CreditCardRequestOrigin: PaymentRequestOrigin {
+        // bump this when we add properties to the struct that might require invaliding previous versions
+        static let version = 2
 
         let hostedDataID: String
         let hostedDataStoreID: String
         let cardType: String
+
+        // new in v2
+        let projectID: String
+        let schemeTransactionID: String
     }
 
     enum CodingKeys: String, CodingKey {
         case encryptedPaymentData, serial, displayName, originType
-        case cardHolder, brand, expirationMonth, expirationYear, version
+        case cardHolder, brand, expirationMonth, expirationYear, version, projectId
     }
 
-    init?(_ gatewayCert: Data?, _ cardHolder: String, _ cardNumber: String, _ brand: String, _ expMonth: String, _ expYear: String, _ hostedDataId: String, _ storeId: String) {
-        guard !cardHolder.isEmpty, !cardNumber.isEmpty, !brand.isEmpty, !expMonth.isEmpty, !expYear.isEmpty, !hostedDataId.isEmpty else {
-            return nil
-        }
-
-        guard let brand = CreditCardBrand(rawValue: brand.lowercased()) else {
+    init?(_ response: ConnectGatewayResponse, _ projectId: Identifier<Project>, _ storeId: String, certificate: Data?) {
+        guard let brand = CreditCardBrand(rawValue: response.brand.lowercased()) else {
             return nil
         }
 
         self.version = CreditCardRequestOrigin.version
-        self.displayName = cardNumber
-        self.cardHolder = cardHolder
+        self.displayName = response.cardNumber
+        self.cardHolder = response.cardHolder
         self.brand = brand
-        self.expirationYear = expYear
-        self.expirationMonth = expMonth
+        self.expirationYear = response.expYear
+        self.expirationMonth = response.expMonth
+        self.projectId = projectId
 
-        let requestOrigin = CreditCardRequestOrigin(hostedDataID: hostedDataId, hostedDataStoreID: storeId, cardType: brand.cardType)
+        let requestOrigin = CreditCardRequestOrigin(hostedDataID: response.hostedDataId,
+                                                    hostedDataStoreID: storeId,
+                                                    cardType: brand.cardType,
+                                                    projectID: projectId.rawValue,
+                                                    schemeTransactionID: response.schemeTransactionId)
 
         guard
-            let encrypter = PaymentDataEncrypter(gatewayCert),
+            let encrypter = PaymentDataEncrypter(certificate),
             let (cipherText, serial) = encrypter.encrypt(requestOrigin)
         else {
             return nil
@@ -211,6 +321,8 @@ struct CreditCardData: Codable, EncryptedPaymentData, Equatable {
         self.expirationYear = try container.decode(String.self, forKey: .expirationYear)
         let version = try container.decodeIfPresent(Int.self, forKey: .version)
         self.version = version ?? CreditCardRequestOrigin.version
+        let projectId = try container.decodeIfPresent(Identifier<Project>.self, forKey: .projectId)
+        self.projectId = projectId ?? ""
     }
 
     // the card's expiration date as a YYYY/MM/DD string with the last day of the month,
@@ -271,7 +383,7 @@ struct CreditCardData: Codable, EncryptedPaymentData, Equatable {
 
         let date = year * 100 + month
         let expiration = expYear * 100 + expMonth
-        return expiration <= date
+        return expiration < date
     }
 }
 
@@ -446,38 +558,43 @@ public extension PaymentMethod {
     }
 }
 
-public struct PaymentMethodDetail: Codable, Equatable {
+public struct PaymentMethodDetail: Equatable {
+    public let id: UUID
     let methodData: PaymentMethodUserData
 
     init(_ sepaData: SepaData) {
+        self.id = UUID()
         self.methodData = PaymentMethodUserData.sepa(sepaData)
     }
 
     init(_ creditcardData: CreditCardData) {
+        self.id = UUID()
         self.methodData = PaymentMethodUserData.creditcard(creditcardData)
     }
 
     init(_ tegutData: TegutEmployeeData) {
+        self.id = UUID()
         self.methodData = PaymentMethodUserData.tegutEmployeeCard(tegutData)
     }
 
     init(_ paydirektData: PaydirektData) {
+        self.id = UUID()
         self.methodData = PaymentMethodUserData.paydirektAuthorization(paydirektData)
     }
 
-    var displayName: String {
+    public var displayName: String {
         return self.methodData.data.displayName
     }
 
-    var encryptedData: String {
+    public var encryptedData: String {
         return self.methodData.data.encryptedPaymentData
     }
 
-    var additionalData: [String: String] {
+    public var additionalData: [String: String] {
         return self.methodData.additionalData
     }
 
-    var serial: String {
+    public var serial: String {
         return self.methodData.data.serial
     }
 
@@ -485,11 +602,11 @@ public struct PaymentMethodDetail: Codable, Equatable {
         return Snabble.PaymentMethodData(self.displayName, self.encryptedData, self.originType, self.additionalData)
     }
 
-    var isExpired: Bool {
+    public var isExpired: Bool {
         return self.methodData.data.isExpired
     }
 
-    var rawMethod: RawPaymentMethod {
+    public var rawMethod: RawPaymentMethod {
         switch self.methodData {
         case .sepa: return .deDirectDebit
         case .creditcard(let creditcardData):
@@ -505,8 +622,30 @@ public struct PaymentMethodDetail: Codable, Equatable {
         }
     }
 
-    var originType: AcceptedOriginType {
+    public var originType: AcceptedOriginType {
         return self.methodData.data.originType
+    }
+
+    public var projectId: Identifier<Project>? {
+        switch self.methodData {
+        case .creditcard(let creditCardData):
+            return creditCardData.projectId
+        default:
+            return nil
+        }
+    }
+}
+
+extension PaymentMethodDetail: Codable {
+    enum CodingKeys: String, CodingKey {
+        case id, methodData
+    }
+
+    public init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+
+        self.id = try container.decodeIfPresent(UUID.self, forKey: .id) ?? UUID()
+        self.methodData = try container.decode(PaymentMethodUserData.self, forKey: .methodData)
     }
 }
 
@@ -550,11 +689,13 @@ struct PaymentMethodDetailStorage {
         }
     }
 
-    func save(_ detail: PaymentMethodDetail, at index: Int?) {
+    func save(_ detail: PaymentMethodDetail) {
         var details = self.read()
 
-        if let index = index {
-            details[index] = detail
+        let index = details.firstIndex { $0.id == detail.id }
+
+        if let idx = index {
+            details[idx] = detail
         } else {
             details.append(detail)
         }
@@ -568,9 +709,9 @@ struct PaymentMethodDetailStorage {
         }
     }
 
-    func remove(at index: Int) {
+    func remove(_ detail: PaymentMethodDetail) {
         var details = self.read()
-        details.remove(at: index)
+        details.removeAll { $0.id == detail.id }
         self.save(details)
 
         NotificationCenter.default.post(name: .snabblePaymentMethodDeleted, object: nil)
@@ -604,20 +745,29 @@ public enum PaymentMethodDetails {
         storage.save(details)
     }
 
-    static func save(_ detail: PaymentMethodDetail, at index: Int? = nil) {
-        storage.save(detail, at: index)
+    static func save(_ detail: PaymentMethodDetail) {
+        storage.save(detail)
     }
 
-    static func remove(at index: Int) {
-        storage.remove(at: index)
+    static func remove(_ detail: PaymentMethodDetail) {
+        storage.remove(detail)
     }
 
-    public static func startup(_ firstStart: Bool) {
+    //
+    /// initialize the storage for payment methods
+    /// - Parameter firstStart: when `true` (on the first start of the app), remove all stored payment methods
+    /// - Returns: true when any obsolete payment methods had to be removed
+    ///
+    /// This method silently removes any payment methods that have expired, most notably credit cards past
+    /// their expiration date.
+    public static func startup(_ firstStart: Bool) -> Bool {
         if firstStart {
             storage.removeAll()
         }
 
         removeExpired()
+
+        return removeObsoleted()
     }
 
     private static func removeExpired() {
@@ -625,14 +775,30 @@ public enum PaymentMethodDetails {
         details.removeAll(where: \.isExpired)
         self.save(details)
     }
+
+    private static func removeObsoleted() -> Bool {
+        var details = self.read()
+        let initialCount = details.count
+        details.removeAll { detail -> Bool in
+            switch detail.methodData {
+            case .creditcard(let creditcardData):
+                return creditcardData.version < CreditCardData.CreditCardRequestOrigin.version
+            default:
+                return false
+            }
+        }
+
+        self.save(details)
+        return initialCount != details.count
+    }
 }
 
 // extensions for employee cards that can be used as payment methods
 extension PaymentMethodDetails {
-    public static func addTegutEmployeeCard(_ number: String, _ name: String) {
+    public static func addTegutEmployeeCard(_ number: String, _ name: String, _ projectId: Identifier<Project>) {
         guard
             let cert = SnabbleAPI.certificates.first,
-            let employeeData = TegutEmployeeData(cert.data, number, name)
+            let employeeData = TegutEmployeeData(cert.data, number, name, projectId)
         else {
             return
         }

@@ -18,15 +18,16 @@ struct PaymentDataEncrypter {
     private var certificate: Data?
 
     init?(_ gatewayCert: Data?) {
+        let caName = "\(SnabbleAPI.serverName)-ca"
         guard
             let gatewayCert = gatewayCert,
-            let rootName = SnabbleBundle.main.path(forResource: self.caName(), ofType: "der")
+            let rootPath = SnabbleBundle.main.path(forResource: caName, ofType: "der")
         else {
             return nil
         }
 
         do {
-            self.rootCertificate = try Data(contentsOf: URL(fileURLWithPath: rootName))
+            self.rootCertificate = try Data(contentsOf: URL(fileURLWithPath: rootPath))
             self.certificate = gatewayCert
         } catch {
             Log.error("can't read root certificate: \(error)")
@@ -108,7 +109,4 @@ struct PaymentDataEncrypter {
         return nil
     }
 
-    private func caName() -> String {
-        return SnabbleAPI.serverName + "-ca"
-    }
 }

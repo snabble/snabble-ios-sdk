@@ -431,9 +431,8 @@ public final class ShoppingCartViewController: UIViewController {
             let paymentMethod = self.methodSelector?.selectedPaymentMethod
         else {
             // no payment method selected -> show the "add method" view
-            let methods = MethodProjects.initialize()
-            let selection = MethodSelectionViewController(methods, showFromCart: true, self)
             if SnabbleUI.implicitNavigation {
+                let selection = PaymentMethodAddViewController(showFromCart: true, self)
                 self.navigationController?.pushViewController(selection, animated: true)
             } else {
                 let msg = "navigationDelegate may not be nil when using explicit navigation"
@@ -445,13 +444,15 @@ public final class ShoppingCartViewController: UIViewController {
         }
 
         // no detail data, and there is an editing VC? Show that instead of continuing
-        if self.methodSelector?.selectedPaymentDetail == nil, let editVC = paymentMethod.editViewController(true, self) {
+        if self.methodSelector?.selectedPaymentDetail == nil,
+           paymentMethod.isAddingAllowed(showAlertOn: self),
+           let editVC = paymentMethod.editViewController(with: project.id, showFromCart: true, self) {
             if SnabbleUI.implicitNavigation {
                 self.navigationController?.pushViewController(editVC, animated: true)
             } else {
                 let msg = "navigationDelegate may not be nil when using explicit navigation"
                 assert(self.paymentMethodNavigationDelegate != nil, msg)
-                self.paymentMethodNavigationDelegate?.addData(for: paymentMethod)
+                self.paymentMethodNavigationDelegate?.addData(for: paymentMethod, in: project.id)
             }
             return
         }

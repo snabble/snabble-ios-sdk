@@ -170,6 +170,12 @@
 
 "Snabble.PaymentMethods.add" = "Add payment method";
 
+"Snabble.PaymentMethods.choose" = "Which payment method to add?";
+
+"Snabble.PaymentMethods.forAllRetailers" = "For all retailers";
+
+"Snabble.PaymentMethods.forSingleRetailer" = "For specific retailer";
+
 "Snabble.PaymentMethods.noCodeAlert.biometry" = "Your iPhone isn't protected by a code or Touch ID/Face ID. For your own safety, please assign a code before storing your payment information.";
 
 "Snabble.PaymentMethods.noCodeAlert.noBiometry" = "Your iPhone isn't protected by a code. For your own safety, please assign a code before storing your payment information.";

@@ -192,12 +192,6 @@ final class InsetLabel: UILabel {
 
 // MARK: - l10n and image support
 
-public final class SnabbleBundle: NSObject {
-    private static let frameworkBundle = Bundle(for: SnabbleBundle.self)
-    static let path = frameworkBundle.path(forResource: "Snabble", ofType: "bundle")!
-    public static let main = Bundle(path: path)!
-}
-
 extension String {
     func localized() -> String {
         // check if the app has a project-specific localization for this string

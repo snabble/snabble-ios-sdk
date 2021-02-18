@@ -7,20 +7,6 @@
 import UIKit
 import WebKit
 
-// TODO: remove ipAddress and fingerprint
-// TODO: if there are multiple bank accounts in one PD account, how/where do we figure out which account to use?
-
-struct PaydirektAuthorization: Encodable {
-    let id: String
-    let name: String
-    let ipAddress: String
-    let fingerprint: String
-
-    let redirectUrlAfterSuccess: String
-    let redirectUrlAfterCancellation: String
-    let redirectUrlAfterFailure: String
-}
-
 private struct PaydirektAuthorizationResult: Decodable {
     let id: String
     let links: AuthLinks
@@ -53,7 +39,6 @@ public final class PaydirektEditViewController: UIViewController {
 
     private var webView: WKWebView?
     private var detail: PaymentMethodDetail?
-    private var index: Int? = 0
     private let showFromCart: Bool
     private weak var analyticsDelegate: AnalyticsDelegate?
     private var clientAuthorization: String?
@@ -70,9 +55,8 @@ public final class PaydirektEditViewController: UIViewController {
         redirectUrlAfterFailure: RedirectStatus.failure.url
     )
 
-    public init(_ detail: PaymentMethodDetail?, _ index: Int?, _ showFromCart: Bool, _ analyticsDelegate: AnalyticsDelegate?) {
+    public init(_ detail: PaymentMethodDetail?, _ showFromCart: Bool, _ analyticsDelegate: AnalyticsDelegate?) {
         self.detail = detail
-        self.index = index
         self.showFromCart = showFromCart
         self.analyticsDelegate = analyticsDelegate
 
@@ -156,13 +140,13 @@ public final class PaydirektEditViewController: UIViewController {
     }
 
     @IBAction private func deleteTapped(_ sender: Any) {
-        guard let index = self.index else {
+        guard let detail = self.detail else {
             return
         }
 
         let alert = UIAlertController(title: nil, message: "Snabble.Payment.delete.message".localized(), preferredStyle: .alert)
         alert.addAction(UIAlertAction(title: "Snabble.Yes".localized(), style: .destructive) { _ in
-            PaymentMethodDetails.remove(at: index)
+            PaymentMethodDetails.remove(detail)
             self.analyticsDelegate?.track(.paymentMethodDeleted("paydirekt"))
             self.goBack()
         })
@@ -241,7 +225,7 @@ extension PaydirektEditViewController: WKNavigationDelegate {
             if self.showFromCart {
                 self.navigationController?.popToRootViewController(animated: true)
             } else {
-                self.navigationController?.popToInstanceOf(PaymentMethodListViewController.self, animated: true)
+                self.navigationController?.popViewController(animated: true)
             }
         } else {
             if self.showFromCart {
@@ -255,8 +239,7 @@ extension PaydirektEditViewController: WKNavigationDelegate {
 
 // stuff that's only used by the RN wrapper
 extension PaydirektEditViewController: ReactNativeWrapper {
-    public func setDetail(_ detail: PaymentMethodDetail, _ index: Int) {
+    public func setDetail(_ detail: PaymentMethodDetail) {
         self.detail = detail
-        self.index = index
     }
 }

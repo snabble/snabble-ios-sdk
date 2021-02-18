@@ -94,8 +94,6 @@ public struct MetadataLinks: Decodable {
     public let appUser: Link
     public let appUserOrders: Link
     public let consents: Link?
-    public let telecashSecret: Link?
-    public let telecashPreauth: Link?
     public let paydirektCustomerAuthorization: Link?
     public let createAppUser: Link
     public let `self`: Link
@@ -108,8 +106,6 @@ public struct MetadataLinks: Decodable {
         self.`self` = Link.empty
 
         self.consents = Link.empty
-        self.telecashSecret = nil
-        self.telecashPreauth = nil
         self.paydirektCustomerAuthorization = nil
     }
 }
@@ -452,6 +448,7 @@ public struct ProjectLinks: Decodable {
     public let resolvedProductBySku: Link?
     public let resolvedProductLookUp: Link?
     public let assetsManifest: Link?
+    public let telecashVaultItems: Link?
 
     public static let empty = ProjectLinks()
 
@@ -464,6 +461,7 @@ public struct ProjectLinks: Decodable {
         self.resolvedProductBySku = nil
         self.resolvedProductLookUp = nil
         self.assetsManifest = nil
+        self.telecashVaultItems = nil
     }
 
     init(appdb: Link, appEvents: Link, checkoutInfo: Link, tokens: Link, resolvedProductBySku: Link, resolvedProductLookUp: Link) {
@@ -475,6 +473,7 @@ public struct ProjectLinks: Decodable {
         self.resolvedProductLookUp = resolvedProductLookUp
 
         self.assetsManifest = nil
+        self.telecashVaultItems = nil
     }
 }
 
