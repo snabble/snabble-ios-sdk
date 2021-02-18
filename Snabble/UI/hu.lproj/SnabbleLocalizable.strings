@@ -170,11 +170,11 @@
 
 "Snabble.PaymentMethods.add" = "Fizetési mód hozzáadása";
 
-"Snabble.PaymentMethods.choose" = "Which payment method to add?";
+"Snabble.PaymentMethods.choose" = "Milyen fizetési módot szeretnél hozzáadni?";
 
-"Snabble.PaymentMethods.forAllRetailers" = "For all retailers";
+"Snabble.PaymentMethods.forAllRetailers" = "Több kereskedőnél érvényes";
 
-"Snabble.PaymentMethods.forSingleRetailer" = "For specific retailer";
+"Snabble.PaymentMethods.forSingleRetailer" = "Egy kereskedőnél érvényes";
 
 "Snabble.PaymentMethods.noCodeAlert.biometry" = "Az iPhone-od nem védi se kód, se Touch ID/Face ID. Biztonságod érdekében először ezt állítsd be, és csak ezt követően add meg IBAN-kódod.";
 

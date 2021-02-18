@@ -170,11 +170,11 @@
 
 "Snabble.PaymentMethods.add" = "Pridať spôsob platby";
 
-"Snabble.PaymentMethods.choose" = "Which payment method to add?";
+"Snabble.PaymentMethods.choose" = "Ktorý spôsob platby chceš pridať?";
 
-"Snabble.PaymentMethods.forAllRetailers" = "For all retailers";
+"Snabble.PaymentMethods.forAllRetailers" = "Pre všetky obchody";
 
-"Snabble.PaymentMethods.forSingleRetailer" = "For specific retailer";
+"Snabble.PaymentMethods.forSingleRetailer" = "Pre jednotlivé obchody";
 
 "Snabble.PaymentMethods.noCodeAlert.biometry" = "Tvoj iPhone nie je chránený ani kódom, ani funkciou Touch ID/Face ID. V záujme svojej ochrany pred zadaním svojho čísla IBAN najprv nastav túto ochranu.";
 
