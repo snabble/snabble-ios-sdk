@@ -227,21 +227,28 @@ extension CreditCardEditViewController: WKScriptMessageHandler {
             return self.showError()
         }
 
-        let connectResponse = ConnectGatewayResponse(response: eventData)
-
-        if let ccData = CreditCardData(connectResponse, projectId, storeId, certificate: cert.data) {
-            let detail = PaymentMethodDetail(ccData)
-            PaymentMethodDetails.save(detail)
-            self.analyticsDelegate?.track(.paymentMethodAdded(detail.rawMethod.displayName))
-            self.deletePreauth(project, self.vaultItem?.links.`self`.href)
-        } else if connectResponse.failCode == "5993" {
-            NSLog("cancelled by user")
-        } else {
-            NSLog("unknown error response_code=\(connectResponse.responseCode) fail_rc=\(connectResponse.failCode) fail_reason=\(connectResponse.failReason)")
-            return self.showError()
+        do {
+            let connectResponse = try ConnectGatewayResponse(response: eventData)
+            if let ccData = CreditCardData(connectResponse, projectId, storeId, certificate: cert.data) {
+                let detail = PaymentMethodDetail(ccData)
+                PaymentMethodDetails.save(detail)
+                self.analyticsDelegate?.track(.paymentMethodAdded(detail.rawMethod.displayName))
+                self.deletePreauth(project, self.vaultItem?.links.`self`.href)
+                goBack()
+            } else {
+                showError()
+            }
+        } catch ConnectGatewayResponse.Error.gateway(let reason, let code) {
+            switch code {
+            case "5993":
+                goBack()
+            default:
+                NSLog("unknown error fail_rc=\(code) fail_reason=\(reason)")
+                showError()
+            }
+        } catch {
+            showError()
         }
-
-        self.goBack()
     }
 
     private func showError() {

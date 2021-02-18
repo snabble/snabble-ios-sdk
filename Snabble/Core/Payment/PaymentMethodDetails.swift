@@ -150,39 +150,101 @@ public enum CreditCardBrand: String, Codable {
 }
 
 // response data from the telecash IPG Connect API
-struct ConnectGatewayResponse {
-    var hostedDataId: String { data["hosteddataid"] ?? "" }
-    var schemeTransactionId: String { data["schemeTransactionId"] ?? "" }
-    var cardNumber: String { data["cardnumber"] ?? "" }
-    var cardHolder: String { data["bname"] ?? "" }
-    var brand: String { data["ccbrand"] ?? "" }
-    var expMonth: String { data["expmonth"] ?? "" }
-    var expYear: String { data["expyear"] ?? "" }
-    var responseCode: String { data["processor_response_code"] ?? "" }
-    var failReason: String { data["fail_reason"] ?? "" }
-    var failCode: String { data["fail_rc"] ?? "" }
-    var orderId: String { data["oid"] ?? "" }
-
-    private var data = [String: String]()
-
-    init(response: [[String: String]]) {
-        for entry in response {
-            if let name = entry["name"], let value = entry["value"] {
-                data[name] = value
-            }
-        }
+struct ConnectGatewayResponse: Decodable {
+    enum Error: Swift.Error {
+        case gateway(reason: String, code: String)
+        case responseCode(String)
+        case empty(variableLabel: String?)
     }
 
-    var isValid: Bool {
-        return
-            responseCode == "00"
-            && !cardHolder.isEmpty
-            && !cardNumber.isEmpty
-            && !brand.isEmpty
-            && !expMonth.isEmpty
-            && !expYear.isEmpty
-            && !hostedDataId.isEmpty
-            && !schemeTransactionId.isEmpty
+    enum CodingKeys: String, CodingKey {
+        case responseCode = "processor_response_code"
+
+        case hostedDataId = "hosteddataid"
+        case schemeTransactionId = "schemeTransactionId"
+
+        case cardNumber = "cardnumber"
+        case cardHolder = "bname"
+        case brand = "ccbrand"
+        case expMonth = "expmonth"
+        case expYear = "expyear"
+
+        case orderId = "oid"
+
+        case failReason = "fail_reason"
+        case failCode = "fail_rc"
+    }
+
+    let hostedDataId: String
+    let schemeTransactionId: String
+    let cardNumber: String
+    let cardHolder: String
+    let brand: String
+    let expMonth: String
+    let expYear: String
+    let responseCode: String
+    let orderId: String
+
+    init(response: [[String: String]]) throws {
+        let reducedResponse = response.reduce([:], { (result: [String: String], element: [String: String]) in
+            guard let name = element["name"], let value = element["value"], !value.isEmpty else {
+                return result
+            }
+            var result = result
+            result[name] = value
+            return result
+        })
+        let jsonDecoder = JSONDecoder()
+        let jsonData = try JSONSerialization.data(withJSONObject: reducedResponse, options: .fragmentsAllowed)
+        let instance = try jsonDecoder.decode(Self.self, from: jsonData)
+
+        hostedDataId = instance.hostedDataId
+        schemeTransactionId = instance.schemeTransactionId
+        cardNumber = instance.cardNumber
+        cardHolder = instance.cardHolder
+        brand = instance.brand
+        expMonth = instance.expMonth
+        expYear = instance.expYear
+        responseCode = instance.responseCode
+        orderId = instance.orderId
+    }
+
+    init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+
+        let failReason = try container.decodeIfPresent(String.self, forKey: .failReason)
+        let failCode = try container.decodeIfPresent(String.self, forKey: .failCode)
+
+        if let failReason = failReason, let failCode = failCode, !failCode.isEmpty {
+            throw Error.gateway(reason: failReason, code: failCode)
+        }
+
+        hostedDataId = try container.decode(String.self, forKey: .hostedDataId)
+        schemeTransactionId = try container.decode(String.self, forKey: .schemeTransactionId)
+        cardNumber = try container.decode(String.self, forKey: .cardNumber)
+        cardHolder = try container.decode(String.self, forKey: .cardHolder)
+        brand = try container.decode(String.self, forKey: .brand)
+        expMonth = try container.decode(String.self, forKey: .expMonth)
+        expYear = try container.decode(String.self, forKey: .expYear)
+        responseCode = try container.decode(String.self, forKey: .responseCode)
+        orderId = try container.decode(String.self, forKey: .orderId)
+
+        // Validation
+
+        guard responseCode == "00" else {
+            throw Error.responseCode(responseCode)
+        }
+
+        try Mirror(reflecting: self)
+            .children
+            .filter { $0.value is String }
+            .forEach {
+                if let value = $0.value as? String {
+                    guard !value.isEmpty else {
+                        throw Error.empty(variableLabel: $0.label)
+                    }
+                }
+            }
     }
 }
 
@@ -218,10 +280,6 @@ struct CreditCardData: Codable, EncryptedPaymentData, Equatable {
     }
 
     init?(_ response: ConnectGatewayResponse, _ projectId: Identifier<Project>, _ storeId: String, certificate: Data?) {
-        guard response.isValid else {
-            return nil
-        }
-
         guard let brand = CreditCardBrand(rawValue: response.brand.lowercased()) else {
             return nil
         }
