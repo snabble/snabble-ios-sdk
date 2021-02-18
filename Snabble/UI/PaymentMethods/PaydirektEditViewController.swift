@@ -187,13 +187,12 @@ extension PaydirektEditViewController: WKNavigationDelegate {
 
         // handle our redirect URLs
         if let requestUrl = navigationAction.request.url?.absoluteString {
-            let rootPath = SnabbleBundle.rootCaPath()
             switch requestUrl {
             case RedirectStatus.success.url:
                 guard
                     let cert = SnabbleAPI.certificates.first,
                     let auth = self.clientAuthorization,
-                    let data = PaydirektData(cert.data, auth, self.authData, rootPath)
+                    let data = PaydirektData(cert.data, auth, self.authData)
                 else {
                     return
                 }

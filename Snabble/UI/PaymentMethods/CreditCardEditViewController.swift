@@ -229,8 +229,7 @@ extension CreditCardEditViewController: WKScriptMessageHandler {
 
         let connectResponse = ConnectGatewayResponse(response: eventData)
 
-        let rootPath = SnabbleBundle.rootCaPath()
-        if let ccData = CreditCardData(connectResponse, projectId, storeId, certificate: cert.data, rootPath) {
+        if let ccData = CreditCardData(connectResponse, projectId, storeId, certificate: cert.data) {
             let detail = PaymentMethodDetail(ccData)
             PaymentMethodDetails.save(detail)
             self.analyticsDelegate?.track(.paymentMethodAdded(detail.rawMethod.displayName))

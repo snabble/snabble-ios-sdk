@@ -183,8 +183,7 @@ public final class SepaEditViewController: UIViewController {
         }
 
         if valid && !name.isEmpty {
-            let rootPath = SnabbleBundle.rootCaPath()
-            if let cert = SnabbleAPI.certificates.first, let sepaData = SepaData(cert.data, name, iban, rootPath) {
+            if let cert = SnabbleAPI.certificates.first, let sepaData = SepaData(cert.data, name, iban) {
                 let detail = PaymentMethodDetail(sepaData)
                 PaymentMethodDetails.save(detail)
                 self.analyticsDelegate?.track(.paymentMethodAdded(detail.rawMethod.displayName))
