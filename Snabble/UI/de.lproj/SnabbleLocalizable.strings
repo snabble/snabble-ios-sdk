@@ -31,7 +31,7 @@
 /* ********* Snabble ********* */
 "Snabble.Cancel" = "Abbrechen";
 
-"Snabble.CC.3dsecureHint" = "Zur Verifizierung deiner Kreditkarte wirst du nach Eingabe der Daten zu deiner Bank weitergeleitet. Dort wirst du gebeten, einer Zahlung von 1,00 € an snabble zuzustimmen. Der Betrag wird dir nach deiner Zustimmung sofort wieder gutgeschrieben.";
+"Snabble.CC.3dsecureHint.retailer" = "Zur Verifizierung deiner Kreditkarte wirst du nach Eingabe der Daten zu deiner Bank weitergeleitet. Dort wirst du gebeten, einer Zahlung von 1,00 € an %@ zuzustimmen. Der Betrag wird dir nach deiner Zustimmung sofort wieder gutgeschrieben.";
 
 "Snabble.CC.cardNumber" = "Kartennummer";
 

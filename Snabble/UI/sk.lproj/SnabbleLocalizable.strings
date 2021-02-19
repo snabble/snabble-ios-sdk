@@ -31,7 +31,7 @@
 /* ********* Snabble ********* */
 "Snabble.Cancel" = "Zrušiť";
 
-"Snabble.CC.3dsecureHint" = "Za účelom overenia kreditnej karty budeš po zadaní údajov presmerovaný/presmerovaná na tvoju banku. Tam budeš požiadaný o súhlas s platbou 1,00 € pre snabble. Po súhlase ti bude suma okamžite opäť pripísaná na účet.";
+"Snabble.CC.3dsecureHint.retailer" = "Za účelom overenia kreditnej karty budeš po zadaní údajov presmerovaný/presmerovaná na tvoju banku. Tam budeš požiadaný o súhlas s platbou 1,00 € pre %@. Po súhlase ti bude suma okamžite opäť pripísaná na účet.";
 
 "Snabble.CC.cardNumber" = "Číslo karty";
 
@@ -176,9 +176,9 @@
 
 "Snabble.PaymentMethods.forSingleRetailer" = "Pre jednotlivé obchody";
 
-"Snabble.PaymentMethods.noCodeAlert.biometry" = "Tvoj iPhone nie je chránený ani kódom, ani funkciou Touch ID/Face ID. V záujme svojej ochrany pred zadaním svojho čísla IBAN najprv nastav túto ochranu.";
+"Snabble.PaymentMethods.noCodeAlert.biometry" = "Tvoj iPhone nie je chránený ani kódom, ani funkciou Touch ID/Face ID. V záujme svojej bezpečnosti pred zadaním IBAN alebo platobnej karty najprv nastav túto ochranu.";
 
-"Snabble.PaymentMethods.noCodeAlert.noBiometry" = "Tvoj iPhone nie je chránený kódom. V záujme svojej ochrany pred zadaním svojho čísla IBAN najprv nastav túto ochranu.";
+"Snabble.PaymentMethods.noCodeAlert.noBiometry" = "Tvoj iPhone nie je chránený kódom. V záujme svojej bezpečnosti pred zadaním IBAN alebo platobnej karty najprv nastav túto ochranu.";
 
 "Snabble.PaymentMethods.noDeviceCode" = "Nepodporovaný iPhone";
 

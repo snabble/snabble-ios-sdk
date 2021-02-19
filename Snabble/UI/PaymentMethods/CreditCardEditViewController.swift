@@ -164,11 +164,20 @@ public final class CreditCardEditViewController: UIViewController {
             .replacingOccurrences(of: "{{hash}}", with: vaultItem.hash)
             .replacingOccurrences(of: "{{paymentMethod}}", with: self.brand?.paymentMethod ?? "V")
             .replacingOccurrences(of: "{{locale}}", with: Locale.current.identifier)
-            .replacingOccurrences(of: "{{header}}", with: "Snabble.CC.3dsecureHint".localized())
+            .replacingOccurrences(of: "{{header}}", with: threeDSecureHint(for: projectId))
             .replacingOccurrences(of: "{{hostedDataId}}", with: UUID().uuidString)
             .replacingOccurrences(of: "{{orderId}}", with: vaultItem.orderId)
 
         self.webView.loadHTMLString(page, baseURL: nil)
+    }
+
+    private func threeDSecureHint(for projectId: Identifier<Project>?) -> String {
+        var projectName = "snabble"
+        if let projectId = self.projectId, let project = SnabbleAPI.project(for: projectId) {
+            projectName = project.name
+        }
+
+        return String(format: "Snabble.CC.3dsecureHint.retailer".localized(), projectName)
     }
 
     private func setupWebView() {

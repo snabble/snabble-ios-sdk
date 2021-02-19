@@ -31,7 +31,7 @@
 /* ********* Snabble ********* */
 "Snabble.Cancel" = "Mégsem";
 
-"Snabble.CC.3dsecureHint" = "A hitelkártyád azonosítása érdekében az adatok bevitelét követően átlépsz a bankodhoz. Ott a rendszer arra kér, hogy 1,00 €-t fizess a snabble részére. Hozzájárulásodat követően ezt az összeget azonnal jóváírjuk.";
+"Snabble.CC.3dsecureHint.retailer" = "A hitelkártyád azonosítása érdekében az adatok bevitelét követően átlépsz a bankodhoz. Ott a rendszer arra kér, hogy 1,00 €-t fizess a %@ részére. Hozzájárulásodat követően ezt az összeget azonnal jóváírjuk.";
 
 "Snabble.CC.cardNumber" = "Kártyaszám";
 
@@ -176,9 +176,9 @@
 
 "Snabble.PaymentMethods.forSingleRetailer" = "Egy kereskedőnél érvényes";
 
-"Snabble.PaymentMethods.noCodeAlert.biometry" = "Az iPhone-od nem védi se kód, se Touch ID/Face ID. Biztonságod érdekében először ezt állítsd be, és csak ezt követően add meg IBAN-kódod.";
+"Snabble.PaymentMethods.noCodeAlert.biometry" = "Az iPhone-od nem védi se kód, se Touch ID/Face ID. Biztonságod érdekében először ezt állítsd be, és csak ezt követően add meg az IBAN-kódodat vagy a hitelkártyádat.";
 
-"Snabble.PaymentMethods.noCodeAlert.noBiometry" = "Az iPhone-od nem védi kód. Biztonságod érdekében először ezt állítsd be, és csak ezt követően add meg IBAN-kódod.";
+"Snabble.PaymentMethods.noCodeAlert.noBiometry" = "Az iPhone-od nem védi kód. Biztonságod érdekében először ezt állítsd be, és csak ezt követően add meg az IBAN-kódodat vagy a hitelkártyádat.";
 
 "Snabble.PaymentMethods.noDeviceCode" = "Védtelen iPhone";
 
