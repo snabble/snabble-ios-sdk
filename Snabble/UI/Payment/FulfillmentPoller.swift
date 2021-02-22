@@ -10,73 +10,90 @@ extension Notification.Name {
 }
 
 final class FulfillmentPoller {
-    static let shared = FulfillmentPoller()
+    public typealias Handler = (_ fulfillments: [Fulfillment]) -> Void
 
     private var processTimer: Timer?
     private var sessionTask: URLSessionTask?
-    private var project: Project?
-    private var process: CheckoutProcess?
 
-    private init() {}
+    let project: Project
+    let process: CheckoutProcess
 
-    func startPolling(_ project: Project, _ process: CheckoutProcess) {
-        let allowStart = self.process == nil && self.project == nil
-        assert(allowStart, "FulfillmentPoller already running")
-        guard allowStart else {
-            return
-        }
-
+    init(project: Project, process: CheckoutProcess) {
         self.project = project
         self.process = process
-
-        self.startTimer()
     }
 
-    // MARK: - polling timer
-    private func startTimer() {
-        guard
-            let process = self.process,
-            let project = self.project
-        else {
-            return
-        }
+    deinit {
+        cancel()
+    }
 
-        self.processTimer = Timer.scheduledTimer(withTimeInterval: 1, repeats: false) { _ in
-            process.update(project,
-                           taskCreated: { self.sessionTask = $0 },
-                           completion: { self.update($0) })
+    func start(
+        progressHandler: @escaping Handler,
+        completionHandler: @escaping Handler
+    ) {
+        processTimer?.invalidate()
+        processTimer = Timer.scheduledTimer(
+            withTimeInterval: 1,
+            repeats: false
+        ) { [unowned self] _ in
+            process.update(
+                project,
+                taskCreated: {
+                    sessionTask = $0
+                },
+                completion: {
+                    update(
+                        result: $0,
+                        progressHandler: progressHandler,
+                        completionHandler: completionHandler
+                    )
+                })
         }
     }
 
-    private func stopPolling() {
-        self.processTimer?.invalidate()
-        self.processTimer = nil
+    private func cancel() {
+        processTimer?.invalidate()
+        processTimer = nil
 
-        self.sessionTask?.cancel()
-        self.sessionTask = nil
-
-        self.project = nil
-        self.process = nil
+        sessionTask?.cancel()
+        sessionTask = nil
     }
 
     // MARK: - process updates
-    private func update(_ result: RawResult<CheckoutProcess, SnabbleError>) {
-        var continuePolling = true
+    private func update(
+        result: RawResult<CheckoutProcess, SnabbleError>,
+        progressHandler: @escaping Handler,
+        completionHandler: @escaping Handler
+    ) {
+        let continuePolling: Bool
         switch result.result {
         case .success(let process):
-            continuePolling = self.checkFulfillmentStatus(process, result.rawJson)
+            continuePolling = checkFulfillmentStatus(
+                for: process,
+                with: result.rawJson,
+                progressHandler: progressHandler,
+                completionHandler: completionHandler
+            )
         case .failure(let error):
+            continuePolling = true
             Log.error(String(describing: error))
         }
 
         if continuePolling {
-            self.startTimer()
+            start(progressHandler: progressHandler, completionHandler: completionHandler)
+            progressHandler(process.fulfillments)
         } else {
-            self.stopPolling()
+            cancel()
+            completionHandler(process.fulfillments)
         }
     }
 
-    func checkFulfillmentStatus(_ process: CheckoutProcess, _ rawJson: [String: Any]?) -> Bool {
+    private func checkFulfillmentStatus(
+        for process: CheckoutProcess,
+        with rawJson: [String: Any]?,
+        progressHandler: @escaping Handler,
+        completionHandler: @escaping Handler
+    ) -> Bool {
         let fulfillments = process.fulfillments
         let count = fulfillments.count
 
@@ -99,8 +116,7 @@ final class FulfillmentPoller {
         } else {
             Log.debug("fulfillment poller: waiting for \(count), ended so far=\(ended)")
             NotificationCenter.default.post(name: .snabbleFulfillmentsUpdate, object: self, userInfo: userInfo)
+            return true
         }
-
-        return true
     }
 }

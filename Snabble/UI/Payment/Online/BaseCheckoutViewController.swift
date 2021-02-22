@@ -33,6 +33,8 @@ public class BaseCheckoutViewController: UIViewController {
     private var sessionTask: URLSessionTask?
     private var processTimer: Timer?
 
+    private var fulfillmentPoller: FulfillmentPoller?
+
     init(_ process: CheckoutProcess, _ rawJson: [String: Any]?, _ cart: ShoppingCart, _ delegate: PaymentDelegate) {
         self.process = process
         self.rawJson = rawJson
@@ -275,9 +277,19 @@ public class BaseCheckoutViewController: UIViewController {
         if success {
             self.cart.removeAll(endSession: true, keepBackup: false)
 
+            print("Fulfillments: ", process.fulfillments)
             // poll fulfillments if there are any in a non-finished state
             if !process.fulfillmentsDone() {
-                FulfillmentPoller.shared.startPolling(SnabbleUI.project, process)
+                print("fulfillments: incompleted")
+                fulfillmentPoller = FulfillmentPoller(project: SnabbleUI.project, process: process)
+                fulfillmentPoller?.start(
+                    progressHandler: { (fulfillments) in
+                        print("fulfillments: ", fulfillments)
+                    },
+                    completionHandler: { (isFinished) in
+                        print("isFinished: ", isFinished)
+                    }
+                )
             }
 
             // if we're using exit tokens, wait for a valid token
