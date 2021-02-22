@@ -402,28 +402,3 @@ public struct Project: Decodable, Identifiable {
         return formatter.currencySymbol
     }
 }
-
-extension Project {
-    #warning("FIXME")
-    public func getEntryToken(completion: @escaping (Result<String, SnabbleError>) -> Void) {
-        DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
-            let token = "snabble;de_DE;\(UUID().uuidString)"
-            completion(.success(token))
-        }
-    }
-//    public func getEntryToken(completion: @escaping (Result<String, SnabbleError>) -> Void) {
-//        guard let url = links.entryToken?.href else {
-//            return completion(.failure(SnabbleError.invalid))
-//        }
-//
-//        self.request(.post, url, timeout: 2) { request in
-//            guard let request = request else {
-//                return completion(.failure(SnabbleError.noRequest))
-//            }
-//
-//            self.perform(request) { (_ result: Result<String, SnabbleError>) in
-//                completion(result)
-//            }
-//        }
-//    }
-}
