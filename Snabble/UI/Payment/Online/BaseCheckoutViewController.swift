@@ -287,9 +287,11 @@ public class BaseCheckoutViewController: UIViewController {
                         print("fulfillments: ", fulfillments)
                     },
                     completionHandler: { (isFinished) in
-                        print("isFinished: ", isFinished)
+                        print("fulfillments: ", isFinished)
+                        self.paymentFinalized(success, process, rawJson)
                     }
                 )
+                return
             }
 
             // if we're using exit tokens, wait for a valid token

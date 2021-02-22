@@ -10,7 +10,7 @@ extension Notification.Name {
 }
 
 final class FulfillmentPoller {
-    public typealias Handler = (_ fulfillments: [Fulfillment]) -> Void
+    typealias Handler = (_ fulfillments: [Fulfillment]) -> Void
 
     private var processTimer: Timer?
     private var sessionTask: URLSessionTask?
@@ -35,7 +35,8 @@ final class FulfillmentPoller {
         processTimer = Timer.scheduledTimer(
             withTimeInterval: 1,
             repeats: false
-        ) { [unowned self] _ in
+        ) { [unowned self] timer in
+            guard timer.isValid else { return }
             process.update(
                 project,
                 taskCreated: {
