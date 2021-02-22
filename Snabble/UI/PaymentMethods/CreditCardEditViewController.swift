@@ -172,12 +172,12 @@ public final class CreditCardEditViewController: UIViewController {
     }
 
     private func threeDSecureHint(for projectId: Identifier<Project>?) -> String {
-        var projectName = "snabble"
+        var name = "snabble"
         if let projectId = self.projectId, let project = SnabbleAPI.project(for: projectId) {
-            projectName = project.name
+            name = project.company?.name ?? project.name
         }
 
-        return String(format: "Snabble.CC.3dsecureHint.retailer".localized(), projectName)
+        return String(format: "Snabble.CC.3dsecureHint.retailer".localized(), name)
     }
 
     private func setupWebView() {

@@ -1,6 +1,10 @@
-## snabble iOS SDK Changelog
+## snabble iOS SDK Changelogj
 
-# v0.16.0 [unreleased]
+# v0.16.2
+
+- Fixes the explanatory text when adding credit card data
+
+# v0.16.0
 
 - Changed the UI and the internal handling of payment methods to conform with PSD2 regulations
 

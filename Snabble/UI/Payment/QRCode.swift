@@ -31,7 +31,7 @@ public enum QRCode {
         let ciContext = CIContext()
         if let ciImage = filter.outputImage, let cgImage = ciContext.createCGImage(ciImage, from: ciImage.extent) {
             let size = ciImage.extent.size
-            let scale = CGFloat(scale)
+            let scale = CGFloat(scale) * UIScreen.main.scale
             UIGraphicsBeginImageContext(CGSize(width: size.width * scale, height: size.height * scale))
             guard let context = UIGraphicsGetCurrentContext() else {
                 return nil
@@ -43,7 +43,7 @@ public enum QRCode {
             context.draw(cgImage, in: context.boundingBoxOfClipPath)
 
             if let rawImage = UIGraphicsGetImageFromCurrentImageContext(), let cgImage = rawImage.cgImage {
-                return UIImage(cgImage: cgImage, scale: rawImage.scale, orientation: .rightMirrored)
+                return UIImage(cgImage: cgImage, scale: UIScreen.main.scale, orientation: .rightMirrored)
             }
         }
 
