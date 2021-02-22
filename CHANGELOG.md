@@ -1,6 +1,6 @@
 ## snabble iOS SDK Changelogj
 
-# v0.16.1
+# v0.16.2
 
 - Fixes the explanatory text when adding credit card data
 
