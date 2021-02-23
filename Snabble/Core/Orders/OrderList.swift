@@ -19,7 +19,7 @@ public struct OrderList: Decodable {
     }
 }
 
-public struct Order: Codable {
+public struct Order: Decodable {
     public let projectId: Identifier<Project>
     public let id: String
     public let date: Date
@@ -35,34 +35,6 @@ public struct Order: Codable {
     enum CodingKeys: String, CodingKey {
         case projectId = "project", id, date, shopName, price, links
         case shopId = "shopID"
-    }
-
-    public init(from decoder: Decoder) throws {
-        let container = try decoder.container(keyedBy: CodingKeys.self)
-
-        self.projectId = try container.decode(Identifier<Project>.self, forKey: .projectId)
-        self.id = try container.decode(String.self, forKey: .id)
-        let date = try container.decode(String.self, forKey: .date)
-        self.date = Snabble.iso8601Formatter.date(from: date) ?? Date()
-
-        self.shopId = try container.decode(String.self, forKey: .shopId)
-        self.shopName = try container.decode(String.self, forKey: .shopName)
-        self.price = try container.decode(Int.self, forKey: .price)
-        self.links = try container.decode(.links, as: OrderLinks.self)
-    }
-
-    public func encode(to encoder: Encoder) throws {
-        var container = encoder.container(keyedBy: CodingKeys.self)
-
-        try container.encode(self.projectId, forKey: .projectId)
-        try container.encode(self.id, forKey: .id)
-        let dateStr = Snabble.iso8601Formatter.string(from: self.date)
-        try container.encode(dateStr, forKey: .date)
-
-        try container.encode(self.shopId, forKey: .shopId)
-        try container.encode(self.shopName, forKey: .shopName)
-        try container.encode(self.price, forKey: .price)
-        try container.encode(self.links, forKey: .links)
     }
 }
 
