@@ -205,7 +205,9 @@ extension Project {
         self.request(method, url, true, true, timeout) { request in
             do {
                 var urlRequest = request
-                urlRequest.httpBody = try JSONEncoder().encode(body)
+                let encoder = JSONEncoder()
+                encoder.dateEncodingStrategy = .iso8601
+                urlRequest.httpBody = try encoder.encode(body)
                 completion(urlRequest)
             } catch {
                 self.logError("error serializing request body: \(error)")
@@ -351,7 +353,9 @@ extension Project {
                 }
                 if let data = rawData {
                     do {
-                        let error = try JSONDecoder().decode(SnabbleError.self, from: data)
+                        let decoder = JSONDecoder()
+                        decoder.dateDecodingStrategy = .customISO8601
+                        let error = try decoder.decode(SnabbleError.self, from: data)
                         self.logError("error response: \(String(describing: error))")
                         apiError = error
                     } catch {
@@ -373,7 +377,9 @@ extension Project {
                 return
             }
             do {
-                let result = try JSONDecoder().decode(T.self, from: data)
+                let decoder = JSONDecoder()
+                decoder.dateDecodingStrategy = .customISO8601
+                let result = try decoder.decode(T.self, from: data)
                 var json: [String: Any]?
                 if returnRaw {
                     json = try JSONSerialization.jsonObject(with: data, options: .allowFragments) as? [String: Any]

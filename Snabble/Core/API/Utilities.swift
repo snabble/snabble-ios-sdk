@@ -47,11 +47,29 @@ enum Log {
     }
 }
 
-let iso8601Formatter: ISO8601DateFormatter = {
-    let fmt = ISO8601DateFormatter()
-    fmt.timeZone = TimeZone(identifier: "UTC") ?? TimeZone.current
-    fmt.formatOptions = .withInternetDateTime
-    fmt.formatOptions.insert(.withFractionalSeconds)
+// MARK: - ISO8601/RFC3339 date formatting
+extension Formatter {
+    static let iso8601withFractionalSeconds: ISO8601DateFormatter = {
+        let formatter = ISO8601DateFormatter()
+        formatter.formatOptions = [.withInternetDateTime, .withFractionalSeconds]
+        return formatter
+    }()
 
-    return fmt
-}()
+    static let iso8601: ISO8601DateFormatter = {
+        let formatter = ISO8601DateFormatter()
+        formatter.formatOptions = [.withInternetDateTime]
+        return formatter
+    }()
+}
+
+// provide a date decoding strategy that can actually parse ISO8601 dates, including those with fractional seconds
+extension JSONDecoder.DateDecodingStrategy {
+    static let customISO8601 = custom {
+        let container = try $0.singleValueContainer()
+        let string = try container.decode(String.self)
+        if let date = Formatter.iso8601withFractionalSeconds.date(from: string) ?? Formatter.iso8601.date(from: string) {
+            return date
+        }
+        throw DecodingError.dataCorruptedError(in: container, debugDescription: "Invalid date: \(string)")
+    }
+}

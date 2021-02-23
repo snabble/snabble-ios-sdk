@@ -88,7 +88,7 @@ extension SignedCheckoutInfo {
 
             if let finalizedAt = finalizedAt {
                 dict["processedOffline"] = true
-                dict["finalizedAt"] = Snabble.iso8601Formatter.string(from: finalizedAt)
+                dict["finalizedAt"] = Formatter.iso8601.string(from: finalizedAt)
             }
 
             if let checkoutInfo = self.rawJson?["checkoutInfo"] as? [String: Any], let session = checkoutInfo["session"] as? String {
