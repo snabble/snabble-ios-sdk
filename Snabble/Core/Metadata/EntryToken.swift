@@ -7,36 +7,44 @@
 import Foundation
 
 public struct EntryToken: Decodable {
-    public let format: String
+    public let format: ScanFormat
     public let value: String
-    #warning("FIXME: date format default?")
-    public let validUntil: String
+    public let validUntil: Date
 }
 
 extension Project {
+
+    // mock
     public func getEntryToken(completion: @escaping (Result<EntryToken, SnabbleError>) -> Void) {
+        let date = Date(timeIntervalSinceNow: 100)
+        let unixTime = Int(Date().timeIntervalSince1970)
+        let value = "snabble:qr:\(UUID().uuidString):\(unixTime)"
+        let json = """
+        {"format": "qr", "value": "\(value)", "validUntil": "\(Formatter.iso8601.string(from: date))"}
+        """.data(using: .utf8)!
+
         DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
-            let date = Date(timeIntervalSinceNow: 100)
-            let token = EntryToken(format: "qr",
-                                   value: "\(UUID().uuidString)",
-                                   validUntil: Snabble.iso8601Formatter.string(from: date))
+            let decoder = JSONDecoder()
+            decoder.dateDecodingStrategy = .customISO8601
+            // swiftlint:disable:next force_try
+            let token = try! decoder.decode(EntryToken.self, from: json)
             completion(.success(token))
         }
     }
 
-    public func getEntryToken2(completion: @escaping (Result<EntryToken, SnabbleError>) -> Void) {
-        guard let url = links.entryToken?.href else {
-            return completion(.failure(SnabbleError.invalid))
-        }
-
-        self.request(.post, url, timeout: 2) { request in
-            guard let request = request else {
-                return completion(.failure(SnabbleError.noRequest))
-            }
-
-            self.perform(request) { (_ result: Result<EntryToken, SnabbleError>) in
-                completion(result)
-            }
-        }
-    }
+//    public func getEntryToken(completion: @escaping (Result<EntryToken, SnabbleError>) -> Void) {
+//        guard let url = links.entryToken?.href else {
+//            return completion(.failure(SnabbleError.invalid))
+//        }
+//
+//        self.request(.post, url, timeout: 2) { request in
+//            guard let request = request else {
+//                return completion(.failure(SnabbleError.noRequest))
+//            }
+//
+//            self.perform(request) { (_ result: Result<EntryToken, SnabbleError>) in
+//                completion(result)
+//            }
+//        }
+//    }
 }
