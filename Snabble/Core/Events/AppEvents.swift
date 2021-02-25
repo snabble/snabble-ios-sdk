@@ -62,7 +62,7 @@ struct AppEvent: Encodable {
     private let appId: String
     private let payload: Payload
     private let projectId: Identifier<Project>
-    private let timestamp: String
+    private let timestamp: Date
 
     private let shopId: Identifier<Shop>?
     private let id: String?
@@ -76,18 +76,6 @@ struct AppEvent: Encodable {
         case shopId, id, agent
     }
 
-    func encode(to encoder: Encoder) throws {
-        var container = encoder.container(keyedBy: CodingKeys.self)
-        try container.encode(self.type, forKey: .type)
-        try container.encode(self.appId, forKey: .appId)
-        try container.encode(self.payload, forKey: .payload)
-        try container.encode(self.projectId, forKey: .projectId)
-        try container.encode(self.timestamp, forKey: .timestamp)
-        try container.encode(self.shopId, forKey: .shopId)
-        try container.encode(self.id, forKey: .id)
-        try container.encode(self.agent, forKey: .agent)
-    }
-
     private init(type: EventType, payload: Payload, project: Project,
                  shopId: Identifier<Shop>? = nil, id: String? = nil, agent: String? = nil) {
         self.type = type
@@ -98,7 +86,7 @@ struct AppEvent: Encodable {
         self.projectId = project.id
         self.id = id
         self.agent = agent
-        self.timestamp = Snabble.iso8601Formatter.string(from: Date())
+        self.timestamp = Date()
     }
 
     init(_ type: EventType, session: String, project: Project, shopId: Identifier<Shop>? = nil) {
@@ -159,7 +147,9 @@ extension AppEvent {
             request.httpMethod = "POST"
 
             do {
-                request.httpBody = try JSONEncoder().encode(self)
+                let encoder = JSONEncoder()
+                encoder.dateEncodingStrategy = .iso8601
+                request.httpBody = try encoder.encode(self)
                 request.addValue(token, forHTTPHeaderField: "Client-Token")
             } catch {
                 Log.error("\(error)")
