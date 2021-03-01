@@ -1,5 +1,9 @@
 ## snabble iOS SDK Changelogj
 
+# v0.16.3 (unreleased)
+
+- Adds support for entry tokens
+
 # v0.16.2
 
 - Fixes the explanatory text when adding credit card data
