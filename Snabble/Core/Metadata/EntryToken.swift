@@ -12,39 +12,29 @@ public struct EntryToken: Decodable {
     public let validUntil: Date
 }
 
+private struct EntryTokenRequest: Encodable {
+    let shopID: Identifier<Shop>
+}
+
 extension Project {
 
-    // mock
-    public func getEntryToken(completion: @escaping (Result<EntryToken, SnabbleError>) -> Void) {
-        let date = Date(timeIntervalSinceNow: 100)
-        let unixTime = Int(Date().timeIntervalSince1970)
-        let value = "snabble:qr:\(UUID().uuidString):\(unixTime)"
-        let json = """
-        {"format": "qr", "value": "\(value)", "validUntil": "\(Formatter.iso8601.string(from: date))"}
-        """.data(using: .utf8)!
+    public func getEntryToken(for shopId: Identifier<Shop>, completion: @escaping (Result<EntryToken, SnabbleError>) -> Void) {
+        let tokenRequest = EntryTokenRequest(shopID: shopId)
 
-        DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
-            let decoder = JSONDecoder()
-            decoder.dateDecodingStrategy = .customISO8601
-            // swiftlint:disable:next force_try
-            let token = try! decoder.decode(EntryToken.self, from: json)
-            completion(.success(token))
+        guard
+            let url = links.entryToken?.href,
+            let data = try? JSONEncoder().encode(tokenRequest)
+        else {
+            return completion(.failure(SnabbleError.invalid))
+        }
+
+        self.request(.post, url, body: data, timeout: 2) { request in
+            guard let request = request else {
+                return completion(.failure(SnabbleError.noRequest))
+            }
+
+            self.perform(request, completion)
         }
     }
 
-//    public func getEntryToken(completion: @escaping (Result<EntryToken, SnabbleError>) -> Void) {
-//        guard let url = links.entryToken?.href else {
-//            return completion(.failure(SnabbleError.invalid))
-//        }
-//
-//        self.request(.post, url, timeout: 2) { request in
-//            guard let request = request else {
-//                return completion(.failure(SnabbleError.noRequest))
-//            }
-//
-//            self.perform(request) { (_ result: Result<EntryToken, SnabbleError>) in
-//                completion(result)
-//            }
-//        }
-//    }
 }
