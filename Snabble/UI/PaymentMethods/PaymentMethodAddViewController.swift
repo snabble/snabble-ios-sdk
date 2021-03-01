@@ -269,12 +269,10 @@ extension PaymentMethodAddViewController {
             .sorted { $0.displayName < $1.displayName }
 
         let sheet = AlertController(title: "Snabble.PaymentMethods.choose".localized(), message: nil, preferredStyle: .actionSheet)
+        sheet.visualStyle = .snabbleActionSheet
+
         methods.forEach { method in
-            let title = NSAttributedString(string: method.displayName, attributes: [
-                .foregroundColor: UIColor.label,
-                .font: UIFont.systemFont(ofSize: 17)
-            ])
-            let action = AlertAction(attributedTitle: title, style: .normal) { [self] _ in
+            let action = AlertAction(title: method.displayName, style: .normal) { [self] _ in
                 if method.isAddingAllowed(showAlertOn: self),
                    let controller = method.editViewController(with: projectId, showFromCart: self.showFromCart, analyticsDelegate) {
                     if SnabbleUI.implicitNavigation {
@@ -288,11 +286,7 @@ extension PaymentMethodAddViewController {
             sheet.addAction(action)
         }
 
-        let cancelTitle = NSAttributedString(string: "Snabble.Cancel".localized(), attributes: [
-            .font: UIFont.systemFont(ofSize: 17, weight: .medium),
-            .foregroundColor: UIColor.label
-        ])
-        sheet.addAction(AlertAction(attributedTitle: cancelTitle, style: .preferred, handler: nil))
+        sheet.addAction(AlertAction(title: "Snabble.Cancel".localized(), style: .preferred, handler: nil))
 
         self.present(sheet, animated: true)
     }
