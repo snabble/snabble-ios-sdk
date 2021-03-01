@@ -33,7 +33,7 @@ public class BaseCheckoutViewController: UIViewController {
     private var sessionTask: URLSessionTask?
     private var processTimer: Timer?
 
-    private var fulfillmentPoller: FulfillmentPoller?
+    private var postPaymentManager: PostPaymentManager?
 
     init(_ process: CheckoutProcess, _ rawJson: [String: Any]?, _ cart: ShoppingCart, _ delegate: PaymentDelegate) {
         self.process = process
@@ -275,43 +275,43 @@ public class BaseCheckoutViewController: UIViewController {
 
     private func paymentFinished(_ success: Bool, _ process: CheckoutProcess, _ rawJson: [String: Any]?) {
         if success {
-            self.cart.removeAll(endSession: true, keepBackup: false)
+            cart.removeAll(endSession: true, keepBackup: false)
 
-            print("Fulfillments: ", process.fulfillments)
-            // poll fulfillments if there are any in a non-finished state
-            if !process.fulfillmentsDone() {
-                print("fulfillments: incompleted")
-                fulfillmentPoller = FulfillmentPoller(project: SnabbleUI.project, process: process)
-                fulfillmentPoller?.start(
-                    progressHandler: { (fulfillments) in
-                        print("fulfillments: ", fulfillments)
-                    },
-                    completionHandler: { (isFinished) in
-                        print("fulfillments: ", isFinished)
-                        self.paymentFinalized(success, process, rawJson)
-                    }
-                )
-                return
-            }
-
-            // if we're using exit tokens, wait for a valid token
-            let waitForToken = process.exitToken != nil && process.exitToken?.value == nil
-            if waitForToken {
-                ExitTokenPoller.shared.startPolling(SnabbleUI.project, process) { process, rawJson in
-                    self.paymentFinalized(success, process, rawJson)
-                }
-                return
-            }
+            postPaymentManager = PostPaymentManager(
+                project: SnabbleUI.project,
+                checkoutProcess: process
+            )
+            postPaymentManager?.delegate = self
+            postPaymentManager?.start()
         } else {
-            self.cart.generateNewUUID()
+            cart.generateNewUUID()
+            paymentFinalized(success, process, rawJson)
         }
-
-        self.paymentFinalized(success, process, rawJson)
     }
 
     private func paymentFinalized(_ success: Bool, _ process: CheckoutProcess, _ rawJson: [String: Any]?) {
         SnabbleAPI.fetchAppUserData(SnabbleUI.project.id)
         self.delegate?.paymentFinished(success, self.cart, process, rawJson)
+    }
+}
+
+extension BaseCheckoutViewController: PostPaymentManagerDelegate {
+    func postPaymentManager(
+        _ poller: PostPaymentManager,
+        didUpdateCheckoutProcess checkoutProcess: CheckoutProcess,
+        withRawJson rawJson: [String: Any]?,
+        includesExitToken exitToken: Bool,
+        forProject project: Project
+    ) {}
+
+    func postPaymentManager(
+        _ poller: PostPaymentManager,
+        didCompleteCheckoutProcess checkoutProcess: CheckoutProcess,
+        withRawJson rawJson: [String: Any]?,
+        includesExitToken exitToken: Bool,
+        forProject project: Project
+    ) {
+        self.paymentFinalized(true, checkoutProcess, rawJson)
     }
 }
 
