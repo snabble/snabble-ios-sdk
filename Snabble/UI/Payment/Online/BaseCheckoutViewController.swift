@@ -297,14 +297,14 @@ public class BaseCheckoutViewController: UIViewController {
 
 extension BaseCheckoutViewController: PostPaymentManagerDelegate {
     func postPaymentManager(
-        _ poller: PostPaymentManager,
+        _ manager: PostPaymentManager,
         didUpdateCheckoutProcess checkoutProcess: CheckoutProcess,
         withRawJson rawJson: [String: Any]?,
         forProject project: Project
     ) {}
 
     func postPaymentManager(
-        _ poller: PostPaymentManager,
+        _ manager: PostPaymentManager,
         didCompleteCheckoutProcess checkoutProcess: CheckoutProcess,
         withRawJson rawJson: [String: Any]?,
         forProject project: Project
