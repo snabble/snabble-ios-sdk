@@ -1,7 +1,7 @@
 //
-//  FulfillmentPoller.swift
+//  PostPaymentManager.swift
 //
-//  Copyright © 2020 snabble. All rights reserved.
+//  Copyright © 2021 snabble. All rights reserved.
 //
 
 extension Notification.Name {
