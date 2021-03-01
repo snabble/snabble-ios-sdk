@@ -149,9 +149,8 @@ final class PostPaymentManager {
             "failedCount": failed
         ]
 
-        let name: NSNotification.Name = finished == count ? .snabbleFulfillmentsDone : .snabbleFulfillmentsUpdate
         NotificationCenter.default.post(
-            name: name,
+            name: finished == count ? .snabbleFulfillmentsDone : .snabbleFulfillmentsUpdate,
             object: self,
             userInfo: userInfo
         )
