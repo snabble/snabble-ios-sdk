@@ -319,6 +319,10 @@ public struct CheckoutProcess: Decodable {
         let states = self.fulfillments.map { $0.state }
         return Set(states).isDisjoint(with: FulfillmentState.workingStates)
     }
+
+    var requiresExitToken: Bool {
+        exitToken != nil
+    }
 }
 
 // MARK: - data we send to the server

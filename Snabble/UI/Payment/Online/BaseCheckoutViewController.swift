@@ -33,6 +33,8 @@ public class BaseCheckoutViewController: UIViewController {
     private var sessionTask: URLSessionTask?
     private var processTimer: Timer?
 
+    private var postPaymentManager: PostPaymentManager?
+
     init(_ process: CheckoutProcess, _ rawJson: [String: Any]?, _ cart: ShoppingCart, _ delegate: PaymentDelegate) {
         self.process = process
         self.rawJson = rawJson
@@ -273,31 +275,49 @@ public class BaseCheckoutViewController: UIViewController {
 
     private func paymentFinished(_ success: Bool, _ process: CheckoutProcess, _ rawJson: [String: Any]?) {
         if success {
-            self.cart.removeAll(endSession: true, keepBackup: false)
+            cart.removeAll(endSession: true, keepBackup: false)
 
-            // poll fulfillments if there are any in a non-finished state
-            if !process.fulfillmentsDone() {
-                FulfillmentPoller.shared.startPolling(SnabbleUI.project, process)
-            }
-
-            // if we're using exit tokens, wait for a valid token
-            let waitForToken = process.exitToken != nil && process.exitToken?.value == nil
-            if waitForToken {
-                ExitTokenPoller.shared.startPolling(SnabbleUI.project, process) { process, rawJson in
-                    self.paymentFinalized(success, process, rawJson)
-                }
-                return
-            }
+            postPaymentManager = PostPaymentManager(
+                project: SnabbleUI.project,
+                checkoutProcess: process
+            )
+            postPaymentManager?.delegate = self
+            postPaymentManager?.start()
         } else {
-            self.cart.generateNewUUID()
+            cart.generateNewUUID()
+            paymentFinalized(success, process, rawJson)
         }
-
-        self.paymentFinalized(success, process, rawJson)
     }
 
     private func paymentFinalized(_ success: Bool, _ process: CheckoutProcess, _ rawJson: [String: Any]?) {
         SnabbleAPI.fetchAppUserData(SnabbleUI.project.id)
         self.delegate?.paymentFinished(success, self.cart, process, rawJson)
+    }
+}
+
+extension BaseCheckoutViewController: PostPaymentManagerDelegate {
+    func postPaymentManager(
+        _ manager: PostPaymentManager,
+        didUpdateCheckoutProcess checkoutProcess: CheckoutProcess,
+        withRawJson rawJson: [String: Any]?,
+        forProject project: Project
+    ) {}
+
+    func postPaymentManager(
+        _ manager: PostPaymentManager,
+        didCompleteCheckoutProcess checkoutProcess: CheckoutProcess,
+        withRawJson rawJson: [String: Any]?,
+        forProject project: Project
+    ) {
+        paymentFinalized(true, checkoutProcess, rawJson)
+    }
+
+    func shouldRetryFailedUpdate(
+        on manager: PostPaymentManager,
+        withCheckoutProcess checkoutProcess: CheckoutProcess,
+        forProject project: Project
+    ) -> Bool {
+        true
     }
 }
 
