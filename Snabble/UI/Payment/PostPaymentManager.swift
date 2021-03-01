@@ -84,9 +84,9 @@ final class PostPaymentManager {
         case .success(let process):
             validateProcess(
                 for: process,
-                with: result.rawJson
+                withRawJson: result.rawJson
             )
-            notifications(
+            postNotification(
                 for: process,
                 withRawJson: result.rawJson
             )
@@ -105,7 +105,7 @@ final class PostPaymentManager {
 
     private func validateProcess(
         for process: CheckoutProcess,
-        with rawJson: [String: Any]?
+        withRawJson rawJson: [String: Any]?
     ) {
         let isCompleted: Bool
         if process.requiresExitToken {
@@ -133,7 +133,7 @@ final class PostPaymentManager {
         }
     }
 
-    private func notifications(for process: CheckoutProcess, withRawJson rawJson: [String: Any]?) {
+    private func postNotification(for process: CheckoutProcess, withRawJson rawJson: [String: Any]?) {
         let fulfillments = process.fulfillments
         let count = fulfillments.count
 
