@@ -47,7 +47,7 @@ final class PostPaymentManager {
     }
 
     deinit {
-        cancel()
+        stop()
     }
 
     func start() {
@@ -68,7 +68,7 @@ final class PostPaymentManager {
         }
     }
 
-    private func cancel() {
+    func stop() {
         processTimer?.invalidate()
         processTimer = nil
 
@@ -121,7 +121,7 @@ final class PostPaymentManager {
                 withRawJson: rawJson,
                 forProject: project
             )
-            cancel()
+            stop()
         } else {
             delegate?.postPaymentManager(
                 self,
