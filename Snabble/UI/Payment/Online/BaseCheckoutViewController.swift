@@ -300,7 +300,6 @@ extension BaseCheckoutViewController: PostPaymentManagerDelegate {
         _ poller: PostPaymentManager,
         didUpdateCheckoutProcess checkoutProcess: CheckoutProcess,
         withRawJson rawJson: [String: Any]?,
-        includesExitToken exitToken: Bool,
         forProject project: Project
     ) {}
 
@@ -308,10 +307,17 @@ extension BaseCheckoutViewController: PostPaymentManagerDelegate {
         _ poller: PostPaymentManager,
         didCompleteCheckoutProcess checkoutProcess: CheckoutProcess,
         withRawJson rawJson: [String: Any]?,
-        includesExitToken exitToken: Bool,
         forProject project: Project
     ) {
-        self.paymentFinalized(true, checkoutProcess, rawJson)
+        paymentFinalized(true, checkoutProcess, rawJson)
+    }
+
+    func shouldRetryFailedUpdate(
+        on manager: PostPaymentManager,
+        withCheckoutProcess checkoutProcess: CheckoutProcess,
+        forProject project: Project
+    ) -> Bool {
+        true
     }
 }
 

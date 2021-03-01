@@ -14,7 +14,6 @@ protocol PostPaymentManagerDelegate: AnyObject {
         _ manager: PostPaymentManager,
         didUpdateCheckoutProcess checkoutProcess: CheckoutProcess,
         withRawJson rawJson: [String: Any]?,
-        includesExitToken hasExitToken: Bool,
         forProject project: Project
     )
 
@@ -22,9 +21,14 @@ protocol PostPaymentManagerDelegate: AnyObject {
         _ manager: PostPaymentManager,
         didCompleteCheckoutProcess checkoutProcess: CheckoutProcess,
         withRawJson rawJson: [String: Any]?,
-        includesExitToken hasExitToken: Bool,
         forProject project: Project
     )
+
+    func shouldRetryFailedUpdate(
+        on manager: PostPaymentManager,
+        withCheckoutProcess checkoutProcess: CheckoutProcess,
+        forProject project: Project
+    ) -> Bool
 }
 
 final class PostPaymentManager {
@@ -87,8 +91,15 @@ final class PostPaymentManager {
                 withRawJson: result.rawJson
             )
         case .failure(let error):
-            start()
             Log.error(String(describing: error))
+            let shouldRetry = delegate?.shouldRetryFailedUpdate(
+                on: self,
+                withCheckoutProcess: checkoutProcess,
+                forProject: project
+            )
+            if shouldRetry ?? true {
+                start()
+            }
         }
     }
 
@@ -96,11 +107,8 @@ final class PostPaymentManager {
         for process: CheckoutProcess,
         with rawJson: [String: Any]?
     ) {
-        // Delegation
-        let requiresExitToken = process.exitToken != nil
-
         let isCompleted: Bool
-        if requiresExitToken {
+        if process.requiresExitToken {
             isCompleted = process.fulfillmentsDone() && process.exitToken?.value != nil
         } else {
             isCompleted = process.fulfillmentsDone()
@@ -111,7 +119,6 @@ final class PostPaymentManager {
                 self,
                 didCompleteCheckoutProcess: process,
                 withRawJson: rawJson,
-                includesExitToken: requiresExitToken,
                 forProject: project
             )
             cancel()
@@ -120,7 +127,6 @@ final class PostPaymentManager {
                 self,
                 didUpdateCheckoutProcess: process,
                 withRawJson: rawJson,
-                includesExitToken: requiresExitToken,
                 forProject: project
             )
             start()
