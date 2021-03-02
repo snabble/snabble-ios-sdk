@@ -262,6 +262,8 @@ public class BaseCheckoutViewController: UIViewController {
     private func paymentCancelled() {
         self.stopTimer()
 
+        cart.generateNewUUID()
+
         if SnabbleUI.implicitNavigation {
             if let cartVC = self.navigationController?.viewControllers.first(where: { $0 is ShoppingCartViewController}) {
                 self.navigationController?.popToViewController(cartVC, animated: true)
