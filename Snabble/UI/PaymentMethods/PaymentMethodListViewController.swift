@@ -126,23 +126,17 @@ public final class PaymentMethodListViewController: UITableViewController {
         }
 
         let sheet = AlertController(title: "Snabble.PaymentMethods.choose".localized(), message: nil, preferredStyle: .actionSheet)
+        sheet.visualStyle = .snabbleActionSheet
+
         methods.forEach { method in
-            let title = NSAttributedString(string: method.displayName, attributes: [
-                .foregroundColor: UIColor.label,
-                .font: UIFont.systemFont(ofSize: 17)
-            ])
-            let action = AlertAction(attributedTitle: title, style: .normal) { [self] _ in
+            let action = AlertAction(title: method.displayName, style: .normal) { [self] _ in
                 showEditController(for: method)
             }
             action.imageView.image = method.icon
             sheet.addAction(action)
         }
 
-        let cancelTitle = NSAttributedString(string: "Snabble.Cancel".localized(), attributes: [
-            .font: UIFont.systemFont(ofSize: 17, weight: .medium),
-            .foregroundColor: UIColor.label
-        ])
-        sheet.addAction(AlertAction(attributedTitle: cancelTitle, style: .preferred, handler: nil))
+        sheet.addAction(AlertAction(title: "Snabble.Cancel".localized(), style: .preferred, handler: nil))
 
         self.present(sheet, animated: true)
     }

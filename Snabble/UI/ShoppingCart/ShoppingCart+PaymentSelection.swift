@@ -195,6 +195,7 @@ final class PaymentMethodSelector {
     @objc private func methodSelectionTapped(_ gesture: UITapGestureRecognizer) {
         let title = "Snabble.Shoppingcart.howToPay".localized()
         let sheet = AlertController(title: title, message: nil, preferredStyle: .actionSheet)
+        sheet.visualStyle = .snabbleActionSheet
 
         // combine all payment methods of all projects
         let allAppMethods = Set(SnabbleAPI.projects.flatMap { $0.paymentMethods })
@@ -225,12 +226,7 @@ final class PaymentMethodSelector {
         }
 
         // add the "add method" action
-        let titleAttrs: [NSAttributedString.Key: Any] = [
-            .font: UIFont.systemFont(ofSize: 17),
-            .foregroundColor: UIColor.label
-        ]
-        let addTitle = NSAttributedString(string: "Snabble.Payment.add".localized(), attributes: titleAttrs)
-        let add = AlertAction(attributedTitle: addTitle, style: .normal) { _ in
+        let add = AlertAction(title: "Snabble.Payment.add".localized(), style: .normal) { _ in
             if SnabbleUI.implicitNavigation {
                 let selection = PaymentMethodAddViewController(showFromCart: true, self.parentVC)
                 self.parentVC?.navigationController?.pushViewController(selection, animated: true)
@@ -251,12 +247,7 @@ final class PaymentMethodSelector {
         }
 
         // add the cancel action
-        let cancelAttrs: [NSAttributedString.Key: Any] = [
-            .font: UIFont.systemFont(ofSize: 17, weight: .medium),
-            .foregroundColor: UIColor.label
-        ]
-        let cancelTitle = NSAttributedString(string: "Snabble.Cancel".localized(), attributes: cancelAttrs)
-        sheet.addAction(AlertAction(attributedTitle: cancelTitle, style: .preferred))
+        sheet.addAction(AlertAction(title: "Snabble.Cancel".localized(), style: .preferred))
 
         sheet.shouldDismissHandler = { action in
             if let action = action, let icon = iconMap[action] {
