@@ -1,9 +1,10 @@
 ## snabble iOS SDK Changelogj
 
-# v0.16.3
+# v0.16.4
 
 - Adds support for entry tokens
 - Fixes a bug where SCO payments couldn't be restarted after manual cancellation
+- Fixes a bug where checkout processes weren't aborted even though the associcated checks indicated that this should happen
 
 # v0.16.2
 
