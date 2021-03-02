@@ -19,7 +19,7 @@ public struct OrderList: Decodable {
     }
 }
 
-public struct Order: Decodable {
+public struct Order: Codable {
     public let projectId: Identifier<Project>
     public let id: String
     public let date: Date
