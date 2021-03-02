@@ -299,7 +299,8 @@ extension PaymentProcess {
         UIApplication.shared.beginIgnoringInteractionEvents()
         self.startBlurOverlayTimer()
 
-        self.signedCheckoutInfo.createCheckoutProcess(SnabbleUI.project, id: self.cart.uuid, paymentMethod: method, timeout: 20) { result in
+        let project = SnabbleUI.project
+        self.signedCheckoutInfo.createCheckoutProcess(project, id: self.cart.uuid, paymentMethod: method, timeout: 20) { result in
             self.hudTimer?.invalidate()
             self.hudTimer = nil
             UIApplication.shared.endIgnoringInteractionEvents()
@@ -310,6 +311,8 @@ extension PaymentProcess {
 
                 let stopProcess = checker.handleChecks()
                 if stopProcess {
+                    process.abort(project) { _ in }
+                    self.cart.generateNewUUID()
                     return
                 }
 
