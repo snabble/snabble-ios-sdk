@@ -1,5 +1,9 @@
 ## snabble iOS SDK Changelogj
 
+# v0.16.5 (unreleased)
+
+- Fixes a bug where barcode decoding would not restart after displaying a sale stop alert
+
 # v0.16.4
 
 - Adds support for entry tokens
