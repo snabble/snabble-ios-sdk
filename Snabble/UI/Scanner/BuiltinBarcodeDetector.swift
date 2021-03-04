@@ -46,12 +46,12 @@ public final class BuiltinBarcodeDetector: NSObject, BarcodeDetector {
         didSet { self.updateCartButtonTitle() }
     }
 
-    public var reticleVisible: Bool = true {
+    public var reticleVisible = true {
         didSet { self.toggleReticleVisibility() }
     }
 
     public var rectangleOfInterest: CGRect = .zero
-    public var continuousScanning: Bool = false
+    public var continuousScanning = false
 
     private var camera: AVCaptureDevice?
     private var captureSession: AVCaptureSession
