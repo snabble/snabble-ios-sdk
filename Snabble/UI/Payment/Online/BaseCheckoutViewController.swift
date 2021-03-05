@@ -12,6 +12,8 @@ public class BaseCheckoutViewController: UIViewController {
     @IBOutlet private weak var topWrapper: UIView!
     @IBOutlet private weak var topIcon: UIImageView!
     @IBOutlet private weak var iconHeight: NSLayoutConstraint!
+    @IBOutlet private weak var messageWrapper: UIView!
+    @IBOutlet private weak var messageLabel: UILabel!
     @IBOutlet private weak var arrowWrapper: UIView!
     @IBOutlet private weak var spinnerWrapper: UIView!
     @IBOutlet private weak var spinner: UIActivityIndicatorView!
@@ -80,6 +82,12 @@ public class BaseCheckoutViewController: UIViewController {
 
         self.cancelButton.setTitle("Snabble.Cancel".localized(), for: .normal)
         self.cancelButton.setTitleColor(.label, for: .normal)
+
+        let onlineMessageKey = "Snabble.Payment.Online.message"
+        let onlineMessage = onlineMessageKey.localized()
+        self.messageLabel.text = onlineMessage
+        // hide if there is no text/translation
+        self.messageWrapper.isHidden = onlineMessage == onlineMessageKey
 
         self.navigationItem.hidesBackButton = true
 
