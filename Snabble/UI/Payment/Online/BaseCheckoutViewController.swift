@@ -87,7 +87,7 @@ public class BaseCheckoutViewController: UIViewController {
         let onlineMessage = onlineMessageKey.localized()
         self.messageLabel.text = onlineMessage
         // hide if there is no text/translation
-        self.messageWrapper.isHidden = onlineMessage == onlineMessageKey
+        self.messageWrapper.isHidden = onlineMessage == onlineMessageKey.uppercased()
 
         self.navigationItem.hidesBackButton = true
 
