@@ -1,4 +1,6 @@
-## snabble iOS SDK Changelogj
+## snabble iOS SDK Changelog
+
+# v0.16.7 (unreleased)
 
 # v0.16.6
 
