@@ -11,6 +11,9 @@ public final class SnabbleAlertStyle: AlertVisualStyle {
         super.init(alertStyle: alertStyle)
 
         self.normalTextColor = .label
+
+        self.actionSheetPreferredFont = self.alertNormalFont
+        self.actionSheetNormalFont = self.alertPreferredFont
     }
 }
 
