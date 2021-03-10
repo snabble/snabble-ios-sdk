@@ -124,7 +124,7 @@ public final class ShoppingCartViewController: UIViewController {
 
         self.keyboardObserver = KeyboardObserver(handler: self)
 
-        self.methodSelector = PaymentMethodSelector(self, self.methodSelectionView, self.methodIcon, self.methodSpinner, self.shoppingCart)
+        self.methodSelector = PaymentMethodSelector(self, self.methodSelectionView, self.methodIcon, self.shoppingCart)
         self.methodSelector?.paymentMethodNavigationDelegate = self.paymentMethodNavigationDelegate
 
         self.view.backgroundColor = .systemBackground

@@ -29,7 +29,6 @@ final class PaymentMethodSelector {
     private weak var parentVC: (UIViewController & AnalyticsDelegate)?
     private var methodSelectionView: UIView
     private var methodIcon: UIImageView
-    private var methodSpinner: UIActivityIndicatorView
 
     private(set) var methodTap: UITapGestureRecognizer!
 
@@ -37,27 +36,26 @@ final class PaymentMethodSelector {
 
     private(set) var selectedPaymentMethod: RawPaymentMethod?
     private(set) var selectedPaymentDetail: PaymentMethodDetail?
+
+    // set to true when the user makes an explicit selection from the action sheet,
+    // this disables the automatic/default method selection
+    private var userMadeExplicitSelection = false
+
     private var shoppingCart: ShoppingCart
 
     init(_ parentVC: UIViewController & AnalyticsDelegate,
          _ selectionView: UIView,
          _ methodIcon: UIImageView,
-         _ spinner: UIActivityIndicatorView,
          _ cart: ShoppingCart
     ) {
         self.parentVC = parentVC
         self.methodSelectionView = selectionView
         self.methodIcon = methodIcon
-        self.methodSpinner = spinner
         self.shoppingCart = cart
 
         let tap = UITapGestureRecognizer(target: self, action: #selector(self.methodSelectionTapped(_:)))
         self.methodTap = tap
         self.methodSelectionView.addGestureRecognizer(tap)
-
-        if #available(iOS 13.0, *) {
-            self.methodSpinner.style = .medium
-        }
 
         self.updateSelectionVisibility()
         self.setDefaultPaymentMethod()
@@ -117,11 +115,11 @@ final class PaymentMethodSelector {
     }
 
     @objc private func shoppingCartUpdating(_ notification: Notification) {
-        self.methodTap?.isEnabled = false
+        self.methodTap.isEnabled = false
     }
 
     func updateAvailablePaymentMethods() {
-        self.methodTap?.isEnabled = true
+        self.methodTap.isEnabled = true
 
         let paymentMethods = self.shoppingCart.paymentMethods ?? []
         let found = paymentMethods.contains { $0.method == self.selectedPaymentMethod }
@@ -141,12 +139,14 @@ final class PaymentMethodSelector {
         if method?.dataRequired == true && detail == nil {
             self.methodIcon.image = icon?.grayscale()
         }
-        self.methodTap?.isEnabled = true
-        self.methodSpinner.stopAnimating()
         self.methodTap.isEnabled = true
     }
 
     private func setDefaultPaymentMethod() {
+        if self.userMadeExplicitSelection {
+            return
+        }
+
         let userMethods = PaymentMethodDetails.read()
 
         let projectMethods = SnabbleUI.project.paymentMethods
@@ -192,6 +192,33 @@ final class PaymentMethodSelector {
         self.methodSelectionView.isHidden = true
     }
 
+    private func userSelectedPaymentMethod(with actionData: PaymentMethodAction) {
+        guard actionData.selectable else {
+            return
+        }
+
+        self.userMadeExplicitSelection = true
+        let method = actionData.method
+        let detail = actionData.methodDetail
+        self.setSelectedPayment(method, detail: detail)
+
+        // if the selected method is missing its detail data, immediately open the edit VC for the method
+        guard
+            detail == nil,
+            let parent = self.parentVC,
+            method.isAddingAllowed(showAlertOn: parent) == true,
+            let editVC = method.editViewController(with: SnabbleUI.project.id, showFromCart: true, parent)
+        else {
+            return
+        }
+
+        if SnabbleUI.implicitNavigation {
+            self.parentVC?.navigationController?.pushViewController(editVC, animated: true)
+        } else {
+            self.paymentMethodNavigationDelegate?.addData(for: method, in: SnabbleUI.project.id)
+        }
+    }
+
     @objc private func methodSelectionTapped(_ gesture: UITapGestureRecognizer) {
         let title = "Snabble.Shoppingcart.howToPay".localized()
         let sheet = AlertController(title: title, message: nil, preferredStyle: .actionSheet)
@@ -212,9 +239,7 @@ final class PaymentMethodSelector {
         // add an action for each method
         for actionData in actions {
             let action = AlertAction(attributedTitle: actionData.title, style: .normal) { _ in
-                if actionData.selectable {
-                    self.setSelectedPayment(actionData.method, detail: actionData.methodDetail)
-                }
+                self.userSelectedPaymentMethod(with: actionData)
             }
             let icon = actionData.active ? actionData.icon : actionData.icon?.grayscale()
             action.imageView.image = icon
