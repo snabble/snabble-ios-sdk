@@ -1,6 +1,9 @@
 ## snabble iOS SDK Changelogj
 
-# v0.16.6 (unreleased)
+# v0.16.6
+
+- Adds support for displaying a text on the online payment screen
+- When selecting a payment method with missing detail data, open the data entry view for this method
 
 # v0.16.5
 
