@@ -229,7 +229,7 @@ extension ReceiptsListViewController {
     }
 }
 
-class QuicklookPreviewControllerDataSource: QLPreviewControllerDataSource {
+final class QuicklookPreviewControllerDataSource: QLPreviewControllerDataSource {
     let item: QLPreviewItem
 
     init(item: QLPreviewItem) {
