@@ -652,7 +652,7 @@ extension PaymentMethodDetail: Codable {
 extension Notification.Name {
     /// new payment method.
     /// `userInfo["detail"]` contains a `PaymentMethodDetail` instance
-    static let snabblePaymentMethodAdded = Notification.Name("snabblePaymentMethodAdded")
+    public static let snabblePaymentMethodAdded = Notification.Name("snabblePaymentMethodAdded")
 
     static let snabblePaymentMethodDeleted = Notification.Name("snabblePaymentMethodDeleted")
 }
