@@ -1,6 +1,8 @@
 ## snabble iOS SDK Changelog
 
-# v0.16.7 (unreleased)
+# v0.16.7
+
+- Made the notification for "new payment method added" public
 
 # v0.16.6
 
