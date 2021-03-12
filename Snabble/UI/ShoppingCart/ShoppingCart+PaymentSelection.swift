@@ -121,7 +121,7 @@ final class PaymentMethodSelector {
     func updateAvailablePaymentMethods() {
         self.methodTap.isEnabled = true
 
-        let paymentMethods = self.shoppingCart.paymentMethods ?? []
+        let paymentMethods = self.shoppingCart.paymentMethods?.filter { $0.method.isAvailable } ?? []
         let found = paymentMethods.contains { $0.method == self.selectedPaymentMethod }
         if !found {
             self.setDefaultPaymentMethod()
@@ -147,10 +147,10 @@ final class PaymentMethodSelector {
             return
         }
 
-        let userMethods = PaymentMethodDetails.read()
+        let userMethods = PaymentMethodDetails.read().filter { $0.rawMethod.isAvailable }
 
-        let projectMethods = SnabbleUI.project.paymentMethods
-        let cartMethods = self.shoppingCart.paymentMethods?.map { $0.method } ?? []
+        let projectMethods = SnabbleUI.project.paymentMethods.filter { $0.isAvailable }
+        let cartMethods = self.shoppingCart.paymentMethods?.map { $0.method }.filter { $0.isAvailable } ?? []
         let availableMethods = cartMethods.isEmpty ? projectMethods : cartMethods
 
         // use Apple Pay, if possible
@@ -231,7 +231,7 @@ final class PaymentMethodSelector {
         sheet.visualStyle = .snabbleActionSheet
 
         // combine all payment methods of all projects
-        let allAppMethods = Set(SnabbleAPI.projects.flatMap { $0.paymentMethods })
+        let allAppMethods = Set(SnabbleAPI.projects.flatMap { $0.paymentMethods }.filter { $0.isAvailable })
         // and get them in the desired display order
         let allMethods = RawPaymentMethod.orderedMethods.filter { allAppMethods.contains($0) }
 
@@ -323,7 +323,8 @@ final class PaymentMethodSelector {
             }
             return actions
 
-        case .creditCardAmericanExpress, .creditCardVisa, .creditCardMastercard, .deDirectDebit, .paydirektOneKlick:
+        case .creditCardAmericanExpress, .creditCardVisa, .creditCardMastercard, .deDirectDebit, .paydirektOneKlick,
+             .twint, .postFinanceCard:
             if !isProjectMethod {
                 if isUserMethod {
                     let title = self.title(method.displayName, "Snabble.Shoppingcart.notForVendor".localized(), .secondaryLabel)

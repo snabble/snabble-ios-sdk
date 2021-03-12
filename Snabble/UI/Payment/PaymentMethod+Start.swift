@@ -48,6 +48,11 @@ public final class PaymentMethodStartCheck {
         case .paydirektOneKlick:
             self.requestBiometricAuthentication(on: presenter, reason: "Snabble.Paydirekt.payNow".snabbleLocalized(), completion)
 
+        case .twint:
+            self.requestBiometricAuthentication(on: presenter, reason: "Snabble.TWINT.payNow".snabbleLocalized(), completion)
+        case .postFinanceCard:
+            self.requestBiometricAuthentication(on: presenter, reason: "Snabble.PostFinanceCard.payNow".snabbleLocalized(), completion)
+
         case .qrCodePOS, .qrCodeOffline, .externalBilling, .gatekeeperTerminal, .customerCardPOS, .applePay:
             completion(true)
         }

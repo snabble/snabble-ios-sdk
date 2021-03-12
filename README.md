@@ -14,7 +14,7 @@ snabble - the self-scanning and checkout platform.
 ### CocoaPods
 
 Snabble is available through [CocoaPods](https://cocoapods.org), v1.7.0 or later is required.  
-To install snabble, add the following line to your Podfile:
+To install snabble, add the following line to your `Podfile`:
 
 ```
 pod 'Snabble'
@@ -26,7 +26,9 @@ If you only need the core functionality without any UI components, use
 pod 'Snabble/Core'
 ```
 
-instead. As with all cocoapods written in Swift, make sure you have `use_frameworks!` in your Podfile.
+instead. As with all cocoapods written in Swift, make sure you have `use_frameworks!` in your `Podfile`.
+
+In order to use the `twint` and `postFinanceCard` payment methods, you will also need to include `pod 'Snabble/Datatrans'` in your app's `Podfile`. During the app's initialization phase you will then need to call `DatatransFactory.initialize()` to add make these methods available.
 
 ### Carthage 
 

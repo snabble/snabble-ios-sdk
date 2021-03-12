@@ -15,19 +15,23 @@ struct MethodEntry {
     var count: Int
 
     init(project: Project, count: Int) {
-        self.name = project.name
-        self.method = nil
-        self.brandId = project.brandId
-        self.projectId = project.id
-        self.count = count
+        self.init(projectId: project.id, name: project.name, brandId: project.brandId, count: count)
     }
 
-    init(method: RawPaymentMethod, count: Int, for project: Project? = nil) {
-        self.name = method.displayName
-        self.method = method
-        self.brandId = nil
-        self.projectId = project?.id
+    init(projectId: Identifier<Project>, name: String, brandId: Identifier<Brand>?, count: Int) {
+        self.projectId = projectId
+        self.name = name
+        self.brandId = brandId
         self.count = count
+        self.method = nil
+    }
+
+    init(method: RawPaymentMethod, count: Int, for projectId: Identifier<Project>? = nil) {
+        self.projectId = projectId
+        self.name = method.displayName
+        self.brandId = nil
+        self.count = count
+        self.method = method
     }
 }
 

@@ -17,13 +17,18 @@ public enum RawPaymentMethod: String, CaseIterable, Decodable {
     case customerCardPOS        // payment via customer card invoice
     case paydirektOneKlick
     case applePay
+    case postFinanceCard        // via Datatrans
+    case twint                  // via Datatrans
 
     static let orderedMethods: [RawPaymentMethod] = [
         // customer-specific methods
         .customerCardPOS, .externalBilling,
 
         // online methods, alphabetically
-        .creditCardAmericanExpress, .applePay, .creditCardMastercard, .paydirektOneKlick, .deDirectDebit, .creditCardVisa,
+        .creditCardAmericanExpress, .applePay,
+        .creditCardMastercard, .paydirektOneKlick,
+        .postFinanceCard, .deDirectDebit,
+        .twint, .creditCardVisa,
 
         // SCO / cashier
         .gatekeeperTerminal,
@@ -39,7 +44,7 @@ public enum RawPaymentMethod: String, CaseIterable, Decodable {
     var dataRequired: Bool {
         switch self {
         case .deDirectDebit, .creditCardVisa, .creditCardMastercard, .creditCardAmericanExpress,
-             .externalBilling, .customerCardPOS, .paydirektOneKlick:
+             .externalBilling, .customerCardPOS, .paydirektOneKlick, .twint, .postFinanceCard:
             return true
         case .qrCodePOS, .qrCodeOffline, .gatekeeperTerminal, .applePay:
             return false
@@ -50,7 +55,8 @@ public enum RawPaymentMethod: String, CaseIterable, Decodable {
     var editable: Bool {
         switch self {
         case .deDirectDebit, .externalBilling, .paydirektOneKlick,
-             .creditCardVisa, .creditCardMastercard, .creditCardAmericanExpress:
+             .creditCardVisa, .creditCardMastercard, .creditCardAmericanExpress,
+             .twint, .postFinanceCard:
             return true
         case .qrCodePOS, .qrCodeOffline, .gatekeeperTerminal, .customerCardPOS, .applePay:
             return false
@@ -60,7 +66,8 @@ public enum RawPaymentMethod: String, CaseIterable, Decodable {
     /// true if editing/entering this method requires a device passcode or biometry
     var codeRequired: Bool {
         switch self {
-        case .deDirectDebit, .creditCardVisa, .creditCardMastercard, .creditCardAmericanExpress, .paydirektOneKlick:
+        case .deDirectDebit, .creditCardVisa, .creditCardMastercard, .creditCardAmericanExpress, .paydirektOneKlick,
+             .twint, .postFinanceCard:
             return true
         case .qrCodePOS, .qrCodeOffline, .externalBilling, .gatekeeperTerminal, .customerCardPOS, .applePay:
             return false
@@ -72,7 +79,8 @@ public enum RawPaymentMethod: String, CaseIterable, Decodable {
     /// and for `externalBilling` where we need project-specific billing data
     public var isProjectSpecific: Bool {
         switch self {
-        case .creditCardVisa, .creditCardMastercard, .creditCardAmericanExpress, .externalBilling:
+        case .creditCardVisa, .creditCardMastercard, .creditCardAmericanExpress, .externalBilling,
+             .twint, .postFinanceCard:
             return true
         case .deDirectDebit, .qrCodePOS, .qrCodeOffline, .gatekeeperTerminal, .customerCardPOS, .paydirektOneKlick, .applePay:
             return false
@@ -87,9 +95,27 @@ public enum RawPaymentMethod: String, CaseIterable, Decodable {
         case .qrCodePOS, .deDirectDebit,
              .creditCardVisa, .creditCardMastercard, .creditCardAmericanExpress,
              .externalBilling, .gatekeeperTerminal, .customerCardPOS, .paydirektOneKlick,
+             .applePay, .twint, .postFinanceCard:
+            return false
+        }
+    }
+
+    /// true if this method needs a plugin (e.g. the Snabble/Datatrans module)
+    public var needsPlugin: Bool {
+        switch self {
+        case .twint, .postFinanceCard:
+            return true
+        case .qrCodeOffline, .qrCodePOS, .deDirectDebit,
+             .creditCardVisa, .creditCardMastercard, .creditCardAmericanExpress,
+             .externalBilling, .gatekeeperTerminal, .customerCardPOS, .paydirektOneKlick,
              .applePay:
             return false
         }
+    }
+
+    // true if this method is available for use - shortcut for the registry method call
+    public var isAvailable: Bool {
+        return SnabbleAPI.methodRegistry.isMethodAvailable(self)
     }
 }
 
@@ -131,6 +157,8 @@ public enum PaymentMethod {
     case customerCardPOS
     case paydirektOneKlick(PaymentMethodData?)
     case applePay
+    case twint(PaymentMethodData?)
+    case postFinanceCard(PaymentMethodData?)
 
     public var rawMethod: RawPaymentMethod {
         switch self {
@@ -145,6 +173,8 @@ public enum PaymentMethod {
         case .customerCardPOS: return .customerCardPOS
         case .paydirektOneKlick: return .paydirektOneKlick
         case .applePay: return .applePay
+        case .twint: return .twint
+        case .postFinanceCard: return .postFinanceCard
         }
     }
 
@@ -156,6 +186,10 @@ public enum PaymentMethod {
             return data
         case .paydirektOneKlick(let data):
             return data
+        case .twint(let data):
+            return data
+        case .postFinanceCard(let data):
+            return data
         case .qrCodePOS, .qrCodeOffline, .gatekeeperTerminal, .customerCardPOS, .applePay:
             return nil
         }
@@ -165,7 +199,8 @@ public enum PaymentMethod {
         switch self {
         case .visa(let data), .mastercard(let data), .americanExpress(let data), .paydirektOneKlick(let data):
             return data?.additionalData ?? [:]
-        case .deDirectDebit, .qrCodePOS, .qrCodeOffline, .externalBilling, .gatekeeperTerminal, .customerCardPOS, .applePay:
+        case .deDirectDebit, .qrCodePOS, .qrCodeOffline, .externalBilling, .gatekeeperTerminal, .customerCardPOS,
+             .applePay, .twint, .postFinanceCard:
             return [:]
         }
     }

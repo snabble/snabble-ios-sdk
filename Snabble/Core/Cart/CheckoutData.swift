@@ -42,6 +42,8 @@ public enum AcceptedOriginType: String, Codable {
     case ipgHostedDataID
     case tegutEmployeeID
     case paydirektCustomerAuthorization
+    case datatransAlias
+    case datatransCreditCardAlias
 }
 
 public enum PaymentState: String, Decodable, UnknownCaseRepresentable {

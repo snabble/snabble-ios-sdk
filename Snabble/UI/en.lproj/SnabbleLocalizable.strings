@@ -119,6 +119,8 @@
 
 "Snabble.Payment.addPaymentOrigin" = "Transfer payment credentials to the app?";
 
+"Snabble.Payment.backToCart" = "Back to cart";
+
 "Snabble.Payment.backToHome" = "Back to start page";
 
 "Snabble.Payment.cancelError.message" = "Payment cannot be cancelled at this time.";
@@ -153,6 +155,8 @@
 
 "Snabble.Payment.payViaInvoice" = "via Invoice";
 
+"Snabble.Payment.PostFinanceCard.error" = "There was an error processing your postfinance card";
+
 "Snabble.Payment.presentCode" = "Show this code at a snabble monitor or to a cashier to confirm your purchase.";
 
 "Snabble.Payment.SEPA.hint" = "Note: In order to protect you and our merchants against misuse, the merchant will have your bank card shown on your first payment by SEPA direct debit.";
@@ -172,9 +176,13 @@
 
 "Snabble.Payment.success" = "Thank you for shopping";
 
+"Snabble.Payment.Twint.error" = "There was an error processing your TWINT account";
+
 "Snabble.Payment.usableAt" = "Usable at: %@";
 
 "Snabble.Payment.waiting" = "Waiting for confirmation";
+
+"Snabble.PaymentCard.editingHint" = "Your card data is only stored in encrypted form and therefore cannot be edited.";
 
 "Snabble.PaymentError.title" = "An error has occurred";
 
@@ -212,6 +220,8 @@
 "Snabble.PaymentStatus.step3" = "Processing your payment";
 
 "Snabble.pleaseWait" = "Please wait…";
+
+"Snabble.PostFinanceCard.payNow" = "Pay now using PostFinance Card";
 
 "Snabble.QRCode.codeXofY" = "Code %1$d of %2$d";
 
@@ -433,6 +443,8 @@
 
 /* Der Titel der übersichtsseite der Einkaufslisten */
 "Snabble.ShoppingLists.title" = "Shopping lists";
+
+"Snabble.TWINT.payNow" = "Pay now using TWINT";
 
 "Snabble.undo" = "Undo";
 

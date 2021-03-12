@@ -23,6 +23,8 @@ Pod::Spec.new do |s|
   s.ios.deployment_target = '12.0'
   s.swift_versions = [ '5.0' ]
 
+  s.default_subspecs = 'Core', 'UI'
+
   s.subspec 'Core' do |core|
     core.source_files = 'Snabble/Core/**/*.swift'
 
@@ -45,11 +47,23 @@ Pod::Spec.new do |s|
 
     ui.resource_bundles = {
       "Snabble" => [
-        'Snabble.xcassets',
         'Snabble/UI/*.lproj/*.strings',
         'Snabble/UI/**/*.xib',
-        'Snabble/UI/**/*.der'
+        'Snabble/UI/**/*.der',
+        'Snabble.xcassets'
       ]
     }
   end
+
+  s.subspec 'Datatrans' do |dt|
+    dt.dependency 'Snabble/UI'
+    dt.source_files = 'Snabble/Datatrans/**/*.swift'
+
+    dt.vendored_frameworks = 'Datatrans.xcframework'
+
+    dt.resource_bundles = {
+       "SnabbleDT" => [ 'Snabble/Datatrans/**/*.xib' ]
+    }
+  end
+
 end

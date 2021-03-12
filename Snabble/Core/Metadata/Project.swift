@@ -22,6 +22,7 @@ public struct ProjectLinks: Decodable {
     public let assetsManifest: Link?
     public let telecashVaultItems: Link?
     public let entryToken: Link?
+    public let datatransTokenization: Link?
 
     public static let empty = ProjectLinks()
 
@@ -36,6 +37,7 @@ public struct ProjectLinks: Decodable {
         self.assetsManifest = nil
         self.telecashVaultItems = nil
         self.entryToken = nil
+        self.datatransTokenization = nil
     }
 
     init(appdb: Link, appEvents: Link, checkoutInfo: Link, tokens: Link, resolvedProductBySku: Link, resolvedProductLookUp: Link) {
@@ -49,6 +51,7 @@ public struct ProjectLinks: Decodable {
         self.assetsManifest = nil
         self.telecashVaultItems = nil
         self.entryToken = nil
+        self.datatransTokenization = nil
     }
 }
 

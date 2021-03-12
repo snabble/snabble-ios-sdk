@@ -99,9 +99,9 @@ public final class PaymentMethodAddViewController: UITableViewController {
     private func getSingleProjectEntries() -> [[MethodEntry]] {
         let allEntries = SnabbleAPI.projects
             .flatMap { $0.paymentMethods }
-            .filter { $0.editable }
+            .filter { $0.editable && $0.isAvailable }
             .sorted { $0.displayName < $1.displayName }
-            .map { MethodEntry(method: $0, count: methodCount(for: $0), for: SnabbleAPI.projects[0]) }
+            .map { MethodEntry(method: $0, count: methodCount(for: $0), for: SnabbleAPI.projects[0].id) }
 
         var entries = [[MethodEntry]]()
         entries.append(allEntries)
@@ -109,7 +109,7 @@ public final class PaymentMethodAddViewController: UITableViewController {
     }
 
     private func getMultiProjectEntries() -> [[MethodEntry]] {
-        // all entries where credit cards are accepted
+        // all entries where project-specific methods are accepted
         var allEntries = SnabbleAPI.projects
             .filter { !$0.shops.isEmpty }
             .filter { $0.paymentMethods.firstIndex { $0.isProjectSpecific } != nil }
@@ -119,30 +119,40 @@ public final class PaymentMethodAddViewController: UITableViewController {
         let entriesByBrand = Dictionary(grouping: allEntries, by: { $0.brandId })
 
         for (brandId, entries) in entriesByBrand {
-            guard let brandId = brandId, !entries.isEmpty, var first = entries.first else {
+            guard let brandId = brandId, !entries.isEmpty, let first = entries.first else {
                 continue
             }
 
-            // overwrite the project's name with the brand name
-            if let brand = SnabbleAPI.brands.first(where: { $0.id == brandId }) {
-                first.name = brand.name
+            let brandProjects = SnabbleAPI.projects.filter { $0.brandId == brandId }
+            let replacement: MethodEntry
+            if brandProjects.count == 1 {
+                // only one project in brand, use the project's entry (w/o brand) directly
+                replacement = MethodEntry(projectId: first.projectId!, name: first.name, brandId: nil, count: first.count)
+            } else {
+                // overwrite the project's name with the brand name
+                var newEntry = first
+                if let brand = SnabbleAPI.brands.first(where: { $0.id == brandId }) {
+                    newEntry.name = brand.name
+                }
+                newEntry.count = entries.reduce(0) { $0 + self.methodCount(for: $1.projectId) }
+                replacement = newEntry
             }
-            first.count = entries.reduce(0) { $0 + self.methodCount(for: $1.projectId) }
 
             // and replace all matching entries with `first`
             allEntries.removeAll(where: { $0.brandId == brandId })
-            allEntries.append(first)
+            allEntries.append(replacement)
         }
 
         allEntries.sort { $0.name < $1.name }
 
-        let allMethods = Set(SnabbleAPI.projects.flatMap { $0.paymentMethods }.filter { $0.editable })
+        let editableMethods = SnabbleAPI.projects
+            .flatMap { $0.paymentMethods }
+            .filter { $0.editable && $0.isAvailable }
+        let allMethods = Set(editableMethods)
 
-        let creditCards = allMethods
-            .filter { $0.isProjectSpecific }
-            .sorted { $0.displayName < $1.displayName }
+        let projectSpecificMethods = allMethods.filter { $0.isProjectSpecific }
 
-        var generalMethods = Array(allMethods.subtracting(creditCards))
+        var generalMethods = Array(allMethods.subtracting(projectSpecificMethods))
         generalMethods.sort { $0.displayName < $1.displayName }
 
         var entries = [[MethodEntry]]()
@@ -165,6 +175,10 @@ public final class PaymentMethodAddViewController: UITableViewController {
             switch detail.methodData {
             case .creditcard(let creditcardData):
                 return creditcardData.projectId == projectId
+            case .datatransAlias(let datatransData):
+                return datatransData.projectId == projectId
+            case .datatransCardAlias(let datatransCardData):
+                return datatransCardData.projectId == projectId
             default:
                 return false
             }

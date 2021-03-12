@@ -119,6 +119,8 @@
 
 "Snabble.Payment.addPaymentOrigin" = "Fizetési információ átadása az alkalmazásnak?";
 
+"Snabble.Payment.backToCart" = "Back to cart";
+
 "Snabble.Payment.backToHome" = "Vissza a kezdőoldalra";
 
 "Snabble.Payment.cancelError.message" = "A fizetés megszakítása jelenleg nem lehetséges.";
@@ -153,6 +155,8 @@
 
 "Snabble.Payment.payViaInvoice" = "számlára";
 
+"Snabble.Payment.PostFinanceCard.error" = "There was an error processing your postfinance card";
+
 "Snabble.Payment.presentCode" = "A bevásárlás nyugtázásához tartsd ezt a kódot egy snabble-monitor elé, vagy mutasd meg egy alkalmazottnak.";
 
 "Snabble.Payment.SEPA.hint" = "Megjegyzés: A te és a kereskedőink visszaélésekkel szembeni védelme érdekében az első SEPA terhelési megbízásos fizetésednél a kereskedőnél megjelenik a bankkártyád.";
@@ -172,9 +176,13 @@
 
 "Snabble.Payment.success" = "Köszönjük a vásárlásodat";
 
+"Snabble.Payment.Twint.error" = "There was an error processing your TWINT account";
+
 "Snabble.Payment.usableAt" = "Itt használható: %@";
 
 "Snabble.Payment.waiting" = "Várj a nyugtázásra";
+
+"Snabble.PaymentCard.editingHint" = "A hitelkártyaadatokat kódolva tároljuk, éppen ezért nem tudjuk feldolgozni.";
 
 "Snabble.PaymentError.title" = "Hiba történt";
 
@@ -212,6 +220,8 @@
 "Snabble.PaymentStatus.step3" = "Fizetésed engedélyezése";
 
 "Snabble.pleaseWait" = "Kérlek, várj...";
+
+"Snabble.PostFinanceCard.payNow" = "Pay now using PostFinance Card";
 
 "Snabble.QRCode.codeXofY" = "%1$d / %2$d kód";
 
@@ -433,6 +443,8 @@
 
 /* Der Titel der übersichtsseite der Einkaufslisten */
 "Snabble.ShoppingLists.title" = "Bevásárlólisták";
+
+"Snabble.TWINT.payNow" = "Pay now using TWINT";
 
 "Snabble.undo" = "Visszavonás";
 

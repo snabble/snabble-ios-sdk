@@ -42,7 +42,7 @@ public final class CreditCardEditViewController: UIViewController {
 
     public weak var navigationDelegate: PaymentMethodNavigationDelegate?
 
-    public init(brand: CreditCardBrand?, _ projectId: Identifier<Project>?, _ showFromCart: Bool, _ analyticsDelegate: AnalyticsDelegate?) {
+    public init(brand: CreditCardBrand?, _ projectId: Identifier<Project>, _ showFromCart: Bool, _ analyticsDelegate: AnalyticsDelegate?) {
         self.brand = brand
         self.showFromCart = showFromCart
         self.analyticsDelegate = analyticsDelegate
@@ -82,11 +82,10 @@ public final class CreditCardEditViewController: UIViewController {
     override public func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
 
-        switch self.brand {
-        case .visa: self.title = "VISA"
-        case .mastercard: self.title = "Mastercard"
-        case .amex: self.title = "American Express"
-        case .none: self.title = "Snabble.Payment.CreditCard".localized()
+        if let brand = self.brand {
+            self.title = brand.displayName
+        } else {
+            self.title = "Snabble.Payment.CreditCard".localized()
         }
 
         if self.ccNumber != nil {

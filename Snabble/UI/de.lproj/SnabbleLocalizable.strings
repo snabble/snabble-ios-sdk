@@ -119,6 +119,8 @@
 
 "Snabble.Payment.addPaymentOrigin" = "Zahlungsinformationen in die App übertragen?";
 
+"Snabble.Payment.backToCart" = "Zurück zum Warenkorb";
+
 "Snabble.Payment.backToHome" = "Zurück zur Startseite";
 
 "Snabble.Payment.cancelError.message" = "Die Zahlung kann jetzt nicht abgebrochen werden.";
@@ -129,7 +131,7 @@
 
 "Snabble.Payment.CreditCard" = "Kreditkarte";
 
-"Snabble.Payment.CreditCard.error" = "Bei der Verarbeitung Ihrer Kreditkarte ist ein Fehler aufgetreten";
+"Snabble.Payment.CreditCard.error" = "Bei der Verarbeitung deiner Kreditkarte ist ein Fehler aufgetreten";
 
 "Snabble.Payment.CreditCard.expireDate" = "Läuft ab: %@";
 
@@ -153,6 +155,8 @@
 
 "Snabble.Payment.payViaInvoice" = "auf Rechnung";
 
+"Snabble.Payment.PostFinanceCard.error" = "Bei der Verarbeitung deiner Postfinance-Card ist ein Fehler aufgetreten";
+
 "Snabble.Payment.presentCode" = "Halte diesen Code an einem snabble-Monitor vor oder zeige ihn einem Mitarbeiter, um deinen Einkauf zu bestätigen.";
 
 "Snabble.Payment.SEPA.hint" = "Hinweis: Um dich und unsere Händler vor Missbrauch zu schützen, wird sich der Händler bei deiner ersten Zahlung per SEPA-Lastschrift deine Bankkarte zeigen lassen.";
@@ -172,9 +176,13 @@
 
 "Snabble.Payment.success" = "Vielen Dank für deinen Einkauf";
 
+"Snabble.Payment.Twint.error" = "Bei der Verarbeitung deines TWINT-Accounts ist ein Fehler aufgetreten";
+
 "Snabble.Payment.usableAt" = "Verwendbar bei: %@";
 
 "Snabble.Payment.waiting" = "Warte auf Bestätigung";
+
+"Snabble.PaymentCard.editingHint" = "Deine Karten-Daten werden von uns nur verschlüsselt gespeichert und können daher nicht bearbeitet werden.";
 
 "Snabble.PaymentError.title" = "Ein Fehler ist aufgetreten";
 
@@ -212,6 +220,8 @@
 "Snabble.PaymentStatus.step3" = "Freigabe deiner Zahlung";
 
 "Snabble.pleaseWait" = "Bitte warten…";
+
+"Snabble.PostFinanceCard.payNow" = "Jetzt mit PostFinance Card bezahlen";
 
 "Snabble.QRCode.codeXofY" = "Code %1$d von %2$d";
 
@@ -433,6 +443,8 @@
 
 /* Der Titel der übersichtsseite der Einkaufslisten */
 "Snabble.ShoppingLists.title" = "Einkaufslisten";
+
+"Snabble.TWINT.payNow" = "Jetzt mit TWINT bezahlen";
 
 "Snabble.undo" = "Rückgängig";
 

@@ -415,9 +415,4 @@ extension Project {
         event.post()
     }
 
-    public func logMsg(_ msg: String) {
-        let event = AppEvent(log: msg, project: self)
-        event.post()
-    }
-
 }

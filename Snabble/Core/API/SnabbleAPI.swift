@@ -61,8 +61,9 @@ public struct SnabbleAPIConfig {
 
 public enum SnabbleAPI {
     public private(set) static var config = SnabbleAPIConfig.none
-    static var tokenRegistry = TokenRegistry("", "")
+    private(set) static var tokenRegistry = TokenRegistry("", "")
     static var metadata = Metadata.none
+    static let methodRegistry = MethodRegistry()
 
     private static var providerPool = [Identifier<Project>: ProductProvider]()
 

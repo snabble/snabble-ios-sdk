@@ -1,7 +1,7 @@
 //
-//  PaymentMethods+UI.swift
+//  RawPaymentMethod+UI.swift
 //
-//  Copyright © 2020 snabble. All rights reserved.
+//  Copyright © 2021 snabble. All rights reserved.
 //
 
 import UIKit
@@ -40,6 +40,10 @@ extension RawPaymentMethod {
             return "Snabble.Payment.payUsingCustomerCard".localized()
         case .applePay:
             return "Apple Pay"
+        case .twint:
+            return "TWINT"
+        case .postFinanceCard:
+            return "PostFinance Card"
         }
     }
 
@@ -52,7 +56,8 @@ extension RawPaymentMethod {
         case .gatekeeperTerminal: return UIImage.fromBundle("SnabbleSDK/payment/payment-sco")
         case .paydirektOneKlick: return UIImage.fromBundle("SnabbleSDK/payment/payment-paydirekt")
         case .applePay: return UIImage.fromBundle("SnabbleSDK/payment/payment-apple-pay")
-
+        case .twint: return UIImage.fromBundle("SnabbleSDK/payment/payment-twint")
+        case .postFinanceCard: return UIImage.fromBundle("SnabbleSDK/payment/payment-postfinance")
         case .qrCodePOS, .qrCodeOffline, .externalBilling, .customerCardPOS:
             return UIImage.fromBundle("SnabbleSDK/payment/payment-pos")
         }
@@ -79,8 +84,14 @@ extension RawPaymentMethod {
             }
 
         case .qrCodePOS, .qrCodeOffline, .externalBilling, .customerCardPOS, .gatekeeperTerminal, .applePay:
-            ()
+            break
+
+        case .twint, .postFinanceCard:
+            if let projectId = projectId {
+                return SnabbleAPI.methodRegistry.createEntry(method: self, projectId, showFromCart, analyticsDelegate)
+            }
         }
+
         return nil
     }
 }

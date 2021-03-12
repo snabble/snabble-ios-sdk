@@ -9,6 +9,7 @@
 - Completely redesigned the Scanner, with integrated shopping list and shopping cart in a Maps-like drawer. 
   To hide this drawer, pass `nil` for the `cartDelegate` init parameter.
 - Add `CouponWallet` to store coupons, along with `CouponsListViewController` as the UI to manage coupons
+- Add support for the new payment methods `twint` and `postFinanceCard`. To use these methods, add `pod Snabble/Datatrans` to your app's `Podfile`, as these methods aren't included by default.
 
 # v0.16.9
 

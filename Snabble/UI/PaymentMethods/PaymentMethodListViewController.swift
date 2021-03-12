@@ -55,6 +55,9 @@ public final class PaymentMethodListViewController: UITableViewController {
         super.viewDidLoad()
 
         self.title = "Snabble.PaymentMethods.title".localized()
+        if let method = self.method {
+            self.title = method.displayName
+        }
 
         let addButton = UIBarButtonItem(barButtonSystemItem: .add, target: self, action: #selector(addMethod))
         self.navigationItem.rightBarButtonItem = addButton
@@ -77,7 +80,7 @@ public final class PaymentMethodListViewController: UITableViewController {
 
         if let method = self.method {
             let details = PaymentMethodDetails.read()
-                .filter { $0.rawMethod == method }
+                .filter { $0.rawMethod == method && $0.rawMethod.isAvailable }
                 .sorted { $0.displayName < $1.displayName }
 
             self.details = [ details ]
@@ -114,7 +117,7 @@ public final class PaymentMethodListViewController: UITableViewController {
         self.availableMethods = SnabbleAPI.projects
             .filter { $0.id == projectId }
             .flatMap { $0.paymentMethods }
-            .filter { $0.isProjectSpecific }
+            .filter { $0.isProjectSpecific && $0.isAvailable }
     }
 
     @objc private func addMethod() {
@@ -187,6 +190,8 @@ extension PaymentMethodListViewController {
             editVC = PaydirektEditViewController(detail, false, self.analyticsDelegate)
         case .tegutEmployeeCard:
             editVC = nil
+        case .datatransAlias, .datatransCardAlias:
+            editVC = SnabbleAPI.methodRegistry.create(detail: detail, showFromCart: false, analyticsDelegate: self.analyticsDelegate)
         }
 
         if let controller = editVC {
