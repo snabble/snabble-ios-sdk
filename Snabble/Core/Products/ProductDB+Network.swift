@@ -103,7 +103,7 @@ final class AppDBDownloadDelegate: CertificatePinningDelegate, URLSessionDownloa
 
         let url = downloadTask.currentRequest?.url?.absoluteString ?? "n/a"
         let elapsed = Date.timeIntervalSinceReferenceDate - self.start
-        Log.info("get \(url) took \(elapsed)s")
+        Log.info("GET \(url) took \(elapsed)s")
 
         self.productDb?.downloadTask = nil
         if let response = downloadTask.response as? HTTPURLResponse {

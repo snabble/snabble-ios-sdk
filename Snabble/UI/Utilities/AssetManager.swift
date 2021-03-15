@@ -296,7 +296,7 @@ final class AssetManager {
         request.timeoutInterval = 2
         let task = session.dataTask(with: request) { data, response, error in
             let elapsed = Date.timeIntervalSinceReferenceDate - start
-            Log.info("get \(url) took \(elapsed)s")
+            Log.info("GET \(url) took \(elapsed)s")
 
             defer { completion() }
 

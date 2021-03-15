@@ -326,7 +326,8 @@ extension Project {
         let task = session.dataTask(with: request) { rawData, response, error in
             let elapsed = Date.timeIntervalSinceReferenceDate - start
             let url = request.url?.absoluteString ?? "n/a"
-            Log.info("get \(url) took \(elapsed)s")
+            let method = request.httpMethod ?? ""
+            Log.info("\(method) \(url) took \(elapsed)s")
             guard
                 let data = rawData,
                 let httpResponse = response as? HTTPURLResponse,
@@ -342,7 +343,7 @@ extension Project {
                 }()
 
                 if !cancelled {
-                    self.logError("error getting response from \(url): \(String(describing: error)) statusCode \(statusCode)")
+                    self.logError("error getting response from \(method) \(url): \(String(describing: error)) statusCode \(statusCode)")
                 } else {
                     Log.error("request was cancelled: \(url)")
                 }
