@@ -315,7 +315,7 @@ public struct CheckoutProcess: Decodable {
         self.exitToken = try container.decodeIfPresent(ExitToken.self, forKey: .exitToken)
     }
 
-    func fulfillmentsDone() -> Bool {
+    public func fulfillmentsDone() -> Bool {
         let states = self.fulfillments.map { $0.state }
         return Set(states).isDisjoint(with: FulfillmentState.workingStates)
     }
