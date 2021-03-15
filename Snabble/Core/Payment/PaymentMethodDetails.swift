@@ -528,6 +528,7 @@ public extension PaymentMethod {
         case .qrCodeOffline: return .qrCodeOffline
         case .gatekeeperTerminal: return .gatekeeperTerminal
         case .customerCardPOS: return .customerCardPOS
+        case .applePay: return .applePay
         case .deDirectDebit:
             if let data = detail?.data {
                 return .deDirectDebit(data)

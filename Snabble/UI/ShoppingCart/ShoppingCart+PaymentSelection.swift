@@ -153,6 +153,12 @@ final class PaymentMethodSelector {
         let cartMethods = self.shoppingCart.paymentMethods?.map { $0.method } ?? []
         let availableMethods = cartMethods.isEmpty ? projectMethods : cartMethods
 
+        // use Apple Pay, if possible
+        if availableMethods.contains(.applePay) && ApplePayCheckoutViewController.canMakePayments() {
+            self.setSelectedPayment(.applePay, detail: nil)
+            return
+        }
+
         // prefer in-app payment methods like SEPA or CC
         for method in RawPaymentMethod.orderedMethods {
             let found = availableMethods.contains(method)
@@ -339,10 +345,19 @@ final class PaymentMethodSelector {
                 }
                 return actions
             } else {
-                let title = self.title(method.displayName, "Snabble.Shoppingcart.noPaymentData".localized(), .label)
+                let subtitle = "Snabble.Shoppingcart.noPaymentData".localized()
+                let title = self.title(method.displayName, subtitle, .label)
                 let action = PaymentMethodAction(title, method, nil, selectable: true, active: false)
                 return [action]
             }
+
+        case .applePay:
+            if !ApplePayCheckoutViewController.applePaySupported() || !isCartMethod {
+                return []
+            }
+            let title = self.title(method.displayName, nil, .label)
+            let action = PaymentMethodAction(title, method, nil, selectable: true, active: false)
+            return [action]
 
         case .qrCodePOS, .qrCodeOffline, .gatekeeperTerminal:
             if !isProjectMethod {

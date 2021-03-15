@@ -14,7 +14,7 @@ extension PaymentMethod {
         case .deDirectDebit, .visa, .mastercard, .americanExpress,
              .externalBilling, .paydirektOneKlick:
             return true
-        case .qrCodePOS, .qrCodeOffline, .gatekeeperTerminal, .customerCardPOS:
+        case .qrCodePOS, .qrCodeOffline, .gatekeeperTerminal, .customerCardPOS, .applePay:
             return false
         }
     }
@@ -35,7 +35,7 @@ extension PaymentMethod {
             return nil
         }
 
-        let processor: UIViewController
+        let processor: UIViewController?
         switch self {
         case .qrCodePOS:
             processor = QRCheckoutViewController(process!, rawJson, cart, delegate)
@@ -49,10 +49,13 @@ extension PaymentMethod {
             processor = OnlineCheckoutViewController(process!, rawJson, cart, delegate)
         case .gatekeeperTerminal:
             processor = TerminalCheckoutViewController(process!, rawJson, cart, delegate)
+        case .applePay:
+            processor = ApplePayCheckoutViewController(process!, rawJson, cart, delegate)
         case .customerCardPOS:
             processor = CustomerCardCheckoutViewController(process!, rawJson, cart, delegate)
         }
-        processor.hidesBottomBarWhenPushed = true
+        processor?.hidesBottomBarWhenPushed = true
+
         return processor
     }
 
@@ -93,6 +96,7 @@ public final class PaymentProcess {
             case .qrCodeOffline: result.append(.qrCodeOffline)
             case .gatekeeperTerminal: result.append(.gatekeeperTerminal)
             case .customerCardPOS: result.append(.customerCardPOS)
+            case .applePay: result.append(.applePay)
             case .deDirectDebit:
                 let sepa = userData.filter { if case .deDirectDebit = $0 { return true } else { return false } }
                 if !sepa.isEmpty {
