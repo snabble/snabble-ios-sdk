@@ -3,6 +3,7 @@
 # v0.16.7
 
 - Made the notification for "new payment method added" public
+- Made the Sets of fulfillment states public and added some convenience methods
 
 # v0.16.6
 
