@@ -208,10 +208,12 @@ public enum FulfillmentState: String, Decodable, UnknownCaseRepresentable {
     // finished with error
     case aborted, allocationFailed, allocationTimedOut, failed
 
-    static let workingStates: Set<FulfillmentState> = [ .open, .allocating, .allocated, .processing ]
-    static let failureStates: Set<FulfillmentState> = [ .aborted, .allocationFailed, .allocationTimedOut, .failed ]
-
-    static let endStates: Set<FulfillmentState> = [ .processed, .aborted, .allocationFailed, .allocationTimedOut, .failed ]
+    public static let workingStates: Set<FulfillmentState> =
+        [ .open, .allocating, .allocated, .processing ]
+    public static let failureStates: Set<FulfillmentState> =
+        [ .aborted, .allocationFailed, .allocationTimedOut, .failed ]
+    public static let endStates: Set<FulfillmentState> =
+        [ .aborted, .allocationFailed, .allocationTimedOut, .failed, .processed ]
 
     public static let unknownCase = FulfillmentState.unknown
 }
@@ -315,13 +317,39 @@ public struct CheckoutProcess: Decodable {
         self.exitToken = try container.decodeIfPresent(ExitToken.self, forKey: .exitToken)
     }
 
+    var requiresExitToken: Bool {
+        exitToken != nil
+    }
+}
+
+// MARK: - Fulfillment convenience methods
+extension CheckoutProcess {
+    /// Check if all fulfillments are done
+    /// - Returns: true if all fulfillments are done
     public func fulfillmentsDone() -> Bool {
         let states = self.fulfillments.map { $0.state }
         return Set(states).isDisjoint(with: FulfillmentState.workingStates)
     }
 
-    var requiresExitToken: Bool {
-        exitToken != nil
+    /// Number of failed fulfillments
+    /// - Returns: number of failed fulfillments
+    public func fulfillmentsFailed() -> Int {
+        let states = self.fulfillments.map { $0.state }
+        return states.filter { FulfillmentState.failureStates.contains($0) }.count
+    }
+
+    /// Number of fulfillments currently in progress
+    /// - Returns: number of fulfillments currently in progress
+    public func fulfillmentsInProgress() -> Int {
+        let states = self.fulfillments.map { $0.state }
+        return states.filter { FulfillmentState.workingStates.contains($0) }.count
+    }
+
+    /// Number of successful fulfillments
+    /// - Returns: number of successful fulfillments
+    public func fulfillmentsSucceeded() -> Int {
+        let states = self.fulfillments.map { $0.state }
+        return states.filter { $0 == .processed }.count
     }
 }
 
