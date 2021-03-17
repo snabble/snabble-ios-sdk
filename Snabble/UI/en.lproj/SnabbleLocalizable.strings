@@ -1,3 +1,5 @@
+"Snabble.addDiscount" = "Enter discount";
+
 "Snabble.ageVerification.explanation" = "To purchase certain products like alcoholic beverages, verifying your age is required. Enter the 7-digit Number from the back side of your ID card.";
 
 "Snabble.ageVerification.failed.message" = "Some products in your cart have an age restriction, unfortunately you can't purchase them.";
@@ -91,6 +93,8 @@
 "Snabble.networkError" = "Connection error";
 
 "Snabble.No" = "No";
+
+"Snabble.noDiscount" = "no discount";
 
 "Snabble.notForSale.errorMsg.scan" = "This product cannot be paid for using the app, please pay for it at the cashier.";
 
@@ -267,11 +271,16 @@
 
 "Snabble.Scanner.enterCodeButton" = "Enter\nbarcode";
 
+/* Text der Snackbar die Angezeigt wird, wenn der Benutzer noch nie ein Produkt gescannt hat */
+"Snabble.Scanner.firstScan" = "Scan your first product. Place the barcode in front of your camera.";
+
 "Snabble.Scanner.goToCart" = "Cart: %@";
 
 "Snabble.Scanner.goToCart.empty" = "Cart";
 
 "Snabble.Scanner.introText" = "Scan product barcodes to add them to your shopping cart.";
+
+"Snabble.Scanner.manualCouponAdded" = "You've entered a discounted price for your last item. Please note that an employee will check your purchase.";
 
 "Snabble.Scanner.multiPack" = "Don't forget!";
 
@@ -358,6 +367,63 @@
 "Snabble.Shoppingcart.removeItems" = "Really remove all products from your shopping cart?";
 
 "Snabble.ShoppingCart.title" = "Shopping Cart";
+
+/* Hinweiß der angezeigt wird wenn ein Artikel der Einkaufsliste hinzugefügt wurde */
+"Snabble.ShoppingList.added" = "%@ saved";
+
+/* Der Titel des Dialogs zur Erzeugung einer neuen Einkaufsliste */
+"Snabble.ShoppingList.CreateList.title" = "Create shopping list";
+
+/* Der Löschen-Knopf beim Editieren von Einkaufslisten */
+"Snabble.ShoppingList.EditList.delete" = "Delete";
+
+/* Der Speichern-Knopf beim Editieren von Einkaufslisten */
+"Snabble.ShoppingList.EditList.save" = "Save";
+
+/* Der Titel des Popups zum bearbeiten von Einkaufslisten */
+"Snabble.ShoppingList.EditList.title" = "Edit shopping list";
+
+/* Der Text wird angezeigt wenn man ein Element der Einkaufsliste wegwischt */
+"Snabble.ShoppingList.ItemDeleted" = "%@ deleted";
+
+/* Der Call-To-Action wenn man das löschen eines Elements der Einkaufsliste rückgänig machen möchte */
+"Snabble.ShoppingList.ItemDeleted.Undo" = "Undo";
+
+/* Der Inhalt der Snackbar wenn eine Einkaufsliste gelöscht wurde */
+"Snabble.ShoppingList.ListDeleted.title" = "Shopping list deleted";
+
+/* Der Call-To-Action wenn eine Einkaufsliste wiederhergestellt werden soll */
+"Snabble.ShoppingList.ListDeleted.undo" = "Undo";
+
+/* Der Call-To-Action beim Empty-State Text wenn der Einkaufszettel noch leer ist  */
+"Snabble.ShoppingList.ListEmpty.add" = "Add product";
+
+/* Empty-State Text wenn der Einkaufszettel noch leer ist */
+"Snabble.ShoppingList.ListEmpty.title" = "Your shopping list is empty.";
+
+/* Der Call-To-Action beim Empty-State Text wenn noch kein Einkaufszettel angelegt wurde */
+"Snabble.ShoppingList.NoLists.add" = "Create shopping list";
+
+/* Der Empty-State wenn noch kein Einkaufszettel angelegt wurde */
+"Snabble.ShoppingList.NoLists.title" = "You have no shopping lists yet.";
+
+/* Hinweiß der angezeigt wird wenn ein Artikel nicht gefunden wurde */
+"Snabble.ShoppingList.notFound" = "Unknown product";
+
+/* Der Hint der angezeigt wird wenn man einen Artikel per Suche hinzufügen möchte */
+"Snabble.ShoppingList.searchHint" = "Product";
+
+/* Der Titel der übersichtsseite der Einkaufslisten */
+"Snabble.ShoppingList.title" = "Shopping list";
+
+/* Man soll verschiedene Artikel mit einem "und" in die Einkaufsliste legen können. Hier geht es nur um das Wort "und" */
+"Snabble.ShoppingList.Voice.connectingWord" = "and";
+
+/* Hinweis der Eingeblendet wird wenn der Benutzer das erste mal vermutlich falsch mehrere Artikel zum Einkaufszettel ergänezen wollte */
+"Snabble.ShoppingList.Voice.details" = "Did you want to add several things to your shopping list? Then combine the individual entries with “and”, like this: Tissues and pasta and yeast";
+
+/* Hinweis der Eingeblendet wird wenn der Benutzer das erste mal vermutlich falsch mehrere Artikel zum Einkaufszettel ergänezen wollte */
+"Snabble.ShoppingList.Voice.title" = "Hint";
 
 "Snabble.undo" = "Undo";
 

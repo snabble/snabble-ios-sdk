@@ -74,6 +74,9 @@ public enum LineItemType: String, Codable, UnknownCaseRepresentable {
     /// a giveaway product that is automatically added
     case giveaway
 
+    /// a coupon
+    case coupon
+
     public static let unknownCase = LineItemType.unknown
 }
 
@@ -97,7 +100,7 @@ public struct CheckoutInfo: Decodable {
 
     public struct LineItem: Codable {
         public let id: String
-        public let sku: String
+        public let sku: String?
         public let name: String?
         public let amount: Int
         public let price: Int?
@@ -110,6 +113,7 @@ public struct CheckoutInfo: Decodable {
         public let fulfillmentType: String?
         public let weightUnit: Units?
         public let referenceUnit: Units?
+        public let priceModifiers: [PriceModifier]?
 
         /// price pre-multiplied with units, if present
         public var itemPrice: Int? {
@@ -117,6 +121,11 @@ public struct CheckoutInfo: Decodable {
                 return nil
             }
             return (self.units ?? 1) * price
+        }
+
+        public struct PriceModifier: Codable {
+            let name: String
+            let price: Int
         }
     }
 
@@ -364,16 +373,37 @@ public struct Cart: Encodable {
     let clientID: String
     let appUserID: String?
 
-    public struct Item: Encodable {
-        let id: String
-        let sku: String
+    public enum Item: Encodable {
+        case product(ProductItem)
+        case coupon(CouponItem)
+
+        public func encode(to encoder: Encoder) throws {
+            var container = encoder.singleValueContainer()
+            switch self {
+            case .product(let productItem):
+                try container.encode(productItem)
+            case .coupon(let couponItem):
+                try container.encode(couponItem)
+            }
+        }
+    }
+
+    public struct ProductItem: Encodable {
+        public let id: String
+        public let sku: String
         public let amount: Int
         public let scannedCode: String
 
-        let price: Int?
-        let weight: Int?
-        let units: Int?
-        let weightUnit: Units?
+        public let price: Int?
+        public let weight: Int?
+        public let units: Int?
+        public let weightUnit: Units?
+    }
+
+    public struct CouponItem: Encodable {
+        public let id: String
+        public let refersTo: String
+        public let couponID: String
     }
 
     struct CustomerInfo: Encodable {
@@ -387,8 +417,6 @@ public struct Cart: Encodable {
         }
     }
 }
-
-public typealias BackendCartItem = Cart.Item
 
 /// AbortRequest
 struct AbortRequest: Encodable {

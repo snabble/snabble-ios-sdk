@@ -87,7 +87,7 @@ extension GS1Code {
     }
 
     var weight: Int? {
-        return (weight(in: .gram) as NSDecimalNumber?)?.intValue
+        return weight(in: .gram)?.intValue
     }
 
     func length(in unit: Units) -> Decimal? {
@@ -105,7 +105,7 @@ extension GS1Code {
     }
 
     var length: Int? {
-        return (length(in: .millimeter) as NSDecimalNumber?)?.intValue
+        return length(in: .millimeter)?.intValue
     }
 
     func area(in unit: Units) -> Decimal? {
@@ -124,7 +124,7 @@ extension GS1Code {
     }
 
     var area: Int? {
-        return (area(in: .squareCentimeter) as NSDecimalNumber?)?.intValue
+        return area(in: .squareCentimeter)?.intValue
     }
 
     func liters(in unit: Units) -> Decimal? {
@@ -142,7 +142,7 @@ extension GS1Code {
     }
 
     var liters: Int? {
-        return (liters(in: .milliliter) as NSDecimalNumber?)?.intValue
+        return liters(in: .milliliter)?.intValue
     }
 
     func volume(in unit: Units) -> Decimal? {
@@ -158,7 +158,7 @@ extension GS1Code {
     }
 
     var volume: Int? {
-        return (volume(in: .cubicCentimeter) as NSDecimalNumber?)?.intValue
+        return volume(in: .cubicCentimeter)?.intValue
     }
 
     var amount: Int? {
@@ -195,15 +195,7 @@ extension GS1Code {
             newPrice = price * pow(Decimal(10), digits - price.exponent)
         }
 
-        let roundingHandler = NSDecimalNumberHandler(roundingMode: roundingMode.mode,
-                                                     scale: 0,
-                                                     raiseOnExactness: false,
-                                                     raiseOnOverflow: false,
-                                                     raiseOnUnderflow: false,
-                                                     raiseOnDivideByZero: false)
-
-        let rounded = (newPrice as NSDecimalNumber).rounding(accordingToBehavior: roundingHandler)
-        return rounded.intValue
+        return newPrice.rounded(mode: roundingMode).intValue
     }
 
     func getEmbeddedData(for encodingUnit: Units?, _ digits: Int, _ roundingMode: RoundingMode) -> (Int?, Units?) {

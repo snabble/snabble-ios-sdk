@@ -31,6 +31,7 @@ final class ShoppingCartTableCell: UITableViewCell {
     @IBOutlet private var weightWrapper: UIView!
     @IBOutlet private var imageWrapper: UIView!
     @IBOutlet private var imageWrapperWidth: NSLayoutConstraint!
+    @IBOutlet private var discountBadge: UILabel!
     @IBOutlet private var quantityWrapper: UIView!
 
     private var quantity = 0
@@ -60,6 +61,10 @@ final class ShoppingCartTableCell: UITableViewCell {
         self.doneButton = toolbar.items?.last
         self.quantityInput.delegate = self
 
+        self.discountBadge.layer.cornerRadius = 4
+        self.discountBadge.layer.masksToBounds = true
+        self.discountBadge.isHidden = true
+
         self.prepareForReuse()
     }
 
@@ -74,6 +79,7 @@ final class ShoppingCartTableCell: UITableViewCell {
         self.buttonWrapper.isHidden = true
         self.weightWrapper.isHidden = true
         self.imageWrapper.isHidden = true
+        self.discountBadge.isHidden = true
         self.quantityWrapper.isHidden = false
 
         self.item = nil
@@ -95,11 +101,10 @@ final class ShoppingCartTableCell: UITableViewCell {
 
         self.nameLabel.text = mainItem.name
 
+        self.loadImage()
         self.displayLineItemPrice(nil, mainItem, lineItems)
 
         self.quantityLabel.text = "\(mainItem.amount)"
-
-        self.loadImage()
     }
 
     func setDiscount(_ amount: Int, delegate: ShoppingCartTableDelegate) {
@@ -161,6 +166,7 @@ final class ShoppingCartTableCell: UITableViewCell {
         }
         self.quantityInput.text = "\(item.quantity)"
 
+        self.loadImage()
         self.showQuantity()
 
         let price = defaultItem?.totalPrice ?? item.price
@@ -169,8 +175,6 @@ final class ShoppingCartTableCell: UITableViewCell {
             self.priceLabel.text = ""
             self.buttonWrapper.isHidden = true
         }
-
-        self.loadImage()
     }
 
     private func updateQuantity(at row: Int, reload: Bool = true) {
@@ -220,15 +224,32 @@ final class ShoppingCartTableCell: UITableViewCell {
     private func displayLineItemPrice(_ product: Product?, _ mainItem: CheckoutInfo.LineItem, _ lineItems: [CheckoutInfo.LineItem]) {
         let formatter = PriceFormatter(SnabbleUI.project)
 
+        let single = formatter.format(mainItem.itemPrice ?? 0)
+        let depositTotal = lineItems.first(where: { $0.type == .deposit })?.totalPrice
+
+        let hasModifiers = mainItem.priceModifiers != nil
+        self.discountBadge.isHidden = !hasModifiers
+        if hasModifiers {
+            self.imageWrapper.isHidden = false
+            self.imageWrapperWidth.constant = product?.imageUrl == nil ? 18 : 61
+            if let depositTotal = depositTotal {
+                let deposit = formatter.format(depositTotal)
+                let total = formatter.format((mainItem.totalPrice ?? 0) + depositTotal)
+                self.priceLabel.text = "× \(single) + \(deposit) = \(total)"
+            } else {
+                let total = formatter.format(mainItem.totalPrice ?? 0)
+                self.priceLabel.text = total
+            }
+            return
+        }
+
         if let depositTotal = lineItems.first(where: { $0.type == .deposit })?.totalPrice {
-            let single = formatter.format(mainItem.itemPrice ?? 0)
             let deposit = formatter.format(depositTotal)
             let total = formatter.format((mainItem.totalPrice ?? 0) + depositTotal)
             self.priceLabel.text = "× \(single) + \(deposit) = \(total)"
         } else {
             let showUnit = product?.referenceUnit?.hasDimension == true || product?.type == .userMustWeigh
             if showUnit {
-                let single = formatter.format(mainItem.itemPrice ?? 0)
                 let unit = product?.referenceUnit?.display ?? ""
                 let total = formatter.format(mainItem.totalPrice ?? 0)
                 self.priceLabel.text = "× \(single)/\(unit) = \(total)"

@@ -109,15 +109,20 @@ public struct QRCodeGenerator {
                 currentBlock.cardCode = card
             }
 
-            let cartItem = item.cartItem
-            if self.config.format.repeatCodes {
-                for _ in 0 ..< cartItem.amount {
-                    let item = CodeBlockItem(1, cartItem.scannedCode)
+            for cartItem in item.cartItems {
+                guard case let Cart.Item.product(productItem) = cartItem else {
+                    continue
+                }
+
+                if self.config.format.repeatCodes {
+                    for _ in 0 ..< productItem.amount {
+                        let item = CodeBlockItem(1, productItem.scannedCode)
+                        self.append(item, to: &currentBlock, &result)
+                    }
+                } else {
+                    let item = CodeBlockItem(productItem.amount, productItem.scannedCode)
                     self.append(item, to: &currentBlock, &result)
                 }
-            } else {
-                let item = CodeBlockItem(cartItem.amount, cartItem.scannedCode)
-                self.append(item, to: &currentBlock, &result)
             }
         }
 

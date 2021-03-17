@@ -240,10 +240,10 @@ public final class ScannerViewController: UIViewController {
     private func updateCartButton() {
         let items = self.shoppingCart.numberOfItems
         if items > 0 {
-            /// workaround for backend giving us 0 as price for price-less products :(
             let nilPrice: Bool
-            if let items = self.shoppingCart.backendCartInfo?.lineItems, items.first(where: { $0.totalPrice == nil }) != nil {
-                nilPrice = true
+            if let items = self.shoppingCart.backendCartInfo?.lineItems {
+                let productsNoPrice = items.filter { $0.type == .default && $0.totalPrice == nil }
+                nilPrice = !productsNoPrice.isEmpty
             } else {
                 nilPrice = false
             }
@@ -362,6 +362,9 @@ extension ScannerViewController: ScanConfirmationViewDelegate {
             if let msg = self.ageCheckRequired(item) {
                 self.showMessage(msg)
             } else if let msg = self.delegate.scanMessage(for: SnabbleUI.project, self.shop, item.product) {
+                self.showMessage(msg)
+            } else if item.manualCoupon != nil {
+                let msg = ScanMessage("Snabble.Scanner.manualCouponAdded".localized())
                 self.showMessage(msg)
             }
         }
@@ -554,7 +557,7 @@ extension ScannerViewController {
         // HACK: set the action sheet buttons background
         if let alertContentView = alert.view.subviews.first?.subviews.first {
             for view in alertContentView.subviews {
-                view.backgroundColor = .white
+                view.backgroundColor = .systemBackground
             }
         }
 

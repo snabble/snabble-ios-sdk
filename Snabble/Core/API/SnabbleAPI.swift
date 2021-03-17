@@ -405,7 +405,6 @@ extension SnabbleAPI {
     private struct TermsResponse: Decodable {}
 
     public static func saveTermsConsent(_ version: String, completion: @escaping (Bool) -> Void) {
-        print(#function)
         guard
             let appUserId = SnabbleAPI.appUserId,
             let consents = SnabbleAPI.links.consents?.href

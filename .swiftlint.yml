@@ -32,6 +32,9 @@ opt_in_rules:
  - unused_import
  - yoda_condition
 
+nesting:
+  type_level: 2
+
 identifier_name:
   min_length: 3
   excluded:

@@ -361,9 +361,9 @@ public final class ShoppingCartViewController: UIViewController {
 
                 // if we have a single lineItem that updates this entry with another SKU,
                 // propagate the change to the shopping cart
-                if let lineItem = items.first, items.count == 1, lineItem.sku != cartItem.product.sku {
+                if let lineItem = items.first, items.count == 1, let sku = lineItem.sku, sku != cartItem.product.sku {
                     let provider = SnabbleAPI.productProvider(for: SnabbleUI.project)
-                    let product = provider.productBySku(lineItem.sku, self.shoppingCart.shopId)
+                    let product = provider.productBySku(sku, self.shoppingCart.shopId)
                     if let product = product, let replacement = CartItem(replacing: cartItem, product, self.shoppingCart.shopId, lineItem) {
                         cart.replaceItem(at: index, with: replacement)
                     } else {
@@ -551,10 +551,10 @@ public final class ShoppingCartViewController: UIViewController {
 
         let backendCartInfo = self.shoppingCart.backendCartInfo
 
-        /// workaround for backend giving us 0 as price for price-less products :(
         let nilPrice: Bool
-        if let items = backendCartInfo?.lineItems, items.first(where: { $0.totalPrice == nil }) != nil {
-            nilPrice = true
+        if let items = backendCartInfo?.lineItems {
+            let productsNoPrice = items.filter { $0.type == .default && $0.totalPrice == nil }
+            nilPrice = !productsNoPrice.isEmpty
         } else {
             nilPrice = false
         }
@@ -832,12 +832,16 @@ extension ShoppingCartViewController {
 
         let provider = SnabbleAPI.productProvider(for: SnabbleUI.project)
         for lookup in lookups {
+            guard let sku = lookup.lineItem.sku else {
+                continue
+            }
+
             group.enter()
 
-            provider.productBySku(lookup.lineItem.sku, self.shoppingCart.shopId) { result in
+            provider.productBySku(sku, self.shoppingCart.shopId) { result in
                 switch result {
                 case .failure(let error):
-                    Log.error("error in pending lookup for \(lookup.lineItem.sku): \(error)")
+                    Log.error("error in pending lookup for \(sku): \(error)")
                 case .success(let product):
                     let replacement = CartItem(replacing: lookup.cartItem, product, self.shoppingCart.shopId, lookup.lineItem)
                     mutex.lock()
