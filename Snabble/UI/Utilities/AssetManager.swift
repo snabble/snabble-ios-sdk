@@ -20,6 +20,9 @@ public enum ImageAsset: String {
     // checkout
     case checkoutOnline = "checkout-online"
     case checkoutOffline = "checkout-offline"
+
+    // app start screen bg
+    case appBackgroundImage = "background-app"
 }
 
 extension SnabbleUI {
@@ -29,7 +32,7 @@ extension SnabbleUI {
     }
 
     public static func initializeAssets(for projectId: Identifier<Project>, _ manifestUrl: String, downloadFiles: Bool) {
-        AssetManager.shared.initialize(projectId, manifestUrl, downloadFiles, pngOnly: true, completion: { })
+        AssetManager.shared.initialize(projectId, manifestUrl, downloadFiles: downloadFiles, completion: { })
     }
 
     public static func getAsset(_ asset: ImageAsset, bundlePath: String? = nil, projectId: Identifier<Project>? = nil, completion: @escaping (UIImage?) -> Void) {
@@ -64,16 +67,6 @@ struct Manifest: Codable {
         }
     }
     // swiftlint:enable identifier_name nesting
-}
-
-extension Manifest {
-    func remoteURL(for name: String, at scale: CGFloat) -> URL? {
-        guard let file = self.files.first(where: { $0.name == "\(name).png" }) else {
-            return nil
-        }
-
-        return file.remoteURL(for: scale)
-    }
 }
 
 extension Manifest.File {
@@ -220,13 +213,32 @@ final class AssetManager {
 
         // in dark mode, check if we have a _dark version, and if so, use that
         if #available(iOS 13.0, *), UIScreen.main.traitCollection.userInterfaceStyle == .dark {
-            if let file = manifest.files.first(where: { $0.name == name + "_dark.png" }) {
+            if let file = manifest.files.first(where: { filenameMatch(name, fullname: "\($0.name)_dark") }) {
                 return file
             }
         }
 
-        let file = manifest.files.first(where: { $0.name == name + ".png" })
+        let file = manifest.files.first { filenameMatch(name, fullname: $0.name) }
         return file
+    }
+
+    private func filenameMatch(_ filename: String, fullname: String) -> Bool {
+        if let dot = fullname.lastIndex(of: ".") {
+            let basename = fullname[fullname.startIndex ..< dot]
+            return filename == basename && hasValidExtension(fullname)
+        }
+
+        return filename == fullname
+    }
+
+    private func hasValidExtension(_ filename: String) -> Bool {
+        let validExtensions = [ ".png", ".jpg", ".jpeg", ".gif" ]
+        if let dot = filename.lastIndex(of: ".") {
+            let ext = filename[dot ..< filename.endIndex]
+            return validExtensions.contains(ext.lowercased())
+        }
+
+        return true
     }
 
     func initialize(_ projects: [Project], _ completion: @escaping () -> Void) {
@@ -247,7 +259,7 @@ final class AssetManager {
         for project in projects {
             if let manifestUrl = project.links.assetsManifest?.href {
                 group.enter()
-                self.initialize(project.id, manifestUrl, false, pngOnly: true) {
+                self.initialize(project.id, manifestUrl, downloadFiles: false) {
                     group.leave()
                 }
             }
@@ -266,7 +278,7 @@ final class AssetManager {
         }
     }
 
-    func initialize(_ projectId: Identifier<Project>, _ manifestUrl: String, _ downloadFiles: Bool, pngOnly: Bool, completion: @escaping () -> Void) {
+    func initialize(_ projectId: Identifier<Project>, _ manifestUrl: String, downloadFiles: Bool, completion: @escaping () -> Void) {
         guard
             let manifestUrl = SnabbleAPI.urlFor(manifestUrl),
             var components = URLComponents(url: manifestUrl, resolvingAgainstBaseURL: false)
@@ -282,9 +294,6 @@ final class AssetManager {
         components.queryItems = [
             URLQueryItem(name: "variant", value: "\(variant)x")
         ]
-        if pngOnly {
-            components.queryItems?.append(URLQueryItem(name: "type", value: "png"))
-        }
 
         guard let url = components.url else {
             return
@@ -343,7 +352,10 @@ final class AssetManager {
         }
 
         // initially download all files in the toplevel directory (ie. no "/" in the `name`)
-        for file in manifest.files.filter({ !$0.name.contains("/") }) {
+        let initialFiles = manifest.files
+            .filter { !$0.name.contains("/") && hasValidExtension($0.name) }
+
+        for file in initialFiles {
             self.downloadIfMissing(projectId, file, completion: { _ in })
         }
     }
