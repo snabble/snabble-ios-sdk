@@ -16,7 +16,7 @@ public enum SnabbleUI {
         self.implicitNavigation = isImplicitNavigation
     }
 
-    private(set) static var appearance: CustomAppearance = SnabbleAppearance() {
+    public private(set) static var appearance: CustomAppearance = SnabbleAppearance() {
         didSet {
             UIColor.contrasts = appearance.contrastColors
             customizableAppearances.objects.forEach {
