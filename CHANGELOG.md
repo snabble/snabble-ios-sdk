@@ -1,5 +1,10 @@
 ## snabble iOS SDK Changelog
 
+# v0.16.8
+
+- Allow other filetypes besides .PNG as assets
+- `SnabbleUI.appearance` is now public
+
 # v0.16.7
 
 - Made the notification for "new payment method added" public

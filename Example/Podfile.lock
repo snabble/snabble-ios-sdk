@@ -10,16 +10,16 @@ PODS:
   - OneTimePassword (3.2.0):
     - Base32 (~> 1.1.2)
   - SDCAlertView (12.0.1)
-  - Snabble (0.16.7):
-    - Snabble/Core (= 0.16.7)
-    - Snabble/UI (= 0.16.7)
-  - Snabble/Core (0.16.7):
+  - Snabble (0.16.8):
+    - Snabble/Core (= 0.16.8)
+    - Snabble/UI (= 0.16.8)
+  - Snabble/Core (0.16.8):
     - GRDB.swift (~> 5)
     - KeychainAccess (~> 4)
     - OneTimePassword (~> 3)
     - TrustKit (~> 1)
     - Zip (~> 2)
-  - Snabble/UI (0.16.7):
+  - Snabble/UI (0.16.8):
     - Capable/Colors
     - ColorCompatibility
     - DeviceKit (~> 4)
@@ -57,7 +57,7 @@ SPEC CHECKSUMS:
   KeychainAccess: 9b07f665298d13c3a85881bd3171f6f49b8151c1
   OneTimePassword: c00ecc908e67e6c5bfda9d50b0b2e4696d0b066e
   SDCAlertView: d6070733e6ce72360dde3f84a2f9eafcda25ed49
-  Snabble: 2d8735e700cef7d58ebbe43658dac7eb1e74c8fc
+  Snabble: c5fe69eb6c24272a2d14e90da7bb4aa5adabfd24
   TrustKit: dac38bb37e49bdfeca41b1a19d020da38017b51c
   Zip: 414f59909701fda9a84ab774ebe0f5449b1082cc
 
