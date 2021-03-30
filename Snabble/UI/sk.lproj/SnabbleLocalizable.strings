@@ -25,6 +25,8 @@
 
 "Snabble.Biometry.FaceId" = "Face ID";
 
+"Snabble.Biometry.locked" = "%@ je zablokovaná. Zadaj svoj kód na obrazovke uzamknutia, aby si ju znovu aktivoval.";
+
 /* ********* iOS Biometry *********, iOS only, this is used for the iOS-specific biometry settings views */
 "Snabble.Biometry.TouchId" = "Touch ID";
 
