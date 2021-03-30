@@ -53,6 +53,8 @@
 
 "Snabble.Checkout.verifying" = "Verifying";
 
+"Snabble.CreditCard.payNow" = "Pay now using Credit card";
+
 "Snabble.Delete" = "Delete";
 
 "Snabble.Done" = "Done";
@@ -97,6 +99,8 @@
 "Snabble.paydirekt.deleteAuthorization" = "Delete method";
 
 "Snabble.paydirekt.gotoWebsite" = "Go to paydirekt.de";
+
+"Snabble.Paydirekt.payNow" = "Pay now using paydirekt";
 
 "Snabble.paydirekt.savedAuthorization" = "You've successfully authorized snabble for paydirekt. To remove this authorization, you need to log in to your paydirekt account. If you do not want to use this payment method anymore, you can remove it here.";
 
@@ -298,6 +302,8 @@
 "Snabble.SEPA.ibanTransferAlert.message" = "Would you like to save this account information (IBAN: %@) for future purchases?";
 
 "Snabble.SEPA.ibanTransferAlert.title" = "Save payment data";
+
+"Snabble.SEPA.payNow" = "Pay now using SEPA";
 
 "Snabble.SEPA.scoTransferHint" = "Please enter the name from the card to save it for future payments.";
 

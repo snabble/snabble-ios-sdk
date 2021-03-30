@@ -53,6 +53,8 @@
 
 "Snabble.Checkout.verifying" = "Overujem";
 
+"Snabble.CreditCard.payNow" = "Teraz zaplatiť kreditnou kartou";
+
 "Snabble.Delete" = "Vymazať";
 
 "Snabble.Done" = "Hotovo";
@@ -97,6 +99,8 @@
 "Snabble.paydirekt.deleteAuthorization" = "Vymazať spôsob platby";
 
 "Snabble.paydirekt.gotoWebsite" = "Prejsť na paydirekt.de";
+
+"Snabble.Paydirekt.payNow" = "Teraz zaplatiť prostredníctvom paydirekt";
 
 "Snabble.paydirekt.savedAuthorization" = "Autorizácia aplikácie snabble pre paydirekt bola úspešná. Ak chceš autorizáciu zrušiť, musíš sa prihlásiť do svojho konta paydirekt na webovej stránke. Pokiaľ nechceš, aby paydirekt bol v budúcnosti zobrazovaný ako spôsob platby, tu ho môžeš jednoducho odstrániť.";
 
@@ -298,6 +302,8 @@
 "Snabble.SEPA.ibanTransferAlert.message" = "Chceš uložiť tieto údaje účtu (IBAN: %@) pre nákupy v budúcnosti?";
 
 "Snabble.SEPA.ibanTransferAlert.title" = "Uložiť údaje účtu";
+
+"Snabble.SEPA.payNow" = "SEPA platba teraz";
 
 "Snabble.SEPA.scoTransferHint" = "Ešte zadaj meno uvedené na karte, aby si ju mohol/mohla uložiť pre platby priamo prostredníctvom aplikácie.";
 

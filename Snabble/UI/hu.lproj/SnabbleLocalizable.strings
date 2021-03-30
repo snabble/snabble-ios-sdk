@@ -53,6 +53,8 @@
 
 "Snabble.Checkout.verifying" = "Igazolja";
 
+"Snabble.CreditCard.payNow" = "Fizetés hitelkártyával";
+
 "Snabble.Delete" = "Törlés";
 
 "Snabble.Done" = "Kész";
@@ -97,6 +99,8 @@
 "Snabble.paydirekt.deleteAuthorization" = "Fizetési mód törlése";
 
 "Snabble.paydirekt.gotoWebsite" = "A paydirekt.de oldalra";
+
+"Snabble.Paydirekt.payNow" = "Fizetés paydirekttel";
 
 "Snabble.paydirekt.savedAuthorization" = "A snabble alkalmazást sikeresen bejelentetted a paydirektre. Visszavonásához a paydirekt fiókadataiddal be kell jelentkezned a honlapon. Ha nem szeretnéd, hogy a paydirekt a fizetési lehetőségeid között legyen, akkor itt egyszerűen eltávolíthatod.";
 
@@ -298,6 +302,8 @@
 "Snabble.SEPA.ibanTransferAlert.message" = "Elmented ezeket a számlaadatokat (IBAN: %@) a jövőbeni bevásárlásokhoz?";
 
 "Snabble.SEPA.ibanTransferAlert.title" = "Számla adatainak mentése";
+
+"Snabble.SEPA.payNow" = "Fizetés SEPA segítségével";
 
 "Snabble.SEPA.scoTransferHint" = "Add meg a kártyán látható nevet, hogy a fizetések lebonyolításához közvetlenül eltárolásra kerülhessen az alkalmazásban.";
 
