@@ -301,9 +301,13 @@
 
 "Snabble.SEPA.encryptionError" = "Chyba pri kódovaní";
 
+"Snabble.SEPA.iAgree" = "Súhlasím";
+
 "Snabble.SEPA.ibanTransferAlert.message" = "Chceš uložiť tieto údaje účtu (IBAN: %@) pre nákupy v budúcnosti?";
 
 "Snabble.SEPA.ibanTransferAlert.title" = "Uložiť údaje účtu";
+
+"Snabble.SEPA.mandate" = "Mandát na inkaso v SEPA";
 
 "Snabble.SEPA.payNow" = "SEPA platba teraz";
 

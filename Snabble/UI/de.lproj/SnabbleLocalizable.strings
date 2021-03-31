@@ -301,9 +301,13 @@
 
 "Snabble.SEPA.encryptionError" = "Fehler bei der Verschlüsselung";
 
+"Snabble.SEPA.iAgree" = "Ich stimme zu";
+
 "Snabble.SEPA.ibanTransferAlert.message" = "Möchtest du diese Kontodaten (IBAN: %@) für zukünftige Einkäufe speichern?";
 
 "Snabble.SEPA.ibanTransferAlert.title" = "Kontodaten speichern";
+
+"Snabble.SEPA.mandate" = "SEPA-Lastschriftmandat";
 
 "Snabble.SEPA.payNow" = "Jetzt mit SEPA bezahlen";
 

@@ -301,9 +301,13 @@
 
 "Snabble.SEPA.encryptionError" = "Hiba a titkosítás során";
 
+"Snabble.SEPA.iAgree" = "Hozzájárulok";
+
 "Snabble.SEPA.ibanTransferAlert.message" = "Elmented ezeket a számlaadatokat (IBAN: %@) a jövőbeni bevásárlásokhoz?";
 
 "Snabble.SEPA.ibanTransferAlert.title" = "Számla adatainak mentése";
+
+"Snabble.SEPA.mandate" = "SEPA terhelési megbízás";
 
 "Snabble.SEPA.payNow" = "Fizetés SEPA segítségével";
 
