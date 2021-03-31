@@ -72,7 +72,7 @@ public enum BiometricAuthentication {
 
 extension BiometricAuthentication {
 
-    public static func requestAuthentication(for reason: String, _ presenter: UIViewController, _ completion: @escaping (AuthenticationResult) -> Void ) {
+    static func requestAuthentication(for reason: String, completion: @escaping (AuthenticationResult) -> Void ) {
         BiometricAuthentication.requestAuthentication(for: reason) { success, error in
             if let error = error as? LAError {
                 let cancelCodes = [ LAError.Code.userCancel, LAError.Code.appCancel, LAError.Code.systemCancel ]
