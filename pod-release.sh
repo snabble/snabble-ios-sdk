@@ -31,7 +31,7 @@ else
 fi
 
 echo building sample app...
-if (cd Example; pod install; xcodebuild -scheme Snabble-Example -workspace Snabble.xcworkspace build | xcpretty); then
+if (cd Example; pod install; xcodebuild -scheme SnabbleSampleApp -workspace SnabbleSampleApp.xcworkspace build | xcpretty); then
     echo "sample app passed!"
 else
     echo "build failed"
