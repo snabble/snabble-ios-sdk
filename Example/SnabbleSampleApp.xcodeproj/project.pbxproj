@@ -12,14 +12,13 @@
 		607FACD81AFB9204008FA782 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 607FACD71AFB9204008FA782 /* ViewController.swift */; };
 		607FACDD1AFB9204008FA782 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 607FACDC1AFB9204008FA782 /* Images.xcassets */; };
 		607FACE01AFB9204008FA782 /* LaunchScreen.xib in Resources */ = {isa = PBXBuildFile; fileRef = 607FACDE1AFB9204008FA782 /* LaunchScreen.xib */; };
-		87679F54193DECE27367EF35 /* Pods_Snabble_Example.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3B41379531545DE999712895 /* Pods_Snabble_Example.framework */; };
+		C76453ABE5317D598719A23D /* Pods_SnabbleSampleApp.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 65DD4792C2707A6351C9857F /* Pods_SnabbleSampleApp.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
 		3A3CBEBC21948AC60001F941 /* Main.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = Main.storyboard; sourceTree = "<group>"; };
-		3B41379531545DE999712895 /* Pods_Snabble_Example.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Snabble_Example.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		50880F89ADD024AE5A2C5629 /* Snabble.podspec */ = {isa = PBXFileReference; explicitFileType = text.script.ruby; includeInIndex = 1; name = Snabble.podspec; path = ../Snabble.podspec; sourceTree = "<group>"; };
-		607FACD01AFB9204008FA782 /* Snabble_Example.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Snabble_Example.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		607FACD01AFB9204008FA782 /* SnabbleSampleApp.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = SnabbleSampleApp.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		607FACD41AFB9204008FA782 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		607FACD51AFB9204008FA782 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		607FACD71AFB9204008FA782 /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
@@ -27,10 +26,10 @@
 		607FACDF1AFB9204008FA782 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/LaunchScreen.xib; sourceTree = "<group>"; };
 		607FACEA1AFB9204008FA782 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		607FACEB1AFB9204008FA782 /* Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Tests.swift; sourceTree = "<group>"; };
-		6D7A1C1543B6FC37F8210B9C /* Pods-Snabble_Example.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Snabble_Example.debug.xcconfig"; path = "Pods/Target Support Files/Pods-Snabble_Example/Pods-Snabble_Example.debug.xcconfig"; sourceTree = "<group>"; };
-		7924BA8BC79B3B0EA73B9D9E /* Pods-Snabble_Example.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Snabble_Example.release.xcconfig"; path = "Pods/Target Support Files/Pods-Snabble_Example/Pods-Snabble_Example.release.xcconfig"; sourceTree = "<group>"; };
+		6225A30121C988ED27BAF059 /* Pods-SnabbleSampleApp.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-SnabbleSampleApp.debug.xcconfig"; path = "Target Support Files/Pods-SnabbleSampleApp/Pods-SnabbleSampleApp.debug.xcconfig"; sourceTree = "<group>"; };
+		65DD4792C2707A6351C9857F /* Pods_SnabbleSampleApp.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_SnabbleSampleApp.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		926E1E4B9E95CCD24DC69470 /* README.md */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = net.daringfireball.markdown; name = README.md; path = ../README.md; sourceTree = "<group>"; };
-		CB7EA7185669A8A2478F8A79 /* Pods_Snabble_Tests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Snabble_Tests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		9DEB9CCAFD9F838EBF7BC67C /* Pods-SnabbleSampleApp.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-SnabbleSampleApp.release.xcconfig"; path = "Target Support Files/Pods-SnabbleSampleApp/Pods-SnabbleSampleApp.release.xcconfig"; sourceTree = "<group>"; };
 		F4CB4458C2FED892CA028D19 /* LICENSE */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text; name = LICENSE; path = ../LICENSE; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -39,43 +38,52 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				87679F54193DECE27367EF35 /* Pods_Snabble_Example.framework in Frameworks */,
+				C76453ABE5317D598719A23D /* Pods_SnabbleSampleApp.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
-		02784129768AD123D8FE2B6D /* Pods */ = {
+		141D43B51088A842DCDC954D /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
-				6D7A1C1543B6FC37F8210B9C /* Pods-Snabble_Example.debug.xcconfig */,
-				7924BA8BC79B3B0EA73B9D9E /* Pods-Snabble_Example.release.xcconfig */,
+				65DD4792C2707A6351C9857F /* Pods_SnabbleSampleApp.framework */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		4E081A65AA96FF8F98D2029F /* Pods */ = {
+			isa = PBXGroup;
+			children = (
+				6225A30121C988ED27BAF059 /* Pods-SnabbleSampleApp.debug.xcconfig */,
+				9DEB9CCAFD9F838EBF7BC67C /* Pods-SnabbleSampleApp.release.xcconfig */,
 			);
 			name = Pods;
+			path = Pods;
 			sourceTree = "<group>";
 		};
 		607FACC71AFB9204008FA782 = {
 			isa = PBXGroup;
 			children = (
 				607FACF51AFB993E008FA782 /* Podspec Metadata */,
-				607FACD21AFB9204008FA782 /* Example for Snabble */,
+				607FACD21AFB9204008FA782 /* Sources */,
 				607FACE81AFB9204008FA782 /* Tests */,
 				607FACD11AFB9204008FA782 /* Products */,
-				02784129768AD123D8FE2B6D /* Pods */,
-				68D4588AB90CE620D8BE0087 /* Frameworks */,
+				4E081A65AA96FF8F98D2029F /* Pods */,
+				141D43B51088A842DCDC954D /* Frameworks */,
 			);
 			sourceTree = "<group>";
 		};
 		607FACD11AFB9204008FA782 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				607FACD01AFB9204008FA782 /* Snabble_Example.app */,
+				607FACD01AFB9204008FA782 /* SnabbleSampleApp.app */,
 			);
 			name = Products;
 			sourceTree = "<group>";
 		};
-		607FACD21AFB9204008FA782 /* Example for Snabble */ = {
+		607FACD21AFB9204008FA782 /* Sources */ = {
 			isa = PBXGroup;
 			children = (
 				607FACD51AFB9204008FA782 /* AppDelegate.swift */,
@@ -85,7 +93,7 @@
 				607FACDE1AFB9204008FA782 /* LaunchScreen.xib */,
 				607FACD31AFB9204008FA782 /* Supporting Files */,
 			);
-			name = "Example for Snabble";
+			name = Sources;
 			path = Snabble;
 			sourceTree = "<group>";
 		};
@@ -124,35 +132,26 @@
 			name = "Podspec Metadata";
 			sourceTree = "<group>";
 		};
-		68D4588AB90CE620D8BE0087 /* Frameworks */ = {
-			isa = PBXGroup;
-			children = (
-				3B41379531545DE999712895 /* Pods_Snabble_Example.framework */,
-				CB7EA7185669A8A2478F8A79 /* Pods_Snabble_Tests.framework */,
-			);
-			name = Frameworks;
-			sourceTree = "<group>";
-		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
-		607FACCF1AFB9204008FA782 /* Snabble_Example */ = {
+		607FACCF1AFB9204008FA782 /* SnabbleSampleApp */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 607FACEF1AFB9204008FA782 /* Build configuration list for PBXNativeTarget "Snabble_Example" */;
+			buildConfigurationList = 607FACEF1AFB9204008FA782 /* Build configuration list for PBXNativeTarget "SnabbleSampleApp" */;
 			buildPhases = (
-				F96C47CC98287376350CF687 /* [CP] Check Pods Manifest.lock */,
+				1A7C60A186EDCDB24DFBAD76 /* [CP] Check Pods Manifest.lock */,
 				607FACCC1AFB9204008FA782 /* Sources */,
 				607FACCD1AFB9204008FA782 /* Frameworks */,
 				607FACCE1AFB9204008FA782 /* Resources */,
-				830E2535F59F9D13A27D1678 /* [CP] Embed Pods Frameworks */,
+				37A9801FA0D344BA999ED6C1 /* [CP] Embed Pods Frameworks */,
 			);
 			buildRules = (
 			);
 			dependencies = (
 			);
-			name = Snabble_Example;
+			name = SnabbleSampleApp;
 			productName = Snabble;
-			productReference = 607FACD01AFB9204008FA782 /* Snabble_Example.app */;
+			productReference = 607FACD01AFB9204008FA782 /* SnabbleSampleApp.app */;
 			productType = "com.apple.product-type.application";
 		};
 /* End PBXNativeTarget section */
@@ -172,7 +171,7 @@
 					};
 				};
 			};
-			buildConfigurationList = 607FACCB1AFB9204008FA782 /* Build configuration list for PBXProject "Snabble" */;
+			buildConfigurationList = 607FACCB1AFB9204008FA782 /* Build configuration list for PBXProject "SnabbleSampleApp" */;
 			compatibilityVersion = "Xcode 3.2";
 			developmentRegion = en;
 			hasScannedForEncodings = 0;
@@ -185,7 +184,7 @@
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				607FACCF1AFB9204008FA782 /* Snabble_Example */,
+				607FACCF1AFB9204008FA782 /* SnabbleSampleApp */,
 			);
 		};
 /* End PBXProject section */
@@ -204,13 +203,35 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXShellScriptBuildPhase section */
-		830E2535F59F9D13A27D1678 /* [CP] Embed Pods Frameworks */ = {
+		1A7C60A186EDCDB24DFBAD76 /* [CP] Check Pods Manifest.lock */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
+				"${PODS_ROOT}/Manifest.lock",
+			);
+			name = "[CP] Check Pods Manifest.lock";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+				"$(DERIVED_FILE_DIR)/Pods-SnabbleSampleApp-checkManifestLockResult.txt",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
+			showEnvVarsInLog = 0;
+		};
+		37A9801FA0D344BA999ED6C1 /* [CP] Embed Pods Frameworks */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
 			);
 			inputPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-Snabble_Example/Pods-Snabble_Example-frameworks.sh",
+				"${PODS_ROOT}/Target Support Files/Pods-SnabbleSampleApp/Pods-SnabbleSampleApp-frameworks.sh",
 				"${BUILT_PRODUCTS_DIR}/Base32/Base32.framework",
 				"${BUILT_PRODUCTS_DIR}/Capable/Capable.framework",
 				"${BUILT_PRODUCTS_DIR}/ColorCompatibility/ColorCompatibility.framework",
@@ -239,25 +260,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-Snabble_Example/Pods-Snabble_Example-frameworks.sh\"\n";
-			showEnvVarsInLog = 0;
-		};
-		F96C47CC98287376350CF687 /* [CP] Check Pods Manifest.lock */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputPaths = (
-				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
-				"${PODS_ROOT}/Manifest.lock",
-			);
-			name = "[CP] Check Pods Manifest.lock";
-			outputPaths = (
-				"$(DERIVED_FILE_DIR)/Pods-Snabble_Example-checkManifestLockResult.txt",
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-SnabbleSampleApp/Pods-SnabbleSampleApp-frameworks.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
 /* End PBXShellScriptBuildPhase section */
@@ -395,7 +398,7 @@
 		};
 		607FACF01AFB9204008FA782 /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 6D7A1C1543B6FC37F8210B9C /* Pods-Snabble_Example.debug.xcconfig */;
+			baseConfigurationReference = 6225A30121C988ED27BAF059 /* Pods-SnabbleSampleApp.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				DEVELOPMENT_TEAM = 53K7JS449L;
@@ -411,7 +414,7 @@
 		};
 		607FACF11AFB9204008FA782 /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 7924BA8BC79B3B0EA73B9D9E /* Pods-Snabble_Example.release.xcconfig */;
+			baseConfigurationReference = 9DEB9CCAFD9F838EBF7BC67C /* Pods-SnabbleSampleApp.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				DEVELOPMENT_TEAM = 53K7JS449L;
@@ -428,7 +431,7 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		607FACCB1AFB9204008FA782 /* Build configuration list for PBXProject "Snabble" */ = {
+		607FACCB1AFB9204008FA782 /* Build configuration list for PBXProject "SnabbleSampleApp" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				607FACED1AFB9204008FA782 /* Debug */,
@@ -437,7 +440,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		607FACEF1AFB9204008FA782 /* Build configuration list for PBXNativeTarget "Snabble_Example" */ = {
+		607FACEF1AFB9204008FA782 /* Build configuration list for PBXNativeTarget "SnabbleSampleApp" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				607FACF01AFB9204008FA782 /* Debug */,

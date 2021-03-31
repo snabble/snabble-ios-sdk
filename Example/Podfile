@@ -4,7 +4,7 @@ platform :ios, deployment_target
 use_frameworks!
 inhibit_all_warnings!
 
-target 'Snabble_Example' do
+target 'SnabbleSampleApp' do
   pod 'Snabble', :path => '../'
 end
 

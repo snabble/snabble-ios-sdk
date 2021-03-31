@@ -1,8 +1,8 @@
 //
 //  AppDelegate.swift
-//  Snabble
+//  Snabble Sample App
 //
-//  Copyright (c) 2019 snabble GmbH. All rights reserved.
+//  Copyright (c) 2021 snabble GmbH. All rights reserved.
 //
 
 import UIKit

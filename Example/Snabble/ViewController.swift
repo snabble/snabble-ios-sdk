@@ -1,8 +1,8 @@
 //
 //  ViewController.swift
-//  Snabble
+//  Snabble Sample App
 //
-//  Copyright (c) 2019 snabble GmbH. All rights reserved.
+//  Copyright (c) 2021 snabble GmbH. All rights reserved.
 //
 
 import UIKit
@@ -24,22 +24,6 @@ class ViewController: UIViewController {
         super.viewWillAppear(animated)
     }
 
-    @IBAction private func scannerButtonTapped(_ sender: Any) {
-        guard let shoppingCart = self.shoppingCart else {
-            return
-        }
-
-        let project = SnabbleAPI.projects[0]
-        let shop = project.shops[0]
-        let scanner = ScannerViewController(shoppingCart, shop, delegate: self)
-        scanner.navigationItem.leftBarButtonItem = nil
-        self.navigationController?.pushViewController(scanner, animated: true)
-    }
-
-    @IBAction private func shoppingCartButtonTapped(_ sender: Any) {
-        self.gotoShoppingCart()
-    }
-
     func snabbleSetup() {
         let APPID = "your-app-id-here"
         let APPSECRET = "your-app-secret-here"
@@ -48,6 +32,10 @@ class ViewController: UIViewController {
         SnabbleAPI.setup(apiConfig) {
             // initial config parsed/loaded
             let project = SnabbleAPI.projects[0]
+
+            if project.id == "none" {
+                fatalError("project initialization failed - make sure APPID and APPSECRET are valid")
+            }
 
             // register the project with the UI components
             SnabbleUI.register(project)
@@ -65,6 +53,23 @@ class ViewController: UIViewController {
             }
         }
     }
+
+    @IBAction private func scannerButtonTapped(_ sender: Any) {
+        guard let shoppingCart = self.shoppingCart else {
+            return
+        }
+
+        let project = SnabbleAPI.projects[0]
+        let shop = project.shops[0]
+        let scanner = ScannerViewController(shoppingCart, shop, delegate: self)
+        scanner.navigationItem.leftBarButtonItem = nil
+        self.navigationController?.pushViewController(scanner, animated: true)
+    }
+
+    @IBAction private func shoppingCartButtonTapped(_ sender: Any) {
+        self.gotoShoppingCart()
+    }
+
 }
 
 extension ViewController: ScannerDelegate {
