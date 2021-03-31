@@ -1,8 +1,7 @@
 //
 //  NSLayoutConstraint+Priority.swift
-//  Snabble
 //
-//  Created by Andreas Osberghaus on 20.01.21.
+//  Copyright © 2021 snabble. All rights reserved.
 //
 
 import Foundation

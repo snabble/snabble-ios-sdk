@@ -1,8 +1,7 @@
 //
 //  Identifier.swift
-//  Snabble
 //
-//  Created by Andreas Osberghaus on 06.01.21.
+//  Copyright © 2021 snabble. All rights reserved.
 //
 
 import Foundation

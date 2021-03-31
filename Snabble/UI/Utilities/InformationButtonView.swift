@@ -1,8 +1,7 @@
 //
 //  InformationButtonView.swift
-//  Snabble
 //
-//  Created by Andreas Osberghaus on 17.12.20.
+//  Copyright © 2021 snabble. All rights reserved.
 //
 
 import Foundation
