@@ -331,18 +331,27 @@ final class ProductDB: ProductProvider {
         DispatchQueue.global(qos: .userInitiated).async {
             let tempDbPath = self.dbPathname(temporary: true)
             let performSwitch: Bool
-            let dataAvailable: AppDbAvailability
+            var dataAvailable = AppDbAvailability.unknown
             switch dbResponse {
             case .diff(let updateFile):
                 Log.info("db update: got diff")
                 performSwitch = self.copyAndUpdateDatabase(updateFile, tempDbPath)
-                dataAvailable = .newData
-                self.lastProductUpdate = Date()
+                if performSwitch {
+                    dataAvailable = .newData
+                    self.lastProductUpdate = Date()
+                } else {
+                    Log.error("applying delta update failed, forcing full db download")
+                    self.updateInProgress = false
+                    self.updateDatabase(forceFullDownload: true, completion: completion)
+                    return
+                }
             case .full(let dbFile):
                 Log.info("db update: got full db")
                 performSwitch = self.writeFullDatabase(dbFile, tempDbPath)
-                dataAvailable = .newData
-                self.lastProductUpdate = Date()
+                if performSwitch {
+                    dataAvailable = .newData
+                    self.lastProductUpdate = Date()
+                }
             case .noUpdate:
                 Log.info("db update: no new data")
                 performSwitch = false
@@ -779,10 +788,10 @@ extension ProductDB {
     /// - Parameters:
     ///   - codes: the codes/templates to look for
     ///   - shopId: the shop id
-    ///   - forceDownload: if true, skip the lookup in the local DB
-    ///   - product: the product found, or nil.
-    ///   - error: whether an error occurred during the lookup.
-    public func productByScannableCodes(_ codes: [(String, String)], _ shopId: Identifier<Shop>, forceDownload: Bool,
+ableCodes(_ codes: [(String, String)], _ shopId: Identifier<Shop>, forceDownload: Bool,    ///   - forceDownload: if true, skip the lookup in the local DB
+          ///   - product: the product found, or nil.
+          ///   - error: whether an error occurred during the lookup.
+          public func productByScann
                                         completion: @escaping (_ result: Result<ScannedProduct, ProductLookupError>) -> Void) {
         if self.lookupLocally(forceDownload), let result = self.productByScannableCodes(codes, shopId) {
             DispatchQueue.main.async {
