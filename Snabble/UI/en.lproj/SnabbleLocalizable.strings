@@ -92,6 +92,8 @@
 
 "Snabble.No" = "No";
 
+"Snabble.notForSale.errorMsg.scan" = "This product cannot be paid for using the app, please pay for it at the cashier.";
+
 "Snabble.OK" = "OK";
 
 "Snabble.paydirekt.authorizationFailed.message" = "Please try again later";
@@ -241,7 +243,7 @@
 
 "Snabble.saleStop.errorMsg.one" = "This product cannot be paid for using the app, please pay for it at the cashier:";
 
-"Snabble.saleStop.errorMsg.scan" = "This product cannot be paid for using the app, please pay for it at the cashier:";
+"Snabble.saleStop.errorMsg.scan" = "This product cannot be paid for using the app, please pay for it at the cashier.";
 
 "Snabble.saleStop.errorMsg.title" = "Sorry";
 

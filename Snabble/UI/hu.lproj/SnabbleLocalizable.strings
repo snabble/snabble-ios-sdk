@@ -92,6 +92,8 @@
 
 "Snabble.No" = "Nem";
 
+"Snabble.notForSale.errorMsg.scan" = "Ezt a terméket jelenleg sajnos nem lehet az alkalmazással kifizetni. Kérlek, fizesd a szokásos módon a kasszánál.";
+
 "Snabble.OK" = "OK";
 
 "Snabble.paydirekt.authorizationFailed.message" = "Kérlek, próbáld meg később még egyszer";

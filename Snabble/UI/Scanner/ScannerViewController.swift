@@ -504,6 +504,7 @@ extension ScannerViewController {
     }
 
     private func showSaleStop() {
+        self.tapticFeedback.notificationOccurred(.error)
         let alert = UIAlertController(title: "Snabble.saleStop.errorMsg.title".localized(), message: "Snabble.saleStop.errorMsg.scan".localized(), preferredStyle: .alert)
 
         alert.addAction(UIAlertAction(title: "Snabble.OK".localized(), style: .default) { _ in
@@ -515,12 +516,12 @@ extension ScannerViewController {
     }
 
     private func showNotForSale(_ product: Product, _ scannedCode: String) {
+        self.tapticFeedback.notificationOccurred(.error)
         if let msg = self.delegate.scanMessage(for: SnabbleUI.project, self.shop, product) {
-            self.tapticFeedback.notificationOccurred(.error)
             self.showMessage(msg)
             self.lastScannedCode = nil
         } else {
-            self.scannedUnknown("Snabble.Scanner.unknownBarcode".localized(), scannedCode)
+            self.scannedUnknown("Snabble.notForSale.errorMsg.scan".localized(), scannedCode)
         }
         self.barcodeDetector.resumeScanning()
     }

@@ -92,6 +92,8 @@
 
 "Snabble.No" = "Nein";
 
+"Snabble.notForSale.errorMsg.scan" = "Dieses Produkt kann derzeit leider nicht mit der App bezahlt werden, bitte bezahle es wie gewohnt an der Kasse.";
+
 "Snabble.OK" = "OK";
 
 "Snabble.paydirekt.authorizationFailed.message" = "Bitte versuche es später nochmal";

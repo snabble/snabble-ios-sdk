@@ -92,6 +92,8 @@
 
 "Snabble.No" = "Nie";
 
+"Snabble.notForSale.errorMsg.scan" = "Tento produkt momentálne nie je možné zaplatiť cez aplikáciu. Zaplať ho pri pokladni ako obvykle.";
+
 "Snabble.OK" = "OK";
 
 "Snabble.paydirekt.authorizationFailed.message" = "Skús neskôr znovu, prosím";
