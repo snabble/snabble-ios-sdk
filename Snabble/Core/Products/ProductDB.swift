@@ -331,18 +331,27 @@ final class ProductDB: ProductProvider {
         DispatchQueue.global(qos: .userInitiated).async {
             let tempDbPath = self.dbPathname(temporary: true)
             let performSwitch: Bool
-            let dataAvailable: AppDbAvailability
+            var dataAvailable = AppDbAvailability.unknown
             switch dbResponse {
             case .diff(let updateFile):
                 Log.info("db update: got diff")
                 performSwitch = self.copyAndUpdateDatabase(updateFile, tempDbPath)
-                dataAvailable = .newData
-                self.lastProductUpdate = Date()
+                if performSwitch {
+                    dataAvailable = .newData
+                    self.lastProductUpdate = Date()
+                } else {
+                    Log.error("applying delta update failed, forcing full db download")
+                    self.updateInProgress = false
+                    self.updateDatabase(forceFullDownload: true, completion: completion)
+                    return
+                }
             case .full(let dbFile):
                 Log.info("db update: got full db")
                 performSwitch = self.writeFullDatabase(dbFile, tempDbPath)
-                dataAvailable = .newData
-                self.lastProductUpdate = Date()
+                if performSwitch {
+                    dataAvailable = .newData
+                    self.lastProductUpdate = Date()
+                }
             case .noUpdate:
                 Log.info("db update: no new data")
                 performSwitch = false
