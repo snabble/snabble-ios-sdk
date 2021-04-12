@@ -64,7 +64,7 @@ extension Formatter {
 
 // provide a date decoding strategy that can actually parse ISO8601 dates, including those with fractional seconds
 extension JSONDecoder.DateDecodingStrategy {
-    static let customISO8601 = custom {
+    public static let customISO8601 = custom {
         let container = try $0.singleValueContainer()
         let string = try container.decode(String.self)
         if let date = Formatter.iso8601withFractionalSeconds.date(from: string) ?? Formatter.iso8601.date(from: string) {
