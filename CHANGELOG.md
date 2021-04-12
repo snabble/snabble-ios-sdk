@@ -1,5 +1,10 @@
 ## snabble iOS SDK Changelog
 
+# v0.16.9
+
+- the confirmation overlay for SEPA payments is now part of the SDK
+- fixes a bug where errors in applying a diff update to the product db would not lead to a full db download
+
 # v0.16.8
 
 - Allow other filetypes besides .PNG as assets

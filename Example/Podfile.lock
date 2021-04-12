@@ -3,9 +3,9 @@ PODS:
   - Capable/Colors (1.1.4)
   - ColorCompatibility (1.1.0)
   - DeviceKit (4.3.0)
-  - GRDB.swift (5.7.2):
-    - GRDB.swift/standard (= 5.7.2)
-  - GRDB.swift/standard (5.7.2)
+  - GRDB.swift (5.7.4):
+    - GRDB.swift/standard (= 5.7.4)
+  - GRDB.swift/standard (5.7.4)
   - KeychainAccess (4.2.2)
   - OneTimePassword (3.2.0):
     - Base32 (~> 1.1.2)
@@ -53,7 +53,7 @@ SPEC CHECKSUMS:
   Capable: 9f420f2a80a12144814ea2f0ba196516a0827ca1
   ColorCompatibility: 7257750b5ac742db9c8b593966c6f8e06992149b
   DeviceKit: 7decde449c308ac7e816e2184ded1c7c596fb885
-  GRDB.swift: 0b1f2d4bf81276f685b16ec412695b104e0cf479
+  GRDB.swift: 2064e726141f130d0b8bd819b29086f2b1157597
   KeychainAccess: c0c4f7f38f6fc7bbe58f5702e25f7bd2f65abf51
   OneTimePassword: c00ecc908e67e6c5bfda9d50b0b2e4696d0b066e
   SDCAlertView: d6070733e6ce72360dde3f84a2f9eafcda25ed49
