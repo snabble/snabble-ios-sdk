@@ -788,10 +788,10 @@ extension ProductDB {
     /// - Parameters:
     ///   - codes: the codes/templates to look for
     ///   - shopId: the shop id
-ableCodes(_ codes: [(String, String)], _ shopId: Identifier<Shop>, forceDownload: Bool,    ///   - forceDownload: if true, skip the lookup in the local DB
-          ///   - product: the product found, or nil.
-          ///   - error: whether an error occurred during the lookup.
-          public func productByScann
+    ///   - forceDownload: if true, skip the lookup in the local DB
+    ///   - product: the product found, or nil.
+    ///   - error: whether an error occurred during the lookup.
+    public func productByScannableCodes(_ codes: [(String, String)], _ shopId: Identifier<Shop>, forceDownload: Bool,
                                         completion: @escaping (_ result: Result<ScannedProduct, ProductLookupError>) -> Void) {
         if self.lookupLocally(forceDownload), let result = self.productByScannableCodes(codes, shopId) {
             DispatchQueue.main.async {
