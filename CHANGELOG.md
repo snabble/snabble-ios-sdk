@@ -1,5 +1,9 @@
 ## snabble iOS SDK Changelog
 
+# v0.16.10 (unreleased)
+
+- fixes a bug in the asset manager where special assets for dark mode weren't found
+
 # v0.16.9
 
 - the confirmation overlay for SEPA payments is now part of the SDK
