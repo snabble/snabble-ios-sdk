@@ -213,7 +213,7 @@ final class AssetManager {
 
         // in dark mode, check if we have a _dark version, and if so, use that
         if #available(iOS 13.0, *), UIScreen.main.traitCollection.userInterfaceStyle == .dark {
-            if let file = manifest.files.first(where: { filenameMatch(name, fullname: "\($0.name)_dark") }) {
+            if let file = manifest.files.first(where: { filenameMatch("\(name)_dark", fullname: $0.name) }) {
                 return file
             }
         }
