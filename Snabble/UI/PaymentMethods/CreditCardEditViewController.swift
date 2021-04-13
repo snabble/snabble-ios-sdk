@@ -17,16 +17,16 @@ import WebKit
 
 public final class CreditCardEditViewController: UIViewController {
 
-    @IBOutlet private weak var containerView: UIView!
-    @IBOutlet private weak var spinner: UIActivityIndicatorView!
+    @IBOutlet private var containerView: UIView!
+    @IBOutlet private var spinner: UIActivityIndicatorView!
 
-    @IBOutlet private weak var cardNumberLabel: UILabel!
-    @IBOutlet private weak var cardNumber: UITextField!
+    @IBOutlet private var cardNumberLabel: UILabel!
+    @IBOutlet private var cardNumber: UITextField!
 
-    @IBOutlet private weak var expDateLabel: UILabel!
-    @IBOutlet private weak var expirationDate: UITextField!
+    @IBOutlet private var expDateLabel: UILabel!
+    @IBOutlet private var expirationDate: UITextField!
 
-    @IBOutlet private weak var explanation: UILabel!
+    @IBOutlet private var explanation: UILabel!
 
     private var webView: WKWebView!
 

@@ -55,15 +55,15 @@ public extension Notification.Name {
 
 public final class ScannerViewController: UIViewController {
 
-    @IBOutlet private weak var spinner: UIActivityIndicatorView!
+    @IBOutlet private var spinner: UIActivityIndicatorView!
 
-    @IBOutlet private weak var messageImage: UIImageView!
-    @IBOutlet private weak var messageImageWidth: NSLayoutConstraint!
-    @IBOutlet private weak var messageSpinner: UIActivityIndicatorView!
-    @IBOutlet private weak var messageWrapper: UIView!
-    @IBOutlet private weak var messageLabel: UILabel!
-    @IBOutlet private weak var messageSeparatorHeight: NSLayoutConstraint!
-    @IBOutlet private weak var messageTopDistance: NSLayoutConstraint!
+    @IBOutlet private var messageImage: UIImageView!
+    @IBOutlet private var messageImageWidth: NSLayoutConstraint!
+    @IBOutlet private var messageSpinner: UIActivityIndicatorView!
+    @IBOutlet private var messageWrapper: UIView!
+    @IBOutlet private var messageLabel: UILabel!
+    @IBOutlet private var messageSeparatorHeight: NSLayoutConstraint!
+    @IBOutlet private var messageTopDistance: NSLayoutConstraint!
 
     private var scanConfirmationView: ScanConfirmationView!
     private var scanConfirmationViewBottom: NSLayoutConstraint!

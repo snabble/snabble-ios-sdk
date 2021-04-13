@@ -8,9 +8,9 @@ import UIKit
 
 public final class BarcodeEntryViewController: UIViewController {
 
-    @IBOutlet private weak var tableView: UITableView!
-    @IBOutlet private weak var searchBar: UISearchBar!
-    @IBOutlet private weak var bottomMargin: NSLayoutConstraint!
+    @IBOutlet private var tableView: UITableView!
+    @IBOutlet private var searchBar: UISearchBar!
+    @IBOutlet private var bottomMargin: NSLayoutConstraint!
 
     private weak var productProvider: ProductProvider!
     private let shopId: Identifier<Shop>

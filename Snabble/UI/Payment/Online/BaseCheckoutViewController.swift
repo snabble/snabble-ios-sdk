@@ -8,21 +8,21 @@ import UIKit
 
 public class BaseCheckoutViewController: UIViewController {
 
-    @IBOutlet private weak var stackView: UIStackView!
-    @IBOutlet private weak var topWrapper: UIView!
-    @IBOutlet private weak var topIcon: UIImageView!
-    @IBOutlet private weak var iconHeight: NSLayoutConstraint!
-    @IBOutlet private weak var messageWrapper: UIView!
-    @IBOutlet private weak var messageLabel: UILabel!
-    @IBOutlet private weak var arrowWrapper: UIView!
-    @IBOutlet private weak var spinnerWrapper: UIView!
-    @IBOutlet private weak var spinner: UIActivityIndicatorView!
-    @IBOutlet private weak var codeWrapper: UIView!
-    @IBOutlet private weak var codeImage: UIImageView!
-    @IBOutlet private weak var codeWidth: NSLayoutConstraint!
-    @IBOutlet private weak var idWrapper: UIView!
-    @IBOutlet private weak var idLabel: UILabel!
-    @IBOutlet private weak var cancelButton: UIButton!
+    @IBOutlet private var stackView: UIStackView!
+    @IBOutlet private var topWrapper: UIView!
+    @IBOutlet private var topIcon: UIImageView!
+    @IBOutlet private var iconHeight: NSLayoutConstraint!
+    @IBOutlet private var messageWrapper: UIView!
+    @IBOutlet private var messageLabel: UILabel!
+    @IBOutlet private var arrowWrapper: UIView!
+    @IBOutlet private var spinnerWrapper: UIView!
+    @IBOutlet private var spinner: UIActivityIndicatorView!
+    @IBOutlet private var codeWrapper: UIView!
+    @IBOutlet private var codeImage: UIImageView!
+    @IBOutlet private var codeWidth: NSLayoutConstraint!
+    @IBOutlet private var idWrapper: UIView!
+    @IBOutlet private var idLabel: UILabel!
+    @IBOutlet private var cancelButton: UIButton!
 
     private let cart: ShoppingCart
     private weak var delegate: PaymentDelegate!

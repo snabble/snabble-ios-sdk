@@ -8,13 +8,13 @@ import UIKit
 
 public final class QRCheckoutViewController: UIViewController {
 
-    @IBOutlet private weak var qrCodeView: UIImageView!
-    @IBOutlet private weak var explanation1: UILabel!
-    @IBOutlet private weak var explanation2: UILabel!
-    @IBOutlet private weak var totalPriceLabel: UILabel!
-    @IBOutlet private weak var qrCodeWidth: NSLayoutConstraint!
-    @IBOutlet private weak var checkoutIdLabel: UILabel!
-    @IBOutlet private weak var cancelButton: UIButton!
+    @IBOutlet private var qrCodeView: UIImageView!
+    @IBOutlet private var explanation1: UILabel!
+    @IBOutlet private var explanation2: UILabel!
+    @IBOutlet private var totalPriceLabel: UILabel!
+    @IBOutlet private var qrCodeWidth: NSLayoutConstraint!
+    @IBOutlet private var checkoutIdLabel: UILabel!
+    @IBOutlet private var cancelButton: UIButton!
 
     private var initialBrightness: CGFloat = 0
     private let process: CheckoutProcess

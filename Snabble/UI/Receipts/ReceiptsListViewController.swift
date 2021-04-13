@@ -32,9 +32,9 @@ enum OrderEntry {
 }
 
 public final class ReceiptsListViewController: UIViewController {
-    @IBOutlet private weak var tableView: UITableView!
-    @IBOutlet private weak var emptyLabel: UILabel!
-    @IBOutlet private weak var spinner: UIActivityIndicatorView!
+    @IBOutlet private var tableView: UITableView!
+    @IBOutlet private var emptyLabel: UILabel!
+    @IBOutlet private var spinner: UIActivityIndicatorView!
 
     private var quickLookDataSources: [QuicklookPreviewControllerDataSource] = []
 

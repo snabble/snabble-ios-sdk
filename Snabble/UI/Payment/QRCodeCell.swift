@@ -8,8 +8,8 @@ import UIKit
 
 final class QRCodeCell: UICollectionViewCell {
 
-    @IBOutlet private weak var imageView: UIImageView!
-    @IBOutlet private weak var imageWidth: NSLayoutConstraint!
+    @IBOutlet private var imageView: UIImageView!
+    @IBOutlet private var imageWidth: NSLayoutConstraint!
 
     override func awakeFromNib() {
         super.awakeFromNib()

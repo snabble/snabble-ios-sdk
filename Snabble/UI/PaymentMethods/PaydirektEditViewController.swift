@@ -31,11 +31,11 @@ private enum RedirectStatus: String {
 
 public final class PaydirektEditViewController: UIViewController {
 
-    @IBOutlet private weak var webViewWrapper: UIView!
-    @IBOutlet private weak var displayView: UIView!
-    @IBOutlet private weak var displayLabel: UILabel!
-    @IBOutlet private weak var openButton: UIButton!
-    @IBOutlet private weak var deleteButton: UIButton!
+    @IBOutlet private var webViewWrapper: UIView!
+    @IBOutlet private var displayView: UIView!
+    @IBOutlet private var displayLabel: UILabel!
+    @IBOutlet private var openButton: UIButton!
+    @IBOutlet private var deleteButton: UIButton!
 
     private var webView: WKWebView?
     private var detail: PaymentMethodDetail?

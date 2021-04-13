@@ -12,19 +12,19 @@ protocol ScanConfirmationViewDelegate: AnalyticsDelegate {
 }
 
 final class ScanConfirmationView: DesignableView {
-    @IBOutlet private weak var subtitleLabel: UILabel!
-    @IBOutlet private weak var productNameLabel: UILabel!
-    @IBOutlet private weak var originalPriceLabel: UILabel!
-    @IBOutlet private weak var priceLabel: UILabel!
+    @IBOutlet private var subtitleLabel: UILabel!
+    @IBOutlet private var productNameLabel: UILabel!
+    @IBOutlet private var originalPriceLabel: UILabel!
+    @IBOutlet private var priceLabel: UILabel!
 
-    @IBOutlet private weak var stackView: UIStackView!
-    @IBOutlet private weak var quantityField: UITextField!
-    @IBOutlet private weak var minusButton: UIButton!
-    @IBOutlet private weak var plusButton: UIButton!
-    @IBOutlet private weak var gramLabel: UILabel!
+    @IBOutlet private var stackView: UIStackView!
+    @IBOutlet private var quantityField: UITextField!
+    @IBOutlet private var minusButton: UIButton!
+    @IBOutlet private var plusButton: UIButton!
+    @IBOutlet private var gramLabel: UILabel!
 
-    @IBOutlet private weak var closeButton: UIButton!
-    @IBOutlet private weak var cartButton: UIButton!
+    @IBOutlet private var closeButton: UIButton!
+    @IBOutlet private var cartButton: UIButton!
 
     weak var delegate: ScanConfirmationViewDelegate!
 

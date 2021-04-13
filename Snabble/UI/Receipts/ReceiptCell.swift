@@ -8,13 +8,13 @@ import UIKit
 
 final class ReceiptCell: UITableViewCell {
 
-    @IBOutlet private weak var storeIcon: UIImageView!
-    @IBOutlet private weak var storeName: UILabel!
-    @IBOutlet private weak var orderDate: UILabel!
-    @IBOutlet private weak var price: UILabel!
+    @IBOutlet private var storeIcon: UIImageView!
+    @IBOutlet private var storeName: UILabel!
+    @IBOutlet private var orderDate: UILabel!
+    @IBOutlet private var price: UILabel!
 
-    @IBOutlet private weak var iconWidth: NSLayoutConstraint!
-    @IBOutlet private weak var iconDistance: NSLayoutConstraint!
+    @IBOutlet private var iconWidth: NSLayoutConstraint!
+    @IBOutlet private var iconDistance: NSLayoutConstraint!
 
     private var projectId: Identifier<Project>?
 

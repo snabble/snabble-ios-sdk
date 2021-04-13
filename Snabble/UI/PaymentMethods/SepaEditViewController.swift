@@ -15,13 +15,13 @@ private enum InputField: Int {
 
 public final class SepaEditViewController: UIViewController {
 
-    @IBOutlet private weak var hintLabel: UILabel!
-    @IBOutlet private weak var nameLabel: UILabel!
-    @IBOutlet private weak var nameField: UITextField!
-    @IBOutlet private weak var ibanLabel: UILabel!
-    @IBOutlet private weak var ibanCountryField: UITextField!
-    @IBOutlet private weak var ibanNumberField: UITextField!
-    @IBOutlet private weak var saveButton: UIButton!
+    @IBOutlet private var hintLabel: UILabel!
+    @IBOutlet private var nameLabel: UILabel!
+    @IBOutlet private var nameField: UITextField!
+    @IBOutlet private var ibanLabel: UILabel!
+    @IBOutlet private var ibanCountryField: UITextField!
+    @IBOutlet private var ibanNumberField: UITextField!
+    @IBOutlet private var saveButton: UIButton!
 
     private var detail: PaymentMethodDetail?
     private var candidate: OriginCandidate?

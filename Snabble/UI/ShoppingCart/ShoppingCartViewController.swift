@@ -52,20 +52,20 @@ enum CartTableEntry {
 
 public final class ShoppingCartViewController: UIViewController {
 
-    @IBOutlet private weak var tableView: UITableView!
-    @IBOutlet private weak var tableBottomMargin: NSLayoutConstraint!
+    @IBOutlet private var tableView: UITableView!
+    @IBOutlet private var tableBottomMargin: NSLayoutConstraint!
 
-    @IBOutlet private weak var bottomWrapper: UIView!
-    @IBOutlet private weak var checkoutButton: UIButton!
+    @IBOutlet private var bottomWrapper: UIView!
+    @IBOutlet private var checkoutButton: UIButton!
 
-    @IBOutlet private weak var methodSelectionView: UIView!
-    @IBOutlet private weak var methodIcon: UIImageView!
-    @IBOutlet private weak var methodSpinner: UIActivityIndicatorView!
+    @IBOutlet private var methodSelectionView: UIView!
+    @IBOutlet private var methodIcon: UIImageView!
+    @IBOutlet private var methodSpinner: UIActivityIndicatorView!
 
-    @IBOutlet private weak var bottomSeparator: UIView!
-    @IBOutlet private weak var bottomSeparatorHeight: NSLayoutConstraint!
-    @IBOutlet private weak var itemCountLabel: UILabel!
-    @IBOutlet private weak var totalPriceLabel: UILabel!
+    @IBOutlet private var bottomSeparator: UIView!
+    @IBOutlet private var bottomSeparatorHeight: NSLayoutConstraint!
+    @IBOutlet private var itemCountLabel: UILabel!
+    @IBOutlet private var totalPriceLabel: UILabel!
 
     public weak var paymentMethodNavigationDelegate: PaymentMethodNavigationDelegate? {
         didSet {

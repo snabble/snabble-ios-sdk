@@ -8,15 +8,15 @@ import UIKit
 
 public final class CustomerCardCheckoutViewController: UIViewController {
 
-    @IBOutlet private weak var topWrapper: UIView!
-    @IBOutlet private weak var topIcon: UIImageView!
-    @IBOutlet private weak var iconHeight: NSLayoutConstraint!
-    @IBOutlet private weak var arrowWrapper: UIView!
-    @IBOutlet private weak var codeWrapper: UIView!
+    @IBOutlet private var topWrapper: UIView!
+    @IBOutlet private var topIcon: UIImageView!
+    @IBOutlet private var iconHeight: NSLayoutConstraint!
+    @IBOutlet private var arrowWrapper: UIView!
+    @IBOutlet private var codeWrapper: UIView!
 
-    @IBOutlet private weak var eanView: EANView!
+    @IBOutlet private var eanView: EANView!
 
-    @IBOutlet private weak var paidButton: UIButton!
+    @IBOutlet private var paidButton: UIButton!
 
     private var initialBrightness: CGFloat = 0
 

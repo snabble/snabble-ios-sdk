@@ -14,24 +14,24 @@ protocol ShoppingCartTableDelegate: AnalyticsDelegate {
 
 final class ShoppingCartTableCell: UITableViewCell {
 
-    @IBOutlet private weak var productImage: UIImageView!
-    @IBOutlet private weak var spinner: UIActivityIndicatorView!
+    @IBOutlet private var productImage: UIImageView!
+    @IBOutlet private var spinner: UIActivityIndicatorView!
 
-    @IBOutlet private weak var nameLabel: UILabel!
-    @IBOutlet private weak var quantityLabel: UILabel!
-    @IBOutlet private weak var priceLabel: UILabel!
+    @IBOutlet private var nameLabel: UILabel!
+    @IBOutlet private var quantityLabel: UILabel!
+    @IBOutlet private var priceLabel: UILabel!
 
-    @IBOutlet private weak var minusButton: UIButton!
-    @IBOutlet private weak var plusButton: UIButton!
+    @IBOutlet private var minusButton: UIButton!
+    @IBOutlet private var plusButton: UIButton!
 
-    @IBOutlet private weak var quantityInput: UITextField!
-    @IBOutlet private weak var unitsLabel: UILabel!
+    @IBOutlet private var quantityInput: UITextField!
+    @IBOutlet private var unitsLabel: UILabel!
 
-    @IBOutlet private weak var buttonWrapper: UIView!
-    @IBOutlet private weak var weightWrapper: UIView!
-    @IBOutlet private weak var imageWrapper: UIView!
-    @IBOutlet private weak var imageWrapperWidth: NSLayoutConstraint!
-    @IBOutlet private weak var quantityWrapper: UIView!
+    @IBOutlet private var buttonWrapper: UIView!
+    @IBOutlet private var weightWrapper: UIView!
+    @IBOutlet private var imageWrapper: UIView!
+    @IBOutlet private var imageWrapperWidth: NSLayoutConstraint!
+    @IBOutlet private var quantityWrapper: UIView!
 
     private var quantity = 0
     private var item: CartItem?
