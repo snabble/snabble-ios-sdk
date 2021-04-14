@@ -14,7 +14,7 @@ jobs:
         uses: actions/checkout@master
 
       - name: Lint
-        run: pod lib lint --allow-warnings
+        run: pod lib lint --allow-warnings --configuration=Debug
 
       - name: Slack Notification
         uses: lazy-actions/slatify@master
