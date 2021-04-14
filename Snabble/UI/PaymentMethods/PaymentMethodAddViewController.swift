@@ -22,7 +22,7 @@ public final class PaymentMethodAddViewController: UITableViewController {
         self.analyticsDelegate = analyticsDelegate
         self.brandId = nil
 
-        super.init(style: .grouped)
+        super.init(style: SnabbleUI.groupedTableStyle)
     }
 
     init(brandId: Identifier<Brand>, showFromCart: Bool, _ analyticsDelegate: AnalyticsDelegate?) {
@@ -30,7 +30,7 @@ public final class PaymentMethodAddViewController: UITableViewController {
         self.showFromCart = showFromCart
         self.analyticsDelegate = analyticsDelegate
 
-        super.init(style: .grouped)
+        super.init(style: SnabbleUI.groupedTableStyle)
     }
 
     required init?(coder: NSCoder) {
@@ -119,7 +119,7 @@ public final class PaymentMethodAddViewController: UITableViewController {
         let entriesByBrand = Dictionary(grouping: allEntries, by: { $0.brandId })
 
         for (brandId, entries) in entriesByBrand {
-            guard let brandId = brandId, entries.count > 1, var first = entries.first else {
+            guard let brandId = brandId, !entries.isEmpty, var first = entries.first else {
                 continue
             }
 

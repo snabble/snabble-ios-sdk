@@ -41,6 +41,13 @@ public enum SnabbleUI {
         }
     }
 
+    public static var groupedTableStyle: UITableView.Style {
+        if #available(iOS 14, *) {
+            return .insetGrouped
+        }
+        return .grouped
+    }
+
     // MARK: - custom appearance handling
 
     private static var customizableAppearances: WeakCustomizableAppearanceSet = .init()

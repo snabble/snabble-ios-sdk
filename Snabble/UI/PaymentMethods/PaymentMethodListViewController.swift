@@ -30,7 +30,7 @@ public final class PaymentMethodListViewController: UITableViewController {
         self.method = method
         self.availableMethods = [ method ]
 
-        super.init(style: .grouped)
+        super.init(style: SnabbleUI.groupedTableStyle)
 
         updateAvailableMethods()
     }
@@ -42,7 +42,7 @@ public final class PaymentMethodListViewController: UITableViewController {
         self.projectId = projectId
         self.method = nil
 
-        super.init(style: .grouped)
+        super.init(style: SnabbleUI.groupedTableStyle)
 
         updateAvailableMethods()
     }
