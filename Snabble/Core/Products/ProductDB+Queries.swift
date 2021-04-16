@@ -136,7 +136,7 @@ extension ProductDB {
                     """,
                     arguments: [shopId.rawValue, self.defaultAvailability, "\(name)*", limit])
             }
-            return rows.compactMap { self.productFromRow(dbQueue, $0, shopId) }
+            return rows.compactMap { self.productFromRow(dbQueue, $0, shopId, fetchPriceAndBundles: false) }
         } catch {
             self.logError("productsByName db error: \(error)")
         }
@@ -162,7 +162,7 @@ extension ProductDB {
                     """,
                     arguments: [ shopId.rawValue, self.defaultAvailability, "\(prefix)*", limit])
             }
-            return rows.compactMap { self.productFromRow(dbQueue, $0, shopId) }
+            return rows.compactMap { self.productFromRow(dbQueue, $0, shopId, fetchPriceAndBundles: false) }
         } catch {
             self.logError("productByScannableCodePrefix db error: \(error)")
         }
@@ -228,7 +228,7 @@ extension ProductDB {
         Log.debug("update took \(elapsed)")
     }
 
-    private func productFromRow(_ dbQueue: DatabaseQueue, _ row: Row?, _ shopId: Identifier<Shop>) -> Product? {
+    private func productFromRow(_ dbQueue: DatabaseQueue, _ row: Row?, _ shopId: Identifier<Shop>, fetchPriceAndBundles: Bool = true) -> Product? {
         guard
             let row = row,
             let sku = row["sku"] as? String
@@ -236,10 +236,8 @@ extension ProductDB {
             return nil
         }
 
-        // if we have a shopId, get the price
         let priceRow: Row
-
-        if let pRow = self.getPriceRowForSku(dbQueue, sku, shopId) {
+        if fetchPriceAndBundles, let pRow = self.getPriceRowForSku(dbQueue, sku, shopId) {
             priceRow = pRow
         } else {
             priceRow = row
@@ -249,11 +247,11 @@ extension ProductDB {
         let depositSku = row["depositSku"] as? String
 
         var depositPrice: Int?
-        if let dSku = depositSku, let depositProduct = self.productBySku(dbQueue, dSku, shopId) {
+        if fetchPriceAndBundles, let dSku = depositSku, let depositProduct = self.productBySku(dbQueue, dSku, shopId) {
             depositPrice = depositProduct.price(nil)
         }
 
-        let bundles = self.productsBundling(dbQueue, sku, shopId)
+        let bundles = fetchPriceAndBundles ? self.productsBundling(dbQueue, sku, shopId) : []
 
         let codes = self.buildCodes(row)
 
@@ -292,6 +290,7 @@ extension ProductDB {
 
     private func getPriceRowForSku(_ dbQueue: DatabaseQueue, _ sku: String, _ shopId: Identifier<Shop>) -> Row? {
         // find the highest priority category that has a price
+        print(#function)
         let priceQuery = """
             select * from prices
             join shops on shops.pricingCategory = prices.pricingCategory
@@ -387,7 +386,7 @@ extension ProductDB {
 
         if SnabbleAPI.debugMode && elapsed >= 0.01 {
             Log.info("slow query: \(elapsed)s for \(query) - arguments: \(String(describing: arguments))" )
-            self.queryPlan(db, query, arguments)
+            // self.queryPlan(db, query, arguments)
         }
     }
 
