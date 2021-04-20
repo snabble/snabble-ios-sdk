@@ -54,7 +54,7 @@ struct Manifest: Codable {
         let variants: Variants
     }
 
-    // swiftlint:disable identifier_name nesting
+    // swiftlint:disable identifier_name
     struct Variants: Codable, Hashable {
         let x1: String?
         let x2: String?

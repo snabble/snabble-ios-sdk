@@ -183,6 +183,7 @@ public struct Product: Codable {
     }
 
     /// convenience accessor for price including deposit
+    @available(*, deprecated)
     public func priceWithDeposit(_ customerCard: String?) -> Int {
         return self.price(customerCard) + (self.deposit ?? 0)
     }

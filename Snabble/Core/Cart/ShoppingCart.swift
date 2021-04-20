@@ -189,8 +189,8 @@ public final class ShoppingCart: Codable {
         }
     }
 
-    func backendItems() -> [BackendCartItem] {
-        return self.items.map { $0.cartItem }
+    func backendItems() -> [Cart.Item] {
+        return self.items.flatMap { $0.cartItems }
     }
 
     func sortedItems() -> [CartItem] {

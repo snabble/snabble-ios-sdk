@@ -85,6 +85,8 @@ public struct CartItem: Codable {
     public let uuid: String
     /// optional customer Card no.
     public let customerCard: String?
+    /// optional manually entered discount
+    public internal(set) var manualCoupon: ManualCoupon?
 
     public init(_ quantity: Int, _ product: Product, _ scannedCode: ScannedCode, _ customerCard: String?, _ roundingMode: RoundingMode) {
         self.quantity = quantity
@@ -107,6 +109,7 @@ public struct CartItem: Codable {
         self.customerCard = customerCard
         self.roundingMode = item.roundingMode
         self.uuid = item.uuid
+        self.manualCoupon = item.manualCoupon
     }
 
     /// init with a lookup product and a `LineItem`
@@ -121,6 +124,7 @@ public struct CartItem: Codable {
         self.customerCard = item.customerCard
         self.roundingMode = item.roundingMode
         self.uuid = lineItem.id
+        self.manualCoupon = item.manualCoupon
     }
 
     /// can this entry be merged with another for the same SKU?
@@ -131,6 +135,7 @@ public struct CartItem: Codable {
             && self.encodingUnit == nil
             && self.scannedCode.priceOverride == nil
             && self.scannedCode.referencePriceOverride == nil
+            && self.manualCoupon == nil
     }
 
     /// is the quantity user-editable?
@@ -157,8 +162,10 @@ public struct CartItem: Codable {
             let deposit = self.product.deposit ?? 0
             return override + deposit
         }
-        if let embed = self.scannedCode.embeddedData, let encodingUnit = self.encodingUnit, let referenceUnit = self.product.referenceUnit {
-            if case .price = encodingUnit {
+        if let embed = self.scannedCode.embeddedData,
+           let encodingUnit = self.encodingUnit,
+           let referenceUnit = self.product.referenceUnit {
+            if encodingUnit == .price {
                 return embed
             }
 
@@ -174,20 +181,17 @@ public struct CartItem: Codable {
 
             return self.roundedPrice(self.product.price(self.customerCard), self.quantity, encodingUnit, referenceUnit)
         }
-        return self.quantity * self.product.priceWithDeposit(self.customerCard)
+
+        let productPrice = self.quantity * self.product.price(customerCard)
+        let deposit = self.quantity * (self.product.deposit ?? 0)
+        return productPrice + deposit
     }
 
     private func roundedPrice(_ price: Int, _ quantity: Int, _ encodingUnit: Units, _ referenceUnit: Units) -> Int {
         let unitPrice = Units.convert(price, from: encodingUnit, to: referenceUnit)
         let total = Decimal(quantity) * unitPrice
 
-        let roundingHandler = NSDecimalNumberHandler(roundingMode: self.roundingMode.mode,
-                                                     scale: 0,
-                                                     raiseOnExactness: false,
-                                                     raiseOnOverflow: false,
-                                                     raiseOnUnderflow: false,
-                                                     raiseOnDivideByZero: false)
-        return (total as NSDecimalNumber).rounding(accordingToBehavior: roundingHandler).intValue
+        return total.rounded(mode: self.roundingMode).intValue
     }
 
     /// formatted price display, e.g. for the confirmation dialog and the shopping cart table cell.
@@ -245,7 +249,7 @@ public struct CartItem: Codable {
     }
 
     /// get a copy of this data suitable for transferring to the backend
-    public var cartItem: BackendCartItem {
+    public var cartItems: [Cart.Item] {
         var quantity = self.quantity
         var units: Int?
         var price: Int?
@@ -290,14 +294,21 @@ public struct CartItem: Codable {
             price = refOverride
         }
 
-        return BackendCartItem(id: self.uuid,
-                               sku: self.product.sku,
-                               amount: quantity,
-                               scannedCode: code,
-                               price: price,
-                               weight: weight,
-                               units: units,
-                               weightUnit: encodingUnit)
+        let productItem = Cart.Item.product(Cart.ProductItem(id: self.uuid,
+                                         sku: self.product.sku,
+                                         amount: quantity,
+                                         scannedCode: code,
+                                         price: price,
+                                         weight: weight,
+                                         units: units,
+                                         weightUnit: encodingUnit))
+
+        if let coupon = self.manualCoupon {
+            let couponItem = Cart.Item.coupon(Cart.CouponItem(id: UUID().uuidString, refersTo: self.uuid, couponID: coupon.id))
+            return [productItem, couponItem]
+        } else {
+            return [productItem]
+        }
     }
 }
 

@@ -23,12 +23,11 @@ final class ScanConfirmationView: DesignableView {
     @IBOutlet private var plusButton: UIButton!
     @IBOutlet private var gramLabel: UILabel!
 
+    @IBOutlet private var manualDiscountButton: UIButton!
     @IBOutlet private var closeButton: UIButton!
     @IBOutlet private var cartButton: UIButton!
 
     weak var delegate: ScanConfirmationViewDelegate!
-
-    private var alreadyInCart = false
 
     private weak var shoppingCart: ShoppingCart!
     private var cartItem: CartItem!
@@ -58,6 +57,8 @@ final class ScanConfirmationView: DesignableView {
         self.closeButton.setImage(UIImage.fromBundle("SnabbleSDK/icon-close"), for: .normal)
         self.plusButton.setImage(UIImage.fromBundle("SnabbleSDK/icon-plus"), for: .normal)
         self.minusButton.setImage(UIImage.fromBundle("SnabbleSDK/icon-minus"), for: .normal)
+
+        self.manualDiscountButton.tintColor = SnabbleUI.appearance.accentColor
     }
 
     func setCustomAppearance(_ appearance: CustomAppearance) {
@@ -74,7 +75,10 @@ final class ScanConfirmationView: DesignableView {
 
     private func doPresent(_ scannedProduct: ScannedProduct, _ scannedCode: String, cart: ShoppingCart) {
         self.shoppingCart = cart
-        self.alreadyInCart = false
+
+        let project = SnabbleUI.project
+        self.manualDiscountButton.isHidden = project.manualCoupons.isEmpty
+        self.manualDiscountButton.setTitle("Snabble.addDiscount".localized(), for: .normal)
 
         let product = scannedProduct.product
         self.productNameLabel.text = product.name
@@ -94,10 +98,10 @@ final class ScanConfirmationView: DesignableView {
             templateId: scannedProduct.templateId ?? CodeTemplate.defaultName,
             lookupCode: scannedProduct.lookupCode)
 
-        self.cartItem = CartItem(1, product, scannedCode, cart.customerCard, SnabbleUI.project.roundingMode)
+        self.cartItem = CartItem(1, product, scannedCode, cart.customerCard, project.roundingMode)
 
         let cartQuantity = self.cartItem.canMerge ? self.shoppingCart.quantity(of: self.cartItem) : 0
-        self.alreadyInCart = cartQuantity > 0
+        let alreadyInCart = cartQuantity > 0
 
         let initialQuantity = scannedProduct.specifiedQuantity ?? 1
         var quantity = cartQuantity + initialQuantity
@@ -128,11 +132,11 @@ final class ScanConfirmationView: DesignableView {
 
         self.showQuantity(updateTextField: true)
 
-        let cartTitle = self.alreadyInCart ? "Snabble.Scanner.updateCart" : "Snabble.Scanner.addToCart"
+        let cartTitle = alreadyInCart ? "Snabble.Scanner.updateCart" : "Snabble.Scanner.addToCart"
         self.cartButton.setTitle(cartTitle.localized(), for: .normal)
 
         if product.discountedPrice != nil && product.discountedPrice != product.listPrice {
-            let formatter = PriceFormatter(SnabbleUI.project)
+            let formatter = PriceFormatter(project)
             let originalPrice = formatter.format(product.listPrice)
             let str = NSAttributedString(string: originalPrice,
                                          attributes: [.strikethroughStyle: NSUnderlineStyle.single.rawValue])
@@ -193,6 +197,36 @@ final class ScanConfirmationView: DesignableView {
         self.showQuantity(updateTextField: true)
     }
 
+    @IBAction private func manualDiscountTapped(_ sender: UIButton) {
+        let project = SnabbleUI.project
+
+        let title = "Snabble.addDiscount".localized()
+        let actionSheet = UIAlertController(title: title, message: nil, preferredStyle: .actionSheet)
+
+        actionSheet.addAction(UIAlertAction(title: "Snabble.noDiscount".localized(), style: .default) { _ in
+            self.cartItem.manualCoupon = nil
+            self.showQuantity(updateTextField: true)
+            self.manualDiscountButton.setTitle(title, for: .normal)
+        })
+
+        for coupon in project.manualCoupons {
+            actionSheet.addAction(UIAlertAction(title: coupon.name, style: .default) { _ in
+                let cartQuantity = self.shoppingCart.quantity(of: self.cartItem)
+                if cartQuantity > 0 {
+                    self.cartItem.quantity = 1
+                }
+                self.cartItem.manualCoupon = coupon
+                self.showQuantity(updateTextField: true)
+                self.manualDiscountButton.setTitle(coupon.name, for: .normal)
+                self.cartButton.setTitle("Snabble.Scanner.addToCart".localized(), for: .normal)
+            })
+        }
+
+        actionSheet.addAction(UIAlertAction(title: "Snabble.Cancel".localized(), style: .cancel, handler: nil))
+
+        UIApplication.topViewController()?.present(actionSheet, animated: true)
+    }
+
     @IBAction private func cartTapped(_ button: UIButton) {
         let cart = self.shoppingCart!
 
@@ -206,7 +240,8 @@ final class ScanConfirmationView: DesignableView {
             }
         }
 
-        if cart.quantity(of: self.cartItem) == 0 || !self.cartItem.canMerge {
+        let cartQuantity = cart.quantity(of: self.cartItem)
+        if cartQuantity == 0 || !self.cartItem.canMerge {
             let item = self.cartItem!
             Log.info("adding to cart: \(item.quantity) x \(item.product.name), scannedCode = \(item.scannedCode.code), embed=\(String(describing: item.scannedCode.embeddedData))")
             cart.add(self.cartItem)

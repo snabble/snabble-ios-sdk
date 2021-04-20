@@ -290,7 +290,6 @@ extension ProductDB {
 
     private func getPriceRowForSku(_ dbQueue: DatabaseQueue, _ sku: String, _ shopId: Identifier<Shop>) -> Row? {
         // find the highest priority category that has a price
-        print(#function)
         let priceQuery = """
             select * from prices
             join shops on shops.pricingCategory = prices.pricingCategory

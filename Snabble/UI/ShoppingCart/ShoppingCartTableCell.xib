@@ -1,9 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="17156" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="17701" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
     <device id="retina6_1" orientation="portrait" appearance="light"/>
     <dependencies>
         <deployment identifier="iOS"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="17126"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="17703"/>
+        <capability name="System colors in document resources" minToolsVersion="11.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <objects>
@@ -65,6 +66,17 @@
                             <activityIndicatorView opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" hidesWhenStopped="YES" animating="YES" style="gray" translatesAutoresizingMaskIntoConstraints="NO" id="LIP-Ob-cVR">
                                 <rect key="frame" x="28.5" y="34.5" width="20" height="20"/>
                             </activityIndicatorView>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="%" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="reN-if-7By">
+                                <rect key="frame" x="8" y="20" width="18" height="16"/>
+                                <color key="backgroundColor" systemColor="systemRedColor"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="16" id="68D-7I-3cG"/>
+                                    <constraint firstAttribute="width" constant="18" id="tgO-1M-MfY"/>
+                                </constraints>
+                                <fontDescription key="fontDescription" type="system" pointSize="11"/>
+                                <color key="textColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                <nil key="highlightedColor"/>
+                            </label>
                         </subviews>
                         <constraints>
                             <constraint firstItem="LIP-Ob-cVR" firstAttribute="centerY" secondItem="A0u-xO-yxn" secondAttribute="centerY" id="3mG-2D-owa"/>
@@ -72,10 +84,11 @@
                             <constraint firstItem="LIP-Ob-cVR" firstAttribute="centerX" secondItem="A0u-xO-yxn" secondAttribute="centerX" id="RG6-6D-zaD"/>
                             <constraint firstItem="A0u-xO-yxn" firstAttribute="leading" secondItem="zYg-eh-r57" secondAttribute="leading" constant="16" id="Wl7-Jb-puU"/>
                             <constraint firstAttribute="width" constant="61" id="tu2-GN-AIo"/>
+                            <constraint firstItem="reN-if-7By" firstAttribute="leading" secondItem="zYg-eh-r57" secondAttribute="leading" constant="8" id="u2K-W7-cvD"/>
                         </constraints>
                     </view>
                     <stackView opaque="NO" contentMode="scaleToFill" spacing="8" translatesAutoresizingMaskIntoConstraints="NO" id="Uwc-p8-iiN">
-                        <rect key="frame" x="77" y="55.5" width="97" height="21"/>
+                        <rect key="frame" x="77" y="55.5" width="95.5" height="21"/>
                         <subviews>
                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="n09-LT-AVO" userLabel="QuantityWrapper">
                                 <rect key="frame" x="0.0" y="0.0" width="50" height="21"/>
@@ -99,7 +112,7 @@
                                 </constraints>
                             </view>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="7,99 €" lineBreakMode="headTruncation" baselineAdjustment="alignBaselines" minimumScaleFactor="0.5" adjustsLetterSpacingToFitWidth="YES" translatesAutoresizingMaskIntoConstraints="NO" id="rMh-Hm-pV6">
-                                <rect key="frame" x="58" y="0.0" width="39" height="21"/>
+                                <rect key="frame" x="58" y="0.0" width="37.5" height="21"/>
                                 <constraints>
                                     <constraint firstAttribute="height" constant="21" id="hbR-og-Q0Z"/>
                                 </constraints>
@@ -156,6 +169,7 @@
                     <constraint firstAttribute="bottom" secondItem="zYg-eh-r57" secondAttribute="bottom" constant="-0.5" id="a28-Pc-yGn"/>
                     <constraint firstItem="ekp-ra-2Ib" firstAttribute="leading" secondItem="Uv3-GT-HQo" secondAttribute="trailing" constant="16" id="aZC-lw-QZ3"/>
                     <constraint firstItem="ekp-ra-2Ib" firstAttribute="centerY" secondItem="uww-bi-O2o" secondAttribute="centerY" id="dQN-Hj-qqL"/>
+                    <constraint firstItem="Uv3-GT-HQo" firstAttribute="centerY" secondItem="reN-if-7By" secondAttribute="centerY" id="fQQ-Ec-aDS"/>
                     <constraint firstItem="Uv3-GT-HQo" firstAttribute="leading" secondItem="zYg-eh-r57" secondAttribute="trailing" constant="16" id="hEv-EL-Phd"/>
                     <constraint firstItem="Uv3-GT-HQo" firstAttribute="top" secondItem="uww-bi-O2o" secondAttribute="top" constant="12" id="hmr-Ow-mp8"/>
                     <constraint firstItem="Uwc-p8-iiN" firstAttribute="top" secondItem="Uv3-GT-HQo" secondAttribute="bottom" priority="999" constant="11.5" id="iqI-0N-0Ok"/>
@@ -165,6 +179,7 @@
             </tableViewCellContentView>
             <connections>
                 <outlet property="buttonWrapper" destination="ekp-ra-2Ib" id="b0H-Fn-JKb"/>
+                <outlet property="discountBadge" destination="reN-if-7By" id="NVF-D3-Raa"/>
                 <outlet property="imageWrapper" destination="zYg-eh-r57" id="4rD-Ch-ji9"/>
                 <outlet property="imageWrapperWidth" destination="tu2-GN-AIo" id="PC6-O8-yXc"/>
                 <outlet property="minusButton" destination="LaQ-c4-Eqm" id="vnn-kW-y6D"/>
@@ -185,5 +200,8 @@
     <resources>
         <image name="SnabbleSDK/icon-minus" width="24" height="24"/>
         <image name="SnabbleSDK/icon-plus" width="24" height="24"/>
+        <systemColor name="systemRedColor">
+            <color red="1" green="0.23137254901960785" blue="0.18823529411764706" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+        </systemColor>
     </resources>
 </document>
