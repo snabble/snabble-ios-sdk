@@ -245,17 +245,22 @@ extension CreditCardEditViewController: WKScriptMessageHandler {
                 self.deletePreauth(project, self.vaultItem?.links.`self`.href)
                 goBack()
             } else {
+                project.logError("can't create CC data from IPG response: \(connectResponse)")
                 showError()
             }
         } catch ConnectGatewayResponse.Error.gateway(let reason, let code) {
             switch code {
             case "5993":
+                // user tapped "cancel"
                 goBack()
             default:
-                NSLog("unknown error fail_rc=\(code) fail_reason=\(reason)")
+                let msg = "IPG error: fail_rc=\(code) fail_reason=\(reason)"
+                project.logError(msg)
                 showError()
             }
         } catch {
+            let msg = "error parsing IPG response: \(error) eventData=\(eventData)"
+            project.logError(msg)
             showError()
         }
     }
