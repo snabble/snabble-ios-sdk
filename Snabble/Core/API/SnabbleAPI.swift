@@ -86,8 +86,8 @@ public enum SnabbleAPI {
         return self.metadata.terms
     }
 
-    public static var brands: [Brand]? {
-        return self.metadata.brands
+    public static var brands: [Brand] {
+        return self.metadata.brands ?? []
     }
 
     public static func project(for projectId: Identifier<Project>) -> Project? {

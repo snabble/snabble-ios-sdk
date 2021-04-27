@@ -124,7 +124,7 @@ public final class PaymentMethodAddViewController: UITableViewController {
             }
 
             // overwrite the project's name with the brand name
-            if let brand = SnabbleAPI.brands?.first(where: { $0.id == brandId }) {
+            if let brand = SnabbleAPI.brands.first(where: { $0.id == brandId }) {
                 first.name = brand.name
             }
             first.count = entries.reduce(0) { $0 + self.methodCount(for: $1.projectId) }
