@@ -367,8 +367,15 @@ final class ProductDB: ProductProvider {
                 dataAvailable = .incomplete
             }
 
-            if self.config.useFTS && dataAvailable == .newData {
-                self.createFulltextIndex(tempDbPath)
+            if self.config.useFTS {
+                if dataAvailable == .newData {
+                    self.createFulltextIndex(tempDbPath)
+                } else {
+                    let dbPath = self.dbPathname()
+                    if self.ftsTablesMissing(dbPath) {
+                        self.createFulltextIndex(dbPath)
+                    }
+                }
             }
 
             if performSwitch {
@@ -393,7 +400,7 @@ final class ProductDB: ProductProvider {
         let start = Date.timeIntervalSinceReferenceDate
         do {
             let db = try DatabaseQueue(path: path)
-            try self.createFullTextIndex(db)
+            try self.createFulltextIndex(db)
             let elapsed = Date.timeIntervalSinceReferenceDate - start
             Log.info("FTS index built in \(elapsed)s")
         } catch {
@@ -403,6 +410,30 @@ final class ProductDB: ProductProvider {
             }
             self.logError("create FTS failed: error \(error), extended error \(extendedResult)")
         }
+    }
+
+    private func ftsTablesMissing(_ path: String) -> Bool {
+        do {
+            var config = Configuration()
+            config.readonly = true
+            let db = try DatabaseQueue(path: path, configuration: config)
+            let tableCount: Int = try db.inDatabase { db in
+                let query = "SELECT count(*) FROM sqlite_master WHERE type='table' AND name='searchByName'"
+                if let count = try Int.fetchOne(db, sql: query) {
+                    return count
+                } else {
+                    return 0
+                }
+            }
+            return tableCount == 0
+        } catch {
+            var extendedResult: Int32 = 0
+            if let dbError = error as? DatabaseError {
+                extendedResult = dbError.extendedResultCode.rawValue
+            }
+            self.logError("check for FTS failed: error \(error), extended error \(extendedResult)")
+        }
+        return true
     }
 
     public func removeDatabase() {

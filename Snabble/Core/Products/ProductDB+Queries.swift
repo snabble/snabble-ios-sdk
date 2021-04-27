@@ -200,7 +200,7 @@ extension ProductDB {
         return [:]
     }
 
-    func createFullTextIndex(_ dbQueue: DatabaseQueue) throws {
+    func createFulltextIndex(_ dbQueue: DatabaseQueue) throws {
         let start = Date.timeIntervalSinceReferenceDate
         try dbQueue.inDatabase { db in
             try db.execute(sql: "drop table if exists searchByName_tmp")
