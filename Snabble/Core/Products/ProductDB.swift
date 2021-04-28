@@ -397,12 +397,9 @@ final class ProductDB: ProductProvider {
 
     private func createFulltextIndex(_ path: String) {
         Log.info("creating FTS index...")
-        let start = Date.timeIntervalSinceReferenceDate
         do {
             let db = try DatabaseQueue(path: path)
             try self.createFulltextIndex(db)
-            let elapsed = Date.timeIntervalSinceReferenceDate - start
-            Log.info("FTS index built in \(elapsed)s")
         } catch {
             var extendedResult: Int32 = 0
             if let dbError = error as? DatabaseError {

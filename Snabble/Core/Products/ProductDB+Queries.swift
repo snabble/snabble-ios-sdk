@@ -132,7 +132,7 @@ extension ProductDB {
             let rows = try dbQueue.inDatabase { db in
                 return try self.fetchAll(db,
                     ProductDB.productQuery + " " + """
-                    where p.sku in (select sku from searchByName where foldedName match ? limit ?) \(depositCondition)
+                    where p.sku in (select sku from searchByName where name match ? limit ?) \(depositCondition)
                     """,
                     arguments: [shopId.rawValue, self.defaultAvailability, "\(name)*", limit])
             }
@@ -204,28 +204,14 @@ extension ProductDB {
         let start = Date.timeIntervalSinceReferenceDate
         try dbQueue.inDatabase { db in
             try db.execute(sql: "drop table if exists searchByName_tmp")
-            try db.execute(sql: "create virtual table searchByName_tmp using fts4(sku text, foldedname text)")
-
-            let rows = try Row.fetchCursor(db, sql: "select sku, name from products")
-
-            try db.inTransaction {
-                while let row = try rows.next() {
-                    guard let sku = row["sku"] as? String, let name = row["name"] as? String else {
-                        continue
-                    }
-
-                    let foldedName = name.folding(options: [.diacriticInsensitive, .caseInsensitive], locale: .current)
-                    try db.execute(sql: "insert into searchByName_tmp values(?, ?)", arguments: [ sku, foldedName ])
-                }
-                return .commit
-            }
+            try db.execute(sql: "create virtual table searchByName_tmp using fts4(sku text, name text, tokenize=unicode61)")
+            try db.execute(sql: "insert into searchByName_tmp select sku, name from products")
 
             try db.execute(sql: "drop table if exists searchByName")
             try db.execute(sql: "alter table searchByName_tmp rename to searchByName")
-            try db.execute(sql: "vacuum")
         }
         let elapsed = Date.timeIntervalSinceReferenceDate - start
-        Log.debug("update took \(elapsed)")
+        Log.info("FTS index built in \(elapsed)s")
     }
 
     private func productFromRow(_ dbQueue: DatabaseQueue, _ row: Row?, _ shopId: Identifier<Shop>, fetchPriceAndBundles: Bool = true) -> Product? {
