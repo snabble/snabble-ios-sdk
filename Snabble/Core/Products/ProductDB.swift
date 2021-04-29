@@ -80,25 +80,17 @@ public protocol ProductProvider: AnyObject {
     init(_ config: SnabbleAPIConfig, _ project: Project)
 
     /// Check if a database file is present for this project
-    func hasDatabase() -> Bool
+    func databaseExists() -> Bool
 
     /// Setup the product database
     ///
     /// The database can be used as soon as this method returns.
     ///
+    /// - parameter update: if `.always` or `.ifOlderThan` , attempt to update the database to the latest revision
     /// - parameter forceFullDownload: if true, force a full download of the product database
     /// - parameter completion: This is called asynchronously on the main thread after the automatic database update check has finished
-    ///   (i.e., only if `update` is true)
     /// - parameter dataAvailable: indicates if new data is available
-    func setup(update: Bool, forceFullDownload: Bool, completion: @escaping ((_ dataAvailable: AppDbAvailability) -> Void))
-
-    /// Attempt to update the product database
-    ///
-    /// - parameter forceFullDownload: if true, force a full download of the product database
-    /// - parameter completion: This is called asynchronously on the main thread after the automatic database update check has finished
-    ///   (i.e., only if `update` is true)
-    /// - parameter dataAvailable: indicates if new data is available
-    func updateDatabase(forceFullDownload: Bool, completion: @escaping (_ dataAvailable: AppDbAvailability) -> Void)
+    func setup(update: ProductDbUpdate, forceFullDownload: Bool, completion: @escaping ((_ dataAvailable: AppDbAvailability) -> Void))
 
     /// attempt to resume a previously interrupted update of the product database
     /// calling this method when there is no previous resumable download has no effect.
@@ -174,11 +166,7 @@ public protocol ProductProvider: AnyObject {
 
 public extension ProductProvider {
     func setup(completion: @escaping (AppDbAvailability) -> Void ) {
-        self.setup(update: true, forceFullDownload: false, completion: completion)
-    }
-
-    func updateDatabase(completion: @escaping (AppDbAvailability) -> Void) {
-        self.updateDatabase(forceFullDownload: false, completion: completion)
+        self.setup(update: .always, forceFullDownload: false, completion: completion)
     }
 
     func productBySku(_ sku: String, _ shopId: Identifier<Shop>, completion: @escaping (_ result: Result<Product, ProductLookupError>) -> Void ) {
@@ -198,6 +186,12 @@ public extension ProductProvider {
     }
 
     func removeDatabase() { }
+}
+
+public enum ProductDbUpdate {
+    case always
+    case never
+    case ifOlderThan(Int) // age in seconds
 }
 
 final class ProductDB: ProductProvider {
@@ -245,18 +239,17 @@ final class ProductDB: ProductProvider {
         return dbDir.path
     }
 
-    func hasDatabase() -> Bool {
+    func databaseExists() -> Bool {
         return FileManager.default.fileExists(atPath: self.dbPathname())
     }
 
     /// Setup the product database
     /// - Parameters:
+    ///   - update: if `.always` or `.ifOlderThan` , attempt to update the database to the latest revision
     ///   - forceFullDownload: if true, force a full download of the product database
-    ///   - update: if true, attempt to update the database to the latest revision
     ///   - completion: This is called asynchronously on the main thread after the automatic database update check has finished
-    ///     (i.e., only if `update` is true)
     ///   - dataAvailable: indicates if the database was updated
-    public func setup(update: Bool = true, forceFullDownload: Bool = false, completion: @escaping (_ dataAvailable: AppDbAvailability) -> Void ) {
+    public func setup(update: ProductDbUpdate = .always, forceFullDownload: Bool = false, completion: @escaping (_ dataAvailable: AppDbAvailability) -> Void ) {
         // remove comments to simulate first app installation
 //        let dbFile = self.dbPathname()
 //        let fileManager = FileManager.default
@@ -272,13 +265,26 @@ final class ProductDB: ProductProvider {
             self.db = self.openDb()
         }
 
-        if update {
+        let doUpdate: Bool
+        switch update {
+        case .always:
+            doUpdate = true
+        case .never:
+            doUpdate = false
+        case .ifOlderThan(let age):
+            let now = Date()
+            let diff = Calendar.current.dateComponents([.second], from: self.lastProductUpdate, to: now)
+            doUpdate = diff.second! > age
+        }
+
+        if doUpdate {
             self.updateDatabase(forceFullDownload: forceFullDownload) { dataAvailable in
                 self.executeInitialSQL()
                 completion(dataAvailable)
             }
         } else {
             self.executeInitialSQL()
+            completion(.unchanged)
         }
     }
 
@@ -287,9 +293,9 @@ final class ProductDB: ProductProvider {
     ///   - forceFullDownload: if true, force a full download of the product database
     ///   - completion: This is called asynchronously on the main thread, after the update check has finished.
     ///   - dataAvailable: indicates if new data is available
-    public func updateDatabase(forceFullDownload: Bool, completion: @escaping (_ dataAvailable: AppDbAvailability) -> Void ) {
+    private func updateDatabase(forceFullDownload: Bool, completion: @escaping (_ dataAvailable: AppDbAvailability) -> Void ) {
         let schemaVersion = "\(self.schemaVersionMajor).\(self.schemaVersionMinor)"
-        let revision = (forceFullDownload || !self.hasDatabase()) ? 0 : self.revision
+        let revision = (forceFullDownload || !self.databaseExists()) ? 0 : self.revision
 
         if self.updateInProgress {
             return completion(.inProgress)
@@ -526,13 +532,7 @@ final class ProductDB: ProductProvider {
 
             // open the db and check its integrity
             let tempDb = try DatabaseQueue(path: tempDbPath)
-            let ok: Bool = try tempDb.inDatabase { db in
-                if let result = try String.fetchOne(db, sql: "pragma integrity_check") {
-                    return result.lowercased() == "ok"
-                } else {
-                    return false
-                }
-            }
+            let ok = try checkIntegrity(tempDb)
 
             if ok {
                 let metadata = self.metadata(tempDb)
@@ -564,6 +564,29 @@ final class ProductDB: ProductProvider {
             try? fileManager.removeItem(atPath: tempDbPath)
         }
         return false
+    }
+
+    private func checkIntegrity(_ dbQueue: DatabaseQueue) throws -> Bool {
+        if !databaseExists() {
+            Log.info("skip integrity check on first full d/l")
+            return true
+        }
+
+        let start = Date.timeIntervalSinceReferenceDate
+
+        let ok: Bool = try dbQueue.inDatabase { db in
+            if let result = try String.fetchOne(db, sql: "pragma integrity_check") {
+                return result.lowercased() == "ok"
+            } else {
+                return false
+            }
+        }
+        let elapsed = Date.timeIntervalSinceReferenceDate - start
+        Log.info("db integrity check: \(ok) took \(elapsed)s")
+        if !ok {
+            logError("db integrity check failed")
+        }
+        return ok
     }
 
     private func setLastUpdate(_ dbQueue: DatabaseQueue) {

@@ -3,6 +3,9 @@
 # v0.16.10 (unreleased)
 
 - fixes a bug in the asset manager where special assets for dark mode weren't found
+- creating the FTS index for a product database is now much faster
+- also, performance of `productsByName` and `productsByScannableCodePrefix` is now much better
+- Product DB updates can now be triggered depending on when the last update was requested
 
 # v0.16.9
 
