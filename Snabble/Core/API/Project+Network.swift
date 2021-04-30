@@ -68,6 +68,9 @@ public enum ErrorResponseType: String, UnknownCaseRepresentable {
     case saleStop = "sale_stop"
     case productNotFound = "product_not_found"
 
+    // client error, used e.g. for "conflicting version" in the terms consent
+    case clientError = "client_error"
+
     public static let unknownCase = ErrorResponseType.unknown
 }
 

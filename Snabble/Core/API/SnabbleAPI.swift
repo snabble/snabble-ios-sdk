@@ -426,7 +426,8 @@ extension SnabbleAPI {
                 case .success:
                     completion(true)
                 case .failure(let error):
-                    completion(error == SnabbleError.empty)
+                    // ignore "client error" since we can't recover from it
+                    completion(error == SnabbleError.empty || error.error.type == .clientError)
                 }
             }
         }
