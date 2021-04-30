@@ -383,7 +383,7 @@ public struct CodeTemplate {
 }
 
 extension CodeTemplate {
-    static let defaultName = "default"
+    public static let defaultName = "default"
 }
 
 /// the matcher's result

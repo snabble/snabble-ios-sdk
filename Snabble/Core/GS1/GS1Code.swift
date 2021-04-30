@@ -68,7 +68,7 @@ public struct GS1Code {
 // MARK: - accessors for often-used AIs
 extension GS1Code {
 
-    var gtin: String? {
+    public var gtin: String? {
         return valueForAI("01")
     }
 
