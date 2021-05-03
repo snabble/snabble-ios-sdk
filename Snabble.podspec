@@ -41,6 +41,7 @@ Pod::Spec.new do |s|
     ui.dependency 'ColorCompatibility'
     ui.dependency 'Capable/Colors'
     ui.dependency 'DeviceKit', '~> 4'
+    ui.dependency 'Pulley', '~> 2.9'
 
     ui.resource_bundles = {
       "Snabble" => [
