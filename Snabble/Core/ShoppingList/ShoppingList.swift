@@ -38,6 +38,12 @@ public final class ShoppingList: Codable {
         }
     }
 
+    public func reloadFromDisk() {
+        if let savedList = self.load() {
+            self.items = savedList.items
+        }
+    }
+
     public func itemAt(_ index: Int) -> ShoppingListItem {
         items[index]
     }
@@ -72,6 +78,12 @@ public final class ShoppingList: Codable {
     public func replaceItem(at index: Int, with newItem: ShoppingListItem) {
         items[index] = newItem
         self.save()
+    }
+
+    public func toggleChecked(at index: Int) -> Bool {
+        items[index].checked.toggle()
+        self.save()
+        return items[index].checked
     }
 
     public func setQuantity(to newQuantity: Int, at index: Int) {
@@ -192,8 +204,8 @@ extension ShoppingList {
 
         do {
             let data = try Data(contentsOf: self.listUrl(directory))
-            let cart = try JSONDecoder().decode(ShoppingList.self, from: data)
-            return cart
+            let list = try JSONDecoder().decode(ShoppingList.self, from: data)
+            return list
         } catch let error {
             Log.error("error loading shopping list for \(self.projectId): \(error)")
             return nil

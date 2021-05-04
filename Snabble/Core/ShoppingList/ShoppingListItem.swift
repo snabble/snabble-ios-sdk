@@ -14,7 +14,7 @@ public enum ShoppingListEntry {
 public final class ShoppingListItem: Codable {
     public var quantity = 0
     public var checked = false
-    public private(set) var entry: ShoppingListEntry
+    public let entry: ShoppingListEntry
 
     public var product: Product? {
         switch entry {

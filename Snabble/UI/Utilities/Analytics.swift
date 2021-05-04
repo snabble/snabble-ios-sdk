@@ -93,4 +93,14 @@ public enum AnalyticsEvent {
 
     /// the named payment method was deleted
     case paymentMethodDeleted(String)
+
+    /// an item was manually marked "done" in the shopping list drawer
+    case itemMarkedDone
+
+    /// an item was manually marked "todo" in the shopping list drawer
+    case itemMarkedTodo
+
+    /// an item was marked "done" in the shopping list drawer by scanning the corresponding product
+    case itemMarkedDoneScanner
+
 }
