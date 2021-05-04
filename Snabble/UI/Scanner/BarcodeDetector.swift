@@ -54,7 +54,7 @@ public protocol BarcodeDetector {
 
     /// this must be called from `viewWillAppear()` of the hosting view controller
     /// use this method to initialize the detector as well as the camera
-    func scannerWillAppear()
+    func scannerWillAppear(on view: UIView)
 
     /// this must be called from `viewDidLayoutSubviews()` of the hosting view controller.
     /// at this point, the bounds of the area reserved for camera preview have been determined
