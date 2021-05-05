@@ -168,7 +168,7 @@ final class ScanningViewController: UIViewController {
     override public func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
 
-        self.barcodeDetector.scannerDidLayoutSubviews(self.view)
+        self.barcodeDetector.scannerDidLayoutSubviews()
 
         self.view.bringSubviewToFront(self.messageWrapper)
         self.view.bringSubviewToFront(self.scanConfirmationView)

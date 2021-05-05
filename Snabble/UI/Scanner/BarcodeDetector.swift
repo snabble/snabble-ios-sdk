@@ -47,10 +47,8 @@ public protocol BarcodeDetector {
     var reticleVisible: Bool { get set }
 
     /// the "rectangle of interest" aka ROI as normalized coordinates, i.e. (0,0),(1,1) is the whole screen
-    var rectangleOfInterest: CGRect { get set }
-
-    /// continue scanning after invoking the `scannedCode` callback
-    var continuousScanning: Bool { get set }
+    /// by default, the ROI corresponds to the frame of the reticle
+    var rectangleOfInterest: CGRect? { get set }
 
     /// this must be called from `viewWillAppear()` of the hosting view controller
     /// use this method to initialize the detector as well as the camera
@@ -59,7 +57,7 @@ public protocol BarcodeDetector {
     /// this must be called from `viewDidLayoutSubviews()` of the hosting view controller.
     /// at this point, the bounds of the area reserved for camera preview have been determined
     /// and a barcode detector instance can place its preview layer/view at these coordinates
-    func scannerDidLayoutSubviews(_ cameraPreview: UIView)
+    func scannerDidLayoutSubviews()
 
     /// instructs the detector to restart capturing video frames and detect barcodes
     func pauseScanning()
