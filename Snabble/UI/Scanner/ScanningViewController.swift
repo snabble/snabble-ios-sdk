@@ -73,22 +73,32 @@ final class ScanningViewController: UIViewController {
     private var shoppingCart: ShoppingCart
     private var shop: Shop
 
-    private var lastScannedCode: String?
     private var confirmationVisible = false
     private var productType: ProductType?
 
     private let hiddenConfirmationOffset: CGFloat = 310
-    private let visibleConfirmationOffset: CGFloat = -16
+    private var visibleConfirmationOffset: CGFloat {
+        if self.pulleyViewController?.drawerPosition == .closed {
+            return -16
+        }
+
+        let bottom = self.pulleyViewController?.drawerDistanceFromBottom
+        return -(bottom?.distance ?? 0) - 16
+    }
 
     private var keyboardObserver: KeyboardObserver!
     private weak var delegate: ScannerDelegate!
-    private var timer: Timer?
     private var barcodeDetector: BarcodeDetector
     private var customAppearance: CustomAppearance?
 
+    private var lastScannedCode: String?
+    private var lastScanTimer: Timer?
+
+    private var spinnerTimer: Timer?
+
     private var messageTimer: Timer?
 
-    public init(_ cart: ShoppingCart, _ shop: Shop, _ detector: BarcodeDetector? = nil, delegate: ScannerDelegate) {
+    public init(_ cart: ShoppingCart, _ shop: Shop, _ detector: BarcodeDetector, delegate: ScannerDelegate) {
         let project = SnabbleUI.project
 
         self.shop = shop
@@ -98,7 +108,7 @@ final class ScanningViewController: UIViewController {
 
         self.productProvider = SnabbleAPI.productProvider(for: project)
 
-        self.barcodeDetector = detector ?? BuiltinBarcodeDetector(ScanningViewController.scannerAppearance())
+        self.barcodeDetector = detector
         self.barcodeDetector.scanFormats = project.scanFormats
 
         super.init(nibName: nil, bundle: SnabbleBundle.main)
@@ -203,6 +213,10 @@ final class ScanningViewController: UIViewController {
     private func showConfirmation(for scannedProduct: ScannedProduct, _ scannedCode: String) {
         self.confirmationVisible = true
         self.scanConfirmationView.present(scannedProduct, scannedCode, cart: self.shoppingCart)
+
+        if self.pulleyViewController?.drawerPosition != .closed {
+            self.pulleyViewController?.setDrawerPosition(position: .collapsed, animated: true)
+        }
         self.displayScanConfirmationView(hidden: false, setBottomOffset: self.productType != .userMustWeigh)
 
         NotificationCenter.default.post(name: .snabbleShowScanConfirmation, object: nil)
@@ -356,6 +370,7 @@ extension ScanningViewController: ScanConfirmationViewDelegate {
 
     func closeConfirmation(_ item: CartItem?) {
         self.displayScanConfirmationView(hidden: true)
+        self.startLastScanTimer()
         self.updateCartButton()
 
         if let item = item {
@@ -366,6 +381,10 @@ extension ScanningViewController: ScanConfirmationViewDelegate {
             } else if item.manualCoupon != nil {
                 let msg = ScanMessage("Snabble.Scanner.manualCouponAdded".localized())
                 self.showMessage(msg)
+            }
+
+            if let drawer = self.pulleyViewController?.drawerContentViewController as? ScannerDrawerViewController {
+                drawer.markScannedProduct(item.product)
             }
         }
 
@@ -426,9 +445,12 @@ extension ScanningViewController {
         let msg = ScanMessage(msg)
         self.showMessage(msg)
         self.delegate.track(.scanUnknown(code))
+        self.startLastScanTimer()
+    }
 
-        self.timer?.invalidate()
-        self.timer = Timer.scheduledTimer(withTimeInterval: 3, repeats: false) { _ in
+    private func startLastScanTimer() {
+        self.lastScanTimer?.invalidate()
+        self.lastScanTimer = Timer.scheduledTimer(withTimeInterval: 3, repeats: false) { _ in
             self.lastScannedCode = nil
         }
     }
@@ -437,16 +459,16 @@ extension ScanningViewController {
         // Log.debug("handleScannedCode \(scannedCode) \(self.lastScannedCode)")
         self.lastScannedCode = scannedCode
 
-        self.timer?.invalidate()
-        self.timer = Timer.scheduledTimer(withTimeInterval: 0.5, repeats: false) { _ in
+        self.spinnerTimer?.invalidate()
+        self.spinnerTimer = Timer.scheduledTimer(withTimeInterval: 0.5, repeats: false) { _ in
             self.spinner.startAnimating()
         }
 
         self.barcodeDetector.pauseScanning()
 
         self.productForCode(scannedCode, format, template) { scannedResult in
-            self.timer?.invalidate()
-            self.timer = nil
+            self.spinnerTimer?.invalidate()
+            self.spinnerTimer = nil
             self.spinner.stopAnimating()
 
             let scannedProduct: ScannedProduct
@@ -464,12 +486,14 @@ extension ScanningViewController {
             // check for sale stop
             if product.saleStop {
                 self.showSaleStop()
+                self.startLastScanTimer()
                 return
             }
 
             // check for not-for-sale
             if product.notForSale {
                 self.showNotForSale(scannedProduct.product, scannedCode)
+                self.startLastScanTimer()
                 return
             }
 
@@ -478,6 +502,7 @@ extension ScanningViewController {
                 let msg = "Snabble.Scanner.scannedShelfCode".localized()
                 self.scannedUnknown(msg, scannedCode)
                 self.barcodeDetector.resumeScanning()
+                self.startLastScanTimer()
                 return
             }
 

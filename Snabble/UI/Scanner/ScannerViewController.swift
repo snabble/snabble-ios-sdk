@@ -9,7 +9,7 @@ import Pulley
 
 public final class ScannerViewController: PulleyViewController {
 
-    public init(_ cart: ShoppingCart, _ shop: Shop, _ detector: BarcodeDetector? = nil, delegate: ScannerDelegate) {
+    public init(_ cart: ShoppingCart, _ shop: Shop, _ detector: BarcodeDetector, delegate: ScannerDelegate) {
         let scanningVC = ScanningViewController(cart, shop, detector, delegate: delegate)
         let drawerVC = ScannerDrawerViewController(SnabbleUI.project.id, delegate: delegate)
 

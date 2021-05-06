@@ -98,6 +98,22 @@ final class ScannerDrawerViewController: UIViewController {
     @objc private func handleTapped(_ gesture: UITapGestureRecognizer) {
         self.pulleyViewController?.setDrawerPosition(position: .open, animated: true)
     }
+
+    func markScannedProduct(_ product: Product) {
+        guard
+            let list = shoppingList,
+            let index = list.findIndex(for: product.sku)
+        else {
+            return
+        }
+
+        let checked = list.itemAt(index).checked
+        if !checked {
+            delegate?.track(.itemMarkedDoneScanner)
+            _ = list.toggleChecked(at: index)
+            tableView.reloadRows(at: [IndexPath(row: index, section: 0)], with: .automatic)
+        }
+    }
 }
 
 // MARK: - TableView
