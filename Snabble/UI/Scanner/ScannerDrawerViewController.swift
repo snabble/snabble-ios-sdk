@@ -8,7 +8,7 @@ import UIKit
 import Pulley
 
 final class ScannerDrawerViewController: UIViewController {
-    private var pulleyPositions = [PulleyPosition]()
+    private var pulleyPositions = PulleyPosition.all
     private var shoppingList: ShoppingList?
     private let projectId: Identifier<Project>
     private var tableView = UITableView()
@@ -19,6 +19,12 @@ final class ScannerDrawerViewController: UIViewController {
         self.delegate = delegate
 
         super.init(nibName: nil, bundle: nil)
+    }
+
+    override func viewDidLoad() {
+        super.viewDidLoad()
+
+        view.backgroundColor = .systemBackground
 
         let handle = UIView()
         handle.translatesAutoresizingMaskIntoConstraints = false
@@ -28,9 +34,7 @@ final class ScannerDrawerViewController: UIViewController {
         handle.isUserInteractionEnabled = true
         let tap = UITapGestureRecognizer(target: self, action: #selector(handleTapped(_:)))
         handle.addGestureRecognizer(tap)
-
-        let tableWrapper = UIView()
-        tableWrapper.translatesAutoresizingMaskIntoConstraints = false
+        view.addSubview(handle)
 
         tableView.translatesAutoresizingMaskIntoConstraints = false
         tableView.delegate = self
@@ -38,21 +42,28 @@ final class ScannerDrawerViewController: UIViewController {
         tableView.tableFooterView = UIView(frame: .zero)
         let nib = UINib(nibName: "ShoppingListCell", bundle: SnabbleBundle.main)
         tableView.register(nib, forCellReuseIdentifier: "shoppingListCell")
-        let insets = UIEdgeInsets(top: 0, left: 0, bottom: 20, right: 0) // 20pt overshoot from Pulley
+        // compensate for the 20pt overshoot from Pulley
+        let insets = UIEdgeInsets(top: 0, left: 0, bottom: 20, right: 0)
         tableView.contentInset = insets
         tableView.scrollIndicatorInsets = insets
-
-        view.backgroundColor = .systemBackground
-        view.addSubview(handle)
         view.addSubview(tableView)
 
+        // Pulley start its layout with a zero-frame view, make our height constraints lower prio
+        // in order to avoid auto layout warnings
+        let handleTop = handle.topAnchor.constraint(equalTo: view.topAnchor, constant: 6)
+        handleTop.priority = .defaultHigh
+        let handleHeight = handle.heightAnchor.constraint(equalToConstant: 4)
+        handleHeight.priority = .defaultHigh
+        let tableTop = tableView.topAnchor.constraint(equalTo: handle.bottomAnchor, constant: 6)
+        tableTop.priority = .defaultHigh
+
         NSLayoutConstraint.activate([
-            handle.topAnchor.constraint(equalTo: view.topAnchor, constant: 6),
+            handleTop,
             handle.centerXAnchor.constraint(equalTo: view.centerXAnchor),
-            handle.heightAnchor.constraint(equalToConstant: 4),
+            handleHeight,
             handle.widthAnchor.constraint(equalToConstant: 60),
 
-            tableView.topAnchor.constraint(equalTo: handle.bottomAnchor, constant: 6),
+            tableTop,
             tableView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
             tableView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
             tableView.bottomAnchor.constraint(equalTo: view.bottomAnchor)
@@ -70,16 +81,17 @@ final class ScannerDrawerViewController: UIViewController {
         if let list = shoppingLists.first(where: {$0.projectId == projectId}), !list.isEmpty {
             self.shoppingList = list
             self.pulleyPositions = [.collapsed, .partiallyRevealed, .open]
+            self.pulleyViewController?.setNeedsSupportedDrawerPositionsUpdate()
             if self.pulleyViewController?.drawerPosition == .closed {
                 self.pulleyViewController?.setDrawerPosition(position: .collapsed, animated: true)
             }
         } else {
             self.shoppingList = nil
-            self.pulleyPositions = [.closed]
+            self.pulleyPositions = [.collapsed, .closed]
+            self.pulleyViewController?.setNeedsSupportedDrawerPositionsUpdate()
             self.pulleyViewController?.setDrawerPosition(position: .closed, animated: false)
         }
 
-        self.pulleyViewController?.setNeedsSupportedDrawerPositionsUpdate()
         self.tableView.reloadData()
     }
 
@@ -119,6 +131,10 @@ extension ScannerDrawerViewController: UITableViewDelegate, UITableViewDataSourc
 
 // MARK: - pulley
 extension ScannerDrawerViewController: PulleyDrawerViewControllerDelegate {
+    public func supportedDrawerPositions() -> [PulleyPosition] {
+        self.pulleyPositions
+    }
+
     public func drawerPositionDidChange(drawer: PulleyViewController, bottomSafeArea: CGFloat) {
         tableView.isScrollEnabled = drawer.drawerPosition == .open
     }

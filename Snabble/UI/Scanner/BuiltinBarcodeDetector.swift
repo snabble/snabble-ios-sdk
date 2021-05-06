@@ -275,18 +275,18 @@ public final class BuiltinBarcodeDetector: NSObject, BarcodeDetector {
         }
 
         if let roi = self.rectangleOfInterest {
-            #warning("WTF")
+            // NB: roi is a normalized rect relative to our frame, which is in portrait orientation.
+            // Convert to pixels in that frame's coordinate space, and then use
+            // metadataOutputRectConverted(fromLayerRect:) to convert that back to the normalized
+            // coords relative to the video buffer, which is in landscape orientation
             let size = previewLayer.frame.size
             let frameRect = CGRect(x: roi.minX * size.width, y: roi.minY * size.height,
                                    width: roi.width * size.width, height: roi.height * size.height)
             let newRoi = previewLayer.metadataOutputRectConverted(fromLayerRect: frameRect)
-
             self.metadataOutput.rectOfInterest = newRoi
-            print("new ROI \(roi) -> \(newRoi)")
         } else if let frame = self.decorationView?.reticle.frame {
             let roi = previewLayer.metadataOutputRectConverted(fromLayerRect: frame)
             self.metadataOutput.rectOfInterest = roi
-            print("reticle ROI \(frame) -> \(self.metadataOutput.rectOfInterest)")
         }
     }
 }
