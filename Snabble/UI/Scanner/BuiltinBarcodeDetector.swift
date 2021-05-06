@@ -67,13 +67,17 @@ public final class BuiltinBarcodeDetector: NSObject, BarcodeDetector {
     private var appearance: BarcodeDetectorAppearance
     private var decorationView: BarcodeDetectorOverlay?
     private var frameTimer: Timer?
+    private var idleTimer: Timer?
+    private var screenTap: UITapGestureRecognizer?
+    private weak var messageDelegate: BarcodeDetectorMessageDelegate?
 
-    public required init(_ appearance: BarcodeDetectorAppearance) {
+    public required init(_ appearance: BarcodeDetectorAppearance, messageDelegate: BarcodeDetectorMessageDelegate) {
         self.appearance = appearance
         self.sessionQueue = DispatchQueue(label: "io.snabble.scannerQueue")
         self.captureSession = AVCaptureSession()
         self.metadataOutput = AVCaptureMetadataOutput()
         self.scanFormats = []
+        self.messageDelegate = messageDelegate
 
         super.init()
 
@@ -135,6 +139,7 @@ public final class BuiltinBarcodeDetector: NSObject, BarcodeDetector {
         self.sessionQueue.async {
             self.captureSession.stopRunning()
         }
+        self.stopIdleTimer()
     }
 
     public func resumeScanning() {
@@ -148,6 +153,7 @@ public final class BuiltinBarcodeDetector: NSObject, BarcodeDetector {
                 }
             }
         }
+        self.startIdleTimer()
     }
 
     public func startScanning() {
@@ -237,25 +243,18 @@ public final class BuiltinBarcodeDetector: NSObject, BarcodeDetector {
     }
 
     @objc private func torchButtonTapped(_ sender: Any) {
-        #warning("FIXME")
-        if self.rectangleOfInterest == nil {
-            self.rectangleOfInterest = CGRect(x: 0, y: 0, width: 0.5, height: 0.5)
-        } else {
-            self.rectangleOfInterest = nil
+        guard let camera = self.camera else {
+            return
         }
 
-//        guard let camera = self.camera else {
-//            return
-//        }
-//
-//        do {
-//            try camera.lockForConfiguration()
-//            defer { camera.unlockForConfiguration() }
-//            camera.torchMode = camera.torchMode == .on ? .off : .on
-//            let torchImage = self.torchImage(for: camera.torchMode)
-//            self.decorationView?.torchButton.setImage(torchImage, for: .normal)
-//            self.delegate?.track(.toggleTorch)
-//        } catch {}
+        do {
+            try camera.lockForConfiguration()
+            defer { camera.unlockForConfiguration() }
+            camera.torchMode = camera.torchMode == .on ? .off : .on
+            let torchImage = self.torchImage(for: camera.torchMode)
+            self.decorationView?.torchButton.setImage(torchImage, for: .normal)
+            self.delegate?.track(.toggleTorch)
+        } catch {}
     }
 
     private func torchImage(for torchMode: AVCaptureDevice.TorchMode) -> UIImage? {
@@ -288,6 +287,45 @@ public final class BuiltinBarcodeDetector: NSObject, BarcodeDetector {
             let roi = previewLayer.metadataOutputRectConverted(fromLayerRect: frame)
             self.metadataOutput.rectOfInterest = roi
         }
+    }
+}
+
+// MARK: - idle timer
+extension BuiltinBarcodeDetector {
+    private func startIdleTimer() {
+        guard
+            UserDefaults.standard.bool(forKey: "io.snabble.sdk.batterySaver"),
+            self.messageDelegate != nil
+        else {
+            return
+        }
+
+        self.stopIdleTimer()
+        self.idleTimer = Timer.scheduledTimer(withTimeInterval: 90, repeats: false) { _ in
+            self.idleTimerFired()
+        }
+    }
+
+    private func stopIdleTimer() {
+        self.idleTimer?.invalidate()
+        self.idleTimer = nil
+    }
+
+    private func idleTimerFired() {
+        self.pauseScanning()
+        self.screenTap = UITapGestureRecognizer(target: self, action: #selector(screenTapped(_:)))
+        self.decorationView?.addGestureRecognizer(self.screenTap!)
+
+        self.messageDelegate?.showMessage("Snabble.Scanner.batterySaverHint".snabbleLocalized()) {
+            self.resumeScanning()
+        }
+    }
+
+    @objc private func screenTapped(_ gesture: UIGestureRecognizer) {
+        self.decorationView?.removeGestureRecognizer(self.screenTap!)
+        self.resumeScanning()
+
+        self.messageDelegate?.dismiss()
     }
 }
 
@@ -327,6 +365,7 @@ extension BuiltinBarcodeDetector: AVCaptureMetadataOutputObjectsDelegate {
         }
 
         NSLog("got code \(code) \(format)")
+        self.startIdleTimer()
         self.delegate?.scannedCode(code, format)
     }
 
