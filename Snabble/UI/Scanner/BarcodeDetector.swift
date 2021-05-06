@@ -77,6 +77,8 @@ public protocol BarcodeDetector {
     func requestCameraPermission()
 
     func setTorch(_ on: Bool)
+
+    func setBottomDistance(_ distance: CGFloat)
 }
 
 public struct BarcodeDetectorAppearance {

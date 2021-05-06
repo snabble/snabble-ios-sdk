@@ -37,7 +37,6 @@ extension AVMetadataObject.ObjectType {
 }
 
 public final class BuiltinBarcodeDetector: NSObject, BarcodeDetector {
-
     public weak var delegate: BarcodeDetectorDelegate?
 
     public var scanFormats: [ScanFormat]
@@ -82,6 +81,10 @@ public final class BuiltinBarcodeDetector: NSObject, BarcodeDetector {
         super.init()
 
         self.metadataOutput.setMetadataObjectsDelegate(self, queue: DispatchQueue.main)
+    }
+
+    public func setBottomDistance(_ distance: CGFloat) {
+        decorationView?.bottomDistance = distance
     }
 
     public func scannerWillAppear(on view: UIView) {

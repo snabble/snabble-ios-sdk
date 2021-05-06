@@ -68,6 +68,8 @@ final class ScannerDrawerViewController: UIViewController {
             tableView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
             tableView.bottomAnchor.constraint(equalTo: view.bottomAnchor)
         ])
+
+        self.updateShoppingLists()
     }
 
     required init?(coder: NSCoder) {
@@ -77,6 +79,10 @@ final class ScannerDrawerViewController: UIViewController {
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
 
+        self.updateShoppingLists()
+    }
+
+    private func updateShoppingLists() {
         let shoppingLists = ShoppingList.fetchListsFromDisk()
         if let list = shoppingLists.first(where: {$0.projectId == projectId}), !list.isEmpty {
             self.shoppingList = list

@@ -172,6 +172,12 @@ final class ScanningViewController: UIViewController {
         self.delegate.track(.viewScanner)
         self.view.bringSubviewToFront(self.spinner)
 
+        if pulleyViewController?.drawerPosition == .closed {
+            self.barcodeDetector.setBottomDistance(16)
+        } else {
+            self.barcodeDetector.setBottomDistance(74)
+        }
+
         self.barcodeDetector.startScanning()
     }
 

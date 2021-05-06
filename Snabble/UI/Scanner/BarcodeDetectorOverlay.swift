@@ -23,7 +23,14 @@ public class BarcodeDetectorOverlay: UIView {
     public let reticleDimmingLayer = CAShapeLayer()
     public let fullDimmingLayer = CAShapeLayer()
 
+    public var bottomDistance: CGFloat = 16 {
+        didSet {
+            bottomBarBottomDistance?.constant = -bottomDistance
+        }
+    }
+
     private let appearance: BarcodeDetectorAppearance
+    private var bottomBarBottomDistance: NSLayoutConstraint?
 
     public var reticleVisible = true {
         didSet {
@@ -33,7 +40,9 @@ public class BarcodeDetectorOverlay: UIView {
 
     public init(appearance: BarcodeDetectorAppearance) {
         self.appearance = appearance
+
         super.init(frame: .zero)
+
         self.translatesAutoresizingMaskIntoConstraints = false
 
         reticle.translatesAutoresizingMaskIntoConstraints = false
@@ -59,12 +68,14 @@ public class BarcodeDetectorOverlay: UIView {
         bottomBar.translatesAutoresizingMaskIntoConstraints = false
         bottomBar.isHidden = appearance.bottomBarHidden
         self.addSubview(bottomBar)
+        let bottomBarBottomDistance = bottomBar.bottomAnchor.constraint(equalTo: self.bottomAnchor, constant: -16)
         NSLayoutConstraint.activate([
             bottomBar.leadingAnchor.constraint(equalTo: self.leadingAnchor, constant: 16),
             bottomBar.trailingAnchor.constraint(equalTo: self.trailingAnchor, constant: -16),
             bottomBar.heightAnchor.constraint(equalToConstant: 48),
-            bottomBar.bottomAnchor.constraint(equalTo: self.bottomAnchor, constant: -16)
+            bottomBarBottomDistance
         ])
+        self.bottomBarBottomDistance = bottomBarBottomDistance
 
         enterButton.translatesAutoresizingMaskIntoConstraints = false
         enterButton.setImage(appearance.enterButtonImage, for: .normal)
@@ -111,6 +122,7 @@ public class BarcodeDetectorOverlay: UIView {
         frameView.layer.borderColor = UIColor.lightGray.cgColor
         frameView.layer.borderWidth = 1 / UIScreen.main.scale
         frameView.layer.cornerRadius = 3
+
         self.addSubview(frameView)
 
         fullDimmingLayer.fillColor = appearance.dimmingColor.cgColor
