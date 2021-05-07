@@ -31,10 +31,17 @@ public class BarcodeDetectorOverlay: UIView {
 
     private let appearance: BarcodeDetectorAppearance
     private var bottomBarBottomDistance: NSLayoutConstraint?
+    private var reticleHeight: NSLayoutConstraint?
 
     public var reticleVisible = true {
         didSet {
             updateReticleVisibility()
+        }
+    }
+
+    public var reticleFrame: CGRect = .zero {
+        didSet {
+            updateReticleFrame(to: reticleFrame)
         }
     }
 
@@ -53,12 +60,14 @@ public class BarcodeDetectorOverlay: UIView {
 
         let bottomOffset: CGFloat = appearance.bottomBarHidden ? 0 : 64
         self.addSubview(reticle)
+        let reticleHeight = reticle.heightAnchor.constraint(equalToConstant: appearance.reticleHeight)
         NSLayoutConstraint.activate([
             reticle.leadingAnchor.constraint(equalTo: self.leadingAnchor, constant: 16),
             reticle.trailingAnchor.constraint(equalTo: self.trailingAnchor, constant: -16),
-            reticle.heightAnchor.constraint(equalToConstant: appearance.reticleHeight),
+            reticleHeight,
             reticle.centerYAnchor.constraint(equalTo: self.centerYAnchor, constant: -bottomOffset / 2)
         ])
+        self.reticleHeight = reticleHeight
 
         reticleDimmingLayer.fillRule = .evenOdd
         reticleDimmingLayer.fillColor = appearance.dimmingColor.cgColor
@@ -150,5 +159,20 @@ public class BarcodeDetectorOverlay: UIView {
         self.reticle.isHidden = !reticleVisible
         self.reticleDimmingLayer.isHidden = !reticleVisible
         self.fullDimmingLayer.isHidden = reticleVisible
+    }
+
+    private func updateReticleFrame(to frame: CGRect) {
+        let size = UIScreen.main.bounds.size
+
+        self.reticle.removeFromSuperview()
+
+        self.addSubview(reticle)
+        NSLayoutConstraint.activate([
+            reticle.leadingAnchor.constraint(equalTo: self.leadingAnchor, constant: frame.minX * size.width),
+            reticle.topAnchor.constraint(equalTo: self.topAnchor, constant: frame.minY * size.height),
+            reticle.widthAnchor.constraint(equalToConstant: frame.width * size.width)
+        ])
+        reticleHeight?.constant = frame.height * size.height
+        self.setNeedsLayout()
     }
 }

@@ -201,19 +201,6 @@ final class ScanningViewController: UIViewController {
 
     private var msgHidden = true
 
-    public static func scannerAppearance() -> BarcodeDetectorAppearance {
-        var appearance = BarcodeDetectorAppearance()
-
-        appearance.torchButtonImage = UIImage.fromBundle("SnabbleSDK/icon-light-inactive")?.recolored(with: .white)
-        appearance.torchButtonActiveImage = UIImage.fromBundle("SnabbleSDK/icon-light-active")
-        appearance.enterButtonImage = UIImage.fromBundle("SnabbleSDK/icon-entercode")?.recolored(with: .white)
-        appearance.backgroundColor = SnabbleUI.appearance.accentColor
-        appearance.textColor = SnabbleUI.appearance.accentColor.contrast
-        appearance.reticleCornerRadius = 3
-
-        return appearance
-    }
-
     // MARK: - scan confirmation views
 
     private func showConfirmation(for scannedProduct: ScannedProduct, _ scannedCode: String) {

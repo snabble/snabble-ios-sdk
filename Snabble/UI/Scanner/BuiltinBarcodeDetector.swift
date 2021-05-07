@@ -57,6 +57,12 @@ public final class BuiltinBarcodeDetector: NSObject, BarcodeDetector {
         }
     }
 
+    public var reticleFrame: CGRect = .zero {
+        didSet {
+            decorationView?.reticleFrame = reticleFrame
+        }
+    }
+
     private var camera: AVCaptureDevice?
     private var captureSession: AVCaptureSession
     private var previewLayer: AVCaptureVideoPreviewLayer?
@@ -70,7 +76,7 @@ public final class BuiltinBarcodeDetector: NSObject, BarcodeDetector {
     private var screenTap: UITapGestureRecognizer?
     private weak var messageDelegate: BarcodeDetectorMessageDelegate?
 
-    public required init(_ appearance: BarcodeDetectorAppearance, messageDelegate: BarcodeDetectorMessageDelegate) {
+    public required init(_ appearance: BarcodeDetectorAppearance, messageDelegate: BarcodeDetectorMessageDelegate?) {
         self.appearance = appearance
         self.sessionQueue = DispatchQueue(label: "io.snabble.scannerQueue")
         self.captureSession = AVCaptureSession()

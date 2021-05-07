@@ -9,11 +9,14 @@ import Pulley
 
 public final class ScannerViewController: PulleyViewController {
 
-    public init(_ cart: ShoppingCart, _ shop: Shop, _ detector: BarcodeDetector, delegate: ScannerDelegate) {
-        let scanningVC = ScanningViewController(cart, shop, detector, delegate: delegate)
-        let drawerVC = ScannerDrawerViewController(SnabbleUI.project.id, delegate: delegate)
+    private let scanningViewController: ScanningViewController
+    private let drawerViewController: ScannerDrawerViewController
 
-        super.init(contentViewController: scanningVC, drawerViewController: drawerVC)
+    public init(_ cart: ShoppingCart, _ shop: Shop, _ detector: BarcodeDetector, delegate: ScannerDelegate) {
+        scanningViewController = ScanningViewController(cart, shop, detector, delegate: delegate)
+        drawerViewController = ScannerDrawerViewController(SnabbleUI.project.id, delegate: delegate)
+
+        super.init(contentViewController: scanningViewController, drawerViewController: drawerViewController)
         self.initialDrawerPosition = .closed
 
         self.title = "Snabble.Scanner.title".localized()
@@ -28,4 +31,17 @@ public final class ScannerViewController: PulleyViewController {
     required init(contentViewController: UIViewController, drawerViewController: UIViewController) {
         fatalError("init(contentViewController:drawerViewController:) has not been implemented")
     }
+}
+
+// stuff that's only used by the RN wrapper
+extension ScannerViewController: ReactNativeWrapper {
+
+    public func setIsScanning(_ on: Bool) {
+        scanningViewController.setIsScanning(on)
+    }
+
+    public func setLookupcode(_ code: String) {
+        scanningViewController.setLookupcode(code)
+    }
+
 }

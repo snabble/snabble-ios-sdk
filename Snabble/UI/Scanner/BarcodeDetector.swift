@@ -46,6 +46,8 @@ public protocol BarcodeDetector {
     /// controls the visibility of the reticle
     var reticleVisible: Bool { get set }
 
+    var reticleFrame: CGRect { get set }
+
     /// the "rectangle of interest" aka ROI as normalized coordinates, i.e. (0,0),(1,1) is the whole screen
     /// by default, the ROI corresponds to the frame of the reticle
     var rectangleOfInterest: CGRect? { get set }
@@ -119,4 +121,17 @@ public struct BarcodeDetectorAppearance {
     public var bottomBarHidden = false
 
     public init() {}
+
+    public static let `default`: BarcodeDetectorAppearance = {
+        var appearance = BarcodeDetectorAppearance()
+
+        appearance.torchButtonImage = UIImage.fromBundle("SnabbleSDK/icon-light-inactive")?.recolored(with: .white)
+        appearance.torchButtonActiveImage = UIImage.fromBundle("SnabbleSDK/icon-light-active")
+        appearance.enterButtonImage = UIImage.fromBundle("SnabbleSDK/icon-entercode")?.recolored(with: .white)
+        appearance.backgroundColor = SnabbleUI.appearance.accentColor
+        appearance.textColor = SnabbleUI.appearance.accentColor.contrast
+        appearance.reticleCornerRadius = 3
+
+        return appearance
+    }()
 }
