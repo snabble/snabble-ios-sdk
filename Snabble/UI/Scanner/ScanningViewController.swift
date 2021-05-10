@@ -156,6 +156,8 @@ final class ScanningViewController: UIViewController {
         let msgTap = UITapGestureRecognizer(target: self, action: #selector(self.messageTapped(_:)))
         self.messageWrapper.addGestureRecognizer(msgTap)
         self.messageTopDistance.constant = -150
+
+        #warning("add torch/enter code buttons")
     }
 
     override public func viewWillAppear(_ animated: Bool) {
@@ -172,13 +174,7 @@ final class ScanningViewController: UIViewController {
         self.delegate.track(.viewScanner)
         self.view.bringSubviewToFront(self.spinner)
 
-        if pulleyViewController?.drawerPosition == .closed {
-            self.barcodeDetector.setBottomDistance(16)
-        } else {
-            self.barcodeDetector.setBottomDistance(74)
-        }
-
-        self.barcodeDetector.startScanning()
+        self.barcodeDetector.resumeScanning()
     }
 
     override public func viewDidLayoutSubviews() {
@@ -193,13 +189,25 @@ final class ScanningViewController: UIViewController {
     override public func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
 
-        self.barcodeDetector.stopScanning()
+        self.barcodeDetector.pauseScanning()
         self.displayScanConfirmationView(hidden: true)
 
         self.keyboardObserver = nil
     }
 
     private var msgHidden = true
+
+    func setOverlayOffset(_ offset: CGFloat) {
+        self.barcodeDetector.setOverlayOffset(offset)
+    }
+
+    func resumeScanning() {
+        self.barcodeDetector.resumeScanning()
+    }
+
+    func pauseScanning() {
+        self.barcodeDetector.pauseScanning()
+    }
 
     // MARK: - scan confirmation views
 
@@ -221,7 +229,6 @@ final class ScanningViewController: UIViewController {
         }
 
         self.confirmationVisible = !hidden
-        self.barcodeDetector.reticleVisible = hidden
 
         self.scanConfirmationView.isHidden = false
 
@@ -262,12 +269,12 @@ final class ScanningViewController: UIViewController {
             let totalPrice = nilPrice ? nil : (backendTotal ?? self.shoppingCart.total)
             if let total = totalPrice {
                 let formatter = PriceFormatter(SnabbleUI.project)
-                self.barcodeDetector.cartButtonTitle = String(format: "Snabble.Scanner.goToCart".localized(), formatter.format(total))
+                // self.barcodeDetector.cartButtonTitle = String(format: "Snabble.Scanner.goToCart".localized(), formatter.format(total))
             } else {
-                self.barcodeDetector.cartButtonTitle = "Snabble.Scanner.goToCart.empty".localized()
+                // self.barcodeDetector.cartButtonTitle = "Snabble.Scanner.goToCart.empty".localized()
             }
         } else {
-            self.barcodeDetector.cartButtonTitle = nil
+            // self.barcodeDetector.cartButtonTitle = nil
         }
     }
 
@@ -785,7 +792,6 @@ extension ScanningViewController: KeyboardHandling {
 
 extension ScanningViewController: CustomizableAppearance {
     public func setCustomAppearance(_ appearance: CustomAppearance) {
-        self.barcodeDetector.setCustomAppearance(appearance)
         self.customAppearance = appearance
 
         SnabbleUI.getAsset(.storeLogoSmall) { img in
@@ -813,9 +819,9 @@ extension ScanningViewController: ReactNativeWrapper {
     public func setIsScanning(_ on: Bool) {
         if on {
             self.barcodeDetector.requestCameraPermission()
-            self.barcodeDetector.startScanning()
+            self.barcodeDetector.resumeScanning()
         } else {
-            self.barcodeDetector.stopScanning()
+            self.barcodeDetector.pauseScanning()
         }
     }
 

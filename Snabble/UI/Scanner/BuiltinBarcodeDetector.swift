@@ -41,56 +41,29 @@ public final class BuiltinBarcodeDetector: NSObject, BarcodeDetector {
 
     public var scanFormats: [ScanFormat]
 
-    public var cartButtonTitle: String? {
-        didSet { self.updateCartButtonTitle() }
-    }
-
-    public var reticleVisible = true {
-        didSet {
-            decorationView?.reticleVisible = reticleVisible
-        }
-    }
-
-    public var rectangleOfInterest: CGRect? {
-        didSet {
-            updateRectangleOfInterest()
-        }
-    }
-
-    public var reticleFrame: CGRect = .zero {
-        didSet {
-            decorationView?.reticleFrame = reticleFrame
-        }
-    }
-
     private var camera: AVCaptureDevice?
     private var captureSession: AVCaptureSession
     private var previewLayer: AVCaptureVideoPreviewLayer?
     private var metadataOutput: AVCaptureMetadataOutput
     private var sessionQueue: DispatchQueue
 
-    private var appearance: BarcodeDetectorAppearance
-    private var decorationView: BarcodeDetectorOverlay?
-    private var frameTimer: Timer?
+    public private(set) var decorationOverlay: BarcodeDetectorOverlay?
     private var idleTimer: Timer?
     private var screenTap: UITapGestureRecognizer?
     private weak var messageDelegate: BarcodeDetectorMessageDelegate?
+    private var detectorArea: BarcodeDetectorArea
 
-    public required init(_ appearance: BarcodeDetectorAppearance, messageDelegate: BarcodeDetectorMessageDelegate?) {
-        self.appearance = appearance
+    public required init(detectorArea: BarcodeDetectorArea, messageDelegate: BarcodeDetectorMessageDelegate?) {
         self.sessionQueue = DispatchQueue(label: "io.snabble.scannerQueue")
         self.captureSession = AVCaptureSession()
         self.metadataOutput = AVCaptureMetadataOutput()
         self.scanFormats = []
         self.messageDelegate = messageDelegate
+        self.detectorArea = detectorArea
 
         super.init()
 
         self.metadataOutput.setMetadataObjectsDelegate(self, queue: DispatchQueue.main)
-    }
-
-    public func setBottomDistance(_ distance: CGFloat) {
-        decorationView?.bottomDistance = distance
     }
 
     public func scannerWillAppear(on view: UIView) {
@@ -100,6 +73,7 @@ public final class BuiltinBarcodeDetector: NSObject, BarcodeDetector {
             let videoInput = try? AVCaptureDeviceInput(device: camera),
             self.captureSession.canAddInput(videoInput)
         else {
+            addOverlay(to: view)
             return
         }
 
@@ -115,33 +89,30 @@ public final class BuiltinBarcodeDetector: NSObject, BarcodeDetector {
         view.layer.addSublayer(previewLayer)
         self.previewLayer = previewLayer
 
-        let decorationView = BarcodeDetectorOverlay(appearance: appearance)
-        view.addSubview(decorationView)
-        NSLayoutConstraint.activate([
-            decorationView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
-            decorationView.topAnchor.constraint(equalTo: view.topAnchor),
-            decorationView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
-            decorationView.bottomAnchor.constraint(equalTo: view.bottomAnchor)
-        ])
+        addOverlay(to: view)
+    }
 
-        decorationView.torchButton.addTarget(self, action: #selector(self.torchButtonTapped(_:)), for: .touchUpInside)
-        if let camera = self.camera {
-            let torchToggleSupported = camera.isTorchModeSupported(.on) && camera.isTorchModeSupported(.off)
-            decorationView.torchButton.isHidden = !torchToggleSupported
+    private func addOverlay(to view: UIView) {
+        guard self.decorationOverlay == nil else {
+            return
         }
 
-        decorationView.enterButton.addTarget(self, action: #selector(self.enterButtonTapped(_:)), for: .touchUpInside)
-        decorationView.cartButton.addTarget(self, action: #selector(self.cartButtonTapped(_:)), for: .touchUpInside)
+        let decorationOverlay = BarcodeDetectorOverlay(detectorArea: detectorArea)
+        view.addSubview(decorationOverlay)
+        NSLayoutConstraint.activate([
+            decorationOverlay.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+            decorationOverlay.topAnchor.constraint(equalTo: view.topAnchor),
+            decorationOverlay.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+            decorationOverlay.bottomAnchor.constraint(equalTo: view.bottomAnchor)
+        ])
 
-        self.decorationView = decorationView
+        self.decorationOverlay = decorationOverlay
     }
 
     public func scannerDidLayoutSubviews() {
-        if let previewLayer = self.previewLayer, let decorationView = self.decorationView {
+        if let previewLayer = self.previewLayer, let decorationView = self.decorationOverlay {
             previewLayer.frame = decorationView.bounds
         }
-
-        self.updateCartButtonTitle()
     }
 
     public func pauseScanning() {
@@ -153,24 +124,20 @@ public final class BuiltinBarcodeDetector: NSObject, BarcodeDetector {
 
     public func resumeScanning() {
         self.sessionQueue.async {
-            if !self.captureSession.isRunning {
-                self.captureSession.commitConfiguration()
-                self.captureSession.startRunning()
-
-                DispatchQueue.main.async {
-                    self.updateRectangleOfInterest()
-                }
-            }
+            self.captureSession.startRunning()
         }
         self.startIdleTimer()
     }
 
-    public func startScanning() {
-        self.resumeScanning()
-    }
+    public func setOverlayOffset(_ offset: CGFloat) {
+        guard let overlay = self.decorationOverlay else {
+            return
+        }
 
-    public func stopScanning() {
-        self.pauseScanning()
+        overlay.centerYOffset = offset
+        let rect = self.previewLayer?.metadataOutputRectConverted(fromLayerRect: overlay.roi)
+        print("new roi \(String(describing: rect))")
+        self.metadataOutput.rectOfInterest = rect ?? CGRect(origin: .zero, size: .init(width: 1, height: 1))
     }
 
     public func requestCameraPermission() {
@@ -239,6 +206,7 @@ public final class BuiltinBarcodeDetector: NSObject, BarcodeDetector {
         }
     }
 
+        /*
     private func updateCartButtonTitle() {
         UIView.performWithoutAnimation {
             self.decorationView?.cartButton.setTitle(self.cartButtonTitle, for: .normal)
@@ -276,27 +244,7 @@ public final class BuiltinBarcodeDetector: NSObject, BarcodeDetector {
     @objc private func cartButtonTapped(_ sender: Any) {
         self.delegate?.gotoShoppingCart()
     }
-
-    private func updateRectangleOfInterest() {
-        guard let previewLayer = self.previewLayer else {
-            return
-        }
-
-        if let roi = self.rectangleOfInterest {
-            // NB: roi is a normalized rect relative to our frame, which is in portrait orientation.
-            // Convert to pixels in that frame's coordinate space, and then use
-            // metadataOutputRectConverted(fromLayerRect:) to convert that back to the normalized
-            // coords relative to the video buffer, which is in landscape orientation
-            let size = previewLayer.frame.size
-            let frameRect = CGRect(x: roi.minX * size.width, y: roi.minY * size.height,
-                                   width: roi.width * size.width, height: roi.height * size.height)
-            let newRoi = previewLayer.metadataOutputRectConverted(fromLayerRect: frameRect)
-            self.metadataOutput.rectOfInterest = newRoi
-        } else if let frame = self.decorationView?.reticle.frame {
-            let roi = previewLayer.metadataOutputRectConverted(fromLayerRect: frame)
-            self.metadataOutput.rectOfInterest = roi
-        }
-    }
+     */
 }
 
 // MARK: - idle timer
@@ -323,7 +271,7 @@ extension BuiltinBarcodeDetector {
     private func idleTimerFired() {
         self.pauseScanning()
         self.screenTap = UITapGestureRecognizer(target: self, action: #selector(screenTapped(_:)))
-        self.decorationView?.addGestureRecognizer(self.screenTap!)
+        self.decorationOverlay?.addGestureRecognizer(self.screenTap!)
 
         self.messageDelegate?.showMessage("Snabble.Scanner.batterySaverHint".snabbleLocalized()) {
             self.resumeScanning()
@@ -331,7 +279,7 @@ extension BuiltinBarcodeDetector {
     }
 
     @objc private func screenTapped(_ gesture: UIGestureRecognizer) {
-        self.decorationView?.removeGestureRecognizer(self.screenTap!)
+        self.decorationOverlay?.removeGestureRecognizer(self.screenTap!)
         self.resumeScanning()
 
         self.messageDelegate?.dismiss()
@@ -356,21 +304,14 @@ extension BuiltinBarcodeDetector: AVCaptureMetadataOutputObjectsDelegate {
             let minSize: CGFloat = 60
             if bounds.height < minSize {
                 bounds.size.height = minSize
+                bounds.origin.y = center.y - minSize / 2
             }
             if bounds.width < minSize {
                 bounds.size.width = minSize
+                bounds.origin.x = center.x - minSize / 2
             }
 
-            self.decorationView?.frameView.isHidden = false
-            UIView.animate(withDuration: 0.25) {
-                self.decorationView?.frameView.frame = bounds
-                self.decorationView?.frameView.center = center
-            }
-
-            self.frameTimer?.invalidate()
-            self.frameTimer = Timer.scheduledTimer(withTimeInterval: 1.5, repeats: false) { _ in
-                self.decorationView?.frameView.isHidden = true
-            }
+            self.decorationOverlay?.showFrameView(at: bounds)
         }
 
         NSLog("got code \(code) \(format)")
@@ -378,10 +319,4 @@ extension BuiltinBarcodeDetector: AVCaptureMetadataOutputObjectsDelegate {
         self.delegate?.scannedCode(code, format)
     }
 
-}
-
-extension BuiltinBarcodeDetector: CustomizableAppearance {
-    public func setCustomAppearance(_ appearance: CustomAppearance) {
-        self.decorationView?.cartButton.setCustomAppearance(appearance)
-    }
 }

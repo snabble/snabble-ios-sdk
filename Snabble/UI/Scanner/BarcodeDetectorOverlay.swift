@@ -6,173 +6,97 @@
 
 import UIKit
 
+public enum BarcodeDetectorArea {
+    // a rectangle, centered vertically and about 30% of the view's height
+    case rectangle
+    // a square, centered vertically
+    case square
+}
+
 public class BarcodeDetectorOverlay: UIView {
-    /// the visible reticle
-    public let reticle = UIView()
-    /// the container for the buttons
-    public let bottomBar = UIView()
-    /// the "enter barcode manually" button
-    public let enterButton = UIButton(type: .custom)
-    /// the "toggle the torch" button
-    public let torchButton = UIButton(type: .custom)
-    /// the "go to shopping cart" button
-    public let cartButton = UIButton(type: .system)
     /// the frame for showing where the barcode was scanned
-    public let frameView = UIView()
+    private let frameView = UIView()
 
-    public let reticleDimmingLayer = CAShapeLayer()
-    public let fullDimmingLayer = CAShapeLayer()
+    private let barcodeOverlay = UIImageView()
 
-    public var bottomDistance: CGFloat = 16 {
+    // our virtual reticle - used so that we can easily position it using auto layout
+    // but always invisible except for debugging
+    private let reticle = UIView()
+
+    private var overlayYCenter: NSLayoutConstraint?
+    private var frameTimer: Timer?
+
+    public var centerYOffset: CGFloat = 0 {
         didSet {
-            bottomBarBottomDistance?.constant = -bottomDistance
+            overlayYCenter?.constant = centerYOffset
         }
     }
 
-    private let appearance: BarcodeDetectorAppearance
-    private var bottomBarBottomDistance: NSLayoutConstraint?
-    private var reticleHeight: NSLayoutConstraint?
-
-    public var reticleVisible = true {
-        didSet {
-            updateReticleVisibility()
-        }
+    public var roi: CGRect {
+        return reticle.frame
     }
 
-    public var reticleFrame: CGRect = .zero {
-        didSet {
-            updateReticleFrame(to: reticleFrame)
-        }
-    }
-
-    public init(appearance: BarcodeDetectorAppearance) {
-        self.appearance = appearance
-
+    public init(detectorArea: BarcodeDetectorArea) { // = .rectangle) {
         super.init(frame: .zero)
+
+        barcodeOverlay.translatesAutoresizingMaskIntoConstraints = false
+        barcodeOverlay.image = UIImage.fromBundle("SnabbleSDK/barcode-overlay")
+        self.addSubview(barcodeOverlay)
+
+        let overlayYCenter = barcodeOverlay.centerYAnchor.constraint(equalTo: self.centerYAnchor)
+        NSLayoutConstraint.activate([
+            barcodeOverlay.centerXAnchor.constraint(equalTo: self.centerXAnchor),
+            overlayYCenter
+        ])
+        self.overlayYCenter = overlayYCenter
 
         self.translatesAutoresizingMaskIntoConstraints = false
 
         reticle.translatesAutoresizingMaskIntoConstraints = false
-        reticle.backgroundColor = .clear
-        reticle.layer.borderColor = appearance.reticleBorderColor.cgColor
+        reticle.layer.borderColor = UIColor.green.cgColor
+        reticle.layer.cornerRadius = 5
         reticle.layer.borderWidth = 1 / UIScreen.main.scale
-        reticle.layer.cornerRadius = appearance.reticleCornerRadius
-
-        let bottomOffset: CGFloat = appearance.bottomBarHidden ? 0 : 64
+        reticle.layer.masksToBounds = true
         self.addSubview(reticle)
-        let reticleHeight = reticle.heightAnchor.constraint(equalToConstant: appearance.reticleHeight)
+
+        let reticleHeight: NSLayoutConstraint
+        switch detectorArea {
+        case .rectangle:
+            reticleHeight = reticle.heightAnchor.constraint(equalTo: self.heightAnchor, multiplier: 0.3, constant: 0)
+        case .square:
+            reticleHeight = reticle.heightAnchor.constraint(equalTo: reticle.widthAnchor, multiplier: 1, constant: 0)
+        }
+
         NSLayoutConstraint.activate([
             reticle.leadingAnchor.constraint(equalTo: self.leadingAnchor, constant: 16),
             reticle.trailingAnchor.constraint(equalTo: self.trailingAnchor, constant: -16),
             reticleHeight,
-            reticle.centerYAnchor.constraint(equalTo: self.centerYAnchor, constant: -bottomOffset / 2)
-        ])
-        self.reticleHeight = reticleHeight
-
-        reticleDimmingLayer.fillRule = .evenOdd
-        reticleDimmingLayer.fillColor = appearance.dimmingColor.cgColor
-
-        self.layer.addSublayer(reticleDimmingLayer)
-
-        bottomBar.translatesAutoresizingMaskIntoConstraints = false
-        bottomBar.isHidden = appearance.bottomBarHidden
-        self.addSubview(bottomBar)
-        let bottomBarBottomDistance = bottomBar.bottomAnchor.constraint(equalTo: self.bottomAnchor, constant: -16)
-        NSLayoutConstraint.activate([
-            bottomBar.leadingAnchor.constraint(equalTo: self.leadingAnchor, constant: 16),
-            bottomBar.trailingAnchor.constraint(equalTo: self.trailingAnchor, constant: -16),
-            bottomBar.heightAnchor.constraint(equalToConstant: 48),
-            bottomBarBottomDistance
-        ])
-        self.bottomBarBottomDistance = bottomBarBottomDistance
-
-        enterButton.translatesAutoresizingMaskIntoConstraints = false
-        enterButton.setImage(appearance.enterButtonImage, for: .normal)
-        enterButton.layer.cornerRadius = 8
-        enterButton.layer.borderColor = appearance.borderColor.cgColor
-        enterButton.layer.borderWidth = 1.0 / UIScreen.main.scale
-        bottomBar.addSubview(enterButton)
-        NSLayoutConstraint.activate([
-            enterButton.leadingAnchor.constraint(equalTo: bottomBar.leadingAnchor),
-            enterButton.centerYAnchor.constraint(equalTo: bottomBar.centerYAnchor),
-            enterButton.heightAnchor.constraint(equalToConstant: 48),
-            enterButton.widthAnchor.constraint(equalToConstant: 48)
-        ])
-
-        torchButton.translatesAutoresizingMaskIntoConstraints = false
-        torchButton.setImage(appearance.torchButtonImage, for: .normal)
-        torchButton.layer.cornerRadius = 8
-        torchButton.layer.borderColor = appearance.borderColor.cgColor
-        torchButton.layer.borderWidth = 1.0 / UIScreen.main.scale
-        bottomBar.addSubview(torchButton)
-        NSLayoutConstraint.activate([
-            torchButton.leadingAnchor.constraint(equalTo: enterButton.trailingAnchor, constant: 16),
-            torchButton.centerYAnchor.constraint(equalTo: bottomBar.centerYAnchor),
-            torchButton.heightAnchor.constraint(equalToConstant: 48),
-            torchButton.widthAnchor.constraint(equalToConstant: 48)
-        ])
-
-        cartButton.translatesAutoresizingMaskIntoConstraints = false
-        cartButton.layer.cornerRadius = 8
-        cartButton.backgroundColor = appearance.backgroundColor
-        cartButton.setTitleColor(appearance.textColor, for: .normal)
-        cartButton.setTitle("", for: .normal)
-        cartButton.titleLabel?.font = UIFont.systemFont(ofSize: 17, weight: .semibold)
-        bottomBar.addSubview(cartButton)
-
-        NSLayoutConstraint.activate([
-            cartButton.leadingAnchor.constraint(equalTo: torchButton.trailingAnchor, constant: 16),
-            cartButton.trailingAnchor.constraint(equalTo: bottomBar.trailingAnchor),
-            cartButton.centerYAnchor.constraint(equalTo: bottomBar.centerYAnchor),
-            cartButton.heightAnchor.constraint(equalToConstant: 48)
+            reticle.centerYAnchor.constraint(equalTo: barcodeOverlay.centerYAnchor)
         ])
 
         frameView.backgroundColor = .clear
-        frameView.layer.borderColor = UIColor.lightGray.cgColor
+        frameView.layer.borderColor = UIColor.darkGray.cgColor
         frameView.layer.borderWidth = 1 / UIScreen.main.scale
         frameView.layer.cornerRadius = 3
 
         self.addSubview(frameView)
-
-        fullDimmingLayer.fillColor = appearance.dimmingColor.cgColor
-        fullDimmingLayer.isHidden = true
-        self.layer.addSublayer(fullDimmingLayer)
     }
 
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
 
-    override public func layoutSubviews() {
-        super.layoutSubviews()
+    public func showFrameView(at frame: CGRect) {
+        UIView.animate(withDuration: 0.25) {
+            self.frameView.frame = frame
+        }
 
-        let overlayPath = UIBezierPath(rect: self.bounds)
+        frameView.frame = frame
+        frameView.isHidden = false
 
-        let transparentPath = UIBezierPath(roundedRect: reticle.frame, cornerRadius: appearance.reticleCornerRadius)
-        overlayPath.append(transparentPath)
-        reticleDimmingLayer.path = overlayPath.cgPath
-
-        fullDimmingLayer.path = UIBezierPath(rect: self.bounds).cgPath
-    }
-
-    private func updateReticleVisibility() {
-        self.reticle.isHidden = !reticleVisible
-        self.reticleDimmingLayer.isHidden = !reticleVisible
-        self.fullDimmingLayer.isHidden = reticleVisible
-    }
-
-    private func updateReticleFrame(to frame: CGRect) {
-        let size = UIScreen.main.bounds.size
-
-        self.reticle.removeFromSuperview()
-
-        self.addSubview(reticle)
-        NSLayoutConstraint.activate([
-            reticle.leadingAnchor.constraint(equalTo: self.leadingAnchor, constant: frame.minX * size.width),
-            reticle.topAnchor.constraint(equalTo: self.topAnchor, constant: frame.minY * size.height),
-            reticle.widthAnchor.constraint(equalToConstant: frame.width * size.width)
-        ])
-        reticleHeight?.constant = frame.height * size.height
-        self.setNeedsLayout()
+        frameTimer?.invalidate()
+        frameTimer = Timer.scheduledTimer(withTimeInterval: 1, repeats: false) { _ in
+            self.frameView.isHidden = true
+        }
     }
 }

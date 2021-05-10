@@ -13,12 +13,17 @@ final class ScannerDrawerViewController: UIViewController {
     private let projectId: Identifier<Project>
     private var tableView = UITableView()
     private weak var delegate: AnalyticsDelegate?
+    private var previousPosition = PulleyPosition.closed
 
     init(_ projectId: Identifier<Project>, delegate: AnalyticsDelegate) {
         self.projectId = projectId
         self.delegate = delegate
 
         super.init(nibName: nil, bundle: nil)
+    }
+
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
     }
 
     override func viewDidLoad() {
@@ -72,10 +77,6 @@ final class ScannerDrawerViewController: UIViewController {
         self.updateShoppingLists()
     }
 
-    required init?(coder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
-    }
-
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
 
@@ -86,7 +87,7 @@ final class ScannerDrawerViewController: UIViewController {
         let shoppingLists = ShoppingList.fetchListsFromDisk()
         if let list = shoppingLists.first(where: {$0.projectId == projectId}), !list.isEmpty {
             self.shoppingList = list
-            self.pulleyPositions = [.collapsed, .partiallyRevealed, .open]
+            self.pulleyPositions = [.collapsed, .partiallyRevealed, .open, .closed]
             self.pulleyViewController?.setNeedsSupportedDrawerPositionsUpdate()
             if self.pulleyViewController?.drawerPosition == .closed {
                 self.pulleyViewController?.setDrawerPosition(position: .collapsed, animated: true)
@@ -117,7 +118,9 @@ final class ScannerDrawerViewController: UIViewController {
         if !checked {
             delegate?.track(.itemMarkedDoneScanner)
             _ = list.toggleChecked(at: index)
-            tableView.reloadRows(at: [IndexPath(row: index, section: 0)], with: .automatic)
+            let indexPath = IndexPath(row: index, section: 0)
+            tableView.reloadRows(at: [indexPath], with: .automatic)
+            tableView.scrollToRow(at: indexPath, at: .middle, animated: true)
         }
     }
 }
@@ -158,6 +161,29 @@ extension ScannerDrawerViewController: PulleyDrawerViewControllerDelegate {
     }
 
     public func drawerPositionDidChange(drawer: PulleyViewController, bottomSafeArea: CGFloat) {
-        tableView.isScrollEnabled = drawer.drawerPosition == .open
+        let newPosition = drawer.drawerPosition
+        tableView.isScrollEnabled = newPosition == .open
+
+        if newPosition != previousPosition {
+            let scanner = self.pulleyViewController?.primaryContentViewController as? ScanningViewController
+            if previousPosition == .open {
+                scanner?.resumeScanning()
+            } else if newPosition == .open {
+                scanner?.pauseScanning()
+            }
+            previousPosition = drawer.drawerPosition
+        }
+    }
+
+    public func drawerChangedDistanceFromBottom(drawer: PulleyViewController, distance: CGFloat, bottomSafeArea: CGFloat) {
+        let height = self.view.bounds.height
+        let insets = UIEdgeInsets(top: 0, left: 0, bottom: height - distance, right: 0)
+        tableView.contentInset = insets
+        tableView.scrollIndicatorInsets = insets
+
+        let scanner = self.pulleyViewController?.primaryContentViewController as? ScanningViewController
+        // using 80% of height as the maximum avoids an ugly trailing animation
+        let offset = -min(distance, height * 0.8) / 2
+        scanner?.setOverlayOffset(offset)
     }
 }
