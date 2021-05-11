@@ -294,17 +294,22 @@ public struct CartItem: Codable {
             price = refOverride
         }
 
-        let productItem = Cart.Item.product(Cart.ProductItem(id: self.uuid,
-                                         sku: self.product.sku,
-                                         amount: quantity,
-                                         scannedCode: code,
-                                         price: price,
-                                         weight: weight,
-                                         units: units,
-                                         weightUnit: encodingUnit))
+        let productItem = Cart.Item.product(
+            Cart.ProductItem(id: self.uuid,
+                             sku: self.product.sku,
+                             amount: quantity,
+                             scannedCode: code,
+                             price: price,
+                             weight: weight,
+                             units: units,
+                             weightUnit: encodingUnit))
 
         if let coupon = self.manualCoupon {
-            let couponItem = Cart.Item.coupon(Cart.CouponItem(id: UUID().uuidString, refersTo: self.uuid, couponID: coupon.id))
+            let couponItem = Cart.Item.coupon(
+                Cart.CouponItem(id: UUID().uuidString,
+                                refersTo: self.uuid,
+                                couponID: coupon.id,
+                                amount: 1))
             return [productItem, couponItem]
         } else {
             return [productItem]

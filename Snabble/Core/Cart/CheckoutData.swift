@@ -404,6 +404,7 @@ public struct Cart: Encodable {
         public let id: String
         public let refersTo: String
         public let couponID: String
+        public let amount: Int
     }
 
     struct CustomerInfo: Encodable {
