@@ -52,6 +52,7 @@ public final class BuiltinBarcodeDetector: NSObject, BarcodeDetector {
     private var screenTap: UITapGestureRecognizer?
     private weak var messageDelegate: BarcodeDetectorMessageDelegate?
     private var detectorArea: BarcodeDetectorArea
+    private var torchOn = false
 
     public required init(detectorArea: BarcodeDetectorArea, messageDelegate: BarcodeDetectorMessageDelegate?) {
         self.sessionQueue = DispatchQueue(label: "io.snabble.scannerQueue")
@@ -136,7 +137,6 @@ public final class BuiltinBarcodeDetector: NSObject, BarcodeDetector {
 
         overlay.centerYOffset = offset
         let rect = self.previewLayer?.metadataOutputRectConverted(fromLayerRect: overlay.roi)
-        print("new roi \(String(describing: rect))")
         self.metadataOutput.rectOfInterest = rect ?? CGRect(origin: .zero, size: .init(width: 1, height: 1))
     }
 
@@ -147,10 +147,12 @@ public final class BuiltinBarcodeDetector: NSObject, BarcodeDetector {
         }
     }
 
-    public func setTorch(_ on: Bool) {
+    public func toggleTorch() -> Bool {
+        torchOn.toggle()
         try? camera?.lockForConfiguration()
         defer { camera?.unlockForConfiguration() }
-        camera?.torchMode = on ? .on : .off
+        camera?.torchMode = torchOn ? .on : .off
+        return torchOn
     }
 
     // MARK: - private implementation

@@ -22,6 +22,7 @@ public class BarcodeDetectorOverlay: UIView {
     // our virtual reticle - used so that we can easily position it using auto layout
     // but always invisible except for debugging
     private let reticle = UIView()
+    private let debugReticle = true
 
     private var overlayYCenter: NSLayoutConstraint?
     private var frameTimer: Timer?
@@ -36,7 +37,7 @@ public class BarcodeDetectorOverlay: UIView {
         return reticle.frame
     }
 
-    public init(detectorArea: BarcodeDetectorArea) { // = .rectangle) {
+    public init(detectorArea: BarcodeDetectorArea) {
         super.init(frame: .zero)
 
         barcodeOverlay.translatesAutoresizingMaskIntoConstraints = false
@@ -53,10 +54,12 @@ public class BarcodeDetectorOverlay: UIView {
         self.translatesAutoresizingMaskIntoConstraints = false
 
         reticle.translatesAutoresizingMaskIntoConstraints = false
-        reticle.layer.borderColor = UIColor.green.cgColor
-        reticle.layer.cornerRadius = 5
-        reticle.layer.borderWidth = 1 / UIScreen.main.scale
-        reticle.layer.masksToBounds = true
+        if SnabbleAPI.debugMode && debugReticle {
+            reticle.layer.borderColor = UIColor.green.cgColor
+            reticle.layer.cornerRadius = 5
+            reticle.layer.borderWidth = 1 / UIScreen.main.scale
+            reticle.layer.masksToBounds = true
+        }
         self.addSubview(reticle)
 
         let reticleHeight: NSLayoutConstraint

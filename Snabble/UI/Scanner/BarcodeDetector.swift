@@ -62,5 +62,6 @@ public protocol BarcodeDetector {
 
     func requestCameraPermission()
 
-    func setTorch(_ on: Bool)
+    // toggle the torch on/off. Returns the state after toggling
+    func toggleTorch() -> Bool
 }

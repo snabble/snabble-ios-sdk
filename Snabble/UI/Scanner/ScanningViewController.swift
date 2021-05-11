@@ -90,6 +90,7 @@ final class ScanningViewController: UIViewController {
     private weak var delegate: ScannerDelegate!
     private var barcodeDetector: BarcodeDetector
     private var customAppearance: CustomAppearance?
+    private var torchButton: UIBarButtonItem?
 
     private var lastScannedCode: String?
     private var lastScanTimer: Timer?
@@ -97,6 +98,7 @@ final class ScanningViewController: UIViewController {
     private var spinnerTimer: Timer?
 
     private var messageTimer: Timer?
+    private var msgHidden = true
 
     public init(_ cart: ShoppingCart, _ shop: Shop, _ detector: BarcodeDetector, delegate: ScannerDelegate) {
         let project = SnabbleUI.project
@@ -157,7 +159,12 @@ final class ScanningViewController: UIViewController {
         self.messageWrapper.addGestureRecognizer(msgTap)
         self.messageTopDistance.constant = -150
 
-        #warning("add torch/enter code buttons")
+        let torchButton = UIBarButtonItem(image: UIImage.fromBundle("SnabbleSDK/icon-light-inactive"), style: .plain, target: self, action: #selector(torchTapped(_:)))
+        self.pulleyViewController?.navigationItem.leftBarButtonItem = torchButton
+        self.torchButton = torchButton
+
+        let searchButton = UIBarButtonItem(image: UIImage.fromBundle("SnabbleSDK/icon-entercode"), style: .plain, target: self, action: #selector(searchTapped(_:)))
+        self.pulleyViewController?.navigationItem.rightBarButtonItem = searchButton
     }
 
     override public func viewWillAppear(_ animated: Bool) {
@@ -195,8 +202,7 @@ final class ScanningViewController: UIViewController {
         self.keyboardObserver = nil
     }
 
-    private var msgHidden = true
-
+    // MARK: - called by the drawer
     func setOverlayOffset(_ offset: CGFloat) {
         self.barcodeDetector.setOverlayOffset(offset)
     }
@@ -209,8 +215,17 @@ final class ScanningViewController: UIViewController {
         self.barcodeDetector.pauseScanning()
     }
 
-    // MARK: - scan confirmation views
+    // MARK: - nav bar buttons
+    @objc private func torchTapped(_ sender: Any) {
+        let torchOn = self.barcodeDetector.toggleTorch()
+        torchButton?.image = torchOn ? UIImage.fromBundle("SnabbleSDK/icon-light-active") : UIImage.fromBundle("SnabbleSDK/icon-light-inactive")
+    }
 
+    @objc private func searchTapped(_ sender: Any) {
+        self.enterBarcode()
+    }
+
+    // MARK: - scan confirmation views
     private func showConfirmation(for scannedProduct: ScannedProduct, _ scannedCode: String) {
         self.confirmationVisible = true
         self.scanConfirmationView.present(scannedProduct, scannedCode, cart: self.shoppingCart)
