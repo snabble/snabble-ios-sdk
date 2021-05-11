@@ -165,7 +165,9 @@ extension ProductDB {
     }
 
     private func returnError<T>(_ msg: String, _ error: ProductLookupError, _ completion: @escaping (_ result: Result<T, ProductLookupError>) -> Void ) {
-        self.logError(msg)
+        if error != .notFound {
+            self.logError(msg)
+        }
         DispatchQueue.main.async {
             completion(.failure(error))
         }
