@@ -151,8 +151,6 @@ final class ScanningViewController: UIViewController {
         self.scanConfirmationViewBottom.constant = self.hiddenConfirmationOffset
         self.scanConfirmationView.isHidden = true
 
-        NotificationCenter.default.addObserver(self, selector: #selector(self.cartUpdated(_:)), name: .snabbleCartUpdated, object: nil)
-
         self.messageSeparatorHeight.constant = 1.0 / UIScreen.main.scale
 
         let msgTap = UITapGestureRecognizer(target: self, action: #selector(self.messageTapped(_:)))
@@ -170,7 +168,6 @@ final class ScanningViewController: UIViewController {
     override public func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
 
-        self.updateCartButton()
         self.barcodeDetector.scannerWillAppear(on: self.view)
     }
 
@@ -265,37 +262,6 @@ final class ScanningViewController: UIViewController {
             self.scanConfirmationView.isHidden = hidden
         }
     }
-
-    private func updateCartButton() {
-        let items = self.shoppingCart.numberOfItems
-        if items > 0 {
-            let nilPrice: Bool
-            if let items = self.shoppingCart.backendCartInfo?.lineItems {
-                let productsNoPrice = items.filter { $0.type == .default && $0.totalPrice == nil }
-                nilPrice = !productsNoPrice.isEmpty
-            } else {
-                nilPrice = false
-            }
-
-            let backendTotal = SnabbleUI.project.displayNetPrice ?
-                self.shoppingCart.backendCartInfo?.netPrice :
-                self.shoppingCart.backendCartInfo?.totalPrice
-
-            let totalPrice = nilPrice ? nil : (backendTotal ?? self.shoppingCart.total)
-            if let total = totalPrice {
-                let formatter = PriceFormatter(SnabbleUI.project)
-                // self.barcodeDetector.cartButtonTitle = String(format: "Snabble.Scanner.goToCart".localized(), formatter.format(total))
-            } else {
-                // self.barcodeDetector.cartButtonTitle = "Snabble.Scanner.goToCart.empty".localized()
-            }
-        } else {
-            // self.barcodeDetector.cartButtonTitle = nil
-        }
-    }
-
-    @objc func cartUpdated(_ notification: Notification) {
-        self.updateCartButton()
-    }
 }
 
 // MARK: - message display
@@ -386,7 +352,6 @@ extension ScanningViewController: ScanConfirmationViewDelegate {
     func closeConfirmation(_ item: CartItem?) {
         self.displayScanConfirmationView(hidden: true)
         self.startLastScanTimer()
-        self.updateCartButton()
 
         if let item = item {
             if let msg = self.ageCheckRequired(item) {
