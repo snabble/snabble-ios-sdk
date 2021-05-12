@@ -12,12 +12,12 @@ public final class ScannerViewController: PulleyViewController {
     private let scanningViewController: ScanningViewController
     private let drawerViewController: ScannerDrawerViewController
 
-    public init(_ cart: ShoppingCart, _ shop: Shop, _ detector: BarcodeDetector, delegate: ScannerDelegate) {
-        scanningViewController = ScanningViewController(cart, shop, detector, delegate: delegate)
-        drawerViewController = ScannerDrawerViewController(SnabbleUI.project.id, delegate: delegate)
+    public init(_ cart: ShoppingCart, _ shop: Shop, _ detector: BarcodeDetector, scannerDelegate: ScannerDelegate, cartDelegate: ShoppingCartDelegate) {
+        scanningViewController = ScanningViewController(cart, shop, detector, delegate: scannerDelegate)
+        drawerViewController = ScannerDrawerViewController(SnabbleUI.project.id, shoppingCart: cart, delegate: cartDelegate)
 
         super.init(contentViewController: scanningViewController, drawerViewController: drawerViewController)
-        self.initialDrawerPosition = .closed
+        self.initialDrawerPosition = .collapsed
 
         self.title = "Snabble.Scanner.title".localized()
         self.tabBarItem.image = UIImage.fromBundle("SnabbleSDK/icon-scan-inactive")

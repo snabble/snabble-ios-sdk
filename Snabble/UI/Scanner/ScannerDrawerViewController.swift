@@ -8,18 +8,47 @@ import UIKit
 import Pulley
 
 final class ScannerDrawerViewController: UIViewController {
-    private var pulleyPositions = PulleyPosition.all
     private var shoppingList: ShoppingList?
+    private var shoppingListTableVC: ScannerShoppingListViewController
+
+    private let shoppingCart: ShoppingCart
+    private var shoppingCartVC: ShoppingCartViewController
+
     private let projectId: Identifier<Project>
-    private var tableView = UITableView()
-    private weak var delegate: AnalyticsDelegate?
+
+    private var customAppearance: CustomAppearance?
+
+    private weak var delegate: ShoppingCartDelegate?
+
     private var previousPosition = PulleyPosition.closed
 
-    init(_ projectId: Identifier<Project>, delegate: AnalyticsDelegate) {
+    @IBOutlet private var handleContainer: UIView!
+    @IBOutlet private var handle: UIView!
+
+    @IBOutlet private var itemCountLabel: UILabel!
+    @IBOutlet private var totalPriceLabel: UILabel!
+
+    @IBOutlet private var methodSelectionView: UIView!
+    @IBOutlet private var methodIcon: UIImageView!
+    @IBOutlet private var methodSpinner: UIActivityIndicatorView!
+    @IBOutlet private var checkoutButton: UIButton!
+
+    @IBOutlet private var segmentedControl: UISegmentedControl!
+    @IBOutlet private var innerSpacer: UIView!
+    @IBOutlet private var contentView: UIView!
+    @IBOutlet private var separatorHeight: NSLayoutConstraint!
+
+    init(_ projectId: Identifier<Project>, shoppingCart: ShoppingCart, delegate: ShoppingCartDelegate) {
         self.projectId = projectId
+        self.shoppingCart = shoppingCart
         self.delegate = delegate
 
-        super.init(nibName: nil, bundle: nil)
+        self.shoppingListTableVC = ScannerShoppingListViewController(delegate: delegate)
+        self.shoppingCartVC = ShoppingCartViewController(shoppingCart, delegate: delegate)
+
+        super.init(nibName: nil, bundle: SnabbleBundle.main)
+
+        SnabbleUI.registerForAppearanceChange(self)
     }
 
     required init?(coder: NSCoder) {
@@ -31,138 +60,130 @@ final class ScannerDrawerViewController: UIViewController {
 
         view.backgroundColor = .systemBackground
 
-        let handle = UIView()
-        handle.translatesAutoresizingMaskIntoConstraints = false
         handle.layer.cornerRadius = 2
         handle.layer.masksToBounds = true
         handle.backgroundColor = .systemGray
         handle.isUserInteractionEnabled = true
         let tap = UITapGestureRecognizer(target: self, action: #selector(handleTapped(_:)))
         handle.addGestureRecognizer(tap)
-        view.addSubview(handle)
 
-        tableView.translatesAutoresizingMaskIntoConstraints = false
-        tableView.delegate = self
-        tableView.dataSource = self
-        tableView.tableFooterView = UIView(frame: .zero)
-        let nib = UINib(nibName: "ShoppingListCell", bundle: SnabbleBundle.main)
-        tableView.register(nib, forCellReuseIdentifier: "shoppingListCell")
-        // compensate for the 20pt overshoot from Pulley
-        let insets = UIEdgeInsets(top: 0, left: 0, bottom: 20, right: 0)
-        tableView.contentInset = insets
-        tableView.scrollIndicatorInsets = insets
-        view.addSubview(tableView)
+        segmentedControl.setTitle("Snabble.ShoppingList.title".localized(), forSegmentAt: 0)
+        segmentedControl.setTitle("Snabble.ShoppingCart.title".localized(), forSegmentAt: 1)
+        segmentedControl.selectedSegmentIndex = 0
+        segmentedControl.addTarget(self, action: #selector(tabChanged(_:)), for: .valueChanged)
+        if #available(iOS 13.0, *) {
+            let appearance = SnabbleUI.appearance
+            segmentedControl.selectedSegmentTintColor = appearance.accentColor
+            segmentedControl.setTitleTextAttributes([.foregroundColor: appearance.accentColor.contrast], for: .selected)
+        }
 
-        // Pulley start its layout with a zero-frame view, make our height constraints lower prio
-        // in order to avoid auto layout warnings
-        let handleTop = handle.topAnchor.constraint(equalTo: view.topAnchor, constant: 6)
-        handleTop.priority = .defaultHigh
-        let handleHeight = handle.heightAnchor.constraint(equalToConstant: 4)
-        handleHeight.priority = .defaultHigh
-        let tableTop = tableView.topAnchor.constraint(equalTo: handle.bottomAnchor, constant: 6)
-        tableTop.priority = .defaultHigh
+        self.checkoutButton.setTitle("Snabble.Shoppingcart.buyProducts.now".localized(), for: .normal)
+        self.checkoutButton.makeSnabbleButton()
 
-        NSLayoutConstraint.activate([
-            handleTop,
-            handle.centerXAnchor.constraint(equalTo: view.centerXAnchor),
-            handleHeight,
-            handle.widthAnchor.constraint(equalToConstant: 60),
+        self.methodSelectionView.layer.masksToBounds = true
+        self.methodSelectionView.layer.cornerRadius = 8
+        self.methodSelectionView.layer.borderColor = UIColor.lightGray.cgColor
+        self.methodSelectionView.layer.borderWidth = 1 / UIScreen.main.scale
 
-            tableTop,
-            tableView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
-            tableView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
-            tableView.bottomAnchor.constraint(equalTo: view.bottomAnchor)
-        ])
+        self.totalPriceLabel.font = UIFont.monospacedDigitSystemFont(ofSize: 22, weight: .bold)
 
-        self.updateShoppingLists()
+        self.separatorHeight.constant = 1 / UIScreen.main.scale
+
+        self.switchTo(shoppingListTableVC, in: contentView, duration: 0)
     }
 
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
 
-        self.updateShoppingLists()
-    }
-
-    private func updateShoppingLists() {
-        let shoppingLists = ShoppingList.fetchListsFromDisk()
-        if let list = shoppingLists.first(where: {$0.projectId == projectId}), !list.isEmpty {
-            self.shoppingList = list
-            self.pulleyPositions = [.collapsed, .partiallyRevealed, .open, .closed]
-            self.pulleyViewController?.setNeedsSupportedDrawerPositionsUpdate()
-            if self.pulleyViewController?.drawerPosition == .closed {
-                self.pulleyViewController?.setDrawerPosition(position: .collapsed, animated: true)
-            }
-        } else {
-            self.shoppingList = nil
-            self.pulleyPositions = [.collapsed, .closed]
-            self.pulleyViewController?.setNeedsSupportedDrawerPositionsUpdate()
-            self.pulleyViewController?.setDrawerPosition(position: .closed, animated: false)
+        if let custom = self.customAppearance {
+            self.checkoutButton.setCustomAppearance(custom)
         }
 
-        self.tableView.reloadData()
+        self.updateShoppingLists()
     }
 
     @objc private func handleTapped(_ gesture: UITapGestureRecognizer) {
         self.pulleyViewController?.setDrawerPosition(position: .open, animated: true)
     }
 
-    func markScannedProduct(_ product: Product) {
-        guard
-            let list = shoppingList,
-            let index = list.findIndex(for: product.sku)
-        else {
+    @objc private func tabChanged(_ control: UISegmentedControl) {
+        let activeVC: UIViewController
+        if control.selectedSegmentIndex == 0 {
+            activeVC = self.shoppingListTableVC
+        } else {
+            activeVC = self.shoppingCartVC
+        }
+
+        self.switchTo(activeVC, in: contentView)
+    }
+
+    func switchTo(_ destination: UIViewController, in view: UIView, duration: TimeInterval = 0.15) {
+        guard destination != children.first else {
             return
         }
 
-        let checked = list.itemAt(index).checked
-        if !checked {
-            delegate?.track(.itemMarkedDoneScanner)
-            _ = list.toggleChecked(at: index)
-            let indexPath = IndexPath(row: index, section: 0)
-            tableView.reloadRows(at: [indexPath], with: .automatic)
-            tableView.scrollToRow(at: indexPath, at: .middle, animated: true)
+        if let source = self.children.first {
+            addChild(destination)
+            source.willMove(toParent: nil)
+            transition(from: source,
+                       to: destination,
+                       duration: duration,
+                       options: .transitionCrossDissolve,
+                       animations: {},
+                       completion: { _ in
+                           source.removeFromParent()
+                           destination.didMove(toParent: self)
+                       }
+            )
+        } else {
+            addChild(destination)
+            view.addSubview(destination.view)
+            destination.didMove(toParent: self)
         }
-    }
-}
 
-// MARK: - TableView
-extension ScannerDrawerViewController: UITableViewDelegate, UITableViewDataSource {
-    func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-        return 50
-    }
-
-    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return shoppingList?.count ?? 0
+        destination.view.translatesAutoresizingMaskIntoConstraints = false
+        NSLayoutConstraint.activate([
+            destination.view.leadingAnchor.constraint(equalTo: contentView.leadingAnchor),
+            destination.view.trailingAnchor.constraint(equalTo: contentView.trailingAnchor),
+            destination.view.topAnchor.constraint(equalTo: contentView.topAnchor),
+            destination.view.bottomAnchor.constraint(equalTo: contentView.bottomAnchor)
+        ])
     }
 
-    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        // swiftlint:disable:next force_cast
-        let cell = tableView.dequeueReusableCell(withIdentifier: "shoppingListCell", for: indexPath) as! ShoppingListCell
+    private func updateShoppingLists() {
+        let shoppingLists = ShoppingList.fetchListsFromDisk()
+        shoppingList = shoppingLists.first { $0.projectId == projectId }
+        if shoppingList?.isEmpty == true {
+            shoppingList = nil
+        }
 
-        let item = shoppingList!.itemAt(indexPath.row)
-        cell.setListItem(item)
+        shoppingListTableVC.reload(shoppingList)
 
-        return cell
+        let noList = shoppingList == nil
+        segmentedControl?.isHidden = noList
+        innerSpacer?.isHidden = noList
+        if noList {
+            switchTo(shoppingCartVC, in: contentView)
+            segmentedControl.selectedSegmentIndex = 1
+        }
+
+        pulleyViewController?.setNeedsSupportedDrawerPositionsUpdate()
     }
 
-    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        tableView.deselectRow(at: indexPath, animated: true)
-
-        let checked = shoppingList!.toggleChecked(at: indexPath.row)
-        delegate?.track(checked ? .itemMarkedDone : .itemMarkedTodo)
-        tableView.reloadRows(at: [indexPath], with: .automatic)
+    func markScannedProduct(_ product: Product) {
+        shoppingListTableVC.markScannedProduct(product)
     }
 }
 
 // MARK: - pulley
 extension ScannerDrawerViewController: PulleyDrawerViewControllerDelegate {
-    public func supportedDrawerPositions() -> [PulleyPosition] {
-        self.pulleyPositions
+    public func collapsedDrawerHeight(bottomSafeArea: CGFloat) -> CGFloat {
+        return shoppingList == nil ? 128 : 168
     }
 
     public func drawerPositionDidChange(drawer: PulleyViewController, bottomSafeArea: CGFloat) {
         let newPosition = drawer.drawerPosition
-        tableView.isScrollEnabled = newPosition == .open
+        shoppingListTableVC.tableView.isScrollEnabled = newPosition == .open
 
         if newPosition != previousPosition {
             let scanner = self.pulleyViewController?.primaryContentViewController as? ScanningViewController
@@ -178,12 +199,20 @@ extension ScannerDrawerViewController: PulleyDrawerViewControllerDelegate {
     public func drawerChangedDistanceFromBottom(drawer: PulleyViewController, distance: CGFloat, bottomSafeArea: CGFloat) {
         let height = self.view.bounds.height
         let insets = UIEdgeInsets(top: 0, left: 0, bottom: height - distance, right: 0)
-        tableView.contentInset = insets
-        tableView.scrollIndicatorInsets = insets
+        shoppingListTableVC.tableView.contentInset = insets
+        shoppingListTableVC.tableView.scrollIndicatorInsets = insets
 
         let scanner = self.pulleyViewController?.primaryContentViewController as? ScanningViewController
         // using 80% of height as the maximum avoids an ugly trailing animation
         let offset = -min(distance, height * 0.8) / 2
         scanner?.setOverlayOffset(offset)
+    }
+}
+
+// MARK: - appearance
+extension ScannerDrawerViewController: CustomizableAppearance {
+    public func setCustomAppearance(_ appearance: CustomAppearance) {
+        self.checkoutButton?.setCustomAppearance(appearance)
+        self.customAppearance = appearance
     }
 }
