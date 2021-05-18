@@ -62,10 +62,6 @@ public struct AESCrypt {
             return nil
         }
 
-        return decryptString(string, keyBytes, ivBytes)
-    }
-
-    public static func decryptString(_ string: String, _ keyBytes: Data, _ ivBytes: Data) -> String? {
         let aes = AESCrypt(key: keyBytes, iv: ivBytes)
 
         guard
