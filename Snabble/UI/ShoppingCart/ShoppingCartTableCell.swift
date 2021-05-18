@@ -297,7 +297,7 @@ extension ShoppingCartTableCell: UITextFieldDelegate {
             return false
         }
 
-        let newText = text.replacingCharacters(in: range, with: string)
+        let newText = text.replacingCharacters(in: range, with: string).trimmingCharacters(in: .whitespacesAndNewlines)
         let qty = Int(newText) ?? 0
 
         self.doneButton?.isEnabled = qty > 0

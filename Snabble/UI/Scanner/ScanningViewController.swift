@@ -33,8 +33,6 @@ public struct ScanMessage {
 }
 
 public protocol ScannerDelegate: AnalyticsDelegate {
-    func gotoShoppingCart()
-
     func gotoBarcodeEntry()
 
     func scanMessage(for project: Project, _ shop: Shop, _ product: Product) -> ScanMessage?
@@ -227,9 +225,6 @@ final class ScanningViewController: UIViewController {
         self.confirmationVisible = true
         self.scanConfirmationView.present(scannedProduct, scannedCode, cart: self.shoppingCart)
 
-        if self.pulleyViewController?.drawerPosition != .closed {
-            self.pulleyViewController?.setDrawerPosition(position: .collapsed, animated: true)
-        }
         self.displayScanConfirmationView(hidden: false, setBottomOffset: self.productType != .userMustWeigh)
 
         NotificationCenter.default.post(name: .snabbleShowScanConfirmation, object: nil)
@@ -239,6 +234,8 @@ final class ScanningViewController: UIViewController {
         guard self.view.window != nil else {
             return
         }
+
+        self.pulleyViewController?.setDrawerPosition(position: hidden ? .collapsed : .closed, animated: true)
 
         self.confirmationVisible = !hidden
 
@@ -409,10 +406,6 @@ extension ScanningViewController: BarcodeDetectorDelegate {
         }
 
         self.handleScannedCode(code, format)
-    }
-
-    public func gotoShoppingCart() {
-        self.delegate.gotoShoppingCart()
     }
 }
 

@@ -14,9 +14,6 @@ public protocol BarcodeDetectorDelegate: AnyObject {
     /// called when the "enter barcode" button is tapped
     func enterBarcode()
 
-    /// called when the "goto cart" button is tapped
-    func gotoShoppingCart()
-
     /// track an `AnalyticsEvent`
     func track(_ event: AnalyticsEvent)
 

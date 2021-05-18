@@ -57,16 +57,16 @@
                             <rect key="frame" x="0.0" y="50" width="382" height="92"/>
                             <subviews>
                                 <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="kSp-Tt-ZlM" userLabel="Summary">
-                                    <rect key="frame" x="0.0" y="0.0" width="382" height="42"/>
+                                    <rect key="frame" x="0.0" y="0.0" width="382" height="26"/>
                                     <subviews>
                                         <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="5 Artikel" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="fXj-jB-rU0" userLabel="count">
-                                            <rect key="frame" x="0.0" y="13.333333333333336" width="50.666666666666664" height="15.666666666666664"/>
+                                            <rect key="frame" x="0.0" y="5.3333333333333348" width="50.666666666666664" height="15.666666666666664"/>
                                             <fontDescription key="fontDescription" type="system" pointSize="13"/>
                                             <color key="textColor" systemColor="secondaryLabelColor"/>
                                             <nil key="highlightedColor"/>
                                         </label>
                                         <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="€ 22,90" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="nV2-w2-rna" userLabel="price">
-                                            <rect key="frame" x="301.33333333333331" y="7.9999999999999982" width="80.666666666666686" height="26.333333333333329"/>
+                                            <rect key="frame" x="301.33333333333331" y="0.0" width="80.666666666666686" height="26.333333333333332"/>
                                             <fontDescription key="fontDescription" type="boldSystem" pointSize="22"/>
                                             <nil key="textColor"/>
                                             <nil key="highlightedColor"/>
@@ -129,7 +129,7 @@
                             </subviews>
                             <constraints>
                                 <constraint firstItem="92V-0d-W2A" firstAttribute="leading" secondItem="N8d-Zg-Ias" secondAttribute="leading" id="3c3-uc-Anf"/>
-                                <constraint firstItem="92V-0d-W2A" firstAttribute="top" secondItem="kSp-Tt-ZlM" secondAttribute="bottom" id="Pwa-cT-8gB"/>
+                                <constraint firstItem="92V-0d-W2A" firstAttribute="top" secondItem="kSp-Tt-ZlM" secondAttribute="bottom" priority="750" constant="4" id="Pwa-cT-8gB"/>
                                 <constraint firstAttribute="trailing" secondItem="kSp-Tt-ZlM" secondAttribute="trailing" id="WCX-nz-d2x"/>
                                 <constraint firstAttribute="bottom" secondItem="92V-0d-W2A" secondAttribute="bottom" priority="750" id="Xfn-Zm-tQh"/>
                                 <constraint firstAttribute="trailing" secondItem="92V-0d-W2A" secondAttribute="trailing" id="jOU-5b-SHz"/>
