@@ -153,6 +153,10 @@ extension ShoppingList {
         var lists = [ShoppingList]()
 
         do {
+            // make sure our directory exists
+            if !fileManager.fileExists(atPath: path) {
+                try? fileManager.createDirectory(atPath: path, withIntermediateDirectories: true)
+            }
             let files = try fileManager.contentsOfDirectory(atPath: path)
             for fileName in files.sorted(by: <) {
                 guard fileName.hasSuffix(Self.fileExtension) else {
