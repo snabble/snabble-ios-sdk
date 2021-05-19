@@ -12,47 +12,39 @@ final class ScannerDrawerViewController: UIViewController {
     private var shoppingListTableVC: ScannerShoppingListViewController
 
     private let shoppingCart: ShoppingCart
-    private var shoppingCartVC: ShoppingCartViewController
+    private var shoppingCartVC: ShoppingCartTableViewController
 
     private let projectId: Identifier<Project>
 
     private var customAppearance: CustomAppearance?
 
-    private weak var delegate: ShoppingCartDelegate?
+    private weak var cartDelegate: ShoppingCartDelegate?
 
     public weak var paymentMethodNavigationDelegate: PaymentMethodNavigationDelegate? {
         didSet {
-            self.methodSelector?.paymentMethodNavigationDelegate = self.paymentMethodNavigationDelegate
+            self.checkoutBar?.paymentMethodNavigationDelegate = self.paymentMethodNavigationDelegate
         }
     }
 
-    private var methodSelector: PaymentMethodSelector?
-
+    private var checkoutBar: CheckoutBar?
     private var previousPosition = PulleyPosition.closed
 
     @IBOutlet private var handleContainer: UIView!
     @IBOutlet private var handle: UIView!
-
-    @IBOutlet private var itemCountLabel: UILabel!
-    @IBOutlet private var totalPriceLabel: UILabel!
-
-    @IBOutlet private var methodSelectionView: UIView!
-    @IBOutlet private var methodIcon: UIImageView!
-    @IBOutlet private var methodSpinner: UIActivityIndicatorView!
-    @IBOutlet private var checkoutButton: UIButton!
+    @IBOutlet private var checkoutWrapper: UIView!
 
     @IBOutlet private var segmentedControl: UISegmentedControl!
     @IBOutlet private var innerSpacer: UIView!
     @IBOutlet private var contentView: UIView!
     @IBOutlet private var separatorHeight: NSLayoutConstraint!
 
-    init(_ projectId: Identifier<Project>, shoppingCart: ShoppingCart, delegate: ShoppingCartDelegate) {
+    init(_ projectId: Identifier<Project>, shoppingCart: ShoppingCart, cartDelegate: ShoppingCartDelegate) {
         self.projectId = projectId
         self.shoppingCart = shoppingCart
-        self.delegate = delegate
+        self.cartDelegate = cartDelegate
 
-        self.shoppingListTableVC = ScannerShoppingListViewController(delegate: delegate)
-        self.shoppingCartVC = ShoppingCartViewController(shoppingCart, delegate: delegate)
+        self.shoppingListTableVC = ScannerShoppingListViewController(delegate: cartDelegate)
+        self.shoppingCartVC = ShoppingCartTableViewController(shoppingCart, cartDelegate: cartDelegate)
 
         super.init(nibName: nil, bundle: SnabbleBundle.main)
 
@@ -67,9 +59,6 @@ final class ScannerDrawerViewController: UIViewController {
         super.viewDidLoad()
 
         view.backgroundColor = .systemBackground
-
-        self.methodSelector = PaymentMethodSelector(self, self.methodSelectionView, self.methodIcon, self.shoppingCart)
-        self.methodSelector?.paymentMethodNavigationDelegate = self.paymentMethodNavigationDelegate
 
         handle.layer.cornerRadius = 2
         handle.layer.masksToBounds = true
@@ -88,17 +77,15 @@ final class ScannerDrawerViewController: UIViewController {
             segmentedControl.setTitleTextAttributes([.foregroundColor: appearance.accentColor.contrast], for: .selected)
         }
 
-        self.checkoutButton.addTarget(self, action: #selector(checkoutTapped(_:)), for: .touchUpInside)
-        self.checkoutButton.setTitle("Snabble.Shoppingcart.buyProducts.now".localized(), for: .normal)
-        self.checkoutButton.makeSnabbleButton()
-        self.checkoutButton.setTitleColor(.systemGray, for: .disabled)
-
-        self.methodSelectionView.layer.masksToBounds = true
-        self.methodSelectionView.layer.cornerRadius = 8
-        self.methodSelectionView.layer.borderColor = UIColor.lightGray.cgColor
-        self.methodSelectionView.layer.borderWidth = 1 / UIScreen.main.scale
-
-        self.totalPriceLabel.font = UIFont.monospacedDigitSystemFont(ofSize: 22, weight: .bold)
+        let checkoutBar = CheckoutBar(self, shoppingCart, cartDelegate: cartDelegate)
+        self.checkoutWrapper.addSubview(checkoutBar)
+        NSLayoutConstraint.activate([
+            checkoutWrapper.topAnchor.constraint(equalTo: checkoutBar.topAnchor),
+            checkoutWrapper.rightAnchor.constraint(equalTo: checkoutBar.rightAnchor),
+            checkoutWrapper.bottomAnchor.constraint(equalTo: checkoutBar.bottomAnchor),
+            checkoutWrapper.leftAnchor.constraint(equalTo: checkoutBar.leftAnchor)
+        ])
+        self.checkoutBar = checkoutBar
 
         self.separatorHeight.constant = 1 / UIScreen.main.scale
 
@@ -106,19 +93,18 @@ final class ScannerDrawerViewController: UIViewController {
 
         let nc = NotificationCenter.default
         nc.addObserver(self, selector: #selector(self.shoppingCartUpdated(_:)), name: .snabbleCartUpdated, object: nil)
-
     }
 
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
 
         if let custom = self.customAppearance {
-            self.checkoutButton.setCustomAppearance(custom)
+            checkoutBar?.setCustomAppearance(custom)
         }
 
         self.updateShoppingLists()
-        self.methodSelector?.updateSelectionVisibility()
-        self.updateTotals()
+        checkoutBar?.updateSelectionVisibility()
+        checkoutBar?.updateTotals()
     }
 
     @objc private func handleTapped(_ gesture: UITapGestureRecognizer) {
@@ -196,38 +182,7 @@ final class ScannerDrawerViewController: UIViewController {
     }
 
     @objc private func shoppingCartUpdated(_ notification: Notification) {
-        updateTotals()
-    }
-
-    private func updateTotals() {
-        let numProducts = self.shoppingCart.numberOfProducts
-        let formatter = PriceFormatter(SnabbleUI.project)
-        let backendCartInfo = self.shoppingCart.backendCartInfo
-
-        let nilPrice: Bool
-        if let items = backendCartInfo?.lineItems {
-            let productsNoPrice = items.filter { $0.type == .default && $0.totalPrice == nil }
-            nilPrice = !productsNoPrice.isEmpty
-        } else {
-            nilPrice = false
-        }
-
-        let cartTotal = SnabbleUI.project.displayNetPrice ? backendCartInfo?.netPrice : backendCartInfo?.totalPrice
-
-        let totalPrice = nilPrice ? nil : (cartTotal ?? self.shoppingCart.total)
-        if let total = totalPrice, numProducts > 0 {
-            let formattedTotal = formatter.format(total)
-            self.totalPriceLabel?.text = formattedTotal
-        } else {
-            self.totalPriceLabel?.text = ""
-        }
-
-        let fmt = numProducts == 1 ? "Snabble.Shoppingcart.numberOfItems.one" : "Snabble.Shoppingcart.numberOfItems"
-        self.itemCountLabel?.text = String(format: fmt.localized(), numProducts)
-
-        self.methodSelector?.updateAvailablePaymentMethods()
-
-        self.checkoutButton?.isEnabled = numProducts > 0 && (totalPrice ?? 0) >= 0
+        checkoutBar?.updateTotals()
     }
 }
 
@@ -259,10 +214,8 @@ extension ScannerDrawerViewController: PulleyDrawerViewControllerDelegate {
     public func drawerChangedDistanceFromBottom(drawer: PulleyViewController, distance: CGFloat, bottomSafeArea: CGFloat) {
         let height = self.view.bounds.height
         let insets = UIEdgeInsets(top: 0, left: 0, bottom: height - distance, right: 0)
-        shoppingListTableVC.tableView?.contentInset = insets
-        shoppingListTableVC.tableView?.scrollIndicatorInsets = insets
-        shoppingCartVC.tableView?.contentInset = insets
-        shoppingCartVC.tableView?.scrollIndicatorInsets = insets
+        shoppingListTableVC.insets = insets
+        shoppingCartVC.insets = insets
 
         let scanner = self.pulleyViewController?.primaryContentViewController as? ScanningViewController
         // using 80% of height as the maximum avoids an ugly trailing animation
@@ -274,116 +227,13 @@ extension ScannerDrawerViewController: PulleyDrawerViewControllerDelegate {
 // MARK: - appearance
 extension ScannerDrawerViewController: CustomizableAppearance {
     public func setCustomAppearance(_ appearance: CustomAppearance) {
-        self.checkoutButton?.setCustomAppearance(appearance)
+        self.checkoutBar?.setCustomAppearance(appearance)
         self.customAppearance = appearance
     }
 }
 
 extension ScannerDrawerViewController: AnalyticsDelegate {
     func track(_ event: AnalyticsEvent) {
-        self.delegate?.track(event)
-    }
-}
-
-// MARK: - checkout stuff
-extension ScannerDrawerViewController {
-    @objc private func checkoutTapped(_ sender: Any) {
-        self.startCheckout()
-    }
-
-    private func startCheckout() {
-        selectSegment(1)
-
-        let project = SnabbleUI.project
-        guard
-            self.delegate?.checkoutAllowed(project) == true,
-            let paymentMethod = self.methodSelector?.selectedPaymentMethod
-        else {
-            // no payment method selected -> show the "add method" view
-            if SnabbleUI.implicitNavigation {
-                let selection = PaymentMethodAddViewController(showFromCart: true, self)
-                self.navigationController?.pushViewController(selection, animated: true)
-            } else {
-                let msg = "navigationDelegate may not be nil when using explicit navigation"
-                assert(self.paymentMethodNavigationDelegate != nil, msg)
-                self.paymentMethodNavigationDelegate?.addMethod(fromCart: true)
-            }
-
-            return
-        }
-
-        // no detail data, and there is an editing VC? Show that instead of continuing
-        if self.methodSelector?.selectedPaymentDetail == nil,
-           paymentMethod.isAddingAllowed(showAlertOn: self),
-           let editVC = paymentMethod.editViewController(with: project.id, showFromCart: true, self) {
-            if SnabbleUI.implicitNavigation {
-                self.navigationController?.pushViewController(editVC, animated: true)
-            } else {
-                let msg = "navigationDelegate may not be nil when using explicit navigation"
-                assert(self.paymentMethodNavigationDelegate != nil, msg)
-                self.paymentMethodNavigationDelegate?.addData(for: paymentMethod, in: project.id)
-            }
-            return
-        }
-
-        let button = self.checkoutButton!
-
-        let spinner = UIActivityIndicatorView(style: .white)
-        spinner.startAnimating()
-        button.addSubview(spinner)
-        spinner.translatesAutoresizingMaskIntoConstraints = false
-        spinner.centerXAnchor.constraint(equalTo: button.centerXAnchor).isActive = true
-        spinner.centerYAnchor.constraint(equalTo: button.centerYAnchor).isActive = true
-        button.isEnabled = false
-
-        let offlineMethods = SnabbleUI.project.paymentMethods.filter { $0.offline }
-        let timeout: TimeInterval = offlineMethods.contains(paymentMethod) ? 3 : 10
-        self.shoppingCart.createCheckoutInfo(SnabbleUI.project, timeout: timeout) { result in
-            spinner.stopAnimating()
-            spinner.removeFromSuperview()
-            button.isEnabled = true
-
-            switch result {
-            case .success(let info):
-                self.delegate?.gotoPayment(paymentMethod, self.methodSelector?.selectedPaymentDetail, info, self.shoppingCart)
-            case .failure(let error):
-                let handled = self.delegate?.handleCheckoutError(error) ?? false
-                if !handled {
-                    if let offendingSkus = error.error.details?.compactMap({ $0.sku }) {
-                        self.showProductError(offendingSkus)
-                        return
-                    }
-
-                    switch error.error.type {
-                    case .noAvailableMethod:
-                        self.delegate?.showWarningMessage("Snabble.Payment.noMethodAvailable".localized())
-                    case .invalidDepositVoucher:
-                        self.delegate?.showWarningMessage("Snabble.invalidDepositVoucher.errorMsg".localized())
-                    default:
-                        if !offlineMethods.isEmpty {
-                            let info = SignedCheckoutInfo(offlineMethods)
-                            self.delegate?.gotoPayment(paymentMethod, self.methodSelector?.selectedPaymentDetail, info, self.shoppingCart)
-                        } else {
-                            self.delegate?.showWarningMessage("Snabble.Payment.errorStarting".localized())
-                        }
-                    }
-                }
-            }
-        }
-    }
-
-    private func showProductError(_ skus: [String]) {
-        var offendingProducts = [String]()
-        for sku in skus {
-            if let item = self.shoppingCart.items.first(where: { $0.product.sku == sku }) {
-                offendingProducts.append(item.product.name)
-            }
-        }
-
-        let start = offendingProducts.count == 1 ? "Snabble.saleStop.errorMsg.one" : "Snabble.saleStop.errorMsg"
-        let msg = start.localized() + "\n\n" + offendingProducts.joined(separator: "\n")
-        let alert = UIAlertController(title: "Snabble.saleStop.errorMsg.title".localized(), message: msg, preferredStyle: .alert)
-        alert.addAction(UIAlertAction(title: "Snabble.OK".localized(), style: .default, handler: nil))
-        self.present(alert, animated: true)
+        self.cartDelegate?.track(event)
     }
 }

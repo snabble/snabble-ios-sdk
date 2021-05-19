@@ -11,18 +11,13 @@
     <objects>
         <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner" customClass="ScannerDrawerViewController" customModule="Snabble" customModuleProvider="target">
             <connections>
-                <outlet property="checkoutButton" destination="yf1-c5-G4g" id="8bz-PW-qdU"/>
+                <outlet property="checkoutWrapper" destination="mvY-mm-qvE" id="0XC-SE-FRy"/>
                 <outlet property="contentView" destination="JCl-zB-3pt" id="9eC-Km-wNA"/>
                 <outlet property="handle" destination="Xr3-SM-efK" id="YbD-Mc-eNY"/>
                 <outlet property="handleContainer" destination="25r-2J-Uft" id="wUo-0r-crQ"/>
                 <outlet property="innerSpacer" destination="vTK-mi-YsQ" id="rme-7m-Saq"/>
-                <outlet property="itemCountLabel" destination="fXj-jB-rU0" id="prT-i5-RTD"/>
-                <outlet property="methodIcon" destination="dMj-4T-IxB" id="jvw-Pc-qjv"/>
-                <outlet property="methodSelectionView" destination="Mx0-WF-RYe" id="1gZ-TW-zX5"/>
-                <outlet property="methodSpinner" destination="w0s-XJ-JbD" id="E2y-zV-Aky"/>
                 <outlet property="segmentedControl" destination="fRv-ht-PMe" id="zeR-nG-Zr5"/>
                 <outlet property="separatorHeight" destination="3D4-dc-5Mh" id="YGY-Ra-PTx"/>
-                <outlet property="totalPriceLabel" destination="nV2-w2-rna" id="evD-Lf-Oo9"/>
                 <outlet property="view" destination="i5M-Pr-FkT" id="sfx-zR-JGt"/>
             </connections>
         </placeholder>
@@ -32,17 +27,17 @@
             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
             <subviews>
                 <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" translatesAutoresizingMaskIntoConstraints="NO" id="dML-eA-daE">
-                    <rect key="frame" x="16" y="0.0" width="382" height="223"/>
+                    <rect key="frame" x="16" y="0.0" width="382" height="181"/>
                     <subviews>
                         <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="25r-2J-Uft" userLabel="handleContainer">
                             <rect key="frame" x="0.0" y="0.0" width="382" height="50"/>
                             <subviews>
                                 <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="Xr3-SM-efK" userLabel="handle">
-                                    <rect key="frame" x="161" y="42" width="60" height="4"/>
+                                    <rect key="frame" x="161" y="4" width="60" height="42"/>
                                     <color key="backgroundColor" systemColor="systemGrayColor"/>
                                     <constraints>
                                         <constraint firstAttribute="width" constant="60" id="g04-Za-R7A"/>
-                                        <constraint firstAttribute="height" constant="4" id="yBJ-3m-GNT"/>
+                                        <constraint firstAttribute="height" priority="750" constant="4" id="yBJ-3m-GNT"/>
                                     </constraints>
                                 </view>
                             </subviews>
@@ -53,99 +48,22 @@
                                 <constraint firstAttribute="bottom" secondItem="Xr3-SM-efK" secondAttribute="bottom" priority="750" constant="4" id="ulS-MA-kaE"/>
                             </constraints>
                         </view>
-                        <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="N8d-Zg-Ias" userLabel="Cart Stuff">
-                            <rect key="frame" x="0.0" y="50" width="382" height="92"/>
-                            <subviews>
-                                <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="kSp-Tt-ZlM" userLabel="Summary">
-                                    <rect key="frame" x="0.0" y="0.0" width="382" height="26"/>
-                                    <subviews>
-                                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="5 Artikel" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="fXj-jB-rU0" userLabel="count">
-                                            <rect key="frame" x="0.0" y="5.3333333333333348" width="50.666666666666664" height="15.666666666666664"/>
-                                            <fontDescription key="fontDescription" type="system" pointSize="13"/>
-                                            <color key="textColor" systemColor="secondaryLabelColor"/>
-                                            <nil key="highlightedColor"/>
-                                        </label>
-                                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="€ 22,90" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="nV2-w2-rna" userLabel="price">
-                                            <rect key="frame" x="301.33333333333331" y="0.0" width="80.666666666666686" height="26.333333333333332"/>
-                                            <fontDescription key="fontDescription" type="boldSystem" pointSize="22"/>
-                                            <nil key="textColor"/>
-                                            <nil key="highlightedColor"/>
-                                        </label>
-                                    </subviews>
-                                    <color key="backgroundColor" systemColor="systemBackgroundColor"/>
-                                    <constraints>
-                                        <constraint firstItem="fXj-jB-rU0" firstAttribute="leading" secondItem="kSp-Tt-ZlM" secondAttribute="leading" id="0gy-5E-gKj"/>
-                                        <constraint firstAttribute="height" priority="750" constant="26" id="QJX-fi-7V1"/>
-                                        <constraint firstItem="nV2-w2-rna" firstAttribute="centerY" secondItem="kSp-Tt-ZlM" secondAttribute="centerY" id="rcV-gM-YmR"/>
-                                        <constraint firstItem="fXj-jB-rU0" firstAttribute="centerY" secondItem="kSp-Tt-ZlM" secondAttribute="centerY" id="xAq-fH-OLp"/>
-                                        <constraint firstAttribute="trailing" secondItem="nV2-w2-rna" secondAttribute="trailing" id="z6R-6n-TQx"/>
-                                    </constraints>
-                                </view>
-                                <stackView opaque="NO" contentMode="scaleToFill" spacing="16" translatesAutoresizingMaskIntoConstraints="NO" id="92V-0d-W2A" userLabel="Payment">
-                                    <rect key="frame" x="0.0" y="42" width="382" height="50"/>
-                                    <subviews>
-                                        <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="Mx0-WF-RYe" userLabel="Method Selection">
-                                            <rect key="frame" x="0.0" y="0.0" width="78" height="50"/>
-                                            <subviews>
-                                                <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="SnabbleSDK/payment/payment-sco" translatesAutoresizingMaskIntoConstraints="NO" id="dMj-4T-IxB" userLabel="method icon">
-                                                    <rect key="frame" x="12" y="13" width="38" height="24"/>
-                                                    <constraints>
-                                                        <constraint firstAttribute="width" constant="38" id="gcq-zU-wUm"/>
-                                                    </constraints>
-                                                </imageView>
-                                                <activityIndicatorView hidden="YES" opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" hidesWhenStopped="YES" style="gray" translatesAutoresizingMaskIntoConstraints="NO" id="w0s-XJ-JbD" userLabel="spinner">
-                                                    <rect key="frame" x="21" y="15" width="20" height="20"/>
-                                                </activityIndicatorView>
-                                                <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="SnabbleSDK/icon-chevron-down" translatesAutoresizingMaskIntoConstraints="NO" id="0vC-K8-qX3" userLabel="chevron">
-                                                    <rect key="frame" x="54" y="17" width="16" height="16"/>
-                                                    <constraints>
-                                                        <constraint firstAttribute="height" constant="16" id="cSi-oO-412"/>
-                                                        <constraint firstAttribute="width" constant="16" id="rhe-rs-frY"/>
-                                                    </constraints>
-                                                </imageView>
-                                            </subviews>
-                                            <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
-                                            <constraints>
-                                                <constraint firstItem="w0s-XJ-JbD" firstAttribute="centerY" secondItem="dMj-4T-IxB" secondAttribute="centerY" id="FBW-yw-7vl"/>
-                                                <constraint firstAttribute="trailing" secondItem="0vC-K8-qX3" secondAttribute="trailing" constant="8" id="JqV-Bb-ZfJ"/>
-                                                <constraint firstItem="0vC-K8-qX3" firstAttribute="centerY" secondItem="Mx0-WF-RYe" secondAttribute="centerY" id="LMM-il-FEd"/>
-                                                <constraint firstItem="dMj-4T-IxB" firstAttribute="leading" secondItem="Mx0-WF-RYe" secondAttribute="leading" constant="12" id="LPu-dE-dAe"/>
-                                                <constraint firstItem="w0s-XJ-JbD" firstAttribute="centerY" secondItem="Mx0-WF-RYe" secondAttribute="centerY" id="Uij-7i-y9y"/>
-                                                <constraint firstAttribute="width" constant="78" id="cyD-T5-kpH"/>
-                                                <constraint firstItem="dMj-4T-IxB" firstAttribute="centerY" secondItem="Mx0-WF-RYe" secondAttribute="centerY" id="hIo-79-fKW"/>
-                                                <constraint firstItem="w0s-XJ-JbD" firstAttribute="centerX" secondItem="dMj-4T-IxB" secondAttribute="centerX" id="olo-xe-WuW"/>
-                                            </constraints>
-                                        </view>
-                                        <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="yf1-c5-G4g" userLabel="Checkout Button">
-                                            <rect key="frame" x="94" y="0.0" width="288" height="50"/>
-                                            <constraints>
-                                                <constraint firstAttribute="height" priority="750" constant="48" id="tQD-1L-yRr"/>
-                                            </constraints>
-                                            <fontDescription key="fontDescription" type="system" weight="semibold" pointSize="17"/>
-                                            <state key="normal" title="Jetzt bezahlen"/>
-                                        </button>
-                                    </subviews>
-                                </stackView>
-                            </subviews>
+                        <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="mvY-mm-qvE" userLabel="checkoutWrapper">
+                            <rect key="frame" x="0.0" y="50" width="382" height="50"/>
+                            <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                             <constraints>
-                                <constraint firstItem="92V-0d-W2A" firstAttribute="leading" secondItem="N8d-Zg-Ias" secondAttribute="leading" id="3c3-uc-Anf"/>
-                                <constraint firstItem="92V-0d-W2A" firstAttribute="top" secondItem="kSp-Tt-ZlM" secondAttribute="bottom" priority="750" constant="4" id="Pwa-cT-8gB"/>
-                                <constraint firstAttribute="trailing" secondItem="kSp-Tt-ZlM" secondAttribute="trailing" id="WCX-nz-d2x"/>
-                                <constraint firstAttribute="bottom" secondItem="92V-0d-W2A" secondAttribute="bottom" priority="750" id="Xfn-Zm-tQh"/>
-                                <constraint firstAttribute="trailing" secondItem="92V-0d-W2A" secondAttribute="trailing" id="jOU-5b-SHz"/>
-                                <constraint firstItem="kSp-Tt-ZlM" firstAttribute="top" secondItem="N8d-Zg-Ias" secondAttribute="top" id="lLr-Ix-UFM"/>
-                                <constraint firstItem="kSp-Tt-ZlM" firstAttribute="leading" secondItem="N8d-Zg-Ias" secondAttribute="leading" id="xZv-Qg-qWE"/>
+                                <constraint firstAttribute="height" priority="750" constant="32" placeholder="YES" id="8Jp-rp-xP6"/>
                             </constraints>
                         </view>
                         <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="vTK-mi-YsQ" userLabel="innerSpacer">
-                            <rect key="frame" x="0.0" y="142" width="382" height="50"/>
+                            <rect key="frame" x="0.0" y="100" width="382" height="50"/>
                             <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                             <constraints>
                                 <constraint firstAttribute="height" priority="750" constant="16" id="feN-fx-eWJ"/>
                             </constraints>
                         </view>
                         <segmentedControl opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="top" segmentControlStyle="plain" selectedSegmentIndex="0" translatesAutoresizingMaskIntoConstraints="NO" id="fRv-ht-PMe">
-                            <rect key="frame" x="0.0" y="192" width="382" height="32"/>
+                            <rect key="frame" x="0.0" y="150" width="382" height="32"/>
                             <segments>
                                 <segment title="First"/>
                                 <segment title="Second"/>
@@ -154,13 +72,13 @@
                     </subviews>
                 </stackView>
                 <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="A9N-JE-sSp" userLabel="spacer">
-                    <rect key="frame" x="0.0" y="223" width="414" height="16"/>
+                    <rect key="frame" x="0.0" y="181" width="414" height="16"/>
                     <subviews>
                         <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="seA-0w-nIq" userLabel="separator">
                             <rect key="frame" x="0.0" y="13" width="414" height="3"/>
                             <color key="backgroundColor" systemColor="separatorColor"/>
                             <constraints>
-                                <constraint firstAttribute="height" constant="3" id="3D4-dc-5Mh"/>
+                                <constraint firstAttribute="height" priority="750" constant="3" id="3D4-dc-5Mh"/>
                             </constraints>
                         </view>
                     </subviews>
@@ -173,7 +91,7 @@
                     </constraints>
                 </view>
                 <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="JCl-zB-3pt" userLabel="contentView">
-                    <rect key="frame" x="0.0" y="239" width="414" height="497"/>
+                    <rect key="frame" x="0.0" y="197" width="414" height="539"/>
                     <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                 </view>
             </subviews>
@@ -195,11 +113,6 @@
         </view>
     </objects>
     <resources>
-        <image name="SnabbleSDK/icon-chevron-down" width="24" height="24"/>
-        <image name="SnabbleSDK/payment/payment-sco" width="38" height="24"/>
-        <systemColor name="secondaryLabelColor">
-            <color red="0.23529411764705882" green="0.23529411764705882" blue="0.2627450980392157" alpha="0.59999999999999998" colorSpace="custom" customColorSpace="sRGB"/>
-        </systemColor>
         <systemColor name="separatorColor">
             <color red="0.23529411764705882" green="0.23529411764705882" blue="0.2627450980392157" alpha="0.28999999999999998" colorSpace="custom" customColorSpace="sRGB"/>
         </systemColor>

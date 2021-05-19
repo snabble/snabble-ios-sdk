@@ -10,6 +10,13 @@ final class ScannerShoppingListViewController: UITableViewController {
     private var shoppingList: ShoppingList?
     private weak var delegate: AnalyticsDelegate?
 
+    var insets: UIEdgeInsets = .zero {
+        didSet {
+            tableView?.contentInset = insets
+            tableView?.scrollIndicatorInsets = insets
+        }
+    }
+
     init(delegate: AnalyticsDelegate?) {
         self.delegate = delegate
         super.init(style: .plain)

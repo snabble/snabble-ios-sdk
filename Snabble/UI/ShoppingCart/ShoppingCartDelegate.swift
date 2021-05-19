@@ -14,6 +14,9 @@ public protocol ShoppingCartDelegate: AnalyticsDelegate, MessageDelegate {
     /// Implementations should usually create a `PaymentProcess` instance and invoke its `start` method
     func gotoPayment(_ method: RawPaymentMethod, _ detail: PaymentMethodDetail?, _ info: SignedCheckoutInfo, _ cart: ShoppingCart)
 
+    /// called from the standalone shopping cart to switch to the scanner view
+    func gotoScanner()
+
     /// called when an error occurred
     ///
     /// - Parameter error: the error from the backend
@@ -22,11 +25,11 @@ public protocol ShoppingCartDelegate: AnalyticsDelegate, MessageDelegate {
 }
 
 extension ShoppingCartDelegate {
-    func checkoutAllowed(_ project: Project) -> Bool {
+    public func checkoutAllowed(_ project: Project) -> Bool {
         return true
     }
 
-    func handleCheckoutError(_ error: SnabbleError) -> Bool {
+    public func handleCheckoutError(_ error: SnabbleError) -> Bool {
         return false
     }
 }

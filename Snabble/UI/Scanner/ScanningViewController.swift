@@ -385,11 +385,8 @@ extension ScanningViewController: ScanConfirmationViewDelegate {
 
         return ScanMessage("Snabble.Scanner.scannedAgeRestrictedProduct".localized())
     }
-}
 
-// MARK: - scanning view delegate
-extension ScanningViewController: BarcodeDetectorDelegate {
-    public func enterBarcode() {
+    private func enterBarcode() {
         if SnabbleUI.implicitNavigation {
             let barcodeEntry = BarcodeEntryViewController(self.productProvider, self.shop.id, delegate: self.delegate, completion: self.handleScannedCode)
             self.navigationController?.pushViewController(barcodeEntry, animated: true)
@@ -399,7 +396,10 @@ extension ScanningViewController: BarcodeDetectorDelegate {
 
         self.barcodeDetector.pauseScanning()
     }
+}
 
+// MARK: - scanning view delegate
+extension ScanningViewController: BarcodeDetectorDelegate {
     public func scannedCode(_ code: String, _ format: ScanFormat) {
         if code == self.lastScannedCode {
             return

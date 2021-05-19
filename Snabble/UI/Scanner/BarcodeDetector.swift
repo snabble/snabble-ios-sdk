@@ -11,9 +11,6 @@ public protocol BarcodeDetectorDelegate: AnyObject {
     /// callback for a successful scan
     func scannedCode(_ code: String, _ format: ScanFormat)
 
-    /// called when the "enter barcode" button is tapped
-    func enterBarcode()
-
     /// track an `AnalyticsEvent`
     func track(_ event: AnalyticsEvent)
 

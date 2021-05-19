@@ -14,7 +14,7 @@ public final class ScannerViewController: PulleyViewController {
 
     public init(_ cart: ShoppingCart, _ shop: Shop, _ detector: BarcodeDetector, scannerDelegate: ScannerDelegate, cartDelegate: ShoppingCartDelegate) {
         scanningViewController = ScanningViewController(cart, shop, detector, delegate: scannerDelegate)
-        drawerViewController = ScannerDrawerViewController(SnabbleUI.project.id, shoppingCart: cart, delegate: cartDelegate)
+        drawerViewController = ScannerDrawerViewController(SnabbleUI.project.id, shoppingCart: cart, cartDelegate: cartDelegate)
 
         super.init(contentViewController: scanningViewController, drawerViewController: drawerViewController)
         self.initialDrawerPosition = .collapsed

@@ -27,8 +27,8 @@ private struct PaymentMethodAction {
 
 final class PaymentMethodSelector {
     private weak var parentVC: (UIViewController & AnalyticsDelegate)?
-    private var methodSelectionView: UIView
-    private var methodIcon: UIImageView
+    private weak var methodSelectionView: UIView?
+    private weak var methodIcon: UIImageView?
 
     private(set) var methodTap: UITapGestureRecognizer!
 
@@ -43,7 +43,7 @@ final class PaymentMethodSelector {
 
     private var shoppingCart: ShoppingCart
 
-    init(_ parentVC: UIViewController & AnalyticsDelegate,
+    init(_ parentVC: (UIViewController & AnalyticsDelegate)?,
          _ selectionView: UIView,
          _ methodIcon: UIImageView,
          _ cart: ShoppingCart
@@ -55,7 +55,7 @@ final class PaymentMethodSelector {
 
         let tap = UITapGestureRecognizer(target: self, action: #selector(self.methodSelectionTapped(_:)))
         self.methodTap = tap
-        self.methodSelectionView.addGestureRecognizer(tap)
+        self.methodSelectionView?.addGestureRecognizer(tap)
 
         self.updateSelectionVisibility()
         self.setDefaultPaymentMethod()
@@ -79,7 +79,7 @@ final class PaymentMethodSelector {
         // hide selection if the project only has one method and we have no payment method data
         let details = PaymentMethodDetails.read()
         let hidden = SnabbleUI.project.paymentMethods.count < 2 && details.isEmpty
-        self.methodSelectionView.isHidden = hidden
+        self.methodSelectionView?.isHidden = hidden
 
         if let selectedMethod = self.selectedPaymentMethod, let selectedDetail = self.selectedPaymentDetail {
             // check if the selected method is still valid
@@ -135,9 +135,9 @@ final class PaymentMethodSelector {
         self.selectedPaymentDetail = detail
 
         let icon = detail?.icon ?? method?.icon
-        self.methodIcon.image = icon
+        self.methodIcon?.image = icon
         if method?.dataRequired == true && detail == nil {
-            self.methodIcon.image = icon?.grayscale()
+            self.methodIcon?.image = icon?.grayscale()
         }
         self.methodTap.isEnabled = true
     }
@@ -189,7 +189,7 @@ final class PaymentMethodSelector {
             }
         }
 
-        self.methodSelectionView.isHidden = true
+        self.methodSelectionView?.isHidden = true
     }
 
     private func userSelectedPaymentMethod(with actionData: PaymentMethodAction) {
@@ -275,9 +275,9 @@ final class PaymentMethodSelector {
         sheet.addAction(AlertAction(title: "Snabble.Cancel".localized(), style: .preferred))
 
         sheet.shouldDismissHandler = { action in
-            if let action = action, let icon = iconMap[action] {
-                UIView.transition(with: self.methodIcon, duration: 0.16, options: .transitionCrossDissolve, animations: {
-                    self.methodIcon.image = icon
+            if let action = action, let icon = iconMap[action], let methodIcon = self.methodIcon {
+                UIView.transition(with: methodIcon, duration: 0.16, options: .transitionCrossDissolve, animations: {
+                    methodIcon.image = icon
                 })
             }
             return true
