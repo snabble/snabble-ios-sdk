@@ -55,7 +55,7 @@ public final class BuiltinBarcodeDetector: NSObject, BarcodeDetector {
     private var torchOn = false
 
     public required init(detectorArea: BarcodeDetectorArea, messageDelegate: BarcodeDetectorMessageDelegate?) {
-        self.sessionQueue = DispatchQueue(label: "io.snabble.scannerQueue")
+        self.sessionQueue = DispatchQueue(label: "io.snabble.scannerQueue", qos: .userInitiated)
         self.captureSession = AVCaptureSession()
         self.metadataOutput = AVCaptureMetadataOutput()
         self.scanFormats = []
@@ -137,7 +137,10 @@ public final class BuiltinBarcodeDetector: NSObject, BarcodeDetector {
 
         overlay.centerYOffset = offset
         let rect = self.previewLayer?.metadataOutputRectConverted(fromLayerRect: overlay.roi)
-        self.metadataOutput.rectOfInterest = rect ?? CGRect(origin: .zero, size: .init(width: 1, height: 1))
+        sessionQueue.async {
+            // for some reason, running this on the main thread may block for ~10 seconds. WHY?!?
+            self.metadataOutput.rectOfInterest = rect ?? CGRect(origin: .zero, size: .init(width: 1, height: 1))
+        }
     }
 
     public func requestCameraPermission() {
