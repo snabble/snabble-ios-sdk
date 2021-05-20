@@ -38,12 +38,18 @@ public protocol BarcodeDetector {
 
     /// this must be called from `viewWillAppear()` of the hosting view controller
     /// use this method to initialize the detector as well as the camera
+    /// and add the camera preview view or layer to the given view
     func scannerWillAppear(on view: UIView)
 
     /// this must be called from `viewDidLayoutSubviews()` of the hosting view controller.
     /// at this point, the bounds of the area reserved for camera preview have been determined
-    /// and a barcode detector instance can place its preview layer/view at these coordinates
+    /// and a barcode detector instance can resize its preview layer/view to these bounds
     func scannerDidLayoutSubviews()
+
+    /// this must be called from `viewWillDisappear()` of the hosting view controller.
+    /// the view is about to disappear, and the detector can remove its camera preview from the
+    /// view hiarchy, if neccessary
+    func scannerWillDisappear()
 
     /// instructs the detector to (re)start capturing video frames and detect barcodes
     func pauseScanning()

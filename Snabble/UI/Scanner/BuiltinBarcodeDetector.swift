@@ -111,9 +111,13 @@ public final class BuiltinBarcodeDetector: NSObject, BarcodeDetector {
     }
 
     public func scannerDidLayoutSubviews() {
-        if let previewLayer = self.previewLayer, let decorationView = self.decorationOverlay {
-            previewLayer.frame = decorationView.bounds
+        if let previewLayer = self.previewLayer, let decorationOverlay = self.decorationOverlay {
+            previewLayer.frame = decorationOverlay.bounds
         }
+    }
+
+    public func scannerWillDisappear() {
+        // nop for the built-in detector
     }
 
     public func pauseScanning() {
@@ -210,46 +214,6 @@ public final class BuiltinBarcodeDetector: NSObject, BarcodeDetector {
             assertionFailure("unhandled av auth status \(currentStatus.rawValue)")
         }
     }
-
-        /*
-    private func updateCartButtonTitle() {
-        UIView.performWithoutAnimation {
-            self.decorationView?.cartButton.setTitle(self.cartButtonTitle, for: .normal)
-            self.decorationView?.cartButton.isHidden = self.cartButtonTitle == nil
-            self.decorationView?.cartButton.layoutIfNeeded()
-        }
-    }
-
-    @objc private func enterButtonTapped(_ sender: Any) {
-        self.delegate?.enterBarcode()
-    }
-
-    @objc private func torchButtonTapped(_ sender: Any) {
-        guard let camera = self.camera else {
-            return
-        }
-
-        do {
-            try camera.lockForConfiguration()
-            defer { camera.unlockForConfiguration() }
-            camera.torchMode = camera.torchMode == .on ? .off : .on
-            let torchImage = self.torchImage(for: camera.torchMode)
-            self.decorationView?.torchButton.setImage(torchImage, for: .normal)
-            self.delegate?.track(.toggleTorch)
-        } catch {}
-    }
-
-    private func torchImage(for torchMode: AVCaptureDevice.TorchMode) -> UIImage? {
-        switch torchMode {
-        case .on: return appearance.torchButtonActiveImage ?? appearance.torchButtonImage
-        default: return appearance.torchButtonImage
-        }
-    }
-
-    @objc private func cartButtonTapped(_ sender: Any) {
-        self.delegate?.gotoShoppingCart()
-    }
-     */
 }
 
 // MARK: - idle timer

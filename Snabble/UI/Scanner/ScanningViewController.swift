@@ -192,6 +192,7 @@ final class ScanningViewController: UIViewController {
         super.viewWillDisappear(animated)
 
         self.barcodeDetector.pauseScanning()
+        self.barcodeDetector.scannerWillDisappear()
         self.displayScanConfirmationView(hidden: true)
 
         self.keyboardObserver = nil
