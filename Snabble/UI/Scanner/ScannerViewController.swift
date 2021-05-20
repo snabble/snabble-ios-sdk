@@ -10,14 +10,22 @@ import Pulley
 public final class ScannerViewController: PulleyViewController {
 
     private let scanningViewController: ScanningViewController
-    private let drawerViewController: ScannerDrawerViewController
+    private let drawerViewController: UIViewController
+    private let initialPosition: PulleyPosition
 
-    public init(_ cart: ShoppingCart, _ shop: Shop, _ detector: BarcodeDetector, scannerDelegate: ScannerDelegate, cartDelegate: ShoppingCartDelegate) {
+    public init(_ cart: ShoppingCart, _ shop: Shop, _ detector: BarcodeDetector, scannerDelegate: ScannerDelegate, cartDelegate: ShoppingCartDelegate?) {
         scanningViewController = ScanningViewController(cart, shop, detector, delegate: scannerDelegate)
-        drawerViewController = ScannerDrawerViewController(SnabbleUI.project.id, shoppingCart: cart, cartDelegate: cartDelegate)
+
+        if let cartDelegate = cartDelegate {
+            drawerViewController = ScannerDrawerViewController(SnabbleUI.project.id, shoppingCart: cart, cartDelegate: cartDelegate)
+            initialPosition = .collapsed
+        } else {
+            drawerViewController = EmptyDrawerViewController()
+            initialPosition = .closed
+        }
 
         super.init(contentViewController: scanningViewController, drawerViewController: drawerViewController)
-        self.initialDrawerPosition = .collapsed
+        self.initialDrawerPosition = initialPosition
 
         self.title = "Snabble.Scanner.title".localized()
         self.tabBarItem.image = UIImage.fromBundle("SnabbleSDK/icon-scan-inactive")
@@ -30,6 +38,11 @@ public final class ScannerViewController: PulleyViewController {
 
     required init(contentViewController: UIViewController, drawerViewController: UIViewController) {
         fatalError("init(contentViewController:drawerViewController:) has not been implemented")
+    }
+
+    public func updateTotals() {
+        let cartController = self.drawerViewController as? ShoppingCartViewController
+        cartController?.updateTotals()
     }
 }
 
@@ -44,4 +57,14 @@ extension ScannerViewController: ReactNativeWrapper {
         scanningViewController.setLookupcode(code)
     }
 
+}
+
+// MARK: - empty drawer
+
+private final class EmptyDrawerViewController: UIViewController { }
+
+extension EmptyDrawerViewController: PulleyDrawerViewControllerDelegate {
+    public func supportedDrawerPositions() -> [PulleyPosition] {
+        return [.closed]
+    }
 }
