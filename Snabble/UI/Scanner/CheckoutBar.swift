@@ -40,8 +40,9 @@ class CheckoutBar: NibView {
         self.checkoutButton.addTarget(self, action: #selector(checkoutTapped(_:)), for: .touchUpInside)
         self.checkoutButton.setTitle("Snabble.Shoppingcart.buyProducts.now".localized(), for: .normal)
         self.checkoutButton.makeSnabbleButton()
-        #warning("FIXME")
-        self.checkoutButton.setTitleColor(.systemGray, for: .disabled)
+
+        let disabledColor = SnabbleUI.appearance.accentColor.contrast.withAlphaComponent(0.5)
+        self.checkoutButton.setTitleColor(disabledColor, for: .disabled)
 
         self.methodSelectionView.layer.masksToBounds = true
         self.methodSelectionView.layer.cornerRadius = 8
