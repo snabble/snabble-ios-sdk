@@ -160,6 +160,10 @@ public final class ShoppingCartViewController: UIViewController {
 
         checkoutBar?.updateTotals()
     }
+
+    func updateTotals() {
+        checkoutBar?.updateTotals()
+    }
 }
 
 // MARK: - empty state
