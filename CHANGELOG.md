@@ -2,11 +2,12 @@
 
 # v0.17.0 (unreleased)
 
-- fixes a bug in the asset manager where special assets for dark mode weren't found
-- creating the FTS index for a product database is now much faster
-- also, performance of `productsByName` and `productsByScannableCodePrefix` is now much better
+- Fixes a bug in the asset manager where special assets for dark mode weren't found
+- Creating the FTS index for a product database is now much faster
+- Performance of `productsByName` and `productsByScannableCodePrefix` is now much better
 - Product DB updates can now be triggered depending on when the last update was requested
-- Completely redesigned the Scanner, with integrated shopping list and shopping cart in a Maps-like drawer. The standalone `ShoppingCartViewController` is no longer available.
+- Completely redesigned the Scanner, with integrated shopping list and shopping cart in a Maps-like drawer. 
+  To hide this drawer, pass `nil` for the `cartDelegate` init parameter.
 
 # v0.16.9
 

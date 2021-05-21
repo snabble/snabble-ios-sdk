@@ -1,13 +1,12 @@
 //
 //  CheckoutBar.swift
-//  Snabble
 //
-//  Created by Gereon Steffens on 19.05.21.
+//  Copyright © 2021 snabble. All rights reserved.
 //
 
 import UIKit
 
-class CheckoutBar: NibView {
+final class CheckoutBar: NibView {
     @IBOutlet private var itemCountLabel: UILabel!
     @IBOutlet private var totalPriceLabel: UILabel!
 

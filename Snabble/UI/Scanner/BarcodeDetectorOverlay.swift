@@ -13,7 +13,7 @@ public enum BarcodeDetectorArea {
     case square
 }
 
-public class BarcodeDetectorOverlay: UIView {
+public final class BarcodeDetectorOverlay: UIView {
     /// the frame for showing where the barcode was scanned
     private let frameView = UIView()
 

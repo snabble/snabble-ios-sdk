@@ -29,7 +29,7 @@ struct SavedCart: Codable {
     }
 }
 
-public class OfflineCarts {
+public final class OfflineCarts {
     public static let shared = OfflineCarts()
 
     private var inProgress = false
