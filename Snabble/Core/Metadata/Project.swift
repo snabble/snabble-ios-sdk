@@ -239,11 +239,6 @@ public struct ProjectMessages: Decodable {
     public let companyNotice: String?
 }
 
-public struct ManualCoupon: Codable {
-    public let id: String
-    public let name: String
-}
-
 public struct Project: Decodable, Identifiable {
     public let id: Identifier<Project>
     public let name: String
@@ -281,7 +276,8 @@ public struct Project: Decodable, Identifiable {
     public let company: Company?
     public let brandId: Identifier<Brand>?
 
-    public let manualCoupons: [ManualCoupon]
+    public let manualCoupons: [Coupon]
+    public let printedCoupons: [Coupon]
 
     enum CodingKeys: String, CodingKey {
         case id, name, links
@@ -294,7 +290,7 @@ public struct Project: Decodable, Identifiable {
         case displayNetPrice
         case company
         case brandId = "brandID"
-        case manualCoupons
+        case coupons
     }
 
     public init(from decoder: Decoder) throws {
@@ -336,7 +332,13 @@ public struct Project: Decodable, Identifiable {
         let brandId = try container.decodeIfPresent(String.self, forKey: .brandId) ?? ""
         self.brandId = brandId.isEmpty ? nil : Identifier<Brand>(rawValue: brandId)
 
-        self.manualCoupons = try container.decodeIfPresent([ManualCoupon].self, forKey: .manualCoupons) ?? []
+        if let coupons = try container.decodeIfPresent([Coupon].self, forKey: .coupons) {
+            self.manualCoupons = coupons.filter { $0.type == .manual }
+            self.printedCoupons = coupons.filter { $0.type == .printed }
+        } else {
+            self.manualCoupons = []
+            self.printedCoupons = []
+        }
     }
 
     private init() {
@@ -364,6 +366,7 @@ public struct Project: Decodable, Identifiable {
         self.company = nil
         self.brandId = nil
         self.manualCoupons = []
+        self.printedCoupons = []
     }
 
     // only used for unit tests!
@@ -392,6 +395,7 @@ public struct Project: Decodable, Identifiable {
         self.company = nil
         self.brandId = nil
         self.manualCoupons = []
+        self.printedCoupons = []
     }
 
     static let none = Project()

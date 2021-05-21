@@ -86,7 +86,7 @@ public struct CartItem: Codable {
     /// optional customer Card no.
     public let customerCard: String?
     /// optional manually entered discount
-    public internal(set) var manualCoupon: ManualCoupon?
+    public internal(set) var manualCoupon: Coupon?
 
     public init(_ quantity: Int, _ product: Product, _ scannedCode: ScannedCode, _ customerCard: String?, _ roundingMode: RoundingMode) {
         self.quantity = quantity
