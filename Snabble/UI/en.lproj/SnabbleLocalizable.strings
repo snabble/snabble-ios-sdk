@@ -265,6 +265,8 @@
 
 "Snabble.Scanner.Camera.allowAccess" = "Sorry, we'll need to access your camera to scan barcodes. Please allow this in the settings and return here.";
 
+"Snabble.Scanner.couponAdded" = "Added coupon “%@”";
+
 "Snabble.Scanner.duplicateDepositScanned" = "Each deposit slip can only be scanned once.";
 
 "Snabble.Scanner.enterBarcode" = "Enter Barcode";
@@ -333,6 +335,10 @@
 "Snabble.Shoppingcart.buyProducts.now" = "Pay now";
 
 "Snabble.Shoppingcart.buyProducts.one" = "Buy %1$d product for %2$@";
+
+"Snabble.Shoppingcart.coupon" = "Coupon";
+
+"Snabble.Shoppingcart.coupons" = "Coupons";
 
 "Snabble.Shoppingcart.deposit" = "Deposit";
 
@@ -411,7 +417,7 @@
 "Snabble.ShoppingList.notFound" = "Unknown product";
 
 /* Der Hint der angezeigt wird wenn man einen Artikel per Suche hinzufügen möchte */
-"Snabble.ShoppingList.searchHint" = "Product";
+"Snabble.ShoppingList.searchHint" = "Search or enter directly";
 
 /* Der Titel der übersichtsseite der Einkaufslisten */
 "Snabble.ShoppingList.title" = "Shopping list";
@@ -424,6 +430,9 @@
 
 /* Hinweis der Eingeblendet wird wenn der Benutzer das erste mal vermutlich falsch mehrere Artikel zum Einkaufszettel ergänezen wollte */
 "Snabble.ShoppingList.Voice.title" = "Hint";
+
+/* Der Titel der übersichtsseite der Einkaufslisten */
+"Snabble.ShoppingLists.title" = "Shopping lists";
 
 "Snabble.undo" = "Undo";
 

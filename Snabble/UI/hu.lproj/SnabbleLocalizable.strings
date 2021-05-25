@@ -1,4 +1,4 @@
-"Snabble.addDiscount" = "Enter discount";
+"Snabble.addDiscount" = "Árengedmény megadása";
 
 "Snabble.ageVerification.explanation" = "Meghatározott termékek, mint pl. alkohol vásárlásához igazolnod kell a korod. Ehhez személyazonosító igazolványod hátoldaláról másold be a 7 jegyű számot.";
 
@@ -94,7 +94,7 @@
 
 "Snabble.No" = "Nem";
 
-"Snabble.noDiscount" = "no discount";
+"Snabble.noDiscount" = "nincs árengedmény";
 
 "Snabble.notForSale.errorMsg.scan" = "Ezt a terméket jelenleg sajnos nem lehet az alkalmazással kifizetni. Kérlek, fizesd a szokásos módon a kasszánál.";
 
@@ -265,6 +265,8 @@
 
 "Snabble.Scanner.Camera.allowAccess" = "A vonalkódok beolvasásához szeretnénk hozzáférni a kamerádhoz. Kérlek, engedélyezd a kamera használatát a beállításokban, és utána lépj vissza ide.";
 
+"Snabble.Scanner.couponAdded" = "Added coupon “%@”";
+
 "Snabble.Scanner.duplicateDepositScanned" = "Az egyes betétdíjblokkok csak egyszer olvashatók be.";
 
 "Snabble.Scanner.enterBarcode" = "Vonalkód megadása";
@@ -272,7 +274,7 @@
 "Snabble.Scanner.enterCodeButton" = "Vonalkód\nmegadása";
 
 /* Text der Snackbar die Angezeigt wird, wenn der Benutzer noch nie ein Produkt gescannt hat */
-"Snabble.Scanner.firstScan" = "Scan your first product. Place the barcode in front of your camera.";
+"Snabble.Scanner.firstScan" = "Szkenneld be az első termékedet. Ehhez tartsd a termék vonalkódját a kamerához.";
 
 "Snabble.Scanner.goToCart" = "Kosár: %@";
 
@@ -280,7 +282,7 @@
 
 "Snabble.Scanner.introText" = "Szkenneld be a termék vonalkódját, és add hozzá a kosaradhoz.";
 
-"Snabble.Scanner.manualCouponAdded" = "You've entered a discounted price for your last item. Please note that an employee will check your purchase.";
+"Snabble.Scanner.manualCouponAdded" = "Az utolsó termékhez engedményes árat adtál meg. Kérjük, vedd tudomásul, hogy az egyik alkalmazott ellenőrizni fogja a vásárlásodat.";
 
 "Snabble.Scanner.multiPack" = "Ne felejtsd el!";
 
@@ -334,6 +336,10 @@
 
 "Snabble.Shoppingcart.buyProducts.one" = "%1$d termék megvásárlása %2$@-ért";
 
+"Snabble.Shoppingcart.coupon" = "Coupon";
+
+"Snabble.Shoppingcart.coupons" = "Coupons";
+
 "Snabble.Shoppingcart.deposit" = "Betétdíj";
 
 "Snabble.Shoppingcart.discounts" = "Összes árengedmény";
@@ -369,61 +375,64 @@
 "Snabble.ShoppingCart.title" = "Kosár";
 
 /* Hinweiß der angezeigt wird wenn ein Artikel der Einkaufsliste hinzugefügt wurde */
-"Snabble.ShoppingList.added" = "%@ saved";
+"Snabble.ShoppingList.added" = "%@ mentve";
 
 /* Der Titel des Dialogs zur Erzeugung einer neuen Einkaufsliste */
-"Snabble.ShoppingList.CreateList.title" = "Create shopping list";
+"Snabble.ShoppingList.CreateList.title" = "Új bevásárlólista létrehozása";
 
 /* Der Löschen-Knopf beim Editieren von Einkaufslisten */
-"Snabble.ShoppingList.EditList.delete" = "Delete";
+"Snabble.ShoppingList.EditList.delete" = "Törlés";
 
 /* Der Speichern-Knopf beim Editieren von Einkaufslisten */
-"Snabble.ShoppingList.EditList.save" = "Save";
+"Snabble.ShoppingList.EditList.save" = "Mentés";
 
 /* Der Titel des Popups zum bearbeiten von Einkaufslisten */
-"Snabble.ShoppingList.EditList.title" = "Edit shopping list";
+"Snabble.ShoppingList.EditList.title" = "Bevásárlólista szerkesztése";
 
 /* Der Text wird angezeigt wenn man ein Element der Einkaufsliste wegwischt */
-"Snabble.ShoppingList.ItemDeleted" = "%@ deleted";
+"Snabble.ShoppingList.ItemDeleted" = "%@ törölve";
 
 /* Der Call-To-Action wenn man das löschen eines Elements der Einkaufsliste rückgänig machen möchte */
-"Snabble.ShoppingList.ItemDeleted.Undo" = "Undo";
+"Snabble.ShoppingList.ItemDeleted.Undo" = "Helyreállítás";
 
 /* Der Inhalt der Snackbar wenn eine Einkaufsliste gelöscht wurde */
-"Snabble.ShoppingList.ListDeleted.title" = "Shopping list deleted";
+"Snabble.ShoppingList.ListDeleted.title" = "Bevásárlólista törölve";
 
 /* Der Call-To-Action wenn eine Einkaufsliste wiederhergestellt werden soll */
-"Snabble.ShoppingList.ListDeleted.undo" = "Undo";
+"Snabble.ShoppingList.ListDeleted.undo" = "Helyreállítás";
 
 /* Der Call-To-Action beim Empty-State Text wenn der Einkaufszettel noch leer ist  */
-"Snabble.ShoppingList.ListEmpty.add" = "Add product";
+"Snabble.ShoppingList.ListEmpty.add" = "Termék hozzáadása";
 
 /* Empty-State Text wenn der Einkaufszettel noch leer ist */
-"Snabble.ShoppingList.ListEmpty.title" = "Your shopping list is empty.";
+"Snabble.ShoppingList.ListEmpty.title" = "A bevásárlólistád üres.";
 
 /* Der Call-To-Action beim Empty-State Text wenn noch kein Einkaufszettel angelegt wurde */
-"Snabble.ShoppingList.NoLists.add" = "Create shopping list";
+"Snabble.ShoppingList.NoLists.add" = "Bevásárlólista létrehozása";
 
 /* Der Empty-State wenn noch kein Einkaufszettel angelegt wurde */
-"Snabble.ShoppingList.NoLists.title" = "You have no shopping lists yet.";
+"Snabble.ShoppingList.NoLists.title" = "Még nem hoztál létre bevásárlólistát.";
 
 /* Hinweiß der angezeigt wird wenn ein Artikel nicht gefunden wurde */
-"Snabble.ShoppingList.notFound" = "Unknown product";
+"Snabble.ShoppingList.notFound" = "Ismeretlen termék";
 
 /* Der Hint der angezeigt wird wenn man einen Artikel per Suche hinzufügen möchte */
-"Snabble.ShoppingList.searchHint" = "Product";
+"Snabble.ShoppingList.searchHint" = "Keresés vagy közvetlen megadás";
 
 /* Der Titel der übersichtsseite der Einkaufslisten */
-"Snabble.ShoppingList.title" = "Shopping list";
+"Snabble.ShoppingList.title" = "Bevásárlólista";
 
 /* Man soll verschiedene Artikel mit einem "und" in die Einkaufsliste legen können. Hier geht es nur um das Wort "und" */
-"Snabble.ShoppingList.Voice.connectingWord" = "and";
+"Snabble.ShoppingList.Voice.connectingWord" = "és";
 
 /* Hinweis der Eingeblendet wird wenn der Benutzer das erste mal vermutlich falsch mehrere Artikel zum Einkaufszettel ergänezen wollte */
-"Snabble.ShoppingList.Voice.details" = "Did you want to add several things to your shopping list? Then combine the individual entries with “and”, like this: Tissues and pasta and yeast";
+"Snabble.ShoppingList.Voice.details" = "Több terméket is fel szerettél volna venni a bevásárlólistára? Ezután kapcsold össze az egyes bejegyzéseket egy „és”-sel - például így: WC-papír és tészta és élesztő";
 
 /* Hinweis der Eingeblendet wird wenn der Benutzer das erste mal vermutlich falsch mehrere Artikel zum Einkaufszettel ergänezen wollte */
-"Snabble.ShoppingList.Voice.title" = "Hint";
+"Snabble.ShoppingList.Voice.title" = "Ötlet";
+
+/* Der Titel der übersichtsseite der Einkaufslisten */
+"Snabble.ShoppingLists.title" = "Bevásárlólisták";
 
 "Snabble.undo" = "Visszavonás";
 
