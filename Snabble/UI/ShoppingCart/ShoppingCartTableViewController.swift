@@ -12,6 +12,9 @@ enum CartTableEntry {
     // our main item and any additional line items referring to it
     case cartItem(CartItem, [CheckoutInfo.LineItem])
 
+    // a user-added coupon
+    case coupon(CartCoupon)
+
     // a new main item from the backend, plus its additional items.
     case lineItem(CheckoutInfo.LineItem, [CheckoutInfo.LineItem])
 
@@ -215,6 +218,11 @@ final class ShoppingCartTableViewController: UITableViewController {
             }
         }
 
+        for coupon in cart.coupons {
+            let item = CartTableEntry.coupon(coupon)
+            self.items.append(item)
+        }
+
         // perform any pending lookups
         if !pendingLookups.isEmpty {
             self.performPendingLookups(pendingLookups, self.shoppingCart.lastSaved)
@@ -384,6 +392,9 @@ extension ShoppingCartTableViewController {
         switch item {
         case .cartItem(let item, let lineItems):
             cell.setCartItem(item, lineItems, row: indexPath.row, delegate: self)
+        case .coupon(let coupon):
+            cell.setCouponItem(coupon, row: indexPath.row, delegate: self)
+
         case .lineItem(let item, let lineItems):
             cell.setLineItem(item, lineItems, row: indexPath.row, delegate: self)
         case .discount(let amount):
@@ -413,7 +424,10 @@ extension ShoppingCartTableViewController {
         let item = self.items[indexPath.row]
 
         switch item {
+        // user stuff is editable
         case .cartItem: return true
+        case .coupon: return true
+        // stuff we get from the backend isn't
         case .lineItem: return false
         case .discount: return false
         case .giveaway: return false
@@ -422,14 +436,20 @@ extension ShoppingCartTableViewController {
 
     // call tableView.deleteRows(at:) inside a CATransaction block so that we can reload the tableview afterwards
     func deleteRow(_ row: Int) {
-        guard row < self.items.count, case .cartItem(let item, _) = self.items[row] else {
+        guard row < self.items.count else {
             return
         }
 
-        let product = item.product
-        self.cartDelegate?.track(.deletedFromCart(product.sku))
+        if case .cartItem(let item, _) = self.items[row] {
+            let product = item.product
+            self.cartDelegate?.track(.deletedFromCart(product.sku))
 
-        self.items.remove(at: row)
+            self.items.remove(at: row)
+            self.shoppingCart.remove(at: row)
+        } else if case .coupon(let coupon) = self.items[row] {
+            self.items.remove(at: row)
+            self.shoppingCart.removeCoupon(coupon.coupon)
+        }
 
         let indexPath = IndexPath(row: row, section: 0)
         CATransaction.begin()
@@ -438,7 +458,6 @@ extension ShoppingCartTableViewController {
         self.tableView.endUpdates()
 
         CATransaction.setCompletionBlock {
-            self.shoppingCart.remove(at: row)
             NotificationCenter.default.post(name: .snabbleCartUpdated, object: self)
             self.updateView()
         }

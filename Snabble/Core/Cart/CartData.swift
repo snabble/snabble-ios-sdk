@@ -71,7 +71,18 @@ public struct ScannedCode: Codable {
     }
 }
 
-/// an entry in a shopping cart.
+/// a coupon entry in a shopping cart
+public struct CartCoupon: Codable {
+    let coupon: Coupon
+    let scannedCode: String?
+
+    public var cartItem: Cart.Item {
+        let couponItem = Cart.CouponItem(id: coupon.id, refersTo: nil, scannedCode: scannedCode, amount: 1)
+        return Cart.Item.coupon(couponItem)
+    }
+}
+
+/// a product entry in a shopping cart.
 public struct CartItem: Codable {
     /// quantity or weight
     public internal(set) var quantity: Int
@@ -306,9 +317,9 @@ public struct CartItem: Codable {
 
         if let coupon = self.manualCoupon {
             let couponItem = Cart.Item.coupon(
-                Cart.CouponItem(id: UUID().uuidString,
+                Cart.CouponItem(id: coupon.id,
                                 refersTo: self.uuid,
-                                couponID: coupon.id,
+                                scannedCode: nil,
                                 amount: 1))
             return [productItem, couponItem]
         } else {

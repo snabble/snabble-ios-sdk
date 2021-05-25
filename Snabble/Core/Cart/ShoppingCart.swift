@@ -14,6 +14,7 @@ public final class ShoppingCart: Codable {
     public private(set) var backendCartInfo: BackendCartInfo?
     public private(set) var paymentMethods: [PaymentMethodDescription]?
     public private(set) var lastCheckoutInfoError: SnabbleError?
+    public private(set) var coupons: [CartCoupon]
 
     public let projectId: Identifier<Project>
     public let shopId: Identifier<Shop>
@@ -43,7 +44,8 @@ public final class ShoppingCart: Codable {
     public static let maxAmount = 9999
 
     enum CodingKeys: String, CodingKey {
-        case items, session, lastSaved, backendCartInfo, projectId, shopId, uuid, backupItems, backupSession, customerCard, maxAge
+        case items, session, lastSaved, backendCartInfo, projectId, shopId
+        case uuid, backupItems, backupSession, customerCard, maxAge, coupons
     }
 
     public init(from decoder: Decoder) throws {
@@ -62,6 +64,7 @@ public final class ShoppingCart: Codable {
         self.directory = nil
         self.sorter = nil
         self.lastCheckoutInfoError = nil
+        self.coupons = try container.decodeIfPresent([CartCoupon].self, forKey: .coupons) ?? []
     }
 
     public func encode(to encoder: Encoder) throws {
@@ -78,6 +81,7 @@ public final class ShoppingCart: Codable {
         try container.encodeIfPresent(self.backupSession, forKey: .backupSession)
         try container.encodeIfPresent(self.customerCard, forKey: .customerCard)
         try container.encode(self.maxAge, forKey: .maxAge)
+        try container.encode(self.coupons, forKey: .coupons)
     }
 
     public init(_ config: CartConfig) {
@@ -92,6 +96,7 @@ public final class ShoppingCart: Codable {
         self.session = ""
         self.uuid = ""
         self.items = []
+        self.coupons = []
         self.generateNewUUID()
 
         if let savedCart = self.load() {
@@ -99,6 +104,7 @@ public final class ShoppingCart: Codable {
             self.session = savedCart.session
             self.customerCard = savedCart.customerCard
             self.uuid = savedCart.uuid
+            self.coupons = savedCart.coupons
 
             self.backupItems = savedCart.backupItems
             self.backupSession = savedCart.backupSession
@@ -190,7 +196,11 @@ public final class ShoppingCart: Codable {
     }
 
     func backendItems() -> [Cart.Item] {
-        return self.items.flatMap { $0.cartItems }
+        var items = self.items.flatMap { $0.cartItems }
+        let coupons = self.coupons.map { $0.cartItem }
+        items.append(contentsOf: coupons)
+
+        return items
     }
 
     func sortedItems() -> [CartItem] {
@@ -221,6 +231,7 @@ public final class ShoppingCart: Codable {
         }
 
         self.items.removeAll()
+        self.coupons.removeAll()
         self.save()
         NotificationCenter.default.post(name: .snabbleCartUpdated, object: self)
 
@@ -278,6 +289,20 @@ public final class ShoppingCart: Codable {
 
     func generateNewUUID() {
         self.uuid = UUID().uuidString
+    }
+}
+
+// MARK: - Coupons
+extension ShoppingCart {
+    func addCoupon(_ coupon: Coupon, scannedCode: String) {
+        let index = coupons.firstIndex(where: { $0.coupon.id == coupon.id })
+        if index == nil {
+            coupons.append(CartCoupon(coupon: coupon, scannedCode: scannedCode))
+        }
+    }
+
+    func removeCoupon(_ coupon: Coupon) {
+        coupons.removeAll { $0.coupon.id == coupon.id }
     }
 }
 

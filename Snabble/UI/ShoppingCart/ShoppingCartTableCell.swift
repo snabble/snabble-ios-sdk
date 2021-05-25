@@ -177,6 +177,24 @@ final class ShoppingCartTableCell: UITableViewCell {
         }
     }
 
+    func setCouponItem(_ coupon: CartCoupon, row: Int, delegate: ShoppingCartTableDelegate) {
+        self.delegate = delegate
+        self.quantity = 1
+        self.nameLabel.text = coupon.coupon.name
+        self.buttonWrapper.isHidden = true
+        self.weightWrapper.isHidden = true
+        self.priceLabel.text = ""
+
+        self.loadImage()
+        self.quantityLabel.text = "1"
+
+        if self.delegate.showImages {
+            let icon = UIImage.fromBundle("SnabbleSDK/icon-percent")
+            self.productImage.image = icon?.recolored(with: SnabbleUI.appearance.accentColor)
+            self.imageWrapper.isHidden = false
+        }
+    }
+
     private func updateQuantity(at row: Int, reload: Bool = true) {
         guard let item = self.item else {
             return

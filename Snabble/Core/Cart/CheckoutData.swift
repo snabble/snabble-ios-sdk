@@ -402,8 +402,8 @@ public struct Cart: Encodable {
 
     public struct CouponItem: Encodable {
         public let id: String
-        public let refersTo: String
-        public let couponID: String
+        public let refersTo: String?
+        public let scannedCode: String?
         public let amount: Int
     }
 

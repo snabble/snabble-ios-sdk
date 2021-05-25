@@ -20,9 +20,9 @@ public struct Coupon: Codable {
     public let id: String
     public let name: String
     public let type: CouponType
-    public let projectID: Identifier<Project>
 
     public let codes: [Code]?
+    public let projectID: Identifier<Project>
 
     public struct Code: Codable {
         public let code, template: String
