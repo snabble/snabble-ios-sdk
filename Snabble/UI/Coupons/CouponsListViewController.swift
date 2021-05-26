@@ -44,6 +44,12 @@ public final class CouponsListViewController: UITableViewController {
         self.setupCoupons()
     }
 
+    override public func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+
+        delegate?.track(.viewCouponList)
+    }
+
     private func setupCoupons() {
         let couponEntries = CouponWallet.shared.coupons
         let dict = Dictionary(grouping: couponEntries, by: { $0.coupon.projectID })
@@ -112,6 +118,7 @@ extension CouponsListViewController {
         coupons[indexPath.section][indexPath.row].active.toggle()
         let coupon = coupons[indexPath.section][indexPath.row]
 
+        delegate?.track(.couponActivated)
         CouponWallet.shared.activate(coupon.coupon, active: coupon.active)
 
         tableView.reloadRows(at: [indexPath], with: .automatic)
@@ -124,6 +131,7 @@ extension CouponsListViewController {
 
         let coupon = coupons[indexPath.section][indexPath.row]
         CouponWallet.shared.remove(coupon.coupon)
+        delegate?.track(.couponDeleted)
         setupCoupons()
     }
 }

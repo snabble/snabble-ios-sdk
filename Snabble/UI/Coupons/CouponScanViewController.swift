@@ -60,6 +60,7 @@ final class CouponScanViewController: UIViewController {
     }
 
     override func viewDidAppear(_ animated: Bool) {
+        delegate?.track(.viewCouponScan)
         super.viewDidAppear(animated)
 
         detector.resumeScanning()
@@ -93,6 +94,7 @@ extension CouponScanViewController: BarcodeDetectorDelegate {
                 feedback.notificationOccurred(.success)
                 delegate?.showInfoMessage("Coupon \"\(coupon.name)\" ist jetzt verfügbar")
                 wallet.add(coupon)
+                delegate?.track(.couponScanned)
             }
         } else {
             feedback.notificationOccurred(.error)
