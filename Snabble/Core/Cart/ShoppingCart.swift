@@ -298,11 +298,13 @@ extension ShoppingCart {
         let index = coupons.firstIndex(where: { $0.coupon.id == coupon.id })
         if index == nil {
             coupons.append(CartCoupon(coupon: coupon, scannedCode: scannedCode))
+            self.save()
         }
     }
 
     func removeCoupon(_ coupon: Coupon) {
         coupons.removeAll { $0.coupon.id == coupon.id }
+        self.save()
     }
 }
 

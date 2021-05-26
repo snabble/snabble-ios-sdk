@@ -77,7 +77,7 @@ public struct CartCoupon: Codable {
     let scannedCode: String?
 
     public var cartItem: Cart.Item {
-        let couponItem = Cart.CouponItem(id: coupon.id, refersTo: nil, scannedCode: scannedCode, amount: 1)
+        let couponItem = Cart.CouponItem(couponId: coupon.id, scannedCode: scannedCode)
         return Cart.Item.coupon(couponItem)
     }
 }
@@ -317,10 +317,7 @@ public struct CartItem: Codable {
 
         if let coupon = self.manualCoupon {
             let couponItem = Cart.Item.coupon(
-                Cart.CouponItem(id: coupon.id,
-                                refersTo: self.uuid,
-                                scannedCode: nil,
-                                amount: 1))
+                Cart.CouponItem(couponId: coupon.id, refersTo: self.uuid))
             return [productItem, couponItem]
         } else {
             return [productItem]

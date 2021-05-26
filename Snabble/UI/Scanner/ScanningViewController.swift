@@ -421,6 +421,7 @@ extension ScanningViewController {
                 scannedProduct = product
             case .coupon(let coupon, let scannedCode):
                 self.shoppingCart.addCoupon(coupon, scannedCode: scannedCode)
+                NotificationCenter.default.post(name: .snabbleCartUpdated, object: self)
                 let msg = String(format: "Snabble.Scanner.couponAdded".localized(), coupon.name)
                 self.showMessage(ScanMessage(msg))
                 return
@@ -634,7 +635,7 @@ extension ScanningViewController {
         for coupon in validCoupons {
             for code in coupon.codes ?? [] {
                 let result = CodeMatcher.match(scannedCode, project.id)
-                if result.first(where: { $0.template.id == code.template }) != nil {
+                if result.first(where: { $0.template.id == code.template && $0.lookupCode == code.code }) != nil {
                     return coupon
                 }
             }
