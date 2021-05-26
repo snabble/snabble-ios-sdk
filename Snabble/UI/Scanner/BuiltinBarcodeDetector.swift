@@ -111,6 +111,7 @@ public final class BuiltinBarcodeDetector: NSObject, BarcodeDetector {
     }
 
     public func scannerDidLayoutSubviews() {
+        decorationOverlay?.layoutIfNeeded()
         if let previewLayer = self.previewLayer, let decorationOverlay = self.decorationOverlay {
             previewLayer.frame = decorationOverlay.bounds
         }
