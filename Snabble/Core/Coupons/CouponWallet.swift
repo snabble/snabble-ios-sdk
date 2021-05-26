@@ -45,8 +45,8 @@ struct CouponEntry: Codable {
     }
 }
 
-class CouponManager {
-    static let shared = CouponManager()
+final class CouponWallet {
+    static let shared = CouponWallet()
 
     private(set) var coupons = [CouponEntry]()
 
@@ -54,8 +54,12 @@ class CouponManager {
         self.coupons = load()
     }
 
+    func contains(_ coupon: Coupon) -> Bool {
+        return coupons.firstIndex(where: { $0.coupon == coupon }) != nil
+    }
+
     func add(_ coupon: Coupon) {
-        if coupons.firstIndex(where: { $0.coupon == coupon }) == nil {
+        if !contains(coupon) {
             coupons.append(CouponEntry(coupon: coupon))
             save()
         }
@@ -79,6 +83,12 @@ class CouponManager {
         }
     }
 
+    func active(for projectId: Identifier<Project>) -> [Coupon] {
+        return coupons
+            .filter { $0.coupon.projectID == projectId }
+            .map { $0.coupon }
+    }
+
     // for testing only!
     func addAll(_ list: [Coupon]) {
         list.forEach { add($0) }
@@ -86,7 +96,7 @@ class CouponManager {
 }
 
 // MARK: - Persistence
-extension CouponManager {
+extension CouponWallet {
     private var url: URL {
         let fileManager = FileManager.default
         return fileManager.urls(for: .documentDirectory, in: .userDomainMask)[0].appendingPathComponent("coupons.json")

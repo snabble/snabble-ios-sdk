@@ -4,17 +4,22 @@
 //  Copyright © 2021 snabble. All rights reserved.
 //
 
+// TODO: Analytics
+
 import UIKit
+
+public typealias CouponDelegate = AnalyticsDelegate & MessageDelegate
 
 public final class CouponsListViewController: UITableViewController {
 
     private var coupons = [[CouponEntry]]()
     private var sections = [String]()
+    private weak var delegate: CouponDelegate?
 
-    public init() {
+    public init(delegate: CouponDelegate) {
+        self.delegate = delegate
+
         super.init(style: SnabbleUI.groupedTableStyle)
-
-        self.setupCoupons()
     }
 
     required init?(coder: NSCoder) {
@@ -33,8 +38,14 @@ public final class CouponsListViewController: UITableViewController {
         parent?.navigationItem.rightBarButtonItems = [scanButton, plusButton]
     }
 
+    override public func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+
+        self.setupCoupons()
+    }
+
     private func setupCoupons() {
-        let couponEntries = CouponManager.shared.coupons
+        let couponEntries = CouponWallet.shared.coupons
         let dict = Dictionary(grouping: couponEntries, by: { $0.coupon.projectID })
 
         var idNames = [(Identifier<Project>, String)]()
@@ -51,18 +62,19 @@ public final class CouponsListViewController: UITableViewController {
             sections.append(name)
             coupons.append(dict[id]!)
         }
+
+        tableView.reloadData()
     }
 
     @objc private func scanTapped(_ sender: Any) {
-        let scanner = CouponScanViewController()
+        let scanner = CouponScanViewController(delegate: self.delegate)
         navigationController?.pushViewController(scanner, animated: true)
     }
 
     @objc private func addTapped(_ sender: Any) {
         let coupons = SnabbleAPI.projects.filter { !$0.printedCoupons.isEmpty }.flatMap { $0.printedCoupons }
-        CouponManager.shared.addAll(coupons)
+        CouponWallet.shared.addAll(coupons)
         setupCoupons()
-        tableView.reloadData()
     }
 }
 
@@ -82,13 +94,12 @@ extension CouponsListViewController {
 
     override public func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "cell") ?? {
-            let cell = UITableViewCell(style: .subtitle, reuseIdentifier: "cell")
+            let cell = UITableViewCell(style: .default, reuseIdentifier: "cell")
             return cell
         }()
 
         let coupon = coupons[indexPath.section][indexPath.row]
         cell.textLabel?.text = coupon.coupon.name
-        cell.detailTextLabel?.text = coupon.coupon.id
 
         cell.accessoryType = coupon.active ? .checkmark : .none
 
@@ -101,7 +112,7 @@ extension CouponsListViewController {
         coupons[indexPath.section][indexPath.row].active.toggle()
         let coupon = coupons[indexPath.section][indexPath.row]
 
-        CouponManager.shared.activate(coupon.coupon, active: coupon.active)
+        CouponWallet.shared.activate(coupon.coupon, active: coupon.active)
 
         tableView.reloadRows(at: [indexPath], with: .automatic)
     }
@@ -112,8 +123,7 @@ extension CouponsListViewController {
         }
 
         let coupon = coupons[indexPath.section][indexPath.row]
-        CouponManager.shared.remove(coupon.coupon)
+        CouponWallet.shared.remove(coupon.coupon)
         setupCoupons()
-        tableView.reloadData()
     }
 }

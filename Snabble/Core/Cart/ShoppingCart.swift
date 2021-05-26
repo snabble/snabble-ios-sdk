@@ -407,7 +407,7 @@ extension ShoppingCart {
             NotificationCenter.default.post(name: .snabbleCartUpdating, object: self)
         }
 
-        self.createCheckoutInfo(project, timeout: 2) { result in
+        self.createCheckoutInfo(project, timeout: 3) { result in
             switch result {
             case .failure(let error):
                 Log.warn("createCheckoutInfo failed: \(error)")
