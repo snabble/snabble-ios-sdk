@@ -158,7 +158,7 @@ public final class EmbeddedCodesCheckoutViewController: UIViewController {
             .iPhone5s, .iPhoneSE, .iPodTouch6, .iPodTouch7
         ]
         let mediumDevices: [Device] = [
-            .iPhone6, .iPhone6s, .iPhone7, .iPhone8, .iPhoneSE2
+            .iPhone6, .iPhone6s, .iPhone7, .iPhone8, .iPhoneSE2, .iPhone12Mini
         ]
 
         let smallSimulators = smallDevices.map { Device.simulator($0) }
