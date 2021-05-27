@@ -22,7 +22,7 @@ public final class BarcodeDetectorOverlay: UIView {
     // our virtual reticle - used so that we can easily position it using auto layout
     // but always invisible except for debugging
     private let reticle = UIView()
-    private let debugReticle = true
+    private let debugReticle = false
 
     private var overlayYCenter: NSLayoutConstraint?
     private var frameTimer: Timer?
