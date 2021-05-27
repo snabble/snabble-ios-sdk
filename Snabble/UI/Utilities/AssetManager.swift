@@ -115,6 +115,7 @@ final class AssetManager {
     static let shared = AssetManager()
 
     private var manifests = [Identifier<Project>: Manifest]()
+    private var lock = ReadWriteLock()
     private let scale: CGFloat
 
     private var redownloadTimer: Timer?
@@ -201,7 +202,7 @@ final class AssetManager {
     }
 
     private func fileFor(name: String, _ projectId: Identifier<Project>) -> Manifest.File? {
-        guard let manifest = self.manifests[projectId] else {
+        guard let manifest = lock.reading({ self.manifests[projectId] }) else {
             return nil
         }
 
@@ -323,7 +324,9 @@ final class AssetManager {
 
             do {
                 let manifest = try JSONDecoder().decode(Manifest.self, from: data)
-                self.manifests[projectId] = manifest
+                self.lock.writing {
+                    self.manifests[projectId] = manifest
+                }
                 if downloadFiles {
                     self.downloadAllMissingFiles(projectId)
                 }
@@ -348,7 +351,7 @@ final class AssetManager {
     }
 
     private func downloadAllMissingFiles(_ projectId: Identifier<Project>) {
-        guard let manifest = self.manifests[projectId] else {
+        guard let manifest = lock.reading({ self.manifests[projectId] }) else {
             return
         }
 
