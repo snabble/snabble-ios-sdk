@@ -8,6 +8,7 @@
 - Product DB updates can now be triggered depending on when the last update was requested
 - Completely redesigned the Scanner, with integrated shopping list and shopping cart in a Maps-like drawer. 
   To hide this drawer, pass `nil` for the `cartDelegate` init parameter.
+- Add `CouponWallet` to store coupons, along with `CouponsListViewController` as the UI to manage coupons
 
 # v0.16.9
 

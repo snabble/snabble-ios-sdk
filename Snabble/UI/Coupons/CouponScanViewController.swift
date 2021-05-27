@@ -4,7 +4,6 @@
 //  Copyright © 2021 snabble. All rights reserved.
 //
 
-// TODO: Analytics
 // TODO: L10n
 // TODO: torch toggle / code entry?
 
