@@ -11,12 +11,6 @@ public protocol BarcodeDetectorDelegate: AnyObject {
     /// callback for a successful scan
     func scannedCode(_ code: String, _ format: ScanFormat)
 
-    /// called when the "enter barcode" button is tapped
-    func enterBarcode()
-
-    /// called when the "goto cart" button is tapped
-    func gotoShoppingCart()
-
     /// track an `AnalyticsEvent`
     func track(_ event: AnalyticsEvent)
 
@@ -37,86 +31,37 @@ public protocol BarcodeDetector {
     /// the `BarcodeDetectorDelegate`. Implementations should make this `weak`
     var delegate: BarcodeDetectorDelegate? { get set }
 
-    /// the cart button's title
-    var cartButtonTitle: String? { get set }
-
     /// the scan formats that should be detected, must be set before `scannerWillAppear()` is called.
     var scanFormats: [ScanFormat] { get set }
 
-    /// controls the visibility of the reticle
-    var reticleVisible: Bool { get set }
-
-    /// the "rectangle of interest" aka ROI as normalized coordinates, i.e. (0,0),(1,1) is the whole screen
-    var rectangleOfInterest: CGRect { get set }
-
-    /// continue scanning after invoking the `scannedCode` callback
-    var continuousScanning: Bool { get set }
+    var decorationOverlay: BarcodeDetectorOverlay? { get }
 
     /// this must be called from `viewWillAppear()` of the hosting view controller
     /// use this method to initialize the detector as well as the camera
-    func scannerWillAppear()
+    /// and add the camera preview view or layer to the given view
+    func scannerWillAppear(on view: UIView)
 
     /// this must be called from `viewDidLayoutSubviews()` of the hosting view controller.
     /// at this point, the bounds of the area reserved for camera preview have been determined
-    /// and a barcode detector instance can place its preview layer/view at these coordinates
-    func scannerDidLayoutSubviews(_ cameraPreview: UIView)
+    /// and a barcode detector instance can resize its preview layer/view to these bounds
+    func scannerDidLayoutSubviews()
 
-    /// instructs the detector to restart capturing video frames and detect barcodes
+    /// this must be called from `viewWillDisappear()` of the hosting view controller.
+    /// the view is about to disappear, and the detector can remove its camera preview from the
+    /// view hiarchy, if neccessary
+    func scannerWillDisappear()
+
+    /// instructs the detector to (re)start capturing video frames and detect barcodes
     func pauseScanning()
 
-    /// instructs the detector to temporarily stop capturing video frames and detect barcodes
+    /// instructs the detector to stop capturing video frames and detect barcodes
     func resumeScanning()
 
-    /// starts the scanning process, called initially when the scanner moves on-screen
-    func startScanning()
-
-    /// stops the scanning process, called when the scanner moves off-screen
-    func stopScanning()
-
-    /// sets the cart button's appearance
-    func setCustomAppearance(_ appearance: CustomAppearance)
+    /// set the scanner overlay's offset relative to the Y-axis center
+    func setOverlayOffset(_ offset: CGFloat)
 
     func requestCameraPermission()
 
-    func setTorch(_ on: Bool)
-}
-
-public struct BarcodeDetectorAppearance {
-    /// icon for the "enter barcode" button
-    public var enterButtonImage: UIImage?
-
-    /// icon for the inactive "torch toggle" button
-    public var torchButtonImage: UIImage?
-
-    /// icon for the active "torch toggle" button (if nil, `torchButtonImage` is used)
-    public var torchButtonActiveImage: UIImage?
-
-    /// text color for the "cart" button
-    public var textColor = UIColor.white
-
-    /// background color for the "cart" button
-    public var backgroundColor = UIColor.clear
-
-    /// border color for the "enter barcode" and "torch" buttons
-    public var borderColor = UIColor.white
-
-    /// color of the reticle's border, default: 100% white, 20% alpha
-    public var reticleBorderColor = UIColor(white: 1.0, alpha: 0.2)
-
-    /// width of the reticle's border, default 0.5
-    public var reticleBorderWidth: CGFloat = 0.5
-
-    /// corner radius of the reticle's border, default 0
-    public var reticleCornerRadius: CGFloat = 0
-
-    /// height of the reticle, in pixels
-    public var reticleHeight: CGFloat = 160
-
-    /// color for the dimming overlay, default: 13% white, 60% alpha
-    public var dimmingColor = UIColor(white: 0.13, alpha: 0.6)
-
-    /// show the button bar?
-    public var bottomBarHidden = false
-
-    public init() {}
+    // toggle the torch on/off. Returns the state after toggling
+    func toggleTorch() -> Bool
 }

@@ -402,8 +402,18 @@ public struct Cart: Encodable {
 
     public struct CouponItem: Encodable {
         public let id: String
-        public let refersTo: String
         public let couponID: String
+        public let refersTo: String?
+        public let scannedCode: String?
+        public let amount: Int
+
+        init(couponId: String, refersTo: String? = nil, scannedCode: String? = nil, amount: Int = 1) {
+            self.id = UUID().uuidString
+            self.couponID = couponId
+            self.refersTo = refersTo
+            self.scannedCode = scannedCode
+            self.amount = amount
+        }
     }
 
     struct CustomerInfo: Encodable {

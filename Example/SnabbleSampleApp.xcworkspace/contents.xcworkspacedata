@@ -2,12 +2,9 @@
 <Workspace
    version = "1.0">
    <FileRef
-      location = "group:/Users/gereon/Development/snabble/iOS-SDK/Example/SnabbleSampleApp.xcodeproj">
+      location = "group:SnabbleSampleApp.xcodeproj">
    </FileRef>
    <FileRef
       location = "group:Pods/Pods.xcodeproj">
-   </FileRef>
-   <FileRef
-      location = "group:SnabbleSampleApp.xcodeproj">
    </FileRef>
 </Workspace>

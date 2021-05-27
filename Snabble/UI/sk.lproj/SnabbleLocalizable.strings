@@ -1,4 +1,4 @@
-"Snabble.addDiscount" = "Enter discount";
+"Snabble.addDiscount" = "Zadať zľavu";
 
 "Snabble.ageVerification.explanation" = "Na kúpu určitých produktov (napr. alkoholických produktov) je potrebné potvrdenie veku. Za týmto účelom zadaj 7-miestne číslo na zadnej strane svojho občianskeho preukazu.";
 
@@ -94,7 +94,7 @@
 
 "Snabble.No" = "Nie";
 
-"Snabble.noDiscount" = "no discount";
+"Snabble.noDiscount" = "žiadna zľava";
 
 "Snabble.notForSale.errorMsg.scan" = "Tento produkt momentálne nie je možné zaplatiť cez aplikáciu. Zaplať ho pri pokladni ako obvykle.";
 
@@ -265,6 +265,8 @@
 
 "Snabble.Scanner.Camera.allowAccess" = "Na skenovanie čiarových kódov potrebujeme prístup k fotoaparátu. Povoľ prístup v nastaveniach a vráť sa sem opäť.";
 
+"Snabble.Scanner.couponAdded" = "Added coupon “%@”";
+
 "Snabble.Scanner.duplicateDepositScanned" = "Každý doklad o zálohe môže byť naskenovaný len raz.";
 
 "Snabble.Scanner.enterBarcode" = "Zadať čiarový kód";
@@ -272,7 +274,7 @@
 "Snabble.Scanner.enterCodeButton" = "Zadať\nčiarový kód";
 
 /* Text der Snackbar die Angezeigt wird, wenn der Benutzer noch nie ein Produkt gescannt hat */
-"Snabble.Scanner.firstScan" = "Scan your first product. Place the barcode in front of your camera.";
+"Snabble.Scanner.firstScan" = "Naskenuj prvý produkt. Prilož čiarový kód produktu pod kameru.";
 
 "Snabble.Scanner.goToCart" = "Košík: %@";
 
@@ -280,7 +282,7 @@
 
 "Snabble.Scanner.introText" = "Naskenuj čiarové kódy produktov a vlož ich do svojho košíka.";
 
-"Snabble.Scanner.manualCouponAdded" = "You've entered a discounted price for your last item. Please note that an employee will check your purchase.";
+"Snabble.Scanner.manualCouponAdded" = "K poslednej položke si zadal/a zľavnenú cenu. Upozorňujeme, že tvoj nákup bude skontrolovaný pracovníkom/pracovníčkou.";
 
 "Snabble.Scanner.multiPack" = "Nezabudni!";
 
@@ -334,6 +336,10 @@
 
 "Snabble.Shoppingcart.buyProducts.one" = "Kúpiť %1$d položku za %2$@";
 
+"Snabble.Shoppingcart.coupon" = "Coupon";
+
+"Snabble.Shoppingcart.coupons" = "Coupons";
+
 "Snabble.Shoppingcart.deposit" = "Záloha";
 
 "Snabble.Shoppingcart.discounts" = "Zľavy celkom";
@@ -369,61 +375,64 @@
 "Snabble.ShoppingCart.title" = "Košík";
 
 /* Hinweiß der angezeigt wird wenn ein Artikel der Einkaufsliste hinzugefügt wurde */
-"Snabble.ShoppingList.added" = "%@ saved";
+"Snabble.ShoppingList.added" = "%@ uložené";
 
 /* Der Titel des Dialogs zur Erzeugung einer neuen Einkaufsliste */
-"Snabble.ShoppingList.CreateList.title" = "Create shopping list";
+"Snabble.ShoppingList.CreateList.title" = "Vytvoriť nový nákupný zoznam";
 
 /* Der Löschen-Knopf beim Editieren von Einkaufslisten */
-"Snabble.ShoppingList.EditList.delete" = "Delete";
+"Snabble.ShoppingList.EditList.delete" = "Vymazať";
 
 /* Der Speichern-Knopf beim Editieren von Einkaufslisten */
-"Snabble.ShoppingList.EditList.save" = "Save";
+"Snabble.ShoppingList.EditList.save" = "Uložiť";
 
 /* Der Titel des Popups zum bearbeiten von Einkaufslisten */
-"Snabble.ShoppingList.EditList.title" = "Edit shopping list";
+"Snabble.ShoppingList.EditList.title" = "Upraviť nákupný zoznam";
 
 /* Der Text wird angezeigt wenn man ein Element der Einkaufsliste wegwischt */
-"Snabble.ShoppingList.ItemDeleted" = "%@ deleted";
+"Snabble.ShoppingList.ItemDeleted" = "%@ vymazané";
 
 /* Der Call-To-Action wenn man das löschen eines Elements der Einkaufsliste rückgänig machen möchte */
-"Snabble.ShoppingList.ItemDeleted.Undo" = "Undo";
+"Snabble.ShoppingList.ItemDeleted.Undo" = "Obnoviť";
 
 /* Der Inhalt der Snackbar wenn eine Einkaufsliste gelöscht wurde */
-"Snabble.ShoppingList.ListDeleted.title" = "Shopping list deleted";
+"Snabble.ShoppingList.ListDeleted.title" = "Nákupný zoznam bol vymazaný";
 
 /* Der Call-To-Action wenn eine Einkaufsliste wiederhergestellt werden soll */
-"Snabble.ShoppingList.ListDeleted.undo" = "Undo";
+"Snabble.ShoppingList.ListDeleted.undo" = "Obnoviť";
 
 /* Der Call-To-Action beim Empty-State Text wenn der Einkaufszettel noch leer ist  */
-"Snabble.ShoppingList.ListEmpty.add" = "Add product";
+"Snabble.ShoppingList.ListEmpty.add" = "Pridať produkt";
 
 /* Empty-State Text wenn der Einkaufszettel noch leer ist */
-"Snabble.ShoppingList.ListEmpty.title" = "Your shopping list is empty.";
+"Snabble.ShoppingList.ListEmpty.title" = "Tvoj nákupný zoznam je prázdny.";
 
 /* Der Call-To-Action beim Empty-State Text wenn noch kein Einkaufszettel angelegt wurde */
-"Snabble.ShoppingList.NoLists.add" = "Create shopping list";
+"Snabble.ShoppingList.NoLists.add" = "Vytvoriť nákupný zoznam";
 
 /* Der Empty-State wenn noch kein Einkaufszettel angelegt wurde */
-"Snabble.ShoppingList.NoLists.title" = "You have no shopping lists yet.";
+"Snabble.ShoppingList.NoLists.title" = "Ešte si nevytvoril/a žiadny nákupný zoznam.";
 
 /* Hinweiß der angezeigt wird wenn ein Artikel nicht gefunden wurde */
-"Snabble.ShoppingList.notFound" = "Unknown product";
+"Snabble.ShoppingList.notFound" = "Neznámy produkt";
 
 /* Der Hint der angezeigt wird wenn man einen Artikel per Suche hinzufügen möchte */
-"Snabble.ShoppingList.searchHint" = "Product";
+"Snabble.ShoppingList.searchHint" = "Vyhľadať alebo zadať priamo";
 
 /* Der Titel der übersichtsseite der Einkaufslisten */
-"Snabble.ShoppingList.title" = "Shopping list";
+"Snabble.ShoppingList.title" = "Nákupný zoznam";
 
 /* Man soll verschiedene Artikel mit einem "und" in die Einkaufsliste legen können. Hier geht es nur um das Wort "und" */
-"Snabble.ShoppingList.Voice.connectingWord" = "and";
+"Snabble.ShoppingList.Voice.connectingWord" = "a";
 
 /* Hinweis der Eingeblendet wird wenn der Benutzer das erste mal vermutlich falsch mehrere Artikel zum Einkaufszettel ergänezen wollte */
-"Snabble.ShoppingList.Voice.details" = "Did you want to add several things to your shopping list? Then combine the individual entries with “and”, like this: Tissues and pasta and yeast";
+"Snabble.ShoppingList.Voice.details" = "Chceš pridať viac vecí do nákupného zoznamu? Tak spoj svoje jednotlivé položky použitím „a“ – napríklad takto: Toaletný papier a cestoviny a droždie";
 
 /* Hinweis der Eingeblendet wird wenn der Benutzer das erste mal vermutlich falsch mehrere Artikel zum Einkaufszettel ergänezen wollte */
-"Snabble.ShoppingList.Voice.title" = "Hint";
+"Snabble.ShoppingList.Voice.title" = "Tip";
+
+/* Der Titel der übersichtsseite der Einkaufslisten */
+"Snabble.ShoppingLists.title" = "Nákupné zoznamy";
 
 "Snabble.undo" = "Vrátiť späť";
 

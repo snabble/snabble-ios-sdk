@@ -32,13 +32,13 @@ final class ReadWriteLock {
         pthread_rwlock_unlock(&lock)
     }
 
-    func reading<T>(closure: () -> T) -> T {
+    func reading<T>(_ closure: () -> T) -> T {
         self.readLock()
         defer { self.unlock() }
         return closure()
     }
 
-    func writing<T>(closure: () -> T) -> T {
+    func writing<T>(_ closure: () -> T) -> T {
         self.writeLock()
         defer { self.unlock() }
         return closure()

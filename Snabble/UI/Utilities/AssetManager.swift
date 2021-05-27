@@ -115,6 +115,7 @@ final class AssetManager {
     static let shared = AssetManager()
 
     private var manifests = [Identifier<Project>: Manifest]()
+    private var lock = ReadWriteLock()
     private let scale: CGFloat
 
     private var redownloadTimer: Timer?
@@ -191,16 +192,17 @@ final class AssetManager {
 
         let settings = UserDefaults.standard
         if let localFilename = settings.string(forKey: file.defaultsKey(projectId)) {
-            let cacheUrl = self.cacheDirectory(projectId)
-            let fileUrl = cacheUrl.appendingPathComponent(localFilename)
-            return try? Data(contentsOf: fileUrl)
+            if let cacheUrl = self.cacheDirectory(projectId) {
+                let fileUrl = cacheUrl.appendingPathComponent(localFilename)
+                return try? Data(contentsOf: fileUrl)
+            }
         }
 
         return nil
     }
 
     private func fileFor(name: String, _ projectId: Identifier<Project>) -> Manifest.File? {
-        guard let manifest = self.manifests[projectId] else {
+        guard let manifest = lock.reading({ self.manifests[projectId] }) else {
             return nil
         }
 
@@ -322,7 +324,9 @@ final class AssetManager {
 
             do {
                 let manifest = try JSONDecoder().decode(Manifest.self, from: data)
-                self.manifests[projectId] = manifest
+                self.lock.writing {
+                    self.manifests[projectId] = manifest
+                }
                 if downloadFiles {
                     self.downloadAllMissingFiles(projectId)
                 }
@@ -347,7 +351,7 @@ final class AssetManager {
     }
 
     private func downloadAllMissingFiles(_ projectId: Identifier<Project>) {
-        guard let manifest = self.manifests[projectId] else {
+        guard let manifest = lock.reading({ self.manifests[projectId] }) else {
             return
         }
 
@@ -361,11 +365,13 @@ final class AssetManager {
     }
 
     private func downloadIfMissing(_ projectId: Identifier<Project>, _ file: Manifest.File, completion: @escaping (URL?) -> Void) {
-        guard let localName = file.localName(self.scale) else {
+        guard
+            let localName = file.localName(self.scale),
+            let cacheUrl = AssetManager.shared.cacheDirectory(projectId)
+        else {
             return
         }
 
-        let cacheUrl = AssetManager.shared.cacheDirectory(projectId)
         let fullUrl = cacheUrl.appendingPathComponent(localName)
 
         let fileManager = FileManager.default
@@ -384,14 +390,15 @@ final class AssetManager {
         }
     }
 
-    func cacheDirectory(_ projectId: Identifier<Project>) -> URL {
+    func cacheDirectory(_ projectId: Identifier<Project>) -> URL? {
         let fileManager = FileManager.default
-        // swiftlint:disable:next force_try
-        var url = try! fileManager.url(for: .cachesDirectory, in: .userDomainMask, appropriateFor: nil, create: true)
+        guard var url = try? fileManager.url(for: .cachesDirectory, in: .userDomainMask, appropriateFor: nil, create: true) else {
+            return nil
+        }
+
         url.appendPathComponent("assets")
         url.appendPathComponent(projectId.rawValue)
         try? fileManager.createDirectory(at: url, withIntermediateDirectories: true, attributes: nil)
-
         return url
     }
 
@@ -400,8 +407,9 @@ final class AssetManager {
         let fileManager = FileManager.default
 
         for project in SnabbleAPI.projects {
-            let url = self.cacheDirectory(project.id)
-            try? fileManager.removeItem(at: url)
+            if let url = self.cacheDirectory(project.id) {
+                try? fileManager.removeItem(at: url)
+            }
         }
     }
 }
@@ -424,9 +432,11 @@ private final class DownloadDelegate: NSObject, URLSessionDownloadDelegate {
     }
 
     func urlSession(_ session: URLSession, downloadTask: URLSessionDownloadTask, didFinishDownloadingTo location: URL) {
-        do {
-            let cacheDirUrl = AssetManager.shared.cacheDirectory(self.projectId)
+        guard let cacheDirUrl = AssetManager.shared.cacheDirectory(self.projectId) else {
+            return
+        }
 
+        do {
             if self.localName.contains("/") {
                 // make sure any reqired subdirectories exist
                 let dirname = (self.localName as NSString).deletingLastPathComponent

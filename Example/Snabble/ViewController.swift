@@ -61,27 +61,24 @@ class ViewController: UIViewController {
 
         let project = SnabbleAPI.projects[0]
         let shop = project.shops[0]
-        let scanner = ScannerViewController(shoppingCart, shop, delegate: self)
+        let detector = BuiltinBarcodeDetector(detectorArea: .rectangle, messageDelegate: nil)
+        let scanner = ScannerViewController(shoppingCart, shop, detector, scannerDelegate: self, cartDelegate: nil)
         scanner.navigationItem.leftBarButtonItem = nil
         self.navigationController?.pushViewController(scanner, animated: true)
     }
 
     @IBAction private func shoppingCartButtonTapped(_ sender: Any) {
-        self.gotoShoppingCart()
+        guard let shoppingCart = self.shoppingCart else {
+            return
+        }
+
+        let shoppingCartVC = ShoppingCartViewController(shoppingCart, cartDelegate: self)
+        self.navigationController?.pushViewController(shoppingCartVC, animated: true)
     }
 
 }
 
 extension ViewController: ScannerDelegate {
-    func gotoShoppingCart() {
-        guard let shoppingCart = self.shoppingCart else {
-            return
-        }
-
-        let shoppingCartVC = ShoppingCartViewController(shoppingCart, delegate: self)
-        self.navigationController?.pushViewController(shoppingCartVC, animated: true)
-    }
-
     // called when the scanner needs to close itself
     func closeScanningView() {
         self.navigationController?.popViewController(animated: true)

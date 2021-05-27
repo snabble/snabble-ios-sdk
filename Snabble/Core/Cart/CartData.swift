@@ -71,7 +71,18 @@ public struct ScannedCode: Codable {
     }
 }
 
-/// an entry in a shopping cart.
+/// a coupon entry in a shopping cart
+public struct CartCoupon: Codable {
+    let coupon: Coupon
+    let scannedCode: String?
+
+    public var cartItem: Cart.Item {
+        let couponItem = Cart.CouponItem(couponId: coupon.id, scannedCode: scannedCode)
+        return Cart.Item.coupon(couponItem)
+    }
+}
+
+/// a product entry in a shopping cart.
 public struct CartItem: Codable {
     /// quantity or weight
     public internal(set) var quantity: Int
@@ -86,7 +97,7 @@ public struct CartItem: Codable {
     /// optional customer Card no.
     public let customerCard: String?
     /// optional manually entered discount
-    public internal(set) var manualCoupon: ManualCoupon?
+    public internal(set) var manualCoupon: Coupon?
 
     public init(_ quantity: Int, _ product: Product, _ scannedCode: ScannedCode, _ customerCard: String?, _ roundingMode: RoundingMode) {
         self.quantity = quantity
@@ -294,17 +305,19 @@ public struct CartItem: Codable {
             price = refOverride
         }
 
-        let productItem = Cart.Item.product(Cart.ProductItem(id: self.uuid,
-                                         sku: self.product.sku,
-                                         amount: quantity,
-                                         scannedCode: code,
-                                         price: price,
-                                         weight: weight,
-                                         units: units,
-                                         weightUnit: encodingUnit))
+        let productItem = Cart.Item.product(
+            Cart.ProductItem(id: self.uuid,
+                             sku: self.product.sku,
+                             amount: quantity,
+                             scannedCode: code,
+                             price: price,
+                             weight: weight,
+                             units: units,
+                             weightUnit: encodingUnit))
 
         if let coupon = self.manualCoupon {
-            let couponItem = Cart.Item.coupon(Cart.CouponItem(id: UUID().uuidString, refersTo: self.uuid, couponID: coupon.id))
+            let couponItem = Cart.Item.coupon(
+                Cart.CouponItem(couponId: coupon.id, refersTo: self.uuid))
             return [productItem, couponItem]
         } else {
             return [productItem]

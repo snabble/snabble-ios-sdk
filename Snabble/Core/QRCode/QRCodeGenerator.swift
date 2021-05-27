@@ -49,7 +49,8 @@ public struct QRCodeGenerator {
 
         // all items are considered "regular"
         let items = self.cart.sortedItems()
-        var blocks = self.makeBlocks(items, self.cart.customerCard)
+        let coupons = self.cart.coupons
+        var blocks = self.makeBlocks(items, coupons, self.cart.customerCard)
 
         // patch the last block to have the `finalCode` code
         blocks[blocks.count - 1].endCode = self.config.finalCode
@@ -62,11 +63,13 @@ public struct QRCodeGenerator {
         let restrictedItems = self.cart.items.filter { $0.product.saleRestriction != .none }
 
         var customerCard = cart.customerCard
-        var regularBlocks = self.makeBlocks(regularItems, customerCard)
+        var coupons = self.cart.coupons
+        var regularBlocks = self.makeBlocks(regularItems, coupons, customerCard)
         if !regularBlocks.isEmpty {
             customerCard = nil
+            coupons = []
         }
-        var restrictedBlocks = self.makeBlocks(restrictedItems, customerCard)
+        var restrictedBlocks = self.makeBlocks(restrictedItems, coupons, customerCard)
 
         // if there is no regular block, fake one so that we have a place to put the `nextWithCheck` code
         if regularBlocks.isEmpty && !restrictedBlocks.isEmpty {
@@ -99,9 +102,15 @@ public struct QRCodeGenerator {
     }
 
     // split a list of cart items into as many `CodeBlock`s as needed
-    private func makeBlocks(_ items: [CartItem], _ customerCard: String?) -> [Codeblock] {
+    private func makeBlocks(_ items: [CartItem], _ coupons: [CartCoupon], _ customerCard: String?) -> [Codeblock] {
         var result = [Codeblock]()
         var currentBlock = Codeblock(self.config)
+
+        // coupons go into the first block
+        for coupon in coupons where coupon.scannedCode != nil {
+            let item = CodeBlockItem(1, coupon.scannedCode!)
+            self.append(item, to: &currentBlock, &result)
+        }
 
         for (index, item) in items.enumerated() {
             // if we have a customer card, it goes into the first block

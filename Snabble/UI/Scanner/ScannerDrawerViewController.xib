@@ -1,0 +1,126 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="18122" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
+    <device id="retina5_5" orientation="portrait" appearance="light"/>
+    <dependencies>
+        <deployment identifier="iOS"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="18093"/>
+        <capability name="Safe area layout guides" minToolsVersion="9.0"/>
+        <capability name="System colors in document resources" minToolsVersion="11.0"/>
+        <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
+    </dependencies>
+    <objects>
+        <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner" customClass="ScannerDrawerViewController" customModule="Snabble" customModuleProvider="target">
+            <connections>
+                <outlet property="checkoutWrapper" destination="mvY-mm-qvE" id="0XC-SE-FRy"/>
+                <outlet property="contentView" destination="JCl-zB-3pt" id="9eC-Km-wNA"/>
+                <outlet property="handle" destination="Xr3-SM-efK" id="YbD-Mc-eNY"/>
+                <outlet property="handleContainer" destination="25r-2J-Uft" id="wUo-0r-crQ"/>
+                <outlet property="innerSpacer" destination="vTK-mi-YsQ" id="rme-7m-Saq"/>
+                <outlet property="segmentedControl" destination="fRv-ht-PMe" id="zeR-nG-Zr5"/>
+                <outlet property="separatorHeight" destination="3D4-dc-5Mh" id="YGY-Ra-PTx"/>
+                <outlet property="view" destination="i5M-Pr-FkT" id="sfx-zR-JGt"/>
+            </connections>
+        </placeholder>
+        <placeholder placeholderIdentifier="IBFirstResponder" id="-2" customClass="UIResponder"/>
+        <view clearsContextBeforeDrawing="NO" contentMode="scaleToFill" id="i5M-Pr-FkT">
+            <rect key="frame" x="0.0" y="0.0" width="414" height="736"/>
+            <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+            <subviews>
+                <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" translatesAutoresizingMaskIntoConstraints="NO" id="dML-eA-daE">
+                    <rect key="frame" x="16" y="0.0" width="382" height="181"/>
+                    <subviews>
+                        <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="25r-2J-Uft" userLabel="handleContainer">
+                            <rect key="frame" x="0.0" y="0.0" width="382" height="50"/>
+                            <subviews>
+                                <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="Xr3-SM-efK" userLabel="handle">
+                                    <rect key="frame" x="161" y="4" width="60" height="42"/>
+                                    <color key="backgroundColor" systemColor="systemGrayColor"/>
+                                    <constraints>
+                                        <constraint firstAttribute="width" constant="60" id="g04-Za-R7A"/>
+                                        <constraint firstAttribute="height" priority="750" constant="4" id="yBJ-3m-GNT"/>
+                                    </constraints>
+                                </view>
+                            </subviews>
+                            <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+                            <constraints>
+                                <constraint firstItem="Xr3-SM-efK" firstAttribute="top" secondItem="25r-2J-Uft" secondAttribute="top" priority="750" constant="4" id="gIe-Dc-kQ8"/>
+                                <constraint firstItem="Xr3-SM-efK" firstAttribute="centerX" secondItem="25r-2J-Uft" secondAttribute="centerX" id="iSB-g1-YIO"/>
+                                <constraint firstAttribute="bottom" secondItem="Xr3-SM-efK" secondAttribute="bottom" priority="750" constant="4" id="ulS-MA-kaE"/>
+                            </constraints>
+                        </view>
+                        <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="mvY-mm-qvE" userLabel="checkoutWrapper">
+                            <rect key="frame" x="0.0" y="50" width="382" height="50"/>
+                            <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+                            <constraints>
+                                <constraint firstAttribute="height" priority="750" constant="32" placeholder="YES" id="8Jp-rp-xP6"/>
+                            </constraints>
+                        </view>
+                        <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="vTK-mi-YsQ" userLabel="innerSpacer">
+                            <rect key="frame" x="0.0" y="100" width="382" height="50"/>
+                            <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+                            <constraints>
+                                <constraint firstAttribute="height" priority="750" constant="16" id="feN-fx-eWJ"/>
+                            </constraints>
+                        </view>
+                        <segmentedControl opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="top" segmentControlStyle="plain" selectedSegmentIndex="0" translatesAutoresizingMaskIntoConstraints="NO" id="fRv-ht-PMe">
+                            <rect key="frame" x="0.0" y="150" width="382" height="32"/>
+                            <segments>
+                                <segment title="First"/>
+                                <segment title="Second"/>
+                            </segments>
+                        </segmentedControl>
+                    </subviews>
+                </stackView>
+                <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="A9N-JE-sSp" userLabel="spacer">
+                    <rect key="frame" x="0.0" y="181" width="414" height="16"/>
+                    <subviews>
+                        <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="seA-0w-nIq" userLabel="separator">
+                            <rect key="frame" x="0.0" y="13" width="414" height="3"/>
+                            <color key="backgroundColor" systemColor="separatorColor"/>
+                            <constraints>
+                                <constraint firstAttribute="height" priority="750" constant="3" id="3D4-dc-5Mh"/>
+                            </constraints>
+                        </view>
+                    </subviews>
+                    <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+                    <constraints>
+                        <constraint firstAttribute="bottom" secondItem="seA-0w-nIq" secondAttribute="bottom" id="aPj-VB-cNl"/>
+                        <constraint firstAttribute="height" priority="750" constant="16" id="gMv-sG-8Rb"/>
+                        <constraint firstAttribute="trailing" secondItem="seA-0w-nIq" secondAttribute="trailing" id="kam-KG-z9l"/>
+                        <constraint firstItem="seA-0w-nIq" firstAttribute="leading" secondItem="A9N-JE-sSp" secondAttribute="leading" id="zKW-R3-WoC"/>
+                    </constraints>
+                </view>
+                <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="JCl-zB-3pt" userLabel="contentView">
+                    <rect key="frame" x="0.0" y="197" width="414" height="539"/>
+                    <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+                </view>
+            </subviews>
+            <viewLayoutGuide key="safeArea" id="fnl-2z-Ty3"/>
+            <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+            <constraints>
+                <constraint firstItem="JCl-zB-3pt" firstAttribute="bottom" secondItem="fnl-2z-Ty3" secondAttribute="bottom" id="8t1-n2-6eO"/>
+                <constraint firstItem="JCl-zB-3pt" firstAttribute="trailing" secondItem="fnl-2z-Ty3" secondAttribute="trailing" id="Orh-1x-37X"/>
+                <constraint firstItem="dML-eA-daE" firstAttribute="leading" secondItem="fnl-2z-Ty3" secondAttribute="leading" priority="750" constant="16" id="Q4m-Zq-The"/>
+                <constraint firstItem="fnl-2z-Ty3" firstAttribute="trailing" secondItem="dML-eA-daE" secondAttribute="trailing" priority="750" constant="16" id="SLT-FS-9dw"/>
+                <constraint firstItem="JCl-zB-3pt" firstAttribute="top" secondItem="A9N-JE-sSp" secondAttribute="bottom" id="XNk-FY-Uh5"/>
+                <constraint firstItem="A9N-JE-sSp" firstAttribute="leading" secondItem="fnl-2z-Ty3" secondAttribute="leading" id="ai3-Wb-8Kg"/>
+                <constraint firstItem="A9N-JE-sSp" firstAttribute="trailing" secondItem="fnl-2z-Ty3" secondAttribute="trailing" id="ayA-Qr-zYM"/>
+                <constraint firstItem="A9N-JE-sSp" firstAttribute="top" secondItem="dML-eA-daE" secondAttribute="bottom" id="hfF-bp-Bd5"/>
+                <constraint firstItem="JCl-zB-3pt" firstAttribute="leading" secondItem="fnl-2z-Ty3" secondAttribute="leading" id="hyN-Nc-YNt"/>
+                <constraint firstItem="dML-eA-daE" firstAttribute="top" secondItem="fnl-2z-Ty3" secondAttribute="top" id="msn-QC-bvw"/>
+            </constraints>
+            <point key="canvasLocation" x="137.68115942028987" y="135.32608695652175"/>
+        </view>
+    </objects>
+    <resources>
+        <systemColor name="separatorColor">
+            <color red="0.23529411764705882" green="0.23529411764705882" blue="0.2627450980392157" alpha="0.28999999999999998" colorSpace="custom" customColorSpace="sRGB"/>
+        </systemColor>
+        <systemColor name="systemBackgroundColor">
+            <color white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+        </systemColor>
+        <systemColor name="systemGrayColor">
+            <color red="0.55686274509803924" green="0.55686274509803924" blue="0.57647058823529407" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+        </systemColor>
+    </resources>
+</document>

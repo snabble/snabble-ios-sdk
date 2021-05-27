@@ -222,6 +222,7 @@ final class ProductDB: ProductProvider {
 
     internal var resumeData: Data?
     internal var downloadTask: URLSessionDownloadTask?
+    private let switchMutex = Mutex()
 
     /// initialize a ProductDB instance with the given configuration
     /// - parameter config: a `ProductDBConfiguration` object
@@ -642,9 +643,8 @@ final class ProductDB: ProductProvider {
     }
 
     private func switchDatabases(_ tempDbPath: String) {
-        let mutex = Mutex()
-        mutex.lock()
-        defer { mutex.unlock() }
+        switchMutex.lock()
+        defer { switchMutex.unlock() }
 
         let fileManager = FileManager.default
         do {
