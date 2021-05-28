@@ -38,6 +38,8 @@ extension RawPaymentMethod {
             return "Snabble.Payment.payViaInvoice".localized()
         case .customerCardPOS:
             return "Snabble.Payment.payUsingCustomerCard".localized()
+        case .applePay:
+            return "Apple Pay"
         }
     }
 
@@ -49,6 +51,7 @@ extension RawPaymentMethod {
         case .creditCardAmericanExpress: return UIImage.fromBundle("SnabbleSDK/payment/payment-amex")
         case .gatekeeperTerminal: return UIImage.fromBundle("SnabbleSDK/payment/payment-sco")
         case .paydirektOneKlick: return UIImage.fromBundle("SnabbleSDK/payment/payment-paydirekt")
+        case .applePay: return UIImage.fromBundle("SnabbleSDK/payment/payment-apple-pay")
 
         case .qrCodePOS, .qrCodeOffline, .externalBilling, .customerCardPOS:
             return UIImage.fromBundle("SnabbleSDK/payment/payment-pos")
@@ -75,7 +78,7 @@ extension RawPaymentMethod {
                 return CreditCardEditViewController(brand: .amex, projectId, showFromCart, analyticsDelegate)
             }
 
-        case .qrCodePOS, .qrCodeOffline, .externalBilling, .customerCardPOS, .gatekeeperTerminal:
+        case .qrCodePOS, .qrCodeOffline, .externalBilling, .customerCardPOS, .gatekeeperTerminal, .applePay:
             ()
         }
         return nil

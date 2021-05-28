@@ -157,6 +157,12 @@ public class BaseCheckoutViewController: UIViewController {
         fatalError("child classes must override this")
     }
 
+    // MARK: - child classes may override this to receive process updates
+
+    func processUpdated(_ process: CheckoutProcess) {
+        // default: do nothing
+    }
+
     // MARK: - polling timer
     private func startTimer() {
         self.processTimer = Timer.scheduledTimer(withTimeInterval: 1, repeats: false) { _ in
@@ -181,6 +187,8 @@ public class BaseCheckoutViewController: UIViewController {
         switch result.result {
         case .success(let process):
             continuePolling = self.updateView(process, result.rawJson)
+            // inform child classes
+            self.processUpdated(process)
         case .failure(let error):
             Log.error(String(describing: error))
         }
@@ -227,7 +235,7 @@ public class BaseCheckoutViewController: UIViewController {
                 return false
             }
             return true
-        case .transferred, .processing, .unknown: ()
+        case .transferred, .processing, .unauthorized, .unknown: ()
             return true
         }
     }
@@ -245,6 +253,10 @@ public class BaseCheckoutViewController: UIViewController {
     }
 
     @IBAction private func cancelButtonTapped(_ sender: UIButton) {
+        self.cancelPayment()
+    }
+
+    func cancelPayment() {
         self.delegate?.track(.paymentCancelled)
 
         self.stopTimer()

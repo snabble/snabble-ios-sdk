@@ -52,6 +52,7 @@ public enum PaymentState: String, Decodable, UnknownCaseRepresentable {
     case transferred
     case successful
     case failed
+    case unauthorized
 
     public static let unknownCase = PaymentState.unknown
 }
@@ -262,6 +263,7 @@ public struct ExitToken: Codable {
 
 // MARK: - Checkout Process
 public struct CheckoutProcess: Decodable {
+    public let id: String
     public let links: ProcessLinks
     public let supervisorApproval: Bool?
     public let paymentApproval: Bool?
@@ -277,6 +279,8 @@ public struct CheckoutProcess: Decodable {
     public let checks: [CheckoutCheck]
     public let fulfillments: [Fulfillment]
     public let exitToken: ExitToken?
+    public let currency: String
+    public let paymentPreauthInformation: PaymentPreauthInformation?
 
     public struct Pricing: Decodable {
         public let lineItems: [CheckoutInfo.LineItem]
@@ -286,6 +290,7 @@ public struct CheckoutProcess: Decodable {
         public let `self`: Link
         public let approval: Link
         public let receipt: Link?
+        public let authorizePayment: Link? // for Apple Pay, POST the transaction payload to this URL
     }
 
     public struct PaymentInformation: Decodable {
@@ -293,16 +298,23 @@ public struct CheckoutProcess: Decodable {
         public let qrCodeContent: String?
     }
 
+    public struct PaymentPreauthInformation: Decodable {
+        public let merchantID: String? // for Apple Pay
+    }
+
     enum CodingKeys: String, CodingKey {
+        case id
         case links, supervisorApproval, paymentApproval, aborted
         case checkoutInfo, paymentMethod, modified, paymentInformation
         case paymentState, orderID, paymentResult
         case checks, fulfillments, pricing, exitToken
+        case currency, paymentPreauthInformation
     }
 
     public init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
 
+        self.id = try container.decode(String.self, forKey: .id)
         self.links = try container.decode(ProcessLinks.self, forKey: .links)
         self.supervisorApproval = try container.decodeIfPresent(Bool.self, forKey: .supervisorApproval)
         self.paymentApproval = try container.decodeIfPresent(Bool.self, forKey: .paymentApproval)
@@ -324,6 +336,9 @@ public struct CheckoutProcess: Decodable {
         let fulfillments = rawFulfillments?.compactMap { $0.value } ?? []
         self.fulfillments = fulfillments.filter { $0.state != .unknown }
         self.exitToken = try container.decodeIfPresent(ExitToken.self, forKey: .exitToken)
+
+        self.currency = try container.decode(String.self, forKey: .currency)
+        self.paymentPreauthInformation = try container.decodeIfPresent(PaymentPreauthInformation.self, forKey: .paymentPreauthInformation)
     }
 
     var requiresExitToken: Bool {

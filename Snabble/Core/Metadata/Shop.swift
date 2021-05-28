@@ -56,6 +56,7 @@ public struct Shop: Codable, Identifiable {
     public let state: String
     /// country
     public let country: String
+    public let countryCode: String?
 
     public let customerNetworks: [CustomerNetworks]?
 
@@ -63,7 +64,7 @@ public struct Shop: Codable, Identifiable {
         case id, name, projectId = "project", externalId, external
         case latitude = "lat", longitude = "lon"
         case services, openingHoursSpecification, email, phone, city, street
-        case postalCode = "zip", state, country
+        case postalCode = "zip", state, country, countryCode
         case customerNetworks
     }
 
@@ -86,6 +87,7 @@ public struct Shop: Codable, Identifiable {
         self.postalCode = try container.decode(.postalCode)
         self.state = try container.decode(.state)
         self.country = try container.decode(.country)
+        self.countryCode = try container.decode(.countryCode)
         self.customerNetworks = try container.decodeIfPresent(.customerNetworks)
     }
 
@@ -107,6 +109,7 @@ public struct Shop: Codable, Identifiable {
         try container.encode(self.postalCode, forKey: .postalCode)
         try container.encode(self.state, forKey: .state)
         try container.encode(self.country, forKey: .country)
+        try container.encode(self.countryCode, forKey: .countryCode)
         try container.encode(self.customerNetworks, forKey: .customerNetworks)
     }
 }
