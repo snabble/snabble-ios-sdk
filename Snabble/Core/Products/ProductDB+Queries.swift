@@ -20,6 +20,7 @@ extension ProductDB {
             (select group_concat(sc.template) from scannableCodes sc where sc.sku = p.sku) as templates,
             (select group_concat(ifnull(sc.encodingUnit, '')) from scannableCodes sc where sc.sku = p.sku) as encodingUnits,
             (select group_concat(ifnull(sc.transmissionCode, '')) from scannableCodes sc where sc.sku = p.sku) as transmissionCodes,
+            (select group_concat(ifnull(sc.transmissionTemplate, '')) from scannableCodes sc where sc.sku = p.sku) as transmissionTemplates,
             (select group_concat(ifnull(sc.isPrimary, '')) from scannableCodes sc where sc.sku = p.sku) as isPrimary,
             (select group_concat(ifnull(sc.specifiedQuantity, '')) from scannableCodes sc where sc.sku = p.sku) as specifiedQuantity,
             ifnull((select a.value from availabilities a where a.sku = p.sku and a.shopID = ?), ?) as availability
@@ -34,6 +35,7 @@ extension ProductDB {
             (select group_concat(sc.template) from scannableCodes sc where sc.sku = p.sku) as templates,
             (select group_concat(ifnull(sc.encodingUnit, '')) from scannableCodes sc where sc.sku = p.sku) as encodingUnits,
             (select group_concat(ifnull(sc.transmissionCode, '')) from scannableCodes sc where sc.sku = p.sku) as transmissionCodes,
+            (select group_concat(ifnull(sc.transmissionTemplate, '')) from scannableCodes sc where sc.sku = p.sku) as transmissionTemplates,
             (select group_concat(ifnull(sc.isPrimary, '')) from scannableCodes sc where sc.sku = p.sku) as isPrimary,
             (select group_concat(ifnull(sc.specifiedQuantity, '')) from scannableCodes sc where sc.sku = p.sku) as specifiedQuantity,
             ifnull((select a.value from availabilities a where a.sku = p.sku and a.shopID = ?), ?) as availability
@@ -93,8 +95,10 @@ extension ProductDB {
                 let codeEntry = product.codes.first { $0.code == code }
                 let transmissionCode = codeEntry?.transmissionCode
                 let specifiedQuantity = codeEntry?.specifiedQuantity
+                let transmissionTemplate = codeEntry?.transmissionTemplate
                 return ScannedProduct(product, code, transmissionCode,
-                                      template: template,
+                                      templateId: template,
+                                      transmissionTemplateId: transmissionTemplate,
                                       specifiedQuantity: specifiedQuantity)
             } else {
                 // check if this was an UPC-A (eg. EAN-13 with a leading zero),
@@ -310,6 +314,7 @@ extension ProductDB {
             let rawCodes = row["codes"] as? String,
             let rawTransmits = row["transmissionCodes"] as? String,
             let rawTemplates = row["templates"] as? String,
+            let rawTxTemplates = row["transmissionTemplates"] as? String,
             let rawUnits = row["encodingUnits"] as? String,
             let rawPrimary = row["isPrimary"] as? String,
             let rawSpecifiedQuantity = row["specifiedQuantity"] as? String
@@ -320,6 +325,7 @@ extension ProductDB {
         let codes = rawCodes.components(separatedBy: ",")
         let templates = rawTemplates.components(separatedBy: ",")
         let transmits = rawTransmits.components(separatedBy: ",")
+        let txTemplates = rawTxTemplates.components(separatedBy: ",")
         let units = rawUnits.components(separatedBy: ",")
         let primary = rawPrimary.components(separatedBy: ",")
         let specifiedQuantity = rawSpecifiedQuantity.components(separatedBy: ",").map { Int($0) }
@@ -329,6 +335,7 @@ extension ProductDB {
         assert(codes.count == units.count)
         assert(codes.count == primary.count)
         assert(codes.count == specifiedQuantity.count)
+        assert(codes.count == txTemplates.count)
 
         var primaryTransmission: String?
         if let primaryIndex = primary.firstIndex(where: { $0 == "1" }) {
@@ -340,9 +347,12 @@ extension ProductDB {
         var scannableCodes = [ScannableCode]()
         for idx in 0 ..< codes.count {
             let transmit = transmits[idx].isEmpty ? nil : transmits[idx]
-            let code = ScannableCode(codes[idx], templates[idx],
-                                     primaryTransmission ?? transmit,
-                                     Units.from(units[idx]), specifiedQuantity[idx])
+            let code = ScannableCode(code: codes[idx],
+                                     template: templates[idx],
+                                     transmissionCode: primaryTransmission ?? transmit,
+                                     encodingUnit: Units.from(units[idx]),
+                                     specifiedQuantity: specifiedQuantity[idx],
+                                     transmissionTemplate: txTemplates[idx])
             scannableCodes.append(code)
         }
         return scannableCodes

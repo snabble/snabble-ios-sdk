@@ -73,7 +73,7 @@ public final class EmbeddedCodesCheckoutViewController: UIViewController {
 
         self.topWrapper.isHidden = true
         self.arrowWrapper.isHidden = true
-        SnabbleUI.getAsset(.checkoutOffline, bundlePath: "Checkout/(SnabbleUI.project.id)/checkout-offline") { img in
+        SnabbleUI.getAsset(.checkoutOffline, bundlePath: "Checkout/\(SnabbleUI.project.id)/checkout-offline") { img in
             if let img = img {
                 self.topIcon.image = img
                 self.iconHeight.constant = img.size.height

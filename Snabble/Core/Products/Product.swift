@@ -91,14 +91,7 @@ public struct ScannableCode: Codable {
     public let transmissionCode: String?
     public let encodingUnit: Units?
     public let specifiedQuantity: Int?
-
-    init(_ code: String, _ template: String, _ transmissionCode: String?, _ encodingUnit: Units?, _ specifiedQuantity: Int?) {
-        self.code = code
-        self.template = template
-        self.transmissionCode = transmissionCode
-        self.encodingUnit = encodingUnit
-        self.specifiedQuantity = specifiedQuantity
-    }
+    public let transmissionTemplate: String?
 }
 
 /// data for one product.

@@ -25,6 +25,8 @@ public struct ScannedProduct {
     public let transmissionCode: String?
     /// the template that was used to match this code, if any
     public let templateId: String?
+    /// the template we should use to generate the QR code, if not same as `templateId`
+    public let transmissionTemplateId: String?
     /// the embedded data from the scanned code (from the {embed} template component), if any
     public let embeddedData: Int?
     /// the units of the embedded data, if any
@@ -41,7 +43,8 @@ public struct ScannedProduct {
     public init(_ product: Product,
                 _ lookupCode: String,
                 _ transmissionCode: String?,
-                template: String? = nil,
+                templateId: String? = nil,
+                transmissionTemplateId: String? = nil,
                 embeddedData: Int? = nil,
                 encodingUnit: Units? = nil,
                 referencePriceOverride: Int? = nil,
@@ -50,7 +53,8 @@ public struct ScannedProduct {
         self.product = product
         self.lookupCode = lookupCode
         self.transmissionCode = transmissionCode
-        self.templateId = template
+        self.templateId = templateId
+        self.transmissionTemplateId = transmissionTemplateId
         self.embeddedData = embeddedData
         self.encodingUnit = encodingUnit ?? product.encodingUnit
         self.referencePriceOverride = referencePriceOverride
