@@ -573,7 +573,8 @@ extension ScanningViewController {
                 var newResult = ScannedProduct(lookupResult.product,
                                                parseResult.lookupCode,
                                                scannedCode,
-                                               template: lookupResult.templateId,
+                                               templateId: lookupResult.templateId,
+                                               transmissionTemplateId: lookupResult.transmissionTemplateId,
                                                embeddedData: parseResult.embeddedData,
                                                encodingUnit: lookupResult.encodingUnit,
                                                referencePriceOverride: parseResult.referencePrice,
@@ -599,7 +600,8 @@ extension ScanningViewController {
                     }
 
                     newResult = ScannedProduct(lookupResult.product, parseResult.lookupCode, scannedCode,
-                                               template: lookupResult.templateId,
+                                               templateId: lookupResult.templateId,
+                                               transmissionTemplateId: lookupResult.transmissionTemplateId,
                                                embeddedData: embeddedData,
                                                encodingUnit: encodingUnit,
                                                referencePriceOverride: newResult.referencePriceOverride,
@@ -669,7 +671,8 @@ extension ScanningViewController {
                 let result = ScannedProduct(lookupResult.product,
                                             gtin,
                                             originalCode,
-                                            template: CodeTemplate.defaultName,
+                                            templateId: CodeTemplate.defaultName,
+                                            transmissionTemplateId: nil,
                                             embeddedData: embeddedData,
                                             encodingUnit: encodingUnit,
                                             referencePriceOverride: nil,
@@ -703,7 +706,8 @@ extension ScanningViewController {
             switch result {
             case .success(let lookupResult):
                 let newResult = ScannedProduct(lookupResult.product, code, match.transmissionCode,
-                                               template: lookupResult.templateId,
+                                               templateId: lookupResult.templateId,
+                                               transmissionTemplateId: lookupResult.transmissionTemplateId,
                                                embeddedData: nil,
                                                encodingUnit: .price,
                                                specifiedQuantity: lookupResult.specifiedQuantity,
@@ -724,7 +728,8 @@ extension ScanningViewController {
                 let scannedProduct: ScannedProduct
                 if let priceOverride = priceOverride {
                     scannedProduct = ScannedProduct(lookupResult.product, code, transmissionCode,
-                                                    template: template,
+                                                    templateId: template,
+                                                    transmissionTemplateId: lookupResult.transmissionTemplateId,
                                                     embeddedData: nil,
                                                     encodingUnit: .price,
                                                     referencePriceOverride: nil,
@@ -732,7 +737,8 @@ extension ScanningViewController {
                                                     priceOverride: priceOverride)
                 } else {
                     scannedProduct = ScannedProduct(lookupResult.product, code, transmissionCode,
-                                                    template: template,
+                                                    templateId: template,
+                                                    transmissionTemplateId: lookupResult.transmissionTemplateId,
                                                     specifiedQuantity: lookupResult.specifiedQuantity)
                 }
                 completion(.product(scannedProduct))

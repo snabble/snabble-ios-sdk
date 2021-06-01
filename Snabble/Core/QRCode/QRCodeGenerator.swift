@@ -123,13 +123,15 @@ public struct QRCodeGenerator {
                     continue
                 }
 
+                let code = getCode(for: item, productItem)
+
                 if self.config.format.repeatCodes {
                     for _ in 0 ..< productItem.amount {
-                        let item = CodeBlockItem(1, productItem.scannedCode)
+                        let item = CodeBlockItem(1, code)
                         self.append(item, to: &currentBlock, &result)
                     }
                 } else {
-                    let item = CodeBlockItem(productItem.amount, productItem.scannedCode)
+                    let item = CodeBlockItem(productItem.amount, code)
                     self.append(item, to: &currentBlock, &result)
                 }
             }
@@ -141,6 +143,15 @@ public struct QRCodeGenerator {
         }
 
         return result
+    }
+
+    private func getCode(for item: CartItem, _ productItem: Cart.ProductItem) -> String {
+        if let transmitTemplate = item.scannedCode.transmissionTemplateId,
+           let code = CodeMatcher.createInstoreEan(transmitTemplate, item.scannedCode.lookupCode, item.scannedCode.embeddedData ?? 0) {
+            return code
+        } else {
+            return productItem.scannedCode
+        }
     }
 
     private func append(_ item: CodeBlockItem, to currentBlock: inout Codeblock, _ result: inout [Codeblock]) {

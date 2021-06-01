@@ -96,6 +96,7 @@ final class ScanConfirmationView: DesignableView {
             priceOverride: scannedProduct.priceOverride,
             referencePriceOverride: scannedProduct.referencePriceOverride,
             templateId: scannedProduct.templateId ?? CodeTemplate.defaultName,
+            transmissionTemplateId: scannedProduct.transmissionTemplateId,
             lookupCode: scannedProduct.lookupCode)
 
         self.cartItem = CartItem(1, product, scannedCode, cart.customerCard, project.roundingMode)

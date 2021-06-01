@@ -86,7 +86,8 @@ extension ProductDB {
 
                         let codeEntry = product.codes.first { $0.code == code }
                         let lookupResult = ScannedProduct(product, code, codeEntry?.transmissionCode,
-                                                          template: template,
+                                                          templateId: template,
+                                                          transmissionTemplateId: codeEntry?.transmissionTemplate,
                                                           specifiedQuantity: codeEntry?.specifiedQuantity)
                         if lookupResult.product.availability == .notAvailable {
                             completion(.failure(.notFound))
@@ -242,9 +243,11 @@ private final class ResolvedProduct: Decodable {
 
     struct ResolvedProductCode: Codable {
         let code, template: String
-        let transmissionCode, encodingUnit: String?
+        let transmissionCode: String?
+        let encodingUnit: String?
         let isPrimary: Bool?
         let specifiedQuantity: Int?
+        let transmissionTemplate: String?
     }
 
     struct Price: Codable {
@@ -263,8 +266,12 @@ private final class ResolvedProduct: Decodable {
         }
 
         return resolvedCodes.map {
-            ScannableCode($0.code, $0.template, primaryTransmission ?? $0.transmissionCode,
-                          Units.from($0.encodingUnit), $0.specifiedQuantity)
+            ScannableCode(code: $0.code,
+                          template: $0.template,
+                          transmissionCode: primaryTransmission ?? $0.transmissionCode,
+                          encodingUnit: Units.from($0.encodingUnit),
+                          specifiedQuantity: $0.specifiedQuantity,
+                          transmissionTemplate: $0.transmissionTemplate)
         }
     }
 

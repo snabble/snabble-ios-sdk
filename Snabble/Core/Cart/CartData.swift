@@ -52,14 +52,23 @@ public struct ScannedCode: Codable {
     public let templateId: String
     /// the lookup code we used to find the product in the database
     public let lookupCode: String
+    /// the template to generate a code for the offline QR code
+    public let transmissionTemplateId: String?
 
     /// the code we need to transmit to the backend
     public var code: String {
         return self.transmissionCode ?? self.scannedCode
     }
 
-    public init(scannedCode: String, transmissionCode: String? = nil, embeddedData: Int? = nil, encodingUnit: Units? = nil,
-                priceOverride: Int? = nil, referencePriceOverride: Int? = nil, templateId: String, lookupCode: String) {
+    public init(scannedCode: String,
+                transmissionCode: String? = nil,
+                embeddedData: Int? = nil,
+                encodingUnit: Units? = nil,
+                priceOverride: Int? = nil,
+                referencePriceOverride: Int? = nil,
+                templateId: String,
+                transmissionTemplateId: String? = nil,
+                lookupCode: String) {
         self.scannedCode = scannedCode
         self.transmissionCode = transmissionCode
         self.embeddedData = embeddedData
@@ -67,6 +76,7 @@ public struct ScannedCode: Codable {
         self.priceOverride = priceOverride
         self.referencePriceOverride = referencePriceOverride
         self.templateId = templateId
+        self.transmissionTemplateId = transmissionTemplateId
         self.lookupCode = lookupCode
     }
 }
@@ -131,7 +141,10 @@ public struct CartItem: Codable {
 
         self.product = product
         self.quantity = lineItem.amount
-        self.scannedCode = ScannedCode(scannedCode: code, templateId: CodeTemplate.defaultName, lookupCode: code)
+        self.scannedCode = ScannedCode(scannedCode: code,
+                                       templateId: CodeTemplate.defaultName,
+                                       transmissionTemplateId: item.scannedCode.transmissionTemplateId,
+                                       lookupCode: code)
         self.customerCard = item.customerCard
         self.roundingMode = item.roundingMode
         self.uuid = lineItem.id
