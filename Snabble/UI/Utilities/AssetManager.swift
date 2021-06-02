@@ -17,6 +17,11 @@ public enum ImageAsset: String {
     // customer/loyalty card
     case customerCard = "loyaltycard"
 
+    // hint customer/loyalty card
+    case startTeaserLoyalty = "start-teaser-loyalty"
+    // hint payment card
+    case startTeaserPayment = "start-teaser-payment"
+
     // checkout
     case checkoutOnline = "checkout-online"
     case checkoutOffline = "checkout-offline"
