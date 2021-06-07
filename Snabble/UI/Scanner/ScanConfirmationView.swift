@@ -231,6 +231,9 @@ final class ScanConfirmationView: DesignableView {
     @IBAction private func cartTapped(_ button: UIButton) {
         let cart = self.shoppingCart!
 
+        let tapticFeedback = UINotificationFeedbackGenerator()
+        tapticFeedback.notificationOccurred(.success)
+
         if self.cartItem.product.type == .depositReturnVoucher {
             // check if we already have this exact scanned code in the cart
             let index = cart.items.firstIndex(where: { $0.scannedCode.code == self.cartItem.scannedCode.code })
