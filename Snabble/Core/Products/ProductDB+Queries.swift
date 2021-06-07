@@ -158,13 +158,14 @@ extension ProductDB {
                     ProductDB.productQuery + " " + """
                     join scannableCodes s on s.sku = p.sku
                     where s.template in (\(list))
-                        and (s.code glob ?) \(depositCondition)
+                        and ((s.code glob ?) or (s.sku glob?))
+                        \(depositCondition)
                         and p.weighing != \(ProductType.preWeighed.rawValue)
                         and p.weighing != \(ProductType.depositReturnVoucher.rawValue)
                         and availability != \(ProductAvailability.notAvailable.rawValue)
                     limit ?
                     """,
-                    arguments: [ shopId.rawValue, self.defaultAvailability, "\(prefix)*", limit])
+                    arguments: [ shopId.rawValue, self.defaultAvailability, "\(prefix)*", "\(prefix)*", limit])
             }
             return rows.compactMap { self.productFromRow(dbQueue, $0, shopId, fetchPriceAndBundles: false) }
         } catch {
@@ -379,7 +380,7 @@ extension ProductDB {
     private func logSlowQuery(_ db: Database, _ query: String, _ arguments: StatementArguments, _ start: TimeInterval) {
         let elapsed = Date.timeIntervalSinceReferenceDate - start
 
-        if SnabbleAPI.debugMode && elapsed >= 0.01 {
+        if SnabbleAPI.debugMode && elapsed >= 0.03 {
             Log.info("slow query: \(elapsed)s for \(query) - arguments: \(String(describing: arguments))" )
             // self.queryPlan(db, query, arguments)
         }

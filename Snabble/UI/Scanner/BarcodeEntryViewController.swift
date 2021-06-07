@@ -140,8 +140,10 @@ extension BarcodeEntryViewController: UITableViewDelegate, UITableViewDataSource
         let product = self.filteredProducts[indexPath.row]
         let codeEntry = product.codes.filter { $0.code.hasPrefix(self.searchText) }.first ?? product.codes.first!
         let str = NSMutableAttributedString(string: codeEntry.code)
-        let boldFont = UIFont.systemFont(ofSize: cell.textLabel?.font.pointSize ?? 0, weight: .medium)
-        str.addAttributes([NSAttributedString.Key.font: boldFont], range: NSRange(location: 0, length: self.searchText.count))
+        if codeEntry.code.hasPrefix(self.searchText) {
+            let boldFont = UIFont.systemFont(ofSize: cell.textLabel?.font.pointSize ?? 0, weight: .medium)
+            str.addAttributes([NSAttributedString.Key.font: boldFont], range: NSRange(location: 0, length: self.searchText.count))
+        }
         cell.textLabel?.attributedText = str
 
         cell.detailTextLabel?.text = product.name
