@@ -26,6 +26,10 @@ final class ScannerDrawerViewController: UIViewController {
         }
     }
 
+    private let minDrawerHeight: CGFloat = 50
+    private let totalsHeight: CGFloat = 88
+    private let segmentedControlHeight: CGFloat = 50
+
     private var checkoutBar: CheckoutBar?
     private var previousPosition = PulleyPosition.closed
 
@@ -193,7 +197,9 @@ extension ScannerDrawerViewController: PulleyDrawerViewControllerDelegate {
     }
 
     public func collapsedDrawerHeight(bottomSafeArea: CGFloat) -> CGFloat {
-        return shoppingList == nil ? 138 : 188
+        let heightForTotals = shoppingCart.numberOfProducts == 0 ? 0 : self.totalsHeight
+        let heightForSegmentedControl = shoppingList == nil ? 0 : self.segmentedControlHeight
+        return self.minDrawerHeight + heightForSegmentedControl + heightForTotals
     }
 
     public func drawerPositionDidChange(drawer: PulleyViewController, bottomSafeArea: CGFloat) {

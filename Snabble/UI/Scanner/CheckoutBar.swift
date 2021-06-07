@@ -70,7 +70,7 @@ final class CheckoutBar: NibView {
         let cartTotal = SnabbleUI.project.displayNetPrice ? backendCartInfo?.netPrice : backendCartInfo?.totalPrice
 
         let totalPrice = nilPrice ? nil : (cartTotal ?? shoppingCart.total)
-        if let total = totalPrice, numProducts > 0 {
+        if let total = totalPrice {
             let formattedTotal = formatter.format(total)
             self.totalPriceLabel?.text = formattedTotal
         } else {
@@ -82,7 +82,11 @@ final class CheckoutBar: NibView {
 
         self.methodSelector?.updateAvailablePaymentMethods()
 
-        self.checkoutButton?.isEnabled = numProducts > 0 && (totalPrice ?? 0) >= 0
+        let shouldDisplayControls = numProducts > 0 && (totalPrice ?? 0) >= 0
+
+        self.checkoutButton?.isEnabled = shouldDisplayControls
+        self.checkoutButton?.isHidden = !shouldDisplayControls
+        self.methodSelectionView.isHidden = !shouldDisplayControls
     }
 
     func updateSelectionVisibility() {
