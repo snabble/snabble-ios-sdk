@@ -134,6 +134,7 @@ final class ScanningViewController: UIViewController {
         super.viewWillAppear(animated)
 
         self.barcodeDetector.scannerWillAppear(on: self.view)
+        UIApplication.shared.isIdleTimerDisabled = true
     }
 
     override public func viewDidAppear(_ animated: Bool) {
@@ -163,6 +164,8 @@ final class ScanningViewController: UIViewController {
         self.displayScanConfirmationView(hidden: true)
 
         self.keyboardObserver = nil
+
+        UIApplication.shared.isIdleTimerDisabled = false
     }
 
     // MARK: - called by the drawer
