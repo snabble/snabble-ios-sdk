@@ -203,7 +203,9 @@ final class ScanningViewController: UIViewController {
             return
         }
 
-        self.pulleyViewController?.setDrawerPosition(position: hidden ? .collapsed : .closed, animated: true)
+        if self.pulleyViewController?.supportedDrawerPositions().contains(.collapsed) == true {
+            self.pulleyViewController?.setDrawerPosition(position: hidden ? .collapsed : .closed, animated: true)
+        }
 
         self.confirmationVisible = !hidden
 
