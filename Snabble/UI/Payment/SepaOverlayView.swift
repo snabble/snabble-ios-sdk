@@ -16,10 +16,10 @@ public protocol SepaOverlayViewModel {
 }
 
 public final class SepaOverlayView: UIView {
-    private(set) weak var titleLabel: UILabel?
-    public private(set) weak var textLabel: UILabel?
-    public private(set) weak var successButton: UIButton?
-    public private(set) weak var closeButton: UIButton?
+    private(set) var titleLabel: UILabel?
+    public private(set) var textLabel: UILabel?
+    public private(set) var successButton: UIButton?
+    public private(set) var closeButton: UIButton?
 
     private weak var stackView: UIStackView?
 

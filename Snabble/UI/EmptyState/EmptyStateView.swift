@@ -8,9 +8,9 @@ import UIKit
 
 internal class EmptyStateView: NibView {
     // swiftlint:disable private_outlet
-    @IBOutlet weak var textLabel: UILabel!
-    @IBOutlet weak var button1: UIButton!
-    @IBOutlet weak var button2: UIButton!
+    @IBOutlet var textLabel: UILabel!
+    @IBOutlet var button1: UIButton!
+    @IBOutlet var button2: UIButton!
     // swiftlint:enable private_outlet
 
     typealias Handler = (UIButton) -> Void
