@@ -63,7 +63,7 @@
                             <constraint firstAttribute="width" constant="46" id="vf6-av-fkc"/>
                         </constraints>
                     </view>
-                    <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="A3e-iY-q4Q" userLabel="Image Wrapper">
+                    <view clipsSubviews="YES" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="A3e-iY-q4Q" userLabel="Image Wrapper">
                         <rect key="frame" x="0.0" y="0.0" width="42" height="44"/>
                         <subviews>
                             <activityIndicatorView opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" style="gray" translatesAutoresizingMaskIntoConstraints="NO" id="ngC-Qp-mjV">
@@ -108,6 +108,7 @@
             <connections>
                 <outlet property="checkContainer" destination="wFG-is-nTb" id="e59-Fo-SRp"/>
                 <outlet property="checkImage" destination="Un8-5k-vct" id="DjF-x8-OwS"/>
+                <outlet property="imageWidth" destination="H0E-lH-9UG" id="afv-Jz-XhF"/>
                 <outlet property="nameLabel" destination="k4k-DN-hdI" id="CVe-1I-l2K"/>
                 <outlet property="productImage" destination="Omc-M8-Gsv" id="Moh-lE-4Ju"/>
                 <outlet property="quantityLabel" destination="JVU-F2-7FJ" id="Iqz-5s-c9z"/>
