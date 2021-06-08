@@ -166,6 +166,8 @@ final class ScannerDrawerViewController: UIViewController {
         innerSpacer?.isHidden = noList
         if noList {
             selectSegment(1)
+        } else {
+            selectSegment(0)
         }
     }
 
