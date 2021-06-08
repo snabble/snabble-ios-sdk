@@ -33,15 +33,12 @@ struct KeyboardInfo {
 }
 
 protocol KeyboardHandling: AnyObject {
-
     func keyboardWillShow(_ info: KeyboardInfo)
 
     func keyboardWillHide(_ info: KeyboardInfo)
-
 }
 
 final class KeyboardObserver: NSObject {
-
     private weak var handler: KeyboardHandling!
 
     public required init(handler: KeyboardHandling) {
@@ -52,10 +49,6 @@ final class KeyboardObserver: NSObject {
         nc.addObserver(self, selector: #selector(self.keyboardWillShow(_:)), name: UIResponder.keyboardWillShowNotification, object: nil)
         nc.addObserver(self, selector: #selector(self.keyboardWillHide(_:)), name: UIResponder.keyboardWillHideNotification, object: nil)
     }
-
-//    deinit {
-//        NotificationCenter.default.removeObserver(self)
-//    }
 
     @objc func keyboardWillShow(_ notification: Notification) {
         guard let info = KeyboardInfo(notification: notification) else {
@@ -75,7 +68,6 @@ final class KeyboardObserver: NSObject {
 }
 
 extension UITextField {
-
     @discardableResult
     func addDoneButton() -> UIToolbar {
         let keyboardToolbar = UIToolbar()
@@ -86,5 +78,4 @@ extension UITextField {
         self.inputAccessoryView = keyboardToolbar
         return keyboardToolbar
     }
-
 }

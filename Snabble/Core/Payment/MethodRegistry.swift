@@ -11,7 +11,7 @@ struct Methods {
     let entryMethod: (RawPaymentMethod, Identifier<Project>, Bool, AnalyticsDelegate?) -> UIViewController
 }
 
-class MethodRegistry {
+final class MethodRegistry {
     private var methods = [RawPaymentMethod: Methods]()
 
     func isMethodAvailable(_ method: RawPaymentMethod) -> Bool {
