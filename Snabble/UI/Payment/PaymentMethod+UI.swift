@@ -8,7 +8,6 @@ import Foundation
 
 /// map payment methods to icons and the UIViewControllers that implement them
 extension PaymentMethod {
-
     var dataRequired: Bool {
         switch self {
         case .deDirectDebit, .visa, .mastercard, .americanExpress,

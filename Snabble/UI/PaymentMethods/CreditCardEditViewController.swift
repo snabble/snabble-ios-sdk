@@ -16,7 +16,6 @@ import WebKit
 // see https://stripe.com/docs/testing
 
 public final class CreditCardEditViewController: UIViewController {
-
     @IBOutlet private var containerView: UIView!
     @IBOutlet private var spinner: UIActivityIndicatorView!
 
@@ -221,7 +220,6 @@ extension CreditCardEditViewController: WKNavigationDelegate {
 }
 
 extension CreditCardEditViewController: WKScriptMessageHandler {
-
     public func userContentController(_ userContentController: WKUserContentController, didReceive message: WKScriptMessage) {
         guard
             message.name == "callbackHandler",
@@ -275,7 +273,6 @@ extension CreditCardEditViewController: WKScriptMessageHandler {
 }
 
 extension CreditCardEditViewController {
-
     private func getTelecashVaultItem(for project: Project, completion: @escaping (Result<TelecashVaultItem, SnabbleError>) -> Void ) {
         guard let url = project.links.telecashVaultItems?.href else {
             Log.error("no telecashVaultItems in metadata")

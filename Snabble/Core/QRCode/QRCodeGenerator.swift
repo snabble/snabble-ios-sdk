@@ -8,7 +8,6 @@ import Foundation
 
 /// generate QR code(s) for offline payment
 public struct QRCodeGenerator {
-
     private var cart: ShoppingCart
     private var config: QRCodeConfig
 

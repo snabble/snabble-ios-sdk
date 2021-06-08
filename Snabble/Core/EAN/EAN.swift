@@ -28,7 +28,6 @@ extension EANCode {
 
 /// methods for parsing and encoding an EAN-8, EAN-13 or EAN-14
 public enum EAN {
-
     public enum Encoding {
         case ean8
         case ean13
@@ -285,7 +284,6 @@ public struct EAN14: EANCode {
 // MARK: - bitwise encoding
 
 extension EAN {
-
     /// encode an EAN-13 as individual bits
     ///
     /// - Parameter code: an EAN-13 code.

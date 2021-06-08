@@ -9,7 +9,6 @@
 import CommonCrypto
 
 extension String {
-
     // a stable string hash.
     // See http://www.cse.yorku.ca/~oz/hash.html and
     // https://stackoverflow.com/questions/52440502/string-hashvalue-not-unique-after-reset-app-when-build-in-xcode-10

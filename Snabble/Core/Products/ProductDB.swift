@@ -731,7 +731,6 @@ final class ProductDB: ProductProvider {
 
 // MARK: - product access methods
 extension ProductDB {
-
     /// get a product by its SKU
     ///
     /// - Parameter sku: the SKU of the product to get

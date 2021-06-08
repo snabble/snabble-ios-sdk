@@ -7,7 +7,6 @@
 import UIKit
 
 public final class CustomerCardCheckoutViewController: UIViewController {
-
     @IBOutlet private var topWrapper: UIView!
     @IBOutlet private var topIcon: UIImageView!
     @IBOutlet private var iconHeight: NSLayoutConstraint!
@@ -97,5 +96,4 @@ public final class CustomerCardCheckoutViewController: UIViewController {
         SnabbleAPI.fetchAppUserData(SnabbleUI.project.id)
         self.delegate.paymentFinished(true, self.cart, self.process, self.rawJson)
     }
-
 }

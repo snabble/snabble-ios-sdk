@@ -5,7 +5,6 @@
 //
 
 extension ProductDB {
-
     func resolveProductsLookup(_ url: String, _ codes: [(String, String)], _ shopId: Identifier<Shop>, completion: @escaping (_ result: Result<ScannedProduct, ProductLookupError>) -> Void) {
         let group = DispatchGroup()
         var results = [Result<ScannedProduct, ProductLookupError>]()

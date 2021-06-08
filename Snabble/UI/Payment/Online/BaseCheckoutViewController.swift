@@ -7,7 +7,6 @@
 import UIKit
 
 public class BaseCheckoutViewController: UIViewController {
-
     @IBOutlet private var stackView: UIStackView!
     @IBOutlet private var topWrapper: UIView!
     @IBOutlet private var topIcon: UIImageView!

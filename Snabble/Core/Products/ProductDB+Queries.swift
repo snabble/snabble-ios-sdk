@@ -11,7 +11,6 @@ extension ProductAvailability: DatabaseValueConvertible { }
 
 // MARK: - low-level db queries
 extension ProductDB {
-
     static let productQuery = """
         select
             p.*, 0 as listPrice, null as discountedPrice, null as customerCardPrice, null as basePrice,

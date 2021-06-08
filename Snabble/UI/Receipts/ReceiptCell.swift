@@ -7,7 +7,6 @@
 import UIKit
 
 final class ReceiptCell: UITableViewCell {
-
     @IBOutlet private var storeIcon: UIImageView!
     @IBOutlet private var storeName: UILabel!
     @IBOutlet private var orderDate: UILabel!

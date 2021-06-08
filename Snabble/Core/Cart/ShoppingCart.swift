@@ -310,7 +310,6 @@ extension ShoppingCart {
 
 // MARK: - Persistence
 extension ShoppingCart {
-
     private func cartUrl(_ directory: String) -> URL {
         let url = URL(fileURLWithPath: directory)
         return url.appendingPathComponent(self.projectId.rawValue + ".json")

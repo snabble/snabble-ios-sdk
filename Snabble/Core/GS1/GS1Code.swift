@@ -67,7 +67,6 @@ public struct GS1Code {
 
 // MARK: - accessors for often-used AIs
 extension GS1Code {
-
     public var gtin: String? {
         return valueForAI("01")
     }
@@ -237,7 +236,6 @@ extension GS1Code {
 
 // MARK: - parsing methods
 extension GS1Code {
-
     static let symbologyIdentifiers = [
         "]C1",  // = GS1-128
         "]e0",  // = GS1 DataBar

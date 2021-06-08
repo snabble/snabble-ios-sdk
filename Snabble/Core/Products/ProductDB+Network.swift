@@ -16,7 +16,6 @@ enum AppDbResponse {
 }
 
 extension ProductDB {
-
     fileprivate static let sqlType = "application/vnd+snabble.appdb+sql"
     fileprivate static let sqliteType = "application/vnd+snabble.appdb+sqlite3"
     private static let contentTypes = "\(sqlType),\(sqliteType)"

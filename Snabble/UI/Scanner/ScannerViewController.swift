@@ -8,7 +8,6 @@ import UIKit
 import Pulley
 
 public final class ScannerViewController: PulleyViewController {
-
     private let scanningViewController: ScanningViewController
     private let drawerViewController: UIViewController
     private let initialPosition: PulleyPosition
@@ -48,7 +47,6 @@ public final class ScannerViewController: PulleyViewController {
 
 // stuff that's only used by the RN wrapper
 extension ScannerViewController: ReactNativeWrapper {
-
     public func setIsScanning(_ on: Bool) {
         scanningViewController.setIsScanning(on)
     }
@@ -56,7 +54,6 @@ extension ScannerViewController: ReactNativeWrapper {
     public func setLookupcode(_ code: String) {
         scanningViewController.setLookupcode(code)
     }
-
 }
 
 // MARK: - empty drawer

@@ -7,7 +7,6 @@
 import Foundation
 
 extension ShoppingCart {
-
     /// create a SignedCheckoutInfo object
     ///
     /// create a new "checkout session" and sends the current cart to the backend.
@@ -51,11 +50,9 @@ extension ShoppingCart {
         self.checkoutInfoTask?.cancel()
         self.checkoutInfoTask = nil
     }
-
 }
 
 extension SignedCheckoutInfo {
-
     /// create a checkout process
     ///
     /// - Parameters:
@@ -137,7 +134,6 @@ extension SignedCheckoutInfo {
 }
 
 extension CheckoutProcess {
-
     /// get the current state of this checkout process
     ///
     /// - Parameters:
@@ -184,5 +180,4 @@ extension CheckoutProcess {
             project.perform(request, completion)
         }
     }
-
 }

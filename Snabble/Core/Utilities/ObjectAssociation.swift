@@ -8,7 +8,6 @@ import Foundation
 import ObjectiveC
 
 public final class ObjectAssociation<T: AnyObject> {
-
     private let policy: objc_AssociationPolicy
 
     /// - Parameter policy: An association policy that will be used when linking objects.

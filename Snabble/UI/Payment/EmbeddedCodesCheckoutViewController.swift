@@ -8,7 +8,6 @@ import UIKit
 import DeviceKit
 
 public final class EmbeddedCodesCheckoutViewController: UIViewController {
-
     @IBOutlet private var topWrapper: UIView!
     @IBOutlet private var topIcon: UIImageView!
     @IBOutlet private var iconHeight: NSLayoutConstraint!
@@ -251,7 +250,6 @@ extension EmbeddedCodesCheckoutViewController {
 }
 
 extension EmbeddedCodesCheckoutViewController: UICollectionViewDataSource, UICollectionViewDelegate, UICollectionViewDelegateFlowLayout {
-
     public func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         return self.codes.count
     }

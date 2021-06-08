@@ -129,7 +129,6 @@ public struct RawResult<T, E: Swift.Error> {
 }
 
 extension Project {
-
     /// create an URLRequest
     ///
     /// - Parameters:
@@ -407,12 +406,10 @@ extension Project {
 }
 
 extension Project {
-
     public func logError(_ msg: String) {
         Log.error(msg)
 
         let event = AppEvent(error: msg, project: self)
         event.post()
     }
-
 }

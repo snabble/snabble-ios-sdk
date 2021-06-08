@@ -8,7 +8,6 @@ import Foundation
 
 /// data needed to initialize a shopping cart
 public struct CartConfig {
-
     /// directory where the cart should be stored, will be created if it doesn't exist.
     /// Default: the app's "Documents" directory
     public var directory: String

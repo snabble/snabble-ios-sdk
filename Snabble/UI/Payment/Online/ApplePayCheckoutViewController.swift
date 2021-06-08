@@ -7,7 +7,6 @@
 import PassKit
 
 public final class ApplePayCheckoutViewController: BaseCheckoutViewController {
-
     private var authController: UIViewController?
     private let countryCode: String?
     private var currentProcess: CheckoutProcess?

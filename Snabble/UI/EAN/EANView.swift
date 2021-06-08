@@ -14,7 +14,6 @@
 import UIKit
 
 @IBDesignable public final class EANView: UIView {
-
     /// the color to show the barcode's bars. default is black
     @IBInspectable public var barColor: UIColor = UIColor.black
 

@@ -11,7 +11,6 @@ import Security
 protocol PaymentRequestOrigin: Encodable { }
 
 struct PaymentDataEncrypter {
-
     /// the root certificate in DER format
     private var rootCertificate: Data?
     /// the encryption certificate in DER format

@@ -11,7 +11,6 @@ import UIKit
 public typealias CouponDelegate = AnalyticsDelegate & MessageDelegate
 
 public final class CouponsListViewController: UITableViewController {
-
     private var coupons = [[CouponEntry]]()
     private var sections = [String]()
     private weak var delegate: CouponDelegate?

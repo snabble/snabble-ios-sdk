@@ -145,7 +145,6 @@ public struct Flags: Decodable {
 // MARK: - loading metadata
 
 public extension Metadata {
-
     static func readResource(_ path: String) -> Metadata? {
         let url = URL(fileURLWithPath: path)
         do {

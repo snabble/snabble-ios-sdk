@@ -9,7 +9,6 @@ import ColorCompatibility
 import SDCAlertView
 
 public final class PaymentMethodAddViewController: UITableViewController {
-
     private var entries = [[MethodEntry]]()
     private var brandId: Identifier<Brand>?
     private let showFromCart: Bool

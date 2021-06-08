@@ -19,7 +19,6 @@ private enum ScannerLookup {
 }
 
 final class ScanningViewController: UIViewController {
-
     @IBOutlet private var spinner: UIActivityIndicatorView!
 
     @IBOutlet private var messageImage: UIImageView!
@@ -237,7 +236,6 @@ final class ScanningViewController: UIViewController {
 // MARK: - message display
 
 extension ScanningViewController {
-
     func showMessage(_ msg: ScanMessage) {
         if let attributedString = msg.attributedString {
             self.messageLabel.text = nil
@@ -318,7 +316,6 @@ extension ScanningViewController: AnalyticsDelegate {
 
 // MARK: - scanning confirmation delegate
 extension ScanningViewController: ScanConfirmationViewDelegate {
-
     func closeConfirmation(_ item: CartItem?) {
         self.displayScanConfirmationView(hidden: true)
         self.startLastScanTimer()
@@ -383,7 +380,6 @@ extension ScanningViewController: BarcodeDetectorDelegate {
 }
 
 extension ScanningViewController {
-
     private func scannedUnknown(_ msg: String, _ code: String) {
         // Log.debug("scanned unknown code \(code)")
         self.tapticFeedback.notificationOccurred(.error)
@@ -756,7 +752,6 @@ extension ScanningViewController {
 }
 
 extension ScanningViewController: KeyboardHandling {
-
     func keyboardWillShow(_ info: KeyboardInfo) {
         self.scanConfirmationViewBottom.constant = -(info.keyboardHeight - 48)
         UIView.animate(withDuration: info.animationDuration) {
@@ -798,7 +793,6 @@ extension ScanningViewController {
 
 // stuff that's only used by the RN wrapper
 extension ScanningViewController: ReactNativeWrapper {
-
     public func setIsScanning(_ on: Bool) {
         if on {
             self.barcodeDetector.requestCameraPermission()
@@ -811,5 +805,4 @@ extension ScanningViewController: ReactNativeWrapper {
     public func setLookupcode(_ code: String) {
         self.handleScannedCode(code, nil)
     }
-
 }

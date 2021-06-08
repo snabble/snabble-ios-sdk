@@ -7,7 +7,6 @@
 import UIKit
 
 public final class GermanIdCardViewController: UIViewController {
-
     @IBOutlet private var saveButton: UIButton!
     @IBOutlet private var textField: UITextField!
     @IBOutlet private var scrollView: UIScrollView!
@@ -187,5 +186,4 @@ extension GermanIdCardViewController: KeyboardHandling {
             self.scrollView.scrollIndicatorInsets = .zero
         }
     }
-
 }

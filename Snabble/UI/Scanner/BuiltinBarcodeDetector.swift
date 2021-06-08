@@ -257,7 +257,6 @@ extension BuiltinBarcodeDetector {
 }
 
 extension BuiltinBarcodeDetector: AVCaptureMetadataOutputObjectsDelegate {
-
     public func metadataOutput(_ output: AVCaptureMetadataOutput, didOutput metadataObjects: [AVMetadataObject], from connection: AVCaptureConnection) {
         guard
             let metadataObject = metadataObjects.first,
@@ -288,5 +287,4 @@ extension BuiltinBarcodeDetector: AVCaptureMetadataOutputObjectsDelegate {
         self.startIdleTimer()
         self.delegate?.scannedCode(code, format)
     }
-
 }

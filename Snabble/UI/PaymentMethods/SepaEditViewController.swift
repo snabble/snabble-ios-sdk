@@ -14,7 +14,6 @@ private enum InputField: Int {
 }
 
 public final class SepaEditViewController: UIViewController {
-
     @IBOutlet private var hintLabel: UILabel!
     @IBOutlet private var nameLabel: UILabel!
     @IBOutlet private var nameField: UITextField!

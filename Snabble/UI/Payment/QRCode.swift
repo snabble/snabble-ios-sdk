@@ -8,7 +8,6 @@ import Foundation
 import CoreImage
 
 public enum QRCode {
-
     // swiftlint:disable identifier_name
     public enum CorrectionLevel: String {
         case L
@@ -51,7 +50,9 @@ public enum QRCode {
     }
 
     public static func generate(for string: String, size: CGSize, _ correctionLevel: CorrectionLevel = .L) -> UIImage? {
-        guard let qrCodeFilter = CIFilter(name: "CIQRCodeGenerator") else { fatalError() }
+        guard let qrCodeFilter = CIFilter(name: "CIQRCodeGenerator") else {
+            fatalError()
+        }
 
         guard let data = string.data(using: .isoLatin1, allowLossyConversion: false) else {
             return nil

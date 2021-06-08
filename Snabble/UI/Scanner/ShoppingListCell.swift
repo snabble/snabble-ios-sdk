@@ -7,7 +7,6 @@
 import UIKit
 
 final class ShoppingListCell: UITableViewCell {
-
     private var item: ShoppingListItem?
     private var indexPath: IndexPath?
     private var checked = false

@@ -242,7 +242,6 @@ public final class PaymentProcess {
 
 // MARK: - start payment
 extension PaymentProcess {
-
     public func start(_ method: PaymentMethod, completion: @escaping (RawResult<CheckoutProcess, SnabbleError>) -> Void ) {
         self.signedCheckoutInfo.createCheckoutProcess(SnabbleUI.project, id: self.cart.uuid, paymentMethod: method, timeout: 20) { result in
             switch result.result {

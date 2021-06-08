@@ -30,7 +30,6 @@ private enum RedirectStatus: String {
 }
 
 public final class PaydirektEditViewController: UIViewController {
-
     @IBOutlet private var webViewWrapper: UIView!
     @IBOutlet private var displayView: UIView!
     @IBOutlet private var displayLabel: UILabel!

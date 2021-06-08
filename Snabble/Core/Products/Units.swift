@@ -108,7 +108,6 @@ extension Units {
 }
 
 extension Units {
-
     ///
     /// Convert a value in a given unit into another unit within the same quantity
     ///

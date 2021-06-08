@@ -17,7 +17,6 @@ private struct EntryTokenRequest: Encodable {
 }
 
 extension Project {
-
     public func getEntryToken(for shopId: Identifier<Shop>, completion: @escaping (Result<EntryToken, SnabbleError>) -> Void) {
         let tokenRequest = EntryTokenRequest(shopID: shopId)
 
@@ -36,5 +35,4 @@ extension Project {
             self.perform(request, completion)
         }
     }
-
 }

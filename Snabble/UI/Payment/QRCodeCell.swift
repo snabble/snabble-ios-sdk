@@ -7,7 +7,6 @@
 import UIKit
 
 final class QRCodeCell: UICollectionViewCell {
-
     @IBOutlet private var imageView: UIImageView!
     @IBOutlet private var imageWidth: NSLayoutConstraint!
 

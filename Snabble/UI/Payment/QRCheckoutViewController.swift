@@ -7,7 +7,6 @@
 import UIKit
 
 public final class QRCheckoutViewController: UIViewController {
-
     @IBOutlet private var qrCodeView: UIImageView!
     @IBOutlet private var explanation1: UILabel!
     @IBOutlet private var explanation2: UILabel!
@@ -147,5 +146,4 @@ public final class QRCheckoutViewController: UIViewController {
         SnabbleAPI.fetchAppUserData(SnabbleUI.project.id)
         self.delegate.paymentFinished(success, self.cart, process, rawJson)
     }
-
 }

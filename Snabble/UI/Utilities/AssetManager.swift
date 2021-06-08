@@ -420,7 +420,6 @@ final class AssetManager {
 }
 
 private final class DownloadDelegate: NSObject, URLSessionDownloadDelegate {
-
     private let projectId: Identifier<Project>
     private let localName: String
     private let key: String

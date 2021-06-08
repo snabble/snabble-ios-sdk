@@ -7,7 +7,6 @@
 import Datatrans
 
 extension DatatransPaymentMethodToken {
-
     init(token: PaymentMethodToken) {
         if let postFinanceToken = token as? PostFinanceCardToken {
             // postfinance card

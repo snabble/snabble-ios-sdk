@@ -10,7 +10,6 @@ import TrustKit
 /// use Trustkit for certificate pinning
 
 extension SnabbleAPI {
-
     private static let CAHashes = [
         // Let's Encrypt X3 cross-signed
         "YLh1dUR9y6Kja30RrAn7JKnbQG/uEtLMkBgFF2Fuihg=",

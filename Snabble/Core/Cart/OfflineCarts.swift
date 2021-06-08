@@ -125,7 +125,6 @@ public final class OfflineCarts {
 
 // MARK: - persistence
 extension OfflineCarts {
-
     private func url() -> URL {
         let fileManager = FileManager.default
         let appSupportDir = fileManager.urls(for: .applicationSupportDirectory, in: .userDomainMask)[0]

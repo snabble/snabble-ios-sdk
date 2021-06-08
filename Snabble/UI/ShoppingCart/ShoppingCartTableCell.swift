@@ -13,7 +13,6 @@ protocol ShoppingCartTableDelegate: AnalyticsDelegate {
 }
 
 final class ShoppingCartTableCell: UITableViewCell {
-
     @IBOutlet private var productImage: UIImageView!
     @IBOutlet private var spinner: UIActivityIndicatorView!
 
@@ -309,7 +308,6 @@ final class ShoppingCartTableCell: UITableViewCell {
 }
 
 extension ShoppingCartTableCell: UITextFieldDelegate {
-
     func textField(_ textField: UITextField, shouldChangeCharactersIn range: NSRange, replacementString string: String) -> Bool {
         guard let text = textField.text as NSString? else {
             return false

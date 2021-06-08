@@ -216,7 +216,6 @@ extension DatatransAliasViewController: TransactionDelegate {
 // MARK: - token retrieval
 
 extension DatatransAliasViewController {
-
     private struct TokenInput: Encodable {
         let paymentMethod: String
         let language: String

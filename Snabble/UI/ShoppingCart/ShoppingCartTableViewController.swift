@@ -331,7 +331,6 @@ final class ShoppingCartTableViewController: UITableViewController {
 }
 
 extension ShoppingCartTableViewController: ShoppingCartTableDelegate {
-
     public func track(_ event: AnalyticsEvent) {
         self.cartDelegate?.track(event)
     }

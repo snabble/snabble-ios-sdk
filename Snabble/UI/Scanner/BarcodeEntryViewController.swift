@@ -7,7 +7,6 @@
 import UIKit
 
 public final class BarcodeEntryViewController: UIViewController {
-
     @IBOutlet private var tableView: UITableView!
     @IBOutlet private var searchBar: UISearchBar!
     @IBOutlet private var bottomMargin: NSLayoutConstraint!
@@ -84,7 +83,6 @@ public final class BarcodeEntryViewController: UIViewController {
             block()
         }
     }
-
 }
 
 extension BarcodeEntryViewController: UISearchBarDelegate {
@@ -163,7 +161,6 @@ extension BarcodeEntryViewController: UITableViewDelegate, UITableViewDataSource
 }
 
 extension BarcodeEntryViewController: KeyboardHandling {
-
     func keyboardWillShow(_ info: KeyboardInfo) {
         // compensate for the opaque tab bar
         let tabBarHeight = self.tabBarController?.tabBar.frame.height ?? 0
@@ -175,5 +172,4 @@ extension BarcodeEntryViewController: KeyboardHandling {
     func keyboardWillHide(_ info: KeyboardInfo) {
         // not used
     }
-
 }

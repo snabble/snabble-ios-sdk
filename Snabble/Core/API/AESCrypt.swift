@@ -7,7 +7,6 @@
 import CommonCrypto
 
 public struct AESCrypt {
-
     private let key: Data
     private let iv: Data
 

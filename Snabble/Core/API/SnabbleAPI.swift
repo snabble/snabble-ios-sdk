@@ -342,7 +342,6 @@ extension SnabbleAPI {
 
 // MARK: - age data
 extension SnabbleAPI {
-
     struct AppUserData: Codable {
         let id: String
         let dayOfBirth: String?

@@ -9,7 +9,6 @@ public extension Notification.Name {
 }
 
 struct CheckoutChecks {
-
     private let process: CheckoutProcess
 
     init(_ process: CheckoutProcess) {

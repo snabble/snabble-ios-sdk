@@ -50,7 +50,6 @@ private struct TokenData {
 }
 
 final class TokenRegistry {
-
     private let appId: String
     private let secret: String
 
@@ -332,5 +331,4 @@ final class TokenRegistry {
             return nil
         }
     }
-
 }

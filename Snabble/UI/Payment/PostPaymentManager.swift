@@ -32,7 +32,6 @@ protocol PostPaymentManagerDelegate: AnyObject {
 }
 
 final class PostPaymentManager {
-
     private var processTimer: Timer?
     private var sessionTask: URLSessionTask?
 
@@ -77,9 +76,7 @@ final class PostPaymentManager {
     }
 
     // MARK: - process updates
-    private func update(
-        result: RawResult<CheckoutProcess, SnabbleError>
-    ) {
+    private func update(result: RawResult<CheckoutProcess, SnabbleError>) {
         switch result.result {
         case .success(let process):
             validateProcess(
@@ -103,10 +100,7 @@ final class PostPaymentManager {
         }
     }
 
-    private func validateProcess(
-        for process: CheckoutProcess,
-        withRawJson rawJson: [String: Any]?
-    ) {
+    private func validateProcess(for process: CheckoutProcess, withRawJson rawJson: [String: Any]?) {
         let isCompleted: Bool
         if process.requiresExitToken {
             isCompleted = process.fulfillmentsDone() && process.exitToken?.value != nil

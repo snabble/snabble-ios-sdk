@@ -131,7 +131,6 @@ struct AppEvent: Encodable {
 }
 
 extension AppEvent {
-
     func post() {
         // use URLRequest/URLSession directly to avoid error logging loops when posting the event fails
         guard let url = SnabbleAPI.urlFor(self.project.links.appEvents.href) else {
@@ -164,7 +163,6 @@ extension AppEvent {
             task.resume()
         }
     }
-
 }
 
 public enum RatingEvent {

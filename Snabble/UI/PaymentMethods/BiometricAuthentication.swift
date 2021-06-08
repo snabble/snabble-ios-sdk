@@ -10,7 +10,6 @@ import LocalAuthentication
 // helpful blog post: http://michael-brown.net/2018/touch-id-and-face-id-on-ios/
 
 public enum BiometricAuthentication {
-
     public enum BiometryType {
         case none
         case touchID
@@ -71,7 +70,6 @@ public enum BiometricAuthentication {
 }
 
 extension BiometricAuthentication {
-
     static func requestAuthentication(for reason: String, completion: @escaping (AuthenticationResult) -> Void ) {
         BiometricAuthentication.requestAuthentication(for: reason) { success, error in
             if let error = error as? LAError {

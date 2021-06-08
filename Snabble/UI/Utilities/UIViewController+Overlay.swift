@@ -8,7 +8,6 @@ import Foundation
 import UIKit
 
 extension UIViewController {
-
     // MARK: - UIView
 
     private static let backgroundViewAssociation = ObjectAssociation<UIView>(policy: .OBJC_ASSOCIATION_ASSIGN)
