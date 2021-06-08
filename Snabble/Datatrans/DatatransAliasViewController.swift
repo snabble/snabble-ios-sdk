@@ -33,7 +33,7 @@ public final class DatatransAliasViewController: UIViewController {
         self.method = method
         self.detail = nil
 
-        super.init(nibName: nil, bundle: SnabbleBundle.main)
+        super.init(nibName: nil, bundle: SnabbleDTBundle.main)
     }
 
     init(_ detail: PaymentMethodDetail, _ showFromCart: Bool, _ analyticsDelegate: AnalyticsDelegate?) {
@@ -47,7 +47,7 @@ public final class DatatransAliasViewController: UIViewController {
             self.method = nil
         }
 
-        super.init(nibName: nil, bundle: SnabbleBundle.main)
+        super.init(nibName: nil, bundle: SnabbleDTBundle.main)
     }
 
     required init?(coder: NSCoder) {
