@@ -208,12 +208,16 @@ extension ShoppingCartViewController {
     func showDeleteCartAlert() {
         let alert = UIAlertController(title: "Snabble.Shoppingcart.removeItems".localized(), message: nil, preferredStyle: .alert)
         alert.addAction(UIAlertAction(title: "Snabble.Yes".localized(), style: .destructive) { _ in
-            self.shoppingCartTableVC.deleteCart()
+            self.deleteCart()
             self.setDeleteButton()
         })
         alert.addAction(UIAlertAction(title: "Snabble.No".localized(), style: .cancel, handler: nil))
 
         self.present(alert, animated: true)
+    }
+
+    public func deleteCart() {
+        self.shoppingCartTableVC.deleteCart()
     }
 }
 
