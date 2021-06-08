@@ -33,11 +33,11 @@
                             <rect key="frame" x="0.0" y="0.0" width="382" height="50"/>
                             <subviews>
                                 <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="Xr3-SM-efK" userLabel="handle">
-                                    <rect key="frame" x="161" y="4" width="60" height="42"/>
+                                    <rect key="frame" x="173.66666666666666" y="41" width="35" height="5"/>
                                     <color key="backgroundColor" systemColor="systemGrayColor"/>
                                     <constraints>
-                                        <constraint firstAttribute="width" constant="60" id="g04-Za-R7A"/>
-                                        <constraint firstAttribute="height" priority="750" constant="4" id="yBJ-3m-GNT"/>
+                                        <constraint firstAttribute="width" constant="35" id="g04-Za-R7A"/>
+                                        <constraint firstAttribute="height" priority="750" constant="5" id="yBJ-3m-GNT"/>
                                     </constraints>
                                 </view>
                             </subviews>
