@@ -48,7 +48,7 @@ final class ScannerShoppingListViewController: UITableViewController {
     func markScannedProduct(_ product: Product) {
         guard
             let list = shoppingList,
-            let index = list.findIndex(for: product.sku)
+            let index = list.findProductIndex(sku: product.sku)
         else {
             return
         }

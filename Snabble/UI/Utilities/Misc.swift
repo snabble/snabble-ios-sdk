@@ -8,7 +8,6 @@
 import UIKit
 
 extension UIView {
-
     /// add a "rounded button" appearance to this view
     public func makeSnabbleButton() {
         self.layer.cornerRadius = 8
@@ -20,7 +19,7 @@ extension UIView {
     public func makeBorderedButton() {
         self.layer.cornerRadius = 6
         self.backgroundColor = .secondarySystemBackground
-        self.layer.borderWidth = 0.5
+        self.layer.borderWidth = 1 / UIScreen.main.scale
         self.layer.borderColor = UIColor.borderColor.cgColor
     }
 
@@ -58,7 +57,6 @@ extension UIView {
 }
 
 public extension UIImage {
-
     /// use `self` as a mask to produce an image that only uses `color`
     ///
     /// used to generate icons suitable for use in a tabbar, since we can't use

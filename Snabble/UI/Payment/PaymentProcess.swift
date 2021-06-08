@@ -240,7 +240,6 @@ public final class PaymentProcess {
     }
 }
 
-
 // MARK: - start payment
 extension PaymentProcess {
 

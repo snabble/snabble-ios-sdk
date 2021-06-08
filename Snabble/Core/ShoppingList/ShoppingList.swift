@@ -92,15 +92,11 @@ public final class ShoppingList: Codable {
     }
 
     public func increaseQuantity(for item: ShoppingListItem) {
-        guard let sku = item.product?.sku else {
-            return
-        }
-
-        if let index = self.findIndex(for: sku) {
+        if let index = findIndex(for: item) {
             let item = itemAt(index)
             item.quantity += 1
         } else {
-            item.quantity += 1
+            item.quantity = 1
             items.append(item)
         }
 
@@ -111,28 +107,27 @@ public final class ShoppingList: Codable {
     /// - Parameter item:
     /// - Returns: the new quantity of the item
     public func decreaseQuantity(for item: ShoppingListItem) -> Int {
-        guard
-            let sku = item.product?.sku,
-            let index = self.findIndex(for: sku)
-        else {
-            return 0
-        }
-
         defer { self.save() }
 
-        let item = itemAt(index)
+        if let index = findIndex(for: item) {
+            let item = itemAt(index)
 
-        if item.quantity > 1 {
             item.quantity -= 1
+            if item.quantity == 0 {
+                self.removeItem(at: index)
+            }
             return item.quantity
-        } else {
-            self.removeItem(at: index)
-            return 0
         }
+
+        return 0
     }
 
-    public func findIndex(for sku: String) -> Int? {
+    public func findProductIndex(sku: String) -> Int? {
         self.items.firstIndex(where: { $0.product?.sku == sku })
+    }
+
+    public func findIndex(for item: ShoppingListItem) -> Int? {
+        self.items.firstIndex { $0 == item }
     }
 
     private func removeItem(sku: String) {
