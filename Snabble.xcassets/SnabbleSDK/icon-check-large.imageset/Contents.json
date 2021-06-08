@@ -3,6 +3,16 @@
     {
       "filename" : "icon-check-large.pdf",
       "idiom" : "universal"
+    },
+    {
+      "appearances" : [
+        {
+          "appearance" : "luminosity",
+          "value" : "dark"
+        }
+      ],
+      "filename" : "icon-check-large-dark.pdf",
+      "idiom" : "universal"
     }
   ],
   "info" : {
