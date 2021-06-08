@@ -27,8 +27,9 @@ final class ScannerDrawerViewController: UIViewController {
     }
 
     private let minDrawerHeight: CGFloat = 50
-    private let totalsHeight: CGFloat = 88
-    private let segmentedControlHeight: CGFloat = 50
+    private let totalsHeight: CGFloat = 60
+    private let segmentedControlHeight: CGFloat = 48
+    private let cartItemHeight: CGFloat = 78
 
     private var checkoutBar: CheckoutBar?
     private var previousPosition = PulleyPosition.closed
@@ -175,14 +176,15 @@ final class ScannerDrawerViewController: UIViewController {
         }
 
         shoppingListTableVC.reload(shoppingList)
+        setupStackView(shoppingList, shoppingCart)
+    }
 
+    private func setupStackView(_ list: ShoppingList?, _ cart: ShoppingCart?) {
         let noList = shoppingList == nil
         segmentedControl?.isHidden = noList
-        innerSpacer?.isHidden = noList
+        innerSpacer?.isHidden = noList || cart?.items.isEmpty ?? true
         if noList {
             selectSegment(1)
-        } else {
-            selectSegment(0)
         }
     }
 
@@ -204,6 +206,7 @@ final class ScannerDrawerViewController: UIViewController {
 
     @objc private func shoppingCartUpdated(_ notification: Notification) {
         checkoutBar?.updateTotals()
+        setupStackView(shoppingList, shoppingCart)
     }
 }
 
@@ -214,9 +217,13 @@ extension ScannerDrawerViewController: PulleyDrawerViewControllerDelegate {
     }
 
     public func collapsedDrawerHeight(bottomSafeArea: CGFloat) -> CGFloat {
+
+        let heightForCartItems: CGFloat = min(CGFloat(shoppingCart.items.count) * cartItemHeight, cartItemHeight * 2.5)
+
+        print("[ShoppingList] heightForCartItems", heightForCartItems)
         let heightForTotals = shoppingCart.numberOfProducts == 0 ? 0 : self.totalsHeight
         let heightForSegmentedControl = shoppingList == nil ? 0 : self.segmentedControlHeight
-        return self.minDrawerHeight + heightForSegmentedControl + heightForTotals
+        return self.minDrawerHeight + heightForSegmentedControl + heightForTotals + heightForCartItems
     }
 
     public func drawerPositionDidChange(drawer: PulleyViewController, bottomSafeArea: CGFloat) {

@@ -48,8 +48,8 @@
                     </view>
                     <blurEffect style="extraLight"/>
                 </visualEffectView>
-                <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" translatesAutoresizingMaskIntoConstraints="NO" id="dML-eA-daE">
-                    <rect key="frame" x="16" y="0.0" width="382" height="181"/>
+                <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" spacing="4" translatesAutoresizingMaskIntoConstraints="NO" id="dML-eA-daE">
+                    <rect key="frame" x="16" y="0.0" width="382" height="193"/>
                     <subviews>
                         <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="25r-2J-Uft" userLabel="handleContainer">
                             <rect key="frame" x="0.0" y="0.0" width="382" height="50"/>
@@ -71,21 +71,21 @@
                             </constraints>
                         </view>
                         <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="mvY-mm-qvE" userLabel="checkoutWrapper">
-                            <rect key="frame" x="0.0" y="50" width="382" height="50"/>
+                            <rect key="frame" x="0.0" y="54" width="382" height="50"/>
                             <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                             <constraints>
                                 <constraint firstAttribute="height" priority="750" constant="32" placeholder="YES" id="8Jp-rp-xP6"/>
                             </constraints>
                         </view>
                         <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="vTK-mi-YsQ" userLabel="innerSpacer">
-                            <rect key="frame" x="0.0" y="100" width="382" height="50"/>
+                            <rect key="frame" x="0.0" y="108" width="382" height="50"/>
                             <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                             <constraints>
-                                <constraint firstAttribute="height" priority="750" constant="16" id="feN-fx-eWJ"/>
+                                <constraint firstAttribute="height" priority="750" constant="4" id="feN-fx-eWJ"/>
                             </constraints>
                         </view>
                         <segmentedControl opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="top" segmentControlStyle="plain" selectedSegmentIndex="0" translatesAutoresizingMaskIntoConstraints="NO" id="fRv-ht-PMe">
-                            <rect key="frame" x="0.0" y="150" width="382" height="32"/>
+                            <rect key="frame" x="0.0" y="162" width="382" height="32"/>
                             <segments>
                                 <segment title="First"/>
                                 <segment title="Second"/>
@@ -95,7 +95,7 @@
                     <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                 </stackView>
                 <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="A9N-JE-sSp" userLabel="spacer">
-                    <rect key="frame" x="0.0" y="181" width="414" height="16"/>
+                    <rect key="frame" x="0.0" y="193" width="414" height="16"/>
                     <subviews>
                         <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="seA-0w-nIq" userLabel="separator">
                             <rect key="frame" x="0.0" y="13" width="414" height="3"/>
@@ -114,7 +114,7 @@
                     </constraints>
                 </view>
                 <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="JCl-zB-3pt" userLabel="contentView">
-                    <rect key="frame" x="0.0" y="197" width="414" height="539"/>
+                    <rect key="frame" x="0.0" y="209" width="414" height="527"/>
                     <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                 </view>
             </subviews>
