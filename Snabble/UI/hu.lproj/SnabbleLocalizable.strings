@@ -1,3 +1,5 @@
+"release.safety.catch" = "Please remove the bottle's security device (if present) at the designated station at the exit.";
+
 "Snabble.addDiscount" = "Árengedmény megadása";
 
 "Snabble.ageVerification.explanation" = "Meghatározott termékek, mint pl. alkohol vásárlásához igazolnod kell a korod. Ehhez személyazonosító igazolványod hátoldaláról másold be a 7 jegyű számot.";
@@ -119,7 +121,7 @@
 
 "Snabble.Payment.addPaymentOrigin" = "Fizetési információ átadása az alkalmazásnak?";
 
-"Snabble.Payment.backToCart" = "Back to cart";
+"Snabble.Payment.backToCart" = "Vissza a kosárhoz";
 
 "Snabble.Payment.backToHome" = "Vissza a kezdőoldalra";
 
@@ -182,7 +184,7 @@
 
 "Snabble.Payment.waiting" = "Várj a nyugtázásra";
 
-"Snabble.PaymentCard.editingHint" = "A hitelkártyaadatokat kódolva tároljuk, éppen ezért nem tudjuk feldolgozni.";
+"Snabble.PaymentCard.editingHint" = "A kártyaadataidat kódolva tároljuk, éppen ezért nem tudjuk feldolgozni.";
 
 "Snabble.PaymentError.title" = "Hiba történt";
 
@@ -275,7 +277,7 @@
 
 "Snabble.Scanner.Camera.allowAccess" = "A vonalkódok beolvasásához szeretnénk hozzáférni a kamerádhoz. Kérlek, engedélyezd a kamera használatát a beállításokban, és utána lépj vissza ide.";
 
-"Snabble.Scanner.couponAdded" = "Added coupon “%@”";
+"Snabble.Scanner.couponAdded" = "„%@“ kupon hozzáadva";
 
 "Snabble.Scanner.duplicateDepositScanned" = "Az egyes betétdíjblokkok csak egyszer olvashatók be.";
 
@@ -346,9 +348,9 @@
 
 "Snabble.Shoppingcart.buyProducts.one" = "%1$d termék megvásárlása %2$@-ért";
 
-"Snabble.Shoppingcart.coupon" = "Coupon";
+"Snabble.Shoppingcart.coupon" = "Kupon";
 
-"Snabble.Shoppingcart.coupons" = "Coupons";
+"Snabble.Shoppingcart.coupons" = "Kuponok";
 
 "Snabble.Shoppingcart.deposit" = "Betétdíj";
 
@@ -367,6 +369,8 @@
 "Snabble.Shoppingcart.giveaway" = "Ingyenes ajándék";
 
 "Snabble.Shoppingcart.howToPay" = "Hogyan szeretnél fizetni?";
+
+"Snabble.Shoppingcart.includesDeposit" = "incl. deposit";
 
 "Snabble.Shoppingcart.noPaymentData" = "Még nincs beállítva";
 

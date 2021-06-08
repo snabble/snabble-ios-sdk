@@ -1,3 +1,5 @@
+"release.safety.catch" = "Bitte entferne (wenn vorhanden) die Flaschenhalssicherung an der dafür vorgesehenen Station am Ausgang.";
+
 "Snabble.addDiscount" = "Rabatt eingeben";
 
 "Snabble.ageVerification.explanation" = "Für den Kauf bestimmter Artikel, wie z.B. Alkohol, ist ein Altersnachweis notwendig. Gib dazu die 7-stellige Zahl von der Rückseite deines Personalausweises ein.";
@@ -110,7 +112,7 @@
 
 "Snabble.Paydirekt.payNow" = "Jetzt mit paydirekt bezahlen";
 
-"Snabble.paydirekt.savedAuthorization" = "Du hast die snabble-App erfolgreich für paydirekt autorisiert. Um dies rückgängig zu machen, musst du dich bei deinem paydirekt-Konto auf der Webseite anmelden. Möchtest du paydirekt nicht mehr als Bezahlmethode angezeigt bekommen, kannst du sie hier einfach entfernen.";
+"Snabble.paydirekt.savedAuthorization" = "Du hast die Snabble-App erfolgreich für paydirekt autorisiert. Um dies rückgängig zu machen, musst du dich bei deinem paydirekt-Konto auf der Webseite anmelden. Möchtest du paydirekt nicht mehr als Bezahlmethode angezeigt bekommen, kannst du sie hier einfach entfernen.";
 
 /* SECTION: SnabbleAndroid */
 "Snabble.Payment.aborted" = "Der Bezahlvorgang wurde abgebrochen";
@@ -157,7 +159,7 @@
 
 "Snabble.Payment.PostFinanceCard.error" = "Bei der Verarbeitung deiner Postfinance-Card ist ein Fehler aufgetreten";
 
-"Snabble.Payment.presentCode" = "Halte diesen Code an einem snabble-Monitor vor oder zeige ihn einem Mitarbeiter, um deinen Einkauf zu bestätigen.";
+"Snabble.Payment.presentCode" = "Halte diesen Code an einem Snabble-Monitor vor oder zeige ihn einem Mitarbeiter, um deinen Einkauf zu bestätigen.";
 
 "Snabble.Payment.SEPA.hint" = "Hinweis: Um dich und unsere Händler vor Missbrauch zu schützen, wird sich der Händler bei deiner ersten Zahlung per SEPA-Lastschrift deine Bankkarte zeigen lassen.";
 
@@ -245,7 +247,7 @@
 
 "Snabble.Receipts.loading" = "(wird geladen)";
 
-"Snabble.Receipts.noReceipts" = "Du hast noch nicht mit snabble eingekauft";
+"Snabble.Receipts.noReceipts" = "Du hast noch nicht mit Snabble eingekauft";
 
 "Snabble.Receipts.oClock" = "Uhr";
 
@@ -367,6 +369,8 @@
 "Snabble.Shoppingcart.giveaway" = "Kostenloses Geschenk";
 
 "Snabble.Shoppingcart.howToPay" = "Wie möchtest du bezahlen?";
+
+"Snabble.Shoppingcart.includesDeposit" = "inkl. Pfand";
 
 "Snabble.Shoppingcart.noPaymentData" = "Noch nicht hinterlegt";
 

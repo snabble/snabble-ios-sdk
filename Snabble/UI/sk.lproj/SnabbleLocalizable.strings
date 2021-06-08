@@ -1,3 +1,5 @@
+"release.safety.catch" = "Please remove the bottle's security device (if present) at the designated station at the exit.";
+
 "Snabble.addDiscount" = "Zadať zľavu";
 
 "Snabble.ageVerification.explanation" = "Na kúpu určitých produktov (napr. alkoholických produktov) je potrebné potvrdenie veku. Za týmto účelom zadaj 7-miestne číslo na zadnej strane svojho občianskeho preukazu.";
@@ -119,7 +121,7 @@
 
 "Snabble.Payment.addPaymentOrigin" = "Chceš preniesť informácie o platbe do aplikácie?";
 
-"Snabble.Payment.backToCart" = "Back to cart";
+"Snabble.Payment.backToCart" = "Späť na košík";
 
 "Snabble.Payment.backToHome" = "Späť na úvodnú stránku";
 
@@ -182,7 +184,7 @@
 
 "Snabble.Payment.waiting" = "Čakanie na potvrdenie";
 
-"Snabble.PaymentCard.editingHint" = "Údaje tvojej kreditnej karty budeme uchovávať len v šifrovanej forme, a preto nemôžu byť spracované.";
+"Snabble.PaymentCard.editingHint" = "Údaje o tvojej karte budeme uchovávať len v šifrovanej forme, a preto nemôžu byť spracované.";
 
 "Snabble.PaymentError.title" = "Vyskytla sa chyba";
 
@@ -275,7 +277,7 @@
 
 "Snabble.Scanner.Camera.allowAccess" = "Na skenovanie čiarových kódov potrebujeme prístup k fotoaparátu. Povoľ prístup v nastaveniach a vráť sa sem opäť.";
 
-"Snabble.Scanner.couponAdded" = "Added coupon “%@”";
+"Snabble.Scanner.couponAdded" = "Poukážka „%@“ je pridaná";
 
 "Snabble.Scanner.duplicateDepositScanned" = "Každý doklad o zálohe môže byť naskenovaný len raz.";
 
@@ -346,9 +348,9 @@
 
 "Snabble.Shoppingcart.buyProducts.one" = "Kúpiť %1$d položku za %2$@";
 
-"Snabble.Shoppingcart.coupon" = "Coupon";
+"Snabble.Shoppingcart.coupon" = "Poukážka";
 
-"Snabble.Shoppingcart.coupons" = "Coupons";
+"Snabble.Shoppingcart.coupons" = "Poukážky";
 
 "Snabble.Shoppingcart.deposit" = "Záloha";
 
@@ -367,6 +369,8 @@
 "Snabble.Shoppingcart.giveaway" = "Darček zadarmo";
 
 "Snabble.Shoppingcart.howToPay" = "Ako chceš zaplatiť?";
+
+"Snabble.Shoppingcart.includesDeposit" = "incl. deposit";
 
 "Snabble.Shoppingcart.noPaymentData" = "Údaje ešte nie sú uložené";
 

@@ -1,3 +1,5 @@
+"release.safety.catch" = "Please remove the bottle's security device (if present) at the designated station at the exit.";
+
 "Snabble.addDiscount" = "Enter discount";
 
 "Snabble.ageVerification.explanation" = "To purchase certain products like alcoholic beverages, verifying your age is required. Enter the 7-digit Number from the back side of your ID card.";
@@ -110,7 +112,7 @@
 
 "Snabble.Paydirekt.payNow" = "Pay now using paydirekt";
 
-"Snabble.paydirekt.savedAuthorization" = "You've successfully authorized snabble for paydirekt. To remove this authorization, you need to log in to your paydirekt account. If you do not want to use this payment method anymore, you can remove it here.";
+"Snabble.paydirekt.savedAuthorization" = "You've successfully authorized Snabble for paydirekt. To remove this authorization, you need to log in to your paydirekt account. If you do not want to use this payment method anymore, you can remove it here.";
 
 /* SECTION: SnabbleAndroid */
 "Snabble.Payment.aborted" = "Payment process was cancelled";
@@ -157,7 +159,7 @@
 
 "Snabble.Payment.PostFinanceCard.error" = "There was an error processing your postfinance card";
 
-"Snabble.Payment.presentCode" = "Show this code at a snabble monitor or to a cashier to confirm your purchase.";
+"Snabble.Payment.presentCode" = "Show this code at a Snabble monitor or to a cashier to confirm your purchase.";
 
 "Snabble.Payment.SEPA.hint" = "Note: In order to protect you and our merchants against misuse, the merchant will have your bank card shown on your first payment by SEPA direct debit.";
 
@@ -356,7 +358,7 @@
 
 "Snabble.Shoppingcart.emptyState.buttonTitle" = "Scan now";
 
-"Snabble.Shoppingcart.emptyState.description" = "Visit a store that supports snabble and scan the barcodes of products you wish to purchase.";
+"Snabble.Shoppingcart.emptyState.description" = "Visit a store that supports Snabble and scan the barcodes of products you wish to purchase.";
 
 "Snabble.Shoppingcart.emptyState.restartButtonTitle" = "Start new shopping trip";
 
@@ -367,6 +369,8 @@
 "Snabble.Shoppingcart.giveaway" = "Free gift";
 
 "Snabble.Shoppingcart.howToPay" = "How would you like to pay?";
+
+"Snabble.Shoppingcart.includesDeposit" = "incl. deposit";
 
 "Snabble.Shoppingcart.noPaymentData" = "Not yet entered";
 
