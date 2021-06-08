@@ -23,6 +23,13 @@ public final class ShoppingListItem: Codable {
         }
     }
 
+    public var name: String {
+        switch entry {
+        case .product(let product): return product.name
+        case .custom(let text): return text
+        }
+    }
+
     enum CodingKeys: String, CodingKey {
         case quantity, checked, text, product, type
     }
@@ -33,7 +40,6 @@ public final class ShoppingListItem: Codable {
 
     public init(text: String) {
         self.entry = .custom(text)
-        self.quantity = 1
     }
 
     public init(from decoder: Decoder) throws {
@@ -58,6 +64,19 @@ public final class ShoppingListItem: Codable {
         switch entry {
         case .custom(let text): try container.encode(text, forKey: .text)
         case .product(let product): try container.encode(product, forKey: .product)
+        }
+    }
+}
+
+extension ShoppingListItem: Equatable {
+    public static func == (lhs: ShoppingListItem, rhs: ShoppingListItem) -> Bool {
+        switch (lhs.entry, rhs.entry) {
+        case (.product(let product1), .product(let product2)):
+            return product1.sku == product2.sku
+        case (.custom(let text1), .custom(let text2)):
+            return text1 == text2
+        default:
+            return false
         }
     }
 }
