@@ -39,7 +39,7 @@
                             <nil key="highlightedColor"/>
                         </label>
                     </subviews>
-                    <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+                    <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                     <constraints>
                         <constraint firstItem="H2s-rv-eKy" firstAttribute="centerY" secondItem="8Kh-9q-0ok" secondAttribute="centerY" id="9w4-HG-uzg"/>
                         <constraint firstAttribute="height" constant="26" id="AFX-h7-NAq"/>
@@ -94,7 +94,7 @@
                     </subviews>
                 </stackView>
             </subviews>
-            <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+            <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
             <constraints>
                 <constraint firstAttribute="trailing" secondItem="7Mg-fR-a7U" secondAttribute="trailing" id="8tL-th-9a8"/>
                 <constraint firstItem="8Kh-9q-0ok" firstAttribute="leading" secondItem="i5M-Pr-FkT" secondAttribute="leading" id="Axj-AJ-5Lc"/>
@@ -113,9 +113,6 @@
         <image name="SnabbleSDK/payment/payment-sco" width="38" height="24"/>
         <systemColor name="secondaryLabelColor">
             <color red="0.23529411764705882" green="0.23529411764705882" blue="0.2627450980392157" alpha="0.59999999999999998" colorSpace="custom" customColorSpace="sRGB"/>
-        </systemColor>
-        <systemColor name="systemBackgroundColor">
-            <color white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
         </systemColor>
     </resources>
 </document>

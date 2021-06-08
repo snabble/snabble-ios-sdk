@@ -33,6 +33,7 @@ final class ScannerDrawerViewController: UIViewController {
     private var checkoutBar: CheckoutBar?
     private var previousPosition = PulleyPosition.closed
 
+    @IBOutlet private var effectView: UIVisualEffectView!
     @IBOutlet private var handleContainer: UIView!
     @IBOutlet private var handle: UIView!
     @IBOutlet private var checkoutWrapper: UIView!
@@ -62,7 +63,11 @@ final class ScannerDrawerViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        view.backgroundColor = .systemBackground
+        // set up appearance for translucency effect
+        view.backgroundColor = .clear
+        self.shoppingListTableVC.view.backgroundColor = .clear
+        self.shoppingCartVC.view.backgroundColor = .clear
+        setupBlurEffect()
 
         handle.layer.cornerRadius = 2.5
         handle.layer.masksToBounds = true
@@ -109,6 +114,16 @@ final class ScannerDrawerViewController: UIViewController {
         self.updateShoppingLists()
         checkoutBar?.updateSelectionVisibility()
         checkoutBar?.updateTotals()
+    }
+
+    override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
+        super.traitCollectionDidChange(previousTraitCollection)
+
+        setupBlurEffect()
+    }
+
+    private func setupBlurEffect() {
+        self.effectView.effect = UIBlurEffect(style: traitCollection.userInterfaceStyle == .light ? .extraLight : .dark)
     }
 
     @objc private func handleTapped(_ gesture: UITapGestureRecognizer) {

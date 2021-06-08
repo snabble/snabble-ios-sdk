@@ -104,6 +104,7 @@
                     <constraint firstItem="M6w-hj-F8N" firstAttribute="leading" secondItem="k4k-DN-hdI" secondAttribute="trailing" id="m6h-FI-Xqr"/>
                 </constraints>
             </tableViewCellContentView>
+            <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
             <connections>
                 <outlet property="checkContainer" destination="wFG-is-nTb" id="e59-Fo-SRp"/>
                 <outlet property="checkImage" destination="Un8-5k-vct" id="DjF-x8-OwS"/>
