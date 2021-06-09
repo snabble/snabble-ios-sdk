@@ -217,7 +217,7 @@ public struct CartItem: Codable {
         return total.rounded(mode: self.roundingMode).intValue
     }
 
-    /// formatted price display, e.g. for the confirmation dialog and the shopping cart table cell.
+    /// formatted price display, e.g. for the confirmation dialog.
     /// returns a String like `"x 2,99€ = 5,98€"`. NB: `quantity` is not part of the string!
     ///
     /// - Parameter formatter: the formatter to use
