@@ -175,7 +175,7 @@ final class ScannerDrawerViewController: UIViewController {
     }
 
     private func setupStackView(_ list: ShoppingList?, _ cart: ShoppingCart?) {
-        let noList = shoppingList == nil
+        let noList = list == nil
         segmentedControl?.isHidden = noList
         innerSpacer?.isHidden = noList || cart?.items.isEmpty ?? true
         if noList {
@@ -201,7 +201,6 @@ final class ScannerDrawerViewController: UIViewController {
 
     @objc private func shoppingCartUpdated(_ notification: Notification) {
         checkoutBar?.updateTotals()
-        setupStackView(shoppingList, shoppingCart)
     }
 }
 
