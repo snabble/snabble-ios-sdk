@@ -28,6 +28,7 @@ public final class CreditCardEditViewController: UIViewController {
     @IBOutlet private var explanation: UILabel!
 
     private var webView: WKWebView!
+    private static let handlerName = "callbackHandler"
 
     private var detail: PaymentMethodDetail?
     private var brand: CreditCardBrand?
@@ -118,22 +119,29 @@ public final class CreditCardEditViewController: UIViewController {
         self.containerView.bringSubviewToFront(self.spinner)
 
         self.spinner.startAnimating()
-        self.getTelecashVaultItem(for: project) { result in
-            self.spinner.stopAnimating()
+        self.getTelecashVaultItem(for: project) { [weak self] result in
+            self?.spinner.stopAnimating()
             switch result {
             case .failure:
                 let alert = UIAlertController(title: "Oops", message: "Snabble.CC.noEntryPossible".localized(), preferredStyle: .alert)
                 alert.addAction(UIAlertAction(title: "Snabble.OK".localized(), style: .default) { _ in
-                    self.goBack()
+                    self?.goBack()
                 })
-                self.present(alert, animated: true)
+                self?.present(alert, animated: true)
             case .success(let vaultItem):
-                self.vaultItem = vaultItem
-                self.prepareAndInjectPage(vaultItem)
+                self?.vaultItem = vaultItem
+                self?.prepareAndInjectPage(vaultItem)
             }
         }
 
         self.analyticsDelegate?.track(.viewPaymentMethodDetail)
+    }
+
+    override public func viewDidDisappear(_ animated: Bool) {
+        super.viewDidDisappear(animated)
+
+        // required to break the retain cycle
+        self.webView?.configuration.userContentController.removeScriptMessageHandler(forName: Self.handlerName)
     }
 
     private func goBack() {
@@ -166,7 +174,7 @@ public final class CreditCardEditViewController: UIViewController {
             .replacingOccurrences(of: "{{hostedDataId}}", with: UUID().uuidString)
             .replacingOccurrences(of: "{{orderId}}", with: vaultItem.orderId)
 
-        self.webView.loadHTMLString(page, baseURL: nil)
+        self.webView?.loadHTMLString(page, baseURL: nil)
     }
 
     private func threeDSecureHint(for projectId: Identifier<Project>?) -> String {
@@ -180,7 +188,7 @@ public final class CreditCardEditViewController: UIViewController {
 
     private func setupWebView() {
         let contentController = WKUserContentController()
-        contentController.add(self, name: "callbackHandler")
+        contentController.add(self, name: Self.handlerName)
 
         let config = WKWebViewConfiguration()
         config.userContentController = contentController
@@ -222,7 +230,7 @@ extension CreditCardEditViewController: WKNavigationDelegate {
 extension CreditCardEditViewController: WKScriptMessageHandler {
     public func userContentController(_ userContentController: WKUserContentController, didReceive message: WKScriptMessage) {
         guard
-            message.name == "callbackHandler",
+            message.name == Self.handlerName,
             let body = message.body as? [String: Any],
             let eventData = body["elementArr"] as? [[String: String]],
             let storeId = self.vaultItem?.storeId,
@@ -375,7 +383,7 @@ extension CreditCardEditViewController {
             <script>
             window.addEventListener("message", function receiveMessage(event) {
                 try {
-                    webkit.messageHandlers.callbackHandler.postMessage(event.data);
+                    webkit.messageHandlers.\(handlerName).postMessage(event.data);
                 } catch (err) {
                     console.log('The native context does not exist yet');
                 }
