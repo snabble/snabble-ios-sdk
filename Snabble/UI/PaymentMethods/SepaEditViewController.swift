@@ -326,7 +326,6 @@ public final class SepaEditViewController: UIViewController {
 }
 
 extension SepaEditViewController: UITextFieldDelegate {
-
     public func textFieldDidEndEditing(_ textField: UITextField) {
         guard let text = textField.text else {
             return

@@ -9,7 +9,6 @@ public protocol AnalyticsDelegate: AnyObject {
 }
 
 public enum AnalyticsEvent {
-
     /// views events are tracked in `viewDidAppear` of the corresponding view controllers
     /// the `ScanningViewController` appeared
     case viewScanner
@@ -120,5 +119,4 @@ public enum AnalyticsEvent {
 
     /// a coupon was deleted
     case couponDeleted
-
 }

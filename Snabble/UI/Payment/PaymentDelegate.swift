@@ -30,9 +30,7 @@ public protocol PaymentDelegate: AnalyticsDelegate, MessageDelegate {
 
 /// provide simple default implementations
 extension PaymentDelegate {
-
     public func handlePaymentError(_ method: PaymentMethod, _ error: SnabbleError) -> Bool {
         return false
     }
-
 }

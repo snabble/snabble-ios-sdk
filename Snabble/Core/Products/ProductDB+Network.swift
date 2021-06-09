@@ -72,7 +72,6 @@ extension ProductDB {
 }
 
 final class AppDBDownloadDelegate: CertificatePinningDelegate, URLSessionDownloadDelegate {
-
     private var completion: (AppDbResponse) -> Void
     private var response: URLResponse?
     private weak var productDb: ProductDB?
