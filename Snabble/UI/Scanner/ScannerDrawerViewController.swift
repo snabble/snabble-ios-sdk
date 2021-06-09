@@ -81,11 +81,6 @@ final class ScannerDrawerViewController: UIViewController {
         segmentedControl.setTitle("Snabble.ShoppingCart.title".localized(), forSegmentAt: 1)
         segmentedControl.selectedSegmentIndex = 0
         segmentedControl.addTarget(self, action: #selector(tabChanged(_:)), for: .valueChanged)
-        if #available(iOS 13.0, *) {
-            let appearance = SnabbleUI.appearance
-            segmentedControl.selectedSegmentTintColor = appearance.accentColor
-            segmentedControl.setTitleTextAttributes([.foregroundColor: appearance.accentColor.contrast], for: .selected)
-        }
 
         let checkoutBar = CheckoutBar(self, shoppingCart, cartDelegate: cartDelegate)
         self.checkoutWrapper.addSubview(checkoutBar)
