@@ -94,24 +94,32 @@ public final class DatatransAliasViewController: UIViewController {
         super.viewDidAppear(animated)
 
         if let projectId = self.projectId, let method = self.method {
-            fetchToken(projectId, method) { token in
-                guard let token = token else {
-                    return self.showError("no mobile token")
+            fetchToken(projectId, method) { [weak self] response in
+                guard let self = self, let tokenResponse = response else {
+                    self?.showError("no mobile token")
+                    return
                 }
 
-                print("got mobileToken: \(token)")
-                self.startTransaction(token, on: self)
+                print("got mobileToken: \(tokenResponse.mobileToken)")
+                self.startTransaction(with: tokenResponse, on: self)
             }
         }
 
         self.analyticsDelegate?.track(.viewPaymentMethodDetail)
     }
 
-    private func startTransaction(_ mobileToken: String, on presentingController: UIViewController) {
-        let transaction = Transaction(mobileToken: mobileToken)
+    override public func viewDidDisappear(_ animated: Bool) {
+        super.viewDidDisappear(animated)
+
+        self.transaction?.delegate = nil
+        self.transaction = nil
+    }
+
+    private func startTransaction(with tokenResponse: TokenResponse, on presentingController: UIViewController) {
+        let transaction = Transaction(mobileToken: tokenResponse.mobileToken)
         transaction.delegate = self
         transaction.options.appCallbackScheme = "snabble"
-        transaction.options.testing = true
+        transaction.options.testing = tokenResponse.isTesting == nil || tokenResponse.isTesting == true
         transaction.options.useCertificatePinning = true
         transaction.start(presentingController: presentingController)
 
@@ -223,9 +231,10 @@ extension DatatransAliasViewController {
 
     private struct TokenResponse: Decodable {
         let mobileToken: String
+        let isTesting: Bool?
     }
 
-    private func fetchToken(_ projectId: Identifier<Project>, _ method: RawPaymentMethod, completion: @escaping (String?) -> Void) {
+    private func fetchToken(_ projectId: Identifier<Project>, _ method: RawPaymentMethod, completion: @escaping (TokenResponse?) -> Void) {
         guard let project = SnabbleAPI.project(for: projectId), let url = project.links.datatransTokenization?.href else {
             return
         }
@@ -241,7 +250,7 @@ extension DatatransAliasViewController {
             project.perform(request) { (result: Result<TokenResponse, SnabbleError>) in
                 switch result {
                 case .success(let response):
-                    completion(response.mobileToken)
+                    completion(response)
                 case .failure(let error):
                     print(error)
                     completion(nil)
