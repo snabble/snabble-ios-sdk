@@ -11,6 +11,7 @@ final class ShoppingListCell: UITableViewCell {
     private var indexPath: IndexPath?
     private var checked = false
 
+    @IBOutlet private var imageWidth: NSLayoutConstraint!
     @IBOutlet private var productImage: UIImageView!
     @IBOutlet private var spinner: UIActivityIndicatorView!
 
@@ -53,6 +54,7 @@ final class ShoppingListCell: UITableViewCell {
         task?.cancel()
         task = nil
         productImage.image = nil
+        imageWidth.constant = 10
         spinner.isHidden = true
 
         item = nil
@@ -62,10 +64,12 @@ final class ShoppingListCell: UITableViewCell {
         nameLabel.text = nil
     }
 
-    func setListItem(_ item: ShoppingListItem) {
+    func setListItem(_ item: ShoppingListItem,_ list: ShoppingList) {
         self.item = item
         let name: String
         let quantity: String?
+
+        imageWidth.constant = list.hasImages ? 42 : 10
 
         switch item.entry {
         case .custom(let text):

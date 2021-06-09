@@ -79,7 +79,7 @@ extension ScannerShoppingListViewController {
         let cell = tableView.dequeueReusableCell(withIdentifier: "shoppingListCell", for: indexPath) as! ShoppingListCell
 
         let item = shoppingList!.itemAt(indexPath.row)
-        cell.setListItem(item)
+        cell.setListItem(item, shoppingList!)
 
         return cell
     }

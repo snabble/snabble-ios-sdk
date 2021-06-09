@@ -26,9 +26,16 @@ final class ScannerDrawerViewController: UIViewController {
         }
     }
 
+    private let minDrawerHeight: CGFloat = 50
+    private let totalsHeight: CGFloat = 60
+    private let segmentedControlHeight: CGFloat = 48
+    private let cartItemHeight: CGFloat = 78
+    private let listItemHeight: CGFloat = 50
+
     private var checkoutBar: CheckoutBar?
     private var previousPosition = PulleyPosition.closed
 
+    @IBOutlet private var effectView: UIVisualEffectView!
     @IBOutlet private var handleContainer: UIView!
     @IBOutlet private var handle: UIView!
     @IBOutlet private var checkoutWrapper: UIView!
@@ -58,11 +65,15 @@ final class ScannerDrawerViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        view.backgroundColor = .systemBackground
+        // set up appearance for translucency effect
+        view.backgroundColor = .clear
+        self.shoppingListTableVC.view.backgroundColor = .clear
+        self.shoppingCartVC.view.backgroundColor = .clear
+        setupBlurEffect()
 
-        handle.layer.cornerRadius = 2
+        handle.layer.cornerRadius = 2.5
         handle.layer.masksToBounds = true
-        handle.backgroundColor = .systemGray
+        handle.backgroundColor = .systemGray3
         handle.isUserInteractionEnabled = true
         let tap = UITapGestureRecognizer(target: self, action: #selector(handleTapped(_:)))
         handle.addGestureRecognizer(tap)
@@ -71,11 +82,6 @@ final class ScannerDrawerViewController: UIViewController {
         segmentedControl.setTitle("Snabble.ShoppingCart.title".localized(), forSegmentAt: 1)
         segmentedControl.selectedSegmentIndex = 0
         segmentedControl.addTarget(self, action: #selector(tabChanged(_:)), for: .valueChanged)
-        if #available(iOS 13.0, *) {
-            let appearance = SnabbleUI.appearance
-            segmentedControl.selectedSegmentTintColor = appearance.accentColor
-            segmentedControl.setTitleTextAttributes([.foregroundColor: appearance.accentColor.contrast], for: .selected)
-        }
 
         let checkoutBar = CheckoutBar(self, shoppingCart, cartDelegate: cartDelegate)
         self.checkoutWrapper.addSubview(checkoutBar)
@@ -105,6 +111,16 @@ final class ScannerDrawerViewController: UIViewController {
         self.updateShoppingLists()
         checkoutBar?.updateSelectionVisibility()
         checkoutBar?.updateTotals()
+    }
+
+    override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
+        super.traitCollectionDidChange(previousTraitCollection)
+
+        setupBlurEffect()
+    }
+
+    private func setupBlurEffect() {
+        self.effectView.effect = UIBlurEffect(style: traitCollection.userInterfaceStyle == .light ? .extraLight : .dark)
     }
 
     @objc private func handleTapped(_ gesture: UITapGestureRecognizer) {
@@ -156,8 +172,11 @@ final class ScannerDrawerViewController: UIViewController {
         }
 
         shoppingListTableVC.reload(shoppingList)
+        setupStackView(shoppingList, shoppingCart)
+    }
 
-        let noList = shoppingList == nil
+    private func setupStackView(_ list: ShoppingList?, _ cart: ShoppingCart?) {
+        let noList = list == nil
         segmentedControl?.isHidden = noList
         innerSpacer?.isHidden = noList
         if noList {
@@ -193,7 +212,14 @@ extension ScannerDrawerViewController: PulleyDrawerViewControllerDelegate {
     }
 
     public func collapsedDrawerHeight(bottomSafeArea: CGFloat) -> CGFloat {
-        return shoppingList == nil ? 138 : 188
+
+        let heightForCartItems: CGFloat = min(CGFloat(shoppingCart.items.count) * cartItemHeight, cartItemHeight * 2.5)
+        let heightForListItems: CGFloat = min(CGFloat(shoppingList?.count ?? 0) * listItemHeight, listItemHeight * 2.5)
+        let heightForItems = !shoppingCart.items.isEmpty ? heightForCartItems : heightForListItems
+
+        let heightForTotals = shoppingCart.numberOfProducts == 0 ? 0 : self.totalsHeight
+        let heightForSegmentedControl = shoppingList == nil ? 0 : self.segmentedControlHeight
+        return self.minDrawerHeight + heightForSegmentedControl + heightForTotals + heightForItems
     }
 
     public func drawerPositionDidChange(drawer: PulleyViewController, bottomSafeArea: CGFloat) {
