@@ -30,6 +30,7 @@ final class ScannerDrawerViewController: UIViewController {
     private let totalsHeight: CGFloat = 60
     private let segmentedControlHeight: CGFloat = 48
     private let cartItemHeight: CGFloat = 78
+    private let listItemHeight: CGFloat = 50
 
     private var checkoutBar: CheckoutBar?
     private var previousPosition = PulleyPosition.closed
@@ -177,7 +178,7 @@ final class ScannerDrawerViewController: UIViewController {
     private func setupStackView(_ list: ShoppingList?, _ cart: ShoppingCart?) {
         let noList = list == nil
         segmentedControl?.isHidden = noList
-        innerSpacer?.isHidden = noList || cart?.items.isEmpty ?? true
+        innerSpacer?.isHidden = noList
         if noList {
             selectSegment(1)
         }
@@ -213,11 +214,12 @@ extension ScannerDrawerViewController: PulleyDrawerViewControllerDelegate {
     public func collapsedDrawerHeight(bottomSafeArea: CGFloat) -> CGFloat {
 
         let heightForCartItems: CGFloat = min(CGFloat(shoppingCart.items.count) * cartItemHeight, cartItemHeight * 2.5)
+        let heightForListItems: CGFloat = min(CGFloat(shoppingList?.count ?? 0) * listItemHeight, listItemHeight * 2.5)
+        let heightForItems = !shoppingCart.items.isEmpty ? heightForCartItems : heightForListItems
 
-        print("[ShoppingList] heightForCartItems", heightForCartItems)
         let heightForTotals = shoppingCart.numberOfProducts == 0 ? 0 : self.totalsHeight
         let heightForSegmentedControl = shoppingList == nil ? 0 : self.segmentedControlHeight
-        return self.minDrawerHeight + heightForSegmentedControl + heightForTotals + heightForCartItems
+        return self.minDrawerHeight + heightForSegmentedControl + heightForTotals + heightForItems
     }
 
     public func drawerPositionDidChange(drawer: PulleyViewController, bottomSafeArea: CGFloat) {

@@ -10,6 +10,7 @@ final class CheckoutBar: NibView {
     @IBOutlet private var itemCountLabel: UILabel!
     @IBOutlet private var totalPriceLabel: UILabel!
 
+    @IBOutlet private var paymentStackView: UIStackView!
     @IBOutlet private var methodSelectionView: UIView!
     @IBOutlet private var methodIcon: UIImageView!
     @IBOutlet private var methodSpinner: UIActivityIndicatorView!
@@ -85,8 +86,7 @@ final class CheckoutBar: NibView {
         let shouldDisplayControls = numProducts > 0 && (totalPrice ?? 0) >= 0
 
         self.checkoutButton?.isEnabled = shouldDisplayControls
-        self.checkoutButton?.isHidden = !shouldDisplayControls
-        self.methodSelectionView.isHidden = !shouldDisplayControls
+        self.paymentStackView.isHidden = !shouldDisplayControls
     }
 
     func updateSelectionVisibility() {
