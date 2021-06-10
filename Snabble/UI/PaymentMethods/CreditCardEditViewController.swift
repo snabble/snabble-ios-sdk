@@ -170,20 +170,32 @@ public final class CreditCardEditViewController: UIViewController {
             .replacingOccurrences(of: "{{hash}}", with: vaultItem.hash)
             .replacingOccurrences(of: "{{paymentMethod}}", with: self.brand?.paymentMethod ?? "V")
             .replacingOccurrences(of: "{{locale}}", with: Locale.current.identifier)
-            .replacingOccurrences(of: "{{header}}", with: threeDSecureHint(for: projectId))
+            .replacingOccurrences(of: "{{header}}", with: threeDSecureHint(for: projectId, vaultItem))
             .replacingOccurrences(of: "{{hostedDataId}}", with: UUID().uuidString)
             .replacingOccurrences(of: "{{orderId}}", with: vaultItem.orderId)
 
         self.webView?.loadHTMLString(page, baseURL: nil)
     }
 
-    private func threeDSecureHint(for projectId: Identifier<Project>?) -> String {
+    private func threeDSecureHint(for projectId: Identifier<Project>?, _ vaultItem: TelecashVaultItem) -> String {
         var name = "snabble"
+        let fmt = NumberFormatter()
+        fmt.minimumIntegerDigits = 1
+        fmt.numberStyle = .currency
+
         if let projectId = self.projectId, let project = SnabbleAPI.project(for: projectId) {
             name = project.company?.name ?? project.name
+            fmt.minimumFractionDigits = project.decimalDigits
+            fmt.maximumFractionDigits = project.decimalDigits
+            fmt.currencyCode = project.currency
+            fmt.currencySymbol = project.currencySymbol
+            fmt.locale = Locale(identifier: project.locale)
         }
 
-        return String(format: "Snabble.CC.3dsecureHint.retailer".localized(), name)
+        let chargeDecimal = Decimal(string: vaultItem.chargeTotal.replacingOccurrences(of: ",", with: "."))
+        let chargeTotal = fmt.string(for: chargeDecimal)!
+
+        return String(format: "Snabble.CC.3dsecureHint.retailerWithPrice".localized(), chargeTotal, name)
     }
 
     private func setupWebView() {

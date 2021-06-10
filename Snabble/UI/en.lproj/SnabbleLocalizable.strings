@@ -39,6 +39,8 @@
 
 "Snabble.CC.3dsecureHint.retailer" = "In order to verify your credit card, you will be redirected to your bank after entering your data. There you will be asked to approve a payment of € 1.00 to %@. The amount will be credited to you immediately after your approval.";
 
+"Snabble.CC.3dsecureHint.retailerWithPrice" = "In order to verify your credit card, you will be redirected to your bank after entering your data. There you will be asked to approve a payment of %@ to %@. The amount will be credited to you immediately after your approval.";
+
 "Snabble.CC.cardNumber" = "Card number";
 
 "Snabble.CC.editingHint" = "Your credit card data is only stored in encrypted form and therefore cannot be edited.";

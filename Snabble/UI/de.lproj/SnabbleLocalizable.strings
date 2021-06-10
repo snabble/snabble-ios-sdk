@@ -39,6 +39,8 @@
 
 "Snabble.CC.3dsecureHint.retailer" = "Zur Verifizierung deiner Kreditkarte wirst du nach Eingabe der Daten zu deiner Bank weitergeleitet. Dort wirst du gebeten, einer Zahlung von 1,00 € an %@ zuzustimmen. Der Betrag wird dir nach deiner Zustimmung sofort wieder gutgeschrieben.";
 
+"Snabble.CC.3dsecureHint.retailerWithPrice" = "Zur Verifizierung deiner Kreditkarte wirst du nach Eingabe der Daten zu deiner Bank weitergeleitet. Dort wirst du gebeten, einer Zahlung von %@ an %@ zuzustimmen. Der Betrag wird dir nach deiner Zustimmung sofort wieder gutgeschrieben.";
+
 "Snabble.CC.cardNumber" = "Kartennummer";
 
 "Snabble.CC.editingHint" = "Deine Kreditkarten-Daten werden von uns nur verschlüsselt gespeichert und können daher nicht bearbeitet werden.";

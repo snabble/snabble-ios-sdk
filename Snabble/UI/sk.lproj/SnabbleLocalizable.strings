@@ -39,6 +39,8 @@
 
 "Snabble.CC.3dsecureHint.retailer" = "Za účelom overenia kreditnej karty budeš po zadaní údajov presmerovaný/presmerovaná na tvoju banku. Tam budeš požiadaný/-á o súhlas s platbou 1,00 € pre %@. Po súhlase ti bude suma okamžite opäť pripísaná na účet.";
 
+"Snabble.CC.3dsecureHint.retailerWithPrice" = "Za účelom overenia kreditnej karty budeš po zadaní údajov presmerovaný/presmerovaná na tvoju banku. Tam budeš požiadaný/-á o súhlas s platbou %@ pre %@. Po súhlase ti bude suma okamžite opäť pripísaná na účet.";
+
 "Snabble.CC.cardNumber" = "Číslo karty";
 
 "Snabble.CC.editingHint" = "Údaje tvojej kreditnej karty budeme uchovávať len v šifrovanej forme, a preto nemôžu byť spracované.";
