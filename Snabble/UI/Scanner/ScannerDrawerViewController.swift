@@ -29,7 +29,7 @@ final class ScannerDrawerViewController: UIViewController {
     private let minDrawerHeight: CGFloat = 50
     private let totalsHeight: CGFloat = 60
     private let segmentedControlHeight: CGFloat = 48
-    private let cartItemHeight: CGFloat = 78
+    private let cartItemHeight: CGFloat = 50
     private let listItemHeight: CGFloat = 50
 
     private var checkoutBar: CheckoutBar?
@@ -212,7 +212,6 @@ extension ScannerDrawerViewController: PulleyDrawerViewControllerDelegate {
     }
 
     public func collapsedDrawerHeight(bottomSafeArea: CGFloat) -> CGFloat {
-
         let heightForCartItems: CGFloat = min(CGFloat(shoppingCart.items.count) * cartItemHeight, cartItemHeight * 2.5)
         let heightForListItems: CGFloat = min(CGFloat(shoppingList?.count ?? 0) * listItemHeight, listItemHeight * 2.5)
         let heightForItems = !shoppingCart.items.isEmpty ? heightForCartItems : heightForListItems

@@ -64,7 +64,7 @@ final class ShoppingListCell: UITableViewCell {
         nameLabel.text = nil
     }
 
-    func setListItem(_ item: ShoppingListItem,_ list: ShoppingList) {
+    func setListItem(_ item: ShoppingListItem, _ list: ShoppingList) {
         self.item = item
         let name: String
         let quantity: String?

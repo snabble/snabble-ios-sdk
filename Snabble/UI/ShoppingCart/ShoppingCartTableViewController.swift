@@ -83,7 +83,7 @@ final class ShoppingCartTableViewController: UITableViewController {
         self.tableView.backgroundColor = .clear
 
         self.tableView.rowHeight = UITableView.automaticDimension
-        self.tableView.estimatedRowHeight = 78
+        self.tableView.estimatedRowHeight = 50
     }
 
     override func viewWillAppear(_ animated: Bool) {
@@ -367,6 +367,10 @@ extension ShoppingCartTableViewController: ShoppingCartTableDelegate {
         NotificationCenter.default.post(name: .snabbleCartUpdated, object: self)
         self.updateView(at: row)
     }
+
+    func makeRowVisible(row: Int) {
+        self.pulleyViewController?.setDrawerPosition(position: .open, animated: true)
+    }
 }
 
 // MARK: - UITableViewDelegate, UITableViewDataSource
@@ -412,7 +416,7 @@ extension ShoppingCartTableViewController {
     }
 
     override func tableView(_ tableView: UITableView, estimatedHeightForRowAt indexPath: IndexPath) -> CGFloat {
-        return 78
+        return 50
     }
 
     override func tableView(_ tableView: UITableView, canEditRowAt indexPath: IndexPath) -> Bool {
@@ -434,7 +438,7 @@ extension ShoppingCartTableViewController {
     }
 
     // call tableView.deleteRows(at:) inside a CATransaction block so that we can reload the tableview afterwards
-    func deleteRow(_ row: Int) {
+    private func deleteRow(_ row: Int) {
         guard row < self.items.count else {
             return
         }
