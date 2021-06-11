@@ -286,17 +286,18 @@ final class ShoppingCartTableCell: UITableViewCell {
         }
 
         let showWeight = item.product.referenceUnit?.hasDimension == true || item.product.type == .userMustWeigh
+        let showQuantity = item.product.type == .singleItem || showWeight
         let encodingUnit = item.encodingUnit ?? item.product.encodingUnit
         let unit = encodingUnit?.display ?? ""
         let unitDisplay = showWeight ? " \(unit)" : nil
 
-        self.quantityText = "\(item.effectiveQuantity)"
+        self.quantityText = showQuantity ? "\(item.effectiveQuantity)" : nil
         self.unitsText = unitDisplay
 
         if let defaultItem = lineItems.first(where: { $0.type == .default }) {
             let units = defaultItem.units ?? 1
             let amount = defaultItem.weight ?? (defaultItem.amount * units)
-            self.quantityText = "\(amount)"
+            self.quantityText = showQuantity ? "\(amount)" : nil
             self.unitsText = unitDisplay
             self.displayLineItemPrice(item.product, defaultItem, lineItems)
         } else {
