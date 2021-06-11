@@ -4,10 +4,6 @@
 //  Copyright © 2020 snabble. All rights reserved.
 //
 
-public extension Notification.Name {
-    static let snabbleShowAgeEntry = Notification.Name("snabbleShowAgeEntry.")
-}
-
 struct CheckoutChecks {
     private let process: CheckoutProcess
 
