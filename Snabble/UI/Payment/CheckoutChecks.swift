@@ -60,22 +60,6 @@ struct CheckoutChecks {
     private func performAppAgeCheck(_ check: CheckoutCheck) -> Bool {
         switch check.state {
         case .pending:
-            let alert = UIAlertController(title: "Snabble.ageVerification.pending.title".localized(),
-                                          message: "Snabble.ageVerification.pending.message".localized(),
-                                          preferredStyle: .alert)
-            alert.addAction(UIAlertAction(title: "Snabble.OK".localized(), style: .default) { _ in
-                if SnabbleUI.implicitNavigation {
-                    let germanIdCard = GermanIdCardViewController()
-                    let top = UIApplication.topViewController()
-                    top?.navigationController?.pushViewController(germanIdCard, animated: true)
-                } else {
-                    NotificationCenter.default.post(name: .snabbleShowAgeEntry, object: nil)
-                }
-            })
-            alert.addAction(UIAlertAction(title: "Snabble.Cancel".localized(), style: .cancel, handler: nil))
-
-            let topViewController = UIApplication.topViewController()
-            topViewController?.present(alert, animated: true)
             return true
         case .failed:
             let alert = UIAlertController(title: "Snabble.ageVerification.failed.title".localized(),
