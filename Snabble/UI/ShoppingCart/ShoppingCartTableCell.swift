@@ -129,6 +129,8 @@ final class ShoppingCartTableCell: UITableViewCell {
         self.minusButton.makeBorderedButton()
         self.plusButton.makeBorderedButton()
 
+        self.priceLabel.font = UIFont.monospacedDigitSystemFont(ofSize: 13, weight: .regular)
+
         let toolbar = self.quantityInput.addDoneButton()
         self.doneButton = toolbar.items?.last
         self.quantityInput.delegate = self
