@@ -11,6 +11,7 @@
         <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner" customClass="CheckoutBar" customModule="Snabble" customModuleProvider="target">
             <connections>
                 <outlet property="checkoutButton" destination="A2j-lQ-Cws" id="2TY-yk-Q32"/>
+                <outlet property="contentStack" destination="zyQ-Wn-NCf" id="VUT-3L-ieJ"/>
                 <outlet property="itemCountLabel" destination="H2s-rv-eKy" id="5dS-vx-4KO"/>
                 <outlet property="methodIcon" destination="uIE-jq-uvT" id="gs7-w9-Hur"/>
                 <outlet property="methodSelectionView" destination="aFd-qz-9xh" id="pW0-nC-0dL"/>
@@ -24,7 +25,7 @@
             <rect key="frame" x="0.0" y="0.0" width="375" height="88"/>
             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
             <subviews>
-                <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" spacing="12" translatesAutoresizingMaskIntoConstraints="NO" id="zyQ-Wn-NCf">
+                <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" translatesAutoresizingMaskIntoConstraints="NO" id="zyQ-Wn-NCf">
                     <rect key="frame" x="0.0" y="0.0" width="375" height="88"/>
                     <subviews>
                         <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="8Kh-9q-0ok" userLabel="Summary">
@@ -46,29 +47,29 @@
                             <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                             <constraints>
                                 <constraint firstItem="H2s-rv-eKy" firstAttribute="centerY" secondItem="8Kh-9q-0ok" secondAttribute="centerY" id="9w4-HG-uzg"/>
-                                <constraint firstAttribute="height" constant="26" id="AFX-h7-NAq"/>
+                                <constraint firstAttribute="height" priority="999" constant="26" id="AFX-h7-NAq"/>
                                 <constraint firstAttribute="trailing" secondItem="vDd-Ai-hP8" secondAttribute="trailing" id="GuY-ZY-TUY"/>
                                 <constraint firstItem="vDd-Ai-hP8" firstAttribute="centerY" secondItem="8Kh-9q-0ok" secondAttribute="centerY" id="WwK-cl-3Fd"/>
                                 <constraint firstItem="H2s-rv-eKy" firstAttribute="leading" secondItem="8Kh-9q-0ok" secondAttribute="leading" id="ngm-IN-tpf"/>
                             </constraints>
                         </view>
                         <stackView opaque="NO" contentMode="scaleToFill" spacing="16" translatesAutoresizingMaskIntoConstraints="NO" id="7Mg-fR-a7U" userLabel="Payment">
-                            <rect key="frame" x="0.0" y="38" width="375" height="50"/>
+                            <rect key="frame" x="0.0" y="26" width="375" height="62"/>
                             <subviews>
                                 <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="aFd-qz-9xh" userLabel="Method Selection">
-                                    <rect key="frame" x="0.0" y="0.0" width="78" height="50"/>
+                                    <rect key="frame" x="0.0" y="0.0" width="78" height="62"/>
                                     <subviews>
                                         <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="SnabbleSDK/payment/payment-sco" translatesAutoresizingMaskIntoConstraints="NO" id="uIE-jq-uvT" userLabel="method icon">
-                                            <rect key="frame" x="12" y="13" width="38" height="24"/>
+                                            <rect key="frame" x="12" y="19" width="38" height="24"/>
                                             <constraints>
                                                 <constraint firstAttribute="width" constant="38" id="Pyv-An-Kx3"/>
                                             </constraints>
                                         </imageView>
                                         <activityIndicatorView hidden="YES" opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" hidesWhenStopped="YES" style="gray" translatesAutoresizingMaskIntoConstraints="NO" id="MfK-pz-aAL" userLabel="spinner">
-                                            <rect key="frame" x="21" y="15" width="20" height="20"/>
+                                            <rect key="frame" x="21" y="21" width="20" height="20"/>
                                         </activityIndicatorView>
                                         <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="SnabbleSDK/icon-chevron-down" translatesAutoresizingMaskIntoConstraints="NO" id="D2M-PR-bPh" userLabel="chevron">
-                                            <rect key="frame" x="54" y="17" width="16" height="16"/>
+                                            <rect key="frame" x="54" y="23" width="16" height="16"/>
                                             <constraints>
                                                 <constraint firstAttribute="height" constant="16" id="0zg-n5-Rdk"/>
                                                 <constraint firstAttribute="width" constant="16" id="FEf-zQ-bkq"/>
@@ -88,7 +89,7 @@
                                     </constraints>
                                 </view>
                                 <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="A2j-lQ-Cws" userLabel="Checkout Button">
-                                    <rect key="frame" x="94" y="0.0" width="281" height="50"/>
+                                    <rect key="frame" x="94" y="0.0" width="281" height="62"/>
                                     <constraints>
                                         <constraint firstAttribute="height" priority="750" constant="48" id="y4G-6U-NQC"/>
                                     </constraints>

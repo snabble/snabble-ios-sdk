@@ -113,6 +113,12 @@ final class ScannerDrawerViewController: UIViewController {
         checkoutBar?.updateTotals()
     }
 
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+
+        checkoutBar?.barDidAppear()
+    }
+
     override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
         super.traitCollectionDidChange(previousTraitCollection)
 

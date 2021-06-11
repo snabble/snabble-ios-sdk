@@ -113,6 +113,12 @@ public final class ShoppingCartViewController: UIViewController {
         updateView()
     }
 
+    override public func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+
+        checkoutBar?.barDidAppear()
+    }
+
     override public func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
         // turn off table editing, and re-enable everything that is disabled while editing

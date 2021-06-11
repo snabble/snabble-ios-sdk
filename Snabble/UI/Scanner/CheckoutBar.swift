@@ -7,6 +7,7 @@
 import UIKit
 
 final class CheckoutBar: NibView {
+    @IBOutlet private var contentStack: UIStackView!
     @IBOutlet private var itemCountLabel: UILabel!
     @IBOutlet private var totalPriceLabel: UILabel!
 
@@ -91,6 +92,11 @@ final class CheckoutBar: NibView {
 
     func updateSelectionVisibility() {
         self.methodSelector?.updateSelectionVisibility()
+    }
+
+    func barDidAppear() {
+        // avoid auto-layout warning
+        self.contentStack.spacing = 12
     }
 
     @objc private func checkoutTapped(_ sender: Any) {
