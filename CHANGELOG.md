@@ -2,6 +2,7 @@
 
 # v0.17.0 (unreleased)
 
+- The SDK requires Xcode 12.5 or later to compile
 - Fixes a bug in the asset manager where special assets for dark mode weren't found
 - Creating the FTS index for a product database is now much faster
 - Performance of `productsByName` and `productsByScannableCodePrefix` is now much better
@@ -10,6 +11,7 @@
   To hide this drawer, pass `nil` for the `cartDelegate` init parameter.
 - Add `CouponWallet` to store coupons, along with `CouponsListViewController` as the UI to manage coupons
 - Add support for the new payment methods `twint` and `postFinanceCard`. To use these methods, add `pod Snabble/Datatrans` to your app's `Podfile`, as these methods aren't included by default.
+- Add support for Apple Pay
 
 # v0.16.9
 
