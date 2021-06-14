@@ -283,7 +283,7 @@
 
 "Snabble.Scanner.duplicateDepositScanned" = "Each deposit slip can only be scanned once.";
 
-"Snabble.Scanner.enterBarcode" = "Enter Barcode";
+"Snabble.Scanner.enterBarcode" = "Enter code";
 
 "Snabble.Scanner.enterCodeButton" = "Enter\nbarcode";
 

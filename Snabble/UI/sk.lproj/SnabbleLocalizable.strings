@@ -1,4 +1,4 @@
-"release.safety.catch" = "Please remove the bottle's security device (if present) at the designated station at the exit.";
+"release.safety.catch" = "Prosím, odstráň z fľaše zámok (ak je nasadený) pri východe na mieste, ktoré je na to určené.";
 
 "Snabble.addDiscount" = "Zadať zľavu";
 
@@ -114,7 +114,7 @@
 
 "Snabble.Paydirekt.payNow" = "Teraz zaplatiť prostredníctvom paydirekt";
 
-"Snabble.paydirekt.savedAuthorization" = "Autorizácia aplikácie snabble pre paydirekt bola úspešná. Ak chceš autorizáciu zrušiť, musíš sa prihlásiť do svojho konta paydirekt na webovej stránke. Pokiaľ nechceš, aby paydirekt bol v budúcnosti zobrazovaný ako spôsob platby, tu ho môžeš jednoducho odstrániť.";
+"Snabble.paydirekt.savedAuthorization" = "Autorizácia aplikácie Snabble pre paydirekt bola úspešná. Ak chceš autorizáciu zrušiť, musíš sa prihlásiť do svojho konta paydirekt na webovej stránke. Pokiaľ nechceš, aby paydirekt bol v budúcnosti zobrazovaný ako spôsob platby, tu ho môžeš jednoducho odstrániť.";
 
 /* SECTION: SnabbleAndroid */
 "Snabble.Payment.aborted" = "Platobný proces bol prerušený";
@@ -135,7 +135,7 @@
 
 "Snabble.Payment.CreditCard" = "Kreditná karta";
 
-"Snabble.Payment.CreditCard.error" = "Pri spracovaní Vašej platobnej karty sa vyskytla chyba";
+"Snabble.Payment.CreditCard.error" = "Pri spracovaní tvojej platobnej karty sa vyskytla chyba";
 
 "Snabble.Payment.CreditCard.expireDate" = "Platnosť do: %@";
 
@@ -159,9 +159,9 @@
 
 "Snabble.Payment.payViaInvoice" = "na faktúru";
 
-"Snabble.Payment.PostFinanceCard.error" = "There was an error processing your postfinance card";
+"Snabble.Payment.PostFinanceCard.error" = "Pri spracovaní tvojej karty PostFinance sa vyskytla chyba";
 
-"Snabble.Payment.presentCode" = "Za účelom potvrdenia nákupu prilož tento kód pred snabble monitor alebo ho ukáž zamestnancovi.";
+"Snabble.Payment.presentCode" = "Za účelom potvrdenia nákupu prilož tento kód pred Snabble monitor alebo ho ukáž zamestnancovi.";
 
 "Snabble.Payment.SEPA.hint" = "Poznámka: Za účelom tvojej ochrany a ochrany našich obchodníkov pred zneužitím si obchodník pri tvojej prvej platbe prostredníctvom SEPA inkasa vyžiada tvoju bankovú kartu.";
 
@@ -180,7 +180,7 @@
 
 "Snabble.Payment.success" = "Ďakujeme za tvoj nákup";
 
-"Snabble.Payment.Twint.error" = "There was an error processing your TWINT account";
+"Snabble.Payment.Twint.error" = "Pri spracovaní tvojho účtu TWINT sa vyskytla chyba";
 
 "Snabble.Payment.usableAt" = "Použiteľné tu: %@";
 
@@ -225,7 +225,7 @@
 
 "Snabble.pleaseWait" = "Čakaj, prosím...";
 
-"Snabble.PostFinanceCard.payNow" = "Pay now using PostFinance Card";
+"Snabble.PostFinanceCard.payNow" = "Zaplatiť kartou PostFinance teraz";
 
 "Snabble.QRCode.codeXofY" = "Kód %1$d z %2$d";
 
@@ -249,7 +249,7 @@
 
 "Snabble.Receipts.loading" = "(načítava sa)";
 
-"Snabble.Receipts.noReceipts" = "Ešte si nenakupoval/a s aplikáciou snabble";
+"Snabble.Receipts.noReceipts" = "Ešte si nenakupoval/a s aplikáciou Snabble";
 
 "Snabble.Receipts.oClock" = "Čas";
 
@@ -450,7 +450,7 @@
 /* Der Titel der übersichtsseite der Einkaufslisten */
 "Snabble.ShoppingLists.title" = "Nákupné zoznamy";
 
-"Snabble.TWINT.payNow" = "Pay now using TWINT";
+"Snabble.TWINT.payNow" = "Zaplatiť cez TWINT teraz";
 
 "Snabble.undo" = "Vrátiť späť";
 

@@ -1,4 +1,4 @@
-"release.safety.catch" = "Please remove the bottle's security device (if present) at the designated station at the exit.";
+"release.safety.catch" = "Kérjük, hogy a kijáratnál, az arra kijelölt állomáson vedd le a palacknyak-biztosítót (ha van).";
 
 "Snabble.addDiscount" = "Árengedmény megadása";
 
@@ -114,7 +114,7 @@
 
 "Snabble.Paydirekt.payNow" = "Fizetés paydirekttel";
 
-"Snabble.paydirekt.savedAuthorization" = "A snabble alkalmazást sikeresen bejelentetted a paydirektre. Visszavonásához a paydirekt fiókadataiddal be kell jelentkezned a honlapon. Ha nem szeretnéd, hogy a paydirekt a fizetési lehetőségeid között legyen, akkor itt egyszerűen eltávolíthatod.";
+"Snabble.paydirekt.savedAuthorization" = "A Snabble alkalmazást sikeresen bejelentetted a paydirektre. Visszavonásához a paydirekt fiókadataiddal be kell jelentkezned a honlapon. Ha nem szeretnéd, hogy a paydirekt a fizetési lehetőségeid között legyen, akkor itt egyszerűen eltávolíthatod.";
 
 /* SECTION: SnabbleAndroid */
 "Snabble.Payment.aborted" = "Megszakadt a fizetési folyamat";
@@ -159,9 +159,9 @@
 
 "Snabble.Payment.payViaInvoice" = "számlára";
 
-"Snabble.Payment.PostFinanceCard.error" = "There was an error processing your postfinance card";
+"Snabble.Payment.PostFinanceCard.error" = "A Postfinance kártyád feldolgozása során hiba történt";
 
-"Snabble.Payment.presentCode" = "A bevásárlás nyugtázásához tartsd ezt a kódot egy snabble-monitor elé, vagy mutasd meg egy alkalmazottnak.";
+"Snabble.Payment.presentCode" = "A bevásárlás nyugtázásához tartsd ezt a kódot egy Snabble-monitor elé, vagy mutasd meg egy alkalmazottnak.";
 
 "Snabble.Payment.SEPA.hint" = "Megjegyzés: A te és a kereskedőink visszaélésekkel szembeni védelme érdekében az első SEPA terhelési megbízásos fizetésednél a kereskedőnél megjelenik a bankkártyád.";
 
@@ -180,7 +180,7 @@
 
 "Snabble.Payment.success" = "Köszönjük a vásárlásodat";
 
-"Snabble.Payment.Twint.error" = "There was an error processing your TWINT account";
+"Snabble.Payment.Twint.error" = "A TWINT-fiókod feldolgozása során hiba történt";
 
 "Snabble.Payment.usableAt" = "Itt használható: %@";
 
@@ -225,7 +225,7 @@
 
 "Snabble.pleaseWait" = "Kérlek, várj...";
 
-"Snabble.PostFinanceCard.payNow" = "Pay now using PostFinance Card";
+"Snabble.PostFinanceCard.payNow" = "Most fizetés a PostFinance kártyával";
 
 "Snabble.QRCode.codeXofY" = "%1$d / %2$d kód";
 
@@ -249,7 +249,7 @@
 
 "Snabble.Receipts.loading" = "(Betöltés alatt)";
 
-"Snabble.Receipts.noReceipts" = "Még nem vásároltál a snabble segítségével";
+"Snabble.Receipts.noReceipts" = "Még nem vásároltál a Snabble segítségével";
 
 "Snabble.Receipts.oClock" = "Óra";
 
@@ -450,7 +450,7 @@
 /* Der Titel der übersichtsseite der Einkaufslisten */
 "Snabble.ShoppingLists.title" = "Bevásárlólisták";
 
-"Snabble.TWINT.payNow" = "Pay now using TWINT";
+"Snabble.TWINT.payNow" = "Fizetés TWINT segítségével";
 
 "Snabble.undo" = "Visszavonás";
 

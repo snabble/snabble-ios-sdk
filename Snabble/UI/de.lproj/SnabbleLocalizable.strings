@@ -283,7 +283,7 @@
 
 "Snabble.Scanner.duplicateDepositScanned" = "Jeder Pfandbon kann nur einmal gescannt werden.";
 
-"Snabble.Scanner.enterBarcode" = "Barcode eingeben";
+"Snabble.Scanner.enterBarcode" = "Code eingeben";
 
 "Snabble.Scanner.enterCodeButton" = "Barcode\neingeben";
 
