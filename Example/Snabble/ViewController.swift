@@ -79,6 +79,14 @@ class ViewController: UIViewController {
 }
 
 extension ViewController: ScannerDelegate {
+    func scanMessage(for project: Project, _ shop: Shop, _ product: Product) -> ScanMessage? {
+        return nil
+    }
+
+    func gotoBarcodeEntry() {
+        // nop, we're using the shiny new integrated scanner/cart
+    }
+
     // called when the scanner needs to close itself
     func closeScanningView() {
         self.navigationController?.popViewController(animated: true)
