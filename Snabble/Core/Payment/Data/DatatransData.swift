@@ -37,9 +37,14 @@ struct DatatransPaymentMethodToken: Codable, Equatable {
         }
 
         guard
-            let expYear = Int(self.expirationYear ?? ""),
+            var expYear = Int(self.expirationYear ?? ""),
             let expMonth = Int(self.expirationMonth ?? "") else {
             return false
+        }
+
+        // expYear only has two digits
+        if expYear < 100 {
+            expYear += 2000
         }
 
         let date = year * 100 + month

@@ -23,7 +23,7 @@ extension DatatransPaymentMethodToken {
         }
     }
 
-    init(token: String, displayTitle: String, cardHolder: String?, expiryDate: CardExpiryDate?) {
+    private init(token: String, displayTitle: String, cardHolder: String?, expiryDate: CardExpiryDate?) {
         self.init(token: token, displayTitle: displayTitle, cardHolder: cardHolder,
                   expirationMonth: expiryDate?.formattedMonth, expirationYear: expiryDate?.formattedYear)
     }
