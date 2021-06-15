@@ -35,6 +35,7 @@ public class BaseCheckoutViewController: UIViewController {
     private var processTimer: Timer?
 
     private var postPaymentManager: PostPaymentManager?
+    private var alreadyApproved = false
 
     init(_ process: CheckoutProcess, _ rawJson: [String: Any]?, _ cart: ShoppingCart, _ delegate: PaymentDelegate) {
         self.process = process
@@ -58,13 +59,15 @@ public class BaseCheckoutViewController: UIViewController {
 
         self.title = "Snabble.Payment.confirm".localized()
 
+        self.alreadyApproved = self.process.supervisorApproval == true
+
         self.topWrapper.isHidden = true
         self.arrowWrapper.isHidden = true
         SnabbleUI.getAsset(.checkoutOnline, bundlePath: "Checkout/\(SnabbleUI.project.id)/checkout-online") { img in
             if let img = img {
                 self.topIcon.image = img
                 self.iconHeight.constant = img.size.height
-                self.topWrapper.isHidden = false
+                self.topWrapper.isHidden = self.alreadyApproved
                 self.arrowWrapper.isHidden = false
             }
         }
@@ -86,7 +89,7 @@ public class BaseCheckoutViewController: UIViewController {
         let onlineMessage = onlineMessageKey.localized()
         self.messageLabel.text = onlineMessage
         // hide if there is no text/translation
-        self.messageWrapper.isHidden = onlineMessage == onlineMessageKey.uppercased()
+        self.messageWrapper.isHidden = onlineMessage == onlineMessageKey.uppercased() || alreadyApproved
 
         self.navigationItem.hidesBackButton = true
 
@@ -358,11 +361,7 @@ extension BaseCheckoutViewController {
 
     private func setSpinnerAppearance() {
         if #available(iOS 13.0, *) {
-            if self.traitCollection.userInterfaceStyle == .dark {
-                self.spinner.style = .white
-            } else {
-                self.spinner.style = .gray
-            }
+            self.spinner.style = alreadyApproved ? .large : .medium
         }
     }
 }
