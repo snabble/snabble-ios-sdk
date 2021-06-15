@@ -117,6 +117,8 @@ public struct CheckoutInfo: Decodable {
         public let weightUnit: Units?
         public let referenceUnit: Units?
         public let priceModifiers: [PriceModifier]?
+        public let couponID: String?
+        public let redeemed: Bool?
 
         /// price pre-multiplied with units, if present
         public var itemPrice: Int? {

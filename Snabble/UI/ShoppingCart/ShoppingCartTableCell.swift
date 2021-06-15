@@ -71,6 +71,15 @@ final class ShoppingCartTableCell: UITableViewCell {
         }
     }
 
+    private var badgeColor: UIColor? = nil {
+        didSet {
+            if let color = badgeColor {
+                self.badgeLabel.backgroundColor = color
+                self.imageBadge.backgroundColor = color
+            }
+        }
+    }
+
     private var quantityText: String? = nil {
         didSet {
             self.quantityLabel.text = quantityText
@@ -169,6 +178,7 @@ final class ShoppingCartTableCell: UITableViewCell {
         self.quantityText = nil
         self.unitsText = nil
         self.badgeText = nil
+        self.badgeColor = .systemRed
     }
 
     func setLineItem(_ mainItem: CheckoutInfo.LineItem, _ lineItems: [CheckoutInfo.LineItem], row: Int, delegate: ShoppingCartTableDelegate) {
@@ -296,17 +306,6 @@ final class ShoppingCartTableCell: UITableViewCell {
         self.quantityText = showQuantity ? "\(item.effectiveQuantity)" : nil
         self.unitsText = unitDisplay
 
-        if let defaultItem = lineItems.first(where: { $0.type == .default }) {
-            let units = defaultItem.units ?? 1
-            let amount = defaultItem.weight ?? (defaultItem.amount * units)
-            self.quantityText = showQuantity ? "\(amount)" : nil
-            self.unitsText = unitDisplay
-            self.displayLineItemPrice(item.product, defaultItem, lineItems)
-        } else {
-            let formatter = PriceFormatter(SnabbleUI.project)
-            self.priceLabel.text = formatter.format(item.price)
-        }
-
         var badgeText: String?
         if item.manualCoupon != nil {
             badgeText = "%"
@@ -317,29 +316,47 @@ final class ShoppingCartTableCell: UITableViewCell {
         case .age(let age): badgeText = "\(age)"
         case .fsk: badgeText = "FSK"
         }
-
         self.badgeText = badgeText
         if badgeText != nil {
             self.leftDisplay = showImages ? .image : .badge
+        }
+
+        if let defaultItem = lineItems.first(where: { $0.type == .default }) {
+            let units = defaultItem.units ?? 1
+            let amount = defaultItem.weight ?? (defaultItem.amount * units)
+            self.quantityText = showQuantity ? "\(amount)" : nil
+            self.unitsText = unitDisplay
+            self.displayLineItemPrice(item.product, defaultItem, lineItems)
+        } else {
+            let formatter = PriceFormatter(SnabbleUI.project)
+            self.priceLabel.text = formatter.format(item.price)
         }
     }
 
     private func displayLineItemPrice(_ product: Product?, _ mainItem: CheckoutInfo.LineItem, _ lineItems: [CheckoutInfo.LineItem]) {
         let formatter = PriceFormatter(SnabbleUI.project)
 
+        var badgeColor: UIColor?
         var badgeText: String?
+        if mainItem.priceModifiers != nil {
+            badgeText = "%"
+        }
+        if let couponItem = lineItems.first(where: { $0.type == .coupon && $0.refersTo == mainItem.id }) {
+            badgeText = "%"
+            let redeemed = couponItem.redeemed == true
+            badgeColor = redeemed ? .systemRed : .systemGray
+        }
+
         if let saleRestricton = product?.saleRestriction {
             switch saleRestricton {
             case .none: ()
             case .age(let age): badgeText = "\(age)"
             case .fsk: badgeText = "FSK"
             }
-        } else if mainItem.priceModifiers != nil {
-            badgeText = "%"
+            badgeColor = .systemRed
         }
-
         self.badgeText = badgeText
-
+        self.badgeColor = badgeColor
         if badgeText != nil {
             self.leftDisplay = showImages ? .image : .badge
         }
