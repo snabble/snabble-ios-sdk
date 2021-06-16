@@ -156,11 +156,15 @@ public final class BuiltinBarcodeDetector: NSObject, BarcodeDetector {
     }
 
     public func toggleTorch() -> Bool {
-        torchOn.toggle()
+        setTorch(!torchOn)
+        return torchOn
+    }
+
+    public func setTorch(_ on: Bool) {
         try? camera?.lockForConfiguration()
         defer { camera?.unlockForConfiguration() }
-        camera?.torchMode = torchOn ? .on : .off
-        return torchOn
+        torchOn = on
+        camera?.torchMode = on ? .on : .off
     }
 
     // MARK: - private implementation

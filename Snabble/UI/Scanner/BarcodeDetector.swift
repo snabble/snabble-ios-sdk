@@ -64,4 +64,7 @@ public protocol BarcodeDetector {
 
     // toggle the torch on/off. Returns the state after toggling
     func toggleTorch() -> Bool
+
+    // turn the torch
+    func setTorch(_ on: Bool)
 }

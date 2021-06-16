@@ -29,8 +29,8 @@ final class ScanningViewController: UIViewController {
     @IBOutlet private var messageSeparatorHeight: NSLayoutConstraint!
     @IBOutlet private var messageTopDistance: NSLayoutConstraint!
 
-    private var scanConfirmationView: ScanConfirmationView!
-    private var scanConfirmationViewBottom: NSLayoutConstraint!
+    private var scanConfirmationView: ScanConfirmationView?
+    private var scanConfirmationViewBottom: NSLayoutConstraint?
     private var tapticFeedback = UINotificationFeedbackGenerator()
 
     private var productProvider: ProductProvider
@@ -98,22 +98,24 @@ final class ScanningViewController: UIViewController {
 
         self.view.backgroundColor = .black
 
-        self.scanConfirmationView = ScanConfirmationView()
+        let scanConfirmationView = ScanConfirmationView()
         if let custom = self.customAppearance {
-            self.scanConfirmationView.setCustomAppearance(custom)
+            scanConfirmationView.setCustomAppearance(custom)
         }
-        self.scanConfirmationView.translatesAutoresizingMaskIntoConstraints = false
-        self.view.addSubview(self.scanConfirmationView)
-        self.scanConfirmationView.leadingAnchor.constraint(equalTo: self.view.leadingAnchor, constant: 16).isActive = true
-        self.scanConfirmationView.trailingAnchor.constraint(equalTo: self.view.trailingAnchor, constant: -16).isActive = true
-        self.scanConfirmationView.centerXAnchor.constraint(equalTo: self.view.centerXAnchor).isActive = true
-        let bottom = self.scanConfirmationView.bottomAnchor.constraint(equalTo: self.view.bottomAnchor)
+        scanConfirmationView.translatesAutoresizingMaskIntoConstraints = false
+        self.view.addSubview(scanConfirmationView)
+        scanConfirmationView.leadingAnchor.constraint(equalTo: self.view.leadingAnchor, constant: 16).isActive = true
+        scanConfirmationView.trailingAnchor.constraint(equalTo: self.view.trailingAnchor, constant: -16).isActive = true
+        scanConfirmationView.centerXAnchor.constraint(equalTo: self.view.centerXAnchor).isActive = true
+        scanConfirmationView.delegate = self
+        scanConfirmationView.isHidden = true
+
+        let bottom = scanConfirmationView.bottomAnchor.constraint(equalTo: self.view.bottomAnchor)
         bottom.isActive = true
         bottom.constant = self.hiddenConfirmationOffset
+
         self.scanConfirmationViewBottom = bottom
-        self.scanConfirmationView.delegate = self
-        self.scanConfirmationViewBottom.constant = self.hiddenConfirmationOffset
-        self.scanConfirmationView.isHidden = true
+        self.scanConfirmationView = scanConfirmationView
 
         self.messageSeparatorHeight.constant = 1.0 / UIScreen.main.scale
 
@@ -152,7 +154,9 @@ final class ScanningViewController: UIViewController {
         self.barcodeDetector.scannerDidLayoutSubviews()
 
         self.view.bringSubviewToFront(self.messageWrapper)
-        self.view.bringSubviewToFront(self.scanConfirmationView)
+        if let confirmationView = self.scanConfirmationView {
+            self.view.bringSubviewToFront(confirmationView)
+        }
     }
 
     override public func viewWillDisappear(_ animated: Bool) {
@@ -193,7 +197,7 @@ final class ScanningViewController: UIViewController {
     // MARK: - scan confirmation views
     private func showConfirmation(for scannedProduct: ScannedProduct, _ scannedCode: String) {
         self.confirmationVisible = true
-        self.scanConfirmationView.present(scannedProduct, scannedCode, cart: self.shoppingCart)
+        self.scanConfirmationView?.present(scannedProduct, scannedCode, cart: self.shoppingCart)
 
         self.displayScanConfirmationView(hidden: false, setBottomOffset: self.productType != .userMustWeigh)
 
@@ -201,9 +205,7 @@ final class ScanningViewController: UIViewController {
     }
 
     private func displayScanConfirmationView(hidden: Bool, setBottomOffset: Bool = true) {
-        guard self.view.window != nil else {
-            return
-        }
+        print(#function, hidden)
 
         if self.pulleyViewController?.supportedDrawerPositions().contains(.collapsed) == true {
             self.pulleyViewController?.setDrawerPosition(position: hidden ? .collapsed : .closed, animated: true)
@@ -211,10 +213,10 @@ final class ScanningViewController: UIViewController {
 
         self.confirmationVisible = !hidden
 
-        self.scanConfirmationView.isHidden = false
+        self.scanConfirmationView?.isHidden = false
 
         if setBottomOffset {
-            self.scanConfirmationViewBottom.constant = hidden ? self.hiddenConfirmationOffset : self.visibleConfirmationOffset
+            self.scanConfirmationViewBottom?.constant = hidden ? self.hiddenConfirmationOffset : self.visibleConfirmationOffset
             UIView.animate(withDuration: 0.25,
                            delay: 0,
                            usingSpringWithDamping: 0.8,
@@ -224,11 +226,11 @@ final class ScanningViewController: UIViewController {
                                 self.view.layoutIfNeeded()
                            },
                            completion: { _ in
-                                self.scanConfirmationView.isHidden = hidden
+                                self.scanConfirmationView?.isHidden = hidden
                            }
             )
         } else {
-            self.scanConfirmationView.isHidden = hidden
+            self.scanConfirmationView?.isHidden = hidden
         }
     }
 }
@@ -753,14 +755,14 @@ extension ScanningViewController {
 
 extension ScanningViewController: KeyboardHandling {
     func keyboardWillShow(_ info: KeyboardInfo) {
-        self.scanConfirmationViewBottom.constant = -(info.keyboardHeight - 48)
+        self.scanConfirmationViewBottom?.constant = -(info.keyboardHeight - 48)
         UIView.animate(withDuration: info.animationDuration) {
             self.view.layoutIfNeeded()
         }
     }
 
     func keyboardWillHide(_ info: KeyboardInfo) {
-        self.scanConfirmationViewBottom.constant = self.confirmationVisible ? self.visibleConfirmationOffset : self.hiddenConfirmationOffset
+        self.scanConfirmationViewBottom?.constant = self.confirmationVisible ? self.visibleConfirmationOffset : self.hiddenConfirmationOffset
         UIView.animate(withDuration: info.animationDuration) {
             self.view.layoutIfNeeded()
         }
@@ -804,5 +806,9 @@ extension ScanningViewController: ReactNativeWrapper {
 
     public func setLookupcode(_ code: String) {
         self.handleScannedCode(code, nil)
+    }
+
+    public func setTorchOn(_ on: Bool) {
+        self.barcodeDetector.setTorch(on)
     }
 }

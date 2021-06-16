@@ -54,6 +54,10 @@ extension ScannerViewController: ReactNativeWrapper {
     public func setLookupcode(_ code: String) {
         scanningViewController.setLookupcode(code)
     }
+
+    public func setTorchOn(_ on: Bool) {
+        scanningViewController.setTorchOn(on)
+    }
 }
 
 // MARK: - empty drawer
