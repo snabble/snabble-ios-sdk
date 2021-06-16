@@ -76,7 +76,7 @@
                                             </constraints>
                                         </imageView>
                                     </subviews>
-                                    <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                    <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                                     <constraints>
                                         <constraint firstItem="MfK-pz-aAL" firstAttribute="centerY" secondItem="uIE-jq-uvT" secondAttribute="centerY" id="0CL-Zh-kxX"/>
                                         <constraint firstItem="D2M-PR-bPh" firstAttribute="centerY" secondItem="aFd-qz-9xh" secondAttribute="centerY" id="Eyv-x5-gIr"/>
@@ -117,6 +117,9 @@
         <image name="SnabbleSDK/payment/payment-sco" width="38" height="24"/>
         <systemColor name="secondaryLabelColor">
             <color red="0.23529411764705882" green="0.23529411764705882" blue="0.2627450980392157" alpha="0.59999999999999998" colorSpace="custom" customColorSpace="sRGB"/>
+        </systemColor>
+        <systemColor name="systemBackgroundColor">
+            <color white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
         </systemColor>
     </resources>
 </document>
