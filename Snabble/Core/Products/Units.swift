@@ -180,6 +180,7 @@ extension Units {
         self.addConversion(from: .kilogram, to: .gram, 1000, 1, &conversions)
         self.addConversion(from: .kilogram, to: .decagram, 100, 1, &conversions)
         self.addConversion(from: .kilogram, to: .hectogram, 10, 1, &conversions)
+        self.addConversion(from: .hectogram, to: .gram, 100, 1, &conversions)
 
         return conversions
     }
