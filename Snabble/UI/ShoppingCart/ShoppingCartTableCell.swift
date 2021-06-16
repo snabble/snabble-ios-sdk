@@ -136,7 +136,9 @@ final class ShoppingCartTableCell: UITableViewCell {
         super.awakeFromNib()
 
         self.minusButton.makeBorderedButton()
+        self.minusButton.backgroundColor = .systemBackground
         self.plusButton.makeBorderedButton()
+        self.plusButton.backgroundColor = .systemBackground
 
         self.priceLabel.font = UIFont.monospacedDigitSystemFont(ofSize: 13, weight: .regular)
 
