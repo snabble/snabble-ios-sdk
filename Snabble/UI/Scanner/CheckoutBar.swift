@@ -21,7 +21,11 @@ final class CheckoutBar: NibView {
     private weak var parentVC: (UIViewController & AnalyticsDelegate)?
     private let shoppingCart: ShoppingCart
     private weak var cartDelegate: ShoppingCartDelegate?
-    weak var paymentMethodNavigationDelegate: PaymentMethodNavigationDelegate?
+    weak var paymentMethodNavigationDelegate: PaymentMethodNavigationDelegate? {
+        didSet {
+            self.methodSelector?.paymentMethodNavigationDelegate = self.paymentMethodNavigationDelegate
+        }
+    }
 
     init(_ parentVC: UIViewController & AnalyticsDelegate, _ shoppingCart: ShoppingCart, cartDelegate: ShoppingCartDelegate?) {
         self.parentVC = parentVC
