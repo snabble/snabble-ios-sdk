@@ -177,6 +177,7 @@ final class ShoppingCartTableCell: UITableViewCell {
 
         self.nameLabel.text = nil
         self.priceLabel.text = nil
+        self.priceLabel.isHidden = false
         self.quantityText = nil
         self.unitsText = nil
         self.badgeText = nil
@@ -255,6 +256,7 @@ final class ShoppingCartTableCell: UITableViewCell {
         let price = defaultItem?.totalPrice ?? item.price
         if price == 0 {
             self.priceLabel.text = ""
+            self.priceLabel.isHidden = true
             self.rightDisplay = .none
         }
     }
