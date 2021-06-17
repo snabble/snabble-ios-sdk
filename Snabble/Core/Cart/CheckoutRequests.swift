@@ -22,6 +22,13 @@ extension ShoppingCart {
 
         let cart = self.createCart()
 
+        // uncomment to show the raw JSON of the cart we're posting
+//        let encoder = JSONEncoder()
+//        encoder.outputFormatting = .prettyPrinted
+//        let data = try? encoder.encode(cart)
+//        let str = String(bytes: data!, encoding: .utf8)!
+//        print(str)
+
         Log.info("create checkout session: \(cart.session)")
 
         let url = project.links.checkoutInfo.href

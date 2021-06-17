@@ -12,8 +12,8 @@ enum CartTableEntry {
     // our main item and any additional line items referring to it
     case cartItem(CartItem, [CheckoutInfo.LineItem])
 
-    // a user-added coupon
-    case coupon(CartCoupon)
+    // a user-added coupon, plus the backend info for it
+    case coupon(CartCoupon, CheckoutInfo.LineItem?)
 
     // a new main item from the backend, plus its additional items.
     case lineItem(CheckoutInfo.LineItem, [CheckoutInfo.LineItem])
@@ -219,8 +219,14 @@ final class ShoppingCartTableViewController: UITableViewController {
         }
 
         for coupon in cart.coupons {
-            let item = CartTableEntry.coupon(coupon)
-            self.items.append(item)
+            if let lineItems = cart.backendCartInfo?.lineItems {
+                let couponItem = lineItems.filter { $0.couponID == coupon.coupon.id }.first
+                let item = CartTableEntry.coupon(coupon, couponItem)
+                self.items.append(item)
+            } else {
+                let item = CartTableEntry.coupon(coupon, nil)
+                self.items.append(item)
+            }
         }
 
         // perform any pending lookups
@@ -395,8 +401,8 @@ extension ShoppingCartTableViewController {
         switch item {
         case .cartItem(let item, let lineItems):
             cell.setCartItem(item, lineItems, row: indexPath.row, delegate: self)
-        case .coupon(let coupon):
-            cell.setCouponItem(coupon, row: indexPath.row, delegate: self)
+        case .coupon(let coupon, let lineItem):
+            cell.setCouponItem(coupon, lineItem, row: indexPath.row, delegate: self)
 
         case .lineItem(let item, let lineItems):
             cell.setLineItem(item, lineItems, row: indexPath.row, delegate: self)
@@ -449,7 +455,7 @@ extension ShoppingCartTableViewController {
 
             self.items.remove(at: row)
             self.shoppingCart.remove(at: row)
-        } else if case .coupon(let coupon) = self.items[row] {
+        } else if case .coupon(let coupon, _) = self.items[row] {
             self.items.remove(at: row)
             self.shoppingCart.removeCoupon(coupon.coupon)
         }

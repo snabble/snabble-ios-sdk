@@ -205,8 +205,6 @@ final class ScanningViewController: UIViewController {
     }
 
     private func displayScanConfirmationView(hidden: Bool, setBottomOffset: Bool = true) {
-        print(#function, hidden)
-
         if self.pulleyViewController?.supportedDrawerPositions().contains(.collapsed) == true {
             self.pulleyViewController?.setDrawerPosition(position: hidden ? .collapsed : .closed, animated: true)
         }

@@ -261,7 +261,7 @@ final class ShoppingCartTableCell: UITableViewCell {
         }
     }
 
-    func setCouponItem(_ coupon: CartCoupon, row: Int, delegate: ShoppingCartTableDelegate) {
+    func setCouponItem(_ coupon: CartCoupon, _ lineItem: CheckoutInfo.LineItem?, row: Int, delegate: ShoppingCartTableDelegate) {
         self.delegate = delegate
         self.quantity = 1
         self.nameLabel.text = coupon.coupon.name
@@ -269,10 +269,16 @@ final class ShoppingCartTableCell: UITableViewCell {
 
         self.quantityText = "1"
 
+        let redeemed = lineItem?.redeemed == true
+
         if showImages {
             let icon = UIImage.fromBundle("SnabbleSDK/icon-percent")
-            self.productImage.image = icon?.recolored(with: SnabbleUI.appearance.accentColor)
+            self.productImage.image = icon?.recolored(with: redeemed ? SnabbleUI.appearance.accentColor : .systemGray)
             self.leftDisplay = .image
+        } else {
+            self.leftDisplay = .badge
+            self.badgeText = "%"
+            self.badgeColor = redeemed ? .systemRed : .systemGray
         }
     }
 
@@ -354,13 +360,18 @@ final class ShoppingCartTableCell: UITableViewCell {
         if let saleRestricton = product?.saleRestriction {
             switch saleRestricton {
             case .none: ()
-            case .age(let age): badgeText = "\(age)"
-            case .fsk: badgeText = "FSK"
+            case .age(let age):
+                badgeText = "\(age)"
+                badgeColor = .systemRed
+            case .fsk:
+                badgeText = "FSK"
+                badgeColor = .systemRed
             }
-            badgeColor = .systemRed
         }
         self.badgeText = badgeText
-        self.badgeColor = badgeColor
+        if let color = badgeColor {
+            self.badgeColor = color
+        }
         if badgeText != nil {
             self.leftDisplay = showImages ? .image : .badge
         }
