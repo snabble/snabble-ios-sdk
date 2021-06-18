@@ -8,7 +8,8 @@ import UIKit
 
 protocol ScanConfirmationViewDelegate: AnalyticsDelegate {
     func closeConfirmation(_ item: CartItem?)
-    func showMessage(_ msg: ScanMessage)
+    func showMessage(_ message: ScanMessage)
+    func showMessages(_ messages: [ScanMessage])
 }
 
 final class ScanConfirmationView: DesignableView {

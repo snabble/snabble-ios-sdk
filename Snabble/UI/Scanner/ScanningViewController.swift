@@ -236,17 +236,28 @@ final class ScanningViewController: UIViewController {
 // MARK: - message display
 
 extension ScanningViewController {
-    func showMessage(_ msg: ScanMessage) {
-        if let attributedString = msg.attributedString {
+    func showMessage(_ message: ScanMessage) {
+        showMessages([message])
+    }
+
+    func showMessages(_ messages: [ScanMessage]) {
+        guard let firstMsg = messages.first else {
+            return
+        }
+
+        let text: String
+        if let attributedString = firstMsg.attributedString {
+            text = firstMsg.text
             self.messageLabel.text = nil
             self.messageLabel.attributedText = attributedString
         } else {
-            self.messageLabel.text = msg.text
+            text = messages.map { $0.text }.joined(separator: "\n\n")
+            self.messageLabel.text = text
         }
         self.messageWrapper.isHidden = false
         self.messageTopDistance.constant = 0
 
-        if let imgUrl = msg.imageUrl, let url = URL(string: imgUrl) {
+        if let imgUrl = messages.first?.imageUrl, let url = URL(string: imgUrl) {
             self.messageImageWidth.constant = 80
             self.loadMessageImage(url)
         } else {
@@ -259,12 +270,12 @@ extension ScanningViewController {
         }
 
         let seconds: TimeInterval?
-        if let dismissTime = msg.dismissTime {
+        if let dismissTime = firstMsg.dismissTime {
             seconds = dismissTime > 0 ? dismissTime : nil
         } else {
-            let factor = msg.imageUrl == nil ? 1.0 : 3.0
-            let minMillis = msg.imageUrl == nil ? 2000 : 4000
-            let millis = min(max(50 * msg.text.count, minMillis), 7000)
+            let factor = firstMsg.imageUrl == nil ? 1.0 : 3.0
+            let minMillis = firstMsg.imageUrl == nil ? 2000 : 4000
+            let millis = min(max(50 * text.count, minMillis), 7000)
             seconds = TimeInterval(millis) / 1000.0 * factor
         }
 
@@ -321,14 +332,19 @@ extension ScanningViewController: ScanConfirmationViewDelegate {
         self.startLastScanTimer()
 
         if let item = item {
+            var messages = [ScanMessage]()
             if let msg = self.ageCheckRequired(item) {
-                self.showMessage(msg)
-            } else if let msg = self.delegate.scanMessage(for: SnabbleUI.project, self.shop, item.product) {
-                self.showMessage(msg)
-            } else if item.manualCoupon != nil {
-                let msg = ScanMessage("Snabble.Scanner.manualCouponAdded".localized())
-                self.showMessage(msg)
+                messages.append(msg)
             }
+            if let msg = self.delegate.scanMessage(for: SnabbleUI.project, self.shop, item.product) {
+                messages.append(msg)
+            }
+            if item.manualCoupon != nil {
+                let msg = ScanMessage("Snabble.Scanner.manualCouponAdded".localized())
+                messages.append(msg)
+            }
+
+            self.showMessages(messages)
 
             if let drawer = self.pulleyViewController?.drawerContentViewController as? ScannerDrawerViewController {
                 drawer.markScannedProduct(item.product)
