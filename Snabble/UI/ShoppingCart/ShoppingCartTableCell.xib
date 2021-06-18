@@ -245,8 +245,8 @@
                     <constraint firstItem="kFf-O6-0of" firstAttribute="top" secondItem="H2p-sc-9uM" secondAttribute="top" id="1UF-F3-knx"/>
                     <constraint firstAttribute="bottom" secondItem="kFf-O6-0of" secondAttribute="bottom" id="AkM-Ju-qrF"/>
                     <constraint firstAttribute="bottom" secondItem="1UM-Am-nAc" secondAttribute="bottom" id="FUa-q9-iBI"/>
-                    <constraint firstItem="zdM-tF-bDx" firstAttribute="top" secondItem="H2p-sc-9uM" secondAttribute="top" constant="8" id="Fqf-8Q-d4C"/>
-                    <constraint firstAttribute="bottom" secondItem="zdM-tF-bDx" secondAttribute="bottom" constant="8" id="OZ4-lr-Apg"/>
+                    <constraint firstItem="zdM-tF-bDx" firstAttribute="top" secondItem="H2p-sc-9uM" secondAttribute="top" priority="750" constant="8" id="Fqf-8Q-d4C"/>
+                    <constraint firstAttribute="bottom" secondItem="zdM-tF-bDx" secondAttribute="bottom" priority="750" constant="8" id="OZ4-lr-Apg"/>
                     <constraint firstItem="1UM-Am-nAc" firstAttribute="top" secondItem="H2p-sc-9uM" secondAttribute="top" id="YOd-un-Yfs"/>
                     <constraint firstAttribute="trailing" secondItem="1UM-Am-nAc" secondAttribute="trailing" constant="12" id="rkF-Qq-GWC"/>
                     <constraint firstItem="zdM-tF-bDx" firstAttribute="leading" secondItem="kFf-O6-0of" secondAttribute="trailing" id="uLK-EB-zzG"/>
