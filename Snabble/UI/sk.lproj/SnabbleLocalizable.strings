@@ -39,7 +39,7 @@
 
 "Snabble.CC.3dsecureHint.retailer" = "Za účelom overenia kreditnej karty budeš po zadaní údajov presmerovaný/presmerovaná na tvoju banku. Tam budeš požiadaný/-á o súhlas s platbou 1,00 € pre %@. Po súhlase ti bude suma okamžite opäť pripísaná na účet.";
 
-"Snabble.CC.3dsecureHint.retailerWithPrice" = "Za účelom overenia kreditnej karty budeš po zadaní údajov presmerovaný/presmerovaná na tvoju banku. Tam budeš požiadaný/-á o súhlas s platbou %@ pre %@. Po súhlase ti bude suma okamžite opäť pripísaná na účet.";
+"Snabble.CC.3dsecureHint.retailerWithPrice" = "Za účelom overenia kreditnej karty budeš po zadaní údajov presmerovaný/presmerovaná na tvoju banku. Tam budeš požiadaný/-á o súhlas so zaplatením %@ pre %@. Po súhlase ti bude suma okamžite opäť pripísaná na účet.";
 
 "Snabble.CC.cardNumber" = "Číslo karty";
 
@@ -283,7 +283,7 @@
 
 "Snabble.Scanner.duplicateDepositScanned" = "Každý doklad o zálohe môže byť naskenovaný len raz.";
 
-"Snabble.Scanner.enterBarcode" = "Zadať čiarový kód";
+"Snabble.Scanner.enterBarcode" = "Zadanie kódu";
 
 "Snabble.Scanner.enterCodeButton" = "Zadať\nčiarový kód";
 
@@ -356,7 +356,7 @@
 
 "Snabble.Shoppingcart.deposit" = "Záloha";
 
-"Snabble.Shoppingcart.discounts" = "Zľavy celkom";
+"Snabble.Shoppingcart.discounts" = "Rabat";
 
 "Snabble.Shoppingcart.emptyState.buttonTitle" = "Skenovať teraz";
 
@@ -372,7 +372,7 @@
 
 "Snabble.Shoppingcart.howToPay" = "Ako chceš zaplatiť?";
 
-"Snabble.Shoppingcart.includesDeposit" = "incl. deposit";
+"Snabble.Shoppingcart.includesDeposit" = "vrátane zálohy";
 
 "Snabble.Shoppingcart.noPaymentData" = "Údaje ešte nie sú uložené";
 

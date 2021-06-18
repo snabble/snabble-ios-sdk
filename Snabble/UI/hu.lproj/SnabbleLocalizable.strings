@@ -39,7 +39,7 @@
 
 "Snabble.CC.3dsecureHint.retailer" = "A hitelkártyád azonosítása érdekében az adatok bevitelét követően átlépsz a bankodhoz. Ott a rendszer arra kér, hogy 1,00 €-t fizess a %@ részére. Hozzájárulásodat követően ezt az összeget azonnal jóváírjuk.";
 
-"Snabble.CC.3dsecureHint.retailerWithPrice" = "A hitelkártyád azonosítása érdekében az adatok bevitelét követően átlépsz a bankodhoz. Ott a rendszer arra kér, hogy %@-t fizess a %@ részére. Hozzájárulásodat követően ezt az összeget azonnal jóváírjuk.";
+"Snabble.CC.3dsecureHint.retailerWithPrice" = "A hitelkártyád azonosítása érdekében az adatok bevitelét követően átlépsz a bankodhoz. Ott a rendszer arra kér, hogy fizess %@-t a %@ részére. Hozzájárulásodat követően ezt az összeget azonnal jóváírjuk.";
 
 "Snabble.CC.cardNumber" = "Kártyaszám";
 
@@ -283,7 +283,7 @@
 
 "Snabble.Scanner.duplicateDepositScanned" = "Az egyes betétdíjblokkok csak egyszer olvashatók be.";
 
-"Snabble.Scanner.enterBarcode" = "Vonalkód megadása";
+"Snabble.Scanner.enterBarcode" = "Kód megadása";
 
 "Snabble.Scanner.enterCodeButton" = "Vonalkód\nmegadása";
 
@@ -356,7 +356,7 @@
 
 "Snabble.Shoppingcart.deposit" = "Betétdíj";
 
-"Snabble.Shoppingcart.discounts" = "Összes árengedmény";
+"Snabble.Shoppingcart.discounts" = "Engedmény";
 
 "Snabble.Shoppingcart.emptyState.buttonTitle" = "Termék szkennelése";
 
@@ -372,7 +372,7 @@
 
 "Snabble.Shoppingcart.howToPay" = "Hogyan szeretnél fizetni?";
 
-"Snabble.Shoppingcart.includesDeposit" = "incl. deposit";
+"Snabble.Shoppingcart.includesDeposit" = "betétdíjjal együtt";
 
 "Snabble.Shoppingcart.noPaymentData" = "Még nincs beállítva";
 
