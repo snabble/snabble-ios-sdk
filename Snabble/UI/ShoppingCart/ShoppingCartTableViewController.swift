@@ -255,12 +255,20 @@ final class ShoppingCartTableViewController: UITableViewController {
             }
         }
 
-        // find all discounts
+        // add all discounts and priceModifiers for the "total discounts" entry
         if let lineItems = cart.backendCartInfo?.lineItems {
+            var totalDiscounts = 0
             let discounts = lineItems.filter { $0.type == .discount }
-            if !discounts.isEmpty {
-                let sum = discounts.reduce(0) { $0 + $1.amount * ($1.price ?? 0) }
-                let item = CartTableEntry.discount(sum)
+            totalDiscounts = discounts.reduce(0) { $0 + $1.amount * ($1.price ?? 0) }
+
+            for lineItem in lineItems {
+                guard let modifiers = lineItem.priceModifiers else { continue }
+                let modSum = modifiers.reduce(0, { $0 + $1.price })
+                totalDiscounts += modSum * lineItem.amount
+            }
+
+            if totalDiscounts != 0 {
+                let item = CartTableEntry.discount(totalDiscounts)
                 self.items.append(item)
             }
         }
