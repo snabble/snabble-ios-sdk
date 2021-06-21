@@ -41,8 +41,10 @@ public final class ApplePayCheckoutViewController: BaseCheckoutViewController {
         self.currentProcess = process
 
         if self.authController == nil, !checksPending(in: process), let applePayAuth = createApplePayProcessor(for: process) {
-            self.authController = applePayAuth
-            self.present(applePayAuth, animated: true)
+            if process.supervisorApproval == true {
+                self.authController = applePayAuth
+                self.present(applePayAuth, animated: true)
+            }
         }
     }
 
