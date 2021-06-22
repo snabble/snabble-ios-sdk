@@ -247,7 +247,7 @@ extension BuiltinBarcodeDetector {
         self.screenTap = UITapGestureRecognizer(target: self, action: #selector(screenTapped(_:)))
         self.decorationOverlay?.addGestureRecognizer(self.screenTap!)
 
-        self.messageDelegate?.showMessage("Snabble.Scanner.batterySaverHint".snabbleLocalized()) {
+        self.messageDelegate?.showMessage("Snabble.Scanner.batterySaverHint".localized()) {
             self.resumeScanning()
         }
     }

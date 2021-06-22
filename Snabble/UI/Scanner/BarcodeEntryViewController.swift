@@ -23,8 +23,12 @@ public final class BarcodeEntryViewController: UIViewController {
     private var emptyState: EmptyStateView!
     private var showSku = false
 
-    public init(_ productProvider: ProductProvider, _ shopId: Identifier<Shop>, delegate: AnalyticsDelegate, showSku: Bool = false, completion: @escaping (String, ScanFormat?, String?) -> Void ) {
-
+    public init(_ productProvider: ProductProvider,
+                _ shopId: Identifier<Shop>,
+                delegate: AnalyticsDelegate,
+                showSku: Bool = false,
+                completion: @escaping (String, ScanFormat?, String?) -> Void
+    ) {
         self.productProvider = productProvider
         self.shopId = shopId
         self.completion = completion

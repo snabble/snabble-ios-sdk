@@ -43,15 +43,15 @@ public final class PaymentMethodStartCheck {
             presenter.showOverlay(with: view)
 
         case .visa, .mastercard, .americanExpress:
-            self.requestBiometricAuthentication(on: presenter, reason: "Snabble.CreditCard.payNow".snabbleLocalized(), completion)
+            self.requestBiometricAuthentication(on: presenter, reason: "Snabble.CreditCard.payNow".localized(), completion)
 
         case .paydirektOneKlick:
-            self.requestBiometricAuthentication(on: presenter, reason: "Snabble.Paydirekt.payNow".snabbleLocalized(), completion)
+            self.requestBiometricAuthentication(on: presenter, reason: "Snabble.Paydirekt.payNow".localized(), completion)
 
         case .twint:
-            self.requestBiometricAuthentication(on: presenter, reason: "Snabble.TWINT.payNow".snabbleLocalized(), completion)
+            self.requestBiometricAuthentication(on: presenter, reason: "Snabble.TWINT.payNow".localized(), completion)
         case .postFinanceCard:
-            self.requestBiometricAuthentication(on: presenter, reason: "Snabble.PostFinanceCard.payNow".snabbleLocalized(), completion)
+            self.requestBiometricAuthentication(on: presenter, reason: "Snabble.PostFinanceCard.payNow".localized(), completion)
 
         case .qrCodePOS, .qrCodeOffline, .externalBilling, .gatekeeperTerminal, .customerCardPOS, .applePay:
             completion(true)
@@ -73,12 +73,12 @@ public final class PaymentMethodStartCheck {
         }
 
         presenter.dismissOverlay()
-        self.requestBiometricAuthentication(on: presenter, reason: "Snabble.SEPA.payNow".snabbleLocalized(), completionHandler)
+        self.requestBiometricAuthentication(on: presenter, reason: "Snabble.SEPA.payNow".localized(), completionHandler)
     }
 
     @objc private func sepaShowDetailsTapped(_ gestureRecognizer: UITapGestureRecognizer) {
         let msg = SnabbleUI.project.messages?.sepaMandate ?? ""
-        let alert = UIAlertController(title: "Snabble.SEPA.mandate".snabbleLocalized(), message: msg, preferredStyle: .alert)
+        let alert = UIAlertController(title: "Snabble.SEPA.mandate".localized(), message: msg, preferredStyle: .alert)
         alert.addAction(UIAlertAction(title: "Snabble.OK".localized(), style: .default, handler: nil))
         presenter?.present(alert, animated: true)
     }
