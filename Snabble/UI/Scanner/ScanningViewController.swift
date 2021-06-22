@@ -441,6 +441,7 @@ extension ScanningViewController {
                 NotificationCenter.default.post(name: .snabbleCartUpdated, object: self)
                 let msg = String(format: "Snabble.Scanner.couponAdded".localized(), coupon.name)
                 self.showMessage(ScanMessage(msg))
+                self.barcodeDetector.resumeScanning()
                 return
             }
 
