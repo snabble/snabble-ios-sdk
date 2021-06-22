@@ -10,9 +10,8 @@
 
 @class DTAliasPaymentAuthorizationRequest;
 @class DTAliasRequest;
+@class DTAliasRequestResponse;
 @class DTAuthorizationRequestResponse;
-@class DTCard;
-@class DTCardTokenRequestResponse;
 @class DTPaymentAuthorizationRequest;
 @class DTPaymentOptions;
 @class DTPaymentRequest;
@@ -52,7 +51,7 @@ typedef enum {
 - (instancetype)initWithMobileToken:(NSString *)mobileToken options:(DTPaymentOptions *)paymentOptions urls:(DTUrls *)urls;
 
 - (void)requestInitialTransaction:(NSString *)mobileToken idempotencyKey:(NSString *)idempotencyKey completion:(void (^)(NSData *, NSError *))completion;
-- (void)requestCardTokenForMerchantId:(NSString *)merchantId card:(DTCard *)card completion:(void (^)(DTCardTokenRequestResponse *, NSError *))completion;
+- (void)requestAliasForMerchantId:(NSString *)merchantId cardNo:(NSString *)cardNo completion:(void (^)(DTAliasRequestResponse *, NSError *))completion;
 - (void)requestStatusForMerchantId:(NSString *)merchantId alias:(NSString *)alias currencyCode:(NSString *)currencyCode isAliasRequest:(BOOL)isAliasRequest completion:(void(^)(DTStatusRequestResponse *, NSError *))completion;
 - (void)requestTokenizationWithJSONBody:(NSData *)body completion:(void (^)(NSData *, NSError *))completion;
 - (void)authorizeAliasPaymentRequest:(DTAliasPaymentAuthorizationRequest *)authorizationRequest completion:(void (^)(DTAuthorizationRequestResponse *, NSError *))completion;

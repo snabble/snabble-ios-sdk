@@ -5,7 +5,6 @@ import AVFoundation
 import Combine
 @_exported import Datatrans
 import Foundation
-import PPRiskMagnes
 import PassKit
 import SafariServices
 import Swift
