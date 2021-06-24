@@ -12,11 +12,20 @@ public final class ScannerViewController: PulleyViewController {
     private let drawerViewController: UIViewController
     private let initialPosition: PulleyPosition
 
-    public init(_ cart: ShoppingCart, _ shop: Shop, _ detector: BarcodeDetector, scannerDelegate: ScannerDelegate, cartDelegate: ShoppingCartDelegate?) {
+    public init(_ cart: ShoppingCart,
+                _ shop: Shop,
+                _ detector: BarcodeDetector,
+                scannerDelegate: ScannerDelegate,
+                cartDelegate: ShoppingCartDelegate?,
+                shoppingListDelegate: ShoppingListDelegate?
+    ) {
         scanningViewController = ScanningViewController(cart, shop, detector, delegate: scannerDelegate)
 
         if let cartDelegate = cartDelegate {
-            drawerViewController = ScannerDrawerViewController(SnabbleUI.project.id, shoppingCart: cart, cartDelegate: cartDelegate)
+            drawerViewController = ScannerDrawerViewController(SnabbleUI.project.id,
+                                                               shoppingCart: cart,
+                                                               cartDelegate: cartDelegate,
+                                                               shoppingListDelegate: shoppingListDelegate)
             initialPosition = .collapsed
         } else {
             drawerViewController = EmptyDrawerViewController()

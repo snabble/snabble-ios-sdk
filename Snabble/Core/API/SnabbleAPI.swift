@@ -21,6 +21,7 @@ public struct SnabbleAPIConfig {
     public let appVersion: String?
 
     /// set this to true if you want to use the `productsByName` method of `ProductDB`
+    /// this flag is ignored for projects that have a `shoppingListDB` link
     public var useFTS = false
 
     /// set to false to disable certificate pinning for requests to the snabble API server

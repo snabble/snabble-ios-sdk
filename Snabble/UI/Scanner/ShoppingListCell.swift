@@ -66,19 +66,16 @@ final class ShoppingListCell: UITableViewCell {
 
     func setListItem(_ item: ShoppingListItem, _ list: ShoppingList) {
         self.item = item
-        let name: String
         let quantity: String?
 
         imageWidth.constant = list.hasImages ? 42 : 10
 
         switch item.entry {
-        case .custom(let text):
-            name = text
-            quantity = nil
         case .product(let product):
-            name = product.name
             quantity = "\(item.quantity)"
             loadImage(url: product.imageUrl)
+        case .tag, .custom:
+            quantity = nil
         }
 
         quantityLabel.text = quantity
@@ -92,7 +89,7 @@ final class ShoppingListCell: UITableViewCell {
         let strikeStyle: NSUnderlineStyle = item.checked ? .single : []
         let attributes = [NSAttributedString.Key.strikethroughStyle: strikeStyle.rawValue]
 
-        nameLabel.attributedText = NSAttributedString(string: name, attributes: attributes)
+        nameLabel.attributedText = NSAttributedString(string: item.name, attributes: attributes)
     }
 }
 

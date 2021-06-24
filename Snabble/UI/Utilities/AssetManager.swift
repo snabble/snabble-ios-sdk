@@ -441,6 +441,8 @@ private final class DownloadDelegate: NSObject, URLSessionDownloadDelegate {
         }
 
         do {
+            cacheResponse(session, downloadTask, location)
+
             if self.localName.contains("/") {
                 // make sure any reqired subdirectories exist
                 let dirname = (self.localName as NSString).deletingLastPathComponent
@@ -490,5 +492,19 @@ private final class DownloadDelegate: NSObject, URLSessionDownloadDelegate {
         self.completion(nil)
         AssetManager.shared.rescheduleDownloads()
         session.invalidateAndCancel()
+    }
+
+    private func cacheResponse(_ session: URLSession, _ task: URLSessionDownloadTask, _ location: URL) {
+        guard
+            let response = task.response,
+            let request = task.currentRequest,
+            let cache = session.configuration.urlCache,
+            cache.cachedResponse(for: request) == nil,
+            let data = try? Data(contentsOf: location)
+        else {
+            return
+        }
+
+        cache.storeCachedResponse(CachedURLResponse(response: response, data: data), for: request)
     }
 }

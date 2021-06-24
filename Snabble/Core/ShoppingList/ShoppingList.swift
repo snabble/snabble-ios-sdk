@@ -8,7 +8,7 @@ import Foundation
 
 /// a ShoppingList is a collection of ShoppingListItem objects
 public final class ShoppingList: Codable {
-    private var items = [ShoppingListItem]()
+    private(set) public var items = [ShoppingListItem]()
     public let projectId: Identifier<Project>
 
     private let directory: String
@@ -55,11 +55,13 @@ public final class ShoppingList: Codable {
 
     public func append(_ item: ShoppingListItem) {
         items.append(item)
+        self.sort()
         self.save()
     }
 
     public func append(contentsOf items: [ShoppingListItem]) {
         self.items.append(contentsOf: items)
+        self.sort()
         self.save()
     }
 
@@ -85,6 +87,30 @@ public final class ShoppingList: Codable {
         self.save()
     }
 
+    public func sort() {
+        // sorting rules:
+        //   tags come first, sorted by their `order`, then name
+        //   products come second, sorted by their `order`, then name
+        //   text entrie are last, sorted by name
+        // swiftlint:disable identifier_name
+        items.sort { item1, item2 in
+            switch (item1.entry, item2.entry) {
+            case (.tag(let t1), .tag(let t2)):
+                return t1.order == t2.order ? t1.name < t2.name : t1.order < t2.order
+            case (.tag, _): return true
+            case (_, .tag): return false
+
+            case (.product(let p1), .product(let p2)):
+                return p1.order == p2.order ? p1.name < p2.name : p1.order < p2.order
+            case (.product, .custom): return true
+            case (.custom, .product): return false
+
+            case (.custom(let c1), .custom(let c2)): return c1 < c2
+            }
+        }
+        // swiftlint:enable identifier_name
+    }
+
     public func toggleChecked(at index: Int) -> Bool {
         items[index].checked.toggle()
         self.save()
@@ -103,6 +129,7 @@ public final class ShoppingList: Codable {
         } else {
             item.quantity = 1
             items.append(item)
+            self.sort()
         }
 
         self.save()
@@ -120,6 +147,7 @@ public final class ShoppingList: Codable {
             item.quantity -= 1
             if item.quantity == 0 {
                 self.removeItem(at: index)
+                self.sort()
             }
             return item.quantity
         }
@@ -133,11 +161,6 @@ public final class ShoppingList: Codable {
 
     public func findIndex(for item: ShoppingListItem) -> Int? {
         self.items.firstIndex { $0 == item }
-    }
-
-    private func removeItem(sku: String) {
-        items = items.filter { $0.product?.sku != sku }
-        self.save()
     }
 }
 
