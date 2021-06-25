@@ -28,6 +28,10 @@ pod 'Snabble/Core'
 
 instead. As with all cocoapods written in Swift, make sure you have `use_frameworks!` in your `Podfile`.
 
+__NOTE__: CocoaPods issue [#10204](https://github.com/CocoaPods/CocoaPods/issues/10204) currently keeps us from publishing the SDK to the central specs repository. For the time being, please use `pod 'Snabble', :git => 'https://github.com/snabble/iOS-SDK', :tag => '1.7.0'` to add the SDK to your app.
+
+### Optional components
+
 In order to use the `twint` and `postFinanceCard` payment methods, you will also need to include `pod 'Snabble/Datatrans'` in your app's `Podfile`. During the app's initialization phase you will then need to call `DatatransFactory.initialize()` to add make these methods available.
 
 ### Carthage 
@@ -53,6 +57,11 @@ Build the example project, as described below, and copy the following frameworks
 * TrustKit.framework
 * Zip.framework
 * Snabble.bundle
+* SDCAlertView.framework
+* ColorCompatibility.framework
+* Capable.framework
+* DeviceKit.framework
+* Pulley.framework
 
 ## Versioning
 
