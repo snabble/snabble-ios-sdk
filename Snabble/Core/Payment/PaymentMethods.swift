@@ -52,7 +52,7 @@ public enum RawPaymentMethod: String, CaseIterable, Decodable {
     }
 
     /// true if this method is shown/edited on the PaymentMethod[Add|List]ViewControllers
-    var editable: Bool {
+    public var editable: Bool {
         switch self {
         case .deDirectDebit, .externalBilling, .paydirektOneKlick,
              .creditCardVisa, .creditCardMastercard, .creditCardAmericanExpress,

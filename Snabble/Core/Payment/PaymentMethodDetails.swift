@@ -219,7 +219,11 @@ public struct PaymentMethodDetail: Equatable {
         switch self.methodData {
         case .creditcard(let creditCardData):
             return creditCardData.projectId
-        default:
+        case .datatransAlias(let datatransData):
+            return datatransData.projectId
+        case .datatransCardAlias(let datatransData):
+            return datatransData.projectId
+        case .sepa, .tegutEmployeeCard, .paydirektAuthorization:
             return nil
         }
     }
@@ -242,8 +246,7 @@ extension Notification.Name {
     /// new payment method.
     /// `userInfo["detail"]` contains a `PaymentMethodDetail` instance
     public static let snabblePaymentMethodAdded = Notification.Name("snabblePaymentMethodAdded")
-
-    static let snabblePaymentMethodDeleted = Notification.Name("snabblePaymentMethodDeleted")
+    public static let snabblePaymentMethodDeleted = Notification.Name("snabblePaymentMethodDeleted")
 }
 
 struct PaymentMethodDetailStorage {
