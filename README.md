@@ -28,7 +28,7 @@ pod 'Snabble/Core'
 
 instead. As with all cocoapods written in Swift, make sure you have `use_frameworks!` in your `Podfile`.
 
-__NOTE__: CocoaPods issue [#10204](https://github.com/CocoaPods/CocoaPods/issues/10204) currently keeps us from publishing the SDK to the central specs repository. For the time being, please use `pod 'Snabble', :git => 'https://github.com/snabble/iOS-SDK', :tag => '1.17.0'` to add the SDK to your app.
+__NOTE__: CocoaPods issue [#10204](https://github.com/CocoaPods/CocoaPods/issues/10204) currently keeps us from publishing the SDK to the central specs repository. For the time being, please use `pod 'Snabble', :git => 'https://github.com/snabble/iOS-SDK', :tag => '0.17.0'` to add the SDK to your app.
 
 ### Optional components
 
