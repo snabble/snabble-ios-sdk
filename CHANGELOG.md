@@ -1,5 +1,9 @@
 ## snabble iOS SDK Changelog
 
+# v0.17.1
+- Updates the Datatrans SDK to v1.4
+- Fixes a bug where completion handler for loading metadata could be called twice
+
 # v0.17.0
 
 - The SDK requires Xcode 12.5 or later to compile
