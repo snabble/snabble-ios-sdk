@@ -177,10 +177,8 @@ public extension Metadata {
                         self.saveLastMetadata(raw, hash)
                     }
                 case .failure:
-                    if let metadata = self.readLastMetadata(url, hash) {
-                        completion(metadata)
-                    }
-                    completion(nil)
+                    let metadata = self.readLastMetadata(url, hash)
+                    completion(metadata)
                 }
             }
         }
