@@ -106,6 +106,7 @@ public struct QRCodeConfig: Decodable {
 
     // optional EAN codes used when splitting into multiple QR codes
     let finalCode: String?          // last code of the last block
+    let manualDiscountFinalCode: String?  // last code of the last block if there are any manual discounts
     let nextCode: String?           // marker code to indicate "more QR codes"
     let nextCodeWithCheck: String?  // marker code to indicate "more QR codes" + age check required
 
@@ -116,7 +117,7 @@ public struct QRCodeConfig: Decodable {
     static let qrCodeMax = 2953
 
     var effectiveMaxCodes: Int {
-        let leaveRoom = self.nextCode != nil || self.nextCodeWithCheck != nil || self.finalCode != nil
+        let leaveRoom = self.nextCode != nil || self.nextCodeWithCheck != nil || self.finalCode != nil || self.manualDiscountFinalCode != nil
         return self.maxCodes - (leaveRoom ? 1 : 0)
     }
 
@@ -124,6 +125,7 @@ public struct QRCodeConfig: Decodable {
         case format
         case prefix, separator, suffix, maxCodes, maxChars
         case finalCode, nextCode, nextCodeWithCheck
+        case manualDiscountFinalCode
     }
 
     public init(from decoder: Decoder) throws {
@@ -143,6 +145,7 @@ public struct QRCodeConfig: Decodable {
         }
 
         self.finalCode = try container.decodeIfPresent(String.self, forKey: .finalCode)
+        self.manualDiscountFinalCode = try container.decodeIfPresent(String.self, forKey: .manualDiscountFinalCode)
         self.nextCode = try container.decodeIfPresent(String.self, forKey: .nextCode)
         self.nextCodeWithCheck = try container.decodeIfPresent(String.self, forKey: .nextCodeWithCheck)
     }
@@ -154,6 +157,7 @@ public struct QRCodeConfig: Decodable {
          maxCodes: Int = 100,
          maxChars: Int? = nil,
          finalCode: String? = nil,
+         manualDiscountFinalCode: String? = nil,
          nextCode: String? = nil,
          nextCodeWithCheck: String? = nil
     ) {
@@ -168,6 +172,7 @@ public struct QRCodeConfig: Decodable {
             self.maxChars = nil
         }
         self.finalCode = finalCode
+        self.manualDiscountFinalCode = manualDiscountFinalCode
         self.nextCode = nextCode
         self.nextCodeWithCheck = nextCodeWithCheck
     }

@@ -53,6 +53,12 @@ public struct QRCodeGenerator {
 
         // patch the last block to have the `finalCode` code
         blocks[blocks.count - 1].endCode = self.config.finalCode
+
+        // if there are any manual discounts, use the `manualDiscountFinalCode` instead
+        let manualDiscountUsed = self.cart.items.firstIndex { $0.manualCoupon != nil } != nil
+        if manualDiscountUsed, let manualDiscountFinalCode = self.config.manualDiscountFinalCode {
+            blocks[blocks.count - 1].endCode = manualDiscountFinalCode
+        }
         return self.balanceBlocks(blocks)
     }
 
