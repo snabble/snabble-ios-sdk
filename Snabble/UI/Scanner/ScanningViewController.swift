@@ -96,7 +96,7 @@ final class ScanningViewController: UIViewController {
     override public func viewDidLoad() {
         super.viewDidLoad()
 
-        self.view.backgroundColor = .black
+        self.view.backgroundColor = .darkGray
 
         let scanConfirmationView = ScanConfirmationView()
         if let custom = self.customAppearance {
@@ -789,6 +789,7 @@ extension ScanningViewController: CustomizableAppearance {
     public func setCustomAppearance(_ appearance: CustomAppearance) {
         self.customAppearance = appearance
 
+        self.scanConfirmationView?.setCustomAppearance(appearance)
         SnabbleUI.getAsset(.storeLogoSmall) { img in
             if let image = img ?? appearance.titleIcon {
                 let imgView = UIImageView(image: image)
