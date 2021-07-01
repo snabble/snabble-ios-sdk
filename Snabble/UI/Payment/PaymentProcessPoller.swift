@@ -11,14 +11,6 @@ public enum PaymentEvent {
     case paymentSuccess
 
     case receipt
-
-    var abortOnFailure: Bool {
-        switch self {
-        case .approval: return true
-        case .paymentSuccess: return true
-        case .receipt: return false
-        }
-    }
 }
 
 public final class PaymentProcessPoller {
@@ -70,53 +62,57 @@ public final class PaymentProcessPoller {
 
     private func checkEvents(_ events: [PaymentEvent], _ completion: @escaping ([PaymentEvent: Bool]) -> Void ) {
         self.process.update(self.project, taskCreated: { self.task = $0 }, completion: { result in
-            guard case Result.success(let process) = result.result else {
-                return
-            }
-
-            if let candidateLink = process.paymentResult?["originCandidateLink"] as? String {
-                OriginPoller.shared.startPolling(self.project, candidateLink)
-            }
-
-            if let failureCause = process.paymentResult?["failureCause"] as? String {
-                self.failureCause = FailureCause(rawValue: failureCause)
-            }
-
-            self.updatedProcess = process
-            self.rawJson = result.rawJson
-
-            var seenNow = [PaymentEvent: Bool]()
-            var abort = false
-            for event in self.waitingFor {
-                if self.alreadySeen.contains(event) {
-                    continue
+            switch result.result {
+            case .failure:
+                if result.statusCode > 0 {
+                    self.timer?.invalidate()
                 }
-
-                var result: (event: PaymentEvent, ok: Bool)?
-                switch event {
-                case .approval: result = self.checkApproval(process)
-                case .paymentSuccess: result = self.checkPayment(process)
-                case .receipt: result = self.checkReceipt(process)
-                }
-
-                if let result = result {
-                    seenNow[result.event] = result.ok
-                    self.alreadySeen.append(result.event)
-                    if result.event.abortOnFailure {
-                        abort = abort || !result.ok
-                    }
-                }
-            }
-
-            if !seenNow.isEmpty {
-                completion(seenNow)
-            }
-
-            if abort || self.alreadySeen.count == self.waitingFor.count {
-                self.timer?.invalidate()
-                self.timer = nil
+            case .success(let process):
+                self.updatedProcess = process
+                self.rawJson = result.rawJson
+                self.checkProcess(process, completion)
             }
         })
+    }
+
+    private func checkProcess(_ process: CheckoutProcess, _ completion: @escaping ([PaymentEvent: Bool]) -> Void ) {
+        if let candidateLink = process.paymentResult?["originCandidateLink"] as? String {
+            OriginPoller.shared.startPolling(self.project, candidateLink)
+        }
+
+        if let failureCause = process.paymentResult?["failureCause"] as? String {
+            self.failureCause = FailureCause(rawValue: failureCause)
+        }
+
+        var seenNow = [PaymentEvent: Bool]()
+        var abort = false
+        for event in self.waitingFor {
+            if self.alreadySeen.contains(event) {
+                continue
+            }
+
+            var result: (event: PaymentEvent, ok: Bool)?
+            switch event {
+            case .approval: result = self.checkApproval(process)
+            case .paymentSuccess: result = self.checkPayment(process)
+            case .receipt: result = self.checkReceipt(process)
+            }
+
+            if let result = result {
+                seenNow[result.event] = result.ok
+                self.alreadySeen.append(result.event)
+                abort = abort || !result.ok
+            }
+        }
+
+        if !seenNow.isEmpty {
+            completion(seenNow)
+        }
+
+        if abort || self.alreadySeen.count == self.waitingFor.count {
+            self.timer?.invalidate()
+            self.timer = nil
+        }
     }
 
     private func checkApproval(_ process: CheckoutProcess) -> (PaymentEvent, Bool)? {
@@ -144,11 +140,16 @@ public final class PaymentProcessPoller {
     }
 
     private func checkReceipt(_ process: CheckoutProcess) -> (PaymentEvent, Bool)? {
-        guard process.links.receipt != nil else {
-            return nil
+        if process.links.receipt != nil {
+            return (.receipt, true)
         }
 
-        return (.receipt, true)
+        let paymentFinished = process.paymentState == .failed || process.paymentState == .successful
+        if paymentFinished && process.fulfillmentsDone() {
+            return (.receipt, false)
+        }
+
+        return nil
     }
 
 }
