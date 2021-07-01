@@ -23,7 +23,7 @@ public struct ProjectLinks: Decodable {
     public let telecashVaultItems: Link?
     public let entryToken: Link?
     public let datatransTokenization: Link?
-    public let customerLoyaltyInfoByUsername: Link?
+    public let customerLoyaltyInfo: Link?
 
     public static let empty = ProjectLinks()
 
@@ -39,7 +39,7 @@ public struct ProjectLinks: Decodable {
         self.telecashVaultItems = nil
         self.entryToken = nil
         self.datatransTokenization = nil
-        self.customerLoyaltyInfoByUsername = nil
+        self.customerLoyaltyInfo = nil
     }
 
     init(appdb: Link, appEvents: Link, checkoutInfo: Link, tokens: Link, resolvedProductBySku: Link, resolvedProductLookUp: Link) {
@@ -54,7 +54,7 @@ public struct ProjectLinks: Decodable {
         self.telecashVaultItems = nil
         self.entryToken = nil
         self.datatransTokenization = nil
-        self.customerLoyaltyInfoByUsername = nil
+        self.customerLoyaltyInfo = nil
     }
 }
 
