@@ -100,9 +100,9 @@ public final class ApplePayCheckoutViewController: BaseCheckoutViewController {
 
         let project = SnabbleUI.project
 
-        project.request(.post, authorizeUrl, timeout: 2) { request in
+        project.request(.post, authorizeUrl, timeout: 4) { request in
             guard var request = request else {
-                return
+                return completion(false)
             }
 
             let body = [ "encryptedOrigin": token.paymentData.base64EncodedString() ]
@@ -197,8 +197,6 @@ extension ApplePayCheckoutViewController {
 
 extension ApplePayCheckoutViewController: PKPaymentAuthorizationViewControllerDelegate {
     public func paymentAuthorizationViewControllerDidFinish(_ controller: PKPaymentAuthorizationViewController) {
-        print(#function)
-
         self.authController?.dismiss(animated: true)
 
         if !authorized {
@@ -207,9 +205,6 @@ extension ApplePayCheckoutViewController: PKPaymentAuthorizationViewControllerDe
     }
 
     public func paymentAuthorizationViewController(_ controller: PKPaymentAuthorizationViewController, didAuthorizePayment payment: PKPayment, handler completion: @escaping (PKPaymentAuthorizationResult) -> Void) {
-        print(#function)
-        print(payment)
-
         authorized = true
         self.performPayment(with: self.currentProcess, and: payment.token) { success in
             let status: PKPaymentAuthorizationStatus = success ? .success : .failure
