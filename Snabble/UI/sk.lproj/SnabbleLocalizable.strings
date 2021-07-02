@@ -245,7 +245,7 @@
 
 "Snabble.QRCode.title" = "Zaplatiť pri pokladni";
 
-"Snabble.QRCode.total" = "Celková suma:\u0020";
+"Snabble.QRCode.total" = "Celková suma: ";
 
 "Snabble.Receipts.loading" = "(načítava sa)";
 

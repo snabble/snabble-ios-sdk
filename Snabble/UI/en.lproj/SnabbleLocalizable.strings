@@ -245,7 +245,7 @@
 
 "Snabble.QRCode.title" = "Pay at cash desk";
 
-"Snabble.QRCode.total" = "Total:\u0020";
+"Snabble.QRCode.total" = "Total: ";
 
 "Snabble.Receipts.loading" = "(loading)";
 
