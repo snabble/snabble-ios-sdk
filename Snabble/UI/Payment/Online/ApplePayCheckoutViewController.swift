@@ -49,7 +49,7 @@ public final class ApplePayCheckoutViewController: BaseCheckoutViewController {
     }
 
     private func checksPending(in process: CheckoutProcess) -> Bool {
-        let checksNeedingSupervisor = process.checks.filter { $0.performedBy == .supervisor }
+        let checksNeedingSupervisor = process.checks.filter { $0.performedBy == .supervisor && $0.state != .successful }
         return process.supervisorApproval == nil || !checksNeedingSupervisor.isEmpty
     }
 
