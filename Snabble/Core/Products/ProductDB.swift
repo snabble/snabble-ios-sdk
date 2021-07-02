@@ -205,6 +205,7 @@ final class ProductDB: ProductProvider {
     private var db: DatabaseQueue?
     private var dbDirectory: URL
     private let config: SnabbleAPIConfig
+    private let useFTS: Bool
     let project: Project
 
     /// revision of the current local product database
@@ -233,6 +234,8 @@ final class ProductDB: ProductProvider {
     public init(_ config: SnabbleAPIConfig, _ project: Project) {
         self.config = config
         self.project = project
+
+        self.useFTS = config.useFTS && project.links.shoppingListDB == nil
 
         let appSupportDir = FileManager.default.urls(for: .applicationSupportDirectory, in: .userDomainMask)[0]
         self.dbDirectory = appSupportDir.appendingPathComponent(project.id.rawValue, isDirectory: true)
@@ -378,7 +381,7 @@ final class ProductDB: ProductProvider {
                 dataAvailable = .incomplete
             }
 
-            if self.config.useFTS {
+            if self.useFTS {
                 if dataAvailable == .newData {
                     self.createFulltextIndex(tempDbPath)
                 } else {
@@ -503,7 +506,7 @@ final class ProductDB: ProductProvider {
             self.logError("error while unzipping seed: \(error)")
         }
 
-        if self.config.useFTS {
+        if self.useFTS {
             self.createFulltextIndex(self.dbPathname())
         }
 
@@ -779,7 +782,7 @@ extension ProductDB {
             return []
         }
 
-        if !self.config.useFTS {
+        if !self.useFTS {
             Log.warn("productsByName called, but useFTS not set")
         }
 

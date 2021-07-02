@@ -111,6 +111,9 @@ public enum AnalyticsEvent {
     /// an item was marked "done" in the shopping list drawer by scanning the corresponding product
     case itemMarkedDoneScanner
 
+    /// an tag was marked "done" in the shopping list drawer by scanning a corresponding product
+    case tagMarkDoneScanner
+
     /// a coupon was scanned
     case couponScanned
 

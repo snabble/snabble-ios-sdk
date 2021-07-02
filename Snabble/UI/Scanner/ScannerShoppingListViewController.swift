@@ -8,7 +8,7 @@
 
 final class ScannerShoppingListViewController: UITableViewController {
     private var shoppingList: ShoppingList?
-    private weak var delegate: AnalyticsDelegate?
+    private weak var delegate: ShoppingListDelegate?
 
     var insets: UIEdgeInsets = .zero {
         didSet {
@@ -17,7 +17,7 @@ final class ScannerShoppingListViewController: UITableViewController {
         }
     }
 
-    init(delegate: AnalyticsDelegate?) {
+    init(delegate: ShoppingListDelegate?) {
         self.delegate = delegate
         super.init(style: .plain)
     }
@@ -48,19 +48,36 @@ final class ScannerShoppingListViewController: UITableViewController {
     func markScannedProduct(_ product: Product) {
         guard
             let list = shoppingList,
-            let index = list.findProductIndex(sku: product.sku)
+            let (index, event) = findIndex(for: product.sku, in: list)
         else {
             return
         }
 
         let checked = list.itemAt(index).checked
         if !checked {
-            delegate?.track(.itemMarkedDoneScanner)
+            delegate?.track(event)
             _ = list.toggleChecked(at: index)
             let indexPath = IndexPath(row: index, section: 0)
             tableView.reloadRows(at: [indexPath], with: .automatic)
             tableView.scrollToRow(at: indexPath, at: .middle, animated: true)
         }
+    }
+
+    private func findIndex(for sku: String, in list: ShoppingList) -> (Int, AnalyticsEvent)? {
+        var index: Int?
+        let event: AnalyticsEvent
+        if let delegate = self.delegate {
+            index = delegate.shouldMarkItemDone(in: list, sku: sku)
+            event = .tagMarkDoneScanner
+        } else {
+            index = list.findProductIndex(sku: sku)
+            event = .itemMarkedDoneScanner
+        }
+
+        if let index = index {
+            return (index, event)
+        }
+        return nil
     }
 }
 

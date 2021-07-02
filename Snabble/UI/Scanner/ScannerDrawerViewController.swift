@@ -45,12 +45,16 @@ final class ScannerDrawerViewController: UIViewController {
     @IBOutlet private var contentView: UIView!
     @IBOutlet private var separatorHeight: NSLayoutConstraint!
 
-    init(_ projectId: Identifier<Project>, shoppingCart: ShoppingCart, cartDelegate: ShoppingCartDelegate) {
+    init(_ projectId: Identifier<Project>,
+         shoppingCart: ShoppingCart,
+         cartDelegate: ShoppingCartDelegate,
+         shoppingListDelegate: ShoppingListDelegate?
+    ) {
         self.projectId = projectId
         self.shoppingCart = shoppingCart
         self.cartDelegate = cartDelegate
 
-        self.shoppingListTableVC = ScannerShoppingListViewController(delegate: cartDelegate)
+        self.shoppingListTableVC = ScannerShoppingListViewController(delegate: shoppingListDelegate)
         self.shoppingCartVC = ShoppingCartTableViewController(shoppingCart, cartDelegate: cartDelegate)
 
         super.init(nibName: nil, bundle: SnabbleBundle.main)
