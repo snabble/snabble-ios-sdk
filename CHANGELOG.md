@@ -1,5 +1,9 @@
 ## snabble iOS SDK Changelog
 
+# v0.17.2
+- Fixes some bugs related to payment method selection and Apple Pay
+- Add support for "Tags" in the shopping list
+
 # v0.17.1
 - Updates the Datatrans SDK to v1.4
 - Fixes a bug where completion handler for loading metadata could be called twice
