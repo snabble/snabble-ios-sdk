@@ -151,12 +151,14 @@ final class PaymentMethodSelector {
 
         let projectMethods = SnabbleUI.project.paymentMethods.filter { $0.isAvailable }
         let cartMethods = self.shoppingCart.paymentMethods?.map { $0.method }.filter { $0.isAvailable } ?? []
-        let availableMethods = cartMethods.isEmpty ? projectMethods : cartMethods
+        var availableMethods = cartMethods.isEmpty ? projectMethods : cartMethods
 
         // use Apple Pay, if possible
-        if availableMethods.contains(.applePay) && ApplePayCheckoutViewController.canMakePayments() {
+        if availableMethods.contains(.applePay) && ApplePaySupport.canMakePayments() {
             self.setSelectedPayment(.applePay, detail: nil)
             return
+        } else if !ApplePaySupport.applePaySupported() {
+            availableMethods.removeAll { $0 == .applePay }
         }
 
         // prefer in-app payment methods like SEPA or CC
@@ -353,11 +355,14 @@ final class PaymentMethodSelector {
             }
 
         case .applePay:
-            if !ApplePayCheckoutViewController.applePaySupported() || !isCartMethod {
+            if !ApplePaySupport.applePaySupported() || !isCartMethod {
                 return []
             }
-            let title = self.title(method.displayName, nil, .label)
-            let action = PaymentMethodAction(title, method, nil, selectable: true, active: false)
+
+            let canMakePayments = ApplePaySupport.canMakePayments()
+            let subtitle = canMakePayments ? nil : "Snabble.Shoppingcart.notForThisPurchase".localized()
+            let title = self.title(method.displayName, subtitle, .label)
+            let action = PaymentMethodAction(title, method, nil, selectable: canMakePayments, active: false)
             return [action]
 
         case .qrCodePOS, .qrCodeOffline, .gatekeeperTerminal:

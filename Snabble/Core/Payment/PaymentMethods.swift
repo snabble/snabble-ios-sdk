@@ -36,8 +36,9 @@ public enum RawPaymentMethod: String, CaseIterable, Decodable {
     ]
 
     // roughly sorted by popularity
+    // Apple Pay is not included here, needs separate treatment
     static let preferredOnlineMethods: [RawPaymentMethod] = [
-        .applePay, .deDirectDebit, .creditCardVisa, .creditCardMastercard, .creditCardAmericanExpress, .paydirektOneKlick
+        .deDirectDebit, .creditCardVisa, .creditCardMastercard, .creditCardAmericanExpress, .paydirektOneKlick
     ]
 
     /// true if this method reqires additional data, like an IBAN or a credit card number

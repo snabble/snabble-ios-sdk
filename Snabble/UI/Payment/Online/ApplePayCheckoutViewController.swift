@@ -71,7 +71,7 @@ public final class ApplePayCheckoutViewController: BaseCheckoutViewController {
         paymentRequest.merchantIdentifier = merchantId
         paymentRequest.countryCode = countryCode
         paymentRequest.currencyCode = process.currency
-        paymentRequest.supportedNetworks = Self.supportedNetworks()
+        paymentRequest.supportedNetworks = ApplePaySupport.supportedNetworks()
         paymentRequest.merchantCapabilities = .capability3DS
 
         let totalAmount = decimalPrice(process.checkoutInfo.price.price, decimalDigits)
@@ -172,27 +172,6 @@ extension ApplePayCheckoutViewController {
 
 }
 
-// MARK: - static utility functions
-
-extension ApplePayCheckoutViewController {
-    private static func supportedNetworks() -> [PKPaymentNetwork] {
-        let project = SnabbleUI.project
-        return project.paymentMethods.compactMap { $0.network }
-    }
-
-    // Does the device/OS support Apple Pay? This does not check if any cards have been added to the wallet!
-    // Use this to decide whether to show Apple Pay in the popup or not
-    static func applePaySupported() -> Bool {
-        PKPaymentAuthorizationViewController.canMakePayments()
-    }
-
-    // Is there a card in the wallet that allows a payment?
-    // Use this to determine if Apple Pay can be selected as the default method
-    static func canMakePayments() -> Bool {
-        PKPaymentAuthorizationViewController.canMakePayments(usingNetworks: supportedNetworks(), capabilities: .capability3DS)
-    }
-}
-
 // MARK: - PKPaymentAuthorizationViewControllerDelegate
 
 extension ApplePayCheckoutViewController: PKPaymentAuthorizationViewControllerDelegate {
@@ -209,17 +188,6 @@ extension ApplePayCheckoutViewController: PKPaymentAuthorizationViewControllerDe
         self.performPayment(with: self.currentProcess, and: payment.token) { success in
             let status: PKPaymentAuthorizationStatus = success ? .success : .failure
             completion(PKPaymentAuthorizationResult(status: status, errors: nil))
-        }
-    }
-}
-
-extension RawPaymentMethod {
-    var network: PKPaymentNetwork? {
-        switch self {
-        case .creditCardVisa: return .visa
-        case .creditCardMastercard: return .masterCard
-        case .creditCardAmericanExpress: return .amex
-        default: return nil
         }
     }
 }
