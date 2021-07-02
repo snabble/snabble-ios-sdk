@@ -74,7 +74,9 @@ final class ShoppingListCell: UITableViewCell {
         case .product(let product):
             quantity = "\(item.quantity)"
             loadImage(url: product.imageUrl)
-        case .tag, .custom:
+        case .tag:
+            quantity = "\(item.quantity)"
+        case .custom:
             quantity = nil
         }
 
