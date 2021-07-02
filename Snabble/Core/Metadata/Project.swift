@@ -58,7 +58,6 @@ public struct ProjectLinks: Decodable {
         self.datatransTokenization = nil
         self.shoppingListDB = nil
         self.customerLoyaltyInfo = nil
-        self.customerLoyaltyInfoByUsername = nil
     }
 }
 
