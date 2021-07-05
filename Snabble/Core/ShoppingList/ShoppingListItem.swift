@@ -126,3 +126,29 @@ extension ShoppingListItem: Equatable {
         }
     }
 }
+
+extension ShoppingListItem: Comparable {
+    // sorting rules:
+    //   tags and products come first, sorted by their `order`, then name
+    //   text entries are last, sorted by name
+    public static func < (lhs: ShoppingListItem, rhs: ShoppingListItem) -> Bool {
+        // swiftlint:disable identifier_name
+        switch (lhs.entry, rhs.entry) {
+        case (.tag(let t1), .tag(let t2)):
+            return t1.order == t2.order ? t1.name < t2.name : t1.order < t2.order
+        case (.tag(let t), .product(let p)):
+            return t.order == p.order ? t.name < p.name : t.order < p.order
+        case (.product(let p), .tag(let t)):
+            return p.order == t.order ? p.name < t.name : p.order < t.order
+        case (.product(let p1), .product(let p2)):
+            return p1.order == p2.order ? p1.name < p2.name : p1.order < p2.order
+        case (.product, .custom): return true
+        case (.custom, .product): return false
+        case (.tag, .custom): return true
+        case (.custom, .tag): return false
+
+        case (.custom(let c1), .custom(let c2)): return c1 < c2
+        }
+        // swiftlint:enable identifier_name
+    }
+}

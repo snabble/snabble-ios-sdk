@@ -88,27 +88,8 @@ public final class ShoppingList: Codable {
     }
 
     public func sort() {
-        // sorting rules:
-        //   tags come first, sorted by their `order`, then name
-        //   products come second, sorted by their `order`, then name
-        //   text entrie are last, sorted by name
-        // swiftlint:disable identifier_name
-        items.sort { item1, item2 in
-            switch (item1.entry, item2.entry) {
-            case (.tag(let t1), .tag(let t2)):
-                return t1.order == t2.order ? t1.name < t2.name : t1.order < t2.order
-            case (.tag, _): return true
-            case (_, .tag): return false
-
-            case (.product(let p1), .product(let p2)):
-                return p1.order == p2.order ? p1.name < p2.name : p1.order < p2.order
-            case (.product, .custom): return true
-            case (.custom, .product): return false
-
-            case (.custom(let c1), .custom(let c2)): return c1 < c2
-            }
-        }
-        // swiftlint:enable identifier_name
+        items.shuffle()
+        items.sort(by: <)
     }
 
     public func toggleChecked(at index: Int) -> Bool {
