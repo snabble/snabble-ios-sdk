@@ -1,5 +1,8 @@
 ## snabble iOS SDK Changelog
 
+# v0.17.3 (unreleased)
+- Change sorting rules for shopping list entries
+
 # v0.17.2
 - Fixes some bugs related to payment method selection and Apple Pay
 - Add support for "Tags" in the shopping list
