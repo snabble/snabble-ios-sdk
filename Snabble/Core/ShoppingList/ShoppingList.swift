@@ -88,7 +88,6 @@ public final class ShoppingList: Codable {
     }
 
     public func sort() {
-        items.shuffle()
         items.sort(by: <)
     }
 
