@@ -1,7 +1,8 @@
 ## snabble iOS SDK Changelog
 
-# v0.17.3 (unreleased)
+# v0.17.3
 - Change sorting rules for shopping list entries
+- Fixes a bug where aborting a cash desk payment could lead to problems
 
 # v0.17.2
 - Fixes some bugs related to payment method selection and Apple Pay

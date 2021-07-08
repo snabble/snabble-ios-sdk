@@ -62,7 +62,7 @@ class ViewController: UIViewController {
         let project = SnabbleAPI.projects[0]
         let shop = project.shops[0]
         let detector = BuiltinBarcodeDetector(detectorArea: .rectangle, messageDelegate: nil)
-        let scanner = ScannerViewController(shoppingCart, shop, detector, scannerDelegate: self, cartDelegate: nil)
+        let scanner = ScannerViewController(shoppingCart, shop, detector, scannerDelegate: self, cartDelegate: nil, shoppingListDelegate: nil)
         scanner.navigationItem.leftBarButtonItem = nil
         self.navigationController?.pushViewController(scanner, animated: true)
     }
