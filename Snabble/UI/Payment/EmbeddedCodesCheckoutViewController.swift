@@ -150,6 +150,11 @@ public final class EmbeddedCodesCheckoutViewController: UIViewController {
         super.viewWillDisappear(animated)
 
         UIScreen.main.brightness = self.initialBrightness
+
+        if self.isMovingFromParent {
+            // user "aborted" this payment process by tapping 'Back'
+            self.cart.generateNewUUID()
+        }
     }
 
     private func configureViewForDevice() {
