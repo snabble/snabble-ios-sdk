@@ -142,9 +142,22 @@ final class PaymentMethodSelector {
         self.methodTap.isEnabled = true
     }
 
+    private func selectedMethodIsValid() -> Bool {
+        guard let method = self.selectedPaymentMethod else {
+            return false
+        }
+        
+        if method.dataRequired {
+            return self.selectedPaymentDetail != nil
+        }
+        return true
+    }
+
     private func setDefaultPaymentMethod() {
-        if self.userMadeExplicitSelection {
+        if self.userMadeExplicitSelection && selectedMethodIsValid() {
             return
+        } else {
+            self.userMadeExplicitSelection = false
         }
 
         let userMethods = PaymentMethodDetails.read().filter { $0.rawMethod.isAvailable }
