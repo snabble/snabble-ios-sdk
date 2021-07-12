@@ -142,6 +142,27 @@ public enum SnabbleAPI {
                 CodeMatcher.addTemplate(project.id, $0.id, $0.template)
             }
         }
+
+        // reload any shop lists where we have a link for that
+        for index in 0 ..< metadata.projects.count {
+            let project = metadata.projects[index]
+            guard let activeShops = project.links.activeShops?.href else {
+                continue
+            }
+
+            project.request(.get, activeShops, timeout: 3) { request in
+                guard let request = request else { return }
+
+                project.perform(request) { (result: Result<ActiveShops, SnabbleError>) in
+                    switch result {
+                    case .success(let activeShops):
+                        self.metadata.setShops(activeShops.shops, at: index)
+                    case .failure(let error):
+                        print(error)
+                    }
+                }
+            }
+        }
     }
 
     public static func getToken(for project: Project, completion: @escaping (String?) -> Void ) {

@@ -25,6 +25,7 @@ public struct ProjectLinks: Decodable {
     public let datatransTokenization: Link?
     public let shoppingListDB: Link?
     public let customerLoyaltyInfo: Link?
+    public let activeShops: Link?
 
     public static let empty = ProjectLinks()
 
@@ -42,6 +43,7 @@ public struct ProjectLinks: Decodable {
         self.datatransTokenization = nil
         self.shoppingListDB = nil
         self.customerLoyaltyInfo = nil
+        self.activeShops = nil
     }
 
     init(appdb: Link, appEvents: Link, checkoutInfo: Link, tokens: Link, resolvedProductBySku: Link, resolvedProductLookUp: Link) {
@@ -58,6 +60,7 @@ public struct ProjectLinks: Decodable {
         self.datatransTokenization = nil
         self.shoppingListDB = nil
         self.customerLoyaltyInfo = nil
+        self.activeShops = nil
     }
 }
 
@@ -271,7 +274,7 @@ public struct Project: Decodable, Identifiable {
     public let scanFormats: [ScanFormat]
     public let barcodeDetector: BarcodeDetectorType
 
-    public let shops: [Shop]
+    private(set) public var shops: [Shop]
 
     public let customerCards: CustomerCardInfo?
 
@@ -430,5 +433,9 @@ public struct Project: Decodable, Identifiable {
         }
 
         return formatter.currencySymbol
+    }
+
+    mutating func setShops(_ shops: [Shop]) {
+        self.shops = shops
     }
 }

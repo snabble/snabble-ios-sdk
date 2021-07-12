@@ -113,3 +113,8 @@ public struct Shop: Codable, Identifiable {
         try container.encode(self.customerNetworks, forKey: .customerNetworks)
     }
 }
+
+// response object from the `activeShops` endpoint
+struct ActiveShops: Decodable {
+    let shops: [Shop]
+}

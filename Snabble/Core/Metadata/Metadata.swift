@@ -8,7 +8,7 @@ import Foundation
 
 public struct Metadata: Decodable {
     public let flags: Flags
-    public let projects: [Project]
+    private(set) public var projects: [Project]
     public let gatewayCertificates: [GatewayCertificate]
     public let links: MetadataLinks
     public let terms: Terms?
@@ -40,6 +40,10 @@ public struct Metadata: Decodable {
         self.links = try container.decode(MetadataLinks.self, forKey: .links)
         self.terms = try container.decodeIfPresent(Terms.self, forKey: .terms)
         self.brands = try container.decodeIfPresent([Brand].self, forKey: .brands)
+    }
+
+    mutating func setShops(_ shops: [Shop], at index: Int) {
+        self.projects[index].setShops(shops)
     }
 }
 
