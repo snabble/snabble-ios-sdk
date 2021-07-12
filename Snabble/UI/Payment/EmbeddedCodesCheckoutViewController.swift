@@ -36,8 +36,8 @@ public final class EmbeddedCodesCheckoutViewController: UIViewController {
 
     private var initialBrightness: CGFloat = 0
 
-    private weak var cart: ShoppingCart!
-    private weak var delegate: PaymentDelegate!
+    private weak var cart: ShoppingCart?
+    private weak var delegate: PaymentDelegate?
     private let process: CheckoutProcess?
     private let rawJson: [String: Any]?
     private var qrCodeConfig: QRCodeConfig
@@ -88,8 +88,10 @@ public final class EmbeddedCodesCheckoutViewController: UIViewController {
         let nib = UINib(nibName: "QRCodeCell", bundle: SnabbleBundle.main)
         self.collectionView.register(nib, forCellWithReuseIdentifier: "qrCodeCell")
 
-        let generator = QRCodeGenerator(self.cart, self.qrCodeConfig)
-        self.codes = generator.generateCodes()
+        if let cart = self.cart {
+            let generator = QRCodeGenerator(cart, self.qrCodeConfig)
+            self.codes = generator.generateCodes()
+        }
 
         self.codeCountWrapper.isHidden = self.codes.count == 1
 
@@ -111,12 +113,12 @@ public final class EmbeddedCodesCheckoutViewController: UIViewController {
     override public func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
 
-        self.delegate.track(.viewEmbeddedCodesCheckout)
+        self.delegate?.track(.viewEmbeddedCodesCheckout)
 
         self.initialBrightness = UIScreen.main.brightness
         if self.initialBrightness < 0.5 {
             UIScreen.main.brightness = 0.5
-            self.delegate.track(.brightnessIncreased)
+            self.delegate?.track(.brightnessIncreased)
         }
     }
 
@@ -153,7 +155,7 @@ public final class EmbeddedCodesCheckoutViewController: UIViewController {
 
         if self.isMovingFromParent {
             // user "aborted" this payment process by tapping 'Back'
-            self.cart.generateNewUUID()
+            self.cart?.generateNewUUID()
         }
     }
 
@@ -215,11 +217,13 @@ public final class EmbeddedCodesCheckoutViewController: UIViewController {
 
             self.setButtonTitle()
         } else {
-            self.delegate.track(.markEmbeddedCodesPaid)
-            self.cart.removeAll(endSession: true)
+            self.delegate?.track(.markEmbeddedCodesPaid)
+            self.cart?.removeAll(endSession: true)
 
             SnabbleAPI.fetchAppUserData(SnabbleUI.project.id)
-            self.delegate.paymentFinished(true, self.cart, self.process, self.rawJson)
+            if let cart = self.cart {
+                self.delegate?.paymentFinished(true, cart, self.process, self.rawJson)
+            }
         }
     }
 
