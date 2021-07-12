@@ -144,8 +144,7 @@ public enum SnabbleAPI {
         }
 
         // reload any shop lists where we have a link for that
-        for index in 0 ..< metadata.projects.count {
-            let project = metadata.projects[index]
+        for (index, project) in metadata.projects.enumerated() {
             guard let activeShops = project.links.activeShops?.href else {
                 continue
             }
