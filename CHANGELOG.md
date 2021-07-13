@@ -1,5 +1,8 @@
 ## snabble iOS SDK Changelog
 
+# v0.17.4
+- Add the new `loadActiveShops` config option to `SnabbleAPIConfig`
+
 # v0.17.3
 - Change sorting rules for shopping list entries
 - Fixes a bug where aborting a cash desk payment could lead to problems
