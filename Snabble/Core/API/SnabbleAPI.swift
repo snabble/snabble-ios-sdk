@@ -18,7 +18,7 @@ public struct SnabbleAPIConfig {
     public let secret: String
 
     /// the app version that is passed to the metadata endpoint. if not set, the app's `CFBundleShortVersionString` is used
-    public let appVersion: String?
+    public var appVersion: String?
 
     /// set this to true if you want to use the `productsByName` method of `ProductDB`
     /// this flag is ignored for projects that have a `shoppingListDB` link
@@ -39,22 +39,17 @@ public struct SnabbleAPIConfig {
     /// the asychronous lookup methods will not use the local database anymore.
     public var maxProductDatabaseAge: TimeInterval = 3600
 
+    /// load shop list from the `activeShops` endpoint?
+    public var loadActiveShops = false
+
     // debug mode only:
     // SQL statements that are executed just before the product database is opened
     public var initialSQL: [String]?
 
-    public init(appId: String, baseUrl: String, secret: String, appVersion: String? = nil,
-                useFTS: Bool = false, useCertificatePinning: Bool = true,
-                seedDatabase: String? = nil, seedRevision: Int64? = nil, seedMetadata: String? = nil) {
+    public init(appId: String, baseUrl: String, secret: String) {
         self.appId = appId
         self.baseUrl = baseUrl
         self.secret = secret
-        self.appVersion = appVersion
-        self.useFTS = useFTS
-        self.useCertificatePinning = useCertificatePinning
-        self.seedDatabase = seedDatabase
-        self.seedRevision = seedRevision
-        self.seedMetadata = seedMetadata
     }
 
     static let none = SnabbleAPIConfig(appId: "none", baseUrl: "", secret: "")
@@ -143,7 +138,13 @@ public enum SnabbleAPI {
             }
         }
 
-        // reload any shop lists where we have a link for that
+        if self.config.loadActiveShops {
+            self.loadActiveShops()
+        }
+    }
+
+    private static func loadActiveShops() {
+        // reload shops from `acticeShops` endpoint where present
         for (index, project) in metadata.projects.enumerated() {
             guard let activeShops = project.links.activeShops?.href else {
                 continue
