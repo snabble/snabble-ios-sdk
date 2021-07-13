@@ -21,6 +21,7 @@ public final class DatatransAliasViewController: UIViewController {
     private let showFromCart: Bool
     private let projectId: Identifier<Project>?
     private let method: RawPaymentMethod?
+    private let brand: CreditCardBrand?
     private var transaction: Datatrans.Transaction?
     private let detail: PaymentMethodDetail?
 
@@ -32,6 +33,7 @@ public final class DatatransAliasViewController: UIViewController {
         self.projectId = projectId
         self.method = method
         self.detail = nil
+        self.brand = CreditCardBrand.forMethod(method)
 
         super.init(nibName: nil, bundle: SnabbleDTBundle.main)
     }
@@ -43,8 +45,13 @@ public final class DatatransAliasViewController: UIViewController {
         self.projectId = nil
         if case .datatransAlias(let data) = detail.methodData {
             self.method = data.method.rawMethod
+            self.brand = nil
+        } else if case .datatransCardAlias(let data) = detail.methodData {
+            self.brand = data.brand
+            self.method = data.brand.method
         } else {
             self.method = nil
+            self.brand = nil
         }
 
         super.init(nibName: nil, bundle: SnabbleDTBundle.main)
@@ -70,22 +77,14 @@ public final class DatatransAliasViewController: UIViewController {
     override public func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
 
-        if let detail = detail, case .datatransAlias(let data) = detail.methodData {
-            self.cardNumber.text = data.displayName
-            let expirationDate = data.expirationDate
-            self.expirationDate.text = expirationDate
-
-            self.cardNumberLabel.text = "Snabble.CC.cardNumber".localized()
-            self.expDateLabel.text = "Snabble.CC.validUntil".localized()
-            self.explanation.text = "Snabble.PaymentCard.editingHint".localized()
-
-            self.expDateLabel.isHidden = expirationDate == nil
-            self.expirationDate.isHidden = expirationDate == nil
-
-            let trash = UIImage.fromBundle("SnabbleSDK/icon-trash")
-            let deleteButton = UIBarButtonItem(image: trash, style: .plain, target: self, action: #selector(self.deleteButtonTapped(_:)))
-            self.navigationItem.rightBarButtonItem = deleteButton
-        } else {
+        if let detail = detail {
+            if case .datatransAlias(let data) = detail.methodData {
+                setupView(data.displayName, data.expirationDate)
+            } else if case .datatransCardAlias(let data) = detail.methodData {
+                setupView(data.displayName, data.expirationDate)
+            }
+        }
+        else {
             self.containerView.isHidden = true
         }
     }
@@ -115,6 +114,22 @@ public final class DatatransAliasViewController: UIViewController {
         self.transaction = nil
     }
 
+    private func setupView(_ displayName: String, _ expirationDate: String?) {
+        self.cardNumber.text = displayName
+        self.expirationDate.text = expirationDate
+
+        self.cardNumberLabel.text = "Snabble.CC.cardNumber".localized()
+        self.expDateLabel.text = "Snabble.CC.validUntil".localized()
+        self.explanation.text = "Snabble.PaymentCard.editingHint".localized()
+
+        self.expDateLabel.isHidden = expirationDate == nil
+        self.expirationDate.isHidden = expirationDate == nil
+
+        let trash = UIImage.fromBundle("SnabbleSDK/icon-trash")
+        let deleteButton = UIBarButtonItem(image: trash, style: .plain, target: self, action: #selector(self.deleteButtonTapped(_:)))
+        self.navigationItem.rightBarButtonItem = deleteButton
+    }
+
     private func startTransaction(with tokenResponse: TokenResponse, on presentingController: UIViewController) {
         let transaction = Transaction(mobileToken: tokenResponse.mobileToken)
         transaction.delegate = self
@@ -136,7 +151,7 @@ public final class DatatransAliasViewController: UIViewController {
         switch method?.datatransMethod {
         case .postFinanceCard: titleKey = "Snabble.Payment.PostFinanceCard.error"
         case .twint: titleKey = "Snabble.Payment.Twint.error"
-        default: return
+        default: titleKey = "Snabble.Payment.CreditCard.error"
         }
 
         let alert = UIAlertController(title: titleKey.localized(), message: nil, preferredStyle: .alert)
@@ -158,20 +173,38 @@ public final class DatatransAliasViewController: UIViewController {
             return self.showError("transaction success, but no token found")
         }
 
-        guard let method = self.method?.datatransMethod else {
-            return self.showError("unknown datatrans method")
+        if let brand = self.brand {
+            if let data = DatatransCreditCardData(gatewayCert: cert.data,
+                                                  brand: brand,
+                                                  token: DatatransPaymentMethodToken(token: token),
+                                                  projectId: projectId) {
+                saveDetail(PaymentMethodDetail(data))
+            } else {
+                showError("can't create details for cc brand \(brand.rawValue)")
+            }
+            return
         }
 
-        if let data = DatatransData(gatewayCert: cert.data,
-                                    method: method,
-                                    token: DatatransPaymentMethodToken(token: token),
-                                    projectId: projectId) {
-            let detail = PaymentMethodDetail(data)
-            PaymentMethodDetails.save(detail)
-            self.analyticsDelegate?.track(.paymentMethodAdded(detail.rawMethod.displayName))
-
-            self.goBack()
+        if let method = self.method?.datatransMethod {
+            if let data = DatatransData(gatewayCert: cert.data,
+                                        method: method,
+                                        token: DatatransPaymentMethodToken(token: token),
+                                        projectId: projectId) {
+                saveDetail(PaymentMethodDetail(data))
+            } else {
+                showError("can't create details for method \(method.rawValue)")
+            }
+            return
         }
+
+        self.showError("unknown datatrans method or cc brand")
+    }
+
+    private func saveDetail(_ detail: PaymentMethodDetail) {
+        PaymentMethodDetails.save(detail)
+        self.analyticsDelegate?.track(.paymentMethodAdded(detail.rawMethod.displayName))
+
+        self.goBack()
     }
 
     @objc private func deleteButtonTapped(_ sender: Any) {
@@ -235,8 +268,13 @@ extension DatatransAliasViewController {
     }
 
     private func fetchToken(_ projectId: Identifier<Project>, _ method: RawPaymentMethod, completion: @escaping (TokenResponse?) -> Void) {
-        guard let project = SnabbleAPI.project(for: projectId), let url = project.links.datatransTokenization?.href else {
-            return
+        guard
+            let project = SnabbleAPI.project(for: projectId),
+            let descriptor = project.paymentMethodDescriptors.first(where: { $0.id == method }),
+            hasValidOriginType(descriptor),
+            let url = descriptor.links?.tokenization?.href
+        else {
+            return completion(nil)
         }
 
         let language = Locale.current.languageCode ?? "en"
@@ -244,7 +282,7 @@ extension DatatransAliasViewController {
 
         project.request(.post, url, body: tokenInput, timeout: 2) { request in
             guard let request = request else {
-                return
+                return completion(nil)
             }
 
             project.perform(request) { (result: Result<TokenResponse, SnabbleError>) in
@@ -257,5 +295,10 @@ extension DatatransAliasViewController {
                 }
             }
         }
+    }
+
+    private func hasValidOriginType(_ descriptor: PaymentMethodDescriptor) -> Bool {
+        return descriptor.acceptedOriginTypes?.contains(.datatransAlias) == true ||
+            descriptor.acceptedOriginTypes?.contains(.datatransCreditCardAlias) == true
     }
 }

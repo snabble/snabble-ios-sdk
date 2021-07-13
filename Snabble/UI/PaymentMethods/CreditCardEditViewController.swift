@@ -109,8 +109,10 @@ public final class CreditCardEditViewController: UIViewController {
 
         guard
             self.detail == nil,
+            let brand = self.brand,
             let projectId = self.projectId,
-            let project = SnabbleAPI.project(for: projectId)
+            let project = SnabbleAPI.project(for: projectId),
+            let descriptor = project.paymentMethodDescriptors.first(where: { $0.id == brand.method })
         else {
             return
         }
@@ -119,7 +121,27 @@ public final class CreditCardEditViewController: UIViewController {
         self.containerView.bringSubviewToFront(self.spinner)
 
         self.spinner.startAnimating()
-        self.getTelecashVaultItem(for: project) { [weak self] result in
+
+        if descriptor.acceptedOriginTypes?.contains(.ipgHostedDataID) == true {
+            tokenizeWithTelecash(project, descriptor)
+        } else {
+            // oops - somehow we got here for a non-IPG tokenization. Bail out.
+            showError()
+        }
+
+        self.analyticsDelegate?.track(.viewPaymentMethodDetail)
+    }
+
+    override public func viewDidDisappear(_ animated: Bool) {
+        super.viewDidDisappear(animated)
+
+        // required to break the retain cycle
+        self.webView?.configuration.userContentController.removeScriptMessageHandler(forName: Self.handlerName)
+    }
+
+    private func tokenizeWithTelecash(_ project: Project, _ descriptor: PaymentMethodDescriptor) {
+        let link = descriptor.links?.tokenization
+        self.getTelecashVaultItem(for: project, link) { [weak self] result in
             self?.spinner.stopAnimating()
             switch result {
             case .failure:
@@ -133,15 +155,6 @@ public final class CreditCardEditViewController: UIViewController {
                 self?.prepareAndInjectPage(vaultItem)
             }
         }
-
-        self.analyticsDelegate?.track(.viewPaymentMethodDetail)
-    }
-
-    override public func viewDidDisappear(_ animated: Bool) {
-        super.viewDidDisappear(animated)
-
-        // required to break the retain cycle
-        self.webView?.configuration.userContentController.removeScriptMessageHandler(forName: Self.handlerName)
     }
 
     private func goBack() {
@@ -293,9 +306,11 @@ extension CreditCardEditViewController: WKScriptMessageHandler {
 }
 
 extension CreditCardEditViewController {
-    private func getTelecashVaultItem(for project: Project, completion: @escaping (Result<TelecashVaultItem, SnabbleError>) -> Void ) {
-        guard let url = project.links.telecashVaultItems?.href else {
-            Log.error("no telecashVaultItems in metadata")
+    private func getTelecashVaultItem(for project: Project,
+                                      _ link: Link?,
+                                      completion: @escaping (Result<TelecashVaultItem, SnabbleError>) -> Void ) {
+        guard let url = link?.href else {
+            Log.error("no telecashVaultItems tokenization link found")
             return completion(Result.failure(SnabbleError.unknown))
         }
 

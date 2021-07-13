@@ -1,5 +1,8 @@
 ## snabble iOS SDK Changelog
 
+# v0.17.5 (unreleased)
+- Add support for credit card tokenization via Datatrans
+
 # v0.17.4
 - Add the new `loadActiveShops` config option to `SnabbleAPIConfig`
 

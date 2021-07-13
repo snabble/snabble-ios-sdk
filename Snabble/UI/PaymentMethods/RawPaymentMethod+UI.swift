@@ -71,17 +71,11 @@ extension RawPaymentMethod {
             return PaydirektEditViewController(nil, showFromCart, analyticsDelegate)
 
         case .creditCardMastercard:
-            if let projectId = projectId {
-                return CreditCardEditViewController(brand: .mastercard, projectId, showFromCart, analyticsDelegate)
-            }
+            return creditCardEditViewController(.mastercard, projectId, showFromCart, analyticsDelegate)
         case .creditCardVisa:
-            if let projectId = projectId {
-                return CreditCardEditViewController(brand: .visa, projectId, showFromCart, analyticsDelegate)
-            }
+            return creditCardEditViewController(.visa, projectId, showFromCart, analyticsDelegate)
         case .creditCardAmericanExpress:
-            if let projectId = projectId {
-                return CreditCardEditViewController(brand: .amex, projectId, showFromCart, analyticsDelegate)
-            }
+            return creditCardEditViewController(.amex, projectId, showFromCart, analyticsDelegate)
 
         case .qrCodePOS, .qrCodeOffline, .externalBilling, .customerCardPOS, .gatekeeperTerminal, .applePay:
             break
@@ -90,6 +84,24 @@ extension RawPaymentMethod {
             if let projectId = projectId {
                 return SnabbleAPI.methodRegistry.createEntry(method: self, projectId, showFromCart, analyticsDelegate)
             }
+        }
+
+        return nil
+    }
+
+    private func creditCardEditViewController(_ brand: CreditCardBrand, _ projectId: Identifier<Project>?, _ showFromCart: Bool, _ analyticsDelegate: AnalyticsDelegate?) -> UIViewController? {
+        guard
+            let projectId = projectId,
+            let project = SnabbleAPI.project(for: projectId),
+            let descriptor = project.paymentMethodDescriptors.first(where: { $0.id == brand.method })
+        else {
+            return nil
+        }
+
+        if descriptor.acceptedOriginTypes?.contains(.ipgHostedDataID) == true {
+            return CreditCardEditViewController(brand: .visa, projectId, showFromCart, analyticsDelegate)
+        } else if descriptor.acceptedOriginTypes?.contains(.datatransCreditCardAlias) == true {
+            return SnabbleAPI.methodRegistry.createEntry(method: self, projectId, showFromCart, analyticsDelegate)
         }
 
         return nil

@@ -89,6 +89,10 @@ public final class PaymentMethodListViewController: UITableViewController {
                 switch detail.methodData {
                 case .creditcard(let creditcardData):
                     return creditcardData.projectId == projectId
+                case .datatransCardAlias(let cardAlias):
+                    return cardAlias.projectId == projectId
+                case .datatransAlias(let alias):
+                    return alias.projectId == projectId
                 case .tegutEmployeeCard:
                     return true
                 default:

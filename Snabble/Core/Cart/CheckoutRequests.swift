@@ -68,7 +68,11 @@ extension SignedCheckoutInfo {
     ///   - timeout: the timeout for the HTTP request (0 for the system default timeout)
     ///   - completion: is called on the main thread with the result of the API call,
     ///   - result: the newly created `CheckoutProcess` or the error
-    public func createCheckoutProcess(_ project: Project, id: String, paymentMethod: PaymentMethod, timeout: TimeInterval = 0, finalizedAt: Date? = nil,
+    public func createCheckoutProcess(_ project: Project,
+                                      id: String,
+                                      paymentMethod: PaymentMethod,
+                                      timeout: TimeInterval = 0,
+                                      finalizedAt: Date? = nil,
                                       completion: @escaping (_ result: RawResult<CheckoutProcess, SnabbleError>) -> Void ) {
         do {
             // since we need to pass the originally-received SignedCheckoutInfo as-is,

@@ -57,7 +57,7 @@ enum DatatransMethod: String, Codable {
     case twint
     case postFinanceCard
 
-    var rawMethod: RawPaymentMethod? {
+    var rawMethod: RawPaymentMethod {
         switch self {
         case .twint: return .twint
         case .postFinanceCard: return .postFinanceCard
