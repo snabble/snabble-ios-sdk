@@ -15,10 +15,10 @@ import UIKit
 
 @IBDesignable public final class EANView: UIView {
     /// the color to show the barcode's bars. default is black
-    @IBInspectable public var barColor: UIColor = UIColor.black
+    @IBInspectable public var barColor: UIColor = .black
 
     /// the color to show the barcode's digits. default is black
-    @IBInspectable public var digitsColor: UIColor = UIColor.black
+    @IBInspectable public var digitsColor: UIColor = .black
 
     /// show the numeric value of the barcode at the bottom. default is true
     @IBInspectable public var showDigits: Bool = true
@@ -64,8 +64,8 @@ import UIKit
             return
         }
 
-        let bgColor = self.backgroundColor ?? UIColor.white
-        let bottomPadding = CGFloat(self.scale * 3)
+        let bgColor = self.backgroundColor ?? .white
+        let bottomPadding = CGFloat(showDigits ? self.scale * 3 : 0)
 
         bgColor.setFill()
         ctx.fill(rect)
@@ -76,8 +76,9 @@ import UIKit
             for idx in 0 ..< bits.count {
                 let color = bits[idx] == 1 ? barColor : bgColor
                 color.set()
-                ctx.move(to: CGPoint(x: CGFloat(scale * idx), y: 0.0))
-                ctx.addLine(to: CGPoint(x: CGFloat(scale * idx), y: self.bounds.size.height - bottomPadding))
+                let x = CGFloat(scale * idx)
+                ctx.move(to: CGPoint(x: x, y: 0))
+                ctx.addLine(to: CGPoint(x: x, y: self.bounds.size.height - bottomPadding))
                 ctx.setLineWidth(CGFloat(scale))
                 ctx.strokePath()
             }
@@ -92,7 +93,7 @@ import UIKit
             ]
             let str = NSAttributedString(string: "Invalid Barcode", attributes: attrs)
 
-            str.draw(at: CGPoint(x: 3.0, y: rect.size.height / 2 - 20))
+            str.draw(at: CGPoint(x: 3, y: rect.size.height / 2 - 20))
         }
     }
 
@@ -131,7 +132,7 @@ import UIKit
     }
 
     private func labelWidth() -> Int {
-        switch self.barcode?.count ?? 0 {
+        switch self.barcode?.count {
         case 13: return 6
         case 8: return 4
         default: return 0
@@ -141,12 +142,15 @@ import UIKit
     private func createLabel(width: Int, offset: Int, value: String) -> UILabel {
         let digitHeight = 7
 
-        let frame = CGRect(x: scale * offset, y: Int(self.bounds.size.height) - (scale * digitHeight), width: scale * width, height: scale * digitHeight)
+        let frame = CGRect(x: scale * offset,
+                           y: Int(self.bounds.size.height) - (scale * digitHeight),
+                           width: scale * width,
+                           height: scale * digitHeight)
         let label = UILabel(frame: frame)
         label.backgroundColor = self.backgroundColor ?? .white
         label.textColor = self.digitsColor
         label.textAlignment = .center
-        label.font = UIFont.monospacedDigitSystemFont(ofSize: CGFloat(scale * (digitHeight - 1)), weight: UIFont.Weight.medium)
+        label.font = UIFont.monospacedDigitSystemFont(ofSize: CGFloat(scale * (digitHeight - 1)), weight: .medium)
         label.text = value
 
         return label
