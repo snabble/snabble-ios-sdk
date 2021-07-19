@@ -6,7 +6,7 @@
 
 import Foundation
 
-// unfortunately we have to maintain a bunch of different mappings to strings
+// unfortunately we have to maintain a bunch of different mappings to strings and other types
 public enum CreditCardBrand: String, Codable {
     // 1st mapping: from the reponse of the IPG card entry form; also used for datatrans
     case visa
@@ -37,6 +37,24 @@ public enum CreditCardBrand: String, Codable {
         case .visa: return "VISA"
         case .mastercard: return "Mastercard"
         case .amex: return "American Express"
+        }
+    }
+
+    // 5th mapping: from brand to RawPaymentMethod
+    var method: RawPaymentMethod {
+        switch self {
+        case .visa: return .creditCardVisa
+        case .mastercard: return .creditCardMastercard
+        case .amex: return .creditCardAmericanExpress
+        }
+    }
+
+    static func forMethod(_ method: RawPaymentMethod) -> CreditCardBrand? {
+        switch method {
+        case .creditCardVisa: return .visa
+        case .creditCardMastercard: return .mastercard
+        case .creditCardAmericanExpress: return .amex
+        default: return nil
         }
     }
 }

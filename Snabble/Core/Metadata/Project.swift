@@ -20,9 +20,7 @@ public struct ProjectLinks: Decodable {
     public let resolvedProductBySku: Link?
     public let resolvedProductLookUp: Link?
     public let assetsManifest: Link?
-    public let telecashVaultItems: Link?
     public let entryToken: Link?
-    public let datatransTokenization: Link?
     public let shoppingListDB: Link?
     public let customerLoyaltyInfo: Link?
     public let activeShops: Link?
@@ -38,9 +36,7 @@ public struct ProjectLinks: Decodable {
         self.resolvedProductBySku = nil
         self.resolvedProductLookUp = nil
         self.assetsManifest = nil
-        self.telecashVaultItems = nil
         self.entryToken = nil
-        self.datatransTokenization = nil
         self.shoppingListDB = nil
         self.customerLoyaltyInfo = nil
         self.activeShops = nil
@@ -55,9 +51,7 @@ public struct ProjectLinks: Decodable {
         self.resolvedProductLookUp = resolvedProductLookUp
 
         self.assetsManifest = nil
-        self.telecashVaultItems = nil
         self.entryToken = nil
-        self.datatransTokenization = nil
         self.shoppingListDB = nil
         self.customerLoyaltyInfo = nil
         self.activeShops = nil
@@ -286,7 +280,11 @@ public struct Project: Decodable, Identifiable {
     public let checkoutLimits: CheckoutLimits?
 
     public let messages: ProjectMessages?
-    public let paymentMethods: [RawPaymentMethod]
+
+    public let paymentMethodDescriptors: [PaymentMethodDescriptor]
+    public var paymentMethods: [RawPaymentMethod] {
+        paymentMethodDescriptors.map { $0.id }
+    }
 
     public let displayNetPrice: Bool
 
@@ -303,7 +301,7 @@ public struct Project: Decodable, Identifiable {
         case shops, scanFormats, barcodeDetector
         case customerCards, codeTemplates, searchableTemplates, priceOverrideCodes, checkoutLimits
         case messages = "texts"
-        case paymentMethods
+        case paymentMethodDescriptors
         case displayNetPrice
         case company
         case brandId = "brandID"
@@ -342,8 +340,9 @@ public struct Project: Decodable, Identifiable {
         self.checkoutLimits = try container.decodeIfPresent(CheckoutLimits.self, forKey: .checkoutLimits)
         self.messages = try container.decodeIfPresent(ProjectMessages.self, forKey: .messages)
 
-        let paymentMethods = try container.decodeIfPresent([String].self, forKey: .paymentMethods) ?? []
-        self.paymentMethods = paymentMethods.compactMap { RawPaymentMethod(rawValue: $0) }
+        let descriptors = try container.decodeIfPresent([FailableDecodable<PaymentMethodDescriptor>].self, forKey: .paymentMethodDescriptors)
+        self.paymentMethodDescriptors = descriptors?.compactMap { $0.value } ?? []
+
         self.displayNetPrice = try container.decodeIfPresent(Bool.self, forKey: .displayNetPrice) ?? false
         self.company = try container.decodeIfPresent(Company.self, forKey: .company)
         let brandId = try container.decodeIfPresent(String.self, forKey: .brandId) ?? ""
@@ -378,7 +377,7 @@ public struct Project: Decodable, Identifiable {
         self.priceOverrideCodes = nil
         self.checkoutLimits = nil
         self.messages = nil
-        self.paymentMethods = []
+        self.paymentMethodDescriptors = []
         self.displayNetPrice = false
         self.company = nil
         self.brandId = nil
@@ -407,7 +406,7 @@ public struct Project: Decodable, Identifiable {
         self.priceOverrideCodes = nil
         self.checkoutLimits = nil
         self.messages = nil
-        self.paymentMethods = []
+        self.paymentMethodDescriptors = []
         self.displayNetPrice = false
         self.company = nil
         self.brandId = nil

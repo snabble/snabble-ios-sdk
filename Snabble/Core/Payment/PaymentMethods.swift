@@ -4,6 +4,17 @@
 //  Copyright © 2020 snabble. All rights reserved.
 //
 
+public struct PaymentMethodDescriptor: Decodable {
+    public let id: RawPaymentMethod
+    public let acceptedOriginTypes: [AcceptedOriginType]?
+    public let providerName: String
+    public let links: Links?
+
+    public struct Links: Decodable {
+        public let tokenization: Link?
+    }
+}
+
 // known payment methods
 public enum RawPaymentMethod: String, CaseIterable, Decodable {
     case qrCodePOS              // QR Code with a reference to snabble's backend

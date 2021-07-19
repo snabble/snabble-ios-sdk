@@ -144,6 +144,9 @@ final class CheckoutBar: NibView {
         let button = self.checkoutButton!
 
         let spinner = UIActivityIndicatorView(style: .white)
+        if #available(iOS 13.0, *) {
+            spinner.style = .medium
+        }
         spinner.startAnimating()
         button.addSubview(spinner)
         spinner.translatesAutoresizingMaskIntoConstraints = false
