@@ -339,10 +339,6 @@ extension ScanningViewController: ScanConfirmationViewDelegate {
             if let msg = self.delegate.scanMessage(for: SnabbleUI.project, self.shop, item.product) {
                 messages.append(msg)
             }
-            if item.manualCoupon != nil {
-                let msg = ScanMessage("Snabble.Scanner.manualCouponAdded".localized())
-                messages.append(msg)
-            }
 
             self.showMessages(messages)
 
