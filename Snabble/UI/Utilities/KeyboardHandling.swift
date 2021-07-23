@@ -7,7 +7,7 @@
 import UIKit
 
 /// frame and animation data extracted from a keyboard show/hide notification
-struct KeyboardInfo {
+public struct KeyboardInfo {
     public let beginFrame: CGRect
     public let endFrame: CGRect
     public let animationDuration: TimeInterval
@@ -32,13 +32,13 @@ struct KeyboardInfo {
     }
 }
 
-protocol KeyboardHandling: AnyObject {
+public protocol KeyboardHandling: AnyObject {
     func keyboardWillShow(_ info: KeyboardInfo)
 
     func keyboardWillHide(_ info: KeyboardInfo)
 }
 
-final class KeyboardObserver: NSObject {
+final public class KeyboardObserver: NSObject {
     private weak var handler: KeyboardHandling!
 
     public required init(handler: KeyboardHandling) {
@@ -50,7 +50,7 @@ final class KeyboardObserver: NSObject {
         nc.addObserver(self, selector: #selector(self.keyboardWillHide(_:)), name: UIResponder.keyboardWillHideNotification, object: nil)
     }
 
-    @objc func keyboardWillShow(_ notification: Notification) {
+    @objc private func keyboardWillShow(_ notification: Notification) {
         guard let info = KeyboardInfo(notification: notification) else {
             return
         }
@@ -58,7 +58,7 @@ final class KeyboardObserver: NSObject {
         self.handler.keyboardWillShow(info)
     }
 
-    @objc func keyboardWillHide(_ notification: Notification) {
+    @objc private func keyboardWillHide(_ notification: Notification) {
         guard let info = KeyboardInfo(notification: notification) else {
             return
         }

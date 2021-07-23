@@ -165,7 +165,7 @@ extension BarcodeEntryViewController: UITableViewDelegate, UITableViewDataSource
 }
 
 extension BarcodeEntryViewController: KeyboardHandling {
-    func keyboardWillShow(_ info: KeyboardInfo) {
+    public func keyboardWillShow(_ info: KeyboardInfo) {
         // compensate for the opaque tab bar
         let tabBarHeight = self.tabBarController?.tabBar.frame.height ?? 0
         let keyboardHeight = info.keyboardHeight - tabBarHeight
@@ -173,7 +173,7 @@ extension BarcodeEntryViewController: KeyboardHandling {
         self.bottomMargin.constant = keyboardHeight
     }
 
-    func keyboardWillHide(_ info: KeyboardInfo) {
+    public func keyboardWillHide(_ info: KeyboardInfo) {
         // not used
     }
 }
