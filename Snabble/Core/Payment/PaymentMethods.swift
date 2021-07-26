@@ -7,7 +7,6 @@
 public struct PaymentMethodDescriptor: Decodable {
     public let id: RawPaymentMethod
     public let acceptedOriginTypes: [AcceptedOriginType]?
-    public let providerName: String
     public let links: Links?
 
     public struct Links: Decodable {
