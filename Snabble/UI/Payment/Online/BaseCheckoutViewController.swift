@@ -60,6 +60,7 @@ public class BaseCheckoutViewController: UIViewController {
         self.title = "Snabble.Payment.confirm".localized()
 
         self.alreadyApproved = self.process.supervisorApproval == true
+        let method = RawPaymentMethod(rawValue: self.process.paymentMethod)
 
         self.topWrapper.isHidden = true
         self.arrowWrapper.isHidden = true
@@ -67,8 +68,9 @@ public class BaseCheckoutViewController: UIViewController {
             if let img = img {
                 self.topIcon.image = img
                 self.iconHeight.constant = img.size.height
-                self.topWrapper.isHidden = self.alreadyApproved
-                self.arrowWrapper.isHidden = false
+                let showTop = method == .gatekeeperTerminal ? false : self.alreadyApproved
+                self.topWrapper.isHidden = showTop
+                self.arrowWrapper.isHidden = showTop
             }
         }
 
