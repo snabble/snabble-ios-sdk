@@ -306,7 +306,7 @@
 
 "Snabble.Scanner.plusDeposit" = "+ %@ Pfand";
 
-"Snabble.Scanner.scannedAgeRestrictedProduct" = "Dieses Produkt unterliegt einer Altersbeschränkung. Dein Alter wird daher bei der Zahlung überprüft werden.";
+"Snabble.Scanner.scannedAgeRestrictedProduct" = "Dein Alter wird einmalig bei der Zahlung überprüft werden.";
 
 "Snabble.Scanner.scannedShelfCode" = "Bitte wiege das Produkt und scanne dann den Barcode auf dem Aufkleber";
 

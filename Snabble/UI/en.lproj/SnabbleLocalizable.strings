@@ -306,7 +306,7 @@
 
 "Snabble.Scanner.plusDeposit" = "+ %@ deposit";
 
-"Snabble.Scanner.scannedAgeRestrictedProduct" = "This is an age-restricted product, your age will be verified during checkout.";
+"Snabble.Scanner.scannedAgeRestrictedProduct" = "Your age will be checked once at the time of payment.";
 
 "Snabble.Scanner.scannedShelfCode" = "Please weigh the product, then scan the barcode from the sticker";
 

@@ -306,7 +306,7 @@
 
 "Snabble.Scanner.plusDeposit" = "+ %@ záloha";
 
-"Snabble.Scanner.scannedAgeRestrictedProduct" = "Na tento produkt sa vzťahuje vekový limit. Preto bude tvoj vek pri platbe skontrolovaný.";
+"Snabble.Scanner.scannedAgeRestrictedProduct" = "Preto bude tvoj vek pri platbe jednorazovo skontrolovaný.";
 
 "Snabble.Scanner.scannedShelfCode" = "Odváž produkt a naskenuj čiarový kód na etikete";
 

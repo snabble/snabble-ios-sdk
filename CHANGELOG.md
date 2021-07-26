@@ -1,6 +1,6 @@
 ## snabble iOS SDK Changelog
 
-# v0.17.5 (unreleased)
+# v0.17.5
 - Add support for credit card tokenization via Datatrans
 
 # v0.17.4

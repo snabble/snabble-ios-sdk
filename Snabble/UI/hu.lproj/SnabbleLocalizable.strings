@@ -306,7 +306,7 @@
 
 "Snabble.Scanner.plusDeposit" = "+ %@ betétdíj";
 
-"Snabble.Scanner.scannedAgeRestrictedProduct" = "Erre a termékre életkori korlátozás vonatkozik. A fizetésnél éppen ezért ellenőrizzük a korod.";
+"Snabble.Scanner.scannedAgeRestrictedProduct" = "A fizetésnél egyszeri alkalommal ellenőrizzük a korodat.";
 
 "Snabble.Scanner.scannedShelfCode" = "Kérlek, mérd le a terméket, és utána olvasd be a matricán található vonalkódot";
 
