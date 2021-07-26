@@ -8,7 +8,7 @@ import Foundation
 
 public struct Metadata: Decodable {
     public let flags: Flags
-    private(set) public var projects: [Project]
+    public private(set) var projects: [Project]
     public let gatewayCertificates: [GatewayCertificate]
     public let links: MetadataLinks
     public let terms: Terms?

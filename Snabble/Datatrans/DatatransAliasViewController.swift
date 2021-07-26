@@ -83,8 +83,7 @@ public final class DatatransAliasViewController: UIViewController {
             } else if case .datatransCardAlias(let data) = detail.methodData {
                 setupView(data.displayName, data.expirationDate)
             }
-        }
-        else {
+        } else {
             self.containerView.isHidden = true
         }
     }

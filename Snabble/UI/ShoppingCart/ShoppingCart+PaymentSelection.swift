@@ -146,7 +146,7 @@ final class PaymentMethodSelector {
         guard let method = self.selectedPaymentMethod else {
             return false
         }
-        
+
         if method.dataRequired {
             return self.selectedPaymentDetail != nil
         }

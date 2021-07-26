@@ -8,7 +8,7 @@ import Foundation
 
 /// a ShoppingList is a collection of ShoppingListItem objects
 public final class ShoppingList: Codable {
-    private(set) public var items = [ShoppingListItem]()
+    public private(set) var items = [ShoppingListItem]()
     public let projectId: Identifier<Project>
 
     private let directory: String

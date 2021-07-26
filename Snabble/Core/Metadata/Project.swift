@@ -268,7 +268,7 @@ public struct Project: Decodable, Identifiable {
     public let scanFormats: [ScanFormat]
     public let barcodeDetector: BarcodeDetectorType
 
-    private(set) public var shops: [Shop]
+    public private(set) var shops: [Shop]
 
     public let customerCards: CustomerCardInfo?
 

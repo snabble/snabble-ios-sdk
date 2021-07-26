@@ -38,7 +38,7 @@ public protocol KeyboardHandling: AnyObject {
     func keyboardWillHide(_ info: KeyboardInfo)
 }
 
-final public class KeyboardObserver: NSObject {
+public final class KeyboardObserver: NSObject {
     private weak var handler: KeyboardHandling!
 
     public required init(handler: KeyboardHandling) {
