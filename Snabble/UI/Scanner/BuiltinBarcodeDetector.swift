@@ -42,6 +42,7 @@ public final class BuiltinBarcodeDetector: NSObject, BarcodeDetector {
     public var scanFormats: [ScanFormat]
 
     private var camera: AVCaptureDevice?
+    private var videoInput: AVCaptureDeviceInput?
     private var captureSession: AVCaptureSession
     private var previewLayer: AVCaptureVideoPreviewLayer?
     private var metadataOutput: AVCaptureMetadataOutput
@@ -79,6 +80,7 @@ public final class BuiltinBarcodeDetector: NSObject, BarcodeDetector {
         }
 
         self.camera = camera
+        self.videoInput = videoInput
         self.captureSession.addInput(videoInput)
         self.captureSession.addOutput(self.metadataOutput)
         self.metadataOutput.metadataObjectTypes = self.scanFormats.map { $0.avType }
@@ -91,6 +93,10 @@ public final class BuiltinBarcodeDetector: NSObject, BarcodeDetector {
         self.previewLayer = previewLayer
 
         addOverlay(to: view)
+
+        if #available(iOS 15, *) {
+            self.setRecommendedZoomFactor()
+        }
     }
 
     private func addOverlay(to view: UIView) {
@@ -217,6 +223,22 @@ public final class BuiltinBarcodeDetector: NSObject, BarcodeDetector {
 
         default:
             assertionFailure("unhandled av auth status \(currentStatus.rawValue)")
+        }
+    }
+
+    @available(iOS 15, *)
+    private func setRecommendedZoomFactor() {
+        guard let videoInput = self.videoInput else {
+            return
+        }
+
+        let zoomFactor = RecommendedZoom.factor(for: videoInput)
+        do {
+            try videoInput.device.lockForConfiguration()
+            videoInput.device.videoZoomFactor = CGFloat(zoomFactor)
+            videoInput.device.unlockForConfiguration()
+        } catch {
+            print("Could not lock for configuration: \(error)")
         }
     }
 }
