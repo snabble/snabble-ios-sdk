@@ -11,6 +11,7 @@ public final class ScannerViewController: PulleyViewController {
     private let scanningViewController: ScanningViewController
     private let drawerViewController: UIViewController
     private let initialPosition: PulleyPosition
+    private var customAppearance: CustomAppearance?
 
     public init(_ cart: ShoppingCart,
                 _ shop: Shop,
@@ -38,6 +39,8 @@ public final class ScannerViewController: PulleyViewController {
         self.title = "Snabble.Scanner.title".localized()
         self.tabBarItem.image = UIImage.fromBundle("SnabbleSDK/icon-scan-inactive")
         self.tabBarItem.selectedImage = UIImage.fromBundle("SnabbleSDK/icon-scan-active")
+
+        SnabbleUI.registerForAppearanceChange(self)
     }
 
     required init?(coder aDecoder: NSCoder) {
@@ -51,6 +54,17 @@ public final class ScannerViewController: PulleyViewController {
     public func updateTotals() {
         let cartController = self.drawerViewController as? ShoppingCartViewController
         cartController?.updateTotals()
+    }
+}
+
+extension ScannerViewController: CustomizableAppearance {
+    public func setCustomAppearance(_ appearance: CustomAppearance) {
+        self.customAppearance = appearance
+
+        self.scanningViewController.setCustomAppearance(appearance)
+        if let drawer = self.drawerViewController as? ScannerDrawerViewController {
+            drawer.setCustomAppearance(appearance)
+        }
     }
 }
 

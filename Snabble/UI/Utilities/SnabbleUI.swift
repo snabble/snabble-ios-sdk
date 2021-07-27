@@ -51,9 +51,11 @@ public enum SnabbleUI {
 
     private static var customizableAppearances: WeakCustomizableAppearanceSet = .init()
 
-    public static func registerForAppearanceChange(_ appearance: CustomizableAppearance) {
+    public static func registerForAppearanceChange(_ customizable: CustomizableAppearance) {
         customizableAppearances.reap()
-        customizableAppearances.addObject(appearance)
+        customizableAppearances.addObject(customizable)
+
+        customizable.setCustomAppearance(self.appearance)
     }
 }
 
