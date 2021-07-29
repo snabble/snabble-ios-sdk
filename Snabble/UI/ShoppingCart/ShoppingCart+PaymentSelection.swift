@@ -241,7 +241,7 @@ final class PaymentMethodSelector {
     }
 
     @objc private func methodSelectionTapped(_ gesture: UITapGestureRecognizer) {
-        let title = "Snabble.Shoppingcart.howToPay".localized()
+        let title = L10n.Snabble.Shoppingcart.howToPay
         let sheet = AlertController(title: title, message: nil, preferredStyle: .actionSheet)
         sheet.visualStyle = .snabbleActionSheet
 
@@ -272,7 +272,7 @@ final class PaymentMethodSelector {
         }
 
         // add the "add method" action
-        let add = AlertAction(title: "Snabble.Payment.add".localized(), style: .normal) { _ in
+        let add = AlertAction(title: L10n.Snabble.Payment.add, style: .normal) { _ in
             if SnabbleUI.implicitNavigation {
                 let selection = PaymentMethodAddViewController(showFromCart: true, self.parentVC)
                 self.parentVC?.navigationController?.pushViewController(selection, animated: true)
@@ -293,7 +293,7 @@ final class PaymentMethodSelector {
         }
 
         // add the cancel action
-        sheet.addAction(AlertAction(title: "Snabble.Cancel".localized(), style: .preferred))
+        sheet.addAction(AlertAction(title: L10n.Snabble.cancel, style: .preferred))
 
         sheet.shouldDismissHandler = { action in
             if let action = action, let icon = iconMap[action], let methodIcon = self.methodIcon {
@@ -329,7 +329,7 @@ final class PaymentMethodSelector {
                 }
 
                 if !isCartMethod {
-                    detailText = "Snabble.Shoppingcart.notForThisPurchase".localized()
+                    detailText = L10n.Snabble.Shoppingcart.notForThisPurchase
                     color = .secondaryLabel
                 }
 
@@ -342,7 +342,7 @@ final class PaymentMethodSelector {
              .twint, .postFinanceCard:
             if !isProjectMethod {
                 if isUserMethod {
-                    let title = self.title(method.displayName, "Snabble.Shoppingcart.notForVendor".localized(), .secondaryLabel)
+                    let title = self.title(method.displayName, L10n.Snabble.Shoppingcart.notForVendor, .secondaryLabel)
                     let action = PaymentMethodAction(title, method, nil, selectable: false, active: false)
                     return [action]
                 } else {
@@ -351,7 +351,7 @@ final class PaymentMethodSelector {
             }
 
             if !isCartMethod && isUserMethod {
-                let title = self.title(method.displayName, "Snabble.Shoppingcart.notForThisPurchase".localized(), .secondaryLabel)
+                let title = self.title(method.displayName, L10n.Snabble.Shoppingcart.notForThisPurchase, .secondaryLabel)
                 let action = PaymentMethodAction(title, method, nil, selectable: false, active: false)
                 return [action]
             } else if !userMethods.isEmpty {
@@ -361,7 +361,7 @@ final class PaymentMethodSelector {
                 }
                 return actions
             } else {
-                let subtitle = "Snabble.Shoppingcart.noPaymentData".localized()
+                let subtitle = L10n.Snabble.Shoppingcart.noPaymentData
                 let title = self.title(method.displayName, subtitle, .label)
                 let action = PaymentMethodAction(title, method, nil, selectable: true, active: false)
                 return [action]
@@ -373,7 +373,7 @@ final class PaymentMethodSelector {
             }
 
             let canMakePayments = ApplePaySupport.canMakePayments()
-            let subtitle = canMakePayments ? nil : "Snabble.Shoppingcart.notForThisPurchase".localized()
+            let subtitle = canMakePayments ? nil : L10n.Snabble.Shoppingcart.notForThisPurchase
             let title = self.title(method.displayName, subtitle, .label)
             let action = PaymentMethodAction(title, method, nil, selectable: canMakePayments, active: false)
             return [action]

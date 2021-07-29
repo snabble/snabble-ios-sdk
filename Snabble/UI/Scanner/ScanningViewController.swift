@@ -81,10 +81,10 @@ final class ScanningViewController: UIViewController {
 
         self.barcodeDetector.delegate = self
 
-        self.title = "Snabble.Scanner.title".localized()
+        self.title = L10n.Snabble.Scanner.title
         self.tabBarItem.image = UIImage.fromBundle("SnabbleSDK/icon-scan-inactive")
         self.tabBarItem.selectedImage = UIImage.fromBundle("SnabbleSDK/icon-scan-active")
-        self.navigationItem.title = "Snabble.Scanner.scanningTitle".localized()
+        self.navigationItem.title = L10n.Snabble.Scanner.scanningTitle
 
         SnabbleUI.registerForAppearanceChange(self)
     }
@@ -365,7 +365,7 @@ extension ScanningViewController: ScanConfirmationViewDelegate {
             }
         }
 
-        return ScanMessage("Snabble.Scanner.scannedAgeRestrictedProduct".localized())
+        return ScanMessage(L10n.Snabble.Scanner.scannedAgeRestrictedProduct)
     }
 
     private func enterBarcode() {
@@ -435,7 +435,7 @@ extension ScanningViewController {
             case .coupon(let coupon, let scannedCode):
                 self.shoppingCart.addCoupon(coupon, scannedCode: scannedCode)
                 NotificationCenter.default.post(name: .snabbleCartUpdated, object: self)
-                let msg = String(format: "Snabble.Scanner.couponAdded".localized(), coupon.name)
+                let msg = L10n.Snabble.Scanner.couponAdded(coupon.name)
                 self.showMessage(ScanMessage(msg))
                 self.barcodeDetector.resumeScanning()
                 return
@@ -460,7 +460,7 @@ extension ScanningViewController {
 
             // handle scanning the shelf code of a pre-weighed product (no data or 0 encoded in the EAN)
             if product.type == .preWeighed && (embeddedData == nil || embeddedData == 0) {
-                let msg = "Snabble.Scanner.scannedShelfCode".localized()
+                let msg = L10n.Snabble.Scanner.scannedShelfCode
                 self.scannedUnknown(msg, scannedCode)
                 self.barcodeDetector.resumeScanning()
                 self.startLastScanTimer()
@@ -483,9 +483,9 @@ extension ScanningViewController {
     private func showScanLookupError(_ error: ProductLookupError, _ scannedCode: String) {
         let errorMsg: String
         switch error {
-        case .notFound: errorMsg = "Snabble.Scanner.unknownBarcode".localized()
-        case .networkError: errorMsg = "Snabble.Scanner.networkError".localized()
-        case .serverError: errorMsg = "Snabble.Scanner.serverError".localized()
+        case .notFound: errorMsg = L10n.Snabble.Scanner.unknownBarcode
+        case .networkError: errorMsg = L10n.Snabble.Scanner.networkError
+        case .serverError: errorMsg = L10n.Snabble.Scanner.serverError
         }
 
         self.scannedUnknown(errorMsg, scannedCode)
@@ -494,9 +494,11 @@ extension ScanningViewController {
 
     private func showSaleStop() {
         self.tapticFeedback.notificationOccurred(.error)
-        let alert = UIAlertController(title: "Snabble.saleStop.errorMsg.title".localized(), message: "Snabble.saleStop.errorMsg.scan".localized(), preferredStyle: .alert)
+        let alert = UIAlertController(title: L10n.Snabble.SaleStop.ErrorMsg.title,
+                                      message: L10n.Snabble.SaleStop.ErrorMsg.scan,
+                                      preferredStyle: .alert)
 
-        alert.addAction(UIAlertAction(title: "Snabble.OK".localized(), style: .default) { _ in
+        alert.addAction(UIAlertAction(title: L10n.Snabble.ok, style: .default) { _ in
             self.lastScannedCode = nil
             self.barcodeDetector.resumeScanning()
         })
@@ -510,13 +512,13 @@ extension ScanningViewController {
             self.showMessage(msg)
             self.lastScannedCode = nil
         } else {
-            self.scannedUnknown("Snabble.notForSale.errorMsg.scan".localized(), scannedCode)
+            self.scannedUnknown(L10n.Snabble.NotForSale.ErrorMsg.scan, scannedCode)
         }
         self.barcodeDetector.resumeScanning()
     }
 
     private func showBundleSelection(for scannedProduct: ScannedProduct, _ scannedCode: String) {
-        let alert = UIAlertController(title: nil, message: "Snabble.Scanner.BundleDialog.headline".localized(), preferredStyle: .actionSheet)
+        let alert = UIAlertController(title: nil, message: L10n.Snabble.Scanner.BundleDialog.headline, preferredStyle: .actionSheet)
 
         let product = scannedProduct.product
         alert.addAction(UIAlertAction(title: product.name, style: .default) { _ in
@@ -535,7 +537,7 @@ extension ScanningViewController {
             })
         }
 
-        alert.addAction(UIAlertAction(title: "Snabble.Cancel".localized(), style: .cancel) { _ in
+        alert.addAction(UIAlertAction(title: L10n.Snabble.cancel, style: .cancel) { _ in
             self.lastScannedCode = nil
             self.barcodeDetector.resumeScanning()
         })

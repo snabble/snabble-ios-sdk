@@ -198,7 +198,7 @@ public final class PaymentProcess {
                 completion(.success(processor))
                 OfflineCarts.shared.saveCartForLater(self.cart)
             } else {
-                self.delegate.showWarningMessage("Snabble.Payment.errorStarting".localized())
+                self.delegate.showWarningMessage(L10n.Snabble.Payment.errorStarting)
             }
         }
     }
@@ -300,7 +300,7 @@ extension PaymentProcess {
                 if let processor = method.processor(process, result.rawJson, self.cart, self.delegate) {
                     completion(.success(processor))
                 } else {
-                    self.delegate.showWarningMessage("Snabble.Payment.errorStarting".localized())
+                    self.delegate.showWarningMessage(L10n.Snabble.Payment.errorStarting)
                 }
             case .failure(let error):
                 self.cart.generateNewUUID()

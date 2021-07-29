@@ -36,7 +36,7 @@ public final class SepaEditViewController: UIViewController {
 
         super.init(nibName: nil, bundle: SnabbleBundle.main)
 
-        self.title = "Snabble.Payment.SEPA.Title".localized()
+        self.title = L10n.Snabble.Payment.Sepa.title
     }
 
     public init(_ candidate: OriginCandidate, _ analyticsDelegate: AnalyticsDelegate?) {
@@ -45,7 +45,7 @@ public final class SepaEditViewController: UIViewController {
 
         super.init(nibName: nil, bundle: SnabbleBundle.main)
 
-        self.title = "Snabble.Payment.SEPA.Title".localized()
+        self.title = L10n.Snabble.Payment.Sepa.title
     }
 
     required init?(coder aDecoder: NSCoder) {
@@ -55,17 +55,17 @@ public final class SepaEditViewController: UIViewController {
     override public func viewDidLoad() {
         super.viewDidLoad()
 
-        self.hintLabel.text = "Snabble.Payment.SEPA.hint".localized()
+        self.hintLabel.text = L10n.Snabble.Payment.Sepa.hint
 
         self.saveButton.makeSnabbleButton()
-        self.saveButton.setTitle("Snabble.Save".localized(), for: .normal)
+        self.saveButton.setTitle(L10n.Snabble.save, for: .normal)
 
         self.setupKeyboard(self.nameField)
         self.setupKeyboard(self.ibanCountryField)
         self.setupKeyboard(self.ibanNumberField)
 
-        self.nameLabel.text = "Snabble.Payment.SEPA.Name".localized()
-        self.ibanLabel.text = "Snabble.Payment.SEPA.IBAN".localized()
+        self.nameLabel.text = L10n.Snabble.Payment.Sepa.name
+        self.ibanLabel.text = L10n.Snabble.Payment.Sepa.iban
 
         self.nameField.tag = InputField.name.rawValue
         self.nameField.keyboardType = .alphabet
@@ -97,7 +97,7 @@ public final class SepaEditViewController: UIViewController {
         super.viewWillAppear(animated)
 
         if let detail = self.detail {
-            self.hintLabel.text = "Snabble.SEPA.editingHint".localized()
+            self.hintLabel.text = L10n.Snabble.Sepa.editingHint
 
             self.saveButton.isHidden = true
 
@@ -126,7 +126,7 @@ public final class SepaEditViewController: UIViewController {
             self.ibanNumberField.text = iban
             self.ibanNumberField.isEnabled = false
 
-            self.hintLabel.text = "Snabble.SEPA.scoTransferHint".localized()
+            self.hintLabel.text = L10n.Snabble.Sepa.scoTransferHint
         } else {
             self.nameField.becomeFirstResponder()
         }
@@ -158,26 +158,26 @@ public final class SepaEditViewController: UIViewController {
         if !valid {
             self.ibanNumberField.textColor = .systemRed
             self.ibanLabel.textColor = .systemRed
-            self.ibanLabel.text = "Snabble.Payment.SEPA.InvalidIBAN".localized()
+            self.ibanLabel.text = L10n.Snabble.Payment.Sepa.invalidIBAN
             showError = true
         }
         if name.isEmpty {
             self.nameField.textColor = .systemRed
             self.nameLabel.textColor = .systemRed
-            self.nameLabel.text = "Snabble.Payment.SEPA.InvalidName".localized()
+            self.nameLabel.text = L10n.Snabble.Payment.Sepa.invalidName
             showError = true
         }
         if country.isEmpty {
             self.ibanCountryField.textColor = .systemRed
             self.ibanLabel.textColor = .systemRed
-            self.ibanLabel.text = "Snabble.Payment.SEPA.missingCountry".localized()
+            self.ibanLabel.text = L10n.Snabble.Payment.Sepa.missingCountry
             showError = true
         }
 
         if showError {
             Timer.scheduledTimer(withTimeInterval: 3, repeats: false) { _ in
-                self.fadeText(self.ibanLabel, "Snabble.Payment.SEPA.IBAN".localized())
-                self.fadeText(self.nameLabel, "Snabble.Payment.SEPA.Name".localized())
+                self.fadeText(self.ibanLabel, L10n.Snabble.Payment.Sepa.iban)
+                self.fadeText(self.nameLabel, L10n.Snabble.Payment.Sepa.name)
             }
         }
 
@@ -193,8 +193,8 @@ public final class SepaEditViewController: UIViewController {
                     self.goBack()
                 }
             } else {
-                let alert = UIAlertController(title: nil, message: "Snabble.SEPA.encryptionError".localized(), preferredStyle: .alert)
-                alert.addAction(UIAlertAction(title: "Snabble.OK".localized(), style: .default, handler: nil))
+                let alert = UIAlertController(title: nil, message: L10n.Snabble.Sepa.encryptionError, preferredStyle: .alert)
+                alert.addAction(UIAlertAction(title: L10n.Snabble.ok, style: .default, handler: nil))
 
                 self.present(alert, animated: true)
             }
@@ -241,13 +241,13 @@ public final class SepaEditViewController: UIViewController {
             return
         }
 
-        let alert = UIAlertController(title: nil, message: "Snabble.Payment.delete.message".localized(), preferredStyle: .alert)
-        alert.addAction(UIAlertAction(title: "Snabble.Yes".localized(), style: .destructive) { _ in
+        let alert = UIAlertController(title: nil, message: L10n.Snabble.Payment.Delete.message, preferredStyle: .alert)
+        alert.addAction(UIAlertAction(title: L10n.Snabble.yes, style: .destructive) { _ in
             PaymentMethodDetails.remove(detail)
             self.analyticsDelegate?.track(.paymentMethodDeleted(detail.rawMethod.displayName))
             self.navigationController?.popViewController(animated: true)
         })
-        alert.addAction(UIAlertAction(title: "Snabble.No".localized(), style: .cancel, handler: nil))
+        alert.addAction(UIAlertAction(title: L10n.Snabble.no, style: .cancel, handler: nil))
 
         self.present(alert, animated: true)
     }

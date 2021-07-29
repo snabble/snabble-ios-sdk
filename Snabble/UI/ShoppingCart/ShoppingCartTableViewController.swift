@@ -286,16 +286,16 @@ final class ShoppingCartTableViewController: UITableViewController {
             }
         }
 
-        let start = offendingProducts.count == 1 ? "Snabble.saleStop.errorMsg.one" : "Snabble.saleStop.errorMsg"
-        let msg = start.localized() + "\n\n" + offendingProducts.joined(separator: "\n")
-        let alert = UIAlertController(title: "Snabble.saleStop.errorMsg.title".localized(), message: msg, preferredStyle: .alert)
-        alert.addAction(UIAlertAction(title: "Snabble.OK".localized(), style: .default, handler: nil))
+        let start = offendingProducts.count == 1 ? L10n.Snabble.SaleStop.ErrorMsg.one : L10n.Snabble.SaleStop.errorMsg
+        let msg = start + "\n\n" + offendingProducts.joined(separator: "\n")
+        let alert = UIAlertController(title: L10n.Snabble.SaleStop.ErrorMsg.title, message: msg, preferredStyle: .alert)
+        alert.addAction(UIAlertAction(title: L10n.Snabble.ok, style: .default, handler: nil))
         self.present(alert, animated: true)
     }
 
     private func showVoucherError() {
-        let alert = UIAlertController(title: "Snabble.invalidDepositVoucher.errorMsg".localized(), message: nil, preferredStyle: .alert)
-        alert.addAction(UIAlertAction(title: "Snabble.OK".localized(), style: .default, handler: nil))
+        let alert = UIAlertController(title: L10n.Snabble.InvalidDepositVoucher.errorMsg, message: nil, preferredStyle: .alert)
+        alert.addAction(UIAlertAction(title: L10n.Snabble.ok, style: .default, handler: nil))
         self.present(alert, animated: true)
     }
 
@@ -309,7 +309,7 @@ final class ShoppingCartTableViewController: UITableViewController {
             if totalPrice > notAllMethodsAvailable {
                 if !self.notAllMethodsAvailableShown {
                     let limit = formatter.format(notAllMethodsAvailable)
-                    self.showLimitAlert(String(format: "Snabble.limitsAlert.notAllMethodsAvailable".localized(), limit))
+                    self.showLimitAlert(L10n.Snabble.LimitsAlert.notAllMethodsAvailable(limit))
                     self.notAllMethodsAvailableShown = true
                 }
             } else {
@@ -321,7 +321,7 @@ final class ShoppingCartTableViewController: UITableViewController {
             if totalPrice > checkoutNotAvailable {
                 if !self.checkoutNotAvailableShown {
                     let limit = formatter.format(checkoutNotAvailable)
-                    self.showLimitAlert(String(format: "Snabble.limitsAlert.checkoutNotAvailable".localized(), limit))
+                    self.showLimitAlert(L10n.Snabble.LimitsAlert.checkoutNotAvailable(limit))
                     self.checkoutNotAvailableShown = true
                 }
             } else {
@@ -335,8 +335,8 @@ final class ShoppingCartTableViewController: UITableViewController {
             return
         }
 
-        let alert = UIAlertController(title: "Snabble.limitsAlert.title".localized(), message: msg, preferredStyle: .alert)
-        alert.addAction(UIAlertAction(title: "Snabble.OK".localized(), style: .default) { _ in
+        let alert = UIAlertController(title: L10n.Snabble.LimitsAlert.title, message: msg, preferredStyle: .alert)
+        alert.addAction(UIAlertAction(title: L10n.Snabble.ok, style: .default) { _ in
             self.limitAlert = nil
         })
         UIApplication.topViewController()?.present(alert, animated: true)
@@ -356,14 +356,14 @@ extension ShoppingCartTableViewController: ShoppingCartTableDelegate {
 
         let product = item.product
 
-        let msg = String(format: "Snabble.Shoppingcart.removeItem".localized(), product.name)
+        let msg = L10n.Snabble.Shoppingcart.removeItem(product.name)
         let alert = UIAlertController(title: nil, message: msg, preferredStyle: .alert)
 
-        alert.addAction(UIAlertAction(title: "Snabble.Yes".localized(), style: .destructive) { _ in
+        alert.addAction(UIAlertAction(title: L10n.Snabble.yes, style: .destructive) { _ in
             self.deleteRow(row)
         })
 
-        alert.addAction(UIAlertAction(title: "Snabble.No".localized(), style: .cancel) { _ in
+        alert.addAction(UIAlertAction(title: L10n.Snabble.no, style: .cancel) { _ in
             self.shoppingCart.setQuantity(1, at: row)
             let indexPath = IndexPath(row: row, section: 0)
             self.tableView.reloadRows(at: [indexPath], with: .none)
@@ -483,7 +483,7 @@ extension ShoppingCartTableViewController {
     }
 
     override func tableView(_ tableView: UITableView, titleForDeleteConfirmationButtonForRowAt indexPath: IndexPath) -> String? {
-        return "Snabble.remove".localized()
+        return L10n.Snabble.remove
     }
 }
 

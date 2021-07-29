@@ -36,7 +36,7 @@ public final class ScannerViewController: PulleyViewController {
         super.init(contentViewController: scanningViewController, drawerViewController: drawerViewController)
         self.initialDrawerPosition = initialPosition
 
-        self.title = "Snabble.Scanner.title".localized()
+        self.title = L10n.Snabble.Scanner.title
         self.tabBarItem.image = UIImage.fromBundle("SnabbleSDK/icon-scan-inactive")
         self.tabBarItem.selectedImage = UIImage.fromBundle("SnabbleSDK/icon-scan-active")
 

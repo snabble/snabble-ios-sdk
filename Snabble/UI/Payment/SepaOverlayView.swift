@@ -111,10 +111,10 @@ public final class SepaOverlayView: UIView {
     }
 
     public struct ViewModel: SepaOverlayViewModel {
-        public let title: String = "Snabble.SEPA.mandate".localized()
+        public let title: String = L10n.Snabble.Sepa.mandate
         public let text: NSAttributedString
 
-        public let successButtonTitle: String = "Snabble.SEPA.iAgree".localized()
+        public let successButtonTitle: String = L10n.Snabble.Sepa.iAgree
         public let successButtonTintColor: UIColor?
         public let successButtonBackgroundColor: UIColor?
 

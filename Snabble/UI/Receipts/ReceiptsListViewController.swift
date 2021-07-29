@@ -51,7 +51,7 @@ public final class ReceiptsListViewController: UIViewController {
 
         super.init(nibName: nil, bundle: SnabbleBundle.main)
 
-        self.title = "Snabble.Receipts.title".localized()
+        self.title = L10n.Snabble.Receipts.title
     }
 
     required init?(coder aDecoder: NSCoder) {
@@ -65,7 +65,7 @@ public final class ReceiptsListViewController: UIViewController {
         self.tableView.register(nib, forCellReuseIdentifier: "receiptCell")
         self.tableView.tableFooterView = UIView(frame: CGRect.zero)
 
-        self.emptyLabel.text = "Snabble.Receipts.noReceipts".localized()
+        self.emptyLabel.text = L10n.Snabble.Receipts.noReceipts
         self.emptyLabel.isHidden = true
 
         self.spinner.startAnimating()

@@ -39,7 +39,7 @@ public final class PaymentMethodAddViewController: UITableViewController {
     override public func viewDidLoad() {
         super.viewDidLoad()
 
-        self.title = "Snabble.PaymentMethods.title".localized()
+        self.title = L10n.Snabble.PaymentMethods.title
 
         tableView.tableFooterView = UIView(frame: .zero)
         tableView.rowHeight = 44
@@ -215,8 +215,8 @@ extension PaymentMethodAddViewController {
         }
 
         switch section {
-        case 0: return "Snabble.PaymentMethods.forAllRetailers".localized()
-        case 1: return "Snabble.PaymentMethods.forSingleRetailer".localized()
+        case 0: return L10n.Snabble.PaymentMethods.forAllRetailers
+        case 1: return L10n.Snabble.PaymentMethods.forSingleRetailer
         default: return nil
         }
     }
@@ -281,7 +281,7 @@ extension PaymentMethodAddViewController {
             .filter { $0.isProjectSpecific }
             .sorted { $0.displayName < $1.displayName }
 
-        let sheet = AlertController(title: "Snabble.PaymentMethods.choose".localized(), message: nil, preferredStyle: .actionSheet)
+        let sheet = AlertController(title: L10n.Snabble.PaymentMethods.choose, message: nil, preferredStyle: .actionSheet)
         sheet.visualStyle = .snabbleActionSheet
 
         methods.forEach { method in
@@ -299,7 +299,7 @@ extension PaymentMethodAddViewController {
             sheet.addAction(action)
         }
 
-        sheet.addAction(AlertAction(title: "Snabble.Cancel".localized(), style: .preferred, handler: nil))
+        sheet.addAction(AlertAction(title: L10n.Snabble.cancel, style: .preferred, handler: nil))
 
         self.present(sheet, animated: true)
     }

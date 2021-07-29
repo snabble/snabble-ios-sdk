@@ -207,11 +207,11 @@ public final class BuiltinBarcodeDetector: NSObject, BarcodeDetector {
     private func requestCameraPermission(currentStatus: AVAuthorizationStatus) {
         switch currentStatus {
         case .restricted, .denied:
-            let title = "Snabble.Scanner.Camera.accessDenied".localized()
-            let msg = "Snabble.Scanner.Camera.allowAccess".localized()
+            let title = L10n.Snabble.Scanner.Camera.accessDenied
+            let msg = L10n.Snabble.Scanner.Camera.allowAccess
             let alert = UIAlertController(title: title, message: msg, preferredStyle: .alert)
-            alert.addAction(UIAlertAction(title: "Snabble.Cancel".localized(), style: .cancel, handler: nil))
-            alert.addAction(UIAlertAction(title: "Snabble.Settings".localized(), style: .default) { _ in
+            alert.addAction(UIAlertAction(title: L10n.Snabble.cancel, style: .cancel, handler: nil))
+            alert.addAction(UIAlertAction(title: L10n.Snabble.settings, style: .default) { _ in
                 UIApplication.shared.open(URL(string: UIApplication.openSettingsURLString)!)
             })
             DispatchQueue.main.async {
@@ -269,7 +269,7 @@ extension BuiltinBarcodeDetector {
         self.screenTap = UITapGestureRecognizer(target: self, action: #selector(screenTapped(_:)))
         self.decorationOverlay?.addGestureRecognizer(self.screenTap!)
 
-        self.messageDelegate?.showMessage("Snabble.Scanner.batterySaverHint".localized()) {
+        self.messageDelegate?.showMessage(L10n.Snabble.Scanner.batterySaverHint) {
             self.resumeScanning()
         }
     }

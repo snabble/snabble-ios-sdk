@@ -18,8 +18,8 @@ public enum BiometricAuthentication {
         public var name: String {
             switch self {
             case .none: return ""
-            case .touchID: return "Snabble.Biometry.TouchId".localized()
-            case .faceID: return "Snabble.Biometry.FaceId".localized()
+            case .touchID: return L10n.Snabble.Biometry.touchId
+            case .faceID: return L10n.Snabble.Biometry.faceId
             }
         }
     }
@@ -52,7 +52,7 @@ public enum BiometricAuthentication {
         let canEvaluate = authContext.canEvaluatePolicy(self.policy, error: nil)
 
         if canEvaluate && (authContext.biometryType == .touchID || authContext.biometryType == .faceID) {
-            authContext.localizedFallbackTitle = "Snabble.Biometry.enterCode".localized()
+            authContext.localizedFallbackTitle = L10n.Snabble.Biometry.enterCode
             authContext.evaluatePolicy(policy, localizedReason: reason) { success, error in
                 if let error = error {
                     NSLog("local authentication error: \(error)")

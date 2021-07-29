@@ -33,7 +33,7 @@ public final class ShoppingCartViewController: UIViewController {
 
         super.init(nibName: nil, bundle: nil)
 
-        self.title = "Snabble.ShoppingCart.title".localized()
+        self.title = L10n.Snabble.ShoppingCart.title
         let cartEmpty = shoppingCart.numberOfProducts == 0
         self.tabBarItem.image = UIImage.fromBundle(cartEmpty ? "SnabbleSDK/icon-cart-inactive-empty" : "SnabbleSDK/icon-cart-inactive-full")
         self.tabBarItem.selectedImage = UIImage.fromBundle("SnabbleSDK/icon-cart-active")
@@ -176,12 +176,12 @@ public final class ShoppingCartViewController: UIViewController {
 extension ShoppingCartViewController {
     private func configureEmptyState() {
         if self.shoppingCart.items.isEmpty == true && self.shoppingCart.backupAvailable {
-            self.emptyState.button1.setTitle("Snabble.Shoppingcart.emptyState.restartButtonTitle".localized(), for: .normal)
+            self.emptyState.button1.setTitle(L10n.Snabble.Shoppingcart.EmptyState.restartButtonTitle, for: .normal)
             self.emptyState.button2.isHidden = false
             let restoreInterval: TimeInterval = 5 * 60
             self.restoreTimer = Timer.scheduledTimer(withTimeInterval: restoreInterval, repeats: false) { [weak self] _ in
                 UIView.animate(withDuration: 0.2) {
-                    self?.emptyState.button1.setTitle("Snabble.Shoppingcart.emptyState.buttonTitle".localized(), for: .normal)
+                    self?.emptyState.button1.setTitle(L10n.Snabble.Shoppingcart.EmptyState.buttonTitle, for: .normal)
                     self?.emptyState.button2.isHidden = true
                     self?.restoreTimer = nil
                 }
@@ -212,12 +212,12 @@ extension ShoppingCartViewController {
     }
 
     func showDeleteCartAlert() {
-        let alert = UIAlertController(title: "Snabble.Shoppingcart.removeItems".localized(), message: nil, preferredStyle: .alert)
-        alert.addAction(UIAlertAction(title: "Snabble.Yes".localized(), style: .destructive) { _ in
+        let alert = UIAlertController(title: L10n.Snabble.Shoppingcart.removeItems, message: nil, preferredStyle: .alert)
+        alert.addAction(UIAlertAction(title: L10n.Snabble.yes, style: .destructive) { _ in
             self.deleteCart()
             self.setDeleteButton()
         })
-        alert.addAction(UIAlertAction(title: "Snabble.No".localized(), style: .cancel, handler: nil))
+        alert.addAction(UIAlertAction(title: L10n.Snabble.no, style: .cancel, handler: nil))
 
         self.present(alert, animated: true)
     }

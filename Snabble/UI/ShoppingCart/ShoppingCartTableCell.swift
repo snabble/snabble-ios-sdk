@@ -198,7 +198,7 @@ final class ShoppingCartTableCell: UITableViewCell {
     func setDiscount(_ amount: Int, delegate: ShoppingCartTableDelegate) {
         self.delegate = delegate
 
-        self.nameLabel.text = "Snabble.Shoppingcart.discounts".localized()
+        self.nameLabel.text = L10n.Snabble.Shoppingcart.discounts
 
         let formatter = PriceFormatter(SnabbleUI.project)
         self.priceLabel.text = formatter.format(amount)
@@ -215,7 +215,7 @@ final class ShoppingCartTableCell: UITableViewCell {
 
         self.nameLabel.text = lineItem.name
 
-        self.priceLabel.text = "Snabble.Shoppingcart.giveaway".localized()
+        self.priceLabel.text = L10n.Snabble.Shoppingcart.giveaway
 
         if showImages {
             let icon = UIImage.fromBundle("SnabbleSDK/icon-giveaway")
@@ -378,7 +378,7 @@ final class ShoppingCartTableCell: UITableViewCell {
 
         if let depositTotal = lineItems.first(where: { $0.type == .deposit })?.totalPrice {
             let total = formatter.format((mainItem.totalPrice ?? 0) + depositTotal)
-            let includesDeposit = "Snabble.Shoppingcart.includesDeposit".localized()
+            let includesDeposit = L10n.Snabble.Shoppingcart.includesDeposit
             self.priceLabel.text = "\(total) \(includesDeposit)"
         } else {
             let total = formatter.format(mainItem.totalPrice ?? 0)
