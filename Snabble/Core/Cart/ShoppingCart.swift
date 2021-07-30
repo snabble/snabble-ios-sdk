@@ -16,6 +16,11 @@ public final class ShoppingCart: Codable {
     public private(set) var lastCheckoutInfoError: SnabbleError?
     public private(set) var coupons: [CartCoupon]
 
+    // info that the backend requires
+    public private(set) var requiredInformation: [RequiredInformation]
+    // required info we've already gathered
+    public internal(set) var requiredInformationData: [RequiredInformation]
+
     public let projectId: Identifier<Project>
     public let shopId: Identifier<Shop>
 
@@ -46,6 +51,7 @@ public final class ShoppingCart: Codable {
     enum CodingKeys: String, CodingKey {
         case items, session, lastSaved, backendCartInfo, projectId, shopId
         case uuid, backupItems, backupSession, customerCard, maxAge, coupons
+        case requiredInformation, requiredInformationData
     }
 
     public init(from decoder: Decoder) throws {
@@ -65,6 +71,8 @@ public final class ShoppingCart: Codable {
         self.sorter = nil
         self.lastCheckoutInfoError = nil
         self.coupons = try container.decodeIfPresent([CartCoupon].self, forKey: .coupons) ?? []
+        self.requiredInformation = try container.decodeIfPresent([RequiredInformation].self, forKey: .requiredInformation) ?? []
+        self.requiredInformationData = try container.decodeIfPresent([RequiredInformation].self, forKey: .requiredInformationData) ?? []
     }
 
     public func encode(to encoder: Encoder) throws {
@@ -82,6 +90,8 @@ public final class ShoppingCart: Codable {
         try container.encodeIfPresent(self.customerCard, forKey: .customerCard)
         try container.encode(self.maxAge, forKey: .maxAge)
         try container.encode(self.coupons, forKey: .coupons)
+        try container.encode(self.requiredInformation, forKey: .requiredInformation)
+        try container.encode(self.requiredInformationData, forKey: .requiredInformationData)
     }
 
     public init(_ config: CartConfig) {
@@ -97,6 +107,8 @@ public final class ShoppingCart: Codable {
         self.uuid = ""
         self.items = []
         self.coupons = []
+        self.requiredInformation = []
+        self.requiredInformationData = []
         self.generateNewUUID()
 
         if let savedCart = self.load() {
@@ -105,6 +117,8 @@ public final class ShoppingCart: Codable {
             self.customerCard = savedCart.customerCard
             self.uuid = savedCart.uuid
             self.coupons = savedCart.coupons
+            self.requiredInformation = savedCart.requiredInformation
+            self.requiredInformationData = savedCart.requiredInformationData
 
             self.backupItems = savedCart.backupItems
             self.backupSession = savedCart.backupSession
@@ -232,6 +246,8 @@ public final class ShoppingCart: Codable {
 
         self.items.removeAll()
         self.coupons.removeAll()
+        self.requiredInformation = []
+        self.requiredInformationData = []
         self.save()
         NotificationCenter.default.post(name: .snabbleCartUpdated, object: self)
 
@@ -385,12 +401,7 @@ public extension Notification.Name {
 // MARK: backend connection
 extension ShoppingCart {
     func createCart() -> Cart {
-        return Cart(session: self.session,
-                    shopID: self.shopId,
-                    customer: Cart.CustomerInfo(loyaltyCard: self.customerCard),
-                    items: self.backendItems(),
-                    clientID: SnabbleAPI.clientId,
-                    appUserID: SnabbleAPI.appUserId?.userId)
+        return Cart(self, clientId: SnabbleAPI.clientId, appUserId: SnabbleAPI.appUserId?.userId)
     }
 
     func createCheckoutInfo(userInitiated: Bool = false, completion: @escaping (Bool) -> Void) {
@@ -421,6 +432,11 @@ extension ShoppingCart {
                 Log.info("createCheckoutInfo succeeded: \(session)")
                 self.backendCartInfo = BackendCartInfo(info.checkoutInfo)
                 self.paymentMethods = info.checkoutInfo.paymentMethods
+                self.requiredInformation = info.checkoutInfo.requiredInformation
+
+                let ids = self.requiredInformation.map { $0.id }
+                self.requiredInformationData.removeAll { !ids.contains($0.id) }
+
                 self.lastCheckoutInfoError = nil
                 self.save(postEvent: false)
                 completion(true)

@@ -450,13 +450,13 @@
 /* Der Titel der übersichtsseite der Einkaufslisten */
 "Snabble.ShoppingLists.title" = "Bevásárlólisták";
 
-"Snabble.Taxation.consume.inhouse" = "Consume here";
+"Snabble.Taxation.consume.inhouse" = "itt elfogyasztani";
 
-"Snabble.Taxation.consume.takeaway" = "Take with me";
+"Snabble.Taxation.consume.takeaway" = "magaddal vinni";
 
-"Snabble.Taxation.consumeWhere" = "What do you want to do with your purchase?";
+"Snabble.Taxation.consumeWhere" = "Szeretnéd a bevásárlásodat";
 
-"Snabble.Taxation.pleaseChoose" = "Please choose";
+"Snabble.Taxation.pleaseChoose" = "Kérlek, válassz";
 
 "Snabble.TWINT.payNow" = "Fizetés TWINT segítségével";
 
