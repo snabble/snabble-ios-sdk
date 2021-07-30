@@ -542,6 +542,18 @@ public enum L10n {
       /// Pay now using TWINT
       public static var payNow: String { return L10n.tr("SnabbleLocalizable", "Snabble.TWINT.payNow") }
     }
+    public enum Taxation {
+      /// What do you want to do with your purchase?
+      public static var consumeWhere: String { return L10n.tr("SnabbleLocalizable", "Snabble.Taxation.consumeWhere") }
+      /// Please choose
+      public static var pleaseChoose: String { return L10n.tr("SnabbleLocalizable", "Snabble.Taxation.pleaseChoose") }
+      public enum Consume {
+        /// Consume here
+        public static var inhouse: String { return L10n.tr("SnabbleLocalizable", "Snabble.Taxation.consume.inhouse") }
+        /// Take with me
+        public static var takeaway: String { return L10n.tr("SnabbleLocalizable", "Snabble.Taxation.consume.takeaway") }
+      }
+    }
     public enum AgeVerification {
       /// To purchase certain products like alcoholic beverages, verifying your age is required. Enter the 7-digit Number from the back side of your ID card.
       public static var explanation: String { return L10n.tr("SnabbleLocalizable", "Snabble.ageVerification.explanation") }

@@ -450,6 +450,14 @@
 /* Der Titel der übersichtsseite der Einkaufslisten */
 "Snabble.ShoppingLists.title" = "Nákupné zoznamy";
 
+"Snabble.Taxation.consume.inhouse" = "Consume here";
+
+"Snabble.Taxation.consume.takeaway" = "Take with me";
+
+"Snabble.Taxation.consumeWhere" = "What do you want to do with your purchase?";
+
+"Snabble.Taxation.pleaseChoose" = "Please choose";
+
 "Snabble.TWINT.payNow" = "Zaplatiť cez TWINT teraz";
 
 "Snabble.undo" = "Vrátiť späť";

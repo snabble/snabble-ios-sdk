@@ -450,6 +450,14 @@
 /* Der Titel der übersichtsseite der Einkaufslisten */
 "Snabble.ShoppingLists.title" = "Einkaufslisten";
 
+"Snabble.Taxation.consume.inhouse" = "hier konsumieren";
+
+"Snabble.Taxation.consume.takeaway" = "mitnehmen";
+
+"Snabble.Taxation.consumeWhere" = "Möchtest du deinen Einkauf";
+
+"Snabble.Taxation.pleaseChoose" = "Bitte wählen";
+
 "Snabble.TWINT.payNow" = "Jetzt mit TWINT bezahlen";
 
 "Snabble.undo" = "Rückgängig";
