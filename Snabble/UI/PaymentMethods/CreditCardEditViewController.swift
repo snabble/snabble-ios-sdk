@@ -85,7 +85,7 @@ public final class CreditCardEditViewController: UIViewController {
         if let brand = self.brand {
             self.title = brand.displayName
         } else {
-            self.title = "Snabble.Payment.CreditCard".localized()
+            self.title = L10n.Snabble.Payment.creditCard
         }
 
         if self.ccNumber != nil {
@@ -94,9 +94,9 @@ public final class CreditCardEditViewController: UIViewController {
             self.cardNumber.text = self.ccNumber
             self.expirationDate.text = self.expDate
 
-            self.cardNumberLabel.text = "Snabble.CC.cardNumber".localized()
-            self.expDateLabel.text = "Snabble.CC.validUntil".localized()
-            self.explanation.text = "Snabble.CC.editingHint".localized()
+            self.cardNumberLabel.text = L10n.Snabble.Cc.cardNumber
+            self.expDateLabel.text = L10n.Snabble.Cc.validUntil
+            self.explanation.text = L10n.Snabble.Cc.editingHint
 
             let trash = UIImage.fromBundle("SnabbleSDK/icon-trash")
             let deleteButton = UIBarButtonItem(image: trash, style: .plain, target: self, action: #selector(self.deleteButtonTapped(_:)))
@@ -145,8 +145,8 @@ public final class CreditCardEditViewController: UIViewController {
             self?.spinner.stopAnimating()
             switch result {
             case .failure:
-                let alert = UIAlertController(title: "Oops", message: "Snabble.CC.noEntryPossible".localized(), preferredStyle: .alert)
-                alert.addAction(UIAlertAction(title: "Snabble.OK".localized(), style: .default) { _ in
+                let alert = UIAlertController(title: "Oops", message: L10n.Snabble.Cc.noEntryPossible, preferredStyle: .alert)
+                alert.addAction(UIAlertAction(title: L10n.Snabble.ok, style: .default) { _ in
                     self?.goBack()
                 })
                 self?.present(alert, animated: true)
@@ -208,7 +208,7 @@ public final class CreditCardEditViewController: UIViewController {
         let chargeDecimal = Decimal(string: vaultItem.chargeTotal.replacingOccurrences(of: ",", with: "."))
         let chargeTotal = fmt.string(for: chargeDecimal)!
 
-        return String(format: "Snabble.CC.3dsecureHint.retailerWithPrice".localized(), chargeTotal, name)
+        return L10n.Snabble.Cc._3dsecureHint.retailerWithPrice(chargeTotal, name)
     }
 
     private func setupWebView() {
@@ -229,13 +229,13 @@ public final class CreditCardEditViewController: UIViewController {
             return
         }
 
-        let alert = UIAlertController(title: nil, message: "Snabble.Payment.delete.message".localized(), preferredStyle: .alert)
-        alert.addAction(UIAlertAction(title: "Snabble.Yes".localized(), style: .destructive) { _ in
+        let alert = UIAlertController(title: nil, message: L10n.Snabble.Payment.Delete.message, preferredStyle: .alert)
+        alert.addAction(UIAlertAction(title: L10n.Snabble.yes, style: .destructive) { _ in
             PaymentMethodDetails.remove(detail)
             self.analyticsDelegate?.track(.paymentMethodDeleted(self.brand?.rawValue ?? ""))
             self.goBack()
         })
-        alert.addAction(UIAlertAction(title: "Snabble.No".localized(), style: .cancel, handler: nil))
+        alert.addAction(UIAlertAction(title: L10n.Snabble.no, style: .cancel, handler: nil))
         self.present(alert, animated: true)
     }
 }
@@ -296,8 +296,8 @@ extension CreditCardEditViewController: WKScriptMessageHandler {
     }
 
     private func showError() {
-        let alert = UIAlertController(title: "Snabble.Payment.CreditCard.error".localized(), message: nil, preferredStyle: .alert)
-        alert.addAction(UIAlertAction(title: "Snabble.OK".localized(), style: .default) { _ in
+        let alert = UIAlertController(title: L10n.Snabble.Payment.CreditCard.error, message: nil, preferredStyle: .alert)
+        alert.addAction(UIAlertAction(title: L10n.Snabble.ok, style: .default) { _ in
             self.goBack()
         })
 

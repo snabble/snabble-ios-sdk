@@ -52,11 +52,11 @@ final class ShoppingCartEmptyStateView: EmptyStateView {
     override init(_ tapHandler: @escaping Handler) {
         super.init(tapHandler)
 
-        self.textLabel.text = "Snabble.Shoppingcart.emptyState.description".localized()
-        self.button1.setTitle("Snabble.Shoppingcart.emptyState.buttonTitle".localized(), for: .normal)
+        self.textLabel.text = L10n.Snabble.Shoppingcart.EmptyState.description
+        self.button1.setTitle(L10n.Snabble.Shoppingcart.EmptyState.buttonTitle, for: .normal)
         self.button1.setTitleColor(.label, for: .normal)
 
-        self.button2.setTitle("Snabble.Shoppingcart.emptyState.restoreButtonTitle".localized(), for: .normal)
+        self.button2.setTitle(L10n.Snabble.Shoppingcart.EmptyState.restoreButtonTitle, for: .normal)
         self.button2.setTitleColor(.label, for: .normal)
         self.button2.isHidden = true
     }
@@ -70,7 +70,7 @@ final class BarcodeEntryEmptyStateView: EmptyStateView {
     override init(_ tapHandler: @escaping Handler) {
         super.init(tapHandler)
 
-        self.textLabel.text = "Snabble.Scanner.enterBarcode".localized()
+        self.textLabel.text = L10n.Snabble.Scanner.enterBarcode
 
         self.button1.setTitle("", for: .normal)
         self.button1.setTitleColor(.label, for: .normal)

@@ -112,7 +112,7 @@
 
 "Snabble.paydirekt.gotoWebsite" = "A paydirekt.de oldalra";
 
-"Snabble.Paydirekt.payNow" = "Fizetés paydirekttel";
+"Snabble.paydirekt.payNow" = "Fizetés paydirekttel";
 
 "Snabble.paydirekt.savedAuthorization" = "A Snabble alkalmazást sikeresen bejelentetted a paydirektre. Visszavonásához a paydirekt fiókadataiddal be kell jelentkezned a honlapon. Ha nem szeretnéd, hogy a paydirekt a fizetési lehetőségeid között legyen, akkor itt egyszerűen eltávolíthatod.";
 

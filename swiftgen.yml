@@ -1,0 +1,18 @@
+#
+    
+xcassets:
+  inputs: Snabble.xcassets
+  outputs:
+    templateName: swift5
+    params:
+      imageTypeName: SwiftGenImageAsset
+    output: Snabble/UI/Assets.swift
+
+strings:
+  inputs: Snabble/UI/en.lproj/SnabbleLocalizable.strings
+  outputs:
+    templateName: structured-swift5
+    params:
+      lookupFunction: SnabbleAPI.l10n
+      publicAccess: true
+    output: Snabble/UI/Strings.swift

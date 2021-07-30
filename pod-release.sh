@@ -22,6 +22,11 @@ if [ "$TODAY" != "$CHANGELOG_DATE" ]; then
     exit 1
 fi
 
+
+echo "updating strings..."
+phrase pull
+swiftgen
+
 echo running unit tests...
 if (cd ../iOS-App; bundle install >/dev/null; bundle exec fastlane unittests); then
     echo "unit tests passed!"
@@ -53,9 +58,6 @@ if [ -d ../react-native-snabble ]; then
     fi
     )
 fi
-
-echo "updating strings file..."
-phrase pull
 
 git add .
 git commit -m "release v$POD_VERSION"

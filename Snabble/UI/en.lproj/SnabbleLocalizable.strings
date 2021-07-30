@@ -112,7 +112,7 @@
 
 "Snabble.paydirekt.gotoWebsite" = "Go to paydirekt.de";
 
-"Snabble.Paydirekt.payNow" = "Pay now using paydirekt";
+"Snabble.paydirekt.payNow" = "Pay now using paydirekt";
 
 "Snabble.paydirekt.savedAuthorization" = "You've successfully authorized Snabble for paydirekt. To remove this authorization, you need to log in to your paydirekt account. If you do not want to use this payment method anymore, you can remove it here.";
 

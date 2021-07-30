@@ -43,7 +43,7 @@ final class CheckoutBar: NibView {
         super.awakeFromNib()
 
         self.checkoutButton.addTarget(self, action: #selector(checkoutTapped(_:)), for: .touchUpInside)
-        self.checkoutButton.setTitle("Snabble.Shoppingcart.buyProducts.now".localized(), for: .normal)
+        self.checkoutButton.setTitle(L10n.Snabble.Shoppingcart.BuyProducts.now, for: .normal)
         self.checkoutButton.makeSnabbleButton()
 
         let disabledColor = SnabbleUI.appearance.accentColor.contrast.withAlphaComponent(0.5)
@@ -83,8 +83,8 @@ final class CheckoutBar: NibView {
             self.totalPriceLabel?.text = ""
         }
 
-        let fmt = numProducts == 1 ? "Snabble.Shoppingcart.numberOfItems.one" : "Snabble.Shoppingcart.numberOfItems"
-        self.itemCountLabel?.text = String(format: fmt.localized(), numProducts)
+        let fun = numProducts == 1 ? L10n.Snabble.Shoppingcart.NumberOfItems.one : L10n.Snabble.Shoppingcart.numberOfItems
+        self.itemCountLabel?.text = fun(numProducts)
 
         self.methodSelector?.updateAvailablePaymentMethods()
 
@@ -174,15 +174,15 @@ final class CheckoutBar: NibView {
 
                     switch error.error.type {
                     case .noAvailableMethod:
-                        self.cartDelegate?.showWarningMessage("Snabble.Payment.noMethodAvailable".localized())
+                        self.cartDelegate?.showWarningMessage(L10n.Snabble.Payment.noMethodAvailable)
                     case .invalidDepositVoucher:
-                        self.cartDelegate?.showWarningMessage("Snabble.invalidDepositVoucher.errorMsg".localized())
+                        self.cartDelegate?.showWarningMessage(L10n.Snabble.InvalidDepositVoucher.errorMsg)
                     default:
                         if !offlineMethods.isEmpty {
                             let info = SignedCheckoutInfo(offlineMethods)
                             self.cartDelegate?.gotoPayment(paymentMethod, self.methodSelector?.selectedPaymentDetail, info, self.shoppingCart)
                         } else {
-                            self.cartDelegate?.showWarningMessage("Snabble.Payment.errorStarting".localized())
+                            self.cartDelegate?.showWarningMessage(L10n.Snabble.Payment.errorStarting)
                         }
                     }
                 }
@@ -198,10 +198,10 @@ final class CheckoutBar: NibView {
             }
         }
 
-        let start = offendingProducts.count == 1 ? "Snabble.saleStop.errorMsg.one" : "Snabble.saleStop.errorMsg"
-        let msg = start.localized() + "\n\n" + offendingProducts.joined(separator: "\n")
-        let alert = UIAlertController(title: "Snabble.saleStop.errorMsg.title".localized(), message: msg, preferredStyle: .alert)
-        alert.addAction(UIAlertAction(title: "Snabble.OK".localized(), style: .default, handler: nil))
+        let start = offendingProducts.count == 1 ? L10n.Snabble.SaleStop.ErrorMsg.one : L10n.Snabble.SaleStop.errorMsg
+        let msg = start + "\n\n" + offendingProducts.joined(separator: "\n")
+        let alert = UIAlertController(title: L10n.Snabble.SaleStop.ErrorMsg.title, message: msg, preferredStyle: .alert)
+        alert.addAction(UIAlertAction(title: L10n.Snabble.ok, style: .default, handler: nil))
         parentVC?.present(alert, animated: true)
     }
 

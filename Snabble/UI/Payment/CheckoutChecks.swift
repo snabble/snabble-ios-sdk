@@ -58,10 +58,10 @@ struct CheckoutChecks {
         case .pending:
             return true
         case .failed:
-            let alert = UIAlertController(title: "Snabble.ageVerification.failed.title".localized(),
-                                          message: "Snabble.ageVerification.failed.message".localized(),
+            let alert = UIAlertController(title: L10n.Snabble.AgeVerification.Failed.title,
+                                          message: L10n.Snabble.AgeVerification.Failed.message,
                                           preferredStyle: .alert)
-            alert.addAction(UIAlertAction(title: "Snabble.OK".localized(), style: .cancel, handler: nil))
+            alert.addAction(UIAlertAction(title: L10n.Snabble.ok, style: .cancel, handler: nil))
 
             let topViewController = UIApplication.topViewController()
             topViewController?.present(alert, animated: true)

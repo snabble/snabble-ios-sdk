@@ -57,7 +57,7 @@ public class BaseCheckoutViewController: UIViewController {
     override public func viewDidLoad() {
         super.viewDidLoad()
 
-        self.title = "Snabble.Payment.confirm".localized()
+        self.title = L10n.Snabble.Payment.confirm
 
         self.alreadyApproved = self.process.supervisorApproval == true
         let method = RawPaymentMethod(rawValue: self.process.paymentMethod)
@@ -84,11 +84,11 @@ public class BaseCheckoutViewController: UIViewController {
         self.codeImage.image = QRCode.generate(for: qrCodeContent, scale: 5)
         self.codeWidth.constant = self.codeImage.image?.size.width ?? 0
 
-        self.cancelButton.setTitle("Snabble.Cancel".localized(), for: .normal)
+        self.cancelButton.setTitle(L10n.Snabble.cancel, for: .normal)
         self.cancelButton.setTitleColor(.label, for: .normal)
 
         let onlineMessageKey = "Snabble.Payment.Online.message"
-        let onlineMessage = onlineMessageKey.localized()
+        let onlineMessage = SnabbleAPI.l10n(onlineMessageKey)
         self.messageLabel.text = onlineMessage
         // hide if there is no text/translation
         self.messageWrapper.isHidden = onlineMessage == onlineMessageKey.uppercased() || alreadyApproved
@@ -271,10 +271,10 @@ public class BaseCheckoutViewController: UIViewController {
                 self.cart.generateNewUUID()
                 self.paymentCancelled()
             case .failure:
-                let alert = UIAlertController(title: "Snabble.Payment.cancelError.title".localized(),
-                                              message: "Snabble.Payment.cancelError.message".localized(),
+                let alert = UIAlertController(title: L10n.Snabble.Payment.CancelError.title,
+                                              message: L10n.Snabble.Payment.CancelError.message,
                                               preferredStyle: .alert)
-                alert.addAction(UIAlertAction(title: "Snabble.OK".localized(), style: .default) { _ in
+                alert.addAction(UIAlertAction(title: L10n.Snabble.ok, style: .default) { _ in
                     self.startTimer()
                 })
                 self.present(alert, animated: true)

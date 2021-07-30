@@ -117,9 +117,9 @@ public final class DatatransAliasViewController: UIViewController {
         self.cardNumber.text = displayName
         self.expirationDate.text = expirationDate
 
-        self.cardNumberLabel.text = "Snabble.CC.cardNumber".localized()
-        self.expDateLabel.text = "Snabble.CC.validUntil".localized()
-        self.explanation.text = "Snabble.PaymentCard.editingHint".localized()
+        self.cardNumberLabel.text = L10n.Snabble.Cc.cardNumber
+        self.expDateLabel.text = L10n.Snabble.Cc.validUntil
+        self.explanation.text = L10n.Snabble.PaymentCard.editingHint
 
         self.expDateLabel.isHidden = expirationDate == nil
         self.expirationDate.isHidden = expirationDate == nil
@@ -146,15 +146,15 @@ public final class DatatransAliasViewController: UIViewController {
             project?.logError(msg)
         }
 
-        let titleKey: String
+        let title: String
         switch method?.datatransMethod {
-        case .postFinanceCard: titleKey = "Snabble.Payment.PostFinanceCard.error"
-        case .twint: titleKey = "Snabble.Payment.Twint.error"
-        default: titleKey = "Snabble.Payment.CreditCard.error"
+        case .postFinanceCard: title = L10n.Snabble.Payment.PostFinanceCard.error
+        case .twint: title = L10n.Snabble.Payment.Twint.error
+        default: title = L10n.Snabble.Payment.CreditCard.error
         }
 
-        let alert = UIAlertController(title: titleKey.localized(), message: nil, preferredStyle: .alert)
-        alert.addAction(UIAlertAction(title: "Snabble.OK".localized(), style: .default) { _ in
+        let alert = UIAlertController(title: title, message: nil, preferredStyle: .alert)
+        alert.addAction(UIAlertAction(title: L10n.Snabble.ok, style: .default) { _ in
             self.goBack()
         })
 
@@ -211,13 +211,13 @@ public final class DatatransAliasViewController: UIViewController {
             return
         }
 
-        let alert = UIAlertController(title: nil, message: "Snabble.Payment.delete.message".localized(), preferredStyle: .alert)
-        alert.addAction(UIAlertAction(title: "Snabble.Yes".localized(), style: .destructive) { _ in
+        let alert = UIAlertController(title: nil, message: L10n.Snabble.Payment.Delete.message, preferredStyle: .alert)
+        alert.addAction(UIAlertAction(title: L10n.Snabble.yes, style: .destructive) { _ in
             PaymentMethodDetails.remove(detail)
             self.analyticsDelegate?.track(.paymentMethodDeleted(self.method?.rawValue ?? ""))
             self.goBack()
         })
-        alert.addAction(UIAlertAction(title: "Snabble.No".localized(), style: .cancel, handler: nil))
+        alert.addAction(UIAlertAction(title: L10n.Snabble.no, style: .cancel, handler: nil))
         self.present(alert, animated: true)
     }
 

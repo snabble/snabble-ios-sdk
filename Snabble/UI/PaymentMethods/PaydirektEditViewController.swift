@@ -73,12 +73,12 @@ public final class PaydirektEditViewController: UIViewController {
 
         self.webView = self.addWebView(to: self.webViewWrapper)
 
-        self.displayLabel.text = "Snabble.paydirekt.savedAuthorization".localized()
+        self.displayLabel.text = L10n.Snabble.Paydirekt.savedAuthorization
 
         self.deleteButton.makeSnabbleButton()
-        self.deleteButton.setTitle("Snabble.paydirekt.deleteAuthorization".localized(), for: .normal)
+        self.deleteButton.setTitle(L10n.Snabble.Paydirekt.deleteAuthorization, for: .normal)
 
-        self.openButton.setTitle("Snabble.paydirekt.gotoWebsite".localized(), for: .normal)
+        self.openButton.setTitle(L10n.Snabble.Paydirekt.gotoWebsite, for: .normal)
 
         if !SnabbleUI.implicitNavigation && self.navigationDelegate == nil {
             let msg = "navigationDelegate may not be nil when using explicit navigation"
@@ -143,13 +143,13 @@ public final class PaydirektEditViewController: UIViewController {
             return
         }
 
-        let alert = UIAlertController(title: nil, message: "Snabble.Payment.delete.message".localized(), preferredStyle: .alert)
-        alert.addAction(UIAlertAction(title: "Snabble.Yes".localized(), style: .destructive) { _ in
+        let alert = UIAlertController(title: nil, message: L10n.Snabble.Payment.Delete.message, preferredStyle: .alert)
+        alert.addAction(UIAlertAction(title: L10n.Snabble.yes, style: .destructive) { _ in
             PaymentMethodDetails.remove(detail)
             self.analyticsDelegate?.track(.paymentMethodDeleted("paydirekt"))
             self.goBack()
         })
-        alert.addAction(UIAlertAction(title: "Snabble.No".localized(), style: .cancel, handler: nil))
+        alert.addAction(UIAlertAction(title: L10n.Snabble.no, style: .cancel, handler: nil))
 
         self.present(alert, animated: true)
     }
@@ -202,8 +202,8 @@ extension PaydirektEditViewController: WKNavigationDelegate {
                 self.goBack()
             case RedirectStatus.failure.url:
                 self.clientAuthorization = nil
-                let alert = UIAlertController(title: "Snabble.paydirekt.authorizationFailed.title".localized(),
-                                              message: "Snabble.paydirekt.authorizationFailed.message".localized(),
+                let alert = UIAlertController(title: L10n.Snabble.Paydirekt.AuthorizationFailed.title,
+                                              message: L10n.Snabble.Paydirekt.AuthorizationFailed.message,
                                               preferredStyle: .alert)
 
                 self.present(alert, animated: true)

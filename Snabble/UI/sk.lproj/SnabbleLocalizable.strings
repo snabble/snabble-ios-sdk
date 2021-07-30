@@ -112,7 +112,7 @@
 
 "Snabble.paydirekt.gotoWebsite" = "Prejsť na paydirekt.de";
 
-"Snabble.Paydirekt.payNow" = "Teraz zaplatiť prostredníctvom paydirekt";
+"Snabble.paydirekt.payNow" = "Teraz zaplatiť prostredníctvom paydirekt";
 
 "Snabble.paydirekt.savedAuthorization" = "Autorizácia aplikácie Snabble pre paydirekt bola úspešná. Ak chceš autorizáciu zrušiť, musíš sa prihlásiť do svojho konta paydirekt na webovej stránke. Pokiaľ nechceš, aby paydirekt bol v budúcnosti zobrazovaný ako spôsob platby, tu ho môžeš jednoducho odstrániť.";
 

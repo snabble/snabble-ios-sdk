@@ -82,8 +82,8 @@ final class ScannerDrawerViewController: UIViewController {
         let tap = UITapGestureRecognizer(target: self, action: #selector(handleTapped(_:)))
         handle.addGestureRecognizer(tap)
 
-        segmentedControl.setTitle("Snabble.ShoppingList.title".localized(), forSegmentAt: 0)
-        segmentedControl.setTitle("Snabble.ShoppingCart.title".localized(), forSegmentAt: 1)
+        segmentedControl.setTitle(L10n.Snabble.ShoppingList.title, forSegmentAt: 0)
+        segmentedControl.setTitle(L10n.Snabble.ShoppingCart.title, forSegmentAt: 1)
         segmentedControl.selectedSegmentIndex = 0
         segmentedControl.addTarget(self, action: #selector(tabChanged(_:)), for: .valueChanged)
 

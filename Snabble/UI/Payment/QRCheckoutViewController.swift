@@ -31,7 +31,7 @@ public final class QRCheckoutViewController: UIViewController {
 
         super.init(nibName: nil, bundle: SnabbleBundle.main)
 
-        self.title = "Snabble.QRCode.title".localized()
+        self.title = L10n.Snabble.QRCode.title
     }
 
     required init?(coder aDecoder: NSCoder) {
@@ -43,8 +43,8 @@ public final class QRCheckoutViewController: UIViewController {
 
         self.navigationItem.hidesBackButton = true
 
-        self.checkoutIdLabel.text = "Snabble.Checkout.ID".localized() + ": " + String(process.links.`self`.href.suffix(4))
-        self.cancelButton.setTitle("Snabble.Cancel".localized(), for: .normal)
+        self.checkoutIdLabel.text = L10n.Snabble.Checkout.id + ": " + String(process.links.`self`.href.suffix(4))
+        self.cancelButton.setTitle(L10n.Snabble.cancel, for: .normal)
     }
 
     override public func viewWillAppear(_ animated: Bool) {
@@ -63,9 +63,9 @@ public final class QRCheckoutViewController: UIViewController {
 
         let formattedTotal = formatter.format(total ?? 0)
 
-        self.totalPriceLabel.text = "Snabble.QRCode.total".localized() + "\(formattedTotal)"
-        self.explanation1.text = "Snabble.QRCode.showThisCode".localized()
-        self.explanation2.text = "Snabble.QRCode.priceMayDiffer".localized()
+        self.totalPriceLabel.text = L10n.Snabble.QRCode.total + "\(formattedTotal)"
+        self.explanation1.text = L10n.Snabble.QRCode.showThisCode
+        self.explanation2.text = L10n.Snabble.QRCode.priceMayDiffer
 
         let qrCodeContent = self.process.paymentInformation?.qrCodeContent ?? "n/a"
         // Log.debug("QR code: \(qrCodeContent)")
@@ -123,10 +123,10 @@ public final class QRCheckoutViewController: UIViewController {
                     self.navigationDelegate?.checkoutCancelled()
                 }
             case .failure:
-                let alert = UIAlertController(title: "Snabble.Payment.cancelError.title".localized(),
-                                              message: "Snabble.Payment.cancelError.message".localized(),
+                let alert = UIAlertController(title: L10n.Snabble.Payment.CancelError.title,
+                                              message: L10n.Snabble.Payment.CancelError.message,
                                               preferredStyle: .alert)
-                alert.addAction(UIAlertAction(title: "Snabble.OK".localized(), style: .default) { _ in
+                alert.addAction(UIAlertAction(title: L10n.Snabble.ok, style: .default) { _ in
                     self.startPoller()
                 })
                 self.present(alert, animated: true)

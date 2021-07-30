@@ -32,7 +32,7 @@ public final class CustomerCardCheckoutViewController: UIViewController {
 
         super.init(nibName: nil, bundle: SnabbleBundle.main)
 
-        self.title = "Snabble.Checkout.payAtCashRegister".localized()
+        self.title = L10n.Snabble.Checkout.payAtCashRegister
     }
 
     required init?(coder aDecoder: NSCoder) {
@@ -45,7 +45,7 @@ public final class CustomerCardCheckoutViewController: UIViewController {
         self.eanView.barcode = self.cart.customerCard
 
         self.paidButton.makeSnabbleButton()
-        self.paidButton.setTitle("Snabble.QRCode.didPay".localized(), for: .normal)
+        self.paidButton.setTitle(L10n.Snabble.QRCode.didPay, for: .normal)
         self.paidButton.alpha = 0
         self.paidButton.isUserInteractionEnabled = false
 

@@ -55,7 +55,7 @@ public final class EmbeddedCodesCheckoutViewController: UIViewController {
 
         super.init(nibName: nil, bundle: SnabbleBundle.main)
 
-        self.title = "Snabble.QRCode.title".localized()
+        self.title = L10n.Snabble.QRCode.title
     }
 
     required init?(coder aDecoder: NSCoder) {
@@ -66,7 +66,7 @@ public final class EmbeddedCodesCheckoutViewController: UIViewController {
         super.viewDidLoad()
 
         self.paidButton.makeSnabbleButton()
-        self.paidButton.setTitle("Snabble.QRCode.didPay".localized(), for: .normal)
+        self.paidButton.setTitle(L10n.Snabble.QRCode.didPay, for: .normal)
         self.paidButton.alpha = 0
         self.paidButton.isUserInteractionEnabled = false
 
@@ -81,7 +81,7 @@ public final class EmbeddedCodesCheckoutViewController: UIViewController {
             }
         }
 
-        let msg = "Snabble.QRCode.message".localized()
+        let msg = L10n.Snabble.QRCode.message
         self.messageLabel.text = msg
         self.messageWrapper.isHidden = msg.isEmpty
 
@@ -197,15 +197,13 @@ public final class EmbeddedCodesCheckoutViewController: UIViewController {
     private func setButtonTitle() {
         var title = ""
         if self.pageControl.currentPage == self.codes.count - 1 {
-            title = "Snabble.QRCode.didPay".localized()
+            title = L10n.Snabble.QRCode.didPay
         } else {
-            title = String(format: "Snabble.QRCode.nextCode".localized(),
-                           self.pageControl.currentPage + 2, self.codes.count)
+            title = L10n.Snabble.QRCode.nextCode(self.pageControl.currentPage + 2, self.codes.count)
         }
         self.paidButton.setTitle(title, for: .normal)
 
-        let codeXofY = String(format: "Snabble.QRCode.codeXofY".localized(),
-                              self.pageControl.currentPage + 1, self.codes.count)
+        let codeXofY = L10n.Snabble.QRCode.codeXofY(self.pageControl.currentPage + 1, self.codes.count)
         self.codeCountLabel.text = codeXofY
     }
 
