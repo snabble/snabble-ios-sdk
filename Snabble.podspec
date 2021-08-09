@@ -57,9 +57,9 @@ Pod::Spec.new do |s|
 
   s.subspec 'Datatrans' do |dt|
     dt.dependency 'Snabble/UI'
-    dt.source_files = 'Snabble/Datatrans/**/*.swift'
+    dt.dependency 'Datatrans'
 
-    dt.vendored_frameworks = 'Datatrans.xcframework', 'PPRiskMagnes.xcframework'
+    dt.source_files = 'Snabble/Datatrans/**/*.swift'
 
     dt.resource_bundles = {
        "SnabbleDT" => [ 'Snabble/Datatrans/**/*.xib' ]
