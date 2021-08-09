@@ -450,13 +450,13 @@
 /* Der Titel der übersichtsseite der Einkaufslisten */
 "Snabble.ShoppingLists.title" = "Nákupné zoznamy";
 
-"Snabble.Taxation.consume.inhouse" = "Consume here";
+"Snabble.Taxation.consume.inhouse" = "konzumovať tu";
 
-"Snabble.Taxation.consume.takeaway" = "Take with me";
+"Snabble.Taxation.consume.takeaway" = "zobrať so sebou";
 
-"Snabble.Taxation.consumeWhere" = "What do you want to do with your purchase?";
+"Snabble.Taxation.consumeWhere" = "Chceš svoj nákup";
 
-"Snabble.Taxation.pleaseChoose" = "Please choose";
+"Snabble.Taxation.pleaseChoose" = "Vyber niektorú možnosť";
 
 "Snabble.TWINT.payNow" = "Zaplatiť cez TWINT teraz";
 

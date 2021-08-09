@@ -543,12 +543,12 @@ public enum L10n {
       public static var payNow: String { return L10n.tr("SnabbleLocalizable", "Snabble.TWINT.payNow") }
     }
     public enum Taxation {
-      /// What do you want to do with your purchase?
+      /// Will you be eating here or is this to go?
       public static var consumeWhere: String { return L10n.tr("SnabbleLocalizable", "Snabble.Taxation.consumeWhere") }
       /// Please choose
       public static var pleaseChoose: String { return L10n.tr("SnabbleLocalizable", "Snabble.Taxation.pleaseChoose") }
       public enum Consume {
-        /// Consume here
+        /// Eat here
         public static var inhouse: String { return L10n.tr("SnabbleLocalizable", "Snabble.Taxation.consume.inhouse") }
         /// Take with me
         public static var takeaway: String { return L10n.tr("SnabbleLocalizable", "Snabble.Taxation.consume.takeaway") }

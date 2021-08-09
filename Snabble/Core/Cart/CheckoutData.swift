@@ -83,6 +83,24 @@ public enum LineItemType: String, Codable, UnknownCaseRepresentable {
     public static let unknownCase = LineItemType.unknown
 }
 
+// optional required information
+public struct RequiredInformation: Codable {
+    public let id: RequiredInformationType
+    public let value: String?
+
+    enum TaxationValue: String {
+        case inHouse
+        case takeaway
+    }
+
+    static let taxationInhouse = RequiredInformation(id: .taxation, value: TaxationValue.inHouse.rawValue)
+    static let taxationTakeaway = RequiredInformation(id: .taxation, value: TaxationValue.takeaway.rawValue)
+}
+
+public enum RequiredInformationType: String, Codable {
+    case taxation
+}
+
 // CheckoutInfo
 public struct CheckoutInfo: Decodable {
     /// session id
@@ -94,11 +112,14 @@ public struct CheckoutInfo: Decodable {
     /// line items (only contains records with supported types)
     public let lineItems: [LineItem]
 
+    /// optional: required information for the checkout, e.g. inhouse or takeaway
+    public let requiredInformation: [RequiredInformation]
+
     /// price info
     public let price: Price
 
     enum CodingKeys: String, CodingKey {
-        case session, paymentMethods, lineItems, price
+        case session, paymentMethods, lineItems, price, requiredInformation
     }
 
     public struct LineItem: Codable {
@@ -153,6 +174,7 @@ public struct CheckoutInfo: Decodable {
         let lineItems = try container.decode([LineItem].self, forKey: .lineItems)
         self.lineItems = lineItems.filter { $0.type != .unknown }
         self.price = try container.decode(Price.self, forKey: .price)
+        self.requiredInformation = try container.decodeIfPresent([RequiredInformation].self, forKey: .requiredInformation) ?? []
     }
 
     fileprivate init(_ paymentMethods: [RawPaymentMethod]) {
@@ -160,6 +182,7 @@ public struct CheckoutInfo: Decodable {
         self.paymentMethods = paymentMethods.map { PaymentMethodDescription(method: $0, acceptedOriginTypes: nil) }
         self.session = ""
         self.lineItems = []
+        self.requiredInformation = []
     }
 }
 
@@ -385,12 +408,24 @@ extension CheckoutProcess {
 
 /// Cart
 public struct Cart: Encodable {
-    let session: String
-    let shopID: Identifier<Shop>
-    let customer: CustomerInfo?
-    let items: [Item]
-    let clientID: String
-    let appUserID: String?
+    public let session: String
+    public let shopID: Identifier<Shop>
+    public let customer: CustomerInfo?
+    public let items: [Item]
+    public let clientID: String
+    public let appUserID: String?
+    public let requiredInformation: [RequiredInformation]
+
+    init(_ cart: ShoppingCart, clientId: String, appUserId: String?) {
+        self.session = cart.session
+        self.shopID = cart.shopId
+        self.customer = Cart.CustomerInfo(loyaltyCard: cart.customerCard)
+        self.items = cart.backendItems()
+        self.requiredInformation = cart.requiredInformationData
+
+        self.clientID = clientId
+        self.appUserID = appUserId
+    }
 
     public enum Item: Encodable {
         case product(ProductItem)
@@ -435,8 +470,8 @@ public struct Cart: Encodable {
         }
     }
 
-    struct CustomerInfo: Encodable {
-        let loyaltyCard: String
+    public struct CustomerInfo: Encodable {
+        public let loyaltyCard: String
 
         init?(loyaltyCard: String?) {
             guard let card = loyaltyCard else {

@@ -450,11 +450,11 @@
 /* Der Titel der übersichtsseite der Einkaufslisten */
 "Snabble.ShoppingLists.title" = "Einkaufslisten";
 
-"Snabble.Taxation.consume.inhouse" = "hier konsumieren";
+"Snabble.Taxation.consume.inhouse" = "Hier Essen";
 
-"Snabble.Taxation.consume.takeaway" = "mitnehmen";
+"Snabble.Taxation.consume.takeaway" = "Mitnehmen";
 
-"Snabble.Taxation.consumeWhere" = "Möchtest du deinen Einkauf";
+"Snabble.Taxation.consumeWhere" = "Zum hier Essen oder zum Mitnehmen?";
 
 "Snabble.Taxation.pleaseChoose" = "Bitte wählen";
 
