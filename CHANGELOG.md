@@ -1,5 +1,8 @@
 ## snabble iOS SDK Changelog
 
+# v0.17.6 (unreleased)
+- Add support for `requiredInformation` during checkout, e.g. for takeaway vs inhouse taxation
+
 # v0.17.5
 - Add support for credit card tokenization via Datatrans
 
