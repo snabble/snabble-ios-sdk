@@ -57,11 +57,11 @@ final class ScanningViewController: UIViewController {
     private var torchButton: UIBarButtonItem?
 
     private var lastScannedCode: String?
-    private var lastScanTimer: Timer?
 
-    private var spinnerTimer: Timer?
+    private weak var lastScanTimer: Timer?
+    private weak var spinnerTimer: Timer?
+    private weak var messageTimer: Timer?
 
-    private var messageTimer: Timer?
     private var msgHidden = true
 
     public init(_ cart: ShoppingCart, _ shop: Shop, _ detector: BarcodeDetector, delegate: ScannerDelegate) {
@@ -422,7 +422,6 @@ extension ScanningViewController {
 
         self.lookupCode(scannedCode, format, template) { scannedResult in
             self.spinnerTimer?.invalidate()
-            self.spinnerTimer = nil
             self.spinner.stopAnimating()
 
             let scannedProduct: ScannedProduct

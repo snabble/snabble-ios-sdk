@@ -12,7 +12,7 @@ final class OriginPoller {
     static let shared = OriginPoller()
 
     private var project: Project?
-    private var timer: Timer?
+    private weak var timer: Timer?
     private var candidates = Set<String>()
 
     private init() {}
@@ -30,7 +30,6 @@ final class OriginPoller {
 
     private func stopPolling() {
         self.timer?.invalidate()
-        self.timer = nil
         self.project = nil
     }
 
@@ -60,6 +59,7 @@ final class OriginPoller {
                 }
 
                 if continuePolling {
+                    self.timer?.invalidate()
                     self.timer = Timer.scheduledTimer(withTimeInterval: 1, repeats: false) { _ in
                         self.checkCandidate(url)
                     }

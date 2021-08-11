@@ -32,7 +32,7 @@ public class BaseCheckoutViewController: UIViewController {
     private var initialBrightness: CGFloat = 0
 
     private var sessionTask: URLSessionTask?
-    private var processTimer: Timer?
+    private weak var processTimer: Timer?
 
     private var postPaymentManager: PostPaymentManager?
     private var alreadyApproved = false
@@ -169,6 +169,7 @@ public class BaseCheckoutViewController: UIViewController {
 
     // MARK: - polling timer
     private func startTimer() {
+        self.processTimer?.invalidate()
         self.processTimer = Timer.scheduledTimer(withTimeInterval: 1, repeats: false) { _ in
             let project = SnabbleUI.project
             self.process.update(project,
@@ -179,7 +180,6 @@ public class BaseCheckoutViewController: UIViewController {
 
     private func stopTimer() {
         self.processTimer?.invalidate()
-        self.processTimer = nil
 
         self.sessionTask?.cancel()
         self.sessionTask = nil

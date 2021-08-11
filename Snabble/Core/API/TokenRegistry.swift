@@ -56,7 +56,7 @@ final class TokenRegistry {
     private var verboseToken = false
 
     private var projectTokens = [Identifier<Project>: TokenData]()
-    private var refreshTimer: Timer?
+    private weak var refreshTimer: Timer?
 
     private typealias Handlers = [(String?) -> Void]
     private var pendingHandlers = [Identifier<Project>: Handlers ]()
@@ -132,7 +132,6 @@ final class TokenRegistry {
     // invalidate all tokens - called when the appUser changes
     func invalidateAllTokens() {
         self.refreshTimer?.invalidate()
-        self.refreshTimer = nil
 
         let activeIds: [Identifier<Project>] = lock.writing {
             let activeIds = Array(self.projectTokens.keys)
@@ -155,7 +154,6 @@ final class TokenRegistry {
     @objc private func appEnteredBackground(_ notification: Notification) {
         // Log.debug("app going to bg, stop refresh")
         self.refreshTimer?.invalidate()
-        self.refreshTimer = nil
     }
 
     private func startRefreshTimer() {

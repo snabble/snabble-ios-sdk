@@ -8,7 +8,7 @@
 public final class PaymentProcess {
     let signedCheckoutInfo: SignedCheckoutInfo
     let cart: ShoppingCart
-    private var hudTimer: Timer?
+    private weak var hudTimer: Timer?
     private(set) weak var delegate: PaymentDelegate!
 
     /// create a payment process
@@ -204,6 +204,7 @@ public final class PaymentProcess {
     }
 
     private func startBlurOverlayTimer() {
+        self.hudTimer?.invalidate()
         self.hudTimer = Timer.scheduledTimer(withTimeInterval: 0.25, repeats: false) { _ in
             self.showBlurOverlay()
         }
@@ -283,7 +284,6 @@ extension PaymentProcess {
         let project = SnabbleUI.project
         self.signedCheckoutInfo.createCheckoutProcess(project, id: self.cart.uuid, paymentMethod: method, timeout: 20) { result in
             self.hudTimer?.invalidate()
-            self.hudTimer = nil
             UIApplication.shared.endIgnoringInteractionEvents()
             self.hideBlurOverlay()
             switch result.result {
