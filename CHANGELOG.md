@@ -1,6 +1,9 @@
 ## snabble iOS SDK Changelog
 
-# v0.17.6 (unreleased)
+# v0.17.7 (unreleased)
+- fixes a rare crash in `AssetManager`
+
+# v0.17.6
 - Add support for `requiredInformation` during checkout, e.g. for takeaway vs inhouse taxation
 
 # v0.17.5
