@@ -17,7 +17,7 @@ public final class ShoppingCartViewController: UIViewController {
     private var customAppearance: CustomAppearance?
     private var emptyState: ShoppingCartEmptyStateView!
     private let shoppingCart: ShoppingCart
-    private var restoreTimer: Timer?
+    private weak var restoreTimer: Timer?
     private var trashButton: UIBarButtonItem!
 
     public weak var paymentMethodNavigationDelegate: PaymentMethodNavigationDelegate? {
@@ -179,17 +179,16 @@ extension ShoppingCartViewController {
             self.emptyState.button1.setTitle(L10n.Snabble.Shoppingcart.EmptyState.restartButtonTitle, for: .normal)
             self.emptyState.button2.isHidden = false
             let restoreInterval: TimeInterval = 5 * 60
+            self.restoreTimer?.invalidate()
             self.restoreTimer = Timer.scheduledTimer(withTimeInterval: restoreInterval, repeats: false) { [weak self] _ in
                 UIView.animate(withDuration: 0.2) {
                     self?.emptyState.button1.setTitle(L10n.Snabble.Shoppingcart.EmptyState.buttonTitle, for: .normal)
                     self?.emptyState.button2.isHidden = true
-                    self?.restoreTimer = nil
                 }
             }
         } else {
             self.emptyState.button2.isHidden = true
             self.restoreTimer?.invalidate()
-            self.restoreTimer = nil
         }
     }
 

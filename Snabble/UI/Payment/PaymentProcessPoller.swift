@@ -14,7 +14,7 @@ public enum PaymentEvent {
 }
 
 public final class PaymentProcessPoller {
-    private var timer: Timer?
+    private weak var timer: Timer?
 
     private let process: CheckoutProcess
     private let project: Project
@@ -43,7 +43,6 @@ public final class PaymentProcessPoller {
 
     func stop() {
         self.timer?.invalidate()
-        self.timer = nil
 
         self.task?.cancel()
         self.task = nil
@@ -55,6 +54,7 @@ public final class PaymentProcessPoller {
     public func waitFor(_ events: [PaymentEvent], completion: @escaping ([PaymentEvent: Bool]) -> Void ) {
         self.waitingFor = events
         self.alreadySeen = []
+        self.timer?.invalidate()
         self.timer = Timer.scheduledTimer(withTimeInterval: 1.0, repeats: true) { _ in
             self.checkEvents(events, completion)
         }
@@ -111,7 +111,6 @@ public final class PaymentProcessPoller {
 
         if abort || self.alreadySeen.count == self.waitingFor.count {
             self.timer?.invalidate()
-            self.timer = nil
         }
     }
 

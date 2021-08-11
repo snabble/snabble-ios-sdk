@@ -32,7 +32,7 @@ protocol PostPaymentManagerDelegate: AnyObject {
 }
 
 final class PostPaymentManager {
-    private var processTimer: Timer?
+    private weak var processTimer: Timer?
     private var sessionTask: URLSessionTask?
 
     weak var delegate: PostPaymentManagerDelegate?
@@ -69,8 +69,6 @@ final class PostPaymentManager {
 
     func stop() {
         processTimer?.invalidate()
-        processTimer = nil
-
         sessionTask?.cancel()
         sessionTask = nil
     }

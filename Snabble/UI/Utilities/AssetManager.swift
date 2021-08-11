@@ -123,7 +123,7 @@ final class AssetManager {
     private var lock = ReadWriteLock()
     private let scale: CGFloat
 
-    private var redownloadTimer: Timer?
+    private weak var redownloadTimer: Timer?
 
     private init() {
         self.scale = UIScreen.main.scale
@@ -343,14 +343,12 @@ final class AssetManager {
     }
 
     func rescheduleDownloads() {
-        self.redownloadTimer?.invalidate()
-
         DispatchQueue.main.async {
+            self.redownloadTimer?.invalidate()
             self.redownloadTimer = Timer.scheduledTimer(withTimeInterval: 10, repeats: false) { _ in
                 for projectId in self.manifests.keys {
                     self.downloadAllMissingFiles(projectId)
                 }
-                self.redownloadTimer = nil
             }
         }
     }

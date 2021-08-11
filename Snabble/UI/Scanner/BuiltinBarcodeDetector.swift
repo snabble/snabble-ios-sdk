@@ -49,7 +49,7 @@ public final class BuiltinBarcodeDetector: NSObject, BarcodeDetector {
     private var sessionQueue: DispatchQueue
 
     public private(set) var decorationOverlay: BarcodeDetectorOverlay?
-    private var idleTimer: Timer?
+    private weak var idleTimer: Timer?
     private var screenTap: UITapGestureRecognizer?
     private weak var messageDelegate: BarcodeDetectorMessageDelegate?
     private var detectorArea: BarcodeDetectorArea
@@ -253,7 +253,7 @@ extension BuiltinBarcodeDetector {
             return
         }
 
-        self.stopIdleTimer()
+        self.idleTimer?.invalidate()
         self.idleTimer = Timer.scheduledTimer(withTimeInterval: 90, repeats: false) { _ in
             self.idleTimerFired()
         }
@@ -261,7 +261,6 @@ extension BuiltinBarcodeDetector {
 
     private func stopIdleTimer() {
         self.idleTimer?.invalidate()
-        self.idleTimer = nil
     }
 
     private func idleTimerFired() {

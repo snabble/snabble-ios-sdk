@@ -38,7 +38,7 @@ public final class ShoppingCart: Codable {
         }
     }
 
-    internal var eventTimer: Timer?
+    internal weak var eventTimer: Timer?
 
     // number of seconds to wait after a local modification is sent to the backend
     private let saveDelay: TimeInterval = 0.5
@@ -359,8 +359,8 @@ extension ShoppingCart {
         }
 
         if postEvent {
-            self.eventTimer?.invalidate()
             DispatchQueue.main.async {
+                self.eventTimer?.invalidate()
                 self.eventTimer = Timer.scheduledTimer(withTimeInterval: self.saveDelay, repeats: false) { _ in
                     CartEvent.cart(self)
                 }
