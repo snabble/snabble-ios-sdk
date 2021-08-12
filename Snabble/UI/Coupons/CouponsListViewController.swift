@@ -51,7 +51,8 @@ public final class CouponsListViewController: UITableViewController {
 
     private func setupCoupons() {
         let couponEntries = CouponWallet.shared.coupons
-        let dict = Dictionary(grouping: couponEntries, by: { $0.coupon.projectID })
+        #warning("FIXME - remove ??")
+        let dict = Dictionary(grouping: couponEntries, by: { $0.coupon.projectID ?? "n/a" })
 
         var idNames = [(Identifier<Project>, String)]()
         for id in dict.keys {

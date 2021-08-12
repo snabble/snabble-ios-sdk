@@ -293,6 +293,7 @@ public struct Project: Decodable, Identifiable {
 
     public let manualCoupons: [Coupon]
     public let printedCoupons: [Coupon]
+    public let digitalCoupons: [Coupon]
 
     enum CodingKeys: String, CodingKey {
         case id, name, links
@@ -351,9 +352,11 @@ public struct Project: Decodable, Identifiable {
         if let coupons = try container.decodeIfPresent([Coupon].self, forKey: .coupons) {
             self.manualCoupons = coupons.filter { $0.type == .manual }
             self.printedCoupons = coupons.filter { $0.type == .printed }
+            self.digitalCoupons = coupons.filter { $0.type == .digital }
         } else {
             self.manualCoupons = []
             self.printedCoupons = []
+            self.digitalCoupons = []
         }
     }
 
@@ -383,6 +386,7 @@ public struct Project: Decodable, Identifiable {
         self.brandId = nil
         self.manualCoupons = []
         self.printedCoupons = []
+        self.digitalCoupons = []
     }
 
     // only used for unit tests!
@@ -412,6 +416,7 @@ public struct Project: Decodable, Identifiable {
         self.brandId = nil
         self.manualCoupons = []
         self.printedCoupons = []
+        self.digitalCoupons = []
     }
 
     static let none = Project()
