@@ -271,27 +271,6 @@ final class PaymentMethodSelector {
             sheet.addAction(action)
         }
 
-        // add the "add method" action
-        let add = AlertAction(title: L10n.Snabble.Payment.add, style: .normal) { _ in
-            if SnabbleUI.implicitNavigation {
-                let selection = PaymentMethodAddViewController(showFromCart: true, self.parentVC)
-                self.parentVC?.navigationController?.pushViewController(selection, animated: true)
-            } else {
-                let msg = "navigationDelegate may not be nil when using explicit navigation"
-                assert(self.paymentMethodNavigationDelegate != nil, msg)
-                self.paymentMethodNavigationDelegate?.addMethod(fromCart: true)
-            }
-        }
-        add.imageView.image = UIImage.fromBundle("SnabbleSDK/payment/payment-add")
-
-        let dataRequiring = SnabbleUI.project.paymentMethods.filter { $0.dataRequired }
-        let userMethods = Set(PaymentMethodDetails.read().map { $0.rawMethod })
-        let requiring = Set(dataRequiring).subtracting(userMethods)
-
-        if !requiring.isEmpty {
-            sheet.addAction(add)
-        }
-
         // add the cancel action
         sheet.addAction(AlertAction(title: L10n.Snabble.cancel, style: .preferred))
 
