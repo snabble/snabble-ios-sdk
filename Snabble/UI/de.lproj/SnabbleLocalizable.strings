@@ -151,7 +151,7 @@
 
 "Snabble.Payment.offlineHint" = "Du bist derzeit offline und einige Zahlungsmethoden sind möglicherweise nicht verfügbar";
 
-"Snabble.Payment.payAtCashDesk" = "Kasse";
+"Snabble.Payment.payAtCashDesk" = "An der Kasse bezahlen";
 
 "Snabble.Payment.payAtSCO" = "Karte an EC-Terminal";
 
