@@ -136,7 +136,9 @@ extension CouponWallet {
     /// persist coupons to disk
     private func save() {
         do {
-            let data = try JSONEncoder().encode(self.coupons)
+            let encoder = JSONEncoder()
+            encoder.dateEncodingStrategy = .iso8601
+            let data = try encoder.encode(self.coupons)
             try data.write(to: url, options: .atomic)
         } catch let error {
             Log.error("error saving coupons: \(error)")
