@@ -24,8 +24,7 @@ public struct Coupon: Codable {
     public let code: String? // the code to render in-app
     public let codes: [Code]? // the scannable codes for this coupon
 
-    #warning("FIXME - remove optional")
-    public let projectID: Identifier<Project>?
+    public let projectID: Identifier<Project>
 
     // cms properties
     public let colors: Colors?
