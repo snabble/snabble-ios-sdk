@@ -257,13 +257,16 @@ final class PaymentMethodSelector {
 
         var iconMap = [AlertAction: UIImage]()
 
+        let isAnyActive = actions.contains { $0.active == true }
+
         // add an action for each method
         for actionData in actions {
             let action = AlertAction(attributedTitle: actionData.title, style: .normal) { _ in
                 self.userSelectedPaymentMethod(with: actionData)
             }
-            let icon = actionData.active ? actionData.icon : actionData.icon?.grayscale()
+            let icon = isAnyActive && !actionData.active ? actionData.icon?.grayscale() : actionData.icon
             action.imageView.image = icon
+
             if actionData.active {
                 iconMap[action] = icon
             }
