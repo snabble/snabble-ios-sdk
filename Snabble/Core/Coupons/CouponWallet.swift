@@ -39,25 +39,25 @@ public struct Coupon: Codable {
     public struct Code: Codable {
         public let code, template: String
     }
+}
 
-    public struct Colors: Codable {
-        public let background, foreground: String
-    }
+public struct Colors: Codable {
+    public let background, foreground: String
+}
 
-    // MARK: - Image
-    public struct Image: Codable {
-        public let formats: [Format]
-        public let name: String
-    }
+// MARK: - Image
+public struct Image: Codable {
+    public let formats: [Format]
+    public let name: String
+}
 
-    // MARK: - Format
-    public struct Format: Codable {
-        public let contentType: String
-        public let height: Int
-        public let size: String
-        public let url: URL
-        public let width: Int
-    }
+// MARK: - Format
+public struct Format: Codable {
+    public let contentType: String
+    public let height: Int
+    public let size: String
+    public let url: URL
+    public let width: Int
 }
 
 extension Coupon: Equatable {
