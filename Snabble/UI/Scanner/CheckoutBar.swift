@@ -12,6 +12,7 @@ final class CheckoutBar: NibView {
     @IBOutlet private var totalPriceLabel: UILabel!
 
     @IBOutlet private var paymentStackView: UIStackView!
+    @IBOutlet private weak var noPaymentView: UIView!
     @IBOutlet private var methodSelectionView: UIView!
     @IBOutlet private var methodIcon: UIImageView!
     @IBOutlet private var checkoutButton: UIButton!
@@ -53,6 +54,11 @@ final class CheckoutBar: NibView {
         self.methodSelectionView.layer.borderColor = UIColor.lightGray.cgColor
         self.methodSelectionView.layer.borderWidth = 1 / UIScreen.main.scale
 
+        self.noPaymentView.layer.masksToBounds = true
+        self.noPaymentView.layer.cornerRadius = 8
+        self.noPaymentView.layer.borderColor = UIColor.lightGray.cgColor
+        self.noPaymentView.layer.borderWidth = 1 / UIScreen.main.scale
+
         self.totalPriceLabel.font = UIFont.monospacedDigitSystemFont(ofSize: 22, weight: .bold)
 
         self.methodSelector = PaymentMethodSelector(parentVC, self.methodSelectionView, self.methodIcon, self.shoppingCart)
@@ -91,6 +97,7 @@ final class CheckoutBar: NibView {
 
         self.checkoutButton?.isEnabled = shouldDisplayControls
         self.paymentStackView.isHidden = !shouldDisplayControls
+        self.noPaymentView.isHidden = shouldDisplayControls
     }
 
     func updateSelectionVisibility() {

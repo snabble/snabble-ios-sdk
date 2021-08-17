@@ -229,9 +229,8 @@ extension ScannerDrawerViewController: PulleyDrawerViewControllerDelegate {
         let heightForListItems: CGFloat = min(CGFloat(shoppingList?.count ?? 0) * listItemHeight, listItemHeight * 2.5)
         let heightForItems = !shoppingCart.items.isEmpty ? heightForCartItems : heightForListItems
 
-        let heightForTotals = shoppingCart.numberOfProducts == 0 ? 0 : self.totalsHeight
         let heightForSegmentedControl = shoppingList == nil ? 0 : self.segmentedControlHeight
-        return self.minDrawerHeight + heightForSegmentedControl + heightForTotals + heightForItems
+        return self.minDrawerHeight + heightForSegmentedControl + totalsHeight + heightForItems
     }
 
     public func drawerPositionDidChange(drawer: PulleyViewController, bottomSafeArea: CGFloat) {
