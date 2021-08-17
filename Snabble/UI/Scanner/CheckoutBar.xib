@@ -53,20 +53,20 @@
                                 <constraint firstItem="H2s-rv-eKy" firstAttribute="leading" secondItem="8Kh-9q-0ok" secondAttribute="leading" id="ngm-IN-tpf"/>
                             </constraints>
                         </view>
-                        <stackView opaque="NO" contentMode="scaleToFill" spacing="16" translatesAutoresizingMaskIntoConstraints="NO" id="7Mg-fR-a7U" userLabel="Payment">
-                            <rect key="frame" x="0.0" y="26" width="375" height="59"/>
+                        <stackView hidden="YES" opaque="NO" contentMode="scaleToFill" spacing="16" translatesAutoresizingMaskIntoConstraints="NO" id="7Mg-fR-a7U" userLabel="Payment">
+                            <rect key="frame" x="0.0" y="26" width="375" height="0.0"/>
                             <subviews>
                                 <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="aFd-qz-9xh" userLabel="Method Selection">
-                                    <rect key="frame" x="0.0" y="0.0" width="78" height="59"/>
+                                    <rect key="frame" x="0.0" y="0.0" width="78" height="0.0"/>
                                     <subviews>
                                         <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="SnabbleSDK/payment/payment-sco" translatesAutoresizingMaskIntoConstraints="NO" id="uIE-jq-uvT" userLabel="method icon">
-                                            <rect key="frame" x="12" y="17.5" width="38" height="24"/>
+                                            <rect key="frame" x="12" y="-12" width="38" height="24"/>
                                             <constraints>
                                                 <constraint firstAttribute="width" constant="38" id="Pyv-An-Kx3"/>
                                             </constraints>
                                         </imageView>
                                         <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="SnabbleSDK/icon-chevron-down" translatesAutoresizingMaskIntoConstraints="NO" id="D2M-PR-bPh" userLabel="chevron">
-                                            <rect key="frame" x="54" y="21.5" width="16" height="16"/>
+                                            <rect key="frame" x="54" y="-8" width="16" height="16"/>
                                             <constraints>
                                                 <constraint firstAttribute="height" constant="16" id="0zg-n5-Rdk"/>
                                                 <constraint firstAttribute="width" constant="16" id="FEf-zQ-bkq"/>
@@ -83,7 +83,7 @@
                                     </constraints>
                                 </view>
                                 <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="A2j-lQ-Cws" userLabel="Checkout Button">
-                                    <rect key="frame" x="94" y="0.0" width="281" height="59"/>
+                                    <rect key="frame" x="94" y="0.0" width="281" height="0.0"/>
                                     <constraints>
                                         <constraint firstAttribute="height" priority="750" constant="48" id="y4G-6U-NQC"/>
                                     </constraints>
@@ -93,16 +93,16 @@
                             </subviews>
                         </stackView>
                         <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="roB-Xv-1zt" userLabel="NoPayment">
-                            <rect key="frame" x="0.0" y="85" width="375" height="48"/>
+                            <rect key="frame" x="0.0" y="26" width="375" height="107"/>
                             <subviews>
                                 <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Bezahlverfahren wählen" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" minimumScaleFactor="0.5" adjustsLetterSpacingToFitWidth="YES" translatesAutoresizingMaskIntoConstraints="NO" id="6x7-vF-vYK">
-                                    <rect key="frame" x="94" y="14" width="187.5" height="20.5"/>
+                                    <rect key="frame" x="94" y="43.5" width="187.5" height="20.5"/>
                                     <fontDescription key="fontDescription" type="system" weight="medium" pointSize="17"/>
                                     <nil key="textColor"/>
                                     <nil key="highlightedColor"/>
                                 </label>
                                 <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="SnabbleSDK/icon-chevron-down" translatesAutoresizingMaskIntoConstraints="NO" id="MTa-Hi-zR2" userLabel="chevron">
-                                    <rect key="frame" x="343" y="16" width="16" height="16"/>
+                                    <rect key="frame" x="343" y="45.5" width="16" height="16"/>
                                     <constraints>
                                         <constraint firstAttribute="height" constant="16" id="Hwf-pg-NcJ"/>
                                         <constraint firstAttribute="width" constant="16" id="WdH-Ri-Zye"/>
@@ -112,15 +112,11 @@
                             <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                             <constraints>
                                 <constraint firstItem="6x7-vF-vYK" firstAttribute="centerY" secondItem="roB-Xv-1zt" secondAttribute="centerY" id="O5z-lN-HDC"/>
-                                <constraint firstAttribute="height" constant="48" id="SFC-eS-DaB"/>
+                                <constraint firstAttribute="height" priority="750" constant="48" id="SFC-eS-DaB"/>
                                 <constraint firstItem="MTa-Hi-zR2" firstAttribute="centerY" secondItem="roB-Xv-1zt" secondAttribute="centerY" id="WPM-Qy-J4a"/>
-                                <constraint firstItem="6x7-vF-vYK" firstAttribute="top" relation="greaterThanOrEqual" secondItem="roB-Xv-1zt" secondAttribute="top" constant="6" id="XQx-Yo-G7J"/>
-                                <constraint firstAttribute="bottom" relation="greaterThanOrEqual" secondItem="MTa-Hi-zR2" secondAttribute="bottom" constant="16" id="bbu-4m-6iv"/>
                                 <constraint firstAttribute="trailing" secondItem="MTa-Hi-zR2" secondAttribute="trailing" constant="16" id="fXZ-sq-deN"/>
                                 <constraint firstItem="MTa-Hi-zR2" firstAttribute="leading" relation="greaterThanOrEqual" secondItem="6x7-vF-vYK" secondAttribute="trailing" constant="8" id="mzk-Zc-Mny"/>
                                 <constraint firstItem="6x7-vF-vYK" firstAttribute="centerX" secondItem="roB-Xv-1zt" secondAttribute="centerX" id="uSp-aT-K8l"/>
-                                <constraint firstItem="MTa-Hi-zR2" firstAttribute="top" relation="greaterThanOrEqual" secondItem="roB-Xv-1zt" secondAttribute="top" constant="16" id="wat-16-tkV"/>
-                                <constraint firstAttribute="bottom" relation="greaterThanOrEqual" secondItem="6x7-vF-vYK" secondAttribute="bottom" constant="6" id="yob-YU-6vN"/>
                             </constraints>
                         </view>
                     </subviews>
