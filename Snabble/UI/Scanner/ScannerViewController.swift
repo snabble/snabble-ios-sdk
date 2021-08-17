@@ -8,8 +8,6 @@ import UIKit
 import Pulley
 
 public final class ScannerViewController: PulleyViewController {
-    private let scanningViewController: ScanningViewController
-    private let drawerViewController: UIViewController
     private let initialPosition: PulleyPosition
     private var customAppearance: CustomAppearance?
 
@@ -20,20 +18,21 @@ public final class ScannerViewController: PulleyViewController {
                 cartDelegate: ShoppingCartDelegate?,
                 shoppingListDelegate: ShoppingListDelegate?
     ) {
-        scanningViewController = ScanningViewController(cart, shop, detector, delegate: scannerDelegate)
+        let scanningViewController = ScanningViewController(cart, shop, detector, delegate: scannerDelegate)
 
+        var viewController: UIViewController
         if let cartDelegate = cartDelegate {
-            drawerViewController = ScannerDrawerViewController(SnabbleUI.project.id,
+            viewController = ScannerDrawerViewController(SnabbleUI.project.id,
                                                                shoppingCart: cart,
                                                                cartDelegate: cartDelegate,
                                                                shoppingListDelegate: shoppingListDelegate)
             initialPosition = .collapsed
         } else {
-            drawerViewController = EmptyDrawerViewController()
+            viewController = EmptyDrawerViewController()
             initialPosition = .closed
         }
 
-        super.init(contentViewController: scanningViewController, drawerViewController: drawerViewController)
+        super.init(contentViewController: scanningViewController, drawerViewController: viewController)
         self.initialDrawerPosition = initialPosition
 
         self.title = L10n.Snabble.Scanner.title
@@ -52,7 +51,7 @@ public final class ScannerViewController: PulleyViewController {
     }
 
     public func updateTotals() {
-        let cartController = self.drawerViewController as? ShoppingCartViewController
+        let cartController = self.drawerContentViewController as? ShoppingCartViewController
         cartController?.updateTotals()
     }
 }
@@ -61,8 +60,8 @@ extension ScannerViewController: CustomizableAppearance {
     public func setCustomAppearance(_ appearance: CustomAppearance) {
         self.customAppearance = appearance
 
-        self.scanningViewController.setCustomAppearance(appearance)
-        if let drawer = self.drawerViewController as? ScannerDrawerViewController {
+        self.scanningViewController?.setCustomAppearance(appearance)
+        if let drawer = self.drawerContentViewController as? ScannerDrawerViewController {
             drawer.setCustomAppearance(appearance)
         }
     }
@@ -70,16 +69,20 @@ extension ScannerViewController: CustomizableAppearance {
 
 // stuff that's only used by the RN wrapper
 extension ScannerViewController: ReactNativeWrapper {
+    private var scanningViewController: ScanningViewController? {
+        primaryContentViewController as? ScanningViewController
+    }
+
     public func setIsScanning(_ on: Bool) {
-        scanningViewController.setIsScanning(on)
+        scanningViewController?.setIsScanning(on)
     }
 
     public func setLookupcode(_ code: String) {
-        scanningViewController.setLookupcode(code)
+        scanningViewController?.setLookupcode(code)
     }
 
     public func setTorchOn(_ on: Bool) {
-        scanningViewController.setTorchOn(on)
+        scanningViewController?.setTorchOn(on)
     }
 }
 
