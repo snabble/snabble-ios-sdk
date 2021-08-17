@@ -14,7 +14,6 @@ final class CheckoutBar: NibView {
     @IBOutlet private var paymentStackView: UIStackView!
     @IBOutlet private var methodSelectionView: UIView!
     @IBOutlet private var methodIcon: UIImageView!
-    @IBOutlet private var methodSpinner: UIActivityIndicatorView!
     @IBOutlet private var checkoutButton: UIButton!
 
     private var methodSelector: PaymentMethodSelector?
