@@ -336,6 +336,10 @@ extension SnabbleAPI {
             request.addValue("application/json", forHTTPHeaderField: "Content-Type")
         }
 
+        if let languageCode = Locale.current.languageCode {
+            request.addValue(languageCode, forHTTPHeaderField: "Accept-Language")
+        }
+
         return request
     }
 
