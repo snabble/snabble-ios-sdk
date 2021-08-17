@@ -24,6 +24,7 @@ public struct ProjectLinks: Decodable {
     public let shoppingListDB: Link?
     public let customerLoyaltyInfo: Link?
     public let activeShops: Link?
+    public let coupons: Link?
 
     public static let empty = ProjectLinks()
 
@@ -40,6 +41,7 @@ public struct ProjectLinks: Decodable {
         self.shoppingListDB = nil
         self.customerLoyaltyInfo = nil
         self.activeShops = nil
+        self.coupons = nil
     }
 
     init(appdb: Link, appEvents: Link, checkoutInfo: Link, tokens: Link, resolvedProductBySku: Link, resolvedProductLookUp: Link) {
@@ -55,6 +57,7 @@ public struct ProjectLinks: Decodable {
         self.shoppingListDB = nil
         self.customerLoyaltyInfo = nil
         self.activeShops = nil
+        self.coupons = nil
     }
 }
 
