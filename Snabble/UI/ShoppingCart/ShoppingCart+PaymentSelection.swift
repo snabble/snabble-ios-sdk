@@ -257,21 +257,22 @@ final class PaymentMethodSelector {
 
         var iconMap = [AlertAction: UIImage]()
 
-        let isAnyActive = actions.contains { $0.active == true }
+        let isAnyActive = actions.contains { $0.active == true && $0.method.offline == false }
 
         // add an action for each method
-        for actionData in actions {
-            let action = AlertAction(attributedTitle: actionData.title, style: .normal) { _ in
-                self.userSelectedPaymentMethod(with: actionData)
-            }
-            let icon = isAnyActive && !actionData.active ? actionData.icon?.grayscale() : actionData.icon
-            action.imageView.image = icon
-
-            if actionData.active {
-                iconMap[action] = icon
+        for action in actions {
+            let alertAction = AlertAction(attributedTitle: action.title, style: .normal) { _ in
+                self.userSelectedPaymentMethod(with: action)
             }
 
-            sheet.addAction(action)
+            let icon = isAnyActive && !action.active ? action.icon?.grayscale() : action.icon
+            alertAction.imageView.image = icon
+
+            if action.active {
+                iconMap[alertAction] = icon
+            }
+
+            sheet.addAction(alertAction)
         }
 
         // add the cancel action
