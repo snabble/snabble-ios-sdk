@@ -12,7 +12,8 @@ final class CheckoutBar: NibView {
     @IBOutlet private var totalPriceLabel: UILabel!
 
     @IBOutlet private var paymentStackView: UIStackView!
-    @IBOutlet private weak var noPaymentView: UIView!
+    @IBOutlet private weak var noPaymentView: UIView?
+    @IBOutlet private weak var noPaymentLabel: UILabel?
     @IBOutlet private var methodSelectionView: UIView!
     @IBOutlet private var methodIcon: UIImageView!
     @IBOutlet private var checkoutButton: UIButton!
@@ -55,17 +56,19 @@ final class CheckoutBar: NibView {
         self.methodSelectionView.layer.borderColor = UIColor.lightGray.cgColor
         self.methodSelectionView.layer.borderWidth = 1 / UIScreen.main.scale
 
-        self.noPaymentView.layer.masksToBounds = true
-        self.noPaymentView.layer.cornerRadius = 8
-        self.noPaymentView.layer.borderColor = UIColor.lightGray.cgColor
-        self.noPaymentView.layer.borderWidth = 1 / UIScreen.main.scale
+        self.noPaymentLabel?.text = L10n.Snabble.Shoppingcart.BuyProducts.selectPaymentMethod
+
+        self.noPaymentView?.layer.masksToBounds = true
+        self.noPaymentView?.layer.cornerRadius = 8
+        self.noPaymentView?.layer.borderColor = UIColor.lightGray.cgColor
+        self.noPaymentView?.layer.borderWidth = 1 / UIScreen.main.scale
 
         self.totalPriceLabel.font = UIFont.monospacedDigitSystemFont(ofSize: 22, weight: .bold)
 
         self.methodSelector = PaymentMethodSelector(parentVC, self.methodSelectionView, self.methodIcon, self.shoppingCart)
         self.methodSelector?.paymentMethodNavigationDelegate = self.paymentMethodNavigationDelegate
 
-        methodSelector2 = PaymentMethodSelector(parentVC, self.noPaymentView, self.methodIcon, self.shoppingCart)
+        methodSelector2 = PaymentMethodSelector(parentVC, self.noPaymentView!, self.methodIcon, self.shoppingCart)
         methodSelector2?.paymentMethodNavigationDelegate = paymentMethodNavigationDelegate
     }
 
@@ -101,7 +104,7 @@ final class CheckoutBar: NibView {
 
         let paymentMethodSelected = self.methodSelector?.selectedPaymentMethod != nil
         self.paymentStackView.isHidden = !paymentMethodSelected
-        self.noPaymentView.isHidden = paymentMethodSelected
+        self.noPaymentView?.isHidden = paymentMethodSelected
     }
 
     func updateSelectionVisibility() {
