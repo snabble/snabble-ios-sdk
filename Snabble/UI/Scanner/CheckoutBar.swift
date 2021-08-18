@@ -99,6 +99,7 @@ final class CheckoutBar: NibView {
         self.itemCountLabel?.text = fun(numProducts)
 
         self.methodSelector?.updateAvailablePaymentMethods()
+        self.methodSelector2?.updateAvailablePaymentMethods()
 
         self.checkoutButton?.isEnabled = numProducts > 0 && (totalPrice ?? 0) >= 0
 
@@ -109,6 +110,7 @@ final class CheckoutBar: NibView {
 
     func updateSelectionVisibility() {
         self.methodSelector?.updateSelectionVisibility()
+        self.methodSelector2?.updateSelectionVisibility()
     }
 
     func barDidAppear() {
