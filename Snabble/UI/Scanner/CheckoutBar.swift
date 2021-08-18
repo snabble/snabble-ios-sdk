@@ -93,11 +93,11 @@ final class CheckoutBar: NibView {
 
         self.methodSelector?.updateAvailablePaymentMethods()
 
-        let shouldDisplayControls = numProducts > 0 && (totalPrice ?? 0) >= 0
+        self.checkoutButton?.isEnabled = numProducts > 0 && (totalPrice ?? 0) >= 0
 
-        self.checkoutButton?.isEnabled = shouldDisplayControls
-        self.paymentStackView.isHidden = !shouldDisplayControls
-        self.noPaymentView.isHidden = shouldDisplayControls
+        let paymentMethodSelected = self.methodSelector?.selectedPaymentMethod != nil
+        self.paymentStackView.isHidden = !paymentMethodSelected
+        self.noPaymentView.isHidden = paymentMethodSelected
     }
 
     func updateSelectionVisibility() {

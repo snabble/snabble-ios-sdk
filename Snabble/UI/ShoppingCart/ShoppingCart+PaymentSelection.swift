@@ -160,7 +160,7 @@ final class PaymentMethodSelector {
             self.userMadeExplicitSelection = false
         }
 
-        let userMethods = PaymentMethodDetails.read().filter { $0.rawMethod.isAvailable }
+        let userMethods = PaymentMethodDetails.read().filter { $0.rawMethod.isAvailable && $0.projectId == SnabbleUI.project.id }
 
         let projectMethods = SnabbleUI.project.paymentMethods.filter { $0.isAvailable }
         let cartMethods = self.shoppingCart.paymentMethods?.map { $0.method }.filter { $0.isAvailable } ?? []
@@ -184,29 +184,31 @@ final class PaymentMethodSelector {
             }
         }
 
-        // prefer in-app payment methods like SEPA or CC, even if we have no user data yet
+        // prefer in-app payment methods like SEPA or CC
         for method in RawPaymentMethod.preferredOnlineMethods {
-            if availableMethods.contains(method) {
+            if availableMethods.contains(method), userMethods.contains(where: { $0.rawMethod == method }) {
                 self.setSelectedPayment(method, detail: nil)
                 return
             }
         }
 
-        let fallbackMethods: [RawPaymentMethod] = [ .gatekeeperTerminal, .qrCodeOffline, .qrCodePOS, .customerCardPOS ]
+        if !availableMethods.contains(where: { !$0.offline }) {
+            let fallbackMethods: [RawPaymentMethod] = [ .gatekeeperTerminal, .qrCodeOffline, .qrCodePOS, .customerCardPOS ]
 
-        // check if one of the fallbacks matches the cart
-        for method in fallbackMethods {
-            if availableMethods.contains(method) {
-                self.setSelectedPayment(method, detail: nil)
-                return
+            // check if one of the fallbacks matches the cart
+            for method in fallbackMethods {
+                if availableMethods.contains(method) {
+                    self.setSelectedPayment(method, detail: nil)
+                    return
+                }
             }
-        }
 
-        // check if one of the fallbacks matches the project
-        for fallback in fallbackMethods {
-            if projectMethods.contains(fallback) {
-                self.setSelectedPayment(fallback, detail: nil)
-                return
+            // check if one of the fallbacks matches the project
+            for fallback in fallbackMethods {
+                if projectMethods.contains(fallback) {
+                    self.setSelectedPayment(fallback, detail: nil)
+                    return
+                }
             }
         }
 
