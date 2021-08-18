@@ -18,6 +18,7 @@ final class CheckoutBar: NibView {
     @IBOutlet private var checkoutButton: UIButton!
 
     private var methodSelector: PaymentMethodSelector?
+    private var methodSelector2: PaymentMethodSelector?
     private weak var parentVC: (UIViewController & AnalyticsDelegate)?
     private let shoppingCart: ShoppingCart
     private weak var cartDelegate: ShoppingCartDelegate?
@@ -63,6 +64,9 @@ final class CheckoutBar: NibView {
 
         self.methodSelector = PaymentMethodSelector(parentVC, self.methodSelectionView, self.methodIcon, self.shoppingCart)
         self.methodSelector?.paymentMethodNavigationDelegate = self.paymentMethodNavigationDelegate
+
+        methodSelector2 = PaymentMethodSelector(parentVC, self.noPaymentView, self.methodIcon, self.shoppingCart)
+        methodSelector2?.paymentMethodNavigationDelegate = paymentMethodNavigationDelegate
     }
 
     func updateTotals() {
