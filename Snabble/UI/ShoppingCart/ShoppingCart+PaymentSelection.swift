@@ -25,6 +25,10 @@ private struct PaymentMethodAction {
     }
 }
 
+protocol PaymentMethodSelectorDelegate: AnyObject {
+    func paymentMethodeSelector(_ paymentMethodSelector: PaymentMethodSelector, didSelectMethod: RawPaymentMethod?)
+}
+
 final class PaymentMethodSelector {
     private weak var parentVC: (UIViewController & AnalyticsDelegate)?
     private weak var methodSelectionView: UIView?
@@ -42,6 +46,7 @@ final class PaymentMethodSelector {
     private var userMadeExplicitSelection = false
 
     private var shoppingCart: ShoppingCart
+    weak var delegate: PaymentMethodSelectorDelegate?
 
     init(_ parentVC: (UIViewController & AnalyticsDelegate)?,
          _ selectionView: UIView,
@@ -140,6 +145,7 @@ final class PaymentMethodSelector {
             self.methodIcon?.image = icon?.grayscale()
         }
         self.methodTap.isEnabled = true
+        delegate?.paymentMethodeSelector(self, didSelectMethod: method)
     }
 
     private func selectedMethodIsValid() -> Bool {

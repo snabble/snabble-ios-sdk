@@ -61,6 +61,14 @@ final class CheckoutBar: NibView {
 
         self.methodSelector = PaymentMethodSelector(parentVC, self.methodSelectionStackView!, self.methodIcon, self.shoppingCart)
         self.methodSelector?.paymentMethodNavigationDelegate = self.paymentMethodNavigationDelegate
+        self.methodSelector?.delegate = self
+    }
+
+    func updateViewHierachy(for paymentMethod: RawPaymentMethod?) {
+        let paymentMethodSelected = paymentMethod != nil
+        self.checkoutButton.isHidden = !paymentMethodSelected
+        self.methodIcon?.isHidden = !paymentMethodSelected
+        self.noPaymentLabel?.isHidden = paymentMethodSelected
     }
 
     func updateTotals() {
@@ -88,15 +96,10 @@ final class CheckoutBar: NibView {
 
         let fun = numProducts == 1 ? L10n.Snabble.Shoppingcart.NumberOfItems.one : L10n.Snabble.Shoppingcart.numberOfItems
         self.itemCountLabel?.text = fun(numProducts)
-
-        self.methodSelector?.updateAvailablePaymentMethods()
-
         self.checkoutButton?.isEnabled = numProducts > 0 && (totalPrice ?? 0) >= 0
 
-        let paymentMethodSelected = self.methodSelector?.selectedPaymentMethod != nil
-        self.checkoutButton.isHidden = !paymentMethodSelected
-        self.methodIcon?.isHidden = !paymentMethodSelected
-        self.noPaymentLabel?.isHidden = paymentMethodSelected
+        self.methodSelector?.updateAvailablePaymentMethods()
+        updateViewHierachy(for: self.methodSelector?.selectedPaymentMethod)
     }
 
     func updateSelectionVisibility() {
@@ -250,5 +253,11 @@ extension CheckoutBar {
         alert.addAction(UIAlertAction(title: L10n.Snabble.cancel, style: .cancel, handler: nil))
 
         self.parentVC?.present(alert, animated: true)
+    }
+}
+
+extension CheckoutBar: PaymentMethodSelectorDelegate {
+    func paymentMethodeSelector(_ paymentMethodSelector: PaymentMethodSelector, didSelectMethod rawPaymentMethod: RawPaymentMethod?) {
+        updateViewHierachy(for: rawPaymentMethod)
     }
 }
