@@ -319,7 +319,7 @@ extension SnabbleAPI {
 
 // MARK: - networking stuff
 extension SnabbleAPI {
-    static func request(url: URL, timeout: TimeInterval = 0, json: Bool = true) -> URLRequest {
+    public static func request(url: URL, timeout: TimeInterval? = nil, json: Bool = true) -> URLRequest {
         var request = URLRequest(url: url)
         request.addValue(SnabbleAPI.clientId, forHTTPHeaderField: "Client-Id")
 
@@ -327,7 +327,7 @@ extension SnabbleAPI {
             request.addValue(userAgent, forHTTPHeaderField: "User-Agent")
         }
 
-        if timeout > 0 {
+        if let timeout = timeout {
             request.timeoutInterval = timeout
         }
 
@@ -336,9 +336,13 @@ extension SnabbleAPI {
             request.addValue("application/json", forHTTPHeaderField: "Content-Type")
         }
 
-        if let languageCode = Locale.current.languageCode {
-            request.addValue(languageCode, forHTTPHeaderField: "Accept-Language")
-        }
+        let acceptLanguage = Bundle.main.preferredLocalizations.enumerated()
+            .map { index, language in
+                let quality = max(9 - index, 1)
+                return "\(language);q=0.\(quality)"
+            }
+            .joined(separator: ",")
+        request.addValue(acceptLanguage, forHTTPHeaderField: "Accept-Language")
 
         return request
     }
