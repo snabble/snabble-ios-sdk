@@ -211,8 +211,6 @@ final class PaymentMethodSelector {
                 }
             }
         }
-
-        self.methodSelectionView?.isHidden = true
     }
 
     private func userSelectedPaymentMethod(with actionData: PaymentMethodAction) {
