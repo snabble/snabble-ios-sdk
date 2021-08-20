@@ -65,3 +65,7 @@ extension Coupon: Equatable {
         return lhs.id == rhs.id
     }
 }
+
+public struct CouponList: Decodable {
+    let coupons: [Coupon]
+}

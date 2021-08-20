@@ -45,6 +45,10 @@ public struct Metadata: Decodable {
     mutating func setShops(_ shops: [Shop], at index: Int) {
         self.projects[index].setShops(shops)
     }
+
+    mutating func setCoupons(_ coupons: [Coupon], at index: Int) {
+        self.projects[index].setCoupons(coupons)
+    }
 }
 
 public struct Brand: Decodable, Identifiable {
