@@ -1,8 +1,7 @@
 //
 //  Coupon.swift
-//  Snabble
 //
-//  Created by Gereon Steffens on 16.08.21.
+//  Copyright © 2021 snabble. All rights reserved.
 //
 
 import Foundation

@@ -1,8 +1,7 @@
 //
 //  ShoppingListDelegate.swift
-//  Snabble
 //
-//  Created by Gereon Steffens on 25.06.21.
+//  Copyright © 2021 snabble. All rights reserved.
 //
 
 import Foundation

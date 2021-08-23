@@ -1,8 +1,7 @@
 //
 //  ApplePaySupport.swift
-//  Snabble
 //
-//  Created by Gereon Steffens on 02.07.21.
+//  Copyright © 2021 snabble. All rights reserved.
 //
 
 import PassKit

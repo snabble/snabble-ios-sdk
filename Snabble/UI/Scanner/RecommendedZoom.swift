@@ -1,8 +1,7 @@
 //
 //  RecommendedZoomFactor.swift
-//  RecommendedZoomFactor
 //
-//  Created by Gereon Steffens on 27.07.21.
+//  Copyright © 2021 snabble. All rights reserved.
 //
 
 import Foundation

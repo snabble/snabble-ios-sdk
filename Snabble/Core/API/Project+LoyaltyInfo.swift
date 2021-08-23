@@ -1,8 +1,7 @@
 //
 //  Project+LoyaltyInfo.swift
-//  Snabble
 //
-//  Created by Gereon Steffens on 01.07.21.
+//  Copyright © 2021 snabble. All rights reserved.
 //
 
 import Foundation
