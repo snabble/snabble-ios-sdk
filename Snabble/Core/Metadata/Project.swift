@@ -456,7 +456,6 @@ public struct Project: Decodable, Identifiable {
             self.updateable.manualCoupons = coupons.filter { $0.type == .manual }
             self.updateable.printedCoupons = coupons.filter { $0.type == .printed }
             self.updateable.digitalCoupons = coupons.filter { $0.type == .digital }
-
         }
     }
 }
