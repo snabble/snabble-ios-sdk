@@ -24,14 +24,12 @@ public final class SepaEditViewController: UIViewController {
 
     private var detail: PaymentMethodDetail?
     private var candidate: OriginCandidate?
-    private let showFromCart: Bool
     private weak var analyticsDelegate: AnalyticsDelegate?
 
     public weak var navigationDelegate: PaymentMethodNavigationDelegate?
 
-    public init(_ detail: PaymentMethodDetail?, _ showFromCart: Bool, _ analyticsDelegate: AnalyticsDelegate?) {
+    public init(_ detail: PaymentMethodDetail?, _ analyticsDelegate: AnalyticsDelegate?) {
         self.detail = detail
-        self.showFromCart = showFromCart
         self.analyticsDelegate = analyticsDelegate
 
         super.init(nibName: nil, bundle: SnabbleBundle.main)
@@ -41,7 +39,6 @@ public final class SepaEditViewController: UIViewController {
 
     public init(_ candidate: OriginCandidate, _ analyticsDelegate: AnalyticsDelegate?) {
         self.candidate = candidate
-        self.showFromCart = false
 
         super.init(nibName: nil, bundle: SnabbleBundle.main)
 
@@ -222,17 +219,9 @@ public final class SepaEditViewController: UIViewController {
 
     private func goBack() {
         if SnabbleUI.implicitNavigation {
-            if self.showFromCart {
-                self.navigationController?.popToRootViewController(animated: true)
-            } else {
-                self.navigationController?.popViewController(animated: true)
-            }
+            self.navigationController?.popViewController(animated: true)
         } else {
-            if self.showFromCart {
-                self.navigationDelegate?.goBackToCart()
-            } else {
-                self.navigationDelegate?.goBack()
-            }
+            self.navigationDelegate?.goBack()
         }
     }
 

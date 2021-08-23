@@ -63,33 +63,33 @@ extension RawPaymentMethod {
         }
     }
 
-    func editViewController(with projectId: Identifier<Project>?, showFromCart: Bool, _ analyticsDelegate: AnalyticsDelegate?) -> UIViewController? {
+    func editViewController(with projectId: Identifier<Project>?, _ analyticsDelegate: AnalyticsDelegate?) -> UIViewController? {
         switch self {
         case .deDirectDebit:
-            return SepaEditViewController(nil, showFromCart, analyticsDelegate)
+            return SepaEditViewController(nil, analyticsDelegate)
         case .paydirektOneKlick:
-            return PaydirektEditViewController(nil, showFromCart, analyticsDelegate)
+            return PaydirektEditViewController(nil, analyticsDelegate)
 
         case .creditCardMastercard:
-            return creditCardEditViewController(.mastercard, projectId, showFromCart, analyticsDelegate)
+            return creditCardEditViewController(.mastercard, projectId, analyticsDelegate)
         case .creditCardVisa:
-            return creditCardEditViewController(.visa, projectId, showFromCart, analyticsDelegate)
+            return creditCardEditViewController(.visa, projectId, analyticsDelegate)
         case .creditCardAmericanExpress:
-            return creditCardEditViewController(.amex, projectId, showFromCart, analyticsDelegate)
+            return creditCardEditViewController(.amex, projectId, analyticsDelegate)
 
         case .qrCodePOS, .qrCodeOffline, .externalBilling, .customerCardPOS, .gatekeeperTerminal, .applePay:
             break
 
         case .twint, .postFinanceCard:
             if let projectId = projectId {
-                return SnabbleAPI.methodRegistry.createEntry(method: self, projectId, showFromCart, analyticsDelegate)
+                return SnabbleAPI.methodRegistry.createEntry(method: self, projectId, analyticsDelegate)
             }
         }
 
         return nil
     }
 
-    private func creditCardEditViewController(_ brand: CreditCardBrand, _ projectId: Identifier<Project>?, _ showFromCart: Bool, _ analyticsDelegate: AnalyticsDelegate?) -> UIViewController? {
+    private func creditCardEditViewController(_ brand: CreditCardBrand, _ projectId: Identifier<Project>?, _ analyticsDelegate: AnalyticsDelegate?) -> UIViewController? {
         guard
             let projectId = projectId,
             let project = SnabbleAPI.project(for: projectId),
@@ -99,9 +99,9 @@ extension RawPaymentMethod {
         }
 
         if descriptor.acceptedOriginTypes?.contains(.ipgHostedDataID) == true {
-            return CreditCardEditViewController(brand: .visa, projectId, showFromCart, analyticsDelegate)
+            return CreditCardEditViewController(brand: .visa, projectId, analyticsDelegate)
         } else if descriptor.acceptedOriginTypes?.contains(.datatransCreditCardAlias) == true {
-            return SnabbleAPI.methodRegistry.createEntry(method: self, projectId, showFromCart, analyticsDelegate)
+            return SnabbleAPI.methodRegistry.createEntry(method: self, projectId, analyticsDelegate)
         }
 
         return nil

@@ -228,7 +228,7 @@ final class PaymentMethodSelector {
             detail == nil,
             let parent = self.parentVC,
             method.isAddingAllowed(showAlertOn: parent) == true,
-            let editVC = method.editViewController(with: SnabbleUI.project.id, showFromCart: true, parent)
+            let editVC = method.editViewController(with: SnabbleUI.project.id, parent)
         else {
             return
         }

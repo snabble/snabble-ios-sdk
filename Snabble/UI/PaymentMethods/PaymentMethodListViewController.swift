@@ -9,7 +9,6 @@ import SDCAlertView
 
 public final class PaymentMethodListViewController: UITableViewController {
     private var details = [[PaymentMethodDetail]]()
-    private let showFromCart: Bool
     private weak var analyticsDelegate: AnalyticsDelegate?
 
     public weak var navigationDelegate: PaymentMethodNavigationDelegate?
@@ -23,8 +22,7 @@ public final class PaymentMethodListViewController: UITableViewController {
 
     private var availableMethods: [RawPaymentMethod]
 
-    public init(method: RawPaymentMethod, for projectId: Identifier<Project>?, showFromCart: Bool, _ analyticsDelegate: AnalyticsDelegate?) {
-        self.showFromCart = showFromCart
+    public init(method: RawPaymentMethod, for projectId: Identifier<Project>?, _ analyticsDelegate: AnalyticsDelegate?) {
         self.analyticsDelegate = analyticsDelegate
         self.projectId = projectId
         self.method = method
@@ -35,8 +33,7 @@ public final class PaymentMethodListViewController: UITableViewController {
         updateAvailableMethods()
     }
 
-    public init(for projectId: Identifier<Project>?, showFromCart: Bool, _ analyticsDelegate: AnalyticsDelegate?) {
-        self.showFromCart = showFromCart
+    public init(for projectId: Identifier<Project>?, _ analyticsDelegate: AnalyticsDelegate?) {
         self.analyticsDelegate = analyticsDelegate
         self.availableMethods = []
         self.projectId = projectId
@@ -150,7 +147,7 @@ public final class PaymentMethodListViewController: UITableViewController {
 
     private func showEditController(for method: RawPaymentMethod) {
         if method.isAddingAllowed(showAlertOn: self),
-           let controller = method.editViewController(with: projectId, showFromCart: showFromCart, analyticsDelegate) {
+           let controller = method.editViewController(with: projectId, analyticsDelegate) {
             if SnabbleUI.implicitNavigation {
                 navigationController?.pushViewController(controller, animated: true)
             } else {
@@ -187,15 +184,15 @@ extension PaymentMethodListViewController {
         var editVC: UIViewController?
         switch detail.methodData {
         case .sepa:
-            editVC = SepaEditViewController(detail, false, self.analyticsDelegate)
+            editVC = SepaEditViewController(detail, self.analyticsDelegate)
         case .creditcard:
-            editVC = CreditCardEditViewController(detail, false, self.analyticsDelegate)
+            editVC = CreditCardEditViewController(detail, self.analyticsDelegate)
         case .paydirektAuthorization:
-            editVC = PaydirektEditViewController(detail, false, self.analyticsDelegate)
+            editVC = PaydirektEditViewController(detail, self.analyticsDelegate)
         case .tegutEmployeeCard:
             editVC = nil
         case .datatransAlias, .datatransCardAlias:
-            editVC = SnabbleAPI.methodRegistry.create(detail: detail, showFromCart: false, analyticsDelegate: self.analyticsDelegate)
+            editVC = SnabbleAPI.methodRegistry.create(detail: detail, analyticsDelegate: self.analyticsDelegate)
         }
 
         if let controller = editVC {

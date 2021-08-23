@@ -11,22 +11,19 @@ import SDCAlertView
 public final class PaymentMethodAddViewController: UITableViewController {
     private var entries = [[MethodEntry]]()
     private var brandId: Identifier<Brand>?
-    private let showFromCart: Bool
     private weak var analyticsDelegate: AnalyticsDelegate?
 
     public weak var navigationDelegate: PaymentMethodNavigationDelegate?
 
-    public init(showFromCart: Bool, _ analyticsDelegate: AnalyticsDelegate?) {
-        self.showFromCart = showFromCart
+    public init(_ analyticsDelegate: AnalyticsDelegate?) {
         self.analyticsDelegate = analyticsDelegate
         self.brandId = nil
 
         super.init(style: SnabbleUI.groupedTableStyle)
     }
 
-    init(brandId: Identifier<Brand>, showFromCart: Bool, _ analyticsDelegate: AnalyticsDelegate?) {
+    init(brandId: Identifier<Brand>, _ analyticsDelegate: AnalyticsDelegate?) {
         self.brandId = brandId
-        self.showFromCart = showFromCart
         self.analyticsDelegate = analyticsDelegate
 
         super.init(style: SnabbleUI.groupedTableStyle)
@@ -231,7 +228,7 @@ extension PaymentMethodAddViewController {
         if let brandId = entry.brandId, self.brandId == nil {
             // from the starting view, drill-down to the individual projects in this brand
             if SnabbleUI.implicitNavigation {
-                navigationTarget = PaymentMethodAddViewController(brandId: brandId, showFromCart: self.showFromCart, self.analyticsDelegate)
+                navigationTarget = PaymentMethodAddViewController(brandId: brandId, self.analyticsDelegate)
             } else {
                 navigationDelegate?.showRetailers(for: brandId)
             }
@@ -241,14 +238,14 @@ extension PaymentMethodAddViewController {
             if entry.count == 0 {
                 if method.isAddingAllowed(showAlertOn: self) {
                     if SnabbleUI.implicitNavigation {
-                        navigationTarget = method.editViewController(with: entry.projectId, showFromCart: false, self.analyticsDelegate)
+                        navigationTarget = method.editViewController(with: entry.projectId, self.analyticsDelegate)
                     } else {
                         navigationDelegate?.addData(for: method, in: entry.projectId)
                     }
                 }
             } else {
                 if SnabbleUI.implicitNavigation {
-                    navigationTarget = PaymentMethodListViewController(method: method, for: entry.projectId, showFromCart: self.showFromCart, self.analyticsDelegate)
+                    navigationTarget = PaymentMethodListViewController(method: method, for: entry.projectId, self.analyticsDelegate)
                 } else {
                     navigationDelegate?.showData(for: method, in: entry.projectId)
                 }
@@ -260,7 +257,7 @@ extension PaymentMethodAddViewController {
                 self.addMethod(for: projectId)
             } else {
                 if SnabbleUI.implicitNavigation {
-                    navigationTarget = PaymentMethodListViewController(for: projectId, showFromCart: self.showFromCart, self.analyticsDelegate)
+                    navigationTarget = PaymentMethodListViewController(for: projectId, self.analyticsDelegate)
                 } else {
                     navigationDelegate?.showData(for: projectId)
                 }
@@ -287,7 +284,7 @@ extension PaymentMethodAddViewController {
         methods.forEach { method in
             let action = AlertAction(title: method.displayName, style: .normal) { [self] _ in
                 if method.isAddingAllowed(showAlertOn: self),
-                   let controller = method.editViewController(with: projectId, showFromCart: self.showFromCart, analyticsDelegate) {
+                   let controller = method.editViewController(with: projectId, analyticsDelegate) {
                     if SnabbleUI.implicitNavigation {
                         navigationController?.pushViewController(controller, animated: true)
                     } else {

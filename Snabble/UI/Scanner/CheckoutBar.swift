@@ -119,7 +119,7 @@ final class CheckoutBar: NibView {
         else {
             // no payment method selected -> show the "add method" view
             if SnabbleUI.implicitNavigation {
-                let selection = PaymentMethodAddViewController(showFromCart: true, parentVC)
+                let selection = PaymentMethodAddViewController(parentVC)
                 parentVC?.navigationController?.pushViewController(selection, animated: true)
             } else {
                 let msg = "navigationDelegate may not be nil when using explicit navigation"
@@ -134,7 +134,7 @@ final class CheckoutBar: NibView {
         if self.methodSelector?.selectedPaymentDetail == nil,
            let parentVC = self.parentVC,
            paymentMethod.isAddingAllowed(showAlertOn: parentVC),
-           let editVC = paymentMethod.editViewController(with: project.id, showFromCart: true, parentVC) {
+           let editVC = paymentMethod.editViewController(with: project.id, parentVC) {
             if SnabbleUI.implicitNavigation {
                 parentVC.navigationController?.pushViewController(editVC, animated: true)
             } else {

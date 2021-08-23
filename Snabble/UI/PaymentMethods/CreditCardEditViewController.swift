@@ -34,7 +34,6 @@ public final class CreditCardEditViewController: UIViewController {
     private var brand: CreditCardBrand?
     private var ccNumber: String?
     private var expDate: String?
-    private let showFromCart: Bool
     private var projectId: Identifier<Project>?
     private weak var analyticsDelegate: AnalyticsDelegate?
 
@@ -42,23 +41,21 @@ public final class CreditCardEditViewController: UIViewController {
 
     public weak var navigationDelegate: PaymentMethodNavigationDelegate?
 
-    public init(brand: CreditCardBrand?, _ projectId: Identifier<Project>, _ showFromCart: Bool, _ analyticsDelegate: AnalyticsDelegate?) {
+    public init(brand: CreditCardBrand?, _ projectId: Identifier<Project>, _ analyticsDelegate: AnalyticsDelegate?) {
         self.brand = brand
-        self.showFromCart = showFromCart
         self.analyticsDelegate = analyticsDelegate
         self.projectId = projectId
 
         super.init(nibName: nil, bundle: SnabbleBundle.main)
     }
 
-    init(_ detail: PaymentMethodDetail, _ showFromCart: Bool, _ analyticsDelegate: AnalyticsDelegate?) {
+    init(_ detail: PaymentMethodDetail, _ analyticsDelegate: AnalyticsDelegate?) {
         if case .creditcard(let data) = detail.methodData {
             self.brand = data.brand
             self.ccNumber = data.displayName
             self.expDate = data.expirationDate
             self.detail = detail
         }
-        self.showFromCart = showFromCart
         self.analyticsDelegate = analyticsDelegate
         self.projectId = nil
 
@@ -159,17 +156,9 @@ public final class CreditCardEditViewController: UIViewController {
 
     private func goBack() {
         if SnabbleUI.implicitNavigation {
-            if self.showFromCart {
-                self.navigationController?.popToRootViewController(animated: true)
-            } else {
-                self.navigationController?.popViewController(animated: true)
-            }
+            self.navigationController?.popViewController(animated: true)
         } else {
-            if self.showFromCart {
-                self.navigationDelegate?.goBackToCart()
-            } else {
-                self.navigationDelegate?.goBack()
-            }
+            self.navigationDelegate?.goBack()
         }
     }
 

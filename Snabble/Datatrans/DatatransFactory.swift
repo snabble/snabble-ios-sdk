@@ -16,12 +16,12 @@ public enum DatatransFactory {
         SnabbleAPI.methodRegistry.register(methods: methods, for: .creditCardAmericanExpress)
     }
 
-    private static func viewFactory(_ detail: PaymentMethodDetail, _ showFromCard: Bool, _ analyticsDelegate: AnalyticsDelegate?) -> UIViewController {
-        return DatatransAliasViewController(detail, showFromCard, analyticsDelegate)
+    private static func viewFactory(_ detail: PaymentMethodDetail, _ analyticsDelegate: AnalyticsDelegate?) -> UIViewController {
+        return DatatransAliasViewController(detail, analyticsDelegate)
 
     }
 
-    private static func entryFactory(_ method: RawPaymentMethod, _ projectId: Identifier<Project>, _ showFromCard: Bool, _ analyticsDelegate: AnalyticsDelegate?) -> UIViewController {
-        return DatatransAliasViewController(method, projectId, showFromCard, analyticsDelegate)
+    private static func entryFactory(_ method: RawPaymentMethod, _ projectId: Identifier<Project>, _ analyticsDelegate: AnalyticsDelegate?) -> UIViewController {
+        return DatatransAliasViewController(method, projectId, analyticsDelegate)
     }
 }

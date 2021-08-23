@@ -38,7 +38,6 @@ public final class PaydirektEditViewController: UIViewController {
 
     private var webView: WKWebView?
     private var detail: PaymentMethodDetail?
-    private let showFromCart: Bool
     private weak var analyticsDelegate: AnalyticsDelegate?
     private var clientAuthorization: String?
 
@@ -54,9 +53,8 @@ public final class PaydirektEditViewController: UIViewController {
         redirectUrlAfterFailure: RedirectStatus.failure.url
     )
 
-    public init(_ detail: PaymentMethodDetail?, _ showFromCart: Bool, _ analyticsDelegate: AnalyticsDelegate?) {
+    public init(_ detail: PaymentMethodDetail?, _ analyticsDelegate: AnalyticsDelegate?) {
         self.detail = detail
-        self.showFromCart = showFromCart
         self.analyticsDelegate = analyticsDelegate
 
         super.init(nibName: nil, bundle: SnabbleBundle.main)
@@ -221,17 +219,9 @@ extension PaydirektEditViewController: WKNavigationDelegate {
 
     private func goBack() {
         if SnabbleUI.implicitNavigation {
-            if self.showFromCart {
-                self.navigationController?.popToRootViewController(animated: true)
-            } else {
-                self.navigationController?.popViewController(animated: true)
-            }
+            self.navigationController?.popViewController(animated: true)
         } else {
-            if self.showFromCart {
-                self.navigationDelegate?.goBackToCart()
-            } else {
-                self.navigationDelegate?.goBack()
-            }
+            self.navigationDelegate?.goBack()
         }
     }
 }

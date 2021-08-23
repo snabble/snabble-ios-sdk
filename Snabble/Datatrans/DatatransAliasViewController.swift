@@ -18,7 +18,6 @@ public final class DatatransAliasViewController: UIViewController {
     @IBOutlet private var explanation: UILabel!
 
     private weak var analyticsDelegate: AnalyticsDelegate?
-    private let showFromCart: Bool
     private let projectId: Identifier<Project>?
     private let method: RawPaymentMethod?
     private let brand: CreditCardBrand?
@@ -27,8 +26,7 @@ public final class DatatransAliasViewController: UIViewController {
 
     public weak var navigationDelegate: PaymentMethodNavigationDelegate?
 
-    public init(_ method: RawPaymentMethod, _ projectId: Identifier<Project>, _ showFromCart: Bool, _ analyticsDelegate: AnalyticsDelegate?) {
-        self.showFromCart = showFromCart
+    public init(_ method: RawPaymentMethod, _ projectId: Identifier<Project>, _ analyticsDelegate: AnalyticsDelegate?) {
         self.analyticsDelegate = analyticsDelegate
         self.projectId = projectId
         self.method = method
@@ -38,9 +36,8 @@ public final class DatatransAliasViewController: UIViewController {
         super.init(nibName: nil, bundle: SnabbleDTBundle.main)
     }
 
-    init(_ detail: PaymentMethodDetail, _ showFromCart: Bool, _ analyticsDelegate: AnalyticsDelegate?) {
+    init(_ detail: PaymentMethodDetail, _ analyticsDelegate: AnalyticsDelegate?) {
         self.detail = detail
-        self.showFromCart = showFromCart
         self.analyticsDelegate = analyticsDelegate
         self.projectId = nil
         if case .datatransAlias(let data) = detail.methodData {
@@ -223,17 +220,9 @@ public final class DatatransAliasViewController: UIViewController {
 
     private func goBack() {
         if SnabbleUI.implicitNavigation {
-            if self.showFromCart {
-                self.navigationController?.popToRootViewController(animated: true)
-            } else {
-                self.navigationController?.popViewController(animated: true)
-            }
+            self.navigationController?.popViewController(animated: true)
         } else {
-            if self.showFromCart {
-                self.navigationDelegate?.goBackToCart()
-            } else {
-                self.navigationDelegate?.goBack()
-            }
+            self.navigationDelegate?.goBack()
         }
     }
 }
