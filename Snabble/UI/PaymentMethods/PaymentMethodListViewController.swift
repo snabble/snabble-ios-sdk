@@ -90,10 +90,8 @@ public final class PaymentMethodListViewController: UITableViewController {
                     return cardAlias.projectId == projectId
                 case .datatransAlias(let alias):
                     return alias.projectId == projectId
-                case .tegutEmployeeCard:
+                case .tegutEmployeeCard, .sepa, .paydirektAuthorization:
                     return true
-                default:
-                    return false
                 }
             }
 

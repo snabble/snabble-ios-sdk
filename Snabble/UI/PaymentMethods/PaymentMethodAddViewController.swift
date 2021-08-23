@@ -105,10 +105,11 @@ public final class PaymentMethodAddViewController: UITableViewController {
     }
 
     private func getMultiProjectEntries() -> [[MethodEntry]] {
-        // all entries where project-specific methods are accepted
+        var entries = [[MethodEntry]]()
+
         var allEntries = SnabbleAPI.projects
             .filter { !$0.shops.isEmpty }
-            .filter { $0.paymentMethods.firstIndex { $0.isProjectSpecific } != nil }
+            .filter { $0.paymentMethods.firstIndex { $0.dataRequired } != nil }
             .map { MethodEntry(project: $0, count: self.methodCount(for: $0.id)) }
 
         // merge entries belonging to the same brand
@@ -141,23 +142,7 @@ public final class PaymentMethodAddViewController: UITableViewController {
 
         allEntries.sort { $0.name < $1.name }
 
-        let editableMethods = SnabbleAPI.projects
-            .flatMap { $0.paymentMethods }
-            .filter { $0.editable && $0.isAvailable }
-        let allMethods = Set(editableMethods)
-
-        let projectSpecificMethods = allMethods.filter { $0.isProjectSpecific }
-
-        var generalMethods = Array(allMethods.subtracting(projectSpecificMethods))
-        generalMethods.sort { $0.displayName < $1.displayName }
-
-        var entries = [[MethodEntry]]()
-        if !generalMethods.isEmpty {
-            entries.append(generalMethods.map { MethodEntry(method: $0, count: methodCount(for: $0)) })
-        }
-
         entries.append(allEntries)
-
         return entries
     }
 
@@ -175,8 +160,8 @@ public final class PaymentMethodAddViewController: UITableViewController {
                 return datatransData.projectId == projectId
             case .datatransCardAlias(let datatransCardData):
                 return datatransCardData.projectId == projectId
-            default:
-                return false
+            case .sepa, .tegutEmployeeCard, .paydirektAuthorization:
+                return SnabbleAPI.project(for: projectId)?.paymentMethods.contains(detail.rawMethod) ?? false
             }
         }.count
     }
