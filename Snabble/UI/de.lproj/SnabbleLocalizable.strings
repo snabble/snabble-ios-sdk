@@ -350,6 +350,8 @@
 
 "Snabble.Shoppingcart.buyProducts.one" = "%1$d Artikel für %2$@ kaufen";
 
+"Snabble.Shoppingcart.buyProducts.selectPaymentMethod" = "Bezahlverfahren wählen";
+
 "Snabble.Shoppingcart.coupon" = "Gutschein";
 
 "Snabble.Shoppingcart.coupons" = "Gutscheine";
@@ -450,11 +452,11 @@
 /* Der Titel der übersichtsseite der Einkaufslisten */
 "Snabble.ShoppingLists.title" = "Einkaufslisten";
 
-"Snabble.Taxation.consume.inhouse" = "Hier Essen";
+"Snabble.Taxation.consume.inhouse" = "hier konsumieren";
 
-"Snabble.Taxation.consume.takeaway" = "Mitnehmen";
+"Snabble.Taxation.consume.takeaway" = "mitnehmen";
 
-"Snabble.Taxation.consumeWhere" = "Zum hier Essen oder zum Mitnehmen?";
+"Snabble.Taxation.consumeWhere" = "Möchtest du deinen Einkauf";
 
 "Snabble.Taxation.pleaseChoose" = "Bitte wählen";
 

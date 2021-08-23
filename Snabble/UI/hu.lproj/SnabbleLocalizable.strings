@@ -151,7 +151,7 @@
 
 "Snabble.Payment.offlineHint" = "Jelenleg offline állapotban vagy, így bizonyos fizetési módok adott esetben nem érhetők el";
 
-"Snabble.Payment.payAtCashDesk" = "Pénztár";
+"Snabble.Payment.payAtCashDesk" = "Fizetés a pénztárnál";
 
 "Snabble.Payment.payAtSCO" = "Kártya az EC-terminálra";
 
@@ -350,6 +350,8 @@
 
 "Snabble.Shoppingcart.buyProducts.one" = "%1$d termék megvásárlása %2$@-ért";
 
+"Snabble.Shoppingcart.buyProducts.selectPaymentMethod" = "Select payment method";
+
 "Snabble.Shoppingcart.coupon" = "Kupon";
 
 "Snabble.Shoppingcart.coupons" = "Kuponok";
@@ -374,7 +376,7 @@
 
 "Snabble.Shoppingcart.includesDeposit" = "betétdíjjal együtt";
 
-"Snabble.Shoppingcart.noPaymentData" = "Még nincs beállítva";
+"Snabble.Shoppingcart.noPaymentData" = "Hozzáadás most";
 
 "Snabble.Shoppingcart.notForThisPurchase" = "Ehhez a bevásárláshoz nem áll rendelkezésre";
 

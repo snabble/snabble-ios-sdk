@@ -1,8 +1,7 @@
 //
 //  L10n.swift
-//  Snabble
 //
-//  Created by Gereon Steffens on 29.07.21.
+//  Copyright © 2021 snabble. All rights reserved.
 //
 
 import Foundation

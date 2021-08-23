@@ -24,6 +24,8 @@ public struct ProjectLinks: Decodable {
     public let shoppingListDB: Link?
     public let customerLoyaltyInfo: Link?
     public let activeShops: Link?
+    public let coupons: Link?
+    public let news: Link?
 
     public static let empty = ProjectLinks()
 
@@ -40,6 +42,8 @@ public struct ProjectLinks: Decodable {
         self.shoppingListDB = nil
         self.customerLoyaltyInfo = nil
         self.activeShops = nil
+        self.coupons = nil
+        self.news = nil
     }
 
     init(appdb: Link, appEvents: Link, checkoutInfo: Link, tokens: Link, resolvedProductBySku: Link, resolvedProductLookUp: Link) {
@@ -55,6 +59,8 @@ public struct ProjectLinks: Decodable {
         self.shoppingListDB = nil
         self.customerLoyaltyInfo = nil
         self.activeShops = nil
+        self.coupons = nil
+        self.news = nil
     }
 }
 
@@ -268,8 +274,6 @@ public struct Project: Decodable, Identifiable {
     public let scanFormats: [ScanFormat]
     public let barcodeDetector: BarcodeDetectorType
 
-    public private(set) var shops: [Shop]
-
     public let customerCards: CustomerCardInfo?
 
     public let codeTemplates: [TemplateDefinition]
@@ -291,8 +295,20 @@ public struct Project: Decodable, Identifiable {
     public let company: Company?
     public let brandId: Identifier<Brand>?
 
-    public let manualCoupons: [Coupon]
-    public let printedCoupons: [Coupon]
+    // these properties may be updated after the original metadata document has been loaded
+    private struct UpdateableProperties {
+        var shops = [Shop]()
+        var manualCoupons = [Coupon]()
+        var printedCoupons = [Coupon]()
+        var digitalCoupons = [Coupon]()
+    }
+    private var updateable: UpdateableProperties
+    private let updateLock = ReadWriteLock()
+
+    public var shops: [Shop] { updateLock.reading { updateable.shops } }
+    public var manualCoupons: [Coupon] { updateLock.reading { updateable.manualCoupons } }
+    public var printedCoupons: [Coupon] { updateLock.reading { updateable.printedCoupons } }
+    public var digitalCoupons: [Coupon] { updateLock.reading { updateable.digitalCoupons } }
 
     enum CodingKeys: String, CodingKey {
         case id, name, links
@@ -325,8 +341,6 @@ public struct Project: Decodable, Identifiable {
 
         self.currencySymbol = Self.currencySymbol(for: self.currency, locale: self.locale)
 
-        self.shops = (try container.decodeIfPresent([Shop].self, forKey: .shops)) ?? []
-
         let defaultFormats = [ ScanFormat.ean8.rawValue, ScanFormat.ean13.rawValue, ScanFormat.code128.rawValue ]
         let formats = (try container.decodeIfPresent([String].self, forKey: .scanFormats)) ?? defaultFormats
         self.scanFormats = formats.compactMap { ScanFormat(rawValue: $0) }
@@ -348,12 +362,13 @@ public struct Project: Decodable, Identifiable {
         let brandId = try container.decodeIfPresent(String.self, forKey: .brandId) ?? ""
         self.brandId = brandId.isEmpty ? nil : Identifier<Brand>(rawValue: brandId)
 
+        self.updateable = UpdateableProperties()
+        updateLock.writing {
+            updateable.shops = (try? container.decodeIfPresent([Shop].self, forKey: .shops)) ?? []
+        }
+
         if let coupons = try container.decodeIfPresent([Coupon].self, forKey: .coupons) {
-            self.manualCoupons = coupons.filter { $0.type == .manual }
-            self.printedCoupons = coupons.filter { $0.type == .printed }
-        } else {
-            self.manualCoupons = []
-            self.printedCoupons = []
+            setCoupons(coupons)
         }
     }
 
@@ -368,7 +383,6 @@ public struct Project: Decodable, Identifiable {
         self.roundingMode = .up
         self.qrCodeConfig = nil
         self.currencySymbol = ""
-        self.shops = []
         self.scanFormats = []
         self.barcodeDetector = .default
         self.customerCards = CustomerCardInfo()
@@ -381,8 +395,7 @@ public struct Project: Decodable, Identifiable {
         self.displayNetPrice = false
         self.company = nil
         self.brandId = nil
-        self.manualCoupons = []
-        self.printedCoupons = []
+        self.updateable = UpdateableProperties()
     }
 
     // only used for unit tests!
@@ -397,7 +410,6 @@ public struct Project: Decodable, Identifiable {
         self.roundingMode = .up
         self.qrCodeConfig = nil
         self.currencySymbol = ""
-        self.shops = []
         self.scanFormats = []
         self.barcodeDetector = .default
         self.customerCards = CustomerCardInfo()
@@ -410,8 +422,7 @@ public struct Project: Decodable, Identifiable {
         self.displayNetPrice = false
         self.company = nil
         self.brandId = nil
-        self.manualCoupons = []
-        self.printedCoupons = []
+        self.updateable = UpdateableProperties()
     }
 
     static let none = Project()
@@ -435,6 +446,16 @@ public struct Project: Decodable, Identifiable {
     }
 
     mutating func setShops(_ shops: [Shop]) {
-        self.shops = shops
+        updateLock.writing {
+            self.updateable.shops = shops
+        }
+    }
+
+    mutating func setCoupons(_ coupons: [Coupon]) {
+        updateLock.writing {
+            self.updateable.manualCoupons = coupons.filter { $0.type == .manual }
+            self.updateable.printedCoupons = coupons.filter { $0.type == .printed }
+            self.updateable.digitalCoupons = coupons.filter { $0.type == .digital }
+        }
     }
 }

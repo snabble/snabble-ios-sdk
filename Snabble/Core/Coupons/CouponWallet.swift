@@ -6,35 +6,6 @@
 
 import Foundation
 
-public enum CouponType: String, Codable, UnknownCaseRepresentable {
-    case unknown
-
-    case manual
-    case printed
-    case digital
-
-    public static var unknownCase = CouponType.unknown
-}
-
-public struct Coupon: Codable {
-    public let id: String
-    public let name: String
-    public let type: CouponType
-
-    public let codes: [Code]?
-    public let projectID: Identifier<Project>
-
-    public struct Code: Codable {
-        public let code, template: String
-    }
-}
-
-extension Coupon: Equatable {
-    public static func == (lhs: Coupon, rhs: Coupon) -> Bool {
-        return lhs.id == rhs.id
-    }
-}
-
 struct CouponEntry: Codable {
     let coupon: Coupon
     var active: Bool // true -> add this coupon to the next shopping cart created for the corresponding project
@@ -105,7 +76,9 @@ extension CouponWallet {
     /// persist coupons to disk
     private func save() {
         do {
-            let data = try JSONEncoder().encode(self.coupons)
+            let encoder = JSONEncoder()
+            encoder.dateEncodingStrategy = .iso8601
+            let data = try encoder.encode(self.coupons)
             try data.write(to: url, options: .atomic)
         } catch let error {
             Log.error("error saving coupons: \(error)")

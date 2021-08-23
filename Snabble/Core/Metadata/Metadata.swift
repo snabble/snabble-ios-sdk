@@ -45,6 +45,10 @@ public struct Metadata: Decodable {
     mutating func setShops(_ shops: [Shop], at index: Int) {
         self.projects[index].setShops(shops)
     }
+
+    mutating func setCoupons(_ coupons: [Coupon], at index: Int) {
+        self.projects[index].setCoupons(coupons)
+    }
 }
 
 public struct Brand: Decodable, Identifiable {
@@ -194,7 +198,9 @@ extension Metadata {
         do {
             let fileUrl = try self.urlForLastMetadata(hash)
             let data = try Data(contentsOf: fileUrl)
-            let metadata = try JSONDecoder().decode(Metadata.self, from: data)
+            let decoder = JSONDecoder()
+            decoder.dateDecodingStrategy = .customISO8601
+            let metadata = try decoder.decode(Metadata.self, from: data)
             // make sure the self link matches
             if url.contains(metadata.links.`self`.href) {
                 return metadata

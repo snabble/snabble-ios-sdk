@@ -121,7 +121,10 @@ public enum SnabbleAPI {
             if let metadata = metadata {
                 self.setMetadata(metadata)
             }
-            completion()
+
+            self.loadCoupons {
+                completion()
+            }
         }
     }
 
@@ -144,14 +147,16 @@ public enum SnabbleAPI {
     }
 
     private static func loadActiveShops() {
-        // reload shops from `acticeShops` endpoint where present
+        // reload shops from `activeShops` endpoint where present
         for (index, project) in metadata.projects.enumerated() {
             guard let activeShops = project.links.activeShops?.href else {
                 continue
             }
 
             project.request(.get, activeShops, timeout: 3) { request in
-                guard let request = request else { return }
+                guard let request = request else {
+                    return
+                }
 
                 project.perform(request) { (result: Result<ActiveShops, SnabbleError>) in
                     switch result {
@@ -162,6 +167,39 @@ public enum SnabbleAPI {
                     }
                 }
             }
+        }
+    }
+
+    private static func loadCoupons(_ completion: @escaping () -> Void) {
+        // reload coupons from `coupons` endpoint where present
+        let group = DispatchGroup()
+
+        for (index, project) in metadata.projects.enumerated() {
+            guard let coupons = project.links.coupons?.href else {
+                continue
+            }
+
+            group.enter()
+            project.request(.get, coupons, timeout: 3) { request in
+                guard let request = request else {
+                    group.leave()
+                    return
+                }
+
+                project.perform(request) { (result: Result<CouponList, SnabbleError>) in
+                    group.leave()
+                    switch result {
+                    case .success(let couponList):
+                        self.metadata.setCoupons(couponList.coupons, at: index)
+                    case .failure(let error):
+                        print(error)
+                    }
+                }
+            }
+        }
+
+        group.notify(queue: DispatchQueue.main) {
+            completion()
         }
     }
 
@@ -319,7 +357,7 @@ extension SnabbleAPI {
 
 // MARK: - networking stuff
 extension SnabbleAPI {
-    static func request(url: URL, timeout: TimeInterval = 0, json: Bool = true) -> URLRequest {
+    public static func request(url: URL, timeout: TimeInterval? = nil, json: Bool = true) -> URLRequest {
         var request = URLRequest(url: url)
         request.addValue(SnabbleAPI.clientId, forHTTPHeaderField: "Client-Id")
 
@@ -327,7 +365,7 @@ extension SnabbleAPI {
             request.addValue(userAgent, forHTTPHeaderField: "User-Agent")
         }
 
-        if timeout > 0 {
+        if let timeout = timeout {
             request.timeoutInterval = timeout
         }
 
@@ -335,6 +373,14 @@ extension SnabbleAPI {
             request.addValue("application/json", forHTTPHeaderField: "Accept")
             request.addValue("application/json", forHTTPHeaderField: "Content-Type")
         }
+
+        let acceptLanguage = Bundle.main.preferredLocalizations.enumerated()
+            .map { index, language in
+                let quality = max(9 - index, 1)
+                return "\(language);q=0.\(quality)"
+            }
+            .joined(separator: ",")
+        request.addValue(acceptLanguage, forHTTPHeaderField: "Accept-Language")
 
         return request
     }
