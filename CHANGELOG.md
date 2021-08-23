@@ -2,6 +2,9 @@
 
 # v0.17.7 (unreleased)
 - fixes a rare crash in `AssetManager`
+- adds support for loading Coupons if the corresponding endpoint is present
+- extends `Coupon` structure to add image, text and color data from a CMS
+- adds `Accept-Language` header to all SDK network requests
 
 # v0.17.6
 - Add support for `requiredInformation` during checkout, e.g. for takeaway vs inhouse taxation
