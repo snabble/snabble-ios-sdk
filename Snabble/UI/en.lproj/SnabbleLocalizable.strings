@@ -350,6 +350,8 @@
 
 "Snabble.Shoppingcart.buyProducts.one" = "Buy %1$d product for %2$@";
 
+"Snabble.Shoppingcart.buyProducts.selectPaymentMethod" = "Select payment method";
+
 "Snabble.Shoppingcart.coupon" = "Coupon";
 
 "Snabble.Shoppingcart.coupons" = "Coupons";
