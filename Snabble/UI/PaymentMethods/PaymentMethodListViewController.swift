@@ -91,7 +91,7 @@ public final class PaymentMethodListViewController: UITableViewController {
                 case .datatransAlias(let alias):
                     return alias.projectId == projectId
                 case .tegutEmployeeCard, .sepa, .paydirektAuthorization:
-                    return true
+                    return SnabbleAPI.project(for: projectId)?.paymentMethods.contains(where: { $0 == detail.rawMethod}) ?? false
                 }
             }
 
@@ -116,7 +116,7 @@ public final class PaymentMethodListViewController: UITableViewController {
         self.availableMethods = SnabbleAPI.projects
             .filter { $0.id == projectId }
             .flatMap { $0.paymentMethods }
-            .filter { $0.isProjectSpecific && $0.isAvailable }
+            .filter { $0.editable }
     }
 
     @objc private func addMethod() {
