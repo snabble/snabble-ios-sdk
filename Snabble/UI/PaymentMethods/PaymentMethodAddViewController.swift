@@ -53,15 +53,9 @@ public final class PaymentMethodAddViewController: UITableViewController {
         super.viewWillAppear(animated)
 
         if let brandId = self.brandId {
-            entries = getProjectEntries(for: brandId)
+            entries = projectEntries(for: brandId)
         } else {
-            entries = getAllEntries()
-        }
-
-        // special case: remove externalBilling entries where we have no data
-        for idx in 0..<entries.count {
-            // swiftlint:disable:next empty_count
-            entries[idx].removeAll { $0.method == .externalBilling && $0.count == 0 }
+            entries = multiProjectEntries()
         }
 
         tableView.reloadData()
@@ -73,7 +67,7 @@ public final class PaymentMethodAddViewController: UITableViewController {
         self.analyticsDelegate?.track(.viewPaymentMethodList)
     }
 
-    private func getProjectEntries(for brandId: Identifier<Brand>) -> [[MethodEntry]] {
+    private func projectEntries(for brandId: Identifier<Brand>) -> [[MethodEntry]] {
         let projectsEntries = SnabbleAPI.projects
             .filter { $0.brandId == brandId }
             .sorted { $0.name < $1.name }
@@ -84,27 +78,7 @@ public final class PaymentMethodAddViewController: UITableViewController {
         return entries
     }
 
-    private func getAllEntries() -> [[MethodEntry]] {
-        if SnabbleAPI.projects.count == 1 {
-            return getSingleProjectEntries()
-        } else {
-            return getMultiProjectEntries()
-        }
-    }
-
-    private func getSingleProjectEntries() -> [[MethodEntry]] {
-        let allEntries = SnabbleAPI.projects
-            .flatMap { $0.paymentMethods }
-            .filter { $0.editable && $0.isAvailable }
-            .sorted { $0.displayName < $1.displayName }
-            .map { MethodEntry(method: $0, count: methodCount(for: $0), for: SnabbleAPI.projects[0].id) }
-
-        var entries = [[MethodEntry]]()
-        entries.append(allEntries)
-        return entries
-    }
-
-    private func getMultiProjectEntries() -> [[MethodEntry]] {
+    private func multiProjectEntries() -> [[MethodEntry]] {
         var entries = [[MethodEntry]]()
 
         var allEntries = SnabbleAPI.projects
@@ -204,24 +178,6 @@ extension PaymentMethodAddViewController {
                 navigationTarget = PaymentMethodAddViewController(brandId: brandId, self.analyticsDelegate)
             } else {
                 navigationDelegate?.showRetailers(for: brandId)
-            }
-        } else if let method = entry.method {
-            // show/add retailer-independent methods
-            // swiftlint:disable:next empty_count
-            if entry.count == 0 {
-                if method.isAddingAllowed(showAlertOn: self) {
-                    if SnabbleUI.implicitNavigation {
-                        navigationTarget = method.editViewController(with: entry.projectId, self.analyticsDelegate)
-                    } else {
-                        navigationDelegate?.addData(for: method, in: entry.projectId)
-                    }
-                }
-            } else {
-                if SnabbleUI.implicitNavigation {
-                    navigationTarget = PaymentMethodListViewController(method: method, for: entry.projectId, self.analyticsDelegate)
-                } else {
-                    navigationDelegate?.showData(for: method, in: entry.projectId)
-                }
             }
         } else if let projectId = entry.projectId {
             // show/add methods for this specific project

@@ -9,7 +9,6 @@ import ColorCompatibility
 
 struct MethodEntry {
     var name: String
-    let method: RawPaymentMethod?
     let brandId: Identifier<Brand>?
     let projectId: Identifier<Project>?
     var count: Int
@@ -23,15 +22,6 @@ struct MethodEntry {
         self.name = name
         self.brandId = brandId
         self.count = count
-        self.method = nil
-    }
-
-    init(method: RawPaymentMethod, count: Int, for projectId: Identifier<Project>? = nil) {
-        self.projectId = projectId
-        self.name = method.displayName
-        self.brandId = nil
-        self.count = count
-        self.method = method
     }
 }
 
@@ -42,10 +32,9 @@ final class PaymentMethodAddCell: UITableViewCell {
 
     var entry: MethodEntry? {
         didSet {
-            icon.image = entry?.method?.icon
             nameLabel.text = entry?.name
 
-            if let projectId = entry?.projectId, entry?.method == nil {
+            if let projectId = entry?.projectId {
                 SnabbleUI.getAsset(.storeIcon, projectId: projectId) { img in
                     self.icon.image = img
                 }
