@@ -260,7 +260,7 @@ extension PaymentMethodAddViewController {
         }
 
         let methods = project.paymentMethods
-            .filter { $0.isProjectSpecific }
+            .filter { $0.editable }
             .sorted { $0.displayName < $1.displayName }
 
         let sheet = AlertController(title: L10n.Snabble.PaymentMethods.choose, message: nil, preferredStyle: .actionSheet)

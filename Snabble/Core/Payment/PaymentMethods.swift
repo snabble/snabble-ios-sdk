@@ -65,11 +65,11 @@ public enum RawPaymentMethod: String, CaseIterable, Decodable {
     /// true if this method is shown/edited on the PaymentMethod[Add|List]ViewControllers
     public var editable: Bool {
         switch self {
-        case .deDirectDebit, .externalBilling, .paydirektOneKlick,
+        case .deDirectDebit, .paydirektOneKlick,
              .creditCardVisa, .creditCardMastercard, .creditCardAmericanExpress,
              .twint, .postFinanceCard:
             return true
-        case .qrCodePOS, .qrCodeOffline, .gatekeeperTerminal, .customerCardPOS, .applePay:
+        case .qrCodePOS, .externalBilling, .qrCodeOffline, .gatekeeperTerminal, .customerCardPOS, .applePay:
             return false
         }
     }
