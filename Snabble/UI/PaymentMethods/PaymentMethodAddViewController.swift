@@ -126,7 +126,7 @@ public final class PaymentMethodAddViewController: UITableViewController {
         }
 
         let details = PaymentMethodDetails.read()
-        return details.filter { detail in
+        let count = details.filter { detail in
             switch detail.methodData {
             case .creditcard(let creditcardData):
                 return creditcardData.projectId == projectId
@@ -138,6 +138,12 @@ public final class PaymentMethodAddViewController: UITableViewController {
                 return SnabbleAPI.project(for: projectId)?.paymentMethods.contains(detail.rawMethod) ?? false
             }
         }.count
+
+        if ApplePaySupport.canMakePayments() && SnabbleAPI.project(for: projectId)?.paymentMethods.contains(.applePay) ?? false {
+            return count + 1
+        } else {
+            return count
+        }
     }
 
     private func methodCount(for method: RawPaymentMethod) -> Int {

@@ -63,11 +63,11 @@ public final class PaymentMethodListViewController: UITableViewController {
 
         data = []
 
-        if ApplePaySupport.canMakePayments() {
-            data.append([ViewModel(rawPaymentMethod: .applePay)])
-        }
-
         if let projectId = self.projectId {
+            if ApplePaySupport.canMakePayments() && SnabbleAPI.project(for: projectId)?.paymentMethods.contains(.applePay) ?? false {
+                data.append([ViewModel(rawPaymentMethod: .applePay)])
+            }
+
             let details = PaymentMethodDetails.read().filter { detail in
                 switch detail.methodData {
                 case .creditcard(let creditcardData):
