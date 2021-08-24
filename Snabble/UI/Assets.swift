@@ -40,7 +40,6 @@ internal enum Asset {
     internal static let iconScanInactive = SwiftGenImageAsset(name: "SnabbleSDK/icon-scan-inactive")
     internal static let iconTrash = SwiftGenImageAsset(name: "SnabbleSDK/icon-trash")
     internal enum Payment {
-      internal static let paymentAdd = SwiftGenImageAsset(name: "SnabbleSDK/payment/payment-add")
       internal static let paymentAmex = SwiftGenImageAsset(name: "SnabbleSDK/payment/payment-amex")
       internal static let paymentApplePay = SwiftGenImageAsset(name: "SnabbleSDK/payment/payment-apple-pay")
       internal static let paymentGirocard = SwiftGenImageAsset(name: "SnabbleSDK/payment/payment-girocard")
