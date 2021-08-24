@@ -167,10 +167,10 @@ final class PaymentMethodSelector {
         var availableMethods = cartMethods.isEmpty ? projectMethods : cartMethods
 
         // use Apple Pay, if possible
-        if availableMethods.contains(.applePay) && ApplePaySupport.canMakePayments() {
+        if availableMethods.contains(.applePay) && ApplePay.canMakePayments(with: SnabbleUI.project.id) {
             self.setSelectedPayment(.applePay, detail: nil)
             return
-        } else if !ApplePaySupport.applePaySupported() {
+        } else if !ApplePay.isSupported() {
             availableMethods.removeAll { $0 == .applePay }
         }
 
@@ -350,11 +350,11 @@ final class PaymentMethodSelector {
             }
 
         case .applePay:
-            if !ApplePaySupport.applePaySupported() || !isCartMethod {
+            if !ApplePay.isSupported() || !isCartMethod {
                 return []
             }
 
-            let canMakePayments = ApplePaySupport.canMakePayments()
+            let canMakePayments = ApplePay.canMakePayments(with: SnabbleUI.project.id)
             let subtitle = canMakePayments ? nil : L10n.Snabble.Shoppingcart.notForThisPurchase
             let title = self.title(method.displayName, subtitle, .label)
             let action = PaymentMethodAction(title, method, nil, selectable: canMakePayments, active: false)

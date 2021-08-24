@@ -64,7 +64,7 @@ public final class PaymentMethodListViewController: UITableViewController {
         data = []
 
         if let projectId = self.projectId {
-            if ApplePaySupport.canMakePayments() && SnabbleAPI.project(for: projectId)?.paymentMethods.contains(.applePay) ?? false {
+            if ApplePay.canMakePayments(with: projectId) {
                 data.append([ViewModel(rawPaymentMethod: .applePay)])
             }
 

@@ -135,11 +135,7 @@ public final class PaymentMethodAddViewController: UITableViewController {
             }
         }.count
 
-        if ApplePaySupport.canMakePayments() && SnabbleAPI.project(for: projectId)?.paymentMethods.contains(.applePay) ?? false {
-            return count + 1
-        } else {
-            return count
-        }
+        return ApplePay.canMakePayments(with: projectId) ? count + 1 : count
     }
 
     private func methodCount(for method: RawPaymentMethod) -> Int {
