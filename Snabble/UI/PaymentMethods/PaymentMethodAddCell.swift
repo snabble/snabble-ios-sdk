@@ -10,7 +10,7 @@ import ColorCompatibility
 struct MethodEntry {
     var name: String
     let brandId: Identifier<Brand>?
-    let projectId: Identifier<Project>?
+    let projectId: Identifier<Project>
     var count: Int
 
     init(project: Project, count: Int) {

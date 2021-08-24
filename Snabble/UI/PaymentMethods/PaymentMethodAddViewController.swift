@@ -98,7 +98,7 @@ public final class PaymentMethodAddViewController: UITableViewController {
             let replacement: MethodEntry
             if brandProjects.count == 1 {
                 // only one project in brand, use the project's entry (w/o brand) directly
-                replacement = MethodEntry(projectId: first.projectId!, name: first.name, brandId: nil, count: first.count)
+                replacement = MethodEntry(projectId: first.projectId, name: first.name, brandId: nil, count: first.count)
             } else {
                 // overwrite the project's name with the brand name
                 var newEntry = first
@@ -120,11 +120,7 @@ public final class PaymentMethodAddViewController: UITableViewController {
         return entries
     }
 
-    private func methodCount(for projectId: Identifier<Project>?) -> Int {
-        guard let projectId = projectId else {
-            return 0
-        }
-
+    private func methodCount(for projectId: Identifier<Project>) -> Int {
         let details = PaymentMethodDetails.read()
         let count = details.filter { detail in
             switch detail.methodData {
@@ -185,16 +181,16 @@ extension PaymentMethodAddViewController {
             } else {
                 navigationDelegate?.showRetailers(for: brandId)
             }
-        } else if let projectId = entry.projectId {
+        } else {
             // show/add methods for this specific project
             // swiftlint:disable:next empty_count
             if entry.count == 0 {
-                self.addMethod(for: projectId)
+                self.addMethod(for: entry.projectId)
             } else {
                 if SnabbleUI.implicitNavigation {
-                    navigationTarget = PaymentMethodListViewController(for: projectId, self.analyticsDelegate)
+                    navigationTarget = PaymentMethodListViewController(for: entry.projectId, self.analyticsDelegate)
                 } else {
-                    navigationDelegate?.showData(for: projectId)
+                    navigationDelegate?.showData(for: entry.projectId)
                 }
             }
         }
