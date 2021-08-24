@@ -63,19 +63,6 @@ extension RawPaymentMethod {
         }
     }
 
-    private var creditCardBrand: CreditCardBrand? {
-        switch self {
-        case .creditCardAmericanExpress:
-            return .amex
-        case .creditCardVisa:
-            return .visa
-        case .creditCardMastercard:
-            return .mastercard
-        default:
-            return nil
-        }
-    }
-
     func editViewController(with projectId: Identifier<Project>?, _ analyticsDelegate: AnalyticsDelegate?) -> UIViewController? {
         switch self {
         case .deDirectDebit:
@@ -99,13 +86,13 @@ extension RawPaymentMethod {
         guard
             let projectId = projectId,
             let project = SnabbleAPI.project(for: projectId),
-            let descriptor = project.paymentMethodDescriptors.first(where: { $0.id == creditCardBrand?.method })
+            let descriptor = project.paymentMethodDescriptors.first(where: { $0.id == self })
         else {
             return nil
         }
 
         if descriptor.acceptedOriginTypes?.contains(.ipgHostedDataID) == true {
-            return CreditCardEditViewController(brand: creditCardBrand, projectId, analyticsDelegate)
+            return CreditCardEditViewController(brand: CreditCardBrand.forMethod(self), projectId, analyticsDelegate)
         } else if descriptor.acceptedOriginTypes?.contains(.datatransCreditCardAlias) == true {
             return SnabbleAPI.methodRegistry.createEntry(method: self, projectId, analyticsDelegate)
         }

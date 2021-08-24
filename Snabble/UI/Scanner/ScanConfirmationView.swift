@@ -5,6 +5,7 @@
 //
 
 import UIKit
+import Capable
 
 protocol ScanConfirmationViewDelegate: AnalyticsDelegate {
     func closeConfirmation(_ item: CartItem?)
@@ -59,7 +60,15 @@ final class ScanConfirmationView: DesignableView {
         self.plusButton.setImage(UIImage.fromBundle("SnabbleSDK/icon-plus"), for: .normal)
         self.minusButton.setImage(UIImage.fromBundle("SnabbleSDK/icon-minus"), for: .normal)
 
-        self.manualDiscountButton.tintColor = SnabbleUI.appearance.accentColor
+        let contrastRatio = UIColor.getContrastRatio(forTextColor: SnabbleUI.appearance.accentColor,
+                                                     onBackgroundColor: .systemBackground)
+        let conformanceLevel = ConformanceLevel(contrastRatio: contrastRatio ?? 1, fontSize: 17, isBoldFont: false)
+
+        if conformanceLevel == .AA || conformanceLevel == .AAA {
+            self.manualDiscountButton.tintColor = SnabbleUI.appearance.accentColor
+        } else {
+            self.manualDiscountButton.tintColor = .label
+        }
     }
 
     func setCustomAppearance(_ appearance: CustomAppearance) {
