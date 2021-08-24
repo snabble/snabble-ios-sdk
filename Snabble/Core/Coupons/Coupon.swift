@@ -57,6 +57,7 @@ public struct Format: Codable {
     public let size: String
     public let url: URL
     public let width: Int
+    public let contentType: String
 }
 
 extension Coupon: Equatable {
