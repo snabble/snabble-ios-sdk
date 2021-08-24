@@ -7,12 +7,27 @@
 import UIKit
 import SDCAlertView
 
+private struct ViewModel {
+    init(detail: PaymentMethodDetail) {
+        self.rawPaymentMethod = detail.rawMethod
+        self.detail = detail
+    }
+
+    init(rawPaymentMethod: RawPaymentMethod) {
+        self.rawPaymentMethod = rawPaymentMethod
+        self.detail = nil
+    }
+
+    var rawPaymentMethod: RawPaymentMethod
+    var detail: PaymentMethodDetail?
+}
+
 public final class PaymentMethodListViewController: UITableViewController {
     private weak var analyticsDelegate: AnalyticsDelegate?
     public weak var navigationDelegate: PaymentMethodNavigationDelegate?
 
     private(set) var projectId: Identifier<Project>?
-    private var details = [[PaymentMethodDetail]]()
+    private var data: [[ViewModel]] = []
 
     public init(for projectId: Identifier<Project>?, _ analyticsDelegate: AnalyticsDelegate?) {
         self.projectId = projectId
@@ -46,7 +61,11 @@ public final class PaymentMethodListViewController: UITableViewController {
     override public func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
 
-        self.details = []
+        data = []
+
+        if ApplePaySupport.canMakePayments() {
+            data.append([ViewModel(rawPaymentMethod: .applePay)])
+        }
 
         if let projectId = self.projectId {
             let details = PaymentMethodDetails.read().filter { detail in
@@ -58,19 +77,20 @@ public final class PaymentMethodListViewController: UITableViewController {
                 case .datatransAlias(let alias):
                     return alias.projectId == projectId
                 case .tegutEmployeeCard, .sepa, .paydirektAuthorization:
-                    return SnabbleAPI.project(for: projectId)?.paymentMethods.contains(where: { $0 == detail.rawMethod}) ?? false
+                    return SnabbleAPI.project(for: projectId)?.paymentMethods.contains(where: { $0 == detail.rawMethod }) ?? false
                 }
             }
 
             Dictionary(grouping: details, by: { $0.rawMethod })
                 .values
                 .sorted { $0[0].displayName < $1[0].displayName }
-                .forEach {
-                    self.details.append($0)
+                .map { $0.map { ViewModel(detail: $0) } }
+                .forEach { [self] in
+                    data.append($0)
                 }
         }
 
-        self.tableView.reloadData()
+        tableView.reloadData()
     }
 
     override public func viewDidAppear(_ animated: Bool) {
@@ -119,18 +139,24 @@ public final class PaymentMethodListViewController: UITableViewController {
 // MARK: - table view delegate & data source
 extension PaymentMethodListViewController {
     override public func numberOfSections(in tableView: UITableView) -> Int {
-        return details.count
+        data.count
     }
 
     override public func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return details[section].count
+        data[section].count
     }
 
     override public func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         // swiftlint:disable:next force_cast
         let cell = tableView.dequeueReusableCell(withIdentifier: "cell", for: indexPath) as! PaymentMethodListCell
 
-        let viewModel = PaymentMethodListCell.ViewModel(detail: details[indexPath.section][indexPath.row])
+        let data = data[indexPath.section][indexPath.row]
+        let viewModel: PaymentMethodListCellViewModel
+        if let detail = data.detail {
+            viewModel = PaymentMethodListCell.ViewModel(detail: detail)
+        } else {
+            viewModel = PaymentMethodListCell.ViewModel(displayName: data.rawPaymentMethod.displayName, icon: data.rawPaymentMethod.icon)
+        }
         cell.configure(with: viewModel)
 
         return cell
@@ -139,44 +165,51 @@ extension PaymentMethodListViewController {
     override public func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
 
-        let detail = details[indexPath.section][indexPath.row]
+        let viewModel = data[indexPath.section][indexPath.row]
 
         var editVC: UIViewController?
-        switch detail.methodData {
-        case .sepa:
-            editVC = SepaEditViewController(detail, self.analyticsDelegate)
-        case .creditcard:
-            editVC = CreditCardEditViewController(detail, self.analyticsDelegate)
-        case .paydirektAuthorization:
-            editVC = PaydirektEditViewController(detail, self.analyticsDelegate)
-        case .tegutEmployeeCard:
-            editVC = nil
-        case .datatransAlias, .datatransCardAlias:
-            editVC = SnabbleAPI.methodRegistry.create(detail: detail, analyticsDelegate: self.analyticsDelegate)
-        }
+        if let detail = viewModel.detail {
+            switch detail.methodData {
+            case .sepa:
+                editVC = SepaEditViewController(detail, self.analyticsDelegate)
+            case .creditcard:
+                editVC = CreditCardEditViewController(detail, self.analyticsDelegate)
+            case .paydirektAuthorization:
+                editVC = PaydirektEditViewController(detail, self.analyticsDelegate)
+            case .tegutEmployeeCard:
+                editVC = nil
+            case .datatransAlias, .datatransCardAlias:
+                editVC = SnabbleAPI.methodRegistry.create(detail: detail, analyticsDelegate: self.analyticsDelegate)
+            }
 
-        if let controller = editVC {
-            if SnabbleUI.implicitNavigation {
-                self.navigationController?.pushViewController(controller, animated: true)
-            } else {
-                navigationDelegate?.editMethod(detail)
+            if let controller = editVC {
+                if SnabbleUI.implicitNavigation {
+                    navigationController?.pushViewController(controller, animated: true)
+                } else {
+                    navigationDelegate?.editMethod(detail)
+                }
             }
         }
     }
 
-    override public func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
-        guard editingStyle == .delete else {
-            return
-        }
+    override public func tableView(_ tableView: UITableView, canEditRowAt indexPath: IndexPath) -> Bool {
+        data[indexPath.section][indexPath.row].detail != nil
+    }
 
-        let detail = details[indexPath.section][indexPath.row]
-        PaymentMethodDetails.remove(detail)
-        details[indexPath.section].remove(at: indexPath.row)
-        tableView.deleteRows(at: [indexPath], with: .automatic)
+    override public func tableView(_ tableView: UITableView, editingStyleForRowAt indexPath: IndexPath) -> UITableViewCell.EditingStyle {
+        .delete
+    }
+
+    override public func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
+        if let detail = data[indexPath.section][indexPath.row].detail {
+            PaymentMethodDetails.remove(detail)
+            data[indexPath.section].remove(at: indexPath.row)
+            tableView.deleteRows(at: [indexPath], with: .automatic)
+        }
     }
 
     override public func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
-        return details[section].first?.rawMethod.displayName
+        data[section].first?.rawPaymentMethod.displayName
     }
 }
 
