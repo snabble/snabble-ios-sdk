@@ -8,40 +8,16 @@ import UIKit
 import SDCAlertView
 
 public final class PaymentMethodListViewController: UITableViewController {
-    private var details = [[PaymentMethodDetail]]()
     private weak var analyticsDelegate: AnalyticsDelegate?
-
     public weak var navigationDelegate: PaymentMethodNavigationDelegate?
 
-    private var method: RawPaymentMethod?
-    private var projectId: Identifier<Project>? {
-        didSet {
-            updateAvailableMethods()
-        }
-    }
-
-    private var availableMethods: [RawPaymentMethod]
-
-    public init(method: RawPaymentMethod, for projectId: Identifier<Project>?, _ analyticsDelegate: AnalyticsDelegate?) {
-        self.analyticsDelegate = analyticsDelegate
-        self.projectId = projectId
-        self.method = method
-        self.availableMethods = [ method ]
-
-        super.init(style: SnabbleUI.groupedTableStyle)
-
-        updateAvailableMethods()
-    }
+    private(set) var projectId: Identifier<Project>?
+    private var details = [[PaymentMethodDetail]]()
 
     public init(for projectId: Identifier<Project>?, _ analyticsDelegate: AnalyticsDelegate?) {
-        self.analyticsDelegate = analyticsDelegate
-        self.availableMethods = []
         self.projectId = projectId
-        self.method = nil
-
+        self.analyticsDelegate = analyticsDelegate
         super.init(style: SnabbleUI.groupedTableStyle)
-
-        updateAvailableMethods()
     }
 
     required init?(coder: NSCoder) {
@@ -52,9 +28,6 @@ public final class PaymentMethodListViewController: UITableViewController {
         super.viewDidLoad()
 
         self.title = L10n.Snabble.PaymentMethods.title
-        if let method = self.method {
-            self.title = method.displayName
-        }
 
         let addButton = UIBarButtonItem(barButtonSystemItem: .add, target: self, action: #selector(addMethod))
         self.navigationItem.rightBarButtonItem = addButton
@@ -75,13 +48,7 @@ public final class PaymentMethodListViewController: UITableViewController {
 
         self.details = []
 
-        if let method = self.method {
-            let details = PaymentMethodDetails.read()
-                .filter { $0.rawMethod == method && $0.rawMethod.isAvailable }
-                .sorted { $0.displayName < $1.displayName }
-
-            self.details = [ details ]
-        } else if let projectId = self.projectId {
+        if let projectId = self.projectId {
             let details = PaymentMethodDetails.read().filter { detail in
                 switch detail.methodData {
                 case .creditcard(let creditcardData):
@@ -108,39 +75,33 @@ public final class PaymentMethodListViewController: UITableViewController {
 
     override public func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
-
         self.analyticsDelegate?.track(.viewPaymentMethodList)
     }
 
-    private func updateAvailableMethods() {
-        self.availableMethods = SnabbleAPI.projects
+    @objc private func addMethod() {
+        let methods = SnabbleAPI.projects
             .filter { $0.id == projectId }
             .flatMap { $0.paymentMethods }
             .filter { $0.editable }
-    }
-
-    @objc private func addMethod() {
-        let methods = self.availableMethods
 
         if methods.count == 1 {
             showEditController(for: methods[0])
-            return
-        }
+        } else {
+            let sheet = AlertController(title: L10n.Snabble.PaymentMethods.choose, message: nil, preferredStyle: .actionSheet)
+            sheet.visualStyle = .snabbleActionSheet
 
-        let sheet = AlertController(title: L10n.Snabble.PaymentMethods.choose, message: nil, preferredStyle: .actionSheet)
-        sheet.visualStyle = .snabbleActionSheet
-
-        methods.forEach { method in
-            let action = AlertAction(title: method.displayName, style: .normal) { [self] _ in
-                showEditController(for: method)
+            methods.forEach { method in
+                let action = AlertAction(title: method.displayName, style: .normal) { [self] _ in
+                    showEditController(for: method)
+                }
+                action.imageView.image = method.icon
+                sheet.addAction(action)
             }
-            action.imageView.image = method.icon
-            sheet.addAction(action)
+
+            sheet.addAction(AlertAction(title: L10n.Snabble.cancel, style: .preferred, handler: nil))
+
+            self.present(sheet, animated: true)
         }
-
-        sheet.addAction(AlertAction(title: L10n.Snabble.cancel, style: .preferred, handler: nil))
-
-        self.present(sheet, animated: true)
     }
 
     private func showEditController(for method: RawPaymentMethod) {
@@ -221,12 +182,6 @@ extension PaymentMethodListViewController {
 
 // stuff that's only used by the RN wrapper
 extension PaymentMethodListViewController: ReactNativeWrapper {
-    public func setMethod(_ method: RawPaymentMethod) {
-        self.method = method
-
-        self.availableMethods = [ method ]
-    }
-
     public func setProjectId(_ projectId: Identifier<Project>) {
         self.projectId = projectId
     }
