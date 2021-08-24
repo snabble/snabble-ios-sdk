@@ -192,15 +192,7 @@ extension PaymentMethodAddViewController {
     }
 
     override public func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
-        if entries.count == 1 {
-            return nil
-        }
-
-        switch section {
-        case 0: return L10n.Snabble.PaymentMethods.forAllRetailers
-        case 1: return L10n.Snabble.PaymentMethods.forSingleRetailer
-        default: return nil
-        }
+        nil
     }
 
     override public func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
