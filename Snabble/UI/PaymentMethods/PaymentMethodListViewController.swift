@@ -169,7 +169,8 @@ extension PaymentMethodListViewController {
         // swiftlint:disable:next force_cast
         let cell = tableView.dequeueReusableCell(withIdentifier: "cell", for: indexPath) as! PaymentMethodListCell
 
-        cell.method = details[indexPath.section][indexPath.row]
+        let viewModel = PaymentMethodListCell.ViewModel(detail: details[indexPath.section][indexPath.row])
+        cell.configure(with: viewModel)
 
         return cell
     }

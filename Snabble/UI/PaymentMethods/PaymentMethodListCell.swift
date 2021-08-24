@@ -6,20 +6,13 @@
 
 import UIKit
 
+protocol PaymentMethodListCellViewModel {
+    var displayName: String { get }
+    var icon: UIImage? { get }
+    var accessoryType: UITableViewCell.AccessoryType { get }
+}
+
 final class PaymentMethodListCell: UITableViewCell {
-    var method: PaymentMethodDetail? {
-        didSet {
-            self.nameLabel.text = method?.displayName
-            self.icon.image = method?.icon
-
-            if method?.originType == .tegutEmployeeID {
-                self.accessoryType = .none
-            } else {
-                self.accessoryType = .disclosureIndicator
-            }
-        }
-    }
-
     private var nameLabel = UILabel()
     private var icon = UIImageView()
 
@@ -50,8 +43,32 @@ final class PaymentMethodListCell: UITableViewCell {
 
     override func prepareForReuse() {
         super.prepareForReuse()
-
         nameLabel.text = nil
         icon.image = nil
+        accessoryType = .none
+    }
+
+    func configure(with viewModel: PaymentMethodListCellViewModel) {
+        nameLabel.text = viewModel.displayName
+        icon.image = viewModel.icon
+        accessoryType = viewModel.accessoryType
+    }
+
+    struct ViewModel: PaymentMethodListCellViewModel {
+        let displayName: String
+        let icon: UIImage?
+        let accessoryType: UITableViewCell.AccessoryType
+
+        init(detail: PaymentMethodDetail) {
+            displayName = detail.displayName
+            icon = detail.icon
+            accessoryType = detail.originType == .tegutEmployeeID ? .none : .disclosureIndicator
+        }
+
+        init(displayName: String, icon: UIImage?) {
+            self.displayName = displayName
+            self.icon = icon
+            self.accessoryType = .none
+        }
     }
 }
