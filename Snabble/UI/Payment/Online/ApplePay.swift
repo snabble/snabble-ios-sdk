@@ -8,7 +8,7 @@ import PassKit
 
 // utility functions to check Apple Pay availability
 
-enum ApplePay {
+public enum ApplePay {
     // Does the device/OS support Apple Pay? This does not check if any cards have been added to the wallet!
     // Use this to decide whether to show Apple Pay in the popup or not
     static func isSupported() -> Bool {
@@ -17,7 +17,7 @@ enum ApplePay {
 
     // Is there a card in the wallet that allows a payment?
     // Use this to determine if Apple Pay can be selected from the selection or as the default
-    static func canMakePayments(with projectId: Identifier<Project>) -> Bool {
+    public static func canMakePayments(with projectId: Identifier<Project>) -> Bool {
         return
             SnabbleAPI.project(for: projectId)?.paymentMethods.contains(.applePay) ?? false &&
             isSupported() &&
