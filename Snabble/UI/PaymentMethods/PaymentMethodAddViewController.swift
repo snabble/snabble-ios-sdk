@@ -8,7 +8,7 @@ import UIKit
 import ColorCompatibility
 import SDCAlertView
 
-struct MethodEntry {
+private struct MethodEntry {
     var name: String
     let brandId: Identifier<Brand>?
     let projectId: Identifier<Project>
@@ -23,6 +23,14 @@ struct MethodEntry {
         self.name = name
         self.brandId = brandId
         self.count = count
+    }
+}
+
+private extension PaymentMethodAddCell.ViewModel {
+    init(methodEntry: MethodEntry) {
+        projectId = methodEntry.projectId
+        name = methodEntry.name
+        count = "\(methodEntry.count)"
     }
 }
 

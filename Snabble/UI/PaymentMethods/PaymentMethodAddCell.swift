@@ -74,18 +74,6 @@ final class PaymentMethodAddCell: UITableViewCell {
         fatalError("init(coder:) has not been implemented")
     }
 
-    struct ViewModel: PaymentMethodAddCellViewModel {
-        let projectId: Identifier<Project>
-        let name: String
-        let count: String
-
-        init(methodEntry: MethodEntry) {
-            projectId = methodEntry.projectId
-            name = methodEntry.name
-            count = "\(methodEntry.count)"
-        }
-    }
-
     private var projectId: Identifier<Project>?
 
     func configure(with viewModel: PaymentMethodAddCellViewModel) {
@@ -98,5 +86,11 @@ final class PaymentMethodAddCell: UITableViewCell {
             }
         }
         countLabel?.text = viewModel.count
+    }
+
+    struct ViewModel: PaymentMethodAddCellViewModel {
+        let projectId: Identifier<Project>
+        let name: String
+        let count: String
     }
 }
