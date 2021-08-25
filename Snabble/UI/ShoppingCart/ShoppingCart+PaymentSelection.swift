@@ -26,7 +26,7 @@ private struct PaymentMethodAction {
 }
 
 protocol PaymentMethodSelectorDelegate: AnyObject {
-    func paymentMethodeSelector(_ paymentMethodSelector: PaymentMethodSelector, didSelectMethod: RawPaymentMethod?)
+    func paymentMethodSelector(_ paymentMethodSelector: PaymentMethodSelector, didSelectMethod: RawPaymentMethod?)
 }
 
 final class PaymentMethodSelector {
@@ -145,7 +145,7 @@ final class PaymentMethodSelector {
             self.methodIcon?.image = icon?.grayscale()
         }
         self.methodTap.isEnabled = true
-        delegate?.paymentMethodeSelector(self, didSelectMethod: method)
+        delegate?.paymentMethodSelector(self, didSelectMethod: method)
     }
 
     private func selectedMethodIsValid() -> Bool {

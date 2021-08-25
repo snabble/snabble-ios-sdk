@@ -257,7 +257,7 @@ extension CheckoutBar {
 }
 
 extension CheckoutBar: PaymentMethodSelectorDelegate {
-    func paymentMethodeSelector(_ paymentMethodSelector: PaymentMethodSelector, didSelectMethod rawPaymentMethod: RawPaymentMethod?) {
+    func paymentMethodSelector(_ paymentMethodSelector: PaymentMethodSelector, didSelectMethod rawPaymentMethod: RawPaymentMethod?) {
         updateViewHierachy(for: rawPaymentMethod)
     }
 }
