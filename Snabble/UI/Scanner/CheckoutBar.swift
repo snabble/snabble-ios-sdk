@@ -12,9 +12,9 @@ final class CheckoutBar: NibView {
     @IBOutlet private var totalPriceLabel: UILabel!
 
     @IBOutlet private var paymentStackView: UIStackView!
-    @IBOutlet private weak var methodSelectionStackView: UIStackView?
+    @IBOutlet private var methodSelectionStackView: UIStackView!
 
-    @IBOutlet private weak var noPaymentLabel: UILabel?
+    @IBOutlet private var noPaymentLabel: UILabel!
     @IBOutlet private var methodIcon: UIImageView!
     @IBOutlet private var checkoutButton: UIButton!
 
@@ -50,12 +50,12 @@ final class CheckoutBar: NibView {
         let disabledColor = SnabbleUI.appearance.accentColor.contrast.withAlphaComponent(0.5)
         self.checkoutButton.setTitleColor(disabledColor, for: .disabled)
 
-        self.methodSelectionStackView?.layer.masksToBounds = true
-        self.methodSelectionStackView?.layer.cornerRadius = 8
-        self.methodSelectionStackView?.layer.borderColor = UIColor.lightGray.cgColor
-        self.methodSelectionStackView?.layer.borderWidth = 1 / UIScreen.main.scale
+        self.methodSelectionStackView.layer.masksToBounds = true
+        self.methodSelectionStackView.layer.cornerRadius = 8
+        self.methodSelectionStackView.layer.borderColor = UIColor.lightGray.cgColor
+        self.methodSelectionStackView.layer.borderWidth = 1 / UIScreen.main.scale
 
-        self.noPaymentLabel?.text = L10n.Snabble.Shoppingcart.BuyProducts.selectPaymentMethod
+        self.noPaymentLabel.text = L10n.Snabble.Shoppingcart.BuyProducts.selectPaymentMethod
 
         self.totalPriceLabel.font = UIFont.monospacedDigitSystemFont(ofSize: 22, weight: .bold)
 
@@ -64,11 +64,11 @@ final class CheckoutBar: NibView {
         self.methodSelector?.delegate = self
     }
 
-    func updateViewHierachy(for paymentMethod: RawPaymentMethod?) {
+    private func updateViewHierarchy(for paymentMethod: RawPaymentMethod?) {
         let paymentMethodSelected = paymentMethod != nil
         self.checkoutButton.isHidden = !paymentMethodSelected
         self.methodIcon?.isHidden = !paymentMethodSelected
-        self.noPaymentLabel?.isHidden = paymentMethodSelected
+        self.noPaymentLabel.isHidden = paymentMethodSelected
     }
 
     func updateTotals() {
@@ -99,7 +99,7 @@ final class CheckoutBar: NibView {
         self.checkoutButton?.isEnabled = numProducts > 0 && (totalPrice ?? 0) >= 0
 
         self.methodSelector?.updateAvailablePaymentMethods()
-        updateViewHierachy(for: self.methodSelector?.selectedPaymentMethod)
+        updateViewHierarchy(for: self.methodSelector?.selectedPaymentMethod)
     }
 
     func updateSelectionVisibility() {
@@ -258,6 +258,6 @@ extension CheckoutBar {
 
 extension CheckoutBar: PaymentMethodSelectorDelegate {
     func paymentMethodSelector(_ paymentMethodSelector: PaymentMethodSelector, didSelectMethod rawPaymentMethod: RawPaymentMethod?) {
-        updateViewHierachy(for: rawPaymentMethod)
+        updateViewHierarchy(for: rawPaymentMethod)
     }
 }
