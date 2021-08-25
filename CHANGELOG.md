@@ -1,6 +1,9 @@
 ## snabble iOS SDK Changelog
 
-# v0.17.7 (unreleased)
+# v0.17.8 (unreleased)
+- n/a
+
+# v0.17.7
 - fixes a rare crash in `AssetManager`
 - adds support for loading Coupons if the corresponding endpoint is present
 - extends `Coupon` structure to add image, text and color data from a CMS

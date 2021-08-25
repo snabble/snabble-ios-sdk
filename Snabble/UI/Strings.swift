@@ -149,7 +149,7 @@ public enum L10n {
       public static var noMethodAvailable: String { return L10n.tr("SnabbleLocalizable", "Snabble.Payment.noMethodAvailable") }
       /// You are currently offline and some payment methods may not be available
       public static var offlineHint: String { return L10n.tr("SnabbleLocalizable", "Snabble.Payment.offlineHint") }
-      /// Cash desk
+      /// Pay at the cash desk
       public static var payAtCashDesk: String { return L10n.tr("SnabbleLocalizable", "Snabble.Payment.payAtCashDesk") }
       /// Card at EC terminal
       public static var payAtSCO: String { return L10n.tr("SnabbleLocalizable", "Snabble.Payment.payAtSCO") }
@@ -495,7 +495,7 @@ public enum L10n {
       public static var howToPay: String { return L10n.tr("SnabbleLocalizable", "Snabble.Shoppingcart.howToPay") }
       /// incl. deposit
       public static var includesDeposit: String { return L10n.tr("SnabbleLocalizable", "Snabble.Shoppingcart.includesDeposit") }
-      /// Not yet entered
+      /// Add now
       public static var noPaymentData: String { return L10n.tr("SnabbleLocalizable", "Snabble.Shoppingcart.noPaymentData") }
       /// Not available for this purchase
       public static var notForThisPurchase: String { return L10n.tr("SnabbleLocalizable", "Snabble.Shoppingcart.notForThisPurchase") }
@@ -518,6 +518,8 @@ public enum L10n {
         public static func one(_ p1: Int, _ p2: Any) -> String {
           return L10n.tr("SnabbleLocalizable", "Snabble.Shoppingcart.buyProducts.one", p1, String(describing: p2))
         }
+        /// Select payment method
+        public static var selectPaymentMethod: String { return L10n.tr("SnabbleLocalizable", "Snabble.Shoppingcart.buyProducts.selectPaymentMethod") }
       }
       public enum EmptyState {
         /// Scan now
