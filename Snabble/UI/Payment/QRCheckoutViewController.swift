@@ -19,11 +19,11 @@ public final class QRCheckoutViewController: UIViewController {
     private let process: CheckoutProcess
     private let rawJson: [String: Any]?
     private var poller: PaymentProcessPoller?
-    private weak var cart: ShoppingCart!
-    private weak var delegate: PaymentDelegate!
+    private let cart: ShoppingCart
+    private weak var delegate: PaymentDelegate?
     public weak var navigationDelegate: CheckoutNavigationDelegate?
 
-    public init(_ process: CheckoutProcess, _ rawJson: [String: Any]?, _ cart: ShoppingCart, _ delegate: PaymentDelegate) {
+    public init(_ process: CheckoutProcess, _ rawJson: [String: Any]?, _ cart: ShoppingCart, _ delegate: PaymentDelegate?) {
         self.cart = cart
         self.process = process
         self.rawJson = rawJson
@@ -53,7 +53,7 @@ public final class QRCheckoutViewController: UIViewController {
         self.initialBrightness = UIScreen.main.brightness
         if self.initialBrightness < 0.5 {
             UIScreen.main.brightness = 0.5
-            self.delegate.track(.brightnessIncreased)
+            self.delegate?.track(.brightnessIncreased)
         }
 
         let formatter = PriceFormatter(SnabbleUI.project)
@@ -84,7 +84,7 @@ public final class QRCheckoutViewController: UIViewController {
     override public func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
 
-        self.delegate.track(.viewQRCodeCheckout)
+        self.delegate?.track(.viewQRCodeCheckout)
     }
 
     override public func viewWillDisappear(_ animated: Bool) {
@@ -111,7 +111,7 @@ public final class QRCheckoutViewController: UIViewController {
             switch result {
             case .success:
                 self.cart.generateNewUUID()
-                self.delegate.track(.paymentCancelled)
+                self.delegate?.track(.paymentCancelled)
 
                 if SnabbleUI.implicitNavigation {
                     if let cartVC = self.navigationController?.viewControllers.first(where: { $0 is ShoppingCartViewController}) {
@@ -144,6 +144,6 @@ public final class QRCheckoutViewController: UIViewController {
         }
 
         SnabbleAPI.fetchAppUserData(SnabbleUI.project.id)
-        self.delegate.paymentFinished(success, self.cart, process, rawJson)
+        self.delegate?.paymentFinished(success, self.cart, process, rawJson)
     }
 }

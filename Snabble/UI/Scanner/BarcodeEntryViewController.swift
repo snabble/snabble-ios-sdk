@@ -11,7 +11,7 @@ public final class BarcodeEntryViewController: UIViewController {
     @IBOutlet private var searchBar: UISearchBar!
     @IBOutlet private var bottomMargin: NSLayoutConstraint!
 
-    private weak var productProvider: ProductProvider!
+    private weak var productProvider: ProductProvider?
     private let shopId: Identifier<Shop>
 
     private let completion: ((String, ScanFormat?, String?) -> Void)
@@ -19,13 +19,13 @@ public final class BarcodeEntryViewController: UIViewController {
     private var filteredProducts = [Product]()
     private var searchText = ""
     private var keyboardObserver: KeyboardObserver!
-    private weak var delegate: AnalyticsDelegate!
+    private weak var delegate: AnalyticsDelegate?
     private var emptyState: EmptyStateView!
     private var showSku = false
 
     public init(_ productProvider: ProductProvider,
                 _ shopId: Identifier<Shop>,
-                delegate: AnalyticsDelegate,
+                delegate: AnalyticsDelegate?,
                 showSku: Bool = false,
                 completion: @escaping (String, ScanFormat?, String?) -> Void
     ) {
@@ -64,7 +64,7 @@ public final class BarcodeEntryViewController: UIViewController {
         super.viewWillAppear(animated)
         self.searchBar.becomeFirstResponder()
 
-        self.delegate.track(.viewBarcodeEntry)
+        self.delegate?.track(.viewBarcodeEntry)
     }
 
     private func addEnteredCode() {
@@ -73,7 +73,7 @@ public final class BarcodeEntryViewController: UIViewController {
 
     private func addCode(_ code: String, _ template: String?) {
         let block = {
-            self.delegate.track(.barcodeSelected(code))
+            self.delegate?.track(.barcodeSelected(code))
             self.completion(code, nil, template)
         }
 
@@ -93,11 +93,11 @@ extension BarcodeEntryViewController: UISearchBarDelegate {
     // MARK: - search bar
     public func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
         if !searchText.isEmpty {
-            let products = self.productProvider.productsByScannableCodePrefix(searchText,
+            let products = self.productProvider?.productsByScannableCodePrefix(searchText,
                                                                               filterDeposits: true,
                                                                               templates: SnabbleUI.project.searchableTemplates,
                                                                               shopId: self.shopId)
-            self.filteredProducts = removeDuplicates(products).sorted { prod1, prod2 in
+            self.filteredProducts = removeDuplicates(products ?? []).sorted { prod1, prod2 in
                 let code1 = prod1.codes.filter { $0.code.hasPrefix(searchText) }.first ?? prod1.codes.first!
                 let code2 = prod2.codes.filter { $0.code.hasPrefix(searchText) }.first ?? prod2.codes.first!
                 return code1.code < code2.code

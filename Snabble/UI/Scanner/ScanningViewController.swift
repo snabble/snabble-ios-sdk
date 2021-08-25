@@ -31,11 +31,11 @@ final class ScanningViewController: UIViewController {
 
     private var scanConfirmationView: ScanConfirmationView?
     private var scanConfirmationViewBottom: NSLayoutConstraint?
-    private var tapticFeedback = UINotificationFeedbackGenerator()
+    private let tapticFeedback = UINotificationFeedbackGenerator()
 
-    private var productProvider: ProductProvider
-    private var shoppingCart: ShoppingCart
-    private var shop: Shop
+    private let productProvider: ProductProvider
+    private let shoppingCart: ShoppingCart
+    private let shop: Shop
 
     private var confirmationVisible = false
     private var productType: ProductType?
@@ -51,7 +51,7 @@ final class ScanningViewController: UIViewController {
     }
 
     private var keyboardObserver: KeyboardObserver!
-    private weak var delegate: ScannerDelegate!
+    private weak var delegate: ScannerDelegate?
     private var barcodeDetector: BarcodeDetector
     private var customAppearance: CustomAppearance?
     private var torchButton: UIBarButtonItem?
@@ -142,7 +142,7 @@ final class ScanningViewController: UIViewController {
         super.viewDidAppear(animated)
         self.keyboardObserver = KeyboardObserver(handler: self)
 
-        self.delegate.track(.viewScanner)
+        self.delegate?.track(.viewScanner)
         self.view.bringSubviewToFront(self.spinner)
 
         self.barcodeDetector.resumeScanning()
@@ -321,7 +321,7 @@ extension ScanningViewController {
 // MARK: - analytics delegate
 extension ScanningViewController: AnalyticsDelegate {
     public func track(_ event: AnalyticsEvent) {
-        self.delegate.track(event)
+        self.delegate?.track(event)
     }
 }
 
@@ -336,7 +336,7 @@ extension ScanningViewController: ScanConfirmationViewDelegate {
             if let msg = self.ageCheckRequired(item) {
                 messages.append(msg)
             }
-            if let msg = self.delegate.scanMessage(for: SnabbleUI.project, self.shop, item.product) {
+            if let msg = self.delegate?.scanMessage(for: SnabbleUI.project, self.shop, item.product) {
                 messages.append(msg)
             }
 
@@ -373,7 +373,7 @@ extension ScanningViewController: ScanConfirmationViewDelegate {
             let barcodeEntry = BarcodeEntryViewController(self.productProvider, self.shop.id, delegate: self.delegate, completion: self.handleScannedCode)
             self.navigationController?.pushViewController(barcodeEntry, animated: true)
         } else {
-            self.delegate.gotoBarcodeEntry()
+            self.delegate?.gotoBarcodeEntry()
         }
 
         self.barcodeDetector.pauseScanning()
@@ -398,7 +398,7 @@ extension ScanningViewController {
 
         let msg = ScanMessage(msg)
         self.showMessage(msg)
-        self.delegate.track(.scanUnknown(code))
+        self.delegate?.track(.scanUnknown(code))
         self.startLastScanTimer()
     }
 
@@ -468,7 +468,7 @@ extension ScanningViewController {
 
             self.tapticFeedback.notificationOccurred(.success)
 
-            self.delegate.track(.scanProduct(scannedProduct.transmissionCode ?? scannedCode))
+            self.delegate?.track(.scanProduct(scannedProduct.transmissionCode ?? scannedCode))
             self.productType = product.type
 
             if product.bundles.isEmpty || scannedProduct.priceOverride != nil {
@@ -507,7 +507,7 @@ extension ScanningViewController {
 
     private func showNotForSale(_ product: Product, _ scannedCode: String) {
         self.tapticFeedback.notificationOccurred(.error)
-        if let msg = self.delegate.scanMessage(for: SnabbleUI.project, self.shop, product) {
+        if let msg = self.delegate?.scanMessage(for: SnabbleUI.project, self.shop, product) {
             self.showMessage(msg)
             self.lastScannedCode = nil
         } else {

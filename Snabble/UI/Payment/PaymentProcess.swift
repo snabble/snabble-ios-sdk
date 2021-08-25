@@ -9,7 +9,7 @@ public final class PaymentProcess {
     let signedCheckoutInfo: SignedCheckoutInfo
     let cart: ShoppingCart
     private weak var hudTimer: Timer?
-    private(set) weak var delegate: PaymentDelegate!
+    private weak var delegate: PaymentDelegate?
 
     /// create a payment process
     ///
@@ -191,14 +191,14 @@ public final class PaymentProcess {
     private func startFailed(_ method: PaymentMethod, _ error: SnabbleError?, _ completion: @escaping (_ result: Result<UIViewController, SnabbleError>) -> Void ) {
         var handled = false
         if let error = error {
-            handled = self.delegate.handlePaymentError(method, error)
+            handled = self.delegate?.handlePaymentError(method, error) ?? false
         }
         if !handled {
             if method.rawMethod.offline, let processor = method.processor(nil, nil, self.cart, self.delegate) {
                 completion(.success(processor))
                 OfflineCarts.shared.saveCartForLater(self.cart)
             } else {
-                self.delegate.showWarningMessage(L10n.Snabble.Payment.errorStarting)
+                self.delegate?.showWarningMessage(L10n.Snabble.Payment.errorStarting)
             }
         }
     }
@@ -211,7 +211,7 @@ public final class PaymentProcess {
     }
 
     func track(_ event: AnalyticsEvent) {
-        self.delegate.track(event)
+        self.delegate?.track(event)
     }
 
     // MARK: - blur
@@ -219,9 +219,13 @@ public final class PaymentProcess {
     private var blurView: UIView?
 
     private func showBlurOverlay() {
+        guard let view = self.delegate?.view else {
+            return
+        }
+
         let blurEffect = UIBlurEffect(style: .dark)
         let blurEffectView = UIVisualEffectView(effect: blurEffect)
-        blurEffectView.frame = self.delegate.view.bounds
+        blurEffectView.frame = view.bounds
         blurEffectView.autoresizingMask = [.flexibleWidth, .flexibleHeight]
 
         let activityIndicator = UIActivityIndicatorView(style: .whiteLarge)
@@ -231,7 +235,7 @@ public final class PaymentProcess {
         blurEffectView.contentView.addSubview(activityIndicator)
         activityIndicator.center = blurEffectView.contentView.center
 
-        self.delegate.view.addSubview(blurEffectView)
+        view.addSubview(blurEffectView)
         self.blurView = blurEffectView
     }
 
@@ -300,7 +304,7 @@ extension PaymentProcess {
                 if let processor = method.processor(process, result.rawJson, self.cart, self.delegate) {
                     completion(.success(processor))
                 } else {
-                    self.delegate.showWarningMessage(L10n.Snabble.Payment.errorStarting)
+                    self.delegate?.showWarningMessage(L10n.Snabble.Payment.errorStarting)
                 }
             case .failure(let error):
                 self.cart.generateNewUUID()

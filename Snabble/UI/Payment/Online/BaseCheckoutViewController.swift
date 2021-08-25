@@ -24,7 +24,7 @@ public class BaseCheckoutViewController: UIViewController {
     @IBOutlet private var cancelButton: UIButton!
 
     private let cart: ShoppingCart
-    private weak var delegate: PaymentDelegate!
+    private weak var delegate: PaymentDelegate?
     public weak var navigationDelegate: CheckoutNavigationDelegate?
 
     private let process: CheckoutProcess
@@ -37,7 +37,7 @@ public class BaseCheckoutViewController: UIViewController {
     private var postPaymentManager: PostPaymentManager?
     private var alreadyApproved = false
 
-    init(_ process: CheckoutProcess, _ rawJson: [String: Any]?, _ cart: ShoppingCart, _ delegate: PaymentDelegate) {
+    init(_ process: CheckoutProcess, _ rawJson: [String: Any]?, _ cart: ShoppingCart, _ delegate: PaymentDelegate?) {
         self.process = process
         self.rawJson = rawJson
         self.cart = cart
