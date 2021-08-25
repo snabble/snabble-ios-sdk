@@ -8,10 +8,9 @@ import UIKit
 import ColorCompatibility
 
 protocol PaymentMethodAddCellViewModel {
-    var name: String { get }
-    var brandId: Identifier<Brand>? { get }
     var projectId: Identifier<Project> { get }
-    var count: Int { get }
+    var name: String { get }
+    var count: String { get }
 }
 
 final class PaymentMethodAddCell: UITableViewCell {
@@ -76,16 +75,14 @@ final class PaymentMethodAddCell: UITableViewCell {
     }
 
     struct ViewModel: PaymentMethodAddCellViewModel {
-        let name: String
-        let brandId: Identifier<Brand>?
         let projectId: Identifier<Project>
-        let count: Int
+        let name: String
+        let count: String
 
         init(methodEntry: MethodEntry) {
-            name = methodEntry.name
-            brandId = methodEntry.brandId
             projectId = methodEntry.projectId
-            count = methodEntry.count
+            name = methodEntry.name
+            count = "\(methodEntry.count)"
         }
     }
 
@@ -95,6 +92,6 @@ final class PaymentMethodAddCell: UITableViewCell {
         SnabbleUI.getAsset(.storeIcon, projectId: viewModel.projectId) { [weak self] img in
             self?.icon?.image = img
         }
-        countLabel?.text = "\(viewModel.count)"
+        countLabel?.text = viewModel.count
     }
 }
