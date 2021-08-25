@@ -124,7 +124,7 @@ final class CheckoutBar: NibView {
             } else {
                 let msg = "navigationDelegate may not be nil when using explicit navigation"
                 assert(self.paymentMethodNavigationDelegate != nil, msg)
-                self.paymentMethodNavigationDelegate?.addMethod(fromCart: true)
+                self.paymentMethodNavigationDelegate?.addMethod()
             }
 
             return
