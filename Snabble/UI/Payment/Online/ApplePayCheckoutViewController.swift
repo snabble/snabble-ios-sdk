@@ -12,7 +12,7 @@ public final class ApplePayCheckoutViewController: BaseCheckoutViewController {
     private var currentProcess: CheckoutProcess?
     private var authorized = false
 
-    override public init(_ process: CheckoutProcess, _ rawJson: [String: Any]?, _ cart: ShoppingCart, _ delegate: PaymentDelegate) {
+    override public init(_ process: CheckoutProcess, _ rawJson: [String: Any]?, _ cart: ShoppingCart, _ delegate: PaymentDelegate?) {
         // Apple Pay needs the two-letter ISO country code for the payment. Try to extract that from the various contryCode fields we have
         // in `Shop` and `Project.Company`, which may or may not have 3- or 2-letter codes. Oh well...
         self.countryCode = Self.getCountryCode(from: cart)

@@ -26,7 +26,7 @@ extension PaymentMethod {
         }
     }
 
-    func processor(_ process: CheckoutProcess?, _ rawJson: [String: Any]?, _ cart: ShoppingCart, _ delegate: PaymentDelegate) -> UIViewController? {
+    func processor(_ process: CheckoutProcess?, _ rawJson: [String: Any]?, _ cart: ShoppingCart, _ delegate: PaymentDelegate?) -> UIViewController? {
         if !self.rawMethod.offline && process == nil {
             return nil
         }

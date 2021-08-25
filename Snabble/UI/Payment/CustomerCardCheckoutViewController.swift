@@ -20,11 +20,11 @@ public final class CustomerCardCheckoutViewController: UIViewController {
     private var initialBrightness: CGFloat = 0
 
     private weak var cart: ShoppingCart!
-    private weak var delegate: PaymentDelegate!
+    private weak var delegate: PaymentDelegate?
     private var process: CheckoutProcess?
     private var rawJson: [String: Any]?
 
-    public init(_ process: CheckoutProcess?, _ rawJson: [String: Any]?, _ cart: ShoppingCart, _ delegate: PaymentDelegate) {
+    public init(_ process: CheckoutProcess?, _ rawJson: [String: Any]?, _ cart: ShoppingCart, _ delegate: PaymentDelegate?) {
         self.process = process
         self.rawJson = rawJson
         self.cart = cart
@@ -64,12 +64,12 @@ public final class CustomerCardCheckoutViewController: UIViewController {
     override public func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
 
-        self.delegate.track(.viewCustomerCardCheckout)
+        self.delegate?.track(.viewCustomerCardCheckout)
 
         self.initialBrightness = UIScreen.main.brightness
         if self.initialBrightness < 0.5 {
             UIScreen.main.brightness = 0.5
-            self.delegate.track(.brightnessIncreased)
+            self.delegate?.track(.brightnessIncreased)
         }
     }
 
@@ -94,6 +94,6 @@ public final class CustomerCardCheckoutViewController: UIViewController {
         self.cart.removeAll(endSession: true)
 
         SnabbleAPI.fetchAppUserData(SnabbleUI.project.id)
-        self.delegate.paymentFinished(true, self.cart, self.process, self.rawJson)
+        self.delegate?.paymentFinished(true, self.cart, self.process, self.rawJson)
     }
 }

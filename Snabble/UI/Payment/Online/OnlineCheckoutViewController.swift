@@ -5,7 +5,7 @@
 //
 
 public final class OnlineCheckoutViewController: BaseCheckoutViewController {
-    override public init(_ process: CheckoutProcess, _ rawJson: [String: Any]?, _ cart: ShoppingCart, _ delegate: PaymentDelegate) {
+    override public init(_ process: CheckoutProcess, _ rawJson: [String: Any]?, _ cart: ShoppingCart, _ delegate: PaymentDelegate?) {
         super.init(process, rawJson, cart, delegate)
     }
 

@@ -29,7 +29,7 @@ final class ScanConfirmationView: DesignableView {
     @IBOutlet private var closeButton: UIButton!
     @IBOutlet private var cartButton: UIButton!
 
-    weak var delegate: ScanConfirmationViewDelegate!
+    weak var delegate: ScanConfirmationViewDelegate?
 
     private weak var shoppingCart: ShoppingCart!
     private var cartItem: CartItem!
@@ -265,10 +265,10 @@ final class ScanConfirmationView: DesignableView {
         }
 
         NotificationCenter.default.post(name: .snabbleCartUpdated, object: self)
-        self.delegate.track(.productAddedToCart(self.cartItem.product.sku))
+        self.delegate?.track(.productAddedToCart(self.cartItem.product.sku))
 
         self.productNameLabel.text = nil
-        self.delegate.closeConfirmation(self.cartItem)
+        self.delegate?.closeConfirmation(self.cartItem)
 
         self.quantityField.resignFirstResponder()
 
@@ -281,10 +281,10 @@ final class ScanConfirmationView: DesignableView {
     }
 
     @IBAction private func closeButtonTapped(_ button: UIButton) {
-        self.delegate.track(.scanAborted(self.cartItem.product.sku))
+        self.delegate?.track(.scanAborted(self.cartItem.product.sku))
 
         self.productNameLabel.text = nil
-        self.delegate.closeConfirmation(nil)
+        self.delegate?.closeConfirmation(nil)
         self.quantityField.resignFirstResponder()
 
         NotificationCenter.default.post(name: .snabbleHideScanConfirmation, object: nil)

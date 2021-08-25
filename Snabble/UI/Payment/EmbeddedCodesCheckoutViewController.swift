@@ -45,7 +45,7 @@ public final class EmbeddedCodesCheckoutViewController: UIViewController {
     private var codes = [String]()
     private var itemSize = CGSize.zero
 
-    public init(_ process: CheckoutProcess?, _ rawJson: [String: Any]?, _ cart: ShoppingCart, _ delegate: PaymentDelegate, _ codeConfig: QRCodeConfig) {
+    public init(_ process: CheckoutProcess?, _ rawJson: [String: Any]?, _ cart: ShoppingCart, _ delegate: PaymentDelegate?, _ codeConfig: QRCodeConfig) {
         self.process = process
         self.rawJson = rawJson
         self.cart = cart
