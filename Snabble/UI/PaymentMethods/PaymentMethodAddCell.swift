@@ -86,11 +86,16 @@ final class PaymentMethodAddCell: UITableViewCell {
         }
     }
 
+    private var projectId: Identifier<Project>?
+
     func configure(with viewModel: PaymentMethodAddCellViewModel) {
         nameLabel?.text = viewModel.name
 
+        projectId = viewModel.projectId
         SnabbleUI.getAsset(.storeIcon, projectId: viewModel.projectId) { [weak self] img in
-            self?.icon?.image = img
+            if self?.projectId == viewModel.projectId {
+                self?.icon?.image = img
+            }
         }
         countLabel?.text = viewModel.count
     }
