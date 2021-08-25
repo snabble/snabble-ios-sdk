@@ -5,7 +5,7 @@
 //
 
 public protocol PaymentMethodNavigationDelegate: AnyObject {
-    func addMethod(fromCart: Bool)
+    func addMethod()
 
     func addData(for method: RawPaymentMethod, in projectId: Identifier<Project>?)
 
