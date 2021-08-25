@@ -8,6 +8,24 @@ import UIKit
 import ColorCompatibility
 import SDCAlertView
 
+struct MethodEntry {
+    var name: String
+    let brandId: Identifier<Brand>?
+    let projectId: Identifier<Project>
+    var count: Int
+
+    init(project: Project, count: Int) {
+        self.init(projectId: project.id, name: project.name, brandId: project.brandId, count: count)
+    }
+
+    init(projectId: Identifier<Project>, name: String, brandId: Identifier<Brand>?, count: Int) {
+        self.projectId = projectId
+        self.name = name
+        self.brandId = brandId
+        self.count = count
+    }
+}
+
 public final class PaymentMethodAddViewController: UITableViewController {
     private var entries = [[MethodEntry]]()
     private var brandId: Identifier<Brand>?
@@ -158,7 +176,8 @@ extension PaymentMethodAddViewController {
         // swiftlint:disable:next force_cast
         let cell = tableView.dequeueReusableCell(withIdentifier: "cell", for: indexPath) as! PaymentMethodAddCell
 
-        cell.entry = entries[indexPath.section][indexPath.row]
+        let methodEntry = entries[indexPath.section][indexPath.row]
+        cell.configure(with: PaymentMethodAddCell.ViewModel(methodEntry: methodEntry))
 
         return cell
     }

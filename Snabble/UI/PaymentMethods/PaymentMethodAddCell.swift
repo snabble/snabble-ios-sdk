@@ -7,50 +7,22 @@
 import UIKit
 import ColorCompatibility
 
-struct MethodEntry {
-    var name: String
-    let brandId: Identifier<Brand>?
-    let projectId: Identifier<Project>
-    var count: Int
-
-    init(project: Project, count: Int) {
-        self.init(projectId: project.id, name: project.name, brandId: project.brandId, count: count)
-    }
-
-    init(projectId: Identifier<Project>, name: String, brandId: Identifier<Brand>?, count: Int) {
-        self.projectId = projectId
-        self.name = name
-        self.brandId = brandId
-        self.count = count
-    }
+protocol PaymentMethodAddCellViewModel {
+    var name: String { get }
+    var brandId: Identifier<Brand>? { get }
+    var projectId: Identifier<Project> { get }
+    var count: Int { get }
 }
 
 final class PaymentMethodAddCell: UITableViewCell {
-    private var icon: UIImageView
-    private var nameLabel: UILabel
-    private var countLabel: UILabel
-
-    var entry: MethodEntry? {
-        didSet {
-            nameLabel.text = entry?.name
-
-            if let projectId = entry?.projectId {
-                SnabbleUI.getAsset(.storeIcon, projectId: projectId) { img in
-                    self.icon.image = img
-                }
-            }
-            if let count = entry?.count {
-                countLabel.text = "\(count)"
-            } else {
-                countLabel.text = nil
-            }
-        }
-    }
+    private weak var icon: UIImageView?
+    private weak var nameLabel: UILabel?
+    private weak var countLabel: UILabel?
 
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
-        icon = UIImageView()
-        nameLabel = UILabel()
-        countLabel = UILabel()
+        let icon = UIImageView()
+        let nameLabel = UILabel()
+        let countLabel = UILabel()
         super.init(style: style, reuseIdentifier: reuseIdentifier)
 
         icon.translatesAutoresizingMaskIntoConstraints = false
@@ -60,6 +32,10 @@ final class PaymentMethodAddCell: UITableViewCell {
         contentView.addSubview(icon)
         contentView.addSubview(nameLabel)
         contentView.addSubview(countLabel)
+
+        self.icon = icon
+        self.nameLabel = nameLabel
+        self.countLabel = countLabel
 
         countLabel.font = UIFont.systemFont(ofSize: 15, weight: .regular)
         countLabel.textColor = ColorCompatibility.systemGray2
@@ -90,12 +66,35 @@ final class PaymentMethodAddCell: UITableViewCell {
     override func prepareForReuse() {
         super.prepareForReuse()
 
-        icon.image = nil
-        nameLabel.text = nil
+        icon?.image = nil
+        nameLabel?.text = nil
+        countLabel?.text = nil
     }
 
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
 
+    struct ViewModel: PaymentMethodAddCellViewModel {
+        let name: String
+        let brandId: Identifier<Brand>?
+        let projectId: Identifier<Project>
+        let count: Int
+
+        init(methodEntry: MethodEntry) {
+            name = methodEntry.name
+            brandId = methodEntry.brandId
+            projectId = methodEntry.projectId
+            count = methodEntry.count
+        }
+    }
+
+    func configure(with viewModel: PaymentMethodAddCellViewModel) {
+        nameLabel?.text = viewModel.name
+
+        SnabbleUI.getAsset(.storeIcon, projectId: viewModel.projectId) { [weak self] img in
+            self?.icon?.image = img
+        }
+        countLabel?.text = "\(viewModel.count)"
+    }
 }
