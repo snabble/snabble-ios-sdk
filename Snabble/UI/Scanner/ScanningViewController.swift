@@ -31,11 +31,11 @@ final class ScanningViewController: UIViewController {
 
     private var scanConfirmationView: ScanConfirmationView?
     private var scanConfirmationViewBottom: NSLayoutConstraint?
-    private var tapticFeedback = UINotificationFeedbackGenerator()
+    private let tapticFeedback = UINotificationFeedbackGenerator()
 
-    private var productProvider: ProductProvider
-    private var shoppingCart: ShoppingCart
-    private var shop: Shop
+    private let productProvider: ProductProvider
+    private let shoppingCart: ShoppingCart
+    private let shop: Shop
 
     private var confirmationVisible = false
     private var productType: ProductType?

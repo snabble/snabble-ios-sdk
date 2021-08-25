@@ -19,7 +19,7 @@ public final class QRCheckoutViewController: UIViewController {
     private let process: CheckoutProcess
     private let rawJson: [String: Any]?
     private var poller: PaymentProcessPoller?
-    private weak var cart: ShoppingCart!
+    private let cart: ShoppingCart
     private weak var delegate: PaymentDelegate?
     public weak var navigationDelegate: CheckoutNavigationDelegate?
 

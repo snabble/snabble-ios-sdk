@@ -39,7 +39,7 @@ public protocol KeyboardHandling: AnyObject {
 }
 
 public final class KeyboardObserver: NSObject {
-    private weak var handler: KeyboardHandling!
+    private weak var handler: KeyboardHandling?
 
     public required init(handler: KeyboardHandling) {
         self.handler = handler
@@ -55,7 +55,7 @@ public final class KeyboardObserver: NSObject {
             return
         }
 
-        self.handler.keyboardWillShow(info)
+        self.handler?.keyboardWillShow(info)
     }
 
     @objc private func keyboardWillHide(_ notification: Notification) {
@@ -63,7 +63,7 @@ public final class KeyboardObserver: NSObject {
             return
         }
 
-        self.handler.keyboardWillHide(info)
+        self.handler?.keyboardWillHide(info)
     }
 }
 

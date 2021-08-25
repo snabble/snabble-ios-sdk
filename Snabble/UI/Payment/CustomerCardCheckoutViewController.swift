@@ -19,7 +19,7 @@ public final class CustomerCardCheckoutViewController: UIViewController {
 
     private var initialBrightness: CGFloat = 0
 
-    private weak var cart: ShoppingCart!
+    private let cart: ShoppingCart
     private weak var delegate: PaymentDelegate?
     private var process: CheckoutProcess?
     private var rawJson: [String: Any]?

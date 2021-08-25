@@ -11,7 +11,7 @@ public final class BarcodeEntryViewController: UIViewController {
     @IBOutlet private var searchBar: UISearchBar!
     @IBOutlet private var bottomMargin: NSLayoutConstraint!
 
-    private weak var productProvider: ProductProvider!
+    private weak var productProvider: ProductProvider?
     private let shopId: Identifier<Shop>
 
     private let completion: ((String, ScanFormat?, String?) -> Void)
@@ -93,11 +93,11 @@ extension BarcodeEntryViewController: UISearchBarDelegate {
     // MARK: - search bar
     public func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
         if !searchText.isEmpty {
-            let products = self.productProvider.productsByScannableCodePrefix(searchText,
+            let products = self.productProvider?.productsByScannableCodePrefix(searchText,
                                                                               filterDeposits: true,
                                                                               templates: SnabbleUI.project.searchableTemplates,
                                                                               shopId: self.shopId)
-            self.filteredProducts = removeDuplicates(products).sorted { prod1, prod2 in
+            self.filteredProducts = removeDuplicates(products ?? []).sorted { prod1, prod2 in
                 let code1 = prod1.codes.filter { $0.code.hasPrefix(searchText) }.first ?? prod1.codes.first!
                 let code2 = prod2.codes.filter { $0.code.hasPrefix(searchText) }.first ?? prod2.codes.first!
                 return code1.code < code2.code

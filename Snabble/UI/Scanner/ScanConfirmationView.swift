@@ -31,7 +31,7 @@ final class ScanConfirmationView: DesignableView {
 
     weak var delegate: ScanConfirmationViewDelegate?
 
-    private weak var shoppingCart: ShoppingCart!
+    private var shoppingCart: ShoppingCart!
     private var cartItem: CartItem!
 
     override var isFirstResponder: Bool {
