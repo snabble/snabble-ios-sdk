@@ -7,41 +7,32 @@
 import UIKit
 import SDCAlertView
 
-public final class PaymentMethodListViewController: UITableViewController {
-    private var details = [[PaymentMethodDetail]]()
-    private weak var analyticsDelegate: AnalyticsDelegate?
+private struct ViewModel {
+    init(detail: PaymentMethodDetail) {
+        self.rawPaymentMethod = detail.rawMethod
+        self.detail = detail
+    }
 
+    init(rawPaymentMethod: RawPaymentMethod) {
+        self.rawPaymentMethod = rawPaymentMethod
+        self.detail = nil
+    }
+
+    var rawPaymentMethod: RawPaymentMethod
+    var detail: PaymentMethodDetail?
+}
+
+public final class PaymentMethodListViewController: UITableViewController {
+    private weak var analyticsDelegate: AnalyticsDelegate?
     public weak var navigationDelegate: PaymentMethodNavigationDelegate?
 
-    private var method: RawPaymentMethod?
-    private var projectId: Identifier<Project>? {
-        didSet {
-            updateAvailableMethods()
-        }
-    }
-
-    private var availableMethods: [RawPaymentMethod]
-
-    public init(method: RawPaymentMethod, for projectId: Identifier<Project>?, _ analyticsDelegate: AnalyticsDelegate?) {
-        self.analyticsDelegate = analyticsDelegate
-        self.projectId = projectId
-        self.method = method
-        self.availableMethods = [ method ]
-
-        super.init(style: SnabbleUI.groupedTableStyle)
-
-        updateAvailableMethods()
-    }
+    private(set) var projectId: Identifier<Project>?
+    private var data: [[ViewModel]] = []
 
     public init(for projectId: Identifier<Project>?, _ analyticsDelegate: AnalyticsDelegate?) {
-        self.analyticsDelegate = analyticsDelegate
-        self.availableMethods = []
         self.projectId = projectId
-        self.method = nil
-
+        self.analyticsDelegate = analyticsDelegate
         super.init(style: SnabbleUI.groupedTableStyle)
-
-        updateAvailableMethods()
     }
 
     required init?(coder: NSCoder) {
@@ -52,9 +43,6 @@ public final class PaymentMethodListViewController: UITableViewController {
         super.viewDidLoad()
 
         self.title = L10n.Snabble.PaymentMethods.title
-        if let method = self.method {
-            self.title = method.displayName
-        }
 
         let addButton = UIBarButtonItem(barButtonSystemItem: .add, target: self, action: #selector(addMethod))
         self.navigationItem.rightBarButtonItem = addButton
@@ -73,15 +61,13 @@ public final class PaymentMethodListViewController: UITableViewController {
     override public func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
 
-        self.details = []
+        data = []
 
-        if let method = self.method {
-            let details = PaymentMethodDetails.read()
-                .filter { $0.rawMethod == method && $0.rawMethod.isAvailable }
-                .sorted { $0.displayName < $1.displayName }
+        if let projectId = self.projectId {
+            if ApplePay.canMakePayments(with: projectId) {
+                data.append([ViewModel(rawPaymentMethod: .applePay)])
+            }
 
-            self.details = [ details ]
-        } else if let projectId = self.projectId {
             let details = PaymentMethodDetails.read().filter { detail in
                 switch detail.methodData {
                 case .creditcard(let creditcardData):
@@ -90,59 +76,52 @@ public final class PaymentMethodListViewController: UITableViewController {
                     return cardAlias.projectId == projectId
                 case .datatransAlias(let alias):
                     return alias.projectId == projectId
-                case .tegutEmployeeCard:
-                    return true
-                default:
-                    return false
+                case .tegutEmployeeCard, .sepa, .paydirektAuthorization:
+                    return SnabbleAPI.project(for: projectId)?.paymentMethods.contains(where: { $0 == detail.rawMethod }) ?? false
                 }
             }
 
             Dictionary(grouping: details, by: { $0.rawMethod })
                 .values
                 .sorted { $0[0].displayName < $1[0].displayName }
-                .forEach {
-                    self.details.append($0)
+                .map { $0.map { ViewModel(detail: $0) } }
+                .forEach { [self] in
+                    data.append($0)
                 }
         }
 
-        self.tableView.reloadData()
+        tableView.reloadData()
     }
 
     override public func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
-
         self.analyticsDelegate?.track(.viewPaymentMethodList)
     }
 
-    private func updateAvailableMethods() {
-        self.availableMethods = SnabbleAPI.projects
+    @objc private func addMethod() {
+        let methods = SnabbleAPI.projects
             .filter { $0.id == projectId }
             .flatMap { $0.paymentMethods }
-            .filter { $0.isProjectSpecific && $0.isAvailable }
-    }
-
-    @objc private func addMethod() {
-        let methods = self.availableMethods
+            .filter { $0.editable }
 
         if methods.count == 1 {
             showEditController(for: methods[0])
-            return
-        }
+        } else {
+            let sheet = AlertController(title: L10n.Snabble.PaymentMethods.choose, message: nil, preferredStyle: .actionSheet)
+            sheet.visualStyle = .snabbleActionSheet
 
-        let sheet = AlertController(title: L10n.Snabble.PaymentMethods.choose, message: nil, preferredStyle: .actionSheet)
-        sheet.visualStyle = .snabbleActionSheet
-
-        methods.forEach { method in
-            let action = AlertAction(title: method.displayName, style: .normal) { [self] _ in
-                showEditController(for: method)
+            methods.forEach { method in
+                let action = AlertAction(title: method.displayName, style: .normal) { [self] _ in
+                    showEditController(for: method)
+                }
+                action.imageView.image = method.icon
+                sheet.addAction(action)
             }
-            action.imageView.image = method.icon
-            sheet.addAction(action)
+
+            sheet.addAction(AlertAction(title: L10n.Snabble.cancel, style: .preferred, handler: nil))
+
+            self.present(sheet, animated: true)
         }
-
-        sheet.addAction(AlertAction(title: L10n.Snabble.cancel, style: .preferred, handler: nil))
-
-        self.present(sheet, animated: true)
     }
 
     private func showEditController(for method: RawPaymentMethod) {
@@ -160,18 +139,25 @@ public final class PaymentMethodListViewController: UITableViewController {
 // MARK: - table view delegate & data source
 extension PaymentMethodListViewController {
     override public func numberOfSections(in tableView: UITableView) -> Int {
-        return details.count
+        data.count
     }
 
     override public func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return details[section].count
+        data[section].count
     }
 
     override public func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         // swiftlint:disable:next force_cast
         let cell = tableView.dequeueReusableCell(withIdentifier: "cell", for: indexPath) as! PaymentMethodListCell
 
-        cell.method = details[indexPath.section][indexPath.row]
+        let data = data[indexPath.section][indexPath.row]
+        let viewModel: PaymentMethodListCellViewModel
+        if let detail = data.detail {
+            viewModel = PaymentMethodListCell.ViewModel(detail: detail)
+        } else {
+            viewModel = PaymentMethodListCell.ViewModel(displayName: data.rawPaymentMethod.displayName, icon: data.rawPaymentMethod.icon)
+        }
+        cell.configure(with: viewModel)
 
         return cell
     }
@@ -179,55 +165,56 @@ extension PaymentMethodListViewController {
     override public func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
 
-        let detail = details[indexPath.section][indexPath.row]
+        let viewModel = data[indexPath.section][indexPath.row]
 
         var editVC: UIViewController?
-        switch detail.methodData {
-        case .sepa:
-            editVC = SepaEditViewController(detail, self.analyticsDelegate)
-        case .creditcard:
-            editVC = CreditCardEditViewController(detail, self.analyticsDelegate)
-        case .paydirektAuthorization:
-            editVC = PaydirektEditViewController(detail, self.analyticsDelegate)
-        case .tegutEmployeeCard:
-            editVC = nil
-        case .datatransAlias, .datatransCardAlias:
-            editVC = SnabbleAPI.methodRegistry.create(detail: detail, analyticsDelegate: self.analyticsDelegate)
-        }
+        if let detail = viewModel.detail {
+            switch detail.methodData {
+            case .sepa:
+                editVC = SepaEditViewController(detail, self.analyticsDelegate)
+            case .creditcard:
+                editVC = CreditCardEditViewController(detail, self.analyticsDelegate)
+            case .paydirektAuthorization:
+                editVC = PaydirektEditViewController(detail, self.analyticsDelegate)
+            case .tegutEmployeeCard:
+                editVC = nil
+            case .datatransAlias, .datatransCardAlias:
+                editVC = SnabbleAPI.methodRegistry.create(detail: detail, analyticsDelegate: self.analyticsDelegate)
+            }
 
-        if let controller = editVC {
-            if SnabbleUI.implicitNavigation {
-                self.navigationController?.pushViewController(controller, animated: true)
-            } else {
-                navigationDelegate?.editMethod(detail)
+            if let controller = editVC {
+                if SnabbleUI.implicitNavigation {
+                    navigationController?.pushViewController(controller, animated: true)
+                } else {
+                    navigationDelegate?.editMethod(detail)
+                }
             }
         }
     }
 
-    override public func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
-        guard editingStyle == .delete else {
-            return
-        }
+    override public func tableView(_ tableView: UITableView, canEditRowAt indexPath: IndexPath) -> Bool {
+        data[indexPath.section][indexPath.row].detail != nil
+    }
 
-        let detail = details[indexPath.section][indexPath.row]
-        PaymentMethodDetails.remove(detail)
-        details[indexPath.section].remove(at: indexPath.row)
-        tableView.deleteRows(at: [indexPath], with: .automatic)
+    override public func tableView(_ tableView: UITableView, editingStyleForRowAt indexPath: IndexPath) -> UITableViewCell.EditingStyle {
+        .delete
+    }
+
+    override public func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
+        if let detail = data[indexPath.section][indexPath.row].detail {
+            PaymentMethodDetails.remove(detail)
+            data[indexPath.section].remove(at: indexPath.row)
+            tableView.deleteRows(at: [indexPath], with: .automatic)
+        }
     }
 
     override public func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
-        return details[section].first?.rawMethod.displayName
+        data[section].first?.rawPaymentMethod.displayName
     }
 }
 
 // stuff that's only used by the RN wrapper
 extension PaymentMethodListViewController: ReactNativeWrapper {
-    public func setMethod(_ method: RawPaymentMethod) {
-        self.method = method
-
-        self.availableMethods = [ method ]
-    }
-
     public func setProjectId(_ projectId: Identifier<Project>) {
         self.projectId = projectId
     }

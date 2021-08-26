@@ -6,20 +6,14 @@
 
 import UIKit
 
+protocol PaymentMethodListCellViewModel {
+    var displayName: String { get }
+    var icon: UIImage? { get }
+    var accessoryType: UITableViewCell.AccessoryType { get }
+    var selectionStyle: UITableViewCell.SelectionStyle { get }
+}
+
 final class PaymentMethodListCell: UITableViewCell {
-    var method: PaymentMethodDetail? {
-        didSet {
-            self.nameLabel.text = method?.displayName
-            self.icon.image = method?.icon
-
-            if method?.originType == .tegutEmployeeID {
-                self.accessoryType = .none
-            } else {
-                self.accessoryType = .disclosureIndicator
-            }
-        }
-    }
-
     private var nameLabel = UILabel()
     private var icon = UIImageView()
 
@@ -50,8 +44,38 @@ final class PaymentMethodListCell: UITableViewCell {
 
     override func prepareForReuse() {
         super.prepareForReuse()
-
         nameLabel.text = nil
         icon.image = nil
+        accessoryType = .none
+        selectionStyle = .none
+    }
+
+    func configure(with viewModel: PaymentMethodListCellViewModel) {
+        nameLabel.text = viewModel.displayName
+        icon.image = viewModel.icon
+        accessoryType = viewModel.accessoryType
+        selectionStyle = viewModel.selectionStyle
+    }
+
+    struct ViewModel: PaymentMethodListCellViewModel {
+        let displayName: String
+        let icon: UIImage?
+        let accessoryType: UITableViewCell.AccessoryType
+        let selectionStyle: UITableViewCell.SelectionStyle
+
+        init(detail: PaymentMethodDetail) {
+            displayName = detail.displayName
+            icon = detail.icon
+            accessoryType = detail.originType == .tegutEmployeeID ? .none : .disclosureIndicator
+            selectionStyle = detail.originType == .tegutEmployeeID ? .none : .default
+
+        }
+
+        init(displayName: String, icon: UIImage?) {
+            self.displayName = displayName
+            self.icon = icon
+            self.accessoryType = .none
+            self.selectionStyle = .none
+        }
     }
 }
