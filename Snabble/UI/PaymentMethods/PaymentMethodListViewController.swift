@@ -207,10 +207,6 @@ extension PaymentMethodListViewController {
             tableView.deleteRows(at: [indexPath], with: .automatic)
         }
     }
-
-    override public func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
-        data[section].first?.rawPaymentMethod.displayName
-    }
 }
 
 // stuff that's only used by the RN wrapper
