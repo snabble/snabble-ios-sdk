@@ -85,19 +85,6 @@ public enum RawPaymentMethod: String, CaseIterable, Decodable {
         }
     }
 
-    /// true if this method requires project-specific data
-    /// currently, this is set for all creditcards, where we need strong customer authorization per project
-    /// and for `externalBilling` where we need project-specific billing data
-    public var isProjectSpecific: Bool {
-        switch self {
-        case .creditCardVisa, .creditCardMastercard, .creditCardAmericanExpress, .externalBilling,
-             .twint, .postFinanceCard:
-            return true
-        case .deDirectDebit, .qrCodePOS, .qrCodeOffline, .gatekeeperTerminal, .customerCardPOS, .paydirektOneKlick, .applePay:
-            return false
-        }
-    }
-
     /// true if this method can be used even if creating a checkout info/process fails
     public var offline: Bool {
         switch self {
