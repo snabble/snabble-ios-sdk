@@ -166,7 +166,9 @@ final class PaymentMethodSelector {
             self.userMadeExplicitSelection = false
         }
 
-        let userMethods = PaymentMethodDetails.read().filter { $0.rawMethod.isAvailable && $0.projectId == SnabbleUI.project.id }
+        let userMethods = PaymentMethodDetails.read()
+            .filter { $0.rawMethod.isAvailable }
+            .filter { $0.projectId != nil ? $0.projectId == SnabbleUI.project.id : true }
 
         let projectMethods = SnabbleUI.project.paymentMethods.filter { $0.isAvailable }
         let cartMethods = self.shoppingCart.paymentMethods?.map { $0.method }.filter { $0.isAvailable } ?? []
@@ -298,8 +300,8 @@ final class PaymentMethodSelector {
 
     private func actionsFor(_ method: RawPaymentMethod) -> [PaymentMethodAction] {
         let isProjectMethod = SnabbleUI.project.paymentMethods.contains(method)
-        let cartMethod = self.shoppingCart.paymentMethods?.first { $0.method == method }
-        let isCartMethod = cartMethod != nil
+        let isCartMethod = shoppingCart.paymentMethods?.contains { $0.method == method } ?? isProjectMethod
+
         let userMethods = PaymentMethodDetails.read().filter { $0.rawMethod == method }
         let isUserMethod = !userMethods.isEmpty
 
