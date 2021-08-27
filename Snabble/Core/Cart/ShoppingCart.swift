@@ -251,13 +251,13 @@ public final class ShoppingCart: Codable {
         self.coupons.removeAll()
         self.requiredInformation = []
         self.requiredInformationData = []
-        self.save()
-        NotificationCenter.default.post(name: .snabbleCartUpdated, object: self)
 
         if endSession {
             CartEvent.sessionEnd(self)
             self.session = ""
         }
+        self.save()
+        NotificationCenter.default.post(name: .snabbleCartUpdated, object: self)
     }
 
     public func restoreCart() {
