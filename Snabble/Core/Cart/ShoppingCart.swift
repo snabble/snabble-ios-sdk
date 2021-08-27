@@ -235,7 +235,10 @@ public final class ShoppingCart: Codable {
     }
 
     /// remove all items from the cart
-    public func removeAll(endSession: Bool = false, keepBackup: Bool = true) {
+    /// - Parameters:
+    ///   - endSession: true to end this cart session (ie. after a successful checkout)
+    ///   - keepBackup: true to keep a backup of the cart items (ie. after an offline checkout)
+    public func removeAll(endSession: Bool, keepBackup: Bool) {
         if keepBackup {
             self.backupItems = self.items
             self.backupSession = self.session

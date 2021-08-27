@@ -216,7 +216,7 @@ public final class EmbeddedCodesCheckoutViewController: UIViewController {
             self.setButtonTitle()
         } else {
             self.delegate?.track(.markEmbeddedCodesPaid)
-            self.cart?.removeAll(endSession: true)
+            self.cart?.removeAll(endSession: true, keepBackup: true)
 
             SnabbleAPI.fetchAppUserData(SnabbleUI.project.id)
             if let cart = self.cart {

@@ -157,7 +157,7 @@ final class ShoppingCartTableViewController: UITableViewController {
 
     func deleteCart() {
         self.cartDelegate?.track(.deletedEntireCart)
-        self.shoppingCart.removeAll()
+        self.shoppingCart.removeAll(endSession: false, keepBackup: false)
         self.updateView()
     }
 
