@@ -111,14 +111,13 @@ extension SignedCheckoutInfo {
                 }
 
                 project.performRaw(request) { (result: RawResult<CheckoutProcess, SnabbleError>) in
-                    // TODO: GET the checkout when PUT gave us a 403
                     switch result.result {
                     case .success:
                         completion(result)
                     case .failure:
                         if result.statusCode == 403 {
                             // this means that somehow we already have a process with this id in the backend.
-                            // GET that process, and return that to the caller
+                            // GET that process, and return it to the caller
                             self.fetchCheckoutProcess(project, url, completion)
                         } else {
                             completion(result)

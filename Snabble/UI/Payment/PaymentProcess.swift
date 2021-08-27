@@ -247,8 +247,12 @@ public final class PaymentProcess {
 
 // MARK: - start payment
 extension PaymentProcess {
+    private static let createTimeout: TimeInterval = 25
+
     public func start(_ method: PaymentMethod, completion: @escaping (RawResult<CheckoutProcess, SnabbleError>) -> Void ) {
-        self.signedCheckoutInfo.createCheckoutProcess(SnabbleUI.project, id: self.cart.uuid, paymentMethod: method, timeout: 20) { result in
+        let project = SnabbleUI.project
+        let id = self.cart.uuid
+        self.signedCheckoutInfo.createCheckoutProcess(project, id: id, paymentMethod: method, timeout: Self.createTimeout) { result in
             switch result.result {
             case .success(let process):
                 let checker = CheckoutChecks(process)
@@ -256,8 +260,10 @@ extension PaymentProcess {
                 if stopProcess {
                     return
                 }
-            case .failure:
-                self.cart.generateNewUUID()
+            case .failure(let error):
+                if error != .timedOut {
+                    self.cart.generateNewUUID()
+                }
             }
             completion(result)
         }
@@ -275,18 +281,19 @@ extension PaymentProcess {
             let method = PaymentMethod.make(rawMethod, detail),
             method.canStart()
         else {
-            return completion(Result.failure(SnabbleError.noPaymentAvailable))
+            return completion(Result.failure(.noPaymentAvailable))
         }
 
         self.start(method, completion)
     }
 
-    func start(_ method: PaymentMethod, _ completion: @escaping (_ result: Result<UIViewController, SnabbleError>) -> Void ) {
+    private func start(_ method: PaymentMethod, _ completion: @escaping (_ result: Result<UIViewController, SnabbleError>) -> Void ) {
         UIApplication.shared.beginIgnoringInteractionEvents()
         self.startBlurOverlayTimer()
 
         let project = SnabbleUI.project
-        self.signedCheckoutInfo.createCheckoutProcess(project, id: self.cart.uuid, paymentMethod: method, timeout: 20) { result in
+        let id = self.cart.uuid
+        self.signedCheckoutInfo.createCheckoutProcess(project, id: id, paymentMethod: method, timeout: Self.createTimeout) { result in
             self.hudTimer?.invalidate()
             UIApplication.shared.endIgnoringInteractionEvents()
             self.hideBlurOverlay()
@@ -307,7 +314,9 @@ extension PaymentProcess {
                     self.delegate?.showWarningMessage(L10n.Snabble.Payment.errorStarting)
                 }
             case .failure(let error):
-                self.cart.generateNewUUID()
+                if error != .timedOut {
+                    self.cart.generateNewUUID()
+                }
                 self.startFailed(method, error, completion)
             }
         }

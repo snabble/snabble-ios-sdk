@@ -15,6 +15,7 @@ public struct SnabbleError: Decodable, Error, Equatable {
     static let noRequest = SnabbleError(error: ErrorResponse("no request"))
     static let notFound = SnabbleError(error: ErrorResponse("not found"))
     static let cancelled = SnabbleError(error: ErrorResponse("cancelled"))
+    static let timedOut = SnabbleError(error: ErrorResponse("timedOut"))
 
     static let noPaymentAvailable = SnabbleError(error: ErrorResponse("no payment method available"))
 }
@@ -351,9 +352,15 @@ extension Project {
                 }
 
                 var apiError = SnabbleError.unknown
-                if let urlError = error as? URLError, urlError.code == .cancelled {
+                let urlError = error as? URLError
+                switch urlError?.code {
+                case .some(.cancelled):
                     apiError = SnabbleError.cancelled
+                case .some(.timedOut):
+                    apiError = SnabbleError.timedOut
+                default: ()
                 }
+
                 if let data = rawData {
                     do {
                         let decoder = JSONDecoder()
