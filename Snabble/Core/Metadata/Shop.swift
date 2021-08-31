@@ -114,6 +114,12 @@ public struct Shop: Codable, Identifiable {
     }
 }
 
+extension Shop: Equatable {
+    public static func == (lhs: Self, rhs: Self) -> Bool {
+        lhs.id == rhs.id
+    }
+}
+
 // response object from the `activeShops` endpoint
 struct ActiveShops: Decodable {
     let shops: [Shop]
