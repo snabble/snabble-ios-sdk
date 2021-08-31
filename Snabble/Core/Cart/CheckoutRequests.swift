@@ -114,10 +114,12 @@ extension SignedCheckoutInfo {
                     switch result.result {
                     case .success:
                         completion(result)
-                    case .failure:
+                    case .failure(let error):
                         if result.statusCode == 403 {
                             // this means that somehow we already have a process with this id in the backend.
                             // GET that process, and return it to the caller
+                            self.fetchCheckoutProcess(project, url, completion)
+                        } else if case .urlError = error {
                             self.fetchCheckoutProcess(project, url, completion)
                         } else {
                             completion(result)
@@ -131,13 +133,24 @@ extension SignedCheckoutInfo {
     }
 
     private func fetchCheckoutProcess(_ project: Project, _ url: String, _ completion: @escaping (_ result: RawResult<CheckoutProcess, SnabbleError>) -> Void ) {
-        project.request(.get, url, timeout: 0) { request in
+        project.request(.get, url, timeout: 3) { request in
             guard let request = request else {
                 return completion(RawResult.failure(SnabbleError.noRequest))
             }
 
             project.performRaw(request) { (result: RawResult<CheckoutProcess, SnabbleError>) in
-                completion(result)
+                switch result.result {
+                case .success:
+                    completion(result)
+                case .failure(let error):
+                    if case .urlError = error {
+                        DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
+                            self.fetchCheckoutProcess(project, url, completion)
+                        }
+                    } else {
+                        completion(result)
+                    }
+                }
             }
         }
     }

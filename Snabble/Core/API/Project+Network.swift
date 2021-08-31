@@ -6,18 +6,51 @@
 
 import Foundation
 
-public struct SnabbleError: Decodable, Error, Equatable {
-    public let error: ErrorResponse
+public enum SnabbleError: Error, Equatable {
+    case unknown
 
-    static let unknown = SnabbleError(error: ErrorResponse("unknown"))
-    static let empty = SnabbleError(error: ErrorResponse("empty"))
-    static let invalid = SnabbleError(error: ErrorResponse("invalid"))
-    static let noRequest = SnabbleError(error: ErrorResponse("no request"))
-    static let notFound = SnabbleError(error: ErrorResponse("not found"))
-    static let cancelled = SnabbleError(error: ErrorResponse("cancelled"))
-    static let timedOut = SnabbleError(error: ErrorResponse("timedOut"))
+    // unable to even make the HTTP request (e.g. no or invalid URL)
+    case noRequest
 
-    static let noPaymentAvailable = SnabbleError(error: ErrorResponse("no payment method available"))
+    // HTTP status was OK, but response was empty
+    case empty
+
+    // HTTP status was OK, but response parsing failed
+    case invalid
+
+    // the URL loading failed
+    case urlError(URLError)
+    // the HTTP request failed
+    case httpError(statusCode: Int)
+    // structured error from the snabble backend
+    case apiError(SnabbleAPIError)
+
+    var details: [ErrorResponse]? {
+        switch self {
+        case .apiError(let apiError):
+            return apiError.error.details
+        default:
+            return nil
+        }
+    }
+
+    var type: ErrorResponseType {
+        switch self {
+        case .apiError(let apiError):
+            return apiError.error.type
+        default:
+            return .unknown
+        }
+    }
+
+    func isUrlError(_ code: URLError.Code) -> Bool {
+        switch self {
+        case .urlError(let urlError):
+            return urlError.code == code
+        default:
+            return false
+        }
+    }
 }
 
 public enum ProductLookupError: Error, Equatable {
@@ -96,6 +129,10 @@ public struct ErrorResponse: Decodable, Equatable {
     var type: ErrorResponseType {
         return ErrorResponseType(rawValue: self.rawType)
     }
+}
+
+public struct SnabbleAPIError: Decodable, Error, Equatable {
+    public let error: ErrorResponse
 }
 
 enum HTTPRequestMethod: String {
@@ -322,59 +359,33 @@ extension Project {
     ///   - raw: the JSON structure returned by the server, or nil if an error occurred
     ///   - response: the HTTPURLResponse object if available
     @discardableResult
-    private func perform<T: Decodable>(_ request: URLRequest, returnRaw: Bool, _ completion: @escaping (_ result: Result<T, SnabbleError>, _ raw: [String: Any]?,
-                               _ response: HTTPURLResponse?) -> Void ) -> URLSessionDataTask {
+    private func perform<T: Decodable>(_ request: URLRequest, returnRaw: Bool, _ completion: @escaping (_ result: Result<T, SnabbleError>, _ raw: [String: Any]?, _ response: HTTPURLResponse?) -> Void ) -> URLSessionDataTask {
         let start = Date.timeIntervalSinceReferenceDate
         let session = SnabbleAPI.urlSession()
-        let task = session.dataTask(with: request) { rawData, response, error in
+        let task = session.dataTask(with: request) { data, response, error in
             let elapsed = Date.timeIntervalSinceReferenceDate - start
             let url = request.url?.absoluteString ?? "n/a"
             let method = request.httpMethod ?? ""
             Log.info("\(method) \(url) took \(elapsed)s")
+
+            // handle URL errors
+            if let error = error {
+                let urlError = self.snabbleError(for: error, method, url)
+                DispatchQueue.main.async {
+                    completion(.failure(urlError), nil, nil)
+                }
+                return
+            }
+
+            // handle HTTP error responses
             guard
-                let data = rawData,
+                let data = data,
                 let httpResponse = response as? HTTPURLResponse,
                 httpResponse.statusCode == 200 || httpResponse.statusCode == 201
             else {
-                let statusCode = (response as? HTTPURLResponse)?.statusCode ?? 0
-
-                let cancelled: Bool = {
-                    if let urlError = error as? URLError, urlError.code == .cancelled {
-                        return true
-                    }
-                    return false
-                }()
-
-                if !cancelled {
-                    self.logError("error getting response from \(method) \(url): \(String(describing: error)) statusCode \(statusCode)")
-                } else {
-                    Log.error("request was cancelled: \(url)")
-                }
-
-                var apiError = SnabbleError.unknown
-                let urlError = error as? URLError
-                switch urlError?.code {
-                case .some(.cancelled):
-                    apiError = SnabbleError.cancelled
-                case .some(.timedOut):
-                    apiError = SnabbleError.timedOut
-                default: ()
-                }
-
-                if let data = rawData {
-                    do {
-                        let decoder = JSONDecoder()
-                        decoder.dateDecodingStrategy = .customISO8601
-                        let error = try decoder.decode(SnabbleError.self, from: data)
-                        self.logError("error response: \(String(describing: error))")
-                        apiError = error
-                    } catch {
-                        let rawResponse = String(bytes: data, encoding: .utf8)
-                        self.logError("failed parsing error response: \(String(describing: rawResponse)) -> \(error)")
-                    }
-                }
+                let httpError = self.snabbleError(for: response, method, url, data)
                 DispatchQueue.main.async {
-                    completion(.failure(apiError), nil, response as? HTTPURLResponse)
+                    completion(.failure(httpError), nil, response as? HTTPURLResponse)
                 }
                 return
             }
@@ -386,6 +397,8 @@ extension Project {
                 }
                 return
             }
+
+            // finally, decode the reponse object
             do {
                 let decoder = JSONDecoder()
                 decoder.dateDecodingStrategy = .customISO8601
@@ -410,6 +423,66 @@ extension Project {
         return task
     }
 
+    private func snabbleError(for error: Error, _ method: String, _ url: String) -> SnabbleError {
+        guard let urlError = error as? URLError else {
+            return SnabbleError.unknown
+        }
+
+        let cancelled = urlError.code == .cancelled
+        if !cancelled {
+            self.logError("error getting response from \(method) \(url): \(String(describing: error))")
+        } else {
+            Log.error("request was cancelled: \(url)")
+        }
+
+        return SnabbleError.urlError(urlError)
+    }
+
+    private func snabbleError(for response: URLResponse?, _ method: String, _ url: String, _ data: Data?) -> SnabbleError {
+        guard let response = response as? HTTPURLResponse else {
+            return SnabbleError.unknown
+        }
+
+        if let data = data {
+            do {
+                let decoder = JSONDecoder()
+                decoder.dateDecodingStrategy = .customISO8601
+                let error = try decoder.decode(SnabbleAPIError.self, from: data)
+                self.logError("error response: \(String(describing: error))")
+                return SnabbleError.apiError(error)
+            } catch {
+                let rawResponse = String(bytes: data, encoding: .utf8)
+                self.logError("failed parsing error response: \(String(describing: rawResponse)) -> \(error)")
+            }
+        }
+        return SnabbleError.httpError(statusCode: response.statusCode)
+    }
+
+    /*
+    private func handleURLError(_ response: URLResponse?, _ error: Error?, _ method: String, _ url: String, _ rawData: Data?) -> SnabbleError {
+        let statusCode = (response as? HTTPURLResponse)?.statusCode ?? 0
+
+        var apiError = SnabbleError.unknown
+        if let urlError = error as? URLError {
+            apiError = SnabbleError.urlError(urlError)
+        }
+
+        if let data = rawData {
+            do {
+                let decoder = JSONDecoder()
+                decoder.dateDecodingStrategy = .customISO8601
+                let error = try decoder.decode(SnabbleAPIError.self, from: data)
+                self.logError("error response: \(String(describing: error))")
+                apiError = SnabbleError.apiError(error)
+            } catch {
+                let rawResponse = String(bytes: data, encoding: .utf8)
+                self.logError("failed parsing error response: \(String(describing: rawResponse)) -> \(error)")
+            }
+        }
+
+        return apiError
+    }
+    */
 }
 
 extension Project {

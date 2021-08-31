@@ -495,7 +495,7 @@ extension SnabbleAPI {
                     completion(true)
                 case .failure(let error):
                     // ignore "client error" since we can't recover from it
-                    completion(error == SnabbleError.empty || error.error.type == .clientError)
+                    completion(error == SnabbleError.empty || error.type == .clientError)
                 }
             }
         }

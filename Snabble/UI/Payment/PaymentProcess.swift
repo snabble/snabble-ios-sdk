@@ -261,7 +261,7 @@ extension PaymentProcess {
                     return
                 }
             case .failure(let error):
-                if error != .timedOut {
+                if !error.isUrlError(.timedOut) {
                     self.cart.generateNewUUID()
                 }
             }
@@ -281,7 +281,7 @@ extension PaymentProcess {
             let method = PaymentMethod.make(rawMethod, detail),
             method.canStart()
         else {
-            return completion(Result.failure(.noPaymentAvailable))
+            return completion(Result.failure(.noRequest))
         }
 
         self.start(method, completion)
@@ -314,7 +314,7 @@ extension PaymentProcess {
                     self.delegate?.showWarningMessage(L10n.Snabble.Payment.errorStarting)
                 }
             case .failure(let error):
-                if error != .timedOut {
+                if !error.isUrlError(.timedOut) {
                     self.cart.generateNewUUID()
                 }
                 self.startFailed(method, error, completion)

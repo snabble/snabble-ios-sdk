@@ -181,12 +181,12 @@ final class CheckoutBar: NibView {
             case .failure(let error):
                 let handled = self.cartDelegate?.handleCheckoutError(error) ?? false
                 if !handled {
-                    if let offendingSkus = error.error.details?.compactMap({ $0.sku }) {
+                    if let offendingSkus = error.details?.compactMap({ $0.sku }) {
                         self.showProductError(offendingSkus)
                         return
                     }
 
-                    switch error.error.type {
+                    switch error.type {
                     case .noAvailableMethod:
                         self.cartDelegate?.showWarningMessage(L10n.Snabble.Payment.noMethodAvailable)
                     case .invalidDepositVoucher:

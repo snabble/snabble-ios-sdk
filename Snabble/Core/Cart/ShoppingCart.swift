@@ -424,7 +424,7 @@ extension ShoppingCart {
             switch result {
             case .failure(let error):
                 Log.warn("createCheckoutInfo failed: \(error)")
-                if error != SnabbleError.cancelled {
+                if error.isUrlError(.cancelled) {
                     self.backendCartInfo = nil
                     self.paymentMethods = nil
                     self.lastCheckoutInfoError = error
