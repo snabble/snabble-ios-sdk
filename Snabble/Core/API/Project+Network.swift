@@ -20,8 +20,10 @@ public enum SnabbleError: Error, Equatable {
 
     // the URL loading failed
     case urlError(URLError)
+
     // the HTTP request failed
     case httpError(statusCode: Int)
+
     // structured error from the snabble backend
     case apiError(SnabbleAPIError)
 
@@ -377,12 +379,13 @@ extension Project {
                 return
             }
 
-            // handle HTTP error responses
+            // check presence of data AND an "OK" HTTP response
             guard
                 let data = data,
                 let httpResponse = response as? HTTPURLResponse,
                 httpResponse.statusCode == 200 || httpResponse.statusCode == 201
             else {
+                // handle HTTP error responses
                 let httpError = self.snabbleError(for: response, method, url, data)
                 DispatchQueue.main.async {
                     completion(.failure(httpError), nil, response as? HTTPURLResponse)
@@ -398,7 +401,7 @@ extension Project {
                 return
             }
 
-            // finally, decode the reponse object
+            // finally, decode the response object
             do {
                 let decoder = JSONDecoder()
                 decoder.dateDecodingStrategy = .customISO8601
@@ -420,6 +423,7 @@ extension Project {
             }
         }
         task.resume()
+
         return task
     }
 
@@ -444,45 +448,26 @@ extension Project {
         }
 
         if let data = data {
-            do {
-                let decoder = JSONDecoder()
-                decoder.dateDecodingStrategy = .customISO8601
-                let error = try decoder.decode(SnabbleAPIError.self, from: data)
-                self.logError("error response: \(String(describing: error))")
-                return SnabbleError.apiError(error)
-            } catch {
-                let rawResponse = String(bytes: data, encoding: .utf8)
-                self.logError("failed parsing error response: \(String(describing: rawResponse)) -> \(error)")
+            let contentType = response.allHeaderFields["Content-Type"] as? String ?? ""
+            let isJsonResponse = contentType.lowercased().starts(with: "application/json")
+            if isJsonResponse {
+                do {
+                    let decoder = JSONDecoder()
+                    decoder.dateDecodingStrategy = .customISO8601
+                    let error = try decoder.decode(SnabbleAPIError.self, from: data)
+                    Log.error("error response: \(String(describing: error))")
+                    return SnabbleError.apiError(error)
+                } catch {
+                    let rawResponse = String(bytes: data, encoding: .utf8) ?? ""
+                    self.logError("failed parsing error response: \(rawResponse) -> \(error)")
+                }
+            } else {
+                let rawResponse = String(bytes: data, encoding: .utf8) ?? ""
+                Log.error("got error response: \(rawResponse), statusCode: \(response.statusCode)")
             }
         }
         return SnabbleError.httpError(statusCode: response.statusCode)
     }
-
-    /*
-    private func handleURLError(_ response: URLResponse?, _ error: Error?, _ method: String, _ url: String, _ rawData: Data?) -> SnabbleError {
-        let statusCode = (response as? HTTPURLResponse)?.statusCode ?? 0
-
-        var apiError = SnabbleError.unknown
-        if let urlError = error as? URLError {
-            apiError = SnabbleError.urlError(urlError)
-        }
-
-        if let data = rawData {
-            do {
-                let decoder = JSONDecoder()
-                decoder.dateDecodingStrategy = .customISO8601
-                let error = try decoder.decode(SnabbleAPIError.self, from: data)
-                self.logError("error response: \(String(describing: error))")
-                apiError = SnabbleError.apiError(error)
-            } catch {
-                let rawResponse = String(bytes: data, encoding: .utf8)
-                self.logError("failed parsing error response: \(String(describing: rawResponse)) -> \(error)")
-            }
-        }
-
-        return apiError
-    }
-    */
 }
 
 extension Project {
