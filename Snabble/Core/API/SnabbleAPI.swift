@@ -163,7 +163,7 @@ public enum SnabbleAPI {
                     case .success(let activeShops):
                         self.metadata.setShops(activeShops.shops, at: index)
                     case .failure(let error):
-                        print(error)
+                        print("\(#function), \(error)")
                     }
                 }
             }
@@ -192,7 +192,7 @@ public enum SnabbleAPI {
                     case .success(let couponList):
                         self.metadata.setCoupons(couponList.coupons, at: index)
                     case .failure(let error):
-                        print(error)
+                        print("\(#function), \(error)")
                     }
                 }
             }
@@ -460,7 +460,7 @@ extension SnabbleAPI {
                         SnabbleAPI.appUserData = userData
                     }
                 case .failure(let error):
-                    print(error)
+                    print("\(#function), \(error)")
                 }
             }
         }
