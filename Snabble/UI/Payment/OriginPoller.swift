@@ -39,15 +39,14 @@ final class OriginPoller {
                 return self.stopPolling()
             }
 
-            self.project?.perform(request) { (result: Result<OriginCandidate, SnabbleError>, response) in
-                if response?.statusCode == 404 {
-                    return self.stopPolling()
-                }
-
+            self.project?.perform(request) { (result: Result<OriginCandidate, SnabbleError>) in
                 var continuePolling = true
                 switch result {
                 case .failure(let error):
                     Log.error("error getting originCandidate: \(error)")
+                    if case .httpError(let statusCode) = error, statusCode == 404 {
+                        return self.stopPolling()
+                    }
                 case .success(let candidate):
                     let valid = candidate.isValid
                     if valid {

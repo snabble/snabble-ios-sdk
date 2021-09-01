@@ -115,7 +115,7 @@ extension SignedCheckoutInfo {
                     case .success:
                         completion(result)
                     case .failure(let error):
-                        if result.statusCode == 403 {
+                        if case .httpError(let statusCode) = error, statusCode == 403 {
                             // this means that somehow we already have a process with this id in the backend.
                             // GET that process, and return it to the caller
                             self.fetchCheckoutProcess(project, url, completion)

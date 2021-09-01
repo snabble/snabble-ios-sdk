@@ -149,22 +149,19 @@ enum HTTPRequestMethod: String {
 public struct RawResult<T, E: Swift.Error> {
     public let result: Result<T, E>
     public let rawJson: [String: Any]?
-    public let statusCode: Int
 
-    public init(_ value: T, statusCode: Int, rawJson: [String: Any]? = nil) {
+    public init(_ value: T, rawJson: [String: Any]? = nil) {
         self.result = Result.success(value)
         self.rawJson = rawJson
-        self.statusCode = statusCode
     }
 
-    public init(_ result: Result<T, E>, statusCode: Int, rawJson: [String: Any]? = nil) {
+    public init(_ result: Result<T, E>, rawJson: [String: Any]? = nil) {
         self.result = result
         self.rawJson = rawJson
-        self.statusCode = statusCode
     }
 
     public static func failure(_ error: E) -> RawResult {
-        return RawResult(Result.failure(error), statusCode: 0, rawJson: nil)
+        return RawResult(Result.failure(error), rawJson: nil)
     }
 }
 
@@ -284,7 +281,7 @@ extension Project {
         }
     }
 
-    /// perfom an API Request
+    /// perform an API Request
     ///
     /// - Parameters:
     ///   - retryCount: how often the request should be retried on failure
@@ -309,7 +306,7 @@ extension Project {
         }
     }
 
-    /// perfom an API Request
+    /// perform an API Request
     ///
     /// - Parameters:
     ///   - request: the `URLRequest` to perform
@@ -322,7 +319,7 @@ extension Project {
         }
     }
 
-    /// perfom an API Request
+    /// perform an API Request
     ///
     /// - Parameters:
     ///   - request: the `URLRequest` to perform
@@ -330,14 +327,13 @@ extension Project {
     ///   - result: the parsed result object plus its raw JSON data, or error
     @discardableResult
     func performRaw<T: Decodable>(_ request: URLRequest, _ completion: @escaping (_ result: RawResult<T, SnabbleError>) -> Void ) -> URLSessionDataTask {
-        return self.perform(request, returnRaw: true) { (_ result: Result<T, SnabbleError>, _ raw: [String: Any]?, response: HTTPURLResponse?) in
-            let statusCode = response?.statusCode ?? 0
-            let rawResult = RawResult(result, statusCode: statusCode, rawJson: raw)
+        return self.perform(request, returnRaw: true) { (_ result: Result<T, SnabbleError>, _ raw: [String: Any]?, _) in
+            let rawResult = RawResult(result, rawJson: raw)
             completion(rawResult)
         }
     }
 
-    /// perfom an API Request
+    /// perform an API Request
     ///
     /// - Parameters:
     ///   - request: the `URLRequest` to perform
@@ -351,7 +347,7 @@ extension Project {
         }
     }
 
-    /// perfom an API Request
+    /// perform an API Request
     ///
     /// - Parameters:
     ///   - request: the `URLRequest` to perform
