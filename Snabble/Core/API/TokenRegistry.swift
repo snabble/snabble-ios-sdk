@@ -116,17 +116,17 @@ final class TokenRegistry {
 
     // raw, synchronous token access. externally only used by AppEvent.post() to avoid endless loops
     private func token(for projectId: Identifier<Project>) -> String? {
-        lock.readLock()
-        defer { lock.unlock() }
-
-        if let token = self.projectTokens[projectId] {
-            // we already have a token. return it if it's still valid
-            let now = Date()
-            if token.expires > now {
-                return token.jwt
+        lock.reading {
+            if let token = self.projectTokens[projectId] {
+                // we already have a token. return it if it's still valid
+                let now = Date()
+                if token.expires > now {
+                    return token.jwt
+                }
             }
+            return nil
         }
-        return nil
+
     }
 
     // invalidate all tokens - called when the appUser changes
@@ -188,11 +188,11 @@ final class TokenRegistry {
             group.enter()
             let projectId = tokenData.projectId
             // Log.debug("refresh token for \(project.id)")
-            self.retrieveToken(for: projectId) { tokenData in
+            self.retrieveToken(for: projectId) { [weak self] tokenData in
                 if let tokenData = tokenData {
-                    self.lock.writeLock()
-                    self.projectTokens[projectId] = tokenData
-                    self.lock.unlock()
+                    self?.lock.writing { [weak self] in
+                        self?.projectTokens[projectId] = tokenData
+                    }
                 }
                 group.leave()
             }
