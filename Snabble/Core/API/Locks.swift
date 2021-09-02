@@ -65,10 +65,6 @@ final class Mutex {
         pthread_mutex_unlock(&mutex)
     }
 
-    func trylock() {
-        pthread_mutex_trylock(&mutex)
-    }
-
     func run<T>(closure: () -> T) -> T {
         self.lock()
         defer { self.unlock() }
