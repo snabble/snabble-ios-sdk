@@ -20,15 +20,15 @@ final class ReadWriteLock {
         pthread_rwlock_destroy(&lock)
     }
 
-    func writeLock() {
+    private func writeLock() {
         pthread_rwlock_wrlock(&lock)
     }
 
-    func readLock() {
+    private func readLock() {
         pthread_rwlock_rdlock(&lock)
     }
 
-    func unlock() {
+    private func unlock() {
         pthread_rwlock_unlock(&lock)
     }
 
@@ -63,10 +63,6 @@ final class Mutex {
 
     func unlock() {
         pthread_mutex_unlock(&mutex)
-    }
-
-    func trylock() {
-        pthread_mutex_trylock(&mutex)
     }
 
     func run<T>(closure: () -> T) -> T {

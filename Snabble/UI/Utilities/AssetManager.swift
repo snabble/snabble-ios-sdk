@@ -116,6 +116,13 @@ extension Manifest.File {
     }
 }
 
+private struct AssetRequest {
+    let asset: ImageAsset
+    let bundlePath: String?
+    let projectId: Identifier<Project>
+    let completion: (UIImage?) -> Void
+}
+
 final class AssetManager {
     static let shared = AssetManager()
 
@@ -124,6 +131,8 @@ final class AssetManager {
     private let scale: CGFloat
 
     private weak var redownloadTimer: Timer?
+
+    private var pendingRequests = [AssetRequest]()
 
     private init() {
         self.scale = UIScreen.main.scale
@@ -138,6 +147,16 @@ final class AssetManager {
     func getAsset(_ asset: ImageAsset, _ bundlePath: String?, _ projectId: Identifier<Project>?, _ completion: @escaping (UIImage?) -> Void) {
         let projectId = projectId ?? SnabbleUI.project.id
         let name = asset.rawValue
+
+        // if the manifest for the project hasn't been loaded yet, save the request for later
+        if lock.reading({ self.manifests[projectId] }) == nil && projectId != Project.none.id {
+            lock.writing {
+                let request = AssetRequest(asset: asset, bundlePath: bundlePath, projectId: projectId, completion: completion)
+                self.pendingRequests.append(request)
+            }
+            return
+        }
+
         if let image = self.getLocallyCachedImage(named: name, projectId) {
             completion(image)
         } else {
@@ -272,13 +291,21 @@ final class AssetManager {
             }
         }
 
-        group.notify(queue: DispatchQueue.main) {
+        group.notify(queue: .main) {
             // save manifests for next start
             do {
                 let manifestData = try JSONEncoder().encode(self.manifests)
                 settings.set(manifestData, forKey: settingsKey)
             } catch {
                 print(error)
+            }
+
+            // execute any pending requests
+            self.lock.writing {
+                self.pendingRequests.forEach {
+                    self.getAsset($0.asset, $0.bundlePath, $0.projectId, $0.completion)
+                }
+                self.pendingRequests = []
             }
 
             completion()
