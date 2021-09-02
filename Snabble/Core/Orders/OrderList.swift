@@ -108,7 +108,7 @@ extension Order {
     private func download(_ project: Project, _ targetPath: URL, completion: @escaping (Result<URL, Error>) -> Void ) {
         guard let link = self.links.receipt?.href else {
             Log.error("error downloading receipt: no receipt link?!?")
-            return completion(.failure(SnabbleError.notFound))
+            return completion(.failure(SnabbleError.noRequest))
         }
 
         project.request(.get, link, timeout: 10) { request in
@@ -126,7 +126,7 @@ extension Order {
 
                 guard let location = location else {
                     Log.error("error downloading receipt: no location?!?")
-                    return completion(.failure(SnabbleError.notFound))
+                    return completion(.failure(SnabbleError.noRequest))
                 }
 
                 do {
@@ -134,7 +134,7 @@ extension Order {
                     completion(.success(targetPath))
                 } catch {
                     Log.error("error saving receipt: \(error)")
-                    completion(.failure(SnabbleError.notFound))
+                    completion(.failure(SnabbleError.invalid))
                 }
             }
             task.resume()

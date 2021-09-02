@@ -63,8 +63,8 @@ public final class PaymentProcessPoller {
     private func checkEvents(_ events: [PaymentEvent], _ completion: @escaping ([PaymentEvent: Bool]) -> Void ) {
         self.process.update(self.project, taskCreated: { self.task = $0 }, completion: { result in
             switch result.result {
-            case .failure:
-                if result.statusCode > 0 {
+            case .failure(let error):
+                if case .httpError = error {
                     self.timer?.invalidate()
                 }
             case .success(let process):

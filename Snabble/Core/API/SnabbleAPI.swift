@@ -163,7 +163,7 @@ public enum SnabbleAPI {
                     case .success(let activeShops):
                         self.metadata.setShops(activeShops.shops, at: index)
                     case .failure(let error):
-                        print(error)
+                        print("\(#function), \(error)")
                     }
                 }
             }
@@ -192,7 +192,7 @@ public enum SnabbleAPI {
                     case .success(let couponList):
                         self.metadata.setCoupons(couponList.coupons, at: index)
                     case .failure(let error):
-                        print(error)
+                        print("\(#function), \(error)")
                     }
                 }
             }
@@ -460,7 +460,7 @@ extension SnabbleAPI {
                         SnabbleAPI.appUserData = userData
                     }
                 case .failure(let error):
-                    print(error)
+                    print("\(#function), \(error)")
                 }
             }
         }
@@ -495,7 +495,7 @@ extension SnabbleAPI {
                     completion(true)
                 case .failure(let error):
                     // ignore "client error" since we can't recover from it
-                    completion(error == SnabbleError.empty || error.error.type == .clientError)
+                    completion(error == SnabbleError.empty || error.type == .clientError)
                 }
             }
         }

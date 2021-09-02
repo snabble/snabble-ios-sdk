@@ -116,9 +116,9 @@ final class ShoppingCartTableViewController: UITableViewController {
 
         // if we're on-screen, check for errors from the last checkoutInfo creation/update
         if self.view.window != nil, let error = self.shoppingCart.lastCheckoutInfoError {
-            switch error.error.type {
+            switch error.type {
             case .saleStop:
-                if let offendingSkus = error.error.details?.compactMap({ $0.sku }) {
+                if let offendingSkus = error.details?.compactMap({ $0.sku }) {
                     self.showProductError(offendingSkus)
                 }
             case .invalidDepositVoucher:
