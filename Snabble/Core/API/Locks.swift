@@ -20,15 +20,15 @@ final class ReadWriteLock {
         pthread_rwlock_destroy(&lock)
     }
 
-    func writeLock() {
+    private func writeLock() {
         pthread_rwlock_wrlock(&lock)
     }
 
-    func readLock() {
+    private func readLock() {
         pthread_rwlock_rdlock(&lock)
     }
 
-    func unlock() {
+    private func unlock() {
         pthread_rwlock_unlock(&lock)
     }
 
