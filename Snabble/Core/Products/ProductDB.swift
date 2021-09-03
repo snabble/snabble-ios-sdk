@@ -226,7 +226,28 @@ final class ProductDB: ProductProvider {
     private var updateInProgress = false
 
     internal var resumeData: Data?
-    internal var downloadTask: URLSessionDownloadTask?
+
+    private var backgroundTaskIdentifier: UIBackgroundTaskIdentifier = .invalid {
+        willSet {
+            if backgroundTaskIdentifier != .invalid {
+                UIApplication.shared.endBackgroundTask(backgroundTaskIdentifier)
+            }
+        }
+    }
+    internal var downloadTask: URLSessionDownloadTask? {
+        willSet {
+            if newValue != nil {
+                backgroundTaskIdentifier = UIApplication.shared.beginBackgroundTask(expirationHandler: { [self] in
+                    backgroundTaskIdentifier = .invalid
+                })
+            }
+        }
+        didSet {
+            if downloadTask == nil {
+                backgroundTaskIdentifier = .invalid
+            }
+        }
+    }
     private let switchMutex = Mutex()
 
     /// initialize a ProductDB instance with the given configuration
@@ -331,13 +352,9 @@ final class ProductDB: ProductProvider {
     }
 
     public func stopDatabaseUpdate() {
-        guard let task = self.downloadTask else {
-            return
-        }
-
-        task.cancel { data in
-            self.resumeData = data
-            self.appDbAvailability = data != nil ? .incomplete : .unknown
+        downloadTask?.cancel { [self] data in
+            resumeData = data
+            appDbAvailability = data != nil ? .incomplete : .unknown
         }
     }
 
