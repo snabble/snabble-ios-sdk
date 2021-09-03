@@ -68,3 +68,7 @@ public protocol BarcodeDetector {
     // turn the torch
     func setTorch(_ on: Bool)
 }
+
+extension BarcodeDetector {
+    public static var batterySaverTimeout: TimeInterval { 90 }
+}

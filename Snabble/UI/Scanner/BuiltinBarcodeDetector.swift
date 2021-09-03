@@ -254,7 +254,7 @@ extension BuiltinBarcodeDetector {
         }
 
         self.idleTimer?.invalidate()
-        self.idleTimer = Timer.scheduledTimer(withTimeInterval: 90, repeats: false) { _ in
+        self.idleTimer = Timer.scheduledTimer(withTimeInterval: Self.batterySaverTimeout, repeats: false) { _ in
             self.idleTimerFired()
         }
     }
