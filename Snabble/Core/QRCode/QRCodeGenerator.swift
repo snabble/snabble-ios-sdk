@@ -52,12 +52,16 @@ public struct QRCodeGenerator {
         var blocks = self.makeBlocks(items, coupons, self.cart.customerCard)
 
         // patch the last block to have the `finalCode` code
-        blocks[blocks.count - 1].endCode = self.config.finalCode
+        if let finalCode = self.config.finalCode {
+            blocks[blocks.count - 1].endCodes = [finalCode]
+        } else {
+            blocks[blocks.count - 1].endCodes = []
+        }
 
-        // if there are any manual discounts, use the `manualDiscountFinalCode` instead
+        // if there are any manual discounts, append the `manualDiscountFinalCode`
         let manualDiscountUsed = self.cart.items.firstIndex { $0.manualCoupon != nil } != nil
         if manualDiscountUsed, let manualDiscountFinalCode = self.config.manualDiscountFinalCode {
-            blocks[blocks.count - 1].endCode = manualDiscountFinalCode
+            blocks[blocks.count - 1].endCodes.append(manualDiscountFinalCode)
         }
         return self.balanceBlocks(blocks)
     }
@@ -97,11 +101,19 @@ public struct QRCodeGenerator {
         restrictedBlocks = self.balanceBlocks(restrictedBlocks)
 
         // patch the last regular block to have the `nextWithCheck` code
-        regularBlocks[regularBlocks.count - 1].endCode = nextWithCheck
+        regularBlocks[regularBlocks.count - 1].endCodes = [nextWithCheck]
 
         // patch the last of all blocks to have the `finalCode` code
         var allBlocks = regularBlocks + restrictedBlocks
-        allBlocks[allBlocks.count - 1].endCode = self.config.finalCode
+        if let finalCode = self.config.finalCode {
+            allBlocks[allBlocks.count - 1].endCodes = [finalCode]
+        }
+
+        // if there are any manual discounts, append the `manualDiscountFinalCode`
+        let manualDiscountUsed = self.cart.items.firstIndex { $0.manualCoupon != nil } != nil
+        if manualDiscountUsed, let manualDiscountFinalCode = self.config.manualDiscountFinalCode {
+            allBlocks[allBlocks.count - 1].endCodes.append(manualDiscountFinalCode)
+        }
 
         return allBlocks
     }
@@ -218,12 +230,16 @@ private struct Codeblock {
     let config: QRCodeConfig
     var cardCode: String?
     var items: [CodeBlockItem]
-    var endCode: String?
+    var endCodes: [String]
 
     init(_ config: QRCodeConfig) {
         self.config = config
-        self.endCode = config.nextCode
         self.items = []
+        if let nextCode = config.nextCode {
+            self.endCodes = [nextCode]
+        } else {
+            self.endCodes = []
+        }
     }
 
     var count: Int {
@@ -273,9 +289,7 @@ private struct Codeblock {
         if let card = self.cardCode {
             codes.insert(card, at: 0)
         }
-        if let end = self.endCode {
-            codes.append(end)
-        }
+        codes.append(contentsOf: self.endCodes)
 
         return self.config.prefix + codes.joined(separator: self.config.separator) + config.suffix
     }
@@ -285,8 +299,8 @@ private struct Codeblock {
         if let card = self.cardCode {
             codes.insert("1;\(card)", at: 0)
         }
-        if let end = self.endCode {
-            codes.append("1;\(end)")
+        self.endCodes.forEach {
+            codes.append("1;\($0)")
         }
 
         let header = self.config.format == .csv ? "snabble;\(index + 1);\(total)" : "snabble;"
@@ -301,18 +315,18 @@ private struct Codeblock {
     }()
 
     private func ikeaStringify(_ total: Int) -> String {
-        var codes = self.items.map { "240" + $0.code }
+        var codes = self.items.map { "240\($0.code)" }
         if let card = self.cardCode {
             codes.insert("92" + card, at: 0)
         }
-        if let end = self.endCode {
-            codes.append("240" + end)
+        self.endCodes.forEach {
+            codes.append("240\($0)")
         }
 
         let sep = "\u{1d}" // ascii GROUP SEPARATOR, 0x1d
 
         // AI 91 (origin type), 00003 == IKEA Store App
-        let header = "9100003" + sep
+        let header = "9100003\(sep)"
 
         // AI 10 (lot number), # of chunks
         let lot = "10" + Codeblock.formatter.string(for: total)! + sep

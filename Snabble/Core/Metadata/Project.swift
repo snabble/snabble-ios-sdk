@@ -114,10 +114,20 @@ public struct QRCodeConfig: Decodable {
     let maxCodes: Int
 
     // optional EAN codes used when splitting into multiple QR codes
-    let finalCode: String?          // last code of the last block
-    let manualDiscountFinalCode: String?  // last code of the last block if there are any manual discounts
-    let nextCode: String?           // marker code to indicate "more QR codes"
-    let nextCodeWithCheck: String?  // marker code to indicate "more QR codes" + age check required
+
+    // last code of the last block
+    let finalCode: String?
+
+    // last code of the last block if there are any manual discounts
+    // NB: when both `finalCode` and `manualDiscountFinalCode` are defined and there are any manual discounts,
+    // both are appended to the QR code
+    let manualDiscountFinalCode: String?
+
+    // marker code to indicate "more QR codes"
+    let nextCode: String?
+
+    // marker code to indicate "more QR codes" + age check required
+    let nextCodeWithCheck: String?
 
     // when maxCodes is not sufficiently precise, maxChars imposes a string length limit
     let maxChars: Int?
@@ -126,8 +136,17 @@ public struct QRCodeConfig: Decodable {
     static let qrCodeMax = 2953
 
     var effectiveMaxCodes: Int {
-        let leaveRoom = self.nextCode != nil || self.nextCodeWithCheck != nil || self.finalCode != nil || self.manualDiscountFinalCode != nil
-        return self.maxCodes - (leaveRoom ? 1 : 0)
+        switch (finalCode, manualDiscountFinalCode) {
+        case (.some, .some): return maxCodes - 2
+        case (.some, .none), (.none, .some): return maxCodes - 1
+        case (.none, .none): ()
+        }
+
+        if nextCode != nil || self.nextCodeWithCheck != nil {
+            return maxCodes - 1
+        }
+
+        return maxCodes
     }
 
     enum CodingKeys: String, CodingKey {
