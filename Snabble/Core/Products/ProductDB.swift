@@ -228,9 +228,9 @@ final class ProductDB: ProductProvider {
     internal var resumeData: Data?
 
     private var backgroundTaskIdentifier: UIBackgroundTaskIdentifier = .invalid {
-        willSet {
-            if backgroundTaskIdentifier != .invalid {
-                UIApplication.shared.endBackgroundTask(backgroundTaskIdentifier)
+        didSet {
+            if oldValue != .invalid {
+                UIApplication.shared.endBackgroundTask(oldValue)
             }
         }
     }
@@ -240,10 +240,7 @@ final class ProductDB: ProductProvider {
                 backgroundTaskIdentifier = UIApplication.shared.beginBackgroundTask(expirationHandler: { [self] in
                     backgroundTaskIdentifier = .invalid
                 })
-            }
-        }
-        didSet {
-            if downloadTask == nil {
+            } else {
                 backgroundTaskIdentifier = .invalid
             }
         }
