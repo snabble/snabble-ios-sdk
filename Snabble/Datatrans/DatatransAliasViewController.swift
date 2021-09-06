@@ -129,7 +129,7 @@ public final class DatatransAliasViewController: UIViewController {
     private func startTransaction(with tokenResponse: TokenResponse, on presentingController: UIViewController) {
         let transaction = Transaction(mobileToken: tokenResponse.mobileToken)
         transaction.delegate = self
-        transaction.options.appCallbackScheme = "snabble"
+        transaction.options.appCallbackScheme = DatatransFactory.appCallbackScheme
         transaction.options.testing = tokenResponse.isTesting ?? false
         transaction.options.useCertificatePinning = true
         transaction.start(presentingController: presentingController)

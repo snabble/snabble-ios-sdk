@@ -5,7 +5,11 @@
 //
 
 public enum DatatransFactory {
-    public static func initialize() {
+    private(set) static var appCallbackScheme: String?
+
+    public static func initialize(appCallbackScheme: String) {
+        Self.appCallbackScheme = appCallbackScheme
+
         let methods = Methods(viewMethod: viewFactory, entryMethod: entryFactory)
 
         SnabbleAPI.methodRegistry.register(methods: methods, for: .twint)
@@ -18,7 +22,6 @@ public enum DatatransFactory {
 
     private static func viewFactory(_ detail: PaymentMethodDetail, _ analyticsDelegate: AnalyticsDelegate?) -> UIViewController {
         return DatatransAliasViewController(detail, analyticsDelegate)
-
     }
 
     private static func entryFactory(_ method: RawPaymentMethod, _ projectId: Identifier<Project>, _ analyticsDelegate: AnalyticsDelegate?) -> UIViewController {

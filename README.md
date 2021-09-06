@@ -30,7 +30,25 @@ instead. As with all cocoapods written in Swift, make sure you have `use_framewo
 
 ### Optional components
 
-In order to use the `twint` and `postFinanceCard` payment methods, you will also need to include `pod 'Snabble/Datatrans'` in your app's `Podfile`. During the app's initialization phase you will then need to call `DatatransFactory.initialize()` to make these methods available. Note that support for these payment methods also requires changes to your app's `Info.plist` as described in Datatrans' SDK [documentation](https://docs.datatrans.ch/docs/mobile-sdk#section-additional-requirements-for-i-os).
+In order to use the `twint` and `postFinanceCard` payment methods, you will also need to include `pod 'Snabble/Datatrans'` in your app's `Podfile`. During the app's initialization phase you will then need to call `DatatransFactory.initialize()` with your app's registered URL scheme to make these methods available. 
+
+Note that support for these payment methods also requires changes to your app's `Info.plist` as described in Datatrans' SDK [documentation](https://docs.datatrans.ch/docs/mobile-sdk#section-additional-requirements-for-i-os), as well as adding a URL scheme that can be used to pass data back to your app, e.g. by adding
+
+```
+<key>CFBundleURLTypes</key>
+<array>
+  <dict>
+    <key>CFBundleTypeRole</key>
+    <string>Editor</string>
+    <key>CFBundleURLName</key>
+    <string>YOUR_URL_NAME_HERE</string>
+    <key>CFBundleURLSchemes</key>
+    <array>
+      <string>YOUR_URL_SCHEME_HERE</string>
+    </array>
+  </dict>
+</array>
+```
 
 ### Carthage 
 
