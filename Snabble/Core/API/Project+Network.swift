@@ -451,7 +451,7 @@ extension Project {
                     let decoder = JSONDecoder()
                     decoder.dateDecodingStrategy = .customISO8601
                     let error = try decoder.decode(SnabbleAPIError.self, from: data)
-                    Log.error("error response: \(String(describing: error))")
+                    Log.error("error response: \(String(describing: error)) - statuscode \(response.statusCode)")
                     return SnabbleError.apiError(error)
                 } catch {
                     let rawResponse = String(bytes: data, encoding: .utf8) ?? ""
