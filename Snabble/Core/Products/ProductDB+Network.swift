@@ -135,8 +135,9 @@ final class AppDBDownloadDelegate: CertificatePinningDelegate, URLSessionDownloa
     private var tmpFile: URL?
 
     func urlSession(_ session: URLSession, task: URLSessionTask, didCompleteWithError error: Error?) {
-        self.productDb?.resumeData = nil
-        self.productDb?.downloadTask = nil
+        tmpFile = nil
+        productDb?.resumeData = nil
+        productDb?.downloadTask = nil
 
         if let error = error as NSError? {
             let url = task.currentRequest?.url?.absoluteString ?? "n/a"
