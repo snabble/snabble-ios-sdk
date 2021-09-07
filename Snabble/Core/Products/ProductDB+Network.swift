@@ -20,7 +20,7 @@ extension ProductDB {
     fileprivate static let sqliteType = "application/vnd+snabble.appdb+sqlite3"
     private static let contentTypes = "\(sqlType),\(sqliteType)"
 
-    func appDbSession(_ completion: @escaping (AppDbResponse) -> Void) -> URLSession {
+    private func appDbSession(_ completion: @escaping (AppDbResponse) -> Void) -> URLSession {
         let delegate = AppDBDownloadDelegate(self, completion)
         return URLSession(configuration: .default, delegate: delegate, delegateQueue: nil)
     }
@@ -37,17 +37,16 @@ extension ProductDB {
             return
         }
 
-        self.project.request(.get, self.project.links.appdb.href, json: false, parameters: parameters, timeout: 0) { request in
+        self.project.request(.get, self.project.links.appdb.href, json: false, parameters: parameters, timeout: 0) { [self] request in
             guard var request = request else {
                 return completion(.httpError)
             }
 
             request.setValue(ProductDB.contentTypes, forHTTPHeaderField: "Accept")
 
-            let session = self.appDbSession(completion)
-            let task = session.downloadTask(with: request)
-            task.resume()
-            self.downloadTask = task
+            let session = appDbSession(completion)
+            downloadTask = session.downloadTask(with: request)
+            downloadTask?.resume()
         }
     }
 
@@ -64,9 +63,8 @@ extension ProductDB {
         Log.info("resuming download of appdb")
 
         let session = self.appDbSession(completion)
-        let task = session.downloadTask(withResumeData: resumeData)
-        task.resume()
-        self.downloadTask = task
+        downloadTask = session.downloadTask(withResumeData: resumeData)
+        downloadTask?.resume()
     }
 
 }
@@ -97,17 +95,15 @@ final class AppDBDownloadDelegate: CertificatePinningDelegate, URLSessionDownloa
     }
 
     func urlSession(_ session: URLSession, downloadTask: URLSessionDownloadTask, didFinishDownloadingTo location: URL) {
-        session.finishTasksAndInvalidate()
-
         let url = downloadTask.currentRequest?.url?.absoluteString ?? "n/a"
         let elapsed = Date.timeIntervalSinceReferenceDate - self.start
         Log.info("GET \(url) took \(elapsed)s")
 
-        self.productDb?.downloadTask = nil
         if let response = downloadTask.response as? HTTPURLResponse {
             // print("got bytes: \(data.count) \(self.bytesReceived), \(self.mbps) MB/s")
             if response.statusCode == 304 {
                 completion(.noUpdate)
+                session.invalidateAndCancel()
                 return
             }
 
@@ -119,51 +115,52 @@ final class AppDBDownloadDelegate: CertificatePinningDelegate, URLSessionDownloa
             } catch {
                 Log.error("error creating tmp dir: \(error)")
                 completion(.dataError)
+                session.invalidateAndCancel()
                 return
             }
 
             let tmpFile = tmpDir.appendingPathComponent(ProcessInfo().globallyUniqueString)
             do {
                 try fileManager.moveItem(at: location, to: tmpFile)
+                self.tmpFile = tmpFile
             } catch {
                 Log.error("error moving \(location) to \(tmpFile): \(error)")
                 completion(.dataError)
+                session.invalidateAndCancel()
                 return
             }
-
-            let headers = response.allHeaderFields
-            if let contentType = headers["Content-Type"] as? String {
-                if contentType == ProductDB.sqliteType {
-                    completion(.full(db: tmpFile))
-                    return
-                } else if contentType == ProductDB.sqlType {
-                    completion(.diff(lines: tmpFile))
-                    return
-                }
-            }
-
         }
-        completion(.dataError)
     }
 
+    private var tmpFile: URL?
+
     func urlSession(_ session: URLSession, task: URLSessionTask, didCompleteWithError error: Error?) {
-        session.finishTasksAndInvalidate()
+        tmpFile = nil
+        productDb?.resumeData = nil
+        productDb?.downloadTask = nil
 
-        self.productDb?.resumeData = nil
-        self.productDb?.downloadTask = nil
-        guard let error = error as NSError? else {
-            return
-        }
+        if let error = error as NSError? {
+            let url = task.currentRequest?.url?.absoluteString ?? "n/a"
+            Log.info("\(url) finished with error \(error.code)")
 
-        let url = task.currentRequest?.url?.absoluteString ?? "n/a"
-        Log.info("\(url) finished with error \(error.code)")
-
-        let userInfo = error.userInfo
-        if let resumeData = userInfo[NSURLSessionDownloadTaskResumeData] as? Data {
-            self.productDb?.resumeData = resumeData
-            self.completion(.aborted)
+            let userInfo = error.userInfo
+            if let resumeData = userInfo[NSURLSessionDownloadTaskResumeData] as? Data {
+                self.productDb?.resumeData = resumeData
+                self.completion(.aborted)
+            } else {
+                self.completion(.httpError)
+            }
+        } else if let response = task.response as? HTTPURLResponse, let tmpFile = tmpFile {
+            switch response.allHeaderFields["Content-Type"] as? String {
+            case ProductDB.sqliteType:
+                completion(.full(db: tmpFile))
+            case ProductDB.sqlType:
+                completion(.diff(lines: tmpFile))
+            default:
+                completion(.dataError)
+            }
         } else {
-            self.completion(.httpError)
+            completion(.dataError)
         }
     }
 }
