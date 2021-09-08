@@ -77,6 +77,8 @@ final class AppDBDownloadDelegate: CertificatePinningDelegate, URLSessionDownloa
     private var bytesReceived: Int64 = 0
     private var mbps = 0.0 // megabytes/second
 
+    private var tmpFile: URL?
+
     init(_ productDb: ProductDB, _ completion: @escaping (AppDbResponse) -> Void) {
         self.productDb = productDb
         self.completion = completion
@@ -99,43 +101,26 @@ final class AppDBDownloadDelegate: CertificatePinningDelegate, URLSessionDownloa
         let elapsed = Date.timeIntervalSinceReferenceDate - self.start
         Log.info("GET \(url) took \(elapsed)s")
 
-        if let response = downloadTask.response as? HTTPURLResponse {
-            // print("got bytes: \(data.count) \(self.bytesReceived), \(self.mbps) MB/s")
-            if response.statusCode == 304 {
-                completion(.noUpdate)
-                session.invalidateAndCancel()
-                return
-            }
+        // move the downloaded data to our own temp file
+        let fileManager = FileManager.default
+        let tmpDir: URL
+        do {
+            tmpDir = try fileManager.url(for: .itemReplacementDirectory, in: .userDomainMask, appropriateFor: location, create: true)
+        } catch {
+            Log.error("error creating tmp dir: \(error)")
+            return
+        }
 
-            // move the downloaded data to our own temp file
-            let fileManager = FileManager.default
-            let tmpDir: URL
-            do {
-                tmpDir = try fileManager.url(for: .itemReplacementDirectory, in: .userDomainMask, appropriateFor: location, create: true)
-            } catch {
-                Log.error("error creating tmp dir: \(error)")
-                completion(.dataError)
-                session.invalidateAndCancel()
-                return
-            }
-
-            let tmpFile = tmpDir.appendingPathComponent(ProcessInfo().globallyUniqueString)
-            do {
-                try fileManager.moveItem(at: location, to: tmpFile)
-                self.tmpFile = tmpFile
-            } catch {
-                Log.error("error moving \(location) to \(tmpFile): \(error)")
-                completion(.dataError)
-                session.invalidateAndCancel()
-                return
-            }
+        let tmpFile = tmpDir.appendingPathComponent(ProcessInfo().globallyUniqueString)
+        do {
+            try fileManager.moveItem(at: location, to: tmpFile)
+            self.tmpFile = tmpFile
+        } catch {
+            Log.error("error moving \(location) to \(tmpFile): \(error)")
         }
     }
 
-    private var tmpFile: URL?
-
     func urlSession(_ session: URLSession, task: URLSessionTask, didCompleteWithError error: Error?) {
-        tmpFile = nil
         productDb?.resumeData = nil
         productDb?.downloadTask = nil
 
@@ -151,16 +136,30 @@ final class AppDBDownloadDelegate: CertificatePinningDelegate, URLSessionDownloa
                 self.completion(.httpError)
             }
         } else if let response = task.response as? HTTPURLResponse, let tmpFile = tmpFile {
-            switch response.allHeaderFields["Content-Type"] as? String {
-            case ProductDB.sqliteType:
-                completion(.full(db: tmpFile))
-            case ProductDB.sqlType:
-                completion(.diff(lines: tmpFile))
-            default:
-                completion(.dataError)
+            if response.statusCode == 304 {
+                completion(.noUpdate)
+            } else {
+                switch response.allHeaderFields["Content-Type"] as? String {
+                case ProductDB.sqliteType:
+                    completion(.full(db: tmpFile))
+                    // completionHandler is responsible for deleting the temp file
+                    self.tmpFile = nil
+                case ProductDB.sqlType:
+                    completion(.diff(lines: tmpFile))
+                    // completionHandler is responsible for deleting the temp file
+                    self.tmpFile = nil
+                default:
+                    completion(.dataError)
+                }
             }
         } else {
+            // this should never happen
             completion(.dataError)
         }
+
+        if let tmpFile = tmpFile {
+            try? FileManager.default.removeItem(at: tmpFile)
+        }
+        tmpFile = nil
     }
 }
