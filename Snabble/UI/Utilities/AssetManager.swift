@@ -409,7 +409,7 @@ final class AssetManager {
         // try? fileManager.removeItem(at: fullUrl)
 
         if !fileManager.fileExists(atPath: fullUrl.path) {
-            let downloadDelegate = DownloadDelegate(projectId, localName, file.defaultsKey(projectId), completion)
+            let downloadDelegate = AssetDownloadDelegate(projectId, localName, file.defaultsKey(projectId), completion)
             let session = URLSession(configuration: .default, delegate: downloadDelegate, delegateQueue: nil)
 
             if let remoteUrl = file.remoteURL(for: self.scale) {
@@ -444,7 +444,7 @@ final class AssetManager {
     }
 }
 
-private final class DownloadDelegate: NSObject, URLSessionDownloadDelegate {
+private final class AssetDownloadDelegate: NSObject, URLSessionDownloadDelegate {
     private let projectId: Identifier<Project>
     private let localName: String
     private let key: String
