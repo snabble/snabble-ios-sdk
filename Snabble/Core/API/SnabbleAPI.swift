@@ -102,7 +102,7 @@ public enum SnabbleAPI {
         self.providerPool.removeAll()
         self.tokenRegistry = TokenRegistry(config.appId, config.secret)
 
-        if let metadataPath = config.seedMetadata, self.metadata.projects[0].id == Project.none.id {
+        if let metadataPath = config.seedMetadata, self.metadata.projects.isEmpty {
             if let metadata = Metadata.readResource(metadataPath) {
                 self.setMetadata(metadata)
             }
@@ -475,14 +475,14 @@ extension SnabbleAPI {
     public static func saveTermsConsent(_ version: String, completion: @escaping (Bool) -> Void) {
         guard
             let appUserId = SnabbleAPI.appUserId,
-            let consents = SnabbleAPI.links.consents?.href
+            let consents = SnabbleAPI.links.consents?.href,
+            let project = SnabbleAPI.projects.first
         else {
             return
         }
 
         let url = consents.replacingOccurrences(of: "{appUserID}", with: appUserId.userId)
 
-        let project = SnabbleAPI.projects[0]
         let termsVersion = TermsVersion(version: version)
         project.request(.post, url, body: termsVersion) { request in
             guard let request = request else {

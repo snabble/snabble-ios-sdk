@@ -21,7 +21,7 @@ public struct Metadata: Decodable {
 
     private init() {
         self.flags = Flags()
-        self.projects = [ Project.none ]
+        self.projects = []
         self.gatewayCertificates = []
         self.links = MetadataLinks()
         self.terms = nil
