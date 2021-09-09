@@ -47,7 +47,7 @@ public struct QRCodeGenerator {
         }
 
         // all items are considered "regular"
-        let items = self.cart.sortedItems()
+        let items = self.cart.items
         let coupons = self.cart.coupons
         var blocks = self.makeBlocks(items, coupons, self.cart.customerCard)
 

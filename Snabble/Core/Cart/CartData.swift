@@ -13,22 +13,19 @@ public struct CartConfig {
     public var directory: String
 
     /// the `Project` that this cart is used in. You must always use the same snabble project for a cart.
-    public var project = Project.none
+    public let projectId: Identifier<Project>
 
     /// the ID of the shop that this cart is used for
-    public var shopId: Identifier<Shop> = ""
+    public let shopId: Identifier<Shop>
 
     /// the maximum age of a shopping cart, in seconds. Set this to 0 to keep carts forever
     public var maxAge: TimeInterval = 14400
 
-    /// optional: a closure that is used to sort cart items before a QR code is generated
-    /// use this to e.g. sort items by price, or move certain item types to the end of the cart
-    public typealias ItemSorter = ([CartItem]) -> [CartItem]
-    public var sorter: ItemSorter?
-
-    public init() {
+    public init(projectId: Identifier<Project>, shopId: Identifier<Shop>) {
         let docDir = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)[0]
         self.directory = docDir.path
+        self.projectId = projectId
+        self.shopId = shopId
     }
 }
 

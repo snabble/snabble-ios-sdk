@@ -30,7 +30,6 @@ public final class ShoppingCart: Codable {
 
     fileprivate var backupItems: [CartItem]?
     fileprivate var backupSession: String?
-    private let sorter: CartConfig.ItemSorter?
 
     public var customerCard: String? {
         didSet {
@@ -68,7 +67,6 @@ public final class ShoppingCart: Codable {
         self.customerCard = try container.decodeIfPresent(.customerCard)
         self.maxAge = try container.decode(.maxAge)
         self.directory = nil
-        self.sorter = nil
         self.lastCheckoutInfoError = nil
         self.coupons = try container.decodeIfPresent([CartCoupon].self, forKey: .coupons) ?? []
         self.requiredInformation = try container.decodeIfPresent([RequiredInformation].self, forKey: .requiredInformation) ?? []
@@ -95,13 +93,12 @@ public final class ShoppingCart: Codable {
     }
 
     public init(_ config: CartConfig) {
-        assert(!config.project.id.rawValue.isEmpty && config.project.id != Project.none.id, "empty projects cannot have a shopping cart")
+        assert(!config.projectId.rawValue.isEmpty, "projectId is required")
         assert(!config.shopId.rawValue.isEmpty, "shopId is required")
-        self.projectId = config.project.id
+        self.projectId = config.projectId
         self.shopId = config.shopId
         self.maxAge = config.maxAge
         self.directory = config.directory
-        self.sorter = config.sorter
 
         self.session = ""
         self.uuid = ""
@@ -215,10 +212,6 @@ public final class ShoppingCart: Codable {
         items.append(contentsOf: coupons)
 
         return items
-    }
-
-    func sortedItems() -> [CartItem] {
-        return self.sorter?(self.items) ?? self.items
     }
 
     /// return the the total price of all products. nil if unknown, i.e. when there are products with unknown prices in the cart
