@@ -62,7 +62,7 @@ final class ShoppingCartTableCell: UITableViewCell {
     private var doneButton: UIBarButtonItem?
 
     // convenience setters for stuff we display in multiple places
-    private var badgeText: String? = nil {
+    private var badgeText: String? {
         didSet {
             self.badgeLabel.text = badgeText
             self.badgeLabel.isHidden = badgeText == nil
@@ -71,7 +71,7 @@ final class ShoppingCartTableCell: UITableViewCell {
         }
     }
 
-    private var badgeColor: UIColor? = nil {
+    private var badgeColor: UIColor? {
         didSet {
             if let color = badgeColor {
                 self.badgeLabel.backgroundColor = color
@@ -80,7 +80,7 @@ final class ShoppingCartTableCell: UITableViewCell {
         }
     }
 
-    private var quantityText: String? = nil {
+    private var quantityText: String? {
         didSet {
             self.quantityLabel.text = quantityText
             self.weightLabel.text = quantityText
@@ -88,7 +88,7 @@ final class ShoppingCartTableCell: UITableViewCell {
         }
     }
 
-    private var unitsText: String? = nil {
+    private var unitsText: String? {
         didSet {
             self.unitsLabel.text = unitsText
             self.weightUnits.text = unitsText
