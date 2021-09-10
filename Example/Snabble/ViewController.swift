@@ -46,9 +46,7 @@ class ViewController: UIViewController {
                 self.spinner.stopAnimating()
                 self.buttonContainer.isHidden = false
 
-                var cartConfig = CartConfig()
-                cartConfig.project = project
-                cartConfig.shopId = project.shops[0].id
+                let cartConfig = CartConfig(projectId: project.id, shopId: project.shops[0].id)
                 self.shoppingCart = ShoppingCart(cartConfig)
             }
         }
@@ -141,7 +139,9 @@ extension ViewController: MessageDelegate {
 
 extension ViewController: PaymentDelegate {
     func paymentFinished(_ success: Bool, _ cart: ShoppingCart, _ process: CheckoutProcess?, _ rawJson: [String: Any]?) {
-        cart.removeAll()
+        if success {
+            cart.removeAll(endSession: true, keepBackup: false)
+        }
         self.navigationController?.popViewController(animated: true)
     }
 
