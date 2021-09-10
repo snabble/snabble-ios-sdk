@@ -247,7 +247,7 @@ public final class BuiltinBarcodeDetector: NSObject, BarcodeDetector {
 extension BuiltinBarcodeDetector {
     private func startIdleTimer() {
         guard
-            UserDefaults.standard.bool(forKey: "io.snabble.sdk.batterySaver"),
+            UserDefaults.standard.bool(forKey: Self.batterySaverKey),
             self.messageDelegate != nil
         else {
             return

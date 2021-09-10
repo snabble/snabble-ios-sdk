@@ -71,4 +71,5 @@ public protocol BarcodeDetector {
 
 extension BarcodeDetector {
     public static var batterySaverTimeout: TimeInterval { 90 }
+    public static var batterySaverKey: String { "io.snabble.sdk.batterySaver" }
 }
