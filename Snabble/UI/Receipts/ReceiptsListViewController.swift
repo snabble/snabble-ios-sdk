@@ -81,7 +81,11 @@ public final class ReceiptsListViewController: UIViewController {
     }
 
     private func loadOrderList() {
-        OrderList.load(SnabbleAPI.projects[0]) { result in
+        guard let project = SnabbleAPI.projects.first else {
+            return
+        }
+
+        OrderList.load(project) { result in
             self.orderListLoaded(result)
 
             if self.tableView.refreshControl == nil {
@@ -146,7 +150,11 @@ public final class ReceiptsListViewController: UIViewController {
     }
 
     @objc private func handleRefresh(_ sender: Any) {
-        OrderList.load(SnabbleAPI.projects[0]) { result in
+        guard let project = SnabbleAPI.projects.first else {
+            return
+        }
+
+        OrderList.load(project) { result in
             self.tableView.refreshControl?.endRefreshing()
             self.orderListLoaded(result)
         }
@@ -179,14 +187,15 @@ extension ReceiptsListViewController: UITableViewDelegate, UITableViewDataSource
         }
 
         let orderEntry = orders[indexPath.row]
-        guard case .done(let order) = orderEntry else {
+        guard
+            case .done(let order) = orderEntry,
+            let project = SnabbleAPI.project(for: order.projectId) ?? SnabbleAPI.projects.first
+        else {
             return
         }
 
         spinner.startAnimating()
         tableView.allowsSelection = false
-
-        let project = SnabbleAPI.project(for: order.projectId) ?? SnabbleAPI.projects[0]
         showOrder(order, for: project) { [weak self] _ in
             self?.spinner.stopAnimating()
             tableView.allowsSelection = true

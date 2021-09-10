@@ -99,12 +99,14 @@ public final class PaydirektEditViewController: UIViewController {
     }
 
     private func startAuthorization() {
-        guard let authUrl = SnabbleAPI.metadata.links.paydirektCustomerAuthorization?.href else {
-            Log.error("no paydirektCustomerAuthorization in metadata")
+        guard
+            let authUrl = SnabbleAPI.metadata.links.paydirektCustomerAuthorization?.href,
+            let project = SnabbleAPI.projects.first
+        else {
+            Log.error("no paydirektCustomerAuthorization in metadata or no project found")
             return
         }
 
-        let project = SnabbleAPI.projects[0]
         project.request(.post, authUrl, body: authData) { request in
             guard let request = request else {
                 return

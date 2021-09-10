@@ -350,7 +350,7 @@
 
 "Snabble.Shoppingcart.buyProducts.one" = "Kúpiť %1$d položku za %2$@";
 
-"Snabble.Shoppingcart.buyProducts.selectPaymentMethod" = "Select payment method";
+"Snabble.Shoppingcart.buyProducts.selectPaymentMethod" = "Vybrať spôsob platby";
 
 "Snabble.Shoppingcart.coupon" = "Poukážka";
 
@@ -452,11 +452,11 @@
 /* Der Titel der übersichtsseite der Einkaufslisten */
 "Snabble.ShoppingLists.title" = "Nákupné zoznamy";
 
-"Snabble.Taxation.consume.inhouse" = "Jesť tu";
+"Snabble.Taxation.consume.inhouse" = "konzumovať tu";
 
-"Snabble.Taxation.consume.takeaway" = "Zobrať so sebou";
+"Snabble.Taxation.consume.takeaway" = "zobrať so sebou";
 
-"Snabble.Taxation.consumeWhere" = "Budeš jesť tu, alebo zoberieš so sebou?";
+"Snabble.Taxation.consumeWhere" = "Chceš svoj nákup";
 
 "Snabble.Taxation.pleaseChoose" = "Vyber niektorú možnosť";
 

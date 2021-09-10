@@ -350,7 +350,7 @@
 
 "Snabble.Shoppingcart.buyProducts.one" = "%1$d termék megvásárlása %2$@-ért";
 
-"Snabble.Shoppingcart.buyProducts.selectPaymentMethod" = "Select payment method";
+"Snabble.Shoppingcart.buyProducts.selectPaymentMethod" = "Fizetési mód kiválasztása";
 
 "Snabble.Shoppingcart.coupon" = "Kupon";
 
@@ -452,11 +452,11 @@
 /* Der Titel der übersichtsseite der Einkaufslisten */
 "Snabble.ShoppingLists.title" = "Bevásárlólisták";
 
-"Snabble.Taxation.consume.inhouse" = "Étkezés helyben";
+"Snabble.Taxation.consume.inhouse" = "itt elfogyasztani";
 
-"Snabble.Taxation.consume.takeaway" = "Elvitelre";
+"Snabble.Taxation.consume.takeaway" = "magaddal vinni";
 
-"Snabble.Taxation.consumeWhere" = "Helyben étkezel, vagy magaddal viszed?";
+"Snabble.Taxation.consumeWhere" = "Szeretnéd a bevásárlásodat";
 
 "Snabble.Taxation.pleaseChoose" = "Kérlek, válassz";
 
