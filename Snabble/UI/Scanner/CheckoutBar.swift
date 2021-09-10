@@ -112,19 +112,21 @@ final class CheckoutBar: NibView {
     }
 
     @objc private func checkoutTapped(_ sender: Any) {
-        if taxationInfoRequired() {
-            self.requestTaxationInfo()
-        } else {
-            startCheckout()
+        let project = SnabbleUI.project
+        self.cartDelegate?.checkoutAllowed(project: project, cart: shoppingCart) { start in
+            if start {
+                if self.taxationInfoRequired() {
+                    self.requestTaxationInfo()
+                } else {
+                    self.startCheckout()
+                }
+            }
         }
     }
 
     private func startCheckout() {
         let project = SnabbleUI.project
-        guard
-            self.cartDelegate?.checkoutAllowed(project) == true,
-            let paymentMethod = self.methodSelector?.selectedPaymentMethod
-        else {
+        guard let paymentMethod = self.methodSelector?.selectedPaymentMethod else {
             // no payment method selected -> show the "add method" view
             if SnabbleUI.implicitNavigation {
                 let selection = PaymentMethodAddViewController(parentVC)
@@ -241,18 +243,21 @@ extension CheckoutBar {
                                       preferredStyle: .alert)
 
         alert.addAction(UIAlertAction(title: L10n.Snabble.Taxation.Consume.inhouse, style: .default) { _ in
-            self.shoppingCart.requiredInformationData.removeAll { $0.id == .taxation }
-            self.shoppingCart.requiredInformationData.append(.taxationInhouse)
+            self.setTaxation(to: .taxationInhouse)
             self.startCheckout()
         })
         alert.addAction(UIAlertAction(title: L10n.Snabble.Taxation.Consume.takeaway, style: .default) { _ in
-            self.shoppingCart.requiredInformationData.removeAll { $0.id == .taxation }
-            self.shoppingCart.requiredInformationData.append(.taxationTakeaway)
+            self.setTaxation(to: .taxationTakeaway)
             self.startCheckout()
         })
         alert.addAction(UIAlertAction(title: L10n.Snabble.cancel, style: .cancel, handler: nil))
 
         self.parentVC?.present(alert, animated: true)
+    }
+
+    private func setTaxation(to taxation: RequiredInformation) {
+        self.shoppingCart.requiredInformationData.removeAll { $0.id == .taxation }
+        self.shoppingCart.requiredInformationData.append(taxation)
     }
 }
 

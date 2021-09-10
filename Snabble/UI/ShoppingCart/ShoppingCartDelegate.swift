@@ -6,9 +6,11 @@
 
 /// a protocol that users of `ShoppingCartViewController` must implement
 public protocol ShoppingCartDelegate: AnalyticsDelegate, MessageDelegate {
-    /// called to determine if checking out is possible, e.g. if required customer card data is present
+    /// called to determine if starting the checkout process is allowed/possible,
+    /// e.g. after asking the user's confirmation
     /// it is this method's responsibility to display corresponding error messages
-    func checkoutAllowed(_ project: Project) -> Bool
+    /// calls the `completion` to indicate whether the checkout process should start
+    func checkoutAllowed(project: Project, cart: ShoppingCart, completion: @escaping (Bool) -> Void)
 
     /// called when the user wants to initiate payment.
     /// Implementations should usually create a `PaymentProcess` instance and invoke its `start` method
@@ -25,8 +27,8 @@ public protocol ShoppingCartDelegate: AnalyticsDelegate, MessageDelegate {
 }
 
 extension ShoppingCartDelegate {
-    public func checkoutAllowed(_ project: Project) -> Bool {
-        return true
+    func checkoutAllowed(project: Project, cart: ShoppingCart, completion: @escaping (Bool) -> Void) {
+        completion(true)
     }
 
     public func handleCheckoutError(_ error: SnabbleError) -> Bool {
