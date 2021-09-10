@@ -1,7 +1,11 @@
 ## snabble iOS SDK Changelog
 
-# v0.17.8 (unreleased)
-- n/a
+# v0.17.8
+- QR codes now include both `finalCode` and `manualCouponFinalCode`, if appropriate
+- Restructured payment method entry and selection
+- Fixes a bug where the scanner's energy saver hint could appear during the payment process
+- Fixes a bug where some requests for assets could never be satisfied
+- Fixes a bug where checkouts could be duplicated under very bad network connectivity conditions
 
 # v0.17.7
 - fixes a rare crash in `AssetManager`
