@@ -25,6 +25,7 @@ public enum RecommendedZoom {
     static let minimumCodeSize: Float = 40 // in mm, this is the recommended size of an EAN-13 barcode
 
     public static func factor(for videoInput: AVCaptureDeviceInput) -> Float {
+        #if compiler(>=5.5) // this only works in Xcode 13
         let deviceMinimumFocusDistance = Float(videoInput.device.minimumFocusDistance)
         guard deviceMinimumFocusDistance != -1 else {
             return 1
@@ -36,6 +37,7 @@ public enum RecommendedZoom {
             let zoomFactor = deviceMinimumFocusDistance / minimumSubjectDistanceForCode
             return zoomFactor
         }
+        #endif
         return 1
     }
 
