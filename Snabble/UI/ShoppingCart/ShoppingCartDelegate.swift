@@ -27,7 +27,7 @@ public protocol ShoppingCartDelegate: AnalyticsDelegate, MessageDelegate {
 }
 
 extension ShoppingCartDelegate {
-    func checkoutAllowed(project: Project, cart: ShoppingCart, completion: @escaping (Bool) -> Void) {
+    public func checkoutAllowed(project: Project, cart: ShoppingCart, completion: @escaping (Bool) -> Void) {
         completion(true)
     }
 
