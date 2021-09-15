@@ -229,22 +229,21 @@ final class PaymentMethodSelector {
         self.userMadeExplicitSelection = true
         let method = actionData.method
         let detail = actionData.methodDetail
-        self.setSelectedPayment(method, detail: detail)
 
         // if the selected method is missing its detail data, immediately open the edit VC for the method
-        guard
+        if
             detail == nil,
-            let parent = self.parentVC,
+            let parent = parentVC,
             method.isAddingAllowed(showAlertOn: parent) == true,
             let editVC = method.editViewController(with: SnabbleUI.project.id, parent)
-        else {
-            return
-        }
-
-        if SnabbleUI.implicitNavigation {
-            self.parentVC?.navigationController?.pushViewController(editVC, animated: true)
+        {
+            if SnabbleUI.implicitNavigation {
+                parent.navigationController?.pushViewController(editVC, animated: true)
+            } else {
+                paymentMethodNavigationDelegate?.addData(for: method, in: SnabbleUI.project.id)
+            }
         } else {
-            self.paymentMethodNavigationDelegate?.addData(for: method, in: SnabbleUI.project.id)
+            setSelectedPayment(method, detail: detail)
         }
     }
 
