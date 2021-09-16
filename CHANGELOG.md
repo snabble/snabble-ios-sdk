@@ -1,5 +1,8 @@
 ## snabble iOS SDK Changelog
 
+# v0.17.9
+- Fixes a payment method selection bug
+
 # v0.17.8
 - QR codes now include both `finalCode` and `manualCouponFinalCode`, if appropriate
 - Restructured payment method entry and selection
