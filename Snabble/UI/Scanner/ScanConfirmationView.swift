@@ -5,7 +5,7 @@
 //
 
 import UIKit
-import Capable
+import WCAG_Colors
 
 protocol ScanConfirmationViewDelegate: AnalyticsDelegate {
     func closeConfirmation(_ item: CartItem?)

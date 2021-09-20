@@ -41,7 +41,7 @@ Pod::Spec.new do |s|
     ui.dependency 'Snabble/Core'
     ui.dependency 'SDCAlertView', '~> 12'
     ui.dependency 'ColorCompatibility'
-    ui.dependency 'Capable/Colors'
+    ui.dependency 'WCAG-Colors'
     ui.dependency 'DeviceKit', '~> 4'
     ui.dependency 'Pulley', '~> 2.9'
 
