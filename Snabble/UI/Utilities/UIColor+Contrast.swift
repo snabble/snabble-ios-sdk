@@ -6,7 +6,7 @@
 
 import Foundation
 import UIKit
-import Capable
+import WCAG_Colors
 
 extension UIColor {
     static var contrasts: [UIColor]?
