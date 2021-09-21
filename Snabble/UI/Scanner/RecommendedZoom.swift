@@ -6,6 +6,7 @@
 
 import Foundation
 import AVFoundation
+import SnabbleApp
 
 /*
 Code adapted from Apple's "AvCamBarcode" example project, found at
@@ -23,8 +24,10 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 @available(iOS 15, *)
 public enum RecommendedZoom {
     static let minimumCodeSize: Float = 40 // in mm, this is the recommended size of an EAN-13 barcode
+    static let isEnabled: Bool = BuildConfig.debug
 
     public static func factor(for videoInput: AVCaptureDeviceInput) -> Float {
+        guard isEnabled else { return 1 }
         let deviceMinimumFocusDistance = Float(videoInput.device.minimumFocusDistance)
         guard deviceMinimumFocusDistance != -1 else {
             return 1
