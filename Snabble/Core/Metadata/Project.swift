@@ -219,6 +219,7 @@ public enum ScanFormat: String, Codable, CaseIterable, UnknownCaseRepresentable 
     // 2d codes
     case qr
     case dataMatrix = "datamatrix"
+    case pdf417
 
     public static let unknownCase = Self.unknown
 }

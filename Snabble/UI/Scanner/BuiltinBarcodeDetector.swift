@@ -17,6 +17,7 @@ extension ScanFormat {
         case .itf14: return .itf14
         case .qr: return .qr
         case .dataMatrix: return .dataMatrix
+        case .pdf417: return .pdf417
         }
     }
 }
@@ -31,6 +32,7 @@ extension AVMetadataObject.ObjectType {
         case .itf14: return .itf14
         case .qr: return .qr
         case .dataMatrix: return .dataMatrix
+        case .pdf417: return .pdf417
         default: return nil
         }
     }
