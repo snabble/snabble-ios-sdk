@@ -24,8 +24,6 @@ public final class DatatransAliasViewController: UIViewController {
     private var transaction: Datatrans.Transaction?
     private let detail: PaymentMethodDetail?
 
-    public weak var navigationDelegate: PaymentMethodNavigationDelegate?
-
     public init(_ method: RawPaymentMethod, _ projectId: Identifier<Project>, _ analyticsDelegate: AnalyticsDelegate?) {
         self.analyticsDelegate = analyticsDelegate
         self.projectId = projectId
@@ -63,12 +61,6 @@ public final class DatatransAliasViewController: UIViewController {
 
         self.view.backgroundColor = .systemBackground
         self.title = method?.displayName
-
-        if !SnabbleUI.implicitNavigation && self.navigationDelegate == nil {
-            let msg = "navigationDelegate may not be nil when using explicit navigation"
-            assert(self.navigationDelegate != nil, msg)
-            Log.error(msg)
-        }
     }
 
     override public func viewWillAppear(_ animated: Bool) {
@@ -219,11 +211,7 @@ public final class DatatransAliasViewController: UIViewController {
     }
 
     private func goBack() {
-        if SnabbleUI.implicitNavigation {
-            self.navigationController?.popViewController(animated: true)
-        } else {
-            self.navigationDelegate?.goBack()
-        }
+        navigationController?.popViewController(animated: true)
     }
 }
 

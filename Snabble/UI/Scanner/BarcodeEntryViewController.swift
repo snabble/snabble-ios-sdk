@@ -77,15 +77,11 @@ public final class BarcodeEntryViewController: UIViewController {
             self.completion(code, nil, template)
         }
 
-        if SnabbleUI.implicitNavigation {
-            // popViewController has no completion handler, so we roll our own
-            CATransaction.begin()
-            CATransaction.setCompletionBlock(block)
-            _ = self.navigationController?.popViewController(animated: false)
-            CATransaction.commit()
-        } else {
-            block()
-        }
+        // popViewController has no completion handler, so we roll our own
+        CATransaction.begin()
+        CATransaction.setCompletionBlock(block)
+        _ = self.navigationController?.popViewController(animated: false)
+        CATransaction.commit()
     }
 }
 

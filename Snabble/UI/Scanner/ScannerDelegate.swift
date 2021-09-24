@@ -35,7 +35,4 @@ public protocol ScannerDelegate: AnalyticsDelegate {
     /// check if we need to display a special message when scanning this product, like
     /// "don't forget to grab the other X packages"
     func scanMessage(for project: Project, _ shop: Shop, _ product: Product) -> ScanMessage?
-
-    /// if not using `implicitNavigation`, go to the barcode entry VC
-    func gotoBarcodeEntry()
 }

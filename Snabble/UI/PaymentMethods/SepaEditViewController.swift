@@ -26,8 +26,6 @@ public final class SepaEditViewController: UIViewController {
     private var candidate: OriginCandidate?
     private weak var analyticsDelegate: AnalyticsDelegate?
 
-    public weak var navigationDelegate: PaymentMethodNavigationDelegate?
-
     public init(_ detail: PaymentMethodDetail?, _ analyticsDelegate: AnalyticsDelegate?) {
         self.detail = detail
         self.analyticsDelegate = analyticsDelegate
@@ -82,12 +80,6 @@ public final class SepaEditViewController: UIViewController {
         let toolbar = self.ibanNumberField.addDoneButton()
         let abcButton = UIBarButtonItem(title: "ABC/123", style: .plain, target: self, action: #selector(self.toggleKeyboard(_:)))
         toolbar.items = [ abcButton ] + toolbar.items!
-
-        if !SnabbleUI.implicitNavigation && self.navigationDelegate == nil {
-            let msg = "navigationDelegate may not be nil when using explicit navigation"
-            assert(self.navigationDelegate != nil, msg)
-            Log.error(msg)
-        }
     }
 
     override public func viewWillAppear(_ animated: Bool) {
@@ -218,11 +210,7 @@ public final class SepaEditViewController: UIViewController {
     }
 
     private func goBack() {
-        if SnabbleUI.implicitNavigation {
-            self.navigationController?.popViewController(animated: true)
-        } else {
-            self.navigationDelegate?.goBack()
-        }
+        navigationController?.popViewController(animated: true)
     }
 
     @objc private func deleteButtonTapped(_ sender: Any) {

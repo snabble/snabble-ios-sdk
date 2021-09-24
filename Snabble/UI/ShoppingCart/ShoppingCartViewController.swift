@@ -20,12 +20,6 @@ public final class ShoppingCartViewController: UIViewController {
     private weak var restoreTimer: Timer?
     private var trashButton: UIBarButtonItem!
 
-    public weak var paymentMethodNavigationDelegate: PaymentMethodNavigationDelegate? {
-        didSet {
-            self.checkoutBar?.paymentMethodNavigationDelegate = self.paymentMethodNavigationDelegate
-        }
-    }
-
     public init(_ shoppingCart: ShoppingCart, cartDelegate: ShoppingCartDelegate) {
         self.shoppingCart = shoppingCart
         self.cartDelegate = cartDelegate

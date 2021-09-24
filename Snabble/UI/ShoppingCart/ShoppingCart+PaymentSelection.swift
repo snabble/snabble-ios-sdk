@@ -36,8 +36,6 @@ final class PaymentMethodSelector {
 
     private(set) var methodTap: UITapGestureRecognizer!
 
-    weak var paymentMethodNavigationDelegate: PaymentMethodNavigationDelegate?
-
     private(set) var selectedPaymentMethod: RawPaymentMethod?
     private(set) var selectedPaymentDetail: PaymentMethodDetail?
 
@@ -238,11 +236,7 @@ final class PaymentMethodSelector {
             method.isAddingAllowed(showAlertOn: parent) == true,
             let editVC = method.editViewController(with: SnabbleUI.project.id, parent)
         {
-            if SnabbleUI.implicitNavigation {
-                parent.navigationController?.pushViewController(editVC, animated: true)
-            } else {
-                paymentMethodNavigationDelegate?.addData(for: method, in: SnabbleUI.project.id)
-            }
+            parent.navigationController?.pushViewController(editVC, animated: true)
         } else if method == .applePay && !ApplePay.canMakePayments(with: SnabbleUI.project.id) {
             ApplePay.openPaymentSetup()
         } else {

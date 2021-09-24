@@ -27,11 +27,6 @@ final class CheckoutBar: NibView {
     private weak var parentVC: (UIViewController & AnalyticsDelegate)?
     private let shoppingCart: ShoppingCart
     private weak var cartDelegate: ShoppingCartDelegate?
-    weak var paymentMethodNavigationDelegate: PaymentMethodNavigationDelegate? {
-        didSet {
-            self.methodSelector?.paymentMethodNavigationDelegate = self.paymentMethodNavigationDelegate
-        }
-    }
 
     init(_ parentVC: UIViewController & AnalyticsDelegate, _ shoppingCart: ShoppingCart, cartDelegate: ShoppingCartDelegate?) {
         self.parentVC = parentVC
@@ -65,7 +60,6 @@ final class CheckoutBar: NibView {
         self.totalPriceLabel.font = UIFont.monospacedDigitSystemFont(ofSize: 22, weight: .bold)
 
         self.methodSelector = PaymentMethodSelector(parentVC, self.methodSelectionStackView!, self.methodIcon, self.shoppingCart)
-        self.methodSelector?.paymentMethodNavigationDelegate = self.paymentMethodNavigationDelegate
         self.methodSelector?.delegate = self
     }
 
@@ -147,31 +141,18 @@ final class CheckoutBar: NibView {
     private func startCheckout() {
         let project = SnabbleUI.project
         guard let paymentMethod = self.methodSelector?.selectedPaymentMethod else {
-            // no payment method selected -> show the "add method" view
-            if SnabbleUI.implicitNavigation {
-                let selection = PaymentMethodAddViewController(parentVC)
-                parentVC?.navigationController?.pushViewController(selection, animated: true)
-            } else {
-                let msg = "navigationDelegate may not be nil when using explicit navigation"
-                assert(self.paymentMethodNavigationDelegate != nil, msg)
-                self.paymentMethodNavigationDelegate?.addMethod()
-            }
+            let selection = PaymentMethodAddViewController(parentVC)
+            parentVC?.navigationController?.pushViewController(selection, animated: true)
 
             return
         }
 
         // no detail data, and there is an editing VC? Show that instead of continuing
         if self.methodSelector?.selectedPaymentDetail == nil,
-           let parentVC = self.parentVC,
-           paymentMethod.isAddingAllowed(showAlertOn: parentVC),
-           let editVC = paymentMethod.editViewController(with: project.id, parentVC) {
-            if SnabbleUI.implicitNavigation {
-                parentVC.navigationController?.pushViewController(editVC, animated: true)
-            } else {
-                let msg = "navigationDelegate may not be nil when using explicit navigation"
-                assert(self.paymentMethodNavigationDelegate != nil, msg)
-                self.paymentMethodNavigationDelegate?.addData(for: paymentMethod, in: project.id)
-            }
+            let parentVC = self.parentVC,
+            paymentMethod.isAddingAllowed(showAlertOn: parentVC),
+            let editVC = paymentMethod.editViewController(with: project.id, parentVC) {
+            parentVC.navigationController?.pushViewController(editVC, animated: true)
             return
         }
 
