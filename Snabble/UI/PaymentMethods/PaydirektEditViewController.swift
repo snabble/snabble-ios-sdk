@@ -215,10 +215,3 @@ extension PaydirektEditViewController: WKNavigationDelegate {
         navigationController?.popViewController(animated: true)
     }
 }
-
-// stuff that's only used by the RN wrapper
-extension PaydirektEditViewController: ReactNativeWrapper {
-    public func setDetail(_ detail: PaymentMethodDetail) {
-        self.detail = detail
-    }
-}

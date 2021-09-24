@@ -237,16 +237,3 @@ extension PaymentMethodAddViewController {
         self.present(sheet, animated: true)
     }
 }
-
-// stuff that's only used by the RN wrapper
-extension PaymentMethodAddViewController: ReactNativeWrapper {
-    public func setBrandId(_ brandId: Identifier<Brand>) {
-        self.brandId = brandId
-    }
-
-    public func setIsFocused(_ focused: Bool) {
-        if focused {
-            self.viewWillAppear(true)
-        }
-    }
-}

@@ -804,23 +804,3 @@ extension ScanningViewController {
         }
     }
 }
-
-// stuff that's only used by the RN wrapper
-extension ScanningViewController: ReactNativeWrapper {
-    public func setIsScanning(_ on: Bool) {
-        if on {
-            self.barcodeDetector.requestCameraPermission()
-            self.barcodeDetector.resumeScanning()
-        } else {
-            self.barcodeDetector.pauseScanning()
-        }
-    }
-
-    public func setLookupcode(_ code: String) {
-        self.handleScannedCode(code, nil)
-    }
-
-    public func setTorchOn(_ on: Bool) {
-        self.barcodeDetector.setTorch(on)
-    }
-}

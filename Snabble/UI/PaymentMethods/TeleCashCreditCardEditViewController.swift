@@ -316,28 +316,6 @@ extension TeleCashCreditCardEditViewController {
     }
 }
 
-// stuff that's only used by the RN wrapper
-extension TeleCashCreditCardEditViewController: ReactNativeWrapper {
-    public func setBrand(_ brand: CreditCardBrand) {
-        self.brand = brand
-    }
-
-    public func setProjectId(_ projectId: String) {
-        self.projectId = Identifier<Project>(rawValue: projectId)
-    }
-
-    public func setDetail(_ detail: PaymentMethodDetail) {
-        guard case .teleCashCreditCard(let data) = detail.methodData else {
-            return
-        }
-
-        self.detail = detail
-        self.brand = data.brand
-        self.ccNumber = data.displayName
-        self.expDate = data.expirationDate
-    }
-}
-
 extension TeleCashCreditCardEditViewController {
     fileprivate static let pageTemplate = """
         <!DOCTYPE html>

@@ -417,12 +417,3 @@ extension SepaEditViewController: UITextFieldDelegate {
         return formatted
     }
 }
-
-// stuff that's only used by the RN wrapper
-extension SepaEditViewController: ReactNativeWrapper {
-    public func setDetail(_ detail: PaymentMethodDetail) {
-        self.detail = detail
-
-        self.candidate = nil
-    }
-}
