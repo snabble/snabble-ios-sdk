@@ -6,6 +6,7 @@
 
 import UIKit
 import Pulley
+import AutoLayout_Helper
 
 final class ScannerDrawerViewController: UIViewController {
     private var shoppingList: ShoppingList?
@@ -88,13 +89,11 @@ final class ScannerDrawerViewController: UIViewController {
         segmentedControl.addTarget(self, action: #selector(tabChanged(_:)), for: .valueChanged)
 
         let checkoutBar = CheckoutBar(self, shoppingCart, cartDelegate: cartDelegate)
+        checkoutBar.translatesAutoresizingMaskIntoConstraints = false
         self.checkoutWrapper.addSubview(checkoutBar)
-        NSLayoutConstraint.activate([
-            checkoutWrapper.topAnchor.constraint(equalTo: checkoutBar.topAnchor),
-            checkoutWrapper.rightAnchor.constraint(equalTo: checkoutBar.rightAnchor),
-            checkoutWrapper.bottomAnchor.constraint(equalTo: checkoutBar.bottomAnchor),
-            checkoutWrapper.leftAnchor.constraint(equalTo: checkoutBar.leftAnchor)
-        ])
+        NSLayoutConstraint.activate(
+            checkoutBar.constraintsForAnchoringTo(boundsOf: checkoutWrapper)
+        )
         self.checkoutBar = checkoutBar
 
         self.separatorHeight.constant = 1 / UIScreen.main.scale
