@@ -295,7 +295,6 @@ public struct CheckoutProcess: Decodable {
     public let supervisorApproval: Bool?
     public let paymentApproval: Bool?
     public let aborted: Bool
-    public let checkoutInfo: CheckoutInfo
     public let paymentMethod: String
     public let modified: Bool
     public let paymentInformation: PaymentInformation?
@@ -311,6 +310,7 @@ public struct CheckoutProcess: Decodable {
 
     public struct Pricing: Decodable {
         public let lineItems: [CheckoutInfo.LineItem]
+        public let price: CheckoutInfo.Price
     }
 
     public struct ProcessLinks: Decodable {
@@ -346,7 +346,6 @@ public struct CheckoutProcess: Decodable {
         self.supervisorApproval = try container.decodeIfPresent(Bool.self, forKey: .supervisorApproval)
         self.paymentApproval = try container.decodeIfPresent(Bool.self, forKey: .paymentApproval)
         self.aborted = try container.decode(Bool.self, forKey: .aborted)
-        self.checkoutInfo = try container.decode(CheckoutInfo.self, forKey: .checkoutInfo)
         self.paymentMethod = try container.decode(String.self, forKey: .paymentMethod)
         self.modified = try container.decode(Bool.self, forKey: .modified)
         self.paymentInformation = try container.decodeIfPresent(PaymentInformation.self, forKey: .paymentInformation)

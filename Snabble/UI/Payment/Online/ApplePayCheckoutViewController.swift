@@ -74,7 +74,7 @@ public final class ApplePayCheckoutViewController: BaseCheckoutViewController {
         paymentRequest.supportedNetworks = ApplePay.paymentNetworks(with: project.id)
         paymentRequest.merchantCapabilities = .capability3DS
 
-        let totalAmount = decimalPrice(process.checkoutInfo.price.price, decimalDigits)
+        let totalAmount = decimalPrice(process.pricing.price.price, decimalDigits)
         let sumItem = PKPaymentSummaryItem(label: project.name, amount: totalAmount)
         paymentRequest.paymentSummaryItems = [sumItem]
 
