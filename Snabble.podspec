@@ -44,6 +44,7 @@ Pod::Spec.new do |s|
     ui.dependency 'WCAG-Colors'
     ui.dependency 'DeviceKit', '~> 4'
     ui.dependency 'Pulley', '~> 2.9'
+    ui.dependency 'AutoLayout-Helper'
 
     ui.resource_bundles = {
       "Snabble" => [
