@@ -93,6 +93,8 @@ extension RawPaymentMethod {
 
         if descriptor.acceptedOriginTypes?.contains(.ipgHostedDataID) == true {
             return TeleCashCreditCardEditViewController(brand: CreditCardBrand.forMethod(self), projectId, analyticsDelegate)
+        } else if descriptor.acceptedOriginTypes?.contains(.payonePseudoCardPAN) == true {
+            return PayoneCreditCardEditViewController(brand: CreditCardBrand.forMethod(self), projectId, analyticsDelegate)
         } else if descriptor.acceptedOriginTypes?.contains(.datatransCreditCardAlias) == true {
             return SnabbleAPI.methodRegistry.createEntry(method: self, projectId, analyticsDelegate)
         }
