@@ -325,10 +325,10 @@ final class PaymentMethodSelector {
                     color = .secondaryLabel
                 }
 
-                let title = Self.title(
-                    title: userMethod.displayName,
-                    subtitle: detailText,
-                    color: color
+                let title = Self.attributedString(
+                    forText: userMethod.displayName,
+                    withSubtitle: detailText,
+                    inColor: color
                 )
                 return PaymentMethodAction(
                     title: title,
@@ -343,10 +343,10 @@ final class PaymentMethodSelector {
         case .creditCardAmericanExpress, .creditCardVisa, .creditCardMastercard, .deDirectDebit, .paydirektOneKlick, .twint, .postFinanceCard:
             if !isProjectMethod {
                 if isUserMethod {
-                    let title = Self.title(
-                        title: method.displayName,
-                        subtitle: L10n.Snabble.Shoppingcart.notForVendor,
-                        color: .secondaryLabel
+                    let title = Self.attributedString(
+                        forText: method.displayName,
+                        withSubtitle: L10n.Snabble.Shoppingcart.notForVendor,
+                        inColor: .secondaryLabel
                     )
                     let action = PaymentMethodAction(
                         title: title,
@@ -362,10 +362,10 @@ final class PaymentMethodSelector {
             }
             if isCartMethod && isUserMethod {
                 let actions = userMethods.map { userMethod -> PaymentMethodAction in
-                    let title = Self.title(
-                        title: method.displayName,
-                        subtitle: userMethod.displayName,
-                        color: .label
+                    let title = Self.attributedString(
+                        forText: method.displayName,
+                        withSubtitle: userMethod.displayName,
+                        inColor: .label
                     )
                     return PaymentMethodAction(
                         title: title,
@@ -377,10 +377,10 @@ final class PaymentMethodSelector {
                 }
                 return actions
             } else if !isCartMethod && isUserMethod {
-                let title = Self.title(
-                    title: method.displayName,
-                    subtitle: L10n.Snabble.Shoppingcart.notForThisPurchase,
-                    color: .secondaryLabel
+                let title = Self.attributedString(
+                    forText: method.displayName,
+                    withSubtitle: L10n.Snabble.Shoppingcart.notForThisPurchase,
+                    inColor: .secondaryLabel
                 )
                 let action = PaymentMethodAction(
                     title: title,
@@ -392,7 +392,10 @@ final class PaymentMethodSelector {
                 return [action]
             } else {
                 let subtitle = L10n.Snabble.Shoppingcart.noPaymentData
-                let title = Self.title(title: method.displayName, subtitle: subtitle, color: .label)
+                let title = Self.attributedString(
+                    forText: method.displayName,
+                    withSubtitle: subtitle,
+                    inColor: .label)
                 let action = PaymentMethodAction(
                     title: title,
                     paymentMethod: method,
@@ -410,7 +413,11 @@ final class PaymentMethodSelector {
 
             let canMakePayments = ApplePay.canMakePayments(with: SnabbleUI.project.id)
             let subtitle = canMakePayments ? nil : L10n.Snabble.Shoppingcart.notForThisPurchase
-            let title = Self.title(title: method.displayName, subtitle: subtitle, color: .label)
+            let title = Self.attributedString(
+                forText: method.displayName,
+                withSubtitle: subtitle,
+                inColor: .label
+            )
             let action = PaymentMethodAction(
                 title: title,
                 paymentMethod: method,
@@ -426,7 +433,7 @@ final class PaymentMethodSelector {
             }
         }
 
-        let title = Self.title(title: method.displayName, subtitle: nil, color: .label)
+        let title = Self.attributedString(forText: method.displayName, inColor: .label)
         let action = PaymentMethodAction(
             title: title,
             paymentMethod: method,
@@ -438,21 +445,21 @@ final class PaymentMethodSelector {
         return [action]
     }
 
-    private static func title(title titleText: String, subtitle subtitleText: String?, color textColor: UIColor) -> NSAttributedString {
+    private static func attributedString(forText text: String, withSubtitle subtitle: String? = nil, inColor textColor: UIColor) -> NSAttributedString {
         let titleAttributes: [NSAttributedString.Key: Any] = [
             .font: UIFont.systemFont(ofSize: 17),
             .foregroundColor: textColor
         ]
 
-        let newline = subtitleText != nil ? "\n" : ""
-        let title = NSMutableAttributedString(string: "\(titleText)\(newline)", attributes: titleAttributes)
+        let newline = subtitle != nil ? "\n" : ""
+        let title = NSMutableAttributedString(string: "\(text)\(newline)", attributes: titleAttributes)
 
-        if let subtitleText = subtitleText {
+        if let subtitle = subtitle {
             let subtitleAttributes: [NSAttributedString.Key: Any] = [
                 .font: UIFont.systemFont(ofSize: 13),
                 .foregroundColor: UIColor.secondaryLabel
             ]
-            let subTitle = NSAttributedString(string: subtitleText, attributes: subtitleAttributes)
+            let subTitle = NSAttributedString(string: subtitle, attributes: subtitleAttributes)
             title.append(subTitle)
         }
 
