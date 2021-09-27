@@ -359,8 +359,7 @@ final class PaymentMethodSelector {
                 } else {
                     return []
                 }
-            }
-            if isCartMethod && isUserMethod {
+            } else if isCartMethod && isUserMethod {
                 let actions = userMethods.map { userMethod -> PaymentMethodAction in
                     let title = Self.attributedString(
                         forText: method.displayName,
@@ -376,20 +375,6 @@ final class PaymentMethodSelector {
                     )
                 }
                 return actions
-            } else if !isCartMethod && isUserMethod {
-                let title = Self.attributedString(
-                    forText: method.displayName,
-                    withSubtitle: L10n.Snabble.Shoppingcart.notForThisPurchase,
-                    inColor: .secondaryLabel
-                )
-                let action = PaymentMethodAction(
-                    title: title,
-                    paymentMethod: method,
-                    paymentMethodDetail: nil,
-                    selectable: true,
-                    active: false
-                )
-                return [action]
             } else {
                 let subtitle = L10n.Snabble.Shoppingcart.noPaymentData
                 let title = Self.attributedString(
