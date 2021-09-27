@@ -31,9 +31,7 @@ class ViewController: UIViewController {
 
         SnabbleAPI.setup(apiConfig) {
             // initial config parsed/loaded
-            let project = SnabbleAPI.projects[0]
-
-            if project.id == "none" {
+            guard let project = SnabbleAPI.projects.first else {
                 fatalError("project initialization failed - make sure APPID and APPSECRET are valid")
             }
 
@@ -53,12 +51,10 @@ class ViewController: UIViewController {
     }
 
     @IBAction private func scannerButtonTapped(_ sender: Any) {
-        guard let shoppingCart = self.shoppingCart else {
+        guard let shoppingCart = self.shoppingCart, let shop = SnabbleAPI.projects.first?.shops.first else {
             return
         }
-
-        let project = SnabbleAPI.projects[0]
-        let shop = project.shops[0]
+        
         let detector = BuiltinBarcodeDetector(detectorArea: .rectangle, messageDelegate: nil)
         let scanner = ScannerViewController(shoppingCart, shop, detector, scannerDelegate: self, cartDelegate: nil, shoppingListDelegate: nil)
         scanner.navigationItem.leftBarButtonItem = nil
