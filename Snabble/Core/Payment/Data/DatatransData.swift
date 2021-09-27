@@ -128,7 +128,7 @@ struct DatatransData: Codable, EncryptedPaymentData, Equatable {
 
 // Usable for Credit Cards
 // - stores info from a Datatrans.CardToken
-struct DatatransCreditCardData: Codable, EncryptedPaymentData, Equatable {
+struct DatatransCreditCardData: Codable, EncryptedPaymentData, Equatable, BrandedCreditCard {
     // encrypted JSON string
     let encryptedPaymentData: String
     // serial # of the certificate used to encrypt

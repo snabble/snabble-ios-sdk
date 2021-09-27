@@ -58,3 +58,8 @@ public enum CreditCardBrand: String, Codable {
         }
     }
 }
+
+// so that we can access cc brands regardless of payment gateway
+protocol BrandedCreditCard {
+    var brand: CreditCardBrand { get }
+}
