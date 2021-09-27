@@ -386,7 +386,7 @@ final class PaymentMethodSelector {
                     title: title,
                     paymentMethod: method,
                     paymentMethodDetail: nil,
-                    selectable: false,
+                    selectable: true,
                     active: false
                 )
                 return [action]
