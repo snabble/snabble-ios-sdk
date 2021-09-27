@@ -150,12 +150,14 @@ public final class PaymentMethodAddViewController: UITableViewController {
         let details = PaymentMethodDetails.read()
         let count = details.filter { detail in
             switch detail.methodData {
-            case .creditcard(let creditcardData):
-                return creditcardData.projectId == projectId
+            case .teleCashCreditCard(let telecashData):
+                return telecashData.projectId == projectId
             case .datatransAlias(let datatransData):
                 return datatransData.projectId == projectId
             case .datatransCardAlias(let datatransCardData):
                 return datatransCardData.projectId == projectId
+            case .payoneCreditCard(let payoneData):
+                return payoneData.projectId == projectId
             case .sepa, .tegutEmployeeCard, .paydirektAuthorization:
                 return SnabbleAPI.project(for: projectId)?.paymentMethods.contains(detail.rawMethod) ?? false
             }

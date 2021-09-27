@@ -50,7 +50,7 @@ public final class TeleCashCreditCardEditViewController: UIViewController {
     }
 
     init(_ detail: PaymentMethodDetail, _ analyticsDelegate: AnalyticsDelegate?) {
-        if case .creditcard(let data) = detail.methodData {
+        if case .teleCashCreditCard(let data) = detail.methodData {
             self.brand = data.brand
             self.ccNumber = data.displayName
             self.expDate = data.expirationDate
@@ -343,7 +343,7 @@ extension TeleCashCreditCardEditViewController: ReactNativeWrapper {
     }
 
     public func setDetail(_ detail: PaymentMethodDetail) {
-        guard case .creditcard(let data) = detail.methodData else {
+        guard case .teleCashCreditCard(let data) = detail.methodData else {
             return
         }
 
