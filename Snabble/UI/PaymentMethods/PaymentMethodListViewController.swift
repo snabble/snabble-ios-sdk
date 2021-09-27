@@ -173,7 +173,7 @@ extension PaymentMethodListViewController {
             case .sepa:
                 editVC = SepaEditViewController(detail, self.analyticsDelegate)
             case .creditcard:
-                editVC = CreditCardEditViewController(detail, self.analyticsDelegate)
+                editVC = TeleCashCreditCardEditViewController(detail, self.analyticsDelegate)
             case .paydirektAuthorization:
                 editVC = PaydirektEditViewController(detail, self.analyticsDelegate)
             case .tegutEmployeeCard:

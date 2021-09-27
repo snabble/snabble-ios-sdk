@@ -1,12 +1,12 @@
 //
-//  CreditCardData.swift
+//  TeleCashCreditCardData.swift
 //
 //  Copyright © 2021 snabble. All rights reserved.
 //
 
 import Foundation
 
-struct CreditCardData: Codable, EncryptedPaymentData, Equatable {
+struct TeleCashCreditCardData: Codable, EncryptedPaymentData, Equatable {
     let encryptedPaymentData: String
     let serial: String
     let displayName: String
@@ -19,7 +19,7 @@ struct CreditCardData: Codable, EncryptedPaymentData, Equatable {
     let version: Int
     let projectId: Identifier<Project>?
 
-    struct CreditCardRequestOrigin: PaymentRequestOrigin {
+    struct TeleCashRequestOrigin: PaymentRequestOrigin {
         // bump this when we add properties to the struct that might require invaliding previous versions
         static let version = 2
 
@@ -42,7 +42,7 @@ struct CreditCardData: Codable, EncryptedPaymentData, Equatable {
             return nil
         }
 
-        self.version = CreditCardRequestOrigin.version
+        self.version = TeleCashRequestOrigin.version
         self.displayName = response.cardNumber
         self.cardHolder = response.cardHolder
         self.brand = brand
@@ -50,11 +50,11 @@ struct CreditCardData: Codable, EncryptedPaymentData, Equatable {
         self.expirationMonth = response.expMonth
         self.projectId = projectId
 
-        let requestOrigin = CreditCardRequestOrigin(hostedDataID: response.hostedDataId,
-                                                    hostedDataStoreID: storeId,
-                                                    cardType: brand.cardType,
-                                                    projectID: projectId.rawValue,
-                                                    schemeTransactionID: response.schemeTransactionId)
+        let requestOrigin = TeleCashRequestOrigin(hostedDataID: response.hostedDataId,
+                                                  hostedDataStoreID: storeId,
+                                                  cardType: brand.cardType,
+                                                  projectID: projectId.rawValue,
+                                                  schemeTransactionID: response.schemeTransactionId)
 
         guard
             let encrypter = PaymentDataEncrypter(certificate),
@@ -78,7 +78,7 @@ struct CreditCardData: Codable, EncryptedPaymentData, Equatable {
         self.expirationMonth = try container.decode(String.self, forKey: .expirationMonth)
         self.expirationYear = try container.decode(String.self, forKey: .expirationYear)
         let version = try container.decodeIfPresent(Int.self, forKey: .version)
-        self.version = version ?? CreditCardRequestOrigin.version
+        self.version = version ?? TeleCashRequestOrigin.version
         let projectId = try container.decodeIfPresent(Identifier<Project>.self, forKey: .projectId)
         self.projectId = projectId ?? ""
     }

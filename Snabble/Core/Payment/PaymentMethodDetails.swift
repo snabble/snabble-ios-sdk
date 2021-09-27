@@ -46,7 +46,7 @@ enum PaymentMethodUserData: Codable, Equatable {
         let container = try decoder.container(keyedBy: CodingKeys.self)
         if let sepa = try container.decodeIfPresent(SepaData.self, forKey: .sepa) {
             self = .sepa(sepa)
-        } else if let creditcard = try container.decodeIfPresent(CreditCardData.self, forKey: .creditcard) {
+        } else if let creditcard = try container.decodeIfPresent(TeleCashCreditCardData.self, forKey: .creditcard) {
             self = .creditcard(creditcard)
         } else if let tegutData = try container.decodeIfPresent(TegutEmployeeData.self, forKey: .tegutEmployeeCard) {
             self = .tegutEmployeeCard(tegutData)
@@ -135,7 +135,7 @@ public struct PaymentMethodDetail: Equatable {
         self.methodData = PaymentMethodUserData.sepa(sepaData)
     }
 
-    init(_ creditcardData: CreditCardData) {
+    init(_ creditcardData: TeleCashCreditCardData) {
         self.id = UUID()
         self.methodData = PaymentMethodUserData.creditcard(creditcardData)
     }
@@ -374,7 +374,7 @@ public enum PaymentMethodDetails {
         details.removeAll { detail -> Bool in
             switch detail.methodData {
             case .creditcard(let creditcardData):
-                return creditcardData.version < CreditCardData.CreditCardRequestOrigin.version
+                return creditcardData.version < TeleCashCreditCardData.TeleCashRequestOrigin.version
             default:
                 return false
             }
