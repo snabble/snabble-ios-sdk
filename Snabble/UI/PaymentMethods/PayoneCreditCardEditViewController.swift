@@ -17,6 +17,9 @@ import WebKit
 //
 // see https://docs.payone.com/display/public/PLATFORM/Testdata
 
+// more docs: https://docs.payone.com/display/public/PLATFORM/Hosted-iFrame+Mode+-+Short+description
+//
+
 public final class PayoneCreditCardEditViewController: UIViewController {
     @IBOutlet private var containerView: UIView!
     @IBOutlet private var spinner: UIActivityIndicatorView!
@@ -330,6 +333,7 @@ extension PayoneCreditCardEditViewController: ReactNativeWrapper {
 }
 
 extension PayoneCreditCardEditViewController {
+    // based on https://docs.payone.com/display/public/PLATFORM/Cardtype+set+by+shop-system
     fileprivate static let pageTemplate = """
         <head lang="en">
             <meta charset="utf-8">
