@@ -1,5 +1,7 @@
 "release.safety.catch" = "Bitte entferne (wenn vorhanden) die Flaschenhalssicherung an der dafür vorgesehenen Station am Ausgang.";
 
+"Shopping.title" = "Einkaufen";
+
 "Snabble.addDiscount" = "Rabatt eingeben";
 
 "Snabble.ageVerification.explanation" = "Für den Kauf bestimmter Artikel, wie z.B. Alkohol, ist ein Altersnachweis notwendig. Gib dazu die 7-stellige Zahl von der Rückseite deines Personalausweises ein.";
