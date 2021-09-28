@@ -173,24 +173,18 @@ public final class PayoneCreditCardEditViewController: UIViewController {
             .replacingOccurrences(of: "{{merchantID}}", with: payoneTokenization.merchantID)
             .replacingOccurrences(of: "{{portalID}}", with: payoneTokenization.portalID)
             .replacingOccurrences(of: "{{accountID}}", with: payoneTokenization.accountID)
-            .replacingOccurrences(of: "{{mode}}", with: payoneTokenization.mode)
+            .replacingOccurrences(of: "{{mode}}", with: payoneTokenization.mode ?? "test")
+            .replacingOccurrences(of: "{{header}}", with: threeDSecureHint(for: projectId))
+        #warning("CHECK - is this the correct default?")
 
         self.webView?.loadHTMLString(page, baseURL: nil)
     }
 
-    private func threeDSecureHint(for projectId: Identifier<Project>?, _ payoneTokenization: PayoneTokenization) -> String {
+    private func threeDSecureHint(for projectId: Identifier<Project>?) -> String {
         var name = "snabble"
-        let fmt = NumberFormatter()
-        fmt.minimumIntegerDigits = 1
-        fmt.numberStyle = .currency
 
         if let projectId = self.projectId, let project = SnabbleAPI.project(for: projectId) {
             name = project.company?.name ?? project.name
-            fmt.minimumFractionDigits = project.decimalDigits
-            fmt.maximumFractionDigits = project.decimalDigits
-            fmt.currencyCode = project.currency
-            fmt.currencySymbol = project.currencySymbol
-            fmt.locale = Locale(identifier: project.locale)
         }
 
         #warning("FIXME - is this text still correct?")
@@ -242,8 +236,6 @@ extension PayoneCreditCardEditViewController: WKScriptMessageHandler {
     public func userContentController(_ userContentController: WKUserContentController, didReceive message: WKScriptMessage) {
         guard
             message.name == Self.handlerName,
-            let body = message.body as? [String: Any],
-            let eventData = body["elementArr"] as? [[String: String]],
             let projectId = self.projectId,
             let project = SnabbleAPI.project(for: projectId),
             let cert = SnabbleAPI.certificates.first
@@ -251,32 +243,33 @@ extension PayoneCreditCardEditViewController: WKScriptMessageHandler {
             return self.showError()
         }
 
-        do {
-            let response = try PayoneResponse(response: eventData)
-            if let ccData = PayoneCreditCardData(gatewayCert: cert.data, response: response, projectId: projectId) {
-                let detail = PaymentMethodDetail(ccData)
-                PaymentMethodDetails.save(detail)
-                self.analyticsDelegate?.track(.paymentMethodAdded(detail.rawMethod.displayName))
-                goBack()
-            } else {
-                project.logError("can't create CC data from pay1 response: \(response)")
-                showError()
-            }
-        } catch ConnectGatewayResponse.Error.gateway(let reason, let code) {
-            switch code {
-            case "5993":
-                // user tapped "cancel"
-                goBack()
-            default:
-                let msg = "pay1 error: fail_rc=\(code) fail_reason=\(reason)"
-                project.logError(msg)
-                showError()
-            }
-        } catch {
-            let msg = "error parsing pay1 response: \(error) eventData=\(eventData)"
-            project.logError(msg)
-            showError()
-        }
+        print(message.body)
+//        do {
+//            let response = try PayoneResponse(response: eventData)
+//            if let ccData = PayoneCreditCardData(gatewayCert: cert.data, response: response, projectId: projectId) {
+//                let detail = PaymentMethodDetail(ccData)
+//                PaymentMethodDetails.save(detail)
+//                self.analyticsDelegate?.track(.paymentMethodAdded(detail.rawMethod.displayName))
+//                goBack()
+//            } else {
+//                project.logError("can't create CC data from pay1 response: \(response)")
+//                showError()
+//            }
+//        } catch ConnectGatewayResponse.Error.gateway(let reason, let code) {
+//            switch code {
+//            case "5993":
+//                // user tapped "cancel"
+//                goBack()
+//            default:
+//                let msg = "pay1 error: fail_rc=\(code) fail_reason=\(reason)"
+//                project.logError(msg)
+//                showError()
+//            }
+//        } catch {
+//            let msg = "error parsing pay1 response: \(error) eventData=\(eventData)"
+//            project.logError(msg)
+//            showError()
+//        }
     }
 
     private func showError() {
@@ -298,7 +291,7 @@ extension PayoneCreditCardEditViewController {
             return completion(Result.failure(SnabbleError.unknown))
         }
 
-        project.request(.post, url, timeout: 5) { request in
+        project.request(.get, url, timeout: 5) { request in
             guard let request = request else {
                 return completion(Result.failure(SnabbleError.noRequest))
             }
@@ -344,31 +337,18 @@ extension PayoneCreditCardEditViewController {
                 @media (prefers-color-scheme: dark) {
                     body { background-color: #000; color: #fff; }
                 }
-                fieldset {
-                    padding: 1em;
-                    width: 275px;
-                    margin: 10px;
-                }
-                label {
-                    margin-right: 10px;
+                fieldset { padding: 1em; margin: 10px; }
+                label { margin-right: 10px;
                     float: left;
                     width: 80px;
                     padding-top: 0.3em;
                     text-align: right;
                 }
-                input, select {
-                    font-size: 1em;
-                    padding: 0.1em;
-                }
-                select {
-                    margin-right: 10px;
-                }
+                input, select { padding: 0.1em; }
+                select { margin-right: 10px; }
                 input, .inputIframe, select {
                     display: block;
                     margin-bottom: 10px;
-                }
-                input {
-                    width: 175px;
                 }
                 #paymentsubmit {
                     float: right;
@@ -385,7 +365,9 @@ extension PayoneCreditCardEditViewController {
             </style>
         </head>
         <body>
-        <script type="text/javascript" src="https://secure.pay1.de/client-api/js/v1/payone_hosted_min.js"></script>
+        <!-- script type="text/javascript" xrc="https://secure.pay1.de/client-api/js/v1/payone_hosted_min.js"></script -->
+        <script type="text/javascript" src="https://secure.pay1.de/client-api/js/v1/payone_hosted.js"></script>
+        <div class="header">{{header}}</div>
         <form name="paymentform" action="" method="post">
             <fieldset>
                 <input type="hidden" name="pseudocardpan" id="pseudocardpan">
@@ -402,7 +384,7 @@ extension PayoneCreditCardEditViewController {
                 <label for="cardpanInput">Cardpan:</label>
                 <span class="inputIframe" id="cardpan"></span>
 
-                <label for="cvcInput">CVC:</label>
+                <label for="cardcvc2">CVC:</label>
                 <span id="cardcvc2" class="inputIframe"></span>
 
                 <label for="expireInput">Expire Date:</label>
@@ -412,10 +394,10 @@ extension PayoneCreditCardEditViewController {
                 </span>
 
                 <label for="firstname">Firstname:</label>
-                <input id="firstname" type="text" name="firstname" value="">
+                <input id="firstname" type="text" name="firstname" value="Foo">
 
                 <label for="lastname">Lastname:</label>
-                <input id="lastname" type="text" name="lastname" value="">
+                <input id="lastname" type="text" name="lastname" value="Bar">
 
                 <div id="errorOutput"></div>
 
@@ -431,13 +413,12 @@ extension PayoneCreditCardEditViewController {
                 fields: {
                     cardpan: {
                         selector: "cardpan",                 // put name of your div-container here
-                        type: "text",                        // text (default), password, tel
-                        style: "font-size: 1em; border: 1px solid #000;"
+                        type: "tel",                        // text (default), password, tel
                     },
                     cardcvc2: {
                         selector: "cardcvc2",                // put name of your div-container here
                         type: "password",                    // select(default), text, password, tel
-                        style: "font-size: 1em; border: 1px solid #000;",
+                        style: "font-size: 1em;",
                         size: "4",
                         maxlength: "4",                      // set max. length for CVC input; empty values possible
                         length: { "A": 4, "V": 3, "M": 3, "J": 0 } // set required CVC length per cardtype
@@ -491,23 +472,40 @@ extension PayoneCreditCardEditViewController {
             };
 
             function check() {                               // Function called by submitting PAY-button
-                if (iframes.isComplete()) {
+                if (true || iframes.isComplete()) {
                     iframes.creditCardCheck('checkCallback');// Perform "CreditCardCheck" to create and get a
                                                              // PseudoCardPan; then call your function "checkCallback"
                 } else {
-                    console.debug("not complete");
+                    console.log(iframes);
+                    console.log("not complete");
                 }
             }
 
             function checkCallback(response) {
-                console.debug(response);
+                console.log(response);
                 if (response.status === "VALID") {
                     document.getElementById("pseudocardpan").value = response.pseudocardpan;
                     document.getElementById("truncatedcardpan").value = response.truncatedcardpan;
-                    document.paymentform.submit();
                 }
             }
 
+            // intercept errors
+            window.onerror = (msg, url, line, column, error) => {
+              const message = {
+                message: msg,
+                url: url,
+                line: line,
+                column: column,
+                error: JSON.stringify(error)
+              }
+
+              window.webkit.messageHandlers.\(handlerName).postMessage(message);
+            };
+
+            // intercept console.log
+            var console = {
+                log: function(msg) { window.webkit.messageHandlers.\(handlerName).postMessage(msg) }
+            };
         </script>
         </body>
         </html>
