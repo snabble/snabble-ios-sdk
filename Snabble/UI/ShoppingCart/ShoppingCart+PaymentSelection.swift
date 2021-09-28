@@ -15,10 +15,10 @@ private struct PaymentMethodAction {
     let selectable: Bool
     let active: Bool
 
-    init(_ title: NSAttributedString, _ method: RawPaymentMethod, _ methodDetail: PaymentMethodDetail?, selectable: Bool, active: Bool) {
+    init(title: NSAttributedString, paymentMethod: RawPaymentMethod, paymentMethodDetail: PaymentMethodDetail?, selectable: Bool, active: Bool) {
         self.title = title
-        self.method = method
-        self.methodDetail = methodDetail
+        self.method = paymentMethod
+        self.methodDetail = paymentMethodDetail
         self.icon = methodDetail?.icon ?? method.icon
         self.selectable = selectable
         self.active = active
@@ -253,7 +253,10 @@ final class PaymentMethodSelector {
         sheet.visualStyle = .snabbleActionSheet
 
         // combine all payment methods of all projects
-        let allAppMethods = Set(SnabbleAPI.projects.flatMap { $0.paymentMethods }.filter { $0.isAvailable })
+        let allAppMethods = Set(SnabbleAPI.projects
+                                    .flatMap { $0.paymentMethods }
+                                    .filter { $0.isAvailable }
+        )
         // and get them in the desired display order
         let allMethods = RawPaymentMethod.orderedMethods.filter { allAppMethods.contains($0) }
 
@@ -299,21 +302,20 @@ final class PaymentMethodSelector {
 
     private func actionsFor(_ method: RawPaymentMethod) -> [PaymentMethodAction] {
         let isProjectMethod = SnabbleUI.project.paymentMethods.contains(method)
-        let isCartMethod = shoppingCart.paymentMethods?.contains { $0.method == method } ?? isProjectMethod
+        let isCartMethod = shoppingCart.paymentMethods?.contains { $0.method == method } ?? false
 
         let userMethods = PaymentMethodDetails.read().filter { $0.rawMethod == method }
         let isUserMethod = !userMethods.isEmpty
 
-        var detailText: String?
-
         switch method {
         case .externalBilling, .customerCardPOS:
-            if !isProjectMethod || userMethods.isEmpty {
+            if !isProjectMethod || !isUserMethod {
                 return []
             }
 
             let actions = userMethods.map { userMethod -> PaymentMethodAction in
                 var color: UIColor = .label
+                var detailText: String?
                 if case let PaymentMethodUserData.tegutEmployeeCard(data) = userMethod.methodData {
                     detailText = data.cardNumber
                 }
@@ -323,37 +325,69 @@ final class PaymentMethodSelector {
                     color = .secondaryLabel
                 }
 
-                let title = self.title(userMethod.displayName, detailText, color)
-                return PaymentMethodAction(title, method, userMethod, selectable: true, active: isCartMethod)
+                let title = Self.attributedString(
+                    forText: userMethod.displayName,
+                    withSubtitle: detailText,
+                    inColor: color
+                )
+                return PaymentMethodAction(
+                    title: title,
+                    paymentMethod: method,
+                    paymentMethodDetail: userMethod,
+                    selectable: true,
+                    active: isCartMethod
+                )
             }
             return actions
 
-        case .creditCardAmericanExpress, .creditCardVisa, .creditCardMastercard, .deDirectDebit, .paydirektOneKlick,
-             .twint, .postFinanceCard:
+        case .creditCardAmericanExpress, .creditCardVisa, .creditCardMastercard, .deDirectDebit, .paydirektOneKlick, .twint, .postFinanceCard:
             if !isProjectMethod {
                 if isUserMethod {
-                    let title = self.title(method.displayName, L10n.Snabble.Shoppingcart.notForVendor, .secondaryLabel)
-                    let action = PaymentMethodAction(title, method, nil, selectable: false, active: false)
+                    let title = Self.attributedString(
+                        forText: method.displayName,
+                        withSubtitle: L10n.Snabble.Shoppingcart.notForVendor,
+                        inColor: .secondaryLabel
+                    )
+                    let action = PaymentMethodAction(
+                        title: title,
+                        paymentMethod: method,
+                        paymentMethodDetail: nil,
+                        selectable: false,
+                        active: false
+                    )
                     return [action]
                 } else {
                     return []
                 }
-            }
-
-            if !isCartMethod && isUserMethod {
-                let title = self.title(method.displayName, L10n.Snabble.Shoppingcart.notForThisPurchase, .secondaryLabel)
-                let action = PaymentMethodAction(title, method, nil, selectable: false, active: false)
-                return [action]
-            } else if !userMethods.isEmpty {
+            } else if isCartMethod && isUserMethod {
                 let actions = userMethods.map { userMethod -> PaymentMethodAction in
-                    let title = self.title(method.displayName, userMethod.displayName, .label)
-                    return PaymentMethodAction(title, method, userMethod, selectable: true, active: true)
+                    let title = Self.attributedString(
+                        forText: method.displayName,
+                        withSubtitle: userMethod.displayName,
+                        inColor: .label
+                    )
+                    return PaymentMethodAction(
+                        title: title,
+                        paymentMethod: method,
+                        paymentMethodDetail: userMethod,
+                        selectable: true,
+                        active: true
+                    )
                 }
                 return actions
             } else {
                 let subtitle = L10n.Snabble.Shoppingcart.noPaymentData
-                let title = self.title(method.displayName, subtitle, .label)
-                let action = PaymentMethodAction(title, method, nil, selectable: true, active: false)
+                let title = Self.attributedString(
+                    forText: method.displayName,
+                    withSubtitle: subtitle,
+                    inColor: .label)
+                let action = PaymentMethodAction(
+                    title: title,
+                    paymentMethod: method,
+                    paymentMethodDetail: nil,
+                    selectable: true,
+                    active: false
+                )
                 return [action]
             }
 
@@ -364,8 +398,18 @@ final class PaymentMethodSelector {
 
             let canMakePayments = ApplePay.canMakePayments(with: SnabbleUI.project.id)
             let subtitle = canMakePayments ? nil : L10n.Snabble.Shoppingcart.notForThisPurchase
-            let title = self.title(method.displayName, subtitle, .label)
-            let action = PaymentMethodAction(title, method, nil, selectable: canMakePayments, active: false)
+            let title = Self.attributedString(
+                forText: method.displayName,
+                withSubtitle: subtitle,
+                inColor: .label
+            )
+            let action = PaymentMethodAction(
+                title: title,
+                paymentMethod: method,
+                paymentMethodDetail: nil,
+                selectable: canMakePayments,
+                active: false
+            )
             return [action]
 
         case .qrCodePOS, .qrCodeOffline, .gatekeeperTerminal:
@@ -374,27 +418,33 @@ final class PaymentMethodSelector {
             }
         }
 
-        let title = self.title(method.displayName, detailText, .label)
-        let action = PaymentMethodAction(title, method, nil, selectable: true, active: true)
+        let title = Self.attributedString(forText: method.displayName, inColor: .label)
+        let action = PaymentMethodAction(
+            title: title,
+            paymentMethod: method,
+            paymentMethodDetail: nil,
+            selectable: true,
+            active: true
+        )
 
         return [action]
     }
 
-    private func title(_ titleText: String, _ subtitleText: String?, _ textColor: UIColor) -> NSAttributedString {
+    private static func attributedString(forText text: String, withSubtitle subtitle: String? = nil, inColor textColor: UIColor) -> NSAttributedString {
         let titleAttributes: [NSAttributedString.Key: Any] = [
             .font: UIFont.systemFont(ofSize: 17),
             .foregroundColor: textColor
         ]
 
-        let newline = subtitleText != nil ? "\n" : ""
-        let title = NSMutableAttributedString(string: "\(titleText)\(newline)", attributes: titleAttributes)
+        let newline = subtitle != nil ? "\n" : ""
+        let title = NSMutableAttributedString(string: "\(text)\(newline)", attributes: titleAttributes)
 
-        if let subtitleText = subtitleText {
+        if let subtitle = subtitle {
             let subtitleAttributes: [NSAttributedString.Key: Any] = [
                 .font: UIFont.systemFont(ofSize: 13),
                 .foregroundColor: UIColor.secondaryLabel
             ]
-            let subTitle = NSAttributedString(string: subtitleText, attributes: subtitleAttributes)
+            let subTitle = NSAttributedString(string: subtitle, attributes: subtitleAttributes)
             title.append(subTitle)
         }
 

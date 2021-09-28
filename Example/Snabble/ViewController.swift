@@ -54,7 +54,7 @@ class ViewController: UIViewController {
         guard let shoppingCart = self.shoppingCart, let shop = SnabbleAPI.projects.first?.shops.first else {
             return
         }
-        
+
         let detector = BuiltinBarcodeDetector(detectorArea: .rectangle, messageDelegate: nil)
         let scanner = ScannerViewController(shoppingCart, shop, detector, scannerDelegate: self, cartDelegate: nil, shoppingListDelegate: nil)
         scanner.navigationItem.leftBarButtonItem = nil
