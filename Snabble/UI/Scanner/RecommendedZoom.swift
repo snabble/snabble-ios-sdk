@@ -22,18 +22,14 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 
 @available(iOS 15, *)
 public enum RecommendedZoom {
-    static let minimumCodeSize: Float = 40 // in mm, this is the recommended size of an EAN-13 barcode
-    static let isEnabled = false
-
-    public static func factor(for videoInput: AVCaptureDeviceInput) -> Float {
-        guard isEnabled else { return 1 }
+    public static func factor(for videoInput: AVCaptureDeviceInput, codeWidth: Int) -> Float {
         let deviceMinimumFocusDistance = Float(videoInput.device.minimumFocusDistance)
         guard deviceMinimumFocusDistance != -1 else {
             return 1
         }
 
         let deviceFieldOfView = videoInput.device.activeFormat.videoFieldOfView
-        let minimumSubjectDistanceForCode = minimumSubjectDistanceForCode(fieldOfView: deviceFieldOfView)
+        let minimumSubjectDistanceForCode = minimumSubjectDistanceForCode(fieldOfView: deviceFieldOfView, width: codeWidth)
         if minimumSubjectDistanceForCode < deviceMinimumFocusDistance {
             let zoomFactor = deviceMinimumFocusDistance / minimumSubjectDistanceForCode
             return zoomFactor
@@ -41,13 +37,13 @@ public enum RecommendedZoom {
         return 1
     }
 
-    private static func minimumSubjectDistanceForCode(fieldOfView: Float) -> Float {
+    private static func minimumSubjectDistanceForCode(fieldOfView: Float, width: Int) -> Float {
         /*
          Given the camera horizontal field of view, compute the distance (mm) to make a code
          of `minimumCodeSize` (mm) fill the screen width
          */
         let radians = degreesToRadians(fieldOfView / 2)
-        return minimumCodeSize / tan(radians)
+        return Float(width) / tan(radians)
     }
 
     private static func degreesToRadians(_ degrees: Float) -> Float {

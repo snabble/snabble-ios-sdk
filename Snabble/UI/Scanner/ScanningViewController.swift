@@ -76,6 +76,7 @@ final class ScanningViewController: UIViewController {
 
         self.barcodeDetector = detector
         self.barcodeDetector.scanFormats = project.scanFormats
+        self.barcodeDetector.expectedBarcodeWidth = project.expectedBarcodeWidth
 
         super.init(nibName: nil, bundle: SnabbleBundle.main)
 
