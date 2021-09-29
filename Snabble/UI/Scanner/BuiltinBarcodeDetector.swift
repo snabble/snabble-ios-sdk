@@ -42,6 +42,7 @@ public final class BuiltinBarcodeDetector: NSObject, BarcodeDetector {
     public weak var delegate: BarcodeDetectorDelegate?
 
     public var scanFormats: [ScanFormat]
+    public var expectedBarcodeWidth: Int?
 
     private var camera: AVCaptureDevice?
     private var videoInput: AVCaptureDeviceInput?
@@ -230,11 +231,14 @@ public final class BuiltinBarcodeDetector: NSObject, BarcodeDetector {
 
     @available(iOS 15, *)
     private func setRecommendedZoomFactor() {
-        guard let videoInput = self.videoInput else {
+        guard
+            let videoInput = self.videoInput,
+            let expectedBarcodeWidth = self.expectedBarcodeWidth
+        else {
             return
         }
 
-        let zoomFactor = RecommendedZoom.factor(for: videoInput)
+        let zoomFactor = RecommendedZoom.factor(for: videoInput, codeWidth: expectedBarcodeWidth)
         do {
             try videoInput.device.lockForConfiguration()
             videoInput.device.videoZoomFactor = CGFloat(zoomFactor)

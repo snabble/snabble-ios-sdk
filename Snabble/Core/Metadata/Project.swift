@@ -293,6 +293,7 @@ public struct Project: Decodable, Identifiable {
 
     public let scanFormats: [ScanFormat]
     public let barcodeDetector: BarcodeDetectorType
+    public let expectedBarcodeWidth: Int? // if specified, width of a "standard" barcode in mm
 
     public let customerCards: CustomerCardInfo?
 
@@ -334,7 +335,7 @@ public struct Project: Decodable, Identifiable {
         case id, name, links
         case currency, decimalDigits, locale, roundingMode
         case qrCodeConfig = "qrCodeOffline"
-        case shops, scanFormats, barcodeDetector
+        case shops, scanFormats, barcodeDetector, expectedBarcodeWidth
         case customerCards, codeTemplates, searchableTemplates, priceOverrideCodes, checkoutLimits
         case messages = "texts"
         case paymentMethodDescriptors
@@ -366,6 +367,7 @@ public struct Project: Decodable, Identifiable {
         self.scanFormats = formats.compactMap { ScanFormat(rawValue: $0) }
         let detector = try container.decodeIfPresent(String.self, forKey: .barcodeDetector)
         self.barcodeDetector = BarcodeDetectorType(rawValue: detector ?? "")
+        self.expectedBarcodeWidth = try container.decodeIfPresent(Int.self, forKey: .expectedBarcodeWidth)
         self.customerCards = try container.decodeIfPresent(CustomerCardInfo.self, forKey: .customerCards)
         let templates = try container.decodeIfPresent([String: String].self, forKey: .codeTemplates)
         self.codeTemplates = TemplateDefinition.arrayFrom(templates)
@@ -390,6 +392,10 @@ public struct Project: Decodable, Identifiable {
         if let coupons = try container.decodeIfPresent([Coupon].self, forKey: .coupons) {
             setCoupons(coupons)
         }
+
+        if let bcw = self.expectedBarcodeWidth {
+            print(bcw, id)
+        }
     }
 
     private init() {
@@ -405,6 +411,7 @@ public struct Project: Decodable, Identifiable {
         self.currencySymbol = ""
         self.scanFormats = []
         self.barcodeDetector = .default
+        self.expectedBarcodeWidth = nil
         self.customerCards = CustomerCardInfo()
         self.codeTemplates = []
         self.searchableTemplates = nil
@@ -432,6 +439,7 @@ public struct Project: Decodable, Identifiable {
         self.currencySymbol = ""
         self.scanFormats = []
         self.barcodeDetector = .default
+        self.expectedBarcodeWidth = nil
         self.customerCards = CustomerCardInfo()
         self.codeTemplates = []
         self.searchableTemplates = nil

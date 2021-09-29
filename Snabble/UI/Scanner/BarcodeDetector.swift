@@ -34,6 +34,9 @@ public protocol BarcodeDetector {
     /// the scan formats that should be detected, must be set before `scannerWillAppear()` is called.
     var scanFormats: [ScanFormat] { get set }
 
+    /// the expected width of a "standard" barcode, must be set before `scannerWillAppear()` is called.
+    var expectedBarcodeWidth: Int? { get set }
+
     var decorationOverlay: BarcodeDetectorOverlay? { get }
 
     /// this must be called from `viewWillAppear()` of the hosting view controller
