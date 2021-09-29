@@ -168,14 +168,14 @@ public final class PayoneCreditCardEditViewController: UIViewController {
     }
 
     private func prepareAndInjectPage(_ payoneTokenization: PayoneTokenization) {
+        let testing = payoneTokenization.isTesting ?? false
         let page = PayoneCreditCardEditViewController.pageTemplate
             .replacingOccurrences(of: "{{hash}}", with: payoneTokenization.hash)
             .replacingOccurrences(of: "{{merchantID}}", with: payoneTokenization.merchantID)
             .replacingOccurrences(of: "{{portalID}}", with: payoneTokenization.portalID)
             .replacingOccurrences(of: "{{accountID}}", with: payoneTokenization.accountID)
-            .replacingOccurrences(of: "{{mode}}", with: payoneTokenization.mode ?? "test")
+            .replacingOccurrences(of: "{{mode}}", with: testing ? "test" : "live")
             .replacingOccurrences(of: "{{header}}", with: threeDSecureHint(for: projectId))
-        #warning("CHECK - is this the correct default?")
 
         self.webView?.loadHTMLString(page, baseURL: nil)
     }
@@ -328,97 +328,154 @@ extension PayoneCreditCardEditViewController: ReactNativeWrapper {
 extension PayoneCreditCardEditViewController {
     // based on https://docs.payone.com/display/public/PLATFORM/Cardtype+set+by+shop-system
     fileprivate static let pageTemplate = """
-        <head lang="en">
-            <meta charset="utf-8">
+        <html>
+        <head lang="de">
+            <meta charset="UTF-8">
             <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-            <style type="text/css"">
-                * { font-family: -apple-system,sans-serif; font-size: 17px }
-                body { background-color: #fff; color: #000; }
+            <script type="text/javascript">
+                // intercept errors
+                window.onerror = (msg, url, line, column, error) => {
+                  const message = {
+                    message: msg,
+                    url: url,
+                    line: line,
+                    column: column,
+                    error: JSON.stringify(error)
+                  }
+
+                  window.webkit.messageHandlers.\(handlerName).postMessage(message);
+                };
+
+                // intercept console.log and console.debug
+                var console = {
+                    log: function(msg) { window.webkit.messageHandlers.\(handlerName).postMessage(msg) }
+                    debug: function(msg) { window.webkit.messageHandlers.\(handlerName).postMessage(msg) }
+                };
+            </script>
+            <style type="text/css" media="screen">
+                * {
+                    margin: 0;
+                    padding: 0;
+                }
+                body {
+                    background: #fff;
+                    color: #000;
+                    font-size: 17px;
+                    font-family: -apple-system, sans-serif;
+                }
                 @media (prefers-color-scheme: dark) {
-                    body { background-color: #000; color: #fff; }
+                  body {
+                    background-color: #000;
+                    color: #fff; }
                 }
-                fieldset { padding: 1em; margin: 10px; }
-                label { margin-right: 10px;
-                    float: left;
-                    width: 80px;
-                    padding-top: 0.3em;
-                    text-align: right;
+                fieldset {
+                    border: none;
+                    padding: 16px;
                 }
-                input, select { padding: 0.1em; }
-                select { margin-right: 10px; }
-                input, .inputIframe, select {
+                label {
                     display: block;
-                    margin-bottom: 10px;
+                    float: left;
+                    text-align: right;
+                    margin-right: 12px;
+                    width: 110px;
+                    height: 33px;
                 }
-                #paymentsubmit {
-                    float: right;
-                    width: auto;
-                    padding: 5px;
-                    margin-bottom: 0px;
+                input, select {
+                    font-size: 100%; height: 33px;
+                }
+                select {
                     margin-right: 10px;
+                }
+                input, .inputIframe, select {
+                    margin-bottom: 16px;
+                }
+
+                input {
+                    width: 160px; font-size: 100%;
+                }
+
+                #paymentsubmit {
+                    width: 100%;
                 }
                 #errorOutput {
                     text-align: center;
                     color: #ff0000;
                     display: block;
                 }
+                #appWrapper {
+                  max-width: 400px;
+                  margin: auto;
+                }
             </style>
         </head>
         <body>
-        <!-- script type="text/javascript" xrc="https://secure.pay1.de/client-api/js/v1/payone_hosted_min.js"></script -->
-        <script type="text/javascript" src="https://secure.pay1.de/client-api/js/v1/payone_hosted.js"></script>
-        <div class="header">{{header}}</div>
+        <script type="text/javascript" src="https://secure.pay1.de/client-api/js/v1/payone_hosted_min.js"></script>
         <form name="paymentform" action="" method="post">
             <fieldset>
-                <input type="hidden" name="pseudocardpan" id="pseudocardpan">
-                <input type="hidden" name="truncatedcardpan" id="truncatedcardpan">
+                <div id="appWrapper">
+                  <input type="hidden" name="pseudocardpan" id="pseudocardpan">
+                  <input type="hidden" name="truncatedcardpan" id="truncatedcardpan">
 
-                <!-- configure your cardtype-selection here -->
-                <label for="cardtypeInput">Card type</label>
-                <select id="cardtype">
-                    <option value="V">VISA</option>
-                    <option value="M">Mastercard</option>
-                    <option value="A">Amex</option>
-                </select>
+                  <!-- configure your cardtype-selection here -->
+                  <div class="row">
+                    <label for="cardtypeInput">Karte</label>
+                    <select id="cardtype">
+                        <option value="V">VISA</option>
+                        <option value="M">Mastercard</option>
+                        <option value="A">Amex</option>
+                    </select>
+                  </div>
 
-                <label for="cardpanInput">Cardpan:</label>
-                <span class="inputIframe" id="cardpan"></span>
+                  <div class="row">
+                    <label for="cardpanInput">Kartennummer</label> <!-- TODO: l10n -->
+                    <span class="inputIframe" id="cardpan"></span>
+                  </div>
 
-                <label for="cardcvc2">CVC:</label>
-                <span id="cardcvc2" class="inputIframe"></span>
+                  <div class="row">
+                    <label for="cvcInput">Prüfnummer</label> <!-- TODO: l10n -->
+                    <span id="cardcvc2" class="inputIframe"></span>
+                  </div>
 
-                <label for="expireInput">Expire Date:</label>
-                <span id="expireInput" class="inputIframe">
-                    <span id="cardexpiremonth"></span>
-                    <span id="cardexpireyear"></span>
-                </span>
+                  <div class="row">
+                    <label for="expireInput">Ablaufdatum</label> <!-- TODO: l10n -->
+                    <span id="expireInput" class="inputIframe">
+                        <span id="cardexpiremonth"></span>
+                        <span id="cardexpireyear"></span>
+                    </span>
+                  </div>
 
-                <label for="firstname">Firstname:</label>
-                <input id="firstname" type="text" name="firstname" value="Foo">
+                  <div class="row">
+                    <label for="firstname">Vorname</label> <!-- TODO: l10n -->
+                    <input id="firstname" type="text" name="firstname" value="">
+                  </div>
 
-                <label for="lastname">Lastname:</label>
-                <input id="lastname" type="text" name="lastname" value="Bar">
+                  <div class="row">
+                    <label for="lastname">Nachname</label> <!-- TODO: l10n -->
+                    <input id="lastname" type="text" name="lastname" value="">
+                  </div>
 
-                <div id="errorOutput"></div>
+                  <div class="row">
+                    <div id="errorOutput"></div>
+                  </div>
+                </div>
 
-                <input id="paymentsubmit" type="button" value="Submit" onclick="check();">
+                <input id="paymentsubmit" type="button" value="Speichern" onclick="check();"> <!-- TODO: l10n -->
             </fieldset>
         </form>
 
         <div id="paymentform"></div>
         <script>
             var request, config;
-
+        foo + - / %
             config = {
                 fields: {
                     cardpan: {
                         selector: "cardpan",                 // put name of your div-container here
-                        type: "tel",                        // text (default), password, tel
+                        type: "text"                         // text (default), password, tel
                     },
                     cardcvc2: {
                         selector: "cardcvc2",                // put name of your div-container here
                         type: "password",                    // select(default), text, password, tel
-                        style: "font-size: 1em;",
                         size: "4",
                         maxlength: "4",                      // set max. length for CVC input; empty values possible
                         length: { "A": 4, "V": 3, "M": 3, "J": 0 } // set required CVC length per cardtype
@@ -442,16 +499,16 @@ extension PayoneCreditCardEditViewController {
                     }
                 },
                 defaultStyle: {
-                    input: "font-size: 1em; border: 1px solid #000; width: 175px;",
-                    select: "font-size: 1em; border: 1px solid #000;",
+                    input: "font-size: 100%",
                     iframe: {
                         height: "33px",
-                        width: "180px"
+                        width: "160px",
                     }
                 },
                 error: "errorOutput",                        // area to display error-messages (optional)
                 language: Payone.ClientApi.Language.de       // Language to display error-messages
                                                              // (default: Payone.ClientApi.Language.en)
+                                                             // TODO: l10n
             };
 
             request = {
@@ -472,11 +529,10 @@ extension PayoneCreditCardEditViewController {
             };
 
             function check() {                               // Function called by submitting PAY-button
-                if (true || iframes.isComplete()) {
+                if (iframes.isComplete()) {
                     iframes.creditCardCheck('checkCallback');// Perform "CreditCardCheck" to create and get a
                                                              // PseudoCardPan; then call your function "checkCallback"
                 } else {
-                    console.log(iframes);
                     console.log("not complete");
                 }
             }
@@ -488,24 +544,6 @@ extension PayoneCreditCardEditViewController {
                     document.getElementById("truncatedcardpan").value = response.truncatedcardpan;
                 }
             }
-
-            // intercept errors
-            window.onerror = (msg, url, line, column, error) => {
-              const message = {
-                message: msg,
-                url: url,
-                line: line,
-                column: column,
-                error: JSON.stringify(error)
-              }
-
-              window.webkit.messageHandlers.\(handlerName).postMessage(message);
-            };
-
-            // intercept console.log
-            var console = {
-                log: function(msg) { window.webkit.messageHandlers.\(handlerName).postMessage(msg) }
-            };
         </script>
         </body>
         </html>

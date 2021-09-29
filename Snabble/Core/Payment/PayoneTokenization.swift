@@ -12,5 +12,5 @@ struct PayoneTokenization: Decodable {
     let portalID: String
     let accountID: String
     let hash: String
-    let mode: String?
+    let isTesting: Bool?
 }
