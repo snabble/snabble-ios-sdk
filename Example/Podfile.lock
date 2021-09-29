@@ -2,10 +2,10 @@ PODS:
   - AutoLayout-Helper (1.0.0)
   - Base32 (1.1.2)
   - ColorCompatibility (1.1.0)
-  - DeviceKit (4.4.0)
-  - GRDB.swift (5.11.0):
-    - GRDB.swift/standard (= 5.11.0)
-  - GRDB.swift/standard (5.11.0)
+  - DeviceKit (4.5.0)
+  - GRDB.swift (5.12.0):
+    - GRDB.swift/standard (= 5.12.0)
+  - GRDB.swift/standard (5.12.0)
   - KeychainAccess (4.2.2)
   - OneTimePassword (3.2.0):
     - Base32 (~> 1.1.2)
@@ -58,8 +58,8 @@ SPEC CHECKSUMS:
   AutoLayout-Helper: cff0627ca7587871036bb7c10105dbc5889dc67a
   Base32: 163c298644d184e89ca4e00a996bad6bf5166390
   ColorCompatibility: 7257750b5ac742db9c8b593966c6f8e06992149b
-  DeviceKit: 2c5d7485a2fa10b65c0091b2952d30843a6ba06d
-  GRDB.swift: 9a33d9680cd3c870c82f48a6cbc73d3cfbb235eb
+  DeviceKit: b68cded46afdaefc5d2253d631d441ba7049a7fe
+  GRDB.swift: f94b00ac11ab22597771b6a47211d1c44284395a
   KeychainAccess: c0c4f7f38f6fc7bbe58f5702e25f7bd2f65abf51
   OneTimePassword: c00ecc908e67e6c5bfda9d50b0b2e4696d0b066e
   Pulley: a4c28c930958f42978d69631000bc1abb82cb232
