@@ -41,10 +41,6 @@ final class PaymentMethodSelector {
     private(set) var selectedPaymentMethod: RawPaymentMethod?
     private(set) var selectedPaymentDetail: PaymentMethodDetail?
 
-    // set to true when the user makes an explicit selection from the action sheet,
-    // this disables the automatic/default method selection
-    private var userMadeExplicitSelection = false
-
     private var shoppingCart: ShoppingCart
     weak var delegate: PaymentMethodSelectorDelegate?
 
@@ -148,24 +144,7 @@ final class PaymentMethodSelector {
         delegate?.paymentMethodSelector(self, didSelectMethod: method)
     }
 
-    private func selectedMethodIsValid() -> Bool {
-        guard let method = self.selectedPaymentMethod else {
-            return false
-        }
-
-        if method.dataRequired {
-            return self.selectedPaymentDetail != nil
-        }
-        return true
-    }
-
     private func setDefaultPaymentMethod() {
-        if self.userMadeExplicitSelection && selectedMethodIsValid() {
-            return
-        } else {
-            self.userMadeExplicitSelection = false
-        }
-
         let userMethods = PaymentMethodDetails.read()
             .filter { $0.rawMethod.isAvailable }
             .filter { $0.projectId != nil ? $0.projectId == SnabbleUI.project.id : true }
@@ -219,14 +198,13 @@ final class PaymentMethodSelector {
                 }
             }
         }
+        setSelectedPayment(nil, detail: nil)
     }
 
     private func userSelectedPaymentMethod(with actionData: PaymentMethodAction) {
         guard actionData.selectable else {
             return
         }
-
-        self.userMadeExplicitSelection = true
         let method = actionData.method
         let detail = actionData.methodDetail
 
@@ -283,8 +261,10 @@ final class PaymentMethodSelector {
 
         // add an action for each method
         for action in actions {
-            let alertAction = AlertAction(attributedTitle: action.title, style: .normal) { _ in
-                self.userSelectedPaymentMethod(with: action)
+            let alertAction = AlertAction(attributedTitle: action.title, style: .normal) { [self] _ in
+                if action.selectable {
+                    userSelectedPaymentMethod(with: action)
+                }
             }
 
             let icon = isAnyActive && !action.active ? action.icon?.grayscale() : action.icon
