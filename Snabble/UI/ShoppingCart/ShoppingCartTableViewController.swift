@@ -26,7 +26,6 @@ enum CartTableEntry {
 }
 
 final class ShoppingCartTableViewController: UITableViewController {
-    private var limitAlert: UIAlertController?
     private var customAppearance: CustomAppearance?
 
     private let itemCellIdentifier = "itemCell"
@@ -297,50 +296,6 @@ final class ShoppingCartTableViewController: UITableViewController {
         let alert = UIAlertController(title: L10n.Snabble.InvalidDepositVoucher.errorMsg, message: nil, preferredStyle: .alert)
         alert.addAction(UIAlertAction(title: L10n.Snabble.ok, style: .default, handler: nil))
         self.present(alert, animated: true)
-    }
-
-    private var notAllMethodsAvailableShown = false
-    private var checkoutNotAvailableShown = false
-
-    private func checkCheckoutLimits(_ totalPrice: Int) {
-        let formatter = PriceFormatter(SnabbleUI.project)
-
-        if let notAllMethodsAvailable = SnabbleUI.project.checkoutLimits?.notAllMethodsAvailable {
-            if totalPrice > notAllMethodsAvailable {
-                if !self.notAllMethodsAvailableShown {
-                    let limit = formatter.format(notAllMethodsAvailable)
-                    self.showLimitAlert(L10n.Snabble.LimitsAlert.notAllMethodsAvailable(limit))
-                    self.notAllMethodsAvailableShown = true
-                }
-            } else {
-                self.notAllMethodsAvailableShown = false
-            }
-        }
-
-        if let checkoutNotAvailable = SnabbleUI.project.checkoutLimits?.checkoutNotAvailable {
-            if totalPrice > checkoutNotAvailable {
-                if !self.checkoutNotAvailableShown {
-                    let limit = formatter.format(checkoutNotAvailable)
-                    self.showLimitAlert(L10n.Snabble.LimitsAlert.checkoutNotAvailable(limit))
-                    self.checkoutNotAvailableShown = true
-                }
-            } else {
-                self.checkoutNotAvailableShown = false
-            }
-        }
-    }
-
-    private func showLimitAlert(_ msg: String) {
-        guard self.limitAlert == nil else {
-            return
-        }
-
-        let alert = UIAlertController(title: L10n.Snabble.LimitsAlert.title, message: msg, preferredStyle: .alert)
-        alert.addAction(UIAlertAction(title: L10n.Snabble.ok, style: .default) { _ in
-            self.limitAlert = nil
-        })
-        UIApplication.topViewController()?.present(alert, animated: true)
-        self.limitAlert = alert
     }
 }
 
