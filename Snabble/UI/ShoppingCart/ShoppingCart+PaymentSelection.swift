@@ -252,18 +252,29 @@ final class PaymentMethodSelector {
         let sheet = AlertController(title: title, message: nil, preferredStyle: .actionSheet)
         sheet.visualStyle = .snabbleActionSheet
 
+        let projectId = SnabbleUI.project.id
         // combine all payment methods of all projects
         let allAppMethods = Set(SnabbleAPI.projects
                                     .flatMap { $0.paymentMethods }
                                     .filter { $0.isAvailable }
         )
         // and get them in the desired display order
-        let allMethods = RawPaymentMethod.orderedMethods
+        let availableOrderedMethods = RawPaymentMethod.orderedMethods
             .filter { allAppMethods.contains($0) }
+            .filter { SnabbleUI.project.paymentMethods.contains($0) }
+
+        let availablePaymentMethodDetails = PaymentMethodDetails.read()
+            .filter { $0.projectId != nil ? $0.projectId == projectId : true }
 
         var actions = [PaymentMethodAction]()
-        for method in allMethods {
-            actions.append(contentsOf: self.actionsFor(method))
+        for method in availableOrderedMethods {
+            actions.append(
+                contentsOf: actionsFor(
+                    method,
+                    withPaymentMethodDetails: availablePaymentMethodDetails,
+                    andSupportedMethods: shoppingCart.paymentMethods?.map { $0.method }
+                )
+            )
         }
 
         var iconMap = [AlertAction: UIImage]()
@@ -301,63 +312,61 @@ final class PaymentMethodSelector {
         self.parentVC?.present(sheet, animated: true)
     }
 
-    private func actionsFor(_ method: RawPaymentMethod) -> [PaymentMethodAction] {
-        let availableMethods = SnabbleUI.project.paymentMethods
+    private func actionsFor(
+        _ method: RawPaymentMethod,
+        withPaymentMethodDetails paymentMethodDetails: [PaymentMethodDetail],
+        andSupportedMethods supportedMethods: [RawPaymentMethod]?
+    ) -> [PaymentMethodAction] {
 
-        guard availableMethods.contains(where: { $0 == method }) else {
-            return []
-        }
+        let hasCartMethods = supportedMethods != nil
+        let isCartMethod = supportedMethods?.contains { $0 == method } ?? false
 
-        let isCartMethod: Bool? = shoppingCart.paymentMethods?.contains { $0.method == method }
-
-        let userMethods = PaymentMethodDetails.read()
-            .filter { $0.rawMethod == method }
-            .filter { $0.projectId != nil ? $0.projectId == SnabbleUI.project.id : true }
-        let isUserMethod = !userMethods.isEmpty
+        let paymentMethodDetails = paymentMethodDetails.filter { $0.rawMethod == method }
+        let isPaymentMethodDetailAvailable = !paymentMethodDetails.isEmpty
 
         switch method {
         case .externalBilling, .customerCardPOS:
-            let actions = userMethods.map { userMethod -> PaymentMethodAction in
+            let actions = paymentMethodDetails.map { paymentMethodDetail -> PaymentMethodAction in
                 var color: UIColor = .label
                 var detailText: String?
-                if case let PaymentMethodUserData.tegutEmployeeCard(data) = userMethod.methodData {
+                if case let PaymentMethodUserData.tegutEmployeeCard(data) = paymentMethodDetail.methodData {
                     detailText = data.cardNumber
                 }
 
-                if let isCartMethod = isCartMethod, !isCartMethod {
+                if hasCartMethods && !isCartMethod {
                     detailText = L10n.Snabble.Shoppingcart.notForThisPurchase
                     color = .secondaryLabel
                 }
 
                 let title = Self.attributedString(
-                    forText: userMethod.displayName,
+                    forText: paymentMethodDetail.displayName,
                     withSubtitle: detailText,
                     inColor: color
                 )
                 return PaymentMethodAction(
                     title: title,
                     paymentMethod: method,
-                    paymentMethodDetail: userMethod,
+                    paymentMethodDetail: paymentMethodDetail,
                     selectable: true,
-                    active: isCartMethod ?? false
+                    active: hasCartMethods ? isCartMethod : false
                 )
             }
             return actions
 
         case .creditCardAmericanExpress, .creditCardVisa, .creditCardMastercard, .deDirectDebit, .paydirektOneKlick, .twint, .postFinanceCard:
-            if isUserMethod {
-                if let isCartMethod = isCartMethod {
+            if isPaymentMethodDetailAvailable {
+                if hasCartMethods {
                     if isCartMethod {
-                        let actions = userMethods.map { userMethod -> PaymentMethodAction in
+                        let actions = paymentMethodDetails.map { paymentMethodDetail -> PaymentMethodAction in
                             let title = Self.attributedString(
                                 forText: method.displayName,
-                                withSubtitle: userMethod.displayName,
+                                withSubtitle: paymentMethodDetail.displayName,
                                 inColor: .label
                             )
                             return PaymentMethodAction(
                                 title: title,
                                 paymentMethod: method,
-                                paymentMethodDetail: userMethod,
+                                paymentMethodDetail: paymentMethodDetail,
                                 selectable: true,
                                 active: true
                             )
@@ -379,16 +388,16 @@ final class PaymentMethodSelector {
                         return [action]
                     }
                 } else {
-                    let actions = userMethods.map { userMethod -> PaymentMethodAction in
+                    let actions = paymentMethodDetails.map { paymentMethodDetail -> PaymentMethodAction in
                         let title = Self.attributedString(
                             forText: method.displayName,
-                            withSubtitle: userMethod.displayName,
+                            withSubtitle: paymentMethodDetail.displayName,
                             inColor: .label
                         )
                         return PaymentMethodAction(
                             title: title,
                             paymentMethod: method,
-                            paymentMethodDetail: userMethod,
+                            paymentMethodDetail: paymentMethodDetail,
                             selectable: true,
                             active: true
                         )
@@ -411,7 +420,7 @@ final class PaymentMethodSelector {
                 return [action]
             }
         case .applePay:
-            if (isCartMethod ?? false) || isCartMethod == nil {
+            if !hasCartMethods || isCartMethod {
                 let canMakePayments = ApplePay.canMakePayments(with: SnabbleUI.project.id)
                 let subtitle = canMakePayments ? nil : L10n.Snabble.Shoppingcart.notForThisPurchase
                 let title = Self.attributedString(
