@@ -355,7 +355,7 @@ final class PaymentMethodSelector {
                     } else {
                         let title = Self.attributedString(
                             forText: method.displayName,
-                            withSubtitle: L10n.Snabble.Shoppingcart.notForVendor,
+                            withSubtitle: L10n.Snabble.Shoppingcart.notForThisPurchase,
                             inColor: .secondaryLabel
                         )
                         let action = PaymentMethodAction(
