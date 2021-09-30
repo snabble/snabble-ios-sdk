@@ -18,6 +18,10 @@ final class CheckoutBar: NibView {
     @IBOutlet private var methodIcon: UIImageView!
     @IBOutlet private var checkoutButton: UIButton!
 
+    private var notAllMethodsAvailableShown = false
+    private var checkoutNotAvailableShown = false
+    private weak var limitAlert: UIAlertController?
+
     private var methodSelector: PaymentMethodSelector?
     private weak var parentVC: (UIViewController & AnalyticsDelegate)?
     private let shoppingCart: ShoppingCart
@@ -90,6 +94,7 @@ final class CheckoutBar: NibView {
         if let total = totalPrice {
             let formattedTotal = formatter.format(total)
             self.totalPriceLabel?.text = formattedTotal
+            self.checkCheckoutLimits(total)
         } else {
             self.totalPriceLabel?.text = ""
         }
@@ -264,5 +269,48 @@ extension CheckoutBar {
 extension CheckoutBar: PaymentMethodSelectorDelegate {
     func paymentMethodSelector(_ paymentMethodSelector: PaymentMethodSelector, didSelectMethod rawPaymentMethod: RawPaymentMethod?) {
         updateViewHierarchy(for: rawPaymentMethod)
+    }
+}
+
+extension CheckoutBar {
+    private func checkCheckoutLimits(_ totalPrice: Int) {
+        let formatter = PriceFormatter(SnabbleUI.project)
+
+        if let notAllMethodsAvailable = SnabbleUI.project.checkoutLimits?.notAllMethodsAvailable {
+            if totalPrice > notAllMethodsAvailable {
+                if !self.notAllMethodsAvailableShown {
+                    let limit = formatter.format(notAllMethodsAvailable)
+                    self.showLimitAlert(L10n.Snabble.LimitsAlert.notAllMethodsAvailable(limit))
+                    self.notAllMethodsAvailableShown = true
+                }
+            } else {
+                self.notAllMethodsAvailableShown = false
+            }
+        }
+
+        if let checkoutNotAvailable = SnabbleUI.project.checkoutLimits?.checkoutNotAvailable {
+            if totalPrice > checkoutNotAvailable {
+                if !self.checkoutNotAvailableShown {
+                    let limit = formatter.format(checkoutNotAvailable)
+                    self.showLimitAlert(L10n.Snabble.LimitsAlert.checkoutNotAvailable(limit))
+                    self.checkoutNotAvailableShown = true
+                }
+            } else {
+                self.checkoutNotAvailableShown = false
+            }
+        }
+    }
+
+    private func showLimitAlert(_ msg: String) {
+        guard self.limitAlert == nil else {
+            return
+        }
+
+        let alert = UIAlertController(title: L10n.Snabble.LimitsAlert.title, message: msg, preferredStyle: .alert)
+        alert.addAction(UIAlertAction(title: L10n.Snabble.ok, style: .default) { _ in
+            self.limitAlert = nil
+        })
+        UIApplication.topViewController()?.present(alert, animated: true)
+        self.limitAlert = alert
     }
 }
