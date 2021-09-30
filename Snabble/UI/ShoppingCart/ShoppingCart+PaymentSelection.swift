@@ -44,6 +44,22 @@ final class PaymentMethodSelector {
     private var shoppingCart: ShoppingCart
     weak var delegate: PaymentMethodSelectorDelegate?
 
+    private var userPaymentMethodDetails: [PaymentMethodDetail] {
+        PaymentMethodDetails.read()
+           .filter { $0.rawMethod.isAvailable }
+           .filter { $0.projectId != nil ? $0.projectId == SnabbleUI.project.id : true }
+    }
+
+    private var projectPaymentMethods: [RawPaymentMethod] {
+        SnabbleUI.project.paymentMethods.filter { $0.isAvailable }
+    }
+
+    private var availableMethods: [RawPaymentMethod] {
+        let hasCartMethods = shoppingCart.paymentMethods != nil
+        let cartMethods = shoppingCart.paymentMethods?.map { $0.method }.filter { $0.isAvailable } ?? []
+        return (hasCartMethods ? cartMethods : projectPaymentMethods)
+    }
+
     init(_ parentVC: (UIViewController & AnalyticsDelegate)?,
          _ selectionView: UIView,
          _ methodIcon: UIImageView,
@@ -79,7 +95,7 @@ final class PaymentMethodSelector {
     func updateSelectionVisibility() {
         // hide selection if the project only has one method and we have no payment method data
         let details = PaymentMethodDetails.read()
-        let hidden = SnabbleUI.project.paymentMethods.count < 2 && details.isEmpty
+        let hidden = projectPaymentMethods.count < 2 && details.isEmpty
         self.methodSelectionView?.isHidden = hidden
 
         if let selectedMethod = self.selectedPaymentMethod, let selectedDetail = self.selectedPaymentDetail {
@@ -122,9 +138,7 @@ final class PaymentMethodSelector {
     func updateAvailablePaymentMethods() {
         self.methodTap.isEnabled = true
 
-        let paymentMethods = self.shoppingCart.paymentMethods?.filter { $0.method.isAvailable } ?? []
-        let found = paymentMethods.contains { $0.method == self.selectedPaymentMethod }
-        if !found {
+        if !availableMethods.contains(where: { $0 == selectedPaymentMethod }) {
             self.setDefaultPaymentMethod()
         } else {
             self.setSelectedPayment(self.selectedPaymentMethod, detail: self.selectedPaymentDetail)
@@ -145,59 +159,43 @@ final class PaymentMethodSelector {
     }
 
     private func setDefaultPaymentMethod() {
-        let userMethods = PaymentMethodDetails.read()
-            .filter { $0.rawMethod.isAvailable }
-            .filter { $0.projectId != nil ? $0.projectId == SnabbleUI.project.id : true }
-
-        let projectMethods = SnabbleUI.project.paymentMethods.filter { $0.isAvailable }
-        let cartMethods = self.shoppingCart.paymentMethods?.map { $0.method }.filter { $0.isAvailable } ?? []
-        var availableMethods = cartMethods.isEmpty ? projectMethods : cartMethods
+        let userMethods = userPaymentMethodDetails
+        var availableMethods = availableMethods.filter { !$0.offline }
 
         // use Apple Pay, if possible
         if availableMethods.contains(.applePay) && ApplePay.canMakePayments(with: SnabbleUI.project.id) {
-            self.setSelectedPayment(.applePay, detail: nil)
-            return
+            return setSelectedPayment(.applePay, detail: nil)
         } else if !ApplePay.isSupported() {
             availableMethods.removeAll { $0 == .applePay }
         }
 
-        // prefer in-app payment methods like SEPA or CC
-        for method in RawPaymentMethod.orderedMethods {
-            let found = availableMethods.contains(method)
-            let userMethod = userMethods.first { $0.rawMethod == method }
-            if found, let userMethod = userMethod {
-                self.setSelectedPayment(method, detail: userMethod)
-                return
+        let verifyMethod: (RawPaymentMethod) -> (PaymentMethodDetail?) = { method in
+            guard availableMethods.contains(method) else {
+                return nil
             }
+
+            guard let userMethod = userMethods.first(where: { $0.rawMethod == method }) else {
+                return nil
+            }
+            return userMethod
         }
 
         // prefer in-app payment methods like SEPA or CC
         for method in RawPaymentMethod.preferredOnlineMethods {
-            if availableMethods.contains(method), userMethods.contains(where: { $0.rawMethod == method }) {
-                self.setSelectedPayment(method, detail: nil)
-                return
+            guard let userMethod = verifyMethod(method) else {
+                continue
             }
+            return setSelectedPayment(userMethod.rawMethod, detail: userMethod)
         }
 
-        if !availableMethods.contains(where: { !$0.offline }) {
-            let fallbackMethods: [RawPaymentMethod] = [ .gatekeeperTerminal, .qrCodeOffline, .qrCodePOS, .customerCardPOS ]
-
-            // check if one of the fallbacks matches the cart
-            for method in fallbackMethods {
-                if availableMethods.contains(method) {
-                    self.setSelectedPayment(method, detail: nil)
-                    return
-                }
+        // prefer in-app payment methods like SEPA or CC
+        for method in RawPaymentMethod.orderedMethods {
+            guard let userMethod = verifyMethod(method) else {
+                continue
             }
-
-            // check if one of the fallbacks matches the project
-            for fallback in fallbackMethods {
-                if projectMethods.contains(fallback) {
-                    self.setSelectedPayment(fallback, detail: nil)
-                    return
-                }
-            }
+            return setSelectedPayment(userMethod.rawMethod, detail: userMethod)
         }
+
         setSelectedPayment(nil, detail: nil)
     }
 
@@ -230,26 +228,24 @@ final class PaymentMethodSelector {
         let sheet = AlertController(title: title, message: nil, preferredStyle: .actionSheet)
         sheet.visualStyle = .snabbleActionSheet
 
-        let projectId = SnabbleUI.project.id
         // combine all payment methods of all projects
-        let allAppMethods = Set(SnabbleAPI.projects
-                                    .flatMap { $0.paymentMethods }
-                                    .filter { $0.isAvailable }
+        let allAppMethods = Set(
+            SnabbleAPI.projects
+                .flatMap { $0.paymentMethods }
+                .filter { $0.isAvailable }
         )
+
         // and get them in the desired display order
         let availableOrderedMethods = RawPaymentMethod.orderedMethods
             .filter { allAppMethods.contains($0) }
-            .filter { SnabbleUI.project.paymentMethods.contains($0) }
-
-        let availablePaymentMethodDetails = PaymentMethodDetails.read()
-            .filter { $0.projectId != nil ? $0.projectId == projectId : true }
+            .filter { projectPaymentMethods.contains($0) }
 
         var actions = [PaymentMethodAction]()
         for method in availableOrderedMethods {
             actions.append(
                 contentsOf: actionsFor(
                     method,
-                    withPaymentMethodDetails: availablePaymentMethodDetails,
+                    withPaymentMethodDetails: userPaymentMethodDetails,
                     andSupportedMethods: shoppingCart.paymentMethods?.map { $0.method }
                 )
             )
