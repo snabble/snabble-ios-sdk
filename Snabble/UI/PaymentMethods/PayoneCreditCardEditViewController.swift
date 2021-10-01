@@ -176,6 +176,7 @@ public final class PayoneCreditCardEditViewController: UIViewController {
             .replacingOccurrences(of: "{{accountID}}", with: payoneTokenization.accountID)
             .replacingOccurrences(of: "{{mode}}", with: testing ? "test" : "live")
             .replacingOccurrences(of: "{{header}}", with: threeDSecureHint(for: projectId))
+            .replacingOccurrences(of: "{{handler}}", with: Self.handlerName)
 
         self.webView?.loadHTMLString(page, baseURL: nil)
     }
@@ -222,6 +223,7 @@ public final class PayoneCreditCardEditViewController: UIViewController {
 
 extension PayoneCreditCardEditViewController: WKNavigationDelegate {
     public func webView(_ webView: WKWebView, decidePolicyFor navigationAction: WKNavigationAction, decisionHandler: @escaping (WKNavigationActionPolicy) -> Void) {
+        print(#function)
         if navigationAction.navigationType == .linkActivated, let url = navigationAction.request.url {
             UIApplication.shared.open(url)
             decisionHandler(.cancel)
@@ -234,6 +236,7 @@ extension PayoneCreditCardEditViewController: WKNavigationDelegate {
 
 extension PayoneCreditCardEditViewController: WKScriptMessageHandler {
     public func userContentController(_ userContentController: WKUserContentController, didReceive message: WKScriptMessage) {
+        print(#function)
         guard
             message.name == Self.handlerName,
             let projectId = self.projectId,
@@ -243,7 +246,7 @@ extension PayoneCreditCardEditViewController: WKScriptMessageHandler {
             return self.showError()
         }
 
-        print(message.body)
+        print("WEBVIEW log", message.body)
 //        do {
 //            let response = try PayoneResponse(response: eventData)
 //            if let ccData = PayoneCreditCardData(gatewayCert: cert.data, response: response, projectId: projectId) {
@@ -326,226 +329,14 @@ extension PayoneCreditCardEditViewController: ReactNativeWrapper {
 }
 
 extension PayoneCreditCardEditViewController {
-    // based on https://docs.payone.com/display/public/PLATFORM/Cardtype+set+by+shop-system
-    fileprivate static let pageTemplate = """
-        <html>
-        <head lang="de">
-            <meta charset="UTF-8">
-            <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-            <script type="text/javascript">
-                // intercept errors
-                window.onerror = (msg, url, line, column, error) => {
-                  const message = {
-                    message: msg,
-                    url: url,
-                    line: line,
-                    column: column,
-                    error: JSON.stringify(error)
-                  }
+    fileprivate static let pageTemplate: String = { () -> String in
+        guard
+            let path = SnabbleBundle.main.path(forResource: "payone-form-2", ofType: "html"),
+            let data = try? Data(contentsOf: URL(fileURLWithPath: path))
+        else {
+            return ""
+        }
 
-                  window.webkit.messageHandlers.\(handlerName).postMessage(message);
-                };
-
-                // intercept console.log and console.debug
-                var console = {
-                    log: function(msg) { window.webkit.messageHandlers.\(handlerName).postMessage(msg) }
-                    debug: function(msg) { window.webkit.messageHandlers.\(handlerName).postMessage(msg) }
-                };
-            </script>
-            <style type="text/css" media="screen">
-                * {
-                    margin: 0;
-                    padding: 0;
-                }
-                body {
-                    background: #fff;
-                    color: #000;
-                    font-size: 17px;
-                    font-family: -apple-system, sans-serif;
-                }
-                @media (prefers-color-scheme: dark) {
-                  body {
-                    background-color: #000;
-                    color: #fff; }
-                }
-                fieldset {
-                    border: none;
-                    padding: 16px;
-                }
-                label {
-                    display: block;
-                    float: left;
-                    text-align: right;
-                    margin-right: 12px;
-                    width: 110px;
-                    height: 33px;
-                }
-                input, select {
-                    font-size: 100%; height: 33px;
-                }
-                select {
-                    margin-right: 10px;
-                }
-                input, .inputIframe, select {
-                    margin-bottom: 16px;
-                }
-
-                input {
-                    width: 160px; font-size: 100%;
-                }
-
-                #paymentsubmit {
-                    width: 100%;
-                }
-                #errorOutput {
-                    text-align: center;
-                    color: #ff0000;
-                    display: block;
-                }
-                #appWrapper {
-                  max-width: 400px;
-                  margin: auto;
-                }
-            </style>
-        </head>
-        <body>
-        <script type="text/javascript" src="https://secure.pay1.de/client-api/js/v1/payone_hosted_min.js"></script>
-        <form name="paymentform" action="" method="post">
-            <fieldset>
-                <div id="appWrapper">
-                  <input type="hidden" name="pseudocardpan" id="pseudocardpan">
-                  <input type="hidden" name="truncatedcardpan" id="truncatedcardpan">
-
-                  <!-- configure your cardtype-selection here -->
-                  <div class="row">
-                    <label for="cardtypeInput">Karte</label>
-                    <select id="cardtype">
-                        <option value="V">VISA</option>
-                        <option value="M">Mastercard</option>
-                        <option value="A">Amex</option>
-                    </select>
-                  </div>
-
-                  <div class="row">
-                    <label for="cardpanInput">Kartennummer</label> <!-- TODO: l10n -->
-                    <span class="inputIframe" id="cardpan"></span>
-                  </div>
-
-                  <div class="row">
-                    <label for="cvcInput">Prüfnummer</label> <!-- TODO: l10n -->
-                    <span id="cardcvc2" class="inputIframe"></span>
-                  </div>
-
-                  <div class="row">
-                    <label for="expireInput">Ablaufdatum</label> <!-- TODO: l10n -->
-                    <span id="expireInput" class="inputIframe">
-                        <span id="cardexpiremonth"></span>
-                        <span id="cardexpireyear"></span>
-                    </span>
-                  </div>
-
-                  <div class="row">
-                    <label for="firstname">Vorname</label> <!-- TODO: l10n -->
-                    <input id="firstname" type="text" name="firstname" value="">
-                  </div>
-
-                  <div class="row">
-                    <label for="lastname">Nachname</label> <!-- TODO: l10n -->
-                    <input id="lastname" type="text" name="lastname" value="">
-                  </div>
-
-                  <div class="row">
-                    <div id="errorOutput"></div>
-                  </div>
-                </div>
-
-                <input id="paymentsubmit" type="button" value="Speichern" onclick="check();"> <!-- TODO: l10n -->
-            </fieldset>
-        </form>
-
-        <div id="paymentform"></div>
-        <script>
-            var request, config;
-        foo + - / %
-            config = {
-                fields: {
-                    cardpan: {
-                        selector: "cardpan",                 // put name of your div-container here
-                        type: "text"                         // text (default), password, tel
-                    },
-                    cardcvc2: {
-                        selector: "cardcvc2",                // put name of your div-container here
-                        type: "password",                    // select(default), text, password, tel
-                        size: "4",
-                        maxlength: "4",                      // set max. length for CVC input; empty values possible
-                        length: { "A": 4, "V": 3, "M": 3, "J": 0 } // set required CVC length per cardtype
-                                                             // if set exact length required; 0=CVC input disabled
-                    },
-                    cardexpiremonth: {
-                        selector: "cardexpiremonth",         // put name of your div-container here
-                        type: "select",                      // select(default), text, password, tel
-                        size: "2",
-                        maxlength: "2",
-                        iframe: {
-                            width: "50px"
-                        }
-                    },
-                    cardexpireyear: {
-                        selector: "cardexpireyear",          // put name of your div-container here
-                        type: "select",                      // select(default), text, password, tel
-                        iframe: {
-                            width: "80px"
-                        }
-                    }
-                },
-                defaultStyle: {
-                    input: "font-size: 100%",
-                    iframe: {
-                        height: "33px",
-                        width: "160px",
-                    }
-                },
-                error: "errorOutput",                        // area to display error-messages (optional)
-                language: Payone.ClientApi.Language.de       // Language to display error-messages
-                                                             // (default: Payone.ClientApi.Language.en)
-                                                             // TODO: l10n
-            };
-
-            request = {
-                request: 'creditcardcheck',                  // fixed value
-                responsetype: 'JSON',                        // fixed value
-                mode: '{{mode}}',                            // desired mode
-                mid: '{{merchantID}}',                       // your MID
-                aid: '{{accountID}}',                        // your AID
-                portalid: '{{portalID}}',                    // your PortalId
-                encoding: 'UTF-8',                           // desired encoding
-                storecarddata: 'yes',                        // fixed value
-                hash: '{{hash}}'
-            };
-            var iframes = new Payone.ClientApi.HostedIFrames(config, request);
-
-            document.getElementById('cardtype').onchange = function () {
-               iframes.setCardType(this.value);              // on change: set new type of credit card to process
-            };
-
-            function check() {                               // Function called by submitting PAY-button
-                if (iframes.isComplete()) {
-                    iframes.creditCardCheck('checkCallback');// Perform "CreditCardCheck" to create and get a
-                                                             // PseudoCardPan; then call your function "checkCallback"
-                } else {
-                    console.log("not complete");
-                }
-            }
-
-            function checkCallback(response) {
-                console.log(response);
-                if (response.status === "VALID") {
-                    document.getElementById("pseudocardpan").value = response.pseudocardpan;
-                    document.getElementById("truncatedcardpan").value = response.truncatedcardpan;
-                }
-            }
-        </script>
-        </body>
-        </html>
-        """
+        return String(bytes: data, encoding: .utf8) ?? ""
+    }()
 }
