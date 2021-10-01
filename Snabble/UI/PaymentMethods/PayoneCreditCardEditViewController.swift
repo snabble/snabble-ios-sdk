@@ -168,6 +168,7 @@ public final class PayoneCreditCardEditViewController: UIViewController {
     }
 
     private func prepareAndInjectPage(_ payoneTokenization: PayoneTokenization) {
+        print(payoneTokenization)
         let testing = payoneTokenization.isTesting ?? false
         let page = PayoneCreditCardEditViewController.pageTemplate
             .replacingOccurrences(of: "{{hash}}", with: payoneTokenization.hash)
@@ -178,7 +179,25 @@ public final class PayoneCreditCardEditViewController: UIViewController {
             .replacingOccurrences(of: "{{header}}", with: threeDSecureHint(for: projectId))
             .replacingOccurrences(of: "{{handler}}", with: Self.handlerName)
 
-        self.webView?.loadHTMLString(page, baseURL: nil)
+        self.webView?.loadHTMLString(page, baseURL: URL(string: "http://127.0.0.1/")!)
+//        do {
+//            let fileManager = FileManager.default
+//            let tmpDir = try fileManager.url(for: .cachesDirectory,
+//                                             in: .userDomainMask,
+//                                             appropriateFor: nil,
+//                                             create: true)
+//
+//            let temporaryFilename = ProcessInfo().globallyUniqueString
+//
+//            let tmpFile = tmpDir.appendingPathComponent(temporaryFilename)
+//
+//            let data = page.data(using: .utf8)
+//            try data?.write(to: tmpFile, options: .atomic)
+//
+//            self.webView.load(URLRequest(url: tmpFile))
+//        } catch {
+//            print(error)
+//        }
     }
 
     private func threeDSecureHint(for projectId: Identifier<Project>?) -> String {
