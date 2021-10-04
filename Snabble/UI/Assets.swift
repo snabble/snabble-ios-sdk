@@ -57,6 +57,7 @@ internal enum Asset {
     }
     internal static let paymentMethodCheckstand = SwiftGenImageAsset(name: "SnabbleSDK/payment-method-checkstand")
   }
+  internal static let successIcon = SwiftGenImageAsset(name: "success-icon")
 }
 // swiftlint:enable identifier_name line_length nesting type_body_length type_name
 
@@ -71,6 +72,7 @@ internal struct SwiftGenImageAsset {
   internal typealias Image = UIImage
   #endif
 
+  @available(iOS 8.0, tvOS 9.0, watchOS 2.0, macOS 10.7, *)
   internal var image: Image {
     let bundle = BundleToken.bundle
     #if os(iOS) || os(tvOS)
@@ -86,9 +88,21 @@ internal struct SwiftGenImageAsset {
     }
     return result
   }
+
+  #if os(iOS) || os(tvOS)
+  @available(iOS 8.0, tvOS 9.0, *)
+  internal func image(compatibleWith traitCollection: UITraitCollection) -> Image {
+    let bundle = BundleToken.bundle
+    guard let result = Image(named: name, in: bundle, compatibleWith: traitCollection) else {
+      fatalError("Unable to load image asset named \(name).")
+    }
+    return result
+  }
+  #endif
 }
 
 internal extension SwiftGenImageAsset.Image {
+  @available(iOS 8.0, tvOS 9.0, watchOS 2.0, *)
   @available(macOS, deprecated,
     message: "This initializer is unsafe on macOS, please use the SwiftGenImageAsset.image property")
   convenience init?(asset: SwiftGenImageAsset) {

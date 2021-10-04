@@ -358,7 +358,8 @@ public enum L10n {
       public static var duplicateDepositScanned: String { return L10n.tr("SnabbleLocalizable", "Snabble.Scanner.duplicateDepositScanned") }
       /// Enter code
       public static var enterBarcode: String { return L10n.tr("SnabbleLocalizable", "Snabble.Scanner.enterBarcode") }
-      /// Enter\nbarcode
+      /// Enter
+      /// barcode
       public static var enterCodeButton: String { return L10n.tr("SnabbleLocalizable", "Snabble.Scanner.enterCodeButton") }
       /// Scan your first product. Place the barcode in front of your camera.
       public static var firstScan: String { return L10n.tr("SnabbleLocalizable", "Snabble.Scanner.firstScan") }
