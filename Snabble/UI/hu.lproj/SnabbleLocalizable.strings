@@ -165,6 +165,8 @@
 
 "Snabble.Payment.presentCode" = "A bevásárlás nyugtázásához tartsd ezt a kódot egy Snabble-monitor elé, vagy mutasd meg egy alkalmazottnak.";
 
+"Snabble.Payment.rejected" = "Bevásárlás elutasítva";
+
 "Snabble.Payment.SEPA.hint" = "Megjegyzés: A te és a kereskedőink visszaélésekkel szembeni védelme érdekében az első SEPA terhelési megbízásos fizetésednél a kereskedőnél megjelenik a bankkártyád.";
 
 "Snabble.Payment.SEPA.IBAN" = "IBAN";

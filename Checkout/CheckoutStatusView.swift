@@ -114,7 +114,7 @@ extension CheckoutStatusView.Status {
         case .success:
             return L10n.Snabble.Payment.success
         case .failure:
-            return L10n.Snabble.Payment.aborted
+            return L10n.Snabble.Payment.rejected
         }
     }
 

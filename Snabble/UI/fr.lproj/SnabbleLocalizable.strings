@@ -165,6 +165,8 @@
 
 "Snabble.Payment.presentCode" = "Présente ce code devant un écran Snabble ou montre-le à un collaborateur afin de confirmer ton achat.";
 
+"Snabble.Payment.rejected" = "Purchase denied";
+
 "Snabble.Payment.SEPA.hint" = "Remarque : pour te protéger et protéger nos commerçants contre les abus, le commerçant te demandera de montrer ta carte bancaire lors de ton premier paiement par débit SEPA.";
 
 "Snabble.Payment.SEPA.IBAN" = "IBAN";

@@ -165,6 +165,8 @@
 
 "Snabble.Payment.presentCode" = "Za účelom potvrdenia nákupu prilož tento kód pred Snabble monitor alebo ho ukáž zamestnancovi.";
 
+"Snabble.Payment.rejected" = "Nákup zamietnutý";
+
 "Snabble.Payment.SEPA.hint" = "Poznámka: Za účelom tvojej ochrany a ochrany našich obchodníkov pred zneužitím si obchodník pri tvojej prvej platbe prostredníctvom SEPA inkasa vyžiada tvoju bankovú kartu.";
 
 "Snabble.Payment.SEPA.IBAN" = "IBAN";
