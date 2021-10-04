@@ -1,5 +1,5 @@
 PODS:
-  - AutoLayout-Helper (1.0.0)
+  - AutoLayout-Helper (1.1.0)
   - Base32 (1.1.2)
   - ColorCompatibility (1.1.0)
   - DeviceKit (4.5.0)
@@ -11,16 +11,16 @@ PODS:
     - Base32 (~> 1.1.2)
   - Pulley (2.9.1)
   - SDCAlertView (12.0.1)
-  - Snabble (0.17.9):
-    - Snabble/Core (= 0.17.9)
-    - Snabble/UI (= 0.17.9)
-  - Snabble/Core (0.17.9):
+  - Snabble (0.17.10):
+    - Snabble/Core (= 0.17.10)
+    - Snabble/UI (= 0.17.10)
+  - Snabble/Core (0.17.10):
     - GRDB.swift (~> 5)
     - KeychainAccess (~> 4)
     - OneTimePassword (~> 3)
     - TrustKit (~> 1)
     - Zip (~> 2)
-  - Snabble/UI (0.17.9):
+  - Snabble/UI (0.17.10):
     - AutoLayout-Helper
     - ColorCompatibility
     - DeviceKit (~> 4)
@@ -55,7 +55,7 @@ EXTERNAL SOURCES:
     :path: "../"
 
 SPEC CHECKSUMS:
-  AutoLayout-Helper: cff0627ca7587871036bb7c10105dbc5889dc67a
+  AutoLayout-Helper: cef12ab4c7169facf772b2afaaeecce23e898999
   Base32: 163c298644d184e89ca4e00a996bad6bf5166390
   ColorCompatibility: 7257750b5ac742db9c8b593966c6f8e06992149b
   DeviceKit: b68cded46afdaefc5d2253d631d441ba7049a7fe
@@ -64,7 +64,7 @@ SPEC CHECKSUMS:
   OneTimePassword: c00ecc908e67e6c5bfda9d50b0b2e4696d0b066e
   Pulley: a4c28c930958f42978d69631000bc1abb82cb232
   SDCAlertView: d6070733e6ce72360dde3f84a2f9eafcda25ed49
-  Snabble: e4c77cb3820fec7a5f5170c6404274379c78330e
+  Snabble: 2b1793224a2b6a69e7f95457a8d1689725710eed
   TrustKit: dac38bb37e49bdfeca41b1a19d020da38017b51c
   WCAG-Colors: 4aca2fd6c2dce9cd1211c5bf3cda1e8c531d3d2c
   Zip: 414f59909701fda9a84ab774ebe0f5449b1082cc
