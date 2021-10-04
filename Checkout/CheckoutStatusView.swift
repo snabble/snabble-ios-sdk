@@ -8,13 +8,13 @@
 import Foundation
 import UIKit
 
-public final class CheckoutStatusView: UIView {
-    public enum Status {
-        case loading
-        case success
-        case failure
-    }
+public protocol CheckoutStatusViewModel {
+    var circleColor: UIColor? { get }
+    var image: UIImage? { get }
+    var isLoading: Bool { get }
+}
 
+public final class CheckoutStatusView: UIView {
     public private(set) weak var circleView: CircleView?
     public private(set) weak var activityIndicatorView: UIActivityIndicatorView?
     public private(set) weak var imageView: UIImageView?
@@ -87,21 +87,25 @@ public final class CheckoutStatusView: UIView {
         fatalError("init(coder:) has not been implemented")
     }
 
-    public func configure(with status: Status) {
-        circleView?.circleColor = status.circleColor
-        imageView?.image = status.image
+    public func configure(with viewModel: CheckoutStatusViewModel) {
+        circleView?.circleColor = viewModel.circleColor
+        imageView?.image = viewModel.image
 
-        switch status {
-        case .loading:
-            activityIndicatorView?.startAnimating()
-        case .failure, .success:
-            activityIndicatorView?.stopAnimating()
-        }
+        viewModel.isLoading ? activityIndicatorView?.startAnimating() : activityIndicatorView?.stopAnimating()
     }
 }
 
-extension CheckoutStatusView.Status {
-    var circleColor: UIColor? {
+extension CheckoutStatus: CheckoutStatusViewModel {
+    public var isLoading: Bool {
+        switch self {
+        case .loading:
+            return true
+        default:
+            return false
+        }
+    }
+
+    public var circleColor: UIColor? {
         switch self {
         case .loading:
             return .clear
@@ -112,7 +116,7 @@ extension CheckoutStatusView.Status {
         }
     }
 
-    var image: UIImage? {
+    public var image: UIImage? {
         switch self {
         case .loading:
             return nil
