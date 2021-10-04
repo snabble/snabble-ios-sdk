@@ -15,16 +15,22 @@ public final class CheckoutStatusView: UIView {
         case failure
     }
 
-    private(set) weak var circleView: CircleView?
-    private(set) weak var activityIndicatorView: UIActivityIndicatorView?
-    private(set) weak var imageView: UIImageView?
-    private(set) weak var textLabel: UILabel?
+    public private(set) weak var circleView: CircleView?
+    public private(set) weak var activityIndicatorView: UIActivityIndicatorView?
+    public private(set) weak var imageView: UIImageView?
+
+    var circleColor: UIColor? {
+        get {
+            circleView?.circleColor
+        }
+        set {
+            circleView?.circleColor = newValue
+        }
+    }
 
     override public init(frame: CGRect) {
-
         let circleView = CircleView()
         circleView.translatesAutoresizingMaskIntoConstraints = false
-        circleView.circleColor = .gray
 
         let activityIndicatorView: UIActivityIndicatorView
         if #available(iOS 13.0, *) {
@@ -34,16 +40,11 @@ public final class CheckoutStatusView: UIView {
         }
         activityIndicatorView.translatesAutoresizingMaskIntoConstraints = false
         activityIndicatorView.hidesWhenStopped = true
+        activityIndicatorView.color = .systemGray
 
         let imageView = UIImageView()
         imageView.translatesAutoresizingMaskIntoConstraints = false
         imageView.tintColor = .white
-
-        let textLabel = UILabel()
-        textLabel.translatesAutoresizingMaskIntoConstraints = false
-        textLabel.numberOfLines = 0
-        textLabel.textAlignment = .center
-        textLabel.textColor = .label
 
         super.init(frame: frame)
 
@@ -52,20 +53,17 @@ public final class CheckoutStatusView: UIView {
         addSubview(circleView)
         addSubview(activityIndicatorView)
         addSubview(imageView)
-        addSubview(textLabel)
 
         self.circleView = circleView
         self.activityIndicatorView = activityIndicatorView
         self.imageView = imageView
-        self.textLabel = textLabel
 
         NSLayoutConstraint.activate([
             circleView.centerXAnchor.constraint(equalTo: centerXAnchor),
 
-            circleView.widthAnchor.constraint(equalToConstant: 168).usingPriority(.defaultLow + 1),
             circleView.widthAnchor.constraint(equalTo: circleView.heightAnchor),
-            circleView.leadingAnchor.constraint(greaterThanOrEqualTo: leadingAnchor, constant: 32),
-            trailingAnchor.constraint(greaterThanOrEqualTo: circleView.trailingAnchor, constant: 32),
+            circleView.leadingAnchor.constraint(equalTo: leadingAnchor),
+            trailingAnchor.constraint(equalTo: circleView.trailingAnchor),
 
             activityIndicatorView.centerXAnchor.constraint(equalTo: circleView.centerXAnchor),
             activityIndicatorView.centerYAnchor.constraint(equalTo: circleView.centerYAnchor),
@@ -75,16 +73,13 @@ public final class CheckoutStatusView: UIView {
             imageView.leadingAnchor.constraint(greaterThanOrEqualTo: circleView.leadingAnchor),
             imageView.topAnchor.constraint(greaterThanOrEqualTo: circleView.topAnchor),
             imageView.heightAnchor.constraint(equalTo: imageView.widthAnchor),
-            imageView.heightAnchor.constraint(equalToConstant: 90),
+
+            imageView.heightAnchor.constraint(equalTo: circleView.heightAnchor, multiplier: 0.55),
             circleView.trailingAnchor.constraint(greaterThanOrEqualTo: imageView.trailingAnchor),
             circleView.bottomAnchor.constraint(greaterThanOrEqualTo: imageView.bottomAnchor),
 
-            textLabel.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 16),
-            trailingAnchor.constraint(equalTo: textLabel.trailingAnchor, constant: 16),
-
-            circleView.topAnchor.constraint(equalTo: topAnchor, constant: 32),
-            textLabel.topAnchor.constraint(equalTo: circleView.bottomAnchor, constant: 32),
-            bottomAnchor.constraint(equalTo: textLabel.bottomAnchor, constant: 16)
+            circleView.topAnchor.constraint(equalTo: topAnchor),
+            bottomAnchor.constraint(equalTo: circleView.bottomAnchor)
         ])
     }
 
@@ -93,7 +88,6 @@ public final class CheckoutStatusView: UIView {
     }
 
     public func configure(with status: Status) {
-        textLabel?.text = status.text
         circleView?.circleColor = status.circleColor
         imageView?.image = status.image
 
@@ -107,21 +101,10 @@ public final class CheckoutStatusView: UIView {
 }
 
 extension CheckoutStatusView.Status {
-    var text: String {
-        switch self {
-        case .loading:
-            return L10n.Snabble.Payment.waiting
-        case .success:
-            return L10n.Snabble.Payment.success
-        case .failure:
-            return L10n.Snabble.Payment.rejected
-        }
-    }
-
     var circleColor: UIColor? {
         switch self {
         case .loading:
-            return .systemGray2
+            return .clear
         case .success:
             return .systemGreen
         case .failure:
@@ -137,13 +120,13 @@ extension CheckoutStatusView.Status {
             if #available(iOS 13.0, *) {
                 return UIImage(systemName: "checkmark")
             } else {
-                return Asset.successIcon.image
+                return Asset.SnabbleSDK.checkmark.image
             }
         case .failure:
             if #available(iOS 13.0, *) {
                 return UIImage(systemName: "xmark")
             } else {
-                return nil // Warning: Missing Icon
+                return Asset.SnabbleSDK.x.image
             }
         }
     }

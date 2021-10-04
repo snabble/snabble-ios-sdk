@@ -9,15 +9,15 @@ import Foundation
 import UIKit
 import QuartzCore
 
-class CircleView: UIView {
+public class CircleView: UIView {
 
-    var circleColor: UIColor? = .systemBackground {
+    public var circleColor: UIColor? = .clear {
         didSet {
             shapeLayer?.fillColor = circleColor?.cgColor
         }
     }
 
-    override class var layerClass: AnyClass {
+    override public class var layerClass: AnyClass {
         CAShapeLayer.self
     }
 
@@ -25,7 +25,7 @@ class CircleView: UIView {
         layer as? CAShapeLayer
     }
 
-    override func didMoveToSuperview() {
+    override public func didMoveToSuperview() {
         super.didMoveToSuperview()
 
         shapeLayer?.fillColor = circleColor?.cgColor

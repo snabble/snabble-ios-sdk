@@ -22,6 +22,7 @@ internal enum Asset {
   internal enum SnabbleSDK {
     internal static let arrowUp = SwiftGenImageAsset(name: "SnabbleSDK/arrow-up")
     internal static let barcodeOverlay = SwiftGenImageAsset(name: "SnabbleSDK/barcode-overlay")
+    internal static let checkmark = SwiftGenImageAsset(name: "SnabbleSDK/checkmark")
     internal static let iconBarcode = SwiftGenImageAsset(name: "SnabbleSDK/icon-barcode")
     internal static let iconCartActive = SwiftGenImageAsset(name: "SnabbleSDK/icon-cart-active")
     internal static let iconCartInactiveEmpty = SwiftGenImageAsset(name: "SnabbleSDK/icon-cart-inactive-empty")
@@ -56,8 +57,8 @@ internal enum Asset {
       internal static let paymentVisa = SwiftGenImageAsset(name: "SnabbleSDK/payment/payment-visa")
     }
     internal static let paymentMethodCheckstand = SwiftGenImageAsset(name: "SnabbleSDK/payment-method-checkstand")
+    internal static let x = SwiftGenImageAsset(name: "SnabbleSDK/x")
   }
-  internal static let successIcon = SwiftGenImageAsset(name: "success-icon")
 }
 // swiftlint:enable identifier_name line_length nesting type_body_length type_name
 
