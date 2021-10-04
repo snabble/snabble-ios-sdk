@@ -169,6 +169,11 @@ public final class PayoneCreditCardEditViewController: UIViewController {
 
     private func prepareAndInjectPage(_ payoneTokenization: PayoneTokenization) {
         print(payoneTokenization)
+        var languageCode = Locale.current.languageCode ?? "en"
+        switch languageCode {
+        case "de", "en", "fr", "it", "es", "pt", "nl": ()
+        default: languageCode = "en"
+        }
         let testing = payoneTokenization.isTesting ?? false
         let page = PayoneCreditCardEditViewController.pageTemplate
             .replacingOccurrences(of: "{{hash}}", with: payoneTokenization.hash)
@@ -178,26 +183,18 @@ public final class PayoneCreditCardEditViewController: UIViewController {
             .replacingOccurrences(of: "{{mode}}", with: testing ? "test" : "live")
             .replacingOccurrences(of: "{{header}}", with: threeDSecureHint(for: projectId))
             .replacingOccurrences(of: "{{handler}}", with: Self.handlerName)
+            .replacingOccurrences(of: "{{language}}", with: languageCode)
+            .replacingOccurrences(of: "{{supportedCardType}}", with: self.brand?.paymentMethod ?? "")
+            // TODO: l10n
+            .replacingOccurrences(of: "{{cardNumberLabel}}", with: "Kartennummer")
+            .replacingOccurrences(of: "{{cvcLabel}}", with: "Prüfnummer (CVC)")
+            .replacingOccurrences(of: "{{expireMonthLabel}}", with: "Ablaufmonat (MM)")
+            .replacingOccurrences(of: "{{expireYearLabel}}", with: "Ablaufjahr (JJJJ)")
+            .replacingOccurrences(of: "{{saveButtonLabel}}", with: "Speichern")
+            .replacingOccurrences(of: "{{incompleteForm}}", with: "Bitte fülle das Formular vollständig aus.")
 
+        // passing the dummy base URL is necessary for the Payone JS to work  ¯\_(ツ)_/¯
         self.webView?.loadHTMLString(page, baseURL: URL(string: "http://127.0.0.1/")!)
-//        do {
-//            let fileManager = FileManager.default
-//            let tmpDir = try fileManager.url(for: .cachesDirectory,
-//                                             in: .userDomainMask,
-//                                             appropriateFor: nil,
-//                                             create: true)
-//
-//            let temporaryFilename = ProcessInfo().globallyUniqueString
-//
-//            let tmpFile = tmpDir.appendingPathComponent(temporaryFilename)
-//
-//            let data = page.data(using: .utf8)
-//            try data?.write(to: tmpFile, options: .atomic)
-//
-//            self.webView.load(URLRequest(url: tmpFile))
-//        } catch {
-//            print(error)
-//        }
     }
 
     private func threeDSecureHint(for projectId: Identifier<Project>?) -> String {
