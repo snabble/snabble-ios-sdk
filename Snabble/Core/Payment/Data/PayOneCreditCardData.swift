@@ -63,15 +63,15 @@ struct PayoneResponse {
     let cardExpireDate: String // (YYMM)
     let lastName: String
 
-    init?(response: [String: String], lastName: String) {
+    init?(response: [String: Any], lastName: String) {
         guard
-            let status = response["status"],
+            let status = response["status"] as? String,
             status == "VALID",
-            let pseudoCardPAN = response["pseudocardpan"],
-            let maskedCardPAN = response["truncatedcardpan"],
-            let cardtype = response["cardtype"],
+            let pseudoCardPAN = response["pseudocardpan"] as? String,
+            let maskedCardPAN = response["truncatedcardpan"] as? String,
+            let cardtype = response["cardtype"] as? String,
             let brand = CreditCardBrand.forType(cardtype),
-            let cardexpiredate = response["cardexpiredate"]
+            let cardexpiredate = response["cardexpiredate"] as? String
         else {
             return nil
         }

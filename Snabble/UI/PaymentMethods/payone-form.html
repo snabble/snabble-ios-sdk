@@ -28,8 +28,9 @@
         }
         
         function processResponse(obj, lastName) {
+            console.log("processResponse!")
             window.webkit.messageHandlers.{{handler}}.postMessage({
-                response: obj
+                response: obj,
                 lastName: lastName
             });
         }
@@ -162,7 +163,7 @@
             switch (response.status) {
                 case 'VALID':
                     console.log('Success! Credit card check was valid.');
-                    var lastName = document.getElementById('lastName').value
+                    var lastName = document.getElementById('lastName').value;
                     processResponse(response, lastName);
                     break;
                 case 'INVALID':

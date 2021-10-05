@@ -263,14 +263,14 @@ extension PayoneCreditCardEditViewController: WKScriptMessageHandler {
             return NSLog("P1 console.log \(log)")
         } else if let error = body["error"] as? String {
             return showErrorAlert(message: error, goBack: false)
-        } else if let response = body["response"] as? [String: String] {
+        } else if let response = body["response"] as? [String: Any] {
             print("yay! valid response!")
             let lastName = body["lastName"] as? String
             self.processResponse(response, lastName)
         }
     }
 
-    private func processResponse(_ response: [String: String], _ lastName: String?) {
+    private func processResponse(_ response: [String: Any], _ lastName: String?) {
         guard
             let projectId = self.projectId,
             let project = SnabbleAPI.project(for: projectId),
