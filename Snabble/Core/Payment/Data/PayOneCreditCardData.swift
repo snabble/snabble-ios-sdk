@@ -46,8 +46,8 @@ struct PayoneCreditCardData: Codable, EncryptedPaymentData, Equatable, BrandedCr
         self.projectId = projectId
         self.encryptedPaymentData = cipherText
         self.serial = serial
-        self.displayName = response.truncatedcardpan
-        self.expirationDate = response.cardexpiredate
+        self.displayName = response.maskedCardPAN
+        self.expirationDate = response.cardExpireDate
     }
 
     var isExpired: Bool {
@@ -57,20 +57,29 @@ struct PayoneCreditCardData: Codable, EncryptedPaymentData, Equatable, BrandedCr
 }
 
 struct PayoneResponse {
-    let status: String // = “VALID”
-    let pseudocardpan: String // containing the unique pseudocardnumber (Pseudo-PAN)
-    let truncatedcardpan: String // containing the masked creditcard number (masked PAN)
-    let cardtype: String //  containing the selected cardtype
-    let cardexpiredate: String //  containing the entered expiredate (YYMM)
+    let pseudoCardPAN: String
+    let maskedCardPAN: String
     let brand: CreditCardBrand
+    let cardExpireDate: String // (YYMM)
+    let lastName: String
 
-    init(response: [[String: String]]) throws {
-        #warning("implement me")
-        status = "VALID"
-        pseudocardpan = "123"
-        truncatedcardpan = "456"
-        cardtype = "VISA"
-        cardexpiredate = "2103"
-        brand = .visa
+    init?(response: [String: String], lastName: String) {
+        guard
+            let status = response["status"],
+            status == "VALID",
+            let pseudoCardPAN = response["pseudocardpan"],
+            let maskedCardPAN = response["truncatedcardpan"],
+            let cardtype = response["cardtype"],
+            let brand = CreditCardBrand.forType(cardtype),
+            let cardexpiredate = response["cardexpiredate"]
+        else {
+            return nil
+        }
+
+        self.pseudoCardPAN = pseudoCardPAN
+        self.maskedCardPAN = maskedCardPAN
+        self.brand = brand
+        self.cardExpireDate = cardexpiredate
+        self.lastName = lastName
     }
 }

@@ -27,34 +27,40 @@
             window.webkit.messageHandlers.{{handler}}.postMessage({ error: msg });
         }
         
-        function processResponse(obj) {
-            window.webkit.messageHandlers.{{handler}}.postMessage({ response: obj });
+        function processResponse(obj, lastName) {
+            window.webkit.messageHandlers.{{handler}}.postMessage({
+                response: obj
+                lastName: lastName
+            });
         }
     </script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.3.1/css/bootstrap.css">
     <style type="text/css">
-        * {
-            box-sizing: content-box;
-        }
-
+        * { box-sizing: content-box; }
         .container { width: auto; }
         .header { margin-bottom: 1rem; }
-
-        .payone-cc-message-wrap {
-            display: none;
-        }
+        label { font-weight: bold; }
 
         .payone-input-mock {
-            border: 2px solid #0078AB;
+            border: 2px solid #0077bb;
             border-radius: 10px;
             padding: 5px 15px;
-            max-width: 300px;
+            max-width: 100%;
         }
 
         .payone-input-mock iframe {
             height: 50px;
             width: 100%;
             vertical-align: middle;
+        }
+
+        .payone-input-mock input {
+            height: 42px;
+            width: 90%;
+            vertical-align: middle;
+            font-size: 17px;
+            border: none;
+            outline: none;
         }
     </style>
 
@@ -154,7 +160,8 @@
             switch (response.status) {
                 case 'VALID':
                     console.log('Success! Credit card check was valid.');
-                    processResponse(response);
+                    var lastName = document.getElementById('lastName').value
+                    processResponse(response, lastName);
                     break;
                 case 'INVALID':
                 case 'ERROR':
@@ -171,7 +178,8 @@
          */
         PayoneAutoCcDetection.prototype.performCreditCardCheck = function () {
             console.log("performCheck");
-            if (this._hostedIframe.isComplete()) {
+            var name = document.getElementById('lastName').value
+            if (this._hostedIframe.isComplete() && name != "") {
                 console.log("complete!");
                 this._hostedIframe.creditCardCheck(this._creditCardCheckCallbackName);
             }
@@ -198,6 +206,13 @@
 
                 <!-- The form HTML with IFrame fields. -->
                 <form id="cc-form" class="my-3" action="#" method="post">
+                    <div class="form-group">
+                        <label for="payone-cc-lastname">{{lastName}}</label>
+                        <div class="payone-input-mock">
+                            <input type="text" id="lastName"/>
+                        </div>
+                    </div>
+
                     <div class="form-group">
                         <label for="payone-cc-pan">{{cardNumberLabel}}</label>
                         <div class="payone-input-mock payone-input-mock--pan">

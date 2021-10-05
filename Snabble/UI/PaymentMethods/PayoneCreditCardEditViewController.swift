@@ -186,6 +186,7 @@ public final class PayoneCreditCardEditViewController: UIViewController {
             .replacingOccurrences(of: "{{language}}", with: languageCode)
             .replacingOccurrences(of: "{{supportedCardType}}", with: self.brand?.paymentMethod ?? "")
             // TODO: l10n
+            .replacingOccurrences(of: "{{lastName}}", with: "Nachname")
             .replacingOccurrences(of: "{{cardNumberLabel}}", with: "Kartennummer")
             .replacingOccurrences(of: "{{cvcLabel}}", with: "Prüfnummer (CVC)")
             .replacingOccurrences(of: "{{expireMonthLabel}}", with: "Ablaufmonat (MM)")
@@ -253,10 +254,7 @@ extension PayoneCreditCardEditViewController: WKScriptMessageHandler {
     public func userContentController(_ userContentController: WKUserContentController, didReceive message: WKScriptMessage) {
         guard
             message.name == Self.handlerName,
-            let body = message.body as? [String: Any],
-            let projectId = self.projectId,
-            let project = SnabbleAPI.project(for: projectId),
-            let cert = SnabbleAPI.certificates.first
+            let body = message.body as? [String: Any]
         else {
             return self.showErrorAlert(message: L10n.Snabble.Payment.CreditCard.error, goBack: true)
         }
@@ -265,35 +263,33 @@ extension PayoneCreditCardEditViewController: WKScriptMessageHandler {
             return NSLog("P1 console.log \(log)")
         } else if let error = body["error"] as? String {
             return showErrorAlert(message: error, goBack: false)
-        } else if let response = body["response"] {
+        } else if let response = body["response"] as? [String: String] {
             print("yay! valid response!")
+            let lastName = body["lastName"] as? String
+            self.processResponse(response, lastName)
         }
-//        do {
-//            let response = try PayoneResponse(response: eventData)
-//            if let ccData = PayoneCreditCardData(gatewayCert: cert.data, response: response, projectId: projectId) {
-//                let detail = PaymentMethodDetail(ccData)
-//                PaymentMethodDetails.save(detail)
-//                self.analyticsDelegate?.track(.paymentMethodAdded(detail.rawMethod.displayName))
-//                goBack()
-//            } else {
-//                project.logError("can't create CC data from pay1 response: \(response)")
-//                showError()
-//            }
-//        } catch ConnectGatewayResponse.Error.gateway(let reason, let code) {
-//            switch code {
-//            case "5993":
-//                // user tapped "cancel"
-//                goBack()
-//            default:
-//                let msg = "pay1 error: fail_rc=\(code) fail_reason=\(reason)"
-//                project.logError(msg)
-//                showError()
-//            }
-//        } catch {
-//            let msg = "error parsing pay1 response: \(error) eventData=\(eventData)"
-//            project.logError(msg)
-//            showError()
-//        }
+    }
+
+    private func processResponse(_ response: [String: String], _ lastName: String?) {
+        guard
+            let projectId = self.projectId,
+            let project = SnabbleAPI.project(for: projectId),
+            let cert = SnabbleAPI.certificates.first,
+            let lastName = lastName,
+            let response = PayoneResponse(response: response, lastName: lastName)
+        else {
+            return
+        }
+
+        if let ccData = PayoneCreditCardData(gatewayCert: cert.data, response: response, projectId: projectId) {
+            let detail = PaymentMethodDetail(ccData)
+            PaymentMethodDetails.save(detail)
+            self.analyticsDelegate?.track(.paymentMethodAdded(detail.rawMethod.displayName))
+            goBack()
+        } else {
+            project.logError("can't create CC data from pay1 response: \(response)")
+            showErrorAlert(message: L10n.Snabble.Payment.CreditCard.error, goBack: true)
+        }
     }
 
     private func showErrorAlert(message: String, goBack: Bool) {
