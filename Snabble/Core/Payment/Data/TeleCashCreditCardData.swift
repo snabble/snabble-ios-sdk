@@ -139,8 +139,12 @@ struct TeleCashCreditCardData: Codable, EncryptedPaymentData, Equatable, Branded
             return false
         }
 
-        let date = year * 100 + month
-        let expiration = expYear * 100 + expMonth
-        return expiration < date
+        if year > expYear {
+            return true
+        } else if month > expMonth {
+            return true
+        } else {
+            return false
+        }
     }
 }

@@ -51,8 +51,25 @@ struct PayoneCreditCardData: Codable, EncryptedPaymentData, Equatable, BrandedCr
     }
 
     var isExpired: Bool {
-        #warning("FIXME")
-        return false
+        let components = Calendar.current.dateComponents([.year, .month], from: Date())
+        guard let year = components.year, let month = components.month else {
+            return false
+        }
+
+        guard
+            let expYear = Int(String(self.expirationDate.prefix(2))),
+            let expMonth = Int(String(self.expirationDate.suffix(2)))
+        else {
+            return false
+        }
+
+        if year > 2000 + expYear {
+            return true
+        } else if month > expMonth {
+            return true
+        } else {
+            return false
+        }
     }
 }
 
