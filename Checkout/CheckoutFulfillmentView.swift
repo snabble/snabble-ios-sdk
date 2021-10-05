@@ -107,8 +107,14 @@ public final class CheckoutFulfillmentView: UIView {
         button?.isHidden = button?.title(for: .normal) == nil
         imageView?.isHidden = imageView?.image == nil
     }
+}
 
-    #if DEBUG
+#if canImport(SwiftUI) && DEBUG
+import SwiftUI
+import AutoLayout_Helper
+
+@available(iOS 13, *)
+struct CheckoutFulfillmentView_Previews: PreviewProvider {
     public enum Mock {
         public enum Payment: CheckoutFulfillmentViewModel {
             case loading
@@ -153,5 +159,22 @@ public final class CheckoutFulfillmentView: UIView {
             }
         }
     }
-    #endif
+
+    static var previews: some View {
+        Group {
+            UIViewPreview {
+                let view = CheckoutFulfillmentView(frame: .zero)
+                view.configure(with: Mock.Payment.failure)
+                return view
+            }.previewLayout(.fixed(width: 200, height: 200))
+                .preferredColorScheme(.dark)
+            UIViewPreview {
+                let view = CheckoutFulfillmentView()
+                view.configure(with: Mock.Payment.loading)
+                return view
+            }.previewLayout(.fixed(width: 200, height: 200))
+                .preferredColorScheme(.light)
+        }
+    }
 }
+#endif

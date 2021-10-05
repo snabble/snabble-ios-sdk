@@ -46,3 +46,22 @@ public class CircleView: UIView {
         shapeLayer?.path = UIBezierPath(ovalIn: rect).cgPath
     }
 }
+
+#if canImport(SwiftUI) && DEBUG
+import SwiftUI
+import AutoLayout_Helper
+
+@available(iOS 13, *)
+struct CircleView_Previews: PreviewProvider {
+    static var previews: some View {
+        Group {
+            UIViewPreview {
+                let view = CircleView(frame: .zero)
+                view.circleColor = .red
+                return view
+            }.previewLayout(.fixed(width: 300, height: 300))
+                .preferredColorScheme(.light)
+        }
+    }
+}
+#endif

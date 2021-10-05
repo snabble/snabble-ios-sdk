@@ -142,3 +142,58 @@ extension CheckoutStatus: CheckoutStatusViewModel {
         }
     }
 }
+
+#if canImport(SwiftUI) && DEBUG
+import SwiftUI
+import AutoLayout_Helper
+
+@available(iOS 13, *)
+struct CheckoutStatusView_Previews: PreviewProvider {
+    static var previews: some View {
+        Group {
+            UIViewPreview {
+                let view = CheckoutStatusView(frame: .zero)
+                view.configure(with: CheckoutStatus.loading)
+                return view
+            }.previewLayout(.fixed(width: 100, height: 100))
+                .preferredColorScheme(.light)
+            UIViewPreview {
+                let view = CheckoutStatusView(frame: .zero)
+                view.configure(with: CheckoutStatus.loading)
+                return view
+            }.previewLayout(.fixed(width: 75, height: 75))
+                .preferredColorScheme(.dark)
+            UIViewPreview {
+                let view = CheckoutStatusView(frame: .zero)
+                view.configure(with: CheckoutStatus.success)
+                return view
+            }.previewLayout(.fixed(width: 25, height: 25))
+                .preferredColorScheme(.light)
+            UIViewPreview {
+                let view = CheckoutStatusView(frame: .zero)
+                view.configure(with: CheckoutStatus.success)
+                return view
+            }.previewLayout(.fixed(width: 50, height: 50))
+                .preferredColorScheme(.light)
+            UIViewPreview {
+                let view = CheckoutStatusView(frame: .zero)
+                view.configure(with: CheckoutStatus.failure)
+                return view
+            }.previewLayout(.fixed(width: 35, height: 35))
+                .preferredColorScheme(.dark)
+            UIViewPreview {
+                let view = CheckoutHeaderView(frame: .zero)
+                view.configure(with: CheckoutStatus.failure)
+                return view
+            }.previewLayout(.fixed(width: 100, height: 100))
+                .preferredColorScheme(.dark)
+            UIViewPreview {
+                let view = CheckoutHeaderView(frame: .zero)
+                view.configure(with: CheckoutStatus.failure)
+                return view
+            }.previewLayout(.fixed(width: 300, height: 300))
+                .preferredColorScheme(.light)
+        }
+    }
+}
+#endif
