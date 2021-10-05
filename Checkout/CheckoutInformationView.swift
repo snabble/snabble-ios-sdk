@@ -73,3 +73,27 @@ extension CheckoutInformationView.ViewModel {
         )
     }
 }
+#if canImport(SwiftUI) && DEBUG
+import SwiftUI
+import AutoLayout_Helper
+
+@available(iOS 13, *)
+struct Pods_Previews: PreviewProvider {
+    static var previews: some View {
+        Group {
+            UIViewPreview {
+                let view = CheckoutInformationView()
+                view.configure(with: CheckoutInformationView.ViewModel.mock)
+                return view
+            }.previewLayout(.fixed(width: 300, height: 300))
+                .preferredColorScheme(.dark)
+            UIViewPreview {
+                let view = CheckoutInformationView()
+                view.configure(with: CheckoutInformationView.ViewModel.mock)
+                return view
+            }.previewLayout(.fixed(width: 300, height: 300))
+                .preferredColorScheme(.light)
+        }
+    }
+}
+#endif
