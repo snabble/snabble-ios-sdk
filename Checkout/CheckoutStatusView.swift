@@ -58,6 +58,8 @@ public final class CheckoutStatusView: UIView {
         self.activityIndicatorView = activityIndicatorView
         self.imageView = imageView
 
+        configure(with: CheckoutStatus.loading)
+
         NSLayoutConstraint.activate([
             circleView.centerXAnchor.constraint(equalTo: centerXAnchor),
 
@@ -74,7 +76,7 @@ public final class CheckoutStatusView: UIView {
             imageView.topAnchor.constraint(greaterThanOrEqualTo: circleView.topAnchor),
             imageView.heightAnchor.constraint(equalTo: imageView.widthAnchor),
 
-            imageView.heightAnchor.constraint(equalTo: circleView.heightAnchor, multiplier: 0.55),
+            imageView.heightAnchor.constraint(equalTo: circleView.heightAnchor, multiplier: 0.56),
             circleView.trailingAnchor.constraint(greaterThanOrEqualTo: imageView.trailingAnchor),
             circleView.bottomAnchor.constraint(greaterThanOrEqualTo: imageView.bottomAnchor),
 
@@ -88,10 +90,15 @@ public final class CheckoutStatusView: UIView {
     }
 
     public func configure(with viewModel: CheckoutStatusViewModel) {
-        circleView?.circleColor = viewModel.circleColor
         imageView?.image = viewModel.image
 
-        viewModel.isLoading ? activityIndicatorView?.startAnimating() : activityIndicatorView?.stopAnimating()
+        if viewModel.isLoading {
+            circleView?.circleColor = circleColor ?? viewModel.circleColor
+            activityIndicatorView?.startAnimating()
+        } else {
+            circleView?.circleColor = viewModel.circleColor
+            activityIndicatorView?.stopAnimating()
+        }
     }
 }
 
