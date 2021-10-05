@@ -128,7 +128,7 @@ public final class PayoneCreditCardEditViewController: UIViewController {
             tokenizeWithPayone(project, descriptor)
         } else {
             // oops - somehow we got here for a non-payone tokenization. Bail out.
-            showError()
+            showErrorAlert(message: L10n.Snabble.Payment.CreditCard.error, goBack: true)
         }
 
         self.analyticsDelegate?.track(.viewPaymentMethodDetail)
@@ -239,7 +239,6 @@ public final class PayoneCreditCardEditViewController: UIViewController {
 
 extension PayoneCreditCardEditViewController: WKNavigationDelegate {
     public func webView(_ webView: WKWebView, decidePolicyFor navigationAction: WKNavigationAction, decisionHandler: @escaping (WKNavigationActionPolicy) -> Void) {
-        print(#function)
         if navigationAction.navigationType == .linkActivated, let url = navigationAction.request.url {
             UIApplication.shared.open(url)
             decisionHandler(.cancel)
@@ -252,17 +251,23 @@ extension PayoneCreditCardEditViewController: WKNavigationDelegate {
 
 extension PayoneCreditCardEditViewController: WKScriptMessageHandler {
     public func userContentController(_ userContentController: WKUserContentController, didReceive message: WKScriptMessage) {
-        print(#function)
         guard
             message.name == Self.handlerName,
+            let body = message.body as? [String: Any],
             let projectId = self.projectId,
             let project = SnabbleAPI.project(for: projectId),
             let cert = SnabbleAPI.certificates.first
         else {
-            return self.showError()
+            return self.showErrorAlert(message: L10n.Snabble.Payment.CreditCard.error, goBack: true)
         }
 
-        print("WEBVIEW log", message.body)
+        if let log = body["log"] as? String {
+            return NSLog("P1 console.log \(log)")
+        } else if let error = body["error"] as? String {
+            return showErrorAlert(message: error, goBack: false)
+        } else if let response = body["response"] {
+            print("yay! valid response!")
+        }
 //        do {
 //            let response = try PayoneResponse(response: eventData)
 //            if let ccData = PayoneCreditCardData(gatewayCert: cert.data, response: response, projectId: projectId) {
@@ -291,10 +296,14 @@ extension PayoneCreditCardEditViewController: WKScriptMessageHandler {
 //        }
     }
 
-    private func showError() {
-        let alert = UIAlertController(title: L10n.Snabble.Payment.CreditCard.error, message: nil, preferredStyle: .alert)
+    private func showErrorAlert(message: String, goBack: Bool) {
+        let alert = UIAlertController(title: nil,
+                                      message: message,
+                                      preferredStyle: .alert)
         alert.addAction(UIAlertAction(title: L10n.Snabble.ok, style: .default) { _ in
-            self.goBack()
+            if goBack {
+                self.goBack()
+            }
         })
 
         self.present(alert, animated: true)
@@ -347,7 +356,7 @@ extension PayoneCreditCardEditViewController: ReactNativeWrapper {
 extension PayoneCreditCardEditViewController {
     fileprivate static let pageTemplate: String = { () -> String in
         guard
-            let path = SnabbleBundle.main.path(forResource: "payone-form-2", ofType: "html"),
+            let path = SnabbleBundle.main.path(forResource: "payone-form", ofType: "html"),
             let data = try? Data(contentsOf: URL(fileURLWithPath: path))
         else {
             return ""

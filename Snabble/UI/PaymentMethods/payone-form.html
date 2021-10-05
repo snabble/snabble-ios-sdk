@@ -1,224 +1,304 @@
-<html>
-<!-- based on https://docs.payone.com/display/public/PLATFORM/Cardtype+set+by+shop-system -->
-<head lang="de">
-    <meta charset="UTF-8">
+<!doctype html>
+<html lang="en">
+<head>
+    <title>Auto Credit Card Type Detection</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <meta charset="UTF-8">
     <script type="text/javascript">
-        // intercept errors
-        window.onerror = (msg, url, line, column, error) => {
-          const message = {
-            message: msg,
-            url: url,
-            line: line,
-            column: column,
-            error: JSON.stringify(error)
-          }
-
-          window.webkit.messageHandlers.{{handler}}.postMessage(message);
+        // intercept console.log
+        window.console.log = function(msg) {
+            window.webkit.messageHandlers.{{handler}}.postMessage({ log: msg });
         };
 
-        // intercept console.log and console.debug
-        window.console.log = function(msg) { window.webkit.messageHandlers.{{handler}}.postMessage(msg) }
-        window.console.debug = function(msg) { window.webkit.messageHandlers.{{handler}}.postMessage(msg) }
+        // intercept errors
+        window.onerror = (msg, url, line, column, error) => {
+            const message = {
+                message: msg,
+                url: url,
+                line: line,
+                column: column,
+                error: JSON.stringify(error)
+            }
 
+            console.log(message);
+        };
+
+        function showError(msg) {
+            window.webkit.messageHandlers.{{handler}}.postMessage({ error: msg });
+        }
+        
+        function processResponse(obj) {
+            window.webkit.messageHandlers.{{handler}}.postMessage({ response: obj });
+        }
     </script>
-    <style type="text/css" media="screen">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.3.1/css/bootstrap.css">
+    <style type="text/css">
         * {
-            margin: 0;
-            padding: 0;
-        }
-        body {
-            background: #fff;
-            color: #000;
-            font-size: 17px;
-            font-family: -apple-system, sans-serif;
-        }
-        @media (prefers-color-scheme: dark) {
-          body {
-            background-color: #000;
-            color: #fff; }
-        }
-        fieldset {
-            border: none;
-            padding: 16px;
-        }
-        label {
-            display: block;
-            float: left;
-            text-align: right;
-            margin-right: 12px;
-            width: 110px;
-            height: 33px;
-        }
-        input, select {
-            font-size: 100%; height: 33px;
-        }
-        select {
-            margin-right: 10px;
-        }
-        input, .inputIframe, select {
-            margin-bottom: 16px;
+            box-sizing: content-box;
         }
 
-        input {
-            width: 160px; font-size: 100%;
+        .container { width: auto; }
+        .header { margin-bottom: 1rem; }
+
+        .payone-cc-message-wrap {
+            display: none;
         }
 
-        #paymentsubmit {
+        .payone-input-mock {
+            border: 2px solid #0078AB;
+            border-radius: 10px;
+            padding: 5px 15px;
+            max-width: 300px;
+        }
+
+        .payone-input-mock iframe {
+            height: 50px;
             width: 100%;
-        }
-        #errorOutput {
-            text-align: center;
-            color: #ff0000;
-            display: block;
-        }
-        #appWrapper {
-          max-width: 400px;
-          margin: auto;
+            vertical-align: middle;
         }
     </style>
+
+    <script src="https://secure.pay1.de/client-api/js/v1/payone_hosted.js"></script>
+    <script type="text/javascript">
+        console.log("payone form start");
+        /**
+         * The PAYONE auto card type detection class constructor.
+         *
+         * @param config The auto card type detection config.
+         * @constructor
+         */
+        function PayoneAutoCcDetection(config)
+        {
+            console.log("PayoneAutoCcDetection " + config)
+            // Apply config defaults.
+            this._config = config;
+
+            // Setup auto credit card detection config.
+            console.log("supported types: " + this._config.supportedCardTypes);
+            this._config.hostedIframesConfig.config.autoCardtypeDetection = {
+                deactivate: false,
+                supportedCardtypes: this._config.supportedCardTypes,
+                callback: this._handleDetectionResult.bind(this),
+            };
+
+            // Create hosted IFrames object.
+            this._hostedIframe = new Payone.ClientApi.HostedIFrames(
+                this._config.hostedIframesConfig.config,
+                this._config.hostedIframesConfig.request
+            );
+
+            // Register credit card check callback.
+            // The hosted IFrames API expects a callback provided as string,
+            // therefore we cannot use a function value reference directly.
+            // As a workaround we register the actual handler method as global
+            // function with a random unique name which will be provided to the
+            // hosted IFrames API later.
+            this._creditCardCheckCallbackName = 'payone_cc_check_callback_' + Math.random().toString().substr(2);
+            window[this._creditCardCheckCallbackName] = this._creditCardCheckCallback.bind(this);
+        }
+
+        /**
+         * Handles automatically detected card types.
+         * This is the handler that will be called by the hosted iFrames API
+         * if a card type detection result is available.
+         *
+         * @param {string} type The detection result of the hosted IFrames API.
+         * @private
+         */
+        PayoneAutoCcDetection.prototype._handleDetectionResult = function (type) {
+            console.log("handleDetection " + type);
+            type = type.toUpperCase();
+
+            // Delegate further processing to dedicated handlers.
+            switch (type) {
+                case '?':
+                    this._handleUnknownCardType(type);
+                    break;
+                case '-':
+                    this._handleUnsupportedCardType(type);
+                    break;
+                default:
+                    this._handleValidCardType(type);
+                    break;
+            }
+        };
+
+        /**
+         * Handles detection results of valid card types.
+         *
+         * @param {string} type The detected valid card type.
+         * @private
+         */
+        PayoneAutoCcDetection.prototype._handleValidCardType = function (type) {
+            console.log("handleValidCard " + type);
+            this._changeIcon(type);
+        };
+
+        /**
+         * Handles unsupported card type detection results.
+         *
+         * @private
+         */
+        PayoneAutoCcDetection.prototype._handleUnsupportedCardType = function () {
+            console.log("handleUnsupportedType");
+        };
+
+        /**
+         * Handles the credit card check result.
+         *
+         * @param {object} response The credit card check result from the hosted IFrame API.
+         * @private
+         */
+        PayoneAutoCcDetection.prototype._creditCardCheckCallback = function (response) {
+            console.log("checkCallback" + response);
+            switch (response.status) {
+                case 'VALID':
+                    console.log('Success! Credit card check was valid.');
+                    processResponse(response);
+                    break;
+                case 'INVALID':
+                case 'ERROR':
+                    showError('Error ' + response.errorcode + ': ' + response.errormessage);
+                    break;
+                default:
+                    showError('API returned an unexpected status.');
+                    break;
+            }
+        };
+
+        /**
+         * Performs the credit card check.
+         */
+        PayoneAutoCcDetection.prototype.performCreditCardCheck = function () {
+            console.log("performCheck");
+            if (this._hostedIframe.isComplete()) {
+                console.log("complete!");
+                this._hostedIframe.creditCardCheck(this._creditCardCheckCallbackName);
+            }
+            else {
+                console.log("incomplete :(");
+                showError('{{incompleteForm}}');
+            }
+        };
+
+        PayoneAutoCcDetection.prototype.setInitialCardType = function (type) {
+            console.log("set initial card type " + type)
+            this._hostedIframe.setCardType(type)
+        }
+
+    </script>
 </head>
 <body>
-<script type="text/javascript" src="https://secure.pay1.de/client-api/js/v1/payone_hosted_min.js"></script>
-<form name="paymentform" action="" method="post">
-    <fieldset>
-        <div id="appWrapper">
-          <input type="hidden" name="pseudocardpan" id="pseudocardpan">
-          <input type="hidden" name="truncatedcardpan" id="truncatedcardpan">
+    <div class="container">
+        <div class="row">
+            <div class="col py-5">
+                <div class="header">
+                    {{header}}
+                </div>
 
-          <!-- configure your cardtype-selection here -->
-          <div class="row">
-            <label for="cardtypeInput">Karte</label>
-            <select id="cardtype">
-                <option value="V">VISA</option>
-                <option value="M">Mastercard</option>
-                <option value="A">Amex</option>
-            </select>
-          </div>
+                <!-- The form HTML with IFrame fields. -->
+                <form id="cc-form" class="my-3" action="#" method="post">
+                    <div class="form-group">
+                        <label for="payone-cc-pan">{{cardNumberLabel}}</label>
+                        <div class="payone-input-mock payone-input-mock--pan">
+                            <!-- Mount element for PAN IFrame. -->
+                            <span id="payone-cc-pan"></span>
+                        </div>
+                    </div>
 
-          <div class="row">
-            <label for="cardpanInput">Kartennummer</label> <!-- TODO: l10n -->
-            <span class="inputIframe" id="cardpan"></span>
-          </div>
+                    <div class="form-group">
+                        <label for="payone-cc-cvc">{{cvcLabel}}</label for="payone-cc-cvc">
+                        <div class="payone-input-mock payone-input-mock--cvc">
+                            <!-- Mount element for CVC IFrame. -->
+                            <span id="payone-cc-cvc"></span>
+                        </div>
+                    </div>
 
-          <div class="row">
-            <label for="cvcInput">Prüfnummer</label> <!-- TODO: l10n -->
-            <span id="cardcvc2" class="inputIframe"></span>
-          </div>
+                    <div class="form-group">
+                        <label for="payone-cc-expire-month">{{expireMonthLabel}}</label>
+                        <div class="payone-input-mock payone-input-mock--expire-month">
+                            <!-- Mount element for card expire month IFrame. -->
+                            <span id="payone-cc-expire-month"></span>
+                        </div>
+                    </div>
 
-          <div class="row">
-            <label for="expireInput">Ablaufdatum</label> <!-- TODO: l10n -->
-            <span id="expireInput" class="inputIframe">
-                <span id="cardexpiremonth"></span>
-                <span id="cardexpireyear"></span>
-            </span>
-          </div>
+                    <div class="form-group">
+                        <label for="payone-cc-expire-year">{{expireYearLabel}}</label>
+                        <div class="payone-input-mock payone-input-mock--expire-year">
+                            <!-- Mount element for card expire year IFrame. -->
+                            <span id="payone-cc-expire-year"></span>
+                        </div>
+                    </div>
 
-          <div class="row">
-            <label for="firstname">Vorname</label> <!-- TODO: l10n -->
-            <input id="firstname" type="text" name="firstname" value="">
-          </div>
-
-          <div class="row">
-            <label for="lastname">Nachname</label> <!-- TODO: l10n -->
-            <input id="lastname" type="text" name="lastname" value="">
-          </div>
-
-          <div class="row">
-            <div id="errorOutput"></div>
-          </div>
+                    <div class="form-group mt-5">
+                        <button id="submit" class="btn btn-primary btn-lg" type="button">{{saveButtonLabel}}</button>
+                    </div>
+                </form>
+            </div>
         </div>
+    </div>
 
-        <input id="paymentsubmit" type="button" value="Speichern" onclick="check();"> <!-- TODO: l10n -->
-    </fieldset>
-</form>
+    <script>
+        (function () {
+            var autoCcDetection = new PayoneAutoCcDetection({
+                supportedCardTypes: ["{{supportedCardType}}"],
+                hostedIframesConfig: {
+                    config: {
+                        fields: {
+                            cardpan: {
+                                selector: "payone-cc-pan",
+                                type: "input"
+                            },
+                            cardcvc2: {
+                                selector: "payone-cc-cvc",
+                                type: "password",
+                                size: "4",
+                                maxlength: "4",
+                                length: { "V": 3, "M": 3, "A": 4 }
+                            },
+                            cardexpiremonth: {
+                                selector: "payone-cc-expire-month",
+                                type: "text",
+                                size: "2",
+                                maxlength: "2"
+                            },
+                            cardexpireyear: {
+                                selector: "payone-cc-expire-year",
+                                size: "4",
+                                maxlength: "4",
+                                type: "text"
+                            }
+                        },
+                        defaultStyle: {
+                            input: "height: 100%; width: 100%; border: none; font-size: 17px; border-radius: 0",
+                            iframe: {}
+                        },
 
-<div id="paymentform"></div>
-<script>
-    console.log("start form")
-    var request, config;
-    config = {
-        fields: {
-            cardpan: {
-                selector: "cardpan",                 // put name of your div-container here
-                type: "text"                         // text (default), password, tel
-            },
-            cardcvc2: {
-                selector: "cardcvc2",                // put name of your div-container here
-                type: "password",                    // select(default), text, password, tel
-                size: "4",
-                maxlength: "4",                      // set max. length for CVC input; empty values possible
-                length: { "A": 4, "V": 3, "M": 3, "J": 0 } // set required CVC length per cardtype
-                                                     // if set exact length required; 0=CVC input disabled
-            },
-            cardexpiremonth: {
-                selector: "cardexpiremonth",         // put name of your div-container here
-                type: "select",                      // select(default), text, password, tel
-                size: "2",
-                maxlength: "2",
-                iframe: {
-                    width: "50px"
-                }
-            },
-            cardexpireyear: {
-                selector: "cardexpireyear",          // put name of your div-container here
-                type: "select",                      // select(default), text, password, tel
-                iframe: {
-                    width: "80px"
-                }
-            }
-        },
-        defaultStyle: {
-            input: "font-size: 100%",
-            iframe: {
-                height: "33px",
-                width: "160px",
-            }
-        },
-        error: "errorOutput",                        // area to display error-messages (optional)
-        language: Payone.ClientApi.Language.de       // Language to display error-messages
-                                                     // (default: Payone.ClientApi.Language.en)
-                                                     // TODO: l10n
-    };
+                        language: Payone.ClientApi.Language.{{language}}
+                    },
+                    request: {
+                        "responsetype":"JSON",
+                        "encoding":"UTF-8",
+                        "mode":"{{mode}}",
+                        "request":"creditcardcheck",
+                        "storecarddata":"yes",
+                        "mid":"{{merchantID}}",
+                        "aid":"{{accountID}}",
+                        "portalid":"{{portalID}}",
+                        "hash":"{{hash}}"
+                    }
+                },
+            });
 
-    request = {
-        request: 'creditcardcheck',                  // fixed value
-        responsetype: 'JSON',                        // fixed value
-        mode: '{{mode}}',                            // desired mode
-        mid: '{{merchantID}}',                       // your MID
-        aid: '{{accountID}}',                        // your AID
-        portalid: '{{portalID}}',                    // your PortalId
-        encoding: 'UTF-8',                           // desired encoding
-        storecarddata: 'yes',                        // fixed value
-        hash: '{{hash}}'
-    };
-    var iframes = new Payone.ClientApi.HostedIFrames(config, request);
+            document.querySelector('#submit').addEventListener('click', function (event) {
+                event.preventDefault();
+                console.log('click!');
+                autoCcDetection.performCreditCardCheck();
+            });
 
-    document.getElementById('cardtype').onchange = function () {
-        console.log("set cartype: " + this.value)
-       iframes.setCardType(this.value);              // on change: set new type of credit card to process
-    };
-
-    function check() {                               // Function called by submitting PAY-button
-        console.log("check!");
-        var cardType = document.getElementById('cardtype').value;
-        iframes.setCardType(cardType);
-        console.log("cardtype: " + cardType)
-        if (iframes.isComplete()) {
-            iframes.creditCardCheck('checkCallback');// Perform "CreditCardCheck" to create and get a
-                                                     // PseudoCardPan; then call your function "checkCallback"
-        } else {
-            console.log("not complete");
-        }
-    }
-
-    function checkCallback(response) {
-        console.log(response);
-        if (response.status === "VALID") {
-            document.getElementById("pseudocardpan").value = response.pseudocardpan;
-            document.getElementById("truncatedcardpan").value = response.truncatedcardpan;
-        }
-    }
-</script>
+            autoCcDetection.setInitialCardType("{{supportedCardType}}");
+        })();
+    </script>
 </body>
 </html>
+
