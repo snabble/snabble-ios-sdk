@@ -114,3 +114,28 @@ public final class CheckoutRatingView: UIView {
         fatalError("init(coder:) has not been implemented")
     }
 }
+
+#if canImport(SwiftUI) && DEBUG
+import SwiftUI
+import AutoLayout_Helper
+
+@available(iOS 13, *)
+struct CheckoutRatingView_Previews: PreviewProvider {
+    static var previews: some View {
+        Group {
+            UIViewPreview {
+                let view = CheckoutRatingView()
+                view.state = .finished
+                return view
+            }.previewLayout(.fixed(width: 300, height: 300))
+                .preferredColorScheme(.dark)
+            UIViewPreview {
+                let view = CheckoutRatingView()
+                view.state = .initial
+                return view
+            }.previewLayout(.fixed(width: 300, height: 300))
+                .preferredColorScheme(.light)
+        }
+    }
+}
+#endif
