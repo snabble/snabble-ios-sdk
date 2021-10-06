@@ -6,6 +6,7 @@
 
 import UIKit
 import WebKit
+import AutoLayout_Helper
 
 // sample data for testing:
 //
@@ -18,6 +19,8 @@ import WebKit
 // see https://docs.payone.com/display/public/PLATFORM/Testdata
 
 // more docs: https://docs.payone.com/display/public/PLATFORM/Hosted-iFrame+Mode+-+Short+description
+//
+// TODO: can we implement dark mode?
 //
 
 public final class PayoneCreditCardEditViewController: UIViewController {
@@ -79,6 +82,8 @@ public final class PayoneCreditCardEditViewController: UIViewController {
             assert(self.navigationDelegate != nil, msg)
             Log.error(msg)
         }
+
+        self.setupWebView()
     }
 
     override public func viewWillAppear(_ animated: Bool) {
@@ -119,7 +124,6 @@ public final class PayoneCreditCardEditViewController: UIViewController {
             return
         }
 
-        self.setupWebView()
         self.containerView.bringSubviewToFront(self.spinner)
 
         self.spinner.startAnimating()
@@ -205,8 +209,8 @@ public final class PayoneCreditCardEditViewController: UIViewController {
             name = project.company?.name ?? project.name
         }
 
-        #warning("FIXME - is this text still correct?")
-        return L10n.Snabble.Cc._3dsecureHint.retailer(name)
+        #warning("FIXME - change when we get chargeAmount from backend")
+        return L10n.Snabble.Cc._3dsecureHint.retailerWithPrice("1,00 €", name)
     }
 
     private func setupWebView() {
@@ -216,10 +220,15 @@ public final class PayoneCreditCardEditViewController: UIViewController {
         let config = WKWebViewConfiguration()
         config.userContentController = contentController
 
-        self.webView = WKWebView(frame: self.containerView.bounds, configuration: config)
-        self.webView.navigationDelegate = self
+        webView = WKWebView(frame: .zero, configuration: config)
+        webView.navigationDelegate = self
+//        webView.isOpaque = false
+//        webView.backgroundColor = .clear
+        webView.translatesAutoresizingMaskIntoConstraints = false
 
-        self.containerView.addSubview(self.webView)
+        containerView.addSubview(self.webView)
+
+        NSLayoutConstraint.activate(webView.constraintsForAnchoringTo(boundsOf: containerView))
     }
 
     @objc private func deleteButtonTapped(_ sender: Any) {
