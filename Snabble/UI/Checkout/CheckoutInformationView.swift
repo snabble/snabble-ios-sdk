@@ -78,8 +78,8 @@ import SwiftUI
 import AutoLayout_Helper
 
 @available(iOS 13, *)
-struct CheckoutInformationView_Previews: PreviewProvider {
-    static var previews: some View {
+public struct CheckoutInformationView_Previews: PreviewProvider {
+    public static var previews: some View {
         Group {
             UIViewPreview {
                 let view = CheckoutInformationView()

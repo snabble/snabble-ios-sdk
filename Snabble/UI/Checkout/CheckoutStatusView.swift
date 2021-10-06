@@ -148,8 +148,8 @@ import SwiftUI
 import AutoLayout_Helper
 
 @available(iOS 13, *)
-struct CheckoutStatusView_Previews: PreviewProvider {
-    static var previews: some View {
+public struct CheckoutStatusView_Previews: PreviewProvider {
+    public static var previews: some View {
         Group {
             UIViewPreview {
                 let view = CheckoutStatusView(frame: .zero)

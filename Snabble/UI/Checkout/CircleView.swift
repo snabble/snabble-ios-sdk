@@ -52,8 +52,8 @@ import SwiftUI
 import AutoLayout_Helper
 
 @available(iOS 13, *)
-struct CircleView_Previews: PreviewProvider {
-    static var previews: some View {
+public struct CircleView_Previews: PreviewProvider {
+    public static var previews: some View {
         Group {
             UIViewPreview {
                 let view = CircleView(frame: .zero)

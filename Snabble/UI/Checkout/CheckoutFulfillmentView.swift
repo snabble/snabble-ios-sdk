@@ -114,7 +114,7 @@ import SwiftUI
 import AutoLayout_Helper
 
 @available(iOS 13, *)
-struct CheckoutFulfillmentView_Previews: PreviewProvider {
+public struct CheckoutFulfillmentView_Previews: PreviewProvider {
     public enum Mock {
         public enum Payment: CheckoutFulfillmentViewModel {
             case loading
@@ -160,7 +160,7 @@ struct CheckoutFulfillmentView_Previews: PreviewProvider {
         }
     }
 
-    static var previews: some View {
+    public static var previews: some View {
         Group {
             UIViewPreview {
                 let view = CheckoutFulfillmentView(frame: .zero)
