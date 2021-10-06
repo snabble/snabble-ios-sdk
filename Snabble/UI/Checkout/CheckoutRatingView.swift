@@ -8,21 +8,21 @@
 import Foundation
 import UIKit
 
-public final class CheckoutRatingView: UIView {
-    public enum State {
+final class CheckoutRatingView: UIView {
+    enum State {
         case initial
         case finished
     }
-    public private(set) weak var textLabel: UILabel?
-    public private(set) weak var detailTextLabel: UILabel?
+    private(set) weak var textLabel: UILabel?
+    private(set) weak var detailTextLabel: UILabel?
 
-    public private(set) weak var leftButton: UIButton?
-    public private(set) weak var middleButton: UIButton?
-    public private(set) weak var rightButton: UIButton?
+    private(set) weak var leftButton: UIButton?
+    private(set) weak var middleButton: UIButton?
+    private(set) weak var rightButton: UIButton?
 
     private weak var buttonStackView: UIStackView?
 
-    public var state: State = .initial {
+    var state: State = .initial {
         didSet {
             switch state {
             case .initial:
@@ -35,7 +35,7 @@ public final class CheckoutRatingView: UIView {
         }
     }
 
-    override public init(frame: CGRect) {
+    override init(frame: CGRect) {
         let textLabel = UILabel()
         textLabel.translatesAutoresizingMaskIntoConstraints = false
         textLabel.font = .systemFont(ofSize: 17)

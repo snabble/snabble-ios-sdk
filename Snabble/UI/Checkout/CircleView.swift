@@ -9,15 +9,15 @@ import Foundation
 import UIKit
 import QuartzCore
 
-public class CircleView: UIView {
+class CircleView: UIView {
 
-    public var circleColor: UIColor? = .clear {
+    var circleColor: UIColor? = .clear {
         didSet {
             shapeLayer?.fillColor = circleColor?.cgColor
         }
     }
 
-    override public class var layerClass: AnyClass {
+    override class var layerClass: AnyClass {
         CAShapeLayer.self
     }
 
@@ -25,7 +25,7 @@ public class CircleView: UIView {
         layer as? CAShapeLayer
     }
 
-    override public func didMoveToSuperview() {
+    override func didMoveToSuperview() {
         super.didMoveToSuperview()
 
         shapeLayer?.fillColor = circleColor?.cgColor
@@ -34,13 +34,13 @@ public class CircleView: UIView {
         layer.masksToBounds = false
     }
 
-    override public func layoutSubviews() {
+    override func layoutSubviews() {
         updateShapeLayerFrame()
     }
 
     func updateShapeLayerFrame() {
         let squareSize = min(frame.size.width, frame.size.height)
-        var rect = CGRect(origin: CGPoint.zero, size: CGSize(width: squareSize, height: squareSize))
+        var rect = CGRect(origin: .zero, size: CGSize(width: squareSize, height: squareSize))
         rect.origin.x = floor((frame.size.width - squareSize) * 0.5)
         rect.origin.y = floor((frame.size.height - squareSize) * 0.5)
         shapeLayer?.path = UIBezierPath(ovalIn: rect).cgPath

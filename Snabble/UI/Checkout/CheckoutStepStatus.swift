@@ -7,7 +7,7 @@
 
 import Foundation
 
-public enum CheckoutStatus {
+enum CheckoutStepStatus {
     case loading
     case success
     case failure

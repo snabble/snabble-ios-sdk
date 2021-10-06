@@ -8,16 +8,16 @@
 import Foundation
 import UIKit
 
-public protocol CheckoutInformationViewModel {
+protocol CheckoutInformationViewModel {
     var text: String { get }
     var buttonTitle: String { get }
 }
 
-public final class CheckoutInformationView: UIView {
-    public private(set) weak var textLabel: UILabel?
-    public private(set) weak var button: UIButton?
+final class CheckoutInformationView: UIView {
+    private(set) weak var textLabel: UILabel?
+    private(set) weak var button: UIButton?
 
-    override public init(frame: CGRect) {
+    override init(frame: CGRect) {
         let textLabel = UILabel()
         textLabel.translatesAutoresizingMaskIntoConstraints = false
         textLabel.textColor = .label
@@ -54,19 +54,19 @@ public final class CheckoutInformationView: UIView {
         fatalError("init(coder:) has not been implemented")
     }
 
-    public func configure(with viewModel: CheckoutInformationViewModel) {
+    func configure(with viewModel: CheckoutInformationViewModel) {
         textLabel?.text = viewModel.text
         button?.setTitle(viewModel.buttonTitle, for: .normal)
     }
 
-    public struct ViewModel: CheckoutInformationViewModel {
+    struct ViewModel: CheckoutInformationViewModel {
         public let text: String
         public let buttonTitle: String
     }
 }
 
 extension CheckoutInformationView.ViewModel {
-    public static var mock: Self {
+    static var mock: Self {
         .init(
             text: "Möchtest du die Daten deiner girocard sicher in der App speichern, um deinen nächsten Einkauf per Lastschrift zu bezahlen? Die Karte kannst du zukünftig im Geldbeutel lassen.",
             buttonTitle: "Ja, Daten in der App speichern"

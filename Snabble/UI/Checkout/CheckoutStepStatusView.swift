@@ -8,16 +8,16 @@
 import Foundation
 import UIKit
 
-public protocol CheckoutStatusViewModel {
+protocol CheckoutStepStatusViewModel {
     var circleColor: UIColor? { get }
     var image: UIImage? { get }
     var isLoading: Bool { get }
 }
 
-public final class CheckoutStatusView: UIView {
-    public private(set) weak var circleView: CircleView?
-    public private(set) weak var activityIndicatorView: UIActivityIndicatorView?
-    public private(set) weak var imageView: UIImageView?
+final class CheckoutStepStatusView: UIView {
+    private(set) weak var circleView: CircleView?
+    private(set) weak var activityIndicatorView: UIActivityIndicatorView?
+    private(set) weak var imageView: UIImageView?
 
     var circleColor: UIColor? {
         get {
@@ -28,7 +28,7 @@ public final class CheckoutStatusView: UIView {
         }
     }
 
-    override public init(frame: CGRect) {
+    override init(frame: CGRect) {
         let circleView = CircleView()
         circleView.translatesAutoresizingMaskIntoConstraints = false
 
@@ -58,7 +58,7 @@ public final class CheckoutStatusView: UIView {
         self.activityIndicatorView = activityIndicatorView
         self.imageView = imageView
 
-        configure(with: CheckoutStatus.loading)
+        configure(with: CheckoutStepStatus.loading)
 
         NSLayoutConstraint.activate([
             circleView.centerXAnchor.constraint(equalTo: centerXAnchor),
@@ -89,7 +89,7 @@ public final class CheckoutStatusView: UIView {
         fatalError("init(coder:) has not been implemented")
     }
 
-    public func configure(with viewModel: CheckoutStatusViewModel) {
+    func configure(with viewModel: CheckoutStepStatusViewModel) {
         imageView?.image = viewModel.image
 
         if viewModel.isLoading {
@@ -102,8 +102,8 @@ public final class CheckoutStatusView: UIView {
     }
 }
 
-extension CheckoutStatus: CheckoutStatusViewModel {
-    public var isLoading: Bool {
+extension CheckoutStepStatus: CheckoutStepStatusViewModel {
+    var isLoading: Bool {
         switch self {
         case .loading:
             return true
@@ -112,7 +112,7 @@ extension CheckoutStatus: CheckoutStatusViewModel {
         }
     }
 
-    public var circleColor: UIColor? {
+    var circleColor: UIColor? {
         switch self {
         case .loading:
             return .clear
@@ -123,7 +123,7 @@ extension CheckoutStatus: CheckoutStatusViewModel {
         }
     }
 
-    public var image: UIImage? {
+    var image: UIImage? {
         switch self {
         case .loading:
             return nil
@@ -152,44 +152,44 @@ public struct CheckoutStatusView_Previews: PreviewProvider {
     public static var previews: some View {
         Group {
             UIViewPreview {
-                let view = CheckoutStatusView(frame: .zero)
-                view.configure(with: CheckoutStatus.loading)
+                let view = CheckoutStepStatusView(frame: .zero)
+                view.configure(with: CheckoutStepStatus.loading)
                 return view
             }.previewLayout(.fixed(width: 100, height: 100))
                 .preferredColorScheme(.light)
             UIViewPreview {
-                let view = CheckoutStatusView(frame: .zero)
-                view.configure(with: CheckoutStatus.loading)
+                let view = CheckoutStepStatusView(frame: .zero)
+                view.configure(with: CheckoutStepStatus.loading)
                 return view
             }.previewLayout(.fixed(width: 75, height: 75))
                 .preferredColorScheme(.dark)
             UIViewPreview {
-                let view = CheckoutStatusView(frame: .zero)
-                view.configure(with: CheckoutStatus.success)
+                let view = CheckoutStepStatusView(frame: .zero)
+                view.configure(with: CheckoutStepStatus.success)
                 return view
             }.previewLayout(.fixed(width: 25, height: 25))
                 .preferredColorScheme(.light)
             UIViewPreview {
-                let view = CheckoutStatusView(frame: .zero)
-                view.configure(with: CheckoutStatus.success)
+                let view = CheckoutStepStatusView(frame: .zero)
+                view.configure(with: CheckoutStepStatus.success)
                 return view
             }.previewLayout(.fixed(width: 50, height: 50))
                 .preferredColorScheme(.light)
             UIViewPreview {
-                let view = CheckoutStatusView(frame: .zero)
-                view.configure(with: CheckoutStatus.failure)
+                let view = CheckoutStepStatusView(frame: .zero)
+                view.configure(with: CheckoutStepStatus.failure)
                 return view
             }.previewLayout(.fixed(width: 35, height: 35))
                 .preferredColorScheme(.dark)
             UIViewPreview {
                 let view = CheckoutHeaderView(frame: .zero)
-                view.configure(with: CheckoutStatus.failure)
+                view.configure(with: CheckoutStepStatus.failure)
                 return view
             }.previewLayout(.fixed(width: 100, height: 100))
                 .preferredColorScheme(.dark)
             UIViewPreview {
                 let view = CheckoutHeaderView(frame: .zero)
-                view.configure(with: CheckoutStatus.failure)
+                view.configure(with: CheckoutStepStatus.failure)
                 return view
             }.previewLayout(.fixed(width: 300, height: 300))
                 .preferredColorScheme(.light)

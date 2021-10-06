@@ -9,17 +9,17 @@ import Foundation
 import UIKit
 import AutoLayout_Helper
 
-public protocol CheckoutHeaderViewModel {
-    var statusViewModel: CheckoutStatusViewModel { get }
+protocol CheckoutHeaderViewModel {
+    var statusViewModel: CheckoutStepStatusViewModel { get }
     var text: String { get }
 }
 
-public final class CheckoutHeaderView: UIView {
-    public private(set) weak var statusView: CheckoutStatusView?
-    public private(set) weak var textLabel: UILabel?
+final class CheckoutHeaderView: UIView {
+    private(set) weak var statusView: CheckoutStepStatusView?
+    private(set) weak var textLabel: UILabel?
 
-    override public init(frame: CGRect) {
-        let statusView = CheckoutStatusView()
+    override init(frame: CGRect) {
+        let statusView = CheckoutStepStatusView()
         statusView.translatesAutoresizingMaskIntoConstraints = false
 
         let textLabel = UILabel()
@@ -59,14 +59,14 @@ public final class CheckoutHeaderView: UIView {
         fatalError("init(coder:) has not been implemented")
     }
 
-    public func configure(with viewModel: CheckoutHeaderViewModel) {
+    func configure(with viewModel: CheckoutHeaderViewModel) {
         statusView?.configure(with: viewModel.statusViewModel)
         textLabel?.text = viewModel.text
     }
 }
 
-extension CheckoutStatus: CheckoutHeaderViewModel {
-    public var text: String {
+extension CheckoutStepStatus: CheckoutHeaderViewModel {
+    var text: String {
         switch self {
         case .loading:
             return L10n.Snabble.Payment.waiting
@@ -77,7 +77,7 @@ extension CheckoutStatus: CheckoutHeaderViewModel {
         }
     }
 
-    public var statusViewModel: CheckoutStatusViewModel {
+    var statusViewModel: CheckoutStepStatusViewModel {
         self
     }
 }
@@ -92,13 +92,13 @@ public struct CheckoutHeaderView_Previews: PreviewProvider {
         Group {
             UIViewPreview {
                 let view = CheckoutHeaderView(frame: .zero)
-                view.configure(with: CheckoutStatus.failure)
+                view.configure(with: CheckoutStepStatus.failure)
                 return view
             }.previewLayout(.fixed(width: 100, height: 100))
                 .preferredColorScheme(.dark)
             UIViewPreview {
                 let view = CheckoutHeaderView(frame: .zero)
-                view.configure(with: CheckoutStatus.failure)
+                view.configure(with: CheckoutStepStatus.failure)
                 return view
             }.previewLayout(.fixed(width: 300, height: 300))
                 .preferredColorScheme(.light)

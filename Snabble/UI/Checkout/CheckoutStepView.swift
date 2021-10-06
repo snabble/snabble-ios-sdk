@@ -8,16 +8,16 @@
 import Foundation
 import UIKit
 
-public protocol CheckoutFulfillmentViewModel {
-    var statusViewModel: CheckoutStatusViewModel { get }
+protocol CheckoutStepViewModel {
+    var statusViewModel: CheckoutStepStatusViewModel { get }
     var text: String { get }
     var detailText: String? { get }
     var buttonTitle: String? { get }
     var image: UIImage? { get }
 }
 
-public final class CheckoutFulfillmentView: UIView {
-    public private(set) weak var statusView: CheckoutStatusView?
+final class CheckoutStepView: UIView {
+    public private(set) weak var statusView: CheckoutStepStatusView?
     public private(set) weak var textLabel: UILabel?
     public private(set) weak var detailTextLabel: UILabel?
     public private(set) weak var button: UIButton?
@@ -26,7 +26,7 @@ public final class CheckoutFulfillmentView: UIView {
     private weak var stackView: UIStackView?
 
     override public init(frame: CGRect) {
-        let statusView = CheckoutStatusView()
+        let statusView = CheckoutStepStatusView()
         statusView.translatesAutoresizingMaskIntoConstraints = false
 
         let stackView = UIStackView()
@@ -95,7 +95,7 @@ public final class CheckoutFulfillmentView: UIView {
         fatalError("init(coder:) has not been implemented")
     }
 
-    public func configure(with viewModel: CheckoutFulfillmentViewModel) {
+    func configure(with viewModel: CheckoutStepViewModel) {
         statusView?.configure(with: viewModel.statusViewModel)
         textLabel?.text = viewModel.text
 
@@ -114,21 +114,21 @@ import SwiftUI
 import AutoLayout_Helper
 
 @available(iOS 13, *)
-public struct CheckoutFulfillmentView_Previews: PreviewProvider {
-    public enum Mock {
-        public enum Payment: CheckoutFulfillmentViewModel {
+public struct CheckoutStepView_Previews: PreviewProvider {
+    enum Mock {
+        enum Payment: CheckoutStepViewModel {
             case loading
             case success
             case failure
 
-            public var statusViewModel: CheckoutStatusViewModel {
+            public var statusViewModel: CheckoutStepStatusViewModel {
                 switch self {
                 case .loading:
-                    return CheckoutStatus.loading
+                    return CheckoutStepStatus.loading
                 case .success:
-                    return CheckoutStatus.success
+                    return CheckoutStepStatus.success
                 case .failure:
-                    return CheckoutStatus.failure
+                    return CheckoutStepStatus.failure
                 }
             }
 
@@ -163,13 +163,13 @@ public struct CheckoutFulfillmentView_Previews: PreviewProvider {
     public static var previews: some View {
         Group {
             UIViewPreview {
-                let view = CheckoutFulfillmentView(frame: .zero)
+                let view = CheckoutStepView(frame: .zero)
                 view.configure(with: Mock.Payment.failure)
                 return view
             }.previewLayout(.fixed(width: 200, height: 200))
                 .preferredColorScheme(.dark)
             UIViewPreview {
-                let view = CheckoutFulfillmentView()
+                let view = CheckoutStepView()
                 view.configure(with: Mock.Payment.loading)
                 return view
             }.previewLayout(.fixed(width: 200, height: 200))
