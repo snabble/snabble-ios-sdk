@@ -1,5 +1,5 @@
 //
-//  CheckoutFulfillmentView.swift
+//  CheckoutStepView.swift
 //  Snabble
 //
 //  Created by Andreas Osberghaus on 05.10.21.

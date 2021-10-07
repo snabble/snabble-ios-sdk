@@ -1,5 +1,5 @@
 //
-//  CheckoutStatusView.swift
+//  CheckoutStepStatusView.swift
 //  Snabble
 //
 //  Created by Andreas Osberghaus on 04.10.21.
@@ -148,7 +148,7 @@ import SwiftUI
 import AutoLayout_Helper
 
 @available(iOS 13, *)
-public struct CheckoutStatusView_Previews: PreviewProvider {
+public struct CheckoutStepStatusView_Previews: PreviewProvider {
     public static var previews: some View {
         Group {
             UIViewPreview {

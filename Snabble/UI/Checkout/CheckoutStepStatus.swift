@@ -1,5 +1,5 @@
 //
-//  CheckoutStatus.swift
+//  CheckoutStepStatus.swift
 //  Snabble
 //
 //  Created by Andreas Osberghaus on 04.10.21.
