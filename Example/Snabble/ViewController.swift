@@ -80,11 +80,6 @@ extension ViewController: ScannerDelegate {
     func gotoBarcodeEntry() {
         // nop, we're using the shiny new integrated scanner/cart
     }
-
-    // called when the scanner needs to close itself
-    func closeScanningView() {
-        self.navigationController?.popViewController(animated: true)
-    }
 }
 
 extension ViewController: ShoppingCartDelegate {
