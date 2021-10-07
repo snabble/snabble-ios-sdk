@@ -56,9 +56,9 @@ final class ScanConfirmationView: DesignableView {
         self.quantityField.delegate = self
         self.quantityField.addDoneButton()
 
-        self.closeButton.setImage(UIImage.fromBundle("SnabbleSDK/icon-close"), for: .normal)
-        self.plusButton.setImage(UIImage.fromBundle("SnabbleSDK/icon-plus"), for: .normal)
-        self.minusButton.setImage(UIImage.fromBundle("SnabbleSDK/icon-minus"), for: .normal)
+        self.closeButton.setImage(Asset.SnabbleSDK.iconClose.image, for: .normal)
+        self.plusButton.setImage(Asset.SnabbleSDK.iconPlus.image, for: .normal)
+        self.minusButton.setImage(Asset.SnabbleSDK.iconMinus.image, for: .normal)
 
         let contrastRatio = UIColor.getContrastRatio(forTextColor: SnabbleUI.appearance.accentColor,
                                                      onBackgroundColor: .systemBackground)

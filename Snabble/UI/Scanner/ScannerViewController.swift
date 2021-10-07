@@ -36,8 +36,8 @@ public final class ScannerViewController: PulleyViewController {
         self.initialDrawerPosition = initialPosition
 
         self.title = L10n.Shopping.title
-        self.tabBarItem.image = UIImage.fromBundle("SnabbleSDK/icon-scan-inactive")
-        self.tabBarItem.selectedImage = UIImage.fromBundle("SnabbleSDK/icon-scan-active")
+        self.tabBarItem.image = Asset.SnabbleSDK.iconScanInactive.image
+        self.tabBarItem.selectedImage = Asset.SnabbleSDK.iconScanActive.image
 
         SnabbleUI.registerForAppearanceChange(self)
     }

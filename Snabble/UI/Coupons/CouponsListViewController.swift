@@ -30,9 +30,9 @@ public final class CouponsListViewController: UITableViewController {
 
         tableView.tableFooterView = UIView(frame: .zero)
 
-        let scanButton = UIBarButtonItem(image: UIImage.fromBundle("SnabbleSDK/icon-barcode"), style: .plain, target: self, action: #selector(scanTapped(_:)))
+        let scanButton = UIBarButtonItem(image: Asset.SnabbleSDK.iconBarcode.image, style: .plain, target: self, action: #selector(scanTapped(_:)))
 
-        let plusButton = UIBarButtonItem(image: UIImage.fromBundle("SnabbleSDK/icon-plus"), style: .plain, target: self, action: #selector(addTapped(_:)))
+        let plusButton = UIBarButtonItem(image: Asset.SnabbleSDK.iconPlus.image, style: .plain, target: self, action: #selector(addTapped(_:)))
 
         parent?.navigationItem.rightBarButtonItems = [scanButton, plusButton]
     }

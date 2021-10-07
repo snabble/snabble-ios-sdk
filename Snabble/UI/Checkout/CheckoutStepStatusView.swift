@@ -131,13 +131,13 @@ extension CheckoutStepStatus: CheckoutStepStatusViewModel {
             if #available(iOS 13.0, *) {
                 return UIImage(systemName: "checkmark")
             } else {
-                return UIImage.fromBundle("SnabbleSDK/checkmark")
+                return Asset.SnabbleSDK.checkmark.image
             }
         case .failure:
             if #available(iOS 13.0, *) {
                 return UIImage(systemName: "xmark")
             } else {
-                return UIImage.fromBundle("SnabbleSDK/x")
+                return Asset.SnabbleSDK.x.image
             }
         }
     }

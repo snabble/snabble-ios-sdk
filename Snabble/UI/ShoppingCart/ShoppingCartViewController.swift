@@ -35,8 +35,8 @@ public final class ShoppingCartViewController: UIViewController {
 
         self.title = L10n.Snabble.ShoppingCart.title
         let cartEmpty = shoppingCart.numberOfProducts == 0
-        self.tabBarItem.image = UIImage.fromBundle(cartEmpty ? "SnabbleSDK/icon-cart-inactive-empty" : "SnabbleSDK/icon-cart-inactive-full")
-        self.tabBarItem.selectedImage = UIImage.fromBundle("SnabbleSDK/icon-cart-active")
+        self.tabBarItem.image = cartEmpty ? Asset.SnabbleSDK.iconCartInactiveEmpty.image : Asset.SnabbleSDK.iconCartInactiveFull.image
+        self.tabBarItem.selectedImage = Asset.SnabbleSDK.iconCartActive.image
 
         self.checkoutBar = CheckoutBar(self, shoppingCart, cartDelegate: cartDelegate)
 
@@ -55,7 +55,7 @@ public final class ShoppingCartViewController: UIViewController {
     override public func viewDidLoad() {
         super.viewDidLoad()
 
-        self.trashButton = UIBarButtonItem(image: UIImage.fromBundle("SnabbleSDK/icon-trash"), style: .plain, target: self, action: #selector(self.trashButtonTapped(_:)))
+        self.trashButton = UIBarButtonItem(image: Asset.SnabbleSDK.iconTrash.image, style: .plain, target: self, action: #selector(self.trashButtonTapped(_:)))
 
         self.view.backgroundColor = .systemBackground
 
@@ -156,7 +156,7 @@ public final class ShoppingCartViewController: UIViewController {
     private func updateView() {
         let numProducts = self.shoppingCart.numberOfProducts
 
-        self.tabBarItem.image = UIImage.fromBundle(numProducts == 0 ? "SnabbleSDK/icon-cart-inactive-empty" : "SnabbleSDK/icon-cart-inactive-full")
+        self.tabBarItem.image = numProducts == 0 ? Asset.SnabbleSDK.iconCartInactiveEmpty.image : Asset.SnabbleSDK.iconCartInactiveFull.image
 
         setEditButton()
         setDeleteButton()

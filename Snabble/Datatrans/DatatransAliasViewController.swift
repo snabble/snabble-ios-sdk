@@ -121,7 +121,7 @@ public final class DatatransAliasViewController: UIViewController {
         self.expDateLabel.isHidden = expirationDate == nil
         self.expirationDate.isHidden = expirationDate == nil
 
-        let trash = UIImage.fromBundle("SnabbleSDK/icon-trash")
+        let trash = Asset.SnabbleSDK.iconTrash.image
         let deleteButton = UIBarButtonItem(image: trash, style: .plain, target: self, action: #selector(self.deleteButtonTapped(_:)))
         self.navigationItem.rightBarButtonItem = deleteButton
     }

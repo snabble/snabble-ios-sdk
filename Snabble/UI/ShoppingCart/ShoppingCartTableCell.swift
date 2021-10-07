@@ -204,8 +204,8 @@ final class ShoppingCartTableCell: UITableViewCell {
         self.priceLabel.text = formatter.format(amount)
 
         if showImages {
-            let icon = UIImage.fromBundle("SnabbleSDK/icon-percent")
-            self.productImage.image = icon?.recolored(with: .label)
+            let icon = Asset.SnabbleSDK.iconPercent.image
+            self.productImage.image = icon.recolored(with: .label)
             self.leftDisplay = .image
         }
     }
@@ -218,8 +218,8 @@ final class ShoppingCartTableCell: UITableViewCell {
         self.priceLabel.text = L10n.Snabble.Shoppingcart.giveaway
 
         if showImages {
-            let icon = UIImage.fromBundle("SnabbleSDK/icon-giveaway")
-            self.productImage.image = icon?.recolored(with: SnabbleUI.appearance.accentColor)
+            let icon = Asset.SnabbleSDK.iconGiveaway.image
+            self.productImage.image = icon.recolored(with: SnabbleUI.appearance.accentColor)
             self.leftDisplay = .image
         }
     }
@@ -272,8 +272,8 @@ final class ShoppingCartTableCell: UITableViewCell {
         let redeemed = lineItem?.redeemed == true
 
         if showImages {
-            let icon = UIImage.fromBundle("SnabbleSDK/icon-percent")
-            self.productImage.image = icon?.recolored(with: redeemed ? .label : .systemGray)
+            let icon = Asset.SnabbleSDK.iconPercent.image
+            self.productImage.image = icon.recolored(with: redeemed ? .label : .systemGray)
             self.leftDisplay = .image
         } else {
             self.leftDisplay = .badge
