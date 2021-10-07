@@ -1,3 +1,7 @@
+"PaymentDone.Rating.thanks" = "Ďakujem!";
+
+"PaymentDone.Rating.title" = "Páčil sa ti nákup so Snabble?";
+
 "release.safety.catch" = "Prosím, odstráň z fľaše zámok (ak je nasadený) pri východe na mieste, ktoré je na to určené.";
 
 "Shopping.title" = "Shopping";
@@ -164,6 +168,8 @@
 "Snabble.Payment.PostFinanceCard.error" = "Pri spracovaní tvojej karty PostFinance sa vyskytla chyba";
 
 "Snabble.Payment.presentCode" = "Za účelom potvrdenia nákupu prilož tento kód pred Snabble monitor alebo ho ukáž zamestnancovi.";
+
+"Snabble.Payment.rejected" = "Nákup zamietnutý";
 
 "Snabble.Payment.SEPA.hint" = "Poznámka: Za účelom tvojej ochrany a ochrany našich obchodníkov pred zneužitím si obchodník pri tvojej prvej platbe prostredníctvom SEPA inkasa vyžiada tvoju bankovú kartu.";
 

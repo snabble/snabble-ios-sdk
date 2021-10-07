@@ -1,3 +1,7 @@
+"PaymentDone.Rating.thanks" = "Thank you!";
+
+"PaymentDone.Rating.title" = "Did you like shopping with Snabble?";
+
 "release.safety.catch" = "Please remove the bottle's security device (if present) at the designated station at the exit.";
 
 "Shopping.title" = "Shopping";
@@ -164,6 +168,8 @@
 "Snabble.Payment.PostFinanceCard.error" = "There was an error processing your postfinance card";
 
 "Snabble.Payment.presentCode" = "Show this code at a Snabble monitor or to a cashier to confirm your purchase.";
+
+"Snabble.Payment.rejected" = "Purchase denied";
 
 "Snabble.Payment.SEPA.hint" = "Note: In order to protect you and our merchants against misuse, the merchant will have your bank card shown on your first payment by SEPA direct debit.";
 

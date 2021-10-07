@@ -1,3 +1,7 @@
+"PaymentDone.Rating.thanks" = "Thank you!";
+
+"PaymentDone.Rating.title" = "Did you like shopping with Snabble?";
+
 "release.safety.catch" = "Veille à enlever (le cas échéant) le dispositif de sécurité du goulot de la bouteille au poste prévu à cet effet à la sortie.";
 
 "Shopping.title" = "Shopping";
@@ -164,6 +168,8 @@
 "Snabble.Payment.PostFinanceCard.error" = "Une erreur s’est produite lors du traitement de ta carte PostFinance";
 
 "Snabble.Payment.presentCode" = "Présente ce code devant un écran Snabble ou montre-le à un collaborateur afin de confirmer ton achat.";
+
+"Snabble.Payment.rejected" = "Purchase denied";
 
 "Snabble.Payment.SEPA.hint" = "Remarque : pour te protéger et protéger nos commerçants contre les abus, le commerçant te demandera de montrer ta carte bancaire lors de ton premier paiement par débit SEPA.";
 

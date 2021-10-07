@@ -11,6 +11,15 @@ import Foundation
 // swiftlint:disable nesting type_body_length type_name vertical_whitespace_opening_braces
 public enum L10n {
 
+  public enum PaymentDone {
+    public enum Rating {
+      /// Thank you!
+      public static var thanks: String { return L10n.tr("SnabbleLocalizable", "PaymentDone.Rating.thanks") }
+      /// Did you like shopping with Snabble?
+      public static var title: String { return L10n.tr("SnabbleLocalizable", "PaymentDone.Rating.title") }
+    }
+  }
+
   public enum Shopping {
     /// Shopping
     public static var title: String { return L10n.tr("SnabbleLocalizable", "Shopping.title") }
@@ -164,6 +173,8 @@ public enum L10n {
       public static var payViaInvoice: String { return L10n.tr("SnabbleLocalizable", "Snabble.Payment.payViaInvoice") }
       /// Show this code at a Snabble monitor or to a cashier to confirm your purchase.
       public static var presentCode: String { return L10n.tr("SnabbleLocalizable", "Snabble.Payment.presentCode") }
+      /// Purchase denied
+      public static var rejected: String { return L10n.tr("SnabbleLocalizable", "Snabble.Payment.rejected") }
       /// Thank you for shopping
       public static var success: String { return L10n.tr("SnabbleLocalizable", "Snabble.Payment.success") }
       /// Usable at: %@
@@ -358,7 +369,8 @@ public enum L10n {
       public static var duplicateDepositScanned: String { return L10n.tr("SnabbleLocalizable", "Snabble.Scanner.duplicateDepositScanned") }
       /// Enter code
       public static var enterBarcode: String { return L10n.tr("SnabbleLocalizable", "Snabble.Scanner.enterBarcode") }
-      /// Enter\nbarcode
+      /// Enter
+      /// barcode
       public static var enterCodeButton: String { return L10n.tr("SnabbleLocalizable", "Snabble.Scanner.enterCodeButton") }
       /// Scan your first product. Place the barcode in front of your camera.
       public static var firstScan: String { return L10n.tr("SnabbleLocalizable", "Snabble.Scanner.firstScan") }

@@ -22,6 +22,10 @@ internal enum Asset {
   internal enum SnabbleSDK {
     internal static let arrowUp = SwiftGenImageAsset(name: "SnabbleSDK/arrow-up")
     internal static let barcodeOverlay = SwiftGenImageAsset(name: "SnabbleSDK/barcode-overlay")
+    internal static let checkmark = SwiftGenImageAsset(name: "SnabbleSDK/checkmark")
+    internal static let emoji1 = SwiftGenImageAsset(name: "SnabbleSDK/emoji-1")
+    internal static let emoji2 = SwiftGenImageAsset(name: "SnabbleSDK/emoji-2")
+    internal static let emoji3 = SwiftGenImageAsset(name: "SnabbleSDK/emoji-3")
     internal static let iconBarcode = SwiftGenImageAsset(name: "SnabbleSDK/icon-barcode")
     internal static let iconCartActive = SwiftGenImageAsset(name: "SnabbleSDK/icon-cart-active")
     internal static let iconCartInactiveEmpty = SwiftGenImageAsset(name: "SnabbleSDK/icon-cart-inactive-empty")
@@ -56,6 +60,7 @@ internal enum Asset {
       internal static let paymentVisa = SwiftGenImageAsset(name: "SnabbleSDK/payment/payment-visa")
     }
     internal static let paymentMethodCheckstand = SwiftGenImageAsset(name: "SnabbleSDK/payment-method-checkstand")
+    internal static let x = SwiftGenImageAsset(name: "SnabbleSDK/x")
   }
 }
 // swiftlint:enable identifier_name line_length nesting type_body_length type_name
@@ -71,6 +76,7 @@ internal struct SwiftGenImageAsset {
   internal typealias Image = UIImage
   #endif
 
+  @available(iOS 8.0, tvOS 9.0, watchOS 2.0, macOS 10.7, *)
   internal var image: Image {
     let bundle = BundleToken.bundle
     #if os(iOS) || os(tvOS)
@@ -86,9 +92,21 @@ internal struct SwiftGenImageAsset {
     }
     return result
   }
+
+  #if os(iOS) || os(tvOS)
+  @available(iOS 8.0, tvOS 9.0, *)
+  internal func image(compatibleWith traitCollection: UITraitCollection) -> Image {
+    let bundle = BundleToken.bundle
+    guard let result = Image(named: name, in: bundle, compatibleWith: traitCollection) else {
+      fatalError("Unable to load image asset named \(name).")
+    }
+    return result
+  }
+  #endif
 }
 
 internal extension SwiftGenImageAsset.Image {
+  @available(iOS 8.0, tvOS 9.0, watchOS 2.0, *)
   @available(macOS, deprecated,
     message: "This initializer is unsafe on macOS, please use the SwiftGenImageAsset.image property")
   convenience init?(asset: SwiftGenImageAsset) {
