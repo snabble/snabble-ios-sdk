@@ -172,13 +172,18 @@ public final class PayoneCreditCardEditViewController: UIViewController {
     }
 
     private func prepareAndInjectPage(_ payoneTokenization: PayoneTokenization) {
-        print(payoneTokenization)
         var languageCode = Locale.current.languageCode ?? "en"
         switch languageCode {
         case "de", "en", "fr", "it", "es", "pt", "nl": ()
         default: languageCode = "en"
         }
+
         let testing = payoneTokenization.isTesting ?? false
+
+        let fieldColors = self.traitCollection.userInterfaceStyle == .light ?
+            "color: #000; background-color: #fff;" :
+            "color: #fff; background-color: #000;"
+
         let page = PayoneCreditCardEditViewController.pageTemplate
             .replacingOccurrences(of: "{{hash}}", with: payoneTokenization.hash)
             .replacingOccurrences(of: "{{merchantID}}", with: payoneTokenization.merchantID)
@@ -189,6 +194,7 @@ public final class PayoneCreditCardEditViewController: UIViewController {
             .replacingOccurrences(of: "{{handler}}", with: Self.handlerName)
             .replacingOccurrences(of: "{{language}}", with: languageCode)
             .replacingOccurrences(of: "{{supportedCardType}}", with: self.brand?.paymentMethod ?? "")
+            .replacingOccurrences(of: "{{fieldColors}}", with: fieldColors)
             // TODO: l10n
             .replacingOccurrences(of: "{{lastName}}", with: "Nachname")
             .replacingOccurrences(of: "{{cardNumberLabel}}", with: "Kartennummer")

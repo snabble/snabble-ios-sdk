@@ -45,6 +45,9 @@
         background-color: #fff;
         text-align: left;
     }
+    @media (prefers-color-scheme: dark) {
+        body, input { background-color: #000; color: #fff; }
+    }
     form {
         width: auto;
         max-width: 1140px;
@@ -55,7 +58,7 @@
         display: inline-block;
         margin-bottom: 0.5rem;
     }
-    .form-group {
+    .form-group, .header {
         margin-bottom: 1rem;
     }
     .payone-input-mock {
@@ -330,7 +333,7 @@
                             }
                         },
                         defaultStyle: {
-                            input: "height: 100%; width: 100%; border: none; font-size: 17px; border-radius: 0",
+                            input: "height: 100%; width: 100%; border: none; font-size: 17px; border-radius: 0; {{fieldColors}}",
                             iframe: {}
                         },
 
