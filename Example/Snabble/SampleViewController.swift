@@ -62,10 +62,6 @@ class SampleViewController: UIViewController {
         self.snabbleSetup()
     }
 
-    override func viewDidAppear(_ animated: Bool) {
-        super.viewDidAppear(animated)
-    }
-
     func snabbleSetup() {
         let APPID = "your-app-id-here"
         let APPSECRET = "your-app-secret-here"
