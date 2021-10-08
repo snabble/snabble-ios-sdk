@@ -36,7 +36,7 @@ final class ShoppingListCell: UITableViewCell {
         checkContainer.layer.cornerRadius = checkContainer.bounds.width / 2
         checkContainer.backgroundColor = .clear
 
-        checkImage.image = UIImage.fromBundle("icon-check-large")
+        checkImage.image = Asset.SnabbleSDK.iconCheckLarge.image
 
         if #available(iOS 13.0, *) {
             spinner.style = .medium

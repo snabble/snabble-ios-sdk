@@ -1,5 +1,6 @@
 // swiftlint:disable all
 // Generated using SwiftGen — https://github.com/SwiftGen/SwiftGen
+// using xcassets-swift.stencil, based on templates/xcassets/swift5.stencil from swiftgen 6.5.1
 
 #if os(macOS)
   import AppKit
@@ -80,6 +81,11 @@ internal struct SwiftGenImageAsset {
   internal var image: Image {
     let bundle = BundleToken.bundle
     #if os(iOS) || os(tvOS)
+    // start snabble-specific code - try the main bundle first
+    if let image = Image(named: name, in: Bundle.main, compatibleWith: nil) {
+      return image
+    }
+    // end snabble-specific code
     let image = Image(named: name, in: bundle, compatibleWith: nil)
     #elseif os(macOS)
     let name = NSImage.Name(self.name)

@@ -26,7 +26,7 @@ public final class SepaOverlayView: UIView {
     override public init(frame: CGRect) {
         let closeButton = UIButton(type: .custom)
         closeButton.translatesAutoresizingMaskIntoConstraints = false
-        closeButton.setImage(UIImage.fromBundle("SnabbleSDK/icon-close"), for: .normal)
+        closeButton.setImage(Asset.SnabbleSDK.iconClose.image, for: .normal)
 
         let titleLabel = UILabel()
         titleLabel.font = .systemFont(ofSize: 17, weight: .bold)

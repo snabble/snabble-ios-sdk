@@ -109,7 +109,7 @@ public final class SepaEditViewController: UIViewController {
             self.ibanCountryField.text = String(iban.prefix(2))
             self.ibanCountryField.isEnabled = false
 
-            let trash = UIImage.fromBundle("SnabbleSDK/icon-trash")
+            let trash = Asset.SnabbleSDK.iconTrash.image
             let deleteButton = UIBarButtonItem(image: trash, style: .plain, target: self, action: #selector(self.deleteButtonTapped(_:)))
             self.navigationItem.rightBarButtonItem = deleteButton
         } else if let originIban = self.candidate?.origin {

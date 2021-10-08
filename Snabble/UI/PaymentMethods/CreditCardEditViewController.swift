@@ -95,7 +95,7 @@ public final class CreditCardEditViewController: UIViewController {
             self.expDateLabel.text = L10n.Snabble.Cc.validUntil
             self.explanation.text = L10n.Snabble.Cc.editingHint
 
-            let trash = UIImage.fromBundle("SnabbleSDK/icon-trash")
+            let trash = Asset.SnabbleSDK.iconTrash.image
             let deleteButton = UIBarButtonItem(image: trash, style: .plain, target: self, action: #selector(self.deleteButtonTapped(_:)))
             self.navigationItem.rightBarButtonItem = deleteButton
         }

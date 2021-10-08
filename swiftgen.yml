@@ -3,7 +3,7 @@
 xcassets:
   inputs: Snabble.xcassets
   outputs:
-    templateName: swift5
+    templatePath: xcassets-swift5.stencil
     params:
       imageTypeName: SwiftGenImageAsset
     output: Snabble/UI/Assets.swift

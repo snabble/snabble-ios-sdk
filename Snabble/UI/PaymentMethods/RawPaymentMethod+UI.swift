@@ -10,7 +10,7 @@ extension PaymentMethodDetail {
     var icon: UIImage? {
         switch self.methodData {
         case .tegutEmployeeCard:
-            return UIImage.fromBundle("SnabbleSDK/payment/payment-tegut")
+            return Asset.SnabbleSDK.Payment.paymentTegut.image
         default:
             return self.rawMethod.icon
         }
@@ -49,17 +49,17 @@ extension RawPaymentMethod {
 
     public var icon: UIImage? {
         switch self {
-        case .deDirectDebit: return UIImage.fromBundle("SnabbleSDK/payment/payment-sepa")
-        case .creditCardVisa: return UIImage.fromBundle("SnabbleSDK/payment/payment-visa")
-        case .creditCardMastercard: return UIImage.fromBundle("SnabbleSDK/payment/payment-mastercard")
-        case .creditCardAmericanExpress: return UIImage.fromBundle("SnabbleSDK/payment/payment-amex")
-        case .gatekeeperTerminal: return UIImage.fromBundle("SnabbleSDK/payment/payment-sco")
-        case .paydirektOneKlick: return UIImage.fromBundle("SnabbleSDK/payment/payment-paydirekt")
-        case .applePay: return UIImage.fromBundle("SnabbleSDK/payment/payment-apple-pay")
-        case .twint: return UIImage.fromBundle("SnabbleSDK/payment/payment-twint")
-        case .postFinanceCard: return UIImage.fromBundle("SnabbleSDK/payment/payment-postfinance")
+        case .deDirectDebit: return Asset.SnabbleSDK.Payment.paymentSepa.image
+        case .creditCardVisa: return Asset.SnabbleSDK.Payment.paymentVisa.image
+        case .creditCardMastercard: return Asset.SnabbleSDK.Payment.paymentMastercard.image
+        case .creditCardAmericanExpress: return Asset.SnabbleSDK.Payment.paymentAmex.image
+        case .gatekeeperTerminal: return Asset.SnabbleSDK.Payment.paymentSco.image
+        case .paydirektOneKlick: return Asset.SnabbleSDK.Payment.paymentPaydirekt.image
+        case .applePay: return Asset.SnabbleSDK.Payment.paymentApplePay.image
+        case .twint: return Asset.SnabbleSDK.Payment.paymentTwint.image
+        case .postFinanceCard: return Asset.SnabbleSDK.Payment.paymentPostfinance.image
         case .qrCodePOS, .qrCodeOffline, .externalBilling, .customerCardPOS:
-            return UIImage.fromBundle("SnabbleSDK/payment/payment-pos")
+            return Asset.SnabbleSDK.Payment.paymentPos.image
         }
     }
 

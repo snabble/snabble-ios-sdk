@@ -83,8 +83,8 @@ final class ScanningViewController: UIViewController {
         self.barcodeDetector.delegate = self
 
         self.title = L10n.Snabble.Scanner.title
-        self.tabBarItem.image = UIImage.fromBundle("SnabbleSDK/icon-scan-inactive")
-        self.tabBarItem.selectedImage = UIImage.fromBundle("SnabbleSDK/icon-scan-active")
+        self.tabBarItem.image = Asset.SnabbleSDK.iconScanInactive.image
+        self.tabBarItem.selectedImage = Asset.SnabbleSDK.iconScanActive.image
         self.navigationItem.title = L10n.Snabble.Scanner.scanningTitle
 
         SnabbleUI.registerForAppearanceChange(self)
@@ -125,11 +125,11 @@ final class ScanningViewController: UIViewController {
         self.messageTopDistance.constant = -150
         self.messageWrapper.isHidden = true
 
-        let torchButton = UIBarButtonItem(image: UIImage.fromBundle("SnabbleSDK/icon-light-inactive"), style: .plain, target: self, action: #selector(torchTapped(_:)))
+        let torchButton = UIBarButtonItem(image: Asset.SnabbleSDK.iconLightInactive.image, style: .plain, target: self, action: #selector(torchTapped(_:)))
         self.pulleyViewController?.navigationItem.leftBarButtonItem = torchButton
         self.torchButton = torchButton
 
-        let searchButton = UIBarButtonItem(image: UIImage.fromBundle("SnabbleSDK/icon-entercode"), style: .plain, target: self, action: #selector(searchTapped(_:)))
+        let searchButton = UIBarButtonItem(image: Asset.SnabbleSDK.iconEntercode.image, style: .plain, target: self, action: #selector(searchTapped(_:)))
         self.pulleyViewController?.navigationItem.rightBarButtonItem = searchButton
     }
 
@@ -190,7 +190,7 @@ final class ScanningViewController: UIViewController {
     // MARK: - nav bar buttons
     @objc private func torchTapped(_ sender: Any) {
         let torchOn = self.barcodeDetector.toggleTorch()
-        torchButton?.image = torchOn ? UIImage.fromBundle("SnabbleSDK/icon-light-active") : UIImage.fromBundle("SnabbleSDK/icon-light-inactive")
+        torchButton?.image = torchOn ? Asset.SnabbleSDK.iconLightActive.image : Asset.SnabbleSDK.iconLightInactive.image
     }
 
     @objc private func searchTapped(_ sender: Any) {

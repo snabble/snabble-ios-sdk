@@ -59,13 +59,13 @@ final class CheckoutRatingView: UIView {
         detailTextLabel.isHidden = true
 
         let leftButton = UIButton(type: .custom)
-        leftButton.setImage(UIImage.fromBundle("SnabbleSDK/emoji-1"), for: .normal)
+        leftButton.setImage(Asset.SnabbleSDK.emoji1.image, for: .normal)
 
         let middleButton = UIButton(type: .custom)
-        middleButton.setImage(UIImage.fromBundle("SnabbleSDK/emoji-2"), for: .normal)
+        middleButton.setImage(Asset.SnabbleSDK.emoji2.image, for: .normal)
 
         let rightButton = UIButton(type: .custom)
-        rightButton.setImage(UIImage.fromBundle("SnabbleSDK/emoji-3"), for: .normal)
+        rightButton.setImage(Asset.SnabbleSDK.emoji3.image, for: .normal)
 
         let buttonStackView = UIStackView(arrangedSubviews: [leftButton, middleButton, rightButton])
         buttonStackView.translatesAutoresizingMaskIntoConstraints = false
