@@ -29,8 +29,7 @@ if [ "$TODAY" != "$CHANGELOG_DATE" ]; then
 fi
 
 echo "updating strings..."
-phrase pull
-swiftgen
+sh ./phrase-pull.sh
 
 if [ "$RUN_UNITTESTS" == "YES" ]; then
     echo running unit tests...
