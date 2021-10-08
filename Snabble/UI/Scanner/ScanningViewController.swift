@@ -123,6 +123,7 @@ final class ScanningViewController: UIViewController {
         let msgTap = UITapGestureRecognizer(target: self, action: #selector(self.messageTapped(_:)))
         self.messageWrapper.addGestureRecognizer(msgTap)
         self.messageTopDistance.constant = -150
+        self.messageWrapper.isHidden = true
 
         let torchButton = UIBarButtonItem(image: UIImage.fromBundle("SnabbleSDK/icon-light-inactive"), style: .plain, target: self, action: #selector(torchTapped(_:)))
         self.pulleyViewController?.navigationItem.leftBarButtonItem = torchButton

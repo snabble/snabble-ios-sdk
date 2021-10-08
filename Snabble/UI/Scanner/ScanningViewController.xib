@@ -88,7 +88,7 @@
             <constraints>
                 <constraint firstItem="N9z-bZ-BCF" firstAttribute="top" secondItem="QeV-hn-is3" secondAttribute="top" constant="40" id="02K-f3-pGk"/>
                 <constraint firstItem="f6o-K2-0vK" firstAttribute="leading" secondItem="QeV-hn-is3" secondAttribute="leading" id="44E-4a-OND"/>
-                <constraint firstItem="f6o-K2-0vK" firstAttribute="top" secondItem="QeV-hn-is3" secondAttribute="top" id="HWc-Zk-A0q"/>
+                <constraint firstItem="f6o-K2-0vK" firstAttribute="top" secondItem="QeV-hn-is3" secondAttribute="topMargin" id="HWc-Zk-A0q"/>
                 <constraint firstAttribute="trailing" secondItem="f6o-K2-0vK" secondAttribute="trailing" id="Rxh-d4-Zb8"/>
                 <constraint firstItem="N9z-bZ-BCF" firstAttribute="centerX" secondItem="QeV-hn-is3" secondAttribute="centerX" id="tp8-Ip-mmg"/>
             </constraints>

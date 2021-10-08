@@ -1,5 +1,5 @@
 //
-//  ViewController.swift
+//  SampleViewController.swift
 //  Snabble Sample App
 //
 //  Copyright (c) 2021 snabble GmbH. All rights reserved.
@@ -8,20 +8,62 @@
 import UIKit
 import Snabble
 
-class ViewController: UIViewController {
-
-    @IBOutlet private weak var buttonContainer: UIStackView!
-    @IBOutlet private weak var spinner: UIActivityIndicatorView!
+class SampleViewController: UIViewController {
+    private var buttonContainer = UIStackView()
+    private var spinner = UIActivityIndicatorView()
 
     private var shoppingCart: ShoppingCart?
 
+    init() {
+        super.init(nibName: nil, bundle: nil)
+
+        self.title = "Snabble"
+
+        self.tabBarItem.image = UIImage(named: "scan-off")
+        self.tabBarItem.selectedImage = UIImage(named: "scan-on")
+    }
+
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+
     override func viewDidLoad() {
         super.viewDidLoad()
+
+        let scanButton = UIButton(type: .system)
+        scanButton.setTitle("Scanner", for: .normal)
+        scanButton.titleLabel?.font = .boldSystemFont(ofSize: 17)
+        scanButton.addTarget(self, action: #selector(scannerButtonTapped(_:)), for: .touchUpInside)
+        buttonContainer.addArrangedSubview(scanButton)
+
+        let cartButton = UIButton(type: .system)
+        cartButton.setTitle("Shopping Cart", for: .normal)
+        cartButton.titleLabel?.font = .boldSystemFont(ofSize: 17)
+        cartButton.addTarget(self, action: #selector(shoppingCartButtonTapped(_:)), for: .touchUpInside)
+        buttonContainer.addArrangedSubview(cartButton)
+
+        buttonContainer.translatesAutoresizingMaskIntoConstraints = false
+        buttonContainer.spacing = 16
+        buttonContainer.axis = .vertical
+        view.addSubview(buttonContainer)
+
+        spinner.translatesAutoresizingMaskIntoConstraints = false
+        view.addSubview(spinner)
+        view.backgroundColor = .systemBackground
+
+        NSLayoutConstraint.activate([
+            spinner.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+            spinner.centerYAnchor.constraint(equalTo: view.centerYAnchor),
+
+            buttonContainer.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+            buttonContainer.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 32)
+        ])
+
         self.snabbleSetup()
     }
 
-    override func viewWillAppear(_ animated: Bool) {
-        super.viewWillAppear(animated)
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
     }
 
     func snabbleSetup() {
@@ -50,7 +92,7 @@ class ViewController: UIViewController {
         }
     }
 
-    @IBAction private func scannerButtonTapped(_ sender: Any) {
+    @objc private func scannerButtonTapped(_ sender: Any) {
         guard let shoppingCart = self.shoppingCart, let shop = SnabbleAPI.projects.first?.shops.first else {
             return
         }
@@ -61,7 +103,7 @@ class ViewController: UIViewController {
         self.navigationController?.pushViewController(scanner, animated: true)
     }
 
-    @IBAction private func shoppingCartButtonTapped(_ sender: Any) {
+    @objc private func shoppingCartButtonTapped(_ sender: Any) {
         guard let shoppingCart = self.shoppingCart else {
             return
         }
@@ -72,7 +114,7 @@ class ViewController: UIViewController {
 
 }
 
-extension ViewController: ScannerDelegate {
+extension SampleViewController: ScannerDelegate {
     func scanMessage(for project: Project, _ shop: Shop, _ product: Product) -> ScanMessage? {
         return nil
     }
@@ -82,7 +124,7 @@ extension ViewController: ScannerDelegate {
     }
 }
 
-extension ViewController: ShoppingCartDelegate {
+extension SampleViewController: ShoppingCartDelegate {
     func gotoPayment(_ method: RawPaymentMethod, _ detail: PaymentMethodDetail?, _ info: SignedCheckoutInfo, _ cart: ShoppingCart) {
         guard !info.checkoutInfo.paymentMethods.isEmpty else {
             return
@@ -111,14 +153,14 @@ extension ViewController: ShoppingCartDelegate {
 }
 
 /// implement this method to track an event generated from the SDK in your analytics system
-extension ViewController: AnalyticsDelegate {
+extension SampleViewController: AnalyticsDelegate {
     func track(_ event: AnalyticsEvent) {
         NSLog("track: \(event)")
     }
 }
 
 /// implement these methods to show warning/info messages on-screen, e.g. as toasts
-extension ViewController: MessageDelegate {
+extension SampleViewController: MessageDelegate {
     func showInfoMessage(_ message: String) {
         NSLog("warning: \(message)")
     }
@@ -128,7 +170,7 @@ extension ViewController: MessageDelegate {
     }
 }
 
-extension ViewController: PaymentDelegate {
+extension SampleViewController: PaymentDelegate {
     func paymentFinished(_ success: Bool, _ cart: ShoppingCart, _ process: CheckoutProcess?, _ rawJson: [String: Any]?) {
         if success {
             cart.removeAll(endSession: true, keepBackup: false)
