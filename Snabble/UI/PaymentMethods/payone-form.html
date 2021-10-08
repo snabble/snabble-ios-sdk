@@ -35,36 +35,75 @@
             });
         }
     </script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.3.1/css/bootstrap.css">
     <style type="text/css">
-        * { box-sizing: content-box; }
-        .container { width: auto; }
-        .header { margin-bottom: 1rem; }
-        label { font-weight: bold; }
-
-        .payone-input-mock {
-            border: 2px solid #0077bb;
-            border-radius: 10px;
-            padding: 5px 15px;
-            max-width: 100%;
-        }
-
-        .payone-input-mock iframe {
-            height: 50px;
-            width: 100%;
-            vertical-align: middle;
-        }
-
-        .payone-input-mock input {
-            height: 42px;
-            width: 90%;
-            vertical-align: middle;
-            font-size: 17px;
-            border: none;
-            outline: none;
-        }
-
-        #submit { background-color: #0077bb; padding-left:0; padding-right: 0; width: 100%; }
+    body {
+        font-family: -apple-system, sans-serif;
+        font-size: 1rem;
+        font-weight: 400;
+        line-height: 1.5;
+        color: #000;
+        background-color: #fff;
+        text-align: left;
+    }
+    form {
+        width: auto;
+        max-width: 1140px;
+        margin: auto;
+    }
+    label {
+        font-weight: bold;
+        display: inline-block;
+        margin-bottom: 0.5rem;
+    }
+    .form-group {
+        margin-bottom: 1rem;
+    }
+    .payone-input-mock {
+        border: 2px solid #07b;
+        border-radius: 10px;
+        padding: 5px 15px;
+        max-width: 100%;
+    }
+    .payone-input-mock iframe {
+        height: 50px;
+        width: 100%;
+        vertical-align: middle;
+    }
+    .payone-input-mock input {
+        height: 42px;
+        width: 90%;
+        vertical-align: middle;
+        font-size: 17px;
+        border: none;
+        outline: none;
+    }
+    #submit {
+        margin: 2rem 0;
+        background-color:#07b;
+        border-radius: 0.3rem;
+        border: none;
+        padding: 0.5rem 1rem;
+        padding-right: 1rem;
+        padding-left: 1rem;
+        font-size: 1.25rem;
+        line-height: 1.5;
+        color:#fff;
+        width: 100%;
+        font-weight: 400;
+        text-align: center;
+        vertical-align: middle;
+    }
+    input:focus {
+        outline: none;
+        box-shadow: none;
+    }
+    .halves {
+        display: flex;
+        gap: 1rem;
+    }
+    .half {
+        flex-grow: 1
+    }
     </style>
 
     <script src="https://secure.pay1.de/client-api/js/v1/payone_hosted.js"></script>
@@ -232,19 +271,21 @@
                         </div>
                     </div>
 
-                    <div class="form-group">
-                        <label for="payone-cc-expire-month">{{expireMonthLabel}}</label>
-                        <div class="payone-input-mock payone-input-mock--expire-month">
-                            <!-- Mount element for card expire month IFrame. -->
-                            <span id="payone-cc-expire-month"></span>
+                    <div class="form-group halves">
+                        <div class="half">
+                            <label for="payone-cc-expire-month">{{expireMonthLabel}}</label>
+                            <div class="payone-input-mock payone-input-mock--expire-month">
+                                <!-- Mount element for card expire month IFrame. -->
+                                <span id="payone-cc-expire-month"></span>
+                            </div>
                         </div>
-                    </div>
 
-                    <div class="form-group">
-                        <label for="payone-cc-expire-year">{{expireYearLabel}}</label>
-                        <div class="payone-input-mock payone-input-mock--expire-year">
-                            <!-- Mount element for card expire year IFrame. -->
-                            <span id="payone-cc-expire-year"></span>
+                        <div class="half">
+                            <label for="payone-cc-expire-year">{{expireYearLabel}}</label>
+                            <div class="payone-input-mock payone-input-mock--expire-year">
+                                <!-- Mount element for card expire year IFrame. -->
+                                <span id="payone-cc-expire-year"></span>
+                            </div>
                         </div>
                     </div>
 
