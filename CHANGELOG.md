@@ -1,6 +1,8 @@
 ## snabble iOS SDK Changelog
 
-# v0.17.10 (unreleased)
+# v0.17.11 (unreleased)
+
+# v0.17.10
 - Adds support for the new `expectedBarcodeWidth` property
 - Fixes various minor bugs related to payment method selection
 - Made some visual improvements to the included Example app
