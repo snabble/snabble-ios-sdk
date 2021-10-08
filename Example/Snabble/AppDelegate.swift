@@ -18,7 +18,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         let rightNavi = UINavigationController(rootViewController: RightViewController())
 
         let sampleVC = SampleViewController()
-        
+
         let sampleNavi = UINavigationController(rootViewController: sampleVC)
         sampleNavi.navigationBar.isOpaque = true
 

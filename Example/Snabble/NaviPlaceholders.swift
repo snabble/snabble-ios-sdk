@@ -24,7 +24,7 @@ final class LeftViewController: UIViewController {
 final class RightViewController: UIViewController {
     init() {
         super.init(nibName: nil, bundle: nil)
-        
+
         self.title = "Settings"
         self.tabBarItem.image = UIImage(systemName: "gearshape")
         self.tabBarItem.selectedImage = UIImage(systemName: "gearshape.fill")
