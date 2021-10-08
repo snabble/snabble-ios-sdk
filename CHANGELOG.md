@@ -3,6 +3,7 @@
 # v0.17.10 (unreleased)
 - Adds support for the new `expectedBarcodeWidth` property
 - Fixes various minor bugs related to payment method selection
+- Made some visual improvements to the included Example app
 - NOTE that after this version, support for the React Native wrapper of the SDK will be dropped 
 
 # v0.17.9
