@@ -160,6 +160,7 @@ final class PaymentMethodSelector {
 
     private func setDefaultPaymentMethod() {
         let userMethods = userPaymentMethodDetails
+        let availableOfflineMethods = availableMethods.filter { $0.offline }
         var availableMethods = availableMethods.filter { !$0.offline }
 
         // use Apple Pay, if possible
@@ -196,7 +197,8 @@ final class PaymentMethodSelector {
             return setSelectedPayment(userMethod.rawMethod, detail: userMethod)
         }
 
-        setSelectedPayment(nil, detail: nil)
+        // no available online payment method. if we have any offline methods, use the first of those
+        setSelectedPayment(availableOfflineMethods.first, detail: nil)
     }
 
     private func userSelectedPaymentMethod(with actionData: PaymentMethodAction) {
