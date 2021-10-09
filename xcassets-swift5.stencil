@@ -244,7 +244,7 @@
     let bundle = {{param.bundle|default:"BundleToken.bundle"}}
     #if os(iOS) || os(tvOS)
     // start snabble-specific code - try the main bundle first
-    if let image = Image(named: name, in: Bundle.main, compatibleWith: nil) {
+    if let image = UIImage.fromBundle(name) {
       return image
     }
     // end snabble-specific code
