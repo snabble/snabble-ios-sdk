@@ -161,17 +161,17 @@ final class PaymentMethodSelector {
     private func setDefaultPaymentMethod() {
         let userMethods = userPaymentMethodDetails
         let availableOfflineMethods = availableMethods.filter { $0.offline }
-        var availableMethods = availableMethods.filter { !$0.offline }
+        var availableOnlineMethods = availableMethods.filter { !$0.offline }
 
         // use Apple Pay, if possible
-        if availableMethods.contains(.applePay) && ApplePay.canMakePayments(with: SnabbleUI.project.id) {
+        if availableOnlineMethods.contains(.applePay) && ApplePay.canMakePayments(with: SnabbleUI.project.id) {
             return setSelectedPayment(.applePay, detail: nil)
         } else if !ApplePay.isSupported() {
-            availableMethods.removeAll { $0 == .applePay }
+            availableOnlineMethods.removeAll { $0 == .applePay }
         }
 
         let verifyMethod: (RawPaymentMethod) -> (PaymentMethodDetail?) = { method in
-            guard availableMethods.contains(method) else {
+            guard availableOnlineMethods.contains(method) else {
                 return nil
             }
 
@@ -197,8 +197,14 @@ final class PaymentMethodSelector {
             return setSelectedPayment(userMethod.rawMethod, detail: userMethod)
         }
 
-        // no available online payment method. if we have any offline methods, use the first of those
-        setSelectedPayment(availableOfflineMethods.first, detail: nil)
+        // no possible online payment method.
+        if availableOnlineMethods.isEmpty {
+            // if we have any offline methods, use the first of those
+            setSelectedPayment(availableOfflineMethods.first, detail: nil)
+        } else {
+            setSelectedPayment(nil, detail: nil)
+        }
+
     }
 
     private func userSelectedPaymentMethod(with actionData: PaymentMethodAction) {
