@@ -1,6 +1,8 @@
 ## snabble iOS SDK Changelog
 
-# v0.17.11 (unreleased)
+# v0.17.12 (unreleased)
+
+# v0.17.11
 - Fixes Payment Selection
 
 # v0.17.10

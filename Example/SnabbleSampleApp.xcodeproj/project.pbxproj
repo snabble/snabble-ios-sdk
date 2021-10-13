@@ -17,7 +17,7 @@
 
 /* Begin PBXFileReference section */
 		3A64AF2F2710486300AF24C6 /* NaviPlaceholders.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NaviPlaceholders.swift; sourceTree = "<group>"; };
-		50880F89ADD024AE5A2C5629 /* Snabble.podspec */ = {isa = PBXFileReference; explicitFileType = text.script.ruby; includeInIndex = 1; name = Snabble.podspec; path = ../Snabble.podspec; sourceTree = "<group>"; };
+		50880F89ADD024AE5A2C5629 /* Snabble.podspec */ = {isa = PBXFileReference; explicitFileType = text.script.ruby; includeInIndex = 1; name = Snabble.podspec; path = ../Snabble.podspec; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.ruby; };
 		607FACD01AFB9204008FA782 /* SnabbleSampleApp.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = SnabbleSampleApp.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		607FACD41AFB9204008FA782 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		607FACD51AFB9204008FA782 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
