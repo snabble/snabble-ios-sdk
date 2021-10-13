@@ -6,6 +6,7 @@
 //
 
 import UIKit
+import Snabble
 
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate {
@@ -17,9 +18,9 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         let leftNavi = UINavigationController(rootViewController: LeftViewController())
         let rightNavi = UINavigationController(rootViewController: RightViewController())
 
-        let sampleVC = SampleViewController()
+//        let sampleVC = SampleViewController()
 
-        let sampleNavi = UINavigationController(rootViewController: sampleVC)
+        let sampleNavi = UINavigationController(rootViewController: CheckoutStepsViewController())
         sampleNavi.navigationBar.isOpaque = true
 
         let tabBarController = UITabBarController()

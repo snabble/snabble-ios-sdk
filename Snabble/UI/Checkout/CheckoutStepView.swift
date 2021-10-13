@@ -107,14 +107,7 @@ final class CheckoutStepView: UIView {
         button?.isHidden = button?.title(for: .normal) == nil
         imageView?.isHidden = imageView?.image == nil
     }
-}
 
-#if canImport(SwiftUI) && DEBUG
-import SwiftUI
-import AutoLayout_Helper
-
-@available(iOS 13, *)
-public struct CheckoutStepView_Previews: PreviewProvider {
     enum Mock {
         enum Payment: CheckoutStepViewModel {
             case loading
@@ -159,18 +152,25 @@ public struct CheckoutStepView_Previews: PreviewProvider {
             }
         }
     }
+}
 
+#if canImport(SwiftUI) && DEBUG
+import SwiftUI
+import AutoLayout_Helper
+
+@available(iOS 13, *)
+public struct CheckoutStepView_Previews: PreviewProvider {
     public static var previews: some View {
         Group {
             UIViewPreview {
                 let view = CheckoutStepView(frame: .zero)
-                view.configure(with: Mock.Payment.failure)
+                view.configure(with: CheckoutStepView.Mock.Payment.failure)
                 return view
             }.previewLayout(.fixed(width: 200, height: 200))
                 .preferredColorScheme(.dark)
             UIViewPreview {
                 let view = CheckoutStepView()
-                view.configure(with: Mock.Payment.loading)
+                view.configure(with: CheckoutStepView.Mock.Payment.loading)
                 return view
             }.previewLayout(.fixed(width: 200, height: 200))
                 .preferredColorScheme(.light)
