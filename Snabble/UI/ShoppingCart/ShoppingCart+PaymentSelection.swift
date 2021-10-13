@@ -163,6 +163,10 @@ final class PaymentMethodSelector {
         let availableOfflineMethods = availableMethods.filter { $0.offline }
         var availableOnlineMethods = availableMethods.filter { !$0.offline }
 
+        guard !availableOnlineMethods.isEmpty else {
+            return setSelectedPayment(availableOfflineMethods.first, detail: nil)
+        }
+
         // use Apple Pay, if possible
         if availableOnlineMethods.contains(.applePay) && ApplePay.canMakePayments(with: SnabbleUI.project.id) {
             return setSelectedPayment(.applePay, detail: nil)
@@ -170,41 +174,38 @@ final class PaymentMethodSelector {
             availableOnlineMethods.removeAll { $0 == .applePay }
         }
 
-        let verifyMethod: (RawPaymentMethod) -> (PaymentMethodDetail?) = { method in
+        let verifyMethod: (RawPaymentMethod) -> (rawPaymentMethod: RawPaymentMethod, paymentMethodDetail: PaymentMethodDetail?)? = { method in
             guard availableOnlineMethods.contains(method) else {
                 return nil
+            }
+
+            guard method.dataRequired else {
+                return (method, nil)
             }
 
             guard let userMethod = userMethods.first(where: { $0.rawMethod == method }) else {
                 return nil
             }
-            return userMethod
+            return (userMethod.rawMethod, userMethod)
         }
 
         // prefer in-app payment methods like SEPA or CC
         for method in RawPaymentMethod.preferredOnlineMethods {
-            guard let userMethod = verifyMethod(method) else {
+            guard let verified = verifyMethod(method) else {
                 continue
             }
-            return setSelectedPayment(userMethod.rawMethod, detail: userMethod)
+            return setSelectedPayment(verified.rawPaymentMethod, detail: verified.paymentMethodDetail)
         }
 
         // prefer in-app payment methods like SEPA or CC
         for method in RawPaymentMethod.orderedMethods {
-            guard let userMethod = verifyMethod(method) else {
+            guard let verified = verifyMethod(method) else {
                 continue
             }
-            return setSelectedPayment(userMethod.rawMethod, detail: userMethod)
+            return setSelectedPayment(verified.rawPaymentMethod, detail: verified.paymentMethodDetail)
         }
 
-        // no possible online payment method.
-        if availableOnlineMethods.isEmpty {
-            // if we have any offline methods, use the first of those
-            setSelectedPayment(availableOfflineMethods.first, detail: nil)
-        } else {
-            setSelectedPayment(nil, detail: nil)
-        }
-
+        setSelectedPayment(nil, detail: nil)
     }
 
     private func userSelectedPaymentMethod(with actionData: PaymentMethodAction) {
