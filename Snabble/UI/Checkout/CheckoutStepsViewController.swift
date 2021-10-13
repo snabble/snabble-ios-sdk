@@ -48,9 +48,18 @@ public final class CheckoutStepsViewController: UIViewController {
 
         view.addSubview(cardView)
 
+        let doneButton = UIButton(type: .system)
+        doneButton.translatesAutoresizingMaskIntoConstraints = false
+        doneButton.setTitle("Schließen", for: .normal)
+        doneButton.makeSnabbleButton()
+        view.addSubview(doneButton)
+        self.doneButton = doneButton
+
         NSLayoutConstraint.activate([
             headerView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
             view.trailingAnchor.constraint(equalTo: headerView.trailingAnchor),
+
+            headerView.widthAnchor.constraint(equalTo: headerView.heightAnchor, multiplier: 1.75),
 
             cardView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16),
             view.trailingAnchor.constraint(equalTo: cardView.trailingAnchor, constant: 16),
@@ -60,11 +69,15 @@ public final class CheckoutStepsViewController: UIViewController {
             cardView.contentView.trailingAnchor.constraint(equalTo: stepsStackView.trailingAnchor),
             cardView.contentView.bottomAnchor.constraint(equalTo: stepsStackView.bottomAnchor),
 
-            headerView.widthAnchor.constraint(equalTo: headerView.heightAnchor, multiplier: 1.75),
+            doneButton.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 24),
+            view.trailingAnchor.constraint(equalTo: doneButton.trailingAnchor, constant: 24),
+
+            doneButton.heightAnchor.constraint(equalToConstant: 48),
 
             headerView.topAnchor.constraint(equalTo: view.topAnchor, constant: 16),
             cardView.topAnchor.constraint(equalTo: headerView.bottomAnchor, constant: 16),
-            view.bottomAnchor.constraint(greaterThanOrEqualTo: cardView.bottomAnchor, constant: 16)
+            doneButton.topAnchor.constraint(greaterThanOrEqualTo: cardView.bottomAnchor, constant: 16),
+            view.bottomAnchor.constraint(equalTo: doneButton.bottomAnchor, constant: 16)
         ])
 
         self.view = view
