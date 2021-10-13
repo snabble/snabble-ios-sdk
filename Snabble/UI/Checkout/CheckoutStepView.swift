@@ -87,7 +87,7 @@ final class CheckoutStepView: UIView {
             bottomAnchor.constraint(greaterThanOrEqualTo: statusView.bottomAnchor, constant: 16),
 
             stackView.topAnchor.constraint(equalTo: statusView.topAnchor),
-            bottomAnchor.constraint(greaterThanOrEqualTo: stackView.bottomAnchor, constant: 16)
+            bottomAnchor.constraint(equalTo: stackView.bottomAnchor, constant: 16)
         ])
     }
 
