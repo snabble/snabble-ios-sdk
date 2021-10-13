@@ -48,6 +48,11 @@ public final class CheckoutStepsViewController: UIViewController {
 
         view.addSubview(cardView)
 
+        let ratingView = CheckoutRatingView()
+        ratingView.translatesAutoresizingMaskIntoConstraints = false
+        view.addSubview(ratingView)
+        self.ratingView = ratingView
+
         let doneButton = UIButton(type: .system)
         doneButton.translatesAutoresizingMaskIntoConstraints = false
         doneButton.setTitle("Schließen", for: .normal)
@@ -74,8 +79,14 @@ public final class CheckoutStepsViewController: UIViewController {
 
             doneButton.heightAnchor.constraint(equalToConstant: 48),
 
+            ratingView.leadingAnchor.constraint(greaterThanOrEqualTo: view.leadingAnchor, constant: 16),
+            view.trailingAnchor.constraint(greaterThanOrEqualTo: ratingView.trailingAnchor, constant: 16),
+            ratingView.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+
             headerView.topAnchor.constraint(equalTo: view.topAnchor, constant: 16),
             cardView.topAnchor.constraint(equalTo: headerView.bottomAnchor, constant: 16),
+
+            doneButton.topAnchor.constraint(equalTo: ratingView.bottomAnchor, constant: 16),
             doneButton.topAnchor.constraint(greaterThanOrEqualTo: cardView.bottomAnchor, constant: 16),
             view.bottomAnchor.constraint(equalTo: doneButton.bottomAnchor, constant: 16)
         ])
