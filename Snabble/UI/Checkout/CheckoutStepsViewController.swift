@@ -26,7 +26,8 @@ public final class CheckoutStepsViewController: UIViewController {
     }
 
     override public func loadView() {
-        let view = UIView(frame: UIScreen.main.bounds)
+        let view = UIScrollView(frame: UIScreen.main.bounds)
+        view.contentInsetAdjustmentBehavior = .automatic
 
         let headerView = CheckoutHeaderView()
         headerView.translatesAutoresizingMaskIntoConstraints = false
@@ -85,9 +86,8 @@ public final class CheckoutStepsViewController: UIViewController {
 
             headerView.topAnchor.constraint(equalTo: view.topAnchor, constant: 16),
             cardView.topAnchor.constraint(equalTo: headerView.bottomAnchor, constant: 16),
-
+            ratingView.topAnchor.constraint(greaterThanOrEqualTo: cardView.bottomAnchor, constant: 16),
             doneButton.topAnchor.constraint(equalTo: ratingView.bottomAnchor, constant: 16),
-            doneButton.topAnchor.constraint(greaterThanOrEqualTo: cardView.bottomAnchor, constant: 16),
             view.bottomAnchor.constraint(equalTo: doneButton.bottomAnchor, constant: 16)
         ])
 
