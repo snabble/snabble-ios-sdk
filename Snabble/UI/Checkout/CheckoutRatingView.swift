@@ -91,7 +91,7 @@ final class CheckoutRatingView: UIView {
         NSLayoutConstraint.activate([
             textLabel.topAnchor.constraint(equalTo: topAnchor),
             detailTextLabel.topAnchor.constraint(equalTo: textLabel.bottomAnchor, constant: 16),
-            bottomAnchor.constraint(greaterThanOrEqualTo: detailTextLabel.bottomAnchor),
+            bottomAnchor.constraint(equalTo: detailTextLabel.bottomAnchor),
 
             buttonStackView.topAnchor.constraint(equalTo: detailTextLabel.topAnchor),
             detailTextLabel.bottomAnchor.constraint(equalTo: buttonStackView.bottomAnchor),
