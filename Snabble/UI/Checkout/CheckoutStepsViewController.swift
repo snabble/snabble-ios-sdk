@@ -51,7 +51,6 @@ public final class CheckoutStepsViewController: UIViewController {
 
         let cardView = CardView()
         cardView.translatesAutoresizingMaskIntoConstraints = false
-        cardView.enableCardStyle()
 
         let stepsStackView = UIStackView()
         stepsStackView.backgroundColor = .red
@@ -146,13 +145,13 @@ extension UIStackView {
     }
 }
 
-protocol Cardable: UIView {
-    var contentView: UIView { get }
-    func enableCardStyle()
-}
-
-class CardView: UIView, Cardable {
+class CardView: UIView {
     private(set) var contentView: UIView
+
+    var cornerRadius: CGFloat = 8
+    var shadowColor: UIColor? = .black
+    var shadowOpacity: Float = 0.25
+    var shadowOffset: CGSize = .init(width: 0, height: 3)
 
     override init(frame: CGRect) {
         let contentView = UIView()
@@ -172,17 +171,18 @@ class CardView: UIView, Cardable {
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
-}
 
-extension Cardable {
-    func enableCardStyle() {
-        layer.cornerRadius = 8
-        layer.shadowColor = UIColor.black.cgColor
-        layer.shadowOffset = .init(width: 0, height: 3)
-        layer.shadowRadius = 4
-        layer.shadowOpacity = 0.25
+    override func layoutSubviews() {
+        super.layoutSubviews()
+        layer.cornerRadius = cornerRadius
+        layer.masksToBounds = false
 
-        contentView.layer.cornerRadius = 8
+        layer.shadowColor = shadowColor?.cgColor
+        layer.shadowOffset = shadowOffset;
+        layer.shadowOpacity = shadowOpacity
+        layer.shadowPath = UIBezierPath(roundedRect: bounds, cornerRadius: cornerRadius).cgPath
+
+        contentView.layer.cornerRadius = cornerRadius
         contentView.layer.masksToBounds = true
     }
 }
