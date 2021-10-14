@@ -11,6 +11,8 @@ import UIKit
 public final class CheckoutStepsViewController: UIViewController {
     let viewModel: CheckoutStepsViewModel
 
+    private(set) weak var scrollView: UIScrollView?
+
     private(set) weak var headerView: CheckoutHeaderView?
     private(set) weak var stepsStackView: UIStackView?
     private(set) weak var ratingView: CheckoutRatingView?
@@ -26,12 +28,25 @@ public final class CheckoutStepsViewController: UIViewController {
     }
 
     override public func loadView() {
-        let view = UIScrollView(frame: UIScreen.main.bounds)
-        view.contentInsetAdjustmentBehavior = .automatic
+        let view = UIView(frame: UIScreen.main.bounds)
+
+        let scrollView = UIScrollView()
+        scrollView.translatesAutoresizingMaskIntoConstraints = false
+        scrollView.alwaysBounceHorizontal = false
+        scrollView.isDirectionalLockEnabled = true
+        view.addSubview(scrollView)
+        self.scrollView = scrollView
+
+        NSLayoutConstraint.activate([
+            scrollView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+            scrollView.topAnchor.constraint(equalTo: view.topAnchor),
+            view.trailingAnchor.constraint(equalTo: scrollView.trailingAnchor),
+            view.bottomAnchor.constraint(equalTo: scrollView.bottomAnchor)
+        ])
 
         let headerView = CheckoutHeaderView()
         headerView.translatesAutoresizingMaskIntoConstraints = false
-        view.addSubview(headerView)
+        scrollView.addSubview(headerView)
         self.headerView = headerView
 
         let cardView = CardView()
@@ -47,18 +62,18 @@ public final class CheckoutStepsViewController: UIViewController {
         cardView.contentView.addSubview(stepsStackView)
         self.stepsStackView = stepsStackView
 
-        view.addSubview(cardView)
+        scrollView.addSubview(cardView)
 
         let ratingView = CheckoutRatingView()
         ratingView.translatesAutoresizingMaskIntoConstraints = false
-        view.addSubview(ratingView)
+        scrollView.addSubview(ratingView)
         self.ratingView = ratingView
 
         let doneButton = UIButton(type: .system)
         doneButton.translatesAutoresizingMaskIntoConstraints = false
         doneButton.setTitle("Schließen", for: .normal)
         doneButton.makeSnabbleButton()
-        view.addSubview(doneButton)
+        scrollView.addSubview(doneButton)
         self.doneButton = doneButton
 
         NSLayoutConstraint.activate([
@@ -84,11 +99,12 @@ public final class CheckoutStepsViewController: UIViewController {
             view.trailingAnchor.constraint(greaterThanOrEqualTo: ratingView.trailingAnchor, constant: 16),
             ratingView.centerXAnchor.constraint(equalTo: view.centerXAnchor),
 
-            headerView.topAnchor.constraint(equalTo: view.topAnchor, constant: 16),
+            headerView.topAnchor.constraint(equalTo: scrollView.topAnchor, constant: 16),
             cardView.topAnchor.constraint(equalTo: headerView.bottomAnchor, constant: 16),
             ratingView.topAnchor.constraint(greaterThanOrEqualTo: cardView.bottomAnchor, constant: 16),
             doneButton.topAnchor.constraint(equalTo: ratingView.bottomAnchor, constant: 16),
-            view.bottomAnchor.constraint(equalTo: doneButton.bottomAnchor, constant: 16)
+            scrollView.bottomAnchor.constraint(equalTo: doneButton.bottomAnchor, constant: 16),
+            view.bottomAnchor.constraint(lessThanOrEqualTo: doneButton.bottomAnchor, constant: 16)
         ])
 
         self.view = view
