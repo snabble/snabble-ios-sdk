@@ -15,7 +15,8 @@ class CheckoutStepsViewModel {
         [
             CheckoutStepView.Mock.Payment.loading,
             CheckoutStepView.Mock.Payment.success,
-            CheckoutStepView.Mock.Payment.failure
+            CheckoutStepView.Mock.Payment.failure,
+            CheckoutStepView.Mock.Payment.failure,
         ]
     }
 }

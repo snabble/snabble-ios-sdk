@@ -104,6 +104,7 @@ public final class CheckoutStepsViewController: UIViewController {
             headerView.topAnchor.constraint(equalTo: scrollView.contentLayoutGuide.topAnchor, constant: 16),
             cardView.topAnchor.constraint(equalTo: headerView.bottomAnchor, constant: 16),
             ratingView.topAnchor.constraint(greaterThanOrEqualTo: cardView.bottomAnchor, constant: 16),
+            ratingView.topAnchor.constraint(equalTo: cardView.bottomAnchor, constant: 16).usingPriority(.defaultLow - 1),
             doneButton.topAnchor.constraint(equalTo: ratingView.bottomAnchor, constant: 16),
             scrollView.contentLayoutGuide.bottomAnchor.constraint(equalTo: doneButton.bottomAnchor, constant: 16)
         ])
