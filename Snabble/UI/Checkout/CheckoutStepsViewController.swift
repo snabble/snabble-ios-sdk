@@ -43,7 +43,8 @@ public final class CheckoutStepsViewController: UIViewController {
             view.trailingAnchor.constraint(equalTo: scrollView.trailingAnchor),
             view.bottomAnchor.constraint(equalTo: scrollView.bottomAnchor),
 
-            scrollView.contentLayoutGuide.widthAnchor.constraint(equalTo: view.widthAnchor)
+            scrollView.contentLayoutGuide.widthAnchor.constraint(equalTo: view.widthAnchor),
+            scrollView.contentLayoutGuide.heightAnchor.constraint(greaterThanOrEqualTo: view.heightAnchor)
         ])
 
         let headerView = CheckoutHeaderView()
@@ -100,12 +101,11 @@ public final class CheckoutStepsViewController: UIViewController {
             scrollView.trailingAnchor.constraint(greaterThanOrEqualTo: ratingView.trailingAnchor, constant: 16),
             ratingView.centerXAnchor.constraint(equalTo: scrollView.centerXAnchor),
 
-            headerView.topAnchor.constraint(equalTo: scrollView.topAnchor, constant: 16),
+            headerView.topAnchor.constraint(equalTo: scrollView.contentLayoutGuide.topAnchor, constant: 16),
             cardView.topAnchor.constraint(equalTo: headerView.bottomAnchor, constant: 16),
             ratingView.topAnchor.constraint(greaterThanOrEqualTo: cardView.bottomAnchor, constant: 16),
-            ratingView.topAnchor.constraint(equalTo: cardView.bottomAnchor, constant: 16).usingPriority(.defaultHigh),
             doneButton.topAnchor.constraint(equalTo: ratingView.bottomAnchor, constant: 16),
-            scrollView.bottomAnchor.constraint(equalTo: doneButton.bottomAnchor, constant: 16)
+            scrollView.contentLayoutGuide.bottomAnchor.constraint(equalTo: doneButton.bottomAnchor, constant: 16)
         ])
 
         self.view = view
