@@ -9,7 +9,7 @@ import Foundation
 import CoreLocation
 
 public protocol CheckInManagerDelegate: AnyObject {
-    func checkInManager(_ checkInManager: CheckInManager, willCheckOutOf shop: Shop)
+    func checkInManager(_ checkInManager: CheckInManager, didCheckOutOf shop: Shop)
     func checkInManager(_ checkInManager: CheckInManager, didCheckInTo shop: Shop)
 }
 
@@ -33,13 +33,11 @@ public class CheckInManager: NSObject {
 
     /// settable to overwrite our shop
     public var shop: Shop? {
-        willSet {
-            if let shop = shop {
-                checkInAt = nil
-                delegate?.checkInManager(self, willCheckOutOf: shop)
-            }
-        }
         didSet {
+            if let shop = oldValue {
+                checkInAt = nil
+                delegate?.checkInManager(self, didCheckOutOf: shop)
+            }
             if let shop = shop {
                 checkInAt = Date()
                 delegate?.checkInManager(self, didCheckInTo: shop)
