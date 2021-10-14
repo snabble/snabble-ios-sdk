@@ -97,8 +97,10 @@ final class CheckoutRatingView: UIView {
             detailTextLabel.bottomAnchor.constraint(equalTo: buttonStackView.bottomAnchor),
 
             textLabel.centerXAnchor.constraint(equalTo: centerXAnchor),
+            textLabel.leadingAnchor.constraint(equalTo: leadingAnchor).usingPriority(.defaultHigh),
             textLabel.leadingAnchor.constraint(greaterThanOrEqualTo: leadingAnchor),
             trailingAnchor.constraint(greaterThanOrEqualTo: textLabel.trailingAnchor),
+            trailingAnchor.constraint(equalTo: textLabel.trailingAnchor).usingPriority(.defaultHigh),
 
             detailTextLabel.centerXAnchor.constraint(equalTo: textLabel.centerXAnchor),
             detailTextLabel.leadingAnchor.constraint(greaterThanOrEqualTo: leadingAnchor),
