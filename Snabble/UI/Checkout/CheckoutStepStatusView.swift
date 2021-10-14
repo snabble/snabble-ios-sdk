@@ -48,8 +48,6 @@ final class CheckoutStepStatusView: UIView {
 
         super.init(frame: frame)
 
-        backgroundColor = .systemBackground
-
         addSubview(circleView)
         addSubview(activityIndicatorView)
         addSubview(imageView)
