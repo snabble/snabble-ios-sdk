@@ -11,6 +11,9 @@ import CoreLocation
 public protocol CheckInManagerDelegate: AnyObject {
     func checkInManager(_ checkInManager: CheckInManager, didCheckOutOf shop: Shop)
     func checkInManager(_ checkInManager: CheckInManager, didCheckInTo shop: Shop)
+
+    func checkInManagerLocationPermissionNotGranted(_ checkInManager: CheckInManager)
+    func checkInManagerLocationAccuracyNotFullAccuracy(_ checkInManager: CheckInManager)
 }
 
 public class CheckInManager: NSObject {
@@ -72,22 +75,8 @@ public class CheckInManager: NSObject {
         900
     }
 
-    public func startUpdating() throws {
-        try startUpdating(with: locationManager)
-    }
-
-    /// Checks Permissions and throws error if cannot start updating
-    func startUpdating(with locationManager: CLLocationManager) throws {
-        switch (locationManager.satisfyAccuracyAuthorization, locationManager.satisfyAuthorizationStatus) {
-        case (true, true):
-            locationManager.startUpdatingLocation()
-        case (false, _):
-            locationManager.stopUpdatingLocation()
-            throw Error.accuracyNotSatisified
-        case (_, false):
-            locationManager.stopUpdatingLocation()
-            throw Error.authorizationNotGranted
-        }
+    public func startUpdating() {
+        locationManager.startUpdatingLocation()
     }
 
     /// stops shop updates
@@ -126,7 +115,7 @@ public class CheckInManager: NSObject {
     }
 
     @objc private func willEnterForegroundNotification(_ notification: Notification) {
-        try? startUpdating(with: locationManager)
+        locationManager.startUpdatingLocation()
     }
 
     private var allShops: [Shop] {
@@ -138,7 +127,27 @@ public class CheckInManager: NSObject {
 
 extension CheckInManager: CLLocationManagerDelegate {
     public func locationManager(_ manager: CLLocationManager, didChangeAuthorization status: CLAuthorizationStatus) {
-        try? startUpdating(with: manager)
+        manager.startUpdatingLocation()
+
+        switch status {
+        case .authorizedWhenInUse, .authorizedAlways, .notDetermined:
+            break
+        case .denied, .restricted:
+            delegate?.checkInManagerLocationPermissionNotGranted(self)
+        @unknown default:
+            break
+        }
+
+        if #available(iOS 14.0, *) {
+            switch manager.accuracyAuthorization {
+            case .reducedAccuracy:
+                delegate?.checkInManagerLocationAccuracyNotFullAccuracy(self)
+            case .fullAccuracy:
+                break
+            @unknown default:
+                break
+            }
+        }
     }
 
     public func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
