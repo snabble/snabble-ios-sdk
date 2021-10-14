@@ -155,14 +155,10 @@ extension CheckInManager: CLLocationManagerDelegate {
 
         if let shop = shop, checkOutShops.contains(shop) {
             checkInAt = Date()
-        }
-
-        if shop != nil, isInvalidCheckIn(at: checkInAt) {
-            shop = nil
-        }
-
-        if shop == nil {
+        } else if !checkInShops.isEmpty {
             shop = checkInShops.first
+        } else if shop != nil, isInvalidCheckIn(at: checkInAt) {
+            shop = nil
         }
 
         shops = checkInShops
