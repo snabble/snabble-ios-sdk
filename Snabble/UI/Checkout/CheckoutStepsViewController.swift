@@ -41,7 +41,9 @@ public final class CheckoutStepsViewController: UIViewController {
             scrollView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
             scrollView.topAnchor.constraint(equalTo: view.topAnchor),
             view.trailingAnchor.constraint(equalTo: scrollView.trailingAnchor),
-            view.bottomAnchor.constraint(equalTo: scrollView.bottomAnchor)
+            view.bottomAnchor.constraint(equalTo: scrollView.bottomAnchor),
+
+            scrollView.contentLayoutGuide.widthAnchor.constraint(equalTo: view.widthAnchor)
         ])
 
         let headerView = CheckoutHeaderView()
@@ -76,34 +78,34 @@ public final class CheckoutStepsViewController: UIViewController {
         self.doneButton = doneButton
 
         NSLayoutConstraint.activate([
-            headerView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
-            view.trailingAnchor.constraint(equalTo: headerView.trailingAnchor),
+            headerView.leadingAnchor.constraint(equalTo: scrollView.leadingAnchor),
+            scrollView.trailingAnchor.constraint(equalTo: headerView.trailingAnchor),
 
             headerView.widthAnchor.constraint(equalTo: headerView.heightAnchor, multiplier: 1.75),
 
-            cardView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16),
-            view.trailingAnchor.constraint(equalTo: cardView.trailingAnchor, constant: 16),
+            cardView.leadingAnchor.constraint(equalTo: scrollView.leadingAnchor, constant: 16),
+            scrollView.trailingAnchor.constraint(equalTo: cardView.trailingAnchor, constant: 16),
 
             stepsStackView.leadingAnchor.constraint(equalTo: cardView.contentView.leadingAnchor),
             stepsStackView.topAnchor.constraint(equalTo: cardView.contentView.topAnchor),
             cardView.contentView.trailingAnchor.constraint(equalTo: stepsStackView.trailingAnchor),
             cardView.contentView.bottomAnchor.constraint(equalTo: stepsStackView.bottomAnchor),
 
-            doneButton.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 24),
-            view.trailingAnchor.constraint(equalTo: doneButton.trailingAnchor, constant: 24),
+            doneButton.leadingAnchor.constraint(equalTo: scrollView.leadingAnchor, constant: 24),
+            scrollView.trailingAnchor.constraint(equalTo: doneButton.trailingAnchor, constant: 24),
 
             doneButton.heightAnchor.constraint(equalToConstant: 48),
 
-            ratingView.leadingAnchor.constraint(greaterThanOrEqualTo: view.leadingAnchor, constant: 16),
-            view.trailingAnchor.constraint(greaterThanOrEqualTo: ratingView.trailingAnchor, constant: 16),
-            ratingView.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+            ratingView.leadingAnchor.constraint(greaterThanOrEqualTo: scrollView.leadingAnchor, constant: 16),
+            scrollView.trailingAnchor.constraint(greaterThanOrEqualTo: ratingView.trailingAnchor, constant: 16),
+            ratingView.centerXAnchor.constraint(equalTo: scrollView.centerXAnchor),
 
             headerView.topAnchor.constraint(equalTo: scrollView.topAnchor, constant: 16),
             cardView.topAnchor.constraint(equalTo: headerView.bottomAnchor, constant: 16),
             ratingView.topAnchor.constraint(greaterThanOrEqualTo: cardView.bottomAnchor, constant: 16),
+            ratingView.topAnchor.constraint(equalTo: cardView.bottomAnchor, constant: 16).usingPriority(.defaultHigh),
             doneButton.topAnchor.constraint(equalTo: ratingView.bottomAnchor, constant: 16),
-            scrollView.bottomAnchor.constraint(equalTo: doneButton.bottomAnchor, constant: 16),
-            view.bottomAnchor.constraint(lessThanOrEqualTo: doneButton.bottomAnchor, constant: 16)
+            scrollView.bottomAnchor.constraint(equalTo: doneButton.bottomAnchor, constant: 16)
         ])
 
         self.view = view
