@@ -11,6 +11,7 @@ import QuartzCore
 
 class CircleView: UIView {
     override func layoutSubviews() {
+        super.layoutSubviews()
         updateCornerRadius()
     }
 
