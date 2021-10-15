@@ -12,8 +12,10 @@ public protocol CheckInManagerDelegate: AnyObject {
     func checkInManager(_ checkInManager: CheckInManager, didCheckOutOf shop: Shop)
     func checkInManager(_ checkInManager: CheckInManager, didCheckInTo shop: Shop)
 
-    func checkInManagerLocationPermissionNotGranted(_ checkInManager: CheckInManager)
-    func checkInManagerLocationAccuracyNotFullAccuracy(_ checkInManager: CheckInManager)
+    func checkInManager(_ checkInManager: CheckInManager, locationAuthorizationNotGranted authorizationStatus: CLAuthorizationStatus)
+    func checkInManager(_ checkInManager: CheckInManager, locationAccuracyNotSufficient accuracyAuthorization: CLAccuracyAuthorization)
+
+    func checkInManager(_ checkInManager: CheckInManager, didFailWithError error: Error)
 }
 
 public class CheckInManager: NSObject {
@@ -63,17 +65,11 @@ public class CheckInManager: NSObject {
     public weak var delegate: CheckInManagerDelegate?
 
     /// 300m
-    public static var checkInRadius: CLLocationDistance {
-        300
-    }
+    public var checkInRadius: CLLocationDistance = 300
     /// 600m
-    public static var checkOutRadius: CLLocationDistance {
-        600
-    }
+    public var checkOutRadius: CLLocationDistance = 600
     /// 15min until automatic checkout occurs
-    public static var lastSeenTreshold: TimeInterval {
-        900
-    }
+    public var lastSeenTreshold: TimeInterval = 900
 
     public func startUpdating() {
         locationManager.startUpdatingLocation()
@@ -126,27 +122,37 @@ public class CheckInManager: NSObject {
 }
 
 extension CheckInManager: CLLocationManagerDelegate {
-    public func locationManager(_ manager: CLLocationManager, didChangeAuthorization status: CLAuthorizationStatus) {
-        manager.startUpdatingLocation()
-
-        switch status {
-        case .authorizedWhenInUse, .authorizedAlways, .notDetermined:
-            break
-        case .denied, .restricted:
-            delegate?.checkInManagerLocationPermissionNotGranted(self)
+    @available(iOS 14.0, *)
+    public func locationManagerDidChangeAuthorization(_ manager: CLLocationManager) {
+        switch manager.authorizationStatus {
+        case .authorizedWhenInUse, .authorizedAlways:
+            manager.startUpdatingLocation()
+        case .denied, .restricted, .notDetermined:
+            manager.stopUpdatingLocation()
+            delegate?.checkInManager(self, locationAuthorizationNotGranted: manager.authorizationStatus)
         @unknown default:
             break
         }
 
-        if #available(iOS 14.0, *) {
-            switch manager.accuracyAuthorization {
-            case .reducedAccuracy:
-                delegate?.checkInManagerLocationAccuracyNotFullAccuracy(self)
-            case .fullAccuracy:
-                break
-            @unknown default:
-                break
-            }
+        switch manager.accuracyAuthorization {
+        case .reducedAccuracy:
+            delegate?.checkInManager(self, locationAccuracyNotSufficient: manager.accuracyAuthorization)
+        case .fullAccuracy:
+            break
+        @unknown default:
+            break
+        }
+    }
+
+    public func locationManager(_ manager: CLLocationManager, didChangeAuthorization status: CLAuthorizationStatus) {
+        switch status {
+        case .authorizedWhenInUse, .authorizedAlways:
+            manager.startUpdatingLocation()
+        case .denied, .restricted, .notDetermined:
+            manager.stopUpdatingLocation()
+            delegate?.checkInManager(self, locationAuthorizationNotGranted: status)
+        @unknown default:
+            break
         }
     }
 
@@ -154,11 +160,18 @@ extension CheckInManager: CLLocationManagerDelegate {
         update(with: locations.last)
     }
 
-    private func update(with location: CLLocation?) {
-        guard let location = location, location.isValid else { return }
+    public func locationManager(_ manager: CLLocationManager, didFailWithError error: Swift.Error) {
+        if let error = error as? CLError, error.code == .denied {
+            manager.stopUpdatingLocation()
+        }
+        delegate?.checkInManager(self, didFailWithError: error)
+    }
 
-        let checkOutShops = allShops.shops(at: location, in: Self.checkOutRadius)
-        let checkInShops = allShops.shops(at: location, in: Self.checkInRadius)
+    private func update(with location: CLLocation?) {
+        guard let location = location, location.isValid(inRadius: checkInRadius) else { return }
+
+        let checkOutShops = allShops.shops(at: location, in: checkOutRadius)
+        let checkInShops = allShops.shops(at: location, in: checkInRadius)
 
         if let shop = shop, checkOutShops.contains(shop) {
             checkInAt = Date()
@@ -172,7 +185,7 @@ extension CheckInManager: CLLocationManagerDelegate {
     }
 
     private func isInvalidCheckIn(at checkInAt: Date?) -> Bool {
-        Date.timeIntervalSinceReferenceDate - (checkInAt?.timeIntervalSinceReferenceDate ?? 0) > Self.lastSeenTreshold
+        Date.timeIntervalSinceReferenceDate - (checkInAt?.timeIntervalSinceReferenceDate ?? 0) > lastSeenTreshold
     }
 }
 
@@ -185,48 +198,14 @@ private extension Array where Element == Shop {
 }
 
 private extension CLLocation {
-    var isValid: Bool {
+    func isValid(inRadius radius: CGFloat) -> Bool {
         guard timestamp.timeIntervalSinceNow > -60, // 1 Minute
               horizontalAccuracy >= 0, // negative number invalidates the location
-              horizontalAccuracy <= CheckInManager.checkInRadius
+              horizontalAccuracy <= radius
         else {
             return false
         }
         return true
-    }
-}
-
-private extension CLLocationManager {
-    var satisfyAccuracyAuthorization: Bool {
-        if #available(iOS 14.0, *) {
-            switch accuracyAuthorization {
-            case .reducedAccuracy:
-                return false
-            case .fullAccuracy:
-                return true
-            @unknown default:
-                return false
-            }
-        } else {
-            return true
-        }
-    }
-
-    var satisfyAuthorizationStatus: Bool {
-        let authorizationStatus: CLAuthorizationStatus
-        if #available(iOS 14.0, *) {
-            authorizationStatus = self.authorizationStatus
-        } else {
-            authorizationStatus = Self.authorizationStatus()
-        }
-        switch authorizationStatus {
-        case .authorizedWhenInUse, .authorizedAlways:
-            return true
-        case .notDetermined, .denied, .restricted:
-            return false
-        @unknown default:
-            return false
-        }
     }
 }
 
