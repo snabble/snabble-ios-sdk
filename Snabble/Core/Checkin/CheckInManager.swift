@@ -21,11 +21,6 @@ public protocol CheckInManagerDelegate: AnyObject {
 public class CheckInManager: NSObject {
     public static let shared = CheckInManager(projects: SnabbleAPI.projects)
 
-    enum Error: Swift.Error {
-        case authorizationNotGranted
-        case accuracyNotSatisified
-    }
-
     public var projects: [Project] {
         didSet {
             update(with: locationManager.location)
