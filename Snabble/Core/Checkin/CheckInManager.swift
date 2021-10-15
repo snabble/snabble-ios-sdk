@@ -80,6 +80,8 @@ public class CheckInManager: NSObject {
         locationManager.stopUpdatingLocation()
     }
 
+    private let locationManager: CLLocationManager
+
     public init(projects: [Project]) {
         self.projects = projects
 
@@ -113,12 +115,6 @@ public class CheckInManager: NSObject {
     @objc private func willEnterForegroundNotification(_ notification: Notification) {
         locationManager.startUpdatingLocation()
     }
-
-    private var allShops: [Shop] {
-        projects.flatMap { $0.shops }
-    }
-
-    private let locationManager: CLLocationManager
 }
 
 extension CheckInManager: CLLocationManagerDelegate {
@@ -170,6 +166,7 @@ extension CheckInManager: CLLocationManagerDelegate {
     private func update(with location: CLLocation?) {
         guard let location = location, location.isValid(inRadius: checkInRadius) else { return }
 
+        let allShops = projects.flatMap { $0.shops }
         let checkOutShops = allShops.shops(at: location, in: checkOutRadius)
         let checkInShops = allShops.shops(at: location, in: checkInRadius)
 
