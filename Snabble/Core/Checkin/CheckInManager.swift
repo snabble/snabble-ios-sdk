@@ -110,6 +110,10 @@ public class CheckInManager: NSObject {
     @objc private func willEnterForegroundNotification(_ notification: Notification) {
         locationManager.startUpdatingLocation()
     }
+
+    public static var shouldAutoStartUpdating: Bool {
+        true
+    }
 }
 
 extension CheckInManager: CLLocationManagerDelegate {
