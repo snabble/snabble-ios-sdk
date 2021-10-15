@@ -9,29 +9,40 @@ import Foundation
 import CoreLocation
 
 public protocol CheckInManagerDelegate: AnyObject {
+    /// Tells the delegate when the manager did check out of a shop.
     func checkInManager(_ checkInManager: CheckInManager, didCheckOutOf shop: Shop)
+
+    /// Tells the delegate when the manager did check in of a shop.
     func checkInManager(_ checkInManager: CheckInManager, didCheckInTo shop: Shop)
 
+    /// Tells the delegate when the manager cannot start updating locations due to a lack of authorization
     func checkInManager(_ checkInManager: CheckInManager, locationAuthorizationNotGranted authorizationStatus: CLAuthorizationStatus)
+
+    /// Tells the delegate when the manager is unable to check in a shop due to lack of accuracy
     func checkInManager(_ checkInManager: CheckInManager, locationAccuracyNotSufficient accuracyAuthorization: CLAccuracyAuthorization)
 
+    /// Tells the delegate when the manager received `CLLocationManager` errors
     func checkInManager(_ checkInManager: CheckInManager, didFailWithError error: Error)
 }
 
 public class CheckInManager: NSObject {
+
+    /// The app’s shared check in manager
     public static let shared = CheckInManager(projects: SnabbleAPI.projects)
 
+    /// Projects used to find available shops.
     public var projects: [Project] {
         didSet {
             update(with: locationManager.location)
         }
     }
 
+    /// Matching `Project` to the checked in `Shop`
     public var project: Project? {
         projects.first(where: { $0.id == shop?.projectId })
     }
 
-    /// settable to overwrite our shop
+    /// Current checked in `Shop`
     public var shop: Shop? {
         didSet {
             if let shop = oldValue {
@@ -45,9 +56,10 @@ public class CheckInManager: NSObject {
         }
     }
 
+    /// Latest checked in `Date`. Returns to `nil` if `shop` is `nil`.
     public private(set) var checkedInAt: Date?
 
-    /// available shops sorted by distance
+    /// Shops available for check-in sorted by distance to your currenct location
     public private(set) var shops: [Shop] = [] {
         didSet {
             if shop == nil {
@@ -56,21 +68,30 @@ public class CheckInManager: NSObject {
         }
     }
 
-    /// CheckInManagerDelegate
+    /// The delegate object to receive update events.
     public weak var delegate: CheckInManagerDelegate?
 
-    /// 300m
+    /// Radius which needs to be satisifed to automatically check-in a `shop`
+    ///
+    /// If a shop stays within the radius `checkedInAt` concurrently updates.
     public var checkInRadius: CLLocationDistance = 300
-    /// 600m
+
+    /// Radius which keeps the `shop` checked-in.
     public var checkOutRadius: CLLocationDistance = 600
-    /// 15min until automatic checkout occurs
+
+    /// Treshold which keeps a `shop` checked in if it's outside of the `checkOutRadius`.
+    ///
+    /// It only applies if no shop is currently within the `checkInRadius`.
     public var lastSeenTreshold: TimeInterval = 900
 
+    /// Starts updating location to determine available shops
     public func startUpdating() {
         locationManager.startUpdatingLocation()
     }
 
-    /// stops shop updates
+    /// Stops updating locations
+    ///
+    /// Current `shop` will not automatically check out.
     public func stopUpdating() {
         locationManager.stopUpdatingLocation()
     }
@@ -87,33 +108,10 @@ public class CheckInManager: NSObject {
         super.init()
 
         locationManager.delegate = self
-
-        NotificationCenter.default.addObserver(
-            self,
-            selector: #selector(didEnterBackgroundNotification(_:)),
-            name: UIApplication.didEnterBackgroundNotification,
-            object: UIApplication.shared
-        )
-
-        NotificationCenter.default.addObserver(
-            self,
-            selector: #selector(willEnterForegroundNotification(_:)),
-            name: UIApplication.willEnterForegroundNotification,
-            object: UIApplication.shared
-        )
     }
 
-    @objc private func didEnterBackgroundNotification(_ notification: Notification) {
-        locationManager.stopUpdatingLocation()
-    }
-
-    @objc private func willEnterForegroundNotification(_ notification: Notification) {
-        locationManager.startUpdatingLocation()
-    }
-
-    public static var shouldAutoStartUpdating: Bool {
-        true
-    }
+    /// Should the `CheckInManager` immediately startUpdating
+    public static var shouldAutoStartUpdating: Bool = true
 }
 
 extension CheckInManager: CLLocationManagerDelegate {
