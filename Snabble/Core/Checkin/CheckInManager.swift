@@ -111,7 +111,7 @@ public class CheckInManager: NSObject {
     }
 
     /// Should the `CheckInManager` immediately startUpdating
-    public static var shouldAutoStartUpdating: Bool = true
+    public static var shouldAutoStartUpdating = true
 }
 
 extension CheckInManager: CLLocationManagerDelegate {
