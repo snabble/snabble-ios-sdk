@@ -35,17 +35,17 @@ public class CheckInManager: NSObject {
     public var shop: Shop? {
         didSet {
             if let shop = oldValue {
-                checkInAt = nil
+                checkedInAt = nil
                 delegate?.checkInManager(self, didCheckOutOf: shop)
             }
             if let shop = shop {
-                checkInAt = Date()
+                checkedInAt = Date()
                 delegate?.checkInManager(self, didCheckInTo: shop)
             }
         }
     }
 
-    public private(set) var checkInAt: Date?
+    public private(set) var checkedInAt: Date?
 
     /// available shops sorted by distance
     public private(set) var shops: [Shop] = [] {
@@ -166,10 +166,10 @@ extension CheckInManager: CLLocationManagerDelegate {
         let checkInShops = allShops.shops(at: location, in: checkInRadius)
 
         if let shop = shop, checkOutShops.contains(shop) {
-            checkInAt = Date()
+            checkedInAt = Date()
         } else if !checkInShops.isEmpty {
             shop = checkInShops.first
-        } else if shop != nil, isInvalidCheckIn(at: checkInAt) {
+        } else if shop != nil, isInvalidCheckIn(at: checkedInAt) {
             shop = nil
         }
 
