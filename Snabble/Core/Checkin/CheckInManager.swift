@@ -69,11 +69,7 @@ public class CheckInManager: NSObject {
     }
 
     /// The delegate object to receive update events.
-    public weak var delegate: CheckInManagerDelegate? {
-        didSet {
-            update(with: locationManager.location)
-        }
-    }
+    public weak var delegate: CheckInManagerDelegate?
 
     /// Radius which needs to be satisifed to automatically check-in a `shop`
     ///
@@ -90,6 +86,7 @@ public class CheckInManager: NSObject {
 
     /// Starts updating location to determine available shops
     public func startUpdating() {
+        locationManager.delegate = self
         locationManager.startUpdatingLocation()
     }
 
@@ -110,8 +107,6 @@ public class CheckInManager: NSObject {
         locationManager.distanceFilter = kCLDistanceFilterNone
 
         super.init()
-
-        locationManager.delegate = self
     }
 }
 
