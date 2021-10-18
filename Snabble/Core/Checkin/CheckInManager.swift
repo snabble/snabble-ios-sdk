@@ -109,9 +109,6 @@ public class CheckInManager: NSObject {
 
         locationManager.delegate = self
     }
-
-    /// Should the `CheckInManager` immediately startUpdating
-    public static var shouldAutoStartUpdating = true
 }
 
 extension CheckInManager: CLLocationManagerDelegate {
