@@ -27,10 +27,8 @@ public protocol CheckInManagerDelegate: AnyObject {
 
 public class CheckInManager: NSObject {
     /// Projects used to find available shops.
-    public var projects: [Project] {
-        didSet {
-            update(with: locationManager.location)
-        }
+    private var projects: [Project] {
+        SnabbleAPI.projects
     }
 
     /// Matching `Project` to the checked in `Shop`
@@ -95,9 +93,7 @@ public class CheckInManager: NSObject {
 
     private let locationManager: CLLocationManager
 
-    public init(projects: [Project]) {
-        self.projects = projects
-
+    public init() {
         locationManager = CLLocationManager()
         locationManager.desiredAccuracy = kCLLocationAccuracyBest
         locationManager.distanceFilter = kCLDistanceFilterNone
