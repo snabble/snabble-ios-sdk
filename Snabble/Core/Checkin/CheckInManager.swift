@@ -26,10 +26,6 @@ public protocol CheckInManagerDelegate: AnyObject {
 }
 
 public class CheckInManager: NSObject {
-
-    /// The app’s shared check in manager
-    public static let shared = CheckInManager(projects: SnabbleAPI.projects)
-
     /// Projects used to find available shops.
     public var projects: [Project] {
         didSet {
@@ -99,7 +95,7 @@ public class CheckInManager: NSObject {
 
     private let locationManager: CLLocationManager
 
-    private init(projects: [Project]) {
+    public init(projects: [Project]) {
         self.projects = projects
 
         locationManager = CLLocationManager()
