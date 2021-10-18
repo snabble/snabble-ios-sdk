@@ -99,6 +99,17 @@ public class CheckInManager: NSObject {
         locationManager.distanceFilter = kCLDistanceFilterNone
 
         super.init()
+
+        NotificationCenter.default.addObserver(
+            self,
+            selector: #selector(metadataLoadedNotification(_:)),
+            name: .metadataLoaded,
+            object: nil
+        )
+    }
+
+    @objc private func metadataLoadedNotification(_ notification: Notification) {
+        update(with: locationManager.location)
     }
 }
 
