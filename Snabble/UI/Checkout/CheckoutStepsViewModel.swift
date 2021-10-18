@@ -11,6 +11,7 @@ class CheckoutStepsViewModel {
     var headerViewModel: CheckoutHeaderViewModel {
         CheckoutStepStatus.failure
     }
+    
     var steps: [CheckoutStepViewModel] {
         [
             CheckoutStepView.Mock.Payment.loading,

@@ -129,26 +129,23 @@ public final class CheckoutStepsViewController: UIViewController {
     }
 }
 
-extension UIStackView {
+private extension UIStackView {
     func addHorizontalSeparators(color : UIColor) {
         var i = arrangedSubviews.count - 1
         while i > 0 {
-            let separator = createSeparator(color: color)
+            let separator = UIView()
+            separator.backgroundColor = color
             insertArrangedSubview(separator, at: i)
-            separator.widthAnchor.constraint(equalTo: widthAnchor).isActive = true
+            NSLayoutConstraint.activate([
+                separator.heightAnchor.constraint(equalToConstant: 1.0 / UIScreen.main.scale),
+                separator.widthAnchor.constraint(equalTo: widthAnchor)
+            ])
             i -= 1
         }
     }
-
-    private func createSeparator(color : UIColor) -> UIView {
-        let separator = UIView()
-        separator.heightAnchor.constraint(equalToConstant: 1.0 / UIScreen.main.scale).isActive = true
-        separator.backgroundColor = color
-        return separator
-    }
 }
 
-class CardView: UIView {
+private class CardView: UIView {
     private(set) var contentView: UIView
 
     var cornerRadius: CGFloat = 8
