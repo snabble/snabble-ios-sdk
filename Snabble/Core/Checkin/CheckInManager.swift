@@ -69,7 +69,11 @@ public class CheckInManager: NSObject {
     }
 
     /// The delegate object to receive update events.
-    public weak var delegate: CheckInManagerDelegate?
+    public weak var delegate: CheckInManagerDelegate? {
+        didSet {
+            update(with: locationManager.location)
+        }
+    }
 
     /// Radius which needs to be satisifed to automatically check-in a `shop`
     ///
