@@ -102,7 +102,7 @@ public class CheckInManager: NSObject {
 
     private let locationManager: CLLocationManager
 
-    public init(projects: [Project]) {
+    private init(projects: [Project]) {
         self.projects = projects
 
         locationManager = CLLocationManager()
