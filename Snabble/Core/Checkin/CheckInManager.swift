@@ -26,15 +26,9 @@ public protocol CheckInManagerDelegate: AnyObject {
 }
 
 public class CheckInManager: NSObject {
-
-    /// The app’s shared check in manager
-    public static let shared = CheckInManager(projects: SnabbleAPI.projects)
-
     /// Projects used to find available shops.
     public var projects: [Project] {
-        didSet {
-            update(with: locationManager.location)
-        }
+        SnabbleAPI.projects
     }
 
     /// Matching `Project` to the checked in `Shop`
@@ -86,6 +80,7 @@ public class CheckInManager: NSObject {
 
     /// Starts updating location to determine available shops
     public func startUpdating() {
+        locationManager.delegate = self
         locationManager.startUpdatingLocation()
     }
 
@@ -98,16 +93,23 @@ public class CheckInManager: NSObject {
 
     private let locationManager: CLLocationManager
 
-    public init(projects: [Project]) {
-        self.projects = projects
-
+    override public init() {
         locationManager = CLLocationManager()
         locationManager.desiredAccuracy = kCLLocationAccuracyBest
         locationManager.distanceFilter = kCLDistanceFilterNone
 
         super.init()
 
-        locationManager.delegate = self
+        NotificationCenter.default.addObserver(
+            self,
+            selector: #selector(metadataLoadedNotification(_:)),
+            name: .metadataLoaded,
+            object: nil
+        )
+    }
+
+    @objc private func metadataLoadedNotification(_ notification: Notification) {
+        update(with: locationManager.location)
     }
 }
 

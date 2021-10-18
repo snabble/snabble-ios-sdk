@@ -55,10 +55,18 @@ public struct SnabbleAPIConfig {
     static let none = SnabbleAPIConfig(appId: "none", baseUrl: "", secret: "")
 }
 
+public extension Notification.Name {
+    static var metadataLoaded = Notification.Name(rawValue: "io.snabble.metadataLoaded")
+}
+
 public enum SnabbleAPI {
     public private(set) static var config = SnabbleAPIConfig.none
     private(set) static var tokenRegistry = TokenRegistry("", "")
-    static var metadata = Metadata.none
+    static var metadata = Metadata.none {
+        didSet {
+            NotificationCenter.default.post(name: .metadataLoaded, object: nil)
+        }
+    }
     static let methodRegistry = MethodRegistry()
 
     private static var providerPool = [Identifier<Project>: ProductProvider]()
