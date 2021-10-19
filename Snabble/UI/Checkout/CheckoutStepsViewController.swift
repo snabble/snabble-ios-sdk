@@ -130,17 +130,17 @@ public final class CheckoutStepsViewController: UIViewController {
 }
 
 private extension UIStackView {
-    func addHorizontalSeparators(color : UIColor) {
-        var i = arrangedSubviews.count - 1
-        while i > 0 {
+    func addHorizontalSeparators(color: UIColor) {
+        var index = arrangedSubviews.count - 1
+        while index > 0 {
             let separator = UIView()
             separator.backgroundColor = color
-            insertArrangedSubview(separator, at: i)
+            insertArrangedSubview(separator, at: index)
             NSLayoutConstraint.activate([
                 separator.heightAnchor.constraint(equalToConstant: 1.0 / UIScreen.main.scale),
                 separator.widthAnchor.constraint(equalTo: widthAnchor)
             ])
-            i -= 1
+            index -= 1
         }
     }
 }
@@ -178,7 +178,7 @@ private class CardView: UIView {
         layer.masksToBounds = false
 
         layer.shadowColor = shadowColor?.cgColor
-        layer.shadowOffset = shadowOffset;
+        layer.shadowOffset = shadowOffset
         layer.shadowOpacity = shadowOpacity
         layer.shadowPath = UIBezierPath(roundedRect: bounds, cornerRadius: cornerRadius).cgPath
 
