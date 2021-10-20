@@ -33,7 +33,7 @@ public struct Shop: Codable, Identifiable {
     }
 
     /// externally provided identifier
-    public let externalId: String?
+    public let externalId: String
     /// externally provided data
     public let external: [String: Any]?
 
@@ -61,7 +61,7 @@ public struct Shop: Codable, Identifiable {
     public let state: String
     /// country
     public let country: String
-    public let countryCode: String?
+    public let countryCode: String
 
     public let customerNetworks: [CustomerNetworks]?
 
@@ -115,7 +115,29 @@ public struct Shop: Codable, Identifiable {
         try container.encode(self.state, forKey: .state)
         try container.encode(self.country, forKey: .country)
         try container.encode(self.countryCode, forKey: .countryCode)
-        try container.encode(self.customerNetworks, forKey: .customerNetworks)
+        try container.encodeIfPresent(self.customerNetworks, forKey: .customerNetworks)
+    }
+
+    // only used for unit tests!
+    internal init(id: Identifier<Shop>, projectId: Identifier<Project>) {
+        self.id = id
+        self.name = "Snabble Shop"
+        self.projectId = projectId
+        self.externalId = "1"
+        self.external = nil
+        self.latitude = 10
+        self.longitude = 20
+        self.services = []
+        self.openingHoursSpecification = []
+        self.email = "info@snabble.io"
+        self.phone = "0228123456"
+        self.city = "Bonn"
+        self.street = "Am Dickobskreuz 10"
+        self.postalCode = "53121"
+        self.state = "NRW"
+        self.country = "Deutschland"
+        self.countryCode = "de"
+        self.customerNetworks = nil
     }
 }
 
