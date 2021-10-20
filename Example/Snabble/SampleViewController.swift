@@ -114,10 +114,6 @@ extension SampleViewController: ScannerDelegate {
     func scanMessage(for project: Project, _ shop: Shop, _ product: Product) -> ScanMessage? {
         return nil
     }
-
-    func gotoBarcodeEntry() {
-        // nop, we're using the shiny new integrated scanner/cart
-    }
 }
 
 extension SampleViewController: ShoppingCartDelegate {
