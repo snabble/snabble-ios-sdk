@@ -31,11 +31,6 @@ public class CheckInManager: NSObject {
         SnabbleAPI.projects
     }
 
-    /// Matching `Project` to the checked in `Shop`
-    public var project: Project? {
-        projects.first(where: { $0.id == shop?.projectId })
-    }
-
     /// Current checked in `Shop`
     public var shop: Shop? {
         didSet {

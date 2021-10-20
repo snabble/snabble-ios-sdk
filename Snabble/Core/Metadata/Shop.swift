@@ -27,6 +27,11 @@ public struct Shop: Codable, Identifiable {
     /// snabble project identifier of this shop
     public let projectId: Identifier<Project>
 
+    // snabble `Project` of this shop
+    public var project: Project? {
+        SnabbleAPI.project(for: projectId)
+    }
+
     /// externally provided identifier
     public let externalId: String?
     /// externally provided data
