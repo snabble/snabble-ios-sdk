@@ -33,7 +33,7 @@ public struct Shop: Codable, Identifiable {
     }
 
     /// externally provided identifier
-    public let externalId: String
+    public let externalId: String?
     /// externally provided data
     public let external: [String: Any]?
 
@@ -61,7 +61,7 @@ public struct Shop: Codable, Identifiable {
     public let state: String
     /// country
     public let country: String
-    public let countryCode: String
+    public let countryCode: String?
 
     public let customerNetworks: [CustomerNetworks]?
 
@@ -79,7 +79,7 @@ public struct Shop: Codable, Identifiable {
         self.id = try container.decode(.id)
         self.name = try container.decode(.name)
         self.projectId = try container.decode(.projectId)
-        self.externalId = try container.decode(.externalId)
+        self.externalId = try container.decodeIfPresent(.externalId)
         self.external = try container.decodeIfPresent([String: Any].self, forKey: .external)
         self.latitude = try container.decode(.latitude)
         self.longitude = try container.decode(.longitude)
@@ -92,7 +92,7 @@ public struct Shop: Codable, Identifiable {
         self.postalCode = try container.decode(.postalCode)
         self.state = try container.decode(.state)
         self.country = try container.decode(.country)
-        self.countryCode = try container.decode(.countryCode)
+        self.countryCode = try container.decodeIfPresent(.countryCode)
         self.customerNetworks = try container.decodeIfPresent(.customerNetworks)
     }
 
@@ -114,7 +114,7 @@ public struct Shop: Codable, Identifiable {
         try container.encode(self.postalCode, forKey: .postalCode)
         try container.encode(self.state, forKey: .state)
         try container.encode(self.country, forKey: .country)
-        try container.encode(self.countryCode, forKey: .countryCode)
+        try container.encodeIfPresent(self.countryCode, forKey: .countryCode)
         try container.encodeIfPresent(self.customerNetworks, forKey: .customerNetworks)
     }
 
@@ -123,7 +123,7 @@ public struct Shop: Codable, Identifiable {
         self.id = id
         self.name = "Snabble Shop"
         self.projectId = projectId
-        self.externalId = "1"
+        self.externalId = nil
         self.external = nil
         self.latitude = 10
         self.longitude = 20
