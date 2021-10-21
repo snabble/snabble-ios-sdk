@@ -86,11 +86,13 @@ extension ProductDB {
     private func productByScannableCode(_ dbQueue: DatabaseQueue, _ code: String, _ template: String, _ shopId: Identifier<Shop>) -> ScannedProduct? {
         do {
             let row = try dbQueue.inDatabase { db in
-                return try self.fetchOne(db,
+                return try fetchOne(
+                    db,
                     ProductDB.productQueryUnits,
-                    arguments: [shopId.rawValue, self.defaultAvailability, code, template])
+                    arguments: [shopId.rawValue, self.defaultAvailability, code, template]
+                )
             }
-            if let product = self.productFromRow(dbQueue, row, shopId) {
+            if let product = productFromRow(dbQueue, row, shopId) {
                 let codeEntry = product.codes.first { $0.code == code }
                 let transmissionCode = codeEntry?.transmissionCode
                 let specifiedQuantity = codeEntry?.specifiedQuantity
@@ -100,12 +102,9 @@ extension ProductDB {
                                       transmissionTemplateId: transmissionTemplate,
                                       specifiedQuantity: specifiedQuantity)
             } else {
-                // check if this was an UPC-A (eg. EAN-13 with a leading zero),
-                // and if so, try again with the 12-digit version
-                if let upcCode = self.extractUpcA(from: code) {
-                    return self.productByScannableCode(dbQueue, upcCode, template, shopId)
+                if let code = extractLeadingZeros(from: code) {
+                    return productByScannableCode(dbQueue, code, template, shopId)
                 }
-
             }
         } catch {
             self.logError("productByScannableCode db error: \(error)")
@@ -114,15 +113,17 @@ extension ProductDB {
         return nil
     }
 
-    /// check if `code` is a potential 12-digit UPC-A code embedded in an EAN-13 or GTIN-14
+    /// check if `code` is a potential 14/13/12/8-digit GTIN code embedded in an or GTIN-14
     /// - Parameter code: the code to test
-    /// - Returns: the `code` shortened to 12 digits, or nil
-    private func extractUpcA(from code: String) -> String? {
+    /// - Returns: the `code` shortened or `nil`
+    private func extractLeadingZeros(from code: String) -> String? {
         switch code.count {
+        case 12 where code.hasPrefix("0000"):
+            return String(code.suffix(8))
         case 13 where code.hasPrefix("0"):
             return String(code.suffix(12))
-        case 14 where code.hasPrefix("00"):
-            return String(code.suffix(12))
+        case 14 where code.hasPrefix("0"):
+            return String(code.suffix(13))
         default:
             return nil
         }
