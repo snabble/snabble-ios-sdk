@@ -225,11 +225,45 @@
 
 "Snabble.PaymentSelection.title" = "Zaplatiť";
 
+"Snabble.PaymentStatus.AddDebitCard.button" = "Áno, uložiť kartu v aplikácii";
+
+"Snabble.PaymentStatus.AddDebitCard.message" = "Naozaj chceš uložiť v aplikácii svoju kartu girocard, aby si nasledujúci nákup mohol/mohla zaplatiť inkasom? Kartu môžeš v budúcnosti nechať vo svojej peňaženke.";
+
+"Snabble.PaymentStatus.back" = "Späť";
+
+"Snabble.PaymentStatus.close" = "Zatvoriť";
+
+"Snabble.PaymentStatus.ExitCode.title" = "Kód ukončenia";
+
+"Snabble.PaymentStatus.Payment.error" = "Tvoja platba nemohla byť vykonaná. Skús znovu alebo vyber iný spôsob platby.";
+
+"Snabble.PaymentStatus.Payment.title" = "Platba";
+
+"Snabble.PaymentStatus.Payment.tryAgain" = "Skúsiť znovu";
+
+"Snabble.PaymentStatus.Ratings.thanks" = "Ďakujem!";
+
+"Snabble.PaymentStatus.Ratings.title" = "Páčilo sa ti nakupovanie?";
+
+"Snabble.PaymentStatus.Receipt.title" = "Pokladničný blok";
+
 "Snabble.PaymentStatus.step1" = "Lokalizácia v oblasti pokladní";
 
 "Snabble.PaymentStatus.step2" = "Povolenie tvojho nákupu";
 
 "Snabble.PaymentStatus.step3" = "Povolenie tvojej platby";
+
+"Snabble.PaymentStatus.Title.error" = "Ľutujeme, vyskytla sa chyba";
+
+"Snabble.PaymentStatus.Title.inProgress" = "Tvoj nákup bude uzavretý";
+
+"Snabble.PaymentStatus.Title.success" = "Ďakujeme za tvoj nákup!";
+
+"Snabble.PaymentStatus.Tobacco.error" = "Pri vydávaní cigariet sa vyskytol problém. Obráť sa na zamestnanca obchodu, prosím.";
+
+"Snabble.PaymentStatus.Tobacco.message" = "Zober si svoje cigarety, prosím.";
+
+"Snabble.PaymentStatus.Tobacco.title" = "Vydávanie cigariet";
 
 "Snabble.pleaseWait" = "Čakaj, prosím...";
 
