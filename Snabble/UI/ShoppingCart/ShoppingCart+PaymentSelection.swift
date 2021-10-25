@@ -98,12 +98,14 @@ final class PaymentMethodSelector {
         let hidden = projectPaymentMethods.count < 2 && details.isEmpty
         self.methodSelectionView?.isHidden = hidden
 
-        if let selectedMethod = self.selectedPaymentMethod {
-            if selectedMethod.dataRequired, let selectedDetail = self.selectedPaymentDetail {
-                let method = details.first { $0 == selectedDetail }
-                if method != nil {
-                    assert(method?.rawMethod == selectedMethod)
-                    return
+        if let selectedMethod = selectedPaymentMethod {
+            if selectedMethod.dataRequired {
+                if let selectedDetail = selectedPaymentDetail {
+                    let method = details.first { $0 == selectedDetail }
+                    if method != nil {
+                        assert(method?.rawMethod == selectedMethod)
+                        return
+                    }
                 }
             } else {
                 return
