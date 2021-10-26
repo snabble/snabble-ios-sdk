@@ -225,11 +225,45 @@
 
 "Snabble.PaymentSelection.title" = "Fizetés";
 
+"Snabble.PaymentStatus.AddDebitCard.button" = "Igen, elmentem a kártyát az alkalmazásban";
+
+"Snabble.PaymentStatus.AddDebitCard.message" = "Szeretnéd biztonságosan tárolni a girocard adataidat az alkalmazásban, hogy a következő vásárlásodat beszedési megbízással fizethesd ki? A kártyát a jövőben a pénztárcádban hagyhatod.";
+
+"Snabble.PaymentStatus.back" = "Vissza";
+
+"Snabble.PaymentStatus.close" = "Bezárás";
+
+"Snabble.PaymentStatus.ExitCode.title" = "Kilépőkód";
+
+"Snabble.PaymentStatus.Payment.error" = "Fizetésed nem sikerült teljesíteni. Próbáld meg újra, vagy válassz másik fizetési módot.";
+
+"Snabble.PaymentStatus.Payment.title" = "Fizetés";
+
+"Snabble.PaymentStatus.Payment.tryAgain" = "Megpróbálom újra";
+
+"Snabble.PaymentStatus.Ratings.thanks" = "Köszönjük!";
+
+"Snabble.PaymentStatus.Ratings.title" = "Tetszett a vásárlás?";
+
+"Snabble.PaymentStatus.Receipt.title" = "Nyugta";
+
 "Snabble.PaymentStatus.step1" = "Helymeghatározás a pénztár területén";
 
 "Snabble.PaymentStatus.step2" = "Bevásárlásod engedélyezése";
 
 "Snabble.PaymentStatus.step3" = "Fizetésed engedélyezése";
+
+"Snabble.PaymentStatus.Title.error" = "Sajnos hiba történt";
+
+"Snabble.PaymentStatus.Title.inProgress" = "A vásárlásod befejeződött";
+
+"Snabble.PaymentStatus.Title.success" = "Köszönjük a vásárlásodat!";
+
+"Snabble.PaymentStatus.Tobacco.error" = "A cigaretták kiadásakor probléma lépett fel. Kérjük, tájékoztasd az egyik alkalmazottat.";
+
+"Snabble.PaymentStatus.Tobacco.message" = "Vedd ki a cigarettáidat";
+
+"Snabble.PaymentStatus.Tobacco.title" = "Cigaretta kiadása";
 
 "Snabble.pleaseWait" = "Kérlek, várj...";
 

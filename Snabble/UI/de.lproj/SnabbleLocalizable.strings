@@ -225,11 +225,45 @@
 
 "Snabble.PaymentSelection.title" = "Bezahlen";
 
+"Snabble.PaymentStatus.AddDebitCard.button" = "Ja, Karte in der App speichern";
+
+"Snabble.PaymentStatus.AddDebitCard.message" = "Möchtest du die Daten deiner girocard sicher in der App speichern, um deinen nächsten Einkauf per Lastschrift zu bezahlen? Die Karte kannst du zukünftig im Geldbeutel lassen.";
+
+"Snabble.PaymentStatus.back" = "Zurück";
+
+"Snabble.PaymentStatus.close" = "Schließen";
+
+"Snabble.PaymentStatus.ExitCode.title" = "Ausgangs-Code";
+
+"Snabble.PaymentStatus.Payment.error" = "Deine Zahlung konnte nicht durchgeführt werden. Versuche es erneut oder wähle ein anderes Bezahlverfahren.";
+
+"Snabble.PaymentStatus.Payment.title" = "Bezahlung";
+
+"Snabble.PaymentStatus.Payment.tryAgain" = "Erneut versuchen";
+
+"Snabble.PaymentStatus.Ratings.thanks" = "Danke!";
+
+"Snabble.PaymentStatus.Ratings.title" = "Hat dir der Einkauf gefallen?";
+
+"Snabble.PaymentStatus.Receipt.title" = "Kassenbon";
+
 "Snabble.PaymentStatus.step1" = "Lokalisierung im Kassenbereich";
 
 "Snabble.PaymentStatus.step2" = "Freigabe deines Einkaufs";
 
 "Snabble.PaymentStatus.step3" = "Freigabe deiner Zahlung";
+
+"Snabble.PaymentStatus.Title.error" = "Leider ist ein Fehler aufgetreten";
+
+"Snabble.PaymentStatus.Title.inProgress" = "Dein Einkauf wird abgeschlossen";
+
+"Snabble.PaymentStatus.Title.success" = "Vielen Dank für deinen Einkauf!";
+
+"Snabble.PaymentStatus.Tobacco.error" = "Bei der Ausgabe der Zigaretten ist ein Problem aufgetreten. Bitte informiere einen Mitarbeiter.";
+
+"Snabble.PaymentStatus.Tobacco.message" = "Bitte entnimm deine Zigaretten.";
+
+"Snabble.PaymentStatus.Tobacco.title" = "Zigarettenausgabe";
 
 "Snabble.pleaseWait" = "Bitte warten…";
 

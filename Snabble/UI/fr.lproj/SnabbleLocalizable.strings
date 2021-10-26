@@ -225,11 +225,45 @@
 
 "Snabble.PaymentSelection.title" = "Payer";
 
+"Snabble.PaymentStatus.AddDebitCard.button" = "";
+
+"Snabble.PaymentStatus.AddDebitCard.message" = "";
+
+"Snabble.PaymentStatus.back" = "";
+
+"Snabble.PaymentStatus.close" = "";
+
+"Snabble.PaymentStatus.ExitCode.title" = "";
+
+"Snabble.PaymentStatus.Payment.error" = "";
+
+"Snabble.PaymentStatus.Payment.title" = "";
+
+"Snabble.PaymentStatus.Payment.tryAgain" = "";
+
+"Snabble.PaymentStatus.Ratings.thanks" = "";
+
+"Snabble.PaymentStatus.Ratings.title" = "";
+
+"Snabble.PaymentStatus.Receipt.title" = "";
+
 "Snabble.PaymentStatus.step1" = "Localisation dans la zone des caisses";
 
 "Snabble.PaymentStatus.step2" = "Autorisation de ton achat";
 
 "Snabble.PaymentStatus.step3" = "Autorisation de ton paiement";
+
+"Snabble.PaymentStatus.Title.error" = "";
+
+"Snabble.PaymentStatus.Title.inProgress" = "";
+
+"Snabble.PaymentStatus.Title.success" = "";
+
+"Snabble.PaymentStatus.Tobacco.error" = "";
+
+"Snabble.PaymentStatus.Tobacco.message" = "";
+
+"Snabble.PaymentStatus.Tobacco.title" = "";
 
 "Snabble.pleaseWait" = "Merci d’attendre...";
 

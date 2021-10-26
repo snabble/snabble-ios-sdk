@@ -93,10 +93,10 @@ public final class ShoppingCart: Codable {
     }
 
     public init(_ config: CartConfig) {
-        assert(!config.projectId.rawValue.isEmpty, "projectId is required")
-        assert(!config.shopId.rawValue.isEmpty, "shopId is required")
-        self.projectId = config.projectId
-        self.shopId = config.shopId
+        assert(!config.shop.projectId.rawValue.isEmpty, "projectId is required")
+        assert(!config.shop.id.rawValue.isEmpty, "shopId is required")
+        self.projectId = config.shop.projectId
+        self.shopId = config.shop.id
         self.maxAge = config.maxAge
         self.directory = config.directory
 

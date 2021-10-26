@@ -27,6 +27,11 @@ public struct Shop: Codable, Identifiable {
     /// snabble project identifier of this shop
     public let projectId: Identifier<Project>
 
+    // snabble `Project` of this shop
+    public var project: Project? {
+        SnabbleAPI.project(for: projectId)
+    }
+
     /// externally provided identifier
     public let externalId: String?
     /// externally provided data
@@ -74,7 +79,7 @@ public struct Shop: Codable, Identifiable {
         self.id = try container.decode(.id)
         self.name = try container.decode(.name)
         self.projectId = try container.decode(.projectId)
-        self.externalId = try container.decode(.externalId)
+        self.externalId = try container.decodeIfPresent(.externalId)
         self.external = try container.decodeIfPresent([String: Any].self, forKey: .external)
         self.latitude = try container.decode(.latitude)
         self.longitude = try container.decode(.longitude)
@@ -87,7 +92,7 @@ public struct Shop: Codable, Identifiable {
         self.postalCode = try container.decode(.postalCode)
         self.state = try container.decode(.state)
         self.country = try container.decode(.country)
-        self.countryCode = try container.decode(.countryCode)
+        self.countryCode = try container.decodeIfPresent(.countryCode)
         self.customerNetworks = try container.decodeIfPresent(.customerNetworks)
     }
 
@@ -109,8 +114,30 @@ public struct Shop: Codable, Identifiable {
         try container.encode(self.postalCode, forKey: .postalCode)
         try container.encode(self.state, forKey: .state)
         try container.encode(self.country, forKey: .country)
-        try container.encode(self.countryCode, forKey: .countryCode)
-        try container.encode(self.customerNetworks, forKey: .customerNetworks)
+        try container.encodeIfPresent(self.countryCode, forKey: .countryCode)
+        try container.encodeIfPresent(self.customerNetworks, forKey: .customerNetworks)
+    }
+
+    // only used for unit tests!
+    internal init(id: Identifier<Shop>, projectId: Identifier<Project>) {
+        self.id = id
+        self.name = "Snabble Shop"
+        self.projectId = projectId
+        self.externalId = nil
+        self.external = nil
+        self.latitude = 10
+        self.longitude = 20
+        self.services = []
+        self.openingHoursSpecification = []
+        self.email = "info@snabble.io"
+        self.phone = "0228123456"
+        self.city = "Bonn"
+        self.street = "Am Dickobskreuz 10"
+        self.postalCode = "53121"
+        self.state = "NRW"
+        self.country = "Deutschland"
+        self.countryCode = "de"
+        self.customerNetworks = nil
     }
 }
 

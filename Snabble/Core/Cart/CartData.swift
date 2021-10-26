@@ -12,20 +12,16 @@ public struct CartConfig {
     /// Default: the app's "Documents" directory
     public var directory: String
 
-    /// the `Project` that this cart is used in. You must always use the same snabble project for a cart.
-    public let projectId: Identifier<Project>
-
-    /// the ID of the shop that this cart is used for
-    public let shopId: Identifier<Shop>
+    /// the `shop` that this cart is used for
+    public let shop: Shop
 
     /// the maximum age of a shopping cart, in seconds. Set this to 0 to keep carts forever
     public var maxAge: TimeInterval = 14400
 
-    public init(projectId: Identifier<Project>, shopId: Identifier<Shop>) {
+    public init(shop: Shop) {
         let docDir = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)[0]
         self.directory = docDir.path
-        self.projectId = projectId
-        self.shopId = shopId
+        self.shop = shop
     }
 }
 

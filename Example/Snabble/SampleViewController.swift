@@ -82,7 +82,7 @@ class SampleViewController: UIViewController {
                 self.spinner.stopAnimating()
                 self.buttonContainer.isHidden = false
 
-                let cartConfig = CartConfig(projectId: project.id, shopId: project.shops[0].id)
+                let cartConfig = CartConfig(shop: project.shops.first!)
                 self.shoppingCart = ShoppingCart(cartConfig)
             }
         }

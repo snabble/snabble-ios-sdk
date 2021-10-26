@@ -277,12 +277,60 @@ public enum L10n {
       public static var title: String { return L10n.tr("SnabbleLocalizable", "Snabble.PaymentSelection.title") }
     }
     public enum PaymentStatus {
+      /// 
+      public static var back: String { return L10n.tr("SnabbleLocalizable", "Snabble.PaymentStatus.back") }
+      /// 
+      public static var close: String { return L10n.tr("SnabbleLocalizable", "Snabble.PaymentStatus.close") }
       /// Locating you in the checkout area
       public static var step1: String { return L10n.tr("SnabbleLocalizable", "Snabble.PaymentStatus.step1") }
       /// Processing your purchase
       public static var step2: String { return L10n.tr("SnabbleLocalizable", "Snabble.PaymentStatus.step2") }
       /// Processing your payment
       public static var step3: String { return L10n.tr("SnabbleLocalizable", "Snabble.PaymentStatus.step3") }
+      public enum AddDebitCard {
+        /// 
+        public static var button: String { return L10n.tr("SnabbleLocalizable", "Snabble.PaymentStatus.AddDebitCard.button") }
+        /// 
+        public static var message: String { return L10n.tr("SnabbleLocalizable", "Snabble.PaymentStatus.AddDebitCard.message") }
+      }
+      public enum ExitCode {
+        /// 
+        public static var title: String { return L10n.tr("SnabbleLocalizable", "Snabble.PaymentStatus.ExitCode.title") }
+      }
+      public enum Payment {
+        /// 
+        public static var error: String { return L10n.tr("SnabbleLocalizable", "Snabble.PaymentStatus.Payment.error") }
+        /// 
+        public static var title: String { return L10n.tr("SnabbleLocalizable", "Snabble.PaymentStatus.Payment.title") }
+        /// 
+        public static var tryAgain: String { return L10n.tr("SnabbleLocalizable", "Snabble.PaymentStatus.Payment.tryAgain") }
+      }
+      public enum Ratings {
+        /// 
+        public static var thanks: String { return L10n.tr("SnabbleLocalizable", "Snabble.PaymentStatus.Ratings.thanks") }
+        /// 
+        public static var title: String { return L10n.tr("SnabbleLocalizable", "Snabble.PaymentStatus.Ratings.title") }
+      }
+      public enum Receipt {
+        /// 
+        public static var title: String { return L10n.tr("SnabbleLocalizable", "Snabble.PaymentStatus.Receipt.title") }
+      }
+      public enum Title {
+        /// 
+        public static var error: String { return L10n.tr("SnabbleLocalizable", "Snabble.PaymentStatus.Title.error") }
+        /// 
+        public static var inProgress: String { return L10n.tr("SnabbleLocalizable", "Snabble.PaymentStatus.Title.inProgress") }
+        /// 
+        public static var success: String { return L10n.tr("SnabbleLocalizable", "Snabble.PaymentStatus.Title.success") }
+      }
+      public enum Tobacco {
+        /// 
+        public static var error: String { return L10n.tr("SnabbleLocalizable", "Snabble.PaymentStatus.Tobacco.error") }
+        /// 
+        public static var message: String { return L10n.tr("SnabbleLocalizable", "Snabble.PaymentStatus.Tobacco.message") }
+        /// 
+        public static var title: String { return L10n.tr("SnabbleLocalizable", "Snabble.PaymentStatus.Tobacco.title") }
+      }
     }
     public enum PostFinanceCard {
       /// Pay now using PostFinance Card
