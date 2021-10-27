@@ -12,7 +12,7 @@ public protocol CheckInManagerDelegate: AnyObject {
     /// Tells the delegate when the manager did check out of a shop.
     func checkInManager(_ checkInManager: CheckInManager, didCheckOutOf shop: Shop)
 
-    /// Tells the delegate when the manager did check in of a shop.
+    /// Tells the delegate when the manager did check in at a shop.
     func checkInManager(_ checkInManager: CheckInManager, didCheckInTo shop: Shop)
 
     /// Tells the delegate when the manager cannot start updating locations due to a lack of authorization
@@ -62,16 +62,16 @@ public class CheckInManager: NSObject {
 
     /// Radius which needs to be satisifed to automatically check-in a `shop`
     ///
-    /// If a shop stays within the radius `checkedInAt` concurrently updates.
+    /// If a shop stays within the radius, `checkedInAt` continually updates.
     public var checkInRadius: CLLocationDistance = 300
 
     /// Radius which keeps the `shop` checked-in.
     public var checkOutRadius: CLLocationDistance = 600
 
-    /// Treshold which keeps a `shop` checked in if it's outside of the `checkOutRadius`.
+    /// Threshold which keeps a `shop` checked in if it's outside of the `checkOutRadius`.
     ///
     /// It only applies if no shop is currently within the `checkInRadius`.
-    public var lastSeenTreshold: TimeInterval = 900
+    public var lastSeenThreshold: TimeInterval = 900
 
     /// Starts updating location to determine available shops
     public func startUpdating() {
@@ -173,7 +173,7 @@ extension CheckInManager: CLLocationManagerDelegate {
     }
 
     private func isInvalidCheckIn(at checkInAt: Date?) -> Bool {
-        Date.timeIntervalSinceReferenceDate - (checkInAt?.timeIntervalSinceReferenceDate ?? 0) > lastSeenTreshold
+        Date.timeIntervalSinceReferenceDate - (checkInAt?.timeIntervalSinceReferenceDate ?? 0) > lastSeenThreshold
     }
 }
 
