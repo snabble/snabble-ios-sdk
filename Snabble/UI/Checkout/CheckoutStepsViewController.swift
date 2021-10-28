@@ -20,6 +20,8 @@ public final class CheckoutStepsViewController: UIViewController {
 
     public let shop: Shop
 
+    public weak var analyticsDelegate: AnalyticsDelegate?
+
     private weak var ratingViewController: CheckoutRatingViewController?
 
     public init(shop: Shop) {
@@ -57,6 +59,7 @@ public final class CheckoutStepsViewController: UIViewController {
 
         let ratingViewController = CheckoutRatingViewController(shop: shop)
         ratingViewController.shouldRequestReview = false
+        ratingViewController.analyticsDelegate = analyticsDelegate
         addChild(ratingViewController)
         tableView.tableFooterView = ratingViewController.view
         ratingViewController.didMove(toParent: self)
@@ -67,6 +70,7 @@ public final class CheckoutStepsViewController: UIViewController {
         doneButton.setTitle(L10n.Snabble.done, for: .normal)
         doneButton.makeSnabbleButton()
         doneButton.titleLabel?.font = .systemFont(ofSize: 17, weight: .medium)
+        doneButton.addTarget(self, action: #selector(doneButtonTouchedUpInside(_:)), for: .touchUpInside)
         view.addSubview(doneButton)
         self.doneButton = doneButton
 
@@ -106,6 +110,11 @@ public final class CheckoutStepsViewController: UIViewController {
     public override func viewWillLayoutSubviews() {
         super.viewWillLayoutSubviews()
         tableView?.updateHeaderViews()
+    }
+
+    @objc private func doneButtonTouchedUpInside(_ sender: UIButton) {
+        // warning: TBD
+        analyticsDelegate?.track(.checkoutStepsClosed)
     }
 }
 

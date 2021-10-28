@@ -125,4 +125,7 @@ public enum AnalyticsEvent {
 
     /// checkout rating has been submitted
     case ratingSubmitted(value: Int)
+
+    /// closed checkoutSteps
+    case checkoutStepsClosed
 }
