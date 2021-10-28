@@ -41,10 +41,8 @@ public final class CheckoutStepsViewController: UIViewController {
             scrollView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
             scrollView.topAnchor.constraint(equalTo: view.topAnchor),
             view.trailingAnchor.constraint(equalTo: scrollView.trailingAnchor),
-            view.bottomAnchor.constraint(equalTo: scrollView.bottomAnchor),
 
-            scrollView.contentLayoutGuide.widthAnchor.constraint(equalTo: view.widthAnchor),
-            scrollView.contentLayoutGuide.heightAnchor.constraint(greaterThanOrEqualTo: view.heightAnchor)
+            scrollView.contentLayoutGuide.widthAnchor.constraint(equalTo: view.widthAnchor)
         ])
 
         let headerView = CheckoutHeaderView()
@@ -73,9 +71,10 @@ public final class CheckoutStepsViewController: UIViewController {
 
         let doneButton = UIButton(type: .system)
         doneButton.translatesAutoresizingMaskIntoConstraints = false
-        doneButton.setTitle("Schließen", for: .normal)
+        doneButton.setTitle(L10n.Snabble.done, for: .normal)
         doneButton.makeSnabbleButton()
-        scrollView.addSubview(doneButton)
+        doneButton.titleLabel?.font = .systemFont(ofSize: 17, weight: .medium)
+        view.addSubview(doneButton)
         self.doneButton = doneButton
 
         NSLayoutConstraint.activate([
@@ -92,11 +91,6 @@ public final class CheckoutStepsViewController: UIViewController {
             cardView.contentView.trailingAnchor.constraint(equalTo: stepsStackView.trailingAnchor),
             cardView.contentView.bottomAnchor.constraint(equalTo: stepsStackView.bottomAnchor),
 
-            doneButton.leadingAnchor.constraint(equalTo: scrollView.leadingAnchor, constant: 24),
-            scrollView.trailingAnchor.constraint(equalTo: doneButton.trailingAnchor, constant: 24),
-
-            doneButton.heightAnchor.constraint(equalToConstant: 48),
-
             ratingView.leadingAnchor.constraint(greaterThanOrEqualTo: scrollView.leadingAnchor, constant: 16),
             scrollView.trailingAnchor.constraint(greaterThanOrEqualTo: ratingView.trailingAnchor, constant: 16),
             ratingView.centerXAnchor.constraint(equalTo: scrollView.centerXAnchor),
@@ -104,9 +98,16 @@ public final class CheckoutStepsViewController: UIViewController {
             headerView.topAnchor.constraint(equalTo: scrollView.contentLayoutGuide.topAnchor, constant: 16),
             cardView.topAnchor.constraint(equalTo: headerView.bottomAnchor, constant: 16),
             ratingView.topAnchor.constraint(greaterThanOrEqualTo: cardView.bottomAnchor, constant: 16),
-            ratingView.topAnchor.constraint(equalTo: cardView.bottomAnchor, constant: 16).usingPriority(.defaultLow - 1),
-            doneButton.topAnchor.constraint(equalTo: ratingView.bottomAnchor, constant: 16),
-            scrollView.contentLayoutGuide.bottomAnchor.constraint(equalTo: doneButton.bottomAnchor, constant: 16)
+            scrollView.contentLayoutGuide.bottomAnchor.constraint(equalTo: ratingView.bottomAnchor, constant: 16),
+
+//            doneButton.topAnchor.constraint(lessThanOrEqualTo: scrollView.contentLayoutGuide.bottomAnchor, constant: 16),
+
+            doneButton.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 24),
+            view.trailingAnchor.constraint(equalTo: doneButton.trailingAnchor, constant: 24),
+
+            doneButton.heightAnchor.constraint(equalToConstant: 48),
+            view.safeAreaLayoutGuide.bottomAnchor.constraint(equalTo: doneButton.bottomAnchor, constant: 16),
+            scrollView.bottomAnchor.constraint(equalTo: doneButton.topAnchor)
         ])
 
         self.view = view
@@ -114,6 +115,8 @@ public final class CheckoutStepsViewController: UIViewController {
 
     override public func viewDidLoad() {
         super.viewDidLoad()
+//        navigationController?.isNavigationBarHidden = true
+//        view.layoutIfNeeded()
         viewModel.steps
             .map { stepViewModel -> UIView in
                 let view = CheckoutStepView()
