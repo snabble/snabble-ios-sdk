@@ -14,9 +14,15 @@ struct PayoneTokenization: Decodable {
     let hash: String
     let isTesting: Bool?
 
-    // TODO: waiting for backend
-    // let preauthURL: URL
-    // let pollingURL: URL
-    // let chargeAmount: String
-    // let currency: String
+    let preAuthInfo: PreAuthInfo
+    let links: PayoneLinks
+
+    struct PreAuthInfo: Decodable {
+        let amount: Int
+        let currency: String
+    }
+
+    struct PayoneLinks: Decodable {
+        let preAuth: Link
+    }
 }

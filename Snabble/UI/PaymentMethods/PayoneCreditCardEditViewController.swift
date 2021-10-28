@@ -190,7 +190,7 @@ public final class PayoneCreditCardEditViewController: UIViewController {
             .replacingOccurrences(of: "{{portalID}}", with: payoneTokenization.portalID)
             .replacingOccurrences(of: "{{accountID}}", with: payoneTokenization.accountID)
             .replacingOccurrences(of: "{{mode}}", with: testing ? "test" : "live")
-            .replacingOccurrences(of: "{{header}}", with: threeDSecureHint(for: projectId))
+            .replacingOccurrences(of: "{{header}}", with: threeDSecureHint(for: projectId, amount: payoneTokenization.preAuthInfo.amount))
             .replacingOccurrences(of: "{{handler}}", with: Self.handlerName)
             .replacingOccurrences(of: "{{language}}", with: languageCode)
             .replacingOccurrences(of: "{{supportedCardType}}", with: self.brand?.paymentMethod ?? "")
@@ -208,15 +208,27 @@ public final class PayoneCreditCardEditViewController: UIViewController {
         self.webView?.loadHTMLString(page, baseURL: URL(string: "http://127.0.0.1/")!)
     }
 
-    private func threeDSecureHint(for projectId: Identifier<Project>?) -> String {
+    private func threeDSecureHint(for projectId: Identifier<Project>?, amount: Int) -> String {
         var name = "snabble"
+        let fmt = NumberFormatter()
+        fmt.minimumIntegerDigits = 1
+        fmt.numberStyle = .currency
 
+        var amount = Decimal(amount)
         if let projectId = self.projectId, let project = SnabbleAPI.project(for: projectId) {
             name = project.company?.name ?? project.name
-        }
+            fmt.minimumFractionDigits = project.decimalDigits
+            fmt.maximumFractionDigits = project.decimalDigits
+            fmt.currencyCode = project.currency
+            fmt.currencySymbol = project.currencySymbol
+            fmt.locale = Locale(identifier: project.locale)
 
-        #warning("FIXME - change when we get chargeAmount from backend")
-        return L10n.Snabble.Cc._3dsecureHint.retailerWithPrice("1,00 €", name)
+            let divider = pow(Decimal(10), project.decimalDigits)
+            amount /= divider
+        }
+        let chargeTotal = fmt.string(for: amount)!
+
+        return L10n.Snabble.Cc._3dsecureHint.retailerWithPrice(chargeTotal, name)
     }
 
     private func setupWebView() {
