@@ -12,6 +12,7 @@ public final class CheckoutStepsViewController: UIViewController {
     let viewModel: CheckoutStepsViewModel
 
     private(set) weak var scrollView: UIScrollView?
+    private(set) weak var tableView: UITableView?
 
     private(set) weak var headerView: CheckoutHeaderView?
     private(set) weak var stepsStackView: UIStackView?
@@ -30,36 +31,27 @@ public final class CheckoutStepsViewController: UIViewController {
     override public func loadView() {
         let view = UIView(frame: UIScreen.main.bounds)
 
-        let scrollView = UIScrollView()
-        scrollView.translatesAutoresizingMaskIntoConstraints = false
-        scrollView.alwaysBounceHorizontal = false
-        scrollView.isDirectionalLockEnabled = true
-        scrollView.contentInset = .init(top: 0, left: 0, bottom: 48 + 16, right: 0)
-        view.addSubview(scrollView)
-        self.scrollView = scrollView
+        let style: UITableView.Style
+        if #available(iOS 13.0, *) {
+            style = .insetGrouped
+        } else {
+            style = .grouped
+        }
+        let tableView = UITableView(frame: view.bounds, style: style)
+        tableView.translatesAutoresizingMaskIntoConstraints = false
+        tableView.dataSource = self
+        tableView.estimatedRowHeight = 44
+        tableView.register(UITableViewCell.self, forCellReuseIdentifier: "identifier")
+        tableView.contentInset = .init(top: 0, left: 0, bottom: 48 + 16 + 16, right: 0)
+        view.addSubview(tableView)
+        self.tableView = tableView
 
         let headerView = CheckoutHeaderView()
-        headerView.translatesAutoresizingMaskIntoConstraints = false
-        scrollView.addSubview(headerView)
+        tableView.tableHeaderView = headerView
         self.headerView = headerView
 
-        let cardView = CardView()
-        cardView.translatesAutoresizingMaskIntoConstraints = false
-
-        let stepsStackView = UIStackView()
-        stepsStackView.backgroundColor = .red
-        stepsStackView.translatesAutoresizingMaskIntoConstraints = false
-        stepsStackView.axis = .vertical
-        stepsStackView.distribution = .fill
-        stepsStackView.alignment = .fill
-        cardView.contentView.addSubview(stepsStackView)
-        self.stepsStackView = stepsStackView
-
-        scrollView.addSubview(cardView)
-
         let ratingView = CheckoutRatingView()
-        ratingView.translatesAutoresizingMaskIntoConstraints = false
-        scrollView.addSubview(ratingView)
+        tableView.tableFooterView = ratingView
         self.ratingView = ratingView
 
         let doneButton = UIButton(type: .system)
@@ -71,42 +63,17 @@ public final class CheckoutStepsViewController: UIViewController {
         self.doneButton = doneButton
 
         NSLayoutConstraint.activate([
-            scrollView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
-            scrollView.topAnchor.constraint(equalTo: view.topAnchor),
-            view.trailingAnchor.constraint(equalTo: scrollView.trailingAnchor),
+            tableView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+            tableView.topAnchor.constraint(equalTo: view.topAnchor),
+            view.trailingAnchor.constraint(equalTo: tableView.trailingAnchor),
 
-            scrollView.contentLayoutGuide.widthAnchor.constraint(equalTo: view.widthAnchor),
-
-            headerView.leadingAnchor.constraint(equalTo: scrollView.leadingAnchor),
-            scrollView.trailingAnchor.constraint(equalTo: headerView.trailingAnchor),
-
-            headerView.widthAnchor.constraint(equalTo: headerView.heightAnchor, multiplier: 1.75),
-
-            cardView.leadingAnchor.constraint(equalTo: scrollView.leadingAnchor, constant: 16),
-            scrollView.trailingAnchor.constraint(equalTo: cardView.trailingAnchor, constant: 16),
-
-            stepsStackView.leadingAnchor.constraint(equalTo: cardView.contentView.leadingAnchor),
-            stepsStackView.topAnchor.constraint(equalTo: cardView.contentView.topAnchor),
-            cardView.contentView.trailingAnchor.constraint(equalTo: stepsStackView.trailingAnchor),
-            cardView.contentView.bottomAnchor.constraint(equalTo: stepsStackView.bottomAnchor),
-
-            ratingView.leadingAnchor.constraint(greaterThanOrEqualTo: scrollView.leadingAnchor, constant: 16),
-            scrollView.trailingAnchor.constraint(greaterThanOrEqualTo: ratingView.trailingAnchor, constant: 16),
-            ratingView.centerXAnchor.constraint(equalTo: scrollView.centerXAnchor),
-
-            headerView.topAnchor.constraint(equalTo: scrollView.contentLayoutGuide.topAnchor, constant: 16),
-            cardView.topAnchor.constraint(equalTo: headerView.bottomAnchor, constant: 16),
-            ratingView.topAnchor.constraint(greaterThanOrEqualTo: cardView.bottomAnchor, constant: 16),
-            scrollView.contentLayoutGuide.bottomAnchor.constraint(equalTo: ratingView.bottomAnchor, constant: 16),
-
-//            doneButton.topAnchor.constraint(lessThanOrEqualTo: scrollView.contentLayoutGuide.bottomAnchor, constant: 16),
-
+            tableView.contentLayoutGuide.widthAnchor.constraint(equalTo: view.widthAnchor),
             doneButton.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 24),
             view.trailingAnchor.constraint(equalTo: doneButton.trailingAnchor, constant: 24),
 
             doneButton.heightAnchor.constraint(equalToConstant: 48),
             view.safeAreaLayoutGuide.bottomAnchor.constraint(equalTo: doneButton.bottomAnchor, constant: 16),
-            scrollView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor)
+            tableView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor)
         ])
 
         self.view = view
@@ -114,8 +81,6 @@ public final class CheckoutStepsViewController: UIViewController {
 
     override public func viewDidLoad() {
         super.viewDidLoad()
-//        navigationController?.isNavigationBarHidden = true
-//        view.layoutIfNeeded()
         viewModel.steps
             .map { stepViewModel -> UIView in
                 let view = CheckoutStepView()
@@ -125,27 +90,46 @@ public final class CheckoutStepsViewController: UIViewController {
             .forEach { [weak self] stepView in
                 self?.stepsStackView?.addArrangedSubview(stepView)
             }
-        stepsStackView?.addHorizontalSeparators(color: .label)
 
         headerView?.configure(with: viewModel.headerViewModel)
+        tableView?.updateHeaderViews()
+    }
+
+    public override func viewWillLayoutSubviews() {
+        super.viewWillLayoutSubviews()
+        tableView?.updateHeaderViews()
     }
 }
 
-private extension UIStackView {
-    func addHorizontalSeparators(color: UIColor) {
-        var index = arrangedSubviews.count - 1
-        while index > 0 {
-            let separator = UIView()
-            separator.backgroundColor = color
-            insertArrangedSubview(separator, at: index)
-            NSLayoutConstraint.activate([
-                separator.heightAnchor.constraint(equalToConstant: 1.0 / UIScreen.main.scale),
-                separator.widthAnchor.constraint(equalTo: widthAnchor)
-            ])
-            index -= 1
-        }
+extension CheckoutStepsViewController: UITableViewDataSource {
+    public func numberOfSections(in tableView: UITableView) -> Int {
+        1
+    }
+
+    public func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        10
+    }
+
+    public func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        let cell = tableView.dequeueReusableCell(withIdentifier: "identifier", for: indexPath)
+        cell.textLabel?.text = "foobar"
+        return cell
     }
 }
+
+private extension UITableView {
+    func updateHeaderViews() {
+        updateHeaderViewHeight(for: tableHeaderView)
+        updateHeaderViewHeight(for: tableFooterView)
+    }
+
+    func updateHeaderViewHeight(for header: UIView?) {
+        guard let header = header else { return }
+        let fittingSize = CGSize(width: bounds.width - (safeAreaInsets.left + safeAreaInsets.right), height: 0)
+        header.frame.size = header.systemLayoutSizeFitting(fittingSize, withHorizontalFittingPriority: .required, verticalFittingPriority: .fittingSizeLevel)
+    }
+}
+
 
 private class CardView: UIView {
     private(set) var contentView: UIView
