@@ -47,6 +47,7 @@ public final class CheckoutStepsViewController: UIViewController {
         tableView.estimatedRowHeight = 44
         tableView.register(UITableViewCell.self, forCellReuseIdentifier: "identifier")
         tableView.contentInset = .init(top: 0, left: 0, bottom: 48 + 16 + 16, right: 0)
+
         view.addSubview(tableView)
         self.tableView = tableView
 
@@ -134,48 +135,5 @@ private extension UITableView {
         guard let header = header else { return }
         let fittingSize = CGSize(width: bounds.width - (safeAreaInsets.left + safeAreaInsets.right), height: 0)
         header.frame.size = header.systemLayoutSizeFitting(fittingSize, withHorizontalFittingPriority: .required, verticalFittingPriority: .fittingSizeLevel)
-    }
-}
-
-
-private class CardView: UIView {
-    private(set) var contentView: UIView
-
-    var cornerRadius: CGFloat = 8
-    var shadowColor: UIColor? = .black
-    var shadowOpacity: Float = 0.25
-    var shadowOffset: CGSize = .init(width: 0, height: 3)
-
-    override init(frame: CGRect) {
-        let contentView = UIView()
-        contentView.translatesAutoresizingMaskIntoConstraints = false
-        self.contentView = contentView
-        super.init(frame: frame)
-        addSubview(contentView)
-
-        NSLayoutConstraint.activate([
-            contentView.leadingAnchor.constraint(equalTo: leadingAnchor),
-            contentView.topAnchor.constraint(equalTo: topAnchor),
-            trailingAnchor.constraint(equalTo: contentView.trailingAnchor),
-            bottomAnchor.constraint(equalTo: contentView.bottomAnchor)
-        ])
-    }
-
-    required init?(coder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
-    }
-
-    override func layoutSubviews() {
-        super.layoutSubviews()
-        layer.cornerRadius = cornerRadius
-        layer.masksToBounds = false
-
-        layer.shadowColor = shadowColor?.cgColor
-        layer.shadowOffset = shadowOffset
-        layer.shadowOpacity = shadowOpacity
-        layer.shadowPath = UIBezierPath(roundedRect: bounds, cornerRadius: cornerRadius).cgPath
-
-        contentView.layer.cornerRadius = cornerRadius
-        contentView.layer.masksToBounds = true
     }
 }
