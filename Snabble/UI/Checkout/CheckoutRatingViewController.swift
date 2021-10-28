@@ -162,7 +162,7 @@ final class CheckoutRatingViewController: UIViewController {
 
     private func getRatingComment(_ rating: Int) {
         let alert = AlertController(title: L10n.Snabble.PaymentStatus.Rating.title, message: nil, preferredStyle: .alert)
-//        alert.visualStyle = .snabbleAlert
+        alert.visualStyle = .snabbleAlert
 
         let textField = UITextView(frame: .zero)
         textField.translatesAutoresizingMaskIntoConstraints = false
