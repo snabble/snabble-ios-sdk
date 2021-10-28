@@ -1,5 +1,3 @@
-"PaymentDone.Rating.thanks" = "Thank you!";
-
 "PaymentDone.Rating.title" = "Did you like shopping with Snabble?";
 
 "release.safety.catch" = "Veille à enlever (le cas échéant) le dispositif de sécurité du goulot de la bouteille au poste prévu à cet effet à la sortie.";
@@ -225,27 +223,31 @@
 
 "Snabble.PaymentSelection.title" = "Payer";
 
-"Snabble.PaymentStatus.AddDebitCard.button" = "";
+"Snabble.PaymentStatus.AddDebitCard.button" = "Yes, save girocard in app";
 
-"Snabble.PaymentStatus.AddDebitCard.message" = "";
+"Snabble.PaymentStatus.AddDebitCard.message" = "Would you like to store your girocard data securely in the app so that you can pay for your next purchase by direct debit? You can leave your card in your wallet in the future.";
 
-"Snabble.PaymentStatus.back" = "";
+"Snabble.PaymentStatus.back" = "Back";
 
-"Snabble.PaymentStatus.close" = "";
+"Snabble.PaymentStatus.close" = "Close";
 
-"Snabble.PaymentStatus.ExitCode.title" = "";
+"Snabble.PaymentStatus.ExitCode.title" = "Exit-Code";
 
-"Snabble.PaymentStatus.Payment.error" = "";
+"Snabble.PaymentStatus.Payment.error" = "Your payment could not be processed. Try again or choose another payment method.";
 
-"Snabble.PaymentStatus.Payment.title" = "";
+"Snabble.PaymentStatus.Payment.title" = "Payment";
 
-"Snabble.PaymentStatus.Payment.tryAgain" = "";
+"Snabble.PaymentStatus.Payment.tryAgain" = "Try again";
 
-"Snabble.PaymentStatus.Ratings.thanks" = "";
+"Snabble.PaymentStatus.Rating.send" = "Send";
 
-"Snabble.PaymentStatus.Ratings.title" = "";
+"Snabble.PaymentStatus.Rating.title" = "What was not good?";
 
-"Snabble.PaymentStatus.Receipt.title" = "";
+"Snabble.PaymentStatus.Ratings.thanks" = "Thank you!";
+
+"Snabble.PaymentStatus.Ratings.title" = "Did you like the purchase?";
+
+"Snabble.PaymentStatus.Receipt.title" = "Receipt";
 
 "Snabble.PaymentStatus.step1" = "Localisation dans la zone des caisses";
 
@@ -253,17 +255,17 @@
 
 "Snabble.PaymentStatus.step3" = "Autorisation de ton paiement";
 
-"Snabble.PaymentStatus.Title.error" = "";
+"Snabble.PaymentStatus.Title.error" = "Unfortunately an error has occurred";
 
-"Snabble.PaymentStatus.Title.inProgress" = "";
+"Snabble.PaymentStatus.Title.inProgress" = "Your purchase is completing";
 
-"Snabble.PaymentStatus.Title.success" = "";
+"Snabble.PaymentStatus.Title.success" = "Thank you for your purchase!";
 
-"Snabble.PaymentStatus.Tobacco.error" = "";
+"Snabble.PaymentStatus.Tobacco.error" = "A problem has occurred with the distribution of cigarettes. Please inform a staff member.";
 
-"Snabble.PaymentStatus.Tobacco.message" = "";
+"Snabble.PaymentStatus.Tobacco.message" = "Please remove your cigarettes.";
 
-"Snabble.PaymentStatus.Tobacco.title" = "";
+"Snabble.PaymentStatus.Tobacco.title" = "Cigarette distribution";
 
 "Snabble.pleaseWait" = "Merci d’attendre...";
 

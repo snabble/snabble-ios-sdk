@@ -16,10 +16,14 @@ public final class CheckoutStepsViewController: UIViewController {
 
     private(set) weak var headerView: CheckoutHeaderView?
     private(set) weak var stepsStackView: UIStackView?
-    private(set) weak var ratingView: CheckoutRatingView?
     private(set) weak var doneButton: UIButton?
 
-    public init() {
+    public let shop: Shop
+
+    private weak var ratingViewController: CheckoutRatingViewController?
+
+    public init(shop: Shop) {
+        self.shop = shop
         viewModel = CheckoutStepsViewModel()
         super.init(nibName: nil, bundle: nil)
     }
@@ -50,9 +54,12 @@ public final class CheckoutStepsViewController: UIViewController {
         tableView.tableHeaderView = headerView
         self.headerView = headerView
 
-        let ratingView = CheckoutRatingView()
-        tableView.tableFooterView = ratingView
-        self.ratingView = ratingView
+        let ratingViewController = CheckoutRatingViewController(shop: shop)
+        ratingViewController.shouldRequestReview = false
+        addChild(ratingViewController)
+        tableView.tableFooterView = ratingViewController.view
+        ratingViewController.didMove(toParent: self)
+        self.ratingViewController = ratingViewController
 
         let doneButton = UIButton(type: .system)
         doneButton.translatesAutoresizingMaskIntoConstraints = false

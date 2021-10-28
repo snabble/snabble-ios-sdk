@@ -1,5 +1,3 @@
-"PaymentDone.Rating.thanks" = "Ďakujem!";
-
 "PaymentDone.Rating.title" = "Páčil sa ti nákup so Snabble?";
 
 "release.safety.catch" = "Prosím, odstráň z fľaše zámok (ak je nasadený) pri východe na mieste, ktoré je na to určené.";
@@ -240,6 +238,10 @@
 "Snabble.PaymentStatus.Payment.title" = "Platba";
 
 "Snabble.PaymentStatus.Payment.tryAgain" = "Skúsiť znovu";
+
+"Snabble.PaymentStatus.Rating.send" = "Odoslať";
+
+"Snabble.PaymentStatus.Rating.title" = "What was not good?";
 
 "Snabble.PaymentStatus.Ratings.thanks" = "Ďakujem!";
 

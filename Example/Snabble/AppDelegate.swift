@@ -20,7 +20,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
 //        let sampleVC = SampleViewController()
 
-        let sampleNavi = UINavigationController(rootViewController: CheckoutStepsViewController())
+        let sampleNavi = UINavigationController(rootViewController: CheckoutStepsViewController(shop: Shop(id: "42", projectId: "29")))
         sampleNavi.navigationBar.isOpaque = true
 
         let tabBarController = UITabBarController()

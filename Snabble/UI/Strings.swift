@@ -13,8 +13,6 @@ public enum L10n {
 
   public enum PaymentDone {
     public enum Rating {
-      /// Thank you!
-      public static var thanks: String { return L10n.tr("SnabbleLocalizable", "PaymentDone.Rating.thanks") }
       /// Did you like shopping with Snabble?
       public static var title: String { return L10n.tr("SnabbleLocalizable", "PaymentDone.Rating.title") }
     }
@@ -96,11 +94,11 @@ public enum L10n {
       /// Valid until
       public static var validUntil: String { return L10n.tr("SnabbleLocalizable", "Snabble.CC.validUntil") }
       public enum _3dsecureHint {
-        /// In order to verify your credit card, you will be redirected to your bank after entering your data. There you will be asked to approve a payment of € 1.00 to %@. The amount will be credited to you immediately after your approval.
+        /// Enter your data here. Then we will redirect you to your bank to confirm your data. Here we reserve 1 € (for %@) and book the money back directly.
         public static func retailer(_ p1: Any) -> String {
           return L10n.tr("SnabbleLocalizable", "Snabble.CC.3dsecureHint.retailer", String(describing: p1))
         }
-        /// In order to verify your credit card, you will be redirected to your bank after entering your data. There you will be asked to approve a payment of %@ to %@. The amount will be credited to you immediately after your approval.
+        /// Enter your data here. Then we will redirect you to your bank to confirm your data. Here we reserve %@ (for %@) and book the money back directly.
         public static func retailerWithPrice(_ p1: Any, _ p2: Any) -> String {
           return L10n.tr("SnabbleLocalizable", "Snabble.CC.3dsecureHint.retailerWithPrice", String(describing: p1), String(describing: p2))
         }
@@ -277,9 +275,9 @@ public enum L10n {
       public static var title: String { return L10n.tr("SnabbleLocalizable", "Snabble.PaymentSelection.title") }
     }
     public enum PaymentStatus {
-      /// 
+      /// Back
       public static var back: String { return L10n.tr("SnabbleLocalizable", "Snabble.PaymentStatus.back") }
-      /// 
+      /// Close
       public static var close: String { return L10n.tr("SnabbleLocalizable", "Snabble.PaymentStatus.close") }
       /// Locating you in the checkout area
       public static var step1: String { return L10n.tr("SnabbleLocalizable", "Snabble.PaymentStatus.step1") }
@@ -288,47 +286,53 @@ public enum L10n {
       /// Processing your payment
       public static var step3: String { return L10n.tr("SnabbleLocalizable", "Snabble.PaymentStatus.step3") }
       public enum AddDebitCard {
-        /// 
+        /// Yes, save girocard in app
         public static var button: String { return L10n.tr("SnabbleLocalizable", "Snabble.PaymentStatus.AddDebitCard.button") }
-        /// 
+        /// Would you like to store your girocard data securely in the app so that you can pay for your next purchase by direct debit? You can leave your card in your wallet in the future.
         public static var message: String { return L10n.tr("SnabbleLocalizable", "Snabble.PaymentStatus.AddDebitCard.message") }
       }
       public enum ExitCode {
-        /// 
+        /// Exit-Code
         public static var title: String { return L10n.tr("SnabbleLocalizable", "Snabble.PaymentStatus.ExitCode.title") }
       }
       public enum Payment {
-        /// 
+        /// Your payment could not be processed. Try again or choose another payment method.
         public static var error: String { return L10n.tr("SnabbleLocalizable", "Snabble.PaymentStatus.Payment.error") }
-        /// 
+        /// Payment
         public static var title: String { return L10n.tr("SnabbleLocalizable", "Snabble.PaymentStatus.Payment.title") }
-        /// 
+        /// Try again
         public static var tryAgain: String { return L10n.tr("SnabbleLocalizable", "Snabble.PaymentStatus.Payment.tryAgain") }
       }
+      public enum Rating {
+        /// Send
+        public static var send: String { return L10n.tr("SnabbleLocalizable", "Snabble.PaymentStatus.Rating.send") }
+        /// What was not good?
+        public static var title: String { return L10n.tr("SnabbleLocalizable", "Snabble.PaymentStatus.Rating.title") }
+      }
       public enum Ratings {
-        /// 
+        /// Thank you!
         public static var thanks: String { return L10n.tr("SnabbleLocalizable", "Snabble.PaymentStatus.Ratings.thanks") }
-        /// 
+        /// Did you like the purchase?
         public static var title: String { return L10n.tr("SnabbleLocalizable", "Snabble.PaymentStatus.Ratings.title") }
       }
       public enum Receipt {
-        /// 
+        /// Receipt
         public static var title: String { return L10n.tr("SnabbleLocalizable", "Snabble.PaymentStatus.Receipt.title") }
       }
       public enum Title {
-        /// 
+        /// Unfortunately an error has occurred
         public static var error: String { return L10n.tr("SnabbleLocalizable", "Snabble.PaymentStatus.Title.error") }
-        /// 
+        /// Your purchase is completing
         public static var inProgress: String { return L10n.tr("SnabbleLocalizable", "Snabble.PaymentStatus.Title.inProgress") }
-        /// 
+        /// Thank you for your purchase!
         public static var success: String { return L10n.tr("SnabbleLocalizable", "Snabble.PaymentStatus.Title.success") }
       }
       public enum Tobacco {
-        /// 
+        /// A problem has occurred with the distribution of cigarettes. Please inform a staff member.
         public static var error: String { return L10n.tr("SnabbleLocalizable", "Snabble.PaymentStatus.Tobacco.error") }
-        /// 
+        /// Please remove your cigarettes.
         public static var message: String { return L10n.tr("SnabbleLocalizable", "Snabble.PaymentStatus.Tobacco.message") }
-        /// 
+        /// Cigarette distribution
         public static var title: String { return L10n.tr("SnabbleLocalizable", "Snabble.PaymentStatus.Tobacco.title") }
       }
     }
