@@ -28,7 +28,6 @@
         }
         
         function processResponse(obj, lastName) {
-            console.log("processResponse!")
             window.webkit.messageHandlers.{{handler}}.postMessage({
                 response: obj,
                 lastName: lastName
@@ -111,7 +110,6 @@
 
     <script src="https://secure.pay1.de/client-api/js/v1/payone_hosted.js"></script>
     <script type="text/javascript">
-        console.log("payone form start");
         /**
          * The PAYONE auto card type detection class constructor.
          *
@@ -120,12 +118,10 @@
          */
         function PayoneAutoCcDetection(config)
         {
-            console.log("PayoneAutoCcDetection " + config)
             // Apply config defaults.
             this._config = config;
 
             // Setup auto credit card detection config.
-            console.log("supported types: " + this._config.supportedCardTypes);
             this._config.hostedIframesConfig.config.autoCardtypeDetection = {
                 deactivate: false,
                 supportedCardtypes: this._config.supportedCardTypes,
@@ -157,7 +153,6 @@
          * @private
          */
         PayoneAutoCcDetection.prototype._handleDetectionResult = function (type) {
-            console.log("handleDetection " + type);
             type = type.toUpperCase();
 
             // Delegate further processing to dedicated handlers.
@@ -181,7 +176,6 @@
          * @private
          */
         PayoneAutoCcDetection.prototype._handleValidCardType = function (type) {
-            console.log("handleValidCard " + type);
             this._changeIcon(type);
         };
 
@@ -191,7 +185,7 @@
          * @private
          */
         PayoneAutoCcDetection.prototype._handleUnsupportedCardType = function () {
-            console.log("handleUnsupportedType");
+            //
         };
 
         /**
@@ -201,10 +195,8 @@
          * @private
          */
         PayoneAutoCcDetection.prototype._creditCardCheckCallback = function (response) {
-            console.log("checkCallback" + response);
             switch (response.status) {
                 case 'VALID':
-                    console.log('Success! Credit card check was valid.');
                     var lastName = document.getElementById('lastName').value;
                     processResponse(response, lastName);
                     break;
@@ -222,20 +214,16 @@
          * Performs the credit card check.
          */
         PayoneAutoCcDetection.prototype.performCreditCardCheck = function () {
-            console.log("performCheck");
             var name = document.getElementById('lastName').value
             if (this._hostedIframe.isComplete() && name != "") {
-                console.log("complete!");
                 this._hostedIframe.creditCardCheck(this._creditCardCheckCallbackName);
             }
             else {
-                console.log("incomplete :(");
                 showError('{{incompleteForm}}');
             }
         };
 
         PayoneAutoCcDetection.prototype.setInitialCardType = function (type) {
-            console.log("set initial card type " + type)
             this._hostedIframe.setCardType(type)
         }
 
@@ -355,7 +343,6 @@
 
             document.querySelector('#submit').addEventListener('click', function (event) {
                 event.preventDefault();
-                console.log('click!');
                 autoCcDetection.performCreditCardCheck();
             });
 
