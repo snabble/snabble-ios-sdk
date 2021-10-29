@@ -19,9 +19,6 @@ import AutoLayout_Helper
 // see https://docs.payone.com/display/public/PLATFORM/Testdata
 
 // more docs: https://docs.payone.com/display/public/PLATFORM/Hosted-iFrame+Mode+-+Short+description
-//
-// TODO: can we implement dark mode?
-//
 
 public final class PayoneCreditCardEditViewController: UIViewController {
     @IBOutlet private var containerView: UIView!
@@ -43,9 +40,13 @@ public final class PayoneCreditCardEditViewController: UIViewController {
     private var ccNumber: String?
     private var expDate: String?
     private var projectId: Identifier<Project>?
+
+    private weak var pollTimer: Timer?
     private weak var analyticsDelegate: AnalyticsDelegate?
 
     private var payoneTokenization: PayoneTokenization?
+    private var payonePreAuthResult: PayonePreAuthResult?
+    private var payoneResponse: PayoneResponse?
 
     public weak var navigationDelegate: PaymentMethodNavigationDelegate?
 
@@ -114,6 +115,12 @@ public final class PayoneCreditCardEditViewController: UIViewController {
     override public func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
 
+        if self.payoneTokenization == nil {
+            self.startCreditCardTokenization()
+        }
+    }
+
+    private func startCreditCardTokenization() {
         guard
             self.detail == nil,
             let brand = self.brand,
@@ -124,12 +131,17 @@ public final class PayoneCreditCardEditViewController: UIViewController {
             return
         }
 
+        self.payoneTokenization = nil
+        self.payonePreAuthResult = nil
+        self.payoneResponse = nil
+        self.pollTimer?.invalidate()
+
         self.containerView.bringSubviewToFront(self.spinner)
 
         self.spinner.startAnimating()
 
         if descriptor.acceptedOriginTypes?.contains(.payonePseudoCardPAN) == true {
-            tokenizeWithPayone(project, descriptor)
+             tokenizeWithPayone(project, descriptor)
         } else {
             // oops - somehow we got here for a non-payone tokenization. Bail out.
             showErrorAlert(message: L10n.Snabble.Payment.CreditCard.error, goBack: true)
@@ -138,11 +150,15 @@ public final class PayoneCreditCardEditViewController: UIViewController {
         self.analyticsDelegate?.track(.viewPaymentMethodDetail)
     }
 
-    override public func viewDidDisappear(_ animated: Bool) {
-        super.viewDidDisappear(animated)
+    override public func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
 
-        // required to break the retain cycle
-        self.webView?.configuration.userContentController.removeScriptMessageHandler(forName: Self.handlerName)
+        if self.isMovingFromParent {
+            // we're being popped
+            self.pollTimer?.invalidate()
+            // required to break the retain cycle
+            self.webView?.configuration.userContentController.removeScriptMessageHandler(forName: Self.handlerName)
+        }
     }
 
     private func tokenizeWithPayone(_ project: Project, _ descriptor: PaymentMethodDescriptor) {
@@ -174,7 +190,7 @@ public final class PayoneCreditCardEditViewController: UIViewController {
     private func prepareAndInjectPage(_ payoneTokenization: PayoneTokenization) {
         var languageCode = Locale.current.languageCode ?? "en"
         switch languageCode {
-        case "de", "en", "fr", "it", "es", "pt", "nl": ()
+        case "de", "en", "fr", "it", "es", "pt", "nl": () // payone supported language
         default: languageCode = "en"
         }
 
@@ -190,37 +206,37 @@ public final class PayoneCreditCardEditViewController: UIViewController {
             .replacingOccurrences(of: "{{portalID}}", with: payoneTokenization.portalID)
             .replacingOccurrences(of: "{{accountID}}", with: payoneTokenization.accountID)
             .replacingOccurrences(of: "{{mode}}", with: testing ? "test" : "live")
-            .replacingOccurrences(of: "{{header}}", with: threeDSecureHint(for: projectId, amount: payoneTokenization.preAuthInfo.amount))
+            .replacingOccurrences(of: "{{header}}", with: threeDSecureHint(for: projectId, tokenization: payoneTokenization))
             .replacingOccurrences(of: "{{handler}}", with: Self.handlerName)
             .replacingOccurrences(of: "{{language}}", with: languageCode)
             .replacingOccurrences(of: "{{supportedCardType}}", with: self.brand?.paymentMethod ?? "")
             .replacingOccurrences(of: "{{fieldColors}}", with: fieldColors)
             // TODO: l10n
-            .replacingOccurrences(of: "{{lastName}}", with: "Nachname")
-            .replacingOccurrences(of: "{{cardNumberLabel}}", with: "Kartennummer")
-            .replacingOccurrences(of: "{{cvcLabel}}", with: "Prüfnummer (CVC)")
-            .replacingOccurrences(of: "{{expireMonthLabel}}", with: "Ablaufmonat (MM)")
-            .replacingOccurrences(of: "{{expireYearLabel}}", with: "Ablaufjahr (JJJJ)")
-            .replacingOccurrences(of: "{{saveButtonLabel}}", with: "Speichern")
-            .replacingOccurrences(of: "{{incompleteForm}}", with: "Bitte fülle das Formular vollständig aus.")
+            .replacingOccurrences(of: "{{lastName}}", with: L10n.Snabble.Payone.lastname)
+            .replacingOccurrences(of: "{{cardNumberLabel}}", with: L10n.Snabble.Payone.cardNumber)
+            .replacingOccurrences(of: "{{cvcLabel}}", with: L10n.Snabble.Payone.cvc)
+            .replacingOccurrences(of: "{{expireMonthLabel}}", with: L10n.Snabble.Payone.expireMonth)
+            .replacingOccurrences(of: "{{expireYearLabel}}", with: L10n.Snabble.Payone.expireYear)
+            .replacingOccurrences(of: "{{saveButtonLabel}}", with: L10n.Snabble.save)
+            .replacingOccurrences(of: "{{incompleteForm}}", with: L10n.Snabble.Payone.incompleteForm)
 
-        // passing the dummy base URL is necessary for the Payone JS to work  ¯\_(ツ)_/¯
+        // passing a dummy base URL is necessary for the Payone JS to work  ¯\_(ツ)_/¯
         self.webView?.loadHTMLString(page, baseURL: URL(string: "http://127.0.0.1/")!)
     }
 
-    private func threeDSecureHint(for projectId: Identifier<Project>?, amount: Int) -> String {
+    private func threeDSecureHint(for projectId: Identifier<Project>?, tokenization: PayoneTokenization) -> String {
         var name = "snabble"
         let fmt = NumberFormatter()
         fmt.minimumIntegerDigits = 1
         fmt.numberStyle = .currency
+        fmt.currencyCode = tokenization.preAuthInfo.currency
 
-        var amount = Decimal(amount)
+        var amount = Decimal(tokenization.preAuthInfo.amount)
         if let projectId = self.projectId, let project = SnabbleAPI.project(for: projectId) {
             name = project.company?.name ?? project.name
             fmt.minimumFractionDigits = project.decimalDigits
             fmt.maximumFractionDigits = project.decimalDigits
-            fmt.currencyCode = project.currency
-            fmt.currencySymbol = project.currencySymbol
+
             fmt.locale = Locale(identifier: project.locale)
 
             let divider = pow(Decimal(10), project.decimalDigits)
@@ -240,8 +256,8 @@ public final class PayoneCreditCardEditViewController: UIViewController {
 
         webView = WKWebView(frame: .zero, configuration: config)
         webView.navigationDelegate = self
-//        webView.isOpaque = false
-//        webView.backgroundColor = .clear
+        webView.isOpaque = false
+        webView.backgroundColor = .clear
         webView.translatesAutoresizingMaskIntoConstraints = false
 
         containerView.addSubview(self.webView)
@@ -265,12 +281,19 @@ public final class PayoneCreditCardEditViewController: UIViewController {
     }
 }
 
+// MARK: - webview delegate & msg handler
 extension PayoneCreditCardEditViewController: WKNavigationDelegate {
     public func webView(_ webView: WKWebView, decidePolicyFor navigationAction: WKNavigationAction, decisionHandler: @escaping (WKNavigationActionPolicy) -> Void) {
-        if navigationAction.navigationType == .linkActivated, let url = navigationAction.request.url {
-            UIApplication.shared.open(url)
-            decisionHandler(.cancel)
-            return
+        if let preAuthResult = self.payonePreAuthResult, let url = navigationAction.request.url?.absoluteString {
+            if url == preAuthResult.links.redirectSuccess.href {
+                // sca succeeded, we still need to wait for the preAuth status to switch to "success"
+                self.spinner.startAnimating()
+                self.webView.loadHTMLString("", baseURL: nil)
+            } else if url == preAuthResult.links.redirectError.href {
+                self.finishPreAuth(with: .failed)
+            } else if url == preAuthResult.links.redirectBack.href {
+                self.startCreditCardTokenization()
+            }
         }
 
         decisionHandler(.allow)
@@ -297,25 +320,95 @@ extension PayoneCreditCardEditViewController: WKScriptMessageHandler {
         }
     }
 
-    private func processResponse(_ response: [String: Any], _ lastName: String?) {
+    private func processResponse(_ response: [String: Any], _ lastname: String?) {
         guard
             let projectId = self.projectId,
             let project = SnabbleAPI.project(for: projectId),
-            let cert = SnabbleAPI.certificates.first,
-            let lastName = lastName,
-            let response = PayoneResponse(response: response, lastName: lastName)
+            let lastname = lastname,
+            let response = PayoneResponse(response: response, lastname: lastname)
         else {
             return
         }
 
-        if let ccData = PayoneCreditCardData(gatewayCert: cert.data, response: response, projectId: projectId) {
-            let detail = PaymentMethodDetail(ccData)
-            PaymentMethodDetails.save(detail)
-            self.analyticsDelegate?.track(.paymentMethodAdded(detail.rawMethod.displayName))
-            goBack()
+        startPayonePreauthorization(for: project, payoneTokenization?.links.preAuth, response) { result in
+            switch result {
+            case .failure(let error):
+                print(error)
+                self.showErrorAlert(message: L10n.Snabble.Payment.CreditCard.error, goBack: true)
+            case .success(let preAuthResult):
+                self.loadScaChallenge(for: project, preAuthResult, response)
+            }
+        }
+    }
+
+    private func loadScaChallenge(for project: Project, _ preAuthResult: PayonePreAuthResult, _ response: PayoneResponse) {
+        guard
+            let url = URL(string: preAuthResult.links.scaChallenge.href)
+        else {
+            self.showErrorAlert(message: L10n.Snabble.Payment.CreditCard.error, goBack: true)
+            return
+        }
+
+        let scaRequest = URLRequest(url: url)
+        self.webView.load(scaRequest)
+
+        self.payonePreAuthResult = preAuthResult
+        self.payoneResponse = response
+
+        self.startPreAuthPollTimer(for: project, preAuthResult)
+    }
+
+    private func startPreAuthPollTimer(for project: Project, _ preAuthResult: PayonePreAuthResult) {
+        pollTimer = Timer.scheduledTimer(withTimeInterval: 1, repeats: false) { [weak self] _ in
+            self?.getPreAuthStatus(for: project, preAuthResult.links.preAuthStatus) { result in
+                switch result {
+                case .failure(let error):
+                    print(error)
+                    self?.startPreAuthPollTimer(for: project, preAuthResult)
+                case .success(let status):
+                    switch status.status {
+                    case .unknown, .pending:
+                        self?.startPreAuthPollTimer(for: project, preAuthResult)
+                    case .successful, .failed:
+                        self?.finishPreAuth(with: status.status)
+                    }
+                }
+            }
+        }
+    }
+
+    private func finishPreAuth(with status: PayonePreAuthStatus) {
+        self.pollTimer?.invalidate()
+
+        print("finished! status=\(status)")
+
+        if status == .failed {
+            self.showErrorAlert(message: L10n.Snabble.Payment.CreditCard.error, goBack: true)
         } else {
-            project.logError("can't create CC data from pay1 response: \(response)")
-            showErrorAlert(message: L10n.Snabble.Payment.CreditCard.error, goBack: true)
+            assert(status == .successful)
+
+            guard
+                let projectId = self.projectId,
+                let project = SnabbleAPI.project(for: projectId),
+                let cert = SnabbleAPI.certificates.first,
+                let response = self.payoneResponse,
+                let preAuthResult = self.payonePreAuthResult
+            else {
+                return
+            }
+
+            if let ccData = PayoneCreditCardData(gatewayCert: cert.data,
+                                                 response: response,
+                                                 preAuthResult: preAuthResult,
+                                                 projectId: projectId) {
+                let detail = PaymentMethodDetail(ccData)
+                PaymentMethodDetails.save(detail)
+                self.analyticsDelegate?.track(.paymentMethodAdded(detail.rawMethod.displayName))
+                goBack()
+            } else {
+                project.logError("can't create CC data from pay1 response: \(response)")
+                showErrorAlert(message: L10n.Snabble.Payment.CreditCard.error, goBack: true)
+            }
         }
     }
 
@@ -333,6 +426,8 @@ extension PayoneCreditCardEditViewController: WKScriptMessageHandler {
     }
 }
 
+// MARK: - backend endpoints
+
 extension PayoneCreditCardEditViewController {
     private func getPayoneTokenization(for project: Project,
                                        _ link: Link?,
@@ -348,6 +443,41 @@ extension PayoneCreditCardEditViewController {
             }
 
             project.perform(request) { (_ result: Result<PayoneTokenization, SnabbleError>) in
+                completion(result)
+            }
+        }
+    }
+
+    private func startPayonePreauthorization(for project: Project, _ link: Link?, _ response: PayoneResponse,
+                                             completion: @escaping (Result<PayonePreAuthResult, SnabbleError>) -> Void) {
+        guard let url = link?.href else {
+            Log.error("no preauth link found")
+            return completion(Result.failure(SnabbleError.unknown))
+        }
+
+        project.request(.post, url, timeout: 5) { request in
+            guard var request = request else {
+                return completion(Result.failure(SnabbleError.noRequest))
+            }
+
+            let preAuthData = PayonePreAuthData(pseudoCardPAN: response.pseudoCardPAN, lastname: response.lastname)
+            // swiftlint:disable:next force_try
+            request.httpBody = try! JSONEncoder().encode(preAuthData)
+
+            project.perform(request) { (_ result: Result<PayonePreAuthResult, SnabbleError>) in
+                completion(result)
+            }
+        }
+    }
+
+    private func getPreAuthStatus(for project: Project, _ link: Link, completion: @escaping (Result<PayonePreAuthStatusResult, SnabbleError>) -> Void) {
+        project.request(.get, link.href, timeout: 2) { request in
+            guard var request = request else {
+                return completion(Result.failure(SnabbleError.noRequest))
+            }
+
+            request.cachePolicy = .reloadIgnoringLocalAndRemoteCacheData
+            project.perform(request) { (_ result: Result<PayonePreAuthStatusResult, SnabbleError>) in
                 completion(result)
             }
         }

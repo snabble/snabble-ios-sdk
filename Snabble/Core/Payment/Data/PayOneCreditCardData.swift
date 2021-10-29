@@ -30,10 +30,11 @@ struct PayoneCreditCardData: Codable, EncryptedPaymentData, Equatable, BrandedCr
     private struct PayoneOrigin: PaymentRequestOrigin {
         let pseudoCardPAN: String
         let name: String
+        let userID: String
     }
 
-    init?(gatewayCert: Data?, response: PayoneResponse, projectId: Identifier<Project>) {
-        let requestOrigin = PayoneOrigin(pseudoCardPAN: "", name: "")
+    init?(gatewayCert: Data?, response: PayoneResponse, preAuthResult: PayonePreAuthResult, projectId: Identifier<Project>) {
+        let requestOrigin = PayoneOrigin(pseudoCardPAN: response.pseudoCardPAN, name: response.lastname, userID: preAuthResult.userID)
 
         guard
             let encrypter = PaymentDataEncrypter(gatewayCert),
@@ -78,9 +79,9 @@ struct PayoneResponse {
     let maskedCardPAN: String
     let brand: CreditCardBrand
     let cardExpireDate: String // (YYMM)
-    let lastName: String
+    let lastname: String
 
-    init?(response: [String: Any], lastName: String) {
+    init?(response: [String: Any], lastname: String) {
         guard
             let status = response["status"] as? String,
             status == "VALID",
@@ -96,7 +97,9 @@ struct PayoneResponse {
         self.pseudoCardPAN = pseudoCardPAN
         self.maskedCardPAN = maskedCardPAN
         self.brand = brand
-        self.cardExpireDate = cardexpiredate
-        self.lastName = lastName
+        self.lastname = lastname
+
+        // cardexpiredate is YYMM, convert to MM/YY
+        self.cardExpireDate = cardexpiredate.suffix(2) + "/" + cardexpiredate.prefix(2)
     }
 }
