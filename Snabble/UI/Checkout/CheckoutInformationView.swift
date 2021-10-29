@@ -17,36 +17,36 @@ final class CheckoutInformationView: UIView {
     private(set) weak var textLabel: UILabel?
     private(set) weak var button: UIButton?
 
+    private weak var stackView: UIStackView?
+
     override init(frame: CGRect) {
         let textLabel = UILabel()
-        textLabel.translatesAutoresizingMaskIntoConstraints = false
         textLabel.textColor = .label
         textLabel.numberOfLines = 0
         textLabel.font = .systemFont(ofSize: 13)
 
         let button = UIButton(type: .system)
-        button.translatesAutoresizingMaskIntoConstraints = false
         button.setTitleColor(.systemRed, for: .normal)
-        button.titleLabel?.font = .systemFont(ofSize: 13)
+        button.titleLabel?.font = .systemFont(ofSize: 13, weight: .medium)
+
+        let stackView = UIStackView(arrangedSubviews: [textLabel, button])
+        stackView.translatesAutoresizingMaskIntoConstraints = false
+        stackView.spacing = 4
+        stackView.axis = .vertical
+        stackView.alignment = .leading
 
         super.init(frame: frame)
 
-        addSubview(textLabel)
-        addSubview(button)
-
+        addSubview(stackView)
+        self.stackView = stackView
         self.textLabel = textLabel
         self.button = button
 
         NSLayoutConstraint.activate([
-            textLabel.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 16),
-            trailingAnchor.constraint(equalTo: textLabel.trailingAnchor, constant: 16),
-
-            button.leadingAnchor.constraint(equalTo: textLabel.leadingAnchor),
-            trailingAnchor.constraint(greaterThanOrEqualTo: button.trailingAnchor, constant: 16),
-
-            textLabel.topAnchor.constraint(equalTo: topAnchor, constant: 16),
-            button.topAnchor.constraint(equalTo: textLabel.bottomAnchor, constant: 8),
-            bottomAnchor.constraint(greaterThanOrEqualTo: button.bottomAnchor, constant: 16)
+            stackView.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 16),
+            trailingAnchor.constraint(equalTo: stackView.trailingAnchor, constant: 16),
+            stackView.topAnchor.constraint(equalTo: topAnchor, constant: 16),
+            bottomAnchor.constraint(greaterThanOrEqualTo: stackView.bottomAnchor, constant: 16)
         ])
     }
 
@@ -57,6 +57,7 @@ final class CheckoutInformationView: UIView {
     func configure(with viewModel: CheckoutInformationViewModel) {
         textLabel?.text = viewModel.text
         button?.setTitle(viewModel.actionTitle, for: .normal)
+        button?.isHidden = viewModel.actionTitle == nil
     }
 }
 

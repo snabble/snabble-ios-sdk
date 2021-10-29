@@ -59,11 +59,12 @@ extension CheckoutStep {
         image = nil
     }
 
-    init(information: String) {
-        text = information
+    init(text: String, actionTitle: String? = nil) {
+        self.text = text
+        self.actionTitle = actionTitle
+
         status = nil
         detailText = nil
-        actionTitle = nil
         image = nil
     }
 }
