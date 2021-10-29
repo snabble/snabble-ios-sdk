@@ -119,7 +119,7 @@ public struct Shop: Codable, Identifiable {
     }
 
     // only used for unit tests!
-    public init(id: Identifier<Shop>, projectId: Identifier<Project>) {
+    internal init(id: Identifier<Shop>, projectId: Identifier<Project>) {
         self.id = id
         self.name = "Snabble Shop"
         self.projectId = projectId
