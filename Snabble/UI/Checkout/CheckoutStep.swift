@@ -47,15 +47,15 @@ extension CheckoutStep {
             actionTitle = nil
         case .failure:
             status = .failure
-            detailText = "Deine Zahlung konnte nicht durchgeführt werden. Versuche es erneut oder wähle ein anderes Bezahlverfahren."
-            actionTitle = "Erneut versuchen"
+            detailText = L10n.Snabble.PaymentStatus.Payment.error
+            actionTitle = L10n.Snabble.PaymentStatus.Payment.tryAgain
         case .success:
             status = .success
             detailText = nil
             actionTitle = nil
         }
 
-        text = "Bezahlung"
+        text = L10n.Snabble.PaymentStatus.Payment.title
         image = nil
     }
 
