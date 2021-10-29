@@ -9,7 +9,7 @@ import Foundation
 
 class CheckoutStepsViewModel {
     var headerViewModel: CheckoutHeaderViewModel {
-        CheckoutStepStatus.failure
+        CheckoutStepStatus.success
     }
 
     var steps: [CheckoutStepViewModel] {

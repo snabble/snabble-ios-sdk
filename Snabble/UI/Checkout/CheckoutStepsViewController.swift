@@ -11,18 +11,21 @@ import UIKit
 public final class CheckoutStepsViewController: UIViewController {
     let viewModel: CheckoutStepsViewModel
 
-    private(set) weak var scrollView: UIScrollView?
     private(set) weak var tableView: UITableView?
-
     private(set) weak var headerView: CheckoutHeaderView?
-    private(set) weak var stepsStackView: UIStackView?
     private(set) weak var doneButton: UIButton?
 
-    public let shop: Shop
+    private weak var ratingViewController: CheckoutRatingViewController?
 
     public weak var analyticsDelegate: AnalyticsDelegate?
 
-    private weak var ratingViewController: CheckoutRatingViewController?
+    var dataSource: UITableViewViewArrayDataSource<CheckoutStepViewModel, CheckoutStepTableViewCell>? {
+        didSet {
+            tableView?.dataSource = dataSource
+        }
+    }
+
+    public let shop: Shop
 
     public init(shop: Shop) {
         self.shop = shop
@@ -45,9 +48,8 @@ public final class CheckoutStepsViewController: UIViewController {
         }
         let tableView = UITableView(frame: view.bounds, style: style)
         tableView.translatesAutoresizingMaskIntoConstraints = false
-        tableView.dataSource = self
         tableView.estimatedRowHeight = 44
-        tableView.register(UITableViewCell.self, forCellReuseIdentifier: "identifier")
+        tableView.register(CheckoutStepTableViewCell.self)
         tableView.contentInset = .init(top: 0, left: 0, bottom: 48 + 16 + 16, right: 0)
 
         view.addSubview(tableView)
@@ -93,18 +95,15 @@ public final class CheckoutStepsViewController: UIViewController {
 
     override public func viewDidLoad() {
         super.viewDidLoad()
-        viewModel.steps
-            .map { stepViewModel -> UIView in
-                let view = CheckoutStepView()
-                view.configure(with: stepViewModel)
-                return view
-            }
-            .forEach { [weak self] stepView in
-                self?.stepsStackView?.addArrangedSubview(stepView)
-            }
-
         headerView?.configure(with: viewModel.headerViewModel)
         tableView?.updateHeaderViews()
+
+        dataSource = UITableViewViewArrayDataSource<CheckoutStepViewModel, CheckoutStepTableViewCell>(
+            items: viewModel.steps,
+            configure: { item, cell, _ in
+                cell.stepView?.configure(with: item)
+            }
+        )
     }
 
     public override func viewWillLayoutSubviews() {
@@ -115,22 +114,6 @@ public final class CheckoutStepsViewController: UIViewController {
     @objc private func doneButtonTouchedUpInside(_ sender: UIButton) {
         // warning: TBD
         analyticsDelegate?.track(.checkoutStepsClosed)
-    }
-}
-
-extension CheckoutStepsViewController: UITableViewDataSource {
-    public func numberOfSections(in tableView: UITableView) -> Int {
-        1
-    }
-
-    public func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        10
-    }
-
-    public func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: "identifier", for: indexPath)
-        cell.textLabel?.text = "foobar"
-        return cell
     }
 }
 
