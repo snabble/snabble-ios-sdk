@@ -19,7 +19,8 @@ public final class CheckoutStepsViewController: UIViewController {
 
     public weak var analyticsDelegate: AnalyticsDelegate?
 
-    typealias CellProvider = (_ tableView: UITableView, _ indexPath: IndexPath, _ itemIdentifier: CheckoutStep) -> UITableViewCell?
+    private typealias ItemIdentifierType = CheckoutStep
+    private typealias CellProvider = (_ tableView: UITableView, _ indexPath: IndexPath, _ itemIdentifier: ItemIdentifierType) -> UITableViewCell?
 
     private var cellProvider: CellProvider = { tableView, indexPath, step in
         switch step.kind {
@@ -35,13 +36,13 @@ public final class CheckoutStepsViewController: UIViewController {
         }
     }
 
-    lazy private var arrayDataSource = UITableViewViewArrayDataSource<CheckoutStep>(
+    lazy private var arrayDataSource = UITableViewViewArrayDataSource<ItemIdentifierType>(
         tableView: tableView!,
         cellProvider: cellProvider
     )
 
     @available(iOS 13.0, *)
-    lazy private var diffableDataSource = UITableViewDiffableDataSource<Int, CheckoutStep>(
+    lazy private var diffableDataSource = UITableViewDiffableDataSource<Int, ItemIdentifierType>(
         tableView: tableView!,
         cellProvider: cellProvider
     )
@@ -125,7 +126,7 @@ public final class CheckoutStepsViewController: UIViewController {
         } else {
             tableView?.dataSource = arrayDataSource
         }
-        tableView?.dataSource?.update(with: viewModel.steps, animate: false)
+        update(with: viewModel.steps, animate: false)
     }
 
     public override func viewWillLayoutSubviews() {
@@ -136,6 +137,19 @@ public final class CheckoutStepsViewController: UIViewController {
     @objc private func doneButtonTouchedUpInside(_ sender: UIButton) {
         // warning: TBD
         analyticsDelegate?.track(.checkoutStepsClosed)
+    }
+
+    private func update(with steps: [ItemIdentifierType], animate: Bool = true) {
+        if #available(iOS 13.0, *), let dataSource = tableView?.dataSource as? UITableViewDiffableDataSource<Int, ItemIdentifierType> {
+            var snapshot = NSDiffableDataSourceSnapshot<Int, ItemIdentifierType>()
+            snapshot.appendSections([0])
+            snapshot.appendItems(steps, toSection: 0)
+            dataSource.apply(snapshot, animatingDifferences: animate)
+        } else if let dataSource = tableView?.dataSource as? UITableViewViewArrayDataSource<ItemIdentifierType> {
+            dataSource.apply(steps)
+        } else {
+            fatalError("dataSource cannot be updated")
+        }
     }
 }
 
@@ -149,20 +163,5 @@ private extension UITableView {
         guard let header = header else { return }
         let fittingSize = CGSize(width: bounds.width - (safeAreaInsets.left + safeAreaInsets.right), height: 0)
         header.frame.size = header.systemLayoutSizeFitting(fittingSize, withHorizontalFittingPriority: .required, verticalFittingPriority: .fittingSizeLevel)
-    }
-}
-
-private extension UITableViewDataSource {
-    func update(with steps: [CheckoutStep], animate: Bool = true) {
-        if #available(iOS 13.0, *), let dataSource = self as? UITableViewDiffableDataSource<Int, CheckoutStep> {
-            var snapshot = NSDiffableDataSourceSnapshot<Int, CheckoutStep>()
-            snapshot.appendSections([0])
-            snapshot.appendItems(steps, toSection: 0)
-            dataSource.apply(snapshot, animatingDifferences: animate)
-        } else if let dataSource = self as? UITableViewViewArrayDataSource<CheckoutStep> {
-            dataSource.apply(steps)
-        } else {
-            fatalError("dataSource cannot be updated")
-        }
     }
 }
