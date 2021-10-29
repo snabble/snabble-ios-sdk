@@ -1,5 +1,3 @@
-"PaymentDone.Rating.title" = "Did you like shopping with Snabble?";
-
 "release.safety.catch" = "Please remove the bottle's security device (if present) at the designated station at the exit.";
 
 "Shopping.title" = "Shopping";
@@ -41,9 +39,9 @@
 /* ********* Snabble ********* */
 "Snabble.Cancel" = "Cancel";
 
-"Snabble.CC.3dsecureHint.retailer" = "Enter your data here. Then we will redirect you to your bank to confirm your data. Here we reserve 1 € (for %@) and book the money back directly.";
+"Snabble.CC.3dsecureHint.retailer" = "Enter your data here. We will then forward you to your bank to confirm your details. We reserve 1 € (for %@) and book the money back immediately.";
 
-"Snabble.CC.3dsecureHint.retailerWithPrice" = "Enter your data here. Then we will redirect you to your bank to confirm your data. Here we reserve %@ (for %@) and book the money back directly.";
+"Snabble.CC.3dsecureHint.retailerWithPrice" = "Enter your data here. We will then forward you to your bank to confirm your details. We reserve %@ (for %@) and book the money back immediately.";
 
 "Snabble.CC.cardNumber" = "Card number";
 
@@ -266,6 +264,18 @@
 "Snabble.PaymentStatus.Tobacco.message" = "Please remove your cigarettes.";
 
 "Snabble.PaymentStatus.Tobacco.title" = "Cigarette distribution";
+
+"Snabble.Payone.cardNumber" = "Card Number";
+
+"Snabble.Payone.cvc" = "Card Security Code (CVV)";
+
+"Snabble.Payone.expireMonth" = "Expiry Month (MM)";
+
+"Snabble.Payone.expireYear" = "Expiry Year (YYYY)";
+
+"Snabble.Payone.incompleteForm" = "Please enter all required data.";
+
+"Snabble.Payone.Lastname" = "Last Name";
 
 "Snabble.pleaseWait" = "Please wait…";
 

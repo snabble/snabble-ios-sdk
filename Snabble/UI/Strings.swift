@@ -11,13 +11,6 @@ import Foundation
 // swiftlint:disable nesting type_body_length type_name vertical_whitespace_opening_braces
 public enum L10n {
 
-  public enum PaymentDone {
-    public enum Rating {
-      /// Did you like shopping with Snabble?
-      public static var title: String { return L10n.tr("SnabbleLocalizable", "PaymentDone.Rating.title") }
-    }
-  }
-
   public enum Shopping {
     /// Shopping
     public static var title: String { return L10n.tr("SnabbleLocalizable", "Shopping.title") }
@@ -94,11 +87,11 @@ public enum L10n {
       /// Valid until
       public static var validUntil: String { return L10n.tr("SnabbleLocalizable", "Snabble.CC.validUntil") }
       public enum _3dsecureHint {
-        /// Enter your data here. Then we will redirect you to your bank to confirm your data. Here we reserve 1 € (for %@) and book the money back directly.
+        /// Enter your data here. We will then forward you to your bank to confirm your details. We reserve 1 € (for %@) and book the money back immediately.
         public static func retailer(_ p1: Any) -> String {
           return L10n.tr("SnabbleLocalizable", "Snabble.CC.3dsecureHint.retailer", String(describing: p1))
         }
-        /// Enter your data here. Then we will redirect you to your bank to confirm your data. Here we reserve %@ (for %@) and book the money back directly.
+        /// Enter your data here. We will then forward you to your bank to confirm your details. We reserve %@ (for %@) and book the money back immediately.
         public static func retailerWithPrice(_ p1: Any, _ p2: Any) -> String {
           return L10n.tr("SnabbleLocalizable", "Snabble.CC.3dsecureHint.retailerWithPrice", String(describing: p1), String(describing: p2))
         }
@@ -335,6 +328,20 @@ public enum L10n {
         /// Cigarette distribution
         public static var title: String { return L10n.tr("SnabbleLocalizable", "Snabble.PaymentStatus.Tobacco.title") }
       }
+    }
+    public enum Payone {
+      /// Card Number
+      public static var cardNumber: String { return L10n.tr("SnabbleLocalizable", "Snabble.Payone.cardNumber") }
+      /// Card Security Code (CVV)
+      public static var cvc: String { return L10n.tr("SnabbleLocalizable", "Snabble.Payone.cvc") }
+      /// Expiry Month (MM)
+      public static var expireMonth: String { return L10n.tr("SnabbleLocalizable", "Snabble.Payone.expireMonth") }
+      /// Expiry Year (YYYY)
+      public static var expireYear: String { return L10n.tr("SnabbleLocalizable", "Snabble.Payone.expireYear") }
+      /// Please enter all required data.
+      public static var incompleteForm: String { return L10n.tr("SnabbleLocalizable", "Snabble.Payone.incompleteForm") }
+      /// Last Name
+      public static var lastname: String { return L10n.tr("SnabbleLocalizable", "Snabble.Payone.Lastname") }
     }
     public enum PostFinanceCard {
       /// Pay now using PostFinance Card

@@ -70,7 +70,7 @@ class SampleViewController: UIViewController {
         SnabbleAPI.setup(apiConfig) {
             // initial config parsed/loaded
             guard let project = SnabbleAPI.projects.first else {
-                fatalError("project initialization failed - make sure APPID and APPSECRET are valid")
+o                fatalError("project initialization failed - make sure APPID and APPSECRET are valid")
             }
 
             // register the project with the UI components

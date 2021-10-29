@@ -23,7 +23,7 @@ struct CheckoutStep {
         if status == nil, detailText == nil, image == nil {
             return .information
         } else {
-            return .default
+            return .defaultt
         }
     }
 }
