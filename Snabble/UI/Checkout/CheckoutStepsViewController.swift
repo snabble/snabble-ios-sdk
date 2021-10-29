@@ -73,6 +73,7 @@ public final class CheckoutStepsViewController: UIViewController {
         tableView.estimatedRowHeight = 44
         tableView.register(CheckoutStepTableViewCell.self)
         tableView.register(CheckoutInformationTableViewCell.self)
+        tableView.allowsSelection = false
         tableView.contentInset = .init(top: 0, left: 0, bottom: 48 + 16 + 16, right: 0)
 
         view.addSubview(tableView)
