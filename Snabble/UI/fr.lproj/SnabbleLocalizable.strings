@@ -265,6 +265,18 @@
 
 "Snabble.PaymentStatus.Tobacco.title" = "Cigarette distribution";
 
+"Snabble.Payone.cardNumber" = "Card Number";
+
+"Snabble.Payone.cvc" = "Card Security Code (CVV)";
+
+"Snabble.Payone.expireMonth" = "Expiry Month (MM)";
+
+"Snabble.Payone.expireYear" = "Expiry Year (YYYY)";
+
+"Snabble.Payone.incompleteForm" = "Please enter all required data.";
+
+"Snabble.Payone.Lastname" = "Last Name";
+
 "Snabble.pleaseWait" = "Merci d’attendre...";
 
 "Snabble.PostFinanceCard.payNow" = "Payer maintenant avec la carte PostFinance";
