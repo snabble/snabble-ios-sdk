@@ -14,7 +14,7 @@ class CheckoutStepsViewModel {
 
     var steps: [PaymentStatus] {
         [
-            .loading, .success, .failure, .failure
+            .loading, .success, .failure
         ]
     }
 }

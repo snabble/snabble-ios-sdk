@@ -8,15 +8,18 @@
 import Foundation
 import UIKit
 
-class UITableViewViewArrayDataSource<T, U: UITableViewCell>: NSObject, UITableViewDataSource where U: ReuseIdentifiable {
-    typealias ConfigureBlock = (_ item: T, _ cell: U, _ index: Int) -> Void
+class UITableViewViewArrayDataSource<T>: NSObject, UITableViewDataSource {
+    typealias CellProvider = (_ tableView: UITableView, _ item: T, _ indexPath: IndexPath) -> UITableViewCell
+
 
     private(set) var items: [T]
-    let configure: ConfigureBlock
+    let cellProvider: CellProvider
+    let tableView: UITableView
 
-    init(items: [T], configure: @escaping ConfigureBlock) {
-        self.items = items
-        self.configure = configure
+    init(tableView: UITableView, cellProvider: @escaping CellProvider) {
+        self.items = []
+        self.cellProvider = cellProvider
+        self.tableView = tableView
         super.init()
     }
 
@@ -32,6 +35,11 @@ class UITableViewViewArrayDataSource<T, U: UITableViewCell>: NSObject, UITableVi
         indexPaths.compactMap { item(at: $0) }
     }
 
+    func apply(_ items: [T]) {
+        self.items = items
+        tableView.reloadData()
+    }
+
     // MARK: TableViewDataSource
 
     func numberOfSections(in tableView: UITableView) -> Int {
@@ -43,10 +51,9 @@ class UITableViewViewArrayDataSource<T, U: UITableViewCell>: NSObject, UITableVi
     }
 
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusable(U.self, for: indexPath)
-        if let item = item(at: indexPath) {
-            configure(item, cell, indexPath.item)
+        guard let item = item(at: indexPath) else {
+            fatalError("unsupported indexPath")
         }
-        return cell
+        return cellProvider(tableView, item, indexPath)
     }
 }

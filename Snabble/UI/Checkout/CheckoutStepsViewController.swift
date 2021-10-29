@@ -19,11 +19,24 @@ public final class CheckoutStepsViewController: UIViewController {
 
     public weak var analyticsDelegate: AnalyticsDelegate?
 
-    var arrayDataSource: UITableViewViewArrayDataSource<PaymentStatus, CheckoutStepTableViewCell>? {
-        didSet {
-            tableView?.dataSource = arrayDataSource
+    lazy private var arrayDataSource = UITableViewViewArrayDataSource<PaymentStatus>(
+        tableView: tableView!,
+        cellProvider: { tableView, status, indexPath in
+            let cell = tableView.dequeueReusable(CheckoutStepTableViewCell.self, for: indexPath)
+            cell.stepView?.configure(with: status)
+            return cell
         }
-    }
+    )
+
+    @available(iOS 13.0, *)
+    lazy private var diffableDataSource = UITableViewDiffableDataSource<Int, PaymentStatus>(
+        tableView: tableView!,
+        cellProvider: { tableView, indexPath, status in
+            let cell = tableView.dequeueReusable(CheckoutStepTableViewCell.self, for: indexPath)
+            cell.stepView?.configure(with: status)
+            return cell
+        }
+    )
 
     public let shop: Shop
 
@@ -98,12 +111,12 @@ public final class CheckoutStepsViewController: UIViewController {
         headerView?.configure(with: viewModel.headerViewModel)
         tableView?.updateHeaderViews()
 
-        arrayDataSource = UITableViewViewArrayDataSource<PaymentStatus, CheckoutStepTableViewCell>(
-            items: viewModel.steps,
-            configure: { item, cell, _ in
-                cell.stepView?.configure(with: item)
-            }
-        )
+        if #available(iOS 13.0, *) {
+            tableView?.dataSource = diffableDataSource
+        } else {
+            tableView?.dataSource = arrayDataSource
+        }
+        tableView?.dataSource?.update(with: viewModel.steps, animate: true)
     }
 
     public override func viewWillLayoutSubviews() {
@@ -127,5 +140,20 @@ private extension UITableView {
         guard let header = header else { return }
         let fittingSize = CGSize(width: bounds.width - (safeAreaInsets.left + safeAreaInsets.right), height: 0)
         header.frame.size = header.systemLayoutSizeFitting(fittingSize, withHorizontalFittingPriority: .required, verticalFittingPriority: .fittingSizeLevel)
+    }
+}
+
+private extension UITableViewDataSource {
+    func update(with status: [PaymentStatus], animate: Bool = true) {
+        if #available(iOS 13.0, *), let dataSource = self as? UITableViewDiffableDataSource<Int, PaymentStatus> {
+            var snapshot = NSDiffableDataSourceSnapshot<Int, PaymentStatus>()
+            snapshot.appendSections([0])
+            snapshot.appendItems(status, toSection: 0)
+            dataSource.apply(snapshot, animatingDifferences: animate)
+        } else if let dataSource = self as? UITableViewViewArrayDataSource<PaymentStatus> {
+            dataSource.apply(status)
+        } else {
+            fatalError("dataSource cannot be updated")
+        }
     }
 }
