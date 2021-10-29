@@ -19,9 +19,9 @@ public final class CheckoutStepsViewController: UIViewController {
 
     public weak var analyticsDelegate: AnalyticsDelegate?
 
-    var dataSource: UITableViewViewArrayDataSource<CheckoutStepViewModel, CheckoutStepTableViewCell>? {
+    var arrayDataSource: UITableViewViewArrayDataSource<PaymentStatus, CheckoutStepTableViewCell>? {
         didSet {
-            tableView?.dataSource = dataSource
+            tableView?.dataSource = arrayDataSource
         }
     }
 
@@ -98,7 +98,7 @@ public final class CheckoutStepsViewController: UIViewController {
         headerView?.configure(with: viewModel.headerViewModel)
         tableView?.updateHeaderViews()
 
-        dataSource = UITableViewViewArrayDataSource<CheckoutStepViewModel, CheckoutStepTableViewCell>(
+        arrayDataSource = UITableViewViewArrayDataSource<PaymentStatus, CheckoutStepTableViewCell>(
             items: viewModel.steps,
             configure: { item, cell, _ in
                 cell.stepView?.configure(with: item)

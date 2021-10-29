@@ -12,12 +12,15 @@ class CheckoutStepsViewModel {
         CheckoutStepStatus.success
     }
 
-    var steps: [CheckoutStepViewModel] {
+    var steps: [PaymentStatus] {
         [
-            CheckoutStepView.Mock.Payment.loading,
-            CheckoutStepView.Mock.Payment.success,
-            CheckoutStepView.Mock.Payment.failure,
-            CheckoutStepView.Mock.Payment.failure
+            .loading, .success, .failure, .failure
         ]
     }
+}
+
+enum PaymentStatus: Hashable {
+    case loading
+    case success
+    case failure
 }
