@@ -10,7 +10,7 @@ import UIKit
 
 protocol CheckoutInformationViewModel {
     var text: String { get }
-    var buttonTitle: String { get }
+    var actionTitle: String? { get }
 }
 
 final class CheckoutInformationView: UIView {
@@ -56,24 +56,27 @@ final class CheckoutInformationView: UIView {
 
     func configure(with viewModel: CheckoutInformationViewModel) {
         textLabel?.text = viewModel.text
-        button?.setTitle(viewModel.buttonTitle, for: .normal)
-    }
-
-    struct ViewModel: CheckoutInformationViewModel {
-        public let text: String
-        public let buttonTitle: String
+        button?.setTitle(viewModel.actionTitle, for: .normal)
     }
 }
 
-extension CheckoutInformationView.ViewModel {
-    static var mock: Self {
-        .init(
-            text: "Möchtest du die Daten deiner girocard sicher in der App speichern, um deinen nächsten Einkauf per Lastschrift zu bezahlen? Die Karte kannst du zukünftig im Geldbeutel lassen.",
-            buttonTitle: "Ja, Daten in der App speichern"
-        )
-    }
-}
+extension CheckoutStep: CheckoutInformationViewModel {}
+
 #if canImport(SwiftUI) && DEBUG
+extension CheckoutInformationView {
+    struct ViewModel: CheckoutInformationViewModel {
+        let text: String
+        let actionTitle: String?
+
+        static var mock: Self {
+            .init(
+                text: "Möchtest du die Daten deiner girocard sicher in der App speichern, um deinen nächsten Einkauf per Lastschrift zu bezahlen? Die Karte kannst du zukünftig im Geldbeutel lassen.",
+                actionTitle: "Ja, Daten in der App speichern"
+            )
+        }
+    }
+}
+
 import SwiftUI
 import AutoLayout_Helper
 

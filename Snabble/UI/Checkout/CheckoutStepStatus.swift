@@ -7,7 +7,7 @@
 
 import Foundation
 
-enum CheckoutStepStatus {
+enum CheckoutStepStatus: Hashable {
     case loading
     case success
     case failure

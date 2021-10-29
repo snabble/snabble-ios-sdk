@@ -12,9 +12,12 @@ class CheckoutStepsViewModel {
         CheckoutStepStatus.success
     }
 
-    var steps: [PaymentStatus] {
+    var steps: [CheckoutStep] {
         [
-            .loading, .success, .failure
+            .init(paymentStatus: .loading),
+            .init(paymentStatus: .failure),
+            .init(paymentStatus: .success),
+            .init(information: "Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet.")
         ]
     }
 }

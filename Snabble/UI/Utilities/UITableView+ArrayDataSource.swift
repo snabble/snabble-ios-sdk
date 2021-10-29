@@ -8,11 +8,11 @@
 import Foundation
 import UIKit
 
-class UITableViewViewArrayDataSource<T>: NSObject, UITableViewDataSource {
-    typealias CellProvider = (_ tableView: UITableView, _ item: T, _ indexPath: IndexPath) -> UITableViewCell
+class UITableViewViewArrayDataSource<ItemIdentifierType>: NSObject, UITableViewDataSource {
+    typealias CellProvider = (_ tableView: UITableView, _ indexPath: IndexPath, _ itemIdentifier: ItemIdentifierType) -> UITableViewCell?
 
 
-    private(set) var items: [T]
+    private(set) var items: [ItemIdentifierType]
     let cellProvider: CellProvider
     let tableView: UITableView
 
@@ -23,7 +23,7 @@ class UITableViewViewArrayDataSource<T>: NSObject, UITableViewDataSource {
         super.init()
     }
 
-    func item(at indexPath: IndexPath) -> T? {
+    func item(at indexPath: IndexPath) -> ItemIdentifierType? {
         if items.count > indexPath.item && indexPath.section == 0 {
             return items[indexPath.item]
         } else {
@@ -31,11 +31,11 @@ class UITableViewViewArrayDataSource<T>: NSObject, UITableViewDataSource {
         }
     }
 
-    func items(at indexPaths: [IndexPath]) -> [T] {
+    func items(at indexPaths: [IndexPath]) -> [ItemIdentifierType] {
         indexPaths.compactMap { item(at: $0) }
     }
 
-    func apply(_ items: [T]) {
+    func apply(_ items: [ItemIdentifierType]) {
         self.items = items
         tableView.reloadData()
     }
@@ -52,8 +52,8 @@ class UITableViewViewArrayDataSource<T>: NSObject, UITableViewDataSource {
 
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         guard let item = item(at: indexPath) else {
-            fatalError("unsupported indexPath")
+            return UITableViewCell()
         }
-        return cellProvider(tableView, item, indexPath)
+        return cellProvider(tableView, indexPath, item) ?? UITableViewCell()
     }
 }

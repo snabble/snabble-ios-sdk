@@ -19,23 +19,31 @@ public final class CheckoutStepsViewController: UIViewController {
 
     public weak var analyticsDelegate: AnalyticsDelegate?
 
-    lazy private var arrayDataSource = UITableViewViewArrayDataSource<PaymentStatus>(
-        tableView: tableView!,
-        cellProvider: { tableView, status, indexPath in
+    typealias CellProvider = (_ tableView: UITableView, _ indexPath: IndexPath, _ itemIdentifier: CheckoutStep) -> UITableViewCell?
+
+    private var cellProvider: CellProvider = { tableView, indexPath, step in
+        switch step.kind {
+        case .default:
             let cell = tableView.dequeueReusable(CheckoutStepTableViewCell.self, for: indexPath)
-            cell.stepView?.configure(with: status)
+            cell.stepView?.configure(with: step)
+            return cell
+
+        case .information:
+            let cell = tableView.dequeueReusable(CheckoutInformationTableViewCell.self, for: indexPath)
+            cell.informationView?.configure(with: step)
             return cell
         }
+    }
+
+    lazy private var arrayDataSource = UITableViewViewArrayDataSource<CheckoutStep>(
+        tableView: tableView!,
+        cellProvider: cellProvider
     )
 
     @available(iOS 13.0, *)
-    lazy private var diffableDataSource = UITableViewDiffableDataSource<Int, PaymentStatus>(
+    lazy private var diffableDataSource = UITableViewDiffableDataSource<Int, CheckoutStep>(
         tableView: tableView!,
-        cellProvider: { tableView, indexPath, status in
-            let cell = tableView.dequeueReusable(CheckoutStepTableViewCell.self, for: indexPath)
-            cell.stepView?.configure(with: status)
-            return cell
-        }
+        cellProvider: cellProvider
     )
 
     public let shop: Shop
@@ -63,6 +71,7 @@ public final class CheckoutStepsViewController: UIViewController {
         tableView.translatesAutoresizingMaskIntoConstraints = false
         tableView.estimatedRowHeight = 44
         tableView.register(CheckoutStepTableViewCell.self)
+        tableView.register(CheckoutInformationTableViewCell.self)
         tableView.contentInset = .init(top: 0, left: 0, bottom: 48 + 16 + 16, right: 0)
 
         view.addSubview(tableView)
@@ -116,7 +125,7 @@ public final class CheckoutStepsViewController: UIViewController {
         } else {
             tableView?.dataSource = arrayDataSource
         }
-        tableView?.dataSource?.update(with: viewModel.steps, animate: true)
+        tableView?.dataSource?.update(with: viewModel.steps, animate: false)
     }
 
     public override func viewWillLayoutSubviews() {
@@ -144,14 +153,14 @@ private extension UITableView {
 }
 
 private extension UITableViewDataSource {
-    func update(with status: [PaymentStatus], animate: Bool = true) {
-        if #available(iOS 13.0, *), let dataSource = self as? UITableViewDiffableDataSource<Int, PaymentStatus> {
-            var snapshot = NSDiffableDataSourceSnapshot<Int, PaymentStatus>()
+    func update(with steps: [CheckoutStep], animate: Bool = true) {
+        if #available(iOS 13.0, *), let dataSource = self as? UITableViewDiffableDataSource<Int, CheckoutStep> {
+            var snapshot = NSDiffableDataSourceSnapshot<Int, CheckoutStep>()
             snapshot.appendSections([0])
-            snapshot.appendItems(status, toSection: 0)
+            snapshot.appendItems(steps, toSection: 0)
             dataSource.apply(snapshot, animatingDifferences: animate)
-        } else if let dataSource = self as? UITableViewViewArrayDataSource<PaymentStatus> {
-            dataSource.apply(status)
+        } else if let dataSource = self as? UITableViewViewArrayDataSource<CheckoutStep> {
+            dataSource.apply(steps)
         } else {
             fatalError("dataSource cannot be updated")
         }
