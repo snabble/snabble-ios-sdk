@@ -39,32 +39,33 @@ extension CheckoutStep: Hashable {
 }
 
 extension CheckoutStep {
-    init(paymentStatus: PaymentStatus) {
-        switch paymentStatus {
-        case .loading:
-            status = .loading
-            detailText = nil
-            actionTitle = nil
-        case .failure:
-            status = .failure
-            detailText = L10n.Snabble.PaymentStatus.Payment.error
-            actionTitle = L10n.Snabble.PaymentStatus.Payment.tryAgain
-        case .success:
-            status = .success
-            detailText = nil
-            actionTitle = nil
-        }
-
-        text = L10n.Snabble.PaymentStatus.Payment.title
-        image = nil
-    }
-
     init(text: String, actionTitle: String? = nil) {
         self.text = text
         self.actionTitle = actionTitle
 
         status = nil
         detailText = nil
+        image = nil
+    }
+}
+
+extension CheckoutStep {
+    init(paymentState: PaymentState) {
+        switch paymentState {
+        case .unknown, .failed, .unauthorized:
+            status = .failure
+            detailText = L10n.Snabble.PaymentStatus.Payment.error
+            actionTitle = L10n.Snabble.PaymentStatus.Payment.tryAgain
+        case .pending, .processing, .transferred:
+            status = .loading
+            detailText = nil
+            actionTitle = nil
+        case .successful:
+            status = .success
+            detailText = nil
+            actionTitle = nil
+        }
+        text = L10n.Snabble.PaymentStatus.Payment.title
         image = nil
     }
 }
