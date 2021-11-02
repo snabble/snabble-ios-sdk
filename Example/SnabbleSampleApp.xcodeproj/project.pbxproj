@@ -143,6 +143,7 @@
 				607FACCD1AFB9204008FA782 /* Frameworks */,
 				607FACCE1AFB9204008FA782 /* Resources */,
 				37A9801FA0D344BA999ED6C1 /* [CP] Embed Pods Frameworks */,
+				E18D963B27311A3200F21217 /* SwiftLint */,
 			);
 			buildRules = (
 			);
@@ -264,6 +265,24 @@
 			shellPath = /bin/sh;
 			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-SnabbleSampleApp/Pods-SnabbleSampleApp-frameworks.sh\"\n";
 			showEnvVarsInLog = 0;
+		};
+		E18D963B27311A3200F21217 /* SwiftLint */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+			);
+			name = SwiftLint;
+			outputFileListPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "if [ \"${CONFIGURATION}\" = \"Debug\" ]; then\n  SWIFTLINT=${PODS_ROOT}/SwiftLint/swiftlint\n\n  if [ -x \"$SWIFTLINT\" ]; then\n    \"$SWIFTLINT\"\n    (cd ..; \"$SWIFTLINT\")\n  fi\nfi\n";
 		};
 /* End PBXShellScriptBuildPhase section */
 

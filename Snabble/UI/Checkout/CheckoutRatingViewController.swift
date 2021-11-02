@@ -9,8 +9,6 @@ import Foundation
 import UIKit
 import SDCAlertView
 import StoreKit
-import Snabble
-import StoreKit
 
 final class CheckoutRatingViewController: UIViewController {
     private(set) weak var textLabel: UILabel?

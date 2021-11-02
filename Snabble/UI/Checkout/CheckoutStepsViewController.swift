@@ -36,13 +36,13 @@ public final class CheckoutStepsViewController: UIViewController {
         }
     }
 
-    lazy private var arrayDataSource = UITableViewViewArrayDataSource<ItemIdentifierType>(
+    private lazy var arrayDataSource = UITableViewViewArrayDataSource<ItemIdentifierType>(
         tableView: tableView!,
         cellProvider: cellProvider
     )
 
     @available(iOS 13.0, *)
-    lazy private var diffableDataSource = UITableViewDiffableDataSource<Int, ItemIdentifierType>(
+    private lazy var diffableDataSource = UITableViewDiffableDataSource<Int, ItemIdentifierType>(
         tableView: tableView!,
         cellProvider: cellProvider
     )
@@ -130,7 +130,7 @@ public final class CheckoutStepsViewController: UIViewController {
         update(with: viewModel.steps, animate: false)
     }
 
-    public override func viewWillLayoutSubviews() {
+    override public func viewWillLayoutSubviews() {
         super.viewWillLayoutSubviews()
         tableView?.updateHeaderViews()
     }

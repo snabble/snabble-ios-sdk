@@ -11,7 +11,6 @@ import UIKit
 class UITableViewViewArrayDataSource<ItemIdentifierType>: NSObject, UITableViewDataSource {
     typealias CellProvider = (_ tableView: UITableView, _ indexPath: IndexPath, _ itemIdentifier: ItemIdentifierType) -> UITableViewCell?
 
-
     private(set) var items: [ItemIdentifierType]
     let cellProvider: CellProvider
     let tableView: UITableView

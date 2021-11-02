@@ -8,7 +8,7 @@
 import Foundation
 import UIKit
 
-public protocol ReuseIdentifiable: class {
+public protocol ReuseIdentifiable: AnyObject {
     static var reuseIdentifier: String { get }
 }
 
@@ -24,6 +24,7 @@ public extension UITableView {
     }
 
     func dequeueReusable<Cell>(_ type: Cell.Type, for indexPath: IndexPath) -> Cell where Cell: ReuseIdentifiable, Cell: UITableViewCell {
+        // swiftlint:disable:next force_cast
         dequeueReusableCell(withIdentifier: Cell.reuseIdentifier, for: indexPath) as! Cell
     }
 
@@ -45,6 +46,7 @@ public extension UICollectionView {
     }
 
     func dequeueReusable<Cell>(_ type: Cell.Type, for indexPath: IndexPath) -> Cell where Cell: ReuseIdentifiable, Cell: UICollectionViewCell {
+        // swiftlint:disable:next force_cast
         dequeueReusableCell(withReuseIdentifier: Cell.reuseIdentifier, for: indexPath) as! Cell
     }
 
@@ -53,6 +55,7 @@ public extension UICollectionView {
     }
 
     func dequeueReusable<SupplementaryView>(ofKind kind: String, withType type: SupplementaryView.Type, for indexPath: IndexPath) -> SupplementaryView where SupplementaryView: ReuseIdentifiable, SupplementaryView: UICollectionReusableView {
+        // swiftlint:disable:next force_cast
         dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: SupplementaryView.reuseIdentifier, for: indexPath) as! SupplementaryView
     }
 }

@@ -80,8 +80,7 @@ extension Identifier: CustomStringConvertible {
 // MARK: - Equatable
 
 extension Identifier: Equatable {
-    static public func == (lhs: Identifier, rhs: Identifier) -> Bool {
+    public static func == (lhs: Identifier, rhs: Identifier) -> Bool {
         lhs.rawValue == rhs.rawValue
     }
 }
-
