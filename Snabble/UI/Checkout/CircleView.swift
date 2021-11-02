@@ -10,40 +10,14 @@ import UIKit
 import QuartzCore
 
 class CircleView: UIView {
-
-    var circleColor: UIColor? = .clear {
-        didSet {
-            shapeLayer?.fillColor = circleColor?.cgColor
-        }
-    }
-
-    override class var layerClass: AnyClass {
-        CAShapeLayer.self
-    }
-
-    private var shapeLayer: CAShapeLayer? {
-        layer as? CAShapeLayer
-    }
-
-    override func didMoveToSuperview() {
-        super.didMoveToSuperview()
-
-        shapeLayer?.fillColor = circleColor?.cgColor
-
-        clipsToBounds = false
-        layer.masksToBounds = false
-    }
-
     override func layoutSubviews() {
-        updateShapeLayerFrame()
+        super.layoutSubviews()
+        updateCornerRadius()
     }
 
-    func updateShapeLayerFrame() {
+    private func updateCornerRadius() {
         let squareSize = min(frame.size.width, frame.size.height)
-        var rect = CGRect(origin: .zero, size: CGSize(width: squareSize, height: squareSize))
-        rect.origin.x = floor((frame.size.width - squareSize) * 0.5)
-        rect.origin.y = floor((frame.size.height - squareSize) * 0.5)
-        shapeLayer?.path = UIBezierPath(ovalIn: rect).cgPath
+        layer.cornerRadius = squareSize / 2
     }
 }
 
@@ -57,7 +31,7 @@ public struct CircleView_Previews: PreviewProvider {
         Group {
             UIViewPreview {
                 let view = CircleView(frame: .zero)
-                view.circleColor = .red
+                view.backgroundColor = .red
                 return view
             }.previewLayout(.fixed(width: 300, height: 300))
                 .preferredColorScheme(.light)

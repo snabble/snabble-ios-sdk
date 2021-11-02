@@ -122,4 +122,10 @@ public enum AnalyticsEvent {
 
     /// a coupon was deleted
     case couponDeleted
+
+    /// checkout rating has been submitted
+    case ratingSubmitted(value: Int)
+
+    /// closed checkoutSteps
+    case checkoutStepsClosed
 }

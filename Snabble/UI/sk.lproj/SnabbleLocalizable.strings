@@ -1,7 +1,3 @@
-"PaymentDone.Rating.thanks" = "Ďakujem!";
-
-"PaymentDone.Rating.title" = "Páčil sa ti nákup so Snabble?";
-
 "release.safety.catch" = "Prosím, odstráň z fľaše zámok (ak je nasadený) pri východe na mieste, ktoré je na to určené.";
 
 "Shopping.title" = "Nakúpiť";
@@ -43,9 +39,9 @@
 /* ********* Snabble ********* */
 "Snabble.Cancel" = "Zrušiť";
 
-"Snabble.CC.3dsecureHint.retailer" = "Za účelom overenia kreditnej karty budeš po zadaní údajov presmerovaný/presmerovaná na tvoju banku. Tam budeš požiadaný/-á o súhlas s platbou 1,00 € pre %@. Po súhlase ti bude suma okamžite opäť pripísaná na účet.";
+"Snabble.CC.3dsecureHint.retailer" = "Zadaj svoje údaje tu. Následne ťa presmerujeme do tvojej banky za účelom potvrdenia tvojich údajov. Dovtedy si rezervujeme 1 € (na %@), a potom ti budú peniaze opäť priamo pripísané.";
 
-"Snabble.CC.3dsecureHint.retailerWithPrice" = "Za účelom overenia kreditnej karty budeš po zadaní údajov presmerovaný/presmerovaná na tvoju banku. Tam budeš požiadaný/-á o súhlas so zaplatením %@ pre %@. Po súhlase ti bude suma okamžite opäť pripísaná na účet.";
+"Snabble.CC.3dsecureHint.retailerWithPrice" = "Zadaj svoje údaje tu. Následne ťa presmerujeme do tvojej banky za účelom potvrdenia tvojich údajov. Dovtedy si rezervujeme %@ (na %@), a potom ti budú peniaze opäť priamo pripísané.";
 
 "Snabble.CC.cardNumber" = "Číslo karty";
 
@@ -241,6 +237,10 @@
 
 "Snabble.PaymentStatus.Payment.tryAgain" = "Skúsiť znovu";
 
+"Snabble.PaymentStatus.Rating.send" = "Odoslať";
+
+"Snabble.PaymentStatus.Rating.title" = "What was not good?";
+
 "Snabble.PaymentStatus.Ratings.thanks" = "Ďakujem!";
 
 "Snabble.PaymentStatus.Ratings.title" = "Páčilo sa ti nakupovanie?";
@@ -264,6 +264,18 @@
 "Snabble.PaymentStatus.Tobacco.message" = "Zober si svoje cigarety, prosím.";
 
 "Snabble.PaymentStatus.Tobacco.title" = "Vydávanie cigariet";
+
+"Snabble.Payone.cardNumber" = "Card Number";
+
+"Snabble.Payone.cvc" = "Card Security Code (CVV)";
+
+"Snabble.Payone.expireMonth" = "Expiry Month (MM)";
+
+"Snabble.Payone.expireYear" = "Expiry Year (YYYY)";
+
+"Snabble.Payone.incompleteForm" = "Please enter all required data.";
+
+"Snabble.Payone.Lastname" = "Last Name";
 
 "Snabble.pleaseWait" = "Čakaj, prosím...";
 

@@ -76,3 +76,11 @@ extension Identifier: CustomStringConvertible {
         String(describing: rawValue)
     }
 }
+
+// MARK: - Equatable
+
+extension Identifier: Equatable {
+    public static func == (lhs: Identifier, rhs: Identifier) -> Bool {
+        lhs.rawValue == rhs.rawValue
+    }
+}

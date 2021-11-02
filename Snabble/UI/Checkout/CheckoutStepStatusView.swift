@@ -21,10 +21,10 @@ final class CheckoutStepStatusView: UIView {
 
     var circleColor: UIColor? {
         get {
-            circleView?.circleColor
+            circleView?.backgroundColor
         }
         set {
-            circleView?.circleColor = newValue
+            circleView?.backgroundColor = newValue
         }
     }
 
@@ -47,8 +47,6 @@ final class CheckoutStepStatusView: UIView {
         imageView.tintColor = .white
 
         super.init(frame: frame)
-
-        backgroundColor = .systemBackground
 
         addSubview(circleView)
         addSubview(activityIndicatorView)
@@ -93,10 +91,10 @@ final class CheckoutStepStatusView: UIView {
         imageView?.image = viewModel.image
 
         if viewModel.isLoading {
-            circleView?.circleColor = circleColor ?? viewModel.circleColor
+            circleView?.backgroundColor = circleColor ?? viewModel.circleColor
             activityIndicatorView?.startAnimating()
         } else {
-            circleView?.circleColor = viewModel.circleColor
+            circleView?.backgroundColor = viewModel.circleColor
             activityIndicatorView?.stopAnimating()
         }
     }

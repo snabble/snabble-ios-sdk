@@ -1,7 +1,3 @@
-"PaymentDone.Rating.thanks" = "Köszönjük!";
-
-"PaymentDone.Rating.title" = "Milyen volt a Snabble-lel végzett bevásárlásod?";
-
 "release.safety.catch" = "Kérjük, hogy a kijáratnál, az arra kijelölt állomáson vedd le a palacknyak-biztosítót (ha van).";
 
 "Shopping.title" = "Bevásárlás";
@@ -43,9 +39,9 @@
 /* ********* Snabble ********* */
 "Snabble.Cancel" = "Mégsem";
 
-"Snabble.CC.3dsecureHint.retailer" = "A hitelkártyád azonosítása érdekében az adatok bevitelét követően átlépsz a bankodhoz. Ott a rendszer arra kér, hogy 1,00 €-t fizess a %@ részére. Hozzájárulásodat követően ezt az összeget azonnal jóváírjuk.";
+"Snabble.CC.3dsecureHint.retailer" = "Itt add meg az adataidat. Ezután átirányítunk a bankodhoz, hogy megerősítse az adataidat. Ekkor zárolunk 1 eurót (%@-re), majd a pénzt közvetlenül visszautaljuk.";
 
-"Snabble.CC.3dsecureHint.retailerWithPrice" = "A hitelkártyád azonosítása érdekében az adatok bevitelét követően átlépsz a bankodhoz. Ott a rendszer arra kér, hogy fizess %@-t a %@ részére. Hozzájárulásodat követően ezt az összeget azonnal jóváírjuk.";
+"Snabble.CC.3dsecureHint.retailerWithPrice" = "Itt add meg az adataidat. Ezután átirányítunk a bankodhoz, hogy megerősítse az adataidat. Ekkor zárolunk %@-t (%@-re), majd a pénzt közvetlenül visszautaljuk.";
 
 "Snabble.CC.cardNumber" = "Kártyaszám";
 
@@ -241,6 +237,10 @@
 
 "Snabble.PaymentStatus.Payment.tryAgain" = "Megpróbálom újra";
 
+"Snabble.PaymentStatus.Rating.send" = "Elküldés";
+
+"Snabble.PaymentStatus.Rating.title" = "What was not good?";
+
 "Snabble.PaymentStatus.Ratings.thanks" = "Köszönjük!";
 
 "Snabble.PaymentStatus.Ratings.title" = "Tetszett a vásárlás?";
@@ -264,6 +264,18 @@
 "Snabble.PaymentStatus.Tobacco.message" = "Vedd ki a cigarettáidat";
 
 "Snabble.PaymentStatus.Tobacco.title" = "Cigaretta kiadása";
+
+"Snabble.Payone.cardNumber" = "Card Number";
+
+"Snabble.Payone.cvc" = "Card Security Code (CVV)";
+
+"Snabble.Payone.expireMonth" = "Expiry Month (MM)";
+
+"Snabble.Payone.expireYear" = "Expiry Year (YYYY)";
+
+"Snabble.Payone.incompleteForm" = "Please enter all required data.";
+
+"Snabble.Payone.Lastname" = "Last Name";
 
 "Snabble.pleaseWait" = "Kérlek, várj...";
 

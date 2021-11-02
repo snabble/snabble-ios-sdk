@@ -12,7 +12,7 @@ protocol CheckoutStepViewModel {
     var statusViewModel: CheckoutStepStatusViewModel { get }
     var text: String { get }
     var detailText: String? { get }
-    var buttonTitle: String? { get }
+    var actionTitle: String? { get }
     var image: UIImage? { get }
 }
 
@@ -54,12 +54,10 @@ final class CheckoutStepView: UIView {
 
         let button = UIButton(type: .system)
         button.setTitleColor(.systemRed, for: .normal)
-        button.titleLabel?.font = .systemFont(ofSize: 13)
+        button.titleLabel?.font = .systemFont(ofSize: 13, weight: .medium)
         button.titleLabel?.textAlignment = .left
 
         super.init(frame: frame)
-
-        backgroundColor = .systemBackground
 
         addSubview(statusView)
         addSubview(stackView)
@@ -87,7 +85,7 @@ final class CheckoutStepView: UIView {
             bottomAnchor.constraint(greaterThanOrEqualTo: statusView.bottomAnchor, constant: 16),
 
             stackView.topAnchor.constraint(equalTo: statusView.topAnchor),
-            bottomAnchor.constraint(greaterThanOrEqualTo: stackView.bottomAnchor, constant: 16)
+            bottomAnchor.constraint(equalTo: stackView.bottomAnchor, constant: 16)
         ])
     }
 
@@ -100,7 +98,7 @@ final class CheckoutStepView: UIView {
         textLabel?.text = viewModel.text
 
         detailTextLabel?.text = viewModel.detailText
-        button?.setTitle(viewModel.buttonTitle, for: .normal)
+        button?.setTitle(viewModel.actionTitle, for: .normal)
         imageView?.image = viewModel.image
 
         detailTextLabel?.isHidden = detailTextLabel?.text == nil
@@ -109,72 +107,8 @@ final class CheckoutStepView: UIView {
     }
 }
 
-#if canImport(SwiftUI) && DEBUG
-import SwiftUI
-import AutoLayout_Helper
-
-@available(iOS 13, *)
-public struct CheckoutStepView_Previews: PreviewProvider {
-    enum Mock {
-        enum Payment: CheckoutStepViewModel {
-            case loading
-            case success
-            case failure
-
-            public var statusViewModel: CheckoutStepStatusViewModel {
-                switch self {
-                case .loading:
-                    return CheckoutStepStatus.loading
-                case .success:
-                    return CheckoutStepStatus.success
-                case .failure:
-                    return CheckoutStepStatus.failure
-                }
-            }
-
-            public var text: String {
-                "Bezahlung"
-            }
-
-            public var detailText: String? {
-                switch self {
-                case .loading, .success:
-                    return nil
-                case .failure:
-                    return "Deine Zahlung konnte nicht durchgeführt werden. Versuche es erneut oder wähle ein anderes Bezahlverfahren."
-                }
-            }
-
-            public var buttonTitle: String? {
-                switch self {
-                case .loading, .success:
-                    return nil
-                case .failure:
-                    return "Erneut versuchen"
-                }
-            }
-
-            public var image: UIImage? {
-                nil
-            }
-        }
-    }
-
-    public static var previews: some View {
-        Group {
-            UIViewPreview {
-                let view = CheckoutStepView(frame: .zero)
-                view.configure(with: Mock.Payment.failure)
-                return view
-            }.previewLayout(.fixed(width: 200, height: 200))
-                .preferredColorScheme(.dark)
-            UIViewPreview {
-                let view = CheckoutStepView()
-                view.configure(with: Mock.Payment.loading)
-                return view
-            }.previewLayout(.fixed(width: 200, height: 200))
-                .preferredColorScheme(.light)
-        }
+extension CheckoutStep: CheckoutStepViewModel {
+    var statusViewModel: CheckoutStepStatusViewModel {
+        status ?? .loading
     }
 }
-#endif

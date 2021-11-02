@@ -1,7 +1,3 @@
-"PaymentDone.Rating.thanks" = "Danke!";
-
-"PaymentDone.Rating.title" = "Hat dir der Einkauf mit Snabble gefallen?";
-
 "release.safety.catch" = "Bitte entferne (wenn vorhanden) die Flaschenhalssicherung an der dafür vorgesehenen Station am Ausgang.";
 
 "Shopping.title" = "Einkaufen";
@@ -43,9 +39,9 @@
 /* ********* Snabble ********* */
 "Snabble.Cancel" = "Abbrechen";
 
-"Snabble.CC.3dsecureHint.retailer" = "Zur Verifizierung deiner Kreditkarte wirst du nach Eingabe der Daten zu deiner Bank weitergeleitet. Dort wirst du gebeten, einer Zahlung von 1,00 € an %@ zuzustimmen. Der Betrag wird dir nach deiner Zustimmung sofort wieder gutgeschrieben.";
+"Snabble.CC.3dsecureHint.retailer" = "Gib deine Daten hier ein. Anschließend leiten wir dich zu deiner Bank weiter, um deine Daten zu bestätigen. Dabei reservieren wir 1 € (für %@) und buchen das Geld direkt wieder zurück.";
 
-"Snabble.CC.3dsecureHint.retailerWithPrice" = "Zur Verifizierung deiner Kreditkarte wirst du nach Eingabe der Daten zu deiner Bank weitergeleitet. Dort wirst du gebeten, einer Zahlung von %@ an %@ zuzustimmen. Der Betrag wird dir nach deiner Zustimmung sofort wieder gutgeschrieben.";
+"Snabble.CC.3dsecureHint.retailerWithPrice" = "Gib deine Daten hier ein. Anschließend leiten wir dich zu deiner Bank weiter, um deine Daten zu bestätigen. Dabei reservieren wir %@ (für %@) und buchen das Geld direkt wieder zurück.";
 
 "Snabble.CC.cardNumber" = "Kartennummer";
 
@@ -241,6 +237,10 @@
 
 "Snabble.PaymentStatus.Payment.tryAgain" = "Erneut versuchen";
 
+"Snabble.PaymentStatus.Rating.send" = "Abschicken";
+
+"Snabble.PaymentStatus.Rating.title" = "Was war nicht gut?";
+
 "Snabble.PaymentStatus.Ratings.thanks" = "Danke!";
 
 "Snabble.PaymentStatus.Ratings.title" = "Hat dir der Einkauf gefallen?";
@@ -264,6 +264,18 @@
 "Snabble.PaymentStatus.Tobacco.message" = "Bitte entnimm deine Zigaretten.";
 
 "Snabble.PaymentStatus.Tobacco.title" = "Zigarettenausgabe";
+
+"Snabble.Payone.cardNumber" = "Kartennummer";
+
+"Snabble.Payone.cvc" = "Prüfnummer (CVC)";
+
+"Snabble.Payone.expireMonth" = "Ablaufmonat (MM)";
+
+"Snabble.Payone.expireYear" = "Ablaufjahr (JJJJ)";
+
+"Snabble.Payone.incompleteForm" = "Bitte fülle das Formular vollständig aus.";
+
+"Snabble.Payone.Lastname" = "Nachname";
 
 "Snabble.pleaseWait" = "Bitte warten…";
 

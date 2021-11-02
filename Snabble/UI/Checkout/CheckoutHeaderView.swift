@@ -42,16 +42,18 @@ final class CheckoutHeaderView: UIView {
             trailingAnchor.constraint(greaterThanOrEqualTo: statusView.trailingAnchor, constant: 16),
             statusView.centerXAnchor.constraint(equalTo: centerXAnchor),
 
+            statusView.heightAnchor.constraint(equalToConstant: 168),
+
             statusView.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 16).usingPriority(.defaultLow),
             trailingAnchor.constraint(equalTo: statusView.trailingAnchor, constant: 16).usingPriority(.defaultLow),
 
             textLabel.leadingAnchor.constraint(equalTo: leadingAnchor),
             trailingAnchor.constraint(equalTo: textLabel.trailingAnchor),
 
-            statusView.topAnchor.constraint(equalTo: topAnchor),
+            statusView.topAnchor.constraint(equalTo: topAnchor, constant: 16),
             textLabel.topAnchor.constraint(greaterThanOrEqualTo: statusView.bottomAnchor, constant: 8),
             textLabel.topAnchor.constraint(equalTo: statusView.bottomAnchor, constant: 24).usingPriority(.defaultHigh - 1),
-            bottomAnchor.constraint(equalTo: textLabel.bottomAnchor)
+            bottomAnchor.constraint(equalTo: textLabel.bottomAnchor, constant: 16)
         ])
     }
 
