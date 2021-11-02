@@ -342,6 +342,7 @@ public final class PayoneCreditCardEditViewController: UIViewController {
 // MARK: - backend endpoints
 
 extension PayoneCreditCardEditViewController {
+    // get the info we need for the web form / tokenization request
     private func getPayoneTokenization(for project: Project,
                                        _ link: Link?,
                                        completion: @escaping (Result<PayoneTokenization, SnabbleError>) -> Void ) {
@@ -361,6 +362,7 @@ extension PayoneCreditCardEditViewController {
         }
     }
 
+    // given a newly tokenized card, start the pre auth for e.g. 1€
     private func startPayonePreauthorization(for project: Project,
                                              _ link: Link?,
                                              _ response: PayoneResponse,
@@ -385,6 +387,7 @@ extension PayoneCreditCardEditViewController {
         }
     }
 
+    // get the status of a pre auth - we need to poll this until status is either `.successful` or `.failed`
     private func getPreAuthStatus(for project: Project,
                                   _ link: Link,
                                   completion: @escaping (Result<PayonePreAuthStatusResult, SnabbleError>) -> Void) {
@@ -464,6 +467,7 @@ extension PayoneCreditCardEditViewController: WKNavigationDelegate {
             } else if url == preAuthResult.links.redirectError.href {
                 self.finishPreAuth(with: .failed)
             } else if url == preAuthResult.links.redirectBack.href {
+                // start from scratch
                 self.startCreditCardTokenization()
             }
         }

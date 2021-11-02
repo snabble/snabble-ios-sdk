@@ -16,7 +16,7 @@ struct PayoneCreditCardData: Codable, EncryptedPaymentData, Equatable, BrandedCr
 
     // name of this payment method for display in table
     var displayName: String
-    let expirationDate: String
+    let expirationDate: String // as "MM/YY"
 
     let originType = AcceptedOriginType.payonePseudoCardPAN
 
@@ -58,8 +58,8 @@ struct PayoneCreditCardData: Codable, EncryptedPaymentData, Equatable, BrandedCr
         }
 
         guard
-            let expYear = Int(String(self.expirationDate.prefix(2))),
-            let expMonth = Int(String(self.expirationDate.suffix(2)))
+            let expYear = Int(String(self.expirationDate.suffix(2))),
+            let expMonth = Int(String(self.expirationDate.prefix(2)))
         else {
             return false
         }
@@ -78,7 +78,7 @@ struct PayoneResponse {
     let pseudoCardPAN: String
     let maskedCardPAN: String
     let brand: CreditCardBrand
-    let cardExpireDate: String // (YYMM)
+    let cardExpireDate: String // MM/YY
     let lastname: String
 
     init?(response: [String: Any], lastname: String) {
@@ -99,7 +99,7 @@ struct PayoneResponse {
         self.brand = brand
         self.lastname = lastname
 
-        // cardexpiredate is YYMM, convert to MM/YY
+        // raw cardexpiredate is YYMM, convert to MM/YY
         self.cardExpireDate = cardexpiredate.suffix(2) + "/" + cardexpiredate.prefix(2)
     }
 }
