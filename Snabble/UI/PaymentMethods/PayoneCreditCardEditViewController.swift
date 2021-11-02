@@ -21,18 +21,19 @@ import AutoLayout_Helper
 // more docs: https://docs.payone.com/display/public/PLATFORM/Hosted-iFrame+Mode+-+Short+description
 
 public final class PayoneCreditCardEditViewController: UIViewController {
-    @IBOutlet private var containerView: UIView!
-    @IBOutlet private var spinner: UIActivityIndicatorView!
+    private let webViewContainer = UIView()
+    private let spinner = UIActivityIndicatorView(style: .gray)
+    private var webView: WKWebView?
 
-    @IBOutlet private var cardNumberLabel: UILabel!
-    @IBOutlet private var cardNumber: UITextField!
+    private let displayContainer = UIView()
+    private let cardNumberLabel = UILabel()
+    private let cardNumber = UITextField()
 
-    @IBOutlet private var expDateLabel: UILabel!
-    @IBOutlet private var expirationDate: UITextField!
+    private let expDateLabel = UILabel()
+    private let expirationDate = UITextField()
 
-    @IBOutlet private var explanation: UILabel!
+    private let explanation = UILabel()
 
-    private var webView: WKWebView!
     private static let handlerName = "callbackHandler"
 
     private var detail: PaymentMethodDetail?
@@ -53,7 +54,7 @@ public final class PayoneCreditCardEditViewController: UIViewController {
         self.analyticsDelegate = analyticsDelegate
         self.projectId = projectId
 
-        super.init(nibName: nil, bundle: SnabbleBundle.main)
+        super.init(nibName: nil, bundle: nil)
     }
 
     init(_ detail: PaymentMethodDetail, _ analyticsDelegate: AnalyticsDelegate?) {
@@ -76,11 +77,7 @@ public final class PayoneCreditCardEditViewController: UIViewController {
     override public func viewDidLoad() {
         super.viewDidLoad()
 
-        self.setupWebView()
-    }
-
-    override public func viewWillAppear(_ animated: Bool) {
-        super.viewWillAppear(animated)
+        self.setupView()
 
         if let brand = self.brand {
             self.title = brand.displayName
@@ -89,7 +86,8 @@ public final class PayoneCreditCardEditViewController: UIViewController {
         }
 
         if self.ccNumber != nil {
-            self.containerView.isHidden = true
+            self.webViewContainer.isHidden = true
+            self.displayContainer.isHidden = false
 
             self.cardNumber.text = self.ccNumber
             self.expirationDate.text = self.expDate
@@ -102,10 +100,17 @@ public final class PayoneCreditCardEditViewController: UIViewController {
             let deleteButton = UIBarButtonItem(image: trash, style: .plain, target: self, action: #selector(self.deleteButtonTapped(_:)))
             self.navigationItem.rightBarButtonItem = deleteButton
         } else {
-            if self.payoneTokenization == nil {
-                self.startCreditCardTokenization()
-            }
+            self.webViewContainer.isHidden = false
+            self.displayContainer.isHidden = true
+
+            self.startCreditCardTokenization()
         }
+    }
+
+    override public func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+
+        self.analyticsDelegate?.track(.viewPaymentMethodDetail)
     }
 
     // (re)start the tokenization process
@@ -125,7 +130,7 @@ public final class PayoneCreditCardEditViewController: UIViewController {
         self.payoneResponse = nil
         self.pollTimer?.invalidate()
 
-        self.containerView.bringSubviewToFront(self.spinner)
+        self.webViewContainer.bringSubviewToFront(self.spinner)
 
         self.spinner.startAnimating()
 
@@ -135,8 +140,6 @@ public final class PayoneCreditCardEditViewController: UIViewController {
             // oops - somehow we got here for a non-payone tokenization. Bail out.
             showErrorAlert(message: L10n.Snabble.Payment.CreditCard.error, goBack: true)
         }
-
-        self.analyticsDelegate?.track(.viewPaymentMethodDetail)
     }
 
     override public func viewWillDisappear(_ animated: Bool) {
@@ -195,22 +198,89 @@ public final class PayoneCreditCardEditViewController: UIViewController {
         return L10n.Snabble.Cc._3dsecureHint.retailerWithPrice(chargeTotal, name)
     }
 
-    private func setupWebView() {
+    private func setupView() {
+        view.backgroundColor = .systemBackground
+
+        // container for the "display-only" mode
+        displayContainer.translatesAutoresizingMaskIntoConstraints = false
+        view.addSubview(displayContainer)
+        NSLayoutConstraint.activate(displayContainer.constraintsForAnchoringTo(boundsOf: view))
+
+        explanation.translatesAutoresizingMaskIntoConstraints = false
+        explanation.numberOfLines = 0
+        explanation.font = .systemFont(ofSize: 13)
+        displayContainer.addSubview(explanation)
+
+        cardNumberLabel.translatesAutoresizingMaskIntoConstraints = false
+        displayContainer.addSubview(cardNumberLabel)
+
+        cardNumber.translatesAutoresizingMaskIntoConstraints = false
+        cardNumber.isEnabled = false
+        cardNumber.borderStyle = .roundedRect
+        displayContainer.addSubview(cardNumber)
+
+        expDateLabel.translatesAutoresizingMaskIntoConstraints = false
+        displayContainer.addSubview(expDateLabel)
+
+        expirationDate.translatesAutoresizingMaskIntoConstraints = false
+        expirationDate.isEnabled = false
+        expirationDate.borderStyle = .roundedRect
+        displayContainer.addSubview(expirationDate)
+
+        NSLayoutConstraint.activate([
+            explanation.topAnchor.constraint(equalTo: displayContainer.topAnchor, constant: 16),
+            explanation.leadingAnchor.constraint(equalTo: displayContainer.leadingAnchor, constant: 16),
+            explanation.trailingAnchor.constraint(equalTo: displayContainer.trailingAnchor, constant: -16),
+
+            cardNumberLabel.topAnchor.constraint(equalTo: explanation.bottomAnchor, constant: 16),
+            cardNumberLabel.leadingAnchor.constraint(equalTo: displayContainer.leadingAnchor, constant: 16),
+            cardNumberLabel.trailingAnchor.constraint(equalTo: displayContainer.trailingAnchor, constant: -16),
+
+            cardNumber.topAnchor.constraint(equalTo: cardNumberLabel.bottomAnchor, constant: 8),
+            cardNumber.leadingAnchor.constraint(equalTo: displayContainer.leadingAnchor, constant: 16),
+            cardNumber.trailingAnchor.constraint(equalTo: displayContainer.trailingAnchor, constant: -16),
+            cardNumber.heightAnchor.constraint(equalToConstant: 40),
+
+            expDateLabel.topAnchor.constraint(equalTo: cardNumber.bottomAnchor, constant: 16),
+            expDateLabel.leadingAnchor.constraint(equalTo: displayContainer.leadingAnchor, constant: 16),
+            expDateLabel.trailingAnchor.constraint(equalTo: displayContainer.trailingAnchor, constant: -16),
+
+            expirationDate.topAnchor.constraint(equalTo: expDateLabel.bottomAnchor, constant: 8),
+            expirationDate.leadingAnchor.constraint(equalTo: displayContainer.leadingAnchor, constant: 16),
+            expirationDate.trailingAnchor.constraint(equalTo: displayContainer.trailingAnchor, constant: -16),
+            expirationDate.heightAnchor.constraint(equalToConstant: 40)
+        ])
+
+        // container for our webview
+        webViewContainer.translatesAutoresizingMaskIntoConstraints = false
+        self.view.addSubview(webViewContainer)
+        NSLayoutConstraint.activate(webViewContainer.constraintsForAnchoringTo(boundsOf: view))
+
+        let spinner = UIActivityIndicatorView(style: .gray)
+        spinner.translatesAutoresizingMaskIntoConstraints = false
+        webViewContainer.addSubview(spinner)
+        NSLayoutConstraint.activate(spinner.constraintsForCenterIn(boundsOf: webViewContainer))
+
+        setupWebView(in: webViewContainer)
+    }
+
+    private func setupWebView(in containerView: UIView) {
         let contentController = WKUserContentController()
         contentController.add(self, name: Self.handlerName)
 
         let config = WKWebViewConfiguration()
         config.userContentController = contentController
 
-        webView = WKWebView(frame: .zero, configuration: config)
+        let webView = WKWebView(frame: .zero, configuration: config)
         webView.navigationDelegate = self
         webView.isOpaque = false
         webView.backgroundColor = .clear
         webView.translatesAutoresizingMaskIntoConstraints = false
 
-        containerView.addSubview(self.webView)
-
+        containerView.addSubview(webView)
         NSLayoutConstraint.activate(webView.constraintsForAnchoringTo(boundsOf: containerView))
+
+        self.webView = webView
     }
 
     @objc private func deleteButtonTapped(_ sender: Any) {
@@ -260,7 +330,7 @@ public final class PayoneCreditCardEditViewController: UIViewController {
         }
 
         let scaRequest = URLRequest(url: url)
-        self.webView.load(scaRequest)
+        self.webView?.load(scaRequest)
 
         self.payonePreAuthResult = preAuthResult
         self.payoneResponse = response
@@ -463,7 +533,7 @@ extension PayoneCreditCardEditViewController: WKNavigationDelegate {
             if url == preAuthResult.links.redirectSuccess.href {
                 // sca succeeded, we still need to wait for the preAuth status to switch to "success"
                 self.spinner.startAnimating()
-                self.webView.loadHTMLString("", baseURL: nil)
+                webView.loadHTMLString("", baseURL: nil)
             } else if url == preAuthResult.links.redirectError.href {
                 self.finishPreAuth(with: .failed)
             } else if url == preAuthResult.links.redirectBack.href {
