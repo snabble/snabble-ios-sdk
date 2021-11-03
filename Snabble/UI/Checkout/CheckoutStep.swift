@@ -69,3 +69,21 @@ extension CheckoutStep {
         image = nil
     }
 }
+
+extension CheckoutStep {
+    init(fulfillment: Fulfillment) {
+        status = .from(fulfillmentState: fulfillment.state)
+        text = fulfillment.type
+        image = nil
+        detailText = nil
+        actionTitle = nil
+    }
+
+    init(exitToken: ExitToken) {
+        status = .from(exitToken: exitToken)
+        text = L10n.Snabble.PaymentStatus.ExitCode.title
+        image = nil
+        detailText = nil
+        actionTitle = nil
+    }
+}

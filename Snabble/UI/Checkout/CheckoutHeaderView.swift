@@ -85,19 +85,6 @@ extension CheckoutStepStatus: CheckoutHeaderViewModel {
     }
 }
 
-extension CheckoutStepStatus {
-    static func from(paymentState: PaymentState) -> Self {
-        switch paymentState {
-        case .processing, .transferred, .pending:
-            return .loading
-        case .successful:
-            return .success
-        case .failed, .unauthorized, .unknown:
-            return .failure
-        }
-    }
-}
-
 #if canImport(SwiftUI) && DEBUG
 import SwiftUI
 import AutoLayout_Helper

@@ -64,9 +64,16 @@ class CheckoutStepsViewModel {
 
     private func update(with checkoutProcess: CheckoutProcess) {
         headerViewModel = CheckoutStepStatus.from(paymentState: checkoutProcess.paymentState)
-        steps = [
+        var steps: [CheckoutStep] = [
             .init(paymentState: checkoutProcess.paymentState)
         ]
+
+        steps.append(contentsOf: checkoutProcess.fulfillments.map(CheckoutStep.init))
+
+        if let exitToken = checkoutProcess.exitToken {
+            steps.append(CheckoutStep(exitToken: exitToken))
+        }
+        self.steps = steps
     }
 
     private func shouldContinuePolling(for checkoutProcess: CheckoutProcess) -> Bool {
