@@ -296,7 +296,7 @@ public struct ExitToken: Codable {
         case .qr:
             return QRCode.generate(for: exitCode, scale: 4)
         case .code128:
-            return nil // Code128.generate(for: exitCode, scale: 2)
+            return Code128.generate(for: exitCode, scale: 2)
         case .unknown, .ean13, .ean8, .itf14, .code39, .dataMatrix, .pdf417:
             print("unsupported exit code format: \(format)")
             return nil

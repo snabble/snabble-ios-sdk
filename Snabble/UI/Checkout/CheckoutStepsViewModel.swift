@@ -77,20 +77,26 @@ class CheckoutStepsViewModel {
     }
 
     private func shouldContinuePolling(for checkoutProcess: CheckoutProcess) -> Bool {
+        var shouldContinuePolling = true
         switch checkoutProcess.paymentState {
         case .successful, .failed:
-            return false
+            shouldContinuePolling = false
         case .pending:
             let states = Set(checkoutProcess.fulfillments.map { $0.state })
             if FulfillmentState.failureStates.isDisjoint(with: states) == false {
 //                self.paymentFinished(false, process, rawJson)
-                return false
+                shouldContinuePolling = false
             } else {
-                return true
+                shouldContinuePolling = true
             }
         case .transferred, .processing, .unauthorized, .unknown: ()
-            return true
+            shouldContinuePolling = true
         }
+
+        if checkoutProcess.requiresExitToken && checkoutProcess.exitToken?.image == nil {
+            shouldContinuePolling = true
+        }
+        return shouldContinuePolling
     }
 
 //    private func updateView(_ process: CheckoutProcess, _ rawJson: [String: Any]?) -> Bool {

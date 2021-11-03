@@ -82,7 +82,7 @@ extension CheckoutStep {
     init(exitToken: ExitToken) {
         status = .from(exitToken: exitToken)
         text = L10n.Snabble.PaymentStatus.ExitCode.title
-        image = nil
+        image = exitToken.image
         detailText = nil
         actionTitle = nil
     }
