@@ -141,7 +141,7 @@ struct TeleCashCreditCardData: Codable, EncryptedPaymentData, Equatable, Branded
 
         if year > expYear {
             return true
-        } else if month > expMonth {
+        } else if year == expYear && month > expMonth {
             return true
         } else {
             return false

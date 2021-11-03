@@ -58,15 +58,16 @@ struct PayoneCreditCardData: Codable, EncryptedPaymentData, Equatable, BrandedCr
         }
 
         guard
-            let expYear = Int(String(self.expirationDate.suffix(2))),
+            var expYear = Int(String(self.expirationDate.suffix(2))),
             let expMonth = Int(String(self.expirationDate.prefix(2)))
         else {
             return false
         }
 
-        if year > 2000 + expYear {
+        expYear += 2000
+        if year > expYear {
             return true
-        } else if month > expMonth {
+        } else if year == expYear && month > expMonth {
             return true
         } else {
             return false
