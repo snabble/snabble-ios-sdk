@@ -13,31 +13,41 @@ enum PaymentMethodError: Error {
 
 enum PaymentMethodUserData: Codable, Equatable {
     case sepa(SepaData)
-    case creditcard(CreditCardData)
+    case teleCashCreditCard(TeleCashCreditCardData)
     case tegutEmployeeCard(TegutEmployeeData)
     case paydirektAuthorization(PaydirektData)
     case datatransAlias(DatatransData)
     case datatransCardAlias(DatatransCreditCardData)
+    case payoneCreditCard(PayoneCreditCardData)
 
     enum CodingKeys: String, CodingKey {
-        case sepa, creditcard, tegutEmployeeCard, paydirektAuthorization, datatransAlias, datatransCardAlias
+        case sepa
+        case teleCashCreditCard
+        case tegutEmployeeCard
+        case paydirektAuthorization
+        case datatransAlias, datatransCardAlias
+        case payoneCreditCard
+
+        // old and bad name - only used in the migration code below
+        case creditcard
     }
 
     var data: EncryptedPaymentData {
         switch self {
         case .sepa(let data): return data
-        case .creditcard(let data): return data
+        case .teleCashCreditCard(let data): return data
         case .tegutEmployeeCard(let data): return data
         case .paydirektAuthorization(let data): return data
         case .datatransAlias(let data): return data
         case .datatransCardAlias(let data): return data
+        case .payoneCreditCard(let data): return data
         }
     }
 
     var additionalData: [String: String] {
         switch self {
         case .paydirektAuthorization(let data): return data.additionalData
-        case .creditcard(let data): return data.additionalData
+        case .teleCashCreditCard(let data): return data.additionalData
         default: return [:]
         }
     }
@@ -46,8 +56,10 @@ enum PaymentMethodUserData: Codable, Equatable {
         let container = try decoder.container(keyedBy: CodingKeys.self)
         if let sepa = try container.decodeIfPresent(SepaData.self, forKey: .sepa) {
             self = .sepa(sepa)
-        } else if let creditcard = try container.decodeIfPresent(CreditCardData.self, forKey: .creditcard) {
-            self = .creditcard(creditcard)
+        } else if let creditcard = try container.decodeIfPresent(TeleCashCreditCardData.self, forKey: .creditcard) {
+            self = .teleCashCreditCard(creditcard)
+        } else if let creditcard = try container.decodeIfPresent(TeleCashCreditCardData.self, forKey: .teleCashCreditCard) {
+            self = .teleCashCreditCard(creditcard)
         } else if let tegutData = try container.decodeIfPresent(TegutEmployeeData.self, forKey: .tegutEmployeeCard) {
             self = .tegutEmployeeCard(tegutData)
         } else if let paydirektData = try container.decodeIfPresent(PaydirektData.self, forKey: .paydirektAuthorization) {
@@ -56,6 +68,8 @@ enum PaymentMethodUserData: Codable, Equatable {
             self = .datatransAlias(datatransData)
         } else if let datatransCardData = try container.decodeIfPresent(DatatransCreditCardData.self, forKey: .datatransCardAlias) {
             self = .datatransCardAlias(datatransCardData)
+        } else if let payoneData = try container.decodeIfPresent(PayoneCreditCardData.self, forKey: .payoneCreditCard) {
+            self = .payoneCreditCard(payoneData)
         } else {
             throw PaymentMethodError.unknownMethodError("unknown payment method")
         }
@@ -65,11 +79,12 @@ enum PaymentMethodUserData: Codable, Equatable {
         var container = encoder.container(keyedBy: CodingKeys.self)
         switch self {
         case .sepa(let data): try container.encode(data, forKey: .sepa)
-        case .creditcard(let data): try container.encode(data, forKey: .creditcard)
+        case .teleCashCreditCard(let data): try container.encode(data, forKey: .teleCashCreditCard)
         case .tegutEmployeeCard(let data): try container.encode(data, forKey: .tegutEmployeeCard)
         case .paydirektAuthorization(let data): try container.encode(data, forKey: .paydirektAuthorization)
         case .datatransAlias(let data): try container.encode(data, forKey: .datatransAlias)
         case .datatransCardAlias(let data): try container.encode(data, forKey: .datatransCardAlias)
+        case .payoneCreditCard(let data): try container.encode(data, forKey: .payoneCreditCard)
         }
     }
 }
@@ -135,9 +150,9 @@ public struct PaymentMethodDetail: Equatable {
         self.methodData = PaymentMethodUserData.sepa(sepaData)
     }
 
-    init(_ creditcardData: CreditCardData) {
+    init(_ creditcardData: TeleCashCreditCardData) {
         self.id = UUID()
-        self.methodData = PaymentMethodUserData.creditcard(creditcardData)
+        self.methodData = PaymentMethodUserData.teleCashCreditCard(creditcardData)
     }
 
     init(_ tegutData: TegutEmployeeData) {
@@ -158,6 +173,11 @@ public struct PaymentMethodDetail: Equatable {
     init(_ datatransCardData: DatatransCreditCardData) {
         self.id = UUID()
         self.methodData = PaymentMethodUserData.datatransCardAlias(datatransCardData)
+    }
+
+    init(_ payoneData: PayoneCreditCardData) {
+        self.id = UUID()
+        self.methodData = PaymentMethodUserData.payoneCreditCard(payoneData)
     }
 
     public var displayName: String {
@@ -187,12 +207,6 @@ public struct PaymentMethodDetail: Equatable {
     public var rawMethod: RawPaymentMethod {
         switch self.methodData {
         case .sepa: return .deDirectDebit
-        case .creditcard(let creditcardData):
-            switch creditcardData.brand {
-            case .mastercard: return .creditCardMastercard
-            case .visa: return .creditCardVisa
-            case .amex: return .creditCardAmericanExpress
-            }
         case .tegutEmployeeCard:
             return .externalBilling
         case .paydirektAuthorization:
@@ -202,8 +216,10 @@ public struct PaymentMethodDetail: Equatable {
             case .twint: return .twint
             case .postFinanceCard: return .postFinanceCard
             }
-        case .datatransCardAlias(let datatransCardData):
-            switch datatransCardData.brand {
+        case .teleCashCreditCard(let ccData as BrandedCreditCard),
+                .datatransCardAlias(let ccData as BrandedCreditCard),
+                .payoneCreditCard(let ccData as BrandedCreditCard):
+            switch ccData.brand {
             case .mastercard: return .creditCardMastercard
             case .visa: return .creditCardVisa
             case .amex: return .creditCardAmericanExpress
@@ -217,12 +233,14 @@ public struct PaymentMethodDetail: Equatable {
 
     public var projectId: Identifier<Project>? {
         switch self.methodData {
-        case .creditcard(let creditCardData):
+        case .teleCashCreditCard(let creditCardData):
             return creditCardData.projectId
         case .datatransAlias(let datatransData):
             return datatransData.projectId
         case .datatransCardAlias(let datatransData):
             return datatransData.projectId
+        case .payoneCreditCard(let payoneData):
+            return payoneData.projectId
         case .sepa, .tegutEmployeeCard, .paydirektAuthorization:
             return nil
         }
@@ -373,8 +391,8 @@ public enum PaymentMethodDetails {
         let initialCount = details.count
         details.removeAll { detail -> Bool in
             switch detail.methodData {
-            case .creditcard(let creditcardData):
-                return creditcardData.version < CreditCardData.CreditCardRequestOrigin.version
+            case .teleCashCreditCard(let creditcardData):
+                return creditcardData.version < TeleCashCreditCardData.TeleCashRequestOrigin.version
             default:
                 return false
             }

@@ -7,7 +7,7 @@
 import Foundation
 
 // unfortunately we have to maintain a bunch of different mappings to strings and other types
-public enum CreditCardBrand: String, Codable {
+public enum CreditCardBrand: String, Codable, CaseIterable {
     // 1st mapping: from the reponse of the IPG card entry form; also used for datatrans
     case visa
     case mastercard
@@ -23,6 +23,7 @@ public enum CreditCardBrand: String, Codable {
     }
 
     // 3rd mapping: to the `paymentMethod` form field of the IPG card entry form
+    // also used for mapping from/to Payone "cardtype"
     var paymentMethod: String {
         switch self {
         case .visa: return "V"
@@ -57,4 +58,13 @@ public enum CreditCardBrand: String, Codable {
         default: return nil
         }
     }
+
+    static func forType(_ type: String) -> CreditCardBrand? {
+        allCases.first { $0.paymentMethod == type }
+    }
+}
+
+// so that we can access cc brands regardless of payment gateway
+protocol BrandedCreditCard {
+    var brand: CreditCardBrand { get }
 }

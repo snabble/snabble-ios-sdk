@@ -119,25 +119,6 @@ public final class PaymentProcess {
                     let telecash = PaymentMethod.deDirectDebit(detail.data)
                     results.append(telecash)
                 }
-            case .creditcard(let creditcardData):
-                let data = detail.data
-                let useVisa = methods.first { $0.method == .creditCardVisa } != nil
-                if useVisa && creditcardData.brand == .visa {
-                    let visa = PaymentMethod.visa(data)
-                    results.append(visa)
-                }
-
-                let useMastercard = methods.first { $0.method == .creditCardMastercard } != nil
-                if useMastercard && creditcardData.brand == .mastercard {
-                    let mc = PaymentMethod.mastercard(data)
-                    results.append(mc)
-                }
-
-                let useAmex = methods.first { $0.method == .creditCardAmericanExpress } != nil
-                if useAmex && creditcardData.brand == .amex {
-                    let amex = PaymentMethod.americanExpress(data)
-                    results.append(amex)
-                }
             case .tegutEmployeeCard:
                 let tegut = methods.first {
                     $0.method == .externalBilling && $0.acceptedOriginTypes?.contains(.tegutEmployeeID) == true
@@ -164,26 +145,28 @@ public final class PaymentProcess {
                     let postFinanceCard = PaymentMethod.postFinanceCard(data)
                     results.append(postFinanceCard)
                 }
-            case .datatransCardAlias(let datatransData):
+
+            case .teleCashCreditCard(let ccData as BrandedCreditCard),
+                    .datatransCardAlias(let ccData as BrandedCreditCard),
+                    .payoneCreditCard(let ccData as BrandedCreditCard):
                 let data = detail.data
                 let useVisa = methods.first { $0.method == .creditCardVisa } != nil
-                if useVisa && datatransData.brand == .visa {
+                if useVisa && ccData.brand == .visa {
                     let visa = PaymentMethod.visa(data)
                     results.append(visa)
                 }
 
                 let useMastercard = methods.first { $0.method == .creditCardMastercard } != nil
-                if useMastercard && datatransData.brand == .mastercard {
+                if useMastercard && ccData.brand == .mastercard {
                     let mc = PaymentMethod.mastercard(data)
                     results.append(mc)
                 }
 
                 let useAmex = methods.first { $0.method == .creditCardAmericanExpress } != nil
-                if useAmex && datatransData.brand == .amex {
+                if useAmex && ccData.brand == .amex {
                     let amex = PaymentMethod.americanExpress(data)
                     results.append(amex)
                 }
-
             }
         }
 

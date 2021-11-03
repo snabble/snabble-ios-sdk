@@ -1,5 +1,5 @@
 //
-//  CreditCardEditViewController.swift
+//  TeleCashCreditCardEditViewController.swift
 //
 //  Copyright © 2020 snabble. All rights reserved.
 //
@@ -15,7 +15,7 @@ import WebKit
 //
 // see https://stripe.com/docs/testing
 
-public final class CreditCardEditViewController: UIViewController {
+public final class TeleCashCreditCardEditViewController: UIViewController {
     @IBOutlet private var containerView: UIView!
     @IBOutlet private var spinner: UIActivityIndicatorView!
 
@@ -50,7 +50,7 @@ public final class CreditCardEditViewController: UIViewController {
     }
 
     init(_ detail: PaymentMethodDetail, _ analyticsDelegate: AnalyticsDelegate?) {
-        if case .creditcard(let data) = detail.methodData {
+        if case .teleCashCreditCard(let data) = detail.methodData {
             self.brand = data.brand
             self.ccNumber = data.displayName
             self.expDate = data.expirationDate
@@ -163,7 +163,7 @@ public final class CreditCardEditViewController: UIViewController {
     }
 
     private func prepareAndInjectPage(_ vaultItem: TelecashVaultItem) {
-        let page = CreditCardEditViewController.pageTemplate
+        let page = TeleCashCreditCardEditViewController.pageTemplate
             .replacingOccurrences(of: "{{url}}", with: vaultItem.url)
             .replacingOccurrences(of: "{{date}}", with: vaultItem.date)
             .replacingOccurrences(of: "{{storeId}}", with: vaultItem.storeId)
@@ -229,7 +229,7 @@ public final class CreditCardEditViewController: UIViewController {
     }
 }
 
-extension CreditCardEditViewController: WKNavigationDelegate {
+extension TeleCashCreditCardEditViewController: WKNavigationDelegate {
     public func webView(_ webView: WKWebView, decidePolicyFor navigationAction: WKNavigationAction, decisionHandler: @escaping (WKNavigationActionPolicy) -> Void) {
         if navigationAction.navigationType == .linkActivated, let url = navigationAction.request.url {
             UIApplication.shared.open(url)
@@ -241,7 +241,7 @@ extension CreditCardEditViewController: WKNavigationDelegate {
     }
 }
 
-extension CreditCardEditViewController: WKScriptMessageHandler {
+extension TeleCashCreditCardEditViewController: WKScriptMessageHandler {
     public func userContentController(_ userContentController: WKUserContentController, didReceive message: WKScriptMessage) {
         guard
             message.name == Self.handlerName,
@@ -257,7 +257,7 @@ extension CreditCardEditViewController: WKScriptMessageHandler {
 
         do {
             let connectResponse = try ConnectGatewayResponse(response: eventData)
-            if let ccData = CreditCardData(connectResponse, projectId, storeId, certificate: cert.data) {
+            if let ccData = TeleCashCreditCardData(connectResponse, projectId, storeId, certificate: cert.data) {
                 let detail = PaymentMethodDetail(ccData)
                 PaymentMethodDetails.save(detail)
                 self.analyticsDelegate?.track(.paymentMethodAdded(detail.rawMethod.displayName))
@@ -294,7 +294,7 @@ extension CreditCardEditViewController: WKScriptMessageHandler {
     }
 }
 
-extension CreditCardEditViewController {
+extension TeleCashCreditCardEditViewController {
     private func getTelecashVaultItem(for project: Project,
                                       _ link: Link?,
                                       completion: @escaping (Result<TelecashVaultItem, SnabbleError>) -> Void ) {
@@ -333,7 +333,7 @@ extension CreditCardEditViewController {
 }
 
 // stuff that's only used by the RN wrapper
-extension CreditCardEditViewController: ReactNativeWrapper {
+extension TeleCashCreditCardEditViewController: ReactNativeWrapper {
     public func setBrand(_ brand: CreditCardBrand) {
         self.brand = brand
     }
@@ -343,7 +343,7 @@ extension CreditCardEditViewController: ReactNativeWrapper {
     }
 
     public func setDetail(_ detail: PaymentMethodDetail) {
-        guard case .creditcard(let data) = detail.methodData else {
+        guard case .teleCashCreditCard(let data) = detail.methodData else {
             return
         }
 
@@ -354,7 +354,7 @@ extension CreditCardEditViewController: ReactNativeWrapper {
     }
 }
 
-extension CreditCardEditViewController {
+extension TeleCashCreditCardEditViewController {
     fileprivate static let pageTemplate = """
         <!DOCTYPE html>
         <html lang="en">
