@@ -105,7 +105,10 @@ public final class ApplePayCheckoutViewController: BaseCheckoutViewController {
                 return completion(false)
             }
 
-            let body = [ "encryptedOrigin": token.paymentData.base64EncodedString() ]
+            let body = [
+                "encryptedOrigin": token.paymentData.base64EncodedString(),
+                "paymentNetwork": token.paymentMethod.network?.rawValue
+            ]
             // swiftlint:disable:next force_try
             let data = try! JSONSerialization.data(withJSONObject: body, options: [])
             request.httpBody = data
