@@ -78,6 +78,10 @@ class CheckoutStepsViewModel {
             steps.append(CheckoutStep(exitToken: exitToken))
         }
 
+        if let link = checkoutProcess.links.receipt {
+            steps.append(CheckoutStep(receiptLink: link))
+        }
+
         return steps
     }
 
