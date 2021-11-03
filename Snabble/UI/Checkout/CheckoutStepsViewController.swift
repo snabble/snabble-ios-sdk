@@ -162,7 +162,7 @@ public final class CheckoutStepsViewController: UIViewController {
     }
 
     @objc private func doneButtonTouchedUpInside(_ sender: UIButton) {
-        // warning: TBD
+        navigationController?.popToRootViewController(animated: true)
         analyticsDelegate?.track(.checkoutStepsClosed)
     }
 
