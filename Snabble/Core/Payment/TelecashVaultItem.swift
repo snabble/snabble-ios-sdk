@@ -1,5 +1,5 @@
 //
-//  Telecash.swift
+//  TelecashVaultItem.swift
 //
 //  Copyright © 2020 snabble. All rights reserved.
 //

@@ -1,0 +1,354 @@
+<!doctype html>
+<html>
+<head>
+    <title>Payone Credit Card Entry</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <meta charset="UTF-8">
+    <script type="text/javascript">
+        // intercept console.log
+        window.console.log = function(msg) {
+            window.webkit.messageHandlers.{{handler}}.postMessage({ log: msg });
+        };
+
+        // intercept errors
+        window.onerror = (msg, url, line, column, error) => {
+            const message = {
+                message: msg,
+                url: url,
+                line: line,
+                column: column,
+                error: JSON.stringify(error)
+            }
+
+            console.log(message);
+        };
+
+        function showError(msg) {
+            window.webkit.messageHandlers.{{handler}}.postMessage({ error: msg });
+        }
+        
+        function processResponse(obj, lastName) {
+            window.webkit.messageHandlers.{{handler}}.postMessage({
+                response: obj,
+                lastName: lastName
+            });
+        }
+    </script>
+    <style type="text/css">
+    body {
+        font-family: -apple-system, sans-serif;
+        font-size: 1rem;
+        font-weight: 400;
+        line-height: 1.5;
+        color: #000;
+        background-color: #fff;
+        text-align: left;
+    }
+    @media (prefers-color-scheme: dark) {
+        body, input { background-color: #000; color: #fff; }
+    }
+    form {
+        width: auto;
+        max-width: 1140px;
+        margin: auto;
+    }
+    label {
+        font-weight: bold;
+        display: inline-block;
+        margin-bottom: 0.5rem;
+    }
+    .form-group, .header {
+        margin-bottom: 1rem;
+    }
+    .payone-input-mock {
+        border: 2px solid #07b;
+        border-radius: 10px;
+        padding: 5px 15px;
+        max-width: 100%;
+    }
+    .payone-input-mock iframe {
+        height: 50px;
+        width: 100%;
+        vertical-align: middle;
+    }
+    .payone-input-mock input {
+        height: 42px;
+        width: 90%;
+        vertical-align: middle;
+        font-size: 17px;
+        border: none;
+        outline: none;
+    }
+    #submit {
+        margin: 2rem 0;
+        background-color:#07b;
+        border-radius: 0.3rem;
+        border: none;
+        padding: 0.5rem 1rem;
+        padding-right: 1rem;
+        padding-left: 1rem;
+        font-size: 1.25rem;
+        line-height: 1.5;
+        color:#fff;
+        width: 100%;
+        font-weight: 400;
+        text-align: center;
+        vertical-align: middle;
+    }
+    input:focus {
+        outline: none;
+        box-shadow: none;
+    }
+    .halves {
+        display: flex;
+        gap: 1rem;
+    }
+    .half {
+        flex-grow: 1
+    }
+    </style>
+
+    <script src="https://secure.pay1.de/client-api/js/v1/payone_hosted.js"></script>
+    <script type="text/javascript">
+        /**
+         * The PAYONE auto card type detection class constructor.
+         *
+         * @param config The auto card type detection config.
+         * @constructor
+         */
+        function PayoneAutoCcDetection(config)
+        {
+            // Apply config defaults.
+            this._config = config;
+
+            // Setup auto credit card detection config.
+            this._config.hostedIframesConfig.config.autoCardtypeDetection = {
+                deactivate: false,
+                supportedCardtypes: this._config.supportedCardTypes,
+                callback: this._handleDetectionResult.bind(this),
+            };
+
+            // Create hosted IFrames object.
+            this._hostedIframe = new Payone.ClientApi.HostedIFrames(
+                this._config.hostedIframesConfig.config,
+                this._config.hostedIframesConfig.request
+            );
+
+            // Register credit card check callback.
+            // The hosted IFrames API expects a callback provided as string,
+            // therefore we cannot use a function value reference directly.
+            // As a workaround we register the actual handler method as global
+            // function with a random unique name which will be provided to the
+            // hosted IFrames API later.
+            this._creditCardCheckCallbackName = 'payone_cc_check_callback_' + Math.random().toString().substr(2);
+            window[this._creditCardCheckCallbackName] = this._creditCardCheckCallback.bind(this);
+        }
+
+        /**
+         * Handles automatically detected card types.
+         * This is the handler that will be called by the hosted iFrames API
+         * if a card type detection result is available.
+         *
+         * @param {string} type The detection result of the hosted IFrames API.
+         * @private
+         */
+        PayoneAutoCcDetection.prototype._handleDetectionResult = function (type) {
+            type = type.toUpperCase();
+
+            // Delegate further processing to dedicated handlers.
+            switch (type) {
+                case '?':
+                    this._handleUnknownCardType(type);
+                    break;
+                case '-':
+                    this._handleUnsupportedCardType(type);
+                    break;
+                default:
+                    this._handleValidCardType(type);
+                    break;
+            }
+        };
+
+        /**
+         * Handles detection results of valid card types.
+         *
+         * @param {string} type The detected valid card type.
+         * @private
+         */
+        PayoneAutoCcDetection.prototype._handleValidCardType = function (type) {
+            this._changeIcon(type);
+        };
+
+        /**
+         * Handles unsupported card type detection results.
+         *
+         * @private
+         */
+        PayoneAutoCcDetection.prototype._handleUnsupportedCardType = function () {
+            //
+        };
+
+        /**
+         * Handles the credit card check result.
+         *
+         * @param {object} response The credit card check result from the hosted IFrame API.
+         * @private
+         */
+        PayoneAutoCcDetection.prototype._creditCardCheckCallback = function (response) {
+            switch (response.status) {
+                case 'VALID':
+                    var lastName = document.getElementById('lastName').value;
+                    processResponse(response, lastName);
+                    break;
+                case 'INVALID':
+                case 'ERROR':
+                    showError('Error ' + response.errorcode + ': ' + response.errormessage);
+                    break;
+                default:
+                    showError('API returned an unexpected status.');
+                    break;
+            }
+        };
+
+        /**
+         * Performs the credit card check.
+         */
+        PayoneAutoCcDetection.prototype.performCreditCardCheck = function () {
+            var name = document.getElementById('lastName').value
+            if (this._hostedIframe.isComplete() && name != "") {
+                this._hostedIframe.creditCardCheck(this._creditCardCheckCallbackName);
+            }
+            else {
+                showError('{{incompleteForm}}');
+            }
+        };
+
+        PayoneAutoCcDetection.prototype.setInitialCardType = function (type) {
+            this._hostedIframe.setCardType(type)
+        }
+
+    </script>
+</head>
+<body>
+    <div class="container">
+        <div class="row">
+            <div class="col py-5">
+                <div class="header">
+                    {{header}}
+                </div>
+
+                <!-- The form HTML with IFrame fields. -->
+                <form id="cc-form" class="my-3" action="#" method="post">
+                    <div class="form-group">
+                        <label for="payone-cc-lastname">{{lastName}}</label>
+                        <div class="payone-input-mock">
+                            <input type="text" id="lastName"/>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="payone-cc-pan">{{cardNumberLabel}}</label>
+                        <div class="payone-input-mock payone-input-mock--pan">
+                            <!-- Mount element for PAN IFrame. -->
+                            <span id="payone-cc-pan"></span>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="payone-cc-cvc">{{cvcLabel}}</label for="payone-cc-cvc">
+                        <div class="payone-input-mock payone-input-mock--cvc">
+                            <!-- Mount element for CVC IFrame. -->
+                            <span id="payone-cc-cvc"></span>
+                        </div>
+                    </div>
+
+                    <div class="form-group halves">
+                        <div class="half">
+                            <label for="payone-cc-expire-month">{{expireMonthLabel}}</label>
+                            <div class="payone-input-mock payone-input-mock--expire-month">
+                                <!-- Mount element for card expire month IFrame. -->
+                                <span id="payone-cc-expire-month"></span>
+                            </div>
+                        </div>
+
+                        <div class="half">
+                            <label for="payone-cc-expire-year">{{expireYearLabel}}</label>
+                            <div class="payone-input-mock payone-input-mock--expire-year">
+                                <!-- Mount element for card expire year IFrame. -->
+                                <span id="payone-cc-expire-year"></span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-group mt-5">
+                        <button id="submit" class="btn btn-primary btn-lg" type="button">{{saveButtonLabel}}</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        (function () {
+            var autoCcDetection = new PayoneAutoCcDetection({
+                supportedCardTypes: ["{{supportedCardType}}"],
+                hostedIframesConfig: {
+                    config: {
+                        fields: {
+                            cardpan: {
+                                selector: "payone-cc-pan",
+                                type: "input"
+                            },
+                            cardcvc2: {
+                                selector: "payone-cc-cvc",
+                                type: "tel",
+                                size: "4",
+                                maxlength: "4",
+                                length: { "V": 3, "M": 3, "A": 4 }
+                            },
+                            cardexpiremonth: {
+                                selector: "payone-cc-expire-month",
+                                type: "text",
+                                size: "2",
+                                maxlength: "2",
+                                type: "tel"
+                            },
+                            cardexpireyear: {
+                                selector: "payone-cc-expire-year",
+                                size: "4",
+                                maxlength: "4",
+                                type: "tel"
+                            }
+                        },
+                        defaultStyle: {
+                            input: "height: 100%; width: 100%; border: none; font-size: 17px; border-radius: 0; {{fieldColors}}",
+                            iframe: {}
+                        },
+
+                        language: Payone.ClientApi.Language.{{language}}
+                    },
+                    request: {
+                        "responsetype":"JSON",
+                        "encoding":"UTF-8",
+                        "mode":"{{mode}}",
+                        "request":"creditcardcheck",
+                        "storecarddata":"yes",
+                        "mid":"{{merchantID}}",
+                        "aid":"{{accountID}}",
+                        "portalid":"{{portalID}}",
+                        "hash":"{{hash}}"
+                    }
+                },
+            });
+
+            document.querySelector('#submit').addEventListener('click', function (event) {
+                event.preventDefault();
+                autoCcDetection.performCreditCardCheck();
+            });
+
+            autoCcDetection.setInitialCardType("{{supportedCardType}}");
+        })();
+    </script>
+</body>
+</html>
+

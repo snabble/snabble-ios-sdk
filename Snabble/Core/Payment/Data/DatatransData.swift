@@ -47,9 +47,13 @@ struct DatatransPaymentMethodToken: Codable, Equatable {
             expYear += 2000
         }
 
-        let date = year * 100 + month
-        let expiration = expYear * 100 + expMonth
-        return expiration < date
+        if year > expYear {
+            return true
+        } else if month > expMonth {
+            return true
+        } else {
+            return false
+        }
     }
 }
 
@@ -128,7 +132,7 @@ struct DatatransData: Codable, EncryptedPaymentData, Equatable {
 
 // Usable for Credit Cards
 // - stores info from a Datatrans.CardToken
-struct DatatransCreditCardData: Codable, EncryptedPaymentData, Equatable {
+struct DatatransCreditCardData: Codable, EncryptedPaymentData, Equatable, BrandedCreditCard {
     // encrypted JSON string
     let encryptedPaymentData: String
     // serial # of the certificate used to encrypt
