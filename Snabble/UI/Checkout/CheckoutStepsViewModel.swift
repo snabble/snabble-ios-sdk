@@ -13,16 +13,18 @@ protocol CheckoutStepsViewModelDelegate: AnyObject {
 }
 
 class CheckoutStepsViewModel {
-    let checkoutProcess: CheckoutProcess
+    private(set) var checkoutProcess: CheckoutProcess
+    let shoppingCart: ShoppingCart
 
     private weak var checkoutProcessTimer: Timer?
     private var processSessionTask: URLSessionDataTask?
 
     weak var delegate: CheckoutStepsViewModelDelegate?
 
-    init(checkoutProcess: CheckoutProcess) {
+    init(checkoutProcess: CheckoutProcess, shoppingCart: ShoppingCart) {
         self.checkoutProcess = checkoutProcess
-        update(with: checkoutProcess)
+        self.shoppingCart = shoppingCart
+        updateViewModels(with: checkoutProcess)
     }
 
     func startTimer() {
@@ -50,7 +52,9 @@ class CheckoutStepsViewModel {
         var continuePolling: Bool
         switch result.result {
         case let .success(process):
-            update(with: process)
+            checkoutProcess = process
+            updateViewModels(with: process)
+            updateShoppingCart(for: process)
             continuePolling = shouldContinuePolling(for: process)
         case let .failure(error):
             Log.error(String(describing: error))
@@ -62,7 +66,22 @@ class CheckoutStepsViewModel {
         }
     }
 
-    private func update(with checkoutProcess: CheckoutProcess) {
+    private func updateShoppingCart(for checkoutProcess: CheckoutProcess) {
+        switch checkoutProcess.paymentState {
+        case .successful:
+            shoppingCart.removeAll(endSession: true, keepBackup: false)
+        case .failed:
+            shoppingCart.generateNewUUID()
+        case .pending:
+            if checkoutProcess.fulfillments.containsFailureState {
+                shoppingCart.generateNewUUID()
+            }
+        case .transferred, .processing, .unauthorized, .unknown:
+            break
+        }
+    }
+
+    private func updateViewModels(with checkoutProcess: CheckoutProcess) {
         headerViewModel = CheckoutStepStatus.from(paymentState: checkoutProcess.paymentState)
         steps = steps(for: checkoutProcess)
     }
@@ -86,18 +105,15 @@ class CheckoutStepsViewModel {
     }
 
     private func shouldContinuePolling(for checkoutProcess: CheckoutProcess) -> Bool {
-        var shouldContinuePolling = true
+        var shouldContinuePolling: Bool
         switch checkoutProcess.paymentState {
-        case .successful, .failed:
+        case .successful:
+            shouldContinuePolling = false
+        case .failed:
             shouldContinuePolling = false
         case .pending:
-            let states = Set(checkoutProcess.fulfillments.map { $0.state })
-            if FulfillmentState.failureStates.isDisjoint(with: states) == false {
-                shouldContinuePolling = false
-            } else {
-                shouldContinuePolling = true
-            }
-        case .transferred, .processing, .unauthorized, .unknown: ()
+            shouldContinuePolling = !checkoutProcess.fulfillments.containsFailureState
+        case .transferred, .processing, .unauthorized, .unknown:
             shouldContinuePolling = true
         }
 
@@ -157,5 +173,12 @@ class CheckoutStepsViewModel {
         didSet {
             delegate?.checkoutStepsViewModel(self, didUpdateSteps: steps)
         }
+    }
+}
+
+private extension Array where Element == Fulfillment {
+    var containsFailureState: Bool {
+        !FulfillmentState.failureStates.isDisjoint(with: Set(map { $0.state }))
+
     }
 }

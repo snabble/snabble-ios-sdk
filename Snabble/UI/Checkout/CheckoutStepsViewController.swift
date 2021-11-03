@@ -58,7 +58,7 @@ public final class CheckoutStepsViewController: UIViewController {
         self.shop = shop
         self.shoppingCart = shoppingCart
         self.checkoutProcess = checkoutProcess
-        viewModel = CheckoutStepsViewModel(checkoutProcess: checkoutProcess)
+        viewModel = CheckoutStepsViewModel(checkoutProcess: checkoutProcess, shoppingCart: shoppingCart)
 
         super.init(nibName: nil, bundle: nil)
 
