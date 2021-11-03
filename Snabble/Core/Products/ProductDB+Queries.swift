@@ -11,17 +11,19 @@ extension ProductAvailability: DatabaseValueConvertible { }
 
 // MARK: - low-level db queries
 extension ProductDB {
+    private static let gs = "•" // use a non-ASCII character as the delimiter for group_concat
+
     static let productQuery = """
         select
             p.*, 0 as listPrice, null as discountedPrice, null as customerCardPrice, null as basePrice,
             null as code_encodingUnit,
-            (select group_concat(sc.code) from scannableCodes sc where sc.sku = p.sku) as codes,
-            (select group_concat(sc.template) from scannableCodes sc where sc.sku = p.sku) as templates,
-            (select group_concat(ifnull(sc.encodingUnit, '')) from scannableCodes sc where sc.sku = p.sku) as encodingUnits,
-            (select group_concat(ifnull(sc.transmissionCode, '')) from scannableCodes sc where sc.sku = p.sku) as transmissionCodes,
-            (select group_concat(ifnull(sc.transmissionTemplate, '')) from scannableCodes sc where sc.sku = p.sku) as transmissionTemplates,
-            (select group_concat(ifnull(sc.isPrimary, '')) from scannableCodes sc where sc.sku = p.sku) as isPrimary,
-            (select group_concat(ifnull(sc.specifiedQuantity, '')) from scannableCodes sc where sc.sku = p.sku) as specifiedQuantity,
+            (select group_concat(sc.code, '\(gs)') from scannableCodes sc where sc.sku = p.sku) as codes,
+            (select group_concat(sc.template, '\(gs)') from scannableCodes sc where sc.sku = p.sku) as templates,
+            (select group_concat(ifnull(sc.encodingUnit, ''), '\(gs)') from scannableCodes sc where sc.sku = p.sku) as encodingUnits,
+            (select group_concat(ifnull(sc.transmissionCode, ''), '\(gs)') from scannableCodes sc where sc.sku = p.sku) as transmissionCodes,
+            (select group_concat(ifnull(sc.transmissionTemplate, ''), '\(gs)') from scannableCodes sc where sc.sku = p.sku) as transmissionTemplates,
+            (select group_concat(ifnull(sc.isPrimary, ''), '\(gs)') from scannableCodes sc where sc.sku = p.sku) as isPrimary,
+            (select group_concat(ifnull(sc.specifiedQuantity, ''), '\(gs)') from scannableCodes sc where sc.sku = p.sku) as specifiedQuantity,
             ifnull((select a.value from availabilities a where a.sku = p.sku and a.shopID = ?), ?) as availability
         from products p
         """
@@ -30,13 +32,13 @@ extension ProductDB {
         select
             p.*, 0 as listPrice, null as discountedPrice, null as customerCardPrice, null as basePrice,
             s.encodingUnit as code_encodingUnit,
-            (select group_concat(sc.code) from scannableCodes sc where sc.sku = p.sku) as codes,
-            (select group_concat(sc.template) from scannableCodes sc where sc.sku = p.sku) as templates,
-            (select group_concat(ifnull(sc.encodingUnit, '')) from scannableCodes sc where sc.sku = p.sku) as encodingUnits,
-            (select group_concat(ifnull(sc.transmissionCode, '')) from scannableCodes sc where sc.sku = p.sku) as transmissionCodes,
-            (select group_concat(ifnull(sc.transmissionTemplate, '')) from scannableCodes sc where sc.sku = p.sku) as transmissionTemplates,
-            (select group_concat(ifnull(sc.isPrimary, '')) from scannableCodes sc where sc.sku = p.sku) as isPrimary,
-            (select group_concat(ifnull(sc.specifiedQuantity, '')) from scannableCodes sc where sc.sku = p.sku) as specifiedQuantity,
+            (select group_concat(sc.code, '\(gs)') from scannableCodes sc where sc.sku = p.sku) as codes,
+            (select group_concat(sc.template, '\(gs)') from scannableCodes sc where sc.sku = p.sku) as templates,
+            (select group_concat(ifnull(sc.encodingUnit, ''), '\(gs)') from scannableCodes sc where sc.sku = p.sku) as encodingUnits,
+            (select group_concat(ifnull(sc.transmissionCode, ''), '\(gs)') from scannableCodes sc where sc.sku = p.sku) as transmissionCodes,
+            (select group_concat(ifnull(sc.transmissionTemplate, ''), '\(gs)') from scannableCodes sc where sc.sku = p.sku) as transmissionTemplates,
+            (select group_concat(ifnull(sc.isPrimary, ''), '\(gs)') from scannableCodes sc where sc.sku = p.sku) as isPrimary,
+            (select group_concat(ifnull(sc.specifiedQuantity, ''), '\(gs)') from scannableCodes sc where sc.sku = p.sku) as specifiedQuantity,
             ifnull((select a.value from availabilities a where a.sku = p.sku and a.shopID = ?), ?) as availability
         from products p
         join scannableCodes s on s.sku = p.sku
@@ -323,13 +325,13 @@ extension ProductDB {
             return []
         }
 
-        let codes = rawCodes.components(separatedBy: ",")
-        let templates = rawTemplates.components(separatedBy: ",")
-        let transmits = rawTransmits.components(separatedBy: ",")
-        let txTemplates = rawTxTemplates.components(separatedBy: ",")
-        let units = rawUnits.components(separatedBy: ",")
-        let primary = rawPrimary.components(separatedBy: ",")
-        let specifiedQuantity = rawSpecifiedQuantity.components(separatedBy: ",").map { Int($0) }
+        let codes = rawCodes.components(separatedBy: Self.gs)
+        let templates = rawTemplates.components(separatedBy: Self.gs)
+        let transmits = rawTransmits.components(separatedBy: Self.gs)
+        let txTemplates = rawTxTemplates.components(separatedBy: Self.gs)
+        let units = rawUnits.components(separatedBy: Self.gs)
+        let primary = rawPrimary.components(separatedBy: Self.gs)
+        let specifiedQuantity = rawSpecifiedQuantity.components(separatedBy: Self.gs).map { Int($0) }
 
         assert(codes.count == templates.count)
         assert(codes.count == transmits.count)
