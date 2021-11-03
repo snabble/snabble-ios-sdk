@@ -392,10 +392,6 @@ public struct Project: Decodable, Identifiable {
         if let coupons = try container.decodeIfPresent([Coupon].self, forKey: .coupons) {
             setCoupons(coupons)
         }
-
-        if let bcw = self.expectedBarcodeWidth {
-            print(bcw, id)
-        }
     }
 
     private init() {
