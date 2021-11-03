@@ -27,6 +27,11 @@ public enum ApplePay {
     static func paymentNetworks(with projectId: Identifier<Project>) -> [PKPaymentNetwork] {
         return SnabbleAPI.project(for: projectId)?.paymentMethods.compactMap { $0.paymentNetwork } ?? []
     }
+
+    static func openPaymentSetup() {
+        let library = PKPassLibrary()
+        library.openPaymentSetup()
+    }
 }
 
 // we check apple pay networks based on the availability of our "regular" credit card methods
