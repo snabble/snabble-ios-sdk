@@ -64,6 +64,10 @@ class CheckoutStepsViewModel {
 
     private func update(with checkoutProcess: CheckoutProcess) {
         headerViewModel = CheckoutStepStatus.from(paymentState: checkoutProcess.paymentState)
+        steps = steps(for: checkoutProcess)
+    }
+
+    private func steps(for checkoutProcess: CheckoutProcess) -> [CheckoutStep] {
         var steps: [CheckoutStep] = [
             .init(paymentState: checkoutProcess.paymentState)
         ]
@@ -73,7 +77,8 @@ class CheckoutStepsViewModel {
         if let exitToken = checkoutProcess.exitToken {
             steps.append(CheckoutStep(exitToken: exitToken))
         }
-        self.steps = steps
+
+        return steps
     }
 
     private func shouldContinuePolling(for checkoutProcess: CheckoutProcess) -> Bool {
@@ -84,7 +89,6 @@ class CheckoutStepsViewModel {
         case .pending:
             let states = Set(checkoutProcess.fulfillments.map { $0.state })
             if FulfillmentState.failureStates.isDisjoint(with: states) == false {
-//                self.paymentFinished(false, process, rawJson)
                 shouldContinuePolling = false
             } else {
                 shouldContinuePolling = true
