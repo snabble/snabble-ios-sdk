@@ -9,8 +9,6 @@ import Foundation
 import UIKit
 
 public final class CheckoutStepsViewController: UIViewController {
-    let viewModel: CheckoutStepsViewModel
-
     private(set) weak var tableView: UITableView?
     private(set) weak var headerView: CheckoutHeaderView?
     private(set) weak var doneButton: UIButton?
@@ -47,18 +45,26 @@ public final class CheckoutStepsViewController: UIViewController {
         cellProvider: cellProvider
     )
 
+    let viewModel: CheckoutStepsViewModel
     public let shop: Shop
-    public let checkoutProcess: CheckoutProcess
-    public let shoppingCart: ShoppingCart
+
+    public var checkoutProcess: CheckoutProcess {
+        viewModel.checkoutProcess
+    }
+
+    public var shoppingCart: ShoppingCart {
+        viewModel.shoppingCart
+    }
 
     private weak var processTimer: Timer?
     private var processSessionTask: URLSessionDataTask?
 
     public init(shop: Shop, shoppingCart: ShoppingCart, checkoutProcess: CheckoutProcess) {
         self.shop = shop
-        self.shoppingCart = shoppingCart
-        self.checkoutProcess = checkoutProcess
-        viewModel = CheckoutStepsViewModel(checkoutProcess: checkoutProcess, shoppingCart: shoppingCart)
+        viewModel = CheckoutStepsViewModel(
+            checkoutProcess: checkoutProcess,
+            shoppingCart: shoppingCart
+        )
 
         super.init(nibName: nil, bundle: nil)
 
