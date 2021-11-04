@@ -77,6 +77,7 @@ public class CheckInManager: NSObject {
     public func startUpdating() {
         locationManager.delegate = self
         locationManager.startUpdatingLocation()
+        isUpdating = true
     }
 
     /// Stops updating locations
@@ -84,7 +85,11 @@ public class CheckInManager: NSObject {
     /// Current `shop` will not automatically check out.
     public func stopUpdating() {
         locationManager.stopUpdatingLocation()
+        isUpdating = false
     }
+
+    /// Shows if updating is activated
+    public private(set) var isUpdating: Bool = false
 
     private let locationManager: CLLocationManager
 
@@ -104,7 +109,9 @@ public class CheckInManager: NSObject {
     }
 
     @objc private func metadataLoadedNotification(_ notification: Notification) {
-        update(with: locationManager.location)
+        if isUpdating {
+            update(with: locationManager.location)
+        }
     }
 }
 
