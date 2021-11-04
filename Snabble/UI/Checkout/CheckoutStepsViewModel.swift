@@ -139,6 +139,5 @@ class CheckoutStepsViewModel {
 private extension Array where Element == Fulfillment {
     var containsFailureState: Bool {
         !FulfillmentState.failureStates.isDisjoint(with: Set(map { $0.state }))
-
     }
 }
