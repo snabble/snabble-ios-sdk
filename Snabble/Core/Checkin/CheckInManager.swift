@@ -7,6 +7,7 @@
 
 import Foundation
 import CoreLocation
+import UIKit
 
 public protocol CheckInManagerDelegate: AnyObject {
     /// Tells the delegate when the manager did check out of a shop.
@@ -93,6 +94,9 @@ public class CheckInManager: NSObject {
 
     private let locationManager: CLLocationManager
 
+    private var didEnterBackgroundNotificationToken: NSObjectProtocol?
+    private var willEnterForegroundNotificationToken: NSObjectProtocol?
+
     override public init() {
         locationManager = CLLocationManager()
         locationManager.desiredAccuracy = kCLLocationAccuracyBest
@@ -106,6 +110,33 @@ public class CheckInManager: NSObject {
             name: .metadataLoaded,
             object: nil
         )
+
+        didEnterBackgroundNotificationToken = NotificationCenter.default.addObserver(
+            forName: UIApplication.didEnterBackgroundNotification,
+            object: nil,
+            queue: nil
+        ) { [weak self] _ in
+            self?.locationManager.stopUpdatingLocation()
+        }
+
+        willEnterForegroundNotificationToken = NotificationCenter.default.addObserver(
+            forName: UIApplication.willEnterForegroundNotification,
+            object: nil,
+            queue: nil
+        ) { [weak self] _ in
+            if self?.isUpdating ?? false {
+                self?.locationManager.startUpdatingLocation()
+            }
+        }
+    }
+
+    deinit {
+        if let token = didEnterBackgroundNotificationToken {
+            NotificationCenter.default.removeObserver(token)
+        }
+        if let token = willEnterForegroundNotificationToken {
+            NotificationCenter.default.removeObserver(token)
+        }
     }
 
     @objc private func metadataLoadedNotification(_ notification: Notification) {
