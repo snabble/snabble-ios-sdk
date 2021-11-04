@@ -73,9 +73,9 @@ extension CheckoutStep {
 extension CheckoutStep {
     init(fulfillment: Fulfillment) {
         status = .from(fulfillmentState: fulfillment.state)
-        text = fulfillment.type
+        text = fulfillment.displayName
         image = nil
-        detailText = nil
+        detailText = fulfillment.detailText
         actionTitle = nil
     }
 
@@ -93,5 +93,25 @@ extension CheckoutStep {
         image = nil
         detailText = nil
         actionTitle = nil
+    }
+}
+
+private extension Fulfillment {
+    var displayName: String {
+        switch type {
+        case "tobaccolandEWA":
+            return L10n.Snabble.PaymentStatus.Tobacco.title
+        default:
+            return L10n.Snabble.PaymentStatus.Fulfillment.title
+        }
+    }
+
+    var detailText: String? {
+        switch type {
+        case "tobaccolandEWA":
+            return L10n.Snabble.PaymentStatus.Tobacco.message
+        default:
+            return nil
+        }
     }
 }
