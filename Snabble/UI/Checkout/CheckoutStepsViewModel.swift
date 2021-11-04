@@ -82,8 +82,8 @@ class CheckoutStepsViewModel {
     }
 
     private func updateViewModels(with checkoutProcess: CheckoutProcess) {
-        headerViewModel = CheckoutStepStatus.from(paymentState: checkoutProcess.paymentState)
         steps = steps(for: checkoutProcess)
+        headerViewModel = steps.checkoutStepStatus
     }
 
     private func steps(for checkoutProcess: CheckoutProcess) -> [CheckoutStep] {
@@ -122,46 +122,6 @@ class CheckoutStepsViewModel {
         }
         return shouldContinuePolling
     }
-
-//    private func updateView(_ process: CheckoutProcess, _ rawJson: [String: Any]?) -> Bool {
-//        // figure out failure conditions first
-//        let approvalDenied = process.supervisorApproval == false || process.paymentApproval == false
-//        let checkFailed = process.checks.first { $0.state == .failed } != nil
-//        if approvalDenied || checkFailed {
-//            self.paymentFinished(false, process, rawJson)
-//            return false
-//        }
-//
-//        if let candidateLink = process.paymentResult?["originCandidateLink"] as? String {
-//            OriginPoller.shared.startPolling(SnabbleUI.project, candidateLink)
-//        }
-//
-//        let failureCause = FailureCause(rawValue: process.paymentResult?["failureCause"] as? String ?? "")
-//
-//        self.updateQRCode(process)
-//
-//        switch process.paymentState {
-//        case .successful:
-//            self.paymentFinished(true, process, rawJson)
-//            return false
-//        case .failed:
-//            if failureCause == .terminalAbort {
-//                self.paymentCancelled()
-//            } else {
-//                self.paymentFinished(false, process, rawJson)
-//            }
-//            return false
-//        case .pending:
-//            let states = Set(process.fulfillments.map { $0.state })
-//            if !FulfillmentState.failureStates.isDisjoint(with: states) {
-//                self.paymentFinished(false, process, rawJson)
-//                return false
-//            }
-//            return true
-//        case .transferred, .processing, .unauthorized, .unknown: ()
-//            return true
-//        }
-//    }
 
     var headerViewModel: CheckoutHeaderViewModel = CheckoutStepStatus.loading {
         didSet {

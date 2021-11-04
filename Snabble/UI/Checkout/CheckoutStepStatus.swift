@@ -47,3 +47,17 @@ extension CheckoutStepStatus {
         return .success
     }
 }
+
+extension Array where Element == CheckoutStep {
+    var checkoutStepStatus: CheckoutStepStatus {
+        if contains(where: { $0.status == .failure }) {
+            return .failure
+        }
+
+        if contains(where: { $0.status == .loading }) {
+            return .loading
+        }
+
+        return .success
+    }
+}
