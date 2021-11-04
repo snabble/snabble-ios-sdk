@@ -91,7 +91,6 @@ class CheckoutStepsViewModel {
             .init(paymentState: checkoutProcess.paymentState)
         ]
 
-        steps.append(contentsOf: checkoutProcess.checks.map(CheckoutStep.init))
         steps.append(contentsOf: checkoutProcess.fulfillments.map(CheckoutStep.init))
 
         if let exitToken = checkoutProcess.exitToken {

@@ -47,16 +47,3 @@ extension CheckoutStepStatus {
         return .success
     }
 }
-
-extension CheckoutStepStatus {
-    static func from(checkState: CheckState) -> Self {
-        switch checkState {
-        case .pending:
-            return .loading
-        case .successful:
-            return .success
-        case .failed, .unknown, .postponed:
-            return failure
-        }
-    }
-}

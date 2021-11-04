@@ -94,12 +94,4 @@ extension CheckoutStep {
         detailText = nil
         actionTitle = nil
     }
-
-    init(checkoutCheck: CheckoutCheck) {
-        status = CheckoutStepStatus.from(checkState: checkoutCheck.state)
-        text = checkoutCheck.type.rawValue
-        image = nil
-        detailText = nil
-        actionTitle = nil
-    }
 }
