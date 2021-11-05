@@ -8,7 +8,6 @@
 public final class PaymentProcess {
     let signedCheckoutInfo: SignedCheckoutInfo
     let cart: ShoppingCart
-    let shop: Shop
     private weak var hudTimer: Timer?
     private weak var delegate: PaymentDelegate?
 
@@ -18,10 +17,9 @@ public final class PaymentProcess {
     ///   - signedCheckoutInfo: the checkout info for this process
     ///   - cart: the cart for this process
     ///   - delegate: the `PaymentDelegate` to use
-    public init(_ signedCheckoutInfo: SignedCheckoutInfo, _ cart: ShoppingCart, shop: Shop, delegate: PaymentDelegate) {
+    public init(_ signedCheckoutInfo: SignedCheckoutInfo, _ cart: ShoppingCart, delegate: PaymentDelegate) {
         self.signedCheckoutInfo = signedCheckoutInfo
         self.cart = cart
-        self.shop = shop
         self.delegate = delegate
     }
 
@@ -173,7 +171,7 @@ public final class PaymentProcess {
         return results
     }
 
-    private func startFailed(_ method: PaymentMethod, shop: Shop, _ error: SnabbleError?, _ completion: @escaping (_ result: Result<UIViewController, SnabbleError>) -> Void ) {
+    private func startFailed(_ method: PaymentMethod, _ error: SnabbleError?, _ completion: @escaping (_ result: Result<UIViewController, SnabbleError>) -> Void ) {
         var handled = false
         if let error = error {
             handled = self.delegate?.handlePaymentError(method, error) ?? false
@@ -269,10 +267,10 @@ extension PaymentProcess {
             return completion(Result.failure(.noRequest))
         }
 
-        self.start(method, shop: shop, completion)
+        self.start(method, completion)
     }
 
-    private func start(_ method: PaymentMethod, shop: Shop, _ completion: @escaping (_ result: Result<UIViewController, SnabbleError>) -> Void ) {
+    private func start(_ method: PaymentMethod, _ completion: @escaping (_ result: Result<UIViewController, SnabbleError>) -> Void ) {
         UIApplication.shared.beginIgnoringInteractionEvents()
         self.startBlurOverlayTimer()
 
@@ -302,7 +300,7 @@ extension PaymentProcess {
                 if !error.isUrlError(.timedOut) {
                     self.cart.generateNewUUID()
                 }
-                self.startFailed(method, shop: shop, error, completion)
+                self.startFailed(method, error, completion)
             }
         }
     }
