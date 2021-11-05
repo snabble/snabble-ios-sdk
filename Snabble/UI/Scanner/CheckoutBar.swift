@@ -173,8 +173,6 @@ final class CheckoutBar: NibView {
         spinner.centerYAnchor.constraint(equalTo: button.centerYAnchor).isActive = true
         button.isEnabled = false
 
-//        let offlineMethods = SnabbleUI.project.paymentMethods.filter { $0.offline }
-//        let timeout: TimeInterval = offlineMethods.contains(paymentMethod) ? 3 : 10
         self.shoppingCart.createCheckoutInfo(SnabbleUI.project, timeout: 10) { result in
             spinner.stopAnimating()
             spinner.removeFromSuperview()
@@ -194,6 +192,7 @@ final class CheckoutBar: NibView {
                     }
 
                     if paymentMethod.offline {
+                        // if the payment method works offline, ignore the error and continue anyway
                         let info = SignedCheckoutInfo([paymentMethod])
                         self.cartDelegate?.gotoPayment(paymentMethod, nil, info, self.shoppingCart)
                         return
@@ -211,12 +210,6 @@ final class CheckoutBar: NibView {
                         self.cartDelegate?.showWarningMessage(L10n.Snabble.InvalidDepositVoucher.errorMsg)
                     default:
                         self.cartDelegate?.showWarningMessage(L10n.Snabble.Payment.errorStarting)
-//                        if !offlineMethods.isEmpty {
-//                            let info = SignedCheckoutInfo(offlineMethods)
-//                            self.cartDelegate?.gotoPayment(paymentMethod, self.methodSelector?.selectedPaymentDetail, info, self.shoppingCart)
-//                        } else {
-//                            self.cartDelegate?.showWarningMessage(L10n.Snabble.Payment.errorStarting)
-//                        }
                     }
                 }
             }

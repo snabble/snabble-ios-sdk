@@ -121,6 +121,7 @@ extension SignedCheckoutInfo {
                             Log.warn("got 409/403 from PUT to checkoutProcess, try GET")
                             self.fetchCheckoutProcess(project, url, completion)
                         } else if case .urlError = error, !paymentMethod.rawMethod.offline {
+                            // ignore urlErrors if this is an offline method
                             self.fetchCheckoutProcess(project, url, completion)
                         } else {
                             completion(result)
