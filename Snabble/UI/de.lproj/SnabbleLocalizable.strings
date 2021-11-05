@@ -231,6 +231,8 @@
 
 "Snabble.PaymentStatus.ExitCode.title" = "Ausgangs-Code";
 
+"Snabble.PaymentStatus.Fulfillment.title" = "Lieferung";
+
 "Snabble.PaymentStatus.Payment.error" = "Deine Zahlung konnte nicht durchgeführt werden. Versuche es erneut oder wähle ein anderes Bezahlverfahren.";
 
 "Snabble.PaymentStatus.Payment.title" = "Bezahlung";

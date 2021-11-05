@@ -288,6 +288,10 @@ public enum L10n {
         /// Exit-Code
         public static var title: String { return L10n.tr("SnabbleLocalizable", "Snabble.PaymentStatus.ExitCode.title") }
       }
+      public enum Fulfillment {
+        /// Fulfillment
+        public static var title: String { return L10n.tr("SnabbleLocalizable", "Snabble.PaymentStatus.Fulfillment.title") }
+      }
       public enum Payment {
         /// Your payment could not be processed. Try again or choose another payment method.
         public static var error: String { return L10n.tr("SnabbleLocalizable", "Snabble.PaymentStatus.Payment.error") }

@@ -39,26 +39,6 @@ extension CheckoutStep: Hashable {
 }
 
 extension CheckoutStep {
-    init(paymentStatus: PaymentStatus) {
-        switch paymentStatus {
-        case .loading:
-            status = .loading
-            detailText = nil
-            actionTitle = nil
-        case .failure:
-            status = .failure
-            detailText = L10n.Snabble.PaymentStatus.Payment.error
-            actionTitle = L10n.Snabble.PaymentStatus.Payment.tryAgain
-        case .success:
-            status = .success
-            detailText = nil
-            actionTitle = nil
-        }
-
-        text = L10n.Snabble.PaymentStatus.Payment.title
-        image = nil
-    }
-
     init(text: String, actionTitle: String? = nil) {
         self.text = text
         self.actionTitle = actionTitle
@@ -66,5 +46,72 @@ extension CheckoutStep {
         status = nil
         detailText = nil
         image = nil
+    }
+}
+
+extension CheckoutStep {
+    init(paymentState: PaymentState) {
+        switch paymentState {
+        case .unknown, .failed, .unauthorized:
+            status = .failure
+            detailText = L10n.Snabble.PaymentStatus.Payment.error
+            actionTitle = L10n.Snabble.PaymentStatus.Payment.tryAgain
+        case .pending, .processing, .transferred:
+            status = .loading
+            detailText = nil
+            actionTitle = nil
+        case .successful:
+            status = .success
+            detailText = nil
+            actionTitle = nil
+        }
+        text = L10n.Snabble.PaymentStatus.Payment.title
+        image = nil
+    }
+}
+
+extension CheckoutStep {
+    init(fulfillment: Fulfillment) {
+        status = .from(fulfillmentState: fulfillment.state)
+        text = fulfillment.displayName
+        image = nil
+        detailText = fulfillment.detailText
+        actionTitle = nil
+    }
+
+    init(exitToken: ExitToken) {
+        status = .from(exitToken: exitToken)
+        text = L10n.Snabble.PaymentStatus.ExitCode.title
+        image = exitToken.image
+        detailText = nil
+        actionTitle = nil
+    }
+
+    init(receiptLink: Link) {
+        status = .success
+        text = L10n.Snabble.PaymentStatus.Receipt.title
+        image = nil
+        detailText = nil
+        actionTitle = nil
+    }
+}
+
+private extension Fulfillment {
+    var displayName: String {
+        switch type {
+        case "tobaccolandEWA":
+            return L10n.Snabble.PaymentStatus.Tobacco.title
+        default:
+            return L10n.Snabble.PaymentStatus.Fulfillment.title
+        }
+    }
+
+    var detailText: String? {
+        switch type {
+        case "tobaccolandEWA":
+            return L10n.Snabble.PaymentStatus.Tobacco.message
+        default:
+            return nil
+        }
     }
 }

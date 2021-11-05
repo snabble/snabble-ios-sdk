@@ -20,6 +20,7 @@ final class CheckoutHeaderView: UIView {
 
     override init(frame: CGRect) {
         let statusView = CheckoutStepStatusView()
+        statusView.circleColor = .systemGray5
         statusView.translatesAutoresizingMaskIntoConstraints = false
 
         let textLabel = UILabel()

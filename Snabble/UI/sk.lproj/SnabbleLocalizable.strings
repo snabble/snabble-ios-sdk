@@ -231,6 +231,8 @@
 
 "Snabble.PaymentStatus.ExitCode.title" = "Kód ukončenia";
 
+"Snabble.PaymentStatus.Fulfillment.title" = "Fulfillment";
+
 "Snabble.PaymentStatus.Payment.error" = "Tvoja platba nemohla byť vykonaná. Skús znovu alebo vyber iný spôsob platby.";
 
 "Snabble.PaymentStatus.Payment.title" = "Platba";

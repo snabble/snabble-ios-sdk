@@ -9,8 +9,6 @@ import Foundation
 import UIKit
 
 public final class CheckoutStepsViewController: UIViewController {
-    let viewModel: CheckoutStepsViewModel
-
     private(set) weak var tableView: UITableView?
     private(set) weak var headerView: CheckoutHeaderView?
     private(set) weak var doneButton: UIButton?
@@ -47,12 +45,30 @@ public final class CheckoutStepsViewController: UIViewController {
         cellProvider: cellProvider
     )
 
+    let viewModel: CheckoutStepsViewModel
     public let shop: Shop
 
-    public init(shop: Shop) {
+    public var checkoutProcess: CheckoutProcess {
+        viewModel.checkoutProcess
+    }
+
+    public var shoppingCart: ShoppingCart {
+        viewModel.shoppingCart
+    }
+
+    private weak var processTimer: Timer?
+    private var processSessionTask: URLSessionDataTask?
+
+    public init(shop: Shop, shoppingCart: ShoppingCart, checkoutProcess: CheckoutProcess) {
         self.shop = shop
-        viewModel = CheckoutStepsViewModel()
+        viewModel = CheckoutStepsViewModel(
+            checkoutProcess: checkoutProcess,
+            shoppingCart: shoppingCart
+        )
+
         super.init(nibName: nil, bundle: nil)
+
+        viewModel.delegate = self
     }
 
     required init?(coder: NSCoder) {
@@ -130,13 +146,23 @@ public final class CheckoutStepsViewController: UIViewController {
         update(with: viewModel.steps, animate: false)
     }
 
+    override public func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        viewModel.startTimer()
+    }
+
+    override public func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
+        viewModel.stopTimer()
+    }
+
     override public func viewWillLayoutSubviews() {
         super.viewWillLayoutSubviews()
         tableView?.updateHeaderViews()
     }
 
     @objc private func doneButtonTouchedUpInside(_ sender: UIButton) {
-        // warning: TBD
+        navigationController?.popToRootViewController(animated: true)
         analyticsDelegate?.track(.checkoutStepsClosed)
     }
 
@@ -151,6 +177,16 @@ public final class CheckoutStepsViewController: UIViewController {
         } else {
             fatalError("dataSource cannot be updated")
         }
+    }
+}
+
+extension CheckoutStepsViewController: CheckoutStepsViewModelDelegate {
+    func checkoutStepsViewModel(_ viewModel: CheckoutStepsViewModel, didUpdateSteps steps: [CheckoutStep]) {
+        update(with: steps, animate: true)
+    }
+
+    func checkoutStepsViewModel(_ viewModel: CheckoutStepsViewModel, didUpdateHeaderViewModel headerViewModel: CheckoutHeaderViewModel) {
+        headerView?.configure(with: headerViewModel)
     }
 }
 
