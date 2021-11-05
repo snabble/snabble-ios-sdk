@@ -2,7 +2,7 @@
 //  ExitToken+Image.swift
 //  Snabble
 //
-//  Created by Andreas Osberghaus on 04.11.21.
+//  Created by Andreas Osberghaus on 05.11.21.
 //
 
 import Foundation
