@@ -173,9 +173,9 @@ final class CheckoutBar: NibView {
         spinner.centerYAnchor.constraint(equalTo: button.centerYAnchor).isActive = true
         button.isEnabled = false
 
-        let offlineMethods = SnabbleUI.project.paymentMethods.filter { $0.offline }
-        let timeout: TimeInterval = offlineMethods.contains(paymentMethod) ? 3 : 10
-        self.shoppingCart.createCheckoutInfo(SnabbleUI.project, timeout: timeout) { result in
+//        let offlineMethods = SnabbleUI.project.paymentMethods.filter { $0.offline }
+//        let timeout: TimeInterval = offlineMethods.contains(paymentMethod) ? 3 : 10
+        self.shoppingCart.createCheckoutInfo(SnabbleUI.project, timeout: 10) { result in
             spinner.stopAnimating()
             spinner.removeFromSuperview()
             button.isEnabled = true
@@ -193,18 +193,30 @@ final class CheckoutBar: NibView {
                         return
                     }
 
+                    if paymentMethod.offline {
+                        let info = SignedCheckoutInfo([paymentMethod])
+                        self.cartDelegate?.gotoPayment(paymentMethod, nil, info, self.shoppingCart)
+                        return
+                    }
+
+                    if case SnabbleError.urlError = error {
+                        self.cartDelegate?.showWarningMessage(L10n.Snabble.Payment.offlineHint)
+                        return
+                    }
+
                     switch error.type {
                     case .noAvailableMethod:
                         self.cartDelegate?.showWarningMessage(L10n.Snabble.Payment.noMethodAvailable)
                     case .invalidDepositVoucher:
                         self.cartDelegate?.showWarningMessage(L10n.Snabble.InvalidDepositVoucher.errorMsg)
                     default:
-                        if !offlineMethods.isEmpty {
-                            let info = SignedCheckoutInfo(offlineMethods)
-                            self.cartDelegate?.gotoPayment(paymentMethod, self.methodSelector?.selectedPaymentDetail, info, self.shoppingCart)
-                        } else {
-                            self.cartDelegate?.showWarningMessage(L10n.Snabble.Payment.errorStarting)
-                        }
+                        self.cartDelegate?.showWarningMessage(L10n.Snabble.Payment.errorStarting)
+//                        if !offlineMethods.isEmpty {
+//                            let info = SignedCheckoutInfo(offlineMethods)
+//                            self.cartDelegate?.gotoPayment(paymentMethod, self.methodSelector?.selectedPaymentDetail, info, self.shoppingCart)
+//                        } else {
+//                            self.cartDelegate?.showWarningMessage(L10n.Snabble.Payment.errorStarting)
+//                        }
                     }
                 }
             }

@@ -120,7 +120,7 @@ extension SignedCheckoutInfo {
                             // GET that process, and return it to the caller
                             Log.warn("got 409/403 from PUT to checkoutProcess, try GET")
                             self.fetchCheckoutProcess(project, url, completion)
-                        } else if case .urlError = error {
+                        } else if case .urlError = error, !paymentMethod.rawMethod.offline {
                             self.fetchCheckoutProcess(project, url, completion)
                         } else {
                             completion(result)
