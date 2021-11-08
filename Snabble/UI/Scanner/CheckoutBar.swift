@@ -5,6 +5,7 @@
 //
 
 import UIKit
+import Pulley
 
 final class CheckoutBar: NibView {
     @IBOutlet private var contentStack: UIStackView!
@@ -116,7 +117,21 @@ final class CheckoutBar: NibView {
         self.contentStack.spacing = 12
     }
 
+    private func pauseScanning() {
+        let drawer = self.parentVC as? ScannerDrawerViewController
+        let scanner = drawer?.pulleyViewController?.primaryContentViewController as? ScanningViewController
+        scanner?.pauseScanning()
+    }
+
+    private func resumeScanning() {
+        let drawer = self.parentVC as? ScannerDrawerViewController
+        let scanner = drawer?.pulleyViewController?.primaryContentViewController as? ScanningViewController
+        scanner?.resumeScanning()
+    }
+
     @objc private func checkoutTapped(_ sender: Any) {
+        pauseScanning()
+
         let project = SnabbleUI.project
         self.cartDelegate?.checkoutAllowed(project: project, cart: shoppingCart) { start in
             if start {
@@ -182,7 +197,14 @@ final class CheckoutBar: NibView {
             case .success(let info):
                 // force any required info to be re-requested on the next attempt
                 self.shoppingCart.requiredInformationData = []
-                self.cartDelegate?.gotoPayment(paymentMethod, self.methodSelector?.selectedPaymentDetail, info, self.shoppingCart)
+
+                let detail = self.methodSelector?.selectedPaymentDetail
+                let cart = self.shoppingCart
+                self.cartDelegate?.gotoPayment(paymentMethod, detail, info, cart) { didStart in
+                    if !didStart {
+                        self.resumeScanning()
+                    }
+                }
             case .failure(let error):
                 let handled = self.cartDelegate?.handleCheckoutError(error) ?? false
                 if !handled {
@@ -194,7 +216,7 @@ final class CheckoutBar: NibView {
                     if paymentMethod.offline {
                         // if the payment method works offline, ignore the error and continue anyway
                         let info = SignedCheckoutInfo([paymentMethod])
-                        self.cartDelegate?.gotoPayment(paymentMethod, nil, info, self.shoppingCart)
+                        self.cartDelegate?.gotoPayment(paymentMethod, nil, info, self.shoppingCart) { _ in }
                         return
                     }
 
