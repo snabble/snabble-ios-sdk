@@ -282,7 +282,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "if [ \"${CONFIGURATION}\" = \"Debug\" ]; then\n  SWIFTLINT=${PODS_ROOT}/SwiftLint/swiftlint\n\n  if [ -x \"$SWIFTLINT\" ]; then\n    \"$SWIFTLINT\"\n    (cd ..; \"$SWIFTLINT\")\n  fi\nfi\n";
+			shellScript = "if [ \"${CONFIGURATION}\" = \"Debug\" ]; then\n  SWIFTLINT=${PODS_ROOT}/SwiftLint/swiftlint\n\n  if [ -x \"$SWIFTLINT\" ]; then\n    (cd ..; \"$SWIFTLINT\")\n  fi\nfi\n";
 		};
 /* End PBXShellScriptBuildPhase section */
 
