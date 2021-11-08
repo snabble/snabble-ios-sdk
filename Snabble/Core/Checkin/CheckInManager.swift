@@ -124,6 +124,7 @@ extension CheckInManager: CLLocationManagerDelegate {
         case .denied, .restricted, .notDetermined:
             manager.stopUpdatingLocation()
             delegate?.checkInManager(self, locationAuthorizationNotGranted: manager.authorizationStatus)
+            return
         @unknown default:
             break
         }
