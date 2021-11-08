@@ -1,7 +1,5 @@
 "release.safety.catch" = "Rimuovi il dispositivo di sicurezza della bottiglia (se presente) alla stazione designata all’uscita.";
 
-"Shopping.title" = "Shopping";
-
 "Snabble.addDiscount" = "Inserisci lo sconto";
 
 "Snabble.ageVerification.explanation" = "Per l’acquisto di determinati articoli, come ad esempio gli alcolici, è necessario un documento che attesti l’età. Inserisci il numero a 7 cifre della parte posteriore del tuo documento di identità.";
@@ -397,6 +395,8 @@
 "Snabble.SEPA.scoTransferHint" = "Inserisci anche il nome indicato sulla carta per poterla salvare direttamente con l’app per i pagamenti.";
 
 "Snabble.Settings" = "Impostazioni";
+
+"Snabble.Shopping.title" = "Shopping";
 
 "Snabble.Shoppingcart.articleRemoved" = "Articolo rimosso";
 

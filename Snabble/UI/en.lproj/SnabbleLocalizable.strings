@@ -1,7 +1,5 @@
 "release.safety.catch" = "Please remove the bottle's security device (if present) at the designated station at the exit.";
 
-"Shopping.title" = "Shopping";
-
 "Snabble.addDiscount" = "Enter discount";
 
 "Snabble.ageVerification.explanation" = "To purchase certain products like alcoholic beverages, verifying your age is required. Enter the 7-digit Number from the back side of your ID card.";
@@ -397,6 +395,8 @@
 "Snabble.SEPA.scoTransferHint" = "Please enter the name from the card to save it for future payments.";
 
 "Snabble.Settings" = "Settings";
+
+"Snabble.Shopping.title" = "Shopping";
 
 "Snabble.Shoppingcart.articleRemoved" = "Product removed";
 
