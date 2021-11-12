@@ -1,5 +1,7 @@
 ## snabble iOS SDK Changelog
 
+# v0.17.13 (unreleased)
+
 # v0.17.12
 - Add support for credit card payment via PAYONE
 - Fixes a bug where barcodes with embedded comma "," characters were not handled correctly
