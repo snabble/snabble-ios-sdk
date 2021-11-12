@@ -25,11 +25,6 @@ public final class ShoppingList: Codable {
         items.count
     }
 
-    public var hasImages: Bool {
-        let imgIndex = self.items.firstIndex { $0.product?.imageUrl != nil }
-        return imgIndex != nil
-    }
-
     public init(for projectId: Identifier<Project>, directory: String = ShoppingList.listsDirectory) {
         self.projectId = projectId
 

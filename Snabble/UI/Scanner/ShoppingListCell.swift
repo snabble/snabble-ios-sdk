@@ -11,7 +11,6 @@ final class ShoppingListCell: UITableViewCell {
     private var indexPath: IndexPath?
     private var checked = false
 
-    @IBOutlet private var imageWidth: NSLayoutConstraint!
     @IBOutlet private var productImage: UIImageView!
     @IBOutlet private var spinner: UIActivityIndicatorView!
 
@@ -44,6 +43,7 @@ final class ShoppingListCell: UITableViewCell {
 
         nameLabel.textColor = .label
         quantityLabel.textColor = .label
+        productImage.tintColor = .label
 
         prepareForReuse()
     }
@@ -54,7 +54,6 @@ final class ShoppingListCell: UITableViewCell {
         task?.cancel()
         task = nil
         productImage.image = nil
-        imageWidth.constant = 10
         spinner.isHidden = true
 
         item = nil
@@ -68,22 +67,20 @@ final class ShoppingListCell: UITableViewCell {
         self.item = item
         let quantity: String?
 
-        imageWidth.constant = list.hasImages ? 42 : 10
-
         switch item.entry {
-        case .product(let product):
+        case .product:
             quantity = "\(item.quantity)"
-            loadImage(url: product.imageUrl)
         case .tag:
             quantity = "\(item.quantity)"
         case .custom:
             quantity = nil
         }
+        loadImage(for: item)
 
         quantityLabel.text = quantity
         checkImage.isHidden = !item.checked
 
-        let alpha: CGFloat = item.checked ? 0.3 : 1
+        let alpha = item.checked ? 0.3 : 1
         nameLabel.alpha = alpha
         checkContainer.alpha = alpha
         quantityLabel.alpha = alpha
@@ -100,11 +97,12 @@ final class ShoppingListCell: UITableViewCell {
 extension ShoppingListCell {
     private static var imageCache = [String: UIImage]()
 
-    private func loadImage(url: String?) {
+    private func loadImage(for item: ShoppingListItem) {
         guard
-            let imgUrl = url,
+            let imgUrl = item.product?.imageUrl,
             let url = URL(string: imgUrl)
         else {
+            self.setDefaultImage(for: item)
             return
         }
 
@@ -125,13 +123,29 @@ extension ShoppingListCell {
                 return
             }
 
-            if let image = UIImage(data: data) {
-                DispatchQueue.main.async {
+            DispatchQueue.main.async {
+                if let image = UIImage(data: data) {
                     ShoppingListCell.imageCache[imgUrl] = image
                     self.productImage.image = image
+                } else {
+                    self.setDefaultImage(for: item)
                 }
             }
         }
         self.task?.resume()
+    }
+
+    private func setDefaultImage(for item: ShoppingListItem) {
+        let asset: SwiftGenImageAsset
+        switch item.entry {
+        case .product:
+            asset = Asset.SnabbleSDK.Shoppinglist.shoppinglistIconProduct
+        case .tag:
+            asset = Asset.SnabbleSDK.Shoppinglist.shoppinglistIconTag
+        case .custom:
+            asset = Asset.SnabbleSDK.Shoppinglist.shoppinglistIconText
+        }
+
+        productImage.image = asset.image.withRenderingMode(.alwaysTemplate)
     }
 }
