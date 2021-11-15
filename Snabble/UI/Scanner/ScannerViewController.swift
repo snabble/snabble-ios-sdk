@@ -21,11 +21,13 @@ public final class ScannerViewController: PulleyViewController {
         let scanningViewController = ScanningViewController(cart, shop, detector, delegate: scannerDelegate)
 
         var viewController: UIViewController
-        if let cartDelegate = cartDelegate {
-            viewController = ScannerDrawerViewController(SnabbleUI.project.id,
-                                                               shoppingCart: cart,
-                                                               cartDelegate: cartDelegate,
-                                                               shoppingListDelegate: shoppingListDelegate)
+        if let cartDelegate = cartDelegate, let project = shop.project {
+            viewController = ScannerDrawerViewController(
+                project.id,
+                shoppingCart: cart,
+                cartDelegate: cartDelegate,
+                shoppingListDelegate: shoppingListDelegate
+            )
             initialPosition = .collapsed
         } else {
             viewController = EmptyDrawerViewController()
