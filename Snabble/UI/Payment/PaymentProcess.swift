@@ -276,7 +276,7 @@ extension PaymentProcess {
         UIApplication.shared.beginIgnoringInteractionEvents()
         self.startBlurOverlayTimer()
 
-        let project = SnabbleUI.project
+        let project = shop.project ?? .none
         let id = self.cart.uuid
         self.signedCheckoutInfo.createCheckoutProcess(project, id: id, paymentMethod: method, timeout: Self.createTimeout) { result in
             self.hudTimer?.invalidate()

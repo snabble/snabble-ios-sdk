@@ -10,10 +10,17 @@ import Foundation
 protocol CheckoutStepsViewModelDelegate: AnyObject {
     func checkoutStepsViewModel(_ viewModel: CheckoutStepsViewModel, didUpdateHeaderViewModel headerViewModel: CheckoutHeaderViewModel)
     func checkoutStepsViewModel(_ viewModel: CheckoutStepsViewModel, didUpdateSteps steps: [CheckoutStep])
+    func checkoutStepsViewModel(_ viewModel: CheckoutStepsViewModel, didUpdateExitToken exitToken: ExitToken)
 }
 
 class CheckoutStepsViewModel {
-    private(set) var checkoutProcess: CheckoutProcess
+    private(set) var checkoutProcess: CheckoutProcess {
+        didSet {
+            if let exitToken = checkoutProcess.exitToken {
+                delegate?.checkoutStepsViewModel(self, didUpdateExitToken: exitToken)
+            }
+        }
+    }
     let shoppingCart: ShoppingCart
 
     private weak var checkoutProcessTimer: Timer?

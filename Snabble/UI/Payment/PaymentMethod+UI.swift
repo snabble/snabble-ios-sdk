@@ -45,7 +45,9 @@ extension PaymentMethod {
                 return nil
             }
         case .deDirectDebit, .visa, .mastercard, .americanExpress, .externalBilling, .paydirektOneKlick, .twint, .postFinanceCard:
-            processor = CheckoutStepsViewController(shop: shop, shoppingCart: cart, checkoutProcess: process!)
+            let viewController = CheckoutStepsViewController(shop: shop, shoppingCart: cart, checkoutProcess: process!)
+            viewController.paymentDelegate = delegate
+            processor = viewController
 //            processor = OnlineCheckoutViewController(process!, rawJson, cart, delegate)
         case .gatekeeperTerminal:
             processor = TerminalCheckoutViewController(process!, rawJson, cart, delegate)

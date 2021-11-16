@@ -15,7 +15,7 @@ public final class CheckoutStepsViewController: UIViewController {
 
     private weak var ratingViewController: CheckoutRatingViewController?
 
-    public weak var analyticsDelegate: AnalyticsDelegate?
+    public weak var paymentDelegate: PaymentDelegate?
 
     private typealias ItemIdentifierType = CheckoutStep
     private typealias CellProvider = (_ tableView: UITableView, _ indexPath: IndexPath, _ itemIdentifier: ItemIdentifierType) -> UITableViewCell?
@@ -101,7 +101,7 @@ public final class CheckoutStepsViewController: UIViewController {
 
         let ratingViewController = CheckoutRatingViewController(shop: shop)
         ratingViewController.shouldRequestReview = false
-        ratingViewController.analyticsDelegate = analyticsDelegate
+        ratingViewController.analyticsDelegate = paymentDelegate
         addChild(ratingViewController)
         tableView.tableFooterView = ratingViewController.view
         ratingViewController.didMove(toParent: self)
@@ -163,7 +163,7 @@ public final class CheckoutStepsViewController: UIViewController {
 
     @objc private func doneButtonTouchedUpInside(_ sender: UIButton) {
         navigationController?.popToRootViewController(animated: true)
-        analyticsDelegate?.track(.checkoutStepsClosed)
+        paymentDelegate?.track(.checkoutStepsClosed)
     }
 
     private func update(with steps: [ItemIdentifierType], animate: Bool = true) {
@@ -187,6 +187,10 @@ extension CheckoutStepsViewController: CheckoutStepsViewModelDelegate {
 
     func checkoutStepsViewModel(_ viewModel: CheckoutStepsViewModel, didUpdateHeaderViewModel headerViewModel: CheckoutHeaderViewModel) {
         headerView?.configure(with: headerViewModel)
+    }
+
+    func checkoutStepsViewModel(_ viewModel: CheckoutStepsViewModel, didUpdateExitToken exitToken: ExitToken) {
+        paymentDelegate?.exitToken(exitToken, for: shop)
     }
 }
 
