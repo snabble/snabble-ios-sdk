@@ -100,6 +100,10 @@ class CheckoutStepsViewModel {
 
         steps.append(contentsOf: checkoutProcess.fulfillments.map(CheckoutStep.init))
 
+        if let qrCodeContent = checkoutProcess.paymentInformation?.qrCodeContent {
+            steps.append(CheckoutStep(qrCodeContent: qrCodeContent))
+        }
+
         if let exitToken = checkoutProcess.exitToken {
             steps.append(CheckoutStep(exitToken: exitToken))
         }

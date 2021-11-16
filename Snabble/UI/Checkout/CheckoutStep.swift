@@ -94,6 +94,14 @@ extension CheckoutStep {
         detailText = nil
         actionTitle = nil
     }
+
+    init(qrCodeContent: String) {
+        status = .success
+        text = L10n.Snabble.QRCode.showThisCode
+        image = QRCode.generate(for: qrCodeContent, scale: 5)
+        detailText = L10n.Snabble.QRCode.priceMayDiffer
+        actionTitle = nil
+    }
 }
 
 private extension Fulfillment {
