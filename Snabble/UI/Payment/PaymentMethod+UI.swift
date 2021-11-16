@@ -26,7 +26,7 @@ extension PaymentMethod {
         }
     }
 
-    func processor(_ process: CheckoutProcess?, _ rawJson: [String: Any]?, _ cart: ShoppingCart, _ delegate: PaymentDelegate?) -> UIViewController? {
+    func processor(_ process: CheckoutProcess?, shop: Shop, _ rawJson: [String: Any]?, _ cart: ShoppingCart, _ delegate: PaymentDelegate?) -> UIViewController? {
         if !self.rawMethod.offline && process == nil {
             return nil
         }
@@ -45,7 +45,8 @@ extension PaymentMethod {
                 return nil
             }
         case .deDirectDebit, .visa, .mastercard, .americanExpress, .externalBilling, .paydirektOneKlick, .twint, .postFinanceCard:
-            processor = OnlineCheckoutViewController(process!, rawJson, cart, delegate)
+            processor = CheckoutStepsViewController(shop: shop, shoppingCart: cart, checkoutProcess: process!)
+//            processor = OnlineCheckoutViewController(process!, rawJson, cart, delegate)
         case .gatekeeperTerminal:
             processor = TerminalCheckoutViewController(process!, rawJson, cart, delegate)
         case .applePay:
