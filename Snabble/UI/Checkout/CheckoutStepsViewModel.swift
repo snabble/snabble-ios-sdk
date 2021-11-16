@@ -22,13 +22,15 @@ class CheckoutStepsViewModel {
         }
     }
     let shoppingCart: ShoppingCart
+    let shop: Shop
 
     private weak var checkoutProcessTimer: Timer?
     private var processSessionTask: URLSessionDataTask?
 
     weak var delegate: CheckoutStepsViewModelDelegate?
 
-    init(checkoutProcess: CheckoutProcess, shoppingCart: ShoppingCart) {
+    init(shop: Shop, checkoutProcess: CheckoutProcess, shoppingCart: ShoppingCart) {
+        self.shop = shop
         self.checkoutProcess = checkoutProcess
         self.shoppingCart = shoppingCart
         updateViewModels(with: checkoutProcess)
@@ -101,7 +103,8 @@ class CheckoutStepsViewModel {
         steps.append(contentsOf: checkoutProcess.fulfillments.map(CheckoutStep.init))
 
         if let qrCodeContent = checkoutProcess.paymentInformation?.qrCodeContent {
-            steps.append(CheckoutStep(qrCodeContent: qrCodeContent))
+            let total = !checkoutProcess.pricing.lineItems.isEmpty ? checkoutProcess.pricing.price.price : shoppingCart.total
+            steps.append(CheckoutStep(qrCodeContent: qrCodeContent, total: total ?? 0, project: shop.project!))
         }
 
         if let exitToken = checkoutProcess.exitToken {

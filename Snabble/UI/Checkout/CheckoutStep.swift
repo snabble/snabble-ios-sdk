@@ -95,11 +95,11 @@ extension CheckoutStep {
         actionTitle = nil
     }
 
-    init(qrCodeContent: String) {
+    init(qrCodeContent: String, total: Int, project: Project) {
         status = .success
         text = L10n.Snabble.QRCode.showThisCode
         image = QRCode.generate(for: qrCodeContent, scale: 5)
-        detailText = L10n.Snabble.QRCode.priceMayDiffer
+        detailText = "\(L10n.Snabble.QRCode.total) \(PriceFormatter(project).format(total))\n \(L10n.Snabble.QRCode.priceMayDiffer)"
         actionTitle = nil
     }
 }

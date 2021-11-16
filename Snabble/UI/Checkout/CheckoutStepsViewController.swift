@@ -46,7 +46,9 @@ public final class CheckoutStepsViewController: UIViewController {
     )
 
     let viewModel: CheckoutStepsViewModel
-    public let shop: Shop
+    public var shop: Shop {
+        viewModel.shop
+    }
 
     public var checkoutProcess: CheckoutProcess {
         viewModel.checkoutProcess
@@ -60,8 +62,8 @@ public final class CheckoutStepsViewController: UIViewController {
     private var processSessionTask: URLSessionDataTask?
 
     public init(shop: Shop, shoppingCart: ShoppingCart, checkoutProcess: CheckoutProcess) {
-        self.shop = shop
         viewModel = CheckoutStepsViewModel(
+            shop: shop,
             checkoutProcess: checkoutProcess,
             shoppingCart: shoppingCart
         )
