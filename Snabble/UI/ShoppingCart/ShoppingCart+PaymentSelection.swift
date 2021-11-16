@@ -443,7 +443,7 @@ final class PaymentMethodSelector {
                 )
                 return [action]
             }
-        case .qrCodePOS, .qrCodeOffline, .gatekeeperTerminal:
+        case .qrCodePOS, .qrCodeOffline, .gatekeeperTerminal, .unknown:
             break
         }
 

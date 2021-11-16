@@ -170,8 +170,7 @@ public struct CheckoutInfo: Decodable {
         let container = try decoder.container(keyedBy: CodingKeys.self)
 
         self.session = try container.decode(String.self, forKey: .session)
-        let paymentMethods = try container.decode([FailableDecodable<PaymentMethodDescription>].self, forKey: .paymentMethods)
-        self.paymentMethods = paymentMethods.compactMap { $0.value }
+        self.paymentMethods = try container.decodeIfPresent([PaymentMethodDescription].self, forKey: .paymentMethods) ?? []
         let lineItems = try container.decode([LineItem].self, forKey: .lineItems)
         self.lineItems = lineItems.filter { $0.type != .unknown }
         self.price = try container.decode(Price.self, forKey: .price)
@@ -296,7 +295,7 @@ public struct CheckoutProcess: Decodable {
     public let supervisorApproval: Bool?
     public let paymentApproval: Bool?
     public let aborted: Bool
-    public let paymentMethod: String
+    public let paymentMethod: RawPaymentMethod
     public let modified: Bool
     public let paymentInformation: PaymentInformation?
     public let paymentState: PaymentState
@@ -347,7 +346,7 @@ public struct CheckoutProcess: Decodable {
         self.supervisorApproval = try container.decodeIfPresent(Bool.self, forKey: .supervisorApproval)
         self.paymentApproval = try container.decodeIfPresent(Bool.self, forKey: .paymentApproval)
         self.aborted = try container.decode(Bool.self, forKey: .aborted)
-        self.paymentMethod = try container.decode(String.self, forKey: .paymentMethod)
+        self.paymentMethod = try container.decode(RawPaymentMethod.self, forKey: .paymentMethod)
         self.modified = try container.decode(Bool.self, forKey: .modified)
         self.paymentInformation = try container.decodeIfPresent(PaymentInformation.self, forKey: .paymentInformation)
         self.paymentState = try container.decode(PaymentState.self, forKey: .paymentState)

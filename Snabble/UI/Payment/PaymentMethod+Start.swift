@@ -53,7 +53,7 @@ public final class PaymentMethodStartCheck {
         case .postFinanceCard:
             self.requestBiometricAuthentication(on: presenter, reason: L10n.Snabble.PostFinanceCard.payNow, completion)
 
-        case .qrCodePOS, .qrCodeOffline, .externalBilling, .gatekeeperTerminal, .customerCardPOS, .applePay:
+        case .qrCodePOS, .qrCodeOffline, .externalBilling, .gatekeeperTerminal, .customerCardPOS, .applePay, .unknown:
             completion(true)
         }
     }

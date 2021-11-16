@@ -376,8 +376,7 @@ public struct Project: Decodable, Identifiable {
         self.checkoutLimits = try container.decodeIfPresent(CheckoutLimits.self, forKey: .checkoutLimits)
         self.messages = try container.decodeIfPresent(ProjectMessages.self, forKey: .messages)
 
-        let descriptors = try container.decodeIfPresent([FailableDecodable<PaymentMethodDescriptor>].self, forKey: .paymentMethodDescriptors)
-        self.paymentMethodDescriptors = descriptors?.compactMap { $0.value } ?? []
+        self.paymentMethodDescriptors = try container.decodeIfPresent([PaymentMethodDescriptor].self, forKey: .paymentMethodDescriptors) ?? []
 
         self.displayNetPrice = try container.decodeIfPresent(Bool.self, forKey: .displayNetPrice) ?? false
         self.company = try container.decodeIfPresent(Company.self, forKey: .company)

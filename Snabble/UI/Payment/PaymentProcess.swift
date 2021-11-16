@@ -28,6 +28,7 @@ public final class PaymentProcess {
         var result = [PaymentMethod]()
         for method in methods {
             switch method.method {
+            case .unknown: break
             case .qrCodePOS: result.append(.qrCodePOS)
             case .qrCodeOffline: result.append(.qrCodeOffline)
             case .gatekeeperTerminal: result.append(.gatekeeperTerminal)

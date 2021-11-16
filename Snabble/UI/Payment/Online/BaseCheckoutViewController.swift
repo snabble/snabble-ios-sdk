@@ -60,7 +60,7 @@ public class BaseCheckoutViewController: UIViewController {
         self.title = L10n.Snabble.Payment.confirm
 
         self.alreadyApproved = self.process.supervisorApproval == true
-        let method = RawPaymentMethod(rawValue: self.process.paymentMethod)
+        let method = process.paymentMethod
 
         self.topWrapper.isHidden = true
         self.arrowWrapper.isHidden = true

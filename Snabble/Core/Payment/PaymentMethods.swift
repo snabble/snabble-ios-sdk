@@ -14,8 +14,15 @@ public struct PaymentMethodDescriptor: Decodable {
     }
 }
 
+extension RawPaymentMethod: Decodable {
+    public init(from decoder: Decoder) throws {
+        let rawValue = try decoder.singleValueContainer().decode(RawValue.self)
+        self = Self(rawValue: rawValue) ?? .unknown
+    }
+}
+
 // known payment methods
-public enum RawPaymentMethod: String, CaseIterable, Decodable {
+public enum RawPaymentMethod: String, CaseIterable {
     case qrCodePOS              // QR Code with a reference to snabble's backend
     case qrCodeOffline          // QR Code, offline capable, format is specified via `QRCodeConfig.format`
     case deDirectDebit          // SEPA direct debit via Telecash/First Data
@@ -29,6 +36,7 @@ public enum RawPaymentMethod: String, CaseIterable, Decodable {
     case applePay
     case postFinanceCard        // via Datatrans
     case twint                  // via Datatrans
+    case unknown
 
     static let orderedMethods: [RawPaymentMethod] = [
         // customer-specific methods
@@ -57,7 +65,7 @@ public enum RawPaymentMethod: String, CaseIterable, Decodable {
         case .deDirectDebit, .creditCardVisa, .creditCardMastercard, .creditCardAmericanExpress,
              .externalBilling, .customerCardPOS, .paydirektOneKlick, .twint, .postFinanceCard:
             return true
-        case .qrCodePOS, .qrCodeOffline, .gatekeeperTerminal, .applePay:
+        case .qrCodePOS, .qrCodeOffline, .gatekeeperTerminal, .applePay, .unknown:
             return false
         }
     }
@@ -69,7 +77,7 @@ public enum RawPaymentMethod: String, CaseIterable, Decodable {
              .creditCardVisa, .creditCardMastercard, .creditCardAmericanExpress,
              .twint, .postFinanceCard:
             return true
-        case .qrCodePOS, .externalBilling, .qrCodeOffline, .gatekeeperTerminal, .customerCardPOS, .applePay:
+        case .qrCodePOS, .externalBilling, .qrCodeOffline, .gatekeeperTerminal, .customerCardPOS, .applePay, .unknown:
             return false
         }
     }
@@ -80,7 +88,7 @@ public enum RawPaymentMethod: String, CaseIterable, Decodable {
         case .deDirectDebit, .creditCardVisa, .creditCardMastercard, .creditCardAmericanExpress, .paydirektOneKlick,
              .twint, .postFinanceCard:
             return true
-        case .qrCodePOS, .qrCodeOffline, .externalBilling, .gatekeeperTerminal, .customerCardPOS, .applePay:
+        case .qrCodePOS, .qrCodeOffline, .externalBilling, .gatekeeperTerminal, .customerCardPOS, .applePay, .unknown:
             return false
         }
     }
@@ -93,7 +101,7 @@ public enum RawPaymentMethod: String, CaseIterable, Decodable {
         case .qrCodePOS, .deDirectDebit,
              .creditCardVisa, .creditCardMastercard, .creditCardAmericanExpress,
              .externalBilling, .gatekeeperTerminal, .customerCardPOS, .paydirektOneKlick,
-             .applePay, .twint, .postFinanceCard:
+             .applePay, .twint, .postFinanceCard, .unknown:
             return false
         }
     }
@@ -106,7 +114,7 @@ public enum RawPaymentMethod: String, CaseIterable, Decodable {
         case .qrCodeOffline, .qrCodePOS, .deDirectDebit,
              .creditCardVisa, .creditCardMastercard, .creditCardAmericanExpress,
              .externalBilling, .gatekeeperTerminal, .customerCardPOS, .paydirektOneKlick,
-             .applePay:
+             .applePay, .unknown:
             return false
         }
     }
@@ -157,6 +165,7 @@ public enum PaymentMethod {
     case applePay
     case twint(PaymentMethodData?)
     case postFinanceCard(PaymentMethodData?)
+    case unknown
 
     public var rawMethod: RawPaymentMethod {
         switch self {
@@ -173,6 +182,7 @@ public enum PaymentMethod {
         case .applePay: return .applePay
         case .twint: return .twint
         case .postFinanceCard: return .postFinanceCard
+        case .unknown: return .unknown
         }
     }
 
@@ -188,7 +198,7 @@ public enum PaymentMethod {
             return data
         case .postFinanceCard(let data):
             return data
-        case .qrCodePOS, .qrCodeOffline, .gatekeeperTerminal, .customerCardPOS, .applePay:
+        case .qrCodePOS, .qrCodeOffline, .gatekeeperTerminal, .customerCardPOS, .applePay, .unknown:
             return nil
         }
     }
@@ -198,7 +208,7 @@ public enum PaymentMethod {
         case .visa(let data), .mastercard(let data), .americanExpress(let data), .paydirektOneKlick(let data):
             return data?.additionalData ?? [:]
         case .deDirectDebit, .qrCodePOS, .qrCodeOffline, .externalBilling, .gatekeeperTerminal, .customerCardPOS,
-             .applePay, .twint, .postFinanceCard:
+                .applePay, .twint, .postFinanceCard, .unknown:
             return [:]
         }
     }

@@ -13,7 +13,7 @@ extension PaymentMethod {
         case .deDirectDebit, .visa, .mastercard, .americanExpress,
              .externalBilling, .paydirektOneKlick, .twint, .postFinanceCard:
             return true
-        case .qrCodePOS, .qrCodeOffline, .gatekeeperTerminal, .customerCardPOS, .applePay:
+        case .qrCodePOS, .qrCodeOffline, .gatekeeperTerminal, .customerCardPOS, .applePay, .unknown:
             return false
         }
     }
@@ -44,7 +44,7 @@ extension PaymentMethod {
             } else {
                 return nil
             }
-        case .deDirectDebit, .visa, .mastercard, .americanExpress, .externalBilling, .paydirektOneKlick, .twint, .postFinanceCard:
+        case .deDirectDebit, .visa, .mastercard, .americanExpress, .externalBilling, .paydirektOneKlick, .twint, .postFinanceCard, .unknown:
             processor = OnlineCheckoutViewController(process!, rawJson, cart, delegate)
         case .gatekeeperTerminal:
             processor = TerminalCheckoutViewController(process!, rawJson, cart, delegate)

@@ -98,6 +98,7 @@ public extension PaymentMethod {
         }
 
         switch rawMethod {
+        case .unknown: return .unknown
         case .qrCodePOS: return .qrCodePOS
         case .qrCodeOffline: return .qrCodeOffline
         case .gatekeeperTerminal: return .gatekeeperTerminal

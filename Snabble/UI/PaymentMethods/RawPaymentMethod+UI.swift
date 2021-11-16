@@ -44,6 +44,8 @@ extension RawPaymentMethod {
             return "TWINT"
         case .postFinanceCard:
             return "PostFinance Card"
+        case .unknown:
+            return "Unknown"
         }
     }
 
@@ -60,6 +62,8 @@ extension RawPaymentMethod {
         case .postFinanceCard: return Asset.SnabbleSDK.Payment.paymentPostfinance.image
         case .qrCodePOS, .qrCodeOffline, .externalBilling, .customerCardPOS:
             return Asset.SnabbleSDK.Payment.paymentPos.image
+        case .unknown:
+            return nil
         }
     }
 
@@ -71,7 +75,7 @@ extension RawPaymentMethod {
             return PaydirektEditViewController(nil, analyticsDelegate)
         case .creditCardMastercard, .creditCardVisa, .creditCardAmericanExpress:
             return creditCardEditViewController(projectId, analyticsDelegate)
-        case .qrCodePOS, .qrCodeOffline, .externalBilling, .customerCardPOS, .gatekeeperTerminal, .applePay:
+        case .qrCodePOS, .qrCodeOffline, .externalBilling, .customerCardPOS, .gatekeeperTerminal, .applePay, .unknown:
             break
         case .twint, .postFinanceCard:
             if let projectId = projectId {
