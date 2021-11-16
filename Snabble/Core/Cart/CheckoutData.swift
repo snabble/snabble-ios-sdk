@@ -296,7 +296,7 @@ public struct CheckoutProcess: Decodable {
     public let supervisorApproval: Bool?
     public let paymentApproval: Bool?
     public let aborted: Bool
-    public let paymentMethod: RawPaymentMethod
+    public let paymentMethod: String
     public let modified: Bool
     public let paymentInformation: PaymentInformation?
     public let paymentState: PaymentState
@@ -308,6 +308,10 @@ public struct CheckoutProcess: Decodable {
     public let exitToken: ExitToken?
     public let currency: String
     public let paymentPreauthInformation: PaymentPreauthInformation?
+
+    public var rawPaymentMethod: RawPaymentMethod? {
+        RawPaymentMethod(rawValue: paymentMethod)
+    }
 
     public struct Pricing: Decodable {
         public let lineItems: [CheckoutInfo.LineItem]
@@ -347,7 +351,7 @@ public struct CheckoutProcess: Decodable {
         self.supervisorApproval = try container.decodeIfPresent(Bool.self, forKey: .supervisorApproval)
         self.paymentApproval = try container.decodeIfPresent(Bool.self, forKey: .paymentApproval)
         self.aborted = try container.decode(Bool.self, forKey: .aborted)
-        self.paymentMethod = try container.decode(RawPaymentMethod.self, forKey: .paymentMethod)
+        self.paymentMethod = try container.decode(String.self, forKey: .paymentMethod)
         self.modified = try container.decode(Bool.self, forKey: .modified)
         self.paymentInformation = try container.decodeIfPresent(PaymentInformation.self, forKey: .paymentInformation)
         self.paymentState = try container.decode(PaymentState.self, forKey: .paymentState)
