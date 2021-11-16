@@ -102,9 +102,17 @@ class CheckoutStepsViewModel {
 
         steps.append(contentsOf: checkoutProcess.fulfillments.map(CheckoutStep.init))
 
-        if let qrCodeContent = checkoutProcess.paymentInformation?.qrCodeContent {
+
+        switch checkoutProcess.rawPaymentMethod {
+        case .gatekeeperTerminal:
+            let qrCodeContent = checkoutProcess.paymentInformation?.qrCodeContent ?? "snabble:checkoutProcess:" + checkoutProcess.id
+            steps.append(CheckoutStep(qrCodeContent: qrCodeContent, process: checkoutProcess))
+        case .qrCodePOS:
+            let qrCodeContent = checkoutProcess.paymentInformation?.qrCodeContent ?? "n/a"
             let total = !checkoutProcess.pricing.lineItems.isEmpty ? checkoutProcess.pricing.price.price : shoppingCart.total
             steps.append(CheckoutStep(qrCodeContent: qrCodeContent, total: total ?? 0, project: shop.project!))
+        default:
+            break
         }
 
         if let exitToken = checkoutProcess.exitToken {

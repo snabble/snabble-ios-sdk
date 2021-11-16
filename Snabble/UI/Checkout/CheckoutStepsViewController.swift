@@ -229,6 +229,8 @@ private extension RawPaymentMethod {
 
     var analyticsEvent: AnalyticsEvent {
         switch self {
+        case .gatekeeperTerminal:
+            return .viewTerminalCheckout
         case .qrCodePOS:
             return .viewQRCodeCheckout
         default:
