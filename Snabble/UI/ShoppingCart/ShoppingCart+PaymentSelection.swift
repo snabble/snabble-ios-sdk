@@ -93,9 +93,20 @@ final class PaymentMethodSelector {
     }
 
     func updateSelectionVisibility() {
-        // hide selection if the project only has one method and we have no payment method data
-        let details = PaymentMethodDetails.read()
-        let hidden = projectPaymentMethods.count < 2 && details.isEmpty
+        // get details for all payment methods that could be used here
+        let details = PaymentMethodDetails.read().filter { detail in
+            projectPaymentMethods.contains { $0 == detail.rawMethod }
+        }
+
+        // hide selection if
+        // - the project only has one method,
+        // - we have no payment method data for it,
+        // - and none is needed for this method
+        let hidden =
+            projectPaymentMethods.count < 2 &&
+            details.isEmpty &&
+            projectPaymentMethods.first?.dataRequired == false
+
         self.methodSelectionView?.isHidden = hidden
 
         if let selectedMethod = selectedPaymentMethod {
