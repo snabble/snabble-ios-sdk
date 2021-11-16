@@ -137,6 +137,7 @@ public final class CheckoutStepsViewController: UIViewController {
 
     override public func viewDidLoad() {
         super.viewDidLoad()
+        title = checkoutProcess.rawPaymentMethod?.title ?? L10n.Snabble.Payment.confirm
         headerView?.configure(with: viewModel.headerViewModel)
         tableView?.updateHeaderViews()
 
@@ -151,6 +152,13 @@ public final class CheckoutStepsViewController: UIViewController {
     override public func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         viewModel.startTimer()
+    }
+
+    override public func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        if let analyticsEvent = checkoutProcess.rawPaymentMethod?.analyticsEvent {
+            paymentDelegate?.track(analyticsEvent)
+        }
     }
 
     override public func viewWillDisappear(_ animated: Bool) {
@@ -206,5 +214,25 @@ private extension UITableView {
         guard let header = header else { return }
         let fittingSize = CGSize(width: bounds.width - (safeAreaInsets.left + safeAreaInsets.right), height: 0)
         header.frame.size = header.systemLayoutSizeFitting(fittingSize, withHorizontalFittingPriority: .required, verticalFittingPriority: .fittingSizeLevel)
+    }
+}
+
+private extension RawPaymentMethod {
+    var title: String {
+        switch self {
+        case .qrCodePOS:
+            return L10n.Snabble.QRCode.title
+        default:
+            return L10n.Snabble.Payment.confirm
+        }
+    }
+
+    var analyticsEvent: AnalyticsEvent {
+        switch self {
+        case .qrCodePOS:
+            return .viewQRCodeCheckout
+        default:
+            return .viewOnlineCheckout
+        }
     }
 }
