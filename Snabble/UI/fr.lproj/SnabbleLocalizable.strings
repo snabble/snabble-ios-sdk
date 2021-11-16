@@ -1,7 +1,5 @@
 "release.safety.catch" = "Veille à enlever (le cas échéant) le dispositif de sécurité du goulot de la bouteille au poste prévu à cet effet à la sortie.";
 
-"Shopping.title" = "Shopping";
-
 "Snabble.addDiscount" = "Saisir le rabais";
 
 "Snabble.ageVerification.explanation" = "Une preuve de ton âge est requise pour l’achat de certains articles, comme l’alcool. Saisis à cette fin le numéro à 7 chiffres figurant au dos de ta carte d’identité.";
@@ -397,6 +395,8 @@
 "Snabble.SEPA.scoTransferHint" = "Merci de saisir ton nom sur la carte afin de pouvoir l’enregistrer directement à l’aide de l’application pour les paiements.";
 
 "Snabble.Settings" = "Paramètres";
+
+"Snabble.Shopping.title" = "Shopping";
 
 "Snabble.Shoppingcart.articleRemoved" = "Article supprimé";
 

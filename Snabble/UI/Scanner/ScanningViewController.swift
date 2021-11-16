@@ -65,7 +65,7 @@ final class ScanningViewController: UIViewController {
     private var msgHidden = true
 
     public init(_ cart: ShoppingCart, _ shop: Shop, _ detector: BarcodeDetector, delegate: ScannerDelegate) {
-        let project = SnabbleUI.project
+        let project = shop.project ?? .none
 
         self.shop = shop
         self.delegate = delegate

@@ -5,6 +5,7 @@
 //
 
 import UIKit
+import Pulley
 
 final class CheckoutBar: NibView {
     @IBOutlet private var contentStack: UIStackView!
@@ -116,7 +117,21 @@ final class CheckoutBar: NibView {
         self.contentStack.spacing = 12
     }
 
+    private func pauseScanning() {
+        let drawer = self.parentVC as? ScannerDrawerViewController
+        let scanner = drawer?.pulleyViewController?.primaryContentViewController as? ScanningViewController
+        scanner?.pauseScanning()
+    }
+
+    private func resumeScanning() {
+        let drawer = self.parentVC as? ScannerDrawerViewController
+        let scanner = drawer?.pulleyViewController?.primaryContentViewController as? ScanningViewController
+        scanner?.resumeScanning()
+    }
+
     @objc private func checkoutTapped(_ sender: Any) {
+        pauseScanning()
+
         let project = SnabbleUI.project
         self.cartDelegate?.checkoutAllowed(project: project, cart: shoppingCart) { start in
             if start {
@@ -173,9 +188,7 @@ final class CheckoutBar: NibView {
         spinner.centerYAnchor.constraint(equalTo: button.centerYAnchor).isActive = true
         button.isEnabled = false
 
-        let offlineMethods = SnabbleUI.project.paymentMethods.filter { $0.offline }
-        let timeout: TimeInterval = offlineMethods.contains(paymentMethod) ? 3 : 10
-        self.shoppingCart.createCheckoutInfo(SnabbleUI.project, timeout: timeout) { result in
+        self.shoppingCart.createCheckoutInfo(SnabbleUI.project, timeout: 10) { result in
             spinner.stopAnimating()
             spinner.removeFromSuperview()
             button.isEnabled = true
@@ -184,12 +197,31 @@ final class CheckoutBar: NibView {
             case .success(let info):
                 // force any required info to be re-requested on the next attempt
                 self.shoppingCart.requiredInformationData = []
-                self.cartDelegate?.gotoPayment(paymentMethod, self.methodSelector?.selectedPaymentDetail, info, self.shoppingCart)
+
+                let detail = self.methodSelector?.selectedPaymentDetail
+                let cart = self.shoppingCart
+                self.cartDelegate?.gotoPayment(paymentMethod, detail, info, cart) { didStart in
+                    if !didStart {
+                        self.resumeScanning()
+                    }
+                }
             case .failure(let error):
                 let handled = self.cartDelegate?.handleCheckoutError(error) ?? false
                 if !handled {
                     if let offendingSkus = error.details?.compactMap({ $0.sku }) {
                         self.showProductError(offendingSkus)
+                        return
+                    }
+
+                    if paymentMethod.offline {
+                        // if the payment method works offline, ignore the error and continue anyway
+                        let info = SignedCheckoutInfo([paymentMethod])
+                        self.cartDelegate?.gotoPayment(paymentMethod, nil, info, self.shoppingCart) { _ in }
+                        return
+                    }
+
+                    if case SnabbleError.urlError = error {
+                        self.cartDelegate?.showWarningMessage(L10n.Snabble.Payment.offlineHint)
                         return
                     }
 
@@ -199,12 +231,7 @@ final class CheckoutBar: NibView {
                     case .invalidDepositVoucher:
                         self.cartDelegate?.showWarningMessage(L10n.Snabble.InvalidDepositVoucher.errorMsg)
                     default:
-                        if !offlineMethods.isEmpty {
-                            let info = SignedCheckoutInfo(offlineMethods)
-                            self.cartDelegate?.gotoPayment(paymentMethod, self.methodSelector?.selectedPaymentDetail, info, self.shoppingCart)
-                        } else {
-                            self.cartDelegate?.showWarningMessage(L10n.Snabble.Payment.errorStarting)
-                        }
+                        self.cartDelegate?.showWarningMessage(L10n.Snabble.Payment.errorStarting)
                     }
                 }
             }

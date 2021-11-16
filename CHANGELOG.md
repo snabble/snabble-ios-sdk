@@ -1,10 +1,16 @@
 ## snabble iOS SDK Changelog
 
-# v0.17.12 (unreleased)
+# v0.17.13 (unreleased)
+
+# v0.17.12
 - Add support for credit card payment via PAYONE
 - Fixes a bug where barcodes with embedded comma "," characters were not handled correctly
 - New Feature: handling checking in and out at a store is now part of the SDK, in the `CheckInManager` class
 - Fixes a bug where looking up products after extracting their code from a GS1 code would not alway succeed
+- Fixes a bug where checkout via `qrCodeOffline` could fail while the device had not internet connectivity
+- Fixes a bug where the scanner's energy saver timer was not stopped at the appropriate time
+- For retailers that have Apple Pay enabled, wallets without matching credit cards are now correctly handled,
+  and it is possible to add a card during the checkout process
 
 # v0.17.11
 - Fixes Payment Selection

@@ -233,13 +233,13 @@ final class ShoppingCartTableViewController: UITableViewController {
             self.performPendingLookups(pendingLookups, self.shoppingCart.lastSaved)
         }
 
-        // now gather the remaining lineItems. find the "master" items first
+        // now gather the remaining lineItems. find the main items first
         if let lineItems = cart.backendCartInfo?.lineItems {
             let cartIds = Set(cart.items.map { $0.uuid })
 
-            let masterItems = lineItems.filter { $0.type == .default && !cartIds.contains($0.id) }
+            let mainItems = lineItems.filter { $0.type == .default && !cartIds.contains($0.id) }
 
-            for item in masterItems {
+            for item in mainItems {
                 let additionalItems = lineItems.filter { $0.type != .default && $0.refersTo == item.id }
                 let item = CartTableEntry.lineItem(item, additionalItems)
                 self.items.append(item)

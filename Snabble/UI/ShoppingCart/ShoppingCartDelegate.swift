@@ -14,7 +14,11 @@ public protocol ShoppingCartDelegate: AnalyticsDelegate, MessageDelegate {
 
     /// called when the user wants to initiate payment.
     /// Implementations should usually create a `PaymentProcess` instance and invoke its `start` method
-    func gotoPayment(_ method: RawPaymentMethod, _ detail: PaymentMethodDetail?, _ info: SignedCheckoutInfo, _ cart: ShoppingCart)
+    func gotoPayment(_ method: RawPaymentMethod,
+                     _ detail: PaymentMethodDetail?,
+                     _ info: SignedCheckoutInfo,
+                     _ cart: ShoppingCart,
+                     _ didStartPayment: @escaping (Bool) -> Void)
 
     /// called from the standalone shopping cart to switch to the scanner view
     func gotoScanner()

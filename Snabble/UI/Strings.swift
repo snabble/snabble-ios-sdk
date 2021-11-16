@@ -11,11 +11,6 @@ import Foundation
 // swiftlint:disable nesting type_body_length type_name vertical_whitespace_opening_braces
 public enum L10n {
 
-  public enum Shopping {
-    /// Shopping
-    public static var title: String { return L10n.tr("SnabbleLocalizable", "Shopping.title") }
-  }
-
   public enum Snabble {
     /// Enter discount
     public static var addDiscount: String { return L10n.tr("SnabbleLocalizable", "Snabble.addDiscount") }
@@ -487,6 +482,10 @@ public enum L10n {
         /// Cart
         public static var empty: String { return L10n.tr("SnabbleLocalizable", "Snabble.Scanner.goToCart.empty") }
       }
+    }
+    public enum Shopping {
+      /// Shopping
+      public static var title: String { return L10n.tr("SnabbleLocalizable", "Snabble.Shopping.title") }
     }
     public enum ShoppingCart {
       /// Shopping Cart

@@ -121,11 +121,17 @@ extension SampleViewController: ScannerDelegate {
 }
 
 extension SampleViewController: ShoppingCartDelegate {
-    func gotoPayment(_ method: RawPaymentMethod, _ detail: PaymentMethodDetail?, _ info: SignedCheckoutInfo, _ cart: ShoppingCart) {
+    func gotoPayment(
+        _ method: RawPaymentMethod,
+        _ detail: PaymentMethodDetail?,
+        _ info: SignedCheckoutInfo,
+        _ cart: ShoppingCart,
+        _ didStart: @escaping (Bool) -> Void) {
         guard !info.checkoutInfo.paymentMethods.isEmpty else {
             return
         }
 
+        didStart(true)
         let process = PaymentProcess(info, cart, delegate: self)
         process.start(method, detail) { result in
             switch result {

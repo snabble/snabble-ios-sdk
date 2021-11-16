@@ -61,6 +61,11 @@ internal enum Asset {
       internal static let paymentVisa = SwiftGenImageAsset(name: "SnabbleSDK/payment/payment-visa")
     }
     internal static let paymentMethodCheckstand = SwiftGenImageAsset(name: "SnabbleSDK/payment-method-checkstand")
+    internal enum Shoppinglist {
+      internal static let shoppinglistIconProduct = SwiftGenImageAsset(name: "SnabbleSDK/shoppinglist/shoppinglist-icon-product")
+      internal static let shoppinglistIconTag = SwiftGenImageAsset(name: "SnabbleSDK/shoppinglist/shoppinglist-icon-tag")
+      internal static let shoppinglistIconText = SwiftGenImageAsset(name: "SnabbleSDK/shoppinglist/shoppinglist-icon-text")
+    }
     internal static let x = SwiftGenImageAsset(name: "SnabbleSDK/x")
   }
 }

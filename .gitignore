@@ -19,9 +19,6 @@ DerivedData
 *.hmap
 *.ipa
 
-# Bundler
-.bundle
-
 # Ruby Gem
 /vendor/bundle
 /Example/vendor/bundle
