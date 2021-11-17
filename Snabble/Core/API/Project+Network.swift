@@ -25,11 +25,11 @@ public enum SnabbleError: Error, Equatable {
     case httpError(statusCode: Int)
 
     // structured error from the snabble backend
-    case apiError(SnabbleAPIError)
+    case apiError(error: SnabbleAPIError, statusCode: Int)
 
     var details: [ErrorResponse]? {
         switch self {
-        case .apiError(let apiError):
+        case .apiError(let apiError, _):
             return apiError.error.details
         default:
             return nil
@@ -38,10 +38,18 @@ public enum SnabbleError: Error, Equatable {
 
     var type: ErrorResponseType {
         switch self {
-        case .apiError(let apiError):
+        case .apiError(let apiError, _):
             return apiError.error.type
         default:
             return .unknown
+        }
+    }
+
+    var statusCode: Int? {
+        switch self {
+        case .apiError(_, let statusCode): return statusCode
+        case .httpError(let statusCode): return statusCode
+        default: return nil
         }
     }
 
@@ -452,7 +460,7 @@ extension Project {
                     decoder.dateDecodingStrategy = .customISO8601
                     let error = try decoder.decode(SnabbleAPIError.self, from: data)
                     Log.error("error response: \(String(describing: error)) - statuscode \(response.statusCode)")
-                    return SnabbleError.apiError(error)
+                    return SnabbleError.apiError(error: error, statusCode: response.statusCode)
                 } catch {
                     let rawResponse = String(bytes: data, encoding: .utf8) ?? ""
                     self.logError("failed parsing error response: \(rawResponse) -> \(error)")
