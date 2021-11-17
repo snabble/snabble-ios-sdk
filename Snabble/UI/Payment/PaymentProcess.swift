@@ -261,15 +261,8 @@ extension PaymentProcess {
     ///   - detail: the details for that payment method (e.g., the encrypted IBAN for SEPA)
     ///   - completion: a closure called when the payment method has been determined.
     ///   - result: the view controller to present for this payment process or the error
-    public func start(_ rawMethod: RawPaymentMethod, _ detail: PaymentMethodDetail?, completion: @escaping (_ result: Result<UIViewController, SnabbleError>) -> Void ) {
-        guard
-            let method = PaymentMethod.make(rawMethod, detail),
-            method.canStart()
-        else {
-            return completion(Result.failure(.noRequest))
-        }
-
-        self.start(method, shop: shop, completion)
+    public func start(_ rawMethod: RawPaymentMethod, _ detail: PaymentMethodDetail?, completion: @escaping (_ result:
+        start(method, shop: shop, completion)
     }
 
     private func start(_ method: PaymentMethod, shop: Shop, _ completion: @escaping (_ result: Result<UIViewController, SnabbleError>) -> Void ) {

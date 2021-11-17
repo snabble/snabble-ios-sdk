@@ -21,7 +21,7 @@ public final class PaymentMethodStartCheck {
     }
 
     public func startPayment(_ completion: @escaping (Bool) -> Void) {
-        guard let presenter = presenter else {
+        guard let presenter = presenter, method.canStart() else {
             completion(false)
             return
         }
