@@ -45,6 +45,12 @@ if [ "$BUILD_SAMPLE_APP" == "YES" ]; then
     echo building sample app...
     if (cd Example; bundle exec pod install; xcodebuild -scheme SnabbleSampleApp -workspace SnabbleSampleApp.xcworkspace -configuration Debug build | bundle exec xcpretty); then
         echo "sample app passed!"
+        if Example/Pods/SwiftLint/swiftlint; then
+            echo "SwiftLint passed!"
+        else
+            echo "SwiftLint found violation(s)"
+            exit 1
+        fi
     else
         echo "build failed"
         exit 1
