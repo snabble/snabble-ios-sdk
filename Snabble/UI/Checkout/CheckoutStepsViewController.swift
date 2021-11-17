@@ -233,6 +233,8 @@ private extension RawPaymentMethod {
             return .viewTerminalCheckout
         case .qrCodePOS:
             return .viewQRCodeCheckout
+        case .applePay:
+            return .viewApplePayCheckout
         default:
             return .viewOnlineCheckout
         }
