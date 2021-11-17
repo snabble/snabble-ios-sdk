@@ -102,7 +102,6 @@ class CheckoutStepsViewModel {
 
         steps.append(contentsOf: checkoutProcess.fulfillments.map(CheckoutStep.init))
 
-
         switch checkoutProcess.rawPaymentMethod {
         case .gatekeeperTerminal:
             let qrCodeContent = checkoutProcess.paymentInformation?.qrCodeContent ?? "snabble:checkoutProcess:" + checkoutProcess.id
