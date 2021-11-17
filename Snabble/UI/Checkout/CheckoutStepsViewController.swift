@@ -172,8 +172,19 @@ public final class CheckoutStepsViewController: UIViewController {
     }
 
     @objc private func doneButtonTouchedUpInside(_ sender: UIButton) {
+        SnabbleAPI.fetchAppUserData(shop.projectId)
+        updateShoppingCart(for: checkoutProcess)
         navigationController?.popToRootViewController(animated: true)
         paymentDelegate?.track(.checkoutStepsClosed)
+    }
+
+    private func updateShoppingCart(for checkoutProcess: CheckoutProcess) {
+        switch checkoutProcess.paymentState {
+        case .successful:
+            shoppingCart.removeAll(endSession: true, keepBackup: false)
+        default:
+            shoppingCart.generateNewUUID()
+        }
     }
 
     private func update(with steps: [ItemIdentifierType], animate: Bool = true) {
