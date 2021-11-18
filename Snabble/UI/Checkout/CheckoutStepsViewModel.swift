@@ -8,6 +8,7 @@
 import Foundation
 
 protocol CheckoutStepsViewModelDelegate: AnyObject {
+    func checkoutStepsViewModel(_ viewModel: CheckoutStepsViewModel, didUpdateCheckoutProcess checkoutProcess: CheckoutProcess)
     func checkoutStepsViewModel(_ viewModel: CheckoutStepsViewModel, didUpdateHeaderViewModel headerViewModel: CheckoutHeaderViewModel)
     func checkoutStepsViewModel(_ viewModel: CheckoutStepsViewModel, didUpdateSteps steps: [CheckoutStep])
     func checkoutStepsViewModel(_ viewModel: CheckoutStepsViewModel, didUpdateExitToken exitToken: ExitToken)
@@ -16,6 +17,7 @@ protocol CheckoutStepsViewModelDelegate: AnyObject {
 class CheckoutStepsViewModel {
     private(set) var checkoutProcess: CheckoutProcess {
         didSet {
+            delegate?.checkoutStepsViewModel(self, didUpdateCheckoutProcess: checkoutProcess)
             if let exitToken = checkoutProcess.exitToken {
                 delegate?.checkoutStepsViewModel(self, didUpdateExitToken: exitToken)
             }

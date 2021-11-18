@@ -17,6 +17,8 @@ public final class CheckoutStepsViewController: UIViewController {
 
     public weak var paymentDelegate: PaymentDelegate?
 
+    private weak var checksViewController: CheckoutChecksViewController?
+
     private typealias ItemIdentifierType = CheckoutStep
     private typealias CellProvider = (_ tableView: UITableView, _ indexPath: IndexPath, _ itemIdentifier: ItemIdentifierType) -> UITableViewCell?
 
@@ -202,6 +204,21 @@ public final class CheckoutStepsViewController: UIViewController {
 }
 
 extension CheckoutStepsViewController: CheckoutStepsViewModelDelegate {
+    func checkoutStepsViewModel(_ viewModel: CheckoutStepsViewModel, didUpdateCheckoutProcess checkoutProcess: CheckoutProcess) {
+        if isCheckNeeded(for: checkoutProcess) {
+            let viewController = CheckoutChecksViewController(qrCodeContent: checkoutProcess.id)
+            addChild(viewController)
+            viewController.view.frame = view.bounds
+            view.addSubview(viewController.view)
+            viewController.didMove(toParent: self)
+            self.checksViewController = viewController
+        } else {
+            checksViewController?.willMove(toParent: nil)
+            checksViewController?.view.removeFromSuperview()
+            checksViewController?.removeFromParent()
+        }
+    }
+
     func checkoutStepsViewModel(_ viewModel: CheckoutStepsViewModel, didUpdateSteps steps: [CheckoutStep]) {
         update(with: steps, animate: true)
     }
@@ -212,6 +229,12 @@ extension CheckoutStepsViewController: CheckoutStepsViewModelDelegate {
 
     func checkoutStepsViewModel(_ viewModel: CheckoutStepsViewModel, didUpdateExitToken exitToken: ExitToken) {
         paymentDelegate?.exitToken(exitToken, for: shop)
+    }
+
+    // MARK: Checks
+    private func isCheckNeeded(for checkoutProcess: CheckoutProcess) -> Bool {
+        let checksNeedingSupervisor = checkoutProcess.checks.filter { $0.performedBy == .supervisor }
+        return checkoutProcess.supervisorApproval == nil || !checksNeedingSupervisor.isEmpty
     }
 }
 
