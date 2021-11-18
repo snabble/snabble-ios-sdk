@@ -16,6 +16,11 @@ jobs:
       - name: Checkout
         uses: actions/checkout@master
 
+      - name: SwiftLint
+        run: |
+          (cd Example; pod install)
+          Example/Pods/SwiftLint/swiftlint
+
       - name: Lint
         run: pod lib lint --allow-warnings --configuration=Debug
 

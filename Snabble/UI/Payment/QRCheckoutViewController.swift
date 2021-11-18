@@ -67,10 +67,7 @@ public final class QRCheckoutViewController: UIViewController {
         self.explanation1.text = L10n.Snabble.QRCode.showThisCode
         self.explanation2.text = L10n.Snabble.QRCode.priceMayDiffer
 
-        let qrCodeContent = self.process.paymentInformation?.qrCodeContent ?? "n/a"
-        // Log.debug("QR code: \(qrCodeContent)")
-        self.qrCodeView.image = QRCode.generate(for: qrCodeContent, scale: 5)
-        self.qrCodeWidth.constant = self.qrCodeView.image?.size.width ?? 0
+        self.setupQrCode()
 
         self.startPoller()
 
@@ -91,6 +88,18 @@ public final class QRCheckoutViewController: UIViewController {
         UIScreen.main.brightness = self.initialBrightness
         self.poller?.stop()
         self.poller = nil
+    }
+
+    override public func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
+        super.traitCollectionDidChange(previousTraitCollection)
+
+        setupQrCode()
+    }
+
+    private func setupQrCode() {
+        let qrCodeContent = self.process.paymentInformation?.qrCodeContent ?? "n/a"
+        self.qrCodeView.image = QRCode.generate(for: qrCodeContent, scale: 5)
+        self.qrCodeWidth.constant = self.qrCodeView.image?.size.width ?? 0
     }
 
     private func startPoller() {

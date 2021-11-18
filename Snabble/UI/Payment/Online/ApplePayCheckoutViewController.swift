@@ -30,10 +30,6 @@ public final class ApplePayCheckoutViewController: BaseCheckoutViewController {
         return checksPending(in: process)
     }
 
-    override func qrCodeContent(_ process: CheckoutProcess, _ id: String) -> String {
-        return process.paymentInformation?.qrCodeContent ?? id
-    }
-
     override var viewEvent: AnalyticsEvent { .viewApplePayCheckout }
 
     // called from the base class whenever the checkout process is initialized or updated
