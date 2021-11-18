@@ -21,10 +21,10 @@ final class CheckoutChecksViewController: UIViewController {
     private(set) weak var idLabel: UILabel?
     private(set) weak var cancelButton: UIButton?
 
-    let qrCodeContent: String
+    let checkoutProcessId: String
 
-    init(qrCodeContent: String) {
-        self.qrCodeContent = qrCodeContent
+    init(checkoutProcessId: String) {
+        self.checkoutProcessId = checkoutProcessId
         super.init(nibName: nil, bundle: nil)
     }
 
@@ -35,12 +35,26 @@ final class CheckoutChecksViewController: UIViewController {
     override func loadView() {
         let view = UIView(frame: UIScreen.main.bounds)
 
-        let qrCodeImage = QRCode.generate(for: qrCodeContent, scale: 5)
+        let descriptionImageView = UIImageView(image: nil)
+
+        let textLabel = UILabel()
+        textLabel.text = SnabbleAPI.l10n("Snabble.Payment.Online.message")
+        textLabel.numberOfLines = 0
+        textLabel.textAlignment = .center
+
+        let arrowImageView = UIImageView(image: Asset.SnabbleSDK.arrowUp.image)
+        arrowImageView.contentMode = .center
+
+        let qrCodeImage = QRCode.generate(for: checkoutProcessId, scale: 5)
         let qrCodeImageView = UIImageView(image: qrCodeImage)
         qrCodeImageView.setContentCompressionResistancePriority(.required, for: .vertical)
         qrCodeImageView.setContentCompressionResistancePriority(.required, for: .horizontal)
 
-        let stackView = UIStackView(arrangedSubviews: [qrCodeImageView])
+        let idLabel = UILabel()
+        idLabel.text = String(checkoutProcessId.suffix(4))
+        idLabel.textAlignment = .center
+
+        let stackView = UIStackView(arrangedSubviews: [descriptionImageView, textLabel, arrowImageView, qrCodeImageView, idLabel])
         stackView.translatesAutoresizingMaskIntoConstraints = false
         stackView.distribution = .fillProportionally
         stackView.axis = .vertical
@@ -48,15 +62,22 @@ final class CheckoutChecksViewController: UIViewController {
         stackView.spacing = 4
         view.addSubview(stackView)
 
+        self.descriptionImageView = descriptionImageView
+        self.textLabel = textLabel
+        self.arrowImageView = arrowImageView
+        self.qrCodeImageView = qrCodeImageView
+        self.idLabel = idLabel
+
         let cancelButton = UIButton(type: .system)
         cancelButton.translatesAutoresizingMaskIntoConstraints = false
         cancelButton.setTitle(L10n.Snabble.cancel, for: .normal)
         cancelButton.addTarget(self, action: #selector(cancelButtonTouchedUpInside(_:)), for: .touchUpInside)
         view.addSubview(cancelButton)
+        self.cancelButton = cancelButton
 
         NSLayoutConstraint.activate([
-            stackView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
-            view.trailingAnchor.constraint(equalTo: stackView.trailingAnchor),
+            stackView.leadingAnchor.constraint(equalTo: view.readableContentGuide.leadingAnchor),
+            view.readableContentGuide.trailingAnchor.constraint(equalTo: stackView.trailingAnchor),
 
             cancelButton.leadingAnchor.constraint(greaterThanOrEqualToSystemSpacingAfter: view.leadingAnchor, multiplier: 1),
             view.trailingAnchor.constraint(greaterThanOrEqualToSystemSpacingAfter: cancelButton.trailingAnchor, multiplier: 1),
@@ -72,6 +93,10 @@ final class CheckoutChecksViewController: UIViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
+
+        SnabbleUI.getAsset(.checkoutOnline, bundlePath: "Checkout/\(SnabbleUI.project.id)/checkout-online") { [weak self] img in
+            self?.descriptionImageView?.image = img
+        }
     }
 
     @objc
