@@ -204,7 +204,10 @@ public final class CheckoutStepsViewController: UIViewController {
 extension CheckoutStepsViewController: CheckoutStepsViewModelDelegate {
     func checkoutStepsViewModel(_ viewModel: CheckoutStepsViewModel, didUpdateCheckoutProcess checkoutProcess: CheckoutProcess) {
         if isCheckNeeded(for: checkoutProcess) {
-            let viewController = CheckoutChecksViewController(checkoutProcessId: checkoutProcess.id)
+            let viewController = CheckoutChecksViewController(
+                checkoutProcessId: checkoutProcess.id,
+                projectId: viewModel.shop.projectId
+            )
             viewController.modalPresentationStyle = .fullScreen
             present(viewController, animated: true, completion: nil)
         } else {

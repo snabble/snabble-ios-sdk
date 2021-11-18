@@ -22,9 +22,11 @@ final class CheckoutChecksViewController: UIViewController {
     private(set) weak var cancelButton: UIButton?
 
     let checkoutProcessId: String
+    let projectId: Identifier<Project>
 
-    init(checkoutProcessId: String) {
+    init(checkoutProcessId: String, projectId: Identifier<Project>) {
         self.checkoutProcessId = checkoutProcessId
+        self.projectId = projectId
         super.init(nibName: nil, bundle: nil)
     }
 
@@ -94,7 +96,7 @@ final class CheckoutChecksViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        SnabbleUI.getAsset(.checkoutOnline, bundlePath: "Checkout/\(SnabbleUI.project.id)/checkout-online") { [weak self] img in
+        SnabbleUI.getAsset(.checkoutOnline, bundlePath: "Checkout/\(projectId)/checkout-online") { [weak self] img in
             self?.descriptionImageView?.image = img
         }
     }
