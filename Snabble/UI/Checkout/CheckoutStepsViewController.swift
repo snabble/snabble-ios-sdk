@@ -205,9 +205,8 @@ extension CheckoutStepsViewController: CheckoutStepsViewModelDelegate {
     func checkoutStepsViewModel(_ viewModel: CheckoutStepsViewModel, didUpdateCheckoutProcess checkoutProcess: CheckoutProcess) {
         if isCheckNeeded(for: checkoutProcess) {
             let viewController = CheckoutChecksViewController(checkoutProcessId: checkoutProcess.id)
-            let navigationController = UINavigationController(rootViewController: viewController)
-            navigationController.modalPresentationStyle = .fullScreen
-            present(navigationController, animated: true, completion: nil)
+            viewController.modalPresentationStyle = .fullScreen
+            present(viewController, animated: true, completion: nil)
         } else {
             presentedViewController?.dismiss(animated: true, completion: nil)
         }

@@ -83,7 +83,7 @@ final class CheckoutChecksViewController: UIViewController {
             view.trailingAnchor.constraint(greaterThanOrEqualToSystemSpacingAfter: cancelButton.trailingAnchor, multiplier: 1),
             cancelButton.centerXAnchor.constraint(equalTo: view.centerXAnchor),
 
-            stackView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
+            stackView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 16),
             cancelButton.topAnchor.constraint(greaterThanOrEqualTo: stackView.bottomAnchor),
             view.safeAreaLayoutGuide.bottomAnchor.constraint(equalTo: cancelButton.bottomAnchor)
         ])
