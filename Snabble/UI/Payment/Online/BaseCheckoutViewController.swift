@@ -80,9 +80,7 @@ public class BaseCheckoutViewController: UIViewController {
         let id = components.last ?? "n/a"
         self.idLabel.text = String(id.suffix(4))
 
-        let qrCodeContent = self.qrCodeContent(self.process, id)
-        self.codeImage.image = QRCode.generate(for: qrCodeContent, scale: 5)
-        self.codeWidth.constant = self.codeImage.image?.size.width ?? 0
+        setupQrCode()
 
         self.cancelButton.setTitle(L10n.Snabble.cancel, for: .normal)
         self.cancelButton.setTitleColor(.label, for: .normal)
@@ -147,18 +145,26 @@ public class BaseCheckoutViewController: UIViewController {
         UIApplication.shared.isIdleTimerDisabled = false
     }
 
+    private func setupQrCode() {
+        let qrCodeContent = self.qrCodeContent(self.process)
+        self.codeImage.image = QRCode.generate(for: qrCodeContent, scale: 5)
+        self.codeWidth.constant = self.codeImage.image?.size.width ?? 0
+    }
+
     // MARK: - child classes must override these methods
 
     func showQrCode(_ process: CheckoutProcess) -> Bool {
         fatalError("child classes must override this")
     }
 
-    func qrCodeContent(_ process: CheckoutProcess, _ id: String) -> String {
+    var viewEvent: AnalyticsEvent {
         fatalError("child classes must override this")
     }
 
-    var viewEvent: AnalyticsEvent {
-        fatalError("child classes must override this")
+    // MARK: - child classes may override for other qr code contents
+
+    func qrCodeContent(_ process: CheckoutProcess) -> String {
+        return process.paymentInformation?.qrCodeContent ?? process.id
     }
 
     // MARK: - child classes may override this to receive process updates
@@ -358,6 +364,7 @@ extension BaseCheckoutViewController {
             }
 
             self.setSpinnerAppearance()
+            self.setupQrCode()
         }
     }
 

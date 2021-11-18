@@ -17,10 +17,6 @@ public final class OnlineCheckoutViewController: BaseCheckoutViewController {
         return .viewOnlineCheckout
     }
 
-    override public func qrCodeContent(_ process: CheckoutProcess, _ id: String) -> String {
-        return process.paymentInformation?.qrCodeContent ?? id
-    }
-
     override public func showQrCode(_ process: CheckoutProcess) -> Bool {
         let checksNeedingSupervisor = process.checks.filter { $0.performedBy == .supervisor }
         return process.supervisorApproval == nil || !checksNeedingSupervisor.isEmpty

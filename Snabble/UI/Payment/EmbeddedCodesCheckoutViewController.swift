@@ -72,14 +72,7 @@ public final class EmbeddedCodesCheckoutViewController: UIViewController {
 
         self.topWrapper.isHidden = true
         self.arrowWrapper.isHidden = true
-        SnabbleUI.getAsset(.checkoutOffline, bundlePath: "Checkout/\(SnabbleUI.project.id)/checkout-offline") { img in
-            if let img = img {
-                self.topIcon.image = img
-                self.iconHeight.constant = img.size.height
-                self.topWrapper.isHidden = false
-                self.arrowWrapper.isHidden = false
-            }
-        }
+        setupIcon()
 
         let msg = L10n.Snabble.QRCode.message
         self.messageLabel.text = msg
@@ -159,12 +152,18 @@ public final class EmbeddedCodesCheckoutViewController: UIViewController {
         }
     }
 
+    override public func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
+        super.traitCollectionDidChange(previousTraitCollection)
+
+        setupIcon()
+    }
+
     private func configureViewForDevice() {
         let smallDevices: [Device] = [
             .iPhone5s, .iPhoneSE, .iPodTouch6, .iPodTouch7
         ]
         let mediumDevices: [Device] = [
-            .iPhone6, .iPhone6s, .iPhone7, .iPhone8, .iPhoneSE2, .iPhone12Mini
+            .iPhone6, .iPhone6s, .iPhone7, .iPhone8, .iPhoneSE2, .iPhone12Mini, .iPhone13Mini
         ]
 
         let smallSimulators = smallDevices.map { Device.simulator($0) }
@@ -225,6 +224,16 @@ public final class EmbeddedCodesCheckoutViewController: UIViewController {
         }
     }
 
+    private func setupIcon() {
+        SnabbleUI.getAsset(.checkoutOffline, bundlePath: "Checkout/\(SnabbleUI.project.id)/checkout-offline") { img in
+            if let img = img {
+                self.topIcon.image = img
+                self.iconHeight.constant = img.size.height
+                self.topWrapper.isHidden = false
+                self.arrowWrapper.isHidden = false
+            }
+        }
+    }
 }
 
 extension EmbeddedCodesCheckoutViewController {
