@@ -99,6 +99,36 @@ final class CheckoutChecksViewController: UIViewController {
         }
     }
 
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        UIApplication.shared.isIdleTimerDisabled = true
+        increaseBrightnessIfNeeded()
+    }
+
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
+        UIApplication.shared.isIdleTimerDisabled = false
+        resetBrightnessIfNeeded()
+    }
+
+    // MARK: Brightness
+    
+    private var previousBrightness: CGFloat?
+
+    private func increaseBrightnessIfNeeded() {
+        if UIScreen.main.brightness < 0.5 {
+            previousBrightness = UIScreen.main.brightness
+            UIScreen.main.brightness = 0.5
+        }
+    }
+
+    private func resetBrightnessIfNeeded() {
+        if let previousBrightness = previousBrightness {
+            UIScreen.main.brightness = previousBrightness
+        }
+        previousBrightness = nil
+    }
+
     @objc
     private func cancelButtonTouchedUpInside(_ sender: UIButton) {
         print(#function)
