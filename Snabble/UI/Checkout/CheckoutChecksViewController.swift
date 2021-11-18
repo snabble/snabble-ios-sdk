@@ -36,6 +36,7 @@ final class CheckoutChecksViewController: UIViewController {
 
     override func loadView() {
         let view = UIView(frame: UIScreen.main.bounds)
+        view.backgroundColor = .systemBackground
 
         let descriptionImageView = UIImageView(image: nil)
 
@@ -114,7 +115,7 @@ final class CheckoutChecksViewController: UIViewController {
     }
 
     // MARK: Brightness
-    
+
     private var previousBrightness: CGFloat?
 
     private func increaseBrightnessIfNeeded() {

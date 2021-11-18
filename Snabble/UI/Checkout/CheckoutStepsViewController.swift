@@ -149,26 +149,36 @@ public final class CheckoutStepsViewController: UIViewController {
         update(with: viewModel.steps, animate: false)
     }
 
-    override public func viewWillAppear(_ animated: Bool) {
-        super.viewWillAppear(animated)
-        viewModel.startTimer()
-    }
-
     override public func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
+        showChecksIfNeeded(for: checkoutProcess)
+        viewModel.startTimer()
         if let analyticsEvent = checkoutProcess.rawPaymentMethod?.analyticsEvent {
             paymentDelegate?.track(analyticsEvent)
         }
     }
 
-    override public func viewWillDisappear(_ animated: Bool) {
-        super.viewWillDisappear(animated)
+    override public func viewDidDisappear(_ animated: Bool) {
+        super.viewDidDisappear(animated)
         viewModel.stopTimer()
     }
 
     override public func viewWillLayoutSubviews() {
         super.viewWillLayoutSubviews()
         tableView?.updateHeaderViews()
+    }
+
+    private func showChecksIfNeeded(for checkoutProcess: CheckoutProcess) {
+        if isCheckNeeded(for: checkoutProcess) {
+            let viewController = CheckoutChecksViewController(
+                checkoutProcessId: checkoutProcess.id,
+                projectId: viewModel.shop.projectId
+            )
+            viewController.modalPresentationStyle = .fullScreen
+            present(viewController, animated: true, completion: nil)
+        } else {
+            presentedViewController?.dismiss(animated: true, completion: nil)
+        }
     }
 
     @objc private func doneButtonTouchedUpInside(_ sender: UIButton) {
@@ -203,16 +213,7 @@ public final class CheckoutStepsViewController: UIViewController {
 
 extension CheckoutStepsViewController: CheckoutStepsViewModelDelegate {
     func checkoutStepsViewModel(_ viewModel: CheckoutStepsViewModel, didUpdateCheckoutProcess checkoutProcess: CheckoutProcess) {
-        if isCheckNeeded(for: checkoutProcess) {
-            let viewController = CheckoutChecksViewController(
-                checkoutProcessId: checkoutProcess.id,
-                projectId: viewModel.shop.projectId
-            )
-            viewController.modalPresentationStyle = .fullScreen
-            present(viewController, animated: true, completion: nil)
-        } else {
-            presentedViewController?.dismiss(animated: true, completion: nil)
-        }
+        showChecksIfNeeded(for: checkoutProcess)
     }
 
     func checkoutStepsViewModel(_ viewModel: CheckoutStepsViewModel, didUpdateSteps steps: [CheckoutStep]) {
