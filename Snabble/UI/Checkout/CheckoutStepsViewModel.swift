@@ -120,9 +120,10 @@ class CheckoutStepsViewModel {
             steps.append(CheckoutStep(exitToken: exitToken))
         }
 
-        steps.append(CheckoutStep(receiptLink: checkoutProcess.links.receipt,
-                                  paymentStatus: checkoutProcess.paymentState)
-        )
+        if let receipt = checkoutProcess.links.receipt {
+            steps.append(CheckoutStep(receiptLink: receipt))
+        }
+
         return steps
     }
 
@@ -138,7 +139,6 @@ class CheckoutStepsViewModel {
         case .transferred, .processing, .unauthorized, .unknown:
             shouldContinuePolling = true
         }
-
         if checkoutProcess.requiresExitToken && checkoutProcess.exitToken?.image == nil {
             shouldContinuePolling = true
         }
