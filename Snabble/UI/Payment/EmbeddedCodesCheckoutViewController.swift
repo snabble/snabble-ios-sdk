@@ -39,15 +39,13 @@ public final class EmbeddedCodesCheckoutViewController: UIViewController {
     private weak var cart: ShoppingCart?
     private weak var delegate: PaymentDelegate?
     private let process: CheckoutProcess?
-    private let rawJson: [String: Any]?
     private var qrCodeConfig: QRCodeConfig
 
     private var codes = [String]()
     private var itemSize = CGSize.zero
 
-    public init(_ process: CheckoutProcess?, _ rawJson: [String: Any]?, _ cart: ShoppingCart, _ delegate: PaymentDelegate?, _ codeConfig: QRCodeConfig) {
+    public init(_ process: CheckoutProcess?, _ cart: ShoppingCart, _ delegate: PaymentDelegate?, _ codeConfig: QRCodeConfig) {
         self.process = process
-        self.rawJson = rawJson
         self.cart = cart
         self.delegate = delegate
 
@@ -219,7 +217,7 @@ public final class EmbeddedCodesCheckoutViewController: UIViewController {
 
             SnabbleAPI.fetchAppUserData(SnabbleUI.project.id)
             if let cart = self.cart {
-                self.delegate?.paymentFinished(true, cart, self.process, self.rawJson)
+                self.delegate?.paymentFinished(true, cart, self.process)
             }
         }
     }

@@ -26,7 +26,7 @@ extension PaymentMethod {
         }
     }
 
-    func processor(_ process: CheckoutProcess?, shop: Shop, _ rawJson: [String: Any]?, _ cart: ShoppingCart, _ delegate: PaymentDelegate?) -> UIViewController? {
+    func processor(_ process: CheckoutProcess?, shop: Shop, _ cart: ShoppingCart, _ delegate: PaymentDelegate?) -> UIViewController? {
         if !self.rawMethod.offline && process == nil {
             return nil
         }
@@ -37,21 +37,21 @@ extension PaymentMethod {
         let processor: UIViewController?
         switch self {
         case .qrCodePOS:
-            processor = QRCheckoutViewController(process!, rawJson, cart, delegate)
+            processor = QRCheckoutViewController(process!, cart, delegate)
         case .qrCodeOffline:
             if let codeConfig = shop.project?.qrCodeConfig {
-                processor = EmbeddedCodesCheckoutViewController(process, rawJson, cart, delegate, codeConfig)
+                processor = EmbeddedCodesCheckoutViewController(process, cart, delegate, codeConfig)
             } else {
                 return nil
             }
         case .deDirectDebit, .visa, .mastercard, .americanExpress, .externalBilling, .paydirektOneKlick, .twint, .postFinanceCard:
-            processor = OnlineCheckoutViewController(process!, rawJson, cart, delegate)
+            processor = OnlineCheckoutViewController(process!, cart, delegate)
         case .gatekeeperTerminal:
-            processor = TerminalCheckoutViewController(process!, rawJson, cart, delegate)
+            processor = TerminalCheckoutViewController(process!, cart, delegate)
         case .applePay:
-            processor = ApplePayCheckoutViewController(process!, rawJson, cart, delegate)
+            processor = ApplePayCheckoutViewController(process!, cart, delegate)
         case .customerCardPOS:
-            processor = CustomerCardCheckoutViewController(process!, rawJson, cart, delegate)
+            processor = CustomerCardCheckoutViewController(process!, cart, delegate)
         }
         processor?.hidesBottomBarWhenPushed = true
 

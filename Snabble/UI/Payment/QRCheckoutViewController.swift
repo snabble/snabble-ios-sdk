@@ -17,16 +17,14 @@ public final class QRCheckoutViewController: UIViewController {
 
     private var initialBrightness: CGFloat = 0
     private let process: CheckoutProcess
-    private let rawJson: [String: Any]?
     private var poller: PaymentProcessPoller?
     private let cart: ShoppingCart
     private weak var delegate: PaymentDelegate?
     public weak var navigationDelegate: CheckoutNavigationDelegate?
 
-    public init(_ process: CheckoutProcess, _ rawJson: [String: Any]?, _ cart: ShoppingCart, _ delegate: PaymentDelegate?) {
+    public init(_ process: CheckoutProcess, _ cart: ShoppingCart, _ delegate: PaymentDelegate?) {
         self.cart = cart
         self.process = process
-        self.rawJson = rawJson
         self.delegate = delegate
 
         super.init(nibName: nil, bundle: SnabbleBundle.main)
@@ -103,10 +101,10 @@ public final class QRCheckoutViewController: UIViewController {
     }
 
     private func startPoller() {
-        let poller = PaymentProcessPoller(self.process, self.rawJson, SnabbleUI.project)
+        let poller = PaymentProcessPoller(self.process, SnabbleUI.project)
         poller.waitFor([.paymentSuccess]) { events in
             if let success = events[.paymentSuccess] {
-                self.paymentFinished(success, poller.updatedProcess, poller.rawJson)
+                self.paymentFinished(success, poller.updatedProcess)
             }
         }
         self.poller = poller
@@ -143,7 +141,7 @@ public final class QRCheckoutViewController: UIViewController {
         }
     }
 
-    private func paymentFinished(_ success: Bool, _ process: CheckoutProcess, _ rawJson: [String: Any]?) {
+    private func paymentFinished(_ success: Bool, _ process: CheckoutProcess) {
         self.poller = nil
 
         if success {
@@ -153,6 +151,6 @@ public final class QRCheckoutViewController: UIViewController {
         }
 
         SnabbleAPI.fetchAppUserData(SnabbleUI.project.id)
-        self.delegate?.paymentFinished(success, self.cart, process, rawJson)
+        self.delegate?.paymentFinished(success, self.cart, process)
     }
 }

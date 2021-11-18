@@ -28,7 +28,6 @@ public class BaseCheckoutViewController: UIViewController {
     public weak var navigationDelegate: CheckoutNavigationDelegate?
 
     private let process: CheckoutProcess
-    private let rawJson: [String: Any]?
     private var initialBrightness: CGFloat = 0
 
     private var sessionTask: URLSessionTask?
@@ -36,9 +35,8 @@ public class BaseCheckoutViewController: UIViewController {
 
     private var alreadyApproved = false
 
-    init(_ process: CheckoutProcess, _ rawJson: [String: Any]?, _ cart: ShoppingCart, _ delegate: PaymentDelegate?) {
+    init(_ process: CheckoutProcess, _ cart: ShoppingCart, _ delegate: PaymentDelegate?) {
         self.process = process
-        self.rawJson = rawJson
         self.cart = cart
         self.delegate = delegate
 
@@ -131,7 +129,7 @@ public class BaseCheckoutViewController: UIViewController {
 
         self.delegate?.track(self.viewEvent)
 
-        let needsPolling = self.updateView(self.process, self.rawJson)
+        let needsPolling = self.updateView(self.process)
         if needsPolling {
             self.startTimer()
         }
@@ -195,7 +193,7 @@ public class BaseCheckoutViewController: UIViewController {
         var continuePolling = true
         switch result.result {
         case .success(let process):
-            continuePolling = self.updateView(process, result.rawJson)
+            continuePolling = self.updateView(process)
             // inform child classes
             self.processUpdated(process)
         case .failure(let error):
@@ -209,12 +207,12 @@ public class BaseCheckoutViewController: UIViewController {
 
     // update our view according to the `process`.
     // Return true if we should keep checking the process, false otherwise
-    private func updateView(_ process: CheckoutProcess, _ rawJson: [String: Any]?) -> Bool {
+    private func updateView(_ process: CheckoutProcess) -> Bool {
         // figure out failure conditions first
         let approvalDenied = process.supervisorApproval == false || process.paymentApproval == false
         let checkFailed = process.checks.first { $0.state == .failed } != nil
         if approvalDenied || checkFailed {
-            self.paymentFinished(false, process, rawJson)
+            self.paymentFinished(false, process)
             return false
         }
 
@@ -228,19 +226,19 @@ public class BaseCheckoutViewController: UIViewController {
 
         switch process.paymentState {
         case .successful:
-            self.paymentFinished(true, process, rawJson)
+            self.paymentFinished(true, process)
             return false
         case .failed:
             if failureCause == .terminalAbort {
                 self.paymentCancelled()
             } else {
-                self.paymentFinished(false, process, rawJson)
+                self.paymentFinished(false, process)
             }
             return false
         case .pending:
             let states = Set(process.fulfillments.map { $0.state })
             if !FulfillmentState.failureStates.isDisjoint(with: states) {
-                self.paymentFinished(false, process, rawJson)
+                self.paymentFinished(false, process)
                 return false
             }
             return true
@@ -304,18 +302,18 @@ public class BaseCheckoutViewController: UIViewController {
         }
     }
 
-    private func paymentFinished(_ success: Bool, _ process: CheckoutProcess, _ rawJson: [String: Any]?) {
+    private func paymentFinished(_ success: Bool, _ process: CheckoutProcess) {
         if success {
             cart.removeAll(endSession: true, keepBackup: false)
         } else {
             cart.generateNewUUID()
         }
-        paymentFinalized(success, process, rawJson)
+        paymentFinalized(success, process)
     }
 
-    private func paymentFinalized(_ success: Bool, _ process: CheckoutProcess, _ rawJson: [String: Any]?) {
+    private func paymentFinalized(_ success: Bool, _ process: CheckoutProcess) {
         SnabbleAPI.fetchAppUserData(SnabbleUI.project.id)
-        self.delegate?.paymentFinished(success, self.cart, process, rawJson)
+        self.delegate?.paymentFinished(success, self.cart, process)
     }
 }
 
