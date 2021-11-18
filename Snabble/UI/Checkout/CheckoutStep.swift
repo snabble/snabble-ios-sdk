@@ -94,22 +94,6 @@ extension CheckoutStep {
         detailText = nil
         actionTitle = nil
     }
-
-    init(qrCodeContent: String, total: Int, project: Project) {
-        status = .success
-        text = L10n.Snabble.QRCode.showThisCode
-        image = QRCode.generate(for: qrCodeContent, scale: 5)
-        detailText = "\(L10n.Snabble.QRCode.total) \(PriceFormatter(project).format(total))\n \(L10n.Snabble.QRCode.priceMayDiffer)"
-        actionTitle = nil
-    }
-
-    init(qrCodeContent: String, process: CheckoutProcess) {
-        status = .success
-        text = L10n.Snabble.QRCode.showThisCode
-        image = QRCode.generate(for: qrCodeContent, scale: 5)
-        detailText = String(process.id.suffix(4))
-        actionTitle = nil
-    }
 }
 
 private extension Fulfillment {

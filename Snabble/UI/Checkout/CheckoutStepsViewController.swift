@@ -127,7 +127,7 @@ public final class CheckoutStepsViewController: UIViewController {
 
             doneButton.heightAnchor.constraint(equalToConstant: 48),
             view.safeAreaLayoutGuide.bottomAnchor.constraint(equalTo: doneButton.bottomAnchor, constant: 16),
-            tableView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor)
+            tableView.bottomAnchor.constraint(equalTo: view.bottomAnchor)
         ])
 
         self.view = view
@@ -150,7 +150,7 @@ public final class CheckoutStepsViewController: UIViewController {
     override public func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
         viewModel.startTimer()
-        // paymentDelegate?.track(analyticsEvent)
+        paymentDelegate?.track(.viewCheckoutSteps)
     }
 
     override public func viewDidDisappear(_ animated: Bool) {
@@ -194,9 +194,7 @@ public final class CheckoutStepsViewController: UIViewController {
 }
 
 extension CheckoutStepsViewController: CheckoutStepsViewModelDelegate {
-    func checkoutStepsViewModel(_ viewModel: CheckoutStepsViewModel, didUpdateCheckoutProcess checkoutProcess: CheckoutProcess) {
-
-    }
+    func checkoutStepsViewModel(_ viewModel: CheckoutStepsViewModel, didUpdateCheckoutProcess checkoutProcess: CheckoutProcess) {}
 
     func checkoutStepsViewModel(_ viewModel: CheckoutStepsViewModel, didUpdateSteps steps: [CheckoutStep]) {
         update(with: steps, animate: true)
