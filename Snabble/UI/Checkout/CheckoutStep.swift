@@ -87,8 +87,15 @@ extension CheckoutStep {
         actionTitle = nil
     }
 
-    init(receiptLink: Link) {
-        status = .success
+    init(receiptLink: Link?, paymentStatus: PaymentState) {
+        switch paymentStatus {
+        case .pending, .processing, .transferred:
+            status = .loading
+        case .successful:
+            status = receiptLink != nil ? .success : .failure
+        case .failed, .unauthorized, .unknown:
+            status = .failure
+        }
         text = L10n.Snabble.PaymentStatus.Receipt.title
         image = nil
         detailText = nil

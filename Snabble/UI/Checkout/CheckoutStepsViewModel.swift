@@ -120,10 +120,9 @@ class CheckoutStepsViewModel {
             steps.append(CheckoutStep(exitToken: exitToken))
         }
 
-        if let link = checkoutProcess.links.receipt {
-            steps.append(CheckoutStep(receiptLink: link))
-        }
-
+        steps.append(CheckoutStep(receiptLink: checkoutProcess.links.receipt,
+                                  paymentStatus: checkoutProcess.paymentState)
+        )
         return steps
     }
 
