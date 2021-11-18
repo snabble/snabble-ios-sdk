@@ -123,7 +123,6 @@ class CheckoutStepsViewModel {
         if let receipt = checkoutProcess.links.receipt {
             steps.append(CheckoutStep(receiptLink: receipt))
         }
-
         return steps
     }
 

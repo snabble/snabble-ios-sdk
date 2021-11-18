@@ -36,16 +36,21 @@ extension PaymentMethod {
 
         let processor: UIViewController?
         switch self {
+        case .qrCodePOS:
+            processor = QRCheckoutViewController(process!, rawJson, cart, delegate)
         case .qrCodeOffline:
             if let codeConfig = shop.project?.qrCodeConfig {
                 processor = EmbeddedCodesCheckoutViewController(process, rawJson, cart, delegate, codeConfig)
             } else {
                 return nil
             }
-        case .deDirectDebit, .visa, .mastercard, .americanExpress, .externalBilling, .paydirektOneKlick, .twint, .postFinanceCard, .qrCodePOS, .gatekeeperTerminal:
-            let viewController = CheckoutStepsViewController(shop: shop, shoppingCart: cart, checkoutProcess: process!)
-            viewController.paymentDelegate = delegate
-            processor = viewController
+        case .deDirectDebit, .visa, .mastercard, .americanExpress, .externalBilling, .paydirektOneKlick, .twint, .postFinanceCard:
+            processor = OnlineCheckoutViewController(process!, rawJson, cart, delegate)
+//            let viewController = CheckoutStepsViewController(shop: shop, shoppingCart: cart, checkoutProcess: process!)
+//            viewController.paymentDelegate = delegate
+//            processor = viewController
+        case .gatekeeperTerminal:
+            processor = TerminalCheckoutViewController(process!, rawJson, cart, delegate)
         case .applePay:
             processor = ApplePayCheckoutViewController(process!, rawJson, cart, delegate)
         case .customerCardPOS:

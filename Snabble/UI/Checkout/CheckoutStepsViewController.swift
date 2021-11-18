@@ -67,9 +67,7 @@ public final class CheckoutStepsViewController: UIViewController {
             checkoutProcess: checkoutProcess,
             shoppingCart: shoppingCart
         )
-
         super.init(nibName: nil, bundle: nil)
-
         viewModel.delegate = self
     }
 
@@ -137,7 +135,7 @@ public final class CheckoutStepsViewController: UIViewController {
 
     override public func viewDidLoad() {
         super.viewDidLoad()
-        title = checkoutProcess.rawPaymentMethod?.title ?? L10n.Snabble.Payment.confirm
+        // title = L10n.PaymentDone.title
         headerView?.configure(with: viewModel.headerViewModel)
         tableView?.updateHeaderViews()
 
@@ -151,11 +149,8 @@ public final class CheckoutStepsViewController: UIViewController {
 
     override public func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
-        showChecksIfNeeded(for: checkoutProcess)
         viewModel.startTimer()
-        if let analyticsEvent = checkoutProcess.rawPaymentMethod?.analyticsEvent {
-            paymentDelegate?.track(analyticsEvent)
-        }
+        // paymentDelegate?.track(analyticsEvent)
     }
 
     override public func viewDidDisappear(_ animated: Bool) {
@@ -166,19 +161,6 @@ public final class CheckoutStepsViewController: UIViewController {
     override public func viewWillLayoutSubviews() {
         super.viewWillLayoutSubviews()
         tableView?.updateHeaderViews()
-    }
-
-    private func showChecksIfNeeded(for checkoutProcess: CheckoutProcess) {
-        if isCheckNeeded(for: checkoutProcess) {
-            let viewController = CheckoutChecksViewController(
-                checkoutProcessId: checkoutProcess.id,
-                projectId: viewModel.shop.projectId
-            )
-            viewController.modalPresentationStyle = .fullScreen
-            present(viewController, animated: true, completion: nil)
-        } else {
-            presentedViewController?.dismiss(animated: true, completion: nil)
-        }
     }
 
     @objc private func doneButtonTouchedUpInside(_ sender: UIButton) {
@@ -213,7 +195,7 @@ public final class CheckoutStepsViewController: UIViewController {
 
 extension CheckoutStepsViewController: CheckoutStepsViewModelDelegate {
     func checkoutStepsViewModel(_ viewModel: CheckoutStepsViewModel, didUpdateCheckoutProcess checkoutProcess: CheckoutProcess) {
-        showChecksIfNeeded(for: checkoutProcess)
+
     }
 
     func checkoutStepsViewModel(_ viewModel: CheckoutStepsViewModel, didUpdateSteps steps: [CheckoutStep]) {
@@ -227,12 +209,6 @@ extension CheckoutStepsViewController: CheckoutStepsViewModelDelegate {
     func checkoutStepsViewModel(_ viewModel: CheckoutStepsViewModel, didUpdateExitToken exitToken: ExitToken) {
         paymentDelegate?.exitToken(exitToken, for: shop)
     }
-
-    // MARK: Checks
-    private func isCheckNeeded(for checkoutProcess: CheckoutProcess) -> Bool {
-        let checksNeedingSupervisor = checkoutProcess.checks.filter { $0.performedBy == .supervisor }
-        return checkoutProcess.supervisorApproval == nil || !checksNeedingSupervisor.isEmpty
-    }
 }
 
 private extension UITableView {
@@ -245,29 +221,5 @@ private extension UITableView {
         guard let header = header else { return }
         let fittingSize = CGSize(width: bounds.width - (safeAreaInsets.left + safeAreaInsets.right), height: 0)
         header.frame.size = header.systemLayoutSizeFitting(fittingSize, withHorizontalFittingPriority: .required, verticalFittingPriority: .fittingSizeLevel)
-    }
-}
-
-private extension RawPaymentMethod {
-    var title: String {
-        switch self {
-        case .qrCodePOS:
-            return L10n.Snabble.QRCode.title
-        default:
-            return L10n.Snabble.Payment.confirm
-        }
-    }
-
-    var analyticsEvent: AnalyticsEvent {
-        switch self {
-        case .gatekeeperTerminal:
-            return .viewTerminalCheckout
-        case .qrCodePOS:
-            return .viewQRCodeCheckout
-        case .applePay:
-            return .viewApplePayCheckout
-        default:
-            return .viewOnlineCheckout
-        }
     }
 }

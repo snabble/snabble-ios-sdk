@@ -34,7 +34,6 @@ public class BaseCheckoutViewController: UIViewController {
     private var sessionTask: URLSessionTask?
     private weak var processTimer: Timer?
 
-    private var postPaymentManager: PostPaymentManager?
     private var alreadyApproved = false
 
     init(_ process: CheckoutProcess, _ rawJson: [String: Any]?, _ cart: ShoppingCart, _ delegate: PaymentDelegate?) {
@@ -308,48 +307,15 @@ public class BaseCheckoutViewController: UIViewController {
     private func paymentFinished(_ success: Bool, _ process: CheckoutProcess, _ rawJson: [String: Any]?) {
         if success {
             cart.removeAll(endSession: true, keepBackup: false)
-
-            postPaymentManager = PostPaymentManager(
-                project: SnabbleUI.project,
-                checkoutProcess: process
-            )
-            postPaymentManager?.delegate = self
-            postPaymentManager?.start()
         } else {
             cart.generateNewUUID()
-            paymentFinalized(success, process, rawJson)
         }
+        paymentFinalized(success, process, rawJson)
     }
 
     private func paymentFinalized(_ success: Bool, _ process: CheckoutProcess, _ rawJson: [String: Any]?) {
         SnabbleAPI.fetchAppUserData(SnabbleUI.project.id)
         self.delegate?.paymentFinished(success, self.cart, process, rawJson)
-    }
-}
-
-extension BaseCheckoutViewController: PostPaymentManagerDelegate {
-    func postPaymentManager(
-        _ manager: PostPaymentManager,
-        didUpdateCheckoutProcess checkoutProcess: CheckoutProcess,
-        withRawJson rawJson: [String: Any]?,
-        forProject project: Project
-    ) {}
-
-    func postPaymentManager(
-        _ manager: PostPaymentManager,
-        didCompleteCheckoutProcess checkoutProcess: CheckoutProcess,
-        withRawJson rawJson: [String: Any]?,
-        forProject project: Project
-    ) {
-        paymentFinalized(true, checkoutProcess, rawJson)
-    }
-
-    func shouldRetryFailedUpdate(
-        on manager: PostPaymentManager,
-        withCheckoutProcess checkoutProcess: CheckoutProcess,
-        forProject project: Project
-    ) -> Bool {
-        true
     }
 }
 
