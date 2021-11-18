@@ -17,8 +17,6 @@ public final class CheckoutStepsViewController: UIViewController {
 
     public weak var paymentDelegate: PaymentDelegate?
 
-    private weak var checksViewController: CheckoutChecksViewController?
-
     private typealias ItemIdentifierType = CheckoutStep
     private typealias CellProvider = (_ tableView: UITableView, _ indexPath: IndexPath, _ itemIdentifier: ItemIdentifierType) -> UITableViewCell?
 
@@ -207,15 +205,11 @@ extension CheckoutStepsViewController: CheckoutStepsViewModelDelegate {
     func checkoutStepsViewModel(_ viewModel: CheckoutStepsViewModel, didUpdateCheckoutProcess checkoutProcess: CheckoutProcess) {
         if isCheckNeeded(for: checkoutProcess) {
             let viewController = CheckoutChecksViewController(qrCodeContent: checkoutProcess.id)
-            addChild(viewController)
-            viewController.view.frame = view.bounds
-            view.addSubview(viewController.view)
-            viewController.didMove(toParent: self)
-            self.checksViewController = viewController
+            let navigationController = UINavigationController(rootViewController: viewController)
+            navigationController.modalPresentationStyle = .fullScreen
+            present(navigationController, animated: true, completion: nil)
         } else {
-            checksViewController?.willMove(toParent: nil)
-            checksViewController?.view.removeFromSuperview()
-            checksViewController?.removeFromParent()
+            presentedViewController?.dismiss(animated: true, completion: nil)
         }
     }
 

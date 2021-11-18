@@ -63,7 +63,7 @@ final class CheckoutChecksViewController: UIViewController {
             cancelButton.centerXAnchor.constraint(equalTo: view.centerXAnchor),
 
             stackView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
-            cancelButton.topAnchor.constraint(equalTo: stackView.bottomAnchor),
+            cancelButton.topAnchor.constraint(greaterThanOrEqualTo: stackView.bottomAnchor),
             view.safeAreaLayoutGuide.bottomAnchor.constraint(equalTo: cancelButton.bottomAnchor)
         ])
 
