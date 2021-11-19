@@ -20,7 +20,7 @@ public final class TerminalCheckoutViewController: BaseCheckoutViewController {
     }
 
     override public func qrCodeContent(_ process: CheckoutProcess) -> String {
-        return process.paymentInformation?.qrCodeContent ?? "snabble:checkoutProcess:\(process.id)" 
+        return process.paymentInformation?.qrCodeContent ?? "snabble:checkoutProcess:\(process.id)"
     }
 
     override public func showQrCode(_ process: CheckoutProcess) -> Bool {
