@@ -88,12 +88,6 @@ public final class QRCheckoutViewController: UIViewController {
         self.poller = nil
     }
 
-    override public func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
-        super.traitCollectionDidChange(previousTraitCollection)
-
-        setupQrCode()
-    }
-
     private func setupQrCode() {
         let qrCodeContent = self.process.paymentInformation?.qrCodeContent ?? "n/a"
         self.qrCodeView.image = QRCode.generate(for: qrCodeContent, scale: 5)
