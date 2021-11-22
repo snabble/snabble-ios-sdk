@@ -364,7 +364,6 @@ extension BaseCheckoutViewController {
             }
 
             self.setSpinnerAppearance()
-            self.setupQrCode()
         }
     }
 

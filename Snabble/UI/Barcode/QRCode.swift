@@ -19,6 +19,20 @@ public enum QRCode {
     // swiftlint:enable identifier_name
 
     public static func generate(for string: String, scale: Int, _ correctionLevel: CorrectionLevel = .L) -> UIImage? {
+        let lightImage = generate(for: string, inScale: scale, withCorrectionLevel: correctionLevel, for: .light)
+
+        if let darkImage = generate(for: string, inScale: scale, withCorrectionLevel: correctionLevel, for: .dark) {
+            let traitCollection = UITraitCollection(traitsFrom: [
+                .init(displayScale: UIScreen.main.scale),
+                .init(userInterfaceStyle: .dark)
+            ])
+            lightImage?.imageAsset?.register(darkImage, with: traitCollection)
+
+        }
+        return lightImage
+    }
+
+    private static func generate(for string: String, inScale scale: Int, withCorrectionLevel correctionLevel: CorrectionLevel, for userInterfaceStyle: UIUserInterfaceStyle) -> UIImage? {
         guard
             let data = string.data(using: .isoLatin1, allowLossyConversion: false),
             let filter = CIFilter(name: "CIQRCodeGenerator")
@@ -62,35 +76,5 @@ public enum QRCode {
         }
 
         return nil
-    }
-
-    public static func generate(for string: String, size: CGSize, _ correctionLevel: CorrectionLevel = .L) -> UIImage? {
-        guard let qrCodeFilter = CIFilter(name: "CIQRCodeGenerator") else {
-            fatalError()
-        }
-
-        guard let data = string.data(using: .isoLatin1, allowLossyConversion: false) else {
-            return nil
-        }
-
-        qrCodeFilter.setValue(data, forKey: "inputMessage")
-        qrCodeFilter.setValue(correctionLevel.rawValue, forKey: "inputCorrectionLevel")
-
-        guard let qrOutputImage = qrCodeFilter.outputImage else {
-            return nil
-        }
-
-        let scaleX = size.width / qrOutputImage.extent.size.width
-        let scaleY = size.height / qrOutputImage.extent.size.height
-        let transformedImage = qrOutputImage.transformed(by: CGAffineTransform(scaleX: scaleX, y: scaleY))
-
-        return UIImage(ciImage: transformedImage)
-    }
-
-    private static var userInterfaceStyle: UIUserInterfaceStyle {
-        if #available(iOS 13, *) {
-            return UITraitCollection.current.userInterfaceStyle
-        }
-        return .light
     }
 }
