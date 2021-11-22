@@ -15,18 +15,18 @@ public struct PaymentMethodDescriptor: Decodable {
 }
 
 // known payment methods
-public enum RawPaymentMethod: String, CaseIterable, Decodable {
+public enum RawPaymentMethod: String, Decodable {
     case qrCodePOS              // QR Code with a reference to snabble's backend
     case qrCodeOffline          // QR Code, offline capable, format is specified via `QRCodeConfig.format`
     case deDirectDebit          // SEPA direct debit via Telecash/First Data
-    case creditCardVisa         // VISA via Telecash/First Data
-    case creditCardMastercard   // MASTERCARD via Telecash/First Data
-    case creditCardAmericanExpress // AMERICAN EXPRESS via Telecash/First Data
+    case creditCardVisa         // VISA via Telecash/First Data or PAYONE
+    case creditCardMastercard   // MASTERCARD via Telecash/First Data or PAYONE
+    case creditCardAmericanExpress // AMERICAN EXPRESS via Telecash/First Data or PAYONE
     case externalBilling        // external billing, e.g. via an employee id
     case gatekeeperTerminal
     case customerCardPOS        // payment via customer card invoice
     case paydirektOneKlick
-    case applePay
+    case applePay               // via Telecash/First Data
     case postFinanceCard        // via Datatrans
     case twint                  // via Datatrans
 

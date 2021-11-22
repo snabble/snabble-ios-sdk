@@ -41,7 +41,7 @@ public enum SnabbleUI {
     }
 
     public static var groupedTableStyle: UITableView.Style {
-        if #available(iOS 14, *) {
+        if #available(iOS 13, *) {
             return .insetGrouped
         }
         return .grouped
