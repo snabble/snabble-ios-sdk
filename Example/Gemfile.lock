@@ -91,6 +91,7 @@ GEM
     zeitwerk (2.5.1)
 
 PLATFORMS
+  arm64-darwin-21
   universal-darwin-20
 
 DEPENDENCIES
@@ -98,4 +99,4 @@ DEPENDENCIES
   xcpretty
 
 BUNDLED WITH
-   2.2.25
+   2.2.31

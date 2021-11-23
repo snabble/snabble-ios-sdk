@@ -1,6 +1,9 @@
 ## snabble iOS SDK Changelog
 
-# v0.17.13 (unreleased)
+# v0.17.13
+- This is the last version of the SDK with support for the React Native wrapper
+- Adds a larger (4 module) quiet zone around QR codes in dark mode
+- Fixes a bug where the payment selection was sometimes visible even if only one payment method was selectable
 
 # v0.17.12
 - Add support for credit card payment via PAYONE
