@@ -93,6 +93,12 @@ final class CheckoutStepView: UIView {
         fatalError("init(coder:) has not been implemented")
     }
 
+    func prepareForReuse() {
+        detailTextLabel?.isHidden = false
+        button?.isHidden = false
+        imageView?.isHidden = false
+    }
+
     func configure(with viewModel: CheckoutStepViewModel) {
         statusView?.configure(with: viewModel.statusViewModel)
         textLabel?.text = viewModel.text
