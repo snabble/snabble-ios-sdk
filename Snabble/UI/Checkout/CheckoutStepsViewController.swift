@@ -135,7 +135,6 @@ public final class CheckoutStepsViewController: UIViewController {
 
     override public func viewDidLoad() {
         super.viewDidLoad()
-        navigationController?.setNavigationBarHidden(true, animated: false)
         headerView?.configure(with: viewModel.headerViewModel)
         tableView?.updateHeaderViews()
 
@@ -147,10 +146,20 @@ public final class CheckoutStepsViewController: UIViewController {
         update(with: viewModel.steps, animate: false)
     }
 
+    override public func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        navigationController?.setNavigationBarHidden(true, animated: false)
+    }
+
     override public func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
         viewModel.startTimer()
         paymentDelegate?.track(.viewCheckoutSteps)
+    }
+
+    override public func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
+        navigationController?.setNavigationBarHidden(false, animated: false)
     }
 
     override public func viewDidDisappear(_ animated: Bool) {
