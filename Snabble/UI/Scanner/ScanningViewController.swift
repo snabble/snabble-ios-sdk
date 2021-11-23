@@ -372,12 +372,8 @@ extension ScanningViewController: ScanConfirmationViewDelegate {
     }
 
     private func enterBarcode() {
-        if SnabbleUI.implicitNavigation {
-            let barcodeEntry = BarcodeEntryViewController(self.productProvider, self.shop.id, delegate: self.delegate, completion: self.handleScannedCode)
-            self.navigationController?.pushViewController(barcodeEntry, animated: true)
-        } else {
-            self.delegate?.gotoBarcodeEntry()
-        }
+        let barcodeEntry = BarcodeEntryViewController(self.productProvider, self.shop.id, delegate: self.delegate, completion: self.handleScannedCode)
+        self.navigationController?.pushViewController(barcodeEntry, animated: true)
 
         self.barcodeDetector.pauseScanning()
     }
@@ -806,25 +802,5 @@ extension ScanningViewController {
         if let appearance = self.customAppearance {
             self.setCustomAppearance(appearance)
         }
-    }
-}
-
-// stuff that's only used by the RN wrapper
-extension ScanningViewController: ReactNativeWrapper {
-    public func setIsScanning(_ on: Bool) {
-        if on {
-            self.barcodeDetector.requestCameraPermission()
-            self.barcodeDetector.resumeScanning()
-        } else {
-            self.barcodeDetector.pauseScanning()
-        }
-    }
-
-    public func setLookupcode(_ code: String) {
-        self.handleScannedCode(code, nil)
-    }
-
-    public func setTorchOn(_ on: Bool) {
-        self.barcodeDetector.setTorch(on)
     }
 }

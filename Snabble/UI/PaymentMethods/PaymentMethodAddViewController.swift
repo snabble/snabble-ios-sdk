@@ -39,8 +39,6 @@ public final class PaymentMethodAddViewController: UITableViewController {
     private var brandId: Identifier<Brand>?
     private weak var analyticsDelegate: AnalyticsDelegate?
 
-    public weak var navigationDelegate: PaymentMethodNavigationDelegate?
-
     public init(_ analyticsDelegate: AnalyticsDelegate?) {
         self.analyticsDelegate = analyticsDelegate
         self.brandId = nil
@@ -67,12 +65,6 @@ public final class PaymentMethodAddViewController: UITableViewController {
         tableView.tableFooterView = UIView(frame: .zero)
         tableView.rowHeight = 44
         tableView.register(PaymentMethodAddCell.self, forCellReuseIdentifier: "cell")
-
-        if !SnabbleUI.implicitNavigation && self.navigationDelegate == nil {
-            let msg = "navigationDelegate may not be nil when using explicit navigation"
-            assert(self.navigationDelegate != nil, msg)
-            Log.error(msg)
-        }
     }
 
     override public func viewWillAppear(_ animated: Bool) {
@@ -201,27 +193,19 @@ extension PaymentMethodAddViewController {
 
         if let brandId = entry.brandId, self.brandId == nil {
             // from the starting view, drill-down to the individual projects in this brand
-            if SnabbleUI.implicitNavigation {
-                navigationTarget = PaymentMethodAddViewController(brandId: brandId, self.analyticsDelegate)
-            } else {
-                navigationDelegate?.showRetailers(for: brandId)
-            }
+            navigationTarget = PaymentMethodAddViewController(brandId: brandId, self.analyticsDelegate)
         } else {
             // show/add methods for this specific project
             // swiftlint:disable:next empty_count
             if entry.count == 0 {
                 self.addMethod(for: entry.projectId)
             } else {
-                if SnabbleUI.implicitNavigation {
-                    navigationTarget = PaymentMethodListViewController(for: entry.projectId, self.analyticsDelegate)
-                } else {
-                    navigationDelegate?.showData(for: entry.projectId)
-                }
+                navigationTarget = PaymentMethodListViewController(for: entry.projectId, self.analyticsDelegate)
             }
         }
 
         if let viewController = navigationTarget {
-            self.navigationController?.pushViewController(viewController, animated: true)
+            navigationController?.pushViewController(viewController, animated: true)
         }
     }
 
@@ -240,12 +224,8 @@ extension PaymentMethodAddViewController {
         methods.forEach { method in
             let action = AlertAction(title: method.displayName, style: .normal) { [self] _ in
                 if method.isAddingAllowed(showAlertOn: self),
-                   let controller = method.editViewController(with: projectId, analyticsDelegate) {
-                    if SnabbleUI.implicitNavigation {
-                        navigationController?.pushViewController(controller, animated: true)
-                    } else {
-                        navigationDelegate?.addData(for: method, in: projectId)
-                    }
+                    let controller = method.editViewController(with: projectId, analyticsDelegate) {
+                    navigationController?.pushViewController(controller, animated: true)
                 }
             }
             action.imageView.image = method.icon
@@ -255,18 +235,5 @@ extension PaymentMethodAddViewController {
         sheet.addAction(AlertAction(title: L10n.Snabble.cancel, style: .preferred, handler: nil))
 
         self.present(sheet, animated: true)
-    }
-}
-
-// stuff that's only used by the RN wrapper
-extension PaymentMethodAddViewController: ReactNativeWrapper {
-    public func setBrandId(_ brandId: Identifier<Brand>) {
-        self.brandId = brandId
-    }
-
-    public func setIsFocused(_ focused: Bool) {
-        if focused {
-            self.viewWillAppear(true)
-        }
     }
 }

@@ -25,7 +25,6 @@ public class BaseCheckoutViewController: UIViewController {
 
     private let cart: ShoppingCart
     private weak var delegate: PaymentDelegate?
-    public weak var navigationDelegate: CheckoutNavigationDelegate?
 
     private let process: CheckoutProcess
     private var initialBrightness: CGFloat = 0
@@ -89,12 +88,6 @@ public class BaseCheckoutViewController: UIViewController {
         self.messageWrapper.isHidden = onlineMessage == onlineMessageKey.uppercased() || alreadyApproved
 
         self.navigationItem.hidesBackButton = true
-
-        if !SnabbleUI.implicitNavigation && self.navigationDelegate == nil {
-            let msg = "navigationDelegate may not be nil when using explicit navigation"
-            assert(self.navigationDelegate != nil, msg)
-            Log.error(msg)
-        }
     }
 
     override public func viewWillAppear(_ animated: Bool) {
@@ -291,14 +284,10 @@ public class BaseCheckoutViewController: UIViewController {
 
         cart.generateNewUUID()
 
-        if SnabbleUI.implicitNavigation {
-            if let cartVC = self.navigationController?.viewControllers.first(where: { $0 is ShoppingCartViewController}) {
-                self.navigationController?.popToViewController(cartVC, animated: true)
-            } else {
-                self.navigationController?.popToRootViewController(animated: true)
-            }
+        if let cartVC = self.navigationController?.viewControllers.first(where: { $0 is ShoppingCartViewController}) {
+            self.navigationController?.popToViewController(cartVC, animated: true)
         } else {
-            self.navigationDelegate?.checkoutCancelled()
+            self.navigationController?.popToRootViewController(animated: true)
         }
     }
 
