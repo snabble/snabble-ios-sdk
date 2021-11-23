@@ -62,29 +62,9 @@ extension ScannerViewController: CustomizableAppearance {
     public func setCustomAppearance(_ appearance: CustomAppearance) {
         self.customAppearance = appearance
 
-        self.scanningViewController?.setCustomAppearance(appearance)
         if let drawer = self.drawerContentViewController as? ScannerDrawerViewController {
             drawer.setCustomAppearance(appearance)
         }
-    }
-}
-
-// stuff that's only used by the RN wrapper
-extension ScannerViewController: ReactNativeWrapper {
-    private var scanningViewController: ScanningViewController? {
-        primaryContentViewController as? ScanningViewController
-    }
-
-    public func setIsScanning(_ on: Bool) {
-        scanningViewController?.setIsScanning(on)
-    }
-
-    public func setLookupcode(_ code: String) {
-        scanningViewController?.setLookupcode(code)
-    }
-
-    public func setTorchOn(_ on: Bool) {
-        scanningViewController?.setTorchOn(on)
     }
 }
 

@@ -21,7 +21,6 @@ public final class QRCheckoutViewController: UIViewController {
     private var poller: PaymentProcessPoller?
     private let cart: ShoppingCart
     private weak var delegate: PaymentDelegate?
-    public weak var navigationDelegate: CheckoutNavigationDelegate?
 
     public init(_ process: CheckoutProcess, _ rawJson: [String: Any]?, _ cart: ShoppingCart, _ delegate: PaymentDelegate?) {
         self.cart = cart
@@ -70,12 +69,6 @@ public final class QRCheckoutViewController: UIViewController {
         self.setupQrCode()
 
         self.startPoller()
-
-        if !SnabbleUI.implicitNavigation && self.navigationDelegate == nil {
-            let msg = "navigationDelegate may not be nil when using explicit navigation"
-            assert(self.navigationDelegate != nil, msg)
-            Log.error(msg)
-        }
     }
 
     override public func viewDidAppear(_ animated: Bool) {
@@ -116,14 +109,10 @@ public final class QRCheckoutViewController: UIViewController {
                 self.cart.generateNewUUID()
                 self.delegate?.track(.paymentCancelled)
 
-                if SnabbleUI.implicitNavigation {
-                    if let cartVC = self.navigationController?.viewControllers.first(where: { $0 is ShoppingCartViewController}) {
-                        self.navigationController?.popToViewController(cartVC, animated: true)
-                    } else {
-                        self.navigationController?.popToRootViewController(animated: true)
-                    }
+                if let cartVC = self.navigationController?.viewControllers.first(where: { $0 is ShoppingCartViewController}) {
+                    self.navigationController?.popToViewController(cartVC, animated: true)
                 } else {
-                    self.navigationDelegate?.checkoutCancelled()
+                    self.navigationController?.popToRootViewController(animated: true)
                 }
             case .failure:
                 let alert = UIAlertController(title: L10n.Snabble.Payment.CancelError.title,

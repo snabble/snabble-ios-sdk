@@ -1,5 +1,8 @@
 ## snabble iOS SDK Changelog
 
+# v0.18.0 (unreleased)
+- 
+
 # v0.17.13
 - This is the last version of the SDK with support for the React Native wrapper
 - Adds a larger (4 module) quiet zone around QR codes in dark mode

@@ -39,8 +39,6 @@ public final class TeleCashCreditCardEditViewController: UIViewController {
 
     private var vaultItem: TelecashVaultItem?
 
-    public weak var navigationDelegate: PaymentMethodNavigationDelegate?
-
     public init(brand: CreditCardBrand?, _ projectId: Identifier<Project>, _ analyticsDelegate: AnalyticsDelegate?) {
         self.brand = brand
         self.analyticsDelegate = analyticsDelegate
@@ -64,16 +62,6 @@ public final class TeleCashCreditCardEditViewController: UIViewController {
 
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
-    }
-
-    override public func viewDidLoad() {
-        super.viewDidLoad()
-
-        if !SnabbleUI.implicitNavigation && self.navigationDelegate == nil {
-            let msg = "navigationDelegate may not be nil when using explicit navigation"
-            assert(self.navigationDelegate != nil, msg)
-            Log.error(msg)
-        }
     }
 
     override public func viewWillAppear(_ animated: Bool) {
@@ -155,11 +143,7 @@ public final class TeleCashCreditCardEditViewController: UIViewController {
     }
 
     private func goBack() {
-        if SnabbleUI.implicitNavigation {
-            self.navigationController?.popViewController(animated: true)
-        } else {
-            self.navigationDelegate?.goBack()
-        }
+        navigationController?.popViewController(animated: true)
     }
 
     private func prepareAndInjectPage(_ vaultItem: TelecashVaultItem) {
@@ -329,28 +313,6 @@ extension TeleCashCreditCardEditViewController {
                 print(result)
             }
         }
-    }
-}
-
-// stuff that's only used by the RN wrapper
-extension TeleCashCreditCardEditViewController: ReactNativeWrapper {
-    public func setBrand(_ brand: CreditCardBrand) {
-        self.brand = brand
-    }
-
-    public func setProjectId(_ projectId: String) {
-        self.projectId = Identifier<Project>(rawValue: projectId)
-    }
-
-    public func setDetail(_ detail: PaymentMethodDetail) {
-        guard case .teleCashCreditCard(let data) = detail.methodData else {
-            return
-        }
-
-        self.detail = detail
-        self.brand = data.brand
-        self.ccNumber = data.displayName
-        self.expDate = data.expirationDate
     }
 }
 

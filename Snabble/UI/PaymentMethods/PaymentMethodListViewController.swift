@@ -24,7 +24,6 @@ private struct ViewModel {
 
 public final class PaymentMethodListViewController: UITableViewController {
     private weak var analyticsDelegate: AnalyticsDelegate?
-    public weak var navigationDelegate: PaymentMethodNavigationDelegate?
 
     private(set) var projectId: Identifier<Project>?
     private var data: [[ViewModel]] = []
@@ -50,12 +49,6 @@ public final class PaymentMethodListViewController: UITableViewController {
         tableView.tableFooterView = UIView(frame: .zero)
         tableView.rowHeight = 44
         tableView.register(PaymentMethodListCell.self, forCellReuseIdentifier: "cell")
-
-        if !SnabbleUI.implicitNavigation && self.navigationDelegate == nil {
-            let msg = "navigationDelegate may not be nil when using explicit navigation"
-            assert(self.navigationDelegate != nil, msg)
-            Log.error(msg)
-        }
     }
 
     override public func viewWillAppear(_ animated: Bool) {
@@ -128,12 +121,8 @@ public final class PaymentMethodListViewController: UITableViewController {
 
     private func showEditController(for method: RawPaymentMethod) {
         if method.isAddingAllowed(showAlertOn: self),
-           let controller = method.editViewController(with: projectId, analyticsDelegate) {
-            if SnabbleUI.implicitNavigation {
-                navigationController?.pushViewController(controller, animated: true)
-            } else {
-                navigationDelegate?.addData(for: method, in: self.projectId)
-            }
+            let controller = method.editViewController(with: projectId, analyticsDelegate) {
+            navigationController?.pushViewController(controller, animated: true)
         }
     }
 }
@@ -187,11 +176,7 @@ extension PaymentMethodListViewController {
             }
 
             if let controller = editVC {
-                if SnabbleUI.implicitNavigation {
-                    navigationController?.pushViewController(controller, animated: true)
-                } else {
-                    navigationDelegate?.editMethod(detail)
-                }
+                navigationController?.pushViewController(controller, animated: true)
             }
         }
     }
@@ -209,19 +194,6 @@ extension PaymentMethodListViewController {
             PaymentMethodDetails.remove(detail)
             data[indexPath.section].remove(at: indexPath.row)
             tableView.deleteRows(at: [indexPath], with: .automatic)
-        }
-    }
-}
-
-// stuff that's only used by the RN wrapper
-extension PaymentMethodListViewController: ReactNativeWrapper {
-    public func setProjectId(_ projectId: Identifier<Project>) {
-        self.projectId = projectId
-    }
-
-    public func setIsFocused(_ focused: Bool) {
-        if focused {
-            self.viewWillAppear(true)
         }
     }
 }

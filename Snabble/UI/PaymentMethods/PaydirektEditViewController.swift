@@ -41,8 +41,6 @@ public final class PaydirektEditViewController: UIViewController {
     private weak var analyticsDelegate: AnalyticsDelegate?
     private var clientAuthorization: String?
 
-    public weak var navigationDelegate: PaymentMethodNavigationDelegate?
-
     private let authData = PaydirektAuthorization(
         id: UIDevice.current.identifierForVendor?.uuidString ?? "",
         name: UIDevice.current.name,
@@ -77,12 +75,6 @@ public final class PaydirektEditViewController: UIViewController {
         self.deleteButton.setTitle(L10n.Snabble.Paydirekt.deleteAuthorization, for: .normal)
 
         self.openButton.setTitle(L10n.Snabble.Paydirekt.gotoWebsite, for: .normal)
-
-        if !SnabbleUI.implicitNavigation && self.navigationDelegate == nil {
-            let msg = "navigationDelegate may not be nil when using explicit navigation"
-            assert(self.navigationDelegate != nil, msg)
-            Log.error(msg)
-        }
     }
 
     override public func viewWillAppear(_ animated: Bool) {
@@ -220,17 +212,6 @@ extension PaydirektEditViewController: WKNavigationDelegate {
     }
 
     private func goBack() {
-        if SnabbleUI.implicitNavigation {
-            self.navigationController?.popViewController(animated: true)
-        } else {
-            self.navigationDelegate?.goBack()
-        }
-    }
-}
-
-// stuff that's only used by the RN wrapper
-extension PaydirektEditViewController: ReactNativeWrapper {
-    public func setDetail(_ detail: PaymentMethodDetail) {
-        self.detail = detail
+        navigationController?.popViewController(animated: true)
     }
 }

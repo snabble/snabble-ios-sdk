@@ -21,12 +21,6 @@ final class ScannerDrawerViewController: UIViewController {
 
     private weak var cartDelegate: ShoppingCartDelegate?
 
-    public weak var paymentMethodNavigationDelegate: PaymentMethodNavigationDelegate? {
-        didSet {
-            self.checkoutBar?.paymentMethodNavigationDelegate = self.paymentMethodNavigationDelegate
-        }
-    }
-
     private let minDrawerHeight: CGFloat = 50
     private let totalsHeight: CGFloat = 60
     private let segmentedControlHeight: CGFloat = 48

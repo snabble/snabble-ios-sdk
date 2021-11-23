@@ -8,13 +8,6 @@ import UIKit
 
 /// global settings for the Snabble UI classes
 public enum SnabbleUI {
-    private(set) static var implicitNavigation = true
-
-    /// set to false only if you want or need to take control of all navigation in the app (e.g. in the ReactiveNative wrapper)
-    public static func setImplicitNavigation(_ isImplicitNavigation: Bool) {
-        self.implicitNavigation = isImplicitNavigation
-    }
-
     public private(set) static var appearance: CustomAppearance = SnabbleAppearance() {
         didSet {
             UIColor.contrasts = appearance.contrastColors
