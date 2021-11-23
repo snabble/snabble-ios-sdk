@@ -36,6 +36,14 @@ extension CheckoutStep: Hashable {
         lhs.actionTitle == rhs.actionTitle &&
         lhs.image == rhs.image
     }
+
+    func hash(into hasher: inout Hasher) {
+        hasher.combine(status)
+        hasher.combine(text)
+        hasher.combine(detailText)
+        hasher.combine(actionTitle)
+        hasher.combine(image?.cgImage)
+    }
 }
 
 extension CheckoutStep {
