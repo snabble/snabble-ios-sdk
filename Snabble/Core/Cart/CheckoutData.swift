@@ -287,37 +287,6 @@ public enum FailureCause: String {
 public struct ExitToken: Codable {
     public let format: ScanFormat?
     public let value: String?
-    public let image: UIImage?
-
-    enum CodingKeys: String, CodingKey {
-        case format
-        case value
-    }
-
-    public init(from decoder: Decoder) throws {
-        let container = try decoder.container(keyedBy: CodingKeys.self)
-        format = try container.decodeIfPresent(ScanFormat.self, forKey: .format)
-        value = try container.decodeIfPresent(String.self, forKey: .value)
-        if let value = value, let format = format {
-            image = Self.image(with: value, in: format)
-        } else {
-            image = nil
-        }
-    }
-}
-
-private extension ExitToken {
-    static func image(with value: String, in format: ScanFormat) -> UIImage? {
-        switch format {
-        case .qr:
-            return QRCode.generate(for: value, scale: 4)
-        case .code128:
-            return Code128.generate(for: value, scale: 2)
-        case .unknown, .ean13, .ean8, .itf14, .code39, .dataMatrix, .pdf417:
-            print("unsupported exit code format: \(format)")
-            return nil
-        }
-    }
 }
 
 // MARK: - Checkout Process
