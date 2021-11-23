@@ -229,7 +229,7 @@
 
 "Snabble.PaymentStatus.ExitCode.title" = "Kilépőkód";
 
-"Snabble.PaymentStatus.Fulfillment.title" = "Fulfillment";
+"Snabble.PaymentStatus.Fulfillment.title" = "Szállítás";
 
 "Snabble.PaymentStatus.Payment.error" = "Fizetésed nem sikerült teljesíteni. Próbáld meg újra, vagy válassz másik fizetési módot.";
 
