@@ -95,7 +95,7 @@ extension CheckoutStep {
         actionTitle = nil
     }
 
-    init(receiptLink: Link?) {
+    init(receiptLink: Link) {
         status = .success
         text = L10n.Snabble.PaymentStatus.Receipt.title
         image = nil
