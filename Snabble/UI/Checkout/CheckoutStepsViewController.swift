@@ -135,7 +135,7 @@ public final class CheckoutStepsViewController: UIViewController {
 
     override public func viewDidLoad() {
         super.viewDidLoad()
-        // title = L10n.PaymentDone.title
+        navigationController?.setNavigationBarHidden(true, animated: false)
         headerView?.configure(with: viewModel.headerViewModel)
         tableView?.updateHeaderViews()
 
