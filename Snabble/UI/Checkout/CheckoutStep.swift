@@ -34,7 +34,7 @@ extension CheckoutStep: Hashable {
         lhs.text == rhs.text &&
         lhs.detailText == rhs.detailText &&
         lhs.actionTitle == rhs.actionTitle &&
-        lhs.image == rhs.image
+        lhs.image?.pngData() == rhs.image?.pngData()
     }
 
     func hash(into hasher: inout Hasher) {
@@ -42,7 +42,7 @@ extension CheckoutStep: Hashable {
         hasher.combine(text)
         hasher.combine(detailText)
         hasher.combine(actionTitle)
-        hasher.combine(image?.cgImage)
+        hasher.combine(image?.pngData())
     }
 }
 
