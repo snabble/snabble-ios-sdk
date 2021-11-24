@@ -104,11 +104,15 @@ extension CheckoutStep {
     }
 
     init(originCandidate: OriginCandidate) {
-        status = .success
-        text = "foobar"
+        status = nil
+        if let origin = originCandidate.origin {
+            text = L10n.Snabble.Sepa.IbanTransferAlert.message(origin)
+        } else {
+            text = L10n.Snabble.PaymentStatus.AddDebitCard.message
+        }
         image = nil
-        detailText = "barfoo"
-        actionTitle = "actionTitle"
+        detailText = nil
+        actionTitle = L10n.Snabble.PaymentStatus.AddDebitCard.button
     }
 }
 
