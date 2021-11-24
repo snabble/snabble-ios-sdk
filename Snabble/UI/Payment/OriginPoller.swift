@@ -15,8 +15,11 @@ final class OriginPoller {
 
     private weak var timer: Timer?
 
-    func validCandidate(for urlString: String) -> OriginCandidate? {
-        candidates.first { candidate in
+    func validCandidate(for checkoutProcess: CheckoutProcess) -> OriginCandidate? {
+        guard let urlString = checkoutProcess.paymentResult?["originCandidateLink"] as? String else {
+            return nil
+        }
+        return candidates.first { candidate in
             guard let href = candidate.links?.`self`.href, href == urlString else {
                 return false
             }
@@ -27,8 +30,9 @@ final class OriginPoller {
         }
     }
 
-    func startPolling(urlString: String) {
-        guard !candidatesURLStrings.contains(urlString) else {
+    func startPolling(for checkoutProcess: CheckoutProcess) {
+        guard let urlString = checkoutProcess.paymentResult?["originCandidateLink"] as? String,
+              !candidatesURLStrings.contains(urlString) else {
             return
         }
         candidatesURLStrings.insert(urlString)

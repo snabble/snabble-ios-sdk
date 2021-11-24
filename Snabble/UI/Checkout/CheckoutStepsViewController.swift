@@ -30,6 +30,7 @@ public final class CheckoutStepsViewController: UIViewController {
         case .information:
             let cell = tableView.dequeueReusable(CheckoutInformationTableViewCell.self, for: indexPath)
             cell.informationView?.configure(with: step)
+            cell.informationView?.button?.addTarget(self, action: #selector(stepActionTouchedUpInside), for: .touchUpInside)
             return cell
         }
     }
@@ -170,6 +171,12 @@ public final class CheckoutStepsViewController: UIViewController {
     override public func viewWillLayoutSubviews() {
         super.viewWillLayoutSubviews()
         tableView?.updateHeaderViews()
+    }
+
+    @objc private func stepActionTouchedUpInside(_ sender: UIButton) {
+        guard let originCandidate = viewModel.originCandidate else { return }
+        let sepa = SepaEditViewController(originCandidate, paymentDelegate)
+        navigationController?.pushViewController(sepa, animated: true)
     }
 
     @objc private func doneButtonTouchedUpInside(_ sender: UIButton) {
