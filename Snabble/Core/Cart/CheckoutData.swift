@@ -491,7 +491,7 @@ struct AbortRequest: Encodable {
     let aborted: Bool
 }
 
-public enum CandidateType: String, Decodable {
+public enum CandidateType: String, Decodable, Hashable {
     case debitCardIban = "debit_card_iban"
 }
 
@@ -500,12 +500,19 @@ public struct OriginCandidate: Decodable {
     public let origin: String?
     public let type: CandidateType?
 
-    public struct CandidateLinks: Decodable {
+    public struct CandidateLinks: Decodable, Hashable {
         public let `self`: Link
         public let promote: Link
     }
 
     public var isValid: Bool {
         return self.links?.promote != nil && self.origin != nil && self.type != nil
+    }
+}
+
+extension OriginCandidate: Hashable {
+    public func hash(into hasher: inout Hasher) {
+        hasher.combine(links?.`self`)
+        hasher.combine(type)
     }
 }

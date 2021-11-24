@@ -209,10 +209,6 @@ public class BaseCheckoutViewController: UIViewController {
             return false
         }
 
-        if let candidateLink = process.paymentResult?["originCandidateLink"] as? String {
-            OriginPoller.shared.startPolling(SnabbleUI.project, candidateLink)
-        }
-
         let failureCause = FailureCause(rawValue: process.paymentResult?["failureCause"] as? String ?? "")
 
         self.updateQRCode(process)

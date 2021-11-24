@@ -4,66 +4,69 @@
 //  Copyright © 2020 snabble. All rights reserved.
 //
 
-extension Notification.Name {
-    public static let snabbleOriginCandidateReceived = Notification.Name("snabbleOriginCandidateReceived")
-}
-
 final class OriginPoller {
-    static let shared = OriginPoller()
+    private let project: Project
+    private(set) var candidatesURLStrings = Set<String>()
+    private var candidates = Set<OriginCandidate>()
 
-    private var project: Project?
+    init(project: Project) {
+        self.project = project
+    }
+
     private weak var timer: Timer?
-    private var candidates = Set<String>()
 
-    private init() {}
+    func validCandidate(for urlString: String) -> OriginCandidate? {
+        candidates.first { candidate in
+            guard let href = candidate.links?.`self`.href, href == urlString else {
+                return false
+            }
+            guard candidate.isValid else {
+                return false
+            }
+            return true
+        }
+    }
 
-    func startPolling(_ project: Project, _ url: String) {
-        let allowStart = self.project == nil && !self.candidates.contains(url)
-        assert(allowStart, "OriginPoller for \(url) already running")
-        guard allowStart else {
+    func startPolling(urlString: String) {
+        guard !candidatesURLStrings.contains(urlString) else {
             return
         }
-
-        self.project = project
-        self.checkCandidate(url)
+        candidatesURLStrings.insert(urlString)
+        checkCandidate(urlString)
     }
 
     private func stopPolling() {
-        self.timer?.invalidate()
-        self.project = nil
+        timer?.invalidate()
+        candidatesURLStrings.removeAll()
     }
 
     private func checkCandidate(_ url: String) {
-        self.project?.request(.get, url, timeout: 2) { request in
+        project.request(.get, url, timeout: 2) { [self] request in
             guard let request = request else {
-                return self.stopPolling()
+                stopPolling()
+                return
             }
 
-            self.project?.perform(request) { (result: Result<OriginCandidate, SnabbleError>) in
+            project.perform(request) { [self] (result: Result<OriginCandidate, SnabbleError>) in
                 var continuePolling = true
                 switch result {
                 case .failure(let error):
                     Log.error("error getting originCandidate: \(error)")
                     if case .httpError(let statusCode) = error, statusCode == 404 {
-                        return self.stopPolling()
+                        return stopPolling()
                     }
                 case .success(let candidate):
-                    let valid = candidate.isValid
-                    if valid {
-                        self.candidates.insert(url)
-                        let nc = NotificationCenter.default
-                        nc.post(name: .snabbleOriginCandidateReceived, object: nil, userInfo: [ "candidate": candidate ])
-                    }
-                    continuePolling = !valid
+                    continuePolling = !candidate.isValid
+                    candidates.insert(candidate)
                 }
 
                 if continuePolling {
-                    self.timer?.invalidate()
-                    self.timer = Timer.scheduledTimer(withTimeInterval: 1, repeats: false) { _ in
-                        self.checkCandidate(url)
+                    timer?.invalidate()
+                    timer = Timer.scheduledTimer(withTimeInterval: 1, repeats: false) { [weak self] _ in
+                        self?.checkCandidate(url)
                     }
                 } else {
-                    self.stopPolling()
+                    stopPolling()
                 }
             }
         }

@@ -102,6 +102,14 @@ extension CheckoutStep {
         detailText = nil
         actionTitle = nil
     }
+
+    init(originCandidate: OriginCandidate) {
+        status = .success
+        text = "foobar"
+        image = nil
+        detailText = "barfoo"
+        actionTitle = "actionTitle"
+    }
 }
 
 private extension Fulfillment {

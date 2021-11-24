@@ -31,10 +31,13 @@ class CheckoutStepsViewModel {
 
     weak var delegate: CheckoutStepsViewModelDelegate?
 
+    private let originPoller: OriginPoller
+
     init(shop: Shop, checkoutProcess: CheckoutProcess, shoppingCart: ShoppingCart) {
         self.shop = shop
         self.checkoutProcess = checkoutProcess
         self.shoppingCart = shoppingCart
+        self.originPoller = OriginPoller(project: shop.project!)
         updateViewModels(with: checkoutProcess)
     }
 
@@ -111,6 +114,11 @@ class CheckoutStepsViewModel {
         if let receipt = checkoutProcess.links.receipt {
             steps.append(CheckoutStep(receiptLink: receipt))
         }
+
+        if let candidateURL = checkoutProcess.paymentResult?["originCandidateLink"] as? String,
+           let originCandidate = originPoller.validCandidate(for: candidateURL) {
+            steps.append(CheckoutStep(originCandidate: originCandidate))
+        }
         return steps
     }
 
@@ -129,6 +137,12 @@ class CheckoutStepsViewModel {
         if checkoutProcess.requiresExitToken && checkoutProcess.exitToken?.image == nil {
             shouldContinuePolling = true
         }
+        if let originURLString = checkoutProcess.paymentResult?["originCandidateLink"] as? String,
+           originPoller.validCandidate(for: originURLString) == nil {
+            shouldContinuePolling = true
+            originPoller.startPolling(urlString: originURLString)
+        }
+
         return shouldContinuePolling
     }
 

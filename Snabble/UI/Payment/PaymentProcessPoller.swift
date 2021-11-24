@@ -73,10 +73,6 @@ public final class PaymentProcessPoller {
     }
 
     private func checkProcess(_ process: CheckoutProcess, _ completion: @escaping ([PaymentEvent: Bool]) -> Void ) {
-        if let candidateLink = process.paymentResult?["originCandidateLink"] as? String {
-            OriginPoller.shared.startPolling(self.project, candidateLink)
-        }
-
         if let failureCause = process.paymentResult?["failureCause"] as? String {
             self.failureCause = FailureCause(rawValue: failureCause)
         }
