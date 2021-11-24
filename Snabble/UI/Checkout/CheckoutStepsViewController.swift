@@ -237,3 +237,11 @@ private extension UITableView {
         header.frame.size = header.systemLayoutSizeFitting(fittingSize, withHorizontalFittingPriority: .required, verticalFittingPriority: .fittingSizeLevel)
     }
 }
+
+extension CheckoutStepsViewController: SepaEditViewControllerDelegate {
+    func sepaEditViewControllerDidSave(iban: String) {
+        print("iban:", iban)
+        viewModel.savedIbans.insert(iban)
+        viewModel.update()
+    }
+}

@@ -33,6 +33,8 @@ class CheckoutStepsViewModel {
 
     private let originPoller: OriginPoller
 
+    var savedIbans = Set<String>()
+
     var originCandidate: OriginCandidate? {
         originPoller.validCandidate(for: checkoutProcess)
     }
@@ -48,7 +50,7 @@ class CheckoutStepsViewModel {
     func startTimer() {
         checkoutProcessTimer?.invalidate()
         checkoutProcessTimer = Timer.scheduledTimer(withTimeInterval: 1, repeats: false) { [weak self] _ in
-            let project = SnabbleUI.project
+            guard let project = self?.shop.project else { return }
             self?.checkoutProcess.update(project,
                                          taskCreated: { [weak self] in
                 self?.processSessionTask = $0
@@ -64,6 +66,10 @@ class CheckoutStepsViewModel {
 
         processSessionTask?.cancel()
         processSessionTask = nil
+    }
+
+    func update() {
+        updateViewModels(with: checkoutProcess)
     }
 
     private func update(_ result: RawResult<CheckoutProcess, SnabbleError>) {
@@ -120,7 +126,7 @@ class CheckoutStepsViewModel {
         }
 
         if let originCandidate = originPoller.validCandidate(for: checkoutProcess) {
-            steps.append(CheckoutStep(originCandidate: originCandidate))
+            steps.append(CheckoutStep(originCandidate: originCandidate, savedIbans: savedIbans))
         }
         return steps
     }

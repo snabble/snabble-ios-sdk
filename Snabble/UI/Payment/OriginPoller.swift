@@ -60,8 +60,13 @@ final class OriginPoller {
                 switch result {
                 case .failure(let error):
                     Log.error("error getting originCandidate: \(error)")
-                    if case .httpError(let statusCode) = error, statusCode == 404 {
-                        return stopPolling()
+                    switch error {
+                    case let .httpError(statusCode):
+                        if statusCode == 404 {
+                            return stopPolling()
+                        }
+                    default:
+                        break
                     }
                 case .success(let candidate):
                     continuePolling = !candidate.isValid

@@ -279,6 +279,10 @@ public enum L10n {
         /// Would you like to store your girocard data securely in the app so that you can pay for your next purchase by direct debit? You can leave your card in your wallet in the future.
         public static var message: String { return L10n.tr("SnabbleLocalizable", "Snabble.PaymentStatus.AddDebitCard.message") }
       }
+      public enum DebitCardAdded {
+        /// We have successfully verified your card. You can now pay by SEPA direct debit. You can leave your girocard in your wallet in the future.
+        public static var message: String { return L10n.tr("SnabbleLocalizable", "Snabble.PaymentStatus.DebitCardAdded.message") }
+      }
       public enum ExitCode {
         /// Exit-Code
         public static var title: String { return L10n.tr("SnabbleLocalizable", "Snabble.PaymentStatus.ExitCode.title") }

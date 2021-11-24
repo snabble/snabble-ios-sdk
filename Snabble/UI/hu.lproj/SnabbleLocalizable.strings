@@ -227,6 +227,8 @@
 
 "Snabble.PaymentStatus.close" = "Bezárás";
 
+"Snabble.PaymentStatus.DebitCardAdded.message" = "We have successfully verified your card. You can now pay by SEPA direct debit. You can leave your girocard in your wallet in the future.";
+
 "Snabble.PaymentStatus.ExitCode.title" = "Kilépőkód";
 
 "Snabble.PaymentStatus.Fulfillment.title" = "Szállítás";
