@@ -83,7 +83,7 @@ extension CheckoutStep {
         status = .from(fulfillmentState: fulfillment.state)
         text = fulfillment.displayName
         image = nil
-        detailText = fulfillment.detailText
+        detailText = fulfillment.detailText(for: status!)
         actionTitle = nil
     }
 
@@ -127,10 +127,17 @@ private extension Fulfillment {
         }
     }
 
-    var detailText: String? {
+    func detailText(for status: CheckoutStepStatus) -> String? {
         switch type {
         case "tobaccolandEWA":
-            return L10n.Snabble.PaymentStatus.Tobacco.message
+            switch status {
+            case .loading:
+                return nil
+            case .success:
+                return L10n.Snabble.PaymentStatus.Tobacco.message
+            case .failure:
+                return L10n.Snabble.PaymentStatus.Tobacco.error
+            }
         default:
             return nil
         }
