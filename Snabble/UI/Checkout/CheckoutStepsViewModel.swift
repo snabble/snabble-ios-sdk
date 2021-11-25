@@ -111,9 +111,14 @@ class CheckoutStepsViewModel {
     }
 
     private func steps(for checkoutProcess: CheckoutProcess) -> [CheckoutStep] {
-        var steps: [CheckoutStep] = [
-            .init(paymentState: checkoutProcess.paymentState)
-        ]
+        var steps = [CheckoutStep]()
+
+        switch checkoutProcess.rawPaymentMethod {
+        case .qrCodeOffline:
+            break
+        default:
+            steps.append(.init(paymentState: checkoutProcess.paymentState))
+        }
 
         steps.append(contentsOf: checkoutProcess.fulfillments.map(CheckoutStep.init))
 
