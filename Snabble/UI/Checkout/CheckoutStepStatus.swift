@@ -11,12 +11,15 @@ enum CheckoutStepStatus: Hashable {
     case loading
     case success
     case failure
+    case aborted
 }
 
 extension CheckoutStepStatus {
     static func from(fulfillmentState: FulfillmentState) -> Self {
         switch fulfillmentState {
-        case .unknown, .aborted, .allocationFailed, .allocationTimedOut, .failed:
+        case .aborted:
+            return .aborted
+        case .unknown, .allocationFailed, .allocationTimedOut, .failed:
             return .failure
         case .open, .processing, .allocating:
             return .loading
@@ -52,6 +55,10 @@ extension Array where Element == CheckoutStep {
     var checkoutStepStatus: CheckoutStepStatus {
         if contains(where: { $0.status == .failure }) {
             return .failure
+        }
+
+        if contains(where: { $0.status == .aborted }) {
+            return .aborted
         }
 
         if contains(where: { $0.status == .loading }) {

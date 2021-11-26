@@ -113,21 +113,25 @@ class CheckoutStepsViewModel {
     private func steps(for checkoutProcess: CheckoutProcess) -> [CheckoutStep] {
         var steps = [CheckoutStep]()
 
+        let paymentState = checkoutProcess.paymentState
         switch checkoutProcess.rawPaymentMethod {
         case .qrCodeOffline:
             break
         default:
-            steps.append(.init(paymentState: checkoutProcess.paymentState))
+            steps.append(.init(paymentState: paymentState))
         }
 
-        steps.append(contentsOf: checkoutProcess.fulfillments.map(CheckoutStep.init))
+        let fulfillmentSteps = checkoutProcess.fulfillments.map({ fulfillment in
+            CheckoutStep(fulfillment: fulfillment, paymentState: paymentState)
+        })
+        steps.append(contentsOf: fulfillmentSteps)
 
         if let exitToken = checkoutProcess.exitToken {
-            steps.append(CheckoutStep(exitToken: exitToken))
+            steps.append(CheckoutStep(exitToken: exitToken, paymentState: paymentState))
         }
 
         if let receipt = checkoutProcess.links.receipt {
-            steps.append(CheckoutStep(receiptLink: receipt))
+            steps.append(CheckoutStep(receiptLink: receipt, paymentState: paymentState))
         }
 
         if let originCandidate = originPoller.validCandidate(for: checkoutProcess) {
@@ -142,7 +146,7 @@ class CheckoutStepsViewModel {
         case .successful:
             shouldContinuePolling = false
         case .failed:
-            shouldContinuePolling = false
+            return false
         case .pending:
             shouldContinuePolling = !checkoutProcess.fulfillments.containsFailureState
         case .transferred, .processing, .unauthorized, .unknown:

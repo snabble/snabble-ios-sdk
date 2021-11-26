@@ -119,6 +119,8 @@ extension CheckoutStepStatus: CheckoutStepStatusViewModel {
             return .systemGreen
         case .failure:
             return .systemRed
+        case .aborted:
+            return .systemGray5
         }
     }
 
@@ -132,7 +134,7 @@ extension CheckoutStepStatus: CheckoutStepStatusViewModel {
             } else {
                 return Asset.SnabbleSDK.checkmark.image
             }
-        case .failure:
+        case .failure, .aborted:
             if #available(iOS 13.0, *) {
                 return UIImage(systemName: "xmark")
             } else {

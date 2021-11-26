@@ -79,24 +79,24 @@ extension CheckoutStep {
 }
 
 extension CheckoutStep {
-    init(fulfillment: Fulfillment) {
-        status = .from(fulfillmentState: fulfillment.state)
+    init(fulfillment: Fulfillment, paymentState: PaymentState) {
+        status = paymentState == .failed ? .aborted : .from(fulfillmentState: fulfillment.state)
         text = fulfillment.displayName
         image = nil
         detailText = fulfillment.detailText(for: status!)
         actionTitle = nil
     }
 
-    init(exitToken: ExitToken) {
-        status = .from(exitToken: exitToken)
+    init(exitToken: ExitToken, paymentState: PaymentState) {
+        status = paymentState == .failed ? .aborted : .from(exitToken: exitToken)
         text = L10n.Snabble.PaymentStatus.ExitCode.title
         image = exitToken.image
         detailText = nil
         actionTitle = nil
     }
 
-    init(receiptLink: Link) {
-        status = .success
+    init(receiptLink: Link, paymentState: PaymentState) {
+        status = paymentState == .failed ? .aborted : .success
         text = L10n.Snabble.PaymentStatus.Receipt.title
         image = nil
         detailText = nil
@@ -131,7 +131,7 @@ private extension Fulfillment {
         switch type {
         case "tobaccolandEWA":
             switch status {
-            case .loading:
+            case .loading, .aborted:
                 return nil
             case .success:
                 return L10n.Snabble.PaymentStatus.Tobacco.message
