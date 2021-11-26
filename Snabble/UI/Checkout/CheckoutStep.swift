@@ -63,7 +63,7 @@ extension CheckoutStep {
         case .unknown, .failed, .unauthorized:
             status = .failure
             detailText = L10n.Snabble.PaymentStatus.Payment.error
-            actionTitle = L10n.Snabble.PaymentStatus.Payment.tryAgain
+            actionTitle = nil
         case .pending, .processing, .transferred:
             status = .loading
             detailText = nil
