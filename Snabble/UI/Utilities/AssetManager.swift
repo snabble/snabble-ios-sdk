@@ -140,7 +140,7 @@ final class AssetManager {
 
     /// Get a named asset, or its local fallback
     /// - Parameters:
-    ///   - name: name of the asset, e.g. "checkout-offline"
+    ///   - asset: type of the asset, e.g. `.checkoutOffline`
     ///   - bundlePath: bundle path of the fallback to use, e.g. "Checkout/$PROJECTID/checkout-offline"
     ///   - projectId: the project id. If nil, use `SnabbleUI.project.id`
     ///   - completion: called when the image has been retrieved
@@ -160,7 +160,7 @@ final class AssetManager {
         if let image = self.getLocallyCachedImage(named: name, projectId) {
             completion(image)
         } else {
-            if let file = self.fileFor(name: name, projectId) {
+            if let file = self.fileFor(name: name, projectId, UIScreen.main.traitCollection.userInterfaceStyle) {
                 self.downloadIfMissing(projectId, file) { fileUrl in
                     if let fileUrl = fileUrl, let data = try? Data(contentsOf: fileUrl) {
                         let img = UIImage(data: data, scale: self.scale)
@@ -181,36 +181,26 @@ final class AssetManager {
         }
     }
 
-    func getRawAsset(_ name: String, _ projectId: Identifier<Project>, _ completion: @escaping (Data?, String?) -> Void) {
-        guard let file = self.fileFor(name: name, projectId) else {
-            return completion(nil, nil)
-        }
-
-        let localName = file.localName(self.scale)
-
-        if let data = self.getLocallyCachedData(named: name, projectId) {
-            completion(data, localName)
-        } else {
-            self.downloadIfMissing(projectId, file) { fileUrl in
-                if let fileUrl = fileUrl, let data = try? Data(contentsOf: fileUrl) {
-                    completion(data, localName)
-                } else {
-                    completion(nil, nil)
-                }
-            }
-        }
-    }
-
     private func getLocallyCachedImage(named name: String, _ projectId: Identifier<Project>) -> UIImage? {
-        guard let data = getLocallyCachedData(named: name, projectId) else {
+        guard let lightData = getLocallyCachedData(named: name, projectId, .light) else {
             return nil
         }
 
-        return UIImage(data: data, scale: self.scale)
+        let lightImage = UIImage(data: lightData, scale: self.scale)
+
+        if let darkData = getLocallyCachedData(named: name, projectId, .dark), let darkImage = UIImage(data: darkData, scale: self.scale) {
+            let traitCollection = UITraitCollection(traitsFrom: [
+                .init(displayScale: self.scale),
+                .init(userInterfaceStyle: .dark)
+            ])
+
+            lightImage?.imageAsset?.register(darkImage, with: traitCollection)
+        }
+        return lightImage
     }
 
-    private func getLocallyCachedData(named name: String, _ projectId: Identifier<Project>) -> Data? {
-        guard let file = self.fileFor(name: name, projectId) else {
+    private func getLocallyCachedData(named name: String, _ projectId: Identifier<Project>, _ userInterfaceStyle: UIUserInterfaceStyle) -> Data? {
+        guard let file = self.fileFor(name: name, projectId, userInterfaceStyle) else {
             return nil
         }
 
@@ -225,7 +215,7 @@ final class AssetManager {
         return nil
     }
 
-    private func fileFor(name: String, _ projectId: Identifier<Project>) -> Manifest.File? {
+    private func fileFor(name: String, _ projectId: Identifier<Project>, _ userInterfaceStyle: UIUserInterfaceStyle) -> Manifest.File? {
         guard let manifest = lock.reading({ self.manifests[projectId] }) else {
             return nil
         }
@@ -238,7 +228,7 @@ final class AssetManager {
         // else we assume it's a name without file extension
 
         // in dark mode, check if we have a _dark version, and if so, use that
-        if #available(iOS 13.0, *), UIScreen.main.traitCollection.userInterfaceStyle == .dark {
+        if userInterfaceStyle == .dark {
             if let file = manifest.files.first(where: { filenameMatch("\(name)_dark", fullname: $0.name) }) {
                 return file
             }
