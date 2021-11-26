@@ -154,6 +154,7 @@ class CheckoutStepsViewModel {
         case .transferred, .processing, .unauthorized, .unknown:
             shouldContinuePolling = true
         }
+
         if checkoutProcess.requiresExitToken && checkoutProcess.exitToken?.image == nil {
             shouldContinuePolling = true
         }
@@ -190,6 +191,5 @@ private extension Array where Element == Fulfillment {
 extension CheckoutStepsViewModel: OriginPollerDelegate {
     func originPoller(_ originPoller: OriginPoller, didReceiveCandidate originCandidate: OriginCandidate) {
         self.originCandidate = originCandidate
-
     }
 }

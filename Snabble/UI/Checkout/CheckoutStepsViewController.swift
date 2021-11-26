@@ -175,8 +175,9 @@ public final class CheckoutStepsViewController: UIViewController {
 
     @objc private func stepActionTouchedUpInside(_ sender: UIButton) {
         guard let originCandidate = viewModel.originCandidate else { return }
-        let sepa = SepaEditViewController(originCandidate, paymentDelegate)
-        navigationController?.pushViewController(sepa, animated: true)
+        let sepaViewController = SepaEditViewController(originCandidate, paymentDelegate)
+        sepaViewController.delegate = self
+        navigationController?.pushViewController(sepaViewController, animated: true)
     }
 
     @objc private func doneButtonTouchedUpInside(_ sender: UIButton) {

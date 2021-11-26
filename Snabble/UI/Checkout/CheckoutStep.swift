@@ -105,7 +105,7 @@ extension CheckoutStep {
 
     init(originCandidate: OriginCandidate, savedIbans: Set<String>) {
         status = nil
-        if let origin = originCandidate.origin, savedIbans.contains(origin) {
+        if let origin = originCandidate.origin, !savedIbans.contains(origin) {
             text = L10n.Snabble.Sepa.IbanTransferAlert.message(origin)
             actionTitle = L10n.Snabble.PaymentStatus.AddDebitCard.button
         } else {
