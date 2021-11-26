@@ -34,9 +34,10 @@ class CheckoutStepsViewModel {
     private let originPoller: OriginPoller
 
     var savedIbans = Set<String>()
-
-    var originCandidate: OriginCandidate? {
-        originPoller.validCandidate(for: checkoutProcess)
+    private(set) var originCandidate: OriginCandidate? {
+        didSet {
+            updateViewModels(with: checkoutProcess)
+        }
     }
 
     init(shop: Shop, checkoutProcess: CheckoutProcess, shoppingCart: ShoppingCart) {
@@ -80,6 +81,7 @@ class CheckoutStepsViewModel {
             updateViewModels(with: process)
             updateShoppingCart(for: process)
             continuePolling = shouldContinuePolling(for: process)
+            startOriginPollerIfNeeded(for: process)
         case let .failure(error):
             Log.error(String(describing: error))
             continuePolling = true
@@ -134,7 +136,7 @@ class CheckoutStepsViewModel {
             steps.append(CheckoutStep(receiptLink: receipt, paymentState: paymentState))
         }
 
-        if let originCandidate = originPoller.validCandidate(for: checkoutProcess) {
+        if let originCandidate = originCandidate, originCandidate.isValid {
             steps.append(CheckoutStep(originCandidate: originCandidate, savedIbans: savedIbans))
         }
         return steps
@@ -155,12 +157,15 @@ class CheckoutStepsViewModel {
         if checkoutProcess.requiresExitToken && checkoutProcess.exitToken?.image == nil {
             shouldContinuePolling = true
         }
-        if originPoller.validCandidate(for: checkoutProcess) == nil {
-            shouldContinuePolling = true
-            originPoller.startPolling(for: checkoutProcess)
-        }
 
         return shouldContinuePolling
+    }
+
+    private func startOriginPollerIfNeeded(for checkoutProcess: CheckoutProcess) {
+        if originPoller.shouldStart(for: checkoutProcess) {
+            originPoller.delegate = self
+            originPoller.start(for: checkoutProcess)
+        }
     }
 
     var headerViewModel: CheckoutHeaderViewModel = CheckoutStepStatus.loading {
@@ -179,5 +184,12 @@ class CheckoutStepsViewModel {
 private extension Array where Element == Fulfillment {
     var containsFailureState: Bool {
         !FulfillmentState.failureStates.isDisjoint(with: Set(map { $0.state }))
+    }
+}
+
+extension CheckoutStepsViewModel: OriginPollerDelegate {
+    func originPoller(_ originPoller: OriginPoller, didReceiveCandidate originCandidate: OriginCandidate) {
+        self.originCandidate = originCandidate
+
     }
 }

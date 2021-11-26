@@ -4,10 +4,15 @@
 //  Copyright © 2020 snabble. All rights reserved.
 //
 
+protocol OriginPollerDelegate: AnyObject {
+    func originPoller(_ originPoller: OriginPoller, didReceiveCandidate originCandidate: OriginCandidate)
+}
+
 final class OriginPoller {
     private let project: Project
     private(set) var candidatesURLStrings = Set<String>()
-    private var candidates = Set<OriginCandidate>()
+
+    weak var delegate: OriginPollerDelegate?
 
     init(project: Project) {
         self.project = project
@@ -15,26 +20,23 @@ final class OriginPoller {
 
     private weak var timer: Timer?
 
-    func urlString(for checkoutProcess: CheckoutProcess) -> String? {
+    private func urlString(for checkoutProcess: CheckoutProcess) -> String? {
         checkoutProcess.paymentResult?["originCandidateLink"] as? String
     }
 
-    func validCandidate(for checkoutProcess: CheckoutProcess) -> OriginCandidate? {
+    func shouldStart(for checkoutProcess: CheckoutProcess) -> Bool {
         guard let urlString = urlString(for: checkoutProcess) else {
-            return nil
+            return false
         }
-        return candidates.first { candidate in
-            guard let href = candidate.links?.`self`.href, href == urlString else {
-                return false
-            }
-            guard candidate.isValid else {
-                return false
-            }
-            return true
+
+        guard !candidatesURLStrings.contains(urlString) else {
+            return false
         }
+
+        return true
     }
 
-    func startPolling(for checkoutProcess: CheckoutProcess) {
+    func start(for checkoutProcess: CheckoutProcess) {
         guard let urlString = urlString(for: checkoutProcess),
               !candidatesURLStrings.contains(urlString) else {
             return
@@ -43,7 +45,7 @@ final class OriginPoller {
         checkCandidate(urlString)
     }
 
-    private func stopPolling() {
+    func stop() {
         timer?.invalidate()
         candidatesURLStrings.removeAll()
     }
@@ -51,7 +53,7 @@ final class OriginPoller {
     private func checkCandidate(_ url: String) {
         project.request(.get, url, timeout: 2) { [self] request in
             guard let request = request else {
-                stopPolling()
+                stop()
                 return
             }
 
@@ -63,14 +65,14 @@ final class OriginPoller {
                     switch error {
                     case let .httpError(statusCode):
                         if statusCode == 404 {
-                            return stopPolling()
+                            return stop()
                         }
                     default:
                         break
                     }
                 case .success(let candidate):
                     continuePolling = !candidate.isValid
-                    candidates.insert(candidate)
+                    delegate?.originPoller(self, didReceiveCandidate: candidate)
                 }
 
                 if continuePolling {
@@ -79,7 +81,7 @@ final class OriginPoller {
                         self?.checkCandidate(url)
                     }
                 } else {
-                    stopPolling()
+                    stop()
                 }
             }
         }
