@@ -26,14 +26,12 @@ public final class PaymentProcessPoller {
     private var alreadySeen = [PaymentEvent]()
 
     private(set) var updatedProcess: CheckoutProcess
-    private(set) var rawJson: [String: Any]?
 
     private(set) var failureCause: FailureCause?
 
-    public init(_ process: CheckoutProcess, _ rawJson: [String: Any]?, _ project: Project) {
+    public init(_ process: CheckoutProcess, _ project: Project) {
         self.process = process
         self.updatedProcess = process
-        self.rawJson = rawJson
         self.project = project
     }
 
@@ -69,17 +67,12 @@ public final class PaymentProcessPoller {
                 }
             case .success(let process):
                 self.updatedProcess = process
-                self.rawJson = result.rawJson
                 self.checkProcess(process, completion)
             }
         })
     }
 
     private func checkProcess(_ process: CheckoutProcess, _ completion: @escaping ([PaymentEvent: Bool]) -> Void ) {
-        if let candidateLink = process.paymentResult?["originCandidateLink"] as? String {
-            OriginPoller.shared.startPolling(self.project, candidateLink)
-        }
-
         if let failureCause = process.paymentResult?["failureCause"] as? String {
             self.failureCause = FailureCause(rawValue: failureCause)
         }

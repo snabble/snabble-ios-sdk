@@ -8,29 +8,50 @@
 import Foundation
 
 protocol CheckoutStepsViewModelDelegate: AnyObject {
+    func checkoutStepsViewModel(_ viewModel: CheckoutStepsViewModel, didUpdateCheckoutProcess checkoutProcess: CheckoutProcess)
     func checkoutStepsViewModel(_ viewModel: CheckoutStepsViewModel, didUpdateHeaderViewModel headerViewModel: CheckoutHeaderViewModel)
     func checkoutStepsViewModel(_ viewModel: CheckoutStepsViewModel, didUpdateSteps steps: [CheckoutStep])
+    func checkoutStepsViewModel(_ viewModel: CheckoutStepsViewModel, didUpdateExitToken exitToken: ExitToken)
 }
 
 class CheckoutStepsViewModel {
-    private(set) var checkoutProcess: CheckoutProcess
+    private(set) var checkoutProcess: CheckoutProcess {
+        didSet {
+            delegate?.checkoutStepsViewModel(self, didUpdateCheckoutProcess: checkoutProcess)
+            if let exitToken = checkoutProcess.exitToken {
+                delegate?.checkoutStepsViewModel(self, didUpdateExitToken: exitToken)
+            }
+        }
+    }
     let shoppingCart: ShoppingCart
+    let shop: Shop
 
     private weak var checkoutProcessTimer: Timer?
     private var processSessionTask: URLSessionDataTask?
 
     weak var delegate: CheckoutStepsViewModelDelegate?
 
-    init(checkoutProcess: CheckoutProcess, shoppingCart: ShoppingCart) {
+    private let originPoller: OriginPoller
+
+    var savedIbans = Set<String>()
+    private(set) var originCandidate: OriginCandidate? {
+        didSet {
+            updateViewModels(with: checkoutProcess)
+        }
+    }
+
+    init(shop: Shop, checkoutProcess: CheckoutProcess, shoppingCart: ShoppingCart) {
+        self.shop = shop
         self.checkoutProcess = checkoutProcess
         self.shoppingCart = shoppingCart
+        self.originPoller = OriginPoller(project: shop.project!)
         updateViewModels(with: checkoutProcess)
     }
 
     func startTimer() {
         checkoutProcessTimer?.invalidate()
         checkoutProcessTimer = Timer.scheduledTimer(withTimeInterval: 1, repeats: false) { [weak self] _ in
-            let project = SnabbleUI.project
+            guard let project = self?.shop.project else { return }
             self?.checkoutProcess.update(project,
                                          taskCreated: { [weak self] in
                 self?.processSessionTask = $0
@@ -48,6 +69,10 @@ class CheckoutStepsViewModel {
         processSessionTask = nil
     }
 
+    func update() {
+        updateViewModels(with: checkoutProcess)
+    }
+
     private func update(_ result: RawResult<CheckoutProcess, SnabbleError>) {
         var continuePolling: Bool
         switch result.result {
@@ -56,6 +81,7 @@ class CheckoutStepsViewModel {
             updateViewModels(with: process)
             updateShoppingCart(for: process)
             continuePolling = shouldContinuePolling(for: process)
+            startOriginPollerIfNeeded(for: process)
         case let .failure(error):
             Log.error(String(describing: error))
             continuePolling = true
@@ -87,20 +113,32 @@ class CheckoutStepsViewModel {
     }
 
     private func steps(for checkoutProcess: CheckoutProcess) -> [CheckoutStep] {
-        var steps: [CheckoutStep] = [
-            .init(paymentState: checkoutProcess.paymentState)
-        ]
+        var steps = [CheckoutStep]()
 
-        steps.append(contentsOf: checkoutProcess.fulfillments.map(CheckoutStep.init))
+        let paymentState = checkoutProcess.paymentState
+        switch checkoutProcess.rawPaymentMethod {
+        case .qrCodeOffline:
+            break
+        default:
+            steps.append(.init(paymentState: paymentState))
+        }
+
+        let fulfillmentSteps = checkoutProcess.fulfillments.map({ fulfillment in
+            CheckoutStep(fulfillment: fulfillment, paymentState: paymentState)
+        })
+        steps.append(contentsOf: fulfillmentSteps)
 
         if let exitToken = checkoutProcess.exitToken {
-            steps.append(CheckoutStep(exitToken: exitToken))
+            steps.append(CheckoutStep(exitToken: exitToken, paymentState: paymentState))
         }
 
-        if let link = checkoutProcess.links.receipt {
-            steps.append(CheckoutStep(receiptLink: link))
+        if let receipt = checkoutProcess.links.receipt {
+            steps.append(CheckoutStep(receiptLink: receipt, paymentState: paymentState))
         }
 
+        if let originCandidate = originCandidate, originCandidate.isValid {
+            steps.append(CheckoutStep(originCandidate: originCandidate, savedIbans: savedIbans))
+        }
         return steps
     }
 
@@ -110,7 +148,7 @@ class CheckoutStepsViewModel {
         case .successful:
             shouldContinuePolling = false
         case .failed:
-            shouldContinuePolling = false
+            return false
         case .pending:
             shouldContinuePolling = !checkoutProcess.fulfillments.containsFailureState
         case .transferred, .processing, .unauthorized, .unknown:
@@ -120,7 +158,15 @@ class CheckoutStepsViewModel {
         if checkoutProcess.requiresExitToken && checkoutProcess.exitToken?.image == nil {
             shouldContinuePolling = true
         }
+
         return shouldContinuePolling
+    }
+
+    private func startOriginPollerIfNeeded(for checkoutProcess: CheckoutProcess) {
+        if originPoller.shouldStart(for: checkoutProcess) {
+            originPoller.delegate = self
+            originPoller.start(for: checkoutProcess)
+        }
     }
 
     var headerViewModel: CheckoutHeaderViewModel = CheckoutStepStatus.loading {
@@ -139,5 +185,11 @@ class CheckoutStepsViewModel {
 private extension Array where Element == Fulfillment {
     var containsFailureState: Bool {
         !FulfillmentState.failureStates.isDisjoint(with: Set(map { $0.state }))
+    }
+}
+
+extension CheckoutStepsViewModel: OriginPollerDelegate {
+    func originPoller(_ originPoller: OriginPoller, didReceiveCandidate originCandidate: OriginCandidate) {
+        self.originCandidate = originCandidate
     }
 }

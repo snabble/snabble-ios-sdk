@@ -34,7 +34,15 @@ extension CheckoutStep: Hashable {
         lhs.text == rhs.text &&
         lhs.detailText == rhs.detailText &&
         lhs.actionTitle == rhs.actionTitle &&
-        lhs.image == rhs.image
+        lhs.image?.pngData() == rhs.image?.pngData()
+    }
+
+    func hash(into hasher: inout Hasher) {
+        hasher.combine(status)
+        hasher.combine(text)
+        hasher.combine(detailText)
+        hasher.combine(actionTitle)
+        hasher.combine(image?.pngData())
     }
 }
 
@@ -55,7 +63,7 @@ extension CheckoutStep {
         case .unknown, .failed, .unauthorized:
             status = .failure
             detailText = L10n.Snabble.PaymentStatus.Payment.error
-            actionTitle = L10n.Snabble.PaymentStatus.Payment.tryAgain
+            actionTitle = nil
         case .pending, .processing, .transferred:
             status = .loading
             detailText = nil
@@ -71,28 +79,41 @@ extension CheckoutStep {
 }
 
 extension CheckoutStep {
-    init(fulfillment: Fulfillment) {
-        status = .from(fulfillmentState: fulfillment.state)
+    init(fulfillment: Fulfillment, paymentState: PaymentState) {
+        status = paymentState == .failed ? .aborted : .from(fulfillmentState: fulfillment.state)
         text = fulfillment.displayName
         image = nil
-        detailText = fulfillment.detailText
+        detailText = fulfillment.detailText(for: status!)
         actionTitle = nil
     }
 
-    init(exitToken: ExitToken) {
-        status = .from(exitToken: exitToken)
+    init(exitToken: ExitToken, paymentState: PaymentState) {
+        status = paymentState == .failed ? .aborted : .from(exitToken: exitToken)
         text = L10n.Snabble.PaymentStatus.ExitCode.title
         image = exitToken.image
         detailText = nil
         actionTitle = nil
     }
 
-    init(receiptLink: Link) {
-        status = .success
+    init(receiptLink: Link, paymentState: PaymentState) {
+        status = paymentState == .failed ? .aborted : .success
         text = L10n.Snabble.PaymentStatus.Receipt.title
         image = nil
         detailText = nil
         actionTitle = nil
+    }
+
+    init(originCandidate: OriginCandidate, savedIbans: Set<String>) {
+        status = nil
+        if let origin = originCandidate.origin, !savedIbans.contains(origin) {
+            text = L10n.Snabble.Sepa.IbanTransferAlert.message(origin)
+            actionTitle = L10n.Snabble.PaymentStatus.AddDebitCard.button
+        } else {
+            text = L10n.Snabble.PaymentStatus.DebitCardAdded.message
+            actionTitle = nil
+        }
+        image = nil
+        detailText = nil
     }
 }
 
@@ -106,10 +127,17 @@ private extension Fulfillment {
         }
     }
 
-    var detailText: String? {
+    func detailText(for status: CheckoutStepStatus) -> String? {
         switch type {
         case "tobaccolandEWA":
-            return L10n.Snabble.PaymentStatus.Tobacco.message
+            switch status {
+            case .loading, .aborted:
+                return nil
+            case .success:
+                return L10n.Snabble.PaymentStatus.Tobacco.message
+            case .failure:
+                return L10n.Snabble.PaymentStatus.Tobacco.error
+            }
         default:
             return nil
         }

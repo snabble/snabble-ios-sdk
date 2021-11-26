@@ -6,6 +6,10 @@
 
 import UIKit
 
+protocol SepaEditViewControllerDelegate: AnyObject {
+    func sepaEditViewControllerDidSave(iban: String)
+}
+
 // tags for the input fields, determines tabbing order (starts at `name`)
 private enum InputField: Int {
     case name = 0
@@ -25,6 +29,7 @@ public final class SepaEditViewController: UIViewController {
     private var detail: PaymentMethodDetail?
     private var candidate: OriginCandidate?
     private weak var analyticsDelegate: AnalyticsDelegate?
+    weak var delegate: SepaEditViewControllerDelegate?
 
     public init(_ detail: PaymentMethodDetail?, _ analyticsDelegate: AnalyticsDelegate?) {
         self.detail = detail
@@ -174,6 +179,7 @@ public final class SepaEditViewController: UIViewController {
             if let cert = SnabbleAPI.certificates.first, let sepaData = SepaData(cert.data, name, iban) {
                 let detail = PaymentMethodDetail(sepaData)
                 PaymentMethodDetails.save(detail)
+                self.delegate?.sepaEditViewControllerDidSave(iban: iban)
                 self.analyticsDelegate?.track(.paymentMethodAdded(detail.rawMethod.displayName))
 
                 if let promote = self.candidate?.links?.promote.href {

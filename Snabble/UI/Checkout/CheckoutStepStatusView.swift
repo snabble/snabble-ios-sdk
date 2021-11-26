@@ -45,6 +45,7 @@ final class CheckoutStepStatusView: UIView {
         let imageView = UIImageView()
         imageView.translatesAutoresizingMaskIntoConstraints = false
         imageView.tintColor = .white
+        imageView.contentMode = .scaleAspectFit
 
         super.init(frame: frame)
 
@@ -71,12 +72,12 @@ final class CheckoutStepStatusView: UIView {
             imageView.centerXAnchor.constraint(equalTo: circleView.centerXAnchor),
             imageView.centerYAnchor.constraint(equalTo: circleView.centerYAnchor),
             imageView.leadingAnchor.constraint(greaterThanOrEqualTo: circleView.leadingAnchor),
+            circleView.trailingAnchor.constraint(greaterThanOrEqualTo: imageView.trailingAnchor),
             imageView.topAnchor.constraint(greaterThanOrEqualTo: circleView.topAnchor),
+            circleView.bottomAnchor.constraint(greaterThanOrEqualTo: imageView.bottomAnchor),
             imageView.heightAnchor.constraint(equalTo: imageView.widthAnchor),
 
             imageView.heightAnchor.constraint(equalTo: circleView.heightAnchor, multiplier: 0.56),
-            circleView.trailingAnchor.constraint(greaterThanOrEqualTo: imageView.trailingAnchor),
-            circleView.bottomAnchor.constraint(greaterThanOrEqualTo: imageView.bottomAnchor),
 
             circleView.topAnchor.constraint(equalTo: topAnchor),
             bottomAnchor.constraint(equalTo: circleView.bottomAnchor)
@@ -118,6 +119,8 @@ extension CheckoutStepStatus: CheckoutStepStatusViewModel {
             return .systemGreen
         case .failure:
             return .systemRed
+        case .aborted:
+            return .systemGray5
         }
     }
 
@@ -131,7 +134,7 @@ extension CheckoutStepStatus: CheckoutStepStatusViewModel {
             } else {
                 return Asset.SnabbleSDK.checkmark.image
             }
-        case .failure:
+        case .failure, .aborted:
             if #available(iOS 13.0, *) {
                 return UIImage(systemName: "xmark")
             } else {

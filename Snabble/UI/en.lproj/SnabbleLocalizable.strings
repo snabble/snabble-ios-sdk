@@ -227,6 +227,8 @@
 
 "Snabble.PaymentStatus.close" = "Close";
 
+"Snabble.PaymentStatus.DebitCardAdded.message" = "We have successfully verified your card. You can now pay by SEPA direct debit. You can leave your girocard in your wallet in the future.";
+
 "Snabble.PaymentStatus.ExitCode.title" = "Exit-Code";
 
 "Snabble.PaymentStatus.Fulfillment.title" = "Fulfillment";

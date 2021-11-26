@@ -20,7 +20,7 @@ final class CheckoutHeaderView: UIView {
 
     override init(frame: CGRect) {
         let statusView = CheckoutStepStatusView()
-        statusView.circleColor = .systemGray5
+        statusView.circleColor = CheckoutStepStatus.aborted.circleColor
         statusView.translatesAutoresizingMaskIntoConstraints = false
 
         let textLabel = UILabel()
@@ -73,7 +73,7 @@ extension CheckoutStepStatus: CheckoutHeaderViewModel {
         switch self {
         case .loading:
             return L10n.Snabble.Payment.waiting
-        case .failure:
+        case .failure, .aborted:
             return L10n.Snabble.Payment.rejected
         case .success:
             return L10n.Snabble.Payment.success

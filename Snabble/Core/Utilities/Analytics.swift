@@ -40,6 +40,9 @@ public enum AnalyticsEvent {
     /// the `CustomerCardCheckoutViewController` appeared
     case viewCustomerCardCheckout
 
+    /// the `CheckoutStepsViewController` appeared
+    case viewCheckoutSteps
+
     /// the `ReceiptListViewController` appeared
     case viewReceiptList
 

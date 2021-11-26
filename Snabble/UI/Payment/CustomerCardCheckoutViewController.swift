@@ -22,11 +22,9 @@ public final class CustomerCardCheckoutViewController: UIViewController {
     private let cart: ShoppingCart
     private weak var delegate: PaymentDelegate?
     private var process: CheckoutProcess?
-    private var rawJson: [String: Any]?
 
-    public init(_ process: CheckoutProcess?, _ rawJson: [String: Any]?, _ cart: ShoppingCart, _ delegate: PaymentDelegate?) {
+    public init(_ process: CheckoutProcess?, _ cart: ShoppingCart, _ delegate: PaymentDelegate?) {
         self.process = process
-        self.rawJson = rawJson
         self.cart = cart
         self.delegate = delegate
 
@@ -94,6 +92,6 @@ public final class CustomerCardCheckoutViewController: UIViewController {
         self.cart.removeAll(endSession: true, keepBackup: true)
 
         SnabbleAPI.fetchAppUserData(SnabbleUI.project.id)
-        self.delegate?.paymentFinished(true, self.cart, self.process, self.rawJson)
+        self.delegate?.paymentFinished(true, self.cart, self.process)
     }
 }

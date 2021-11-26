@@ -15,7 +15,7 @@ public protocol PaymentDelegate: AnalyticsDelegate, MessageDelegate {
     ///   - success: indicates whether the payment was successful
     ///   - cart: the shopping cart
     ///   - process: the checkout process, if available
-    func paymentFinished(_ success: Bool, _ cart: ShoppingCart, _ process: CheckoutProcess?, _ rawJson: [String: Any]?)
+    func paymentFinished(_ success: Bool, _ cart: ShoppingCart, _ process: CheckoutProcess?)
 
     /// a view that the payment process can use to temporarily display e.g. loading indicators
     /// (this uses `UIView!` as the type so that instances of `UIViewController` don't need to do anything to conform)
@@ -26,6 +26,8 @@ public protocol PaymentDelegate: AnalyticsDelegate, MessageDelegate {
     /// - Parameter error: the error from the backend
     /// - Returns: true if the error has been dealt with and no error messages need to be shown from the SDK
     func handlePaymentError(_ method: PaymentMethod, _ error: SnabbleError) -> Bool
+
+    func exitToken(_ exitToken: ExitToken, for shop: Shop)
 }
 
 /// provide simple default implementations

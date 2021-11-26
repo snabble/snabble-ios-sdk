@@ -227,6 +227,8 @@
 
 "Snabble.PaymentStatus.close" = "Schließen";
 
+"Snabble.PaymentStatus.DebitCardAdded.message" = "Wir haben deine Karte erfolgreich verifiziert. Ab sofort kannst du per SEPA-Lastschrift bezahlen. Deine girocard kannst du zukünftig im Geldbeutel lassen.";
+
 "Snabble.PaymentStatus.ExitCode.title" = "Ausgangs-Code";
 
 "Snabble.PaymentStatus.Fulfillment.title" = "Lieferung";

@@ -15,7 +15,7 @@ public final class CheckoutStepsViewController: UIViewController {
 
     private weak var ratingViewController: CheckoutRatingViewController?
 
-    public weak var analyticsDelegate: AnalyticsDelegate?
+    public weak var paymentDelegate: PaymentDelegate?
 
     private typealias ItemIdentifierType = CheckoutStep
     private typealias CellProvider = (_ tableView: UITableView, _ indexPath: IndexPath, _ itemIdentifier: ItemIdentifierType) -> UITableViewCell?
@@ -30,6 +30,7 @@ public final class CheckoutStepsViewController: UIViewController {
         case .information:
             let cell = tableView.dequeueReusable(CheckoutInformationTableViewCell.self, for: indexPath)
             cell.informationView?.configure(with: step)
+            cell.informationView?.button?.addTarget(self, action: #selector(stepActionTouchedUpInside), for: .touchUpInside)
             return cell
         }
     }
@@ -46,7 +47,9 @@ public final class CheckoutStepsViewController: UIViewController {
     )
 
     let viewModel: CheckoutStepsViewModel
-    public let shop: Shop
+    public var shop: Shop {
+        viewModel.shop
+    }
 
     public var checkoutProcess: CheckoutProcess {
         viewModel.checkoutProcess
@@ -60,14 +63,12 @@ public final class CheckoutStepsViewController: UIViewController {
     private var processSessionTask: URLSessionDataTask?
 
     public init(shop: Shop, shoppingCart: ShoppingCart, checkoutProcess: CheckoutProcess) {
-        self.shop = shop
         viewModel = CheckoutStepsViewModel(
+            shop: shop,
             checkoutProcess: checkoutProcess,
             shoppingCart: shoppingCart
         )
-
         super.init(nibName: nil, bundle: nil)
-
         viewModel.delegate = self
     }
 
@@ -101,7 +102,7 @@ public final class CheckoutStepsViewController: UIViewController {
 
         let ratingViewController = CheckoutRatingViewController(shop: shop)
         ratingViewController.shouldRequestReview = false
-        ratingViewController.analyticsDelegate = analyticsDelegate
+        ratingViewController.analyticsDelegate = paymentDelegate
         addChild(ratingViewController)
         tableView.tableFooterView = ratingViewController.view
         ratingViewController.didMove(toParent: self)
@@ -127,7 +128,7 @@ public final class CheckoutStepsViewController: UIViewController {
 
             doneButton.heightAnchor.constraint(equalToConstant: 48),
             view.safeAreaLayoutGuide.bottomAnchor.constraint(equalTo: doneButton.bottomAnchor, constant: 16),
-            tableView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor)
+            tableView.bottomAnchor.constraint(equalTo: view.bottomAnchor)
         ])
 
         self.view = view
@@ -148,11 +149,22 @@ public final class CheckoutStepsViewController: UIViewController {
 
     override public func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
+        navigationController?.setNavigationBarHidden(true, animated: false)
+    }
+
+    override public func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
         viewModel.startTimer()
+        paymentDelegate?.track(.viewCheckoutSteps)
     }
 
     override public func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
+        navigationController?.setNavigationBarHidden(false, animated: false)
+    }
+
+    override public func viewDidDisappear(_ animated: Bool) {
+        super.viewDidDisappear(animated)
         viewModel.stopTimer()
     }
 
@@ -161,9 +173,27 @@ public final class CheckoutStepsViewController: UIViewController {
         tableView?.updateHeaderViews()
     }
 
+    @objc private func stepActionTouchedUpInside(_ sender: UIButton) {
+        guard let originCandidate = viewModel.originCandidate else { return }
+        let sepaViewController = SepaEditViewController(originCandidate, paymentDelegate)
+        sepaViewController.delegate = self
+        navigationController?.pushViewController(sepaViewController, animated: true)
+    }
+
     @objc private func doneButtonTouchedUpInside(_ sender: UIButton) {
+        SnabbleAPI.fetchAppUserData(shop.projectId)
+        updateShoppingCart(for: checkoutProcess)
         navigationController?.popToRootViewController(animated: true)
-        analyticsDelegate?.track(.checkoutStepsClosed)
+        paymentDelegate?.track(.checkoutStepsClosed)
+    }
+
+    private func updateShoppingCart(for checkoutProcess: CheckoutProcess) {
+        switch checkoutProcess.paymentState {
+        case .successful:
+            shoppingCart.removeAll(endSession: true, keepBackup: false)
+        default:
+            shoppingCart.generateNewUUID()
+        }
     }
 
     private func update(with steps: [ItemIdentifierType], animate: Bool = true) {
@@ -181,12 +211,18 @@ public final class CheckoutStepsViewController: UIViewController {
 }
 
 extension CheckoutStepsViewController: CheckoutStepsViewModelDelegate {
+    func checkoutStepsViewModel(_ viewModel: CheckoutStepsViewModel, didUpdateCheckoutProcess checkoutProcess: CheckoutProcess) {}
+
     func checkoutStepsViewModel(_ viewModel: CheckoutStepsViewModel, didUpdateSteps steps: [CheckoutStep]) {
         update(with: steps, animate: true)
     }
 
     func checkoutStepsViewModel(_ viewModel: CheckoutStepsViewModel, didUpdateHeaderViewModel headerViewModel: CheckoutHeaderViewModel) {
         headerView?.configure(with: headerViewModel)
+    }
+
+    func checkoutStepsViewModel(_ viewModel: CheckoutStepsViewModel, didUpdateExitToken exitToken: ExitToken) {
+        paymentDelegate?.exitToken(exitToken, for: shop)
     }
 }
 
@@ -200,5 +236,13 @@ private extension UITableView {
         guard let header = header else { return }
         let fittingSize = CGSize(width: bounds.width - (safeAreaInsets.left + safeAreaInsets.right), height: 0)
         header.frame.size = header.systemLayoutSizeFitting(fittingSize, withHorizontalFittingPriority: .required, verticalFittingPriority: .fittingSizeLevel)
+    }
+}
+
+extension CheckoutStepsViewController: SepaEditViewControllerDelegate {
+    func sepaEditViewControllerDidSave(iban: String) {
+        print("iban:", iban)
+        viewModel.savedIbans.insert(iban)
+        viewModel.update()
     }
 }
