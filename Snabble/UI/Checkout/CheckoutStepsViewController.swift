@@ -241,7 +241,6 @@ private extension UITableView {
 
 extension CheckoutStepsViewController: SepaEditViewControllerDelegate {
     func sepaEditViewControllerDidSave(iban: String) {
-        print("iban:", iban)
         viewModel.savedIbans.insert(iban)
         viewModel.update()
     }
