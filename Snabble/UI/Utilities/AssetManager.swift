@@ -128,15 +128,12 @@ final class AssetManager {
 
     private var manifests = [Identifier<Project>: Manifest]()
     private var lock = ReadWriteLock()
-    private let scale: CGFloat
 
     private weak var redownloadTimer: Timer?
 
     private var pendingRequests = [AssetRequest]()
 
-    private init() {
-        self.scale = UIScreen.main.scale
-    }
+    private init() {}
 
     /// Get a named asset, or its local fallback
     /// - Parameters:
@@ -163,7 +160,7 @@ final class AssetManager {
             if let file = self.fileFor(name: name, projectId, UIScreen.main.traitCollection.userInterfaceStyle) {
                 self.downloadIfMissing(projectId, file) { fileUrl in
                     if let fileUrl = fileUrl, let data = try? Data(contentsOf: fileUrl) {
-                        let img = UIImage(data: data, scale: self.scale)
+                        let img = UIImage(data: data, scale: UIScreen.main.scale)
                         DispatchQueue.main.async {
                             completion(img)
                         }
@@ -186,11 +183,11 @@ final class AssetManager {
             return nil
         }
 
-        let lightImage = UIImage(data: lightData, scale: self.scale)
+        let lightImage = UIImage(data: lightData, scale: UIScreen.main.scale)
 
-        if let darkData = getLocallyCachedData(named: name, projectId, .dark), let darkImage = UIImage(data: darkData, scale: self.scale) {
+        if let darkData = getLocallyCachedData(named: name, projectId, .dark), let darkImage = UIImage(data: darkData, scale: UIScreen.main.scale) {
             let traitCollection = UITraitCollection(traitsFrom: [
-                .init(displayScale: self.scale),
+                .init(displayScale: UIScreen.main.scale),
                 .init(userInterfaceStyle: .dark)
             ])
 
@@ -313,7 +310,7 @@ final class AssetManager {
         let fmt = NumberFormatter()
         fmt.minimumFractionDigits = 0
         fmt.numberStyle = .decimal
-        let variant = fmt.string(for: self.scale)!
+        let variant = fmt.string(for: UIScreen.main.scale)!
 
         components.queryItems = [
             URLQueryItem(name: "variant", value: "\(variant)x")
@@ -386,7 +383,7 @@ final class AssetManager {
 
     private func downloadIfMissing(_ projectId: Identifier<Project>, _ file: Manifest.File, completion: @escaping (URL?) -> Void) {
         guard
-            let localName = file.localName(self.scale),
+            let localName = file.localName(UIScreen.main.scale),
             let cacheUrl = AssetManager.shared.cacheDirectory(projectId)
         else {
             return
@@ -402,7 +399,7 @@ final class AssetManager {
             let downloadDelegate = AssetDownloadDelegate(projectId, localName, file.defaultsKey(projectId), completion)
             let session = URLSession(configuration: .default, delegate: downloadDelegate, delegateQueue: nil)
 
-            if let remoteUrl = file.remoteURL(for: self.scale) {
+            if let remoteUrl = file.remoteURL(for: UIScreen.main.scale) {
                 let request = SnabbleAPI.request(url: remoteUrl, json: false)
                 let task = session.downloadTask(with: request)
                 task.resume()
