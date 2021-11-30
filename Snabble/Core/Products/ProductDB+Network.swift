@@ -97,6 +97,8 @@ final class AppDBDownloadDelegate: CertificatePinningDelegate, URLSessionDownloa
     }
 
     func urlSession(_ session: URLSession, downloadTask: URLSessionDownloadTask, didFinishDownloadingTo location: URL) {
+        session.invalidateAndCancel()
+
         let url = downloadTask.currentRequest?.url?.absoluteString ?? "n/a"
         let elapsed = Date.timeIntervalSinceReferenceDate - self.start
         Log.info("GET \(url) took \(elapsed)s")
@@ -121,6 +123,8 @@ final class AppDBDownloadDelegate: CertificatePinningDelegate, URLSessionDownloa
     }
 
     func urlSession(_ session: URLSession, task: URLSessionTask, didCompleteWithError error: Error?) {
+        session.invalidateAndCancel()
+
         productDb?.resumeData = nil
         productDb?.downloadTask = nil
 
