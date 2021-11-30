@@ -38,47 +38,31 @@ extension AVMetadataObject.ObjectType {
     }
 }
 
-public final class BuiltinBarcodeDetector: NSObject, BarcodeDetector {
-    public weak var delegate: BarcodeDetectorDelegate?
-
-    public var scanFormats: [ScanFormat]
-    public var expectedBarcodeWidth: Int?
-
+public final class BuiltinBarcodeDetector: BarcodeDetector {
     private var camera: AVCaptureDevice?
     private var videoInput: AVCaptureDeviceInput?
     private var captureSession: AVCaptureSession
     private var previewLayer: AVCaptureVideoPreviewLayer?
     private var metadataOutput: AVCaptureMetadataOutput
-    private var sessionQueue: DispatchQueue
 
-    public private(set) var decorationOverlay: BarcodeDetectorOverlay?
-    private weak var idleTimer: Timer?
-    private var screenTap: UITapGestureRecognizer?
-    private weak var messageDelegate: BarcodeDetectorMessageDelegate?
-    private var detectorArea: BarcodeDetectorArea
-    private var torchOn = false
-
-    public required init(detectorArea: BarcodeDetectorArea, messageDelegate: BarcodeDetectorMessageDelegate?) {
-        self.sessionQueue = DispatchQueue(label: "io.snabble.scannerQueue", qos: .userInitiated)
+    override public init(detectorArea: BarcodeDetectorArea) {
         self.captureSession = AVCaptureSession()
         self.metadataOutput = AVCaptureMetadataOutput()
-        self.scanFormats = []
-        self.messageDelegate = messageDelegate
-        self.detectorArea = detectorArea
 
-        super.init()
+        super.init(detectorArea: detectorArea)
 
         self.metadataOutput.setMetadataObjectsDelegate(self, queue: DispatchQueue.main)
     }
 
-    public func scannerWillAppear(on view: UIView) {
+    override public func scannerWillAppear(on view: UIView) {
+        startForegroundBackgroundObserver()
+
         guard
             self.camera == nil,
             let camera = self.initializeCamera(),
             let videoInput = try? AVCaptureDeviceInput(device: camera),
             self.captureSession.canAddInput(videoInput)
         else {
-            addOverlay(to: view)
             return
         }
 
@@ -119,32 +103,32 @@ public final class BuiltinBarcodeDetector: NSObject, BarcodeDetector {
         self.decorationOverlay = decorationOverlay
     }
 
-    public func scannerDidLayoutSubviews() {
+    override public func scannerDidLayoutSubviews() {
         decorationOverlay?.layoutIfNeeded()
         if let previewLayer = self.previewLayer, let decorationOverlay = self.decorationOverlay {
             previewLayer.frame = decorationOverlay.bounds
         }
     }
 
-    public func scannerWillDisappear() {
-        // nop for the built-in detector
+    override public func scannerWillDisappear() {
+        stopForegroundBackgroundObserver()
     }
 
-    public func pauseScanning() {
+    override public func pauseScanning() {
         self.sessionQueue.async {
             self.captureSession.stopRunning()
         }
         self.stopIdleTimer()
     }
 
-    public func resumeScanning() {
+    override public func resumeScanning() {
         self.sessionQueue.async {
             self.captureSession.startRunning()
         }
         self.startIdleTimer()
     }
 
-    public func setOverlayOffset(_ offset: CGFloat) {
+    override public func setOverlayOffset(_ offset: CGFloat) {
         guard let overlay = self.decorationOverlay else {
             return
         }
@@ -157,19 +141,7 @@ public final class BuiltinBarcodeDetector: NSObject, BarcodeDetector {
         }
     }
 
-    public func requestCameraPermission() {
-        let authorizationStatus = AVCaptureDevice.authorizationStatus(for: .video)
-        if authorizationStatus != .authorized {
-            self.requestCameraPermission(currentStatus: authorizationStatus)
-        }
-    }
-
-    public func toggleTorch() -> Bool {
-        setTorch(!torchOn)
-        return torchOn
-    }
-
-    public func setTorch(_ on: Bool) {
+    override public func setTorch(_ on: Bool) {
         try? camera?.lockForConfiguration()
         defer { camera?.unlockForConfiguration() }
         torchOn = on
@@ -207,28 +179,6 @@ public final class BuiltinBarcodeDetector: NSObject, BarcodeDetector {
         return camera
     }
 
-    private func requestCameraPermission(currentStatus: AVAuthorizationStatus) {
-        switch currentStatus {
-        case .restricted, .denied:
-            let title = L10n.Snabble.Scanner.Camera.accessDenied
-            let msg = L10n.Snabble.Scanner.Camera.allowAccess
-            let alert = UIAlertController(title: title, message: msg, preferredStyle: .alert)
-            alert.addAction(UIAlertAction(title: L10n.Snabble.cancel, style: .cancel, handler: nil))
-            alert.addAction(UIAlertAction(title: L10n.Snabble.settings, style: .default) { _ in
-                UIApplication.shared.open(URL(string: UIApplication.openSettingsURLString)!)
-            })
-            DispatchQueue.main.async {
-                self.delegate?.present(alert, animated: true, completion: nil)
-            }
-
-        case .notDetermined:
-            AVCaptureDevice.requestAccess(for: .video) { _ in }
-
-        default:
-            assertionFailure("unhandled av auth status \(currentStatus.rawValue)")
-        }
-    }
-
     @available(iOS 15, *)
     private func setRecommendedZoomFactor() {
         guard
@@ -246,44 +196,6 @@ public final class BuiltinBarcodeDetector: NSObject, BarcodeDetector {
         } catch {
             print("Could not lock for configuration: \(error)")
         }
-    }
-}
-
-// MARK: - idle timer
-extension BuiltinBarcodeDetector {
-    private func startIdleTimer() {
-        guard
-            UserDefaults.standard.bool(forKey: Self.batterySaverKey),
-            self.messageDelegate != nil
-        else {
-            return
-        }
-
-        self.idleTimer?.invalidate()
-        self.idleTimer = Timer.scheduledTimer(withTimeInterval: Self.batterySaverTimeout, repeats: false) { _ in
-            self.idleTimerFired()
-        }
-    }
-
-    private func stopIdleTimer() {
-        self.idleTimer?.invalidate()
-    }
-
-    private func idleTimerFired() {
-        self.pauseScanning()
-        self.screenTap = UITapGestureRecognizer(target: self, action: #selector(screenTapped(_:)))
-        self.decorationOverlay?.addGestureRecognizer(self.screenTap!)
-
-        self.messageDelegate?.showMessage(L10n.Snabble.Scanner.batterySaverHint) {
-            self.resumeScanning()
-        }
-    }
-
-    @objc private func screenTapped(_ gesture: UIGestureRecognizer) {
-        self.decorationOverlay?.removeGestureRecognizer(self.screenTap!)
-        self.resumeScanning()
-
-        self.messageDelegate?.dismiss()
     }
 }
 

@@ -10,7 +10,7 @@
 import UIKit
 
 final class CouponScanViewController: UIViewController {
-    private let detector = BuiltinBarcodeDetector(detectorArea: .rectangle, messageDelegate: nil)
+    private let detector = BuiltinBarcodeDetector(detectorArea: .rectangle)
     private let cameraPreview = UIView()
     private var lastScannedCode: String?
     private weak var timer: Timer?
