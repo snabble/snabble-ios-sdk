@@ -14,6 +14,8 @@ class SampleViewController: UIViewController {
 
     private var shoppingCart: ShoppingCart?
 
+    private var shop: Shop?
+
     init() {
         super.init(nibName: nil, bundle: nil)
 
@@ -75,6 +77,7 @@ class SampleViewController: UIViewController {
 
             // register the project with the UI components
             SnabbleUI.register(project)
+            self.shop = project.shops.first!
 
             // initialize the product database for this project
             let productProvider = SnabbleAPI.productProvider(for: project)
@@ -82,7 +85,7 @@ class SampleViewController: UIViewController {
                 self.spinner.stopAnimating()
                 self.buttonContainer.isHidden = false
 
-                let cartConfig = CartConfig(shop: project.shops.first!)
+                let cartConfig = CartConfig(shop: self.shop!)
                 self.shoppingCart = ShoppingCart(cartConfig)
             }
         }
@@ -128,7 +131,7 @@ extension SampleViewController: ShoppingCartDelegate {
         }
 
         didStart(true)
-        let process = PaymentProcess(info, cart, delegate: self)
+        let process = PaymentProcess(info, cart, shop: self.shop!, delegate: self)
         process.start(method, detail) { result in
             switch result {
             case .success(let viewController):
@@ -169,7 +172,11 @@ extension SampleViewController: MessageDelegate {
 }
 
 extension SampleViewController: PaymentDelegate {
-    func paymentFinished(_ success: Bool, _ cart: ShoppingCart, _ process: CheckoutProcess?, _ rawJson: [String: Any]?) {
+    func exitToken(_ exitToken: ExitToken, for shop: Shop) {
+        print("exitToken:", exitToken)
+    }
+
+    func paymentFinished(_ success: Bool, _ cart: ShoppingCart, _ process: CheckoutProcess?) {
         if success {
             cart.removeAll(endSession: true, keepBackup: false)
         }

@@ -62,7 +62,7 @@ final class TokenRegistry {
     private var pendingHandlers = [Identifier<Project>: Handlers ]()
     private var lock = ReadWriteLock()
 
-    init(_ appId: String, _ secret: String) {
+    init(appId: String, secret: String) {
         self.appId = appId
         self.secret = secret
 

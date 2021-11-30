@@ -61,7 +61,7 @@ public extension Notification.Name {
 
 public enum SnabbleAPI {
     public private(set) static var config = SnabbleAPIConfig.none
-    private(set) static var tokenRegistry = TokenRegistry("", "")
+    private(set) static var tokenRegistry = TokenRegistry(appId: "", secret: "")
     static var metadata = Metadata.none {
         didSet {
             NotificationCenter.default.post(name: .metadataLoaded, object: nil)
@@ -108,7 +108,7 @@ public enum SnabbleAPI {
         }
 
         self.providerPool.removeAll()
-        self.tokenRegistry = TokenRegistry(config.appId, config.secret)
+        self.tokenRegistry = TokenRegistry(appId: config.appId, secret: config.secret)
 
         if let metadataPath = config.seedMetadata, self.metadata.projects.isEmpty {
             if let metadata = Metadata.readResource(metadataPath) {
