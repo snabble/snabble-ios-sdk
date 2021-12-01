@@ -73,11 +73,6 @@ public final class ScannerViewController: PulleyViewController {
     required init(contentViewController: UIViewController, drawerViewController: UIViewController) {
         fatalError("init(contentViewController:drawerViewController:) has not been implemented")
     }
-
-    public func updateTotals() {
-        let cartController = self.drawerContentViewController as? ShoppingCartViewController
-        cartController?.updateTotals()
-    }
 }
 
 extension ScannerViewController: CustomizableAppearance {
@@ -87,15 +82,5 @@ extension ScannerViewController: CustomizableAppearance {
         if let drawer = self.drawerContentViewController as? ScannerDrawerViewController {
             drawer.setCustomAppearance(appearance)
         }
-    }
-}
-
-// MARK: - empty drawer
-
-private final class EmptyDrawerViewController: UIViewController { }
-
-extension EmptyDrawerViewController: PulleyDrawerViewControllerDelegate {
-    public func supportedDrawerPositions() -> [PulleyPosition] {
-        return [.closed]
     }
 }

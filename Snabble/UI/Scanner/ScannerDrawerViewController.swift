@@ -223,7 +223,7 @@ final class ScannerDrawerViewController: UIViewController {
 // MARK: - pulley
 extension ScannerDrawerViewController: PulleyDrawerViewControllerDelegate {
     public func supportedDrawerPositions() -> [PulleyPosition] {
-        return [.closed, .collapsed, .open]
+        return PulleyPosition.compact
     }
 
     public func collapsedDrawerHeight(bottomSafeArea: CGFloat) -> CGFloat {
