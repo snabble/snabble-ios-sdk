@@ -19,20 +19,19 @@ public final class BarcodeEntryViewController: UIViewController {
     private var filteredProducts = [Product]()
     private var searchText = ""
     private var keyboardObserver: KeyboardObserver!
-    private weak var delegate: AnalyticsDelegate?
     private var emptyState: EmptyStateView!
     private var showSku = false
 
+    public weak var analyticsDelegate: AnalyticsDelegate?
+
     public init(_ productProvider: ProductProvider,
                 _ shopId: Identifier<Shop>,
-                delegate: AnalyticsDelegate?,
                 showSku: Bool = false,
                 completion: @escaping (String, ScanFormat?, String?) -> Void
     ) {
         self.productProvider = productProvider
         self.shopId = shopId
         self.completion = completion
-        self.delegate = delegate
         self.showSku = showSku
 
         super.init(nibName: nil, bundle: SnabbleBundle.main)
@@ -64,7 +63,7 @@ public final class BarcodeEntryViewController: UIViewController {
         super.viewWillAppear(animated)
         self.searchBar.becomeFirstResponder()
 
-        self.delegate?.track(.viewBarcodeEntry)
+        self.analyticsDelegate?.track(.viewBarcodeEntry)
     }
 
     private func addEnteredCode() {
@@ -73,7 +72,7 @@ public final class BarcodeEntryViewController: UIViewController {
 
     private func addCode(_ code: String, _ template: String?) {
         let block = {
-            self.delegate?.track(.barcodeSelected(code))
+            self.analyticsDelegate?.track(.barcodeSelected(code))
             self.completion(code, nil, template)
         }
 

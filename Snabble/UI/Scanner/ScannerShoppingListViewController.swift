@@ -8,7 +8,7 @@
 
 final class ScannerShoppingListViewController: UITableViewController {
     private var shoppingList: ShoppingList?
-    private weak var delegate: ShoppingListDelegate?
+    weak var delegate: ShoppingListDelegate?
 
     var insets: UIEdgeInsets = .zero {
         didSet {
@@ -17,8 +17,7 @@ final class ScannerShoppingListViewController: UITableViewController {
         }
     }
 
-    init(delegate: ShoppingListDelegate?) {
-        self.delegate = delegate
+    init() {
         super.init(style: .plain)
     }
 

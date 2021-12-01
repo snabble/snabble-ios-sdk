@@ -44,7 +44,7 @@ final class ShoppingCartTableViewController: UITableViewController {
         }
     }
 
-    private weak var cartDelegate: ShoppingCartDelegate?
+    weak var shoppingCartDelegate: ShoppingCartDelegate?
 
     private var items = [CartTableEntry]()
 
@@ -53,11 +53,10 @@ final class ShoppingCartTableViewController: UITableViewController {
 
     var itemCount: Int { items.count }
 
-    init(_ cart: ShoppingCart, cartDelegate: ShoppingCartDelegate) {
+    init(_ cart: ShoppingCart) {
         super.init(style: .plain)
 
         self.view.backgroundColor = .systemBackground
-        self.cartDelegate = cartDelegate
 
         let nc = NotificationCenter.default
         nc.addObserver(self, selector: #selector(self.shoppingCartUpdated(_:)), name: .snabbleCartUpdated, object: nil)
@@ -94,7 +93,7 @@ final class ShoppingCartTableViewController: UITableViewController {
     override public func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
 
-        self.cartDelegate?.track(.viewShoppingCart)
+        self.shoppingCartDelegate?.track(.viewShoppingCart)
 
         if !self.isBeingPresented && !self.isMovingToParent {
             // whatever was covering us has been dismissed or popped
@@ -155,7 +154,7 @@ final class ShoppingCartTableViewController: UITableViewController {
     }
 
     func deleteCart() {
-        self.cartDelegate?.track(.deletedEntireCart)
+        self.shoppingCartDelegate?.track(.deletedEntireCart)
         self.shoppingCart.removeAll(endSession: false, keepBackup: false)
         self.updateView()
     }
@@ -301,7 +300,7 @@ final class ShoppingCartTableViewController: UITableViewController {
 
 extension ShoppingCartTableViewController: ShoppingCartTableDelegate {
     public func track(_ event: AnalyticsEvent) {
-        self.cartDelegate?.track(event)
+        self.shoppingCartDelegate?.track(event)
     }
 
     func confirmDeletion(at row: Int) {
@@ -414,7 +413,7 @@ extension ShoppingCartTableViewController {
 
         if case .cartItem(let item, _) = self.items[row] {
             let product = item.product
-            self.cartDelegate?.track(.deletedFromCart(product.sku))
+            self.shoppingCartDelegate?.track(.deletedFromCart(product.sku))
 
             self.items.remove(at: row)
             self.shoppingCart.remove(at: row)
