@@ -96,7 +96,7 @@ class SampleViewController: UIViewController {
             return
         }
 
-        let detector = BuiltinBarcodeDetector(detectorArea: .rectangle, messageDelegate: nil)
+        let detector = BuiltinBarcodeDetector(detectorArea: .rectangle)
         let scanner = ScannerViewController(shoppingCart, shop, detector, scannerDelegate: self, cartDelegate: nil, shoppingListDelegate: nil)
         scanner.navigationItem.leftBarButtonItem = nil
         self.navigationController?.pushViewController(scanner, animated: true)
