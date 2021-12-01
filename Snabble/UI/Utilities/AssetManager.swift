@@ -157,7 +157,8 @@ final class AssetManager {
         if let image = self.getLocallyCachedImage(named: name, projectId) {
             completion(image)
         } else {
-            if let file = self.fileFor(name: name, projectId, UIScreen.main.traitCollection.userInterfaceStyle) {
+            let interfaceStyle = UIScreen.main.traitCollection.userInterfaceStyle
+            if let file = self.fileFor(name: name, projectId, interfaceStyle) {
                 self.downloadIfMissing(projectId, file) { fileUrl in
                     if let fileUrl = fileUrl, let data = try? Data(contentsOf: fileUrl) {
                         let img = UIImage(data: data, scale: UIScreen.main.scale)
@@ -171,11 +172,37 @@ final class AssetManager {
                         }
                     }
                 }
+
+                // check if there is an "opposite" (light vs dark) file that we also need to download
+                downloadOpposite(for: file, projectId, named: name)
             } else {
                 let img = UIImage.fromBundle(bundlePath)
                 completion(img)
             }
         }
+    }
+
+    private func oppositeStyle(for style: UIUserInterfaceStyle) -> UIUserInterfaceStyle {
+        switch style {
+        case .light: return .dark
+        case .dark: return .light
+        default: return .unspecified
+        }
+    }
+
+    // download the "opposite" of `file`, if it exists
+    private func downloadOpposite(for file: Manifest.File, _ projectId: Identifier<Project>, named name: String) {
+        let interfaceStyle = UIScreen.main.traitCollection.userInterfaceStyle
+        let oppositeStyle = oppositeStyle(for: interfaceStyle)
+        guard
+            oppositeStyle != interfaceStyle,
+            let oppositeFile = self.fileFor(name: name, projectId, oppositeStyle),
+            oppositeFile != file
+        else {
+            return
+        }
+
+        self.downloadIfMissing(projectId, oppositeFile) { _ in }
     }
 
     private func getLocallyCachedImage(named name: String, _ projectId: Identifier<Project>) -> UIImage? {
