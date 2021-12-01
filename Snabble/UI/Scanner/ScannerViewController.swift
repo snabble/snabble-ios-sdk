@@ -21,9 +21,9 @@ public final class ScannerViewController: PulleyViewController {
         let scanningViewController = ScanningViewController(cart, shop, detector, delegate: scannerDelegate)
 
         var viewController: UIViewController
-        if let cartDelegate = cartDelegate, let project = shop.project {
+        if let cartDelegate = cartDelegate {
             viewController = ScannerDrawerViewController(
-                project.id,
+                shop.projectId,
                 shoppingCart: cart,
                 cartDelegate: cartDelegate,
                 shoppingListDelegate: shoppingListDelegate
