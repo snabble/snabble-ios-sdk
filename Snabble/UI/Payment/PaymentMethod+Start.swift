@@ -9,15 +9,13 @@ import UIKit
 public final class PaymentMethodStartCheck {
     private var method: PaymentMethod
     private weak var presenter: UIViewController?
-    private weak var messageDelegate: MessageDelegate?
+    public weak var messageDelegate: MessageDelegate?
     private var completionHandler: ((Bool) -> Void)?
 
     public init(for method: PaymentMethod,
-                on presenter: UIViewController,
-                messageDelegate: MessageDelegate) {
+                on presenter: UIViewController) {
         self.method = method
         self.presenter = presenter
-        self.messageDelegate = messageDelegate
     }
 
     public func startPayment(_ completion: @escaping (Bool) -> Void) {
