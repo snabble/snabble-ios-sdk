@@ -133,7 +133,8 @@ extension SampleViewController: ShoppingCartDelegate {
         }
 
         didStart(true)
-        let process = PaymentProcess(info, cart, shop: self.shop!, delegate: self)
+        let process = PaymentProcess(info, cart, shop: self.shop!)
+        process.paymentDelegate = self
         process.start(method, detail) { result in
             switch result {
             case .success(let viewController):
