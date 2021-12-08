@@ -10,7 +10,7 @@ public final class PaymentProcess {
     let cart: ShoppingCart
     let shop: Shop
     private weak var hudTimer: Timer?
-    private weak var delegate: PaymentDelegate?
+    public weak var paymentDelegate: PaymentDelegate?
 
     /// create a payment process
     ///
@@ -18,11 +18,10 @@ public final class PaymentProcess {
     ///   - signedCheckoutInfo: the checkout info for this process
     ///   - cart: the cart for this process
     ///   - delegate: the `PaymentDelegate` to use
-    public init(_ signedCheckoutInfo: SignedCheckoutInfo, _ cart: ShoppingCart, shop: Shop, delegate: PaymentDelegate) {
+    public init(_ signedCheckoutInfo: SignedCheckoutInfo, _ cart: ShoppingCart, shop: Shop) {
         self.signedCheckoutInfo = signedCheckoutInfo
         self.cart = cart
         self.shop = shop
-        self.delegate = delegate
     }
 
     func mergePaymentMethodList(_ methods: [PaymentMethodDescription]) -> [PaymentMethod] {
@@ -176,14 +175,14 @@ public final class PaymentProcess {
     private func startFailed(_ method: PaymentMethod, shop: Shop, _ error: SnabbleError?, _ completion: @escaping (_ result: Result<UIViewController, SnabbleError>) -> Void ) {
         var handled = false
         if let error = error {
-            handled = self.delegate?.handlePaymentError(method, error) ?? false
+            handled = self.paymentDelegate?.handlePaymentError(method, error) ?? false
         }
         if !handled {
-            if method.rawMethod.offline, let processor = method.processor(nil, shop: shop, self.cart, self.delegate) {
+            if method.rawMethod.offline, let processor = method.processor(nil, shop: shop, self.cart, self.paymentDelegate) {
                 completion(.success(processor))
                 OfflineCarts.shared.saveCartForLater(self.cart)
             } else {
-                self.delegate?.showWarningMessage(L10n.Snabble.Payment.errorStarting)
+                self.paymentDelegate?.showWarningMessage(L10n.Snabble.Payment.errorStarting)
             }
         }
     }
@@ -196,7 +195,7 @@ public final class PaymentProcess {
     }
 
     func track(_ event: AnalyticsEvent) {
-        self.delegate?.track(event)
+        self.paymentDelegate?.track(event)
     }
 
     // MARK: - blur
@@ -204,7 +203,7 @@ public final class PaymentProcess {
     private var blurView: UIView?
 
     private func showBlurOverlay() {
-        guard let view = self.delegate?.view else {
+        guard let view = self.paymentDelegate?.view else {
             return
         }
 
@@ -293,10 +292,10 @@ extension PaymentProcess {
                     return
                 }
 
-                if let processor = method.processor(process, shop: shop, self.cart, self.delegate) {
+                if let processor = method.processor(process, shop: shop, self.cart, self.paymentDelegate) {
                     completion(.success(processor))
                 } else {
-                    self.delegate?.showWarningMessage(L10n.Snabble.Payment.errorStarting)
+                    self.paymentDelegate?.showWarningMessage(L10n.Snabble.Payment.errorStarting)
                 }
             case .failure(let error):
                 if !error.isUrlError(.timedOut) {

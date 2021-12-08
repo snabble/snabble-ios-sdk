@@ -19,7 +19,18 @@ final class ScannerDrawerViewController: UIViewController {
 
     private var customAppearance: CustomAppearance?
 
-    private weak var cartDelegate: ShoppingCartDelegate?
+    weak var shoppingCartDelegate: ShoppingCartDelegate? {
+        didSet {
+            checkoutBar?.shoppingCartDelegate = shoppingCartDelegate
+            shoppingCartVC.shoppingCartDelegate = shoppingCartDelegate
+        }
+    }
+
+    weak var shoppingListDelegate: ShoppingListDelegate? {
+        didSet {
+            shoppingListTableVC.delegate = shoppingListDelegate
+        }
+    }
 
     private let minDrawerHeight: CGFloat = 50
     private let totalsHeight: CGFloat = 60
@@ -41,16 +52,13 @@ final class ScannerDrawerViewController: UIViewController {
     @IBOutlet private var separatorHeight: NSLayoutConstraint!
 
     init(_ projectId: Identifier<Project>,
-         shoppingCart: ShoppingCart,
-         cartDelegate: ShoppingCartDelegate,
-         shoppingListDelegate: ShoppingListDelegate?
+         shoppingCart: ShoppingCart
     ) {
         self.projectId = projectId
         self.shoppingCart = shoppingCart
-        self.cartDelegate = cartDelegate
 
-        self.shoppingListTableVC = ScannerShoppingListViewController(delegate: shoppingListDelegate)
-        self.shoppingCartVC = ShoppingCartTableViewController(shoppingCart, cartDelegate: cartDelegate)
+        self.shoppingListTableVC = ScannerShoppingListViewController()
+        self.shoppingCartVC = ShoppingCartTableViewController(shoppingCart)
 
         super.init(nibName: nil, bundle: SnabbleBundle.main)
 
@@ -82,7 +90,8 @@ final class ScannerDrawerViewController: UIViewController {
         segmentedControl.selectedSegmentIndex = 0
         segmentedControl.addTarget(self, action: #selector(tabChanged(_:)), for: .valueChanged)
 
-        let checkoutBar = CheckoutBar(self, shoppingCart, cartDelegate: cartDelegate)
+        let checkoutBar = CheckoutBar(self, shoppingCart)
+        checkoutBar.shoppingCartDelegate = shoppingCartDelegate
         checkoutBar.translatesAutoresizingMaskIntoConstraints = false
         self.checkoutWrapper.addSubview(checkoutBar)
         NSLayoutConstraint.activate(
@@ -214,7 +223,7 @@ final class ScannerDrawerViewController: UIViewController {
 // MARK: - pulley
 extension ScannerDrawerViewController: PulleyDrawerViewControllerDelegate {
     public func supportedDrawerPositions() -> [PulleyPosition] {
-        return [.closed, .collapsed, .open]
+        return PulleyPosition.compact
     }
 
     public func collapsedDrawerHeight(bottomSafeArea: CGFloat) -> CGFloat {
@@ -264,6 +273,6 @@ extension ScannerDrawerViewController: CustomizableAppearance {
 
 extension ScannerDrawerViewController: AnalyticsDelegate {
     func track(_ event: AnalyticsEvent) {
-        self.cartDelegate?.track(event)
+        self.shoppingCartDelegate?.track(event)
     }
 }

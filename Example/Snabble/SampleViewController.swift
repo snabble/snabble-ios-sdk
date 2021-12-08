@@ -97,9 +97,10 @@ class SampleViewController: UIViewController {
         }
 
         let detector = BuiltinBarcodeDetector(detectorArea: .rectangle)
-        let scanner = ScannerViewController(shoppingCart, shop, detector, scannerDelegate: self, cartDelegate: nil, shoppingListDelegate: nil)
-        scanner.navigationItem.leftBarButtonItem = nil
-        self.navigationController?.pushViewController(scanner, animated: true)
+        let scannerViewController = ScannerViewController(shoppingCart, shop, detector)
+        scannerViewController.scannerDelegate = self
+        scannerViewController.navigationItem.leftBarButtonItem = nil
+        self.navigationController?.pushViewController(scannerViewController, animated: true)
     }
 
     @objc private func shoppingCartButtonTapped(_ sender: Any) {
@@ -107,7 +108,8 @@ class SampleViewController: UIViewController {
             return
         }
 
-        let shoppingCartVC = ShoppingCartViewController(shoppingCart, cartDelegate: self)
+        let shoppingCartVC = ShoppingCartViewController(shoppingCart)
+        shoppingCartVC.shoppingCartDelegate = self
         self.navigationController?.pushViewController(shoppingCartVC, animated: true)
     }
 
@@ -131,7 +133,8 @@ extension SampleViewController: ShoppingCartDelegate {
         }
 
         didStart(true)
-        let process = PaymentProcess(info, cart, shop: self.shop!, delegate: self)
+        let process = PaymentProcess(info, cart, shop: self.shop!)
+        process.paymentDelegate = self
         process.start(method, detail) { result in
             switch result {
             case .success(let viewController):

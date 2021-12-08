@@ -8,34 +8,56 @@ import UIKit
 import Pulley
 
 public final class ScannerViewController: PulleyViewController {
-    private let initialPosition: PulleyPosition
     private var customAppearance: CustomAppearance?
+
+    public weak var scannerDelegate: ScannerDelegate? {
+        didSet {
+            guard let scanningViewController = primaryContentViewController as? ScanningViewController else {
+                return
+            }
+            scanningViewController.scannerDelegate = scannerDelegate
+        }
+    }
+
+    public weak var shoppingCartDelegate: ShoppingCartDelegate? {
+        didSet {
+            if let drawerViewController = drawerContentViewController as? ScannerDrawerViewController,
+               let shoppingCartDelegate = shoppingCartDelegate {
+                drawerViewController.shoppingCartDelegate = shoppingCartDelegate
+                drawerViewController.shoppingListDelegate = shoppingListDelegate
+                setDrawerPosition(position: .collapsed, animated: false, completion: nil)
+            } else {
+                setDrawerPosition(position: .closed, animated: false, completion: nil)
+            }
+        }
+    }
+
+    public weak var shoppingListDelegate: ShoppingListDelegate? {
+        didSet {
+            guard let scannerDrawerViewController = drawerContentViewController as? ScannerDrawerViewController else {
+                return
+            }
+            scannerDrawerViewController.shoppingListDelegate = shoppingListDelegate
+        }
+    }
+
+    public let shoppingCart: ShoppingCart
+    public let shop: Shop
+    public let barcodeDetector: BarcodeDetector
 
     public init(_ cart: ShoppingCart,
                 _ shop: Shop,
-                _ detector: BarcodeDetector,
-                scannerDelegate: ScannerDelegate,
-                cartDelegate: ShoppingCartDelegate?,
-                shoppingListDelegate: ShoppingListDelegate?
+                _ detector: BarcodeDetector
     ) {
-        let scanningViewController = ScanningViewController(cart, shop, detector, delegate: scannerDelegate)
+        self.shoppingCart = cart
+        self.shop = shop
+        self.barcodeDetector = detector
 
-        var viewController: UIViewController
-        if let cartDelegate = cartDelegate {
-            viewController = ScannerDrawerViewController(
-                shop.projectId,
-                shoppingCart: cart,
-                cartDelegate: cartDelegate,
-                shoppingListDelegate: shoppingListDelegate
-            )
-            initialPosition = .collapsed
-        } else {
-            viewController = EmptyDrawerViewController()
-            initialPosition = .closed
-        }
+        let contentViewController = ScanningViewController(cart, shop, detector)
+        let drawerViewController = ScannerDrawerViewController(shop.projectId, shoppingCart: shoppingCart)
 
-        super.init(contentViewController: scanningViewController, drawerViewController: viewController)
-        self.initialDrawerPosition = initialPosition
+        super.init(contentViewController: contentViewController, drawerViewController: drawerViewController)
+        self.initialDrawerPosition = .closed
 
         self.title = L10n.Snabble.Shopping.title
         self.tabBarItem.image = Asset.SnabbleSDK.iconScanInactive.image
@@ -51,11 +73,6 @@ public final class ScannerViewController: PulleyViewController {
     required init(contentViewController: UIViewController, drawerViewController: UIViewController) {
         fatalError("init(contentViewController:drawerViewController:) has not been implemented")
     }
-
-    public func updateTotals() {
-        let cartController = self.drawerContentViewController as? ShoppingCartViewController
-        cartController?.updateTotals()
-    }
 }
 
 extension ScannerViewController: CustomizableAppearance {
@@ -65,15 +82,5 @@ extension ScannerViewController: CustomizableAppearance {
         if let drawer = self.drawerContentViewController as? ScannerDrawerViewController {
             drawer.setCustomAppearance(appearance)
         }
-    }
-}
-
-// MARK: - empty drawer
-
-private final class EmptyDrawerViewController: UIViewController { }
-
-extension EmptyDrawerViewController: PulleyDrawerViewControllerDelegate {
-    public func supportedDrawerPositions() -> [PulleyPosition] {
-        return [.closed]
     }
 }

@@ -26,12 +26,11 @@ final class CheckoutBar: NibView {
     private var methodSelector: PaymentMethodSelector?
     private weak var parentVC: (UIViewController & AnalyticsDelegate)?
     private let shoppingCart: ShoppingCart
-    private weak var cartDelegate: ShoppingCartDelegate?
+    weak var shoppingCartDelegate: ShoppingCartDelegate?
 
-    init(_ parentVC: UIViewController & AnalyticsDelegate, _ shoppingCart: ShoppingCart, cartDelegate: ShoppingCartDelegate?) {
+    init(_ parentVC: UIViewController & AnalyticsDelegate, _ shoppingCart: ShoppingCart) {
         self.parentVC = parentVC
         self.shoppingCart = shoppingCart
-        self.cartDelegate = cartDelegate
 
         super.init(frame: .zero)
     }
@@ -127,7 +126,7 @@ final class CheckoutBar: NibView {
         pauseScanning()
 
         let project = SnabbleUI.project
-        self.cartDelegate?.checkoutAllowed(project: project, cart: shoppingCart) { start in
+        self.shoppingCartDelegate?.checkoutAllowed(project: project, cart: shoppingCart) { start in
             if start {
                 if self.taxationInfoRequired() {
                     self.requestTaxationInfo()
@@ -181,13 +180,13 @@ final class CheckoutBar: NibView {
 
                 let detail = self.methodSelector?.selectedPaymentDetail
                 let cart = self.shoppingCart
-                self.cartDelegate?.gotoPayment(paymentMethod, detail, info, cart) { didStart in
+                self.shoppingCartDelegate?.gotoPayment(paymentMethod, detail, info, cart) { didStart in
                     if !didStart {
                         self.resumeScanning()
                     }
                 }
             case .failure(let error):
-                let handled = self.cartDelegate?.handleCheckoutError(error) ?? false
+                let handled = self.shoppingCartDelegate?.handleCheckoutError(error) ?? false
                 if !handled {
                     if let offendingSkus = error.details?.compactMap({ $0.sku }) {
                         self.showProductError(offendingSkus)
@@ -197,22 +196,22 @@ final class CheckoutBar: NibView {
                     if paymentMethod.offline {
                         // if the payment method works offline, ignore the error and continue anyway
                         let info = SignedCheckoutInfo([paymentMethod])
-                        self.cartDelegate?.gotoPayment(paymentMethod, nil, info, self.shoppingCart) { _ in }
+                        self.shoppingCartDelegate?.gotoPayment(paymentMethod, nil, info, self.shoppingCart) { _ in }
                         return
                     }
 
                     if case SnabbleError.urlError = error {
-                        self.cartDelegate?.showWarningMessage(L10n.Snabble.Payment.offlineHint)
+                        self.shoppingCartDelegate?.showWarningMessage(L10n.Snabble.Payment.offlineHint)
                         return
                     }
 
                     switch error.type {
                     case .noAvailableMethod:
-                        self.cartDelegate?.showWarningMessage(L10n.Snabble.Payment.noMethodAvailable)
+                        self.shoppingCartDelegate?.showWarningMessage(L10n.Snabble.Payment.noMethodAvailable)
                     case .invalidDepositVoucher:
-                        self.cartDelegate?.showWarningMessage(L10n.Snabble.InvalidDepositVoucher.errorMsg)
+                        self.shoppingCartDelegate?.showWarningMessage(L10n.Snabble.InvalidDepositVoucher.errorMsg)
                     default:
-                        self.cartDelegate?.showWarningMessage(L10n.Snabble.Payment.errorStarting)
+                        self.shoppingCartDelegate?.showWarningMessage(L10n.Snabble.Payment.errorStarting)
                     }
                 }
             }

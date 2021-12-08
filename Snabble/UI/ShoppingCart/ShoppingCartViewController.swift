@@ -13,17 +13,24 @@ public final class ShoppingCartViewController: UIViewController {
     private let shoppingCartTableVC: ShoppingCartTableViewController
     private let bottomWrapper = UIView()
     private var checkoutBar: CheckoutBar!
-    private weak var cartDelegate: ShoppingCartDelegate?
+
     private var customAppearance: CustomAppearance?
     private var emptyState: ShoppingCartEmptyStateView!
     private let shoppingCart: ShoppingCart
     private weak var restoreTimer: Timer?
     private var trashButton: UIBarButtonItem!
 
-    public init(_ shoppingCart: ShoppingCart, cartDelegate: ShoppingCartDelegate) {
+    public weak var shoppingCartDelegate: ShoppingCartDelegate? {
+        didSet {
+            shoppingCartTableVC.shoppingCartDelegate = shoppingCartDelegate
+            checkoutBar.shoppingCartDelegate = shoppingCartDelegate
+        }
+    }
+
+    // WARNING!!!
+    public init(_ shoppingCart: ShoppingCart) {
         self.shoppingCart = shoppingCart
-        self.cartDelegate = cartDelegate
-        self.shoppingCartTableVC = ShoppingCartTableViewController(shoppingCart, cartDelegate: cartDelegate)
+        self.shoppingCartTableVC = ShoppingCartTableViewController(shoppingCart)
 
         super.init(nibName: nil, bundle: nil)
 
@@ -32,7 +39,7 @@ public final class ShoppingCartViewController: UIViewController {
         self.tabBarItem.image = cartEmpty ? Asset.SnabbleSDK.iconCartInactiveEmpty.image : Asset.SnabbleSDK.iconCartInactiveFull.image
         self.tabBarItem.selectedImage = Asset.SnabbleSDK.iconCartActive.image
 
-        self.checkoutBar = CheckoutBar(self, shoppingCart, cartDelegate: cartDelegate)
+        self.checkoutBar = CheckoutBar(self, shoppingCart)
 
         self.emptyState = ShoppingCartEmptyStateView { [weak self] button in
             self?.emptyStateButtonTapped(button)
@@ -195,7 +202,7 @@ extension ShoppingCartViewController {
     }
 
     private func showScanner() {
-        self.cartDelegate?.gotoScanner()
+        self.shoppingCartDelegate?.gotoScanner()
     }
 
     private func restoreCart() {
@@ -237,6 +244,6 @@ extension ShoppingCartViewController: CustomizableAppearance {
 
 extension ShoppingCartViewController: AnalyticsDelegate {
     public func track(_ event: AnalyticsEvent) {
-        cartDelegate?.track(event)
+        shoppingCartDelegate?.track(event)
     }
 }
