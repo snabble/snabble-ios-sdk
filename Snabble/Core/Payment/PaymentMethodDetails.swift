@@ -19,6 +19,7 @@ enum PaymentMethodUserData: Codable, Equatable {
     case datatransAlias(DatatransData)
     case datatransCardAlias(DatatransCreditCardData)
     case payoneCreditCard(PayoneCreditCardData)
+    case leinweberCustomerNumber(LeinweberCustomerData)
 
     enum CodingKeys: String, CodingKey {
         case sepa
@@ -27,6 +28,7 @@ enum PaymentMethodUserData: Codable, Equatable {
         case paydirektAuthorization
         case datatransAlias, datatransCardAlias
         case payoneCreditCard
+        case leinweberCustomerNumber
 
         // old and bad name - only used in the migration code below
         case creditcard
@@ -41,6 +43,7 @@ enum PaymentMethodUserData: Codable, Equatable {
         case .datatransAlias(let data): return data
         case .datatransCardAlias(let data): return data
         case .payoneCreditCard(let data): return data
+        case .leinweberCustomerNumber(let data): return data
         }
     }
 
@@ -70,6 +73,8 @@ enum PaymentMethodUserData: Codable, Equatable {
             self = .datatransCardAlias(datatransCardData)
         } else if let payoneData = try container.decodeIfPresent(PayoneCreditCardData.self, forKey: .payoneCreditCard) {
             self = .payoneCreditCard(payoneData)
+        } else if let leinweberData = try container.decodeIfPresent(LeinweberCustomerData.self, forKey: .leinweberCustomerNumber) {
+            self = .leinweberCustomerNumber(leinweberData)
         } else {
             throw PaymentMethodError.unknownMethodError("unknown payment method")
         }
@@ -85,6 +90,7 @@ enum PaymentMethodUserData: Codable, Equatable {
         case .datatransAlias(let data): try container.encode(data, forKey: .datatransAlias)
         case .datatransCardAlias(let data): try container.encode(data, forKey: .datatransCardAlias)
         case .payoneCreditCard(let data): try container.encode(data, forKey: .payoneCreditCard)
+        case .leinweberCustomerNumber(let data): try container.encode(data, forKey: .leinweberCustomerNumber)
         }
     }
 }
@@ -160,6 +166,11 @@ public struct PaymentMethodDetail: Equatable {
         self.methodData = PaymentMethodUserData.tegutEmployeeCard(tegutData)
     }
 
+    init(_ leinweberData: LeinweberCustomerData) {
+        self.id = UUID()
+        self.methodData = PaymentMethodUserData.leinweberCustomerNumber(leinweberData)
+    }
+
     init(_ paydirektData: PaydirektData) {
         self.id = UUID()
         self.methodData = PaymentMethodUserData.paydirektAuthorization(paydirektData)
@@ -207,7 +218,7 @@ public struct PaymentMethodDetail: Equatable {
     public var rawMethod: RawPaymentMethod {
         switch self.methodData {
         case .sepa: return .deDirectDebit
-        case .tegutEmployeeCard:
+        case .tegutEmployeeCard, .leinweberCustomerNumber:
             return .externalBilling
         case .paydirektAuthorization:
             return .paydirektOneKlick
@@ -241,7 +252,7 @@ public struct PaymentMethodDetail: Equatable {
             return datatransData.projectId
         case .payoneCreditCard(let payoneData):
             return payoneData.projectId
-        case .sepa, .tegutEmployeeCard, .paydirektAuthorization:
+        case .sepa, .tegutEmployeeCard, .paydirektAuthorization, .leinweberCustomerNumber:
             return nil
         }
     }
@@ -403,7 +414,7 @@ public enum PaymentMethodDetails {
     }
 }
 
-// extensions for employee cards that can be used as payment methods
+// extensions for tegut employee cards that can be used as payment methods
 extension PaymentMethodDetails {
     public static func addTegutEmployeeCard(_ number: String, _ name: String, _ projectId: Identifier<Project>) {
         guard
@@ -420,6 +431,27 @@ extension PaymentMethodDetails {
 
     public static func removeTegutEmployeeCard() {
         let details = self.read().filter { $0.originType != .tegutEmployeeID }
+        self.save(details)
+    }
+}
+
+// extensions for leinweber customer numbers that can be used as payment methods
+extension PaymentMethodDetails {
+    public static func addLeinweberCustomerNumber(_ number: String, _ name: String, _ projectId: Identifier<Project>) {
+        guard
+            let cert = SnabbleAPI.certificates.first,
+            let employeeData = LeinweberCustomerData(cert.data, number, name, projectId)
+        else {
+            return
+        }
+
+        var details = self.read().filter { $0.originType != .leinweberCustomerID }
+        details.append(PaymentMethodDetail(employeeData))
+        self.save(details)
+    }
+
+    public static func removeLeinweberCustomerNumber() {
+        let details = self.read().filter { $0.originType != .leinweberCustomerID }
         self.save(details)
     }
 }
