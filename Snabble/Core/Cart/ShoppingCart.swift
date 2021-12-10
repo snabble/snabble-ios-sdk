@@ -22,7 +22,7 @@ public final class ShoppingCart: Codable {
     public internal(set) var requiredInformationData: [RequiredInformation]
 
     public let projectId: Identifier<Project>
-    public let shopId: Identifier<Shop>
+    private(set) public var shopId: Identifier<Shop>
 
     public private(set) var uuid: String
 
@@ -441,5 +441,11 @@ extension ShoppingCart {
                 NotificationCenter.default.post(name: .snabbleCartUpdated, object: self)
             }
         }
+    }
+}
+
+extension ShoppingCart: ReactNativeWrapper {
+    public func setShopId(_ shopId: Identifier<Shop>) {
+        self.shopId = shopId
     }
 }
