@@ -444,7 +444,8 @@ extension ShoppingCart {
     }
 }
 
-extension ShoppingCart: ReactNativeWrapper {
+// only for RN
+extension ShoppingCart {
     public func setShopId(_ shopId: Identifier<Shop>) {
         self.shopId = shopId
     }
