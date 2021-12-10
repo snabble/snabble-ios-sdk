@@ -97,7 +97,7 @@ final class AppDBDownloadDelegate: CertificatePinningDelegate, URLSessionDownloa
     }
 
     func urlSession(_ session: URLSession, downloadTask: URLSessionDownloadTask, didFinishDownloadingTo location: URL) {
-        session.invalidateAndCancel()
+        session.finishTasksAndInvalidate()
 
         let url = downloadTask.currentRequest?.url?.absoluteString ?? "n/a"
         let elapsed = Date.timeIntervalSinceReferenceDate - self.start
