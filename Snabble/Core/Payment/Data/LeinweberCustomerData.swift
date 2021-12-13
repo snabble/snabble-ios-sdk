@@ -1,12 +1,12 @@
 //
-//  TegutEmployeeData.swift
+//  LeinweberCustomerData.swift
 //
 //  Copyright © 2021 snabble. All rights reserved.
 //
 
 import Foundation
 
-struct TegutEmployeeData: Codable, EncryptedPaymentData, Equatable {
+struct LeinweberCustomerData: Codable, EncryptedPaymentData, Equatable {
     // encrypted JSON string
     let encryptedPaymentData: String
     // serial # of the certificate used to encrypt
@@ -17,7 +17,7 @@ struct TegutEmployeeData: Codable, EncryptedPaymentData, Equatable {
 
     let isExpired = false
 
-    let originType = AcceptedOriginType.tegutEmployeeID
+    let originType = AcceptedOriginType.leinweberCustomerID
 
     let cardNumber: String
 

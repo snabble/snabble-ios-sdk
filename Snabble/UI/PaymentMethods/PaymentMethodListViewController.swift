@@ -71,7 +71,7 @@ public final class PaymentMethodListViewController: UITableViewController {
                     return alias.projectId == projectId
                 case .payoneCreditCard(let payoneData):
                     return payoneData.projectId == projectId
-                case .tegutEmployeeCard, .sepa, .paydirektAuthorization:
+                case .tegutEmployeeCard, .sepa, .paydirektAuthorization, .leinweberCustomerNumber:
                     return SnabbleAPI.project(for: projectId)?.paymentMethods.contains(where: { $0 == detail.rawMethod }) ?? false
                 }
             }
@@ -169,7 +169,7 @@ extension PaymentMethodListViewController {
                 editVC = PaydirektEditViewController(detail, self.analyticsDelegate)
             case .payoneCreditCard:
                 editVC = PayoneCreditCardEditViewController(detail, self.analyticsDelegate)
-            case .tegutEmployeeCard:
+            case .tegutEmployeeCard, .leinweberCustomerNumber:
                 editVC = nil
             case .datatransAlias, .datatransCardAlias:
                 editVC = SnabbleAPI.methodRegistry.create(detail: detail, analyticsDelegate: self.analyticsDelegate)

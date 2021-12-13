@@ -66,9 +66,14 @@ final class PaymentMethodListCell: UITableViewCell {
         init(detail: PaymentMethodDetail) {
             displayName = detail.displayName
             icon = detail.icon
-            accessoryType = detail.originType == .tegutEmployeeID ? .none : .disclosureIndicator
-            selectionStyle = detail.originType == .tegutEmployeeID ? .none : .default
-
+            switch detail.originType {
+            case .tegutEmployeeID, .leinweberCustomerID:
+                accessoryType = .none
+                selectionStyle = .none
+            default:
+                accessoryType = .disclosureIndicator
+                selectionStyle = .default
+            }
         }
 
         init(displayName: String, icon: UIImage?) {
