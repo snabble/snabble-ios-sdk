@@ -54,8 +54,7 @@ struct TegutEmployeeData: Codable, EncryptedPaymentData, Equatable {
         self.encryptedPaymentData = try container.decode(String.self, forKey: .encryptedPaymentData)
         self.serial = try container.decode(String.self, forKey: .serial)
         self.displayName = try container.decode(String.self, forKey: .displayName)
-        self.cardNumber = (try? container.decodeIfPresent(String.self, forKey: .cardNumber)) ?? ""
-        let projectId = try container.decodeIfPresent(Identifier<Project>.self, forKey: .projectId)
-        self.projectId = projectId ?? ""
+        self.cardNumber = try container.decode(String.self, forKey: .cardNumber)
+        self.projectId = try container.decode(Identifier<Project>.self, forKey: .projectId)
     }
 }
