@@ -25,10 +25,11 @@ public final class ScannerViewController: PulleyViewController {
                let shoppingCartDelegate = shoppingCartDelegate {
                 drawerViewController.shoppingCartDelegate = shoppingCartDelegate
                 drawerViewController.shoppingListDelegate = shoppingListDelegate
-                setDrawerPosition(position: .collapsed, animated: false, completion: nil)
+                initialDrawerPosition = .collapsed
             } else {
-                setDrawerPosition(position: .closed, animated: false, completion: nil)
+                initialDrawerPosition = .closed
             }
+            setDrawerPosition(position: initialDrawerPosition, animated: false, completion: nil)
         }
     }
 
@@ -57,7 +58,7 @@ public final class ScannerViewController: PulleyViewController {
         let drawerViewController = ScannerDrawerViewController(shop.projectId, shoppingCart: shoppingCart)
 
         super.init(contentViewController: contentViewController, drawerViewController: drawerViewController)
-        self.initialDrawerPosition = .closed
+        initialDrawerPosition = .closed
 
         self.title = L10n.Snabble.Shopping.title
         self.tabBarItem.image = Asset.SnabbleSDK.iconScanInactive.image
