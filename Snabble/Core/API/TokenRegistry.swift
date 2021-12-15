@@ -102,7 +102,9 @@ final class TokenRegistry {
                 if let tokenData = tokenData {
                     self.projectTokens[projectId] = tokenData
                     self.startRefreshTimer()
-                    SnabbleAPI.fetchAppUserData(projectId)
+                    if SnabbleAPI.appUserData == nil {
+                        SnabbleAPI.fetchAppUserData(projectId)
+                    }
                 }
 
                 return self.pendingHandlers.removeValue(forKey: projectId)
@@ -214,6 +216,7 @@ final class TokenRegistry {
     }
 
     private func retrieveAppUserAndToken(for projectId: Identifier<Project>, _ date: Date? = nil, completion: @escaping (TokenData?) -> Void) {
+        print(#function)
         guard let project = SnabbleAPI.project(for: projectId) else {
             return completion(nil)
         }
@@ -238,6 +241,7 @@ final class TokenRegistry {
                 case .success(let appUserData):
                     if self.verboseToken { Log.debug("retrieveAppUserAndToken succeeded") }
                     self.verboseToken = false
+                    print(#function, "new appUserID: \(appUserData.appUser.id)")
                     SnabbleAPI.appUserId = AppUserId(userId: appUserData.appUser.id, secret: appUserData.appUser.secret)
                     completion(TokenData(appUserData.token, projectId))
                 case .failure:
