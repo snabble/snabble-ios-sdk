@@ -107,8 +107,6 @@ public enum SnabbleAPI {
             self.initializeTrustKit()
         }
 
-        #warning("HACK")
-        SnabbleAPI.appUserId = nil
         self.providerPool.removeAll()
         self.tokenRegistry = TokenRegistry(appId: config.appId, secret: config.secret)
 
@@ -457,7 +455,7 @@ extension SnabbleAPI {
     }
 
     private(set) static var appUserData: AppUserData?
-    private static var appUserDataTask: URLSessionDataTask?
+    private static weak var appUserDataTask: URLSessionDataTask?
 
     static func fetchAppUserData(_ projectId: Identifier<Project>) {
         guard
@@ -467,7 +465,6 @@ extension SnabbleAPI {
         else {
             return
         }
-        print(#function)
 
         let url = SnabbleAPI.links.appUser.href.replacingOccurrences(of: "{appUserID}", with: appUserId.userId)
         project.request(.get, url, timeout: 2) { request in
@@ -478,14 +475,9 @@ extension SnabbleAPI {
             appUserDataTask = project.perform(request) { (result: Result<AppUserData, SnabbleError>) in
                 switch result {
                 case .success(let userData):
-                    DispatchQueue.main.async {
-                        print(#function, "got data: \(userData.id)")
-                        SnabbleAPI.appUserData = userData
-                        appUserDataTask = nil
-                    }
+                    SnabbleAPI.appUserData = userData
                 case .failure(let error):
                     print("\(#function), \(error)")
-                    appUserDataTask = nil
                 }
             }
         }
