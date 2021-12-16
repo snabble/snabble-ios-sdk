@@ -130,8 +130,21 @@ public enum SnabbleAPI {
                 self.setMetadata(metadata)
             }
 
-            self.loadCoupons {
-                completion()
+            let metadataLoaded = {
+                if self.config.loadActiveShops {
+                    self.loadActiveShops()
+                }
+                self.loadCoupons {
+                    completion()
+                }
+            }
+
+            if let project = self.metadata.projects.first {
+                self.tokenRegistry.getToken(for: project) { _ in
+                    metadataLoaded()
+                }
+            } else {
+                metadataLoaded()
             }
         }
     }
@@ -147,10 +160,6 @@ public enum SnabbleAPI {
             project.priceOverrideCodes?.forEach {
                 CodeMatcher.addTemplate(project.id, $0.id, $0.template)
             }
-        }
-
-        if self.config.loadActiveShops {
-            self.loadActiveShops()
         }
     }
 
@@ -171,7 +180,7 @@ public enum SnabbleAPI {
                     case .success(let activeShops):
                         self.metadata.setShops(activeShops.shops, at: index)
                     case .failure(let error):
-                        print("\(#function), \(error)")
+                        print("\(#function), \(project.id) \(error)")
                     }
                 }
             }
@@ -445,10 +454,12 @@ extension SnabbleAPI {
         }
     }
 
-    static var appUserData: AppUserData?
+    private(set) static var appUserData: AppUserData?
+    private static weak var appUserDataTask: URLSessionDataTask?
 
     static func fetchAppUserData(_ projectId: Identifier<Project>) {
         guard
+            appUserDataTask == nil,
             let project = SnabbleAPI.project(for: projectId),
             let appUserId = SnabbleAPI.appUserId
         else {
@@ -461,12 +472,10 @@ extension SnabbleAPI {
                 return
             }
 
-            project.perform(request) { (result: Result<AppUserData, SnabbleError>) in
+            appUserDataTask = project.perform(request) { (result: Result<AppUserData, SnabbleError>) in
                 switch result {
                 case .success(let userData):
-                    DispatchQueue.main.async {
-                        SnabbleAPI.appUserData = userData
-                    }
+                    SnabbleAPI.appUserData = userData
                 case .failure(let error):
                     print("\(#function), \(error)")
                 }
