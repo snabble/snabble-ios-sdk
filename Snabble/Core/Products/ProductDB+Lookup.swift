@@ -47,7 +47,7 @@ extension ProductDB {
 
     private func resolveProductsLookup(_ url: String, _ code: String, _ template: String, _ shopId: Identifier<Shop>,
                                        completion: @escaping (_ result: Result<ScannedProduct, ProductLookupError>) -> Void) {
-        let session = SnabbleAPI.urlSession()
+        let session = SnabbleAPI.urlSession
 
         // TODO: is this the right value?
         let timeoutInterval: TimeInterval = 5
@@ -109,7 +109,7 @@ extension ProductDB {
     }
 
     func resolveProductLookup(_ url: String, _ sku: String, _ shopId: Identifier<Shop>, completion: @escaping (_ result: Result<Product, ProductLookupError>) -> Void) {
-        let session = SnabbleAPI.urlSession()
+        let session = SnabbleAPI.urlSession
 
         // TODO: is this the right value?
         let timeoutInterval: TimeInterval = 5

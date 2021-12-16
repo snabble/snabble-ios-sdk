@@ -117,7 +117,7 @@ extension Order {
                 return
             }
 
-            let session = SnabbleAPI.urlSession()
+            let session = SnabbleAPI.urlSession
             let task = session.downloadTask(with: request) { location, _, error in
                 if let error = error {
                     Log.error("error downloading receipt: \(String(describing: error))")

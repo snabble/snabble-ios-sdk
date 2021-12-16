@@ -347,7 +347,7 @@ final class AssetManager {
             return
         }
 
-        let session = URLSession.shared
+        let session = SnabbleAPI.urlSession
         let start = Date.timeIntervalSinceReferenceDate
         var request = SnabbleAPI.request(url: url, json: true)
         request.timeoutInterval = 2

@@ -147,7 +147,7 @@ final class ShoppingCartTableViewController: UITableViewController {
             guard let url = URL(string: img) else {
                 continue
             }
-            let task = URLSession.shared.dataTask(with: url) { _, _, _ in }
+            let task = SnabbleAPI.urlSession.dataTask(with: url) { _, _, _ in }
             task.resume()
         }
         self.knownImages = images
