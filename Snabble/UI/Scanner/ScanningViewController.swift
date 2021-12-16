@@ -307,7 +307,7 @@ extension ScanningViewController {
     }
 
     private func loadMessageImage(_ url: URL) {
-        let session = URLSession.shared
+        let session = SnabbleAPI.urlSession
         self.messageSpinner.startAnimating()
         let task = session.dataTask(with: url) { data, _, _ in
             if let data = data, let img = UIImage(data: data) {

@@ -75,13 +75,11 @@ extension SnabbleAPI {
     /// and verifies the CAs
     ///
     /// - Returns: a URLSession object
-    public static func urlSession() -> URLSession {
-        return pinningSession
-    }
-
-    static let pinningSession: URLSession = {
+    public static var urlSession: URLSession = {
         let checker = CertificatePinningDelegate()
-        let session = URLSession(configuration: .default, delegate: checker, delegateQueue: nil)
+        let sessionConfiguration = URLSessionConfiguration.default
+        sessionConfiguration.httpCookieStorage = nil
+        let session = URLSession(configuration: sessionConfiguration, delegate: checker, delegateQueue: nil)
         return session
     }()
 }

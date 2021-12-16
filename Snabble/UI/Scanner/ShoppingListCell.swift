@@ -113,7 +113,7 @@ extension ShoppingListCell {
 
         self.spinner.startAnimating()
         self.spinner.isHidden = false
-        self.task = URLSession.shared.dataTask(with: url) { data, _, error in
+        self.task = SnabbleAPI.urlSession.dataTask(with: url) { data, _, error in
             self.task = nil
             DispatchQueue.main.async {
                 self.spinner.stopAnimating()
