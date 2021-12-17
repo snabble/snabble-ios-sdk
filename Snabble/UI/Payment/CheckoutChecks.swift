@@ -30,45 +30,47 @@ struct CheckoutChecks {
         return stopProcess
     }
 
-    private func performCheck(_ check: CheckoutCheck) -> Bool {
-        switch check.type {
-        case .unknown: return false
-        case .minAge: return self.performAgeCheck(check)
-        }
+    private func performCheck(_ check: CheckoutProcess.Check) -> Bool {
+        return false
+//        switch check.type {
+//        case .unknown: return false
+//        case .minAge: return self.performAgeCheck(check)
+//        }
     }
 
-    private func performAgeCheck(_ check: CheckoutCheck) -> Bool {
-        switch check.performedBy {
-        case .app:
-            // DIY
-            return performAppAgeCheck(check)
-        case .none, .unknown, .backend, .payment, .supervisor:
-            // check for failure, else continue waiting
-            switch check.state {
-            case .failed:
-                return true
-            case .pending, .successful, .postponed, .unknown:
-                return false
-            }
-        }
+    private func performAgeCheck(_ check: CheckoutProcess.Check) -> Bool {
+        return false
+//        switch check.performedBy {
+//        case .app:
+//            // DIY
+//            return performAppAgeCheck(check)
+//        case .none, .unknown, .backend, .payment, .supervisor:
+//            // check for failure, else continue waiting
+//            switch check.state {
+//            case .failed:
+//                return true
+//            case .pending, .successful, .postponed, .unknown:
+//                return false
+//            }
+//        }
     }
 
-    private func performAppAgeCheck(_ check: CheckoutCheck) -> Bool {
-        switch check.state {
-        case .pending:
-            return true
-        case .failed:
-            let alert = UIAlertController(title: L10n.Snabble.AgeVerification.Failed.title,
-                                          message: L10n.Snabble.AgeVerification.Failed.message,
-                                          preferredStyle: .alert)
-            alert.addAction(UIAlertAction(title: L10n.Snabble.ok, style: .cancel, handler: nil))
-
-            let topViewController = UIApplication.topViewController()
-            topViewController?.present(alert, animated: true)
-            return true
-        case .successful, .postponed, .unknown:
-            return false
-        }
-    }
+//    private func performAppAgeCheck(_ check: CheckoutCheck) -> Bool {
+//        switch check.state {
+//        case .pending:
+//            return true
+//        case .failed:
+//            let alert = UIAlertController(title: L10n.Snabble.AgeVerification.Failed.title,
+//                                          message: L10n.Snabble.AgeVerification.Failed.message,
+//                                          preferredStyle: .alert)
+//            alert.addAction(UIAlertAction(title: L10n.Snabble.ok, style: .cancel, handler: nil))
+//
+//            let topViewController = UIApplication.topViewController()
+//            topViewController?.present(alert, animated: true)
+//            return true
+//        case .successful, .postponed, .unknown:
+//            return false
+//        }
+//    }
 
 }

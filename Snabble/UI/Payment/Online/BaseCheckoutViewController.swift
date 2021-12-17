@@ -55,7 +55,7 @@ public class BaseCheckoutViewController: UIViewController {
 
         self.title = L10n.Snabble.Payment.confirm
 
-        self.alreadyApproved = self.process.supervisorApproval == true
+        self.alreadyApproved = self.process.supervisorApprovalGranted
         let method = process.rawPaymentMethod
 
         self.topWrapper.isHidden = true
@@ -186,6 +186,8 @@ public class BaseCheckoutViewController: UIViewController {
         var continuePolling = true
         switch result.result {
         case .success(let process):
+            print("routingTarget", process.routingTarget)
+            print("checks", process.checks)
             continuePolling = self.updateView(process)
             // inform child classes
             self.processUpdated(process)
@@ -202,7 +204,7 @@ public class BaseCheckoutViewController: UIViewController {
     // Return true if we should keep checking the process, false otherwise
     private func updateView(_ process: CheckoutProcess) -> Bool {
         // figure out failure conditions first
-        let approvalDenied = process.supervisorApproval == false || process.paymentApproval == false
+        let approvalDenied = process.supervisorApprovalDenied || process.paymentApproval == false
         let checkFailed = process.checks.first { $0.state == .failed } != nil
         if approvalDenied || checkFailed {
             self.paymentFinished(false, process)

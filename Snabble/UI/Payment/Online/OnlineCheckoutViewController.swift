@@ -18,7 +18,8 @@ public final class OnlineCheckoutViewController: BaseCheckoutViewController {
     }
 
     override public func showQrCode(_ process: CheckoutProcess) -> Bool {
-        let checksNeedingSupervisor = process.checks.filter { $0.performedBy == .supervisor }
-        return process.supervisorApproval == nil || !checksNeedingSupervisor.isEmpty
+        // let checksNeedingSupervisor = process.checks.filter { $0.performedBy == .supervisor }
+        // return process.supervisorApproval == nil || !checksNeedingSupervisor.isEmpty
+        process.routingTarget != .none
     }
 }

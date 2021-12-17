@@ -37,7 +37,7 @@ public final class ApplePayCheckoutViewController: BaseCheckoutViewController {
         self.currentProcess = process
 
         if self.authController == nil, !checksPending(in: process), let applePayAuth = createApplePayProcessor(for: process) {
-            if process.supervisorApproval == true {
+            if process.supervisorApprovalGranted {
                 self.authController = applePayAuth
                 self.present(applePayAuth, animated: true)
             }
@@ -45,8 +45,9 @@ public final class ApplePayCheckoutViewController: BaseCheckoutViewController {
     }
 
     private func checksPending(in process: CheckoutProcess) -> Bool {
-        let checksNeedingSupervisor = process.checks.filter { $0.performedBy == .supervisor && $0.state != .successful }
-        return process.supervisorApproval == nil || !checksNeedingSupervisor.isEmpty
+//        let checksNeedingSupervisor = process.checks.filter { $0.performedBy == .supervisor && $0.state != .successful }
+//        return process.supervisorApproval == nil || !checksNeedingSupervisor.isEmpty
+        process.routingTarget != .none
     }
 
     // MARK: - apple pay
