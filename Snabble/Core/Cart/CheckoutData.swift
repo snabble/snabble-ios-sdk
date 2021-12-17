@@ -188,55 +188,6 @@ public struct CheckoutInfo: Decodable {
     }
 }
 
-// MARK: - process checks
-public enum CheckState: String, Codable, UnknownCaseRepresentable {
-    case unknown
-
-    case pending
-    case postponed
-    case successful
-    case failed
-
-    public static let unknownCase = Self.unknown
-}
-
-public enum CheckType: String, Codable, UnknownCaseRepresentable {
-    case unknown
-
-    case minAge = "min_age"
-
-    public static let unknownCase = Self.unknown
-}
-
-public enum CheckPerformer: String, Decodable, UnknownCaseRepresentable {
-    case unknown
-
-    case app
-    case backend
-    case supervisor
-    case payment
-
-    public static let unknownCase = Self.unknown
-}
-
-public struct CheckoutCheck: Decodable {
-    public let id: String
-    public let links: CheckLinks
-
-    public let state: CheckState
-    public let type: CheckType
-
-    // type-specific properties
-
-    // properties for min_age
-    public let requiredAge: Int?
-    public let performedBy: CheckPerformer?
-
-    public struct CheckLinks: Decodable {
-        public let `self`: Link
-    }
-}
-
 public enum FulfillmentState: String, Decodable, UnknownCaseRepresentable {
     case unknown
 
@@ -271,13 +222,6 @@ public struct Fulfillment: Decodable {
     }
 }
 
-public struct AgeCheckData: Encodable {
-    public let requiredAge: Int
-    public let state: CheckState
-    public let type: CheckType
-    public let dayOfBirth: String // YYYY/MM/DD
-}
-
 // known values from checkoutProcess.paymentResults["failureCause"]
 public enum FailureCause: String {
     case terminalAbort
@@ -290,11 +234,21 @@ public struct ExitToken: Codable {
     public let value: String?
 }
 
+public enum RoutingTarget: String, Decodable, UnknownCaseRepresentable {
+    case none
+    case supervisor
+    case gatekeeper
+
+    public static let unknownCase = Self.none
+}
+
 // MARK: - Checkout Process
 public struct CheckoutProcess: Decodable {
     public let id: String
     public let links: ProcessLinks
+    @available(*, deprecated)
     public let supervisorApproval: Bool?
+    @available(*, deprecated)
     public let paymentApproval: Bool?
     public let aborted: Bool
     public let paymentMethod: String
@@ -304,11 +258,12 @@ public struct CheckoutProcess: Decodable {
     public let orderID: String?
     public let paymentResult: [String: Any]?
     public let pricing: Pricing
-    public let checks: [CheckoutCheck]
+    public let checks: [CheckoutProcess.Check]
     public let fulfillments: [Fulfillment]
     public let exitToken: ExitToken?
     public let currency: String
     public let paymentPreauthInformation: PaymentPreauthInformation?
+    public let routingTarget: RoutingTarget
 
     public var rawPaymentMethod: RawPaymentMethod? {
         RawPaymentMethod(rawValue: paymentMethod)
@@ -342,6 +297,7 @@ public struct CheckoutProcess: Decodable {
         case paymentState, orderID, paymentResult
         case checks, fulfillments, pricing, exitToken
         case currency, paymentPreauthInformation
+        case routingTarget
     }
 
     public init(from decoder: Decoder) throws {
@@ -360,7 +316,7 @@ public struct CheckoutProcess: Decodable {
         self.paymentResult = try container.decodeIfPresent([String: Any].self, forKey: .paymentResult)
         self.pricing = try container.decode(Pricing.self, forKey: .pricing)
 
-        let rawChecks = try container.decodeIfPresent([FailableDecodable<CheckoutCheck>].self, forKey: .checks)
+        let rawChecks = try container.decodeIfPresent([FailableDecodable<CheckoutProcess.Check>].self, forKey: .checks)
         let checks = rawChecks?.compactMap { $0.value } ?? []
         self.checks = checks.filter { $0.state != .unknown }
 
@@ -371,6 +327,7 @@ public struct CheckoutProcess: Decodable {
 
         self.currency = try container.decode(String.self, forKey: .currency)
         self.paymentPreauthInformation = try container.decodeIfPresent(PaymentPreauthInformation.self, forKey: .paymentPreauthInformation)
+        self.routingTarget = try container.decode(RoutingTarget.self, forKey: .routingTarget)
     }
 
     var requiresExitToken: Bool {
