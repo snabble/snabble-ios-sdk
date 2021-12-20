@@ -4,7 +4,7 @@ on:
       - 0.*
 
 env:
-  DEVELOPER_DIR: /Applications/Xcode_13.1.app/Contents/Developer
+  DEVELOPER_DIR: /Applications/Xcode_13.2.app/Contents/Developer
 
 name: Publish
 jobs:
