@@ -49,12 +49,12 @@ extension CheckoutProcess {
     }
 
     // are there any `failed` checks?
-    public var failedChecks: Bool {
+    public var hasFailedChecks: Bool {
         checks.contains { $0.state == .failed }
     }
 
     // are there any `pending` checks?
-    public var pendingChecks: Bool {
+    public var hasPendingChecks: Bool {
         checks.contains { $0.state == .pending }
     }
 
@@ -64,7 +64,7 @@ extension CheckoutProcess {
     }
 
     public var supervisorApprovalDenied: Bool {
-        routingTarget == .supervisor && failedChecks
+        routingTarget == .supervisor && hasFailedChecks
     }
 
     public var supervisorApprovalGranted: Bool {

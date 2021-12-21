@@ -240,26 +240,6 @@ public final class PaymentProcess {
 extension PaymentProcess {
     private static let createTimeout: TimeInterval = 25
 
-    public func start(_ method: PaymentMethod, completion: @escaping (RawResult<CheckoutProcess, SnabbleError>) -> Void ) {
-        let project = SnabbleUI.project
-        let id = self.cart.uuid
-        self.signedCheckoutInfo.createCheckoutProcess(project, id: id, paymentMethod: method, timeout: Self.createTimeout) { result in
-            switch result.result {
-            case .success(let process):
-                let checker = CheckoutChecks(process)
-                let stopProcess = checker.handleChecks()
-                if stopProcess {
-                    return
-                }
-            case .failure(let error):
-                if !error.isUrlError(.timedOut) {
-                    self.cart.generateNewUUID()
-                }
-            }
-            completion(result)
-        }
-    }
-
     /// start a payment process with the given payment method
     ///
     /// - Parameters:
@@ -275,10 +255,6 @@ extension PaymentProcess {
             return completion(Result.failure(.noRequest))
         }
 
-        start(method, shop: shop, completion)
-    }
-
-    public func start(_ method: PaymentMethod, shop: Shop, _ completion: @escaping (_ result: Result<UIViewController, SnabbleError>) -> Void ) {
         UIApplication.shared.beginIgnoringInteractionEvents()
         self.startBlurOverlayTimer()
 
@@ -290,25 +266,26 @@ extension PaymentProcess {
             self.hideBlurOverlay()
             switch result.result {
             case .success(let process):
-                let checker = CheckoutChecks(process)
-
-                let stopProcess = checker.handleChecks()
-                if stopProcess {
-                    process.abort(project) { _ in }
-                    self.cart.generateNewUUID()
-                    return
+                switch process.routingTarget {
+                case .none:
+                    if let processor = method.processor(process, shop: self.shop, self.cart, self.paymentDelegate) {
+                        completion(.success(processor))
+                    } else {
+                        self.paymentDelegate?.showWarningMessage(L10n.Snabble.Payment.errorStarting)
+                    }
+                case .supervisor:
+                    let supervisor = SupervisorCheckViewController(shop: self.shop, shoppingCart: self.cart, checkoutProcess: process)
+                    completion(.success(supervisor))
+                case .gatekeeper:
+                    let gatekeeper = GatekeeperCheckViewController(shop: self.shop, shoppingCart: self.cart, checkoutProcess: process)
+                    completion(.success(gatekeeper))
                 }
 
-                if let processor = method.processor(process, shop: shop, self.cart, self.paymentDelegate) {
-                    completion(.success(processor))
-                } else {
-                    self.paymentDelegate?.showWarningMessage(L10n.Snabble.Payment.errorStarting)
-                }
             case .failure(let error):
                 if !error.isUrlError(.timedOut) {
                     self.cart.generateNewUUID()
                 }
-                self.startFailed(method, shop: shop, error, completion)
+                self.startFailed(method, shop: self.shop, error, completion)
             }
         }
     }
