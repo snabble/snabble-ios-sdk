@@ -218,6 +218,10 @@ final class ScannerDrawerViewController: UIViewController {
     @objc private func shoppingCartUpdated(_ notification: Notification) {
         checkoutBar?.updateTotals()
     }
+
+    func updateTotals() {
+        checkoutBar?.updateTotals()
+    }
 }
 
 // MARK: - pulley

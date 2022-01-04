@@ -56,6 +56,8 @@ public final class ShoppingCartViewController: UIViewController {
     override public func viewDidLoad() {
         super.viewDidLoad()
 
+        self.shoppingCart.delegate = self
+
         self.trashButton = UIBarButtonItem(image: Asset.SnabbleSDK.iconTrash.image, style: .plain, target: self, action: #selector(self.trashButtonTapped(_:)))
 
         self.view.backgroundColor = .systemBackground
@@ -245,5 +247,11 @@ extension ShoppingCartViewController: CustomizableAppearance {
 extension ShoppingCartViewController: AnalyticsDelegate {
     public func track(_ event: AnalyticsEvent) {
         shoppingCartDelegate?.track(event)
+    }
+}
+
+extension ShoppingCartViewController: InternalShoppingCartDelegate {
+    func shoppingCart(_ shoppingCart: ShoppingCart, didChangeCustomerCard customerCard: String?) {
+        updateTotals()
     }
 }
