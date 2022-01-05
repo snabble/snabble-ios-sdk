@@ -8,6 +8,10 @@
 import Foundation
 import UIKit
 
+public protocol CheckoutStepsViewControllerDelegate: AnyObject {
+    func checkoutStepsViewController(_ checkoutStepsViewController: CheckoutStepsViewController, didFinishWithPaymentState paymentState: PaymentState)
+}
+
 public final class CheckoutStepsViewController: UIViewController {
     private(set) weak var tableView: UITableView?
     private(set) weak var headerView: CheckoutHeaderView?
@@ -16,6 +20,7 @@ public final class CheckoutStepsViewController: UIViewController {
     private weak var ratingViewController: CheckoutRatingViewController?
 
     public weak var paymentDelegate: PaymentDelegate?
+    public weak var delegate: CheckoutStepsViewControllerDelegate?
 
     private typealias ItemIdentifierType = CheckoutStep
     private typealias CellProvider = (_ tableView: UITableView, _ indexPath: IndexPath, _ itemIdentifier: ItemIdentifierType) -> UITableViewCell?
@@ -183,7 +188,7 @@ public final class CheckoutStepsViewController: UIViewController {
     @objc private func doneButtonTouchedUpInside(_ sender: UIButton) {
         SnabbleAPI.fetchAppUserData(shop.projectId)
         updateShoppingCart(for: checkoutProcess)
-        navigationController?.popToRootViewController(animated: true)
+        delegate?.checkoutStepsViewController(self, didFinishWithPaymentState: checkoutProcess.paymentState)
         paymentDelegate?.track(.checkoutStepsClosed)
     }
 
