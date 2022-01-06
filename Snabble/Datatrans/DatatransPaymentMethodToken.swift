@@ -7,24 +7,42 @@
 import Datatrans
 
 extension DatatransPaymentMethodToken {
-    init(token: PaymentMethodToken) {
-        if let postFinanceToken = token as? PostFinanceCardToken {
+    init(savedPaymentMethod: SavedPaymentMethod) {
+        if let postFinanceToken = savedPaymentMethod as? SavedPostFinanceCard {
             // postfinance card
-            self.init(token: postFinanceToken.token, displayTitle: postFinanceToken.displayTitle,
-                      cardHolder: postFinanceToken.cardholder, expiryDate: postFinanceToken.cardExpiryDate)
-        } else if let cardToken = token as? CardToken {
+            self.init(
+                alias: postFinanceToken.alias,
+                displayTitle: postFinanceToken.displayTitle,
+                cardHolder: postFinanceToken.cardholder,
+                expiryDate: postFinanceToken.cardExpiryDate
+            )
+        } else if let cardToken = savedPaymentMethod as? SavedCard {
             // credit card
-            self.init(token: cardToken.token, displayTitle: cardToken.displayTitle,
-                      cardHolder: cardToken.cardholder, expiryDate: cardToken.cardExpiryDate)
+            self.init(
+                alias: cardToken.alias,
+                displayTitle: cardToken.displayTitle,
+                cardHolder: cardToken.cardholder,
+                expiryDate: cardToken.cardExpiryDate
+            )
         } else {
             // plain old PaymentMethodToken
-            self.init(token: token.token, displayTitle: token.displayTitle,
-                      cardHolder: nil, expirationMonth: nil, expirationYear: nil)
+            self.init(
+                token: savedPaymentMethod.alias,
+                displayTitle: savedPaymentMethod.displayTitle,
+                cardHolder: nil,
+                expirationMonth: nil,
+                expirationYear: nil
+            )
         }
     }
 
-    private init(token: String, displayTitle: String, cardHolder: String?, expiryDate: CardExpiryDate?) {
-        self.init(token: token, displayTitle: displayTitle, cardHolder: cardHolder,
-                  expirationMonth: expiryDate?.formattedMonth, expirationYear: expiryDate?.formattedYear)
+    private init(alias: String, displayTitle: String, cardHolder: String?, expiryDate: CardExpiryDate?) {
+        self.init(
+            token: alias,
+            displayTitle: displayTitle,
+            cardHolder: cardHolder,
+            expirationMonth: expiryDate?.formattedMonth,
+            expirationYear: expiryDate?.formattedYear
+        )
     }
 }

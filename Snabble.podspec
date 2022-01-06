@@ -59,7 +59,7 @@ Pod::Spec.new do |s|
 
   s.subspec 'Datatrans' do |dt|
     dt.dependency 'Snabble/UI'
-    dt.dependency 'Datatrans', '~> 1.4.1'
+    dt.dependency 'Datatrans', '~> 1.5.0'
 
     dt.source_files = 'Snabble/Datatrans/**/*.swift'
 
