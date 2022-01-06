@@ -189,6 +189,7 @@ public final class CheckoutStepsViewController: UIViewController {
         SnabbleAPI.fetchAppUserData(shop.projectId)
         updateShoppingCart(for: checkoutProcess)
         delegate?.checkoutStepsViewController(self, didFinishWithPaymentState: checkoutProcess.paymentState)
+        navigationController?.popToRootViewController(animated: false)
         paymentDelegate?.track(.checkoutStepsClosed)
     }
 
