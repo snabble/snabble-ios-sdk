@@ -6,6 +6,10 @@
 
 import Foundation
 
+protocol InternalShoppingCartDelegate: AnyObject {
+    func shoppingCart(_ shoppingCart: ShoppingCart, didChangeCustomerCard customerCard: String?)
+}
+
 /// a ShoppingCart is a collection of CartItem objects
 public final class ShoppingCart: Codable {
     public private(set) var items: [CartItem]
@@ -34,8 +38,11 @@ public final class ShoppingCart: Codable {
     public var customerCard: String? {
         didSet {
             self.updateProducts(self.customerCard)
+            delegate?.shoppingCart(self, didChangeCustomerCard: customerCard)
         }
     }
+
+    weak var delegate: InternalShoppingCartDelegate?
 
     internal weak var eventTimer: Timer?
 

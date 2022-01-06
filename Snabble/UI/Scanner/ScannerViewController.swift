@@ -65,6 +65,8 @@ public final class ScannerViewController: PulleyViewController {
         self.tabBarItem.selectedImage = Asset.SnabbleSDK.iconScanActive.image
 
         SnabbleUI.registerForAppearanceChange(self)
+
+        shoppingCart.delegate = self
     }
 
     required init?(coder aDecoder: NSCoder) {
@@ -83,5 +85,12 @@ extension ScannerViewController: CustomizableAppearance {
         if let drawer = self.drawerContentViewController as? ScannerDrawerViewController {
             drawer.setCustomAppearance(appearance)
         }
+    }
+}
+
+extension ScannerViewController: InternalShoppingCartDelegate {
+    func shoppingCart(_ shoppingCart: ShoppingCart, didChangeCustomerCard customerCard: String?) {
+        guard let drawer = self.drawerContentViewController as? ScannerDrawerViewController else { return }
+        drawer.updateTotals()
     }
 }
