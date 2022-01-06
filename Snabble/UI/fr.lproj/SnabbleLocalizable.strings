@@ -1,3 +1,5 @@
+"DatabaseSync.title" = "Database synchronization";
+
 "release.safety.catch" = "Veille à enlever (le cas échéant) le dispositif de sécurité du goulot de la bouteille au poste prévu à cet effet à la sortie.";
 
 "Snabble.addDiscount" = "Saisir le rabais";
@@ -165,6 +167,8 @@
 
 "Snabble.Payment.rejected" = "Purchase denied";
 
+"Snabble.Payment.rejectedHint" = "Your purchase was denied. Please check your cart and start the checkout again.";
+
 "Snabble.Payment.SEPA.hint" = "Remarque : pour te protéger et protéger nos commerçants contre les abus, le commerçant te demandera de montrer ta carte bancaire lors de ton premier paiement par débit SEPA.";
 
 "Snabble.Payment.SEPA.IBAN" = "IBAN";
@@ -228,6 +232,8 @@
 "Snabble.PaymentStatus.close" = "Close";
 
 "Snabble.PaymentStatus.DebitCardAdded.message" = "We have successfully verified your card. You can now pay by SEPA direct debit. You can leave your girocard in your wallet in the future.";
+
+"Snabble.PaymentStatus.ExitCode.openExitGateTimed" = "The code is only valid for a short time.";
 
 "Snabble.PaymentStatus.ExitCode.title" = "Exit-Code";
 

@@ -66,8 +66,8 @@ final class CheckoutStepView: UIView {
         self.stackView = stackView
 
         stackView.addArrangedSubview(textLabel)
-        stackView.addArrangedSubview(detailTextLabel)
         stackView.addArrangedSubview(imageView)
+        stackView.addArrangedSubview(detailTextLabel)
         stackView.addArrangedSubview(button)
 
         self.textLabel = textLabel

@@ -1,3 +1,5 @@
+"DatabaseSync.title" = "Adatbázis-szinkronizáció";
+
 "release.safety.catch" = "Kérjük, hogy a kijáratnál, az arra kijelölt állomáson vedd le a palacknyak-biztosítót (ha van).";
 
 "Snabble.addDiscount" = "Árengedmény megadása";
@@ -165,6 +167,8 @@
 
 "Snabble.Payment.rejected" = "Bevásárlás elutasítva";
 
+"Snabble.Payment.rejectedHint" = "A bevásárlás elutasításra került. Ellenőrizd a kosaradat, és próbáld meg újra a fizetést.";
+
 "Snabble.Payment.SEPA.hint" = "Megjegyzés: A te és a kereskedőink visszaélésekkel szembeni védelme érdekében az első SEPA terhelési megbízásos fizetésednél a kereskedőnél megjelenik a bankkártyád.";
 
 "Snabble.Payment.SEPA.IBAN" = "IBAN";
@@ -227,7 +231,9 @@
 
 "Snabble.PaymentStatus.close" = "Bezárás";
 
-"Snabble.PaymentStatus.DebitCardAdded.message" = "We have successfully verified your card. You can now pay by SEPA direct debit. You can leave your girocard in your wallet in the future.";
+"Snabble.PaymentStatus.DebitCardAdded.message" = "Sikeresen ellenőriztük a kártyádat. Azonnal tudsz fizetni SEPA terhelési megbízással. A girocard kártyádat a jövőben a pénztárcádban hagyhatod.";
+
+"Snabble.PaymentStatus.ExitCode.openExitGateTimed" = "A kód csak rövid ideig érvényes.";
 
 "Snabble.PaymentStatus.ExitCode.title" = "Kilépőkód";
 

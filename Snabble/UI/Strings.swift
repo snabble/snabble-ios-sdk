@@ -11,6 +11,11 @@ import Foundation
 // swiftlint:disable nesting type_body_length type_name vertical_whitespace_opening_braces
 public enum L10n {
 
+  public enum DatabaseSync {
+    /// Database synchronization
+    public static var title: String { return L10n.tr("SnabbleLocalizable", "DatabaseSync.title") }
+  }
+
   public enum Snabble {
     /// Enter discount
     public static var addDiscount: String { return L10n.tr("SnabbleLocalizable", "Snabble.addDiscount") }
@@ -161,6 +166,8 @@ public enum L10n {
       public static var presentCode: String { return L10n.tr("SnabbleLocalizable", "Snabble.Payment.presentCode") }
       /// Purchase denied
       public static var rejected: String { return L10n.tr("SnabbleLocalizable", "Snabble.Payment.rejected") }
+      /// Your purchase was denied. Please check your cart and start the checkout again.
+      public static var rejectedHint: String { return L10n.tr("SnabbleLocalizable", "Snabble.Payment.rejectedHint") }
       /// Thank you for shopping
       public static var success: String { return L10n.tr("SnabbleLocalizable", "Snabble.Payment.success") }
       /// Usable at: %@
@@ -284,6 +291,8 @@ public enum L10n {
         public static var message: String { return L10n.tr("SnabbleLocalizable", "Snabble.PaymentStatus.DebitCardAdded.message") }
       }
       public enum ExitCode {
+        /// The code is only valid for a short time.
+        public static var openExitGateTimed: String { return L10n.tr("SnabbleLocalizable", "Snabble.PaymentStatus.ExitCode.openExitGateTimed") }
         /// Exit-Code
         public static var title: String { return L10n.tr("SnabbleLocalizable", "Snabble.PaymentStatus.ExitCode.title") }
       }

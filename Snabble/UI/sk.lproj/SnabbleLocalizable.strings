@@ -1,3 +1,5 @@
+"DatabaseSync.title" = "Synchronizácia databanky";
+
 "release.safety.catch" = "Prosím, odstráň z fľaše zámok (ak je nasadený) pri východe na mieste, ktoré je na to určené.";
 
 "Snabble.addDiscount" = "Zadať zľavu";
@@ -165,6 +167,8 @@
 
 "Snabble.Payment.rejected" = "Nákup zamietnutý";
 
+"Snabble.Payment.rejectedHint" = "Tvoj nákup bol zamietnutý. Skontroluj svoj košík a začni platobný proces znovu.";
+
 "Snabble.Payment.SEPA.hint" = "Poznámka: Za účelom tvojej ochrany a ochrany našich obchodníkov pred zneužitím si obchodník pri tvojej prvej platbe prostredníctvom SEPA inkasa vyžiada tvoju bankovú kartu.";
 
 "Snabble.Payment.SEPA.IBAN" = "IBAN";
@@ -227,7 +231,9 @@
 
 "Snabble.PaymentStatus.close" = "Zatvoriť";
 
-"Snabble.PaymentStatus.DebitCardAdded.message" = "We have successfully verified your card. You can now pay by SEPA direct debit. You can leave your girocard in your wallet in the future.";
+"Snabble.PaymentStatus.DebitCardAdded.message" = "Tvoja karta bola úspešne overená. Odteraz môžeš platiť SEPA inkasom. Svoju kartu girocard môžeš v budúcnosti nechať vo svojej peňaženke.";
+
+"Snabble.PaymentStatus.ExitCode.openExitGateTimed" = "Platnosť kódu je časovo obmedzená.";
 
 "Snabble.PaymentStatus.ExitCode.title" = "Kód ukončenia";
 

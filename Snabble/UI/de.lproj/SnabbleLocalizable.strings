@@ -1,3 +1,5 @@
+"DatabaseSync.title" = "Datenbank-Synchronisation";
+
 "release.safety.catch" = "Bitte entferne (wenn vorhanden) die Flaschenhalssicherung an der dafür vorgesehenen Station am Ausgang.";
 
 "Snabble.addDiscount" = "Rabatt eingeben";
@@ -165,6 +167,8 @@
 
 "Snabble.Payment.rejected" = "Einkauf abgelehnt";
 
+"Snabble.Payment.rejectedHint" = "Dein Einkauf wurde abgelehnt. Bitte überprüfe deinen Warenkorb und starte den Bezahlvorgang erneut.";
+
 "Snabble.Payment.SEPA.hint" = "Hinweis: Um dich und unsere Händler vor Missbrauch zu schützen, wird sich der Händler bei deiner ersten Zahlung per SEPA-Lastschrift deine Bankkarte zeigen lassen.";
 
 "Snabble.Payment.SEPA.IBAN" = "IBAN";
@@ -228,6 +232,8 @@
 "Snabble.PaymentStatus.close" = "Schließen";
 
 "Snabble.PaymentStatus.DebitCardAdded.message" = "Wir haben deine Karte erfolgreich verifiziert. Ab sofort kannst du per SEPA-Lastschrift bezahlen. Deine girocard kannst du zukünftig im Geldbeutel lassen.";
+
+"Snabble.PaymentStatus.ExitCode.openExitGateTimed" = "Der Code ist nur kurze Zeit gültig.";
 
 "Snabble.PaymentStatus.ExitCode.title" = "Ausgangs-Code";
 

@@ -91,7 +91,7 @@ extension CheckoutStep {
         status = paymentState == .failed ? .aborted : .from(exitToken: exitToken)
         text = L10n.Snabble.PaymentStatus.ExitCode.title
         image = exitToken.image
-        detailText = nil
+        detailText = L10n.Snabble.PaymentStatus.ExitCode.openExitGateTimed
         actionTitle = nil
     }
 
