@@ -157,14 +157,14 @@ public final class DatatransAliasViewController: UIViewController {
             return self.showError("no certificate found")
         }
 
-        guard let token = result.paymentMethodToken else {
+        guard let savedPaymentMethod = result.savedPaymentMethod else {
             return self.showError("transaction success, but no token found")
         }
 
         if let brand = self.brand {
             if let data = DatatransCreditCardData(gatewayCert: cert.data,
                                                   brand: brand,
-                                                  token: DatatransPaymentMethodToken(token: token),
+                                                  token: DatatransPaymentMethodToken(savedPaymentMethod: savedPaymentMethod),
                                                   projectId: projectId) {
                 saveDetail(PaymentMethodDetail(data))
             } else {
@@ -176,7 +176,7 @@ public final class DatatransAliasViewController: UIViewController {
         if let method = self.method?.datatransMethod {
             if let data = DatatransData(gatewayCert: cert.data,
                                         method: method,
-                                        token: DatatransPaymentMethodToken(token: token),
+                                        token: DatatransPaymentMethodToken(savedPaymentMethod: savedPaymentMethod),
                                         projectId: projectId) {
                 saveDetail(PaymentMethodDetail(data))
             } else {
