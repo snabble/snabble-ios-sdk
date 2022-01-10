@@ -93,6 +93,9 @@ public enum AnalyticsEvent {
     /// the user tappped "cancel" on the payment screen
     case paymentCancelled
 
+    /// the checkout was rejected by a supervisor or gatekeeper
+    case checkoutRejected
+
     /// the user tapped "I have paid" on the embedded codes payment screen
     case markEmbeddedCodesPaid
 

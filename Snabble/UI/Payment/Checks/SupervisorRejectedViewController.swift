@@ -9,6 +9,7 @@ import UIKit
 
 final class SupervisorRejectedViewController: UIViewController {
     private let process: CheckoutProcess?
+    weak var delegate: AnalyticsDelegate?
 
     init(_ process: CheckoutProcess?) {
         self.process = process
@@ -83,8 +84,7 @@ final class SupervisorRejectedViewController: UIViewController {
         let tapticFeedback = UINotificationFeedbackGenerator()
         tapticFeedback.notificationOccurred(.error)
 
-        #warning("todo")
-        // Analytics.view(.paymentFailure)
+        delegate?.track(.checkoutRejected)
     }
 
     @IBAction private func backButtonTapped(_ sender: UIButton) {
