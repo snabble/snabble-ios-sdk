@@ -185,8 +185,10 @@ public final class PaymentProcess {
             handled = self.paymentDelegate?.handlePaymentError(method, error) ?? false
         }
         if !handled {
-            if method.rawMethod.offline, let processor = method.processor(nil, shop: shop, self.cart, self.paymentDelegate) {
-                completion(.success(processor))
+            let checkoutDisplay = method.rawMethod.checkoutDisplayViewController(shop: shop, checkoutProcess: nil, shoppingCart: self.cart, delegate: self.paymentDelegate)
+            // if method.rawMethod.offline, let processor = method.processor(nil, shop: shop, self.cart, self.paymentDelegate) {
+            if method.rawMethod.offline, let display = checkoutDisplay {
+                completion(.success(display))
                 OfflineCarts.shared.saveCartForLater(self.cart)
             } else {
                 self.paymentDelegate?.showWarningMessage(L10n.Snabble.Payment.errorStarting)
@@ -269,11 +271,20 @@ extension PaymentProcess {
                 print("checkout start: routingTarget = \(process.routingTarget)")
                 switch process.routingTarget {
                 case .none:
-                    if let processor = method.processor(process, shop: self.shop, self.cart, self.paymentDelegate) {
-                        completion(.success(processor))
+                    let checkoutDisplay = method.rawMethod.checkoutDisplayViewController(shop: self.shop,
+                                                                                         checkoutProcess: process,
+                                                                                         shoppingCart: self.cart,
+                                                                                         delegate: self.paymentDelegate)
+                    if let display = checkoutDisplay {
+                        completion(.success(display))
                     } else {
                         self.paymentDelegate?.showWarningMessage(L10n.Snabble.Payment.errorStarting)
                     }
+//                    if let processor = method.processor(process, shop: self.shop, self.cart, self.paymentDelegate) {
+//                        completion(.success(processor))
+//                    } else {
+//                        self.paymentDelegate?.showWarningMessage(L10n.Snabble.Payment.errorStarting)
+//                    }
                 case .supervisor:
                     let supervisor = SupervisorCheckViewController(shop: self.shop, shoppingCart: self.cart, checkoutProcess: process)
                     supervisor.delegate = self.paymentDelegate

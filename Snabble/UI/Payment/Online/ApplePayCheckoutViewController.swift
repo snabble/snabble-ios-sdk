@@ -6,24 +6,52 @@
 
 import PassKit
 
-public final class ApplePayCheckoutViewController: BaseCheckoutViewController {
+public final class ApplePayCheckoutViewController: UIViewController {
     private var authController: UIViewController?
     private let countryCode: String?
     private var currentProcess: CheckoutProcess?
     private var authorized = false
 
-    override public init(_ process: CheckoutProcess, _ cart: ShoppingCart, _ delegate: PaymentDelegate?) {
+    private let checkoutProcess: CheckoutProcess
+    private let shoppingCart: ShoppingCart
+    private let shop: Shop
+    private weak var delegate: PaymentDelegate?
+
+    public init(_ process: CheckoutProcess, _ cart: ShoppingCart, _ shop: Shop, _ delegate: PaymentDelegate?) {
+        self.checkoutProcess = process
+        self.shoppingCart = cart
+        self.shop = shop
+        self.delegate = delegate
+
         // Apple Pay needs the two-letter ISO country code for the payment. Try to extract that from the various contryCode fields we have
         // in `Shop` and `Project.Company`, which may or may not have 3- or 2-letter codes. Oh well...
         self.countryCode = Self.getCountryCode(from: cart)
 
-        super.init(process, cart, delegate)
+        // super.init(process, cart, delegate)
+        super.init(nibName: nil, bundle: nil)
     }
 
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
 
+    override public func viewDidLoad() {
+        super.viewDidLoad()
+
+        self.title = "Apple Pay"
+        self.navigationItem.hidesBackButton = true
+    }
+
+    override public func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+
+        if let applePayAuth = createApplePayProcessor(for: checkoutProcess) {
+            self.authController = applePayAuth
+            self.present(applePayAuth, animated: true)
+        }
+    }
+
+    /*
     // MARK: - base class overrides
 
     override func showQrCode(_ process: CheckoutProcess) -> Bool {
@@ -43,12 +71,7 @@ public final class ApplePayCheckoutViewController: BaseCheckoutViewController {
             }
         }
     }
-
-    private func checksPending(in process: CheckoutProcess) -> Bool {
-//        let checksNeedingSupervisor = process.checks.filter { $0.performedBy == .supervisor && $0.state != .successful }
-//        return process.supervisorApproval == nil || !checksNeedingSupervisor.isEmpty
-        process.routingTarget != .none
-    }
+    */
 
     // MARK: - apple pay
 
@@ -140,6 +163,28 @@ public final class ApplePayCheckoutViewController: BaseCheckoutViewController {
             task.resume()
         }
     }
+
+    private func cancelPayment() {
+        self.delegate?.track(.paymentCancelled)
+
+        self.checkoutProcess.abort(SnabbleUI.project) { result in
+            switch result {
+            case .success:
+                self.shoppingCart.generateNewUUID()
+                if let cartVC = self.navigationController?.viewControllers.first(where: { $0 is ShoppingCartViewController}) {
+                    self.navigationController?.popToViewController(cartVC, animated: true)
+                } else {
+                    self.navigationController?.popToRootViewController(animated: true)
+                }
+            case .failure:
+                let alert = UIAlertController(title: L10n.Snabble.Payment.CancelError.title,
+                                              message: L10n.Snabble.Payment.CancelError.message,
+                                              preferredStyle: .alert)
+                alert.addAction(UIAlertAction(title: L10n.Snabble.ok, style: .default, handler: nil))
+                self.present(alert, animated: true)
+            }
+        }
+    }
 }
 
 // MARK: - country code extraction
@@ -179,7 +224,12 @@ extension ApplePayCheckoutViewController: PKPaymentAuthorizationViewControllerDe
         self.authController?.dismiss(animated: true)
 
         if !authorized {
-            super.cancelPayment()
+            cancelPayment()
+        } else {
+            let paymentDisplay = CheckoutStepsViewController(shop: shop,
+                                                             shoppingCart: shoppingCart,
+                                                             checkoutProcess: checkoutProcess)
+            self.navigationController?.pushViewController(paymentDisplay, animated: true)
         }
     }
 

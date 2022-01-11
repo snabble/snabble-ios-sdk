@@ -32,7 +32,7 @@ class BaseCheckViewController: UIViewController {
 
     private var initialBrightness: CGFloat = 0
 
-    weak var delegate: AnalyticsDelegate?
+    weak var delegate: PaymentDelegate?
 
     init(shop: Shop, shoppingCart: ShoppingCart, checkoutProcess: CheckoutProcess) {
         self.shop = shop
@@ -150,11 +150,7 @@ class BaseCheckViewController: UIViewController {
             self.delegate?.track(.brightnessIncreased)
         }
 
-        self.startTimer()
-
-        SnabbleUI.getAsset(.checkoutOnline, bundlePath: "Checkout/\(SnabbleUI.project.id)/checkout-online") { img in
-            self.icon.image = img
-        }
+        self.setIcon()
 
         let codeContent = checkoutProcess.paymentInformation?.qrCodeContent ?? checkoutProcess.id
         self.code.image = renderCode(codeContent)
@@ -166,6 +162,8 @@ class BaseCheckViewController: UIViewController {
         self.textWrapper.isHidden = onlineMessage == onlineMessageKey.uppercased()
 
         self.id.text = String(checkoutProcess.id.suffix(4))
+
+        self.startTimer()
     }
 
     override public func viewWillDisappear(_ animated: Bool) {
@@ -181,6 +179,22 @@ class BaseCheckViewController: UIViewController {
 
     func renderCode(_ content: String) -> UIImage? {
         fatalError("clients must override")
+    }
+
+    private func setIcon() {
+        let asset: ImageAsset
+        let bundlePath: String
+        switch checkoutProcess.rawPaymentMethod {
+        case .qrCodeOffline, .customerCardPOS:
+            asset = .checkoutOffline
+            bundlePath = "Checkout/\(SnabbleUI.project.id)/checkout-offline"
+        default:
+            asset = .checkoutOnline
+            bundlePath = "Checkout/\(SnabbleUI.project.id)/checkout-online"
+        }
+        SnabbleUI.getAsset(asset, bundlePath: bundlePath) { img in
+            self.icon.image = img
+        }
     }
 
     // MARK: - polling timer
@@ -215,11 +229,7 @@ class BaseCheckViewController: UIViewController {
             }
             if process.allChecksSuccessful {
                 continuePolling = false
-                switch process.rawPaymentMethod {
-                case .applePay: () // TODO
-                default:
-                    showCheckoutSteps(process: process)
-                }
+                continueCheckout()
             }
         case .failure(let error):
             Log.error(String(describing: error))
@@ -232,9 +242,19 @@ class BaseCheckViewController: UIViewController {
         }
     }
 
-    private func showCheckoutSteps(process: CheckoutProcess) {
-        let checkoutSteps = CheckoutStepsViewController(shop: shop, shoppingCart: shoppingCart, checkoutProcess: process)
-        self.navigationController?.pushViewController(checkoutSteps, animated: true)
+    private func continueCheckout() {
+        guard
+            let method = checkoutProcess.rawPaymentMethod,
+            let checkoutDisplay = method.checkoutDisplayViewController(shop: shop,
+                                                                       checkoutProcess: checkoutProcess,
+                                                                       shoppingCart: shoppingCart,
+                                                                       delegate: delegate)
+        else {
+            self.delegate?.showWarningMessage(L10n.Snabble.Payment.errorStarting)
+            return
+        }
+
+        self.navigationController?.pushViewController(checkoutDisplay, animated: true)
     }
 
     private func showCheckoutRejected(process: CheckoutProcess) {
@@ -252,7 +272,11 @@ class BaseCheckViewController: UIViewController {
             switch result {
             case .success:
                 self.shoppingCart.generateNewUUID()
-                self.paymentCancelled()
+                if let cartVC = self.navigationController?.viewControllers.first(where: { $0 is ShoppingCartViewController}) {
+                    self.navigationController?.popToViewController(cartVC, animated: true)
+                } else {
+                    self.navigationController?.popToRootViewController(animated: true)
+                }
             case .failure:
                 let alert = UIAlertController(title: L10n.Snabble.Payment.CancelError.title,
                                               message: L10n.Snabble.Payment.CancelError.message,
@@ -262,19 +286,6 @@ class BaseCheckViewController: UIViewController {
                 })
                 self.present(alert, animated: true)
             }
-        }
-    }
-
-    // payment was cancelled, return to the shopping cart
-    private func paymentCancelled() {
-        self.stopTimer()
-
-        shoppingCart.generateNewUUID()
-
-        if let cartVC = self.navigationController?.viewControllers.first(where: { $0 is ShoppingCartViewController}) {
-            self.navigationController?.popToViewController(cartVC, animated: true)
-        } else {
-            self.navigationController?.popToRootViewController(animated: true)
         }
     }
 }
@@ -290,7 +301,6 @@ final class SupervisorCheckViewController: BaseCheckViewController {
     }
 
     override func arrangeLayout() {
-
         let stackWrapper = UIView()
         stackWrapper.translatesAutoresizingMaskIntoConstraints = false
         stackWrapper.addSubview(stackView)
@@ -305,15 +315,15 @@ final class SupervisorCheckViewController: BaseCheckViewController {
             stackWrapper.topAnchor.constraint(equalTo: topWrapper.topAnchor),
             stackWrapper.leadingAnchor.constraint(equalTo: topWrapper.leadingAnchor),
             stackWrapper.trailingAnchor.constraint(equalTo: topWrapper.trailingAnchor),
-            stackWrapper.bottomAnchor.constraint(equalTo: idWrapper.topAnchor, constant: -4),
+            stackWrapper.bottomAnchor.constraint(equalTo: codeWrapper.topAnchor, constant: -4),
 
-            codeWrapper.bottomAnchor.constraint(equalTo: topWrapper.bottomAnchor, constant: -8),
-            codeWrapper.leadingAnchor.constraint(equalTo: topWrapper.leadingAnchor),
-            codeWrapper.trailingAnchor.constraint(equalTo: topWrapper.trailingAnchor),
-
-            idWrapper.bottomAnchor.constraint(equalTo: codeWrapper.topAnchor, constant: -4),
+            idWrapper.bottomAnchor.constraint(equalTo: topWrapper.bottomAnchor, constant: -4),
             idWrapper.leadingAnchor.constraint(equalTo: topWrapper.leadingAnchor),
             idWrapper.trailingAnchor.constraint(equalTo: topWrapper.trailingAnchor),
+
+            codeWrapper.bottomAnchor.constraint(equalTo: idWrapper.topAnchor),
+            codeWrapper.leadingAnchor.constraint(equalTo: topWrapper.leadingAnchor),
+            codeWrapper.trailingAnchor.constraint(equalTo: topWrapper.trailingAnchor),
 
             stackView.topAnchor.constraint(greaterThanOrEqualTo: stackWrapper.topAnchor),
             stackView.bottomAnchor.constraint(lessThanOrEqualTo: stackWrapper.bottomAnchor),
@@ -324,7 +334,6 @@ final class SupervisorCheckViewController: BaseCheckViewController {
 
         stackView.addArrangedSubview(iconWrapper)
         stackView.addArrangedSubview(textWrapper)
-        stackView.addArrangedSubview(arrowWrapper)
     }
 }
 

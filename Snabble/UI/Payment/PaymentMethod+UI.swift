@@ -26,6 +26,7 @@ extension PaymentMethod {
         }
     }
 
+    @available(*, deprecated)
     func processor(_ process: CheckoutProcess?, shop: Shop, _ cart: ShoppingCart, _ delegate: PaymentDelegate?) -> UIViewController? {
         if !self.rawMethod.offline && process == nil {
             return nil
@@ -49,7 +50,7 @@ extension PaymentMethod {
         case .gatekeeperTerminal:
             processor = TerminalCheckoutViewController(process!, cart, delegate)
         case .applePay:
-            processor = ApplePayCheckoutViewController(process!, cart, delegate)
+            processor = ApplePayCheckoutViewController(process!, cart, shop, delegate)
         case .customerCardPOS:
             processor = CustomerCardCheckoutViewController(process!, cart, delegate)
         }

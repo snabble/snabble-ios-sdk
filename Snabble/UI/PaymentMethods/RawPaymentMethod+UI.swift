@@ -101,4 +101,38 @@ extension RawPaymentMethod {
 
         return nil
     }
+
+    func checkoutDisplayViewController(shop: Shop,
+                                       checkoutProcess: CheckoutProcess?,
+                                       shoppingCart: ShoppingCart,
+                                       delegate: PaymentDelegate?) -> UIViewController? {
+        let paymentDisplay: UIViewController
+        switch self {
+        case .qrCodePOS:
+            paymentDisplay = QRCheckoutViewController(checkoutProcess!, shoppingCart, delegate)
+        case .qrCodeOffline:
+            if let codeConfig = shop.project?.qrCodeConfig {
+                paymentDisplay = EmbeddedCodesCheckoutViewController(checkoutProcess, shoppingCart, delegate, codeConfig)
+            } else {
+                return nil
+            }
+        case .applePay:
+            paymentDisplay = ApplePayCheckoutViewController(checkoutProcess!, shoppingCart, shop, delegate)
+        case .customerCardPOS:
+            paymentDisplay = CustomerCardCheckoutViewController(checkoutProcess!, shoppingCart, delegate)
+        case .deDirectDebit,
+                .creditCardVisa,
+                .creditCardMastercard,
+                .creditCardAmericanExpress,
+                .externalBilling,
+                .paydirektOneKlick,
+                .twint,
+                .postFinanceCard,
+                .gatekeeperTerminal:
+            paymentDisplay = CheckoutStepsViewController(shop: shop, shoppingCart: shoppingCart, checkoutProcess: checkoutProcess!)
+        }
+        paymentDisplay.hidesBottomBarWhenPushed = true
+
+        return paymentDisplay
+    }
 }

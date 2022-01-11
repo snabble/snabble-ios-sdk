@@ -12,7 +12,6 @@ public enum ApplePay {
     // Does the device/OS support Apple Pay? This does not check if any cards have been added to the wallet!
     // Use this to decide whether to show Apple Pay in the popup or not
     static func isSupported() -> Bool {
-        return false
         PKPaymentAuthorizationViewController.canMakePayments()
     }
 
