@@ -15,11 +15,13 @@ protocol CheckoutStepsViewModelDelegate: AnyObject {
 }
 
 class CheckoutStepsViewModel {
-    private(set) var checkoutProcess: CheckoutProcess {
+    private(set) var checkoutProcess: CheckoutProcess? {
         didSet {
-            delegate?.checkoutStepsViewModel(self, didUpdateCheckoutProcess: checkoutProcess)
-            if let exitToken = checkoutProcess.exitToken {
-                delegate?.checkoutStepsViewModel(self, didUpdateExitToken: exitToken)
+            if let checkoutProcess = checkoutProcess {
+                delegate?.checkoutStepsViewModel(self, didUpdateCheckoutProcess: checkoutProcess)
+                if let exitToken = checkoutProcess.exitToken {
+                    delegate?.checkoutStepsViewModel(self, didUpdateExitToken: exitToken)
+                }
             }
         }
     }
@@ -40,7 +42,7 @@ class CheckoutStepsViewModel {
         }
     }
 
-    init(shop: Shop, checkoutProcess: CheckoutProcess, shoppingCart: ShoppingCart) {
+    init(shop: Shop, checkoutProcess: CheckoutProcess?, shoppingCart: ShoppingCart) {
         self.shop = shop
         self.checkoutProcess = checkoutProcess
         self.shoppingCart = shoppingCart
@@ -52,7 +54,7 @@ class CheckoutStepsViewModel {
         checkoutProcessTimer?.invalidate()
         checkoutProcessTimer = Timer.scheduledTimer(withTimeInterval: 1, repeats: false) { [weak self] _ in
             guard let project = self?.shop.project else { return }
-            self?.checkoutProcess.update(project,
+            self?.checkoutProcess?.update(project,
                                          taskCreated: { [weak self] in
                 self?.processSessionTask = $0
             },
@@ -107,12 +109,16 @@ class CheckoutStepsViewModel {
         }
     }
 
-    private func updateViewModels(with checkoutProcess: CheckoutProcess) {
+    private func updateViewModels(with checkoutProcess: CheckoutProcess?) {
         steps = steps(for: checkoutProcess)
         headerViewModel = steps.checkoutStepStatus
     }
 
-    private func steps(for checkoutProcess: CheckoutProcess) -> [CheckoutStep] {
+    private func steps(for checkoutProcess: CheckoutProcess?) -> [CheckoutStep] {
+        guard let checkoutProcess = checkoutProcess else {
+            return []
+        }
+
         var steps = [CheckoutStep]()
 
         let paymentState = checkoutProcess.paymentState

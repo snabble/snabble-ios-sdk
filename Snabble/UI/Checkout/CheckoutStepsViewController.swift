@@ -56,7 +56,7 @@ public final class CheckoutStepsViewController: UIViewController {
         viewModel.shop
     }
 
-    public var checkoutProcess: CheckoutProcess {
+    public var checkoutProcess: CheckoutProcess? {
         viewModel.checkoutProcess
     }
 
@@ -67,7 +67,7 @@ public final class CheckoutStepsViewController: UIViewController {
     private weak var processTimer: Timer?
     private var processSessionTask: URLSessionDataTask?
 
-    public init(shop: Shop, shoppingCart: ShoppingCart, checkoutProcess: CheckoutProcess) {
+    public init(shop: Shop, shoppingCart: ShoppingCart, checkoutProcess: CheckoutProcess?) {
         viewModel = CheckoutStepsViewModel(
             shop: shop,
             checkoutProcess: checkoutProcess,
@@ -188,13 +188,15 @@ public final class CheckoutStepsViewController: UIViewController {
     @objc private func doneButtonTouchedUpInside(_ sender: UIButton) {
         SnabbleAPI.fetchAppUserData(shop.projectId)
         updateShoppingCart(for: checkoutProcess)
-        delegate?.checkoutStepsViewController(self, didFinishWithPaymentState: checkoutProcess.paymentState)
+        if let paymentState = checkoutProcess?.paymentState {
+            delegate?.checkoutStepsViewController(self, didFinishWithPaymentState: paymentState)
+        }
         navigationController?.popToRootViewController(animated: false)
         paymentDelegate?.track(.checkoutStepsClosed)
     }
 
-    private func updateShoppingCart(for checkoutProcess: CheckoutProcess) {
-        switch checkoutProcess.paymentState {
+    private func updateShoppingCart(for checkoutProcess: CheckoutProcess?) {
+        switch checkoutProcess?.paymentState {
         case .successful:
             shoppingCart.removeAll(endSession: true, keepBackup: false)
         default:
