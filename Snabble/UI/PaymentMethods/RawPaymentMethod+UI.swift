@@ -106,20 +106,41 @@ extension RawPaymentMethod {
                                        checkoutProcess: CheckoutProcess?,
                                        shoppingCart: ShoppingCart,
                                        delegate: PaymentDelegate?) -> UIViewController? {
+        if !self.offline && checkoutProcess == nil {
+            return nil
+        }
+
         let paymentDisplay: UIViewController
         switch self {
         case .qrCodePOS:
-            paymentDisplay = QRCheckoutViewController(checkoutProcess!, shoppingCart, delegate)
+            let qrCheckout = QRCheckoutViewController(shop: shop,
+                                                      checkoutProcess: checkoutProcess!,
+                                                      cart: shoppingCart)
+            qrCheckout.delegate = delegate
+            paymentDisplay = qrCheckout
         case .qrCodeOffline:
             if let codeConfig = shop.project?.qrCodeConfig {
-                paymentDisplay = EmbeddedCodesCheckoutViewController(checkoutProcess, shoppingCart, delegate, codeConfig)
+                let embedded = EmbeddedCodesCheckoutViewController(shop: shop,
+                                                                   checkoutProcess: checkoutProcess,
+                                                                   cart: shoppingCart,
+                                                                   qrCodeConfig: codeConfig)
+                embedded.delegate = delegate
+                paymentDisplay = embedded
             } else {
                 return nil
             }
         case .applePay:
-            paymentDisplay = ApplePayCheckoutViewController(checkoutProcess!, shoppingCart, shop, delegate)
+            let applePay = ApplePayCheckoutViewController(shop: shop,
+                                                          checkoutProcess: checkoutProcess!,
+                                                          cart: shoppingCart)
+            applePay.delegate = delegate
+            paymentDisplay = applePay
         case .customerCardPOS:
-            paymentDisplay = CustomerCardCheckoutViewController(checkoutProcess!, shoppingCart, delegate)
+            let customerCart = CustomerCardCheckoutViewController(shop: shop,
+                                                                  checkoutProcess: checkoutProcess!,
+                                                                  cart: shoppingCart)
+            customerCart.delegate = delegate
+            paymentDisplay = customerCart
         case .deDirectDebit,
                 .creditCardVisa,
                 .creditCardMastercard,
@@ -129,7 +150,9 @@ extension RawPaymentMethod {
                 .twint,
                 .postFinanceCard,
                 .gatekeeperTerminal:
-            paymentDisplay = CheckoutStepsViewController(shop: shop, shoppingCart: shoppingCart, checkoutProcess: checkoutProcess!)
+            let checkoutSteps = CheckoutStepsViewController(shop: shop, shoppingCart: shoppingCart, checkoutProcess: checkoutProcess!)
+            checkoutSteps.paymentDelegate = delegate
+            paymentDisplay = checkoutSteps
         }
         paymentDisplay.hidesBottomBarWhenPushed = true
 
