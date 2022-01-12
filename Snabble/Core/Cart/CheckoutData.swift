@@ -246,10 +246,6 @@ public enum RoutingTarget: String, Decodable, UnknownCaseRepresentable {
 public struct CheckoutProcess: Decodable {
     public let id: String
     public let links: ProcessLinks
-    @available(*, deprecated)
-    public let supervisorApproval: Bool?
-    @available(*, deprecated)
-    public let paymentApproval: Bool?
     public let aborted: Bool
     public let paymentMethod: String
     public let modified: Bool
@@ -292,7 +288,7 @@ public struct CheckoutProcess: Decodable {
 
     enum CodingKeys: String, CodingKey {
         case id
-        case links, supervisorApproval, paymentApproval, aborted
+        case links, aborted
         case checkoutInfo, paymentMethod, modified, paymentInformation
         case paymentState, orderID, paymentResult
         case checks, fulfillments, pricing, exitToken
@@ -305,8 +301,6 @@ public struct CheckoutProcess: Decodable {
 
         self.id = try container.decode(String.self, forKey: .id)
         self.links = try container.decode(ProcessLinks.self, forKey: .links)
-        self.supervisorApproval = try container.decodeIfPresent(Bool.self, forKey: .supervisorApproval)
-        self.paymentApproval = try container.decodeIfPresent(Bool.self, forKey: .paymentApproval)
         self.aborted = try container.decode(Bool.self, forKey: .aborted)
         self.paymentMethod = try container.decode(String.self, forKey: .paymentMethod)
         self.modified = try container.decode(Bool.self, forKey: .modified)

@@ -62,12 +62,4 @@ extension CheckoutProcess {
     public var allChecksSuccessful: Bool {
         checks.allSatisfy { $0.state == .successful }
     }
-
-    public var supervisorApprovalDenied: Bool {
-        routingTarget == .supervisor && hasFailedChecks
-    }
-
-    public var supervisorApprovalGranted: Bool {
-        routingTarget == .supervisor && allChecksSuccessful
-    }
 }

@@ -7,7 +7,6 @@
 import Foundation
 
 public enum PaymentEvent {
-    case approval
     case paymentSuccess
 
     case receipt
@@ -86,7 +85,6 @@ public final class PaymentProcessPoller {
 
             var result: (event: PaymentEvent, ok: Bool)?
             switch event {
-            case .approval: result = self.checkApproval(process)
             case .paymentSuccess: result = self.checkPayment(process)
             case .receipt: result = self.checkReceipt(process)
             }
@@ -104,20 +102,6 @@ public final class PaymentProcessPoller {
 
         if abort || self.alreadySeen.count == self.waitingFor.count {
             self.timer?.invalidate()
-        }
-    }
-
-    private func checkApproval(_ process: CheckoutProcess) -> (PaymentEvent, Bool)? {
-        // print("approval: \(process.paymentApproval) \(process.supervisorApproval)")
-        switch (process.paymentApproval, process.supervisorApproval) {
-        case (.none, .none):
-            return nil
-        case (.some(let paymentApproval), .none):
-            return paymentApproval ? nil : (.approval, false)
-        case (.none, .some(let supervisorApproval)):
-            return supervisorApproval ? nil : (.approval, false)
-        case (.some(let paymentApproval), .some(let supervisorApproval)):
-            return (.approval, paymentApproval && supervisorApproval)
         }
     }
 
