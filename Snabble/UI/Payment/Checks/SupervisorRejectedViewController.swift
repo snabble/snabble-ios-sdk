@@ -1,8 +1,7 @@
 //
 //  SupervisorRejectedViewController.swift
-//  SnabbleApp
 //
-//  Copyright © 2021 snabble. All rights reserved.
+//  Copyright © 2022 snabble. All rights reserved.
 //
 
 import UIKit

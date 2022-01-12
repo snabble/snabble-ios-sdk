@@ -268,7 +268,6 @@ extension PaymentProcess {
             self.hideBlurOverlay()
             switch result.result {
             case .success(let process):
-                print("checkout start: routingTarget = \(process.routingTarget)")
                 switch process.routingTarget {
                 case .none:
                     let checkoutDisplay = method.rawMethod.checkoutDisplayViewController(shop: self.shop,
@@ -280,11 +279,6 @@ extension PaymentProcess {
                     } else {
                         self.paymentDelegate?.showWarningMessage(L10n.Snabble.Payment.errorStarting)
                     }
-//                    if let processor = method.processor(process, shop: self.shop, self.cart, self.paymentDelegate) {
-//                        completion(.success(processor))
-//                    } else {
-//                        self.paymentDelegate?.showWarningMessage(L10n.Snabble.Payment.errorStarting)
-//                    }
                 case .supervisor:
                     let supervisor = SupervisorCheckViewController(shop: self.shop, shoppingCart: self.cart, checkoutProcess: process)
                     supervisor.delegate = self.paymentDelegate
