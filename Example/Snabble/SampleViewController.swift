@@ -175,15 +175,12 @@ extension SampleViewController: MessageDelegate {
 }
 
 extension SampleViewController: PaymentDelegate {
-    func exitToken(_ exitToken: ExitToken, for shop: Shop) {
-        print("exitToken:", exitToken)
+    func checkoutFinished(_ cart: ShoppingCart, _ process: CheckoutProcess?) {
+        self.navigationController?.popViewController(animated: true)
     }
 
-    func paymentFinished(_ success: Bool, _ cart: ShoppingCart, _ process: CheckoutProcess?) {
-        if success {
-            cart.removeAll(endSession: true, keepBackup: false)
-        }
-        self.navigationController?.popViewController(animated: true)
+    func exitToken(_ exitToken: ExitToken, for shop: Shop) {
+        print("exitToken:", exitToken)
     }
 
     func handlePaymentError(_ method: PaymentMethod, _ error: SnabbleError) -> Bool {
