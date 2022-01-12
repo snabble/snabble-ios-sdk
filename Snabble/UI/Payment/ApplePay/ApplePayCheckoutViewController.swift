@@ -6,22 +6,23 @@
 
 import PassKit
 
-public final class ApplePayCheckoutViewController: UIViewController {
+final class ApplePayCheckoutViewController: UIViewController {
     private var authController: UIViewController?
     private let countryCode: String?
-    private var currentProcess: CheckoutProcess?
     private var authorized = false
+    private var poller: PaymentProcessPoller?
 
     private let checkoutProcess: CheckoutProcess
     private let shoppingCart: ShoppingCart
     private let shop: Shop
-    private weak var delegate: PaymentDelegate?
+    weak var delegate: PaymentDelegate?
 
-    public init(_ process: CheckoutProcess, _ cart: ShoppingCart, _ shop: Shop, _ delegate: PaymentDelegate?) {
-        self.checkoutProcess = process
+    public init(shop: Shop,
+                checkoutProcess: CheckoutProcess,
+                cart: ShoppingCart) {
+        self.checkoutProcess = checkoutProcess
         self.shoppingCart = cart
         self.shop = shop
-        self.delegate = delegate
 
         // Apple Pay needs the two-letter ISO country code for the payment. Try to extract that from the various contryCode fields we have
         // in `Shop` and `Project.Company`, which may or may not have 3- or 2-letter codes. Oh well...
@@ -35,14 +36,14 @@ public final class ApplePayCheckoutViewController: UIViewController {
         fatalError("init(coder:) has not been implemented")
     }
 
-    override public func viewDidLoad() {
+    override func viewDidLoad() {
         super.viewDidLoad()
 
         self.title = "Apple Pay"
         self.navigationItem.hidesBackButton = true
     }
 
-    override public func viewWillAppear(_ animated: Bool) {
+    override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
 
         if let applePayAuth = createApplePayProcessor(for: checkoutProcess) {
@@ -50,30 +51,6 @@ public final class ApplePayCheckoutViewController: UIViewController {
             self.present(applePayAuth, animated: true)
         }
     }
-
-    /*
-    // MARK: - base class overrides
-
-    override func showQrCode(_ process: CheckoutProcess) -> Bool {
-        return checksPending(in: process)
-    }
-
-    override var viewEvent: AnalyticsEvent { .viewApplePayCheckout }
-
-    // called from the base class whenever the checkout process is initialized or updated
-    override func processUpdated(_ process: CheckoutProcess) {
-        self.currentProcess = process
-
-        if self.authController == nil, !checksPending(in: process), let applePayAuth = createApplePayProcessor(for: process) {
-            if process.supervisorApprovalGranted {
-                self.authController = applePayAuth
-                self.present(applePayAuth, animated: true)
-            }
-        }
-    }
-    */
-
-    // MARK: - apple pay
 
     private func createApplePayProcessor(for process: CheckoutProcess) -> UIViewController? {
         guard
@@ -111,10 +88,10 @@ public final class ApplePayCheckoutViewController: UIViewController {
     }
 
     // POST the payment authorization token we get from the PassKit API to our backend
-    private func performPayment(with process: CheckoutProcess?,
+    private func performPayment(with process: CheckoutProcess,
                                 and token: PKPaymentToken,
                                 completion: @escaping (_ success: Bool) -> Void) {
-        guard let authorizeUrl = process?.links.authorizePayment?.href else {
+        guard let authorizeUrl = process.links.authorizePayment?.href else {
             return completion(false)
         }
 
@@ -226,18 +203,38 @@ extension ApplePayCheckoutViewController: PKPaymentAuthorizationViewControllerDe
         if !authorized {
             cancelPayment()
         } else {
-            let paymentDisplay = CheckoutStepsViewController(shop: shop,
-                                                             shoppingCart: shoppingCart,
-                                                             checkoutProcess: checkoutProcess)
-            self.navigationController?.pushViewController(paymentDisplay, animated: true)
+            waitForPaymentProcessing()
         }
     }
 
     public func paymentAuthorizationViewController(_ controller: PKPaymentAuthorizationViewController, didAuthorizePayment payment: PKPayment, handler completion: @escaping (PKPaymentAuthorizationResult) -> Void) {
         authorized = true
-        self.performPayment(with: self.currentProcess, and: payment.token) { success in
+        self.performPayment(with: self.checkoutProcess, and: payment.token) { success in
             let status: PKPaymentAuthorizationStatus = success ? .success : .failure
             completion(PKPaymentAuthorizationResult(status: status, errors: nil))
         }
+    }
+
+    private func waitForPaymentProcessing() {
+        let project = SnabbleUI.project
+        let poller = PaymentProcessPoller(checkoutProcess, project)
+
+        poller.waitFor([.paymentSuccess]) { events in
+            if events[.paymentSuccess] != nil {
+                self.paymentFinished(poller.updatedProcess)
+            }
+        }
+
+        self.poller = poller
+    }
+
+    private func paymentFinished(_ checkoutProcess: CheckoutProcess) {
+        self.poller = nil
+
+        let paymentDisplay = CheckoutStepsViewController(shop: shop,
+                                                         shoppingCart: shoppingCart,
+                                                         checkoutProcess: checkoutProcess)
+        paymentDisplay.paymentDelegate = delegate
+        self.navigationController?.pushViewController(paymentDisplay, animated: true)
     }
 }
