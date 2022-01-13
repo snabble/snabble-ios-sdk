@@ -7,13 +7,20 @@
 import UIKit
 
 final class SupervisorCheckViewController: BaseCheckViewController {
-    override func viewDidLoad() {
-        super.viewDidLoad()
-        self.title = L10n.Snabble.Payment.confirm + " SV"
-    }
-
     override func renderCode(_ content: String) -> UIImage? {
         PDF417.generate(for: content, scale: 2)
+    }
+
+    override func checkContinuation(for process: CheckoutProcess) -> CheckResult {
+        if process.hasFailedChecks {
+            return .rejectCheckout
+        }
+
+        if process.allChecksSuccessful {
+            return .finalizeCheckout
+        }
+
+        return .continuePolling
     }
 
     override func arrangeLayout() {

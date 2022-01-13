@@ -7,13 +7,24 @@
 import UIKit
 
 final class GatekeeperCheckViewController: BaseCheckViewController {
-    override func viewDidLoad() {
-        super.viewDidLoad()
-        self.title = L10n.Snabble.Payment.confirm + " GK"
+    override func renderCode(_ content: String) -> UIImage? {
+        return QRCode.generate(for: content, scale: 5)
     }
 
-    override func renderCode(_ content: String) -> UIImage? {
-        QRCode.generate(for: content, scale: 5)
+    override func checkContinuation(for process: CheckoutProcess) -> CheckResult {
+        if process.hasFailedChecks {
+            return .rejectCheckout
+        }
+
+        if process.paymentState == .pending {
+            return .continuePolling
+        }
+
+        if process.allChecksSuccessful {
+            return .finalizeCheckout
+        }
+
+        return .continuePolling
     }
 
     override func arrangeLayout() {

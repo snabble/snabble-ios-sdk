@@ -52,6 +52,8 @@ class BaseCheckViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
 
+        title = L10n.Snabble.Payment.confirm
+
         view.backgroundColor = .systemBackground
 
         // set the main view components
@@ -184,6 +186,10 @@ class BaseCheckViewController: UIViewController {
         fatalError("clients must override")
     }
 
+    func checkContinuation(for process: CheckoutProcess) -> CheckResult {
+        fatalError("clients must override")
+    }
+
     private func codeContent() -> String {
         let qrCodeContent = checkoutProcess.paymentInformation?.qrCodeContent
         switch checkoutProcess.rawPaymentMethod {
@@ -229,41 +235,32 @@ class BaseCheckViewController: UIViewController {
     }
 
     // MARK: - process updates
+    enum CheckResult {
+        case continuePolling
+        case rejectCheckout
+        case finalizeCheckout
+    }
+
     private func update(_ result: RawResult<CheckoutProcess, SnabbleError>) {
-        var continuePolling = true
         switch result.result {
         case .success(let process):
             checkoutProcess = process
-            // we're done if there are any failed checks
-            if process.hasFailedChecks {
-                continuePolling = false
+
+            switch checkContinuation(for: process) {
+            case .continuePolling:
+                self.startTimer()
+            case .rejectCheckout:
                 showCheckoutRejected(process: process)
-                break
-            }
-
-            // continue if there are unfinished checks,
-            // or if we're still waiting to transfer the payment to the gatekeeper
-            continuePolling = !process.allChecksSuccessful
-            if process.rawPaymentMethod == .gatekeeperTerminal {
-                continuePolling = continuePolling || process.paymentState == .pending
-            }
-
-            if !continuePolling {
-                continueCheckout()
+            case .finalizeCheckout:
+                finalizeCheckout()
             }
 
         case .failure(let error):
             Log.error(String(describing: error))
         }
-
-        if continuePolling {
-            self.startTimer()
-        } else {
-            self.stopTimer()
-        }
     }
 
-    private func continueCheckout() {
+    private func finalizeCheckout() {
         guard
             let method = checkoutProcess.rawPaymentMethod,
             let checkoutDisplay = method.checkoutDisplayViewController(shop: shop,
