@@ -11,6 +11,8 @@ final class SupervisorCheckViewController: BaseCheckViewController {
         PDF417.generate(for: content, scale: 2)
     }
 
+    // supervisors are only concerned with checks: if there are failed checks, bail out,
+    // and if all checks pass, finalize the checkout
     override func checkContinuation(for process: CheckoutProcess) -> CheckResult {
         if process.hasFailedChecks {
             return .rejectCheckout

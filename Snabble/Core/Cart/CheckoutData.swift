@@ -205,6 +205,9 @@ public enum FulfillmentState: String, Decodable, UnknownCaseRepresentable {
     public static let endStates: Set<FulfillmentState> =
         [ .aborted, .allocationFailed, .allocationTimedOut, .failed, .processed ]
 
+    public static let allocationFailureStates: Set<FulfillmentState> =
+        [ .allocationFailed, .allocationTimedOut ]
+
     public static let unknownCase = FulfillmentState.unknown
 }
 
@@ -343,6 +346,13 @@ extension CheckoutProcess {
     public func fulfillmentsFailed() -> Int {
         let states = self.fulfillments.map { $0.state }
         return states.filter { FulfillmentState.failureStates.contains($0) }.count
+    }
+
+    /// Number of fulfillments with failed allocations
+    /// - Returns: number of fulfillments failed allocations
+    public func fulfillmentsAllocationFailed() -> Int {
+        let states = self.fulfillments.map { $0.state }
+        return states.filter { FulfillmentState.allocationFailureStates.contains($0) }.count
     }
 
     /// Number of fulfillments currently in progress
