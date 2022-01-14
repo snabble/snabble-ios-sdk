@@ -17,14 +17,14 @@ final class GatekeeperCheckViewController: BaseCheckViewController {
             return .rejectCheckout
         }
 
-        // this is necessary because currently the paymentState stays at .pending
+        // this is necessary because currently the paymentState stays at `.pending`
         // when allocation failures happen
         if process.fulfillmentsAllocationFailed() > 0 {
             return .finalizeCheckout
         }
 
-        // gatekeepers also have to wait until the payment moves to e.g. .transferred or .processing,
-        // e.g. for payments via the physical card readers
+        // gatekeepers also have to wait until the payment moves to e.g. `.transferred`
+        // or `.processing`, e.g. for payments via the physical card readers
         if process.paymentState == .pending {
             return .continuePolling
         }
