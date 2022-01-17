@@ -331,17 +331,19 @@ extension SnabbleAPI {
         let queryItems = parameters?.map { (key, value) in
             URLQueryItem(name: key, value: value)
         }
-        return urlString(url, queryItems ?? [])
+        return urlString(url, queryItems)
     }
 
-    static func urlString(_ url: String, _ queryItems: [URLQueryItem]) -> String? {
+    static func urlString(_ url: String, _ queryItems: [URLQueryItem]?) -> String? {
         guard var urlComponents = URLComponents(string: url) else {
             return nil
         }
-        if urlComponents.queryItems == nil {
-            urlComponents.queryItems = queryItems
-        } else {
-            urlComponents.queryItems?.append(contentsOf: queryItems)
+        if let queryItems = queryItems, !queryItems.isEmpty {
+            if urlComponents.queryItems == nil {
+                urlComponents.queryItems = queryItems
+            } else {
+                urlComponents.queryItems?.append(contentsOf: queryItems)
+            }
         }
 
         return urlComponents.url?.absoluteString
