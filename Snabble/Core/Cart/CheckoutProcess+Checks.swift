@@ -11,40 +11,14 @@ extension CheckoutProcess {
         public let id: String
 
         public let state: State
-        public let type: `Type`
-        public let method: Method?
 
         public enum State: String, Codable, UnknownCaseRepresentable {
-            case unknown
-
             case pending
             case postponed
             case successful
             case failed
 
-            public static let unknownCase = Self.unknown
-        }
-
-        public enum `Type`: String, Codable, UnknownCaseRepresentable {
-            case unknown
-
-            case minAge = "min_age"
-            case supervisorApproval = "supervisor_approval"
-            case verifyDebitCard = "verify_debit_card"
-
-            public static let unknownCase = Self.unknown
-        }
-
-        public enum Method: String, Decodable, UnknownCaseRepresentable {
-            case unknown
-
-            case none
-            case control
-            case partialRescan
-            case rescan
-            case gatekeeper
-
-            public static let unknownCase = Self.unknown
+            public static let unknownCase = Self.failed
         }
     }
 

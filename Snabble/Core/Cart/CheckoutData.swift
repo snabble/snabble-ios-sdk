@@ -314,8 +314,7 @@ public struct CheckoutProcess: Decodable {
         self.pricing = try container.decode(Pricing.self, forKey: .pricing)
 
         let rawChecks = try container.decodeIfPresent([FailableDecodable<CheckoutProcess.Check>].self, forKey: .checks)
-        let checks = rawChecks?.compactMap { $0.value } ?? []
-        self.checks = checks.filter { $0.state != .unknown }
+        self.checks = rawChecks?.compactMap { $0.value } ?? []
 
         let rawFulfillments = try container.decodeIfPresent([FailableDecodable<Fulfillment>].self, forKey: .fulfillments)
         let fulfillments = rawFulfillments?.compactMap { $0.value } ?? []
