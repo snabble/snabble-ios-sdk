@@ -6,7 +6,7 @@
 
 import UIKit
 
-public final class QRCheckoutViewController: UIViewController {
+final class QRCheckoutViewController: UIViewController {
     @IBOutlet private var qrCodeView: UIImageView!
     @IBOutlet private var explanation1: UILabel!
     @IBOutlet private var explanation2: UILabel!
@@ -19,12 +19,15 @@ public final class QRCheckoutViewController: UIViewController {
     private let process: CheckoutProcess
     private var poller: PaymentProcessPoller?
     private let cart: ShoppingCart
-    private weak var delegate: PaymentDelegate?
+    private let shop: Shop
+    weak var delegate: PaymentDelegate?
 
-    public init(_ process: CheckoutProcess, _ cart: ShoppingCart, _ delegate: PaymentDelegate?) {
+    public init(shop: Shop,
+                checkoutProcess: CheckoutProcess,
+                cart: ShoppingCart) {
+        self.shop = shop
         self.cart = cart
-        self.process = process
-        self.delegate = delegate
+        self.process = checkoutProcess
 
         super.init(nibName: nil, bundle: SnabbleBundle.main)
 
@@ -35,7 +38,7 @@ public final class QRCheckoutViewController: UIViewController {
         fatalError("init(coder:) has not been implemented")
     }
 
-    override public func viewDidLoad() {
+    override func viewDidLoad() {
         super.viewDidLoad()
 
         self.navigationItem.hidesBackButton = true
@@ -44,7 +47,7 @@ public final class QRCheckoutViewController: UIViewController {
         self.cancelButton.setTitle(L10n.Snabble.cancel, for: .normal)
     }
 
-    override public func viewWillAppear(_ animated: Bool) {
+    override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
 
         self.initialBrightness = UIScreen.main.brightness
@@ -69,13 +72,13 @@ public final class QRCheckoutViewController: UIViewController {
         self.startPoller()
     }
 
-    override public func viewDidAppear(_ animated: Bool) {
+    override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
 
         self.delegate?.track(.viewQRCodeCheckout)
     }
 
-    override public func viewWillDisappear(_ animated: Bool) {
+    override func viewWillDisappear(_ animated: Bool) {
         UIScreen.main.brightness = self.initialBrightness
         self.poller?.stop()
         self.poller = nil
@@ -133,7 +136,8 @@ public final class QRCheckoutViewController: UIViewController {
             self.cart.generateNewUUID()
         }
 
-        SnabbleAPI.fetchAppUserData(SnabbleUI.project.id)
-        self.delegate?.paymentFinished(success, self.cart, process)
+        let checkoutSteps = CheckoutStepsViewController(shop: shop, shoppingCart: cart, checkoutProcess: process)
+        checkoutSteps.paymentDelegate = delegate
+        self.navigationController?.pushViewController(checkoutSteps, animated: true)
     }
 }

@@ -9,13 +9,12 @@ import UIKit
 
 /// a protocol that users of `PaymentProcess` must implement
 public protocol PaymentDelegate: AnalyticsDelegate, MessageDelegate {
-    /// callback when the payment is finished
+    // callback when the checkout is finished
     ///
     /// - Parameters:
-    ///   - success: indicates whether the payment was successful
     ///   - cart: the shopping cart
     ///   - process: the checkout process, if available
-    func paymentFinished(_ success: Bool, _ cart: ShoppingCart, _ process: CheckoutProcess?)
+    func checkoutFinished(_ cart: ShoppingCart, _ process: CheckoutProcess?)
 
     /// a view that the payment process can use to temporarily display e.g. loading indicators
     /// (this uses `UIView!` as the type so that instances of `UIViewController` don't need to do anything to conform)

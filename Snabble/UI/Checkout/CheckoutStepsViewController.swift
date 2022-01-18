@@ -8,19 +8,14 @@
 import Foundation
 import UIKit
 
-public protocol CheckoutStepsViewControllerDelegate: AnyObject {
-    func checkoutStepsViewController(_ checkoutStepsViewController: CheckoutStepsViewController, didFinishWithPaymentState paymentState: PaymentState)
-}
-
-public final class CheckoutStepsViewController: UIViewController {
+final class CheckoutStepsViewController: UIViewController {
     private(set) weak var tableView: UITableView?
     private(set) weak var headerView: CheckoutHeaderView?
     private(set) weak var doneButton: UIButton?
 
     private weak var ratingViewController: CheckoutRatingViewController?
 
-    public weak var paymentDelegate: PaymentDelegate?
-    public weak var delegate: CheckoutStepsViewControllerDelegate?
+    weak var paymentDelegate: PaymentDelegate?
 
     private typealias ItemIdentifierType = CheckoutStep
     private typealias CellProvider = (_ tableView: UITableView, _ indexPath: IndexPath, _ itemIdentifier: ItemIdentifierType) -> UITableViewCell?
@@ -52,22 +47,22 @@ public final class CheckoutStepsViewController: UIViewController {
     )
 
     let viewModel: CheckoutStepsViewModel
-    public var shop: Shop {
+    var shop: Shop {
         viewModel.shop
     }
 
-    public var checkoutProcess: CheckoutProcess {
+    var checkoutProcess: CheckoutProcess? {
         viewModel.checkoutProcess
     }
 
-    public var shoppingCart: ShoppingCart {
+    var shoppingCart: ShoppingCart {
         viewModel.shoppingCart
     }
 
     private weak var processTimer: Timer?
     private var processSessionTask: URLSessionDataTask?
 
-    public init(shop: Shop, shoppingCart: ShoppingCart, checkoutProcess: CheckoutProcess) {
+    init(shop: Shop, shoppingCart: ShoppingCart, checkoutProcess: CheckoutProcess?) {
         viewModel = CheckoutStepsViewModel(
             shop: shop,
             checkoutProcess: checkoutProcess,
@@ -81,7 +76,7 @@ public final class CheckoutStepsViewController: UIViewController {
         fatalError("init(coder:) has not been implemented")
     }
 
-    override public func loadView() {
+    override func loadView() {
         let view = UIView(frame: UIScreen.main.bounds)
 
         let style: UITableView.Style
@@ -139,7 +134,7 @@ public final class CheckoutStepsViewController: UIViewController {
         self.view = view
     }
 
-    override public func viewDidLoad() {
+    override func viewDidLoad() {
         super.viewDidLoad()
         headerView?.configure(with: viewModel.headerViewModel)
         tableView?.updateHeaderViews()
@@ -152,28 +147,28 @@ public final class CheckoutStepsViewController: UIViewController {
         update(with: viewModel.steps, animate: false)
     }
 
-    override public func viewWillAppear(_ animated: Bool) {
+    override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         navigationController?.setNavigationBarHidden(true, animated: false)
     }
 
-    override public func viewDidAppear(_ animated: Bool) {
+    override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
         viewModel.startTimer()
         paymentDelegate?.track(.viewCheckoutSteps)
     }
 
-    override public func viewWillDisappear(_ animated: Bool) {
+    override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
         navigationController?.setNavigationBarHidden(false, animated: false)
     }
 
-    override public func viewDidDisappear(_ animated: Bool) {
+    override func viewDidDisappear(_ animated: Bool) {
         super.viewDidDisappear(animated)
         viewModel.stopTimer()
     }
 
-    override public func viewWillLayoutSubviews() {
+    override func viewWillLayoutSubviews() {
         super.viewWillLayoutSubviews()
         tableView?.updateHeaderViews()
     }
@@ -188,13 +183,13 @@ public final class CheckoutStepsViewController: UIViewController {
     @objc private func doneButtonTouchedUpInside(_ sender: UIButton) {
         SnabbleAPI.fetchAppUserData(shop.projectId)
         updateShoppingCart(for: checkoutProcess)
-        delegate?.checkoutStepsViewController(self, didFinishWithPaymentState: checkoutProcess.paymentState)
+        paymentDelegate?.checkoutFinished(viewModel.shoppingCart, viewModel.checkoutProcess)
         navigationController?.popToRootViewController(animated: false)
         paymentDelegate?.track(.checkoutStepsClosed)
     }
 
-    private func updateShoppingCart(for checkoutProcess: CheckoutProcess) {
-        switch checkoutProcess.paymentState {
+    private func updateShoppingCart(for checkoutProcess: CheckoutProcess?) {
+        switch checkoutProcess?.paymentState {
         case .successful:
             shoppingCart.removeAll(endSession: true, keepBackup: false)
         default:

@@ -101,4 +101,61 @@ extension RawPaymentMethod {
 
         return nil
     }
+
+    func checkoutDisplayViewController(shop: Shop,
+                                       checkoutProcess: CheckoutProcess?,
+                                       shoppingCart: ShoppingCart,
+                                       delegate: PaymentDelegate?) -> UIViewController? {
+        if !self.offline && checkoutProcess == nil {
+            return nil
+        }
+
+        let paymentDisplay: UIViewController
+        switch self {
+        case .qrCodePOS:
+            let qrCheckout = QRCheckoutViewController(shop: shop,
+                                                      checkoutProcess: checkoutProcess!,
+                                                      cart: shoppingCart)
+            qrCheckout.delegate = delegate
+            paymentDisplay = qrCheckout
+        case .qrCodeOffline:
+            if let codeConfig = shop.project?.qrCodeConfig {
+                let embedded = EmbeddedCodesCheckoutViewController(shop: shop,
+                                                                   checkoutProcess: checkoutProcess,
+                                                                   cart: shoppingCart,
+                                                                   qrCodeConfig: codeConfig)
+                embedded.delegate = delegate
+                paymentDisplay = embedded
+            } else {
+                return nil
+            }
+        case .applePay:
+            let applePay = ApplePayCheckoutViewController(shop: shop,
+                                                          checkoutProcess: checkoutProcess!,
+                                                          cart: shoppingCart)
+            applePay.delegate = delegate
+            paymentDisplay = applePay
+        case .customerCardPOS:
+            let customerCart = CustomerCardCheckoutViewController(shop: shop,
+                                                                  checkoutProcess: checkoutProcess!,
+                                                                  cart: shoppingCart)
+            customerCart.delegate = delegate
+            paymentDisplay = customerCart
+        case .deDirectDebit,
+                .creditCardVisa,
+                .creditCardMastercard,
+                .creditCardAmericanExpress,
+                .externalBilling,
+                .paydirektOneKlick,
+                .twint,
+                .postFinanceCard,
+                .gatekeeperTerminal:
+            let checkoutSteps = CheckoutStepsViewController(shop: shop, shoppingCart: shoppingCart, checkoutProcess: checkoutProcess!)
+            checkoutSteps.paymentDelegate = delegate
+            paymentDisplay = checkoutSteps
+        }
+        paymentDisplay.hidesBottomBarWhenPushed = true
+
+        return paymentDisplay
+    }
 }

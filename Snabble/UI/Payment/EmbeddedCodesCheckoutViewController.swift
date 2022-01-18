@@ -7,7 +7,7 @@
 import UIKit
 import DeviceKit
 
-public final class EmbeddedCodesCheckoutViewController: UIViewController {
+final class EmbeddedCodesCheckoutViewController: UIViewController {
     @IBOutlet private var topWrapper: UIView!
     @IBOutlet private var topIcon: UIImageView!
     @IBOutlet private var iconHeight: NSLayoutConstraint!
@@ -36,20 +36,23 @@ public final class EmbeddedCodesCheckoutViewController: UIViewController {
 
     private var initialBrightness: CGFloat = 0
 
-    private weak var cart: ShoppingCart?
-    private weak var delegate: PaymentDelegate?
+    private let cart: ShoppingCart
+    private let shop: Shop
+    weak var delegate: PaymentDelegate?
     private let process: CheckoutProcess?
     private var qrCodeConfig: QRCodeConfig
 
     private var codes = [String]()
     private var itemSize = CGSize.zero
 
-    public init(_ process: CheckoutProcess?, _ cart: ShoppingCart, _ delegate: PaymentDelegate?, _ codeConfig: QRCodeConfig) {
-        self.process = process
+    public init(shop: Shop,
+                checkoutProcess: CheckoutProcess?,
+                cart: ShoppingCart,
+                qrCodeConfig: QRCodeConfig) {
+        self.process = checkoutProcess
         self.cart = cart
-        self.delegate = delegate
-
-        self.qrCodeConfig = codeConfig
+        self.shop = shop
+        self.qrCodeConfig = qrCodeConfig
 
         super.init(nibName: nil, bundle: SnabbleBundle.main)
 
@@ -60,7 +63,7 @@ public final class EmbeddedCodesCheckoutViewController: UIViewController {
         fatalError("init(coder:) has not been implemented")
     }
 
-    override public func viewDidLoad() {
+    override func viewDidLoad() {
         super.viewDidLoad()
 
         self.paidButton.makeSnabbleButton()
@@ -79,10 +82,8 @@ public final class EmbeddedCodesCheckoutViewController: UIViewController {
         let nib = UINib(nibName: "QRCodeCell", bundle: SnabbleBundle.main)
         self.collectionView.register(nib, forCellWithReuseIdentifier: "qrCodeCell")
 
-        if let cart = self.cart {
-            let generator = QRCodeGenerator(cart, self.qrCodeConfig)
-            self.codes = generator.generateCodes()
-        }
+        let generator = QRCodeGenerator(cart, self.qrCodeConfig)
+        self.codes = generator.generateCodes()
 
         self.codeCountWrapper.isHidden = self.codes.count == 1
 
@@ -101,7 +102,7 @@ public final class EmbeddedCodesCheckoutViewController: UIViewController {
         self.configureViewForDevice()
     }
 
-    override public func viewWillAppear(_ animated: Bool) {
+    override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
 
         self.delegate?.track(.viewEmbeddedCodesCheckout)
@@ -113,7 +114,7 @@ public final class EmbeddedCodesCheckoutViewController: UIViewController {
         }
     }
 
-    override public func viewDidLayoutSubviews() {
+    override func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
 
         let frameWidth = self.codeContainer.frame.width
@@ -128,7 +129,7 @@ public final class EmbeddedCodesCheckoutViewController: UIViewController {
         }
     }
 
-    override public func viewDidAppear(_ animated: Bool) {
+    override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
 
         Timer.scheduledTimer(withTimeInterval: 2, repeats: false) { _ in
@@ -139,18 +140,18 @@ public final class EmbeddedCodesCheckoutViewController: UIViewController {
         }
     }
 
-    override public func viewWillDisappear(_ animated: Bool) {
+    override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
 
         UIScreen.main.brightness = self.initialBrightness
 
         if self.isMovingFromParent {
             // user "aborted" this payment process by tapping 'Back'
-            self.cart?.generateNewUUID()
+            self.cart.generateNewUUID()
         }
     }
 
-    override public func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
+    override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
         super.traitCollectionDidChange(previousTraitCollection)
 
         setupIcon()
@@ -213,12 +214,11 @@ public final class EmbeddedCodesCheckoutViewController: UIViewController {
             self.setButtonTitle()
         } else {
             self.delegate?.track(.markEmbeddedCodesPaid)
-            self.cart?.removeAll(endSession: true, keepBackup: true)
+            self.cart.removeAll(endSession: true, keepBackup: true)
 
-            SnabbleAPI.fetchAppUserData(SnabbleUI.project.id)
-            if let cart = self.cart {
-                self.delegate?.paymentFinished(true, cart, self.process)
-            }
+            let checkoutSteps = CheckoutStepsViewController(shop: shop, shoppingCart: cart, checkoutProcess: process)
+            checkoutSteps.paymentDelegate = delegate
+            self.navigationController?.pushViewController(checkoutSteps, animated: true)
         }
     }
 

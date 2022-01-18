@@ -188,55 +188,6 @@ public struct CheckoutInfo: Decodable {
     }
 }
 
-// MARK: - process checks
-public enum CheckState: String, Codable, UnknownCaseRepresentable {
-    case unknown
-
-    case pending
-    case postponed
-    case successful
-    case failed
-
-    public static let unknownCase = Self.unknown
-}
-
-public enum CheckType: String, Codable, UnknownCaseRepresentable {
-    case unknown
-
-    case minAge = "min_age"
-
-    public static let unknownCase = Self.unknown
-}
-
-public enum CheckPerformer: String, Decodable, UnknownCaseRepresentable {
-    case unknown
-
-    case app
-    case backend
-    case supervisor
-    case payment
-
-    public static let unknownCase = Self.unknown
-}
-
-public struct CheckoutCheck: Decodable {
-    public let id: String
-    public let links: CheckLinks
-
-    public let state: CheckState
-    public let type: CheckType
-
-    // type-specific properties
-
-    // properties for min_age
-    public let requiredAge: Int?
-    public let performedBy: CheckPerformer?
-
-    public struct CheckLinks: Decodable {
-        public let `self`: Link
-    }
-}
-
 public enum FulfillmentState: String, Decodable, UnknownCaseRepresentable {
     case unknown
 
@@ -253,6 +204,9 @@ public enum FulfillmentState: String, Decodable, UnknownCaseRepresentable {
         [ .aborted, .allocationFailed, .allocationTimedOut, .failed ]
     public static let endStates: Set<FulfillmentState> =
         [ .aborted, .allocationFailed, .allocationTimedOut, .failed, .processed ]
+
+    public static let allocationFailureStates: Set<FulfillmentState> =
+        [ .allocationFailed, .allocationTimedOut ]
 
     public static let unknownCase = FulfillmentState.unknown
 }
@@ -271,13 +225,6 @@ public struct Fulfillment: Decodable {
     }
 }
 
-public struct AgeCheckData: Encodable {
-    public let requiredAge: Int
-    public let state: CheckState
-    public let type: CheckType
-    public let dayOfBirth: String // YYYY/MM/DD
-}
-
 // known values from checkoutProcess.paymentResults["failureCause"]
 public enum FailureCause: String {
     case terminalAbort
@@ -290,12 +237,18 @@ public struct ExitToken: Codable {
     public let value: String?
 }
 
+public enum RoutingTarget: String, Decodable, UnknownCaseRepresentable {
+    case none
+    case supervisor
+    case gatekeeper
+
+    public static let unknownCase = Self.none
+}
+
 // MARK: - Checkout Process
 public struct CheckoutProcess: Decodable {
     public let id: String
     public let links: ProcessLinks
-    public let supervisorApproval: Bool?
-    public let paymentApproval: Bool?
     public let aborted: Bool
     public let paymentMethod: String
     public let modified: Bool
@@ -304,11 +257,12 @@ public struct CheckoutProcess: Decodable {
     public let orderID: String?
     public let paymentResult: [String: Any]?
     public let pricing: Pricing
-    public let checks: [CheckoutCheck]
+    public let checks: [CheckoutProcess.Check]
     public let fulfillments: [Fulfillment]
     public let exitToken: ExitToken?
     public let currency: String
     public let paymentPreauthInformation: PaymentPreauthInformation?
+    public let routingTarget: RoutingTarget
 
     public var rawPaymentMethod: RawPaymentMethod? {
         RawPaymentMethod(rawValue: paymentMethod)
@@ -337,11 +291,12 @@ public struct CheckoutProcess: Decodable {
 
     enum CodingKeys: String, CodingKey {
         case id
-        case links, supervisorApproval, paymentApproval, aborted
+        case links, aborted
         case checkoutInfo, paymentMethod, modified, paymentInformation
         case paymentState, orderID, paymentResult
         case checks, fulfillments, pricing, exitToken
         case currency, paymentPreauthInformation
+        case routingTarget
     }
 
     public init(from decoder: Decoder) throws {
@@ -349,8 +304,6 @@ public struct CheckoutProcess: Decodable {
 
         self.id = try container.decode(String.self, forKey: .id)
         self.links = try container.decode(ProcessLinks.self, forKey: .links)
-        self.supervisorApproval = try container.decodeIfPresent(Bool.self, forKey: .supervisorApproval)
-        self.paymentApproval = try container.decodeIfPresent(Bool.self, forKey: .paymentApproval)
         self.aborted = try container.decode(Bool.self, forKey: .aborted)
         self.paymentMethod = try container.decode(String.self, forKey: .paymentMethod)
         self.modified = try container.decode(Bool.self, forKey: .modified)
@@ -360,9 +313,8 @@ public struct CheckoutProcess: Decodable {
         self.paymentResult = try container.decodeIfPresent([String: Any].self, forKey: .paymentResult)
         self.pricing = try container.decode(Pricing.self, forKey: .pricing)
 
-        let rawChecks = try container.decodeIfPresent([FailableDecodable<CheckoutCheck>].self, forKey: .checks)
-        let checks = rawChecks?.compactMap { $0.value } ?? []
-        self.checks = checks.filter { $0.state != .unknown }
+        let rawChecks = try container.decodeIfPresent([FailableDecodable<CheckoutProcess.Check>].self, forKey: .checks)
+        self.checks = rawChecks?.compactMap { $0.value } ?? []
 
         let rawFulfillments = try container.decodeIfPresent([FailableDecodable<Fulfillment>].self, forKey: .fulfillments)
         let fulfillments = rawFulfillments?.compactMap { $0.value } ?? []
@@ -371,6 +323,7 @@ public struct CheckoutProcess: Decodable {
 
         self.currency = try container.decode(String.self, forKey: .currency)
         self.paymentPreauthInformation = try container.decodeIfPresent(PaymentPreauthInformation.self, forKey: .paymentPreauthInformation)
+        self.routingTarget = try container.decode(RoutingTarget.self, forKey: .routingTarget)
     }
 
     var requiresExitToken: Bool {
@@ -392,6 +345,13 @@ extension CheckoutProcess {
     public func fulfillmentsFailed() -> Int {
         let states = self.fulfillments.map { $0.state }
         return states.filter { FulfillmentState.failureStates.contains($0) }.count
+    }
+
+    /// Number of fulfillments with failed allocations
+    /// - Returns: number of fulfillments failed allocations
+    public func fulfillmentsAllocationFailed() -> Int {
+        let states = self.fulfillments.map { $0.state }
+        return states.filter { FulfillmentState.allocationFailureStates.contains($0) }.count
     }
 
     /// Number of fulfillments currently in progress

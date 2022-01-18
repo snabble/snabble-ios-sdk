@@ -6,7 +6,7 @@
 
 import UIKit
 
-public final class CustomerCardCheckoutViewController: UIViewController {
+final class CustomerCardCheckoutViewController: UIViewController {
     @IBOutlet private var topWrapper: UIView!
     @IBOutlet private var topIcon: UIImageView!
     @IBOutlet private var iconHeight: NSLayoutConstraint!
@@ -20,13 +20,16 @@ public final class CustomerCardCheckoutViewController: UIViewController {
     private var initialBrightness: CGFloat = 0
 
     private let cart: ShoppingCart
-    private weak var delegate: PaymentDelegate?
-    private var process: CheckoutProcess?
+    weak var delegate: PaymentDelegate?
+    private let process: CheckoutProcess
+    private let shop: Shop
 
-    public init(_ process: CheckoutProcess?, _ cart: ShoppingCart, _ delegate: PaymentDelegate?) {
-        self.process = process
+    public init(shop: Shop,
+                checkoutProcess: CheckoutProcess,
+                cart: ShoppingCart) {
+        self.process = checkoutProcess
         self.cart = cart
-        self.delegate = delegate
+        self.shop = shop
 
         super.init(nibName: nil, bundle: SnabbleBundle.main)
 
@@ -37,7 +40,7 @@ public final class CustomerCardCheckoutViewController: UIViewController {
         fatalError("init(coder:) has not been implemented")
     }
 
-    override public func viewDidLoad() {
+    override func viewDidLoad() {
         super.viewDidLoad()
 
         self.eanView.barcode = self.cart.customerCard
@@ -59,7 +62,7 @@ public final class CustomerCardCheckoutViewController: UIViewController {
         }
     }
 
-    override public func viewWillAppear(_ animated: Bool) {
+    override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
 
         self.delegate?.track(.viewCustomerCardCheckout)
@@ -71,7 +74,7 @@ public final class CustomerCardCheckoutViewController: UIViewController {
         }
     }
 
-    override public func viewDidAppear(_ animated: Bool) {
+    override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
 
         Timer.scheduledTimer(withTimeInterval: 2, repeats: false) { _ in
@@ -82,7 +85,7 @@ public final class CustomerCardCheckoutViewController: UIViewController {
         }
     }
 
-    override public func viewWillDisappear(_ animated: Bool) {
+    override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
 
         UIScreen.main.brightness = self.initialBrightness
@@ -91,7 +94,8 @@ public final class CustomerCardCheckoutViewController: UIViewController {
     @IBAction private func paidButtonTapped(_ sender: UIButton) {
         self.cart.removeAll(endSession: true, keepBackup: true)
 
-        SnabbleAPI.fetchAppUserData(SnabbleUI.project.id)
-        self.delegate?.paymentFinished(true, self.cart, self.process)
+        let checkoutSteps = CheckoutStepsViewController(shop: shop, shoppingCart: cart, checkoutProcess: process)
+        checkoutSteps.paymentDelegate = delegate
+        self.navigationController?.pushViewController(checkoutSteps, animated: true)
     }
 }
