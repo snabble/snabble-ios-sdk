@@ -500,7 +500,7 @@
 "Snabble.ShoppingList.searchHint" = "Search or enter directly";
 
 /* Der Titel der übersichtsseite der Einkaufslisten */
-"Snabble.ShoppingList.title" = "Shopping list";
+"Snabble.ShoppingList.title" = "Shopping List";
 
 /* Man soll verschiedene Artikel mit einem "und" in die Einkaufsliste legen können. Hier geht es nur um das Wort "und" */
 "Snabble.ShoppingList.Voice.connectingWord" = "and";

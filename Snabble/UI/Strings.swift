@@ -512,7 +512,7 @@ public enum L10n {
       public static var notFound: String { return L10n.tr("SnabbleLocalizable", "Snabble.ShoppingList.notFound") }
       /// Search or enter directly
       public static var searchHint: String { return L10n.tr("SnabbleLocalizable", "Snabble.ShoppingList.searchHint") }
-      /// Shopping list
+      /// Shopping List
       public static var title: String { return L10n.tr("SnabbleLocalizable", "Snabble.ShoppingList.title") }
       public enum CreateList {
         /// Create shopping list
