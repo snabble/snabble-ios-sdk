@@ -283,6 +283,9 @@ public struct CheckoutProcess: Decodable {
     public struct PaymentInformation: Decodable {
         /// for method == .qrCodePOS
         public let qrCodeContent: String?
+
+        /// for method == .gatekeeperTerminal
+        public let handoverInformation: String?
     }
 
     public struct PaymentPreauthInformation: Decodable {

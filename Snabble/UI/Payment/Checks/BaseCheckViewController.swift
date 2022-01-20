@@ -191,12 +191,12 @@ class BaseCheckViewController: UIViewController {
     }
 
     private func codeContent() -> String {
-        let qrCodeContent = checkoutProcess.paymentInformation?.qrCodeContent
         switch checkoutProcess.rawPaymentMethod {
         case .gatekeeperTerminal:
-            return qrCodeContent ?? "snabble:checkoutProcess:\(checkoutProcess.id)"
+            let handoverInformation = checkoutProcess.paymentInformation?.handoverInformation
+            return handoverInformation ?? "snabble:checkoutProcess:\(checkoutProcess.id)"
         default:
-            return qrCodeContent ?? checkoutProcess.id
+            return checkoutProcess.id
         }
     }
 
