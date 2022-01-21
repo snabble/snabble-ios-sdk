@@ -120,7 +120,7 @@ public final class PaymentProcessPoller {
             return (.receipt, true)
         }
 
-        let paymentFinished = process.paymentState == .failed || process.paymentState == .successful
+        let paymentFinished = PaymentState.endStates.contains(process.paymentState)
         if paymentFinished && process.fulfillmentsDone() {
             return (.receipt, false)
         }
