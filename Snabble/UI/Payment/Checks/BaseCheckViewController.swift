@@ -277,6 +277,7 @@ class BaseCheckViewController: UIViewController {
 
     private func showCheckoutRejected(process: CheckoutProcess) {
         let reject = SupervisorRejectedViewController(process)
+        self.shoppingCart.generateNewUUID()
         reject.delegate = self.delegate
         self.navigationController?.pushViewController(reject, animated: true)
     }
