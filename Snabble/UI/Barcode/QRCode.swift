@@ -8,7 +8,7 @@ import Foundation
 import CoreImage
 import UIKit
 
-public enum QRCode {
+public enum QRCode: CodeRenderer {
     // swiftlint:disable identifier_name
     public enum CorrectionLevel: String {
         case L
@@ -47,34 +47,10 @@ public enum QRCode {
 
         filter.setValue(data, forKey: "inputMessage")
         filter.setValue(correctionLevel.rawValue, forKey: "inputCorrectionLevel")
-        let ciContext = CIContext()
-        if let ciImage = filter.outputImage, let cgImage = ciContext.createCGImage(ciImage, from: ciImage.extent) {
-            let scale = CGFloat(scale) * UIScreen.main.scale
-            let codeSize = CGSize(width: ciImage.extent.size.width * scale,
-                                  height: ciImage.extent.size.height * scale)
-            let quietZone = scale * CGFloat(additionalQuietZone)
-            UIGraphicsBeginImageContext(
-                CGSize(width: codeSize.width + quietZone * 2,
-                       height: codeSize.height + quietZone * 2)
-            )
-            guard let context = UIGraphicsGetCurrentContext() else {
-                return nil
-            }
-            defer {
-                UIGraphicsEndImageContext()
-            }
 
-            context.interpolationQuality = .none
-            UIColor.white.setFill()
-            context.fill(context.boundingBoxOfClipPath)
-            let drawRect = CGRect(origin: CGPoint(x: quietZone, y: quietZone), size: codeSize)
-            context.draw(cgImage, in: drawRect)
-
-            if let rawImage = UIGraphicsGetImageFromCurrentImageContext(), let cgImage = rawImage.cgImage {
-                return UIImage(cgImage: cgImage, scale: UIScreen.main.scale, orientation: .rightMirrored)
-            }
-        }
-
-        return nil
+        return render(filter.outputImage,
+                      scale: scale,
+                      additionalQuietZone: additionalQuietZone,
+                      orientation: .rightMirrored)
     }
 }
