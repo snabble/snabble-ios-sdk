@@ -7,8 +7,22 @@
 import UIKit
 import CoreImage
 
-enum PDF417 {
+enum PDF417: CodeRenderer {
     public static func generate(for string: String, scale: Int) -> UIImage? {
+        let lightImage = generate(for: string, inScale: scale, for: .light)
+
+        if let darkImage = generate(for: string, inScale: scale, for: .dark) {
+            let traitCollection = UITraitCollection(traitsFrom: [
+                .init(displayScale: UIScreen.main.scale),
+                .init(userInterfaceStyle: .dark)
+            ])
+            lightImage?.imageAsset?.register(darkImage, with: traitCollection)
+
+        }
+        return lightImage
+    }
+
+    private static func generate(for string: String, inScale scale: Int, for userInterfaceStyle: UIUserInterfaceStyle) -> UIImage? {
         // print("generate pdf417 for \(string)")
         guard
             let data = string.data(using: .isoLatin1, allowLossyConversion: false),
@@ -17,25 +31,16 @@ enum PDF417 {
             return nil
         }
 
+        // the generated code has 2 pixels of "quiet zone" around it, as the standard mandates.
+        // This is fine in light mode, but insufficient in dark mode, so we add some additional space
+        let additionalQuietZone = userInterfaceStyle == .dark ? 3 : 0
+
         filter.setValue(data, forKey: "inputMessage")
         filter.setValue(3, forKey: "inputCompactionMode")
 
-        let ciContext = CIContext()
-        if let ciImage = filter.outputImage, let cgImage = ciContext.createCGImage(ciImage, from: ciImage.extent) {
-            let size = ciImage.extent.size
-            let scale = CGFloat(scale)
-            UIGraphicsBeginImageContext(CGSize(width: size.width * scale, height: size.height * scale))
-            guard let context = UIGraphicsGetCurrentContext() else {
-                return nil
-            }
-
-            context.interpolationQuality = .none
-            context.draw(cgImage, in: context.boundingBoxOfClipPath)
-
-            let image = UIGraphicsGetImageFromCurrentImageContext()
-            UIGraphicsEndImageContext()
-            return image
-        }
-        return nil
+        return render(filter.outputImage,
+                      scale: scale,
+                      additionalQuietZone: additionalQuietZone,
+                      orientation: .up)
     }
 }
