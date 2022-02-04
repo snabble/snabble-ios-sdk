@@ -31,10 +31,9 @@ enum OrderEntry {
     case done(Order)
 }
 
-public final class ReceiptsListViewController: UIViewController {
-    @IBOutlet private var tableView: UITableView!
-    @IBOutlet private var emptyLabel: UILabel!
-    @IBOutlet private var spinner: UIActivityIndicatorView!
+public final class ReceiptsListViewController: UITableViewController {
+    private let emptyLabel = UILabel()
+    private let spinner = UIActivityIndicatorView(style: .gray)
 
     private var quickLookDataSources: [QuicklookPreviewControllerDataSource] = []
 
@@ -49,7 +48,7 @@ public final class ReceiptsListViewController: UIViewController {
         self.orderId = process?.orderID
         self.analyticsDelegate = analyticsDelegate
 
-        super.init(nibName: nil, bundle: SnabbleBundle.main)
+        super.init(nibName: nil, bundle: nil)
 
         self.title = L10n.Snabble.Receipts.title
     }
@@ -60,6 +59,24 @@ public final class ReceiptsListViewController: UIViewController {
 
     override public func viewDidLoad() {
         super.viewDidLoad()
+
+        emptyLabel.translatesAutoresizingMaskIntoConstraints = false
+        emptyLabel.numberOfLines = 0
+        emptyLabel.textAlignment = .center
+        view.addSubview(emptyLabel)
+
+        spinner.translatesAutoresizingMaskIntoConstraints = false
+        view.addSubview(spinner)
+
+        NSLayoutConstraint.activate([
+            spinner.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+            spinner.centerYAnchor.constraint(equalTo: view.centerYAnchor),
+
+            emptyLabel.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+            emptyLabel.centerYAnchor.constraint(equalTo: view.centerYAnchor),
+            emptyLabel.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16),
+            emptyLabel.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -16)
+        ])
 
         let nib = UINib(nibName: "ReceiptCell", bundle: SnabbleBundle.main)
         self.tableView.register(nib, forCellReuseIdentifier: "receiptCell")
@@ -161,12 +178,13 @@ public final class ReceiptsListViewController: UIViewController {
     }
 }
 
-extension ReceiptsListViewController: UITableViewDelegate, UITableViewDataSource {
-    public func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+// MARK: - UITableViewDelegate, UITableViewDataSource
+extension ReceiptsListViewController {
+    override public func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return self.orders?.count ?? 0
     }
 
-    public func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+    override public func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         // swiftlint:disable:next force_cast
         let cell = tableView.dequeueReusableCell(withIdentifier: "receiptCell", for: indexPath) as! ReceiptCell
 
@@ -180,7 +198,7 @@ extension ReceiptsListViewController: UITableViewDelegate, UITableViewDataSource
         return cell
     }
 
-    public func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+    override public func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
         guard let orders = self.orders else {
             return
