@@ -1,0 +1,8 @@
+theme: fullwidth 
+skip_undocumented: true
+readme: README.md
+documentation: Documentation/*.md
+hide_documentation_coverage: true
+author: Snabble
+author_url: https://snabble.io/
+github_url: https://github.com/Snabble/iOS-SDK
