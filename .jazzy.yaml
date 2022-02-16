@@ -1,3 +1,4 @@
+podspec: Snabble.podspec
 theme: fullwidth 
 skip_undocumented: true
 readme: README.md
