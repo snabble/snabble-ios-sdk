@@ -18,25 +18,25 @@ jobs:
       - name: Gem Cache
         uses: actions/cache@v2
         with:
-          path: main/vendor/bundle
+          path: vendor/bundle
           key: ${{ runner.os }}-gems-${{ env.ImageVersion }}-${{ hashFiles('**/Gemfile.lock') }}
           restore-keys: ${{ runner.os }}-gems-${{ env.ImageVersion }}
       
       - name: Bundler
         run: |
-          cd main
           bundle config path vendor/bundle
           bundle install --jobs 4 --retry 3
 
       - name: Jazzy
         run: bundle exec jazzy -c
 
-      - name: Commit
-        uses: stefanzweifel/git-auto-commit-action@v4
-        with:
-          commit_message: documenation update
-          branch: gh-pages
-          file_pattern: docs/**
+      - name: Deploy
+        uses: s0/git-publish-subdir-action@develop
+        env:
+          REPO: self
+          BRANCH: gh-pages
+          FOLDER: docs
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Slack Notification
         uses: lazy-actions/slatify@master
