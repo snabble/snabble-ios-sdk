@@ -1,8 +1,6 @@
 on: 
   workflow_dispatch:
   push:
-    branches:
-      - documenation
     tags:
       - 0.*
 
