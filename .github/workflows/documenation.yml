@@ -31,6 +31,13 @@ jobs:
       - name: Jazzy
         run: bundle exec jazzy -c
 
+      - name: Commit
+      uses: stefanzweifel/git-auto-commit-action@v4
+      with:
+        commit_message: documenation update
+        branch: gh-pages
+        file_pattern: docs/**
+
       - name: Slack Notification
         uses: lazy-actions/slatify@master
         if: always()
