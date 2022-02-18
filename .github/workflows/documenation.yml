@@ -37,13 +37,12 @@ jobs:
         run: bundle exec jazzy -c
 
       - name: Deploy
-        uses: s0/git-publish-subdir-action@develop
-        env:
-          REPO: self
-          BRANCH: gh-pages
-          FOLDER: docs
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          MESSAGE: "This updates the documentation to the commit {sha}"
+        uses: casperdcl/push-dir@v1
+        with:
+          message: update documentation
+          branch: gh-pages
+          dir: docs
+          history: false
 
       - name: Slack Notification
         uses: lazy-actions/slatify@master
