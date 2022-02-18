@@ -37,12 +37,14 @@ jobs:
         run: bundle exec jazzy -c
 
       - name: Deploy
-        uses: casperdcl/push-dir@v1
+        uses: Cecilapp/GitHub-Pages-deploy@v3
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          message: update documentation
+          email: info@snabble.io
+          build_dir: docs
           branch: gh-pages
-          dir: docs
-          history: false
+          commit_message: update documentation
 
       - name: Slack Notification
         uses: lazy-actions/slatify@master
