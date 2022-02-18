@@ -43,6 +43,7 @@ jobs:
           BRANCH: gh-pages
           FOLDER: docs
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          MESSAGE: "This updates the documentation to the commit {sha}"
 
       - name: Slack Notification
         uses: lazy-actions/slatify@master
