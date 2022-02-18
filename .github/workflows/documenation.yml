@@ -1,6 +1,8 @@
 on: 
   workflow_dispatch:
   push:
+    branches:
+      - documentation
     tags:
       - 0.*
 
