@@ -36,11 +36,23 @@ jobs:
       - name: Jazzy
         run: bundle exec jazzy -c
 
+      - name: Upload Artifacts
+        uses: actions/upload-artifact@v2
+        with:
+          name: documentation
+          path: docs
+
   deploy:
     name: Deploy GitHub Page
     runs-on: ubuntu-latest
     needs: Jazzy
     steps:
+      - name: Download Artifacts
+        uses: actions/download-artifact@v2
+        with:
+          name: documentation
+          path: docs
+      
       - name: GitHub Pages Deploy
         uses: Cecilapp/GitHub-Pages-deploy@v3
         env:
