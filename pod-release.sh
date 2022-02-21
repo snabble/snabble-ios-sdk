@@ -3,7 +3,7 @@
 set -o pipefail
 
 TODAY=$(date +%Y-%m-%d)
-CHANGELOG_DATE=$(stat -f "%Sm" -t "%Y-%m-%d" CHANGELOG.md)
+CHANGELOG_DATE=$(stat -f "%Sm" -t "%Y-%m-%d" documentation/Changelog.md)
 
 POD_VERSION=$(awk '/s.version.*=/ { print substr($3,2,length($3)-2) }' Snabble.podspec)
 
