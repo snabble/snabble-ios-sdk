@@ -45,9 +45,11 @@ Using the Snabble Mobile SDK, your app is able to handle payments with the Payme
  * Credit Cards (VISA, MasterCard, American Express)
  * Apple Pay
  * Google Pay
+
 #### PayOne
  * SEPA Direct Debit
  * Credit Cards (VISA, MasterCard, American Express)
+
 #### Datatrans
  * Postfinance
  * Twint
