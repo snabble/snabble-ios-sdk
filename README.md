@@ -84,6 +84,8 @@ Build the example project, as described below, and copy the following frameworks
 Snabble follows [semantic versioning](https://semver.org/) rules.
 Note that we are currently in initial development, with major version 0. Anything may change at any time.
 
+## Documentation
+https://snabble.github.io/iOS-SDK/
 ## Example project
 
 The Example folder contains an extremely simple example for an app. To compile:
