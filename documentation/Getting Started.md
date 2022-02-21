@@ -10,7 +10,6 @@ For details about integrating with the Snabble Cloud-Platform, please see the [P
 
 ### Android
 * [Snabble Mobile SDK for Android on GitHub](https://github.com/snabble/Android-SDK)
-* [Sample Apps](sample-apps.md)
 * Supported Android versions: Android 8+
 
 ## Feature Overview
