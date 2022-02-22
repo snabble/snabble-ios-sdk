@@ -81,7 +81,7 @@ public enum SnabbleAPI {
             }
         }
 
-        var name: String {
+        public var name: String {
             switch self {
             case .testing, .staging:
                 return rawValue
