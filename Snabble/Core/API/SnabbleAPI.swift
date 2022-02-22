@@ -70,7 +70,7 @@ public enum SnabbleAPI {
         case staging
         case production
 
-        var urlString: String {
+        public var urlString: String {
             switch self {
             case .testing:
                 return "https://api.snabble-testing.io"
