@@ -67,7 +67,7 @@ class SampleViewController: UIViewController {
     func snabbleSetup() {
         let APPID = "your-app-id-here"
         let APPSECRET = "your-app-secret-here"
-        let apiConfig = SnabbleAPIConfig(appId: APPID, baseUrl: "https://api.snabble-testing.io", secret: APPSECRET)
+        let apiConfig = SnabbleAPIConfig(appId: APPID, secret: APPSECRET)
 
         SnabbleAPI.setup(apiConfig) {
             // initial config parsed/loaded

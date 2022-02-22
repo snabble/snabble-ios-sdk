@@ -12,8 +12,8 @@ import KeychainAccess
 public struct SnabbleAPIConfig {
     /// the appID assigned by snabble
     public let appId: String
-    /// the base URL to use
-    public let baseUrl: String
+    /// the environment  to use
+    public let environment: SnabbleAPI.Environment
     /// the secrect assigned by snabble, used to retrieve authorization tokens
     public let secret: String
 
@@ -46,13 +46,19 @@ public struct SnabbleAPIConfig {
     // SQL statements that are executed just before the product database is opened
     public var initialSQL: [String]?
 
-    public init(appId: String, baseUrl: String, secret: String) {
+
+    /// Initialize the configuration for Snabble
+    /// - Parameters:
+    ///   - appId: Provide your personal `appId`
+    ///   - secret: The secret matching your `appId`
+    ///   - environment: Choose an environment you want to use
+    public init(appId: String, secret: String, environment: SnabbleAPI.Environment = .production) {
         self.appId = appId
-        self.baseUrl = baseUrl
+        self.environment = environment
         self.secret = secret
     }
 
-    static let none = SnabbleAPIConfig(appId: "none", baseUrl: "", secret: "")
+    static let none = SnabbleAPIConfig(appId: "none", secret: "")
 }
 
 public extension Notification.Name {
@@ -60,6 +66,23 @@ public extension Notification.Name {
 }
 
 public enum SnabbleAPI {
+    public enum Environment {
+        case test
+        case stage
+        case production
+
+        var urlString: String {
+            switch self {
+            case .test:
+                return "https://api.snabble-testing.io"
+            case .stage:
+                return "https://api.snabble-staging.io"
+            case .production:
+                return "https://api.snabble.io"
+            }
+        }
+    }
+
     public private(set) static var config = SnabbleAPIConfig.none
     private(set) static var tokenRegistry = TokenRegistry(appId: "", secret: "")
     static var metadata = Metadata.none {
@@ -321,7 +344,7 @@ extension SnabbleAPI {
 
     private static func absoluteUrl(_ url: String) -> String {
         if url.hasPrefix("/") {
-            return self.config.baseUrl + url
+            return self.config.environment.urlString + url
         } else {
             return url
         }
@@ -358,7 +381,7 @@ extension SnabbleAPI {
 
 extension SnabbleAPI {
     static var serverName: String {
-        switch config.baseUrl {
+        switch config.environment.urlString {
         case "https://api.snabble.io":
             return "prod"
         case "https://api.snabble-staging.io":
