@@ -66,15 +66,15 @@ public extension Notification.Name {
 
 public enum SnabbleAPI {
     public enum Environment: String {
-        case test
-        case stage
+        case testing
+        case staging
         case production
 
         var urlString: String {
             switch self {
-            case .test:
+            case .testing:
                 return "https://api.snabble-testing.io"
-            case .stage:
+            case .staging:
                 return "https://api.snabble-staging.io"
             case .production:
                 return "https://api.snabble.io"
@@ -83,9 +83,10 @@ public enum SnabbleAPI {
 
         var name: String {
             switch self {
-            case .test: return "testing"
-            case .stage: return "staging"
-            case .production: return "production"
+            case .testing, .staging:
+                return rawValue
+            case .production:
+                return "prod"
             }
         }
     }
