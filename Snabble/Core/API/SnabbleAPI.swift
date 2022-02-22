@@ -46,7 +46,6 @@ public struct SnabbleAPIConfig {
     // SQL statements that are executed just before the product database is opened
     public var initialSQL: [String]?
 
-
     /// Initialize the configuration for Snabble
     /// - Parameters:
     ///   - appId: Provide your personal `appId`
@@ -66,7 +65,7 @@ public extension Notification.Name {
 }
 
 public enum SnabbleAPI {
-    public enum Environment {
+    public enum Environment: String {
         case test
         case stage
         case production
@@ -79,6 +78,14 @@ public enum SnabbleAPI {
                 return "https://api.snabble-staging.io"
             case .production:
                 return "https://api.snabble.io"
+            }
+        }
+
+        var name: String {
+            switch self {
+            case .test: return "testing"
+            case .stage: return "staging"
+            case .production: return "production"
             }
         }
     }
@@ -317,7 +324,7 @@ extension SnabbleAPI {
 
     // MARK: - app user id
     private static var appUserKey: String {
-        return "Snabble.api.appUserId.\(SnabbleAPI.serverName).\(SnabbleAPI.config.appId)"
+        return "Snabble.api.appUserId.\(config.environment.name).\(SnabbleAPI.config.appId)"
     }
 
     public static var appUserId: AppUserId? {
@@ -376,24 +383,6 @@ extension SnabbleAPI {
 extension SnabbleAPI {
     static var debugMode: Bool {
         return _isDebugAssertConfiguration()
-    }
-}
-
-extension SnabbleAPI {
-    static var serverName: String {
-        switch config.environment.urlString {
-        case "https://api.snabble.io":
-            return "prod"
-        case "https://api.snabble-staging.io":
-            return "staging"
-        case "https://api.snabble-testing.io":
-            return "testing"
-        default:
-            if SnabbleAPI.debugMode {
-                fatalError("API config not correctly initialized")
-            }
-            return "prod"
-        }
     }
 }
 
