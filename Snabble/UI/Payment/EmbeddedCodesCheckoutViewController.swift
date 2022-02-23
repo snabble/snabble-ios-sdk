@@ -82,7 +82,7 @@ final class EmbeddedCodesCheckoutViewController: UIViewController {
         let nib = UINib(nibName: "QRCodeCell", bundle: SnabbleBundle.main)
         self.collectionView.register(nib, forCellWithReuseIdentifier: "qrCodeCell")
 
-        let generator = QRCodeGenerator(cart, self.qrCodeConfig)
+        let generator = QRCodeGenerator(cart: cart, config: self.qrCodeConfig, processId: process?.id)
         self.codes = generator.generateCodes()
 
         self.codeCountWrapper.isHidden = self.codes.count == 1

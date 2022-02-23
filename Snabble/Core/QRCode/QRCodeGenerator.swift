@@ -8,15 +8,18 @@ import Foundation
 
 /// generate QR code(s) for offline payment
 public struct QRCodeGenerator {
-    private var cart: ShoppingCart
-    private var config: QRCodeConfig
+    private let cart: ShoppingCart
+    private let config: QRCodeConfig
+    private let processId: String?
 
     /// - Parameters:
     ///   - cart: the `ShoppingCart`
     ///   - config: the `QRCodeConfig`
-    public init(_ cart: ShoppingCart, _ config: QRCodeConfig) {
+    ///   - id: the id of the checkout process, if known
+    public init(cart: ShoppingCart, config: QRCodeConfig, processId: String?) {
         self.cart = cart
         self.config = config
+        self.processId = processId
     }
 
     /// generate the QR code strings for a shopping cart
@@ -82,7 +85,7 @@ public struct QRCodeGenerator {
 
         // if there is no regular block, fake one so that we have a place to put the `nextWithCheck` code
         if regularBlocks.isEmpty && !restrictedBlocks.isEmpty {
-            let block = Codeblock(self.config)
+            let block = Codeblock(config: self.config, processId: self.processId)
             regularBlocks = [ block ]
         }
 
@@ -121,7 +124,7 @@ public struct QRCodeGenerator {
     // split a list of cart items into as many `CodeBlock`s as needed
     private func makeBlocks(_ items: [CartItem], _ coupons: [CartCoupon], _ customerCard: String?) -> [Codeblock] {
         var result = [Codeblock]()
-        var currentBlock = Codeblock(self.config)
+        var currentBlock = Codeblock(config: self.config, processId: self.processId)
 
         // coupons go into the first block
         for coupon in coupons where coupon.scannedCode != nil {
@@ -174,7 +177,7 @@ public struct QRCodeGenerator {
     private func append(_ item: CodeBlockItem, to currentBlock: inout Codeblock, _ result: inout [Codeblock]) {
         if !currentBlock.hasRoom(for: item) {
             result.append(currentBlock)
-            currentBlock = Codeblock(self.config)
+            currentBlock = Codeblock(config: self.config, processId: self.processId)
         }
         currentBlock.items.append(item)
     }
@@ -228,12 +231,14 @@ private struct CodeBlockItem {
 
 private struct Codeblock {
     let config: QRCodeConfig
+    let processId: String?
     var cardCode: String?
     var items: [CodeBlockItem]
     var endCodes: [String]
 
-    init(_ config: QRCodeConfig) {
+    init(config: QRCodeConfig, processId: String?) {
         self.config = config
+        self.processId = processId
         self.items = []
         if let nextCode = config.nextCode {
             self.endCodes = [nextCode]
@@ -303,8 +308,13 @@ private struct Codeblock {
             codes.append("1;\($0)")
         }
 
-        let header = self.config.format == .csv ? "snabble;\(index + 1);\(total)" : "snabble;"
-
+        var header = "snabble;"
+        if self.config.format == .csv {
+            header.append("\(index + 1);\(total)")
+            if let processId = self.processId {
+                header.append(";\(processId)")
+            }
+        }
         return header + self.config.separator + codes.joined(separator: self.config.separator)
     }
 
