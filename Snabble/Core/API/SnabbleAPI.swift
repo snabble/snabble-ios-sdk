@@ -65,7 +65,7 @@ public extension Notification.Name {
 }
 
 public enum SnabbleAPI {
-    public enum Environment: String {
+    public enum Environment: String, CaseIterable, Equatable {
         case testing
         case staging
         case production
