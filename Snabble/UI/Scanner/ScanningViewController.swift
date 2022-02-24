@@ -443,16 +443,8 @@ extension ScanningViewController {
             let product = scannedProduct.product
             let embeddedData = scannedProduct.embeddedData
 
-            // check for sale stop
-            if product.saleStop {
-                self.showSaleStop()
-                self.startLastScanTimer()
-                return
-            }
-
-            // check for not-for-sale
-            if product.notForSale {
-                self.showNotForSale(scannedProduct.product, scannedCode)
+            // check for sale stop / notForSale
+            if self.isSaleProhibited(of: product, scannedCode: scannedCode) {
                 self.startLastScanTimer()
                 return
             }
@@ -489,6 +481,22 @@ extension ScanningViewController {
 
         self.scannedUnknown(errorMsg, scannedCode)
         self.barcodeDetector.resumeScanning()
+    }
+
+    private func isSaleProhibited(of product: Product, scannedCode: String) -> Bool {
+        // check for sale stop
+        if product.saleStop {
+            self.showSaleStop()
+            return true
+        }
+
+        // check for not-for-sale
+        if product.notForSale {
+            self.showNotForSale(product, scannedCode)
+            return true
+        }
+
+        return false
     }
 
     private func showSaleStop() {
@@ -532,6 +540,10 @@ extension ScanningViewController {
                 let specifiedQuantity = bundle.codes.first?.specifiedQuantity
                 let scannedBundle = ScannedProduct(bundle, lookupCode, transmissionCode,
                                                    specifiedQuantity: specifiedQuantity)
+
+                if self.isSaleProhibited(of: scannedBundle.product, scannedCode: scannedCode) {
+                    return
+                }
                 self.showConfirmation(for: scannedBundle, transmissionCode ?? scannedCode)
             })
         }
