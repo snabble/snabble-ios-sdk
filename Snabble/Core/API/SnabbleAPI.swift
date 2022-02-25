@@ -67,7 +67,7 @@ public extension Notification.Name {
 /**
  * The main entry point for the SnabbleSDK.
  *
- * We recommend using `SnabbleAPI.setup(_:, completion:)` to initialize Snabble.
+ * Use `SnabbleAPI.setup(_:, completion:)` to initialize Snabble.
  */
 public enum SnabbleAPI {
 
@@ -103,11 +103,21 @@ public enum SnabbleAPI {
         }
     }
 
-    /// API Configuration which was used for the `setup(_:, completion)` method
-    public private(set) static var config = SnabbleAPIConfig.none
+    private(set) static var config = SnabbleAPIConfig.none
     private(set) static var tokenRegistry = TokenRegistry(appId: "", secret: "")
+
     static var metadata = Metadata.none {
         didSet {
+            for project in metadata.projects {
+                project.codeTemplates.forEach {
+                    CodeMatcher.addTemplate(project.id, $0.id, $0.template)
+                }
+
+                project.priceOverrideCodes?.forEach {
+                    CodeMatcher.addTemplate(project.id, $0.id, $0.template)
+                }
+            }
+
             NotificationCenter.default.post(name: .metadataLoaded, object: nil)
         }
     }
@@ -120,7 +130,7 @@ public enum SnabbleAPI {
         return self.metadata.gatewayCertificates
     }
 
-    /// Available projects after an successful setup
+    /// Available projects after a successful setup
     public static var projects: [Project] {
         return self.metadata.projects
     }
@@ -145,14 +155,14 @@ public enum SnabbleAPI {
         return self.metadata.brands ?? []
     }
 
-    /// Finds first project for a given id
+    /// Finds project for a given id
     /// - Parameter projectId: matching id
     /// - Returns: `Project` or `nil` if none was found
     public static func project(for projectId: Identifier<Project>) -> Project? {
         return self.metadata.projects.first { $0.id == projectId }
     }
 
-    /// First method to be called to verify the initialization of the `SnabbleSDK`
+    /// First method to be called to initialize of the `SnabbleSDK`
     /// - Parameters:
     ///   - config: `SnabbleAPIConfig` with at least an `appId` and a `secret`
     ///   - completion: CompletionHandler is called as soon as everything is finished
@@ -169,16 +179,16 @@ public enum SnabbleAPI {
 
         if let metadataPath = config.seedMetadata, self.metadata.projects.isEmpty {
             if let metadata = Metadata.readResource(metadataPath) {
-                self.setMetadata(metadata)
+                self.metadata = metadata
             }
         }
 
-        self.loadMetadata(completion: completion)
+        self.update(completion: completion)
     }
 
-    /// loadMetadata information
-    /// - Parameter completion: completionHandler informs
-    public static func loadMetadata(completion: @escaping () -> Void ) {
+    /// update Snabble
+    /// - Parameter completion: completionHandler informs about the status
+    public static func update(completion: @escaping () -> Void ) {
         let bundleVersion = Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String ?? "0.0"
         let appVersion = config.appVersion ?? bundleVersion
         let version = appVersion.addingPercentEncoding(withAllowedCharacters: .urlPathAllowed) ?? appVersion
@@ -186,7 +196,7 @@ public enum SnabbleAPI {
 
         Metadata.load(from: metadataURL) { metadata in
             if let metadata = metadata {
-                self.setMetadata(metadata)
+                self.metadata = metadata
             }
 
             let metadataLoaded = {
@@ -204,20 +214,6 @@ public enum SnabbleAPI {
                 }
             } else {
                 metadataLoaded()
-            }
-        }
-    }
-
-    private static func setMetadata(_ metadata: Metadata) {
-        self.metadata = metadata
-
-        for project in metadata.projects {
-            project.codeTemplates.forEach {
-                CodeMatcher.addTemplate(project.id, $0.id, $0.template)
-            }
-
-            project.priceOverrideCodes?.forEach {
-                CodeMatcher.addTemplate(project.id, $0.id, $0.template)
             }
         }
     }
@@ -334,6 +330,10 @@ extension SnabbleAPI {
     // MARK: - client id
     private static let idKey = "Snabble.api.clientId"
 
+    /** SnabbleSDK client identification
+     *
+     * Stored in the keychain. Survives an uninstallation
+     */
     public static var clientId: String {
         let keychain = Keychain(service: service)
 
@@ -357,6 +357,11 @@ extension SnabbleAPI {
         return "Snabble.api.appUserId.\(config.environment.name).\(SnabbleAPI.config.appId)"
     }
 
+    /** SnabbleSDK application user identification
+     *
+     * Can be used to link an user acount
+     * Stored in the keychain. Survives an uninstallation
+     */
     public static var appUserId: AppUserId? {
         get {
             let keychain = Keychain(service: service)
