@@ -290,6 +290,9 @@ public enum SnabbleAPI {
     }
 
     /// Removes database for a project
+    ///
+    ///  Restart the app after removing a database
+    /// - Warning: For debugging only
     /// - Parameter project: `Project` of the database to be deleted
     public static func removeDatabase(of project: Project) {
         let provider = productProvider(for: project)
