@@ -301,16 +301,18 @@ public enum SnabbleAPI {
     }
 }
 
+/// SnabbleSDK application user identification
 public struct AppUserId {
-    public let userId: String
+    /// the public part of the `userId`
+    public let value: String
     let secret: String
 
-    public init(userId: String, secret: String) {
-        self.userId = userId
+    init(userId: String, secret: String) {
+        self.value = userId
         self.secret = secret
     }
 
-    public init?(_ string: String?) {
+    init?(_ string: String?) {
         guard
             let components = string?.split(separator: ":"),
             components.count == 2
@@ -318,12 +320,12 @@ public struct AppUserId {
             return nil
         }
 
-        self.userId = String(components[0])
-        self.secret = String(components[1])
+        value = String(components[0])
+        secret = String(components[1])
     }
 
-    public var combined: String {
-        return "\(self.userId):\(self.secret)"
+    var combined: String {
+        "\(value):\(secret)"
     }
 }
 
@@ -374,9 +376,9 @@ extension SnabbleAPI {
         set {
             let keychain = Keychain(service: service)
             keychain[appUserKey] = newValue?.combined
-            UserDefaults.standard.set(newValue?.userId, forKey: "Snabble.api.appUserId")
+            UserDefaults.standard.set(newValue?.value, forKey: "Snabble.api.appUserId")
 
-            self.tokenRegistry.invalidateAllTokens()
+            tokenRegistry.invalidateAllTokens()
             OrderList.clearCache()
         }
     }
@@ -518,7 +520,7 @@ extension SnabbleAPI {
             return
         }
 
-        let url = SnabbleAPI.links.appUser.href.replacingOccurrences(of: "{appUserID}", with: appUserId.userId)
+        let url = SnabbleAPI.links.appUser.href.replacingOccurrences(of: "{appUserID}", with: appUserId.value)
         project.request(.get, url, timeout: 2) { request in
             guard let request = request else {
                 return
@@ -550,7 +552,7 @@ extension SnabbleAPI {
             return
         }
 
-        let url = consents.replacingOccurrences(of: "{appUserID}", with: appUserId.userId)
+        let url = consents.replacingOccurrences(of: "{appUserID}", with: appUserId.value)
 
         let termsVersion = TermsVersion(version: version)
         project.request(.post, url, body: termsVersion) { request in
