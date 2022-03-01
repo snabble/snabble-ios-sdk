@@ -269,7 +269,7 @@ final class TokenRegistry {
             guard
                 var request = request,
                 let password = self.generatePassword(date),
-                let data = "\(self.appId):\(password):\(appUserId.value):\(appUserId.secret)".data(using: .utf8)
+                let data = "\(self.appId):\(password):\(appUserId.authorization)".data(using: .utf8)
             else {
                 return completion(nil)
             }

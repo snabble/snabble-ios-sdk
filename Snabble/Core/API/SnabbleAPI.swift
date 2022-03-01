@@ -302,15 +302,20 @@ public enum SnabbleAPI {
 }
 
 /// SnabbleSDK application user identification
+///
+/// An username and password combination.
+/// - Important: It contains sensitive data. Be careful when you store this data.
 public struct AppUserId {
-    /// the actual information of the `AppUserId`
+    /// the `userId` of the `AppUserId`
     public let value: String
 
     /// an opaque information for the backend
     public let secret: String
 
-    /// `value` and `secret` combined in a `String` separated by a colon
-    public var combined: String {
+    /// Basic web authorization
+    ///
+    /// Example `https://{authorization}@example.com`
+    public var authorization: String {
         "\(value):\(secret)"
     }
 
@@ -323,14 +328,18 @@ public struct AppUserId {
         self.secret = secret
     }
 
-    /// An optional initializer.
-    ///
-    /// `value` and `secret` must be separated by a colon.
-    public init?(_ string: String?) {
-        guard
-            let components = string?.split(separator: ":"),
-            components.count == 2
-        else {
+    /**
+     An optional initializer with a valid `authorization` value
+
+     `value` and `secret` must be separated by a colon.
+
+     - Precondition:
+        - `value` is the first part and `secret` the second.
+        - Only two elements allowed after split by colon
+     */
+    public init?(authorization: String) {
+        let components = authorization.split(separator: ":")
+        guard components.count == 2 else {
             return nil
         }
 
@@ -385,12 +394,15 @@ extension SnabbleAPI {
     public static var appUserId: AppUserId? {
         get {
             let keychain = Keychain(service: service)
-            return AppUserId(keychain[appUserKey])
+            guard let authorization = keychain[appUserKey] else {
+                return nil
+            }
+            return AppUserId(authorization: authorization)
         }
 
         set {
             let keychain = Keychain(service: service)
-            keychain[appUserKey] = newValue?.combined
+            keychain[appUserKey] = newValue?.authorization
             UserDefaults.standard.set(newValue?.value, forKey: "Snabble.api.appUserId")
 
             tokenRegistry.invalidateAllTokens()
