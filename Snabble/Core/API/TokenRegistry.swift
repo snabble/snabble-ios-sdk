@@ -242,7 +242,7 @@ final class TokenRegistry {
                     if self.verboseToken { Log.debug("retrieveAppUserAndToken succeeded") }
                     self.verboseToken = false
                     print(#function, "new appUserID: \(appUserData.appUser.id)")
-                    SnabbleAPI.appUserId = AppUserId(userId: appUserData.appUser.id, secret: appUserData.appUser.secret)
+                    SnabbleAPI.appUserId = AppUserId(value: appUserData.appUser.id, secret: appUserData.appUser.secret)
                     completion(TokenData(appUserData.token, projectId))
                 case .failure:
                     self.verboseToken = true && SnabbleAPI.debugMode

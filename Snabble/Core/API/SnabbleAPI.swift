@@ -303,16 +303,30 @@ public enum SnabbleAPI {
 
 /// SnabbleSDK application user identification
 public struct AppUserId {
-    /// the public part of the `userId`
+    /// the actual information of the `userId`
     public let value: String
-    let secret: String
 
-    init(userId: String, secret: String) {
-        self.value = userId
+    /// an information kept hidden for the backend
+    public let secret: String
+
+    /// `value` and `secret` combined in a `String` separated by a colon
+    public var combined: String {
+        "\(value):\(secret)"
+    }
+
+    /// initialize an `AppUserId` with a received `value` and `secret`
+    /// - Parameters:
+    ///   - value: the actual information of the `userId`
+    ///   - secret: an information kept hidden for the backend
+    public init(value: String, secret: String) {
+        self.value = value
         self.secret = secret
     }
 
-    init?(_ string: String?) {
+    /// An optional initializer.
+    ///
+    /// `value` and `secret` must be separated by a colon.
+    public init?(_ string: String?) {
         guard
             let components = string?.split(separator: ":"),
             components.count == 2
@@ -322,10 +336,6 @@ public struct AppUserId {
 
         value = String(components[0])
         secret = String(components[1])
-    }
-
-    var combined: String {
-        "\(value):\(secret)"
     }
 }
 
