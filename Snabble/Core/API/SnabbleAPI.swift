@@ -303,8 +303,8 @@ public enum SnabbleAPI {
 
 /// SnabbleSDK application user identification
 ///
-/// An username and password combination.
-/// - Important: It contains sensitive data. Be careful when you store this data.
+/// A plain text username and password combination.
+/// - Important: It contains a sensitve data. Be careful when you store it.
 public struct AppUserId {
     /// the `userId` of the `AppUserId`
     public let value: String
