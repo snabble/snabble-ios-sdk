@@ -303,7 +303,7 @@ public enum SnabbleAPI {
 
 /// SnabbleSDK application user identification
 public struct AppUserId {
-    /// the actual information of the `userId`
+    /// the actual information of the `AppUserId`
     public let value: String
 
     /// an opaque information for the backend
