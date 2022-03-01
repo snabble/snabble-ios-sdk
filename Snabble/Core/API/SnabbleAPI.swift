@@ -329,7 +329,7 @@ public struct AppUserId {
     }
 
     /**
-     An optional initializer with a valid `authorization` value
+     An optional initializer with a valid `stringRepresentation` value
 
      `value` and `secret` must be separated by a colon.
 
@@ -337,8 +337,8 @@ public struct AppUserId {
         - `value` is the first part and `secret` the second.
         - Only two elements allowed after split by colon
      */
-    public init?(authorization: String) {
-        let components = authorization.split(separator: ":")
+    public init?(stringRepresentation: String) {
+        let components = stringRepresentation.split(separator: ":")
         guard components.count == 2 else {
             return nil
         }
