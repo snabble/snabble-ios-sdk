@@ -312,10 +312,10 @@ public struct AppUserId {
     /// an opaque information for the backend
     public let secret: String
 
-    /// Basic web authorization
+    /// A formatted string that specifies the components of the `AppUserId`.
     ///
-    /// Example `https://{authorization}@example.com`
-    public var authorization: String {
+    /// The string representation always has two components separated by a colon. The first is the `value` and last is the `secret`
+    public var stringRepresentation: String {
         "\(value):\(secret)"
     }
 
@@ -402,7 +402,7 @@ extension SnabbleAPI {
 
         set {
             let keychain = Keychain(service: service)
-            keychain[appUserKey] = newValue?.authorization
+            keychain[appUserKey] = newValue?.stringRepresentation
             UserDefaults.standard.set(newValue?.value, forKey: "Snabble.api.appUserId")
 
             tokenRegistry.invalidateAllTokens()
