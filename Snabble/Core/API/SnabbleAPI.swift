@@ -306,7 +306,7 @@ public struct AppUserId {
     /// the actual information of the `userId`
     public let value: String
 
-    /// an information kept hidden for the backend
+    /// an opaque information for the backend
     public let secret: String
 
     /// `value` and `secret` combined in a `String` separated by a colon
@@ -317,7 +317,7 @@ public struct AppUserId {
     /// initialize an `AppUserId` with a received `value` and `secret`
     /// - Parameters:
     ///   - value: the actual information of the `userId`
-    ///   - secret: an information kept hidden for the backend
+    ///   - secret: an opaque information for the backend
     public init(value: String, secret: String) {
         self.value = value
         self.secret = secret
@@ -345,10 +345,13 @@ extension SnabbleAPI {
     // MARK: - client id
     private static let idKey = "Snabble.api.clientId"
 
-    /** SnabbleSDK client identification
-     *
-     * Stored in the keychain. Survives an uninstallation
-     */
+    /**
+     SnabbleSDK client identification
+
+     Stored in the keychain. Survives an uninstallation
+
+     - Important: [Apple Developer Forum Thread 36442](https://developer.apple.com/forums/thread/36442?answerId=281900022#281900022)
+    */
     public static var clientId: String {
         let keychain = Keychain(service: service)
 
@@ -372,11 +375,13 @@ extension SnabbleAPI {
         return "Snabble.api.appUserId.\(config.environment.name).\(SnabbleAPI.config.appId)"
     }
 
-    /** SnabbleSDK application user identification
-     *
-     * Can be used to link an user acount
-     * Stored in the keychain. Survives an uninstallation
-     */
+    /**
+     SnabbleSDK application user identification
+
+     Stored in the keychain. Survives an uninstallation
+
+     - Important: [Apple Developer Forum Thread 36442](https://developer.apple.com/forums/thread/36442?answerId=281900022#281900022)
+    */
     public static var appUserId: AppUserId? {
         get {
             let keychain = Keychain(service: service)
