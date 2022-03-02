@@ -7,7 +7,7 @@
 import Foundation
 import KeychainAccess
 
-/// general config data for using the snabble API.
+/// General config data for using the snabble API.
 /// Applications must call `SnabbleAPI.setup()` with an instance of this struct before they make their first API call.
 public struct SnabbleAPIConfig {
     /// the appID assigned by snabble
@@ -64,7 +64,19 @@ public extension Notification.Name {
     static var metadataLoaded = Notification.Name(rawValue: "io.snabble.metadataLoaded")
 }
 
+/**
+ * The main entry point for the SnabbleSDK.
+ *
+ * Use `SnabbleAPI.setup(_:, completion:)` to initialize Snabble.
+ */
 public enum SnabbleAPI {
+
+    /**
+     * Environment in which the SDK should work
+     *
+     * Possible values are `testing`, `staging` and `production`.
+     * `production` is the default in the sdk
+     */
     public enum Environment: String, CaseIterable, Equatable {
         case testing
         case staging
@@ -91,10 +103,21 @@ public enum SnabbleAPI {
         }
     }
 
-    public private(set) static var config = SnabbleAPIConfig.none
+    private(set) static var config = SnabbleAPIConfig.none
     private(set) static var tokenRegistry = TokenRegistry(appId: "", secret: "")
+
     static var metadata = Metadata.none {
         didSet {
+            for project in metadata.projects {
+                project.codeTemplates.forEach {
+                    CodeMatcher.addTemplate(project.id, $0.id, $0.template)
+                }
+
+                project.priceOverrideCodes?.forEach {
+                    CodeMatcher.addTemplate(project.id, $0.id, $0.template)
+                }
+            }
+
             NotificationCenter.default.post(name: .metadataLoaded, object: nil)
         }
     }
@@ -102,35 +125,48 @@ public enum SnabbleAPI {
 
     private static var providerPool = [Identifier<Project>: ProductProvider]()
 
-    public static var certificates: [GatewayCertificate] {
+    /// Gateway certificates for payment routes
+    static var certificates: [GatewayCertificate] {
         return self.metadata.gatewayCertificates
     }
 
+    /// Available projects after a successful setup
     public static var projects: [Project] {
         return self.metadata.projects
     }
 
+    /// Additional information provided by Snabble
     public static var flags: Flags {
         return self.metadata.flags
     }
 
+    /// API links for snabble features
     public static var links: MetadataLinks {
         return self.metadata.links
     }
 
+    /// Terms of Use for the Snabble App
     public static var terms: Terms? {
         return self.metadata.terms
     }
 
+    /// Are used to combine multiple projects
     public static var brands: [Brand] {
         return self.metadata.brands ?? []
     }
 
+    /// Finds project for a given id
+    /// - Parameter projectId: matching id
+    /// - Returns: `Project` or `nil` if none was found
     public static func project(for projectId: Identifier<Project>) -> Project? {
         return self.metadata.projects.first { $0.id == projectId }
     }
 
-    public static func setup(_ config: SnabbleAPIConfig, completion: @escaping () -> Void ) {
+    /// First method to be called to initialize of the `SnabbleSDK`
+    /// - Parameters:
+    ///   - config: `SnabbleAPIConfig` with at least an `appId` and a `secret`
+    ///   - completion: CompletionHandler is called as soon as everything is finished
+    public static func setup(config: SnabbleAPIConfig, completion: @escaping () -> Void ) {
         self.config = config
         self.config.useCertificatePinning = !self.debugMode || config.useCertificatePinning
 
@@ -143,14 +179,16 @@ public enum SnabbleAPI {
 
         if let metadataPath = config.seedMetadata, self.metadata.projects.isEmpty {
             if let metadata = Metadata.readResource(metadataPath) {
-                self.setMetadata(metadata)
+                self.metadata = metadata
             }
         }
 
-        self.loadMetadata(completion: completion)
+        self.update(completion: completion)
     }
 
-    public static func loadMetadata(completion: @escaping () -> Void ) {
+    /// update Snabble
+    /// - Parameter completion: completionHandler informs about the status
+    public static func update(completion: @escaping () -> Void ) {
         let bundleVersion = Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String ?? "0.0"
         let appVersion = config.appVersion ?? bundleVersion
         let version = appVersion.addingPercentEncoding(withAllowedCharacters: .urlPathAllowed) ?? appVersion
@@ -158,7 +196,7 @@ public enum SnabbleAPI {
 
         Metadata.load(from: metadataURL) { metadata in
             if let metadata = metadata {
-                self.setMetadata(metadata)
+                self.metadata = metadata
             }
 
             let metadataLoaded = {
@@ -176,20 +214,6 @@ public enum SnabbleAPI {
                 }
             } else {
                 metadataLoaded()
-            }
-        }
-    }
-
-    private static func setMetadata(_ metadata: Metadata) {
-        self.metadata = metadata
-
-        for project in metadata.projects {
-            project.codeTemplates.forEach {
-                CodeMatcher.addTemplate(project.id, $0.id, $0.template)
-            }
-
-            project.priceOverrideCodes?.forEach {
-                CodeMatcher.addTemplate(project.id, $0.id, $0.template)
             }
         }
     }
@@ -251,10 +275,9 @@ public enum SnabbleAPI {
         }
     }
 
-    public static func getToken(for project: Project, completion: @escaping (String?) -> Void ) {
-        self.tokenRegistry.getToken(for: project, completion: completion)
-    }
-
+    /// Product Provider for a project
+    /// - Parameter project: `Project` associated to the product provider
+    /// - Returns: `ProductProvider` to retrieve products
     public static func productProvider(for project: Project) -> ProductProvider {
         assert(!project.id.rawValue.isEmpty && project.id != Project.none.id, "empty projects don't have a product provider")
         if let provider = providerPool[project.id] {
@@ -266,36 +289,62 @@ public enum SnabbleAPI {
         }
     }
 
-    public static func removeDatabase(for project: Project) {
+    /// Removes database for a project
+    ///
+    ///  Restart the app after removing a database
+    /// - Warning: For debugging only
+    /// - Parameter project: `Project` of the database to be deleted
+    public static func removeDatabase(of project: Project) {
         let provider = productProvider(for: project)
         provider.removeDatabase()
         providerPool[project.id] = nil
     }
 }
 
+/// SnabbleSDK application user identification
+///
+/// A plain text username and password combination.
+/// - Important: It contains a sensitve data. Be careful when you store it.
 public struct AppUserId {
-    public let userId: String
-    let secret: String
+    /// the `userId` of the `AppUserId`
+    public let value: String
 
-    public init(userId: String, secret: String) {
-        self.userId = userId
+    /// an opaque information for the backend
+    public let secret: String
+
+    /// A formatted string that specifies the components of the `AppUserId`.
+    ///
+    /// The string representation always has two components separated by a colon. The first is the `value` and last is the `secret`
+    public var stringRepresentation: String {
+        "\(value):\(secret)"
+    }
+
+    /// initialize an `AppUserId` with a received `value` and `secret`
+    /// - Parameters:
+    ///   - value: the actual information of the `userId`
+    ///   - secret: an opaque information for the backend
+    public init(value: String, secret: String) {
+        self.value = value
         self.secret = secret
     }
 
-    public init?(_ string: String?) {
-        guard
-            let components = string?.split(separator: ":"),
-            components.count == 2
-        else {
+    /**
+     An optional initializer with a valid `stringRepresentation` value
+
+     `value` and `secret` must be separated by a colon.
+
+     - Precondition:
+        - `value` is the first part and `secret` the second.
+        - Only two elements allowed after split by colon
+     */
+    public init?(stringRepresentation: String) {
+        let components = stringRepresentation.split(separator: ":")
+        guard components.count == 2 else {
             return nil
         }
 
-        self.userId = String(components[0])
-        self.secret = String(components[1])
-    }
-
-    public var combined: String {
-        return "\(self.userId):\(self.secret)"
+        value = String(components[0])
+        secret = String(components[1])
     }
 }
 
@@ -305,6 +354,13 @@ extension SnabbleAPI {
     // MARK: - client id
     private static let idKey = "Snabble.api.clientId"
 
+    /**
+     SnabbleSDK client identification
+
+     Stored in the keychain. Survives an uninstallation
+
+     - Important: [Apple Developer Forum Thread 36442](https://developer.apple.com/forums/thread/36442?answerId=281900022#281900022)
+    */
     public static var clientId: String {
         let keychain = Keychain(service: service)
 
@@ -328,18 +384,28 @@ extension SnabbleAPI {
         return "Snabble.api.appUserId.\(config.environment.name).\(SnabbleAPI.config.appId)"
     }
 
+    /**
+     SnabbleSDK application user identification
+
+     Stored in the keychain. Survives an uninstallation
+
+     - Important: [Apple Developer Forum Thread 36442](https://developer.apple.com/forums/thread/36442?answerId=281900022#281900022)
+    */
     public static var appUserId: AppUserId? {
         get {
             let keychain = Keychain(service: service)
-            return AppUserId(keychain[appUserKey])
+            guard let stringRepresentation = keychain[appUserKey] else {
+                return nil
+            }
+            return AppUserId(stringRepresentation: stringRepresentation)
         }
 
         set {
             let keychain = Keychain(service: service)
-            keychain[appUserKey] = newValue?.combined
-            UserDefaults.standard.set(newValue?.userId, forKey: "Snabble.api.appUserId")
+            keychain[appUserKey] = newValue?.stringRepresentation
+            UserDefaults.standard.set(newValue?.value, forKey: "Snabble.api.appUserId")
 
-            self.tokenRegistry.invalidateAllTokens()
+            tokenRegistry.invalidateAllTokens()
             OrderList.clearCache()
         }
     }
@@ -481,7 +547,7 @@ extension SnabbleAPI {
             return
         }
 
-        let url = SnabbleAPI.links.appUser.href.replacingOccurrences(of: "{appUserID}", with: appUserId.userId)
+        let url = SnabbleAPI.links.appUser.href.replacingOccurrences(of: "{appUserID}", with: appUserId.value)
         project.request(.get, url, timeout: 2) { request in
             guard let request = request else {
                 return
@@ -513,7 +579,7 @@ extension SnabbleAPI {
             return
         }
 
-        let url = consents.replacingOccurrences(of: "{appUserID}", with: appUserId.userId)
+        let url = consents.replacingOccurrences(of: "{appUserID}", with: appUserId.value)
 
         let termsVersion = TermsVersion(version: version)
         project.request(.post, url, body: termsVersion) { request in
