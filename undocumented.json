@@ -618,55 +618,6 @@
     },
     {
       "file": "/Users/runner/work/iOS-SDK/iOS-SDK/Snabble/Core/API/SnabbleAPI.swift",
-      "line": 9,
-      "symbol": "SnabbleAPI",
-      "symbol_kind": "source.lang.swift.decl.extension",
-      "warning": "undocumented"
-    },
-    {
-      "file": "/Users/runner/work/iOS-SDK/iOS-SDK/Snabble/Core/API/SnabbleAPI.swift",
-      "line": 9,
-      "symbol": "SnabbleAPI",
-      "symbol_kind": "source.lang.swift.decl.extension",
-      "warning": "undocumented"
-    },
-    {
-      "file": "/Users/runner/work/iOS-SDK/iOS-SDK/Snabble/Core/API/SnabbleAPI.swift",
-      "line": 9,
-      "symbol": "SnabbleAPI",
-      "symbol_kind": "source.lang.swift.decl.extension",
-      "warning": "undocumented"
-    },
-    {
-      "file": "/Users/runner/work/iOS-SDK/iOS-SDK/Snabble/Core/API/SnabbleAPI.swift",
-      "line": 12,
-      "symbol": "SnabbleAPI",
-      "symbol_kind": "source.lang.swift.decl.extension",
-      "warning": "undocumented"
-    },
-    {
-      "file": "/Users/runner/work/iOS-SDK/iOS-SDK/Snabble/Core/API/SnabbleAPI.swift",
-      "line": 12,
-      "symbol": "SnabbleAPI",
-      "symbol_kind": "source.lang.swift.decl.extension",
-      "warning": "undocumented"
-    },
-    {
-      "file": "/Users/runner/work/iOS-SDK/iOS-SDK/Snabble/Core/API/SnabbleAPI.swift",
-      "line": 12,
-      "symbol": "SnabbleAPI",
-      "symbol_kind": "source.lang.swift.decl.extension",
-      "warning": "undocumented"
-    },
-    {
-      "file": "/Users/runner/work/iOS-SDK/iOS-SDK/Snabble/Core/API/SnabbleAPI.swift",
-      "line": 12,
-      "symbol": "SnabbleAPI",
-      "symbol_kind": "source.lang.swift.decl.extension",
-      "warning": "undocumented"
-    },
-    {
-      "file": "/Users/runner/work/iOS-SDK/iOS-SDK/Snabble/Core/API/SnabbleAPI.swift",
       "line": 47,
       "symbol": "SnabbleAPIConfig.initialSQL",
       "symbol_kind": "source.lang.swift.decl.var.instance",
@@ -695,226 +646,254 @@
     },
     {
       "file": "/Users/runner/work/iOS-SDK/iOS-SDK/Snabble/Core/API/SnabbleAPI.swift",
-      "line": 49,
-      "symbol": "SnabbleAPIConfig.init(appId:baseUrl:secret:)",
-      "symbol_kind": "source.lang.swift.decl.function.method.instance",
-      "warning": "undocumented"
-    },
-    {
-      "file": "/Users/runner/work/iOS-SDK/iOS-SDK/Snabble/Core/API/SnabbleAPI.swift",
-      "line": 49,
-      "symbol": "SnabbleAPIConfig.init(appId:baseUrl:secret:)",
-      "symbol_kind": "source.lang.swift.decl.function.method.instance",
-      "warning": "undocumented"
-    },
-    {
-      "file": "/Users/runner/work/iOS-SDK/iOS-SDK/Snabble/Core/API/SnabbleAPI.swift",
-      "line": 49,
-      "symbol": "SnabbleAPIConfig.init(appId:baseUrl:secret:)",
-      "symbol_kind": "source.lang.swift.decl.function.method.instance",
-      "warning": "undocumented"
-    },
-    {
-      "file": "/Users/runner/work/iOS-SDK/iOS-SDK/Snabble/Core/API/SnabbleAPI.swift",
-      "line": 49,
-      "symbol": "SnabbleAPIConfig.init(appId:baseUrl:secret:)",
-      "symbol_kind": "source.lang.swift.decl.function.method.instance",
-      "warning": "undocumented"
-    },
-    {
-      "file": "/Users/runner/work/iOS-SDK/iOS-SDK/Snabble/Core/API/SnabbleAPI.swift",
-      "line": 59,
+      "line": 64,
       "symbol": "Notification.Name.metadataLoaded",
       "symbol_kind": "source.lang.swift.decl.var.static",
       "warning": "undocumented"
     },
     {
       "file": "/Users/runner/work/iOS-SDK/iOS-SDK/Snabble/Core/API/SnabbleAPI.swift",
-      "line": 59,
+      "line": 64,
       "symbol": "Notification.Name.metadataLoaded",
       "symbol_kind": "source.lang.swift.decl.var.static",
       "warning": "undocumented"
     },
     {
       "file": "/Users/runner/work/iOS-SDK/iOS-SDK/Snabble/Core/API/SnabbleAPI.swift",
-      "line": 59,
+      "line": 64,
       "symbol": "Notification.Name.metadataLoaded",
       "symbol_kind": "source.lang.swift.decl.var.static",
       "warning": "undocumented"
     },
     {
       "file": "/Users/runner/work/iOS-SDK/iOS-SDK/Snabble/Core/API/SnabbleAPI.swift",
-      "line": 59,
+      "line": 64,
       "symbol": "Notification.Name.metadataLoaded",
       "symbol_kind": "source.lang.swift.decl.var.static",
       "warning": "undocumented"
     },
     {
       "file": "/Users/runner/work/iOS-SDK/iOS-SDK/Snabble/Core/API/SnabbleAPI.swift",
-      "line": 62,
-      "symbol": "SnabbleAPI",
-      "symbol_kind": "source.lang.swift.decl.enum",
+      "line": 81,
+      "symbol": "SnabbleAPI.Environment.testing",
+      "symbol_kind": "source.lang.swift.decl.enumelement",
       "warning": "undocumented"
     },
     {
       "file": "/Users/runner/work/iOS-SDK/iOS-SDK/Snabble/Core/API/SnabbleAPI.swift",
-      "line": 62,
-      "symbol": "SnabbleAPI",
-      "symbol_kind": "source.lang.swift.decl.enum",
+      "line": 81,
+      "symbol": "SnabbleAPI.Environment.testing",
+      "symbol_kind": "source.lang.swift.decl.enumelement",
       "warning": "undocumented"
     },
     {
       "file": "/Users/runner/work/iOS-SDK/iOS-SDK/Snabble/Core/API/SnabbleAPI.swift",
-      "line": 62,
-      "symbol": "SnabbleAPI",
-      "symbol_kind": "source.lang.swift.decl.enum",
+      "line": 81,
+      "symbol": "SnabbleAPI.Environment.testing",
+      "symbol_kind": "source.lang.swift.decl.enumelement",
       "warning": "undocumented"
     },
     {
       "file": "/Users/runner/work/iOS-SDK/iOS-SDK/Snabble/Core/API/SnabbleAPI.swift",
-      "line": 62,
-      "symbol": "SnabbleAPI",
-      "symbol_kind": "source.lang.swift.decl.enum",
+      "line": 81,
+      "symbol": "SnabbleAPI.Environment.testing",
+      "symbol_kind": "source.lang.swift.decl.enumelement",
       "warning": "undocumented"
     },
     {
       "file": "/Users/runner/work/iOS-SDK/iOS-SDK/Snabble/Core/API/SnabbleAPI.swift",
-      "line": 245,
-      "symbol": "AppUserId",
-      "symbol_kind": "source.lang.swift.decl.struct",
+      "line": 82,
+      "symbol": "SnabbleAPI.Environment.staging",
+      "symbol_kind": "source.lang.swift.decl.enumelement",
       "warning": "undocumented"
     },
     {
       "file": "/Users/runner/work/iOS-SDK/iOS-SDK/Snabble/Core/API/SnabbleAPI.swift",
-      "line": 245,
-      "symbol": "AppUserId",
-      "symbol_kind": "source.lang.swift.decl.struct",
+      "line": 82,
+      "symbol": "SnabbleAPI.Environment.staging",
+      "symbol_kind": "source.lang.swift.decl.enumelement",
       "warning": "undocumented"
     },
     {
       "file": "/Users/runner/work/iOS-SDK/iOS-SDK/Snabble/Core/API/SnabbleAPI.swift",
-      "line": 245,
-      "symbol": "AppUserId",
-      "symbol_kind": "source.lang.swift.decl.struct",
+      "line": 82,
+      "symbol": "SnabbleAPI.Environment.staging",
+      "symbol_kind": "source.lang.swift.decl.enumelement",
       "warning": "undocumented"
     },
     {
       "file": "/Users/runner/work/iOS-SDK/iOS-SDK/Snabble/Core/API/SnabbleAPI.swift",
-      "line": 245,
-      "symbol": "AppUserId",
-      "symbol_kind": "source.lang.swift.decl.struct",
+      "line": 82,
+      "symbol": "SnabbleAPI.Environment.staging",
+      "symbol_kind": "source.lang.swift.decl.enumelement",
       "warning": "undocumented"
     },
     {
       "file": "/Users/runner/work/iOS-SDK/iOS-SDK/Snabble/Core/API/SnabbleAPI.swift",
-      "line": 271,
-      "symbol": "SnabbleAPI",
-      "symbol_kind": "source.lang.swift.decl.extension",
+      "line": 83,
+      "symbol": "SnabbleAPI.Environment.production",
+      "symbol_kind": "source.lang.swift.decl.enumelement",
       "warning": "undocumented"
     },
     {
       "file": "/Users/runner/work/iOS-SDK/iOS-SDK/Snabble/Core/API/SnabbleAPI.swift",
-      "line": 271,
-      "symbol": "SnabbleAPI",
-      "symbol_kind": "source.lang.swift.decl.extension",
+      "line": 83,
+      "symbol": "SnabbleAPI.Environment.production",
+      "symbol_kind": "source.lang.swift.decl.enumelement",
       "warning": "undocumented"
     },
     {
       "file": "/Users/runner/work/iOS-SDK/iOS-SDK/Snabble/Core/API/SnabbleAPI.swift",
-      "line": 271,
-      "symbol": "SnabbleAPI",
-      "symbol_kind": "source.lang.swift.decl.extension",
+      "line": 83,
+      "symbol": "SnabbleAPI.Environment.production",
+      "symbol_kind": "source.lang.swift.decl.enumelement",
       "warning": "undocumented"
     },
     {
       "file": "/Users/runner/work/iOS-SDK/iOS-SDK/Snabble/Core/API/SnabbleAPI.swift",
-      "line": 271,
-      "symbol": "SnabbleAPI",
-      "symbol_kind": "source.lang.swift.decl.extension",
+      "line": 83,
+      "symbol": "SnabbleAPI.Environment.production",
+      "symbol_kind": "source.lang.swift.decl.enumelement",
       "warning": "undocumented"
     },
     {
       "file": "/Users/runner/work/iOS-SDK/iOS-SDK/Snabble/Core/API/SnabbleAPI.swift",
-      "line": 317,
-      "symbol": "SnabbleAPI",
-      "symbol_kind": "source.lang.swift.decl.extension",
+      "line": 85,
+      "symbol": "SnabbleAPI.Environment.urlString",
+      "symbol_kind": "source.lang.swift.decl.var.instance",
       "warning": "undocumented"
     },
     {
       "file": "/Users/runner/work/iOS-SDK/iOS-SDK/Snabble/Core/API/SnabbleAPI.swift",
-      "line": 317,
-      "symbol": "SnabbleAPI",
-      "symbol_kind": "source.lang.swift.decl.extension",
+      "line": 85,
+      "symbol": "SnabbleAPI.Environment.urlString",
+      "symbol_kind": "source.lang.swift.decl.var.instance",
       "warning": "undocumented"
     },
     {
       "file": "/Users/runner/work/iOS-SDK/iOS-SDK/Snabble/Core/API/SnabbleAPI.swift",
-      "line": 317,
-      "symbol": "SnabbleAPI",
-      "symbol_kind": "source.lang.swift.decl.extension",
+      "line": 85,
+      "symbol": "SnabbleAPI.Environment.urlString",
+      "symbol_kind": "source.lang.swift.decl.var.instance",
       "warning": "undocumented"
     },
     {
       "file": "/Users/runner/work/iOS-SDK/iOS-SDK/Snabble/Core/API/SnabbleAPI.swift",
-      "line": 317,
-      "symbol": "SnabbleAPI",
-      "symbol_kind": "source.lang.swift.decl.extension",
+      "line": 85,
+      "symbol": "SnabbleAPI.Environment.urlString",
+      "symbol_kind": "source.lang.swift.decl.var.instance",
       "warning": "undocumented"
     },
     {
       "file": "/Users/runner/work/iOS-SDK/iOS-SDK/Snabble/Core/API/SnabbleAPI.swift",
-      "line": 378,
-      "symbol": "SnabbleAPI",
-      "symbol_kind": "source.lang.swift.decl.extension",
+      "line": 96,
+      "symbol": "SnabbleAPI.Environment.name",
+      "symbol_kind": "source.lang.swift.decl.var.instance",
       "warning": "undocumented"
     },
     {
       "file": "/Users/runner/work/iOS-SDK/iOS-SDK/Snabble/Core/API/SnabbleAPI.swift",
-      "line": 378,
-      "symbol": "SnabbleAPI",
-      "symbol_kind": "source.lang.swift.decl.extension",
+      "line": 96,
+      "symbol": "SnabbleAPI.Environment.name",
+      "symbol_kind": "source.lang.swift.decl.var.instance",
       "warning": "undocumented"
     },
     {
       "file": "/Users/runner/work/iOS-SDK/iOS-SDK/Snabble/Core/API/SnabbleAPI.swift",
-      "line": 378,
-      "symbol": "SnabbleAPI",
-      "symbol_kind": "source.lang.swift.decl.extension",
+      "line": 96,
+      "symbol": "SnabbleAPI.Environment.name",
+      "symbol_kind": "source.lang.swift.decl.var.instance",
       "warning": "undocumented"
     },
     {
       "file": "/Users/runner/work/iOS-SDK/iOS-SDK/Snabble/Core/API/SnabbleAPI.swift",
-      "line": 378,
-      "symbol": "SnabbleAPI",
-      "symbol_kind": "source.lang.swift.decl.extension",
+      "line": 96,
+      "symbol": "SnabbleAPI.Environment.name",
+      "symbol_kind": "source.lang.swift.decl.var.instance",
       "warning": "undocumented"
     },
     {
       "file": "/Users/runner/work/iOS-SDK/iOS-SDK/Snabble/Core/API/SnabbleAPI.swift",
-      "line": 431,
-      "symbol": "SnabbleAPI",
-      "symbol_kind": "source.lang.swift.decl.extension",
+      "line": 415,
+      "symbol": "SnabbleAPI.urlFor(_:)",
+      "symbol_kind": "source.lang.swift.decl.function.method.static",
       "warning": "undocumented"
     },
     {
       "file": "/Users/runner/work/iOS-SDK/iOS-SDK/Snabble/Core/API/SnabbleAPI.swift",
-      "line": 431,
-      "symbol": "SnabbleAPI",
-      "symbol_kind": "source.lang.swift.decl.extension",
+      "line": 415,
+      "symbol": "SnabbleAPI.urlFor(_:)",
+      "symbol_kind": "source.lang.swift.decl.function.method.static",
       "warning": "undocumented"
     },
     {
       "file": "/Users/runner/work/iOS-SDK/iOS-SDK/Snabble/Core/API/SnabbleAPI.swift",
-      "line": 431,
-      "symbol": "SnabbleAPI",
-      "symbol_kind": "source.lang.swift.decl.extension",
+      "line": 415,
+      "symbol": "SnabbleAPI.urlFor(_:)",
+      "symbol_kind": "source.lang.swift.decl.function.method.static",
       "warning": "undocumented"
     },
     {
       "file": "/Users/runner/work/iOS-SDK/iOS-SDK/Snabble/Core/API/SnabbleAPI.swift",
-      "line": 431,
-      "symbol": "SnabbleAPI",
-      "symbol_kind": "source.lang.swift.decl.extension",
+      "line": 415,
+      "symbol": "SnabbleAPI.urlFor(_:)",
+      "symbol_kind": "source.lang.swift.decl.function.method.static",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/runner/work/iOS-SDK/iOS-SDK/Snabble/Core/API/SnabbleAPI.swift",
+      "line": 458,
+      "symbol": "SnabbleAPI.request(url:timeout:json:)",
+      "symbol_kind": "source.lang.swift.decl.function.method.static",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/runner/work/iOS-SDK/iOS-SDK/Snabble/Core/API/SnabbleAPI.swift",
+      "line": 458,
+      "symbol": "SnabbleAPI.request(url:timeout:json:)",
+      "symbol_kind": "source.lang.swift.decl.function.method.static",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/runner/work/iOS-SDK/iOS-SDK/Snabble/Core/API/SnabbleAPI.swift",
+      "line": 458,
+      "symbol": "SnabbleAPI.request(url:timeout:json:)",
+      "symbol_kind": "source.lang.swift.decl.function.method.static",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/runner/work/iOS-SDK/iOS-SDK/Snabble/Core/API/SnabbleAPI.swift",
+      "line": 458,
+      "symbol": "SnabbleAPI.request(url:timeout:json:)",
+      "symbol_kind": "source.lang.swift.decl.function.method.static",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/runner/work/iOS-SDK/iOS-SDK/Snabble/Core/API/SnabbleAPI.swift",
+      "line": 573,
+      "symbol": "SnabbleAPI.saveTermsConsent(_:completion:)",
+      "symbol_kind": "source.lang.swift.decl.function.method.static",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/runner/work/iOS-SDK/iOS-SDK/Snabble/Core/API/SnabbleAPI.swift",
+      "line": 573,
+      "symbol": "SnabbleAPI.saveTermsConsent(_:completion:)",
+      "symbol_kind": "source.lang.swift.decl.function.method.static",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/runner/work/iOS-SDK/iOS-SDK/Snabble/Core/API/SnabbleAPI.swift",
+      "line": 573,
+      "symbol": "SnabbleAPI.saveTermsConsent(_:completion:)",
+      "symbol_kind": "source.lang.swift.decl.function.method.static",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/runner/work/iOS-SDK/iOS-SDK/Snabble/Core/API/SnabbleAPI.swift",
+      "line": 573,
+      "symbol": "SnabbleAPI.saveTermsConsent(_:completion:)",
+      "symbol_kind": "source.lang.swift.decl.function.method.static",
       "warning": "undocumented"
     },
     {
@@ -3936,308 +3915,308 @@
     },
     {
       "file": "/Users/runner/work/iOS-SDK/iOS-SDK/Snabble/Core/Metadata/Project.swift",
-      "line": 67,
+      "line": 70,
       "symbol": "RoundingMode",
       "symbol_kind": "source.lang.swift.decl.enum",
       "warning": "undocumented"
     },
     {
       "file": "/Users/runner/work/iOS-SDK/iOS-SDK/Snabble/Core/Metadata/Project.swift",
-      "line": 67,
+      "line": 70,
       "symbol": "RoundingMode",
       "symbol_kind": "source.lang.swift.decl.enum",
       "warning": "undocumented"
     },
     {
       "file": "/Users/runner/work/iOS-SDK/iOS-SDK/Snabble/Core/Metadata/Project.swift",
-      "line": 67,
+      "line": 70,
       "symbol": "RoundingMode",
       "symbol_kind": "source.lang.swift.decl.enum",
       "warning": "undocumented"
     },
     {
       "file": "/Users/runner/work/iOS-SDK/iOS-SDK/Snabble/Core/Metadata/Project.swift",
-      "line": 67,
+      "line": 70,
       "symbol": "RoundingMode",
       "symbol_kind": "source.lang.swift.decl.enum",
       "warning": "undocumented"
     },
     {
       "file": "/Users/runner/work/iOS-SDK/iOS-SDK/Snabble/Core/Metadata/Project.swift",
-      "line": 88,
+      "line": 91,
       "symbol": "QRCodeFormat",
       "symbol_kind": "source.lang.swift.decl.enum",
       "warning": "undocumented"
     },
     {
       "file": "/Users/runner/work/iOS-SDK/iOS-SDK/Snabble/Core/Metadata/Project.swift",
-      "line": 88,
+      "line": 91,
       "symbol": "QRCodeFormat",
       "symbol_kind": "source.lang.swift.decl.enum",
       "warning": "undocumented"
     },
     {
       "file": "/Users/runner/work/iOS-SDK/iOS-SDK/Snabble/Core/Metadata/Project.swift",
-      "line": 88,
+      "line": 91,
       "symbol": "QRCodeFormat",
       "symbol_kind": "source.lang.swift.decl.enum",
       "warning": "undocumented"
     },
     {
       "file": "/Users/runner/work/iOS-SDK/iOS-SDK/Snabble/Core/Metadata/Project.swift",
-      "line": 88,
+      "line": 91,
       "symbol": "QRCodeFormat",
       "symbol_kind": "source.lang.swift.decl.enum",
       "warning": "undocumented"
     },
     {
       "file": "/Users/runner/work/iOS-SDK/iOS-SDK/Snabble/Core/Metadata/Project.swift",
-      "line": 108,
+      "line": 111,
       "symbol": "QRCodeConfig",
       "symbol_kind": "source.lang.swift.decl.struct",
       "warning": "undocumented"
     },
     {
       "file": "/Users/runner/work/iOS-SDK/iOS-SDK/Snabble/Core/Metadata/Project.swift",
-      "line": 108,
+      "line": 111,
       "symbol": "QRCodeConfig",
       "symbol_kind": "source.lang.swift.decl.struct",
       "warning": "undocumented"
     },
     {
       "file": "/Users/runner/work/iOS-SDK/iOS-SDK/Snabble/Core/Metadata/Project.swift",
-      "line": 108,
+      "line": 111,
       "symbol": "QRCodeConfig",
       "symbol_kind": "source.lang.swift.decl.struct",
       "warning": "undocumented"
     },
     {
       "file": "/Users/runner/work/iOS-SDK/iOS-SDK/Snabble/Core/Metadata/Project.swift",
-      "line": 108,
+      "line": 111,
       "symbol": "QRCodeConfig",
       "symbol_kind": "source.lang.swift.decl.struct",
       "warning": "undocumented"
     },
     {
       "file": "/Users/runner/work/iOS-SDK/iOS-SDK/Snabble/Core/Metadata/Project.swift",
-      "line": 209,
+      "line": 212,
       "symbol": "ScanFormat",
       "symbol_kind": "source.lang.swift.decl.enum",
       "warning": "undocumented"
     },
     {
       "file": "/Users/runner/work/iOS-SDK/iOS-SDK/Snabble/Core/Metadata/Project.swift",
-      "line": 209,
+      "line": 212,
       "symbol": "ScanFormat",
       "symbol_kind": "source.lang.swift.decl.enum",
       "warning": "undocumented"
     },
     {
       "file": "/Users/runner/work/iOS-SDK/iOS-SDK/Snabble/Core/Metadata/Project.swift",
-      "line": 209,
+      "line": 212,
       "symbol": "ScanFormat",
       "symbol_kind": "source.lang.swift.decl.enum",
       "warning": "undocumented"
     },
     {
       "file": "/Users/runner/work/iOS-SDK/iOS-SDK/Snabble/Core/Metadata/Project.swift",
-      "line": 209,
+      "line": 212,
       "symbol": "ScanFormat",
       "symbol_kind": "source.lang.swift.decl.enum",
       "warning": "undocumented"
     },
     {
       "file": "/Users/runner/work/iOS-SDK/iOS-SDK/Snabble/Core/Metadata/Project.swift",
-      "line": 227,
+      "line": 230,
       "symbol": "BarcodeDetectorType",
       "symbol_kind": "source.lang.swift.decl.enum",
       "warning": "undocumented"
     },
     {
       "file": "/Users/runner/work/iOS-SDK/iOS-SDK/Snabble/Core/Metadata/Project.swift",
-      "line": 227,
+      "line": 230,
       "symbol": "BarcodeDetectorType",
       "symbol_kind": "source.lang.swift.decl.enum",
       "warning": "undocumented"
     },
     {
       "file": "/Users/runner/work/iOS-SDK/iOS-SDK/Snabble/Core/Metadata/Project.swift",
-      "line": 227,
+      "line": 230,
       "symbol": "BarcodeDetectorType",
       "symbol_kind": "source.lang.swift.decl.enum",
       "warning": "undocumented"
     },
     {
       "file": "/Users/runner/work/iOS-SDK/iOS-SDK/Snabble/Core/Metadata/Project.swift",
-      "line": 227,
+      "line": 230,
       "symbol": "BarcodeDetectorType",
       "symbol_kind": "source.lang.swift.decl.enum",
       "warning": "undocumented"
     },
     {
       "file": "/Users/runner/work/iOS-SDK/iOS-SDK/Snabble/Core/Metadata/Project.swift",
-      "line": 234,
+      "line": 237,
       "symbol": "CustomerCardInfo",
       "symbol_kind": "source.lang.swift.decl.struct",
       "warning": "undocumented"
     },
     {
       "file": "/Users/runner/work/iOS-SDK/iOS-SDK/Snabble/Core/Metadata/Project.swift",
-      "line": 234,
+      "line": 237,
       "symbol": "CustomerCardInfo",
       "symbol_kind": "source.lang.swift.decl.struct",
       "warning": "undocumented"
     },
     {
       "file": "/Users/runner/work/iOS-SDK/iOS-SDK/Snabble/Core/Metadata/Project.swift",
-      "line": 234,
+      "line": 237,
       "symbol": "CustomerCardInfo",
       "symbol_kind": "source.lang.swift.decl.struct",
       "warning": "undocumented"
     },
     {
       "file": "/Users/runner/work/iOS-SDK/iOS-SDK/Snabble/Core/Metadata/Project.swift",
-      "line": 234,
+      "line": 237,
       "symbol": "CustomerCardInfo",
       "symbol_kind": "source.lang.swift.decl.struct",
       "warning": "undocumented"
     },
     {
       "file": "/Users/runner/work/iOS-SDK/iOS-SDK/Snabble/Core/Metadata/Project.swift",
-      "line": 244,
+      "line": 247,
       "symbol": "TemplateDefinition",
       "symbol_kind": "source.lang.swift.decl.struct",
       "warning": "undocumented"
     },
     {
       "file": "/Users/runner/work/iOS-SDK/iOS-SDK/Snabble/Core/Metadata/Project.swift",
-      "line": 244,
+      "line": 247,
       "symbol": "TemplateDefinition",
       "symbol_kind": "source.lang.swift.decl.struct",
       "warning": "undocumented"
     },
     {
       "file": "/Users/runner/work/iOS-SDK/iOS-SDK/Snabble/Core/Metadata/Project.swift",
-      "line": 244,
+      "line": 247,
       "symbol": "TemplateDefinition",
       "symbol_kind": "source.lang.swift.decl.struct",
       "warning": "undocumented"
     },
     {
       "file": "/Users/runner/work/iOS-SDK/iOS-SDK/Snabble/Core/Metadata/Project.swift",
-      "line": 244,
+      "line": 247,
       "symbol": "TemplateDefinition",
       "symbol_kind": "source.lang.swift.decl.struct",
       "warning": "undocumented"
     },
     {
       "file": "/Users/runner/work/iOS-SDK/iOS-SDK/Snabble/Core/Metadata/Project.swift",
-      "line": 260,
+      "line": 263,
       "symbol": "PriceOverrideCode",
       "symbol_kind": "source.lang.swift.decl.struct",
       "warning": "undocumented"
     },
     {
       "file": "/Users/runner/work/iOS-SDK/iOS-SDK/Snabble/Core/Metadata/Project.swift",
-      "line": 260,
+      "line": 263,
       "symbol": "PriceOverrideCode",
       "symbol_kind": "source.lang.swift.decl.struct",
       "warning": "undocumented"
     },
     {
       "file": "/Users/runner/work/iOS-SDK/iOS-SDK/Snabble/Core/Metadata/Project.swift",
-      "line": 260,
+      "line": 263,
       "symbol": "PriceOverrideCode",
       "symbol_kind": "source.lang.swift.decl.struct",
       "warning": "undocumented"
     },
     {
       "file": "/Users/runner/work/iOS-SDK/iOS-SDK/Snabble/Core/Metadata/Project.swift",
-      "line": 260,
+      "line": 263,
       "symbol": "PriceOverrideCode",
       "symbol_kind": "source.lang.swift.decl.struct",
       "warning": "undocumented"
     },
     {
       "file": "/Users/runner/work/iOS-SDK/iOS-SDK/Snabble/Core/Metadata/Project.swift",
-      "line": 268,
+      "line": 271,
       "symbol": "CheckoutLimits",
       "symbol_kind": "source.lang.swift.decl.struct",
       "warning": "undocumented"
     },
     {
       "file": "/Users/runner/work/iOS-SDK/iOS-SDK/Snabble/Core/Metadata/Project.swift",
-      "line": 268,
+      "line": 271,
       "symbol": "CheckoutLimits",
       "symbol_kind": "source.lang.swift.decl.struct",
       "warning": "undocumented"
     },
     {
       "file": "/Users/runner/work/iOS-SDK/iOS-SDK/Snabble/Core/Metadata/Project.swift",
-      "line": 268,
+      "line": 271,
       "symbol": "CheckoutLimits",
       "symbol_kind": "source.lang.swift.decl.struct",
       "warning": "undocumented"
     },
     {
       "file": "/Users/runner/work/iOS-SDK/iOS-SDK/Snabble/Core/Metadata/Project.swift",
-      "line": 268,
+      "line": 271,
       "symbol": "CheckoutLimits",
       "symbol_kind": "source.lang.swift.decl.struct",
       "warning": "undocumented"
     },
     {
       "file": "/Users/runner/work/iOS-SDK/iOS-SDK/Snabble/Core/Metadata/Project.swift",
-      "line": 273,
+      "line": 276,
       "symbol": "ProjectMessages",
       "symbol_kind": "source.lang.swift.decl.struct",
       "warning": "undocumented"
     },
     {
       "file": "/Users/runner/work/iOS-SDK/iOS-SDK/Snabble/Core/Metadata/Project.swift",
-      "line": 273,
+      "line": 276,
       "symbol": "ProjectMessages",
       "symbol_kind": "source.lang.swift.decl.struct",
       "warning": "undocumented"
     },
     {
       "file": "/Users/runner/work/iOS-SDK/iOS-SDK/Snabble/Core/Metadata/Project.swift",
-      "line": 273,
+      "line": 276,
       "symbol": "ProjectMessages",
       "symbol_kind": "source.lang.swift.decl.struct",
       "warning": "undocumented"
     },
     {
       "file": "/Users/runner/work/iOS-SDK/iOS-SDK/Snabble/Core/Metadata/Project.swift",
-      "line": 273,
+      "line": 276,
       "symbol": "ProjectMessages",
       "symbol_kind": "source.lang.swift.decl.struct",
       "warning": "undocumented"
     },
     {
       "file": "/Users/runner/work/iOS-SDK/iOS-SDK/Snabble/Core/Metadata/Project.swift",
-      "line": 279,
+      "line": 282,
       "symbol": "Project",
       "symbol_kind": "source.lang.swift.decl.struct",
       "warning": "undocumented"
     },
     {
       "file": "/Users/runner/work/iOS-SDK/iOS-SDK/Snabble/Core/Metadata/Project.swift",
-      "line": 279,
+      "line": 282,
       "symbol": "Project",
       "symbol_kind": "source.lang.swift.decl.struct",
       "warning": "undocumented"
     },
     {
       "file": "/Users/runner/work/iOS-SDK/iOS-SDK/Snabble/Core/Metadata/Project.swift",
-      "line": 279,
+      "line": 282,
       "symbol": "Project",
       "symbol_kind": "source.lang.swift.decl.struct",
       "warning": "undocumented"
     },
     {
       "file": "/Users/runner/work/iOS-SDK/iOS-SDK/Snabble/Core/Metadata/Project.swift",
-      "line": 279,
+      "line": 282,
       "symbol": "Project",
       "symbol_kind": "source.lang.swift.decl.struct",
       "warning": "undocumented"
@@ -8044,6 +8023,27 @@
       "warning": "undocumented"
     },
     {
+      "file": "/Users/runner/work/iOS-SDK/iOS-SDK/Snabble/UI/L10n.swift",
+      "line": 10,
+      "symbol": "SnabbleAPI.l10n(_:_:)",
+      "symbol_kind": "source.lang.swift.decl.function.method.static",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/runner/work/iOS-SDK/iOS-SDK/Snabble/UI/L10n.swift",
+      "line": 10,
+      "symbol": "SnabbleAPI.l10n(_:_:)",
+      "symbol_kind": "source.lang.swift.decl.function.method.static",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/runner/work/iOS-SDK/iOS-SDK/Snabble/UI/L10n.swift",
+      "line": 10,
+      "symbol": "SnabbleAPI.l10n(_:_:)",
+      "symbol_kind": "source.lang.swift.decl.function.method.static",
+      "warning": "undocumented"
+    },
+    {
       "file": "/Users/runner/work/iOS-SDK/iOS-SDK/Snabble/UI/Payment/ApplePay/ApplePay.swift",
       "line": 11,
       "symbol": "ApplePay",
@@ -9221,63 +9221,63 @@
     },
     {
       "file": "/Users/runner/work/iOS-SDK/iOS-SDK/Snabble/UI/Scanner/ScanningViewController.swift",
-      "line": 768,
+      "line": 780,
       "symbol": "ScanningViewController",
       "symbol_kind": "source.lang.swift.decl.extension",
       "warning": "undocumented"
     },
     {
       "file": "/Users/runner/work/iOS-SDK/iOS-SDK/Snabble/UI/Scanner/ScanningViewController.swift",
-      "line": 768,
+      "line": 780,
       "symbol": "ScanningViewController",
       "symbol_kind": "source.lang.swift.decl.extension",
       "warning": "undocumented"
     },
     {
       "file": "/Users/runner/work/iOS-SDK/iOS-SDK/Snabble/UI/Scanner/ScanningViewController.swift",
-      "line": 768,
+      "line": 780,
       "symbol": "ScanningViewController",
       "symbol_kind": "source.lang.swift.decl.extension",
       "warning": "undocumented"
     },
     {
       "file": "/Users/runner/work/iOS-SDK/iOS-SDK/Snabble/UI/Scanner/ScanningViewController.swift",
-      "line": 785,
+      "line": 797,
       "symbol": "ScanningViewController",
       "symbol_kind": "source.lang.swift.decl.extension",
       "warning": "undocumented"
     },
     {
       "file": "/Users/runner/work/iOS-SDK/iOS-SDK/Snabble/UI/Scanner/ScanningViewController.swift",
-      "line": 785,
+      "line": 797,
       "symbol": "ScanningViewController",
       "symbol_kind": "source.lang.swift.decl.extension",
       "warning": "undocumented"
     },
     {
       "file": "/Users/runner/work/iOS-SDK/iOS-SDK/Snabble/UI/Scanner/ScanningViewController.swift",
-      "line": 785,
+      "line": 797,
       "symbol": "ScanningViewController",
       "symbol_kind": "source.lang.swift.decl.extension",
       "warning": "undocumented"
     },
     {
       "file": "/Users/runner/work/iOS-SDK/iOS-SDK/Snabble/UI/Scanner/ScanningViewController.swift",
-      "line": 799,
+      "line": 811,
       "symbol": "ScanningViewController",
       "symbol_kind": "source.lang.swift.decl.extension",
       "warning": "undocumented"
     },
     {
       "file": "/Users/runner/work/iOS-SDK/iOS-SDK/Snabble/UI/Scanner/ScanningViewController.swift",
-      "line": 799,
+      "line": 811,
       "symbol": "ScanningViewController",
       "symbol_kind": "source.lang.swift.decl.extension",
       "warning": "undocumented"
     },
     {
       "file": "/Users/runner/work/iOS-SDK/iOS-SDK/Snabble/UI/Scanner/ScanningViewController.swift",
-      "line": 799,
+      "line": 811,
       "symbol": "ScanningViewController",
       "symbol_kind": "source.lang.swift.decl.extension",
       "warning": "undocumented"
