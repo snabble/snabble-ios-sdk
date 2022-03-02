@@ -394,10 +394,10 @@ extension SnabbleAPI {
     public static var appUserId: AppUserId? {
         get {
             let keychain = Keychain(service: service)
-            guard let authorization = keychain[appUserKey] else {
+            guard let stringRepresentation = keychain[appUserKey] else {
                 return nil
             }
-            return AppUserId(authorization: authorization)
+            return AppUserId(stringRepresentation: stringRepresentation)
         }
 
         set {
