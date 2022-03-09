@@ -23,6 +23,9 @@ final class PaymentMethodListCell: UITableViewCell {
         accessoryType = .disclosureIndicator
 
         nameLabel.translatesAutoresizingMaskIntoConstraints = false
+        nameLabel.numberOfLines = 0
+        nameLabel.useDynamicFont(forTextStyle: .body)
+
         icon.translatesAutoresizingMaskIntoConstraints = false
         contentView.addSubview(nameLabel)
         contentView.addSubview(icon)
@@ -34,7 +37,11 @@ final class PaymentMethodListCell: UITableViewCell {
 
             nameLabel.leadingAnchor.constraint(equalTo: icon.trailingAnchor, constant: 16),
             nameLabel.centerYAnchor.constraint(equalTo: contentView.centerYAnchor),
-            nameLabel.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -16)
+            nameLabel.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -16),
+            nameLabel.topAnchor.constraint(greaterThanOrEqualTo: contentView.topAnchor, constant: 8),
+            nameLabel.bottomAnchor.constraint(lessThanOrEqualTo: contentView.bottomAnchor, constant: -8),
+
+            contentView.heightAnchor.constraint(greaterThanOrEqualToConstant: 44)
         ])
     }
 
