@@ -36,29 +36,34 @@ final class PaymentMethodAddCell: UITableViewCell {
         self.nameLabel = nameLabel
         self.countLabel = countLabel
 
-        countLabel.font = UIFont.systemFont(ofSize: 15, weight: .regular)
+        nameLabel.useDynamicFont(forTextStyle: .body)
+        nameLabel.numberOfLines = 0
+
+        countLabel.useDynamicFont(forTextStyle: .subheadline)
         countLabel.textColor = ColorCompatibility.systemGray2
 
         self.accessoryType = .disclosureIndicator
 
-        let noImageWidthConstraint = icon.widthAnchor.constraint(equalToConstant: 0)
-        noImageWidthConstraint.priority = .defaultHigh
-
         icon.setContentHuggingPriority(.defaultHigh, for: .horizontal)
         nameLabel.setContentHuggingPriority(.defaultLow, for: .horizontal)
+        nameLabel.setContentCompressionResistancePriority(.defaultLow, for: .horizontal)
         countLabel.setContentHuggingPriority(.defaultHigh, for: .horizontal)
         NSLayoutConstraint.activate([
             icon.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 16),
             icon.centerYAnchor.constraint(equalTo: contentView.centerYAnchor),
             icon.heightAnchor.constraint(equalToConstant: 24),
-            noImageWidthConstraint,
+            icon.widthAnchor.constraint(equalToConstant: 24),
 
             nameLabel.leadingAnchor.constraint(equalTo: icon.trailingAnchor, constant: 16),
             nameLabel.centerYAnchor.constraint(equalTo: contentView.centerYAnchor),
+            nameLabel.topAnchor.constraint(greaterThanOrEqualTo: contentView.topAnchor, constant: 8),
+            nameLabel.bottomAnchor.constraint(lessThanOrEqualTo: contentView.bottomAnchor, constant: -8),
 
             countLabel.leadingAnchor.constraint(equalTo: nameLabel.trailingAnchor, constant: 16),
             countLabel.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -8),
-            countLabel.centerYAnchor.constraint(equalTo: contentView.centerYAnchor)
+            countLabel.centerYAnchor.constraint(equalTo: contentView.centerYAnchor),
+
+            contentView.heightAnchor.constraint(greaterThanOrEqualToConstant: 44)
         ])
     }
 

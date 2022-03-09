@@ -47,7 +47,7 @@ public final class PaymentMethodListViewController: UITableViewController {
         self.navigationItem.rightBarButtonItem = addButton
 
         tableView.tableFooterView = UIView(frame: .zero)
-        tableView.rowHeight = 44
+        tableView.rowHeight = UITableView.automaticDimension
         tableView.register(PaymentMethodListCell.self, forCellReuseIdentifier: "cell")
     }
 
