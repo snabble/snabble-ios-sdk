@@ -69,7 +69,7 @@ class SampleViewController: UIViewController {
         let APPSECRET = "your-app-secret-here"
         let apiConfig = SnabbleAPIConfig(appId: APPID, secret: APPSECRET)
 
-        SnabbleAPI.setup(apiConfig) {
+        SnabbleAPI.setup(config: apiConfig) {
             // initial config parsed/loaded
             guard let project = SnabbleAPI.projects.first else {
                 fatalError("project initialization failed - make sure APPID and APPSECRET are valid")
