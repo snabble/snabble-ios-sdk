@@ -1,3 +1,5 @@
+"aldi.sued.ch.87cc7e.Snabble.Scanner.unknownBarcode" = "Produkt nicht erkannt. Du kannst oben rechts in der Suche die Artikelnummer manuell eingeben. Diese findest du auf dem Preisschild am Regal.";
+
 "release.safety.catch" = "Bitte entferne (wenn vorhanden) die Flaschenhalssicherung an der dafür vorgesehenen Station am Ausgang.";
 
 "Snabble.addDiscount" = "Rabatt eingeben";
@@ -327,6 +329,27 @@
 
 "Snabble.Save" = "Speichern";
 
+"Snabble.Scanner.Accessibility.actionHideHint" = "Hinweis dauerhaft ausblenden";
+
+"Snabble.Scanner.Accessibility.actionUnderstood" = "Verstanden";
+
+"Snabble.Scanner.Accessibility.eventBackInScanner" = "Du bist wieder im Scanner";
+
+"Snabble.Scanner.Accessibility.eventBarcodeDetected" = "Barcode erkannt";
+
+"Snabble.Scanner.Accessibility.eventMaxQuantityReached" = "Du kannst nicht mehr Artikel in den Warenkorb legen";
+
+/* Example: 3 times Banana for 3$ */
+"Snabble.Scanner.Accessibility.eventQuantityUpdate" = "%@ mal %@ für %@";
+
+"Snabble.Scanner.Accessibility.eventScannerOpened" = "Du hast den Scanner geöffnet.";
+
+"Snabble.Scanner.Accessibility.hintCartContent" = "Im Warenkorb sind %@ Artikel für %@.";
+
+"Snabble.Scanner.Accessibility.hintCartIsEmpty" = "Dein Warenkorb ist aktuell leer.";
+
+"Snabble.Scanner.Accessibility.hintPermission" = "Zum Scannen benötigen wir noch eine Berechtigung von dir.";
+
 "Snabble.Scanner.addCodeAsIs" = "%@ so hinzufügen";
 
 "Snabble.Scanner.addToCart" = "In den Warenkorb";
@@ -403,6 +426,36 @@
 "Snabble.Settings" = "Einstellungen";
 
 "Snabble.Shopping.title" = "Einkaufen";
+
+"Snabble.Shoppingcart.Accessibility.actionAdd" = "Hinzufügen";
+
+"Snabble.Shoppingcart.Accessibility.actionDelete" = "Löschen";
+
+"Snabble.Shoppingcart.Accessibility.actionUse" = "Verwenden";
+
+"Snabble.Shoppingcart.Accessibility.cardEndsWith" = "Endet mit  %@";
+
+"Snabble.Shoppingcart.Accessibility.closeDialog" = "Dialog schließen";
+
+"Snabble.Shoppingcart.Accessibility.contextInCart" = "Im Warenkorb";
+
+"Snabble.Shoppingcart.Accessibility.decreaseQuantity" = "Anzahl verringern";
+
+"Snabble.Shoppingcart.Accessibility.descriptionForPrice" = "für %@";
+
+"Snabble.Shoppingcart.Accessibility.descriptionQuantity" = "%@ mal";
+
+"Snabble.Shoppingcart.Accessibility.descriptionWithDiscount" = "mit Rabatt";
+
+"Snabble.Shoppingcart.Accessibility.descriptionWithoutDiscount" = "ohne Rabatt";
+
+"Snabble.Shoppingcart.Accessibility.increaseQuantity" = "Anzahl erhöhen";
+
+"Snabble.Shoppingcart.Accessibility.paymentMethod" = "Zahlungsmethode: %@";
+
+"Snabble.Shoppingcart.Accessibility.quantity" = "Anzahl";
+
+"Snabble.Shoppingcart.Accessibility.selected" = "Ausgewählt";
 
 "Snabble.Shoppingcart.articleRemoved" = "Artikel entfernt";
 

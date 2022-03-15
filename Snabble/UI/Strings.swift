@@ -476,6 +476,32 @@ public enum L10n {
       public static var unknownBarcode: String { return L10n.tr("SnabbleLocalizable", "Snabble.Scanner.unknownBarcode") }
       /// Update cart
       public static var updateCart: String { return L10n.tr("SnabbleLocalizable", "Snabble.Scanner.updateCart") }
+      public enum Accessibility {
+        /// Hide hint permanently
+        public static var actionHideHint: String { return L10n.tr("SnabbleLocalizable", "Snabble.Scanner.Accessibility.actionHideHint") }
+        /// Understood
+        public static var actionUnderstood: String { return L10n.tr("SnabbleLocalizable", "Snabble.Scanner.Accessibility.actionUnderstood") }
+        /// You are back in scanner
+        public static var eventBackInScanner: String { return L10n.tr("SnabbleLocalizable", "Snabble.Scanner.Accessibility.eventBackInScanner") }
+        /// Barcode detected
+        public static var eventBarcodeDetected: String { return L10n.tr("SnabbleLocalizable", "Snabble.Scanner.Accessibility.eventBarcodeDetected") }
+        /// You reached the maximum count of items for the cart
+        public static var eventMaxQuantityReached: String { return L10n.tr("SnabbleLocalizable", "Snabble.Scanner.Accessibility.eventMaxQuantityReached") }
+        /// %@ times %@ for %@
+        public static func eventQuantityUpdate(_ p1: Any, _ p2: Any, _ p3: Any) -> String {
+          return L10n.tr("SnabbleLocalizable", "Snabble.Scanner.Accessibility.eventQuantityUpdate", String(describing: p1), String(describing: p2), String(describing: p3))
+        }
+        /// You opened the scanner.
+        public static var eventScannerOpened: String { return L10n.tr("SnabbleLocalizable", "Snabble.Scanner.Accessibility.eventScannerOpened") }
+        /// There are %@ items for %@ in your cart.
+        public static func hintCartContent(_ p1: Any, _ p2: Any) -> String {
+          return L10n.tr("SnabbleLocalizable", "Snabble.Scanner.Accessibility.hintCartContent", String(describing: p1), String(describing: p2))
+        }
+        /// Your cart is empty.
+        public static var hintCartIsEmpty: String { return L10n.tr("SnabbleLocalizable", "Snabble.Scanner.Accessibility.hintCartIsEmpty") }
+        /// In order to scan we need a permission from you.
+        public static var hintPermission: String { return L10n.tr("SnabbleLocalizable", "Snabble.Scanner.Accessibility.hintPermission") }
+      }
       public enum BundleDialog {
         /// Choose package
         public static var headline: String { return L10n.tr("SnabbleLocalizable", "Snabble.Scanner.BundleDialog.headline") }
@@ -598,6 +624,46 @@ public enum L10n {
       }
       /// Really remove all products from your shopping cart?
       public static var removeItems: String { return L10n.tr("SnabbleLocalizable", "Snabble.Shoppingcart.removeItems") }
+      public enum Accessibility {
+        /// Add
+        public static var actionAdd: String { return L10n.tr("SnabbleLocalizable", "Snabble.Shoppingcart.Accessibility.actionAdd") }
+        /// Delete
+        public static var actionDelete: String { return L10n.tr("SnabbleLocalizable", "Snabble.Shoppingcart.Accessibility.actionDelete") }
+        /// Use
+        public static var actionUse: String { return L10n.tr("SnabbleLocalizable", "Snabble.Shoppingcart.Accessibility.actionUse") }
+        /// Ends with %@
+        public static func cardEndsWith(_ p1: Any) -> String {
+          return L10n.tr("SnabbleLocalizable", "Snabble.Shoppingcart.Accessibility.cardEndsWith", String(describing: p1))
+        }
+        /// Close dialog
+        public static var closeDialog: String { return L10n.tr("SnabbleLocalizable", "Snabble.Shoppingcart.Accessibility.closeDialog") }
+        /// In cart
+        public static var contextInCart: String { return L10n.tr("SnabbleLocalizable", "Snabble.Shoppingcart.Accessibility.contextInCart") }
+        /// Decrease quantity
+        public static var decreaseQuantity: String { return L10n.tr("SnabbleLocalizable", "Snabble.Shoppingcart.Accessibility.decreaseQuantity") }
+        /// for %@
+        public static func descriptionForPrice(_ p1: Any) -> String {
+          return L10n.tr("SnabbleLocalizable", "Snabble.Shoppingcart.Accessibility.descriptionForPrice", String(describing: p1))
+        }
+        /// %@ times
+        public static func descriptionQuantity(_ p1: Any) -> String {
+          return L10n.tr("SnabbleLocalizable", "Snabble.Shoppingcart.Accessibility.descriptionQuantity", String(describing: p1))
+        }
+        /// with discount
+        public static var descriptionWithDiscount: String { return L10n.tr("SnabbleLocalizable", "Snabble.Shoppingcart.Accessibility.descriptionWithDiscount") }
+        /// without discount
+        public static var descriptionWithoutDiscount: String { return L10n.tr("SnabbleLocalizable", "Snabble.Shoppingcart.Accessibility.descriptionWithoutDiscount") }
+        /// Increase quantity
+        public static var increaseQuantity: String { return L10n.tr("SnabbleLocalizable", "Snabble.Shoppingcart.Accessibility.increaseQuantity") }
+        /// Payment method: %@
+        public static func paymentMethod(_ p1: Any) -> String {
+          return L10n.tr("SnabbleLocalizable", "Snabble.Shoppingcart.Accessibility.paymentMethod", String(describing: p1))
+        }
+        /// Quantity
+        public static var quantity: String { return L10n.tr("SnabbleLocalizable", "Snabble.Shoppingcart.Accessibility.quantity") }
+        /// Selected
+        public static var selected: String { return L10n.tr("SnabbleLocalizable", "Snabble.Shoppingcart.Accessibility.selected") }
+      }
       public enum BuyProducts {
         /// Pay now
         public static var now: String { return L10n.tr("SnabbleLocalizable", "Snabble.Shoppingcart.buyProducts.now") }
@@ -711,6 +777,21 @@ public enum L10n {
         public static var scan: String { return L10n.tr("SnabbleLocalizable", "Snabble.saleStop.errorMsg.scan") }
         /// Sorry
         public static var title: String { return L10n.tr("SnabbleLocalizable", "Snabble.saleStop.errorMsg.title") }
+      }
+    }
+  }
+
+  public enum Aldi {
+    public enum Sued {
+      public enum Ch {
+        public enum _87cc7e {
+          public enum Snabble {
+            public enum Scanner {
+              /// Product not recognized. You can manually enter the article number in the search in the upper right corner. You can find it on the price tag on the shelf.
+              public static var unknownBarcode: String { return L10n.tr("SnabbleLocalizable", "aldi.sued.ch.87cc7e.Snabble.Scanner.unknownBarcode") }
+            }
+          }
+        }
       }
     }
   }
