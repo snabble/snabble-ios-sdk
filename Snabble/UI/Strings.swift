@@ -781,21 +781,6 @@ public enum L10n {
     }
   }
 
-  public enum Aldi {
-    public enum Sued {
-      public enum Ch {
-        public enum _87cc7e {
-          public enum Snabble {
-            public enum Scanner {
-              /// Product not recognized. You can manually enter the article number in the search in the upper right corner. You can find it on the price tag on the shelf.
-              public static var unknownBarcode: String { return L10n.tr("SnabbleLocalizable", "aldi.sued.ch.87cc7e.Snabble.Scanner.unknownBarcode") }
-            }
-          }
-        }
-      }
-    }
-  }
-
   public enum Release {
     public enum Safety {
       /// Please remove the bottle's security device (if present) at the designated station at the exit.
