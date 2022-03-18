@@ -13,7 +13,6 @@ SDK_VERSION=$(awk '/version =/ { print substr($6,2,length($6)-2) }' Snabble/Core
 # feature flags
 RUN_UNITTESTS=YES
 BUILD_SAMPLE_APP=YES
-# CHECK_RN_COMPAT=YES
 COMMIT_AND_RELEASE=YES
 
 trap "exit" INT
@@ -54,24 +53,6 @@ if [ "$BUILD_SAMPLE_APP" == "YES" ]; then
     else
         echo "build failed"
         exit 1
-    fi
-fi
-
-if [ "$CHECK_RN_COMPAT" == "YES" ]; then
-    echo checking RN wrapper compatibility...
-    if [ -d ../react-native-snabble ]; then
-        (
-        cd ../react-native-snabble
-        perl -pi -e "s/, \"= .*\"/, \"= $POD_VERSION\"/" ios/Snabble-ReactNative.podspec
-        cd Sample/ios
-        bundle exec pod install
-        if SKIP_BUNDLING=YES xcodebuild CODE_SIGNING_REQUIRED=NO CODE_SIGNING_ALLOWED=NO CODE_SIGN_ENTITLEMENTS="" CODE_SIGN_IDENTITY="" -scheme RN-Sample -workspace RN-Sample.xcworkspace -configuration Debug build | bundle exec xcpretty; then
-            echo "building RN sample passed"
-        else
-            echo "building RN sample failed"
-            exit 1
-        fi
-        )
     fi
 fi
 

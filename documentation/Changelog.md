@@ -1,7 +1,9 @@
 ## snabble iOS SDK Changelog
 
-# v0.18.0 (unreleased)
--
+# v0.18.0
+- Major changes to the checkout flow. Handling the routing, checkout and finalization of the checkout (including fulfillments like e.g. product dispensing machines) is now completely handled by the SDK.
+- QR codes for offline checkouts now include snabble's checkout ID, if present.
+
 
 # v0.17.13
 - This is the last version of the SDK with support for the React Native wrapper

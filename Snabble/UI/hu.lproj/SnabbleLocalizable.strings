@@ -327,26 +327,26 @@
 
 "Snabble.Save" = "Mentés";
 
-"Snabble.Scanner.Accessibility.actionHideHint" = "Hide hint permanently";
+"Snabble.Scanner.Accessibility.actionHideHint" = "Megjegyzés tartós elrejtése";
 
-"Snabble.Scanner.Accessibility.actionUnderstood" = "Understood";
+"Snabble.Scanner.Accessibility.actionUnderstood" = "Megértettem";
 
-"Snabble.Scanner.Accessibility.eventBackInScanner" = "You are back in scanner";
+"Snabble.Scanner.Accessibility.eventBackInScanner" = "Visszatértél a szkennerbe";
 
-"Snabble.Scanner.Accessibility.eventBarcodeDetected" = "Barcode detected";
+"Snabble.Scanner.Accessibility.eventBarcodeDetected" = "Vonalkód ismert";
 
-"Snabble.Scanner.Accessibility.eventMaxQuantityReached" = "You reached the maximum count of items for the cart";
+"Snabble.Scanner.Accessibility.eventMaxQuantityReached" = "Nem tudsz több terméket tenni a kosárba";
 
 /* Example: 3 times Banana for 3$ */
-"Snabble.Scanner.Accessibility.eventQuantityUpdate" = "%@ times %@ for %@";
+"Snabble.Scanner.Accessibility.eventQuantityUpdate" = "%@ db %@ %@-ért";
 
-"Snabble.Scanner.Accessibility.eventScannerOpened" = "You opened the scanner.";
+"Snabble.Scanner.Accessibility.eventScannerOpened" = "Megnyitottad a szkennert.";
 
-"Snabble.Scanner.Accessibility.hintCartContent" = "There are %@ items for %@ in your cart.";
+"Snabble.Scanner.Accessibility.hintCartContent" = "A kosárban %@ termék van %@-ért.";
 
-"Snabble.Scanner.Accessibility.hintCartIsEmpty" = "Your cart is empty.";
+"Snabble.Scanner.Accessibility.hintCartIsEmpty" = "A kosarad pillanatnyilag üres.";
 
-"Snabble.Scanner.Accessibility.hintPermission" = "In order to scan we need a permission from you.";
+"Snabble.Scanner.Accessibility.hintPermission" = "A szkenneléshez szükségünk van még az engedélyedre.";
 
 "Snabble.Scanner.addCodeAsIs" = "%@ hozzáadása így";
 
@@ -425,35 +425,35 @@
 
 "Snabble.Shopping.title" = "Bevásárlás";
 
-"Snabble.Shoppingcart.Accessibility.actionAdd" = "Add";
+"Snabble.Shoppingcart.Accessibility.actionAdd" = "Hozzáadás";
 
-"Snabble.Shoppingcart.Accessibility.actionDelete" = "Delete";
+"Snabble.Shoppingcart.Accessibility.actionDelete" = "Törlés";
 
-"Snabble.Shoppingcart.Accessibility.actionUse" = "Use";
+"Snabble.Shoppingcart.Accessibility.actionUse" = "Alkalmazás";
 
-"Snabble.Shoppingcart.Accessibility.cardEndsWith" = "Ends with %@";
+"Snabble.Shoppingcart.Accessibility.cardEndsWith" = "Befejezés %@-vel";
 
-"Snabble.Shoppingcart.Accessibility.closeDialog" = "Close dialog";
+"Snabble.Shoppingcart.Accessibility.closeDialog" = "Párbeszéd bezárása";
 
-"Snabble.Shoppingcart.Accessibility.contextInCart" = "In cart";
+"Snabble.Shoppingcart.Accessibility.contextInCart" = "A kosárban";
 
-"Snabble.Shoppingcart.Accessibility.decreaseQuantity" = "Decrease quantity";
+"Snabble.Shoppingcart.Accessibility.decreaseQuantity" = "Mennyiség csökkentése";
 
-"Snabble.Shoppingcart.Accessibility.descriptionForPrice" = "for %@";
+"Snabble.Shoppingcart.Accessibility.descriptionForPrice" = "%@-ért";
 
-"Snabble.Shoppingcart.Accessibility.descriptionQuantity" = "%@ times";
+"Snabble.Shoppingcart.Accessibility.descriptionQuantity" = "%@ db";
 
-"Snabble.Shoppingcart.Accessibility.descriptionWithDiscount" = "with discount";
+"Snabble.Shoppingcart.Accessibility.descriptionWithDiscount" = "engedménnyel";
 
-"Snabble.Shoppingcart.Accessibility.descriptionWithoutDiscount" = "without discount";
+"Snabble.Shoppingcart.Accessibility.descriptionWithoutDiscount" = "engedmény nélkül";
 
-"Snabble.Shoppingcart.Accessibility.increaseQuantity" = "Increase quantity";
+"Snabble.Shoppingcart.Accessibility.increaseQuantity" = "Mennyiség növelése";
 
-"Snabble.Shoppingcart.Accessibility.paymentMethod" = "Payment method: %@";
+"Snabble.Shoppingcart.Accessibility.paymentMethod" = "Fizetési mód: %@";
 
-"Snabble.Shoppingcart.Accessibility.quantity" = "Quantity";
+"Snabble.Shoppingcart.Accessibility.quantity" = "Mennyiség";
 
-"Snabble.Shoppingcart.Accessibility.selected" = "Selected";
+"Snabble.Shoppingcart.Accessibility.selected" = "Kiválasztva";
 
 "Snabble.Shoppingcart.articleRemoved" = "Termék eltávolítva";
 

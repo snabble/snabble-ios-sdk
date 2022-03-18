@@ -327,26 +327,26 @@
 
 "Snabble.Save" = "Uložiť";
 
-"Snabble.Scanner.Accessibility.actionHideHint" = "Hide hint permanently";
+"Snabble.Scanner.Accessibility.actionHideHint" = "Skryť upozornenie natrvalo";
 
-"Snabble.Scanner.Accessibility.actionUnderstood" = "Understood";
+"Snabble.Scanner.Accessibility.actionUnderstood" = "Rozumiem";
 
-"Snabble.Scanner.Accessibility.eventBackInScanner" = "You are back in scanner";
+"Snabble.Scanner.Accessibility.eventBackInScanner" = "Si opäť v skeneri";
 
-"Snabble.Scanner.Accessibility.eventBarcodeDetected" = "Barcode detected";
+"Snabble.Scanner.Accessibility.eventBarcodeDetected" = "Čiarový kód bol rozpoznaný";
 
-"Snabble.Scanner.Accessibility.eventMaxQuantityReached" = "You reached the maximum count of items for the cart";
+"Snabble.Scanner.Accessibility.eventMaxQuantityReached" = "Nemôžeš vložiť do košíka ďalšie položky";
 
 /* Example: 3 times Banana for 3$ */
-"Snabble.Scanner.Accessibility.eventQuantityUpdate" = "%@ times %@ for %@";
+"Snabble.Scanner.Accessibility.eventQuantityUpdate" = "%@ krát %@ pre %@";
 
-"Snabble.Scanner.Accessibility.eventScannerOpened" = "You opened the scanner.";
+"Snabble.Scanner.Accessibility.eventScannerOpened" = "Otvoril(a) si skener.";
 
-"Snabble.Scanner.Accessibility.hintCartContent" = "There are %@ items for %@ in your cart.";
+"Snabble.Scanner.Accessibility.hintCartContent" = "V košíku je %@ položiek pre %@.";
 
-"Snabble.Scanner.Accessibility.hintCartIsEmpty" = "Your cart is empty.";
+"Snabble.Scanner.Accessibility.hintCartIsEmpty" = "Tvoj košík je momentálne prázdny.";
 
-"Snabble.Scanner.Accessibility.hintPermission" = "In order to scan we need a permission from you.";
+"Snabble.Scanner.Accessibility.hintPermission" = "Na skenovanie potrebujeme od teba oprávnenie.";
 
 "Snabble.Scanner.addCodeAsIs" = "Pridať %@ takto";
 
@@ -425,35 +425,35 @@
 
 "Snabble.Shopping.title" = "Nakúpiť";
 
-"Snabble.Shoppingcart.Accessibility.actionAdd" = "Add";
+"Snabble.Shoppingcart.Accessibility.actionAdd" = "Pridať";
 
-"Snabble.Shoppingcart.Accessibility.actionDelete" = "Delete";
+"Snabble.Shoppingcart.Accessibility.actionDelete" = "Vymazať";
 
-"Snabble.Shoppingcart.Accessibility.actionUse" = "Use";
+"Snabble.Shoppingcart.Accessibility.actionUse" = "Použiť";
 
-"Snabble.Shoppingcart.Accessibility.cardEndsWith" = "Ends with %@";
+"Snabble.Shoppingcart.Accessibility.cardEndsWith" = "Končí sa s %@";
 
-"Snabble.Shoppingcart.Accessibility.closeDialog" = "Close dialog";
+"Snabble.Shoppingcart.Accessibility.closeDialog" = "Zatvoriť dialóg";
 
-"Snabble.Shoppingcart.Accessibility.contextInCart" = "In cart";
+"Snabble.Shoppingcart.Accessibility.contextInCart" = "V košíku";
 
-"Snabble.Shoppingcart.Accessibility.decreaseQuantity" = "Decrease quantity";
+"Snabble.Shoppingcart.Accessibility.decreaseQuantity" = "Znížiť počet";
 
-"Snabble.Shoppingcart.Accessibility.descriptionForPrice" = "for %@";
+"Snabble.Shoppingcart.Accessibility.descriptionForPrice" = "pre %@";
 
-"Snabble.Shoppingcart.Accessibility.descriptionQuantity" = "%@ times";
+"Snabble.Shoppingcart.Accessibility.descriptionQuantity" = "%@ krát";
 
-"Snabble.Shoppingcart.Accessibility.descriptionWithDiscount" = "with discount";
+"Snabble.Shoppingcart.Accessibility.descriptionWithDiscount" = "so zľavou";
 
-"Snabble.Shoppingcart.Accessibility.descriptionWithoutDiscount" = "without discount";
+"Snabble.Shoppingcart.Accessibility.descriptionWithoutDiscount" = "bez zľavy";
 
-"Snabble.Shoppingcart.Accessibility.increaseQuantity" = "Increase quantity";
+"Snabble.Shoppingcart.Accessibility.increaseQuantity" = "Zvýšiť počet";
 
-"Snabble.Shoppingcart.Accessibility.paymentMethod" = "Payment method: %@";
+"Snabble.Shoppingcart.Accessibility.paymentMethod" = "Spôsob platby: %@";
 
-"Snabble.Shoppingcart.Accessibility.quantity" = "Quantity";
+"Snabble.Shoppingcart.Accessibility.quantity" = "Počet";
 
-"Snabble.Shoppingcart.Accessibility.selected" = "Selected";
+"Snabble.Shoppingcart.Accessibility.selected" = "Vybraté";
 
 "Snabble.Shoppingcart.articleRemoved" = "Položka bola odstránená";
 
