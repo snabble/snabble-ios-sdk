@@ -18,6 +18,7 @@ public enum CouponType: String, Codable, UnknownCaseRepresentable {
 
 public struct Coupon: Codable {
     public let id: String
+    public let externalID: String?
     public let name: String
     public let type: CouponType
 
@@ -49,14 +50,16 @@ public struct Colors: Codable {
 
 public struct Image: Codable {
     public let formats: [Format]
-    public let name: String
+    public let name: String?
 }
 
 public struct Format: Codable {
-    public let height: Int
+    // [sic] this should be called `resolution` as it contains the resolution as in Android:
+    // mdpi, hdpi, xhdpi, xxhdpi, xxxhdpi etc
     public let size: String
     public let url: URL
-    public let width: Int
+    public let width: Int?
+    public let height: Int?
     public let contentType: String
 }
 
