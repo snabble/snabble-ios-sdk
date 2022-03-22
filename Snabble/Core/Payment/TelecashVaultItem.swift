@@ -16,6 +16,10 @@ public struct TelecashVaultItem: Decodable {
     public let url: String // DELETE this to cancel the pre-auth
 
     public struct TelecashVaultItemLinks: Decodable {
-        public let `self`: Link
+        public let _self: Link
+
+        enum CodingKeys: String, CodingKey {
+            case _self = "self"
+        }
     }
 }

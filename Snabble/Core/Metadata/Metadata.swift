@@ -88,14 +88,19 @@ public struct MetadataLinks: Decodable {
     public let consents: Link?
     public let paydirektCustomerAuthorization: Link?
     public let createAppUser: Link
-    public let `self`: Link
+    public let _self: Link
+
+    enum CodingKeys: String, CodingKey {
+        case _self = "self"
+        case clientOrders, appUser, appUserOrders, consents, paydirektCustomerAuthorization, createAppUser
+    }
 
     fileprivate init() {
         self.clientOrders = nil
         self.appUser = Link.empty
         self.appUserOrders = Link.empty
         self.createAppUser = Link.empty
-        self.`self` = Link.empty
+        self._self = Link.empty
 
         self.consents = Link.empty
         self.paydirektCustomerAuthorization = nil
@@ -202,7 +207,7 @@ extension Metadata {
             decoder.dateDecodingStrategy = .customISO8601
             let metadata = try decoder.decode(Metadata.self, from: data)
             // make sure the self link matches
-            if url.contains(metadata.links.`self`.href) {
+            if url.contains(metadata.links._self.href) {
                 return metadata
             }
         } catch {

@@ -276,10 +276,15 @@ public struct CheckoutProcess: Decodable {
     }
 
     public struct ProcessLinks: Decodable {
-        public let `self`: Link
+        public let _self: Link
         public let approval: Link
         public let receipt: Link?
         public let authorizePayment: Link? // for Apple Pay, POST the transaction payload to this URL
+
+        enum CodingKeys: String, CodingKey {
+            case _self = "self"
+            case approval, receipt, authorizePayment
+        }
     }
 
     public struct PaymentInformation: Decodable {
@@ -467,8 +472,13 @@ public struct OriginCandidate: Decodable {
     public let type: CandidateType?
 
     public struct CandidateLinks: Decodable, Hashable {
-        public let `self`: Link
+        public let _self: Link
         public let promote: Link
+
+        enum CodingKeys: String, CodingKey {
+            case _self = "self"
+            case promote
+        }
     }
 
     public var isValid: Bool {
@@ -478,7 +488,7 @@ public struct OriginCandidate: Decodable {
 
 extension OriginCandidate: Hashable {
     public func hash(into hasher: inout Hasher) {
-        hasher.combine(links?.`self`)
+        hasher.combine(links?._self)
         hasher.combine(type)
     }
 }

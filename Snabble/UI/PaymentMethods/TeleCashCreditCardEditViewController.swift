@@ -245,7 +245,7 @@ extension TeleCashCreditCardEditViewController: WKScriptMessageHandler {
                 let detail = PaymentMethodDetail(ccData)
                 PaymentMethodDetails.save(detail)
                 self.analyticsDelegate?.track(.paymentMethodAdded(detail.rawMethod.displayName))
-                self.deletePreauth(project, self.vaultItem?.links.`self`.href)
+                self.deletePreauth(project, self.vaultItem?.links._self.href)
                 goBack()
             } else {
                 project.logError("can't create CC data from IPG response: \(connectResponse)")

@@ -173,7 +173,7 @@ extension CheckoutProcess {
                        taskCreated: @escaping (_ task: URLSessionDataTask) -> Void,
                        completion: @escaping (_ result: RawResult<CheckoutProcess, SnabbleError>) -> Void ) {
 
-        project.request(.get, self.links.`self`.href, timeout: timeout) { request in
+        project.request(.get, self.links._self.href, timeout: timeout) { request in
             guard let request = request else {
                 let rawResult = RawResult<CheckoutProcess, SnabbleError>.failure(SnabbleError.noRequest)
                 return completion(rawResult)
@@ -197,7 +197,7 @@ extension CheckoutProcess {
     public func abort(_ project: Project, timeout: TimeInterval = 0, completion: @escaping (_ result: Result<CheckoutProcess, SnabbleError>) -> Void ) {
         let abort = AbortRequest(aborted: true)
 
-        project.request(.patch, self.links.`self`.href, body: abort, timeout: timeout) { request in
+        project.request(.patch, self.links._self.href, body: abort, timeout: timeout) { request in
             guard let request = request else {
                 return completion(Result.failure(SnabbleError.noRequest))
             }

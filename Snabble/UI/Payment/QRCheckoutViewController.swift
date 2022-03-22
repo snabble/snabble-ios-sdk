@@ -43,7 +43,7 @@ final class QRCheckoutViewController: UIViewController {
 
         self.navigationItem.hidesBackButton = true
 
-        self.checkoutIdLabel.text = L10n.Snabble.Checkout.id + ": " + String(process.links.`self`.href.suffix(4))
+        self.checkoutIdLabel.text = L10n.Snabble.Checkout.id + ": " + String(process.links._self.href.suffix(4))
         self.cancelButton.setTitle(L10n.Snabble.cancel, for: .normal)
     }
 

@@ -12,8 +12,13 @@ private struct PaydirektAuthorizationResult: Decodable {
     let links: AuthLinks
 
     struct AuthLinks: Decodable {
-        let `self`: Link
+        let _self: Link
         let web: Link
+
+        enum CodingKeys: String, CodingKey {
+            case _self = "self"
+            case web
+        }
     }
 }
 
@@ -112,7 +117,7 @@ public final class PaydirektEditViewController: UIViewController {
                     }
 
                     self.webView?.load(URLRequest(url: webUrl))
-                    self.clientAuthorization = authResult.links.`self`.href
+                    self.clientAuthorization = authResult.links._self.href
                 case .failure(let error):
                     print(error)
                 }

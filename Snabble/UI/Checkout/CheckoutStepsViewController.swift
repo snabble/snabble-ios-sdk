@@ -18,9 +18,8 @@ final class CheckoutStepsViewController: UIViewController {
     weak var paymentDelegate: PaymentDelegate?
 
     private typealias ItemIdentifierType = CheckoutStep
-    private typealias CellProvider = (_ tableView: UITableView, _ indexPath: IndexPath, _ itemIdentifier: ItemIdentifierType) -> UITableViewCell?
 
-    private var cellProvider: CellProvider = { tableView, indexPath, step in
+    private func cellProvider(_ tableView: UITableView, _ indexPath: IndexPath, _ step: ItemIdentifierType) -> UITableViewCell? {
         switch step.kind {
         case .default:
             let cell = tableView.dequeueReusable(CheckoutStepTableViewCell.self, for: indexPath)

@@ -95,7 +95,7 @@ final class EmbeddedCodesCheckoutViewController: UIViewController {
         self.collectionView.dataSource = self
         self.collectionView.delegate = self
 
-        let id = process?.links.`self`.href.suffix(4) ?? "offline"
+        let id = process?.links._self.href.suffix(4) ?? "offline"
         self.idLabel.text = String(id)
 
         self.setButtonTitle()
