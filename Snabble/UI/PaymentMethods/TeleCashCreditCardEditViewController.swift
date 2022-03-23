@@ -355,6 +355,7 @@ extension TeleCashCreditCardEditViewController {
                 <input type="hidden" name="language" value="{{locale}}"/>
                 <input type="hidden" name="authenticateTransaction" value="true"/>
                 <input type="hidden" name="threeDSRequestorChallengeIndicator" value="04"/>
+                <input type="hidden" name="unscheduledCredentialOnFileType" value="FIRST"/>
                 <input type="hidden" name="hosteddataid" value="{{hostedDataId}}"/>
                 <input type="hidden" name="oid" value="{{orderId}}"/>
             </form>
