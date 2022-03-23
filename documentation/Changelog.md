@@ -1,5 +1,8 @@
 ## snabble iOS SDK Changelog
 
+# v0.18.1
+- Credit card entry via Telecash now enforces 3DS verification
+
 # v0.18.0
 - Major changes to the checkout flow. Handling the routing, checkout and finalization of the checkout (including fulfillments like e.g. product dispensing machines) is now completely handled by the SDK.
 - QR codes for offline checkouts now include snabble's checkout ID, if present.
