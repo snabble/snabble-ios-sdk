@@ -75,8 +75,8 @@ public struct ScannedCode: Codable {
 
 /// a coupon entry in a shopping cart
 public struct CartCoupon: Codable {
-    let coupon: Coupon
-    let scannedCode: String?
+    public let coupon: Coupon
+    public let scannedCode: String?
 
     public var cartItem: Cart.Item {
         let couponItem = Cart.CouponItem(couponId: coupon.id, scannedCode: scannedCode)
