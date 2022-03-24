@@ -362,7 +362,7 @@ public enum PaymentMethodDetails {
         return storage.read()
     }
 
-    static func save(_ details: [PaymentMethodDetail]) {
+    public static func save(_ details: [PaymentMethodDetail]) {
         storage.save(details)
     }
 
