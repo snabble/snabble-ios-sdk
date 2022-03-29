@@ -5,7 +5,6 @@
 //
 
 import UIKit
-import SDCAlertView
 
 private struct ViewModel {
     init(detail: PaymentMethodDetail) {
@@ -102,18 +101,16 @@ public final class PaymentMethodListViewController: UITableViewController {
         if methods.count == 1 {
             showEditController(for: methods[0])
         } else {
-            let sheet = AlertController(title: L10n.Snabble.PaymentMethods.choose, message: nil, preferredStyle: .actionSheet)
-            sheet.visualStyle = .snabbleActionSheet
+            let sheet = SelectionSheetController(title: L10n.Snabble.PaymentMethods.choose)
 
             methods.forEach { method in
-                let action = AlertAction(title: method.displayName, style: .normal) { [self] _ in
+                let action = SelectionSheetAction(title: method.displayName, image: method.icon) { [self] _ in
                     showEditController(for: method)
                 }
-                action.imageView.image = method.icon
                 sheet.addAction(action)
             }
 
-            sheet.addAction(AlertAction(title: L10n.Snabble.cancel, style: .preferred, handler: nil))
+            sheet.cancelButtonTitle = L10n.Snabble.cancel
 
             self.present(sheet, animated: true)
         }

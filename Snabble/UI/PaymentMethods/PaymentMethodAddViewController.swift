@@ -6,7 +6,6 @@
 
 import UIKit
 import ColorCompatibility
-import SDCAlertView
 
 private struct MethodEntry {
     var name: String
@@ -218,21 +217,19 @@ extension PaymentMethodAddViewController {
             .filter { $0.editable }
             .sorted { $0.displayName < $1.displayName }
 
-        let sheet = AlertController(title: L10n.Snabble.PaymentMethods.choose, message: nil, preferredStyle: .actionSheet)
-        sheet.visualStyle = .snabbleActionSheet
+        let sheet = SelectionSheetController(title: L10n.Snabble.PaymentMethods.choose, message: nil)
 
         methods.forEach { method in
-            let action = AlertAction(title: method.displayName, style: .normal) { [self] _ in
+            let action = SelectionSheetAction(title: method.displayName, image: method.icon) { [self] _ in
                 if method.isAddingAllowed(showAlertOn: self),
                     let controller = method.editViewController(with: projectId, analyticsDelegate) {
                     navigationController?.pushViewController(controller, animated: true)
                 }
             }
-            action.imageView.image = method.icon
             sheet.addAction(action)
         }
 
-        sheet.addAction(AlertAction(title: L10n.Snabble.cancel, style: .preferred, handler: nil))
+        sheet.cancelButtonTitle = L10n.Snabble.cancel
 
         self.present(sheet, animated: true)
     }
