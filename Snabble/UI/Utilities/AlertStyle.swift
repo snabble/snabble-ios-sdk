@@ -12,15 +12,12 @@ public final class SnabbleAlertStyle: AlertVisualStyle {
 
         self.normalTextColor = .label
 
-        self.alertNormalFont = UIFont.preferredFont(forTextStyle: .body)
-        self.alertPreferredFont = UIFont.preferredFont(forTextStyle: .headline)
-
         self.actionSheetPreferredFont = self.alertNormalFont
         self.actionSheetNormalFont = self.alertPreferredFont
     }
 }
 
 extension AlertVisualStyle {
-    public static var snabbleAlert: SnabbleAlertStyle { .init(alertStyle: .alert) }
-    public static var snabbleActionSheet: SnabbleAlertStyle { .init(alertStyle: .actionSheet) }
+    public static let snabbleAlert = SnabbleAlertStyle(alertStyle: .alert)
+    public static let snabbleActionSheet = SnabbleAlertStyle(alertStyle: .actionSheet)
 }
