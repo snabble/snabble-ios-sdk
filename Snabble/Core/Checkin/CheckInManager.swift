@@ -188,7 +188,7 @@ extension CheckInManager: CLLocationManagerDelegate {
 private extension Array where Element == Shop {
     func shops(at location: CLLocation, in radius: CGFloat) -> [Element] {
         return self
-            .filter { $0.distance(to: location) <= radius }
+            .filter { $0.distance(to: location) < radius }
             .sorted { $0.distance(to: location) < $1.distance(to: location) }
     }
 }
@@ -197,7 +197,7 @@ private extension CLLocation {
     func isValid(inRadius radius: CGFloat) -> Bool {
         guard timestamp.timeIntervalSinceNow > -60, // 1 Minute
               horizontalAccuracy >= 0, // negative number invalidates the location
-              horizontalAccuracy <= radius
+              horizontalAccuracy < radius
         else {
             return false
         }
