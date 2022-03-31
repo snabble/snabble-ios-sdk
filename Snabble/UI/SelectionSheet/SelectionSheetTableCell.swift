@@ -55,9 +55,9 @@ final class SelectionSheetTableCell: UITableViewCell {
         titleLabel.font = appearance.actionTitleFont
         titleLabel.textColor = appearance.actionTitleColor
 
-        subtitleLabel.text = action.subTitle
+        subtitleLabel.text = action.subtitle
         subtitleLabel.textAlignment = action.image == nil ? .center : .left
-        subtitleLabel.isHidden = action.subTitle == nil
+        subtitleLabel.isHidden = action.subtitle == nil
         subtitleLabel.font = appearance.actionSubtitleFont
         subtitleLabel.textColor = appearance.actionSubtitleColor
 
