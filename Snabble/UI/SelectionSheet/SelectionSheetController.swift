@@ -14,7 +14,11 @@ final class SelectionSheetController: UIViewController {
     private let stackView = UIStackView()
     private let tableView = SelectionSheetTableView()
 
-    private var cancelButtonBottom: NSLayoutConstraint?
+    private var cancelButtonBottom: NSLayoutConstraint? {
+        didSet {
+            isBeingPresented ? show() : hide()
+        }
+    }
     private var selectionViewTop: NSLayoutConstraint?
 
     var message: String?
@@ -166,21 +170,35 @@ final class SelectionSheetController: UIViewController {
         ])
     }
 
-    override func viewWillAppear(_ animated: Bool) {
-        super.viewWillAppear(animated)
-
-        // avoid UITableView layout warnings
-        DispatchQueue.main.async {
-            self.view.layoutIfNeeded()
-            UIView.animate(withDuration: 0.15) {
-                // deactivate initial push-down constraint
-                self.selectionViewTop?.isActive = false
-                let viewBottom = self.view.safeAreaLayoutGuide.bottomAnchor
-                self.cancelButtonBottom = self.cancelButton.bottomAnchor.constraint(equalTo: viewBottom, constant: -16)
-                self.cancelButtonBottom?.isActive = true
-                self.view.layoutIfNeeded()
-            }
+    private func hide() {
+        view.layoutIfNeeded()
+        UIView.animate(withDuration: 0.15) { [self] in
+            selectionViewTop?.isActive = true
+            cancelButtonBottom?.isActive = false
+            view.layoutIfNeeded()
         }
+    }
+
+    private func show() {
+        view.layoutIfNeeded()
+        UIView.animate(withDuration: 0.15) { [self] in
+            selectionViewTop?.isActive = false
+            cancelButtonBottom?.isActive = true
+            view.layoutIfNeeded()
+        }
+    }
+
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
+        hide()
+    }
+
+    override func viewSafeAreaInsetsDidChange() {
+        super.viewSafeAreaInsetsDidChange()
+        cancelButtonBottom = cancelButton.bottomAnchor.constraint(
+            equalTo: view.safeAreaLayoutGuide.bottomAnchor,
+            constant: -16
+        )
     }
 
     override func viewDidAppear(_ animated: Bool) {
