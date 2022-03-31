@@ -154,8 +154,10 @@ final class SelectionSheetController: UIViewController {
             scrollView.bottomAnchor.constraint(equalTo: separator.topAnchor, constant: 0),
             contentGuide.widthAnchor.constraint(equalTo: scrollView.widthAnchor),
 
-            scrollView.heightAnchor.constraint(lessThanOrEqualTo: selectionView.heightAnchor, multiplier: 0.5),
-            scrollView.heightAnchor.constraint(equalTo: stackView.heightAnchor).usingPriority(.defaultHigh - 1),
+            scrollView.heightAnchor.constraint(lessThanOrEqualTo: selectionView.heightAnchor, multiplier: 0.5)
+                .usingPriority(.defaultHigh - 2),
+            scrollView.heightAnchor.constraint(equalTo: stackView.heightAnchor)
+                .usingPriority(.defaultHigh - 1),
 
             stackView.leadingAnchor.constraint(equalTo: contentGuide.leadingAnchor),
             stackView.trailingAnchor.constraint(equalTo: contentGuide.trailingAnchor),
