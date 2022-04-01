@@ -63,6 +63,7 @@ public final class ReceiptsListViewController: UITableViewController {
         emptyLabel.translatesAutoresizingMaskIntoConstraints = false
         emptyLabel.numberOfLines = 0
         emptyLabel.textAlignment = .center
+        emptyLabel.useDynamicFont(forTextStyle: .body)
         view.addSubview(emptyLabel)
 
         spinner.translatesAutoresizingMaskIntoConstraints = false
@@ -78,8 +79,7 @@ public final class ReceiptsListViewController: UITableViewController {
             emptyLabel.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -16)
         ])
 
-        let nib = UINib(nibName: "ReceiptCell", bundle: SnabbleBundle.main)
-        self.tableView.register(nib, forCellReuseIdentifier: "receiptCell")
+        self.tableView.register(ReceiptCell.self, forCellReuseIdentifier: "receiptCell")
         self.tableView.tableFooterView = UIView(frame: CGRect.zero)
 
         self.emptyLabel.text = L10n.Snabble.Receipts.noReceipts
@@ -95,6 +95,7 @@ public final class ReceiptsListViewController: UITableViewController {
         super.viewDidAppear(animated)
 
         self.analyticsDelegate?.track(.viewReceiptList)
+        self.tableView.flashScrollIndicators()
     }
 
     private func loadOrderList() {

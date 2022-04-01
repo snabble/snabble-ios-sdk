@@ -5,22 +5,69 @@
 //
 
 import UIKit
+import AutoLayout_Helper
 
 final class ReceiptCell: UITableViewCell {
-    @IBOutlet private var storeIcon: UIImageView!
-    @IBOutlet private var storeName: UILabel!
-    @IBOutlet private var orderDate: UILabel!
-    @IBOutlet private var price: UILabel!
+    private let storeIcon = UIImageView()
+    private let storeName = UILabel()
+    private let orderDate = UILabel()
+    private let price = UILabel()
 
-    @IBOutlet private var iconWidth: NSLayoutConstraint!
-    @IBOutlet private var iconDistance: NSLayoutConstraint!
+    private var iconWidth: NSLayoutConstraint?
+    private var iconDistance: NSLayoutConstraint?
 
     private var projectId: Identifier<Project>?
 
-    override func awakeFromNib() {
-        super.awakeFromNib()
+    override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
+        super.init(style: style, reuseIdentifier: reuseIdentifier)
 
-        self.prepareForReuse()
+        accessoryType = .disclosureIndicator
+
+        storeIcon.translatesAutoresizingMaskIntoConstraints = false
+        contentView.addSubview(storeIcon)
+
+        storeName.translatesAutoresizingMaskIntoConstraints = false
+        storeName.numberOfLines = 0
+        storeName.useDynamicFont(forTextStyle: .body)
+        contentView.addSubview(storeName)
+
+        orderDate.translatesAutoresizingMaskIntoConstraints = false
+        orderDate.numberOfLines = 0
+        orderDate.textColor = .secondaryLabel
+        orderDate.useDynamicFont(forTextStyle: .footnote)
+        contentView.addSubview(orderDate)
+
+        price.translatesAutoresizingMaskIntoConstraints = false
+        price.textColor = .secondaryLabel
+        price.useDynamicFont(forTextStyle: .footnote)
+        price.setContentHuggingPriority(.defaultHigh, for: .horizontal)
+        price.setContentCompressionResistancePriority(.required, for: .horizontal)
+        contentView.addSubview(price)
+
+        NSLayoutConstraint.activate([
+            storeIcon.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 16),
+            storeIcon.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 16),
+            storeIcon.heightAnchor.constraint(equalTo: storeIcon.widthAnchor),
+            storeIcon.widthAnchor.constraint(equalToConstant: 0)
+                .usingVariable(&iconWidth),
+
+            storeName.leadingAnchor.constraint(equalTo: storeIcon.trailingAnchor, constant: 0)
+                .usingVariable(&iconDistance),
+            storeName.trailingAnchor.constraint(equalTo: price.leadingAnchor, constant: -16),
+            storeName.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 16),
+
+            orderDate.leadingAnchor.constraint(equalTo: storeName.leadingAnchor),
+            orderDate.trailingAnchor.constraint(equalTo: price.leadingAnchor, constant: -16),
+            orderDate.topAnchor.constraint(equalTo: storeName.bottomAnchor, constant: 8),
+            orderDate.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -16),
+
+            price.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -4),
+            price.centerYAnchor.constraint(equalTo: contentView.centerYAnchor)
+        ])
+    }
+
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
     }
 
     override func prepareForReuse() {
@@ -31,8 +78,8 @@ final class ReceiptCell: UITableViewCell {
         self.orderDate.text = nil
         self.price.text = nil
 
-        self.iconWidth.constant = 0
-        self.iconDistance.constant = 0
+        self.iconWidth?.constant = 0
+        self.iconDistance?.constant = 0
 
         self.projectId = nil
     }
@@ -84,8 +131,8 @@ final class ReceiptCell: UITableViewCell {
     private func updateImage(_ img: UIImage?) {
         self.storeIcon.image = img
         if img != nil {
-            self.iconWidth.constant = 24
-            self.iconDistance.constant = 16
+            self.iconWidth?.constant = 24
+            self.iconDistance?.constant = 16
         }
     }
 }
