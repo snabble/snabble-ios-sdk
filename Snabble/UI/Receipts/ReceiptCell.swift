@@ -13,9 +13,6 @@ final class ReceiptCell: UITableViewCell {
     private let orderDate = UILabel()
     private let price = UILabel()
 
-    private var iconWidth: NSLayoutConstraint?
-    private var iconDistance: NSLayoutConstraint?
-
     private var projectId: Identifier<Project>?
 
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
@@ -45,14 +42,15 @@ final class ReceiptCell: UITableViewCell {
         contentView.addSubview(price)
 
         NSLayoutConstraint.activate([
-            storeIcon.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 16),
+            storeIcon.topAnchor.constraint(greaterThanOrEqualTo: contentView.topAnchor, constant: 0),
+            storeIcon.centerYAnchor.constraint(equalTo: contentView.centerYAnchor),
+            storeIcon.bottomAnchor.constraint(lessThanOrEqualTo: contentView.bottomAnchor, constant: 0),
+            storeIcon.widthAnchor.constraint(equalToConstant: 24),
+
             storeIcon.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 16),
             storeIcon.heightAnchor.constraint(equalTo: storeIcon.widthAnchor),
-            storeIcon.widthAnchor.constraint(equalToConstant: 0)
-                .usingVariable(&iconWidth),
 
-            storeName.leadingAnchor.constraint(equalTo: storeIcon.trailingAnchor, constant: 0)
-                .usingVariable(&iconDistance),
+            storeName.leadingAnchor.constraint(equalTo: storeIcon.trailingAnchor, constant: 16),
             storeName.trailingAnchor.constraint(equalTo: price.leadingAnchor, constant: -16),
             storeName.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 16),
 
@@ -77,9 +75,6 @@ final class ReceiptCell: UITableViewCell {
         self.storeName.text = nil
         self.orderDate.text = nil
         self.price.text = nil
-
-        self.iconWidth?.constant = 0
-        self.iconDistance?.constant = 0
 
         self.projectId = nil
     }
@@ -121,18 +116,10 @@ final class ReceiptCell: UITableViewCell {
 
         SnabbleUI.getAsset(.storeIcon, projectId: projectId) { [weak self] img in
             if let img = img, self?.projectId == projectId {
-                self?.updateImage(img)
+                self?.storeIcon.image = img
             } else {
-                self?.updateImage(UIImage(named: projectId.rawValue))
+                self?.storeIcon.image = UIImage(named: projectId.rawValue)
             }
-        }
-    }
-
-    private func updateImage(_ img: UIImage?) {
-        self.storeIcon.image = img
-        if img != nil {
-            self.iconWidth?.constant = 24
-            self.iconDistance?.constant = 16
         }
     }
 }
