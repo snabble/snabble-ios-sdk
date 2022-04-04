@@ -5,11 +5,12 @@
 //
 
 import UIKit
+import AutoLayout_Helper
 
 public final class BarcodeEntryViewController: UIViewController {
-    @IBOutlet private var tableView: UITableView!
-    @IBOutlet private var searchBar: UISearchBar!
-    @IBOutlet private var bottomMargin: NSLayoutConstraint!
+    private let tableView = UITableView()
+    private let searchBar = UISearchBar()
+    private var bottomMargin: NSLayoutConstraint?
 
     private weak var productProvider: ProductProvider?
     private let shopId: Identifier<Shop>
@@ -18,8 +19,8 @@ public final class BarcodeEntryViewController: UIViewController {
 
     private var filteredProducts = [Product]()
     private var searchText = ""
-    private var keyboardObserver: KeyboardObserver!
-    private var emptyState: EmptyStateView!
+    private var keyboardObserver: KeyboardObserver?
+    private var emptyState: EmptyStateView?
     private var showSku = false
 
     public weak var analyticsDelegate: AnalyticsDelegate?
@@ -46,10 +47,33 @@ public final class BarcodeEntryViewController: UIViewController {
     override public func viewDidLoad() {
         super.viewDidLoad()
 
+        searchBar.translatesAutoresizingMaskIntoConstraints = false
+        searchBar.delegate = self
+        searchBar.keyboardType = .numberPad
+        view.addSubview(searchBar)
+
+        tableView.translatesAutoresizingMaskIntoConstraints = false
+        tableView.delegate = self
+        tableView.dataSource = self
+        view.addSubview(tableView)
+
+        NSLayoutConstraint.activate([
+            searchBar.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
+            searchBar.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+            searchBar.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+            searchBar.bottomAnchor.constraint(equalTo: tableView.topAnchor),
+
+            tableView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+            tableView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+            tableView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor)
+                .usingVariable(&bottomMargin)
+        ])
+
         self.emptyState = BarcodeEntryEmptyStateView({ [weak self] _ in self?.addEnteredCode() })
-        self.emptyState.addTo(self.tableView)
+        self.emptyState?.addTo(self.tableView)
 
         self.tableView.tableFooterView = UIView(frame: CGRect.zero)
+        self.tableView.register(BarcodeEntryTableCell.self, forCellReuseIdentifier: "barcodeCell")
 
         self.searchBar.placeholder = L10n.Snabble.Scanner.enterBarcode
 
@@ -116,29 +140,24 @@ extension BarcodeEntryViewController: UISearchBarDelegate {
 extension BarcodeEntryViewController: UITableViewDelegate, UITableViewDataSource {
     public func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         let rows = filteredProducts.count
-        self.emptyState.isHidden = rows > 0
-        self.emptyState.button1.isHidden = true
+        self.emptyState?.isHidden = rows > 0
+        self.emptyState?.button1.isHidden = true
         if !self.searchText.isEmpty {
             let title = L10n.Snabble.Scanner.addCodeAsIs(self.searchText)
-            self.emptyState.button1.setTitle(title, for: .normal)
-            self.emptyState.button1.isHidden = false
+            self.emptyState?.button1.setTitle(title, for: .normal)
+            self.emptyState?.button1.isHidden = false
         }
         return rows
     }
 
     public func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let identifier = "barcodeCell"
-        let cell = tableView.dequeueReusableCell(withIdentifier: identifier) ?? {
-            let cell = UITableViewCell(style: .subtitle, reuseIdentifier: identifier)
-            cell.selectionStyle = .none
-            return cell
-        }()
+        let cell = tableView.dequeueReusableCell(withIdentifier: "barcodeCell", for: indexPath)
 
         let product = self.filteredProducts[indexPath.row]
         let codeEntry = product.codes.filter { $0.code.hasPrefix(self.searchText) }.first ?? product.codes.first!
         let str = NSMutableAttributedString(string: codeEntry.code)
         if codeEntry.code.hasPrefix(self.searchText) {
-            let boldFont = UIFont.systemFont(ofSize: cell.textLabel?.font.pointSize ?? 0, weight: .medium)
+            let boldFont = UIFont.preferredFont(forTextStyle: .body, weight: .semibold)
             str.addAttributes([NSAttributedString.Key.font: boldFont], range: NSRange(location: 0, length: self.searchText.count))
         }
         cell.textLabel?.attributedText = str
@@ -152,6 +171,8 @@ extension BarcodeEntryViewController: UITableViewDelegate, UITableViewDataSource
     }
 
     public func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        tableView.deselectRow(at: indexPath, animated: true)
+
         let product = self.filteredProducts[indexPath.row]
 
         let codeEntry = product.codes.filter { $0.code.hasPrefix(self.searchText) }.first ?? product.codes.first!
@@ -165,10 +186,20 @@ extension BarcodeEntryViewController: KeyboardHandling {
         let tabBarHeight = self.tabBarController?.tabBar.frame.height ?? 0
         let keyboardHeight = info.keyboardHeight - tabBarHeight
 
-        self.bottomMargin.constant = keyboardHeight
+        self.bottomMargin?.constant = -keyboardHeight
     }
 
     public func keyboardWillHide(_ info: KeyboardInfo) {
-        // not used
+        self.bottomMargin?.constant = 0
+    }
+}
+
+private class BarcodeEntryTableCell: UITableViewCell {
+    override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
+        super.init(style: .subtitle, reuseIdentifier: reuseIdentifier)
+    }
+
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
     }
 }

@@ -6,12 +6,10 @@
 
 import UIKit
 
-internal class EmptyStateView: NibView {
-    // swiftlint:disable private_outlet
-    @IBOutlet var textLabel: UILabel!
-    @IBOutlet var button1: UIButton!
-    @IBOutlet var button2: UIButton!
-    // swiftlint:enable private_outlet
+internal class EmptyStateView: UIView {
+    let textLabel = UILabel()
+    let button1 = MultilineButton()
+    let button2 = MultilineButton()
 
     typealias Handler = (UIButton) -> Void
     private let tapHandler: Handler
@@ -20,31 +18,60 @@ internal class EmptyStateView: NibView {
         self.tapHandler = tapHandler
         super.init(frame: CGRect.zero)
 
-        self.backgroundColor = .systemBackground
+        translatesAutoresizingMaskIntoConstraints = false
+        backgroundColor = .systemBackground
 
-        self.button1.tag = 0
-        self.button2.tag = 1
+        button1.tag = 0
+        button1.useDynamicFont(forTextStyle: .headline)
+        button1.addTarget(self, action: #selector(self.buttonTapped(_:)), for: .touchUpInside)
+
+        button2.tag = 1
+        button2.useDynamicFont(forTextStyle: .headline)
+        button2.addTarget(self, action: #selector(self.buttonTapped(_:)), for: .touchUpInside)
+
+        textLabel.translatesAutoresizingMaskIntoConstraints = false
+        textLabel.numberOfLines = 0
+        textLabel.textAlignment = .center
+        textLabel.useDynamicFont(forTextStyle: .body)
+        addSubview(textLabel)
+
+        let stackView = UIStackView(arrangedSubviews: [ button1, button2 ])
+        stackView.axis = .vertical
+        stackView.alignment = .center
+        stackView.translatesAutoresizingMaskIntoConstraints = false
+        addSubview(stackView)
+
+        NSLayoutConstraint.activate([
+            textLabel.topAnchor.constraint(equalTo: topAnchor),
+            textLabel.leadingAnchor.constraint(equalTo: leadingAnchor),
+            textLabel.trailingAnchor.constraint(equalTo: trailingAnchor),
+            textLabel.bottomAnchor.constraint(equalTo: stackView.topAnchor, constant: -16),
+
+            stackView.leadingAnchor.constraint(equalTo: leadingAnchor),
+            stackView.trailingAnchor.constraint(equalTo: trailingAnchor),
+            stackView.bottomAnchor.constraint(equalTo: bottomAnchor)
+        ])
     }
 
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
 
-    @IBAction private func buttonTapped(_ sender: UIButton) {
+    @objc private func buttonTapped(_ sender: UIButton) {
         self.tapHandler(sender)
     }
 
     func addTo(_ superview: UIView) {
         superview.addSubview(self)
 
-        self.centerXAnchor.constraint(equalTo: superview.centerXAnchor).isActive = true
-        self.centerYAnchor.constraint(equalTo: superview.centerYAnchor).isActive = true
-        self.leftAnchor.constraint(equalTo: superview.leftAnchor, constant: 16).isActive = true
-        self.rightAnchor.constraint(equalTo: superview.rightAnchor, constant: -16).isActive = true
-    }
-
-    override var nibName: String {
-        return "EmptyStateView"
+        NSLayoutConstraint.activate([
+            leadingAnchor.constraint(equalTo: superview.leadingAnchor, constant: 16),
+            trailingAnchor.constraint(equalTo: superview.trailingAnchor, constant: -16),
+            topAnchor.constraint(greaterThanOrEqualTo: superview.topAnchor, constant: 16),
+            bottomAnchor.constraint(lessThanOrEqualTo: superview.bottomAnchor, constant: -16),
+            centerYAnchor.constraint(equalTo: superview.centerYAnchor),
+            centerXAnchor.constraint(equalTo: superview.centerXAnchor)
+        ])
     }
 }
 
