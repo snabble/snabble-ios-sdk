@@ -67,7 +67,7 @@ public final class PayoneCreditCardEditViewController: UIViewController {
         self.analyticsDelegate = analyticsDelegate
         self.projectId = nil
 
-        super.init(nibName: nil, bundle: SnabbleBundle.main)
+        super.init(nibName: nil, bundle: SnabbleSDKBundle.main)
     }
 
     required init?(coder aDecoder: NSCoder) {
@@ -516,7 +516,7 @@ extension PayoneCreditCardEditViewController {
 
     fileprivate static let pageTemplate: String = { () -> String in
         guard
-            let path = SnabbleBundle.main.path(forResource: "payone-form", ofType: "html"),
+            let path = SnabbleSDKBundle.main.path(forResource: "payone-form", ofType: "html"),
             let data = try? Data(contentsOf: URL(fileURLWithPath: path))
         else {
             return ""

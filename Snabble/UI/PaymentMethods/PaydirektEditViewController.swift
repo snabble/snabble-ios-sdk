@@ -60,7 +60,7 @@ public final class PaydirektEditViewController: UIViewController {
         self.detail = detail
         self.analyticsDelegate = analyticsDelegate
 
-        super.init(nibName: nil, bundle: SnabbleBundle.main)
+        super.init(nibName: nil, bundle: SnabbleSDKBundle.main)
 
         self.title = "paydirekt"
     }

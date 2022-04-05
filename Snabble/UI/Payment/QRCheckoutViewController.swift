@@ -29,7 +29,7 @@ final class QRCheckoutViewController: UIViewController {
         self.cart = cart
         self.process = checkoutProcess
 
-        super.init(nibName: nil, bundle: SnabbleBundle.main)
+        super.init(nibName: nil, bundle: SnabbleSDKBundle.main)
 
         self.title = L10n.Snabble.QRCode.title
     }

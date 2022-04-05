@@ -31,7 +31,7 @@ final class CustomerCardCheckoutViewController: UIViewController {
         self.cart = cart
         self.shop = shop
 
-        super.init(nibName: nil, bundle: SnabbleBundle.main)
+        super.init(nibName: nil, bundle: SnabbleSDKBundle.main)
 
         self.title = L10n.Snabble.Checkout.payAtCashRegister
     }

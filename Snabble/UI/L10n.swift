@@ -24,7 +24,7 @@ extension Snabble {
         }
 
         // check the SDK's localization file
-        let sdkValue = SnabbleBundle.main.localizedString(forKey: key, value: upper, table: "SnabbleLocalizable")
+        let sdkValue = SnabbleSDKBundle.main.localizedString(forKey: key, value: upper, table: "SnabbleLocalizable")
         return sdkValue
     }
 }

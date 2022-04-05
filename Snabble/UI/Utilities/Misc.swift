@@ -166,7 +166,7 @@ open class NibView: UIView {
     }
 
     open var nibBundle: Bundle {
-        return SnabbleBundle.main
+        return SnabbleSDKBundle.main
     }
 }
 
@@ -200,7 +200,7 @@ extension UIImage {
             return img
         }
 
-        return UIImage(named: name, in: SnabbleBundle.main, compatibleWith: nil)
+        return UIImage(named: name, in: SnabbleSDKBundle.main, compatibleWith: nil)
     }
 }
 

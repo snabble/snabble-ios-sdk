@@ -35,7 +35,7 @@ public final class SepaEditViewController: UIViewController {
         self.detail = detail
         self.analyticsDelegate = analyticsDelegate
 
-        super.init(nibName: nil, bundle: SnabbleBundle.main)
+        super.init(nibName: nil, bundle: SnabbleSDKBundle.main)
 
         self.title = L10n.Snabble.Payment.Sepa.title
     }
@@ -43,7 +43,7 @@ public final class SepaEditViewController: UIViewController {
     public init(_ candidate: OriginCandidate, _ analyticsDelegate: AnalyticsDelegate?) {
         self.candidate = candidate
 
-        super.init(nibName: nil, bundle: SnabbleBundle.main)
+        super.init(nibName: nil, bundle: SnabbleSDKBundle.main)
 
         self.title = L10n.Snabble.Payment.Sepa.title
     }

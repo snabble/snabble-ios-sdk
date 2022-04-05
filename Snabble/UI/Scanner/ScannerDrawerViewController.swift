@@ -60,7 +60,7 @@ final class ScannerDrawerViewController: UIViewController {
         self.shoppingListTableVC = ScannerShoppingListViewController()
         self.shoppingCartVC = ShoppingCartTableViewController(shoppingCart)
 
-        super.init(nibName: nil, bundle: SnabbleBundle.main)
+        super.init(nibName: nil, bundle: SnabbleSDKBundle.main)
 
         SnabbleUI.registerForAppearanceChange(self)
     }

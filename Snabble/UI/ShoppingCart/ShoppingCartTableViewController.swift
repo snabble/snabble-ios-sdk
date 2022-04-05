@@ -75,7 +75,7 @@ final class ShoppingCartTableViewController: UITableViewController {
 
         self.view.backgroundColor = .clear
 
-        self.tableView.register(UINib(nibName: "ShoppingCartTableCell", bundle: SnabbleBundle.main), forCellReuseIdentifier: self.itemCellIdentifier)
+        self.tableView.register(UINib(nibName: "ShoppingCartTableCell", bundle: SnabbleSDKBundle.main), forCellReuseIdentifier: self.itemCellIdentifier)
 
         self.tableView.tableFooterView = UIView(frame: CGRect.zero)
         self.tableView.backgroundColor = .clear

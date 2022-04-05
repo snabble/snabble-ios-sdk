@@ -44,7 +44,7 @@ public final class TeleCashCreditCardEditViewController: UIViewController {
         self.analyticsDelegate = analyticsDelegate
         self.projectId = projectId
 
-        super.init(nibName: nil, bundle: SnabbleBundle.main)
+        super.init(nibName: nil, bundle: SnabbleSDKBundle.main)
     }
 
     init(_ detail: PaymentMethodDetail, _ analyticsDelegate: AnalyticsDelegate?) {
@@ -57,7 +57,7 @@ public final class TeleCashCreditCardEditViewController: UIViewController {
         self.analyticsDelegate = analyticsDelegate
         self.projectId = nil
 
-        super.init(nibName: nil, bundle: SnabbleBundle.main)
+        super.init(nibName: nil, bundle: SnabbleSDKBundle.main)
     }
 
     required init?(coder aDecoder: NSCoder) {

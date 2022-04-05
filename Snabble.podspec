@@ -48,7 +48,7 @@ Pod::Spec.new do |s|
     ui.dependency 'AutoLayout-Helper'
 
     ui.resource_bundles = {
-      "Snabble" => [
+      "SnabbleSDK" => [
         'Snabble/UI/*.lproj/*.strings',
         'Snabble/UI/**/*.xib',
         'Snabble/UI/**/*.der',
