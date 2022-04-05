@@ -795,7 +795,7 @@ public enum L10n {
 
 extension L10n {
   private static func tr(_ table: String, _ key: String, _ args: CVarArg...) -> String {
-    let format = Snabble.l10n(key, table)
+    let format = SnabbleSDK.Snabble.l10n(key, table)
     return String(format: format, locale: Locale.current, arguments: args)
   }
 }
