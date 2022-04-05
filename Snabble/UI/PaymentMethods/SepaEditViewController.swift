@@ -96,7 +96,6 @@ public final class SepaEditViewController: UIViewController {
         nameField.tag = InputField.name.rawValue
         nameField.keyboardType = .alphabet
         nameField.autocapitalizationType = .words
-        nameField.tag = InputField.name.rawValue
         nameField.useDynamicFont(forTextStyle: .body)
         nameField.delegate = self
         scrollView.addSubview(nameField)
@@ -104,7 +103,6 @@ public final class SepaEditViewController: UIViewController {
         ibanCountryField.translatesAutoresizingMaskIntoConstraints = false
         ibanCountryField.tag = InputField.country.rawValue
         ibanCountryField.text = "DE"
-        ibanCountryField.tag = InputField.country.rawValue
         ibanCountryField.useDynamicFont(forTextStyle: .body)
         ibanCountryField.delegate = self
         ibanCountryField.setContentHuggingPriority(.required, for: .horizontal)
@@ -118,7 +116,6 @@ public final class SepaEditViewController: UIViewController {
         let smallPhone = UIScreen.main.bounds.width <= 320
         ibanNumberField.clearButtonMode = smallPhone ? .never : .always
         ibanNumberField.placeholder = self.placeholderFor("DE")
-        ibanNumberField.tag = InputField.number.rawValue
         ibanNumberField.useDynamicFont(forTextStyle: .body)
         ibanNumberField.delegate = self
         ibanNumberField.addDoneButton()
