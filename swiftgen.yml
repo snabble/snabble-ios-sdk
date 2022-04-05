@@ -13,6 +13,6 @@ strings:
   outputs:
     templateName: structured-swift5
     params:
-      lookupFunction: SnabbleAPI.l10n
+      lookupFunction: Snabble.l10n
       publicAccess: true
     output: Snabble/UI/Strings.swift
