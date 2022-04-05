@@ -119,7 +119,7 @@ public final class PayoneCreditCardEditViewController: UIViewController {
             self.detail == nil,
             let brand = self.brand,
             let projectId = self.projectId,
-            let project = SnabbleAPI.project(for: projectId),
+            let project = Snabble.project(for: projectId),
             let descriptor = project.paymentMethodDescriptors.first(where: { $0.id == brand.method })
         else {
             return
@@ -183,7 +183,7 @@ public final class PayoneCreditCardEditViewController: UIViewController {
         fmt.currencyCode = tokenization.preAuthInfo.currency
 
         var amount = Decimal(tokenization.preAuthInfo.amount)
-        if let projectId = self.projectId, let project = SnabbleAPI.project(for: projectId) {
+        if let projectId = self.projectId, let project = Snabble.project(for: projectId) {
             name = project.company?.name ?? project.name
             fmt.minimumFractionDigits = project.decimalDigits
             fmt.maximumFractionDigits = project.decimalDigits
@@ -302,7 +302,7 @@ public final class PayoneCreditCardEditViewController: UIViewController {
     private func processResponse(_ response: [String: Any], _ lastname: String?) {
         guard
             let projectId = self.projectId,
-            let project = SnabbleAPI.project(for: projectId),
+            let project = Snabble.project(for: projectId),
             let lastname = lastname,
             let response = PayoneResponse(response: response, lastname: lastname)
         else {
@@ -371,8 +371,8 @@ public final class PayoneCreditCardEditViewController: UIViewController {
 
             guard
                 let projectId = self.projectId,
-                let project = SnabbleAPI.project(for: projectId),
-                let cert = SnabbleAPI.certificates.first,
+                let project = Snabble.project(for: projectId),
+                let cert = Snabble.certificates.first,
                 let response = self.payoneResponse,
                 let preAuthResult = self.payonePreAuthResult
             else {

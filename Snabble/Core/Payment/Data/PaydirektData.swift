@@ -35,7 +35,7 @@ struct PaydirektData: Codable, EncryptedPaymentData, Equatable {
     }
 
     init?(_ gatewayCert: Data?, _ authorizationURI: String, _ auth: PaydirektAuthorization) {
-        let requestOrigin = PaydirektOrigin(clientID: SnabbleAPI.clientId, customerAuthorizationURI: authorizationURI)
+        let requestOrigin = PaydirektOrigin(clientID: Snabble.clientId, customerAuthorizationURI: authorizationURI)
 
         guard
             let encrypter = PaymentDataEncrypter(gatewayCert),

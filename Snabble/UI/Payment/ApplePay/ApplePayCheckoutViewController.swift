@@ -112,7 +112,7 @@ final class ApplePayCheckoutViewController: UIViewController {
 
             // can't use `Project.perform` here since we have to deal with "204 NO CONTENT" as the "success" response
             let start = Date.timeIntervalSinceReferenceDate
-            let session = SnabbleAPI.urlSession
+            let session = Snabble.urlSession
             let task = session.dataTask(with: request) { data, response, error in
                 let elapsed = Date.timeIntervalSinceReferenceDate - start
                 let url = request.url?.absoluteString ?? "n/a"

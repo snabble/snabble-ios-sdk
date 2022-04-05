@@ -6,7 +6,7 @@
 
 import Foundation
 
-extension SnabbleAPI {
+extension Snabble {
     public static func l10n(_ key: String, _ table: String = "") -> String {
         // check if the app has a project-specific localization for this string
         let projectId = SnabbleUI.project.id.rawValue.replacingOccurrences(of: "-", with: ".")

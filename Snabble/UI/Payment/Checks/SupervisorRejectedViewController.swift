@@ -35,7 +35,7 @@ final class SupervisorRejectedViewController: UIViewController {
         let button = UIButton()
         button.makeSnabbleButton()
         button.translatesAutoresizingMaskIntoConstraints = false
-        button.setTitle(Snabble.L10n.Snabble.Payment.backToCart, for: .normal)
+        button.setTitle(SnabbleSDK.L10n.Snabble.Payment.backToCart, for: .normal)
         button.addTarget(self, action: #selector(backButtonTapped(_:)), for: .touchUpInside)
         view.addSubview(button)
 

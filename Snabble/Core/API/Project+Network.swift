@@ -186,8 +186,8 @@ extension Project {
     func request(_ method: HTTPRequestMethod, _ url: String, json: Bool = true, jwtRequired: Bool = true, parameters: [String: String]? = nil,
                  timeout: TimeInterval, completion: @escaping (URLRequest?) -> Void) {
         guard
-            let url = SnabbleAPI.urlString(url, parameters),
-            let fullUrl = SnabbleAPI.urlFor(url)
+            let url = Snabble.urlString(url, parameters),
+            let fullUrl = Snabble.urlFor(url)
         else {
             return completion(nil)
         }
@@ -207,8 +207,8 @@ extension Project {
     func request(_ method: HTTPRequestMethod, _ url: String, json: Bool = true, jwtRequired: Bool = true, queryItems: [URLQueryItem],
                  timeout: TimeInterval, completion: @escaping (URLRequest?) -> Void) {
         guard
-            let url = SnabbleAPI.urlString(url, queryItems),
-            let fullUrl = SnabbleAPI.urlFor(url)
+            let url = Snabble.urlString(url, queryItems),
+            let fullUrl = Snabble.urlFor(url)
         else {
             return completion(nil)
         }
@@ -225,7 +225,7 @@ extension Project {
     ///   - timeout: the timeout for the HTTP request (0 for the system default timeout)
     /// - Returns: the URLRequest
     func request(_ method: HTTPRequestMethod, _ url: String, body: Data, timeout: TimeInterval, completion: @escaping (URLRequest?) -> Void) {
-        guard let url = SnabbleAPI.urlFor(url) else {
+        guard let url = Snabble.urlFor(url) else {
             return completion(nil)
         }
 
@@ -245,7 +245,7 @@ extension Project {
     ///   - timeout: the timeout for the HTTP request (0 for the system default timeout)
     /// - Returns: the URLRequest
     func request<T: Encodable>(_ method: HTTPRequestMethod, _ url: String, body: T, timeout: TimeInterval = 0, _ completion: @escaping (URLRequest?) -> Void ) {
-        guard let url = SnabbleAPI.urlFor(url) else {
+        guard let url = Snabble.urlFor(url) else {
             return completion(nil)
         }
 
@@ -274,11 +274,11 @@ extension Project {
     /// - Returns: the URLRequest
     // swiftlint:disable:next function_parameter_count
     func request(_ method: HTTPRequestMethod, _ url: URL, _ json: Bool, _ jwtRequired: Bool, _ timeout: TimeInterval, _ completion: @escaping (URLRequest) -> Void) {
-        var urlRequest = SnabbleAPI.request(url: url, timeout: timeout, json: json)
+        var urlRequest = Snabble.request(url: url, timeout: timeout, json: json)
         urlRequest.httpMethod = method.rawValue
 
         if jwtRequired {
-            SnabbleAPI.tokenRegistry.getToken(for: self) { token in
+            Snabble.tokenRegistry.getToken(for: self) { token in
                 if let token = token {
                     urlRequest.addValue(token, forHTTPHeaderField: "Client-Token")
                 }
@@ -367,7 +367,7 @@ extension Project {
     @discardableResult
     private func perform<T: Decodable>(_ request: URLRequest, returnRaw: Bool, _ completion: @escaping (_ result: Result<T, SnabbleError>, _ raw: [String: Any]?, _ response: HTTPURLResponse?) -> Void ) -> URLSessionDataTask {
         let start = Date.timeIntervalSinceReferenceDate
-        let session = SnabbleAPI.urlSession
+        let session = Snabble.urlSession
         let task = session.dataTask(with: request) { data, response, error in
             let elapsed = Date.timeIntervalSinceReferenceDate - start
             let url = request.url?.absoluteString ?? "n/a"

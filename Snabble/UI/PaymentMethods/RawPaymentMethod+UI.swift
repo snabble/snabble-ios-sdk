@@ -75,7 +75,7 @@ extension RawPaymentMethod {
             break
         case .twint, .postFinanceCard:
             if let projectId = projectId {
-                return SnabbleAPI.methodRegistry.createEntry(method: self, projectId, analyticsDelegate)
+                return Snabble.methodRegistry.createEntry(method: self, projectId, analyticsDelegate)
             }
         }
 
@@ -85,7 +85,7 @@ extension RawPaymentMethod {
     private func creditCardEditViewController(_ projectId: Identifier<Project>?, _ analyticsDelegate: AnalyticsDelegate?) -> UIViewController? {
         guard
             let projectId = projectId,
-            let project = SnabbleAPI.project(for: projectId),
+            let project = Snabble.project(for: projectId),
             let descriptor = project.paymentMethodDescriptors.first(where: { $0.id == self })
         else {
             return nil
@@ -96,7 +96,7 @@ extension RawPaymentMethod {
         } else if descriptor.acceptedOriginTypes?.contains(.payonePseudoCardPAN) == true {
             return PayoneCreditCardEditViewController(brand: CreditCardBrand.forMethod(self), projectId, analyticsDelegate)
         } else if descriptor.acceptedOriginTypes?.contains(.datatransCreditCardAlias) == true {
-            return SnabbleAPI.methodRegistry.createEntry(method: self, projectId, analyticsDelegate)
+            return Snabble.methodRegistry.createEntry(method: self, projectId, analyticsDelegate)
         }
 
         return nil

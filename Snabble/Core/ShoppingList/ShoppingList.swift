@@ -14,7 +14,7 @@ public final class ShoppingList: Codable {
     private let directory: String
 
     public var project: Project? {
-        SnabbleAPI.projects.first { $0.id == projectId }
+        Snabble.projects.first { $0.id == projectId }
     }
 
     public var isEmpty: Bool {
@@ -163,7 +163,7 @@ extension ShoppingList {
 
                 let basename = String(fileName.dropLast(Self.fileExtension.count))
                 let projectId = Identifier<Project>(rawValue: basename)
-                if SnabbleAPI.project(for: projectId) == nil {
+                if Snabble.project(for: projectId) == nil {
                     continue
                 }
 

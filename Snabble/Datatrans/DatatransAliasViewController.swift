@@ -131,7 +131,7 @@ public final class DatatransAliasViewController: UIViewController {
 
     private func showError(_ msg: String) {
         if let projectId = projectId {
-            let project = SnabbleAPI.project(for: projectId)
+            let project = Snabble.project(for: projectId)
             project?.logError(msg)
         }
 
@@ -153,7 +153,7 @@ public final class DatatransAliasViewController: UIViewController {
     private func handleSuccess(_ result: TransactionSuccess) {
         guard
             let projectId = self.projectId,
-            let cert = SnabbleAPI.certificates.first else {
+            let cert = Snabble.certificates.first else {
             return self.showError("no certificate found")
         }
 
@@ -245,7 +245,7 @@ extension DatatransAliasViewController {
 
     private func fetchToken(_ projectId: Identifier<Project>, _ method: RawPaymentMethod, completion: @escaping (TokenResponse?) -> Void) {
         guard
-            let project = SnabbleAPI.project(for: projectId),
+            let project = Snabble.project(for: projectId),
             let descriptor = project.paymentMethodDescriptors.first(where: { $0.id == method }),
             hasValidOriginType(descriptor),
             let url = descriptor.links?.tokenization?.href

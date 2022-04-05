@@ -81,7 +81,7 @@ public protocol ProductProvider: AnyObject {
     /// initialize a ProductDB instance with the given configuration
     /// - parameter config: a `SnabbleAPIConfig` object
     /// - parameter project: the snabble `Project`
-    init(_ config: SnabbleAPIConfig, _ project: Project)
+    init(_ config: Config, _ project: Project)
 
     /// Check if a database file is present for this project
     func databaseExists() -> Bool
@@ -204,7 +204,7 @@ final class ProductDB: ProductProvider {
     private let dbName = "products.sqlite3"
     private var db: DatabaseQueue?
     private var dbDirectory: URL
-    private let config: SnabbleAPIConfig
+    private let config: Config
     private let useFTS: Bool
     let project: Project
 
@@ -249,7 +249,7 @@ final class ProductDB: ProductProvider {
 
     /// initialize a ProductDB instance with the given configuration
     /// - parameter config: a `ProductDBConfiguration` object
-    public init(_ config: SnabbleAPIConfig, _ project: Project) {
+    public init(_ config: Config, _ project: Project) {
         self.config = config
         self.project = project
 
@@ -712,7 +712,7 @@ final class ProductDB: ProductProvider {
     }
 
     private func executeInitialSQL() {
-        guard SnabbleAPI.debugMode, let statements = self.config.initialSQL, !statements.isEmpty else {
+        guard Snabble.debugMode, let statements = self.config.initialSQL, !statements.isEmpty else {
             return
         }
 

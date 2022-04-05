@@ -1,5 +1,5 @@
 //
-//  SnabbleAPI.swift
+//  Snabble.swift
 //
 //  Copyright © 2020 snabble. All rights reserved.
 //
@@ -7,13 +7,13 @@
 import Foundation
 import KeychainAccess
 
-/// General config data for using the snabble API.
-/// Applications must call `SnabbleAPI.setup()` with an instance of this struct before they make their first API call.
-public struct SnabbleAPIConfig {
+/// General config data for using the snabble.
+/// Applications must call `Snabble.setup(config: completion:)` with an instance of this struct before they make their first API call.
+public struct Config {
     /// the appID assigned by snabble
     public let appId: String
     /// the environment  to use
-    public let environment: SnabbleAPI.Environment
+    public let environment: Snabble.Environment
     /// the secrect assigned by snabble, used to retrieve authorization tokens
     public let secret: String
 
@@ -51,13 +51,11 @@ public struct SnabbleAPIConfig {
     ///   - appId: Provide your personal `appId`
     ///   - secret: The secret matching your `appId`
     ///   - environment: Choose an environment you want to use
-    public init(appId: String, secret: String, environment: SnabbleAPI.Environment = .production) {
+    public init(appId: String, secret: String, environment: Snabble.Environment = .production) {
         self.appId = appId
         self.environment = environment
         self.secret = secret
     }
-
-    static let none = SnabbleAPIConfig(appId: "none", secret: "")
 }
 
 public extension Notification.Name {
@@ -67,9 +65,9 @@ public extension Notification.Name {
 /**
  * The main entry point for the SnabbleSDK.
  *
- * Use `SnabbleAPI.setup(_:, completion:)` to initialize Snabble.
+ * Use `Snabble.setup(config:, completion:)` to initialize Snabble.
  */
-public enum SnabbleAPI {
+public enum Snabble {
 
     /**
      * Environment in which the SDK should work
@@ -103,8 +101,11 @@ public enum SnabbleAPI {
         }
     }
 
-    private(set) static var config = SnabbleAPIConfig.none
-    private(set) static var tokenRegistry = TokenRegistry(appId: "", secret: "")
+    /// Will be set with setup(config:, completion:)
+    private(set) static var config: Config!
+
+    /// Will be created in setup(config:, completion:)
+    private(set) static var tokenRegistry: TokenRegistry!
 
     static var metadata = Metadata.none {
         didSet {
@@ -166,7 +167,7 @@ public enum SnabbleAPI {
     /// - Parameters:
     ///   - config: `SnabbleAPIConfig` with at least an `appId` and a `secret`
     ///   - completion: CompletionHandler is called as soon as everything is finished
-    public static func setup(config: SnabbleAPIConfig, completion: @escaping () -> Void ) {
+    public static func setup(config: Config, completion: @escaping () -> Void ) {
         self.config = config
         self.config.useCertificatePinning = !self.debugMode || config.useCertificatePinning
 
@@ -283,7 +284,7 @@ public enum SnabbleAPI {
         if let provider = providerPool[project.id] {
             return provider
         } else {
-            let provider = ProductDB(SnabbleAPI.config, project)
+            let provider = ProductDB(Snabble.config, project)
             providerPool[project.id] = provider
             return provider
         }
@@ -348,7 +349,7 @@ public struct AppUserId {
     }
 }
 
-extension SnabbleAPI {
+extension Snabble {
     private static let service = "io.snabble.sdk"
 
     // MARK: - client id
@@ -381,7 +382,7 @@ extension SnabbleAPI {
 
     // MARK: - app user id
     private static var appUserKey: String {
-        return "Snabble.api.appUserId.\(config.environment.name).\(SnabbleAPI.config.appId)"
+        return "Snabble.api.appUserId.\(config.environment.name).\(Snabble.config.appId)"
     }
 
     /**
@@ -411,7 +412,7 @@ extension SnabbleAPI {
     }
 }
 
-extension SnabbleAPI {
+extension Snabble {
     public static func urlFor(_ url: String) -> URL? {
         return URL(string: self.absoluteUrl(url))
     }
@@ -447,19 +448,19 @@ extension SnabbleAPI {
     }
 }
 
-extension SnabbleAPI {
+extension Snabble {
     static var debugMode: Bool {
         return _isDebugAssertConfiguration()
     }
 }
 
 // MARK: - networking stuff
-extension SnabbleAPI {
+extension Snabble {
     public static func request(url: URL, timeout: TimeInterval? = nil, json: Bool = true) -> URLRequest {
         var request = URLRequest(url: url)
-        request.addValue(SnabbleAPI.clientId, forHTTPHeaderField: "Client-Id")
+        request.addValue(Snabble.clientId, forHTTPHeaderField: "Client-Id")
 
-        if let userAgent = SnabbleAPI.userAgent {
+        if let userAgent = Snabble.userAgent {
             request.addValue(userAgent, forHTTPHeaderField: "User-Agent")
         }
 
@@ -507,7 +508,7 @@ extension SnabbleAPI {
 }
 
 // MARK: - age data
-extension SnabbleAPI {
+extension Snabble {
     struct AppUserData: Codable {
         let id: String
         let dayOfBirth: String?
@@ -541,13 +542,13 @@ extension SnabbleAPI {
     static func fetchAppUserData(_ projectId: Identifier<Project>) {
         guard
             appUserDataTask == nil,
-            let project = SnabbleAPI.project(for: projectId),
-            let appUserId = SnabbleAPI.appUserId
+            let project = Snabble.project(for: projectId),
+            let appUserId = Snabble.appUserId
         else {
             return
         }
 
-        let url = SnabbleAPI.links.appUser.href.replacingOccurrences(of: "{appUserID}", with: appUserId.value)
+        let url = Snabble.links.appUser.href.replacingOccurrences(of: "{appUserID}", with: appUserId.value)
         project.request(.get, url, timeout: 2) { request in
             guard let request = request else {
                 return
@@ -556,7 +557,7 @@ extension SnabbleAPI {
             appUserDataTask = project.perform(request) { (result: Result<AppUserData, SnabbleError>) in
                 switch result {
                 case .success(let userData):
-                    SnabbleAPI.appUserData = userData
+                    Snabble.appUserData = userData
                 case .failure(let error):
                     print("\(#function), \(error)")
                 }
@@ -572,9 +573,9 @@ extension SnabbleAPI {
 
     public static func saveTermsConsent(_ version: String, completion: @escaping (Bool) -> Void) {
         guard
-            let appUserId = SnabbleAPI.appUserId,
-            let consents = SnabbleAPI.links.consents?.href,
-            let project = SnabbleAPI.projects.first
+            let appUserId = Snabble.appUserId,
+            let consents = Snabble.links.consents?.href,
+            let project = Snabble.projects.first
         else {
             return
         }

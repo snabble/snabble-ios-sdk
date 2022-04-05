@@ -12,12 +12,12 @@ public enum DatatransFactory {
 
         let methods = Methods(viewMethod: viewFactory, entryMethod: entryFactory)
 
-        SnabbleAPI.methodRegistry.register(methods: methods, for: .twint)
-        SnabbleAPI.methodRegistry.register(methods: methods, for: .postFinanceCard)
+        Snabble.methodRegistry.register(methods: methods, for: .twint)
+        Snabble.methodRegistry.register(methods: methods, for: .postFinanceCard)
 
-        SnabbleAPI.methodRegistry.register(methods: methods, for: .creditCardVisa)
-        SnabbleAPI.methodRegistry.register(methods: methods, for: .creditCardMastercard)
-        SnabbleAPI.methodRegistry.register(methods: methods, for: .creditCardAmericanExpress)
+        Snabble.methodRegistry.register(methods: methods, for: .creditCardVisa)
+        Snabble.methodRegistry.register(methods: methods, for: .creditCardMastercard)
+        Snabble.methodRegistry.register(methods: methods, for: .creditCardAmericanExpress)
     }
 
     private static func viewFactory(_ detail: PaymentMethodDetail, _ analyticsDelegate: AnalyticsDelegate?) -> UIViewController {

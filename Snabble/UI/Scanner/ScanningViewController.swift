@@ -72,7 +72,7 @@ final class ScanningViewController: UIViewController {
 
         self.shoppingCart = cart
 
-        self.productProvider = SnabbleAPI.productProvider(for: project)
+        self.productProvider = Snabble.productProvider(for: project)
 
         self.barcodeDetector = detector
         self.barcodeDetector.scanFormats = project.scanFormats
@@ -307,7 +307,7 @@ extension ScanningViewController {
     }
 
     private func loadMessageImage(_ url: URL) {
-        let session = SnabbleAPI.urlSession
+        let session = Snabble.urlSession
         self.messageSpinner.startAnimating()
         let task = session.dataTask(with: url) { data, _, _ in
             if let data = data, let img = UIImage(data: data) {
@@ -355,7 +355,7 @@ extension ScanningViewController: ScanConfirmationViewDelegate {
     }
 
     private func ageCheckRequired(_ item: CartItem) -> ScanMessage? {
-        let userAge = SnabbleAPI.appUserData?.age ?? 0
+        let userAge = Snabble.appUserData?.age ?? 0
 
         switch item.product.saleRestriction {
         case .none:

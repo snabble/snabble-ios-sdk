@@ -80,7 +80,7 @@ extension Manifest.File {
         guard let variant = self.variant(for: scale) else {
             return nil
         }
-        return SnabbleAPI.urlFor(variant)
+        return Snabble.urlFor(variant)
     }
 
     private func variant(for scale: CGFloat) -> String? {
@@ -328,7 +328,7 @@ final class AssetManager {
 
     func initialize(_ projectId: Identifier<Project>, _ manifestUrl: String, downloadFiles: Bool, completion: @escaping () -> Void) {
         guard
-            let manifestUrl = SnabbleAPI.urlFor(manifestUrl),
+            let manifestUrl = Snabble.urlFor(manifestUrl),
             var components = URLComponents(url: manifestUrl, resolvingAgainstBaseURL: false)
         else {
             return
@@ -347,9 +347,9 @@ final class AssetManager {
             return
         }
 
-        let session = SnabbleAPI.urlSession
+        let session = Snabble.urlSession
         let start = Date.timeIntervalSinceReferenceDate
-        var request = SnabbleAPI.request(url: url, json: true)
+        var request = Snabble.request(url: url, json: true)
         request.timeoutInterval = 2
         let task = session.dataTask(with: request) { data, response, error in
             let elapsed = Date.timeIntervalSinceReferenceDate - start
@@ -427,7 +427,7 @@ final class AssetManager {
             let session = URLSession(configuration: .default, delegate: downloadDelegate, delegateQueue: nil)
 
             if let remoteUrl = file.remoteURL(for: UIScreen.main.scale) {
-                let request = SnabbleAPI.request(url: remoteUrl, json: false)
+                let request = Snabble.request(url: remoteUrl, json: false)
                 let task = session.downloadTask(with: request)
                 task.resume()
             }
@@ -450,7 +450,7 @@ final class AssetManager {
     func clearAssets() {
         let fileManager = FileManager.default
 
-        for project in SnabbleAPI.projects {
+        for project in Snabble.projects {
             if let url = self.cacheDirectory(project.id) {
                 try? fileManager.removeItem(at: url)
             }

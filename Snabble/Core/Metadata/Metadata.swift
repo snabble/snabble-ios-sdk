@@ -177,7 +177,7 @@ public extension Metadata {
                 return completion(nil)
             }
 
-            if SnabbleAPI.debugMode {
+            if Snabble.debugMode {
                 request.cachePolicy = .reloadIgnoringCacheData
             }
 

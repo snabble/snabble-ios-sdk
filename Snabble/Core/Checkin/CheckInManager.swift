@@ -28,7 +28,7 @@ public protocol CheckInManagerDelegate: AnyObject {
 public class CheckInManager: NSObject {
     /// Projects used to find available shops.
     public var projects: [Project] {
-        SnabbleAPI.projects
+        Snabble.projects
     }
 
     /// Current checked in `Shop`
