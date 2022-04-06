@@ -268,6 +268,18 @@ extension PaymentProcess {
             self.hideBlurOverlay()
             switch result.result {
             case .success(let process):
+                Snabble.storeInFlightCheckout(url: process.links._self.href, shop: self.shop)
+                let checkoutVC = Self.checkoutViewController(for: process,
+                                                             shop: self.shop,
+                                                             cart: self.cart,
+                                                             paymentDelegate: self.paymentDelegate)
+
+                if let checkout = checkoutVC {
+                    completion(.success(checkout))
+                } else {
+                    self.paymentDelegate?.showWarningMessage(L10n.Snabble.Payment.errorStarting)
+                }
+                /*
                 switch process.routingTarget {
                 case .none:
                     let checkoutDisplay = method.rawMethod.checkoutDisplayViewController(shop: self.shop,
@@ -288,13 +300,42 @@ extension PaymentProcess {
                     gatekeeper.delegate = self.paymentDelegate
                     completion(.success(gatekeeper))
                 }
-
+                 */
             case .failure(let error):
                 if !error.isUrlError(.timedOut) {
                     self.cart.generateNewUUID()
                 }
                 self.startFailed(method, shop: self.shop, error, completion)
             }
+        }
+    }
+
+    static func checkoutViewController(for process: CheckoutProcess,
+                                       shop: Shop,
+                                       cart: ShoppingCart,
+                                       paymentDelegate: PaymentDelegate?) -> UIViewController? {
+        guard let rawMethod = RawPaymentMethod(rawValue: process.paymentMethod) else {
+            return nil
+        }
+        switch process.routingTarget {
+        case .none:
+            let checkoutDisplay = rawMethod.checkoutDisplayViewController(shop: shop,
+                                                                          checkoutProcess: process,
+                                                                          shoppingCart: cart,
+                                                                          delegate: paymentDelegate)
+            if let display = checkoutDisplay {
+                return display
+            } else {
+                return nil
+            }
+        case .supervisor:
+            let supervisor = SupervisorCheckViewController(shop: shop, shoppingCart: cart, checkoutProcess: process)
+            supervisor.delegate = paymentDelegate
+            return supervisor
+        case .gatekeeper:
+            let gatekeeper = GatekeeperCheckViewController(shop: shop, shoppingCart: cart, checkoutProcess: process)
+            gatekeeper.delegate = paymentDelegate
+            return gatekeeper
         }
     }
 }

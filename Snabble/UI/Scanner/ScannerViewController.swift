@@ -76,6 +76,28 @@ public final class ScannerViewController: PulleyViewController {
     required init(contentViewController: UIViewController, drawerViewController: UIViewController) {
         fatalError("init(contentViewController:drawerViewController:) has not been implemented")
     }
+
+    override public func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+
+        if let inFlight = Snabble.inFlightCheckout {
+            continueInFlightCheckout(with: inFlight)
+        }
+    }
+
+    private func continueInFlightCheckout(with checkout: Snabble.InFlightCheckout) {
+        SignedCheckoutInfo.fetchCheckoutProcess(SnabbleUI.project, checkout.url) { result in
+            switch result.result {
+            case .success(let process):
+                let checkoutVC = PaymentProcess.checkoutViewController(for: process,
+                                                                       shop: checkout.shop,
+                                                                       cart: self.shoppingCart,
+                                                                       paymentDelegate: self.shoppingCartDelegate)
+            case .failure(let error):
+                print("can't get in-flight checkout process: \(error)")
+            }
+        }
+    }
 }
 
 extension ScannerViewController: CustomizableAppearance {

@@ -145,6 +145,7 @@ final class EmbeddedCodesCheckoutViewController: UIViewController {
 
         UIScreen.main.brightness = self.initialBrightness
 
+        Snabble.clearInFlightCheckout()
         if self.isMovingFromParent {
             // user "aborted" this payment process by tapping 'Back'
             self.cart.generateNewUUID()
