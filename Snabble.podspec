@@ -18,6 +18,7 @@ Pod::Spec.new do |s|
   s.author = { 'snabble GmbH' => 'info@snabble.io' }
   s.source = { :git => 'https://github.com/snabble/iOS-SDK.git', :tag => "#{s.version}" }
   s.social_media_url = 'https://twitter.com/snabble_io'
+  s.module_name = 'SnabbleSDK'
 
   s.platform = :ios
   s.ios.deployment_target = '12.0'
@@ -47,7 +48,7 @@ Pod::Spec.new do |s|
     ui.dependency 'AutoLayout-Helper'
 
     ui.resource_bundles = {
-      "Snabble" => [
+      "SnabbleSDK" => [
         'Snabble/UI/*.lproj/*.strings',
         'Snabble/UI/**/*.xib',
         'Snabble/UI/**/*.der',

@@ -35,7 +35,7 @@ public final class BarcodeEntryViewController: UIViewController {
         self.completion = completion
         self.showSku = showSku
 
-        super.init(nibName: nil, bundle: SnabbleBundle.main)
+        super.init(nibName: nil, bundle: SnabbleSDKBundle.main)
 
         self.title = L10n.Snabble.Scanner.enterBarcode
     }

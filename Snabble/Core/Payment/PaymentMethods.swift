@@ -113,7 +113,7 @@ public enum RawPaymentMethod: String, Decodable {
 
     // true if this method is available for use - shortcut for the registry method call
     public var isAvailable: Bool {
-        return SnabbleAPI.methodRegistry.isMethodAvailable(self)
+        return Snabble.methodRegistry.isMethodAvailable(self)
     }
 }
 

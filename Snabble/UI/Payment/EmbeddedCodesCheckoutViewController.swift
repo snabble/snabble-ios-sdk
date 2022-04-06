@@ -54,7 +54,7 @@ final class EmbeddedCodesCheckoutViewController: UIViewController {
         self.shop = shop
         self.qrCodeConfig = qrCodeConfig
 
-        super.init(nibName: nil, bundle: SnabbleBundle.main)
+        super.init(nibName: nil, bundle: SnabbleSDKBundle.main)
 
         self.title = L10n.Snabble.QRCode.title
     }
@@ -79,7 +79,7 @@ final class EmbeddedCodesCheckoutViewController: UIViewController {
         self.messageLabel.text = msg
         self.messageWrapper.isHidden = msg.isEmpty
 
-        let nib = UINib(nibName: "QRCodeCell", bundle: SnabbleBundle.main)
+        let nib = UINib(nibName: "QRCodeCell", bundle: SnabbleSDKBundle.main)
         self.collectionView.register(nib, forCellWithReuseIdentifier: "qrCodeCell")
 
         let generator = QRCodeGenerator(cart: cart, config: self.qrCodeConfig, processId: process?.id)

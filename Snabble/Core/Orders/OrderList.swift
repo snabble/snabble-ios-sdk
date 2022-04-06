@@ -41,12 +41,12 @@ public struct Order: Codable {
 extension OrderList {
     public static func load(_ project: Project, completion: @escaping (Result<OrderList, SnabbleError>) -> Void ) {
         var url: String?
-        if let clientOrdersUrl = SnabbleAPI.links.clientOrders?.href {
-            url = clientOrdersUrl.replacingOccurrences(of: "{clientID}", with: SnabbleAPI.clientId)
+        if let clientOrdersUrl = Snabble.links.clientOrders?.href {
+            url = clientOrdersUrl.replacingOccurrences(of: "{clientID}", with: Snabble.clientId)
         }
 
-        if let appUserId = SnabbleAPI.appUserId {
-            url = SnabbleAPI.links.appUserOrders.href.replacingOccurrences(of: "{appUserID}", with: appUserId.value)
+        if let appUserId = Snabble.appUserId {
+            url = Snabble.links.appUserOrders.href.replacingOccurrences(of: "{appUserID}", with: appUserId.value)
         }
 
         guard let ordersUrl = url else {
@@ -117,7 +117,7 @@ extension Order {
                 return
             }
 
-            let session = SnabbleAPI.urlSession
+            let session = Snabble.urlSession
             let task = session.downloadTask(with: request) { location, _, error in
                 if let error = error {
                     Log.error("error downloading receipt: \(String(describing: error))")

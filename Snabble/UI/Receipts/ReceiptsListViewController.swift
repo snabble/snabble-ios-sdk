@@ -99,7 +99,7 @@ public final class ReceiptsListViewController: UITableViewController {
     }
 
     private func loadOrderList() {
-        guard let project = SnabbleAPI.projects.first else {
+        guard let project = Snabble.projects.first else {
             return
         }
 
@@ -168,7 +168,7 @@ public final class ReceiptsListViewController: UITableViewController {
     }
 
     @objc private func handleRefresh(_ sender: Any) {
-        guard let project = SnabbleAPI.projects.first else {
+        guard let project = Snabble.projects.first else {
             return
         }
 
@@ -208,7 +208,7 @@ extension ReceiptsListViewController {
         let orderEntry = orders[indexPath.row]
         guard
             case .done(let order) = orderEntry,
-            let project = SnabbleAPI.project(for: order.projectId) ?? SnabbleAPI.projects.first
+            let project = Snabble.project(for: order.projectId) ?? Snabble.projects.first
         else {
             return
         }

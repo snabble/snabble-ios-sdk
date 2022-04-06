@@ -9,7 +9,7 @@ import TrustKit
 
 /// use Trustkit for certificate pinning
 
-extension SnabbleAPI {
+extension Snabble {
     private static let CAHashes = [
         // Let's Encrypt X3 cross-signed
         "YLh1dUR9y6Kja30RrAn7JKnbQG/uEtLMkBgFF2Fuihg=",
@@ -44,19 +44,19 @@ extension SnabbleAPI {
                     kTSKExpirationDate: "2025-09-15",
                     kTSKIncludeSubdomains: true,
                     kTSKDisableDefaultReportUri: true,
-                    kTSKPublicKeyHashes: SnabbleAPI.CAHashes
+                    kTSKPublicKeyHashes: Snabble.CAHashes
                 ],
                 "snabble-testing.io": [
                     kTSKExpirationDate: "2025-09-15",
                     kTSKIncludeSubdomains: true,
                     kTSKDisableDefaultReportUri: true,
-                    kTSKPublicKeyHashes: SnabbleAPI.CAHashes
+                    kTSKPublicKeyHashes: Snabble.CAHashes
                 ],
                 "snabble-staging.io": [
                     kTSKExpirationDate: "2025-09-15",
                     kTSKIncludeSubdomains: true,
                     kTSKDisableDefaultReportUri: true,
-                    kTSKPublicKeyHashes: SnabbleAPI.CAHashes
+                    kTSKPublicKeyHashes: Snabble.CAHashes
                 ]
             ]
         ]
@@ -88,7 +88,7 @@ extension SnabbleAPI {
 internal class CertificatePinningDelegate: NSObject, URLSessionDelegate {
     func urlSession(_ session: URLSession, didReceive challenge: URLAuthenticationChallenge,
                     completionHandler: @escaping (URLSession.AuthChallengeDisposition, URLCredential?) -> Void) {
-        guard SnabbleAPI.config.useCertificatePinning else {
+        guard Snabble.config.useCertificatePinning else {
             return completionHandler(.performDefaultHandling, nil)
         }
 

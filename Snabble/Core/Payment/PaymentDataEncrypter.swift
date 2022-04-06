@@ -17,10 +17,10 @@ struct PaymentDataEncrypter {
     private var certificate: Data?
 
     init?(_ gatewayCert: Data?) {
-        let caName = "\(SnabbleAPI.config.environment.name)-ca"
+        let caName = "\(Snabble.config.environment.name)-ca"
         guard
             let gatewayCert = gatewayCert,
-            let rootPath = SnabbleBundle.main.path(forResource: caName, ofType: "der")
+            let rootPath = SnabbleSDKBundle.main.path(forResource: caName, ofType: "der")
         else {
             return nil
         }

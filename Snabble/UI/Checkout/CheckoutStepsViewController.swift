@@ -180,7 +180,7 @@ final class CheckoutStepsViewController: UIViewController {
     }
 
     @objc private func doneButtonTouchedUpInside(_ sender: UIButton) {
-        SnabbleAPI.fetchAppUserData(shop.projectId)
+        Snabble.fetchAppUserData(shop.projectId)
         updateShoppingCart(for: checkoutProcess)
         paymentDelegate?.checkoutFinished(viewModel.shoppingCart, viewModel.checkoutProcess)
         navigationController?.popToRootViewController(animated: false)

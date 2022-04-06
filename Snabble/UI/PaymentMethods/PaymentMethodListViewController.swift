@@ -71,7 +71,7 @@ public final class PaymentMethodListViewController: UITableViewController {
                 case .payoneCreditCard(let payoneData):
                     return payoneData.projectId == projectId
                 case .tegutEmployeeCard, .sepa, .paydirektAuthorization, .leinweberCustomerNumber:
-                    return SnabbleAPI.project(for: projectId)?.paymentMethods.contains(where: { $0 == detail.rawMethod }) ?? false
+                    return Snabble.project(for: projectId)?.paymentMethods.contains(where: { $0 == detail.rawMethod }) ?? false
                 }
             }
 
@@ -93,7 +93,7 @@ public final class PaymentMethodListViewController: UITableViewController {
     }
 
     @objc private func addMethod() {
-        let methods = SnabbleAPI.projects
+        let methods = Snabble.projects
             .filter { $0.id == projectId }
             .flatMap { $0.paymentMethods }
             .filter { $0.editable }
@@ -169,7 +169,7 @@ extension PaymentMethodListViewController {
             case .tegutEmployeeCard, .leinweberCustomerNumber:
                 editVC = nil
             case .datatransAlias, .datatransCardAlias:
-                editVC = SnabbleAPI.methodRegistry.create(detail: detail, analyticsDelegate: self.analyticsDelegate)
+                editVC = Snabble.methodRegistry.create(detail: detail, analyticsDelegate: self.analyticsDelegate)
             }
 
             if let controller = editVC {

@@ -102,8 +102,8 @@ final class TokenRegistry {
                 if let tokenData = tokenData {
                     self.projectTokens[projectId] = tokenData
                     self.startRefreshTimer()
-                    if SnabbleAPI.appUserData == nil {
-                        SnabbleAPI.fetchAppUserData(projectId)
+                    if Snabble.appUserData == nil {
+                        Snabble.fetchAppUserData(projectId)
                     }
                 }
 
@@ -142,7 +142,7 @@ final class TokenRegistry {
         }
 
         for projectId in activeIds {
-            if let project = SnabbleAPI.project(for: projectId) {
+            if let project = Snabble.project(for: projectId) {
                 self.getToken(for: project, completion: { _ in })
             }
         }
@@ -206,22 +206,22 @@ final class TokenRegistry {
     }
 
     private func retrieveToken(for projectId: Identifier<Project>, _ date: Date? = nil, completion: @escaping (TokenData?) -> Void) {
-        if let appUserId = SnabbleAPI.appUserId {
-            if verboseToken { Log.debug("retrieveToken p=\(projectId.rawValue) app=\(self.appId) client=\(SnabbleAPI.clientId) au=\(appUserId), date=\(String(describing: date))") }
+        if let appUserId = Snabble.appUserId {
+            if verboseToken { Log.debug("retrieveToken p=\(projectId.rawValue) app=\(self.appId) client=\(Snabble.clientId) au=\(appUserId), date=\(String(describing: date))") }
             self.retrieveTokenForUser(for: projectId, appUserId, date, completion: completion)
         } else {
-            if verboseToken { Log.debug("retrieveToken+User p=\(projectId.rawValue) app=\(self.appId) client=\(SnabbleAPI.clientId) date=\(String(describing: date))") }
+            if verboseToken { Log.debug("retrieveToken+User p=\(projectId.rawValue) app=\(self.appId) client=\(Snabble.clientId) date=\(String(describing: date))") }
             self.retrieveAppUserAndToken(for: projectId, date, completion: completion)
         }
     }
 
     private func retrieveAppUserAndToken(for projectId: Identifier<Project>, _ date: Date? = nil, completion: @escaping (TokenData?) -> Void) {
         print(#function)
-        guard let project = SnabbleAPI.project(for: projectId) else {
+        guard let project = Snabble.project(for: projectId) else {
             return completion(nil)
         }
 
-        let url = SnabbleAPI.metadata.links.createAppUser.href
+        let url = Snabble.metadata.links.createAppUser.href
         let parameters = [ "project": projectId.rawValue ]
         project.request(.post, url, jwtRequired: false, parameters: parameters, timeout: 5) { request in
             guard
@@ -242,10 +242,10 @@ final class TokenRegistry {
                     if self.verboseToken { Log.debug("retrieveAppUserAndToken succeeded") }
                     self.verboseToken = false
                     print(#function, "new appUserID: \(appUserData.appUser.id)")
-                    SnabbleAPI.appUserId = AppUserId(value: appUserData.appUser.id, secret: appUserData.appUser.secret)
+                    Snabble.appUserId = AppUserId(value: appUserData.appUser.id, secret: appUserData.appUser.secret)
                     completion(TokenData(appUserData.token, projectId))
                 case .failure:
-                    self.verboseToken = true && SnabbleAPI.debugMode
+                    self.verboseToken = true && Snabble.debugMode
                     if self.verboseToken { Log.debug("retrieveAppUserAndToken failed") }
                     if let response = httpResponse, response.statusCode == 403, date == nil {
                         self.retryWithServerDate(projectId, response, completion: completion)
@@ -258,7 +258,7 @@ final class TokenRegistry {
     }
 
     private func retrieveTokenForUser(for projectId: Identifier<Project>, _ appUserId: AppUserId, _ date: Date? = nil, completion: @escaping (TokenData?) -> Void ) {
-        guard let project = SnabbleAPI.project(for: projectId) else {
+        guard let project = Snabble.project(for: projectId) else {
             return completion(nil)
         }
 
@@ -285,7 +285,7 @@ final class TokenRegistry {
                     self.verboseToken = false
                     completion(TokenData(token, projectId))
                 case .failure:
-                    self.verboseToken = true && SnabbleAPI.debugMode
+                    self.verboseToken = true && Snabble.debugMode
                     if self.verboseToken { Log.debug("retrieveTokenForUser failed") }
                     if let response = httpResponse, response.statusCode == 403, date == nil {
                         self.retryWithServerDate(projectId, response, completion: completion)

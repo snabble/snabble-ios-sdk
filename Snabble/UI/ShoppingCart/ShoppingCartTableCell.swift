@@ -464,7 +464,7 @@ extension ShoppingCartTableCell {
         }
 
         self.spinner.startAnimating()
-        self.task = SnabbleAPI.urlSession.dataTask(with: url) { data, _, error in
+        self.task = Snabble.urlSession.dataTask(with: url) { data, _, error in
             self.task = nil
             DispatchQueue.main.async {
                 self.spinner.stopAnimating()

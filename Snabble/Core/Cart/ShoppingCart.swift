@@ -287,11 +287,11 @@ public final class ShoppingCart: Codable {
     /// update the products in this shopping cart, e.g. after a database update was downloaded
     /// or when the customer card was changed
     public func updateProducts(_ customerCard: String? = nil) {
-        guard let project = SnabbleAPI.project(for: self.projectId) else {
+        guard let project = Snabble.project(for: self.projectId) else {
             return
         }
 
-        let provider = SnabbleAPI.productProvider(for: project)
+        let provider = Snabble.productProvider(for: project)
         var newItems = [CartItem]()
         for item in self.items {
             // TODO: don't rely on on products being available locally?
@@ -404,12 +404,12 @@ public extension Notification.Name {
 // MARK: backend connection
 extension ShoppingCart {
     func createCart() -> Cart {
-        return Cart(self, clientId: SnabbleAPI.clientId, appUserId: SnabbleAPI.appUserId?.value)
+        return Cart(self, clientId: Snabble.clientId, appUserId: Snabble.appUserId?.value)
     }
 
     func createCheckoutInfo(userInitiated: Bool = false, completion: @escaping (Bool) -> Void) {
         guard
-            let project = SnabbleAPI.project(for: self.projectId),
+            let project = Snabble.project(for: self.projectId),
             !self.items.isEmpty
         else {
             completion(false)

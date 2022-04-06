@@ -85,7 +85,7 @@ public final class PaymentMethodAddViewController: UITableViewController {
     }
 
     private func projectEntries(for brandId: Identifier<Brand>) -> [[MethodEntry]] {
-        let projectsEntries = SnabbleAPI.projects
+        let projectsEntries = Snabble.projects
             .filter { $0.brandId == brandId }
             .sorted { $0.name < $1.name }
             .map { MethodEntry(project: $0, count: self.methodCount(for: $0.id)) }
@@ -98,7 +98,7 @@ public final class PaymentMethodAddViewController: UITableViewController {
     private func multiProjectEntries() -> [[MethodEntry]] {
         var entries = [[MethodEntry]]()
 
-        var allEntries = SnabbleAPI.projects
+        var allEntries = Snabble.projects
             .filter { !$0.shops.isEmpty }
             .filter { $0.paymentMethods.firstIndex { $0.dataRequired } != nil }
             .map { MethodEntry(project: $0, count: self.methodCount(for: $0.id)) }
@@ -111,7 +111,7 @@ public final class PaymentMethodAddViewController: UITableViewController {
                 continue
             }
 
-            let brandProjects = SnabbleAPI.projects.filter { $0.brandId == brandId }
+            let brandProjects = Snabble.projects.filter { $0.brandId == brandId }
             let replacement: MethodEntry
             if brandProjects.count == 1 {
                 // only one project in brand, use the project's entry (w/o brand) directly
@@ -119,7 +119,7 @@ public final class PaymentMethodAddViewController: UITableViewController {
             } else {
                 // overwrite the project's name with the brand name
                 var newEntry = first
-                if let brand = SnabbleAPI.brands.first(where: { $0.id == brandId }) {
+                if let brand = Snabble.brands.first(where: { $0.id == brandId }) {
                     newEntry.name = brand.name
                 }
                 newEntry.count = entries.reduce(0) { $0 + self.methodCount(for: $1.projectId) }
@@ -150,7 +150,7 @@ public final class PaymentMethodAddViewController: UITableViewController {
             case .payoneCreditCard(let payoneData):
                 return payoneData.projectId == projectId
             case .sepa, .tegutEmployeeCard, .paydirektAuthorization, .leinweberCustomerNumber:
-                return SnabbleAPI.project(for: projectId)?.paymentMethods.contains(detail.rawMethod) ?? false
+                return Snabble.project(for: projectId)?.paymentMethods.contains(detail.rawMethod) ?? false
             }
         }.count
 
@@ -209,7 +209,7 @@ extension PaymentMethodAddViewController {
     }
 
     private func addMethod(for projectId: Identifier<Project>) {
-        guard let project = SnabbleAPI.project(for: projectId) else {
+        guard let project = Snabble.project(for: projectId) else {
             return
         }
 

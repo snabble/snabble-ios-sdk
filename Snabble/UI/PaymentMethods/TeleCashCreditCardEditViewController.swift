@@ -44,7 +44,7 @@ public final class TeleCashCreditCardEditViewController: UIViewController {
         self.analyticsDelegate = analyticsDelegate
         self.projectId = projectId
 
-        super.init(nibName: nil, bundle: SnabbleBundle.main)
+        super.init(nibName: nil, bundle: SnabbleSDKBundle.main)
     }
 
     init(_ detail: PaymentMethodDetail, _ analyticsDelegate: AnalyticsDelegate?) {
@@ -57,7 +57,7 @@ public final class TeleCashCreditCardEditViewController: UIViewController {
         self.analyticsDelegate = analyticsDelegate
         self.projectId = nil
 
-        super.init(nibName: nil, bundle: SnabbleBundle.main)
+        super.init(nibName: nil, bundle: SnabbleSDKBundle.main)
     }
 
     required init?(coder aDecoder: NSCoder) {
@@ -96,7 +96,7 @@ public final class TeleCashCreditCardEditViewController: UIViewController {
             self.detail == nil,
             let brand = self.brand,
             let projectId = self.projectId,
-            let project = SnabbleAPI.project(for: projectId),
+            let project = Snabble.project(for: projectId),
             let descriptor = project.paymentMethodDescriptors.first(where: { $0.id == brand.method })
         else {
             return
@@ -169,7 +169,7 @@ public final class TeleCashCreditCardEditViewController: UIViewController {
         fmt.minimumIntegerDigits = 1
         fmt.numberStyle = .currency
 
-        if let projectId = self.projectId, let project = SnabbleAPI.project(for: projectId) {
+        if let projectId = self.projectId, let project = Snabble.project(for: projectId) {
             name = project.company?.name ?? project.name
             fmt.minimumFractionDigits = project.decimalDigits
             fmt.maximumFractionDigits = project.decimalDigits
@@ -233,8 +233,8 @@ extension TeleCashCreditCardEditViewController: WKScriptMessageHandler {
             let eventData = body["elementArr"] as? [[String: String]],
             let storeId = self.vaultItem?.storeId,
             let projectId = self.projectId,
-            let project = SnabbleAPI.project(for: projectId),
-            let cert = SnabbleAPI.certificates.first
+            let project = Snabble.project(for: projectId),
+            let cert = Snabble.certificates.first
         else {
             return self.showError()
         }

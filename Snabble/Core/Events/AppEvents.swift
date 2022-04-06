@@ -79,7 +79,7 @@ struct AppEvent: Encodable {
     private init(type: EventType, payload: Payload, project: Project,
                  shopId: Identifier<Shop>? = nil, id: String? = nil, agent: String? = nil) {
         self.type = type
-        self.appId = SnabbleAPI.clientId
+        self.appId = Snabble.clientId
         self.payload = payload
         self.shopId = shopId
         self.project = project
@@ -112,7 +112,7 @@ struct AppEvent: Encodable {
 
     init?(_ shoppingCart: ShoppingCart) {
         let cart = shoppingCart.createCart()
-        guard let project = SnabbleAPI.project(for: shoppingCart.projectId) else {
+        guard let project = Snabble.project(for: shoppingCart.projectId) else {
             return nil
         }
 
@@ -133,16 +133,16 @@ struct AppEvent: Encodable {
 extension AppEvent {
     func post() {
         // use URLRequest/URLSession directly to avoid error logging loops when posting the event fails
-        guard let url = SnabbleAPI.urlFor(self.project.links.appEvents.href) else {
+        guard let url = Snabble.urlFor(self.project.links.appEvents.href) else {
             return
         }
 
-        SnabbleAPI.tokenRegistry.getExistingToken(for: self.project) { token in
+        Snabble.tokenRegistry.getExistingToken(for: self.project) { token in
             guard let token = token else {
                 return
             }
 
-            var request = SnabbleAPI.request(url: url, json: true)
+            var request = Snabble.request(url: url, json: true)
             request.httpMethod = "POST"
 
             do {
