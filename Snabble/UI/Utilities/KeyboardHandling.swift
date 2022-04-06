@@ -70,11 +70,11 @@ public final class KeyboardObserver: NSObject {
 extension UITextField {
     @discardableResult
     func addDoneButton() -> UIToolbar {
-        let keyboardToolbar = UIToolbar()
-        keyboardToolbar.sizeToFit()
+        let keyboardToolbar = UIToolbar(frame: CGRect(x: 0, y: 0, width: 100, height: 44))
         let flexSpace = UIBarButtonItem(barButtonSystemItem: .flexibleSpace, target: nil, action: nil)
         let doneButton = UIBarButtonItem(barButtonSystemItem: .done, target: self, action: #selector(UITextField.endEditing(_:)))
-        keyboardToolbar.items = [ flexSpace, doneButton ]
+        keyboardToolbar.items = [flexSpace, doneButton]
+        keyboardToolbar.sizeToFit()
         self.inputAccessoryView = keyboardToolbar
         return keyboardToolbar
     }
