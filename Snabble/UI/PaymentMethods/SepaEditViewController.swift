@@ -18,16 +18,18 @@ private enum InputField: Int {
 }
 
 public final class SepaEditViewController: UIViewController {
-    @IBOutlet private var hintLabel: UILabel!
-    @IBOutlet private var nameLabel: UILabel!
-    @IBOutlet private var nameField: UITextField!
-    @IBOutlet private var ibanLabel: UILabel!
-    @IBOutlet private var ibanCountryField: UITextField!
-    @IBOutlet private var ibanNumberField: UITextField!
-    @IBOutlet private var saveButton: UIButton!
+    private let hintLabel = UILabel()
+    private let nameLabel = UILabel()
+    private let nameField = UITextField()
+    private let ibanLabel = UILabel()
+    private let ibanCountryField = UITextField()
+    private let ibanNumberField = UITextField()
+    private let saveButton = UIButton()
+    private let scrollView = UIScrollView()
 
     private var detail: PaymentMethodDetail?
     private var candidate: OriginCandidate?
+    private var keyboardObserver: KeyboardObserver?
     private weak var analyticsDelegate: AnalyticsDelegate?
     weak var delegate: SepaEditViewControllerDelegate?
 
@@ -38,14 +40,16 @@ public final class SepaEditViewController: UIViewController {
         super.init(nibName: nil, bundle: SnabbleSDKBundle.main)
 
         self.title = L10n.Snabble.Payment.Sepa.title
+        self.keyboardObserver = KeyboardObserver(handler: self)
     }
 
     public init(_ candidate: OriginCandidate, _ analyticsDelegate: AnalyticsDelegate?) {
         self.candidate = candidate
 
-        super.init(nibName: nil, bundle: SnabbleSDKBundle.main)
+        super.init(nibName: nil, bundle: nil)
 
         self.title = L10n.Snabble.Payment.Sepa.title
+        self.keyboardObserver = KeyboardObserver(handler: self)
     }
 
     required init?(coder aDecoder: NSCoder) {
@@ -55,36 +59,108 @@ public final class SepaEditViewController: UIViewController {
     override public func viewDidLoad() {
         super.viewDidLoad()
 
-        self.hintLabel.text = L10n.Snabble.Payment.Sepa.hint
+        view.backgroundColor = .systemBackground
+        scrollView.translatesAutoresizingMaskIntoConstraints = false
 
-        self.saveButton.makeSnabbleButton()
-        self.saveButton.setTitle(L10n.Snabble.save, for: .normal)
+        view.addSubview(scrollView)
+
+        saveButton.makeSnabbleButton()
+        saveButton.translatesAutoresizingMaskIntoConstraints = false
+        saveButton.setTitle(L10n.Snabble.save, for: .normal)
+        saveButton.addTarget(self, action: #selector(self.saveButtonTapped(_:)), for: .touchUpInside)
+        view.addSubview(saveButton)
+
+        hintLabel.translatesAutoresizingMaskIntoConstraints = false
+        hintLabel.numberOfLines = 0
+        hintLabel.useDynamicFont(forTextStyle: .footnote)
+        hintLabel.text = L10n.Snabble.Payment.Sepa.hint
+        scrollView.addSubview(hintLabel)
 
         self.setupKeyboard(self.nameField)
         self.setupKeyboard(self.ibanCountryField)
         self.setupKeyboard(self.ibanNumberField)
 
-        self.nameLabel.text = L10n.Snabble.Payment.Sepa.name
-        self.ibanLabel.text = L10n.Snabble.Payment.Sepa.iban
+        nameLabel.translatesAutoresizingMaskIntoConstraints = false
+        nameLabel.numberOfLines = 0
+        nameLabel.useDynamicFont(forTextStyle: .body)
+        nameLabel.text = L10n.Snabble.Payment.Sepa.name
+        scrollView.addSubview(nameLabel)
 
-        self.nameField.tag = InputField.name.rawValue
-        self.nameField.keyboardType = .alphabet
-        self.nameField.autocapitalizationType = .words
+        ibanLabel.translatesAutoresizingMaskIntoConstraints = false
+        ibanLabel.numberOfLines = 0
+        ibanLabel.useDynamicFont(forTextStyle: .body)
+        ibanLabel.text = L10n.Snabble.Payment.Sepa.iban
+        scrollView.addSubview(ibanLabel)
 
-        self.ibanCountryField.tag = InputField.country.rawValue
-        self.ibanCountryField.text = "DE"
+        nameField.translatesAutoresizingMaskIntoConstraints = false
+        nameField.tag = InputField.name.rawValue
+        nameField.keyboardType = .alphabet
+        nameField.autocapitalizationType = .words
+        nameField.useDynamicFont(forTextStyle: .body)
+        nameField.delegate = self
+        scrollView.addSubview(nameField)
 
-        self.ibanNumberField.tag = InputField.number.rawValue
-        self.ibanNumberField.keyboardType = .numberPad
-        self.ibanNumberField.returnKeyType = .done
+        ibanCountryField.translatesAutoresizingMaskIntoConstraints = false
+        ibanCountryField.tag = InputField.country.rawValue
+        ibanCountryField.text = "DE"
+        ibanCountryField.useDynamicFont(forTextStyle: .body)
+        ibanCountryField.delegate = self
+        ibanCountryField.setContentHuggingPriority(.required, for: .horizontal)
+        ibanCountryField.setContentCompressionResistancePriority(.required, for: .horizontal)
+        scrollView.addSubview(ibanCountryField)
+
+        ibanNumberField.translatesAutoresizingMaskIntoConstraints = false
+        ibanNumberField.tag = InputField.number.rawValue
+        ibanNumberField.keyboardType = .numberPad
+        ibanNumberField.returnKeyType = .done
         let smallPhone = UIScreen.main.bounds.width <= 320
-        self.ibanNumberField.clearButtonMode = smallPhone ? .never : .always
-        self.ibanNumberField.placeholder = self.placeholderFor("DE")
+        ibanNumberField.clearButtonMode = smallPhone ? .never : .always
+        ibanNumberField.placeholder = self.placeholderFor("DE")
+        ibanNumberField.useDynamicFont(forTextStyle: .body)
+        ibanNumberField.delegate = self
+        scrollView.addSubview(ibanNumberField)
 
-        self.ibanNumberField.addDoneButton()
-        let toolbar = self.ibanNumberField.addDoneButton()
+        let toolbar = ibanNumberField.addDoneButton()
         let abcButton = UIBarButtonItem(title: "ABC/123", style: .plain, target: self, action: #selector(self.toggleKeyboard(_:)))
-        toolbar.items = [ abcButton ] + toolbar.items!
+        toolbar.items?.insert(abcButton, at: 0)
+
+        NSLayoutConstraint.activate([
+            scrollView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
+            scrollView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+            scrollView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+            scrollView.bottomAnchor.constraint(equalTo: saveButton.topAnchor),
+            scrollView.contentLayoutGuide.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+            scrollView.contentLayoutGuide.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+
+            saveButton.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16),
+            saveButton.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -16),
+            saveButton.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -16),
+            saveButton.heightAnchor.constraint(greaterThanOrEqualToConstant: 48),
+
+            hintLabel.topAnchor.constraint(equalTo: scrollView.topAnchor, constant: 16),
+            hintLabel.leadingAnchor.constraint(equalTo: scrollView.leadingAnchor, constant: 16),
+            hintLabel.trailingAnchor.constraint(equalTo: scrollView.trailingAnchor, constant: -16),
+            hintLabel.bottomAnchor.constraint(equalTo: nameLabel.topAnchor, constant: -16),
+
+            nameLabel.leadingAnchor.constraint(equalTo: scrollView.leadingAnchor, constant: 16),
+            nameLabel.trailingAnchor.constraint(equalTo: scrollView.trailingAnchor, constant: -16),
+            nameLabel.bottomAnchor.constraint(equalTo: nameField.topAnchor, constant: -8),
+
+            nameField.leadingAnchor.constraint(equalTo: scrollView.leadingAnchor, constant: 16),
+            nameField.trailingAnchor.constraint(equalTo: scrollView.trailingAnchor, constant: -16),
+            nameField.bottomAnchor.constraint(equalTo: ibanLabel.topAnchor, constant: -16),
+
+            ibanLabel.leadingAnchor.constraint(equalTo: scrollView.leadingAnchor, constant: 16),
+            ibanLabel.trailingAnchor.constraint(equalTo: scrollView.trailingAnchor, constant: -16),
+            ibanLabel.bottomAnchor.constraint(equalTo: ibanCountryField.topAnchor, constant: -8),
+            ibanLabel.bottomAnchor.constraint(equalTo: ibanNumberField.topAnchor, constant: -8),
+
+            ibanCountryField.leadingAnchor.constraint(equalTo: scrollView.leadingAnchor, constant: 16),
+            ibanCountryField.trailingAnchor.constraint(equalTo: ibanNumberField.leadingAnchor, constant: -4),
+
+            ibanNumberField.trailingAnchor.constraint(equalTo: scrollView.trailingAnchor, constant: -16),
+            ibanNumberField.bottomAnchor.constraint(equalTo: scrollView.bottomAnchor, constant: -16)
+        ])
     }
 
     override public func viewWillAppear(_ animated: Bool) {
@@ -132,17 +208,17 @@ public final class SepaEditViewController: UIViewController {
         self.analyticsDelegate?.track(.viewPaymentMethodDetail)
     }
 
-    @IBAction private func saveButtonTapped(_ sender: Any) {
+    @objc private func saveButtonTapped(_ sender: Any) {
         guard
-            let country = self.ibanCountryField?.text,
-            let number = self.ibanNumberField?.text,
-            let name = self.nameField?.text
+            let country = self.ibanCountryField.text,
+            let number = self.ibanNumberField.text,
+            let name = self.nameField.text
         else {
             return
         }
 
-        for input in [ self.nameField, self.ibanCountryField, self.ibanNumberField ] where input?.isFirstResponder == true {
-            input?.resignFirstResponder()
+        for input in [ self.nameField, self.ibanCountryField, self.ibanNumberField ] where input.isFirstResponder == true {
+            input.resignFirstResponder()
         }
 
         let iban = self.sanitzeIban(country + number)
@@ -278,8 +354,8 @@ public final class SepaEditViewController: UIViewController {
     }
 
     private func markTextfields() {
-        let country = self.ibanCountryField?.text ?? ""
-        let ibanText = self.ibanNumberField?.text ?? ""
+        let country = self.ibanCountryField.text ?? ""
+        let ibanText = self.ibanNumberField.text ?? ""
         let iban = self.sanitzeIban(ibanText)
 
         let letters = CharacterSet.uppercaseLetters
@@ -323,7 +399,7 @@ extension SepaEditViewController: UITextFieldDelegate {
             self.ibanNumberField.placeholder = self.placeholderFor(textField.text!)
         case InputField.number.rawValue: // number field - uppercase and check validity
             var iban = self.sanitzeIban(text)
-            if let country = self.ibanCountryField?.text {
+            if let country = self.ibanCountryField.text {
                 iban = self.formattedIban(country, iban)
             }
             textField.text = iban
@@ -371,7 +447,7 @@ extension SepaEditViewController: UITextFieldDelegate {
         case InputField.number.rawValue: // number field
             let ok = string.rangeOfCharacter(from: alphanumerics) != nil
             if ok {
-                if let country = self.ibanCountryField?.text {
+                if let country = self.ibanCountryField.text {
                     let formatted = self.formattedIban(country, self.sanitzeIban(newText))
                     textField.text = formatted
                 } else {
@@ -421,5 +497,15 @@ extension SepaEditViewController: UITextFieldDelegate {
         }
 
         return formatted
+    }
+}
+
+extension SepaEditViewController: KeyboardHandling {
+    public func keyboardWillShow(_ info: KeyboardInfo) {
+        scrollView.contentInset = UIEdgeInsets(top: 0, left: 0, bottom: info.keyboardHeight, right: 0)
+    }
+
+    public func keyboardWillHide(_ info: KeyboardInfo) {
+        scrollView.contentInset = .zero
     }
 }
