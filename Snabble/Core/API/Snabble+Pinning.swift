@@ -1,5 +1,5 @@
 //
-//  SnabbleAPI+Pinning.swift
+//  Snabble+Pinning.swift
 //
 //  Copyright © 2020 snabble. All rights reserved.
 //
