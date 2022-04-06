@@ -118,10 +118,9 @@ public final class SepaEditViewController: UIViewController {
         ibanNumberField.placeholder = self.placeholderFor("DE")
         ibanNumberField.useDynamicFont(forTextStyle: .body)
         ibanNumberField.delegate = self
-        ibanNumberField.addDoneButton()
         scrollView.addSubview(ibanNumberField)
 
-        let toolbar = self.ibanNumberField.addDoneButton()
+        let toolbar = ibanNumberField.addDoneButton()
         let abcButton = UIBarButtonItem(title: "ABC/123", style: .plain, target: self, action: #selector(self.toggleKeyboard(_:)))
         toolbar.items?.insert(abcButton, at: 0)
 
