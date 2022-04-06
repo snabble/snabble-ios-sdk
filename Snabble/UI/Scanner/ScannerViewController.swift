@@ -33,6 +33,8 @@ public final class ScannerViewController: PulleyViewController {
         }
     }
 
+    public weak var paymentDelegate: PaymentDelegate?
+
     public weak var shoppingListDelegate: ShoppingListDelegate? {
         didSet {
             guard let scannerDrawerViewController = drawerContentViewController as? ScannerDrawerViewController else {
@@ -80,19 +82,26 @@ public final class ScannerViewController: PulleyViewController {
     override public func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
 
-        if let inFlight = Snabble.inFlightCheckout {
-            continueInFlightCheckout(with: inFlight)
+        if let inFlightCheckout = Snabble.inFlightCheckout {
+            continueInFlightCheckout(with: inFlightCheckout)
         }
     }
 
-    private func continueInFlightCheckout(with checkout: Snabble.InFlightCheckout) {
-        SignedCheckoutInfo.fetchCheckoutProcess(SnabbleUI.project, checkout.url) { result in
+    private func continueInFlightCheckout(with inFlightCheckout: Snabble.InFlightCheckout) {
+        guard let project = inFlightCheckout.shop.project else {
+            return
+        }
+
+        CheckoutProcess.fetch(for: project, url: inFlightCheckout.url) { result in
             switch result.result {
             case .success(let process):
                 let checkoutVC = PaymentProcess.checkoutViewController(for: process,
-                                                                       shop: checkout.shop,
+                                                                       shop: inFlightCheckout.shop,
                                                                        cart: self.shoppingCart,
-                                                                       paymentDelegate: self.shoppingCartDelegate)
+                                                                       paymentDelegate: self.paymentDelegate)
+                if let checkout = checkoutVC {
+                    self.navigationController?.pushViewController(checkout, animated: true)
+                }
             case .failure(let error):
                 print("can't get in-flight checkout process: \(error)")
             }
