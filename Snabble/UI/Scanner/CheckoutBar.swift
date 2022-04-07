@@ -134,31 +134,31 @@ final class CheckoutBar: UIView {
             summaryLayoutGuide.topAnchor.constraint(equalTo: topAnchor),
             summaryLayoutGuide.leadingAnchor.constraint(equalTo: leadingAnchor),
             summaryLayoutGuide.trailingAnchor.constraint(equalTo: trailingAnchor),
-            summaryLayoutGuide.heightAnchor.constraint(greaterThanOrEqualTo: itemCountLabel.heightAnchor).usingPriority(.init(rawValue: 998)),
-            summaryLayoutGuide.heightAnchor.constraint(greaterThanOrEqualTo: totalPriceLabel.heightAnchor).usingPriority(.init(rawValue: 998)),
+            summaryLayoutGuide.heightAnchor.constraint(greaterThanOrEqualTo: itemCountLabel.heightAnchor).usingPriority(.defaultHigh + 3),
+            summaryLayoutGuide.heightAnchor.constraint(greaterThanOrEqualTo: totalPriceLabel.heightAnchor).usingPriority(.defaultHigh + 3),
 
             itemCountLabel.leadingAnchor.constraint(equalTo: summaryLayoutGuide.leadingAnchor),
             itemCountLabel.widthAnchor.constraint(equalTo: widthAnchor, multiplier: 0.5),
-            itemCountLabel.topAnchor.constraint(equalTo: summaryLayoutGuide.topAnchor).usingPriority(.init(rawValue: 999)),
-            itemCountLabel.bottomAnchor.constraint(equalTo: summaryLayoutGuide.bottomAnchor).usingPriority(.init(rawValue: 999)),
+            itemCountLabel.topAnchor.constraint(equalTo: summaryLayoutGuide.topAnchor).usingPriority(.defaultHigh + 4),
+            itemCountLabel.bottomAnchor.constraint(equalTo: summaryLayoutGuide.bottomAnchor).usingPriority(.defaultHigh + 4),
 
             totalPriceLabel.leadingAnchor.constraint(equalTo: itemCountLabel.trailingAnchor),
             totalPriceLabel.trailingAnchor.constraint(equalTo: summaryLayoutGuide.trailingAnchor),
-            totalPriceLabel.topAnchor.constraint(equalTo: summaryLayoutGuide.topAnchor).usingPriority(.init(rawValue: 999)),
-            summaryLayoutGuide.bottomAnchor.constraint(equalTo: totalPriceLabel.bottomAnchor).usingPriority(.init(rawValue: 999)),
+            totalPriceLabel.topAnchor.constraint(equalTo: summaryLayoutGuide.topAnchor).usingPriority(.defaultHigh + 4),
+            summaryLayoutGuide.bottomAnchor.constraint(equalTo: totalPriceLabel.bottomAnchor).usingPriority(.defaultHigh + 4),
 
-            paymentStackView.topAnchor.constraint(equalToSystemSpacingBelow: summaryLayoutGuide.bottomAnchor, multiplier: 1).usingPriority(.init(rawValue: 989)),
+            paymentStackView.topAnchor.constraint(equalToSystemSpacingBelow: summaryLayoutGuide.bottomAnchor, multiplier: 1).usingPriority(.defaultHigh + 3),
             paymentStackView.leadingAnchor.constraint(equalTo: leadingAnchor),
             paymentStackView.trailingAnchor.constraint(equalTo: trailingAnchor),
             paymentStackView.bottomAnchor.constraint(equalTo: bottomAnchor),
 
-            methodSelectionStackView.heightAnchor.constraint(equalToConstant: 48).usingPriority(.init(rawValue: 751)),
-            methodSelectionStackView.widthAnchor.constraint(equalToConstant: 80).usingPriority(.init(rawValue: 749)),
-            methodIcon.widthAnchor.constraint(equalToConstant: 38).usingPriority(.init(rawValue: 752)),
-            shevronImage.widthAnchor.constraint(equalToConstant: 16).usingPriority(.init(rawValue: 752)),
-            shevronImage.heightAnchor.constraint(equalToConstant: 16).usingPriority(.init(rawValue: 747)),
-            checkoutButton.heightAnchor.constraint(equalToConstant: 48).usingPriority(.init(rawValue: 750)),
-            checkoutButton.widthAnchor.constraint(equalToConstant: 280).usingPriority(.init(rawValue: 748))
+            methodSelectionStackView.heightAnchor.constraint(equalToConstant: 48).usingPriority(.defaultHigh + 1),
+            methodSelectionStackView.widthAnchor.constraint(equalToConstant: 80).usingPriority(.defaultHigh - 1),
+            methodIcon.widthAnchor.constraint(equalToConstant: 38).usingPriority(.defaultHigh + 2),
+            shevronImage.widthAnchor.constraint(equalToConstant: 16).usingPriority(.defaultHigh + 2),
+            shevronImage.heightAnchor.constraint(equalToConstant: 16).usingPriority(.defaultHigh - 3),
+            checkoutButton.heightAnchor.constraint(equalToConstant: 48).usingPriority(.defaultHigh),
+            checkoutButton.widthAnchor.constraint(equalToConstant: 280).usingPriority(.defaultHigh - 2)
         ])
     }
 
