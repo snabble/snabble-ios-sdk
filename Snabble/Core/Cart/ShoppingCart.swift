@@ -50,7 +50,6 @@ public final class ShoppingCart: Codable {
     private let saveDelay: TimeInterval = 0.5
 
     private let maxAge: TimeInterval
-    private let directory: String?
 
     public static let maxAmount = 9999
 
@@ -73,7 +72,6 @@ public final class ShoppingCart: Codable {
         self.backupSession = try container.decodeIfPresent(.backupSession)
         self.customerCard = try container.decodeIfPresent(.customerCard)
         self.maxAge = try container.decode(.maxAge)
-        self.directory = nil
         self.lastCheckoutInfoError = nil
         self.coupons = try container.decodeIfPresent([CartCoupon].self, forKey: .coupons) ?? []
         self.requiredInformation = try container.decodeIfPresent([RequiredInformation].self, forKey: .requiredInformation) ?? []
@@ -105,7 +103,6 @@ public final class ShoppingCart: Codable {
         self.projectId = config.shop.projectId
         self.shopId = config.shop.id
         self.maxAge = config.maxAge
-        self.directory = config.directory
 
         self.session = ""
         self.uuid = ""
@@ -332,6 +329,11 @@ extension ShoppingCart {
     private func cartUrl(_ directory: String) -> URL {
         let url = URL(fileURLWithPath: directory)
         return url.appendingPathComponent(self.projectId.rawValue + ".json")
+    }
+
+    private var directory: String? {
+        let docDir = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)[0]
+        return docDir.path
     }
 
     /// persist this shopping cart to disk
