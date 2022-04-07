@@ -43,6 +43,10 @@ final class CustomerCardCheckoutViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
 
+        if Snabble.inFlightCheckoutPending {
+            self.navigationItem.hidesBackButton = true
+        }
+
         self.eanView.barcode = self.cart.customerCard
 
         self.paidButton.makeSnabbleButton()

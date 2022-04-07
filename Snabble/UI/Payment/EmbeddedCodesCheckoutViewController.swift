@@ -66,6 +66,10 @@ final class EmbeddedCodesCheckoutViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
 
+        if Snabble.inFlightCheckoutPending {
+            self.navigationItem.hidesBackButton = true
+        }
+
         self.paidButton.makeSnabbleButton()
         self.paidButton.setTitle(L10n.Snabble.QRCode.didPay, for: .normal)
         self.paidButton.alpha = 0
