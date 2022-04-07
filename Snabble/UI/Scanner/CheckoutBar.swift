@@ -9,8 +9,6 @@ import Pulley
 
 final class CheckoutBar: UIView {
 
-    private weak var contentStack: UIStackView?
-    private weak var summaryView: UIView?
     private weak var itemCountLabel: UILabel?
     private weak var totalPriceLabel: UILabel?
     private weak var paymentStackView: UIStackView?
@@ -50,28 +48,19 @@ final class CheckoutBar: UIView {
 
     private func setupUI() {
 
-        let contentStack = UIStackView()
-        contentStack.translatesAutoresizingMaskIntoConstraints = false
-        contentStack.axis = .vertical
-        contentStack.distribution = .fill
-        contentStack.alignment = .fill
-        contentStack.spacing = 0
-
-        let summaryView = UIView()
-        summaryView.translatesAutoresizingMaskIntoConstraints = false
+        let summaryLayoutGuide = UILayoutGuide()
 
         let itemCountLabel = UILabel()
         itemCountLabel.translatesAutoresizingMaskIntoConstraints = false
         itemCountLabel.font = UIFont.systemFont(ofSize: 13)
         itemCountLabel.textColor = .secondaryLabel
-        itemCountLabel.textAlignment = .natural
+        itemCountLabel.textAlignment = .left
 
         let totalPriceLabel = UILabel()
         totalPriceLabel.translatesAutoresizingMaskIntoConstraints = false
-        totalPriceLabel.font = UIFont.systemFont(ofSize: 22, weight: .bold)
         totalPriceLabel.font = UIFont.monospacedDigitSystemFont(ofSize: 22, weight: .bold)
         totalPriceLabel.textColor = .label
-        totalPriceLabel.textAlignment = .natural
+        totalPriceLabel.textAlignment = .right
 
         let paymentStackView = UIStackView()
         paymentStackView.translatesAutoresizingMaskIntoConstraints = false
@@ -121,20 +110,16 @@ final class CheckoutBar: UIView {
         checkoutButton.isUserInteractionEnabled = true
         checkoutButton.addTarget(self, action: #selector(checkoutTapped(_:)), for: .touchUpInside)
 
-        addSubview(contentStack)
-
-        contentStack.addArrangedSubview(summaryView)
-        contentStack.addArrangedSubview(paymentStackView)
-        summaryView.addSubview(itemCountLabel)
-        summaryView.addSubview(totalPriceLabel)
+        addLayoutGuide(summaryLayoutGuide)
+        addSubview(paymentStackView)
+        addSubview(itemCountLabel)
+        addSubview(totalPriceLabel)
         paymentStackView.addArrangedSubview(methodSelectionStackView)
         paymentStackView.addArrangedSubview(checkoutButton)
         methodSelectionStackView.addArrangedSubview(noPaymentLabel)
         methodSelectionStackView.addArrangedSubview(methodIcon)
         methodSelectionStackView.addArrangedSubview(shevronImage)
 
-        self.contentStack = contentStack
-        self.summaryView = summaryView
         self.itemCountLabel = itemCountLabel
         self.totalPriceLabel = totalPriceLabel
         self.paymentStackView = paymentStackView
@@ -145,16 +130,27 @@ final class CheckoutBar: UIView {
         self.checkoutButton = checkoutButton
 
         NSLayoutConstraint.activate([
-            contentStack.topAnchor.constraint(equalTo: topAnchor),
-            contentStack.bottomAnchor.constraint(equalTo: bottomAnchor),
-            contentStack.leadingAnchor.constraint(equalTo: leadingAnchor),
-            contentStack.trailingAnchor.constraint(equalTo: trailingAnchor),
 
-            summaryView.heightAnchor.constraint(equalToConstant: 26).usingPriority(.init(rawValue: 999)),
-            itemCountLabel.leadingAnchor.constraint(equalTo: summaryView.leadingAnchor),
-            itemCountLabel.centerYAnchor.constraint(equalTo: summaryView.centerYAnchor),
-            totalPriceLabel.trailingAnchor.constraint(equalTo: summaryView.trailingAnchor),
-            totalPriceLabel.centerYAnchor.constraint(equalTo: summaryView.centerYAnchor),
+            summaryLayoutGuide.topAnchor.constraint(equalTo: topAnchor),
+            summaryLayoutGuide.leadingAnchor.constraint(equalTo: leadingAnchor),
+            summaryLayoutGuide.trailingAnchor.constraint(equalTo: trailingAnchor),
+            summaryLayoutGuide.heightAnchor.constraint(greaterThanOrEqualTo: itemCountLabel.heightAnchor).usingPriority(.init(rawValue: 998)),
+            summaryLayoutGuide.heightAnchor.constraint(greaterThanOrEqualTo: totalPriceLabel.heightAnchor).usingPriority(.init(rawValue: 998)),
+
+            itemCountLabel.leadingAnchor.constraint(equalTo: summaryLayoutGuide.leadingAnchor),
+            itemCountLabel.widthAnchor.constraint(equalTo: widthAnchor, multiplier: 0.5),
+            itemCountLabel.topAnchor.constraint(equalTo: summaryLayoutGuide.topAnchor).usingPriority(.init(rawValue: 999)),
+            itemCountLabel.bottomAnchor.constraint(equalTo: summaryLayoutGuide.bottomAnchor).usingPriority(.init(rawValue: 999)),
+
+            totalPriceLabel.leadingAnchor.constraint(equalTo: itemCountLabel.trailingAnchor),
+            totalPriceLabel.trailingAnchor.constraint(equalTo: summaryLayoutGuide.trailingAnchor),
+            totalPriceLabel.topAnchor.constraint(equalTo: summaryLayoutGuide.topAnchor).usingPriority(.init(rawValue: 999)),
+            summaryLayoutGuide.bottomAnchor.constraint(equalTo: totalPriceLabel.bottomAnchor).usingPriority(.init(rawValue: 999)),
+
+            paymentStackView.topAnchor.constraint(equalToSystemSpacingBelow: summaryLayoutGuide.bottomAnchor, multiplier: 1).usingPriority(.init(rawValue: 989)),
+            paymentStackView.leadingAnchor.constraint(equalTo: leadingAnchor),
+            paymentStackView.trailingAnchor.constraint(equalTo: trailingAnchor),
+            paymentStackView.bottomAnchor.constraint(equalTo: bottomAnchor),
 
             methodSelectionStackView.heightAnchor.constraint(equalToConstant: 48).usingPriority(.init(rawValue: 751)),
             methodSelectionStackView.widthAnchor.constraint(equalToConstant: 80).usingPriority(.init(rawValue: 749)),
@@ -196,7 +192,6 @@ final class CheckoutBar: UIView {
         } else {
             self.totalPriceLabel?.text = ""
         }
-
         let fun = numProducts == 1 ? L10n.Snabble.Shoppingcart.NumberOfItems.one : L10n.Snabble.Shoppingcart.numberOfItems
         self.itemCountLabel?.text = fun(numProducts)
         self.checkoutButton?.isEnabled = numProducts > 0 && (totalPrice ?? 0) >= 0
@@ -207,11 +202,6 @@ final class CheckoutBar: UIView {
 
     func updateSelectionVisibility() {
         self.methodSelector?.updateSelectionVisibility()
-    }
-
-    func barDidAppear() {
-        // avoid auto-layout warning
-        self.contentStack?.spacing = 12
     }
 
     private func pauseScanning() {

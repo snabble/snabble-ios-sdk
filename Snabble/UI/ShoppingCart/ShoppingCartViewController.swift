@@ -118,8 +118,6 @@ public final class ShoppingCartViewController: UIViewController {
 
     override public func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
-
-        checkoutBar?.barDidAppear()
     }
 
     override public func viewWillDisappear(_ animated: Bool) {
