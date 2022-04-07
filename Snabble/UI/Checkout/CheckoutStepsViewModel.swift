@@ -14,7 +14,7 @@ protocol CheckoutStepsViewModelDelegate: AnyObject {
     func checkoutStepsViewModel(_ viewModel: CheckoutStepsViewModel, didUpdateExitToken exitToken: ExitToken)
 }
 
-class CheckoutStepsViewModel {
+final class CheckoutStepsViewModel {
     private(set) var checkoutProcess: CheckoutProcess? {
         didSet {
             if let checkoutProcess = checkoutProcess {
@@ -30,6 +30,7 @@ class CheckoutStepsViewModel {
 
     private weak var checkoutProcessTimer: Timer?
     private var processSessionTask: URLSessionDataTask?
+    private(set) var polling = true
 
     weak var delegate: CheckoutStepsViewModelDelegate?
 
@@ -76,27 +77,26 @@ class CheckoutStepsViewModel {
     }
 
     private func update(_ result: RawResult<CheckoutProcess, SnabbleError>) {
-        var continuePolling: Bool
         switch result.result {
         case let .success(process):
+            polling = shouldContinuePolling(for: process)
             checkoutProcess = process
             updateViewModels(with: process)
             updateShoppingCart(for: process)
-            continuePolling = shouldContinuePolling(for: process)
             startOriginPollerIfNeeded(for: process)
         case let .failure(error):
             Log.error(String(describing: error))
-            continuePolling = true
+            polling = true
         }
 
-        if continuePolling {
+        if polling {
             startTimer()
         }
     }
 
     private func updateShoppingCart(for checkoutProcess: CheckoutProcess) {
         switch checkoutProcess.paymentState {
-        case .successful:
+        case .successful, .transferred:
             shoppingCart.removeAll(endSession: true, keepBackup: false)
         case .failed:
             shoppingCart.generateNewUUID()
@@ -104,7 +104,7 @@ class CheckoutStepsViewModel {
             if checkoutProcess.fulfillments.containsFailureState {
                 shoppingCart.generateNewUUID()
             }
-        case .transferred, .processing, .unauthorized, .unknown:
+        case .processing, .unauthorized, .unknown:
             break
         }
     }
@@ -151,13 +151,13 @@ class CheckoutStepsViewModel {
     private func shouldContinuePolling(for checkoutProcess: CheckoutProcess) -> Bool {
         var shouldContinuePolling: Bool
         switch checkoutProcess.paymentState {
-        case .successful:
+        case .successful, .transferred:
             shouldContinuePolling = false
         case .failed:
             return false
         case .pending:
             shouldContinuePolling = !checkoutProcess.fulfillments.containsFailureState
-        case .transferred, .processing, .unauthorized, .unknown:
+        case .processing, .unauthorized, .unknown:
             shouldContinuePolling = true
         }
 
