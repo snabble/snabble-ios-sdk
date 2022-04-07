@@ -33,7 +33,7 @@ enum OrderEntry {
 
 public final class ReceiptsListViewController: UITableViewController {
     private let emptyLabel = UILabel()
-    private let spinner = UIActivityIndicatorView(style: .gray)
+    private weak var activityIndicator: UIActivityIndicatorView?
 
     private var quickLookDataSources: [QuicklookPreviewControllerDataSource] = []
 
@@ -59,19 +59,28 @@ public final class ReceiptsListViewController: UITableViewController {
 
     override public func viewDidLoad() {
         super.viewDidLoad()
-
         emptyLabel.translatesAutoresizingMaskIntoConstraints = false
         emptyLabel.numberOfLines = 0
         emptyLabel.textAlignment = .center
         emptyLabel.useDynamicFont(forTextStyle: .body)
         view.addSubview(emptyLabel)
 
-        spinner.translatesAutoresizingMaskIntoConstraints = false
-        view.addSubview(spinner)
+        let activityIndicator: UIActivityIndicatorView
+        if #available(iOS 13.0, *) {
+            activityIndicator = UIActivityIndicatorView(style: .medium)
+        } else {
+            activityIndicator = UIActivityIndicatorView(style: .gray)
+        }
+        activityIndicator.startAnimating()
+        activityIndicator.hidesWhenStopped = true
+        activityIndicator.color = .systemGray
+        activityIndicator.translatesAutoresizingMaskIntoConstraints = false
+        view.addSubview(activityIndicator)
+        self.activityIndicator = activityIndicator
 
         NSLayoutConstraint.activate([
-            spinner.centerXAnchor.constraint(equalTo: view.centerXAnchor),
-            spinner.centerYAnchor.constraint(equalTo: view.centerYAnchor),
+            activityIndicator.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+            activityIndicator.centerYAnchor.constraint(equalTo: view.centerYAnchor),
 
             emptyLabel.centerXAnchor.constraint(equalTo: view.centerXAnchor),
             emptyLabel.centerYAnchor.constraint(equalTo: view.centerYAnchor),
@@ -84,8 +93,6 @@ public final class ReceiptsListViewController: UITableViewController {
 
         self.emptyLabel.text = L10n.Snabble.Receipts.noReceipts
         self.emptyLabel.isHidden = true
-
-        self.spinner.startAnimating()
 
         self.loadOrderList()
         self.startReceiptPolling()
@@ -160,7 +167,7 @@ public final class ReceiptsListViewController: UITableViewController {
         }
         self.orders = orders
 
-        self.spinner.stopAnimating()
+        self.activityIndicator?.stopAnimating()
         if orders.isEmpty {
             self.emptyLabel.isHidden = false
         }
@@ -213,10 +220,10 @@ extension ReceiptsListViewController {
             return
         }
 
-        spinner.startAnimating()
+        activityIndicator?.startAnimating()
         tableView.allowsSelection = false
         showOrder(order, for: project) { [weak self] _ in
-            self?.spinner.stopAnimating()
+            self?.activityIndicator?.stopAnimating()
             tableView.allowsSelection = true
         }
     }

@@ -22,7 +22,7 @@ import AutoLayout_Helper
 
 public final class PayoneCreditCardEditViewController: UIViewController {
     private let webViewContainer = UIView()
-    private let spinner = UIActivityIndicatorView(style: .gray)
+    private weak var activityIndicator: UIActivityIndicatorView?
     private var webView: WKWebView?
 
     private let displayContainer = UIView()
@@ -130,9 +130,7 @@ public final class PayoneCreditCardEditViewController: UIViewController {
         self.payoneResponse = nil
         self.pollTimer?.invalidate()
 
-        self.webViewContainer.bringSubviewToFront(self.spinner)
-
-        self.spinner.startAnimating()
+        self.activityIndicator?.startAnimating()
 
         if descriptor.acceptedOriginTypes?.contains(.payonePseudoCardPAN) == true {
              tokenizeWithPayone(project, descriptor)
@@ -156,7 +154,7 @@ public final class PayoneCreditCardEditViewController: UIViewController {
     private func tokenizeWithPayone(_ project: Project, _ descriptor: PaymentMethodDescriptor) {
         let link = descriptor.links?.tokenization
         self.getPayoneTokenization(for: project, link) { [weak self] result in
-            self?.spinner.stopAnimating()
+            self?.activityIndicator?.stopAnimating()
             switch result {
             case .failure:
                 let alert = UIAlertController(title: "Oops", message: L10n.Snabble.Cc.noEntryPossible, preferredStyle: .alert)
@@ -256,10 +254,20 @@ public final class PayoneCreditCardEditViewController: UIViewController {
         self.view.addSubview(webViewContainer)
         NSLayoutConstraint.activate(webViewContainer.constraintsForAnchoringTo(boundsOf: view))
 
-        let spinner = UIActivityIndicatorView(style: .gray)
-        spinner.translatesAutoresizingMaskIntoConstraints = false
-        webViewContainer.addSubview(spinner)
-        NSLayoutConstraint.activate(spinner.constraintsForCenterIn(boundsOf: webViewContainer))
+        let activityIndicator: UIActivityIndicatorView
+        if #available(iOS 13.0, *) {
+            activityIndicator = UIActivityIndicatorView(style: .medium)
+        } else {
+            activityIndicator = UIActivityIndicatorView(style: .gray)
+        }
+        activityIndicator.color = .systemGray
+        activityIndicator.translatesAutoresizingMaskIntoConstraints = false
+        activityIndicator.hidesWhenStopped = true
+        webViewContainer.addSubview(activityIndicator)
+        NSLayoutConstraint.activate(
+            activityIndicator.constraintsForCenterIn(boundsOf: webViewContainer)
+        )
+        self.activityIndicator = activityIndicator
 
         setupWebView(in: webViewContainer)
     }

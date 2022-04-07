@@ -89,7 +89,7 @@ import UIKit
         } else {
             let attrs = [
                 NSAttributedString.Key.font: UIFont.systemFont(ofSize: 15),
-                NSAttributedString.Key.foregroundColor: UIColor.red
+                NSAttributedString.Key.foregroundColor: UIColor.systemRed
             ]
             let str = NSAttributedString(string: "Invalid Barcode", attributes: attrs)
 

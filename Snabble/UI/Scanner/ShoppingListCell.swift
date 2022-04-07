@@ -25,7 +25,7 @@ final class ShoppingListCell: UITableViewCell {
     override func awakeFromNib() {
         super.awakeFromNib()
 
-        checkContainer.layer.shadowColor = UIColor.gray.cgColor
+        checkContainer.layer.shadowColor = UIColor.systemGray3.cgColor
         checkContainer.layer.shadowOpacity = 0.3
         checkContainer.layer.shadowOffset = CGSize.zero
         checkContainer.layer.shadowRadius = 1.5
