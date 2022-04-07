@@ -605,15 +605,16 @@ extension Snabble {
 extension Snabble {
     static let inFlightKey = "io.snabble.inFlightCheckout"
 
-    public struct InFlightCheckout: Codable {
+    struct InFlightCheckout: Codable {
         let url: String
         let shop: Shop
+        let cart: ShoppingCart
     }
 
-    static func storeInFlightCheckout(url: String, shop: Shop) {
+    static func storeInFlightCheckout(url: String, shop: Shop, cart: ShoppingCart) {
         print(#function, url, shop.id)
 
-        let inflight = InFlightCheckout(url: url, shop: shop)
+        let inflight = InFlightCheckout(url: url, shop: shop, cart: cart)
         do {
             let data = try JSONEncoder().encode(inflight)
             UserDefaults.standard.set(data, forKey: Self.inFlightKey)
@@ -627,17 +628,22 @@ extension Snabble {
         UserDefaults.standard.removeObject(forKey: Self.inFlightKey)
     }
 
-    public static var inFlightCheckout: InFlightCheckout? {
+    static var inFlightCheckout: InFlightCheckout? {
         print(#function)
         guard let data = UserDefaults.standard.data(forKey: Self.inFlightKey) else {
             return nil
         }
 
         do {
-            return try JSONDecoder().decode(InFlightCheckout.self, from: data)
+            let inFlight = try JSONDecoder().decode(InFlightCheckout.self, from: data)
+            return inFlight
         } catch {
             print("error decoding in-flight checkout: \(error)")
             return nil
         }
+    }
+
+    public static var inFlightCheckoutPending: Bool {
+        UserDefaults.standard.data(forKey: Self.inFlightKey) != nil
     }
 }

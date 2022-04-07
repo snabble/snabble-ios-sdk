@@ -268,7 +268,9 @@ extension PaymentProcess {
             self.hideBlurOverlay()
             switch result.result {
             case .success(let process):
-                Snabble.storeInFlightCheckout(url: process.links._self.href, shop: self.shop)
+                Snabble.storeInFlightCheckout(url: process.links._self.href,
+                                              shop: self.shop,
+                                              cart: self.cart)
                 let checkoutVC = Self.checkoutViewController(for: process,
                                                              shop: self.shop,
                                                              cart: self.cart,
