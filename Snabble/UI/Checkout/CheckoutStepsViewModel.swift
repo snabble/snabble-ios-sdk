@@ -30,7 +30,6 @@ final class CheckoutStepsViewModel {
 
     private weak var checkoutProcessTimer: Timer?
     private var processSessionTask: URLSessionDataTask?
-    private(set) var polling = true
 
     weak var delegate: CheckoutStepsViewModelDelegate?
 
@@ -77,19 +76,21 @@ final class CheckoutStepsViewModel {
     }
 
     private func update(_ result: RawResult<CheckoutProcess, SnabbleError>) {
+        var continuePolling: Bool
+
         switch result.result {
         case let .success(process):
-            polling = shouldContinuePolling(for: process)
+            continuePolling = shouldContinuePolling(for: process)
             checkoutProcess = process
             updateViewModels(with: process)
             updateShoppingCart(for: process)
             startOriginPollerIfNeeded(for: process)
         case let .failure(error):
             Log.error(String(describing: error))
-            polling = true
+            continuePolling = true
         }
 
-        if polling {
+        if continuePolling {
             startTimer()
         }
     }

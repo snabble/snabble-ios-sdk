@@ -208,13 +208,13 @@ final class CheckoutStepsViewController: UIViewController {
         } else {
             fatalError("dataSource cannot be updated")
         }
-
-        doneButton?.isEnabled = !viewModel.polling
     }
 }
 
 extension CheckoutStepsViewController: CheckoutStepsViewModelDelegate {
-    func checkoutStepsViewModel(_ viewModel: CheckoutStepsViewModel, didUpdateCheckoutProcess checkoutProcess: CheckoutProcess) {}
+    func checkoutStepsViewModel(_ viewModel: CheckoutStepsViewModel, didUpdateCheckoutProcess checkoutProcess: CheckoutProcess) {
+        doneButton?.isEnabled = PaymentState.endStates.contains(checkoutProcess.paymentState)
+    }
 
     func checkoutStepsViewModel(_ viewModel: CheckoutStepsViewModel, didUpdateSteps steps: [CheckoutStep]) {
         update(with: steps, animate: true)
