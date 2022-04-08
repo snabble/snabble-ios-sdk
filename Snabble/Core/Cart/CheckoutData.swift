@@ -359,7 +359,7 @@ public struct CheckoutProcess: Decodable {
             complete = false
         }
 
-        if requiresExitToken && exitToken?.image == nil {
+        if requiresExitToken && exitToken?.value == nil && exitToken?.format == nil {
             complete = false
         }
 
