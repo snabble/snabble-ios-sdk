@@ -8,7 +8,6 @@
 import Foundation
 
 final class ShoppingListCellView: UIView {
-
     private weak var productImage: UIImageView?
     public weak var spinner: UIActivityIndicatorView?
 
@@ -98,7 +97,6 @@ final class ShoppingListCellView: UIView {
         self.checkImage = checkImage
 
         NSLayoutConstraint.activate([
-
             imageViewLayuotGuide.leadingAnchor.constraint(equalTo: leadingAnchor),
             imageViewLayuotGuide.widthAnchor.constraint(equalToConstant: 42),
             imageViewLayuotGuide.topAnchor.constraint(equalTo: topAnchor),
@@ -138,7 +136,6 @@ final class ShoppingListCellView: UIView {
             quantityLabel.trailingAnchor.constraint(equalTo: checkContainer.leadingAnchor),
             quantityLabel.heightAnchor.constraint(equalToConstant: 24),
             quantityLabel.centerYAnchor.constraint(equalTo: tickLayoutGuide.centerYAnchor)
-
         ])
     }
 

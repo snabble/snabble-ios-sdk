@@ -7,7 +7,6 @@
 import UIKit
 
 final class ShoppingListCell: UITableViewCell {
-
     private var item: ShoppingListItem?
     private var indexPath: IndexPath?
     private var checked = false
@@ -16,7 +15,6 @@ final class ShoppingListCell: UITableViewCell {
     private weak var cellView: ShoppingListCellView?
 
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
-
         super.init(style: style, reuseIdentifier: reuseIdentifier)
 
         self.setupUI()
