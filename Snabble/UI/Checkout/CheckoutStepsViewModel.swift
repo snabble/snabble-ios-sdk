@@ -14,7 +14,7 @@ protocol CheckoutStepsViewModelDelegate: AnyObject {
     func checkoutStepsViewModel(_ viewModel: CheckoutStepsViewModel, didUpdateExitToken exitToken: ExitToken)
 }
 
-class CheckoutStepsViewModel {
+final class CheckoutStepsViewModel {
     private(set) var checkoutProcess: CheckoutProcess? {
         didSet {
             if let checkoutProcess = checkoutProcess {
@@ -77,12 +77,13 @@ class CheckoutStepsViewModel {
 
     private func update(_ result: RawResult<CheckoutProcess, SnabbleError>) {
         var continuePolling: Bool
+
         switch result.result {
         case let .success(process):
+            continuePolling = !process.isComplete
             checkoutProcess = process
             updateViewModels(with: process)
             updateShoppingCart(for: process)
-            continuePolling = shouldContinuePolling(for: process)
             startOriginPollerIfNeeded(for: process)
         case let .failure(error):
             Log.error(String(describing: error))
@@ -96,7 +97,7 @@ class CheckoutStepsViewModel {
 
     private func updateShoppingCart(for checkoutProcess: CheckoutProcess) {
         switch checkoutProcess.paymentState {
-        case .successful:
+        case .successful, .transferred:
             shoppingCart.removeAll(endSession: true, keepBackup: false)
         case .failed:
             shoppingCart.generateNewUUID()
@@ -104,7 +105,7 @@ class CheckoutStepsViewModel {
             if checkoutProcess.fulfillments.containsFailureState {
                 shoppingCart.generateNewUUID()
             }
-        case .transferred, .processing, .unauthorized, .unknown:
+        case .processing, .unauthorized, .unknown:
             break
         }
     }
@@ -148,26 +149,6 @@ class CheckoutStepsViewModel {
         return steps
     }
 
-    private func shouldContinuePolling(for checkoutProcess: CheckoutProcess) -> Bool {
-        var shouldContinuePolling: Bool
-        switch checkoutProcess.paymentState {
-        case .successful:
-            shouldContinuePolling = false
-        case .failed:
-            return false
-        case .pending:
-            shouldContinuePolling = !checkoutProcess.fulfillments.containsFailureState
-        case .transferred, .processing, .unauthorized, .unknown:
-            shouldContinuePolling = true
-        }
-
-        if checkoutProcess.requiresExitToken && checkoutProcess.exitToken?.image == nil {
-            shouldContinuePolling = true
-        }
-
-        return shouldContinuePolling
-    }
-
     private func startOriginPollerIfNeeded(for checkoutProcess: CheckoutProcess) {
         if originPoller.shouldStart(for: checkoutProcess) {
             originPoller.delegate = self
@@ -185,12 +166,6 @@ class CheckoutStepsViewModel {
         didSet {
             delegate?.checkoutStepsViewModel(self, didUpdateSteps: steps)
         }
-    }
-}
-
-private extension Array where Element == Fulfillment {
-    var containsFailureState: Bool {
-        !FulfillmentState.failureStates.isDisjoint(with: Set(map { $0.state }))
     }
 }
 

@@ -113,6 +113,7 @@ final class CheckoutStepsViewController: UIViewController {
         doneButton.makeSnabbleButton()
         doneButton.titleLabel?.font = .systemFont(ofSize: 17, weight: .medium)
         doneButton.addTarget(self, action: #selector(doneButtonTouchedUpInside(_:)), for: .touchUpInside)
+        doneButton.isEnabled = false
         view.addSubview(doneButton)
         self.doneButton = doneButton
 
@@ -189,7 +190,7 @@ final class CheckoutStepsViewController: UIViewController {
 
     private func updateShoppingCart(for checkoutProcess: CheckoutProcess?) {
         switch checkoutProcess?.paymentState {
-        case .successful:
+        case .successful, .transferred:
             shoppingCart.removeAll(endSession: true, keepBackup: false)
         default:
             shoppingCart.generateNewUUID()
@@ -211,7 +212,9 @@ final class CheckoutStepsViewController: UIViewController {
 }
 
 extension CheckoutStepsViewController: CheckoutStepsViewModelDelegate {
-    func checkoutStepsViewModel(_ viewModel: CheckoutStepsViewModel, didUpdateCheckoutProcess checkoutProcess: CheckoutProcess) {}
+    func checkoutStepsViewModel(_ viewModel: CheckoutStepsViewModel, didUpdateCheckoutProcess checkoutProcess: CheckoutProcess) {
+        doneButton?.isEnabled = checkoutProcess.isComplete
+    }
 
     func checkoutStepsViewModel(_ viewModel: CheckoutStepsViewModel, didUpdateSteps steps: [CheckoutStep]) {
         update(with: steps, animate: true)
