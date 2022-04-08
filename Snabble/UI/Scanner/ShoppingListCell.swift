@@ -7,45 +7,41 @@
 import UIKit
 
 final class ShoppingListCell: UITableViewCell {
+
     private var item: ShoppingListItem?
     private var indexPath: IndexPath?
     private var checked = false
-
-    @IBOutlet private var productImage: UIImageView!
-    @IBOutlet private var spinner: UIActivityIndicatorView!
-
-    @IBOutlet private var nameLabel: UILabel!
-
-    @IBOutlet private var quantityLabel: UILabel!
-    @IBOutlet private var checkContainer: UIView!
-    @IBOutlet private var checkImage: UIImageView!
-
     private var task: URLSessionDataTask?
 
-    override func awakeFromNib() {
-        super.awakeFromNib()
+    private weak var cellView: ShoppingListCellView?
 
-        checkContainer.layer.shadowColor = UIColor.gray.cgColor
-        checkContainer.layer.shadowOpacity = 0.3
-        checkContainer.layer.shadowOffset = CGSize.zero
-        checkContainer.layer.shadowRadius = 1.5
-        checkContainer.layer.masksToBounds = true
-        checkContainer.layer.borderWidth = 1 / UIScreen.main.scale
-        checkContainer.layer.borderColor = UIColor.systemBackground.cgColor
-        checkContainer.layer.cornerRadius = checkContainer.bounds.width / 2
-        checkContainer.backgroundColor = .clear
+    override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
 
-        checkImage.image = Asset.SnabbleSDK.iconCheckLarge.image
+        super.init(style: style, reuseIdentifier: reuseIdentifier)
 
-        if #available(iOS 13.0, *) {
-            spinner.style = .medium
-        }
-
-        nameLabel.textColor = .label
-        quantityLabel.textColor = .label
-        productImage.tintColor = .label
-
+        self.setupUI()
         prepareForReuse()
+    }
+
+    public required init?(coder aDecoder: NSCoder) {
+            fatalError("init(coder:) has not been implemented")
+    }
+
+    private func setupUI() {
+        self.backgroundColor = .clear
+
+        let cellView = ShoppingListCellView(frame: .zero)
+        cellView.translatesAutoresizingMaskIntoConstraints = false
+        self.contentView.addSubview(cellView)
+
+        self.cellView = cellView
+
+        NSLayoutConstraint.activate([
+            cellView.leadingAnchor.constraint(equalTo: self.contentView.leadingAnchor),
+            self.contentView.trailingAnchor.constraint(equalTo: cellView.trailingAnchor),
+            cellView.topAnchor.constraint(equalTo: self.contentView.topAnchor),
+            self.contentView.bottomAnchor.constraint(equalTo: cellView.bottomAnchor)
+        ])
     }
 
     override func prepareForReuse() {
@@ -53,14 +49,9 @@ final class ShoppingListCell: UITableViewCell {
 
         task?.cancel()
         task = nil
-        productImage.image = nil
-        spinner.isHidden = true
-
         item = nil
         checked = false
-
-        quantityLabel.text = nil
-        nameLabel.text = nil
+        self.cellView?.prepareForReuse()
     }
 
     func setListItem(_ item: ShoppingListItem, _ list: ShoppingList) {
@@ -77,18 +68,12 @@ final class ShoppingListCell: UITableViewCell {
         }
         loadImage(for: item)
 
-        quantityLabel.text = quantity
-        checkImage.isHidden = !item.checked
-
-        let alpha = item.checked ? 0.3 : 1
-        nameLabel.alpha = alpha
-        checkContainer.alpha = alpha
-        quantityLabel.alpha = alpha
-
         let strikeStyle: NSUnderlineStyle = item.checked ? .single : []
         let attributes = [NSAttributedString.Key.strikethroughStyle: strikeStyle.rawValue]
 
-        nameLabel.attributedText = NSAttributedString(string: item.name, attributes: attributes)
+        self.cellView?.configure(with: NSAttributedString(string: item.name, attributes: attributes),
+                                 item.checked,
+                                 quantity)
     }
 }
 
@@ -107,17 +92,17 @@ extension ShoppingListCell {
         }
 
         if let img = ShoppingListCell.imageCache[imgUrl] {
-            self.productImage.image = img
+            self.cellView?.configureProductImage(with: img)
             return
         }
 
-        self.spinner.startAnimating()
-        self.spinner.isHidden = false
+        self.cellView?.spinnerStartAnimation()
+        self.cellView?.spinnerIsHidden(false)
         self.task = Snabble.urlSession.dataTask(with: url) { data, _, error in
             self.task = nil
             DispatchQueue.main.async {
-                self.spinner.stopAnimating()
-                self.spinner.isHidden = true
+                self.cellView?.spinnerStopAnimation()
+                self.cellView?.spinnerIsHidden(true)
             }
             guard let data = data, error == nil else {
                 return
@@ -126,7 +111,7 @@ extension ShoppingListCell {
             DispatchQueue.main.async {
                 if let image = UIImage(data: data) {
                     ShoppingListCell.imageCache[imgUrl] = image
-                    self.productImage.image = image
+                    self.cellView?.configureProductImage(with: image)
                 } else {
                     self.setDefaultImage(for: item)
                 }
@@ -146,6 +131,6 @@ extension ShoppingListCell {
             asset = Asset.SnabbleSDK.Shoppinglist.shoppinglistIconText
         }
 
-        productImage.image = asset.image.withRenderingMode(.alwaysTemplate)
+        self.cellView?.configureProductImage(with: asset.image.withRenderingMode(.alwaysTemplate))
     }
 }

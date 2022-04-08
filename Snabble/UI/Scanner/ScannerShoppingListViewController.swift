@@ -31,8 +31,7 @@ final class ScannerShoppingListViewController: UITableViewController {
         tableView.delegate = self
         tableView.dataSource = self
         tableView.tableFooterView = UIView(frame: .zero)
-        let nib = UINib(nibName: "ShoppingListCell", bundle: SnabbleSDKBundle.main)
-        tableView.register(nib, forCellReuseIdentifier: "shoppingListCell")
+        tableView.register(ShoppingListCell.self, forCellReuseIdentifier: "shoppingListCell")
         // compensate for the 20pt overshoot from Pulley
         let insets = UIEdgeInsets(top: 0, left: 0, bottom: 20, right: 0)
         tableView.contentInset = insets
