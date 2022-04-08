@@ -7,17 +7,15 @@
 import UIKit
 import Pulley
 
-final class CheckoutBar: NibView {
-    @IBOutlet private var contentStack: UIStackView!
-    @IBOutlet private var itemCountLabel: UILabel!
-    @IBOutlet private var totalPriceLabel: UILabel!
-
-    @IBOutlet private var paymentStackView: UIStackView!
-    @IBOutlet private var methodSelectionStackView: UIStackView!
-
-    @IBOutlet private var noPaymentLabel: UILabel!
-    @IBOutlet private var methodIcon: UIImageView!
-    @IBOutlet private var checkoutButton: UIButton!
+final class CheckoutBar: UIView {
+    private weak var itemCountLabel: UILabel?
+    private weak var totalPriceLabel: UILabel?
+    private weak var paymentStackView: UIStackView?
+    private weak var methodSelectionStackView: UIStackView?
+    private weak var noPaymentLabel: UILabel?
+    private weak var methodIcon: UIImageView?
+    private weak var chevronImage: UIImageView?
+    private weak var checkoutButton: UIButton?
 
     private var notAllMethodsAvailableShown = false
     private var checkoutNotAvailableShown = false
@@ -31,42 +29,140 @@ final class CheckoutBar: NibView {
     init(_ parentVC: UIViewController & AnalyticsDelegate, _ shoppingCart: ShoppingCart) {
         self.parentVC = parentVC
         self.shoppingCart = shoppingCart
-
         super.init(frame: .zero)
+
+        self.setupUI()
+
+        if let methodSelectionStackView = self.methodSelectionStackView, let methodIcon = self.methodIcon {
+            self.methodSelector = PaymentMethodSelector(parentVC, methodSelectionStackView, methodIcon, self.shoppingCart)
+        }
+        self.methodSelector?.delegate = self
     }
 
     public required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
 
-    override func awakeFromNib() {
-        super.awakeFromNib()
+    private func setupUI() {
+        let summaryLayoutGuide = UILayoutGuide()
 
-        self.checkoutButton.addTarget(self, action: #selector(checkoutTapped(_:)), for: .touchUpInside)
-        self.checkoutButton.setTitle(L10n.Snabble.Shoppingcart.BuyProducts.now, for: .normal)
-        self.checkoutButton.makeSnabbleButton()
+        let itemCountLabel = UILabel()
+        itemCountLabel.translatesAutoresizingMaskIntoConstraints = false
+        itemCountLabel.font = UIFont.systemFont(ofSize: 13)
+        itemCountLabel.textColor = .secondaryLabel
+        itemCountLabel.textAlignment = .left
 
+        let totalPriceLabel = UILabel()
+        totalPriceLabel.translatesAutoresizingMaskIntoConstraints = false
+        totalPriceLabel.font = UIFont.monospacedDigitSystemFont(ofSize: 22, weight: .bold)
+        totalPriceLabel.textColor = .label
+        totalPriceLabel.textAlignment = .right
+
+        let paymentStackView = UIStackView()
+        paymentStackView.translatesAutoresizingMaskIntoConstraints = false
+        paymentStackView.axis = .horizontal
+        paymentStackView.distribution = .fill
+        paymentStackView.alignment = .fill
+        paymentStackView.spacing = 16
+
+        let methodSelectionStackView = UIStackView()
+        methodSelectionStackView.translatesAutoresizingMaskIntoConstraints = false
+        methodSelectionStackView.axis = .horizontal
+        methodSelectionStackView.distribution = .fill
+        methodSelectionStackView.spacing = 4
+        methodSelectionStackView.isLayoutMarginsRelativeArrangement = true
+        methodSelectionStackView.layoutMargins = UIEdgeInsets(top: 0, left: 12, bottom: 0, right: 12)
+        methodSelectionStackView.backgroundColor = .systemBackground
+        methodSelectionStackView.layer.masksToBounds = true
+        methodSelectionStackView.layer.cornerRadius = 8
+        methodSelectionStackView.layer.borderColor = UIColor.lightGray.cgColor
+        methodSelectionStackView.layer.borderWidth = 1 / UIScreen.main.scale
+
+        let noPaymentLabel = UILabel()
+        noPaymentLabel.translatesAutoresizingMaskIntoConstraints = false
+        noPaymentLabel.font = UIFont.systemFont(ofSize: 17, weight: .medium)
+        noPaymentLabel.textColor = .label
+        noPaymentLabel.textAlignment = .center
+        noPaymentLabel.text = L10n.Snabble.Shoppingcart.BuyProducts.selectPaymentMethod
+
+        let methodIcon = UIImageView()
+        methodIcon.translatesAutoresizingMaskIntoConstraints = false
+        methodIcon.contentMode = .scaleAspectFit
+        methodIcon.image = Asset.SnabbleSDK.Payment.paymentSco.image
+
+        let chevronImage = UIImageView()
+        chevronImage.translatesAutoresizingMaskIntoConstraints = false
+        chevronImage.contentMode = .scaleAspectFit
+        chevronImage.image = Asset.SnabbleSDK.iconChevronDown.image
+
+        let checkoutButton = UIButton()
+        checkoutButton.translatesAutoresizingMaskIntoConstraints = false
+        checkoutButton.setTitle(L10n.Snabble.Shoppingcart.BuyProducts.now, for: .normal)
         let disabledColor = SnabbleUI.appearance.accentColor.contrast.withAlphaComponent(0.5)
-        self.checkoutButton.setTitleColor(disabledColor, for: .disabled)
+        checkoutButton.setTitleColor(disabledColor, for: .disabled)
+        checkoutButton.titleLabel?.font = UIFont.systemFont(ofSize: 17, weight: .semibold)
+        checkoutButton.makeSnabbleButton()
+        checkoutButton.isEnabled = true
+        checkoutButton.isUserInteractionEnabled = true
+        checkoutButton.addTarget(self, action: #selector(checkoutTapped(_:)), for: .touchUpInside)
 
-        self.methodSelectionStackView.layer.masksToBounds = true
-        self.methodSelectionStackView.layer.cornerRadius = 8
-        self.methodSelectionStackView.layer.borderColor = UIColor.lightGray.cgColor
-        self.methodSelectionStackView.layer.borderWidth = 1 / UIScreen.main.scale
+        addLayoutGuide(summaryLayoutGuide)
+        addSubview(paymentStackView)
+        addSubview(itemCountLabel)
+        addSubview(totalPriceLabel)
+        paymentStackView.addArrangedSubview(methodSelectionStackView)
+        paymentStackView.addArrangedSubview(checkoutButton)
+        methodSelectionStackView.addArrangedSubview(noPaymentLabel)
+        methodSelectionStackView.addArrangedSubview(methodIcon)
+        methodSelectionStackView.addArrangedSubview(chevronImage)
 
-        self.noPaymentLabel.text = L10n.Snabble.Shoppingcart.BuyProducts.selectPaymentMethod
+        self.itemCountLabel = itemCountLabel
+        self.totalPriceLabel = totalPriceLabel
+        self.paymentStackView = paymentStackView
+        self.methodSelectionStackView = methodSelectionStackView
+        self.noPaymentLabel = noPaymentLabel
+        self.methodIcon = methodIcon
+        self.chevronImage = chevronImage
+        self.checkoutButton = checkoutButton
 
-        self.totalPriceLabel.font = UIFont.monospacedDigitSystemFont(ofSize: 22, weight: .bold)
+        NSLayoutConstraint.activate([
 
-        self.methodSelector = PaymentMethodSelector(parentVC, self.methodSelectionStackView!, self.methodIcon, self.shoppingCart)
-        self.methodSelector?.delegate = self
+            summaryLayoutGuide.topAnchor.constraint(equalTo: topAnchor),
+            summaryLayoutGuide.leadingAnchor.constraint(equalTo: leadingAnchor),
+            summaryLayoutGuide.trailingAnchor.constraint(equalTo: trailingAnchor),
+            summaryLayoutGuide.heightAnchor.constraint(greaterThanOrEqualTo: itemCountLabel.heightAnchor).usingPriority(.defaultHigh + 3),
+            summaryLayoutGuide.heightAnchor.constraint(greaterThanOrEqualTo: totalPriceLabel.heightAnchor).usingPriority(.defaultHigh + 3),
+
+            itemCountLabel.leadingAnchor.constraint(equalTo: summaryLayoutGuide.leadingAnchor),
+            itemCountLabel.widthAnchor.constraint(equalTo: widthAnchor, multiplier: 0.5),
+            itemCountLabel.topAnchor.constraint(equalTo: summaryLayoutGuide.topAnchor).usingPriority(.defaultHigh + 4),
+            itemCountLabel.bottomAnchor.constraint(equalTo: summaryLayoutGuide.bottomAnchor).usingPriority(.defaultHigh + 4),
+
+            totalPriceLabel.leadingAnchor.constraint(equalTo: itemCountLabel.trailingAnchor),
+            totalPriceLabel.trailingAnchor.constraint(equalTo: summaryLayoutGuide.trailingAnchor),
+            totalPriceLabel.topAnchor.constraint(equalTo: summaryLayoutGuide.topAnchor).usingPriority(.defaultHigh + 4),
+            summaryLayoutGuide.bottomAnchor.constraint(equalTo: totalPriceLabel.bottomAnchor).usingPriority(.defaultHigh + 4),
+
+            paymentStackView.topAnchor.constraint(equalToSystemSpacingBelow: summaryLayoutGuide.bottomAnchor, multiplier: 1).usingPriority(.defaultHigh + 3),
+            paymentStackView.leadingAnchor.constraint(equalTo: leadingAnchor),
+            paymentStackView.trailingAnchor.constraint(equalTo: trailingAnchor),
+            paymentStackView.bottomAnchor.constraint(equalTo: bottomAnchor),
+
+            methodSelectionStackView.heightAnchor.constraint(equalToConstant: 48).usingPriority(.defaultHigh + 1),
+            methodSelectionStackView.widthAnchor.constraint(equalToConstant: 80).usingPriority(.defaultHigh - 1),
+            methodIcon.widthAnchor.constraint(equalToConstant: 38).usingPriority(.defaultHigh + 2),
+            chevronImage.widthAnchor.constraint(equalToConstant: 16).usingPriority(.defaultHigh + 2),
+            chevronImage.heightAnchor.constraint(equalToConstant: 16).usingPriority(.defaultHigh - 3),
+            checkoutButton.heightAnchor.constraint(equalToConstant: 48).usingPriority(.defaultHigh),
+            checkoutButton.widthAnchor.constraint(equalToConstant: 280).usingPriority(.defaultHigh - 2)
+        ])
     }
 
     private func updateViewHierarchy(for paymentMethod: RawPaymentMethod?) {
         let paymentMethodSelected = paymentMethod != nil
-        self.checkoutButton.isHidden = !paymentMethodSelected
+        self.checkoutButton?.isHidden = !paymentMethodSelected
         self.methodIcon?.isHidden = !paymentMethodSelected
-        self.noPaymentLabel.isHidden = paymentMethodSelected
+        self.noPaymentLabel?.isHidden = paymentMethodSelected
     }
 
     func updateTotals() {
@@ -92,7 +188,6 @@ final class CheckoutBar: NibView {
         } else {
             self.totalPriceLabel?.text = ""
         }
-
         let fun = numProducts == 1 ? L10n.Snabble.Shoppingcart.NumberOfItems.one : L10n.Snabble.Shoppingcart.numberOfItems
         self.itemCountLabel?.text = fun(numProducts)
         self.checkoutButton?.isEnabled = numProducts > 0 && (totalPrice ?? 0) >= 0
@@ -103,11 +198,6 @@ final class CheckoutBar: NibView {
 
     func updateSelectionVisibility() {
         self.methodSelector?.updateSelectionVisibility()
-    }
-
-    func barDidAppear() {
-        // avoid auto-layout warning
-        self.contentStack.spacing = 12
     }
 
     private func pauseScanning() {
