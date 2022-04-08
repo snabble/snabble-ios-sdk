@@ -8,14 +8,13 @@ import UIKit
 import Pulley
 
 final class CheckoutBar: UIView {
-
     private weak var itemCountLabel: UILabel?
     private weak var totalPriceLabel: UILabel?
     private weak var paymentStackView: UIStackView?
     private weak var methodSelectionStackView: UIStackView?
     private weak var noPaymentLabel: UILabel?
     private weak var methodIcon: UIImageView?
-    private weak var shevronImage: UIImageView?
+    private weak var chevronImage: UIImageView?
     private weak var checkoutButton: UIButton?
 
     private var notAllMethodsAvailableShown = false
@@ -28,7 +27,6 @@ final class CheckoutBar: UIView {
     weak var shoppingCartDelegate: ShoppingCartDelegate?
 
     init(_ parentVC: UIViewController & AnalyticsDelegate, _ shoppingCart: ShoppingCart) {
-
         self.parentVC = parentVC
         self.shoppingCart = shoppingCart
         super.init(frame: .zero)
@@ -39,7 +37,6 @@ final class CheckoutBar: UIView {
             self.methodSelector = PaymentMethodSelector(parentVC, methodSelectionStackView, methodIcon, self.shoppingCart)
         }
         self.methodSelector?.delegate = self
-
     }
 
     public required init?(coder aDecoder: NSCoder) {
@@ -47,7 +44,6 @@ final class CheckoutBar: UIView {
     }
 
     private func setupUI() {
-
         let summaryLayoutGuide = UILayoutGuide()
 
         let itemCountLabel = UILabel()
@@ -94,10 +90,10 @@ final class CheckoutBar: UIView {
         methodIcon.contentMode = .scaleAspectFit
         methodIcon.image = Asset.SnabbleSDK.Payment.paymentSco.image
 
-        let shevronImage = UIImageView()
-        shevronImage.translatesAutoresizingMaskIntoConstraints = false
-        shevronImage.contentMode = .scaleAspectFit
-        shevronImage.image = Asset.SnabbleSDK.iconChevronDown.image
+        let chevronImage = UIImageView()
+        chevronImage.translatesAutoresizingMaskIntoConstraints = false
+        chevronImage.contentMode = .scaleAspectFit
+        chevronImage.image = Asset.SnabbleSDK.iconChevronDown.image
 
         let checkoutButton = UIButton()
         checkoutButton.translatesAutoresizingMaskIntoConstraints = false
@@ -118,7 +114,7 @@ final class CheckoutBar: UIView {
         paymentStackView.addArrangedSubview(checkoutButton)
         methodSelectionStackView.addArrangedSubview(noPaymentLabel)
         methodSelectionStackView.addArrangedSubview(methodIcon)
-        methodSelectionStackView.addArrangedSubview(shevronImage)
+        methodSelectionStackView.addArrangedSubview(chevronImage)
 
         self.itemCountLabel = itemCountLabel
         self.totalPriceLabel = totalPriceLabel
@@ -126,7 +122,7 @@ final class CheckoutBar: UIView {
         self.methodSelectionStackView = methodSelectionStackView
         self.noPaymentLabel = noPaymentLabel
         self.methodIcon = methodIcon
-        self.shevronImage = shevronImage
+        self.chevronImage = chevronImage
         self.checkoutButton = checkoutButton
 
         NSLayoutConstraint.activate([
@@ -155,8 +151,8 @@ final class CheckoutBar: UIView {
             methodSelectionStackView.heightAnchor.constraint(equalToConstant: 48).usingPriority(.defaultHigh + 1),
             methodSelectionStackView.widthAnchor.constraint(equalToConstant: 80).usingPriority(.defaultHigh - 1),
             methodIcon.widthAnchor.constraint(equalToConstant: 38).usingPriority(.defaultHigh + 2),
-            shevronImage.widthAnchor.constraint(equalToConstant: 16).usingPriority(.defaultHigh + 2),
-            shevronImage.heightAnchor.constraint(equalToConstant: 16).usingPriority(.defaultHigh - 3),
+            chevronImage.widthAnchor.constraint(equalToConstant: 16).usingPriority(.defaultHigh + 2),
+            chevronImage.heightAnchor.constraint(equalToConstant: 16).usingPriority(.defaultHigh - 3),
             checkoutButton.heightAnchor.constraint(equalToConstant: 48).usingPriority(.defaultHigh),
             checkoutButton.widthAnchor.constraint(equalToConstant: 280).usingPriority(.defaultHigh - 2)
         ])
