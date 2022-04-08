@@ -80,7 +80,7 @@ final class CheckoutStepsViewModel {
 
         switch result.result {
         case let .success(process):
-            continuePolling = shouldContinuePolling(for: process)
+            continuePolling = !process.isComplete
             checkoutProcess = process
             updateViewModels(with: process)
             updateShoppingCart(for: process)
@@ -149,26 +149,6 @@ final class CheckoutStepsViewModel {
         return steps
     }
 
-    private func shouldContinuePolling(for checkoutProcess: CheckoutProcess) -> Bool {
-        var shouldContinuePolling: Bool
-        switch checkoutProcess.paymentState {
-        case .successful, .transferred:
-            shouldContinuePolling = false
-        case .failed:
-            return false
-        case .pending:
-            shouldContinuePolling = !checkoutProcess.fulfillments.containsFailureState
-        case .processing, .unauthorized, .unknown:
-            shouldContinuePolling = true
-        }
-
-        if checkoutProcess.requiresExitToken && checkoutProcess.exitToken?.image == nil {
-            shouldContinuePolling = true
-        }
-
-        return shouldContinuePolling
-    }
-
     private func startOriginPollerIfNeeded(for checkoutProcess: CheckoutProcess) {
         if originPoller.shouldStart(for: checkoutProcess) {
             originPoller.delegate = self
@@ -186,12 +166,6 @@ final class CheckoutStepsViewModel {
         didSet {
             delegate?.checkoutStepsViewModel(self, didUpdateSteps: steps)
         }
-    }
-}
-
-private extension Array where Element == Fulfillment {
-    var containsFailureState: Bool {
-        !FulfillmentState.failureStates.isDisjoint(with: Set(map { $0.state }))
     }
 }
 

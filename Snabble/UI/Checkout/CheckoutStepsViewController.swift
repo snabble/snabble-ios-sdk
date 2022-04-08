@@ -213,7 +213,7 @@ final class CheckoutStepsViewController: UIViewController {
 
 extension CheckoutStepsViewController: CheckoutStepsViewModelDelegate {
     func checkoutStepsViewModel(_ viewModel: CheckoutStepsViewModel, didUpdateCheckoutProcess checkoutProcess: CheckoutProcess) {
-        doneButton?.isEnabled = PaymentState.endStates.contains(checkoutProcess.paymentState)
+        doneButton?.isEnabled = checkoutProcess.isComplete
     }
 
     func checkoutStepsViewModel(_ viewModel: CheckoutStepsViewModel, didUpdateSteps steps: [CheckoutStep]) {
