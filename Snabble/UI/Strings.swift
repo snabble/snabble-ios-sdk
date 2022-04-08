@@ -224,6 +224,10 @@ public enum L10n {
       /// Your card data is only stored in encrypted form and therefore cannot be edited.
       public static var editingHint: String { return L10n.tr("SnabbleLocalizable", "Snabble.PaymentCard.editingHint") }
     }
+    public enum PaymentContinuation {
+      /// Continuing the payment
+      public static var message: String { return L10n.tr("SnabbleLocalizable", "Snabble.PaymentContinuation.message") }
+    }
     public enum PaymentError {
       /// An error has occurred
       public static var title: String { return L10n.tr("SnabbleLocalizable", "Snabble.PaymentError.title") }
@@ -481,6 +485,10 @@ public enum L10n {
         public static var actionHideHint: String { return L10n.tr("SnabbleLocalizable", "Snabble.Scanner.Accessibility.actionHideHint") }
         /// Understood
         public static var actionUnderstood: String { return L10n.tr("SnabbleLocalizable", "Snabble.Scanner.Accessibility.actionUnderstood") }
+        /// Please enter the quantity in %@
+        public static func enterQuantity(_ p1: Any) -> String {
+          return L10n.tr("SnabbleLocalizable", "Snabble.Scanner.Accessibility.enterQuantity", String(describing: p1))
+        }
         /// You are back in scanner
         public static var eventBackInScanner: String { return L10n.tr("SnabbleLocalizable", "Snabble.Scanner.Accessibility.eventBackInScanner") }
         /// Barcode detected

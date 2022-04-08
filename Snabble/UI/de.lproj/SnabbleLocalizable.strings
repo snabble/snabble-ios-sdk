@@ -192,6 +192,8 @@
 
 "Snabble.PaymentCard.editingHint" = "Deine Karten-Daten werden von uns nur verschlüsselt gespeichert und können daher nicht bearbeitet werden.";
 
+"Snabble.PaymentContinuation.message" = "Bezahlung wird fortgesetzt";
+
 "Snabble.PaymentError.title" = "Ein Fehler ist aufgetreten";
 
 "Snabble.PaymentError.tryAgain" = "Nochmal versuchen";
@@ -330,6 +332,8 @@
 "Snabble.Scanner.Accessibility.actionHideHint" = "Hinweis dauerhaft ausblenden";
 
 "Snabble.Scanner.Accessibility.actionUnderstood" = "Verstanden";
+
+"Snabble.Scanner.Accessibility.enterQuantity" = "Bitte gib die Menge in %@ ein";
 
 "Snabble.Scanner.Accessibility.eventBackInScanner" = "Du bist wieder im Scanner";
 

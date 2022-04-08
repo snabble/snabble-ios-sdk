@@ -192,6 +192,8 @@
 
 "Snabble.PaymentCard.editingHint" = "Údaje o tvojej karte budeme uchovávať len v šifrovanej forme, a preto nemôžu byť spracované.";
 
+"Snabble.PaymentContinuation.message" = "Continuing the payment";
+
 "Snabble.PaymentError.title" = "Vyskytla sa chyba";
 
 "Snabble.PaymentError.tryAgain" = "Skúsiť znovu";
@@ -330,6 +332,8 @@
 "Snabble.Scanner.Accessibility.actionHideHint" = "Skryť upozornenie natrvalo";
 
 "Snabble.Scanner.Accessibility.actionUnderstood" = "Rozumiem";
+
+"Snabble.Scanner.Accessibility.enterQuantity" = "Please enter the quantity in %@";
 
 "Snabble.Scanner.Accessibility.eventBackInScanner" = "Si opäť v skeneri";
 

@@ -192,6 +192,8 @@
 
 "Snabble.PaymentCard.editingHint" = "A kártyaadataidat kódolva tároljuk, éppen ezért nem tudjuk feldolgozni.";
 
+"Snabble.PaymentContinuation.message" = "Continuing the payment";
+
 "Snabble.PaymentError.title" = "Hiba történt";
 
 "Snabble.PaymentError.tryAgain" = "Próbálkozz újra";
@@ -330,6 +332,8 @@
 "Snabble.Scanner.Accessibility.actionHideHint" = "Megjegyzés tartós elrejtése";
 
 "Snabble.Scanner.Accessibility.actionUnderstood" = "Megértettem";
+
+"Snabble.Scanner.Accessibility.enterQuantity" = "Please enter the quantity in %@";
 
 "Snabble.Scanner.Accessibility.eventBackInScanner" = "Visszatértél a szkennerbe";
 
