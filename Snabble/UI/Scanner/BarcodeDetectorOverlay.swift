@@ -73,8 +73,11 @@ public final class BarcodeDetectorOverlay: UIView {
         NSLayoutConstraint.activate([
             reticle.leadingAnchor.constraint(equalTo: self.leadingAnchor, constant: 16),
             reticle.trailingAnchor.constraint(equalTo: self.trailingAnchor, constant: -16),
-            reticleHeight,
-            reticle.centerYAnchor.constraint(equalTo: barcodeOverlay.centerYAnchor)
+            reticleHeight.usingPriority(.defaultHigh),
+            reticle.centerYAnchor.constraint(equalTo: barcodeOverlay.centerYAnchor),
+
+            reticle.heightAnchor.constraint(lessThanOrEqualTo: self.heightAnchor, constant: -32)
+                .usingPriority(.required - 1)
         ])
 
         frameView.backgroundColor = .clear
