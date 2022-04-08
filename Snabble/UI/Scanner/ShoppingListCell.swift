@@ -94,13 +94,11 @@ extension ShoppingListCell {
             return
         }
 
-        self.cellView?.spinnerStartAnimation()
-        self.cellView?.spinnerIsHidden(false)
+        self.cellView?.spinner?.startAnimating()
         self.task = Snabble.urlSession.dataTask(with: url) { data, _, error in
             self.task = nil
             DispatchQueue.main.async {
-                self.cellView?.spinnerStopAnimation()
-                self.cellView?.spinnerIsHidden(true)
+                self.cellView?.spinner?.stopAnimating()
             }
             guard let data = data, error == nil else {
                 return

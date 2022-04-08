@@ -27,8 +27,6 @@ final class ShoppingListCellView: UIView {
     }
 
     private func setupUI() {
-        self.backgroundColor = .clear
-
         let imageViewLayuotGuide = UILayoutGuide()
 
         let productImage = UIImageView()
@@ -38,6 +36,7 @@ final class ShoppingListCellView: UIView {
 
         let spinner = UIActivityIndicatorView()
         spinner.translatesAutoresizingMaskIntoConstraints = false
+        spinner.hidesWhenStopped = true
         if #available(iOS 13.0, *) {
             spinner.style = .medium
         } else {
@@ -141,7 +140,6 @@ final class ShoppingListCellView: UIView {
 
     public func prepareForReuse() {
         self.productImage?.image = nil
-        self.spinner?.isHidden = true
         self.quantityLabel?.text = nil
         self.nameLabel?.text = nil
     }
@@ -159,17 +157,5 @@ final class ShoppingListCellView: UIView {
 
     public func configureProductImage(with image: UIImage) {
         self.productImage?.image = image
-    }
-
-    public func spinnerStartAnimation() {
-        self.spinner?.startAnimating()
-    }
-
-    public func spinnerStopAnimation() {
-        self.spinner?.stopAnimating()
-    }
-
-    public func spinnerIsHidden(_ bool: Bool) {
-        self.spinner?.isHidden = bool
     }
 }
