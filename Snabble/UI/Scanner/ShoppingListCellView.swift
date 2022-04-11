@@ -39,8 +39,9 @@ final class ShoppingListCellView: UIView {
         spinner.hidesWhenStopped = true
         if #available(iOS 13.0, *) {
             spinner.style = .medium
+        } else {
+            spinner.style = .gray
         }
-        spinner.contentMode = .scaleToFill
 
         let nameLabel = UILabel()
         nameLabel.translatesAutoresizingMaskIntoConstraints = false
