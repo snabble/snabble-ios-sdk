@@ -45,7 +45,9 @@ public final class InflightCheckoutContinuationViewController: UIViewController 
         NSLayoutConstraint.activate([
             stackview.centerYAnchor.constraint(equalTo: view.centerYAnchor),
             stackview.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16),
-            stackview.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -16)
+            stackview.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -16),
+            stackview.topAnchor.constraint(greaterThanOrEqualTo: view.safeAreaLayoutGuide.topAnchor, constant: 16),
+            stackview.bottomAnchor.constraint(lessThanOrEqualTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -16)
         ])
 
         if let inFlightCheckout = Snabble.inFlightCheckout {
