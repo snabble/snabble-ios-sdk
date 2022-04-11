@@ -39,8 +39,6 @@ final class ShoppingListCellView: UIView {
         spinner.hidesWhenStopped = true
         if #available(iOS 13.0, *) {
             spinner.style = .medium
-        } else {
-            spinner.style = .gray
         }
         spinner.contentMode = .scaleToFill
 
@@ -106,10 +104,10 @@ final class ShoppingListCellView: UIView {
             productImage.heightAnchor.constraint(equalToConstant: 28),
             productImage.centerYAnchor.constraint(equalTo: imageViewLayuotGuide.centerYAnchor),
 
-            spinner.leadingAnchor.constraint(equalTo: imageViewLayuotGuide.leadingAnchor),
             spinner.widthAnchor.constraint(equalToConstant: 28),
             spinner.heightAnchor.constraint(equalToConstant: 28),
-            spinner.centerYAnchor.constraint(equalTo: imageViewLayuotGuide.centerYAnchor),
+            spinner.centerYAnchor.constraint(equalTo: productImage.centerYAnchor),
+            spinner.centerXAnchor.constraint(equalTo: productImage.centerXAnchor),
 
             tickLayoutGuide.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -14),
             tickLayoutGuide.widthAnchor.constraint(equalToConstant: 46),
