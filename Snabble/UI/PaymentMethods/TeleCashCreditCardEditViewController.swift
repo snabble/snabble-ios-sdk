@@ -16,18 +16,16 @@ import WebKit
 // see https://stripe.com/docs/testing
 
 public final class TeleCashCreditCardEditViewController: UIViewController {
-    @IBOutlet private var containerView: UIView!
-    @IBOutlet private var spinner: UIActivityIndicatorView!
+    private let explanation = UILabel()
 
-    @IBOutlet private var cardNumberLabel: UILabel!
-    @IBOutlet private var cardNumber: UITextField!
+    private let cardNumberLabel = UILabel()
+    private let cardNumber = UITextField()
 
-    @IBOutlet private var expDateLabel: UILabel!
-    @IBOutlet private var expirationDate: UITextField!
+    private let expDateLabel = UILabel()
+    private let expirationDate = UITextField()
 
-    @IBOutlet private var explanation: UILabel!
-
-    private var webView: WKWebView!
+    private var webView: WKWebView?
+    private let spinner = UIActivityIndicatorView()
     private static let handlerName = "callbackHandler"
 
     private var detail: PaymentMethodDetail?
@@ -44,7 +42,7 @@ public final class TeleCashCreditCardEditViewController: UIViewController {
         self.analyticsDelegate = analyticsDelegate
         self.projectId = projectId
 
-        super.init(nibName: nil, bundle: SnabbleSDKBundle.main)
+        super.init(nibName: nil, bundle: nil)
     }
 
     init(_ detail: PaymentMethodDetail, _ analyticsDelegate: AnalyticsDelegate?) {
@@ -57,11 +55,87 @@ public final class TeleCashCreditCardEditViewController: UIViewController {
         self.analyticsDelegate = analyticsDelegate
         self.projectId = nil
 
-        super.init(nibName: nil, bundle: SnabbleSDKBundle.main)
+        super.init(nibName: nil, bundle: nil)
     }
 
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
+    }
+
+    override public func viewDidLoad() {
+        super.viewDidLoad()
+
+        view.backgroundColor = .systemBackground
+
+        let scrollView = UIScrollView()
+        scrollView.translatesAutoresizingMaskIntoConstraints = false
+        view.addSubview(scrollView)
+
+        let stackView = UIStackView(arrangedSubviews: [
+            explanation, cardNumberLabel, cardNumber, expDateLabel, expirationDate
+        ])
+        stackView.translatesAutoresizingMaskIntoConstraints = false
+        stackView.axis = .vertical
+        stackView.spacing = 16
+        stackView.alignment = .fill
+        stackView.setCustomSpacing(8, after: cardNumberLabel)
+        stackView.setCustomSpacing(8, after: expDateLabel)
+        scrollView.addSubview(stackView)
+
+        let contentController = WKUserContentController()
+        contentController.add(self, name: Self.handlerName)
+
+        let config = WKWebViewConfiguration()
+        config.userContentController = contentController
+
+        let webView = WKWebView(frame: .zero, configuration: config)
+        webView.translatesAutoresizingMaskIntoConstraints = false
+        webView.navigationDelegate = self
+        self.webView = webView
+        view.addSubview(webView)
+
+        spinner.translatesAutoresizingMaskIntoConstraints = false
+        view.addSubview(spinner)
+
+        explanation.numberOfLines = 0
+        explanation.useDynamicFont(forTextStyle: .footnote)
+
+        cardNumberLabel.useDynamicFont(forTextStyle: .body)
+
+        cardNumber.useDynamicFont(forTextStyle: .body)
+        cardNumber.isEnabled = false
+        cardNumber.borderStyle = .roundedRect
+
+        expDateLabel.useDynamicFont(forTextStyle: .body)
+
+        expirationDate.useDynamicFont(forTextStyle: .body)
+        expirationDate.isEnabled = false
+        expirationDate.borderStyle = .roundedRect
+
+        NSLayoutConstraint.activate([
+            scrollView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
+            scrollView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+            scrollView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+            scrollView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor),
+            scrollView.contentLayoutGuide.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+            scrollView.contentLayoutGuide.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+
+            stackView.topAnchor.constraint(equalTo: scrollView.topAnchor, constant: 16),
+            stackView.leadingAnchor.constraint(equalTo: scrollView.leadingAnchor, constant: 16),
+            stackView.trailingAnchor.constraint(equalTo: scrollView.trailingAnchor, constant: -16),
+            stackView.bottomAnchor.constraint(equalTo: scrollView.bottomAnchor, constant: -16),
+
+            cardNumber.heightAnchor.constraint(greaterThanOrEqualToConstant: 40),
+            expirationDate.heightAnchor.constraint(greaterThanOrEqualToConstant: 40),
+
+            webView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
+            webView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+            webView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+            webView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor),
+
+            spinner.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+            spinner.centerYAnchor.constraint(equalTo: view.centerYAnchor)
+        ])
     }
 
     override public func viewWillAppear(_ animated: Bool) {
@@ -74,7 +148,7 @@ public final class TeleCashCreditCardEditViewController: UIViewController {
         }
 
         if self.ccNumber != nil {
-            self.containerView.isHidden = true
+            self.webView?.isHidden = true
 
             self.cardNumber.text = self.ccNumber
             self.expirationDate.text = self.expDate
@@ -102,11 +176,6 @@ public final class TeleCashCreditCardEditViewController: UIViewController {
             return
         }
 
-        self.setupWebView()
-        self.containerView.bringSubviewToFront(self.spinner)
-
-        self.spinner.startAnimating()
-
         if descriptor.acceptedOriginTypes?.contains(.ipgHostedDataID) == true {
             tokenizeWithTelecash(project, descriptor)
         } else {
@@ -126,6 +195,7 @@ public final class TeleCashCreditCardEditViewController: UIViewController {
 
     private func tokenizeWithTelecash(_ project: Project, _ descriptor: PaymentMethodDescriptor) {
         let link = descriptor.links?.tokenization
+        spinner.startAnimating()
         self.getTelecashVaultItem(for: project, link) { [weak self] result in
             self?.spinner.stopAnimating()
             switch result {
@@ -182,19 +252,6 @@ public final class TeleCashCreditCardEditViewController: UIViewController {
         let chargeTotal = fmt.string(for: chargeDecimal)!
 
         return L10n.Snabble.Cc._3dsecureHint.retailerWithPrice(chargeTotal, name)
-    }
-
-    private func setupWebView() {
-        let contentController = WKUserContentController()
-        contentController.add(self, name: Self.handlerName)
-
-        let config = WKWebViewConfiguration()
-        config.userContentController = contentController
-
-        self.webView = WKWebView(frame: self.containerView.bounds, configuration: config)
-        self.webView.navigationDelegate = self
-
-        self.containerView.addSubview(self.webView)
     }
 
     @objc private func deleteButtonTapped(_ sender: Any) {
@@ -322,9 +379,9 @@ extension TeleCashCreditCardEditViewController {
         <html lang="en">
         <head>
             <meta charset="utf-8">
-            <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+            <meta name="viewport" content="width=device-width, initial-scale=1.0">
             <style type='text/css'>
-                * { font-family: -apple-system,sans-serif; font-size: 17px }
+                * { font: -apple-system-body }
                 @media (prefers-color-scheme: dark) {
                     * { background-color: #000; color: #fff; }
                 }
