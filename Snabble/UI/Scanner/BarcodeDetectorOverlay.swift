@@ -64,7 +64,6 @@ public final class BarcodeDetectorOverlay: UIView {
             reticle.layer.borderWidth = 1 / UIScreen.main.scale
             reticle.layer.masksToBounds = true
         }
-        reticle.backgroundColor = .red
         addSubview(reticle)
 
         let reticleHeight: NSLayoutConstraint
