@@ -47,7 +47,7 @@ extension Snabble {
         }
     }
 
-    public static var inFlightCheckoutPending: Bool {
+    public static var isInFlightCheckoutPending: Bool {
         UserDefaults.standard.data(forKey: Self.inFlightKey) != nil
     }
 }

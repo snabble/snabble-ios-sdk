@@ -66,7 +66,7 @@ final class EmbeddedCodesCheckoutViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        if Snabble.inFlightCheckoutPending {
+        if Snabble.isInFlightCheckoutPending {
             self.navigationItem.hidesBackButton = true
         }
 
