@@ -42,16 +42,20 @@ public final class BarcodeDetectorOverlay: UIView {
 
         barcodeOverlay.translatesAutoresizingMaskIntoConstraints = false
         barcodeOverlay.image = Asset.SnabbleSDK.barcodeOverlay.image
-        self.addSubview(barcodeOverlay)
+        addSubview(barcodeOverlay)
 
-        let overlayYCenter = barcodeOverlay.centerYAnchor.constraint(equalTo: self.centerYAnchor)
         NSLayoutConstraint.activate([
-            barcodeOverlay.centerXAnchor.constraint(equalTo: self.centerXAnchor),
-            overlayYCenter
-        ])
-        self.overlayYCenter = overlayYCenter
+            barcodeOverlay.centerXAnchor.constraint(equalTo: centerXAnchor),
+            barcodeOverlay.centerYAnchor.constraint(equalTo: centerYAnchor).usingVariable(&overlayYCenter),
 
-        self.translatesAutoresizingMaskIntoConstraints = false
+            barcodeOverlay.topAnchor.constraint(greaterThanOrEqualTo: topAnchor, constant: 16),
+            bottomAnchor.constraint(greaterThanOrEqualTo: barcodeOverlay.bottomAnchor, constant: 16),
+
+            barcodeOverlay.leadingAnchor.constraint(greaterThanOrEqualTo: leadingAnchor, constant: 16),
+            trailingAnchor.constraint(greaterThanOrEqualTo: barcodeOverlay.trailingAnchor, constant: 16)
+        ])
+
+        translatesAutoresizingMaskIntoConstraints = false
 
         reticle.translatesAutoresizingMaskIntoConstraints = false
         if Snabble.debugMode && debugReticle {
@@ -60,24 +64,27 @@ public final class BarcodeDetectorOverlay: UIView {
             reticle.layer.borderWidth = 1 / UIScreen.main.scale
             reticle.layer.masksToBounds = true
         }
-        self.addSubview(reticle)
+        reticle.backgroundColor = .red
+        addSubview(reticle)
 
         let reticleHeight: NSLayoutConstraint
         switch detectorArea {
         case .rectangle:
-            reticleHeight = reticle.heightAnchor.constraint(equalTo: self.heightAnchor, multiplier: 0.3, constant: 0)
+            reticleHeight = reticle.heightAnchor.constraint(equalTo: heightAnchor, multiplier: 0.3, constant: 0)
         case .square:
             reticleHeight = reticle.heightAnchor.constraint(equalTo: reticle.widthAnchor, multiplier: 1, constant: 0)
         }
 
         NSLayoutConstraint.activate([
-            reticle.leadingAnchor.constraint(equalTo: self.leadingAnchor, constant: 16),
-            reticle.trailingAnchor.constraint(equalTo: self.trailingAnchor, constant: -16),
-            reticleHeight.usingPriority(.defaultHigh),
-            reticle.centerYAnchor.constraint(equalTo: barcodeOverlay.centerYAnchor),
+            reticle.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 16),
+            trailingAnchor.constraint(equalTo: reticle.trailingAnchor, constant: 16),
 
-            reticle.heightAnchor.constraint(lessThanOrEqualTo: self.heightAnchor, constant: -32)
-                .usingPriority(.required - 1)
+            reticle.topAnchor.constraint(greaterThanOrEqualTo: topAnchor, constant: 16),
+            bottomAnchor.constraint(greaterThanOrEqualTo: reticle.bottomAnchor, constant: 16),
+
+            reticleHeight.usingPriority(.defaultHigh + 1),
+
+            reticle.centerYAnchor.constraint(equalTo: barcodeOverlay.centerYAnchor)
         ])
 
         frameView.backgroundColor = .clear
@@ -85,7 +92,7 @@ public final class BarcodeDetectorOverlay: UIView {
         frameView.layer.borderWidth = 1 / UIScreen.main.scale
         frameView.layer.cornerRadius = 3
 
-        self.addSubview(frameView)
+        addSubview(frameView)
     }
 
     required init?(coder: NSCoder) {
