@@ -105,10 +105,10 @@ final class ShoppingListCellView: UIView {
             productImage.heightAnchor.constraint(equalToConstant: 28),
             productImage.centerYAnchor.constraint(equalTo: imageViewLayuotGuide.centerYAnchor),
 
-            spinner.widthAnchor.constraint(equalToConstant: 28),
-            spinner.heightAnchor.constraint(equalToConstant: 28),
-            spinner.centerYAnchor.constraint(equalTo: productImage.centerYAnchor),
-            spinner.centerXAnchor.constraint(equalTo: productImage.centerXAnchor),
+            spinner.topAnchor.constraint(equalTo: productImage.topAnchor),
+            spinner.bottomAnchor.constraint(equalTo: productImage.bottomAnchor),
+            spinner.leadingAnchor.constraint(equalTo: productImage.leadingAnchor),
+            spinner.trailingAnchor.constraint(equalTo: productImage.trailingAnchor),
 
             tickLayoutGuide.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -14),
             tickLayoutGuide.widthAnchor.constraint(equalToConstant: 46),
