@@ -4,8 +4,6 @@
 //  Copyright © 2020 snabble. All rights reserved.
 //
 
-import UIKit
-
 protocol ShoppingCartTableDelegate: AnalyticsDelegate {
     func confirmDeletion(at row: Int)
     func updateQuantity(_ quantity: Int, at row: Int)
@@ -13,14 +11,14 @@ protocol ShoppingCartTableDelegate: AnalyticsDelegate {
     var showImages: Bool { get }
 }
 
-private enum LeftDisplay {
+enum LeftDisplay {
     case none
     case image
     case emptyImage
     case badge
 }
 
-private enum RightDisplay {
+enum RightDisplay {
     case none
     case buttons
     case weightEntry
@@ -28,34 +26,13 @@ private enum RightDisplay {
 }
 
 final class ShoppingCartTableCell: UITableViewCell {
-    @IBOutlet private var imageWrapper: UIView!
-    @IBOutlet private var imageBadge: UILabel!
-    @IBOutlet private var productImage: UIImageView!
-    @IBOutlet private var imageBackground: UIView!
-    @IBOutlet private var spinner: UIActivityIndicatorView!
 
-    @IBOutlet private var badgeWrapper: UIView!
-    @IBOutlet private var badgeLabel: UILabel!
-
-    @IBOutlet private var nameLabel: UILabel!
-    @IBOutlet private var priceLabel: UILabel!
-
-    @IBOutlet private var buttonWrapper: UIView!
-    @IBOutlet private var minusButton: UIButton!
-    @IBOutlet private var plusButton: UIButton!
-    @IBOutlet private var quantityLabel: UILabel!
-
-    @IBOutlet private var entryWrapper: UIView!
-    @IBOutlet private var quantityInput: UITextField!
-    @IBOutlet private var unitsLabel: UILabel!
-
-    @IBOutlet private var weightWrapper: UIView!
-    @IBOutlet private var weightLabel: UILabel!
-    @IBOutlet private var weightUnits: UILabel!
+    private weak var cellView: ShoppingCartTableCellView?
 
     private var quantity = 0
     private var item: CartItem?
     private var lineItems = [CheckoutInfo.LineItem]()
+    private var row: Int?
 
     private weak var delegate: ShoppingCartTableDelegate?
     private var task: URLSessionDataTask?
@@ -64,52 +41,32 @@ final class ShoppingCartTableCell: UITableViewCell {
     // convenience setters for stuff we display in multiple places
     private var badgeText: String? {
         didSet {
-            self.badgeLabel.text = badgeText
-            self.badgeLabel.isHidden = badgeText == nil
-            self.imageBadge.text = badgeText
-            self.imageBadge.isHidden = badgeText == nil
+            self.cellView?.updateBadgeText(withText: badgeText)
         }
     }
 
     private var badgeColor: UIColor? {
         didSet {
-            if let color = badgeColor {
-                self.badgeLabel.backgroundColor = color
-                self.imageBadge.backgroundColor = color
-            }
+            self.cellView?.updateBadgeColor(withColor: badgeColor)
         }
     }
 
     private var quantityText: String? {
         didSet {
-            self.quantityLabel.text = quantityText
-            self.weightLabel.text = quantityText
-            self.quantityInput.text = quantityText
+            self.cellView?.updateQuantityText(withText: quantityText)
         }
     }
 
     private var unitsText: String? {
         didSet {
-            self.unitsLabel.text = unitsText
-            self.weightUnits.text = unitsText
+            self.cellView?.updateUnitsText(withText: unitsText)
         }
     }
 
     private var leftDisplay: LeftDisplay = .none {
         didSet {
             UIView.performWithoutAnimation {
-                [imageWrapper, badgeWrapper].forEach { $0?.isHidden = true }
-                switch leftDisplay {
-                case .none: ()
-                case .image:
-                    imageWrapper.isHidden = false
-                    imageBackground.isHidden = false
-                case .emptyImage:
-                    imageWrapper.isHidden = false
-                    imageBackground.isHidden = true
-                case .badge:
-                    badgeWrapper.isHidden = false
-                }
+                self.cellView?.updateLeftDisplay(withMode: leftDisplay)
             }
         }
     }
@@ -117,13 +74,7 @@ final class ShoppingCartTableCell: UITableViewCell {
     private var rightDisplay: RightDisplay = .buttons {
         didSet {
             UIView.performWithoutAnimation {
-                [buttonWrapper, weightWrapper, entryWrapper].forEach { $0?.isHidden = true }
-                switch rightDisplay {
-                case .none: ()
-                case .buttons: buttonWrapper.isHidden = false
-                case .weightDisplay: weightWrapper.isHidden = false
-                case .weightEntry: entryWrapper.isHidden = false
-                }
+                self.cellView?.updateRightDisplay(withMode: self.rightDisplay)
             }
         }
     }
@@ -132,62 +83,66 @@ final class ShoppingCartTableCell: UITableViewCell {
         self.delegate?.showImages == true
     }
 
-    override func awakeFromNib() {
-        super.awakeFromNib()
+    override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
+        let cellView = ShoppingCartTableCellView(frame: .zero)
+        cellView.translatesAutoresizingMaskIntoConstraints = false
 
-        self.minusButton.makeBorderedButton()
-        self.minusButton.backgroundColor = .systemBackground
-        self.plusButton.makeBorderedButton()
-        self.plusButton.backgroundColor = .systemBackground
+        super.init(style: style, reuseIdentifier: reuseIdentifier)
+        self.backgroundColor = .clear
+        self.contentView.addSubview(cellView)
+        self.cellView = cellView
+        self.cellView?.delegate = self
+        self.cellView?.quantityInput?.delegate = self
 
-        self.priceLabel.font = UIFont.monospacedDigitSystemFont(ofSize: 13, weight: .regular)
-
-        let toolbar = self.quantityInput.addDoneButton()
-        self.doneButton = toolbar.items?.last
-        self.quantityInput.delegate = self
-
-        for badge in [self.badgeLabel, self.imageBadge] {
-            badge?.layer.cornerRadius = 4
-            badge?.layer.masksToBounds = true
-        }
-
-        self.imageBackground.layer.cornerRadius = 4
-        self.imageBackground.layer.masksToBounds = true
-
-        self.productImage.layer.cornerRadius = 3
-        self.productImage.layer.masksToBounds = true
+        let toolbar = self.cellView?.quantityInput?.addDoneButton()
+        self.doneButton = toolbar?.items?.last
 
         self.selectionStyle = .none
-        self.prepareForReuse()
+
+        prepareForReuse()
+
+        NSLayoutConstraint.activate([
+            cellView.leadingAnchor.constraint(equalTo: self.contentView.leadingAnchor),
+            self.contentView.trailingAnchor.constraint(equalTo: cellView.trailingAnchor),
+            cellView.topAnchor.constraint(equalTo: self.contentView.topAnchor),
+            self.contentView.bottomAnchor.constraint(equalTo: cellView.bottomAnchor)
+        ])
+    }
+
+    public required init?(coder aDecoder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
     }
 
     override func prepareForReuse() {
         super.prepareForReuse()
-
         self.task?.cancel()
         self.task = nil
         self.item = nil
         self.lineItems = []
         self.quantity = 0
+        self.row = nil
 
-        self.productImage.image = nil
+        self.cellView?.productImage?.image = nil
 
         self.leftDisplay = .none
         self.rightDisplay = .none
 
-        self.nameLabel.text = nil
-        self.priceLabel.text = nil
-        self.priceLabel.isHidden = false
+        self.cellView?.nameLabel?.text = nil
+        self.cellView?.priceLabel?.text = nil
+        self.cellView?.priceLabel?.isHidden = false
         self.quantityText = nil
         self.unitsText = nil
         self.badgeText = nil
         self.badgeColor = .systemRed
     }
 
-    func setLineItem(_ mainItem: CheckoutInfo.LineItem, _ lineItems: [CheckoutInfo.LineItem], row: Int, delegate: ShoppingCartTableDelegate) {
+    func configureCell(row: Int, delegate: ShoppingCartTableDelegate) {
+        self.row = row
         self.delegate = delegate
+    }
 
-        self.nameLabel.text = mainItem.name
+    func setLineItem(_ mainItem: CheckoutInfo.LineItem, _ lineItems: [CheckoutInfo.LineItem]) {
+        self.cellView?.nameLabel?.text = mainItem.name
 
         self.loadImage()
         self.displayLineItemPrice(nil, mainItem, lineItems)
@@ -195,37 +150,32 @@ final class ShoppingCartTableCell: UITableViewCell {
         self.quantityText = "\(mainItem.amount)"
     }
 
-    func setDiscount(_ amount: Int, delegate: ShoppingCartTableDelegate) {
-        self.delegate = delegate
-
-        self.nameLabel.text = L10n.Snabble.Shoppingcart.discounts
+    func setDiscount(_ amount: Int) {
+        self.cellView?.nameLabel?.text = L10n.Snabble.Shoppingcart.discounts
 
         let formatter = PriceFormatter(SnabbleUI.project)
-        self.priceLabel.text = formatter.format(amount)
+        self.cellView?.priceLabel?.text = formatter.format(amount)
 
         if showImages {
             let icon = Asset.SnabbleSDK.iconPercent.image
-            self.productImage.image = icon.recolored(with: .label)
+            self.cellView?.productImage?.image = icon.recolored(with: .label)
             self.leftDisplay = .image
         }
     }
 
-    func setGiveaway(_ lineItem: CheckoutInfo.LineItem, delegate: ShoppingCartTableDelegate) {
-        self.delegate = delegate
+    func setGiveaway(_ lineItem: CheckoutInfo.LineItem) {
+        self.cellView?.nameLabel?.text = lineItem.name
 
-        self.nameLabel.text = lineItem.name
-
-        self.priceLabel.text = L10n.Snabble.Shoppingcart.giveaway
+        self.cellView?.priceLabel?.text = L10n.Snabble.Shoppingcart.giveaway
 
         if showImages {
             let icon = Asset.SnabbleSDK.iconGiveaway.image
-            self.productImage.image = icon.recolored(with: SnabbleUI.appearance.accentColor)
+            self.cellView?.productImage?.image = icon.recolored(with: SnabbleUI.appearance.accentColor)
             self.leftDisplay = .image
         }
     }
 
-    func setCartItem(_ item: CartItem, _ lineItems: [CheckoutInfo.LineItem], row: Int, delegate: ShoppingCartTableDelegate) {
-        self.delegate = delegate
+    func setCartItem(_ item: CartItem, _ lineItems: [CheckoutInfo.LineItem]) {
         self.item = item
         self.lineItems = lineItems
 
@@ -234,11 +184,7 @@ final class ShoppingCartTableCell: UITableViewCell {
         self.quantity = defaultItem?.weight ?? defaultItem?.amount ?? item.quantity
 
         let product = item.product
-        self.nameLabel.text = defaultItem?.name ?? product.name
-
-        self.minusButton.tag = row
-        self.plusButton.tag = row
-        self.quantityInput.tag = row
+        self.cellView?.nameLabel?.text = defaultItem?.name ?? product.name
 
         if item.editable {
             self.rightDisplay = .buttons
@@ -247,6 +193,7 @@ final class ShoppingCartTableCell: UITableViewCell {
         } else if product.type == .preWeighed {
             self.rightDisplay = .weightDisplay
         }
+
         self.quantityText = "\(item.quantity)"
 
         self.loadImage()
@@ -255,16 +202,15 @@ final class ShoppingCartTableCell: UITableViewCell {
         // suppress display when price == 0
         let price = defaultItem?.totalPrice ?? item.price
         if price == 0 {
-            self.priceLabel.text = ""
-            self.priceLabel.isHidden = true
+            self.cellView?.priceLabel?.text = ""
+            self.cellView?.priceLabel?.isHidden = true
             self.rightDisplay = .none
         }
     }
 
-    func setCouponItem(_ coupon: CartCoupon, _ lineItem: CheckoutInfo.LineItem?, row: Int, delegate: ShoppingCartTableDelegate) {
-        self.delegate = delegate
+    func setCouponItem(_ coupon: CartCoupon, _ lineItem: CheckoutInfo.LineItem?) {
         self.quantity = 1
-        self.nameLabel.text = coupon.coupon.name
+        self.cellView?.nameLabel?.text = coupon.coupon.name
         self.rightDisplay = .none
 
         self.quantityText = "1"
@@ -273,7 +219,7 @@ final class ShoppingCartTableCell: UITableViewCell {
 
         if showImages {
             let icon = Asset.SnabbleSDK.iconPercent.image
-            self.productImage.image = icon.recolored(with: redeemed ? .label : .systemGray)
+            self.cellView?.productImage?.image = icon.recolored(with: redeemed ? .label : .systemGray)
             self.leftDisplay = .image
         } else {
             self.leftDisplay = .badge
@@ -339,7 +285,7 @@ final class ShoppingCartTableCell: UITableViewCell {
             self.displayLineItemPrice(item.product, defaultItem, lineItems)
         } else {
             let formatter = PriceFormatter(SnabbleUI.project)
-            self.priceLabel.text = formatter.format(item.price)
+            self.cellView?.priceLabel?.text = formatter.format(item.price)
         }
     }
 
@@ -379,27 +325,30 @@ final class ShoppingCartTableCell: UITableViewCell {
         if let depositTotal = lineItems.first(where: { $0.type == .deposit })?.totalPrice {
             let total = formatter.format((mainItem.totalPrice ?? 0) + depositTotal)
             let includesDeposit = L10n.Snabble.Shoppingcart.includesDeposit
-            self.priceLabel.text = "\(total) \(includesDeposit)"
+            self.cellView?.priceLabel?.text = "\(total) \(includesDeposit)"
         } else {
             let total = formatter.format(mainItem.totalPrice ?? 0)
-            self.priceLabel.text = "\(total)"
+            self.cellView?.priceLabel?.text = "\(total)"
         }
     }
+}
 
-    @IBAction private func minusButtonTapped(_ button: UIButton) {
+extension ShoppingCartTableCell: ShoppingCardCellViewDelegate {
+    func minusButtonTapped() {
+        guard let row = self.row else { return }
         if self.quantity > 0 {
             self.quantity -= 1
-            self.updateQuantity(at: button.tag)
+            self.updateQuantity(at: row)
         }
     }
 
-    @IBAction private func plusButtonTapped(_ button: UIButton) {
+    func plusButtonTapped() {
+        guard let row = self.row else { return }
         if self.quantity < ShoppingCart.maxAmount {
             self.quantity += 1
-            self.updateQuantity(at: button.tag)
+            self.updateQuantity(at: row)
         }
     }
-
 }
 
 extension ShoppingCartTableCell: UITextFieldDelegate {
@@ -421,14 +370,16 @@ extension ShoppingCartTableCell: UITextFieldDelegate {
     }
 
     func textFieldShouldEndEditing(_ textField: UITextField) -> Bool {
+        guard let row = self.row else { return false }
         DispatchQueue.main.async {
-            self.updateQuantity(at: textField.tag)
+            self.updateQuantity(at: row)
         }
         return true
     }
 
     func textFieldShouldBeginEditing(_ textField: UITextField) -> Bool {
-        self.delegate?.makeRowVisible(row: textField.tag)
+        guard let row = self.row else { return false }
+        self.delegate?.makeRowVisible(row: row)
         return true
     }
 
@@ -459,15 +410,15 @@ extension ShoppingCartTableCell {
         self.leftDisplay = .image
 
         if let img = ShoppingCartTableCell.imageCache[imgUrl] {
-            self.productImage.image = img
+            self.cellView?.productImage?.image = img
             return
         }
 
-        self.spinner.startAnimating()
+        self.cellView?.spinner?.startAnimating()
         self.task = Snabble.urlSession.dataTask(with: url) { data, _, error in
             self.task = nil
             DispatchQueue.main.async {
-                self.spinner.stopAnimating()
+                self.cellView?.spinner?.stopAnimating()
             }
             guard let data = data, error == nil else {
                 return
@@ -476,7 +427,7 @@ extension ShoppingCartTableCell {
             if let image = UIImage(data: data) {
                 DispatchQueue.main.async {
                     ShoppingCartTableCell.imageCache[imgUrl] = image
-                    self.productImage.image = image
+                    self.cellView?.productImage?.image = image
                 }
             }
         }
