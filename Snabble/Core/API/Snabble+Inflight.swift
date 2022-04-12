@@ -11,7 +11,7 @@ import Foundation
 extension Snabble {
     static let inFlightKey = "io.snabble.inFlightCheckout"
 
-    struct InFlightCheckout: Codable {
+    public struct InFlightCheckout: Codable {
         let url: String
         let shop: Shop
         let cart: ShoppingCart
@@ -28,19 +28,16 @@ extension Snabble {
     }
 
     static func clearInFlightCheckout() {
-        print(#function)
         UserDefaults.standard.removeObject(forKey: Self.inFlightKey)
     }
 
-    static var inFlightCheckout: InFlightCheckout? {
-        print(#function)
+    public static var inFlightCheckout: InFlightCheckout? {
         guard let data = UserDefaults.standard.data(forKey: Self.inFlightKey) else {
             return nil
         }
 
         do {
-            let inFlight = try JSONDecoder().decode(InFlightCheckout.self, from: data)
-            return inFlight
+            return try JSONDecoder().decode(InFlightCheckout.self, from: data)
         } catch {
             print("error decoding in-flight checkout: \(error)")
             return nil
