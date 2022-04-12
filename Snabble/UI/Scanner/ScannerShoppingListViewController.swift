@@ -93,8 +93,10 @@ extension ScannerShoppingListViewController {
         // swiftlint:disable:next force_cast
         let cell = tableView.dequeueReusableCell(withIdentifier: "shoppingListCell", for: indexPath) as! ShoppingListCell
 
-        let item = shoppingList!.itemAt(indexPath.row)
-        cell.setListItem(item, shoppingList!)
+        if let shoppingList = shoppingList {
+            let item = shoppingList.itemAt(indexPath.row)
+            cell.configure(with: item, in: shoppingList)
+        }
 
         return cell
     }
