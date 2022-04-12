@@ -143,7 +143,7 @@ final class ShoppingListCellView: UIView {
         self.nameLabel?.text = nil
     }
 
-    public func configure(with nameLabel: NSAttributedString, _ isItemChecked: Bool, _ quantity: String?) {
+    public func configure(withName attributedText: NSAttributedString, isItemChecked: Bool, quantity: String?) {
         self.quantityLabel?.text = quantity
         self.checkImage?.isHidden = !isItemChecked
 
@@ -151,7 +151,7 @@ final class ShoppingListCellView: UIView {
         self.nameLabel?.alpha = alpha
         self.checkContainer?.alpha = alpha
         self.quantityLabel?.alpha = alpha
-        self.nameLabel?.attributedText = nameLabel
+        self.nameLabel?.attributedText = attributedText
     }
 
     public func configureProductImage(with image: UIImage) {
