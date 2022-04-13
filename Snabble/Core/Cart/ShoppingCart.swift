@@ -326,14 +326,46 @@ extension ShoppingCart {
 
 // MARK: - Persistence
 extension ShoppingCart {
-    private func cartUrl(_ directory: String) -> URL {
-        let url = URL(fileURLWithPath: directory)
-        return url.appendingPathComponent(self.projectId.rawValue + ".json")
+    private func cartURL(in directoryURL: URL) -> URL {
+        directoryURL.appendingPathComponent(projectId.rawValue + ".json")
     }
 
-    private var directory: String? {
-        let docDir = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)[0]
-        return docDir.path
+    private var directory: URL? {
+        var documentDirectoryURL = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first
+        documentDirectoryURL?.appendPathComponent("Snabble")
+        documentDirectoryURL?.appendPathComponent("ShoppingCarts")
+        return documentDirectoryURL
+    }
+
+    private var oldDirectory: URL? {
+        FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first
+    }
+
+    public func move(from fromDirectory: URL, to toDirectory: URL) throws {
+        try createFolderIfNeeded(at: toDirectory)
+        try FileManager.default.moveItem(
+            at: cartURL(in: fromDirectory),
+            to: cartURL(in: toDirectory)
+        )
+    }
+
+    private func createFolderIfNeeded(at directory: URL) throws {
+        let fileManager = FileManager.default
+
+        if !fileManager.fileExists(atPath: directory.path) {
+            try fileManager.createDirectory(
+                atPath: directory.path,
+                withIntermediateDirectories: true,
+                attributes: nil
+            )
+        }
+    }
+
+    public func delete(in directory: URL) throws {
+        let cartURL = cartURL(in: directory)
+        if FileManager.default.isDeletableFile(atPath: cartURL.path) {
+            try FileManager.default.removeItem(at: cartURL)
+        }
     }
 
     /// persist this shopping cart to disk
@@ -345,19 +377,16 @@ extension ShoppingCart {
 
         if let directory = self.directory {
             do {
-                let fileManager = FileManager.default
-                if !fileManager.fileExists(atPath: directory) {
-                    try fileManager.createDirectory(atPath: directory, withIntermediateDirectories: true, attributes: nil)
-                }
+                try createFolderIfNeeded(at: directory)
 
-                self.lastSaved = Date()
-                if self.session.isEmpty {
-                    self.session = UUID().uuidString
+                lastSaved = Date()
+                if session.isEmpty {
+                    session = UUID().uuidString
                     CartEvent.sessionStart(self)
                 }
 
                 let data = try JSONEncoder().encode(self)
-                try data.write(to: self.cartUrl(directory), options: .atomic)
+                try data.write(to: cartURL(in: directory), options: .atomic)
             } catch let error {
                 Log.error("error saving cart \(self.projectId): \(error)")
             }
@@ -375,26 +404,38 @@ extension ShoppingCart {
 
     // load this shoppping cart from disk
     private func load() -> ShoppingCart? {
-        guard let directory = self.directory else {
+        guard let directory = directory else {
             return nil
         }
 
-        let fileManager = FileManager.default
-        if !fileManager.fileExists(atPath: self.cartUrl(directory).path) {
-            return nil
-        }
-
-        do {
-            let data = try Data(contentsOf: self.cartUrl(directory))
-            let cart = try JSONDecoder().decode(ShoppingCart.self, from: data)
-            if cart.outdated {
-                return nil
+        // Migration to /Snabble/ShoppingCart folder
+        if let oldDirectory = oldDirectory, FileManager.default.fileExists(atPath: cartURL(in: oldDirectory).path) {
+            do {
+                try move(from: oldDirectory, to: directory)
+                try delete(in: oldDirectory)
+            } catch {
+                print(error)
             }
-            return cart
+        }
+
+        guard FileManager.default.fileExists(atPath: cartURL(in: directory).path) else {
+            return nil
+        }
+
+        let cart: ShoppingCart
+        do {
+            let data = try Data(contentsOf: cartURL(in: directory))
+            cart = try JSONDecoder().decode(ShoppingCart.self, from: data)
         } catch let error {
             Log.error("error loading cart \(self.projectId): \(error)")
             return nil
         }
+
+        guard !cart.outdated else {
+            return nil
+        }
+
+        return cart
     }
 }
 
