@@ -414,7 +414,7 @@ extension ShoppingCart {
                 try move(from: oldDirectory, to: directory)
                 try delete(in: oldDirectory)
             } catch {
-                print("Error: Could not delete \(cartURL(in: oldDirectory)). Details:"error)
+                print("Error: Could not delete \(cartURL(in: oldDirectory)). Details:", error)
             }
         }
 
