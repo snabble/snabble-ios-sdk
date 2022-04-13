@@ -192,6 +192,8 @@
 
 "Snabble.PaymentCard.editingHint" = "Your card data is only stored in encrypted form and therefore cannot be edited.";
 
+"Snabble.PaymentContinuation.message" = "Continuing the payment";
+
 "Snabble.PaymentError.title" = "An error has occurred";
 
 "Snabble.PaymentError.tryAgain" = "Try again";
@@ -330,6 +332,8 @@
 "Snabble.Scanner.Accessibility.actionHideHint" = "Hide hint permanently";
 
 "Snabble.Scanner.Accessibility.actionUnderstood" = "Understood";
+
+"Snabble.Scanner.Accessibility.enterQuantity" = "Please enter the quantity in %@";
 
 "Snabble.Scanner.Accessibility.eventBackInScanner" = "You are back in scanner";
 

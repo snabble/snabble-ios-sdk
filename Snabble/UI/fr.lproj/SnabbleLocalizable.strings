@@ -192,6 +192,8 @@
 
 "Snabble.PaymentCard.editingHint" = "Les données de ta carte sont enregistrées uniquement sous forme cryptée chez nous et ne peuvent donc pas être modifiées.";
 
+"Snabble.PaymentContinuation.message" = "Continuing the payment";
+
 "Snabble.PaymentError.title" = "Une erreur est survenue";
 
 "Snabble.PaymentError.tryAgain" = "Réessayer";
@@ -330,6 +332,8 @@
 "Snabble.Scanner.Accessibility.actionHideHint" = "Hide hint permanently";
 
 "Snabble.Scanner.Accessibility.actionUnderstood" = "Understood";
+
+"Snabble.Scanner.Accessibility.enterQuantity" = "Please enter the quantity in %@";
 
 "Snabble.Scanner.Accessibility.eventBackInScanner" = "You are back in scanner";
 
