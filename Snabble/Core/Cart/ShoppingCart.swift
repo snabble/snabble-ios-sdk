@@ -341,7 +341,7 @@ extension ShoppingCart {
         FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first
     }
 
-    public func move(from fromDirectory: URL, to toDirectory: URL) throws {
+    private func move(from fromDirectory: URL, to toDirectory: URL) throws {
         try createFolderIfNeeded(at: toDirectory)
         try FileManager.default.moveItem(
             at: cartURL(in: fromDirectory),
@@ -361,7 +361,7 @@ extension ShoppingCart {
         }
     }
 
-    public func delete(in directory: URL) throws {
+    private func delete(in directory: URL) throws {
         let cartURL = cartURL(in: directory)
         if FileManager.default.isDeletableFile(atPath: cartURL.path) {
             try FileManager.default.removeItem(at: cartURL)
