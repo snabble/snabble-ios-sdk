@@ -94,20 +94,16 @@ final class ScanConfirmationView: UIView {
 
         let subtitleLabel = customLabel
         subtitleLabel.font = UIFont.systemFont(ofSize: 13)
-        subtitleLabel.text = "Brand"
 
         let productNameLabel = customLabel
         productNameLabel.font = UIFont.systemFont(ofSize: 17, weight: .bold)
-        productNameLabel.text = "Name"
 
         let originalPriceLabel = customLabel
         originalPriceLabel.font = UIFont.systemFont(ofSize: 17)
         originalPriceLabel.textColor = .secondaryLabel
-        originalPriceLabel.text = "Orig Price"
 
         let priceLabel = customLabel
         priceLabel.font = UIFont.monospacedDigitSystemFont(ofSize: 17, weight: .regular)
-        priceLabel.text = "Price"
 
         let manualDiscountButton = UIButton(type: .system)
         manualDiscountButton.translatesAutoresizingMaskIntoConstraints = false
