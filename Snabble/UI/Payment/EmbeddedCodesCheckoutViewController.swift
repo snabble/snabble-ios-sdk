@@ -66,6 +66,10 @@ final class EmbeddedCodesCheckoutViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
 
+        if Snabble.isInFlightCheckoutPending {
+            self.navigationItem.hidesBackButton = true
+        }
+
         self.paidButton.makeSnabbleButton()
         self.paidButton.setTitle(L10n.Snabble.QRCode.didPay, for: .normal)
         self.paidButton.alpha = 0
@@ -145,6 +149,7 @@ final class EmbeddedCodesCheckoutViewController: UIViewController {
 
         UIScreen.main.brightness = self.initialBrightness
 
+        Snabble.clearInFlightCheckout()
         if self.isMovingFromParent {
             // user "aborted" this payment process by tapping 'Back'
             self.cart.generateNewUUID()

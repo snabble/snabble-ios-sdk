@@ -107,6 +107,7 @@ final class QRCheckoutViewController: UIViewController {
         self.process.abort(SnabbleUI.project) { result in
             switch result {
             case .success:
+                Snabble.clearInFlightCheckout()
                 self.cart.generateNewUUID()
                 self.delegate?.track(.paymentCancelled)
 

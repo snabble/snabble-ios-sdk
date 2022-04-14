@@ -8,10 +8,6 @@ import Foundation
 
 /// data needed to initialize a shopping cart
 public struct CartConfig {
-    /// directory where the cart should be stored, will be created if it doesn't exist.
-    /// Default: the app's "Documents" directory
-    public var directory: String
-
     /// the `shop` that this cart is used for
     public let shop: Shop
 
@@ -19,8 +15,6 @@ public struct CartConfig {
     public var maxAge: TimeInterval = 14400
 
     public init(shop: Shop) {
-        let docDir = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)[0]
-        self.directory = docDir.path
         self.shop = shop
     }
 }

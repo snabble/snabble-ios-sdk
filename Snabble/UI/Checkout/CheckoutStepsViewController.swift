@@ -183,6 +183,7 @@ final class CheckoutStepsViewController: UIViewController {
     @objc private func doneButtonTouchedUpInside(_ sender: UIButton) {
         Snabble.fetchAppUserData(shop.projectId)
         updateShoppingCart(for: checkoutProcess)
+        Snabble.clearInFlightCheckout()
         paymentDelegate?.checkoutFinished(viewModel.shoppingCart, viewModel.checkoutProcess)
         navigationController?.popToRootViewController(animated: false)
         paymentDelegate?.track(.checkoutStepsClosed)
