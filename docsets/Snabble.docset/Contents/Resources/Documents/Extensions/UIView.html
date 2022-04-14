@@ -21,7 +21,7 @@
     <header class="header">
       <p class="header-col header-col--primary">
         <a class="header-link" href="../index.html">
-          Snabble 0.18.2 Docs
+          Snabble 0.18.3 Docs
         </a>
         
       </p>
@@ -90,6 +90,9 @@
               </li>
               <li class="nav-group-task">
                 <a class="nav-group-task-link" href="../Classes/EANView.html">EANView</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Classes/InFlightCheckoutContinuationViewController.html">InFlightCheckoutContinuationViewController</a>
               </li>
               <li class="nav-group-task">
                 <a class="nav-group-task-link" href="../Classes/KeyboardObserver.html">KeyboardObserver</a>
@@ -323,6 +326,9 @@
               </li>
               <li class="nav-group-task">
                 <a class="nav-group-task-link" href="../Enums/Snabble/Environment.html">– Environment</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Enums/Snabble.html#/s:10SnabbleSDK0A0O16InFlightCheckoutV">– InFlightCheckout</a>
               </li>
               <li class="nav-group-task">
                 <a class="nav-group-task-link" href="../Enums/SnabbleError.html">SnabbleError</a>
@@ -881,6 +887,106 @@
                     </section>
                   </div>
                 </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:So6UIViewC10SnabbleSDKE9indexPath2in10Foundation05IndexE0VSgSo11UITableViewC_tF"></a>
+                    <a name="//apple_ref/swift/Method/indexPath(in:)" class="dashAnchor"></a>
+                    <a class="token" href="#/s:So6UIViewC10SnabbleSDKE9indexPath2in10Foundation05IndexE0VSgSo11UITableViewC_tF">indexPath(in:<wbr>)</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Searches indexPath of <code>self</code> in given <code>UITableView</code></p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">func</span> <span class="nf">indexPath</span><span class="p">(</span><span class="k">in</span> <span class="nv">tableView</span><span class="p">:</span> <span class="kt">UITableView</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kt">IndexPath</span><span class="p">?</span></code></pre>
+
+                        </div>
+                      </div>
+                      <div>
+                        <h4>Parameters</h4>
+                        <table class="graybox">
+                          <tbody>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>tableView</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>tableView which should cointain <code>self</code></p>
+                                </div>
+                              </td>
+                            </tr>
+                          </tbody>
+                        </table>
+                      </div>
+                      <div>
+                        <h4>Return Value</h4>
+                        <p><code>IndexPath</code> of the associated <code>UITableView</code> or <code>nil</code> if not found</p>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:So6UIViewC10SnabbleSDKE9indexPath2in10Foundation05IndexE0VSgSo16UICollectionViewC_tF"></a>
+                    <a name="//apple_ref/swift/Method/indexPath(in:)" class="dashAnchor"></a>
+                    <a class="token" href="#/s:So6UIViewC10SnabbleSDKE9indexPath2in10Foundation05IndexE0VSgSo16UICollectionViewC_tF">indexPath(in:<wbr>)</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Searches indexPath of <code>self</code> in given <code>UICollectionView</code></p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">func</span> <span class="nf">indexPath</span><span class="p">(</span><span class="k">in</span> <span class="nv">collectionView</span><span class="p">:</span> <span class="kt">UICollectionView</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kt">IndexPath</span><span class="p">?</span></code></pre>
+
+                        </div>
+                      </div>
+                      <div>
+                        <h4>Parameters</h4>
+                        <table class="graybox">
+                          <tbody>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>collectionView</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>collectionView which should cointain <code>self</code></p>
+                                </div>
+                              </td>
+                            </tr>
+                          </tbody>
+                        </table>
+                      </div>
+                      <div>
+                        <h4>Return Value</h4>
+                        <p><code>IndexPath</code> of the associated <code>UICollectionViewCell</code> or <code>nil</code> if not found</p>
+                      </div>
+                    </section>
+                  </div>
+                </li>
               </ul>
             </div>
           </div>
@@ -889,7 +995,7 @@
       </article>
     </div>
     <section class="footer">
-      <p>&copy; 2022 <a class="link" href="https://snabble.io/" target="_blank" rel="external noopener">Snabble</a>. All rights reserved. (Last updated: 2022-04-08)</p>
+      <p>&copy; 2022 <a class="link" href="https://snabble.io/" target="_blank" rel="external noopener">Snabble</a>. All rights reserved. (Last updated: 2022-04-14)</p>
       <p>Generated by <a class="link" href="https://github.com/realm/jazzy" target="_blank" rel="external noopener">jazzy ♪♫ v0.14.2</a>, a <a class="link" href="https://realm.io" target="_blank" rel="external noopener">Realm</a> project.</p>
     </section>
   </body>
