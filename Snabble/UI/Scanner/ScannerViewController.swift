@@ -33,6 +33,8 @@ public final class ScannerViewController: PulleyViewController {
         }
     }
 
+    public weak var paymentDelegate: PaymentDelegate?
+
     public weak var shoppingListDelegate: ShoppingListDelegate? {
         didSet {
             guard let scannerDrawerViewController = drawerContentViewController as? ScannerDrawerViewController else {
