@@ -1,5 +1,8 @@
 ## snabble iOS SDK Changelog
 
+# v0.18.3
+- Ability to restore a checkout which is in process
+
 # v0.18.2
 - Fixes a bug where the user could navigate away from the checkout status view while the checkout was still incomplete.
 
