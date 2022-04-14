@@ -540,7 +540,7 @@ extension PayoneCreditCardEditViewController: WKNavigationDelegate {
         if let preAuthResult = self.payonePreAuthResult, let url = navigationAction.request.url?.absoluteString {
             if url == preAuthResult.links.redirectSuccess.href {
                 // sca succeeded, we still need to wait for the preAuth status to switch to "success"
-                self.spinner.startAnimating()
+                self.activityIndicator?.startAnimating()
                 webView.loadHTMLString("", baseURL: nil)
             } else if url == preAuthResult.links.redirectError.href {
                 self.finishPreAuth(with: .failed)
