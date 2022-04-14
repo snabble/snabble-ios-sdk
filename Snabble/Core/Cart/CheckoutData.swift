@@ -227,6 +227,12 @@ public struct Fulfillment: Decodable {
     }
 }
 
+extension Array where Element == Fulfillment {
+    var containsFailureState: Bool {
+        !FulfillmentState.failureStates.isDisjoint(with: Set(map { $0.state }))
+    }
+}
+
 // known values from checkoutProcess.paymentResults["failureCause"]
 public enum FailureCause: String {
     case terminalAbort
@@ -338,6 +344,26 @@ public struct CheckoutProcess: Decodable {
 
     var requiresExitToken: Bool {
         exitToken != nil
+    }
+
+    var isComplete: Bool {
+        var complete: Bool
+        switch paymentState {
+        case .successful, .transferred:
+            complete = true
+        case .failed:
+            return true
+        case .pending:
+            complete = fulfillments.containsFailureState
+        case .processing, .unauthorized, .unknown:
+            complete = false
+        }
+
+        if requiresExitToken && exitToken?.value == nil && exitToken?.format == nil {
+            complete = false
+        }
+
+        return complete
     }
 }
 

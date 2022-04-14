@@ -147,6 +147,7 @@ final class ApplePayCheckoutViewController: UIViewController {
         self.checkoutProcess.abort(SnabbleUI.project) { result in
             switch result {
             case .success:
+                Snabble.clearInFlightCheckout()
                 self.shoppingCart.generateNewUUID()
                 if let cartVC = self.navigationController?.viewControllers.first(where: { $0 is ShoppingCartViewController}) {
                     self.navigationController?.popToViewController(cartVC, animated: true)

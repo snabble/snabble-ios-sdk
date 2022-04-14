@@ -119,10 +119,10 @@ extension SignedCheckoutInfo {
                             // this means that somehow we already have a process with this id in the backend.
                             // GET that process, and return it to the caller
                             Log.warn("got 409/403 from PUT to checkoutProcess, try GET")
-                            self.fetchCheckoutProcess(project, url, completion)
+                            CheckoutProcess.fetch(for: project, url: url, completion)
                         } else if case .urlError = error, !paymentMethod.rawMethod.offline {
                             // ignore urlErrors if this is an offline method
-                            self.fetchCheckoutProcess(project, url, completion)
+                            CheckoutProcess.fetch(for: project, url: url, completion)
                         } else {
                             completion(result)
                         }
@@ -133,8 +133,10 @@ extension SignedCheckoutInfo {
             Log.error("error serializing request body: \(error)")
         }
     }
+}
 
-    private func fetchCheckoutProcess(_ project: Project, _ url: String, _ completion: @escaping (_ result: RawResult<CheckoutProcess, SnabbleError>) -> Void ) {
+extension CheckoutProcess {
+    static func fetch(for project: Project, url: String, _ completion: @escaping (_ result: RawResult<CheckoutProcess, SnabbleError>) -> Void ) {
         project.request(.get, url, timeout: 3) { request in
             guard let request = request else {
                 return completion(RawResult.failure(SnabbleError.noRequest))
@@ -147,7 +149,7 @@ extension SignedCheckoutInfo {
                 case .failure(let error):
                     if case .urlError = error {
                         DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
-                            self.fetchCheckoutProcess(project, url, completion)
+                            Self.fetch(for: project, url: url, completion)
                         }
                     } else {
                         completion(result)
