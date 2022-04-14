@@ -141,16 +141,16 @@ final class ShoppingCartTableCell: UITableViewCell {
         self.delegate = delegate
     }
 
-    func setLineItem(_ mainItem: CheckoutInfo.LineItem, _ lineItems: [CheckoutInfo.LineItem]) {
+    func setLineItem(_ mainItem: CheckoutInfo.LineItem, for lineItems: [CheckoutInfo.LineItem]) {
         self.cellView?.nameLabel?.text = mainItem.name
 
         self.loadImage()
-        self.displayLineItemPrice(nil, mainItem, lineItems)
+        self.displayLineItemPrice(for: nil, item: mainItem, in: lineItems)
 
         self.quantityText = "\(mainItem.amount)"
     }
 
-    func setDiscount(_ amount: Int) {
+    func setDiscount(for amount: Int) {
         self.cellView?.nameLabel?.text = L10n.Snabble.Shoppingcart.discounts
 
         let formatter = PriceFormatter(SnabbleUI.project)
@@ -163,7 +163,7 @@ final class ShoppingCartTableCell: UITableViewCell {
         }
     }
 
-    func setGiveaway(_ lineItem: CheckoutInfo.LineItem) {
+    func setGiveaway(for lineItem: CheckoutInfo.LineItem) {
         self.cellView?.nameLabel?.text = lineItem.name
 
         self.cellView?.priceLabel?.text = L10n.Snabble.Shoppingcart.giveaway
@@ -175,7 +175,7 @@ final class ShoppingCartTableCell: UITableViewCell {
         }
     }
 
-    func setCartItem(_ item: CartItem, _ lineItems: [CheckoutInfo.LineItem]) {
+    func setCartItem(_ item: CartItem, for lineItems: [CheckoutInfo.LineItem]) {
         self.item = item
         self.lineItems = lineItems
 
@@ -208,7 +208,7 @@ final class ShoppingCartTableCell: UITableViewCell {
         }
     }
 
-    func setCouponItem(_ coupon: CartCoupon, _ lineItem: CheckoutInfo.LineItem?) {
+    func setCouponItem(_ coupon: CartCoupon, for lineItem: CheckoutInfo.LineItem?) {
         self.quantity = 1
         self.cellView?.nameLabel?.text = coupon.coupon.name
         self.rightDisplay = .none
@@ -282,22 +282,22 @@ final class ShoppingCartTableCell: UITableViewCell {
             let amount = defaultItem.weight ?? (defaultItem.amount * units)
             self.quantityText = showQuantity ? "\(amount)" : nil
             self.unitsText = unitDisplay
-            self.displayLineItemPrice(item.product, defaultItem, lineItems)
+            self.displayLineItemPrice(for: item.product, item: defaultItem, in: lineItems)
         } else {
             let formatter = PriceFormatter(SnabbleUI.project)
             self.cellView?.priceLabel?.text = formatter.format(item.price)
         }
     }
 
-    private func displayLineItemPrice(_ product: Product?, _ mainItem: CheckoutInfo.LineItem, _ lineItems: [CheckoutInfo.LineItem]) {
+    private func displayLineItemPrice(for product: Product?, item: CheckoutInfo.LineItem, in lineItems: [CheckoutInfo.LineItem]) {
         let formatter = PriceFormatter(SnabbleUI.project)
 
         var badgeColor: UIColor?
         var badgeText: String?
-        if mainItem.priceModifiers != nil {
+        if item.priceModifiers != nil {
             badgeText = "%"
         }
-        if let couponItem = lineItems.first(where: { $0.type == .coupon && $0.refersTo == mainItem.id }) {
+        if let couponItem = lineItems.first(where: { $0.type == .coupon && $0.refersTo == item.id }) {
             badgeText = "%"
             let redeemed = couponItem.redeemed == true
             badgeColor = redeemed ? .systemRed : .systemGray
@@ -323,11 +323,11 @@ final class ShoppingCartTableCell: UITableViewCell {
         }
 
         if let depositTotal = lineItems.first(where: { $0.type == .deposit })?.totalPrice {
-            let total = formatter.format((mainItem.totalPrice ?? 0) + depositTotal)
+            let total = formatter.format((item.totalPrice ?? 0) + depositTotal)
             let includesDeposit = L10n.Snabble.Shoppingcart.includesDeposit
             self.cellView?.priceLabel?.text = "\(total) \(includesDeposit)"
         } else {
-            let total = formatter.format(mainItem.totalPrice ?? 0)
+            let total = formatter.format(item.totalPrice ?? 0)
             self.cellView?.priceLabel?.text = "\(total)"
         }
     }

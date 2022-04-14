@@ -362,16 +362,16 @@ extension ShoppingCartTableViewController {
         let item = self.items[indexPath.row]
         switch item {
         case .cartItem(let item, let lineItems):
-            cell.setCartItem(item, lineItems)
+            cell.setCartItem(item, for: lineItems)
         case .coupon(let coupon, let lineItem):
-            cell.setCouponItem(coupon, lineItem)
+            cell.setCouponItem(coupon, for: lineItem)
 
         case .lineItem(let item, let lineItems):
-            cell.setLineItem(item, lineItems)
+            cell.setLineItem(item, for: lineItems)
         case .discount(let amount):
-            cell.setDiscount(amount)
+            cell.setDiscount(for: amount)
         case .giveaway(let lineItem):
-            cell.setGiveaway(lineItem)
+            cell.setGiveaway(for: lineItem)
         }
 
         return cell
