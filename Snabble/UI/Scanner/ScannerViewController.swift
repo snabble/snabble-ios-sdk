@@ -54,7 +54,7 @@ public final class ScannerViewController: PulleyViewController {
         self.shop = shop
         self.barcodeDetector = detector
 
-        let contentViewController = ScanningViewController(cart, shop, detector)
+        let contentViewController = ScanningViewController(forCart: cart, forShop: shop, withDetector: detector)
         let drawerViewController = ScannerDrawerViewController(shop.projectId, shoppingCart: shoppingCart)
 
         super.init(contentViewController: contentViewController, drawerViewController: drawerViewController)
