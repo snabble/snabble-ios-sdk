@@ -361,6 +361,9 @@ final class ShoppingCartTableCellView: UIView {
         [self.imageWrapper, self.badgeWrapper].forEach { $0?.isHidden = true }
         switch mode {
         case .none: ()
+        case .none:
+            self.badgeWrapper?.isHidden = false
+            self.badgeLabel?.isHidden = true
         case .image:
             self.imageWrapper?.isHidden = false
             self.imageBackground?.isHidden = false
