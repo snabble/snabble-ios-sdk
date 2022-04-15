@@ -113,6 +113,7 @@ final class ShoppingCartTableCellView: UIView {
 
         let badgeWrapper = self.customView
         let badgeLabel = self.badge
+        badgeLabel.setContentHuggingPriority(.defaultHigh, for: .horizontal)
         let imageWrapper = self.customView
 
         let imageBadge = self.badge
@@ -360,7 +361,6 @@ final class ShoppingCartTableCellView: UIView {
     public func updateLeftDisplay(withMode mode: LeftDisplay) {
         [self.imageWrapper, self.badgeWrapper].forEach { $0?.isHidden = true }
         switch mode {
-        case .none: ()
         case .none:
             self.badgeWrapper?.isHidden = false
             self.badgeLabel?.isHidden = true
