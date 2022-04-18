@@ -77,7 +77,19 @@ public final class PaydirektEditViewController: UIViewController {
         let webViewWrapper = UIView()
         webViewWrapper.translatesAutoresizingMaskIntoConstraints = false
 
+        let displayView = UIView()
         displayView.translatesAutoresizingMaskIntoConstraints = false
+
+        let displayLabel = UILabel()
+        displayLabel.translatesAutoresizingMaskIntoConstraints = false
+        displayLabel.font = UIFont.systemFont(ofSize: 17)
+        displayLabel.textColor = .label
+        displayLabel.textAlignment = .natural
+        displayLabel.numberOfLines = 0
+        displayLabel.text = L10n.Snabble.Paydirekt.savedAuthorization
+
+        let openButton = UIButton(type: .system)
+        openButton.translatesAutoresizingMaskIntoConstraints = false
         openButton.isUserInteractionEnabled = true
         openButton.titleLabel?.font = UIFont.systemFont(ofSize: 15)
         openButton.setTitleColor(.link, for: .normal)
