@@ -104,6 +104,8 @@
 
 "Snabble.OK" = "OK";
 
+"Snabble.paydirekt.title" = "paydirekt";
+
 "Snabble.paydirekt.authorizationFailed.message" = "Skús neskôr znovu, prosím";
 
 "Snabble.paydirekt.authorizationFailed.title" = "Autorizácia sa nepodarila";

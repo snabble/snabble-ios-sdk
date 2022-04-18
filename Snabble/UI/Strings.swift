@@ -760,6 +760,8 @@ public enum L10n {
       }
     }
     public enum Paydirekt {
+      /// paydirekt
+      public static var title: String { return L10n.tr("SnabbleLocalizable", "Snabble.paydirekt.title") }
       /// Delete method
       public static var deleteAuthorization: String { return L10n.tr("SnabbleLocalizable", "Snabble.paydirekt.deleteAuthorization") }
       /// Go to paydirekt.de

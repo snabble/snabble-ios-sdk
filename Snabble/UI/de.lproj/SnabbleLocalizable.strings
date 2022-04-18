@@ -104,6 +104,8 @@
 
 "Snabble.OK" = "OK";
 
+"Snabble.paydirekt.title" = "paydirekt";
+
 "Snabble.paydirekt.authorizationFailed.message" = "Bitte versuche es später nochmal";
 
 "Snabble.paydirekt.authorizationFailed.title" = "Autorisierung fehlgeschlagen";

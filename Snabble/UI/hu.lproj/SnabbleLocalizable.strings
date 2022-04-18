@@ -104,6 +104,8 @@
 
 "Snabble.OK" = "OK";
 
+"Snabble.paydirekt.title" = "paydirekt";
+
 "Snabble.paydirekt.authorizationFailed.message" = "Kérlek, próbáld meg később még egyszer";
 
 "Snabble.paydirekt.authorizationFailed.title" = "Nem sikerült az azonosítás";
