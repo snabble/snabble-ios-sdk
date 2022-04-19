@@ -1,4 +1,19 @@
-## snabble iOS SDK Changelog
+# Changelog
+All notable changes to this project will be documented in this file.
+
+The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
+and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
+
+## [Unreleased]
+
+### Added
+
+### Changed
+* Refactor ShoppingCartTableCellView #98
+
+### Removed
+
+## Deprecated snabble iOS SDK Changelog
 
 # v0.18.3
 - Ability to restore a checkout which is in process
