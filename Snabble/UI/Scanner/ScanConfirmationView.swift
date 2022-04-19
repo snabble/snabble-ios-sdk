@@ -8,90 +8,225 @@ import UIKit
 import WCAG_Colors
 
 protocol ScanConfirmationViewDelegate: AnalyticsDelegate {
-    func closeConfirmation(_ item: CartItem?)
+    func closeConfirmation(forItem item: CartItem?)
     func showMessage(_ message: ScanMessage)
     func showMessages(_ messages: [ScanMessage])
 }
 
-final class ScanConfirmationView: DesignableView {
-    @IBOutlet private var subtitleLabel: UILabel!
-    @IBOutlet private var productNameLabel: UILabel!
-    @IBOutlet private var originalPriceLabel: UILabel!
-    @IBOutlet private var priceLabel: UILabel!
+final class ScanConfirmationView: UIView {
+    private weak var closeButton: UIButton?
+    private weak var cartButton: UIButton?
 
-    @IBOutlet private var stackView: UIStackView!
-    @IBOutlet private var quantityField: UITextField!
-    @IBOutlet private var minusButton: UIButton!
-    @IBOutlet private var plusButton: UIButton!
-    @IBOutlet private var gramLabel: UILabel!
+    private weak var productStack: UIStackView?
+    private weak var subtitleLabel: UILabel?
+    private weak var productNameLabel: UILabel?
+    private weak var originalPriceLabel: UILabel?
+    private weak var priceLabel: UILabel?
+    private var manualDiscountButton: UIButton?
 
-    @IBOutlet private var manualDiscountButton: UIButton!
-    @IBOutlet private var closeButton: UIButton!
-    @IBOutlet private var cartButton: UIButton!
-
-    weak var delegate: ScanConfirmationViewDelegate?
+    private weak var quantityStack: UIStackView?
+    private weak var quantityField: UITextField?
+    private weak var minusButton: UIButton?
+    private weak var plusButton: UIButton?
+    private weak var unitLabel: UILabel?
 
     private var shoppingCart: ShoppingCart!
     private var cartItem: CartItem!
 
+    weak var delegate: ScanConfirmationViewDelegate?
+
     override var isFirstResponder: Bool {
-        return self.quantityField.isFirstResponder
+        guard let textField = self.quantityField else { return false }
+        return textField.isFirstResponder
     }
 
-    override func awakeFromNib() {
-        super.awakeFromNib()
+    override init(frame: CGRect) {
+        super.init(frame: frame)
+        self.setupUI()
+    }
 
-        self.view.backgroundColor = .clear
+    public required init?(coder aDecoder: NSCoder) {
+            fatalError("init(coder:) has not been implemented")
+    }
+
+    var customLabel: UILabel {
+        let label = UILabel()
+        label.translatesAutoresizingMaskIntoConstraints = false
+        label.textAlignment = .center
+        label.textColor  = .label
+        label.setContentHuggingPriority(.defaultLow + 1, for: .horizontal)
+        label.setContentHuggingPriority(.defaultLow + 1, for: .vertical)
+        return label
+    }
+
+    var squareButton: UIButton {
+        let button = UIButton()
+        button.translatesAutoresizingMaskIntoConstraints = false
+        button.heightAnchor.constraint(equalToConstant: 48).isActive = true
+        button.widthAnchor.constraint(equalToConstant: 48).isActive = true
+        button.makeBorderedButton()
+        return button
+    }
+
+    private func setupUI() {
         self.addCornersAndShadow(backgroundColor: .systemBackground, cornerRadius: 8)
 
-        self.cartButton.makeSnabbleButton()
+        let closeButton = UIButton()
+        closeButton.translatesAutoresizingMaskIntoConstraints = false
+        closeButton.setImage(Asset.SnabbleSDK.iconClose.image, for: .normal)
+        closeButton.isUserInteractionEnabled = true
+        closeButton.addTarget(self, action: #selector(closeButtonTapped(_:)), for: .touchUpInside)
 
-        self.priceLabel.font = UIFont.monospacedDigitSystemFont(ofSize: 17, weight: .regular)
+        let cartButton = UIButton()
+        cartButton.translatesAutoresizingMaskIntoConstraints = false
+        cartButton.setTitle(L10n.Snabble.Scanner.addToCart, for: .normal)
+        cartButton.titleLabel?.font = UIFont.systemFont(ofSize: 17, weight: .semibold)
+        cartButton.makeSnabbleButton()
+        cartButton.isUserInteractionEnabled = true
+        cartButton.addTarget(self, action: #selector(cartButtonTapped(_:)), for: .touchUpInside)
 
-        self.minusButton.makeBorderedButton()
-        self.plusButton.makeBorderedButton()
+        let productStack = UIStackView()
+        productStack.translatesAutoresizingMaskIntoConstraints = false
+        productStack.axis = .vertical
+        productStack.distribution = .fill
+        productStack.alignment = .center
+        productStack.spacing = 4
 
-        self.quantityField.font = UIFont.monospacedDigitSystemFont(ofSize: 21, weight: .regular)
-        self.quantityField.tintColor = .label
-        self.quantityField.delegate = self
-        self.quantityField.addDoneButton()
+        let subtitleLabel = customLabel
+        subtitleLabel.font = UIFont.systemFont(ofSize: 13)
 
-        self.closeButton.setImage(Asset.SnabbleSDK.iconClose.image, for: .normal)
-        self.plusButton.setImage(Asset.SnabbleSDK.iconPlus.image, for: .normal)
-        self.minusButton.setImage(Asset.SnabbleSDK.iconMinus.image, for: .normal)
+        let productNameLabel = customLabel
+        productNameLabel.font = UIFont.systemFont(ofSize: 17, weight: .bold)
 
+        let originalPriceLabel = customLabel
+        originalPriceLabel.font = UIFont.systemFont(ofSize: 17)
+        originalPriceLabel.textColor = .secondaryLabel
+
+        let priceLabel = customLabel
+        priceLabel.font = UIFont.monospacedDigitSystemFont(ofSize: 17, weight: .regular)
+
+        let manualDiscountButton = UIButton(type: .system)
+        manualDiscountButton.translatesAutoresizingMaskIntoConstraints = false
+        manualDiscountButton.setTitle(L10n.Snabble.addDiscount, for: .normal)
+        manualDiscountButton.titleLabel?.font = UIFont.systemFont(ofSize: 17)
         let contrastRatio = UIColor.getContrastRatio(forTextColor: SnabbleUI.appearance.accentColor,
                                                      onBackgroundColor: .systemBackground)
         let conformanceLevel = ConformanceLevel(contrastRatio: contrastRatio ?? 1, fontSize: 17, isBoldFont: false)
 
         if conformanceLevel == .AA || conformanceLevel == .AAA {
-            self.manualDiscountButton.tintColor = SnabbleUI.appearance.accentColor
+            manualDiscountButton.tintColor = SnabbleUI.appearance.accentColor
         } else {
-            self.manualDiscountButton.tintColor = .label
+            manualDiscountButton.tintColor = .label
         }
+        manualDiscountButton.isUserInteractionEnabled = true
+        manualDiscountButton.addTarget(self, action: #selector(manualDiscountTapped(_:)), for: .touchUpInside)
+
+        let quantityStack = UIStackView()
+        quantityStack.translatesAutoresizingMaskIntoConstraints = false
+        quantityStack.axis = .horizontal
+        quantityStack.distribution = .fill
+        quantityStack.alignment = .fill
+        quantityStack.spacing = 8
+
+        let minusButton = squareButton
+        minusButton.setImage(Asset.SnabbleSDK.iconMinus.image, for: .normal)
+        minusButton.addTarget(self, action: #selector(minusButtonTapped(_:)), for: .touchUpInside)
+
+        let plusButton = squareButton
+        plusButton.setImage(Asset.SnabbleSDK.iconPlus.image, for: .normal)
+        plusButton.addTarget(self, action: #selector(plusButtonTapped(_:)), for: .touchUpInside)
+
+        let quantityField = UITextField()
+        quantityField.translatesAutoresizingMaskIntoConstraints = false
+        quantityField.font = UIFont.monospacedDigitSystemFont(ofSize: 21, weight: .regular)
+        quantityField.tintColor = .label
+        quantityField.delegate = self
+        quantityField.addDoneButton()
+        quantityField.textAlignment = .center
+        quantityField.borderStyle = .roundedRect
+        quantityField.keyboardType = .numberPad
+
+        let unitLabel = customLabel
+        unitLabel.font = UIFont.systemFont(ofSize: 17)
+        unitLabel.textAlignment = .natural
+
+        addSubview(closeButton)
+        addSubview(productStack)
+        addSubview(quantityStack)
+        addSubview(cartButton)
+
+        productStack.addArrangedSubview(subtitleLabel)
+        productStack.addArrangedSubview(productNameLabel)
+        productStack.addArrangedSubview(originalPriceLabel)
+        productStack.addArrangedSubview(priceLabel)
+        productStack.addArrangedSubview(manualDiscountButton)
+
+        quantityStack.addArrangedSubview(minusButton)
+        quantityStack.addArrangedSubview(quantityField)
+        quantityStack.addArrangedSubview(plusButton)
+        quantityStack.addArrangedSubview(unitLabel)
+
+        self.closeButton = closeButton
+        self.productStack = productStack
+        self.subtitleLabel = subtitleLabel
+        self.productNameLabel = productNameLabel
+        self.originalPriceLabel = originalPriceLabel
+        self.priceLabel = priceLabel
+        self.manualDiscountButton = manualDiscountButton
+        self.quantityStack = quantityStack
+        self.minusButton = minusButton
+        self.plusButton = plusButton
+        self.quantityField = quantityField
+        self.unitLabel = unitLabel
+        self.cartButton = cartButton
+
+        NSLayoutConstraint.activate([
+            closeButton.centerXAnchor.constraint(equalTo: centerXAnchor),
+            closeButton.widthAnchor.constraint(equalToConstant: 32),
+            closeButton.topAnchor.constraint(equalTo: topAnchor, constant: 12),
+            closeButton.heightAnchor.constraint(equalToConstant: 32),
+
+            productStack.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 16),
+            productStack.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -16),
+            productStack.topAnchor.constraint(equalTo: closeButton.bottomAnchor, constant: 12),
+
+            quantityStack.leadingAnchor.constraint(greaterThanOrEqualTo: leadingAnchor, constant: 16).usingPriority(.almostRequired),
+            quantityStack.trailingAnchor.constraint(greaterThanOrEqualTo: trailingAnchor, constant: -16).usingPriority(.almostRequired),
+            quantityStack.topAnchor.constraint(equalTo: productStack.bottomAnchor, constant: 16),
+            quantityStack.bottomAnchor.constraint(equalTo: cartButton.topAnchor, constant: -16),
+
+            quantityField.widthAnchor.constraint(equalToConstant: 96),
+            quantityField.centerXAnchor.constraint(equalTo: centerXAnchor),
+            quantityField.heightAnchor.constraint(equalToConstant: 48),
+
+            cartButton.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 16),
+            cartButton.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -16),
+            cartButton.heightAnchor.constraint(equalToConstant: 48),
+            cartButton.bottomAnchor.constraint(equalTo: bottomAnchor, constant: -16)
+        ])
     }
 
     func setCustomAppearance(_ appearance: CustomAppearance) {
-        self.cartButton.setCustomAppearance(appearance)
+        self.cartButton?.setCustomAppearance(appearance)
     }
 
-    func present(_ scannedProduct: ScannedProduct, _ scannedCode: String, cart: ShoppingCart) {
+    func present(withProduct scannedProduct: ScannedProduct, withCode scannedCode: String, forCart cart: ShoppingCart) {
         // avoid ugly animations
         UIView.performWithoutAnimation {
-            self.doPresent(scannedProduct, scannedCode, cart: cart)
+            self.doPresent(withProduct: scannedProduct, withCode: scannedCode, forCart: cart)
             self.layoutIfNeeded()
         }
     }
 
-    private func doPresent(_ scannedProduct: ScannedProduct, _ scannedCode: String, cart: ShoppingCart) {
+    private func doPresent(withProduct scannedProduct: ScannedProduct, withCode scannedCode: String, forCart cart: ShoppingCart) {
         self.shoppingCart = cart
 
         let project = SnabbleUI.project
-        self.manualDiscountButton.isHidden = project.manualCoupons.isEmpty
-        self.manualDiscountButton.setTitle(L10n.Snabble.addDiscount, for: .normal)
+        self.manualDiscountButton?.isHidden = project.manualCoupons.isEmpty
+        self.manualDiscountButton?.setTitle(L10n.Snabble.addDiscount, for: .normal)
 
         let product = scannedProduct.product
-        self.productNameLabel.text = product.name
+        self.productNameLabel?.text = product.name
 
         var embeddedData = scannedProduct.embeddedData
         if let embed = embeddedData, product.type == .depositReturnVoucher, scannedProduct.encodingUnit == .price {
@@ -125,35 +260,35 @@ final class ScanConfirmationView: DesignableView {
         }
         self.cartItem.quantity = quantity
 
-        self.priceLabel.isHidden = false
+        self.priceLabel?.isHidden = false
 
-        self.minusButton.isHidden = !self.cartItem.editable
-        self.plusButton.isHidden = !self.cartItem.editable
+        self.minusButton?.isHidden = !self.cartItem.editable
+        self.plusButton?.isHidden = !self.cartItem.editable
 
-        self.gramLabel.text = cartItem.encodingUnit?.display
-        self.gramLabel.isHidden = !self.cartItem.editable
+        self.unitLabel?.text = cartItem.encodingUnit?.display
+        self.unitLabel?.isHidden = !self.cartItem.editable
 
-        self.quantityField.isHidden = !self.cartItem.editable
+        self.quantityField?.isHidden = !self.cartItem.editable
 
-        self.subtitleLabel.text = product.subtitle
+        self.subtitleLabel?.text = product.subtitle
 
         if product.type == .userMustWeigh {
-            self.quantityField.becomeFirstResponder()
+            self.quantityField?.becomeFirstResponder()
         }
 
         self.showQuantity(updateTextField: true)
 
         let cartTitle = alreadyInCart ? L10n.Snabble.Scanner.updateCart : L10n.Snabble.Scanner.addToCart
-        self.cartButton.setTitle(cartTitle, for: .normal)
+        self.cartButton?.setTitle(cartTitle, for: .normal)
 
         if product.discountedPrice != nil && product.discountedPrice != product.listPrice {
             let formatter = PriceFormatter(project)
             let originalPrice = formatter.format(product.listPrice)
             let str = NSAttributedString(string: originalPrice,
                                          attributes: [.strikethroughStyle: NSUnderlineStyle.single.rawValue])
-            self.originalPriceLabel.attributedText = str
+            self.originalPriceLabel?.attributedText = str
         } else {
-            self.originalPriceLabel.text = nil
+            self.originalPriceLabel?.text = nil
         }
 
         // suppress display when price == 0
@@ -162,10 +297,10 @@ final class ScanConfirmationView: DesignableView {
             hasPrice = true
         }
         if !hasPrice {
-            self.priceLabel.isHidden = true
-            self.plusButton.isHidden = true
-            self.minusButton.isHidden = true
-            self.quantityField.isEnabled = false
+            self.priceLabel?.isHidden = true
+            self.plusButton?.isHidden = true
+            self.minusButton?.isHidden = true
+            self.quantityField?.isEnabled = false
         }
     }
 
@@ -173,7 +308,7 @@ final class ScanConfirmationView: DesignableView {
         var quantity = self.cartItem.effectiveQuantity
         let product = self.cartItem.product
 
-        self.cartButton.isEnabled = quantity > 0
+        self.cartButton?.isEnabled = quantity > 0
 
         if quantity < 1 && product.type != .userMustWeigh {
             quantity = 1
@@ -182,63 +317,33 @@ final class ScanConfirmationView: DesignableView {
         }
 
         if updateTextField {
-            self.quantityField.text = quantity == 0 ? "" : "\(quantity)"
+            self.quantityField?.text = quantity == 0 ? "" : "\(quantity)"
         }
 
-        self.minusButton.isEnabled = quantity > 1
-        self.plusButton.isEnabled = quantity < ShoppingCart.maxAmount
+        self.minusButton?.isEnabled = quantity > 1
+        self.plusButton?.isEnabled = quantity < ShoppingCart.maxAmount
 
-        self.quantityField.isEnabled = self.cartItem.editable
+        self.quantityField?.isEnabled = self.cartItem.editable
 
         let formatter = PriceFormatter(SnabbleUI.project)
         let formattedPrice = self.cartItem.priceDisplay(formatter)
         let quantityDisplay = self.cartItem.quantityDisplay()
 
         let showQuantity = quantity != 1 || self.cartItem.product.deposit != nil
-        self.priceLabel.text = (showQuantity ? quantityDisplay + " " : "") + formattedPrice
+        self.priceLabel?.text = (showQuantity ? quantityDisplay + " " : "") + formattedPrice
     }
 
-    @IBAction private func plusTapped(_ button: UIButton) {
-        self.cartItem.quantity += 1
-        self.showQuantity(updateTextField: true)
+    @objc private func closeButtonTapped(_ sender: Any) {
+        self.delegate?.track(.scanAborted(self.cartItem.product.sku))
+
+        self.productNameLabel?.text = nil
+        self.delegate?.closeConfirmation(forItem: nil)
+        self.quantityField?.resignFirstResponder()
+
+        NotificationCenter.default.post(name: .snabbleHideScanConfirmation, object: nil)
     }
 
-    @IBAction private func minusTapped(_ button: UIButton) {
-        self.cartItem.quantity -= 1
-        self.showQuantity(updateTextField: true)
-    }
-
-    @IBAction private func manualDiscountTapped(_ sender: UIButton) {
-        let project = SnabbleUI.project
-
-        let title = L10n.Snabble.addDiscount
-        let actionSheet = UIAlertController(title: title, message: nil, preferredStyle: .actionSheet)
-
-        actionSheet.addAction(UIAlertAction(title: L10n.Snabble.noDiscount, style: .default) { _ in
-            self.cartItem.manualCoupon = nil
-            self.showQuantity(updateTextField: true)
-            self.manualDiscountButton.setTitle(title, for: .normal)
-        })
-
-        for coupon in project.manualCoupons {
-            actionSheet.addAction(UIAlertAction(title: coupon.name, style: .default) { _ in
-                let cartQuantity = self.shoppingCart.quantity(of: self.cartItem)
-                if cartQuantity > 0 {
-                    self.cartItem.quantity = 1
-                }
-                self.cartItem.manualCoupon = coupon
-                self.showQuantity(updateTextField: true)
-                self.manualDiscountButton.setTitle(coupon.name, for: .normal)
-                self.cartButton.setTitle(L10n.Snabble.Scanner.addToCart, for: .normal)
-            })
-        }
-
-        actionSheet.addAction(UIAlertAction(title: L10n.Snabble.cancel, style: .cancel, handler: nil))
-
-        UIApplication.topViewController()?.present(actionSheet, animated: true)
-    }
-
-    @IBAction private func cartTapped(_ button: UIButton) {
+    @objc private func cartButtonTapped(_ sender: Any) {
         let cart = self.shoppingCart!
 
         let tapticFeedback = UINotificationFeedbackGenerator()
@@ -267,10 +372,10 @@ final class ScanConfirmationView: DesignableView {
         NotificationCenter.default.post(name: .snabbleCartUpdated, object: self)
         self.delegate?.track(.productAddedToCart(self.cartItem.product.sku))
 
-        self.productNameLabel.text = nil
-        self.delegate?.closeConfirmation(self.cartItem)
+        self.productNameLabel?.text = nil
+        self.delegate?.closeConfirmation(forItem: self.cartItem)
 
-        self.quantityField.resignFirstResponder()
+        self.quantityField?.resignFirstResponder()
 
         let userInfo: [String: Any] = [
             "scannedCode": self.cartItem.scannedCode.code,
@@ -280,15 +385,46 @@ final class ScanConfirmationView: DesignableView {
         NotificationCenter.default.post(name: .snabbleHideScanConfirmation, object: nil, userInfo: userInfo)
     }
 
-    @IBAction private func closeButtonTapped(_ button: UIButton) {
-        self.delegate?.track(.scanAborted(self.cartItem.product.sku))
+    @objc private func manualDiscountTapped(_ sender: Any) {
+        let project = SnabbleUI.project
 
-        self.productNameLabel.text = nil
-        self.delegate?.closeConfirmation(nil)
-        self.quantityField.resignFirstResponder()
+        let title = L10n.Snabble.addDiscount
+        let actionSheet = UIAlertController(title: title, message: nil, preferredStyle: .actionSheet)
 
-        NotificationCenter.default.post(name: .snabbleHideScanConfirmation, object: nil)
+        actionSheet.addAction(UIAlertAction(title: L10n.Snabble.noDiscount, style: .default) { _ in
+            self.cartItem.manualCoupon = nil
+            self.showQuantity(updateTextField: true)
+            self.manualDiscountButton?.setTitle(title, for: .normal)
+        })
+
+        for coupon in project.manualCoupons {
+            actionSheet.addAction(UIAlertAction(title: coupon.name, style: .default) { _ in
+                let cartQuantity = self.shoppingCart.quantity(of: self.cartItem)
+                if cartQuantity > 0 {
+                    self.cartItem.quantity = 1
+                }
+                self.cartItem.manualCoupon = coupon
+                self.showQuantity(updateTextField: true)
+                self.manualDiscountButton?.setTitle(coupon.name, for: .normal)
+                self.cartButton?.setTitle(L10n.Snabble.Scanner.addToCart, for: .normal)
+            })
+        }
+
+        actionSheet.addAction(UIAlertAction(title: L10n.Snabble.cancel, style: .cancel, handler: nil))
+
+        UIApplication.topViewController()?.present(actionSheet, animated: true)
     }
+
+    @objc private func minusButtonTapped(_ sender: Any) {
+        self.cartItem.quantity -= 1
+        self.showQuantity(updateTextField: true)
+    }
+
+    @objc private func plusButtonTapped(_ sender: Any) {
+        self.cartItem.quantity += 1
+        self.showQuantity(updateTextField: true)
+    }
+
 }
 
 extension ScanConfirmationView: UITextFieldDelegate {
