@@ -92,7 +92,7 @@ final class EmbeddedCodesCheckoutViewController: UIViewController {
         self.codeCountWrapper.isHidden = self.codes.count == 1
 
         self.pageControl.numberOfPages = self.codes.count
-        self.pageControl.pageIndicatorTintColor = .lightGray
+        self.pageControl.pageIndicatorTintColor = .systemGray6
         self.pageControl.currentPageIndicatorTintColor = .label
         self.pageControlWrapper.isHidden = self.codes.count == 1
 

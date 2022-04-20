@@ -75,7 +75,7 @@ final class CheckoutBar: UIView {
         methodSelectionStackView.backgroundColor = .systemBackground
         methodSelectionStackView.layer.masksToBounds = true
         methodSelectionStackView.layer.cornerRadius = 8
-        methodSelectionStackView.layer.borderColor = UIColor.lightGray.cgColor
+        methodSelectionStackView.layer.borderColor = UIColor.systemGray6.cgColor
         methodSelectionStackView.layer.borderWidth = 1 / UIScreen.main.scale
 
         let noPaymentLabel = UILabel()

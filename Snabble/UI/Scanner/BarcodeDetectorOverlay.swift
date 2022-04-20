@@ -87,7 +87,7 @@ public final class BarcodeDetectorOverlay: UIView {
         ])
 
         frameView.backgroundColor = .clear
-        frameView.layer.borderColor = UIColor.darkGray.cgColor
+        frameView.layer.borderColor = UIColor.systemGray.cgColor
         frameView.layer.borderWidth = 1 / UIScreen.main.scale
         frameView.layer.cornerRadius = 3
 
