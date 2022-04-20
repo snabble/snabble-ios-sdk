@@ -21,6 +21,6 @@ public extension UIColor {
             fromColors: contrasts,
             withFont: .preferredFont(forTextStyle: .body), // default Font
             onBackgroundColor: self
-        ) ?? contrasts.first
+        )
     }
 }
