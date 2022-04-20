@@ -64,7 +64,7 @@ import UIKit
             return
         }
 
-        let bgColor = self.backgroundColor ?? .white
+        let bgColor = self.backgroundColor ?? .systemBackground
         let bottomPadding = CGFloat(showDigits ? self.scale * 3 : 0)
 
         bgColor.setFill()
@@ -147,7 +147,7 @@ import UIKit
                            width: scale * width,
                            height: scale * digitHeight)
         let label = UILabel(frame: frame)
-        label.backgroundColor = self.backgroundColor ?? .white
+        label.backgroundColor = self.backgroundColor ?? .systemBackground
         label.textColor = self.digitsColor
         label.textAlignment = .center
         label.font = UIFont.monospacedDigitSystemFont(ofSize: CGFloat(scale * (digitHeight - 1)), weight: .medium)

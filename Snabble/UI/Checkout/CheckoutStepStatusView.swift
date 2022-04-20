@@ -44,7 +44,7 @@ final class CheckoutStepStatusView: UIView {
 
         let imageView = UIImageView()
         imageView.translatesAutoresizingMaskIntoConstraints = false
-        imageView.tintColor = .white
+        imageView.tintColor = .systemBackground
         imageView.contentMode = .scaleAspectFit
 
         super.init(frame: frame)

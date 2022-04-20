@@ -10,18 +10,17 @@ import WCAG_Colors
 
 extension UIColor {
     static var contrasts: [UIColor]?
-    static var defaultContrast: UIColor { .white }
 }
 
 public extension UIColor {
-    var contrast: UIColor {
+    var contrast: UIColor? {
         guard let contrasts = Self.contrasts, !contrasts.isEmpty else {
-            return Self.getTextColor(onBackgroundColor: self) ?? .defaultContrast
+            return Self.getTextColor(onBackgroundColor: self)
         }
         return Self.getTextColor(
             fromColors: contrasts,
-            withFont: .systemFont(ofSize: 17), // default Font
+            withFont: .preferredFont(forTextStyle: .body), // default Font
             onBackgroundColor: self
-        ) ?? contrasts.first ?? .defaultContrast
+        ) ?? contrasts.first
     }
 }
