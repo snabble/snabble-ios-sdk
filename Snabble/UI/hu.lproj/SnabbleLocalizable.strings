@@ -104,8 +104,6 @@
 
 "Snabble.OK" = "OK";
 
-"Snabble.paydirekt.title" = "paydirekt";
-
 "Snabble.paydirekt.authorizationFailed.message" = "Kérlek, próbáld meg később még egyszer";
 
 "Snabble.paydirekt.authorizationFailed.title" = "Nem sikerült az azonosítás";
@@ -117,6 +115,8 @@
 "Snabble.paydirekt.payNow" = "Fizetés paydirekttel";
 
 "Snabble.paydirekt.savedAuthorization" = "A Snabble alkalmazást sikeresen bejelentetted a paydirektre. Visszavonásához a paydirekt fiókadataiddal be kell jelentkezned a honlapon. Ha nem szeretnéd, hogy a paydirekt a fizetési lehetőségeid között legyen, akkor itt egyszerűen eltávolíthatod.";
+
+"Snabble.paydirekt.title" = "paydirekt";
 
 /* SECTION: SnabbleAndroid */
 "Snabble.Payment.aborted" = "Megszakadt a fizetési folyamat";
@@ -194,7 +194,7 @@
 
 "Snabble.PaymentCard.editingHint" = "A kártyaadataidat kódolva tároljuk, éppen ezért nem tudjuk feldolgozni.";
 
-"Snabble.PaymentContinuation.message" = "Continuing the payment";
+"Snabble.PaymentContinuation.message" = "A fizetés folytatódik";
 
 "Snabble.PaymentError.title" = "Hiba történt";
 
@@ -335,7 +335,7 @@
 
 "Snabble.Scanner.Accessibility.actionUnderstood" = "Megértettem";
 
-"Snabble.Scanner.Accessibility.enterQuantity" = "Please enter the quantity in %@";
+"Snabble.Scanner.Accessibility.enterQuantity" = "Add meg a mennyiséget %@-ben";
 
 "Snabble.Scanner.Accessibility.eventBackInScanner" = "Visszatértél a szkennerbe";
 

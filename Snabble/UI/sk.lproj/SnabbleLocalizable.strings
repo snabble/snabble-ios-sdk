@@ -104,8 +104,6 @@
 
 "Snabble.OK" = "OK";
 
-"Snabble.paydirekt.title" = "paydirekt";
-
 "Snabble.paydirekt.authorizationFailed.message" = "Skús neskôr znovu, prosím";
 
 "Snabble.paydirekt.authorizationFailed.title" = "Autorizácia sa nepodarila";
@@ -117,6 +115,8 @@
 "Snabble.paydirekt.payNow" = "Teraz zaplatiť prostredníctvom paydirekt";
 
 "Snabble.paydirekt.savedAuthorization" = "Autorizácia aplikácie Snabble pre paydirekt bola úspešná. Ak chceš autorizáciu zrušiť, musíš sa prihlásiť do svojho konta paydirekt na webovej stránke. Pokiaľ nechceš, aby paydirekt bol v budúcnosti zobrazovaný ako spôsob platby, tu ho môžeš jednoducho odstrániť.";
+
+"Snabble.paydirekt.title" = "paydirekt";
 
 /* SECTION: SnabbleAndroid */
 "Snabble.Payment.aborted" = "Platobný proces bol prerušený";
@@ -194,7 +194,7 @@
 
 "Snabble.PaymentCard.editingHint" = "Údaje o tvojej karte budeme uchovávať len v šifrovanej forme, a preto nemôžu byť spracované.";
 
-"Snabble.PaymentContinuation.message" = "Continuing the payment";
+"Snabble.PaymentContinuation.message" = "Pokračovanie platby";
 
 "Snabble.PaymentError.title" = "Vyskytla sa chyba";
 
@@ -335,7 +335,7 @@
 
 "Snabble.Scanner.Accessibility.actionUnderstood" = "Rozumiem";
 
-"Snabble.Scanner.Accessibility.enterQuantity" = "Please enter the quantity in %@";
+"Snabble.Scanner.Accessibility.enterQuantity" = "Zadaj množstvo v %@";
 
 "Snabble.Scanner.Accessibility.eventBackInScanner" = "Si opäť v skeneri";
 

@@ -104,8 +104,6 @@
 
 "Snabble.OK" = "OK";
 
-"Snabble.paydirekt.title" = "paydirekt";
-
 "Snabble.paydirekt.authorizationFailed.message" = "Ti preghiamo di riprovare più tardi";
 
 "Snabble.paydirekt.authorizationFailed.title" = "Autorizzazione non riuscita";
@@ -117,6 +115,8 @@
 "Snabble.paydirekt.payNow" = "Paga ora con paydirekt";
 
 "Snabble.paydirekt.savedAuthorization" = "L’autorizzazione dell’app Snabble per paydirekt è avvenuta con successo. Per revocare l’autorizzazione, è necessario accedere al tuo account paydirekt sul sito web. Se non desideri più che paydirekt sia visualizzato come metodo di pagamento, è sufficiente rimuoverlo.";
+
+"Snabble.paydirekt.title" = "paydirekt";
 
 /* SECTION: SnabbleAndroid */
 "Snabble.Payment.aborted" = "Il pagamento è stato interrotto";

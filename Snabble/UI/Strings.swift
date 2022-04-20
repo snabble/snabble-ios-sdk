@@ -760,8 +760,6 @@ public enum L10n {
       }
     }
     public enum Paydirekt {
-      /// paydirekt
-      public static var title: String { return L10n.tr("SnabbleLocalizable", "Snabble.paydirekt.title") }
       /// Delete method
       public static var deleteAuthorization: String { return L10n.tr("SnabbleLocalizable", "Snabble.paydirekt.deleteAuthorization") }
       /// Go to paydirekt.de
@@ -770,6 +768,8 @@ public enum L10n {
       public static var payNow: String { return L10n.tr("SnabbleLocalizable", "Snabble.paydirekt.payNow") }
       /// You've successfully authorized Snabble for paydirekt. To remove this authorization, you need to log in to your paydirekt account. If you do not want to use this payment method anymore, you can remove it here.
       public static var savedAuthorization: String { return L10n.tr("SnabbleLocalizable", "Snabble.paydirekt.savedAuthorization") }
+      /// paydirekt
+      public static var title: String { return L10n.tr("SnabbleLocalizable", "Snabble.paydirekt.title") }
       public enum AuthorizationFailed {
         /// Please try again later
         public static var message: String { return L10n.tr("SnabbleLocalizable", "Snabble.paydirekt.authorizationFailed.message") }
