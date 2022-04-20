@@ -75,7 +75,7 @@ final class ShoppingCartTableViewController: UITableViewController {
 
         self.view.backgroundColor = .clear
 
-        self.tableView.register(UINib(nibName: "ShoppingCartTableCell", bundle: SnabbleSDKBundle.main), forCellReuseIdentifier: self.itemCellIdentifier)
+        self.tableView.register(ShoppingCartTableCell.self, forCellReuseIdentifier: self.itemCellIdentifier)
 
         self.tableView.tableFooterView = UIView(frame: CGRect.zero)
         self.tableView.backgroundColor = .clear
@@ -358,20 +358,20 @@ extension ShoppingCartTableViewController {
         guard indexPath.row < self.items.count else {
             return cell
         }
-
+        cell.configureCell(row: indexPath.row, delegate: self)
         let item = self.items[indexPath.row]
         switch item {
         case .cartItem(let item, let lineItems):
-            cell.setCartItem(item, lineItems, row: indexPath.row, delegate: self)
+            cell.setCartItem(item, for: lineItems)
         case .coupon(let coupon, let lineItem):
-            cell.setCouponItem(coupon, lineItem, row: indexPath.row, delegate: self)
+            cell.setCouponItem(coupon, for: lineItem)
 
         case .lineItem(let item, let lineItems):
-            cell.setLineItem(item, lineItems, row: indexPath.row, delegate: self)
+            cell.setLineItem(item, for: lineItems)
         case .discount(let amount):
-            cell.setDiscount(amount, delegate: self)
+            cell.setDiscount(for: amount)
         case .giveaway(let lineItem):
-            cell.setGiveaway(lineItem, delegate: self)
+            cell.setGiveaway(for: lineItem)
         }
 
         return cell

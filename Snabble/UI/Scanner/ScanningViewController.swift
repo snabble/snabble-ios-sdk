@@ -31,6 +31,7 @@ final class ScanningViewController: UIViewController {
 
     private var scanConfirmationView: ScanConfirmationView?
     private var scanConfirmationViewBottom: NSLayoutConstraint?
+
     private let tapticFeedback = UINotificationFeedbackGenerator()
 
     private let productProvider: ProductProvider
@@ -65,7 +66,7 @@ final class ScanningViewController: UIViewController {
 
     public weak var scannerDelegate: ScannerDelegate?
 
-    public init(_ cart: ShoppingCart, _ shop: Shop, _ detector: BarcodeDetector) {
+    public init(forCart cart: ShoppingCart, forShop shop: Shop, withDetector detector: BarcodeDetector) {
         let project = shop.project ?? .none
 
         self.shop = shop
@@ -99,7 +100,8 @@ final class ScanningViewController: UIViewController {
 
         self.view.backgroundColor = .darkGray
 
-        let scanConfirmationView = ScanConfirmationView()
+        let scanConfirmationView = ScanConfirmationView(frame: .zero)
+
         if let custom = self.customAppearance {
             scanConfirmationView.setCustomAppearance(custom)
         }
@@ -198,9 +200,10 @@ final class ScanningViewController: UIViewController {
     }
 
     // MARK: - scan confirmation views
-    private func showConfirmation(for scannedProduct: ScannedProduct, _ scannedCode: String) {
+    private func showConfirmation(for scannedProduct: ScannedProduct, withCode scannedCode: String) {
         self.confirmationVisible = true
-        self.scanConfirmationView?.present(scannedProduct, scannedCode, cart: self.shoppingCart)
+
+        self.scanConfirmationView?.present(withProduct: scannedProduct, withCode: scannedCode, forCart: self.shoppingCart)
 
         self.displayScanConfirmationView(hidden: false, setBottomOffset: self.productType != .userMustWeigh)
 
@@ -262,7 +265,7 @@ extension ScanningViewController {
 
         if let imgUrl = messages.first?.imageUrl, let url = URL(string: imgUrl) {
             self.messageImageWidth.constant = 80
-            self.loadMessageImage(url)
+            self.loadMessageImage(from: url)
         } else {
             self.messageImageWidth.constant = 0
             self.messageImage.image = nil
@@ -306,7 +309,7 @@ extension ScanningViewController {
                        completion: { _ in self.messageWrapper.isHidden = true })
     }
 
-    private func loadMessageImage(_ url: URL) {
+    private func loadMessageImage(from url: URL) {
         let session = Snabble.urlSession
         self.messageSpinner.startAnimating()
         let task = session.dataTask(with: url) { data, _, _ in
@@ -330,13 +333,13 @@ extension ScanningViewController: AnalyticsDelegate {
 
 // MARK: - scanning confirmation delegate
 extension ScanningViewController: ScanConfirmationViewDelegate {
-    func closeConfirmation(_ item: CartItem?) {
+    func closeConfirmation(forItem item: CartItem?) {
         self.displayScanConfirmationView(hidden: true)
         self.startLastScanTimer()
 
         if let item = item {
             var messages = [ScanMessage]()
-            if let msg = self.ageCheckRequired(item) {
+            if let msg = self.ageCheckRequired(for: item) {
                 messages.append(msg)
             }
             if let msg = self.scannerDelegate?.scanMessage(for: SnabbleUI.project, self.shop, item.product) {
@@ -354,7 +357,7 @@ extension ScanningViewController: ScanConfirmationViewDelegate {
         self.barcodeDetector.resumeScanning()
     }
 
-    private func ageCheckRequired(_ item: CartItem) -> ScanMessage? {
+    private func ageCheckRequired(for item: CartItem) -> ScanMessage? {
         let userAge = Snabble.appUserData?.age ?? 0
 
         switch item.product.saleRestriction {
@@ -387,17 +390,17 @@ extension ScanningViewController: BarcodeDetectorDelegate {
             return
         }
 
-        self.handleScannedCode(code, format)
+        self.handleScannedCode(code, withFormat: format)
     }
 }
 
 extension ScanningViewController {
-    private func scannedUnknown(_ msg: String, _ code: String) {
+    private func scannedUnknown(messageText: String, code: String) {
         // Log.debug("scanned unknown code \(code)")
         self.tapticFeedback.notificationOccurred(.error)
 
-        let msg = ScanMessage(msg)
-        self.showMessage(msg)
+        let message = ScanMessage(messageText)
+        self.showMessage(message)
         self.scannerDelegate?.track(.scanUnknown(code))
         self.startLastScanTimer()
     }
@@ -409,7 +412,7 @@ extension ScanningViewController {
         }
     }
 
-    private func handleScannedCode(_ scannedCode: String, _ format: ScanFormat?, _ template: String? = nil) {
+    private func handleScannedCode(_ scannedCode: String, withFormat format: ScanFormat?, withTemplate template: String? = nil) {
         // Log.debug("handleScannedCode \(scannedCode) \(self.lastScannedCode)")
         self.lastScannedCode = scannedCode
 
@@ -420,14 +423,14 @@ extension ScanningViewController {
 
         self.barcodeDetector.pauseScanning()
 
-        self.lookupCode(scannedCode, format, template) { scannedResult in
+        self.lookupCode(scannedCode, withFormat: format, withTemplate: template) { scannedResult in
             self.spinnerTimer?.invalidate()
             self.spinner.stopAnimating()
 
             let scannedProduct: ScannedProduct
             switch scannedResult {
             case .failure(let error):
-                self.showScanLookupError(error, scannedCode)
+                self.showScanLookupError(error, forCode: scannedCode)
                 return
             case .product(let product):
                 scannedProduct = product
@@ -452,7 +455,7 @@ extension ScanningViewController {
             // handle scanning the shelf code of a pre-weighed product (no data or 0 encoded in the EAN)
             if product.type == .preWeighed && (embeddedData == nil || embeddedData == 0) {
                 let msg = L10n.Snabble.Scanner.scannedShelfCode
-                self.scannedUnknown(msg, scannedCode)
+                self.scannedUnknown(messageText: msg, code: scannedCode)
                 self.barcodeDetector.resumeScanning()
                 self.startLastScanTimer()
                 return
@@ -464,14 +467,14 @@ extension ScanningViewController {
             self.productType = product.type
 
             if product.bundles.isEmpty || scannedProduct.priceOverride != nil {
-                self.showConfirmation(for: scannedProduct, scannedCode)
+                self.showConfirmation(for: scannedProduct, withCode: scannedCode)
             } else {
-                self.showBundleSelection(for: scannedProduct, scannedCode)
+                self.showBundleSelection(for: scannedProduct, withCode: scannedCode)
             }
         }
     }
 
-    private func showScanLookupError(_ error: ProductLookupError, _ scannedCode: String) {
+    private func showScanLookupError(_ error: ProductLookupError, forCode scannedCode: String) {
         let errorMsg: String
         switch error {
         case .notFound: errorMsg = L10n.Snabble.Scanner.unknownBarcode
@@ -479,7 +482,7 @@ extension ScanningViewController {
         case .serverError: errorMsg = L10n.Snabble.Scanner.serverError
         }
 
-        self.scannedUnknown(errorMsg, scannedCode)
+        self.scannedUnknown(messageText: errorMsg, code: scannedCode)
         self.barcodeDetector.resumeScanning()
     }
 
@@ -492,7 +495,7 @@ extension ScanningViewController {
 
         // check for not-for-sale
         if product.notForSale {
-            self.showNotForSale(product, scannedCode)
+            self.showNotForSale(for: product, withCode: scannedCode)
             return true
         }
 
@@ -513,23 +516,23 @@ extension ScanningViewController {
         self.present(alert, animated: true)
     }
 
-    private func showNotForSale(_ product: Product, _ scannedCode: String) {
+    private func showNotForSale(for product: Product, withCode scannedCode: String) {
         self.tapticFeedback.notificationOccurred(.error)
         if let msg = self.scannerDelegate?.scanMessage(for: SnabbleUI.project, self.shop, product) {
             self.showMessage(msg)
             self.lastScannedCode = nil
         } else {
-            self.scannedUnknown(L10n.Snabble.NotForSale.ErrorMsg.scan, scannedCode)
+            self.scannedUnknown(messageText: L10n.Snabble.NotForSale.ErrorMsg.scan, code: scannedCode)
         }
         self.barcodeDetector.resumeScanning()
     }
 
-    private func showBundleSelection(for scannedProduct: ScannedProduct, _ scannedCode: String) {
+    private func showBundleSelection(for scannedProduct: ScannedProduct, withCode scannedCode: String) {
         let alert = UIAlertController(title: nil, message: L10n.Snabble.Scanner.BundleDialog.headline, preferredStyle: .actionSheet)
 
         let product = scannedProduct.product
         alert.addAction(UIAlertAction(title: product.name, style: .default) { _ in
-            self.showConfirmation(for: scannedProduct, scannedCode)
+            self.showConfirmation(for: scannedProduct, withCode: scannedCode)
         })
 
         for bundle in product.bundles {
@@ -544,7 +547,7 @@ extension ScanningViewController {
                 if self.isSaleProhibited(of: scannedBundle.product, scannedCode: scannedCode) {
                     return
                 }
-                self.showConfirmation(for: scannedBundle, transmissionCode ?? scannedCode)
+                self.showConfirmation(for: scannedBundle, withCode: transmissionCode ?? scannedCode)
             })
         }
 
@@ -564,18 +567,18 @@ extension ScanningViewController {
     }
 
     private func lookupCode(_ code: String,
-                            _ format: ScanFormat?,
-                            _ template: String?,
+                            withFormat format: ScanFormat?,
+                            withTemplate template: String?,
                             completion: @escaping (ScannerLookup) -> Void ) {
         // if we were given a template from the barcode entry, use that to lookup the product directly
         if let template = template {
-            return self.lookupProduct(code, template, nil, completion)
+            return self.lookupProduct(for: code, withTemplate: template, priceOverride: nil, completion: completion)
         }
 
         // check override codes first
         let project = SnabbleUI.project
         if let match = CodeMatcher.matchOverride(code, project.priceOverrideCodes, project.id) {
-            return self.productForOverrideCode(match, completion: completion)
+            return self.productForOverrideCode(for: match, completion: completion)
         }
 
         // then, check our regular templates
@@ -638,12 +641,12 @@ extension ScanningViewController {
                 completion(.product(newResult))
             case .failure(let error):
                 if error == .notFound {
-                    if let gs1 = self.checkValidGS1(code) {
-                        return self.productForGS1(gs1, code, completion: completion)
+                    if let gs1 = self.checkValidGS1(for: code) {
+                        return self.productForGS1(gs1: gs1, originalCode: code, completion: completion)
                     }
 
                     // is this a valid coupon?
-                    if let coupon = self.checkValidCoupon(code) {
+                    if let coupon = self.checkValidCoupon(for: code) {
                         return completion(.coupon(coupon, code))
                     }
 
@@ -657,7 +660,7 @@ extension ScanningViewController {
         }
     }
 
-    private func checkValidCoupon(_ scannedCode: String) -> Coupon? {
+    private func checkValidCoupon(for scannedCode: String) -> Coupon? {
         let project = SnabbleUI.project
         let validCoupons = project.printedCoupons
 
@@ -673,7 +676,7 @@ extension ScanningViewController {
         return nil
     }
 
-    private func checkValidGS1(_ code: String) -> GS1Code? {
+    private func checkValidGS1(for code: String) -> GS1Code? {
         let gs1 = GS1Code(code)
         if gs1.gtin != nil {
             return gs1
@@ -681,8 +684,8 @@ extension ScanningViewController {
         return nil
     }
 
-    private func productForGS1(_ gs1: GS1Code,
-                               _ originalCode: String,
+    private func productForGS1(gs1: GS1Code,
+                               originalCode: String,
                                completion: @escaping (ScannerLookup) -> Void ) {
         guard let gtin = gs1.gtin else {
             return completion(.failure(.notFound))
@@ -713,11 +716,11 @@ extension ScanningViewController {
         }
     }
 
-    private func productForOverrideCode(_ match: OverrideLookup, completion: @escaping (ScannerLookup) -> Void ) {
+    private func productForOverrideCode(for match: OverrideLookup, completion: @escaping (ScannerLookup) -> Void ) {
         let code = match.lookupCode
 
         if let template = match.lookupTemplate {
-            return self.lookupProduct(code, template, match.embeddedData, completion)
+            return self.lookupProduct(for: code, withTemplate: template, priceOverride: match.embeddedData, completion: completion)
         }
 
         let matches = CodeMatcher.match(code, SnabbleUI.project.id)
@@ -746,7 +749,7 @@ extension ScanningViewController {
         }
     }
 
-    private func lookupProduct(_ code: String, _ template: String, _ priceOverride: Int?, _ completion: @escaping (ScannerLookup) -> Void ) {
+    private func lookupProduct(for code: String, withTemplate template: String, priceOverride: Int?, completion: @escaping (ScannerLookup) -> Void ) {
         let codes = [(code, template)]
         self.productProvider.productByScannableCodes(codes, self.shop.id) { result in
             switch result {
