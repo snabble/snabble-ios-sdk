@@ -11,7 +11,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 * Refactor ShoppingCartTableCellView #98
 * Updated colors to semantic colors #100
-* Refactor EmbeddedCodesCheckoutViewController #101
+* Refactor EmbeddedCodesCheckoutViewController #102
 
 ### Removed
 
