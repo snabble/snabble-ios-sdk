@@ -55,7 +55,7 @@ final class ShoppingCartTableCellView: UIView {
         let label = UILabel()
         label.translatesAutoresizingMaskIntoConstraints = false
         label.font = UIFont.systemFont(ofSize: 11)
-        label.textColor = .white
+        label.textColor = .label.contrast
         label.backgroundColor = .systemRed
         label.layer.cornerRadius = 4
         label.layer.masksToBounds = true

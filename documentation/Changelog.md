@@ -11,9 +11,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 * Refactored ShoppingCartTableCellView to programmatically written UI #98
 * Refactored PaydirektEditViewController to programmatically written UI #101
+* Updated colors to semantic colors #100
 
 ### Removed
-* removed PaydirektEditViewController.xib
 
 ## Deprecated snabble iOS SDK Changelog
 

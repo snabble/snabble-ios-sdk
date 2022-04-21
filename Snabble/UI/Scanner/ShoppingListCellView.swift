@@ -55,7 +55,7 @@ final class ShoppingListCellView: UIView {
         let checkContainer = UIView()
         checkContainer.translatesAutoresizingMaskIntoConstraints = false
         checkContainer.backgroundColor = .systemTeal
-        checkContainer.layer.shadowColor = UIColor.gray.cgColor
+        checkContainer.layer.shadowColor = UIColor.systemGray3.cgColor
         checkContainer.layer.shadowOpacity = 0.3
         checkContainer.layer.shadowOffset = CGSize.zero
         checkContainer.layer.shadowRadius = 1.5

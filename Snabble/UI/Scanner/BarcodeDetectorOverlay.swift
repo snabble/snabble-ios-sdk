@@ -59,7 +59,7 @@ public final class BarcodeDetectorOverlay: UIView {
 
         reticle.translatesAutoresizingMaskIntoConstraints = false
         if Snabble.debugMode && debugReticle {
-            reticle.layer.borderColor = UIColor.green.cgColor
+            reticle.layer.borderColor = UIColor.systemGreen.cgColor
             reticle.layer.cornerRadius = 5
             reticle.layer.borderWidth = 1 / UIScreen.main.scale
             reticle.layer.masksToBounds = true
@@ -87,7 +87,7 @@ public final class BarcodeDetectorOverlay: UIView {
         ])
 
         frameView.backgroundColor = .clear
-        frameView.layer.borderColor = UIColor.darkGray.cgColor
+        frameView.layer.borderColor = UIColor.systemGray.cgColor
         frameView.layer.borderWidth = 1 / UIScreen.main.scale
         frameView.layer.cornerRadius = 3
 

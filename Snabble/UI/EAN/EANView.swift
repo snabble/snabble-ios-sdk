@@ -64,7 +64,7 @@ import UIKit
             return
         }
 
-        let bgColor = self.backgroundColor ?? .white
+        let bgColor = self.backgroundColor ?? .systemBackground
         let bottomPadding = CGFloat(showDigits ? self.scale * 3 : 0)
 
         bgColor.setFill()
@@ -89,7 +89,7 @@ import UIKit
         } else {
             let attrs = [
                 NSAttributedString.Key.font: UIFont.systemFont(ofSize: 15),
-                NSAttributedString.Key.foregroundColor: UIColor.red
+                NSAttributedString.Key.foregroundColor: UIColor.systemRed
             ]
             let str = NSAttributedString(string: "Invalid Barcode", attributes: attrs)
 
@@ -147,7 +147,7 @@ import UIKit
                            width: scale * width,
                            height: scale * digitHeight)
         let label = UILabel(frame: frame)
-        label.backgroundColor = self.backgroundColor ?? .white
+        label.backgroundColor = self.backgroundColor ?? .systemBackground
         label.textColor = self.digitsColor
         label.textAlignment = .center
         label.font = UIFont.monospacedDigitSystemFont(ofSize: CGFloat(scale * (digitHeight - 1)), weight: .medium)

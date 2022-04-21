@@ -75,7 +75,7 @@ final class CheckoutBar: UIView {
         methodSelectionStackView.backgroundColor = .systemBackground
         methodSelectionStackView.layer.masksToBounds = true
         methodSelectionStackView.layer.cornerRadius = 8
-        methodSelectionStackView.layer.borderColor = UIColor.lightGray.cgColor
+        methodSelectionStackView.layer.borderColor = UIColor.systemGray6.cgColor
         methodSelectionStackView.layer.borderWidth = 1 / UIScreen.main.scale
 
         let noPaymentLabel = UILabel()
@@ -98,7 +98,7 @@ final class CheckoutBar: UIView {
         let checkoutButton = UIButton()
         checkoutButton.translatesAutoresizingMaskIntoConstraints = false
         checkoutButton.setTitle(L10n.Snabble.Shoppingcart.BuyProducts.now, for: .normal)
-        let disabledColor = SnabbleUI.appearance.accentColor.contrast.withAlphaComponent(0.5)
+        let disabledColor = SnabbleUI.appearance.accentColor.contrast?.withAlphaComponent(0.5)
         checkoutButton.setTitleColor(disabledColor, for: .disabled)
         checkoutButton.titleLabel?.font = UIFont.systemFont(ofSize: 17, weight: .semibold)
         checkoutButton.makeSnabbleButton()
@@ -247,9 +247,12 @@ final class CheckoutBar: UIView {
 
         let button = self.checkoutButton!
 
-        let spinner = UIActivityIndicatorView(style: .white)
+        let spinner: UIActivityIndicatorView
+
         if #available(iOS 13.0, *) {
-            spinner.style = .medium
+            spinner = .init(style: .medium)
+        } else {
+            spinner = .init(style: .gray)
         }
         spinner.startAnimating()
         button.addSubview(spinner)
