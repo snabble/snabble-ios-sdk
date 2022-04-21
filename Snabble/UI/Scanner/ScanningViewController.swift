@@ -98,7 +98,7 @@ final class ScanningViewController: UIViewController {
     override public func viewDidLoad() {
         super.viewDidLoad()
 
-        self.view.backgroundColor = .darkGray
+        self.view.backgroundColor = .systemGray
 
         let scanConfirmationView = ScanConfirmationView(frame: .zero)
 
