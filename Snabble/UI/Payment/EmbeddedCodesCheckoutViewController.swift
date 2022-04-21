@@ -218,7 +218,7 @@ final class EmbeddedCodesCheckoutViewController: UIViewController {
         let id = process?.links._self.href.suffix(4) ?? "offline"
         self.idLabel?.text = String(id)
 
-        self.setButtonTitle()
+        self.setButtonTitle(for: pageControl?.currentPage ?? 0)
         self.configureViewForDevice()
 
         self.scrollView?.delegate = self
@@ -275,7 +275,6 @@ final class EmbeddedCodesCheckoutViewController: UIViewController {
 
         UIScreen.main.brightness = self.initialBrightness
 
-        Snabble.clearInFlightCheckout()
         if self.isMovingFromParent {
             // user "aborted" this payment process by tapping 'Back'
             self.cart.generateNewUUID()
@@ -318,19 +317,17 @@ final class EmbeddedCodesCheckoutViewController: UIViewController {
         self.scrollViewWidth = (self.stackViewLayout?.layoutFrame.width)! * multiplier
     }
 
-    private func setButtonTitle() {
-        var title = ""
-        guard let page = pageControl?.currentPage else { return }
-
-        if page == self.codes.count - 1 {
+    private func setButtonTitle(for page: Int) {
+        let title: String
+        if page == codes.count - 1 {
             title = L10n.Snabble.QRCode.didPay
         } else {
-            title = L10n.Snabble.QRCode.nextCode(page + 2, self.codes.count)
+            title = L10n.Snabble.QRCode.nextCode(page + 2, codes.count)
         }
-        self.paidButton?.setTitle(title, for: .normal)
+        paidButton?.setTitle(title, for: .normal)
 
-        let codeXofY = L10n.Snabble.QRCode.codeXofY(page + 1, self.codes.count)
-        self.codeCountLabel?.text = codeXofY
+        let codeXofY = L10n.Snabble.QRCode.codeXofY(page + 1, codes.count)
+        codeCountLabel?.text = codeXofY
     }
 
     @objc private func paidButtonTapped(_ sender: Any) {
@@ -338,10 +335,11 @@ final class EmbeddedCodesCheckoutViewController: UIViewController {
             self.pageControl?.currentPage += 1
             guard let page = pageControl?.currentPage else {return}//
             self.updatePageControl(with: page)
-            self.setButtonTitle()
+            self.setButtonTitle(for: page)
         } else {
             self.delegate?.track(.markEmbeddedCodesPaid)
             self.cart.removeAll(endSession: true, keepBackup: true)
+            Snabble.clearInFlightCheckout()
 
             let checkoutSteps = CheckoutStepsViewController(shop: shop, shoppingCart: cart, checkoutProcess: process)
             checkoutSteps.paymentDelegate = delegate
@@ -356,6 +354,21 @@ final class EmbeddedCodesCheckoutViewController: UIViewController {
                 self.topIcon?.heightAnchor.constraint(equalToConstant: img.size.height).usingPriority(.required - 1).isActive = true
                 self.topWrapper?.isHidden = false
                 self.arrowWrapper?.isHidden = false
+            }
+        }
+    }
+
+    @objc private func pageControlTapped(_ pageControl: UIPageControl) {
+        updatePageControl(with: pageControl.currentPage)
+        setButtonTitle(for: pageControl.currentPage)
+    }
+
+    private func updatePageControl(with page: Int) {
+        if page < codes.count {
+            DispatchQueue.main.async {
+                UIView.animate(withDuration: 0.3) {
+                    self.scrollView?.contentOffset = CGPoint(x: CGFloat(page) * (self.scrollView?.frame.width)!, y: 0)
+                }
             }
         }
     }
@@ -386,22 +399,7 @@ extension EmbeddedCodesCheckoutViewController {
 
 extension EmbeddedCodesCheckoutViewController: UIScrollViewDelegate {
     func scrollViewDidScroll(_ scrollView: UIScrollView) {
-        self.pageControl?.currentPage = Int(floorf(Float(scrollView.contentOffset.x) / Float(scrollView.frame.size.width)))
-        self.setButtonTitle()
-    }
-
-    @objc private func pageControlTapped(_ pageControl: UIPageControl) {
-        self.updatePageControl(with: pageControl.currentPage)
-        self.setButtonTitle()
-    }
-
-    private func updatePageControl(with page: Int) {
-        if page < self.codes.count {
-            DispatchQueue.main.async {
-                UIView.animate(withDuration: 0.3) {
-                    self.scrollView?.contentOffset = CGPoint(x: CGFloat(page) * (self.scrollView?.frame.width)!, y: 0)
-                }
-            }
-        }
+        pageControl?.currentPage = scrollView.currentPage
+        setButtonTitle(for: scrollView.currentPage)
     }
 }
