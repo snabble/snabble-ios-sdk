@@ -41,7 +41,7 @@ public final class PaydirektEditViewController: UIViewController {
     private weak var openButton: UIButton?
     private weak var deleteButton: UIButton?
 
-    private var webView: WKWebView?
+    private weak var webView: WKWebView?
     private var detail: PaymentMethodDetail?
     private weak var analyticsDelegate: AnalyticsDelegate?
     private var clientAuthorization: String?
@@ -59,7 +59,6 @@ public final class PaydirektEditViewController: UIViewController {
     public init(_ detail: PaymentMethodDetail?, with analyticsDelegate: AnalyticsDelegate?) {
         self.detail = detail
         self.analyticsDelegate = analyticsDelegate
-
         super.init(nibName: nil, bundle: nil)
     }
 
@@ -68,14 +67,12 @@ public final class PaydirektEditViewController: UIViewController {
     }
 
     override public func loadView() {
-        super.loadView()
-
         let view = UIView(frame: UIScreen.main.bounds)
         view.backgroundColor = .systemBackground
-        self.view = view
 
         let webViewWrapper = UIView()
         webViewWrapper.translatesAutoresizingMaskIntoConstraints = false
+        let webView = self.addWebView(to: webViewWrapper)
 
         let displayView = UIView()
         displayView.translatesAutoresizingMaskIntoConstraints = false
@@ -104,29 +101,23 @@ public final class PaydirektEditViewController: UIViewController {
         deleteButton.setTitle(L10n.Snabble.Paydirekt.deleteAuthorization, for: .normal)
         deleteButton.addTarget(self, action: #selector(deleteTapped(_:)), for: .touchUpInside)
 
-        self.view.addSubview(webViewWrapper)
-        self.view.addSubview(displayView)
+        view.addSubview(webViewWrapper)
+        view.addSubview(displayView)
 
         displayView.addSubview(displayLabel)
         displayView.addSubview(openButton)
         displayView.addSubview(deleteButton)
 
-        self.webViewWrapper = webViewWrapper
-        self.displayView = displayView
-        self.displayLabel = displayLabel
-        self.openButton = openButton
-        self.deleteButton = deleteButton
-
         NSLayoutConstraint.activate([
-            webViewWrapper.topAnchor.constraint(equalTo: self.view.safeAreaLayoutGuide.topAnchor),
-            webViewWrapper.bottomAnchor.constraint(equalTo: self.view.safeAreaLayoutGuide.bottomAnchor),
-            webViewWrapper.leadingAnchor.constraint(equalTo: self.view.safeAreaLayoutGuide.leadingAnchor),
-            webViewWrapper.trailingAnchor.constraint(equalTo: self.view.safeAreaLayoutGuide.trailingAnchor),
+            webViewWrapper.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
+            webViewWrapper.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor),
+            webViewWrapper.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor),
+            webViewWrapper.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor),
 
-            displayView.topAnchor.constraint(equalTo: self.view.safeAreaLayoutGuide.topAnchor),
-            displayView.bottomAnchor.constraint(equalTo: self.view.safeAreaLayoutGuide.bottomAnchor),
-            displayView.leadingAnchor.constraint(equalTo: self.view.safeAreaLayoutGuide.leadingAnchor),
-            displayView.trailingAnchor.constraint(equalTo: self.view.safeAreaLayoutGuide.trailingAnchor),
+            displayView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
+            displayView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor),
+            displayView.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor),
+            displayView.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor),
 
             displayLabel.leadingAnchor.constraint(equalTo: displayView.leadingAnchor, constant: 16),
             displayLabel.trailingAnchor.constraint(equalTo: displayView.trailingAnchor, constant: -16),
@@ -140,14 +131,19 @@ public final class PaydirektEditViewController: UIViewController {
             deleteButton.leadingAnchor.constraint(equalTo: displayView.leadingAnchor, constant: 16),
             deleteButton.trailingAnchor.constraint(equalTo: displayView.trailingAnchor, constant: -16)
         ])
+
+        self.view = view
+        self.webViewWrapper = webViewWrapper
+        self.webView = webView
+        self.displayView = displayView
+        self.displayLabel = displayLabel
+        self.openButton = openButton
+        self.deleteButton = deleteButton
     }
 
     override public func viewDidLoad() {
         super.viewDidLoad()
         self.title = L10n.Snabble.Paydirekt.title
-        if let wrapper = self.webViewWrapper {
-            self.webView = self.addWebView(to: wrapper)
-        }
     }
 
     override public func viewWillAppear(_ animated: Bool) {
