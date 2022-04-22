@@ -121,7 +121,7 @@ final class EmbeddedCodesCheckoutViewController: UIViewController {
         pageControl.translatesAutoresizingMaskIntoConstraints = false
         pageControl.pageIndicatorTintColor = .systemGray6
         pageControl.currentPageIndicatorTintColor = .black
-        pageControl.addTarget(self, action: #selector(self.pageControlTapped(_:)), for: UIControl.Event.valueChanged)
+        pageControl.addTarget(self, action: #selector(pageControlTapped(_:)), for: UIControl.Event.valueChanged)
 
         contentView.addLayoutGuide(stackViewLayout)
         contentView.addSubview(stackView)
@@ -195,47 +195,47 @@ final class EmbeddedCodesCheckoutViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        self.title = L10n.Snabble.QRCode.title
+        title = L10n.Snabble.QRCode.title
 
         if Snabble.isInFlightCheckoutPending {
-            self.navigationItem.hidesBackButton = true
+            navigationItem.hidesBackButton = true
         }
 
-        self.topWrapper?.isHidden = true
-        self.arrowWrapper?.isHidden = true
+        topWrapper?.isHidden = true
+        arrowWrapper?.isHidden = true
         setupIcon()
 
         let msg = L10n.Snabble.QRCode.message
-        self.messageLabel?.text = msg
-        self.messageLabel?.isHidden = msg.isEmpty
+        messageLabel?.text = msg
+        messageLabel?.isHidden = msg.isEmpty
 
-        let generator = QRCodeGenerator(cart: cart, config: self.qrCodeConfig, processId: process?.id)
-        self.codes = generator.generateCodes()
-        self.codeCountLabel?.isHidden = self.codes.count == 1
-        self.pageControl?.numberOfPages = self.codes.count
-        self.pageControl?.pageIndicatorTintColor = .lightGray
-        self.pageControl?.currentPageIndicatorTintColor = .label
-        self.pageControl?.isHidden = self.codes.count == 1
+        let generator = QRCodeGenerator(cart: cart, config: qrCodeConfig, processId: process?.id)
+        codes = generator.generateCodes()
+        codeCountLabel?.isHidden = codes.count == 1
+        pageControl?.numberOfPages = codes.count
+        pageControl?.pageIndicatorTintColor = .lightGray
+        pageControl?.currentPageIndicatorTintColor = .label
+        pageControl?.isHidden = codes.count == 1
 
         let id = process?.links._self.href.suffix(4) ?? "offline"
-        self.idLabel?.text = String(id)
+        idLabel?.text = String(id)
 
-        self.setButtonTitle(for: pageControl?.currentPage ?? 0)
-        self.configureViewForDevice()
+        setButtonTitle(for: pageControl?.currentPage ?? 0)
+        configureViewForDevice()
         configureScrollView()
 
-        self.scrollView?.delegate = self
+        scrollView?.delegate = self
     }
 
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
 
-        self.delegate?.track(.viewEmbeddedCodesCheckout)
+        delegate?.track(.viewEmbeddedCodesCheckout)
 
-        self.initialBrightness = UIScreen.main.brightness
-        if self.initialBrightness < 0.5 {
+        initialBrightness = UIScreen.main.brightness
+        if initialBrightness < 0.5 {
             UIScreen.main.brightness = 0.5
-            self.delegate?.track(.brightnessIncreased)
+            delegate?.track(.brightnessIncreased)
         }
     }
 
@@ -253,11 +253,11 @@ final class EmbeddedCodesCheckoutViewController: UIViewController {
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
 
-        UIScreen.main.brightness = self.initialBrightness
+        UIScreen.main.brightness = initialBrightness
 
-        if self.isMovingFromParent {
+        if isMovingFromParent {
             // user "aborted" this payment process by tapping 'Back'
-            self.cart.generateNewUUID()
+            cart.generateNewUUID()
         }
     }
 
@@ -282,26 +282,26 @@ final class EmbeddedCodesCheckoutViewController: UIViewController {
         let multiplier: CGFloat
         if device.isOneOf(smallDevices) || device.isOneOf(smallSimulators) {
             // hide project graphic + arrow
-            self.topWrapper?.isHidden = true
-            self.arrowWrapper?.isHidden = true
+            topWrapper?.isHidden = true
+            arrowWrapper?.isHidden = true
             multiplier = 0.8
         } else if device.isOneOf(mediumDevices) || device.isOneOf(mediumSimulators) {
             // hide arrow, project graphic will likely scale
-            self.arrowWrapper?.isHidden = true
+            arrowWrapper?.isHidden = true
             multiplier = 0.7
         } else {
             // all other devices: scale project graphic if needed
             multiplier = 0.6
         }
-        if let stackViewLayout = self.stackViewLayout {
-            self.maxScrollViewWidth = stackViewLayout.layoutFrame.width * multiplier
+        if let stackViewLayout = stackViewLayout {
+            maxScrollViewWidth = stackViewLayout.layoutFrame.width * multiplier
         }
     }
 
     private func configureScrollView() {
-        guard let scrollView = self.scrollView else { return }
+        guard let scrollView = scrollView else { return }
 
-        for x in 0..<self.codes.count {
+        for x in 0..<codes.count {
             if let image = qrCode(with: codes[x], fitting: maxScrollViewWidth) {
                 codeImages.append(image)
             }
@@ -310,9 +310,9 @@ final class EmbeddedCodesCheckoutViewController: UIViewController {
 
         scrollView.widthAnchor.constraint(equalToConstant: maxPageSize).isActive = true
         scrollView.heightAnchor.constraint(equalToConstant: maxPageSize).isActive = true
-        scrollView.contentSize = CGSize(width: maxPageSize * CGFloat(self.codes.count), height: scrollView.frame.height)
+        scrollView.contentSize = CGSize(width: maxPageSize * CGFloat(codes.count), height: scrollView.frame.height)
 
-        for x in 0..<self.codes.count {
+        for x in 0..<codes.count {
             let page = UIImageView()
             page.translatesAutoresizingMaskIntoConstraints = false
             page.contentMode = .scaleAspectFit
@@ -340,19 +340,19 @@ final class EmbeddedCodesCheckoutViewController: UIViewController {
     }
 
     @objc private func paidButtonTapped(_ sender: Any) {
-        if self.pageControl?.currentPage != self.codes.count - 1 {
-            self.pageControl?.currentPage += 1
+        if pageControl?.currentPage != codes.count - 1 {
+            pageControl?.currentPage += 1
             guard let page = pageControl?.currentPage else {return}//
-            self.updatePageControl(with: page)
-            self.setButtonTitle(for: page)
+            updatePageControl(with: page)
+            setButtonTitle(for: page)
         } else {
-            self.delegate?.track(.markEmbeddedCodesPaid)
-            self.cart.removeAll(endSession: true, keepBackup: true)
+            delegate?.track(.markEmbeddedCodesPaid)
+            cart.removeAll(endSession: true, keepBackup: true)
             Snabble.clearInFlightCheckout()
 
             let checkoutSteps = CheckoutStepsViewController(shop: shop, shoppingCart: cart, checkoutProcess: process)
             checkoutSteps.paymentDelegate = delegate
-            self.navigationController?.pushViewController(checkoutSteps, animated: true)
+            navigationController?.pushViewController(checkoutSteps, animated: true)
         }
     }
 
@@ -373,10 +373,11 @@ final class EmbeddedCodesCheckoutViewController: UIViewController {
     }
 
     private func updatePageControl(with page: Int) {
+        guard let scrollView = scrollView else { return }
         if page < codes.count {
             DispatchQueue.main.async {
                 UIView.animate(withDuration: 0.3) {
-                    self.scrollView?.contentOffset = CGPoint(x: CGFloat(page) * (self.scrollView?.frame.width)!, y: 0)
+                    scrollView.contentOffset = CGPoint(x: CGFloat(page) * scrollView.frame.width, y: 0)
                 }
             }
         }
