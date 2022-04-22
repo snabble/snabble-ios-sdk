@@ -20,7 +20,7 @@ final class EmbeddedCodesCheckoutViewController: UIViewController {
     private weak var pageControl: UIPageControl?
 
     private var initialBrightness: CGFloat = 0
-    private var scrollViewWidth: CGFloat = 0
+    private var maxScrollViewWidth: CGFloat = 0
     private var maxPageSize: CGFloat = 0
 
     private let cart: ShoppingCart
@@ -222,12 +222,7 @@ final class EmbeddedCodesCheckoutViewController: UIViewController {
 
         self.setButtonTitle(for: pageControl?.currentPage ?? 0)
         self.configureViewForDevice()
-
-        for x in 0..<self.codes.count {
-            if let image = qrCode(with: self.codes[x], fitting: self.maxPageSize) {
-                codeImages.append(image)
-            }
-        }
+        configureScrollView()
 
         self.scrollView?.delegate = self
     }
@@ -241,28 +236,6 @@ final class EmbeddedCodesCheckoutViewController: UIViewController {
         if self.initialBrightness < 0.5 {
             UIScreen.main.brightness = 0.5
             self.delegate?.track(.brightnessIncreased)
-        }
-    }
-
-    override func viewDidLayoutSubviews() {
-        super.viewDidLayoutSubviews()
-        guard let scrollView = self.scrollView else { return }
-
-        scrollView.widthAnchor.constraint(equalToConstant: maxPageSize).isActive = true
-        scrollView.heightAnchor.constraint(equalToConstant: maxPageSize).isActive = true
-
-        scrollView.contentSize = CGSize(width: maxPageSize * CGFloat(self.codes.count), height: scrollView.frame.height)
-        for x in 0..<self.codes.count {
-            let page = UIImageView()
-            page.translatesAutoresizingMaskIntoConstraints = false
-            page.contentMode = .scaleAspectFit
-            page.image = codeImages[x]
-            scrollView.addSubview(page)
-
-            page.widthAnchor.constraint(equalToConstant: maxPageSize).isActive = true
-            page.heightAnchor.constraint(equalToConstant: maxPageSize).isActive = true
-            page.leadingAnchor.constraint(equalTo: scrollView.leadingAnchor, constant: CGFloat(x) * maxPageSize).isActive = true
-            page.centerYAnchor.constraint(equalTo: scrollView.centerYAnchor).isActive = true
         }
     }
 
@@ -320,9 +293,37 @@ final class EmbeddedCodesCheckoutViewController: UIViewController {
             // all other devices: scale project graphic if needed
             multiplier = 0.6
         }
+        if let stackViewLayout = self.stackViewLayout {
+            self.maxScrollViewWidth = stackViewLayout.layoutFrame.width * multiplier
+        }
+    }
 
-        self.scrollViewWidth = (self.stackViewLayout?.layoutFrame.width)! * multiplier
-        self.maxPageSize = self.maxCodeSize(fitting: self.scrollViewWidth)
+    private func configureScrollView() {
+        guard let scrollView = self.scrollView else { return }
+
+        for x in 0..<self.codes.count {
+            if let image = qrCode(with: codes[x], fitting: maxScrollViewWidth) {
+                codeImages.append(image)
+            }
+        }
+        maxPageSize = maxCodeSize(for: codeImages, fitting: maxScrollViewWidth)
+
+        scrollView.widthAnchor.constraint(equalToConstant: maxPageSize).isActive = true
+        scrollView.heightAnchor.constraint(equalToConstant: maxPageSize).isActive = true
+        scrollView.contentSize = CGSize(width: maxPageSize * CGFloat(self.codes.count), height: scrollView.frame.height)
+
+        for x in 0..<self.codes.count {
+            let page = UIImageView()
+            page.translatesAutoresizingMaskIntoConstraints = false
+            page.contentMode = .scaleAspectFit
+            page.image = codeImages[x]
+            scrollView.addSubview(page)
+
+            page.widthAnchor.constraint(equalToConstant: maxPageSize).isActive = true
+            page.heightAnchor.constraint(equalToConstant: maxPageSize).isActive = true
+            page.leadingAnchor.constraint(equalTo: scrollView.leadingAnchor, constant: CGFloat(x) * maxPageSize).isActive = true
+            page.centerYAnchor.constraint(equalTo: scrollView.centerYAnchor).isActive = true
+        }
     }
 
     private func setButtonTitle(for page: Int) {
@@ -383,12 +384,10 @@ final class EmbeddedCodesCheckoutViewController: UIViewController {
 }
 
 extension EmbeddedCodesCheckoutViewController {
-    private func maxCodeSize(fitting width: CGFloat) -> CGFloat {
+    private func maxCodeSize(for images: [UIImage], fitting width: CGFloat) -> CGFloat {
         var maxWidth: CGFloat = 0
-        for code in self.codes {
-            if let img = self.qrCode(with: code, fitting: width) {
-                maxWidth = max(maxWidth, img.size.width)
-            }
+        for image in codeImages {
+            maxWidth = max(maxWidth, image.size.width)
         }
         return maxWidth
     }
