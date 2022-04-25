@@ -6,7 +6,8 @@
 
 import UIKit
 import Pulley
-import AutoLayout_Helper
+import CoreGraphics
+//import AutoLayout_Helper
 
 final class ScannerDrawerViewController: UIViewController {
     private var shoppingList: ShoppingList?
@@ -38,18 +39,20 @@ final class ScannerDrawerViewController: UIViewController {
     private let cartItemHeight: CGFloat = 50
     private let listItemHeight: CGFloat = 50
 
-    private var checkoutBar: CheckoutBar?
+    private weak var checkoutBar: CheckoutBar?
     private var previousPosition = PulleyPosition.closed
 
-    @IBOutlet private var effectView: UIVisualEffectView!
-    @IBOutlet private var handleContainer: UIView!
-    @IBOutlet private var handle: UIView!
-    @IBOutlet private var checkoutWrapper: UIView!
+    private weak var effectView: UIVisualEffectView?
+    //private var handleContainer: UIView?
+    private weak var handleView: UIView?
+    //private var checkoutWrapper: UIView?
 
-    @IBOutlet private var segmentedControl: UISegmentedControl!
-    @IBOutlet private var innerSpacer: UIView!
-    @IBOutlet private var contentView: UIView!
-    @IBOutlet private var separatorHeight: NSLayoutConstraint!
+    private weak var segmentedControl: UISegmentedControl?
+    private weak var innerSpacer: UILayoutGuide?
+    private let innerSpacerHeight: CGFloat = 14
+
+    private weak var bottomView: UIView?
+    //private var separatorHeight: NSLayoutConstraint?
 
     init(_ projectId: Identifier<Project>,
          shoppingCart: ShoppingCart
@@ -60,13 +63,101 @@ final class ScannerDrawerViewController: UIViewController {
         self.shoppingListTableVC = ScannerShoppingListViewController()
         self.shoppingCartVC = ShoppingCartTableViewController(shoppingCart)
 
-        super.init(nibName: nil, bundle: SnabbleSDKBundle.main)
+        super.init(nibName: nil, bundle: nil)
 
         SnabbleUI.registerForAppearanceChange(self)
     }
 
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
+    }
+
+    override func loadView() {
+        let contentView = UIView(frame: UIScreen.main.bounds)
+
+        let effectView = UIVisualEffectView()
+        effectView.translatesAutoresizingMaskIntoConstraints = false
+
+
+        let handleView = UIView()
+        handleView.translatesAutoresizingMaskIntoConstraints = false
+        handleView.layer.cornerRadius = 2.5
+        handleView.layer.masksToBounds = true
+        handleView.backgroundColor = .systemGray3
+        handleView.isUserInteractionEnabled = true
+        let tap = UITapGestureRecognizer(target: self, action: #selector(handleTapped(_:)))
+        handleView.addGestureRecognizer(tap)
+
+        let checkoutBar = CheckoutBar(self, shoppingCart)
+        checkoutBar.translatesAutoresizingMaskIntoConstraints = false
+
+        let innerSpacer = UILayoutGuide()
+
+        let segmentedControl = UISegmentedControl(items: [L10n.Snabble.ShoppingList.title, L10n.Snabble.ShoppingCart.title])
+        segmentedControl.translatesAutoresizingMaskIntoConstraints = false
+        segmentedControl.selectedSegmentIndex = 0
+        segmentedControl.addTarget(self, action: #selector(tabChanged(_:)), for: .valueChanged)
+
+        let separatorSpacer = UILayoutGuide()
+        let separator = UIView()
+        separator.translatesAutoresizingMaskIntoConstraints = false
+        separator.backgroundColor = .separator
+
+        let bottomView = UIView()
+        bottomView.translatesAutoresizingMaskIntoConstraints = false
+
+        contentView.addSubview(effectView)
+        contentView.addSubview(handleView)
+        contentView.addSubview(checkoutBar)
+        contentView.addLayoutGuide(innerSpacer)
+        contentView.addSubview(segmentedControl)
+        contentView.addLayoutGuide(separatorSpacer)
+        contentView.addSubview(separator)
+        contentView.addSubview(bottomView)
+
+        NSLayoutConstraint.activate([
+            effectView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor),
+            effectView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor),
+            effectView.topAnchor.constraint(equalTo: contentView.topAnchor),
+            effectView.bottomAnchor.constraint(equalTo: contentView.bottomAnchor),
+
+            handleView.widthAnchor.constraint(equalToConstant: 35),
+            handleView.centerXAnchor.constraint(equalTo: contentView.centerXAnchor),
+            handleView.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 4),
+            handleView.heightAnchor.constraint(equalToConstant: 5),
+
+            checkoutBar.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 16).usingPriority(.defaultHigh + 1),
+            checkoutBar.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -16).usingPriority(.defaultHigh + 1),
+            checkoutBar.topAnchor.constraint(equalTo: handleView.bottomAnchor, constant: 4),
+            innerSpacer.leadingAnchor.constraint(equalTo: contentView.leadingAnchor),
+            innerSpacer.trailingAnchor.constraint(equalTo: contentView.trailingAnchor),
+            innerSpacer.topAnchor.constraint(equalTo: checkoutBar.bottomAnchor),
+            innerSpacer.heightAnchor.constraint(equalToConstant: innerSpacerHeight).usingPriority(.defaultHigh),
+            segmentedControl.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 16),
+            segmentedControl.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -16),
+            segmentedControl.topAnchor.constraint(equalTo: innerSpacer.bottomAnchor),
+            separatorSpacer.topAnchor.constraint(equalTo: segmentedControl.bottomAnchor),
+            separatorSpacer.heightAnchor.constraint(equalToConstant: 16).usingPriority(.defaultHigh),
+            separatorSpacer.leadingAnchor.constraint(equalTo: contentView.leadingAnchor),
+            separatorSpacer.trailingAnchor.constraint(equalTo: contentView.trailingAnchor),
+            separator.heightAnchor.constraint(equalToConstant: 1 / UIScreen.main.scale).usingPriority(.defaultHigh),
+            separator.bottomAnchor.constraint(equalTo: separatorSpacer.bottomAnchor),
+            separator.leadingAnchor.constraint(equalTo: separatorSpacer.leadingAnchor),
+            separator.trailingAnchor.constraint(equalTo: separatorSpacer.trailingAnchor),
+
+            bottomView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor),
+            bottomView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor),
+            bottomView.topAnchor.constraint(equalTo: separator.bottomAnchor),
+            bottomView.bottomAnchor.constraint(equalTo: contentView.bottomAnchor)
+        ])
+
+
+        self.view = contentView
+        self.effectView = effectView
+        self.checkoutBar = checkoutBar
+        self.innerSpacer = innerSpacer
+        self.segmentedControl = segmentedControl
+        self.bottomView = bottomView
     }
 
     override func viewDidLoad() {
@@ -78,30 +169,9 @@ final class ScannerDrawerViewController: UIViewController {
         self.shoppingCartVC.view.backgroundColor = .clear
         setupBlurEffect()
 
-        handle.layer.cornerRadius = 2.5
-        handle.layer.masksToBounds = true
-        handle.backgroundColor = .systemGray3
-        handle.isUserInteractionEnabled = true
-        let tap = UITapGestureRecognizer(target: self, action: #selector(handleTapped(_:)))
-        handle.addGestureRecognizer(tap)
+        checkoutBar?.shoppingCartDelegate = shoppingCartDelegate
 
-        segmentedControl.setTitle(L10n.Snabble.ShoppingList.title, forSegmentAt: 0)
-        segmentedControl.setTitle(L10n.Snabble.ShoppingCart.title, forSegmentAt: 1)
-        segmentedControl.selectedSegmentIndex = 0
-        segmentedControl.addTarget(self, action: #selector(tabChanged(_:)), for: .valueChanged)
-
-        let checkoutBar = CheckoutBar(self, shoppingCart)
-        checkoutBar.shoppingCartDelegate = shoppingCartDelegate
-        checkoutBar.translatesAutoresizingMaskIntoConstraints = false
-        self.checkoutWrapper.addSubview(checkoutBar)
-        NSLayoutConstraint.activate(
-            checkoutBar.constraintsForAnchoringTo(boundsOf: checkoutWrapper)
-        )
-        self.checkoutBar = checkoutBar
-
-        self.separatorHeight.constant = 1 / UIScreen.main.scale
-
-        self.switchTo(shoppingListTableVC, in: contentView, duration: 0)
+        self.switchTo(shoppingListTableVC, in: bottomView, duration: 0)
 
         let nc = NotificationCenter.default
         nc.addObserver(self, selector: #selector(self.shoppingCartUpdated(_:)), name: .snabbleCartUpdated, object: nil)
@@ -129,7 +199,7 @@ final class ScannerDrawerViewController: UIViewController {
     }
 
     private func setupBlurEffect() {
-        self.effectView.effect = UIBlurEffect(style: traitCollection.userInterfaceStyle == .light ? .extraLight : .dark)
+        self.effectView?.effect = UIBlurEffect(style: traitCollection.userInterfaceStyle == .light ? .extraLight : .dark)
     }
 
     @objc private func handleTapped(_ gesture: UITapGestureRecognizer) {
@@ -140,11 +210,9 @@ final class ScannerDrawerViewController: UIViewController {
         selectSegment(control.selectedSegmentIndex)
     }
 
-    func switchTo(_ destination: UIViewController, in view: UIView, duration: TimeInterval = 0.15) {
-        guard destination != children.first else {
-            return
-        }
-
+    func switchTo(_ destination: UIViewController, in view: UIView?, duration: TimeInterval = 0.15) {
+        guard destination != children.first else { return }
+        guard let view = view else { return }
         if let source = self.children.first {
             addChild(destination)
             source.willMove(toParent: nil)
@@ -166,10 +234,10 @@ final class ScannerDrawerViewController: UIViewController {
 
         destination.view.translatesAutoresizingMaskIntoConstraints = false
         NSLayoutConstraint.activate([
-            destination.view.leadingAnchor.constraint(equalTo: contentView.leadingAnchor),
-            destination.view.trailingAnchor.constraint(equalTo: contentView.trailingAnchor),
-            destination.view.topAnchor.constraint(equalTo: contentView.topAnchor),
-            destination.view.bottomAnchor.constraint(equalTo: contentView.bottomAnchor)
+            destination.view.leadingAnchor.constraint(equalTo: bottomView!.leadingAnchor),
+            destination.view.trailingAnchor.constraint(equalTo: bottomView!.trailingAnchor),
+            destination.view.topAnchor.constraint(equalTo: bottomView!.topAnchor),
+            destination.view.bottomAnchor.constraint(equalTo: bottomView!.bottomAnchor)
         ])
     }
 
@@ -187,9 +255,12 @@ final class ScannerDrawerViewController: UIViewController {
     private func setupStackView(_ list: ShoppingList?, _ cart: ShoppingCart?) {
         let noList = list == nil
         segmentedControl?.isHidden = noList
-        innerSpacer?.isHidden = noList
+        //innerSpacer?.isHidden = noList
         if noList {
+            innerSpacer?.heightAnchor.constraint(equalToConstant: 0).isActive = true
             selectSegment(1)
+        } else {
+            innerSpacer?.heightAnchor.constraint(equalToConstant: innerSpacerHeight).isActive = true
         }
     }
 
@@ -198,7 +269,7 @@ final class ScannerDrawerViewController: UIViewController {
     }
 
     func selectSegment(_ segment: Int) {
-        segmentedControl.selectedSegmentIndex = segment
+        segmentedControl?.selectedSegmentIndex = segment
         let activeVC: UIViewController
         if segment == 0 {
             activeVC = self.shoppingListTableVC
@@ -206,7 +277,7 @@ final class ScannerDrawerViewController: UIViewController {
             activeVC = self.shoppingCartVC
         }
 
-        self.switchTo(activeVC, in: contentView)
+        self.switchTo(activeVC, in: bottomView)
     }
 
     @objc private func shoppingCartUpdated(_ notification: Notification) {
