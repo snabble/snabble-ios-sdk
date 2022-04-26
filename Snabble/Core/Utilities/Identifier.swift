@@ -7,7 +7,7 @@
 import Foundation
 
 public protocol Identifiable {
-    associatedtype RawIdentifier: Codable & Hashable = String
+    associatedtype RawIdentifier: Codable, Hashable = String
     var id: Identifier<Self> { get }
 }
 
