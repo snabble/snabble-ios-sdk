@@ -8,33 +8,20 @@ import UIKit
 import DeviceKit
 
 final class EmbeddedCodesCheckoutViewController: UIViewController {
-    @IBOutlet private var topWrapper: UIView!
-    @IBOutlet private var topIcon: UIImageView!
-    @IBOutlet private var iconHeight: NSLayoutConstraint!
-
-    @IBOutlet private var arrowWrapper: UIView!
-
-    @IBOutlet private var idWrapper: UIView!
-    @IBOutlet private var idLabel: UILabel!
-
-    @IBOutlet private var messageWrapper: UIView!
-    @IBOutlet private var messageLabel: UILabel!
-
-    @IBOutlet private var codeCountWrapper: UIView!
-    @IBOutlet private var codeCountLabel: UILabel!
-
-    @IBOutlet private var paidButton: UIButton!
-
-    @IBOutlet private var pageControlWrapper: UIView!
-    @IBOutlet private var pageControl: UIPageControl!
-
-    @IBOutlet private var codeContainer: UIView!
-    @IBOutlet private var codeContainerWidth: NSLayoutConstraint!
-
-    @IBOutlet private var collectionView: UICollectionView!
-    @IBOutlet private var collectionViewWidth: NSLayoutConstraint!
+    private weak var stackViewLayout: UILayoutGuide?
+    private weak var topWrapper: UIView?
+    private weak var topIcon: UIImageView?
+    private weak var arrowWrapper: UIView?
+    private weak var idLabel: UILabel?
+    private weak var messageLabel: UILabel?
+    private weak var codeCountLabel: UILabel?
+    private weak var scrollView: UIScrollView?
+    private weak var paidButton: UIButton?
+    private weak var pageControl: UIPageControl?
 
     private var initialBrightness: CGFloat = 0
+    private var maxScrollViewWidth: CGFloat = 0
+    private var maxPageSize: CGFloat = 0
 
     private let cart: ShoppingCart
     private let shop: Shop
@@ -43,7 +30,27 @@ final class EmbeddedCodesCheckoutViewController: UIViewController {
     private var qrCodeConfig: QRCodeConfig
 
     private var codes = [String]()
-    private var itemSize = CGSize.zero
+    private var codeImages = [UIImage]()
+
+    private var customLabel: UILabel {
+        let label = UILabel()
+        label.translatesAutoresizingMaskIntoConstraints = false
+        label.font = UIFont.systemFont(ofSize: 17)
+        label.textColor = .label
+        label.textAlignment = .natural
+        label.setContentHuggingPriority(.defaultLow + 1, for: .horizontal)
+        label.setContentHuggingPriority(.defaultLow + 1, for: .vertical)
+        return label
+    }
+
+    private var iconImage: UIImageView {
+        let imageView = UIImageView()
+        imageView.translatesAutoresizingMaskIntoConstraints = false
+        imageView.contentMode = .scaleAspectFit
+        imageView.setContentHuggingPriority(.defaultLow + 1, for: .horizontal)
+        imageView.setContentHuggingPriority(.defaultLow + 2, for: .vertical)
+        return imageView
+    }
 
     public init(shop: Shop,
                 checkoutProcess: CheckoutProcess?,
@@ -54,82 +61,181 @@ final class EmbeddedCodesCheckoutViewController: UIViewController {
         self.shop = shop
         self.qrCodeConfig = qrCodeConfig
 
-        super.init(nibName: nil, bundle: SnabbleSDKBundle.main)
-
-        self.title = L10n.Snabble.QRCode.title
+        super.init(nibName: nil, bundle: nil)
     }
 
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
 
+    override public func loadView() {
+        let contentView = UIView(frame: UIScreen.main.bounds)
+        contentView.backgroundColor = .systemBackground
+
+        let paidButton = UIButton(type: .system)
+        paidButton.translatesAutoresizingMaskIntoConstraints = false
+        paidButton.titleLabel?.font = UIFont.systemFont(ofSize: 17, weight: .semibold)
+        paidButton.makeSnabbleButton()
+        paidButton.setTitle(L10n.Snabble.QRCode.didPay, for: .normal)
+        paidButton.alpha = 0
+        paidButton.isUserInteractionEnabled = false
+        paidButton.addTarget(self, action: #selector(paidButtonTapped(_:)), for: .touchUpInside)
+
+        let stackViewLayout = UILayoutGuide()
+
+        let stackView = UIStackView()
+        stackView.translatesAutoresizingMaskIntoConstraints = false
+        stackView.axis = .vertical
+        stackView.distribution = .equalSpacing
+        stackView.alignment = .center
+        stackView.spacing = 0
+
+        let topWrapper = UIView()
+        topWrapper.translatesAutoresizingMaskIntoConstraints = false
+
+        let topIcon = iconImage
+
+        let messageLabel = customLabel
+
+        let arrowWrapper = UIView()
+        arrowWrapper.translatesAutoresizingMaskIntoConstraints = false
+
+        let arrowIcon = iconImage
+        arrowIcon.image = Asset.SnabbleSDK.arrowUp.image
+
+        let codeCountLabel = customLabel
+
+        let scrollView = UIScrollView()
+        scrollView.translatesAutoresizingMaskIntoConstraints = false
+        scrollView.isPagingEnabled = true
+        scrollView.showsHorizontalScrollIndicator = false
+        scrollView.bounces = false
+
+        let idLabel = customLabel
+        idLabel.font = UIFont.systemFont(ofSize: 13)
+
+        let codeContainer = UIView()
+        codeContainer.translatesAutoresizingMaskIntoConstraints = true
+
+        let pageControl = UIPageControl()
+        pageControl.translatesAutoresizingMaskIntoConstraints = false
+        pageControl.pageIndicatorTintColor = .systemGray6
+        pageControl.currentPageIndicatorTintColor = .black
+        pageControl.addTarget(self, action: #selector(pageControlTapped(_:)), for: UIControl.Event.valueChanged)
+
+        contentView.addLayoutGuide(stackViewLayout)
+        contentView.addSubview(stackView)
+        contentView.addSubview(paidButton)
+
+        stackView.addArrangedSubview(topWrapper)
+        stackView.addArrangedSubview(messageLabel)
+        stackView.addArrangedSubview(arrowWrapper)
+        stackView.addArrangedSubview(codeCountLabel)
+        stackView.addArrangedSubview(codeContainer)
+        stackView.addArrangedSubview(idLabel)
+        stackView.addArrangedSubview(pageControl)
+
+        topWrapper.addSubview(topIcon)
+        arrowWrapper.addSubview(arrowIcon)
+        codeContainer.addSubview(scrollView)
+
+        NSLayoutConstraint.activate([
+            paidButton.heightAnchor.constraint(equalToConstant: 48),
+            paidButton.bottomAnchor.constraint(equalTo: contentView.safeAreaLayoutGuide.bottomAnchor, constant: -16),
+            paidButton.leadingAnchor.constraint(equalTo: contentView.safeAreaLayoutGuide.leadingAnchor, constant: 16),
+            paidButton.trailingAnchor.constraint(equalTo: contentView.safeAreaLayoutGuide.trailingAnchor, constant: -16),
+
+            stackViewLayout.topAnchor.constraint(equalTo: contentView.safeAreaLayoutGuide.topAnchor),
+            stackViewLayout.leadingAnchor.constraint(equalTo: contentView.safeAreaLayoutGuide.leadingAnchor, constant: 16),
+            stackViewLayout.trailingAnchor.constraint(equalTo: contentView.safeAreaLayoutGuide.trailingAnchor, constant: -16),
+            stackViewLayout.bottomAnchor.constraint(equalTo: paidButton.topAnchor),
+
+            stackView.leadingAnchor.constraint(equalTo: stackViewLayout.leadingAnchor),
+            stackView.trailingAnchor.constraint(equalTo: stackViewLayout.trailingAnchor),
+            stackView.centerYAnchor.constraint(equalTo: stackViewLayout.centerYAnchor),
+            stackView.topAnchor.constraint(greaterThanOrEqualTo: stackViewLayout.topAnchor),
+            stackView.bottomAnchor.constraint(lessThanOrEqualTo: stackViewLayout.bottomAnchor),
+
+            topIcon.centerXAnchor.constraint(equalTo: topWrapper.centerXAnchor),
+            topIcon.centerYAnchor.constraint(equalTo: topWrapper.centerYAnchor),
+            topIcon.topAnchor.constraint(equalTo: topWrapper.topAnchor, constant: 16),
+            topIcon.bottomAnchor.constraint(equalTo: topWrapper.bottomAnchor, constant: -16),
+
+            messageLabel.heightAnchor.constraint(equalToConstant: 25),
+
+            arrowWrapper.heightAnchor.constraint(equalToConstant: 30),
+            arrowIcon.leadingAnchor.constraint(equalTo: arrowWrapper.leadingAnchor),
+            arrowIcon.trailingAnchor.constraint(equalTo: arrowWrapper.trailingAnchor),
+            arrowIcon.topAnchor.constraint(equalTo: arrowWrapper.topAnchor),
+            arrowIcon.bottomAnchor.constraint(equalTo: arrowWrapper.bottomAnchor),
+
+            codeCountLabel.heightAnchor.constraint(equalToConstant: 25),
+            scrollView.leadingAnchor.constraint(equalTo: codeContainer.leadingAnchor),
+            scrollView.trailingAnchor.constraint(equalTo: codeContainer.trailingAnchor),
+            scrollView.topAnchor.constraint(equalTo: codeContainer.topAnchor, constant: 16),
+            scrollView.bottomAnchor.constraint(equalTo: codeContainer.bottomAnchor, constant: -16),
+
+            idLabel.heightAnchor.constraint(equalToConstant: 21),
+            pageControl.heightAnchor.constraint(equalToConstant: 37)
+        ])
+
+        self.view = contentView
+        self.stackViewLayout = stackViewLayout
+        self.topWrapper = topWrapper
+        self.topIcon = topIcon
+        self.messageLabel = messageLabel
+        self.arrowWrapper = arrowWrapper
+        self.codeCountLabel = codeCountLabel
+        self.scrollView = scrollView
+        self.idLabel = idLabel
+        self.pageControl = pageControl
+        self.paidButton = paidButton
+    }
+
     override func viewDidLoad() {
         super.viewDidLoad()
 
+        title = L10n.Snabble.QRCode.title
+
         if Snabble.isInFlightCheckoutPending {
-            self.navigationItem.hidesBackButton = true
+            navigationItem.hidesBackButton = true
         }
 
-        self.paidButton.makeSnabbleButton()
-        self.paidButton.setTitle(L10n.Snabble.QRCode.didPay, for: .normal)
-        self.paidButton.alpha = 0
-        self.paidButton.isUserInteractionEnabled = false
-
-        self.topWrapper.isHidden = true
-        self.arrowWrapper.isHidden = true
+        topWrapper?.isHidden = true
+        arrowWrapper?.isHidden = true
         setupIcon()
 
         let msg = L10n.Snabble.QRCode.message
-        self.messageLabel.text = msg
-        self.messageWrapper.isHidden = msg.isEmpty
+        messageLabel?.text = msg
+        messageLabel?.isHidden = msg.isEmpty
 
-        let nib = UINib(nibName: "QRCodeCell", bundle: SnabbleSDKBundle.main)
-        self.collectionView.register(nib, forCellWithReuseIdentifier: "qrCodeCell")
-
-        let generator = QRCodeGenerator(cart: cart, config: self.qrCodeConfig, processId: process?.id)
-        self.codes = generator.generateCodes()
-
-        self.codeCountWrapper.isHidden = self.codes.count == 1
-
-        self.pageControl.numberOfPages = self.codes.count
-        self.pageControl.pageIndicatorTintColor = .systemGray6
-        self.pageControl.currentPageIndicatorTintColor = .label
-        self.pageControlWrapper.isHidden = self.codes.count == 1
-
-        self.collectionView.dataSource = self
-        self.collectionView.delegate = self
+        let generator = QRCodeGenerator(cart: cart, config: qrCodeConfig, processId: process?.id)
+        codes = generator.generateCodes()
+        codeCountLabel?.isHidden = codes.count == 1
+        pageControl?.numberOfPages = codes.count
+        pageControl?.pageIndicatorTintColor = .lightGray
+        pageControl?.currentPageIndicatorTintColor = .label
+        pageControl?.isHidden = codes.count == 1
 
         let id = process?.links._self.href.suffix(4) ?? "offline"
-        self.idLabel.text = String(id)
+        idLabel?.text = String(id)
 
-        self.setButtonTitle()
-        self.configureViewForDevice()
+        setButtonTitle(for: pageControl?.currentPage ?? 0)
+        configureViewForDevice()
+        configureScrollView()
+
+        scrollView?.delegate = self
     }
 
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
 
-        self.delegate?.track(.viewEmbeddedCodesCheckout)
+        delegate?.track(.viewEmbeddedCodesCheckout)
 
-        self.initialBrightness = UIScreen.main.brightness
-        if self.initialBrightness < 0.5 {
+        initialBrightness = UIScreen.main.brightness
+        if initialBrightness < 0.5 {
             UIScreen.main.brightness = 0.5
-            self.delegate?.track(.brightnessIncreased)
-        }
-    }
-
-    override func viewDidLayoutSubviews() {
-        super.viewDidLayoutSubviews()
-
-        let frameWidth = self.codeContainer.frame.width
-        let maxCodeSize = self.maxCodeSize(fitting: frameWidth)
-
-        self.collectionViewWidth.constant = maxCodeSize
-
-        if maxCodeSize != self.itemSize.width {
-            self.itemSize = CGSize(width: maxCodeSize, height: maxCodeSize)
-            self.collectionView.collectionViewLayout.invalidateLayout()
-            self.collectionView.reloadData()
+            delegate?.track(.brightnessIncreased)
         }
     }
 
@@ -138,21 +244,20 @@ final class EmbeddedCodesCheckoutViewController: UIViewController {
 
         Timer.scheduledTimer(withTimeInterval: 2, repeats: false) { _ in
             UIView.animate(withDuration: 0.2) {
-                self.paidButton.alpha = 1
+                self.paidButton?.alpha = 1
             }
-            self.paidButton.isUserInteractionEnabled = true
+            self.paidButton?.isUserInteractionEnabled = true
         }
     }
 
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
 
-        UIScreen.main.brightness = self.initialBrightness
+        UIScreen.main.brightness = initialBrightness
 
-        Snabble.clearInFlightCheckout()
-        if self.isMovingFromParent {
+        if isMovingFromParent {
             // user "aborted" this payment process by tapping 'Back'
-            self.cart.generateNewUUID()
+            cart.generateNewUUID()
         }
     }
 
@@ -174,85 +279,117 @@ final class EmbeddedCodesCheckoutViewController: UIViewController {
         let mediumSimulators = mediumDevices.map { Device.simulator($0) }
 
         let device = Device.current
-
-        self.codeContainerWidth.isActive = false
-
         let multiplier: CGFloat
         if device.isOneOf(smallDevices) || device.isOneOf(smallSimulators) {
             // hide project graphic + arrow
-            self.topWrapper.isHidden = true
-            self.arrowWrapper.isHidden = true
+            topWrapper?.isHidden = true
+            arrowWrapper?.isHidden = true
             multiplier = 0.8
         } else if device.isOneOf(mediumDevices) || device.isOneOf(mediumSimulators) {
             // hide arrow, project graphic will likely scale
-            self.arrowWrapper.isHidden = true
+            arrowWrapper?.isHidden = true
             multiplier = 0.7
         } else {
             // all other devices: scale project graphic if needed
             multiplier = 0.6
         }
-
-        NSLayoutConstraint.activate([
-            self.codeContainer.widthAnchor.constraint(equalTo: self.view.widthAnchor, multiplier: multiplier, constant: 0)
-        ])
+        if let stackViewLayout = stackViewLayout {
+            maxScrollViewWidth = stackViewLayout.layoutFrame.width * multiplier
+        }
     }
 
-    private func setButtonTitle() {
-        var title = ""
-        if self.pageControl.currentPage == self.codes.count - 1 {
+    private func configureScrollView() {
+        guard let scrollView = scrollView else { return }
+
+        for x in 0..<codes.count {
+            if let image = qrCode(with: codes[x], fitting: maxScrollViewWidth) {
+                codeImages.append(image)
+            }
+        }
+        maxPageSize = maxCodeSize(for: codeImages, fitting: maxScrollViewWidth)
+
+        scrollView.widthAnchor.constraint(equalToConstant: maxPageSize).isActive = true
+        scrollView.heightAnchor.constraint(equalToConstant: maxPageSize).isActive = true
+        scrollView.contentSize = CGSize(width: maxPageSize * CGFloat(codes.count), height: scrollView.frame.height)
+
+        for x in 0..<codes.count {
+            let page = UIImageView()
+            page.translatesAutoresizingMaskIntoConstraints = false
+            page.contentMode = .scaleAspectFit
+            page.image = codeImages[x]
+            scrollView.addSubview(page)
+
+            page.widthAnchor.constraint(equalToConstant: maxPageSize).isActive = true
+            page.heightAnchor.constraint(equalToConstant: maxPageSize).isActive = true
+            page.leadingAnchor.constraint(equalTo: scrollView.leadingAnchor, constant: CGFloat(x) * maxPageSize).isActive = true
+            page.centerYAnchor.constraint(equalTo: scrollView.centerYAnchor).isActive = true
+        }
+    }
+
+    private func setButtonTitle(for page: Int) {
+        let title: String
+        if page == codes.count - 1 {
             title = L10n.Snabble.QRCode.didPay
         } else {
-            title = L10n.Snabble.QRCode.nextCode(self.pageControl.currentPage + 2, self.codes.count)
+            title = L10n.Snabble.QRCode.nextCode(page + 2, codes.count)
         }
-        self.paidButton.setTitle(title, for: .normal)
+        paidButton?.setTitle(title, for: .normal)
 
-        let codeXofY = L10n.Snabble.QRCode.codeXofY(self.pageControl.currentPage + 1, self.codes.count)
-        self.codeCountLabel.text = codeXofY
+        let codeXofY = L10n.Snabble.QRCode.codeXofY(page + 1, codes.count)
+        codeCountLabel?.text = codeXofY
     }
 
-    @IBAction private func paidButtonTapped(_ sender: UIButton) {
-        if self.pageControl.currentPage != self.codes.count - 1 {
-            self.pageControl.currentPage += 1
-            let indexPath = IndexPath(item: pageControl.currentPage, section: 0)
-            self.collectionView.scrollToItem(at: indexPath, at: .left, animated: true)
-
-            self.setButtonTitle()
+    @objc private func paidButtonTapped(_ sender: Any) {
+        if pageControl?.currentPage != codes.count - 1 {
+            pageControl?.currentPage += 1
+            guard let page = pageControl?.currentPage else {return}//
+            updatePageControl(with: page)
+            setButtonTitle(for: page)
         } else {
-            self.delegate?.track(.markEmbeddedCodesPaid)
-            self.cart.removeAll(endSession: true, keepBackup: true)
+            delegate?.track(.markEmbeddedCodesPaid)
+            cart.removeAll(endSession: true, keepBackup: true)
+            Snabble.clearInFlightCheckout()
 
             let checkoutSteps = CheckoutStepsViewController(shop: shop, shoppingCart: cart, checkoutProcess: process)
             checkoutSteps.paymentDelegate = delegate
-            self.navigationController?.pushViewController(checkoutSteps, animated: true)
+            navigationController?.pushViewController(checkoutSteps, animated: true)
         }
     }
 
     private func setupIcon() {
         SnabbleUI.getAsset(.checkoutOffline, bundlePath: "Checkout/\(SnabbleUI.project.id)/checkout-offline") { img in
             if let img = img {
-                self.topIcon.image = img
-                self.iconHeight.constant = img.size.height
-                self.topWrapper.isHidden = false
-                self.arrowWrapper.isHidden = false
+                self.topIcon?.image = img
+                self.topIcon?.heightAnchor.constraint(equalToConstant: img.size.height).usingPriority(.required - 1).isActive = true
+                self.topWrapper?.isHidden = false
+                self.arrowWrapper?.isHidden = false
+            }
+        }
+    }
+
+    @objc private func pageControlTapped(_ pageControl: UIPageControl) {
+        updatePageControl(with: pageControl.currentPage)
+        setButtonTitle(for: pageControl.currentPage)
+    }
+
+    private func updatePageControl(with page: Int) {
+        guard let scrollView = scrollView else { return }
+        if page < codes.count {
+            DispatchQueue.main.async {
+                UIView.animate(withDuration: 0.3) {
+                    scrollView.contentOffset = CGPoint(x: CGFloat(page) * scrollView.frame.width, y: 0)
+                }
             }
         }
     }
 }
 
 extension EmbeddedCodesCheckoutViewController {
-    private func qrCode(with code: String) -> UIImage? {
-        // Log.debug("QR Code content:\n\(code)")
-        return self.qrCode(with: code, fitting: self.collectionView.frame.width)
-    }
-
-    private func maxCodeSize(fitting width: CGFloat) -> CGFloat {
+    private func maxCodeSize(for images: [UIImage], fitting width: CGFloat) -> CGFloat {
         var maxWidth: CGFloat = 0
-        for code in self.codes {
-            if let img = self.qrCode(with: code, fitting: width) {
-                maxWidth = max(maxWidth, img.size.width)
-            }
+        for image in codeImages {
+            maxWidth = max(maxWidth, image.size.width)
         }
-
         return maxWidth
     }
 
@@ -268,37 +405,9 @@ extension EmbeddedCodesCheckoutViewController {
     }
 }
 
-extension EmbeddedCodesCheckoutViewController: UICollectionViewDataSource, UICollectionViewDelegate, UICollectionViewDelegateFlowLayout {
-    public func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return self.codes.count
-    }
-
-    public func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        // swiftlint:disable:next force_cast
-        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "qrCodeCell", for: indexPath) as! QRCodeCell
-
-        let img = self.qrCode(with: self.codes[indexPath.row])
-        cell.setImage(img)
-
-        return cell
-    }
-
-    public func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
-        return self.itemSize
-    }
-
-    @IBAction private func pageControlTapped(_ pageControl: UIPageControl) {
-        if pageControl.currentPage < self.codes.count {
-            let indexPath = IndexPath(item: pageControl.currentPage, section: 0)
-            self.collectionView.scrollToItem(at: indexPath, at: .left, animated: true)
-        }
-        self.setButtonTitle()
-    }
-
-    // adjust the page control when the scrolling ends
-    public func scrollViewDidEndDecelerating(_ scrollView: UIScrollView) {
-        let newPage = Int((scrollView.contentOffset.x + self.itemSize.width / 2) / self.itemSize.width)
-        self.pageControl.currentPage = newPage
-        self.setButtonTitle()
+extension EmbeddedCodesCheckoutViewController: UIScrollViewDelegate {
+    func scrollViewDidScroll(_ scrollView: UIScrollView) {
+        pageControl?.currentPage = scrollView.currentPage
+        setButtonTitle(for: scrollView.currentPage)
     }
 }

@@ -116,6 +116,8 @@
 
 "Snabble.paydirekt.savedAuthorization" = "You've successfully authorized Snabble for paydirekt. To remove this authorization, you need to log in to your paydirekt account. If you do not want to use this payment method anymore, you can remove it here.";
 
+"Snabble.paydirekt.title" = "paydirekt";
+
 /* SECTION: SnabbleAndroid */
 "Snabble.Payment.aborted" = "Payment process was cancelled";
 

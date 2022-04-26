@@ -163,7 +163,7 @@ extension PaymentMethodListViewController {
             case .teleCashCreditCard:
                 editVC = TeleCashCreditCardEditViewController(detail, self.analyticsDelegate)
             case .paydirektAuthorization:
-                editVC = PaydirektEditViewController(detail, self.analyticsDelegate)
+                editVC = PaydirektEditViewController(detail, with: self.analyticsDelegate)
             case .payoneCreditCard:
                 editVC = PayoneCreditCardEditViewController(detail, self.analyticsDelegate)
             case .tegutEmployeeCard, .leinweberCustomerNumber:
@@ -171,9 +171,8 @@ extension PaymentMethodListViewController {
             case .datatransAlias, .datatransCardAlias:
                 editVC = Snabble.methodRegistry.create(detail: detail, analyticsDelegate: self.analyticsDelegate)
             }
-
             if let controller = editVC {
-                navigationController?.pushViewController(controller, animated: true)
+                self.navigationController?.pushViewController(controller, animated: true)
             }
         }
     }

@@ -116,6 +116,8 @@
 
 "Snabble.paydirekt.savedAuthorization" = "Du hast die Snabble-App erfolgreich für paydirekt autorisiert. Um dies rückgängig zu machen, musst du dich bei deinem paydirekt-Konto auf der Webseite anmelden. Möchtest du paydirekt nicht mehr als Bezahlmethode angezeigt bekommen, kannst du sie hier einfach entfernen.";
 
+"Snabble.paydirekt.title" = "paydirekt";
+
 /* SECTION: SnabbleAndroid */
 "Snabble.Payment.aborted" = "Der Bezahlvorgang wurde abgebrochen";
 

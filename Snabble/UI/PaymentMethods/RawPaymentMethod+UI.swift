@@ -68,7 +68,7 @@ extension RawPaymentMethod {
         case .deDirectDebit:
             return SepaEditViewController(nil, analyticsDelegate)
         case .paydirektOneKlick:
-            return PaydirektEditViewController(nil, analyticsDelegate)
+            return PaydirektEditViewController(nil, with: analyticsDelegate)
         case .creditCardMastercard, .creditCardVisa, .creditCardAmericanExpress:
             return creditCardEditViewController(projectId, analyticsDelegate)
         case .qrCodePOS, .qrCodeOffline, .externalBilling, .customerCardPOS, .gatekeeperTerminal, .applePay:

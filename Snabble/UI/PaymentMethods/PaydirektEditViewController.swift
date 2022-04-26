@@ -35,13 +35,13 @@ private enum RedirectStatus: String {
 }
 
 public final class PaydirektEditViewController: UIViewController {
-    @IBOutlet private var webViewWrapper: UIView!
-    @IBOutlet private var displayView: UIView!
-    @IBOutlet private var displayLabel: UILabel!
-    @IBOutlet private var openButton: UIButton!
-    @IBOutlet private var deleteButton: UIButton!
+    private weak var webViewWrapper: UIView?
+    private weak var displayView: UIView?
+    private weak var displayLabel: UILabel?
+    private weak var openButton: UIButton?
+    private weak var deleteButton: UIButton?
 
-    private var webView: WKWebView?
+    private weak var webView: WKWebView?
     private var detail: PaymentMethodDetail?
     private weak var analyticsDelegate: AnalyticsDelegate?
     private var clientAuthorization: String?
@@ -56,42 +56,105 @@ public final class PaydirektEditViewController: UIViewController {
         redirectUrlAfterFailure: RedirectStatus.failure.url
     )
 
-    public init(_ detail: PaymentMethodDetail?, _ analyticsDelegate: AnalyticsDelegate?) {
+    public init(_ detail: PaymentMethodDetail?, with analyticsDelegate: AnalyticsDelegate?) {
         self.detail = detail
         self.analyticsDelegate = analyticsDelegate
-
-        super.init(nibName: nil, bundle: SnabbleSDKBundle.main)
-
-        self.title = "paydirekt"
+        super.init(nibName: nil, bundle: nil)
     }
 
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
 
+    override public func loadView() {
+        let view = UIView(frame: UIScreen.main.bounds)
+        view.backgroundColor = .systemBackground
+
+        let webViewWrapper = UIView()
+        webViewWrapper.translatesAutoresizingMaskIntoConstraints = false
+        let webView = self.addWebView(to: webViewWrapper)
+
+        let displayView = UIView()
+        displayView.translatesAutoresizingMaskIntoConstraints = false
+
+        let displayLabel = UILabel()
+        displayLabel.translatesAutoresizingMaskIntoConstraints = false
+        displayLabel.font = UIFont.systemFont(ofSize: 17)
+        displayLabel.textColor = .label
+        displayLabel.textAlignment = .natural
+        displayLabel.numberOfLines = 0
+        displayLabel.text = L10n.Snabble.Paydirekt.savedAuthorization
+
+        let openButton = UIButton(type: .system)
+        openButton.translatesAutoresizingMaskIntoConstraints = false
+        openButton.isUserInteractionEnabled = true
+        openButton.titleLabel?.font = UIFont.systemFont(ofSize: 15)
+        openButton.setTitleColor(.link, for: .normal)
+        openButton.setTitle(L10n.Snabble.Paydirekt.gotoWebsite, for: .normal)
+        openButton.addTarget(self, action: #selector(openButtonTapped(_:)), for: .touchUpInside)
+
+        let deleteButton = UIButton(type: .system)
+        deleteButton.translatesAutoresizingMaskIntoConstraints = false
+        deleteButton.titleLabel?.font = UIFont.systemFont(ofSize: 17, weight: .semibold)
+        deleteButton.makeSnabbleButton()
+        deleteButton.isUserInteractionEnabled = true
+        deleteButton.setTitle(L10n.Snabble.Paydirekt.deleteAuthorization, for: .normal)
+        deleteButton.addTarget(self, action: #selector(deleteTapped(_:)), for: .touchUpInside)
+
+        view.addSubview(webViewWrapper)
+        view.addSubview(displayView)
+
+        displayView.addSubview(displayLabel)
+        displayView.addSubview(openButton)
+        displayView.addSubview(deleteButton)
+
+        NSLayoutConstraint.activate([
+            webViewWrapper.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
+            webViewWrapper.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor),
+            webViewWrapper.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor),
+            webViewWrapper.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor),
+
+            displayView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
+            displayView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor),
+            displayView.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor),
+            displayView.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor),
+
+            displayLabel.leadingAnchor.constraint(equalTo: displayView.leadingAnchor, constant: 16),
+            displayLabel.trailingAnchor.constraint(equalTo: displayView.trailingAnchor, constant: -16),
+            displayLabel.topAnchor.constraint(equalTo: displayView.topAnchor, constant: 16),
+
+            openButton.leadingAnchor.constraint(equalTo: displayLabel.leadingAnchor),
+            openButton.topAnchor.constraint(equalTo: displayLabel.bottomAnchor, constant: 16),
+
+            deleteButton.heightAnchor.constraint(equalToConstant: 48),
+            deleteButton.bottomAnchor.constraint(equalTo: displayView.bottomAnchor, constant: -16),
+            deleteButton.leadingAnchor.constraint(equalTo: displayView.leadingAnchor, constant: 16),
+            deleteButton.trailingAnchor.constraint(equalTo: displayView.trailingAnchor, constant: -16)
+        ])
+
+        self.view = view
+        self.webViewWrapper = webViewWrapper
+        self.webView = webView
+        self.displayView = displayView
+        self.displayLabel = displayLabel
+        self.openButton = openButton
+        self.deleteButton = deleteButton
+    }
+
     override public func viewDidLoad() {
         super.viewDidLoad()
-
-        self.webView = self.addWebView(to: self.webViewWrapper)
-
-        self.displayLabel.text = L10n.Snabble.Paydirekt.savedAuthorization
-
-        self.deleteButton.makeSnabbleButton()
-        self.deleteButton.setTitle(L10n.Snabble.Paydirekt.deleteAuthorization, for: .normal)
-
-        self.openButton.setTitle(L10n.Snabble.Paydirekt.gotoWebsite, for: .normal)
+        self.title = L10n.Snabble.Paydirekt.title
     }
 
     override public func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-
         if self.detail == nil {
-            self.webViewWrapper.isHidden = false
-            self.displayView.isHidden = true
+            self.webViewWrapper?.isHidden = false
+            self.displayView?.isHidden = true
             self.startAuthorization()
         } else {
-            self.webViewWrapper.isHidden = true
-            self.displayView.isHidden = false
+            self.webViewWrapper?.isHidden = true
+            self.displayView?.isHidden = false
         }
     }
 
@@ -131,11 +194,11 @@ public final class PaydirektEditViewController: UIViewController {
         self.analyticsDelegate?.track(.viewPaymentMethodDetail)
     }
 
-    @IBAction private func paydirektTapped(_ sender: Any) {
+    @objc private func openButtonTapped(_ sender: Any) {
         UIApplication.shared.open(URL(string: "https://www.paydirekt.de")!)
     }
 
-    @IBAction private func deleteTapped(_ sender: Any) {
+    @objc private func deleteTapped(_ sender: Any) {
         guard let detail = self.detail else {
             return
         }
