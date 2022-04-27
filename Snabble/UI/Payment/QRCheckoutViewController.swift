@@ -7,13 +7,13 @@
 import UIKit
 
 final class QRCheckoutViewController: UIViewController {
-    @IBOutlet private var qrCodeView: UIImageView!
-    @IBOutlet private var explanation1: UILabel!
-    @IBOutlet private var explanation2: UILabel!
-    @IBOutlet private var totalPriceLabel: UILabel!
-    @IBOutlet private var qrCodeWidth: NSLayoutConstraint!
-    @IBOutlet private var checkoutIdLabel: UILabel!
-    @IBOutlet private var cancelButton: UIButton!
+
+    private weak var checkoutIdLabel: UILabel?
+    private weak var totalPriceLabel: UILabel?
+    private weak var explanationUpperLabel: UILabel?
+    private weak var qrCodeView: UIImageView?
+    private weak var explanationBottomLabel: UILabel?
+    private weak var cancelButton: UIButton?
 
     private var initialBrightness: CGFloat = 0
     private let process: CheckoutProcess
@@ -22,6 +22,16 @@ final class QRCheckoutViewController: UIViewController {
     private let shop: Shop
     weak var delegate: PaymentDelegate?
 
+    private var customLabel: UILabel {
+        let label = UILabel()
+        label.translatesAutoresizingMaskIntoConstraints = false
+        label.textColor = .label
+        label.textAlignment = .center
+        label.setContentHuggingPriority(.defaultLow + 1, for: .horizontal)
+        label.setContentHuggingPriority(.defaultLow + 1, for: .vertical)
+        return label
+    }
+
     public init(shop: Shop,
                 checkoutProcess: CheckoutProcess,
                 cart: ShoppingCart) {
@@ -29,22 +39,93 @@ final class QRCheckoutViewController: UIViewController {
         self.cart = cart
         self.process = checkoutProcess
 
-        super.init(nibName: nil, bundle: SnabbleSDKBundle.main)
-
-        self.title = L10n.Snabble.QRCode.title
+        super.init(nibName: nil, bundle: nil)
     }
 
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
 
+    override public func loadView() {
+        let contentView = UIView(frame: UIScreen.main.bounds)
+        contentView.backgroundColor = .systemBackground
+
+        let checkoutIdLabel = customLabel
+        checkoutIdLabel.font = UIFont.systemFont(ofSize: 13)
+
+        let totalPriceLabel = customLabel
+        totalPriceLabel.font = UIFont.systemFont(ofSize: 17, weight: .medium)
+
+        let explanationUpperLabel = customLabel
+        explanationUpperLabel.font = UIFont.systemFont(ofSize: 17, weight: .light)
+        explanationUpperLabel.lineBreakMode = .byWordWrapping
+        explanationUpperLabel.numberOfLines = 0
+
+        let qrCodeView = UIImageView()
+        qrCodeView.translatesAutoresizingMaskIntoConstraints = false
+        qrCodeView.contentMode = .scaleToFill
+        qrCodeView.setContentHuggingPriority(.defaultLow + 1, for: .horizontal)
+        qrCodeView.setContentHuggingPriority(.defaultLow + 1, for: .vertical)
+
+        let explanationBottomLabel = customLabel
+        explanationUpperLabel.font = UIFont.systemFont(ofSize: 11)
+        explanationBottomLabel.numberOfLines = 0
+
+        let cancelButton = UIButton(type: .system)
+        cancelButton.translatesAutoresizingMaskIntoConstraints = false
+        cancelButton.setTitle(L10n.Snabble.cancel, for: .normal)
+        cancelButton.titleLabel?.font = UIFont.systemFont(ofSize: 15)
+        cancelButton.setTitleColor(SnabbleUI.appearance.accentColor, for: .normal)
+        cancelButton.isEnabled = true
+        cancelButton.isUserInteractionEnabled = true
+        cancelButton.addTarget(self, action: #selector(cancelButtonTapped(_:)), for: .touchUpInside)
+
+        contentView.addSubview(checkoutIdLabel)
+        contentView.addSubview(totalPriceLabel)
+        contentView.addSubview(explanationUpperLabel)
+        contentView.addSubview(qrCodeView)
+        contentView.addSubview(explanationBottomLabel)
+        contentView.addSubview(cancelButton)
+
+        NSLayoutConstraint.activate([
+            checkoutIdLabel.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 8),
+            checkoutIdLabel.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 16),
+            checkoutIdLabel.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -16),
+
+            qrCodeView.centerXAnchor.constraint(equalTo: contentView.centerXAnchor),
+            qrCodeView.centerYAnchor.constraint(equalTo: contentView.centerYAnchor),
+            qrCodeView.heightAnchor.constraint(equalTo: qrCodeView.widthAnchor),
+
+            explanationUpperLabel.bottomAnchor.constraint(equalTo: qrCodeView.topAnchor, constant: -16),
+            explanationUpperLabel.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 16),
+            explanationUpperLabel.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -16),
+
+            totalPriceLabel.bottomAnchor.constraint(equalTo: explanationUpperLabel.topAnchor, constant: -16),
+            totalPriceLabel.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 16),
+            totalPriceLabel.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -16),
+
+            explanationBottomLabel.topAnchor.constraint(equalTo: qrCodeView.bottomAnchor, constant: 16),
+            explanationBottomLabel.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 16),
+            explanationBottomLabel.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -16),
+
+            cancelButton.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -20),
+            cancelButton.centerXAnchor.constraint(equalTo: contentView.centerXAnchor)
+        ])
+
+        self.view = contentView
+        self.checkoutIdLabel = checkoutIdLabel
+        self.totalPriceLabel = totalPriceLabel
+        self.explanationUpperLabel = explanationUpperLabel
+        self.qrCodeView = qrCodeView
+        self.cancelButton = cancelButton
+    }
+
     override func viewDidLoad() {
         super.viewDidLoad()
-
         self.navigationItem.hidesBackButton = true
+        self.title = L10n.Snabble.QRCode.title
 
-        self.checkoutIdLabel.text = L10n.Snabble.Checkout.id + ": " + String(process.links._self.href.suffix(4))
-        self.cancelButton.setTitle(L10n.Snabble.cancel, for: .normal)
+        self.checkoutIdLabel?.text = L10n.Snabble.Checkout.id + ": " + String(process.links._self.href.suffix(4))
     }
 
     override func viewWillAppear(_ animated: Bool) {
@@ -63,18 +144,16 @@ final class QRCheckoutViewController: UIViewController {
 
         let formattedTotal = formatter.format(total ?? 0)
 
-        self.totalPriceLabel.text = L10n.Snabble.QRCode.total + "\(formattedTotal)"
-        self.explanation1.text = L10n.Snabble.QRCode.showThisCode
-        self.explanation2.text = L10n.Snabble.QRCode.priceMayDiffer
+        self.totalPriceLabel?.text = L10n.Snabble.QRCode.total + "\(formattedTotal)"
+        self.explanationUpperLabel?.text = L10n.Snabble.QRCode.showThisCode
+        self.explanationBottomLabel?.text = L10n.Snabble.QRCode.priceMayDiffer
 
         self.setupQrCode()
-
         self.startPoller()
     }
 
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
-
         self.delegate?.track(.viewQRCodeCheckout)
     }
 
@@ -86,8 +165,8 @@ final class QRCheckoutViewController: UIViewController {
 
     private func setupQrCode() {
         let qrCodeContent = self.process.paymentInformation?.qrCodeContent ?? "n/a"
-        self.qrCodeView.image = QRCode.generate(for: qrCodeContent, scale: 5)
-        self.qrCodeWidth.constant = self.qrCodeView.image?.size.width ?? 0
+        self.qrCodeView?.image = QRCode.generate(for: qrCodeContent, scale: 5)
+        self.qrCodeView?.widthAnchor.constraint(equalToConstant: self.qrCodeView?.image?.size.width ?? 0).isActive = true
     }
 
     private func startPoller() {
@@ -100,7 +179,7 @@ final class QRCheckoutViewController: UIViewController {
         self.poller = poller
     }
 
-    @IBAction private func cancelButtonTapped(_ sender: UIButton) {
+    @objc private func cancelButtonTapped(_ sender: UIButton) {
         self.poller?.stop()
         self.poller = nil
 
