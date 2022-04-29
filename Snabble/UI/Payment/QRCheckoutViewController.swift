@@ -161,7 +161,6 @@ final class QRCheckoutViewController: UIViewController {
         if let qrImage = QRCode.generate(for: qrCodeContent, scale: 5) {
             qrCodeView?.image = qrImage
             qrCodeWidth?.constant = qrImage.size.width
-            //self.qrCodeView?.widthAnchor.constraint(equalToConstant: qrImage.size.width).isActive = true
         }
     }
 
