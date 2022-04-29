@@ -15,6 +15,7 @@ final class QRCheckoutViewController: UIViewController {
     private weak var explanationBottomLabel: UILabel?
     private weak var cancelButton: UIButton?
 
+    private var qrCodeWidth: NSLayoutConstraint?
     private var initialBrightness: CGFloat = 0
     private let process: CheckoutProcess
     private var poller: PaymentProcessPoller?
@@ -74,11 +75,11 @@ final class QRCheckoutViewController: UIViewController {
         let cancelButton = UIButton(type: .system)
         cancelButton.translatesAutoresizingMaskIntoConstraints = false
         cancelButton.setTitle(L10n.Snabble.cancel, for: .normal)
-        cancelButton.titleLabel?.font = UIFont.systemFont(ofSize: 15)
-        cancelButton.setTitleColor(SnabbleUI.appearance.accentColor, for: .normal)
+        cancelButton.titleLabel?.font = UIFont.systemFont(ofSize: 17, weight: .semibold)
         cancelButton.isEnabled = true
         cancelButton.isUserInteractionEnabled = true
         cancelButton.addTarget(self, action: #selector(cancelButtonTapped(_:)), for: .touchUpInside)
+        cancelButton.makeSnabbleButton()
 
         contentView.addSubview(checkoutIdLabel)
         contentView.addSubview(totalPriceLabel)
@@ -94,6 +95,7 @@ final class QRCheckoutViewController: UIViewController {
 
             qrCodeView.centerXAnchor.constraint(equalTo: contentView.centerXAnchor),
             qrCodeView.centerYAnchor.constraint(equalTo: contentView.centerYAnchor),
+            qrCodeView.widthAnchor.constraint(equalToConstant: 0).usingVariable(&qrCodeWidth),
             qrCodeView.heightAnchor.constraint(equalTo: qrCodeView.widthAnchor),
 
             explanationUpperLabel.bottomAnchor.constraint(equalTo: qrCodeView.topAnchor, constant: -16),
@@ -108,8 +110,10 @@ final class QRCheckoutViewController: UIViewController {
             explanationBottomLabel.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 16),
             explanationBottomLabel.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -16),
 
-            cancelButton.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -20),
-            cancelButton.centerXAnchor.constraint(equalTo: contentView.centerXAnchor)
+            cancelButton.leadingAnchor.constraint(equalTo: contentView.safeAreaLayoutGuide.leadingAnchor, constant: 16),
+            cancelButton.trailingAnchor.constraint(equalTo: contentView.safeAreaLayoutGuide.trailingAnchor, constant: -16),
+            cancelButton.bottomAnchor.constraint(equalTo: contentView.safeAreaLayoutGuide.bottomAnchor, constant: -16),
+            cancelButton.heightAnchor.constraint(equalToConstant: 48)
         ])
 
         self.view = contentView
@@ -125,7 +129,8 @@ final class QRCheckoutViewController: UIViewController {
         self.navigationItem.hidesBackButton = true
         self.title = L10n.Snabble.QRCode.title
 
-        self.checkoutIdLabel?.text = L10n.Snabble.Checkout.id + ": " + String(process.links._self.href.suffix(4))
+        setupLabels()
+        setupQrCode()
     }
 
     override func viewWillAppear(_ animated: Bool) {
@@ -137,18 +142,6 @@ final class QRCheckoutViewController: UIViewController {
             self.delegate?.track(.brightnessIncreased)
         }
 
-        let formatter = PriceFormatter(SnabbleUI.project)
-        // if we have a valid checkoutInfo, use the total from that, else what we've calculated in the cart
-        let lineItems = self.process.pricing.lineItems.count
-        let total = lineItems > 0 ? self.process.pricing.price.price : self.cart.total
-
-        let formattedTotal = formatter.format(total ?? 0)
-
-        self.totalPriceLabel?.text = L10n.Snabble.QRCode.total + "\(formattedTotal)"
-        self.explanationUpperLabel?.text = L10n.Snabble.QRCode.showThisCode
-        self.explanationBottomLabel?.text = L10n.Snabble.QRCode.priceMayDiffer
-
-        self.setupQrCode()
         self.startPoller()
     }
 
@@ -165,8 +158,26 @@ final class QRCheckoutViewController: UIViewController {
 
     private func setupQrCode() {
         let qrCodeContent = self.process.paymentInformation?.qrCodeContent ?? "n/a"
-        self.qrCodeView?.image = QRCode.generate(for: qrCodeContent, scale: 5)
-        self.qrCodeView?.widthAnchor.constraint(equalToConstant: self.qrCodeView?.image?.size.width ?? 0).isActive = true
+        if let qrImage = QRCode.generate(for: qrCodeContent, scale: 5) {
+            qrCodeView?.image = qrImage
+            qrCodeWidth?.constant = qrImage.size.width
+            //self.qrCodeView?.widthAnchor.constraint(equalToConstant: qrImage.size.width).isActive = true
+        }
+    }
+
+    private func setupLabels() {
+        self.checkoutIdLabel?.text = L10n.Snabble.Checkout.id + ": " + String(process.links._self.href.suffix(4))
+
+        let formatter = PriceFormatter(SnabbleUI.project)
+        // if we have a valid checkoutInfo, use the total from that, else what we've calculated in the cart
+        let lineItems = self.process.pricing.lineItems.count
+        let total = lineItems > 0 ? self.process.pricing.price.price : self.cart.total
+
+        let formattedTotal = formatter.format(total ?? 0)
+
+        self.totalPriceLabel?.text = L10n.Snabble.QRCode.total + "\(formattedTotal)"
+        self.explanationUpperLabel?.text = L10n.Snabble.QRCode.showThisCode
+        self.explanationBottomLabel?.text = L10n.Snabble.QRCode.priceMayDiffer
     }
 
     private func startPoller() {
