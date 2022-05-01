@@ -19,15 +19,10 @@ private enum ScannerLookup {
 }
 
 final class ScanningViewController: UIViewController {
-    @IBOutlet private var spinner: UIActivityIndicatorView!
+    private weak var spinner: UIActivityIndicatorView?
 
-    @IBOutlet private var messageImage: UIImageView!
-    @IBOutlet private var messageImageWidth: NSLayoutConstraint!
-    @IBOutlet private var messageSpinner: UIActivityIndicatorView!
-    @IBOutlet private var messageWrapper: UIView!
-    @IBOutlet private var messageLabel: UILabel!
-    @IBOutlet private var messageSeparatorHeight: NSLayoutConstraint!
-    @IBOutlet private var messageTopDistance: NSLayoutConstraint!
+    private var messageView: ScanningMessageView?
+    private var messageTopDistance: NSLayoutConstraint?
 
     private var scanConfirmationView: ScanConfirmationView?
     private var scanConfirmationViewBottom: NSLayoutConstraint?
@@ -62,8 +57,6 @@ final class ScanningViewController: UIViewController {
     private weak var spinnerTimer: Timer?
     private weak var messageTimer: Timer?
 
-    private var msgHidden = true
-
     public weak var scannerDelegate: ScannerDelegate?
 
     public init(forCart cart: ShoppingCart, forShop shop: Shop, withDetector detector: BarcodeDetector) {
@@ -79,7 +72,7 @@ final class ScanningViewController: UIViewController {
         self.barcodeDetector.scanFormats = project.scanFormats
         self.barcodeDetector.expectedBarcodeWidth = project.expectedBarcodeWidth
 
-        super.init(nibName: nil, bundle: SnabbleSDKBundle.main)
+        super.init(nibName: nil, bundle: nil)
 
         self.barcodeDetector.delegate = self
 
@@ -95,37 +88,62 @@ final class ScanningViewController: UIViewController {
         fatalError("init(coder:) has not been implemented")
     }
 
+    override public func loadView() {
+        super.loadView()
+
+        let spinner = UIActivityIndicatorView()
+        spinner.translatesAutoresizingMaskIntoConstraints = false
+        spinner.color = UIColor.systemGray
+        spinner.hidesWhenStopped = true
+        if #available(iOS 13.0, *) {
+            spinner.style = .large
+        } else {
+            spinner.style = .whiteLarge
+        }
+
+        let scanConfirmationView = ScanConfirmationView(frame: .zero)
+        scanConfirmationView.translatesAutoresizingMaskIntoConstraints = false
+        scanConfirmationView.isHidden = true
+
+        let messageView = ScanningMessageView(frame: .zero)
+        messageView.translatesAutoresizingMaskIntoConstraints = false
+        let msgTap = UITapGestureRecognizer(target: self, action: #selector(self.messageTapped(_:)))
+        messageView.addGestureRecognizer(msgTap)
+
+        view.addSubview(spinner)
+        view.addSubview(scanConfirmationView)
+        view.addSubview(messageView)
+
+        NSLayoutConstraint.activate([
+            spinner.topAnchor.constraint(equalTo: self.view.layoutMarginsGuide.topAnchor, constant: 40),
+            spinner.centerXAnchor.constraint(equalTo: self.view.centerXAnchor),
+            scanConfirmationView.leadingAnchor.constraint(equalTo: self.view.leadingAnchor, constant: 16),
+            scanConfirmationView.trailingAnchor.constraint(equalTo: self.view.trailingAnchor, constant: -16),
+            scanConfirmationView.centerXAnchor.constraint(equalTo: self.view.centerXAnchor),
+            scanConfirmationView.bottomAnchor.constraint(equalTo: self.view.bottomAnchor).usingVariable(&scanConfirmationViewBottom),
+            messageView.leadingAnchor.constraint(equalTo: self.view.leadingAnchor),
+            messageView.trailingAnchor.constraint(equalTo: self.view.trailingAnchor),
+            messageView.topAnchor.constraint(equalTo: self.view.topAnchor).usingVariable(&messageTopDistance)
+        ])
+
+        self.spinner = spinner
+        self.messageView = messageView
+        self.scanConfirmationView = scanConfirmationView
+    }
+
     override public func viewDidLoad() {
         super.viewDidLoad()
 
         self.view.backgroundColor = .systemGray
 
-        let scanConfirmationView = ScanConfirmationView(frame: .zero)
-
         if let custom = self.customAppearance {
-            scanConfirmationView.setCustomAppearance(custom)
+            scanConfirmationView?.setCustomAppearance(custom)
         }
-        scanConfirmationView.translatesAutoresizingMaskIntoConstraints = false
-        self.view.addSubview(scanConfirmationView)
-        scanConfirmationView.leadingAnchor.constraint(equalTo: self.view.leadingAnchor, constant: 16).isActive = true
-        scanConfirmationView.trailingAnchor.constraint(equalTo: self.view.trailingAnchor, constant: -16).isActive = true
-        scanConfirmationView.centerXAnchor.constraint(equalTo: self.view.centerXAnchor).isActive = true
-        scanConfirmationView.delegate = self
-        scanConfirmationView.isHidden = true
+        scanConfirmationView?.delegate = self
+        scanConfirmationViewBottom?.constant = hiddenConfirmationOffset
 
-        let bottom = scanConfirmationView.bottomAnchor.constraint(equalTo: self.view.bottomAnchor)
-        bottom.isActive = true
-        bottom.constant = self.hiddenConfirmationOffset
-
-        self.scanConfirmationViewBottom = bottom
-        self.scanConfirmationView = scanConfirmationView
-
-        self.messageSeparatorHeight.constant = 1.0 / UIScreen.main.scale
-
-        let msgTap = UITapGestureRecognizer(target: self, action: #selector(self.messageTapped(_:)))
-        self.messageWrapper.addGestureRecognizer(msgTap)
-        self.messageTopDistance.constant = -150
-        self.messageWrapper.isHidden = true
+        self.messageTopDistance?.constant = -150
+        messageView?.isHidden = true
 
         let torchButton = UIBarButtonItem(image: Asset.SnabbleSDK.iconLightInactive.image, style: .plain, target: self, action: #selector(torchTapped(_:)))
         self.pulleyViewController?.navigationItem.leftBarButtonItem = torchButton
@@ -147,8 +165,15 @@ final class ScanningViewController: UIViewController {
         self.keyboardObserver = KeyboardObserver(handler: self)
 
         self.scannerDelegate?.track(.viewScanner)
-        self.view.bringSubviewToFront(self.spinner)
-
+        if let spinner = spinner {
+            self.view.bringSubviewToFront(spinner)
+        }
+        if let confirmationView = self.scanConfirmationView {
+            self.view.bringSubviewToFront(confirmationView)
+        }
+        if let messageView = messageView {
+            self.view.bringSubviewToFront(messageView)
+        }
         self.barcodeDetector.resumeScanning()
     }
 
@@ -156,11 +181,6 @@ final class ScanningViewController: UIViewController {
         super.viewDidLayoutSubviews()
 
         self.barcodeDetector.scannerDidLayoutSubviews()
-
-        self.view.bringSubviewToFront(self.messageWrapper)
-        if let confirmationView = self.scanConfirmationView {
-            self.view.bringSubviewToFront(confirmationView)
-        }
     }
 
     override public func viewWillDisappear(_ animated: Bool) {
@@ -250,25 +270,22 @@ extension ScanningViewController {
         guard let firstMsg = messages.first else {
             return
         }
-
         let text: String
         if let attributedString = firstMsg.attributedString {
             text = firstMsg.text
-            self.messageLabel.text = nil
-            self.messageLabel.attributedText = attributedString
+            messageView?.label?.attributedText = attributedString
         } else {
             text = messages.map { $0.text }.joined(separator: "\n\n")
-            self.messageLabel.text = text
+            messageView?.label?.text = text
         }
-        self.messageWrapper.isHidden = false
-        self.messageTopDistance.constant = 0
+        self.messageView?.isHidden = false
+        self.messageTopDistance?.constant = 0
 
         if let imgUrl = messages.first?.imageUrl, let url = URL(string: imgUrl) {
-            self.messageImageWidth.constant = 80
+            messageView?.imageWidth?.constant = 80
             self.loadMessageImage(from: url)
         } else {
-            self.messageImageWidth.constant = 0
-            self.messageImage.image = nil
+            messageView?.imageWidth?.constant = 0
         }
 
         UIView.animate(withDuration: 0.2) {
@@ -302,21 +319,21 @@ extension ScanningViewController {
     }
 
     private func hideMessage() {
-        self.messageTopDistance.constant = -150
+        self.messageTopDistance?.constant = -150
 
         UIView.animate(withDuration: 0.2,
                        animations: { self.view.layoutIfNeeded() },
-                       completion: { _ in self.messageWrapper.isHidden = true })
+                       completion: { _ in self.messageView?.isHidden = true })
     }
 
     private func loadMessageImage(from url: URL) {
         let session = Snabble.urlSession
-        self.messageSpinner.startAnimating()
+        messageView?.spinner?.startAnimating()
         let task = session.dataTask(with: url) { data, _, _ in
             if let data = data, let img = UIImage(data: data) {
                 DispatchQueue.main.async {
-                    self.messageSpinner.stopAnimating()
-                    self.messageImage.image = img
+                    self.messageView?.spinner?.stopAnimating()
+                    self.messageView?.imageView?.image = img
                 }
             }
         }
@@ -418,14 +435,14 @@ extension ScanningViewController {
 
         self.spinnerTimer?.invalidate()
         self.spinnerTimer = Timer.scheduledTimer(withTimeInterval: 0.5, repeats: false) { _ in
-            self.spinner.startAnimating()
+            self.spinner?.startAnimating()
         }
 
         self.barcodeDetector.pauseScanning()
 
         self.lookupCode(scannedCode, withFormat: format, withTemplate: template) { scannedResult in
             self.spinnerTimer?.invalidate()
-            self.spinner.stopAnimating()
+            self.spinner?.stopAnimating()
 
             let scannedProduct: ScannedProduct
             switch scannedResult {
