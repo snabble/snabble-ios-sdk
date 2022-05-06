@@ -285,7 +285,7 @@ final class ShoppingCartTableCellView: UIView {
 
             centerStackView.trailingAnchor.constraint(equalTo: rightStackView.leadingAnchor),
             centerStackView.topAnchor.constraint(equalTo: topAnchor, constant: 8),
-            bottomAnchor.constraint(equalTo: centerStackView.bottomAnchor, constant: 8),
+            bottomAnchor.constraint(equalTo: centerStackView.bottomAnchor, constant: 8).usingPriority(.required),
             centerStackView.heightAnchor.constraint(greaterThanOrEqualToConstant: 32),
 
             trailingAnchor.constraint(equalTo: rightStackView.trailingAnchor, constant: 12),
