@@ -100,6 +100,7 @@ final class CheckoutBar: UIView {
         checkoutButton.setTitle(L10n.Snabble.Shoppingcart.BuyProducts.now, for: .normal)
         let disabledColor = SnabbleUI.appearance.accentColor.contrast?.withAlphaComponent(0.5)
         checkoutButton.setTitleColor(disabledColor, for: .disabled)
+        checkoutButton.setTitleColor(SnabbleUI.appearance.accentColor.contrast, for: .normal)
         checkoutButton.titleLabel?.font = UIFont.systemFont(ofSize: 17, weight: .semibold)
         checkoutButton.makeSnabbleButton()
         checkoutButton.isEnabled = true
