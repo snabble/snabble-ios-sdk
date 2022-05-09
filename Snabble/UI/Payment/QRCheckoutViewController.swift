@@ -41,6 +41,8 @@ final class QRCheckoutViewController: UIViewController {
         self.process = checkoutProcess
 
         super.init(nibName: nil, bundle: nil)
+
+        title = L10n.Snabble.QRCode.title
     }
 
     required init?(coder aDecoder: NSCoder) {
@@ -115,19 +117,18 @@ final class QRCheckoutViewController: UIViewController {
             cancelButton.bottomAnchor.constraint(equalTo: contentView.safeAreaLayoutGuide.bottomAnchor, constant: -16),
             cancelButton.heightAnchor.constraint(equalToConstant: 48)
         ])
-
-        self.view = contentView
         self.checkoutIdLabel = checkoutIdLabel
         self.totalPriceLabel = totalPriceLabel
         self.explanationUpperLabel = explanationUpperLabel
         self.qrCodeView = qrCodeView
         self.cancelButton = cancelButton
+
+        self.view = contentView
     }
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        self.navigationItem.hidesBackButton = true
-        self.title = L10n.Snabble.QRCode.title
+        navigationItem.hidesBackButton = true
 
         setupLabels()
         setupQrCode()
@@ -167,10 +168,10 @@ final class QRCheckoutViewController: UIViewController {
     private func setupLabels() {
         self.checkoutIdLabel?.text = L10n.Snabble.Checkout.id + ": " + String(process.links._self.href.suffix(4))
 
-        let formatter = PriceFormatter(SnabbleUI.project)
+        let formatter = PriceFormatter(shop.project ?? SnabbleUI.project)
         // if we have a valid checkoutInfo, use the total from that, else what we've calculated in the cart
-        let lineItems = self.process.pricing.lineItems.count
-        let total = lineItems > 0 ? self.process.pricing.price.price : self.cart.total
+        let lineItems = process.pricing.lineItems.count
+        let total = lineItems > 0 ? process.pricing.price.price : self.cart.total
 
         let formattedTotal = formatter.format(total ?? 0)
 
