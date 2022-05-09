@@ -7,20 +7,31 @@
 import UIKit
 
 final class QRCheckoutViewController: UIViewController {
-    @IBOutlet private var qrCodeView: UIImageView!
-    @IBOutlet private var explanation1: UILabel!
-    @IBOutlet private var explanation2: UILabel!
-    @IBOutlet private var totalPriceLabel: UILabel!
-    @IBOutlet private var qrCodeWidth: NSLayoutConstraint!
-    @IBOutlet private var checkoutIdLabel: UILabel!
-    @IBOutlet private var cancelButton: UIButton!
 
+    private weak var checkoutIdLabel: UILabel?
+    private weak var totalPriceLabel: UILabel?
+    private weak var explanationUpperLabel: UILabel?
+    private weak var qrCodeView: UIImageView?
+    private weak var explanationBottomLabel: UILabel?
+    private weak var cancelButton: UIButton?
+
+    private var qrCodeWidth: NSLayoutConstraint?
     private var initialBrightness: CGFloat = 0
     private let process: CheckoutProcess
     private var poller: PaymentProcessPoller?
     private let cart: ShoppingCart
     private let shop: Shop
     weak var delegate: PaymentDelegate?
+
+    private var customLabel: UILabel {
+        let label = UILabel()
+        label.translatesAutoresizingMaskIntoConstraints = false
+        label.textColor = .label
+        label.textAlignment = .center
+        label.setContentHuggingPriority(.defaultLow + 1, for: .horizontal)
+        label.setContentHuggingPriority(.defaultLow + 1, for: .vertical)
+        return label
+    }
 
     public init(shop: Shop,
                 checkoutProcess: CheckoutProcess,
@@ -29,22 +40,98 @@ final class QRCheckoutViewController: UIViewController {
         self.cart = cart
         self.process = checkoutProcess
 
-        super.init(nibName: nil, bundle: SnabbleSDKBundle.main)
+        super.init(nibName: nil, bundle: nil)
 
-        self.title = L10n.Snabble.QRCode.title
+        title = L10n.Snabble.QRCode.title
     }
 
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
 
+    override public func loadView() {
+        let contentView = UIView(frame: UIScreen.main.bounds)
+        contentView.backgroundColor = .systemBackground
+
+        let checkoutIdLabel = customLabel
+        checkoutIdLabel.font = UIFont.systemFont(ofSize: 13)
+
+        let totalPriceLabel = customLabel
+        totalPriceLabel.font = UIFont.systemFont(ofSize: 17, weight: .medium)
+
+        let explanationUpperLabel = customLabel
+        explanationUpperLabel.font = UIFont.systemFont(ofSize: 17, weight: .light)
+        explanationUpperLabel.lineBreakMode = .byWordWrapping
+        explanationUpperLabel.numberOfLines = 0
+
+        let qrCodeView = UIImageView()
+        qrCodeView.translatesAutoresizingMaskIntoConstraints = false
+        qrCodeView.contentMode = .scaleToFill
+        qrCodeView.setContentHuggingPriority(.defaultLow + 1, for: .horizontal)
+        qrCodeView.setContentHuggingPriority(.defaultLow + 1, for: .vertical)
+
+        let explanationBottomLabel = customLabel
+        explanationUpperLabel.font = UIFont.systemFont(ofSize: 11)
+        explanationBottomLabel.numberOfLines = 0
+
+        let cancelButton = UIButton(type: .system)
+        cancelButton.translatesAutoresizingMaskIntoConstraints = false
+        cancelButton.setTitle(L10n.Snabble.cancel, for: .normal)
+        cancelButton.titleLabel?.font = UIFont.systemFont(ofSize: 17, weight: .semibold)
+        cancelButton.isEnabled = true
+        cancelButton.isUserInteractionEnabled = true
+        cancelButton.addTarget(self, action: #selector(cancelButtonTapped(_:)), for: .touchUpInside)
+        cancelButton.makeSnabbleButton()
+
+        contentView.addSubview(checkoutIdLabel)
+        contentView.addSubview(totalPriceLabel)
+        contentView.addSubview(explanationUpperLabel)
+        contentView.addSubview(qrCodeView)
+        contentView.addSubview(explanationBottomLabel)
+        contentView.addSubview(cancelButton)
+
+        NSLayoutConstraint.activate([
+            checkoutIdLabel.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 8),
+            checkoutIdLabel.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 16),
+            checkoutIdLabel.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -16),
+
+            qrCodeView.centerXAnchor.constraint(equalTo: contentView.centerXAnchor),
+            qrCodeView.centerYAnchor.constraint(equalTo: contentView.centerYAnchor),
+            qrCodeView.widthAnchor.constraint(equalToConstant: 0).usingVariable(&qrCodeWidth),
+            qrCodeView.heightAnchor.constraint(equalTo: qrCodeView.widthAnchor),
+
+            explanationUpperLabel.bottomAnchor.constraint(equalTo: qrCodeView.topAnchor, constant: -16),
+            explanationUpperLabel.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 16),
+            explanationUpperLabel.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -16),
+
+            totalPriceLabel.bottomAnchor.constraint(equalTo: explanationUpperLabel.topAnchor, constant: -16),
+            totalPriceLabel.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 16),
+            totalPriceLabel.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -16),
+
+            explanationBottomLabel.topAnchor.constraint(equalTo: qrCodeView.bottomAnchor, constant: 16),
+            explanationBottomLabel.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 16),
+            explanationBottomLabel.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -16),
+
+            cancelButton.leadingAnchor.constraint(equalTo: contentView.safeAreaLayoutGuide.leadingAnchor, constant: 16),
+            cancelButton.trailingAnchor.constraint(equalTo: contentView.safeAreaLayoutGuide.trailingAnchor, constant: -16),
+            cancelButton.bottomAnchor.constraint(equalTo: contentView.safeAreaLayoutGuide.bottomAnchor, constant: -16),
+            cancelButton.heightAnchor.constraint(equalToConstant: 48)
+        ])
+        self.checkoutIdLabel = checkoutIdLabel
+        self.totalPriceLabel = totalPriceLabel
+        self.explanationUpperLabel = explanationUpperLabel
+        self.qrCodeView = qrCodeView
+        self.cancelButton = cancelButton
+
+        self.view = contentView
+    }
+
     override func viewDidLoad() {
         super.viewDidLoad()
+        navigationItem.hidesBackButton = true
 
-        self.navigationItem.hidesBackButton = true
-
-        self.checkoutIdLabel.text = L10n.Snabble.Checkout.id + ": " + String(process.links._self.href.suffix(4))
-        self.cancelButton.setTitle(L10n.Snabble.cancel, for: .normal)
+        setupLabels()
+        setupQrCode()
     }
 
     override func viewWillAppear(_ animated: Bool) {
@@ -56,25 +143,11 @@ final class QRCheckoutViewController: UIViewController {
             self.delegate?.track(.brightnessIncreased)
         }
 
-        let formatter = PriceFormatter(SnabbleUI.project)
-        // if we have a valid checkoutInfo, use the total from that, else what we've calculated in the cart
-        let lineItems = self.process.pricing.lineItems.count
-        let total = lineItems > 0 ? self.process.pricing.price.price : self.cart.total
-
-        let formattedTotal = formatter.format(total ?? 0)
-
-        self.totalPriceLabel.text = L10n.Snabble.QRCode.total + "\(formattedTotal)"
-        self.explanation1.text = L10n.Snabble.QRCode.showThisCode
-        self.explanation2.text = L10n.Snabble.QRCode.priceMayDiffer
-
-        self.setupQrCode()
-
         self.startPoller()
     }
 
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
-
         self.delegate?.track(.viewQRCodeCheckout)
     }
 
@@ -86,8 +159,25 @@ final class QRCheckoutViewController: UIViewController {
 
     private func setupQrCode() {
         let qrCodeContent = self.process.paymentInformation?.qrCodeContent ?? "n/a"
-        self.qrCodeView.image = QRCode.generate(for: qrCodeContent, scale: 5)
-        self.qrCodeWidth.constant = self.qrCodeView.image?.size.width ?? 0
+        if let qrImage = QRCode.generate(for: qrCodeContent, scale: 5) {
+            qrCodeView?.image = qrImage
+            qrCodeWidth?.constant = qrImage.size.width
+        }
+    }
+
+    private func setupLabels() {
+        self.checkoutIdLabel?.text = L10n.Snabble.Checkout.id + ": " + String(process.links._self.href.suffix(4))
+
+        let formatter = PriceFormatter(shop.project ?? SnabbleUI.project)
+        // if we have a valid checkoutInfo, use the total from that, else what we've calculated in the cart
+        let lineItems = process.pricing.lineItems.count
+        let total = lineItems > 0 ? process.pricing.price.price : self.cart.total
+
+        let formattedTotal = formatter.format(total ?? 0)
+
+        self.totalPriceLabel?.text = L10n.Snabble.QRCode.total + "\(formattedTotal)"
+        self.explanationUpperLabel?.text = L10n.Snabble.QRCode.showThisCode
+        self.explanationBottomLabel?.text = L10n.Snabble.QRCode.priceMayDiffer
     }
 
     private func startPoller() {
@@ -100,7 +190,7 @@ final class QRCheckoutViewController: UIViewController {
         self.poller = poller
     }
 
-    @IBAction private func cancelButtonTapped(_ sender: UIButton) {
+    @objc private func cancelButtonTapped(_ sender: UIButton) {
         self.poller?.stop()
         self.poller = nil
 
