@@ -45,6 +45,7 @@ public final class PaydirektEditViewController: UIViewController {
     private var detail: PaymentMethodDetail?
     private weak var analyticsDelegate: AnalyticsDelegate?
     private var clientAuthorization: String?
+    private var projectId: Identifier<Project>?
 
     private let authData = PaydirektAuthorization(
         id: UIDevice.current.identifierForVendor?.uuidString ?? "",
@@ -56,9 +57,10 @@ public final class PaydirektEditViewController: UIViewController {
         redirectUrlAfterFailure: RedirectStatus.failure.url
     )
 
-    public init(_ detail: PaymentMethodDetail?, with analyticsDelegate: AnalyticsDelegate?) {
+    public init(_ detail: PaymentMethodDetail?, for projectId: Identifier<Project>?, with analyticsDelegate: AnalyticsDelegate?) {
         self.detail = detail
         self.analyticsDelegate = analyticsDelegate
+        self.projectId = projectId
         super.init(nibName: nil, bundle: nil)
     }
 
@@ -161,7 +163,8 @@ public final class PaydirektEditViewController: UIViewController {
     private func startAuthorization() {
         guard
             let authUrl = Snabble.metadata.links.paydirektCustomerAuthorization?.href,
-            let project = Snabble.projects.first
+            let projectId = projectId,
+            let project = Snabble.project(for: projectId)
         else {
             Log.error("no paydirektCustomerAuthorization in metadata or no project found")
             return
