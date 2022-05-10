@@ -85,6 +85,7 @@ final class ScanningMessageView: UIView {
 
             label.topAnchor.constraint(greaterThanOrEqualTo: topAnchor, constant: 16),
             label.bottomAnchor.constraint(lessThanOrEqualTo: separator.topAnchor, constant: -16),
+            label.centerYAnchor.constraint(equalTo: centerYAnchor),
             label.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 16),
             label.trailingAnchor.constraint(equalTo: imageView.leadingAnchor, constant: -8)
         ])
