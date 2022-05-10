@@ -19,13 +19,3 @@ jobs:
         env:
           COCOAPODS_TRUNK_TOKEN: ${{ secrets.COCOAPODS_TRUNK_TOKEN }}
         run: pod trunk push Snabble.podspec --allow-warnings
-
-      - name: Slack Notification
-        uses: lazy-actions/slatify@master
-        if: always()
-        with:
-          type: ${{ job.status }}
-          job_name: '*iOS SDK Publish*'
-          username: 'Github Action: Publish'
-          channel: '#app-actions'
-          url: ${{ secrets.SLACK_WEBHOOK }}
