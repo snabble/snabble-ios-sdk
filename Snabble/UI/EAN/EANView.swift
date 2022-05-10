@@ -13,21 +13,21 @@
 
 import UIKit
 
-@IBDesignable public final class EANView: UIView {
+public final class EANView: UIView {
     /// the color to show the barcode's bars. default is black
-    @IBInspectable public var barColor: UIColor = .black
+    public var barColor: UIColor = .black
 
     /// the color to show the barcode's digits. default is black
-    @IBInspectable public var digitsColor: UIColor = .black
+    public var digitsColor: UIColor = .black
 
     /// show the numeric value of the barcode at the bottom. default is true
-    @IBInspectable public var showDigits: Bool = true
+    public var showDigits = true
 
     /// line width of a single "1" bit
-    @IBInspectable public var scale: Int = 1
+    public var scale: Int = 2
 
     /// the barcode to display
-    @IBInspectable public var barcode: String? {
+    public var barcode: String? {
         didSet {
             self.bits = EAN.encode(barcode ?? "")
             self.updateLabels()
@@ -43,6 +43,8 @@ import UIKit
     private var leftDigitsLabel: UILabel?
     private var rightDigitsLabel: UILabel?
 
+    private var leftMargin: CGFloat = 0
+
     override init(frame: CGRect) {
         super.init(frame: frame)
     }
@@ -51,19 +53,10 @@ import UIKit
         super.init(coder: aDecoder)
     }
 
-    override public func awakeFromNib() {
-        super.awakeFromNib()
-    }
-
     override public func draw(_ rect: CGRect) {
-        if self.firstDigitLabel == nil && self.showDigits {
-            self.createLabels()
-            self.updateLabels()
-        }
         guard let ctx = UIGraphicsGetCurrentContext() else {
             return
         }
-
         let bgColor = self.backgroundColor ?? .systemBackground
         let bottomPadding = CGFloat(showDigits ? self.scale * 3 : 0)
 
@@ -72,11 +65,17 @@ import UIKit
 
         if let bits = self.bits {
             let barcodeBits = bits.count
+            let calculatedWidth = CGFloat(scale * barcodeBits)
+            leftMargin = (rect.size.width - calculatedWidth) / 2
+            if self.firstDigitLabel == nil && self.showDigits {
+                self.createLabels()
+                self.updateLabels()
+            }
             ctx.beginPath()
             for idx in 0 ..< bits.count {
                 let color = bits[idx] == 1 ? barColor : bgColor
                 color.set()
-                let x = CGFloat(scale * idx)
+                let x = idx == 0 ? leftMargin : leftMargin + CGFloat(scale * idx)
                 ctx.move(to: CGPoint(x: x, y: 0))
                 ctx.addLine(to: CGPoint(x: x, y: self.bounds.size.height - bottomPadding))
                 ctx.setLineWidth(CGFloat(scale))
@@ -92,8 +91,9 @@ import UIKit
                 NSAttributedString.Key.foregroundColor: UIColor.systemRed
             ]
             let str = NSAttributedString(string: "Invalid Barcode", attributes: attrs)
-
-            str.draw(at: CGPoint(x: 3, y: rect.size.height / 2 - 20))
+            let stringSize = str.size()
+            str.draw(at: CGPoint(x: (rect.size.width - stringSize.width) / 2,
+                                 y: (rect.size.height - stringSize.height) / 2))
         }
     }
 
@@ -142,7 +142,7 @@ import UIKit
     private func createLabel(width: Int, offset: Int, value: String) -> UILabel {
         let digitHeight = 7
 
-        let frame = CGRect(x: scale * offset,
+        let frame = CGRect(x: Int(leftMargin) + scale * offset,
                            y: Int(self.bounds.size.height) - (scale * digitHeight),
                            width: scale * width,
                            height: scale * digitHeight)
