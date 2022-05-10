@@ -187,9 +187,11 @@ final class ShoppingCartTableCell: UITableViewCell {
         self.cellView?.nameLabel?.text = defaultItem?.name ?? product.name
 
         if item.editable {
-            self.rightDisplay = .buttons
-        } else if product.type == .userMustWeigh {
-            self.rightDisplay = .weightEntry
+            if product.type == .userMustWeigh {
+                self.rightDisplay = .weightEntry
+            } else {
+                self.rightDisplay = .buttons
+            }
         } else if product.type == .preWeighed {
             self.rightDisplay = .weightDisplay
         }
