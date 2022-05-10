@@ -15,6 +15,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 * Refactor EmbeddedCodesCheckoutViewController #102
 * Refactored ScannerDrawerViewController to programmatically written UI #104
 * Refactored QRCheckoutViewController to programmatically written UI #105
+* Refactored ScanningViewController to programmatically written UI #106
+* Refactored CustomerCardCheckoutViewController to programmatically written UI #107
 
 ### Removed
 
