@@ -60,13 +60,3 @@ jobs:
           build_dir: docs
           branch: gh-pages
           commit_message: update documentation
-
-      - name: Slack Notification
-        uses: lazy-actions/slatify@master
-        if: always()
-        with:
-          type: ${{ job.status }}
-          job_name: '*iOS SDK Documenation*'
-          username: 'Github Action: Documenation'
-          channel: '#app-actions'
-          url: ${{ secrets.SLACK_WEBHOOK }}

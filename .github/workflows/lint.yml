@@ -23,13 +23,3 @@ jobs:
 
       - name: Lint
         run: pod lib lint --allow-warnings --configuration=Debug
-
-      - name: Slack Notification
-        uses: lazy-actions/slatify@master
-        if: always()
-        with:
-          type: ${{ job.status }}
-          job_name: '*iOS SDK Lint*'
-          username: 'Github Action: Lint'
-          channel: '#app-actions'
-          url: ${{ secrets.SLACK_WEBHOOK }}

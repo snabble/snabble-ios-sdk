@@ -21,7 +21,7 @@ public extension UIColor {
         guard contrasts.count > 1 else {
             return contrasts.first
         }
-        
+
         return Self.getTextColor(
             fromColors: contrasts,
             withFont: .preferredFont(forTextStyle: .body), // default Font
