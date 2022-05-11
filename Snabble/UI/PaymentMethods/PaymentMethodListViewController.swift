@@ -163,7 +163,7 @@ extension PaymentMethodListViewController {
             case .teleCashCreditCard:
                 editVC = TeleCashCreditCardEditViewController(detail, self.analyticsDelegate)
             case .paydirektAuthorization:
-                editVC = PaydirektEditViewController(detail, with: self.analyticsDelegate)
+                editVC = PaydirektEditViewController(detail, for: projectId, with: self.analyticsDelegate)
             case .payoneCreditCard:
                 editVC = PayoneCreditCardEditViewController(detail, self.analyticsDelegate)
             case .tegutEmployeeCard, .leinweberCustomerNumber:
