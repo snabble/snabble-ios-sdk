@@ -37,14 +37,13 @@ private enum RedirectStatus: String {
 public final class PaydirektEditViewController: UIViewController {
     private weak var webViewWrapper: UIView?
     private weak var displayView: UIView?
-    private weak var displayLabel: UILabel?
-    private weak var openButton: UIButton?
-    private weak var deleteButton: UIButton?
+    private weak var errorView: UIView?
 
     private weak var webView: WKWebView?
     private var detail: PaymentMethodDetail?
     private weak var analyticsDelegate: AnalyticsDelegate?
     private var clientAuthorization: String?
+    private var projectId: Identifier<Project>?
 
     private let authData = PaydirektAuthorization(
         id: UIDevice.current.identifierForVendor?.uuidString ?? "",
@@ -56,9 +55,10 @@ public final class PaydirektEditViewController: UIViewController {
         redirectUrlAfterFailure: RedirectStatus.failure.url
     )
 
-    public init(_ detail: PaymentMethodDetail?, with analyticsDelegate: AnalyticsDelegate?) {
+    public init(_ detail: PaymentMethodDetail?, for projectId: Identifier<Project>?, with analyticsDelegate: AnalyticsDelegate?) {
         self.detail = detail
         self.analyticsDelegate = analyticsDelegate
+        self.projectId = projectId
         super.init(nibName: nil, bundle: nil)
     }
 
@@ -101,12 +101,36 @@ public final class PaydirektEditViewController: UIViewController {
         deleteButton.setTitle(L10n.Snabble.Paydirekt.deleteAuthorization, for: .normal)
         deleteButton.addTarget(self, action: #selector(deleteTapped(_:)), for: .touchUpInside)
 
+        let errorView = UIView()
+        errorView.translatesAutoresizingMaskIntoConstraints = false
+
+        let errorLabel = UILabel()
+        errorLabel.translatesAutoresizingMaskIntoConstraints = false
+        errorLabel.font = UIFont.systemFont(ofSize: 17)
+        errorLabel.textColor = .label
+        errorLabel.textAlignment = .center
+        errorLabel.numberOfLines = 0
+        errorLabel.text = L10n.Snabble.Paydirekt.AuthorizationFailed.title
+
+        let errorButton = UIButton(type: .system)
+        errorButton.translatesAutoresizingMaskIntoConstraints = false
+        errorButton.titleLabel?.font = UIFont.systemFont(ofSize: 17, weight: .semibold)
+        errorButton.setTitle(L10n.Snabble.PaymentError.tryAgain, for: .normal)
+        errorButton.setTitleColor(SnabbleUI.appearance.accentColor.contrast, for: .normal)
+        errorButton.makeSnabbleButton()
+        errorButton.isUserInteractionEnabled = true
+        errorButton.addTarget(self, action: #selector(errorButtonTapped(_:)), for: .touchUpInside)
+
         view.addSubview(webViewWrapper)
         view.addSubview(displayView)
+        view.addSubview(errorView)
 
         displayView.addSubview(displayLabel)
         displayView.addSubview(openButton)
         displayView.addSubview(deleteButton)
+
+        errorView.addSubview(errorLabel)
+        errorView.addSubview(errorButton)
 
         NSLayoutConstraint.activate([
             webViewWrapper.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
@@ -129,21 +153,36 @@ public final class PaydirektEditViewController: UIViewController {
             deleteButton.heightAnchor.constraint(equalToConstant: 48),
             deleteButton.bottomAnchor.constraint(equalTo: displayView.bottomAnchor, constant: -16),
             deleteButton.leadingAnchor.constraint(equalTo: displayView.leadingAnchor, constant: 16),
-            deleteButton.trailingAnchor.constraint(equalTo: displayView.trailingAnchor, constant: -16)
+            deleteButton.trailingAnchor.constraint(equalTo: displayView.trailingAnchor, constant: -16),
+
+            errorView.topAnchor.constraint(greaterThanOrEqualTo: view.safeAreaLayoutGuide.topAnchor),
+            errorView.bottomAnchor.constraint(lessThanOrEqualTo: view.safeAreaLayoutGuide.bottomAnchor),
+            errorView.centerYAnchor.constraint(equalTo: view.safeAreaLayoutGuide.centerYAnchor),
+            errorView.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor),
+            errorView.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor),
+
+            errorLabel.leadingAnchor.constraint(equalTo: errorView.leadingAnchor, constant: 16),
+            errorLabel.trailingAnchor.constraint(equalTo: errorView.trailingAnchor, constant: -16),
+            errorLabel.topAnchor.constraint(equalTo: errorView.topAnchor),
+
+            errorButton.heightAnchor.constraint(equalToConstant: 48),
+            errorButton.topAnchor.constraint(equalTo: errorLabel.bottomAnchor, constant: 30),
+            errorButton.bottomAnchor.constraint(equalTo: errorView.bottomAnchor),
+            errorButton.leadingAnchor.constraint(equalTo: errorView.leadingAnchor, constant: 16),
+            errorButton.trailingAnchor.constraint(equalTo: errorView.trailingAnchor, constant: -16)
         ])
 
         self.view = view
         self.webViewWrapper = webViewWrapper
         self.webView = webView
         self.displayView = displayView
-        self.displayLabel = displayLabel
-        self.openButton = openButton
-        self.deleteButton = deleteButton
+        self.errorView = errorView
     }
 
     override public func viewDidLoad() {
         super.viewDidLoad()
         self.title = L10n.Snabble.Paydirekt.title
+        errorView?.isHidden = true
     }
 
     override public func viewWillAppear(_ animated: Bool) {
@@ -161,8 +200,10 @@ public final class PaydirektEditViewController: UIViewController {
     private func startAuthorization() {
         guard
             let authUrl = Snabble.metadata.links.paydirektCustomerAuthorization?.href,
-            let project = Snabble.projects.first
+            let projectId = projectId,
+            let project = Snabble.project(for: projectId)
         else {
+            errorView?.isHidden = false
             Log.error("no paydirektCustomerAuthorization in metadata or no project found")
             return
         }
@@ -182,6 +223,7 @@ public final class PaydirektEditViewController: UIViewController {
                     self.webView?.load(URLRequest(url: webUrl))
                     self.clientAuthorization = authResult.links._self.href
                 case .failure(let error):
+                    self.errorView?.isHidden = false
                     print(error)
                 }
             }
@@ -212,6 +254,10 @@ public final class PaydirektEditViewController: UIViewController {
         alert.addAction(UIAlertAction(title: L10n.Snabble.no, style: .cancel, handler: nil))
 
         self.present(alert, animated: true)
+    }
+
+    @objc private func errorButtonTapped(_ sender: Any) {
+        startAuthorization()
     }
 
     private func addWebView(to superview: UIView) -> WKWebView {

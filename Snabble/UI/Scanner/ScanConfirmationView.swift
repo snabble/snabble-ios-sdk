@@ -274,6 +274,8 @@ final class ScanConfirmationView: UIView {
 
         if product.type == .userMustWeigh {
             self.quantityField?.becomeFirstResponder()
+            self.plusButton?.isHidden = true
+            self.minusButton?.isHidden = true
         }
 
         self.showQuantity(updateTextField: true)
