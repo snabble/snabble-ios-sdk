@@ -122,8 +122,21 @@ public struct CheckoutInfo: Decodable {
     /// price info
     public let price: Price
 
+    public let violations: [Violation]?
+
     enum CodingKeys: String, CodingKey {
-        case session, paymentMethods, lineItems, price, requiredInformation
+        case session, paymentMethods, lineItems, price, requiredInformation, violations
+    }
+
+    public struct Violation: Codable {
+        public enum `Type`: String, Codable {
+            case couponInvalid = "coupon_invalid"
+            case couponCurrentlyNotValid = "coupon_currently_not_valid"
+            case couponAlreadyVoided = "coupon_already_voided"
+        }
+        public let type: `Type`
+        public let refersTo: String?
+        public let message: String
     }
 
     public struct LineItem: Codable {
@@ -179,6 +192,7 @@ public struct CheckoutInfo: Decodable {
         self.lineItems = lineItems.filter { $0.type != .unknown }
         self.price = try container.decode(Price.self, forKey: .price)
         self.requiredInformation = try container.decodeIfPresent([RequiredInformation].self, forKey: .requiredInformation) ?? []
+        self.violations = try container.decodeIfPresent([Violation].self, forKey: .violations)
     }
 
     fileprivate init(_ paymentMethods: [RawPaymentMethod]) {
@@ -187,6 +201,7 @@ public struct CheckoutInfo: Decodable {
         self.session = ""
         self.lineItems = []
         self.requiredInformation = []
+        self.violations = nil
     }
 }
 
