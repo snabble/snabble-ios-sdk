@@ -129,10 +129,13 @@ public struct CheckoutInfo: Decodable {
     }
 
     public struct Violation: Codable {
-        public enum `Type`: String, Codable {
+        public enum `Type`: String, Codable, UnknownCaseRepresentable {
+            public static var unknownCase: Self = .unknown
+
             case couponInvalid = "coupon_invalid"
             case couponCurrentlyNotValid = "coupon_currently_not_valid"
             case couponAlreadyVoided = "coupon_already_voided"
+            case unknown
         }
         public let type: `Type`
         public let refersTo: String?
