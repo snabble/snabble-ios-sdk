@@ -33,10 +33,11 @@ final class ScannerDrawerViewController: UIViewController {
 
     private let minDrawerHeight: CGFloat = 50
     private let totalsHeight: CGFloat = 60
-    private let segmentedControlHeight: CGFloat = 48
     private let cartItemHeight: CGFloat = 50
     private let listItemHeight: CGFloat = 50
-    private let innerSpacerHeight: CGFloat = 14
+    private let separatorSpacerHeight: CGFloat = 16
+    private var innerSpacerHeight: NSLayoutConstraint?
+    private var segmentedControlHeight: NSLayoutConstraint?
 
     private weak var checkoutBarWrapper: UILayoutGuide?
     private weak var checkoutBar: CheckoutBar?
@@ -45,7 +46,6 @@ final class ScannerDrawerViewController: UIViewController {
     private weak var effectView: UIVisualEffectView?
     private weak var handleView: UIView?
     private weak var segmentedControl: UISegmentedControl?
-    private weak var innerSpacer: UILayoutGuide?
     private weak var bottomView: UIView?
 
     init(_ projectId: Identifier<Project>,
@@ -127,14 +127,15 @@ final class ScannerDrawerViewController: UIViewController {
             innerSpacer.leadingAnchor.constraint(equalTo: contentView.leadingAnchor),
             innerSpacer.trailingAnchor.constraint(equalTo: contentView.trailingAnchor),
             innerSpacer.topAnchor.constraint(equalTo: checkoutBar.bottomAnchor),
-            innerSpacer.heightAnchor.constraint(equalToConstant: innerSpacerHeight).usingPriority(.defaultHigh),
+            innerSpacer.heightAnchor.constraint(equalToConstant: 0).usingVariable(&innerSpacerHeight).usingPriority(.defaultHigh),
 
             segmentedControl.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 16).usingPriority(.defaultHigh + 1),
             segmentedControl.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -16).usingPriority(.defaultHigh + 1),
             segmentedControl.topAnchor.constraint(equalTo: innerSpacer.bottomAnchor),
+            segmentedControl.heightAnchor.constraint(equalToConstant: 0).usingVariable(&segmentedControlHeight).usingPriority(.defaultHigh + 1),
 
             separatorSpacer.topAnchor.constraint(equalTo: segmentedControl.bottomAnchor),
-            separatorSpacer.heightAnchor.constraint(equalToConstant: 16).usingPriority(.defaultHigh),
+            separatorSpacer.heightAnchor.constraint(equalToConstant: separatorSpacerHeight).usingPriority(.defaultHigh),
             separatorSpacer.leadingAnchor.constraint(equalTo: contentView.leadingAnchor),
             separatorSpacer.trailingAnchor.constraint(equalTo: contentView.trailingAnchor),
 
@@ -145,14 +146,13 @@ final class ScannerDrawerViewController: UIViewController {
 
             bottomView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor),
             bottomView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor),
-            bottomView.topAnchor.constraint(equalTo: separator.bottomAnchor),
+            bottomView.topAnchor.constraint(equalTo: separatorSpacer.bottomAnchor),
             bottomView.bottomAnchor.constraint(equalTo: contentView.bottomAnchor)
         ])
 
         self.view = contentView
         self.effectView = effectView
         self.checkoutBar = checkoutBar
-        self.innerSpacer = innerSpacer
         self.segmentedControl = segmentedControl
         self.bottomView = bottomView
     }
@@ -209,7 +209,7 @@ final class ScannerDrawerViewController: UIViewController {
 
     func bottomViewSwitchTo(_ destination: UIViewController, duration: TimeInterval = 0.15) {
         guard destination != children.first else { return }
-        guard let view = bottomView else { return }
+        guard let bottomView = bottomView else { return }
         if let source = self.children.first {
             addChild(destination)
             source.willMove(toParent: nil)
@@ -231,10 +231,10 @@ final class ScannerDrawerViewController: UIViewController {
 
         destination.view.translatesAutoresizingMaskIntoConstraints = false
         NSLayoutConstraint.activate([
-            destination.view.leadingAnchor.constraint(equalTo: view.leadingAnchor),
-            destination.view.trailingAnchor.constraint(equalTo: view.trailingAnchor),
-            destination.view.topAnchor.constraint(equalTo: view.topAnchor),
-            destination.view.bottomAnchor.constraint(equalTo: view.bottomAnchor)
+            destination.view.leadingAnchor.constraint(equalTo: bottomView.leadingAnchor),
+            destination.view.trailingAnchor.constraint(equalTo: bottomView.trailingAnchor),
+            destination.view.topAnchor.constraint(equalTo: bottomView.topAnchor),
+            destination.view.bottomAnchor.constraint(equalTo: bottomView.bottomAnchor)
         ])
     }
 
@@ -252,11 +252,10 @@ final class ScannerDrawerViewController: UIViewController {
     private func setupViews(_ list: ShoppingList?, _ cart: ShoppingCart?) {
         let noList = list == nil
         segmentedControl?.isHidden = noList
+        innerSpacerHeight?.constant = noList ? 0 : 14
+        segmentedControlHeight?.constant = noList ? 0 : 32
         if noList {
-            innerSpacer?.heightAnchor.constraint(equalToConstant: 0).isActive = true
             selectSegment(1)
-        } else {
-            innerSpacer?.heightAnchor.constraint(equalToConstant: innerSpacerHeight).isActive = true
         }
     }
 
@@ -296,7 +295,7 @@ extension ScannerDrawerViewController: PulleyDrawerViewControllerDelegate {
         let heightForListItems: CGFloat = min(CGFloat(shoppingList?.count ?? 0) * listItemHeight, listItemHeight * 2.5)
         let heightForItems = !shoppingCart.items.isEmpty ? heightForCartItems : heightForListItems
 
-        let heightForSegmentedControl = shoppingList == nil ? 0 : self.segmentedControlHeight
+        let heightForSegmentedControl = shoppingList == nil ? 0 : (self.segmentedControlHeight?.constant ?? 0) + self.separatorSpacerHeight
         return self.minDrawerHeight + heightForSegmentedControl + totalsHeight + heightForItems
     }
 
