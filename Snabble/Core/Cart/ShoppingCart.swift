@@ -159,6 +159,14 @@ public final class ShoppingCart: Codable {
         self.items.insert(item, at: 0)
     }
 
+    public func remove(with uuid: String) -> Bool {
+        guard let itemIndex = items.firstIndex(where: { $0.uuid == uuid }) else {
+            return false
+        }
+        remove(at: itemIndex)
+        return true
+    }
+
     /// delete the entry at position `index`
     public func remove(at index: Int) {
         self.items.remove(at: index)
