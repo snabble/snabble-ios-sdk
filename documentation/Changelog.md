@@ -7,7 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Added
-* Checkout Violations
+* Checkout Violations #110
 
 ### Changed
 * Refactored ShoppingCartTableCellView to programmatically written UI #98
