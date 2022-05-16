@@ -8,6 +8,7 @@ import Foundation
 
 protocol InternalShoppingCartDelegate: AnyObject {
     func shoppingCart(_ shoppingCart: ShoppingCart, didChangeCustomerCard customerCard: String?)
+    func shoppingCart(_ shoppingCart: ShoppingCart, violationsDetected violations: [CheckoutInfo.Violation])
 }
 
 /// a ShoppingCart is a collection of CartItem objects
@@ -494,7 +495,7 @@ extension ShoppingCart {
             NotificationCenter.default.post(name: .snabbleCartUpdating, object: self)
         }
 
-        self.createCheckoutInfo(project, timeout: 3) { result in
+        self.createCheckoutInfo(project, timeout: 3) { [self] result in
             switch result {
             case .failure(let error):
                 Log.warn("createCheckoutInfo failed: \(error)")
@@ -513,12 +514,14 @@ extension ShoppingCart {
 
                 let ids = self.requiredInformation.map { $0.id }
                 self.requiredInformationData.removeAll { !ids.contains($0.id) }
-                for violation in info.checkoutInfo.violations ?? [] {
-                    guard let uuid = violation.refersTo else {
-                        continue
-                    }
 
-                    self.remove(with: uuid)
+                if let violations = info.checkoutInfo.violations {
+                    violations
+                        .compactMap(\.refersTo)
+                        .forEach {
+                            remove(with: $0)
+                    }
+                    delegate?.shoppingCart(self, violationsDetected: violations)
                 }
                 self.lastCheckoutInfoError = nil
                 self.save(postEvent: false)

@@ -95,4 +95,13 @@ extension ScannerViewController: InternalShoppingCartDelegate {
         guard let drawer = self.drawerContentViewController as? ScannerDrawerViewController else { return }
         drawer.updateTotals()
     }
+
+    func shoppingCart(_ shoppingCart: ShoppingCart, violationsDetected violations: [CheckoutInfo.Violation]) {
+        print(#function)
+        print("violations:", violations)
+        let alertController = UIAlertController(title: nil, message: violations.first?.message, preferredStyle: .alert)
+        present(alertController, animated: true)
+
+
+    }
 }
