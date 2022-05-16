@@ -159,12 +159,35 @@ public final class ShoppingCart: Codable {
         self.items.insert(item, at: 0)
     }
 
-    public func remove(with uuid: String) -> Bool {
-        guard let itemIndex = items.firstIndex(where: { $0.uuid == uuid }) else {
-            return false
+    private func item(for uuid: String) -> Cart.Item? {
+        backendItems().first(where: {
+            switch $0 {
+            case .coupon(let item):
+                return item.id == uuid
+            case .product(let item):
+                return item.id == uuid
+            }
+        })
+    }
+
+    public func remove(with uuid: String) {
+        guard let item = item(for: uuid) else { return }
+        switch item {
+        case .product(let item):
+            removeProduct(with: item.id)
+        case .coupon(let item):
+            removeCoupon(with: item.id)
         }
-        remove(at: itemIndex)
-        return true
+    }
+
+    func removeCoupon(with uuid: String) {
+        coupons.removeAll { $0.uuid == uuid }
+        save()
+    }
+
+    func removeProduct(with uuid: String) {
+        items.removeAll { $0.uuid == uuid }
+        save()
     }
 
     /// delete the entry at position `index`
@@ -321,7 +344,7 @@ extension ShoppingCart {
     public func addCoupon(_ coupon: Coupon, scannedCode: String? = nil) {
         let index = coupons.firstIndex(where: { $0.coupon.id == coupon.id })
         if index == nil {
-            coupons.append(CartCoupon(coupon: coupon, scannedCode: scannedCode))
+            coupons.append(CartCoupon(uuid: UUID().uuidString, coupon: coupon, scannedCode: scannedCode))
             self.save()
         }
     }
@@ -490,7 +513,13 @@ extension ShoppingCart {
 
                 let ids = self.requiredInformation.map { $0.id }
                 self.requiredInformationData.removeAll { !ids.contains($0.id) }
+                for violation in info.checkoutInfo.violations ?? [] {
+                    guard let uuid = violation.refersTo else {
+                        continue
+                    }
 
+                    self.remove(with: uuid)
+                }
                 self.lastCheckoutInfoError = nil
                 self.save(postEvent: false)
                 completion(true)

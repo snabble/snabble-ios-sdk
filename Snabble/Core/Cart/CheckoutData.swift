@@ -480,8 +480,8 @@ public struct Cart: Encodable {
         public let scannedCode: String?
         public let amount: Int
 
-        init(couponId: String, refersTo: String? = nil, scannedCode: String? = nil, amount: Int = 1) {
-            self.id = UUID().uuidString
+        init(id: String, couponId: String, refersTo: String? = nil, scannedCode: String? = nil, amount: Int = 1) {
+            self.id = id
             self.couponID = couponId
             self.refersTo = refersTo
             self.scannedCode = scannedCode
