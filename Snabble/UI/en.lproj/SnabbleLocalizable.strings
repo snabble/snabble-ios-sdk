@@ -583,5 +583,13 @@
 
 "Snabble.undo" = "Undo";
 
+"Snabble.Violations.couponAlreadyVoided" = "The coupon „%@“ is already redeemed and will be removed from cart";
+
+"Snabble.Violations.couponCurrentlyNotValid" = "The coupon „%@“ is currently not valid and will be removed from cart";
+
+"Snabble.Violations.couponInvalid" = "The coupon „%@“ is invalid and will be removed from cart";
+
+"Snabble.Violations.title" = "Coupon invalid";
+
 "Snabble.Yes" = "Yes";
 

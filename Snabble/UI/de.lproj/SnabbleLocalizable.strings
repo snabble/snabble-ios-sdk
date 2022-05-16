@@ -583,5 +583,13 @@
 
 "Snabble.undo" = "Rückgängig";
 
+"Snabble.Violations.couponAlreadyVoided" = "Der Coupon „%@“ wurde bereits benutzt und wird aus dem Warenkorb entfernt";
+
+"Snabble.Violations.couponCurrentlyNotValid" = "Der Coupon „%@“ ist akuell ungültig und wird aus dem Warenkorb entfernt";
+
+"Snabble.Violations.couponInvalid" = "Der Coupon „%@“ ist ungültig und wird aus dem Warenkorb entfernt";
+
+"Snabble.Violations.title" = "Coupon ungültig";
+
 "Snabble.Yes" = "Ja";
 

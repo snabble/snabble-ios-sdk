@@ -717,6 +717,22 @@ public enum L10n {
         public static var takeaway: String { return L10n.tr("SnabbleLocalizable", "Snabble.Taxation.consume.takeaway") }
       }
     }
+    public enum Violations {
+      /// The coupon „%@“ is already redeemed and will be removed from cart
+      public static func couponAlreadyVoided(_ p1: Any) -> String {
+        return L10n.tr("SnabbleLocalizable", "Snabble.Violations.couponAlreadyVoided", String(describing: p1))
+      }
+      /// The coupon „%@“ is currently not valid and will be removed from cart
+      public static func couponCurrentlyNotValid(_ p1: Any) -> String {
+        return L10n.tr("SnabbleLocalizable", "Snabble.Violations.couponCurrentlyNotValid", String(describing: p1))
+      }
+      /// The coupon „%@“ is invalid and will be removed from cart
+      public static func couponInvalid(_ p1: Any) -> String {
+        return L10n.tr("SnabbleLocalizable", "Snabble.Violations.couponInvalid", String(describing: p1))
+      }
+      /// Coupon invalid
+      public static var title: String { return L10n.tr("SnabbleLocalizable", "Snabble.Violations.title") }
+    }
     public enum AgeVerification {
       /// To purchase certain products like alcoholic beverages, verifying your age is required. Enter the 7-digit Number from the back side of your ID card.
       public static var explanation: String { return L10n.tr("SnabbleLocalizable", "Snabble.ageVerification.explanation") }
