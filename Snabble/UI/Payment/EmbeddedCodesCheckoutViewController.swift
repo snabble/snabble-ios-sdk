@@ -87,7 +87,6 @@ final class EmbeddedCodesCheckoutViewController: UIViewController {
         let paidButton = UIButton(type: .system)
         paidButton.translatesAutoresizingMaskIntoConstraints = false
         paidButton.useDynamicFont(forTextStyle: .headline, weight: .semibold)
-        paidButton.restrictDynamicTypeSize(from: nil, to: .extraExtraExtraLarge)
         paidButton.makeSnabbleButton()
         paidButton.titleLabel?.textAlignment = .center
         paidButton.setTitle(L10n.Snabble.QRCode.didPay, for: .normal)
