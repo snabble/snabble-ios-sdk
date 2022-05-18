@@ -16,6 +16,7 @@ final class CustomerCardCheckoutViewController: UIViewController {
     private var iconImageHeight: NSLayoutConstraint?
 
     private var initialBrightness: CGFloat = 0
+    private let arrowIconHeight: CGFloat = 30
 
     private let cart: ShoppingCart
     weak var delegate: PaymentDelegate?
@@ -50,10 +51,23 @@ final class CustomerCardCheckoutViewController: UIViewController {
     override public func loadView() {
         let contentView = UIView(frame: UIScreen.main.bounds)
         contentView.backgroundColor = .systemBackground
+        contentView.restrictDynamicTypeSize(from: nil, to: .extraExtraExtraLarge)
+
+        let scrollView = UIScrollView()
+        scrollView.translatesAutoresizingMaskIntoConstraints = false
+        scrollView.backgroundColor = .systemBackground
+        scrollView.showsVerticalScrollIndicator = false
+        scrollView.alwaysBounceVertical = false
+
+        let contentLayoutGuide = scrollView.contentLayoutGuide
+        let frameLayoutGuide = scrollView.frameLayoutGuide
+
+        let wrapperView = UIView()
+        wrapperView.translatesAutoresizingMaskIntoConstraints = false
 
         let paidButton = UIButton(type: .system)
         paidButton.translatesAutoresizingMaskIntoConstraints = false
-        paidButton.titleLabel?.font = UIFont.systemFont(ofSize: 17, weight: .semibold)
+        paidButton.useDynamicFont(forTextStyle: .headline, weight: .semibold)
         paidButton.makeSnabbleButton()
         paidButton.setTitle(L10n.Snabble.QRCode.didPay, for: .normal)
         paidButton.alpha = 0
@@ -79,6 +93,7 @@ final class CustomerCardCheckoutViewController: UIViewController {
 
         let arrowIcon = customImage
         arrowIcon.image = Asset.SnabbleSDK.arrowUp.image
+        arrowIcon.adjustsImageSizeForAccessibilityContentSizeCategory = true
 
         let codeWrapper = UIView()
         codeWrapper.translatesAutoresizingMaskIntoConstraints = false
@@ -87,9 +102,12 @@ final class CustomerCardCheckoutViewController: UIViewController {
         codeView.translatesAutoresizingMaskIntoConstraints = false
         codeView.backgroundColor = .systemBackground
 
-        contentView.addLayoutGuide(stackViewLayout)
-        contentView.addSubview(stackView)
-        contentView.addSubview(paidButton)
+        contentView.addSubview(scrollView)
+        scrollView.addSubview(wrapperView)
+
+        wrapperView.addLayoutGuide(stackViewLayout)
+        wrapperView.addSubview(stackView)
+        wrapperView.addSubview(paidButton)
 
         stackView.addArrangedSubview(iconWrapper)
         stackView.addArrangedSubview(arrowWrapper)
@@ -100,14 +118,26 @@ final class CustomerCardCheckoutViewController: UIViewController {
         codeWrapper.addSubview(codeView)
 
         NSLayoutConstraint.activate([
-            paidButton.heightAnchor.constraint(equalToConstant: 48),
-            paidButton.bottomAnchor.constraint(equalTo: contentView.safeAreaLayoutGuide.bottomAnchor, constant: -16),
-            paidButton.leadingAnchor.constraint(equalTo: contentView.safeAreaLayoutGuide.leadingAnchor, constant: 16),
-            paidButton.trailingAnchor.constraint(equalTo: contentView.safeAreaLayoutGuide.trailingAnchor, constant: -16),
+            frameLayoutGuide.leadingAnchor.constraint(equalTo: contentView.leadingAnchor),
+            frameLayoutGuide.trailingAnchor.constraint(equalTo: contentView.trailingAnchor),
+            frameLayoutGuide.topAnchor.constraint(equalTo: contentView.safeAreaLayoutGuide.topAnchor),
+            frameLayoutGuide.bottomAnchor.constraint(equalTo: contentView.safeAreaLayoutGuide.bottomAnchor),
+            frameLayoutGuide.widthAnchor.constraint(equalTo: contentLayoutGuide.widthAnchor),
 
-            stackViewLayout.topAnchor.constraint(equalTo: contentView.safeAreaLayoutGuide.topAnchor),
-            stackViewLayout.leadingAnchor.constraint(equalTo: contentView.safeAreaLayoutGuide.leadingAnchor, constant: 16),
-            stackViewLayout.trailingAnchor.constraint(equalTo: contentView.safeAreaLayoutGuide.trailingAnchor, constant: -16),
+            contentLayoutGuide.leadingAnchor.constraint(equalTo: wrapperView.leadingAnchor),
+            contentLayoutGuide.topAnchor.constraint(equalTo: wrapperView.topAnchor),
+            contentLayoutGuide.trailingAnchor.constraint(equalTo: wrapperView.trailingAnchor),
+            contentLayoutGuide.bottomAnchor.constraint(equalTo: wrapperView.bottomAnchor),
+            wrapperView.heightAnchor.constraint(greaterThanOrEqualTo: frameLayoutGuide.heightAnchor),
+
+            paidButton.heightAnchor.constraint(equalToConstant: 48),
+            paidButton.bottomAnchor.constraint(equalTo: wrapperView.bottomAnchor, constant: -16),
+            paidButton.leadingAnchor.constraint(equalTo: wrapperView.leadingAnchor, constant: 16),
+            paidButton.trailingAnchor.constraint(equalTo: wrapperView.trailingAnchor, constant: -16),
+
+            stackViewLayout.topAnchor.constraint(equalTo: wrapperView.topAnchor),
+            stackViewLayout.leadingAnchor.constraint(equalTo: wrapperView.leadingAnchor, constant: 16),
+            stackViewLayout.trailingAnchor.constraint(equalTo: wrapperView.trailingAnchor, constant: -16),
             stackViewLayout.bottomAnchor.constraint(equalTo: paidButton.topAnchor),
 
             stackView.leadingAnchor.constraint(equalTo: stackViewLayout.leadingAnchor),
@@ -121,7 +151,6 @@ final class CustomerCardCheckoutViewController: UIViewController {
             iconImageView.topAnchor.constraint(equalTo: iconWrapper.topAnchor, constant: 16),
             iconImageView.bottomAnchor.constraint(equalTo: iconWrapper.bottomAnchor, constant: -16),
 
-            arrowWrapper.heightAnchor.constraint(equalToConstant: 30),
             arrowIcon.leadingAnchor.constraint(equalTo: arrowWrapper.leadingAnchor),
             arrowIcon.trailingAnchor.constraint(equalTo: arrowWrapper.trailingAnchor),
             arrowIcon.topAnchor.constraint(equalTo: arrowWrapper.topAnchor),
@@ -155,14 +184,8 @@ final class CustomerCardCheckoutViewController: UIViewController {
 
         arrowWrapper?.isHidden = true
         iconWrapper?.isHidden = true
-        SnabbleUI.getAsset(.checkoutOffline, bundlePath: "Checkout/\(SnabbleUI.project.id)/checkout-offline") { img in
-            if let img = img {
-                self.iconImageView?.image = img
-                self.iconImageHeight?.constant = img.size.height
-                self.iconWrapper?.isHidden = false
-                self.arrowWrapper?.isHidden = false
-            }
-        }
+
+        setupIcons()
     }
 
     override func viewWillAppear(_ animated: Bool) {
@@ -192,6 +215,25 @@ final class CustomerCardCheckoutViewController: UIViewController {
         super.viewWillDisappear(animated)
 
         UIScreen.main.brightness = self.initialBrightness
+    }
+
+    override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
+        super.traitCollectionDidChange(previousTraitCollection)
+
+        setupIcons()
+    }
+
+    private func setupIcons() {
+        SnabbleUI.getAsset(.checkoutOffline, bundlePath: "Checkout/\(SnabbleUI.project.id)/checkout-offline") { img in
+            if let img = img {
+                self.iconImageView?.image = img
+                self.iconImageHeight?.constant = img.size.height
+                self.iconWrapper?.isHidden = false
+                let scaledArrowWrapperHeight = UIFontMetrics.default.scaledValue(for: self.arrowIconHeight)
+                self.arrowWrapper?.heightAnchor.constraint(equalToConstant: scaledArrowWrapperHeight).usingPriority(.defaultHigh + 1).isActive = true
+                self.arrowWrapper?.isHidden = false
+            }
+        }
     }
 
     @objc private func paidButtonTapped(_ sender: Any) {
