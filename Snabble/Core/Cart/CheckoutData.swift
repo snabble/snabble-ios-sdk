@@ -105,14 +105,6 @@ public enum RequiredInformationType: String, Codable {
     case taxation
 }
 
-extension Array where Element == CheckoutInfo.Violation {
-    var message: String {
-        self
-            .map { $0.text }
-            .joined(separator: "\n")
-    }
-}
-
 // CheckoutInfo
 public struct CheckoutInfo: Decodable {
     /// session id

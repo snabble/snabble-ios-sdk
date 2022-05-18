@@ -22,3 +22,11 @@ extension CheckoutInfo.Violation {
         }
     }
 }
+
+extension Array where Element == CheckoutInfo.Violation {
+    var message: String {
+        self
+            .map { $0.text }
+            .joined(separator: "\n")
+    }
+}
