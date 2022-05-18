@@ -248,4 +248,19 @@ extension ShoppingCartViewController: InternalShoppingCartDelegate {
     func shoppingCart(_ shoppingCart: ShoppingCart, didChangeCustomerCard customerCard: String?) {
         updateTotals()
     }
+
+    func shoppingCart(_ shoppingCart: ShoppingCart, violationsDetected violations: [CheckoutInfo.Violation]) {
+        let alertController = UIAlertController(
+            title: L10n.Snabble.Violations.title,
+            message: violations.message,
+            preferredStyle: .alert
+        )
+        let action = UIAlertAction(
+            title: L10n.Snabble.ok,
+            style: .default) { _ in
+            alertController.dismiss(animated: true)
+        }
+        alertController.addAction(action)
+        present(alertController, animated: true)
+    }
 }

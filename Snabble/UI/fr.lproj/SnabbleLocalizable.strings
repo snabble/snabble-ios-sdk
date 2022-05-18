@@ -61,6 +61,38 @@
 
 "Snabble.Checkout.verifying" = "Vérifie";
 
+"Snabble.Coupons.expired" = "Déjà expiré";
+
+"Snabble.Coupons.expiresAtDate" = "valable jusqu'au %@";
+
+"Snabble.Coupons.expiresInDays.one" = "encore %d jour";
+
+"Snabble.Coupons.expiresInDays.other" = "encore %d jours";
+
+"Snabble.Coupons.expiresInDays.zero" = "Déjà expiré";
+
+"Snabble.Coupons.expiresInHours.one" = "encore %d heure";
+
+"Snabble.Coupons.expiresInHours.other" = "encore %d heures";
+
+"Snabble.Coupons.expiresInHours.zero" = "Déjà expiré";
+
+"Snabble.Coupons.expiresInMinutes.one" = "encore %d minute";
+
+"Snabble.Coupons.expiresInMinutes.other" = "encore %d minutes";
+
+"Snabble.Coupons.expiresInMinutes.zero" = "Déjà expiré";
+
+"Snabble.Coupons.expiresInWeeks.one" = "encore %d semaine";
+
+"Snabble.Coupons.expiresInWeeks.other" = "encore %d semaines";
+
+"Snabble.Coupons.expiresInWeeks.zero" = "Déjà expiré";
+
+"Snabble.Coupons.none" = "Aucun coupon disponible";
+
+"Snabble.Coupons.title" = "coupons";
+
 "Snabble.CreditCard.payNow" = "Payer maintenant avec la carte de crédit";
 
 "Snabble.Delete" = "Effacer";
@@ -582,6 +614,14 @@
 "Snabble.TWINT.payNow" = "Payer maintenant avec TWINT";
 
 "Snabble.undo" = "Annuler";
+
+"Snabble.Violations.couponAlreadyVoided" = "A coupon is already redeemed and will be removed from cart";
+
+"Snabble.Violations.couponCurrentlyNotValid" = "A coupon is currently not valid and will be removed from cart";
+
+"Snabble.Violations.couponInvalid" = "A coupon is invalid and will be removed from cart";
+
+"Snabble.Violations.title" = "Invalid shopping cart";
 
 "Snabble.Yes" = "Oui";
 

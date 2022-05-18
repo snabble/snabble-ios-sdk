@@ -61,6 +61,38 @@
 
 "Snabble.Checkout.verifying" = "Overujem";
 
+"Snabble.Coupons.expired" = "Already expired";
+
+"Snabble.Coupons.expiresAtDate" = "valid until %@";
+
+"Snabble.Coupons.expiresInDays.one" = "%d day remaining";
+
+"Snabble.Coupons.expiresInDays.other" = "%d days remaining";
+
+"Snabble.Coupons.expiresInDays.zero" = "Already expired";
+
+"Snabble.Coupons.expiresInHours.one" = "%d hour remaining";
+
+"Snabble.Coupons.expiresInHours.other" = "%d hours remaining";
+
+"Snabble.Coupons.expiresInHours.zero" = "Already expired";
+
+"Snabble.Coupons.expiresInMinutes.one" = "%d minute remaining";
+
+"Snabble.Coupons.expiresInMinutes.other" = "%d minutes remaining";
+
+"Snabble.Coupons.expiresInMinutes.zero" = "Already expired";
+
+"Snabble.Coupons.expiresInWeeks.one" = "%d week remaining";
+
+"Snabble.Coupons.expiresInWeeks.other" = "%d weeks remaining";
+
+"Snabble.Coupons.expiresInWeeks.zero" = "Already expired";
+
+"Snabble.Coupons.none" = "No Coupons available";
+
+"Snabble.Coupons.title" = "Coupons";
+
 "Snabble.CreditCard.payNow" = "Teraz zaplatiť kreditnou kartou";
 
 "Snabble.Delete" = "Vymazať";
@@ -582,6 +614,14 @@
 "Snabble.TWINT.payNow" = "Zaplatiť cez TWINT teraz";
 
 "Snabble.undo" = "Vrátiť späť";
+
+"Snabble.Violations.couponAlreadyVoided" = "A coupon is already redeemed and will be removed from cart";
+
+"Snabble.Violations.couponCurrentlyNotValid" = "A coupon is currently not valid and will be removed from cart";
+
+"Snabble.Violations.couponInvalid" = "A coupon is invalid and will be removed from cart";
+
+"Snabble.Violations.title" = "Invalid shopping cart";
 
 "Snabble.Yes" = "Áno";
 

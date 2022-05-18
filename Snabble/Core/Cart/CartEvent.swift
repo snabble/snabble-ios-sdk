@@ -39,7 +39,7 @@ enum CartEvent {
             return
         }
 
-        cart.createCheckoutInfo(completion: {_ in})
+        cart.createCheckoutInfo(completion: { _ in })
         let event = AppEvent(cart)
         event?.post()
     }
