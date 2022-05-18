@@ -106,6 +106,66 @@ public enum L10n {
       /// Verifying
       public static var verifying: String { return L10n.tr("SnabbleLocalizable", "Snabble.Checkout.verifying") }
     }
+    public enum Coupons {
+      /// Already expired
+      public static var expired: String { return L10n.tr("SnabbleLocalizable", "Snabble.Coupons.expired") }
+      /// valid until %@
+      public static func expiresAtDate(_ p1: Any) -> String {
+        return L10n.tr("SnabbleLocalizable", "Snabble.Coupons.expiresAtDate", String(describing: p1))
+      }
+      /// No Coupons available
+      public static var `none`: String { return L10n.tr("SnabbleLocalizable", "Snabble.Coupons.none") }
+      /// Coupons
+      public static var title: String { return L10n.tr("SnabbleLocalizable", "Snabble.Coupons.title") }
+      public enum ExpiresInDays {
+        /// %d day remaining
+        public static func one(_ p1: Int) -> String {
+          return L10n.tr("SnabbleLocalizable", "Snabble.Coupons.expiresInDays.one", p1)
+        }
+        /// %d days remaining
+        public static func other(_ p1: Int) -> String {
+          return L10n.tr("SnabbleLocalizable", "Snabble.Coupons.expiresInDays.other", p1)
+        }
+        /// Already expired
+        public static var zero: String { return L10n.tr("SnabbleLocalizable", "Snabble.Coupons.expiresInDays.zero") }
+      }
+      public enum ExpiresInHours {
+        /// %d hour remaining
+        public static func one(_ p1: Int) -> String {
+          return L10n.tr("SnabbleLocalizable", "Snabble.Coupons.expiresInHours.one", p1)
+        }
+        /// %d hours remaining
+        public static func other(_ p1: Int) -> String {
+          return L10n.tr("SnabbleLocalizable", "Snabble.Coupons.expiresInHours.other", p1)
+        }
+        /// Already expired
+        public static var zero: String { return L10n.tr("SnabbleLocalizable", "Snabble.Coupons.expiresInHours.zero") }
+      }
+      public enum ExpiresInMinutes {
+        /// %d minute remaining
+        public static func one(_ p1: Int) -> String {
+          return L10n.tr("SnabbleLocalizable", "Snabble.Coupons.expiresInMinutes.one", p1)
+        }
+        /// %d minutes remaining
+        public static func other(_ p1: Int) -> String {
+          return L10n.tr("SnabbleLocalizable", "Snabble.Coupons.expiresInMinutes.other", p1)
+        }
+        /// Already expired
+        public static var zero: String { return L10n.tr("SnabbleLocalizable", "Snabble.Coupons.expiresInMinutes.zero") }
+      }
+      public enum ExpiresInWeeks {
+        /// %d week remaining
+        public static func one(_ p1: Int) -> String {
+          return L10n.tr("SnabbleLocalizable", "Snabble.Coupons.expiresInWeeks.one", p1)
+        }
+        /// %d weeks remaining
+        public static func other(_ p1: Int) -> String {
+          return L10n.tr("SnabbleLocalizable", "Snabble.Coupons.expiresInWeeks.other", p1)
+        }
+        /// Already expired
+        public static var zero: String { return L10n.tr("SnabbleLocalizable", "Snabble.Coupons.expiresInWeeks.zero") }
+      }
+    }
     public enum CreditCard {
       /// Pay now using Credit card
       public static var payNow: String { return L10n.tr("SnabbleLocalizable", "Snabble.CreditCard.payNow") }
@@ -718,19 +778,13 @@ public enum L10n {
       }
     }
     public enum Violations {
-      /// The coupon „%@“ is already redeemed and will be removed from cart
-      public static func couponAlreadyVoided(_ p1: Any) -> String {
-        return L10n.tr("SnabbleLocalizable", "Snabble.Violations.couponAlreadyVoided", String(describing: p1))
-      }
-      /// The coupon „%@“ is currently not valid and will be removed from cart
-      public static func couponCurrentlyNotValid(_ p1: Any) -> String {
-        return L10n.tr("SnabbleLocalizable", "Snabble.Violations.couponCurrentlyNotValid", String(describing: p1))
-      }
-      /// The coupon „%@“ is invalid and will be removed from cart
-      public static func couponInvalid(_ p1: Any) -> String {
-        return L10n.tr("SnabbleLocalizable", "Snabble.Violations.couponInvalid", String(describing: p1))
-      }
-      /// Coupon invalid
+      /// A coupon is already redeemed and will be removed from cart
+      public static var couponAlreadyVoided: String { return L10n.tr("SnabbleLocalizable", "Snabble.Violations.couponAlreadyVoided") }
+      /// A coupon is currently not valid and will be removed from cart
+      public static var couponCurrentlyNotValid: String { return L10n.tr("SnabbleLocalizable", "Snabble.Violations.couponCurrentlyNotValid") }
+      /// A coupon is invalid and will be removed from cart
+      public static var couponInvalid: String { return L10n.tr("SnabbleLocalizable", "Snabble.Violations.couponInvalid") }
+      /// Invalid shopping cart
       public static var title: String { return L10n.tr("SnabbleLocalizable", "Snabble.Violations.title") }
     }
     public enum AgeVerification {

@@ -105,6 +105,14 @@ public enum RequiredInformationType: String, Codable {
     case taxation
 }
 
+extension Array where Element == CheckoutInfo.Violation {
+    var message: String {
+        self
+            .map { $0.text }
+            .joined(separator: "\n")
+    }
+}
+
 // CheckoutInfo
 public struct CheckoutInfo: Decodable {
     /// session id
@@ -140,6 +148,19 @@ public struct CheckoutInfo: Decodable {
         public let type: `Type`
         public let refersTo: String?
         public let message: String
+
+        public var text: String {
+            switch type {
+            case .unknown:
+                return message
+            case .couponInvalid:
+                return L10n.Snabble.Violations.couponInvalid
+            case .couponAlreadyVoided:
+                return L10n.Snabble.Violations.couponAlreadyVoided
+            case .couponCurrentlyNotValid:
+                return L10n.Snabble.Violations.couponCurrentlyNotValid
+            }
+        }
     }
 
     public struct LineItem: Codable {

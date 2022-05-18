@@ -61,6 +61,38 @@
 
 "Snabble.Checkout.verifying" = "Verifiziere";
 
+"Snabble.Coupons.expired" = "Bereits abgelaufen";
+
+"Snabble.Coupons.expiresAtDate" = "gültig bis %@";
+
+"Snabble.Coupons.expiresInDays.one" = "noch %d Tag";
+
+"Snabble.Coupons.expiresInDays.other" = "noch %d Tage";
+
+"Snabble.Coupons.expiresInDays.zero" = "Bereits abgelaufen";
+
+"Snabble.Coupons.expiresInHours.one" = "noch %d Stunde";
+
+"Snabble.Coupons.expiresInHours.other" = "noch %d Stunden";
+
+"Snabble.Coupons.expiresInHours.zero" = "Bereits abgelaufen";
+
+"Snabble.Coupons.expiresInMinutes.one" = "noch %d Minute";
+
+"Snabble.Coupons.expiresInMinutes.other" = "noch %d Minuten";
+
+"Snabble.Coupons.expiresInMinutes.zero" = "Bereits abgelaufen";
+
+"Snabble.Coupons.expiresInWeeks.one" = "noch %d Woche";
+
+"Snabble.Coupons.expiresInWeeks.other" = "noch %d Wochen";
+
+"Snabble.Coupons.expiresInWeeks.zero" = "Bereits abgelaufen";
+
+"Snabble.Coupons.none" = "Keine Coupons verfügbar";
+
+"Snabble.Coupons.title" = "Coupons";
+
 "Snabble.CreditCard.payNow" = "Jetzt mit Kreditkarte bezahlen";
 
 "Snabble.Delete" = "Löschen";
@@ -583,13 +615,13 @@
 
 "Snabble.undo" = "Rückgängig";
 
-"Snabble.Violations.couponAlreadyVoided" = "Der Coupon „%@“ wurde bereits benutzt und wird aus dem Warenkorb entfernt";
+"Snabble.Violations.couponAlreadyVoided" = "Ein Coupon wurde bereits benutzt und wird aus dem Warenkorb entfernt";
 
-"Snabble.Violations.couponCurrentlyNotValid" = "Der Coupon „%@“ ist akuell ungültig und wird aus dem Warenkorb entfernt";
+"Snabble.Violations.couponCurrentlyNotValid" = "Ein Coupon ist aktuell ungültig und wird aus dem Warenkorb entfernt";
 
-"Snabble.Violations.couponInvalid" = "Der Coupon „%@“ ist ungültig und wird aus dem Warenkorb entfernt";
+"Snabble.Violations.couponInvalid" = "Ein Coupon ist ungültig und wird aus dem Warenkorb entfernt";
 
-"Snabble.Violations.title" = "Coupon ungültig";
+"Snabble.Violations.title" = "Ungültiger Warenkorb";
 
 "Snabble.Yes" = "Ja";
 
