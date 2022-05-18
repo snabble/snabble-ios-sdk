@@ -76,7 +76,7 @@ final class EmbeddedCodesCheckoutViewController: UIViewController {
         scrollView.translatesAutoresizingMaskIntoConstraints = false
         scrollView.backgroundColor = .systemBackground
         scrollView.showsVerticalScrollIndicator = false
-        scrollView.alwaysBounceVertical = true
+        scrollView.alwaysBounceVertical = false
 
         let contentLayoutGuide = scrollView.contentLayoutGuide
         let frameLayoutGuide = scrollView.frameLayoutGuide
@@ -172,7 +172,7 @@ final class EmbeddedCodesCheckoutViewController: UIViewController {
             contentLayoutGuide.bottomAnchor.constraint(equalTo: wrapperView.bottomAnchor),
             wrapperView.heightAnchor.constraint(greaterThanOrEqualTo: frameLayoutGuide.heightAnchor),
 
-            paidButton.heightAnchor.constraint(greaterThanOrEqualToConstant: 48),
+            paidButton.heightAnchor.constraint(equalToConstant: 48),
             paidButton.bottomAnchor.constraint(equalTo: wrapperView.bottomAnchor, constant: -16),
             paidButton.leadingAnchor.constraint(equalTo: wrapperView.leadingAnchor, constant: 16),
             paidButton.trailingAnchor.constraint(equalTo: wrapperView.trailingAnchor, constant: -16),
