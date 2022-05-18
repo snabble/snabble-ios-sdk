@@ -69,11 +69,12 @@ public struct ScannedCode: Codable {
 
 /// a coupon entry in a shopping cart
 public struct CartCoupon: Codable {
+    public let uuid: String
     public let coupon: Coupon
     public let scannedCode: String?
 
     public var cartItem: Cart.Item {
-        let couponItem = Cart.CouponItem(couponId: coupon.id, scannedCode: scannedCode)
+        let couponItem = Cart.CouponItem(id: uuid, couponId: coupon.id, scannedCode: scannedCode)
         return Cart.Item.coupon(couponItem)
     }
 }
@@ -316,7 +317,7 @@ public struct CartItem: Codable {
 
         if let coupon = self.manualCoupon {
             let couponItem = Cart.Item.coupon(
-                Cart.CouponItem(couponId: coupon.id, refersTo: self.uuid))
+                Cart.CouponItem(id: UUID().uuidString, couponId: coupon.id, refersTo: uuid))
             return [productItem, couponItem]
         } else {
             return [productItem]

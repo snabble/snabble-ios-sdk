@@ -33,19 +33,26 @@ final class ScannerDrawerViewController: UIViewController {
 
     private let minDrawerHeight: CGFloat = 50
     private let totalsHeight: CGFloat = 60
-    private let segmentedControlHeight: CGFloat = 48
     private let cartItemHeight: CGFloat = 50
     private let listItemHeight: CGFloat = 50
+    private let separatorSpacerHeight: CGFloat = 16
     private let innerSpacerHeight: CGFloat = 14
+    private let segmentedControlHeight: CGFloat = 32
 
-    private weak var checkoutBarWrapper: UILayoutGuide?
+    private var segmentedControlHidden = true {
+        didSet {
+            segmentedControl?.isHidden = segmentedControlHidden
+            innerSpacer?.isHidden = segmentedControlHidden
+        }
+    }
+
     private weak var checkoutBar: CheckoutBar?
     private var previousPosition = PulleyPosition.closed
 
     private weak var effectView: UIVisualEffectView?
     private weak var handleView: UIView?
     private weak var segmentedControl: UISegmentedControl?
-    private weak var innerSpacer: UILayoutGuide?
+    private weak var innerSpacer: UIView?
     private weak var bottomView: UIView?
 
     init(_ projectId: Identifier<Project>,
@@ -82,17 +89,27 @@ final class ScannerDrawerViewController: UIViewController {
         let tap = UITapGestureRecognizer(target: self, action: #selector(handleTapped(_:)))
         handleView.addGestureRecognizer(tap)
 
+        let wrapperStackView = UIStackView()
+        wrapperStackView.translatesAutoresizingMaskIntoConstraints = false
+        wrapperStackView.axis = .vertical
+        wrapperStackView.distribution = .fill
+        wrapperStackView.alignment = .fill
+        wrapperStackView.spacing = 0
+
         let checkoutBar = CheckoutBar(self, shoppingCart)
         checkoutBar.translatesAutoresizingMaskIntoConstraints = false
 
-        let innerSpacer = UILayoutGuide()
+        let innerSpacer = UIView()
+        innerSpacer.translatesAutoresizingMaskIntoConstraints = false
 
         let segmentedControl = UISegmentedControl(items: [L10n.Snabble.ShoppingList.title, L10n.Snabble.ShoppingCart.title])
         segmentedControl.translatesAutoresizingMaskIntoConstraints = false
         segmentedControl.selectedSegmentIndex = 0
         segmentedControl.addTarget(self, action: #selector(tabChanged(_:)), for: .valueChanged)
 
-        let separatorSpacer = UILayoutGuide()
+        let separatorSpacer = UIView()
+        separatorSpacer.translatesAutoresizingMaskIntoConstraints = false
+
         let separator = UIView()
         separator.translatesAutoresizingMaskIntoConstraints = false
         separator.backgroundColor = .separator
@@ -102,12 +119,14 @@ final class ScannerDrawerViewController: UIViewController {
 
         contentView.addSubview(effectView)
         contentView.addSubview(handleView)
-        contentView.addSubview(checkoutBar)
-        contentView.addLayoutGuide(innerSpacer)
-        contentView.addSubview(segmentedControl)
-        contentView.addLayoutGuide(separatorSpacer)
+        contentView.addSubview(wrapperStackView)
         contentView.addSubview(separator)
         contentView.addSubview(bottomView)
+
+        wrapperStackView.addArrangedSubview(checkoutBar)
+        wrapperStackView.addArrangedSubview(innerSpacer)
+        wrapperStackView.addArrangedSubview(segmentedControl)
+        wrapperStackView.addArrangedSubview(separatorSpacer)
 
         NSLayoutConstraint.activate([
             effectView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor),
@@ -120,28 +139,23 @@ final class ScannerDrawerViewController: UIViewController {
             handleView.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 4),
             handleView.heightAnchor.constraint(equalToConstant: 5).usingPriority(.defaultHigh + 2),
 
-            checkoutBar.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 16).usingPriority(.defaultHigh + 1),
-            checkoutBar.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -16).usingPriority(.defaultHigh + 1),
-            checkoutBar.topAnchor.constraint(equalTo: handleView.bottomAnchor, constant: 4).usingPriority(.defaultHigh + 1),
+            wrapperStackView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 16).usingPriority(.defaultHigh + 1),
+            wrapperStackView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -16).usingPriority(.defaultHigh + 1),
+            wrapperStackView.topAnchor.constraint(equalTo: handleView.bottomAnchor, constant: 4).usingPriority(.defaultHigh + 1),
 
-            innerSpacer.leadingAnchor.constraint(equalTo: contentView.leadingAnchor),
-            innerSpacer.trailingAnchor.constraint(equalTo: contentView.trailingAnchor),
-            innerSpacer.topAnchor.constraint(equalTo: checkoutBar.bottomAnchor),
+            checkoutBar.leadingAnchor.constraint(equalTo: wrapperStackView.leadingAnchor).usingPriority(.defaultHigh + 1),
+            checkoutBar.trailingAnchor.constraint(equalTo: wrapperStackView.trailingAnchor).usingPriority(.defaultHigh + 1),
+
             innerSpacer.heightAnchor.constraint(equalToConstant: innerSpacerHeight).usingPriority(.defaultHigh),
 
-            segmentedControl.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 16).usingPriority(.defaultHigh + 1),
-            segmentedControl.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -16).usingPriority(.defaultHigh + 1),
-            segmentedControl.topAnchor.constraint(equalTo: innerSpacer.bottomAnchor),
+            segmentedControl.heightAnchor.constraint(equalToConstant: segmentedControlHeight).usingPriority(.defaultHigh + 1),
 
-            separatorSpacer.topAnchor.constraint(equalTo: segmentedControl.bottomAnchor),
-            separatorSpacer.heightAnchor.constraint(equalToConstant: 16).usingPriority(.defaultHigh),
-            separatorSpacer.leadingAnchor.constraint(equalTo: contentView.leadingAnchor),
-            separatorSpacer.trailingAnchor.constraint(equalTo: contentView.trailingAnchor),
+            separatorSpacer.heightAnchor.constraint(equalToConstant: separatorSpacerHeight).usingPriority(.defaultHigh),
 
+            separator.topAnchor.constraint(equalTo: wrapperStackView.bottomAnchor),
             separator.heightAnchor.constraint(equalToConstant: 1 / UIScreen.main.scale).usingPriority(.defaultHigh),
-            separator.bottomAnchor.constraint(equalTo: separatorSpacer.bottomAnchor),
-            separator.leadingAnchor.constraint(equalTo: separatorSpacer.leadingAnchor),
-            separator.trailingAnchor.constraint(equalTo: separatorSpacer.trailingAnchor),
+            separator.leadingAnchor.constraint(equalTo: contentView.leadingAnchor),
+            separator.trailingAnchor.constraint(equalTo: contentView.trailingAnchor),
 
             bottomView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor),
             bottomView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor),
@@ -152,8 +166,8 @@ final class ScannerDrawerViewController: UIViewController {
         self.view = contentView
         self.effectView = effectView
         self.checkoutBar = checkoutBar
-        self.innerSpacer = innerSpacer
         self.segmentedControl = segmentedControl
+        self.innerSpacer = innerSpacer
         self.bottomView = bottomView
     }
 
@@ -209,7 +223,7 @@ final class ScannerDrawerViewController: UIViewController {
 
     func bottomViewSwitchTo(_ destination: UIViewController, duration: TimeInterval = 0.15) {
         guard destination != children.first else { return }
-        guard let view = bottomView else { return }
+        guard let bottomView = bottomView else { return }
         if let source = self.children.first {
             addChild(destination)
             source.willMove(toParent: nil)
@@ -231,10 +245,10 @@ final class ScannerDrawerViewController: UIViewController {
 
         destination.view.translatesAutoresizingMaskIntoConstraints = false
         NSLayoutConstraint.activate([
-            destination.view.leadingAnchor.constraint(equalTo: view.leadingAnchor),
-            destination.view.trailingAnchor.constraint(equalTo: view.trailingAnchor),
-            destination.view.topAnchor.constraint(equalTo: view.topAnchor),
-            destination.view.bottomAnchor.constraint(equalTo: view.bottomAnchor)
+            destination.view.leadingAnchor.constraint(equalTo: bottomView.leadingAnchor),
+            destination.view.trailingAnchor.constraint(equalTo: bottomView.trailingAnchor),
+            destination.view.topAnchor.constraint(equalTo: bottomView.topAnchor),
+            destination.view.bottomAnchor.constraint(equalTo: bottomView.bottomAnchor)
         ])
     }
 
@@ -251,12 +265,9 @@ final class ScannerDrawerViewController: UIViewController {
 
     private func setupViews(_ list: ShoppingList?, _ cart: ShoppingCart?) {
         let noList = list == nil
-        segmentedControl?.isHidden = noList
+        segmentedControlHidden = noList
         if noList {
-            innerSpacer?.heightAnchor.constraint(equalToConstant: 0).isActive = true
             selectSegment(1)
-        } else {
-            innerSpacer?.heightAnchor.constraint(equalToConstant: innerSpacerHeight).isActive = true
         }
     }
 
@@ -296,8 +307,8 @@ extension ScannerDrawerViewController: PulleyDrawerViewControllerDelegate {
         let heightForListItems: CGFloat = min(CGFloat(shoppingList?.count ?? 0) * listItemHeight, listItemHeight * 2.5)
         let heightForItems = !shoppingCart.items.isEmpty ? heightForCartItems : heightForListItems
 
-        let heightForSegmentedControl = shoppingList == nil ? 0 : self.segmentedControlHeight
-        return self.minDrawerHeight + heightForSegmentedControl + totalsHeight + heightForItems
+        let heightForSegmentedControl = shoppingList == nil ? 0 : segmentedControlHeight + separatorSpacerHeight
+        return minDrawerHeight + heightForSegmentedControl + totalsHeight + heightForItems
     }
 
     public func drawerPositionDidChange(drawer: PulleyViewController, bottomSafeArea: CGFloat) {

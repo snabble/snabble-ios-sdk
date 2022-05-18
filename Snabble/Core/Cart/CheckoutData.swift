@@ -122,8 +122,24 @@ public struct CheckoutInfo: Decodable {
     /// price info
     public let price: Price
 
+    public let violations: [Violation]?
+
     enum CodingKeys: String, CodingKey {
-        case session, paymentMethods, lineItems, price, requiredInformation
+        case session, paymentMethods, lineItems, price, requiredInformation, violations
+    }
+
+    public struct Violation: Codable {
+        public enum `Type`: String, Codable, UnknownCaseRepresentable {
+            public static var unknownCase: Self = .unknown
+
+            case couponInvalid = "coupon_invalid"
+            case couponCurrentlyNotValid = "coupon_currently_not_valid"
+            case couponAlreadyVoided = "coupon_already_voided"
+            case unknown
+        }
+        public let type: `Type`
+        public let refersTo: String?
+        public let message: String
     }
 
     public struct LineItem: Codable {
@@ -179,6 +195,7 @@ public struct CheckoutInfo: Decodable {
         self.lineItems = lineItems.filter { $0.type != .unknown }
         self.price = try container.decode(Price.self, forKey: .price)
         self.requiredInformation = try container.decodeIfPresent([RequiredInformation].self, forKey: .requiredInformation) ?? []
+        self.violations = try container.decodeIfPresent([Violation].self, forKey: .violations)
     }
 
     fileprivate init(_ paymentMethods: [RawPaymentMethod]) {
@@ -187,6 +204,7 @@ public struct CheckoutInfo: Decodable {
         self.session = ""
         self.lineItems = []
         self.requiredInformation = []
+        self.violations = nil
     }
 }
 
@@ -462,8 +480,8 @@ public struct Cart: Encodable {
         public let scannedCode: String?
         public let amount: Int
 
-        init(couponId: String, refersTo: String? = nil, scannedCode: String? = nil, amount: Int = 1) {
-            self.id = UUID().uuidString
+        init(id: String, couponId: String, refersTo: String? = nil, scannedCode: String? = nil, amount: Int = 1) {
+            self.id = id
             self.couponID = couponId
             self.refersTo = refersTo
             self.scannedCode = scannedCode

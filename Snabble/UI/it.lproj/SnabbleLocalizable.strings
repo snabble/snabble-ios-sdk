@@ -61,6 +61,38 @@
 
 "Snabble.Checkout.verifying" = "Verifica";
 
+"Snabble.Coupons.expired" = "Già scaduto";
+
+"Snabble.Coupons.expiresAtDate" = "valido fino al %@";
+
+"Snabble.Coupons.expiresInDays.one" = "ancora %d giorno";
+
+"Snabble.Coupons.expiresInDays.other" = "ancora %d giorni";
+
+"Snabble.Coupons.expiresInDays.zero" = "Già scaduto";
+
+"Snabble.Coupons.expiresInHours.one" = "ancora %d ora";
+
+"Snabble.Coupons.expiresInHours.other" = "ancora %d ore";
+
+"Snabble.Coupons.expiresInHours.zero" = "Già scaduto";
+
+"Snabble.Coupons.expiresInMinutes.one" = "ancora %d minuto";
+
+"Snabble.Coupons.expiresInMinutes.other" = "ancora %d minuti";
+
+"Snabble.Coupons.expiresInMinutes.zero" = "Già scaduto";
+
+"Snabble.Coupons.expiresInWeeks.one" = "ancora %d settimana";
+
+"Snabble.Coupons.expiresInWeeks.other" = "ancora %d settimane";
+
+"Snabble.Coupons.expiresInWeeks.zero" = "Già scaduto";
+
+"Snabble.Coupons.none" = "Nessun coupon disponibile";
+
+"Snabble.Coupons.title" = "Coupon";
+
 "Snabble.CreditCard.payNow" = "Paga ora con carta di credito";
 
 "Snabble.Delete" = "Cancella";
@@ -582,6 +614,14 @@
 "Snabble.TWINT.payNow" = "Paga ora con TWINT";
 
 "Snabble.undo" = "Annulla";
+
+"Snabble.Violations.couponAlreadyVoided" = "A coupon is already redeemed and will be removed from cart";
+
+"Snabble.Violations.couponCurrentlyNotValid" = "A coupon is currently not valid and will be removed from cart";
+
+"Snabble.Violations.couponInvalid" = "A coupon is invalid and will be removed from cart";
+
+"Snabble.Violations.title" = "Invalid shopping cart";
 
 "Snabble.Yes" = "Sì";
 
