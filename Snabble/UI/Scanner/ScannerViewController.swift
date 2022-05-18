@@ -104,8 +104,7 @@ extension ScannerViewController: InternalShoppingCartDelegate {
         )
         let action = UIAlertAction(
             title: L10n.Snabble.ok,
-            style: .default)
-        { _ in
+            style: .default) { _ in
             alertController.dismiss(animated: true)
         }
         alertController.addAction(action)
