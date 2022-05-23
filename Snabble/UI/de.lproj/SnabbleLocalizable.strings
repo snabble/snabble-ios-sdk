@@ -61,6 +61,16 @@
 
 "Snabble.Checkout.verifying" = "Verifiziere";
 
+"Snabble.Coupon.activate" = "Aktivieren";
+
+"Snabble.Coupon.activated" = "Aktiviert";
+
+"Snabble.Coupon.countdown" = "Coupon läuft in %@ Minuten ab";
+
+"Snabble.Coupon.expired" = "Dieser Coupon ist bereits abgelaufen.";
+
+"Snabble.Coupon.explanation" = "Dein Coupon ist jetzt für dich aktiviert. Bitte scanne das Produkt im Shop und lege es in deinen Warenkorb, um von den Vorteilen des Coupons zu profitieren.";
+
 "Snabble.Coupons.expired" = "Bereits abgelaufen";
 
 "Snabble.Coupons.expiresAtDate" = "gültig bis %@";
@@ -615,7 +625,7 @@
 
 "Snabble.undo" = "Rückgängig";
 
-"Snabble.Violations.couponAlreadyVoided" = "Ein Coupon wurde bereits benutzt und wird aus dem Warenkorb entfernt";
+"Snabble.Violations.couponAlreadyVoided" = "Ein Coupon wurde bereits eingelöst und wird aus dem Warenkorb entfernt";
 
 "Snabble.Violations.couponCurrentlyNotValid" = "Ein Coupon ist aktuell ungültig und wird aus dem Warenkorb entfernt";
 
