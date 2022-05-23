@@ -199,6 +199,9 @@ final class ScanningViewController: UIViewController {
     // MARK: - called by the drawer
     func setOverlayOffset(_ offset: CGFloat) {
         self.barcodeDetector.setOverlayOffset(offset)
+        DispatchQueue.main.async {
+            self.barcodeDetector.decorationOverlay?.layoutIfNeeded()
+        }
     }
 
     func resumeScanning() {

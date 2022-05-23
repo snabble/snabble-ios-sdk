@@ -134,7 +134,7 @@ public final class BuiltinBarcodeDetector: BarcodeDetector {
         }
 
         overlay.centerYOffset = offset
-        overlay.layoutIfNeeded()
+        
         let rect = self.previewLayer?.metadataOutputRectConverted(fromLayerRect: overlay.roi)
         sessionQueue.async {
             // for some reason, running this on the main thread may block for ~10 seconds. WHY?!?
