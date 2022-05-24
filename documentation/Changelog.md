@@ -7,6 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## 0.19.1 - In Development
 
 ### Added
+* Added demo project credentials
 
 ### Changed
 * Dispatch barcode detector offset calculation
