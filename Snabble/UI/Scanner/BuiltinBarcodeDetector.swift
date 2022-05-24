@@ -134,10 +134,13 @@ public final class BuiltinBarcodeDetector: BarcodeDetector {
         }
 
         overlay.centerYOffset = offset
-        let rect = self.previewLayer?.metadataOutputRectConverted(fromLayerRect: overlay.roi)
-        sessionQueue.async {
-            // for some reason, running this on the main thread may block for ~10 seconds. WHY?!?
-            self.metadataOutput.rectOfInterest = rect ?? CGRect(origin: .zero, size: .init(width: 1, height: 1))
+        DispatchQueue.main.async { [self] in
+            overlay.layoutIfNeeded()
+            let rect = previewLayer?.metadataOutputRectConverted(fromLayerRect: overlay.roi)
+            sessionQueue.async { [self] in
+                // for some reason, running this on the main thread may block for ~10 seconds. WHY?!?
+                metadataOutput.rectOfInterest = rect ?? CGRect(origin: .zero, size: .init(width: 1, height: 1))
+            }
         }
     }
 

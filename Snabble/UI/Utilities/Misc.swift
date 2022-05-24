@@ -7,22 +7,24 @@
 
 import UIKit
 
-extension UIView {
-    /// add a "rounded button" appearance to this view
+extension UIButton {
+    /// add a "rounded button" appearance to this button
     public func makeSnabbleButton() {
         self.layer.cornerRadius = 8
         self.backgroundColor = SnabbleUI.appearance.accentColor
         self.tintColor = SnabbleUI.appearance.accentColor.contrast
     }
 
-    /// add a "bordered button" appearance to this view
+    /// add a "bordered button" appearance to this button
     public func makeBorderedButton() {
         self.layer.cornerRadius = 6
         self.backgroundColor = .secondarySystemBackground
         self.layer.borderWidth = 1 / UIScreen.main.scale
         self.layer.borderColor = UIColor.borderColor.cgColor
     }
+}
 
+extension UIView {
     /// add a "rounded card" appearance to this view
     public func addCornersAndShadow(backgroundColor: UIColor, cornerRadius: CGFloat) {
         self.layer.shadowColor = UIColor.shadowColor.cgColor

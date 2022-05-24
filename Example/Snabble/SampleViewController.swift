@@ -65,8 +65,8 @@ class SampleViewController: UIViewController {
     }
 
     func snabbleSetup() {
-        let APPID = "your-app-id-here"
-        let APPSECRET = "your-app-secret-here"
+        let APPID = "snabble-sdk-demo-app-oguh3x"
+        let APPSECRET = "2TKKEG5KXWY6DFOGTZKDUIBTNIRVCYKFZBY32FFRUUWIUAFEIBHQ===="
         let apiConfig = SnabbleSDK.Config(appId: APPID, secret: APPSECRET)
 
         Snabble.setup(config: apiConfig) {

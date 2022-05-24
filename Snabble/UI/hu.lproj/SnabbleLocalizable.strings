@@ -21,7 +21,7 @@
 
 "Snabble.Biometry.Alert.laterButton" = "Most nem";
 
-"Snabble.Biometry.Alert.message" = "Online fizetéseid a %@ segítségével szeretnéd védeni?";
+"Snabble.Biometry.Alert.message" = "Online fizetéseid a(z) %@ segítségével szeretnéd védeni?";
 
 "Snabble.Biometry.Alert.title" = "%@ aktiválása?";
 
@@ -60,6 +60,16 @@
 "Snabble.Checkout.title" = "Fizetés";
 
 "Snabble.Checkout.verifying" = "Igazolja";
+
+"Snabble.Coupon.activate" = "Activate";
+
+"Snabble.Coupon.activated" = "Activated";
+
+"Snabble.Coupon.countdown" = "Coupon expires in %@ minutes";
+
+"Snabble.Coupon.expired" = "This coupon is expired.";
+
+"Snabble.Coupon.explanation" = "Your coupon is now activated for you. Please scan the product in the shop and put it in your shopping cart to benefit from it.";
 
 "Snabble.Coupons.expired" = "Already expired";
 
@@ -335,7 +345,7 @@
 
 "Snabble.QRCode.priceMayDiffer" = "A pontos árat a pénztár kalkulálja, és az eltérhet az itt láthatótól.";
 
-"Snabble.QRCode.showTheseCodes" = "Kérlek, mutasd meg ezeket a %d kódokat egymás után a pénztárnál";
+"Snabble.QRCode.showTheseCodes" = "Kérlek, mutasd meg ezeket a(z) %d kódokat egymás után a pénztárnál";
 
 "Snabble.QRCode.showThisCode" = "Kérlek, mutasd meg ezt a kódot a pénztárnál";
 
@@ -615,13 +625,13 @@
 
 "Snabble.undo" = "Visszavonás";
 
-"Snabble.Violations.couponAlreadyVoided" = "A coupon is already redeemed and will be removed from cart";
+"Snabble.Violations.couponAlreadyVoided" = "A(z) „%@“ kupon már felhasználásra került, és eltávolítottuk a kosárból";
 
-"Snabble.Violations.couponCurrentlyNotValid" = "A coupon is currently not valid and will be removed from cart";
+"Snabble.Violations.couponCurrentlyNotValid" = "A(z) „%@“ kupon pillanatnyilag nem érvényes, és eltávolítottuk a kosárból";
 
-"Snabble.Violations.couponInvalid" = "A coupon is invalid and will be removed from cart";
+"Snabble.Violations.couponInvalid" = "A(z) „%@“ kupon nem érvényes, és eltávolítottuk a kosárból";
 
-"Snabble.Violations.title" = "Invalid shopping cart";
+"Snabble.Violations.title" = "A kupon nem érvényes";
 
 "Snabble.Yes" = "Igen";
 

@@ -4,7 +4,19 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [Unreleased]
+## [0.19.1] - In Development
+
+### Added
+* Added demo project credentials
+
+### Changed
+* Dispatch barcode detector offset calculation
+* Fixed button appearance
+
+### Updated
+* Updated localizations 
+
+## [0.19.0] - 2022-05-23
 
 ### Added
 * Checkout Violations #110
@@ -18,8 +30,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 * Refactored QRCheckoutViewController to programmatically written UI #105
 * Refactored ScanningViewController to programmatically written UI #106
 * Refactored CustomerCardCheckoutViewController to programmatically written UI #107
-
-### Removed
+* Fixes BarcodeDetector yOffset calculation #APPS-316 
 
 ## Deprecated snabble iOS SDK Changelog
 

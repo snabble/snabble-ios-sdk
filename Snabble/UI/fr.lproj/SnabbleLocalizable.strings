@@ -61,6 +61,16 @@
 
 "Snabble.Checkout.verifying" = "Vérifie";
 
+"Snabble.Coupon.activate" = "Activer";
+
+"Snabble.Coupon.activated" = "Activé";
+
+"Snabble.Coupon.countdown" = "Le coupon expire dans %@ minutes";
+
+"Snabble.Coupon.expired" = "Ce coupon est expiré";
+
+"Snabble.Coupon.explanation" = "Ton coupon est maintenant activé pour toi. Merci de scanner le produit dans le shop et de le placer dans ton panier pour profiter des avantages du coupon.";
+
 "Snabble.Coupons.expired" = "Déjà expiré";
 
 "Snabble.Coupons.expiresAtDate" = "valable jusqu'au %@";

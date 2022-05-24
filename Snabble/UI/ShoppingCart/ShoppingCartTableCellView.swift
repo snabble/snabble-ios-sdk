@@ -66,7 +66,7 @@ final class ShoppingCartTableCellView: UIView {
     }
 
     private var button: UIButton {
-        let button = UIButton()
+        let button = UIButton(type: .system)
         button.translatesAutoresizingMaskIntoConstraints = false
         button.isUserInteractionEnabled = true
         return button

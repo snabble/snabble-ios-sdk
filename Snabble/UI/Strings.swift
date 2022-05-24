@@ -106,6 +106,20 @@ public enum L10n {
       /// Verifying
       public static var verifying: String { return L10n.tr("SnabbleLocalizable", "Snabble.Checkout.verifying") }
     }
+    public enum Coupon {
+      /// Activate
+      public static var activate: String { return L10n.tr("SnabbleLocalizable", "Snabble.Coupon.activate") }
+      /// Activated
+      public static var activated: String { return L10n.tr("SnabbleLocalizable", "Snabble.Coupon.activated") }
+      /// Coupon expires in %@ minutes
+      public static func countdown(_ p1: Any) -> String {
+        return L10n.tr("SnabbleLocalizable", "Snabble.Coupon.countdown", String(describing: p1))
+      }
+      /// This coupon is expired.
+      public static var expired: String { return L10n.tr("SnabbleLocalizable", "Snabble.Coupon.expired") }
+      /// Your coupon is now activated for you. Please scan the product in the shop and put it in your shopping cart to benefit from it.
+      public static var explanation: String { return L10n.tr("SnabbleLocalizable", "Snabble.Coupon.explanation") }
+    }
     public enum Coupons {
       /// Already expired
       public static var expired: String { return L10n.tr("SnabbleLocalizable", "Snabble.Coupons.expired") }

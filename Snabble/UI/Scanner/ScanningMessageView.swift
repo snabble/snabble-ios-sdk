@@ -23,7 +23,7 @@ final class ScanningMessageView: UIView {
 
     private func setupUI() {
         backgroundColor = .systemBackground
-        let closeButton = UIButton()
+        let closeButton = UIButton(type: .system)
         closeButton.translatesAutoresizingMaskIntoConstraints = false
         closeButton.setImage(Asset.SnabbleSDK.iconClose.image, for: .normal)
 
