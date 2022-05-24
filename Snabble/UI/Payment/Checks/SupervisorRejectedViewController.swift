@@ -32,7 +32,7 @@ final class SupervisorRejectedViewController: UIViewController {
         topSpace.translatesAutoresizingMaskIntoConstraints = false
         view.addSubview(topSpace)
 
-        let button = UIButton()
+        let button = UIButton(type: .system)
         button.makeSnabbleButton()
         button.translatesAutoresizingMaskIntoConstraints = false
         button.setTitle(SnabbleSDK.L10n.Snabble.Payment.backToCart, for: .normal)

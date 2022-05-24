@@ -24,7 +24,7 @@ public final class SepaEditViewController: UIViewController {
     private let ibanLabel = UILabel()
     private let ibanCountryField = UITextField()
     private let ibanNumberField = UITextField()
-    private let saveButton = UIButton()
+    private let saveButton = UIButton(type: .system)
     private let scrollView = UIScrollView()
 
     private var detail: PaymentMethodDetail?

@@ -60,7 +60,7 @@ final class ScanConfirmationView: UIView {
     }
 
     var squareButton: UIButton {
-        let button = UIButton()
+        let button = UIButton(type: .system)
         button.translatesAutoresizingMaskIntoConstraints = false
         button.heightAnchor.constraint(equalToConstant: 48).isActive = true
         button.widthAnchor.constraint(equalToConstant: 48).isActive = true
@@ -71,13 +71,13 @@ final class ScanConfirmationView: UIView {
     private func setupUI() {
         self.addCornersAndShadow(backgroundColor: .systemBackground, cornerRadius: 8)
 
-        let closeButton = UIButton()
+        let closeButton = UIButton(type: .system)
         closeButton.translatesAutoresizingMaskIntoConstraints = false
         closeButton.setImage(Asset.SnabbleSDK.iconClose.image, for: .normal)
         closeButton.isUserInteractionEnabled = true
         closeButton.addTarget(self, action: #selector(closeButtonTapped(_:)), for: .touchUpInside)
 
-        let cartButton = UIButton()
+        let cartButton = UIButton(type: .system)
         cartButton.translatesAutoresizingMaskIntoConstraints = false
         cartButton.setTitle(L10n.Snabble.Scanner.addToCart, for: .normal)
         cartButton.titleLabel?.font = UIFont.systemFont(ofSize: 17, weight: .semibold)

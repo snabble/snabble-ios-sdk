@@ -95,12 +95,11 @@ final class CheckoutBar: UIView {
         chevronImage.contentMode = .scaleAspectFit
         chevronImage.image = Asset.SnabbleSDK.iconChevronDown.image
 
-        let checkoutButton = UIButton()
+        let checkoutButton = UIButton(type: .system)
         checkoutButton.translatesAutoresizingMaskIntoConstraints = false
         checkoutButton.setTitle(L10n.Snabble.Shoppingcart.BuyProducts.now, for: .normal)
         let disabledColor = SnabbleUI.appearance.accentColor.contrast?.withAlphaComponent(0.5)
         checkoutButton.setTitleColor(disabledColor, for: .disabled)
-        checkoutButton.setTitleColor(SnabbleUI.appearance.accentColor.contrast, for: .normal)
         checkoutButton.titleLabel?.font = UIFont.systemFont(ofSize: 17, weight: .semibold)
         checkoutButton.makeSnabbleButton()
         checkoutButton.isEnabled = true

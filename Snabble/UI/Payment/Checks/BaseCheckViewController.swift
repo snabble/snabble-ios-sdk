@@ -30,7 +30,7 @@ class BaseCheckViewController: UIViewController {
     private let code = UIImageView()
     private let id = UILabel()
 
-    private let cancelButton = UIButton()
+    private let cancelButton = UIButton(type: .system)
 
     private var initialBrightness: CGFloat = 0
 
