@@ -24,7 +24,7 @@ public final class SepaOverlayView: UIView {
     private weak var stackView: UIStackView?
 
     override public init(frame: CGRect) {
-        let closeButton = UIButton(type: .system)
+        let closeButton = UIButton(type: .custom)
         closeButton.translatesAutoresizingMaskIntoConstraints = false
         closeButton.setImage(Asset.SnabbleSDK.iconClose.image, for: .normal)
 
