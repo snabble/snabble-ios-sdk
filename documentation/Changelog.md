@@ -6,6 +6,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [unreleased]
 
+### Changed
+* Rating Buttons are black
+
 ## [0.19.1] - 2022-05-24
 
 ### Added
