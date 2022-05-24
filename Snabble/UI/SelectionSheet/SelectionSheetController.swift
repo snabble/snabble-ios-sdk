@@ -8,7 +8,7 @@ import UIKit
 import AutoLayout_Helper
 
 final class SelectionSheetController: UIViewController {
-    private let cancelButton = UIButton(type: .custom)
+    private let cancelButton = UIButton(type: .system)
     private let selectionView = UIView()
     private let scrollView = UIScrollView()
     private let stackView = UIStackView()
