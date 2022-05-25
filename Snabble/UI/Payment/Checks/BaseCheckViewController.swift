@@ -176,7 +176,7 @@ class BaseCheckViewController: UIViewController {
             arrow.leadingAnchor.constraint(equalTo: arrowWrapper.leadingAnchor),
             arrow.trailingAnchor.constraint(equalTo: arrowWrapper.trailingAnchor),
             arrow.topAnchor.constraint(equalTo: arrowWrapper.topAnchor),
-            arrow.bottomAnchor.constraint(equalTo: arrowWrapper.bottomAnchor),
+            arrow.bottomAnchor.constraint(equalTo: arrowWrapper.bottomAnchor)
         ])
         self.arrowWrapper = arrowWrapper
 
@@ -192,7 +192,7 @@ class BaseCheckViewController: UIViewController {
             code.leadingAnchor.constraint(equalTo: codeWrapper.leadingAnchor),
             code.trailingAnchor.constraint(equalTo: codeWrapper.trailingAnchor),
             code.topAnchor.constraint(equalTo: codeWrapper.topAnchor, constant: 16),
-            code.bottomAnchor.constraint(equalTo: codeWrapper.bottomAnchor, constant: -16),
+            code.bottomAnchor.constraint(equalTo: codeWrapper.bottomAnchor, constant: -16)
         ])
         self.codeWrapper = codeWrapper
         self.code = code
@@ -216,7 +216,6 @@ class BaseCheckViewController: UIViewController {
 
         arrangeLayout()
     }
-
 
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
