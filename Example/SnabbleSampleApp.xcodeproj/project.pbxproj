@@ -13,6 +13,7 @@
 		607FACDD1AFB9204008FA782 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 607FACDC1AFB9204008FA782 /* Images.xcassets */; };
 		607FACE01AFB9204008FA782 /* LaunchScreen.xib in Resources */ = {isa = PBXBuildFile; fileRef = 607FACDE1AFB9204008FA782 /* LaunchScreen.xib */; };
 		C76453ABE5317D598719A23D /* Pods_SnabbleSampleApp.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 65DD4792C2707A6351C9857F /* Pods_SnabbleSampleApp.framework */; };
+		E1662A65283DFED90093956C /* Changelog.md in Resources */ = {isa = PBXBuildFile; fileRef = E1662A64283DFED90093956C /* Changelog.md */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -30,6 +31,7 @@
 		65DD4792C2707A6351C9857F /* Pods_SnabbleSampleApp.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_SnabbleSampleApp.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		926E1E4B9E95CCD24DC69470 /* README.md */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = net.daringfireball.markdown; name = README.md; path = ../README.md; sourceTree = "<group>"; };
 		9DEB9CCAFD9F838EBF7BC67C /* Pods-SnabbleSampleApp.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-SnabbleSampleApp.release.xcconfig"; path = "Target Support Files/Pods-SnabbleSampleApp/Pods-SnabbleSampleApp.release.xcconfig"; sourceTree = "<group>"; };
+		E1662A64283DFED90093956C /* Changelog.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = net.daringfireball.markdown; name = Changelog.md; path = ../documentation/Changelog.md; sourceTree = "<group>"; };
 		F4CB4458C2FED892CA028D19 /* LICENSE */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text; name = LICENSE; path = ../LICENSE; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -65,6 +67,7 @@
 		607FACC71AFB9204008FA782 = {
 			isa = PBXGroup;
 			children = (
+				E1662A64283DFED90093956C /* Changelog.md */,
 				607FACF51AFB993E008FA782 /* Podspec Metadata */,
 				607FACD21AFB9204008FA782 /* Sources */,
 				607FACE81AFB9204008FA782 /* Tests */,
@@ -196,6 +199,7 @@
 			files = (
 				607FACE01AFB9204008FA782 /* LaunchScreen.xib in Resources */,
 				607FACDD1AFB9204008FA782 /* Images.xcassets in Resources */,
+				E1662A65283DFED90093956C /* Changelog.md in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
