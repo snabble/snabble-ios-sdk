@@ -53,8 +53,6 @@ final class SupervisorRejectedViewController: UIViewController {
         topIcon.setContentHuggingPriority(.defaultLow + 1, for: .horizontal)
         topIcon.setContentHuggingPriority(.defaultLow + 2, for: .vertical)
 
-
-
         let messageLabel = UILabel()
         messageLabel.translatesAutoresizingMaskIntoConstraints = false
         messageLabel.textColor = .label
@@ -70,7 +68,6 @@ final class SupervisorRejectedViewController: UIViewController {
         button.useDynamicFont(forTextStyle: .headline)
         button.setTitle(SnabbleSDK.L10n.Snabble.Payment.backToCart, for: .normal)
         button.addTarget(self, action: #selector(backButtonTapped(_:)), for: .touchUpInside)
-
 
         contentView.addSubview(scrollView)
         scrollView.addSubview(wrapperView)
