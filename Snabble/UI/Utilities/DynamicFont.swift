@@ -68,11 +68,3 @@ extension UIButton {
         titleLabel?.useDynamicFont(forTextStyle: textStyle, weight: weight)
     }
 }
-
-// TODO: Move to another file
-extension UIView {
-    func restrictDynamicTypeSize(from min: UIContentSizeCategory?, to max: UIContentSizeCategory?) {
-        self.minimumContentSizeCategory = min
-        self.maximumContentSizeCategory = max
-    }
-}
