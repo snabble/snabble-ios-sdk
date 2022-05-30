@@ -62,7 +62,8 @@ public final class ReceiptsListViewController: UITableViewController {
         emptyLabel.translatesAutoresizingMaskIntoConstraints = false
         emptyLabel.numberOfLines = 0
         emptyLabel.textAlignment = .center
-        emptyLabel.useDynamicFont(forTextStyle: .body)
+        emptyLabel.font = UIFont.preferredFont(forTextStyle: .body)
+        emptyLabel.adjustsFontForContentSizeCategory = true
         view.addSubview(emptyLabel)
 
         let activityIndicator: UIActivityIndicatorView

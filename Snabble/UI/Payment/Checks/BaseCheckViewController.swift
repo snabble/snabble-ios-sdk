@@ -73,7 +73,7 @@ class BaseCheckViewController: UIViewController {
         cancelButton.makeSnabbleButton()
         cancelButton.titleLabel?.textAlignment = .center
         cancelButton.setTitle(L10n.Snabble.cancel, for: .normal)
-        cancelButton.titleLabel?.useDynamicFont(forTextStyle: .headline)
+        cancelButton.preferredFont(forTextStyle: .headline)
         cancelButton.alpha = 0
         cancelButton.isUserInteractionEnabled = false
         cancelButton.addTarget(self, action: #selector(self.cancelPayment), for: .touchUpInside)
@@ -152,7 +152,9 @@ class BaseCheckViewController: UIViewController {
         text.translatesAutoresizingMaskIntoConstraints = false
         text.textColor = .label
         text.textAlignment = .center
-        text.useDynamicFont(forTextStyle: .body)
+        text.numberOfLines = 0
+        text.font = UIFont.preferredFont(forTextStyle: .body)
+        text.adjustsFontForContentSizeCategory = true
         textWrapper.addSubview(text)
         NSLayoutConstraint.activate([
             text.leadingAnchor.constraint(equalTo: textWrapper.leadingAnchor),
@@ -203,7 +205,8 @@ class BaseCheckViewController: UIViewController {
         id.translatesAutoresizingMaskIntoConstraints = false
         id.textColor = .label
         id.textAlignment = .center
-        id.useDynamicFont(forTextStyle: .footnote)
+        id.font = UIFont.preferredFont(forTextStyle: .footnote)
+        id.adjustsFontForContentSizeCategory = true
         idWrapper.addSubview(id)
         NSLayoutConstraint.activate([
             id.leadingAnchor.constraint(equalTo: idWrapper.leadingAnchor),

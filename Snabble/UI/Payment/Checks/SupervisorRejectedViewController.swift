@@ -56,8 +56,10 @@ final class SupervisorRejectedViewController: UIViewController {
         let messageLabel = UILabel()
         messageLabel.translatesAutoresizingMaskIntoConstraints = false
         messageLabel.textColor = .label
-        messageLabel.useDynamicFont(forTextStyle: .body)
+        messageLabel.font = UIFont.preferredFont(forTextStyle: .body)
+        messageLabel.adjustsFontForContentSizeCategory = true
         messageLabel.textAlignment = .center
+        messageLabel.numberOfLines = 0
         messageLabel.setContentHuggingPriority(.defaultLow + 1, for: .horizontal)
         messageLabel.setContentHuggingPriority(.defaultLow + 1, for: .vertical)
         messageLabel.text = L10n.Snabble.Payment.rejectedHint
@@ -65,7 +67,7 @@ final class SupervisorRejectedViewController: UIViewController {
         let button = UIButton(type: .system)
         button.translatesAutoresizingMaskIntoConstraints = false
         button.makeSnabbleButton()
-        button.useDynamicFont(forTextStyle: .headline)
+        button.preferredFont(forTextStyle: .headline)
         button.setTitle(SnabbleSDK.L10n.Snabble.Payment.backToCart, for: .normal)
         button.addTarget(self, action: #selector(backButtonTapped(_:)), for: .touchUpInside)
 

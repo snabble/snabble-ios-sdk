@@ -38,6 +38,8 @@ final class EmbeddedCodesCheckoutViewController: UIViewController {
         label.translatesAutoresizingMaskIntoConstraints = false
         label.textColor = .label
         label.textAlignment = .natural
+        label.adjustsFontForContentSizeCategory = true
+        label.numberOfLines = 0
         label.setContentHuggingPriority(.defaultLow + 1, for: .horizontal)
         label.setContentHuggingPriority(.defaultLow + 1, for: .vertical)
         return label
@@ -86,7 +88,7 @@ final class EmbeddedCodesCheckoutViewController: UIViewController {
 
         let paidButton = UIButton(type: .system)
         paidButton.translatesAutoresizingMaskIntoConstraints = false
-        paidButton.useDynamicFont(forTextStyle: .headline)
+        paidButton.preferredFont(forTextStyle: .headline)
         paidButton.makeSnabbleButton()
         paidButton.titleLabel?.textAlignment = .center
         paidButton.setTitle(L10n.Snabble.QRCode.didPay, for: .normal)
@@ -109,7 +111,7 @@ final class EmbeddedCodesCheckoutViewController: UIViewController {
         let topIcon = iconImage
 
         let messageLabel = customLabel
-        messageLabel.useDynamicFont(forTextStyle: .body)
+        messageLabel.font = UIFont.preferredFont(forTextStyle: .body)
         messageLabel.textAlignment = .center
 
         let arrowWrapper = UIView()
@@ -120,7 +122,7 @@ final class EmbeddedCodesCheckoutViewController: UIViewController {
         arrowIcon.adjustsImageSizeForAccessibilityContentSizeCategory = true
 
         let codeCountLabel = customLabel
-        codeCountLabel.useDynamicFont(forTextStyle: .headline)
+        codeCountLabel.font = UIFont.preferredFont(forTextStyle: .headline)
 
         let codeScrollView = UIScrollView()
         codeScrollView.translatesAutoresizingMaskIntoConstraints = false
@@ -129,7 +131,7 @@ final class EmbeddedCodesCheckoutViewController: UIViewController {
         codeScrollView.bounces = false
 
         let idLabel = customLabel
-        idLabel.useDynamicFont(forTextStyle: .footnote)
+        idLabel.font = UIFont.preferredFont(forTextStyle: .footnote)
 
         let codeContainer = UIView()
         codeContainer.translatesAutoresizingMaskIntoConstraints = true

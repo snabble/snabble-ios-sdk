@@ -24,7 +24,8 @@ final class PaymentMethodListCell: UITableViewCell {
 
         nameLabel.translatesAutoresizingMaskIntoConstraints = false
         nameLabel.numberOfLines = 0
-        nameLabel.useDynamicFont(forTextStyle: .body)
+        nameLabel.font = UIFont.preferredFont(forTextStyle: .body)
+        nameLabel.adjustsFontForContentSizeCategory = true
 
         icon.translatesAutoresizingMaskIntoConstraints = false
         contentView.addSubview(nameLabel)
