@@ -122,7 +122,7 @@ final class ShoppingCartTableCell: UITableViewCell {
         self.quantity = 0
         self.row = nil
 
-        self.cellView?.productImage?.image = nil
+        self.cellView?.imageView?.imageView?.image = nil
 
         self.leftDisplay = .none
         self.rightDisplay = .none
@@ -158,7 +158,7 @@ final class ShoppingCartTableCell: UITableViewCell {
 
         if showImages {
             let icon = Asset.SnabbleSDK.iconPercent.image
-            self.cellView?.productImage?.image = icon.recolored(with: .label)
+            self.cellView?.imageView?.imageView?.image = icon.recolored(with: .label)
             self.leftDisplay = .image
         }
     }
@@ -170,7 +170,7 @@ final class ShoppingCartTableCell: UITableViewCell {
 
         if showImages {
             let icon = Asset.SnabbleSDK.iconGiveaway.image
-            self.cellView?.productImage?.image = icon.recolored(with: SnabbleUI.appearance.accentColor)
+            self.cellView?.imageView?.imageView?.image = icon.recolored(with: SnabbleUI.appearance.accentColor)
             self.leftDisplay = .image
         }
     }
@@ -221,7 +221,7 @@ final class ShoppingCartTableCell: UITableViewCell {
 
         if showImages {
             let icon = Asset.SnabbleSDK.iconPercent.image
-            self.cellView?.productImage?.image = icon.recolored(with: redeemed ? .label : .systemGray)
+            self.cellView?.imageView?.imageView?.image = icon.recolored(with: redeemed ? .label : .systemGray)
             self.leftDisplay = .image
         } else {
             self.leftDisplay = .badge
@@ -412,15 +412,15 @@ extension ShoppingCartTableCell {
         self.leftDisplay = .image
 
         if let img = ShoppingCartTableCell.imageCache[imgUrl] {
-            self.cellView?.productImage?.image = img
+            self.cellView?.imageView?.imageView?.image = img
             return
         }
 
-        self.cellView?.spinner?.startAnimating()
+        self.cellView?.imageView?.activityIndicatorView?.startAnimating()
         self.task = Snabble.urlSession.dataTask(with: url) { data, _, error in
             self.task = nil
             DispatchQueue.main.async {
-                self.cellView?.spinner?.stopAnimating()
+                self.cellView?.imageView?.activityIndicatorView?.stopAnimating()
             }
             guard let data = data, error == nil else {
                 return
@@ -429,7 +429,7 @@ extension ShoppingCartTableCell {
             if let image = UIImage(data: data) {
                 DispatchQueue.main.async {
                     ShoppingCartTableCell.imageCache[imgUrl] = image
-                    self.cellView?.productImage?.image = image
+                    self.cellView?.imageView?.imageView?.image = image
                 }
             }
         }
