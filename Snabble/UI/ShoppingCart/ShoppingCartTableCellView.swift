@@ -10,6 +10,50 @@ protocol ShoppingCardCellViewDelegate: AnyObject {
     func minusButtonTapped()
 }
 
+final class NameView: UIView {
+    private(set) weak var nameLabel: UILabel?
+    private(set) weak var priceLabel: UILabel?
+
+    override init(frame: CGRect) {
+        let nameLabel = UILabel()
+        nameLabel.translatesAutoresizingMaskIntoConstraints = false
+        nameLabel.font = UIFont.systemFont(ofSize: 15)
+        nameLabel.textColor = .label
+        nameLabel.textAlignment = .natural
+        nameLabel.numberOfLines = 0
+
+        let priceLabel = UILabel()
+        priceLabel.translatesAutoresizingMaskIntoConstraints = false
+        priceLabel.font = UIFont.monospacedDigitSystemFont(ofSize: 13, weight: .regular)
+        priceLabel.textColor = .systemGray
+        priceLabel.textAlignment = .natural
+
+        super.init(frame: frame)
+
+        addSubview(nameLabel)
+        addSubview(priceLabel)
+
+        self.nameLabel = nameLabel
+        self.priceLabel = priceLabel
+
+        NSLayoutConstraint.activate([
+            nameLabel.topAnchor.constraint(equalTo: topAnchor),
+            priceLabel.topAnchor.constraint(equalTo: nameLabel.bottomAnchor),
+            bottomAnchor.constraint(equalTo: priceLabel.bottomAnchor),
+
+            nameLabel.leadingAnchor.constraint(equalTo: leadingAnchor),
+            trailingAnchor.constraint(equalTo: nameLabel.trailingAnchor),
+
+            priceLabel.leadingAnchor.constraint(equalTo: leadingAnchor),
+            trailingAnchor.constraint(equalTo: priceLabel.trailingAnchor)
+        ])
+    }
+
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+}
+
 final class WeightView: UIView {
     private(set) weak var unitLabel: UILabel?
     private(set) weak var quantityLabel: UILabel?
@@ -182,7 +226,6 @@ final class QuantityView: UIView {
 
 final class ShoppingCartTableCellView: UIView {
     private weak var leftStackView: UIStackView?
-    private weak var centerStackView: UIStackView?
     private weak var rightStackView: UIStackView?
 
     public weak var badgeWrapper: UIView?
@@ -194,12 +237,7 @@ final class ShoppingCartTableCellView: UIView {
     public weak var productImage: UIImageView?
     public weak var spinner: UIActivityIndicatorView?
 
-    public weak var nameLabel: UILabel?
-    public weak var priceLabel: UILabel?
-
-//    public weak var weightWrapper: UIView?
-//    public weak var weightLabel: UILabel?
-//    public weak var weightUnits: UILabel?
+    public weak var nameView: NameView?
 
     public weak var weightView: WeightView?
     public weak var entryView: EntryView?
@@ -264,20 +302,9 @@ final class ShoppingCartTableCellView: UIView {
 
     override init(frame: CGRect) {
         super.init(frame: frame)
-        self.setupUI()
-    }
-
-    public required init?(coder aDecoder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
-    }
-
-    private func setupUI() {
         let leftStackView = self.stackView
         leftStackView.axis = .horizontal
         leftStackView.setContentHuggingPriority(.required, for: .horizontal)
-
-        let centerStackView = self.stackView
-        centerStackView.axis = .vertical
 
         let rightStackView = self.stackView
         rightStackView.axis = .horizontal
@@ -312,46 +339,26 @@ final class ShoppingCartTableCellView: UIView {
             spinner.style = .gray
         }
 
-        let nameLabel = self.customLabel
-        nameLabel.font = UIFont.systemFont(ofSize: 15)
-        nameLabel.textColor = .label
-        nameLabel.textAlignment = .natural
-        nameLabel.numberOfLines = 0
-
-        let priceLabel = self.customLabel
-        priceLabel.font = UIFont.monospacedDigitSystemFont(ofSize: 13, weight: .regular)
-        priceLabel.textColor = .systemGray
-        priceLabel.textAlignment = .natural
-
-//        let weightWrapper = self.customView
-//        let weightLabel = self.customLabel
-//        weightLabel.font = UIFont.systemFont(ofSize: 13, weight: .semibold)
-//        weightLabel.textColor = .label // quanitity
-//        weightLabel.textAlignment = .right
-//
-//        let weightUnits = self.units
+        let nameView = NameView(frame: .zero)
+        nameView.translatesAutoresizingMaskIntoConstraints = false
 
         let weightView = WeightView(frame: .zero)
-
         let entryView = EntryView(frame: .zero)
-
         let quantityView = QuantityView(frame: .zero)
-        quantityView.plusButton?.addTarget(self, action: #selector(plusButtonTapped(_:)), for: .touchUpInside)
-        quantityView.minusButton?.addTarget(self, action: #selector(minusButtonTapped(_:)), for: .touchUpInside)
-
-        addSubview(leftStackView)
-        addSubview(centerStackView)
-        addSubview(rightStackView)
-
-        leftStackView.addArrangedSubview(badgeWrapper)
-        leftStackView.addArrangedSubview(imageWrapper)
-
-        centerStackView.addArrangedSubview(nameLabel)
-        centerStackView.addArrangedSubview(priceLabel)
 
         rightStackView.addArrangedSubview(weightView)
         rightStackView.addArrangedSubview(entryView)
         rightStackView.addArrangedSubview(quantityView)
+
+        quantityView.plusButton?.addTarget(self, action: #selector(plusButtonTapped(_:)), for: .touchUpInside)
+        quantityView.minusButton?.addTarget(self, action: #selector(minusButtonTapped(_:)), for: .touchUpInside)
+
+        addSubview(leftStackView)
+        addSubview(nameView)
+        addSubview(rightStackView)
+
+        leftStackView.addArrangedSubview(badgeWrapper)
+        leftStackView.addArrangedSubview(imageWrapper)
 
         badgeWrapper.addSubview(badgeLabel)
 
@@ -359,9 +366,6 @@ final class ShoppingCartTableCellView: UIView {
         imageWrapper.addSubview(imageBadge)
         imageBackground.addSubview(productImage)
         productImage.addSubview(spinner)
-
-//        weightWrapper.addSubview(weightLabel)
-//        weightWrapper.addSubview(weightUnits)
 
         self.leftStackView = leftStackView
         self.badgeWrapper = badgeWrapper
@@ -371,9 +375,7 @@ final class ShoppingCartTableCellView: UIView {
         self.imageBadge = imageBadge
         self.productImage = productImage
         self.spinner = spinner
-        self.centerStackView = centerStackView
-        self.nameLabel = nameLabel
-        self.priceLabel = priceLabel
+        self.nameView = nameView
         self.rightStackView = rightStackView
         self.weightView = weightView
         self.entryView = entryView
@@ -381,10 +383,21 @@ final class ShoppingCartTableCellView: UIView {
 
         NSLayoutConstraint.activate([
             leftStackView.topAnchor.constraint(equalTo: topAnchor),
-            leftStackView.bottomAnchor.constraint(equalTo: bottomAnchor),
+            bottomAnchor.constraint(equalTo: leftStackView.bottomAnchor),
+
+            nameView.topAnchor.constraint(equalTo: topAnchor, constant: 8),
+            bottomAnchor.constraint(equalTo: nameView.bottomAnchor, constant: 8),
+            nameView.heightAnchor.constraint(greaterThanOrEqualToConstant: 32),
+
+            rightStackView.topAnchor.constraint(equalTo: topAnchor),
+            bottomAnchor.constraint(equalTo: rightStackView.bottomAnchor),
 
             leftStackView.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 12),
-            leftStackView.trailingAnchor.constraint(equalTo: centerStackView.leadingAnchor),
+            nameView.leadingAnchor.constraint(equalTo: leftStackView.trailingAnchor),
+            rightStackView.leadingAnchor.constraint(greaterThanOrEqualTo: nameView.trailingAnchor),
+            trailingAnchor.constraint(equalTo: rightStackView.trailingAnchor, constant: 12),
+
+            // Subviews
 
             badgeLabel.leadingAnchor.constraint(equalTo: leftStackView.leadingAnchor),
             badgeLabel.topAnchor.constraint(equalTo: badgeWrapper.topAnchor, constant: 11),
@@ -409,25 +422,16 @@ final class ShoppingCartTableCellView: UIView {
             spinner.topAnchor.constraint(equalTo: productImage.topAnchor),
             spinner.bottomAnchor.constraint(equalTo: productImage.bottomAnchor),
             spinner.leadingAnchor.constraint(equalTo: productImage.leadingAnchor),
-            spinner.trailingAnchor.constraint(equalTo: productImage.trailingAnchor),
-
-            centerStackView.trailingAnchor.constraint(equalTo: rightStackView.leadingAnchor),
-            centerStackView.topAnchor.constraint(equalTo: topAnchor, constant: 8),
-            bottomAnchor.constraint(equalTo: centerStackView.bottomAnchor, constant: 8),
-            centerStackView.heightAnchor.constraint(greaterThanOrEqualToConstant: 32),
-
-            trailingAnchor.constraint(equalTo: rightStackView.trailingAnchor, constant: 12),
-            rightStackView.topAnchor.constraint(equalTo: topAnchor),
-            rightStackView.bottomAnchor.constraint(equalTo: bottomAnchor),
-
-//            weightLabel.leadingAnchor.constraint(equalTo: weightWrapper.leadingAnchor),
-//            weightLabel.widthAnchor.constraint(equalToConstant: 29),
-//            weightLabel.topAnchor.constraint(equalTo: weightWrapper.topAnchor, constant: 16),
-//            weightUnits.leadingAnchor.constraint(equalTo: weightLabel.trailingAnchor),
-//            weightUnits.widthAnchor.constraint(equalToConstant: 17),
-//            weightUnits.trailingAnchor.constraint(equalTo: weightWrapper.trailingAnchor),
-//            weightUnits.centerYAnchor.constraint(equalTo: weightLabel.centerYAnchor)
+            spinner.trailingAnchor.constraint(equalTo: productImage.trailingAnchor)
         ])
+    }
+
+    public required init?(coder aDecoder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+
+    private func setupUI() {
+
     }
 
     @objc private func plusButtonTapped(_ sender: Any) {
@@ -486,9 +490,7 @@ final class ShoppingCartTableCellView: UIView {
             switch mode {
             case .none: ()
             case .buttons:
-                quantityView?.isHidden = true
-                weightView?.isHidden = false
-                entryView?.isHidden = false
+                quantityView?.isHidden = false
             case .weightDisplay:
                 weightView?.isHidden = false
             case .weightEntry:

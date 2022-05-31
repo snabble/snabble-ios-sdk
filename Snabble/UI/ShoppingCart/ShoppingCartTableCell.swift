@@ -127,9 +127,9 @@ final class ShoppingCartTableCell: UITableViewCell {
         self.leftDisplay = .none
         self.rightDisplay = .none
 
-        self.cellView?.nameLabel?.text = nil
-        self.cellView?.priceLabel?.text = nil
-        self.cellView?.priceLabel?.isHidden = false
+        self.cellView?.nameView?.nameLabel?.text = nil
+        self.cellView?.nameView?.priceLabel?.text = nil
+        self.cellView?.nameView?.priceLabel?.isHidden = false
         self.quantityText = nil
         self.unitsText = nil
         self.badgeText = nil
@@ -142,7 +142,7 @@ final class ShoppingCartTableCell: UITableViewCell {
     }
 
     func setLineItem(_ mainItem: CheckoutInfo.LineItem, for lineItems: [CheckoutInfo.LineItem]) {
-        self.cellView?.nameLabel?.text = mainItem.name
+        self.cellView?.nameView?.nameLabel?.text = mainItem.name
 
         self.loadImage()
         self.displayLineItemPrice(for: nil, item: mainItem, in: lineItems)
@@ -151,10 +151,10 @@ final class ShoppingCartTableCell: UITableViewCell {
     }
 
     func setDiscount(for amount: Int) {
-        self.cellView?.nameLabel?.text = L10n.Snabble.Shoppingcart.discounts
+        self.cellView?.nameView?.nameLabel?.text = L10n.Snabble.Shoppingcart.discounts
 
         let formatter = PriceFormatter(SnabbleUI.project)
-        self.cellView?.priceLabel?.text = formatter.format(amount)
+        self.cellView?.nameView?.priceLabel?.text = formatter.format(amount)
 
         if showImages {
             let icon = Asset.SnabbleSDK.iconPercent.image
@@ -164,9 +164,9 @@ final class ShoppingCartTableCell: UITableViewCell {
     }
 
     func setGiveaway(for lineItem: CheckoutInfo.LineItem) {
-        self.cellView?.nameLabel?.text = lineItem.name
+        self.cellView?.nameView?.nameLabel?.text = lineItem.name
 
-        self.cellView?.priceLabel?.text = L10n.Snabble.Shoppingcart.giveaway
+        self.cellView?.nameView?.priceLabel?.text = L10n.Snabble.Shoppingcart.giveaway
 
         if showImages {
             let icon = Asset.SnabbleSDK.iconGiveaway.image
@@ -184,7 +184,7 @@ final class ShoppingCartTableCell: UITableViewCell {
         self.quantity = defaultItem?.weight ?? defaultItem?.amount ?? item.quantity
 
         let product = item.product
-        self.cellView?.nameLabel?.text = defaultItem?.name ?? product.name
+        self.cellView?.nameView?.nameLabel?.text = defaultItem?.name ?? product.name
 
         if item.editable {
             if product.type == .userMustWeigh {
@@ -204,15 +204,15 @@ final class ShoppingCartTableCell: UITableViewCell {
         // suppress display when price == 0
         let price = defaultItem?.totalPrice ?? item.price
         if price == 0 {
-            self.cellView?.priceLabel?.text = ""
-            self.cellView?.priceLabel?.isHidden = true
+            self.cellView?.nameView?.priceLabel?.text = ""
+            self.cellView?.nameView?.priceLabel?.isHidden = true
             self.rightDisplay = .none
         }
     }
 
     func setCouponItem(_ coupon: CartCoupon, for lineItem: CheckoutInfo.LineItem?) {
         self.quantity = 1
-        self.cellView?.nameLabel?.text = coupon.coupon.name
+        self.cellView?.nameView?.nameLabel?.text = coupon.coupon.name
         self.rightDisplay = .none
 
         self.quantityText = "1"
@@ -287,7 +287,7 @@ final class ShoppingCartTableCell: UITableViewCell {
             self.displayLineItemPrice(for: item.product, item: defaultItem, in: lineItems)
         } else {
             let formatter = PriceFormatter(SnabbleUI.project)
-            self.cellView?.priceLabel?.text = formatter.format(item.price)
+            self.cellView?.nameView?.priceLabel?.text = formatter.format(item.price)
         }
     }
 
@@ -327,10 +327,10 @@ final class ShoppingCartTableCell: UITableViewCell {
         if let depositTotal = lineItems.first(where: { $0.type == .deposit })?.totalPrice {
             let total = formatter.format((item.totalPrice ?? 0) + depositTotal)
             let includesDeposit = L10n.Snabble.Shoppingcart.includesDeposit
-            self.cellView?.priceLabel?.text = "\(total) \(includesDeposit)"
+            self.cellView?.nameView?.priceLabel?.text = "\(total) \(includesDeposit)"
         } else {
             let total = formatter.format(item.totalPrice ?? 0)
-            self.cellView?.priceLabel?.text = "\(total)"
+            self.cellView?.nameView?.priceLabel?.text = "\(total)"
         }
     }
 }
