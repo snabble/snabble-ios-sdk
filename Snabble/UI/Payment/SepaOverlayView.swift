@@ -29,12 +29,14 @@ public final class SepaOverlayView: UIView {
         closeButton.setImage(Asset.SnabbleSDK.iconClose.image, for: .normal)
 
         let titleLabel = UILabel()
-        titleLabel.font = .systemFont(ofSize: 17, weight: .bold)
+        titleLabel.font = UIFont.preferredFont(forTextStyle: .body, weight: .bold)
+        titleLabel.adjustsFontForContentSizeCategory = true
         titleLabel.textAlignment = .center
         titleLabel.numberOfLines = 0
 
         let textLabel = UILabel()
-        textLabel.font = .systemFont(ofSize: 17)
+        textLabel.font = UIFont.preferredFont(forTextStyle: .body)
+        textLabel.adjustsFontForContentSizeCategory = true
         textLabel.textAlignment = .center
         textLabel.numberOfLines = 0
 
@@ -45,7 +47,7 @@ public final class SepaOverlayView: UIView {
 
         let successButton = UIButton(type: .system)
         successButton.translatesAutoresizingMaskIntoConstraints = false
-        successButton.titleLabel?.font = .systemFont(ofSize: 17, weight: .semibold)
+        successButton.preferredFont(forTextStyle: .headline)
         successButton.layer.cornerRadius = 8
 
         super.init(frame: frame)

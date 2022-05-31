@@ -72,7 +72,8 @@ public final class SepaEditViewController: UIViewController {
 
         hintLabel.translatesAutoresizingMaskIntoConstraints = false
         hintLabel.numberOfLines = 0
-        hintLabel.useDynamicFont(forTextStyle: .footnote)
+        hintLabel.font = UIFont.preferredFont(forTextStyle: .footnote)
+        hintLabel.adjustsFontForContentSizeCategory = true
         hintLabel.text = L10n.Snabble.Payment.Sepa.hint
         scrollView.addSubview(hintLabel)
 
@@ -82,13 +83,15 @@ public final class SepaEditViewController: UIViewController {
 
         nameLabel.translatesAutoresizingMaskIntoConstraints = false
         nameLabel.numberOfLines = 0
-        nameLabel.useDynamicFont(forTextStyle: .body)
+        nameLabel.font = UIFont.preferredFont(forTextStyle: .body)
+        nameLabel.adjustsFontForContentSizeCategory = true
         nameLabel.text = L10n.Snabble.Payment.Sepa.name
         scrollView.addSubview(nameLabel)
 
         ibanLabel.translatesAutoresizingMaskIntoConstraints = false
         ibanLabel.numberOfLines = 0
-        ibanLabel.useDynamicFont(forTextStyle: .body)
+        ibanLabel.font = UIFont.preferredFont(forTextStyle: .body)
+        ibanLabel.adjustsFontForContentSizeCategory = true
         ibanLabel.text = L10n.Snabble.Payment.Sepa.iban
         scrollView.addSubview(ibanLabel)
 
@@ -96,14 +99,16 @@ public final class SepaEditViewController: UIViewController {
         nameField.tag = InputField.name.rawValue
         nameField.keyboardType = .alphabet
         nameField.autocapitalizationType = .words
-        nameField.useDynamicFont(forTextStyle: .body)
+        nameField.font = UIFont.preferredFont(forTextStyle: .body)
+        nameField.adjustsFontForContentSizeCategory = true
         nameField.delegate = self
         scrollView.addSubview(nameField)
 
         ibanCountryField.translatesAutoresizingMaskIntoConstraints = false
         ibanCountryField.tag = InputField.country.rawValue
         ibanCountryField.text = "DE"
-        ibanCountryField.useDynamicFont(forTextStyle: .body)
+        ibanCountryField.font = UIFont.preferredFont(forTextStyle: .body)
+        ibanCountryField.adjustsFontForContentSizeCategory = true
         ibanCountryField.delegate = self
         ibanCountryField.setContentHuggingPriority(.required, for: .horizontal)
         ibanCountryField.setContentCompressionResistancePriority(.required, for: .horizontal)
@@ -116,7 +121,8 @@ public final class SepaEditViewController: UIViewController {
         let smallPhone = UIScreen.main.bounds.width <= 320
         ibanNumberField.clearButtonMode = smallPhone ? .never : .always
         ibanNumberField.placeholder = self.placeholderFor("DE")
-        ibanNumberField.useDynamicFont(forTextStyle: .body)
+        ibanNumberField.font = UIFont.preferredFont(forTextStyle: .body)
+        ibanNumberField.adjustsFontForContentSizeCategory = true
         ibanNumberField.delegate = self
         scrollView.addSubview(ibanNumberField)
 

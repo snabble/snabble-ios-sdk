@@ -36,10 +36,12 @@ final class PaymentMethodAddCell: UITableViewCell {
         self.nameLabel = nameLabel
         self.countLabel = countLabel
 
-        nameLabel.useDynamicFont(forTextStyle: .body)
+        nameLabel.font = UIFont.preferredFont(forTextStyle: .body)
+        nameLabel.adjustsFontForContentSizeCategory = true
         nameLabel.numberOfLines = 0
 
-        countLabel.useDynamicFont(forTextStyle: .subheadline)
+        countLabel.font = UIFont.preferredFont(forTextStyle: .subheadline)
+        countLabel.adjustsFontForContentSizeCategory = true
         countLabel.textColor = ColorCompatibility.systemGray2
 
         self.accessoryType = .disclosureIndicator
