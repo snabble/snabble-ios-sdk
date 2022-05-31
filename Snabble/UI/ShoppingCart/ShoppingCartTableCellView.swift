@@ -122,7 +122,7 @@ final class BadgeView: UIView {
             badgeLabel.centerYAnchor.constraint(equalTo: backgroundView.centerYAnchor),
 
             badgeLabel.leadingAnchor.constraint(equalTo: backgroundView.leadingAnchor, constant: 4),
-            backgroundView.trailingAnchor.constraint(equalTo: trailingAnchor, constant: 4),
+            backgroundView.trailingAnchor.constraint(equalTo: trailingAnchor),
 
             backgroundView.topAnchor.constraint(greaterThanOrEqualTo: topAnchor),
             bottomAnchor.constraint(greaterThanOrEqualTo: backgroundView.bottomAnchor),
@@ -422,6 +422,7 @@ final class ShoppingCartTableCellView: UIView {
 
         NSLayoutConstraint.activate([
             heightAnchor.constraint(greaterThanOrEqualToConstant: 48),
+            imageView.widthAnchor.constraint(equalToConstant: 48),
 
             leftStackView.topAnchor.constraint(equalTo: topAnchor),
             bottomAnchor.constraint(equalTo: leftStackView.bottomAnchor),
@@ -483,20 +484,21 @@ final class ShoppingCartTableCellView: UIView {
         case .image, .emptyImage:
             imageView?.isHidden = false
         }
+        layoutIfNeeded()
     }
 
     public func updateRightDisplay(withMode mode: RightDisplay) {
-        UIView.performWithoutAnimation { [self] in
-            [quantityView, weightView, entryView].forEach { $0?.isHidden = true }
-            switch mode {
-            case .none: ()
-            case .buttons:
-                quantityView?.isHidden = false
-            case .weightDisplay:
-                weightView?.isHidden = false
-            case .weightEntry:
-                entryView?.isHidden = false
-            }
+        [quantityView, weightView, entryView].forEach { $0?.isHidden = true }
+        switch mode {
+        case .none:
+            break
+        case .buttons:
+            quantityView?.isHidden = false
+        case .weightDisplay:
+            weightView?.isHidden = false
+        case .weightEntry:
+            entryView?.isHidden = false
         }
+        layoutIfNeeded()
     }
 }
