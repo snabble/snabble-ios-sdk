@@ -149,14 +149,12 @@ final class NameView: UIView {
         nameLabel.textColor = .label
         nameLabel.textAlignment = .natural
         nameLabel.numberOfLines = 0
-        nameLabel.setContentHuggingPriority(.defaultLow - 1, for: .horizontal)
 
         let priceLabel = UILabel()
         priceLabel.translatesAutoresizingMaskIntoConstraints = false
         priceLabel.font = UIFont.monospacedDigitSystemFont(ofSize: 13, weight: .regular)
         priceLabel.textColor = .systemGray
         priceLabel.textAlignment = .natural
-        priceLabel.setContentHuggingPriority(.defaultLow - 1, for: .horizontal)
 
         super.init(frame: frame)
 
@@ -367,70 +365,23 @@ final class ShoppingCartTableCellView: UIView {
     public weak var entryView: EntryView?
     public weak var quantityView: QuantityView?
 
-    private var units: UILabel {
-        let label = UILabel()
-        label.translatesAutoresizingMaskIntoConstraints = false
-        label.font = UIFont.systemFont(ofSize: 13, weight: .semibold)
-        label.textColor = .label
-        label.textAlignment = .center
-        label.setContentHuggingPriority(.defaultLow + 1, for: .horizontal)
-        label.setContentHuggingPriority(.defaultLow + 1, for: .vertical)
-        return label
-    }
-
-    private var badge: UILabel {
-        let label = UILabel()
-        label.translatesAutoresizingMaskIntoConstraints = false
-        label.font = UIFont.systemFont(ofSize: 11)
-        label.textColor = .label.contrast
-        label.backgroundColor = .systemRed
-        label.layer.cornerRadius = 4
-        label.layer.masksToBounds = true
-        label.textAlignment = .center
-        label.setContentHuggingPriority(.defaultLow + 1, for: .horizontal)
-        label.setContentHuggingPriority(.defaultLow + 1, for: .vertical)
-        return label
-    }
-
-    private var button: UIButton {
-        let button = UIButton(type: .custom)
-        button.translatesAutoresizingMaskIntoConstraints = false
-        button.isUserInteractionEnabled = true
-        return button
-    }
-
-    private var stackView: UIStackView {
-        let stackView = UIStackView()
-        stackView.translatesAutoresizingMaskIntoConstraints = false
-        stackView.alignment = .fill
-        stackView.distribution = .fill
-        stackView.spacing = 0
-        return stackView
-    }
-
-    private var customView: UIView {
-        let view = UIView()
-        view.translatesAutoresizingMaskIntoConstraints = false
-        return view
-    }
-
-    private var customLabel: UILabel {
-        let label = UILabel()
-        label.translatesAutoresizingMaskIntoConstraints = false
-        label.setContentHuggingPriority(.defaultLow + 1, for: .horizontal)
-        label.setContentHuggingPriority(.defaultLow + 1, for: .vertical)
-        return label
-    }
-
     weak var delegate: ShoppingCardCellViewDelegate?
 
     override init(frame: CGRect) {
         super.init(frame: frame)
-        let leftStackView = self.stackView
+        let leftStackView = UIStackView()
+        leftStackView.translatesAutoresizingMaskIntoConstraints = false
+        leftStackView.alignment = .fill
+        leftStackView.distribution = .fill
+        leftStackView.spacing = 0
         leftStackView.axis = .horizontal
         leftStackView.setContentHuggingPriority(.required, for: .horizontal)
 
-        let rightStackView = self.stackView
+        let rightStackView = UIStackView()
+        rightStackView.translatesAutoresizingMaskIntoConstraints = false
+        rightStackView.alignment = .fill
+        rightStackView.distribution = .fill
+        rightStackView.spacing = 0
         rightStackView.axis = .horizontal
         rightStackView.setContentHuggingPriority(.required, for: .horizontal)
 
@@ -439,7 +390,6 @@ final class ShoppingCartTableCellView: UIView {
 
         let nameView = NameView(frame: .zero)
         nameView.translatesAutoresizingMaskIntoConstraints = false
-        nameView.setContentHuggingPriority(.defaultLow - 1, for: .horizontal)
 
         let weightView = WeightView(frame: .zero)
         let entryView = EntryView(frame: .zero)
