@@ -22,7 +22,9 @@ final class SupervisorRejectedViewController: UIViewController {
 
     override public func loadView() {
         let contentView = UIView(frame: UIScreen.main.bounds)
-        contentView.restrictDynamicTypeSize(from: nil, to: .extraExtraExtraLarge)
+        if #available(iOS 15, *) {
+            contentView.restrictDynamicTypeSize(from: nil, to: .extraExtraExtraLarge)
+        }
 
         let scrollView = UIScrollView()
         scrollView.translatesAutoresizingMaskIntoConstraints = false

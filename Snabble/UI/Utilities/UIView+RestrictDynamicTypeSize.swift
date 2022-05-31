@@ -9,9 +9,7 @@ import UIKit
 
 extension UIView {
     func restrictDynamicTypeSize(from min: UIContentSizeCategory?, to max: UIContentSizeCategory?) {
-        if #available(iOS 15, *) {
-            self.minimumContentSizeCategory = min
-            self.maximumContentSizeCategory = max
-        }
+        self.minimumContentSizeCategory = min
+        self.maximumContentSizeCategory = max
     }
 }
