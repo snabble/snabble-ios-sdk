@@ -170,10 +170,10 @@ final class NameView: UIView {
             bottomAnchor.constraint(equalTo: priceLabel.bottomAnchor),
 
             nameLabel.leadingAnchor.constraint(equalTo: leadingAnchor),
-            trailingAnchor.constraint(equalTo: nameLabel.trailingAnchor),
+            trailingAnchor.constraint(greaterThanOrEqualTo: nameLabel.trailingAnchor),
 
             priceLabel.leadingAnchor.constraint(equalTo: leadingAnchor),
-            trailingAnchor.constraint(equalTo: priceLabel.trailingAnchor)
+            trailingAnchor.constraint(greaterThanOrEqualTo: priceLabel.trailingAnchor)
         ])
     }
 
