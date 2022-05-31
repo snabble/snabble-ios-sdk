@@ -10,8 +10,56 @@ protocol ShoppingCardCellViewDelegate: AnyObject {
     func minusButtonTapped()
 }
 
-final class EntryView: UIView {
+final class WeightView: UIView {
+    private(set) weak var unitLabel: UILabel?
     private(set) weak var quantityLabel: UILabel?
+
+    override init(frame: CGRect) {
+        let quantityLabel = UILabel()
+        quantityLabel.translatesAutoresizingMaskIntoConstraints = false
+        quantityLabel.font = UIFont.systemFont(ofSize: 13, weight: .semibold)
+        quantityLabel.textColor = .label
+        quantityLabel.textAlignment = .right
+
+        let unitLabel = UILabel()
+        unitLabel.translatesAutoresizingMaskIntoConstraints = false
+        unitLabel.font = UIFont.systemFont(ofSize: 13, weight: .semibold)
+        unitLabel.textColor = .label
+        unitLabel.textAlignment = .center
+
+        super.init(frame: frame)
+
+        addSubview(unitLabel)
+        addSubview(quantityLabel)
+
+        self.unitLabel = unitLabel
+        self.quantityLabel = quantityLabel
+
+        NSLayoutConstraint.activate([
+            quantityLabel.topAnchor.constraint(greaterThanOrEqualToSystemSpacingBelow: topAnchor, multiplier: 1),
+            bottomAnchor.constraint(greaterThanOrEqualToSystemSpacingBelow: quantityLabel.bottomAnchor, multiplier: 1),
+            quantityLabel.centerYAnchor.constraint(equalTo: centerYAnchor),
+
+            unitLabel.topAnchor.constraint(greaterThanOrEqualToSystemSpacingBelow: topAnchor, multiplier: 1),
+            bottomAnchor.constraint(greaterThanOrEqualToSystemSpacingBelow: unitLabel.bottomAnchor, multiplier: 1),
+            unitLabel.centerYAnchor.constraint(equalTo: centerYAnchor),
+
+            quantityLabel.leadingAnchor.constraint(equalTo: leadingAnchor),
+            unitLabel.leadingAnchor.constraint(equalTo: quantityLabel.trailingAnchor, constant: 8),
+            trailingAnchor.constraint(equalTo: unitLabel.trailingAnchor),
+
+            quantityLabel.widthAnchor.constraint(equalToConstant: 34),
+            unitLabel.widthAnchor.constraint(equalToConstant: 18)
+        ])
+    }
+
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+}
+
+final class EntryView: UIView {
+    private(set) weak var unitLabel: UILabel?
     private(set) weak var quantityTextField: UITextField?
 
     override init(frame: CGRect) {
@@ -26,37 +74,35 @@ final class EntryView: UIView {
         quantityTextField.minimumFontSize = 17
         quantityTextField.adjustsFontSizeToFitWidth = true
 
-        let quantityLabel = UILabel()
-        quantityLabel.translatesAutoresizingMaskIntoConstraints = false
-        quantityLabel.font = UIFont.systemFont(ofSize: 13, weight: .semibold)
-        quantityLabel.textColor = .label
-        quantityLabel.textAlignment = .center
-        quantityLabel.setContentHuggingPriority(.defaultLow + 1, for: .horizontal)
-        quantityLabel.setContentHuggingPriority(.defaultLow + 1, for: .vertical)
+        let unitLabel = UILabel()
+        unitLabel.translatesAutoresizingMaskIntoConstraints = false
+        unitLabel.font = UIFont.systemFont(ofSize: 13, weight: .semibold)
+        unitLabel.textColor = .label
+        unitLabel.textAlignment = .center
 
         super.init(frame: frame)
 
         addSubview(quantityTextField)
-        addSubview(quantityLabel)
+        addSubview(unitLabel)
 
         self.quantityTextField = quantityTextField
-        self.quantityLabel = quantityLabel
+        self.unitLabel = unitLabel
 
         NSLayoutConstraint.activate([
             quantityTextField.topAnchor.constraint(greaterThanOrEqualToSystemSpacingBelow: topAnchor, multiplier: 1),
             bottomAnchor.constraint(greaterThanOrEqualToSystemSpacingBelow: quantityTextField.bottomAnchor, multiplier: 1),
             quantityTextField.centerYAnchor.constraint(equalTo: centerYAnchor),
 
-            quantityLabel.topAnchor.constraint(greaterThanOrEqualToSystemSpacingBelow: topAnchor, multiplier: 1),
-            bottomAnchor.constraint(greaterThanOrEqualToSystemSpacingBelow: quantityLabel.bottomAnchor, multiplier: 1),
-            quantityLabel.centerYAnchor.constraint(equalTo: centerYAnchor),
+            unitLabel.topAnchor.constraint(greaterThanOrEqualToSystemSpacingBelow: topAnchor, multiplier: 1),
+            bottomAnchor.constraint(greaterThanOrEqualToSystemSpacingBelow: unitLabel.bottomAnchor, multiplier: 1),
+            unitLabel.centerYAnchor.constraint(equalTo: centerYAnchor),
 
             quantityTextField.widthAnchor.constraint(equalToConstant: 80).usingPriority(.defaultHigh),
             quantityTextField.widthAnchor.constraint(greaterThanOrEqualToConstant: 80),
 
             quantityTextField.leadingAnchor.constraint(equalTo: leadingAnchor),
-            quantityLabel.leadingAnchor.constraint(equalTo: quantityTextField.trailingAnchor, constant: 8),
-            trailingAnchor.constraint(equalTo: quantityLabel.trailingAnchor)
+            unitLabel.leadingAnchor.constraint(equalTo: quantityTextField.trailingAnchor, constant: 8),
+            trailingAnchor.constraint(equalTo: unitLabel.trailingAnchor)
         ])
     }
 
@@ -88,7 +134,8 @@ final class QuantityView: UIView {
         quantityLabel.font = UIFont.systemFont(ofSize: 13, weight: .semibold)
         quantityLabel.textColor = .label
         quantityLabel.textAlignment = .center
-        quantityLabel.setContentCompressionResistancePriority(.defaultHigh + 1, for: .horizontal)
+        quantityLabel.setContentHuggingPriority(.defaultLow + 1, for: .horizontal)
+        quantityLabel.setContentHuggingPriority(.defaultLow + 1, for: .vertical)
         super.init(frame: frame)
 
         addSubview(minusButton)
@@ -150,10 +197,11 @@ final class ShoppingCartTableCellView: UIView {
     public weak var nameLabel: UILabel?
     public weak var priceLabel: UILabel?
 
-    public weak var weightWrapper: UIView?
-    public weak var weightLabel: UILabel?
-    public weak var weightUnits: UILabel?
+//    public weak var weightWrapper: UIView?
+//    public weak var weightLabel: UILabel?
+//    public weak var weightUnits: UILabel?
 
+    public weak var weightView: WeightView?
     public weak var entryView: EntryView?
     public weak var quantityView: QuantityView?
 
@@ -275,13 +323,15 @@ final class ShoppingCartTableCellView: UIView {
         priceLabel.textColor = .systemGray
         priceLabel.textAlignment = .natural
 
-        let weightWrapper = self.customView
-        let weightLabel = self.customLabel
-        weightLabel.font = UIFont.systemFont(ofSize: 13, weight: .semibold)
-        weightLabel.textColor = .label
-        weightLabel.textAlignment = .right
+//        let weightWrapper = self.customView
+//        let weightLabel = self.customLabel
+//        weightLabel.font = UIFont.systemFont(ofSize: 13, weight: .semibold)
+//        weightLabel.textColor = .label // quanitity
+//        weightLabel.textAlignment = .right
+//
+//        let weightUnits = self.units
 
-        let weightUnits = self.units
+        let weightView = WeightView(frame: .zero)
 
         let entryView = EntryView(frame: .zero)
 
@@ -299,7 +349,7 @@ final class ShoppingCartTableCellView: UIView {
         centerStackView.addArrangedSubview(nameLabel)
         centerStackView.addArrangedSubview(priceLabel)
 
-        rightStackView.addArrangedSubview(weightWrapper)
+        rightStackView.addArrangedSubview(weightView)
         rightStackView.addArrangedSubview(entryView)
         rightStackView.addArrangedSubview(quantityView)
 
@@ -310,8 +360,8 @@ final class ShoppingCartTableCellView: UIView {
         imageBackground.addSubview(productImage)
         productImage.addSubview(spinner)
 
-        weightWrapper.addSubview(weightLabel)
-        weightWrapper.addSubview(weightUnits)
+//        weightWrapper.addSubview(weightLabel)
+//        weightWrapper.addSubview(weightUnits)
 
         self.leftStackView = leftStackView
         self.badgeWrapper = badgeWrapper
@@ -325,9 +375,7 @@ final class ShoppingCartTableCellView: UIView {
         self.nameLabel = nameLabel
         self.priceLabel = priceLabel
         self.rightStackView = rightStackView
-        self.weightWrapper = weightWrapper
-        self.weightLabel = weightLabel
-        self.weightUnits = weightUnits
+        self.weightView = weightView
         self.entryView = entryView
         self.quantityView = quantityView
 
@@ -372,13 +420,13 @@ final class ShoppingCartTableCellView: UIView {
             rightStackView.topAnchor.constraint(equalTo: topAnchor),
             rightStackView.bottomAnchor.constraint(equalTo: bottomAnchor),
 
-            weightLabel.leadingAnchor.constraint(equalTo: weightWrapper.leadingAnchor),
-            weightLabel.widthAnchor.constraint(equalToConstant: 29),
-            weightLabel.topAnchor.constraint(equalTo: weightWrapper.topAnchor, constant: 16),
-            weightUnits.leadingAnchor.constraint(equalTo: weightLabel.trailingAnchor),
-            weightUnits.widthAnchor.constraint(equalToConstant: 17),
-            weightUnits.trailingAnchor.constraint(equalTo: weightWrapper.trailingAnchor),
-            weightUnits.centerYAnchor.constraint(equalTo: weightLabel.centerYAnchor)
+//            weightLabel.leadingAnchor.constraint(equalTo: weightWrapper.leadingAnchor),
+//            weightLabel.widthAnchor.constraint(equalToConstant: 29),
+//            weightLabel.topAnchor.constraint(equalTo: weightWrapper.topAnchor, constant: 16),
+//            weightUnits.leadingAnchor.constraint(equalTo: weightLabel.trailingAnchor),
+//            weightUnits.widthAnchor.constraint(equalToConstant: 17),
+//            weightUnits.trailingAnchor.constraint(equalTo: weightWrapper.trailingAnchor),
+//            weightUnits.centerYAnchor.constraint(equalTo: weightLabel.centerYAnchor)
         ])
     }
 
@@ -405,44 +453,44 @@ final class ShoppingCartTableCellView: UIView {
     }
 
     public func updateQuantityText(withText text: String?) {
-        self.quantityView?.quantityLabel?.text = text
-        self.weightLabel?.text = text
-        self.entryView?.quantityTextField?.text = text
+        quantityView?.quantityLabel?.text = text
+        weightView?.quantityLabel?.text = text
+        entryView?.quantityTextField?.text = text
     }
 
     public func updateUnitsText(withText text: String?) {
-        self.entryView?.quantityLabel?.text = text
-        self.weightUnits?.text = text
+        entryView?.unitLabel?.text = text
+        weightView?.unitLabel?.text = text
     }
 
     public func updateLeftDisplay(withMode mode: LeftDisplay) {
-        [self.imageWrapper, self.badgeWrapper].forEach { $0?.isHidden = true }
+        [imageWrapper, badgeWrapper].forEach { $0?.isHidden = true }
         switch mode {
         case .none:
-            self.badgeWrapper?.isHidden = false
-            self.badgeLabel?.isHidden = true
+            badgeWrapper?.isHidden = false
+            badgeLabel?.isHidden = true
         case .image:
-            self.imageWrapper?.isHidden = false
-            self.imageBackground?.isHidden = false
+            imageWrapper?.isHidden = false
+            imageBackground?.isHidden = false
         case .emptyImage:
-            self.imageWrapper?.isHidden = false
-            self.imageBackground?.isHidden = true
+            imageWrapper?.isHidden = false
+            imageBackground?.isHidden = true
         case .badge:
-            self.badgeWrapper?.isHidden = false
+            badgeWrapper?.isHidden = false
         }
     }
 
     public func updateRightDisplay(withMode mode: RightDisplay) {
         UIView.performWithoutAnimation { [self] in
-            [quantityView, weightWrapper, entryView].forEach { $0?.isHidden = true }
+            [quantityView, weightView, entryView].forEach { $0?.isHidden = true }
             switch mode {
             case .none: ()
             case .buttons:
                 quantityView?.isHidden = true
-                weightWrapper?.isHidden = false
+                weightView?.isHidden = false
                 entryView?.isHidden = false
             case .weightDisplay:
-                weightWrapper?.isHidden = false
+                weightView?.isHidden = false
             case .weightEntry:
                 entryView?.isHidden = false
             }
