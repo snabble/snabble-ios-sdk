@@ -6,6 +6,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [unreleased]
 
+### Changed 
+* Improved Check-In and Check-out logic  #APPS-273
+
 ## [0.19.2] - 2022-5-25
 
 ### Changed
