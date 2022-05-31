@@ -16,23 +16,22 @@ class BaseCheckViewController: UIViewController {
     private weak var processTimer: Timer?
     private var sessionTask: URLSessionTask?
 
-    let topWrapper = UIView()
-    let stackView = UIStackView()
-    let iconWrapper = UIView()
-    let textWrapper = UIView()
-    let arrowWrapper = UIView()
-    let codeWrapper = UIView()
-    let idWrapper = UIView()
+    weak var stackView: UIStackView?
+    weak var iconWrapper: UIView?
+    weak var textWrapper: UIView?
+    weak var arrowWrapper: UIView?
+    weak var codeWrapper: UIView?
+    weak var idWrapper: UIView?
 
-    private let icon = UIImageView()
-    private let text = UILabel()
-    private let arrow = UIImageView(image: Asset.SnabbleSDK.arrowUp.image)
-    private let code = UIImageView()
-    private let id = UILabel()
+    private weak var icon: UIImageView?
+    private weak var text: UILabel?
+    private weak var code: UIImageView?
+    private weak var id: UILabel?
 
-    private let cancelButton = UIButton(type: .system)
+    private weak var cancelButton: UIButton?
 
     private var initialBrightness: CGFloat = 0
+    private let arrowIconHeight: CGFloat = 30
 
     weak var delegate: PaymentDelegate?
 
@@ -43,90 +42,182 @@ class BaseCheckViewController: UIViewController {
 
         super.init(nibName: nil, bundle: nil)
         self.hidesBottomBarWhenPushed = true
+
+        title = L10n.Snabble.Payment.confirm
     }
 
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
 
-    override func viewDidLoad() {
-        super.viewDidLoad()
-
-        title = L10n.Snabble.Payment.confirm
-
-        view.backgroundColor = .systemBackground
-
+    override public func loadView() {
         // set the main view components
-        topWrapper.translatesAutoresizingMaskIntoConstraints = false
-        view.addSubview(topWrapper)
+        let contentView = UIView(frame: UIScreen.main.bounds)
+        contentView.backgroundColor = .systemBackground
+        if #available(iOS 15, *) {
+            contentView.restrictDynamicTypeSize(from: nil, to: .extraExtraExtraLarge)
+        }
 
+        let scrollView = UIScrollView()
+        scrollView.translatesAutoresizingMaskIntoConstraints = false
+        scrollView.backgroundColor = .systemBackground
+        scrollView.showsVerticalScrollIndicator = false
+        scrollView.alwaysBounceVertical = false
+
+        let contentLayoutGuide = scrollView.contentLayoutGuide
+        let frameLayoutGuide = scrollView.frameLayoutGuide
+
+        let wrapperView = UIView()
+        wrapperView.translatesAutoresizingMaskIntoConstraints = false
+
+        let cancelButton = UIButton(type: .system)
+        cancelButton.translatesAutoresizingMaskIntoConstraints = false
+        cancelButton.makeSnabbleButton()
+        cancelButton.titleLabel?.textAlignment = .center
+        cancelButton.setTitle(L10n.Snabble.cancel, for: .normal)
+        cancelButton.preferredFont(forTextStyle: .headline)
+        cancelButton.alpha = 0
+        cancelButton.isUserInteractionEnabled = false
+        cancelButton.addTarget(self, action: #selector(self.cancelPayment), for: .touchUpInside)
+
+        let stackViewLayout = UILayoutGuide()
+
+        let stackView = UIStackView()
         stackView.translatesAutoresizingMaskIntoConstraints = false
         stackView.axis = .vertical
+        stackView.distribution = .equalSpacing
+        stackView.alignment = .center
         stackView.spacing = 0
 
-        cancelButton.translatesAutoresizingMaskIntoConstraints = false
-        cancelButton.setTitle(L10n.Snabble.cancel, for: .normal)
-        cancelButton.setTitleColor(.label, for: .normal)
-        cancelButton.titleLabel?.font = .systemFont(ofSize: 17, weight: .semibold)
+        contentView.addSubview(scrollView)
+        scrollView.addSubview(wrapperView)
 
-        view.addSubview(cancelButton)
+        wrapperView.addLayoutGuide(stackViewLayout)
+        wrapperView.addSubview(stackView)
+        wrapperView.addSubview(cancelButton)
 
-        let margins = view.layoutMarginsGuide
         NSLayoutConstraint.activate([
-            topWrapper.topAnchor.constraint(equalTo: margins.topAnchor),
-            topWrapper.leadingAnchor.constraint(equalTo: view.leadingAnchor),
-            topWrapper.trailingAnchor.constraint(equalTo: view.trailingAnchor),
-            topWrapper.bottomAnchor.constraint(equalTo: cancelButton.topAnchor),
+            frameLayoutGuide.leadingAnchor.constraint(equalTo: contentView.leadingAnchor),
+            frameLayoutGuide.trailingAnchor.constraint(equalTo: contentView.trailingAnchor),
+            frameLayoutGuide.topAnchor.constraint(equalTo: contentView.safeAreaLayoutGuide.topAnchor),
+            frameLayoutGuide.bottomAnchor.constraint(equalTo: contentView.safeAreaLayoutGuide.bottomAnchor),
+            frameLayoutGuide.widthAnchor.constraint(equalTo: contentLayoutGuide.widthAnchor),
 
-            cancelButton.bottomAnchor.constraint(equalTo: margins.bottomAnchor, constant: -16),
-            cancelButton.centerXAnchor.constraint(equalTo: view.centerXAnchor)
+            contentLayoutGuide.leadingAnchor.constraint(equalTo: wrapperView.leadingAnchor),
+            contentLayoutGuide.topAnchor.constraint(equalTo: wrapperView.topAnchor),
+            contentLayoutGuide.trailingAnchor.constraint(equalTo: wrapperView.trailingAnchor),
+            contentLayoutGuide.bottomAnchor.constraint(equalTo: wrapperView.bottomAnchor),
+            wrapperView.heightAnchor.constraint(greaterThanOrEqualTo: frameLayoutGuide.heightAnchor),
+
+            cancelButton.heightAnchor.constraint(equalToConstant: 48),
+            cancelButton.bottomAnchor.constraint(equalTo: wrapperView.bottomAnchor, constant: -16),
+            cancelButton.leadingAnchor.constraint(equalTo: wrapperView.leadingAnchor, constant: 16),
+            cancelButton.trailingAnchor.constraint(equalTo: wrapperView.trailingAnchor, constant: -16),
+
+            stackViewLayout.topAnchor.constraint(equalTo: wrapperView.topAnchor),
+            stackViewLayout.leadingAnchor.constraint(equalTo: wrapperView.leadingAnchor, constant: 16),
+            stackViewLayout.trailingAnchor.constraint(equalTo: wrapperView.trailingAnchor, constant: -16),
+            stackViewLayout.bottomAnchor.constraint(equalTo: cancelButton.topAnchor),
+
+            stackView.leadingAnchor.constraint(equalTo: stackViewLayout.leadingAnchor),
+            stackView.trailingAnchor.constraint(equalTo: stackViewLayout.trailingAnchor),
+            stackView.centerYAnchor.constraint(equalTo: stackViewLayout.centerYAnchor),
+            stackView.topAnchor.constraint(greaterThanOrEqualTo: stackViewLayout.topAnchor),
+            stackView.bottomAnchor.constraint(lessThanOrEqualTo: stackViewLayout.bottomAnchor)
         ])
+
+        self.view = contentView
+        self.stackView = stackView
+        self.cancelButton = cancelButton
 
         // build the stackview components
-
-        iconWrapper.addSubview(icon)
+        let iconWrapper = UIView()
+        iconWrapper.translatesAutoresizingMaskIntoConstraints = false
+        let icon = UIImageView()
         icon.translatesAutoresizingMaskIntoConstraints = false
+        icon.contentMode = .scaleAspectFit
+        icon.setContentHuggingPriority(.defaultLow + 1, for: .horizontal)
+        icon.setContentHuggingPriority(.defaultLow + 2, for: .vertical)
+        iconWrapper.addSubview(icon)
         NSLayoutConstraint.activate([
+            icon.centerXAnchor.constraint(equalTo: iconWrapper.centerXAnchor),
+            icon.centerYAnchor.constraint(equalTo: iconWrapper.centerYAnchor),
             icon.topAnchor.constraint(equalTo: iconWrapper.topAnchor, constant: 16),
-            icon.bottomAnchor.constraint(equalTo: iconWrapper.bottomAnchor, constant: -16),
-            icon.centerXAnchor.constraint(equalTo: iconWrapper.centerXAnchor)
+            icon.bottomAnchor.constraint(equalTo: iconWrapper.bottomAnchor, constant: -16)
         ])
+        self.iconWrapper = iconWrapper
+        self.icon = icon
 
-        textWrapper.addSubview(text)
+        let textWrapper = UIView()
+        textWrapper.translatesAutoresizingMaskIntoConstraints = false
+        let text = UILabel()
         text.translatesAutoresizingMaskIntoConstraints = false
-        text.numberOfLines = 0
+        text.textColor = .label
         text.textAlignment = .center
+        text.numberOfLines = 0
+        text.font = UIFont.preferredFont(forTextStyle: .body)
+        text.adjustsFontForContentSizeCategory = true
+        textWrapper.addSubview(text)
         NSLayoutConstraint.activate([
             text.leadingAnchor.constraint(equalTo: textWrapper.leadingAnchor),
             text.trailingAnchor.constraint(equalTo: textWrapper.trailingAnchor),
             text.topAnchor.constraint(equalTo: textWrapper.topAnchor, constant: 4),
             text.bottomAnchor.constraint(equalTo: textWrapper.bottomAnchor, constant: -4)
         ])
+        self.textWrapper = textWrapper
+        self.text = text
 
-        arrowWrapper.addSubview(arrow)
+        let arrowWrapper = UIView()
+        arrowWrapper.translatesAutoresizingMaskIntoConstraints = false
+        let arrow = UIImageView(image: Asset.SnabbleSDK.arrowUp.image)
         arrow.translatesAutoresizingMaskIntoConstraints = false
+        arrow.adjustsImageSizeForAccessibilityContentSizeCategory = true
+        arrow.contentMode = .scaleAspectFit
+        arrow.setContentHuggingPriority(.defaultLow + 1, for: .horizontal)
+        arrow.setContentHuggingPriority(.defaultLow + 2, for: .vertical)
+        arrowWrapper.addSubview(arrow)
         NSLayoutConstraint.activate([
-            arrowWrapper.heightAnchor.constraint(equalToConstant: 30),
-            arrow.centerXAnchor.constraint(equalTo: arrowWrapper.centerXAnchor),
-            arrow.centerYAnchor.constraint(equalTo: arrowWrapper.centerYAnchor)
+            arrow.leadingAnchor.constraint(equalTo: arrowWrapper.leadingAnchor),
+            arrow.trailingAnchor.constraint(equalTo: arrowWrapper.trailingAnchor),
+            arrow.topAnchor.constraint(equalTo: arrowWrapper.topAnchor),
+            arrow.bottomAnchor.constraint(equalTo: arrowWrapper.bottomAnchor)
         ])
+        self.arrowWrapper = arrowWrapper
 
-        codeWrapper.addSubview(code)
+        let codeWrapper = UIView()
+        codeWrapper.translatesAutoresizingMaskIntoConstraints = false
+        let code = UIImageView()
         code.translatesAutoresizingMaskIntoConstraints = false
+        code.contentMode = .scaleAspectFit
+        code.setContentHuggingPriority(.defaultLow + 1, for: .horizontal)
+        code.setContentHuggingPriority(.defaultLow + 2, for: .vertical)
+        codeWrapper.addSubview(code)
         NSLayoutConstraint.activate([
+            code.leadingAnchor.constraint(equalTo: codeWrapper.leadingAnchor),
+            code.trailingAnchor.constraint(equalTo: codeWrapper.trailingAnchor),
             code.topAnchor.constraint(equalTo: codeWrapper.topAnchor, constant: 16),
-            code.bottomAnchor.constraint(equalTo: codeWrapper.bottomAnchor, constant: -16),
-            code.centerXAnchor.constraint(equalTo: codeWrapper.centerXAnchor)
+            code.bottomAnchor.constraint(equalTo: codeWrapper.bottomAnchor, constant: -16)
         ])
+        self.codeWrapper = codeWrapper
+        self.code = code
 
-        idWrapper.addSubview(id)
+        let idWrapper = UIView()
+        idWrapper.translatesAutoresizingMaskIntoConstraints = false
+        let id = UILabel()
         id.translatesAutoresizingMaskIntoConstraints = false
-        id.font = .systemFont(ofSize: 13)
+        id.textColor = .label
+        id.textAlignment = .center
+        id.font = UIFont.preferredFont(forTextStyle: .footnote)
+        id.adjustsFontForContentSizeCategory = true
+        idWrapper.addSubview(id)
         NSLayoutConstraint.activate([
-            idWrapper.heightAnchor.constraint(equalToConstant: 21),
-            id.centerXAnchor.constraint(equalTo: idWrapper.centerXAnchor),
-            id.centerYAnchor.constraint(equalTo: idWrapper.centerYAnchor)
+            id.leadingAnchor.constraint(equalTo: idWrapper.leadingAnchor),
+            id.trailingAnchor.constraint(equalTo: idWrapper.trailingAnchor),
+            id.topAnchor.constraint(equalTo: idWrapper.topAnchor, constant: 4),
+            id.bottomAnchor.constraint(equalTo: idWrapper.bottomAnchor, constant: -4)
         ])
+        self.idWrapper = idWrapper
+        self.id = id
 
         arrangeLayout()
     }
@@ -135,16 +226,13 @@ class BaseCheckViewController: UIViewController {
         super.viewWillAppear(animated)
 
         self.navigationItem.hidesBackButton = true
-        self.cancelButton.alpha = 0
-        self.cancelButton.isUserInteractionEnabled = false
-        self.cancelButton.addTarget(self, action: #selector(self.cancelPayment), for: .touchUpInside)
 
         self.initialBrightness = UIScreen.main.brightness
         Timer.scheduledTimer(withTimeInterval: 2, repeats: false) { _ in
             UIView.animate(withDuration: 0.2) {
-                self.cancelButton.alpha = 1
+                self.cancelButton?.alpha = 1
             }
-            self.cancelButton.isUserInteractionEnabled = true
+            self.cancelButton?.isUserInteractionEnabled = true
         }
 
         UIApplication.shared.isIdleTimerDisabled = true
@@ -154,18 +242,18 @@ class BaseCheckViewController: UIViewController {
             self.delegate?.track(.brightnessIncreased)
         }
 
-        self.setIcon()
+        self.setIcons()
 
         let codeContent = codeContent()
-        self.code.image = renderCode(codeContent)
+        self.code?.image = renderCode(codeContent)
 
         let onlineMessageKey = "Snabble.Payment.Online.message"
         let onlineMessage = Snabble.l10n(onlineMessageKey)
-        self.text.text = onlineMessage
+        self.text?.text = onlineMessage
         // hide if there is no text/translation
-        self.textWrapper.isHidden = onlineMessage == onlineMessageKey.uppercased()
+        self.textWrapper?.isHidden = onlineMessage == onlineMessageKey.uppercased()
 
-        self.id.text = String(checkoutProcess.id.suffix(4))
+        self.id?.text = String(checkoutProcess.id.suffix(4))
 
         self.startTimer()
     }
@@ -175,6 +263,12 @@ class BaseCheckViewController: UIViewController {
 
         UIScreen.main.brightness = self.initialBrightness
         UIApplication.shared.isIdleTimerDisabled = false
+    }
+
+    override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
+        super.traitCollectionDidChange(previousTraitCollection)
+
+        setIcons()
     }
 
     // MARK: - override points
@@ -200,7 +294,7 @@ class BaseCheckViewController: UIViewController {
         }
     }
 
-    private func setIcon() {
+    private func setIcons() {
         let asset: ImageAsset
         let bundlePath: String
         switch checkoutProcess.rawPaymentMethod {
@@ -212,8 +306,11 @@ class BaseCheckViewController: UIViewController {
             bundlePath = "Checkout/\(SnabbleUI.project.id)/checkout-online"
         }
         SnabbleUI.getAsset(asset, bundlePath: bundlePath) { img in
-            self.icon.image = img
+            self.icon?.image = img
         }
+
+        let scaledArrowWrapperHeight = UIFontMetrics.default.scaledValue(for: self.arrowIconHeight)
+        self.arrowWrapper?.heightAnchor.constraint(equalToConstant: scaledArrowWrapperHeight).usingPriority(.defaultHigh + 1).isActive = true
     }
 
     // MARK: - polling timer

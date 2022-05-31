@@ -98,17 +98,22 @@ public final class TeleCashCreditCardEditViewController: UIViewController {
         view.addSubview(spinner)
 
         explanation.numberOfLines = 0
-        explanation.useDynamicFont(forTextStyle: .footnote)
+        explanation.font = UIFont.preferredFont(forTextStyle: .footnote)
+        explanation.adjustsFontForContentSizeCategory = true
 
-        cardNumberLabel.useDynamicFont(forTextStyle: .body)
+        cardNumberLabel.font = UIFont.preferredFont(forTextStyle: .body)
+        cardNumberLabel.adjustsFontForContentSizeCategory = true
 
-        cardNumber.useDynamicFont(forTextStyle: .body)
+        cardNumber.font = UIFont.preferredFont(forTextStyle: .body)
+        cardNumber.adjustsFontForContentSizeCategory = true
         cardNumber.isEnabled = false
         cardNumber.borderStyle = .roundedRect
 
-        expDateLabel.useDynamicFont(forTextStyle: .body)
+        expDateLabel.font = UIFont.preferredFont(forTextStyle: .body)
+        expDateLabel.adjustsFontForContentSizeCategory = true
 
-        expirationDate.useDynamicFont(forTextStyle: .body)
+        expirationDate.font = UIFont.preferredFont(forTextStyle: .body)
+        expirationDate.adjustsFontForContentSizeCategory = true
         expirationDate.isEnabled = false
         expirationDate.borderStyle = .roundedRect
 

@@ -37,20 +37,16 @@ final class GatekeeperCheckViewController: BaseCheckViewController {
     }
 
     override func arrangeLayout() {
-        topWrapper.addSubview(stackView)
-
-        NSLayoutConstraint.activate([
-            stackView.topAnchor.constraint(greaterThanOrEqualTo: topWrapper.topAnchor),
-            stackView.bottomAnchor.constraint(lessThanOrEqualTo: topWrapper.bottomAnchor),
-            stackView.centerYAnchor.constraint(equalTo: topWrapper.centerYAnchor),
-            stackView.leadingAnchor.constraint(equalTo: topWrapper.leadingAnchor, constant: 16),
-            stackView.trailingAnchor.constraint(equalTo: topWrapper.trailingAnchor, constant: -16)
-        ])
-
-        stackView.addArrangedSubview(iconWrapper)
-        stackView.addArrangedSubview(textWrapper)
-        stackView.addArrangedSubview(arrowWrapper)
-        stackView.addArrangedSubview(codeWrapper)
-        stackView.addArrangedSubview(idWrapper)
+        if let iconWrapper = iconWrapper,
+           let textWrapper = textWrapper,
+           let arrowWrapper = arrowWrapper,
+           let idWrapper = idWrapper,
+           let codeWrapper = codeWrapper {
+            stackView?.addArrangedSubview(iconWrapper)
+            stackView?.addArrangedSubview(textWrapper)
+            stackView?.addArrangedSubview(arrowWrapper)
+            stackView?.addArrangedSubview(codeWrapper)
+            stackView?.addArrangedSubview(idWrapper)
+        }
     }
 }

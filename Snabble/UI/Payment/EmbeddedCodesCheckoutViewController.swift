@@ -15,13 +15,14 @@ final class EmbeddedCodesCheckoutViewController: UIViewController {
     private weak var idLabel: UILabel?
     private weak var messageLabel: UILabel?
     private weak var codeCountLabel: UILabel?
-    private weak var scrollView: UIScrollView?
+    private weak var codeScrollView: UIScrollView?
     private weak var paidButton: UIButton?
     private weak var pageControl: UIPageControl?
 
     private var initialBrightness: CGFloat = 0
     private var maxScrollViewWidth: CGFloat = 0
     private var maxPageSize: CGFloat = 0
+    private let arrowIconHeight: CGFloat = 30
 
     private let cart: ShoppingCart
     private let shop: Shop
@@ -35,9 +36,10 @@ final class EmbeddedCodesCheckoutViewController: UIViewController {
     private var customLabel: UILabel {
         let label = UILabel()
         label.translatesAutoresizingMaskIntoConstraints = false
-        label.font = UIFont.systemFont(ofSize: 17)
         label.textColor = .label
         label.textAlignment = .natural
+        label.adjustsFontForContentSizeCategory = true
+        label.numberOfLines = 0
         label.setContentHuggingPriority(.defaultLow + 1, for: .horizontal)
         label.setContentHuggingPriority(.defaultLow + 1, for: .vertical)
         return label
@@ -70,12 +72,27 @@ final class EmbeddedCodesCheckoutViewController: UIViewController {
 
     override public func loadView() {
         let contentView = UIView(frame: UIScreen.main.bounds)
-        contentView.backgroundColor = .systemBackground
+        if #available(iOS 15, *) {
+            contentView.restrictDynamicTypeSize(from: nil, to: .extraExtraExtraLarge)
+        }
+
+        let scrollView = UIScrollView()
+        scrollView.translatesAutoresizingMaskIntoConstraints = false
+        scrollView.backgroundColor = .systemBackground
+        scrollView.showsVerticalScrollIndicator = false
+        scrollView.alwaysBounceVertical = false
+
+        let contentLayoutGuide = scrollView.contentLayoutGuide
+        let frameLayoutGuide = scrollView.frameLayoutGuide
+
+        let wrapperView = UIView()
+        wrapperView.translatesAutoresizingMaskIntoConstraints = false
 
         let paidButton = UIButton(type: .system)
         paidButton.translatesAutoresizingMaskIntoConstraints = false
-        paidButton.titleLabel?.font = UIFont.systemFont(ofSize: 17, weight: .semibold)
+        paidButton.preferredFont(forTextStyle: .headline)
         paidButton.makeSnabbleButton()
+        paidButton.titleLabel?.textAlignment = .center
         paidButton.setTitle(L10n.Snabble.QRCode.didPay, for: .normal)
         paidButton.alpha = 0
         paidButton.isUserInteractionEnabled = false
@@ -96,23 +113,27 @@ final class EmbeddedCodesCheckoutViewController: UIViewController {
         let topIcon = iconImage
 
         let messageLabel = customLabel
+        messageLabel.font = UIFont.preferredFont(forTextStyle: .body)
+        messageLabel.textAlignment = .center
 
         let arrowWrapper = UIView()
         arrowWrapper.translatesAutoresizingMaskIntoConstraints = false
 
         let arrowIcon = iconImage
         arrowIcon.image = Asset.SnabbleSDK.arrowUp.image
+        arrowIcon.adjustsImageSizeForAccessibilityContentSizeCategory = true
 
         let codeCountLabel = customLabel
+        codeCountLabel.font = UIFont.preferredFont(forTextStyle: .headline)
 
-        let scrollView = UIScrollView()
-        scrollView.translatesAutoresizingMaskIntoConstraints = false
-        scrollView.isPagingEnabled = true
-        scrollView.showsHorizontalScrollIndicator = false
-        scrollView.bounces = false
+        let codeScrollView = UIScrollView()
+        codeScrollView.translatesAutoresizingMaskIntoConstraints = false
+        codeScrollView.isPagingEnabled = true
+        codeScrollView.showsHorizontalScrollIndicator = false
+        codeScrollView.bounces = false
 
         let idLabel = customLabel
-        idLabel.font = UIFont.systemFont(ofSize: 13)
+        idLabel.font = UIFont.preferredFont(forTextStyle: .footnote)
 
         let codeContainer = UIView()
         codeContainer.translatesAutoresizingMaskIntoConstraints = true
@@ -123,9 +144,12 @@ final class EmbeddedCodesCheckoutViewController: UIViewController {
         pageControl.currentPageIndicatorTintColor = .black
         pageControl.addTarget(self, action: #selector(pageControlTapped(_:)), for: UIControl.Event.valueChanged)
 
-        contentView.addLayoutGuide(stackViewLayout)
-        contentView.addSubview(stackView)
-        contentView.addSubview(paidButton)
+        contentView.addSubview(scrollView)
+        scrollView.addSubview(wrapperView)
+
+        wrapperView.addLayoutGuide(stackViewLayout)
+        wrapperView.addSubview(stackView)
+        wrapperView.addSubview(paidButton)
 
         stackView.addArrangedSubview(topWrapper)
         stackView.addArrangedSubview(messageLabel)
@@ -137,17 +161,29 @@ final class EmbeddedCodesCheckoutViewController: UIViewController {
 
         topWrapper.addSubview(topIcon)
         arrowWrapper.addSubview(arrowIcon)
-        codeContainer.addSubview(scrollView)
+        codeContainer.addSubview(codeScrollView)
 
         NSLayoutConstraint.activate([
-            paidButton.heightAnchor.constraint(equalToConstant: 48),
-            paidButton.bottomAnchor.constraint(equalTo: contentView.safeAreaLayoutGuide.bottomAnchor, constant: -16),
-            paidButton.leadingAnchor.constraint(equalTo: contentView.safeAreaLayoutGuide.leadingAnchor, constant: 16),
-            paidButton.trailingAnchor.constraint(equalTo: contentView.safeAreaLayoutGuide.trailingAnchor, constant: -16),
+            frameLayoutGuide.leadingAnchor.constraint(equalTo: contentView.leadingAnchor),
+            frameLayoutGuide.trailingAnchor.constraint(equalTo: contentView.trailingAnchor),
+            frameLayoutGuide.topAnchor.constraint(equalTo: contentView.safeAreaLayoutGuide.topAnchor),
+            frameLayoutGuide.bottomAnchor.constraint(equalTo: contentView.safeAreaLayoutGuide.bottomAnchor),
+            frameLayoutGuide.widthAnchor.constraint(equalTo: contentLayoutGuide.widthAnchor),
 
-            stackViewLayout.topAnchor.constraint(equalTo: contentView.safeAreaLayoutGuide.topAnchor),
-            stackViewLayout.leadingAnchor.constraint(equalTo: contentView.safeAreaLayoutGuide.leadingAnchor, constant: 16),
-            stackViewLayout.trailingAnchor.constraint(equalTo: contentView.safeAreaLayoutGuide.trailingAnchor, constant: -16),
+            contentLayoutGuide.leadingAnchor.constraint(equalTo: wrapperView.leadingAnchor),
+            contentLayoutGuide.topAnchor.constraint(equalTo: wrapperView.topAnchor),
+            contentLayoutGuide.trailingAnchor.constraint(equalTo: wrapperView.trailingAnchor),
+            contentLayoutGuide.bottomAnchor.constraint(equalTo: wrapperView.bottomAnchor),
+            wrapperView.heightAnchor.constraint(greaterThanOrEqualTo: frameLayoutGuide.heightAnchor),
+
+            paidButton.heightAnchor.constraint(equalToConstant: 48),
+            paidButton.bottomAnchor.constraint(equalTo: wrapperView.bottomAnchor, constant: -16),
+            paidButton.leadingAnchor.constraint(equalTo: wrapperView.leadingAnchor, constant: 16),
+            paidButton.trailingAnchor.constraint(equalTo: wrapperView.trailingAnchor, constant: -16),
+
+            stackViewLayout.topAnchor.constraint(equalTo: wrapperView.topAnchor),
+            stackViewLayout.leadingAnchor.constraint(equalTo: wrapperView.leadingAnchor, constant: 16),
+            stackViewLayout.trailingAnchor.constraint(equalTo: wrapperView.trailingAnchor, constant: -16),
             stackViewLayout.bottomAnchor.constraint(equalTo: paidButton.topAnchor),
 
             stackView.leadingAnchor.constraint(equalTo: stackViewLayout.leadingAnchor),
@@ -161,21 +197,16 @@ final class EmbeddedCodesCheckoutViewController: UIViewController {
             topIcon.topAnchor.constraint(equalTo: topWrapper.topAnchor, constant: 16),
             topIcon.bottomAnchor.constraint(equalTo: topWrapper.bottomAnchor, constant: -16),
 
-            messageLabel.heightAnchor.constraint(equalToConstant: 25),
-
-            arrowWrapper.heightAnchor.constraint(equalToConstant: 30),
             arrowIcon.leadingAnchor.constraint(equalTo: arrowWrapper.leadingAnchor),
             arrowIcon.trailingAnchor.constraint(equalTo: arrowWrapper.trailingAnchor),
             arrowIcon.topAnchor.constraint(equalTo: arrowWrapper.topAnchor),
             arrowIcon.bottomAnchor.constraint(equalTo: arrowWrapper.bottomAnchor),
 
-            codeCountLabel.heightAnchor.constraint(equalToConstant: 25),
-            scrollView.leadingAnchor.constraint(equalTo: codeContainer.leadingAnchor),
-            scrollView.trailingAnchor.constraint(equalTo: codeContainer.trailingAnchor),
-            scrollView.topAnchor.constraint(equalTo: codeContainer.topAnchor, constant: 16),
-            scrollView.bottomAnchor.constraint(equalTo: codeContainer.bottomAnchor, constant: -16),
+            codeScrollView.leadingAnchor.constraint(equalTo: codeContainer.leadingAnchor),
+            codeScrollView.trailingAnchor.constraint(equalTo: codeContainer.trailingAnchor),
+            codeScrollView.topAnchor.constraint(equalTo: codeContainer.topAnchor, constant: 16),
+            codeScrollView.bottomAnchor.constraint(equalTo: codeContainer.bottomAnchor, constant: -16),
 
-            idLabel.heightAnchor.constraint(equalToConstant: 21),
             pageControl.heightAnchor.constraint(equalToConstant: 37)
         ])
 
@@ -186,7 +217,7 @@ final class EmbeddedCodesCheckoutViewController: UIViewController {
         self.messageLabel = messageLabel
         self.arrowWrapper = arrowWrapper
         self.codeCountLabel = codeCountLabel
-        self.scrollView = scrollView
+        self.codeScrollView = codeScrollView
         self.idLabel = idLabel
         self.pageControl = pageControl
         self.paidButton = paidButton
@@ -219,12 +250,11 @@ final class EmbeddedCodesCheckoutViewController: UIViewController {
 
         let id = process?.links._self.href.suffix(4) ?? "offline"
         idLabel?.text = String(id)
-
         setButtonTitle(for: pageControl?.currentPage ?? 0)
         configureViewForDevice()
-        configureScrollView()
+        configureCodeScrollView()
 
-        scrollView?.delegate = self
+        codeScrollView?.delegate = self
     }
 
     override func viewWillAppear(_ animated: Bool) {
@@ -298,8 +328,8 @@ final class EmbeddedCodesCheckoutViewController: UIViewController {
         }
     }
 
-    private func configureScrollView() {
-        guard let scrollView = scrollView else { return }
+    private func configureCodeScrollView() {
+        guard let scrollView = codeScrollView else { return }
 
         for x in 0..<codes.count {
             if let image = qrCode(with: codes[x], fitting: maxScrollViewWidth) {
@@ -362,6 +392,8 @@ final class EmbeddedCodesCheckoutViewController: UIViewController {
                 self.topIcon?.image = img
                 self.topIcon?.heightAnchor.constraint(equalToConstant: img.size.height).usingPriority(.required - 1).isActive = true
                 self.topWrapper?.isHidden = false
+                let scaledArrowWrapperHeight = UIFontMetrics.default.scaledValue(for: self.arrowIconHeight)
+                self.arrowWrapper?.heightAnchor.constraint(equalToConstant: scaledArrowWrapperHeight).usingPriority(.defaultHigh + 1).isActive = true
                 self.arrowWrapper?.isHidden = false
             }
         }
@@ -373,7 +405,7 @@ final class EmbeddedCodesCheckoutViewController: UIViewController {
     }
 
     private func updatePageControl(with page: Int) {
-        guard let scrollView = scrollView else { return }
+        guard let scrollView = codeScrollView else { return }
         if page < codes.count {
             DispatchQueue.main.async {
                 UIView.animate(withDuration: 0.3) {

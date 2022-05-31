@@ -28,6 +28,8 @@ final class QRCheckoutViewController: UIViewController {
         label.translatesAutoresizingMaskIntoConstraints = false
         label.textColor = .label
         label.textAlignment = .center
+        label.numberOfLines = 0
+        label.adjustsFontForContentSizeCategory = true
         label.setContentHuggingPriority(.defaultLow + 1, for: .horizontal)
         label.setContentHuggingPriority(.defaultLow + 1, for: .vertical)
         return label
@@ -51,18 +53,40 @@ final class QRCheckoutViewController: UIViewController {
 
     override public func loadView() {
         let contentView = UIView(frame: UIScreen.main.bounds)
+        if #available(iOS 15, *) {
+            contentView.restrictDynamicTypeSize(from: nil, to: .extraExtraExtraLarge)
+        }
         contentView.backgroundColor = .systemBackground
 
+        let scrollView = UIScrollView()
+        scrollView.translatesAutoresizingMaskIntoConstraints = false
+        scrollView.backgroundColor = .systemBackground
+        scrollView.showsVerticalScrollIndicator = false
+        scrollView.alwaysBounceVertical = false
+
+        let contentLayoutGuide = scrollView.contentLayoutGuide
+        let frameLayoutGuide = scrollView.frameLayoutGuide
+
+        let wrapperView = UIView()
+        wrapperView.translatesAutoresizingMaskIntoConstraints = false
+
         let checkoutIdLabel = customLabel
-        checkoutIdLabel.font = UIFont.systemFont(ofSize: 13)
+        checkoutIdLabel.font = UIFont.preferredFont(forTextStyle: .footnote)
+
+        let stackViewLayout = UILayoutGuide()
+
+        let stackView = UIStackView()
+        stackView.translatesAutoresizingMaskIntoConstraints = false
+        stackView.axis = .vertical
+        stackView.distribution = .equalSpacing
+        stackView.alignment = .center
+        stackView.spacing = 16
 
         let totalPriceLabel = customLabel
-        totalPriceLabel.font = UIFont.systemFont(ofSize: 17, weight: .medium)
+        totalPriceLabel.font = UIFont.preferredFont(forTextStyle: .body, weight: .medium)
 
         let explanationUpperLabel = customLabel
-        explanationUpperLabel.font = UIFont.systemFont(ofSize: 17, weight: .light)
-        explanationUpperLabel.lineBreakMode = .byWordWrapping
-        explanationUpperLabel.numberOfLines = 0
+        explanationUpperLabel.font = UIFont.preferredFont(forTextStyle: .body, weight: .light)
 
         let qrCodeView = UIImageView()
         qrCodeView.translatesAutoresizingMaskIntoConstraints = false
@@ -71,55 +95,71 @@ final class QRCheckoutViewController: UIViewController {
         qrCodeView.setContentHuggingPriority(.defaultLow + 1, for: .vertical)
 
         let explanationBottomLabel = customLabel
-        explanationUpperLabel.font = UIFont.systemFont(ofSize: 11)
-        explanationBottomLabel.numberOfLines = 0
+        explanationBottomLabel.font = UIFont.preferredFont(forTextStyle: .caption2)
 
         let cancelButton = UIButton(type: .system)
         cancelButton.translatesAutoresizingMaskIntoConstraints = false
         cancelButton.setTitle(L10n.Snabble.cancel, for: .normal)
-        cancelButton.titleLabel?.font = UIFont.systemFont(ofSize: 17, weight: .semibold)
+        cancelButton.preferredFont(forTextStyle: .headline)
+        cancelButton.titleLabel?.textAlignment = .center
         cancelButton.isEnabled = true
         cancelButton.isUserInteractionEnabled = true
         cancelButton.addTarget(self, action: #selector(cancelButtonTapped(_:)), for: .touchUpInside)
         cancelButton.makeSnabbleButton()
 
-        contentView.addSubview(checkoutIdLabel)
-        contentView.addSubview(totalPriceLabel)
-        contentView.addSubview(explanationUpperLabel)
-        contentView.addSubview(qrCodeView)
-        contentView.addSubview(explanationBottomLabel)
-        contentView.addSubview(cancelButton)
+        contentView.addSubview(scrollView)
+        scrollView.addSubview(wrapperView)
+
+        wrapperView.addSubview(checkoutIdLabel)
+        wrapperView.addLayoutGuide(stackViewLayout)
+        wrapperView.addSubview(stackView)
+        wrapperView.addSubview(cancelButton)
+
+        stackView.addArrangedSubview(totalPriceLabel)
+        stackView.addArrangedSubview(explanationUpperLabel)
+        stackView.addArrangedSubview(qrCodeView)
+        stackView.addArrangedSubview(explanationBottomLabel)
 
         NSLayoutConstraint.activate([
-            checkoutIdLabel.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 8),
-            checkoutIdLabel.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 16),
-            checkoutIdLabel.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -16),
+            frameLayoutGuide.leadingAnchor.constraint(equalTo: contentView.leadingAnchor),
+            frameLayoutGuide.trailingAnchor.constraint(equalTo: contentView.trailingAnchor),
+            frameLayoutGuide.topAnchor.constraint(equalTo: contentView.safeAreaLayoutGuide.topAnchor),
+            frameLayoutGuide.bottomAnchor.constraint(equalTo: contentView.safeAreaLayoutGuide.bottomAnchor),
+            frameLayoutGuide.widthAnchor.constraint(equalTo: contentLayoutGuide.widthAnchor),
 
-            qrCodeView.centerXAnchor.constraint(equalTo: contentView.centerXAnchor),
-            qrCodeView.centerYAnchor.constraint(equalTo: contentView.centerYAnchor),
+            contentLayoutGuide.leadingAnchor.constraint(equalTo: wrapperView.leadingAnchor),
+            contentLayoutGuide.topAnchor.constraint(equalTo: wrapperView.topAnchor),
+            contentLayoutGuide.trailingAnchor.constraint(equalTo: wrapperView.trailingAnchor),
+            contentLayoutGuide.bottomAnchor.constraint(equalTo: wrapperView.bottomAnchor),
+            wrapperView.heightAnchor.constraint(greaterThanOrEqualTo: frameLayoutGuide.heightAnchor),
+
+            checkoutIdLabel.topAnchor.constraint(equalTo: wrapperView.topAnchor, constant: 8),
+            checkoutIdLabel.leadingAnchor.constraint(equalTo: wrapperView.leadingAnchor, constant: 16),
+            checkoutIdLabel.trailingAnchor.constraint(equalTo: wrapperView.trailingAnchor, constant: -16),
+
+            cancelButton.leadingAnchor.constraint(equalTo: wrapperView.safeAreaLayoutGuide.leadingAnchor, constant: 16),
+            cancelButton.trailingAnchor.constraint(equalTo: wrapperView.safeAreaLayoutGuide.trailingAnchor, constant: -16),
+            cancelButton.bottomAnchor.constraint(equalTo: wrapperView.safeAreaLayoutGuide.bottomAnchor, constant: -16),
+            cancelButton.heightAnchor.constraint(equalToConstant: 48),
+
+            stackViewLayout.topAnchor.constraint(equalTo: checkoutIdLabel.bottomAnchor),
+            stackViewLayout.leadingAnchor.constraint(equalTo: wrapperView.leadingAnchor, constant: 16),
+            stackViewLayout.trailingAnchor.constraint(equalTo: wrapperView.trailingAnchor, constant: -16),
+            stackViewLayout.bottomAnchor.constraint(equalTo: cancelButton.topAnchor),
+
+            stackView.leadingAnchor.constraint(equalTo: stackViewLayout.leadingAnchor),
+            stackView.trailingAnchor.constraint(equalTo: stackViewLayout.trailingAnchor),
+            stackView.centerYAnchor.constraint(equalTo: stackViewLayout.centerYAnchor),
+            stackView.topAnchor.constraint(greaterThanOrEqualTo: stackViewLayout.topAnchor),
+            stackView.bottomAnchor.constraint(lessThanOrEqualTo: stackViewLayout.bottomAnchor),
+
             qrCodeView.widthAnchor.constraint(equalToConstant: 0).usingVariable(&qrCodeWidth),
-            qrCodeView.heightAnchor.constraint(equalTo: qrCodeView.widthAnchor),
-
-            explanationUpperLabel.bottomAnchor.constraint(equalTo: qrCodeView.topAnchor, constant: -16),
-            explanationUpperLabel.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 16),
-            explanationUpperLabel.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -16),
-
-            totalPriceLabel.bottomAnchor.constraint(equalTo: explanationUpperLabel.topAnchor, constant: -16),
-            totalPriceLabel.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 16),
-            totalPriceLabel.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -16),
-
-            explanationBottomLabel.topAnchor.constraint(equalTo: qrCodeView.bottomAnchor, constant: 16),
-            explanationBottomLabel.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 16),
-            explanationBottomLabel.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -16),
-
-            cancelButton.leadingAnchor.constraint(equalTo: contentView.safeAreaLayoutGuide.leadingAnchor, constant: 16),
-            cancelButton.trailingAnchor.constraint(equalTo: contentView.safeAreaLayoutGuide.trailingAnchor, constant: -16),
-            cancelButton.bottomAnchor.constraint(equalTo: contentView.safeAreaLayoutGuide.bottomAnchor, constant: -16),
-            cancelButton.heightAnchor.constraint(equalToConstant: 48)
+            qrCodeView.heightAnchor.constraint(equalTo: qrCodeView.widthAnchor)
         ])
         self.checkoutIdLabel = checkoutIdLabel
         self.totalPriceLabel = totalPriceLabel
         self.explanationUpperLabel = explanationUpperLabel
+        self.explanationBottomLabel = explanationBottomLabel
         self.qrCodeView = qrCodeView
         self.cancelButton = cancelButton
 

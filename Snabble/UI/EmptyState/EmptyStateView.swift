@@ -22,17 +22,18 @@ internal class EmptyStateView: UIView {
         backgroundColor = .systemBackground
 
         button1.tag = 0
-        button1.useDynamicFont(forTextStyle: .headline)
+        button1.preferredFont(forTextStyle: .headline)
         button1.addTarget(self, action: #selector(self.buttonTapped(_:)), for: .touchUpInside)
 
         button2.tag = 1
-        button2.useDynamicFont(forTextStyle: .headline)
+        button2.preferredFont(forTextStyle: .headline)
         button2.addTarget(self, action: #selector(self.buttonTapped(_:)), for: .touchUpInside)
 
         textLabel.translatesAutoresizingMaskIntoConstraints = false
         textLabel.numberOfLines = 0
         textLabel.textAlignment = .center
-        textLabel.useDynamicFont(forTextStyle: .body)
+        textLabel.font = UIFont.preferredFont(forTextStyle: .body)
+        textLabel.adjustsFontForContentSizeCategory = true
         addSubview(textLabel)
 
         let stackView = UIStackView(arrangedSubviews: [ button1, button2 ])

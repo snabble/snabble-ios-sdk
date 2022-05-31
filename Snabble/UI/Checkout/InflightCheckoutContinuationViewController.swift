@@ -45,7 +45,8 @@ public final class InFlightCheckoutContinuationViewController: UIViewController 
         let textLabel = UILabel()
         textLabel.text = L10n.Snabble.PaymentContinuation.message
         textLabel.numberOfLines = 0
-        textLabel.useDynamicFont(forTextStyle: .body)
+        textLabel.font = UIFont.preferredFont(forTextStyle: .body)
+        textLabel.adjustsFontForContentSizeCategory = true
 
         let stackview = UIStackView(arrangedSubviews: [ activityIndicatorView, textLabel ])
         stackview.translatesAutoresizingMaskIntoConstraints = false
