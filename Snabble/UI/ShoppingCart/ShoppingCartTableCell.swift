@@ -92,9 +92,9 @@ final class ShoppingCartTableCell: UITableViewCell {
         self.contentView.addSubview(cellView)
         self.cellView = cellView
         self.cellView?.delegate = self
-        self.cellView?.quantityInput?.delegate = self
+        self.cellView?.entryView?.quantityTextField?.delegate = self
 
-        let toolbar = self.cellView?.quantityInput?.addDoneButton()
+        let toolbar = self.cellView?.entryView?.quantityTextField?.addDoneButton()
         self.doneButton = toolbar?.items?.last
 
         self.selectionStyle = .none
