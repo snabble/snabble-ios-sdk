@@ -359,17 +359,25 @@ extension ShoppingCart {
 // MARK: - Persistence
 extension ShoppingCart {
     private func cartURL(in directoryURL: URL) -> URL {
-        directoryURL.appendingPathComponent(projectId.rawValue + ".json")
+        directoryURL.appendingPathComponent(shopId.rawValue + ".json")
     }
 
     private var directory: URL? {
         var documentDirectoryURL = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first
         documentDirectoryURL?.appendPathComponent("Snabble")
         documentDirectoryURL?.appendPathComponent("ShoppingCarts")
+        documentDirectoryURL?.appendPathComponent("\(projectId.rawValue)")
         return documentDirectoryURL
     }
 
-    private var oldDirectory: URL? {
+    private var oldDirectory2: URL? {
+        var documentDirectoryURL = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first
+        documentDirectoryURL?.appendPathComponent("Snabble")
+        documentDirectoryURL?.appendPathComponent("ShoppingCarts")
+        return documentDirectoryURL
+    }
+
+    private var oldDirectory1: URL? {
         FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first
     }
 
@@ -434,20 +442,35 @@ extension ShoppingCart {
         }
     }
 
+    private func deleteOldShoppingCarts(in directory: URL) {
+        do {
+            let fileURLs = try FileManager.default.contentsOfDirectory(
+                at: directory,
+                includingPropertiesForKeys: nil,
+                options: .skipsHiddenFiles
+            )
+            for fileURL in fileURLs where fileURL.pathExtension == "json" {
+                try FileManager.default.removeItem(at: fileURL)
+            }
+        } catch {
+            print("Error: Could not delete files. Details:", error)
+        }
+    }
+
     // load this shoppping cart from disk
     private func load() -> ShoppingCart? {
         guard let directory = directory else {
             return nil
         }
 
-        // Migration to /Snabble/ShoppingCart folder
-        if let oldDirectory = oldDirectory, FileManager.default.fileExists(atPath: cartURL(in: oldDirectory).path) {
-            do {
-                try move(from: oldDirectory, to: directory)
-                try delete(in: oldDirectory)
-            } catch {
-                print("Error: Could not delete \(cartURL(in: oldDirectory)). Details:", error)
-            }
+        // Delete shoppingCarts in oldDirectory1 folder
+        if let oldDirectory = oldDirectory1 {
+            deleteOldShoppingCarts(in: oldDirectory)
+        }
+
+        // Delete shoppingCarts in oldDirectory2 folder
+        if let oldDirectory = oldDirectory2 {
+            deleteOldShoppingCarts(in: oldDirectory)
         }
 
         guard FileManager.default.fileExists(atPath: cartURL(in: directory).path) else {
