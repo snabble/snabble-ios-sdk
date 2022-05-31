@@ -10,6 +10,53 @@ protocol ShoppingCardCellViewDelegate: AnyObject {
     func minusButtonTapped()
 }
 
+final class BadgeView: UIView {
+    private(set) weak var backgroundView: UIView?
+    private(set) weak var badgeLabel: UILabel?
+
+    override init(frame: CGRect) {
+        let backgroundView = UIView()
+        backgroundView.translatesAutoresizingMaskIntoConstraints = false
+
+        let badgeLabel = UILabel()
+        badgeLabel.translatesAutoresizingMaskIntoConstraints = false
+        badgeLabel.font = UIFont.systemFont(ofSize: 11)
+        badgeLabel.textColor = .label.contrast
+        badgeLabel.backgroundColor = .systemRed
+        badgeLabel.textAlignment = .center
+        badgeLabel.layer.cornerRadius = 4
+        badgeLabel.layer.masksToBounds = true
+
+        super.init(frame: frame)
+
+        addSubview(backgroundView)
+        addSubview(badgeLabel)
+
+        self.badgeLabel = badgeLabel
+        self.backgroundView = backgroundView
+
+        NSLayoutConstraint.activate([
+            badgeLabel.topAnchor.constraint(equalTo: backgroundView.topAnchor, constant: 4),
+            backgroundView.bottomAnchor.constraint(equalTo: badgeLabel.bottomAnchor, constant: 4),
+            badgeLabel.centerYAnchor.constraint(equalTo: backgroundView.centerYAnchor),
+
+            badgeLabel.leadingAnchor.constraint(equalTo: backgroundView.leadingAnchor, constant: 4),
+            backgroundView.trailingAnchor.constraint(equalTo: trailingAnchor, constant: 4),
+
+            backgroundView.topAnchor.constraint(greaterThanOrEqualTo: topAnchor),
+            bottomAnchor.constraint(greaterThanOrEqualTo: backgroundView.bottomAnchor),
+            backgroundView.centerYAnchor.constraint(equalTo: centerYAnchor),
+
+            backgroundView.leadingAnchor.constraint(equalTo: leadingAnchor),
+            trailingAnchor.constraint(equalTo: backgroundView.trailingAnchor)
+        ])
+    }
+
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+}
+
 final class NameView: UIView {
     private(set) weak var nameLabel: UILabel?
     private(set) weak var priceLabel: UILabel?
@@ -228,14 +275,13 @@ final class ShoppingCartTableCellView: UIView {
     private weak var leftStackView: UIStackView?
     private weak var rightStackView: UIStackView?
 
-    public weak var badgeWrapper: UIView?
-    public weak var badgeLabel: UILabel?
-
     public weak var imageWrapper: UIView?
     public weak var imageBadge: UILabel?
     public weak var imageBackground: UIView?
     public weak var productImage: UIImageView?
     public weak var spinner: UIActivityIndicatorView?
+
+    public weak var badgeView: BadgeView?
 
     public weak var nameView: NameView?
 
@@ -310,10 +356,6 @@ final class ShoppingCartTableCellView: UIView {
         rightStackView.axis = .horizontal
         rightStackView.setContentHuggingPriority(.required, for: .horizontal)
 
-        let badgeWrapper = self.customView
-        let badgeLabel = self.badge
-        badgeLabel.setContentHuggingPriority(.defaultHigh, for: .horizontal)
-
         let imageWrapper = self.customView
         let imageBadge = self.badge
 
@@ -339,8 +381,11 @@ final class ShoppingCartTableCellView: UIView {
             spinner.style = .gray
         }
 
+        let badgeView = BadgeView(frame: .zero)
+
         let nameView = NameView(frame: .zero)
         nameView.translatesAutoresizingMaskIntoConstraints = false
+        nameView.setContentHuggingPriority(.defaultLow - 249, for: .horizontal)
 
         let weightView = WeightView(frame: .zero)
         let entryView = EntryView(frame: .zero)
@@ -357,10 +402,8 @@ final class ShoppingCartTableCellView: UIView {
         addSubview(nameView)
         addSubview(rightStackView)
 
-        leftStackView.addArrangedSubview(badgeWrapper)
+        leftStackView.addArrangedSubview(badgeView)
         leftStackView.addArrangedSubview(imageWrapper)
-
-        badgeWrapper.addSubview(badgeLabel)
 
         imageWrapper.addSubview(imageBackground)
         imageWrapper.addSubview(imageBadge)
@@ -368,40 +411,44 @@ final class ShoppingCartTableCellView: UIView {
         productImage.addSubview(spinner)
 
         self.leftStackView = leftStackView
-        self.badgeWrapper = badgeWrapper
-        self.badgeLabel = badgeLabel
+        self.nameView = nameView
+        self.rightStackView = rightStackView
+
+        self.badgeView = badgeView
+
         self.imageWrapper = imageWrapper
         self.imageBackground = imageBackground
         self.imageBadge = imageBadge
         self.productImage = productImage
         self.spinner = spinner
-        self.nameView = nameView
-        self.rightStackView = rightStackView
+
         self.weightView = weightView
         self.entryView = entryView
         self.quantityView = quantityView
 
         NSLayoutConstraint.activate([
+            heightAnchor.constraint(greaterThanOrEqualToConstant: 48),
+
             leftStackView.topAnchor.constraint(equalTo: topAnchor),
             bottomAnchor.constraint(equalTo: leftStackView.bottomAnchor),
 
             nameView.topAnchor.constraint(equalTo: topAnchor, constant: 8),
             bottomAnchor.constraint(equalTo: nameView.bottomAnchor, constant: 8),
-            nameView.heightAnchor.constraint(greaterThanOrEqualToConstant: 32),
+//            nameView.heightAnchor.constraint(greaterThanOrEqualToConstant: 32),
 
             rightStackView.topAnchor.constraint(equalTo: topAnchor),
             bottomAnchor.constraint(equalTo: rightStackView.bottomAnchor),
 
             leftStackView.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 12),
             nameView.leadingAnchor.constraint(equalTo: leftStackView.trailingAnchor),
-            rightStackView.leadingAnchor.constraint(greaterThanOrEqualTo: nameView.trailingAnchor),
+            rightStackView.leadingAnchor.constraint(equalTo: nameView.trailingAnchor),
             trailingAnchor.constraint(equalTo: rightStackView.trailingAnchor, constant: 12),
 
             // Subviews
 
-            badgeLabel.leadingAnchor.constraint(equalTo: leftStackView.leadingAnchor),
-            badgeLabel.topAnchor.constraint(equalTo: badgeWrapper.topAnchor, constant: 11),
-            badgeLabel.trailingAnchor.constraint(equalTo: badgeWrapper.trailingAnchor),
+//            badgeLabel.leadingAnchor.constraint(equalTo: leftStackView.leadingAnchor),
+//            badgeLabel.topAnchor.constraint(equalTo: badgeWrapper.topAnchor, constant: 11),
+//            badgeLabel.trailingAnchor.constraint(equalTo: badgeWrapper.trailingAnchor),
 
             imageBackground.leadingAnchor.constraint(equalTo: imageWrapper.leadingAnchor, constant: 8),
             imageBackground.widthAnchor.constraint(equalToConstant: 32),
@@ -430,10 +477,6 @@ final class ShoppingCartTableCellView: UIView {
         fatalError("init(coder:) has not been implemented")
     }
 
-    private func setupUI() {
-
-    }
-
     @objc private func plusButtonTapped(_ sender: Any) {
         delegate?.plusButtonTapped()
     }
@@ -443,16 +486,17 @@ final class ShoppingCartTableCellView: UIView {
     }
 
     public func updateBadgeText(withText text: String?) {
-        self.badgeLabel?.text = text
-        self.badgeLabel?.isHidden = text == nil
-        self.imageBadge?.text = text
-        self.imageBadge?.isHidden = text == nil
+        badgeView?.badgeLabel?.text = text
+        badgeView?.badgeLabel?.isHidden = text == nil
+
+        imageBadge?.text = text
+        imageBadge?.isHidden = text == nil
     }
 
     public func updateBadgeColor(withColor color: UIColor?) {
         if let color = color {
-            self.badgeLabel?.backgroundColor = color
-            self.imageBadge?.backgroundColor = color
+            badgeView?.backgroundView?.backgroundColor = color
+            imageBadge?.backgroundColor = color
         }
     }
 
@@ -468,19 +512,16 @@ final class ShoppingCartTableCellView: UIView {
     }
 
     public func updateLeftDisplay(withMode mode: LeftDisplay) {
-        [imageWrapper, badgeWrapper].forEach { $0?.isHidden = true }
+        [imageWrapper, badgeView].forEach { $0?.isHidden = true }
         switch mode {
-        case .none:
-            badgeWrapper?.isHidden = false
-            badgeLabel?.isHidden = true
+        case .none, .badge:
+            badgeView?.isHidden = false
         case .image:
             imageWrapper?.isHidden = false
             imageBackground?.isHidden = false
         case .emptyImage:
             imageWrapper?.isHidden = false
             imageBackground?.isHidden = true
-        case .badge:
-            badgeWrapper?.isHidden = false
         }
     }
 
