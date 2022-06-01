@@ -59,12 +59,17 @@ public final class SepaEditViewController: UIViewController {
     override public func viewDidLoad() {
         super.viewDidLoad()
 
+        if #available(iOS 15, *) {
+            view.restrictDynamicTypeSize(from: nil, to: .extraExtraExtraLarge)
+        }
+
         view.backgroundColor = .systemBackground
         scrollView.translatesAutoresizingMaskIntoConstraints = false
 
         view.addSubview(scrollView)
 
         saveButton.makeSnabbleButton()
+        saveButton.preferredFont(forTextStyle: .headline)
         saveButton.translatesAutoresizingMaskIntoConstraints = false
         saveButton.setTitle(L10n.Snabble.save, for: .normal)
         saveButton.addTarget(self, action: #selector(self.saveButtonTapped(_:)), for: .touchUpInside)
