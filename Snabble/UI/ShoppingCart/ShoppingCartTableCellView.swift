@@ -117,12 +117,11 @@ final class BadgeView: UIView {
         self.backgroundView = backgroundView
 
         NSLayoutConstraint.activate([
-            badgeLabel.topAnchor.constraint(equalTo: backgroundView.topAnchor, constant: 4),
-            backgroundView.bottomAnchor.constraint(equalTo: badgeLabel.bottomAnchor, constant: 4),
-            badgeLabel.centerYAnchor.constraint(equalTo: backgroundView.centerYAnchor),
+            badgeLabel.topAnchor.constraint(equalTo: backgroundView.topAnchor, constant: 2),
+            backgroundView.bottomAnchor.constraint(equalTo: badgeLabel.bottomAnchor, constant: 2),
 
-            badgeLabel.leadingAnchor.constraint(equalTo: backgroundView.leadingAnchor, constant: 4),
-            backgroundView.trailingAnchor.constraint(equalTo: trailingAnchor),
+            badgeLabel.leadingAnchor.constraint(equalTo: backgroundView.leadingAnchor),
+            backgroundView.trailingAnchor.constraint(equalTo: badgeLabel.trailingAnchor),
 
             backgroundView.topAnchor.constraint(greaterThanOrEqualTo: topAnchor),
             bottomAnchor.constraint(greaterThanOrEqualTo: backgroundView.bottomAnchor),
@@ -444,7 +443,9 @@ final class ShoppingCartTableCellView: UIView {
     public func updateLeftDisplay(withMode mode: LeftDisplay) {
         [imageView, badgeView].forEach { $0?.isHidden = true }
         switch mode {
-        case .none, .badge:
+        case .none:
+            break
+        case .badge:
             badgeView?.isHidden = false
         case .image, .emptyImage:
             imageView?.isHidden = false
