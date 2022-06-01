@@ -69,6 +69,9 @@ public final class PaydirektEditViewController: UIViewController {
     override public func loadView() {
         let view = UIView(frame: UIScreen.main.bounds)
         view.backgroundColor = .systemBackground
+        if #available(iOS 15, *) {
+            view.restrictDynamicTypeSize(from: nil, to: .extraExtraExtraLarge)
+        }
 
         let webViewWrapper = UIView()
         webViewWrapper.translatesAutoresizingMaskIntoConstraints = false
@@ -79,7 +82,8 @@ public final class PaydirektEditViewController: UIViewController {
 
         let displayLabel = UILabel()
         displayLabel.translatesAutoresizingMaskIntoConstraints = false
-        displayLabel.font = UIFont.systemFont(ofSize: 17)
+        displayLabel.font = UIFont.preferredFont(forTextStyle: .body)
+        displayLabel.adjustsFontForContentSizeCategory = true
         displayLabel.textColor = .label
         displayLabel.textAlignment = .natural
         displayLabel.numberOfLines = 0
@@ -88,14 +92,14 @@ public final class PaydirektEditViewController: UIViewController {
         let openButton = UIButton(type: .system)
         openButton.translatesAutoresizingMaskIntoConstraints = false
         openButton.isUserInteractionEnabled = true
-        openButton.titleLabel?.font = UIFont.systemFont(ofSize: 15)
+        openButton.preferredFont(forTextStyle: .subheadline)
         openButton.setTitleColor(.link, for: .normal)
         openButton.setTitle(L10n.Snabble.Paydirekt.gotoWebsite, for: .normal)
         openButton.addTarget(self, action: #selector(openButtonTapped(_:)), for: .touchUpInside)
 
         let deleteButton = UIButton(type: .system)
         deleteButton.translatesAutoresizingMaskIntoConstraints = false
-        deleteButton.titleLabel?.font = UIFont.systemFont(ofSize: 17, weight: .semibold)
+        deleteButton.preferredFont(forTextStyle: .headline)
         deleteButton.makeSnabbleButton()
         deleteButton.isUserInteractionEnabled = true
         deleteButton.setTitle(L10n.Snabble.Paydirekt.deleteAuthorization, for: .normal)
@@ -106,7 +110,8 @@ public final class PaydirektEditViewController: UIViewController {
 
         let errorLabel = UILabel()
         errorLabel.translatesAutoresizingMaskIntoConstraints = false
-        errorLabel.font = UIFont.systemFont(ofSize: 17)
+        errorLabel.font = UIFont.preferredFont(forTextStyle: .body)
+        errorLabel.adjustsFontForContentSizeCategory = true
         errorLabel.textColor = .label
         errorLabel.textAlignment = .center
         errorLabel.numberOfLines = 0
@@ -114,7 +119,7 @@ public final class PaydirektEditViewController: UIViewController {
 
         let errorButton = UIButton(type: .system)
         errorButton.translatesAutoresizingMaskIntoConstraints = false
-        errorButton.titleLabel?.font = UIFont.systemFont(ofSize: 17, weight: .semibold)
+        errorButton.preferredFont(forTextStyle: .headline)
         errorButton.setTitle(L10n.Snabble.PaymentError.tryAgain, for: .normal)
         errorButton.setTitleColor(SnabbleUI.appearance.accentColor.contrast, for: .normal)
         errorButton.makeSnabbleButton()
