@@ -165,15 +165,15 @@ final class NameView: UIView {
         self.priceLabel = priceLabel
 
         NSLayoutConstraint.activate([
-            nameLabel.topAnchor.constraint(equalTo: topAnchor),
+            nameLabel.topAnchor.constraint(equalTo: topAnchor, constant: 8),
             priceLabel.topAnchor.constraint(equalTo: nameLabel.bottomAnchor),
-            bottomAnchor.constraint(equalTo: priceLabel.bottomAnchor),
+            bottomAnchor.constraint(equalTo: priceLabel.bottomAnchor, constant: 8),
 
             nameLabel.leadingAnchor.constraint(equalTo: leadingAnchor),
-            trailingAnchor.constraint(greaterThanOrEqualTo: nameLabel.trailingAnchor),
+            trailingAnchor.constraint(equalTo: nameLabel.trailingAnchor),
 
             priceLabel.leadingAnchor.constraint(equalTo: leadingAnchor),
-            trailingAnchor.constraint(greaterThanOrEqualTo: priceLabel.trailingAnchor)
+            trailingAnchor.constraint(equalTo: priceLabel.trailingAnchor)
         ])
     }
 
@@ -269,8 +269,7 @@ final class EntryView: UIView {
             bottomAnchor.constraint(greaterThanOrEqualToSystemSpacingBelow: unitLabel.bottomAnchor, multiplier: 1),
             unitLabel.centerYAnchor.constraint(equalTo: centerYAnchor),
 
-            quantityTextField.widthAnchor.constraint(equalToConstant: 80).usingPriority(.defaultHigh),
-            quantityTextField.widthAnchor.constraint(greaterThanOrEqualToConstant: 80),
+            quantityTextField.widthAnchor.constraint(equalToConstant: 80),
 
             quantityTextField.leadingAnchor.constraint(equalTo: leadingAnchor),
             unitLabel.leadingAnchor.constraint(equalTo: quantityTextField.trailingAnchor, constant: 8),
@@ -306,8 +305,6 @@ final class QuantityView: UIView {
         quantityLabel.font = UIFont.systemFont(ofSize: 13, weight: .semibold)
         quantityLabel.textColor = .label
         quantityLabel.textAlignment = .center
-        quantityLabel.setContentHuggingPriority(.defaultLow + 1, for: .horizontal)
-        quantityLabel.setContentHuggingPriority(.defaultLow + 1, for: .vertical)
         super.init(frame: frame)
 
         addSubview(minusButton)
@@ -342,8 +339,7 @@ final class QuantityView: UIView {
             plusButton.widthAnchor.constraint(equalTo: minusButton.widthAnchor),
             plusButton.heightAnchor.constraint(equalTo: minusButton.heightAnchor),
 
-            quantityLabel.widthAnchor.constraint(greaterThanOrEqualToConstant: 34),
-            quantityLabel.widthAnchor.constraint(equalToConstant: 34).usingPriority(.defaultHigh)
+            quantityLabel.widthAnchor.constraint(equalToConstant: 34)
         ])
     }
 
@@ -353,9 +349,6 @@ final class QuantityView: UIView {
 }
 
 final class ShoppingCartTableCellView: UIView {
-    private weak var leftStackView: UIStackView?
-    private weak var rightStackView: UIStackView?
-
     public weak var imageView: ImageView?
     public weak var badgeView: BadgeView?
 
@@ -369,74 +362,46 @@ final class ShoppingCartTableCellView: UIView {
 
     override init(frame: CGRect) {
         super.init(frame: frame)
-        let leftStackView = UIStackView()
-        leftStackView.translatesAutoresizingMaskIntoConstraints = false
-        leftStackView.alignment = .fill
-        leftStackView.distribution = .fill
-        leftStackView.spacing = 0
-        leftStackView.axis = .horizontal
-        leftStackView.setContentHuggingPriority(.required, for: .horizontal)
-
-        let rightStackView = UIStackView()
-        rightStackView.translatesAutoresizingMaskIntoConstraints = false
-        rightStackView.alignment = .fill
-        rightStackView.distribution = .fill
-        rightStackView.spacing = 0
-        rightStackView.axis = .horizontal
-        rightStackView.setContentHuggingPriority(.required, for: .horizontal)
 
         let imageView = ImageView(frame: .zero)
         let badgeView = BadgeView(frame: .zero)
 
         let nameView = NameView(frame: .zero)
-        nameView.translatesAutoresizingMaskIntoConstraints = false
 
         let weightView = WeightView(frame: .zero)
         let entryView = EntryView(frame: .zero)
         let quantityView = QuantityView(frame: .zero)
 
-        rightStackView.addArrangedSubview(weightView)
-        rightStackView.addArrangedSubview(entryView)
-        rightStackView.addArrangedSubview(quantityView)
+        let stackView = UIStackView(arrangedSubviews: [imageView, badgeView, nameView, weightView, entryView, quantityView])
+        stackView.translatesAutoresizingMaskIntoConstraints = false
+        stackView.spacing = 4
+        stackView.axis = .horizontal
+        stackView.distribution = .fillProportionally
+        stackView.alignment = .fill
 
         quantityView.plusButton?.addTarget(self, action: #selector(plusButtonTapped(_:)), for: .touchUpInside)
         quantityView.minusButton?.addTarget(self, action: #selector(minusButtonTapped(_:)), for: .touchUpInside)
 
-        addSubview(leftStackView)
-        addSubview(nameView)
-        addSubview(rightStackView)
-
-        leftStackView.addArrangedSubview(badgeView)
-        leftStackView.addArrangedSubview(imageView)
-
-        self.leftStackView = leftStackView
-        self.nameView = nameView
-        self.rightStackView = rightStackView
+        addSubview(stackView)
 
         self.imageView = imageView
         self.badgeView = badgeView
+
+        self.nameView = nameView
 
         self.weightView = weightView
         self.entryView = entryView
         self.quantityView = quantityView
 
         NSLayoutConstraint.activate([
+            stackView.topAnchor.constraint(equalTo: topAnchor),
+            bottomAnchor.constraint(equalTo: stackView.bottomAnchor),
+
+            stackView.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 8),
+            trailingAnchor.constraint(equalTo: stackView.trailingAnchor, constant: 8),
+
             heightAnchor.constraint(greaterThanOrEqualToConstant: 48),
-            imageView.widthAnchor.constraint(equalToConstant: 48),
-
-            leftStackView.topAnchor.constraint(equalTo: topAnchor),
-            bottomAnchor.constraint(equalTo: leftStackView.bottomAnchor),
-
-            nameView.topAnchor.constraint(equalTo: topAnchor, constant: 8),
-            bottomAnchor.constraint(equalTo: nameView.bottomAnchor, constant: 8),
-
-            rightStackView.topAnchor.constraint(equalTo: topAnchor),
-            bottomAnchor.constraint(equalTo: rightStackView.bottomAnchor),
-
-            leftStackView.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 12),
-            nameView.leadingAnchor.constraint(equalTo: leftStackView.trailingAnchor),
-            rightStackView.leadingAnchor.constraint(equalTo: nameView.trailingAnchor, constant: 8),
-            trailingAnchor.constraint(equalTo: rightStackView.trailingAnchor, constant: 12)
+            imageView.widthAnchor.constraint(equalToConstant: 48)
         ])
     }
 
@@ -484,7 +449,6 @@ final class ShoppingCartTableCellView: UIView {
         case .image, .emptyImage:
             imageView?.isHidden = false
         }
-        layoutIfNeeded()
     }
 
     public func updateRightDisplay(withMode mode: RightDisplay) {
@@ -499,6 +463,5 @@ final class ShoppingCartTableCellView: UIView {
         case .weightEntry:
             entryView?.isHidden = false
         }
-        layoutIfNeeded()
     }
 }
