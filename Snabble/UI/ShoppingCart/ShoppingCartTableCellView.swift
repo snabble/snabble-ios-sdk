@@ -143,36 +143,34 @@ final class NameView: UIView {
 
     override init(frame: CGRect) {
         let nameLabel = UILabel()
-        nameLabel.translatesAutoresizingMaskIntoConstraints = false
         nameLabel.font = UIFont.systemFont(ofSize: 15)
         nameLabel.textColor = .label
         nameLabel.textAlignment = .natural
         nameLabel.numberOfLines = 0
 
         let priceLabel = UILabel()
-        priceLabel.translatesAutoresizingMaskIntoConstraints = false
         priceLabel.font = UIFont.monospacedDigitSystemFont(ofSize: 13, weight: .regular)
         priceLabel.textColor = .systemGray
         priceLabel.textAlignment = .natural
 
+        let stackView = UIStackView(arrangedSubviews: [nameLabel, priceLabel])
+        stackView.translatesAutoresizingMaskIntoConstraints = false
+        stackView.axis = .vertical
+
         super.init(frame: frame)
 
-        addSubview(nameLabel)
-        addSubview(priceLabel)
+        addSubview(stackView)
 
         self.nameLabel = nameLabel
         self.priceLabel = priceLabel
 
         NSLayoutConstraint.activate([
-            nameLabel.topAnchor.constraint(equalTo: topAnchor, constant: 8),
-            priceLabel.topAnchor.constraint(equalTo: nameLabel.bottomAnchor),
-            bottomAnchor.constraint(equalTo: priceLabel.bottomAnchor, constant: 8),
+            stackView.topAnchor.constraint(greaterThanOrEqualTo: topAnchor, constant: 8),
+            stackView.centerYAnchor.constraint(equalTo: centerYAnchor),
+            bottomAnchor.constraint(greaterThanOrEqualTo: stackView.bottomAnchor, constant: 8),
 
-            nameLabel.leadingAnchor.constraint(equalTo: leadingAnchor),
-            trailingAnchor.constraint(equalTo: nameLabel.trailingAnchor),
-
-            priceLabel.leadingAnchor.constraint(equalTo: leadingAnchor),
-            trailingAnchor.constraint(equalTo: priceLabel.trailingAnchor)
+            stackView.leadingAnchor.constraint(equalTo: leadingAnchor),
+            trailingAnchor.constraint(equalTo: stackView.trailingAnchor)
         ])
     }
 
