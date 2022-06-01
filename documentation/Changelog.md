@@ -9,6 +9,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 * Added dynamic fonts to several views #Apps-231
 * Added dynamic fonts to PaydirektEditViewController #Apps-231
+* Added dynamic fonts to PayoneCreditCardEditViewController #Apps-231
+* Added dynamic fonts to SepaEditViewController #Apps-231
+* Added dynamic fonts to TeleCashCreditCardEditViewController #Apps-231
 
 ## [0.19.2] - 2022-5-25
 
