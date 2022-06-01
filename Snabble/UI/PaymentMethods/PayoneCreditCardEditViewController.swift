@@ -199,6 +199,10 @@ public final class PayoneCreditCardEditViewController: UIViewController {
     private func setupView() {
         view.backgroundColor = .systemBackground
 
+        if #available(iOS 15, *) {
+            view.restrictDynamicTypeSize(from: nil, to: .extraExtraExtraLarge)
+        }
+
         // container for the "display-only" mode
         displayContainer.translatesAutoresizingMaskIntoConstraints = false
         view.addSubview(displayContainer)
@@ -206,23 +210,32 @@ public final class PayoneCreditCardEditViewController: UIViewController {
 
         explanation.translatesAutoresizingMaskIntoConstraints = false
         explanation.numberOfLines = 0
-        explanation.font = .systemFont(ofSize: 13)
+        explanation.font = UIFont.preferredFont(forTextStyle: .footnote)
+        explanation.adjustsFontForContentSizeCategory = true
         displayContainer.addSubview(explanation)
 
         cardNumberLabel.translatesAutoresizingMaskIntoConstraints = false
+        cardNumberLabel.font = UIFont.preferredFont(forTextStyle: .body)
+        cardNumberLabel.adjustsFontForContentSizeCategory = true
         displayContainer.addSubview(cardNumberLabel)
 
         cardNumber.translatesAutoresizingMaskIntoConstraints = false
         cardNumber.isEnabled = false
         cardNumber.borderStyle = .roundedRect
+        cardNumber.font = UIFont.preferredFont(forTextStyle: .body)
+        cardNumber.adjustsFontForContentSizeCategory = true
         displayContainer.addSubview(cardNumber)
 
         expDateLabel.translatesAutoresizingMaskIntoConstraints = false
+        expDateLabel.font = UIFont.preferredFont(forTextStyle: .body)
+        expDateLabel.adjustsFontForContentSizeCategory = true
         displayContainer.addSubview(expDateLabel)
 
         expirationDate.translatesAutoresizingMaskIntoConstraints = false
         expirationDate.isEnabled = false
         expirationDate.borderStyle = .roundedRect
+        expirationDate.font = UIFont.preferredFont(forTextStyle: .body)
+        expirationDate.adjustsFontForContentSizeCategory = true
         displayContainer.addSubview(expirationDate)
 
         NSLayoutConstraint.activate([
