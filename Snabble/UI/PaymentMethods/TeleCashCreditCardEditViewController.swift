@@ -67,6 +67,10 @@ public final class TeleCashCreditCardEditViewController: UIViewController {
 
         view.backgroundColor = .systemBackground
 
+        if #available(iOS 15, *) {
+            view.restrictDynamicTypeSize(from: nil, to: .extraExtraExtraLarge)
+        }
+
         let scrollView = UIScrollView()
         scrollView.translatesAutoresizingMaskIntoConstraints = false
         view.addSubview(scrollView)
