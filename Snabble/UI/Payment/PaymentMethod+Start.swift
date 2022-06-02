@@ -29,8 +29,7 @@ public final class PaymentMethodStartCheck {
         case .deDirectDebit:
             let view = SepaOverlayView(frame: .zero)
             let viewModel = SepaOverlayView.ViewModel(project: SnabbleUI.project)
-            let layoutGuide: UILayoutGuide = (presenter as? UINavigationController)?.topViewController?.view.safeAreaLayoutGuide ?? presenter.view.safeAreaLayoutGuide
-            view.configure(with: viewModel, for: layoutGuide)
+            view.configure(with: viewModel)
 
             view.closeButton?.addTarget(self, action: #selector(dismissOverlay(_:)), for: .touchUpInside)
             view.successButton?.addTarget(self, action: #selector(sepaSuccessButtonTapped(_:)), for: .touchUpInside)
