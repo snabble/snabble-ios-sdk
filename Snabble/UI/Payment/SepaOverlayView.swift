@@ -9,10 +9,7 @@ import UIKit
 public protocol SepaOverlayViewModel {
     var title: String { get }
     var text: NSAttributedString { get }
-
     var successButtonTitle: String { get }
-    var successButtonBackgroundColor: UIColor? { get }
-    var successButtonTintColor: UIColor? { get }
 }
 
 public final class SepaOverlayView: UIView {
@@ -22,50 +19,64 @@ public final class SepaOverlayView: UIView {
     public private(set) var closeButton: UIButton?
 
     private weak var stackView: UIStackView?
+    private weak var scrollView: UIScrollView?
+    private var maxViewFrameHeight: CGFloat?
+    private var scrollViewHeight: NSLayoutConstraint?
 
     override public init(frame: CGRect) {
+        super.init(frame: frame)
+
+        self.setupUI()
+    }
+
+    public required init?(coder aDecoder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+
+    private func setupUI() {
+        backgroundColor = .systemBackground
+        if #available(iOS 15, *) {
+            restrictDynamicTypeSize(from: nil, to: .extraExtraExtraLarge)
+        }
+
+        let scrollView = UIScrollView()
+        scrollView.translatesAutoresizingMaskIntoConstraints = false
+        scrollView.backgroundColor = .systemBackground
+        scrollView.showsVerticalScrollIndicator = true
+        scrollView.alwaysBounceVertical = false
+
         let closeButton = UIButton(type: .custom)
         closeButton.translatesAutoresizingMaskIntoConstraints = false
         closeButton.setImage(Asset.SnabbleSDK.iconClose.image, for: .normal)
 
         let titleLabel = UILabel()
-        titleLabel.font = UIFont.preferredFont(forTextStyle: .body, weight: .bold)
+        titleLabel.translatesAutoresizingMaskIntoConstraints = false
+        titleLabel.font = .preferredFont(forTextStyle: .body, weight: .bold)
         titleLabel.adjustsFontForContentSizeCategory = true
         titleLabel.textAlignment = .center
         titleLabel.numberOfLines = 0
 
         let textLabel = UILabel()
-        textLabel.font = UIFont.preferredFont(forTextStyle: .body)
+        textLabel.translatesAutoresizingMaskIntoConstraints = false
+        textLabel.font = .preferredFont(forTextStyle: .body)
         textLabel.adjustsFontForContentSizeCategory = true
         textLabel.textAlignment = .center
         textLabel.numberOfLines = 0
 
-        let stackView = UIStackView(arrangedSubviews: [titleLabel, textLabel])
-        stackView.translatesAutoresizingMaskIntoConstraints = false
-        stackView.axis = .vertical
-        stackView.spacing = 20
-
         let successButton = UIButton(type: .system)
         successButton.translatesAutoresizingMaskIntoConstraints = false
         successButton.preferredFont(forTextStyle: .headline)
-        successButton.layer.cornerRadius = 8
-
-        super.init(frame: frame)
-
-        backgroundColor = .systemBackground
-
-        addSubview(closeButton)
-        addSubview(stackView)
-        addSubview(successButton)
-
-        self.closeButton = closeButton
-        self.stackView = stackView
-        self.titleLabel = titleLabel
-        self.textLabel = textLabel
-        self.successButton = successButton
+        successButton.makeSnabbleButton()
 
         let layoutGuide = UILayoutGuide()
         addLayoutGuide(layoutGuide)
+
+        addSubview(closeButton)
+        addSubview(scrollView)
+        addSubview(successButton)
+
+        scrollView.addSubview(titleLabel)
+        scrollView.addSubview(textLabel)
 
         NSLayoutConstraint.activate([
             layoutGuide.leadingAnchor.constraint(equalToSystemSpacingAfter: leadingAnchor, multiplier: 2),
@@ -74,27 +85,47 @@ public final class SepaOverlayView: UIView {
             layoutGuide.topAnchor.constraint(equalToSystemSpacingBelow: topAnchor, multiplier: 2),
             bottomAnchor.constraint(equalToSystemSpacingBelow: layoutGuide.bottomAnchor, multiplier: 2),
 
+            // Horizontal
             closeButton.leadingAnchor.constraint(greaterThanOrEqualTo: layoutGuide.leadingAnchor),
             layoutGuide.trailingAnchor.constraint(greaterThanOrEqualTo: closeButton.trailingAnchor),
             closeButton.centerXAnchor.constraint(equalTo: layoutGuide.centerXAnchor),
-            closeButton.heightAnchor.constraint(equalToConstant: 33),
 
-            stackView.leadingAnchor.constraint(equalTo: layoutGuide.leadingAnchor),
-            layoutGuide.trailingAnchor.constraint(equalTo: stackView.trailingAnchor),
+            scrollView.leadingAnchor.constraint(equalTo: layoutGuide.leadingAnchor),
+            layoutGuide.trailingAnchor.constraint(equalTo: scrollView.trailingAnchor),
+            scrollView.widthAnchor.constraint(equalTo: scrollView.contentLayoutGuide.widthAnchor),
 
             successButton.leadingAnchor.constraint(equalTo: layoutGuide.leadingAnchor),
-            layoutGuide.trailingAnchor.constraint(equalTo: successButton.trailingAnchor),
-            successButton.heightAnchor.constraint(equalToConstant: 48),
+            successButton.trailingAnchor.constraint(equalTo: layoutGuide.trailingAnchor),
 
+            // Vertical
             closeButton.topAnchor.constraint(equalTo: layoutGuide.topAnchor),
-            stackView.topAnchor.constraint(equalToSystemSpacingBelow: closeButton.bottomAnchor, multiplier: 1),
-            successButton.topAnchor.constraint(equalToSystemSpacingBelow: stackView.bottomAnchor, multiplier: 2),
-            layoutGuide.bottomAnchor.constraint(equalTo: successButton.bottomAnchor)
-        ])
-    }
+            closeButton.heightAnchor.constraint(equalToConstant: 34),
+            scrollView.topAnchor.constraint(equalToSystemSpacingBelow: closeButton.bottomAnchor, multiplier: 2),
+            successButton.topAnchor.constraint(equalToSystemSpacingBelow: scrollView.bottomAnchor, multiplier: 2),
+            successButton.heightAnchor.constraint(equalToConstant: 48),
+            successButton.bottomAnchor.constraint(equalTo: layoutGuide.bottomAnchor),
 
-    required init?(coder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
+            // ScrollView Horizontal
+            titleLabel.leadingAnchor.constraint(equalTo: scrollView.contentLayoutGuide.leadingAnchor),
+            scrollView.contentLayoutGuide.trailingAnchor.constraint(equalTo: titleLabel.trailingAnchor),
+
+            textLabel.leadingAnchor.constraint(equalTo: scrollView.contentLayoutGuide.leadingAnchor),
+            scrollView.contentLayoutGuide.trailingAnchor.constraint(equalTo: textLabel.trailingAnchor),
+
+            // ScrollView Vertical
+            titleLabel.topAnchor.constraint(equalTo: scrollView.contentLayoutGuide.topAnchor),
+            textLabel.topAnchor.constraint(equalToSystemSpacingBelow: titleLabel.bottomAnchor, multiplier: 2),
+            scrollView.contentLayoutGuide.bottomAnchor.constraint(equalTo: textLabel.bottomAnchor),
+
+            scrollView.heightAnchor.constraint(equalTo: scrollView.contentLayoutGuide.heightAnchor).usingPriority(.defaultHigh - 1),
+            scrollView.heightAnchor.constraint(lessThanOrEqualTo: scrollView.contentLayoutGuide.heightAnchor)
+        ])
+
+        self.closeButton = closeButton
+        self.titleLabel = titleLabel
+        self.textLabel = textLabel
+        self.successButton = successButton
+        self.scrollView = scrollView
     }
 
     override public func layoutSubviews() {
@@ -107,9 +138,6 @@ public final class SepaOverlayView: UIView {
         textLabel?.attributedText = viewModel.text
 
         successButton?.setTitle(viewModel.successButtonTitle, for: .normal)
-
-        successButton?.backgroundColor = viewModel.successButtonBackgroundColor
-        successButton?.tintColor = viewModel.successButtonTintColor
     }
 
     public struct ViewModel: SepaOverlayViewModel {
@@ -117,13 +145,8 @@ public final class SepaOverlayView: UIView {
         public let text: NSAttributedString
 
         public let successButtonTitle: String = L10n.Snabble.Sepa.iAgree
-        public let successButtonTintColor: UIColor?
-        public let successButtonBackgroundColor: UIColor?
 
-        public init(project: Project?, appearance: CustomAppearance) {
-            successButtonTintColor = appearance.accentColor.contrast
-            successButtonBackgroundColor = appearance.accentColor
-
+        public init(project: Project?) {
             let text = project?.messages?.sepaMandateShort ?? ""
             var attributedString = NSAttributedString(string: text)
 

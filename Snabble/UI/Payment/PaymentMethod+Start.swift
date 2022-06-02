@@ -28,7 +28,7 @@ public final class PaymentMethodStartCheck {
         switch method {
         case .deDirectDebit:
             let view = SepaOverlayView(frame: .zero)
-            let viewModel = SepaOverlayView.ViewModel(project: SnabbleUI.project, appearance: SnabbleUI.appearance)
+            let viewModel = SepaOverlayView.ViewModel(project: SnabbleUI.project)
             view.configure(with: viewModel)
 
             view.closeButton?.addTarget(self, action: #selector(dismissOverlay(_:)), for: .touchUpInside)
