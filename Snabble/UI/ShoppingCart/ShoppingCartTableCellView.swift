@@ -218,13 +218,11 @@ extension ShoppingCartTableCellView {
             backgroundView.translatesAutoresizingMaskIntoConstraints = false
             backgroundView.layer.cornerRadius = 4
             backgroundView.layer.masksToBounds = true
-            backgroundView.backgroundColor = .systemBackground
 
             let badgeLabel = UILabel()
             badgeLabel.translatesAutoresizingMaskIntoConstraints = false
             badgeLabel.font = UIFont.systemFont(ofSize: 11)
             badgeLabel.textColor = .label.contrast
-            badgeLabel.backgroundColor = .systemRed
             badgeLabel.textAlignment = .center
             badgeLabel.layer.cornerRadius = 4
             badgeLabel.layer.masksToBounds = true
