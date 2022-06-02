@@ -58,7 +58,6 @@ public final class PaymentMethodStartCheck {
 
     // MARK: - Sepa
     @objc private func dismissOverlay(_ sender: Any) {
-        print("close tapped")
         presenter?.dismissOverlay()
         completionHandler?(false)
     }
