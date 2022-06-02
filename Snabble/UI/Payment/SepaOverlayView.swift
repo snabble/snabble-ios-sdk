@@ -117,7 +117,7 @@ public final class SepaOverlayView: UIView {
             textLabel.topAnchor.constraint(equalToSystemSpacingBelow: titleLabel.bottomAnchor, multiplier: 2),
             scrollView.contentLayoutGuide.bottomAnchor.constraint(equalTo: textLabel.bottomAnchor),
 
-            scrollView.heightAnchor.constraint(equalTo: scrollView.contentLayoutGuide.heightAnchor).usingPriority(.defaultHigh),
+            scrollView.heightAnchor.constraint(equalTo: scrollView.contentLayoutGuide.heightAnchor).usingPriority(.defaultHigh - 1),
             scrollView.heightAnchor.constraint(lessThanOrEqualTo: scrollView.contentLayoutGuide.heightAnchor)
         ])
 
