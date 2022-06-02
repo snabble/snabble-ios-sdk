@@ -11,318 +11,64 @@ protocol ShoppingCardCellViewDelegate: AnyObject {
 }
 
 final class ShoppingCartTableCellView: UIView {
-    private weak var leftStackView: UIStackView?
-    private weak var centerStackView: UIStackView?
-    private weak var rightStackView: UIStackView?
+    public weak var imageView: ImageView?
+    public weak var badgeView: BadgeView?
 
-    public weak var badgeWrapper: UIView?
-    public weak var badgeLabel: UILabel?
+    public weak var nameView: NameView?
 
-    public weak var imageWrapper: UIView?
-    public weak var imageBadge: UILabel?
-    public weak var imageBackground: UIView?
-    public weak var productImage: UIImageView?
-    public weak var spinner: UIActivityIndicatorView?
-
-    public weak var nameLabel: UILabel?
-    public weak var priceLabel: UILabel?
-
-    public weak var weightWrapper: UIView?
-    public weak var weightLabel: UILabel?
-    public weak var weightUnits: UILabel?
-
-    public weak var entryWrapper: UIView?
-    public weak var quantityInput: UITextField?
-    public weak var unitsLabel: UILabel!
-
-    public weak var buttonWrapper: UIView?
-    public weak var minusButton: UIButton?
-    public weak var plusButton: UIButton?
-    public weak var quantityLabel: UILabel?
-
-    private var units: UILabel {
-        let label = UILabel()
-        label.translatesAutoresizingMaskIntoConstraints = false
-        label.font = UIFont.systemFont(ofSize: 13, weight: .semibold)
-        label.textColor = .label
-        label.textAlignment = .center
-        label.setContentHuggingPriority(.defaultLow + 1, for: .horizontal)
-        label.setContentHuggingPriority(.defaultLow + 1, for: .vertical)
-        return label
-    }
-
-    private var badge: UILabel {
-        let label = UILabel()
-        label.translatesAutoresizingMaskIntoConstraints = false
-        label.font = UIFont.systemFont(ofSize: 11)
-        label.textColor = .label.contrast
-        label.backgroundColor = .systemRed
-        label.layer.cornerRadius = 4
-        label.layer.masksToBounds = true
-        label.textAlignment = .center
-        label.setContentHuggingPriority(.defaultLow + 1, for: .horizontal)
-        label.setContentHuggingPriority(.defaultLow + 1, for: .vertical)
-        return label
-    }
-
-    private var button: UIButton {
-        let button = UIButton(type: .custom)
-        button.translatesAutoresizingMaskIntoConstraints = false
-        button.isUserInteractionEnabled = true
-        return button
-    }
-
-    private var stackView: UIStackView {
-        let stackView = UIStackView()
-        stackView.translatesAutoresizingMaskIntoConstraints = false
-        stackView.alignment = .fill
-        stackView.distribution = .fill
-        stackView.spacing = 0
-        return stackView
-    }
-
-    private var customView: UIView {
-        let view = UIView()
-        view.translatesAutoresizingMaskIntoConstraints = false
-        return view
-    }
-
-    private var customLabel: UILabel {
-        let label = UILabel()
-        label.translatesAutoresizingMaskIntoConstraints = false
-        label.setContentHuggingPriority(.defaultLow + 1, for: .horizontal)
-        label.setContentHuggingPriority(.defaultLow + 1, for: .vertical)
-        return label
-    }
+    public weak var weightView: WeightView?
+    public weak var entryView: EntryView?
+    public weak var quantityView: QuantityView?
 
     weak var delegate: ShoppingCardCellViewDelegate?
 
     override init(frame: CGRect) {
+        let imageView = ImageView(frame: .zero)
+        let badgeView = BadgeView(frame: .zero)
+
+        let nameView = NameView(frame: .zero)
+
+        let weightView = WeightView(frame: .zero)
+        let entryView = EntryView(frame: .zero)
+        let quantityView = QuantityView(frame: .zero)
+
+        let stackView = UIStackView(arrangedSubviews: [imageView, badgeView, nameView, weightView, entryView, quantityView])
+        stackView.translatesAutoresizingMaskIntoConstraints = false
+        stackView.spacing = 4
+        stackView.axis = .horizontal
+        stackView.distribution = .fillProportionally
+        stackView.alignment = .fill
+
+        self.imageView = imageView
+        self.badgeView = badgeView
+
+        self.nameView = nameView
+
+        self.weightView = weightView
+        self.entryView = entryView
+        self.quantityView = quantityView
+
         super.init(frame: frame)
-        self.setupUI()
+
+        addSubview(stackView)
+
+        quantityView.plusButton?.addTarget(self, action: #selector(plusButtonTapped(_:)), for: .touchUpInside)
+        quantityView.minusButton?.addTarget(self, action: #selector(minusButtonTapped(_:)), for: .touchUpInside)
+
+        NSLayoutConstraint.activate([
+            stackView.topAnchor.constraint(equalTo: topAnchor),
+            bottomAnchor.constraint(equalTo: stackView.bottomAnchor),
+
+            stackView.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 8),
+            trailingAnchor.constraint(equalTo: stackView.trailingAnchor, constant: 8),
+
+            heightAnchor.constraint(greaterThanOrEqualToConstant: 48),
+            imageView.widthAnchor.constraint(equalToConstant: 48)
+        ])
     }
 
     public required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
-    }
-
-    private func setupUI() {
-        let leftStackView = self.stackView
-        leftStackView.axis = .horizontal
-        leftStackView.setContentHuggingPriority(.defaultLow + 2, for: .horizontal)
-
-        let badgeWrapper = self.customView
-        let badgeLabel = self.badge
-        badgeLabel.setContentHuggingPriority(.defaultHigh, for: .horizontal)
-        let imageWrapper = self.customView
-
-        let imageBadge = self.badge
-
-        let imageBackground = self.customView
-        imageBackground.layer.cornerRadius = 4
-        imageBackground.layer.masksToBounds = true
-        imageBackground.backgroundColor = .systemBackground
-
-        let productImage = UIImageView()
-        productImage.translatesAutoresizingMaskIntoConstraints = false
-        productImage.contentMode = .scaleAspectFit
-        productImage.layer.cornerRadius = 3
-        productImage.layer.masksToBounds = true
-        productImage.setContentHuggingPriority(.defaultLow + 1, for: .horizontal)
-        productImage.setContentHuggingPriority(.defaultLow + 1, for: .vertical)
-
-        let spinner = UIActivityIndicatorView()
-        spinner.translatesAutoresizingMaskIntoConstraints = false
-        spinner.hidesWhenStopped = true
-        if #available(iOS 13.0, *) {
-            spinner.style = .medium
-        } else {
-            spinner.style = .gray
-        }
-
-        let centerStackView = self.stackView
-        centerStackView.axis = .vertical
-
-        let nameLabel = self.customLabel
-        nameLabel.font = UIFont.systemFont(ofSize: 15)
-        nameLabel.textColor = .label
-        nameLabel.textAlignment = .natural
-        nameLabel.numberOfLines = 0
-        nameLabel.setContentHuggingPriority(.defaultLow + 2, for: .vertical)
-
-        let priceLabel = self.customLabel
-        priceLabel.font = UIFont.monospacedDigitSystemFont(ofSize: 13, weight: .regular)
-        priceLabel.textColor = .systemGray
-        priceLabel.textAlignment = .natural
-
-        let rightStackView = self.stackView
-        rightStackView.axis = .horizontal
-        rightStackView.setContentHuggingPriority(.defaultLow + 2, for: .horizontal)
-
-        let weightWrapper = self.customView
-        let weightLabel = self.customLabel
-        weightLabel.font = UIFont.systemFont(ofSize: 13, weight: .semibold)
-        weightLabel.textColor = .label
-        weightLabel.textAlignment = .right
-
-        let weightUnits = self.units
-        let entryWrapper = self.customView
-        let quantityInput = UITextField()
-        quantityInput.translatesAutoresizingMaskIntoConstraints = false
-        quantityInput.textColor = .label
-        quantityInput.font = UIFont.systemFont(ofSize: 13, weight: .semibold)
-        quantityInput.textAlignment = .right
-        quantityInput.borderStyle = .roundedRect
-        quantityInput.backgroundColor = .secondarySystemBackground
-        quantityInput.keyboardType = .numberPad
-        quantityInput.minimumFontSize = 17
-        quantityInput.adjustsFontSizeToFitWidth = true
-
-        let unitsLabel = self.units
-        let buttonWrapper = self.customView
-
-        let minusButton = self.button
-        minusButton.makeBorderedButton()
-        minusButton.backgroundColor = .systemBackground
-        minusButton.setImage(Asset.SnabbleSDK.iconMinus.image, for: .normal)
-        minusButton.addTarget(self, action: #selector(minusButtonTapped(_:)), for: .touchUpInside)
-
-        let quantityLabel = self.customLabel
-        quantityLabel.font = UIFont.systemFont(ofSize: 13, weight: .semibold)
-        quantityLabel.textColor = .label
-        quantityLabel.textAlignment = .center
-
-        let plusButton = self.button
-        plusButton.makeBorderedButton()
-        plusButton.backgroundColor = .systemBackground
-        plusButton.setImage(Asset.SnabbleSDK.iconPlus.image, for: .normal)
-        plusButton.addTarget(self, action: #selector(plusButtonTapped(_:)), for: .touchUpInside)
-
-        addSubview(leftStackView)
-        addSubview(centerStackView)
-        addSubview(rightStackView)
-
-        leftStackView.addArrangedSubview(badgeWrapper)
-        leftStackView.addArrangedSubview(imageWrapper)
-
-        centerStackView.addArrangedSubview(nameLabel)
-        centerStackView.addArrangedSubview(priceLabel)
-
-        rightStackView.addArrangedSubview(weightWrapper)
-        rightStackView.addArrangedSubview(entryWrapper)
-        rightStackView.addArrangedSubview(buttonWrapper)
-
-        badgeWrapper.addSubview(badgeLabel)
-
-        imageWrapper.addSubview(imageBackground)
-        imageWrapper.addSubview(imageBadge)
-        imageBackground.addSubview(productImage)
-        productImage.addSubview(spinner)
-
-        weightWrapper.addSubview(weightLabel)
-        weightWrapper.addSubview(weightUnits)
-
-        entryWrapper.addSubview(quantityInput)
-        entryWrapper.addSubview(unitsLabel)
-
-        buttonWrapper.addSubview(minusButton)
-        buttonWrapper.addSubview(quantityLabel)
-        buttonWrapper.addSubview(plusButton)
-
-        self.leftStackView = leftStackView
-        self.badgeWrapper = badgeWrapper
-        self.badgeLabel = badgeLabel
-        self.imageWrapper = imageWrapper
-        self.imageBackground = imageBackground
-        self.imageBadge = imageBadge
-        self.productImage = productImage
-        self.spinner = spinner
-        self.centerStackView = centerStackView
-        self.nameLabel = nameLabel
-        self.priceLabel = priceLabel
-        self.rightStackView = rightStackView
-        self.weightWrapper = weightWrapper
-        self.weightLabel = weightLabel
-        self.weightUnits = weightUnits
-        self.entryWrapper = entryWrapper
-        self.quantityInput = quantityInput
-        self.unitsLabel = unitsLabel
-        self.buttonWrapper = buttonWrapper
-        self.minusButton = minusButton
-        self.quantityLabel = quantityLabel
-        self.plusButton = plusButton
-
-        NSLayoutConstraint.activate([
-            leftStackView.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 12),
-            leftStackView.topAnchor.constraint(equalTo: topAnchor),
-            leftStackView.bottomAnchor.constraint(equalTo: bottomAnchor),
-            leftStackView.trailingAnchor.constraint(equalTo: centerStackView.leadingAnchor),
-
-            badgeLabel.leadingAnchor.constraint(equalTo: leftStackView.leadingAnchor),
-            badgeLabel.topAnchor.constraint(equalTo: badgeWrapper.topAnchor, constant: 11),
-            badgeLabel.trailingAnchor.constraint(equalTo: badgeWrapper.trailingAnchor, constant: -8),
-
-            imageBackground.leadingAnchor.constraint(equalTo: imageWrapper.leadingAnchor, constant: 8),
-            imageBackground.widthAnchor.constraint(equalToConstant: 32),
-            imageBackground.trailingAnchor.constraint(equalTo: imageWrapper.trailingAnchor, constant: -8),
-            imageBackground.topAnchor.constraint(equalTo: imageWrapper.topAnchor, constant: 9),
-            imageBackground.heightAnchor.constraint(equalToConstant: 32),
-
-            imageBadge.topAnchor.constraint(equalTo: imageBackground.topAnchor),
-            imageBadge.heightAnchor.constraint(equalToConstant: 16),
-            imageBadge.widthAnchor.constraint(equalToConstant: 18),
-            imageBadge.trailingAnchor.constraint(equalTo: imageBackground.leadingAnchor, constant: 8),
-
-            productImage.widthAnchor.constraint(equalToConstant: 28),
-            productImage.heightAnchor.constraint(equalToConstant: 28),
-            productImage.centerYAnchor.constraint(equalTo: imageBackground.centerYAnchor),
-            productImage.centerXAnchor.constraint(equalTo: imageBackground.centerXAnchor),
-
-            spinner.topAnchor.constraint(equalTo: productImage.topAnchor),
-            spinner.bottomAnchor.constraint(equalTo: productImage.bottomAnchor),
-            spinner.leadingAnchor.constraint(equalTo: productImage.leadingAnchor),
-            spinner.trailingAnchor.constraint(equalTo: productImage.trailingAnchor),
-
-            centerStackView.trailingAnchor.constraint(equalTo: rightStackView.leadingAnchor),
-            centerStackView.topAnchor.constraint(equalTo: topAnchor, constant: 8),
-            bottomAnchor.constraint(equalTo: centerStackView.bottomAnchor, constant: 8).usingPriority(.required),
-            centerStackView.heightAnchor.constraint(greaterThanOrEqualToConstant: 32),
-
-            trailingAnchor.constraint(equalTo: rightStackView.trailingAnchor, constant: 12),
-            rightStackView.topAnchor.constraint(equalTo: topAnchor),
-            rightStackView.bottomAnchor.constraint(equalTo: bottomAnchor),
-
-            weightLabel.leadingAnchor.constraint(equalTo: weightWrapper.leadingAnchor),
-            weightLabel.widthAnchor.constraint(equalToConstant: 29),
-            weightLabel.topAnchor.constraint(equalTo: weightWrapper.topAnchor, constant: 16),
-            weightUnits.leadingAnchor.constraint(equalTo: weightLabel.trailingAnchor),
-            weightUnits.widthAnchor.constraint(equalToConstant: 17),
-            weightUnits.trailingAnchor.constraint(equalTo: weightWrapper.trailingAnchor),
-            weightUnits.centerYAnchor.constraint(equalTo: weightLabel.centerYAnchor),
-
-            quantityInput.leadingAnchor.constraint(equalTo: entryWrapper.leadingAnchor),
-            quantityInput.widthAnchor.constraint(equalToConstant: 81),
-            quantityInput.topAnchor.constraint(equalTo: entryWrapper.topAnchor, constant: 8),
-            quantityInput.heightAnchor.constraint(equalToConstant: 32),
-            unitsLabel.leadingAnchor.constraint(equalTo: quantityInput.trailingAnchor),
-            unitsLabel.widthAnchor.constraint(equalToConstant: 17),
-            unitsLabel.trailingAnchor.constraint(equalTo: entryWrapper.trailingAnchor),
-            unitsLabel.centerYAnchor.constraint(equalTo: quantityInput.centerYAnchor),
-
-            minusButton.leadingAnchor.constraint(equalTo: buttonWrapper.leadingAnchor),
-            minusButton.widthAnchor.constraint(equalToConstant: 32),
-            minusButton.topAnchor.constraint(equalTo: buttonWrapper.topAnchor, constant: 8),
-            minusButton.heightAnchor.constraint(equalToConstant: 32),
-
-            quantityLabel.leadingAnchor.constraint(equalTo: minusButton.trailingAnchor),
-            quantityLabel.widthAnchor.constraint(equalToConstant: 34),
-            quantityLabel.centerYAnchor.constraint(equalTo: minusButton.centerYAnchor),
-            plusButton.leadingAnchor.constraint(equalTo: quantityLabel.trailingAnchor),
-            plusButton.widthAnchor.constraint(equalToConstant: 32),
-            plusButton.trailingAnchor.constraint(equalTo: buttonWrapper.trailingAnchor),
-            plusButton.heightAnchor.constraint(equalToConstant: 32),
-            plusButton.centerYAnchor.constraint(equalTo: minusButton.centerYAnchor)
-        ])
     }
 
     @objc private func plusButtonTapped(_ sender: Any) {
@@ -334,56 +80,389 @@ final class ShoppingCartTableCellView: UIView {
     }
 
     public func updateBadgeText(withText text: String?) {
-        self.badgeLabel?.text = text
-        self.badgeLabel?.isHidden = text == nil
-        self.imageBadge?.text = text
-        self.imageBadge?.isHidden = text == nil
+        badgeView?.badgeLabel?.text = text
+        badgeView?.badgeLabel?.isHidden = text == nil
+
+        imageView?.badgeView?.badgeLabel?.text = text
+        imageView?.badgeView?.isHidden = text == nil
     }
 
     public func updateBadgeColor(withColor color: UIColor?) {
-        if let color = color {
-            self.badgeLabel?.backgroundColor = color
-            self.imageBadge?.backgroundColor = color
-        }
+        badgeView?.backgroundView?.backgroundColor = color
+        imageView?.badgeView?.backgroundView?.backgroundColor = color
     }
 
     public func updateQuantityText(withText text: String?) {
-        self.quantityLabel?.text = text
-        self.weightLabel?.text = text
-        self.quantityInput?.text = text
+        quantityView?.quantityLabel?.text = text
+        weightView?.quantityLabel?.text = text
+        entryView?.quantityTextField?.text = text
     }
 
     public func updateUnitsText(withText text: String?) {
-        self.unitsLabel?.text = text
-        self.weightUnits?.text = text
+        entryView?.unitLabel?.text = text
+        weightView?.unitLabel?.text = text
     }
 
     public func updateLeftDisplay(withMode mode: LeftDisplay) {
-        [self.imageWrapper, self.badgeWrapper].forEach { $0?.isHidden = true }
+        [imageView, badgeView].forEach { $0?.isHidden = true }
         switch mode {
         case .none:
-            self.badgeWrapper?.isHidden = false
-            self.badgeLabel?.isHidden = true
-        case .image:
-            self.imageWrapper?.isHidden = false
-            self.imageBackground?.isHidden = false
-        case .emptyImage:
-            self.imageWrapper?.isHidden = false
-            self.imageBackground?.isHidden = true
+            break
         case .badge:
-            self.badgeWrapper?.isHidden = false
+            badgeView?.isHidden = false
+        case .image, .emptyImage:
+            imageView?.isHidden = false
         }
     }
 
     public func updateRightDisplay(withMode mode: RightDisplay) {
-        UIView.performWithoutAnimation {
-            [self.buttonWrapper, self.weightWrapper, self.entryWrapper].forEach { $0?.isHidden = true }
-            switch mode {
-            case .none: ()
-            case .buttons: self.buttonWrapper?.isHidden = false
-            case .weightDisplay: self.weightWrapper?.isHidden = false
-            case .weightEntry: self.entryWrapper?.isHidden = false
+        [quantityView, weightView, entryView].forEach { $0?.isHidden = true }
+        switch mode {
+        case .none:
+            break
+        case .buttons:
+            quantityView?.isHidden = false
+        case .weightDisplay:
+            weightView?.isHidden = false
+        case .weightEntry:
+            entryView?.isHidden = false
+        }
+    }
+}
+
+extension ShoppingCartTableCellView {
+    final class ImageView: UIView {
+        private(set) weak var badgeView: BadgeView?
+
+        private(set) weak var imageBackgroundView: UIView?
+        private(set) weak var imageView: UIImageView?
+        private(set) weak var activityIndicatorView: UIActivityIndicatorView?
+
+        override init(frame: CGRect) {
+            let badgeView = BadgeView(frame: .zero)
+            badgeView.translatesAutoresizingMaskIntoConstraints = false
+
+            let imageBackgroundView = UIView()
+            imageBackgroundView.translatesAutoresizingMaskIntoConstraints = false
+            imageBackgroundView.layer.cornerRadius = 4
+            imageBackgroundView.layer.masksToBounds = true
+            imageBackgroundView.backgroundColor = .systemBackground
+
+            let imageView = UIImageView()
+            imageView.translatesAutoresizingMaskIntoConstraints = false
+            imageView.contentMode = .scaleAspectFit
+            imageView.layer.cornerRadius = 4
+            imageView.layer.masksToBounds = true
+
+            let activityIndicatorView = UIActivityIndicatorView()
+            activityIndicatorView.translatesAutoresizingMaskIntoConstraints = false
+            activityIndicatorView.hidesWhenStopped = true
+            if #available(iOS 13.0, *) {
+                activityIndicatorView.style = .medium
+            } else {
+                activityIndicatorView.style = .gray
             }
+
+            super.init(frame: frame)
+
+            addSubview(imageBackgroundView)
+            addSubview(imageView)
+            addSubview(badgeView)
+            addSubview(activityIndicatorView)
+
+            self.imageBackgroundView = imageBackgroundView
+            self.imageView = imageView
+            self.badgeView = badgeView
+            self.activityIndicatorView = activityIndicatorView
+
+            NSLayoutConstraint.activate([
+                activityIndicatorView.centerYAnchor.constraint(equalTo: imageView.centerYAnchor),
+                activityIndicatorView.centerXAnchor.constraint(equalTo: imageView.centerXAnchor),
+
+                imageView.topAnchor.constraint(equalTo: imageBackgroundView.topAnchor),
+                imageBackgroundView.bottomAnchor.constraint(equalTo: imageView.bottomAnchor),
+
+                imageView.leadingAnchor.constraint(equalTo: imageBackgroundView.leadingAnchor),
+                imageBackgroundView.trailingAnchor.constraint(equalTo: imageView.trailingAnchor),
+
+                imageBackgroundView.heightAnchor.constraint(equalToConstant: 32),
+                imageBackgroundView.widthAnchor.constraint(equalToConstant: 32),
+
+                imageBackgroundView.centerYAnchor.constraint(equalTo: centerYAnchor),
+                imageBackgroundView.centerXAnchor.constraint(equalTo: centerXAnchor),
+
+                imageBackgroundView.topAnchor.constraint(greaterThanOrEqualTo: topAnchor, constant: 8),
+                bottomAnchor.constraint(greaterThanOrEqualTo: imageBackgroundView.bottomAnchor, constant: 8),
+
+                imageBackgroundView.leadingAnchor.constraint(greaterThanOrEqualTo: leadingAnchor, constant: 8),
+                trailingAnchor.constraint(greaterThanOrEqualTo: imageBackgroundView.trailingAnchor, constant: 8),
+
+                badgeView.topAnchor.constraint(equalTo: imageBackgroundView.topAnchor),
+                badgeView.heightAnchor.constraint(equalToConstant: 16),
+                badgeView.widthAnchor.constraint(equalToConstant: 16),
+                badgeView.trailingAnchor.constraint(equalTo: imageBackgroundView.leadingAnchor, constant: 8)
+            ])
+        }
+
+        required init?(coder: NSCoder) {
+            fatalError("init(coder:) has not been implemented")
+        }
+    }
+
+    final class BadgeView: UIView {
+        private(set) weak var backgroundView: UIView?
+        private(set) weak var badgeLabel: UILabel?
+
+        override init(frame: CGRect) {
+            let backgroundView = UIView()
+            backgroundView.translatesAutoresizingMaskIntoConstraints = false
+            backgroundView.layer.cornerRadius = 4
+            backgroundView.layer.masksToBounds = true
+
+            let badgeLabel = UILabel()
+            badgeLabel.translatesAutoresizingMaskIntoConstraints = false
+            badgeLabel.font = UIFont.systemFont(ofSize: 11)
+            badgeLabel.textColor = .label.contrast
+            badgeLabel.textAlignment = .center
+            badgeLabel.layer.cornerRadius = 4
+            badgeLabel.layer.masksToBounds = true
+
+            super.init(frame: frame)
+
+            addSubview(backgroundView)
+            addSubview(badgeLabel)
+
+            self.badgeLabel = badgeLabel
+            self.backgroundView = backgroundView
+
+            NSLayoutConstraint.activate([
+                badgeLabel.topAnchor.constraint(equalTo: backgroundView.topAnchor, constant: 2),
+                backgroundView.bottomAnchor.constraint(equalTo: badgeLabel.bottomAnchor, constant: 2),
+
+                badgeLabel.leadingAnchor.constraint(equalTo: backgroundView.leadingAnchor),
+                backgroundView.trailingAnchor.constraint(equalTo: badgeLabel.trailingAnchor),
+
+                backgroundView.topAnchor.constraint(greaterThanOrEqualTo: topAnchor),
+                bottomAnchor.constraint(greaterThanOrEqualTo: backgroundView.bottomAnchor),
+                backgroundView.centerYAnchor.constraint(equalTo: centerYAnchor),
+
+                backgroundView.leadingAnchor.constraint(equalTo: leadingAnchor),
+                trailingAnchor.constraint(equalTo: backgroundView.trailingAnchor)
+            ])
+        }
+
+        required init?(coder: NSCoder) {
+            fatalError("init(coder:) has not been implemented")
+        }
+    }
+
+    final class NameView: UIView {
+        private(set) weak var nameLabel: UILabel?
+        private(set) weak var priceLabel: UILabel?
+
+        override init(frame: CGRect) {
+            let nameLabel = UILabel()
+            nameLabel.font = UIFont.systemFont(ofSize: 15)
+            nameLabel.textColor = .label
+            nameLabel.textAlignment = .natural
+            nameLabel.numberOfLines = 0
+
+            let priceLabel = UILabel()
+            priceLabel.font = UIFont.monospacedDigitSystemFont(ofSize: 13, weight: .regular)
+            priceLabel.textColor = .systemGray
+            priceLabel.textAlignment = .natural
+
+            let stackView = UIStackView(arrangedSubviews: [nameLabel, priceLabel])
+            stackView.translatesAutoresizingMaskIntoConstraints = false
+            stackView.axis = .vertical
+
+            super.init(frame: frame)
+
+            addSubview(stackView)
+
+            self.nameLabel = nameLabel
+            self.priceLabel = priceLabel
+
+            NSLayoutConstraint.activate([
+                stackView.topAnchor.constraint(greaterThanOrEqualTo: topAnchor, constant: 8),
+                stackView.centerYAnchor.constraint(equalTo: centerYAnchor),
+                bottomAnchor.constraint(greaterThanOrEqualTo: stackView.bottomAnchor, constant: 8),
+
+                stackView.leadingAnchor.constraint(equalTo: leadingAnchor),
+                trailingAnchor.constraint(equalTo: stackView.trailingAnchor)
+            ])
+        }
+
+        required init?(coder: NSCoder) {
+            fatalError("init(coder:) has not been implemented")
+        }
+    }
+
+    final class WeightView: UIView {
+        private(set) weak var unitLabel: UILabel?
+        private(set) weak var quantityLabel: UILabel?
+
+        override init(frame: CGRect) {
+            let quantityLabel = UILabel()
+            quantityLabel.translatesAutoresizingMaskIntoConstraints = false
+            quantityLabel.font = UIFont.systemFont(ofSize: 13, weight: .semibold)
+            quantityLabel.textColor = .label
+            quantityLabel.textAlignment = .right
+
+            let unitLabel = UILabel()
+            unitLabel.translatesAutoresizingMaskIntoConstraints = false
+            unitLabel.font = UIFont.systemFont(ofSize: 13, weight: .semibold)
+            unitLabel.textColor = .label
+            unitLabel.textAlignment = .center
+            unitLabel.setContentHuggingPriority(.required, for: .horizontal)
+
+            super.init(frame: frame)
+
+            addSubview(unitLabel)
+            addSubview(quantityLabel)
+
+            self.unitLabel = unitLabel
+            self.quantityLabel = quantityLabel
+
+            NSLayoutConstraint.activate([
+                quantityLabel.topAnchor.constraint(greaterThanOrEqualToSystemSpacingBelow: topAnchor, multiplier: 1),
+                bottomAnchor.constraint(greaterThanOrEqualToSystemSpacingBelow: quantityLabel.bottomAnchor, multiplier: 1),
+                quantityLabel.centerYAnchor.constraint(equalTo: centerYAnchor),
+
+                unitLabel.topAnchor.constraint(greaterThanOrEqualToSystemSpacingBelow: topAnchor, multiplier: 1),
+                bottomAnchor.constraint(greaterThanOrEqualToSystemSpacingBelow: unitLabel.bottomAnchor, multiplier: 1),
+                unitLabel.centerYAnchor.constraint(equalTo: centerYAnchor),
+
+                quantityLabel.leadingAnchor.constraint(equalTo: leadingAnchor),
+                unitLabel.leadingAnchor.constraint(equalTo: quantityLabel.trailingAnchor, constant: 8),
+                trailingAnchor.constraint(equalTo: unitLabel.trailingAnchor),
+
+                quantityLabel.widthAnchor.constraint(equalToConstant: 34),
+                unitLabel.widthAnchor.constraint(equalToConstant: 18)
+            ])
+        }
+
+        required init?(coder: NSCoder) {
+            fatalError("init(coder:) has not been implemented")
+        }
+    }
+
+    final class EntryView: UIView {
+        private(set) weak var unitLabel: UILabel?
+        private(set) weak var quantityTextField: UITextField?
+
+        override init(frame: CGRect) {
+            let quantityTextField = UITextField()
+            quantityTextField.translatesAutoresizingMaskIntoConstraints = false
+            quantityTextField.textColor = .label
+            quantityTextField.font = UIFont.systemFont(ofSize: 13, weight: .semibold)
+            quantityTextField.textAlignment = .right
+            quantityTextField.borderStyle = .roundedRect
+            quantityTextField.backgroundColor = .secondarySystemBackground
+            quantityTextField.keyboardType = .numberPad
+            quantityTextField.minimumFontSize = 17
+            quantityTextField.adjustsFontSizeToFitWidth = true
+
+            let unitLabel = UILabel()
+            unitLabel.translatesAutoresizingMaskIntoConstraints = false
+            unitLabel.font = UIFont.systemFont(ofSize: 13, weight: .semibold)
+            unitLabel.textColor = .label
+            unitLabel.textAlignment = .center
+            unitLabel.setContentHuggingPriority(.required, for: .horizontal)
+
+            super.init(frame: frame)
+
+            addSubview(quantityTextField)
+            addSubview(unitLabel)
+
+            self.quantityTextField = quantityTextField
+            self.unitLabel = unitLabel
+
+            NSLayoutConstraint.activate([
+                quantityTextField.topAnchor.constraint(greaterThanOrEqualToSystemSpacingBelow: topAnchor, multiplier: 1),
+                bottomAnchor.constraint(greaterThanOrEqualToSystemSpacingBelow: quantityTextField.bottomAnchor, multiplier: 1),
+                quantityTextField.centerYAnchor.constraint(equalTo: centerYAnchor),
+
+                unitLabel.topAnchor.constraint(greaterThanOrEqualToSystemSpacingBelow: topAnchor, multiplier: 1),
+                bottomAnchor.constraint(greaterThanOrEqualToSystemSpacingBelow: unitLabel.bottomAnchor, multiplier: 1),
+                unitLabel.centerYAnchor.constraint(equalTo: centerYAnchor),
+
+                quantityTextField.widthAnchor.constraint(equalToConstant: 80),
+
+                quantityTextField.leadingAnchor.constraint(equalTo: leadingAnchor),
+                unitLabel.leadingAnchor.constraint(equalTo: quantityTextField.trailingAnchor, constant: 8),
+                trailingAnchor.constraint(equalTo: unitLabel.trailingAnchor)
+            ])
+        }
+
+        required init?(coder: NSCoder) {
+            fatalError("init(coder:) has not been implemented")
+        }
+    }
+
+    final class QuantityView: UIView {
+        private(set) weak var minusButton: UIButton?
+        private(set) weak var plusButton: UIButton?
+        private(set) weak var quantityLabel: UILabel?
+
+        override init(frame: CGRect) {
+            let minusButton = UIButton(type: .custom)
+            minusButton.translatesAutoresizingMaskIntoConstraints = false
+            minusButton.setImage(Asset.SnabbleSDK.iconMinus.image, for: .normal)
+            minusButton.makeBorderedButton()
+            minusButton.backgroundColor = .secondarySystemBackground
+
+            let plusButton = UIButton(type: .custom)
+            plusButton.translatesAutoresizingMaskIntoConstraints = false
+            plusButton.setImage(Asset.SnabbleSDK.iconPlus.image, for: .normal)
+            plusButton.makeBorderedButton()
+            plusButton.backgroundColor = .secondarySystemBackground
+
+            let quantityLabel = UILabel()
+            quantityLabel.translatesAutoresizingMaskIntoConstraints = false
+            quantityLabel.font = UIFont.systemFont(ofSize: 13, weight: .semibold)
+            quantityLabel.textColor = .label
+            quantityLabel.textAlignment = .center
+            super.init(frame: frame)
+
+            addSubview(minusButton)
+            addSubview(plusButton)
+            addSubview(quantityLabel)
+
+            self.minusButton = minusButton
+            self.plusButton = plusButton
+            self.quantityLabel = quantityLabel
+
+            NSLayoutConstraint.activate([
+                minusButton.topAnchor.constraint(greaterThanOrEqualTo: topAnchor),
+                bottomAnchor.constraint(greaterThanOrEqualTo: minusButton.bottomAnchor),
+                minusButton.centerYAnchor.constraint(equalTo: centerYAnchor),
+
+                plusButton.topAnchor.constraint(greaterThanOrEqualTo: topAnchor),
+                bottomAnchor.constraint(greaterThanOrEqualTo: plusButton.bottomAnchor),
+                plusButton.centerYAnchor.constraint(equalTo: centerYAnchor),
+
+                quantityLabel.topAnchor.constraint(greaterThanOrEqualTo: topAnchor),
+                bottomAnchor.constraint(greaterThanOrEqualTo: quantityLabel.bottomAnchor),
+                quantityLabel.centerYAnchor.constraint(equalTo: centerYAnchor),
+
+                minusButton.leadingAnchor.constraint(equalTo: leadingAnchor),
+                quantityLabel.leadingAnchor.constraint(equalTo: minusButton.trailingAnchor),
+                plusButton.leadingAnchor.constraint(equalTo: quantityLabel.trailingAnchor),
+                trailingAnchor.constraint(equalTo: plusButton.trailingAnchor),
+
+                minusButton.widthAnchor.constraint(equalToConstant: 32),
+                minusButton.heightAnchor.constraint(equalToConstant: 32),
+
+                plusButton.widthAnchor.constraint(equalTo: minusButton.widthAnchor),
+                plusButton.heightAnchor.constraint(equalTo: minusButton.heightAnchor),
+
+                quantityLabel.widthAnchor.constraint(equalToConstant: 34)
+            ])
+        }
+
+        required init?(coder: NSCoder) {
+            fatalError("init(coder:) has not been implemented")
         }
     }
 }
