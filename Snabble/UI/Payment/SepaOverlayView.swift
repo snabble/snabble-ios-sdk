@@ -11,8 +11,6 @@ public protocol SepaOverlayViewModel {
     var text: NSAttributedString { get }
 
     var successButtonTitle: String { get }
-    var successButtonBackgroundColor: UIColor? { get }
-    var successButtonTintColor: UIColor? { get }
 }
 
 public final class SepaOverlayView: UIView {
@@ -49,6 +47,7 @@ public final class SepaOverlayView: UIView {
         successButton.translatesAutoresizingMaskIntoConstraints = false
         successButton.preferredFont(forTextStyle: .headline)
         successButton.layer.cornerRadius = 8
+        successButton.makeSnabbleButton()
 
         super.init(frame: frame)
 
@@ -107,9 +106,6 @@ public final class SepaOverlayView: UIView {
         textLabel?.attributedText = viewModel.text
 
         successButton?.setTitle(viewModel.successButtonTitle, for: .normal)
-
-        successButton?.backgroundColor = viewModel.successButtonBackgroundColor
-        successButton?.tintColor = viewModel.successButtonTintColor
     }
 
     public struct ViewModel: SepaOverlayViewModel {
@@ -117,13 +113,8 @@ public final class SepaOverlayView: UIView {
         public let text: NSAttributedString
 
         public let successButtonTitle: String = L10n.Snabble.Sepa.iAgree
-        public let successButtonTintColor: UIColor?
-        public let successButtonBackgroundColor: UIColor?
 
-        public init(project: Project?, appearance: CustomAppearance) {
-            successButtonTintColor = appearance.accentColor.contrast
-            successButtonBackgroundColor = appearance.accentColor
-
+        public init(project: Project?) {
             let text = project?.messages?.sepaMandateShort ?? ""
             var attributedString = NSAttributedString(string: text)
 
