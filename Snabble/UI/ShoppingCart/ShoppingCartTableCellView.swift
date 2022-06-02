@@ -314,6 +314,7 @@ extension ShoppingCartTableCellView {
             unitLabel.font = UIFont.systemFont(ofSize: 13, weight: .semibold)
             unitLabel.textColor = .label
             unitLabel.textAlignment = .center
+            unitLabel.setContentHuggingPriority(.required, for: .horizontal)
 
             super.init(frame: frame)
 
@@ -367,6 +368,7 @@ extension ShoppingCartTableCellView {
             unitLabel.font = UIFont.systemFont(ofSize: 13, weight: .semibold)
             unitLabel.textColor = .label
             unitLabel.textAlignment = .center
+            unitLabel.setContentHuggingPriority(.required, for: .horizontal)
 
             super.init(frame: frame)
 
