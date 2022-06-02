@@ -17,20 +17,24 @@ final class PaymentMethodAddCell: UITableViewCell {
     private weak var icon: UIImageView?
     private weak var nameLabel: UILabel?
     private weak var countLabel: UILabel?
+    private var projectId: Identifier<Project>?
 
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         let icon = UIImageView()
         let nameLabel = UILabel()
         let countLabel = UILabel()
+        let arrowImage = UIImageView()
         super.init(style: style, reuseIdentifier: reuseIdentifier)
 
         icon.translatesAutoresizingMaskIntoConstraints = false
         nameLabel.translatesAutoresizingMaskIntoConstraints = false
         countLabel.translatesAutoresizingMaskIntoConstraints = false
+        arrowImage.translatesAutoresizingMaskIntoConstraints = false
 
         contentView.addSubview(icon)
         contentView.addSubview(nameLabel)
         contentView.addSubview(countLabel)
+        contentView.addSubview(arrowImage)
 
         self.icon = icon
         self.nameLabel = nameLabel
@@ -43,13 +47,16 @@ final class PaymentMethodAddCell: UITableViewCell {
         countLabel.font = UIFont.preferredFont(forTextStyle: .subheadline)
         countLabel.adjustsFontForContentSizeCategory = true
         countLabel.textColor = ColorCompatibility.systemGray2
-
-        self.accessoryType = .disclosureIndicator
+        countLabel.textAlignment = .center
 
         icon.setContentHuggingPriority(.defaultHigh, for: .horizontal)
         nameLabel.setContentHuggingPriority(.defaultLow, for: .horizontal)
         nameLabel.setContentCompressionResistancePriority(.defaultLow, for: .horizontal)
         countLabel.setContentHuggingPriority(.defaultHigh, for: .horizontal)
+
+        arrowImage.contentMode = .scaleAspectFit
+        arrowImage.image = Asset.SnabbleSDK.iconChevron.image
+
         NSLayoutConstraint.activate([
             icon.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 16),
             icon.centerYAnchor.constraint(equalTo: contentView.centerYAnchor),
@@ -62,8 +69,13 @@ final class PaymentMethodAddCell: UITableViewCell {
             nameLabel.bottomAnchor.constraint(lessThanOrEqualTo: contentView.bottomAnchor, constant: -8),
 
             countLabel.leadingAnchor.constraint(equalTo: nameLabel.trailingAnchor, constant: 16),
-            countLabel.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -8),
             countLabel.centerYAnchor.constraint(equalTo: contentView.centerYAnchor),
+
+            arrowImage.leadingAnchor.constraint(equalTo: countLabel.trailingAnchor, constant: 16),
+            arrowImage.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -16),
+            arrowImage.centerYAnchor.constraint(equalTo: contentView.centerYAnchor),
+            arrowImage.heightAnchor.constraint(equalToConstant: 20),
+            arrowImage.widthAnchor.constraint(equalToConstant: 20),
 
             contentView.heightAnchor.constraint(greaterThanOrEqualToConstant: 44)
         ])
@@ -80,8 +92,6 @@ final class PaymentMethodAddCell: UITableViewCell {
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
-
-    private var projectId: Identifier<Project>?
 
     func configure(with viewModel: PaymentMethodAddCellViewModel) {
         nameLabel?.text = viewModel.name
