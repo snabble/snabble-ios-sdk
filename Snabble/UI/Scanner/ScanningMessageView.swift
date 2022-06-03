@@ -44,7 +44,8 @@ final class ScanningMessageView: UIView {
 
         let label = UILabel()
         label.translatesAutoresizingMaskIntoConstraints = false
-        label.font = UIFont.systemFont(ofSize: 17)
+        label.font = .preferredFont(forTextStyle: .body)
+        label.adjustsFontForContentSizeCategory = true
         label.textColor = .label
         label.textAlignment = .natural
         label.numberOfLines = 0
