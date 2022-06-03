@@ -13,6 +13,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 * Added dynamic fonts to SepaEditViewController #Apps-231
 * Added dynamic fonts to TeleCashCreditCardEditViewController #Apps-231
 * Added dynamic fints to PaymentMethodAddCell and PaymentMethodAddViewController #Apps-231
+* Added dynamic fonts to SepaOverlayView #Apps-231
+
+### Changed
+* Shopping cart indicator icons are scaled incorrectly #APPS-333
 
 ## [0.19.2] - 2022-5-25
 
