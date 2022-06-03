@@ -33,7 +33,6 @@ internal enum Asset {
     internal static let iconCartInactiveFull = SwiftGenImageAsset(name: "SnabbleSDK/icon-cart-inactive-full")
     internal static let iconCheckLarge = SwiftGenImageAsset(name: "SnabbleSDK/icon-check-large")
     internal static let iconChevronDown = SwiftGenImageAsset(name: "SnabbleSDK/icon-chevron-down")
-    internal static let iconChevron = SwiftGenImageAsset(name: "SnabbleSDK/icon-chevron")
     internal static let iconClose = SwiftGenImageAsset(name: "SnabbleSDK/icon-close")
     internal static let iconEntercode = SwiftGenImageAsset(name: "SnabbleSDK/icon-entercode")
     internal static let iconGiveaway = SwiftGenImageAsset(name: "SnabbleSDK/icon-giveaway")

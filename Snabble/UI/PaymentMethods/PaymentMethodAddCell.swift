@@ -23,18 +23,16 @@ final class PaymentMethodAddCell: UITableViewCell {
         let icon = UIImageView()
         let nameLabel = UILabel()
         let countLabel = UILabel()
-        let arrowImage = UIImageView()
+
         super.init(style: style, reuseIdentifier: reuseIdentifier)
 
         icon.translatesAutoresizingMaskIntoConstraints = false
         nameLabel.translatesAutoresizingMaskIntoConstraints = false
         countLabel.translatesAutoresizingMaskIntoConstraints = false
-        arrowImage.translatesAutoresizingMaskIntoConstraints = false
 
         contentView.addSubview(icon)
         contentView.addSubview(nameLabel)
         contentView.addSubview(countLabel)
-        contentView.addSubview(arrowImage)
 
         self.icon = icon
         self.nameLabel = nameLabel
@@ -54,8 +52,7 @@ final class PaymentMethodAddCell: UITableViewCell {
         nameLabel.setContentCompressionResistancePriority(.defaultLow, for: .horizontal)
         countLabel.setContentHuggingPriority(.defaultHigh, for: .horizontal)
 
-        arrowImage.contentMode = .scaleAspectFit
-        arrowImage.image = Asset.SnabbleSDK.iconChevron.image
+        self.accessoryType = .disclosureIndicator
 
         NSLayoutConstraint.activate([
             icon.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 16),
@@ -70,13 +67,7 @@ final class PaymentMethodAddCell: UITableViewCell {
 
             countLabel.leadingAnchor.constraint(equalTo: nameLabel.trailingAnchor, constant: 16),
             countLabel.centerYAnchor.constraint(equalTo: contentView.centerYAnchor),
-
-            arrowImage.leadingAnchor.constraint(equalTo: countLabel.trailingAnchor, constant: 16),
-            arrowImage.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -16),
-            arrowImage.centerYAnchor.constraint(equalTo: contentView.centerYAnchor),
-            arrowImage.heightAnchor.constraint(equalToConstant: 20),
-            arrowImage.widthAnchor.constraint(equalToConstant: 20),
-
+            countLabel.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -16),
             contentView.heightAnchor.constraint(greaterThanOrEqualToConstant: 44)
         ])
     }

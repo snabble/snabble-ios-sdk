@@ -59,10 +59,6 @@ public final class PaymentMethodAddViewController: UITableViewController {
     override public func viewDidLoad() {
         super.viewDidLoad()
 
-        if #available(iOS 15, *) {
-            view.restrictDynamicTypeSize(from: nil, to: .extraExtraExtraLarge)
-        }
-
         self.title = L10n.Snabble.PaymentMethods.title
         tableView.tableFooterView = UIView(frame: .zero)
         tableView.rowHeight = UITableView.automaticDimension
