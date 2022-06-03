@@ -91,6 +91,9 @@ final class ScanningViewController: UIViewController {
     override public func loadView() {
         super.loadView()
 
+        if #available(iOS 15, *) {
+            self.view.restrictDynamicTypeSize(from: nil, to: .extraExtraExtraLarge)
+        }
         let spinner = UIActivityIndicatorView()
         spinner.translatesAutoresizingMaskIntoConstraints = false
         spinner.color = UIColor.systemGray

@@ -80,7 +80,7 @@ final class ScanConfirmationView: UIView {
         let cartButton = UIButton(type: .system)
         cartButton.translatesAutoresizingMaskIntoConstraints = false
         cartButton.setTitle(L10n.Snabble.Scanner.addToCart, for: .normal)
-        cartButton.titleLabel?.font = UIFont.systemFont(ofSize: 17, weight: .semibold)
+        cartButton.preferredFont(forTextStyle: .headline)
         cartButton.makeSnabbleButton()
         cartButton.isUserInteractionEnabled = true
         cartButton.addTarget(self, action: #selector(cartButtonTapped(_:)), for: .touchUpInside)
@@ -93,22 +93,27 @@ final class ScanConfirmationView: UIView {
         productStack.spacing = 4
 
         let subtitleLabel = customLabel
-        subtitleLabel.font = UIFont.systemFont(ofSize: 13)
+        subtitleLabel.font = .preferredFont(forTextStyle: .footnote)
+        subtitleLabel.adjustsFontForContentSizeCategory = true
 
         let productNameLabel = customLabel
-        productNameLabel.font = UIFont.systemFont(ofSize: 17, weight: .bold)
+        productNameLabel.font = .preferredFont(forTextStyle: .body, weight: .bold)
+        productNameLabel.adjustsFontForContentSizeCategory = true
 
         let originalPriceLabel = customLabel
-        originalPriceLabel.font = UIFont.systemFont(ofSize: 17)
+        originalPriceLabel.font = .preferredFont(forTextStyle: .body)
+        originalPriceLabel.adjustsFontForContentSizeCategory = true
         originalPriceLabel.textColor = .secondaryLabel
 
         let priceLabel = customLabel
-        priceLabel.font = UIFont.monospacedDigitSystemFont(ofSize: 17, weight: .regular)
+        priceLabel.font = .preferredFont(forTextStyle: .body)
+        priceLabel.adjustsFontForContentSizeCategory = true
 
         let manualDiscountButton = UIButton(type: .system)
         manualDiscountButton.translatesAutoresizingMaskIntoConstraints = false
         manualDiscountButton.setTitle(L10n.Snabble.addDiscount, for: .normal)
-        manualDiscountButton.titleLabel?.font = UIFont.systemFont(ofSize: 17)
+        manualDiscountButton.preferredFont(forTextStyle: .body)
+
         let contrastRatio = UIColor.getContrastRatio(forTextColor: SnabbleUI.appearance.accentColor,
                                                      onBackgroundColor: .systemBackground)
         let conformanceLevel = ConformanceLevel(contrastRatio: contrastRatio ?? 1, fontSize: 17, isBoldFont: false)
@@ -138,7 +143,8 @@ final class ScanConfirmationView: UIView {
 
         let quantityField = UITextField()
         quantityField.translatesAutoresizingMaskIntoConstraints = false
-        quantityField.font = UIFont.monospacedDigitSystemFont(ofSize: 21, weight: .regular)
+        quantityField.font = .preferredFont(forTextStyle: .title3)
+        quantityField.adjustsFontForContentSizeCategory = true
         quantityField.tintColor = .label
         quantityField.delegate = self
         quantityField.addDoneButton()
@@ -147,7 +153,8 @@ final class ScanConfirmationView: UIView {
         quantityField.keyboardType = .numberPad
 
         let unitLabel = customLabel
-        unitLabel.font = UIFont.systemFont(ofSize: 17)
+        unitLabel.font = .preferredFont(forTextStyle: .body)
+        unitLabel.adjustsFontForContentSizeCategory = true
         unitLabel.textAlignment = .natural
 
         addSubview(closeButton)

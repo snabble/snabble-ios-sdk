@@ -173,7 +173,6 @@ final class ScannerDrawerViewController: UIViewController {
         if #available(iOS 15, *) {
             self.view.restrictDynamicTypeSize(from: nil, to: .extraExtraExtraLarge)
         }
-
     }
 
     override func viewDidLoad() {
