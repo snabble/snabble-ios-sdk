@@ -73,6 +73,10 @@ final class ShoppingCartTableViewController: UITableViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
 
+        if #available(iOS 15, *) {
+            self.view.restrictDynamicTypeSize(from: nil, to: .extraExtraExtraLarge)
+        }
+
         self.view.backgroundColor = .clear
 
         self.tableView.register(ShoppingCartTableCell.self, forCellReuseIdentifier: self.itemCellIdentifier)
