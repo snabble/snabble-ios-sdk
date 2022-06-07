@@ -31,6 +31,10 @@ public final class InFlightCheckoutContinuationViewController: UIViewController 
     override public func loadView() {
         let view = UIView(frame: UIScreen.main.bounds)
 
+        if #available(iOS 15, *) {
+            view.restrictDynamicTypeSize(from: nil, to: .extraExtraExtraLarge)
+        }
+
         view.backgroundColor = .systemBackground
 
         let activityIndicatorView: UIActivityIndicatorView
