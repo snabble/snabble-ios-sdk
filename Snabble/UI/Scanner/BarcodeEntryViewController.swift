@@ -49,7 +49,7 @@ public final class BarcodeEntryViewController: UIViewController {
 
         if #available(iOS 15, *) {
             view.restrictDynamicTypeSize(from: nil, to: .extraExtraExtraLarge)
-        }4
+        }
 
         searchBar.translatesAutoresizingMaskIntoConstraints = false
         searchBar.delegate = self
