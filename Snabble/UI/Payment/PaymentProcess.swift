@@ -221,7 +221,12 @@ public final class PaymentProcess {
         blurEffectView.frame = view.bounds
         blurEffectView.autoresizingMask = [.flexibleWidth, .flexibleHeight]
 
-        let activityIndicator = UIActivityIndicatorView(style: .whiteLarge)
+        let activityIndicator: UIActivityIndicatorView
+        if #available(iOS 13.0, *) {
+            activityIndicator = UIActivityIndicatorView(style: .large)
+        } else {
+            activityIndicator = UIActivityIndicatorView(style: .whiteLarge)
+        }
         activityIndicator.frame = CGRect(x: 0, y: 0, width: 50, height: 50)
         activityIndicator.startAnimating()
 
@@ -257,14 +262,14 @@ extension PaymentProcess {
             return completion(Result.failure(.noRequest))
         }
 
-        UIApplication.shared.beginIgnoringInteractionEvents()
+        UIApplication.shared.mainKeyWindow?.isUserInteractionEnabled = false
         self.startBlurOverlayTimer()
 
         let project = shop.project ?? .none
         let id = self.cart.uuid
         self.signedCheckoutInfo.createCheckoutProcess(project, id: id, paymentMethod: method, timeout: Self.createTimeout) { result in
             self.hudTimer?.invalidate()
-            UIApplication.shared.endIgnoringInteractionEvents()
+            UIApplication.shared.mainKeyWindow?.isUserInteractionEnabled = true
             self.hideBlurOverlay()
             switch result.result {
             case .success(let process):

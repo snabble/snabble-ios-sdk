@@ -77,8 +77,8 @@ struct PaymentDataEncrypter {
 
         let certs: NSArray = [cert, root]
         var secTrustResult: SecTrust?
-        var status = SecTrustCreateWithCertificates(certs, nil, &secTrustResult)
-        if status != errSecSuccess {
+        let status = SecTrustCreateWithCertificates(certs, nil, &secTrustResult)
+        guard status == errSecSuccess else {
             return nil
         }
 
@@ -91,14 +91,20 @@ struct PaymentDataEncrypter {
         SecTrustSetAnchorCertificates(secTrust, anchors)
 
         // check if cerficate and root match
-        var trustResult = SecTrustResultType.invalid
-        status = SecTrustEvaluate(secTrust, &trustResult)
-        if status != errSecSuccess || trustResult != .unspecified {
+        guard SecTrustEvaluateWithError(secTrust, nil) else {
             return nil
         }
 
         // encrypt the payment data
-        if let publicKeyRef = SecTrustCopyPublicKey(secTrust), let plainTextData = plainText.data(using: .utf8) {
+        let publicKeyRef: SecKey?
+        if #available(iOS 14, *) {
+            publicKeyRef = SecTrustCopyKey(secTrust)
+        } else {
+            publicKeyRef = SecTrustCopyPublicKey(secTrust)
+        }
+
+
+        if let publicKeyRef = publicKeyRef, let plainTextData = plainText.data(using: .utf8) {
             var error: Unmanaged<CFError>?
             if let cipher = SecKeyCreateEncryptedData(publicKeyRef, .rsaEncryptionOAEPSHA256, plainTextData as CFData, &error) as Data? {
                 return cipher.base64EncodedString()
