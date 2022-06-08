@@ -60,7 +60,6 @@ public final class PaymentMethodAddViewController: UITableViewController {
         super.viewDidLoad()
 
         self.title = L10n.Snabble.PaymentMethods.title
-
         tableView.tableFooterView = UIView(frame: .zero)
         tableView.rowHeight = UITableView.automaticDimension
         tableView.register(PaymentMethodAddCell.self, forCellReuseIdentifier: "cell")
