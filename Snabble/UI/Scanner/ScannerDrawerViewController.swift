@@ -169,6 +169,10 @@ final class ScannerDrawerViewController: UIViewController {
         self.segmentedControl = segmentedControl
         self.innerSpacer = innerSpacer
         self.bottomView = bottomView
+
+        if #available(iOS 15, *) {
+            self.view.restrictDynamicTypeSize(from: nil, to: .extraExtraExtraLarge)
+        }
     }
 
     override func viewDidLoad() {

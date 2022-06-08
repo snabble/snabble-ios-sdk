@@ -47,6 +47,10 @@ public final class BarcodeEntryViewController: UIViewController {
     override public func viewDidLoad() {
         super.viewDidLoad()
 
+        if #available(iOS 15, *) {
+            view.restrictDynamicTypeSize(from: nil, to: .extraExtraExtraLarge)
+        }
+
         searchBar.translatesAutoresizingMaskIntoConstraints = false
         searchBar.delegate = self
         searchBar.keyboardType = .numberPad

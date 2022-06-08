@@ -45,10 +45,11 @@ final class ShoppingListCellView: UIView {
 
         let nameLabel = UILabel()
         nameLabel.translatesAutoresizingMaskIntoConstraints = false
-        nameLabel.font = UIFont.systemFont(ofSize: 15)
+        nameLabel.font = .preferredFont(forTextStyle: .subheadline)
+        nameLabel.adjustsFontForContentSizeCategory = true
         nameLabel.textColor = .label
         nameLabel.textAlignment = .natural
-        nameLabel.numberOfLines = 1
+        nameLabel.numberOfLines = 0
 
         let tickLayoutGuide = UILayoutGuide()
 
@@ -72,7 +73,8 @@ final class ShoppingListCellView: UIView {
 
         let quantityLabel = UILabel()
         quantityLabel.translatesAutoresizingMaskIntoConstraints = false
-        quantityLabel.font = UIFont.systemFont(ofSize: 13)
+        quantityLabel.font = .preferredFont(forTextStyle: .footnote)
+        quantityLabel.adjustsFontForContentSizeCategory = true
         quantityLabel.textColor = .label
         quantityLabel.textAlignment = .center
         quantityLabel.numberOfLines = 1
@@ -117,8 +119,8 @@ final class ShoppingListCellView: UIView {
 
             nameLabel.leadingAnchor.constraint(equalTo: imageViewLayuotGuide.trailingAnchor, constant: 10),
             nameLabel.trailingAnchor.constraint(equalTo: tickLayoutGuide.leadingAnchor),
-            nameLabel.topAnchor.constraint(equalTo: topAnchor),
-            nameLabel.bottomAnchor.constraint(equalTo: bottomAnchor),
+            nameLabel.topAnchor.constraint(equalTo: topAnchor, constant: 6),
+            nameLabel.bottomAnchor.constraint(equalTo: bottomAnchor, constant: -6),
 
             checkContainer.trailingAnchor.constraint(equalTo: tickLayoutGuide.trailingAnchor).usingPriority(.defaultHigh),
             checkContainer.widthAnchor.constraint(equalToConstant: 24).usingPriority(.defaultHigh + 1),
@@ -133,7 +135,9 @@ final class ShoppingListCellView: UIView {
             quantityLabel.leadingAnchor.constraint(equalTo: tickLayoutGuide.leadingAnchor),
             quantityLabel.trailingAnchor.constraint(equalTo: checkContainer.leadingAnchor),
             quantityLabel.heightAnchor.constraint(equalToConstant: 24),
-            quantityLabel.centerYAnchor.constraint(equalTo: tickLayoutGuide.centerYAnchor)
+            quantityLabel.centerYAnchor.constraint(equalTo: tickLayoutGuide.centerYAnchor),
+
+            heightAnchor.constraint(greaterThanOrEqualToConstant: 50)
         ])
     }
 

@@ -28,6 +28,10 @@ final class ScannerShoppingListViewController: UITableViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
 
+        if #available(iOS 15, *) {
+            self.view.restrictDynamicTypeSize(from: nil, to: .extraExtraExtraLarge)
+        }
+
         tableView.delegate = self
         tableView.dataSource = self
         tableView.tableFooterView = UIView(frame: .zero)
@@ -81,10 +85,6 @@ final class ScannerShoppingListViewController: UITableViewController {
 
 // MARK: - TableView
 extension ScannerShoppingListViewController {
-    override func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-        return 50
-    }
-
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return shoppingList?.count ?? 0
     }

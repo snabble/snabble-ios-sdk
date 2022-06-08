@@ -48,13 +48,15 @@ final class CheckoutBar: UIView {
 
         let itemCountLabel = UILabel()
         itemCountLabel.translatesAutoresizingMaskIntoConstraints = false
-        itemCountLabel.font = UIFont.systemFont(ofSize: 13)
+        itemCountLabel.font = .preferredFont(forTextStyle: .footnote)
+        itemCountLabel.adjustsFontForContentSizeCategory = true
         itemCountLabel.textColor = .secondaryLabel
         itemCountLabel.textAlignment = .left
 
         let totalPriceLabel = UILabel()
         totalPriceLabel.translatesAutoresizingMaskIntoConstraints = false
-        totalPriceLabel.font = UIFont.monospacedDigitSystemFont(ofSize: 22, weight: .bold)
+        totalPriceLabel.font = .preferredFont(forTextStyle: .title2, weight: .bold)
+        totalPriceLabel.adjustsFontForContentSizeCategory = true
         totalPriceLabel.textColor = .label
         totalPriceLabel.textAlignment = .right
 
@@ -80,7 +82,8 @@ final class CheckoutBar: UIView {
 
         let noPaymentLabel = UILabel()
         noPaymentLabel.translatesAutoresizingMaskIntoConstraints = false
-        noPaymentLabel.font = UIFont.systemFont(ofSize: 17, weight: .medium)
+        noPaymentLabel.font = .preferredFont(forTextStyle: .body, weight: .medium)
+        noPaymentLabel.adjustsFontForContentSizeCategory = true
         noPaymentLabel.textColor = .label
         noPaymentLabel.textAlignment = .center
         noPaymentLabel.text = L10n.Snabble.Shoppingcart.BuyProducts.selectPaymentMethod
@@ -100,7 +103,7 @@ final class CheckoutBar: UIView {
         checkoutButton.setTitle(L10n.Snabble.Shoppingcart.BuyProducts.now, for: .normal)
         let disabledColor = SnabbleUI.appearance.accentColor.contrast?.withAlphaComponent(0.5)
         checkoutButton.setTitleColor(disabledColor, for: .disabled)
-        checkoutButton.titleLabel?.font = UIFont.systemFont(ofSize: 17, weight: .semibold)
+        checkoutButton.preferredFont(forTextStyle: .headline)
         checkoutButton.makeSnabbleButton()
         checkoutButton.isEnabled = true
         checkoutButton.isUserInteractionEnabled = true
@@ -126,7 +129,6 @@ final class CheckoutBar: UIView {
         self.checkoutButton = checkoutButton
 
         NSLayoutConstraint.activate([
-
             summaryLayoutGuide.topAnchor.constraint(equalTo: topAnchor),
             summaryLayoutGuide.leadingAnchor.constraint(equalTo: leadingAnchor),
             summaryLayoutGuide.trailingAnchor.constraint(equalTo: trailingAnchor),
