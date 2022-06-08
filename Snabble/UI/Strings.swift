@@ -696,10 +696,6 @@ public enum L10n {
       public static var notForThisPurchase: String { return L10n.tr("SnabbleLocalizable", "Snabble.Shoppingcart.notForThisPurchase") }
       /// Not supported by this retailer
       public static var notForVendor: String { return L10n.tr("SnabbleLocalizable", "Snabble.Shoppingcart.notForVendor") }
-      /// %d products
-      public static func numberOfItems(_ p1: Int) -> String {
-        return L10n.tr("SnabbleLocalizable", "Snabble.Shoppingcart.numberOfItems", p1)
-      }
       /// Really remove %@?
       public static func removeItem(_ p1: Any) -> String {
         return L10n.tr("SnabbleLocalizable", "Snabble.Shoppingcart.removeItem", String(describing: p1))
@@ -772,6 +768,10 @@ public enum L10n {
         /// %d product
         public static func one(_ p1: Int) -> String {
           return L10n.tr("SnabbleLocalizable", "Snabble.Shoppingcart.numberOfItems.one", p1)
+        }
+        /// %d products
+        public static func other(_ p1: Int) -> String {
+          return L10n.tr("SnabbleLocalizable", "Snabble.Shoppingcart.numberOfItems.other", p1)
         }
       }
     }

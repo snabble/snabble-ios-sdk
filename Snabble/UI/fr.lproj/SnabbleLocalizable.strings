@@ -75,11 +75,15 @@
 
 "Snabble.Coupons.expiresAtDate" = "valable jusqu'au %@";
 
+"Snabble.Coupons.expiresInDays.many" = "encore %d jours";
+
 "Snabble.Coupons.expiresInDays.one" = "encore %d jour";
 
 "Snabble.Coupons.expiresInDays.other" = "encore %d jours";
 
 "Snabble.Coupons.expiresInDays.zero" = "Déjà expiré";
+
+"Snabble.Coupons.expiresInHours.many" = "encore %d heures";
 
 "Snabble.Coupons.expiresInHours.one" = "encore %d heure";
 
@@ -87,11 +91,15 @@
 
 "Snabble.Coupons.expiresInHours.zero" = "Déjà expiré";
 
+"Snabble.Coupons.expiresInMinutes.many" = "encore %d minutes";
+
 "Snabble.Coupons.expiresInMinutes.one" = "encore %d minute";
 
 "Snabble.Coupons.expiresInMinutes.other" = "encore %d minutes";
 
 "Snabble.Coupons.expiresInMinutes.zero" = "Déjà expiré";
+
+"Snabble.Coupons.expiresInWeeks.many" = "encore %d semaines";
 
 "Snabble.Coupons.expiresInWeeks.one" = "encore %d semaine";
 
@@ -134,7 +142,7 @@
 
 "Snabble.limitsAlert.title" = "À noter";
 
-"Snabble.loadingProductInformation" = "Chargement des informations de produit...";
+"Snabble.loadingProductInformation" = "Chargement des informations de produit…";
 
 "Snabble.networkError" = "Erreur de connexion au réseau";
 
@@ -329,7 +337,7 @@
 
 "Snabble.Payone.Lastname" = "Last Name";
 
-"Snabble.pleaseWait" = "Merci d’attendre...";
+"Snabble.pleaseWait" = "Merci d’attendre…";
 
 "Snabble.PostFinanceCard.payNow" = "Payer maintenant avec la carte PostFinance";
 
@@ -543,7 +551,11 @@
 
 "Snabble.Shoppingcart.notForVendor" = "N’est pas pris en charge par le commerçant";
 
-"Snabble.Shoppingcart.numberOfItems" = "%d article";
+"Snabble.Shoppingcart.numberOfItems.many" = "%d articles";
+
+"Snabble.Shoppingcart.numberOfItems.one" = "%d article";
+
+"Snabble.Shoppingcart.numberOfItems.other" = "%d articles";
 
 "Snabble.Shoppingcart.numberOfItems.one" = "%d product";
 

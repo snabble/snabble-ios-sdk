@@ -61,47 +61,63 @@
 
 "Snabble.Checkout.verifying" = "Overujem";
 
-"Snabble.Coupon.activate" = "Activate";
+"Snabble.Coupon.activate" = "Aktivovať";
 
-"Snabble.Coupon.activated" = "Activated";
+"Snabble.Coupon.activated" = "Aktivovaný";
 
-"Snabble.Coupon.countdown" = "Coupon expires in %@ minutes";
+"Snabble.Coupon.countdown" = "Platnosť kupónu končí o %@ minút";
 
-"Snabble.Coupon.expired" = "This coupon is expired.";
+"Snabble.Coupon.expired" = "Platnosť tohto kupónu už skončila.";
 
-"Snabble.Coupon.explanation" = "Your coupon is now activated for you. Please scan the product in the shop and put it in your shopping cart to benefit from it.";
+"Snabble.Coupon.explanation" = "Tento kupón je teraz pre teba aktivovaný. Ak chceš využiť kupón, naskenuj výrobok v obchode a pridaj ho do nákupného košíka.";
 
-"Snabble.Coupons.expired" = "Already expired";
+"Snabble.Coupons.expired" = "Platnosť už skončila";
 
-"Snabble.Coupons.expiresAtDate" = "valid until %@";
+"Snabble.Coupons.expiresAtDate" = "platný do %@";
 
-"Snabble.Coupons.expiresInDays.one" = "%d day remaining";
+"Snabble.Coupons.expiresInDays.few" = "ešte %d dni";
 
-"Snabble.Coupons.expiresInDays.other" = "%d days remaining";
+"Snabble.Coupons.expiresInDays.many" = "ešte %d dní";
 
-"Snabble.Coupons.expiresInDays.zero" = "Already expired";
+"Snabble.Coupons.expiresInDays.one" = "ešte %d deň";
 
-"Snabble.Coupons.expiresInHours.one" = "%d hour remaining";
+"Snabble.Coupons.expiresInDays.other" = "ešte %d dní";
 
-"Snabble.Coupons.expiresInHours.other" = "%d hours remaining";
+"Snabble.Coupons.expiresInDays.zero" = "Platnosť už skončila";
 
-"Snabble.Coupons.expiresInHours.zero" = "Already expired";
+"Snabble.Coupons.expiresInHours.few" = "ešte %d hodiny";
 
-"Snabble.Coupons.expiresInMinutes.one" = "%d minute remaining";
+"Snabble.Coupons.expiresInHours.many" = "ešte %d hodín";
 
-"Snabble.Coupons.expiresInMinutes.other" = "%d minutes remaining";
+"Snabble.Coupons.expiresInHours.one" = "ešte %d hodina";
 
-"Snabble.Coupons.expiresInMinutes.zero" = "Already expired";
+"Snabble.Coupons.expiresInHours.other" = "ešte %d hodín";
 
-"Snabble.Coupons.expiresInWeeks.one" = "%d week remaining";
+"Snabble.Coupons.expiresInHours.zero" = "Platnosť už skončila";
 
-"Snabble.Coupons.expiresInWeeks.other" = "%d weeks remaining";
+"Snabble.Coupons.expiresInMinutes.few" = "ešte %d minúty";
 
-"Snabble.Coupons.expiresInWeeks.zero" = "Already expired";
+"Snabble.Coupons.expiresInMinutes.many" = "ešte %d minút";
 
-"Snabble.Coupons.none" = "No Coupons available";
+"Snabble.Coupons.expiresInMinutes.one" = "ešte %d minúta";
 
-"Snabble.Coupons.title" = "Coupons";
+"Snabble.Coupons.expiresInMinutes.other" = "ešte %d minút";
+
+"Snabble.Coupons.expiresInMinutes.zero" = "Platnosť už skončila";
+
+"Snabble.Coupons.expiresInWeeks.few" = "ešte %d týždňov";
+
+"Snabble.Coupons.expiresInWeeks.many" = "ešte %d týždňov";
+
+"Snabble.Coupons.expiresInWeeks.one" = "ešte %d týždeň";
+
+"Snabble.Coupons.expiresInWeeks.other" = "ešte %d týždňov";
+
+"Snabble.Coupons.expiresInWeeks.zero" = "Platnosť už skončila";
+
+"Snabble.Coupons.none" = "Kupóny nie sú k dispozícii";
+
+"Snabble.Coupons.title" = "Kupóny";
 
 "Snabble.CreditCard.payNow" = "Teraz zaplatiť kreditnou kartou";
 
@@ -329,7 +345,7 @@
 
 "Snabble.Payone.Lastname" = "Priezvisko";
 
-"Snabble.pleaseWait" = "Čakaj, prosím...";
+"Snabble.pleaseWait" = "Čakaj, prosím…";
 
 "Snabble.PostFinanceCard.payNow" = "Zaplatiť kartou PostFinance teraz";
 
@@ -543,7 +559,13 @@
 
 "Snabble.Shoppingcart.notForVendor" = "Nepodporovaná obchodom";
 
-"Snabble.Shoppingcart.numberOfItems" = "%d položka";
+"Snabble.Shoppingcart.numberOfItems.few" = "%d položky";
+
+"Snabble.Shoppingcart.numberOfItems.many" = "%d položiek";
+
+"Snabble.Shoppingcart.numberOfItems.one" = "%d položka";
+
+"Snabble.Shoppingcart.numberOfItems.other" = "%d položiek";
 
 "Snabble.Shoppingcart.numberOfItems.one" = "%d položka";
 
@@ -625,13 +647,13 @@
 
 "Snabble.undo" = "Vrátiť späť";
 
-"Snabble.Violations.couponAlreadyVoided" = "Kupón „%@“ bol už použitý a bude odstránený z nákupného koša";
+"Snabble.Violations.couponAlreadyVoided" = "Jeden kupón už bol uplatnený a bude odstránený z nákupného koša";
 
-"Snabble.Violations.couponCurrentlyNotValid" = "Kupón „%@“ je momentálne neplatný a bude odstránený z nákupného koša";
+"Snabble.Violations.couponCurrentlyNotValid" = "Jeden kupón je momentálne neplatný a bude odstránený z nákupného koša";
 
-"Snabble.Violations.couponInvalid" = "Kupón „%@“ je neplatný a bude odstránený z nákupného koša";
+"Snabble.Violations.couponInvalid" = "Jeden kupón je neplatný a bude odstránený z nákupného koša";
 
-"Snabble.Violations.title" = "Neplatný kupón";
+"Snabble.Violations.title" = "Neplatný nákupný kôš";
 
 "Snabble.Yes" = "Áno";
 

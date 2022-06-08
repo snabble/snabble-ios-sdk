@@ -543,7 +543,9 @@
 
 "Snabble.Shoppingcart.notForVendor" = "Vom Händler nicht unterstützt";
 
-"Snabble.Shoppingcart.numberOfItems" = "%d Artikel";
+"Snabble.Shoppingcart.numberOfItems.one" = "%d Artikel";
+
+"Snabble.Shoppingcart.numberOfItems.other" = "%d Artikel";
 
 "Snabble.Shoppingcart.numberOfItems.one" = "%d Artikel";
 
