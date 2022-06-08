@@ -56,6 +56,10 @@ public final class ShoppingCartViewController: UIViewController {
     override public func viewDidLoad() {
         super.viewDidLoad()
 
+        if #available(iOS 15, *) {
+            self.view.restrictDynamicTypeSize(from: nil, to: .extraExtraExtraLarge)
+        }
+
         self.shoppingCart.delegate = self
 
         self.trashButton = UIBarButtonItem(image: Asset.SnabbleSDK.iconTrash.image, style: .plain, target: self, action: #selector(self.trashButtonTapped(_:)))
