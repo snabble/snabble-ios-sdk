@@ -267,7 +267,7 @@ public final class PaydirektEditViewController: UIViewController {
 
     private func addWebView(to superview: UIView) -> WKWebView {
         let configuration = WKWebViewConfiguration()
-        if #available(iOS 13, *) {
+        if #available(iOS 14, *) {
             configuration.defaultWebpagePreferences.allowsContentJavaScript = true
         } else {
             configuration.preferences.javaScriptEnabled = true
