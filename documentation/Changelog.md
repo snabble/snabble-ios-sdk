@@ -6,6 +6,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [unreleased]
 
+### Changed 
+* Improved Check-In and Check-out logic  #APPS-273
 ### Added
 * Added dynamic fonts to several views #Apps-231
 * Added dynamic fonts to PaydirektEditViewController #Apps-231
@@ -15,6 +17,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 * Added dynamic fints to PaymentMethodAddCell and PaymentMethodAddViewController #Apps-231
 * Added dynamic fonts to SepaOverlayView #Apps-231
 * Added dynamic fonts to Scanner section #Apps-231
+* Added dynamic fonts to ShoppingCartTableViewController and ShoppingCartTableCellView section #Apps-231
 
 ### Changed
 * Shopping cart indicator icons are scaled incorrectly #APPS-333

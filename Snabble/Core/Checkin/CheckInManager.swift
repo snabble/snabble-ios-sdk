@@ -169,7 +169,9 @@ extension CheckInManager: CLLocationManagerDelegate {
         let checkOutShops = allShops.shops(at: location, in: checkOutRadius)
         let checkInShops = allShops.shops(at: location, in: checkInRadius)
 
-        if let shop = shop, checkOutShops.contains(shop) {
+        if let currentShop = shop, !checkInShops.contains(currentShop), !checkInShops.isEmpty {
+            shop = checkInShops.first
+        } else if let shop = shop, checkOutShops.contains(shop) {
             checkedInAt = Date()
         } else if !checkInShops.isEmpty {
             shop = checkInShops.first

@@ -262,13 +262,15 @@ extension ShoppingCartTableCellView {
 
         override init(frame: CGRect) {
             let nameLabel = UILabel()
-            nameLabel.font = UIFont.systemFont(ofSize: 15)
+            nameLabel.font = .preferredFont(forTextStyle: .subheadline)
+            nameLabel.adjustsFontForContentSizeCategory = true
             nameLabel.textColor = .label
             nameLabel.textAlignment = .natural
             nameLabel.numberOfLines = 0
 
             let priceLabel = UILabel()
-            priceLabel.font = UIFont.monospacedDigitSystemFont(ofSize: 13, weight: .regular)
+            priceLabel.font = .preferredFont(forTextStyle: .footnote)
+            priceLabel.adjustsFontForContentSizeCategory = true
             priceLabel.textColor = .systemGray
             priceLabel.textAlignment = .natural
 
@@ -305,13 +307,15 @@ extension ShoppingCartTableCellView {
         override init(frame: CGRect) {
             let quantityLabel = UILabel()
             quantityLabel.translatesAutoresizingMaskIntoConstraints = false
-            quantityLabel.font = UIFont.systemFont(ofSize: 13, weight: .semibold)
+            quantityLabel.font = .preferredFont(forTextStyle: .footnote, weight: .semibold)
+            quantityLabel.adjustsFontForContentSizeCategory = true
             quantityLabel.textColor = .label
             quantityLabel.textAlignment = .right
 
             let unitLabel = UILabel()
             unitLabel.translatesAutoresizingMaskIntoConstraints = false
-            unitLabel.font = UIFont.systemFont(ofSize: 13, weight: .semibold)
+            unitLabel.font = .preferredFont(forTextStyle: .footnote, weight: .semibold)
+            unitLabel.adjustsFontForContentSizeCategory = true
             unitLabel.textColor = .label
             unitLabel.textAlignment = .center
             unitLabel.setContentHuggingPriority(.required, for: .horizontal)
