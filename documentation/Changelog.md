@@ -21,6 +21,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 * Added dynamic fonts to Scanner section #Apps-231
 * Added dynamic fonts to Checkout section #Apps-231
 * Added dynamic fonts to ShoppingCartTableViewController and ShoppingCartTableCellView section #Apps-231
+* Added dynamic fonts to CouponsListViewController #Apps-231
 
 ### Removed
 * Xib/Nib utility methods
