@@ -54,9 +54,14 @@ final class CheckoutRatingViewController: UIViewController {
     override func loadView() {
         let view = UIView(frame: UIScreen.main.bounds)
 
+        if #available(iOS 15, *) {
+            view.restrictDynamicTypeSize(from: nil, to: .extraExtraExtraLarge)
+        }
+
         let textLabel = UILabel()
         textLabel.translatesAutoresizingMaskIntoConstraints = false
-        textLabel.font = .systemFont(ofSize: 17)
+        textLabel.font = .preferredFont(forTextStyle: .body)
+        textLabel.adjustsFontForContentSizeCategory = true
         textLabel.numberOfLines = 1
         textLabel.minimumScaleFactor = 13.0 / 17.0
         textLabel.adjustsFontSizeToFitWidth = true
@@ -66,7 +71,8 @@ final class CheckoutRatingViewController: UIViewController {
 
         let detailTextLabel = UILabel()
         detailTextLabel.translatesAutoresizingMaskIntoConstraints = false
-        detailTextLabel.font = .systemFont(ofSize: 17)
+        detailTextLabel.font = .preferredFont(forTextStyle: .body)
+        detailTextLabel.adjustsFontForContentSizeCategory = true
         detailTextLabel.numberOfLines = 1
         detailTextLabel.minimumScaleFactor = 13.0 / 17.0
         detailTextLabel.adjustsFontSizeToFitWidth = true

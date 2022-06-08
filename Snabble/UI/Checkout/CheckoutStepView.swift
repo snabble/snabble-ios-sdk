@@ -38,7 +38,8 @@ final class CheckoutStepView: UIView {
 
         let textLabel = UILabel()
         textLabel.textColor = .label
-        textLabel.font = .systemFont(ofSize: 17)
+        textLabel.font = UIFont.preferredFont(forTextStyle: .body)
+        textLabel.adjustsFontForContentSizeCategory = true
         textLabel.numberOfLines = 1
         textLabel.minimumScaleFactor = 13.0 / 17.0
         textLabel.adjustsFontSizeToFitWidth = true
@@ -46,7 +47,8 @@ final class CheckoutStepView: UIView {
 
         let detailTextLabel = UILabel()
         detailTextLabel.textColor = .label
-        detailTextLabel.font = .systemFont(ofSize: 13)
+        detailTextLabel.font = UIFont.preferredFont(forTextStyle: .footnote)
+        detailTextLabel.adjustsFontForContentSizeCategory = true
         detailTextLabel.numberOfLines = 0
 
         let imageView = UIImageView()
@@ -54,7 +56,7 @@ final class CheckoutStepView: UIView {
 
         let button = UIButton(type: .system)
         button.setTitleColor(.systemRed, for: .normal)
-        button.titleLabel?.font = .systemFont(ofSize: 13, weight: .medium)
+        button.preferredFont(forTextStyle: .footnote, weight: .medium)
         button.titleLabel?.textAlignment = .left
 
         super.init(frame: frame)
