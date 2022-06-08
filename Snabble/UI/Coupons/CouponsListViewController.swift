@@ -105,7 +105,7 @@ extension CouponsListViewController {
 
         let coupon = coupons[indexPath.section][indexPath.row]
         cell.textLabel?.text = coupon.coupon.name
-
+        cell.textLabel?.numberOfLines = 0
         cell.accessoryType = coupon.active ? .checkmark : .none
 
         return cell
