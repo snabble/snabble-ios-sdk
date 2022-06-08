@@ -78,6 +78,10 @@ final class CheckoutStepsViewController: UIViewController {
     override func loadView() {
         let view = UIView(frame: UIScreen.main.bounds)
 
+        if #available(iOS 15, *) {
+            view.restrictDynamicTypeSize(from: nil, to: .extraExtraExtraLarge)
+        }
+
         let style: UITableView.Style
         if #available(iOS 13.0, *) {
             style = .insetGrouped
@@ -111,7 +115,7 @@ final class CheckoutStepsViewController: UIViewController {
         doneButton.translatesAutoresizingMaskIntoConstraints = false
         doneButton.setTitle(L10n.Snabble.done, for: .normal)
         doneButton.makeSnabbleButton()
-        doneButton.titleLabel?.font = .systemFont(ofSize: 17, weight: .medium)
+        doneButton.preferredFont(forTextStyle: .body, weight: .medium)
         doneButton.addTarget(self, action: #selector(doneButtonTouchedUpInside(_:)), for: .touchUpInside)
         doneButton.isEnabled = false
         view.addSubview(doneButton)
