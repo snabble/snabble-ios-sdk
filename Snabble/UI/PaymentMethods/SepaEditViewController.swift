@@ -37,7 +37,7 @@ public final class SepaEditViewController: UIViewController {
         self.detail = detail
         self.analyticsDelegate = analyticsDelegate
 
-        super.init(nibName: nil, bundle: SnabbleSDKBundle.main)
+        super.init(nibName: nil, bundle: nil)
 
         self.title = L10n.Snabble.Payment.Sepa.title
         self.keyboardObserver = KeyboardObserver(handler: self)

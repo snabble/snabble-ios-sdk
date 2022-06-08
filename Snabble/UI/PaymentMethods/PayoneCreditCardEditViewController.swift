@@ -67,7 +67,7 @@ public final class PayoneCreditCardEditViewController: UIViewController {
         self.analyticsDelegate = analyticsDelegate
         self.projectId = nil
 
-        super.init(nibName: nil, bundle: SnabbleSDKBundle.main)
+        super.init(nibName: nil, bundle: nil)
     }
 
     required init?(coder aDecoder: NSCoder) {
