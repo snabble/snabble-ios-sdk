@@ -414,37 +414,15 @@ extension Snabble {
 
 extension Snabble {
     public static func urlFor(_ url: String) -> URL? {
-        return URL(string: self.absoluteUrl(url))
+        return URL(string: absoluteUrl(url))
     }
 
     private static func absoluteUrl(_ url: String) -> String {
         if url.hasPrefix("/") {
-            return self.config.environment.urlString + url
+            return config.environment.urlString + url
         } else {
             return url
         }
-    }
-
-    static func urlString(_ url: String, _ parameters: [String: String]?) -> String? {
-        let queryItems = parameters?.map { (key, value) in
-            URLQueryItem(name: key, value: value)
-        }
-        return urlString(url, queryItems)
-    }
-
-    static func urlString(_ url: String, _ queryItems: [URLQueryItem]?) -> String? {
-        guard var urlComponents = URLComponents(string: url) else {
-            return nil
-        }
-        if let queryItems = queryItems, !queryItems.isEmpty {
-            if urlComponents.queryItems == nil {
-                urlComponents.queryItems = queryItems
-            } else {
-                urlComponents.queryItems?.append(contentsOf: queryItems)
-            }
-        }
-
-        return urlComponents.url?.absoluteString
     }
 }
 

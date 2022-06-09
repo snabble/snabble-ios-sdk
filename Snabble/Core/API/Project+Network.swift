@@ -173,6 +173,31 @@ public struct RawResult<T, E: Swift.Error> {
     }
 }
 
+private extension Dictionary where Key == String, Value == String {
+    func queryItems() -> [URLQueryItem] {
+        map { (key, value) in
+            URLQueryItem(name: key, value: value)
+        }
+    }
+}
+
+private extension String {
+    func urlString(with queryItems: [URLQueryItem]?) -> String? {
+        guard var urlComponents = URLComponents(string: self) else {
+            return nil
+        }
+        if let queryItems = queryItems, !queryItems.isEmpty {
+            if urlComponents.queryItems == nil {
+                urlComponents.queryItems = queryItems
+            } else {
+                urlComponents.queryItems?.append(contentsOf: queryItems)
+            }
+        }
+
+        return urlComponents.url?.absoluteString
+    }
+}
+
 extension Project {
     /// create an URLRequest
     ///
@@ -185,14 +210,7 @@ extension Project {
     /// - Returns: the URLRequest
     func request(_ method: HTTPRequestMethod, _ url: String, json: Bool = true, jwtRequired: Bool = true, parameters: [String: String]? = nil,
                  timeout: TimeInterval, completion: @escaping (URLRequest?) -> Void) {
-        guard
-            let url = Snabble.urlString(url, parameters),
-            let fullUrl = Snabble.urlFor(url)
-        else {
-            return completion(nil)
-        }
-
-        self.request(method, fullUrl, json, jwtRequired, timeout, completion)
+        request(method, url, json: json, jwtRequired: jwtRequired, queryItems: parameters?.queryItems(), timeout: timeout, completion: completion)
     }
 
     /// create an URLRequest
@@ -204,16 +222,16 @@ extension Project {
     ///   - queryItems: the query parameters to append to the URL
     ///   - timeout: the timeout for the HTTP request (0 for the system default timeout)
     /// - Returns: the URLRequest
-    func request(_ method: HTTPRequestMethod, _ url: String, json: Bool = true, jwtRequired: Bool = true, queryItems: [URLQueryItem],
+    func request(_ method: HTTPRequestMethod, _ url: String, json: Bool = true, jwtRequired: Bool = true, queryItems: [URLQueryItem]?,
                  timeout: TimeInterval, completion: @escaping (URLRequest?) -> Void) {
         guard
-            let url = Snabble.urlString(url, queryItems),
+            let url = url.urlString(with: queryItems),
             let fullUrl = Snabble.urlFor(url)
         else {
             return completion(nil)
         }
 
-        self.request(method, fullUrl, json, jwtRequired, timeout, completion)
+        request(method, fullUrl, json, jwtRequired, timeout, completion)
     }
 
     /// create an URLRequest
@@ -229,7 +247,7 @@ extension Project {
             return completion(nil)
         }
 
-        self.request(method, url, true, true, timeout) { request in
+        request(method, url, true, true, timeout) { request in
             var urlRequest = request
             urlRequest.httpBody = body
             completion(urlRequest)
@@ -249,7 +267,7 @@ extension Project {
             return completion(nil)
         }
 
-        self.request(method, url, true, true, timeout) { request in
+        request(method, url, true, true, timeout) { request in
             do {
                 var urlRequest = request
                 let encoder = JSONEncoder()
@@ -286,31 +304,6 @@ extension Project {
             }
         } else {
             completion(urlRequest)
-        }
-    }
-
-    /// perform an API Request
-    ///
-    /// - Parameters:
-    ///   - retryCount: how often the request should be retried on failure
-    ///   - pauseTime: how long (in seconds) to wait after a failed request. This value is doubled for each retry after the first.
-    ///   - request: the `URLRequest` to perform
-    ///   - completion: called on the main thread when the result is available.
-    ///   - result: the parsed result object or error
-    func retry<T: Decodable>(_ retryCount: Int, _ pauseTime: TimeInterval, _ request: URLRequest, _ completion: @escaping (_ result: Result<T, SnabbleError>) -> Void ) {
-        self.perform(request) { (result: Result<T, SnabbleError>) in
-            switch result {
-            case .success:
-                completion(result)
-            case .failure:
-                if retryCount > 1 {
-                    DispatchQueue.main.asyncAfter(deadline: .now() + pauseTime) {
-                        self.retry(retryCount - 1, pauseTime * 2, request, completion)
-                    }
-                } else {
-                    completion(result)
-                }
-            }
         }
     }
 

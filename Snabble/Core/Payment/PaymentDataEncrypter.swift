@@ -103,7 +103,6 @@ struct PaymentDataEncrypter {
             publicKeyRef = SecTrustCopyPublicKey(secTrust)
         }
 
-
         if let publicKeyRef = publicKeyRef, let plainTextData = plainText.data(using: .utf8) {
             var error: Unmanaged<CFError>?
             if let cipher = SecKeyCreateEncryptedData(publicKeyRef, .rsaEncryptionOAEPSHA256, plainTextData as CFData, &error) as Data? {
