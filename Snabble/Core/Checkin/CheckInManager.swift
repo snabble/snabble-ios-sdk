@@ -93,7 +93,7 @@ public class CheckInManager: NSObject {
 
     public let locationManager: CLLocationManager
 
-    override public init() {
+    override init() {
         locationManager = CLLocationManager()
         locationManager.desiredAccuracy = kCLLocationAccuracyBest
         locationManager.distanceFilter = kCLDistanceFilterNone

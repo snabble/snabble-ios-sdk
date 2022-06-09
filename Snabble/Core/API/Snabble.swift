@@ -102,10 +102,12 @@ public enum Snabble {
         }
     }
 
+    /// Location manager for use with the check in manager
     public static var locationManager: CLLocationManager {
         checkInManager.locationManager
     }
 
+    /// Geo-fencing based check in manager. Use for automatically detecting if you are in a shop.
     public static var checkInManager: CheckInManager = {
         CheckInManager()
     }()
