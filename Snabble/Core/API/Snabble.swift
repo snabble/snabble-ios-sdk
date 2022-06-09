@@ -6,6 +6,7 @@
 
 import Foundation
 import KeychainAccess
+import CoreLocation
 
 /// General config data for using the snabble.
 /// Applications must call `Snabble.setup(config: completion:)` with an instance of this struct before they make their first API call.
@@ -100,6 +101,14 @@ public enum Snabble {
             }
         }
     }
+
+    public static var locationManager: CLLocationManager {
+        checkInManager.locationManager
+    }
+
+    public static var checkInManager: CheckInManager = {
+        CheckInManager()
+    }()
 
     /// Will be set with setup(config:, completion:)
     private(set) static var config: Config!

@@ -91,7 +91,7 @@ public class CheckInManager: NSObject {
     /// Shows if updating is activated
     public private(set) var isUpdating = false
 
-    private let locationManager: CLLocationManager
+    public let locationManager: CLLocationManager
 
     override public init() {
         locationManager = CLLocationManager()

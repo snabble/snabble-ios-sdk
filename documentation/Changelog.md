@@ -9,7 +9,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed 
 * Improved Check-In and Check-out logic #APPS-273
 * Shopping cart indicator icons are scaled incorrectly #APPS-333
-* fixes deprecation warnings for iOS 13 and 14 
+* Fixes deprecation warnings for iOS 13 and 14 
+* CheckinManager available via Snabble
 
 ### Added
 * Added dynamic fonts to several views #Apps-231
