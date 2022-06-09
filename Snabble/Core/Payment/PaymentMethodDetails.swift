@@ -285,7 +285,7 @@ struct PaymentMethodDetailStorage {
 
     private var keychain = Keychain(service: "io.snabble.app").accessibility(.whenPasscodeSetThisDeviceOnly)
     private var key: String {
-        return SettingsKeys.paymentMethods + "." + Snabble.config.environment.name + "." + Snabble.config.appId
+        SettingsKeys.paymentMethods + "." + Snabble.shared.config.environment.name + "." + Snabble.shared.config.appId
     }
 
     func read() -> [PaymentMethodDetail] {
@@ -339,7 +339,7 @@ struct PaymentMethodDetailStorage {
     }
 
     func removeAll() {
-        let oldKey = SettingsKeys.paymentMethods + Snabble.config.environment.name
+        let oldKey = SettingsKeys.paymentMethods + Snabble.shared.config.environment.name
         let oldData = self.keychain[oldKey]
 
         let keys = self.keychain.allKeys()
@@ -418,7 +418,7 @@ public enum PaymentMethodDetails {
 extension PaymentMethodDetails {
     public static func addTegutEmployeeCard(_ number: String, _ name: String, _ projectId: Identifier<Project>) {
         guard
-            let cert = Snabble.certificates.first,
+            let cert = Snabble.shared.certificates.first,
             let employeeData = TegutEmployeeData(cert.data, number, name, projectId)
         else {
             return
@@ -439,7 +439,7 @@ extension PaymentMethodDetails {
 extension PaymentMethodDetails {
     public static func addLeinweberCustomerNumber(_ number: String, _ name: String, _ projectId: Identifier<Project>) {
         guard
-            let cert = Snabble.certificates.first,
+            let cert = Snabble.shared.certificates.first,
             let employeeData = LeinweberCustomerData(cert.data, number, name, projectId)
         else {
             return

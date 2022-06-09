@@ -226,7 +226,7 @@ extension Project {
                  timeout: TimeInterval, completion: @escaping (URLRequest?) -> Void) {
         guard
             let url = url.urlString(with: queryItems),
-            let fullUrl = Snabble.urlFor(url)
+            let fullUrl = Snabble.shared.urlFor(url)
         else {
             return completion(nil)
         }
@@ -243,7 +243,7 @@ extension Project {
     ///   - timeout: the timeout for the HTTP request (0 for the system default timeout)
     /// - Returns: the URLRequest
     func request(_ method: HTTPRequestMethod, _ url: String, body: Data, timeout: TimeInterval, completion: @escaping (URLRequest?) -> Void) {
-        guard let url = Snabble.urlFor(url) else {
+        guard let url = Snabble.shared.urlFor(url) else {
             return completion(nil)
         }
 
@@ -263,7 +263,7 @@ extension Project {
     ///   - timeout: the timeout for the HTTP request (0 for the system default timeout)
     /// - Returns: the URLRequest
     func request<T: Encodable>(_ method: HTTPRequestMethod, _ url: String, body: T, timeout: TimeInterval = 0, _ completion: @escaping (URLRequest?) -> Void ) {
-        guard let url = Snabble.urlFor(url) else {
+        guard let url = Snabble.shared.urlFor(url) else {
             return completion(nil)
         }
 
@@ -296,7 +296,7 @@ extension Project {
         urlRequest.httpMethod = method.rawValue
 
         if jwtRequired {
-            Snabble.tokenRegistry.getToken(for: self) { token in
+            Snabble.shared.tokenRegistry.getToken(for: self) { token in
                 if let token = token {
                     urlRequest.addValue(token, forHTTPHeaderField: "Client-Token")
                 }

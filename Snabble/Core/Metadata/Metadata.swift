@@ -12,7 +12,7 @@ public struct Metadata: Decodable {
     public let gatewayCertificates: [GatewayCertificate]
     public let links: MetadataLinks
     public let terms: Terms?
-    public let brands: [Brand]?
+    public let brands: [Brand]
 
     enum CodingKeys: String, CodingKey {
         case flags = "metadata"
@@ -25,7 +25,7 @@ public struct Metadata: Decodable {
         self.gatewayCertificates = []
         self.links = MetadataLinks()
         self.terms = nil
-        self.brands = nil
+        self.brands = []
     }
 
     static let none = Metadata()
@@ -39,7 +39,7 @@ public struct Metadata: Decodable {
         self.gatewayCertificates = certs ?? []
         self.links = try container.decode(MetadataLinks.self, forKey: .links)
         self.terms = try container.decodeIfPresent(Terms.self, forKey: .terms)
-        self.brands = try container.decodeIfPresent([Brand].self, forKey: .brands)
+        self.brands = try container.decodeIfPresent([Brand].self, forKey: .brands) ?? []
     }
 
     mutating func setShops(_ shops: [Shop], at index: Int) {

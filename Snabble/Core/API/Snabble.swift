@@ -68,8 +68,19 @@ public extension Notification.Name {
  *
  * Use `Snabble.setup(config:, completion:)` to initialize Snabble.
  */
-public enum Snabble {
+public class Snabble {
 
+    private init(config: Config, tokenRegistry: TokenRegistry) {
+        self.config = config
+        self.tokenRegistry = tokenRegistry
+        self.providerPool = [:]
+
+        if let metadataPath = config.seedMetadata {
+            if let metadata = Metadata.readResource(metadataPath) {
+                self.metadata = metadata
+            }
+        }
+    }
     /**
      * Environment in which the SDK should work
      *
@@ -102,23 +113,19 @@ public enum Snabble {
         }
     }
 
-    /// Location manager for use with the check in manager
-    public static var locationManager: CLLocationManager {
-        checkInManager.locationManager
-    }
+    /// Snabble instance is accessible after calling `Snabble.setup(config:, completion:)`
+    public private(set) static var shared: Snabble!
 
     /// Geo-fencing based check in manager. Use for automatically detecting if you are in a shop.
-    public static var checkInManager: CheckInManager = {
-        CheckInManager()
-    }()
+    public lazy var checkInManager = CheckInManager()
 
     /// Will be set with setup(config:, completion:)
-    private(set) static var config: Config!
+    let config: Config
 
     /// Will be created in setup(config:, completion:)
-    private(set) static var tokenRegistry: TokenRegistry!
+    let tokenRegistry: TokenRegistry
 
-    static var metadata = Metadata.none {
+    private(set) var metadata = Metadata.none {
         didSet {
             for project in metadata.projects {
                 project.codeTemplates.forEach {
@@ -135,78 +142,70 @@ public enum Snabble {
     }
     static let methodRegistry = MethodRegistry()
 
-    private static var providerPool = [Identifier<Project>: ProductProvider]()
+    private(set) var providerPool: [Identifier<Project>: ProductProvider]
 
     /// Gateway certificates for payment routes
-    static var certificates: [GatewayCertificate] {
-        return self.metadata.gatewayCertificates
+    var certificates: [GatewayCertificate] {
+        metadata.gatewayCertificates
     }
 
     /// Available projects after a successful setup
-    public static var projects: [Project] {
-        return self.metadata.projects
+    public var projects: [Project] {
+        metadata.projects
     }
 
     /// Additional information provided by Snabble
-    public static var flags: Flags {
-        return self.metadata.flags
+    public var flags: Flags {
+        metadata.flags
     }
 
     /// API links for snabble features
-    public static var links: MetadataLinks {
-        return self.metadata.links
+    public var links: MetadataLinks {
+        metadata.links
     }
 
     /// Terms of Use for the Snabble App
-    public static var terms: Terms? {
-        return self.metadata.terms
+    public var terms: Terms? {
+        metadata.terms
     }
 
     /// Are used to combine multiple projects
-    public static var brands: [Brand] {
-        return self.metadata.brands ?? []
+    public var brands: [Brand] {
+        metadata.brands
     }
 
     /// Finds project for a given id
     /// - Parameter projectId: matching id
     /// - Returns: `Project` or `nil` if none was found
-    public static func project(for projectId: Identifier<Project>) -> Project? {
-        return self.metadata.projects.first { $0.id == projectId }
+    public func project(for projectId: Identifier<Project>) -> Project? {
+        metadata.projects.first { $0.id == projectId }
     }
 
     /// First method to be called to initialize of the `SnabbleSDK`
     /// - Parameters:
     ///   - config: `SnabbleAPIConfig` with at least an `appId` and a `secret`
     ///   - completion: CompletionHandler is called as soon as everything is finished
-    public static func setup(config: Config, completion: @escaping () -> Void ) {
-        self.config = config
-        self.config.useCertificatePinning = !self.debugMode || config.useCertificatePinning
-
-        if self.config.useCertificatePinning {
-            self.initializeTrustKit()
+    public static func setup(config: Config, completion: @escaping (Snabble) -> Void) {
+        if config.useCertificatePinning {
+            initializeTrustKit()
         }
 
-        self.providerPool.removeAll()
-        self.tokenRegistry = TokenRegistry(appId: config.appId, secret: config.secret)
-
-        if let metadataPath = config.seedMetadata, self.metadata.projects.isEmpty {
-            if let metadata = Metadata.readResource(metadataPath) {
-                self.metadata = metadata
-            }
-        }
-
-        self.update(completion: completion)
+        shared = Snabble(
+            config: config,
+            tokenRegistry: TokenRegistry(appId: config.appId, secret: config.secret)
+        )
+        shared?.update(completion: completion)
     }
 
     /// update Snabble
     /// - Parameter completion: completionHandler informs about the status
-    public static func update(completion: @escaping () -> Void ) {
+    public func update(completion: @escaping (Snabble) -> Void) {
         let bundleVersion = Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String ?? "0.0"
         let appVersion = config.appVersion ?? bundleVersion
         let version = appVersion.addingPercentEncoding(withAllowedCharacters: .urlPathAllowed) ?? appVersion
         let metadataURL = "/metadata/app/\(config.appId)/ios/\(version)"
 
-        Metadata.load(from: metadataURL) { metadata in
+        Metadata.load(from: metadataURL) { [self] metadata in
             if let metadata = metadata {
                 self.metadata = metadata
             }
@@ -216,7 +215,7 @@ public enum Snabble {
                     self.loadActiveShops()
                 }
                 self.loadCoupons {
-                    completion()
+                    completion(self)
                 }
             }
 
@@ -230,7 +229,7 @@ public enum Snabble {
         }
     }
 
-    private static func loadActiveShops() {
+    private func loadActiveShops() {
         // reload shops from `activeShops` endpoint where present
         for (index, project) in metadata.projects.enumerated() {
             guard let activeShops = project.links.activeShops?.href else {
@@ -254,7 +253,7 @@ public enum Snabble {
         }
     }
 
-    private static func loadCoupons(_ completion: @escaping () -> Void) {
+    private func loadCoupons(_ completion: @escaping () -> Void) {
         // reload coupons from `coupons` endpoint where present
         let group = DispatchGroup()
 
@@ -290,12 +289,12 @@ public enum Snabble {
     /// Product Provider for a project
     /// - Parameter project: `Project` associated to the product provider
     /// - Returns: `ProductProvider` to retrieve products
-    public static func productProvider(for project: Project) -> ProductProvider {
+    public func productProvider(for project: Project) -> ProductProvider {
         assert(!project.id.rawValue.isEmpty && project.id != Project.none.id, "empty projects don't have a product provider")
         if let provider = providerPool[project.id] {
             return provider
         } else {
-            let provider = ProductDB(Snabble.config, project)
+            let provider = ProductDB(config, project)
             providerPool[project.id] = provider
             return provider
         }
@@ -306,7 +305,7 @@ public enum Snabble {
     ///  Restart the app after removing a database
     /// - Warning: For debugging only
     /// - Parameter project: `Project` of the database to be deleted
-    public static func removeDatabase(of project: Project) {
+    public func removeDatabase(of project: Project) {
         let provider = productProvider(for: project)
         provider.removeDatabase()
         providerPool[project.id] = nil
@@ -392,8 +391,8 @@ extension Snabble {
     }
 
     // MARK: - app user id
-    private static var appUserKey: String {
-        return "Snabble.api.appUserId.\(config.environment.name).\(Snabble.config.appId)"
+    private var appUserKey: String {
+        "Snabble.api.appUserId.\(config.environment.name).\(config.appId)"
     }
 
     /**
@@ -403,9 +402,9 @@ extension Snabble {
 
      - Important: [Apple Developer Forum Thread 36442](https://developer.apple.com/forums/thread/36442?answerId=281900022#281900022)
     */
-    public static var appUserId: AppUserId? {
+    public var appUserId: AppUserId? {
         get {
-            let keychain = Keychain(service: service)
+            let keychain = Keychain(service: Self.service)
             guard let stringRepresentation = keychain[appUserKey] else {
                 return nil
             }
@@ -413,7 +412,7 @@ extension Snabble {
         }
 
         set {
-            let keychain = Keychain(service: service)
+            let keychain = Keychain(service: Self.service)
             keychain[appUserKey] = newValue?.stringRepresentation
             UserDefaults.standard.set(newValue?.value, forKey: "Snabble.api.appUserId")
 
@@ -424,11 +423,11 @@ extension Snabble {
 }
 
 extension Snabble {
-    public static func urlFor(_ url: String) -> URL? {
-        return URL(string: absoluteUrl(url))
+    public func urlFor(_ url: String) -> URL? {
+        URL(string: absoluteUrl(url))
     }
 
-    private static func absoluteUrl(_ url: String) -> String {
+    private func absoluteUrl(_ url: String) -> String {
         if url.hasPrefix("/") {
             return config.environment.urlString + url
         } else {
@@ -528,22 +527,22 @@ extension Snabble {
     private(set) static var appUserData: AppUserData?
     private static weak var appUserDataTask: URLSessionDataTask?
 
-    static func fetchAppUserData(_ projectId: Identifier<Project>) {
+    func fetchAppUserData(_ projectId: Identifier<Project>) {
         guard
-            appUserDataTask == nil,
-            let project = Snabble.project(for: projectId),
-            let appUserId = Snabble.appUserId
+            Self.appUserDataTask == nil,
+            let project = project(for: projectId),
+            let appUserId = appUserId
         else {
             return
         }
 
-        let url = Snabble.links.appUser.href.replacingOccurrences(of: "{appUserID}", with: appUserId.value)
+        let url = links.appUser.href.replacingOccurrences(of: "{appUserID}", with: appUserId.value)
         project.request(.get, url, timeout: 2) { request in
             guard let request = request else {
                 return
             }
 
-            appUserDataTask = project.perform(request) { (result: Result<AppUserData, SnabbleError>) in
+            Self.appUserDataTask = project.perform(request) { (result: Result<AppUserData, SnabbleError>) in
                 switch result {
                 case .success(let userData):
                     Snabble.appUserData = userData
@@ -560,11 +559,11 @@ extension Snabble {
 
     private struct TermsResponse: Decodable {}
 
-    public static func saveTermsConsent(_ version: String, completion: @escaping (Bool) -> Void) {
+    public func saveTermsConsent(_ version: String, completion: @escaping (Bool) -> Void) {
         guard
-            let appUserId = Snabble.appUserId,
-            let consents = Snabble.links.consents?.href,
-            let project = Snabble.projects.first
+            let appUserId = appUserId,
+            let consents = links.consents?.href,
+            let project = projects.first
         else {
             return
         }

@@ -263,7 +263,7 @@ public final class SepaEditViewController: UIViewController {
         }
 
         if valid && !name.isEmpty {
-            if let cert = Snabble.certificates.first, let sepaData = SepaData(cert.data, name, iban) {
+            if let cert = Snabble.shared.certificates.first, let sepaData = SepaData(cert.data, name, iban) {
                 let detail = PaymentMethodDetail(sepaData)
                 PaymentMethodDetails.save(detail)
                 self.delegate?.sepaEditViewControllerDidSave(iban: iban)

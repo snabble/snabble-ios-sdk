@@ -55,7 +55,7 @@ public final class CouponsListViewController: UITableViewController {
 
         var idNames = [(Identifier<Project>, String)]()
         for id in dict.keys {
-            guard let project = Snabble.project(for: id) else {
+            guard let project = Snabble.shared.project(for: id) else {
                 continue
             }
             idNames.append((id, project.name))
@@ -77,7 +77,7 @@ public final class CouponsListViewController: UITableViewController {
     }
 
     @objc private func addTapped(_ sender: Any) {
-        let coupons = Snabble.projects.filter { !$0.printedCoupons.isEmpty }.flatMap { $0.printedCoupons }
+        let coupons = Snabble.shared.projects.filter { !$0.printedCoupons.isEmpty }.flatMap { $0.printedCoupons }
         CouponWallet.shared.addAll(coupons)
         setupCoupons()
     }

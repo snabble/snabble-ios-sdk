@@ -112,7 +112,7 @@ struct AppEvent: Encodable {
 
     init?(_ shoppingCart: ShoppingCart) {
         let cart = shoppingCart.createCart()
-        guard let project = Snabble.project(for: shoppingCart.projectId) else {
+        guard let project = Snabble.shared.project(for: shoppingCart.projectId) else {
             return nil
         }
 
@@ -133,11 +133,11 @@ struct AppEvent: Encodable {
 extension AppEvent {
     func post() {
         // use URLRequest/URLSession directly to avoid error logging loops when posting the event fails
-        guard let url = Snabble.urlFor(self.project.links.appEvents.href) else {
+        guard let url = Snabble.shared.urlFor(self.project.links.appEvents.href) else {
             return
         }
 
-        Snabble.tokenRegistry.getExistingToken(for: self.project) { token in
+        Snabble.shared.tokenRegistry.getExistingToken(for: self.project) { token in
             guard let token = token else {
                 return
             }

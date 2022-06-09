@@ -80,7 +80,7 @@ extension Manifest.File {
         guard let variant = self.variant(for: scale) else {
             return nil
         }
-        return Snabble.urlFor(variant)
+        return Snabble.shared.urlFor(variant)
     }
 
     private func variant(for scale: CGFloat) -> String? {
@@ -328,7 +328,7 @@ final class AssetManager {
 
     func initialize(_ projectId: Identifier<Project>, _ manifestUrl: String, downloadFiles: Bool, completion: @escaping () -> Void) {
         guard
-            let manifestUrl = Snabble.urlFor(manifestUrl),
+            let manifestUrl = Snabble.shared.urlFor(manifestUrl),
             var components = URLComponents(url: manifestUrl, resolvingAgainstBaseURL: false)
         else {
             return
@@ -450,7 +450,7 @@ final class AssetManager {
     func clearAssets() {
         let fileManager = FileManager.default
 
-        for project in Snabble.projects {
+        for project in Snabble.shared.projects {
             if let url = self.cacheDirectory(project.id) {
                 try? fileManager.removeItem(at: url)
             }

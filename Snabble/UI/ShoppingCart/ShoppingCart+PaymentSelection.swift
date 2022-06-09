@@ -251,7 +251,7 @@ final class PaymentMethodSelector {
 
         // combine all payment methods of all projects
         let allAppMethods = Set(
-            Snabble.projects
+            Snabble.shared.projects
                 .flatMap { $0.paymentMethods }
                 .filter { $0.isAvailable }
         )

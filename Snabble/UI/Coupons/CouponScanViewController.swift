@@ -112,7 +112,7 @@ extension CouponScanViewController: BarcodeDetectorDelegate {
     }
 
     private func checkValidCoupon(_ scannedCode: String) -> Coupon? {
-        for project in Snabble.projects {
+        for project in Snabble.shared.projects {
             for coupon in project.printedCoupons {
                 for code in coupon.codes ?? [] {
                     let result = CodeMatcher.match(scannedCode, project.id)

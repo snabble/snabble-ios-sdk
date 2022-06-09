@@ -204,9 +204,9 @@ public final class PaydirektEditViewController: UIViewController {
 
     private func startAuthorization() {
         guard
-            let authUrl = Snabble.metadata.links.paydirektCustomerAuthorization?.href,
+            let authUrl = Snabble.shared.metadata.links.paydirektCustomerAuthorization?.href,
             let projectId = projectId,
-            let project = Snabble.project(for: projectId)
+            let project = Snabble.shared.project(for: projectId)
         else {
             errorView?.isHidden = false
             Log.error("no paydirektCustomerAuthorization in metadata or no project found")
@@ -304,7 +304,7 @@ extension PaydirektEditViewController: WKNavigationDelegate {
             switch requestUrl {
             case RedirectStatus.success.url:
                 guard
-                    let cert = Snabble.certificates.first,
+                    let cert = Snabble.shared.certificates.first,
                     let auth = self.clientAuthorization,
                     let data = PaydirektData(cert.data, auth, self.authData)
                 else {

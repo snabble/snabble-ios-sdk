@@ -11,6 +11,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 * Shopping cart indicator icons are scaled incorrectly #APPS-333
 * Fixes deprecation warnings for iOS 13 and 14 
 * CheckinManager available via Snabble
+* Snabble changed to singled with a shared variable
 
 ### Added
 * Added dynamic fonts to several views #Apps-231

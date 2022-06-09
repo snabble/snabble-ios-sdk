@@ -41,12 +41,12 @@ public struct Order: Codable {
 extension OrderList {
     public static func load(_ project: Project, completion: @escaping (Result<OrderList, SnabbleError>) -> Void ) {
         var url: String?
-        if let clientOrdersUrl = Snabble.links.clientOrders?.href {
+        if let clientOrdersUrl = Snabble.shared.links.clientOrders?.href {
             url = clientOrdersUrl.replacingOccurrences(of: "{clientID}", with: Snabble.clientId)
         }
 
-        if let appUserId = Snabble.appUserId {
-            url = Snabble.links.appUserOrders.href.replacingOccurrences(of: "{appUserID}", with: appUserId.value)
+        if let appUserId = Snabble.shared.appUserId {
+            url = Snabble.shared.links.appUserOrders.href.replacingOccurrences(of: "{appUserID}", with: appUserId.value)
         }
 
         guard let ordersUrl = url else {

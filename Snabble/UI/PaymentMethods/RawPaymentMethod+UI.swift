@@ -85,7 +85,7 @@ extension RawPaymentMethod {
     private func creditCardEditViewController(_ projectId: Identifier<Project>?, _ analyticsDelegate: AnalyticsDelegate?) -> UIViewController? {
         guard
             let projectId = projectId,
-            let project = Snabble.project(for: projectId),
+            let project = Snabble.shared.project(for: projectId),
             let descriptor = project.paymentMethodDescriptors.first(where: { $0.id == self })
         else {
             return nil

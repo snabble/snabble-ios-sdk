@@ -29,7 +29,7 @@ public struct Shop: Codable, Identifiable {
 
     // snabble `Project` of this shop
     public var project: Project? {
-        Snabble.project(for: projectId)
+        Snabble.shared.project(for: projectId)
     }
 
     /// externally provided identifier

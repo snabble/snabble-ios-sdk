@@ -19,13 +19,13 @@ public enum ApplePay {
     // Use this to determine if Apple Pay can be selected from the selection or as the default
     public static func canMakePayments(with projectId: Identifier<Project>) -> Bool {
         return
-            Snabble.project(for: projectId)?.paymentMethods.contains(.applePay) ?? false &&
+            Snabble.shared.project(for: projectId)?.paymentMethods.contains(.applePay) ?? false &&
             isSupported() &&
             PKPaymentAuthorizationViewController.canMakePayments(usingNetworks: paymentNetworks(with: projectId), capabilities: .capability3DS)
     }
 
     static func paymentNetworks(with projectId: Identifier<Project>) -> [PKPaymentNetwork] {
-        return Snabble.project(for: projectId)?.paymentMethods.compactMap { $0.paymentNetwork } ?? []
+        return Snabble.shared.project(for: projectId)?.paymentMethods.compactMap { $0.paymentNetwork } ?? []
     }
 
     static func openPaymentSetup() {

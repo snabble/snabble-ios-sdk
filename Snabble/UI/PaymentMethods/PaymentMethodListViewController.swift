@@ -71,7 +71,7 @@ public final class PaymentMethodListViewController: UITableViewController {
                 case .payoneCreditCard(let payoneData):
                     return payoneData.projectId == projectId
                 case .tegutEmployeeCard, .sepa, .paydirektAuthorization, .leinweberCustomerNumber:
-                    return Snabble.project(for: projectId)?.paymentMethods.contains(where: { $0 == detail.rawMethod }) ?? false
+                    return Snabble.shared.project(for: projectId)?.paymentMethods.contains(where: { $0 == detail.rawMethod }) ?? false
                 }
             }
 
@@ -93,7 +93,7 @@ public final class PaymentMethodListViewController: UITableViewController {
     }
 
     @objc private func addMethod() {
-        let methods = Snabble.projects
+        let methods = Snabble.shared.projects
             .filter { $0.id == projectId }
             .flatMap { $0.paymentMethods }
             .filter { $0.editable }

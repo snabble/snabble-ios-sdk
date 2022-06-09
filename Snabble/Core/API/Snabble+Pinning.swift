@@ -88,7 +88,7 @@ extension Snabble {
 internal class CertificatePinningDelegate: NSObject, URLSessionDelegate {
     func urlSession(_ session: URLSession, didReceive challenge: URLAuthenticationChallenge,
                     completionHandler: @escaping (URLSession.AuthChallengeDisposition, URLCredential?) -> Void) {
-        guard Snabble.config.useCertificatePinning else {
+        guard Snabble.shared.config.useCertificatePinning else {
             return completionHandler(.performDefaultHandling, nil)
         }
 

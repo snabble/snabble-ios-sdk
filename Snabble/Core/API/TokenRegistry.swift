@@ -103,7 +103,7 @@ final class TokenRegistry {
                     self.projectTokens[projectId] = tokenData
                     self.startRefreshTimer()
                     if Snabble.appUserData == nil {
-                        Snabble.fetchAppUserData(projectId)
+                        Snabble.shared.fetchAppUserData(projectId)
                     }
                 }
 
@@ -142,7 +142,7 @@ final class TokenRegistry {
         }
 
         for projectId in activeIds {
-            if let project = Snabble.project(for: projectId) {
+            if let project = Snabble.shared.project(for: projectId) {
                 self.getToken(for: project, completion: { _ in })
             }
         }
@@ -206,7 +206,7 @@ final class TokenRegistry {
     }
 
     private func retrieveToken(for projectId: Identifier<Project>, _ date: Date? = nil, completion: @escaping (TokenData?) -> Void) {
-        if let appUserId = Snabble.appUserId {
+        if let appUserId = Snabble.shared.appUserId {
             if verboseToken { Log.debug("retrieveToken p=\(projectId.rawValue) app=\(self.appId) client=\(Snabble.clientId) au=\(appUserId), date=\(String(describing: date))") }
             self.retrieveTokenForUser(for: projectId, appUserId, date, completion: completion)
         } else {
@@ -216,12 +216,11 @@ final class TokenRegistry {
     }
 
     private func retrieveAppUserAndToken(for projectId: Identifier<Project>, _ date: Date? = nil, completion: @escaping (TokenData?) -> Void) {
-        print(#function)
-        guard let project = Snabble.project(for: projectId) else {
+        guard let project = Snabble.shared.project(for: projectId) else {
             return completion(nil)
         }
 
-        let url = Snabble.metadata.links.createAppUser.href
+        let url = Snabble.shared.metadata.links.createAppUser.href
         let parameters = [ "project": projectId.rawValue ]
         project.request(.post, url, jwtRequired: false, parameters: parameters, timeout: 5) { request in
             guard
@@ -242,7 +241,7 @@ final class TokenRegistry {
                     if self.verboseToken { Log.debug("retrieveAppUserAndToken succeeded") }
                     self.verboseToken = false
                     print(#function, "new appUserID: \(appUserData.appUser.id)")
-                    Snabble.appUserId = AppUserId(value: appUserData.appUser.id, secret: appUserData.appUser.secret)
+                    Snabble.shared.appUserId = AppUserId(value: appUserData.appUser.id, secret: appUserData.appUser.secret)
                     completion(TokenData(appUserData.token, projectId))
                 case .failure:
                     self.verboseToken = true && Snabble.debugMode
@@ -258,7 +257,7 @@ final class TokenRegistry {
     }
 
     private func retrieveTokenForUser(for projectId: Identifier<Project>, _ appUserId: AppUserId, _ date: Date? = nil, completion: @escaping (TokenData?) -> Void ) {
-        guard let project = Snabble.project(for: projectId) else {
+        guard let project = Snabble.shared.project(for: projectId) else {
             return completion(nil)
         }
 

@@ -204,7 +204,7 @@ final class ShoppingCartTableViewController: UITableViewController {
                 // if we have a single lineItem that updates this entry with another SKU,
                 // propagate the change to the shopping cart
                 if let lineItem = items.first, items.count == 1, let sku = lineItem.sku, sku != cartItem.product.sku {
-                    let provider = Snabble.productProvider(for: SnabbleUI.project)
+                    let provider = Snabble.shared.productProvider(for: SnabbleUI.project)
                     let product = provider.productBySku(sku, self.shoppingCart.shopId)
                     if let product = product, let replacement = CartItem(replacing: cartItem, product, self.shoppingCart.shopId, lineItem) {
                         cart.replaceItem(at: index, with: replacement)
@@ -483,7 +483,7 @@ extension ShoppingCartTableViewController {
         var replacements = [(Int, CartItem?)]()
         let mutex = Mutex()
 
-        let provider = Snabble.productProvider(for: SnabbleUI.project)
+        let provider = Snabble.shared.productProvider(for: SnabbleUI.project)
         for lookup in lookups {
             guard let sku = lookup.lineItem.sku else {
                 continue
