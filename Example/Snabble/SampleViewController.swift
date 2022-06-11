@@ -69,9 +69,9 @@ class SampleViewController: UIViewController {
         let APPSECRET = "2TKKEG5KXWY6DFOGTZKDUIBTNIRVCYKFZBY32FFRUUWIUAFEIBHQ===="
         let apiConfig = SnabbleSDK.Config(appId: APPID, secret: APPSECRET)
 
-        Snabble.setup(config: apiConfig) {
+        Snabble.setup(config: apiConfig) { snabble in
             // initial config parsed/loaded
-            guard let project = Snabble.projects.first else {
+            guard let project = snabble.projects.first else {
                 fatalError("project initialization failed - make sure APPID and APPSECRET are valid")
             }
 
@@ -80,7 +80,7 @@ class SampleViewController: UIViewController {
             self.shop = project.shops.first!
 
             // initialize the product database for this project
-            let productProvider = Snabble.productProvider(for: project)
+            let productProvider = snabble.productProvider(for: project)
             productProvider.setup { _ in
                 self.spinner.stopAnimating()
                 self.buttonContainer.isHidden = false
@@ -92,7 +92,7 @@ class SampleViewController: UIViewController {
     }
 
     @objc private func scannerButtonTapped(_ sender: Any) {
-        guard let shoppingCart = self.shoppingCart, let shop = Snabble.projects.first?.shops.first else {
+        guard let shoppingCart = self.shoppingCart, let shop = Snabble.shared.projects.first?.shops.first else {
             return
         }
 
