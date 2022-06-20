@@ -75,30 +75,6 @@
 
 "Snabble.Coupons.expiresAtDate" = "gültig bis %@";
 
-"Snabble.Coupons.expiresInDays.one" = "noch %d Tag";
-
-"Snabble.Coupons.expiresInDays.other" = "noch %d Tage";
-
-"Snabble.Coupons.expiresInDays.zero" = "Bereits abgelaufen";
-
-"Snabble.Coupons.expiresInHours.one" = "noch %d Stunde";
-
-"Snabble.Coupons.expiresInHours.other" = "noch %d Stunden";
-
-"Snabble.Coupons.expiresInHours.zero" = "Bereits abgelaufen";
-
-"Snabble.Coupons.expiresInMinutes.one" = "noch %d Minute";
-
-"Snabble.Coupons.expiresInMinutes.other" = "noch %d Minuten";
-
-"Snabble.Coupons.expiresInMinutes.zero" = "Bereits abgelaufen";
-
-"Snabble.Coupons.expiresInWeeks.one" = "noch %d Woche";
-
-"Snabble.Coupons.expiresInWeeks.other" = "noch %d Wochen";
-
-"Snabble.Coupons.expiresInWeeks.zero" = "Bereits abgelaufen";
-
 "Snabble.Coupons.none" = "Keine Coupons verfügbar";
 
 "Snabble.Coupons.title" = "Coupons";
@@ -335,7 +311,13 @@
 
 "Snabble.QRCode.codeXofY" = "Code %1$d von %2$d";
 
-"Snabble.QRCode.didPay" = "Fertig";
+"Snabble.QRCode.didPay" = "Ich habe an der Kasse bezahlt";
+
+"Snabble.QRCode.DidPayDialog.cancel" = "Zurück zum QR-Code";
+
+"Snabble.QRCode.DidPayDialog.message" = "Hast du an der Kasse bezahlt, so dass wir den Warenkorb verwerfen können?";
+
+"Snabble.QRCode.DidPayDialog.ok" = "Ja, Warenkorb verwerfen";
 
 "Snabble.QRCode.entry.title" = "Code: %d";
 
@@ -542,12 +524,6 @@
 "Snabble.Shoppingcart.notForThisPurchase" = "Für diesen Einkauf nicht verfügbar";
 
 "Snabble.Shoppingcart.notForVendor" = "Vom Händler nicht unterstützt";
-
-"Snabble.Shoppingcart.numberOfItems.one" = "%d Artikel";
-
-"Snabble.Shoppingcart.numberOfItems.other" = "%d Artikel";
-
-"Snabble.Shoppingcart.numberOfItems.one" = "%d Artikel";
 
 "Snabble.Shoppingcart.removeItem" = "%@ wirklich entfernen?";
 

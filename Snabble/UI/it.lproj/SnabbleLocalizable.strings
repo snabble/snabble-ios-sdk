@@ -75,38 +75,6 @@
 
 "Snabble.Coupons.expiresAtDate" = "valido fino al %@";
 
-"Snabble.Coupons.expiresInDays.many" = "ancora %d giorni";
-
-"Snabble.Coupons.expiresInDays.one" = "ancora %d giorno";
-
-"Snabble.Coupons.expiresInDays.other" = "ancora %d giorni";
-
-"Snabble.Coupons.expiresInDays.zero" = "Già scaduto";
-
-"Snabble.Coupons.expiresInHours.many" = "ancora %d secondi";
-
-"Snabble.Coupons.expiresInHours.one" = "ancora %d ora";
-
-"Snabble.Coupons.expiresInHours.other" = "ancora %d ore";
-
-"Snabble.Coupons.expiresInHours.zero" = "Già scaduto";
-
-"Snabble.Coupons.expiresInMinutes.many" = "ancora %d minuti";
-
-"Snabble.Coupons.expiresInMinutes.one" = "ancora %d minuto";
-
-"Snabble.Coupons.expiresInMinutes.other" = "ancora %d minuti";
-
-"Snabble.Coupons.expiresInMinutes.zero" = "Già scaduto";
-
-"Snabble.Coupons.expiresInWeeks.many" = "ancora %d settimane";
-
-"Snabble.Coupons.expiresInWeeks.one" = "ancora %d settimana";
-
-"Snabble.Coupons.expiresInWeeks.other" = "ancora %d settimane";
-
-"Snabble.Coupons.expiresInWeeks.zero" = "Già scaduto";
-
 "Snabble.Coupons.none" = "Nessun coupon disponibile";
 
 "Snabble.Coupons.title" = "Coupon";
@@ -345,6 +313,12 @@
 
 "Snabble.QRCode.didPay" = "Finito";
 
+"Snabble.QRCode.DidPayDialog.cancel" = "Back to QR-Code";
+
+"Snabble.QRCode.DidPayDialog.message" = "Did you pay at checkout so we can discard the cart?";
+
+"Snabble.QRCode.DidPayDialog.ok" = "Yes, discard shopping cart";
+
 "Snabble.QRCode.entry.title" = "Codice: %d";
 
 "Snabble.QRCode.message" = "Mostra il codice QR alla cassa";
@@ -550,14 +524,6 @@
 "Snabble.Shoppingcart.notForThisPurchase" = "Non disponibile per questo acquisto";
 
 "Snabble.Shoppingcart.notForVendor" = "Non supportato dal commerciante";
-
-"Snabble.Shoppingcart.numberOfItems.many" = "%d articoli";
-
-"Snabble.Shoppingcart.numberOfItems.one" = "%d articolo";
-
-"Snabble.Shoppingcart.numberOfItems.other" = "%d articoli";
-
-"Snabble.Shoppingcart.numberOfItems.one" = "%d product";
 
 "Snabble.Shoppingcart.removeItem" = "Rimuovere davvero %@?";
 

@@ -75,30 +75,6 @@
 
 "Snabble.Coupons.expiresAtDate" = "érvényes %@-ig";
 
-"Snabble.Coupons.expiresInDays.one" = "még %d nap";
-
-"Snabble.Coupons.expiresInDays.other" = "még %d nap";
-
-"Snabble.Coupons.expiresInDays.zero" = "Már lejárt";
-
-"Snabble.Coupons.expiresInHours.one" = "még %d óra";
-
-"Snabble.Coupons.expiresInHours.other" = "még %d óra";
-
-"Snabble.Coupons.expiresInHours.zero" = "Már lejárt";
-
-"Snabble.Coupons.expiresInMinutes.one" = "még %d perc";
-
-"Snabble.Coupons.expiresInMinutes.other" = "még %d perc";
-
-"Snabble.Coupons.expiresInMinutes.zero" = "Már lejárt";
-
-"Snabble.Coupons.expiresInWeeks.one" = "még %d hét";
-
-"Snabble.Coupons.expiresInWeeks.other" = "még %d hét";
-
-"Snabble.Coupons.expiresInWeeks.zero" = "Már lejárt";
-
 "Snabble.Coupons.none" = "Nincs elérhető kupon";
 
 "Snabble.Coupons.title" = "Kuponok";
@@ -329,13 +305,19 @@
 
 "Snabble.Payone.Lastname" = "Vezetéknév";
 
-"Snabble.pleaseWait" = "Kérlek, várj…";
+"Snabble.pleaseWait" = "Kérlek, várj...";
 
 "Snabble.PostFinanceCard.payNow" = "Most fizetés a PostFinance kártyával";
 
 "Snabble.QRCode.codeXofY" = "%1$d / %2$d kód";
 
 "Snabble.QRCode.didPay" = "Kész";
+
+"Snabble.QRCode.DidPayDialog.cancel" = "Back to QR-Code";
+
+"Snabble.QRCode.DidPayDialog.message" = "Did you pay at checkout so we can discard the cart?";
+
+"Snabble.QRCode.DidPayDialog.ok" = "Yes, discard shopping cart";
 
 "Snabble.QRCode.entry.title" = "Kód: %d";
 
@@ -542,12 +524,6 @@
 "Snabble.Shoppingcart.notForThisPurchase" = "Ehhez a bevásárláshoz nem áll rendelkezésre";
 
 "Snabble.Shoppingcart.notForVendor" = "A kereskedő nem támogatja";
-
-"Snabble.Shoppingcart.numberOfItems.one" = "%d termék";
-
-"Snabble.Shoppingcart.numberOfItems.other" = "%d termék";
-
-"Snabble.Shoppingcart.numberOfItems.one" = "%d termék";
 
 "Snabble.Shoppingcart.removeItem" = "%@ tényleg eltávolítod?";
 

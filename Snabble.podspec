@@ -50,6 +50,7 @@ Pod::Spec.new do |s|
     ui.resource_bundles = {
       "SnabbleSDK" => [
         'Snabble/UI/*.lproj/*.strings',
+        'Snabble/UI/*.lproj/*.stringsdict',
         'Snabble/UI/**/*.xib',
         'Snabble/UI/**/*.der',
         'Snabble/UI/**/*.html',

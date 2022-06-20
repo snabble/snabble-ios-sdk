@@ -127,58 +127,26 @@ public enum L10n {
       public static func expiresAtDate(_ p1: Any) -> String {
         return L10n.tr("SnabbleLocalizable", "Snabble.Coupons.expiresAtDate", String(describing: p1))
       }
+      /// Plural format key: "%#@localized_format_key@"
+      public static func expiresInDays(_ p1: Int) -> String {
+        return L10n.tr("SnabbleLocalizable", "Snabble.Coupons.expiresInDays", p1)
+      }
+      /// Plural format key: "%#@localized_format_key@"
+      public static func expiresInHours(_ p1: Int) -> String {
+        return L10n.tr("SnabbleLocalizable", "Snabble.Coupons.expiresInHours", p1)
+      }
+      /// Plural format key: "%#@localized_format_key@"
+      public static func expiresInMinutes(_ p1: Int) -> String {
+        return L10n.tr("SnabbleLocalizable", "Snabble.Coupons.expiresInMinutes", p1)
+      }
+      /// Plural format key: "%#@localized_format_key@"
+      public static func expiresInWeeks(_ p1: Int) -> String {
+        return L10n.tr("SnabbleLocalizable", "Snabble.Coupons.expiresInWeeks", p1)
+      }
       /// No Coupons available
       public static var `none`: String { return L10n.tr("SnabbleLocalizable", "Snabble.Coupons.none") }
       /// Coupons
       public static var title: String { return L10n.tr("SnabbleLocalizable", "Snabble.Coupons.title") }
-      public enum ExpiresInDays {
-        /// %d day remaining
-        public static func one(_ p1: Int) -> String {
-          return L10n.tr("SnabbleLocalizable", "Snabble.Coupons.expiresInDays.one", p1)
-        }
-        /// %d days remaining
-        public static func other(_ p1: Int) -> String {
-          return L10n.tr("SnabbleLocalizable", "Snabble.Coupons.expiresInDays.other", p1)
-        }
-        /// Already expired
-        public static var zero: String { return L10n.tr("SnabbleLocalizable", "Snabble.Coupons.expiresInDays.zero") }
-      }
-      public enum ExpiresInHours {
-        /// %d hour remaining
-        public static func one(_ p1: Int) -> String {
-          return L10n.tr("SnabbleLocalizable", "Snabble.Coupons.expiresInHours.one", p1)
-        }
-        /// %d hours remaining
-        public static func other(_ p1: Int) -> String {
-          return L10n.tr("SnabbleLocalizable", "Snabble.Coupons.expiresInHours.other", p1)
-        }
-        /// Already expired
-        public static var zero: String { return L10n.tr("SnabbleLocalizable", "Snabble.Coupons.expiresInHours.zero") }
-      }
-      public enum ExpiresInMinutes {
-        /// %d minute remaining
-        public static func one(_ p1: Int) -> String {
-          return L10n.tr("SnabbleLocalizable", "Snabble.Coupons.expiresInMinutes.one", p1)
-        }
-        /// %d minutes remaining
-        public static func other(_ p1: Int) -> String {
-          return L10n.tr("SnabbleLocalizable", "Snabble.Coupons.expiresInMinutes.other", p1)
-        }
-        /// Already expired
-        public static var zero: String { return L10n.tr("SnabbleLocalizable", "Snabble.Coupons.expiresInMinutes.zero") }
-      }
-      public enum ExpiresInWeeks {
-        /// %d week remaining
-        public static func one(_ p1: Int) -> String {
-          return L10n.tr("SnabbleLocalizable", "Snabble.Coupons.expiresInWeeks.one", p1)
-        }
-        /// %d weeks remaining
-        public static func other(_ p1: Int) -> String {
-          return L10n.tr("SnabbleLocalizable", "Snabble.Coupons.expiresInWeeks.other", p1)
-        }
-        /// Already expired
-        public static var zero: String { return L10n.tr("SnabbleLocalizable", "Snabble.Coupons.expiresInWeeks.zero") }
-      }
     }
     public enum CreditCard {
       /// Pay now using Credit card
@@ -437,7 +405,7 @@ public enum L10n {
       public static func codeXofY(_ p1: Int, _ p2: Int) -> String {
         return L10n.tr("SnabbleLocalizable", "Snabble.QRCode.codeXofY", p1, p2)
       }
-      /// Done
+      /// I paid at the cash register
       public static var didPay: String { return L10n.tr("SnabbleLocalizable", "Snabble.QRCode.didPay") }
       /// Please show QR code at the cash desk
       public static var message: String { return L10n.tr("SnabbleLocalizable", "Snabble.QRCode.message") }
@@ -457,6 +425,14 @@ public enum L10n {
       public static var title: String { return L10n.tr("SnabbleLocalizable", "Snabble.QRCode.title") }
       /// Total: 
       public static var total: String { return L10n.tr("SnabbleLocalizable", "Snabble.QRCode.total") }
+      public enum DidPayDialog {
+        /// Back to QR-Code
+        public static var cancel: String { return L10n.tr("SnabbleLocalizable", "Snabble.QRCode.DidPayDialog.cancel") }
+        /// Did you pay at checkout so we can discard the cart?
+        public static var message: String { return L10n.tr("SnabbleLocalizable", "Snabble.QRCode.DidPayDialog.message") }
+        /// Yes, discard shopping cart
+        public static var ok: String { return L10n.tr("SnabbleLocalizable", "Snabble.QRCode.DidPayDialog.ok") }
+      }
       public enum Entry {
         /// Code: %d
         public static func title(_ p1: Int) -> String {
@@ -696,6 +672,10 @@ public enum L10n {
       public static var notForThisPurchase: String { return L10n.tr("SnabbleLocalizable", "Snabble.Shoppingcart.notForThisPurchase") }
       /// Not supported by this retailer
       public static var notForVendor: String { return L10n.tr("SnabbleLocalizable", "Snabble.Shoppingcart.notForVendor") }
+      /// Plural format key: "%#@localized_format_key@"
+      public static func numberOfItems(_ p1: Int) -> String {
+        return L10n.tr("SnabbleLocalizable", "Snabble.Shoppingcart.numberOfItems", p1)
+      }
       /// Really remove %@?
       public static func removeItem(_ p1: Any) -> String {
         return L10n.tr("SnabbleLocalizable", "Snabble.Shoppingcart.removeItem", String(describing: p1))
@@ -763,16 +743,6 @@ public enum L10n {
         public static var restoreButtonTitle: String { return L10n.tr("SnabbleLocalizable", "Snabble.Shoppingcart.emptyState.restoreButtonTitle") }
         /// Your shopping cart is empty
         public static var title: String { return L10n.tr("SnabbleLocalizable", "Snabble.Shoppingcart.emptyState.title") }
-      }
-      public enum NumberOfItems {
-        /// %d product
-        public static func one(_ p1: Int) -> String {
-          return L10n.tr("SnabbleLocalizable", "Snabble.Shoppingcart.numberOfItems.one", p1)
-        }
-        /// %d products
-        public static func other(_ p1: Int) -> String {
-          return L10n.tr("SnabbleLocalizable", "Snabble.Shoppingcart.numberOfItems.other", p1)
-        }
       }
     }
     public enum Twint {

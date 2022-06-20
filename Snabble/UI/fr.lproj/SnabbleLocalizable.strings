@@ -75,38 +75,6 @@
 
 "Snabble.Coupons.expiresAtDate" = "valable jusqu'au %@";
 
-"Snabble.Coupons.expiresInDays.many" = "encore %d jours";
-
-"Snabble.Coupons.expiresInDays.one" = "encore %d jour";
-
-"Snabble.Coupons.expiresInDays.other" = "encore %d jours";
-
-"Snabble.Coupons.expiresInDays.zero" = "Déjà expiré";
-
-"Snabble.Coupons.expiresInHours.many" = "encore %d heures";
-
-"Snabble.Coupons.expiresInHours.one" = "encore %d heure";
-
-"Snabble.Coupons.expiresInHours.other" = "encore %d heures";
-
-"Snabble.Coupons.expiresInHours.zero" = "Déjà expiré";
-
-"Snabble.Coupons.expiresInMinutes.many" = "encore %d minutes";
-
-"Snabble.Coupons.expiresInMinutes.one" = "encore %d minute";
-
-"Snabble.Coupons.expiresInMinutes.other" = "encore %d minutes";
-
-"Snabble.Coupons.expiresInMinutes.zero" = "Déjà expiré";
-
-"Snabble.Coupons.expiresInWeeks.many" = "encore %d semaines";
-
-"Snabble.Coupons.expiresInWeeks.one" = "encore %d semaine";
-
-"Snabble.Coupons.expiresInWeeks.other" = "encore %d semaines";
-
-"Snabble.Coupons.expiresInWeeks.zero" = "Déjà expiré";
-
 "Snabble.Coupons.none" = "Aucun coupon disponible";
 
 "Snabble.Coupons.title" = "coupons";
@@ -345,6 +313,12 @@
 
 "Snabble.QRCode.didPay" = "Terminé";
 
+"Snabble.QRCode.DidPayDialog.cancel" = "Back to QR-Code";
+
+"Snabble.QRCode.DidPayDialog.message" = "Did you pay at checkout so we can discard the cart?";
+
+"Snabble.QRCode.DidPayDialog.ok" = "Yes, discard shopping cart";
+
 "Snabble.QRCode.entry.title" = "Code : %d";
 
 "Snabble.QRCode.message" = "Merci de présenter le code QR à la caisse";
@@ -550,14 +524,6 @@
 "Snabble.Shoppingcart.notForThisPurchase" = "Non disponible pour cet achat";
 
 "Snabble.Shoppingcart.notForVendor" = "N’est pas pris en charge par le commerçant";
-
-"Snabble.Shoppingcart.numberOfItems.many" = "%d articles";
-
-"Snabble.Shoppingcart.numberOfItems.one" = "%d article";
-
-"Snabble.Shoppingcart.numberOfItems.other" = "%d articles";
-
-"Snabble.Shoppingcart.numberOfItems.one" = "%d product";
 
 "Snabble.Shoppingcart.removeItem" = "Es-tu sûr(e) de vouloir supprimer %@ ?";
 

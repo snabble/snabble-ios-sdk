@@ -190,8 +190,8 @@ final class CheckoutBar: UIView {
         } else {
             self.totalPriceLabel?.text = ""
         }
-        let fun = numProducts == 1 ? L10n.Snabble.Shoppingcart.NumberOfItems.one : L10n.Snabble.Shoppingcart.NumberOfItems.other
-        self.itemCountLabel?.text = fun(numProducts)
+
+        self.itemCountLabel?.text = L10n.Snabble.Shoppingcart.numberOfItems(numProducts)
         self.checkoutButton?.isEnabled = numProducts > 0 && (totalPrice ?? 0) >= 0
 
         self.methodSelector?.updateAvailablePaymentMethods()

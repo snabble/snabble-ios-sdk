@@ -9,7 +9,7 @@ xcassets:
     output: Snabble/UI/Assets.swift
 
 strings:
-  inputs: Snabble/UI/en.lproj/SnabbleLocalizable.strings
+  inputs: Snabble/UI/en.lproj
   outputs:
     templateName: structured-swift5
     params:

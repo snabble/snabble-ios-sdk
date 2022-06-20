@@ -75,46 +75,6 @@
 
 "Snabble.Coupons.expiresAtDate" = "platný do %@";
 
-"Snabble.Coupons.expiresInDays.few" = "ešte %d dni";
-
-"Snabble.Coupons.expiresInDays.many" = "ešte %d dní";
-
-"Snabble.Coupons.expiresInDays.one" = "ešte %d deň";
-
-"Snabble.Coupons.expiresInDays.other" = "ešte %d dní";
-
-"Snabble.Coupons.expiresInDays.zero" = "Platnosť už skončila";
-
-"Snabble.Coupons.expiresInHours.few" = "ešte %d hodiny";
-
-"Snabble.Coupons.expiresInHours.many" = "ešte %d hodín";
-
-"Snabble.Coupons.expiresInHours.one" = "ešte %d hodina";
-
-"Snabble.Coupons.expiresInHours.other" = "ešte %d hodín";
-
-"Snabble.Coupons.expiresInHours.zero" = "Platnosť už skončila";
-
-"Snabble.Coupons.expiresInMinutes.few" = "ešte %d minúty";
-
-"Snabble.Coupons.expiresInMinutes.many" = "ešte %d minút";
-
-"Snabble.Coupons.expiresInMinutes.one" = "ešte %d minúta";
-
-"Snabble.Coupons.expiresInMinutes.other" = "ešte %d minút";
-
-"Snabble.Coupons.expiresInMinutes.zero" = "Platnosť už skončila";
-
-"Snabble.Coupons.expiresInWeeks.few" = "ešte %d týždňov";
-
-"Snabble.Coupons.expiresInWeeks.many" = "ešte %d týždňov";
-
-"Snabble.Coupons.expiresInWeeks.one" = "ešte %d týždeň";
-
-"Snabble.Coupons.expiresInWeeks.other" = "ešte %d týždňov";
-
-"Snabble.Coupons.expiresInWeeks.zero" = "Platnosť už skončila";
-
 "Snabble.Coupons.none" = "Kupóny nie sú k dispozícii";
 
 "Snabble.Coupons.title" = "Kupóny";
@@ -345,13 +305,19 @@
 
 "Snabble.Payone.Lastname" = "Priezvisko";
 
-"Snabble.pleaseWait" = "Čakaj, prosím…";
+"Snabble.pleaseWait" = "Čakaj, prosím...";
 
 "Snabble.PostFinanceCard.payNow" = "Zaplatiť kartou PostFinance teraz";
 
 "Snabble.QRCode.codeXofY" = "Kód %1$d z %2$d";
 
 "Snabble.QRCode.didPay" = "Hotovo";
+
+"Snabble.QRCode.DidPayDialog.cancel" = "Back to QR-Code";
+
+"Snabble.QRCode.DidPayDialog.message" = "Did you pay at checkout so we can discard the cart?";
+
+"Snabble.QRCode.DidPayDialog.ok" = "Yes, discard shopping cart";
 
 "Snabble.QRCode.entry.title" = "Kód: %d";
 
@@ -558,16 +524,6 @@
 "Snabble.Shoppingcart.notForThisPurchase" = "Pre tento nákup nie je k dispozícii";
 
 "Snabble.Shoppingcart.notForVendor" = "Nepodporovaná obchodom";
-
-"Snabble.Shoppingcart.numberOfItems.few" = "%d položky";
-
-"Snabble.Shoppingcart.numberOfItems.many" = "%d položiek";
-
-"Snabble.Shoppingcart.numberOfItems.one" = "%d položka";
-
-"Snabble.Shoppingcart.numberOfItems.other" = "%d položiek";
-
-"Snabble.Shoppingcart.numberOfItems.one" = "%d položka";
 
 "Snabble.Shoppingcart.removeItem" = "Naozaj chceš odstrániť %@ z košíka?";
 
