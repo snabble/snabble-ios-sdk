@@ -20,6 +20,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 * Fixes deprecation warnings for iOS 13 and 14 
 * CheckinManager available via Snabble
 * Snabble changed to singled with a shared variable
+* Clear Inflight checkouts as soon as checkoutProcess is completed #APPS-369
 
 ### Added
 * Added dynamic fonts to several views #Apps-231
@@ -38,9 +39,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Removed
 * Xib/Nib utility methods
-
-### Fixed
-* clear Inflight checkouts as soon as checkoutProcess is completed #APPS-369
 
 ## [0.19.2] - 2022-5-25
 
