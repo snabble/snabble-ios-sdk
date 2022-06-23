@@ -6,6 +6,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [unreleased]
 
+### Changed
+
+### Added
+
+### Removed
+
+## [0.20.0] - 2022-06-23
+
 ### Changed 
 * Improved Check-In and Check-out logic #APPS-273
 * Shopping cart indicator icons are scaled incorrectly #APPS-333

@@ -5,7 +5,7 @@
 
 Pod::Spec.new do |s|
   s.name = 'Snabble'
-  s.version = '0.20.0'
+  s.version = '0.21.0'
   s.summary = 'The snabble iOS SDK'
 
   s.description = <<-DESC
