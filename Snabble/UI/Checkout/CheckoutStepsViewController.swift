@@ -187,7 +187,6 @@ final class CheckoutStepsViewController: UIViewController {
     @objc private func doneButtonTouchedUpInside(_ sender: UIButton) {
         Snabble.shared.fetchAppUserData(shop.projectId)
         updateShoppingCart(for: checkoutProcess)
-        Snabble.clearInFlightCheckout()
         paymentDelegate?.checkoutFinished(viewModel.shoppingCart, viewModel.checkoutProcess)
         navigationController?.popToRootViewController(animated: false)
         paymentDelegate?.track(.checkoutStepsClosed)
@@ -219,6 +218,9 @@ final class CheckoutStepsViewController: UIViewController {
 extension CheckoutStepsViewController: CheckoutStepsViewModelDelegate {
     func checkoutStepsViewModel(_ viewModel: CheckoutStepsViewModel, didUpdateCheckoutProcess checkoutProcess: CheckoutProcess) {
         doneButton?.isEnabled = checkoutProcess.isComplete
+        if checkoutProcess.isComplete {
+            Snabble.clearInFlightCheckout()
+        }
     }
 
     func checkoutStepsViewModel(_ viewModel: CheckoutStepsViewModel, didUpdateSteps steps: [CheckoutStep]) {

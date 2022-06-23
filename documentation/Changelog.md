@@ -31,6 +31,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Removed
 * Xib/Nib utility methods
 
+### Fixed
+* clear Inflight checkouts as soon as checkoutProcess is completed #APPS-369
+
 ## [0.19.2] - 2022-5-25
 
 ### Changed

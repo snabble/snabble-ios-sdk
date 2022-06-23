@@ -29,6 +29,7 @@ extension Snabble {
 
     static func clearInFlightCheckout() {
         UserDefaults.standard.removeObject(forKey: Self.inFlightKey)
+        UserDefaults.standard.synchronize()
     }
 
     public static var inFlightCheckout: InFlightCheckout? {
