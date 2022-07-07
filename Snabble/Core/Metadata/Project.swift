@@ -486,3 +486,15 @@ public struct Project: Decodable, Identifiable {
         }
     }
 }
+
+extension Project: Hashable {
+    public func hash(into hasher: inout Hasher) {
+        hasher.combine(id)
+    }
+}
+
+extension Project: Equatable {
+    public static func == (lhs: Self, rhs: Self) -> Bool {
+        lhs.id == rhs.id
+    }
+}

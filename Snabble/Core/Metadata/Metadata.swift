@@ -42,12 +42,16 @@ public struct Metadata: Decodable {
         self.brands = try container.decodeIfPresent([Brand].self, forKey: .brands) ?? []
     }
 
-    mutating func setShops(_ shops: [Shop], at index: Int) {
-        self.projects[index].setShops(shops)
+    mutating func setShops(_ shops: [Shop], for project: Project) {
+        if let index = projects.firstIndex(where: { project == $0 }) {
+            projects[index].setShops(shops)
+        }
     }
 
-    mutating func setCoupons(_ coupons: [Coupon], at index: Int) {
-        self.projects[index].setCoupons(coupons)
+    mutating func setCoupons(_ coupons: [Coupon], for project: Project) {
+        if let index = projects.firstIndex(where: { project == $0 }) {
+            projects[index].setCoupons(coupons)
+        }
     }
 }
 

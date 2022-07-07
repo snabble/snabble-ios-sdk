@@ -231,7 +231,7 @@ public class Snabble {
 
     private func loadActiveShops() {
         // reload shops from `activeShops` endpoint where present
-        for (index, project) in metadata.projects.enumerated() {
+        for project in metadata.projects {
             guard let activeShops = project.links.activeShops?.href else {
                 continue
             }
@@ -244,7 +244,7 @@ public class Snabble {
                 project.perform(request) { (result: Result<ActiveShops, SnabbleError>) in
                     switch result {
                     case .success(let activeShops):
-                        self.metadata.setShops(activeShops.shops, at: index)
+                        self.metadata.setShops(activeShops.shops, for: project)
                     case .failure(let error):
                         print("\(#function), \(project.id) \(error)")
                     }
@@ -257,7 +257,7 @@ public class Snabble {
         // reload coupons from `coupons` endpoint where present
         let group = DispatchGroup()
 
-        for (index, project) in metadata.projects.enumerated() {
+        for project in metadata.projects {
             guard let coupons = project.links.coupons?.href else {
                 continue
             }
@@ -273,7 +273,7 @@ public class Snabble {
                     group.leave()
                     switch result {
                     case .success(let couponList):
-                        self.metadata.setCoupons(couponList.coupons, at: index)
+                        self.metadata.setCoupons(couponList.coupons, for: project)
                     case .failure(let error):
                         print("\(#function), \(error)")
                     }
