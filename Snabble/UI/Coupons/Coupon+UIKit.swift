@@ -9,11 +9,11 @@ import Foundation
 import UIKit
 
 extension Coupon {
-    var backgroundColor: UIColor {
+    var backgroundColor: UIColor? {
         UIColor(rgbString: colors?.background ?? "ffffff")
     }
 
-    var textColor: UIColor {
+    var textColor: UIColor? {
         UIColor(rgbString: colors?.foreground ?? "000000")
     }
 }

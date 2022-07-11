@@ -8,7 +8,7 @@
 import Foundation
 import UIKit
 
-extension UIColor {
+public extension UIColor {
     convenience init(rgbString: String) {
         var rgb = rgbString
 
