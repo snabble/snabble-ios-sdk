@@ -26,7 +26,6 @@ opt_in_rules:
  - legacy_multiple
  - legacy_random
  - literal_expression_end_indentation
- - modifier_order
  - multiline_function_chains
  - operator_usage_whitespace
  - override_in_extension
