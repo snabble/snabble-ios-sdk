@@ -69,6 +69,12 @@ extension Coupon: Equatable {
     }
 }
 
+extension Coupon: Hashable {
+    public func hash(into hasher: inout Hasher) {
+        hasher.combine(id)
+    }
+}
+
 public struct CouponList: Decodable {
     let coupons: [Coupon]
 }
