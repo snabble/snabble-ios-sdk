@@ -71,6 +71,8 @@
 
 "Snabble.Coupon.explanation" = "A kuponod most már aktiválva van számodra. Szkenneld be a terméket az üzletben, és tedd a kosaradba, hogy kihasználhasd a kupon előnyeit.";
 
+"Snabble.Coupon.validIndefinitely" = "valid indefinitely";
+
 "Snabble.Coupons.expired" = "Már lejárt";
 
 "Snabble.Coupons.expiresAtDate" = "érvényes %@-ig";
@@ -311,13 +313,13 @@
 
 "Snabble.QRCode.codeXofY" = "%1$d / %2$d kód";
 
-"Snabble.QRCode.didPay" = "Kész";
+"Snabble.QRCode.didPay" = "A pénztárnál fizettem";
 
-"Snabble.QRCode.DidPayDialog.cancel" = "Back to QR-Code";
+"Snabble.QRCode.DidPayDialog.cancel" = "Vissza a QR-kódhoz";
 
-"Snabble.QRCode.DidPayDialog.message" = "Did you pay at checkout so we can discard the cart?";
+"Snabble.QRCode.DidPayDialog.message" = "Fizettél már a pénztárnál, törölhetjük a kosarat?";
 
-"Snabble.QRCode.DidPayDialog.ok" = "Yes, discard shopping cart";
+"Snabble.QRCode.DidPayDialog.ok" = "Igen, a kosár törlése";
 
 "Snabble.QRCode.entry.title" = "Kód: %d";
 

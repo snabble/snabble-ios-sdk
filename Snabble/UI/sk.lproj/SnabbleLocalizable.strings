@@ -71,6 +71,8 @@
 
 "Snabble.Coupon.explanation" = "Tento kupón je teraz pre teba aktivovaný. Ak chceš využiť kupón, naskenuj výrobok v obchode a pridaj ho do nákupného košíka.";
 
+"Snabble.Coupon.validIndefinitely" = "valid indefinitely";
+
 "Snabble.Coupons.expired" = "Platnosť už skončila";
 
 "Snabble.Coupons.expiresAtDate" = "platný do %@";
@@ -311,13 +313,13 @@
 
 "Snabble.QRCode.codeXofY" = "Kód %1$d z %2$d";
 
-"Snabble.QRCode.didPay" = "Hotovo";
+"Snabble.QRCode.didPay" = "Zaplatil(a) som pri pokladni";
 
-"Snabble.QRCode.DidPayDialog.cancel" = "Back to QR-Code";
+"Snabble.QRCode.DidPayDialog.cancel" = "Späť ku QR kódu";
 
-"Snabble.QRCode.DidPayDialog.message" = "Did you pay at checkout so we can discard the cart?";
+"Snabble.QRCode.DidPayDialog.message" = "Zaplatil(a) si pri pokladni, takže môžeme zrušiť nákupný kôš?";
 
-"Snabble.QRCode.DidPayDialog.ok" = "Yes, discard shopping cart";
+"Snabble.QRCode.DidPayDialog.ok" = "Áno, zrušiť nákupný kôš";
 
 "Snabble.QRCode.entry.title" = "Kód: %d";
 
