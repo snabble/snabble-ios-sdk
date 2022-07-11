@@ -55,12 +55,6 @@ public enum AnalyticsEvent {
     /// the `PaymentMethodDetailViewController` appeared
     case viewPaymentMethodDetail
 
-    /// the `CouponsListViewController` apppeared
-    case viewCouponList
-
-    /// the `CouponScanViewController` appeared
-    case viewCouponScan
-
     /// other events are tracked as a response to user actions
 
     /// toggling the scanner's torch
@@ -119,15 +113,6 @@ public enum AnalyticsEvent {
 
     /// an tag was marked "done" in the shopping list drawer by scanning a corresponding product
     case tagMarkDoneScanner
-
-    /// a coupon was scanned
-    case couponScanned
-
-    /// a coupon was activated
-    case couponActivated
-
-    /// a coupon was deleted
-    case couponDeleted
 
     /// checkout rating has been submitted
     case ratingSubmitted(value: Int)
