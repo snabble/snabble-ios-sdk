@@ -7,6 +7,7 @@
 
 import Foundation
 import UIKit
+import Combine
 
 public protocol CouponViewControllerDelegate: AnyObject {
     func couponViewController(_ couponViewController: CouponViewController, shouldActivateCoupon: Coupon) -> Bool
@@ -33,8 +34,10 @@ public final class CouponViewController: UIViewController {
 
     private var sessionDataTask: URLSessionDataTask?
 
-    public let coupon: Coupon
+    private(set) var coupon: Coupon
     public weak var delegate: CouponViewControllerDelegate?
+
+    private var subscriptions = Set<AnyCancellable>()
 
     public init(coupon: Coupon) {
         self.coupon = coupon
@@ -176,6 +179,15 @@ public final class CouponViewController: UIViewController {
     public override func viewDidLoad() {
         super.viewDidLoad()
         configure(with: couponViewModel)
+
+        UserDefaults.standard
+            .publisher(for: \.couponsActivated)
+            .receive(on: RunLoop.main)
+            .sink { [weak self] couponIds in
+                self?.verifyButtonState(of: self?.button)
+            }
+            .store(in: &subscriptions)
+
     }
 
     public override func viewDidLayoutSubviews() {
@@ -188,11 +200,6 @@ public final class CouponViewController: UIViewController {
         )
         mask.path = path.cgPath
         button?.layer.mask = mask
-    }
-
-    public override func viewWillAppear(_ animated: Bool) {
-        super.viewWillAppear(animated)
-//        verifyButtonState(of: button)
     }
 
     public override func viewDidAppear(_ animated: Bool) {
@@ -216,18 +223,17 @@ public final class CouponViewController: UIViewController {
         }
     }
 
-//    private func verifyButtonState(of button: UIButton?) {
-//        button?.isHidden = coupon.isActivated
-//        activatedStackView?.isHidden = !coupon.isActivated
-//    }
-//
+    private func verifyButtonState(of button: UIButton?) {
+        button?.isHidden = coupon.isActivated
+        activatedStackView?.isHidden = !coupon.isActivated
+    }
+
     @objc
     private func activateCoupon(_ sender: UIButton) {
         guard delegate?.couponViewController(self, shouldActivateCoupon: coupon) ?? true else {
             return
         }
-
-        print(#function)
+        coupon.isActivated = true
 
         delegate?.couponViewController(self, didActivateCoupon: coupon)
 //        if AuthManager.shared.isLoggedIn || !Defaults[.needLoginForCoupon] {

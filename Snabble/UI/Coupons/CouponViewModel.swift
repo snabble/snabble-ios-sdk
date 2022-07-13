@@ -22,6 +22,10 @@ class CouponViewModel {
         self.coupon = coupon
     }
 
+    var isActivated: Bool {
+        coupon.isActivated
+    }
+
     var validUntil: String {
         guard coupon.valid else {
             return L10n.Snabble.Coupon.expired
