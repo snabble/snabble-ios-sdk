@@ -179,15 +179,6 @@ public final class CouponViewController: UIViewController {
     public override func viewDidLoad() {
         super.viewDidLoad()
         configure(with: couponViewModel)
-
-//        UserDefaults.standard
-//            .publisher(for: \.couponsActivated)
-//            .receive(on: RunLoop.main)
-//            .sink { [weak self] couponIds in
-//                self?.verifyButtonState(of: self?.button)
-//            }
-//            .store(in: &subscriptions)
-
     }
 
     public override func viewDidLayoutSubviews() {
@@ -200,6 +191,11 @@ public final class CouponViewController: UIViewController {
         )
         mask.path = path.cgPath
         button?.layer.mask = mask
+    }
+
+    public override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        verifyButtonState(of: button)
     }
 
     public override func viewDidAppear(_ animated: Bool) {
@@ -221,8 +217,6 @@ public final class CouponViewController: UIViewController {
             self?.activityIndicatorView?.stopAnimating()
             self?.imageView?.image = image
         }
-
-        verifyButtonState(of: button)
     }
 
     private func verifyButtonState(of button: UIButton?) {
