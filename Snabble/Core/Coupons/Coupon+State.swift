@@ -8,14 +8,16 @@
 import Foundation
 
 public extension Coupon {
-
     var isActivated: Bool {
-        get {
-            UserDefaults.standard.couponsActivated.contains(where: { $0 == id })
-        }
-        set {
-            switchTo(newValue ? .activate : .deactivate)
-        }
+        UserDefaults.standard.stringArray(forKey: stateKey)?.contains(where: { $0 == id }) ?? false
+    }
+
+    func activate() {
+        switchTo(.activate)
+    }
+
+    func deactivate() {
+        switchTo(.deactivate)
     }
 
     private enum State {
@@ -23,8 +25,8 @@ public extension Coupon {
         case deactivate
     }
 
-    private func switchTo(_ state: State ) {
-        let couponIds = UserDefaults.standard.couponsActivated
+    private func switchTo(_ state: State) {
+        let couponIds = UserDefaults.standard.stringArray(forKey: stateKey) ?? []
         var idSet = couponIds.reduce(into: Set<String>()) { partialResult, object in
             partialResult.insert(object)
         }
@@ -36,19 +38,8 @@ public extension Coupon {
             idSet.remove(id)
         }
 
-        UserDefaults.standard.couponsActivated = Array(idSet)
+        UserDefaults.standard.set(Array(idSet), forKey: stateKey)
     }
-}
 
-extension UserDefaults {
-    private static let stateKey = "io.snabble.couponsActivated"
-
-    @objc var couponsActivated: [String] {
-        get {
-            stringArray(forKey: Self.stateKey) ?? []
-        }
-        set {
-            set(newValue, forKey: Self.stateKey)
-        }
-    }
+    private var stateKey: String { "io.snabble.couponsActivated.\(projectID.rawValue)" }
 }

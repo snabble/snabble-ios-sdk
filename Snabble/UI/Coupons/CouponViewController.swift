@@ -180,13 +180,13 @@ public final class CouponViewController: UIViewController {
         super.viewDidLoad()
         configure(with: couponViewModel)
 
-        UserDefaults.standard
-            .publisher(for: \.couponsActivated)
-            .receive(on: RunLoop.main)
-            .sink { [weak self] couponIds in
-                self?.verifyButtonState(of: self?.button)
-            }
-            .store(in: &subscriptions)
+//        UserDefaults.standard
+//            .publisher(for: \.couponsActivated)
+//            .receive(on: RunLoop.main)
+//            .sink { [weak self] couponIds in
+//                self?.verifyButtonState(of: self?.button)
+//            }
+//            .store(in: &subscriptions)
 
     }
 
@@ -221,6 +221,8 @@ public final class CouponViewController: UIViewController {
             self?.activityIndicatorView?.stopAnimating()
             self?.imageView?.image = image
         }
+
+        verifyButtonState(of: button)
     }
 
     private func verifyButtonState(of button: UIButton?) {
@@ -233,7 +235,8 @@ public final class CouponViewController: UIViewController {
         guard delegate?.couponViewController(self, shouldActivateCoupon: coupon) ?? true else {
             return
         }
-        coupon.isActivated = true
+        coupon.activate()
+        verifyButtonState(of: button)
 
         delegate?.couponViewController(self, didActivateCoupon: coupon)
 //        if AuthManager.shared.isLoggedIn || !Defaults[.needLoginForCoupon] {
