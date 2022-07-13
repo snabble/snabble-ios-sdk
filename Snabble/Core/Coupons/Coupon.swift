@@ -65,7 +65,7 @@ public struct Format: Codable {
 
 extension Coupon: Equatable {
     public static func == (lhs: Coupon, rhs: Coupon) -> Bool {
-        return lhs.id == rhs.id && rhs.projectID == lhs.projectId
+        return lhs.id == rhs.id && rhs.projectID == lhs.projectID
     }
 }
 
