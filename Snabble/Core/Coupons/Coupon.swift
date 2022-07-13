@@ -65,13 +65,14 @@ public struct Format: Codable {
 
 extension Coupon: Equatable {
     public static func == (lhs: Coupon, rhs: Coupon) -> Bool {
-        return lhs.id == rhs.id
+        return lhs.id == rhs.id && rhs.projectID == lhs.projectId
     }
 }
 
 extension Coupon: Hashable {
     public func hash(into hasher: inout Hasher) {
         hasher.combine(id)
+        hasher.combine(projectID)
     }
 }
 
