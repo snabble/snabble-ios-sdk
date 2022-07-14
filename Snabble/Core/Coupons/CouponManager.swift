@@ -6,28 +6,43 @@
 //
 
 import Foundation
+import Combine
 
 final class CouponManager {
     static let shared = CouponManager()
 
-    private(set) var all: [Coupon] = [] {
+    var projectId: Identifier<Project>? = nil {
         didSet {
-            activated = Set(all.filter { UserDefaults.standard.couponsActivated.contains($0.id) })
+            update()
+        }
+    }
+
+    @Published private(set) var all: [Coupon] = [] {
+        didSet {
+            activated = all
+                .filter { $0.projectID == projectId }
+                .filter { $0.isActivated }
         }
 
     }
-    @Published private(set) var activated: Set<Coupon> = [] {
-        didSet {
-            UserDefaults.standard.couponsActivated = activated.map { $0.id }
-        }
+    @Published private(set) var activated: [Coupon] = []
 
+    private init() {}
+
+    private func update() {
+        all = Snabble.shared.metadata.projects.first(where: { $0.id == projectId })?.digitalCoupons ?? []
+    }
+}
+
+extension CouponManager {
+    func deactivate(coupon: Coupon) {
+        coupon.deactivate()
     }
 
-    private init() {
-
+    func activate(coupon: Coupon) {
+        coupon.activate()
+        
     }
-
-    
 }
 //    static let shared = CouponManager()
 //    @Published private(set) var coupons: [Coupon] = [] {
@@ -72,15 +87,7 @@ final class CouponManager {
 //    }
 //}
 //
-//extension CouponManager {
-//    func deactivate(coupon: Coupon) {
-//        activatedCoupons.remove(coupon)
-//    }
-//
-//    func activate(coupon: Coupon) {
-//        activatedCoupons.insert(coupon)
-//    }
-//}
+
 //
 //private extension Defaults.Keys {
 //    static let couponsActivated = Key<[String]>("couponsActivated", default: [])

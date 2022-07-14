@@ -35,11 +35,11 @@ public final class ShoppingCartManager {
 //        self.cart?.customerCard = Snabble.shared.project(for: shop.projectId)?.getMatchingCustomerCard()?.codeForCart()
     }
 
-    func updateCart(_ shop: Shop) {
-        if shop.id == cart?.shopId {
-            self.cart?.updateProducts()
-        }
-    }
+//    func updateCart(_ shop: Shop) {
+//        if shop.id == cart?.shopId {
+//            self.cart?.updateProducts()
+//        }
+//    }
 
     func reset() {
         cart = nil
