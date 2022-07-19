@@ -8,46 +8,77 @@
 import Foundation
 import Combine
 
-final class CouponManager {
-    static let shared = CouponManager()
+public protocol CouponManagerDelegate: AnyObject {
+    func couponManager(_ couponManager: CouponManager, didChangeProjectId projectId: Identifier<Project>?)
+    func couponManager(_ couponManager: CouponManager, didActivateCoupon coupon: Coupon)
+    func couponManager(_ couponManager: CouponManager, didDeactivateCoupon coupon: Coupon)
+}
 
-    var projectId: Identifier<Project>? = nil {
+public final class CouponManager {
+    public static let shared = CouponManager()
+
+    public weak var delegate: CouponManagerDelegate?
+
+    public var projectId: Identifier<Project>? = nil {
         didSet {
-            update()
+            delegate?.couponManager(self, didChangeProjectId: projectId)
         }
     }
 
-    @Published private(set) var all: [Coupon] = [] {
-        didSet {
-            activated = all
-                .filter { $0.projectID == projectId }
-                .filter { $0.isActivated }
-        }
+    public var all: [Coupon] {
+        Snabble.shared.metadata.projects.first(where: { $0.id == projectId })?.digitalCoupons ?? []
 
     }
-    @Published private(set) var activated: [Coupon] = []
+
+    public var activated: [Coupon] {
+        all
+            .filter { $0.projectID == projectId }
+            .filter { $0.isActivated }
+    }
 
     private init() {}
 
-    private func update() {
-        all = Snabble.shared.metadata.projects.first(where: { $0.id == projectId })?.digitalCoupons ?? []
+    public func all(for projectId: Identifier<Project>?) -> [Coupon]? {
+        Snabble.shared.metadata.projects.first(where: { $0.id == projectId })?.digitalCoupons
     }
 
-    func reset() {
+    public func reset() {
         all.forEach { coupon in
-            coupon.deactivate()
+            switchCoupon(coupon, to: .deactivate)
         }
     }
 }
 
 extension CouponManager {
-    func deactivate(coupon: Coupon) {
-        coupon.deactivate()
+    public func deactivate(coupon: Coupon) {
+        switchCoupon(coupon, to: .deactivate)
+        delegate?.couponManager(self, didDeactivateCoupon: coupon)
     }
 
-    func activate(coupon: Coupon) {
-        coupon.activate()
-        
+    public func activate(coupon: Coupon) {
+        switchCoupon(coupon, to: .activate)
+        delegate?.couponManager(self, didActivateCoupon: coupon)
+    }
+
+    private enum State {
+        case activate
+        case deactivate
+    }
+
+    private func switchCoupon(_ coupon: Coupon, to state: State) {
+        let couponIds = UserDefaults.standard.stringArray(forKey: coupon.stateKey) ?? []
+        var idSet = couponIds.reduce(into: Set<String>()) { partialResult, object in
+            partialResult.insert(object)
+        }
+
+        switch state {
+        case .activate:
+            idSet.insert(coupon.id)
+        case .deactivate:
+            idSet.remove(coupon.id)
+        }
+
+        UserDefaults.standard.set(Array(idSet), forKey: coupon.stateKey)
     }
 }
 //    static let shared = CouponManager()

@@ -195,6 +195,7 @@ public final class CouponViewController: UIViewController {
 
     public override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
+        CouponManager.shared.delegate = self
         verifyButtonState(of: button)
     }
 
@@ -229,7 +230,7 @@ public final class CouponViewController: UIViewController {
         guard delegate?.couponViewController(self, shouldActivateCoupon: coupon) ?? true else {
             return
         }
-        coupon.activate()
+        CouponManager.shared.activate(coupon: coupon)
         verifyButtonState(of: button)
 
         delegate?.couponViewController(self, didActivateCoupon: coupon)
@@ -239,5 +240,17 @@ public final class CouponViewController: UIViewController {
 //        } else {
 //            present(LoginViewController(), animated: true)
 //        }
+    }
+}
+
+extension CouponViewController: CouponManagerDelegate {
+    public func couponManager(_ couponManager: CouponManager, didChangeProjectId projectId: Identifier<Project>?) {}
+
+    public func couponManager(_ couponManager: CouponManager, didActivateCoupon coupon: Coupon) {
+        verifyButtonState(of: button)
+    }
+
+    public func couponManager(_ couponManager: CouponManager, didDeactivateCoupon coupon: Coupon) {
+        verifyButtonState(of: button)
     }
 }

@@ -9,6 +9,7 @@ import Foundation
 
 public protocol ShoppingCartManagerDelegate: AnyObject {
     func shoppingCartManager(_ shoppingCartManager: ShoppingCartManager, customerCardForShop shop: Shop) -> String
+    func shoppingCartManager(_ shoppingCartManager: ShoppingCartManager, couponsForShop shop: Shop) -> [Coupon]
 }
 
 public final class ShoppingCartManager {
@@ -24,6 +25,10 @@ public final class ShoppingCartManager {
         if shop.id != cart?.shopId {
             let config = CartConfig(shop: shop)
             cart = ShoppingCart(config)
+        }
+        let coupons = delegate?.shoppingCartManager(self, couponsForShop: shop)
+        coupons?.forEach {
+            cart?.addCoupon($0)
         }
         cart?.customerCard = delegate?.shoppingCartManager(self, customerCardForShop: shop)
         cart?.updateProducts()

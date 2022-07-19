@@ -33,6 +33,8 @@ public final class CouponsViewController: UICollectionViewController {
         let layout = UICollectionViewFlowLayout()
         layout.scrollDirection = .horizontal
         super.init(collectionViewLayout: layout)
+
+        CouponManager.shared.projectId = Snabble.shared.projects.first!.id
     }
 
     required init?(coder: NSCoder) {
@@ -68,17 +70,17 @@ public final class CouponsViewController: UICollectionViewController {
         heightConstraint = view.heightAnchor.constraint(equalToConstant: 0)
         heightConstraint?.isActive = true
 
-        CouponManager.shared.projectId = Snabble.shared.projects.first!.id
-        SnabbleSDK.CouponManager.shared.$all
-            .receive(on: RunLoop.main)
-            .assign(to: \.coupons, on: self)
-            .store(in: &subscriptions)
-
         NotificationCenter.default.publisher(for: UIContentSizeCategory.didChangeNotification, object: nil)
             .sink { [weak self] _ in
                 self?.updateCoupons()
             }
             .store(in: &subscriptions)
+    }
+
+    public override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        CouponManager.shared.delegate = self
+        coupons = SnabbleSDK.CouponManager.shared.all
     }
 
     private func updateCoupons() {
@@ -152,3 +154,12 @@ extension CouponsViewController: UICollectionViewDelegateFlowLayout {
     }
 }
 
+extension CouponsViewController: CouponManagerDelegate {
+    public func couponManager(_ couponManager: CouponManager, didActivateCoupon coupon: Coupon) {}
+
+    public func couponManager(_ couponManager: CouponManager, didDeactivateCoupon coupon: Coupon) {}
+
+    public func couponManager(_ couponManager: CouponManager, didChangeProjectId projectId: Identifier<Project>?) {
+        coupons = couponManager.all(for: projectId) ?? []
+    }
+}
