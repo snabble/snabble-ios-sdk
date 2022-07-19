@@ -32,6 +32,12 @@ final class CouponManager {
     private func update() {
         all = Snabble.shared.metadata.projects.first(where: { $0.id == projectId })?.digitalCoupons ?? []
     }
+
+    func reset() {
+        all.forEach { coupon in
+            coupon.deactivate()
+        }
+    }
 }
 
 extension CouponManager {

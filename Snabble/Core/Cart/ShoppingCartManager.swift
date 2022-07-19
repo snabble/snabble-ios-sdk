@@ -7,20 +7,25 @@
 
 import Foundation
 
+public protocol ShoppingCartManagerDelegate: AnyObject {
+    func shoppingCartManager(_ shoppingCartManager: ShoppingCartManager, customerCardForShop shop: Shop) -> String
+}
+
 public final class ShoppingCartManager {
-    static let shared = ShoppingCartManager()
+    public static let shared = ShoppingCartManager()
 
-    private(set) var cart: ShoppingCart?
+    public weak var delegate: ShoppingCartManagerDelegate?
 
-    private init() {
-        cart = nil
-    }
+    public private(set) var cart: ShoppingCart?
 
-    func update(with shop: Shop) {
+    private init() {}
+
+    public func update(with shop: Shop) {
         if shop.id != cart?.shopId {
             let config = CartConfig(shop: shop)
             cart = ShoppingCart(config)
         }
+        cart?.customerCard = delegate?.shoppingCartManager(self, customerCardForShop: shop)
         cart?.updateProducts()
     }
 
@@ -30,10 +35,10 @@ public final class ShoppingCartManager {
 //        cart?.updateProducts()
 //    }
 
-    func updateCustomerCard(_ customerCard: Any) {
+//    func updateCustomerCard(_ customerCard: Any) {
 //        cart?.customerCard = customerCard
 //        self.cart?.customerCard = Snabble.shared.project(for: shop.projectId)?.getMatchingCustomerCard()?.codeForCart()
-    }
+//    }
 
 //    func updateCart(_ shop: Shop) {
 //        if shop.id == cart?.shopId {
@@ -41,7 +46,7 @@ public final class ShoppingCartManager {
 //        }
 //    }
 
-    func reset() {
+    public func reset() {
         cart = nil
     }
 
