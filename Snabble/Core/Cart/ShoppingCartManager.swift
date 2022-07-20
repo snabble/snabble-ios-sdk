@@ -8,8 +8,7 @@
 import Foundation
 
 public protocol ShoppingCartManagerDelegate: AnyObject {
-    func shoppingCartManager(_ shoppingCartManager: ShoppingCartManager, customerCardForShop shop: Shop) -> String
-    func shoppingCartManager(_ shoppingCartManager: ShoppingCartManager, couponsForShop shop: Shop) -> [Coupon]
+    func shoppingCartManager(_ shoppingCartManager: ShoppingCartManager, customerCardForShop shop: Shop) -> String?
 }
 
 public final class ShoppingCartManager {
@@ -18,15 +17,19 @@ public final class ShoppingCartManager {
     public weak var delegate: ShoppingCartManagerDelegate?
 
     public private(set) var cart: ShoppingCart?
+    public var couponManager: CouponManager
 
-    private init() {}
+    private init() {
+        couponManager = CouponManager.shared
+        couponManager.delegate = self
+    }
 
     public func update(with shop: Shop) {
         if shop.id != cart?.shopId {
             let config = CartConfig(shop: shop)
             cart = ShoppingCart(config)
         }
-        let coupons = delegate?.shoppingCartManager(self, couponsForShop: shop)
+        let coupons = couponManager.activated(for: shop.projectId)
         coupons?.forEach {
             cart?.addCoupon($0)
         }
@@ -55,4 +58,14 @@ public final class ShoppingCartManager {
         cart = nil
     }
 
+}
+
+extension ShoppingCartManager: CouponManagerDelegate {
+    public func couponManager(_ couponManager: CouponManager, didActivateCoupon coupon: Coupon) {
+        cart?.addCoupon(coupon)
+    }
+
+    public func couponManager(_ couponManager: CouponManager, didDeactivateCoupon coupon: Coupon) {
+        cart?.removeCoupon(coupon)
+    }
 }

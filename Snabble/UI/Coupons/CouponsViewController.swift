@@ -23,7 +23,7 @@ public final class CouponsViewController: UICollectionViewController {
     private let cellWidth: CGFloat = 265
     private var cellHeight: CGFloat = 0
 
-    private var coupons = [Coupon]() {
+    private(set) var coupons: [Coupon] = [] {
         didSet {
             updateCoupons()
         }
@@ -33,8 +33,6 @@ public final class CouponsViewController: UICollectionViewController {
         let layout = UICollectionViewFlowLayout()
         layout.scrollDirection = .horizontal
         super.init(collectionViewLayout: layout)
-
-        CouponManager.shared.projectId = Snabble.shared.projects.first!.id
     }
 
     required init?(coder: NSCoder) {
@@ -79,8 +77,7 @@ public final class CouponsViewController: UICollectionViewController {
 
     public override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        CouponManager.shared.delegate = self
-        coupons = SnabbleSDK.CouponManager.shared.all
+        coupons = SnabbleSDK.CouponManager.shared.all(for: Snabble.shared.checkInManager.shop?.projectId) ?? []
     }
 
     private func updateCoupons() {
@@ -151,15 +148,5 @@ extension CouponsViewController: UICollectionViewDelegateFlowLayout {
 
     public func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, minimumLineSpacingForSectionAt section: Int) -> CGFloat {
         20
-    }
-}
-
-extension CouponsViewController: CouponManagerDelegate {
-    public func couponManager(_ couponManager: CouponManager, didActivateCoupon coupon: Coupon) {}
-
-    public func couponManager(_ couponManager: CouponManager, didDeactivateCoupon coupon: Coupon) {}
-
-    public func couponManager(_ couponManager: CouponManager, didChangeProjectId projectId: Identifier<Project>?) {
-        coupons = couponManager.all(for: projectId) ?? []
     }
 }

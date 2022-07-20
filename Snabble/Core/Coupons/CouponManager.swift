@@ -9,7 +9,7 @@ import Foundation
 import Combine
 
 public protocol CouponManagerDelegate: AnyObject {
-    func couponManager(_ couponManager: CouponManager, didChangeProjectId projectId: Identifier<Project>?)
+//    func couponManager(_ couponManager: CouponManager, didChangeProjectId projectId: Identifier<Project>?)
     func couponManager(_ couponManager: CouponManager, didActivateCoupon coupon: Coupon)
     func couponManager(_ couponManager: CouponManager, didDeactivateCoupon coupon: Coupon)
 }
@@ -19,33 +19,64 @@ public final class CouponManager {
 
     public weak var delegate: CouponManagerDelegate?
 
-    public var projectId: Identifier<Project>? = nil {
-        didSet {
-            delegate?.couponManager(self, didChangeProjectId: projectId)
-        }
+//    public var projectId: Identifier<Project>? = nil {
+//        didSet {
+//            delegate?.couponManager(self, didChangeProjectId: projectId)
+//        }
+//    }
+//
+//    public var all: [Coupon] {
+//        Snabble.shared.metadata.projects.first(where: { $0.id == projectId })?.digitalCoupons ?? []
+//
+//    }
+//
+//    public var activated: [Coupon] {
+//        all
+//            .filter { $0.projectID == projectId }
+//            .filter { $0.isActivated }
+//    }
+
+    private init() {
+        NotificationCenter.default.addObserver(
+            self,
+            selector: #selector(shoppingCartUpdated(_:)),
+            name: .snabbleCartUpdated,
+            object: nil
+        )
     }
-
-    public var all: [Coupon] {
-        Snabble.shared.metadata.projects.first(where: { $0.id == projectId })?.digitalCoupons ?? []
-
-    }
-
-    public var activated: [Coupon] {
-        all
-            .filter { $0.projectID == projectId }
-            .filter { $0.isActivated }
-    }
-
-    private init() {}
 
     public func all(for projectId: Identifier<Project>?) -> [Coupon]? {
         Snabble.shared.metadata.projects.first(where: { $0.id == projectId })?.digitalCoupons
+            .filter { $0.type != .unknown }
+            .filter { $0.imageURL != nil }
     }
 
-    public func reset() {
-        all.forEach { coupon in
-            switchCoupon(coupon, to: .deactivate)
-        }
+    public func activated(for projectId: Identifier<Project>?) -> [Coupon]? {
+        all(for: projectId)?
+            .filter { $0.isActivated }
+    }
+
+    @objc
+    private func shoppingCartUpdated(_ notification: Notification) {
+        let projectId = ShoppingCartManager.shared.cart?.projectId
+        let shoppingCartCoupons = ShoppingCartManager.shared.cart?.coupons
+            .map {
+                $0.coupon
+            }
+        all(for: projectId)?
+            .filter {
+                !(shoppingCartCoupons?.contains($0) ?? true)
+            }
+            .forEach {
+                switchCoupon($0, to: .deactivate)
+            }
+    }
+
+    public func reset(for projects: [Project]) {
+        projects
+            .compactMap { all(for: $0.id) }
+            .joined()
+            .forEach { deactivate(coupon: $0) }
     }
 }
 
