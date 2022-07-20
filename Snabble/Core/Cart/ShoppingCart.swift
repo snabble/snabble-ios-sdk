@@ -98,7 +98,7 @@ public final class ShoppingCart: Codable {
         try container.encode(self.requiredInformationData, forKey: .requiredInformationData)
     }
 
-    public init(_ config: CartConfig) {
+    public init(with config: CartConfig) {
         assert(!config.shop.projectId.rawValue.isEmpty, "projectId is required")
         assert(!config.shop.id.rawValue.isEmpty, "shopId is required")
         self.projectId = config.shop.projectId

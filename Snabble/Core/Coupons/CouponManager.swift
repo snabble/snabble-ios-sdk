@@ -21,7 +21,6 @@ public final class CouponManager {
     public private(set) lazy var shoppingCartManager: ShoppingCartManager = .shared
 
     private init() {
-        shoppingCartManager = .shared
         NotificationCenter.default.addObserver(
             self,
             selector: #selector(shoppingCartUpdated(_:)),
@@ -43,8 +42,9 @@ public final class CouponManager {
 
     @objc
     private func shoppingCartUpdated(_ notification: Notification) {
-        let projectId = ShoppingCartManager.shared.cart?.projectId
-        let shoppingCartCoupons = ShoppingCartManager.shared.cart?.coupons
+        let shoppingCart = shoppingCartManager.shoppingCart
+        let projectId = shoppingCart?.projectId
+        let shoppingCartCoupons = shoppingCart?.coupons
             .map {
                 $0.coupon
             }
@@ -68,13 +68,13 @@ public final class CouponManager {
 extension CouponManager {
     public func deactivate(coupon: Coupon) {
         switchCoupon(coupon, to: .deactivate)
-        shoppingCartManager.cart?.removeCoupon(coupon)
+        shoppingCartManager.shoppingCart?.removeCoupon(coupon)
         delegate?.couponManager(self, didDeactivateCoupon: coupon)
     }
 
     public func activate(coupon: Coupon) {
         switchCoupon(coupon, to: .activate)
-        shoppingCartManager.cart?.addCoupon(coupon)
+        shoppingCartManager.shoppingCart?.addCoupon(coupon)
         delegate?.couponManager(self, didActivateCoupon: coupon)
     }
 
