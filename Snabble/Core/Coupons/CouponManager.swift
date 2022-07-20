@@ -19,6 +19,8 @@ public final class CouponManager {
 
     public weak var delegate: CouponManagerDelegate?
 
+    public private(set) lazy var shoppingCartManager: ShoppingCartManager = .shared
+
 //    public var projectId: Identifier<Project>? = nil {
 //        didSet {
 //            delegate?.couponManager(self, didChangeProjectId: projectId)
@@ -37,6 +39,7 @@ public final class CouponManager {
 //    }
 
     private init() {
+        shoppingCartManager = .shared
         NotificationCenter.default.addObserver(
             self,
             selector: #selector(shoppingCartUpdated(_:)),
@@ -83,11 +86,13 @@ public final class CouponManager {
 extension CouponManager {
     public func deactivate(coupon: Coupon) {
         switchCoupon(coupon, to: .deactivate)
+        shoppingCartManager.cart?.removeCoupon(coupon)
         delegate?.couponManager(self, didDeactivateCoupon: coupon)
     }
 
     public func activate(coupon: Coupon) {
         switchCoupon(coupon, to: .activate)
+        shoppingCartManager.cart?.addCoupon(coupon)
         delegate?.couponManager(self, didActivateCoupon: coupon)
     }
 

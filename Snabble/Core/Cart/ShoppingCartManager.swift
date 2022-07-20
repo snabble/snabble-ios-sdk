@@ -17,11 +17,9 @@ public final class ShoppingCartManager {
     public weak var delegate: ShoppingCartManagerDelegate?
 
     public private(set) var cart: ShoppingCart?
-    public var couponManager: CouponManager
+    public private(set) lazy var couponManager: CouponManager = .shared
 
     private init() {
-        couponManager = CouponManager.shared
-        couponManager.delegate = self
     }
 
     public func update(with shop: Shop) {
@@ -58,14 +56,4 @@ public final class ShoppingCartManager {
         cart = nil
     }
 
-}
-
-extension ShoppingCartManager: CouponManagerDelegate {
-    public func couponManager(_ couponManager: CouponManager, didActivateCoupon coupon: Coupon) {
-        cart?.addCoupon(coupon)
-    }
-
-    public func couponManager(_ couponManager: CouponManager, didDeactivateCoupon coupon: Coupon) {
-        cart?.removeCoupon(coupon)
-    }
 }
