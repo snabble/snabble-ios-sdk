@@ -68,13 +68,17 @@ public final class CouponManager {
 extension CouponManager {
     public func deactivate(coupon: Coupon) {
         switchCoupon(coupon, to: .deactivate)
-        shoppingCartManager.shoppingCart?.removeCoupon(coupon)
+        if let shoppingCart = shoppingCartManager.shoppingCart, coupon.projectID == shoppingCart.projectId{
+            shoppingCart.removeCoupon(coupon)
+        }
         delegate?.couponManager(self, didDeactivateCoupon: coupon)
     }
 
     public func activate(coupon: Coupon) {
         switchCoupon(coupon, to: .activate)
-        shoppingCartManager.shoppingCart?.addCoupon(coupon)
+        if let shoppingCart = shoppingCartManager.shoppingCart, coupon.projectID == shoppingCart.projectId {
+            shoppingCart.addCoupon(coupon)
+        }
         delegate?.couponManager(self, didActivateCoupon: coupon)
     }
 
