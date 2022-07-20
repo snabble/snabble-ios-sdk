@@ -8,35 +8,6 @@
 import Foundation
 import UIKit
 
-//final class CouponCollectionCell: UICollectionViewCell {
-//    private let couponView = CouponView(frame: .zero)
-//
-//    override init(frame: CGRect) {
-//        super.init(frame: frame)
-//        contentView.addSubview(couponView)
-//        couponView.translatesAutoresizingMaskIntoConstraints = false
-//        NSLayoutConstraint.activate([
-//            couponView.topAnchor.constraint(equalTo: contentView.topAnchor),
-//            couponView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor),
-//            couponView.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -5),
-//            couponView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor)
-//        ])
-//    }
-//
-//    required init?(coder: NSCoder) {
-//        fatalError("init(coder:) has not been implemented")
-//    }
-//
-//    override func prepareForReuse() {
-//        super.prepareForReuse()
-//        couponView.prepareForReuse()
-//    }
-//
-//    func configure(with viewModel: CouponViewModel) {
-//        couponView.configure(with: viewModel)
-//    }
-//}
-
 class CouponCollectionViewCell: UICollectionViewCell, Cardable {
     private(set) weak var imageView: UIImageView?
     private(set) weak var activityIndicatorView: UIActivityIndicatorView?
