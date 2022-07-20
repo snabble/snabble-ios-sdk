@@ -7,16 +7,15 @@
 
 import Foundation
 import UIKit
-import Combine
 
 public protocol CouponsViewControllerDelegate: AnyObject {
     func couponSelected(_ coupon: Coupon)
 }
 
 public final class CouponsViewController: UICollectionViewController {
-    private var subscriptions = Set<AnyCancellable>()
-    private var spinner = UIActivityIndicatorView()
-    private var emptyMessage = UILabel()
+    private(set) weak var activityIndicatorView: UIActivityIndicatorView?
+    private(set) weak var emptyLabel: UILabel?
+
     public weak var delegate: CouponsViewControllerDelegate?
     private var heightConstraint: NSLayoutConstraint?
 
@@ -25,7 +24,7 @@ public final class CouponsViewController: UICollectionViewController {
 
     private(set) var coupons: [Coupon] = [] {
         didSet {
-            updateCoupons()
+            update(with: coupons)
         }
     }
 
@@ -51,28 +50,37 @@ public final class CouponsViewController: UICollectionViewController {
 
         collectionView.register(CouponCollectionViewCell.self, forCellWithReuseIdentifier: "couponCell")
 
-        spinner.translatesAutoresizingMaskIntoConstraints = false
-        view.addSubview(spinner)
-        emptyMessage.translatesAutoresizingMaskIntoConstraints = false
-        emptyMessage.text = L10n.Snabble.Coupons.none
-        view.addSubview(emptyMessage)
+        let activityIndicatorView: UIActivityIndicatorView
+        if #available(iOS 13, *) {
+            activityIndicatorView = UIActivityIndicatorView(style: .medium)
+        } else {
+            activityIndicatorView = UIActivityIndicatorView(style: .gray)
+        }
+        activityIndicatorView.translatesAutoresizingMaskIntoConstraints = false
+        view.addSubview(activityIndicatorView)
+        self.activityIndicatorView = activityIndicatorView
+
+        let emptyLabel = UILabel()
+        emptyLabel.translatesAutoresizingMaskIntoConstraints = false
+        emptyLabel.text = L10n.Snabble.Coupons.none
+        view.addSubview(emptyLabel)
+        self.emptyLabel = emptyLabel
 
         NSLayoutConstraint.activate([
-            spinner.centerXAnchor.constraint(equalTo: view.centerXAnchor),
-            spinner.centerYAnchor.constraint(equalTo: view.centerYAnchor),
+            activityIndicatorView.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+            activityIndicatorView.centerYAnchor.constraint(equalTo: view.centerYAnchor),
 
-            emptyMessage.centerXAnchor.constraint(equalTo: view.centerXAnchor),
-            emptyMessage.centerYAnchor.constraint(equalTo: view.centerYAnchor)
+            emptyLabel.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+            emptyLabel.centerYAnchor.constraint(equalTo: view.centerYAnchor)
         ])
 
         heightConstraint = view.heightAnchor.constraint(equalToConstant: 0)
         heightConstraint?.isActive = true
+    }
 
-        NotificationCenter.default.publisher(for: UIContentSizeCategory.didChangeNotification, object: nil)
-            .sink { [weak self] _ in
-                self?.updateCoupons()
-            }
-            .store(in: &subscriptions)
+    public override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
+        super.traitCollectionDidChange(previousTraitCollection)
+        update(with: coupons)
     }
 
     public override func viewWillAppear(_ animated: Bool) {
@@ -80,8 +88,8 @@ public final class CouponsViewController: UICollectionViewController {
         coupons = SnabbleSDK.CouponManager.shared.all(for: Snabble.shared.checkInManager.shop?.projectId) ?? []
     }
 
-    private func updateCoupons() {
-        self.emptyMessage.isHidden = !coupons.isEmpty
+    private func update(with coupons: [Coupon]) {
+        emptyLabel?.isHidden = !coupons.isEmpty
 
         cellHeight = maxCellHeight()
         heightConstraint?.constant = cellHeight
@@ -91,9 +99,9 @@ public final class CouponsViewController: UICollectionViewController {
 
     private func updateSpinner(_ loading: Bool) {
         if loading {
-            spinner.startAnimating()
+            activityIndicatorView?.startAnimating()
         } else {
-            spinner.stopAnimating()
+            activityIndicatorView?.stopAnimating()
         }
     }
 

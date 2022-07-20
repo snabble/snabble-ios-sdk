@@ -7,7 +7,6 @@
 
 import Foundation
 import UIKit
-import Combine
 
 public protocol CouponViewControllerDelegate: AnyObject {
     func couponViewController(_ couponViewController: CouponViewController, shouldActivateCoupon: Coupon) -> Bool
@@ -36,8 +35,6 @@ public final class CouponViewController: UIViewController {
 
     private(set) var coupon: Coupon
     public weak var delegate: CouponViewControllerDelegate?
-
-    private var subscriptions = Set<AnyCancellable>()
 
     public init(coupon: Coupon) {
         self.coupon = coupon
@@ -75,7 +72,13 @@ public final class CouponViewController: UIViewController {
         imageBackgroundView.addSubview(imageView)
         self.imageView = imageView
 
-        let activityIndicatorView = UIActivityIndicatorView(style: .medium)
+        let activityIndicatorView: UIActivityIndicatorView
+        if #available(iOS 13, *) {
+            activityIndicatorView = UIActivityIndicatorView(style: .medium)
+        } else {
+            activityIndicatorView = UIActivityIndicatorView(style: .gray)
+        }
+
         activityIndicatorView.translatesAutoresizingMaskIntoConstraints = false
         imageBackgroundView.addSubview(activityIndicatorView)
         self.activityIndicatorView = activityIndicatorView
@@ -115,7 +118,13 @@ public final class CouponViewController: UIViewController {
         self.button = button
 
         let greenColor = UIColor(red: 127.0 / 255.0, green: 187.0 / 255.0, blue: 70.0 / 255.0, alpha: 1)
-        let checkMarkImageView = UIImageView(image: UIImage(systemName: "checkmark.circle"))
+        let image: UIImage?
+        if #available(iOS 13, *) {
+            image = UIImage(systemName: "checkmark.circle")
+        } else {
+            image = nil
+        }
+        let checkMarkImageView = UIImageView(image: image)
         checkMarkImageView.tintColor = greenColor
         let activatedTextLabel = UILabel()
         activatedTextLabel.font = .preferredFont(forTextStyle: .title1)
