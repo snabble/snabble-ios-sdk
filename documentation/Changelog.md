@@ -10,8 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 * `setCoupons` and `setShops` on project not index
 * implement `Equatable` and `Hashable` to Project
 * add `Hashable` to Coupon
-
-### Added
+* Coupons #APPS-297
 
 ### Removed
 * `Gutschein` handling
