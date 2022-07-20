@@ -1,5 +1,5 @@
 //
-//  Coupon+Image.swift
+//  Coupon+ImageURL.swift
 //  Snabble
 //
 //  Created by Andreas Osberghaus on 11.07.22.
