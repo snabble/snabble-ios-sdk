@@ -19,8 +19,7 @@ public final class ShoppingCartManager {
     public private(set) var cart: ShoppingCart?
     public private(set) lazy var couponManager: CouponManager = .shared
 
-    private init() {
-    }
+    private init() {}
 
     public func update(with shop: Shop) {
         if shop.id != cart?.shopId {
@@ -35,21 +34,9 @@ public final class ShoppingCartManager {
         cart?.updateProducts()
     }
 
-//    func changeCart(shop: Shop) {
-//        let config = CartConfig(shop: shop)
-//        cart = ShoppingCart(config)
-//        cart?.updateProducts()
-//    }
-
 //    func updateCustomerCard(_ customerCard: Any) {
 //        cart?.customerCard = customerCard
 //        self.cart?.customerCard = Snabble.shared.project(for: shop.projectId)?.getMatchingCustomerCard()?.codeForCart()
-//    }
-
-//    func updateCart(_ shop: Shop) {
-//        if shop.id == cart?.shopId {
-//            self.cart?.updateProducts()
-//        }
 //    }
 
     public func reset() {

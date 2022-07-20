@@ -9,7 +9,6 @@ import Foundation
 import Combine
 
 public protocol CouponManagerDelegate: AnyObject {
-//    func couponManager(_ couponManager: CouponManager, didChangeProjectId projectId: Identifier<Project>?)
     func couponManager(_ couponManager: CouponManager, didActivateCoupon coupon: Coupon)
     func couponManager(_ couponManager: CouponManager, didDeactivateCoupon coupon: Coupon)
 }
@@ -20,23 +19,6 @@ public final class CouponManager {
     public weak var delegate: CouponManagerDelegate?
 
     public private(set) lazy var shoppingCartManager: ShoppingCartManager = .shared
-
-//    public var projectId: Identifier<Project>? = nil {
-//        didSet {
-//            delegate?.couponManager(self, didChangeProjectId: projectId)
-//        }
-//    }
-//
-//    public var all: [Coupon] {
-//        Snabble.shared.metadata.projects.first(where: { $0.id == projectId })?.digitalCoupons ?? []
-//
-//    }
-//
-//    public var activated: [Coupon] {
-//        all
-//            .filter { $0.projectID == projectId }
-//            .filter { $0.isActivated }
-//    }
 
     private init() {
         shoppingCartManager = .shared
@@ -117,51 +99,3 @@ extension CouponManager {
         UserDefaults.standard.set(Array(idSet), forKey: coupon.stateKey)
     }
 }
-//    static let shared = CouponManager()
-//    @Published private(set) var coupons: [Coupon] = [] {
-//        didSet {
-//            activatedCoupons = Set(coupons.filter { Defaults[.couponsActivated].contains($0.id) })
-//        }
-//    }
-//    @Published private(set) var activatedCoupons: Set<Coupon> = [] {
-//        didSet {
-//            Defaults[.couponsActivated] = activatedCoupons.map { $0.id }
-//        }
-//    }
-//
-//    private init() {
-//        loadCoupons()
-//
-//        NotificationCenter.default.addObserver(
-//            self,
-//            selector: #selector(shoppingCartUpdated(_:)),
-//            name: .snabbleCartUpdated,
-//            object: nil
-//        )
-//    }
-//
-//    func reload() {
-//        loadCoupons()
-//    }
-//
-
-//
-//    @objc
-//    private func shoppingCartUpdated(_ notification: Notification) {
-//        let shoppingCartCoupons = ShoppingCartManager.shared.cart?.coupons
-//            .map {
-//                $0.coupon
-//            }
-//        activatedCoupons = Set(shoppingCartCoupons ?? [])
-//    }
-//
-//    func reset() {
-//        activatedCoupons = []
-//    }
-//}
-//
-
-//
-//private extension Defaults.Keys {
-//    static let couponsActivated = Key<[String]>("couponsActivated", default: [])
-//}
