@@ -25,7 +25,12 @@ class CouponCollectionViewCell: UICollectionViewCell, Cardable {
         imageView.translatesAutoresizingMaskIntoConstraints = false
         imageView.contentMode = .scaleAspectFit
 
-        let activityIndicatorView = UIActivityIndicatorView(style: .medium)
+        let activityIndicatorView: UIActivityIndicatorView
+        if #available(iOS 13, *) {
+            activityIndicatorView = UIActivityIndicatorView(style: .medium)
+        } else {
+            activityIndicatorView = UIActivityIndicatorView(style: .gray)
+        }
         activityIndicatorView.translatesAutoresizingMaskIntoConstraints = false
         activityIndicatorView.hidesWhenStopped = true
 
