@@ -119,6 +119,8 @@ public enum L10n {
       public static var expired: String { return L10n.tr("SnabbleLocalizable", "Snabble.Coupon.expired") }
       /// Your coupon is now activated for you. Please scan the product in the shop and put it in your shopping cart to benefit from it.
       public static var explanation: String { return L10n.tr("SnabbleLocalizable", "Snabble.Coupon.explanation") }
+      /// valid indefinitely
+      public static var validIndefinitely: String { return L10n.tr("SnabbleLocalizable", "Snabble.Coupon.validIndefinitely") }
     }
     public enum Coupons {
       /// Already expired

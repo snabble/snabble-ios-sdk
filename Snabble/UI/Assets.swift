@@ -23,6 +23,7 @@ internal enum Asset {
   internal enum SnabbleSDK {
     internal static let arrowUp = SwiftGenImageAsset(name: "SnabbleSDK/arrow-up")
     internal static let barcodeOverlay = SwiftGenImageAsset(name: "SnabbleSDK/barcode-overlay")
+    internal static let checkmarkCircle = SwiftGenImageAsset(name: "SnabbleSDK/checkmark-circle")
     internal static let checkmark = SwiftGenImageAsset(name: "SnabbleSDK/checkmark")
     internal static let emoji1 = SwiftGenImageAsset(name: "SnabbleSDK/emoji-1")
     internal static let emoji2 = SwiftGenImageAsset(name: "SnabbleSDK/emoji-2")

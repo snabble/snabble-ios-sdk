@@ -71,6 +71,8 @@
 
 "Snabble.Coupon.explanation" = "Your coupon is now activated for you. Please scan the product in the shop and put it in your shopping cart to benefit from it.";
 
+"Snabble.Coupon.validIndefinitely" = "valid indefinitely";
+
 "Snabble.Coupons.expired" = "Already expired";
 
 "Snabble.Coupons.expiresAtDate" = "valid until %@";
