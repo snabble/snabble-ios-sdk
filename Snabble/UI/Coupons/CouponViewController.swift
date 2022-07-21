@@ -207,11 +207,6 @@ public final class CouponViewController: UIViewController {
         verifyButtonState(of: button)
     }
 
-    public override func viewDidAppear(_ animated: Bool) {
-        super.viewDidAppear(animated)
-//        Analytics.view(.couponDetailsSeen, id: couponViewModel.coupon.id, title: couponViewModel.title)
-    }
-
     private func configure(with viewModel: CouponViewModel) {
         titleLabel?.text = viewModel.title
         subtitleLabel?.text = viewModel.subtitle
