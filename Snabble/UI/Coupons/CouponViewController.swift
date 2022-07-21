@@ -242,11 +242,5 @@ public final class CouponViewController: UIViewController {
         verifyButtonState(of: button)
 
         delegate?.couponViewController(self, didActivateCoupon: coupon)
-//        if AuthManager.shared.isLoggedIn || !Defaults[.needLoginForCoupon] {
-//            CouponManager.shared.activate(coupon: coupon)
-//            verifyButtonState(of: sender)
-//        } else {
-//            present(LoginViewController(), animated: true)
-//        }
     }
 }
