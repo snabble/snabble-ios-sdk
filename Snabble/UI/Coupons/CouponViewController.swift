@@ -233,7 +233,7 @@ public final class CouponViewController: UIViewController {
         guard delegate?.couponViewController(self, shouldActivateCoupon: coupon) ?? true else {
             return
         }
-        CouponManager.shared.activate(coupon: coupon)
+        Snabble.shared.couponManager.activate(coupon: coupon)
         verifyButtonState(of: button)
 
         delegate?.couponViewController(self, didActivateCoupon: coupon)

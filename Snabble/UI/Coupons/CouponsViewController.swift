@@ -85,7 +85,7 @@ public final class CouponsViewController: UICollectionViewController {
 
     public override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        coupons = SnabbleSDK.CouponManager.shared.all(for: Snabble.shared.checkInManager.shop?.projectId) ?? []
+        coupons = Snabble.shared.couponManager.all(for: Snabble.shared.checkInManager.shop?.projectId) ?? []
     }
 
     private func update(with coupons: [Coupon]) {

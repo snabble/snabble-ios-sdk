@@ -12,16 +12,14 @@ public protocol ShoppingCartManagerDelegate: AnyObject {
 }
 
 public final class ShoppingCartManager {
-    public static let shared = ShoppingCartManager()
-
     public weak var delegate: ShoppingCartManagerDelegate?
 
     public private(set) var shop: Shop?
     public private(set) var shoppingCart: ShoppingCart?
 
-    public private(set) lazy var couponManager: CouponManager = .shared
+    public private(set) lazy var couponManager: CouponManager = Snabble.shared.couponManager
 
-    private init() {}
+    init() {}
 
     @discardableResult
     public func shoppingCart(for shop: Shop) -> ShoppingCart {

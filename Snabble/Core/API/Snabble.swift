@@ -119,6 +119,10 @@ public class Snabble {
     /// Geo-fencing based check in manager. Use for automatically detecting if you are in a shop.
     public lazy var checkInManager = CheckInManager()
 
+    public lazy var couponManager = CouponManager()
+
+    public lazy var shoppingCartManager = ShoppingCartManager()
+
     /// Will be set with setup(config:, completion:)
     let config: Config
 

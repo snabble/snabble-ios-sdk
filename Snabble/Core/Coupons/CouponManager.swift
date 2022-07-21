@@ -14,13 +14,11 @@ public protocol CouponManagerDelegate: AnyObject {
 }
 
 public final class CouponManager {
-    public static let shared = CouponManager()
-
     public weak var delegate: CouponManagerDelegate?
 
-    public private(set) lazy var shoppingCartManager: ShoppingCartManager = .shared
+    public private(set) lazy var shoppingCartManager: ShoppingCartManager = Snabble.shared.shoppingCartManager
 
-    private init() {
+    init() {
         NotificationCenter.default.addObserver(
             self,
             selector: #selector(shoppingCartUpdated(_:)),
