@@ -122,7 +122,7 @@ public final class CouponViewController: UIViewController {
         if #available(iOS 13, *) {
             image = UIImage(systemName: "checkmark.circle")
         } else {
-            image = nil
+            image = Asset.SnabbleSDK.checkmarkCircle.image
         }
         let checkMarkImageView = UIImageView(image: image)
         checkMarkImageView.tintColor = greenColor
