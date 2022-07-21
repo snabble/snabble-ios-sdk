@@ -68,7 +68,7 @@ public final class CouponManager {
 extension CouponManager {
     public func deactivate(coupon: Coupon) {
         switchCoupon(coupon, to: .deactivate)
-        if let shoppingCart = shoppingCartManager.shoppingCart, coupon.projectID == shoppingCart.projectId{
+        if let shoppingCart = shoppingCartManager.shoppingCart, coupon.projectID == shoppingCart.projectId {
             shoppingCart.removeCoupon(coupon)
         }
         delegate?.couponManager(self, didDeactivateCoupon: coupon)

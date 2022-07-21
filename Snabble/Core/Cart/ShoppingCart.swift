@@ -343,6 +343,7 @@ public final class ShoppingCart: Codable {
 // MARK: - Coupons
 extension ShoppingCart {
     public func addCoupon(_ coupon: Coupon, scannedCode: String? = nil) {
+        guard coupon.projectID == projectId else { return }
         let index = coupons.firstIndex(where: { $0.coupon.id == coupon.id })
         if index == nil {
             coupons.append(CartCoupon(uuid: UUID().uuidString, coupon: coupon, scannedCode: scannedCode))
@@ -351,6 +352,7 @@ extension ShoppingCart {
     }
 
     public func removeCoupon(_ coupon: Coupon) {
+        guard coupon.projectID == projectId else { return }
         coupons.removeAll { $0.coupon.id == coupon.id }
         self.save()
     }
