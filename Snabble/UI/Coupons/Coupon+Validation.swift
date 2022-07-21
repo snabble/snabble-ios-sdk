@@ -7,8 +7,8 @@
 
 import Foundation
 
-extension Coupon {
-    var valid: Bool {
+public extension Coupon {
+    var isValid: Bool {
         let now = Date()
         switch (validFrom, validUntil) {
         case (.none, .none):

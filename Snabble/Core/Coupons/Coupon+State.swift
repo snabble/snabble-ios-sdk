@@ -13,18 +13,4 @@ extension Coupon {
     public var isActivated: Bool {
         UserDefaults.standard.stringArray(forKey: stateKey)?.contains(where: { $0 == id }) ?? false
     }
-
-    public var isValid: Bool {
-        let now = Date()
-        switch (validFrom, validUntil) {
-        case (.none, .none):
-            return false
-        case (.some(let validFrom), .none):
-            return now >= validFrom
-        case (.none, .some(let validUntil)):
-            return now <= validUntil
-        case (.some(let validFrom), .some(let validUntil)):
-            return now >= validFrom && now <= validUntil
-        }
-    }
 }
