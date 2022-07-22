@@ -28,7 +28,7 @@ public final class CouponManager {
     }
 
     public func all(for projectId: Identifier<Project>?) -> [Coupon]? {
-        Snabble.shared.metadata.projects.first(where: { $0.id == projectId })?.digitalCoupons
+        Snabble.shared.projects.first(where: { $0.id == projectId })?.digitalCoupons
             .filter { $0.type != .unknown }
             .filter { $0.imageURL != nil }
     }
