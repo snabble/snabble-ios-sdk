@@ -22,13 +22,14 @@ public final class CouponsViewController: UICollectionViewController {
     private let cellWidth: CGFloat = 265
     private var cellHeight: CGFloat = 0
 
-    private(set) var coupons: [Coupon] = [] {
+    public var coupons: [Coupon] = [] {
         didSet {
             update(with: coupons)
         }
     }
 
-    public init() {
+    public init(coupons: [Coupon]) {
+        self.coupons = coupons
         let layout = UICollectionViewFlowLayout()
         layout.scrollDirection = .horizontal
         super.init(collectionViewLayout: layout)
@@ -76,16 +77,13 @@ public final class CouponsViewController: UICollectionViewController {
 
         heightConstraint = view.heightAnchor.constraint(equalToConstant: 0)
         heightConstraint?.isActive = true
+
+        update(with: coupons)
     }
 
     public override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
         super.traitCollectionDidChange(previousTraitCollection)
         update(with: coupons)
-    }
-
-    public override func viewWillAppear(_ animated: Bool) {
-        super.viewWillAppear(animated)
-        coupons = Snabble.shared.couponManager.all(for: Snabble.shared.checkInManager.shop?.projectId) ?? []
     }
 
     private func update(with coupons: [Coupon]) {
