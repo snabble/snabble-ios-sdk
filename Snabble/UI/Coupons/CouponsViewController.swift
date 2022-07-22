@@ -9,7 +9,7 @@ import Foundation
 import UIKit
 
 public protocol CouponsViewControllerDelegate: AnyObject {
-    func couponSelected(_ coupon: Coupon)
+    func couponsViewController(_ viewController: CouponsViewController, didSelectCoupon coupon: Coupon)
 }
 
 public final class CouponsViewController: UICollectionViewController {
@@ -141,7 +141,7 @@ extension CouponsViewController {
 
     public override func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         let coupon = coupons[indexPath.row]
-        delegate?.couponSelected(coupon)
+        delegate?.couponsViewController(self, didSelectCoupon: coupon)
     }
 }
 
