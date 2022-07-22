@@ -39,4 +39,15 @@ public final class ShoppingCartManager {
             return shoppingCart
         }
     }
+
+    public func updateProducts(for shop: Shop) {
+        if shop.id == shoppingCart?.shopId {
+            shoppingCart?.updateProducts()
+        }
+    }
+
+    public func reset() {
+        shop = nil
+        shoppingCart = nil
+    }
 }
