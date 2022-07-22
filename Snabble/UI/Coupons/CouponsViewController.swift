@@ -44,7 +44,6 @@ public final class CouponsViewController: UICollectionViewController {
 
         collectionView.showsHorizontalScrollIndicator = false
         collectionView.backgroundColor = .systemBackground
-        collectionView.contentInset = UIEdgeInsets(top: 0, left: 32, bottom: 0, right: 32)
 
         view.clipsToBounds = false
         collectionView.clipsToBounds = false
