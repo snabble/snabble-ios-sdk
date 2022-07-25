@@ -11,6 +11,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 * implement `Equatable` and `Hashable` to Project
 * add `Hashable` to Coupon
 * Coupons #APPS-297
+* Added dynamic fonts to DatatransAliasViewController #APPS-231
+* Refactored DatatransAliasViewController to programmatically written UI
 
 ### Removed
 * `Gutschein` handling
