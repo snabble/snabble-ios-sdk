@@ -411,10 +411,8 @@ public struct ParseResult {
     /// is this result valid?
     /// (it is if all components are valid)
     public var isValid: Bool {
-        for component in self.entries {
-            if !self.valid(component) {
-                return false
-            }
+        for component in entries where !valid(component) {
+            return false
         }
         return true
     }

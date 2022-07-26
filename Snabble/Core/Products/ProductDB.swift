@@ -737,11 +737,9 @@ final class ProductDB: ProductProvider {
             return
         }
 
-        for file in files {
-            if file.hasSuffix("_" + self.dbName) {
-                let fileUrl = self.dbDirectory.appendingPathComponent(file)
-                try? fileManager.removeItem(at: fileUrl)
-            }
+        for file in files where file.hasSuffix("_" + self.dbName) {
+            let fileUrl = self.dbDirectory.appendingPathComponent(file)
+            try? fileManager.removeItem(at: fileUrl)
         }
     }
 }

@@ -249,10 +249,8 @@ extension GS1Code {
         var identifiers = [GS1CodeElement]()
         var skipped = [String]()
 
-        for symId in Self.symbologyIdentifiers {
-            if code.hasPrefix(symId) {
-                code.removeFirst(symId.count)
-            }
+        for symId in Self.symbologyIdentifiers where code.hasPrefix(symId) {
+            code.removeFirst(symId.count)
         }
 
         while !code.isEmpty {
@@ -302,10 +300,8 @@ extension GS1Code {
             return candidates[0]
         }
 
-        for ai in candidates {
-            if code.hasPrefix(ai.prefix) {
-                return ai
-            }
+        for ai in candidates where code.hasPrefix(ai.prefix) {
+            return ai
         }
         return nil
     }
