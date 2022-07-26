@@ -8,14 +8,11 @@ import UIKit
 import Datatrans
 
 public final class DatatransAliasViewController: UIViewController {
-    @IBOutlet private var containerView: UIView!
-    @IBOutlet private var cardNumberLabel: UILabel!
-    @IBOutlet private var cardNumber: UITextField!
-
-    @IBOutlet private var expDateLabel: UILabel!
-    @IBOutlet private var expirationDate: UITextField!
-
-    @IBOutlet private var explanation: UILabel!
+    private weak var containerView: UIStackView?
+    private weak var cardNumberLabel: UILabel?
+    private weak var cardNumberField: UITextField?
+    private weak var expirationDateLabel: UILabel?
+    private weak var expirationDateField: UITextField?
 
     private weak var analyticsDelegate: AnalyticsDelegate?
     private let projectId: Identifier<Project>?
@@ -24,6 +21,29 @@ public final class DatatransAliasViewController: UIViewController {
     private var transaction: Datatrans.Transaction?
     private let detail: PaymentMethodDetail?
 
+    private var customLabel: UILabel {
+        let label = UILabel()
+        label.translatesAutoresizingMaskIntoConstraints = false
+        label.adjustsFontForContentSizeCategory = true
+        label.textColor = .label
+        label.textAlignment = .natural
+        label.setContentHuggingPriority(.defaultLow + 1, for: .horizontal)
+        label.setContentHuggingPriority(.defaultLow + 1, for: .vertical)
+        return label
+    }
+
+    private var customTextField: UITextField {
+        let textField = UITextField()
+        textField.translatesAutoresizingMaskIntoConstraints = false
+        textField.font = .preferredFont(forTextStyle: .body)
+        textField.adjustsFontForContentSizeCategory = true
+        textField.textColor = .label
+        textField.borderStyle = .roundedRect
+        textField.textAlignment = .natural
+        textField.clearButtonMode = .whileEditing
+        return textField
+    }
+
     public init(_ method: RawPaymentMethod, _ projectId: Identifier<Project>, _ analyticsDelegate: AnalyticsDelegate?) {
         self.analyticsDelegate = analyticsDelegate
         self.projectId = projectId
@@ -31,7 +51,7 @@ public final class DatatransAliasViewController: UIViewController {
         self.detail = nil
         self.brand = CreditCardBrand.forMethod(method)
 
-        super.init(nibName: nil, bundle: SnabbleDTBundle.main)
+        super.init(nibName: nil, bundle: nil)
     }
 
     init(_ detail: PaymentMethodDetail, _ analyticsDelegate: AnalyticsDelegate?) {
@@ -49,11 +69,76 @@ public final class DatatransAliasViewController: UIViewController {
             self.brand = nil
         }
 
-        super.init(nibName: nil, bundle: SnabbleDTBundle.main)
+        super.init(nibName: nil, bundle: nil)
     }
 
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
+    }
+
+    public override func loadView() {
+        let view = UIView(frame: UIScreen.main.bounds)
+        view.backgroundColor = .systemBackground
+        if #available(iOS 15, *) {
+            view.restrictDynamicTypeSize(from: nil, to: .extraExtraExtraLarge)
+        }
+
+        let containerView = UIStackView()
+        containerView.translatesAutoresizingMaskIntoConstraints = false
+        containerView.axis = .vertical
+        containerView.spacing = 16
+        containerView.alignment = .fill
+        containerView.distribution = .fill
+
+        let explanationLabel = customLabel
+        explanationLabel.numberOfLines = 0
+        explanationLabel.font = .preferredFont(forTextStyle: .subheadline)
+        explanationLabel.text = L10n.Snabble.Cc.editingHint
+
+        let cardNumberLabel = customLabel
+        cardNumberLabel.font = .preferredFont(forTextStyle: .body)
+        cardNumberLabel.text = L10n.Snabble.Cc.cardNumber
+
+        let cardNumberField = customTextField
+
+        let expirationDateLabel = customLabel
+        expirationDateLabel.font = .preferredFont(forTextStyle: .body)
+        expirationDateLabel.text = L10n.Snabble.Cc.validUntil
+
+        let expirationDateField = customTextField
+
+        view.addSubview(containerView)
+
+        containerView.addArrangedSubview(explanationLabel)
+        containerView.addArrangedSubview(cardNumberLabel)
+        containerView.addArrangedSubview(cardNumberField)
+        containerView.addArrangedSubview(expirationDateLabel)
+        containerView.addArrangedSubview(expirationDateField)
+
+        containerView.setCustomSpacing(8, after: cardNumberLabel)
+        containerView.setCustomSpacing(8, after: expirationDateLabel)
+
+        NSLayoutConstraint.activate([
+            containerView.topAnchor.constraint(equalToSystemSpacingBelow: view.safeAreaLayoutGuide.topAnchor, multiplier: 2),
+            view.safeAreaLayoutGuide.bottomAnchor.constraint(greaterThanOrEqualToSystemSpacingBelow: containerView.bottomAnchor, multiplier: 2),
+            containerView.leadingAnchor.constraint(equalToSystemSpacingAfter: view.leadingAnchor, multiplier: 2),
+            view.trailingAnchor.constraint(equalToSystemSpacingAfter: containerView.trailingAnchor, multiplier: 2),
+
+            cardNumberField.heightAnchor.constraint(equalToConstant: 40),
+            cardNumberField.leadingAnchor.constraint(equalTo: containerView.leadingAnchor),
+            cardNumberField.trailingAnchor.constraint(equalTo: containerView.trailingAnchor),
+
+            expirationDateField.heightAnchor.constraint(equalToConstant: 40),
+            expirationDateField.leadingAnchor.constraint(equalTo: containerView.leadingAnchor),
+            expirationDateField.trailingAnchor.constraint(equalTo: containerView.trailingAnchor)
+        ])
+
+        self.containerView = containerView
+        self.cardNumberLabel = cardNumberLabel
+        self.cardNumberField = cardNumberField
+        self.expirationDateLabel = expirationDateLabel
+        self.expirationDateField = expirationDateField
+        self.view = view
     }
 
     override public func viewDidLoad() {
@@ -73,7 +158,7 @@ public final class DatatransAliasViewController: UIViewController {
                 setupView(data.displayName, data.expirationDate)
             }
         } else {
-            self.containerView.isHidden = true
+            self.containerView?.isHidden = true
         }
     }
 
@@ -103,15 +188,11 @@ public final class DatatransAliasViewController: UIViewController {
     }
 
     private func setupView(_ displayName: String, _ expirationDate: String?) {
-        self.cardNumber.text = displayName
-        self.expirationDate.text = expirationDate
+        self.cardNumberField?.text = displayName
+        self.expirationDateField?.text = expirationDate
 
-        self.cardNumberLabel.text = L10n.Snabble.Cc.cardNumber
-        self.expDateLabel.text = L10n.Snabble.Cc.validUntil
-        self.explanation.text = L10n.Snabble.PaymentCard.editingHint
-
-        self.expDateLabel.isHidden = expirationDate == nil
-        self.expirationDate.isHidden = expirationDate == nil
+        self.expirationDateLabel?.isHidden = expirationDate == nil
+        self.expirationDateField?.isHidden = expirationDate == nil
 
         let trash = Asset.SnabbleSDK.iconTrash.image
         let deleteButton = UIBarButtonItem(image: trash, style: .plain, target: self, action: #selector(self.deleteButtonTapped(_:)))

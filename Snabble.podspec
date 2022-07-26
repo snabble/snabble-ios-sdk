@@ -64,10 +64,6 @@ Pod::Spec.new do |s|
     dt.dependency 'Datatrans', '~> 1.5.0'
 
     dt.source_files = 'Snabble/Datatrans/**/*.swift'
-
-    dt.resource_bundles = {
-       "SnabbleDT" => [ 'Snabble/Datatrans/**/*.xib' ]
-    }
   end
 
 end

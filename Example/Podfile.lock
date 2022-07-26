@@ -28,7 +28,7 @@ PODS:
     - SDCAlertView (~> 12)
     - Snabble/Core
     - WCAG-Colors
-  - SwiftLint (0.47.1)
+  - SwiftLint (0.48.0)
   - TrustKit (1.7.0)
   - WCAG-Colors (1.0.0)
   - Zip (2.1.2)
@@ -68,7 +68,7 @@ SPEC CHECKSUMS:
   Pulley: a4c28c930958f42978d69631000bc1abb82cb232
   SDCAlertView: 1c0410de80548da3fed142ded0b97644d9848577
   Snabble: 6009353214469d423e635e05efe4bb7c75f2f8e3
-  SwiftLint: f80f1be7fa96d30e0aa68e58d45d4ea1ccaac519
+  SwiftLint: 284cea64b6187c5d6bd83e9a548a64104d546447
   TrustKit: dac38bb37e49bdfeca41b1a19d020da38017b51c
   WCAG-Colors: 4aca2fd6c2dce9cd1211c5bf3cda1e8c531d3d2c
   Zip: b3fef584b147b6e582b2256a9815c897d60ddc67
