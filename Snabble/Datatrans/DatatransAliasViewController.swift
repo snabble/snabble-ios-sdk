@@ -107,7 +107,6 @@ public final class DatatransAliasViewController: UIViewController {
 
         let expirationDateField = customTextField
 
-
         view.addSubview(containerView)
 
         containerView.addArrangedSubview(explanationLabel)
