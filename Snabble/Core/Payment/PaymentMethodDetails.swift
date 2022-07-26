@@ -343,10 +343,8 @@ struct PaymentMethodDetailStorage {
         let oldData = self.keychain[oldKey]
 
         let keys = self.keychain.allKeys()
-        for key in keys {
-            if key.hasPrefix(SettingsKeys.paymentMethods) {
-                try? self.keychain.remove(key)
-            }
+        for key in keys where key.hasPrefix(SettingsKeys.paymentMethods) {
+            try? self.keychain.remove(key)
         }
 
         if let data = oldData {
