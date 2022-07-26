@@ -51,7 +51,7 @@ public final class DatatransAliasViewController: UIViewController {
         self.detail = nil
         self.brand = CreditCardBrand.forMethod(method)
 
-        super.init(nibName: nil, bundle: SnabbleDTBundle.main)
+        super.init(nibName: nil, bundle: nil)
     }
 
     init(_ detail: PaymentMethodDetail, _ analyticsDelegate: AnalyticsDelegate?) {
@@ -69,7 +69,7 @@ public final class DatatransAliasViewController: UIViewController {
             self.brand = nil
         }
 
-        super.init(nibName: nil, bundle: SnabbleDTBundle.main)
+        super.init(nibName: nil, bundle: nil)
     }
 
     required init?(coder: NSCoder) {

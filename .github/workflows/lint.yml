@@ -19,7 +19,7 @@ jobs:
       - name: GitHub Action for SwiftLint
         uses: sinoru/actions-swiftlint@v6
         with:
-          swiftlint-version: '0.47.1'
+          swiftlint-version: '0.48.0'
 
   PodLint:
     name: PodLint
