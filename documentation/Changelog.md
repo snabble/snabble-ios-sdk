@@ -13,6 +13,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 * Coupons #APPS-297
 * Added dynamic fonts to DatatransAliasViewController #APPS-231
 * Refactored DatatransAliasViewController to programmatically written UI
+* Extension UIStackView+Remove added
+* Fix for ScanMessageView and refactoring with ViewProvider pattern #APPS-339
 
 ### Removed
 * `Gutschein` handling
