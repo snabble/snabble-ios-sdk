@@ -197,6 +197,7 @@ final class ScanningViewController: UIViewController {
         self.keyboardObserver = nil
 
         UIApplication.shared.isIdleTimerDisabled = false
+        hideMessage()
     }
 
     // MARK: - called by the drawer
@@ -271,30 +272,20 @@ extension ScanningViewController {
 
     func showMessages(_ messages: [ScanMessage]) {
         guard let firstMsg = messages.first else {
-            return
+           return
         }
-        let text: String
-        if let attributedString = firstMsg.attributedString {
-            text = firstMsg.text
-            messageView?.label?.attributedText = attributedString
-        } else {
-            text = messages.map { $0.text }.joined(separator: "\n\n")
-            messageView?.label?.text = text
-        }
+
+        let model = ScanningMessageView.Provider(messages: messages)
+        messageView?.configure(with: model)
+
         self.messageView?.isHidden = false
         self.messageTopDistance?.constant = 0
-
-        if let imgUrl = messages.first?.imageUrl, let url = URL(string: imgUrl) {
-            messageView?.imageWidth?.constant = 80
-            self.loadMessageImage(from: url)
-        } else {
-            messageView?.imageWidth?.constant = 0
-        }
 
         UIView.animate(withDuration: 0.2) {
             self.view.layoutIfNeeded()
         }
 
+        let text = messages.map { $0.text }.joined(separator: "\n\n")
         let seconds: TimeInterval?
         if let dismissTime = firstMsg.dismissTime {
             seconds = dismissTime > 0 ? dismissTime : nil
@@ -327,20 +318,6 @@ extension ScanningViewController {
         UIView.animate(withDuration: 0.2,
                        animations: { self.view.layoutIfNeeded() },
                        completion: { _ in self.messageView?.isHidden = true })
-    }
-
-    private func loadMessageImage(from url: URL) {
-        let session = Snabble.urlSession
-        messageView?.spinner?.startAnimating()
-        let task = session.dataTask(with: url) { data, _, _ in
-            if let data = data, let img = UIImage(data: data) {
-                DispatchQueue.main.async {
-                    self.messageView?.spinner?.stopAnimating()
-                    self.messageView?.imageView?.image = img
-                }
-            }
-        }
-        task.resume()
     }
 }
 
