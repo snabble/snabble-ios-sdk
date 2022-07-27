@@ -42,10 +42,6 @@ public final class CouponsViewController: UICollectionViewController {
         configureCollectionView(collectionView)
         configureEmptyLabel(on: collectionView)
         update(with: coupons)
-
-        NSLayoutConstraint.activate([
-            view.heightAnchor.constraint(equalToConstant: cellHeight)
-        ])
     }
 
     private func configureCollectionView(_ collectionView: UICollectionView) {
@@ -63,7 +59,6 @@ public final class CouponsViewController: UICollectionViewController {
         emptyLabel.isHidden = false
         collectionView.backgroundView = emptyLabel
         self.emptyLabel = emptyLabel
-
     }
 
     public override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
@@ -101,7 +96,7 @@ extension CouponsViewController {
 // MARK: - UICollectionViewDelegateFlowLayout
 extension CouponsViewController: UICollectionViewDelegateFlowLayout {
     public func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
-        CGSize(width: cellWidth, height: cellHeight)
+        .init(width: cellWidth, height: cellHeight)
     }
 
     public func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, minimumLineSpacingForSectionAt section: Int) -> CGFloat {
