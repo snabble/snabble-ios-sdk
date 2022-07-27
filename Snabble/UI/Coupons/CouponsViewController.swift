@@ -17,9 +17,6 @@ public final class CouponsViewController: UICollectionViewController {
 
     public weak var delegate: CouponsViewControllerDelegate?
 
-    private let cellWidth: CGFloat = 265
-    private let cellHeight: CGFloat = 355
-
     public var coupons: [Coupon] = [] {
         didSet {
             update(with: coupons)
@@ -96,7 +93,7 @@ extension CouponsViewController {
 // MARK: - UICollectionViewDelegateFlowLayout
 extension CouponsViewController: UICollectionViewDelegateFlowLayout {
     public func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
-        .init(width: cellWidth, height: cellHeight)
+        .init(width: 265, height: 355)
     }
 
     public func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, minimumLineSpacingForSectionAt section: Int) -> CGFloat {
