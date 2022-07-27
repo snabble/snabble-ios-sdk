@@ -39,7 +39,6 @@ public final class CouponsViewController: UICollectionViewController {
 
     public override func viewDidLoad() {
         super.viewDidLoad()
-        view.clipsToBounds = false
         configureCollectionView(collectionView)
         configureEmptyLabel(on: collectionView)
         update(with: coupons)
