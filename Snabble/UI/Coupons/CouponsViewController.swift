@@ -13,14 +13,12 @@ public protocol CouponsViewControllerDelegate: AnyObject {
 }
 
 public final class CouponsViewController: UICollectionViewController {
-    private(set) weak var activityIndicatorView: UIActivityIndicatorView?
     private(set) weak var emptyLabel: UILabel?
 
     public weak var delegate: CouponsViewControllerDelegate?
-    private var heightConstraint: NSLayoutConstraint?
 
     private let cellWidth: CGFloat = 265
-    private var cellHeight: CGFloat = 0
+    private let cellHeight: CGFloat = 355
 
     public var coupons: [Coupon] = [] {
         didSet {
@@ -41,42 +39,32 @@ public final class CouponsViewController: UICollectionViewController {
 
     public override func viewDidLoad() {
         super.viewDidLoad()
-
-        collectionView.showsHorizontalScrollIndicator = false
-        collectionView.backgroundColor = .systemBackground
-
         view.clipsToBounds = false
-        collectionView.clipsToBounds = false
-
-        collectionView.register(CouponCollectionViewCell.self, forCellWithReuseIdentifier: "couponCell")
-
-        let activityIndicatorView: UIActivityIndicatorView
-        if #available(iOS 13, *) {
-            activityIndicatorView = UIActivityIndicatorView(style: .medium)
-        } else {
-            activityIndicatorView = UIActivityIndicatorView(style: .gray)
-        }
-        activityIndicatorView.translatesAutoresizingMaskIntoConstraints = false
-        view.addSubview(activityIndicatorView)
-        self.activityIndicatorView = activityIndicatorView
-
-        let emptyLabel = UILabel()
-        emptyLabel.translatesAutoresizingMaskIntoConstraints = false
-        emptyLabel.text = L10n.Snabble.Coupons.none
-        view.addSubview(emptyLabel)
-        self.emptyLabel = emptyLabel
+        configureCollectionView(collectionView)
+        configureEmptyLabel(on: collectionView)
+        update(with: coupons)
 
         NSLayoutConstraint.activate([
-            activityIndicatorView.centerXAnchor.constraint(equalTo: view.centerXAnchor),
-            activityIndicatorView.centerYAnchor.constraint(equalTo: view.centerYAnchor),
-
-            emptyLabel.centerXAnchor.constraint(equalTo: view.centerXAnchor),
-            emptyLabel.centerYAnchor.constraint(equalTo: view.centerYAnchor)
+            view.heightAnchor.constraint(equalToConstant: cellHeight)
         ])
+    }
 
-        heightConstraint = view.heightAnchor.constraint(equalToConstant: 0)
-        heightConstraint?.isActive = true
-        update(with: coupons)
+    private func configureCollectionView(_ collectionView: UICollectionView) {
+        collectionView.backgroundColor = .systemBackground
+        collectionView.showsHorizontalScrollIndicator = false
+        collectionView.clipsToBounds = false
+        collectionView.register(CouponCollectionViewCell.self)
+    }
+
+    private func configureEmptyLabel(on collectionView: UICollectionView) {
+        let emptyLabel = UILabel()
+        emptyLabel.text = L10n.Snabble.Coupons.none
+        emptyLabel.textAlignment = .center
+        emptyLabel.numberOfLines = 0
+        emptyLabel.isHidden = false
+        collectionView.backgroundView = emptyLabel
+        self.emptyLabel = emptyLabel
+
     }
 
     public override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
@@ -86,39 +74,7 @@ public final class CouponsViewController: UICollectionViewController {
 
     private func update(with coupons: [Coupon]) {
         emptyLabel?.isHidden = !coupons.isEmpty
-
-        cellHeight = maxCellHeight()
-        heightConstraint?.constant = cellHeight
-        collectionView.collectionViewLayout.invalidateLayout()
         collectionView.reloadData()
-    }
-
-    private func updateSpinner(_ loading: Bool) {
-        if loading {
-            activityIndicatorView?.startAnimating()
-        } else {
-            activityIndicatorView?.stopAnimating()
-        }
-    }
-
-    private func maxCellHeight() -> CGFloat {
-        let sizingCell = CouponCollectionViewCell(frame: .zero)
-        sizingCell.contentView.translatesAutoresizingMaskIntoConstraints = false
-        var height: CGFloat = 0
-        for coupon in coupons {
-            sizingCell.prepareForReuse()
-            let viewModel = CouponViewModel(coupon: coupon)
-            sizingCell.configure(with: viewModel)
-            sizingCell.layoutIfNeeded()
-            var fittingSize = UIView.layoutFittingCompressedSize
-            fittingSize.width = cellWidth
-            let size = sizingCell.contentView.systemLayoutSizeFitting(fittingSize,
-                                                                      withHorizontalFittingPriority: .required,
-                                                                      verticalFittingPriority: .defaultLow)
-
-            height = max(height, size.height)
-        }
-        return height
     }
 }
 
@@ -129,8 +85,7 @@ extension CouponsViewController {
     }
 
     public override func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        // swiftlint:disable:next force_cast
-        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "couponCell", for: indexPath) as! CouponCollectionViewCell
+        let cell = collectionView.dequeueReusable(CouponCollectionViewCell.self, for: indexPath)
 
         let viewModel = CouponViewModel(coupon: coupons[indexPath.row])
         cell.configure(with: viewModel)

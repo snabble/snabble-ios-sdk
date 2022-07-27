@@ -8,7 +8,7 @@
 import Foundation
 import UIKit
 
-class CouponCollectionViewCell: UICollectionViewCell, Cardable {
+class CouponCollectionViewCell: UICollectionViewCell, Cardable, ReuseIdentifiable {
     private(set) weak var imageView: UIImageView?
     private(set) weak var activityIndicatorView: UIActivityIndicatorView?
     private(set) weak var titleLabel: UILabel?
@@ -38,22 +38,33 @@ class CouponCollectionViewCell: UICollectionViewCell, Cardable {
         titleLabel.translatesAutoresizingMaskIntoConstraints = false
         titleLabel.numberOfLines = 0
         titleLabel.font = .preferredFont(forTextStyle: .headline)
+        titleLabel.setContentCompressionResistancePriority(.defaultHigh + 3, for: .vertical)
+        titleLabel.minimumScaleFactor = 0.75
+        titleLabel.adjustsFontSizeToFitWidth = true
 
         let subtitleLabel = UILabel()
         subtitleLabel.translatesAutoresizingMaskIntoConstraints = false
         subtitleLabel.numberOfLines = 0
         subtitleLabel.font = .preferredFont(forTextStyle: .caption1)
+        subtitleLabel.minimumScaleFactor = 0.75
+        subtitleLabel.adjustsFontSizeToFitWidth = true
 
         let textLabel = UILabel()
         textLabel.translatesAutoresizingMaskIntoConstraints = false
         textLabel.font = .preferredFont(forTextStyle: .headline)
         textLabel.textColor = SnabbleUI.appearance.accentColor
         textLabel.numberOfLines = 0
+        textLabel.setContentCompressionResistancePriority(.defaultHigh + 2, for: .vertical)
+        textLabel.minimumScaleFactor = 0.75
+        textLabel.adjustsFontSizeToFitWidth = true
 
         let validityLabel = UILabel()
         validityLabel.translatesAutoresizingMaskIntoConstraints = false
         validityLabel.font = .preferredFont(forTextStyle: .caption1)
         validityLabel.numberOfLines = 0
+        validityLabel.setContentCompressionResistancePriority(.defaultHigh + 1, for: .vertical)
+        validityLabel.minimumScaleFactor = 0.75
+        validityLabel.adjustsFontSizeToFitWidth = true
 
         super.init(frame: frame)
 
