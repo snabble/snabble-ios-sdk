@@ -41,11 +41,12 @@ class CouponViewModel {
         }
 
         let formatter = DateFormatter()
-        formatter.dateStyle = .short
+        formatter.dateStyle = .full
         formatter.timeStyle = .none
+        formatter.locale = Locale.current
 
-        let date = formatter.string(from: validUntil)
-        return L10n.Snabble.Coupons.expiresAtDate(date)
+        let dateString = formatter.string(from: validUntil)
+        return L10n.Snabble.Coupons.expiresAtDate(dateString)
     }
 
     var isNew: Bool {
