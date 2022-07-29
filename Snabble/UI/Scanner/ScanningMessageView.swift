@@ -49,7 +49,7 @@ final class ScanningMessageView: UIView {
 
             stackView.leadingAnchor.constraint(equalTo: leadingAnchor),
             stackView.trailingAnchor.constraint(equalTo: trailingAnchor),
-            stackView.topAnchor.constraint(equalTo: closeButton.bottomAnchor, constant: 2),
+            stackView.topAnchor.constraint(equalTo: topAnchor),
             stackView.bottomAnchor.constraint(equalTo: bottomAnchor)
         ])
         self.stackView = stackView
@@ -157,7 +157,7 @@ extension ScanningMessageView {
                 stackView.topAnchor.constraint(equalTo: topAnchor, constant: 8),
                 stackView.bottomAnchor.constraint(equalTo: bottomAnchor, constant: -8),
                 stackView.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 16),
-                stackView.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -16),
+                stackView.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -35),
 
                 imageView.widthAnchor.constraint(equalToConstant: 80).usingPriority(.defaultHigh + 1),
                 imageView.heightAnchor.constraint(equalTo: imageView.widthAnchor).usingPriority(.defaultHigh + 1),
