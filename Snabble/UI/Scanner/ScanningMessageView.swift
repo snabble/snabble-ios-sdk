@@ -70,7 +70,7 @@ final class ScanningMessageView: UIView {
     public func configure(with provider: ScanningMessageViewViewProvider) {
         let messages = provider.messages
         stackView?.removeAllArrangedSubviews()
-        for item in messages {
+        for (index, item) in messages.enumerated() {
             let view = MessageView(frame: .zero)
             if let attributedString = item.attributedString {
                 view.label?.attributedText = attributedString
@@ -83,7 +83,11 @@ final class ScanningMessageView: UIView {
                 view.imageView?.isHidden = true
             }
 
+            if index > 0 {
+                stackView?.addArrangedSubview(SeparatorView(frame: .zero))
+            }
             stackView?.addArrangedSubview(view)
+
         }
         layoutIfNeeded()
     }
@@ -92,15 +96,14 @@ final class ScanningMessageView: UIView {
         let session = Snabble.urlSession
         view.activityIndicatorView?.startAnimating()
         let task = session.dataTask(with: url) { data, _, _ in
-            defer {
-                view.activityIndicatorView?.stopAnimating()
-            }
             if let data = data, let img = UIImage(data: data) {
                 DispatchQueue.main.async {
+                    view.activityIndicatorView?.stopAnimating()
                     view.imageView?.image = img
                 }
             } else {
                 DispatchQueue.main.async {
+                    view.activityIndicatorView?.stopAnimating()
                     view.imageView?.isHidden = true
                 }
             }
@@ -118,6 +121,30 @@ final class ScanningMessageView: UIView {
 }
 
 extension ScanningMessageView {
+    final class SeparatorView: UIView {
+        override init(frame: CGRect) {
+            let view = UIView()
+            view.translatesAutoresizingMaskIntoConstraints = false
+            view.backgroundColor = .separator
+
+            super.init(frame: frame)
+
+            addSubview(view)
+
+            NSLayoutConstraint.activate([
+                view.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 16),
+                trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: 16),
+
+                view.topAnchor.constraint(equalTo: topAnchor),
+                view.heightAnchor.constraint(equalToConstant: 1.0 / UIScreen.main.scale),
+                bottomAnchor.constraint(equalTo: view.bottomAnchor)
+            ])
+        }
+
+        required init?(coder: NSCoder) {
+            fatalError("init(coder:) has not been implemented")
+        }
+    }
     final class MessageView: UIView {
         private(set) weak var imageView: UIImageView?
         private(set) weak var label: UILabel?
@@ -149,10 +176,6 @@ extension ScanningMessageView {
             label.setContentHuggingPriority(.defaultLow + 1, for: .horizontal)
             label.setContentHuggingPriority(.defaultLow + 1, for: .vertical)
 
-            let separator = UIView()
-            separator.translatesAutoresizingMaskIntoConstraints = false
-            separator.backgroundColor = .separator
-
             let stackView = UIStackView(arrangedSubviews: [label, imageView])
             stackView.translatesAutoresizingMaskIntoConstraints = false
             stackView.axis = .horizontal
@@ -164,7 +187,6 @@ extension ScanningMessageView {
 
             addSubview(stackView)
             addSubview(activityIndicatorView)
-            addSubview(separator)
 
             self.imageView = imageView
             self.activityIndicatorView = activityIndicatorView
@@ -178,11 +200,6 @@ extension ScanningMessageView {
 
                 imageView.widthAnchor.constraint(equalToConstant: 80).usingPriority(.defaultHigh + 1),
                 imageView.heightAnchor.constraint(equalTo: imageView.widthAnchor).usingPriority(.defaultHigh + 1),
-
-                separator.leadingAnchor.constraint(equalTo: leadingAnchor),
-                separator.trailingAnchor.constraint(equalTo: trailingAnchor),
-                separator.heightAnchor.constraint(equalToConstant: 1.0 / UIScreen.main.scale),
-                separator.bottomAnchor.constraint(equalTo: bottomAnchor),
 
                 activityIndicatorView.centerYAnchor.constraint(equalTo: imageView.centerYAnchor),
                 activityIndicatorView.centerXAnchor.constraint(equalTo: imageView.centerXAnchor)
