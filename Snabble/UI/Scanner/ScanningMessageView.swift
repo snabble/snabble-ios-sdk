@@ -14,23 +14,20 @@ protocol ScanningMessageViewViewProvider {
 final class ScanningMessageView: UIView {
 
     private(set) weak var stackView: UIStackView?
+    private(set) weak var closeButton: UIButton?
 
     override init(frame: CGRect) {
-        super.init(frame: frame)
-        self.setupUI()
-    }
-
-    public required init?(coder aDecoder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
-    }
-
-    private func setupUI() {
-        backgroundColor = .systemBackground
-
         let closeButton = UIButton(type: .custom)
         closeButton.translatesAutoresizingMaskIntoConstraints = false
-        closeButton.setImage(Asset.SnabbleSDK.iconClose.image, for: .normal)
+        let image: UIImage?
+        if #available(iOS 13, *) {
+            image = UIImage(systemName: "xmark")
+        } else {
+            image = Asset.SnabbleSDK.iconClose.image
+        }
+        closeButton.setImage(image, for: .normal)
         closeButton.isUserInteractionEnabled = false
+        closeButton.setContentHuggingPriority(.defaultHigh + 1, for: .horizontal)
 
         let stackView = UIStackView()
         stackView.translatesAutoresizingMaskIntoConstraints = false
@@ -39,20 +36,35 @@ final class ScanningMessageView: UIView {
         stackView.distribution = .fill
         stackView.alignment = .fill
 
+        super.init(frame: frame)
+
+        backgroundColor = .systemBackground
+
         addSubview(closeButton)
         addSubview(stackView)
 
+        self.closeButton = closeButton
+        self.stackView = stackView
+
         NSLayoutConstraint.activate([
-            closeButton.trailingAnchor.constraint(equalTo: trailingAnchor, constant: 2),
-            closeButton.widthAnchor.constraint(equalToConstant: 33),
-            closeButton.topAnchor.constraint(equalTo: topAnchor, constant: 2),
+            trailingAnchor.constraint(equalTo: closeButton.trailingAnchor, constant: 8),
+            closeButton.widthAnchor.constraint(greaterThanOrEqualToConstant: 32),
+            closeButton.widthAnchor.constraint(lessThanOrEqualToConstant: 44),
+            closeButton.centerYAnchor.constraint(equalTo: centerYAnchor),
+            closeButton.topAnchor.constraint(equalTo: topAnchor, constant: 8).usingPriority(.defaultLow + 1),
+            closeButton.topAnchor.constraint(greaterThanOrEqualTo: topAnchor, constant: 8),
+            bottomAnchor.constraint(equalTo: closeButton.bottomAnchor, constant: 8).usingPriority(.defaultLow + 1),
+            bottomAnchor.constraint(greaterThanOrEqualTo: closeButton.bottomAnchor, constant: 8),
 
             stackView.leadingAnchor.constraint(equalTo: leadingAnchor),
-            stackView.trailingAnchor.constraint(equalTo: trailingAnchor),
+            stackView.trailingAnchor.constraint(equalTo: closeButton.leadingAnchor),
             stackView.topAnchor.constraint(equalTo: topAnchor),
             stackView.bottomAnchor.constraint(equalTo: bottomAnchor)
         ])
-        self.stackView = stackView
+    }
+
+    public required init?(coder aDecoder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
     }
 
     public func configure(with provider: ScanningMessageViewViewProvider) {
@@ -78,16 +90,17 @@ final class ScanningMessageView: UIView {
 
     private func loadMessageImage(from url: URL, at view: MessageView) {
         let session = Snabble.urlSession
-        view.spinner?.startAnimating()
+        view.activityIndicatorView?.startAnimating()
         let task = session.dataTask(with: url) { data, _, _ in
+            defer {
+                view.activityIndicatorView?.stopAnimating()
+            }
             if let data = data, let img = UIImage(data: data) {
                 DispatchQueue.main.async {
-                    view.spinner?.stopAnimating()
                     view.imageView?.image = img
                 }
             } else {
                 DispatchQueue.main.async {
-                    view.spinner?.stopAnimating()
                     view.imageView?.isHidden = true
                 }
             }
@@ -108,7 +121,7 @@ extension ScanningMessageView {
     final class MessageView: UIView {
         private(set) weak var imageView: UIImageView?
         private(set) weak var label: UILabel?
-        private(set) weak var spinner: UIActivityIndicatorView?
+        private(set) weak var activityIndicatorView: UIActivityIndicatorView?
 
         override init(frame: CGRect) {
             let imageView = UIImageView()
@@ -117,13 +130,13 @@ extension ScanningMessageView {
             imageView.setContentHuggingPriority(.defaultLow + 1, for: .horizontal)
             imageView.setContentHuggingPriority(.defaultLow + 1, for: .vertical)
 
-            let spinner = UIActivityIndicatorView()
-            spinner.translatesAutoresizingMaskIntoConstraints = false
-            spinner.hidesWhenStopped = true
+            let activityIndicatorView = UIActivityIndicatorView()
+            activityIndicatorView.translatesAutoresizingMaskIntoConstraints = false
+            activityIndicatorView.hidesWhenStopped = true
             if #available(iOS 13.0, *) {
-                spinner.style = .medium
+                activityIndicatorView.style = .medium
             } else {
-                spinner.style = .gray
+                activityIndicatorView.style = .gray
             }
 
             let label = UILabel()
@@ -150,14 +163,18 @@ extension ScanningMessageView {
             super.init(frame: frame)
 
             addSubview(stackView)
-            addSubview(spinner)
+            addSubview(activityIndicatorView)
             addSubview(separator)
+
+            self.imageView = imageView
+            self.activityIndicatorView = activityIndicatorView
+            self.label = label
 
             NSLayoutConstraint.activate([
                 stackView.topAnchor.constraint(equalTo: topAnchor, constant: 8),
-                stackView.bottomAnchor.constraint(equalTo: bottomAnchor, constant: -8),
+                bottomAnchor.constraint(equalTo: stackView.bottomAnchor, constant: 8),
                 stackView.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 16),
-                stackView.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -35),
+                trailingAnchor.constraint(equalTo: stackView.trailingAnchor, constant: 16),
 
                 imageView.widthAnchor.constraint(equalToConstant: 80).usingPriority(.defaultHigh + 1),
                 imageView.heightAnchor.constraint(equalTo: imageView.widthAnchor).usingPriority(.defaultHigh + 1),
@@ -167,15 +184,9 @@ extension ScanningMessageView {
                 separator.heightAnchor.constraint(equalToConstant: 1.0 / UIScreen.main.scale),
                 separator.bottomAnchor.constraint(equalTo: bottomAnchor),
 
-                spinner.topAnchor.constraint(equalTo: imageView.topAnchor),
-                spinner.bottomAnchor.constraint(equalTo: imageView.bottomAnchor),
-                spinner.leadingAnchor.constraint(equalTo: imageView.leadingAnchor),
-                spinner.trailingAnchor.constraint(equalTo: imageView.trailingAnchor)
+                activityIndicatorView.centerYAnchor.constraint(equalTo: imageView.centerYAnchor),
+                activityIndicatorView.centerXAnchor.constraint(equalTo: imageView.centerXAnchor)
             ])
-
-            self.imageView = imageView
-            self.spinner = spinner
-            self.label = label
         }
 
         required init?(coder: NSCoder) {
