@@ -86,7 +86,7 @@ class SampleViewController: UIViewController {
                 self.buttonContainer.isHidden = false
 
                 let cartConfig = CartConfig(shop: self.shop!)
-                self.shoppingCart = ShoppingCart(cartConfig)
+                self.shoppingCart = ShoppingCart(with: cartConfig)
             }
         }
     }

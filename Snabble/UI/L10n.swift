@@ -7,7 +7,7 @@
 import Foundation
 
 extension Snabble {
-    public static func l10n(_ key: String, _ table: String = "") -> String {
+    public static func l10n(_ key: String, _ table: String? = nil, _ value: String? = nil) -> String {
         // check if the app has a project-specific localization for this string
         let projectId = SnabbleUI.project.id.rawValue.replacingOccurrences(of: "-", with: ".")
         let projectKey = "\(projectId).\(key)"
@@ -17,14 +17,14 @@ extension Snabble {
         }
 
         // check if the app has localized this string
-        let upper = key.uppercased()
-        let appValue = Bundle.main.localizedString(forKey: key, value: upper, table: nil)
-        if appValue != upper {
+        var fallback = value ?? key.uppercased()
+        let appValue = Bundle.main.localizedString(forKey: key, value: fallback, table: nil)
+        if appValue != fallback {
             return appValue
         }
 
         // check the SDK's localization file
-        let sdkValue = SnabbleSDKBundle.main.localizedString(forKey: key, value: upper, table: "SnabbleLocalizable")
+        let sdkValue = SnabbleSDKBundle.main.localizedString(forKey: key, value: value, table: table)
         return sdkValue
     }
 }
