@@ -6,7 +6,6 @@ inhibit_all_warnings!
 
 target 'SnabbleSampleApp' do
   pod 'Snabble', :path => '../'
-  pod 'SwiftLint'
 end
 
 post_install do |installer|

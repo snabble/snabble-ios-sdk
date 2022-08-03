@@ -51,7 +51,6 @@ Pod::Spec.new do |s|
       "SnabbleSDK" => [
         'Snabble/UI/*.lproj/*.strings',
         'Snabble/UI/*.lproj/*.stringsdict',
-        'Snabble/UI/**/*.xib',
         'Snabble/UI/**/*.der',
         'Snabble/UI/**/*.html',
         'Snabble.xcassets'

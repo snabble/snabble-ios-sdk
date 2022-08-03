@@ -28,14 +28,12 @@ PODS:
     - SDCAlertView (~> 12)
     - Snabble/Core
     - WCAG-Colors
-  - SwiftLint (0.48.0)
   - TrustKit (1.7.0)
   - WCAG-Colors (1.0.0)
   - Zip (2.1.2)
 
 DEPENDENCIES:
   - Snabble (from `../`)
-  - SwiftLint
 
 SPEC REPOS:
   trunk:
@@ -48,7 +46,6 @@ SPEC REPOS:
     - OneTimePassword
     - Pulley
     - SDCAlertView
-    - SwiftLint
     - TrustKit
     - WCAG-Colors
     - Zip
@@ -67,12 +64,11 @@ SPEC CHECKSUMS:
   OneTimePassword: c00ecc908e67e6c5bfda9d50b0b2e4696d0b066e
   Pulley: a4c28c930958f42978d69631000bc1abb82cb232
   SDCAlertView: 1c0410de80548da3fed142ded0b97644d9848577
-  Snabble: 6009353214469d423e635e05efe4bb7c75f2f8e3
-  SwiftLint: 284cea64b6187c5d6bd83e9a548a64104d546447
+  Snabble: f6593b8e19e6d349ee04a221b4c957f598b47257
   TrustKit: dac38bb37e49bdfeca41b1a19d020da38017b51c
   WCAG-Colors: 4aca2fd6c2dce9cd1211c5bf3cda1e8c531d3d2c
   Zip: b3fef584b147b6e582b2256a9815c897d60ddc67
 
-PODFILE CHECKSUM: f02089e4cd2a3e392c7645ae672cf5c73e022a96
+PODFILE CHECKSUM: 51371331e87a13ce785b0616c680a2f26b22b2c1
 
 COCOAPODS: 1.11.3
