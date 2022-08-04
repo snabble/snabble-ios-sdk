@@ -48,7 +48,7 @@ public class CheckInManager: NSObject {
 
     private func trackCheckIn(with shop: Shop) {
         guard let location = locationManager.location, let project = shop.project else { return }
-        AppEvent.init(key: "Check in distance to shop", value: "\(shop.id.rawValue);\(shop.distance(to: location))m", project: project, shopId: shop.id).post()
+        AppEvent(key: "Check in distance to shop", value: "\(shop.id.rawValue);\(shop.distance(to: location))m", project: project, shopId: shop.id).post()
     }
 
     /// Latest checked in `Date`. Returns to `nil` if `shop` is `nil`.
