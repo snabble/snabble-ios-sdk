@@ -17,6 +17,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 * Extension UIStackView+Remove added
+* Shop Distance Analytics #APPS-274
 
 ### Removed
 * `Gutschein` handling
