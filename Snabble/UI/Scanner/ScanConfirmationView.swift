@@ -380,6 +380,11 @@ final class ScanConfirmationView: UIView {
 
         NotificationCenter.default.post(name: .snabbleCartUpdated, object: self)
         self.delegate?.track(.productAddedToCart(self.cartItem.product.sku))
+        if let shop = Snabble.shared.checkInManager.shop,
+           let project = shop.project,
+           let location = Snabble.shared.checkInManager.locationManager.location {
+            AppEvent(key: "Add to cart distance to shop", value: "\(shop.id.rawValue);\(shop.distance(to: location))m", project: project, shopId: shop.id).post()
+        }
 
         self.productNameLabel?.text = nil
         self.delegate?.closeConfirmation(forItem: self.cartItem)

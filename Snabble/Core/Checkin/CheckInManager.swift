@@ -39,10 +39,16 @@ public class CheckInManager: NSObject {
                 delegate?.checkInManager(self, didCheckOutOf: shop)
             }
             if let shop = shop {
+                trackCheckIn(with: shop)
                 checkedInAt = Date()
                 delegate?.checkInManager(self, didCheckInTo: shop)
             }
         }
+    }
+
+    private func trackCheckIn(with shop: Shop) {
+        guard let location = locationManager.location, let project = shop.project else { return }
+        AppEvent(key: "Check in distance to shop", value: "\(shop.id.rawValue);\(shop.distance(to: location))m", project: project, shopId: shop.id).post()
     }
 
     /// Latest checked in `Date`. Returns to `nil` if `shop` is `nil`.
@@ -207,7 +213,7 @@ private extension CLLocation {
     }
 }
 
-private extension Shop {
+public extension Shop {
     /// convenience accessor for the shop's location
     var location: CLLocation {
         CLLocation(latitude: latitude, longitude: longitude)
