@@ -73,7 +73,7 @@ final class ScanConfirmationView: UIView {
 
         let closeButton = UIButton(type: .system)
         closeButton.translatesAutoresizingMaskIntoConstraints = false
-        closeButton.setImage(Asset.SnabbleSDK.iconClose.image, for: .normal)
+        closeButton.setImage(UIImage(systemName: "xmark"), for: .normal)
         closeButton.isUserInteractionEnabled = true
         closeButton.addTarget(self, action: #selector(closeButtonTapped(_:)), for: .touchUpInside)
 
