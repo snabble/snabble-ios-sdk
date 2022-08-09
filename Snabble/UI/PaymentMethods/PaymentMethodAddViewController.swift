@@ -5,7 +5,6 @@
 //
 
 import UIKit
-import ColorCompatibility
 
 private struct MethodEntry {
     var name: String
