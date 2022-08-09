@@ -249,13 +249,8 @@ final class CheckoutBar: UIView {
 
         let button = self.checkoutButton!
 
-        let spinner: UIActivityIndicatorView
-
-        if #available(iOS 13.0, *) {
-            spinner = .init(style: .medium)
-        } else {
-            spinner = .init(style: .gray)
-        }
+        let spinner = UIActivityIndicatorView(style: .medium)
+        spinner.hidesWhenStopped = true
         spinner.startAnimating()
         button.addSubview(spinner)
         spinner.translatesAutoresizingMaskIntoConstraints = false

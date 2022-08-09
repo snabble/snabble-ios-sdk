@@ -66,12 +66,7 @@ public final class ReceiptsListViewController: UITableViewController {
         emptyLabel.adjustsFontForContentSizeCategory = true
         view.addSubview(emptyLabel)
 
-        let activityIndicator: UIActivityIndicatorView
-        if #available(iOS 13.0, *) {
-            activityIndicator = UIActivityIndicatorView(style: .medium)
-        } else {
-            activityIndicator = UIActivityIndicatorView(style: .gray)
-        }
+        let activityIndicator = UIActivityIndicatorView(style: .medium)
         activityIndicator.startAnimating()
         activityIndicator.hidesWhenStopped = true
         activityIndicator.color = .systemGray

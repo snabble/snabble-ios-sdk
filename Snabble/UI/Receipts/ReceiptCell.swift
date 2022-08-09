@@ -107,12 +107,7 @@ final class ReceiptCell: UITableViewCell {
             self.storeName.text = shopName
             self.showIcon(projectId)
             self.orderDate.text = L10n.Snabble.Receipts.loading
-            let spinner: UIActivityIndicatorView
-            if #available(iOS 13.0, *) {
-                spinner = UIActivityIndicatorView(style: .medium)
-            } else {
-                spinner = UIActivityIndicatorView(style: .gray)
-            }
+            let spinner = UIActivityIndicatorView(style: .medium)
             spinner.color = .systemGray
             spinner.startAnimating()
             self.accessoryView = spinner

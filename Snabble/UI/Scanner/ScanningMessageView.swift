@@ -19,12 +19,7 @@ final class ScanningMessageView: UIView {
     override init(frame: CGRect) {
         let closeButton = UIButton(type: .custom)
         closeButton.translatesAutoresizingMaskIntoConstraints = false
-        let image: UIImage?
-        if #available(iOS 13, *) {
-            image = UIImage(systemName: "xmark")
-        } else {
-            image = Asset.SnabbleSDK.iconClose.image
-        }
+        let image = UIImage(systemName: "xmark")
         closeButton.setImage(image, for: .normal)
         closeButton.isUserInteractionEnabled = false
         closeButton.setContentHuggingPriority(.defaultHigh + 1, for: .horizontal)
@@ -157,14 +152,9 @@ extension ScanningMessageView {
             imageView.setContentHuggingPriority(.defaultLow + 1, for: .horizontal)
             imageView.setContentHuggingPriority(.defaultLow + 1, for: .vertical)
 
-            let activityIndicatorView = UIActivityIndicatorView()
+            let activityIndicatorView = UIActivityIndicatorView(style: .medium)
             activityIndicatorView.translatesAutoresizingMaskIntoConstraints = false
             activityIndicatorView.hidesWhenStopped = true
-            if #available(iOS 13.0, *) {
-                activityIndicatorView.style = .medium
-            } else {
-                activityIndicatorView.style = .gray
-            }
 
             let label = UILabel()
             label.translatesAutoresizingMaskIntoConstraints = false

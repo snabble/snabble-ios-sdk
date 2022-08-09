@@ -34,16 +34,7 @@ final class CheckoutStepsViewController: UIViewController {
         }
     }
 
-    private lazy var arrayDataSource = UITableViewViewArrayDataSource<ItemIdentifierType>(
-        tableView: tableView!,
-        cellProvider: cellProvider
-    )
-
-    @available(iOS 13.0, *)
-    private lazy var diffableDataSource = UITableViewDiffableDataSource<Int, ItemIdentifierType>(
-        tableView: tableView!,
-        cellProvider: cellProvider
-    )
+    private var diffableDataSource: UITableViewDiffableDataSource<Int, ItemIdentifierType>?
 
     let viewModel: CheckoutStepsViewModel
     var shop: Shop {
@@ -82,19 +73,19 @@ final class CheckoutStepsViewController: UIViewController {
             view.restrictDynamicTypeSize(from: nil, to: .extraExtraExtraLarge)
         }
 
-        let style: UITableView.Style
-        if #available(iOS 13.0, *) {
-            style = .insetGrouped
-        } else {
-            style = .grouped
-        }
-        let tableView = UITableView(frame: view.bounds, style: style)
+        let tableView = UITableView(frame: view.bounds, style: .insetGrouped)
         tableView.translatesAutoresizingMaskIntoConstraints = false
         tableView.estimatedRowHeight = 44
         tableView.register(CheckoutStepTableViewCell.self)
         tableView.register(CheckoutInformationTableViewCell.self)
         tableView.allowsSelection = false
         tableView.contentInset = .init(top: 0, left: 0, bottom: 48 + 16 + 16, right: 0)
+        let diffableDataSource = UITableViewDiffableDataSource<Int, ItemIdentifierType>(
+            tableView: tableView,
+            cellProvider: cellProvider
+        )
+        tableView.dataSource = diffableDataSource
+        self.diffableDataSource = diffableDataSource
 
         view.addSubview(tableView)
         self.tableView = tableView
@@ -142,12 +133,6 @@ final class CheckoutStepsViewController: UIViewController {
         super.viewDidLoad()
         headerView?.configure(with: viewModel.headerViewModel)
         tableView?.updateHeaderViews()
-
-        if #available(iOS 13.0, *) {
-            tableView?.dataSource = diffableDataSource
-        } else {
-            tableView?.dataSource = arrayDataSource
-        }
         update(with: viewModel.steps, animate: false)
     }
 
@@ -202,16 +187,10 @@ final class CheckoutStepsViewController: UIViewController {
     }
 
     private func update(with steps: [ItemIdentifierType], animate: Bool = true) {
-        if #available(iOS 13.0, *), let dataSource = tableView?.dataSource as? UITableViewDiffableDataSource<Int, ItemIdentifierType> {
-            var snapshot = NSDiffableDataSourceSnapshot<Int, ItemIdentifierType>()
-            snapshot.appendSections([0])
-            snapshot.appendItems(steps, toSection: 0)
-            dataSource.apply(snapshot, animatingDifferences: animate)
-        } else if let dataSource = tableView?.dataSource as? UITableViewViewArrayDataSource<ItemIdentifierType> {
-            dataSource.apply(steps)
-        } else {
-            fatalError("dataSource cannot be updated")
-        }
+        var snapshot = NSDiffableDataSourceSnapshot<Int, ItemIdentifierType>()
+        snapshot.appendSections([0])
+        snapshot.appendItems(steps, toSection: 0)
+        diffableDataSource?.apply(snapshot, animatingDifferences: animate)
     }
 }
 

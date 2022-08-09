@@ -32,12 +32,7 @@ final class CheckoutStepStatusView: UIView {
         let circleView = CircleView()
         circleView.translatesAutoresizingMaskIntoConstraints = false
 
-        let activityIndicatorView: UIActivityIndicatorView
-        if #available(iOS 13.0, *) {
-            activityIndicatorView = UIActivityIndicatorView(style: .medium)
-        } else {
-            activityIndicatorView = UIActivityIndicatorView(style: .gray)
-        }
+        let activityIndicatorView = UIActivityIndicatorView(style: .medium)
         activityIndicatorView.translatesAutoresizingMaskIntoConstraints = false
         activityIndicatorView.hidesWhenStopped = true
         activityIndicatorView.color = .systemGray
@@ -129,17 +124,9 @@ extension CheckoutStepStatus: CheckoutStepStatusViewModel {
         case .loading:
             return nil
         case .success:
-            if #available(iOS 13.0, *) {
-                return UIImage(systemName: "checkmark")
-            } else {
-                return Asset.SnabbleSDK.checkmark.image
-            }
+            return UIImage(systemName: "checkmark")
         case .failure, .aborted:
-            if #available(iOS 13.0, *) {
-                return UIImage(systemName: "xmark")
-            } else {
-                return Asset.SnabbleSDK.x.image
-            }
+            return UIImage(systemName: "xmark")
         }
     }
 }

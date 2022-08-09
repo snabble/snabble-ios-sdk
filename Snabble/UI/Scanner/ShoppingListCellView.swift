@@ -34,14 +34,9 @@ final class ShoppingListCellView: UIView {
         productImage.contentMode = .scaleAspectFit
         productImage.tintColor = .label
 
-        let spinner = UIActivityIndicatorView()
+        let spinner = UIActivityIndicatorView(style: .medium)
         spinner.translatesAutoresizingMaskIntoConstraints = false
         spinner.hidesWhenStopped = true
-        if #available(iOS 13.0, *) {
-            spinner.style = .medium
-        } else {
-            spinner.style = .gray
-        }
 
         let nameLabel = UILabel()
         nameLabel.translatesAutoresizingMaskIntoConstraints = false

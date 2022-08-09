@@ -97,13 +97,8 @@ extension UIViewController {
     func showWindowOverlay(with overlayView: UIView) {
         let viewController = UIViewController()
 
-        if #available(iOS 13.0, *) {
-            let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene
-            overlayWindow = UIWindow(windowScene: windowScene!)
-        } else {
-            overlayWindow = UIWindow(frame: UIScreen.main.bounds)
-        }
-
+        let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene
+        overlayWindow = UIWindow(windowScene: windowScene!)
         overlayWindow?.backgroundColor = UIColor.label.withAlphaComponent(0.5)
         overlayWindow?.rootViewController = viewController
         overlayWindow?.windowLevel = .normal

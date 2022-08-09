@@ -72,13 +72,7 @@ public final class CouponViewController: UIViewController {
         imageBackgroundView.addSubview(imageView)
         self.imageView = imageView
 
-        let activityIndicatorView: UIActivityIndicatorView
-        if #available(iOS 13, *) {
-            activityIndicatorView = UIActivityIndicatorView(style: .medium)
-        } else {
-            activityIndicatorView = UIActivityIndicatorView(style: .gray)
-        }
-
+        let activityIndicatorView = UIActivityIndicatorView(style: .medium)
         activityIndicatorView.translatesAutoresizingMaskIntoConstraints = false
         imageBackgroundView.addSubview(activityIndicatorView)
         self.activityIndicatorView = activityIndicatorView
@@ -118,12 +112,7 @@ public final class CouponViewController: UIViewController {
         self.button = button
 
         let greenColor = UIColor(red: 127.0 / 255.0, green: 187.0 / 255.0, blue: 70.0 / 255.0, alpha: 1)
-        let image: UIImage?
-        if #available(iOS 13, *) {
-            image = UIImage(systemName: "checkmark.circle")
-        } else {
-            image = Asset.SnabbleSDK.checkmarkCircle.image
-        }
+        let image = UIImage(systemName: "checkmark.circle")
         let checkMarkImageView = UIImageView(image: image)
         checkMarkImageView.tintColor = greenColor
         let activatedTextLabel = UILabel()
