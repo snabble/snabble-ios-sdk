@@ -12,9 +12,9 @@
         <key>NSStringFormatValueTypeKey</key>
         <string>d</string>
         <key>one</key>
-        <string>még %d nap</string>
+        <string>még %d napig</string>
         <key>other</key>
-        <string>még %d nap</string>
+        <string>még %d napig</string>
         <key>zero</key>
         <string>Már lejárt</string>
       </dict>
@@ -30,9 +30,9 @@
         <key>NSStringFormatValueTypeKey</key>
         <string>d</string>
         <key>one</key>
-        <string>még %d óra</string>
+        <string>még %d óráig</string>
         <key>other</key>
-        <string>még %d óra</string>
+        <string>még %d óráig</string>
         <key>zero</key>
         <string>Már lejárt</string>
       </dict>
@@ -48,9 +48,9 @@
         <key>NSStringFormatValueTypeKey</key>
         <string>d</string>
         <key>one</key>
-        <string>még %d perc</string>
+        <string>még %d percig</string>
         <key>other</key>
-        <string>még %d perc</string>
+        <string>még %d percig</string>
         <key>zero</key>
         <string>Már lejárt</string>
       </dict>
@@ -66,9 +66,9 @@
         <key>NSStringFormatValueTypeKey</key>
         <string>d</string>
         <key>one</key>
-        <string>még %d hét</string>
+        <string>még %d hétig</string>
         <key>other</key>
-        <string>még %d hét</string>
+        <string>még %d hétig</string>
         <key>zero</key>
         <string>Már lejárt</string>
       </dict>
