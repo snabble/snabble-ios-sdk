@@ -37,12 +37,7 @@ public final class InFlightCheckoutContinuationViewController: UIViewController 
 
         view.backgroundColor = .systemBackground
 
-        let activityIndicatorView: UIActivityIndicatorView
-        if #available(iOS 13.0, *) {
-            activityIndicatorView = .init(style: .medium)
-        } else {
-            activityIndicatorView = .init(style: .gray)
-        }
+        let activityIndicatorView = UIActivityIndicatorView(style: .medium)
         activityIndicatorView.hidesWhenStopped = true
         activityIndicatorView.startAnimating()
 

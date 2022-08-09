@@ -27,13 +27,9 @@ protocol SelectionSheetAppearance {
 
 extension SelectionSheetAppearance {
     var backgroundColor: UIColor {
-        if #available(iOS 13, *) {
-            return UIColor { traitCollection in
-                traitCollection.userInterfaceStyle == .dark ? .secondarySystemBackground : .systemBackground
-            }
-        } else {
-            return .systemBackground
-        }
+        UIColor { traitCollection in
+           traitCollection.userInterfaceStyle == .dark ? .secondarySystemBackground : .systemBackground
+       }
     }
 
     var titleFont: UIFont { .preferredFont(forTextStyle: .headline) }

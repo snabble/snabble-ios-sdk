@@ -154,14 +154,9 @@ extension ShoppingCartTableCellView {
             imageView.layer.cornerRadius = 4
             imageView.layer.masksToBounds = true
 
-            let activityIndicatorView = UIActivityIndicatorView()
+            let activityIndicatorView = UIActivityIndicatorView(style: .medium)
             activityIndicatorView.translatesAutoresizingMaskIntoConstraints = false
             activityIndicatorView.hidesWhenStopped = true
-            if #available(iOS 13.0, *) {
-                activityIndicatorView.style = .medium
-            } else {
-                activityIndicatorView.style = .gray
-            }
 
             super.init(frame: frame)
 

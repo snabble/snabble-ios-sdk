@@ -21,7 +21,7 @@ Pod::Spec.new do |s|
   s.module_name = 'SnabbleSDK'
 
   s.platform = :ios
-  s.ios.deployment_target = '12.0'
+  s.ios.deployment_target = '14.0'
   s.swift_versions = [ '5.0' ]
 
   s.default_subspecs = 'Core', 'UI'
@@ -41,7 +41,6 @@ Pod::Spec.new do |s|
 
     ui.dependency 'Snabble/Core'
     ui.dependency 'SDCAlertView', '~> 12'
-    ui.dependency 'ColorCompatibility'
     ui.dependency 'WCAG-Colors'
     ui.dependency 'DeviceKit', '~> 4'
     ui.dependency 'Pulley', '~> 2.9'

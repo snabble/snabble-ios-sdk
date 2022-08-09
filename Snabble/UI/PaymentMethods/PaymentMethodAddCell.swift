@@ -5,7 +5,6 @@
 //
 
 import UIKit
-import ColorCompatibility
 
 protocol PaymentMethodAddCellViewModel {
     var projectId: Identifier<Project> { get }
@@ -44,7 +43,7 @@ final class PaymentMethodAddCell: UITableViewCell {
 
         countLabel.font = UIFont.preferredFont(forTextStyle: .subheadline)
         countLabel.adjustsFontForContentSizeCategory = true
-        countLabel.textColor = ColorCompatibility.systemGray2
+        countLabel.textColor = .systemGray2
         countLabel.textAlignment = .center
 
         icon.setContentHuggingPriority(.defaultHigh, for: .horizontal)

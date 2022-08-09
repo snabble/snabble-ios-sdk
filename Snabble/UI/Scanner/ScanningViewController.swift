@@ -94,15 +94,10 @@ final class ScanningViewController: UIViewController {
         if #available(iOS 15, *) {
             self.view.restrictDynamicTypeSize(from: nil, to: .extraExtraExtraLarge)
         }
-        let spinner = UIActivityIndicatorView()
+        let spinner = UIActivityIndicatorView(style: .large)
         spinner.translatesAutoresizingMaskIntoConstraints = false
         spinner.color = UIColor.systemGray
         spinner.hidesWhenStopped = true
-        if #available(iOS 13.0, *) {
-            spinner.style = .large
-        } else {
-            spinner.style = .whiteLarge
-        }
 
         let scanConfirmationView = ScanConfirmationView(frame: .zero)
         scanConfirmationView.translatesAutoresizingMaskIntoConstraints = false

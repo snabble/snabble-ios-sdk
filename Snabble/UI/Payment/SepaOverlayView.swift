@@ -47,7 +47,7 @@ public final class SepaOverlayView: UIView {
 
         let closeButton = UIButton(type: .custom)
         closeButton.translatesAutoresizingMaskIntoConstraints = false
-        closeButton.setImage(Asset.SnabbleSDK.iconClose.image, for: .normal)
+        closeButton.setImage(UIImage(systemName: "xmark"), for: .normal)
 
         let titleLabel = UILabel()
         titleLabel.translatesAutoresizingMaskIntoConstraints = false
