@@ -23,8 +23,6 @@ internal enum Asset {
   internal enum SnabbleSDK {
     internal static let arrowUp = SwiftGenImageAsset(name: "SnabbleSDK/arrow-up")
     internal static let barcodeOverlay = SwiftGenImageAsset(name: "SnabbleSDK/barcode-overlay")
-    internal static let checkmarkCircle = SwiftGenImageAsset(name: "SnabbleSDK/checkmark-circle")
-    internal static let checkmark = SwiftGenImageAsset(name: "SnabbleSDK/checkmark")
     internal static let emoji1 = SwiftGenImageAsset(name: "SnabbleSDK/emoji-1")
     internal static let emoji2 = SwiftGenImageAsset(name: "SnabbleSDK/emoji-2")
     internal static let emoji3 = SwiftGenImageAsset(name: "SnabbleSDK/emoji-3")
@@ -34,7 +32,6 @@ internal enum Asset {
     internal static let iconCartInactiveFull = SwiftGenImageAsset(name: "SnabbleSDK/icon-cart-inactive-full")
     internal static let iconCheckLarge = SwiftGenImageAsset(name: "SnabbleSDK/icon-check-large")
     internal static let iconChevronDown = SwiftGenImageAsset(name: "SnabbleSDK/icon-chevron-down")
-    internal static let iconClose = SwiftGenImageAsset(name: "SnabbleSDK/icon-close")
     internal static let iconEntercode = SwiftGenImageAsset(name: "SnabbleSDK/icon-entercode")
     internal static let iconGiveaway = SwiftGenImageAsset(name: "SnabbleSDK/icon-giveaway")
     internal static let iconHintBig = SwiftGenImageAsset(name: "SnabbleSDK/icon-hint-big")
@@ -68,7 +65,6 @@ internal enum Asset {
       internal static let shoppinglistIconTag = SwiftGenImageAsset(name: "SnabbleSDK/shoppinglist/shoppinglist-icon-tag")
       internal static let shoppinglistIconText = SwiftGenImageAsset(name: "SnabbleSDK/shoppinglist/shoppinglist-icon-text")
     }
-    internal static let x = SwiftGenImageAsset(name: "SnabbleSDK/x")
   }
 }
 // swiftlint:enable identifier_name line_length nesting type_body_length type_name
