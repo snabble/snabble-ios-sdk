@@ -4,7 +4,7 @@ on:
   pull_request:
     paths:
       - '.github/workflows/lint.yml'
-      - 'Example/.swiftlint.yml'
+      - '.swiftlint.yml'
       - '**/*.swift'
 
 env:
@@ -21,8 +21,6 @@ jobs:
 
       - name: GitHub Action for SwiftLint
         uses: sinoru/actions-swiftlint@v6
-        env:
-          WORKING_DIRECTORY: Example
         with:
           swiftlint-version: '0.48.0'
 
