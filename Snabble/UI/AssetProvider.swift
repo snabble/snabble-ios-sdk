@@ -32,17 +32,17 @@ public typealias AssetProviding = ImageProviding & ColorProviding & StringProvid
 /**
  `AssetProvider` implementing `AssetProviding`.
 */
-public final class AssetProvider : AssetProviding {
+public final class AssetProvider: AssetProviding {
     /// A shared instance
     public static var shared = AssetProvider()
-    
+
     /// A provider to get resources from
-    public weak var provider : AssetProviding?
+    public weak var provider: AssetProviding?
 
     public func color(for name: String, domain: Any? = nil) -> OSColor? {
         return provider?.color(for: name, domain: domain) ?? OSColor.black
     }
-    
+
     public func image(for name: String, domain: Any? = nil) -> OSImage? {
         guard let image = provider?.image(for: name, domain: domain) else {
             // default implementation in SDK should:

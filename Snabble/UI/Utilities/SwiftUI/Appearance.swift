@@ -12,29 +12,29 @@ public struct Appearance: Codable {
     let secondaryAccent: String?
     let contrast: String?
 
-    static let shared : Appearance = load("Appearance.json")
+    static let shared: Appearance = load("Appearance.json")
 }
 
 #if canImport(SwiftUI)
 import SwiftUI
 
-public struct AccentColors {
-    public static let accentColor = Color(.red)
-    public static let buttonTextColor = Color(.white)
+extension Color {
+    static var accentColor: Color { .black }
+    static var buttonTextColor: Color { .white }
 }
 
 public extension Appearance {
 
     var accentColor: Color {
         guard let string = accent else {
-            return AccentColors.accentColor
+            return Color.accentColor
         }
 
         return Color(OSColor(rgbString: string))
     }
 
     var buttonTextColor: Color {
-        return AccentColors.buttonTextColor
+        return Color.buttonTextColor
     }
 }
 #endif

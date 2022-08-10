@@ -21,8 +21,8 @@ struct PageControl: UIViewRepresentable {
         let control = UIPageControl()
         control.numberOfPages = numberOfPages
         control.pageIndicatorTintColor = .gray
-        control.currentPageIndicatorTintColor = UIColor(cgColor:  Appearance.shared.accentColor.cgColor ?? CGColor.init(gray: 1, alpha: 0))
-        
+        control.currentPageIndicatorTintColor = UIColor(cgColor: Appearance.shared.accentColor.cgColor ?? CGColor(gray: 1, alpha: 0))
+
         control.addTarget(
             context.coordinator,
             action: #selector(Coordinator.updateCurrentPage(sender:)),
@@ -49,4 +49,3 @@ struct PageControl: UIViewRepresentable {
     }
 }
 #endif
-

@@ -104,13 +104,6 @@ struct OnboardingItemView: View {
         attributedTextView
             .multilineTextAlignment(.center)
             .handle(with: $urlResource)
-//            .environment(\.openURL, OpenURLAction { url in
-//                if let url = AssetProvider.shared.url(forResource: url.absoluteString, withExtension: nil) {
-//                    urlResource = url
-//                    return .handled
-//                }
-//                return .systemAction
-//            })
             .onChange(of: urlResource) { url in
                 showURL.toggle()
             }
