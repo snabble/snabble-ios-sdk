@@ -9,9 +9,9 @@ import SwiftUI
 import UIKit
 
 extension String {
-    public var containsHTML : Bool {
+    public var containsHTML: Bool {
         var flag = false
-        
+
         if let start = self.range(of: "<a"),
            let href = self.range(of: "href=\""),
            let end = range(of: "</a>"),
@@ -31,7 +31,7 @@ extension String {
         }
         let paragraphStyle = NSMutableParagraphStyle()
         paragraphStyle.alignment = .center
-        
+
         let attributes: [NSAttributedString.Key: Any] = [
             .font: UIFont.preferredFont(forTextStyle: .subheadline),
             .paragraphStyle: paragraphStyle,
@@ -39,11 +39,10 @@ extension String {
             .backgroundColor: UIColor.systemBackground
         ]
         attributedString.addAttributes(attributes, range: NSRange(location: 0, length: attributedString.length ))
-        
+
         var links: [NSRange] = []
-        
+
         attributedString.enumerateAttributes(in: NSRange(location: 0, length: attributedString.length), options: []) { (attrs, range, _) in
-//            print("-> \(attrs), \(range)")
             if attrs[.link] != nil {
                 links.append(range)
             }
@@ -61,7 +60,7 @@ extension String {
 
 struct AttributedText: UIViewRepresentable {
     typealias UIViewType = UITextView
-    
+
     let htmlString: String
     @Binding var openURL : URL
 
@@ -87,7 +86,6 @@ struct AttributedText: UIViewRepresentable {
             generateAttributedText()
             return
         }
-        
         uiView.attributedText = attributedText
     }
 
@@ -131,4 +129,3 @@ struct AttributedText_Previews: PreviewProvider {
         AttributedText(htmlString: OnboardingCaption0, openURL: .constant(URL(fileURLWithPath: "/")))
     }
 }
-
