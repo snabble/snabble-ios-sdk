@@ -17,22 +17,22 @@ struct WebView: UIViewRepresentable {
         Coordinator(self, refresh: $refresh)
     }
 
-    func makeUIView(context: Context) -> WKWebView  {
-        let webView =  WKWebView()
-        
+    func makeUIView(context: Context) -> WKWebView {
+        let webView = WKWebView()
+
         webView.navigationDelegate = context.coordinator
         return webView
     }
 
     func updateUIView(_ uiView: WKWebView, context: Context) {
-        uiView.loadFileURL(url, allowingReadAccessTo: url.deletingLastPathComponent()) //(request)
+        uiView.loadFileURL(url, allowingReadAccessTo: url.deletingLastPathComponent())
     }
 
-    class Coordinator : NSObject, WKNavigationDelegate {
+    class Coordinator: NSObject, WKNavigationDelegate {
         var parent: WebView
         var isFinished = false
 
-        @Binding var refresh : Bool
+        @Binding var refresh: Bool
 
         init(_ uiWebView: WebView, refresh: Binding<Bool>) {
             self.parent = uiWebView
@@ -65,7 +65,7 @@ struct ShowWebView: View {
             GeometryReader { geometry in
                 ScrollView(.vertical) {
                     WebView(url: url, refresh: $refreshURL)
-                        .frame(width:geometry.size.width, height:geometry.size.height)
+                        .frame(width: geometry.size.width, height: geometry.size.height)
                 }
             }
         }

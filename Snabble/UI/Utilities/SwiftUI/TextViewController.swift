@@ -101,7 +101,7 @@ struct AttributedText: UIViewRepresentable {
     /// subclass of UITextView returning contentSize as intrinsicContentSize
     private class ContentTextView: UITextView {
         override var canBecomeFirstResponder: Bool { false }
-        
+    
         override var intrinsicContentSize: CGSize {
             frame.height > 0 ? contentSize : super.intrinsicContentSize
         }
