@@ -17,12 +17,13 @@ default_platform(:ios)
 
 platform :ios do
   desc "Description of what the lane does"
-  lane :build do
-    gym(
+  lane :test do
+    run_tests(
+      device: "iPhone 13",
       scheme: "SnabbleSampleApp",
-      configuration: "Debug",
       clean: true,
-      skip_archive: true,
+      skip_build: true,
+      configuration: "Debug"
     )
   end
 end
