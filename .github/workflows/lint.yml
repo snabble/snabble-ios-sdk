@@ -2,7 +2,10 @@ on:
   push:
     branches: [ main ]
   pull_request:
-    branches: [ main ]
+    paths:
+      - '.github/workflows/lint.yml'
+      - 'Example/.swiftlint.yml'
+      - '**/*.swift'
 
 env:
   DEVELOPER_DIR: /Applications/Xcode_13.4.1.app/Contents/Developer
@@ -16,14 +19,12 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v3
 
-      - name: Change Folder
-        run: |
-          cd Example
-
       - name: GitHub Action for SwiftLint
         uses: sinoru/actions-swiftlint@v6
         with:
           swiftlint-version: '0.48.0'
+        env:
+          WORKING_DIRECTORY: Example
 
   PodLint:
     name: PodLint
