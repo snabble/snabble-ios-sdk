@@ -34,3 +34,6 @@ Carthage
 Pods/
 
 Example/Snabble/secret
+/Example/fastlane/test_output
+/Example/fastlane/test_output
+/Example/fastlane/report.xml
