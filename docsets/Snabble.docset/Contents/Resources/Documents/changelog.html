@@ -20,7 +20,7 @@
     <header class="header">
       <p class="header-col header-col--primary">
         <a class="header-link" href="index.html">
-          Snabble 0.20.0 Docs
+          Snabble 0.21.0 Docs
         </a>
         
       </p>
@@ -79,7 +79,13 @@
                 <a class="nav-group-task-link" href="Classes/CheckInManager.html">CheckInManager</a>
               </li>
               <li class="nav-group-task">
-                <a class="nav-group-task-link" href="Classes/CouponsListViewController.html">CouponsListViewController</a>
+                <a class="nav-group-task-link" href="Classes/CouponManager.html">CouponManager</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="Classes/CouponViewController.html">CouponViewController</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="Classes/CouponsViewController.html">CouponsViewController</a>
               </li>
               <li class="nav-group-task">
                 <a class="nav-group-task-link" href="Classes/DatatransAliasViewController.html">DatatransAliasViewController</a>
@@ -142,6 +148,9 @@
                 <a class="nav-group-task-link" href="Classes/ShoppingCart.html">ShoppingCart</a>
               </li>
               <li class="nav-group-task">
+                <a class="nav-group-task-link" href="Classes/ShoppingCartManager.html">ShoppingCartManager</a>
+              </li>
+              <li class="nav-group-task">
                 <a class="nav-group-task-link" href="Classes/ShoppingCartViewController.html">ShoppingCartViewController</a>
               </li>
               <li class="nav-group-task">
@@ -161,9 +170,6 @@
               </li>
               <li class="nav-group-task">
                 <a class="nav-group-task-link" href="Classes/SnabbleAlertStyle.html">SnabbleAlertStyle</a>
-              </li>
-              <li class="nav-group-task">
-                <a class="nav-group-task-link" href="Classes/SnabbleDTBundle.html">SnabbleDTBundle</a>
               </li>
               <li class="nav-group-task">
                 <a class="nav-group-task-link" href="Classes/SnabbleSDKBundle.html">SnabbleSDKBundle</a>
@@ -347,9 +353,6 @@
                 <a class="nav-group-task-link" href="Extensions.html#/s:10SnabbleSDK12CheckoutStepV">CheckoutStep</a>
               </li>
               <li class="nav-group-task">
-                <a class="nav-group-task-link" href="Extensions.html#/c:@M@SnabbleSDK@objc(cs)CouponScanViewController">CouponScanViewController</a>
-              </li>
-              <li class="nav-group-task">
                 <a class="nav-group-task-link" href="Extensions.html#/c:@M@SnabbleSDK@objc(cs)EmbeddedCodesCheckoutViewController">EmbeddedCodesCheckoutViewController</a>
               </li>
               <li class="nav-group-task">
@@ -427,6 +430,15 @@
                 <a class="nav-group-task-link" href="Protocols/CheckInManagerDelegate.html">CheckInManagerDelegate</a>
               </li>
               <li class="nav-group-task">
+                <a class="nav-group-task-link" href="Protocols/CouponManagerDelegate.html">CouponManagerDelegate</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="Protocols/CouponViewControllerDelegate.html">CouponViewControllerDelegate</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="Protocols/CouponsViewControllerDelegate.html">CouponsViewControllerDelegate</a>
+              </li>
+              <li class="nav-group-task">
                 <a class="nav-group-task-link" href="Protocols/CustomAppearance.html">CustomAppearance</a>
               </li>
               <li class="nav-group-task">
@@ -461,6 +473,9 @@
               </li>
               <li class="nav-group-task">
                 <a class="nav-group-task-link" href="Protocols/ShoppingCartDelegate.html">ShoppingCartDelegate</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="Protocols/ShoppingCartManagerDelegate.html">ShoppingCartManagerDelegate</a>
               </li>
               <li class="nav-group-task">
                 <a class="nav-group-task-link" href="Protocols/ShoppingListDelegate.html">ShoppingListDelegate</a>
@@ -772,14 +787,6 @@
               </li>
             </ul>
           </li>
-          <li class="nav-group-name">
-            <a class="nav-group-name-link" href="Typealiases.html">Type Aliases</a>
-            <ul class="nav-group-tasks">
-              <li class="nav-group-task">
-                <a class="nav-group-task-link" href="Typealiases.html#/s:10SnabbleSDK14CouponDelegatea">CouponDelegate</a>
-              </li>
-            </ul>
-          </li>
         </ul>
       </nav>
       <article class="main-content">
@@ -794,6 +801,32 @@
 <p>The format is based on <a href="https://keepachangelog.com/en/1.0.0/">Keep a Changelog</a>,
 and this project adheres to <a href="https://semver.org/spec/v2.0.0.html">Semantic Versioning</a>.</p>
 <h2 id='unreleased' class='heading'>[unreleased]</h2>
+<h2 id='0-21-0-2022-08-10' class='heading'>[0.21.0] - 2022-08-10</h2>
+<h3 id='changed' class='heading'>Changed</h3>
+
+<ul>
+<li>incremeant deployment Target iOS 14.0</li>
+<li><code>setCoupons</code> and <code>setShops</code> on project not index</li>
+<li>implement <code>Equatable</code> and <code>Hashable</code> to Project</li>
+<li>add <code>Hashable</code> to Coupon</li>
+<li>Coupons #APPS-297</li>
+<li>Added dynamic fonts to DatatransAliasViewController #APPS-231</li>
+<li>Refactored DatatransAliasViewController to programmatically written UI</li>
+<li>Fix for ScanMessageView and refactoring with ViewProvider pattern #APPS-339</li>
+</ul>
+<h3 id='added' class='heading'>Added</h3>
+
+<ul>
+<li>Extension UIStackView+Remove added</li>
+<li>Shop Distance Analytics #APPS-274</li>
+</ul>
+<h3 id='removed' class='heading'>Removed</h3>
+
+<ul>
+<li><code>Gutschein</code> handling</li>
+<li><code>ColorCompability</code> dependency</li>
+</ul>
+<h2 id='0-20-0-2022-06-23' class='heading'>[0.20.0] - 2022-06-23</h2>
 <h3 id='changed' class='heading'>Changed</h3>
 
 <ul>
@@ -802,6 +835,7 @@ and this project adheres to <a href="https://semver.org/spec/v2.0.0.html">Semant
 <li>Fixes deprecation warnings for iOS 13 and 14</li>
 <li>CheckinManager available via Snabble</li>
 <li>Snabble changed to singled with a shared variable</li>
+<li>Clear Inflight checkouts as soon as checkoutProcess is completed #APPS-369</li>
 </ul>
 <h3 id='added' class='heading'>Added</h3>
 
@@ -824,11 +858,6 @@ and this project adheres to <a href="https://semver.org/spec/v2.0.0.html">Semant
 
 <ul>
 <li>Xib/Nib utility methods</li>
-</ul>
-<h3 id='fixed' class='heading'>Fixed</h3>
-
-<ul>
-<li>clear Inflight checkouts as soon as checkoutProcess is completed #APPS-369</li>
 </ul>
 <h2 id='0-19-2-2022-5-25' class='heading'>[0.19.2] - 2022-5-25</h2>
 <h3 id='changed' class='heading'>Changed</h3>
@@ -995,7 +1024,7 @@ and it is possible to add a card during the checkout process</li>
 <li>Product DB updates can now be triggered depending on when the last update was requested</li>
 <li>Completely redesigned the Scanner, with integrated shopping list and shopping cart in a Maps-like drawer. 
 To hide this drawer, pass <code>nil</code> for the <code>cartDelegate</code> init parameter.</li>
-<li>Add <code>CouponWallet</code> to store coupons, along with <code><a href="Classes/CouponsListViewController.html">CouponsListViewController</a></code> as the UI to manage coupons</li>
+<li>Add <code>CouponWallet</code> to store coupons, along with <code>CouponsListViewController</code> as the UI to manage coupons</li>
 <li>Add support for the new payment methods <code>twint</code> and <code>postFinanceCard</code>. To use these methods, add <code>pod &#39;Snabble/Datatrans&#39;</code> to your app&rsquo;s <code>Podfile</code>, as these methods aren&rsquo;t included by default.</li>
 <li>Add support for Apple Pay</li>
 </ul>
@@ -1844,7 +1873,7 @@ To hide this drawer, pass <code>nil</code> for the <code>cartDelegate</code> ini
       </article>
     </div>
     <section class="footer">
-      <p>&copy; 2022 <a class="link" href="https://snabble.io/" target="_blank" rel="external noopener">Snabble</a>. All rights reserved. (Last updated: 2022-06-23)</p>
+      <p>&copy; 2022 <a class="link" href="https://snabble.io/" target="_blank" rel="external noopener">Snabble</a>. All rights reserved. (Last updated: 2022-08-10)</p>
       <p>Generated by <a class="link" href="https://github.com/realm/jazzy" target="_blank" rel="external noopener">jazzy ♪♫ v0.14.2</a>, a <a class="link" href="https://realm.io" target="_blank" rel="external noopener">Realm</a> project.</p>
     </section>
   </body>
