@@ -9,9 +9,9 @@
 import SwiftUI
 import WebKit
 
-struct WebView : UIViewRepresentable {
-    var url : URL
-    @Binding var refresh : Bool
+struct WebView: UIViewRepresentable {
+    var url: URL
+    @Binding var refresh: Bool
 
     func makeCoordinator() -> Coordinator {
         Coordinator(self, refresh: $refresh)
@@ -31,7 +31,7 @@ struct WebView : UIViewRepresentable {
     class Coordinator : NSObject, WKNavigationDelegate {
         var parent: WebView
         var isFinished = false
-        
+
         @Binding var refresh : Bool
 
         init(_ uiWebView: WebView, refresh: Binding<Bool>) {
@@ -52,7 +52,6 @@ struct WebView : UIViewRepresentable {
             if isFinished == false {
                 isFinished = true
             }
-
         }
     }
 }
@@ -60,7 +59,7 @@ struct WebView : UIViewRepresentable {
 struct ShowWebView: View {
     let url: URL
     @State private var refreshURL: Bool = false
-    
+
     var body: some View {
         VStack {
             GeometryReader { geometry in

@@ -22,7 +22,7 @@ extension String {
     }
 
     public var attributedStringFromHTML: NSAttributedString? {
-        
+
         guard let data = self.data(using: .utf16, allowLossyConversion: true),
               let attributedString = try? NSMutableAttributedString(data: data,
                                                                     options: [.documentType: NSAttributedString.DocumentType.html],
@@ -62,7 +62,7 @@ struct AttributedText: UIViewRepresentable {
     typealias UIViewType = UITextView
 
     let htmlString: String
-    @Binding var openURL : URL
+    @Binding var openURL: URL
 
     @State private var attributedText: NSAttributedString?
 
