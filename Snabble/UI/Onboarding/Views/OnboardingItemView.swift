@@ -9,7 +9,7 @@ import SwiftUI
 
 struct URLModifier: ViewModifier {
     @Binding var url: URL
-    
+
     func body(content: Content) -> some View {
         if #available(iOS 15, *) {
             content
@@ -40,11 +40,11 @@ struct OnboardingItemView: View {
     @State private var attributedText: NSAttributedString?
 
     @Environment(\.openURL) var openURL
-    
+
     var topPadding: CGFloat {
         return 40 - (item.title != nil ? 30 : 0)
     }
-    
+
     @ViewBuilder
     var title: some View {
         VStack {
@@ -71,7 +71,8 @@ struct OnboardingItemView: View {
         if let resource = item.link {
             Button(action: {
                 isPresenting.toggle()
-            }) {
+            })
+            {
                 Text("Show").font(.headline)
             }
             .sheet(isPresented: $isPresenting) {
@@ -98,13 +99,13 @@ struct OnboardingItemView: View {
             AttributedText(htmlString: item.text ?? "", openURL: $urlResource)
         }
     }
-    
+
     @ViewBuilder
     var text: some View {
         attributedTextView
             .multilineTextAlignment(.center)
             .handle(with: $urlResource)
-            .onChange(of: urlResource) { url in
+            .onChange(of: urlResource) { _ in
                 showURL.toggle()
             }
             .sheet(isPresented: $showURL) {
@@ -114,10 +115,10 @@ struct OnboardingItemView: View {
                 }
             }
     }
-    
+
     private func generateAttributedText() {
         guard attributedText == nil, let text = item.text, text.containsHTML == true else { return }
-        
+
         // create attributedText on main thread since HTML formatter will crash SwiftUI
         DispatchQueue.main.async {
             self.attributedText = text.attributedStringFromHTML
@@ -138,10 +139,9 @@ struct OnboardingItemView: View {
 }
 
 struct OnboardingItemView_Previews: PreviewProvider {
-    
+
     static var previews: some View {
         let item1 = OnboardingItem(id:1001, imageSource: "onboarding-image-1", text: "Scan your purchase yourself and pay directly in the app. ", prevButtonTitle: nil, nextButtonTitle: "Continue")
         OnboardingItemView(item: item1)
     }
 }
-

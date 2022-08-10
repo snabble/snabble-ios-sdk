@@ -21,7 +21,7 @@ struct TintButton: ButtonStyle {
 struct OnboardingButtonView: View {
     var item: OnboardingItem
     var numberOfPages: Int
-    
+
     @Binding var currentPage: Int
     
     @ViewBuilder
@@ -32,7 +32,8 @@ struct OnboardingButtonView: View {
                     currentPage -= 1
                 }
                 print("right clicked")
-            }) {
+            })
+            {
                 Text(text)
             }
             .buttonStyle(TintButton())
@@ -48,14 +49,15 @@ struct OnboardingButtonView: View {
                 if currentPage < numberOfPages-1 {
                     currentPage += 1
                 }
-            }) {
+            })
+            {
                 Text(text)
             }
             .buttonStyle(TintButton())
         }
         EmptyView()
     }
-    
+
     @ViewBuilder
     var footer: some View {
         switch item.footerType {
@@ -81,11 +83,10 @@ struct OnboardingButtonView: View {
             EmptyView()
         }
     }
-    
+
     var body: some View {
         footer
             .padding([.leading, .trailing], 50)
             .padding(.bottom, UIDevice.current.userInterfaceIdiom == .phone ? 0: 20)
     }
 }
-

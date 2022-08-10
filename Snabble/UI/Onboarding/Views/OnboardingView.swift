@@ -18,7 +18,7 @@ struct ButtonControl: View {
 }
 
 struct OnboardingView: View {
-    @ObservedObject var model : OnboardingModel
+    @ObservedObject var model: OnboardingModel
     @State private var currentPage = 0
 
     @ViewBuilder
@@ -27,7 +27,7 @@ struct OnboardingView: View {
             image
                 .resizable()
                 .scaledToFit()
-                .frame(maxHeight:30)
+                .frame(maxHeight: 30)
                 .clipShape(RoundedRectangle(cornerRadius: 5))
         } else {
             EmptyView()

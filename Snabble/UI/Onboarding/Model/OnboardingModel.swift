@@ -12,7 +12,7 @@ import Combine
 
 public final class OnboardingModel: ObservableObject, Decodable {
     public static let shared : OnboardingModel = load("onboardingData.json")
-    
+
     @Published var configuration: OnboardingConfiguration
     @Published var items: [OnboardingItem]
 
@@ -20,10 +20,10 @@ public final class OnboardingModel: ObservableObject, Decodable {
         case items
         case configuration
     }
-    
+
     public init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
-        
+
         self.items = try container.decode([OnboardingItem].self, forKey:.items)
         self.configuration = try container.decode(OnboardingConfiguration.self, forKey: .configuration)
     }

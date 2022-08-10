@@ -7,8 +7,7 @@
 
 import Foundation
 
-public struct OnboardingConfiguration : Decodable, ImageSourcing {
+public struct OnboardingConfiguration: Decodable, ImageSourcing {
     public let imageSource: String?
     public let hasPageControl: Bool?
 }
-

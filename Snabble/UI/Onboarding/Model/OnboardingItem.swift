@@ -8,7 +8,7 @@ import Foundation
 
 /// The OnboadingItem holds the info for one page
 ///
-public struct OnboardingItem : Hashable, Codable, Swift.Identifiable, ImageSourcing {
+public struct OnboardingItem: Hashable, Codable, Swift.Identifiable, ImageSourcing {
     public let id: Int
     public let title: String?
     public let imageSource: String?
