@@ -7,14 +7,25 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		33B22D0F540C105487D339A5 /* Pods_SnabbleSampleApp.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DF556383574523BFDDFFB356 /* Pods_SnabbleSampleApp.framework */; };
 		3A64AF302710486300AF24C6 /* NaviPlaceholders.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3A64AF2F2710486300AF24C6 /* NaviPlaceholders.swift */; };
 		607FACD61AFB9204008FA782 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 607FACD51AFB9204008FA782 /* AppDelegate.swift */; };
 		607FACD81AFB9204008FA782 /* SampleViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 607FACD71AFB9204008FA782 /* SampleViewController.swift */; };
 		607FACDD1AFB9204008FA782 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 607FACDC1AFB9204008FA782 /* Images.xcassets */; };
 		607FACE01AFB9204008FA782 /* LaunchScreen.xib in Resources */ = {isa = PBXBuildFile; fileRef = 607FACDE1AFB9204008FA782 /* LaunchScreen.xib */; };
-		C76453ABE5317D598719A23D /* Pods_SnabbleSampleApp.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 65DD4792C2707A6351C9857F /* Pods_SnabbleSampleApp.framework */; };
+		E131CF1A28A3D45C00A844E1 /* SnabbleSampleAppTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E131CF1928A3D45C00A844E1 /* SnabbleSampleAppTests.swift */; };
 		E1662A65283DFED90093956C /* Changelog.md in Resources */ = {isa = PBXBuildFile; fileRef = E1662A64283DFED90093956C /* Changelog.md */; };
 /* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		E131CF1B28A3D45C00A844E1 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 607FACC81AFB9204008FA782 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 607FACCF1AFB9204008FA782;
+			remoteInfo = SnabbleSampleApp;
+		};
+/* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
 		3A64AF2F2710486300AF24C6 /* NaviPlaceholders.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NaviPlaceholders.swift; sourceTree = "<group>"; };
@@ -25,13 +36,13 @@
 		607FACD71AFB9204008FA782 /* SampleViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SampleViewController.swift; sourceTree = "<group>"; };
 		607FACDC1AFB9204008FA782 /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Images.xcassets; sourceTree = "<group>"; };
 		607FACDF1AFB9204008FA782 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/LaunchScreen.xib; sourceTree = "<group>"; };
-		607FACEA1AFB9204008FA782 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		607FACEB1AFB9204008FA782 /* Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Tests.swift; sourceTree = "<group>"; };
-		6225A30121C988ED27BAF059 /* Pods-SnabbleSampleApp.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-SnabbleSampleApp.debug.xcconfig"; path = "Target Support Files/Pods-SnabbleSampleApp/Pods-SnabbleSampleApp.debug.xcconfig"; sourceTree = "<group>"; };
-		65DD4792C2707A6351C9857F /* Pods_SnabbleSampleApp.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_SnabbleSampleApp.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		926E1E4B9E95CCD24DC69470 /* README.md */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = net.daringfireball.markdown; name = README.md; path = ../README.md; sourceTree = "<group>"; };
-		9DEB9CCAFD9F838EBF7BC67C /* Pods-SnabbleSampleApp.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-SnabbleSampleApp.release.xcconfig"; path = "Target Support Files/Pods-SnabbleSampleApp/Pods-SnabbleSampleApp.release.xcconfig"; sourceTree = "<group>"; };
+		99CBF1C675972D6DE2013A8B /* Pods-SnabbleSampleApp.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-SnabbleSampleApp.debug.xcconfig"; path = "Target Support Files/Pods-SnabbleSampleApp/Pods-SnabbleSampleApp.debug.xcconfig"; sourceTree = "<group>"; };
+		DF556383574523BFDDFFB356 /* Pods_SnabbleSampleApp.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_SnabbleSampleApp.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		E131CF1728A3D45C00A844E1 /* SnabbleSampleAppTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = SnabbleSampleAppTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		E131CF1928A3D45C00A844E1 /* SnabbleSampleAppTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SnabbleSampleAppTests.swift; sourceTree = "<group>"; };
 		E1662A64283DFED90093956C /* Changelog.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = net.daringfireball.markdown; name = Changelog.md; path = ../documentation/Changelog.md; sourceTree = "<group>"; };
+		E8EE6FB299BC65798BFD7CD6 /* Pods-SnabbleSampleApp.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-SnabbleSampleApp.release.xcconfig"; path = "Target Support Files/Pods-SnabbleSampleApp/Pods-SnabbleSampleApp.release.xcconfig"; sourceTree = "<group>"; };
 		F4CB4458C2FED892CA028D19 /* LICENSE */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text; name = LICENSE; path = ../LICENSE; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -40,26 +51,25 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				C76453ABE5317D598719A23D /* Pods_SnabbleSampleApp.framework in Frameworks */,
+				33B22D0F540C105487D339A5 /* Pods_SnabbleSampleApp.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		E131CF1428A3D45C00A844E1 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
-		141D43B51088A842DCDC954D /* Frameworks */ = {
-			isa = PBXGroup;
-			children = (
-				65DD4792C2707A6351C9857F /* Pods_SnabbleSampleApp.framework */,
-			);
-			name = Frameworks;
-			sourceTree = "<group>";
-		};
 		4E081A65AA96FF8F98D2029F /* Pods */ = {
 			isa = PBXGroup;
 			children = (
-				6225A30121C988ED27BAF059 /* Pods-SnabbleSampleApp.debug.xcconfig */,
-				9DEB9CCAFD9F838EBF7BC67C /* Pods-SnabbleSampleApp.release.xcconfig */,
+				99CBF1C675972D6DE2013A8B /* Pods-SnabbleSampleApp.debug.xcconfig */,
+				E8EE6FB299BC65798BFD7CD6 /* Pods-SnabbleSampleApp.release.xcconfig */,
 			);
 			path = Pods;
 			sourceTree = "<group>";
@@ -70,10 +80,10 @@
 				E1662A64283DFED90093956C /* Changelog.md */,
 				607FACF51AFB993E008FA782 /* Podspec Metadata */,
 				607FACD21AFB9204008FA782 /* Sources */,
-				607FACE81AFB9204008FA782 /* Tests */,
+				E131CF1828A3D45C00A844E1 /* SnabbleSampleAppTests */,
 				607FACD11AFB9204008FA782 /* Products */,
 				4E081A65AA96FF8F98D2029F /* Pods */,
-				141D43B51088A842DCDC954D /* Frameworks */,
+				649282D5B1D228389A97EBA1 /* Frameworks */,
 			);
 			sourceTree = "<group>";
 		};
@@ -81,6 +91,7 @@
 			isa = PBXGroup;
 			children = (
 				607FACD01AFB9204008FA782 /* SnabbleSampleApp.app */,
+				E131CF1728A3D45C00A844E1 /* SnabbleSampleAppTests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -107,23 +118,6 @@
 			name = "Supporting Files";
 			sourceTree = "<group>";
 		};
-		607FACE81AFB9204008FA782 /* Tests */ = {
-			isa = PBXGroup;
-			children = (
-				607FACEB1AFB9204008FA782 /* Tests.swift */,
-				607FACE91AFB9204008FA782 /* Supporting Files */,
-			);
-			path = Tests;
-			sourceTree = "<group>";
-		};
-		607FACE91AFB9204008FA782 /* Supporting Files */ = {
-			isa = PBXGroup;
-			children = (
-				607FACEA1AFB9204008FA782 /* Info.plist */,
-			);
-			name = "Supporting Files";
-			sourceTree = "<group>";
-		};
 		607FACF51AFB993E008FA782 /* Podspec Metadata */ = {
 			isa = PBXGroup;
 			children = (
@@ -134,6 +128,22 @@
 			name = "Podspec Metadata";
 			sourceTree = "<group>";
 		};
+		649282D5B1D228389A97EBA1 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				DF556383574523BFDDFFB356 /* Pods_SnabbleSampleApp.framework */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		E131CF1828A3D45C00A844E1 /* SnabbleSampleAppTests */ = {
+			isa = PBXGroup;
+			children = (
+				E131CF1928A3D45C00A844E1 /* SnabbleSampleAppTests.swift */,
+			);
+			path = SnabbleSampleAppTests;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -141,12 +151,12 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 607FACEF1AFB9204008FA782 /* Build configuration list for PBXNativeTarget "SnabbleSampleApp" */;
 			buildPhases = (
-				1A7C60A186EDCDB24DFBAD76 /* [CP] Check Pods Manifest.lock */,
+				A44BEED1C5CA994840BC737B /* [CP] Check Pods Manifest.lock */,
 				607FACCC1AFB9204008FA782 /* Sources */,
 				607FACCD1AFB9204008FA782 /* Frameworks */,
 				607FACCE1AFB9204008FA782 /* Resources */,
-				37A9801FA0D344BA999ED6C1 /* [CP] Embed Pods Frameworks */,
 				E18D963B27311A3200F21217 /* SwiftLint */,
+				0C3ABFFE9875234729F97E94 /* [CP] Embed Pods Frameworks */,
 			);
 			buildRules = (
 			);
@@ -157,13 +167,32 @@
 			productReference = 607FACD01AFB9204008FA782 /* SnabbleSampleApp.app */;
 			productType = "com.apple.product-type.application";
 		};
+		E131CF1628A3D45C00A844E1 /* SnabbleSampleAppTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = E131CF1F28A3D45C00A844E1 /* Build configuration list for PBXNativeTarget "SnabbleSampleAppTests" */;
+			buildPhases = (
+				E131CF1328A3D45C00A844E1 /* Sources */,
+				E131CF1428A3D45C00A844E1 /* Frameworks */,
+				E131CF1528A3D45C00A844E1 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				E131CF1C28A3D45C00A844E1 /* PBXTargetDependency */,
+			);
+			name = SnabbleSampleAppTests;
+			productName = SnabbleSampleAppTests;
+			productReference = E131CF1728A3D45C00A844E1 /* SnabbleSampleAppTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
 		607FACC81AFB9204008FA782 /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
-				LastSwiftUpdateCheck = 0830;
+				DefaultBuildSystemTypeForWorkspace = Latest;
+				LastSwiftUpdateCheck = 1340;
 				LastUpgradeCheck = 1230;
 				ORGANIZATIONNAME = snabble;
 				TargetAttributes = {
@@ -171,6 +200,12 @@
 						CreatedOnToolsVersion = 6.3.1;
 						DevelopmentTeam = 53K7JS449L;
 						LastSwiftMigration = 1020;
+					};
+					E131CF1628A3D45C00A844E1 = {
+						CreatedOnToolsVersion = 13.4.1;
+						DevelopmentTeam = 53K7JS449L;
+						ProvisioningStyle = Automatic;
+						TestTargetID = 607FACCF1AFB9204008FA782;
 					};
 				};
 			};
@@ -188,6 +223,7 @@
 			projectRoot = "";
 			targets = (
 				607FACCF1AFB9204008FA782 /* SnabbleSampleApp */,
+				E131CF1628A3D45C00A844E1 /* SnabbleSampleAppTests */,
 			);
 		};
 /* End PBXProject section */
@@ -203,10 +239,59 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		E131CF1528A3D45C00A844E1 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXShellScriptBuildPhase section */
-		1A7C60A186EDCDB24DFBAD76 /* [CP] Check Pods Manifest.lock */ = {
+		0C3ABFFE9875234729F97E94 /* [CP] Embed Pods Frameworks */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-SnabbleSampleApp/Pods-SnabbleSampleApp-frameworks.sh",
+				"${BUILT_PRODUCTS_DIR}/AutoLayout-Helper/AutoLayout_Helper.framework",
+				"${BUILT_PRODUCTS_DIR}/Base32/Base32.framework",
+				"${BUILT_PRODUCTS_DIR}/DeviceKit/DeviceKit.framework",
+				"${BUILT_PRODUCTS_DIR}/GRDB.swift/GRDB.framework",
+				"${BUILT_PRODUCTS_DIR}/KeychainAccess/KeychainAccess.framework",
+				"${BUILT_PRODUCTS_DIR}/OneTimePassword/OneTimePassword.framework",
+				"${BUILT_PRODUCTS_DIR}/Pulley/Pulley.framework",
+				"${BUILT_PRODUCTS_DIR}/SDCAlertView/SDCAlertView.framework",
+				"${BUILT_PRODUCTS_DIR}/Snabble/SnabbleSDK.framework",
+				"${BUILT_PRODUCTS_DIR}/SwiftBase32/SwiftBase32.framework",
+				"${BUILT_PRODUCTS_DIR}/TrustKit/TrustKit.framework",
+				"${BUILT_PRODUCTS_DIR}/WCAG-Colors/WCAG_Colors.framework",
+				"${BUILT_PRODUCTS_DIR}/Zip/Zip.framework",
+			);
+			name = "[CP] Embed Pods Frameworks";
+			outputPaths = (
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/AutoLayout_Helper.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Base32.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/DeviceKit.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/GRDB.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/KeychainAccess.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/OneTimePassword.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Pulley.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/SDCAlertView.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/SnabbleSDK.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/SwiftBase32.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/TrustKit.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/WCAG_Colors.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Zip.framework",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-SnabbleSampleApp/Pods-SnabbleSampleApp-frameworks.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+		A44BEED1C5CA994840BC737B /* [CP] Check Pods Manifest.lock */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -228,46 +313,6 @@
 			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
 			showEnvVarsInLog = 0;
 		};
-		37A9801FA0D344BA999ED6C1 /* [CP] Embed Pods Frameworks */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-SnabbleSampleApp/Pods-SnabbleSampleApp-frameworks.sh",
-				"${BUILT_PRODUCTS_DIR}/AutoLayout-Helper/AutoLayout_Helper.framework",
-				"${BUILT_PRODUCTS_DIR}/Base32/Base32.framework",
-				"${BUILT_PRODUCTS_DIR}/DeviceKit/DeviceKit.framework",
-				"${BUILT_PRODUCTS_DIR}/GRDB.swift/GRDB.framework",
-				"${BUILT_PRODUCTS_DIR}/KeychainAccess/KeychainAccess.framework",
-				"${BUILT_PRODUCTS_DIR}/OneTimePassword/OneTimePassword.framework",
-				"${BUILT_PRODUCTS_DIR}/Pulley/Pulley.framework",
-				"${BUILT_PRODUCTS_DIR}/SDCAlertView/SDCAlertView.framework",
-				"${BUILT_PRODUCTS_DIR}/Snabble/SnabbleSDK.framework",
-				"${BUILT_PRODUCTS_DIR}/TrustKit/TrustKit.framework",
-				"${BUILT_PRODUCTS_DIR}/WCAG-Colors/WCAG_Colors.framework",
-				"${BUILT_PRODUCTS_DIR}/Zip/Zip.framework",
-			);
-			name = "[CP] Embed Pods Frameworks";
-			outputPaths = (
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/AutoLayout_Helper.framework",
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Base32.framework",
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/DeviceKit.framework",
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/GRDB.framework",
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/KeychainAccess.framework",
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/OneTimePassword.framework",
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Pulley.framework",
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/SDCAlertView.framework",
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/SnabbleSDK.framework",
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/TrustKit.framework",
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/WCAG_Colors.framework",
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Zip.framework",
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-SnabbleSampleApp/Pods-SnabbleSampleApp-frameworks.sh\"\n";
-			showEnvVarsInLog = 0;
-		};
 		E18D963B27311A3200F21217 /* SwiftLint */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
@@ -284,7 +329,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "if [ \"${CONFIGURATION}\" = \"Debug\" ]; then\n  SWIFTLINT=${PODS_ROOT}/SwiftLint/swiftlint\n\n  if [ -x \"$SWIFTLINT\" ]; then\n    (cd ..; \"$SWIFTLINT\")\n  fi\nfi\n";
+			shellScript = "export PATH=\"$PATH:/opt/homebrew/bin\"\nif which mint > /dev/null; then\n  mint run SwiftLint swiftlint\nelse\n  echo \"warning: Mint not installed, download from https://github.com/yonaskolb/Mint\"\nfi\n";
 		};
 /* End PBXShellScriptBuildPhase section */
 
@@ -299,7 +344,23 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		E131CF1328A3D45C00A844E1 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				E131CF1A28A3D45C00A844E1 /* SnabbleSampleAppTests.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		E131CF1C28A3D45C00A844E1 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 607FACCF1AFB9204008FA782 /* SnabbleSampleApp */;
+			targetProxy = E131CF1B28A3D45C00A844E1 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
 
 /* Begin PBXVariantGroup section */
 		607FACDE1AFB9204008FA782 /* LaunchScreen.xib */ = {
@@ -422,7 +483,7 @@
 		};
 		607FACF01AFB9204008FA782 /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 6225A30121C988ED27BAF059 /* Pods-SnabbleSampleApp.debug.xcconfig */;
+			baseConfigurationReference = 99CBF1C675972D6DE2013A8B /* Pods-SnabbleSampleApp.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				DEVELOPMENT_TEAM = 53K7JS449L;
@@ -438,7 +499,7 @@
 		};
 		607FACF11AFB9204008FA782 /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 9DEB9CCAFD9F838EBF7BC67C /* Pods-SnabbleSampleApp.release.xcconfig */;
+			baseConfigurationReference = E8EE6FB299BC65798BFD7CD6 /* Pods-SnabbleSampleApp.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				DEVELOPMENT_TEAM = 53K7JS449L;
@@ -449,6 +510,63 @@
 				PRODUCT_BUNDLE_IDENTIFIER = io.snabble.exampleapp;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 5.0;
+			};
+			name = Release;
+		};
+		E131CF1D28A3D45C00A844E1 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++17";
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				DEVELOPMENT_TEAM = 53K7JS449L;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 15.5;
+				MARKETING_VERSION = 1.0;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				PRODUCT_BUNDLE_IDENTIFIER = io.snabble.SnabbleSampleAppTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/SnabbleSampleApp.app/SnabbleSampleApp";
+			};
+			name = Debug;
+		};
+		E131CF1E28A3D45C00A844E1 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++17";
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = 53K7JS449L;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 15.5;
+				MARKETING_VERSION = 1.0;
+				MTL_FAST_MATH = YES;
+				PRODUCT_BUNDLE_IDENTIFIER = io.snabble.SnabbleSampleAppTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/SnabbleSampleApp.app/SnabbleSampleApp";
 			};
 			name = Release;
 		};
@@ -469,6 +587,15 @@
 			buildConfigurations = (
 				607FACF01AFB9204008FA782 /* Debug */,
 				607FACF11AFB9204008FA782 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		E131CF1F28A3D45C00A844E1 /* Build configuration list for PBXNativeTarget "SnabbleSampleAppTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				E131CF1D28A3D45C00A844E1 /* Debug */,
+				E131CF1E28A3D45C00A844E1 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
