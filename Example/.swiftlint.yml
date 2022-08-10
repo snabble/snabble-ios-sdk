@@ -12,6 +12,8 @@ disabled_rules:
  - line_length
  - function_body_length
  - file_length
+ - trailing_whitespace
+ - multiple_closures_with_trailing_closure
 
 opt_in_rules:
  - private_outlet
@@ -29,7 +31,6 @@ opt_in_rules:
  - multiline_function_chains
  - operator_usage_whitespace
  - override_in_extension
- - redundant_type_annotation
  - toggle_bool
  - unused_import
  - yoda_condition
