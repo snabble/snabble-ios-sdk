@@ -1,9 +1,9 @@
 included:
- - Snabble
- - Example
+ - ../Snabble
+ - ./
 
 excluded:
- - Example/Pods
+ - Pods
 
 disabled_rules:
  - todo

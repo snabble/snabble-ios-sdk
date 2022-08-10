@@ -16,6 +16,10 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v3
 
+      - name: Change Folder
+        run: |
+          cd Example
+
       - name: GitHub Action for SwiftLint
         uses: sinoru/actions-swiftlint@v6
         with:

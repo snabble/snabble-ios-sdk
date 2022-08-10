@@ -284,7 +284,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "if [ \"${CONFIGURATION}\" = \"Debug\" ]; then\n  SWIFTLINT=${PODS_ROOT}/SwiftLint/swiftlint\n\n  if [ -x \"$SWIFTLINT\" ]; then\n    (cd ..; \"$SWIFTLINT\")\n  fi\nfi\n";
+			shellScript = "export PATH=\"$PATH:/opt/homebrew/bin\"\nif which mint > /dev/null; then\n  mint run SwiftLint swiftlint\nelse\n  echo \"warning: Mint not installed, download from https://github.com/yonaskolb/Mint\"\nfi\n";
 		};
 /* End PBXShellScriptBuildPhase section */
 
