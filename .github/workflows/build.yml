@@ -1,0 +1,48 @@
+on:
+  push:
+    tags:
+      - '**'
+
+env:
+  DEVELOPER_DIR: /Applications/Xcode_13.4.1.app/Contents/Developer
+
+name: Build
+jobs:
+  build:
+    name: Build
+    runs-on: macos-12
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Set ImageVersion environment variable
+        run: echo "ImageVersion=$ImageVersion"  >> $GITHUB_ENV
+      
+      - name: Gem Cache
+        uses: actions/cache@v3
+        with:
+          path: Example/vendor/bundle
+          key: ${{ runner.os }}-gems-${{ env.ImageVersion }}-${{ hashFiles('**/Gemfile.lock') }}
+          restore-keys: ${{ runner.os }}-gems-${{ env.ImageVersion }}
+      
+      - name: Bundler
+        run: |
+          bundle config path Example/vendor/bundle
+          bundle install --jobs 4 --retry 3
+
+      - name: Pod Cache
+        uses: actions/cache@v3
+        with:
+          path: Example/Pods
+          key: ${{ runner.os }}-pods-${{ env.ImageVersion }}-${{ hashFiles('**/Podfile.lock') }}
+          restore-keys: ${{ runner.os }}-pods-${{ env.ImageVersion }}
+
+      - name: Pods
+        run: |
+          cd Example
+          bundle exec pod install --clean-install --repo-update
+
+      - name: Build
+        run: |
+          cd Example
+          bundle exec fastlane build
