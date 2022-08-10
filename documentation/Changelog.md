@@ -6,7 +6,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [unreleased]
 
+## [0.21.0] - 2022-08-10
+
 ### Changed
+* incremeant deployment Target iOS 14.0
 * `setCoupons` and `setShops` on project not index
 * implement `Equatable` and `Hashable` to Project
 * add `Hashable` to Coupon
@@ -21,6 +24,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Removed
 * `Gutschein` handling
+* `ColorCompability` dependency
 
 ## [0.20.0] - 2022-06-23
 
