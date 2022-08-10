@@ -12,10 +12,6 @@ final class LeftViewController: UIViewController {
         super.init(nibName: nil, bundle: nil)
 
         self.title = "Account"
-
-
-
-        
         self.tabBarItem.image = UIImage(systemName: "person")
         self.tabBarItem.selectedImage = UIImage(systemName: "person.fill")
     }

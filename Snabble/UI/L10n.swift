@@ -16,9 +16,6 @@ extension Snabble {
             return projectValue
         }
 
-
-        
-
         // check if the app has localized this string
         let fallback = value ?? key.uppercased()
         let appValue = Bundle.main.localizedString(forKey: key, value: fallback, table: nil)
