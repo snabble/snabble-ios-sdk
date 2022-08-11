@@ -7,6 +7,7 @@
 
 import Foundation
 import UIKit
+import SwiftUI
 
 public enum Assets {
     /// Reference to the implementation of the `AssetProviding` implementation
@@ -39,26 +40,23 @@ public enum Assets {
 // swiftlint:disable:next convenience_type
 private final class BundleToken {
   static let bundle: Bundle = {
-    #if SWIFT_PACKAGE
+#if SWIFT_PACKAGE
     return Bundle.module
-    #else
+#else
     return Bundle(for: BundleToken.self)
-    #endif
+#endif
   }()
 }
 
-#if canImport(SwiftUI)
-import SwiftUI
-
 extension Assets {
-    static func image(named name: String, domain: Any?) -> SwiftUI.Image? {
+    static func image(named name: String, domain: Any? = domain) -> SwiftUI.Image? {
         guard let uiImage: UIImage = Assets.image(named: name, domain: domain) else {
             return nil
         }
         return SwiftUI.Image(uiImage: uiImage)
     }
 
-    static func color(named name: String, domain: Any?) -> SwiftUI.Color? {
+    static func color(named name: String, domain: Any? = domain) -> SwiftUI.Color? {
         guard let uiColor: UIColor = Assets.color(named: name, domain: domain) else {
             return nil
         }
@@ -69,7 +67,7 @@ extension Assets {
         }
     }
 
-    static func preferredFont(forTextStyle style: UIFont.TextStyle, domain: Any?) -> Font {
+    static func preferredFont(forTextStyle style: UIFont.TextStyle, domain: Any? = domain) -> Font {
         let uiFont: UIFont = Assets.preferredFont(forTextStyle: style, domain: domain)
         return SwiftUI.Font.custom(uiFont.familyName, size: uiFont.pointSize, relativeTo: style.textStyle)
     }
@@ -105,4 +103,3 @@ private extension UIFont.TextStyle {
         }
     }
 }
-#endif
