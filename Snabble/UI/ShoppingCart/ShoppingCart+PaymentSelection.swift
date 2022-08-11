@@ -332,7 +332,7 @@ final class PaymentMethodSelector {
 
                 if hasCartMethods && !isCartMethod {
                     detailText = L10n.Snabble.Shoppingcart.notForThisPurchase
-                    color = .secondaryLabel
+                    color = Assets.Color.secondaryLabel()
                 }
 
                 let title = Self.attributedString(
@@ -373,7 +373,7 @@ final class PaymentMethodSelector {
                         let title = Self.attributedString(
                             forText: method.displayName,
                             withSubtitle: L10n.Snabble.Shoppingcart.notForThisPurchase,
-                            inColor: .secondaryLabel
+                            inColor: Assets.Color.secondaryLabel()
                         )
                         let action = PaymentMethodAction(
                             title: title,
@@ -437,7 +437,7 @@ final class PaymentMethodSelector {
                 let title = Self.attributedString(
                     forText: method.displayName,
                     withSubtitle: L10n.Snabble.Shoppingcart.notForVendor,
-                    inColor: .secondaryLabel
+                    inColor: Assets.Color.secondaryLabel()
                 )
                 let action = PaymentMethodAction(
                     title: title,
@@ -476,7 +476,7 @@ final class PaymentMethodSelector {
         if let subtitle = subtitle {
             let subtitleAttributes: [NSAttributedString.Key: Any] = [
                 .font: UIFont.systemFont(ofSize: 13),
-                .foregroundColor: UIColor.secondaryLabel
+                .foregroundColor: Assets.Color.secondaryLabel()
             ]
             let subTitle = NSAttributedString(string: subtitle, attributes: subtitleAttributes)
             title.append(subTitle)

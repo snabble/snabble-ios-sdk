@@ -50,7 +50,7 @@ final class CheckoutBar: UIView {
         itemCountLabel.translatesAutoresizingMaskIntoConstraints = false
         itemCountLabel.font = .preferredFont(forTextStyle: .footnote)
         itemCountLabel.adjustsFontForContentSizeCategory = true
-        itemCountLabel.textColor = .secondaryLabel
+        itemCountLabel.textColor = Assets.Color.secondaryLabel()
         itemCountLabel.textAlignment = .left
 
         let totalPriceLabel = UILabel()

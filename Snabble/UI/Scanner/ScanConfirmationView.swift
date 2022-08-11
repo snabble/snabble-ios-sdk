@@ -103,7 +103,7 @@ final class ScanConfirmationView: UIView {
         let originalPriceLabel = customLabel
         originalPriceLabel.font = .preferredFont(forTextStyle: .body)
         originalPriceLabel.adjustsFontForContentSizeCategory = true
-        originalPriceLabel.textColor = .secondaryLabel
+        originalPriceLabel.textColor = Assets.Color.secondaryLabel()
 
         let priceLabel = customLabel
         priceLabel.font = .preferredFont(forTextStyle: .body)
