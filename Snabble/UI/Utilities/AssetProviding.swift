@@ -50,6 +50,7 @@ public enum Assets {
     }
 }
 
+// swiftlint:disable:next convenience_type
 private final class BundleToken {
   static let bundle: Bundle = {
     #if SWIFT_PACKAGE
