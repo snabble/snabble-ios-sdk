@@ -75,7 +75,8 @@ class BaseCheckViewController: UIViewController {
         cancelButton.makeSnabbleButton()
         cancelButton.titleLabel?.textAlignment = .center
         cancelButton.setTitle(L10n.Snabble.cancel, for: .normal)
-        cancelButton.preferredFont(forTextStyle: .headline)
+        cancelButton.titleLabel?.font = Assets.preferredFont(forTextStyle: .headline)
+        cancelButton.titleLabel?.adjustsFontForContentSizeCategory = true
         cancelButton.alpha = 0
         cancelButton.isUserInteractionEnabled = false
         cancelButton.addTarget(self, action: #selector(self.cancelPayment), for: .touchUpInside)
@@ -155,7 +156,7 @@ class BaseCheckViewController: UIViewController {
         text.textColor = Assets.Color.label()
         text.textAlignment = .center
         text.numberOfLines = 0
-        text.font = UIFont.preferredFont(forTextStyle: .body)
+        text.font = Assets.preferredFont(forTextStyle: .body)
         text.adjustsFontForContentSizeCategory = true
         textWrapper.addSubview(text)
         NSLayoutConstraint.activate([
@@ -207,7 +208,7 @@ class BaseCheckViewController: UIViewController {
         id.translatesAutoresizingMaskIntoConstraints = false
         id.textColor = Assets.Color.label()
         id.textAlignment = .center
-        id.font = UIFont.preferredFont(forTextStyle: .footnote)
+        id.font = Assets.preferredFont(forTextStyle: .footnote)
         id.adjustsFontForContentSizeCategory = true
         idWrapper.addSubview(id)
         NSLayoutConstraint.activate([

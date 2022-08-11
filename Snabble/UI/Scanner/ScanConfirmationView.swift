@@ -80,7 +80,8 @@ final class ScanConfirmationView: UIView {
         let cartButton = UIButton(type: .system)
         cartButton.translatesAutoresizingMaskIntoConstraints = false
         cartButton.setTitle(L10n.Snabble.Scanner.addToCart, for: .normal)
-        cartButton.preferredFont(forTextStyle: .headline)
+        cartButton.titleLabel?.font = Assets.preferredFont(forTextStyle: .headline)
+        cartButton.titleLabel?.adjustsFontForContentSizeCategory = true
         cartButton.makeSnabbleButton()
         cartButton.isUserInteractionEnabled = true
         cartButton.addTarget(self, action: #selector(cartButtonTapped(_:)), for: .touchUpInside)
@@ -93,26 +94,27 @@ final class ScanConfirmationView: UIView {
         productStack.spacing = 4
 
         let subtitleLabel = customLabel
-        subtitleLabel.font = .preferredFont(forTextStyle: .footnote)
+        subtitleLabel.font = Assets.preferredFont(forTextStyle: .footnote)
         subtitleLabel.adjustsFontForContentSizeCategory = true
 
         let productNameLabel = customLabel
-        productNameLabel.font = .preferredFont(forTextStyle: .body, weight: .bold)
+        productNameLabel.font = Assets.preferredFont(forTextStyle: .body, weight: .bold)
         productNameLabel.adjustsFontForContentSizeCategory = true
 
         let originalPriceLabel = customLabel
-        originalPriceLabel.font = .preferredFont(forTextStyle: .body)
+        originalPriceLabel.font = Assets.preferredFont(forTextStyle: .body)
         originalPriceLabel.adjustsFontForContentSizeCategory = true
         originalPriceLabel.textColor = Assets.Color.secondaryLabel()
 
         let priceLabel = customLabel
-        priceLabel.font = .preferredFont(forTextStyle: .body)
+        priceLabel.font = Assets.preferredFont(forTextStyle: .body)
         priceLabel.adjustsFontForContentSizeCategory = true
 
         let manualDiscountButton = UIButton(type: .system)
         manualDiscountButton.translatesAutoresizingMaskIntoConstraints = false
         manualDiscountButton.setTitle(L10n.Snabble.addDiscount, for: .normal)
-        manualDiscountButton.preferredFont(forTextStyle: .body)
+        manualDiscountButton.titleLabel?.font = Assets.preferredFont(forTextStyle: .body)
+        manualDiscountButton.titleLabel?.adjustsFontForContentSizeCategory = true
 
         let contrastRatio = UIColor.getContrastRatio(forTextColor: SnabbleUI.appearance.accentColor,
                                                      onBackgroundColor: Assets.Color.systemBackground())
@@ -143,7 +145,7 @@ final class ScanConfirmationView: UIView {
 
         let quantityField = UITextField()
         quantityField.translatesAutoresizingMaskIntoConstraints = false
-        quantityField.font = .preferredFont(forTextStyle: .title3)
+        quantityField.font = Assets.preferredFont(forTextStyle: .title3)
         quantityField.adjustsFontForContentSizeCategory = true
         quantityField.tintColor = Assets.Color.label()
         quantityField.delegate = self
@@ -153,7 +155,7 @@ final class ScanConfirmationView: UIView {
         quantityField.keyboardType = .numberPad
 
         let unitLabel = customLabel
-        unitLabel.font = .preferredFont(forTextStyle: .body)
+        unitLabel.font = Assets.preferredFont(forTextStyle: .body)
         unitLabel.adjustsFontForContentSizeCategory = true
         unitLabel.textAlignment = .natural
 

@@ -22,17 +22,19 @@ internal class EmptyStateView: UIView {
         backgroundColor = Assets.Color.systemBackground()
 
         button1.tag = 0
-        button1.preferredFont(forTextStyle: .headline)
+        button1.titleLabel?.font = Assets.preferredFont(forTextStyle: .headline)
+        button1.titleLabel?.adjustsFontForContentSizeCategory = true
         button1.addTarget(self, action: #selector(self.buttonTapped(_:)), for: .touchUpInside)
 
         button2.tag = 1
-        button2.preferredFont(forTextStyle: .headline)
+        button2.titleLabel?.font = Assets.preferredFont(forTextStyle: .headline)
+        button2.titleLabel?.adjustsFontForContentSizeCategory = true
         button2.addTarget(self, action: #selector(self.buttonTapped(_:)), for: .touchUpInside)
 
         textLabel.translatesAutoresizingMaskIntoConstraints = false
         textLabel.numberOfLines = 0
         textLabel.textAlignment = .center
-        textLabel.font = UIFont.preferredFont(forTextStyle: .body)
+        textLabel.font = Assets.preferredFont(forTextStyle: .body)
         textLabel.adjustsFontForContentSizeCategory = true
         addSubview(textLabel)
 

@@ -79,34 +79,34 @@ public final class CouponViewController: UIViewController {
 
         let titleLabel = UILabel()
         titleLabel.numberOfLines = 0
-        titleLabel.font = .preferredFont(forTextStyle: .title2, weight: .bold)
+        titleLabel.font = Assets.preferredFont(forTextStyle: .title2, weight: .bold)
         self.titleLabel = titleLabel
 
         let subtitleLabel = UILabel()
         subtitleLabel.numberOfLines = 0
-        subtitleLabel.font = .preferredFont(forTextStyle: .subheadline)
+        subtitleLabel.font = Assets.preferredFont(forTextStyle: .subheadline)
         self.subtitleLabel = subtitleLabel
 
         let disclaimerLabel = UILabel()
         disclaimerLabel.numberOfLines = 0
-        disclaimerLabel.font = .preferredFont(forTextStyle: .subheadline)
+        disclaimerLabel.font = Assets.preferredFont(forTextStyle: .subheadline)
         self.disclaimerLabel = disclaimerLabel
 
         let textLabel = UILabel()
         textLabel.numberOfLines = 0
-        textLabel.font = .preferredFont(forTextStyle: .headline)
+        textLabel.font = Assets.preferredFont(forTextStyle: .headline)
         textLabel.textColor = SnabbleUI.appearance.accentColor
         self.textLabel = textLabel
 
         let validityLabel = UILabel()
-        validityLabel.font = .preferredFont(forTextStyle: .caption1)
+        validityLabel.font = Assets.preferredFont(forTextStyle: .caption1)
         validityLabel.numberOfLines = 0
         self.validityLabel = validityLabel
 
         let button = UIButton(type: .system)
         button.setTitle(L10n.Snabble.Coupon.activate, for: .normal)
         button.setBackgroundColor(color: SnabbleUI.appearance.accentColor, for: .normal)
-        button.titleLabel?.font = .preferredFont(forTextStyle: .headline)
+        button.titleLabel?.font = Assets.preferredFont(forTextStyle: .headline)
         button.tintColor = SnabbleUI.appearance.accentColor.contrast
         button.addTarget(self, action: #selector(activateCoupon), for: .touchUpInside)
         self.button = button
@@ -116,7 +116,7 @@ public final class CouponViewController: UIViewController {
         let checkMarkImageView = UIImageView(image: image)
         checkMarkImageView.tintColor = greenColor
         let activatedTextLabel = UILabel()
-        activatedTextLabel.font = .preferredFont(forTextStyle: .title1)
+        activatedTextLabel.font = Assets.preferredFont(forTextStyle: .title1)
         activatedTextLabel.text = L10n.Snabble.Coupon.activated
         activatedTextLabel.textColor = greenColor
         activatedTextLabel.setContentHuggingPriority(.defaultLow - 1, for: .horizontal)
