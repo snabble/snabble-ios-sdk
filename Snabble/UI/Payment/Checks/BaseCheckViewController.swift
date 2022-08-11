@@ -152,7 +152,7 @@ class BaseCheckViewController: UIViewController {
         textWrapper.translatesAutoresizingMaskIntoConstraints = false
         let text = UILabel()
         text.translatesAutoresizingMaskIntoConstraints = false
-        text.textColor = .label
+        text.textColor = Assets.Color.label()
         text.textAlignment = .center
         text.numberOfLines = 0
         text.font = UIFont.preferredFont(forTextStyle: .body)
@@ -205,7 +205,7 @@ class BaseCheckViewController: UIViewController {
         idWrapper.translatesAutoresizingMaskIntoConstraints = false
         let id = UILabel()
         id.translatesAutoresizingMaskIntoConstraints = false
-        id.textColor = .label
+        id.textColor = Assets.Color.label()
         id.textAlignment = .center
         id.font = UIFont.preferredFont(forTextStyle: .footnote)
         id.adjustsFontForContentSizeCategory = true

@@ -21,7 +21,7 @@ final class CheckoutInformationView: UIView {
 
     override init(frame: CGRect) {
         let textLabel = UILabel()
-        textLabel.textColor = .label
+        textLabel.textColor = Assets.Color.label()
         textLabel.numberOfLines = 0
         textLabel.font = UIFont.preferredFont(forTextStyle: .footnote)
         textLabel.adjustsFontForContentSizeCategory = true

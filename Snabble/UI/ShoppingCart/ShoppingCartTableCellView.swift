@@ -217,7 +217,7 @@ extension ShoppingCartTableCellView {
             let badgeLabel = UILabel()
             badgeLabel.translatesAutoresizingMaskIntoConstraints = false
             badgeLabel.font = UIFont.systemFont(ofSize: 11)
-            badgeLabel.textColor = .label.contrast
+            badgeLabel.textColor = Assets.Color.label().contrast
             badgeLabel.textAlignment = .center
             badgeLabel.layer.cornerRadius = 4
             badgeLabel.layer.masksToBounds = true
@@ -259,7 +259,7 @@ extension ShoppingCartTableCellView {
             let nameLabel = UILabel()
             nameLabel.font = .preferredFont(forTextStyle: .subheadline)
             nameLabel.adjustsFontForContentSizeCategory = true
-            nameLabel.textColor = .label
+            nameLabel.textColor = Assets.Color.label()
             nameLabel.textAlignment = .natural
             nameLabel.numberOfLines = 0
 
@@ -304,14 +304,14 @@ extension ShoppingCartTableCellView {
             quantityLabel.translatesAutoresizingMaskIntoConstraints = false
             quantityLabel.font = .preferredFont(forTextStyle: .footnote, weight: .semibold)
             quantityLabel.adjustsFontForContentSizeCategory = true
-            quantityLabel.textColor = .label
+            quantityLabel.textColor = Assets.Color.label()
             quantityLabel.textAlignment = .right
 
             let unitLabel = UILabel()
             unitLabel.translatesAutoresizingMaskIntoConstraints = false
             unitLabel.font = .preferredFont(forTextStyle: .footnote, weight: .semibold)
             unitLabel.adjustsFontForContentSizeCategory = true
-            unitLabel.textColor = .label
+            unitLabel.textColor = Assets.Color.label()
             unitLabel.textAlignment = .center
             unitLabel.setContentHuggingPriority(.required, for: .horizontal)
 
@@ -353,7 +353,7 @@ extension ShoppingCartTableCellView {
         override init(frame: CGRect) {
             let quantityTextField = UITextField()
             quantityTextField.translatesAutoresizingMaskIntoConstraints = false
-            quantityTextField.textColor = .label
+            quantityTextField.textColor = Assets.Color.label()
             quantityTextField.font = UIFont.systemFont(ofSize: 13, weight: .semibold)
             quantityTextField.textAlignment = .right
             quantityTextField.borderStyle = .roundedRect
@@ -365,7 +365,7 @@ extension ShoppingCartTableCellView {
             let unitLabel = UILabel()
             unitLabel.translatesAutoresizingMaskIntoConstraints = false
             unitLabel.font = UIFont.systemFont(ofSize: 13, weight: .semibold)
-            unitLabel.textColor = .label
+            unitLabel.textColor = Assets.Color.label()
             unitLabel.textAlignment = .center
             unitLabel.setContentHuggingPriority(.required, for: .horizontal)
 
@@ -420,7 +420,7 @@ extension ShoppingCartTableCellView {
             let quantityLabel = UILabel()
             quantityLabel.translatesAutoresizingMaskIntoConstraints = false
             quantityLabel.font = UIFont.systemFont(ofSize: 13, weight: .semibold)
-            quantityLabel.textColor = .label
+            quantityLabel.textColor = Assets.Color.label()
             quantityLabel.textAlignment = .center
             super.init(frame: frame)
 

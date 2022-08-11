@@ -36,7 +36,7 @@ final class EmbeddedCodesCheckoutViewController: UIViewController {
     private var customLabel: UILabel {
         let label = UILabel()
         label.translatesAutoresizingMaskIntoConstraints = false
-        label.textColor = .label
+        label.textColor = Assets.Color.label()
         label.textAlignment = .natural
         label.adjustsFontForContentSizeCategory = true
         label.numberOfLines = 0
@@ -245,7 +245,7 @@ final class EmbeddedCodesCheckoutViewController: UIViewController {
         codeCountLabel?.isHidden = codes.count == 1
         pageControl?.numberOfPages = codes.count
         pageControl?.pageIndicatorTintColor = .lightGray
-        pageControl?.currentPageIndicatorTintColor = .label
+        pageControl?.currentPageIndicatorTintColor = Assets.Color.label()
         pageControl?.isHidden = codes.count == 1
 
         let id = process?.links._self.href.suffix(4) ?? "offline"

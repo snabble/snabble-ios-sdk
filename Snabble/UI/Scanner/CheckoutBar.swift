@@ -57,7 +57,7 @@ final class CheckoutBar: UIView {
         totalPriceLabel.translatesAutoresizingMaskIntoConstraints = false
         totalPriceLabel.font = .preferredFont(forTextStyle: .title2, weight: .bold)
         totalPriceLabel.adjustsFontForContentSizeCategory = true
-        totalPriceLabel.textColor = .label
+        totalPriceLabel.textColor = Assets.Color.label()
         totalPriceLabel.textAlignment = .right
 
         let paymentStackView = UIStackView()
@@ -84,7 +84,7 @@ final class CheckoutBar: UIView {
         noPaymentLabel.translatesAutoresizingMaskIntoConstraints = false
         noPaymentLabel.font = .preferredFont(forTextStyle: .body, weight: .medium)
         noPaymentLabel.adjustsFontForContentSizeCategory = true
-        noPaymentLabel.textColor = .label
+        noPaymentLabel.textColor = Assets.Color.label()
         noPaymentLabel.textAlignment = .center
         noPaymentLabel.text = L10n.Snabble.Shoppingcart.BuyProducts.selectPaymentMethod
 

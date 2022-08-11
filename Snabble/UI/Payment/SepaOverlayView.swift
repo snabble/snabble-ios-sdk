@@ -163,7 +163,7 @@ public final class SepaOverlayView: UIView {
                     let substr = String(text[startIndex..<endIndex])
 
                     let attributes: [NSAttributedString.Key: Any]? = idx == 2 ? [
-                        .foregroundColor: UIColor.label,
+                        .foregroundColor: Assets.Color.label(),
                         .underlineStyle: NSUnderlineStyle.single.rawValue
                     ] : nil
                     str.append(NSAttributedString(string: substr, attributes: attributes))

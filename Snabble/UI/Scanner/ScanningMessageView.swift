@@ -160,7 +160,7 @@ extension ScanningMessageView {
             label.translatesAutoresizingMaskIntoConstraints = false
             label.font = .preferredFont(forTextStyle: .body)
             label.adjustsFontForContentSizeCategory = true
-            label.textColor = .label
+            label.textColor = Assets.Color.label()
             label.textAlignment = .natural
             label.numberOfLines = 0
             label.setContentHuggingPriority(.defaultLow + 1, for: .horizontal)

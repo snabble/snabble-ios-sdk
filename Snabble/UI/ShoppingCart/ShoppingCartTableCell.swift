@@ -158,7 +158,7 @@ final class ShoppingCartTableCell: UITableViewCell {
 
         if showImages {
             let icon = Asset.SnabbleSDK.iconPercent.image
-            self.cellView?.imageView?.imageView?.image = icon.recolored(with: .label)
+            self.cellView?.imageView?.imageView?.image = icon.recolored(with: Assets.Color.label())
             self.leftDisplay = .image
         }
     }

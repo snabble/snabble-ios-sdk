@@ -10,7 +10,7 @@ public final class SnabbleAlertStyle: AlertVisualStyle {
     override public init(alertStyle: AlertControllerStyle) {
         super.init(alertStyle: alertStyle)
 
-        self.normalTextColor = .label
+        self.normalTextColor = Assets.Color.label()
 
         self.actionSheetPreferredFont = self.alertNormalFont
         self.actionSheetNormalFont = self.alertPreferredFont

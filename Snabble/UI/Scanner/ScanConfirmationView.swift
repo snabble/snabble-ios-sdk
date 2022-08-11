@@ -53,7 +53,7 @@ final class ScanConfirmationView: UIView {
         let label = UILabel()
         label.translatesAutoresizingMaskIntoConstraints = false
         label.textAlignment = .center
-        label.textColor = .label
+        label.textColor = Assets.Color.label()
         label.setContentHuggingPriority(.defaultLow + 1, for: .horizontal)
         label.setContentHuggingPriority(.defaultLow + 1, for: .vertical)
         return label
@@ -121,7 +121,7 @@ final class ScanConfirmationView: UIView {
         if conformanceLevel == .AA || conformanceLevel == .AAA {
             manualDiscountButton.tintColor = SnabbleUI.appearance.accentColor
         } else {
-            manualDiscountButton.tintColor = .label
+            manualDiscountButton.tintColor = Assets.Color.label()
         }
         manualDiscountButton.isUserInteractionEnabled = true
         manualDiscountButton.addTarget(self, action: #selector(manualDiscountTapped(_:)), for: .touchUpInside)
@@ -145,7 +145,7 @@ final class ScanConfirmationView: UIView {
         quantityField.translatesAutoresizingMaskIntoConstraints = false
         quantityField.font = .preferredFont(forTextStyle: .title3)
         quantityField.adjustsFontForContentSizeCategory = true
-        quantityField.tintColor = .label
+        quantityField.tintColor = Assets.Color.label()
         quantityField.delegate = self
         quantityField.addDoneButton()
         quantityField.textAlignment = .center

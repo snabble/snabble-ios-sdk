@@ -84,7 +84,7 @@ public final class PaydirektEditViewController: UIViewController {
         displayLabel.translatesAutoresizingMaskIntoConstraints = false
         displayLabel.font = UIFont.preferredFont(forTextStyle: .body)
         displayLabel.adjustsFontForContentSizeCategory = true
-        displayLabel.textColor = .label
+        displayLabel.textColor = Assets.Color.label()
         displayLabel.textAlignment = .natural
         displayLabel.numberOfLines = 0
         displayLabel.text = L10n.Snabble.Paydirekt.savedAuthorization
@@ -112,7 +112,7 @@ public final class PaydirektEditViewController: UIViewController {
         errorLabel.translatesAutoresizingMaskIntoConstraints = false
         errorLabel.font = UIFont.preferredFont(forTextStyle: .body)
         errorLabel.adjustsFontForContentSizeCategory = true
-        errorLabel.textColor = .label
+        errorLabel.textColor = Assets.Color.label()
         errorLabel.textAlignment = .center
         errorLabel.numberOfLines = 0
         errorLabel.text = L10n.Snabble.Paydirekt.AuthorizationFailed.title

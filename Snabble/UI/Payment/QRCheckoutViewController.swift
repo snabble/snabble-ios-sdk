@@ -26,7 +26,7 @@ final class QRCheckoutViewController: UIViewController {
     private var customLabel: UILabel {
         let label = UILabel()
         label.translatesAutoresizingMaskIntoConstraints = false
-        label.textColor = .label
+        label.textColor = Assets.Color.label()
         label.textAlignment = .center
         label.numberOfLines = 0
         label.adjustsFontForContentSizeCategory = true

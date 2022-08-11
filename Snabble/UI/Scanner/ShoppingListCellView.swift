@@ -32,7 +32,7 @@ final class ShoppingListCellView: UIView {
         let productImage = UIImageView()
         productImage.translatesAutoresizingMaskIntoConstraints = false
         productImage.contentMode = .scaleAspectFit
-        productImage.tintColor = .label
+        productImage.tintColor = Assets.Color.label()
 
         let spinner = UIActivityIndicatorView(style: .medium)
         spinner.translatesAutoresizingMaskIntoConstraints = false
@@ -42,7 +42,7 @@ final class ShoppingListCellView: UIView {
         nameLabel.translatesAutoresizingMaskIntoConstraints = false
         nameLabel.font = .preferredFont(forTextStyle: .subheadline)
         nameLabel.adjustsFontForContentSizeCategory = true
-        nameLabel.textColor = .label
+        nameLabel.textColor = Assets.Color.label()
         nameLabel.textAlignment = .natural
         nameLabel.numberOfLines = 0
 
@@ -70,7 +70,7 @@ final class ShoppingListCellView: UIView {
         quantityLabel.translatesAutoresizingMaskIntoConstraints = false
         quantityLabel.font = .preferredFont(forTextStyle: .footnote)
         quantityLabel.adjustsFontForContentSizeCategory = true
-        quantityLabel.textColor = .label
+        quantityLabel.textColor = Assets.Color.label()
         quantityLabel.textAlignment = .center
         quantityLabel.numberOfLines = 1
 

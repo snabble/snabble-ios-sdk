@@ -324,7 +324,7 @@ final class PaymentMethodSelector {
         switch method {
         case .externalBilling, .customerCardPOS:
             let actions = paymentMethodDetails.map { paymentMethodDetail -> PaymentMethodAction in
-                var color: UIColor = .label
+                var color: UIColor = Assets.Color.label()
                 var detailText: String?
                 if case let PaymentMethodUserData.tegutEmployeeCard(data) = paymentMethodDetail.methodData {
                     detailText = data.cardNumber
@@ -358,7 +358,7 @@ final class PaymentMethodSelector {
                             let title = Self.attributedString(
                                 forText: method.displayName,
                                 withSubtitle: paymentMethodDetail.displayName,
-                                inColor: .label
+                                inColor: Assets.Color.label()
                             )
                             return PaymentMethodAction(
                                 title: title,
@@ -389,7 +389,7 @@ final class PaymentMethodSelector {
                         let title = Self.attributedString(
                             forText: method.displayName,
                             withSubtitle: paymentMethodDetail.displayName,
-                            inColor: .label
+                            inColor: Assets.Color.label()
                         )
                         return PaymentMethodAction(
                             title: title,
@@ -406,7 +406,7 @@ final class PaymentMethodSelector {
                 let title = Self.attributedString(
                     forText: method.displayName,
                     withSubtitle: subtitle,
-                    inColor: .label)
+                    inColor: Assets.Color.label())
                 let action = PaymentMethodAction(
                     title: title,
                     paymentMethod: method,
@@ -423,7 +423,7 @@ final class PaymentMethodSelector {
                 let title = Self.attributedString(
                     forText: method.displayName,
                     withSubtitle: subtitle,
-                    inColor: .label
+                    inColor: Assets.Color.label()
                 )
                 let action = PaymentMethodAction(
                     title: title,
@@ -452,7 +452,7 @@ final class PaymentMethodSelector {
             break
         }
 
-        let title = Self.attributedString(forText: method.displayName, inColor: .label)
+        let title = Self.attributedString(forText: method.displayName, inColor: Assets.Color.label())
         let action = PaymentMethodAction(
             title: title,
             paymentMethod: method,

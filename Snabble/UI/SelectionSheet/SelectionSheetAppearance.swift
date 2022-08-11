@@ -33,19 +33,19 @@ extension SelectionSheetAppearance {
     }
 
     var titleFont: UIFont { .preferredFont(forTextStyle: .headline) }
-    var titleColor: UIColor { .label }
+    var titleColor: UIColor { Assets.Color.label() }
 
     var messageFont: UIFont { .preferredFont(forTextStyle: .body) }
-    var messageColor: UIColor { .label }
+    var messageColor: UIColor { Assets.Color.label() }
 
     var actionTitleFont: UIFont { .preferredFont(forTextStyle: .title3) }
-    var actionTitleColor: UIColor { .label }
+    var actionTitleColor: UIColor { Assets.Color.label() }
 
     var actionSubtitleFont: UIFont { .preferredFont(forTextStyle: .body) }
-    var actionSubtitleColor: UIColor { .label }
+    var actionSubtitleColor: UIColor { Assets.Color.label() }
 
     var cancelButtonFont: UIFont { .preferredFont(forTextStyle: .title3, weight: .semibold) }
-    var cancelButtonColor: UIColor { .label }
+    var cancelButtonColor: UIColor { Assets.Color.label() }
 }
 
 struct DefaultSelectionSheetAppearance: SelectionSheetAppearance { }

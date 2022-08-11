@@ -50,14 +50,14 @@ final class SupervisorRejectedViewController: UIViewController {
         let topIcon = UIImageView(image: Asset.SnabbleSDK.iconHintBig.image.withRenderingMode(.alwaysTemplate))
         topIcon.translatesAutoresizingMaskIntoConstraints = false
         topIcon.contentMode = .scaleAspectFit
-        topIcon.tintColor = .label
+        topIcon.tintColor = Assets.Color.label()
         topIcon.adjustsImageSizeForAccessibilityContentSizeCategory = true
         topIcon.setContentHuggingPriority(.defaultLow + 1, for: .horizontal)
         topIcon.setContentHuggingPriority(.defaultLow + 2, for: .vertical)
 
         let messageLabel = UILabel()
         messageLabel.translatesAutoresizingMaskIntoConstraints = false
-        messageLabel.textColor = .label
+        messageLabel.textColor = Assets.Color.label()
         messageLabel.font = UIFont.preferredFont(forTextStyle: .body)
         messageLabel.adjustsFontForContentSizeCategory = true
         messageLabel.textAlignment = .center
