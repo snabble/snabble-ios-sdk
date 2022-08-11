@@ -1,8 +1,10 @@
 //
 //  OnboardingItemView.swift
-//  Onboarding
+//  Snabble
 //
 //  Created by Uwe Tilemann on 05.08.22.
+//
+//  Copyright © 2022 snabble. All rights reserved.
 //
 
 import SwiftUI

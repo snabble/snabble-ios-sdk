@@ -1,8 +1,10 @@
 //
 //  PageViewController.swift
-//  OnboardingUIKit
+//  Snabble
 //
 //  Created by Uwe Tilemann on 05.08.22.
+//
+//  Copyright © 2022 snabble. All rights reserved.
 //
 
 import SwiftUI
@@ -60,11 +62,10 @@ struct PageViewController<Page: View>: UIViewControllerRepresentable {
             return controllers[index + 1]
         }
 
-        func pageViewController(
-            _ pageViewController: UIPageViewController,
-            didFinishAnimating finished: Bool,
-            previousViewControllers: [UIViewController],
-            transitionCompleted completed: Bool) {
+        func pageViewController(_ pageViewController: UIPageViewController,
+                                didFinishAnimating finished: Bool,
+                                previousViewControllers: [UIViewController],
+                                transitionCompleted completed: Bool) {
             if completed,
                let visibleViewController = pageViewController.viewControllers?.first,
                let index = controllers.firstIndex(of: visibleViewController) {

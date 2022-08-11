@@ -1,13 +1,16 @@
 //
 //  OnboardingButtonView.swift
-//  OnboardingUIKit
+//  Snabble
 //
 //  Created by Uwe Tilemann on 06.08.22.
+//
+//  Copyright © 2022 snabble. All rights reserved.
 //
 
 import Foundation
 import SwiftUI
 
+/// Tinted button used for Onboarding navigation
 struct TintButton: ButtonStyle {
     func makeBody(configuration: Configuration) -> some View {
         configuration.label
@@ -18,6 +21,7 @@ struct TintButton: ButtonStyle {
     }
 }
 
+/// View to render one onboarding item
 struct OnboardingButtonView: View {
     var item: OnboardingItem
     var numberOfPages: Int

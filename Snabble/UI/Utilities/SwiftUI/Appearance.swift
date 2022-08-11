@@ -1,8 +1,10 @@
 //
 //  Appearance.swift
-//  OnboardingUIKit
+//  Snabble
 //
 //  Created by Uwe Tilemann on 06.08.22.
+//
+//  Copyright © 2022 snabble. All rights reserved.
 //
 
 import Foundation
@@ -13,12 +15,12 @@ public struct Appearance: Codable {
     let secondaryAccent: String?
     let contrast: String?
 
-    static let shared: Appearance =  load("Appearance.json")
+    static let shared: Appearance = load("Appearance.json")
 }
 
-extension  SwiftUI.Color {
-    static var accentColor:  SwiftUI.Color { .black }
-    static var buttonTextColor:  SwiftUI.Color { .white }
+extension SwiftUI.Color {
+    static var accentColor: SwiftUI.Color { .black }
+    static var buttonTextColor: SwiftUI.Color { .white }
 }
 
 public extension Appearance {
@@ -31,7 +33,7 @@ public extension Appearance {
         return Assets.color(named: string) ?? Color.accentColor
     }
 
-    var secondaryAccentColor:  SwiftUI.Color {
+    var secondaryAccentColor: SwiftUI.Color {
         guard let string = secondaryAccent else {
             return Color.accentColor
         }
@@ -39,7 +41,7 @@ public extension Appearance {
         return Assets.color(named: string) ?? Color.accentColor
     }
 
-    var buttonTextColor:  SwiftUI.Color {
+    var buttonTextColor: SwiftUI.Color {
         return SwiftUI.Color.buttonTextColor
     }
 }

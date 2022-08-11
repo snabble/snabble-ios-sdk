@@ -1,8 +1,10 @@
 //
 //  TextViewController.swift
-//  OnboardingUIKit
+//  Snabble
 //
 //  Created by Uwe Tilemann on 08.08.22.
+//
+//  Copyright © 2022 snabble. All rights reserved.
 //
 
 import SwiftUI

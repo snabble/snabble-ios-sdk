@@ -1,11 +1,12 @@
 //
 //  PageControl.swift
-//  OnboardingUIKit
+//  Snabble
 //
 //  Created by Uwe Tilemann on 05.08.22.
 //
+//  Copyright © 2022 snabble. All rights reserved.
+//
 
-#if canImport(SwiftUI)
 import SwiftUI
 import UIKit
 
@@ -48,4 +49,3 @@ struct PageControl: UIViewRepresentable {
         }
     }
 }
-#endif

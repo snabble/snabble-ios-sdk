@@ -1,9 +1,10 @@
 //
 //  WebView.swift
-//  CarPass
+//  Snabble
 //
 //  Created by Uwe Tilemann on 17.01.22.
-//  Copyright © 2022 Apple. All rights reserved.
+//
+//  Copyright © 2022 snabble. All rights reserved.
 //
 
 import SwiftUI

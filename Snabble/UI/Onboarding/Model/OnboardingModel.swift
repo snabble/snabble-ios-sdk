@@ -1,18 +1,20 @@
 //
 //  OnboardingModel.swift
-//  Onboarding
+//  Snabble
 //
 //  Created by Uwe Tilemann on 05.08.22.
 //
+//  Copyright © 2022 snabble. All rights reserved.
+//
 
 import Foundation
-
-#if canImport(Combine)
 import Combine
 
+/// OnboardingModel describing the Onboading configuration
 public final class OnboardingModel: ObservableObject, Decodable {
     public static let shared: OnboardingModel = load("onboardingData.json")
 
+    /// the configuration like `imagesource` and `hasPageControl` to enable page swiping
     @Published var configuration: OnboardingConfiguration
     @Published var items: [OnboardingItem]
 
@@ -28,7 +30,6 @@ public final class OnboardingModel: ObservableObject, Decodable {
         self.configuration = try container.decode(OnboardingConfiguration.self, forKey: .configuration)
     }
 }
-#endif
 
 func load<T: Decodable>(_ filename: String) -> T {
     let data: Data
