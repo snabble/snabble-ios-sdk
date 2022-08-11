@@ -109,13 +109,13 @@ extension CheckoutStepStatus: CheckoutStepStatusViewModel {
     var circleColor: UIColor? {
         switch self {
         case .loading:
-            return .clear
+            return Assets.Color.clear()
         case .success:
-            return .systemGreen
+            return Assets.Color.systemGreen()
         case .failure:
-            return .systemRed
+            return Assets.Color.systemRed()
         case .aborted:
-            return .systemGray5
+            return Assets.Color.systemGray5()
         }
     }
 

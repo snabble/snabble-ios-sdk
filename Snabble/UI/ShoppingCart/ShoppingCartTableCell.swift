@@ -133,7 +133,7 @@ final class ShoppingCartTableCell: UITableViewCell {
         self.quantityText = nil
         self.unitsText = nil
         self.badgeText = nil
-        self.badgeColor = .systemRed
+        self.badgeColor = Assets.Color.systemRed()
     }
 
     func configureCell(row: Int, delegate: ShoppingCartTableDelegate) {
@@ -226,7 +226,7 @@ final class ShoppingCartTableCell: UITableViewCell {
         } else {
             self.leftDisplay = .badge
             self.badgeText = "%"
-            self.badgeColor = redeemed ? .systemRed : .systemGray
+            self.badgeColor = redeemed ? Assets.Color.systemRed() : Assets.Color.systemGray()
         }
     }
 
@@ -302,7 +302,7 @@ final class ShoppingCartTableCell: UITableViewCell {
         if let couponItem = lineItems.first(where: { $0.type == .coupon && $0.refersTo == item.id }) {
             badgeText = "%"
             let redeemed = couponItem.redeemed == true
-            badgeColor = redeemed ? .systemRed : .systemGray
+            badgeColor = redeemed ? Assets.Color.systemRed() : Assets.Color.systemGray()
         }
 
         if let saleRestricton = product?.saleRestriction {
@@ -310,10 +310,10 @@ final class ShoppingCartTableCell: UITableViewCell {
             case .none: ()
             case .age(let age):
                 badgeText = "\(age)"
-                badgeColor = .systemRed
+                badgeColor = Assets.Color.systemRed()
             case .fsk:
                 badgeText = "FSK"
-                badgeColor = .systemRed
+                badgeColor = Assets.Color.systemRed()
             }
         }
         self.badgeText = badgeText

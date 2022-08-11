@@ -237,20 +237,20 @@ public final class SepaEditViewController: UIViewController {
 
         var showError = false
         if !valid {
-            self.ibanNumberField.textColor = .systemRed
-            self.ibanLabel.textColor = .systemRed
+            self.ibanNumberField.textColor = Assets.Color.systemRed()
+            self.ibanLabel.textColor = Assets.Color.systemRed()
             self.ibanLabel.text = L10n.Snabble.Payment.Sepa.invalidIBAN
             showError = true
         }
         if name.isEmpty {
-            self.nameField.textColor = .systemRed
-            self.nameLabel.textColor = .systemRed
+            self.nameField.textColor = Assets.Color.systemRed()
+            self.nameLabel.textColor = Assets.Color.systemRed()
             self.nameLabel.text = L10n.Snabble.Payment.Sepa.invalidName
             showError = true
         }
         if country.isEmpty {
-            self.ibanCountryField.textColor = .systemRed
-            self.ibanLabel.textColor = .systemRed
+            self.ibanCountryField.textColor = Assets.Color.systemRed()
+            self.ibanLabel.textColor = Assets.Color.systemRed()
             self.ibanLabel.text = L10n.Snabble.Payment.Sepa.missingCountry
             showError = true
         }
@@ -379,10 +379,10 @@ public final class SepaEditViewController: UIViewController {
     }
 
     private func markTextfield(_ textField: UITextField, _ label: UILabel, _ valid: Bool) {
-        textField.textColor = valid ? .label : .systemRed
-        label.textColor = valid ? .label : .systemRed
+        textField.textColor = valid ? Assets.Color.label() : Assets.Color.systemRed()
+        label.textColor = valid ? Assets.Color.label() : Assets.Color.systemRed()
 
-        let borderColor: UIColor = valid ? .clear : .systemRed
+        let borderColor: UIColor = valid ? Assets.Color.clear() : Assets.Color.systemRed()
         textField.layer.borderColor = borderColor.cgColor
     }
 

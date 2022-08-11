@@ -27,7 +27,7 @@ final class CheckoutInformationView: UIView {
         textLabel.adjustsFontForContentSizeCategory = true
 
         let button = UIButton(type: .system)
-        button.setTitleColor(.systemRed, for: .normal)
+        button.setTitleColor(Assets.Color.systemRed(), for: .normal)
         button.preferredFont(forTextStyle: .footnote, weight: .medium)
 
         let stackView = UIStackView(arrangedSubviews: [textLabel, button])

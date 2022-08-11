@@ -88,7 +88,7 @@ public final class EANView: UIView {
         } else {
             let attrs = [
                 NSAttributedString.Key.font: UIFont.systemFont(ofSize: 15),
-                NSAttributedString.Key.foregroundColor: UIColor.systemRed
+                NSAttributedString.Key.foregroundColor: Assets.Color.systemRed()
             ]
             let str = NSAttributedString(string: "Invalid Barcode", attributes: attrs)
             let stringSize = str.size()
