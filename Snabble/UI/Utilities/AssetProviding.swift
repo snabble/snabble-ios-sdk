@@ -120,4 +120,3 @@ private extension UIFont.TextStyle {
     }
 }
 #endif
-
