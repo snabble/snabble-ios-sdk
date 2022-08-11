@@ -7,13 +7,15 @@
 
 import Foundation
 
+import UIKit
+
 public protocol ImageSourcing {
     var imageSource: String? { get }
-    var imageFromSource: OSImage? { get }
+    var imageFromSource: UIImage? { get }
 }
 
 extension ImageSourcing {
-    public var imageFromSource: OSImage? {
+    public var imageFromSource: UIImage? {
         if let src = imageSource {
             return AssetProvider.shared.image(for: src)
         }
