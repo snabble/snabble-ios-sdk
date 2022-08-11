@@ -16,6 +16,7 @@ public protocol ImageProviding: AnyObject {
     /// - Returns: An object containing the image variant that matches the specified configuration data, or nil if no suitable image was found.
     func image(named name: String, domain: Any?) -> UIImage?
 }
+
 public protocol ColorProviding: AnyObject {
     /// Providing a color for the given `name` compatible with the `domain`
     /// - Parameters:
@@ -24,6 +25,7 @@ public protocol ColorProviding: AnyObject {
     /// - Returns: An initialized color object. The returned object uses the color space specified for the asset.
     func color(named name: String, domain: Any?) -> UIColor?
 }
+
 public protocol StringProviding: AnyObject {
     /// Providing a localizedString for the given `name` compatible with the `domain`
     ///
@@ -35,6 +37,7 @@ public protocol StringProviding: AnyObject {
     /// - Returns: A `String` that matches to the given `key`, or nil if no suitable string was found.
     func localizedString(_ key: String, comment: String, domain: Any?) -> String?
 }
+
 public protocol UrlProviding: AnyObject {
     /// Providing an url for the given `name` and `extension` compatible with the `domain`
     /// - Parameters:
@@ -44,6 +47,7 @@ public protocol UrlProviding: AnyObject {
     /// - Returns: The file URL for the resource file or nil if the file could not be located.
     func url(forResource name: String?, withExtension ext: String?, domain: Any?) -> URL?
 }
+
 public protocol FontProviding: AnyObject {
     /// Providing a font for the given `style` compatible with the `domain`
     /// - Parameters:
