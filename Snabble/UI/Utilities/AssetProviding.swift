@@ -52,17 +52,10 @@ public protocol FontProviding: AnyObject {
     /// Providing a font for the given `style` compatible with the `domain`
     /// - Parameters:
     ///   - style: The text style for which to return a font. See UIFont.TextStyle for recognized values.
-    ///   - domain: The domain, usually the current `Identifier<Project>`
-    /// - Returns: The font associated with the specified text style.
-    func preferredFont(forTextStyle style: UIFont.TextStyle, domain: Any?) -> UIFont
-
-    /// Providing a font for the given `style` and `weight` compatible with the `domain`
-    /// - Parameters:
-    ///   - style: The text style for which to return a font. See UIFont.TextStyle for recognized values.
     ///   - weight: The text weight for which to return a font. See UIFont.Weight for reconized values.
     ///   - domain: The domain, usually the current `Identifier<Project>`
-    /// - Returns: The font associated with the specified text style and weight.
-    func preferredFont(forTextStyle style: UIFont.TextStyle, weight: UIFont.Weight, domain: Any?) -> UIFont
+    /// - Returns: The font associated with the specified text style.
+    func preferredFont(forTextStyle style: UIFont.TextStyle, weight: UIFont.Weight?, domain: Any?) -> UIFont
 }
 
 public typealias AssetProviding = ImageProviding & ColorProviding & StringProviding & UrlProviding & FontProviding
