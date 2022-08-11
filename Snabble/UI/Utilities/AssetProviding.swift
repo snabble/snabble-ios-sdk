@@ -8,7 +8,6 @@
 import Foundation
 import UIKit
 
-
 public protocol ImageProviding: AnyObject {
     /// Providing an image for the given `name` compatible with the `domain`
     /// - Parameters:
