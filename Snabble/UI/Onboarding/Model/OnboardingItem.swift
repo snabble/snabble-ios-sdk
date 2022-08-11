@@ -14,7 +14,7 @@ import Foundation
 public struct OnboardingItem: Hashable, Codable, Swift.Identifiable, ImageSourcing {
     /// id to fullfil the `Swift.Identifiable` protocol
     public var id = UUID()
-    
+
     /// optional title string
     public let title: String?
     /// optional string for onboarding image
