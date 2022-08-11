@@ -25,20 +25,20 @@ final class ReceiptCell: UITableViewCell {
 
         storeName.translatesAutoresizingMaskIntoConstraints = false
         storeName.numberOfLines = 0
-        storeName.font = UIFont.preferredFont(forTextStyle: .body)
+        storeName.font = Assets.preferredFont(forTextStyle: .body)
         storeName.adjustsFontForContentSizeCategory = true
         contentView.addSubview(storeName)
 
         orderDate.translatesAutoresizingMaskIntoConstraints = false
         orderDate.numberOfLines = 0
         orderDate.textColor = Assets.Color.secondaryLabel()
-        orderDate.font = UIFont.preferredFont(forTextStyle: .footnote)
+        orderDate.font = Assets.preferredFont(forTextStyle: .footnote)
         orderDate.adjustsFontForContentSizeCategory = true
         contentView.addSubview(orderDate)
 
         price.translatesAutoresizingMaskIntoConstraints = false
         price.textColor = Assets.Color.secondaryLabel()
-        price.font = UIFont.preferredFont(forTextStyle: .footnote)
+        price.font = Assets.preferredFont(forTextStyle: .footnote)
         price.adjustsFontForContentSizeCategory = true
         price.setContentHuggingPriority(.defaultHigh, for: .horizontal)
         price.setContentCompressionResistancePriority(.required, for: .horizontal)

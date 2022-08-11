@@ -24,7 +24,7 @@ final class PaymentMethodListCell: UITableViewCell {
 
         nameLabel.translatesAutoresizingMaskIntoConstraints = false
         nameLabel.numberOfLines = 0
-        nameLabel.font = UIFont.preferredFont(forTextStyle: .body)
+        nameLabel.font = Assets.preferredFont(forTextStyle: .body)
         nameLabel.adjustsFontForContentSizeCategory = true
 
         icon.translatesAutoresizingMaskIntoConstraints = false
