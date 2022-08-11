@@ -173,6 +173,8 @@
 
 "Snabble.Payment.offlineHint" = "Momentálne si offline a preto niektoré spôsoby platby nemusia byť k dispozícii";
 
+"Snabble.Payment.Online.message" = "Your purchase must be confirmed by an employee.";
+
 "Snabble.Payment.payAtCashDesk" = "Zaplatiť pri pokladni";
 
 "Snabble.Payment.payAtSCO" = "Karta na EC termináli";

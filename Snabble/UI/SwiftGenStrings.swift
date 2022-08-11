@@ -222,6 +222,10 @@ public enum L10n {
           return L10n.tr("SnabbleLocalizable", "Snabble.Payment.CreditCard.expireDate", String(describing: p1), fallback: #"Expires: %@"#)
         }
       }
+      public enum Online {
+        /// Your purchase must be confirmed by an employee.
+        public static var message: String { return L10n.tr("SnabbleLocalizable", "Snabble.Payment.Online.message", fallback: #"Your purchase must be confirmed by an employee."#) }
+      }
       public enum PostFinanceCard {
         /// There was an error processing your postfinance card
         public static var error: String { return L10n.tr("SnabbleLocalizable", "Snabble.Payment.PostFinanceCard.error", fallback: #"There was an error processing your postfinance card"#) }

@@ -173,6 +173,8 @@
 
 "Snabble.Payment.offlineHint" = "Al momento sei offline e alcuni metodi di pagamento potrebbero non essere disponibili";
 
+"Snabble.Payment.Online.message" = "Your purchase must be confirmed by an employee.";
+
 "Snabble.Payment.payAtCashDesk" = "Paga alla cassa";
 
 "Snabble.Payment.payAtSCO" = "Carta su POS";
