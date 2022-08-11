@@ -51,7 +51,7 @@ public final class SepaOverlayView: UIView {
 
         let titleLabel = UILabel()
         titleLabel.translatesAutoresizingMaskIntoConstraints = false
-        titleLabel.font = .preferredFont(forTextStyle: .body, weight: .bold)
+        titleLabel.font = Assets.preferredFont(forTextStyle: .body, weight: .bold)
         titleLabel.adjustsFontForContentSizeCategory = true
         titleLabel.textAlignment = .center
         titleLabel.numberOfLines = 0
@@ -65,7 +65,8 @@ public final class SepaOverlayView: UIView {
 
         let successButton = UIButton(type: .system)
         successButton.translatesAutoresizingMaskIntoConstraints = false
-        successButton.preferredFont(forTextStyle: .headline)
+        successButton.titleLabel?.font = Assets.preferredFont(forTextStyle: .headline)
+        successButton.titleLabel?.adjustsFontForContentSizeCategory = true
         successButton.makeSnabbleButton()
 
         let layoutGuide = UILayoutGuide()

@@ -75,7 +75,8 @@ class BaseCheckViewController: UIViewController {
         cancelButton.makeSnabbleButton()
         cancelButton.titleLabel?.textAlignment = .center
         cancelButton.setTitle(L10n.Snabble.cancel, for: .normal)
-        cancelButton.preferredFont(forTextStyle: .headline)
+        cancelButton.titleLabel?.font = Assets.preferredFont(forTextStyle: .headline)
+        cancelButton.titleLabel?.adjustsFontForContentSizeCategory = true
         cancelButton.alpha = 0
         cancelButton.isUserInteractionEnabled = false
         cancelButton.addTarget(self, action: #selector(self.cancelPayment), for: .touchUpInside)

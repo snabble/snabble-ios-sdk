@@ -80,7 +80,8 @@ final class ScanConfirmationView: UIView {
         let cartButton = UIButton(type: .system)
         cartButton.translatesAutoresizingMaskIntoConstraints = false
         cartButton.setTitle(L10n.Snabble.Scanner.addToCart, for: .normal)
-        cartButton.preferredFont(forTextStyle: .headline)
+        cartButton.titleLabel?.font = Assets.preferredFont(forTextStyle: .headline)
+        cartButton.titleLabel?.adjustsFontForContentSizeCategory = true
         cartButton.makeSnabbleButton()
         cartButton.isUserInteractionEnabled = true
         cartButton.addTarget(self, action: #selector(cartButtonTapped(_:)), for: .touchUpInside)
@@ -97,7 +98,7 @@ final class ScanConfirmationView: UIView {
         subtitleLabel.adjustsFontForContentSizeCategory = true
 
         let productNameLabel = customLabel
-        productNameLabel.font = .preferredFont(forTextStyle: .body, weight: .bold)
+        productNameLabel.font = Assets.preferredFont(forTextStyle: .body, weight: .bold)
         productNameLabel.adjustsFontForContentSizeCategory = true
 
         let originalPriceLabel = customLabel
@@ -112,7 +113,8 @@ final class ScanConfirmationView: UIView {
         let manualDiscountButton = UIButton(type: .system)
         manualDiscountButton.translatesAutoresizingMaskIntoConstraints = false
         manualDiscountButton.setTitle(L10n.Snabble.addDiscount, for: .normal)
-        manualDiscountButton.preferredFont(forTextStyle: .body)
+        manualDiscountButton.titleLabel?.font = Assets.preferredFont(forTextStyle: .body)
+        manualDiscountButton.titleLabel?.adjustsFontForContentSizeCategory = true
 
         let contrastRatio = UIColor.getContrastRatio(forTextColor: SnabbleUI.appearance.accentColor,
                                                      onBackgroundColor: Assets.Color.systemBackground())

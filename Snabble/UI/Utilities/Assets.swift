@@ -23,6 +23,10 @@ public enum Assets {
         provider?.preferredFont(forTextStyle: style, domain: domain) ?? .preferredFont(forTextStyle: style)
     }
 
+    static func preferredFont(forTextStyle style: UIFont.TextStyle, weight: UIFont.Weight, domain: Any? = domain) -> UIFont {
+        provider?.preferredFont(forTextStyle: style, weight: weight, domain: domain) ?? .preferredFont(forTextStyle: style, weight: weight)
+    }
+
     static func image(named name: String, domain: Any? = domain) -> UIImage? {
         provider?.image(named: name, domain: domain) ?? UIImage(named: name, in: BundleToken.bundle, with: nil) ?? UIImage(systemName: name)
     }

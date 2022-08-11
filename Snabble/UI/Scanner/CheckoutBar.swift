@@ -55,7 +55,7 @@ final class CheckoutBar: UIView {
 
         let totalPriceLabel = UILabel()
         totalPriceLabel.translatesAutoresizingMaskIntoConstraints = false
-        totalPriceLabel.font = .preferredFont(forTextStyle: .title2, weight: .bold)
+        totalPriceLabel.font = Assets.preferredFont(forTextStyle: .title2, weight: .bold)
         totalPriceLabel.adjustsFontForContentSizeCategory = true
         totalPriceLabel.textColor = Assets.Color.label()
         totalPriceLabel.textAlignment = .right
@@ -82,7 +82,7 @@ final class CheckoutBar: UIView {
 
         let noPaymentLabel = UILabel()
         noPaymentLabel.translatesAutoresizingMaskIntoConstraints = false
-        noPaymentLabel.font = .preferredFont(forTextStyle: .body, weight: .medium)
+        noPaymentLabel.font = Assets.preferredFont(forTextStyle: .body, weight: .medium)
         noPaymentLabel.adjustsFontForContentSizeCategory = true
         noPaymentLabel.textColor = Assets.Color.label()
         noPaymentLabel.textAlignment = .center
@@ -103,7 +103,8 @@ final class CheckoutBar: UIView {
         checkoutButton.setTitle(L10n.Snabble.Shoppingcart.BuyProducts.now, for: .normal)
         let disabledColor = SnabbleUI.appearance.accentColor.contrast?.withAlphaComponent(0.5)
         checkoutButton.setTitleColor(disabledColor, for: .disabled)
-        checkoutButton.preferredFont(forTextStyle: .headline)
+        checkoutButton.titleLabel?.font = Assets.preferredFont(forTextStyle: .headline)
+        checkoutButton.titleLabel?.adjustsFontForContentSizeCategory = true
         checkoutButton.makeSnabbleButton()
         checkoutButton.isEnabled = true
         checkoutButton.isUserInteractionEnabled = true

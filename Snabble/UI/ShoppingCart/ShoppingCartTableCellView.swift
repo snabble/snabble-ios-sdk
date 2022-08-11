@@ -302,14 +302,14 @@ extension ShoppingCartTableCellView {
         override init(frame: CGRect) {
             let quantityLabel = UILabel()
             quantityLabel.translatesAutoresizingMaskIntoConstraints = false
-            quantityLabel.font = .preferredFont(forTextStyle: .footnote, weight: .semibold)
+            quantityLabel.font = Assets.preferredFont(forTextStyle: .footnote, weight: .semibold)
             quantityLabel.adjustsFontForContentSizeCategory = true
             quantityLabel.textColor = Assets.Color.label()
             quantityLabel.textAlignment = .right
 
             let unitLabel = UILabel()
             unitLabel.translatesAutoresizingMaskIntoConstraints = false
-            unitLabel.font = .preferredFont(forTextStyle: .footnote, weight: .semibold)
+            unitLabel.font = Assets.preferredFont(forTextStyle: .footnote, weight: .semibold)
             unitLabel.adjustsFontForContentSizeCategory = true
             unitLabel.textColor = Assets.Color.label()
             unitLabel.textAlignment = .center

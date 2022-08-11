@@ -69,7 +69,8 @@ public final class SepaEditViewController: UIViewController {
         view.addSubview(scrollView)
 
         saveButton.makeSnabbleButton()
-        saveButton.preferredFont(forTextStyle: .headline)
+        saveButton.titleLabel?.font = Assets.preferredFont(forTextStyle: .headline)
+        saveButton.titleLabel?.adjustsFontForContentSizeCategory = true
         saveButton.translatesAutoresizingMaskIntoConstraints = false
         saveButton.setTitle(L10n.Snabble.save, for: .normal)
         saveButton.addTarget(self, action: #selector(self.saveButtonTapped(_:)), for: .touchUpInside)

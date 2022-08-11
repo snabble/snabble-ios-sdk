@@ -69,7 +69,8 @@ final class SupervisorRejectedViewController: UIViewController {
         let button = UIButton(type: .system)
         button.translatesAutoresizingMaskIntoConstraints = false
         button.makeSnabbleButton()
-        button.preferredFont(forTextStyle: .headline)
+        button.titleLabel?.font = Assets.preferredFont(forTextStyle: .headline)
+        button.titleLabel?.adjustsFontForContentSizeCategory = true
         button.setTitle(SnabbleSDK.L10n.Snabble.Payment.backToCart, for: .normal)
         button.addTarget(self, action: #selector(backButtonTapped(_:)), for: .touchUpInside)
 

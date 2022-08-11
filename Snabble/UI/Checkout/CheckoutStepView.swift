@@ -56,7 +56,8 @@ final class CheckoutStepView: UIView {
 
         let button = UIButton(type: .system)
         button.setTitleColor(Assets.Color.systemRed(), for: .normal)
-        button.preferredFont(forTextStyle: .footnote, weight: .medium)
+        button.titleLabel?.font = Assets.preferredFont(forTextStyle: .footnote, weight: .medium)
+        button.titleLabel?.adjustsFontForContentSizeCategory = true
         button.titleLabel?.textAlignment = .left
 
         super.init(frame: frame)

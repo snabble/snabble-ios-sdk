@@ -83,10 +83,10 @@ final class QRCheckoutViewController: UIViewController {
         stackView.spacing = 16
 
         let totalPriceLabel = customLabel
-        totalPriceLabel.font = .preferredFont(forTextStyle: .body, weight: .medium)
+        totalPriceLabel.font = Assets.preferredFont(forTextStyle: .body, weight: .medium)
 
         let explanationUpperLabel = customLabel
-        explanationUpperLabel.font = .preferredFont(forTextStyle: .body, weight: .light)
+        explanationUpperLabel.font = Assets.preferredFont(forTextStyle: .body, weight: .light)
 
         let qrCodeView = UIImageView()
         qrCodeView.translatesAutoresizingMaskIntoConstraints = false
@@ -100,7 +100,8 @@ final class QRCheckoutViewController: UIViewController {
         let cancelButton = UIButton(type: .system)
         cancelButton.translatesAutoresizingMaskIntoConstraints = false
         cancelButton.setTitle(L10n.Snabble.cancel, for: .normal)
-        cancelButton.preferredFont(forTextStyle: .headline)
+        cancelButton.titleLabel?.font = Assets.preferredFont(forTextStyle: .headline)
+        cancelButton.titleLabel?.adjustsFontForContentSizeCategory = true
         cancelButton.titleLabel?.textAlignment = .center
         cancelButton.isEnabled = true
         cancelButton.isUserInteractionEnabled = true

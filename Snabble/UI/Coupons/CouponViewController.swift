@@ -79,7 +79,7 @@ public final class CouponViewController: UIViewController {
 
         let titleLabel = UILabel()
         titleLabel.numberOfLines = 0
-        titleLabel.font = .preferredFont(forTextStyle: .title2, weight: .bold)
+        titleLabel.font = Assets.preferredFont(forTextStyle: .title2, weight: .bold)
         self.titleLabel = titleLabel
 
         let subtitleLabel = UILabel()
