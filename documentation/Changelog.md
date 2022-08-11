@@ -7,7 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [unreleased]
 ### Added
 * `SwiftBase32` as dependency for Core 
-* `AssetProviding` Protocol 
+* `AssetProviding` Protocol #APPS-442
+
+### Changed
+* SystemColors lookup via `AssetProviding`
 
 ## [0.21.0] - 2022-08-10
 
