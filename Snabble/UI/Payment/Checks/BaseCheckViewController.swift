@@ -247,10 +247,7 @@ class BaseCheckViewController: UIViewController {
 
         let codeContent = codeContent()
         self.code?.image = renderCode(codeContent)
-
-        let onlineMessageKey = "Snabble.Payment.Online.message"
-        let onlineMessage = Snabble.l10n(onlineMessageKey)
-        self.text?.text = onlineMessage
+        self.text?.text = L10n.Snabble.Payment.Online.message
         // hide if there is no text/translation
         self.textWrapper?.isHidden = onlineMessage == onlineMessageKey.uppercased()
 
