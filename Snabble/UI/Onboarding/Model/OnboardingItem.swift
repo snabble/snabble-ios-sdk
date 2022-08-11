@@ -13,7 +13,7 @@ import Foundation
 ///
 public struct OnboardingItem: Hashable, Codable, Swift.Identifiable, ImageSourcing {
     /// id to fullfil the `Swift.Identifiable` protocol
-    public let id: Int
+    public var id = UUID()
     
     /// optional title string
     public let title: String?
@@ -27,6 +27,15 @@ public struct OnboardingItem: Hashable, Codable, Swift.Identifiable, ImageSourci
     public let nextButtonTitle: String?
     /// optional string to
     public let link: String?
+
+    enum CodingKeys: String, CodingKey {
+        case title
+        case imageSource
+        case text
+        case prevButtonTitle
+        case nextButtonTitle
+        case link
+    }
 
     /// enum for all possible footer configurations
     public enum FooterType {
@@ -48,8 +57,7 @@ public struct OnboardingItem: Hashable, Codable, Swift.Identifiable, ImageSourci
     }
 
     /// convinience init with default nil values for less used properties
-    public init(id: Int, title: String? = nil, imageSource: String?, text: String?, prevButtonTitle: String? = nil, nextButtonTitle: String? = nil, link: String? = nil) {
-        self.id = id
+    public init(title: String? = nil, imageSource: String?, text: String?, prevButtonTitle: String? = nil, nextButtonTitle: String? = nil, link: String? = nil) {
         self.title = title
         self.imageSource = imageSource
         self.text = text
