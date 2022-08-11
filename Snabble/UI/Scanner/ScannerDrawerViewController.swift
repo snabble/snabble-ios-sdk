@@ -84,7 +84,7 @@ final class ScannerDrawerViewController: UIViewController {
         handleView.translatesAutoresizingMaskIntoConstraints = false
         handleView.layer.cornerRadius = 2.5
         handleView.layer.masksToBounds = true
-        handleView.backgroundColor = .systemGray3
+        handleView.backgroundColor = Assets.Color.systemGray3()
         handleView.isUserInteractionEnabled = true
         let tap = UITapGestureRecognizer(target: self, action: #selector(handleTapped(_:)))
         handleView.addGestureRecognizer(tap)

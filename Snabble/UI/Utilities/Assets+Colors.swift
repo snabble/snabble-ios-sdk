@@ -1,5 +1,5 @@
 //
-//  Assets+SystemColors.swift
+//  Assets+Colors.swift
 //  Snabble
 //
 //  Created by Andreas Osberghaus on 11.08.22.
@@ -10,6 +10,8 @@ import UIKit
 
 extension Assets {
     enum Color {
+        // System Colors
+        
         static func systemRed(in domain: Any? = domain) -> UIColor {
             Assets.color(named: "systemRed", domain: domain) ?? .systemRed
         }
@@ -171,6 +173,16 @@ extension Assets {
 
         static func clear(in domain: Any? = domain) -> UIColor {
             Assets.color(named: "clear", domain: domain) ?? .clear
+        }
+
+        // Snabble Colors
+
+        static func border(in domain: Any? = domain) -> UIColor {
+            Assets.color(named: "border", domain: domain) ?? .systemGray
+        }
+
+        static func shadow(in domain: Any? = domain) -> UIColor {
+            Assets.color(named: "shadow", domain: domain) ?? .systemGray3
         }
     }
 }

@@ -221,7 +221,7 @@ final class ShoppingCartTableCell: UITableViewCell {
 
         if showImages {
             let icon = Asset.SnabbleSDK.iconPercent.image
-            self.cellView?.imageView?.imageView?.image = icon.recolored(with: redeemed ? .label : .systemGray)
+            self.cellView?.imageView?.imageView?.image = icon.recolored(with: redeemed ? Assets.Color.label() : Assets.Color.systemGray())
             self.leftDisplay = .image
         } else {
             self.leftDisplay = .badge

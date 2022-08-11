@@ -108,7 +108,7 @@ final class ReceiptCell: UITableViewCell {
             self.showIcon(projectId)
             self.orderDate.text = L10n.Snabble.Receipts.loading
             let spinner = UIActivityIndicatorView(style: .medium)
-            spinner.color = .systemGray
+            spinner.color = Assets.Color.systemGray()
             spinner.startAnimating()
             self.accessoryView = spinner
             self.price.text = ""

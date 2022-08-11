@@ -266,7 +266,7 @@ extension ShoppingCartTableCellView {
             let priceLabel = UILabel()
             priceLabel.font = .preferredFont(forTextStyle: .footnote)
             priceLabel.adjustsFontForContentSizeCategory = true
-            priceLabel.textColor = .systemGray
+            priceLabel.textColor = Assets.Color.systemGray()
             priceLabel.textAlignment = .natural
 
             let stackView = UIStackView(arrangedSubviews: [nameLabel, priceLabel])

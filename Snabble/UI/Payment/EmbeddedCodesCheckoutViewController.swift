@@ -140,7 +140,7 @@ final class EmbeddedCodesCheckoutViewController: UIViewController {
 
         let pageControl = UIPageControl()
         pageControl.translatesAutoresizingMaskIntoConstraints = false
-        pageControl.pageIndicatorTintColor = .systemGray6
+        pageControl.pageIndicatorTintColor = Assets.Color.systemGray6()
         pageControl.currentPageIndicatorTintColor = .black
         pageControl.addTarget(self, action: #selector(pageControlTapped(_:)), for: UIControl.Event.valueChanged)
 

@@ -9,10 +9,10 @@ import UIKit
 
 extension UIColor {
     static var shadowColor: UIColor {
-        .systemGray3
+        Assets.Color.shadow()
     }
 
     static var borderColor: UIColor {
-        .systemGray
+        Assets.Color.border()
     }
 }

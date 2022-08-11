@@ -268,7 +268,7 @@ public final class PayoneCreditCardEditViewController: UIViewController {
         NSLayoutConstraint.activate(webViewContainer.constraintsForAnchoringTo(boundsOf: view))
 
         let activityIndicator = UIActivityIndicatorView(style: .medium)
-        activityIndicator.color = .systemGray
+        activityIndicator.color = Assets.Color.systemGray()
         activityIndicator.translatesAutoresizingMaskIntoConstraints = false
         activityIndicator.hidesWhenStopped = true
         webViewContainer.addSubview(activityIndicator)

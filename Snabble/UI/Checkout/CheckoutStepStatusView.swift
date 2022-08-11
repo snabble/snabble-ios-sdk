@@ -35,7 +35,7 @@ final class CheckoutStepStatusView: UIView {
         let activityIndicatorView = UIActivityIndicatorView(style: .medium)
         activityIndicatorView.translatesAutoresizingMaskIntoConstraints = false
         activityIndicatorView.hidesWhenStopped = true
-        activityIndicatorView.color = .systemGray
+        activityIndicatorView.color = Assets.Color.systemGray()
 
         let imageView = UIImageView()
         imageView.translatesAutoresizingMaskIntoConstraints = false

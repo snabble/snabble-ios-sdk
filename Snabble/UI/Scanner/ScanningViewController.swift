@@ -96,7 +96,7 @@ final class ScanningViewController: UIViewController {
         }
         let spinner = UIActivityIndicatorView(style: .large)
         spinner.translatesAutoresizingMaskIntoConstraints = false
-        spinner.color = UIColor.systemGray
+        spinner.color = Assets.Color.systemGray()
         spinner.hidesWhenStopped = true
 
         let scanConfirmationView = ScanConfirmationView(frame: .zero)
@@ -132,7 +132,7 @@ final class ScanningViewController: UIViewController {
     override public func viewDidLoad() {
         super.viewDidLoad()
 
-        self.view.backgroundColor = .systemGray
+        self.view.backgroundColor = Assets.Color.systemGray()
 
         if let custom = self.customAppearance {
             scanConfirmationView?.setCustomAppearance(custom)

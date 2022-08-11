@@ -86,8 +86,8 @@ public final class BarcodeDetectorOverlay: UIView {
             reticle.centerYAnchor.constraint(equalTo: barcodeOverlay.centerYAnchor)
         ])
 
-        frameView.backgroundColor = .clear
-        frameView.layer.borderColor = UIColor.systemGray.cgColor
+        frameView.backgroundColor = Assets.Color.clear()
+        frameView.layer.borderColor = Assets.Color.border().cgColor
         frameView.layer.borderWidth = 1 / UIScreen.main.scale
         frameView.layer.cornerRadius = 3
 
