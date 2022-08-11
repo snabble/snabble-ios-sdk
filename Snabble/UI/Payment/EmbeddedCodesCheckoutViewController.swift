@@ -36,7 +36,7 @@ final class EmbeddedCodesCheckoutViewController: UIViewController {
     private var customLabel: UILabel {
         let label = UILabel()
         label.translatesAutoresizingMaskIntoConstraints = false
-        label.textColor = .label
+        label.textColor = Assets.Color.label()
         label.textAlignment = .natural
         label.adjustsFontForContentSizeCategory = true
         label.numberOfLines = 0
@@ -78,7 +78,7 @@ final class EmbeddedCodesCheckoutViewController: UIViewController {
 
         let scrollView = UIScrollView()
         scrollView.translatesAutoresizingMaskIntoConstraints = false
-        scrollView.backgroundColor = .systemBackground
+        scrollView.backgroundColor = Assets.Color.systemBackground()
         scrollView.showsVerticalScrollIndicator = false
         scrollView.alwaysBounceVertical = false
 
@@ -140,8 +140,8 @@ final class EmbeddedCodesCheckoutViewController: UIViewController {
 
         let pageControl = UIPageControl()
         pageControl.translatesAutoresizingMaskIntoConstraints = false
-        pageControl.pageIndicatorTintColor = .systemGray6
-        pageControl.currentPageIndicatorTintColor = .black
+        pageControl.pageIndicatorTintColor = Assets.Color.systemGray6()
+        pageControl.currentPageIndicatorTintColor = Assets.Color.black()
         pageControl.addTarget(self, action: #selector(pageControlTapped(_:)), for: UIControl.Event.valueChanged)
 
         contentView.addSubview(scrollView)
@@ -245,7 +245,7 @@ final class EmbeddedCodesCheckoutViewController: UIViewController {
         codeCountLabel?.isHidden = codes.count == 1
         pageControl?.numberOfPages = codes.count
         pageControl?.pageIndicatorTintColor = .lightGray
-        pageControl?.currentPageIndicatorTintColor = .label
+        pageControl?.currentPageIndicatorTintColor = Assets.Color.label()
         pageControl?.isHidden = codes.count == 1
 
         let id = process?.links._self.href.suffix(4) ?? "offline"

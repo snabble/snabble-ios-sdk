@@ -15,10 +15,10 @@ import UIKit
 
 public final class EANView: UIView {
     /// the color to show the barcode's bars. default is black
-    public var barColor: UIColor = .black
+    public var barColor: UIColor = Assets.Color.black()
 
     /// the color to show the barcode's digits. default is black
-    public var digitsColor: UIColor = .black
+    public var digitsColor: UIColor = Assets.Color.black()
 
     /// show the numeric value of the barcode at the bottom. default is true
     public var showDigits = true
@@ -57,7 +57,7 @@ public final class EANView: UIView {
         guard let ctx = UIGraphicsGetCurrentContext() else {
             return
         }
-        let bgColor = self.backgroundColor ?? .systemBackground
+        let bgColor = self.backgroundColor ?? Assets.Color.systemBackground()
         let bottomPadding = CGFloat(showDigits ? self.scale * 3 : 0)
 
         bgColor.setFill()
@@ -88,7 +88,7 @@ public final class EANView: UIView {
         } else {
             let attrs = [
                 NSAttributedString.Key.font: UIFont.systemFont(ofSize: 15),
-                NSAttributedString.Key.foregroundColor: UIColor.systemRed
+                NSAttributedString.Key.foregroundColor: Assets.Color.systemRed()
             ]
             let str = NSAttributedString(string: "Invalid Barcode", attributes: attrs)
             let stringSize = str.size()
@@ -147,7 +147,7 @@ public final class EANView: UIView {
                            width: scale * width,
                            height: scale * digitHeight)
         let label = UILabel(frame: frame)
-        label.backgroundColor = self.backgroundColor ?? .systemBackground
+        label.backgroundColor = self.backgroundColor ?? Assets.Color.systemBackground()
         label.textColor = self.digitsColor
         label.textAlignment = .center
         label.font = UIFont.monospacedDigitSystemFont(ofSize: CGFloat(scale * (digitHeight - 1)), weight: .medium)

@@ -35,11 +35,11 @@ final class CheckoutStepStatusView: UIView {
         let activityIndicatorView = UIActivityIndicatorView(style: .medium)
         activityIndicatorView.translatesAutoresizingMaskIntoConstraints = false
         activityIndicatorView.hidesWhenStopped = true
-        activityIndicatorView.color = .systemGray
+        activityIndicatorView.color = Assets.Color.systemGray()
 
         let imageView = UIImageView()
         imageView.translatesAutoresizingMaskIntoConstraints = false
-        imageView.tintColor = .systemBackground
+        imageView.tintColor = Assets.Color.systemBackground()
         imageView.contentMode = .scaleAspectFit
 
         super.init(frame: frame)
@@ -109,13 +109,13 @@ extension CheckoutStepStatus: CheckoutStepStatusViewModel {
     var circleColor: UIColor? {
         switch self {
         case .loading:
-            return .clear
+            return Assets.Color.clear()
         case .success:
-            return .systemGreen
+            return Assets.Color.systemGreen()
         case .failure:
-            return .systemRed
+            return Assets.Color.systemRed()
         case .aborted:
-            return .systemGray5
+            return Assets.Color.systemGray5()
         }
     }
 

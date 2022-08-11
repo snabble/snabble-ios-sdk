@@ -83,8 +83,8 @@ public final class BarcodeEntryViewController: UIViewController {
 
         self.keyboardObserver = KeyboardObserver(handler: self)
 
-        self.view.backgroundColor = .systemBackground
-        self.tableView.backgroundColor = .clear
+        self.view.backgroundColor = Assets.Color.systemBackground()
+        self.tableView.backgroundColor = Assets.Color.clear()
     }
 
     override public func viewWillAppear(_ animated: Bool) {

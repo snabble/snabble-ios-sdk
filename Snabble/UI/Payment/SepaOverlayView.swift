@@ -34,14 +34,14 @@ public final class SepaOverlayView: UIView {
     }
 
     private func setupUI() {
-        backgroundColor = .systemBackground
+        backgroundColor = Assets.Color.systemBackground()
         if #available(iOS 15, *) {
             restrictDynamicTypeSize(from: nil, to: .extraExtraExtraLarge)
         }
 
         let scrollView = UIScrollView()
         scrollView.translatesAutoresizingMaskIntoConstraints = false
-        scrollView.backgroundColor = .systemBackground
+        scrollView.backgroundColor = Assets.Color.systemBackground()
         scrollView.showsVerticalScrollIndicator = true
         scrollView.alwaysBounceVertical = false
 
@@ -163,7 +163,7 @@ public final class SepaOverlayView: UIView {
                     let substr = String(text[startIndex..<endIndex])
 
                     let attributes: [NSAttributedString.Key: Any]? = idx == 2 ? [
-                        .foregroundColor: UIColor.label,
+                        .foregroundColor: Assets.Color.label(),
                         .underlineStyle: NSUnderlineStyle.single.rawValue
                     ] : nil
                     str.append(NSAttributedString(string: substr, attributes: attributes))

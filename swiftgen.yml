@@ -6,7 +6,7 @@ xcassets:
     templatePath: xcassets-swift5.stencil
     params:
       imageTypeName: SwiftGenImageAsset
-    output: Snabble/UI/Assets.swift
+    output: Snabble/UI/SwiftGenAssets.swift
 
 strings:
   inputs: Snabble/UI/en.lproj
@@ -15,4 +15,4 @@ strings:
     params:
       lookupFunction: SnabbleSDK.Snabble.l10n
       publicAccess: true
-    output: Snabble/UI/Strings.swift
+    output: Snabble/UI/SwiftGenStrings.swift
