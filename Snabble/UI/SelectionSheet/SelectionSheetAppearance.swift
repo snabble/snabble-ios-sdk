@@ -28,7 +28,7 @@ protocol SelectionSheetAppearance {
 extension SelectionSheetAppearance {
     var backgroundColor: UIColor {
         UIColor { traitCollection in
-           traitCollection.userInterfaceStyle == .dark ? .secondarySystemBackground : .systemBackground
+           traitCollection.userInterfaceStyle == .dark ? .secondarySystemBackground : Assets.Color.systemBackground()
        }
     }
 

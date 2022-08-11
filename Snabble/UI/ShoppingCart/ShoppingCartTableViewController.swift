@@ -56,7 +56,7 @@ final class ShoppingCartTableViewController: UITableViewController {
     init(_ cart: ShoppingCart) {
         super.init(style: .plain)
 
-        self.view.backgroundColor = .systemBackground
+        self.view.backgroundColor = Assets.Color.systemBackground()
 
         let nc = NotificationCenter.default
         nc.addObserver(self, selector: #selector(self.shoppingCartUpdated(_:)), name: .snabbleCartUpdated, object: nil)

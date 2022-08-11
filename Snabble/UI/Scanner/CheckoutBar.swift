@@ -74,7 +74,7 @@ final class CheckoutBar: UIView {
         methodSelectionStackView.spacing = 4
         methodSelectionStackView.isLayoutMarginsRelativeArrangement = true
         methodSelectionStackView.layoutMargins = UIEdgeInsets(top: 0, left: 12, bottom: 0, right: 12)
-        methodSelectionStackView.backgroundColor = .systemBackground
+        methodSelectionStackView.backgroundColor = Assets.Color.systemBackground()
         methodSelectionStackView.layer.masksToBounds = true
         methodSelectionStackView.layer.cornerRadius = 8
         methodSelectionStackView.layer.borderColor = Assets.Color.systemGray6().cgColor

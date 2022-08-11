@@ -146,7 +146,7 @@ extension ShoppingCartTableCellView {
             imageBackgroundView.translatesAutoresizingMaskIntoConstraints = false
             imageBackgroundView.layer.cornerRadius = 4
             imageBackgroundView.layer.masksToBounds = true
-            imageBackgroundView.backgroundColor = .systemBackground
+            imageBackgroundView.backgroundColor = Assets.Color.systemBackground()
 
             let imageView = UIImageView()
             imageView.translatesAutoresizingMaskIntoConstraints = false

@@ -56,11 +56,11 @@ final class QRCheckoutViewController: UIViewController {
         if #available(iOS 15, *) {
             contentView.restrictDynamicTypeSize(from: nil, to: .extraExtraExtraLarge)
         }
-        contentView.backgroundColor = .systemBackground
+        contentView.backgroundColor = Assets.Color.systemBackground()
 
         let scrollView = UIScrollView()
         scrollView.translatesAutoresizingMaskIntoConstraints = false
-        scrollView.backgroundColor = .systemBackground
+        scrollView.backgroundColor = Assets.Color.systemBackground()
         scrollView.showsVerticalScrollIndicator = false
         scrollView.alwaysBounceVertical = false
 

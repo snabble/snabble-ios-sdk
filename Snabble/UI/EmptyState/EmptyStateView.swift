@@ -19,7 +19,7 @@ internal class EmptyStateView: UIView {
         super.init(frame: CGRect.zero)
 
         translatesAutoresizingMaskIntoConstraints = false
-        backgroundColor = .systemBackground
+        backgroundColor = Assets.Color.systemBackground()
 
         button1.tag = 0
         button1.preferredFont(forTextStyle: .headline)

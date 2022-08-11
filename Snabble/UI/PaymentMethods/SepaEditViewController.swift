@@ -63,7 +63,7 @@ public final class SepaEditViewController: UIViewController {
             view.restrictDynamicTypeSize(from: nil, to: .extraExtraExtraLarge)
         }
 
-        view.backgroundColor = .systemBackground
+        view.backgroundColor = Assets.Color.systemBackground()
         scrollView.translatesAutoresizingMaskIntoConstraints = false
 
         view.addSubview(scrollView)

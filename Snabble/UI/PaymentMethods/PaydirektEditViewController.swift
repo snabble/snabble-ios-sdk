@@ -68,7 +68,7 @@ public final class PaydirektEditViewController: UIViewController {
 
     override public func loadView() {
         let view = UIView(frame: UIScreen.main.bounds)
-        view.backgroundColor = .systemBackground
+        view.backgroundColor = Assets.Color.systemBackground()
         if #available(iOS 15, *) {
             view.restrictDynamicTypeSize(from: nil, to: .extraExtraExtraLarge)
         }

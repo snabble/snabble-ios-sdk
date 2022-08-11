@@ -33,7 +33,7 @@ final class ScanningMessageView: UIView {
 
         super.init(frame: frame)
 
-        backgroundColor = .systemBackground
+        backgroundColor = Assets.Color.systemBackground()
 
         addSubview(closeButton)
         addSubview(stackView)

@@ -69,7 +69,7 @@ final class ScanConfirmationView: UIView {
     }
 
     private func setupUI() {
-        self.addCornersAndShadow(backgroundColor: .systemBackground, cornerRadius: 8)
+        self.addCornersAndShadow(backgroundColor: Assets.Color.systemBackground(), cornerRadius: 8)
 
         let closeButton = UIButton(type: .system)
         closeButton.translatesAutoresizingMaskIntoConstraints = false
@@ -115,7 +115,7 @@ final class ScanConfirmationView: UIView {
         manualDiscountButton.preferredFont(forTextStyle: .body)
 
         let contrastRatio = UIColor.getContrastRatio(forTextColor: SnabbleUI.appearance.accentColor,
-                                                     onBackgroundColor: .systemBackground)
+                                                     onBackgroundColor: Assets.Color.systemBackground())
         let conformanceLevel = ConformanceLevel(contrastRatio: contrastRatio ?? 1, fontSize: 17, isBoldFont: false)
 
         if conformanceLevel == .AA || conformanceLevel == .AAA {

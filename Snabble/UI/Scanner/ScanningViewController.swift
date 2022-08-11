@@ -551,7 +551,7 @@ extension ScanningViewController {
         // HACK: set the action sheet buttons background
         if let alertContentView = alert.view.subviews.first?.subviews.first {
             for view in alertContentView.subviews {
-                view.backgroundColor = .systemBackground
+                view.backgroundColor = Assets.Color.systemBackground()
             }
         }
 

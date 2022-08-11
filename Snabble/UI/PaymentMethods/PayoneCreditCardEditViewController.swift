@@ -197,7 +197,7 @@ public final class PayoneCreditCardEditViewController: UIViewController {
     }
 
     private func setupView() {
-        view.backgroundColor = .systemBackground
+        view.backgroundColor = Assets.Color.systemBackground()
 
         if #available(iOS 15, *) {
             view.restrictDynamicTypeSize(from: nil, to: .extraExtraExtraLarge)

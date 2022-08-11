@@ -57,7 +57,7 @@ final class ShoppingListCellView: UIView {
         checkContainer.layer.shadowRadius = 1.5
         checkContainer.layer.masksToBounds = true
         checkContainer.layer.borderWidth = 1 / UIScreen.main.scale
-        checkContainer.layer.borderColor = UIColor.systemBackground.cgColor
+        checkContainer.layer.borderColor = Assets.Color.systemBackground().cgColor
         checkContainer.layer.cornerRadius = 12
         checkContainer.backgroundColor = .clear
 
