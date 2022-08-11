@@ -179,6 +179,10 @@ extension Assets {
             Assets.color(named: "black", domain: domain) ?? .black
         }
 
+        static func white(in domain: Any? = domain) -> UIColor {
+            Assets.color(named: "white", domain: domain) ?? .white
+        }
+
         // Snabble Colors
 
         static func border(in domain: Any? = domain) -> UIColor {
