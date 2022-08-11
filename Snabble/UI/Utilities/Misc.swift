@@ -18,21 +18,21 @@ extension UIButton {
     /// add a "bordered button" appearance to this button
     public func makeBorderedButton() {
         self.layer.cornerRadius = 6
-        self.backgroundColor = .secondarySystemBackground
+        self.backgroundColor = Assets.Color.secondarySystemBackground()
         self.layer.borderWidth = 1 / UIScreen.main.scale
-        self.layer.borderColor = UIColor.borderColor.cgColor
+        self.layer.borderColor = Assets.Color.border().cgColor
     }
 }
 
 extension UIView {
     /// add a "rounded card" appearance to this view
     public func addCornersAndShadow(backgroundColor: UIColor, cornerRadius: CGFloat) {
-        self.layer.shadowColor = UIColor.shadowColor.cgColor
+        self.layer.shadowColor = Assets.Color.shadow().cgColor
         self.layer.shadowOffset = CGSize(width: 0, height: 1)
         self.layer.shadowOpacity = 0.5
         self.layer.shadowRadius = 2.0
 
-        self.backgroundColor = UIColor.clear
+        self.backgroundColor = Assets.Color.clear()
 
         self.addBorderView(backgroundColor, cornerRadius)
     }

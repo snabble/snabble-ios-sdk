@@ -28,8 +28,8 @@ protocol SelectionSheetAppearance {
 extension SelectionSheetAppearance {
     var backgroundColor: UIColor {
         UIColor { traitCollection in
-           traitCollection.userInterfaceStyle == .dark ? .secondarySystemBackground : Assets.Color.systemBackground()
-       }
+            traitCollection.userInterfaceStyle == .dark ? Assets.Color.secondarySystemBackground() : Assets.Color.systemBackground()
+        }
     }
 
     var titleFont: UIFont { .preferredFont(forTextStyle: .headline) }

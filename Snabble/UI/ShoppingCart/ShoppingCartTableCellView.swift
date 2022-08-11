@@ -357,7 +357,7 @@ extension ShoppingCartTableCellView {
             quantityTextField.font = UIFont.systemFont(ofSize: 13, weight: .semibold)
             quantityTextField.textAlignment = .right
             quantityTextField.borderStyle = .roundedRect
-            quantityTextField.backgroundColor = .secondarySystemBackground
+            quantityTextField.backgroundColor = Assets.Color.secondarySystemBackground()
             quantityTextField.keyboardType = .numberPad
             quantityTextField.minimumFontSize = 17
             quantityTextField.adjustsFontSizeToFitWidth = true
@@ -409,13 +409,13 @@ extension ShoppingCartTableCellView {
             minusButton.translatesAutoresizingMaskIntoConstraints = false
             minusButton.setImage(Asset.SnabbleSDK.iconMinus.image, for: .normal)
             minusButton.makeBorderedButton()
-            minusButton.backgroundColor = .secondarySystemBackground
+            minusButton.backgroundColor = Assets.Color.secondarySystemBackground()
 
             let plusButton = UIButton(type: .custom)
             plusButton.translatesAutoresizingMaskIntoConstraints = false
             plusButton.setImage(Asset.SnabbleSDK.iconPlus.image, for: .normal)
             plusButton.makeBorderedButton()
-            plusButton.backgroundColor = .secondarySystemBackground
+            plusButton.backgroundColor = Assets.Color.secondarySystemBackground()
 
             let quantityLabel = UILabel()
             quantityLabel.translatesAutoresizingMaskIntoConstraints = false
