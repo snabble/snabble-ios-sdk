@@ -65,7 +65,7 @@ public final class TeleCashCreditCardEditViewController: UIViewController {
     override public func viewDidLoad() {
         super.viewDidLoad()
 
-        view.backgroundColor = .systemBackground
+        view.backgroundColor = Assets.Color.systemBackground()
 
         if #available(iOS 15, *) {
             view.restrictDynamicTypeSize(from: nil, to: .extraExtraExtraLarge)

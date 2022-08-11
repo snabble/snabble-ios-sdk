@@ -50,14 +50,14 @@ final class CheckoutBar: UIView {
         itemCountLabel.translatesAutoresizingMaskIntoConstraints = false
         itemCountLabel.font = .preferredFont(forTextStyle: .footnote)
         itemCountLabel.adjustsFontForContentSizeCategory = true
-        itemCountLabel.textColor = .secondaryLabel
+        itemCountLabel.textColor = Assets.Color.secondaryLabel()
         itemCountLabel.textAlignment = .left
 
         let totalPriceLabel = UILabel()
         totalPriceLabel.translatesAutoresizingMaskIntoConstraints = false
         totalPriceLabel.font = .preferredFont(forTextStyle: .title2, weight: .bold)
         totalPriceLabel.adjustsFontForContentSizeCategory = true
-        totalPriceLabel.textColor = .label
+        totalPriceLabel.textColor = Assets.Color.label()
         totalPriceLabel.textAlignment = .right
 
         let paymentStackView = UIStackView()
@@ -74,17 +74,17 @@ final class CheckoutBar: UIView {
         methodSelectionStackView.spacing = 4
         methodSelectionStackView.isLayoutMarginsRelativeArrangement = true
         methodSelectionStackView.layoutMargins = UIEdgeInsets(top: 0, left: 12, bottom: 0, right: 12)
-        methodSelectionStackView.backgroundColor = .systemBackground
+        methodSelectionStackView.backgroundColor = Assets.Color.systemBackground()
         methodSelectionStackView.layer.masksToBounds = true
         methodSelectionStackView.layer.cornerRadius = 8
-        methodSelectionStackView.layer.borderColor = UIColor.systemGray6.cgColor
+        methodSelectionStackView.layer.borderColor = Assets.Color.systemGray6().cgColor
         methodSelectionStackView.layer.borderWidth = 1 / UIScreen.main.scale
 
         let noPaymentLabel = UILabel()
         noPaymentLabel.translatesAutoresizingMaskIntoConstraints = false
         noPaymentLabel.font = .preferredFont(forTextStyle: .body, weight: .medium)
         noPaymentLabel.adjustsFontForContentSizeCategory = true
-        noPaymentLabel.textColor = .label
+        noPaymentLabel.textColor = Assets.Color.label()
         noPaymentLabel.textAlignment = .center
         noPaymentLabel.text = L10n.Snabble.Shoppingcart.BuyProducts.selectPaymentMethod
 

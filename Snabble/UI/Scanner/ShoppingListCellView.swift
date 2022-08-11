@@ -32,7 +32,7 @@ final class ShoppingListCellView: UIView {
         let productImage = UIImageView()
         productImage.translatesAutoresizingMaskIntoConstraints = false
         productImage.contentMode = .scaleAspectFit
-        productImage.tintColor = .label
+        productImage.tintColor = Assets.Color.label()
 
         let spinner = UIActivityIndicatorView(style: .medium)
         spinner.translatesAutoresizingMaskIntoConstraints = false
@@ -42,7 +42,7 @@ final class ShoppingListCellView: UIView {
         nameLabel.translatesAutoresizingMaskIntoConstraints = false
         nameLabel.font = .preferredFont(forTextStyle: .subheadline)
         nameLabel.adjustsFontForContentSizeCategory = true
-        nameLabel.textColor = .label
+        nameLabel.textColor = Assets.Color.label()
         nameLabel.textAlignment = .natural
         nameLabel.numberOfLines = 0
 
@@ -50,16 +50,16 @@ final class ShoppingListCellView: UIView {
 
         let checkContainer = UIView()
         checkContainer.translatesAutoresizingMaskIntoConstraints = false
-        checkContainer.backgroundColor = .systemTeal
-        checkContainer.layer.shadowColor = UIColor.systemGray3.cgColor
+        checkContainer.backgroundColor = Assets.Color.systemTeal()
+        checkContainer.layer.shadowColor = Assets.Color.systemGray3().cgColor
         checkContainer.layer.shadowOpacity = 0.3
         checkContainer.layer.shadowOffset = CGSize.zero
         checkContainer.layer.shadowRadius = 1.5
         checkContainer.layer.masksToBounds = true
         checkContainer.layer.borderWidth = 1 / UIScreen.main.scale
-        checkContainer.layer.borderColor = UIColor.systemBackground.cgColor
+        checkContainer.layer.borderColor = Assets.Color.systemBackground().cgColor
         checkContainer.layer.cornerRadius = 12
-        checkContainer.backgroundColor = .clear
+        checkContainer.backgroundColor = Assets.Color.clear()
 
         let checkImage = UIImageView()
         checkImage.translatesAutoresizingMaskIntoConstraints = false
@@ -70,7 +70,7 @@ final class ShoppingListCellView: UIView {
         quantityLabel.translatesAutoresizingMaskIntoConstraints = false
         quantityLabel.font = .preferredFont(forTextStyle: .footnote)
         quantityLabel.adjustsFontForContentSizeCategory = true
-        quantityLabel.textColor = .label
+        quantityLabel.textColor = Assets.Color.label()
         quantityLabel.textAlignment = .center
         quantityLabel.numberOfLines = 1
 

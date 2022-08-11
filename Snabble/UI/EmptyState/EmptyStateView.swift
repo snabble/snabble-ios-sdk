@@ -19,7 +19,7 @@ internal class EmptyStateView: UIView {
         super.init(frame: CGRect.zero)
 
         translatesAutoresizingMaskIntoConstraints = false
-        backgroundColor = .systemBackground
+        backgroundColor = Assets.Color.systemBackground()
 
         button1.tag = 0
         button1.preferredFont(forTextStyle: .headline)
@@ -82,10 +82,10 @@ final class ShoppingCartEmptyStateView: EmptyStateView {
 
         self.textLabel.text = L10n.Snabble.Shoppingcart.EmptyState.description
         self.button1.setTitle(L10n.Snabble.Shoppingcart.EmptyState.buttonTitle, for: .normal)
-        self.button1.setTitleColor(.label, for: .normal)
+        self.button1.setTitleColor(Assets.Color.label(), for: .normal)
 
         self.button2.setTitle(L10n.Snabble.Shoppingcart.EmptyState.restoreButtonTitle, for: .normal)
-        self.button2.setTitleColor(.label, for: .normal)
+        self.button2.setTitleColor(Assets.Color.label(), for: .normal)
         self.button2.isHidden = true
     }
 
@@ -101,7 +101,7 @@ final class BarcodeEntryEmptyStateView: EmptyStateView {
         self.textLabel.text = L10n.Snabble.Scanner.enterBarcode
 
         self.button1.setTitle("", for: .normal)
-        self.button1.setTitleColor(.label, for: .normal)
+        self.button1.setTitleColor(Assets.Color.label(), for: .normal)
 
         self.button2.isHidden = true
     }

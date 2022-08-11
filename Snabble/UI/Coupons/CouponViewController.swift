@@ -42,7 +42,7 @@ public final class CouponViewController: UIViewController {
         super.init(nibName: nil, bundle: nil)
 
         title = L10n.Snabble.Coupons.title
-        view.backgroundColor = .systemBackground
+        view.backgroundColor = Assets.Color.systemBackground()
     }
 
     required init?(coder: NSCoder) {

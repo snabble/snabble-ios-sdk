@@ -35,7 +35,7 @@ public final class InFlightCheckoutContinuationViewController: UIViewController 
             view.restrictDynamicTypeSize(from: nil, to: .extraExtraExtraLarge)
         }
 
-        view.backgroundColor = .systemBackground
+        view.backgroundColor = Assets.Color.systemBackground()
 
         let activityIndicatorView = UIActivityIndicatorView(style: .medium)
         activityIndicatorView.hidesWhenStopped = true
