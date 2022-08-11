@@ -59,7 +59,7 @@ final class ShoppingListCellView: UIView {
         checkContainer.layer.borderWidth = 1 / UIScreen.main.scale
         checkContainer.layer.borderColor = Assets.Color.systemBackground().cgColor
         checkContainer.layer.cornerRadius = 12
-        checkContainer.backgroundColor = .clear
+        checkContainer.backgroundColor = Assets.Color.clear()
 
         let checkImage = UIImageView()
         checkImage.translatesAutoresizingMaskIntoConstraints = false

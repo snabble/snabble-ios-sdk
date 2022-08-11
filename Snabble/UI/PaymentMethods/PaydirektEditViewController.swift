@@ -275,7 +275,7 @@ public final class PaydirektEditViewController: UIViewController {
         configuration.preferences.minimumFontSize = 15
         let webView = WKWebView(frame: .zero, configuration: configuration)
         webView.isOpaque = false
-        webView.backgroundColor = .clear
+        webView.backgroundColor = Assets.Color.clear()
         webView.navigationDelegate = self
 
         webView.translatesAutoresizingMaskIntoConstraints = false

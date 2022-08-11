@@ -329,7 +329,7 @@ public final class SepaEditViewController: UIViewController {
         textField.clearButtonMode = .never
         textField.returnKeyType = .next
         textField.borderStyle = .roundedRect
-        textField.layer.borderColor = UIColor.clear.cgColor
+        textField.layer.borderColor = Assets.Color.clear().cgColor
         textField.layer.borderWidth = 1
         textField.layer.cornerRadius = 6
         textField.delegate = self

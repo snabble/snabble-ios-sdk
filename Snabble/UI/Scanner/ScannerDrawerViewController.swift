@@ -179,9 +179,9 @@ final class ScannerDrawerViewController: UIViewController {
         super.viewDidLoad()
 
         // set up appearance for translucency effect
-        view.backgroundColor = .clear
-        self.shoppingListTableVC.view.backgroundColor = .clear
-        self.shoppingCartVC.view.backgroundColor = .clear
+        view.backgroundColor = Assets.Color.clear()
+        self.shoppingListTableVC.view.backgroundColor = Assets.Color.clear()
+        self.shoppingCartVC.view.backgroundColor = Assets.Color.clear()
         setupBlurEffect()
 
         checkoutBar?.shoppingCartDelegate = shoppingCartDelegate

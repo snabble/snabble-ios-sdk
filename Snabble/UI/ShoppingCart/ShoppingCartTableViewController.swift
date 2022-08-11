@@ -77,12 +77,12 @@ final class ShoppingCartTableViewController: UITableViewController {
             self.view.restrictDynamicTypeSize(from: nil, to: .extraExtraExtraLarge)
         }
 
-        self.view.backgroundColor = .clear
+        self.view.backgroundColor = Assets.Color.clear()
 
         self.tableView.register(ShoppingCartTableCell.self, forCellReuseIdentifier: self.itemCellIdentifier)
 
         self.tableView.tableFooterView = UIView(frame: CGRect.zero)
-        self.tableView.backgroundColor = .clear
+        self.tableView.backgroundColor = Assets.Color.clear()
 
         self.tableView.rowHeight = UITableView.automaticDimension
         self.tableView.estimatedRowHeight = 50

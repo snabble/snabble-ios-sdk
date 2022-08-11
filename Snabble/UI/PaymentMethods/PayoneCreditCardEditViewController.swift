@@ -290,7 +290,7 @@ public final class PayoneCreditCardEditViewController: UIViewController {
         let webView = WKWebView(frame: .zero, configuration: config)
         webView.navigationDelegate = self
         webView.isOpaque = false
-        webView.backgroundColor = .clear
+        webView.backgroundColor = Assets.Color.clear()
         webView.translatesAutoresizingMaskIntoConstraints = false
 
         containerView.addSubview(webView)

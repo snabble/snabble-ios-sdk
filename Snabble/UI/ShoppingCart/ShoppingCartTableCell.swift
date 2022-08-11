@@ -88,7 +88,7 @@ final class ShoppingCartTableCell: UITableViewCell {
         cellView.translatesAutoresizingMaskIntoConstraints = false
 
         super.init(style: style, reuseIdentifier: reuseIdentifier)
-        self.backgroundColor = .clear
+        self.backgroundColor = Assets.Color.clear()
         self.contentView.addSubview(cellView)
         self.cellView = cellView
         self.cellView?.delegate = self
