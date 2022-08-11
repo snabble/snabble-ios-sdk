@@ -57,9 +57,11 @@ public protocol FontProviding: AnyObject {
 public typealias AssetProviding = ImageProviding & ColorProviding & StringProviding & UrlProviding & FontProviding
 
 public enum Assets {
+    /// Reference to the implementation of the `AssetProviding` implementation
     public static weak var provider: AssetProviding?
 
-    static var domain: Any?
+    /// Reference to the current domain
+    public internal(set) static var domain: Any?
 
     static func color(named name: String, domain: Any? = domain) -> UIColor? {
         provider?.color(named: name, domain: domain) ?? UIColor(named: name, in: BundleToken.bundle, compatibleWith: nil)
