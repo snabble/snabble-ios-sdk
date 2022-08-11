@@ -78,7 +78,7 @@ public final class ShoppingCartViewController: UIViewController {
 
         let separator = UIView()
         separator.translatesAutoresizingMaskIntoConstraints = false
-        separator.backgroundColor = .separator
+        separator.backgroundColor = Assets.Color.separator()
         bottomWrapper.addSubview(separator)
 
         NSLayoutConstraint.activate([

@@ -120,7 +120,7 @@ extension ScanningMessageView {
         override init(frame: CGRect) {
             let view = UIView()
             view.translatesAutoresizingMaskIntoConstraints = false
-            view.backgroundColor = .separator
+            view.backgroundColor = Assets.Color.separator()
 
             super.init(frame: frame)
 

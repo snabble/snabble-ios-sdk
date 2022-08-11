@@ -112,7 +112,7 @@ final class ScannerDrawerViewController: UIViewController {
 
         let separator = UIView()
         separator.translatesAutoresizingMaskIntoConstraints = false
-        separator.backgroundColor = .separator
+        separator.backgroundColor = Assets.Color.separator()
 
         let bottomView = UIView()
         bottomView.translatesAutoresizingMaskIntoConstraints = false

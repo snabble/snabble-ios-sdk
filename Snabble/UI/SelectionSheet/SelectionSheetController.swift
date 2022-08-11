@@ -99,7 +99,7 @@ final class SelectionSheetController: UIViewController {
 
         let separator = UIView()
         separator.translatesAutoresizingMaskIntoConstraints = false
-        separator.backgroundColor = .separator
+        separator.backgroundColor = Assets.Color.separator()
         selectionView.addSubview(separator)
 
         tableView.translatesAutoresizingMaskIntoConstraints = false
