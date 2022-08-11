@@ -14,7 +14,7 @@ struct URLModifier: ViewModifier {
         if #available(iOS 15, *) {
             content
             .environment(\.openURL, OpenURLAction { anUrl in
-                if let openUrl = AssetProvider.shared.url(forResource: anUrl.absoluteString, withExtension: nil) {
+                if let openUrl = Assets.url(forResource: anUrl.absoluteString, withExtension: nil) {
                     url = openUrl
                     return .handled
                 }
