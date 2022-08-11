@@ -248,8 +248,6 @@ class BaseCheckViewController: UIViewController {
         let codeContent = codeContent()
         self.code?.image = renderCode(codeContent)
         self.text?.text = L10n.Snabble.Payment.Online.message
-        // hide if there is no text/translation
-        self.textWrapper?.isHidden = onlineMessage == onlineMessageKey.uppercased()
 
         self.id?.text = String(checkoutProcess.id.suffix(4))
 
