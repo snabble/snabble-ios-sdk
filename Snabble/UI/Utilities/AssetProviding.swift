@@ -247,6 +247,10 @@ extension Assets {
         static func darkText(in domain: Any? = domain) -> UIColor? {
             Assets.color(named: "darkText", domain: domain) ?? .darkText
         }
+
+        static func clear(in domain: Any? = domain) -> UIColor? {
+            Assets.color(named: "clear", domain: domain) ?? .clear
+        }
     }
 }
 
