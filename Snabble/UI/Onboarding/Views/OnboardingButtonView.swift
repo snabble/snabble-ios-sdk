@@ -23,7 +23,7 @@ struct OnboardingButtonView: View {
     var numberOfPages: Int
 
     @Binding var currentPage: Int
-    
+
     @ViewBuilder
     var leftButton: some View {
         if let text = item.prevButtonTitle {
@@ -32,8 +32,7 @@ struct OnboardingButtonView: View {
                     currentPage -= 1
                 }
                 print("right clicked")
-            })
-            {
+            }) {
                 Text(text)
             }
             .buttonStyle(TintButton())
@@ -46,11 +45,10 @@ struct OnboardingButtonView: View {
         if let text = item.nextButtonTitle {
             Button(action: {
                 print("right clicked")
-                if currentPage < numberOfPages-1 {
+                if currentPage < numberOfPages - 1 {
                     currentPage += 1
                 }
-            })
-            {
+            }) {
                 Text(text)
             }
             .buttonStyle(TintButton())
@@ -87,6 +85,6 @@ struct OnboardingButtonView: View {
     var body: some View {
         footer
             .padding([.leading, .trailing], 50)
-            .padding(.bottom, UIDevice.current.userInterfaceIdiom == .phone ? 0: 20)
+            .padding(.bottom, UIDevice.current.userInterfaceIdiom == .phone ? 0 : 20)
     }
 }

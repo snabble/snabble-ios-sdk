@@ -71,8 +71,7 @@ struct OnboardingItemView: View {
         if let resource = item.link {
             Button(action: {
                 isPresenting.toggle()
-            })
-            {
+            }) {
                 Text("Show").font(.headline)
             }
             .sheet(isPresented: $isPresenting) {
@@ -132,7 +131,7 @@ struct OnboardingItemView: View {
             footer
         }
         .padding([.leading, .trailing], 50)
-        .onAppear() {
+        .onAppear {
             generateAttributedText()
         }
     }
