@@ -93,7 +93,7 @@ public final class PaydirektEditViewController: UIViewController {
         openButton.translatesAutoresizingMaskIntoConstraints = false
         openButton.isUserInteractionEnabled = true
         openButton.preferredFont(forTextStyle: .subheadline)
-        openButton.setTitleColor(.link, for: .normal)
+        openButton.setTitleColor(Assets.Color.link(), for: .normal)
         openButton.setTitle(L10n.Snabble.Paydirekt.gotoWebsite, for: .normal)
         openButton.addTarget(self, action: #selector(openButtonTapped(_:)), for: .touchUpInside)
 
