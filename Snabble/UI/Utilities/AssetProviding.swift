@@ -58,4 +58,3 @@ public protocol FontProviding: AnyObject {
 }
 
 public typealias AssetProviding = ImageProviding & ColorProviding & StringProviding & UrlProviding & FontProviding
-
