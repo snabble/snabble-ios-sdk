@@ -257,14 +257,14 @@ extension ShoppingCartTableCellView {
 
         override init(frame: CGRect) {
             let nameLabel = UILabel()
-            nameLabel.font = .preferredFont(forTextStyle: .subheadline)
+            nameLabel.font = Assets.preferredFont(forTextStyle: .subheadline)
             nameLabel.adjustsFontForContentSizeCategory = true
             nameLabel.textColor = Assets.Color.label()
             nameLabel.textAlignment = .natural
             nameLabel.numberOfLines = 0
 
             let priceLabel = UILabel()
-            priceLabel.font = .preferredFont(forTextStyle: .footnote)
+            priceLabel.font = Assets.preferredFont(forTextStyle: .footnote)
             priceLabel.adjustsFontForContentSizeCategory = true
             priceLabel.textColor = Assets.Color.systemGray()
             priceLabel.textAlignment = .natural

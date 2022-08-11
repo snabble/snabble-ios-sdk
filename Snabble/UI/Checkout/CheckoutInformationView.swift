@@ -23,7 +23,7 @@ final class CheckoutInformationView: UIView {
         let textLabel = UILabel()
         textLabel.textColor = Assets.Color.label()
         textLabel.numberOfLines = 0
-        textLabel.font = UIFont.preferredFont(forTextStyle: .footnote)
+        textLabel.font = Assets.preferredFont(forTextStyle: .footnote)
         textLabel.adjustsFontForContentSizeCategory = true
 
         let button = UIButton(type: .system)

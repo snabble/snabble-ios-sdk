@@ -37,11 +37,11 @@ final class PaymentMethodAddCell: UITableViewCell {
         self.nameLabel = nameLabel
         self.countLabel = countLabel
 
-        nameLabel.font = UIFont.preferredFont(forTextStyle: .body)
+        nameLabel.font = Assets.preferredFont(forTextStyle: .body)
         nameLabel.adjustsFontForContentSizeCategory = true
         nameLabel.numberOfLines = 0
 
-        countLabel.font = UIFont.preferredFont(forTextStyle: .subheadline)
+        countLabel.font = Assets.preferredFont(forTextStyle: .subheadline)
         countLabel.adjustsFontForContentSizeCategory = true
         countLabel.textColor = Assets.Color.systemGray2()
         countLabel.textAlignment = .center

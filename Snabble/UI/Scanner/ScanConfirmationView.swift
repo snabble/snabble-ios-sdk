@@ -93,7 +93,7 @@ final class ScanConfirmationView: UIView {
         productStack.spacing = 4
 
         let subtitleLabel = customLabel
-        subtitleLabel.font = .preferredFont(forTextStyle: .footnote)
+        subtitleLabel.font = Assets.preferredFont(forTextStyle: .footnote)
         subtitleLabel.adjustsFontForContentSizeCategory = true
 
         let productNameLabel = customLabel
@@ -101,12 +101,12 @@ final class ScanConfirmationView: UIView {
         productNameLabel.adjustsFontForContentSizeCategory = true
 
         let originalPriceLabel = customLabel
-        originalPriceLabel.font = .preferredFont(forTextStyle: .body)
+        originalPriceLabel.font = Assets.preferredFont(forTextStyle: .body)
         originalPriceLabel.adjustsFontForContentSizeCategory = true
         originalPriceLabel.textColor = Assets.Color.secondaryLabel()
 
         let priceLabel = customLabel
-        priceLabel.font = .preferredFont(forTextStyle: .body)
+        priceLabel.font = Assets.preferredFont(forTextStyle: .body)
         priceLabel.adjustsFontForContentSizeCategory = true
 
         let manualDiscountButton = UIButton(type: .system)
@@ -143,7 +143,7 @@ final class ScanConfirmationView: UIView {
 
         let quantityField = UITextField()
         quantityField.translatesAutoresizingMaskIntoConstraints = false
-        quantityField.font = .preferredFont(forTextStyle: .title3)
+        quantityField.font = Assets.preferredFont(forTextStyle: .title3)
         quantityField.adjustsFontForContentSizeCategory = true
         quantityField.tintColor = Assets.Color.label()
         quantityField.delegate = self
@@ -153,7 +153,7 @@ final class ScanConfirmationView: UIView {
         quantityField.keyboardType = .numberPad
 
         let unitLabel = customLabel
-        unitLabel.font = .preferredFont(forTextStyle: .body)
+        unitLabel.font = Assets.preferredFont(forTextStyle: .body)
         unitLabel.adjustsFontForContentSizeCategory = true
         unitLabel.textAlignment = .natural
 

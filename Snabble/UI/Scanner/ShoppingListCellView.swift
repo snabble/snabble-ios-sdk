@@ -40,7 +40,7 @@ final class ShoppingListCellView: UIView {
 
         let nameLabel = UILabel()
         nameLabel.translatesAutoresizingMaskIntoConstraints = false
-        nameLabel.font = .preferredFont(forTextStyle: .subheadline)
+        nameLabel.font = Assets.preferredFont(forTextStyle: .subheadline)
         nameLabel.adjustsFontForContentSizeCategory = true
         nameLabel.textColor = Assets.Color.label()
         nameLabel.textAlignment = .natural
@@ -68,7 +68,7 @@ final class ShoppingListCellView: UIView {
 
         let quantityLabel = UILabel()
         quantityLabel.translatesAutoresizingMaskIntoConstraints = false
-        quantityLabel.font = .preferredFont(forTextStyle: .footnote)
+        quantityLabel.font = Assets.preferredFont(forTextStyle: .footnote)
         quantityLabel.adjustsFontForContentSizeCategory = true
         quantityLabel.textColor = Assets.Color.label()
         quantityLabel.textAlignment = .center

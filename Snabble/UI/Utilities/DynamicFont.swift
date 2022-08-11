@@ -19,12 +19,12 @@ extension UIFont {
 
 extension UIButton {
     func preferredFont(forTextStyle textStyle: UIFont.TextStyle, weight: UIFont.Weight = .regular) {
-        titleLabel?.font = UIFont.preferredFont(forTextStyle: textStyle)
+        titleLabel?.font = Assets.preferredFont(forTextStyle: textStyle)
         titleLabel?.adjustsFontForContentSizeCategory = true
     }
 
     func preferredFont(forTextStyle textStyle: UIFont.TextStyle) {
-        titleLabel?.font = UIFont.preferredFont(forTextStyle: textStyle)
+        titleLabel?.font = Assets.preferredFont(forTextStyle: textStyle)
         titleLabel?.adjustsFontForContentSizeCategory = true
     }
 }

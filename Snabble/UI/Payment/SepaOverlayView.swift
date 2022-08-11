@@ -58,7 +58,7 @@ public final class SepaOverlayView: UIView {
 
         let textLabel = UILabel()
         textLabel.translatesAutoresizingMaskIntoConstraints = false
-        textLabel.font = .preferredFont(forTextStyle: .body)
+        textLabel.font = Assets.preferredFont(forTextStyle: .body)
         textLabel.adjustsFontForContentSizeCategory = true
         textLabel.textAlignment = .center
         textLabel.numberOfLines = 0

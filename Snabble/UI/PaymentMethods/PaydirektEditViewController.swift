@@ -82,7 +82,7 @@ public final class PaydirektEditViewController: UIViewController {
 
         let displayLabel = UILabel()
         displayLabel.translatesAutoresizingMaskIntoConstraints = false
-        displayLabel.font = UIFont.preferredFont(forTextStyle: .body)
+        displayLabel.font = Assets.preferredFont(forTextStyle: .body)
         displayLabel.adjustsFontForContentSizeCategory = true
         displayLabel.textColor = Assets.Color.label()
         displayLabel.textAlignment = .natural
@@ -110,7 +110,7 @@ public final class PaydirektEditViewController: UIViewController {
 
         let errorLabel = UILabel()
         errorLabel.translatesAutoresizingMaskIntoConstraints = false
-        errorLabel.font = UIFont.preferredFont(forTextStyle: .body)
+        errorLabel.font = Assets.preferredFont(forTextStyle: .body)
         errorLabel.adjustsFontForContentSizeCategory = true
         errorLabel.textColor = Assets.Color.label()
         errorLabel.textAlignment = .center

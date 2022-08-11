@@ -58,7 +58,7 @@ final class SupervisorRejectedViewController: UIViewController {
         let messageLabel = UILabel()
         messageLabel.translatesAutoresizingMaskIntoConstraints = false
         messageLabel.textColor = Assets.Color.label()
-        messageLabel.font = UIFont.preferredFont(forTextStyle: .body)
+        messageLabel.font = Assets.preferredFont(forTextStyle: .body)
         messageLabel.adjustsFontForContentSizeCategory = true
         messageLabel.textAlignment = .center
         messageLabel.numberOfLines = 0

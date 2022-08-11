@@ -32,7 +32,7 @@ internal class EmptyStateView: UIView {
         textLabel.translatesAutoresizingMaskIntoConstraints = false
         textLabel.numberOfLines = 0
         textLabel.textAlignment = .center
-        textLabel.font = UIFont.preferredFont(forTextStyle: .body)
+        textLabel.font = Assets.preferredFont(forTextStyle: .body)
         textLabel.adjustsFontForContentSizeCategory = true
         addSubview(textLabel)
 
