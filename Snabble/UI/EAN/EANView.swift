@@ -15,10 +15,10 @@ import UIKit
 
 public final class EANView: UIView {
     /// the color to show the barcode's bars. default is black
-    public var barColor: UIColor = .black
+    public var barColor: UIColor = Assets.Color.black()
 
     /// the color to show the barcode's digits. default is black
-    public var digitsColor: UIColor = .black
+    public var digitsColor: UIColor = Assets.Color.black()
 
     /// show the numeric value of the barcode at the bottom. default is true
     public var showDigits = true

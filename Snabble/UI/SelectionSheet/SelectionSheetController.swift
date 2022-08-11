@@ -54,7 +54,7 @@ final class SelectionSheetController: UIViewController {
         presentationController?.delegate = self
 
         let dimmingBackground = UIView()
-        dimmingBackground.backgroundColor = UIColor.black.withAlphaComponent(0.6)
+        dimmingBackground.backgroundColor = Assets.Color.black().withAlphaComponent(0.6)
         let tap = UITapGestureRecognizer(target: self, action: #selector(cancelTapped(_:)))
         dimmingBackground.addGestureRecognizer(tap)
         dimmingBackground.translatesAutoresizingMaskIntoConstraints = false

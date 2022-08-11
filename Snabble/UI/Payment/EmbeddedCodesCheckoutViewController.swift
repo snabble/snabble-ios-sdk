@@ -141,7 +141,7 @@ final class EmbeddedCodesCheckoutViewController: UIViewController {
         let pageControl = UIPageControl()
         pageControl.translatesAutoresizingMaskIntoConstraints = false
         pageControl.pageIndicatorTintColor = Assets.Color.systemGray6()
-        pageControl.currentPageIndicatorTintColor = .black
+        pageControl.currentPageIndicatorTintColor = Assets.Color.black()
         pageControl.addTarget(self, action: #selector(pageControlTapped(_:)), for: UIControl.Event.valueChanged)
 
         contentView.addSubview(scrollView)
