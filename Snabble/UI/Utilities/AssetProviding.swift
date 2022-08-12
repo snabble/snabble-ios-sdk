@@ -58,4 +58,11 @@ public protocol FontProviding: AnyObject {
     func preferredFont(forTextStyle style: UIFont.TextStyle, weight: UIFont.Weight?, domain: Any?) -> UIFont?
 }
 
-public typealias AssetProviding = ImageProviding & ColorProviding & StringProviding & UrlProviding & FontProviding
+public protocol AppearanceProviding: AnyObject {
+    /// Providing a `CustomAppearance` for the given `projectId`
+    /// - Parameter projectId: current `Identifier<Project>`
+    /// - Returns: The custom appearance for the specified projectId or `nil`
+    func appearance(for projectId: Identifier<Project>?) -> CustomAppearance?
+}
+
+public typealias AssetProviding = ImageProviding & ColorProviding & StringProviding & UrlProviding & FontProviding & AppearanceProviding

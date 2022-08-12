@@ -16,11 +16,6 @@ public enum SnabbleUI {
         }
     }
 
-    /// sets the global appearance to be used. Your app must call `SnabbleUI.setAppearance(_:)` before instantiating any snabble view controllers
-    public static func setAppearance(_ appearance: CustomAppearance) {
-        self.appearance = appearance
-    }
-
     private(set) static var project: Project = .none
 
     /// sets the project to be used
@@ -30,6 +25,7 @@ public enum SnabbleUI {
         if let project = project, project.id != Project.none.id, let manifestUrl = project.links.assetsManifest?.href {
             SnabbleUI.initializeAssets(for: project.id, manifestUrl, downloadFiles: true)
         }
+        self.appearance = Assets.provider?.appearance(for: project?.id) ?? SnabbleAppearance()
     }
 
     public static var groupedTableStyle: UITableView.Style {
