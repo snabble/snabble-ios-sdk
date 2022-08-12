@@ -34,6 +34,7 @@ public class CheckInManager: NSObject {
     /// Current checked in `Shop`
     public var shop: Shop? {
         didSet {
+            Assets.domain = shop?.projectId
             if let shop = oldValue {
                 checkedInAt = nil
                 delegate?.checkInManager(self, didCheckOutOf: shop)
