@@ -28,11 +28,7 @@ public enum SnabbleUI {
         Assets.domain = project?.id
         self.appearance = Assets.provider?.appearance(for: project?.id) ?? SnabbleAppearance()
     }
-
-    public static var groupedTableStyle: UITableView.Style {
-        .insetGrouped
-    }
-
+    
     // MARK: - custom appearance handling
 
     private static var customizableAppearances: WeakCustomizableAppearanceSet = .init()
