@@ -8,6 +8,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 * `SwiftBase32` as dependency for Core 
 * `AssetProviding` Protocol #APPS-442
+* Missing translation `Snabble.Payment.Online.message` #APPS-444
 
 ### Changed
 * colors lookup via `AssetProviding`
