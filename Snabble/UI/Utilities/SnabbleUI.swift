@@ -8,7 +8,7 @@ import UIKit
 
 /// global settings for the Snabble UI classes
 public enum SnabbleUI {
-    public private(set) static var appearance: CustomAppearance = SnabbleAppearance() {
+    private(set) static var appearance: CustomAppearance = SnabbleAppearance() {
         didSet {
             customizableAppearances.objects.forEach {
                 $0.setCustomAppearance(appearance)
