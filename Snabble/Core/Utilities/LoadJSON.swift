@@ -21,7 +21,7 @@ import Foundation
 /// - Returns: An initialized decodable object
 ///
 /// - Important: If the file `filename` does not exists or contains corrupt JSON data this function throws an `fatalError()`
-func LoadJSON<T: Decodable>(_ filename: String) -> T {
+func loadJSON<T: Decodable>(_ filename: String) -> T {
     let data: Data
 
     guard let file = Assets.url(forResource: filename, withExtension: nil) else {
