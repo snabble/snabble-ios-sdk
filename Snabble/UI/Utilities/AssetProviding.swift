@@ -60,9 +60,9 @@ public protocol FontProviding: AnyObject {
 
 public protocol AppearanceProviding: AnyObject {
     /// Providing a `CustomAppearance` for the given `projectId`
-    /// - Parameter projectId: current `Identifier<Project>`
+    /// - Parameter domain: The domain, usually the current `Identifier<Project>`
     /// - Returns: The custom appearance for the specified projectId or `nil`
-    func appearance(for projectId: Identifier<Project>?) -> CustomAppearance?
+    func appearance(for domain: Any?) -> CustomAppearance?
 }
 
 public typealias AssetProviding = ImageProviding & ColorProviding & StringProviding & UrlProviding & FontProviding & AppearanceProviding
