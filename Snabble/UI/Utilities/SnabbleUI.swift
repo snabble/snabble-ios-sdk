@@ -20,11 +20,12 @@ public enum SnabbleUI {
 
     /// sets the project to be used
     public static func register(_ project: Project?) {
-        self.project = project ?? Project.none
+        self.project = project ?? .none
 
         if let project = project, project.id != Project.none.id, let manifestUrl = project.links.assetsManifest?.href {
             SnabbleUI.initializeAssets(for: project.id, manifestUrl, downloadFiles: true)
         }
+        Assets.domain = project?.id
         self.appearance = Assets.provider?.appearance(for: project?.id) ?? SnabbleAppearance()
     }
 
