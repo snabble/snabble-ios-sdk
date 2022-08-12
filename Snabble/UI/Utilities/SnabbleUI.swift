@@ -10,7 +10,6 @@ import UIKit
 public enum SnabbleUI {
     public private(set) static var appearance: CustomAppearance = SnabbleAppearance() {
         didSet {
-            UIColor.contrasts = appearance.contrastColors
             customizableAppearances.objects.forEach {
                 $0.setCustomAppearance(appearance)
             }
