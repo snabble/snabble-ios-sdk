@@ -47,7 +47,7 @@ class CouponCollectionViewCell: UICollectionViewCell, Cardable, ReuseIdentifiabl
         let textLabel = UILabel()
         textLabel.translatesAutoresizingMaskIntoConstraints = false
         textLabel.font = Assets.preferredFont(forTextStyle: .headline)
-        textLabel.textColor = SnabbleUI.appearance.accentColor
+        textLabel.textColor = Assets.Color.accent()
         textLabel.numberOfLines = 0
         textLabel.setContentCompressionResistancePriority(.defaultHigh + 2, for: .vertical)
         textLabel.minimumScaleFactor = 0.75

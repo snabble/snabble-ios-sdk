@@ -124,7 +124,7 @@ public final class PaydirektEditViewController: UIViewController {
         errorButton.titleLabel?.font = Assets.preferredFont(forTextStyle: .headline)
         errorButton.titleLabel?.adjustsFontForContentSizeCategory = true
         errorButton.setTitle(L10n.Snabble.PaymentError.tryAgain, for: .normal)
-        errorButton.setTitleColor(SnabbleUI.appearance.accentColor.contrast, for: .normal)
+        errorButton.setTitleColor(Assets.Color.accent().contrast, for: .normal)
         errorButton.makeSnabbleButton()
         errorButton.isUserInteractionEnabled = true
         errorButton.addTarget(self, action: #selector(errorButtonTapped(_:)), for: .touchUpInside)

@@ -101,7 +101,7 @@ final class CheckoutBar: UIView {
         let checkoutButton = UIButton(type: .system)
         checkoutButton.translatesAutoresizingMaskIntoConstraints = false
         checkoutButton.setTitle(L10n.Snabble.Shoppingcart.BuyProducts.now, for: .normal)
-        let disabledColor = SnabbleUI.appearance.accentColor.contrast?.withAlphaComponent(0.5)
+        let disabledColor = Assets.Color.accent().contrast?.withAlphaComponent(0.5)
         checkoutButton.setTitleColor(disabledColor, for: .disabled)
         checkoutButton.titleLabel?.font = Assets.preferredFont(forTextStyle: .headline)
         checkoutButton.titleLabel?.adjustsFontForContentSizeCategory = true

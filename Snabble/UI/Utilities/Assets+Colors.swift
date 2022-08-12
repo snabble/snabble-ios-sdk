@@ -8,7 +8,7 @@
 import Foundation
 import UIKit
 
-extension Assets {
+public extension Assets {
     enum Color {
         // MARK: - System Colors
         
@@ -199,12 +199,16 @@ extension Assets {
 
         // MARK: - Snabble Colors
 
-        static func border(in domain: Any? = domain) -> UIColor {
+        public static func border(in domain: Any? = domain) -> UIColor {
             Assets.color(named: "border", domain: domain) ?? .systemGray
         }
 
-        static func shadow(in domain: Any? = domain) -> UIColor {
+        public static func shadow(in domain: Any? = domain) -> UIColor {
             Assets.color(named: "shadow", domain: domain) ?? .systemGray3
+        }
+
+        public static func accent(in domain: Any? = domain) -> UIColor {
+            Assets.color(named: "accent", domain: domain) ?? UIColor(red: 0, green: 119, blue: 187, alpha: 1)
         }
     }
 }
@@ -249,113 +253,127 @@ extension Color {
 
     // MARK: - Background Colors
     static func systemBackground(in domain: Any? = Assets.domain) -> SwiftUI.Color {
-        color(Assets.Color.systemBackground())
+        color(Assets.Color.systemBackground(in: domain))
     }
     static func secondarySystemBackground(in domain: Any? = Assets.domain) -> SwiftUI.Color {
-        color(Assets.Color.secondarySystemBackground())
+        color(Assets.Color.secondarySystemBackground(in: domain))
     }
     static func tertiarySystemBackground(in domain: Any? = Assets.domain) -> SwiftUI.Color {
-        color(Assets.Color.tertiarySystemBackground())
+        color(Assets.Color.tertiarySystemBackground(in: domain))
     }
 
     // MARK: - Fill Colors
     static func systemFill(in domain: Any? = Assets.domain) -> SwiftUI.Color {
-        color(Assets.Color.systemFill())
+        color(Assets.Color.systemFill(in: domain))
     }
     static func secondarySystemFill(in domain: Any? = Assets.domain) -> SwiftUI.Color {
-        color(Assets.Color.secondarySystemFill())
+        color(Assets.Color.secondarySystemFill(in: domain))
     }
     static func tertiarySystemFill(in domain: Any? = Assets.domain) -> SwiftUI.Color {
-        color(Assets.Color.tertiarySystemFill())
+        color(Assets.Color.tertiarySystemFill(in: domain))
     }
     static func quaternarySystemFill(in domain: Any? = Assets.domain) -> SwiftUI.Color {
-        color(Assets.Color.quaternarySystemFill())
+        color(Assets.Color.quaternarySystemFill(in: domain))
     }
 
     // MARK: - Grouped Background Colors
     static func systemGroupedBackground(in domain: Any? = Assets.domain) -> SwiftUI.Color {
-        color(Assets.Color.systemGroupedBackground())
+        color(Assets.Color.systemGroupedBackground(in: domain))
     }
     static func secondarySystemGroupedBackground(in domain: Any? = Assets.domain) -> SwiftUI.Color {
-        color(Assets.Color.secondarySystemGroupedBackground())
+        color(Assets.Color.secondarySystemGroupedBackground(in: domain))
     }
     static func tertiarySystemGroupedBackground(in domain: Any? = Assets.domain) -> SwiftUI.Color {
-        color(Assets.Color.tertiarySystemGroupedBackground())
+        color(Assets.Color.tertiarySystemGroupedBackground(in: domain))
     }
 
     // MARK: - Gray Colors
     static func systemGray(in domain: Any? = Assets.domain) -> SwiftUI.Color {
-        color(Assets.Color.systemGray())
+        color(Assets.Color.systemGray(in: domain))
     }
     static func systemGray2(in domain: Any? = Assets.domain) -> SwiftUI.Color {
-        color(Assets.Color.systemGray2())
+        color(Assets.Color.systemGray2(in: domain))
     }
     static func systemGray3(in domain: Any? = Assets.domain) -> SwiftUI.Color {
-        color(Assets.Color.systemGray3())
+        color(Assets.Color.systemGray3(in: domain))
     }
     static func systemGray4(in domain: Any? = Assets.domain) -> SwiftUI.Color {
-        color(Assets.Color.systemGray4())
+        color(Assets.Color.systemGray4(in: domain))
     }
     static func systemGray5(in domain: Any? = Assets.domain) -> SwiftUI.Color {
-        color(Assets.Color.systemGray5())
+        color(Assets.Color.systemGray5(in: domain))
     }
     static func systemGray6(in domain: Any? = Assets.domain) -> SwiftUI.Color {
-        color(Assets.Color.systemGray6())
+        color(Assets.Color.systemGray6(in: domain))
     }
 
     // MARK: - Other Colors
     static func separator(in domain: Any? = Assets.domain) -> SwiftUI.Color {
-        color(Assets.Color.separator())
+        color(Assets.Color.separator(in: domain))
     }
     static func opaqueSeparator(in domain: Any? = Assets.domain) -> SwiftUI.Color {
-        color(Assets.Color.opaqueSeparator())
+        color(Assets.Color.opaqueSeparator(in: domain))
     }
     static func link(in domain: Any? = Assets.domain) -> SwiftUI.Color {
-        color(Assets.Color.link())
+        color(Assets.Color.link(in: domain))
     }
 
     @available(iOS 15.0, *)
     static func tint(in domain: Any? = Assets.domain) -> SwiftUI.Color {
-        color(Assets.Color.tintColor())
+        color(Assets.Color.tintColor(in: domain))
     }
 
     // MARK: System Colors
     static func systemBlue(in domain: Any? = Assets.domain) -> SwiftUI.Color {
-        color(Assets.Color.systemBlue())
+        color(Assets.Color.systemBlue(in: domain))
     }
     static func systemPurple(in domain: Any? = Assets.domain) -> SwiftUI.Color {
-        color(Assets.Color.systemPurple())
+        color(Assets.Color.systemPurple(in: domain))
     }
     static func systemGreen(in domain: Any? = Assets.domain) -> SwiftUI.Color {
-        color(Assets.Color.systemGreen())
+        color(Assets.Color.systemGreen(in: domain))
     }
     static func systemYellow(in domain: Any? = Assets.domain) -> SwiftUI.Color {
-        color(Assets.Color.systemYellow())
+        color(Assets.Color.systemYellow(in: domain))
     }
     static func systemOrange(in domain: Any? = Assets.domain) -> SwiftUI.Color {
-        color(Assets.Color.systemOrange())
+        color(Assets.Color.systemOrange(in: domain))
     }
     static func systemPink(in domain: Any? = Assets.domain) -> SwiftUI.Color {
-        color(Assets.Color.systemPink())
+        color(Assets.Color.systemPink(in: domain))
     }
     static func systemRed(in domain: Any? = Assets.domain) -> SwiftUI.Color {
-        color(Assets.Color.systemRed())
+        color(Assets.Color.systemRed(in: domain))
     }
     static func systemTeal(in domain: Any? = Assets.domain) -> SwiftUI.Color {
-        color(Assets.Color.systemTeal())
+        color(Assets.Color.systemTeal(in: domain))
     }
     static func systemIndigo(in domain: Any? = Assets.domain) -> SwiftUI.Color {
-        color(Assets.Color.systemIndigo())
+        color(Assets.Color.systemIndigo(in: domain))
     }
 
     @available(iOS 15.0, *)
     static func systemMint(in domain: Any? = Assets.domain) -> SwiftUI.Color {
-        color(Assets.Color.systemMint())
+        color(Assets.Color.systemMint(in: domain))
     }
 
     @available(iOS 15.0, *)
     static func systemCyan(in domain: Any? = Assets.domain) -> SwiftUI.Color {
-        color(Assets.Color.systemCyan())
+        color(Assets.Color.systemCyan(in: domain))
+    }
+
+    // MARK: - Snabble Colors
+
+    public static func border(in domain: Any? = Assets.domain) -> SwiftUI.Color {
+        color(Assets.Color.border(in: domain))
+    }
+
+    public static func shadow(in domain: Any? = Assets.domain) -> SwiftUI.Color {
+        color(Assets.Color.shadow(in: domain))
+    }
+
+    public static func accent(in domain: Any? = Assets.domain) -> SwiftUI.Color {
+        color(Assets.Color.accent(in: domain))
     }
 }
 #endif
