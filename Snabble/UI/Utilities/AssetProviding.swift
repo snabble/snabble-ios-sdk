@@ -32,10 +32,9 @@ public protocol StringProviding: AnyObject {
     /// Make sure not to the return `key`
     /// - Parameters:
     ///   - name: The key for a string in the specified table.
-    ///   - comment: The comment to place above the key-value pair in the strings file. This parameter provides the translator with some context about the localized string’s presentation to the user.
     ///   - domain: The domain, usually the current `Identifier<Project>`
     /// - Returns: A `String` that matches to the given `key`, or nil if no suitable string was found.
-    func localizedString(_ key: String, comment: String, domain: Any?) -> String?
+    func localizedString(forKey key: String, domain: Any?) -> String?
 }
 
 public protocol UrlProviding: AnyObject {
