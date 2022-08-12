@@ -10,17 +10,6 @@
 import Foundation
 import SwiftUI
 
-/// Tinted button used for Onboarding navigation
-struct TintButton: ButtonStyle {
-    func makeBody(configuration: Configuration) -> some View {
-        configuration.label
-            .padding(15)
-            .background(Appearance.shared.accentColor)
-            .foregroundColor(Appearance.shared.buttonTextColor)
-            .clipShape(RoundedRectangle(cornerRadius: 10))
-    }
-}
-
 /// View to render one onboarding item
 struct OnboardingButtonView: View {
     var item: OnboardingItem
@@ -39,7 +28,8 @@ struct OnboardingButtonView: View {
             }) {
                 Text(text)
             }
-            .buttonStyle(TintButton())
+            .buttonStyle(.automatic)
+            .buttonStyle(AccentButtonStyle())
         }
         EmptyView()
     }
@@ -55,7 +45,7 @@ struct OnboardingButtonView: View {
             }) {
                 Text(text)
             }
-            .buttonStyle(TintButton())
+            .buttonStyle(AccentButtonStyle())
         }
         EmptyView()
     }
