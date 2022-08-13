@@ -20,12 +20,12 @@ struct ButtonControl: View {
     }
 }
 
-struct OnboardingView: View {
+public struct OnboardingView: View {
     @ObservedObject var model: OnboardingModel
     @State private var currentPage = 0
 
     @ViewBuilder
-    var header: some View {
+    public var header: some View {
         if let image = model.configuration.image {
             image
                 .resizable()
@@ -38,7 +38,7 @@ struct OnboardingView: View {
     }
 
     @ViewBuilder
-    var page: some View {
+    public var page: some View {
         if model.configuration.hasPageControl == true {
             PageViewController(pages: model.items.map { OnboardingItemView(item: $0) }, currentPage: $currentPage)
             PageControl(numberOfPages: model.items.count, currentPage: $currentPage)
@@ -53,12 +53,12 @@ struct OnboardingView: View {
     }
 
     @ViewBuilder
-    var footer: some View {
+    public var footer: some View {
         ButtonControl(pages: model.items.map { OnboardingButtonView(item: $0, numberOfPages: model.items.count, currentPage: $currentPage) }, currentPage: $currentPage)
             .animation(.default, value: currentPage)
     }
 
-    var body: some View {
+    public var body: some View {
         VStack {
             header
             page

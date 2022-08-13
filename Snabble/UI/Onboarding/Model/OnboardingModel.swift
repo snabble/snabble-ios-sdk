@@ -12,7 +12,7 @@ import Combine
 
 /// OnboardingModel describing the Onboading configuration
 public final class OnboardingModel: ObservableObject, Decodable {
-    public static let shared: OnboardingModel = loadJSON("onboardingData.json")
+    public static let shared: OnboardingModel = loadJSON("OnboardingData.json")
 
     /// the configuration like `imagesource` and `hasPageControl` to enable page swiping
     @Published var configuration: OnboardingConfiguration

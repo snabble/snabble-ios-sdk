@@ -53,6 +53,7 @@ Pod::Spec.new do |s|
         'Snabble/UI/*.lproj/*.stringsdict',
         'Snabble/UI/**/*.der',
         'Snabble/UI/**/*.html',
+        'Snabble/UI/**/*.json',
         'Snabble.xcassets'
       ]
     }
