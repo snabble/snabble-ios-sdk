@@ -24,6 +24,10 @@ public struct OnboardingView: View {
     @ObservedObject public var model: OnboardingModel
     @State private var currentPage = 0
 
+    public init(model: OnboardingModel) {
+        self.model = model
+    }
+    
     @ViewBuilder
     public var header: some View {
         if let image = model.configuration.image {
