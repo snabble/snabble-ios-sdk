@@ -21,7 +21,7 @@ struct ButtonControl: View {
 }
 
 public struct OnboardingView: View {
-    @ObservedObject var model: OnboardingModel
+    @ObservedObject public var model: OnboardingModel
     @State private var currentPage = 0
 
     @ViewBuilder
