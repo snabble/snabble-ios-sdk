@@ -83,17 +83,17 @@ final class CheckoutRatingViewController: UIViewController {
         detailTextLabel.isHidden = true
 
         let leftButton = UIButton(type: .custom)
-        leftButton.setImage(Asset.SnabbleSDK.emoji1.image, for: .normal)
+        leftButton.setImage(Assets.image(named: "SnabbleSDK/emoji-1"), for: .normal)
         leftButton.addTarget(self, action: #selector(likeButtonTapped(_:)), for: .touchUpInside)
         leftButton.tag = 1
 
         let middleButton = UIButton(type: .custom)
-        middleButton.setImage(Asset.SnabbleSDK.emoji2.image, for: .normal)
+        middleButton.setImage(Assets.image(named: "SnabbleSDK/emoji-2"), for: .normal)
         middleButton.addTarget(self, action: #selector(likeButtonTapped(_:)), for: .touchUpInside)
         middleButton.tag = 2
 
         let rightButton = UIButton(type: .custom)
-        rightButton.setImage(Asset.SnabbleSDK.emoji3.image, for: .normal)
+        rightButton.setImage(Assets.image(named: "SnabbleSDK/emoji-3"), for: .normal)
         rightButton.addTarget(self, action: #selector(likeButtonTapped(_:)), for: .touchUpInside)
         rightButton.tag = 3
 

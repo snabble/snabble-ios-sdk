@@ -47,7 +47,7 @@ final class SupervisorRejectedViewController: UIViewController {
         stackView.alignment = .center
         stackView.spacing = 32
 
-        let topIcon = UIImageView(image: Asset.SnabbleSDK.iconHintBig.image.withRenderingMode(.alwaysTemplate))
+        let topIcon = UIImageView(image: Assets.image(named: "SnabbleSDK/icon-hint-big")?.withRenderingMode(.alwaysTemplate))
         topIcon.translatesAutoresizingMaskIntoConstraints = false
         topIcon.contentMode = .scaleAspectFit
         topIcon.tintColor = Assets.Color.label()

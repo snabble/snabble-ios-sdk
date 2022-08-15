@@ -95,7 +95,7 @@ final class CustomerCardCheckoutViewController: UIViewController {
         arrowWrapper.translatesAutoresizingMaskIntoConstraints = false
 
         let arrowIcon = customImage
-        arrowIcon.image = Asset.SnabbleSDK.arrowUp.image
+        arrowIcon.image = Assets.image(named: "SnabbleSDK/arrow-up")
         arrowIcon.adjustsImageSizeForAccessibilityContentSizeCategory = true
 
         let codeWrapper = UIView()

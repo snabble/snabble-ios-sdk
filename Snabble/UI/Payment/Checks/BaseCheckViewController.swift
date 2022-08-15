@@ -170,7 +170,7 @@ class BaseCheckViewController: UIViewController {
 
         let arrowWrapper = UIView()
         arrowWrapper.translatesAutoresizingMaskIntoConstraints = false
-        let arrow = UIImageView(image: Asset.SnabbleSDK.arrowUp.image)
+        let arrow = UIImageView(image: Assets.image(named: "SnabbleSDK/arrow-up"))
         arrow.translatesAutoresizingMaskIntoConstraints = false
         arrow.adjustsImageSizeForAccessibilityContentSizeCategory = true
         arrow.contentMode = .scaleAspectFit
