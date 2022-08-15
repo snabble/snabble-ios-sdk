@@ -10,6 +10,7 @@ import SnabbleSDK
 import SwiftUI
 
 class SampleViewController: UIViewController {
+    
     private var buttonContainer = UIStackView()
     private var spinner = UIActivityIndicatorView()
 
@@ -63,6 +64,8 @@ class SampleViewController: UIViewController {
         ])
 
         self.snabbleSetup()
+        
+        self.addOnboardingView()
     }
     
     func addOnboardingView() {
@@ -87,6 +90,8 @@ class SampleViewController: UIViewController {
         let APPSECRET = "2TKKEG5KXWY6DFOGTZKDUIBTNIRVCYKFZBY32FFRUUWIUAFEIBHQ===="
         let apiConfig = SnabbleSDK.Config(appId: APPID, secret: APPSECRET)
 
+        Assets.provider = self
+        
         Snabble.setup(config: apiConfig) { snabble in
             // initial config parsed/loaded
             guard let project = snabble.projects.first else {
@@ -130,6 +135,29 @@ class SampleViewController: UIViewController {
         let shoppingCartVC = ShoppingCartViewController(shoppingCart)
         shoppingCartVC.shoppingCartDelegate = self
         self.navigationController?.pushViewController(shoppingCartVC, animated: true)
+    }
+
+}
+
+extension SampleViewController: AssetProviding {
+    func color(named name: String, domain: Any?) -> UIColor? {
+        return nil
+    }
+    
+    func preferredFont(forTextStyle style: UIFont.TextStyle, weight: UIFont.Weight?, domain: Any?) -> UIFont {
+        return UIFont.preferredFont(forTextStyle: style)
+    }
+    
+    func image(named name: String, domain: Any?) -> UIImage? {
+        return nil
+    }
+    
+    func localizedString(_ key: String, comment: String, domain: Any?) -> String? {
+        return nil
+    }
+    
+    func url(forResource name: String?, withExtension ext: String?, domain: Any?) -> URL? {
+        return nil
     }
 
 }
