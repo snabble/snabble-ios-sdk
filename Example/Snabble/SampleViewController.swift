@@ -18,6 +18,8 @@ class SampleViewController: UIViewController {
 
     private var shop: Shop?
 
+    private var onboardingDone = false
+    
     init() {
         super.init(nibName: nil, bundle: nil)
 
@@ -64,15 +66,24 @@ class SampleViewController: UIViewController {
         ])
 
         self.snabbleSetup()
-        
+    }
+
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+
         self.showOnboardingView()
     }
-    
-    func showOnboardingView() {
 
+    func showOnboardingView() {
+        guard onboardingDone == false else {
+            return
+        }
         let controller = UIHostingController(rootView: OnboardingView(model: OnboardingModel.shared))
 
-        self.present(controller, animated: false)
+        controller.isModalInPresentation = true
+        self.present(controller, animated: false) {
+            self.onboardingDone = true
+        }
     }
 
     func snabbleSetup() {
@@ -134,22 +145,25 @@ extension SampleViewController: AssetProviding {
         return nil
     }
     
-    func preferredFont(forTextStyle style: UIFont.TextStyle, weight: UIFont.Weight?, domain: Any?) -> UIFont {
+    func preferredFont(forTextStyle style: UIFont.TextStyle, weight: UIFont.Weight?, domain: Any?) -> UIFont? {
         return UIFont.preferredFont(forTextStyle: style)
     }
     
     func image(named name: String, domain: Any?) -> UIImage? {
-        return nil
+        
+        return UIImage(named: name)
     }
     
-    func localizedString(_ key: String, comment: String, domain: Any?) -> String? {
+    func localizedString(forKey: String, domain: Any?) -> String? {
         return nil
     }
     
     func url(forResource name: String?, withExtension ext: String?, domain: Any?) -> URL? {
         return nil
     }
-
+    func appearance(for domain: Any?) -> CustomAppearance? {
+        return nil
+    }
 }
 
 extension SampleViewController: ScannerDelegate {

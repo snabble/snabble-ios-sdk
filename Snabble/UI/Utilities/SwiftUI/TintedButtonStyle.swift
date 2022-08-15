@@ -9,12 +9,6 @@
 
 import SwiftUI
 
-extension Color {
-    static func accent(in domain: Any? = Assets.domain) -> SwiftUI.Color {
-        return Color.systemBackground()
-    }
-}
-
 /// Tinted button style using `Color.accent()` as background color and `Color.label()` as text color
 public struct AccentButtonStyle: ButtonStyle {
     public func makeBody(configuration: Configuration) -> some View {
