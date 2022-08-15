@@ -32,8 +32,8 @@ public enum Assets {
         provider?.image(named: name, domain: domain) ?? UIImage(named: name, in: BundleToken.bundle, with: nil) ?? UIImage(systemName: name)
     }
 
-    static func localizedString(_ key: String, comment: String, domain: Any? = domain) -> String? {
-        provider?.localizedString(key, comment: comment, domain: domain) ?? NSLocalizedString(key, tableName: "SnabbleLocalizable", bundle: BundleToken.bundle, value: key, comment: comment)
+    static func localizedString(forKey key: String, table: String?, value: String?, domain: Any? = domain) -> String {
+        provider?.localizedString(forKey: key, domain: domain) ?? BundleToken.bundle.localizedString(forKey: key, value: value, table: table)
     }
 
     static func url(forResource name: String?, withExtension ext: String?, domain: Any? = domain) -> URL? {
@@ -45,9 +45,9 @@ public enum Assets {
 private final class BundleToken {
   static let bundle: Bundle = {
 #if SWIFT_PACKAGE
-    return Bundle.module
+      return Bundle.module
 #else
-    return Bundle(for: BundleToken.self)
+      return SnabbleSDKBundle.main
 #endif
   }()
 }

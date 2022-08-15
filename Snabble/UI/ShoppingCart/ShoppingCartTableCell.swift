@@ -170,7 +170,7 @@ final class ShoppingCartTableCell: UITableViewCell {
 
         if showImages {
             let icon = Asset.SnabbleSDK.iconGiveaway.image
-            self.cellView?.imageView?.imageView?.image = icon.recolored(with: SnabbleUI.appearance.accentColor)
+            self.cellView?.imageView?.imageView?.image = icon.recolored(with: Assets.Color.accent())
             self.leftDisplay = .image
         }
     }

@@ -116,12 +116,12 @@ final class ScanConfirmationView: UIView {
         manualDiscountButton.titleLabel?.font = Assets.preferredFont(forTextStyle: .body)
         manualDiscountButton.titleLabel?.adjustsFontForContentSizeCategory = true
 
-        let contrastRatio = UIColor.getContrastRatio(forTextColor: SnabbleUI.appearance.accentColor,
+        let contrastRatio = UIColor.getContrastRatio(forTextColor: Assets.Color.accent(),
                                                      onBackgroundColor: Assets.Color.systemBackground())
         let conformanceLevel = ConformanceLevel(contrastRatio: contrastRatio ?? 1, fontSize: 17, isBoldFont: false)
 
         if conformanceLevel == .AA || conformanceLevel == .AAA {
-            manualDiscountButton.tintColor = SnabbleUI.appearance.accentColor
+            manualDiscountButton.tintColor = Assets.Color.accent()
         } else {
             manualDiscountButton.tintColor = Assets.Color.label()
         }

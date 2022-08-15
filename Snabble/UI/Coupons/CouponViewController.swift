@@ -95,7 +95,7 @@ public final class CouponViewController: UIViewController {
         let textLabel = UILabel()
         textLabel.numberOfLines = 0
         textLabel.font = Assets.preferredFont(forTextStyle: .headline)
-        textLabel.textColor = SnabbleUI.appearance.accentColor
+        textLabel.textColor = Assets.Color.accent()
         self.textLabel = textLabel
 
         let validityLabel = UILabel()
@@ -105,9 +105,9 @@ public final class CouponViewController: UIViewController {
 
         let button = UIButton(type: .system)
         button.setTitle(L10n.Snabble.Coupon.activate, for: .normal)
-        button.setBackgroundColor(color: SnabbleUI.appearance.accentColor, for: .normal)
+        button.setBackgroundColor(color: Assets.Color.accent(), for: .normal)
         button.titleLabel?.font = Assets.preferredFont(forTextStyle: .headline)
-        button.tintColor = SnabbleUI.appearance.accentColor.contrast
+        button.tintColor = Assets.Color.accent().contrast
         button.addTarget(self, action: #selector(activateCoupon), for: .touchUpInside)
         self.button = button
 
