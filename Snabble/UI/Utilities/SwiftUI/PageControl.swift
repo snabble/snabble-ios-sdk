@@ -23,7 +23,6 @@ struct PageControl: UIViewRepresentable {
         control.numberOfPages = numberOfPages
         control.pageIndicatorTintColor = .gray
         control.currentPageIndicatorTintColor = Assets.Color.accent()
-//        control.currentPageIndicatorTintColor = UIColor(cgColor: Color.accent().cgColor ?? CGColor(gray: 0.7, alpha: 0))
 
         control.addTarget(
             context.coordinator,
