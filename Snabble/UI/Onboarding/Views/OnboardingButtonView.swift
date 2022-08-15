@@ -14,6 +14,7 @@ import SwiftUI
 struct OnboardingButtonView: View {
     var item: OnboardingItem
     var numberOfPages: Int
+    @Environment(\.presentationMode) var presentationMode
 
     @Binding var currentPage: Int
 
@@ -41,6 +42,8 @@ struct OnboardingButtonView: View {
                 print("right clicked")
                 if currentPage < numberOfPages - 1 {
                     currentPage += 1
+                } else if currentPage == numberOfPages - 1 {
+                    presentationMode.wrappedValue.dismiss()
                 }
             }) {
                 Text(text)

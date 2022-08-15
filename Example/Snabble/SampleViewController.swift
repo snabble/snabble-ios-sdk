@@ -65,24 +65,14 @@ class SampleViewController: UIViewController {
 
         self.snabbleSetup()
         
-        self.addOnboardingView()
+        self.showOnboardingView()
     }
     
-    func addOnboardingView() {
+    func showOnboardingView() {
 
         let controller = UIHostingController(rootView: OnboardingView(model: OnboardingModel.shared))
 
-        addChild(controller)
-        controller.view.translatesAutoresizingMaskIntoConstraints = false
-        view.addSubview(controller.view)
-        controller.didMove(toParent: self)
-
-        NSLayoutConstraint.activate([
-            controller.view.widthAnchor.constraint(equalTo: view.widthAnchor, multiplier: 1.0),
-            controller.view.heightAnchor.constraint(equalTo: view.heightAnchor, multiplier: 1.0),
-            controller.view.centerXAnchor.constraint(equalTo: view.centerXAnchor),
-            controller.view.centerYAnchor.constraint(equalTo: view.centerYAnchor)
-        ])
+        self.present(controller, animated: false)
     }
 
     func snabbleSetup() {
