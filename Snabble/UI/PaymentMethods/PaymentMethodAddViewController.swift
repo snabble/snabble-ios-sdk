@@ -41,14 +41,14 @@ public final class PaymentMethodAddViewController: UITableViewController {
         self.analyticsDelegate = analyticsDelegate
         self.brandId = nil
 
-        super.init(style: SnabbleUI.groupedTableStyle)
+        super.init(style: .insetGrouped)
     }
 
     init(brandId: Identifier<Brand>, _ analyticsDelegate: AnalyticsDelegate?) {
         self.brandId = brandId
         self.analyticsDelegate = analyticsDelegate
 
-        super.init(style: SnabbleUI.groupedTableStyle)
+        super.init(style: .insetGrouped)
     }
 
     required init?(coder: NSCoder) {

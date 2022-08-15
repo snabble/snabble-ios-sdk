@@ -13,7 +13,7 @@ public protocol CustomizableAppearance: AnyObject {
 
 extension UIButton: CustomizableAppearance {
     public func setCustomAppearance(_ appearance: CustomAppearance) {
-        backgroundColor = appearance.accentColor
-        tintColor = appearance.accentColor.contrast
+        backgroundColor = appearance.accent
+        tintColor = appearance.accent.contrast
     }
 }

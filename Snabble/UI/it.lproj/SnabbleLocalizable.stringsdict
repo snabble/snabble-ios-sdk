@@ -98,7 +98,7 @@
         <key>other</key>
         <string>%d articoli</string>
         <key>zero</key>
-        <string/>
+        <string>%d articoli</string>
       </dict>
     </dict>
   </dict>

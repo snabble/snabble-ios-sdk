@@ -11,8 +11,8 @@ extension UIButton {
     /// add a "rounded button" appearance to this button
     public func makeSnabbleButton() {
         self.layer.cornerRadius = 8
-        self.backgroundColor = SnabbleUI.appearance.accentColor
-        self.tintColor = SnabbleUI.appearance.accentColor.contrast
+        self.backgroundColor = Assets.Color.accent()
+        self.tintColor = Assets.Color.accent().contrast
     }
 
     /// add a "bordered button" appearance to this button

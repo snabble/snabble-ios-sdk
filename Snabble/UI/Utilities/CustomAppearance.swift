@@ -8,8 +8,6 @@
 import UIKit
 
 public protocol CustomAppearance {
-    var accentColor: UIColor { get }
+    var accent: UIColor { get }
     var titleIcon: UIImage? { get }
-
-    var contrastColors: [UIColor]? { get }
 }

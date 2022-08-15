@@ -276,8 +276,11 @@ extension PaymentProcess {
                                                              cart: self.cart,
                                                              paymentDelegate: self.paymentDelegate)
 
-                if let checkout = checkoutVC {
-                    completion(.success(checkout))
+                if let viewController = checkoutVC {
+                    if let customizable = viewController as? CustomizableAppearance {
+                        customizable.setCustomAppearance(SnabbleUI.appearance)
+                    }
+                    completion(.success(viewController))
                 } else {
                     self.paymentDelegate?.showWarningMessage(L10n.Snabble.Payment.errorStarting)
                 }

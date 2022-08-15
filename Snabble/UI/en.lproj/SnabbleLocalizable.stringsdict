@@ -88,7 +88,7 @@
         <key>other</key>
         <string>%d products</string>
         <key>zero</key>
-        <string/>
+        <string>%d products</string>
       </dict>
     </dict>
   </dict>

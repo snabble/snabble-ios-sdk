@@ -108,7 +108,7 @@
         <key>other</key>
         <string>%d položiek</string>
         <key>zero</key>
-        <string/>
+        <string>%d položiek</string>
       </dict>
     </dict>
   </dict>

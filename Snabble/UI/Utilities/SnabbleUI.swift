@@ -8,35 +8,27 @@ import UIKit
 
 /// global settings for the Snabble UI classes
 public enum SnabbleUI {
-    public private(set) static var appearance: CustomAppearance = SnabbleAppearance() {
+    private(set) static var appearance: CustomAppearance = SnabbleAppearance() {
         didSet {
-            UIColor.contrasts = appearance.contrastColors
             customizableAppearances.objects.forEach {
                 $0.setCustomAppearance(appearance)
             }
         }
     }
 
-    /// sets the global appearance to be used. Your app must call `SnabbleUI.setAppearance(_:)` before instantiating any snabble view controllers
-    public static func setAppearance(_ appearance: CustomAppearance) {
-        self.appearance = appearance
-    }
-
     private(set) static var project: Project = .none
 
     /// sets the project to be used
     public static func register(_ project: Project?) {
-        self.project = project ?? Project.none
+        self.project = project ?? .none
 
         if let project = project, project.id != Project.none.id, let manifestUrl = project.links.assetsManifest?.href {
             SnabbleUI.initializeAssets(for: project.id, manifestUrl, downloadFiles: true)
         }
+        Assets.domain = project?.id
+        self.appearance = Assets.provider?.appearance(for: project?.id) ?? SnabbleAppearance()
     }
-
-    public static var groupedTableStyle: UITableView.Style {
-        .insetGrouped
-    }
-
+    
     // MARK: - custom appearance handling
 
     private static var customizableAppearances: WeakCustomizableAppearanceSet = .init()
@@ -51,9 +43,8 @@ public enum SnabbleUI {
 
 // Uses default implementations of the procotol
 private struct SnabbleAppearance: CustomAppearance {
-    var accentColor: UIColor { UIColor(red: 0, green: 119, blue: 187, alpha: 1) }
+    var accent: UIColor { UIColor(red: 0, green: 119, blue: 187, alpha: 1) }
     var titleIcon: UIImage? { nil }
-    var contrastColors: [UIColor]? { nil }
 }
 
 // since we can't have NSHashTable<CustomizableAppearance>, roll our own primitive weak wrapper

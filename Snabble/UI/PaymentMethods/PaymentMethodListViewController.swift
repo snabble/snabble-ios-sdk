@@ -30,7 +30,7 @@ public final class PaymentMethodListViewController: UITableViewController {
     public init(for projectId: Identifier<Project>?, _ analyticsDelegate: AnalyticsDelegate?) {
         self.projectId = projectId
         self.analyticsDelegate = analyticsDelegate
-        super.init(style: SnabbleUI.groupedTableStyle)
+        super.init(style: .insetGrouped)
     }
 
     required init?(coder: NSCoder) {
