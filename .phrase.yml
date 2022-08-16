@@ -2,7 +2,7 @@ phrase:
   project_id: 12f8a92f13729d6f1996d5bce9ff7cbe
   pull:
     targets:
-    - file: ./Snabble/UI/<locale_name>.lproj/SnabbleLocalizable.strings
+    - file: ./Snabble/UI/<locale_name>.lproj/Localizable.strings
       params:
         file_format: strings
         tags: "SDK"
@@ -12,7 +12,7 @@ phrase:
         format_options:
             convert_placeholder: true
             include_pluralized_keys: false
-    - file: ./Snabble/UI/<locale_name>.lproj/SnabbleLocalizable.stringsdict
+    - file: ./Snabble/UI/<locale_name>.lproj/Localizable.stringsdict
       params:
         file_format: stringsdict
         tags: "SDK"
