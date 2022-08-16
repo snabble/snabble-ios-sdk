@@ -65,13 +65,13 @@ class SampleViewController: UIViewController {
             buttonContainer.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 32)
         ])
 
-        self.snabbleSetup()
     }
 
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
 
         self.showOnboardingView()
+        self.snabbleSetup()
     }
 
     func showOnboardingView() {
@@ -91,7 +91,7 @@ class SampleViewController: UIViewController {
         let APPSECRET = "2TKKEG5KXWY6DFOGTZKDUIBTNIRVCYKFZBY32FFRUUWIUAFEIBHQ===="
         let apiConfig = SnabbleSDK.Config(appId: APPID, secret: APPSECRET)
 
-        Assets.provider = self
+        Asset.provider = self
         
         Snabble.setup(config: apiConfig) { snabble in
             // initial config parsed/loaded
