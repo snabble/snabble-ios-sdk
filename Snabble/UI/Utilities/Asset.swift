@@ -1,5 +1,5 @@
 //
-//  Assets.swift
+//  Asset.swift
 //  Snabble
 //
 //  Created by Andreas Osberghaus on 11.08.22.
@@ -9,7 +9,7 @@ import Foundation
 import UIKit
 import SwiftUI
 
-public enum Assets {
+public enum Asset {
     /// Reference to the implementation of the `AssetProviding` implementation
     public static weak var provider: AssetProviding?
 
@@ -52,16 +52,16 @@ private final class BundleToken {
   }()
 }
 
-extension Assets {
+extension Asset {
     static func image(named name: String, domain: Any? = domain) -> SwiftUI.Image? {
-        guard let uiImage: UIImage = Assets.image(named: name, domain: domain) else {
+        guard let uiImage: UIImage = Asset.image(named: name, domain: domain) else {
             return nil
         }
         return SwiftUI.Image(uiImage: uiImage)
     }
 
     static func color(named name: String, domain: Any? = domain) -> SwiftUI.Color? {
-        guard let uiColor: UIColor = Assets.color(named: name, domain: domain) else {
+        guard let uiColor: UIColor = Asset.color(named: name, domain: domain) else {
             return nil
         }
         if #available(iOS 15.0, *) {
@@ -72,7 +72,7 @@ extension Assets {
     }
 
     static func preferredFont(forTextStyle style: UIFont.TextStyle, domain: Any? = domain) -> Font {
-        let uiFont: UIFont = Assets.preferredFont(forTextStyle: style, domain: domain)
+        let uiFont: UIFont = Asset.preferredFont(forTextStyle: style, domain: domain)
         return SwiftUI.Font.custom(uiFont.familyName, size: uiFont.pointSize, relativeTo: style.textStyle)
     }
 }

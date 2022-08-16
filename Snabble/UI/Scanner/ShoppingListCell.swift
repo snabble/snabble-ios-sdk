@@ -16,7 +16,7 @@ final class ShoppingListCell: UITableViewCell {
         cellView.translatesAutoresizingMaskIntoConstraints = false
 
         super.init(style: style, reuseIdentifier: reuseIdentifier)
-        self.backgroundColor = Assets.Color.clear()
+        self.backgroundColor = Asset.Color.clear()
         contentView.addSubview(cellView)
         self.cellView = cellView
 
@@ -108,11 +108,11 @@ extension ShoppingListCell {
         let asset: UIImage?
         switch item.entry {
         case .product:
-            asset = Assets.image(named: "SnabbleSDK/shoppinglist/shoppinglist-icon-product")
+            asset = Asset.image(named: "SnabbleSDK/shoppinglist/shoppinglist-icon-product")
         case .tag:
-            asset = Assets.image(named: "SnabbleSDK/shoppinglist/shoppinglist-icon-tag")
+            asset = Asset.image(named: "SnabbleSDK/shoppinglist/shoppinglist-icon-tag")
         case .custom:
-            asset = Assets.image(named: "SnabbleSDK/shoppinglist/shoppinglist-icon-text")
+            asset = Asset.image(named: "SnabbleSDK/shoppinglist/shoppinglist-icon-text")
         }
 
         self.cellView?.configureProductImage(with: asset?.withRenderingMode(.alwaysTemplate))

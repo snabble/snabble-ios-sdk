@@ -88,7 +88,7 @@ final class ShoppingCartTableCell: UITableViewCell {
         cellView.translatesAutoresizingMaskIntoConstraints = false
 
         super.init(style: style, reuseIdentifier: reuseIdentifier)
-        self.backgroundColor = Assets.Color.clear()
+        self.backgroundColor = Asset.Color.clear()
         self.contentView.addSubview(cellView)
         self.cellView = cellView
         self.cellView?.delegate = self
@@ -133,7 +133,7 @@ final class ShoppingCartTableCell: UITableViewCell {
         self.quantityText = nil
         self.unitsText = nil
         self.badgeText = nil
-        self.badgeColor = Assets.Color.systemRed()
+        self.badgeColor = Asset.Color.systemRed()
     }
 
     func configureCell(row: Int, delegate: ShoppingCartTableDelegate) {
@@ -157,8 +157,8 @@ final class ShoppingCartTableCell: UITableViewCell {
         self.cellView?.nameView?.priceLabel?.text = formatter.format(amount)
 
         if showImages {
-            let icon: UIImage? = Assets.image(named: "SnabbleSDK/icon-percent")
-            self.cellView?.imageView?.imageView?.image = icon?.recolored(with: Assets.Color.label())
+            let icon: UIImage? = Asset.image(named: "SnabbleSDK/icon-percent")
+            self.cellView?.imageView?.imageView?.image = icon?.recolored(with: Asset.Color.label())
             self.leftDisplay = .image
         }
     }
@@ -169,8 +169,8 @@ final class ShoppingCartTableCell: UITableViewCell {
         self.cellView?.nameView?.priceLabel?.text = L10n.Snabble.Shoppingcart.giveaway
 
         if showImages {
-            let icon: UIImage? = Assets.image(named: "SnabbleSDK/icon-giveaway")
-            self.cellView?.imageView?.imageView?.image = icon?.recolored(with: Assets.Color.accent())
+            let icon: UIImage? = Asset.image(named: "SnabbleSDK/icon-giveaway")
+            self.cellView?.imageView?.imageView?.image = icon?.recolored(with: Asset.Color.accent())
             self.leftDisplay = .image
         }
     }
@@ -220,13 +220,13 @@ final class ShoppingCartTableCell: UITableViewCell {
         let redeemed = lineItem?.redeemed == true
 
         if showImages {
-            let icon: UIImage? = Assets.image(named: "SnabbleSDK/icon-percent")
-            self.cellView?.imageView?.imageView?.image = icon?.recolored(with: redeemed ? Assets.Color.label() : Assets.Color.systemGray())
+            let icon: UIImage? = Asset.image(named: "SnabbleSDK/icon-percent")
+            self.cellView?.imageView?.imageView?.image = icon?.recolored(with: redeemed ? Asset.Color.label() : Asset.Color.systemGray())
             self.leftDisplay = .image
         } else {
             self.leftDisplay = .badge
             self.badgeText = "%"
-            self.badgeColor = redeemed ? Assets.Color.systemRed() : Assets.Color.systemGray()
+            self.badgeColor = redeemed ? Asset.Color.systemRed() : Asset.Color.systemGray()
         }
     }
 
@@ -302,7 +302,7 @@ final class ShoppingCartTableCell: UITableViewCell {
         if let couponItem = lineItems.first(where: { $0.type == .coupon && $0.refersTo == item.id }) {
             badgeText = "%"
             let redeemed = couponItem.redeemed == true
-            badgeColor = redeemed ? Assets.Color.systemRed() : Assets.Color.systemGray()
+            badgeColor = redeemed ? Asset.Color.systemRed() : Asset.Color.systemGray()
         }
 
         if let saleRestricton = product?.saleRestriction {
@@ -310,10 +310,10 @@ final class ShoppingCartTableCell: UITableViewCell {
             case .none: ()
             case .age(let age):
                 badgeText = "\(age)"
-                badgeColor = Assets.Color.systemRed()
+                badgeColor = Asset.Color.systemRed()
             case .fsk:
                 badgeText = "FSK"
-                badgeColor = Assets.Color.systemRed()
+                badgeColor = Asset.Color.systemRed()
             }
         }
         self.badgeText = badgeText

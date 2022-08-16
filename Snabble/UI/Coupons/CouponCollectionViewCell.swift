@@ -32,7 +32,7 @@ class CouponCollectionViewCell: UICollectionViewCell, Cardable, ReuseIdentifiabl
         let titleLabel = UILabel()
         titleLabel.translatesAutoresizingMaskIntoConstraints = false
         titleLabel.numberOfLines = 0
-        titleLabel.font = Assets.preferredFont(forTextStyle: .headline)
+        titleLabel.font = Asset.preferredFont(forTextStyle: .headline)
         titleLabel.setContentCompressionResistancePriority(.defaultHigh + 3, for: .vertical)
         titleLabel.minimumScaleFactor = 0.75
         titleLabel.adjustsFontSizeToFitWidth = true
@@ -40,14 +40,14 @@ class CouponCollectionViewCell: UICollectionViewCell, Cardable, ReuseIdentifiabl
         let subtitleLabel = UILabel()
         subtitleLabel.translatesAutoresizingMaskIntoConstraints = false
         subtitleLabel.numberOfLines = 0
-        subtitleLabel.font = Assets.preferredFont(forTextStyle: .caption1)
+        subtitleLabel.font = Asset.preferredFont(forTextStyle: .caption1)
         subtitleLabel.minimumScaleFactor = 0.75
         subtitleLabel.adjustsFontSizeToFitWidth = true
 
         let textLabel = UILabel()
         textLabel.translatesAutoresizingMaskIntoConstraints = false
-        textLabel.font = Assets.preferredFont(forTextStyle: .headline)
-        textLabel.textColor = Assets.Color.accent()
+        textLabel.font = Asset.preferredFont(forTextStyle: .headline)
+        textLabel.textColor = Asset.Color.accent()
         textLabel.numberOfLines = 0
         textLabel.setContentCompressionResistancePriority(.defaultHigh + 2, for: .vertical)
         textLabel.minimumScaleFactor = 0.75
@@ -55,7 +55,7 @@ class CouponCollectionViewCell: UICollectionViewCell, Cardable, ReuseIdentifiabl
 
         let validityLabel = UILabel()
         validityLabel.translatesAutoresizingMaskIntoConstraints = false
-        validityLabel.font = Assets.preferredFont(forTextStyle: .caption1)
+        validityLabel.font = Asset.preferredFont(forTextStyle: .caption1)
         validityLabel.numberOfLines = 0
         validityLabel.setContentCompressionResistancePriority(.defaultHigh + 1, for: .vertical)
         validityLabel.minimumScaleFactor = 0.75

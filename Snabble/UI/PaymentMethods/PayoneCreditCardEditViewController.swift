@@ -197,7 +197,7 @@ public final class PayoneCreditCardEditViewController: UIViewController {
     }
 
     private func setupView() {
-        view.backgroundColor = Assets.Color.systemBackground()
+        view.backgroundColor = Asset.Color.systemBackground()
 
         if #available(iOS 15, *) {
             view.restrictDynamicTypeSize(from: nil, to: .extraExtraExtraLarge)
@@ -210,31 +210,31 @@ public final class PayoneCreditCardEditViewController: UIViewController {
 
         explanation.translatesAutoresizingMaskIntoConstraints = false
         explanation.numberOfLines = 0
-        explanation.font = Assets.preferredFont(forTextStyle: .footnote)
+        explanation.font = Asset.preferredFont(forTextStyle: .footnote)
         explanation.adjustsFontForContentSizeCategory = true
         displayContainer.addSubview(explanation)
 
         cardNumberLabel.translatesAutoresizingMaskIntoConstraints = false
-        cardNumberLabel.font = Assets.preferredFont(forTextStyle: .body)
+        cardNumberLabel.font = Asset.preferredFont(forTextStyle: .body)
         cardNumberLabel.adjustsFontForContentSizeCategory = true
         displayContainer.addSubview(cardNumberLabel)
 
         cardNumber.translatesAutoresizingMaskIntoConstraints = false
         cardNumber.isEnabled = false
         cardNumber.borderStyle = .roundedRect
-        cardNumber.font = Assets.preferredFont(forTextStyle: .body)
+        cardNumber.font = Asset.preferredFont(forTextStyle: .body)
         cardNumber.adjustsFontForContentSizeCategory = true
         displayContainer.addSubview(cardNumber)
 
         expDateLabel.translatesAutoresizingMaskIntoConstraints = false
-        expDateLabel.font = Assets.preferredFont(forTextStyle: .body)
+        expDateLabel.font = Asset.preferredFont(forTextStyle: .body)
         expDateLabel.adjustsFontForContentSizeCategory = true
         displayContainer.addSubview(expDateLabel)
 
         expirationDate.translatesAutoresizingMaskIntoConstraints = false
         expirationDate.isEnabled = false
         expirationDate.borderStyle = .roundedRect
-        expirationDate.font = Assets.preferredFont(forTextStyle: .body)
+        expirationDate.font = Asset.preferredFont(forTextStyle: .body)
         expirationDate.adjustsFontForContentSizeCategory = true
         displayContainer.addSubview(expirationDate)
 
@@ -268,7 +268,7 @@ public final class PayoneCreditCardEditViewController: UIViewController {
         NSLayoutConstraint.activate(webViewContainer.constraintsForAnchoringTo(boundsOf: view))
 
         let activityIndicator = UIActivityIndicatorView(style: .medium)
-        activityIndicator.color = Assets.Color.systemGray()
+        activityIndicator.color = Asset.Color.systemGray()
         activityIndicator.translatesAutoresizingMaskIntoConstraints = false
         activityIndicator.hidesWhenStopped = true
         webViewContainer.addSubview(activityIndicator)
@@ -290,7 +290,7 @@ public final class PayoneCreditCardEditViewController: UIViewController {
         let webView = WKWebView(frame: .zero, configuration: config)
         webView.navigationDelegate = self
         webView.isOpaque = false
-        webView.backgroundColor = Assets.Color.clear()
+        webView.backgroundColor = Asset.Color.clear()
         webView.translatesAutoresizingMaskIntoConstraints = false
 
         containerView.addSubview(webView)

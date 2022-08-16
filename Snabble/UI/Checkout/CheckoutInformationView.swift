@@ -21,14 +21,14 @@ final class CheckoutInformationView: UIView {
 
     override init(frame: CGRect) {
         let textLabel = UILabel()
-        textLabel.textColor = Assets.Color.label()
+        textLabel.textColor = Asset.Color.label()
         textLabel.numberOfLines = 0
-        textLabel.font = Assets.preferredFont(forTextStyle: .footnote)
+        textLabel.font = Asset.preferredFont(forTextStyle: .footnote)
         textLabel.adjustsFontForContentSizeCategory = true
 
         let button = UIButton(type: .system)
-        button.setTitleColor(Assets.Color.systemRed(), for: .normal)
-        button.titleLabel?.font = Assets.preferredFont(forTextStyle: .footnote, weight: .medium)
+        button.setTitleColor(Asset.Color.systemRed(), for: .normal)
+        button.titleLabel?.font = Asset.preferredFont(forTextStyle: .footnote, weight: .medium)
         button.titleLabel?.adjustsFontForContentSizeCategory = true
 
         let stackView = UIStackView(arrangedSubviews: [textLabel, button])

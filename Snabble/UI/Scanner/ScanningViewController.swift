@@ -77,8 +77,8 @@ final class ScanningViewController: UIViewController {
         self.barcodeDetector.delegate = self
 
         self.title = L10n.Snabble.Scanner.title
-        self.tabBarItem.image = Assets.image(named: "SnabbleSDK/icon-scan-inactive")
-        self.tabBarItem.selectedImage = Assets.image(named: "SnabbleSDK/icon-scan-active")
+        self.tabBarItem.image = Asset.image(named: "SnabbleSDK/icon-scan-inactive")
+        self.tabBarItem.selectedImage = Asset.image(named: "SnabbleSDK/icon-scan-active")
         self.navigationItem.title = L10n.Snabble.Scanner.scanningTitle
 
         SnabbleUI.registerForAppearanceChange(self)
@@ -96,7 +96,7 @@ final class ScanningViewController: UIViewController {
         }
         let spinner = UIActivityIndicatorView(style: .large)
         spinner.translatesAutoresizingMaskIntoConstraints = false
-        spinner.color = Assets.Color.systemGray()
+        spinner.color = Asset.Color.systemGray()
         spinner.hidesWhenStopped = true
 
         let scanConfirmationView = ScanConfirmationView(frame: .zero)
@@ -132,7 +132,7 @@ final class ScanningViewController: UIViewController {
     override public func viewDidLoad() {
         super.viewDidLoad()
 
-        self.view.backgroundColor = Assets.Color.systemGray()
+        self.view.backgroundColor = Asset.Color.systemGray()
 
         if let custom = self.customAppearance {
             scanConfirmationView?.setCustomAppearance(custom)
@@ -143,11 +143,11 @@ final class ScanningViewController: UIViewController {
         self.messageTopDistance?.constant = -150
         messageView?.isHidden = true
 
-        let torchButton = UIBarButtonItem(image: Assets.image(named: "SnabbleSDK/icon-light-inactive"), style: .plain, target: self, action: #selector(torchTapped(_:)))
+        let torchButton = UIBarButtonItem(image: Asset.image(named: "SnabbleSDK/icon-light-inactive"), style: .plain, target: self, action: #selector(torchTapped(_:)))
         self.pulleyViewController?.navigationItem.leftBarButtonItem = torchButton
         self.torchButton = torchButton
 
-        let searchButton = UIBarButtonItem(image: Assets.image(named: "SnabbleSDK/icon-entercode"), style: .plain, target: self, action: #selector(searchTapped(_:)))
+        let searchButton = UIBarButtonItem(image: Asset.image(named: "SnabbleSDK/icon-entercode"), style: .plain, target: self, action: #selector(searchTapped(_:)))
         self.pulleyViewController?.navigationItem.rightBarButtonItem = searchButton
     }
 
@@ -211,7 +211,7 @@ final class ScanningViewController: UIViewController {
     // MARK: - nav bar buttons
     @objc private func torchTapped(_ sender: Any) {
         let torchOn = self.barcodeDetector.toggleTorch()
-        torchButton?.image = torchOn ? Assets.image(named: "SnabbleSDK/icon-light-active") : Assets.image(named: "SnabbleSDK/icon-light-inactive")
+        torchButton?.image = torchOn ? Asset.image(named: "SnabbleSDK/icon-light-active") : Asset.image(named: "SnabbleSDK/icon-light-inactive")
     }
 
     @objc private func searchTapped(_ sender: Any) {
@@ -551,7 +551,7 @@ extension ScanningViewController {
         // HACK: set the action sheet buttons background
         if let alertContentView = alert.view.subviews.first?.subviews.first {
             for view in alertContentView.subviews {
-                view.backgroundColor = Assets.Color.systemBackground()
+                view.backgroundColor = Asset.Color.systemBackground()
             }
         }
 

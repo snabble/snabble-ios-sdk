@@ -28,24 +28,24 @@ protocol SelectionSheetAppearance {
 extension SelectionSheetAppearance {
     var backgroundColor: UIColor {
         UIColor { traitCollection in
-            traitCollection.userInterfaceStyle == .dark ? Assets.Color.secondarySystemBackground() : Assets.Color.systemBackground()
+            traitCollection.userInterfaceStyle == .dark ? Asset.Color.secondarySystemBackground() : Asset.Color.systemBackground()
         }
     }
 
     var titleFont: UIFont { .preferredFont(forTextStyle: .headline) }
-    var titleColor: UIColor { Assets.Color.label() }
+    var titleColor: UIColor { Asset.Color.label() }
 
     var messageFont: UIFont { .preferredFont(forTextStyle: .body) }
-    var messageColor: UIColor { Assets.Color.label() }
+    var messageColor: UIColor { Asset.Color.label() }
 
     var actionTitleFont: UIFont { .preferredFont(forTextStyle: .title3) }
-    var actionTitleColor: UIColor { Assets.Color.label() }
+    var actionTitleColor: UIColor { Asset.Color.label() }
 
     var actionSubtitleFont: UIFont { .preferredFont(forTextStyle: .body) }
-    var actionSubtitleColor: UIColor { Assets.Color.label() }
+    var actionSubtitleColor: UIColor { Asset.Color.label() }
 
     var cancelButtonFont: UIFont { .preferredFont(forTextStyle: .title3, weight: .semibold) }
-    var cancelButtonColor: UIColor { Assets.Color.label() }
+    var cancelButtonColor: UIColor { Asset.Color.label() }
 }
 
 struct DefaultSelectionSheetAppearance: SelectionSheetAppearance { }

@@ -32,7 +32,7 @@ final class ShoppingListCellView: UIView {
         let productImage = UIImageView()
         productImage.translatesAutoresizingMaskIntoConstraints = false
         productImage.contentMode = .scaleAspectFit
-        productImage.tintColor = Assets.Color.label()
+        productImage.tintColor = Asset.Color.label()
 
         let spinner = UIActivityIndicatorView(style: .medium)
         spinner.translatesAutoresizingMaskIntoConstraints = false
@@ -40,9 +40,9 @@ final class ShoppingListCellView: UIView {
 
         let nameLabel = UILabel()
         nameLabel.translatesAutoresizingMaskIntoConstraints = false
-        nameLabel.font = Assets.preferredFont(forTextStyle: .subheadline)
+        nameLabel.font = Asset.preferredFont(forTextStyle: .subheadline)
         nameLabel.adjustsFontForContentSizeCategory = true
-        nameLabel.textColor = Assets.Color.label()
+        nameLabel.textColor = Asset.Color.label()
         nameLabel.textAlignment = .natural
         nameLabel.numberOfLines = 0
 
@@ -50,27 +50,27 @@ final class ShoppingListCellView: UIView {
 
         let checkContainer = UIView()
         checkContainer.translatesAutoresizingMaskIntoConstraints = false
-        checkContainer.backgroundColor = Assets.Color.systemTeal()
-        checkContainer.layer.shadowColor = Assets.Color.systemGray3().cgColor
+        checkContainer.backgroundColor = Asset.Color.systemTeal()
+        checkContainer.layer.shadowColor = Asset.Color.systemGray3().cgColor
         checkContainer.layer.shadowOpacity = 0.3
         checkContainer.layer.shadowOffset = CGSize.zero
         checkContainer.layer.shadowRadius = 1.5
         checkContainer.layer.masksToBounds = true
         checkContainer.layer.borderWidth = 1 / UIScreen.main.scale
-        checkContainer.layer.borderColor = Assets.Color.systemBackground().cgColor
+        checkContainer.layer.borderColor = Asset.Color.systemBackground().cgColor
         checkContainer.layer.cornerRadius = 12
-        checkContainer.backgroundColor = Assets.Color.clear()
+        checkContainer.backgroundColor = Asset.Color.clear()
 
         let checkImage = UIImageView()
         checkImage.translatesAutoresizingMaskIntoConstraints = false
         checkImage.contentMode = .scaleAspectFit
-        checkImage.image = Assets.image(named: "SnabbleSDK/icon-check-large")
+        checkImage.image = Asset.image(named: "SnabbleSDK/icon-check-large")
 
         let quantityLabel = UILabel()
         quantityLabel.translatesAutoresizingMaskIntoConstraints = false
-        quantityLabel.font = Assets.preferredFont(forTextStyle: .footnote)
+        quantityLabel.font = Asset.preferredFont(forTextStyle: .footnote)
         quantityLabel.adjustsFontForContentSizeCategory = true
-        quantityLabel.textColor = Assets.Color.label()
+        quantityLabel.textColor = Asset.Color.label()
         quantityLabel.textAlignment = .center
         quantityLabel.numberOfLines = 1
 

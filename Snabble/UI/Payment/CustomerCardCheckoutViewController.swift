@@ -50,14 +50,14 @@ final class CustomerCardCheckoutViewController: UIViewController {
 
     override public func loadView() {
         let contentView = UIView(frame: UIScreen.main.bounds)
-        contentView.backgroundColor = Assets.Color.systemBackground()
+        contentView.backgroundColor = Asset.Color.systemBackground()
         if #available(iOS 15, *) {
             contentView.restrictDynamicTypeSize(from: nil, to: .extraExtraExtraLarge)
         }
 
         let scrollView = UIScrollView()
         scrollView.translatesAutoresizingMaskIntoConstraints = false
-        scrollView.backgroundColor = Assets.Color.systemBackground()
+        scrollView.backgroundColor = Asset.Color.systemBackground()
         scrollView.showsVerticalScrollIndicator = false
         scrollView.alwaysBounceVertical = false
 
@@ -69,7 +69,7 @@ final class CustomerCardCheckoutViewController: UIViewController {
 
         let paidButton = UIButton(type: .system)
         paidButton.translatesAutoresizingMaskIntoConstraints = false
-        paidButton.titleLabel?.font = Assets.preferredFont(forTextStyle: .headline)
+        paidButton.titleLabel?.font = Asset.preferredFont(forTextStyle: .headline)
         paidButton.titleLabel?.adjustsFontForContentSizeCategory = true
         paidButton.makeSnabbleButton()
         paidButton.setTitle(L10n.Snabble.QRCode.didPay, for: .normal)
@@ -95,7 +95,7 @@ final class CustomerCardCheckoutViewController: UIViewController {
         arrowWrapper.translatesAutoresizingMaskIntoConstraints = false
 
         let arrowIcon = customImage
-        arrowIcon.image = Assets.image(named: "SnabbleSDK/arrow-up")
+        arrowIcon.image = Asset.image(named: "SnabbleSDK/arrow-up")
         arrowIcon.adjustsImageSizeForAccessibilityContentSizeCategory = true
 
         let codeWrapper = UIView()
@@ -103,7 +103,7 @@ final class CustomerCardCheckoutViewController: UIViewController {
 
         let codeView = EANView()
         codeView.translatesAutoresizingMaskIntoConstraints = false
-        codeView.backgroundColor = Assets.Color.systemBackground()
+        codeView.backgroundColor = Asset.Color.systemBackground()
 
         contentView.addSubview(scrollView)
         scrollView.addSubview(wrapperView)

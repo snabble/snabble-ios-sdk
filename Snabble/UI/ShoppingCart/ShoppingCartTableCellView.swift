@@ -146,7 +146,7 @@ extension ShoppingCartTableCellView {
             imageBackgroundView.translatesAutoresizingMaskIntoConstraints = false
             imageBackgroundView.layer.cornerRadius = 4
             imageBackgroundView.layer.masksToBounds = true
-            imageBackgroundView.backgroundColor = Assets.Color.systemBackground()
+            imageBackgroundView.backgroundColor = Asset.Color.systemBackground()
 
             let imageView = UIImageView()
             imageView.translatesAutoresizingMaskIntoConstraints = false
@@ -217,7 +217,7 @@ extension ShoppingCartTableCellView {
             let badgeLabel = UILabel()
             badgeLabel.translatesAutoresizingMaskIntoConstraints = false
             badgeLabel.font = UIFont.systemFont(ofSize: 11)
-            badgeLabel.textColor = Assets.Color.label().contrast
+            badgeLabel.textColor = Asset.Color.label().contrast
             badgeLabel.textAlignment = .center
             badgeLabel.layer.cornerRadius = 4
             badgeLabel.layer.masksToBounds = true
@@ -257,16 +257,16 @@ extension ShoppingCartTableCellView {
 
         override init(frame: CGRect) {
             let nameLabel = UILabel()
-            nameLabel.font = Assets.preferredFont(forTextStyle: .subheadline)
+            nameLabel.font = Asset.preferredFont(forTextStyle: .subheadline)
             nameLabel.adjustsFontForContentSizeCategory = true
-            nameLabel.textColor = Assets.Color.label()
+            nameLabel.textColor = Asset.Color.label()
             nameLabel.textAlignment = .natural
             nameLabel.numberOfLines = 0
 
             let priceLabel = UILabel()
-            priceLabel.font = Assets.preferredFont(forTextStyle: .footnote)
+            priceLabel.font = Asset.preferredFont(forTextStyle: .footnote)
             priceLabel.adjustsFontForContentSizeCategory = true
-            priceLabel.textColor = Assets.Color.systemGray()
+            priceLabel.textColor = Asset.Color.systemGray()
             priceLabel.textAlignment = .natural
 
             let stackView = UIStackView(arrangedSubviews: [nameLabel, priceLabel])
@@ -302,16 +302,16 @@ extension ShoppingCartTableCellView {
         override init(frame: CGRect) {
             let quantityLabel = UILabel()
             quantityLabel.translatesAutoresizingMaskIntoConstraints = false
-            quantityLabel.font = Assets.preferredFont(forTextStyle: .footnote, weight: .semibold)
+            quantityLabel.font = Asset.preferredFont(forTextStyle: .footnote, weight: .semibold)
             quantityLabel.adjustsFontForContentSizeCategory = true
-            quantityLabel.textColor = Assets.Color.label()
+            quantityLabel.textColor = Asset.Color.label()
             quantityLabel.textAlignment = .right
 
             let unitLabel = UILabel()
             unitLabel.translatesAutoresizingMaskIntoConstraints = false
-            unitLabel.font = Assets.preferredFont(forTextStyle: .footnote, weight: .semibold)
+            unitLabel.font = Asset.preferredFont(forTextStyle: .footnote, weight: .semibold)
             unitLabel.adjustsFontForContentSizeCategory = true
-            unitLabel.textColor = Assets.Color.label()
+            unitLabel.textColor = Asset.Color.label()
             unitLabel.textAlignment = .center
             unitLabel.setContentHuggingPriority(.required, for: .horizontal)
 
@@ -353,11 +353,11 @@ extension ShoppingCartTableCellView {
         override init(frame: CGRect) {
             let quantityTextField = UITextField()
             quantityTextField.translatesAutoresizingMaskIntoConstraints = false
-            quantityTextField.textColor = Assets.Color.label()
+            quantityTextField.textColor = Asset.Color.label()
             quantityTextField.font = UIFont.systemFont(ofSize: 13, weight: .semibold)
             quantityTextField.textAlignment = .right
             quantityTextField.borderStyle = .roundedRect
-            quantityTextField.backgroundColor = Assets.Color.secondarySystemBackground()
+            quantityTextField.backgroundColor = Asset.Color.secondarySystemBackground()
             quantityTextField.keyboardType = .numberPad
             quantityTextField.minimumFontSize = 17
             quantityTextField.adjustsFontSizeToFitWidth = true
@@ -365,7 +365,7 @@ extension ShoppingCartTableCellView {
             let unitLabel = UILabel()
             unitLabel.translatesAutoresizingMaskIntoConstraints = false
             unitLabel.font = UIFont.systemFont(ofSize: 13, weight: .semibold)
-            unitLabel.textColor = Assets.Color.label()
+            unitLabel.textColor = Asset.Color.label()
             unitLabel.textAlignment = .center
             unitLabel.setContentHuggingPriority(.required, for: .horizontal)
 
@@ -407,20 +407,20 @@ extension ShoppingCartTableCellView {
         override init(frame: CGRect) {
             let minusButton = UIButton(type: .custom)
             minusButton.translatesAutoresizingMaskIntoConstraints = false
-            minusButton.setImage(Assets.image(named: "SnabbleSDK/icon-minus"), for: .normal)
+            minusButton.setImage(Asset.image(named: "SnabbleSDK/icon-minus"), for: .normal)
             minusButton.makeBorderedButton()
-            minusButton.backgroundColor = Assets.Color.secondarySystemBackground()
+            minusButton.backgroundColor = Asset.Color.secondarySystemBackground()
 
             let plusButton = UIButton(type: .custom)
             plusButton.translatesAutoresizingMaskIntoConstraints = false
-            plusButton.setImage(Assets.image(named: "SnabbleSDK/icon-plus"), for: .normal)
+            plusButton.setImage(Asset.image(named: "SnabbleSDK/icon-plus"), for: .normal)
             plusButton.makeBorderedButton()
-            plusButton.backgroundColor = Assets.Color.secondarySystemBackground()
+            plusButton.backgroundColor = Asset.Color.secondarySystemBackground()
 
             let quantityLabel = UILabel()
             quantityLabel.translatesAutoresizingMaskIntoConstraints = false
             quantityLabel.font = UIFont.systemFont(ofSize: 13, weight: .semibold)
-            quantityLabel.textColor = Assets.Color.label()
+            quantityLabel.textColor = Asset.Color.label()
             quantityLabel.textAlignment = .center
             super.init(frame: frame)
 

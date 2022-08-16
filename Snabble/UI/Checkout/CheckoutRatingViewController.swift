@@ -60,7 +60,7 @@ final class CheckoutRatingViewController: UIViewController {
 
         let textLabel = UILabel()
         textLabel.translatesAutoresizingMaskIntoConstraints = false
-        textLabel.font = Assets.preferredFont(forTextStyle: .body)
+        textLabel.font = Asset.preferredFont(forTextStyle: .body)
         textLabel.adjustsFontForContentSizeCategory = true
         textLabel.numberOfLines = 1
         textLabel.minimumScaleFactor = 13.0 / 17.0
@@ -71,7 +71,7 @@ final class CheckoutRatingViewController: UIViewController {
 
         let detailTextLabel = UILabel()
         detailTextLabel.translatesAutoresizingMaskIntoConstraints = false
-        detailTextLabel.font = Assets.preferredFont(forTextStyle: .body)
+        detailTextLabel.font = Asset.preferredFont(forTextStyle: .body)
         detailTextLabel.adjustsFontForContentSizeCategory = true
         detailTextLabel.numberOfLines = 1
         detailTextLabel.minimumScaleFactor = 13.0 / 17.0
@@ -83,17 +83,17 @@ final class CheckoutRatingViewController: UIViewController {
         detailTextLabel.isHidden = true
 
         let leftButton = UIButton(type: .custom)
-        leftButton.setImage(Assets.image(named: "SnabbleSDK/emoji-1"), for: .normal)
+        leftButton.setImage(Asset.image(named: "SnabbleSDK/emoji-1"), for: .normal)
         leftButton.addTarget(self, action: #selector(likeButtonTapped(_:)), for: .touchUpInside)
         leftButton.tag = 1
 
         let middleButton = UIButton(type: .custom)
-        middleButton.setImage(Assets.image(named: "SnabbleSDK/emoji-2"), for: .normal)
+        middleButton.setImage(Asset.image(named: "SnabbleSDK/emoji-2"), for: .normal)
         middleButton.addTarget(self, action: #selector(likeButtonTapped(_:)), for: .touchUpInside)
         middleButton.tag = 2
 
         let rightButton = UIButton(type: .custom)
-        rightButton.setImage(Assets.image(named: "SnabbleSDK/emoji-3"), for: .normal)
+        rightButton.setImage(Asset.image(named: "SnabbleSDK/emoji-3"), for: .normal)
         rightButton.addTarget(self, action: #selector(likeButtonTapped(_:)), for: .touchUpInside)
         rightButton.tag = 3
 

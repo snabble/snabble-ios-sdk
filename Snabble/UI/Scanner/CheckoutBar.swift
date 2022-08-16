@@ -48,16 +48,16 @@ final class CheckoutBar: UIView {
 
         let itemCountLabel = UILabel()
         itemCountLabel.translatesAutoresizingMaskIntoConstraints = false
-        itemCountLabel.font = Assets.preferredFont(forTextStyle: .footnote)
+        itemCountLabel.font = Asset.preferredFont(forTextStyle: .footnote)
         itemCountLabel.adjustsFontForContentSizeCategory = true
-        itemCountLabel.textColor = Assets.Color.secondaryLabel()
+        itemCountLabel.textColor = Asset.Color.secondaryLabel()
         itemCountLabel.textAlignment = .left
 
         let totalPriceLabel = UILabel()
         totalPriceLabel.translatesAutoresizingMaskIntoConstraints = false
-        totalPriceLabel.font = Assets.preferredFont(forTextStyle: .title2, weight: .bold)
+        totalPriceLabel.font = Asset.preferredFont(forTextStyle: .title2, weight: .bold)
         totalPriceLabel.adjustsFontForContentSizeCategory = true
-        totalPriceLabel.textColor = Assets.Color.label()
+        totalPriceLabel.textColor = Asset.Color.label()
         totalPriceLabel.textAlignment = .right
 
         let paymentStackView = UIStackView()
@@ -74,36 +74,36 @@ final class CheckoutBar: UIView {
         methodSelectionStackView.spacing = 4
         methodSelectionStackView.isLayoutMarginsRelativeArrangement = true
         methodSelectionStackView.layoutMargins = UIEdgeInsets(top: 0, left: 12, bottom: 0, right: 12)
-        methodSelectionStackView.backgroundColor = Assets.Color.systemBackground()
+        methodSelectionStackView.backgroundColor = Asset.Color.systemBackground()
         methodSelectionStackView.layer.masksToBounds = true
         methodSelectionStackView.layer.cornerRadius = 8
-        methodSelectionStackView.layer.borderColor = Assets.Color.systemGray6().cgColor
+        methodSelectionStackView.layer.borderColor = Asset.Color.systemGray6().cgColor
         methodSelectionStackView.layer.borderWidth = 1 / UIScreen.main.scale
 
         let noPaymentLabel = UILabel()
         noPaymentLabel.translatesAutoresizingMaskIntoConstraints = false
-        noPaymentLabel.font = Assets.preferredFont(forTextStyle: .body, weight: .medium)
+        noPaymentLabel.font = Asset.preferredFont(forTextStyle: .body, weight: .medium)
         noPaymentLabel.adjustsFontForContentSizeCategory = true
-        noPaymentLabel.textColor = Assets.Color.label()
+        noPaymentLabel.textColor = Asset.Color.label()
         noPaymentLabel.textAlignment = .center
         noPaymentLabel.text = L10n.Snabble.Shoppingcart.BuyProducts.selectPaymentMethod
 
         let methodIcon = UIImageView()
         methodIcon.translatesAutoresizingMaskIntoConstraints = false
         methodIcon.contentMode = .scaleAspectFit
-        methodIcon.image = Assets.image(named: "SnabbleSDK/payment/payment-sco")
+        methodIcon.image = Asset.image(named: "SnabbleSDK/payment/payment-sco")
 
         let chevronImage = UIImageView()
         chevronImage.translatesAutoresizingMaskIntoConstraints = false
         chevronImage.contentMode = .scaleAspectFit
-        chevronImage.image = Assets.image(named: "SnabbleSDK/icon-chevron-down")
+        chevronImage.image = Asset.image(named: "SnabbleSDK/icon-chevron-down")
 
         let checkoutButton = UIButton(type: .system)
         checkoutButton.translatesAutoresizingMaskIntoConstraints = false
         checkoutButton.setTitle(L10n.Snabble.Shoppingcart.BuyProducts.now, for: .normal)
-        let disabledColor = Assets.Color.accent().contrast?.withAlphaComponent(0.5)
+        let disabledColor = Asset.Color.accent().contrast?.withAlphaComponent(0.5)
         checkoutButton.setTitleColor(disabledColor, for: .disabled)
-        checkoutButton.titleLabel?.font = Assets.preferredFont(forTextStyle: .headline)
+        checkoutButton.titleLabel?.font = Asset.preferredFont(forTextStyle: .headline)
         checkoutButton.titleLabel?.adjustsFontForContentSizeCategory = true
         checkoutButton.makeSnabbleButton()
         checkoutButton.isEnabled = true
