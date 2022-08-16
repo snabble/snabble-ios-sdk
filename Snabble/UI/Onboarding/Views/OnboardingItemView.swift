@@ -74,7 +74,7 @@ struct OnboardingItemView: View {
             Button(action: {
                 isPresenting.toggle()
             }) {
-                Text(Assets.localizedString(forKey: "Snabble.Onboarding.Terms.show"))
+                Text(key: "Snabble.Onboarding.Terms.show")
                     .font(.headline)
             }
             .sheet(isPresented: $isPresenting) {
@@ -98,7 +98,7 @@ struct OnboardingItemView: View {
                 Text(item.attributedString)
             }
         } else {
-            AttributedText(htmlString: item.text ?? "", openURL: $urlResource)
+            AttributedText(htmlString: Assets.localizedString(forKey: item.text ?? ""), openURL: $urlResource)
         }
     }
 
@@ -123,7 +123,7 @@ struct OnboardingItemView: View {
 
         // create attributedText on main thread since HTML formatter will crash SwiftUI
         DispatchQueue.main.async {
-            self.attributedText = text.attributedStringFromHTML
+            self.attributedText = Assets.localizedString(forKey: text).attributedStringFromHTML
         }
     }
 

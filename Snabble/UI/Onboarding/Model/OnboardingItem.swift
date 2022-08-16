@@ -74,9 +74,9 @@ public extension OnboardingItem {
     /// use markdown for links like: `Please visit: [snabble](https://snabble.io)`
     var attributedString: AttributedString {
         do {
-            return try AttributedString(markdown: self.text ?? "", baseURL: nil)
+            return try AttributedString(markdown: Assets.localizedString(forKey: self.text ?? ""), baseURL: nil)
         } catch {
-            return AttributedString(self.text ?? "")
+            return AttributedString(Assets.localizedString(forKey: self.text ?? ""))
         }
     }
 }

@@ -36,6 +36,7 @@ public struct OnboardingView: View {
                 .scaledToFit()
                 .frame(maxHeight: 30)
                 .clipShape(RoundedRectangle(cornerRadius: 5))
+                .padding(.top, 10)
         } else {
             EmptyView()
         }

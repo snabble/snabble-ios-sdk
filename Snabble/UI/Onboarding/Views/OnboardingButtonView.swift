@@ -27,7 +27,7 @@ struct OnboardingButtonView: View {
                 }
                 print("right clicked")
             }) {
-                Text(text)
+                Text(key: text)
             }
             .buttonStyle(.automatic)
             .buttonStyle(AccentButtonStyle())
@@ -46,7 +46,7 @@ struct OnboardingButtonView: View {
                     presentationMode.wrappedValue.dismiss()
                 }
             }) {
-                Text(text)
+                Text(key: text)
             }
             .buttonStyle(AccentButtonStyle())
         }

@@ -30,6 +30,13 @@ extension ImageSourcing {
 
 import SwiftUI
 
+extension Text {
+    init(key string: String) {
+        let value = Assets.localizedString(forKey: string)
+        self.init(value)
+    }
+}
+
 extension ImageSourcing {
     /// SwiftUI support
     public var image: SwiftUI.Image? {
