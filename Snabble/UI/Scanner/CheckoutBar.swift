@@ -91,12 +91,12 @@ final class CheckoutBar: UIView {
         let methodIcon = UIImageView()
         methodIcon.translatesAutoresizingMaskIntoConstraints = false
         methodIcon.contentMode = .scaleAspectFit
-        methodIcon.image = Asset.SnabbleSDK.Payment.paymentSco.image
+        methodIcon.image = Assets.image(named: "SnabbleSDK/payment/payment-sco")
 
         let chevronImage = UIImageView()
         chevronImage.translatesAutoresizingMaskIntoConstraints = false
         chevronImage.contentMode = .scaleAspectFit
-        chevronImage.image = Asset.SnabbleSDK.iconChevronDown.image
+        chevronImage.image = Assets.image(named: "SnabbleSDK/icon-chevron-down")
 
         let checkoutButton = UIButton(type: .system)
         checkoutButton.translatesAutoresizingMaskIntoConstraints = false

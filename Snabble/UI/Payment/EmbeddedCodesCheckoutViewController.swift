@@ -121,7 +121,7 @@ final class EmbeddedCodesCheckoutViewController: UIViewController {
         arrowWrapper.translatesAutoresizingMaskIntoConstraints = false
 
         let arrowIcon = iconImage
-        arrowIcon.image = Asset.SnabbleSDK.arrowUp.image
+        arrowIcon.image = Assets.image(named: "SnabbleSDK/arrow-up")
         arrowIcon.adjustsImageSizeForAccessibilityContentSizeCategory = true
 
         let codeCountLabel = customLabel

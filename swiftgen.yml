@@ -1,13 +1,3 @@
-#
-    
-xcassets:
-  inputs: Snabble.xcassets
-  outputs:
-    templatePath: xcassets-swift5.stencil
-    params:
-      imageTypeName: SwiftGenImageAsset
-    output: Snabble/UI/SwiftGenAssets.swift
-
 strings:
   inputs: Snabble/UI/en.lproj
   outputs:

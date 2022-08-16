@@ -64,7 +64,7 @@ final class ShoppingListCellView: UIView {
         let checkImage = UIImageView()
         checkImage.translatesAutoresizingMaskIntoConstraints = false
         checkImage.contentMode = .scaleAspectFit
-        checkImage.image = Asset.SnabbleSDK.iconCheckLarge.image
+        checkImage.image = Assets.image(named: "SnabbleSDK/icon-check-large")
 
         let quantityLabel = UILabel()
         quantityLabel.translatesAutoresizingMaskIntoConstraints = false
@@ -153,7 +153,7 @@ final class ShoppingListCellView: UIView {
         self.nameLabel?.attributedText = attributedText
     }
 
-    public func configureProductImage(with image: UIImage) {
+    public func configureProductImage(with image: UIImage?) {
         self.productImage?.image = image
     }
 }

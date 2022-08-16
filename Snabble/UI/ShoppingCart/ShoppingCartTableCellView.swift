@@ -407,13 +407,13 @@ extension ShoppingCartTableCellView {
         override init(frame: CGRect) {
             let minusButton = UIButton(type: .custom)
             minusButton.translatesAutoresizingMaskIntoConstraints = false
-            minusButton.setImage(Asset.SnabbleSDK.iconMinus.image, for: .normal)
+            minusButton.setImage(Assets.image(named: "SnabbleSDK/icon-minus"), for: .normal)
             minusButton.makeBorderedButton()
             minusButton.backgroundColor = Assets.Color.secondarySystemBackground()
 
             let plusButton = UIButton(type: .custom)
             plusButton.translatesAutoresizingMaskIntoConstraints = false
-            plusButton.setImage(Asset.SnabbleSDK.iconPlus.image, for: .normal)
+            plusButton.setImage(Assets.image(named: "SnabbleSDK/icon-plus"), for: .normal)
             plusButton.makeBorderedButton()
             plusButton.backgroundColor = Assets.Color.secondarySystemBackground()
 

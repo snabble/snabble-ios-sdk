@@ -41,7 +41,7 @@ public final class BarcodeDetectorOverlay: UIView {
         super.init(frame: .zero)
 
         barcodeOverlay.translatesAutoresizingMaskIntoConstraints = false
-        barcodeOverlay.image = Asset.SnabbleSDK.barcodeOverlay.image
+        barcodeOverlay.image = Assets.image(named: "SnabbleSDK/barcode-overlay")
         addSubview(barcodeOverlay)
 
         NSLayoutConstraint.activate([

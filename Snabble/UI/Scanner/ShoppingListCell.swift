@@ -105,16 +105,16 @@ extension ShoppingListCell {
     }
 
     private func setDefaultImage(for item: ShoppingListItem) {
-        let asset: SwiftGenImageAsset
+        let asset: UIImage?
         switch item.entry {
         case .product:
-            asset = Asset.SnabbleSDK.Shoppinglist.shoppinglistIconProduct
+            asset = Assets.image(named: "SnabbleSDK/shoppinglist/shoppinglist-icon-product")
         case .tag:
-            asset = Asset.SnabbleSDK.Shoppinglist.shoppinglistIconTag
+            asset = Assets.image(named: "SnabbleSDK/shoppinglist/shoppinglist-icon-tag")
         case .custom:
-            asset = Asset.SnabbleSDK.Shoppinglist.shoppinglistIconText
+            asset = Assets.image(named: "SnabbleSDK/shoppinglist/shoppinglist-icon-text")
         }
 
-        self.cellView?.configureProductImage(with: asset.image.withRenderingMode(.alwaysTemplate))
+        self.cellView?.configureProductImage(with: asset?.withRenderingMode(.alwaysTemplate))
     }
 }

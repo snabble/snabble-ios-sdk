@@ -136,11 +136,11 @@ final class ScanConfirmationView: UIView {
         quantityStack.spacing = 8
 
         let minusButton = squareButton
-        minusButton.setImage(Asset.SnabbleSDK.iconMinus.image, for: .normal)
+        minusButton.setImage(Assets.image(named: "SnabbleSDK/icon-minus"), for: .normal)
         minusButton.addTarget(self, action: #selector(minusButtonTapped(_:)), for: .touchUpInside)
 
         let plusButton = squareButton
-        plusButton.setImage(Asset.SnabbleSDK.iconPlus.image, for: .normal)
+        plusButton.setImage(Assets.image(named: "SnabbleSDK/icon-plus"), for: .normal)
         plusButton.addTarget(self, action: #selector(plusButtonTapped(_:)), for: .touchUpInside)
 
         let quantityField = UITextField()

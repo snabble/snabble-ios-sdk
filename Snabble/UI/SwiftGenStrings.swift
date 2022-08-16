@@ -171,24 +171,6 @@ public enum L10n {
       /// SECTION: Android KeyStore
       public static var title: String { return L10n.tr("SnabbleLocalizable", "Snabble.Keyguard.title", fallback: "Please unlock your device") }
     }
-    public enum Onboarding {
-      /// Agree
-      public static var accept: String { return L10n.tr("SnabbleLocalizable", "Snabble.Onboarding.accept", fallback: "Agree") }
-      /// Using Snabble, you scan your purchase yourself and pay directly in the app. No queueing and without putting your purchase on the belt.
-      public static var message1: String { return L10n.tr("SnabbleLocalizable", "Snabble.Onboarding.message1", fallback: "Using Snabble, you scan your purchase yourself and pay directly in the app. No queueing and without putting your purchase on the belt.") }
-      /// Enter a participating store, start shopping and hold the barcode of an article in front of the camera. The rest is self-explanatory.
-      public static var message2: String { return L10n.tr("SnabbleLocalizable", "Snabble.Onboarding.message2", fallback: "Enter a participating store, start shopping and hold the barcode of an article in front of the camera. The rest is self-explanatory.") }
-      /// Please accept the terms of use and take note of the privacy policy.
-      public static var message3: String { return L10n.tr("SnabbleLocalizable", "Snabble.Onboarding.message3", fallback: "Please accept the terms of use and take note of the privacy policy.") }
-      /// Continue
-      public static var next: String { return L10n.tr("SnabbleLocalizable", "Snabble.Onboarding.next", fallback: "Continue") }
-      public enum Terms {
-        /// Show
-        public static var show: String { return L10n.tr("SnabbleLocalizable", "Snabble.Onboarding.Terms.show", fallback: "Show") }
-        /// Terms of Use
-        public static var title: String { return L10n.tr("SnabbleLocalizable", "Snabble.Onboarding.Terms.title", fallback: "Terms of Use") }
-      }
-    }
     public enum Payment {
       /// SECTION: SnabbleAndroid
       public static var aborted: String { return L10n.tr("SnabbleLocalizable", "Snabble.Payment.aborted", fallback: "Payment process was cancelled") }
