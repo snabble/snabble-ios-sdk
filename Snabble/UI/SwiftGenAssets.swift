@@ -23,6 +23,15 @@ internal typealias AssetImageTypeAlias = SwiftGenImageAsset.Image
 // swiftlint:disable identifier_name line_length nesting type_body_length type_name
 internal enum Asset {
   internal enum SnabbleSDK {
+    internal enum Onboarding {
+      internal static let customerCardHint = SwiftGenImageAsset(name: "SnabbleSDK/Onboarding/customer-card-hint")
+      internal static let nutzungsbedingungenImage = SwiftGenImageAsset(name: "SnabbleSDK/Onboarding/nutzungsbedingungen-image")
+      internal static let onboardingImage1 = SwiftGenImageAsset(name: "SnabbleSDK/Onboarding/onboarding-image-1")
+      internal static let onboardingImage2 = SwiftGenImageAsset(name: "SnabbleSDK/Onboarding/onboarding-image-2")
+      internal static let onboardingImage3 = SwiftGenImageAsset(name: "SnabbleSDK/Onboarding/onboarding-image-3")
+      internal static let onboardingLogo = SwiftGenImageAsset(name: "SnabbleSDK/Onboarding/onboarding-logo")
+      internal static let paymentHint = SwiftGenImageAsset(name: "SnabbleSDK/Onboarding/payment-hint")
+    }
     internal static let arrowUp = SwiftGenImageAsset(name: "SnabbleSDK/arrow-up")
     internal static let barcodeOverlay = SwiftGenImageAsset(name: "SnabbleSDK/barcode-overlay")
     internal static let emoji1 = SwiftGenImageAsset(name: "SnabbleSDK/emoji-1")

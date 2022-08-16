@@ -74,7 +74,8 @@ struct OnboardingItemView: View {
             Button(action: {
                 isPresenting.toggle()
             }) {
-                Text("Show").font(.headline)
+                Text(Assets.localizedString(forKey: "Snabble.Onboarding.Terms.show"))
+                    .font(.headline)
             }
             .sheet(isPresented: $isPresenting) {
                 if let url = Bundle.main.url(forResource: resource, withExtension: nil) {
