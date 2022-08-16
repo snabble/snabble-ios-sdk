@@ -11,7 +11,7 @@ final class LeftViewController: UIViewController {
     init() {
         super.init(nibName: nil, bundle: nil)
 
-        self.title = "Account"
+        self.title = NSLocalizedString("Account", comment: "")
         self.tabBarItem.image = UIImage(systemName: "person")
         self.tabBarItem.selectedImage = UIImage(systemName: "person.fill")
     }
@@ -25,7 +25,7 @@ final class RightViewController: UIViewController {
     init() {
         super.init(nibName: nil, bundle: nil)
 
-        self.title = "Settings"
+        self.title = NSLocalizedString("Settings", comment: "")
         self.tabBarItem.image = UIImage(systemName: "gearshape")
         self.tabBarItem.selectedImage = UIImage(systemName: "gearshape.fill")
     }

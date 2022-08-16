@@ -1,0 +1,13 @@
+/* 
+  Localizable.strings
+  SnabbleSampleApp
+
+  Created by Uwe Tilemann on 16.08.22.
+  Copyright © 2022 snabble. All rights reserved.
+*/
+
+"Account" = "Account";
+"Settings" = "Settings";
+
+"Scanner" = "Scanner";
+"Shopping Cart" = "Shopping Cart";
