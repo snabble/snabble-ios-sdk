@@ -32,7 +32,7 @@ public enum Assets {
         provider?.image(named: name, domain: domain) ?? UIImage(named: name, in: BundleToken.bundle, with: nil) ?? UIImage(systemName: name)
     }
 
-    static func localizedString(forKey key: String, table: String?, value: String?, domain: Any? = domain) -> String {
+    static func localizedString(forKey key: String, table: String? = nil, value: String? = nil, domain: Any? = domain) -> String {
         provider?.localizedString(forKey: key, domain: domain) ?? BundleToken.bundle.localizedString(forKey: key, value: value, table: table)
     }
 
