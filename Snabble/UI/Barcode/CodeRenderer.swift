@@ -39,7 +39,7 @@ extension CodeRenderer {
         }
 
         context.interpolationQuality = .none
-        Assets.Color.white().setFill()
+        Asset.Color.white().setFill()
         context.fill(context.boundingBoxOfClipPath)
         let drawRect = CGRect(origin: CGPoint(x: quietZone, y: quietZone), size: codeSize)
         context.draw(cgImage, in: drawRect)

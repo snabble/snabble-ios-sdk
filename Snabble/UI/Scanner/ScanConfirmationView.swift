@@ -53,7 +53,7 @@ final class ScanConfirmationView: UIView {
         let label = UILabel()
         label.translatesAutoresizingMaskIntoConstraints = false
         label.textAlignment = .center
-        label.textColor = Assets.Color.label()
+        label.textColor = Asset.Color.label()
         label.setContentHuggingPriority(.defaultLow + 1, for: .horizontal)
         label.setContentHuggingPriority(.defaultLow + 1, for: .vertical)
         return label
@@ -69,7 +69,7 @@ final class ScanConfirmationView: UIView {
     }
 
     private func setupUI() {
-        self.addCornersAndShadow(backgroundColor: Assets.Color.systemBackground(), cornerRadius: 8)
+        self.addCornersAndShadow(backgroundColor: Asset.Color.systemBackground(), cornerRadius: 8)
 
         let closeButton = UIButton(type: .system)
         closeButton.translatesAutoresizingMaskIntoConstraints = false
@@ -80,7 +80,7 @@ final class ScanConfirmationView: UIView {
         let cartButton = UIButton(type: .system)
         cartButton.translatesAutoresizingMaskIntoConstraints = false
         cartButton.setTitle(L10n.Snabble.Scanner.addToCart, for: .normal)
-        cartButton.titleLabel?.font = Assets.preferredFont(forTextStyle: .headline)
+        cartButton.titleLabel?.font = Asset.preferredFont(forTextStyle: .headline)
         cartButton.titleLabel?.adjustsFontForContentSizeCategory = true
         cartButton.makeSnabbleButton()
         cartButton.isUserInteractionEnabled = true
@@ -94,36 +94,36 @@ final class ScanConfirmationView: UIView {
         productStack.spacing = 4
 
         let subtitleLabel = customLabel
-        subtitleLabel.font = Assets.preferredFont(forTextStyle: .footnote)
+        subtitleLabel.font = Asset.preferredFont(forTextStyle: .footnote)
         subtitleLabel.adjustsFontForContentSizeCategory = true
 
         let productNameLabel = customLabel
-        productNameLabel.font = Assets.preferredFont(forTextStyle: .body, weight: .bold)
+        productNameLabel.font = Asset.preferredFont(forTextStyle: .body, weight: .bold)
         productNameLabel.adjustsFontForContentSizeCategory = true
 
         let originalPriceLabel = customLabel
-        originalPriceLabel.font = Assets.preferredFont(forTextStyle: .body)
+        originalPriceLabel.font = Asset.preferredFont(forTextStyle: .body)
         originalPriceLabel.adjustsFontForContentSizeCategory = true
-        originalPriceLabel.textColor = Assets.Color.secondaryLabel()
+        originalPriceLabel.textColor = Asset.Color.secondaryLabel()
 
         let priceLabel = customLabel
-        priceLabel.font = Assets.preferredFont(forTextStyle: .body)
+        priceLabel.font = Asset.preferredFont(forTextStyle: .body)
         priceLabel.adjustsFontForContentSizeCategory = true
 
         let manualDiscountButton = UIButton(type: .system)
         manualDiscountButton.translatesAutoresizingMaskIntoConstraints = false
         manualDiscountButton.setTitle(L10n.Snabble.addDiscount, for: .normal)
-        manualDiscountButton.titleLabel?.font = Assets.preferredFont(forTextStyle: .body)
+        manualDiscountButton.titleLabel?.font = Asset.preferredFont(forTextStyle: .body)
         manualDiscountButton.titleLabel?.adjustsFontForContentSizeCategory = true
 
-        let contrastRatio = UIColor.getContrastRatio(forTextColor: Assets.Color.accent(),
-                                                     onBackgroundColor: Assets.Color.systemBackground())
+        let contrastRatio = UIColor.getContrastRatio(forTextColor: Asset.Color.accent(),
+                                                     onBackgroundColor: Asset.Color.systemBackground())
         let conformanceLevel = ConformanceLevel(contrastRatio: contrastRatio ?? 1, fontSize: 17, isBoldFont: false)
 
         if conformanceLevel == .AA || conformanceLevel == .AAA {
-            manualDiscountButton.tintColor = Assets.Color.accent()
+            manualDiscountButton.tintColor = Asset.Color.accent()
         } else {
-            manualDiscountButton.tintColor = Assets.Color.label()
+            manualDiscountButton.tintColor = Asset.Color.label()
         }
         manualDiscountButton.isUserInteractionEnabled = true
         manualDiscountButton.addTarget(self, action: #selector(manualDiscountTapped(_:)), for: .touchUpInside)
@@ -136,18 +136,18 @@ final class ScanConfirmationView: UIView {
         quantityStack.spacing = 8
 
         let minusButton = squareButton
-        minusButton.setImage(Assets.image(named: "SnabbleSDK/icon-minus"), for: .normal)
+        minusButton.setImage(Asset.image(named: "SnabbleSDK/icon-minus"), for: .normal)
         minusButton.addTarget(self, action: #selector(minusButtonTapped(_:)), for: .touchUpInside)
 
         let plusButton = squareButton
-        plusButton.setImage(Assets.image(named: "SnabbleSDK/icon-plus"), for: .normal)
+        plusButton.setImage(Asset.image(named: "SnabbleSDK/icon-plus"), for: .normal)
         plusButton.addTarget(self, action: #selector(plusButtonTapped(_:)), for: .touchUpInside)
 
         let quantityField = UITextField()
         quantityField.translatesAutoresizingMaskIntoConstraints = false
-        quantityField.font = Assets.preferredFont(forTextStyle: .title3)
+        quantityField.font = Asset.preferredFont(forTextStyle: .title3)
         quantityField.adjustsFontForContentSizeCategory = true
-        quantityField.tintColor = Assets.Color.label()
+        quantityField.tintColor = Asset.Color.label()
         quantityField.delegate = self
         quantityField.addDoneButton()
         quantityField.textAlignment = .center
@@ -155,7 +155,7 @@ final class ScanConfirmationView: UIView {
         quantityField.keyboardType = .numberPad
 
         let unitLabel = customLabel
-        unitLabel.font = Assets.preferredFont(forTextStyle: .body)
+        unitLabel.font = Asset.preferredFont(forTextStyle: .body)
         unitLabel.adjustsFontForContentSizeCategory = true
         unitLabel.textAlignment = .natural
 

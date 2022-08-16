@@ -34,14 +34,14 @@ public final class SepaOverlayView: UIView {
     }
 
     private func setupUI() {
-        backgroundColor = Assets.Color.systemBackground()
+        backgroundColor = Asset.Color.systemBackground()
         if #available(iOS 15, *) {
             restrictDynamicTypeSize(from: nil, to: .extraExtraExtraLarge)
         }
 
         let scrollView = UIScrollView()
         scrollView.translatesAutoresizingMaskIntoConstraints = false
-        scrollView.backgroundColor = Assets.Color.systemBackground()
+        scrollView.backgroundColor = Asset.Color.systemBackground()
         scrollView.showsVerticalScrollIndicator = true
         scrollView.alwaysBounceVertical = false
 
@@ -51,21 +51,21 @@ public final class SepaOverlayView: UIView {
 
         let titleLabel = UILabel()
         titleLabel.translatesAutoresizingMaskIntoConstraints = false
-        titleLabel.font = Assets.preferredFont(forTextStyle: .body, weight: .bold)
+        titleLabel.font = Asset.preferredFont(forTextStyle: .body, weight: .bold)
         titleLabel.adjustsFontForContentSizeCategory = true
         titleLabel.textAlignment = .center
         titleLabel.numberOfLines = 0
 
         let textLabel = UILabel()
         textLabel.translatesAutoresizingMaskIntoConstraints = false
-        textLabel.font = Assets.preferredFont(forTextStyle: .body)
+        textLabel.font = Asset.preferredFont(forTextStyle: .body)
         textLabel.adjustsFontForContentSizeCategory = true
         textLabel.textAlignment = .center
         textLabel.numberOfLines = 0
 
         let successButton = UIButton(type: .system)
         successButton.translatesAutoresizingMaskIntoConstraints = false
-        successButton.titleLabel?.font = Assets.preferredFont(forTextStyle: .headline)
+        successButton.titleLabel?.font = Asset.preferredFont(forTextStyle: .headline)
         successButton.titleLabel?.adjustsFontForContentSizeCategory = true
         successButton.makeSnabbleButton()
 
@@ -164,7 +164,7 @@ public final class SepaOverlayView: UIView {
                     let substr = String(text[startIndex..<endIndex])
 
                     let attributes: [NSAttributedString.Key: Any]? = idx == 2 ? [
-                        .foregroundColor: Assets.Color.label(),
+                        .foregroundColor: Asset.Color.label(),
                         .underlineStyle: NSUnderlineStyle.single.rawValue
                     ] : nil
                     str.append(NSAttributedString(string: substr, attributes: attributes))

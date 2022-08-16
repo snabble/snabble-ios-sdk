@@ -28,7 +28,7 @@ final class SupervisorRejectedViewController: UIViewController {
 
         let scrollView = UIScrollView()
         scrollView.translatesAutoresizingMaskIntoConstraints = false
-        scrollView.backgroundColor = Assets.Color.systemBackground()
+        scrollView.backgroundColor = Asset.Color.systemBackground()
         scrollView.showsVerticalScrollIndicator = false
         scrollView.alwaysBounceVertical = false
 
@@ -47,18 +47,18 @@ final class SupervisorRejectedViewController: UIViewController {
         stackView.alignment = .center
         stackView.spacing = 32
 
-        let topIcon = UIImageView(image: Assets.image(named: "SnabbleSDK/icon-hint-big")?.withRenderingMode(.alwaysTemplate))
+        let topIcon = UIImageView(image: Asset.image(named: "SnabbleSDK/icon-hint-big")?.withRenderingMode(.alwaysTemplate))
         topIcon.translatesAutoresizingMaskIntoConstraints = false
         topIcon.contentMode = .scaleAspectFit
-        topIcon.tintColor = Assets.Color.label()
+        topIcon.tintColor = Asset.Color.label()
         topIcon.adjustsImageSizeForAccessibilityContentSizeCategory = true
         topIcon.setContentHuggingPriority(.defaultLow + 1, for: .horizontal)
         topIcon.setContentHuggingPriority(.defaultLow + 2, for: .vertical)
 
         let messageLabel = UILabel()
         messageLabel.translatesAutoresizingMaskIntoConstraints = false
-        messageLabel.textColor = Assets.Color.label()
-        messageLabel.font = Assets.preferredFont(forTextStyle: .body)
+        messageLabel.textColor = Asset.Color.label()
+        messageLabel.font = Asset.preferredFont(forTextStyle: .body)
         messageLabel.adjustsFontForContentSizeCategory = true
         messageLabel.textAlignment = .center
         messageLabel.numberOfLines = 0
@@ -69,7 +69,7 @@ final class SupervisorRejectedViewController: UIViewController {
         let button = UIButton(type: .system)
         button.translatesAutoresizingMaskIntoConstraints = false
         button.makeSnabbleButton()
-        button.titleLabel?.font = Assets.preferredFont(forTextStyle: .headline)
+        button.titleLabel?.font = Asset.preferredFont(forTextStyle: .headline)
         button.titleLabel?.adjustsFontForContentSizeCategory = true
         button.setTitle(SnabbleSDK.L10n.Snabble.Payment.backToCart, for: .normal)
         button.addTarget(self, action: #selector(backButtonTapped(_:)), for: .touchUpInside)
@@ -123,7 +123,7 @@ final class SupervisorRejectedViewController: UIViewController {
         title = L10n.Snabble.Payment.rejected
         self.navigationItem.hidesBackButton = true
 
-        view.backgroundColor = Assets.Color.systemBackground()
+        view.backgroundColor = Asset.Color.systemBackground()
     }
 
     override func viewDidAppear(_ animated: Bool) {

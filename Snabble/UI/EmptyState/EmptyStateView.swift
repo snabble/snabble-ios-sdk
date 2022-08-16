@@ -19,22 +19,22 @@ internal class EmptyStateView: UIView {
         super.init(frame: CGRect.zero)
 
         translatesAutoresizingMaskIntoConstraints = false
-        backgroundColor = Assets.Color.systemBackground()
+        backgroundColor = Asset.Color.systemBackground()
 
         button1.tag = 0
-        button1.titleLabel?.font = Assets.preferredFont(forTextStyle: .headline)
+        button1.titleLabel?.font = Asset.preferredFont(forTextStyle: .headline)
         button1.titleLabel?.adjustsFontForContentSizeCategory = true
         button1.addTarget(self, action: #selector(self.buttonTapped(_:)), for: .touchUpInside)
 
         button2.tag = 1
-        button2.titleLabel?.font = Assets.preferredFont(forTextStyle: .headline)
+        button2.titleLabel?.font = Asset.preferredFont(forTextStyle: .headline)
         button2.titleLabel?.adjustsFontForContentSizeCategory = true
         button2.addTarget(self, action: #selector(self.buttonTapped(_:)), for: .touchUpInside)
 
         textLabel.translatesAutoresizingMaskIntoConstraints = false
         textLabel.numberOfLines = 0
         textLabel.textAlignment = .center
-        textLabel.font = Assets.preferredFont(forTextStyle: .body)
+        textLabel.font = Asset.preferredFont(forTextStyle: .body)
         textLabel.adjustsFontForContentSizeCategory = true
         addSubview(textLabel)
 
@@ -84,10 +84,10 @@ final class ShoppingCartEmptyStateView: EmptyStateView {
 
         self.textLabel.text = L10n.Snabble.Shoppingcart.EmptyState.description
         self.button1.setTitle(L10n.Snabble.Shoppingcart.EmptyState.buttonTitle, for: .normal)
-        self.button1.setTitleColor(Assets.Color.label(), for: .normal)
+        self.button1.setTitleColor(Asset.Color.label(), for: .normal)
 
         self.button2.setTitle(L10n.Snabble.Shoppingcart.EmptyState.restoreButtonTitle, for: .normal)
-        self.button2.setTitleColor(Assets.Color.label(), for: .normal)
+        self.button2.setTitleColor(Asset.Color.label(), for: .normal)
         self.button2.isHidden = true
     }
 
@@ -103,7 +103,7 @@ final class BarcodeEntryEmptyStateView: EmptyStateView {
         self.textLabel.text = L10n.Snabble.Scanner.enterBarcode
 
         self.button1.setTitle("", for: .normal)
-        self.button1.setTitleColor(Assets.Color.label(), for: .normal)
+        self.button1.setTitleColor(Asset.Color.label(), for: .normal)
 
         self.button2.isHidden = true
     }

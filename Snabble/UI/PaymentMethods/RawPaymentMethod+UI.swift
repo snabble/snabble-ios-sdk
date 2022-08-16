@@ -10,7 +10,7 @@ extension PaymentMethodDetail {
     var icon: UIImage? {
         switch self.methodData {
         case .tegutEmployeeCard:
-            return Assets.image(named: "SnabbleSDK/payment/payment-tegut")
+            return Asset.image(named: "SnabbleSDK/payment/payment-tegut")
         default:
             return self.rawMethod.icon
         }
@@ -50,18 +50,18 @@ extension RawPaymentMethod {
     public var icon: UIImage? {
         switch self {
         case .deDirectDebit:
-            return Assets.image(named: "SnabbleSDK/payment/payment-sepa")
+            return Asset.image(named: "SnabbleSDK/payment/payment-sepa")
         case .creditCardVisa:
-            return Assets.image(named: "SnabbleSDK/payment/payment-visa")
-        case .creditCardMastercard: return Assets.image(named: "SnabbleSDK/payment/payment-mastercard")
-        case .creditCardAmericanExpress: return Assets.image(named: "SnabbleSDK/payment/payment-amex")
-        case .gatekeeperTerminal: return Assets.image(named: "SnabbleSDK/payment/payment-sco")
-        case .paydirektOneKlick: return Assets.image(named: "SnabbleSDK/payment/payment-paydirekt")
-        case .applePay: return Assets.image(named: "SnabbleSDK/payment/payment-apple-pay")
-        case .twint: return Assets.image(named: "SnabbleSDK/payment/payment-twint")
-        case .postFinanceCard: return Assets.image(named: "SnabbleSDK/payment/payment-postfinance")
+            return Asset.image(named: "SnabbleSDK/payment/payment-visa")
+        case .creditCardMastercard: return Asset.image(named: "SnabbleSDK/payment/payment-mastercard")
+        case .creditCardAmericanExpress: return Asset.image(named: "SnabbleSDK/payment/payment-amex")
+        case .gatekeeperTerminal: return Asset.image(named: "SnabbleSDK/payment/payment-sco")
+        case .paydirektOneKlick: return Asset.image(named: "SnabbleSDK/payment/payment-paydirekt")
+        case .applePay: return Asset.image(named: "SnabbleSDK/payment/payment-apple-pay")
+        case .twint: return Asset.image(named: "SnabbleSDK/payment/payment-twint")
+        case .postFinanceCard: return Asset.image(named: "SnabbleSDK/payment/payment-postfinance")
         case .qrCodePOS, .qrCodeOffline, .externalBilling, .customerCardPOS:
-            return Assets.image(named: "SnabbleSDK/payment/payment-pos")
+            return Asset.image(named: "SnabbleSDK/payment/payment-pos")
         }
     }
 

@@ -53,14 +53,14 @@ class BaseCheckViewController: UIViewController {
     override public func loadView() {
         // set the main view components
         let contentView = UIView(frame: UIScreen.main.bounds)
-        contentView.backgroundColor = Assets.Color.systemBackground()
+        contentView.backgroundColor = Asset.Color.systemBackground()
         if #available(iOS 15, *) {
             contentView.restrictDynamicTypeSize(from: nil, to: .extraExtraExtraLarge)
         }
 
         let scrollView = UIScrollView()
         scrollView.translatesAutoresizingMaskIntoConstraints = false
-        scrollView.backgroundColor = Assets.Color.systemBackground()
+        scrollView.backgroundColor = Asset.Color.systemBackground()
         scrollView.showsVerticalScrollIndicator = false
         scrollView.alwaysBounceVertical = false
 
@@ -75,7 +75,7 @@ class BaseCheckViewController: UIViewController {
         cancelButton.makeSnabbleButton()
         cancelButton.titleLabel?.textAlignment = .center
         cancelButton.setTitle(L10n.Snabble.cancel, for: .normal)
-        cancelButton.titleLabel?.font = Assets.preferredFont(forTextStyle: .headline)
+        cancelButton.titleLabel?.font = Asset.preferredFont(forTextStyle: .headline)
         cancelButton.titleLabel?.adjustsFontForContentSizeCategory = true
         cancelButton.alpha = 0
         cancelButton.isUserInteractionEnabled = false
@@ -153,10 +153,10 @@ class BaseCheckViewController: UIViewController {
         textWrapper.translatesAutoresizingMaskIntoConstraints = false
         let text = UILabel()
         text.translatesAutoresizingMaskIntoConstraints = false
-        text.textColor = Assets.Color.label()
+        text.textColor = Asset.Color.label()
         text.textAlignment = .center
         text.numberOfLines = 0
-        text.font = Assets.preferredFont(forTextStyle: .body)
+        text.font = Asset.preferredFont(forTextStyle: .body)
         text.adjustsFontForContentSizeCategory = true
         textWrapper.addSubview(text)
         NSLayoutConstraint.activate([
@@ -170,7 +170,7 @@ class BaseCheckViewController: UIViewController {
 
         let arrowWrapper = UIView()
         arrowWrapper.translatesAutoresizingMaskIntoConstraints = false
-        let arrow = UIImageView(image: Assets.image(named: "SnabbleSDK/arrow-up"))
+        let arrow = UIImageView(image: Asset.image(named: "SnabbleSDK/arrow-up"))
         arrow.translatesAutoresizingMaskIntoConstraints = false
         arrow.adjustsImageSizeForAccessibilityContentSizeCategory = true
         arrow.contentMode = .scaleAspectFit
@@ -206,9 +206,9 @@ class BaseCheckViewController: UIViewController {
         idWrapper.translatesAutoresizingMaskIntoConstraints = false
         let id = UILabel()
         id.translatesAutoresizingMaskIntoConstraints = false
-        id.textColor = Assets.Color.label()
+        id.textColor = Asset.Color.label()
         id.textAlignment = .center
-        id.font = Assets.preferredFont(forTextStyle: .footnote)
+        id.font = Asset.preferredFont(forTextStyle: .footnote)
         id.adjustsFontForContentSizeCategory = true
         idWrapper.addSubview(id)
         NSLayoutConstraint.activate([

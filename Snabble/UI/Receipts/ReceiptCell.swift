@@ -25,20 +25,20 @@ final class ReceiptCell: UITableViewCell {
 
         storeName.translatesAutoresizingMaskIntoConstraints = false
         storeName.numberOfLines = 0
-        storeName.font = Assets.preferredFont(forTextStyle: .body)
+        storeName.font = Asset.preferredFont(forTextStyle: .body)
         storeName.adjustsFontForContentSizeCategory = true
         contentView.addSubview(storeName)
 
         orderDate.translatesAutoresizingMaskIntoConstraints = false
         orderDate.numberOfLines = 0
-        orderDate.textColor = Assets.Color.secondaryLabel()
-        orderDate.font = Assets.preferredFont(forTextStyle: .footnote)
+        orderDate.textColor = Asset.Color.secondaryLabel()
+        orderDate.font = Asset.preferredFont(forTextStyle: .footnote)
         orderDate.adjustsFontForContentSizeCategory = true
         contentView.addSubview(orderDate)
 
         price.translatesAutoresizingMaskIntoConstraints = false
-        price.textColor = Assets.Color.secondaryLabel()
-        price.font = Assets.preferredFont(forTextStyle: .footnote)
+        price.textColor = Asset.Color.secondaryLabel()
+        price.font = Asset.preferredFont(forTextStyle: .footnote)
         price.adjustsFontForContentSizeCategory = true
         price.setContentHuggingPriority(.defaultHigh, for: .horizontal)
         price.setContentCompressionResistancePriority(.required, for: .horizontal)
@@ -108,7 +108,7 @@ final class ReceiptCell: UITableViewCell {
             self.showIcon(projectId)
             self.orderDate.text = L10n.Snabble.Receipts.loading
             let spinner = UIActivityIndicatorView(style: .medium)
-            spinner.color = Assets.Color.systemGray()
+            spinner.color = Asset.Color.systemGray()
             spinner.startAnimating()
             self.accessoryView = spinner
             self.price.text = ""

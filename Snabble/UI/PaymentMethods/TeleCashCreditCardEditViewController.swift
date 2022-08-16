@@ -65,7 +65,7 @@ public final class TeleCashCreditCardEditViewController: UIViewController {
     override public func viewDidLoad() {
         super.viewDidLoad()
 
-        view.backgroundColor = Assets.Color.systemBackground()
+        view.backgroundColor = Asset.Color.systemBackground()
 
         if #available(iOS 15, *) {
             view.restrictDynamicTypeSize(from: nil, to: .extraExtraExtraLarge)
@@ -102,21 +102,21 @@ public final class TeleCashCreditCardEditViewController: UIViewController {
         view.addSubview(spinner)
 
         explanation.numberOfLines = 0
-        explanation.font = Assets.preferredFont(forTextStyle: .footnote)
+        explanation.font = Asset.preferredFont(forTextStyle: .footnote)
         explanation.adjustsFontForContentSizeCategory = true
 
-        cardNumberLabel.font = Assets.preferredFont(forTextStyle: .body)
+        cardNumberLabel.font = Asset.preferredFont(forTextStyle: .body)
         cardNumberLabel.adjustsFontForContentSizeCategory = true
 
-        cardNumber.font = Assets.preferredFont(forTextStyle: .body)
+        cardNumber.font = Asset.preferredFont(forTextStyle: .body)
         cardNumber.adjustsFontForContentSizeCategory = true
         cardNumber.isEnabled = false
         cardNumber.borderStyle = .roundedRect
 
-        expDateLabel.font = Assets.preferredFont(forTextStyle: .body)
+        expDateLabel.font = Asset.preferredFont(forTextStyle: .body)
         expDateLabel.adjustsFontForContentSizeCategory = true
 
-        expirationDate.font = Assets.preferredFont(forTextStyle: .body)
+        expirationDate.font = Asset.preferredFont(forTextStyle: .body)
         expirationDate.adjustsFontForContentSizeCategory = true
         expirationDate.isEnabled = false
         expirationDate.borderStyle = .roundedRect
@@ -166,7 +166,7 @@ public final class TeleCashCreditCardEditViewController: UIViewController {
             self.expDateLabel.text = L10n.Snabble.Cc.validUntil
             self.explanation.text = L10n.Snabble.Cc.editingHint
 
-            let deleteButton = UIBarButtonItem(image: Assets.image(named: "SnabbleSDK/icon-trash"), style: .plain, target: self, action: #selector(self.deleteButtonTapped(_:)))
+            let deleteButton = UIBarButtonItem(image: Asset.image(named: "SnabbleSDK/icon-trash"), style: .plain, target: self, action: #selector(self.deleteButtonTapped(_:)))
             self.navigationItem.rightBarButtonItem = deleteButton
         }
     }

@@ -26,7 +26,7 @@ final class QRCheckoutViewController: UIViewController {
     private var customLabel: UILabel {
         let label = UILabel()
         label.translatesAutoresizingMaskIntoConstraints = false
-        label.textColor = Assets.Color.label()
+        label.textColor = Asset.Color.label()
         label.textAlignment = .center
         label.numberOfLines = 0
         label.adjustsFontForContentSizeCategory = true
@@ -56,11 +56,11 @@ final class QRCheckoutViewController: UIViewController {
         if #available(iOS 15, *) {
             contentView.restrictDynamicTypeSize(from: nil, to: .extraExtraExtraLarge)
         }
-        contentView.backgroundColor = Assets.Color.systemBackground()
+        contentView.backgroundColor = Asset.Color.systemBackground()
 
         let scrollView = UIScrollView()
         scrollView.translatesAutoresizingMaskIntoConstraints = false
-        scrollView.backgroundColor = Assets.Color.systemBackground()
+        scrollView.backgroundColor = Asset.Color.systemBackground()
         scrollView.showsVerticalScrollIndicator = false
         scrollView.alwaysBounceVertical = false
 
@@ -71,7 +71,7 @@ final class QRCheckoutViewController: UIViewController {
         wrapperView.translatesAutoresizingMaskIntoConstraints = false
 
         let checkoutIdLabel = customLabel
-        checkoutIdLabel.font = Assets.preferredFont(forTextStyle: .footnote)
+        checkoutIdLabel.font = Asset.preferredFont(forTextStyle: .footnote)
 
         let stackViewLayout = UILayoutGuide()
 
@@ -83,10 +83,10 @@ final class QRCheckoutViewController: UIViewController {
         stackView.spacing = 16
 
         let totalPriceLabel = customLabel
-        totalPriceLabel.font = Assets.preferredFont(forTextStyle: .body, weight: .medium)
+        totalPriceLabel.font = Asset.preferredFont(forTextStyle: .body, weight: .medium)
 
         let explanationUpperLabel = customLabel
-        explanationUpperLabel.font = Assets.preferredFont(forTextStyle: .body, weight: .light)
+        explanationUpperLabel.font = Asset.preferredFont(forTextStyle: .body, weight: .light)
 
         let qrCodeView = UIImageView()
         qrCodeView.translatesAutoresizingMaskIntoConstraints = false
@@ -95,12 +95,12 @@ final class QRCheckoutViewController: UIViewController {
         qrCodeView.setContentHuggingPriority(.defaultLow + 1, for: .vertical)
 
         let explanationBottomLabel = customLabel
-        explanationBottomLabel.font = Assets.preferredFont(forTextStyle: .caption2)
+        explanationBottomLabel.font = Asset.preferredFont(forTextStyle: .caption2)
 
         let cancelButton = UIButton(type: .system)
         cancelButton.translatesAutoresizingMaskIntoConstraints = false
         cancelButton.setTitle(L10n.Snabble.cancel, for: .normal)
-        cancelButton.titleLabel?.font = Assets.preferredFont(forTextStyle: .headline)
+        cancelButton.titleLabel?.font = Asset.preferredFont(forTextStyle: .headline)
         cancelButton.titleLabel?.adjustsFontForContentSizeCategory = true
         cancelButton.titleLabel?.textAlignment = .center
         cancelButton.isEnabled = true

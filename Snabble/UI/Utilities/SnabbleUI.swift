@@ -25,8 +25,8 @@ public enum SnabbleUI {
         if let project = project, project.id != Project.none.id, let manifestUrl = project.links.assetsManifest?.href {
             SnabbleUI.initializeAssets(for: project.id, manifestUrl, downloadFiles: true)
         }
-        Assets.domain = project?.id
-        self.appearance = Assets.provider?.appearance(for: project?.id) ?? SnabbleAppearance()
+        Asset.domain = project?.id
+        self.appearance = Asset.provider?.appearance(for: project?.id) ?? SnabbleAppearance()
     }
     
     // MARK: - custom appearance handling

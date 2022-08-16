@@ -36,7 +36,7 @@ final class EmbeddedCodesCheckoutViewController: UIViewController {
     private var customLabel: UILabel {
         let label = UILabel()
         label.translatesAutoresizingMaskIntoConstraints = false
-        label.textColor = Assets.Color.label()
+        label.textColor = Asset.Color.label()
         label.textAlignment = .natural
         label.adjustsFontForContentSizeCategory = true
         label.numberOfLines = 0
@@ -78,7 +78,7 @@ final class EmbeddedCodesCheckoutViewController: UIViewController {
 
         let scrollView = UIScrollView()
         scrollView.translatesAutoresizingMaskIntoConstraints = false
-        scrollView.backgroundColor = Assets.Color.systemBackground()
+        scrollView.backgroundColor = Asset.Color.systemBackground()
         scrollView.showsVerticalScrollIndicator = false
         scrollView.alwaysBounceVertical = false
 
@@ -90,7 +90,7 @@ final class EmbeddedCodesCheckoutViewController: UIViewController {
 
         let paidButton = UIButton(type: .system)
         paidButton.translatesAutoresizingMaskIntoConstraints = false
-        paidButton.titleLabel?.font = Assets.preferredFont(forTextStyle: .headline)
+        paidButton.titleLabel?.font = Asset.preferredFont(forTextStyle: .headline)
         paidButton.titleLabel?.adjustsFontForContentSizeCategory = true
         paidButton.makeSnabbleButton()
         paidButton.titleLabel?.textAlignment = .center
@@ -114,18 +114,18 @@ final class EmbeddedCodesCheckoutViewController: UIViewController {
         let topIcon = iconImage
 
         let messageLabel = customLabel
-        messageLabel.font = Assets.preferredFont(forTextStyle: .body)
+        messageLabel.font = Asset.preferredFont(forTextStyle: .body)
         messageLabel.textAlignment = .center
 
         let arrowWrapper = UIView()
         arrowWrapper.translatesAutoresizingMaskIntoConstraints = false
 
         let arrowIcon = iconImage
-        arrowIcon.image = Assets.image(named: "SnabbleSDK/arrow-up")
+        arrowIcon.image = Asset.image(named: "SnabbleSDK/arrow-up")
         arrowIcon.adjustsImageSizeForAccessibilityContentSizeCategory = true
 
         let codeCountLabel = customLabel
-        codeCountLabel.font = Assets.preferredFont(forTextStyle: .headline)
+        codeCountLabel.font = Asset.preferredFont(forTextStyle: .headline)
 
         let codeScrollView = UIScrollView()
         codeScrollView.translatesAutoresizingMaskIntoConstraints = false
@@ -134,15 +134,15 @@ final class EmbeddedCodesCheckoutViewController: UIViewController {
         codeScrollView.bounces = false
 
         let idLabel = customLabel
-        idLabel.font = Assets.preferredFont(forTextStyle: .footnote)
+        idLabel.font = Asset.preferredFont(forTextStyle: .footnote)
 
         let codeContainer = UIView()
         codeContainer.translatesAutoresizingMaskIntoConstraints = true
 
         let pageControl = UIPageControl()
         pageControl.translatesAutoresizingMaskIntoConstraints = false
-        pageControl.pageIndicatorTintColor = Assets.Color.systemGray6()
-        pageControl.currentPageIndicatorTintColor = Assets.Color.black()
+        pageControl.pageIndicatorTintColor = Asset.Color.systemGray6()
+        pageControl.currentPageIndicatorTintColor = Asset.Color.black()
         pageControl.addTarget(self, action: #selector(pageControlTapped(_:)), for: UIControl.Event.valueChanged)
 
         contentView.addSubview(scrollView)
@@ -246,7 +246,7 @@ final class EmbeddedCodesCheckoutViewController: UIViewController {
         codeCountLabel?.isHidden = codes.count == 1
         pageControl?.numberOfPages = codes.count
         pageControl?.pageIndicatorTintColor = .lightGray
-        pageControl?.currentPageIndicatorTintColor = Assets.Color.label()
+        pageControl?.currentPageIndicatorTintColor = Asset.Color.label()
         pageControl?.isHidden = codes.count == 1
 
         let id = process?.links._self.href.suffix(4) ?? "offline"

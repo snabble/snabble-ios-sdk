@@ -68,7 +68,7 @@ public final class PaydirektEditViewController: UIViewController {
 
     override public func loadView() {
         let view = UIView(frame: UIScreen.main.bounds)
-        view.backgroundColor = Assets.Color.systemBackground()
+        view.backgroundColor = Asset.Color.systemBackground()
         if #available(iOS 15, *) {
             view.restrictDynamicTypeSize(from: nil, to: .extraExtraExtraLarge)
         }
@@ -82,9 +82,9 @@ public final class PaydirektEditViewController: UIViewController {
 
         let displayLabel = UILabel()
         displayLabel.translatesAutoresizingMaskIntoConstraints = false
-        displayLabel.font = Assets.preferredFont(forTextStyle: .body)
+        displayLabel.font = Asset.preferredFont(forTextStyle: .body)
         displayLabel.adjustsFontForContentSizeCategory = true
-        displayLabel.textColor = Assets.Color.label()
+        displayLabel.textColor = Asset.Color.label()
         displayLabel.textAlignment = .natural
         displayLabel.numberOfLines = 0
         displayLabel.text = L10n.Snabble.Paydirekt.savedAuthorization
@@ -92,15 +92,15 @@ public final class PaydirektEditViewController: UIViewController {
         let openButton = UIButton(type: .system)
         openButton.translatesAutoresizingMaskIntoConstraints = false
         openButton.isUserInteractionEnabled = true
-        openButton.titleLabel?.font = Assets.preferredFont(forTextStyle: .subheadline)
+        openButton.titleLabel?.font = Asset.preferredFont(forTextStyle: .subheadline)
         openButton.titleLabel?.adjustsFontForContentSizeCategory = true
-        openButton.setTitleColor(Assets.Color.link(), for: .normal)
+        openButton.setTitleColor(Asset.Color.link(), for: .normal)
         openButton.setTitle(L10n.Snabble.Paydirekt.gotoWebsite, for: .normal)
         openButton.addTarget(self, action: #selector(openButtonTapped(_:)), for: .touchUpInside)
 
         let deleteButton = UIButton(type: .system)
         deleteButton.translatesAutoresizingMaskIntoConstraints = false
-        deleteButton.titleLabel?.font = Assets.preferredFont(forTextStyle: .headline)
+        deleteButton.titleLabel?.font = Asset.preferredFont(forTextStyle: .headline)
         deleteButton.titleLabel?.adjustsFontForContentSizeCategory = true
         deleteButton.makeSnabbleButton()
         deleteButton.isUserInteractionEnabled = true
@@ -112,19 +112,19 @@ public final class PaydirektEditViewController: UIViewController {
 
         let errorLabel = UILabel()
         errorLabel.translatesAutoresizingMaskIntoConstraints = false
-        errorLabel.font = Assets.preferredFont(forTextStyle: .body)
+        errorLabel.font = Asset.preferredFont(forTextStyle: .body)
         errorLabel.adjustsFontForContentSizeCategory = true
-        errorLabel.textColor = Assets.Color.label()
+        errorLabel.textColor = Asset.Color.label()
         errorLabel.textAlignment = .center
         errorLabel.numberOfLines = 0
         errorLabel.text = L10n.Snabble.Paydirekt.AuthorizationFailed.title
 
         let errorButton = UIButton(type: .system)
         errorButton.translatesAutoresizingMaskIntoConstraints = false
-        errorButton.titleLabel?.font = Assets.preferredFont(forTextStyle: .headline)
+        errorButton.titleLabel?.font = Asset.preferredFont(forTextStyle: .headline)
         errorButton.titleLabel?.adjustsFontForContentSizeCategory = true
         errorButton.setTitle(L10n.Snabble.PaymentError.tryAgain, for: .normal)
-        errorButton.setTitleColor(Assets.Color.accent().contrast, for: .normal)
+        errorButton.setTitleColor(Asset.Color.accent().contrast, for: .normal)
         errorButton.makeSnabbleButton()
         errorButton.isUserInteractionEnabled = true
         errorButton.addTarget(self, action: #selector(errorButtonTapped(_:)), for: .touchUpInside)
@@ -278,7 +278,7 @@ public final class PaydirektEditViewController: UIViewController {
         configuration.preferences.minimumFontSize = 15
         let webView = WKWebView(frame: .zero, configuration: configuration)
         webView.isOpaque = false
-        webView.backgroundColor = Assets.Color.clear()
+        webView.backgroundColor = Asset.Color.clear()
         webView.navigationDelegate = self
 
         webView.translatesAutoresizingMaskIntoConstraints = false
