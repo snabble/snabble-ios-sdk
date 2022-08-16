@@ -24,7 +24,7 @@ import Foundation
 func loadJSON<T: Decodable>(_ filename: String) -> T {
     let data: Data
 
-    guard let file = Assets.url(forResource: filename, withExtension: nil) else {
+    guard let file = Asset.url(forResource: filename, withExtension: nil) else {
         fatalError("Couldn't find \(filename) in bundle.")
     }
 

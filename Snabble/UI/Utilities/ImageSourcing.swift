@@ -22,7 +22,7 @@ extension ImageSourcing {
     /// the implementation resolving `imageSource`
     public var imageFromSource: UIImage? {
         if let src = imageSource {
-            return Assets.image(named: src)
+            return Asset.image(named: src)
         }
         return nil
     }
@@ -32,7 +32,7 @@ import SwiftUI
 
 extension Text {
     init(key string: String) {
-        let value = Assets.localizedString(forKey: string)
+        let value = Asset.localizedString(forKey: string)
         self.init(value)
     }
 }
@@ -44,6 +44,6 @@ extension ImageSourcing {
             return nil
         }
 
-        return Assets.image(named: src)
+        return Asset.image(named: src)
     }
 }

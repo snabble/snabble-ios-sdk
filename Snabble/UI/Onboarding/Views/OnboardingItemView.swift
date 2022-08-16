@@ -16,7 +16,7 @@ struct URLModifier: ViewModifier {
         if #available(iOS 15, *) {
             content
             .environment(\.openURL, OpenURLAction { anUrl in
-                if let openUrl = Assets.url(forResource: anUrl.absoluteString, withExtension: nil) {
+                if let openUrl = Asset.url(forResource: anUrl.absoluteString, withExtension: nil) {
                     url = openUrl
                     return .handled
                 }
@@ -98,7 +98,7 @@ struct OnboardingItemView: View {
                 Text(item.attributedString)
             }
         } else {
-            AttributedText(htmlString: Assets.localizedString(forKey: item.text ?? ""), openURL: $urlResource)
+            AttributedText(htmlString: Asset.localizedString(forKey: item.text ?? ""), openURL: $urlResource)
         }
     }
 
@@ -123,7 +123,7 @@ struct OnboardingItemView: View {
 
         // create attributedText on main thread since HTML formatter will crash SwiftUI
         DispatchQueue.main.async {
-            self.attributedText = Assets.localizedString(forKey: text).attributedStringFromHTML
+            self.attributedText = Asset.localizedString(forKey: text).attributedStringFromHTML
         }
     }
 
