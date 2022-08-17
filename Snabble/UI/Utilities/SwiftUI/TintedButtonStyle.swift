@@ -15,7 +15,7 @@ public struct AccentButtonStyle: ButtonStyle {
         configuration.label
             .padding(15)
             .background(Color.accent())
-            .foregroundColor(Color.label())
+            .foregroundColor(Color.onAccent())
             .clipShape(RoundedRectangle(cornerRadius: 10))
     }
 }

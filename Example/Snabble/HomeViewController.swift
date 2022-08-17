@@ -154,7 +154,7 @@ extension HomeViewController: AssetProviding {
         return UIImage(named: name)
     }
     
-    func localizedString(forKey: String, domain: Any?) -> String? {
+    func localizedString(forKey: String, arguments: CVarArg..., domain: Any?) -> String? {
         return nil
     }
     

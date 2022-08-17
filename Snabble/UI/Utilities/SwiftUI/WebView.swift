@@ -40,16 +40,10 @@ struct WebView: UIViewRepresentable {
             _refresh = refresh
         }
 
-        deinit {
-        }
-
-        func webView(_ webView: WKWebView, didCommit navigation: WKNavigation!) {
-            print("WebView didCommit")
-        }
+        func webView(_ webView: WKWebView, didCommit navigation: WKNavigation!) {}
 
         func webView(_ webView: WKWebView, didFinish navigation: WKNavigation!) {
             // Page loaded so no need to show loader anymore
-            print("WebView didFinish")
             if isFinished == false {
                 isFinished = true
             }
