@@ -16,31 +16,31 @@ public enum Asset {
     /// Reference to the current domain
     public internal(set) static var domain: Any?
 
-    static func color(named name: String, domain: Any? = domain) -> UIColor? {
+    public static func color(named name: String, domain: Any? = domain) -> UIColor? {
         provider?.color(named: name, domain: domain) ?? UIColor(named: name, in: BundleToken.bundle, compatibleWith: nil)
     }
 
-    static func preferredFont(forTextStyle style: UIFont.TextStyle, domain: Any? = domain) -> UIFont {
+    public static func preferredFont(forTextStyle style: UIFont.TextStyle, domain: Any? = domain) -> UIFont {
         provider?.preferredFont(forTextStyle: style, weight: nil, domain: domain) ?? .preferredFont(forTextStyle: style)
     }
 
-    static func preferredFont(forTextStyle style: UIFont.TextStyle, weight: UIFont.Weight, domain: Any? = domain) -> UIFont {
+    public static func preferredFont(forTextStyle style: UIFont.TextStyle, weight: UIFont.Weight, domain: Any? = domain) -> UIFont {
         provider?.preferredFont(forTextStyle: style, weight: weight, domain: domain) ?? .preferredFont(forTextStyle: style, weight: weight)
     }
 
-    static func image(named name: String, domain: Any? = domain) -> UIImage? {
+    public static func image(named name: String, domain: Any? = domain) -> UIImage? {
         provider?.image(named: name, domain: domain) ?? UIImage(named: name, in: BundleToken.bundle, with: nil) ?? UIImage(systemName: name)
     }
 
-    static func localizedString(forKey key: String, arguments: CVarArg..., table: String? = nil, value: String? = nil, domain: Any? = domain) -> String {
-        guard let localizedString = provider?.localizedString(forKey: key, domain: domain) else {
+    public static func localizedString(forKey key: String, arguments: CVarArg..., table: String? = nil, value: String? = nil, domain: Any? = domain) -> String {
+        guard let localizedString = provider?.localizedString(forKey: key, arguments: arguments, domain: domain) else {
             let format = BundleToken.bundle.localizedString(forKey: key, value: value, table: table)
             return String.localizedStringWithFormat(format, arguments)
         }
         return localizedString
     }
 
-    static func url(forResource name: String?, withExtension ext: String?, domain: Any? = domain) -> URL? {
+    public static func url(forResource name: String?, withExtension ext: String?, domain: Any? = domain) -> URL? {
         provider?.url(forResource: name, withExtension: ext, domain: domain) ?? BundleToken.bundle.url(forResource: name, withExtension: ext)
     }
 }
