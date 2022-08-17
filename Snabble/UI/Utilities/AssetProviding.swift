@@ -31,10 +31,11 @@ public protocol StringProviding: AnyObject {
     ///
     /// Make sure not to the return `key`
     /// - Parameters:
-    ///   - name: The key for a string in the specified table.
+    ///   - key: The key for a string in the specified table.
+    ///   - arguments: `CVargArg` for the key
     ///   - domain: The domain, usually the current `Identifier<Project>`
     /// - Returns: A `String` that matches to the given `key`, or nil if no suitable string was found.
-    func localizedString(forKey key: String, domain: Any?) -> String?
+    func localizedString(forKey key: String, arguments: CVarArg, domain: Any?) -> String?
 }
 
 public protocol UrlProviding: AnyObject {
