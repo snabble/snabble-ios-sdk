@@ -34,7 +34,7 @@ public final class ShoppingCartViewController: UIViewController {
 
         super.init(nibName: nil, bundle: nil)
 
-        self.title = L10n.Snabble.ShoppingCart.title
+        self.title = Asset.localizedString(forKey: "Snabble.ShoppingCart.title")
         let cartEmpty = shoppingCart.numberOfProducts == 0
         self.tabBarItem.image = cartEmpty ? Asset.image(named: "SnabbleSDK/icon-cart-inactive-empty") : Asset.image(named: "SnabbleSDK/icon-cart-inactive-full")
         self.tabBarItem.selectedImage = Asset.image(named: "SnabbleSDK/icon-cart-active")
@@ -177,13 +177,13 @@ public final class ShoppingCartViewController: UIViewController {
 extension ShoppingCartViewController {
     private func configureEmptyState() {
         if self.shoppingCart.items.isEmpty == true && self.shoppingCart.backupAvailable {
-            self.emptyState.button1.setTitle(L10n.Snabble.Shoppingcart.EmptyState.restartButtonTitle, for: .normal)
+            self.emptyState.button1.setTitle(Asset.localizedString(forKey: "Snabble.Shoppingcart.EmptyState.restartButtonTitle"), for: .normal)
             self.emptyState.button2.isHidden = false
             let restoreInterval: TimeInterval = 5 * 60
             self.restoreTimer?.invalidate()
             self.restoreTimer = Timer.scheduledTimer(withTimeInterval: restoreInterval, repeats: false) { [weak self] _ in
                 UIView.animate(withDuration: 0.2) {
-                    self?.emptyState.button1.setTitle(L10n.Snabble.Shoppingcart.EmptyState.buttonTitle, for: .normal)
+                    self?.emptyState.button1.setTitle(Asset.localizedString(forKey: "Snabble.Shoppingcart.EmptyState.buttonTitle"), for: .normal)
                     self?.emptyState.button2.isHidden = true
                 }
             }
@@ -212,12 +212,12 @@ extension ShoppingCartViewController {
     }
 
     func showDeleteCartAlert() {
-        let alert = UIAlertController(title: L10n.Snabble.Shoppingcart.removeItems, message: nil, preferredStyle: .alert)
-        alert.addAction(UIAlertAction(title: L10n.Snabble.yes, style: .destructive) { _ in
+        let alert = UIAlertController(title: Asset.localizedString(forKey: "Snabble.Shoppingcart.removeItems"), message: nil, preferredStyle: .alert)
+        alert.addAction(UIAlertAction(title: Asset.localizedString(forKey: "Snabble.yes"), style: .destructive) { _ in
             self.deleteCart()
             self.setDeleteButton()
         })
-        alert.addAction(UIAlertAction(title: L10n.Snabble.no, style: .cancel, handler: nil))
+        alert.addAction(UIAlertAction(title: Asset.localizedString(forKey: "Snabble.no"), style: .cancel, handler: nil))
 
         self.present(alert, animated: true)
     }
@@ -255,12 +255,12 @@ extension ShoppingCartViewController: InternalShoppingCartDelegate {
 
     func shoppingCart(_ shoppingCart: ShoppingCart, violationsDetected violations: [CheckoutInfo.Violation]) {
         let alertController = UIAlertController(
-            title: L10n.Snabble.Violations.title,
+            title: Asset.localizedString(forKey: "Snabble.Violations.title"),
             message: violations.message,
             preferredStyle: .alert
         )
         let action = UIAlertAction(
-            title: L10n.Snabble.ok,
+            title: Asset.localizedString(forKey: "Snabble.ok"),
             style: .default) { _ in
             alertController.dismiss(animated: true)
         }

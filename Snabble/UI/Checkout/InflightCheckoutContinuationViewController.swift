@@ -21,7 +21,7 @@ public final class InFlightCheckoutContinuationViewController: UIViewController 
 
         super.init(nibName: nil, bundle: nil)
 
-        title = L10n.Snabble.Payment.confirm
+        title = Asset.localizedString(forKey: "Snabble.Payment.confirm")
     }
 
     required init?(coder: NSCoder) {
@@ -42,7 +42,7 @@ public final class InFlightCheckoutContinuationViewController: UIViewController 
         activityIndicatorView.startAnimating()
 
         let textLabel = UILabel()
-        textLabel.text = L10n.Snabble.PaymentContinuation.message
+        textLabel.text = Asset.localizedString(forKey: "Snabble.PaymentContinuation.message")
         textLabel.numberOfLines = 0
         textLabel.font = Asset.preferredFont(forTextStyle: .body)
         textLabel.adjustsFontForContentSizeCategory = true

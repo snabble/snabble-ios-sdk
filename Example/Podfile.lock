@@ -1,6 +1,7 @@
 PODS:
   - AutoLayout-Helper (1.1.0)
   - Base32 (1.1.2)
+  - Datatrans (1.5.1)
   - DeviceKit (4.6.1)
   - GRDB.swift (5.26.0):
     - GRDB.swift/standard (= 5.26.0)
@@ -20,6 +21,9 @@ PODS:
     - SwiftBase32 (~> 0.9.0)
     - TrustKit (~> 1)
     - Zip (~> 2)
+  - Snabble/Datatrans (0.21.0):
+    - Datatrans (~> 1.5.0)
+    - Snabble/UI
   - Snabble/UI (0.21.0):
     - AutoLayout-Helper
     - DeviceKit (~> 4)
@@ -34,11 +38,13 @@ PODS:
 
 DEPENDENCIES:
   - Snabble (from `../`)
+  - Snabble/Datatrans (from `../`)
 
 SPEC REPOS:
   trunk:
     - AutoLayout-Helper
     - Base32
+    - Datatrans
     - DeviceKit
     - GRDB.swift
     - KeychainAccess
@@ -57,6 +63,7 @@ EXTERNAL SOURCES:
 SPEC CHECKSUMS:
   AutoLayout-Helper: cef12ab4c7169facf772b2afaaeecce23e898999
   Base32: 163c298644d184e89ca4e00a996bad6bf5166390
+  Datatrans: bfb8c88286768b5a8e15e125e10360a95f1f564d
   DeviceKit: 316f28290430467278b8a0d1c895968efa9e16e2
   GRDB.swift: 1395cb3556df6b16ed69dfc74c3886abc75d2825
   KeychainAccess: c0c4f7f38f6fc7bbe58f5702e25f7bd2f65abf51
@@ -69,6 +76,6 @@ SPEC CHECKSUMS:
   WCAG-Colors: 4aca2fd6c2dce9cd1211c5bf3cda1e8c531d3d2c
   Zip: b3fef584b147b6e582b2256a9815c897d60ddc67
 
-PODFILE CHECKSUM: f8521494de30ad2c0d48c8ed8d4ad99f32f16f76
+PODFILE CHECKSUM: 079c97e04bbf5d4e99ce0ff4cd2a5f2135135e03
 
 COCOAPODS: 1.11.3

@@ -28,16 +28,16 @@ class CouponViewModel {
 
     var validUntil: String {
         guard coupon.isValid else {
-            return L10n.Snabble.Coupon.expired
+            return Asset.localizedString(forKey: "Snabble.Coupon.expired")
         }
 
         guard let validUntil = coupon.validUntil else {
-            return L10n.Snabble.Coupon.validIndefinitely
+            return Asset.localizedString(forKey: "Snabble.Coupon.validIndefinitely")
         }
 
         let now = Date()
         guard now < validUntil else {
-            return L10n.Snabble.Coupon.expired
+            return Asset.localizedString(forKey: "Snabble.Coupon.expired")
         }
 
         let formatter = DateFormatter()
@@ -46,7 +46,7 @@ class CouponViewModel {
         formatter.locale = Locale.current
 
         let dateString = formatter.string(from: validUntil)
-        return L10n.Snabble.Coupons.expiresAtDate(dateString)
+        return Asset.localizedString(forKey: "Snabble.Coupons.expiresAtDate", arguments: dateString)
     }
 
     var isNew: Bool {

@@ -106,7 +106,7 @@ final class ReceiptCell: UITableViewCell {
         case .pending(let shopName, let projectId):
             self.storeName.text = shopName
             self.showIcon(projectId)
-            self.orderDate.text = L10n.Snabble.Receipts.loading
+            self.orderDate.text = Asset.localizedString(forKey: "Snabble.Receipts.loading")
             let spinner = UIActivityIndicatorView(style: .medium)
             spinner.color = Asset.Color.systemGray()
             spinner.startAnimating()

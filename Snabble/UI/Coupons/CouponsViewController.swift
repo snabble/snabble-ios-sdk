@@ -50,7 +50,7 @@ public final class CouponsViewController: UICollectionViewController {
 
     private func configureEmptyLabel(on collectionView: UICollectionView) {
         let emptyLabel = UILabel()
-        emptyLabel.text = L10n.Snabble.Coupons.none
+        emptyLabel.text = Asset.localizedString(forKey: "Snabble.Coupons.none")
         emptyLabel.textAlignment = .center
         emptyLabel.numberOfLines = 0
         emptyLabel.isHidden = false

@@ -64,14 +64,14 @@ final class SupervisorRejectedViewController: UIViewController {
         messageLabel.numberOfLines = 0
         messageLabel.setContentHuggingPriority(.defaultLow + 1, for: .horizontal)
         messageLabel.setContentHuggingPriority(.defaultLow + 1, for: .vertical)
-        messageLabel.text = L10n.Snabble.Payment.rejectedHint
+        messageLabel.text = Asset.localizedString(forKey: "Snabble.Payment.rejectedHint")
 
         let button = UIButton(type: .system)
         button.translatesAutoresizingMaskIntoConstraints = false
         button.makeSnabbleButton()
         button.titleLabel?.font = Asset.preferredFont(forTextStyle: .headline)
         button.titleLabel?.adjustsFontForContentSizeCategory = true
-        button.setTitle(SnabbleSDK.L10n.Snabble.Payment.backToCart, for: .normal)
+        button.setTitle(SnabbleSDK.Asset.localizedString(forKey: "Snabble.Payment.backToCart"), for: .normal)
         button.addTarget(self, action: #selector(backButtonTapped(_:)), for: .touchUpInside)
 
         contentView.addSubview(scrollView)
@@ -120,7 +120,7 @@ final class SupervisorRejectedViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        title = L10n.Snabble.Payment.rejected
+        title = Asset.localizedString(forKey: "Snabble.Payment.rejected")
         self.navigationItem.hidesBackButton = true
 
         view.backgroundColor = Asset.Color.systemBackground()

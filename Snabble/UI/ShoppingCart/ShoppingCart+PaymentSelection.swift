@@ -245,7 +245,7 @@ final class PaymentMethodSelector {
     }
 
     @objc private func methodSelectionTapped(_ gesture: UITapGestureRecognizer) {
-        let title = L10n.Snabble.Shoppingcart.howToPay
+        let title = Asset.localizedString(forKey: "Snabble.Shoppingcart.howToPay")
         let sheet = AlertController(title: title, message: nil, preferredStyle: .actionSheet)
         sheet.visualStyle = .snabbleActionSheet
 
@@ -295,7 +295,7 @@ final class PaymentMethodSelector {
         }
 
         // add the cancel action
-        sheet.addAction(AlertAction(title: L10n.Snabble.cancel, style: .preferred))
+        sheet.addAction(AlertAction(title: Asset.localizedString(forKey: "Snabble.cancel"), style: .preferred))
 
         sheet.shouldDismissHandler = { action in
             if let action = action, let icon = iconMap[action], let methodIcon = self.methodIcon {
@@ -331,7 +331,7 @@ final class PaymentMethodSelector {
                 }
 
                 if hasCartMethods && !isCartMethod {
-                    detailText = L10n.Snabble.Shoppingcart.notForThisPurchase
+                    detailText = Asset.localizedString(forKey: "Snabble.Shoppingcart.notForThisPurchase")
                     color = Asset.Color.secondaryLabel()
                 }
 
@@ -372,7 +372,7 @@ final class PaymentMethodSelector {
                     } else {
                         let title = Self.attributedString(
                             forText: method.displayName,
-                            withSubtitle: L10n.Snabble.Shoppingcart.notForThisPurchase,
+                            withSubtitle: Asset.localizedString(forKey: "Snabble.Shoppingcart.notForThisPurchase"),
                             inColor: Asset.Color.secondaryLabel()
                         )
                         let action = PaymentMethodAction(
@@ -402,7 +402,7 @@ final class PaymentMethodSelector {
                     return actions
                 }
             } else {
-                let subtitle = L10n.Snabble.Shoppingcart.noPaymentData
+                let subtitle = Asset.localizedString(forKey: "Snabble.Shoppingcart.noPaymentData")
                 let title = Self.attributedString(
                     forText: method.displayName,
                     withSubtitle: subtitle,
@@ -419,7 +419,7 @@ final class PaymentMethodSelector {
         case .applePay:
             if !hasCartMethods || isCartMethod {
                 let canMakePayments = ApplePay.canMakePayments(with: SnabbleUI.project.id)
-                let subtitle = canMakePayments ? nil : L10n.Snabble.Shoppingcart.noPaymentData
+                let subtitle = canMakePayments ? nil : Asset.localizedString(forKey: "Snabble.Shoppingcart.noPaymentData")
                 let title = Self.attributedString(
                     forText: method.displayName,
                     withSubtitle: subtitle,
@@ -436,7 +436,7 @@ final class PaymentMethodSelector {
             } else {
                 let title = Self.attributedString(
                     forText: method.displayName,
-                    withSubtitle: L10n.Snabble.Shoppingcart.notForVendor,
+                    withSubtitle: Asset.localizedString(forKey: "Snabble.Shoppingcart.notForVendor"),
                     inColor: Asset.Color.secondaryLabel()
                 )
                 let action = PaymentMethodAction(

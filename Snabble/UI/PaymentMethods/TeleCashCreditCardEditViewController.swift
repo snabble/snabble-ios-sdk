@@ -153,7 +153,7 @@ public final class TeleCashCreditCardEditViewController: UIViewController {
         if let brand = self.brand {
             self.title = brand.displayName
         } else {
-            self.title = L10n.Snabble.Payment.creditCard
+            self.title = Asset.localizedString(forKey: "Snabble.Payment.creditCard")
         }
 
         if self.ccNumber != nil {
@@ -162,9 +162,9 @@ public final class TeleCashCreditCardEditViewController: UIViewController {
             self.cardNumber.text = self.ccNumber
             self.expirationDate.text = self.expDate
 
-            self.cardNumberLabel.text = L10n.Snabble.Cc.cardNumber
-            self.expDateLabel.text = L10n.Snabble.Cc.validUntil
-            self.explanation.text = L10n.Snabble.Cc.editingHint
+            self.cardNumberLabel.text = Asset.localizedString(forKey: "Snabble.Cc.cardNumber")
+            self.expDateLabel.text = Asset.localizedString(forKey: "Snabble.Cc.validUntil")
+            self.explanation.text = Asset.localizedString(forKey: "Snabble.Cc.editingHint")
 
             let deleteButton = UIBarButtonItem(image: Asset.image(named: "SnabbleSDK/icon-trash"), style: .plain, target: self, action: #selector(self.deleteButtonTapped(_:)))
             self.navigationItem.rightBarButtonItem = deleteButton
@@ -208,8 +208,8 @@ public final class TeleCashCreditCardEditViewController: UIViewController {
             self?.spinner.stopAnimating()
             switch result {
             case .failure:
-                let alert = UIAlertController(title: "Oops", message: L10n.Snabble.Cc.noEntryPossible, preferredStyle: .alert)
-                alert.addAction(UIAlertAction(title: L10n.Snabble.ok, style: .default) { _ in
+                let alert = UIAlertController(title: "Oops", message: Asset.localizedString(forKey: "Snabble.Cc.noEntryPossible"), preferredStyle: .alert)
+                alert.addAction(UIAlertAction(title: Asset.localizedString(forKey: "Snabble.ok"), style: .default) { _ in
                     self?.goBack()
                 })
                 self?.present(alert, animated: true)
@@ -259,7 +259,7 @@ public final class TeleCashCreditCardEditViewController: UIViewController {
         let chargeDecimal = Decimal(string: vaultItem.chargeTotal.replacingOccurrences(of: ",", with: "."))
         let chargeTotal = fmt.string(for: chargeDecimal)!
 
-        return L10n.Snabble.Cc._3dsecureHint.retailerWithPrice(chargeTotal, name)
+        return Asset.localizedString(forKey: "Snabble.Cc._3dsecureHint.retailerWithPrice", arguments: chargeTotal, name)
     }
 
     @objc private func deleteButtonTapped(_ sender: Any) {
@@ -267,13 +267,13 @@ public final class TeleCashCreditCardEditViewController: UIViewController {
             return
         }
 
-        let alert = UIAlertController(title: nil, message: L10n.Snabble.Payment.Delete.message, preferredStyle: .alert)
-        alert.addAction(UIAlertAction(title: L10n.Snabble.yes, style: .destructive) { _ in
+        let alert = UIAlertController(title: nil, message: Asset.localizedString(forKey: "Snabble.Payment.Delete.message"), preferredStyle: .alert)
+        alert.addAction(UIAlertAction(title: Asset.localizedString(forKey: "Snabble.yes"), style: .destructive) { _ in
             PaymentMethodDetails.remove(detail)
             self.analyticsDelegate?.track(.paymentMethodDeleted(self.brand?.rawValue ?? ""))
             self.goBack()
         })
-        alert.addAction(UIAlertAction(title: L10n.Snabble.no, style: .cancel, handler: nil))
+        alert.addAction(UIAlertAction(title: Asset.localizedString(forKey: "Snabble.no"), style: .cancel, handler: nil))
         self.present(alert, animated: true)
     }
 }
@@ -334,8 +334,8 @@ extension TeleCashCreditCardEditViewController: WKScriptMessageHandler {
     }
 
     private func showError() {
-        let alert = UIAlertController(title: L10n.Snabble.Payment.CreditCard.error, message: nil, preferredStyle: .alert)
-        alert.addAction(UIAlertAction(title: L10n.Snabble.ok, style: .default) { _ in
+        let alert = UIAlertController(title: Asset.localizedString(forKey: "Snabble.Payment.CreditCard.error"), message: nil, preferredStyle: .alert)
+        alert.addAction(UIAlertAction(title: Asset.localizedString(forKey: "Snabble.ok"), style: .default) { _ in
             self.goBack()
         })
 

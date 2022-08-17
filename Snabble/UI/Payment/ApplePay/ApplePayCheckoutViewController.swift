@@ -155,10 +155,10 @@ final class ApplePayCheckoutViewController: UIViewController {
                     self.navigationController?.popToRootViewController(animated: true)
                 }
             case .failure:
-                let alert = UIAlertController(title: L10n.Snabble.Payment.CancelError.title,
-                                              message: L10n.Snabble.Payment.CancelError.message,
+                let alert = UIAlertController(title: Asset.localizedString(forKey: "Snabble.Payment.CancelError.title"),
+                                              message: Asset.localizedString(forKey: "Snabble.Payment.CancelError.message"),
                                               preferredStyle: .alert)
-                alert.addAction(UIAlertAction(title: L10n.Snabble.ok, style: .default, handler: nil))
+                alert.addAction(UIAlertAction(title: Asset.localizedString(forKey: "Snabble.ok"), style: .default, handler: nil))
                 self.present(alert, animated: true)
             }
         }

@@ -41,15 +41,15 @@ public final class PaymentMethodStartCheck {
             presenter.showOverlay(with: view)
 
         case .visa, .mastercard, .americanExpress:
-            self.requestBiometricAuthentication(on: presenter, reason: L10n.Snabble.CreditCard.payNow, completion)
+            self.requestBiometricAuthentication(on: presenter, reason: Asset.localizedString(forKey: "Snabble.CreditCard.payNow"), completion)
 
         case .paydirektOneKlick:
-            self.requestBiometricAuthentication(on: presenter, reason: L10n.Snabble.Paydirekt.payNow, completion)
+            self.requestBiometricAuthentication(on: presenter, reason: Asset.localizedString(forKey: "Snabble.Paydirekt.payNow"), completion)
 
         case .twint:
-            self.requestBiometricAuthentication(on: presenter, reason: L10n.Snabble.Twint.payNow, completion)
+            self.requestBiometricAuthentication(on: presenter, reason: Asset.localizedString(forKey: "Snabble.Twint.payNow"), completion)
         case .postFinanceCard:
-            self.requestBiometricAuthentication(on: presenter, reason: L10n.Snabble.PostFinanceCard.payNow, completion)
+            self.requestBiometricAuthentication(on: presenter, reason: Asset.localizedString(forKey: "Snabble.PostFinanceCard.payNow"), completion)
 
         case .qrCodePOS, .qrCodeOffline, .externalBilling, .gatekeeperTerminal, .customerCardPOS, .applePay:
             completion(true)
@@ -71,13 +71,13 @@ public final class PaymentMethodStartCheck {
         }
 
         presenter.dismissOverlay()
-        self.requestBiometricAuthentication(on: presenter, reason: L10n.Snabble.Sepa.payNow, completionHandler)
+        self.requestBiometricAuthentication(on: presenter, reason: Asset.localizedString(forKey: "Snabble.Sepa.payNow"), completionHandler)
     }
 
     @objc private func sepaShowDetailsTapped(_ gestureRecognizer: UITapGestureRecognizer) {
         let msg = SnabbleUI.project.messages?.sepaMandate ?? ""
-        let alert = UIAlertController(title: L10n.Snabble.Sepa.mandate, message: msg, preferredStyle: .alert)
-        alert.addAction(UIAlertAction(title: L10n.Snabble.ok, style: .default, handler: nil))
+        let alert = UIAlertController(title: Asset.localizedString(forKey: "Snabble.Sepa.mandate"), message: msg, preferredStyle: .alert)
+        alert.addAction(UIAlertAction(title: Asset.localizedString(forKey: "Snabble.ok"), style: .default, handler: nil))
         presenter?.present(alert, animated: true)
     }
 
@@ -90,7 +90,7 @@ public final class PaymentMethodStartCheck {
                 completion(true)
             case .locked:
                 let name = BiometricAuthentication.supportedBiometry.name
-                let message = L10n.Snabble.Biometry.locked(name)
+                let message = Asset.localizedString(forKey: "Snabble.Biometry.locked", arguments: name)
                 self.messageDelegate?.showWarningMessage(message)
                 completion(false)
             default:

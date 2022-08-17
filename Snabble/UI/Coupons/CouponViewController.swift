@@ -41,7 +41,7 @@ public final class CouponViewController: UIViewController {
         self.couponViewModel = CouponViewModel(coupon: coupon)
         super.init(nibName: nil, bundle: nil)
 
-        title = L10n.Snabble.Coupons.title
+        title = Asset.localizedString(forKey: "Snabble.Coupons.title")
         view.backgroundColor = Asset.Color.systemBackground()
     }
 
@@ -104,7 +104,7 @@ public final class CouponViewController: UIViewController {
         self.validityLabel = validityLabel
 
         let button = UIButton(type: .system)
-        button.setTitle(L10n.Snabble.Coupon.activate, for: .normal)
+        button.setTitle(Asset.localizedString(forKey: "Snabble.Coupon.activate"), for: .normal)
         button.setBackgroundColor(color: Asset.Color.accent(), for: .normal)
         button.titleLabel?.font = Asset.preferredFont(forTextStyle: .headline)
         button.tintColor = Asset.Color.onAccent()
@@ -117,7 +117,7 @@ public final class CouponViewController: UIViewController {
         checkMarkImageView.tintColor = greenColor
         let activatedTextLabel = UILabel()
         activatedTextLabel.font = Asset.preferredFont(forTextStyle: .title1)
-        activatedTextLabel.text = L10n.Snabble.Coupon.activated
+        activatedTextLabel.text = Asset.localizedString(forKey: "Snabble.Coupon.activated")
         activatedTextLabel.textColor = greenColor
         activatedTextLabel.setContentHuggingPriority(.defaultLow - 1, for: .horizontal)
         let activatedStackView = UIStackView(arrangedSubviews: [checkMarkImageView, activatedTextLabel])

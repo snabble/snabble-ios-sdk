@@ -44,7 +44,7 @@ final class QRCheckoutViewController: UIViewController {
 
         super.init(nibName: nil, bundle: nil)
 
-        title = L10n.Snabble.QRCode.title
+        title = Asset.localizedString(forKey: "Snabble.QRCode.title")
     }
 
     required init?(coder aDecoder: NSCoder) {
@@ -99,7 +99,7 @@ final class QRCheckoutViewController: UIViewController {
 
         let cancelButton = UIButton(type: .system)
         cancelButton.translatesAutoresizingMaskIntoConstraints = false
-        cancelButton.setTitle(L10n.Snabble.cancel, for: .normal)
+        cancelButton.setTitle(Asset.localizedString(forKey: "Snabble.cancel"), for: .normal)
         cancelButton.titleLabel?.font = Asset.preferredFont(forTextStyle: .headline)
         cancelButton.titleLabel?.adjustsFontForContentSizeCategory = true
         cancelButton.titleLabel?.textAlignment = .center
@@ -207,7 +207,7 @@ final class QRCheckoutViewController: UIViewController {
     }
 
     private func setupLabels() {
-        self.checkoutIdLabel?.text = L10n.Snabble.Checkout.id + ": " + String(process.links._self.href.suffix(4))
+        self.checkoutIdLabel?.text = Asset.localizedString(forKey: "Snabble.Checkout.id") + ": " + String(process.links._self.href.suffix(4))
 
         let formatter = PriceFormatter(shop.project ?? SnabbleUI.project)
         // if we have a valid checkoutInfo, use the total from that, else what we've calculated in the cart
@@ -216,9 +216,9 @@ final class QRCheckoutViewController: UIViewController {
 
         let formattedTotal = formatter.format(total ?? 0)
 
-        self.totalPriceLabel?.text = L10n.Snabble.QRCode.total + "\(formattedTotal)"
-        self.explanationUpperLabel?.text = L10n.Snabble.QRCode.showThisCode
-        self.explanationBottomLabel?.text = L10n.Snabble.QRCode.priceMayDiffer
+        self.totalPriceLabel?.text = Asset.localizedString(forKey: "Snabble.QRCode.total") + "\(formattedTotal)"
+        self.explanationUpperLabel?.text = Asset.localizedString(forKey: "Snabble.QRCode.showThisCode")
+        self.explanationBottomLabel?.text = Asset.localizedString(forKey: "Snabble.QRCode.priceMayDiffer")
     }
 
     private func startPoller() {
@@ -248,10 +248,10 @@ final class QRCheckoutViewController: UIViewController {
                     self.navigationController?.popToRootViewController(animated: true)
                 }
             case .failure:
-                let alert = UIAlertController(title: L10n.Snabble.Payment.CancelError.title,
-                                              message: L10n.Snabble.Payment.CancelError.message,
+                let alert = UIAlertController(title: Asset.localizedString(forKey: "Snabble.Payment.CancelError.title"),
+                                              message: Asset.localizedString(forKey: "Snabble.Payment.CancelError.message"),
                                               preferredStyle: .alert)
-                alert.addAction(UIAlertAction(title: L10n.Snabble.ok, style: .default) { _ in
+                alert.addAction(UIAlertAction(title: Asset.localizedString(forKey: "Snabble.ok"), style: .default) { _ in
                     self.startPoller()
                 })
                 self.present(alert, animated: true)
