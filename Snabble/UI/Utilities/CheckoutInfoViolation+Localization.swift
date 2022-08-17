@@ -14,11 +14,11 @@ extension CheckoutInfo.Violation {
         case .unknown:
             return message
         case .couponInvalid:
-            return L10n.Snabble.Violations.couponInvalid
+            return Asset.localizedString(forKey: "Snabble.Violations.couponInvalid")
         case .couponAlreadyVoided:
-            return L10n.Snabble.Violations.couponAlreadyVoided
+            return Asset.localizedString(forKey: "Snabble.Violations.couponAlreadyVoided")
         case .couponCurrentlyNotValid:
-            return L10n.Snabble.Violations.couponCurrentlyNotValid
+            return Asset.localizedString(forKey: "Snabble.Violations.couponCurrentlyNotValid")
         }
     }
 }

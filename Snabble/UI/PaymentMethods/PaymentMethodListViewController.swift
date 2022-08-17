@@ -40,7 +40,7 @@ public final class PaymentMethodListViewController: UITableViewController {
     override public func viewDidLoad() {
         super.viewDidLoad()
 
-        self.title = L10n.Snabble.PaymentMethods.title
+        self.title = Asset.localizedString(forKey: "Snabble.PaymentMethods.title")
 
         let addButton = UIBarButtonItem(barButtonSystemItem: .add, target: self, action: #selector(addMethod))
         self.navigationItem.rightBarButtonItem = addButton
@@ -101,7 +101,7 @@ public final class PaymentMethodListViewController: UITableViewController {
         if methods.count == 1 {
             showEditController(for: methods[0])
         } else {
-            let sheet = SelectionSheetController(title: L10n.Snabble.PaymentMethods.choose)
+            let sheet = SelectionSheetController(title: Asset.localizedString(forKey: "Snabble.PaymentMethods.choose"))
 
             methods.forEach { method in
                 let action = SelectionSheetAction(title: method.displayName, image: method.icon) { [self] _ in
@@ -110,7 +110,7 @@ public final class PaymentMethodListViewController: UITableViewController {
                 sheet.addAction(action)
             }
 
-            sheet.cancelButtonTitle = L10n.Snabble.cancel
+            sheet.cancelButtonTitle = Asset.localizedString(forKey: "Snabble.cancel")
 
             self.present(sheet, animated: true)
         }

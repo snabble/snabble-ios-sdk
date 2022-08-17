@@ -79,7 +79,7 @@ final class ScanConfirmationView: UIView {
 
         let cartButton = UIButton(type: .system)
         cartButton.translatesAutoresizingMaskIntoConstraints = false
-        cartButton.setTitle(L10n.Snabble.Scanner.addToCart, for: .normal)
+        cartButton.setTitle(Asset.localizedString(forKey: "Snabble.Scanner.addToCart"), for: .normal)
         cartButton.titleLabel?.font = Asset.preferredFont(forTextStyle: .headline)
         cartButton.titleLabel?.adjustsFontForContentSizeCategory = true
         cartButton.makeSnabbleButton()
@@ -112,7 +112,7 @@ final class ScanConfirmationView: UIView {
 
         let manualDiscountButton = UIButton(type: .system)
         manualDiscountButton.translatesAutoresizingMaskIntoConstraints = false
-        manualDiscountButton.setTitle(L10n.Snabble.addDiscount, for: .normal)
+        manualDiscountButton.setTitle(Asset.localizedString(forKey: "Snabble.addDiscount"), for: .normal)
         manualDiscountButton.titleLabel?.font = Asset.preferredFont(forTextStyle: .body)
         manualDiscountButton.titleLabel?.adjustsFontForContentSizeCategory = true
 
@@ -232,7 +232,7 @@ final class ScanConfirmationView: UIView {
 
         let project = SnabbleUI.project
         self.manualDiscountButton?.isHidden = project.manualCoupons.isEmpty
-        self.manualDiscountButton?.setTitle(L10n.Snabble.addDiscount, for: .normal)
+        self.manualDiscountButton?.setTitle(Asset.localizedString(forKey: "Snabble.addDiscount"), for: .normal)
 
         let product = scannedProduct.product
         self.productNameLabel?.text = product.name
@@ -289,7 +289,7 @@ final class ScanConfirmationView: UIView {
 
         self.showQuantity(updateTextField: true)
 
-        let cartTitle = alreadyInCart ? L10n.Snabble.Scanner.updateCart : L10n.Snabble.Scanner.addToCart
+        let cartTitle = alreadyInCart ? Asset.localizedString(forKey: "Snabble.Scanner.updateCart") : Asset.localizedString(forKey: "Snabble.Scanner.addToCart")
         self.cartButton?.setTitle(cartTitle, for: .normal)
 
         if product.discountedPrice != nil && product.discountedPrice != product.listPrice {
@@ -364,7 +364,7 @@ final class ScanConfirmationView: UIView {
             // check if we already have this exact scanned code in the cart
             let index = cart.items.firstIndex(where: { $0.scannedCode.code == self.cartItem.scannedCode.code })
             if index != nil {
-                let msg = ScanMessage(L10n.Snabble.Scanner.duplicateDepositScanned)
+                let msg = ScanMessage(Asset.localizedString(forKey: "Snabble.Scanner.duplicateDepositScanned"))
                 self.delegate?.showMessage(msg)
                 return
             }
@@ -404,10 +404,10 @@ final class ScanConfirmationView: UIView {
     @objc private func manualDiscountTapped(_ sender: Any) {
         let project = SnabbleUI.project
 
-        let title = L10n.Snabble.addDiscount
+        let title = Asset.localizedString(forKey: "Snabble.addDiscount")
         let actionSheet = UIAlertController(title: title, message: nil, preferredStyle: .actionSheet)
 
-        actionSheet.addAction(UIAlertAction(title: L10n.Snabble.noDiscount, style: .default) { _ in
+        actionSheet.addAction(UIAlertAction(title: Asset.localizedString(forKey: "Snabble.noDiscount"), style: .default) { _ in
             self.cartItem.manualCoupon = nil
             self.showQuantity(updateTextField: true)
             self.manualDiscountButton?.setTitle(title, for: .normal)
@@ -422,11 +422,11 @@ final class ScanConfirmationView: UIView {
                 self.cartItem.manualCoupon = coupon
                 self.showQuantity(updateTextField: true)
                 self.manualDiscountButton?.setTitle(coupon.name, for: .normal)
-                self.cartButton?.setTitle(L10n.Snabble.Scanner.addToCart, for: .normal)
+                self.cartButton?.setTitle(Asset.localizedString(forKey: "Snabble.Scanner.addToCart"), for: .normal)
             })
         }
 
-        actionSheet.addAction(UIAlertAction(title: L10n.Snabble.cancel, style: .cancel, handler: nil))
+        actionSheet.addAction(UIAlertAction(title: Asset.localizedString(forKey: "Snabble.cancel"), style: .cancel, handler: nil))
 
         UIApplication.topViewController()?.present(actionSheet, animated: true)
     }

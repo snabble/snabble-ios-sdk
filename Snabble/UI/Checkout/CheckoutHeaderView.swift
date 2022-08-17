@@ -73,11 +73,11 @@ extension CheckoutStepStatus: CheckoutHeaderViewModel {
     var text: String {
         switch self {
         case .loading:
-            return L10n.Snabble.Payment.waiting
+            return Asset.localizedString(forKey: "Snabble.Payment.waiting")
         case .failure, .aborted:
-            return L10n.Snabble.Payment.rejected
+            return Asset.localizedString(forKey: "Snabble.Payment.rejected")
         case .success:
-            return L10n.Snabble.Payment.success
+            return Asset.localizedString(forKey: "Snabble.Payment.success")
         }
     }
 

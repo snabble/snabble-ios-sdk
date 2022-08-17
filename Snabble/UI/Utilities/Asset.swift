@@ -32,8 +32,12 @@ public enum Asset {
         provider?.image(named: name, domain: domain) ?? UIImage(named: name, in: BundleToken.bundle, with: nil) ?? UIImage(systemName: name)
     }
 
-    static func localizedString(forKey key: String, table: String? = nil, value: String? = nil, domain: Any? = domain) -> String {
-        provider?.localizedString(forKey: key, domain: domain) ?? BundleToken.bundle.localizedString(forKey: key, value: value, table: table)
+    static func localizedString(forKey key: String, arguments: CVarArg..., table: String? = nil, value: String? = nil, domain: Any? = domain) -> String {
+        guard let localizedString = provider?.localizedString(forKey: key, domain: domain) else {
+            let format = BundleToken.bundle.localizedString(forKey: key, value: value, table: table)
+            return String.localizedStringWithFormat(format, arguments)
+        }
+        return localizedString
     }
 
     static func url(forResource name: String?, withExtension ext: String?, domain: Any? = domain) -> URL? {

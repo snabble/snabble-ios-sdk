@@ -102,7 +102,7 @@ final class ScannerDrawerViewController: UIViewController {
         let innerSpacer = UIView()
         innerSpacer.translatesAutoresizingMaskIntoConstraints = false
 
-        let segmentedControl = UISegmentedControl(items: [L10n.Snabble.ShoppingList.title, L10n.Snabble.ShoppingCart.title])
+        let segmentedControl = UISegmentedControl(items: [Asset.localizedString(forKey: "Snabble.ShoppingList.title"), Asset.localizedString(forKey: "Snabble.ShoppingCart.title")])
         segmentedControl.translatesAutoresizingMaskIntoConstraints = false
         segmentedControl.selectedSegmentIndex = 0
         segmentedControl.addTarget(self, action: #selector(tabChanged(_:)), for: .valueChanged)

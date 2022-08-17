@@ -29,15 +29,15 @@ extension RawPaymentMethod {
         case .creditCardAmericanExpress:
             return "American Express"
         case .gatekeeperTerminal:
-            return L10n.Snabble.Payment.payAtSCO
+            return Asset.localizedString(forKey: "Snabble.Payment.payAtSCO")
         case .paydirektOneKlick:
             return "paydirekt"
         case .qrCodePOS, .qrCodeOffline:
-            return L10n.Snabble.Payment.payAtCashDesk
+            return Asset.localizedString(forKey: "Snabble.Payment.payAtCashDesk")
         case .externalBilling:
-            return L10n.Snabble.Payment.payViaInvoice
+            return Asset.localizedString(forKey: "Snabble.Payment.payViaInvoice")
         case .customerCardPOS:
-            return L10n.Snabble.Payment.payUsingCustomerCard
+            return Asset.localizedString(forKey: "Snabble.Payment.payUsingCustomerCard")
         case .applePay:
             return "Apple Pay"
         case .twint:

@@ -58,7 +58,7 @@ public final class PaymentMethodAddViewController: UITableViewController {
     override public func viewDidLoad() {
         super.viewDidLoad()
 
-        self.title = L10n.Snabble.PaymentMethods.title
+        self.title = Asset.localizedString(forKey: "Snabble.PaymentMethods.title")
         tableView.tableFooterView = UIView(frame: .zero)
         tableView.rowHeight = UITableView.automaticDimension
         tableView.register(PaymentMethodAddCell.self, forCellReuseIdentifier: "cell")
@@ -215,7 +215,7 @@ extension PaymentMethodAddViewController {
             .filter { $0.editable }
             .sorted { $0.displayName < $1.displayName }
 
-        let sheet = SelectionSheetController(title: L10n.Snabble.PaymentMethods.choose, message: nil)
+        let sheet = SelectionSheetController(title: Asset.localizedString(forKey: "Snabble.PaymentMethods.choose"), message: nil)
 
         methods.forEach { method in
             let action = SelectionSheetAction(title: method.displayName, image: method.icon) { [self] _ in
@@ -227,7 +227,7 @@ extension PaymentMethodAddViewController {
             sheet.addAction(action)
         }
 
-        sheet.cancelButtonTitle = L10n.Snabble.cancel
+        sheet.cancelButtonTitle = Asset.localizedString(forKey: "Snabble.cancel")
 
         self.present(sheet, animated: true)
     }

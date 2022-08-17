@@ -41,7 +41,7 @@ final class CustomerCardCheckoutViewController: UIViewController {
 
         super.init(nibName: nil, bundle: nil)
 
-        self.title = L10n.Snabble.Checkout.payAtCashRegister
+        self.title = Asset.localizedString(forKey: "Snabble.Checkout.payAtCashRegister")
     }
 
     required init?(coder aDecoder: NSCoder) {
@@ -72,7 +72,7 @@ final class CustomerCardCheckoutViewController: UIViewController {
         paidButton.titleLabel?.font = Asset.preferredFont(forTextStyle: .headline)
         paidButton.titleLabel?.adjustsFontForContentSizeCategory = true
         paidButton.makeSnabbleButton()
-        paidButton.setTitle(L10n.Snabble.QRCode.didPay, for: .normal)
+        paidButton.setTitle(Asset.localizedString(forKey: "Snabble.QRCode.didPay"), for: .normal)
         paidButton.alpha = 0
         paidButton.isUserInteractionEnabled = false
         paidButton.addTarget(self, action: #selector(paidButtonTapped(_:)), for: .touchUpInside)

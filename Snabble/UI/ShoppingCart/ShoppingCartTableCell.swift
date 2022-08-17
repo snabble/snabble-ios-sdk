@@ -151,7 +151,7 @@ final class ShoppingCartTableCell: UITableViewCell {
     }
 
     func setDiscount(for amount: Int) {
-        self.cellView?.nameView?.nameLabel?.text = L10n.Snabble.Shoppingcart.discounts
+        self.cellView?.nameView?.nameLabel?.text = Asset.localizedString(forKey: "Snabble.Shoppingcart.discounts")
 
         let formatter = PriceFormatter(SnabbleUI.project)
         self.cellView?.nameView?.priceLabel?.text = formatter.format(amount)
@@ -166,7 +166,7 @@ final class ShoppingCartTableCell: UITableViewCell {
     func setGiveaway(for lineItem: CheckoutInfo.LineItem) {
         self.cellView?.nameView?.nameLabel?.text = lineItem.name
 
-        self.cellView?.nameView?.priceLabel?.text = L10n.Snabble.Shoppingcart.giveaway
+        self.cellView?.nameView?.priceLabel?.text = Asset.localizedString(forKey: "Snabble.Shoppingcart.giveaway")
 
         if showImages {
             let icon: UIImage? = Asset.image(named: "SnabbleSDK/icon-giveaway")
@@ -326,7 +326,7 @@ final class ShoppingCartTableCell: UITableViewCell {
 
         if let depositTotal = lineItems.first(where: { $0.type == .deposit })?.totalPrice {
             let total = formatter.format((item.totalPrice ?? 0) + depositTotal)
-            let includesDeposit = L10n.Snabble.Shoppingcart.includesDeposit
+            let includesDeposit = Asset.localizedString(forKey: "Snabble.Shoppingcart.includesDeposit")
             self.cellView?.nameView?.priceLabel?.text = "\(total) \(includesDeposit)"
         } else {
             let total = formatter.format(item.totalPrice ?? 0)

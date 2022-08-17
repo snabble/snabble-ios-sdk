@@ -87,7 +87,7 @@ open class BarcodeDetector: NSObject {
         self.screenTap = UITapGestureRecognizer(target: self, action: #selector(screenTapped(_:)))
         self.decorationOverlay?.addGestureRecognizer(self.screenTap!)
 
-        self.messageDelegate?.showMessage(L10n.Snabble.Scanner.batterySaverHint) {
+        self.messageDelegate?.showMessage(Asset.localizedString(forKey: "Snabble.Scanner.batterySaverHint")) {
             self.resumeScanning()
         }
     }
@@ -130,11 +130,11 @@ open class BarcodeDetector: NSObject {
     public func requestCameraPermission(currentStatus: AVAuthorizationStatus) {
         switch currentStatus {
         case .restricted, .denied:
-            let title = L10n.Snabble.Scanner.Camera.accessDenied
-            let msg = L10n.Snabble.Scanner.Camera.allowAccess
+            let title = Asset.localizedString(forKey: "Snabble.Scanner.Camera.accessDenied")
+            let msg = Asset.localizedString(forKey: "Snabble.Scanner.Camera.allowAccess")
             let alert = UIAlertController(title: title, message: msg, preferredStyle: .alert)
-            alert.addAction(UIAlertAction(title: L10n.Snabble.cancel, style: .cancel, handler: nil))
-            alert.addAction(UIAlertAction(title: L10n.Snabble.settings, style: .default) { _ in
+            alert.addAction(UIAlertAction(title: Asset.localizedString(forKey: "Snabble.cancel"), style: .cancel, handler: nil))
+            alert.addAction(UIAlertAction(title: Asset.localizedString(forKey: "Snabble.settings"), style: .default) { _ in
                 UIApplication.shared.open(URL(string: UIApplication.openSettingsURLString)!)
             })
             DispatchQueue.main.async {

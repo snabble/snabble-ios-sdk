@@ -94,7 +94,7 @@ final class EmbeddedCodesCheckoutViewController: UIViewController {
         paidButton.titleLabel?.adjustsFontForContentSizeCategory = true
         paidButton.makeSnabbleButton()
         paidButton.titleLabel?.textAlignment = .center
-        paidButton.setTitle(L10n.Snabble.QRCode.didPay, for: .normal)
+        paidButton.setTitle(Asset.localizedString(forKey: "Snabble.QRCode.didPay"), for: .normal)
         paidButton.alpha = 0
         paidButton.isUserInteractionEnabled = false
         paidButton.addTarget(self, action: #selector(paidButtonTapped(_:)), for: .touchUpInside)
@@ -227,7 +227,7 @@ final class EmbeddedCodesCheckoutViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        title = L10n.Snabble.QRCode.title
+        title = Asset.localizedString(forKey: "Snabble.QRCode.title")
 
         if Snabble.isInFlightCheckoutPending {
             navigationItem.hidesBackButton = true
@@ -237,7 +237,7 @@ final class EmbeddedCodesCheckoutViewController: UIViewController {
         arrowWrapper?.isHidden = true
         setupIcon()
 
-        let msg = L10n.Snabble.QRCode.message
+        let msg = Asset.localizedString(forKey: "Snabble.QRCode.message")
         messageLabel?.text = msg
         messageLabel?.isHidden = msg.isEmpty
 
@@ -360,13 +360,13 @@ final class EmbeddedCodesCheckoutViewController: UIViewController {
     private func setButtonTitle(for page: Int) {
         let title: String
         if page == codes.count - 1 {
-            title = L10n.Snabble.QRCode.didPay
+            title = Asset.localizedString(forKey: "Snabble.QRCode.didPay")
         } else {
-            title = L10n.Snabble.QRCode.nextCode(page + 2, codes.count)
+            title = Asset.localizedString(forKey: "Snabble.QRCode.nextCode", arguments: page + 2, codes.count)
         }
         paidButton?.setTitle(title, for: .normal)
 
-        let codeXofY = L10n.Snabble.QRCode.codeXofY(page + 1, codes.count)
+        let codeXofY = Asset.localizedString(forKey: "Snabble.QRCode.codeXofY", arguments: page + 1, codes.count)
         codeCountLabel?.text = codeXofY
     }
 

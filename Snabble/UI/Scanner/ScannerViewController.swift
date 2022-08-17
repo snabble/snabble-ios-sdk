@@ -62,7 +62,7 @@ public final class ScannerViewController: PulleyViewController {
         super.init(contentViewController: contentViewController, drawerViewController: drawerViewController)
         initialDrawerPosition = .closed
 
-        self.title = L10n.Snabble.Shopping.title
+        self.title = Asset.localizedString(forKey: "Snabble.Shopping.title")
         self.tabBarItem.image = Asset.image(named: "SnabbleSDK/icon-scan-inactive")
         self.tabBarItem.selectedImage = Asset.image(named: "SnabbleSDK/icon-scan-active")
 
@@ -98,12 +98,12 @@ extension ScannerViewController: InternalShoppingCartDelegate {
 
     func shoppingCart(_ shoppingCart: ShoppingCart, violationsDetected violations: [CheckoutInfo.Violation]) {
         let alertController = UIAlertController(
-            title: L10n.Snabble.Violations.title,
+            title: Asset.localizedString(forKey: "Snabble.Violations.title"),
             message: violations.message,
             preferredStyle: .alert
         )
         let action = UIAlertAction(
-            title: L10n.Snabble.ok,
+            title: Asset.localizedString(forKey: "Snabble.ok"),
             style: .default) { _ in
             alertController.dismiss(animated: true)
         }

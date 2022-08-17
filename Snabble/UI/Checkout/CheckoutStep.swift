@@ -62,7 +62,7 @@ extension CheckoutStep {
         switch paymentState {
         case .unknown, .failed, .unauthorized:
             status = .failure
-            detailText = L10n.Snabble.PaymentStatus.Payment.error
+            detailText = Asset.localizedString(forKey: "Snabble.PaymentStatus.Payment.error")
             actionTitle = nil
         case .pending, .processing, .transferred:
             status = .loading
@@ -73,7 +73,7 @@ extension CheckoutStep {
             detailText = nil
             actionTitle = nil
         }
-        text = L10n.Snabble.PaymentStatus.Payment.title
+        text = Asset.localizedString(forKey: "Snabble.PaymentStatus.Payment.title")
         image = nil
     }
 }
@@ -89,15 +89,15 @@ extension CheckoutStep {
 
     init(exitToken: ExitToken, paymentState: PaymentState) {
         status = paymentState == .failed ? .aborted : .from(exitToken: exitToken)
-        text = L10n.Snabble.PaymentStatus.ExitCode.title
+        text = Asset.localizedString(forKey: "Snabble.PaymentStatus.ExitCode.title")
         image = exitToken.image
-        detailText = image != nil ? L10n.Snabble.PaymentStatus.ExitCode.openExitGateTimed : nil
+        detailText = image != nil ? Asset.localizedString(forKey: "Snabble.PaymentStatus.ExitCode.openExitGateTimed") : nil
         actionTitle = nil
     }
 
     init(receiptLink: Link, paymentState: PaymentState) {
         status = paymentState == .failed ? .aborted : .success
-        text = L10n.Snabble.PaymentStatus.Receipt.title
+        text = Asset.localizedString(forKey: "Snabble.PaymentStatus.Receipt.title")
         image = nil
         detailText = nil
         actionTitle = nil
@@ -106,10 +106,10 @@ extension CheckoutStep {
     init(originCandidate: OriginCandidate, savedIbans: Set<String>) {
         status = nil
         if let origin = originCandidate.origin, !savedIbans.contains(origin) {
-            text = L10n.Snabble.Sepa.IbanTransferAlert.message(origin)
-            actionTitle = L10n.Snabble.PaymentStatus.AddDebitCard.button
+            text = Asset.localizedString(forKey: "Snabble.Sepa.IbanTransferAlert.message", arguments: origin)
+            actionTitle = Asset.localizedString(forKey: "Snabble.PaymentStatus.AddDebitCard.button")
         } else {
-            text = L10n.Snabble.PaymentStatus.DebitCardAdded.message
+            text = Asset.localizedString(forKey: "Snabble.PaymentStatus.DebitCardAdded.message")
             actionTitle = nil
         }
         image = nil
@@ -121,9 +121,9 @@ private extension Fulfillment {
     var displayName: String {
         switch type {
         case "tobaccolandEWA":
-            return L10n.Snabble.PaymentStatus.Tobacco.title
+            return Asset.localizedString(forKey: "Snabble.PaymentStatus.Tobacco.title")
         default:
-            return L10n.Snabble.PaymentStatus.Fulfillment.title
+            return Asset.localizedString(forKey: "Snabble.PaymentStatus.Fulfillment.title")
         }
     }
 
@@ -134,9 +134,9 @@ private extension Fulfillment {
             case .loading, .aborted:
                 return nil
             case .success:
-                return L10n.Snabble.PaymentStatus.Tobacco.message
+                return Asset.localizedString(forKey: "Snabble.PaymentStatus.Tobacco.message")
             case .failure:
-                return L10n.Snabble.PaymentStatus.Tobacco.error
+                return Asset.localizedString(forKey: "Snabble.PaymentStatus.Tobacco.error")
             }
         default:
             return nil
