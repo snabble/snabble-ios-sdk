@@ -217,7 +217,7 @@ extension ShoppingCartTableCellView {
             let badgeLabel = UILabel()
             badgeLabel.translatesAutoresizingMaskIntoConstraints = false
             badgeLabel.font = UIFont.systemFont(ofSize: 11)
-            badgeLabel.textColor = Asset.Color.label().contrast
+            badgeLabel.textColor = Asset.Color.onLabel()
             badgeLabel.textAlignment = .center
             badgeLabel.layer.cornerRadius = 4
             badgeLabel.layer.masksToBounds = true

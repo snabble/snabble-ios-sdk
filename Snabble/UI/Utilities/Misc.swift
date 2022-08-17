@@ -12,7 +12,7 @@ extension UIButton {
     public func makeSnabbleButton() {
         self.layer.cornerRadius = 8
         self.backgroundColor = Asset.Color.accent()
-        self.tintColor = Asset.Color.accent().contrast
+        self.tintColor = Asset.Color.onAccent()
     }
 
     /// add a "bordered button" appearance to this button

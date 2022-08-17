@@ -7,6 +7,13 @@
 
 import Foundation
 import UIKit
+import WCAG_Colors
+
+private extension UIColor {
+    var contrast: UIColor? {
+        Self.getTextColor(onBackgroundColor: self)
+    }
+}
 
 public extension Asset {
     enum Color {
@@ -155,6 +162,10 @@ public extension Asset {
 
         static func label(in domain: Any? = domain) -> UIColor {
             Asset.color(named: "label", domain: domain) ?? .label
+        }
+
+        static func onLabel(in domain: Any? = domain) -> UIColor? {
+            Asset.color(named: "onLabel", domain: domain) ?? label(in: domain).contrast
         }
 
         static func secondaryLabel(in domain: Any? = domain) -> UIColor {
