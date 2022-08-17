@@ -76,6 +76,7 @@ struct OnboardingItemView: View {
             }) {
                 Text(key: "Snabble.Onboarding.Terms.show")
                     .font(.headline)
+                    .foregroundColor(Color.accent())
             }
             .sheet(isPresented: $isPresenting) {
                 if let url = Asset.url(forResource: resource, withExtension: nil) {

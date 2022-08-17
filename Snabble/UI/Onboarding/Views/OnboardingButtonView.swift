@@ -25,7 +25,6 @@ struct OnboardingButtonView: View {
                 if currentPage > 0 {
                     currentPage -= 1
                 }
-                print("right clicked")
             }) {
                 Text(key: text)
             }
@@ -39,7 +38,6 @@ struct OnboardingButtonView: View {
     var rightButton: some View {
         if let text = item.nextButtonTitle {
             Button(action: {
-                print("right clicked")
                 if currentPage < numberOfPages - 1 {
                     currentPage += 1
                 } else if currentPage == numberOfPages - 1 {
