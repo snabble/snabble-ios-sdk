@@ -1,5 +1,3 @@
-"Release.Safety.catch" = "Kérjük, hogy a kijáratnál, az arra kijelölt állomáson vedd le a palacknyak-biztosítót (ha van).";
-
 "Snabble.addDiscount" = "Árengedmény megadása";
 
 "Snabble.AgeVerification.explanation" = "Meghatározott termékek, mint pl. alkohol vásárlásához igazolnod kell a korod. Ehhez személyazonosító igazolványod hátoldaláról másold be a 7 jegyű számot.";
@@ -110,6 +108,18 @@
 "Snabble.LimitsAlert.title" = "Vedd figyelembe";
 
 "Snabble.loadingProductInformation" = "Termékinformációk betöltése…";
+
+"Snabble.LocationRequired.MissingPermission.message" = "Csak így tudjuk megjeleníteni a közelben lévő üzleteket, és lehetővé tenni neked a bevásárlást.";
+
+"Snabble.LocationRequired.MissingPermission.title" = "A Snabble-nek szüksége van a tartózkodási helyedre";
+
+"Snabble.LocationRequired.notNow" = "Most nem";
+
+"Snabble.LocationRequired.openSettings" = "Beállítások megnyitása";
+
+"Snabble.LocationRequired.ReducedAccuracy.message" = "Nyisd meg a beállításokat, válaszd a „Tartózkodási hely“ lehetőséget, és aktiváld a „Pontos tartózkodási hely“ opciót";
+
+"Snabble.LocationRequired.ReducedAccuracy.title" = "A Snabble-nek szüksége van a pontos tartózkodási helyedre, hogy felismerje, éppen melyik üzletben vásárolsz";
 
 "Snabble.networkError" = "Hálózati kapcsolat hiba";
 
@@ -228,6 +238,8 @@
 "Snabble.PaymentCard.editingHint" = "A kártyaadataidat kódolva tároljuk, éppen ezért nem tudjuk feldolgozni.";
 
 "Snabble.PaymentContinuation.message" = "A fizetés folytatódik";
+
+"Snabble.PaymentError.msg" = "Fizetésed nem sikerült teljesíteni. Fizess egy hagyományos pénztárnál.\n\nSzíves elnézésed kérjük.";
 
 "Snabble.PaymentError.title" = "Hiba történt";
 
@@ -350,6 +362,10 @@
 
 "Snabble.QRCode.total" = "Teljes összeg:";
 
+"Snabble.Receipt.errorDownload" = "A nyugtát nem lehetett letölteni";
+
+"Snabble.Receipt.pdfReaderUnavailable" = "Nem található megfelelő PDF-olvasó";
+
 "Snabble.Receipts.loading" = "(Betöltés alatt)";
 
 "Snabble.Receipts.noReceipts" = "Még nem vásároltál a Snabble segítségével";
@@ -379,6 +395,8 @@
 "Snabble.Scanner.Accessibility.eventBackInScanner" = "Visszatértél a szkennerbe";
 
 "Snabble.Scanner.Accessibility.eventBarcodeDetected" = "Vonalkód ismert";
+
+"Snabble.Scanner.Accessibility.eventCartOpened" = "Kosár megnyitva";
 
 "Snabble.Scanner.Accessibility.eventMaxQuantityReached" = "Nem tudsz több terméket tenni a kosárba";
 
@@ -549,8 +567,32 @@
 /* Hinweiß der angezeigt wird wenn ein Artikel der Einkaufsliste hinzugefügt wurde */
 "Snabble.ShoppingList.added" = "%@ mentve";
 
+/* Beschreibung für den Scan-Knopf */
+"Snabble.ShoppingList.AddItem.viaScan" = "Termékek szkennelése";
+
+/* Beschreibung für den Microfon-Knopf */
+"Snabble.ShoppingList.AddItem.viaVoice" = "Termékek diktálása";
+
+"Snabble.ShoppingList.addToList" = "Hozzáadás a listához";
+
+"Snabble.ShoppingList.changeEntry" = "Bejegyzés módosítása";
+
+"Snabble.ShoppingList.changeQuantity" = "Mennyiség módosítása";
+
+/* Titel des Drilldown Popups wenn ein Marke mehrere Projekte hat */
+"Snabble.ShoppingList.CreateList.drilldownTitle" = "Új bevásárlólista létrehozása %@-hez";
+
 /* Der Titel des Dialogs zur Erzeugung einer neuen Einkaufsliste */
 "Snabble.ShoppingList.CreateList.title" = "Új bevásárlólista létrehozása";
+
+/* Name des zu editierenden Eintrags */
+"Snabble.ShoppingList.EditItem.name" = "Név";
+
+/* Beim Editieren von Einträgen der Einkaufsliste darf der Name nicht leer sein */
+"Snabble.ShoppingList.EditItem.nameRequired" = "A név nem lehet üres";
+
+/* Der Title beim Editieren von Einträgen der Einkaufsliste */
+"Snabble.ShoppingList.EditItem.title" = "Bejegyzés szerkesztése";
 
 /* Der Löschen-Knopf beim Editieren von Einkaufslisten */
 "Snabble.ShoppingList.EditList.delete" = "Törlés";
@@ -560,6 +602,8 @@
 
 /* Der Titel des Popups zum bearbeiten von Einkaufslisten */
 "Snabble.ShoppingList.EditList.title" = "Bevásárlólista szerkesztése";
+
+"Snabble.ShoppingList.isDeleted" = "A bevásárlólista törlésre került";
 
 /* Der Text wird angezeigt wenn man ein Element der Einkaufsliste wegwischt */
 "Snabble.ShoppingList.itemDeleted" = "%@ törölve";
@@ -585,14 +629,25 @@
 /* Der Empty-State wenn noch kein Einkaufszettel angelegt wurde */
 "Snabble.ShoppingList.NoLists.title" = "Még nem hoztál létre bevásárlólistát.";
 
+"Snabble.ShoppingList.notAvailable" = "A bevásárlólista nem elérhető";
+
 /* Hinweiß der angezeigt wird wenn ein Artikel nicht gefunden wurde */
 "Snabble.ShoppingList.notFound" = "Ismeretlen termék";
+
+/* Titel der Toolbar für den Sortiermodus */
+"Snabble.ShoppingList.OrderItems.title" = "Szortírozás módosítása";
 
 /* Der Hint der angezeigt wird wenn man einen Artikel per Suche hinzufügen möchte */
 "Snabble.ShoppingList.searchHint" = "Keresés vagy közvetlen megadás";
 
+"Snabble.ShoppingList.Section.categories" = "Kategóriák";
+
+"Snabble.ShoppingList.Section.products" = "Termékek";
+
 /* Der Titel der übersichtsseite der Einkaufslisten */
 "Snabble.ShoppingList.title" = "Bevásárlólista";
+
+"Snabble.ShoppingList.updateQuantity" = "Mennyiség frissítése";
 
 /* Man soll verschiedene Artikel mit einem "und" in die Einkaufsliste legen können. Hier geht es nur um das Wort "und" */
 "Snabble.ShoppingList.Voice.connectingWord" = "és";
@@ -600,11 +655,24 @@
 /* Hinweis der Eingeblendet wird wenn der Benutzer das erste mal vermutlich falsch mehrere Artikel zum Einkaufszettel ergänezen wollte */
 "Snabble.ShoppingList.Voice.details" = "Több terméket is fel szerettél volna venni a bevásárlólistára? Ezután kapcsold össze az egyes bejegyzéseket egy „és”-sel - például így: WC-papír és tészta és élesztő";
 
+"Snabble.ShoppingList.Voice.discardCommand" = "Elvetés";
+
+"Snabble.ShoppingList.Voice.doneCommand" = "Kész";
+
+"Snabble.ShoppingList.Voice.example" = "Mondd most például ezt:\n\n„Kenyér, szappan és tojás“\n\n„Kész“, ha szeretnéd befejezni a felvételt,\n„Elvetés“, ha nem szeretnéd menteni a bevitelt";
+
+/* Der Hinweis der bei der Spracherkennung angezeigt werden soll was der Benutzer jetzt sagen soll */
+"Snabble.ShoppingList.Voice.hint" = "Mire van szükséged?";
+
 /* Hinweis der Eingeblendet wird wenn der Benutzer das erste mal vermutlich falsch mehrere Artikel zum Einkaufszettel ergänezen wollte */
 "Snabble.ShoppingList.Voice.title" = "Ötlet";
 
 /* Der Titel der übersichtsseite der Einkaufslisten */
 "Snabble.ShoppingLists.title" = "Bevásárlólisták";
+
+"Snabble.SpeechAndMicRequired.message" = "Csak így vagy képes bediktálni a bevásárlólistádat.";
+
+"Snabble.SpeechAndMicRequired.title" = "A Snabble szeretne hozzáférni a mikrofonodhoz és a nyelvfelismeréshez";
 
 "Snabble.Taxation.Consume.inhouse" = "itt elfogyasztani";
 

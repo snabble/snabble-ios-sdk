@@ -1,5 +1,3 @@
-"Release.Safety.catch" = "Prosím, odstráň z fľaše zámok (ak je nasadený) pri východe na mieste, ktoré je na to určené.";
-
 "Snabble.addDiscount" = "Zadať zľavu";
 
 "Snabble.AgeVerification.explanation" = "Na kúpu určitých produktov (napr. alkoholických produktov) je potrebné potvrdenie veku. Za týmto účelom zadaj 7-miestne číslo na zadnej strane svojho občianskeho preukazu.";
@@ -110,6 +108,18 @@
 "Snabble.LimitsAlert.title" = "Pozor";
 
 "Snabble.loadingProductInformation" = "Načítanie informácií o produkte…";
+
+"Snabble.LocationRequired.MissingPermission.message" = "Len tak môžeme zobraziť obchody v tvojej blízkosti a umožniť nákup.";
+
+"Snabble.LocationRequired.MissingPermission.title" = "Snabble potrebuje zistiť tvoju polohu";
+
+"Snabble.LocationRequired.notNow" = "Teraz nie";
+
+"Snabble.LocationRequired.openSettings" = "Otvoriť nastavenia";
+
+"Snabble.LocationRequired.ReducedAccuracy.message" = "Otvor nastavenia, zvoľ položku „Poloha“ a aktivuj možnosť „Presná poloha“.";
+
+"Snabble.LocationRequired.ReducedAccuracy.title" = "Snabble potrebuje tvoju presnú polohu, aby rozpoznal, v ktorom obchode práve nakupuješ";
 
 "Snabble.networkError" = "Chyba spojenia";
 
@@ -228,6 +238,8 @@
 "Snabble.PaymentCard.editingHint" = "Údaje o tvojej karte budeme uchovávať len v šifrovanej forme, a preto nemôžu byť spracované.";
 
 "Snabble.PaymentContinuation.message" = "Pokračovanie platby";
+
+"Snabble.PaymentError.msg" = "Tvoja platba nemohla byť vykonaná. Prosím, zaplať pri bežnej pokladni.\n\nOspravedlňujeme sa za nepríjemnosti.";
 
 "Snabble.PaymentError.title" = "Vyskytla sa chyba";
 
@@ -350,6 +362,10 @@
 
 "Snabble.QRCode.total" = "Celková suma:";
 
+"Snabble.Receipt.errorDownload" = "Nebolo možné stiahnuť potvrdenie";
+
+"Snabble.Receipt.pdfReaderUnavailable" = "Nenašla sa žiadna vhodná aplikácia na zobrazenie PDF";
+
 "Snabble.Receipts.loading" = "(načítava sa)";
 
 "Snabble.Receipts.noReceipts" = "Ešte si nenakupoval/a s aplikáciou Snabble";
@@ -379,6 +395,8 @@
 "Snabble.Scanner.Accessibility.eventBackInScanner" = "Si opäť v skeneri";
 
 "Snabble.Scanner.Accessibility.eventBarcodeDetected" = "Čiarový kód bol rozpoznaný";
+
+"Snabble.Scanner.Accessibility.eventCartOpened" = "Košík je otvorený";
 
 "Snabble.Scanner.Accessibility.eventMaxQuantityReached" = "Nemôžeš vložiť do košíka ďalšie položky";
 
@@ -549,8 +567,32 @@
 /* Hinweiß der angezeigt wird wenn ein Artikel der Einkaufsliste hinzugefügt wurde */
 "Snabble.ShoppingList.added" = "%@ uložené";
 
+/* Beschreibung für den Scan-Knopf */
+"Snabble.ShoppingList.AddItem.viaScan" = "Skenovanie produktov";
+
+/* Beschreibung für den Microfon-Knopf */
+"Snabble.ShoppingList.AddItem.viaVoice" = "Diktovanie produktov";
+
+"Snabble.ShoppingList.addToList" = "Pridať do zoznamu";
+
+"Snabble.ShoppingList.changeEntry" = "Zmeniť položku";
+
+"Snabble.ShoppingList.changeQuantity" = "Zmeniť množstvo";
+
+/* Titel des Drilldown Popups wenn ein Marke mehrere Projekte hat */
+"Snabble.ShoppingList.CreateList.drilldownTitle" = "Vytvoriť nový nákupný zoznam pre %@";
+
 /* Der Titel des Dialogs zur Erzeugung einer neuen Einkaufsliste */
 "Snabble.ShoppingList.CreateList.title" = "Vytvoriť nový nákupný zoznam";
+
+/* Name des zu editierenden Eintrags */
+"Snabble.ShoppingList.EditItem.name" = "Meno";
+
+/* Beim Editieren von Einträgen der Einkaufsliste darf der Name nicht leer sein */
+"Snabble.ShoppingList.EditItem.nameRequired" = "Meno nesmie zostať prázdne";
+
+/* Der Title beim Editieren von Einträgen der Einkaufsliste */
+"Snabble.ShoppingList.EditItem.title" = "Spracovanie záznamu";
 
 /* Der Löschen-Knopf beim Editieren von Einkaufslisten */
 "Snabble.ShoppingList.EditList.delete" = "Vymazať";
@@ -560,6 +602,8 @@
 
 /* Der Titel des Popups zum bearbeiten von Einkaufslisten */
 "Snabble.ShoppingList.EditList.title" = "Upraviť nákupný zoznam";
+
+"Snabble.ShoppingList.isDeleted" = "Nákupný zoznam bol vymazaný";
 
 /* Der Text wird angezeigt wenn man ein Element der Einkaufsliste wegwischt */
 "Snabble.ShoppingList.itemDeleted" = "%@ vymazané";
@@ -585,14 +629,25 @@
 /* Der Empty-State wenn noch kein Einkaufszettel angelegt wurde */
 "Snabble.ShoppingList.NoLists.title" = "Ešte si nevytvoril/a žiadny nákupný zoznam.";
 
+"Snabble.ShoppingList.notAvailable" = "Nákupný zoznam nie je k dispozícii";
+
 /* Hinweiß der angezeigt wird wenn ein Artikel nicht gefunden wurde */
 "Snabble.ShoppingList.notFound" = "Neznámy produkt";
+
+/* Titel der Toolbar für den Sortiermodus */
+"Snabble.ShoppingList.OrderItems.title" = "Zmeniť usporiadanie";
 
 /* Der Hint der angezeigt wird wenn man einen Artikel per Suche hinzufügen möchte */
 "Snabble.ShoppingList.searchHint" = "Vyhľadať alebo zadať priamo";
 
+"Snabble.ShoppingList.Section.categories" = "Kategórie";
+
+"Snabble.ShoppingList.Section.products" = "Produkty";
+
 /* Der Titel der übersichtsseite der Einkaufslisten */
 "Snabble.ShoppingList.title" = "Nákupný zoznam";
+
+"Snabble.ShoppingList.updateQuantity" = "Aktualizovať množstvo";
 
 /* Man soll verschiedene Artikel mit einem "und" in die Einkaufsliste legen können. Hier geht es nur um das Wort "und" */
 "Snabble.ShoppingList.Voice.connectingWord" = "a";
@@ -600,11 +655,24 @@
 /* Hinweis der Eingeblendet wird wenn der Benutzer das erste mal vermutlich falsch mehrere Artikel zum Einkaufszettel ergänezen wollte */
 "Snabble.ShoppingList.Voice.details" = "Chceš pridať viac vecí do nákupného zoznamu? Tak spoj svoje jednotlivé položky použitím „a“ – napríklad takto: Toaletný papier a cestoviny a droždie";
 
+"Snabble.ShoppingList.Voice.discardCommand" = "Zamietnuť";
+
+"Snabble.ShoppingList.Voice.doneCommand" = "Hotovo";
+
+"Snabble.ShoppingList.Voice.example" = "Povedz teraz napríklad:\n\n„Chlieb a mydlo a vajíčka“\n\nPre dokončenie povedz „Hotovo“,\nalebo povedz „Zamietnuť“, ak nechceš uložiť zadanie";
+
+/* Der Hinweis der bei der Spracherkennung angezeigt werden soll was der Benutzer jetzt sagen soll */
+"Snabble.ShoppingList.Voice.hint" = "Čo potrebuješ?";
+
 /* Hinweis der Eingeblendet wird wenn der Benutzer das erste mal vermutlich falsch mehrere Artikel zum Einkaufszettel ergänezen wollte */
 "Snabble.ShoppingList.Voice.title" = "Tip";
 
 /* Der Titel der übersichtsseite der Einkaufslisten */
 "Snabble.ShoppingLists.title" = "Nákupné zoznamy";
+
+"Snabble.SpeechAndMicRequired.message" = "Len tak môžeš nadiktovať svoj nákupný zoznam.";
+
+"Snabble.SpeechAndMicRequired.title" = "Snabble potrebuje prístup k mikrofónu a rozpoznávaniu reči";
 
 "Snabble.Taxation.Consume.inhouse" = "konzumovať tu";
 

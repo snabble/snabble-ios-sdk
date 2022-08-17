@@ -1,5 +1,3 @@
-"Release.Safety.catch" = "Bitte entferne (wenn vorhanden) die Flaschenhalssicherung an der dafür vorgesehenen Station am Ausgang.";
-
 "Snabble.addDiscount" = "Rabatt eingeben";
 
 "Snabble.AgeVerification.explanation" = "Für den Kauf bestimmter Artikel, wie z.B. Alkohol, ist ein Altersnachweis notwendig. Gib dazu die 7-stellige Zahl von der Rückseite deines Personalausweises ein.";
@@ -110,6 +108,18 @@
 "Snabble.LimitsAlert.title" = "Bitte beachten";
 
 "Snabble.loadingProductInformation" = "Lade Produkt-Informationen…";
+
+"Snabble.LocationRequired.MissingPermission.message" = "Nur so können wir Filialen in deiner Nähe anzeigen und dir das Einkaufen ermöglichen.";
+
+"Snabble.LocationRequired.MissingPermission.title" = "Snabble benötigt deinen Standort";
+
+"Snabble.LocationRequired.notNow" = "Nicht jetzt";
+
+"Snabble.LocationRequired.openSettings" = "Einstellungen öffnen";
+
+"Snabble.LocationRequired.ReducedAccuracy.message" = "Bitte öffne die Einstellungen, wähle „Standort“ und aktiviere „Genauer Standort“";
+
+"Snabble.LocationRequired.ReducedAccuracy.title" = "Snabble benötigt deinen genauen Standort, um zu erkennen in welchem Shop du gerade einkaufst";
 
 "Snabble.networkError" = "Netzwerkverbindungsfehler";
 
@@ -228,6 +238,8 @@
 "Snabble.PaymentCard.editingHint" = "Deine Karten-Daten werden von uns nur verschlüsselt gespeichert und können daher nicht bearbeitet werden.";
 
 "Snabble.PaymentContinuation.message" = "Bezahlung wird fortgesetzt";
+
+"Snabble.PaymentError.msg" = "Deine Zahlung konnte nicht durchgeführt werden. Bitte zahle an einer normalen Kasse.\n\nEntschuldigung für die Umstände.";
 
 "Snabble.PaymentError.title" = "Ein Fehler ist aufgetreten";
 
@@ -350,6 +362,10 @@
 
 "Snabble.QRCode.total" = "Gesamtsumme: ";
 
+"Snabble.Receipt.errorDownload" = "Quittung konnte nicht heruntergeladen werden";
+
+"Snabble.Receipt.pdfReaderUnavailable" = "Keine geeignete PDF-Reader-Anwendung gefunden";
+
 "Snabble.Receipts.loading" = "(wird geladen)";
 
 "Snabble.Receipts.noReceipts" = "Du hast noch nicht mit Snabble eingekauft";
@@ -379,6 +395,8 @@
 "Snabble.Scanner.Accessibility.eventBackInScanner" = "Du bist wieder im Scanner";
 
 "Snabble.Scanner.Accessibility.eventBarcodeDetected" = "Barcode erkannt";
+
+"Snabble.Scanner.Accessibility.eventCartOpened" = "Warenkorb aufgeklappt";
 
 "Snabble.Scanner.Accessibility.eventMaxQuantityReached" = "Du kannst nicht mehr Artikel in den Warenkorb legen";
 
@@ -549,8 +567,32 @@
 /* Hinweiß der angezeigt wird wenn ein Artikel der Einkaufsliste hinzugefügt wurde */
 "Snabble.ShoppingList.added" = "%@ gespeichert";
 
+/* Beschreibung für den Scan-Knopf */
+"Snabble.ShoppingList.AddItem.viaScan" = "Produkte scannen";
+
+/* Beschreibung für den Microfon-Knopf */
+"Snabble.ShoppingList.AddItem.viaVoice" = "Produkte diktieren";
+
+"Snabble.ShoppingList.addToList" = "Zur Liste hinzufügen";
+
+"Snabble.ShoppingList.changeEntry" = "Eintrag ändern";
+
+"Snabble.ShoppingList.changeQuantity" = "Menge ändern";
+
+/* Titel des Drilldown Popups wenn ein Marke mehrere Projekte hat */
+"Snabble.ShoppingList.CreateList.drilldownTitle" = "Neue Einkaufsliste für %@ anlegen";
+
 /* Der Titel des Dialogs zur Erzeugung einer neuen Einkaufsliste */
 "Snabble.ShoppingList.CreateList.title" = "Neue Einkaufsliste anlegen";
+
+/* Name des zu editierenden Eintrags */
+"Snabble.ShoppingList.EditItem.name" = "Name";
+
+/* Beim Editieren von Einträgen der Einkaufsliste darf der Name nicht leer sein */
+"Snabble.ShoppingList.EditItem.nameRequired" = "Name darf nicht leer sein";
+
+/* Der Title beim Editieren von Einträgen der Einkaufsliste */
+"Snabble.ShoppingList.EditItem.title" = "Eintrag bearbeiten";
 
 /* Der Löschen-Knopf beim Editieren von Einkaufslisten */
 "Snabble.ShoppingList.EditList.delete" = "Löschen";
@@ -560,6 +602,8 @@
 
 /* Der Titel des Popups zum bearbeiten von Einkaufslisten */
 "Snabble.ShoppingList.EditList.title" = "Einkaufsliste bearbeiten";
+
+"Snabble.ShoppingList.isDeleted" = "Die Einkaufsliste wurde gelöscht";
 
 /* Der Text wird angezeigt wenn man ein Element der Einkaufsliste wegwischt */
 "Snabble.ShoppingList.itemDeleted" = "%@ gelöscht";
@@ -585,14 +629,25 @@
 /* Der Empty-State wenn noch kein Einkaufszettel angelegt wurde */
 "Snabble.ShoppingList.NoLists.title" = "Du hast noch keine Einkaufsliste angelegt.";
 
+"Snabble.ShoppingList.notAvailable" = "Die Einkaufsliste ist nicht verfügbar";
+
 /* Hinweiß der angezeigt wird wenn ein Artikel nicht gefunden wurde */
 "Snabble.ShoppingList.notFound" = "Unbekanntes Produkt";
+
+/* Titel der Toolbar für den Sortiermodus */
+"Snabble.ShoppingList.OrderItems.title" = "Sortierung ändern";
 
 /* Der Hint der angezeigt wird wenn man einen Artikel per Suche hinzufügen möchte */
 "Snabble.ShoppingList.searchHint" = "Suchen oder direkt eingeben";
 
+"Snabble.ShoppingList.Section.categories" = "Kategorien";
+
+"Snabble.ShoppingList.Section.products" = "Produkte";
+
 /* Der Titel der übersichtsseite der Einkaufslisten */
 "Snabble.ShoppingList.title" = "Einkaufsliste";
+
+"Snabble.ShoppingList.updateQuantity" = "Menge aktualisieren";
 
 /* Man soll verschiedene Artikel mit einem "und" in die Einkaufsliste legen können. Hier geht es nur um das Wort "und" */
 "Snabble.ShoppingList.Voice.connectingWord" = "und";
@@ -600,11 +655,24 @@
 /* Hinweis der Eingeblendet wird wenn der Benutzer das erste mal vermutlich falsch mehrere Artikel zum Einkaufszettel ergänezen wollte */
 "Snabble.ShoppingList.Voice.details" = "Wolltest du mehrere Sachen auf den Einkaufsliste legen? Dann verbinde die einzelnen Einträge mit einem  „und“ - z.B. so: Toilettenpapier und Nudeln und Hefe";
 
+"Snabble.ShoppingList.Voice.discardCommand" = "Verwerfen";
+
+"Snabble.ShoppingList.Voice.doneCommand" = "Fertig";
+
+"Snabble.ShoppingList.Voice.example" = "Sage jetzt zum Beispiel:\n\n„Brot und Seife und Eier“\n\n„Fertig“ um die Aufnahme zu beenden,\n„Verwerfen“ um die Eingaben nicht zu speichern";
+
+/* Der Hinweis der bei der Spracherkennung angezeigt werden soll was der Benutzer jetzt sagen soll */
+"Snabble.ShoppingList.Voice.hint" = "Was brauchst du?";
+
 /* Hinweis der Eingeblendet wird wenn der Benutzer das erste mal vermutlich falsch mehrere Artikel zum Einkaufszettel ergänezen wollte */
 "Snabble.ShoppingList.Voice.title" = "Tipp";
 
 /* Der Titel der übersichtsseite der Einkaufslisten */
 "Snabble.ShoppingLists.title" = "Einkaufslisten";
+
+"Snabble.SpeechAndMicRequired.message" = "Nur so kannst du deine Einkaufsliste diktieren.";
+
+"Snabble.SpeechAndMicRequired.title" = "Snabble benötigt Zugriff auf das Mikrophon und die Spracherkennung";
 
 "Snabble.Taxation.Consume.inhouse" = "hier konsumieren";
 

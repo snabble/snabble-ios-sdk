@@ -30,11 +30,11 @@
         <key>NSStringFormatValueTypeKey</key>
         <string>d</string>
         <key>one</key>
-        <string>még %d óráig</string>
+        <string>%d hour remaining</string>
         <key>other</key>
-        <string>még %d óráig</string>
+        <string>%d hours remaining</string>
         <key>zero</key>
-        <string>Már lejárt</string>
+        <string>Already expired</string>
       </dict>
     </dict>
     <key>Snabble.Coupons.expiresInMinutes</key>
@@ -48,11 +48,11 @@
         <key>NSStringFormatValueTypeKey</key>
         <string>d</string>
         <key>one</key>
-        <string>még %d percig</string>
+        <string>%d minute remaining</string>
         <key>other</key>
-        <string>még %d percig</string>
+        <string>%d minutes remaining</string>
         <key>zero</key>
-        <string>Már lejárt</string>
+        <string>Already expired</string>
       </dict>
     </dict>
     <key>Snabble.Coupons.expiresInWeeks</key>
@@ -66,11 +66,11 @@
         <key>NSStringFormatValueTypeKey</key>
         <string>d</string>
         <key>one</key>
-        <string>még %d hétig</string>
+        <string>%d week remaining</string>
         <key>other</key>
-        <string>még %d hétig</string>
+        <string>%d weeks remaining</string>
         <key>zero</key>
-        <string>Már lejárt</string>
+        <string>Already expired</string>
       </dict>
     </dict>
     <key>Snabble.Shoppingcart.numberOfItems</key>
@@ -84,11 +84,11 @@
         <key>NSStringFormatValueTypeKey</key>
         <string>d</string>
         <key>one</key>
-        <string>%d termék</string>
+        <string>%d product</string>
         <key>other</key>
-        <string>%d termék</string>
+        <string>%d products</string>
         <key>zero</key>
-        <string>%d termék</string>
+        <string>%d products</string>
       </dict>
     </dict>
   </dict>

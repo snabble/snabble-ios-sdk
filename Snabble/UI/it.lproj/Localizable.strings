@@ -1,5 +1,3 @@
-"Release.Safety.catch" = "Rimuovi il dispositivo di sicurezza della bottiglia (se presente) alla stazione designata all’uscita.";
-
 "Snabble.addDiscount" = "Inserisci lo sconto";
 
 "Snabble.AgeVerification.explanation" = "Per l’acquisto di determinati articoli, come ad esempio gli alcolici, è necessario un documento che attesti l’età. Inserisci il numero a 7 cifre della parte posteriore del tuo documento di identità.";
@@ -110,6 +108,18 @@
 "Snabble.LimitsAlert.title" = "Attenzione";
 
 "Snabble.loadingProductInformation" = "Caricamento informazioni sul prodotto…";
+
+"Snabble.LocationRequired.MissingPermission.message" = "This is necessary to show stores in your vicinity and allow you to shop there.";
+
+"Snabble.LocationRequired.MissingPermission.title" = "Snabble needs your location";
+
+"Snabble.LocationRequired.notNow" = "Ask me later";
+
+"Snabble.LocationRequired.openSettings" = "Open Settings";
+
+"Snabble.LocationRequired.ReducedAccuracy.message" = "Please go to Settings > Privacy, then select “Location Services” and activate “Precise Location”";
+
+"Snabble.LocationRequired.ReducedAccuracy.title" = "Snabble requires your precise location to identify in which store you are currently shopping";
 
 "Snabble.networkError" = "Errore di connessione di rete";
 
@@ -228,6 +238,8 @@
 "Snabble.PaymentCard.editingHint" = "Salviamo i dati della tua carta solo in forma crittografata, pertanto non è possibile modificarli.";
 
 "Snabble.PaymentContinuation.message" = "Continuing the payment";
+
+"Snabble.PaymentError.msg" = "Your payment couldn't be processed. Please pay at a regular cash desk.\n\nSorry about the inconvenience!";
 
 "Snabble.PaymentError.title" = "Si è verificato un errore";
 
@@ -350,6 +362,10 @@
 
 "Snabble.QRCode.total" = "Somma totale: ";
 
+"Snabble.Receipt.errorDownload" = "Receipt could not be downloaded";
+
+"Snabble.Receipt.pdfReaderUnavailable" = "No suitable PDF reader application found";
+
 "Snabble.Receipts.loading" = "(in caricamento)";
 
 "Snabble.Receipts.noReceipts" = "Non hai ancora fatto acquisti con Snabble";
@@ -379,6 +395,8 @@
 "Snabble.Scanner.Accessibility.eventBackInScanner" = "You are back in scanner";
 
 "Snabble.Scanner.Accessibility.eventBarcodeDetected" = "Barcode detected";
+
+"Snabble.Scanner.Accessibility.eventCartOpened" = "Cart extended";
 
 "Snabble.Scanner.Accessibility.eventMaxQuantityReached" = "You reached the maximum count of items for the cart";
 
@@ -549,8 +567,32 @@
 /* Hinweiß der angezeigt wird wenn ein Artikel der Einkaufsliste hinzugefügt wurde */
 "Snabble.ShoppingList.added" = "%@ salvato";
 
+/* Beschreibung für den Scan-Knopf */
+"Snabble.ShoppingList.AddItem.viaScan" = "Scan products";
+
+/* Beschreibung für den Microfon-Knopf */
+"Snabble.ShoppingList.AddItem.viaVoice" = "Tell products";
+
+"Snabble.ShoppingList.addToList" = "Add to List";
+
+"Snabble.ShoppingList.changeEntry" = "Change entry";
+
+"Snabble.ShoppingList.changeQuantity" = "Change quantity";
+
+/* Titel des Drilldown Popups wenn ein Marke mehrere Projekte hat */
+"Snabble.ShoppingList.CreateList.drilldownTitle" = "Create new shopping list for %@";
+
 /* Der Titel des Dialogs zur Erzeugung einer neuen Einkaufsliste */
 "Snabble.ShoppingList.CreateList.title" = "Crea nuova lista della spesa";
+
+/* Name des zu editierenden Eintrags */
+"Snabble.ShoppingList.EditItem.name" = "Name";
+
+/* Beim Editieren von Einträgen der Einkaufsliste darf der Name nicht leer sein */
+"Snabble.ShoppingList.EditItem.nameRequired" = "Name must not be empty";
+
+/* Der Title beim Editieren von Einträgen der Einkaufsliste */
+"Snabble.ShoppingList.EditItem.title" = "Edit entry";
 
 /* Der Löschen-Knopf beim Editieren von Einkaufslisten */
 "Snabble.ShoppingList.EditList.delete" = "Cancella";
@@ -560,6 +602,8 @@
 
 /* Der Titel des Popups zum bearbeiten von Einkaufslisten */
 "Snabble.ShoppingList.EditList.title" = "Modifica lista della spesa";
+
+"Snabble.ShoppingList.isDeleted" = "The shopping list was deleted";
 
 /* Der Text wird angezeigt wenn man ein Element der Einkaufsliste wegwischt */
 "Snabble.ShoppingList.itemDeleted" = "%@ eliminato";
@@ -585,14 +629,25 @@
 /* Der Empty-State wenn noch kein Einkaufszettel angelegt wurde */
 "Snabble.ShoppingList.NoLists.title" = "Non hai ancora creato liste della spesa.";
 
+"Snabble.ShoppingList.notAvailable" = "The shopping list is not available";
+
 /* Hinweiß der angezeigt wird wenn ein Artikel nicht gefunden wurde */
 "Snabble.ShoppingList.notFound" = "Prodotto sconosciuto";
+
+/* Titel der Toolbar für den Sortiermodus */
+"Snabble.ShoppingList.OrderItems.title" = "Order items";
 
 /* Der Hint der angezeigt wird wenn man einen Artikel per Suche hinzufügen möchte */
 "Snabble.ShoppingList.searchHint" = "Cerca o inserisci direttamente";
 
+"Snabble.ShoppingList.Section.categories" = "Categories";
+
+"Snabble.ShoppingList.Section.products" = "Products";
+
 /* Der Titel der übersichtsseite der Einkaufslisten */
 "Snabble.ShoppingList.title" = "Lista della spesa";
+
+"Snabble.ShoppingList.updateQuantity" = "Update quantity";
 
 /* Man soll verschiedene Artikel mit einem "und" in die Einkaufsliste legen können. Hier geht es nur um das Wort "und" */
 "Snabble.ShoppingList.Voice.connectingWord" = "e";
@@ -600,11 +655,24 @@
 /* Hinweis der Eingeblendet wird wenn der Benutzer das erste mal vermutlich falsch mehrere Artikel zum Einkaufszettel ergänezen wollte */
 "Snabble.ShoppingList.Voice.details" = "Vuoi inserire più cose sulla lista della spesa? Allora unisci le singole voci con una «e», ad esempio così: carta igienica e pasta e lievito";
 
+"Snabble.ShoppingList.Voice.discardCommand" = "Discard";
+
+"Snabble.ShoppingList.Voice.doneCommand" = "Done";
+
+"Snabble.ShoppingList.Voice.example" = "For example, say:\n\n“Bread and Milk and Eggs”\n\n“Done” to end the recording, \n“Discard” to discard the recording";
+
+/* Der Hinweis der bei der Spracherkennung angezeigt werden soll was der Benutzer jetzt sagen soll */
+"Snabble.ShoppingList.Voice.hint" = "What do you need?";
+
 /* Hinweis der Eingeblendet wird wenn der Benutzer das erste mal vermutlich falsch mehrere Artikel zum Einkaufszettel ergänezen wollte */
 "Snabble.ShoppingList.Voice.title" = "Suggerimento";
 
 /* Der Titel der übersichtsseite der Einkaufslisten */
 "Snabble.ShoppingLists.title" = "Liste della spesa";
+
+"Snabble.SpeechAndMicRequired.message" = "This is necessary for dictating your shopping list.";
+
+"Snabble.SpeechAndMicRequired.title" = "Snabble needs access to the microphone and speech recognition";
 
 "Snabble.Taxation.Consume.inhouse" = "Mangia qui";
 
