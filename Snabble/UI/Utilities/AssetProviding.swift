@@ -35,7 +35,7 @@ public protocol StringProviding: AnyObject {
     ///   - arguments: `CVargArg` for the key
     ///   - domain: The domain, usually the current `Identifier<Project>`
     /// - Returns: A `String` that matches to the given `key`, or nil if no suitable string was found.
-    func localizedString(forKey key: String, arguments: CVarArg, domain: Any?) -> String?
+    func localizedString(forKey key: String, arguments: CVarArg..., domain: Any?) -> String?
 }
 
 public protocol UrlProviding: AnyObject {
