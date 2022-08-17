@@ -34,15 +34,15 @@
         <key>NSStringFormatValueTypeKey</key>
         <string>d</string>
         <key>few</key>
-        <string/>
+        <string>ešte %d hodiny</string>
         <key>many</key>
-        <string/>
+        <string>ešte %d hodín</string>
         <key>one</key>
-        <string>%d hour remaining</string>
+        <string>ešte %d hodina</string>
         <key>other</key>
-        <string>%d hours remaining</string>
+        <string>ešte %d hodín</string>
         <key>zero</key>
-        <string>Already expired</string>
+        <string>Platnosť už skončila</string>
       </dict>
     </dict>
     <key>Snabble.Coupons.expiresInMinutes</key>
@@ -56,15 +56,15 @@
         <key>NSStringFormatValueTypeKey</key>
         <string>d</string>
         <key>few</key>
-        <string/>
+        <string>ešte %d minúty</string>
         <key>many</key>
-        <string/>
+        <string>ešte %d minút</string>
         <key>one</key>
-        <string>%d minute remaining</string>
+        <string>ešte %d minúta</string>
         <key>other</key>
-        <string>%d minutes remaining</string>
+        <string>ešte %d minút</string>
         <key>zero</key>
-        <string>Already expired</string>
+        <string>Platnosť už skončila</string>
       </dict>
     </dict>
     <key>Snabble.Coupons.expiresInWeeks</key>
@@ -78,15 +78,15 @@
         <key>NSStringFormatValueTypeKey</key>
         <string>d</string>
         <key>few</key>
-        <string/>
+        <string>ešte %d týždňov</string>
         <key>many</key>
-        <string/>
+        <string>ešte %d týždňov</string>
         <key>one</key>
-        <string>%d week remaining</string>
+        <string>ešte %d týždeň</string>
         <key>other</key>
-        <string>%d weeks remaining</string>
+        <string>ešte %d týždňov</string>
         <key>zero</key>
-        <string>Already expired</string>
+        <string>Platnosť už skončila</string>
       </dict>
     </dict>
     <key>Snabble.Shoppingcart.numberOfItems</key>
@@ -100,15 +100,15 @@
         <key>NSStringFormatValueTypeKey</key>
         <string>d</string>
         <key>few</key>
-        <string/>
+        <string>%d položky</string>
         <key>many</key>
-        <string/>
+        <string>%d položiek</string>
         <key>one</key>
-        <string>%d product</string>
+        <string>%d položka</string>
         <key>other</key>
-        <string>%d products</string>
+        <string>%d položiek</string>
         <key>zero</key>
-        <string>%d products</string>
+        <string>%d položiek</string>
       </dict>
     </dict>
   </dict>

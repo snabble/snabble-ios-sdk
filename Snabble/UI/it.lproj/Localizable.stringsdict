@@ -32,13 +32,13 @@
         <key>NSStringFormatValueTypeKey</key>
         <string>d</string>
         <key>many</key>
-        <string/>
+        <string>ancora %d secondi</string>
         <key>one</key>
-        <string>%d hour remaining</string>
+        <string>ancora %d ora</string>
         <key>other</key>
-        <string>%d hours remaining</string>
+        <string>ancora %d ore</string>
         <key>zero</key>
-        <string>Already expired</string>
+        <string>Già scaduto</string>
       </dict>
     </dict>
     <key>Snabble.Coupons.expiresInMinutes</key>
@@ -52,13 +52,13 @@
         <key>NSStringFormatValueTypeKey</key>
         <string>d</string>
         <key>many</key>
-        <string/>
+        <string>ancora %d minuti</string>
         <key>one</key>
-        <string>%d minute remaining</string>
+        <string>ancora %d minuto</string>
         <key>other</key>
-        <string>%d minutes remaining</string>
+        <string>ancora %d minuti</string>
         <key>zero</key>
-        <string>Already expired</string>
+        <string>Già scaduto</string>
       </dict>
     </dict>
     <key>Snabble.Coupons.expiresInWeeks</key>
@@ -72,13 +72,13 @@
         <key>NSStringFormatValueTypeKey</key>
         <string>d</string>
         <key>many</key>
-        <string/>
+        <string>ancora %d settimane</string>
         <key>one</key>
-        <string>%d week remaining</string>
+        <string>ancora %d settimana</string>
         <key>other</key>
-        <string>%d weeks remaining</string>
+        <string>ancora %d settimane</string>
         <key>zero</key>
-        <string>Already expired</string>
+        <string>Già scaduto</string>
       </dict>
     </dict>
     <key>Snabble.Shoppingcart.numberOfItems</key>
@@ -92,13 +92,13 @@
         <key>NSStringFormatValueTypeKey</key>
         <string>d</string>
         <key>many</key>
-        <string/>
+        <string>%d articoli</string>
         <key>one</key>
-        <string>%d product</string>
+        <string>%d articolo</string>
         <key>other</key>
-        <string>%d products</string>
+        <string>%d articoli</string>
         <key>zero</key>
-        <string>%d products</string>
+        <string>%d articoli</string>
       </dict>
     </dict>
   </dict>
