@@ -191,7 +191,7 @@ public final class PaymentProcess {
                 completion(.success(display))
                 OfflineCarts.shared.saveCartForLater(self.cart)
             } else {
-                self.paymentDelegate?.showWarningMessage(L10n.Snabble.Payment.errorStarting)
+                self.paymentDelegate?.showWarningMessage(Asset.localizedString(forKey: "Snabble.Payment.errorStarting"))
             }
         }
     }
@@ -282,7 +282,7 @@ extension PaymentProcess {
                     }
                     completion(.success(viewController))
                 } else {
-                    self.paymentDelegate?.showWarningMessage(L10n.Snabble.Payment.errorStarting)
+                    self.paymentDelegate?.showWarningMessage(Asset.localizedString(forKey: "Snabble.Payment.errorStarting"))
                 }
                 /*
                 switch process.routingTarget {
@@ -294,7 +294,7 @@ extension PaymentProcess {
                     if let display = checkoutDisplay {
                         completion(.success(display))
                     } else {
-                        self.paymentDelegate?.showWarningMessage(L10n.Snabble.Payment.errorStarting)
+                        self.paymentDelegate?.showWarningMessage(Asset.localizedString(forKey: "Snabble.Payment.errorStarting"))
                     }
                 case .supervisor:
                     let supervisor = SupervisorCheckViewController(shop: self.shop, shoppingCart: self.cart, checkoutProcess: process)

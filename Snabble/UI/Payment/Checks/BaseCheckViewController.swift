@@ -43,7 +43,7 @@ class BaseCheckViewController: UIViewController {
         super.init(nibName: nil, bundle: nil)
         self.hidesBottomBarWhenPushed = true
 
-        title = L10n.Snabble.Payment.confirm
+        title = Asset.localizedString(forKey: "Snabble.Payment.confirm")
     }
 
     required init?(coder: NSCoder) {
@@ -74,7 +74,7 @@ class BaseCheckViewController: UIViewController {
         cancelButton.translatesAutoresizingMaskIntoConstraints = false
         cancelButton.makeSnabbleButton()
         cancelButton.titleLabel?.textAlignment = .center
-        cancelButton.setTitle(L10n.Snabble.cancel, for: .normal)
+        cancelButton.setTitle(Asset.localizedString(forKey: "Snabble.cancel"), for: .normal)
         cancelButton.titleLabel?.font = Asset.preferredFont(forTextStyle: .headline)
         cancelButton.titleLabel?.adjustsFontForContentSizeCategory = true
         cancelButton.alpha = 0
@@ -247,7 +247,7 @@ class BaseCheckViewController: UIViewController {
 
         let codeContent = codeContent()
         self.code?.image = renderCode(codeContent)
-        self.text?.text = L10n.Snabble.Payment.Online.message
+        self.text?.text = Asset.localizedString(forKey: "Snabble.Payment.Online.message")
 
         self.id?.text = String(checkoutProcess.id.suffix(4))
 
@@ -361,7 +361,7 @@ class BaseCheckViewController: UIViewController {
                                                                        shoppingCart: shoppingCart,
                                                                        delegate: delegate)
         else {
-            self.delegate?.showWarningMessage(L10n.Snabble.Payment.errorStarting)
+            self.delegate?.showWarningMessage(Asset.localizedString(forKey: "Snabble.Payment.errorStarting"))
             return
         }
 
@@ -391,10 +391,10 @@ class BaseCheckViewController: UIViewController {
                     self.navigationController?.popToRootViewController(animated: true)
                 }
             case .failure:
-                let alert = UIAlertController(title: L10n.Snabble.Payment.CancelError.title,
-                                              message: L10n.Snabble.Payment.CancelError.message,
+                let alert = UIAlertController(title: Asset.localizedString(forKey: "Snabble.Payment.CancelError.title"),
+                                              message: Asset.localizedString(forKey: "Snabble.Payment.CancelError.message"),
                                               preferredStyle: .alert)
-                alert.addAction(UIAlertAction(title: L10n.Snabble.ok, style: .default) { _ in
+                alert.addAction(UIAlertAction(title: Asset.localizedString(forKey: "Snabble.ok"), style: .default) { _ in
                     self.startTimer()
                 })
                 self.present(alert, animated: true)

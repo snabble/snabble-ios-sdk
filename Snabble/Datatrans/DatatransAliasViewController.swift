@@ -93,17 +93,17 @@ public final class DatatransAliasViewController: UIViewController {
         let explanationLabel = customLabel
         explanationLabel.numberOfLines = 0
         explanationLabel.font = .preferredFont(forTextStyle: .subheadline)
-        explanationLabel.text = L10n.Snabble.Cc.editingHint
+        explanationLabel.text = Asset.localizedString(forKey: "Snabble.Cc.editingHint")
 
         let cardNumberLabel = customLabel
         cardNumberLabel.font = .preferredFont(forTextStyle: .body)
-        cardNumberLabel.text = L10n.Snabble.Cc.cardNumber
+        cardNumberLabel.text = Asset.localizedString(forKey: "Snabble.Cc.cardNumber")
 
         let cardNumberField = customTextField
 
         let expirationDateLabel = customLabel
         expirationDateLabel.font = .preferredFont(forTextStyle: .body)
-        expirationDateLabel.text = L10n.Snabble.Cc.validUntil
+        expirationDateLabel.text = Asset.localizedString(forKey: "Snabble.Cc.validUntil")
 
         let expirationDateField = customTextField
 
@@ -218,13 +218,13 @@ public final class DatatransAliasViewController: UIViewController {
 
         let title: String
         switch method?.datatransMethod {
-        case .postFinanceCard: title = L10n.Snabble.Payment.PostFinanceCard.error
-        case .twint: title = L10n.Snabble.Payment.Twint.error
-        default: title = L10n.Snabble.Payment.CreditCard.error
+        case .postFinanceCard: title = Asset.localizedString(forKey: "Snabble.Payment.PostFinanceCard.error")
+        case .twint: title = Asset.localizedString(forKey: "Snabble.Payment.Twint.error")
+        default: title = Asset.localizedString(forKey: "Snabble.Payment.CreditCard.error")
         }
 
         let alert = UIAlertController(title: title, message: nil, preferredStyle: .alert)
-        alert.addAction(UIAlertAction(title: L10n.Snabble.ok, style: .default) { _ in
+        alert.addAction(UIAlertAction(title: Asset.localizedString(forKey: "Snabble.ok"), style: .default) { _ in
             self.goBack()
         })
 
@@ -281,13 +281,13 @@ public final class DatatransAliasViewController: UIViewController {
             return
         }
 
-        let alert = UIAlertController(title: nil, message: L10n.Snabble.Payment.Delete.message, preferredStyle: .alert)
-        alert.addAction(UIAlertAction(title: L10n.Snabble.yes, style: .destructive) { _ in
+        let alert = UIAlertController(title: nil, message: Asset.localizedString(forKey: "Snabble.Payment.Delete.message"), preferredStyle: .alert)
+        alert.addAction(UIAlertAction(title: Asset.localizedString(forKey: "Snabble.yes"), style: .destructive) { _ in
             PaymentMethodDetails.remove(detail)
             self.analyticsDelegate?.track(.paymentMethodDeleted(self.method?.rawValue ?? ""))
             self.goBack()
         })
-        alert.addAction(UIAlertAction(title: L10n.Snabble.no, style: .cancel, handler: nil))
+        alert.addAction(UIAlertAction(title: Asset.localizedString(forKey: "Snabble.no"), style: .cancel, handler: nil))
         self.present(alert, animated: true)
     }
 

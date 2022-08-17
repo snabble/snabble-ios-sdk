@@ -50,7 +50,7 @@ public final class ReceiptsListViewController: UITableViewController {
 
         super.init(nibName: nil, bundle: nil)
 
-        self.title = L10n.Snabble.Receipts.title
+        self.title = Asset.localizedString(forKey: "Snabble.Receipts.title")
     }
 
     required init?(coder aDecoder: NSCoder) {
@@ -87,7 +87,7 @@ public final class ReceiptsListViewController: UITableViewController {
         self.tableView.register(ReceiptCell.self, forCellReuseIdentifier: "receiptCell")
         self.tableView.tableFooterView = UIView(frame: CGRect.zero)
 
-        self.emptyLabel.text = L10n.Snabble.Receipts.noReceipts
+        self.emptyLabel.text = Asset.localizedString(forKey: "Snabble.Receipts.noReceipts")
         self.emptyLabel.isHidden = true
 
         self.loadOrderList()

@@ -7,6 +7,13 @@
 
 import Foundation
 import UIKit
+import WCAG_Colors
+
+private extension UIColor {
+    var contrast: UIColor? {
+        Self.getTextColor(onBackgroundColor: self)
+    }
+}
 
 public extension Asset {
     enum Color {
@@ -157,6 +164,10 @@ public extension Asset {
             Asset.color(named: "label", domain: domain) ?? .label
         }
 
+        static func onLabel(in domain: Any? = domain) -> UIColor? {
+            Asset.color(named: "onLabel", domain: domain) ?? label(in: domain).contrast
+        }
+
         static func secondaryLabel(in domain: Any? = domain) -> UIColor {
             Asset.color(named: "secondaryLabel", domain: domain) ?? .secondaryLabel
         }
@@ -209,6 +220,10 @@ public extension Asset {
 
         public static func accent(in domain: Any? = domain) -> UIColor {
             Asset.color(named: "accent", domain: domain) ?? UIColor(red: 0, green: 119.0 / 255.0, blue: 187.0 / 255.0, alpha: 1)
+        }
+
+        public static func onAccent(in domain: Any? = domain) -> UIColor {
+            Asset.color(named: "onAccent", domain: domain) ?? accent(in: domain).contrast ?? .label
         }
     }
 }
@@ -374,6 +389,10 @@ extension Color {
 
     public static func accent(in domain: Any? = Asset.domain) -> SwiftUI.Color {
         color(Asset.Color.accent(in: domain))
+    }
+
+    public static func onAccent(in domain: Any? = Asset.domain) -> SwiftUI.Color {
+        color(Asset.Color.onAccent(in: domain))
     }
 }
 #endif

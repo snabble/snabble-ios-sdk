@@ -275,6 +275,8 @@
 				"${BUILT_PRODUCTS_DIR}/TrustKit/TrustKit.framework",
 				"${BUILT_PRODUCTS_DIR}/WCAG-Colors/WCAG_Colors.framework",
 				"${BUILT_PRODUCTS_DIR}/Zip/Zip.framework",
+				"${PODS_XCFRAMEWORKS_BUILD_DIR}/Datatrans/Datatrans.framework/Datatrans",
+				"${PODS_XCFRAMEWORKS_BUILD_DIR}/Datatrans/PPRiskMagnes.framework/PPRiskMagnes",
 			);
 			name = "[CP] Embed Pods Frameworks";
 			outputPaths = (
@@ -291,6 +293,8 @@
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/TrustKit.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/WCAG_Colors.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Zip.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Datatrans.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/PPRiskMagnes.framework",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;

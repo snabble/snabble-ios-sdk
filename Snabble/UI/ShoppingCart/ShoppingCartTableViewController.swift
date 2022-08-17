@@ -288,16 +288,16 @@ final class ShoppingCartTableViewController: UITableViewController {
             }
         }
 
-        let start = offendingProducts.count == 1 ? L10n.Snabble.SaleStop.ErrorMsg.one : L10n.Snabble.SaleStop.errorMsg
+        let start = offendingProducts.count == 1 ? Asset.localizedString(forKey: "Snabble.SaleStop.ErrorMsg.one") : Asset.localizedString(forKey: "Snabble.SaleStop.errorMsg")
         let msg = start + "\n\n" + offendingProducts.joined(separator: "\n")
-        let alert = UIAlertController(title: L10n.Snabble.SaleStop.ErrorMsg.title, message: msg, preferredStyle: .alert)
-        alert.addAction(UIAlertAction(title: L10n.Snabble.ok, style: .default, handler: nil))
+        let alert = UIAlertController(title: Asset.localizedString(forKey: "Snabble.SaleStop.ErrorMsg.title"), message: msg, preferredStyle: .alert)
+        alert.addAction(UIAlertAction(title: Asset.localizedString(forKey: "Snabble.ok"), style: .default, handler: nil))
         self.present(alert, animated: true)
     }
 
     private func showVoucherError() {
-        let alert = UIAlertController(title: L10n.Snabble.InvalidDepositVoucher.errorMsg, message: nil, preferredStyle: .alert)
-        alert.addAction(UIAlertAction(title: L10n.Snabble.ok, style: .default, handler: nil))
+        let alert = UIAlertController(title: Asset.localizedString(forKey: "Snabble.InvalidDepositVoucher.errorMsg"), message: nil, preferredStyle: .alert)
+        alert.addAction(UIAlertAction(title: Asset.localizedString(forKey: "Snabble.ok"), style: .default, handler: nil))
         self.present(alert, animated: true)
     }
 }
@@ -314,14 +314,14 @@ extension ShoppingCartTableViewController: ShoppingCartTableDelegate {
 
         let product = item.product
 
-        let msg = L10n.Snabble.Shoppingcart.removeItem(product.name)
+        let msg = Asset.localizedString(forKey: "Snabble.Shoppingcart.removeItem", arguments: product.name)
         let alert = UIAlertController(title: nil, message: msg, preferredStyle: .alert)
 
-        alert.addAction(UIAlertAction(title: L10n.Snabble.yes, style: .destructive) { _ in
+        alert.addAction(UIAlertAction(title: Asset.localizedString(forKey: "Snabble.yes"), style: .destructive) { _ in
             self.deleteRow(row)
         })
 
-        alert.addAction(UIAlertAction(title: L10n.Snabble.no, style: .cancel) { _ in
+        alert.addAction(UIAlertAction(title: Asset.localizedString(forKey: "Snabble.no"), style: .cancel) { _ in
             self.shoppingCart.setQuantity(1, at: row)
             let indexPath = IndexPath(row: row, section: 0)
             self.tableView.reloadRows(at: [indexPath], with: .none)
@@ -441,7 +441,7 @@ extension ShoppingCartTableViewController {
     }
 
     override func tableView(_ tableView: UITableView, titleForDeleteConfirmationButtonForRowAt indexPath: IndexPath) -> String? {
-        return L10n.Snabble.remove
+        return Asset.localizedString(forKey: "Snabble.remove")
     }
 }
 

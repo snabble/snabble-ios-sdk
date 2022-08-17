@@ -37,7 +37,7 @@ public final class BarcodeEntryViewController: UIViewController {
 
         super.init(nibName: nil, bundle: nil)
 
-        self.title = L10n.Snabble.Scanner.enterBarcode
+        self.title = Asset.localizedString(forKey: "Snabble.Scanner.enterBarcode")
     }
 
     required init?(coder aDecoder: NSCoder) {
@@ -79,7 +79,7 @@ public final class BarcodeEntryViewController: UIViewController {
         self.tableView.tableFooterView = UIView(frame: CGRect.zero)
         self.tableView.register(BarcodeEntryTableCell.self, forCellReuseIdentifier: "barcodeCell")
 
-        self.searchBar.placeholder = L10n.Snabble.Scanner.enterBarcode
+        self.searchBar.placeholder = Asset.localizedString(forKey: "Snabble.Scanner.enterBarcode")
 
         self.keyboardObserver = KeyboardObserver(handler: self)
 
@@ -147,7 +147,7 @@ extension BarcodeEntryViewController: UITableViewDelegate, UITableViewDataSource
         self.emptyState?.isHidden = rows > 0
         self.emptyState?.button1.isHidden = true
         if !self.searchText.isEmpty {
-            let title = L10n.Snabble.Scanner.addCodeAsIs(self.searchText)
+            let title = Asset.localizedString(forKey: "Snabble.Scanner.addCodeAsIs", arguments: self.searchText)
             self.emptyState?.button1.setTitle(title, for: .normal)
             self.emptyState?.button1.isHidden = false
         }

@@ -12,14 +12,14 @@ extension RawPaymentMethod {
         if self.codeRequired && !devicePasscodeSet() {
             let mode = BiometricAuthentication.supportedBiometry
             let msg = mode == .none ?
-                L10n.Snabble.PaymentMethods.NoCodeAlert.noBiometry
-                : L10n.Snabble.PaymentMethods.NoCodeAlert.biometry
+                Asset.localizedString(forKey: "Snabble.PaymentMethods.NoCodeAlert.noBiometry")
+                : Asset.localizedString(forKey: "Snabble.PaymentMethods.NoCodeAlert.biometry")
 
-            let alert = UIAlertController(title: L10n.Snabble.PaymentMethods.noDeviceCode,
+            let alert = UIAlertController(title: Asset.localizedString(forKey: "Snabble.PaymentMethods.noDeviceCode"),
                                           message: msg,
                                           preferredStyle: .alert)
 
-            alert.addAction(UIAlertAction(title: L10n.Snabble.ok, style: .default, handler: nil))
+            alert.addAction(UIAlertAction(title: Asset.localizedString(forKey: "Snabble.ok"), style: .default, handler: nil))
             viewController.present(alert, animated: true)
             return false
         } else {

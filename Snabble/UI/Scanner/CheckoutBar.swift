@@ -86,7 +86,7 @@ final class CheckoutBar: UIView {
         noPaymentLabel.adjustsFontForContentSizeCategory = true
         noPaymentLabel.textColor = Asset.Color.label()
         noPaymentLabel.textAlignment = .center
-        noPaymentLabel.text = L10n.Snabble.Shoppingcart.BuyProducts.selectPaymentMethod
+        noPaymentLabel.text = Asset.localizedString(forKey: "Snabble.Shoppingcart.BuyProducts.selectPaymentMethod")
 
         let methodIcon = UIImageView()
         methodIcon.translatesAutoresizingMaskIntoConstraints = false
@@ -100,8 +100,8 @@ final class CheckoutBar: UIView {
 
         let checkoutButton = UIButton(type: .system)
         checkoutButton.translatesAutoresizingMaskIntoConstraints = false
-        checkoutButton.setTitle(L10n.Snabble.Shoppingcart.BuyProducts.now, for: .normal)
-        let disabledColor = Asset.Color.accent().contrast?.withAlphaComponent(0.5)
+        checkoutButton.setTitle(Asset.localizedString(forKey: "Snabble.Shoppingcart.BuyProducts.now"), for: .normal)
+        let disabledColor = Asset.Color.onAccent().withAlphaComponent(0.5)
         checkoutButton.setTitleColor(disabledColor, for: .disabled)
         checkoutButton.titleLabel?.font = Asset.preferredFont(forTextStyle: .headline)
         checkoutButton.titleLabel?.adjustsFontForContentSizeCategory = true
@@ -192,7 +192,7 @@ final class CheckoutBar: UIView {
             self.totalPriceLabel?.text = ""
         }
 
-        self.itemCountLabel?.text = L10n.Snabble.Shoppingcart.numberOfItems(numProducts)
+        self.itemCountLabel?.text = Asset.localizedString(forKey: "Snabble.Shoppingcart.numberOfItems", arguments: numProducts)
         self.checkoutButton?.isEnabled = numProducts > 0 && (totalPrice ?? 0) >= 0
 
         self.methodSelector?.updateAvailablePaymentMethods()
@@ -292,17 +292,17 @@ final class CheckoutBar: UIView {
                     }
 
                     if case SnabbleError.urlError = error {
-                        self.shoppingCartDelegate?.showWarningMessage(L10n.Snabble.Payment.offlineHint)
+                        self.shoppingCartDelegate?.showWarningMessage(Asset.localizedString(forKey: "Snabble.Payment.offlineHint"))
                         return
                     }
 
                     switch error.type {
                     case .noAvailableMethod:
-                        self.shoppingCartDelegate?.showWarningMessage(L10n.Snabble.Payment.noMethodAvailable)
+                        self.shoppingCartDelegate?.showWarningMessage(Asset.localizedString(forKey: "Snabble.Payment.noMethodAvailable"))
                     case .invalidDepositVoucher:
-                        self.shoppingCartDelegate?.showWarningMessage(L10n.Snabble.InvalidDepositVoucher.errorMsg)
+                        self.shoppingCartDelegate?.showWarningMessage(Asset.localizedString(forKey: "Snabble.InvalidDepositVoucher.errorMsg"))
                     default:
-                        self.shoppingCartDelegate?.showWarningMessage(L10n.Snabble.Payment.errorStarting)
+                        self.shoppingCartDelegate?.showWarningMessage(Asset.localizedString(forKey: "Snabble.Payment.errorStarting"))
                     }
                 }
             }
@@ -317,10 +317,10 @@ final class CheckoutBar: UIView {
             }
         }
 
-        let start = offendingProducts.count == 1 ? L10n.Snabble.SaleStop.ErrorMsg.one : L10n.Snabble.SaleStop.errorMsg
+        let start = offendingProducts.count == 1 ? Asset.localizedString(forKey: "Snabble.SaleStop.ErrorMsg.one") : Asset.localizedString(forKey: "Snabble.SaleStop.errorMsg")
         let msg = start + "\n\n" + offendingProducts.joined(separator: "\n")
-        let alert = UIAlertController(title: L10n.Snabble.SaleStop.ErrorMsg.title, message: msg, preferredStyle: .alert)
-        alert.addAction(UIAlertAction(title: L10n.Snabble.ok, style: .default, handler: nil))
+        let alert = UIAlertController(title: Asset.localizedString(forKey: "Snabble.SaleStop.ErrorMsg.title"), message: msg, preferredStyle: .alert)
+        alert.addAction(UIAlertAction(title: Asset.localizedString(forKey: "Snabble.ok"), style: .default, handler: nil))
         parentVC?.present(alert, animated: true)
     }
 
@@ -341,19 +341,19 @@ extension CheckoutBar {
     }
 
     private func requestTaxationInfo() {
-        let alert = UIAlertController(title: L10n.Snabble.Taxation.pleaseChoose,
-                                      message: L10n.Snabble.Taxation.consumeWhere,
+        let alert = UIAlertController(title: Asset.localizedString(forKey: "Snabble.Taxation.pleaseChoose"),
+                                      message: Asset.localizedString(forKey: "Snabble.Taxation.consumeWhere"),
                                       preferredStyle: .alert)
 
-        alert.addAction(UIAlertAction(title: L10n.Snabble.Taxation.Consume.inhouse, style: .default) { _ in
+        alert.addAction(UIAlertAction(title: Asset.localizedString(forKey: "Snabble.Taxation.Consume.inhouse"), style: .default) { _ in
             self.setTaxation(to: .taxationInhouse)
             self.startCheckout()
         })
-        alert.addAction(UIAlertAction(title: L10n.Snabble.Taxation.Consume.takeaway, style: .default) { _ in
+        alert.addAction(UIAlertAction(title: Asset.localizedString(forKey: "Snabble.Taxation.Consume.takeaway"), style: .default) { _ in
             self.setTaxation(to: .taxationTakeaway)
             self.startCheckout()
         })
-        alert.addAction(UIAlertAction(title: L10n.Snabble.cancel, style: .cancel, handler: nil))
+        alert.addAction(UIAlertAction(title: Asset.localizedString(forKey: "Snabble.cancel"), style: .cancel, handler: nil))
 
         self.parentVC?.present(alert, animated: true)
     }
@@ -378,7 +378,7 @@ extension CheckoutBar {
             if totalPrice > notAllMethodsAvailable {
                 if !self.notAllMethodsAvailableShown {
                     let limit = formatter.format(notAllMethodsAvailable)
-                    self.showLimitAlert(L10n.Snabble.LimitsAlert.notAllMethodsAvailable(limit))
+                    self.showLimitAlert(Asset.localizedString(forKey: "Snabble.LimitsAlert.notAllMethodsAvailable", arguments: limit))
                     self.notAllMethodsAvailableShown = true
                 }
             } else {
@@ -390,7 +390,7 @@ extension CheckoutBar {
             if totalPrice > checkoutNotAvailable {
                 if !self.checkoutNotAvailableShown {
                     let limit = formatter.format(checkoutNotAvailable)
-                    self.showLimitAlert(L10n.Snabble.LimitsAlert.checkoutNotAvailable(limit))
+                    self.showLimitAlert(Asset.localizedString(forKey: "Snabble.LimitsAlert.checkoutNotAvailable", arguments: limit))
                     self.checkoutNotAvailableShown = true
                 }
             } else {
@@ -404,8 +404,8 @@ extension CheckoutBar {
             return
         }
 
-        let alert = UIAlertController(title: L10n.Snabble.LimitsAlert.title, message: msg, preferredStyle: .alert)
-        alert.addAction(UIAlertAction(title: L10n.Snabble.ok, style: .default) { _ in
+        let alert = UIAlertController(title: Asset.localizedString(forKey: "Snabble.LimitsAlert.title"), message: msg, preferredStyle: .alert)
+        alert.addAction(UIAlertAction(title: Asset.localizedString(forKey: "Snabble.ok"), style: .default) { _ in
             self.limitAlert = nil
         })
         UIApplication.topViewController()?.present(alert, animated: true)

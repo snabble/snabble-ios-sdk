@@ -67,7 +67,7 @@ final class CheckoutRatingViewController: UIViewController {
         textLabel.adjustsFontSizeToFitWidth = true
         textLabel.lineBreakMode = .byTruncatingMiddle
         textLabel.textAlignment = .center
-        textLabel.text = L10n.Snabble.PaymentStatus.Ratings.title
+        textLabel.text = Asset.localizedString(forKey: "Snabble.PaymentStatus.Ratings.title")
 
         let detailTextLabel = UILabel()
         detailTextLabel.translatesAutoresizingMaskIntoConstraints = false
@@ -79,7 +79,7 @@ final class CheckoutRatingViewController: UIViewController {
         detailTextLabel.lineBreakMode = .byTruncatingMiddle
         detailTextLabel.textAlignment = .center
         detailTextLabel.setContentHuggingPriority(.defaultLow - 1, for: .vertical)
-        detailTextLabel.text = L10n.Snabble.PaymentStatus.Ratings.thanks
+        detailTextLabel.text = Asset.localizedString(forKey: "Snabble.PaymentStatus.Ratings.thanks")
         detailTextLabel.isHidden = true
 
         let leftButton = UIButton(type: .custom)
@@ -165,7 +165,7 @@ final class CheckoutRatingViewController: UIViewController {
     }
 
     private func getRatingComment(_ rating: Int) {
-        let alert = AlertController(title: L10n.Snabble.PaymentStatus.Rating.title, message: nil, preferredStyle: .alert)
+        let alert = AlertController(title: Asset.localizedString(forKey: "Snabble.PaymentStatus.Rating.title"), message: nil, preferredStyle: .alert)
         alert.visualStyle = .snabbleAlert
 
         let textField = UITextView(frame: .zero)
@@ -180,8 +180,8 @@ final class CheckoutRatingViewController: UIViewController {
         textField.heightAnchor.constraint(equalToConstant: 100).isActive = true
         textField.widthAnchor.constraint(equalToConstant: alert.visualStyle.width - 16).isActive = true
 
-        alert.addAction(AlertAction(title: L10n.Snabble.cancel, style: .normal))
-        alert.addAction(AlertAction(title: L10n.Snabble.PaymentStatus.Rating.send, style: .preferred) { _ in
+        alert.addAction(AlertAction(title: Asset.localizedString(forKey: "Snabble.cancel"), style: .normal))
+        alert.addAction(AlertAction(title: Asset.localizedString(forKey: "Snabble.PaymentStatus.Rating.send"), style: .preferred) { _ in
             self.sendFeedback(rating, textField.text)
         })
 
