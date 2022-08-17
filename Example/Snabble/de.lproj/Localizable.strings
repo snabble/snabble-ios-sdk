@@ -2,14 +2,13 @@
   Localizable.strings
   SnabbleSampleApp
 
-  Created by Uwe Tilemann on 16.08.22.
+  Created by Uwe Tilemann on 17.08.22.
   Copyright © 2022 snabble. All rights reserved.
 */
 
 "Account" = "Profil";
-"Settings" = "Info";
+"Shops" = "Shops";
 
 "Scanner" = "Scanner";
 "Shopping Cart" = "Einkaufswagen";
 
-"Snabble.Onboarding.Terms.show" = "Anzeigen";

@@ -9,7 +9,7 @@ import UIKit
 import SnabbleSDK
 import SwiftUI
 
-class SampleViewController: UIViewController {
+class HomeViewController: UIViewController {
     
     private var buttonContainer = UIStackView()
     private var spinner = UIActivityIndicatorView()
@@ -140,7 +140,7 @@ class SampleViewController: UIViewController {
 
 }
 
-extension SampleViewController: AssetProviding {
+extension HomeViewController: AssetProviding {
     func color(named name: String, domain: Any?) -> UIColor? {
         return nil
     }
@@ -166,13 +166,13 @@ extension SampleViewController: AssetProviding {
     }
 }
 
-extension SampleViewController: ScannerDelegate {
+extension HomeViewController: ScannerDelegate {
     func scanMessage(for project: Project, _ shop: Shop, _ product: Product) -> ScanMessage? {
         return nil
     }
 }
 
-extension SampleViewController: ShoppingCartDelegate {
+extension HomeViewController: ShoppingCartDelegate {
     func gotoPayment(
         _ method: RawPaymentMethod,
         _ detail: PaymentMethodDetail?,
@@ -208,14 +208,14 @@ extension SampleViewController: ShoppingCartDelegate {
 }
 
 /// implement this method to track an event generated from the SDK in your analytics system
-extension SampleViewController: AnalyticsDelegate {
+extension HomeViewController: AnalyticsDelegate {
     func track(_ event: AnalyticsEvent) {
         NSLog("track: \(event)")
     }
 }
 
 /// implement these methods to show warning/info messages on-screen, e.g. as toasts
-extension SampleViewController: MessageDelegate {
+extension HomeViewController: MessageDelegate {
     func showInfoMessage(_ message: String) {
         NSLog("warning: \(message)")
     }
@@ -225,7 +225,7 @@ extension SampleViewController: MessageDelegate {
     }
 }
 
-extension SampleViewController: PaymentDelegate {
+extension HomeViewController: PaymentDelegate {
     func checkoutFinished(_ cart: ShoppingCart, _ process: CheckoutProcess?) {
         self.navigationController?.popViewController(animated: true)
     }

@@ -14,17 +14,17 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
 
-        let leftNavi = UINavigationController(rootViewController: LeftViewController())
-        let rightNavi = UINavigationController(rootViewController: RightViewController())
+        let shopsNavi = UINavigationController(rootViewController: ShopsViewController())
+        let accountNavi = UINavigationController(rootViewController: AccountViewController())
 
-        let sampleVC = SampleViewController()
+        let homeVC = HomeViewController()
 
-        let sampleNavi = UINavigationController(rootViewController: sampleVC)
-        sampleNavi.navigationBar.isOpaque = true
+        let homeNavi = UINavigationController(rootViewController: homeVC)
+        homeNavi.navigationBar.isOpaque = true
 
         let tabBarController = UITabBarController()
-        tabBarController.viewControllers = [ leftNavi, sampleNavi, rightNavi ]
-        tabBarController.selectedIndex = 1
+        tabBarController.viewControllers = [ homeNavi, shopsNavi, accountNavi ]
+        tabBarController.selectedIndex = 0
 
         window = UIWindow(frame: UIScreen.main.bounds)
         window?.makeKeyAndVisible()
