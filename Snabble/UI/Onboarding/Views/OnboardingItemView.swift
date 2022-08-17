@@ -78,7 +78,7 @@ struct OnboardingItemView: View {
                     .font(.headline)
             }
             .sheet(isPresented: $isPresenting) {
-                if let url = Bundle.main.url(forResource: resource, withExtension: nil) {
+                if let url = Asset.url(forResource: resource, withExtension: nil) {
                     ShowWebView(url: url)
                         .padding()
                 }
