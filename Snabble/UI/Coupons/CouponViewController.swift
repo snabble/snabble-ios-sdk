@@ -107,11 +107,11 @@ public final class CouponViewController: UIViewController {
         button.setTitle(Asset.localizedString(forKey: "Snabble.Coupon.activate"), for: .normal)
         button.setBackgroundColor(color: Asset.Color.accent(), for: .normal)
         button.titleLabel?.font = Asset.preferredFont(forTextStyle: .headline)
-        button.tintColor = Asset.Color.accent().contrast
+        button.tintColor = Asset.Color.onAccent()
         button.addTarget(self, action: #selector(activateCoupon), for: .touchUpInside)
         self.button = button
 
-        let greenColor = UIColor(red: 127.0 / 255.0, green: 187.0 / 255.0, blue: 70.0 / 255.0, alpha: 1)
+        let greenColor = Asset.Color.systemGreen()
         let image = UIImage(systemName: "checkmark.circle")
         let checkMarkImageView = UIImageView(image: image)
         checkMarkImageView.tintColor = greenColor

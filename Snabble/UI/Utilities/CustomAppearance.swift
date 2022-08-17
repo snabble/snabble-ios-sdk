@@ -9,5 +9,6 @@ import UIKit
 
 public protocol CustomAppearance {
     var accent: UIColor { get }
+    var contrast: UIColor? { get }
     var titleIcon: UIImage? { get }
 }
