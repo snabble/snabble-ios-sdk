@@ -294,7 +294,7 @@ extension PaymentProcess {
                     if let display = checkoutDisplay {
                         completion(.success(display))
                     } else {
-                        self.paymentDelegate?.showWarningMessage(Asset.localizedString(forKey: "Snabble.Payment.errorStarting)
+                        self.paymentDelegate?.showWarningMessage(Asset.localizedString(forKey: "Snabble.Payment.errorStarting"))
                     }
                 case .supervisor:
                     let supervisor = SupervisorCheckViewController(shop: self.shop, shoppingCart: self.cart, checkoutProcess: process)
