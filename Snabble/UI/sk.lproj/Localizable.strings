@@ -521,15 +521,15 @@
 
 "Snabble.Shoppingcart.discounts" = "Rabat";
 
-"Snabble.Shoppingcart.emptyState.buttonTitle" = "Skenovať teraz";
+"Snabble.Shoppingcart.EmptyState.buttonTitle" = "Skenovať teraz";
 
-"Snabble.Shoppingcart.emptyState.description" = "Košík je prázdny. Naskenuj čiarové kódy produktov, ktoré si chceš kúpiť.";
+"Snabble.Shoppingcart.EmptyState.description" = "Košík je prázdny. Naskenuj čiarové kódy produktov, ktoré si chceš kúpiť.";
 
-"Snabble.Shoppingcart.emptyState.restartButtonTitle" = "Začať nový nákup";
+"Snabble.Shoppingcart.EmptyState.restartButtonTitle" = "Začať nový nákup";
 
-"Snabble.Shoppingcart.emptyState.restoreButtonTitle" = "Obnoviť predchádzajúci košík";
+"Snabble.Shoppingcart.EmptyState.restoreButtonTitle" = "Obnoviť predchádzajúci košík";
 
-"Snabble.Shoppingcart.emptyState.title" = "Tvoj košík je ešte prázdny";
+"Snabble.Shoppingcart.EmptyState.title" = "Tvoj košík je ešte prázdny";
 
 "Snabble.Shoppingcart.giveaway" = "Darček zadarmo";
 

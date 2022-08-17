@@ -521,15 +521,15 @@
 
 "Snabble.Shoppingcart.discounts" = "Rabatt";
 
-"Snabble.Shoppingcart.emptyState.buttonTitle" = "Jetzt scannen";
+"Snabble.Shoppingcart.EmptyState.buttonTitle" = "Jetzt scannen";
 
-"Snabble.Shoppingcart.emptyState.description" = "Dein Warenkorb ist leer. Scanne Barcodes von Artikeln, die du kaufen möchtest.";
+"Snabble.Shoppingcart.EmptyState.description" = "Dein Warenkorb ist leer. Scanne Barcodes von Artikeln, die du kaufen möchtest.";
 
-"Snabble.Shoppingcart.emptyState.restartButtonTitle" = "Neuen Einkauf beginnen";
+"Snabble.Shoppingcart.EmptyState.restartButtonTitle" = "Neuen Einkauf beginnen";
 
-"Snabble.Shoppingcart.emptyState.restoreButtonTitle" = "Vorherigen Warenkorb wiederherstellen";
+"Snabble.Shoppingcart.EmptyState.restoreButtonTitle" = "Vorherigen Warenkorb wiederherstellen";
 
-"Snabble.Shoppingcart.emptyState.title" = "Dein Warenkorb ist noch leer";
+"Snabble.Shoppingcart.EmptyState.title" = "Dein Warenkorb ist noch leer";
 
 "Snabble.Shoppingcart.giveaway" = "Kostenloses Geschenk";
 

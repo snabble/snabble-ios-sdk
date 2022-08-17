@@ -521,15 +521,15 @@
 
 "Snabble.Shoppingcart.discounts" = "Sconto";
 
-"Snabble.Shoppingcart.emptyState.buttonTitle" = "Scansiona ora";
+"Snabble.Shoppingcart.EmptyState.buttonTitle" = "Scansiona ora";
 
-"Snabble.Shoppingcart.emptyState.description" = "Il tuo carrello è vuoto. Scansiona i codici a barre degli articoli che desideri acquistare.";
+"Snabble.Shoppingcart.EmptyState.description" = "Il tuo carrello è vuoto. Scansiona i codici a barre degli articoli che desideri acquistare.";
 
-"Snabble.Shoppingcart.emptyState.restartButtonTitle" = "Inizia nuovo acquisto";
+"Snabble.Shoppingcart.EmptyState.restartButtonTitle" = "Inizia nuovo acquisto";
 
-"Snabble.Shoppingcart.emptyState.restoreButtonTitle" = "Ripristina carrello precedente";
+"Snabble.Shoppingcart.EmptyState.restoreButtonTitle" = "Ripristina carrello precedente";
 
-"Snabble.Shoppingcart.emptyState.title" = "Il tuo carrello è ancora vuoto";
+"Snabble.Shoppingcart.EmptyState.title" = "Il tuo carrello è ancora vuoto";
 
 "Snabble.Shoppingcart.giveaway" = "Regalo gratuito";
 

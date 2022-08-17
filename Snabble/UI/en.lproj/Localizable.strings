@@ -521,15 +521,15 @@
 
 "Snabble.Shoppingcart.discounts" = "Discounts";
 
-"Snabble.Shoppingcart.emptyState.buttonTitle" = "Scan now";
+"Snabble.Shoppingcart.EmptyState.buttonTitle" = "Scan now";
 
-"Snabble.Shoppingcart.emptyState.description" = "Visit a store that supports Snabble and scan the barcodes of products you wish to purchase.";
+"Snabble.Shoppingcart.EmptyState.description" = "Visit a store that supports Snabble and scan the barcodes of products you wish to purchase.";
 
-"Snabble.Shoppingcart.emptyState.restartButtonTitle" = "Start new shopping trip";
+"Snabble.Shoppingcart.EmptyState.restartButtonTitle" = "Start new shopping trip";
 
-"Snabble.Shoppingcart.emptyState.restoreButtonTitle" = "Restore previous cart";
+"Snabble.Shoppingcart.EmptyState.restoreButtonTitle" = "Restore previous cart";
 
-"Snabble.Shoppingcart.emptyState.title" = "Your shopping cart is empty";
+"Snabble.Shoppingcart.EmptyState.title" = "Your shopping cart is empty";
 
 "Snabble.Shoppingcart.giveaway" = "Free gift";
 

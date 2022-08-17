@@ -521,15 +521,15 @@
 
 "Snabble.Shoppingcart.discounts" = "Rabais";
 
-"Snabble.Shoppingcart.emptyState.buttonTitle" = "Scanner maintenant";
+"Snabble.Shoppingcart.EmptyState.buttonTitle" = "Scanner maintenant";
 
-"Snabble.Shoppingcart.emptyState.description" = "Ton panier est vide. Scanne les codes-barres des articles que tu souhaites acheter.";
+"Snabble.Shoppingcart.EmptyState.description" = "Ton panier est vide. Scanne les codes-barres des articles que tu souhaites acheter.";
 
-"Snabble.Shoppingcart.emptyState.restartButtonTitle" = "Commencer un nouvel achat";
+"Snabble.Shoppingcart.EmptyState.restartButtonTitle" = "Commencer un nouvel achat";
 
-"Snabble.Shoppingcart.emptyState.restoreButtonTitle" = "Rétablir le panier précédent";
+"Snabble.Shoppingcart.EmptyState.restoreButtonTitle" = "Rétablir le panier précédent";
 
-"Snabble.Shoppingcart.emptyState.title" = "Ton panier est encore vide";
+"Snabble.Shoppingcart.EmptyState.title" = "Ton panier est encore vide";
 
 "Snabble.Shoppingcart.giveaway" = "Cadeau gratuit";
 

@@ -521,15 +521,15 @@
 
 "Snabble.Shoppingcart.discounts" = "Engedmény";
 
-"Snabble.Shoppingcart.emptyState.buttonTitle" = "Termék szkennelése";
+"Snabble.Shoppingcart.EmptyState.buttonTitle" = "Termék szkennelése";
 
-"Snabble.Shoppingcart.emptyState.description" = "A kosarad üres. Szkenneld be azon termékek vonalkódját, amiket meg szeretnél vásárolni.";
+"Snabble.Shoppingcart.EmptyState.description" = "A kosarad üres. Szkenneld be azon termékek vonalkódját, amiket meg szeretnél vásárolni.";
 
-"Snabble.Shoppingcart.emptyState.restartButtonTitle" = "Új vásárlás megkezdése";
+"Snabble.Shoppingcart.EmptyState.restartButtonTitle" = "Új vásárlás megkezdése";
 
-"Snabble.Shoppingcart.emptyState.restoreButtonTitle" = "Előző kosár visszaállítása";
+"Snabble.Shoppingcart.EmptyState.restoreButtonTitle" = "Előző kosár visszaállítása";
 
-"Snabble.Shoppingcart.emptyState.title" = "A kosarad még üres";
+"Snabble.Shoppingcart.EmptyState.title" = "A kosarad még üres";
 
 "Snabble.Shoppingcart.giveaway" = "Ingyenes ajándék";
 
