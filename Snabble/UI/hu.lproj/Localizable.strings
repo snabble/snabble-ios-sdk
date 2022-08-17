@@ -1,21 +1,20 @@
-"release.safety.catch" = "Kérjük, hogy a kijáratnál, az arra kijelölt állomáson vedd le a palacknyak-biztosítót (ha van).";
+"Release.Safety.catch" = "Kérjük, hogy a kijáratnál, az arra kijelölt állomáson vedd le a palacknyak-biztosítót (ha van).";
 
 "Snabble.addDiscount" = "Árengedmény megadása";
 
-"Snabble.ageVerification.explanation" = "Meghatározott termékek, mint pl. alkohol vásárlásához igazolnod kell a korod. Ehhez személyazonosító igazolványod hátoldaláról másold be a 7 jegyű számot.";
+"Snabble.AgeVerification.explanation" = "Meghatározott termékek, mint pl. alkohol vásárlásához igazolnod kell a korod. Ehhez személyazonosító igazolványod hátoldaláról másold be a 7 jegyű számot.";
 
-"Snabble.ageVerification.failed.message" = "A kosárban olyan termékek is vannak, amelyek életkori korlátozás alá esnek. Ezeket sajnos nem veheted meg.";
+"Snabble.AgeVerification.Failed.message" = "A kosárban olyan termékek is vannak, amelyek életkori korlátozás alá esnek. Ezeket sajnos nem veheted meg.";
 
-"Snabble.ageVerification.failed.title" = "Nem vagy elég idős";
+"Snabble.AgeVerification.Failed.title" = "Nem vagy elég idős";
 
-"Snabble.ageVerification.pending.message" = "A kosárban olyan termékek is vannak, amelyek életkori korlátozás alá esnek. A vásárlás folytatásához igazolnod kell az életkorodat.";
+"Snabble.AgeVerification.Pending.message" = "A kosárban olyan termékek is vannak, amelyek életkori korlátozás alá esnek. A vásárlás folytatásához igazolnod kell az életkorodat.";
 
-"Snabble.ageVerification.pending.title" = "Igazolni kell az életkorodat";
+"Snabble.AgeVerification.Pending.title" = "Igazolni kell az életkorodat";
 
-"Snabble.ageVerification.placeholder" = "7 számjegy";
+"Snabble.AgeVerification.placeholder" = "7 számjegy";
 
-/* ********* Age Verification ********* */
-"Snabble.ageVerification.title" = "Életkor igazolása";
+"Snabble.AgeVerification.title" = "Életkor igazolása";
 
 "Snabble.askForPermission" = "Engedély kéréséhez";
 
@@ -31,11 +30,9 @@
 
 "Snabble.Biometry.locked" = "%@ zárolva. Aktiválásához add meg a képernyőzár kódját.";
 
-/* ********* iOS Biometry *********, iOS only, this is used for the iOS-specific biometry settings views */
-"Snabble.Biometry.TouchId" = "Touch-ID";
+"Snabble.Biometry.touchId" = "Touch-ID";
 
-/* ********* Snabble ********* */
-"Snabble.Cancel" = "Mégsem";
+"Snabble.cancel" = "Mégsem";
 
 "Snabble.CC.3dsecureHint.retailer" = "Itt add meg az adataidat. Ezután átirányítunk a bankodhoz, hogy megerősítse az adataidat. Ekkor zárolunk 1 eurót (%@-re), majd a pénzt közvetlenül visszautaljuk.";
 
@@ -83,11 +80,11 @@
 
 "Snabble.CreditCard.payNow" = "Fizetés hitelkártyával";
 
-"Snabble.Delete" = "Törlés";
+"Snabble.delete" = "Törlés";
 
-"Snabble.Done" = "Kész";
+"Snabble.done" = "Kész";
 
-"Snabble.Edit" = "Szerkesztés";
+"Snabble.edit" = "Szerkesztés";
 
 "Snabble.goToSettings" = "A beállításokhoz";
 
@@ -97,7 +94,7 @@
 
 "Snabble.Hints.title" = "%@ megjegyzése";
 
-"Snabble.invalidDepositVoucher.errorMsg" = "Az üvegvisszaváltó blokkot csak egyszer lehet beváltani.";
+"Snabble.InvalidDepositVoucher.errorMsg" = "Az üvegvisszaváltó blokkot csak egyszer lehet beváltani.";
 
 "Snabble.Keyguard.message" = "Ezzel garantálható, hogy csak te férj ehhez a fizetési eljáráshoz";
 
@@ -106,23 +103,23 @@
 /* SECTION: Android KeyStore */
 "Snabble.Keyguard.title" = "Kérlek, oldd fel az okostelefonod képernyőzárát";
 
-"Snabble.limitsAlert.checkoutNotAvailable" = "%@ feletti áruértéknél az alkalmazással nem tudsz bevásárolni.";
+"Snabble.LimitsAlert.checkoutNotAvailable" = "%@ feletti áruértéknél az alkalmazással nem tudsz bevásárolni.";
 
-"Snabble.limitsAlert.notAllMethodsAvailable" = "%@ feletti áruértéknél nem áll rendelkezésedre az összes fizetési mód";
+"Snabble.LimitsAlert.notAllMethodsAvailable" = "%@ feletti áruértéknél nem áll rendelkezésedre az összes fizetési mód";
 
-"Snabble.limitsAlert.title" = "Vedd figyelembe";
+"Snabble.LimitsAlert.title" = "Vedd figyelembe";
 
 "Snabble.loadingProductInformation" = "Termékinformációk betöltése…";
 
 "Snabble.networkError" = "Hálózati kapcsolat hiba";
 
-"Snabble.No" = "Nem";
+"Snabble.no" = "Nem";
 
 "Snabble.noDiscount" = "nincs árengedmény";
 
-"Snabble.notForSale.errorMsg.scan" = "Ezt a terméket jelenleg sajnos nem lehet az alkalmazással kifizetni. Kérlek, fizesd a szokásos módon a kasszánál.";
+"Snabble.NotForSale.ErrorMsg.scan" = "Ezt a terméket jelenleg sajnos nem lehet az alkalmazással kifizetni. Kérlek, fizesd a szokásos módon a kasszánál.";
 
-"Snabble.OK" = "OK";
+"Snabble.ok" = "OK";
 
 "Snabble.Onboarding.accept" = "Agree";
 
@@ -138,19 +135,19 @@
 
 "Snabble.Onboarding.Terms.title" = "Terms of Use";
 
-"Snabble.paydirekt.authorizationFailed.message" = "Kérlek, próbáld meg később még egyszer";
+"Snabble.Paydirekt.AuthorizationFailed.message" = "Kérlek, próbáld meg később még egyszer";
 
-"Snabble.paydirekt.authorizationFailed.title" = "Nem sikerült az azonosítás";
+"Snabble.Paydirekt.AuthorizationFailed.title" = "Nem sikerült az azonosítás";
 
-"Snabble.paydirekt.deleteAuthorization" = "Fizetési mód törlése";
+"Snabble.Paydirekt.deleteAuthorization" = "Fizetési mód törlése";
 
-"Snabble.paydirekt.gotoWebsite" = "A paydirekt.de oldalra";
+"Snabble.Paydirekt.gotoWebsite" = "A paydirekt.de oldalra";
 
-"Snabble.paydirekt.payNow" = "Fizetés paydirekttel";
+"Snabble.Paydirekt.payNow" = "Fizetés paydirekttel";
 
-"Snabble.paydirekt.savedAuthorization" = "A Snabble alkalmazást sikeresen bejelentetted a paydirektre. Visszavonásához a paydirekt fiókadataiddal be kell jelentkezned a honlapon. Ha nem szeretnéd, hogy a paydirekt a fizetési lehetőségeid között legyen, akkor itt egyszerűen eltávolíthatod.";
+"Snabble.Paydirekt.savedAuthorization" = "A Snabble alkalmazást sikeresen bejelentetted a paydirektre. Visszavonásához a paydirekt fiókadataiddal be kell jelentkezned a honlapon. Ha nem szeretnéd, hogy a paydirekt a fizetési lehetőségeid között legyen, akkor itt egyszerűen eltávolíthatod.";
 
-"Snabble.paydirekt.title" = "paydirekt";
+"Snabble.Paydirekt.title" = "paydirekt";
 
 /* SECTION: SnabbleAndroid */
 "Snabble.Payment.aborted" = "Megszakadt a fizetési folyamat";
@@ -163,23 +160,23 @@
 
 "Snabble.Payment.backToHome" = "Vissza a kezdőoldalra";
 
-"Snabble.Payment.cancelError.message" = "A fizetés megszakítása jelenleg nem lehetséges.";
+"Snabble.Payment.CancelError.message" = "A fizetés megszakítása jelenleg nem lehetséges.";
 
-"Snabble.Payment.cancelError.title" = "A megszakítás nem lehetséges";
+"Snabble.Payment.CancelError.title" = "A megszakítás nem lehetséges";
 
 "Snabble.Payment.confirm" = "Bevásárlás jóváhagyása";
 
-"Snabble.Payment.CreditCard" = "Hitelkártya";
+"Snabble.Payment.creditCard" = "Hitelkártya";
 
 "Snabble.Payment.CreditCard.error" = "A hitelkártyád feldolgozása során hiba történt";
 
 "Snabble.Payment.CreditCard.expireDate" = "Lejár: %@";
 
-"Snabble.Payment.delete.message" = "Tényleg elmented ezt a fizetési módot?";
+"Snabble.Payment.Delete.message" = "Tényleg elmented ezt a fizetési módot?";
 
-"Snabble.Payment.emptyState.add" = "Fizetési mód hozzáadása";
+"Snabble.Payment.EmptyState.add" = "Fizetési mód hozzáadása";
 
-"Snabble.Payment.emptyState.message" = "Még nem állítottál be fizetési módot.";
+"Snabble.Payment.EmptyState.message" = "Még nem állítottál be fizetési módot.";
 
 "Snabble.Payment.errorStarting" = "A fizetési folyamat feldolgozása közben hiba lépett fel.";
 
@@ -244,9 +241,9 @@
 
 "Snabble.PaymentMethods.forSingleRetailer" = "Egy kereskedőnél érvényes";
 
-"Snabble.PaymentMethods.noCodeAlert.biometry" = "Az iPhone-od nem védi se kód, se Touch ID/Face ID. Biztonságod érdekében először ezt állítsd be, és csak ezt követően add meg az IBAN-kódodat vagy a hitelkártyádat.";
+"Snabble.PaymentMethods.NoCodeAlert.biometry" = "Az iPhone-od nem védi se kód, se Touch ID/Face ID. Biztonságod érdekében először ezt állítsd be, és csak ezt követően add meg az IBAN-kódodat vagy a hitelkártyádat.";
 
-"Snabble.PaymentMethods.noCodeAlert.noBiometry" = "Az iPhone-od nem védi kód. Biztonságod érdekében először ezt állítsd be, és csak ezt követően add meg az IBAN-kódodat vagy a hitelkártyádat.";
+"Snabble.PaymentMethods.NoCodeAlert.noBiometry" = "Az iPhone-od nem védi kód. Biztonságod érdekében először ezt állítsd be, és csak ezt követően add meg az IBAN-kódodat vagy a hitelkártyádat.";
 
 "Snabble.PaymentMethods.noDeviceCode" = "Védtelen iPhone";
 
@@ -321,7 +318,7 @@
 
 "Snabble.Payone.incompleteForm" = "Kérjük, hogy teljesen töltsd ki az űrlapot.";
 
-"Snabble.Payone.Lastname" = "Vezetéknév";
+"Snabble.Payone.lastname" = "Vezetéknév";
 
 "Snabble.pleaseWait" = "Kérlek, várj...";
 
@@ -337,7 +334,7 @@
 
 "Snabble.QRCode.DidPayDialog.ok" = "Igen, a kosár törlése";
 
-"Snabble.QRCode.entry.title" = "Kód: %d";
+"Snabble.QRCode.Entry.title" = "Kód: %d";
 
 "Snabble.QRCode.message" = "A QR-kódot tartsd készenlétben a kasszánál";
 
@@ -363,15 +360,15 @@
 
 "Snabble.remove" = "Eltávolítás";
 
-"Snabble.saleStop.errorMsg" = "Ezeket a termékeket jelenleg sajnos nem lehet az alkalmazással kifizetni. Kérlek, fizesd a szokásos módon a kasszánál:";
+"Snabble.SaleStop.errorMsg" = "Ezeket a termékeket jelenleg sajnos nem lehet az alkalmazással kifizetni. Kérlek, fizesd a szokásos módon a kasszánál:";
 
-"Snabble.saleStop.errorMsg.one" = "Ezt a terméket jelenleg sajnos nem lehet az alkalmazással kifizetni. Kérlek, fizesd a szokásos módon a kasszánál:";
+"Snabble.SaleStop.ErrorMsg.one" = "Ezt a terméket jelenleg sajnos nem lehet az alkalmazással kifizetni. Kérlek, fizesd a szokásos módon a kasszánál:";
 
-"Snabble.saleStop.errorMsg.scan" = "Ezt a terméket jelenleg sajnos nem lehet az alkalmazással kifizetni. Kérlek, fizesd a szokásos módon a kasszánál.";
+"Snabble.SaleStop.ErrorMsg.scan" = "Ezt a terméket jelenleg sajnos nem lehet az alkalmazással kifizetni. Kérlek, fizesd a szokásos módon a kasszánál.";
 
-"Snabble.saleStop.errorMsg.title" = "Elnézést kérünk";
+"Snabble.SaleStop.ErrorMsg.title" = "Elnézést kérünk";
 
-"Snabble.Save" = "Mentés";
+"Snabble.save" = "Mentés";
 
 "Snabble.Scanner.Accessibility.actionHideHint" = "Megjegyzés tartós elrejtése";
 
@@ -421,7 +418,7 @@
 
 "Snabble.Scanner.goToCart" = "Kosár: %@";
 
-"Snabble.Scanner.goToCart.empty" = "Kosár";
+"Snabble.Scanner.GoToCart.empty" = "Kosár";
 
 "Snabble.Scanner.introText" = "Szkenneld be a termék vonalkódját, és add hozzá a kosaradhoz.";
 
@@ -459,9 +456,9 @@
 
 "Snabble.SEPA.iAgree" = "Hozzájárulok";
 
-"Snabble.SEPA.ibanTransferAlert.message" = "Elmented ezeket a számlaadatokat (IBAN: %@) a jövőbeni bevásárlásokhoz?";
+"Snabble.SEPA.IbanTransferAlert.message" = "Elmented ezeket a számlaadatokat (IBAN: %@) a jövőbeni bevásárlásokhoz?";
 
-"Snabble.SEPA.ibanTransferAlert.title" = "Számla adatainak mentése";
+"Snabble.SEPA.IbanTransferAlert.title" = "Számla adatainak mentése";
 
 "Snabble.SEPA.mandate" = "SEPA terhelési megbízás";
 
@@ -507,11 +504,11 @@
 
 "Snabble.Shoppingcart.buyProducts" = "%1$d termék megvásárlása %2$@-ért";
 
-"Snabble.Shoppingcart.buyProducts.now" = "Fizetés, most";
+"Snabble.Shoppingcart.BuyProducts.now" = "Fizetés, most";
 
-"Snabble.Shoppingcart.buyProducts.one" = "%1$d termék megvásárlása %2$@-ért";
+"Snabble.Shoppingcart.BuyProducts.one" = "%1$d termék megvásárlása %2$@-ért";
 
-"Snabble.Shoppingcart.buyProducts.selectPaymentMethod" = "Fizetési mód kiválasztása";
+"Snabble.Shoppingcart.BuyProducts.selectPaymentMethod" = "Fizetési mód kiválasztása";
 
 "Snabble.Shoppingcart.coupon" = "Kupon";
 
@@ -565,10 +562,10 @@
 "Snabble.ShoppingList.EditList.title" = "Bevásárlólista szerkesztése";
 
 /* Der Text wird angezeigt wenn man ein Element der Einkaufsliste wegwischt */
-"Snabble.ShoppingList.ItemDeleted" = "%@ törölve";
+"Snabble.ShoppingList.itemDeleted" = "%@ törölve";
 
 /* Der Call-To-Action wenn man das löschen eines Elements der Einkaufsliste rückgänig machen möchte */
-"Snabble.ShoppingList.ItemDeleted.Undo" = "Helyreállítás";
+"Snabble.ShoppingList.ItemDeleted.undo" = "Helyreállítás";
 
 /* Der Inhalt der Snackbar wenn eine Einkaufsliste gelöscht wurde */
 "Snabble.ShoppingList.ListDeleted.title" = "Bevásárlólista törölve";
@@ -609,9 +606,9 @@
 /* Der Titel der übersichtsseite der Einkaufslisten */
 "Snabble.ShoppingLists.title" = "Bevásárlólisták";
 
-"Snabble.Taxation.consume.inhouse" = "itt elfogyasztani";
+"Snabble.Taxation.Consume.inhouse" = "itt elfogyasztani";
 
-"Snabble.Taxation.consume.takeaway" = "magaddal vinni";
+"Snabble.Taxation.Consume.takeaway" = "magaddal vinni";
 
 "Snabble.Taxation.consumeWhere" = "Szeretnéd a bevásárlásodat";
 
@@ -629,5 +626,5 @@
 
 "Snabble.Violations.title" = "Érvénytelen kosár";
 
-"Snabble.Yes" = "Igen";
+"Snabble.yes" = "Igen";
 

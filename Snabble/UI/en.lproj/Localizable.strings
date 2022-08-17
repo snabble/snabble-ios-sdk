@@ -1,21 +1,20 @@
-"release.safety.catch" = "Please remove the bottle's security device (if present) at the designated station at the exit.";
+"Release.Safety.catch" = "Please remove the bottle's security device (if present) at the designated station at the exit.";
 
 "Snabble.addDiscount" = "Enter discount";
 
-"Snabble.ageVerification.explanation" = "To purchase certain products like alcoholic beverages, verifying your age is required. Enter the 7-digit Number from the back side of your ID card.";
+"Snabble.AgeVerification.explanation" = "To purchase certain products like alcoholic beverages, verifying your age is required. Enter the 7-digit Number from the back side of your ID card.";
 
-"Snabble.ageVerification.failed.message" = "Some products in your cart have an age restriction, unfortunately you can't purchase them.";
+"Snabble.AgeVerification.Failed.message" = "Some products in your cart have an age restriction, unfortunately you can't purchase them.";
 
-"Snabble.ageVerification.failed.title" = "Age restriction";
+"Snabble.AgeVerification.Failed.title" = "Age restriction";
 
-"Snabble.ageVerification.pending.message" = "Some products in your cart have an age restriction. Please verify your age before continuing.";
+"Snabble.AgeVerification.Pending.message" = "Some products in your cart have an age restriction. Please verify your age before continuing.";
 
-"Snabble.ageVerification.pending.title" = "Age verification required";
+"Snabble.AgeVerification.Pending.title" = "Age verification required";
 
-"Snabble.ageVerification.placeholder" = "7 Digits";
+"Snabble.AgeVerification.placeholder" = "7 Digits";
 
-/* ********* Age Verification ********* */
-"Snabble.ageVerification.title" = "Age verification";
+"Snabble.AgeVerification.title" = "Age verification";
 
 "Snabble.askForPermission" = "Ask for permission";
 
@@ -31,11 +30,9 @@
 
 "Snabble.Biometry.locked" = "%@ is locked. Please enter your code in the lock screen to re-activate it.";
 
-/* ********* iOS Biometry *********, iOS only, this is used for the iOS-specific biometry settings views */
-"Snabble.Biometry.TouchId" = "Touch ID";
+"Snabble.Biometry.touchId" = "Touch ID";
 
-/* ********* Snabble ********* */
-"Snabble.Cancel" = "Cancel";
+"Snabble.cancel" = "Cancel";
 
 "Snabble.CC.3dsecureHint.retailer" = "Enter your data here. We will then forward you to your bank to confirm your details. We reserve 1 € (for %@) and book the money back immediately.";
 
@@ -83,11 +80,11 @@
 
 "Snabble.CreditCard.payNow" = "Pay now using Credit card";
 
-"Snabble.Delete" = "Delete";
+"Snabble.delete" = "Delete";
 
-"Snabble.Done" = "Done";
+"Snabble.done" = "Done";
 
-"Snabble.Edit" = "Edit";
+"Snabble.edit" = "Edit";
 
 "Snabble.goToSettings" = "Go to settings";
 
@@ -97,7 +94,7 @@
 
 "Snabble.Hints.title" = "Info from %@";
 
-"Snabble.invalidDepositVoucher.errorMsg" = "Deposit return vouchers can be redeemed only once.";
+"Snabble.InvalidDepositVoucher.errorMsg" = "Deposit return vouchers can be redeemed only once.";
 
 "Snabble.Keyguard.message" = "That's how we make sure that only you have access to this payment method";
 
@@ -106,23 +103,23 @@
 /* SECTION: Android KeyStore */
 "Snabble.Keyguard.title" = "Please unlock your device";
 
-"Snabble.limitsAlert.checkoutNotAvailable" = "With a total of more than %@, checkout using the app is unfortunately no longer possible.";
+"Snabble.LimitsAlert.checkoutNotAvailable" = "With a total of more than %@, checkout using the app is unfortunately no longer possible.";
 
-"Snabble.limitsAlert.notAllMethodsAvailable" = "With a total of more than %@, not all payment methods are available.";
+"Snabble.LimitsAlert.notAllMethodsAvailable" = "With a total of more than %@, not all payment methods are available.";
 
-"Snabble.limitsAlert.title" = "Note";
+"Snabble.LimitsAlert.title" = "Note";
 
 "Snabble.loadingProductInformation" = "Loading product data…";
 
 "Snabble.networkError" = "Connection error";
 
-"Snabble.No" = "No";
+"Snabble.no" = "No";
 
 "Snabble.noDiscount" = "no discount";
 
-"Snabble.notForSale.errorMsg.scan" = "This product cannot be paid for using the app, please pay for it at the cashier.";
+"Snabble.NotForSale.ErrorMsg.scan" = "This product cannot be paid for using the app, please pay for it at the cashier.";
 
-"Snabble.OK" = "OK";
+"Snabble.ok" = "OK";
 
 "Snabble.Onboarding.accept" = "Agree";
 
@@ -138,19 +135,19 @@
 
 "Snabble.Onboarding.Terms.title" = "Terms of Use";
 
-"Snabble.paydirekt.authorizationFailed.message" = "Please try again later";
+"Snabble.Paydirekt.AuthorizationFailed.message" = "Please try again later";
 
-"Snabble.paydirekt.authorizationFailed.title" = "Authorization failed";
+"Snabble.Paydirekt.AuthorizationFailed.title" = "Authorization failed";
 
-"Snabble.paydirekt.deleteAuthorization" = "Delete method";
+"Snabble.Paydirekt.deleteAuthorization" = "Delete method";
 
-"Snabble.paydirekt.gotoWebsite" = "Go to paydirekt.de";
+"Snabble.Paydirekt.gotoWebsite" = "Go to paydirekt.de";
 
-"Snabble.paydirekt.payNow" = "Pay now using paydirekt";
+"Snabble.Paydirekt.payNow" = "Pay now using paydirekt";
 
-"Snabble.paydirekt.savedAuthorization" = "You've successfully authorized Snabble for paydirekt. To remove this authorization, you need to log in to your paydirekt account. If you do not want to use this payment method anymore, you can remove it here.";
+"Snabble.Paydirekt.savedAuthorization" = "You've successfully authorized Snabble for paydirekt. To remove this authorization, you need to log in to your paydirekt account. If you do not want to use this payment method anymore, you can remove it here.";
 
-"Snabble.paydirekt.title" = "paydirekt";
+"Snabble.Paydirekt.title" = "paydirekt";
 
 /* SECTION: SnabbleAndroid */
 "Snabble.Payment.aborted" = "Payment process was cancelled";
@@ -163,23 +160,23 @@
 
 "Snabble.Payment.backToHome" = "Back to start page";
 
-"Snabble.Payment.cancelError.message" = "Payment cannot be cancelled at this time.";
+"Snabble.Payment.CancelError.message" = "Payment cannot be cancelled at this time.";
 
-"Snabble.Payment.cancelError.title" = "Error cancelling payment";
+"Snabble.Payment.CancelError.title" = "Error cancelling payment";
 
 "Snabble.Payment.confirm" = "Confirm purchase";
 
-"Snabble.Payment.CreditCard" = "Credit card";
+"Snabble.Payment.creditCard" = "Credit card";
 
 "Snabble.Payment.CreditCard.error" = "There was an error processing your credit card";
 
 "Snabble.Payment.CreditCard.expireDate" = "Expires: %@";
 
-"Snabble.Payment.delete.message" = "Are you sure you want to remove this payment method?";
+"Snabble.Payment.Delete.message" = "Are you sure you want to remove this payment method?";
 
-"Snabble.Payment.emptyState.add" = "Add payment method";
+"Snabble.Payment.EmptyState.add" = "Add payment method";
 
-"Snabble.Payment.emptyState.message" = "You don't have any payment methods added yet.";
+"Snabble.Payment.EmptyState.message" = "You don't have any payment methods added yet.";
 
 "Snabble.Payment.errorStarting" = "Error creating the payment process";
 
@@ -244,9 +241,9 @@
 
 "Snabble.PaymentMethods.forSingleRetailer" = "For specific retailer";
 
-"Snabble.PaymentMethods.noCodeAlert.biometry" = "Your iPhone isn't protected by a code or Touch ID/Face ID. For your own safety, please assign a code before storing your payment information.";
+"Snabble.PaymentMethods.NoCodeAlert.biometry" = "Your iPhone isn't protected by a code or Touch ID/Face ID. For your own safety, please assign a code before storing your payment information.";
 
-"Snabble.PaymentMethods.noCodeAlert.noBiometry" = "Your iPhone isn't protected by a code. For your own safety, please assign a code before storing your payment information.";
+"Snabble.PaymentMethods.NoCodeAlert.noBiometry" = "Your iPhone isn't protected by a code. For your own safety, please assign a code before storing your payment information.";
 
 "Snabble.PaymentMethods.noDeviceCode" = "No Code Protection";
 
@@ -321,7 +318,7 @@
 
 "Snabble.Payone.incompleteForm" = "Please enter all required data.";
 
-"Snabble.Payone.Lastname" = "Last Name";
+"Snabble.Payone.lastname" = "Last Name";
 
 "Snabble.pleaseWait" = "Please wait…";
 
@@ -337,7 +334,7 @@
 
 "Snabble.QRCode.DidPayDialog.ok" = "Yes, discard shopping cart";
 
-"Snabble.QRCode.entry.title" = "Code: %d";
+"Snabble.QRCode.Entry.title" = "Code: %d";
 
 "Snabble.QRCode.message" = "Please show QR code at the cash desk";
 
@@ -363,15 +360,15 @@
 
 "Snabble.remove" = "Remove";
 
-"Snabble.saleStop.errorMsg" = "These products cannot be paid for using the app, please pay for them at the cashier:";
+"Snabble.SaleStop.errorMsg" = "These products cannot be paid for using the app, please pay for them at the cashier:";
 
-"Snabble.saleStop.errorMsg.one" = "This product cannot be paid for using the app, please pay for it at the cashier:";
+"Snabble.SaleStop.ErrorMsg.one" = "This product cannot be paid for using the app, please pay for it at the cashier:";
 
-"Snabble.saleStop.errorMsg.scan" = "This product cannot be paid for using the app, please pay for it at the cashier.";
+"Snabble.SaleStop.ErrorMsg.scan" = "This product cannot be paid for using the app, please pay for it at the cashier.";
 
-"Snabble.saleStop.errorMsg.title" = "Sorry";
+"Snabble.SaleStop.ErrorMsg.title" = "Sorry";
 
-"Snabble.Save" = "Save";
+"Snabble.save" = "Save";
 
 "Snabble.Scanner.Accessibility.actionHideHint" = "Hide hint permanently";
 
@@ -421,7 +418,7 @@
 
 "Snabble.Scanner.goToCart" = "Cart: %@";
 
-"Snabble.Scanner.goToCart.empty" = "Cart";
+"Snabble.Scanner.GoToCart.empty" = "Cart";
 
 "Snabble.Scanner.introText" = "Scan product barcodes to add them to your shopping cart.";
 
@@ -459,9 +456,9 @@
 
 "Snabble.SEPA.iAgree" = "I agree";
 
-"Snabble.SEPA.ibanTransferAlert.message" = "Would you like to save this account information (IBAN: %@) for future purchases?";
+"Snabble.SEPA.IbanTransferAlert.message" = "Would you like to save this account information (IBAN: %@) for future purchases?";
 
-"Snabble.SEPA.ibanTransferAlert.title" = "Save payment data";
+"Snabble.SEPA.IbanTransferAlert.title" = "Save payment data";
 
 "Snabble.SEPA.mandate" = "SEPA direct debit mandate";
 
@@ -507,11 +504,11 @@
 
 "Snabble.Shoppingcart.buyProducts" = "Buy %1$d products for %2$@";
 
-"Snabble.Shoppingcart.buyProducts.now" = "Pay now";
+"Snabble.Shoppingcart.BuyProducts.now" = "Pay now";
 
-"Snabble.Shoppingcart.buyProducts.one" = "Buy %1$d product for %2$@";
+"Snabble.Shoppingcart.BuyProducts.one" = "Buy %1$d product for %2$@";
 
-"Snabble.Shoppingcart.buyProducts.selectPaymentMethod" = "Select payment method";
+"Snabble.Shoppingcart.BuyProducts.selectPaymentMethod" = "Select payment method";
 
 "Snabble.Shoppingcart.coupon" = "Coupon";
 
@@ -565,10 +562,10 @@
 "Snabble.ShoppingList.EditList.title" = "Edit shopping list";
 
 /* Der Text wird angezeigt wenn man ein Element der Einkaufsliste wegwischt */
-"Snabble.ShoppingList.ItemDeleted" = "%@ deleted";
+"Snabble.ShoppingList.itemDeleted" = "%@ deleted";
 
 /* Der Call-To-Action wenn man das löschen eines Elements der Einkaufsliste rückgänig machen möchte */
-"Snabble.ShoppingList.ItemDeleted.Undo" = "Undo";
+"Snabble.ShoppingList.ItemDeleted.undo" = "Undo";
 
 /* Der Inhalt der Snackbar wenn eine Einkaufsliste gelöscht wurde */
 "Snabble.ShoppingList.ListDeleted.title" = "Shopping list deleted";
@@ -609,9 +606,9 @@
 /* Der Titel der übersichtsseite der Einkaufslisten */
 "Snabble.ShoppingLists.title" = "Shopping lists";
 
-"Snabble.Taxation.consume.inhouse" = "Eat here";
+"Snabble.Taxation.Consume.inhouse" = "Eat here";
 
-"Snabble.Taxation.consume.takeaway" = "Take with me";
+"Snabble.Taxation.Consume.takeaway" = "Take with me";
 
 "Snabble.Taxation.consumeWhere" = "Will you be eating here or is this to go?";
 
@@ -629,5 +626,5 @@
 
 "Snabble.Violations.title" = "Invalid shopping cart";
 
-"Snabble.Yes" = "Yes";
+"Snabble.yes" = "Yes";
 
