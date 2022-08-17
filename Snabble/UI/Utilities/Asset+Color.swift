@@ -210,6 +210,10 @@ public extension Asset {
         public static func accent(in domain: Any? = domain) -> UIColor {
             Asset.color(named: "accent", domain: domain) ?? UIColor(red: 0, green: 119.0 / 255.0, blue: 187.0 / 255.0, alpha: 1)
         }
+
+        public static func onAccent(in domain: Any? = domain) -> UIColor {
+            Asset.color(named: "onAccent", domain: domain) ?? accent(in: domain).contrast ?? .label
+        }
     }
 }
 
@@ -374,6 +378,10 @@ extension Color {
 
     public static func accent(in domain: Any? = Asset.domain) -> SwiftUI.Color {
         color(Asset.Color.accent(in: domain))
+    }
+
+    public static func onAccent(in domain: Any? = Asset.domain) -> SwiftUI.Color {
+        color(Asset.Color.onAccent(in: domain))
     }
 }
 #endif
