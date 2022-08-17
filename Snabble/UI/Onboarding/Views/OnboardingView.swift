@@ -44,7 +44,7 @@ public struct OnboardingView: View {
 
     @ViewBuilder
     public var page: some View {
-        if model.configuration.hasPageControl == true {
+        if model.configuration.hasPageControl {
             PageViewController(pages: model.items.map { OnboardingItemView(item: $0) }, currentPage: $currentPage)
             PageControl(numberOfPages: model.items.count, currentPage: $currentPage)
                 .frame(width: CGFloat(model.items.count * 18))

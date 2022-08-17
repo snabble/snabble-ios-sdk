@@ -26,7 +26,7 @@ public final class OnboardingModel: ObservableObject, Decodable {
     public init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
 
-        self.items = try container.decode([OnboardingItem].self, forKey: .items)
         self.configuration = try container.decode(OnboardingConfiguration.self, forKey: .configuration)
+        self.items = try container.decode([OnboardingItem].self, forKey: .items)
     }
 }
