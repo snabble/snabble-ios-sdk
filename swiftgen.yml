@@ -1,8 +1,0 @@
-strings:
-  inputs: Snabble/UI/en.lproj
-  outputs:
-    templateName: structured-swift5
-    params:
-      lookupFunction: SnabbleSDK.Snabble.l10n
-      publicAccess: true
-    output: Snabble/UI/SwiftGenStrings.swift
