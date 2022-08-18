@@ -7,8 +7,10 @@
 
 import UIKit
 import SnabbleSDK
+import SwiftUI
 
-class SampleViewController: UIViewController {
+class HomeViewController: UIViewController {
+    
     private var buttonContainer = UIStackView()
     private var spinner = UIActivityIndicatorView()
 
@@ -16,6 +18,8 @@ class SampleViewController: UIViewController {
 
     private var shop: Shop?
 
+    private var onboardingDone = false
+    
     init() {
         super.init(nibName: nil, bundle: nil)
 
@@ -33,13 +37,13 @@ class SampleViewController: UIViewController {
         super.viewDidLoad()
 
         let scanButton = UIButton(type: .system)
-        scanButton.setTitle("Scanner", for: .normal)
+        scanButton.setTitle(NSLocalizedString("Scanner", comment: ""), for: .normal)
         scanButton.titleLabel?.font = .boldSystemFont(ofSize: 17)
         scanButton.addTarget(self, action: #selector(scannerButtonTapped(_:)), for: .touchUpInside)
         buttonContainer.addArrangedSubview(scanButton)
 
         let cartButton = UIButton(type: .system)
-        cartButton.setTitle("Shopping Cart", for: .normal)
+        cartButton.setTitle(NSLocalizedString("Shopping Cart", comment: ""), for: .normal)
         cartButton.titleLabel?.font = .boldSystemFont(ofSize: 17)
         cartButton.addTarget(self, action: #selector(shoppingCartButtonTapped(_:)), for: .touchUpInside)
         buttonContainer.addArrangedSubview(cartButton)
@@ -61,7 +65,25 @@ class SampleViewController: UIViewController {
             buttonContainer.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 32)
         ])
 
+    }
+
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+
+        self.showOnboardingView()
         self.snabbleSetup()
+    }
+
+    func showOnboardingView() {
+        guard onboardingDone == false else {
+            return
+        }
+        let controller = UIHostingController(rootView: OnboardingView(model: OnboardingModel.shared))
+
+        controller.isModalInPresentation = true
+        self.present(controller, animated: false) {
+            self.onboardingDone = true
+        }
     }
 
     func snabbleSetup() {
@@ -69,6 +91,8 @@ class SampleViewController: UIViewController {
         let APPSECRET = "2TKKEG5KXWY6DFOGTZKDUIBTNIRVCYKFZBY32FFRUUWIUAFEIBHQ===="
         let apiConfig = SnabbleSDK.Config(appId: APPID, secret: APPSECRET)
 
+        Asset.provider = self
+        
         Snabble.setup(config: apiConfig) { snabble in
             // initial config parsed/loaded
             guard let project = snabble.projects.first else {
@@ -116,13 +140,39 @@ class SampleViewController: UIViewController {
 
 }
 
-extension SampleViewController: ScannerDelegate {
+extension HomeViewController: AssetProviding {
+    func color(named name: String, domain: Any?) -> UIColor? {
+        return nil
+    }
+    
+    func preferredFont(forTextStyle style: UIFont.TextStyle, weight: UIFont.Weight?, domain: Any?) -> UIFont? {
+        return UIFont.preferredFont(forTextStyle: style)
+    }
+    
+    func image(named name: String, domain: Any?) -> UIImage? {
+        
+        return UIImage(named: name)
+    }
+    
+    func localizedString(forKey: String, arguments: CVarArg..., domain: Any?) -> String? {
+        return nil
+    }
+    
+    func url(forResource name: String?, withExtension ext: String?, domain: Any?) -> URL? {
+        return nil
+    }
+    func appearance(for domain: Any?) -> CustomAppearance? {
+        return nil
+    }
+}
+
+extension HomeViewController: ScannerDelegate {
     func scanMessage(for project: Project, _ shop: Shop, _ product: Product) -> ScanMessage? {
         return nil
     }
 }
 
-extension SampleViewController: ShoppingCartDelegate {
+extension HomeViewController: ShoppingCartDelegate {
     func gotoPayment(
         _ method: RawPaymentMethod,
         _ detail: PaymentMethodDetail?,
@@ -158,14 +208,14 @@ extension SampleViewController: ShoppingCartDelegate {
 }
 
 /// implement this method to track an event generated from the SDK in your analytics system
-extension SampleViewController: AnalyticsDelegate {
+extension HomeViewController: AnalyticsDelegate {
     func track(_ event: AnalyticsEvent) {
         NSLog("track: \(event)")
     }
 }
 
 /// implement these methods to show warning/info messages on-screen, e.g. as toasts
-extension SampleViewController: MessageDelegate {
+extension HomeViewController: MessageDelegate {
     func showInfoMessage(_ message: String) {
         NSLog("warning: \(message)")
     }
@@ -175,7 +225,7 @@ extension SampleViewController: MessageDelegate {
     }
 }
 
-extension SampleViewController: PaymentDelegate {
+extension HomeViewController: PaymentDelegate {
     func checkoutFinished(_ cart: ShoppingCart, _ process: CheckoutProcess?) {
         self.navigationController?.popViewController(animated: true)
     }

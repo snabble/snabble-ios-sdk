@@ -7,13 +7,13 @@
 
 import UIKit
 
-final class LeftViewController: UIViewController {
+final class ShopsViewController: UIViewController {
     init() {
         super.init(nibName: nil, bundle: nil)
 
-        self.title = "Account"
-        self.tabBarItem.image = UIImage(systemName: "person")
-        self.tabBarItem.selectedImage = UIImage(systemName: "person.fill")
+        self.title = NSLocalizedString("Shops", comment: "")
+        self.tabBarItem.image = UIImage(systemName: "house")
+        self.tabBarItem.selectedImage = UIImage(systemName: "house.fill")
     }
 
     required init?(coder: NSCoder) {
@@ -21,13 +21,13 @@ final class LeftViewController: UIViewController {
     }
 }
 
-final class RightViewController: UIViewController {
+final class AccountViewController: UIViewController {
     init() {
         super.init(nibName: nil, bundle: nil)
 
-        self.title = "Settings"
-        self.tabBarItem.image = UIImage(systemName: "gearshape")
-        self.tabBarItem.selectedImage = UIImage(systemName: "gearshape.fill")
+        self.title = NSLocalizedString("Account", comment: "")
+        self.tabBarItem.image = UIImage(systemName: "person")
+        self.tabBarItem.selectedImage = UIImage(systemName: "person.fill")
     }
 
     required init?(coder: NSCoder) {
