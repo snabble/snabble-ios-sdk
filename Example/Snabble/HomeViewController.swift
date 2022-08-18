@@ -19,7 +19,8 @@ class HomeViewController: UIViewController {
     private var shop: Shop?
 
     private var onboardingDone = false
-    
+    private var setupDone = false
+
     init() {
         super.init(nibName: nil, bundle: nil)
 
@@ -87,6 +88,9 @@ class HomeViewController: UIViewController {
     }
 
     func snabbleSetup() {
+        guard setupDone == false else {
+            return
+        }
         let APPID = "snabble-sdk-demo-app-oguh3x"
         let APPSECRET = "2TKKEG5KXWY6DFOGTZKDUIBTNIRVCYKFZBY32FFRUUWIUAFEIBHQ===="
         let apiConfig = SnabbleSDK.Config(appId: APPID, secret: APPSECRET)
@@ -94,15 +98,16 @@ class HomeViewController: UIViewController {
         Asset.provider = self
         
         Snabble.setup(config: apiConfig) { snabble in
+            
             // initial config parsed/loaded
             guard let project = snabble.projects.first else {
                 fatalError("project initialization failed - make sure APPID and APPSECRET are valid")
             }
-
+            
             // register the project with the UI components
             SnabbleUI.register(project)
             self.shop = project.shops.first!
-
+            
             // initialize the product database for this project
             let productProvider = snabble.productProvider(for: project)
             productProvider.setup { _ in
@@ -112,9 +117,12 @@ class HomeViewController: UIViewController {
                 let cartConfig = CartConfig(shop: self.shop!)
                 self.shoppingCart = ShoppingCart(with: cartConfig)
             }
+            ProjectModel.shared.project = project
+
+            self.setupDone = true
         }
     }
-
+    
     @objc private func scannerButtonTapped(_ sender: Any) {
         guard let shoppingCart = self.shoppingCart, let shop = Snabble.shared.projects.first?.shops.first else {
             return
@@ -153,11 +161,10 @@ extension HomeViewController: AssetProviding {
         
         return UIImage(named: name)
     }
-    
-    func localizedString(forKey: String, arguments: CVarArg..., domain: Any?) -> String? {
+    func localizedString(forKey key: String, arguments: CVarArg..., domain: Any?) -> String? {
         return nil
     }
-    
+
     func url(forResource name: String?, withExtension ext: String?, domain: Any?) -> URL? {
         return nil
     }

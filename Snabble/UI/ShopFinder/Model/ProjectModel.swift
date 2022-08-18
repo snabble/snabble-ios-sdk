@@ -107,7 +107,7 @@ extension ProjectModel: CLLocationManagerDelegate {
             }
 
             if error.code == .denied {
-                manager.stopUpdatingLocation()
+                manager.requestAlwaysAuthorization()
                 self.distancesAvailable = false
             }
         }

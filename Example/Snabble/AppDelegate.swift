@@ -14,18 +14,14 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
 
-        let shopsNavi = UINavigationController(rootViewController: ShopsViewController())
-        let accountNavi = UINavigationController(rootViewController: AccountViewController())
-
         let homeVC = HomeViewController()
-
-        let homeNavi = UINavigationController(rootViewController: homeVC)
-        homeNavi.navigationBar.isOpaque = true
+        let shopsVC = ShopsViewController()
+        let accountVC = AccountViewController()
 
         let tabBarController = UITabBarController()
-        tabBarController.viewControllers = [ homeNavi, shopsNavi, accountNavi ]
+        tabBarController.viewControllers = [homeVC, shopsVC, accountVC]
         tabBarController.selectedIndex = 0
-
+        
         window = UIWindow(frame: UIScreen.main.bounds)
         window?.makeKeyAndVisible()
         window?.backgroundColor = .systemBackground
