@@ -19,13 +19,13 @@ public struct ShopFinderView: View {
             VStack {
                 List(model.project.shops, id: \.id) { shop in
                     NavigationLink {
-                        ShopDetailView(shop: shop)
+                        ShopDetailView(shop: shop, distance: model.formattedDistance(for: shop))
                     } label: {
                         ShopCellView(shop: shop, distance: model.formattedDistance(for: shop))
                     }
                 }
                 .listStyle(PlainListStyle())
-                .navigationTitle("Shops")
+                .navigationTitle(Asset.localizedString(forKey: "Snabble.Shop.Finder.title"))
                 .navigationBarTitleDisplayMode(.inline)
             }
         }
