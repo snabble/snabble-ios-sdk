@@ -28,7 +28,6 @@ struct OnboardingButtonView: View {
             }) {
                 Text(key: text)
             }
-            .buttonStyle(.automatic)
             .buttonStyle(AccentButtonStyle())
         }
         EmptyView()
