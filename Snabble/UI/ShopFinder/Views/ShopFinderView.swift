@@ -9,10 +9,8 @@ import SwiftUI
 
 public struct ShopFinderView: View {
     @EnvironmentObject var model: ShopViewModel
-//    @ObservedObject public var model: BrandViewModel
     
-    public init() {
-    }
+    public init() {}
 
     public var body: some View {
         NavigationView {

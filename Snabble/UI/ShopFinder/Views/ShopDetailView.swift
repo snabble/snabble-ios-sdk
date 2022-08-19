@@ -20,20 +20,18 @@ public struct ShopDetailView: View {
             .padding([.top, .bottom], 20)
 
             HStack {
-                Button(action: {
-                    print("show location")
-                }) {
-                    SwiftUI.Image(systemName: "house.fill")
-                        .font(.title2)
-                }
+                Spacer()
+                SwiftUI.Image(systemName: "mappin.and.ellipse")
                 ShopDistanceView(shop: shop)
-                    .padding([.leading, .trailing], 40)
+//                    .padding(.trailing, 10)
                 Button(action: {
                     print("route")
                 }) {
-                    SwiftUI.Image(systemName: "arrow.triangle.turn.up.right.diamond.fill")
+                    SwiftUI.Image(systemName: "arrow.triangle.turn.up.right.circle.fill")
                         .font(.title2)
+                        .foregroundColor(Color.accent())
                 }
+                Spacer()
             }
             .padding(.bottom, 20)
 

@@ -80,7 +80,13 @@ public struct AnnotationView: View {
 public struct ShopMapView: View {
     var shop: ShopInfoProvider
     @EnvironmentObject var model: ShopViewModel
-
+    
+    enum CurrentLocation {
+        case shop
+        case user
+    }
+    @State private var currentLocation: CurrentLocation = .shop
+    
     // 50,73448° N, 7,07530° O
     @State private var region = MKCoordinateRegion(center: CLLocationCoordinate2D(latitude: 50.73448, longitude: 7.07530), span: MKCoordinateSpan(latitudeDelta: 0.5, longitudeDelta: 0.5))
 
@@ -94,13 +100,50 @@ public struct ShopMapView: View {
             }
        }
     }
+    @ViewBuilder
+    var locationControl: some View {
+        VStack(spacing: 12) {
+            Button(action: {
+                currentLocation = .shop
+            }) {
+                SwiftUI.Image(systemName: currentLocation == .shop ? "house.fill" : "house")
+            }
+            Button(action: {
+                currentLocation = .user
+            }) {
+                SwiftUI.Image(systemName: currentLocation == .user ? "location.fill" : "location")
+            }
+        }
+        .padding(10)
+        .background(Color.white)
+        .foregroundColor(Color.accent())
+        .cornerRadius(8)
+        .shadow(color: .gray, radius: 3, x: 0, y: 0)
+    }
     
     public var body: some View {
-        let userLocation = model.userLocation
         
-        mapView
-            .onAppear {
-                region = MKCoordinateRegion(center: shop.location.coordinate, latitudinalMeters: 2000, longitudinalMeters: 2000)
+        ZStack(alignment: .topTrailing) {
+            mapView
+            locationControl
+                .padding()
+                .zIndex(1)
+        }
+        .onAppear {
+            region = MKCoordinateRegion(center: shop.location.coordinate, latitudinalMeters: 2000, longitudinalMeters: 2000)
+        }
+        .onChange(of: currentLocation) { newLocation in
+            withAnimation(.easeInOut) {
+                switch newLocation {
+                case .shop:
+                    region = MKCoordinateRegion(center: shop.location.coordinate, latitudinalMeters: 2000, longitudinalMeters: 2000)
+                case .user:
+                    if let location = model.userLocation {
+                        region = MKCoordinateRegion(center: location.coordinate, latitudinalMeters: 2000, longitudinalMeters: 2000)
+                    }
+                }
             }
+        }
+
     }
 }
