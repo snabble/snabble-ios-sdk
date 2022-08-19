@@ -33,7 +33,7 @@ Pod::Spec.new do |s|
     core.dependency 'GRDB.swift', '~> 5'
     core.dependency 'Zip', '~> 2'
     core.dependency 'OneTimePassword', '~> 3'
-    core.dependency 'TrustKit', '~> 1'
+    core.dependency 'TrustKit', '~> 2'
     core.dependency 'KeychainAccess', '~> 4'
   end
 
@@ -61,7 +61,7 @@ Pod::Spec.new do |s|
 
   s.subspec 'Datatrans' do |dt|
     dt.dependency 'Snabble/UI'
-    dt.dependency 'Datatrans', '~> 1.5.0'
+    dt.dependency 'Datatrans', '~> 2.1.0'
 
     dt.source_files = 'Snabble/Datatrans/**/*.swift'
   end

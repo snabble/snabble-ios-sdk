@@ -276,6 +276,7 @@
 				"${BUILT_PRODUCTS_DIR}/WCAG-Colors/WCAG_Colors.framework",
 				"${BUILT_PRODUCTS_DIR}/Zip/Zip.framework",
 				"${PODS_XCFRAMEWORKS_BUILD_DIR}/Datatrans/Datatrans.framework/Datatrans",
+				"${PODS_XCFRAMEWORKS_BUILD_DIR}/Datatrans/DTCardScanner.framework/DTCardScanner",
 				"${PODS_XCFRAMEWORKS_BUILD_DIR}/Datatrans/PPRiskMagnes.framework/PPRiskMagnes",
 			);
 			name = "[CP] Embed Pods Frameworks";
@@ -294,6 +295,7 @@
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/WCAG_Colors.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Zip.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Datatrans.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/DTCardScanner.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/PPRiskMagnes.framework",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
