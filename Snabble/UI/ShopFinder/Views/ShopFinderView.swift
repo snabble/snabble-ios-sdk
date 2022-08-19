@@ -8,20 +8,20 @@
 import SwiftUI
 
 public struct ShopFinderView: View {
-    @ObservedObject public var model: ProjectModel
+    @EnvironmentObject var model: ShopViewModel
+//    @ObservedObject public var model: BrandViewModel
     
-    public init(model: ProjectModel) {
-        self.model = model
+    public init() {
     }
 
     public var body: some View {
         NavigationView {
             VStack {
-                List(model.project.shops, id: \.id) { shop in
+                List(model.shops, id: \.id) { shop in
                     NavigationLink {
-                        ShopDetailView(shop: shop, distance: model.formattedDistance(for: shop))
+                        ShopDetailView(shop: shop)
                     } label: {
-                        ShopCellView(shop: shop, distance: model.formattedDistance(for: shop))
+                        ShopCellView(shop: shop)
                     }
                 }
                 .listStyle(PlainListStyle())
@@ -35,6 +35,6 @@ public struct ShopFinderView: View {
 
 struct ShopFinderView_Previews: PreviewProvider {    
     static var previews: some View {
-        ShopFinderView(model: ProjectModel.shared)
+        ShopFinderView().environmentObject(ShopViewModel.shared)
     }
 }

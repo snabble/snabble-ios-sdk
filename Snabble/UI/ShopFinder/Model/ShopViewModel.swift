@@ -1,5 +1,5 @@
 //
-//  ProjectModel.swift
+//  ShopViewModel.swift
 //  Snabble
 //
 //  Created by Uwe Tilemann on 17.08.22.
@@ -32,36 +32,33 @@ extension Double {
     }
 }
 
-/// OnboardingModel describing the Onboading configuration
-public final class ProjectModel: NSObject, ObservableObject {
-    public static let shared = ProjectModel()
+extension LocationProviding {
+    public var id: String {
+        return "\(self.latitude)-\(self.longitude)"
+    }
+}
 
-    private(set) var shops: [Shop] = []
-    var coupons: [Coupon] = []
+/// ShopViewModel for objects implermenting the ShopInfoProvider protocol
+public final class ShopViewModel: NSObject, ObservableObject {
+    public static let shared = ShopViewModel()
+
+    @Published public var shops: [ShopInfoProvider] = []
 
     private let locationManager = CLLocationManager()
-    private var distances = [Identifier<Shop>: Double]()  // shop.id -> distance
+    
+    private var distances = [String: Double]()  // shop.id -> distance
 
     @Published var distancesAvailable = false
 
-    /// the configuration like `imagesource` and `hasPageControl` to enable page swiping
-    @Published public var project: Project = .none {
-        didSet {
-            if project == .none {
-                shops = []
-                coupons = []
-            } else {
-                shops = project.shops ?? []
-                coupons = Snabble.shared.couponManager.all(for: project.id) ?? []
-            }
-        }
+    public var userLocation: CLLocation? {
+        return locationManager.location
     }
-
-    public func distance(for shop: Shop) -> Double {
+    
+    public func distance(for shop: ShopInfoProvider) -> Double {
         return distances[shop.id] ?? 0
     }
     
-    public func formattedDistance(for shop: Shop) -> String {
+    public func formattedDistance(for shop: ShopInfoProvider) -> String {
         guard let value = distances[shop.id] else {
             return ""
         }
@@ -78,7 +75,7 @@ public final class ProjectModel: NSObject, ObservableObject {
     }
 }
 
-extension ProjectModel: CLLocationManagerDelegate {
+extension ShopViewModel: CLLocationManagerDelegate {
     public func locationManager(_ manager: CLLocationManager, didChangeAuthorization status: CLAuthorizationStatus) {
 
         if status == .authorizedWhenInUse {

@@ -71,7 +71,7 @@ class HomeViewController: UIViewController {
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
 
-        self.showOnboardingView()
+//        self.showOnboardingView()
         self.snabbleSetup()
     }
 
@@ -117,7 +117,7 @@ class HomeViewController: UIViewController {
                 let cartConfig = CartConfig(shop: self.shop!)
                 self.shoppingCart = ShoppingCart(with: cartConfig)
             }
-            ProjectModel.shared.project = project
+            ShopViewModel.shared.shops = project.shops
 
             self.setupDone = true
         }
@@ -158,7 +158,9 @@ extension HomeViewController: AssetProviding {
     }
     
     func image(named name: String, domain: Any?) -> UIImage? {
-        
+        if name == "Snabble.Shop.Detail.mapPin" {
+            return UIImage(named: "scan-off")
+        }
         return UIImage(named: name)
     }
     func localizedString(forKey key: String, arguments: CVarArg..., domain: Any?) -> String? {

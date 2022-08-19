@@ -10,7 +10,7 @@ import CoreLocation
 import SwiftUI
 
 public struct ShopAddressView: View {
-    var shop: Shop
+    var shop: ShopInfoProvider
     
     public var body: some View {
         Group {
@@ -20,10 +20,12 @@ public struct ShopAddressView: View {
     }
 }
 public struct ShopDistanceView: View {
-    var shop: Shop
-    var distance: String
-
+    var shop: ShopInfoProvider
+    @EnvironmentObject var model: ShopViewModel
+    
     public var body: some View {
+        let distance = model.formattedDistance(for: shop)
+        
         if distance.isEmpty {
             EmptyView()
         } else {
@@ -33,8 +35,7 @@ public struct ShopDistanceView: View {
 }
 
 public struct ShopCellView: View {
-    var shop: Shop
-    var distance: String
+    var shop: ShopInfoProvider
     
     public var body: some View {
         HStack {
@@ -49,7 +50,7 @@ public struct ShopCellView: View {
                 .foregroundColor(.gray)
             }
             Spacer()
-            ShopDistanceView(shop: shop, distance: distance)
+            ShopDistanceView(shop: shop)
         }
     }
 }

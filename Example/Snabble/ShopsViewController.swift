@@ -32,6 +32,7 @@ extension UIViewController {
 }
 
 final class ShopsViewController: UIViewController {
+    @StateObject var model = ShopViewModel.shared
     
     init() {
         super.init(nibName: nil, bundle: nil)
@@ -48,19 +49,19 @@ final class ShopsViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        let shopFinder = ShopFinderView(model: ProjectModel.shared)
+        let shopFinder = ShopFinderView().environmentObject(model)
         self.addSubSwiftUIView(shopFinder, to: self.view)
     }
     
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
 
-        ProjectModel.shared.startUpdating()
+        ShopViewModel.shared.startUpdating()
     }
     
     override func viewDidDisappear(_ animated: Bool) {
         super.viewDidDisappear(animated)
         
-        ProjectModel.shared.stopUpdating()
+        ShopViewModel.shared.stopUpdating()
     }
 }
