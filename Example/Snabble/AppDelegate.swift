@@ -6,6 +6,7 @@
 //
 
 import UIKit
+import SnabbleSDK
 
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate {
@@ -13,6 +14,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     var window: UIWindow?
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
+
+        Asset.provider = self
 
         let homeVC = HomeViewController()
         let shopsVC = ShopsViewController()
@@ -23,9 +26,11 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         tabBarController.selectedIndex = 0
         
         window = UIWindow(frame: UIScreen.main.bounds)
-        window?.makeKeyAndVisible()
         window?.backgroundColor = .systemBackground
         window?.rootViewController = tabBarController
+        window?.makeKeyAndVisible()
+
+        window?.rootViewController?.present(OnboardingViewController(), animated: false)
 
         setupAppearance()
 

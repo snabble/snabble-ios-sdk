@@ -36,8 +36,8 @@ public enum Asset {
         if let image: SwiftUI.Image = provider?.image(named: name, domain: domain) {
             return image
         }
-        if let uiImage = UIImage(named: name, in: BundleToken.bundle, with: nil) {
-            return SwiftUI.Image(uiImage: uiImage)
+        if UIImage(named: name, in: BundleToken.bundle, with: nil) != nil {
+            return SwiftUI.Image(name, bundle: BundleToken.bundle)
         }
         return SwiftUI.Image(systemName: name)
     }
@@ -67,15 +67,7 @@ private final class BundleToken {
 }
 
 extension Asset {
-//    static func image(named name: String, domain: Any? = domain) -> SwiftUI.Image? {
-//        guard let uiImage: SwiftUI.Image = Asset.image(named: name, domain: domain) else {
-//            return nil
-//        }
-////        return SwiftUI.Image(uiImage: uiImage.withRenderingMode(.alwaysTemplate))
-//        return SwiftUI.Image(systemName: name)
-//    }
-
-    static func color(named name: String, domain: Any? = domain) -> SwiftUI.Color {
+    static func color(named name: String, domain: Any? = domain) -> SwiftUI.Color? {
         guard let uiColor: UIColor = Asset.color(named: name, domain: domain) else {
             return SwiftUI.Color(name)
         }
