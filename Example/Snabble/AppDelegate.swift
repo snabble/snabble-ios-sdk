@@ -26,13 +26,17 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         homeNavi.navigationBar.isOpaque = true
 
         let tabBarController = UITabBarController()
-        tabBarController.viewControllers = [ homeNavi, shopsNavi, accountNavi ]
+        tabBarController.viewControllers = [homeNavi, shopsNavi, accountNavi]
         tabBarController.selectedIndex = 0
 
         window = UIWindow(frame: UIScreen.main.bounds)
-        window?.makeKeyAndVisible()
         window?.backgroundColor = .systemBackground
         window?.rootViewController = tabBarController
+        window?.makeKeyAndVisible()
+
+        let onboardingViewController = OnboardingViewController()
+        onboardingViewController.isModalInPresentation = true
+        window?.rootViewController?.present(onboardingViewController, animated: false)
 
         setupAppearance()
 

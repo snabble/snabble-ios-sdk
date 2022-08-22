@@ -17,8 +17,6 @@ class HomeViewController: UIViewController {
     private var shoppingCart: ShoppingCart?
 
     private var shop: Shop?
-
-    private var onboardingDone = false
     
     init() {
         super.init(nibName: nil, bundle: nil)
@@ -69,21 +67,7 @@ class HomeViewController: UIViewController {
 
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
-
-        self.showOnboardingView()
         self.snabbleSetup()
-    }
-
-    func showOnboardingView() {
-        guard onboardingDone == false else {
-            return
-        }
-        let controller = UIHostingController(rootView: OnboardingView(model: OnboardingModel.shared))
-
-        controller.isModalInPresentation = true
-        self.present(controller, animated: false) {
-            self.onboardingDone = true
-        }
     }
 
     func snabbleSetup() {
