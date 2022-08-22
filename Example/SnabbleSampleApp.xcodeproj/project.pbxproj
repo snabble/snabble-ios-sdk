@@ -17,6 +17,7 @@
 		E131CF1A28A3D45C00A844E1 /* SnabbleSampleAppTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E131CF1928A3D45C00A844E1 /* SnabbleSampleAppTests.swift */; };
 		E1662A65283DFED90093956C /* Changelog.md in Resources */ = {isa = PBXBuildFile; fileRef = E1662A64283DFED90093956C /* Changelog.md */; };
 		E1DA445E28B3668C0034427D /* AppDelegate+AssetProviding.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1DA445D28B3668C0034427D /* AppDelegate+AssetProviding.swift */; };
+		E1DA449C28B3A2BD0034427D /* LoadingViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1DA449B28B3A2BD0034427D /* LoadingViewController.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -47,6 +48,7 @@
 		E131CF1928A3D45C00A844E1 /* SnabbleSampleAppTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SnabbleSampleAppTests.swift; sourceTree = "<group>"; };
 		E1662A64283DFED90093956C /* Changelog.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = net.daringfireball.markdown; name = Changelog.md; path = ../documentation/Changelog.md; sourceTree = "<group>"; };
 		E1DA445D28B3668C0034427D /* AppDelegate+AssetProviding.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "AppDelegate+AssetProviding.swift"; sourceTree = "<group>"; };
+		E1DA449B28B3A2BD0034427D /* LoadingViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoadingViewController.swift; sourceTree = "<group>"; };
 		E8EE6FB299BC65798BFD7CD6 /* Pods-SnabbleSampleApp.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-SnabbleSampleApp.release.xcconfig"; path = "Target Support Files/Pods-SnabbleSampleApp/Pods-SnabbleSampleApp.release.xcconfig"; sourceTree = "<group>"; };
 		F4CB4458C2FED892CA028D19 /* LICENSE */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text; name = LICENSE; path = ../LICENSE; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -105,6 +107,7 @@
 			isa = PBXGroup;
 			children = (
 				607FACD51AFB9204008FA782 /* AppDelegate.swift */,
+				E1DA449B28B3A2BD0034427D /* LoadingViewController.swift */,
 				E1DA445D28B3668C0034427D /* AppDelegate+AssetProviding.swift */,
 				3A64AF2F2710486300AF24C6 /* NaviPlaceholders.swift */,
 				607FACD71AFB9204008FA782 /* HomeViewController.swift */,
@@ -355,6 +358,7 @@
 			files = (
 				E1DA445E28B3668C0034427D /* AppDelegate+AssetProviding.swift in Sources */,
 				607FACD81AFB9204008FA782 /* HomeViewController.swift in Sources */,
+				E1DA449C28B3A2BD0034427D /* LoadingViewController.swift in Sources */,
 				3A64AF302710486300AF24C6 /* NaviPlaceholders.swift in Sources */,
 				607FACD61AFB9204008FA782 /* AppDelegate.swift in Sources */,
 			);
