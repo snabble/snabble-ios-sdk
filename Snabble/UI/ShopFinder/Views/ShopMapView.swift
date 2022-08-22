@@ -18,6 +18,9 @@ struct ShopLocation: Swift.Identifiable {
 public struct AnnotationView: View {
     var shopLocation: ShopLocation
     @State private var showTitle = true
+    @State private var showingAlert = false
+    
+    @EnvironmentObject var model: ShopViewModel
 
     @ViewBuilder
     var mapMarker: some View {
@@ -39,7 +42,7 @@ public struct AnnotationView: View {
             VStack(spacing: -2) {
                 HStack {
                     Button(action: {
-                        print("start navigation?")
+                        showingAlert.toggle()
                     }) {
                         SwiftUI.Image(named: "car.fill", systemName: "car.fill")
                             .resizable()
@@ -50,6 +53,15 @@ public struct AnnotationView: View {
                             .foregroundColor(.white)
                             .cornerRadius(4)
                    }
+                    .alert(isPresented: $showingAlert) {
+                       Alert(title: Text("Snabble.Shop.Detail.startNavigation"),
+                             message: Text("\(shopLocation.shop.street)\n\(shopLocation.shop.postalCode) \(shopLocation.shop.city)"),
+                             primaryButton: .destructive(Text("yes")) {
+                           model.navigate(to: shopLocation.shop)
+                       },
+                             secondaryButton: .cancel())
+                   }
+
                     VStack(alignment: .leading, spacing: 0) {
                         ShopAddressView(shop: shopLocation.shop)
                     }

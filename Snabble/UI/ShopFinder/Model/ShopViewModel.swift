@@ -8,6 +8,8 @@
 import Foundation
 import Combine
 import CoreLocation
+import MapKit
+import Contacts
 
 // stuff for displaying formatted numbers
 extension Double {
@@ -110,5 +112,18 @@ extension ShopViewModel: CLLocationManagerDelegate {
                 self.distancesAvailable = false
             }
         }
+    }
+}
+
+extension ShopViewModel {
+    func navigate(to shop: ShopInfoProvider) {
+        let endingItem = MKMapItem(placemark: MKPlacemark(coordinate: CLLocationCoordinate2DMake(shop.latitude, shop.longitude),
+                                                          addressDictionary: [
+                                                            CNPostalAddressCityKey: shop.city,
+                                                            CNPostalAddressStreetKey: shop.street,
+                                                            CNPostalAddressPostalCodeKey: shop.postalCode,
+                                                            CNPostalAddressISOCountryCodeKey: shop.country
+                                                          ]))
+        endingItem.openInMaps(launchOptions: [MKLaunchOptionsDirectionsModeKey: MKLaunchOptionsDirectionsModeDriving])
     }
 }
