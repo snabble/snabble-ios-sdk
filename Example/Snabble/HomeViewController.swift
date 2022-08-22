@@ -90,8 +90,6 @@ class HomeViewController: UIViewController {
         let APPID = "snabble-sdk-demo-app-oguh3x"
         let APPSECRET = "2TKKEG5KXWY6DFOGTZKDUIBTNIRVCYKFZBY32FFRUUWIUAFEIBHQ===="
         let apiConfig = SnabbleSDK.Config(appId: APPID, secret: APPSECRET)
-
-        Asset.provider = self
         
         Snabble.setup(config: apiConfig) { snabble in
             // initial config parsed/loaded
@@ -138,32 +136,6 @@ class HomeViewController: UIViewController {
         self.navigationController?.pushViewController(shoppingCartVC, animated: true)
     }
 
-}
-
-extension HomeViewController: AssetProviding {
-    func color(named name: String, domain: Any?) -> UIColor? {
-        return nil
-    }
-    
-    func preferredFont(forTextStyle style: UIFont.TextStyle, weight: UIFont.Weight?, domain: Any?) -> UIFont? {
-        return UIFont.preferredFont(forTextStyle: style)
-    }
-    
-    func image(named name: String, domain: Any?) -> UIImage? {
-        
-        return UIImage(named: name)
-    }
-    
-    func localizedString(forKey: String, arguments: CVarArg..., domain: Any?) -> String? {
-        return nil
-    }
-    
-    func url(forResource name: String?, withExtension ext: String?, domain: Any?) -> URL? {
-        return nil
-    }
-    func appearance(for domain: Any?) -> CustomAppearance? {
-        return nil
-    }
 }
 
 extension HomeViewController: ScannerDelegate {
