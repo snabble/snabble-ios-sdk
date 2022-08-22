@@ -8,9 +8,15 @@
 
 import Foundation
 import SnabbleSDK
+import SwiftUI
+import UIKit
 
 extension AppDelegate: AssetProviding {
     func color(named name: String, domain: Any?) -> UIColor? {
+        nil
+    }
+
+    func color(named name: String, domain: Any?) -> SwiftUI.Color? {
         nil
     }
 
@@ -20,6 +26,10 @@ extension AppDelegate: AssetProviding {
 
     func image(named name: String, domain: Any?) -> UIImage? {
         UIImage(named: name)
+    }
+
+    func image(named name: String, domain: Any?) -> SwiftUI.Image? {
+        nil
     }
 
     func localizedString(forKey: String, arguments: CVarArg..., domain: Any?) -> String? {
