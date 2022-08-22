@@ -62,7 +62,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
         let tabBarController = UITabBarController()
         tabBarController.viewControllers = [homeNavi, shopsNavi, accountNavi]
-        tabBarController.selectedIndex = 0
 
         window?.rootViewController = tabBarController
     }
