@@ -37,6 +37,17 @@ extension Text {
     }
 }
 
+extension SwiftUI.Image {
+    // Shop.Finder.Map.pin - pin.fill
+    init(named name: String, systemName: String) {
+        if let image: UIImage = Asset.image(named: name) {
+            self.init(uiImage: image.withRenderingMode(.alwaysTemplate))
+        } else {
+            self.init(systemName: systemName)
+        }
+    }
+}
+
 extension ImageSourcing {
     /// SwiftUI support
     public var image: SwiftUI.Image? {

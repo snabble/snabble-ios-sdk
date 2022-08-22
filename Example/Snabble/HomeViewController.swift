@@ -71,7 +71,7 @@ class HomeViewController: UIViewController {
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
 
-//        self.showOnboardingView()
+        self.showOnboardingView()
         self.snabbleSetup()
     }
 
@@ -152,17 +152,25 @@ extension HomeViewController: AssetProviding {
     func color(named name: String, domain: Any?) -> UIColor? {
         return nil
     }
-    
+    func color(named name: String, domain: Any?) -> SwiftUI.Color? {
+        return nil
+    }
+
     func preferredFont(forTextStyle style: UIFont.TextStyle, weight: UIFont.Weight?, domain: Any?) -> UIFont? {
         return UIFont.preferredFont(forTextStyle: style)
     }
-    
+
     func image(named name: String, domain: Any?) -> UIImage? {
         if name == "Snabble.Shop.Detail.mapPin" {
             return UIImage(named: "scan-off")
         }
         return UIImage(named: name)
     }
+
+    func image(named name: String, domain: Any?) -> SwiftUI.Image? {
+        return nil
+    }
+
     func localizedString(forKey key: String, arguments: CVarArg..., domain: Any?) -> String? {
         return nil
     }

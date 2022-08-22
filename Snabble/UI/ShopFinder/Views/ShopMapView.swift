@@ -21,14 +21,14 @@ public struct AnnotationView: View {
 
     @ViewBuilder
     var mapMarker: some View {
-        if let image = Asset.image(named: "Snabble.Shop.Detail.mapPin") {
-            image
+        if let image: UIImage = Asset.image(named: "Snabble.Shop.Detail.mapPin") {
+            SwiftUI.Image(uiImage: image)
                 .padding(1)
                 .background(Color.white)
                 .clipShape(RoundedRectangle(cornerRadius: 4))
         } else {
             Group {
-                SwiftUI.Image(systemName: "mappin.and.ellipse")
+                Asset.image(named: "mappin.and.ellipse")
                     .font(.title)
             }
         }
@@ -41,7 +41,7 @@ public struct AnnotationView: View {
                     Button(action: {
                         print("start navigation?")
                     }) {
-                        SwiftUI.Image(systemName: "car.fill")
+                        SwiftUI.Image(named: "car.fill", systemName: "car.fill")
                             .resizable()
                             .scaledToFit()
                             .frame(width: 24, height: 24)
@@ -58,7 +58,7 @@ public struct AnnotationView: View {
                 .background(Color(.white))
                 .cornerRadius(8)
                 
-                SwiftUI.Image(systemName: "arrowtriangle.down.fill")
+                Asset.image(named: "arrowtriangle.down.fill")
                     .foregroundColor(.white)
             }
             .font(.callout)
@@ -107,13 +107,13 @@ public struct ShopMapView: View {
                 currentLocation = .shop
                 showLocation = true
             }) {
-                SwiftUI.Image(systemName: currentLocation == .shop ? "house.fill" : "house")
+                Asset.image(named: currentLocation == .shop ? "house.fill" : "house")
             }
             Button(action: {
                 currentLocation = .user
                 showLocation = true
             }) {
-                SwiftUI.Image(systemName: currentLocation == .user ? "location.fill" : "location")
+                Asset.image(named: currentLocation == .user ? "location.fill" : "location")
             }
         }
         .padding(10)

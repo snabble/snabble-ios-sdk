@@ -21,14 +21,14 @@ public struct ShopDetailView: View {
 
             HStack {
                 Spacer()
-                SwiftUI.Image(systemName: "location")
+                Asset.image(named: "location")
                     .font(.subheadline)
                     .foregroundColor(.gray)
                 ShopDistanceView(shop: shop)
                 Button(action: {
                     print("route")
                 }) {
-                    SwiftUI.Image(systemName: "arrow.triangle.turn.up.right.circle.fill")
+                    Asset.image(named: "arrow.triangle.turn.up.right.circle.fill")
                         .font(.title2)
                         .foregroundColor(Color.accent())
                 }
@@ -37,7 +37,7 @@ public struct ShopDetailView: View {
             .padding(.bottom, 20)
 
             HStack {
-                SwiftUI.Image(systemName: "phone")
+                Asset.image(named: "phone")
                 Text(shop.phone)
             }
         }
