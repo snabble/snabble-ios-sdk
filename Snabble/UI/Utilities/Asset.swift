@@ -32,6 +32,16 @@ public enum Asset {
         provider?.image(named: name, domain: domain) ?? UIImage(named: name, in: BundleToken.bundle, with: nil) ?? UIImage(systemName: name)
     }
 
+    public static func image(named name: String, domain: Any? = domain) -> SwiftUI.Image? {
+        if let image: SwiftUI.Image = provider?.image(named: name, domain: domain) {
+            return image
+        }
+        if let uiImage = UIImage(named: name, in: BundleToken.bundle, with: nil) {
+            return SwiftUI.Image(uiImage: uiImage)
+        }
+        return SwiftUI.Image(systemName: name)
+    }
+
     public static func localizedString(forKey key: String, arguments: CVarArg..., table: String? = nil, value: String? = nil, domain: Any? = domain) -> String {
         guard let localizedString = provider?.localizedString(forKey: key, arguments: arguments, domain: domain) else {
             let format = BundleToken.bundle.localizedString(forKey: key, value: value, table: table)
@@ -57,13 +67,6 @@ private final class BundleToken {
 }
 
 extension Asset {
-    static func image(named name: String, domain: Any? = domain) -> SwiftUI.Image? {
-        guard let uiImage: UIImage = Asset.image(named: name, domain: domain) else {
-            return nil
-        }
-        return SwiftUI.Image(uiImage: uiImage)
-    }
-
     static func color(named name: String, domain: Any? = domain) -> SwiftUI.Color? {
         guard let uiColor: UIColor = Asset.color(named: name, domain: domain) else {
             return nil
