@@ -9,13 +9,8 @@ import Foundation
 import UIKit
 import SwiftUI
 
-public protocol OnboardingViewControllerDelegate: AnyObject {
-    func onboardingViewControllerShouldBeDismissed(_ onboardingViewController: OnboardingViewController)
-}
-
+/// Only use this `ViewController` in a modal presentation
 public final class OnboardingViewController: UIHostingController<OnboardingView> {
-
-    public weak var delegate: OnboardingViewControllerDelegate?
 
     public var viewModel: OnboardingViewModel {
         rootView.model
@@ -23,6 +18,7 @@ public final class OnboardingViewController: UIHostingController<OnboardingView>
 
     public init(viewModel: OnboardingViewModel = .default) {
         super.init(rootView: OnboardingView(model: viewModel))
+        isModalInPresentation = true
     }
     
     @MainActor required dynamic init?(coder aDecoder: NSCoder) {

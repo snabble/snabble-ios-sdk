@@ -34,9 +34,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         window?.rootViewController = tabBarController
         window?.makeKeyAndVisible()
 
-        let onboardingViewController = OnboardingViewController()
-        onboardingViewController.isModalInPresentation = true
-        window?.rootViewController?.present(onboardingViewController, animated: false)
+        window?.rootViewController?.present(OnboardingViewController(), animated: false)
 
         setupAppearance()
 
