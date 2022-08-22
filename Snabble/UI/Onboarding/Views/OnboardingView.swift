@@ -21,10 +21,10 @@ struct ButtonControl: View {
 }
 
 public struct OnboardingView: View {
-    @ObservedObject public var model: OnboardingModel
+    @ObservedObject public var model: OnboardingViewModel
     @State private var currentPage = 0
 
-    public init(model: OnboardingModel) {
+    public init(model: OnboardingViewModel = .default) {
         self.model = model
     }
     
@@ -59,8 +59,13 @@ public struct OnboardingView: View {
 
     @ViewBuilder
     public var footer: some View {
-        ButtonControl(pages: model.items.map { OnboardingButtonView(item: $0, numberOfPages: model.items.count, currentPage: $currentPage) }, currentPage: $currentPage)
-            .animation(.default, value: currentPage)
+        ButtonControl(
+            pages: model.items.map {
+                OnboardingButtonView(item: $0, numberOfPages: model.items.count, currentPage: $currentPage)
+            },
+            currentPage: $currentPage
+        )
+        .animation(.default, value: currentPage)
     }
 
     public var body: some View {
@@ -74,6 +79,6 @@ public struct OnboardingView: View {
 
 struct OnboardingView_Previews: PreviewProvider {
     static var previews: some View {
-        OnboardingView(model: OnboardingModel.shared)
+        OnboardingView(model: OnboardingViewModel.default)
     }
 }
