@@ -7,6 +7,7 @@
 
 import Foundation
 import UIKit
+import SwiftUI
 
 public protocol ImageProviding: AnyObject {
     /// Providing an image for the given `name` compatible with the `domain`
@@ -15,6 +16,13 @@ public protocol ImageProviding: AnyObject {
     ///   - domain: The domain, usually the current `Identifier<Project>`
     /// - Returns: An object containing the image variant that matches the specified configuration data, or nil if no suitable image was found.
     func image(named name: String, domain: Any?) -> UIImage?
+
+    /// Providing an `SwiftUI` image for the given `name` compatible with the `domain`
+    /// - Parameters:
+    ///   - name: The name of the image asset or file. For images in asset catalogs, specify the name of the image asset. For PNG images, you may omit the filename extension. For all other file formats, always include the filename extension.
+    ///   - domain: The domain, usually the current `Identifier<Project>`
+    /// - Returns: An object containing the image variant that matches the specified configuration data, or nil if no suitable image was found.
+    func image(named name: String, domain: Any?) -> SwiftUI.Image?
 }
 
 public protocol ColorProviding: AnyObject {
@@ -24,6 +32,13 @@ public protocol ColorProviding: AnyObject {
     ///   - domain: The domain, usually the current `Identifier<Project>`
     /// - Returns: An initialized color object. The returned object uses the color space specified for the asset.
     func color(named name: String, domain: Any?) -> UIColor?
+
+    /// Providing a `SwiftUI` color for the given `name` compatible with the `domain`
+    /// - Parameters:
+    ///   - name: The name of the asset containing the color.
+    ///   - domain: The domain, usually the current `Identifier<Project>`
+    /// - Returns: An initialized color object. The returned object uses the color space specified for the asset.
+    func color(named name: String, domain: Any?) -> SwiftUI.Color?
 }
 
 public protocol StringProviding: AnyObject {
