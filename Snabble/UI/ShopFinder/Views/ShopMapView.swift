@@ -86,7 +86,7 @@ public struct ShopMapView: View {
         case user
     }
     @State private var currentLocation: CurrentLocation = .shop
-    
+    @State private var showLocation = false
     // 50,73448° N, 7,07530° O
     @State private var region = MKCoordinateRegion(center: CLLocationCoordinate2D(latitude: 50.73448, longitude: 7.07530), span: MKCoordinateSpan(latitudeDelta: 0.5, longitudeDelta: 0.5))
 
@@ -105,11 +105,13 @@ public struct ShopMapView: View {
         VStack(spacing: 12) {
             Button(action: {
                 currentLocation = .shop
+                showLocation = true
             }) {
                 SwiftUI.Image(systemName: currentLocation == .shop ? "house.fill" : "house")
             }
             Button(action: {
                 currentLocation = .user
+                showLocation = true
             }) {
                 SwiftUI.Image(systemName: currentLocation == .user ? "location.fill" : "location")
             }
@@ -132,14 +134,17 @@ public struct ShopMapView: View {
         .onAppear {
             region = MKCoordinateRegion(center: shop.location.coordinate, latitudinalMeters: 2000, longitudinalMeters: 2000)
         }
-        .onChange(of: currentLocation) { newLocation in
+        .onChange(of: showLocation) { _ in
+
+            showLocation = false
             withAnimation(.easeInOut) {
-                switch newLocation {
+                switch currentLocation {
                 case .shop:
                     region = MKCoordinateRegion(center: shop.location.coordinate, latitudinalMeters: 2000, longitudinalMeters: 2000)
                 case .user:
                     if let location = model.userLocation {
                         region = MKCoordinateRegion(center: location.coordinate, latitudinalMeters: 2000, longitudinalMeters: 2000)
+                        model.startUpdating()
                     }
                 }
             }

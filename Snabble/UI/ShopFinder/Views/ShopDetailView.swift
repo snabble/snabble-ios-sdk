@@ -21,9 +21,10 @@ public struct ShopDetailView: View {
 
             HStack {
                 Spacer()
-                SwiftUI.Image(systemName: "mappin.and.ellipse")
+                SwiftUI.Image(systemName: "location")
+                    .font(.subheadline)
+                    .foregroundColor(.gray)
                 ShopDistanceView(shop: shop)
-//                    .padding(.trailing, 10)
                 Button(action: {
                     print("route")
                 }) {

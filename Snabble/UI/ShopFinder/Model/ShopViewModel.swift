@@ -50,9 +50,7 @@ public final class ShopViewModel: NSObject, ObservableObject {
 
     @Published var distancesAvailable = false
 
-    public var userLocation: CLLocation? {
-        return locationManager.location
-    }
+    public var userLocation: CLLocation?
     
     public func distance(for shop: ShopInfoProvider) -> Double {
         return distances[shop.id] ?? 0
@@ -91,10 +89,14 @@ extension ShopViewModel: CLLocationManagerDelegate {
             return
         }
 
+        userLocation = location
+        
         self.shops.forEach {
             self.distances[$0.id] = $0.distance(to: location)
         }
         self.distancesAvailable = true
+        
+        locationManager.stopUpdatingLocation()
     }
 
     public func locationManager(_ manager: CLLocationManager, didFailWithError error: Error) {
