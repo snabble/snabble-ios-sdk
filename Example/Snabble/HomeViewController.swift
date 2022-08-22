@@ -17,8 +17,6 @@ class HomeViewController: UIViewController {
     private var shoppingCart: ShoppingCart?
 
     private var shop: Shop?
-
-    private var onboardingDone = false
     
     init() {
         super.init(nibName: nil, bundle: nil)
@@ -69,29 +67,13 @@ class HomeViewController: UIViewController {
 
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
-
-        self.showOnboardingView()
         self.snabbleSetup()
-    }
-
-    func showOnboardingView() {
-        guard onboardingDone == false else {
-            return
-        }
-        let controller = UIHostingController(rootView: OnboardingView(model: OnboardingModel.shared))
-
-        controller.isModalInPresentation = true
-        self.present(controller, animated: false) {
-            self.onboardingDone = true
-        }
     }
 
     func snabbleSetup() {
         let APPID = "snabble-sdk-demo-app-oguh3x"
         let APPSECRET = "2TKKEG5KXWY6DFOGTZKDUIBTNIRVCYKFZBY32FFRUUWIUAFEIBHQ===="
         let apiConfig = SnabbleSDK.Config(appId: APPID, secret: APPSECRET)
-
-        Asset.provider = self
         
         Snabble.setup(config: apiConfig) { snabble in
             // initial config parsed/loaded
@@ -138,41 +120,6 @@ class HomeViewController: UIViewController {
         self.navigationController?.pushViewController(shoppingCartVC, animated: true)
     }
 
-}
-
-extension HomeViewController: AssetProviding {
-    func color(named name: String, domain: Any?) -> UIColor? {
-        return nil
-    }
-    func color(named name: String, domain: Any?) -> SwiftUI.Color? {
-        return nil
-    }
-
-    func preferredFont(forTextStyle style: UIFont.TextStyle, weight: UIFont.Weight?, domain: Any?) -> UIFont? {
-        return UIFont.preferredFont(forTextStyle: style)
-    }
-
-    func image(named name: String, domain: Any?) -> UIImage? {
-        if name == "Snabble.Shop.Detail.mapPin" {
-            return UIImage(named: "scan-off")
-        }
-        return UIImage(named: name)
-    }
-
-    func image(named name: String, domain: Any?) -> SwiftUI.Image? {
-        return nil
-    }
-
-    func localizedString(forKey key: String, arguments: CVarArg..., domain: Any?) -> String? {
-        return nil
-    }
-
-    func url(forResource name: String?, withExtension ext: String?, domain: Any?) -> URL? {
-        return nil
-    }
-    func appearance(for domain: Any?) -> CustomAppearance? {
-        return nil
-    }
 }
 
 extension HomeViewController: ScannerDelegate {

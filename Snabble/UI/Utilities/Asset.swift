@@ -36,7 +36,7 @@ public enum Asset {
         if let image: SwiftUI.Image = provider?.image(named: name, domain: domain) {
             return image
         }
-        if let _ = UIImage(named: name, in: BundleToken.bundle, with: nil) {
+        if UIImage(named: name, in: BundleToken.bundle, with: nil) != nil {
             return SwiftUI.Image(name, bundle: BundleToken.bundle)
         }
         return SwiftUI.Image(systemName: name)
