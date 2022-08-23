@@ -15,7 +15,7 @@ import Contacts
 public final class ShopViewModel: NSObject, ObservableObject {
     static var `default` = ShopViewModel(shops: [])
 
-    public init(shops: [Shop]) {
+    public init(shops: [ShopInfoProvider]) {
         self.shops = shops
     }
 

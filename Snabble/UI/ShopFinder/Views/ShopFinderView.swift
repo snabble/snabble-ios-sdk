@@ -11,7 +11,7 @@ public struct ShopFinderView: View {
     @ObservedObject public var viewModel: ShopViewModel
     @State public var shops: [ShopInfoProvider] = []
 
-    public init(shops: [Shop]) {
+    public init(shops: [ShopInfoProvider]) {
         self.viewModel = ShopViewModel(shops: shops)
     }
 

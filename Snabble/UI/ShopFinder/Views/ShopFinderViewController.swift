@@ -15,7 +15,7 @@ open class ShopFinderViewController: UIHostingController<ShopFinderView> {
         rootView.viewModel
     }
 
-    public init(shops: [Shop]) {
+    public init(shops: [ShopInfoProvider]) {
         let rootView = ShopFinderView(shops: shops)
         super.init(rootView: rootView)
     }
