@@ -99,7 +99,7 @@ class HomeViewController: UIViewController {
                 let cartConfig = CartConfig(shop: self.shop!)
                 self.shoppingCart = ShoppingCart(with: cartConfig)
             }
-            ShopViewModel.shared.shops = project.shops
+            ShopViewModel.default.shops = project.shops
 
             self.setupDone = true
         }

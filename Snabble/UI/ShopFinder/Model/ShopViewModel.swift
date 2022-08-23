@@ -42,7 +42,7 @@ extension LocationProviding {
 
 /// ShopViewModel for objects implermenting the ShopInfoProvider protocol
 public final class ShopViewModel: NSObject, ObservableObject {
-    public static let shared = ShopViewModel()
+    public static let `default` = ShopViewModel()
 
     @Published public var shops: [ShopInfoProvider] = []
 

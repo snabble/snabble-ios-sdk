@@ -20,7 +20,7 @@ public struct AnnotationView: View {
     @State private var showTitle = true
     @State private var showingAlert = false
     
-    @EnvironmentObject var model: ShopViewModel
+//    @EnvironmentObject var model: ShopViewModel
 
     @ViewBuilder
     var mapMarker: some View {
@@ -57,7 +57,7 @@ public struct AnnotationView: View {
                        Alert(title: Text("Snabble.Shop.Detail.startNavigation"),
                              message: Text("\(shopLocation.shop.street)\n\(shopLocation.shop.postalCode) \(shopLocation.shop.city)"),
                              primaryButton: .destructive(Text("yes")) {
-                           model.navigate(to: shopLocation.shop)
+                           ShopViewModel.default.navigate(to: shopLocation.shop)
                        },
                              secondaryButton: .cancel())
                    }
@@ -91,7 +91,7 @@ public struct AnnotationView: View {
 
 public struct ShopMapView: View {
     var shop: ShopInfoProvider
-    @EnvironmentObject var model: ShopViewModel
+//    @EnvironmentObject var model: ShopViewModel
     
     enum CurrentLocation {
         case shop
@@ -154,9 +154,9 @@ public struct ShopMapView: View {
                 case .shop:
                     region = MKCoordinateRegion(center: shop.location.coordinate, latitudinalMeters: 2000, longitudinalMeters: 2000)
                 case .user:
-                    if let location = model.userLocation {
+                    if let location = ShopViewModel.default.userLocation {
                         region = MKCoordinateRegion(center: location.coordinate, latitudinalMeters: 2000, longitudinalMeters: 2000)
-                        model.startUpdating()
+                        ShopViewModel.default.startUpdating()
                     }
                 }
             }

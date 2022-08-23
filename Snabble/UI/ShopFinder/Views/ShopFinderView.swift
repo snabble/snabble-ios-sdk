@@ -8,9 +8,11 @@
 import SwiftUI
 
 public struct ShopFinderView: View {
-    @EnvironmentObject var model: ShopViewModel
+    @ObservedObject var model : ShopViewModel
     
-    public init() {}
+    public init(model: ShopViewModel) {
+        self.model = model
+    }
 
     public var body: some View {
         NavigationView {
@@ -27,12 +29,18 @@ public struct ShopFinderView: View {
                 .navigationBarTitleDisplayMode(.inline)
             }
         }
+        .onAppear {
+            model.startUpdating()
+        }
+        .onDisappear {
+            model.stopUpdating()
+        }
         .navigationViewStyle(.stack)
     }
 }
 
 struct ShopFinderView_Previews: PreviewProvider {    
     static var previews: some View {
-        ShopFinderView().environmentObject(ShopViewModel.shared)
+        ShopFinderView(model: .default)
     }
 }

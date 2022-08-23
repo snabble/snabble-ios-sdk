@@ -25,7 +25,10 @@ extension AppDelegate: AssetProviding {
     }
 
     func image(named name: String, domain: Any?) -> UIImage? {
-        UIImage(named: name)
+        if name == "Snabble.Shop.Detail.mapPin" {
+            return UIImage(named: "scan-off")
+        }
+        return UIImage(named: name)
     }
 
     func image(named name: String, domain: Any?) -> SwiftUI.Image? {
