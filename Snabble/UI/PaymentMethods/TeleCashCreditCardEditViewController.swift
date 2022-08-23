@@ -259,7 +259,7 @@ public final class TeleCashCreditCardEditViewController: UIViewController {
         let chargeDecimal = Decimal(string: vaultItem.chargeTotal.replacingOccurrences(of: ",", with: "."))
         let chargeTotal = fmt.string(for: chargeDecimal)!
 
-        return Asset.localizedString(forKey: "Snabble.Cc._3dsecureHint.retailerWithPrice", arguments: chargeTotal, name)
+        return Asset.localizedString(forKey: "Snabble.CC.3dsecureHint.retailerWithPrice", arguments: chargeTotal, name)
     }
 
     @objc private func deleteButtonTapped(_ sender: Any) {

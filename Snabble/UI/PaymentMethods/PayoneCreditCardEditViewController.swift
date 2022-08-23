@@ -193,7 +193,7 @@ public final class PayoneCreditCardEditViewController: UIViewController {
         }
         let chargeTotal = fmt.string(for: amount)!
 
-        return Asset.localizedString(forKey: "Snabble.Cc._3dsecureHint.retailerWithPrice", arguments: chargeTotal, name)
+        return Asset.localizedString(forKey: "Snabble.CC.3dsecureHint.retailerWithPrice", arguments: chargeTotal, name)
     }
 
     private func setupView() {
