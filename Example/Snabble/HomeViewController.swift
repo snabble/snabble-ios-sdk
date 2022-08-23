@@ -14,11 +14,12 @@ class HomeViewController: UIViewController {
     private var buttonContainer = UIStackView()
     private var spinner = UIActivityIndicatorView()
 
-    private var shoppingCart: ShoppingCart?
+    let shop: Shop
+    let shoppingCart: ShoppingCart
 
-    private var shop: Shop?
-    
-    init() {
+    init(shop: Shop) {
+        self.shop = shop
+        self.shoppingCart = ShoppingCart(with: CartConfig(shop: shop))
         super.init(nibName: nil, bundle: nil)
 
         self.title = "Snabble"
@@ -65,43 +66,7 @@ class HomeViewController: UIViewController {
 
     }
 
-    override func viewDidAppear(_ animated: Bool) {
-        super.viewDidAppear(animated)
-        self.snabbleSetup()
-    }
-
-    func snabbleSetup() {
-        let APPID = "snabble-sdk-demo-app-oguh3x"
-        let APPSECRET = "2TKKEG5KXWY6DFOGTZKDUIBTNIRVCYKFZBY32FFRUUWIUAFEIBHQ===="
-        let apiConfig = SnabbleSDK.Config(appId: APPID, secret: APPSECRET)
-        
-        Snabble.setup(config: apiConfig) { snabble in
-            // initial config parsed/loaded
-            guard let project = snabble.projects.first else {
-                fatalError("project initialization failed - make sure APPID and APPSECRET are valid")
-            }
-
-            // register the project with the UI components
-            SnabbleUI.register(project)
-            self.shop = project.shops.first!
-
-            // initialize the product database for this project
-            let productProvider = snabble.productProvider(for: project)
-            productProvider.setup { _ in
-                self.spinner.stopAnimating()
-                self.buttonContainer.isHidden = false
-
-                let cartConfig = CartConfig(shop: self.shop!)
-                self.shoppingCart = ShoppingCart(with: cartConfig)
-            }
-        }
-    }
-
     @objc private func scannerButtonTapped(_ sender: Any) {
-        guard let shoppingCart = self.shoppingCart, let shop = Snabble.shared.projects.first?.shops.first else {
-            return
-        }
-
         let detector = BuiltinBarcodeDetector(detectorArea: .rectangle)
         let scannerViewController = ScannerViewController(shoppingCart, shop, detector)
         scannerViewController.scannerDelegate = self
@@ -111,10 +76,6 @@ class HomeViewController: UIViewController {
     }
 
     @objc private func shoppingCartButtonTapped(_ sender: Any) {
-        guard let shoppingCart = self.shoppingCart else {
-            return
-        }
-
         let shoppingCartVC = ShoppingCartViewController(shoppingCart)
         shoppingCartVC.shoppingCartDelegate = self
         self.navigationController?.pushViewController(shoppingCartVC, animated: true)
@@ -140,7 +101,7 @@ extension HomeViewController: ShoppingCartDelegate {
         }
 
         didStart(true)
-        let process = PaymentProcess(info, cart, shop: self.shop!)
+        let process = PaymentProcess(info, cart, shop: shop)
         process.paymentDelegate = self
         process.start(method, detail) { result in
             switch result {
