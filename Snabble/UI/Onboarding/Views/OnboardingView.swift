@@ -9,17 +9,6 @@
 
 import SwiftUI
 
-struct ButtonControl: View {
-    var pages: [DoubleButtonView]
-    @Binding var currentPage: Int
-
-    var body: some View {
-        HStack {
-            pages[currentPage]
-        }
-    }
-}
-
 public struct OnboardingView: View {
     @ObservedObject public var viewModel: OnboardingViewModel
     @State var currentPage: Int = 0
@@ -50,10 +39,10 @@ public struct OnboardingView: View {
                 currentPage: $currentPage
             )
             PageControl(
-                numberOfPages: viewModel.items.count,
+                numberOfPages: viewModel.numberOfPages,
                 currentPage: $currentPage
             )
-                .frame(width: CGFloat(viewModel.items.count * 18))
+                .frame(width: CGFloat(viewModel.numberOfPages * 18))
         } else {
             ScrollView(.vertical) {
                 OnboardingItemView(item: viewModel.items[currentPage])
@@ -92,6 +81,17 @@ public struct OnboardingView: View {
             header
             page
             footer
+        }
+    }
+}
+
+struct ButtonControl: View {
+    var pages: [DoubleButtonView]
+    @Binding var currentPage: Int
+
+    var body: some View {
+        HStack {
+            pages[currentPage]
         }
     }
 }
