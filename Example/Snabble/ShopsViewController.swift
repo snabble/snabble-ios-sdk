@@ -10,9 +10,8 @@ import Foundation
 import SnabbleSDK
 
 final class ShopsViewController: ShopFinderViewController {
-    
-    override init() {
-        super.init()
+    override init(shops: [Shop]) {
+        super.init(shops: shops)
 
         self.title = NSLocalizedString("Shops", comment: "")
         self.tabBarItem.image = UIImage(systemName: "house")

@@ -21,7 +21,7 @@ extension View {
             Alert(title: Text("Snabble.Shop.Detail.startNavigation"),
                   message: Text("\(shop.street)\n\(shop.postalCode) \(shop.city)"),
                   primaryButton: .destructive(Text("Snabble.yes")) {
-                ShopViewModel.default.navigate(to: shop)
+                ShopViewModel.navigate(to: shop)
             },
                   secondaryButton: .cancel())
         }
@@ -101,6 +101,7 @@ public struct ShopMapView: View {
         case shop
         case user
     }
+    
     @State private var currentLocation: CurrentLocation = .shop
     @State private var showLocation = false
     // 50,73448° N, 7,07530° O is snabbles home location
@@ -154,14 +155,14 @@ public struct ShopMapView: View {
                 .zIndex(1)
         }
         .onAppear {
-            region = ShopViewModel.default.region(for: shop)
+            region = ShopViewModel.region(for: shop)
         }
         .onChange(of: showLocation) { _ in
             showLocation = false
             withAnimation(.easeInOut) {
                 switch currentLocation {
                 case .shop:
-                    region = ShopViewModel.default.region(for: shop)
+                    region = ShopViewModel.region(for: shop)
                 case .user:
                     if let userRegion = ShopViewModel.default.userRegion {
                         region = userRegion

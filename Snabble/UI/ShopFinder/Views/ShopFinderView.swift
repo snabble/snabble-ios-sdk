@@ -8,8 +8,12 @@
 import SwiftUI
 
 public struct ShopFinderView: View {
-    @StateObject public var viewModel = ShopViewModel.default
+    @ObservedObject public var viewModel: ShopViewModel
     @State public var shops: [ShopInfoProvider] = []
+
+    public init(shops: [Shop]) {
+        self.viewModel = ShopViewModel(shops: shops)
+    }
 
     public var body: some View {
         NavigationView {
@@ -41,6 +45,6 @@ public struct ShopFinderView: View {
 
 struct ShopFinderView_Previews: PreviewProvider {    
     static var previews: some View {
-        ShopFinderView()
+        ShopFinderView(shops: [])
     }
 }

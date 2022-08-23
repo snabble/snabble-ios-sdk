@@ -11,38 +11,13 @@ import CoreLocation
 import MapKit
 import Contacts
 
-// stuff for displaying formatted numbers
-extension Double {
-    /// format a distance value in meters
-    func formattedDistance() -> String {
-        let value: Double
-        let format: String
-        if self < 1000 {
-            value = self
-            format = "#0 m"
-        } else if self < 100000.0 {
-            value = self / 1000.0
-            format = "#0.0 km"
-        } else {
-            value = self / 1000.0
-            format = "#0 km"
-        }
-
-        let formatter = NumberFormatter()
-        formatter.positiveFormat = format
-        return formatter.string(for: value)!
-    }
-}
-
-extension LocationProviding {
-    public var id: String {
-        return "\(self.latitude)-\(self.longitude)"
-    }
-}
-
 /// ShopViewModel for objects implermenting the ShopInfoProvider protocol
 public final class ShopViewModel: NSObject, ObservableObject {
-    public static let `default` = ShopViewModel()
+    static var `default` = ShopViewModel(shops: [])
+
+    public init(shops: [Shop]) {
+        self.shops = shops
+    }
 
     @Published public var shops: [ShopInfoProvider] = []
 
@@ -72,6 +47,35 @@ public final class ShopViewModel: NSObject, ObservableObject {
 
     public func stopUpdating() {
         locationManager.stopUpdatingLocation()
+    }
+}
+
+// stuff for displaying formatted numbers
+extension Double {
+    /// format a distance value in meters
+    func formattedDistance() -> String {
+        let value: Double
+        let format: String
+        if self < 1000 {
+            value = self
+            format = "#0 m"
+        } else if self < 100000.0 {
+            value = self / 1000.0
+            format = "#0.0 km"
+        } else {
+            value = self / 1000.0
+            format = "#0 km"
+        }
+
+        let formatter = NumberFormatter()
+        formatter.positiveFormat = format
+        return formatter.string(for: value)!
+    }
+}
+
+extension LocationProviding {
+    public var id: String {
+        return "\(self.latitude)-\(self.longitude)"
     }
 }
 
@@ -123,13 +127,13 @@ extension ShopViewModel {
         return MKCoordinateRegion(center: location.coordinate, latitudinalMeters: 2000, longitudinalMeters: 2000)
     }
 
-    func region(for shop: ShopInfoProvider) -> MKCoordinateRegion {
+    static func region(for shop: ShopInfoProvider) -> MKCoordinateRegion {
         MKCoordinateRegion(center: shop.location.coordinate, latitudinalMeters: 2000, longitudinalMeters: 2000)
     }
 }
 
 extension ShopViewModel {
-    func navigate(to shop: ShopInfoProvider) {
+    static func navigate(to shop: ShopInfoProvider) {
         let endingItem = MKMapItem(placemark: MKPlacemark(coordinate: CLLocationCoordinate2DMake(shop.latitude, shop.longitude),
                                                           addressDictionary: [
                                                             CNPostalAddressCityKey: shop.city,
