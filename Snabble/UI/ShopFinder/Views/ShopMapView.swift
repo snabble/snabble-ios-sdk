@@ -15,12 +15,23 @@ struct ShopLocation: Swift.Identifiable {
     let shop: ShopInfoProvider
 }
 
-public struct AnnotationView: View {
+extension View {
+    func navigateToShopAlert(isPresented: Binding<Bool>, shop: ShopInfoProvider) -> some View {
+        self.alert(isPresented: isPresented) {
+            Alert(title: Text("Snabble.Shop.Detail.startNavigation"),
+                  message: Text("\(shop.street)\n\(shop.postalCode) \(shop.city)"),
+                  primaryButton: .destructive(Text("Snabble.yes")) {
+                ShopViewModel.default.navigate(to: shop)
+            },
+                  secondaryButton: .cancel())
+        }
+    }
+}
+
+public struct ShopAnnotationView: View {
     var shopLocation: ShopLocation
     @State private var showTitle = true
     @State private var showingAlert = false
-    
-//    @EnvironmentObject var model: ShopViewModel
 
     @ViewBuilder
     var mapMarker: some View {
@@ -53,14 +64,7 @@ public struct AnnotationView: View {
                             .foregroundColor(.white)
                             .cornerRadius(4)
                    }
-                    .alert(isPresented: $showingAlert) {
-                       Alert(title: Text("Snabble.Shop.Detail.startNavigation"),
-                             message: Text("\(shopLocation.shop.street)\n\(shopLocation.shop.postalCode) \(shopLocation.shop.city)"),
-                             primaryButton: .destructive(Text("yes")) {
-                           ShopViewModel.default.navigate(to: shopLocation.shop)
-                       },
-                             secondaryButton: .cancel())
-                   }
+                    .navigateToShopAlert(isPresented: $showingAlert, shop: shopLocation.shop)
 
                     VStack(alignment: .leading, spacing: 0) {
                         ShopAddressView(shop: shopLocation.shop)
@@ -91,7 +95,6 @@ public struct AnnotationView: View {
 
 public struct ShopMapView: View {
     var shop: ShopInfoProvider
-//    @EnvironmentObject var model: ShopViewModel
     
     enum CurrentLocation {
         case shop
@@ -99,19 +102,20 @@ public struct ShopMapView: View {
     }
     @State private var currentLocation: CurrentLocation = .shop
     @State private var showLocation = false
-    // 50,73448° N, 7,07530° O
+    // 50,73448° N, 7,07530° O is snabbles home location
     @State private var region = MKCoordinateRegion(center: CLLocationCoordinate2D(latitude: 50.73448, longitude: 7.07530), span: MKCoordinateSpan(latitudeDelta: 0.5, longitudeDelta: 0.5))
 
     @ViewBuilder
     var mapView: some View {
         Map(coordinateRegion: $region, annotationItems: [ShopLocation(shop: shop)]) { place in
             MapAnnotation(coordinate: place.shop.location.coordinate) {
-                AnnotationView(shopLocation: place)
+                ShopAnnotationView(shopLocation: place)
                     .shadow(color: .gray, radius: 3, x: 2, y: 2)
 
             }
        }
     }
+
     @ViewBuilder
     var locationControl: some View {
         VStack(spacing: 12) {
@@ -144,18 +148,18 @@ public struct ShopMapView: View {
                 .zIndex(1)
         }
         .onAppear {
-            region = MKCoordinateRegion(center: shop.location.coordinate, latitudinalMeters: 2000, longitudinalMeters: 2000)
+            region = ShopViewModel.default.region(for: shop)
         }
         .onChange(of: showLocation) { _ in
-
             showLocation = false
             withAnimation(.easeInOut) {
                 switch currentLocation {
                 case .shop:
-                    region = MKCoordinateRegion(center: shop.location.coordinate, latitudinalMeters: 2000, longitudinalMeters: 2000)
+                    region = ShopViewModel.default.region(for: shop)
                 case .user:
-                    if let location = ShopViewModel.default.userLocation {
-                        region = MKCoordinateRegion(center: location.coordinate, latitudinalMeters: 2000, longitudinalMeters: 2000)
+                    if let userRegion = ShopViewModel.default.userRegion {
+                        region = userRegion
+                        // maybe user is moving so update current location
                         ShopViewModel.default.startUpdating()
                     }
                 }

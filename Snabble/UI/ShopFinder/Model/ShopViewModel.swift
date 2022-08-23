@@ -116,6 +116,19 @@ extension ShopViewModel: CLLocationManagerDelegate {
 }
 
 extension ShopViewModel {
+    var userRegion: MKCoordinateRegion? {
+        guard let location = userLocation else {
+            return nil
+        }
+        return MKCoordinateRegion(center: location.coordinate, latitudinalMeters: 2000, longitudinalMeters: 2000)
+    }
+
+    func region(for shop: ShopInfoProvider) -> MKCoordinateRegion {
+        MKCoordinateRegion(center: shop.location.coordinate, latitudinalMeters: 2000, longitudinalMeters: 2000)
+    }
+}
+
+extension ShopViewModel {
     func navigate(to shop: ShopInfoProvider) {
         let endingItem = MKMapItem(placemark: MKPlacemark(coordinate: CLLocationCoordinate2DMake(shop.latitude, shop.longitude),
                                                           addressDictionary: [

@@ -21,7 +21,6 @@ public struct ShopAddressView: View {
 }
 public struct ShopDistanceView: View {
     var shop: ShopInfoProvider
-//    @EnvironmentObject var model: ShopViewModel
     
     public var body: some View {
         let distance = ShopViewModel.default.formattedDistance(for: shop)

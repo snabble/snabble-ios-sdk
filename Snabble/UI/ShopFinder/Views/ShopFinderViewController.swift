@@ -30,11 +30,8 @@ extension UIViewController {
     }
 }
 
-/// Only use this `ViewController` in a modal presentation
+/// A UIViewController wrapping SwiftUI's ShopFinderView
 open class ShopFinderViewController: UIViewController {
-
-    @StateObject var viewModel = ShopViewModel.default
-    
     public init() {
         super.init(nibName: nil, bundle: nil)
     }
@@ -46,18 +43,6 @@ open class ShopFinderViewController: UIViewController {
     open override func viewDidLoad() {
         super.viewDidLoad()
         
-        self.addSubSwiftUIView(ShopFinderView(model: viewModel), to: self.view)
-    }
-
-    open override func viewDidAppear(_ animated: Bool) {
-        super.viewDidAppear(animated)
-
-        ShopViewModel.default.startUpdating()
-    }
-    
-    open override func viewDidDisappear(_ animated: Bool) {
-        super.viewDidDisappear(animated)
-        
-        ShopViewModel.default.stopUpdating()
+        self.addSubSwiftUIView(ShopFinderView(), to: self.view)
     }
 }

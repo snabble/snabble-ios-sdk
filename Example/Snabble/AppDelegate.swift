@@ -49,16 +49,17 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             productProvider.setup { [unowned self] _ in
                 transitionView(with: project.shops.first!)
             }
+            ShopViewModel.default.shops = project.shops
         }
     }
 
     private func transitionView(with shop: Shop) {
-        let shopsNavi = UINavigationController(rootViewController: ShopsViewController())
-        let accountNavi = UINavigationController(rootViewController: AccountViewController())
-        let homeNavi = UINavigationController(rootViewController: HomeViewController(shop: shop))
+        let shopsVC = ShopsViewController()
+        let accountVC = AccountViewController()
+        let homeVC = HomeViewController(shop: shop)
 
         let tabBarController = UITabBarController()
-        tabBarController.viewControllers = [homeNavi, shopsNavi, accountNavi]
+        tabBarController.viewControllers = [homeVC, shopsVC, accountVC]
 
         window?.rootViewController = tabBarController
 

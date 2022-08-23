@@ -8,16 +8,13 @@
 import SwiftUI
 
 public struct ShopFinderView: View {
-    @ObservedObject var model : ShopViewModel
-    
-    public init(model: ShopViewModel) {
-        self.model = model
-    }
+    @StateObject public var viewModel = ShopViewModel.default
+    @State public var shops: [ShopInfoProvider] = []
 
     public var body: some View {
         NavigationView {
             VStack {
-                List(model.shops, id: \.id) { shop in
+                List(shops, id: \.id) { shop in
                     NavigationLink {
                         ShopDetailView(shop: shop)
                     } label: {
@@ -30,10 +27,13 @@ public struct ShopFinderView: View {
             }
         }
         .onAppear {
-            model.startUpdating()
+            viewModel.startUpdating()
         }
         .onDisappear {
-            model.stopUpdating()
+            viewModel.stopUpdating()
+        }
+        .onChange(of: viewModel.distancesAvailable) { _ in
+            shops = viewModel.shops
         }
         .navigationViewStyle(.stack)
     }
@@ -41,6 +41,6 @@ public struct ShopFinderView: View {
 
 struct ShopFinderView_Previews: PreviewProvider {    
     static var previews: some View {
-        ShopFinderView(model: .default)
+        ShopFinderView()
     }
 }
