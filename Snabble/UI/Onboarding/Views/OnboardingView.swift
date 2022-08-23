@@ -11,7 +11,6 @@ import SwiftUI
 
 public struct OnboardingView: View {
     @ObservedObject public var viewModel: OnboardingViewModel
-    @State var currentPage: Int = 0
 
     public init(viewModel: OnboardingViewModel = .default) {
         self.viewModel = viewModel
@@ -36,17 +35,17 @@ public struct OnboardingView: View {
         if viewModel.configuration.hasPageControl {
             PageViewController(
                 pages: viewModel.items.map { OnboardingItemView(item: $0) },
-                currentPage: $currentPage
+                currentPage: $viewModel.currentPage
             )
             PageControl(
                 numberOfPages: viewModel.numberOfPages,
-                currentPage: $currentPage
+                currentPage: $viewModel.currentPage
             )
                 .frame(width: CGFloat(viewModel.numberOfPages * 18))
         } else {
             ScrollView(.vertical) {
-                OnboardingItemView(item: viewModel.items[currentPage])
-                    .animation(.default, value: currentPage)
+                OnboardingItemView(item: viewModel.items[0])
+                    .animation(.default, value: viewModel.currentPage)
                     .padding(.top, 70)
             }
         }
@@ -55,25 +54,19 @@ public struct OnboardingView: View {
     @ViewBuilder
     public var footer: some View {
         ButtonControl(
-            pages: viewModel.items.map {
+            pages: viewModel.items.map { item in
                 DoubleButtonView(
-                    provider: $0,
+                    provider: item,
                     left: {
-                        if currentPage > 0 {
-                            currentPage -= 1
-                        }
+                        viewModel.previous(for: item)
                     },
                     right: {
-                        if currentPage < viewModel.numberOfPages - 1 {
-                            currentPage += 1
-                        } else if currentPage == viewModel.numberOfPages - 1 {
-                            viewModel.isDone = true
-                        }
+                        viewModel.next(for: item)
                     })
             },
-            currentPage: $currentPage
+            currentPage: $viewModel.currentPage
         )
-        .animation(.default, value: currentPage)
+        .animation(.default, value: viewModel.currentPage)
     }
 
     public var body: some View {
