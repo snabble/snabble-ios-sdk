@@ -58,9 +58,14 @@ struct OnboardingItemView: View {
             }
             if let imageSource = item.imageSource {
                 if let image = item.image {
-                    image.resizable().scaledToFit().padding([.top], topPadding)
+                    image
+                        .resizable()
+                        .scaledToFit()
+                        .padding([.top], topPadding)
                 } else {
-                    Text(imageSource).font(.system(size: 72)).padding([.top], topPadding)
+                    Text(imageSource)
+                        .font(.system(size: 72))
+                        .padding([.top], topPadding)
                 }
             } else {
                 EmptyView()
