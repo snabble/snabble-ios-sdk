@@ -56,20 +56,24 @@ struct OnboardingItemView: View {
             } else {
                 EmptyView()
             }
-            if let imageSource = item.imageSource {
-                if let image = item.image {
-                    image
-                        .resizable()
-                        .scaledToFit()
-                        .padding([.top], topPadding)
-                } else {
-                    Text(imageSource)
-                        .font(.system(size: 72))
-                        .padding([.top], topPadding)
-                }
+        }
+    }
+
+    @ViewBuilder
+    var image: some View {
+        if let imageSource = item.imageSource {
+            if let image = item.image {
+                image
+                    .resizable()
+                    .scaledToFit()
+                    .padding([.top], topPadding)
             } else {
-                EmptyView()
+                Text(imageSource)
+                    .font(.system(size: 72))
+                    .padding([.top], topPadding)
             }
+        } else {
+            EmptyView()
         }
     }
 
@@ -136,6 +140,7 @@ struct OnboardingItemView: View {
     var body: some View {
         VStack(alignment: .center, spacing: 20) {
             title
+            image
             text
             footer
         }
