@@ -39,7 +39,12 @@ public enum Asset {
         if UIImage(named: name, in: BundleToken.bundle, with: nil) != nil {
             return SwiftUI.Image(name, bundle: BundleToken.bundle)
         }
-        return SwiftUI.Image(systemName: name)
+
+        if UIImage(systemName: name) != nil {
+            return SwiftUI.Image(systemName: name)
+        }
+
+        return nil
     }
 
     public static func localizedString(forKey key: String, arguments: CVarArg..., table: String? = nil, value: String? = nil, domain: Any? = domain) -> String {
