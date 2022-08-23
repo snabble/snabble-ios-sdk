@@ -10,11 +10,13 @@ import SwiftUI
 
 public struct ShopDetailView: View {
     var shop: ShopInfoProvider
+
+    @ObservedObject var viewModel: ShopViewModel
     @State private var showingAlert = false
 
     public var body: some View {
         VStack(alignment: .center) {
-            ShopMapView(shop: shop)
+            ShopMapView(shop: shop, viewModel: viewModel)
             VStack(spacing: 0) {
                 AddressView(provider: shop)
             }
@@ -25,7 +27,7 @@ public struct ShopDetailView: View {
                 Asset.image(named: "location")
                     .font(.subheadline)
                     .foregroundColor(.gray)
-                ShopDistanceView(shop: shop)
+                ShopDistanceView(shop: shop, viewModel: viewModel)
                 Button(action: {
                     showingAlert.toggle()
                 }) {

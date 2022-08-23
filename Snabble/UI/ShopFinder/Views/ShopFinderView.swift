@@ -20,9 +20,9 @@ public struct ShopFinderView: View {
             VStack {
                 List(shops, id: \.id) { shop in
                     NavigationLink {
-                        ShopDetailView(shop: shop)
+                        ShopDetailView(shop: shop, viewModel: viewModel)
                     } label: {
-                        ShopCellView(shop: shop)
+                        ShopCellView(shop: shop, viewModel: viewModel)
                     }
                 }
                 .listStyle(PlainListStyle())

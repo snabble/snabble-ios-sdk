@@ -13,8 +13,6 @@ import Contacts
 
 /// ShopViewModel for objects implermenting the ShopInfoProvider protocol
 public final class ShopViewModel: NSObject, ObservableObject {
-    static var `default` = ShopViewModel(shops: [])
-
     public init(shops: [ShopInfoProvider]) {
         self.shops = shops
     }

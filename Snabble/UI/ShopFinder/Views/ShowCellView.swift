@@ -11,6 +11,7 @@ import SwiftUI
 
 public struct ShopCellView: View {
     var shop: ShopInfoProvider
+    @ObservedObject var viewModel: ShopViewModel
     
     public var body: some View {
         HStack {
@@ -25,16 +26,17 @@ public struct ShopCellView: View {
                 .foregroundColor(.gray)
             }
             Spacer()
-            ShopDistanceView(shop: shop)
+            ShopDistanceView(shop: shop, viewModel: viewModel)
         }
     }
 }
 
 public struct ShopDistanceView: View {
     var shop: ShopInfoProvider
+    @ObservedObject var viewModel: ShopViewModel
 
     public var body: some View {
-        let distance = ShopViewModel.default.formattedDistance(for: shop)
+        let distance = viewModel.formattedDistance(for: shop)
 
         if distance.isEmpty {
             EmptyView()

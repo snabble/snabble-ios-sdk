@@ -95,6 +95,7 @@ public struct ShopAnnotationView: View {
 
 public struct ShopMapView: View {
     var shop: ShopInfoProvider
+    @ObservedObject var viewModel: ShopViewModel
     @State var tracking: MapUserTrackingMode = .follow
     
     enum CurrentLocation {
@@ -164,10 +165,10 @@ public struct ShopMapView: View {
                 case .shop:
                     region = ShopViewModel.region(for: shop)
                 case .user:
-                    if let userRegion = ShopViewModel.default.userRegion {
+                    if let userRegion = viewModel.userRegion {
                         region = userRegion
                         // maybe user is moving so update current location
-                        ShopViewModel.default.startUpdating()
+                        viewModel.startUpdating()
                     }
                 }
             }
