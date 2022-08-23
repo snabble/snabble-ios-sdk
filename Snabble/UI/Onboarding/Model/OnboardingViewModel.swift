@@ -29,7 +29,7 @@ public final class OnboardingViewModel: ObservableObject, Decodable {
             guard let item = item else {
                 return currentPage = 0
             }
-            currentPage = items.index(of: item) ?? 0
+            currentPage = items.firstIndex(of: item) ?? 0
         }
     }
     /// Switched to `true` as soon as onboarding is completed.
@@ -74,10 +74,10 @@ public final class OnboardingViewModel: ObservableObject, Decodable {
 
 private extension Array where Element: Equatable {
     func next(after element: Element) -> Element? {
-        guard let index = index(of: element) else {
+        guard let index = firstIndex(of: element) else {
             return nil
         }
-        var nextIndex = index + 1
+        let nextIndex = index + 1
         guard indices.contains(nextIndex) else {
             return nil
         }
@@ -85,10 +85,10 @@ private extension Array where Element: Equatable {
     }
 
     func previous(before element: Element) -> Element? {
-        guard let index = index(of: element) else {
+        guard let index = firstIndex(of: element) else {
             return nil
         }
-        var nextIndex = index - 1
+        let nextIndex = index - 1
         guard nextIndex >= 0, indices.contains(nextIndex) else {
             return nil
         }
