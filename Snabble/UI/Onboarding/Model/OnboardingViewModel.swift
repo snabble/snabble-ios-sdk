@@ -14,7 +14,7 @@ import Combine
 public final class OnboardingViewModel: ObservableObject, Decodable {
     public static let `default`: OnboardingViewModel = loadJSON("OnboardingData.json")
 
-    /// the configuration like `imagesource` and `hasPageControl` to enable page swiping
+    /// the configuration like `imageSource` and `hasPageControl` to enable page swiping
     public let configuration: OnboardingConfiguration
     /// All items to be shown in Onboarding
     public let items: [OnboardingItem]

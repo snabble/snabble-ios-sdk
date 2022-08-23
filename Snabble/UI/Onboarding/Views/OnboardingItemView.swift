@@ -56,15 +56,14 @@ struct OnboardingItemView: View {
             } else {
                 EmptyView()
             }
-            if item.imageFromSource != nil, let image = item.image {
-                image.resizable().scaledToFit().padding([.top], topPadding)
-
-            } else {
-                if let src = item.imageSource {
-                    Text(src).font(.system(size: 72)).padding([.top], topPadding)
+            if let imageSource = item.imageSource {
+                if let image = item.image {
+                    image.resizable().scaledToFit().padding([.top], topPadding)
                 } else {
-                    EmptyView()
+                    Text(imageSource).font(.system(size: 72)).padding([.top], topPadding)
                 }
+            } else {
+                EmptyView()
             }
         }
     }

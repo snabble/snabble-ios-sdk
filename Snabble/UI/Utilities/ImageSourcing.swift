@@ -8,42 +8,31 @@
 //
 
 import Foundation
-
+import SwiftUI
 import UIKit
 
 public protocol ImageSourcing {
     /// an option string for an image resource
     var imageSource: String? { get }
-    /// returns an optional image resolving `imageSource`
-    var imageFromSource: UIImage? { get }
 }
 
 extension ImageSourcing {
-    /// the implementation resolving `imageSource`
-    public var imageFromSource: UIImage? {
-        if let src = imageSource {
-            return Asset.image(named: src)
+    /// Resolve `imageSource` to `UIImage` or `nil` if nothing is available
+    public var uiImage: UIImage? {
+        guard let source = imageSource else {
+            return nil
         }
-        return nil
-    }
-}
-
-import SwiftUI
-
-extension Text {
-    init(key string: String) {
-        let value = Asset.localizedString(forKey: string)
-        self.init(value)
+        return Asset.image(named: source)
     }
 }
 
 extension ImageSourcing {
-    /// SwiftUI support
+    /// Resolve `imageSource` to `Image` or `nil` if nothing is available
     public var image: SwiftUI.Image? {
-        guard let src = imageSource else {
+        guard let source = imageSource else {
             return nil
         }
 
-        return Asset.image(named: src)
+        return Asset.image(named: source)
     }
 }
