@@ -10,21 +10,44 @@
 import Foundation
 import SwiftUI
 
-/// View to render one onboarding item
-struct OnboardingButtonView: View {
-    var item: OnboardingItem
-    var numberOfPages: Int
-    @Environment(\.presentationMode) var presentationMode
+protocol DoubleButtonViewProvider {
+    var leftButtonTitle: String? { get }
+    var rightButtonTitle: String? { get }
+}
 
-    @Binding var currentPage: Int
+private enum DoubleButtonType {
+    case none
+    case left
+    case right
+    case both
+}
+
+private extension DoubleButtonViewProvider {
+    var type: DoubleButtonType {
+        if leftButtonTitle == nil, rightButtonTitle == nil {
+            return .none
+        } else if leftButtonTitle != nil, rightButtonTitle == nil {
+            return .left
+        } else if rightButtonTitle != nil, leftButtonTitle == nil {
+            return .right
+        } else {
+            return .both
+        }
+    }
+}
+
+/// View to render one onboarding item
+struct DoubleButtonView: View {
+    var provider: DoubleButtonViewProvider
+
+    var left: () -> Void
+    var right: () -> Void
 
     @ViewBuilder
     var leftButton: some View {
-        if let text = item.prevButtonTitle {
+        if let text = provider.leftButtonTitle {
             Button(action: {
-                if currentPage > 0 {
-                    currentPage -= 1
-                }
+                left()
             }) {
                 Text(key: text)
             }
@@ -35,13 +58,9 @@ struct OnboardingButtonView: View {
 
     @ViewBuilder
     var rightButton: some View {
-        if let text = item.nextButtonTitle {
+        if let text = provider.rightButtonTitle {
             Button(action: {
-                if currentPage < numberOfPages - 1 {
-                    currentPage += 1
-                } else if currentPage == numberOfPages - 1 {
-                    presentationMode.wrappedValue.dismiss()
-                }
+                right()
             }) {
                 Text(key: text)
             }
@@ -51,15 +70,15 @@ struct OnboardingButtonView: View {
     }
 
     @ViewBuilder
-    var footer: some View {
-        switch item.footerType {
-        case .onlyLeft:
+    var container: some View {
+        switch provider.type {
+        case .left:
             HStack {
                 Spacer()
                 leftButton
                 Spacer()
             }
-        case .onlyRight:
+        case .right:
             HStack {
                 Spacer()
                 rightButton
@@ -77,8 +96,18 @@ struct OnboardingButtonView: View {
     }
 
     var body: some View {
-        footer
+        container
             .padding([.leading, .trailing], 50)
             .padding(.bottom, UIDevice.current.userInterfaceIdiom == .phone ? 0 : 20)
+    }
+}
+
+extension OnboardingItem: DoubleButtonViewProvider {
+    var leftButtonTitle: String? {
+        prevButtonTitle
+    }
+
+    var rightButtonTitle: String? {
+        nextButtonTitle
     }
 }

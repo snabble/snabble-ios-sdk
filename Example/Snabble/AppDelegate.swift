@@ -62,8 +62,13 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
         window?.rootViewController = tabBarController
 
-        // Show onboarding
-//        window?.rootViewController?.present(OnboardingViewController(), animated: false)
+        showOnboarding(on: tabBarController)
+    }
+
+    private func showOnboarding(on viewController: UIViewController) {
+        let onboardingViewController = OnboardingViewController()
+        onboardingViewController.delegate = self
+        viewController.present(onboardingViewController, animated: false)
     }
 
     private func setupAppearance() {
@@ -94,5 +99,11 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         let tabBarItemAppearance = UITabBarItem.appearance()
         tabBarItemAppearance.setTitleTextAttributes([NSAttributedString.Key.foregroundColor: UIColor.darkGray], for: .normal)
         tabBarItemAppearance.setTitleTextAttributes([NSAttributedString.Key.foregroundColor: UIColor.label], for: .selected)
+    }
+}
+
+extension AppDelegate: OnboardingViewControllerDelegate {
+    func onboardingViewControllerDidFinish(_ viewController: OnboardingViewController) {
+        viewController.presentingViewController?.dismiss(animated: true)
     }
 }

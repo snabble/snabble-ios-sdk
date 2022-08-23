@@ -10,7 +10,7 @@
 import SwiftUI
 
 struct ButtonControl: View {
-    var pages: [OnboardingButtonView]
+    var pages: [DoubleButtonView]
     @Binding var currentPage: Int
 
     var body: some View {
@@ -21,16 +21,16 @@ struct ButtonControl: View {
 }
 
 public struct OnboardingView: View {
-    @ObservedObject public var model: OnboardingViewModel
-    @State private var currentPage = 0
+    @ObservedObject public var viewModel: OnboardingViewModel
+    @State var currentPage: Int = 0
 
-    public init(model: OnboardingViewModel = .default) {
-        self.model = model
+    public init(viewModel: OnboardingViewModel = .default) {
+        self.viewModel = viewModel
     }
     
     @ViewBuilder
     public var header: some View {
-        if let image = model.configuration.image {
+        if let image = viewModel.configuration.image {
             image
                 .resizable()
                 .scaledToFit()
@@ -44,15 +44,21 @@ public struct OnboardingView: View {
 
     @ViewBuilder
     public var page: some View {
-        if model.configuration.hasPageControl {
-            PageViewController(pages: model.items.map { OnboardingItemView(item: $0) }, currentPage: $currentPage)
-            PageControl(numberOfPages: model.items.count, currentPage: $currentPage)
-                .frame(width: CGFloat(model.items.count * 18))
+        if viewModel.configuration.hasPageControl {
+            PageViewController(
+                pages: viewModel.items.map { OnboardingItemView(item: $0) },
+                currentPage: $currentPage
+            )
+            PageControl(
+                numberOfPages: viewModel.items.count,
+                currentPage: $currentPage
+            )
+                .frame(width: CGFloat(viewModel.items.count * 18))
         } else {
             ScrollView(.vertical) {
-                OnboardingItemView(item: model.items[currentPage])
-                .animation(.default, value: currentPage)
-                .padding(.top, 70)
+                OnboardingItemView(item: viewModel.items[currentPage])
+                    .animation(.default, value: currentPage)
+                    .padding(.top, 70)
             }
         }
     }
@@ -60,8 +66,21 @@ public struct OnboardingView: View {
     @ViewBuilder
     public var footer: some View {
         ButtonControl(
-            pages: model.items.map {
-                OnboardingButtonView(item: $0, numberOfPages: model.items.count, currentPage: $currentPage)
+            pages: viewModel.items.map {
+                DoubleButtonView(
+                    provider: $0,
+                    left: {
+                        if currentPage > 0 {
+                            currentPage -= 1
+                        }
+                    },
+                    right: {
+                        if currentPage < viewModel.numberOfPages - 1 {
+                            currentPage += 1
+                        } else if currentPage == viewModel.numberOfPages - 1 {
+                            viewModel.isDone = true
+                        }
+                    })
             },
             currentPage: $currentPage
         )
@@ -79,6 +98,6 @@ public struct OnboardingView: View {
 
 struct OnboardingView_Previews: PreviewProvider {
     static var previews: some View {
-        OnboardingView(model: OnboardingViewModel.default)
+        OnboardingView(viewModel: OnboardingViewModel.default)
     }
 }
