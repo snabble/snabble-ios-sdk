@@ -37,25 +37,6 @@ public struct OnboardingItem: Hashable, Codable, Swift.Identifiable, ImageSourci
         case link
     }
 
-    /// enum for all possible footer configurations
-    public enum FooterType {
-        case none
-        case onlyLeft
-        case onlyRight
-        case both
-    }
-    public var footerType: FooterType {
-        if prevButtonTitle == nil, nextButtonTitle == nil {
-            return .none
-        } else if prevButtonTitle != nil, nextButtonTitle == nil {
-            return .onlyLeft
-        } else if nextButtonTitle != nil, prevButtonTitle == nil {
-            return .onlyRight
-        } else {
-            return .both
-        }
-    }
-
     /// convinience init with default nil values for less used properties
     public init(title: String? = nil, imageSource: String?, text: String?, prevButtonTitle: String? = nil, nextButtonTitle: String? = nil, link: String? = nil) {
         self.title = title
