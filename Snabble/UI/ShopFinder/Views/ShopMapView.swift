@@ -95,6 +95,7 @@ public struct ShopAnnotationView: View {
 
 public struct ShopMapView: View {
     var shop: ShopInfoProvider
+    @State var tracking: MapUserTrackingMode = .follow
     
     enum CurrentLocation {
         case shop
@@ -107,13 +108,18 @@ public struct ShopMapView: View {
 
     @ViewBuilder
     var mapView: some View {
-        Map(coordinateRegion: $region, annotationItems: [ShopLocation(shop: shop)]) { place in
+        Map(coordinateRegion: $region,
+            interactionModes: MapInteractionModes.all,
+            showsUserLocation: true,
+            userTrackingMode: $tracking,
+            annotationItems: [ShopLocation(shop: shop)]) { place in
+
             MapAnnotation(coordinate: place.shop.location.coordinate) {
                 ShopAnnotationView(shopLocation: place)
                     .shadow(color: .gray, radius: 3, x: 2, y: 2)
-
+                
             }
-       }
+        }
     }
 
     @ViewBuilder
