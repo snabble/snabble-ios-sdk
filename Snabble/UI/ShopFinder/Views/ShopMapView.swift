@@ -67,7 +67,7 @@ public struct ShopAnnotationView: View {
                     .navigateToShopAlert(isPresented: $showingAlert, shop: shopLocation.shop)
 
                     VStack(alignment: .leading, spacing: 0) {
-                        ShopAddressView(shop: shopLocation.shop)
+                        AddressView(provider: shopLocation.shop)
                     }
                 }
                 .padding(5)

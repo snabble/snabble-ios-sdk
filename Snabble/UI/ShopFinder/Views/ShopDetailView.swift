@@ -16,7 +16,7 @@ public struct ShopDetailView: View {
         VStack(alignment: .center) {
             ShopMapView(shop: shop)
             VStack(spacing: 0) {
-                ShopAddressView(shop: shop)
+                AddressView(provider: shop)
             }
             .padding([.top, .bottom], 20)
 

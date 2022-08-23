@@ -9,30 +9,6 @@ import Foundation
 import CoreLocation
 import SwiftUI
 
-public struct ShopAddressView: View {
-    var shop: ShopInfoProvider
-    
-    public var body: some View {
-        Group {
-            Text(shop.street)
-            Text("\(shop.postalCode) \(shop.city)")
-        }
-    }
-}
-public struct ShopDistanceView: View {
-    var shop: ShopInfoProvider
-    
-    public var body: some View {
-        let distance = ShopViewModel.default.formattedDistance(for: shop)
-        
-        if distance.isEmpty {
-            EmptyView()
-        } else {
-            Text(distance)
-        }
-    }
-}
-
 public struct ShopCellView: View {
     var shop: ShopInfoProvider
     
@@ -43,13 +19,27 @@ public struct ShopCellView: View {
                 .fontWeight(.bold)
                 
                 VStack(alignment: .leading, spacing: 0) {
-                    ShopAddressView(shop: shop)
+                    AddressView(provider: shop)
                 }
                 .font(.subheadline)
                 .foregroundColor(.gray)
             }
             Spacer()
             ShopDistanceView(shop: shop)
+        }
+    }
+}
+
+public struct ShopDistanceView: View {
+    var shop: ShopInfoProvider
+
+    public var body: some View {
+        let distance = ShopViewModel.default.formattedDistance(for: shop)
+
+        if distance.isEmpty {
+            EmptyView()
+        } else {
+            Text(distance)
         }
     }
 }
