@@ -24,9 +24,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         window?.rootViewController = LoadingViewController()
         window?.makeKeyAndVisible()
 
-        // Show onboarding
-//        window?.rootViewController?.present(OnboardingViewController(), animated: false)
-
         snabbleSetup()
 
         return true
@@ -64,6 +61,9 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         tabBarController.viewControllers = [homeNavi, shopsNavi, accountNavi]
 
         window?.rootViewController = tabBarController
+
+        // Show onboarding
+//        window?.rootViewController?.present(OnboardingViewController(), animated: false)
     }
 
     private func setupAppearance() {
