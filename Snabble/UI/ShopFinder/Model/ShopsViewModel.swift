@@ -23,7 +23,11 @@ public final class ShopsViewModel: NSObject, ObservableObject {
         self.locationManager.delegate = self
     }
 
+    /// All available shops
     @Published public private(set) var shops: [ShopProviding]
+
+    /// Current check-in shop
+    @Published public var shop: ShopProviding?
 
     /// distances in meter to a shop by id
     @Published public private(set) var distances: [String: Double]
