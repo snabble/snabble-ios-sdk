@@ -1,5 +1,5 @@
 //
-//  ShowCellView.swift
+//  ShopCellView.swift
 //  Snabble
 //
 //  Created by Uwe Tilemann on 17.08.22.
