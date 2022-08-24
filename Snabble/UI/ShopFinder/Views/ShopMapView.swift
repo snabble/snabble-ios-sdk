@@ -169,7 +169,7 @@ public struct ShopMapView: View {
                 .zIndex(1)
         }
         .onAppear {
-            region = ShopsViewModel.region(for: shop)
+            region = MKCoordinateRegion.region(for: shop)
         }
         .onChange(of: showLocation) { _ in
             showLocation = false

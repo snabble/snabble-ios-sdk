@@ -84,19 +84,6 @@ extension ShopsViewModel: CLLocationManagerDelegate {
     }
 }
 
-extension ShopsViewModel {
-    var userRegion: MKCoordinateRegion? {
-        guard let location = locationManager.location else {
-            return nil
-        }
-        return MKCoordinateRegion(center: location.coordinate, latitudinalMeters: 2000, longitudinalMeters: 2000)
-    }
-
-    static func region(for shop: ShopProviding) -> MKCoordinateRegion {
-        MKCoordinateRegion(center: shop.location.coordinate, latitudinalMeters: 2000, longitudinalMeters: 2000)
-    }
-}
-
 public protocol ShopProviding: AddressProviding {
     var name: String { get }
 
