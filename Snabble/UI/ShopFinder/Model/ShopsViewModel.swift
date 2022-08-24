@@ -169,8 +169,8 @@ public extension LocationProviding {
     }
 
     /// get distance from `location`, in meters
-    func distance(to location: CLLocation) -> CLLocationDistance {
-        self.location.distance(from: location)
+    func distance(from location: CLLocation) -> CLLocationDistance {
+        location.distance(from: location)
     }
 }
 
