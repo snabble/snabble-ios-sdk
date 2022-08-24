@@ -16,7 +16,7 @@ public struct ShopView: View {
 
     public var body: some View {
         VStack(alignment: .center) {
-            ShopMapView(shop: shop, viewModel: viewModel)
+            ShopMapView(shop: shop, userLocation: viewModel.locationManager.location)
             VStack(spacing: 0) {
                 AddressView(provider: shop)
             }

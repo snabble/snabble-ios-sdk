@@ -29,7 +29,7 @@ public final class ShopsViewModel: NSObject, ObservableObject {
     /// distances in meter to an shop by id
     @Published public private(set) var distances: [String: Double]
 
-    private let locationManager: CLLocationManager
+    let locationManager: CLLocationManager
     
     public func distance(for shop: ShopProviding) -> Double? {
         distances[shop.id]

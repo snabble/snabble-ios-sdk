@@ -95,7 +95,8 @@ public struct ShopAnnotationView: View {
 
 public struct ShopMapView: View {
     var shop: ShopProviding
-    @ObservedObject var viewModel: ShopsViewModel
+    var userLocation: CLLocation?
+    
     @State var tracking: MapUserTrackingMode = .follow
     
     enum CurrentLocation {
@@ -163,16 +164,26 @@ public struct ShopMapView: View {
             withAnimation(.easeInOut) {
                 switch currentLocation {
                 case .shop:
-                    region = ShopsViewModel.region(for: shop)
+                    region = MKCoordinateRegion.region(for: shop)
                 case .user:
-                    if let userRegion = viewModel.userRegion {
+                    if let userRegion = userLocation?.region {
                         region = userRegion
-                        // maybe user is moving so update current location
-                        viewModel.startUpdating()
                     }
                 }
             }
         }
 
+    }
+}
+
+extension CLLocation {
+    var region: MKCoordinateRegion? {
+        MKCoordinateRegion(center: coordinate, latitudinalMeters: 2000, longitudinalMeters: 2000)
+    }
+}
+
+extension MKCoordinateRegion {
+    static func region(for shop: ShopProviding) -> MKCoordinateRegion {
+        MKCoordinateRegion(center: shop.location.coordinate, latitudinalMeters: 2000, longitudinalMeters: 2000)
     }
 }
