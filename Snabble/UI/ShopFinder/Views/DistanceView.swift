@@ -12,7 +12,7 @@ public struct DistanceView: View {
     var distance: Double?
 
     public var body: some View {
-        if let distance = distance?.formattedDistance(), !distance.isEmpty {
+        if let distance = distance?.formatted(), !distance.isEmpty {
             Text(distance)
         } else {
             EmptyView()
@@ -23,7 +23,7 @@ public struct DistanceView: View {
 // stuff for displaying formatted numbers
 private extension Double {
     /// format a distance value in meters
-    func formattedDistance() -> String? {
+    func formatted() -> String? {
         let value: Double
         let format: String
         if self < 1000 {
