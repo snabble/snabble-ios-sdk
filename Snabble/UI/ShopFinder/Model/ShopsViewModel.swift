@@ -59,11 +59,11 @@ extension ShopsViewModel: CLLocationManagerDelegate {
             return
         }
 
-        distances.removeAll()
-
-        shops.forEach { shop in
-            distances[shop.id] = shop.distance(from: location)
+        var distances: [String: Double] = [:]
+        shops.forEach {
+            distances[$0.id] = $0.distance(from: location)
         }
+        self.distances = distances
 
         shops = shops.sorted { lhs, rhs in
             lhs.distance(from: location) < rhs.distance(from: location)
