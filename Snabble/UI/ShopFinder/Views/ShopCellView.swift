@@ -11,16 +11,7 @@ import SwiftUI
 
 public struct ShopCellView: View {
     let shop: ShopProviding
-    let distance: Double?
-
-    @Binding var currentShop: ShopProviding?
-
-    private var isCurrentShop: Bool {
-        guard let currentShop = currentShop else {
-            return false
-        }
-        return currentShop.id == shop.id
-    }
+    @ObservedObject var viewModel: ShopsViewModel
     
     public var body: some View {
         HStack {
@@ -34,11 +25,11 @@ public struct ShopCellView: View {
                 }
             }
             Spacer()
-            if isCurrentShop {
+            if viewModel.isCurrent(shop) {
                 Text(key: "Snabble.Shop.Finder.youarehere")
                     .youAreHereStyle()
             } else {
-                DistanceView(distance: distance)
+                DistanceView(distance: viewModel.distance(from: shop))
                     .secondaryStyle()
             }
         }

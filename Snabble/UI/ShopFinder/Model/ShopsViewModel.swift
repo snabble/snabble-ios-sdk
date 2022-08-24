@@ -36,6 +36,13 @@ public final class ShopsViewModel: NSObject, ObservableObject {
         distances[shop.id]
     }
 
+    public func isCurrent(_ shop: ShopProviding) -> Bool {
+        guard let currentShop = self.shop else {
+            return false
+        }
+        return currentShop.id == shop.id
+    }
+
     let locationManager: CLLocationManager
 
     public func startUpdating() {
