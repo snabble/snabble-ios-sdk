@@ -140,3 +140,57 @@ extension ShopViewModel {
         endingItem.openInMaps(launchOptions: [MKLaunchOptionsDirectionsModeKey: MKLaunchOptionsDirectionsModeDriving])
     }
 }
+
+import CoreLocation
+
+/// Protocol to provide address information
+public protocol AddressProviding {
+    /// name of an address
+    var name: String { get }
+    /// street
+    var street: String { get }
+    /// postal code
+    var postalCode: String { get }
+    /// city
+    var city: String { get }
+}
+
+/// Protocol to provide location
+public protocol LocationProviding {
+    /// latitude
+    var latitude: Double { get }
+    /// longitude
+    var longitude: Double { get }
+}
+
+public extension LocationProviding {
+    /// convenience accessor for the shop's location
+    var location: CLLocation {
+        CLLocation(latitude: latitude, longitude: longitude)
+    }
+
+    /// get distance from `location`, in meters
+    func distance(to location: CLLocation) -> CLLocationDistance {
+        self.location.distance(from: location)
+    }
+}
+
+/// Protocol to provide country information
+public protocol CountryProviding {
+    /// state
+    var state: String { get }
+    /// country
+    var country: String { get }
+    /// optional country code
+    var countryCode: String? { get }
+}
+
+/// Protocol to provide communication information
+public protocol CommunicationProviding {
+    /// email address
+    var email: String { get }
+    /// phone number
+    var phone: String { get }
+}
+
+public typealias ShopInfoProvider = AddressProviding & LocationProviding & CountryProviding & CommunicationProviding
