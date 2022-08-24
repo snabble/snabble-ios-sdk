@@ -30,24 +30,47 @@ public struct ShopCellView: View {
 
                 VStack(alignment: .leading, spacing: 0) {
                     AddressView(provider: shop)
-                        .font(.subheadline)
-                        .foregroundColor(.gray)
+                        .secondaryStyle()
                 }
             }
             Spacer()
             if isCurrentShop {
                 Text(key: "Snabble.Shop.Finder.youarehere")
-                    .font(.footnote)
-                    .foregroundColor(Color.onAccent())
-                    .padding(.horizontal, 8)
-                    .padding(.vertical, 4)
-                    .background(Color.accent())
-                    .cornerRadius(16)
+                    .youAreHereStyle()
             } else {
                 DistanceView(distance: distance)
-                    .font(.subheadline)
-                    .foregroundColor(.gray)
+                    .secondaryStyle()
             }
         }
+    }
+}
+
+private struct Secondary: ViewModifier {
+    func body(content: Content) -> some View {
+        content
+            .font(.subheadline)
+            .foregroundColor(.gray)
+    }
+}
+
+private struct YouAreHere: ViewModifier {
+    func body(content: Content) -> some View {
+        content
+           .font(.footnote)
+           .foregroundColor(Color.onAccent())
+           .padding(.horizontal, 8)
+           .padding(.vertical, 4)
+           .background(Color.accent())
+           .cornerRadius(16)
+    }
+}
+
+private extension View {
+    func youAreHereStyle() -> some View {
+        modifier(YouAreHere())
+    }
+
+    func secondaryStyle() -> some View {
+        modifier(Secondary())
     }
 }
