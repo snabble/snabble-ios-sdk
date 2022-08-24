@@ -13,6 +13,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
     var window: UIWindow?
 
+    var shopsViewController: ShopsViewController?
+
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
 
         Asset.provider = self
@@ -34,7 +36,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         let APPSECRET = "2TKKEG5KXWY6DFOGTZKDUIBTNIRVCYKFZBY32FFRUUWIUAFEIBHQ===="
         let apiConfig = SnabbleSDK.Config(appId: APPID, secret: APPSECRET, environment: .staging)
 
-        Snabble.setup(config: apiConfig) { snabble in
+        Snabble.setup(config: apiConfig) { [unowned self] snabble in
             // initial config parsed/loaded
             guard let project = snabble.projects.first else {
                 fatalError("project initialization failed - make sure APPID and APPSECRET are valid")
@@ -42,6 +44,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
             // register the project with the UI components
             SnabbleUI.register(project)
+            snabble.checkInManager.delegate = self
             snabble.checkInManager.shop = project.shops.first
 
             // initialize the product database for this project
@@ -53,16 +56,19 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     }
 
     private func transitionView(with shops: [Shop]) {
-        let shopsVC = ShopsViewController(shops: shops)
-        let accountVC = AccountViewController()
-        let homeVC = HomeViewController(shop: shops.first!)
+        let shopsViewController = ShopsViewController(shops: shops)
+        shopsViewController.viewModel.shop = Snabble.shared.checkInManager.shop
+        self.shopsViewController = shopsViewController
+        
+        let accountViewController = AccountViewController()
+        let homeViewController = HomeViewController(shop: shops.first!)
 
         let tabBarController = UITabBarController()
-        tabBarController.viewControllers = [homeVC, shopsVC, accountVC]
+        tabBarController.viewControllers = [homeViewController, shopsViewController, accountViewController]
 
         window?.rootViewController = tabBarController
 
-        // showOnboarding(on: tabBarController)
+//        showOnboarding(on: tabBarController)
     }
 
     private func showOnboarding(on viewController: UIViewController) {
@@ -105,5 +111,23 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 extension AppDelegate: OnboardingViewControllerDelegate {
     func onboardingViewControllerDidFinish(_ viewController: OnboardingViewController) {
         viewController.presentingViewController?.dismiss(animated: true)
+    }
+}
+
+import CoreLocation
+
+extension AppDelegate: CheckInManagerDelegate {
+    func checkInManager(_ checkInManager: CheckInManager, locationAuthorizationNotGranted authorizationStatus: CLAuthorizationStatus) {}
+
+    func checkInManager(_ checkInManager: CheckInManager, locationAccuracyNotSufficient accuracyAuthorization: CLAccuracyAuthorization) {}
+
+    func checkInManager(_ checkInManager: CheckInManager, didFailWithError error: Error) {}
+
+    func checkInManager(_ checkInManager: CheckInManager, didCheckInTo shop: Shop) {
+        shopsViewController?.viewModel.shop = shop
+    }
+
+    func checkInManager(_ checkInManager: CheckInManager, didCheckOutOf shop: Shop) {
+        shopsViewController?.viewModel.shop = nil
     }
 }

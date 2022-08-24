@@ -23,16 +23,27 @@ public final class ShopsViewModel: NSObject, ObservableObject {
         self.locationManager.delegate = self
     }
 
+    /// All available shops
     @Published public private(set) var shops: [ShopProviding]
 
-    /// distances in meter to a shop by id
-    @Published public private(set) var distances: [String: Double]
+    /// Current check-in shop
+    @Published public var shop: ShopProviding?
 
-    let locationManager: CLLocationManager
-    
-    public func distance(for shop: ShopProviding) -> Double? {
+    /// distances in meter to a shop by id
+    @Published private(set) var distances: [String: Double]
+
+    public func distance(from shop: ShopProviding) -> Double? {
         distances[shop.id]
     }
+
+    public func isCurrent(_ shop: ShopProviding) -> Bool {
+        guard let currentShop = self.shop else {
+            return false
+        }
+        return currentShop.id == shop.id
+    }
+
+    let locationManager: CLLocationManager
 
     public func startUpdating() {
         locationManager.startUpdatingLocation()
@@ -59,11 +70,11 @@ extension ShopsViewModel: CLLocationManagerDelegate {
             return
         }
 
-        distances.removeAll()
-
-        shops.forEach { shop in
-            distances[shop.id] = shop.distance(from: location)
+        var distances: [String: Double] = [:]
+        shops.forEach {
+            distances[$0.id] = $0.distance(from: location)
         }
+        self.distances = distances
 
         shops = shops.sorted { lhs, rhs in
             lhs.distance(from: location) < rhs.distance(from: location)
