@@ -9,7 +9,6 @@ import SwiftUI
 
 public struct ShopsView: View {
     @ObservedObject public var viewModel: ShopsViewModel
-    @State public var shops: [ShopInfoProvider] = []
 
     public init(shops: [ShopInfoProvider]) {
         self.viewModel = ShopsViewModel(shops: shops)
@@ -18,7 +17,7 @@ public struct ShopsView: View {
     public var body: some View {
         NavigationView {
             VStack {
-                List(shops, id: \.id) { shop in
+                List(viewModel.shops, id: \.id) { shop in
                     NavigationLink {
                         ShopView(shop: shop, viewModel: viewModel)
                     } label: {
@@ -37,7 +36,7 @@ public struct ShopsView: View {
             viewModel.stopUpdating()
         }
         .onChange(of: viewModel.distances) { _ in
-            shops = viewModel.shops
+            viewModel.shops = viewModel.shops
         }
         .navigationViewStyle(.stack)
     }
