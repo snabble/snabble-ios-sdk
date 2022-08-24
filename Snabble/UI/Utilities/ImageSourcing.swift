@@ -26,17 +26,6 @@ extension ImageSourcing {
     }
 }
 
-extension SwiftUI.Image {
-    // Shop.Finder.Map.pin - pin.fill
-    init(named name: String, systemName: String) {
-        if let image: UIImage = Asset.image(named: name) {
-            self.init(uiImage: image.withRenderingMode(.alwaysTemplate))
-        } else {
-            self.init(systemName: systemName)
-        }
-    }
-}
-
 extension ImageSourcing {
     /// Resolve `imageSource` to `Image` or `nil` if nothing is available
     public var image: SwiftUI.Image? {

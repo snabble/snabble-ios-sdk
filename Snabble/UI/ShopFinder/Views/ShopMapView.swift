@@ -55,7 +55,7 @@ public struct ShopAnnotationView: View {
                     Button(action: {
                         showingAlert.toggle()
                     }) {
-                        SwiftUI.Image(named: "car.fill", systemName: "car.fill")
+                        SwiftUI.Image.image(named: "car.fill")
                             .resizable()
                             .scaledToFit()
                             .frame(width: 24, height: 24)
