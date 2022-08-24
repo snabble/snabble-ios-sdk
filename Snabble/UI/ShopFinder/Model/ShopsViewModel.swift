@@ -18,7 +18,7 @@ public final class ShopsViewModel: NSObject, ObservableObject {
         super.init()
     }
 
-    @Published public var shops: [ShopInfoProvider] = []
+    @Published public var shops: [ShopInfoProvider]
 
     private let locationManager = CLLocationManager()
 
@@ -28,7 +28,7 @@ public final class ShopsViewModel: NSObject, ObservableObject {
     public var userLocation: CLLocation? {
         locationManager.location
     }
-    
+
     public func distance(for shop: ShopInfoProvider) -> Double {
         return distances[shop.id] ?? 0
     }
