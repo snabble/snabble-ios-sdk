@@ -10,14 +10,10 @@ import CoreLocation
 import SwiftUI
 
 public struct ShopCellView: View {
-    var shop: ShopProviding
+    let shop: ShopProviding
+    let distance: Double?
 
-    @Binding var distances: [String: Double]
     @Binding var currentShop: ShopProviding?
-
-    private var distance: Double? {
-        distances[shop.id]
-    }
 
     private var isCurrentShop: Bool {
         guard let currentShop = currentShop else {
