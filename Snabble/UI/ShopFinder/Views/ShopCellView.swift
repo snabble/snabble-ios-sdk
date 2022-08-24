@@ -61,7 +61,7 @@ private struct YouAreHere: ViewModifier {
            .padding(.horizontal, 8)
            .padding(.vertical, 4)
            .background(Color.accent())
-           .cornerRadius(16)
+           .clipShape(Capsule())
     }
 }
 
