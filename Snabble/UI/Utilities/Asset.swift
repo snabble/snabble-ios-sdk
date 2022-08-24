@@ -20,8 +20,25 @@ public enum Asset {
         provider?.color(named: name, domain: domain) ?? UIColor(named: name, in: BundleToken.bundle, compatibleWith: nil)
     }
 
+    public static func color(named name: String, domain: Any? = domain) -> SwiftUI.Color? {
+        if let color: SwiftUI.Color = provider?.color(named: name, domain: domain) {
+            return color
+        }
+
+        if UIColor(named: name, in: BundleToken.bundle, compatibleWith: nil) != nil {
+            return SwiftUI.Color(name, bundle: BundleToken.bundle)
+        }
+
+        return nil
+    }
+
     public static func preferredFont(forTextStyle style: UIFont.TextStyle, domain: Any? = domain) -> UIFont {
         provider?.preferredFont(forTextStyle: style, weight: nil, domain: domain) ?? .preferredFont(forTextStyle: style)
+    }
+
+    static func preferredFont(forTextStyle style: UIFont.TextStyle, domain: Any? = domain) -> Font {
+        let uiFont: UIFont = Asset.preferredFont(forTextStyle: style, domain: domain)
+        return SwiftUI.Font.custom(uiFont.familyName, size: uiFont.pointSize, relativeTo: style.textStyle)
     }
 
     public static func preferredFont(forTextStyle style: UIFont.TextStyle, weight: UIFont.Weight, domain: Any? = domain) -> UIFont {
@@ -69,24 +86,6 @@ private final class BundleToken {
       return SnabbleSDKBundle.main
 #endif
   }()
-}
-
-extension Asset {
-    static func color(named name: String, domain: Any? = domain) -> SwiftUI.Color? {
-        guard let uiColor: UIColor = Asset.color(named: name, domain: domain) else {
-            return nil
-        }
-        if #available(iOS 15.0, *) {
-            return SwiftUI.Color(uiColor: uiColor)
-        } else {
-            return SwiftUI.Color(uiColor)
-        }
-    }
-
-    static func preferredFont(forTextStyle style: UIFont.TextStyle, domain: Any? = domain) -> Font {
-        let uiFont: UIFont = Asset.preferredFont(forTextStyle: style, domain: domain)
-        return SwiftUI.Font.custom(uiFont.familyName, size: uiFont.pointSize, relativeTo: style.textStyle)
-    }
 }
 
 private extension UIFont.TextStyle {
