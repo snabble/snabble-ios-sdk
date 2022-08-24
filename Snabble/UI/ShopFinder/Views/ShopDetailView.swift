@@ -11,7 +11,7 @@ import SwiftUI
 public struct ShopDetailView: View {
     var shop: ShopInfoProvider
 
-    @ObservedObject var viewModel: ShopViewModel
+    @ObservedObject var viewModel: ShopFinderViewModel
     @State private var showingAlert = false
 
     public var body: some View {

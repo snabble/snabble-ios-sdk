@@ -62,7 +62,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
         window?.rootViewController = tabBarController
 
-        //showOnboarding(on: tabBarController)
+        // showOnboarding(on: tabBarController)
     }
 
     private func showOnboarding(on viewController: UIViewController) {

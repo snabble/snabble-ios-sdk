@@ -11,7 +11,7 @@ import SwiftUI
 
 public struct ShopCellView: View {
     var shop: ShopInfoProvider
-    @ObservedObject var viewModel: ShopViewModel
+    @ObservedObject var viewModel: ShopFinderViewModel
     
     public var body: some View {
         HStack {
@@ -33,7 +33,7 @@ public struct ShopCellView: View {
 
 public struct ShopDistanceView: View {
     var shop: ShopInfoProvider
-    @ObservedObject var viewModel: ShopViewModel
+    @ObservedObject var viewModel: ShopFinderViewModel
 
     public var body: some View {
         let distance = viewModel.formattedDistance(for: shop)

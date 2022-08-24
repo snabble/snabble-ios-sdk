@@ -8,11 +8,11 @@
 import SwiftUI
 
 public struct ShopFinderView: View {
-    @ObservedObject public var viewModel: ShopViewModel
+    @ObservedObject public var viewModel: ShopFinderViewModel
     @State public var shops: [ShopInfoProvider] = []
 
     public init(shops: [ShopInfoProvider]) {
-        self.viewModel = ShopViewModel(shops: shops)
+        self.viewModel = ShopFinderViewModel(shops: shops)
     }
 
     public var body: some View {

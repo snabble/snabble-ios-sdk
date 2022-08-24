@@ -21,7 +21,7 @@ extension View {
             Alert(title: Text("Snabble.Shop.Detail.startNavigation"),
                   message: Text("\(shop.street)\n\(shop.postalCode) \(shop.city)"),
                   primaryButton: .destructive(Text("Snabble.yes")) {
-                ShopViewModel.navigate(to: shop)
+                ShopFinderViewModel.navigate(to: shop)
             },
                   secondaryButton: .cancel())
         }
@@ -95,7 +95,7 @@ public struct ShopAnnotationView: View {
 
 public struct ShopMapView: View {
     var shop: ShopInfoProvider
-    @ObservedObject var viewModel: ShopViewModel
+    @ObservedObject var viewModel: ShopFinderViewModel
     @State var tracking: MapUserTrackingMode = .follow
     
     enum CurrentLocation {
@@ -156,14 +156,14 @@ public struct ShopMapView: View {
                 .zIndex(1)
         }
         .onAppear {
-            region = ShopViewModel.region(for: shop)
+            region = ShopFinderViewModel.region(for: shop)
         }
         .onChange(of: showLocation) { _ in
             showLocation = false
             withAnimation(.easeInOut) {
                 switch currentLocation {
                 case .shop:
-                    region = ShopViewModel.region(for: shop)
+                    region = ShopFinderViewModel.region(for: shop)
                 case .user:
                     if let userRegion = viewModel.userRegion {
                         region = userRegion

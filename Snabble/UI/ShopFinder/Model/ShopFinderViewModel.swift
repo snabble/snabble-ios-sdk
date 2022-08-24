@@ -1,5 +1,5 @@
 //
-//  ShopViewModel.swift
+//  ShopFinderViewModel.swift
 //  Snabble
 //
 //  Created by Uwe Tilemann on 17.08.22.
@@ -11,10 +11,11 @@ import CoreLocation
 import MapKit
 import Contacts
 
-/// ShopViewModel for objects implermenting the ShopInfoProvider protocol
-public final class ShopViewModel: NSObject, ObservableObject {
+/// ShopFinderViewModel for objects implermenting the ShopInfoProvider protocol
+public final class ShopFinderViewModel: NSObject, ObservableObject {
     public init(shops: [ShopInfoProvider]) {
         self.shops = shops
+        super.init()
     }
 
     @Published public var shops: [ShopInfoProvider] = []
@@ -78,7 +79,7 @@ extension LocationProviding {
     }
 }
 
-extension ShopViewModel: CLLocationManagerDelegate {
+extension ShopFinderViewModel: CLLocationManagerDelegate {
     public func locationManager(_ manager: CLLocationManager, didChangeAuthorization status: CLAuthorizationStatus) {
 
         switch status {
@@ -115,7 +116,7 @@ extension ShopViewModel: CLLocationManagerDelegate {
     }
 }
 
-extension ShopViewModel {
+extension ShopFinderViewModel {
     var userRegion: MKCoordinateRegion? {
         guard let location = userLocation else {
             return nil
@@ -128,7 +129,7 @@ extension ShopViewModel {
     }
 }
 
-extension ShopViewModel {
+extension ShopFinderViewModel {
     static func navigate(to shop: ShopInfoProvider) {
         let endingItem = MKMapItem(placemark: MKPlacemark(coordinate: CLLocationCoordinate2DMake(shop.latitude, shop.longitude),
                                                           addressDictionary: [
@@ -140,8 +141,6 @@ extension ShopViewModel {
         endingItem.openInMaps(launchOptions: [MKLaunchOptionsDirectionsModeKey: MKLaunchOptionsDirectionsModeDriving])
     }
 }
-
-import CoreLocation
 
 /// Protocol to provide address information
 public protocol AddressProviding {

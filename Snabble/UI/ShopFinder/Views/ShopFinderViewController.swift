@@ -11,7 +11,7 @@ import SwiftUI
 
 /// A UIViewController wrapping SwiftUI's ShopFinderView
 open class ShopFinderViewController: UIHostingController<ShopFinderView> {
-    var viewModel: ShopViewModel {
+    var viewModel: ShopFinderViewModel {
         rootView.viewModel
     }
 
