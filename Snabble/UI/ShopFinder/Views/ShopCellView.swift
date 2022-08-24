@@ -30,18 +30,3 @@ public struct ShopCellView: View {
         }
     }
 }
-
-public struct ShopDistanceView: View {
-    var shop: ShopInfoProvider
-    @ObservedObject var viewModel: ShopsViewModel
-
-    public var body: some View {
-        let distance = viewModel.formattedDistance(for: shop)
-
-        if distance.isEmpty {
-            EmptyView()
-        } else {
-            Text(distance)
-        }
-    }
-}

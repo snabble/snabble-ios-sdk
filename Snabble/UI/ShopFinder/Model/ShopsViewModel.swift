@@ -15,33 +15,34 @@ import Contacts
 public final class ShopsViewModel: NSObject, ObservableObject {
     public init(shops: [ShopInfoProvider]) {
         self.shops = shops
+        self.distances = [:]
+        self.locationManager = CLLocationManager()
+        
         super.init()
+
+        self.locationManager.desiredAccuracy = kCLLocationAccuracyHundredMeters
+        self.locationManager.delegate = self
     }
 
     @Published public var shops: [ShopInfoProvider]
 
-    private let locationManager = CLLocationManager()
-
     /// distances in meter to an shop by id
-    @Published var distances = [String: Double]()
+    @Published var distances: [String: Double]
+
+    private let locationManager: CLLocationManager
 
     public var userLocation: CLLocation? {
         locationManager.location
     }
-
-    public func distance(for shop: ShopInfoProvider) -> Double {
-        return distances[shop.id] ?? 0
-    }
     
-    public func formattedDistance(for shop: ShopInfoProvider) -> String {
+    public func distance(for shop: ShopInfoProvider) -> String? {
         guard let value = distances[shop.id] else {
-            return ""
+            return nil
         }
         return value.formattedDistance()
     }
 
     public func startUpdating() {
-        locationManager.delegate = self
         locationManager.startUpdatingLocation()
     }
 
@@ -95,16 +96,16 @@ extension ShopsViewModel: CLLocationManagerDelegate {
         guard let location = locations.last else {
             return
         }
-        
-        shops.forEach {
-            distances[$0.id] = $0.distance(from: location)
+
+        distances.removeAll()
+
+        shops.forEach { shop in
+            distances[shop.id] = shop.distance(from: location)
         }
 
         shops = shops.sorted { lhs, rhs in
             lhs.distance(from: location) < rhs.distance(from: location)
         }
-        
-        manager.stopUpdatingLocation()
     }
 
     public func locationManager(_ manager: CLLocationManager, didFailWithError error: Error) {
@@ -174,7 +175,7 @@ public extension LocationProviding {
 
     /// get distance from `location`, in meters
     func distance(from location: CLLocation) -> CLLocationDistance {
-        location.distance(from: location)
+        self.location.distance(from: location)
     }
 }
 
