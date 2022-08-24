@@ -74,7 +74,7 @@ private final class BundleToken {
 extension Asset {
     static func color(named name: String, domain: Any? = domain) -> SwiftUI.Color? {
         guard let uiColor: UIColor = Asset.color(named: name, domain: domain) else {
-            return SwiftUI.Color(name)
+            return nil
         }
         if #available(iOS 15.0, *) {
             return SwiftUI.Color(uiColor: uiColor)
