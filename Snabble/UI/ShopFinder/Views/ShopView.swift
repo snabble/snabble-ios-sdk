@@ -27,7 +27,7 @@ public struct ShopView: View {
                 Asset.image(named: "location")
                     .font(.subheadline)
                     .foregroundColor(.gray)
-                ShopDistanceView(shop: shop, distance: viewModel.distance(for: shop))
+                ShopDistanceView(distance: viewModel.distance(for: shop))
                 Button(action: {
                     showingAlert.toggle()
                 }) {

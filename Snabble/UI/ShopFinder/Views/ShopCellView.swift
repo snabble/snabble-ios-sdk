@@ -26,7 +26,7 @@ public struct ShopCellView: View {
                 .foregroundColor(.gray)
             }
             Spacer()
-            ShopDistanceView(shop: shop, distance: distance)
+            ShopDistanceView(distance: distance)
         }
     }
 }

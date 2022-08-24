@@ -9,7 +9,6 @@ import Foundation
 import SwiftUI
 
 public struct ShopDistanceView: View {
-    var shop: ShopInfoProvider
     var distance: String?
 
     public var body: some View {
