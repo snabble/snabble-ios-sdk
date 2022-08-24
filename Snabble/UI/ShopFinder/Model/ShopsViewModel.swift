@@ -51,7 +51,7 @@ public final class ShopsViewModel: NSObject, ObservableObject {
 }
 
 // stuff for displaying formatted numbers
-extension Double {
+private extension Double {
     /// format a distance value in meters
     func formattedDistance() -> String {
         let value: Double
