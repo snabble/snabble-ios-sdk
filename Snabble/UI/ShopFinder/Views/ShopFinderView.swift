@@ -36,7 +36,7 @@ public struct ShopFinderView: View {
         .onDisappear {
             viewModel.stopUpdating()
         }
-        .onChange(of: viewModel.distancesAvailable) { _ in
+        .onChange(of: viewModel.distances) { _ in
             shops = viewModel.shops
         }
         .navigationViewStyle(.stack)

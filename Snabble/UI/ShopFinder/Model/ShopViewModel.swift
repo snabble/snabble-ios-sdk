@@ -20,12 +20,13 @@ public final class ShopViewModel: NSObject, ObservableObject {
     @Published public var shops: [ShopInfoProvider] = []
 
     private let locationManager = CLLocationManager()
-    
-    private var distances = [String: Double]()  // shop.id -> distance
 
-    @Published var distancesAvailable = false
+    /// distances in meter to an shop by id
+    @Published var distances = [String: Double]()
 
-    public var userLocation: CLLocation?
+    public var userLocation: CLLocation? {
+        locationManager.location
+    }
     
     public func distance(for shop: ShopInfoProvider) -> Double {
         return distances[shop.id] ?? 0
@@ -80,11 +81,12 @@ extension LocationProviding {
 extension ShopViewModel: CLLocationManagerDelegate {
     public func locationManager(_ manager: CLLocationManager, didChangeAuthorization status: CLAuthorizationStatus) {
 
-        if status == .authorizedWhenInUse {
-            self.locationManager.startUpdatingLocation()
-        } else {
-            self.locationManager.stopUpdatingLocation()
-            self.distances.removeAll()
+        switch status {
+        case .authorizedAlways, .authorizedWhenInUse:
+            manager.startUpdatingLocation()
+        case .denied, .restricted, .notDetermined:
+            manager.stopUpdatingLocation()
+            distances.removeAll()
         }
     }
 
@@ -92,15 +94,12 @@ extension ShopViewModel: CLLocationManagerDelegate {
         guard let location = locations.last else {
             return
         }
-
-        userLocation = location
         
         self.shops.forEach {
             self.distances[$0.id] = $0.distance(to: location)
         }
-        self.distancesAvailable = true
         
-        locationManager.stopUpdatingLocation()
+        manager.stopUpdatingLocation()
     }
 
     public func locationManager(_ manager: CLLocationManager, didFailWithError error: Error) {
@@ -111,7 +110,6 @@ extension ShopViewModel: CLLocationManagerDelegate {
 
             if error.code == .denied {
                 manager.requestAlwaysAuthorization()
-                self.distancesAvailable = false
             }
         }
     }
