@@ -26,7 +26,8 @@ public struct ShopsView: View {
                     } label: {
                         ShopCellView(
                             shop: shop,
-                            distance: viewModel.distance(for: shop)
+                            distances: $viewModel.distances,
+                            currentShop: $viewModel.shop
                         )
                     }
                 }
