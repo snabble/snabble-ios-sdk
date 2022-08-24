@@ -96,8 +96,12 @@ extension ShopsViewModel: CLLocationManagerDelegate {
             return
         }
         
-        self.shops.forEach {
-            self.distances[$0.id] = $0.distance(to: location)
+        shops.forEach {
+            distances[$0.id] = $0.distance(from: location)
+        }
+
+        shops = shops.sorted { lhs, rhs in
+            lhs.distance(from: location) < rhs.distance(from: location)
         }
         
         manager.stopUpdatingLocation()
