@@ -30,10 +30,6 @@ public final class ShopsViewModel: NSObject, ObservableObject {
     @Published var distances: [String: Double]
 
     private let locationManager: CLLocationManager
-
-    public var userLocation: CLLocation? {
-        locationManager.location
-    }
     
     public func distance(for shop: ShopInfoProvider) -> String? {
         guard let value = distances[shop.id] else {
@@ -123,7 +119,7 @@ extension ShopsViewModel: CLLocationManagerDelegate {
 
 extension ShopsViewModel {
     var userRegion: MKCoordinateRegion? {
-        guard let location = userLocation else {
+        guard let location = locationManager.location else {
             return nil
         }
         return MKCoordinateRegion(center: location.coordinate, latitudinalMeters: 2000, longitudinalMeters: 2000)
