@@ -20,7 +20,7 @@ extension View {
         self.alert(isPresented: isPresented) {
             Alert(title: Text("Snabble.Shop.Detail.startNavigation"),
                   message: Text("\(shop.street)\n\(shop.postalCode) \(shop.city)"),
-                  primaryButton: .destructive(Text("Snabble.yes")) {
+                  primaryButton: .destructive(Text(key: "Snabble.yes")) {
                 ShopsViewModel.navigate(to: shop)
             },
                   secondaryButton: .cancel())
