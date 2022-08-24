@@ -20,7 +20,7 @@ public struct ShopsView: View {
                 List(viewModel.shops, id: \.id) { shop in
                     ShopCellView(
                         shop: shop,
-                        distance: viewModel.distances[shop.id],
+                        distance: viewModel.distance(from: shop),
                         currentShop: $viewModel.shop
                     )
                 }
