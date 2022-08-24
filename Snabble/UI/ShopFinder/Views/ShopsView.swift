@@ -1,5 +1,5 @@
 //
-//  ShopFinderView.swift
+//  ShopsView.swift
 //  Snabble
 //
 //  Created by Uwe Tilemann on 17.08.22.
@@ -7,12 +7,12 @@
 
 import SwiftUI
 
-public struct ShopFinderView: View {
-    @ObservedObject public var viewModel: ShopFinderViewModel
+public struct ShopsView: View {
+    @ObservedObject public var viewModel: ShopsViewModel
     @State public var shops: [ShopInfoProvider] = []
 
     public init(shops: [ShopInfoProvider]) {
-        self.viewModel = ShopFinderViewModel(shops: shops)
+        self.viewModel = ShopsViewModel(shops: shops)
     }
 
     public var body: some View {
@@ -20,7 +20,7 @@ public struct ShopFinderView: View {
             VStack {
                 List(shops, id: \.id) { shop in
                     NavigationLink {
-                        ShopDetailView(shop: shop, viewModel: viewModel)
+                        ShopView(shop: shop, viewModel: viewModel)
                     } label: {
                         ShopCellView(shop: shop, viewModel: viewModel)
                     }
@@ -45,6 +45,6 @@ public struct ShopFinderView: View {
 
 struct ShopFinderView_Previews: PreviewProvider {    
     static var previews: some View {
-        ShopFinderView(shops: [])
+        ShopsView(shops: [])
     }
 }

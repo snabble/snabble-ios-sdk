@@ -1,5 +1,5 @@
 //
-//  ShopFinderViewModel.swift
+//  ShopsViewModel.swift
 //  Snabble
 //
 //  Created by Uwe Tilemann on 17.08.22.
@@ -12,7 +12,7 @@ import MapKit
 import Contacts
 
 /// ShopFinderViewModel for objects implermenting the ShopInfoProvider protocol
-public final class ShopFinderViewModel: NSObject, ObservableObject {
+public final class ShopsViewModel: NSObject, ObservableObject {
     public init(shops: [ShopInfoProvider]) {
         self.shops = shops
         super.init()
@@ -79,7 +79,7 @@ extension LocationProviding {
     }
 }
 
-extension ShopFinderViewModel: CLLocationManagerDelegate {
+extension ShopsViewModel: CLLocationManagerDelegate {
     public func locationManager(_ manager: CLLocationManager, didChangeAuthorization status: CLAuthorizationStatus) {
 
         switch status {
@@ -116,7 +116,7 @@ extension ShopFinderViewModel: CLLocationManagerDelegate {
     }
 }
 
-extension ShopFinderViewModel {
+extension ShopsViewModel {
     var userRegion: MKCoordinateRegion? {
         guard let location = userLocation else {
             return nil
@@ -129,7 +129,7 @@ extension ShopFinderViewModel {
     }
 }
 
-extension ShopFinderViewModel {
+extension ShopsViewModel {
     static func navigate(to shop: ShopInfoProvider) {
         let endingItem = MKMapItem(placemark: MKPlacemark(coordinate: CLLocationCoordinate2DMake(shop.latitude, shop.longitude),
                                                           addressDictionary: [

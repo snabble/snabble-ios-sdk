@@ -1,5 +1,5 @@
 //
-//  ShopDetailView.swift
+//  ShopView.swift
 //  Snabble
 //
 //  Created by Uwe Tilemann on 17.08.22.
@@ -8,10 +8,10 @@
 import Foundation
 import SwiftUI
 
-public struct ShopDetailView: View {
+public struct ShopView: View {
     var shop: ShopInfoProvider
 
-    @ObservedObject var viewModel: ShopFinderViewModel
+    @ObservedObject var viewModel: ShopsViewModel
     @State private var showingAlert = false
 
     public var body: some View {
