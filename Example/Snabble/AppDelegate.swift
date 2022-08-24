@@ -32,7 +32,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     private func snabbleSetup() {
         let APPID = "snabble-sdk-demo-app-oguh3x"
         let APPSECRET = "2TKKEG5KXWY6DFOGTZKDUIBTNIRVCYKFZBY32FFRUUWIUAFEIBHQ===="
-        let apiConfig = SnabbleSDK.Config(appId: APPID, secret: APPSECRET, environment: .testing)
+        let apiConfig = SnabbleSDK.Config(appId: APPID, secret: APPSECRET, environment: .staging)
 
         Snabble.setup(config: apiConfig) { snabble in
             // initial config parsed/loaded
