@@ -11,22 +11,47 @@ import SwiftUI
 
 public struct ShopCellView: View {
     var shop: ShopProviding
-    var distance: Double?
+
+    @Binding var distances: [String: Double]
+    @Binding var currentShop: ShopProviding?
+
+    private var distance: Double? {
+        distances[shop.id]
+    }
+
+    private var isCurrentShop: Bool {
+        guard let currentShop = currentShop else {
+            return false
+        }
+        return currentShop.id == shop.id
+    }
     
     public var body: some View {
         HStack {
-            VStack(alignment: .leading, spacing: 10) {
+            VStack(alignment: .leading, spacing: 8) {
                 Text(shop.name)
-                .fontWeight(.bold)
-                
+                    .fontWeight(.bold)
+
                 VStack(alignment: .leading, spacing: 0) {
                     AddressView(provider: shop)
+                        .font(.subheadline)
+                        .foregroundColor(.gray)
                 }
-                .font(.subheadline)
-                .foregroundColor(.gray)
             }
             Spacer()
-            DistanceView(distance: distance)
+            if isCurrentShop {
+                Text(key: "Snabble.Shop.Finder.youarehere")
+                    .font(.footnote)
+                    .foregroundColor(Color.onAccent())
+                    .padding(.horizontal, 8)
+                    .padding(.vertical, 4)
+                    .background(Color.accent())
+                    .cornerRadius(16)
+            } else {
+                DistanceView(distance: distance)
+                    .font(.subheadline)
+                    .foregroundColor(.gray)
+            }
         }
     }
 }
