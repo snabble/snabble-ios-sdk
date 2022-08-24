@@ -24,7 +24,10 @@ public struct ShopsView: View {
                             viewModel: viewModel
                         )
                     } label: {
-                        ShopCellView(shop: shop, distance: viewModel.distance(for: shop))
+                        ShopCellView(
+                            shop: shop,
+                            distance: viewModel.distance(for: shop)
+                        )
                     }
                 }
                 .listStyle(PlainListStyle())
