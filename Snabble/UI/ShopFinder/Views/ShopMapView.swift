@@ -8,6 +8,7 @@
 import Foundation
 import SwiftUI
 import MapKit
+import Contacts
 
 struct ShopLocation: Swift.Identifiable {
     var id = UUID()
@@ -21,10 +22,21 @@ extension View {
             Alert(title: Text(key: "Snabble.Shop.Detail.startNavigation"),
                   message: Text("\(shop.street)\n\(shop.postalCode) \(shop.city)"),
                   primaryButton: .destructive(Text(key: "Snabble.yes")) {
-                ShopsViewModel.navigate(to: shop)
+                navigate(to: shop)
             },
                   secondaryButton: .cancel())
         }
+    }
+
+    private func navigate(to shop: ShopProviding) {
+        let endingItem = MKMapItem(placemark: MKPlacemark(coordinate: CLLocationCoordinate2DMake(shop.latitude, shop.longitude),
+                                                          addressDictionary: [
+                                                            CNPostalAddressCityKey: shop.city,
+                                                            CNPostalAddressStreetKey: shop.street,
+                                                            CNPostalAddressPostalCodeKey: shop.postalCode,
+                                                            CNPostalAddressISOCountryCodeKey: shop.country
+                                                          ]))
+        endingItem.openInMaps(launchOptions: [MKLaunchOptionsDirectionsModeKey: MKLaunchOptionsDirectionsModeDriving])
     }
 }
 
@@ -35,8 +47,8 @@ public struct ShopAnnotationView: View {
 
     @ViewBuilder
     var mapMarker: some View {
-        if let image: UIImage = Asset.image(named: "Snabble.Shop.Detail.mapPin") {
-            SwiftUI.Image(uiImage: image)
+        if let image: SwiftUI.Image = Asset.image(named: "Snabble.Shop.Detail.mapPin") {
+            image
                 .padding(1)
                 .background(Color.white)
                 .clipShape(RoundedRectangle(cornerRadius: 4))
