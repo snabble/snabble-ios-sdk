@@ -21,15 +21,20 @@ extension AppDelegate: AssetProviding {
     }
 
     func preferredFont(forTextStyle style: UIFont.TextStyle, weight: UIFont.Weight?, domain: Any?) -> UIFont? {
-        UIFont.preferredFont(forTextStyle: style)
+        nil
     }
 
     func image(named name: String, domain: Any?) -> UIImage? {
-        UIImage(named: name)
+        nil
     }
 
     func image(named name: String, domain: Any?) -> SwiftUI.Image? {
-        nil
+        switch name {
+        case "Snabble.Shop.Detail.mapPin":
+            return SwiftUI.Image("scan-off")
+        default:
+            return nil
+        }
     }
 
     func localizedString(forKey: String, arguments: CVarArg..., domain: Any?) -> String? {

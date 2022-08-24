@@ -20,6 +20,7 @@ class HomeViewController: UIViewController {
     init(shop: Shop) {
         self.shop = shop
         self.shoppingCart = ShoppingCart(with: CartConfig(shop: shop))
+
         super.init(nibName: nil, bundle: nil)
 
         self.title = "Snabble"

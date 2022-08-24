@@ -32,7 +32,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     private func snabbleSetup() {
         let APPID = "snabble-sdk-demo-app-oguh3x"
         let APPSECRET = "2TKKEG5KXWY6DFOGTZKDUIBTNIRVCYKFZBY32FFRUUWIUAFEIBHQ===="
-        let apiConfig = SnabbleSDK.Config(appId: APPID, secret: APPSECRET)
+        let apiConfig = SnabbleSDK.Config(appId: APPID, secret: APPSECRET, environment: .staging)
 
         Snabble.setup(config: apiConfig) { snabble in
             // initial config parsed/loaded
@@ -47,22 +47,22 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             // initialize the product database for this project
             let productProvider = snabble.productProvider(for: project)
             productProvider.setup { [unowned self] _ in
-                transitionView(with: project.shops.first!)
+                transitionView(with: project.shops)
             }
         }
     }
 
-    private func transitionView(with shop: Shop) {
-        let shopsNavi = UINavigationController(rootViewController: ShopsViewController())
-        let accountNavi = UINavigationController(rootViewController: AccountViewController())
-        let homeNavi = UINavigationController(rootViewController: HomeViewController(shop: shop))
+    private func transitionView(with shops: [Shop]) {
+        let shopsVC = ShopsViewController(shops: shops)
+        let accountVC = AccountViewController()
+        let homeVC = HomeViewController(shop: shops.first!)
 
         let tabBarController = UITabBarController()
-        tabBarController.viewControllers = [homeNavi, shopsNavi, accountNavi]
+        tabBarController.viewControllers = [homeVC, shopsVC, accountVC]
 
         window?.rootViewController = tabBarController
 
-        showOnboarding(on: tabBarController)
+        // showOnboarding(on: tabBarController)
     }
 
     private func showOnboarding(on viewController: UIViewController) {

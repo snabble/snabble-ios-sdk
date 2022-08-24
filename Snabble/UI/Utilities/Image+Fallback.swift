@@ -9,7 +9,7 @@ import Foundation
 import SwiftUI
 
 extension SwiftUI.Image {
-    static func image(named name: String, systemName: String) -> SwiftUI.Image {
-        Asset.image(named: name) ?? SwiftUI.Image(systemName: systemName)
+    static func image(named name: String, systemName: String? = nil) -> SwiftUI.Image {
+        Asset.image(named: name) ?? SwiftUI.Image(systemName: systemName ?? name)
     }
 }

@@ -1,0 +1,32 @@
+//
+//  PhoneNumberView.swift
+//  Snabble
+//
+//  Created by Uwe Tilemann on 23.08.22.
+//
+
+import SwiftUI
+
+public struct PhoneNumberView: View {
+    var phone: String
+    @Environment(\.openURL) var openURL
+
+    public var body: some View {
+        HStack {
+            Asset.image(named: "phone")
+                .foregroundColor(.gray)
+            Button(action: {
+                openURL(URL(string: "tel:\(phone)")!)
+            }) {
+                Text(phone)
+                    .foregroundColor(Color.accent())
+            }
+        }
+    }
+}
+
+struct PhoneNumberView_Previews: PreviewProvider {
+    static var previews: some View {
+        PhoneNumberView(phone: "+49 228 38764911")
+    }
+}
