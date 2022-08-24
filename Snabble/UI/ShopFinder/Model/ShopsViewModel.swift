@@ -143,18 +143,6 @@ extension ShopsViewModel {
     }
 }
 
-/// Protocol to provide address information
-public protocol AddressProviding {
-    /// name of an address
-    var name: String { get }
-    /// street
-    var street: String { get }
-    /// postal code
-    var postalCode: String { get }
-    /// city
-    var city: String { get }
-}
-
 /// Protocol to provide location
 public protocol LocationProviding {
     /// latitude
@@ -193,4 +181,10 @@ public protocol CommunicationProviding {
     var phone: String { get }
 }
 
-public typealias ShopInfoProvider = AddressProviding & LocationProviding & CountryProviding & CommunicationProviding
+public protocol ShopProviding {
+    var name: String { get }
+}
+
+public typealias ShopInfoProvider = ShopProviding & AddressProviding & LocationProviding & CountryProviding & CommunicationProviding
+
+extension Shop: ShopInfoProvider {}

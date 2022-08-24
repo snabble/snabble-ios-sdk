@@ -18,3 +18,13 @@ public struct AddressView: View {
         }
     }
 }
+
+/// Protocol to provide address information
+public protocol AddressProviding {
+    /// street
+    var street: String { get }
+    /// postal code
+    var postalCode: String { get }
+    /// city
+    var city: String { get }
+}

@@ -19,7 +19,7 @@ public struct CustomerNetworks: Codable {
 }
 
 /// base data for one shop
-public struct Shop: Codable, Identifiable, ShopInfoProvider {
+public struct Shop: Codable, Identifiable {
     /// id of this shop, use this to initialize shopping carts
     public let id: Identifier<Shop>
     /// name of this shop

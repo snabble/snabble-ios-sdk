@@ -21,7 +21,7 @@ public struct ShopsView: View {
                     NavigationLink {
                         ShopView(shop: shop, viewModel: viewModel)
                     } label: {
-                        ShopCellView(shop: shop, viewModel: viewModel)
+                        ShopCellView(shop: shop, distance: viewModel.distance(for: shop))
                     }
                 }
                 .listStyle(PlainListStyle())
@@ -34,9 +34,6 @@ public struct ShopsView: View {
         }
         .onDisappear {
             viewModel.stopUpdating()
-        }
-        .onChange(of: viewModel.distances) { _ in
-            viewModel.shops = viewModel.shops
         }
         .navigationViewStyle(.stack)
     }
