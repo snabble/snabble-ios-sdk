@@ -19,7 +19,10 @@ public struct ShopsView: View {
             VStack {
                 List(viewModel.shops, id: \.id) { shop in
                     NavigationLink {
-                        ShopView(shop: shop, viewModel: viewModel)
+                        ShopView(
+                            shop: shop,
+                            viewModel: viewModel
+                        )
                     } label: {
                         ShopCellView(shop: shop, distance: viewModel.distance(for: shop))
                     }

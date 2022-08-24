@@ -47,7 +47,7 @@ public struct ShopAnnotationView: View {
 
     @ViewBuilder
     var mapMarker: some View {
-        if let image: SwiftUI.Image = Asset.image(named: "Snabble.Shop.Detail.mapPin") {
+        if let image: SwiftUI.Image = Asset.image(named: "Snabble.Shop.Detail.mapPin" ) {
             image
                 .padding(1)
                 .background(Color.white)

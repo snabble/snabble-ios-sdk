@@ -15,7 +15,7 @@ public struct ShopView: View {
     @State private var showingAlert = false
 
     public var body: some View {
-        VStack(alignment: .center) {
+        VStack(alignment: .center ) {
             ShopMapView(shop: shop, userLocation: viewModel.locationManager.location)
             VStack(spacing: 0) {
                 AddressView(provider: shop)
