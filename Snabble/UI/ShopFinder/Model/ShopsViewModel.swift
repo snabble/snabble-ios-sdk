@@ -33,10 +33,6 @@ public final class ShopsViewModel: NSObject, ObservableObject {
     @Published public internal(set) var distances: [String: Double]
 
     let locationManager: CLLocationManager
-    
-    public func distance(for shop: ShopProviding) -> Double? {
-        distances[shop.id]
-    }
 
     public func startUpdating() {
         locationManager.startUpdatingLocation()
