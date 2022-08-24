@@ -81,9 +81,8 @@ extension ShopsViewModel: CLLocationManagerDelegate {
 
         switch status {
         case .authorizedAlways, .authorizedWhenInUse:
-            manager.startUpdatingLocation()
+            break
         case .denied, .restricted, .notDetermined:
-            manager.stopUpdatingLocation()
             distances.removeAll()
         }
     }
@@ -112,6 +111,7 @@ extension ShopsViewModel: CLLocationManagerDelegate {
 
             if error.code == .denied {
                 manager.requestAlwaysAuthorization()
+                distances.removeAll()
             }
         }
     }
