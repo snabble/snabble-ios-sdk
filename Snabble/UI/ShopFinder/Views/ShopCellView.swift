@@ -10,8 +10,8 @@ import CoreLocation
 import SwiftUI
 
 public struct ShopCellView: View {
-    var shop: ShopInfoProvider
-    var distance: String?
+    var shop: ShopProviding
+    var distance: Double?
     
     public var body: some View {
         HStack {
@@ -26,7 +26,7 @@ public struct ShopCellView: View {
                 .foregroundColor(.gray)
             }
             Spacer()
-            ShopDistanceView(distance: distance)
+            DistanceView(distance: distance)
         }
     }
 }

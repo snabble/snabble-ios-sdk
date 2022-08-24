@@ -13,7 +13,7 @@ import Contacts
 
 /// ShopFinderViewModel for objects implermenting the ShopInfoProvider protocol
 public final class ShopsViewModel: NSObject, ObservableObject {
-    public init(shops: [ShopInfoProvider]) {
+    public init(shops: [ShopProviding]) {
         self.shops = shops
         self.distances = [:]
         self.locationManager = CLLocationManager()
@@ -24,18 +24,15 @@ public final class ShopsViewModel: NSObject, ObservableObject {
         self.locationManager.delegate = self
     }
 
-    @Published public var shops: [ShopInfoProvider]
+    @Published public private(set) var shops: [ShopProviding]
 
     /// distances in meter to an shop by id
-    @Published var distances: [String: Double]
+    @Published public private(set) var distances: [String: Double]
 
     private let locationManager: CLLocationManager
     
-    public func distance(for shop: ShopInfoProvider) -> String? {
-        guard let value = distances[shop.id] else {
-            return nil
-        }
-        return value.formattedDistance()
+    public func distance(for shop: ShopProviding) -> Double? {
+        distances[shop.id]
     }
 
     public func startUpdating() {
@@ -44,35 +41,6 @@ public final class ShopsViewModel: NSObject, ObservableObject {
 
     public func stopUpdating() {
         locationManager.stopUpdatingLocation()
-    }
-}
-
-// stuff for displaying formatted numbers
-private extension Double {
-    /// format a distance value in meters
-    func formattedDistance() -> String {
-        let value: Double
-        let format: String
-        if self < 1000 {
-            value = self
-            format = "#0 m"
-        } else if self < 100000.0 {
-            value = self / 1000.0
-            format = "#0.0 km"
-        } else {
-            value = self / 1000.0
-            format = "#0 km"
-        }
-
-        let formatter = NumberFormatter()
-        formatter.positiveFormat = format
-        return formatter.string(for: value)!
-    }
-}
-
-extension LocationProviding {
-    public var id: String {
-        return "\(self.latitude)-\(self.longitude)"
     }
 }
 
@@ -125,13 +93,13 @@ extension ShopsViewModel {
         return MKCoordinateRegion(center: location.coordinate, latitudinalMeters: 2000, longitudinalMeters: 2000)
     }
 
-    static func region(for shop: ShopInfoProvider) -> MKCoordinateRegion {
+    static func region(for shop: ShopProviding) -> MKCoordinateRegion {
         MKCoordinateRegion(center: shop.location.coordinate, latitudinalMeters: 2000, longitudinalMeters: 2000)
     }
 }
 
 extension ShopsViewModel {
-    static func navigate(to shop: ShopInfoProvider) {
+    static func navigate(to shop: ShopProviding) {
         let endingItem = MKMapItem(placemark: MKPlacemark(coordinate: CLLocationCoordinate2DMake(shop.latitude, shop.longitude),
                                                           addressDictionary: [
                                                             CNPostalAddressCityKey: shop.city,
@@ -143,15 +111,28 @@ extension ShopsViewModel {
     }
 }
 
-/// Protocol to provide location
-public protocol LocationProviding {
-    /// latitude
+public protocol ShopProviding: AddressProviding {
+    var name: String { get }
+
+    var email: String { get }
+    var phone: String { get }
+
+    var street: String { get }
+    var postalCode: String { get }
+    var city: String { get }
+    var country: String { get }
+
     var latitude: Double { get }
-    /// longitude
     var longitude: Double { get }
 }
 
-public extension LocationProviding {
+extension ShopProviding {
+    public var id: String {
+        return "\(latitude)-\(longitude)"
+    }
+}
+
+public extension ShopProviding {
     /// convenience accessor for the shop's location
     var location: CLLocation {
         CLLocation(latitude: latitude, longitude: longitude)
@@ -163,28 +144,4 @@ public extension LocationProviding {
     }
 }
 
-/// Protocol to provide country information
-public protocol CountryProviding {
-    /// state
-    var state: String { get }
-    /// country
-    var country: String { get }
-    /// optional country code
-    var countryCode: String? { get }
-}
-
-/// Protocol to provide communication information
-public protocol CommunicationProviding {
-    /// email address
-    var email: String { get }
-    /// phone number
-    var phone: String { get }
-}
-
-public protocol ShopProviding {
-    var name: String { get }
-}
-
-public typealias ShopInfoProvider = ShopProviding & AddressProviding & LocationProviding & CountryProviding & CommunicationProviding
-
-extension Shop: ShopInfoProvider {}
+extension Shop: ShopProviding {}

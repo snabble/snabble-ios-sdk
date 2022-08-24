@@ -12,11 +12,11 @@ import MapKit
 struct ShopLocation: Swift.Identifiable {
     var id = UUID()
     
-    let shop: ShopInfoProvider
+    let shop: ShopProviding
 }
 
 extension View {
-    func navigateToShopAlert(isPresented: Binding<Bool>, shop: ShopInfoProvider) -> some View {
+    func navigateToShopAlert(isPresented: Binding<Bool>, shop: ShopProviding) -> some View {
         self.alert(isPresented: isPresented) {
             Alert(title: Text(key: "Snabble.Shop.Detail.startNavigation"),
                   message: Text("\(shop.street)\n\(shop.postalCode) \(shop.city)"),
@@ -94,7 +94,7 @@ public struct ShopAnnotationView: View {
 }
 
 public struct ShopMapView: View {
-    var shop: ShopInfoProvider
+    var shop: ShopProviding
     @ObservedObject var viewModel: ShopsViewModel
     @State var tracking: MapUserTrackingMode = .follow
     

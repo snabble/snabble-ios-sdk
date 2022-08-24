@@ -10,7 +10,7 @@ import SwiftUI
 public struct ShopsView: View {
     @ObservedObject public var viewModel: ShopsViewModel
 
-    public init(shops: [ShopInfoProvider]) {
+    public init(shops: [ShopProviding]) {
         self.viewModel = ShopsViewModel(shops: shops)
     }
 

@@ -9,7 +9,7 @@ import Foundation
 import SwiftUI
 
 public struct ShopView: View {
-    var shop: ShopInfoProvider
+    var shop: ShopProviding
 
     @ObservedObject var viewModel: ShopsViewModel
     @State private var showingAlert = false
@@ -27,7 +27,7 @@ public struct ShopView: View {
                 Asset.image(named: "location")
                     .font(.subheadline)
                     .foregroundColor(.gray)
-                ShopDistanceView(distance: viewModel.distance(for: shop))
+                DistanceView(distance: viewModel.distance(for: shop))
                 Button(action: {
                     showingAlert.toggle()
                 }) {

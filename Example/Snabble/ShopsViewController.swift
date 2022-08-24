@@ -10,7 +10,7 @@ import Foundation
 import SnabbleSDK
 
 final class ShopsViewController: SnabbleSDK.ShopsViewController {
-    override init(shops: [ShopInfoProvider]) {
+    override init(shops: [ShopProviding]) {
         super.init(shops: shops)
 
         self.title = NSLocalizedString("Shops", comment: "")
