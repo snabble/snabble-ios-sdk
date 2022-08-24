@@ -18,7 +18,10 @@ public struct ShopsView: View {
         NavigationView {
             VStack {
                 List(viewModel.shops, id: \.id) { shop in
-                    ShopCellView(shop: shop, distance: viewModel.distance(for: shop))
+                    ShopCellView(
+                        shop: shop,
+                        viewModel: viewModel
+                    )
                 }
                 .listStyle(PlainListStyle())
                 .navigationTitle(Asset.localizedString(forKey: "Snabble.Shop.Finder.title"))
