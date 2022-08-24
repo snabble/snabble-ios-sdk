@@ -50,6 +50,7 @@
 		DF556383574523BFDDFFB356 /* Pods_SnabbleSampleApp.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_SnabbleSampleApp.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		E131CF1728A3D45C00A844E1 /* SnabbleSampleAppTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = SnabbleSampleAppTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		E131CF1928A3D45C00A844E1 /* SnabbleSampleAppTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SnabbleSampleAppTests.swift; sourceTree = "<group>"; };
+		E161B03C28B64883005061C4 /* Snabble.gpx */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = Snabble.gpx; sourceTree = "<group>"; };
 		E1662A64283DFED90093956C /* Changelog.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = net.daringfireball.markdown; name = Changelog.md; path = ../documentation/Changelog.md; sourceTree = "<group>"; };
 		E1DA445D28B3668C0034427D /* AppDelegate+AssetProviding.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "AppDelegate+AssetProviding.swift"; sourceTree = "<group>"; };
 		E1DA449B28B3A2BD0034427D /* LoadingViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoadingViewController.swift; sourceTree = "<group>"; };
@@ -130,6 +131,7 @@
 				607FACD41AFB9204008FA782 /* Info.plist */,
 				7605C47528AC9794000105A8 /* Localizable.strings */,
 				7605C5C028AE44B1000105A8 /* InfoPlist.strings */,
+				E161B03C28B64883005061C4 /* Snabble.gpx */,
 			);
 			name = "Supporting Files";
 			sourceTree = "<group>";
