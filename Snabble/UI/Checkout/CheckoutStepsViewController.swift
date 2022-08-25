@@ -106,7 +106,7 @@ final class CheckoutStepsViewController: UIViewController {
         doneButton.translatesAutoresizingMaskIntoConstraints = false
         doneButton.setTitle(Asset.localizedString(forKey: "Snabble.done"), for: .normal)
         doneButton.makeSnabbleButton()
-        doneButton.titleLabel?.font = Asset.preferredFont(forTextStyle: .body, weight: .medium)
+        doneButton.titleLabel?.font = .preferredFont(forTextStyle: .body, weight: .medium)
         doneButton.titleLabel?.adjustsFontForContentSizeCategory = true
         doneButton.addTarget(self, action: #selector(doneButtonTouchedUpInside(_:)), for: .touchUpInside)
         doneButton.isEnabled = false

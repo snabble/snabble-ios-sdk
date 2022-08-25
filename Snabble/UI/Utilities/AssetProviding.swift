@@ -63,16 +63,6 @@ public protocol UrlProviding: AnyObject {
     func url(forResource name: String?, withExtension ext: String?, domain: Any?) -> URL?
 }
 
-public protocol FontProviding: AnyObject {
-    /// Providing a font for the given `style` compatible with the `domain`
-    /// - Parameters:
-    ///   - style: The text style for which to return a font. See UIFont.TextStyle for recognized values.
-    ///   - weight: The text weight for which to return a font. See UIFont.Weight for reconized values.
-    ///   - domain: The domain, usually the current `Identifier<Project>`
-    /// - Returns: The font associated with the specified text style.
-    func preferredFont(forTextStyle style: UIFont.TextStyle, weight: UIFont.Weight?, domain: Any?) -> UIFont?
-}
-
 public protocol AppearanceProviding: AnyObject {
     /// Providing a `CustomAppearance` for the given `projectId`
     /// - Parameter domain: The domain, usually the current `Identifier<Project>`
@@ -80,4 +70,4 @@ public protocol AppearanceProviding: AnyObject {
     func appearance(for domain: Any?) -> CustomAppearance?
 }
 
-public typealias AssetProviding = ImageProviding & ColorProviding & StringProviding & UrlProviding & FontProviding & AppearanceProviding
+public typealias AssetProviding = ImageProviding & ColorProviding & StringProviding & UrlProviding & AppearanceProviding

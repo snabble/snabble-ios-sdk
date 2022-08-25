@@ -158,7 +158,7 @@ extension ScanningMessageView {
 
             let label = UILabel()
             label.translatesAutoresizingMaskIntoConstraints = false
-            label.font = Asset.preferredFont(forTextStyle: .body)
+            label.font = .preferredFont(forTextStyle: .body)
             label.adjustsFontForContentSizeCategory = true
             label.textColor = Asset.Color.label()
             label.textAlignment = .natural

@@ -71,7 +71,7 @@ final class QRCheckoutViewController: UIViewController {
         wrapperView.translatesAutoresizingMaskIntoConstraints = false
 
         let checkoutIdLabel = customLabel
-        checkoutIdLabel.font = Asset.preferredFont(forTextStyle: .footnote)
+        checkoutIdLabel.font = .preferredFont(forTextStyle: .footnote)
 
         let stackViewLayout = UILayoutGuide()
 
@@ -83,10 +83,10 @@ final class QRCheckoutViewController: UIViewController {
         stackView.spacing = 16
 
         let totalPriceLabel = customLabel
-        totalPriceLabel.font = Asset.preferredFont(forTextStyle: .body, weight: .medium)
+        totalPriceLabel.font = .preferredFont(forTextStyle: .body, weight: .medium)
 
         let explanationUpperLabel = customLabel
-        explanationUpperLabel.font = Asset.preferredFont(forTextStyle: .body, weight: .light)
+        explanationUpperLabel.font = .preferredFont(forTextStyle: .body, weight: .light)
 
         let qrCodeView = UIImageView()
         qrCodeView.translatesAutoresizingMaskIntoConstraints = false
@@ -95,12 +95,12 @@ final class QRCheckoutViewController: UIViewController {
         qrCodeView.setContentHuggingPriority(.defaultLow + 1, for: .vertical)
 
         let explanationBottomLabel = customLabel
-        explanationBottomLabel.font = Asset.preferredFont(forTextStyle: .caption2)
+        explanationBottomLabel.font = .preferredFont(forTextStyle: .caption2)
 
         let cancelButton = UIButton(type: .system)
         cancelButton.translatesAutoresizingMaskIntoConstraints = false
         cancelButton.setTitle(Asset.localizedString(forKey: "Snabble.cancel"), for: .normal)
-        cancelButton.titleLabel?.font = Asset.preferredFont(forTextStyle: .headline)
+        cancelButton.titleLabel?.font = .preferredFont(forTextStyle: .headline)
         cancelButton.titleLabel?.adjustsFontForContentSizeCategory = true
         cancelButton.titleLabel?.textAlignment = .center
         cancelButton.isEnabled = true

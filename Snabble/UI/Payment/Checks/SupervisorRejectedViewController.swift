@@ -58,7 +58,7 @@ final class SupervisorRejectedViewController: UIViewController {
         let messageLabel = UILabel()
         messageLabel.translatesAutoresizingMaskIntoConstraints = false
         messageLabel.textColor = Asset.Color.label()
-        messageLabel.font = Asset.preferredFont(forTextStyle: .body)
+        messageLabel.font = .preferredFont(forTextStyle: .body)
         messageLabel.adjustsFontForContentSizeCategory = true
         messageLabel.textAlignment = .center
         messageLabel.numberOfLines = 0
@@ -69,7 +69,7 @@ final class SupervisorRejectedViewController: UIViewController {
         let button = UIButton(type: .system)
         button.translatesAutoresizingMaskIntoConstraints = false
         button.makeSnabbleButton()
-        button.titleLabel?.font = Asset.preferredFont(forTextStyle: .headline)
+        button.titleLabel?.font = .preferredFont(forTextStyle: .headline)
         button.titleLabel?.adjustsFontForContentSizeCategory = true
         button.setTitle(SnabbleSDK.Asset.localizedString(forKey: "Snabble.Payment.backToCart"), for: .normal)
         button.addTarget(self, action: #selector(backButtonTapped(_:)), for: .touchUpInside)

@@ -48,14 +48,14 @@ final class CheckoutBar: UIView {
 
         let itemCountLabel = UILabel()
         itemCountLabel.translatesAutoresizingMaskIntoConstraints = false
-        itemCountLabel.font = Asset.preferredFont(forTextStyle: .footnote)
+        itemCountLabel.font = .preferredFont(forTextStyle: .footnote)
         itemCountLabel.adjustsFontForContentSizeCategory = true
         itemCountLabel.textColor = Asset.Color.secondaryLabel()
         itemCountLabel.textAlignment = .left
 
         let totalPriceLabel = UILabel()
         totalPriceLabel.translatesAutoresizingMaskIntoConstraints = false
-        totalPriceLabel.font = Asset.preferredFont(forTextStyle: .title2, weight: .bold)
+        totalPriceLabel.font = .preferredFont(forTextStyle: .title2, weight: .bold)
         totalPriceLabel.adjustsFontForContentSizeCategory = true
         totalPriceLabel.textColor = Asset.Color.label()
         totalPriceLabel.textAlignment = .right
@@ -82,7 +82,7 @@ final class CheckoutBar: UIView {
 
         let noPaymentLabel = UILabel()
         noPaymentLabel.translatesAutoresizingMaskIntoConstraints = false
-        noPaymentLabel.font = Asset.preferredFont(forTextStyle: .body, weight: .medium)
+        noPaymentLabel.font = .preferredFont(forTextStyle: .body, weight: .medium)
         noPaymentLabel.adjustsFontForContentSizeCategory = true
         noPaymentLabel.textColor = Asset.Color.label()
         noPaymentLabel.textAlignment = .center
@@ -103,7 +103,7 @@ final class CheckoutBar: UIView {
         checkoutButton.setTitle(Asset.localizedString(forKey: "Snabble.Shoppingcart.BuyProducts.now"), for: .normal)
         let disabledColor = Asset.Color.onAccent().withAlphaComponent(0.5)
         checkoutButton.setTitleColor(disabledColor, for: .disabled)
-        checkoutButton.titleLabel?.font = Asset.preferredFont(forTextStyle: .headline)
+        checkoutButton.titleLabel?.font = .preferredFont(forTextStyle: .headline)
         checkoutButton.titleLabel?.adjustsFontForContentSizeCategory = true
         checkoutButton.makeSnabbleButton()
         checkoutButton.isEnabled = true

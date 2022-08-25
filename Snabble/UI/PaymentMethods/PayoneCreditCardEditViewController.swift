@@ -210,31 +210,31 @@ public final class PayoneCreditCardEditViewController: UIViewController {
 
         explanation.translatesAutoresizingMaskIntoConstraints = false
         explanation.numberOfLines = 0
-        explanation.font = Asset.preferredFont(forTextStyle: .footnote)
+        explanation.font = .preferredFont(forTextStyle: .footnote)
         explanation.adjustsFontForContentSizeCategory = true
         displayContainer.addSubview(explanation)
 
         cardNumberLabel.translatesAutoresizingMaskIntoConstraints = false
-        cardNumberLabel.font = Asset.preferredFont(forTextStyle: .body)
+        cardNumberLabel.font = .preferredFont(forTextStyle: .body)
         cardNumberLabel.adjustsFontForContentSizeCategory = true
         displayContainer.addSubview(cardNumberLabel)
 
         cardNumber.translatesAutoresizingMaskIntoConstraints = false
         cardNumber.isEnabled = false
         cardNumber.borderStyle = .roundedRect
-        cardNumber.font = Asset.preferredFont(forTextStyle: .body)
+        cardNumber.font = .preferredFont(forTextStyle: .body)
         cardNumber.adjustsFontForContentSizeCategory = true
         displayContainer.addSubview(cardNumber)
 
         expDateLabel.translatesAutoresizingMaskIntoConstraints = false
-        expDateLabel.font = Asset.preferredFont(forTextStyle: .body)
+        expDateLabel.font = .preferredFont(forTextStyle: .body)
         expDateLabel.adjustsFontForContentSizeCategory = true
         displayContainer.addSubview(expDateLabel)
 
         expirationDate.translatesAutoresizingMaskIntoConstraints = false
         expirationDate.isEnabled = false
         expirationDate.borderStyle = .roundedRect
-        expirationDate.font = Asset.preferredFont(forTextStyle: .body)
+        expirationDate.font = .preferredFont(forTextStyle: .body)
         expirationDate.adjustsFontForContentSizeCategory = true
         displayContainer.addSubview(expirationDate)
 
