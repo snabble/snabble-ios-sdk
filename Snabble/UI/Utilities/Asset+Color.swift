@@ -15,7 +15,7 @@ private extension UIColor {
     }
 }
 
-extension UIColor{
+extension UIColor {
     // MARK: - Snabble Colors
 
     public static func border(in domain: Any? = Asset.domain) -> UIColor {
