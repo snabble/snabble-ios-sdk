@@ -34,7 +34,7 @@ public final class OnboardingViewController: UIHostingController<OnboardingView>
 
     /// Creates and returns an onboarding view controller with the specified viewModel
     /// - Parameter viewModel: A view model that specifies the details to be shown. Default value is `.default`
-    public init(viewModel: OnboardingViewModel = .default) {
+    public init(viewModel: OnboardingViewModel) {
         super.init(rootView: OnboardingView(viewModel: viewModel))
         isModalInPresentation = true
     }

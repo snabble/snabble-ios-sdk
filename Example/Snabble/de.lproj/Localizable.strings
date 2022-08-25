@@ -1,14 +1,16 @@
-/* 
-  Localizable.strings
-  SnabbleSampleApp
+"Sample.account" = "Profil";
 
-  Created by Uwe Tilemann on 17.08.22.
-  Copyright © 2022 snabble. All rights reserved.
-*/
+"Sample.Onboarding.accept" = "Akzeptieren";
 
-"Account" = "Profil";
-"Shops" = "Shops";
+"Sample.Onboarding.message1" = "Mit Snabble scannst du deinen Einkauf selbst und bezahlt direkt in der App. Ohne in der Schlange zu stehen und ohne deinen Einkauf auf’s Band zu legen.";
 
-"Scanner" = "Scanner";
-"Shopping Cart" = "Einkaufswagen";
+"Sample.Onboarding.message2" = "Betrete eine teilnehmende Filiale, starte den Einkauf und halte den Barcode eines Artikels vor die Kamera. Der Rest erklärt sich von selbst.";
+
+"Sample.Onboarding.message3" = "Bitte akzeptiere die Nutzungsbedingungen und lies die Datenschutzhinweise.";
+
+"Sample.scanner" = "Scanner";
+
+"Sample.shoppingCart" = "Warenkorb";
+
+"Sample.shops" = "Filialen";
 

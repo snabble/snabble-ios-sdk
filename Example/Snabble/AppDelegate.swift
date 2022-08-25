@@ -68,11 +68,12 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
         window?.rootViewController = tabBarController
 
-//        showOnboarding(on: tabBarController)
+        showOnboarding(on: tabBarController)
     }
 
     private func showOnboarding(on viewController: UIViewController) {
-        let onboardingViewController = OnboardingViewController()
+        let viewModel: OnboardingViewModel = loadJSON("Onboarding")
+        let onboardingViewController = OnboardingViewController(viewModel: viewModel)
         onboardingViewController.delegate = self
         viewController.present(onboardingViewController, animated: false)
     }

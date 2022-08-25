@@ -131,21 +131,13 @@
 
 "Snabble.ok" = "OK";
 
-"Snabble.Onboarding.accept" = "Agree";
+"Snabble.Onboarding.Deeplink.accessibility" = "open %@";
 
-"Snabble.Onboarding.Deeplink.accessibility" = "";
+"Snabble.Onboarding.done" = "Done";
 
-"Snabble.Onboarding.message1" = "Using Snabble, you scan your purchase yourself and pay directly in the app. No queueing and without putting your purchase on the belt.";
-
-"Snabble.Onboarding.message2" = "Enter a participating store, start shopping and hold the barcode of an article in front of the camera. The rest is self-explanatory.";
-
-"Snabble.Onboarding.message3" = "Please accept the terms of use and take note of the privacy policy.";
+"Snabble.Onboarding.Link.show" = "Show";
 
 "Snabble.Onboarding.next" = "Continue";
-
-"Snabble.Onboarding.Terms.show" = "Show";
-
-"Snabble.Onboarding.Terms.title" = "Terms of Use";
 
 "Snabble.Paydirekt.AuthorizationFailed.message" = "Ti preghiamo di riprovare più tardi";
 
@@ -487,6 +479,8 @@
 "Snabble.SEPA.scoTransferHint" = "Inserisci anche il nome indicato sulla carta per poterla salvare direttamente con l’app per i pagamenti.";
 
 "Snabble.Settings" = "Impostazioni";
+
+"Snabble.Shop.Detail.openingHours" = "Opening hours";
 
 "Snabble.Shop.Detail.startNavigation" = "Do you like to start navigation?";
 
