@@ -25,7 +25,7 @@ struct OnboardingButtonView: View {
             if let title = item.customButtonTitle {
                 Text(LocalizedStringKey(title))
             } else {
-                Text(key: isLast ? "Snabble.Onboarding.done" : "Snabble.Onboarding.next")
+                Text(keyed: isLast ? "Snabble.Onboarding.done" : "Snabble.Onboarding.next")
             }
         }
         .buttonStyle(AccentButtonStyle())
