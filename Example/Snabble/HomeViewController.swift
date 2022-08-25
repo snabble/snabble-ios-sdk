@@ -37,13 +37,13 @@ class HomeViewController: UIViewController {
         super.viewDidLoad()
 
         let scanButton = UIButton(type: .system)
-        scanButton.setTitle(NSLocalizedString("Scanner", comment: ""), for: .normal)
+        scanButton.setTitle(NSLocalizedString("Sample.scanner", comment: ""), for: .normal)
         scanButton.titleLabel?.font = .boldSystemFont(ofSize: 17)
         scanButton.addTarget(self, action: #selector(scannerButtonTapped(_:)), for: .touchUpInside)
         buttonContainer.addArrangedSubview(scanButton)
 
         let cartButton = UIButton(type: .system)
-        cartButton.setTitle(NSLocalizedString("Shopping Cart", comment: ""), for: .normal)
+        cartButton.setTitle(NSLocalizedString("Sample.shoppingCart", comment: ""), for: .normal)
         cartButton.titleLabel?.font = .boldSystemFont(ofSize: 17)
         cartButton.addTarget(self, action: #selector(shoppingCartButtonTapped(_:)), for: .touchUpInside)
         buttonContainer.addArrangedSubview(cartButton)

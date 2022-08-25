@@ -13,7 +13,7 @@ final class ShopsViewController: SnabbleSDK.ShopsViewController {
     override init(shops: [ShopProviding]) {
         super.init(shops: shops)
 
-        self.title = NSLocalizedString("Shops", comment: "")
+        self.title = NSLocalizedString("Sample.shops", comment: "")
         self.tabBarItem.image = UIImage(systemName: "house")
         self.tabBarItem.selectedImage = UIImage(systemName: "house.fill")
     }
