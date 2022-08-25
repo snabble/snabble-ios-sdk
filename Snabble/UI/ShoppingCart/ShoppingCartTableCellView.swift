@@ -257,14 +257,14 @@ extension ShoppingCartTableCellView {
 
         override init(frame: CGRect) {
             let nameLabel = UILabel()
-            nameLabel.font = Asset.preferredFont(forTextStyle: .subheadline)
+            nameLabel.font = .preferredFont(forTextStyle: .subheadline)
             nameLabel.adjustsFontForContentSizeCategory = true
             nameLabel.textColor = Asset.Color.label()
             nameLabel.textAlignment = .natural
             nameLabel.numberOfLines = 0
 
             let priceLabel = UILabel()
-            priceLabel.font = Asset.preferredFont(forTextStyle: .footnote)
+            priceLabel.font = .preferredFont(forTextStyle: .footnote)
             priceLabel.adjustsFontForContentSizeCategory = true
             priceLabel.textColor = Asset.Color.systemGray()
             priceLabel.textAlignment = .natural
@@ -302,14 +302,14 @@ extension ShoppingCartTableCellView {
         override init(frame: CGRect) {
             let quantityLabel = UILabel()
             quantityLabel.translatesAutoresizingMaskIntoConstraints = false
-            quantityLabel.font = Asset.preferredFont(forTextStyle: .footnote, weight: .semibold)
+            quantityLabel.font = .preferredFont(forTextStyle: .footnote, weight: .semibold)
             quantityLabel.adjustsFontForContentSizeCategory = true
             quantityLabel.textColor = Asset.Color.label()
             quantityLabel.textAlignment = .right
 
             let unitLabel = UILabel()
             unitLabel.translatesAutoresizingMaskIntoConstraints = false
-            unitLabel.font = Asset.preferredFont(forTextStyle: .footnote, weight: .semibold)
+            unitLabel.font = .preferredFont(forTextStyle: .footnote, weight: .semibold)
             unitLabel.adjustsFontForContentSizeCategory = true
             unitLabel.textColor = Asset.Color.label()
             unitLabel.textAlignment = .center

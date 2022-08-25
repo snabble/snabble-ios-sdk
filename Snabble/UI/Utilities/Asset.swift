@@ -32,19 +32,6 @@ public enum Asset {
         return nil
     }
 
-    public static func preferredFont(forTextStyle style: UIFont.TextStyle, domain: Any? = domain) -> UIFont {
-        provider?.preferredFont(forTextStyle: style, weight: nil, domain: domain) ?? .preferredFont(forTextStyle: style)
-    }
-
-    public static func preferredFont(forTextStyle style: UIFont.TextStyle, domain: Any? = domain) -> Font {
-        let uiFont: UIFont = Asset.preferredFont(forTextStyle: style, domain: domain)
-        return SwiftUI.Font.custom(uiFont.familyName, size: uiFont.pointSize, relativeTo: style.textStyle)
-    }
-
-    public static func preferredFont(forTextStyle style: UIFont.TextStyle, weight: UIFont.Weight, domain: Any? = domain) -> UIFont {
-        provider?.preferredFont(forTextStyle: style, weight: weight, domain: domain) ?? .preferredFont(forTextStyle: style, weight: weight)
-    }
-
     public static func image(named name: String, domain: Any? = domain) -> UIImage? {
         provider?.image(named: name, domain: domain) ?? UIImage(named: name, in: BundleToken.bundle, with: nil) ?? UIImage(systemName: name)
     }
@@ -86,35 +73,4 @@ private final class BundleToken {
       return SnabbleSDKBundle.main
 #endif
   }()
-}
-
-private extension UIFont.TextStyle {
-    var textStyle: Font.TextStyle {
-        switch self {
-        case .body:
-            return .body
-        case .callout:
-            return .callout
-        case .caption1:
-            return .caption
-        case .caption2:
-            return .caption2
-        case .footnote:
-            return .footnote
-        case .headline:
-            return .headline
-        case .largeTitle:
-            return .largeTitle
-        case .subheadline:
-            return .subheadline
-        case .title1:
-            return .title
-        case .title2:
-            return .title2
-        case .title3:
-            return .title3
-        default:
-            return .body
-        }
-    }
 }

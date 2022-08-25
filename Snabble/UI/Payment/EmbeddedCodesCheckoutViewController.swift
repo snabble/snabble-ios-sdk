@@ -90,7 +90,7 @@ final class EmbeddedCodesCheckoutViewController: UIViewController {
 
         let paidButton = UIButton(type: .system)
         paidButton.translatesAutoresizingMaskIntoConstraints = false
-        paidButton.titleLabel?.font = Asset.preferredFont(forTextStyle: .headline)
+        paidButton.titleLabel?.font = .preferredFont(forTextStyle: .headline)
         paidButton.titleLabel?.adjustsFontForContentSizeCategory = true
         paidButton.makeSnabbleButton()
         paidButton.titleLabel?.textAlignment = .center
@@ -114,7 +114,7 @@ final class EmbeddedCodesCheckoutViewController: UIViewController {
         let topIcon = iconImage
 
         let messageLabel = customLabel
-        messageLabel.font = Asset.preferredFont(forTextStyle: .body)
+        messageLabel.font = .preferredFont(forTextStyle: .body)
         messageLabel.textAlignment = .center
 
         let arrowWrapper = UIView()
@@ -125,7 +125,7 @@ final class EmbeddedCodesCheckoutViewController: UIViewController {
         arrowIcon.adjustsImageSizeForAccessibilityContentSizeCategory = true
 
         let codeCountLabel = customLabel
-        codeCountLabel.font = Asset.preferredFont(forTextStyle: .headline)
+        codeCountLabel.font = .preferredFont(forTextStyle: .headline)
 
         let codeScrollView = UIScrollView()
         codeScrollView.translatesAutoresizingMaskIntoConstraints = false
@@ -134,7 +134,7 @@ final class EmbeddedCodesCheckoutViewController: UIViewController {
         codeScrollView.bounces = false
 
         let idLabel = customLabel
-        idLabel.font = Asset.preferredFont(forTextStyle: .footnote)
+        idLabel.font = .preferredFont(forTextStyle: .footnote)
 
         let codeContainer = UIView()
         codeContainer.translatesAutoresizingMaskIntoConstraints = true

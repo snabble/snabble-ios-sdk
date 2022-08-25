@@ -62,7 +62,7 @@ public final class ReceiptsListViewController: UITableViewController {
         emptyLabel.translatesAutoresizingMaskIntoConstraints = false
         emptyLabel.numberOfLines = 0
         emptyLabel.textAlignment = .center
-        emptyLabel.font = Asset.preferredFont(forTextStyle: .body)
+        emptyLabel.font = .preferredFont(forTextStyle: .body)
         emptyLabel.adjustsFontForContentSizeCategory = true
         view.addSubview(emptyLabel)
 
