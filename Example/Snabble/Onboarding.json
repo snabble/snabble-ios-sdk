@@ -15,7 +15,6 @@
             "#text": "Sample.Onboarding.message2"
         },
         {
-            "title": "Terms",
             "imageSource": "Onboarding/onboarding-image-3",
             "#text": "Sample.Onboarding.message3",
             "#text": "Please accept the terms of use and take note of the privacy policy.",

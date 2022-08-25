@@ -37,8 +37,8 @@ extension String {
         let attributes: [NSAttributedString.Key: Any] = [
             .font: UIFont.preferredFont(forTextStyle: .subheadline),
             .paragraphStyle: paragraphStyle,
-            .foregroundColor: UIColor.label,
-            .backgroundColor: UIColor.systemBackground
+            .foregroundColor: Asset.Color.label(),
+            .backgroundColor: Asset.Color.systemBackground()
         ]
         attributedString.addAttributes(attributes, range: NSRange(location: 0, length: attributedString.length ))
 
