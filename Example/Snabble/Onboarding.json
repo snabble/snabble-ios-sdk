@@ -18,8 +18,8 @@
             "imageSource": "Onboarding/onboarding-image-3",
             "#text": "Sample.Onboarding.message3",
             "#text": "Please accept the terms of use and take note of the privacy policy.",
-            "text": "Please accept the [terms](snabble://terms.html) of use and take note of the [privacy](snabble://privacy.html) policy.",
-            "#text": "Es gelten die <a href=\"teo://terms\">Nutzungsbedingungen</a>. Bitte beachte unsere Hinweise zum <a href=\"teo://privacy\">Datenschutz</a>.",
+            "#text": "Please accept the [terms](snabble://terms.html) of use and take note of the [privacy](snabble://privacy.html) policy.",
+            "text": "Es gelten die <a href=\"teo://terms\">Nutzungsbedingungen</a>. Bitte beachte unsere Hinweise zum <a href=\"teo://privacy\">Datenschutz</a>.",
             "link": "imprint.html",
             "customButtonTitle": "Sample.Onboarding.accept"
         }
