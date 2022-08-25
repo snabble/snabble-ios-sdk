@@ -32,6 +32,10 @@ extension AppDelegate: AssetProviding {
         case "Snabble.Onboarding.next":
             return "Weiter"
         default:
+            let format = Bundle.main.localizedString(forKey: key, value: key, table: nil)
+            if format != key {
+                return String.localizedStringWithFormat(format, arguments)
+            }
             return nil
         }
     }
