@@ -44,10 +44,6 @@ struct OnboardingItemView: View {
 
     @Environment(\.openURL) var openURL
 
-    var topPadding: CGFloat {
-        40
-    }
-
     @ViewBuilder
     var image: some View {
         if let imageSource = item.imageSource {
@@ -55,11 +51,9 @@ struct OnboardingItemView: View {
                 image
                     .resizable()
                     .scaledToFit()
-                    .padding([.top], topPadding)
             } else {
                 Text(imageSource)
                     .font(.system(size: 72))
-                    .padding([.top], topPadding)
             }
         } else {
             EmptyView()

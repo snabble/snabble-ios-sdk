@@ -40,7 +40,7 @@ public struct OnboardingView: View {
             numberOfPages: viewModel.numberOfPages,
             currentPage: $viewModel.currentPage
         )
-            .frame(width: CGFloat(viewModel.numberOfPages * 18))
+        .frame(width: CGFloat(viewModel.numberOfPages * 18))
     }
 
     @ViewBuilder
