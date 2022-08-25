@@ -51,7 +51,7 @@ extension String {
         }
 
         for range in links {
-            attributedString.addAttributes([.foregroundColor: UIColor.link,
+            attributedString.addAttributes([.foregroundColor: Asset.Color.onAccent(),
                                             .underlineStyle: 0], range: range)
 
         }
