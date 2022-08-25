@@ -12,7 +12,7 @@ import SwiftUI
 public struct OnboardingView: View {
     @ObservedObject public var viewModel: OnboardingViewModel
 
-    public init(viewModel: OnboardingViewModel = .default) {
+    public init(viewModel: OnboardingViewModel) {
         self.viewModel = viewModel
     }
     
@@ -32,23 +32,15 @@ public struct OnboardingView: View {
 
     @ViewBuilder
     public var page: some View {
-        if viewModel.configuration.hasPageControl {
-            PageViewController(
-                pages: viewModel.items.map { OnboardingItemView(item: $0) },
-                currentPage: $viewModel.currentPage
-            )
-            PageControl(
-                numberOfPages: viewModel.numberOfPages,
-                currentPage: $viewModel.currentPage
-            )
-                .frame(width: CGFloat(viewModel.numberOfPages * 18))
-        } else {
-            ScrollView(.vertical) {
-                OnboardingItemView(item: viewModel.items[0])
-                    .animation(.default, value: viewModel.currentPage)
-                    .padding(.top, 70)
-            }
-        }
+        PageViewController(
+            pages: viewModel.items.map { OnboardingItemView(item: $0) },
+            currentPage: $viewModel.currentPage
+        )
+        PageControl(
+            numberOfPages: viewModel.numberOfPages,
+            currentPage: $viewModel.currentPage
+        )
+            .frame(width: CGFloat(viewModel.numberOfPages * 18))
     }
 
     @ViewBuilder
@@ -57,10 +49,7 @@ public struct OnboardingView: View {
             pages: viewModel.items.map { item in
                 DoubleButtonView(
                     provider: item,
-                    left: {
-                        viewModel.previous(for: item)
-                    },
-                    right: {
+                    action: {
                         viewModel.next(for: item)
                     })
             },
@@ -86,11 +75,5 @@ struct ButtonControl: View {
         HStack {
             pages[currentPage]
         }
-    }
-}
-
-struct OnboardingView_Previews: PreviewProvider {
-    static var previews: some View {
-        OnboardingView(viewModel: OnboardingViewModel.default)
     }
 }

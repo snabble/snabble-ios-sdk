@@ -153,7 +153,11 @@ struct OnboardingItemView: View {
 
 struct OnboardingItemView_Previews: PreviewProvider {
     static var previews: some View {
-        let item1 = OnboardingItem(imageSource: "onboarding-image-1", text: "Scan your purchase yourself and pay directly in the app. ", prevButtonTitle: nil, nextButtonTitle: "Continue")
+        let item1 = OnboardingItem(
+            imageSource: "onboarding-image-1",
+            text: "Scan your purchase yourself and pay directly in the app. ",
+            customButtonTitle: "Continue"
+        )
         OnboardingItemView(item: item1)
     }
 }

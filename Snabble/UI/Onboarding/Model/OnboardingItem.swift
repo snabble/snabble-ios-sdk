@@ -21,10 +21,8 @@ public struct OnboardingItem: Hashable, Codable, Swift.Identifiable, ImageSourci
     public let imageSource: String?
     /// optional text description
     public let text: String?
-    /// optional title for the button to show previous onboarding item
-    public let prevButtonTitle: String?
-    /// optional title for the button to show next onboarding item
-    public let nextButtonTitle: String?
+    /// defines if nextButton should be shown
+    public let customButtonTitle: String?
     /// optional string to
     public let link: String?
 
@@ -32,18 +30,22 @@ public struct OnboardingItem: Hashable, Codable, Swift.Identifiable, ImageSourci
         case title
         case imageSource
         case text
-        case prevButtonTitle
-        case nextButtonTitle
+        case customButtonTitle
         case link
     }
 
     /// convinience init with default nil values for less used properties
-    public init(title: String? = nil, imageSource: String?, text: String?, prevButtonTitle: String? = nil, nextButtonTitle: String? = nil, link: String? = nil) {
+    public init(
+        title: String? = nil,
+        imageSource: String?,
+        text: String?,
+        customButtonTitle: String? = nil,
+        link: String? = nil
+    ) {
         self.title = title
         self.imageSource = imageSource
         self.text = text
-        self.prevButtonTitle = prevButtonTitle
-        self.nextButtonTitle = nextButtonTitle
+        self.customButtonTitle = customButtonTitle
         self.link = link
     }
 }

@@ -11,16 +11,36 @@ import Foundation
 import Combine
 
 /// OnboardingViewModel describing the Onboading configuration
-public final class OnboardingViewModel: ObservableObject, Decodable {
-    public static let `default`: OnboardingViewModel = loadJSON("OnboardingData.json")
-
-    /// the configuration like `imageSource` and `hasPageControl` to enable page swiping
+public final class OnboardingViewModel: ObservableObject, Codable {
+    /// the configuration
     public let configuration: OnboardingConfiguration
     /// All items to be shown in Onboarding
     public let items: [OnboardingItem]
 
     var numberOfPages: Int {
         items.count
+    }
+
+    public init(
+        configuration: OnboardingConfiguration,
+        items: [OnboardingItem]
+    ) {
+        self.configuration = configuration
+        self.items = items
+        self.item = items.first
+    }
+
+    enum CodingKeys: String, CodingKey {
+        case items
+        case configuration
+    }
+
+    public convenience init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+
+        let configuration = try container.decode(OnboardingConfiguration.self, forKey: .configuration)
+        let items = try container.decode([OnboardingItem].self, forKey: .items)
+        self.init(configuration: configuration, items: items)
     }
 
     /// Current shown item
@@ -56,19 +76,6 @@ public final class OnboardingViewModel: ObservableObject, Decodable {
         }
         self.item = item
         return item
-    }
-
-    enum CodingKeys: String, CodingKey {
-        case items
-        case configuration
-    }
-
-    public init(from decoder: Decoder) throws {
-        let container = try decoder.container(keyedBy: CodingKeys.self)
-
-        self.configuration = try container.decode(OnboardingConfiguration.self, forKey: .configuration)
-        self.items = try container.decode([OnboardingItem].self, forKey: .items)
-        self.item = items.first
     }
 }
 
