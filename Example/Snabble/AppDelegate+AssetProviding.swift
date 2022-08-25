@@ -13,31 +13,31 @@ import UIKit
 
 extension AppDelegate: AssetProviding {
     func color(named name: String, domain: Any?) -> UIColor? {
-        nil
-    }
-
-    func color(named name: String, domain: Any?) -> SwiftUI.Color? {
-        nil
-    }
-
-    func preferredFont(forTextStyle style: UIFont.TextStyle, weight: UIFont.Weight?, domain: Any?) -> UIFont? {
-        nil
+        UIColor(named: name)
     }
 
     func image(named name: String, domain: Any?) -> UIImage? {
-        nil
+        UIImage(named: name)
     }
 
     func image(named name: String, domain: Any?) -> SwiftUI.Image? {
-        nil
+        guard UIImage(named: name) != nil else {
+            return nil
+        }
+        return SwiftUI.Image(name)
     }
 
     func localizedString(forKey key: String, arguments: CVarArg..., domain: Any?) -> String? {
-        nil
+        switch key {
+        case "Snabble.Onboarding.next":
+            return "Weiter"
+        default:
+            return nil
+        }
     }
 
     func url(forResource name: String?, withExtension ext: String?, domain: Any?) -> URL? {
-        nil
+        Bundle.main.url(forResource: name, withExtension: ext)
     }
     func appearance(for domain: Any?) -> CustomAppearance? {
         nil

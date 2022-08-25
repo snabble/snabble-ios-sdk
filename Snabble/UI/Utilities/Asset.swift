@@ -21,18 +21,6 @@ public enum Asset {
         provider?.color(named: name, domain: domain) ?? UIColor(named: name, in: BundleToken.bundle, compatibleWith: nil)
     }
 
-    public static func color(named name: String, domain: Any? = domain) -> SwiftUI.Color? {
-        if let color: SwiftUI.Color = provider?.color(named: name, domain: domain) {
-            return color
-        }
-
-        if UIColor(named: name, in: BundleToken.bundle, compatibleWith: nil) != nil {
-            return SwiftUI.Color(name, bundle: BundleToken.bundle)
-        }
-
-        return nil
-    }
-
     // MARK: - Image
     public static func image(named name: String, domain: Any? = domain) -> UIImage? {
         provider?.image(named: name, domain: domain) ?? UIImage(named: name, in: BundleToken.bundle, with: nil) ?? UIImage(systemName: name)

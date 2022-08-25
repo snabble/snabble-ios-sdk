@@ -32,13 +32,6 @@ public protocol ColorProviding: AnyObject {
     ///   - domain: The domain, usually the current `Identifier<Project>`
     /// - Returns: An initialized color object. The returned object uses the color space specified for the asset.
     func color(named name: String, domain: Any?) -> UIColor?
-
-    /// Providing a `SwiftUI` color for the given `name` compatible with the `domain`
-    /// - Parameters:
-    ///   - name: The name of the asset containing the color.
-    ///   - domain: The domain, usually the current `Identifier<Project>`
-    /// - Returns: An initialized color object. The returned object uses the color space specified for the asset.
-    func color(named name: String, domain: Any?) -> SwiftUI.Color?
 }
 
 public protocol StringProviding: AnyObject {
