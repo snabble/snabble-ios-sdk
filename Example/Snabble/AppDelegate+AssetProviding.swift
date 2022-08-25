@@ -28,21 +28,17 @@ extension AppDelegate: AssetProviding {
     }
 
     func localizedString(forKey key: String, arguments: CVarArg..., domain: Any?) -> String? {
-        switch key {
-        case "Snabble.Onboarding.next":
-            return "Weiter"
-        default:
-            let format = Bundle.main.localizedString(forKey: key, value: key, table: nil)
-            if format != key {
-                return String.localizedStringWithFormat(format, arguments)
-            }
-            return nil
+        let format = Bundle.main.localizedString(forKey: key, value: key, table: nil)
+        if format != key {
+            return String.localizedStringWithFormat(format, arguments)
         }
+        return nil
     }
 
     func url(forResource name: String?, withExtension ext: String?, domain: Any?) -> URL? {
         Bundle.main.url(forResource: name, withExtension: ext)
     }
+
     func appearance(for domain: Any?) -> CustomAppearance? {
         nil
     }
