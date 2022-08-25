@@ -16,6 +16,7 @@ public enum Asset {
     /// Reference to the current domain
     public internal(set) static var domain: Any?
 
+    // MARK: - Color
     public static func color(named name: String, domain: Any? = domain) -> UIColor? {
         provider?.color(named: name, domain: domain) ?? UIColor(named: name, in: BundleToken.bundle, compatibleWith: nil)
     }
@@ -32,6 +33,7 @@ public enum Asset {
         return nil
     }
 
+    // MARK: - Image
     public static func image(named name: String, domain: Any? = domain) -> UIImage? {
         provider?.image(named: name, domain: domain) ?? UIImage(named: name, in: BundleToken.bundle, with: nil) ?? UIImage(systemName: name)
     }
@@ -51,6 +53,7 @@ public enum Asset {
         return nil
     }
 
+    // MARK: - Localized String
     public static func localizedString(forKey key: String, arguments: CVarArg..., table: String? = nil, value: String? = nil, domain: Any? = domain) -> String {
         guard let localizedString = provider?.localizedString(forKey: key, arguments: arguments, domain: domain) else {
             let format = BundleToken.bundle.localizedString(forKey: key, value: value, table: table)
@@ -64,6 +67,7 @@ public enum Asset {
     }
 }
 
+// MARK: - Bundle Token
 // swiftlint:disable:next convenience_type
 private final class BundleToken {
   static let bundle: Bundle = {
@@ -73,4 +77,19 @@ private final class BundleToken {
       return SnabbleSDKBundle.main
 #endif
   }()
+}
+
+// MARK: SwiftUI - Extensions
+
+extension SwiftUI.Image {
+    static func image(named name: String, systemName: String? = nil) -> SwiftUI.Image {
+        Asset.image(named: name) ?? SwiftUI.Image(systemName: systemName ?? name)
+    }
+}
+
+extension Text {
+    init(keyed key: String) {
+        let value = Asset.localizedString(forKey: key)
+        self.init(value)
+    }
 }

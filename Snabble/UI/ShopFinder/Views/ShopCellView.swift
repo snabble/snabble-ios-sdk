@@ -26,7 +26,7 @@ public struct ShopCellView: View {
             }
             Spacer()
             if viewModel.isCurrent(shop) {
-                Text(key: "Snabble.Shop.Finder.youarehere")
+                Text(keyed: "Snabble.Shop.Finder.youarehere")
                     .youAreHereStyle()
             } else {
                 DistanceView(distance: viewModel.distance(from: shop))
