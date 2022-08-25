@@ -131,23 +131,13 @@
 
 "Snabble.ok" = "OK";
 
-"Snabble.Onboarding.accept" = "Elfogadás";
-
 "Snabble.Onboarding.Deeplink.accessibility" = "open %@";
 
 "Snabble.Onboarding.done" = "Done";
 
 "Snabble.Onboarding.Link.show" = "Megtekintés";
 
-"Snabble.Onboarding.message1" = "A Snabble segítségével saját magad szkenneled be a vásárolni kívánt termékeket, és közvetlenül az alkalmazásban fizetsz. Nem kell sorban állni a pénztár előtt, és a vásárolt termékeket nem kell az áruszalagra helyezni.";
-
-"Snabble.Onboarding.message2" = "Lépj be egy résztvevő üzletbe, kezdd el a bevásárlást, és tartsd a termék vonalkódját a kamera elé. A többi magától értetődik.";
-
-"Snabble.Onboarding.message3" = "Kérlek, fogadd el a felhasználási feltételeket és az adatvédelmi tudnivalókat.";
-
 "Snabble.Onboarding.next" = "Tovább";
-
-"Snabble.Onboarding.Terms.title" = "Az alkalmazás használata";
 
 "Snabble.Paydirekt.AuthorizationFailed.message" = "Kérlek, próbáld meg később még egyszer";
 

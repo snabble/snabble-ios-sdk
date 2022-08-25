@@ -131,23 +131,13 @@
 
 "Snabble.ok" = "OK";
 
-"Snabble.Onboarding.accept" = "Akzeptieren";
-
 "Snabble.Onboarding.Deeplink.accessibility" = "%@ öffnen";
 
 "Snabble.Onboarding.done" = "Fertig";
 
 "Snabble.Onboarding.Link.show" = "Ansehen";
 
-"Snabble.Onboarding.message1" = "Mit Snabble scannst du deinen Einkauf selbst und bezahlt direkt in der App. Ohne in der Schlange zu stehen und ohne deinen Einkauf auf’s Band zu legen.";
-
-"Snabble.Onboarding.message2" = "Betrete eine teilnehmende Filiale, starte den Einkauf und halte den Barcode eines Artikels vor die Kamera. Der Rest erklärt sich von selbst.";
-
-"Snabble.Onboarding.message3" = "Bitte akzeptiere die Nutzungsbedingungen und lies die Datenschutzhinweise.";
-
 "Snabble.Onboarding.next" = "Weiter";
-
-"Snabble.Onboarding.Terms.title" = "Nutzung der App";
 
 "Snabble.Paydirekt.AuthorizationFailed.message" = "Bitte versuche es später nochmal";
 
