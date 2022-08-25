@@ -53,7 +53,7 @@ final class ScanConfirmationView: UIView {
         let label = UILabel()
         label.translatesAutoresizingMaskIntoConstraints = false
         label.textAlignment = .center
-        label.textColor = Asset.Color.label()
+        label.textColor = .label
         label.setContentHuggingPriority(.defaultLow + 1, for: .horizontal)
         label.setContentHuggingPriority(.defaultLow + 1, for: .vertical)
         return label
@@ -69,7 +69,7 @@ final class ScanConfirmationView: UIView {
     }
 
     private func setupUI() {
-        self.addCornersAndShadow(backgroundColor: Asset.Color.systemBackground(), cornerRadius: 8)
+        self.addCornersAndShadow(backgroundColor: .systemBackground, cornerRadius: 8)
 
         let closeButton = UIButton(type: .system)
         closeButton.translatesAutoresizingMaskIntoConstraints = false
@@ -104,7 +104,7 @@ final class ScanConfirmationView: UIView {
         let originalPriceLabel = customLabel
         originalPriceLabel.font = .preferredFont(forTextStyle: .body)
         originalPriceLabel.adjustsFontForContentSizeCategory = true
-        originalPriceLabel.textColor = Asset.Color.secondaryLabel()
+        originalPriceLabel.textColor = .secondaryLabel
 
         let priceLabel = customLabel
         priceLabel.font = .preferredFont(forTextStyle: .body)
@@ -116,14 +116,14 @@ final class ScanConfirmationView: UIView {
         manualDiscountButton.titleLabel?.font = .preferredFont(forTextStyle: .body)
         manualDiscountButton.titleLabel?.adjustsFontForContentSizeCategory = true
 
-        let contrastRatio = UIColor.getContrastRatio(forTextColor: Asset.Color.accent(),
-                                                     onBackgroundColor: Asset.Color.systemBackground())
+        let contrastRatio = UIColor.getContrastRatio(forTextColor: .accent(),
+                                                     onBackgroundColor: .systemBackground)
         let conformanceLevel = ConformanceLevel(contrastRatio: contrastRatio ?? 1, fontSize: 17, isBoldFont: false)
 
         if conformanceLevel == .AA || conformanceLevel == .AAA {
-            manualDiscountButton.tintColor = Asset.Color.accent()
+            manualDiscountButton.tintColor = .accent()
         } else {
-            manualDiscountButton.tintColor = Asset.Color.label()
+            manualDiscountButton.tintColor = .label
         }
         manualDiscountButton.isUserInteractionEnabled = true
         manualDiscountButton.addTarget(self, action: #selector(manualDiscountTapped(_:)), for: .touchUpInside)
@@ -147,7 +147,7 @@ final class ScanConfirmationView: UIView {
         quantityField.translatesAutoresizingMaskIntoConstraints = false
         quantityField.font = .preferredFont(forTextStyle: .title3)
         quantityField.adjustsFontForContentSizeCategory = true
-        quantityField.tintColor = Asset.Color.label()
+        quantityField.tintColor = .label
         quantityField.delegate = self
         quantityField.addDoneButton()
         quantityField.textAlignment = .center

@@ -47,7 +47,7 @@ class CouponCollectionViewCell: UICollectionViewCell, Cardable, ReuseIdentifiabl
         let textLabel = UILabel()
         textLabel.translatesAutoresizingMaskIntoConstraints = false
         textLabel.font = .preferredFont(forTextStyle: .headline)
-        textLabel.textColor = Asset.Color.accent()
+        textLabel.textColor = .accent()
         textLabel.numberOfLines = 0
         textLabel.setContentCompressionResistancePriority(.defaultHigh + 2, for: .vertical)
         textLabel.minimumScaleFactor = 0.75

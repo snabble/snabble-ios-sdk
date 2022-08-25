@@ -69,7 +69,7 @@ public final class ReceiptsListViewController: UITableViewController {
         let activityIndicator = UIActivityIndicatorView(style: .medium)
         activityIndicator.startAnimating()
         activityIndicator.hidesWhenStopped = true
-        activityIndicator.color = Asset.Color.systemGray()
+        activityIndicator.color = .systemGray
         activityIndicator.translatesAutoresizingMaskIntoConstraints = false
         view.addSubview(activityIndicator)
         self.activityIndicator = activityIndicator

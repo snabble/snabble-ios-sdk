@@ -18,7 +18,7 @@ class LoadingViewController: UIViewController {
 
         let activityIndicatorView = UIActivityIndicatorView(style: .large)
         activityIndicatorView.translatesAutoresizingMaskIntoConstraints = false
-        activityIndicatorView.color = Asset.Color.accent()
+        activityIndicatorView.color = .accent()
         activityIndicatorView.startAnimating()
         view.addSubview(activityIndicatorView)
 

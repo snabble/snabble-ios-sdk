@@ -197,7 +197,7 @@ public final class PayoneCreditCardEditViewController: UIViewController {
     }
 
     private func setupView() {
-        view.backgroundColor = Asset.Color.systemBackground()
+        view.backgroundColor = .systemBackground
 
         if #available(iOS 15, *) {
             view.restrictDynamicTypeSize(from: nil, to: .extraExtraExtraLarge)
@@ -268,7 +268,7 @@ public final class PayoneCreditCardEditViewController: UIViewController {
         NSLayoutConstraint.activate(webViewContainer.constraintsForAnchoringTo(boundsOf: view))
 
         let activityIndicator = UIActivityIndicatorView(style: .medium)
-        activityIndicator.color = Asset.Color.systemGray()
+        activityIndicator.color = .systemGray
         activityIndicator.translatesAutoresizingMaskIntoConstraints = false
         activityIndicator.hidesWhenStopped = true
         webViewContainer.addSubview(activityIndicator)
@@ -290,7 +290,7 @@ public final class PayoneCreditCardEditViewController: UIViewController {
         let webView = WKWebView(frame: .zero, configuration: config)
         webView.navigationDelegate = self
         webView.isOpaque = false
-        webView.backgroundColor = Asset.Color.clear()
+        webView.backgroundColor = .clear
         webView.translatesAutoresizingMaskIntoConstraints = false
 
         containerView.addSubview(webView)

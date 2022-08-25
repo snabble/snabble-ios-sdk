@@ -43,7 +43,7 @@ final class PaymentMethodAddCell: UITableViewCell {
 
         countLabel.font = .preferredFont(forTextStyle: .subheadline)
         countLabel.adjustsFontForContentSizeCategory = true
-        countLabel.textColor = Asset.Color.systemGray2()
+        countLabel.textColor = .systemGray2
         countLabel.textAlignment = .center
 
         icon.setContentHuggingPriority(.defaultHigh, for: .horizontal)
