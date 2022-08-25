@@ -59,6 +59,10 @@ public final class OnboardingViewModel: ObservableObject, Codable {
     /// Current shown page
     @Published public var currentPage: Int = 0
 
+    func isLast(item: OnboardingItem) -> Bool {
+        items.last == item
+    }
+
     @discardableResult
     func next(for element: OnboardingItem) -> OnboardingItem? {
         guard let item = items.next(after: element) else {

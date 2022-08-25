@@ -49,7 +49,7 @@ public struct OnboardingView: View {
             pages: viewModel.items.map { item in
                 OnboardingButtonView(
                     item: item,
-                    isLast: viewModel.items.last == item,
+                    isLast: viewModel.isLast(item: item),
                     action: {
                         viewModel.next(for: item)
                     })
