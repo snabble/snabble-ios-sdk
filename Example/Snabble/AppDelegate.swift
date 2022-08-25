@@ -7,7 +7,6 @@
 
 import UIKit
 import SnabbleSDK
-import SwiftUI
 
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate {
