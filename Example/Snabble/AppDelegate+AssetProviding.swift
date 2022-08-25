@@ -29,15 +29,10 @@ extension AppDelegate: AssetProviding {
     }
 
     func image(named name: String, domain: Any?) -> SwiftUI.Image? {
-        switch name {
-        case "Snabble.Shop.Detail.mapPin":
-            return SwiftUI.Image("scan-off")
-        default:
-            return nil
-        }
+        nil
     }
 
-    func localizedString(forKey: String, arguments: CVarArg..., domain: Any?) -> String? {
+    func localizedString(forKey key: String, arguments: CVarArg..., domain: Any?) -> String? {
         nil
     }
 

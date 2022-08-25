@@ -7,7 +7,7 @@
             "imageSource": "Onboarding/onboarding-image-1",
             "#text": "Scan your purchase yourself and pay directly in the app. No queueing and without putting your purchase on the belt.",
             "text": "Sample.Onboarding.message1",
-            "customButtonTitle": "Jump"
+            "#customButtonTitle": "Jump"
         },
         {
             "imageSource": "Onboarding/onboarding-image-2",
