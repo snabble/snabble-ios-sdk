@@ -10,14 +10,11 @@
 import Foundation
 import SwiftUI
 
-protocol DoubleButtonViewProvider {
-    var buttonTitle: String { get }
-}
-
 /// View to render one onboarding item
-struct DoubleButtonView: View {
-    var provider: DoubleButtonViewProvider
+struct ButtonView: View {
+    var item: OnboardingItem
 
+    var isLast: Bool
     var action: () -> Void
 
     @ViewBuilder
@@ -25,7 +22,11 @@ struct DoubleButtonView: View {
         Button(action: {
             action()
         }) {
-            Text(key: provider.buttonTitle)
+            if let title = item.customButtonTitle {
+                Text(title)
+            } else {
+                Text(key: isLast ? "Snabble.Onboarding.done" : "Snabble.Onboarding.next")
+            }
         }
         .buttonStyle(AccentButtonStyle())
     }
@@ -43,11 +44,5 @@ struct DoubleButtonView: View {
         container
             .padding([.leading, .trailing], 50)
             .padding(.bottom, UIDevice.current.userInterfaceIdiom == .phone ? 0 : 20)
-    }
-}
-
-extension OnboardingItem: DoubleButtonViewProvider {
-    var buttonTitle: String {
-        customButtonTitle ?? "Snabble.Onboarding.next"
     }
 }

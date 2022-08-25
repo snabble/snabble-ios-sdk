@@ -133,7 +133,11 @@
 
 "Snabble.Onboarding.accept" = "Prijať";
 
-"Snabble.Onboarding.Deeplink.accessibility" = "";
+"Snabble.Onboarding.Deeplink.accessibility" = "open %@";
+
+"Snabble.Onboarding.done" = "Done";
+
+"Snabble.Onboarding.Link.show" = "Prezrieť";
 
 "Snabble.Onboarding.message1" = "So Snabble naskenuješ svoj nákup sám/sama a zaplatíš priamo v aplikácii. Bez vystávania v rade a vykladania tvojho nákupu na pás.";
 
@@ -142,8 +146,6 @@
 "Snabble.Onboarding.message3" = "Prosím, akceptuj podmienky používania a prečítaj si pravidlá ochrany údajov.";
 
 "Snabble.Onboarding.next" = "Ďalej";
-
-"Snabble.Onboarding.Terms.show" = "Prezrieť";
 
 "Snabble.Onboarding.Terms.title" = "Používanie aplikácie";
 
@@ -487,6 +489,8 @@
 "Snabble.SEPA.scoTransferHint" = "Ešte zadaj meno uvedené na karte, aby si ju mohol/mohla uložiť pre platby priamo prostredníctvom aplikácie.";
 
 "Snabble.Settings" = "Nastavenia";
+
+"Snabble.Shop.Detail.openingHours" = "Opening hours";
 
 "Snabble.Shop.Detail.startNavigation" = "Do you like to start navigation?";
 

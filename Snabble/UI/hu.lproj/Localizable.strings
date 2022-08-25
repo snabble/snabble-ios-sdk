@@ -133,7 +133,11 @@
 
 "Snabble.Onboarding.accept" = "Elfogadás";
 
-"Snabble.Onboarding.Deeplink.accessibility" = "";
+"Snabble.Onboarding.Deeplink.accessibility" = "open %@";
+
+"Snabble.Onboarding.done" = "Done";
+
+"Snabble.Onboarding.Link.show" = "Megtekintés";
 
 "Snabble.Onboarding.message1" = "A Snabble segítségével saját magad szkenneled be a vásárolni kívánt termékeket, és közvetlenül az alkalmazásban fizetsz. Nem kell sorban állni a pénztár előtt, és a vásárolt termékeket nem kell az áruszalagra helyezni.";
 
@@ -142,8 +146,6 @@
 "Snabble.Onboarding.message3" = "Kérlek, fogadd el a felhasználási feltételeket és az adatvédelmi tudnivalókat.";
 
 "Snabble.Onboarding.next" = "Tovább";
-
-"Snabble.Onboarding.Terms.show" = "Megtekintés";
 
 "Snabble.Onboarding.Terms.title" = "Az alkalmazás használata";
 
@@ -487,6 +489,8 @@
 "Snabble.SEPA.scoTransferHint" = "Add meg a kártyán látható nevet, hogy a fizetések lebonyolításához közvetlenül eltárolásra kerülhessen az alkalmazásban.";
 
 "Snabble.Settings" = "Beállítások";
+
+"Snabble.Shop.Detail.openingHours" = "Opening hours";
 
 "Snabble.Shop.Detail.startNavigation" = "Do you like to start navigation?";
 

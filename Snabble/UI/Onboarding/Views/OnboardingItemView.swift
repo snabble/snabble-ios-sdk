@@ -83,7 +83,7 @@ struct OnboardingItemView: View {
             Button(action: {
                 isPresenting.toggle()
             }) {
-                Text(key: "Snabble.Onboarding.Terms.show")
+                Text(key: "Snabble.Onboarding.Link.show")
                     .font(.headline)
                     .foregroundColor(Color.accent())
             }

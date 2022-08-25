@@ -47,8 +47,9 @@ public struct OnboardingView: View {
     public var footer: some View {
         ButtonControl(
             pages: viewModel.items.map { item in
-                DoubleButtonView(
-                    provider: item,
+                ButtonView(
+                    item: item,
+                    isLast: viewModel.items.last == item,
                     action: {
                         viewModel.next(for: item)
                     })
@@ -68,7 +69,7 @@ public struct OnboardingView: View {
 }
 
 struct ButtonControl: View {
-    var pages: [DoubleButtonView]
+    var pages: [ButtonView]
     @Binding var currentPage: Int
 
     var body: some View {
