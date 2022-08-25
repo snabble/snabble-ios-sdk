@@ -11,7 +11,7 @@ import Foundation
 import SwiftUI
 
 /// View to render one onboarding item
-struct ButtonView: View {
+struct OnboardingButtonView: View {
     var item: OnboardingItem
 
     var isLast: Bool
@@ -23,7 +23,7 @@ struct ButtonView: View {
             action()
         }) {
             if let title = item.customButtonTitle {
-                Text(title)
+                Text(LocalizedStringKey(title))
             } else {
                 Text(key: isLast ? "Snabble.Onboarding.done" : "Snabble.Onboarding.next")
             }

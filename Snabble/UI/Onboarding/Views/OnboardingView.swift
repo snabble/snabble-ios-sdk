@@ -47,7 +47,7 @@ public struct OnboardingView: View {
     public var footer: some View {
         ButtonControl(
             pages: viewModel.items.map { item in
-                ButtonView(
+                OnboardingButtonView(
                     item: item,
                     isLast: viewModel.items.last == item,
                     action: {
@@ -69,7 +69,7 @@ public struct OnboardingView: View {
 }
 
 struct ButtonControl: View {
-    var pages: [ButtonView]
+    var pages: [OnboardingButtonView]
     @Binding var currentPage: Int
 
     var body: some View {
