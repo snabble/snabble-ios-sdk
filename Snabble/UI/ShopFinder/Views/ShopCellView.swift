@@ -10,23 +10,58 @@ import CoreLocation
 import SwiftUI
 
 public struct ShopCellView: View {
-    var shop: ShopProviding
-    var distance: Double?
+    let shop: ShopProviding
+    @ObservedObject var viewModel: ShopsViewModel
     
     public var body: some View {
         HStack {
-            VStack(alignment: .leading, spacing: 10) {
+            VStack(alignment: .leading, spacing: 8) {
                 Text(shop.name)
-                .fontWeight(.bold)
-                
+                    .fontWeight(.bold)
+
                 VStack(alignment: .leading, spacing: 0) {
                     AddressView(provider: shop)
+                        .secondaryStyle()
                 }
-                .font(.subheadline)
-                .foregroundColor(.gray)
             }
             Spacer()
-            DistanceView(distance: distance)
+            if viewModel.isCurrent(shop) {
+                Text(key: "Snabble.Shop.Finder.youarehere")
+                    .youAreHereStyle()
+            } else {
+                DistanceView(distance: viewModel.distance(from: shop))
+                    .secondaryStyle()
+            }
         }
+    }
+}
+
+private struct Secondary: ViewModifier {
+    func body(content: Content) -> some View {
+        content
+            .font(.subheadline)
+            .foregroundColor(.gray)
+    }
+}
+
+private struct YouAreHere: ViewModifier {
+    func body(content: Content) -> some View {
+        content
+           .font(.footnote)
+           .foregroundColor(Color.onAccent())
+           .padding(.horizontal, 8)
+           .padding(.vertical, 4)
+           .background(Color.accent())
+           .clipShape(Capsule())
+    }
+}
+
+private extension View {
+    func youAreHereStyle() -> some View {
+        modifier(YouAreHere())
+    }
+
+    func secondaryStyle() -> some View {
+        modifier(Secondary())
     }
 }

@@ -36,7 +36,7 @@ public enum Asset {
         provider?.preferredFont(forTextStyle: style, weight: nil, domain: domain) ?? .preferredFont(forTextStyle: style)
     }
 
-    static func preferredFont(forTextStyle style: UIFont.TextStyle, domain: Any? = domain) -> Font {
+    public static func preferredFont(forTextStyle style: UIFont.TextStyle, domain: Any? = domain) -> Font {
         let uiFont: UIFont = Asset.preferredFont(forTextStyle: style, domain: domain)
         return SwiftUI.Font.custom(uiFont.familyName, size: uiFont.pointSize, relativeTo: style.textStyle)
     }
