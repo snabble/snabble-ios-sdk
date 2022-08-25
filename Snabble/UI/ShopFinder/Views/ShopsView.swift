@@ -31,8 +31,7 @@ public struct ShopsView: View {
                     }
                 }
                 .listStyle(PlainListStyle())
-                .navigationTitle(Asset.localizedString(forKey: "Snabble.Shop.Finder.title"))
-                .navigationBarTitleDisplayMode(.inline)
+                .navigationBarTitle(Asset.localizedString(forKey: "Snabble.Shop.Finder.title"), displayMode: .inline)
             }
         }
         .onAppear {

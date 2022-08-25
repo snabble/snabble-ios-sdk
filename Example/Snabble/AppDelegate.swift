@@ -84,8 +84,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
         let tabBarAppearanceProxy = UITabBar.appearance()
         tabBarAppearanceProxy.barTintColor = .systemBackground
-        tabBarAppearanceProxy.isTranslucent = false
-        tabBarAppearanceProxy.tintColor = .label
+        tabBarAppearanceProxy.tintColor = Asset.Color.accent()
         tabBarAppearanceProxy.unselectedItemTintColor = .darkGray
 
         let tabBarAppearance = UITabBarAppearance()
@@ -98,7 +97,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
         let tabBarItemAppearance = UITabBarItem.appearance()
         tabBarItemAppearance.setTitleTextAttributes([NSAttributedString.Key.foregroundColor: UIColor.darkGray], for: .normal)
-        tabBarItemAppearance.setTitleTextAttributes([NSAttributedString.Key.foregroundColor: UIColor.label], for: .selected)
+        tabBarItemAppearance.setTitleTextAttributes([NSAttributedString.Key.foregroundColor: Asset.Color.accent()], for: .selected)
     }
 }
 

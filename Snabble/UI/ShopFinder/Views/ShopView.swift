@@ -15,8 +15,9 @@ public struct ShopView: View {
     @State private var showingAlert = false
 
     public var body: some View {
-        VStack(alignment: .center ) {
+        ScrollView(.vertical) {
             ShopMapView(shop: shop, userLocation: viewModel.locationManager.location)
+                .frame(minHeight: 300)
             VStack(spacing: 0) {
                 AddressView(provider: shop)
             }
@@ -41,6 +42,8 @@ public struct ShopView: View {
             .padding(.bottom, 20)
 
             PhoneNumberView(phone: shop.phone)
+
+            OpeningView(shop: shop)
         }
         .navigationTitle(shop.name)
     }

@@ -97,6 +97,9 @@ public protocol ShopProviding: AddressProviding {
 
     var latitude: Double { get }
     var longitude: Double { get }
+
+    /// opening hours
+    var openingHoursSpecification: [OpeningHoursSpecification] { get }
 }
 
 extension ShopProviding {

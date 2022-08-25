@@ -133,7 +133,7 @@
 
 "Snabble.Onboarding.accept" = "Agree";
 
-"Snabble.Onboarding.Deeplink.accessibility" = "";
+"Snabble.Onboarding.Deeplink.accessibility" = "open %@";
 
 "Snabble.Onboarding.message1" = "Using Snabble, you scan your purchase yourself and pay directly in the app. No queueing and without putting your purchase on the belt.";
 
@@ -487,6 +487,8 @@
 "Snabble.SEPA.scoTransferHint" = "Please enter the name from the card to save it for future payments.";
 
 "Snabble.Settings" = "Settings";
+
+"Snabble.Shop.Detail.openingHours" = "Opening hours";
 
 "Snabble.Shop.Detail.startNavigation" = "Do you like to start navigation?";
 
