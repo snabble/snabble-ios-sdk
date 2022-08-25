@@ -49,7 +49,7 @@ struct DoubleButtonView: View {
             Button(action: {
                 left()
             }) {
-                Text(key: text)
+                Text(keyed: text)
             }
             .buttonStyle(AccentButtonStyle())
         }
@@ -62,7 +62,7 @@ struct DoubleButtonView: View {
             Button(action: {
                 right()
             }) {
-                Text(key: text)
+                Text(keyed: text)
             }
             .buttonStyle(AccentButtonStyle())
         }

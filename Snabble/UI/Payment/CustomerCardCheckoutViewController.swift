@@ -69,7 +69,7 @@ final class CustomerCardCheckoutViewController: UIViewController {
 
         let paidButton = UIButton(type: .system)
         paidButton.translatesAutoresizingMaskIntoConstraints = false
-        paidButton.titleLabel?.font = Asset.preferredFont(forTextStyle: .headline)
+        paidButton.titleLabel?.font = .preferredFont(forTextStyle: .headline)
         paidButton.titleLabel?.adjustsFontForContentSizeCategory = true
         paidButton.makeSnabbleButton()
         paidButton.setTitle(Asset.localizedString(forKey: "Snabble.QRCode.didPay"), for: .normal)

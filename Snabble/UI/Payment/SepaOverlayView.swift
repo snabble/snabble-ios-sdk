@@ -51,21 +51,21 @@ public final class SepaOverlayView: UIView {
 
         let titleLabel = UILabel()
         titleLabel.translatesAutoresizingMaskIntoConstraints = false
-        titleLabel.font = Asset.preferredFont(forTextStyle: .body, weight: .bold)
+        titleLabel.font = .preferredFont(forTextStyle: .body, weight: .bold)
         titleLabel.adjustsFontForContentSizeCategory = true
         titleLabel.textAlignment = .center
         titleLabel.numberOfLines = 0
 
         let textLabel = UILabel()
         textLabel.translatesAutoresizingMaskIntoConstraints = false
-        textLabel.font = Asset.preferredFont(forTextStyle: .body)
+        textLabel.font = .preferredFont(forTextStyle: .body)
         textLabel.adjustsFontForContentSizeCategory = true
         textLabel.textAlignment = .center
         textLabel.numberOfLines = 0
 
         let successButton = UIButton(type: .system)
         successButton.translatesAutoresizingMaskIntoConstraints = false
-        successButton.titleLabel?.font = Asset.preferredFont(forTextStyle: .headline)
+        successButton.titleLabel?.font = .preferredFont(forTextStyle: .headline)
         successButton.titleLabel?.adjustsFontForContentSizeCategory = true
         successButton.makeSnabbleButton()
 

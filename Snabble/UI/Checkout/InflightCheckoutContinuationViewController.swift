@@ -44,7 +44,7 @@ public final class InFlightCheckoutContinuationViewController: UIViewController 
         let textLabel = UILabel()
         textLabel.text = Asset.localizedString(forKey: "Snabble.PaymentContinuation.message")
         textLabel.numberOfLines = 0
-        textLabel.font = Asset.preferredFont(forTextStyle: .body)
+        textLabel.font = .preferredFont(forTextStyle: .body)
         textLabel.adjustsFontForContentSizeCategory = true
 
         let stackview = UIStackView(arrangedSubviews: [ activityIndicatorView, textLabel ])
