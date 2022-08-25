@@ -228,9 +228,8 @@ public extension Asset {
     }
 }
 
-#if canImport(SwiftUI)
 import SwiftUI
-extension Color {
+extension SwiftUI.Color {
 
     private static func color(_ uiColor: UIColor) -> SwiftUI.Color {
         if #available(iOS 15.0, *) {
@@ -376,7 +375,9 @@ extension Color {
     static func systemCyan(in domain: Any? = Asset.domain) -> SwiftUI.Color {
         color(Asset.Color.systemCyan(in: domain))
     }
+}
 
+extension SwiftUI.Color {
     // MARK: - Snabble Colors
 
     public static func border(in domain: Any? = Asset.domain) -> SwiftUI.Color {
@@ -395,4 +396,77 @@ extension Color {
         color(Asset.Color.onAccent(in: domain))
     }
 }
-#endif
+
+extension SwiftUI.Color {
+
+    // MARK: - Standard Colors
+    static func black(in domain: Any? = Asset.domain) -> SwiftUI.Color {
+        Asset.color(named: "black", domain: domain) ?? .black
+    }
+
+    static func blue(in domain: Any? = Asset.domain) -> SwiftUI.Color {
+        Asset.color(named: "blue", domain: domain) ?? .blue
+    }
+
+    @available(iOS 15.0, *)
+    static func brown(in domain: Any? = Asset.domain) -> SwiftUI.Color {
+        Asset.color(named: "brown", domain: domain) ?? .brown
+    }
+
+    static func clear(in domain: Any? = Asset.domain) -> SwiftUI.Color {
+        Asset.color(named: "clear", domain: domain) ?? .clear
+    }
+
+    @available(iOS 15.0, *)
+    static func cyan(in domain: Any? = Asset.domain) -> SwiftUI.Color {
+        Asset.color(named: "cyan", domain: domain) ?? .cyan
+    }
+
+    static func green(in domain: Any? = Asset.domain) -> SwiftUI.Color {
+        Asset.color(named: "green", domain: domain) ?? .green
+    }
+
+    @available(iOS 15.0, *)
+    static func indigo(in domain: Any? = Asset.domain) -> SwiftUI.Color {
+        Asset.color(named: "indigo", domain: domain) ?? .indigo
+    }
+
+    @available(iOS 15.0, *)
+    static func mint(in domain: Any? = Asset.domain) -> SwiftUI.Color {
+        Asset.color(named: "mint", domain: domain) ?? .mint
+    }
+    static func orange(in domain: Any? = Asset.domain) -> SwiftUI.Color {
+        Asset.color(named: "orange", domain: domain) ?? .orange
+    }
+    static func pink(in domain: Any? = Asset.domain) -> SwiftUI.Color {
+        Asset.color(named: "pink", domain: domain) ?? .pink
+    }
+    static func purple(in domain: Any? = Asset.domain) -> SwiftUI.Color {
+        Asset.color(named: "purple", domain: domain) ?? .purple
+    }
+    static func red(in domain: Any? = Asset.domain) -> SwiftUI.Color {
+        Asset.color(named: "red", domain: domain) ?? .red
+    }
+
+    @available(iOS 15.0, *)
+    static func teal(in domain: Any? = Asset.domain) -> SwiftUI.Color {
+        Asset.color(named: "teal", domain: domain) ?? .teal
+    }
+    static func white(in domain: Any? = Asset.domain) -> SwiftUI.Color {
+        Asset.color(named: "white", domain: domain) ?? .white
+    }
+    static func yellow(in domain: Any? = Asset.domain) -> SwiftUI.Color {
+        Asset.color(named: "yellow", domain: domain) ?? .yellow
+    }
+
+    // MARK: - Semantic Colors
+    static func accentColor(in domain: Any? = Asset.domain) -> SwiftUI.Color {
+        Asset.color(named: "accentColor", domain: domain) ?? .accentColor
+    }
+    static func primary(in domain: Any? = Asset.domain) -> SwiftUI.Color {
+        Asset.color(named: "primary", domain: domain) ?? .primary
+    }
+    static func secondary(in domain: Any? = Asset.domain) -> SwiftUI.Color {
+        Asset.color(named: "secondary", domain: domain) ?? .secondary
+    }
+}
