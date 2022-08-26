@@ -1,21 +1,3 @@
-"Sample.account" = "Account";
-
-"Sample.Onboarding.accept" = "Agree";
-
-"Sample.Onboarding.message1" = "Using Snabble, you scan your purchase yourself and pay directly in the app. No queueing and without putting your purchase on the belt.";
-
-"Sample.Onboarding.message2" = "Enter a participating store, start shopping and hold the barcode of an article in front of the camera. The rest is self-explanatory.";
-
-"Sample.Onboarding.message3" = "Please accept the terms of use and take note of the privacy policy.";
-
-"Sample.scanner" = "Scanner";
-
-"Sample.Shop.Detail.hour" = "h";
-
-"Sample.shoppingCart" = "Shopping Cart";
-
-"Sample.shops" = "Shops";
-
 "Snabble.addDiscount" = "Inserisci lo sconto";
 
 "Snabble.AgeVerification.explanation" = "Per l’acquisto di determinati articoli, come ad esempio gli alcolici, è necessario un documento che attesti l’età. Inserisci il numero a 7 cifre della parte posteriore del tuo documento di identità.";
@@ -500,11 +482,6 @@
 
 "Snabble.Shop.Detail.openingHours" = "Opening hours";
 
-<<<<<<< HEAD
-"Snabble.Shop.Detail.shopNow" = "Start shopping";
-
-=======
->>>>>>> main
 "Snabble.Shop.Detail.startNavigation" = "Do you like to start navigation?";
 
 "Snabble.Shop.Detail.title" = "Details";
