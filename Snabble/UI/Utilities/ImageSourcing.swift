@@ -33,6 +33,10 @@ extension ImageSourcing {
             return nil
         }
 
+        guard UIImage(named: source) != nil else {
+            return nil
+        }
+
         return SwiftUI.Image(source)
     }
 }

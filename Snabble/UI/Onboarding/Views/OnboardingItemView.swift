@@ -46,15 +46,10 @@ struct OnboardingItemView: View {
 
     @ViewBuilder
     var image: some View {
-        if let imageSource = item.imageSource {
-            if let image = item.image {
-                image
-                    .resizable()
-                    .scaledToFit()
-            } else {
-                Text(imageSource)
-                    .font(.system(size: 72))
-            }
+        if let image = item.image {
+            image
+                .resizable()
+                .scaledToFit()
         } else {
             EmptyView()
         }
@@ -136,9 +131,7 @@ struct OnboardingItemView: View {
 struct OnboardingItemView_Previews: PreviewProvider {
     static var previews: some View {
         let item1 = OnboardingItem(
-            imageSource: "onboarding-image-1",
-            text: "Scan your purchase yourself and pay directly in the app. ",
-            customButtonTitle: "Continue"
+            text: "Scan your purchase yourself and pay directly in the app."
         )
         OnboardingItemView(item: item1)
     }

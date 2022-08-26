@@ -33,7 +33,7 @@ public struct OnboardingItem: Hashable, Codable, Swift.Identifiable, ImageSourci
 
     /// convinience init with default nil values for less used properties
     public init(
-        imageSource: String?,
+        imageSource: String? = nil,
         text: String,
         customButtonTitle: String? = nil,
         link: String? = nil
