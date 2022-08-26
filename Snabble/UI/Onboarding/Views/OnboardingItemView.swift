@@ -86,7 +86,7 @@ struct OnboardingItemView: View {
                 Text(item.attributedString)
             }
         } else {
-            AttributedText(htmlString: Asset.localizedString(forKey: item.text ?? ""), openURL: $urlResource)
+            AttributedText(htmlString: Asset.localizedString(forKey: item.text), openURL: $urlResource)
         }
     }
 

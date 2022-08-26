@@ -52,9 +52,9 @@ public extension OnboardingItem {
     /// use markdown for links like: `Please visit: [snabble](https://snabble.io)`
     var attributedString: AttributedString {
         do {
-            return try AttributedString(markdown: NSLocalizedString(text ?? "", comment: ""), baseURL: nil)
+            return try AttributedString(markdown: NSLocalizedString(text, comment: ""), baseURL: nil)
         } catch {
-            return AttributedString(NSLocalizedString(text ?? "", comment: ""))
+            return AttributedString(NSLocalizedString(text, comment: ""))
         }
     }
 }
