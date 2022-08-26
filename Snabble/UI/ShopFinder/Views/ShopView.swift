@@ -57,10 +57,13 @@ public struct ShopView: View {
                 VStack(spacing: 0) {
                     AddressView(provider: shop)
                 }
+                .font(.body)
 
                 distance
+                    .font(.body)
 
                 PhoneNumberView(phone: shop.phone)
+                    .font(.body)
 
                 OpeningHoursView(shop: shop)
             }

@@ -23,8 +23,7 @@ public struct OpeningHoursView: View {
     public var body: some View {
         VStack(alignment: .center, spacing: 4) {
             Text(keyed: "Snabble.Shop.Detail.openingHours")
-                .font(.footnote)
-                .fontWeight(.semibold)
+                .font(.headline)
 
             VStack(alignment: .trailing, spacing: 2) {
                 ForEach(shop.openingHoursViewModel, id: \.day) { viewModel in
@@ -44,7 +43,7 @@ public struct OpeningHoursView: View {
                     }
                 }
             }
-            .font(.caption)
+            .font(.footnote)
         }
     }
 }
