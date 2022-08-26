@@ -40,7 +40,7 @@ private struct Secondary: ViewModifier {
     func body(content: Content) -> some View {
         content
             .font(.subheadline)
-            .foregroundColor(Color.named("Snabble.Shop.Finder.Details.foreground") ?? .gray)
+            .foregroundColor(Color.named("Snabble.Shop.Finder.Secondary.foreground") ?? .gray)
     }
 }
 
