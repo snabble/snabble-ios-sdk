@@ -40,7 +40,7 @@ private struct Secondary: ViewModifier {
     func body(content: Content) -> some View {
         content
             .font(.subheadline)
-            .foregroundColor(.gray)
+            .foregroundColor(Color.named("Snabble.Shop.Finder.Details.foreground") ?? .gray)
     }
 }
 
@@ -48,10 +48,10 @@ private struct YouAreHere: ViewModifier {
     func body(content: Content) -> some View {
         content
            .font(.footnote)
-           .foregroundColor(Color.onAccent())
+           .foregroundColor(Color.named("Snabble.Shop.Finder.YouAreHere.foreground") ?? Color.onAccent())
            .padding(.horizontal, 8)
            .padding(.vertical, 4)
-           .background(Color.accent())
+           .background(Color.named("Snabble.Shop.Finder.YouAreHere.background") ?? Color.accent())
            .clipShape(Capsule())
     }
 }
