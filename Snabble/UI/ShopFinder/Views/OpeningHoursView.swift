@@ -8,65 +8,43 @@
 import Foundation
 import SwiftUI
 
-public struct OpeningHourView: View, Swift.Identifiable {
-    var viewModel: OpeningHourViewModel
-    public let id = UUID()
-    
-    @ViewBuilder
-    var day: some View {
-        if let day = viewModel.day {
-            Text(key: day)
-                .lineLimit(2)
-        } else {
-            EmptyView()
-        }
-    }
-
-    @ViewBuilder
-    var hour: some View {
-        if let hour = viewModel.hour {
-            Text(key: hour)
-                .lineLimit(2)
-                .multilineTextAlignment(.center)
-                .fixedSize(horizontal: false, vertical: true)
-        } else {
-            EmptyView()
-        }
-    }
-
-    public var body: some View {
-        HStack(alignment: .top) {
-            day
-            hour
-        }
+public extension ShopProviding {
+    var openingHoursViewModel: [OpeningHourViewModel] {
+        ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"]
+            .map {
+                OpeningHourViewModel(forWeekday: $0, withSpecification: openingHoursSpecification)
+            }
     }
 }
 
-public struct OpeningView: View {
+public struct OpeningHoursView: View {
     var shop: ShopProviding
 
-    var views: [OpeningHourView] {
-        ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"]
-            .map {
-                OpeningHourViewModel(forWeekday: $0, withSpecification: shop.openingHoursSpecification)
-            }
-            .map {
-                OpeningHourView(viewModel: $0)
-            }
-    }
-
     public var body: some View {
-        VStack {
+        VStack(alignment: .center, spacing: 4) {
             Text(key: "Snabble.Shop.Detail.openingHours")
-                .padding(.top, 4)
-                .padding(.bottom, 4)
+                .font(.footnote)
+                .fontWeight(.semibold)
 
-            VStack(alignment: .trailing) {
-                ForEach(views, id: \.id) {
-                    $0
+            VStack(alignment: .trailing, spacing: 2) {
+                ForEach(shop.openingHoursViewModel, id: \.day) { viewModel in
+                    HStack(alignment: .top) {
+                        if let day = viewModel.day {
+                            Text(day)
+                                .lineLimit(2)
+                        } else {
+                            EmptyView()
+                        }
+                        if let hour = viewModel.hour {
+                            Text(hour)
+                                .lineLimit(2)
+                        } else {
+                            EmptyView()
+                        }
+                    }
                 }
             }
+            .font(.caption)
         }
-        .font(.footnote)
     }
 }

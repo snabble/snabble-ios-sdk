@@ -30,8 +30,9 @@ extension AppDelegate: AssetProviding {
 
     func image(named name: String, domain: Any?) -> SwiftUI.Image? {
         switch name {
-        case "Snabble.Shop.Detail.mapPin":
-            return SwiftUI.Image("scan-off")
+            // uncomment the following lines to use a custom map pin
+//        case "Snabble.Shop.Detail.mapPin":
+//            return SwiftUI.Image("scan-off")
         default:
             return nil
         }

@@ -8,21 +8,27 @@
 import Foundation
 import SwiftUI
 
+extension ShopsViewModel {
+    func shopNow() {
+    }
+}
+
 public struct ShopView: View {
     var shop: ShopProviding
 
     @ObservedObject var viewModel: ShopsViewModel
     @State private var showingAlert = false
 
-    public var body: some View {
-        ScrollView(.vertical) {
-            ShopMapView(shop: shop, userLocation: viewModel.locationManager.location)
-                .frame(minHeight: 300)
-            VStack(spacing: 0) {
-                AddressView(provider: shop)
+    @ViewBuilder
+    var distance: some View {        
+        if viewModel.isCurrent(shop) {
+            Button(action: {
+                viewModel.shopNow()
+            }) {
+                Text(key: "Snabble.Shop.Detail.shopNow")
             }
-            .padding([.top, .bottom], 20)
-
+            .buttonStyle(AccentButtonStyle())
+        } else {
             HStack {
                 Spacer()
                 Asset.image(named: "location")
@@ -39,11 +45,25 @@ public struct ShopView: View {
                 .navigateToShopAlert(isPresented: $showingAlert, shop: shop)
                 Spacer()
             }
-            .padding(.bottom, 20)
+        }
+    }
 
-            PhoneNumberView(phone: shop.phone)
+    public var body: some View {
+        ScrollView(.vertical) {
+            VStack(spacing: 20) {
+                ShopMapView(shop: shop, userLocation: viewModel.locationManager.location)
+                    .frame(minHeight: 300)
 
-            OpeningView(shop: shop)
+                VStack(spacing: 0) {
+                    AddressView(provider: shop)
+                }
+
+                distance
+
+                PhoneNumberView(phone: shop.phone)
+
+                OpeningHoursView(shop: shop)
+            }
         }
         .navigationTitle(shop.name)
     }
