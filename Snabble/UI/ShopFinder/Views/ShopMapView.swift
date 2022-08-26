@@ -44,7 +44,8 @@ public struct ShopAnnotationView: View {
     var shopLocation: ShopLocation
     @State private var showTitle = true
     @State private var showingAlert = false
-
+    @Environment(\.colorScheme) var colorScheme: ColorScheme
+    
     @ViewBuilder
     var mapMarker: some View {
         if let image: SwiftUI.Image = Asset.image(named: "Snabble.Shop.Detail.mapPin" ) {
@@ -81,6 +82,7 @@ public struct ShopAnnotationView: View {
                     VStack(alignment: .leading, spacing: 0) {
                         AddressView(provider: shopLocation.shop)
                     }
+                    .foregroundColor(.black)
                 }
                 .padding(5)
                 .background(Color(.white))
@@ -89,11 +91,10 @@ public struct ShopAnnotationView: View {
                 Asset.image(named: "arrowtriangle.down.fill")
                     .foregroundColor(.white)
             }
-            .font(.callout)
             .opacity(showTitle ? 0 : 1)
             
             mapMarker
-                .foregroundColor(Color.accent())
+                .foregroundColor(colorScheme == .dark ? Color.onAccent() : Color.accent())
 
         }
        .onTapGesture {
