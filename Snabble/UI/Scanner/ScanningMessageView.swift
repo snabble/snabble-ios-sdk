@@ -33,7 +33,7 @@ final class ScanningMessageView: UIView {
 
         super.init(frame: frame)
 
-        backgroundColor = Asset.Color.systemBackground()
+        backgroundColor = .systemBackground
 
         addSubview(closeButton)
         addSubview(stackView)
@@ -120,7 +120,7 @@ extension ScanningMessageView {
         override init(frame: CGRect) {
             let view = UIView()
             view.translatesAutoresizingMaskIntoConstraints = false
-            view.backgroundColor = Asset.Color.separator()
+            view.backgroundColor = .separator
 
             super.init(frame: frame)
 
@@ -160,7 +160,7 @@ extension ScanningMessageView {
             label.translatesAutoresizingMaskIntoConstraints = false
             label.font = .preferredFont(forTextStyle: .body)
             label.adjustsFontForContentSizeCategory = true
-            label.textColor = Asset.Color.label()
+            label.textColor = .label
             label.textAlignment = .natural
             label.numberOfLines = 0
             label.setContentHuggingPriority(.defaultLow + 1, for: .horizontal)

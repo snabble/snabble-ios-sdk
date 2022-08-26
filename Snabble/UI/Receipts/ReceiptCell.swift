@@ -31,13 +31,13 @@ final class ReceiptCell: UITableViewCell {
 
         orderDate.translatesAutoresizingMaskIntoConstraints = false
         orderDate.numberOfLines = 0
-        orderDate.textColor = Asset.Color.secondaryLabel()
+        orderDate.textColor = .secondaryLabel
         orderDate.font = .preferredFont(forTextStyle: .footnote)
         orderDate.adjustsFontForContentSizeCategory = true
         contentView.addSubview(orderDate)
 
         price.translatesAutoresizingMaskIntoConstraints = false
-        price.textColor = Asset.Color.secondaryLabel()
+        price.textColor = .secondaryLabel
         price.font = .preferredFont(forTextStyle: .footnote)
         price.adjustsFontForContentSizeCategory = true
         price.setContentHuggingPriority(.defaultHigh, for: .horizontal)
@@ -108,7 +108,7 @@ final class ReceiptCell: UITableViewCell {
             self.showIcon(projectId)
             self.orderDate.text = Asset.localizedString(forKey: "Snabble.Receipts.loading")
             let spinner = UIActivityIndicatorView(style: .medium)
-            spinner.color = Asset.Color.systemGray()
+            spinner.color = .systemGray
             spinner.startAnimating()
             self.accessoryView = spinner
             self.price.text = ""

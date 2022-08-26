@@ -37,7 +37,7 @@ extension UIViewController {
     public func showOverlay(with overlayView: UIView) {
         let backgroundView = UIView(frame: view.bounds)
         backgroundView.autoresizingMask = [.flexibleWidth, .flexibleHeight]
-        backgroundView.backgroundColor = Asset.Color.label().withAlphaComponent(0.5)
+        backgroundView.backgroundColor = .label.withAlphaComponent(0.5)
         view.addSubview(backgroundView)
         self.backgroundView = backgroundView
 
@@ -99,7 +99,7 @@ extension UIViewController {
 
         let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene
         overlayWindow = UIWindow(windowScene: windowScene!)
-        overlayWindow?.backgroundColor = Asset.Color.label().withAlphaComponent(0.5)
+        overlayWindow?.backgroundColor = .label.withAlphaComponent(0.5)
         overlayWindow?.rootViewController = viewController
         overlayWindow?.windowLevel = .normal
         overlayWindow?.makeKeyAndVisible()

@@ -64,7 +64,7 @@ public final class ShoppingCartViewController: UIViewController {
 
         self.trashButton = UIBarButtonItem(image: Asset.image(named: "SnabbleSDK/icon-trash"), style: .plain, target: self, action: #selector(self.trashButtonTapped(_:)))
 
-        self.view.backgroundColor = Asset.Color.systemBackground()
+        self.view.backgroundColor = .systemBackground
 
         let cartView = shoppingCartTableVC.view!
         cartView.translatesAutoresizingMaskIntoConstraints = false
@@ -78,7 +78,7 @@ public final class ShoppingCartViewController: UIViewController {
 
         let separator = UIView()
         separator.translatesAutoresizingMaskIntoConstraints = false
-        separator.backgroundColor = Asset.Color.separator()
+        separator.backgroundColor = .separator
         bottomWrapper.addSubview(separator)
 
         NSLayoutConstraint.activate([

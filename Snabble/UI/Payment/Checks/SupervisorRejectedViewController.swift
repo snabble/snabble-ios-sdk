@@ -28,7 +28,7 @@ final class SupervisorRejectedViewController: UIViewController {
 
         let scrollView = UIScrollView()
         scrollView.translatesAutoresizingMaskIntoConstraints = false
-        scrollView.backgroundColor = Asset.Color.systemBackground()
+        scrollView.backgroundColor = .systemBackground
         scrollView.showsVerticalScrollIndicator = false
         scrollView.alwaysBounceVertical = false
 
@@ -50,14 +50,14 @@ final class SupervisorRejectedViewController: UIViewController {
         let topIcon = UIImageView(image: Asset.image(named: "SnabbleSDK/icon-hint-big")?.withRenderingMode(.alwaysTemplate))
         topIcon.translatesAutoresizingMaskIntoConstraints = false
         topIcon.contentMode = .scaleAspectFit
-        topIcon.tintColor = Asset.Color.label()
+        topIcon.tintColor = .label
         topIcon.adjustsImageSizeForAccessibilityContentSizeCategory = true
         topIcon.setContentHuggingPriority(.defaultLow + 1, for: .horizontal)
         topIcon.setContentHuggingPriority(.defaultLow + 2, for: .vertical)
 
         let messageLabel = UILabel()
         messageLabel.translatesAutoresizingMaskIntoConstraints = false
-        messageLabel.textColor = Asset.Color.label()
+        messageLabel.textColor = .label
         messageLabel.font = .preferredFont(forTextStyle: .body)
         messageLabel.adjustsFontForContentSizeCategory = true
         messageLabel.textAlignment = .center
@@ -123,7 +123,7 @@ final class SupervisorRejectedViewController: UIViewController {
         title = Asset.localizedString(forKey: "Snabble.Payment.rejected")
         self.navigationItem.hidesBackButton = true
 
-        view.backgroundColor = Asset.Color.systemBackground()
+        view.backgroundColor = .systemBackground
     }
 
     override func viewDidAppear(_ animated: Bool) {

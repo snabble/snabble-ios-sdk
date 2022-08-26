@@ -68,7 +68,7 @@ public final class PaydirektEditViewController: UIViewController {
 
     override public func loadView() {
         let view = UIView(frame: UIScreen.main.bounds)
-        view.backgroundColor = Asset.Color.systemBackground()
+        view.backgroundColor = .systemBackground
         if #available(iOS 15, *) {
             view.restrictDynamicTypeSize(from: nil, to: .extraExtraExtraLarge)
         }
@@ -84,7 +84,7 @@ public final class PaydirektEditViewController: UIViewController {
         displayLabel.translatesAutoresizingMaskIntoConstraints = false
         displayLabel.font = .preferredFont(forTextStyle: .body)
         displayLabel.adjustsFontForContentSizeCategory = true
-        displayLabel.textColor = Asset.Color.label()
+        displayLabel.textColor = .label
         displayLabel.textAlignment = .natural
         displayLabel.numberOfLines = 0
         displayLabel.text = Asset.localizedString(forKey: "Snabble.Paydirekt.savedAuthorization")
@@ -94,7 +94,7 @@ public final class PaydirektEditViewController: UIViewController {
         openButton.isUserInteractionEnabled = true
         openButton.titleLabel?.font = .preferredFont(forTextStyle: .subheadline)
         openButton.titleLabel?.adjustsFontForContentSizeCategory = true
-        openButton.setTitleColor(Asset.Color.link(), for: .normal)
+        openButton.setTitleColor(.link, for: .normal)
         openButton.setTitle(Asset.localizedString(forKey: "Snabble.Paydirekt.gotoWebsite"), for: .normal)
         openButton.addTarget(self, action: #selector(openButtonTapped(_:)), for: .touchUpInside)
 
@@ -114,7 +114,7 @@ public final class PaydirektEditViewController: UIViewController {
         errorLabel.translatesAutoresizingMaskIntoConstraints = false
         errorLabel.font = .preferredFont(forTextStyle: .body)
         errorLabel.adjustsFontForContentSizeCategory = true
-        errorLabel.textColor = Asset.Color.label()
+        errorLabel.textColor = .label
         errorLabel.textAlignment = .center
         errorLabel.numberOfLines = 0
         errorLabel.text = Asset.localizedString(forKey: "Snabble.Paydirekt.AuthorizationFailed.title")
@@ -124,7 +124,7 @@ public final class PaydirektEditViewController: UIViewController {
         errorButton.titleLabel?.font = .preferredFont(forTextStyle: .headline)
         errorButton.titleLabel?.adjustsFontForContentSizeCategory = true
         errorButton.setTitle(Asset.localizedString(forKey: "Snabble.PaymentError.tryAgain"), for: .normal)
-        errorButton.setTitleColor(Asset.Color.onAccent(), for: .normal)
+        errorButton.setTitleColor(.onAccent(), for: .normal)
         errorButton.makeSnabbleButton()
         errorButton.isUserInteractionEnabled = true
         errorButton.addTarget(self, action: #selector(errorButtonTapped(_:)), for: .touchUpInside)
@@ -278,7 +278,7 @@ public final class PaydirektEditViewController: UIViewController {
         configuration.preferences.minimumFontSize = 15
         let webView = WKWebView(frame: .zero, configuration: configuration)
         webView.isOpaque = false
-        webView.backgroundColor = Asset.Color.clear()
+        webView.backgroundColor = .clear
         webView.navigationDelegate = self
 
         webView.translatesAutoresizingMaskIntoConstraints = false

@@ -53,14 +53,14 @@ class BaseCheckViewController: UIViewController {
     override public func loadView() {
         // set the main view components
         let contentView = UIView(frame: UIScreen.main.bounds)
-        contentView.backgroundColor = Asset.Color.systemBackground()
+        contentView.backgroundColor = .systemBackground
         if #available(iOS 15, *) {
             contentView.restrictDynamicTypeSize(from: nil, to: .extraExtraExtraLarge)
         }
 
         let scrollView = UIScrollView()
         scrollView.translatesAutoresizingMaskIntoConstraints = false
-        scrollView.backgroundColor = Asset.Color.systemBackground()
+        scrollView.backgroundColor = .systemBackground
         scrollView.showsVerticalScrollIndicator = false
         scrollView.alwaysBounceVertical = false
 
@@ -153,7 +153,7 @@ class BaseCheckViewController: UIViewController {
         textWrapper.translatesAutoresizingMaskIntoConstraints = false
         let text = UILabel()
         text.translatesAutoresizingMaskIntoConstraints = false
-        text.textColor = Asset.Color.label()
+        text.textColor = .label
         text.textAlignment = .center
         text.numberOfLines = 0
         text.font = .preferredFont(forTextStyle: .body)
@@ -206,7 +206,7 @@ class BaseCheckViewController: UIViewController {
         idWrapper.translatesAutoresizingMaskIntoConstraints = false
         let id = UILabel()
         id.translatesAutoresizingMaskIntoConstraints = false
-        id.textColor = Asset.Color.label()
+        id.textColor = .label
         id.textAlignment = .center
         id.font = .preferredFont(forTextStyle: .footnote)
         id.adjustsFontForContentSizeCategory = true

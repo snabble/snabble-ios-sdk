@@ -84,7 +84,7 @@ final class ScannerDrawerViewController: UIViewController {
         handleView.translatesAutoresizingMaskIntoConstraints = false
         handleView.layer.cornerRadius = 2.5
         handleView.layer.masksToBounds = true
-        handleView.backgroundColor = Asset.Color.systemGray3()
+        handleView.backgroundColor = .systemGray3
         handleView.isUserInteractionEnabled = true
         let tap = UITapGestureRecognizer(target: self, action: #selector(handleTapped(_:)))
         handleView.addGestureRecognizer(tap)
@@ -112,7 +112,7 @@ final class ScannerDrawerViewController: UIViewController {
 
         let separator = UIView()
         separator.translatesAutoresizingMaskIntoConstraints = false
-        separator.backgroundColor = Asset.Color.separator()
+        separator.backgroundColor = .separator
 
         let bottomView = UIView()
         bottomView.translatesAutoresizingMaskIntoConstraints = false
@@ -179,9 +179,9 @@ final class ScannerDrawerViewController: UIViewController {
         super.viewDidLoad()
 
         // set up appearance for translucency effect
-        view.backgroundColor = Asset.Color.clear()
-        self.shoppingListTableVC.view.backgroundColor = Asset.Color.clear()
-        self.shoppingCartVC.view.backgroundColor = Asset.Color.clear()
+        view.backgroundColor = .clear
+        self.shoppingListTableVC.view.backgroundColor = .clear
+        self.shoppingCartVC.view.backgroundColor = .clear
         setupBlurEffect()
 
         checkoutBar?.shoppingCartDelegate = shoppingCartDelegate
