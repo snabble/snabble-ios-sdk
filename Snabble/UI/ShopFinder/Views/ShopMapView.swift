@@ -51,7 +51,7 @@ public struct ShopAnnotationView: View {
         if let image: SwiftUI.Image = Asset.image(named: "Snabble.Shop.Detail.mapPin" ) {
             image
                 .padding(1)
-                .background(Color.white)
+                .background(Color(UIColor.systemBackground))
                 .clipShape(RoundedRectangle(cornerRadius: 4))
         } else {
             Group {
@@ -74,7 +74,7 @@ public struct ShopAnnotationView: View {
                             .frame(width: 24, height: 24)
                             .padding(8)
                             .background(Color.accent())
-                            .foregroundColor(.white)
+                            .foregroundColor(.onAccent())
                             .cornerRadius(4)
                    }
                     .navigateToShopAlert(isPresented: $showingAlert, shop: shopLocation.shop)
@@ -82,10 +82,10 @@ public struct ShopAnnotationView: View {
                     VStack(alignment: .leading, spacing: 0) {
                         AddressView(provider: shopLocation.shop)
                     }
-                    .foregroundColor(.black)
+                    .foregroundColor(.primary)
                 }
                 .padding(5)
-                .background(Color(.white))
+                .background(Color(UIColor.systemBackground))
                 .cornerRadius(8)
                 
                 Asset.image(named: "arrowtriangle.down.fill")
@@ -155,7 +155,7 @@ public struct ShopMapView: View {
             }
         }
         .padding(10)
-        .background(Color.white)
+        .background(Color(UIColor.systemBackground))
         .foregroundColor(Color.accent())
         .cornerRadius(8)
         .shadow(color: .gray, radius: 3, x: 0, y: 0)
