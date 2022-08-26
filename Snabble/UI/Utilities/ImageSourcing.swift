@@ -22,7 +22,7 @@ extension ImageSourcing {
         guard let source = imageSource else {
             return nil
         }
-        return Asset.image(named: source)
+        return UIImage(named: source)
     }
 }
 
@@ -33,6 +33,10 @@ extension ImageSourcing {
             return nil
         }
 
-        return Asset.image(named: source)
+        guard UIImage(named: source) != nil else {
+            return nil
+        }
+
+        return SwiftUI.Image(source)
     }
 }

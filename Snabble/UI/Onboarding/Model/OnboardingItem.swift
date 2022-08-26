@@ -15,35 +15,32 @@ public struct OnboardingItem: Hashable, Codable, Swift.Identifiable, ImageSourci
     /// id to fullfil the `Swift.Identifiable` protocol
     public var id = UUID()
 
-    /// optional title string
-    public let title: String?
     /// optional string for onboarding image
     public let imageSource: String?
     /// optional text description
-    public let text: String?
-    /// optional title for the button to show previous onboarding item
-    public let prevButtonTitle: String?
-    /// optional title for the button to show next onboarding item
-    public let nextButtonTitle: String?
+    public let text: String
+    /// defines an optional custom button title
+    public let customButtonTitle: String?
     /// optional string to
     public let link: String?
 
     enum CodingKeys: String, CodingKey {
-        case title
         case imageSource
         case text
-        case prevButtonTitle
-        case nextButtonTitle
+        case customButtonTitle
         case link
     }
 
     /// convinience init with default nil values for less used properties
-    public init(title: String? = nil, imageSource: String?, text: String?, prevButtonTitle: String? = nil, nextButtonTitle: String? = nil, link: String? = nil) {
-        self.title = title
+    public init(
+        imageSource: String? = nil,
+        text: String,
+        customButtonTitle: String? = nil,
+        link: String? = nil
+    ) {
         self.imageSource = imageSource
         self.text = text
-        self.prevButtonTitle = prevButtonTitle
-        self.nextButtonTitle = nextButtonTitle
+        self.customButtonTitle = customButtonTitle
         self.link = link
     }
 }
@@ -55,9 +52,9 @@ public extension OnboardingItem {
     /// use markdown for links like: `Please visit: [snabble](https://snabble.io)`
     var attributedString: AttributedString {
         do {
-            return try AttributedString(markdown: Asset.localizedString(forKey: self.text ?? ""), baseURL: nil)
+            return try AttributedString(markdown: NSLocalizedString(text, comment: ""), baseURL: nil)
         } catch {
-            return AttributedString(Asset.localizedString(forKey: self.text ?? ""))
+            return AttributedString(NSLocalizedString(text, comment: ""))
         }
     }
 }

@@ -500,8 +500,11 @@
 
 "Snabble.Shop.Detail.openingHours" = "Opening hours";
 
+<<<<<<< HEAD
 "Snabble.Shop.Detail.shopNow" = "Start shopping";
 
+=======
+>>>>>>> main
 "Snabble.Shop.Detail.startNavigation" = "Do you like to start navigation?";
 
 "Snabble.Shop.Detail.title" = "Details";

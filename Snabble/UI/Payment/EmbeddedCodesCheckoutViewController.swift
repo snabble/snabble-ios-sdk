@@ -36,7 +36,7 @@ final class EmbeddedCodesCheckoutViewController: UIViewController {
     private var customLabel: UILabel {
         let label = UILabel()
         label.translatesAutoresizingMaskIntoConstraints = false
-        label.textColor = Asset.Color.label()
+        label.textColor = .label
         label.textAlignment = .natural
         label.adjustsFontForContentSizeCategory = true
         label.numberOfLines = 0
@@ -78,7 +78,7 @@ final class EmbeddedCodesCheckoutViewController: UIViewController {
 
         let scrollView = UIScrollView()
         scrollView.translatesAutoresizingMaskIntoConstraints = false
-        scrollView.backgroundColor = Asset.Color.systemBackground()
+        scrollView.backgroundColor = .systemBackground
         scrollView.showsVerticalScrollIndicator = false
         scrollView.alwaysBounceVertical = false
 
@@ -90,7 +90,7 @@ final class EmbeddedCodesCheckoutViewController: UIViewController {
 
         let paidButton = UIButton(type: .system)
         paidButton.translatesAutoresizingMaskIntoConstraints = false
-        paidButton.titleLabel?.font = Asset.preferredFont(forTextStyle: .headline)
+        paidButton.titleLabel?.font = .preferredFont(forTextStyle: .headline)
         paidButton.titleLabel?.adjustsFontForContentSizeCategory = true
         paidButton.makeSnabbleButton()
         paidButton.titleLabel?.textAlignment = .center
@@ -114,7 +114,7 @@ final class EmbeddedCodesCheckoutViewController: UIViewController {
         let topIcon = iconImage
 
         let messageLabel = customLabel
-        messageLabel.font = Asset.preferredFont(forTextStyle: .body)
+        messageLabel.font = .preferredFont(forTextStyle: .body)
         messageLabel.textAlignment = .center
 
         let arrowWrapper = UIView()
@@ -125,7 +125,7 @@ final class EmbeddedCodesCheckoutViewController: UIViewController {
         arrowIcon.adjustsImageSizeForAccessibilityContentSizeCategory = true
 
         let codeCountLabel = customLabel
-        codeCountLabel.font = Asset.preferredFont(forTextStyle: .headline)
+        codeCountLabel.font = .preferredFont(forTextStyle: .headline)
 
         let codeScrollView = UIScrollView()
         codeScrollView.translatesAutoresizingMaskIntoConstraints = false
@@ -134,15 +134,15 @@ final class EmbeddedCodesCheckoutViewController: UIViewController {
         codeScrollView.bounces = false
 
         let idLabel = customLabel
-        idLabel.font = Asset.preferredFont(forTextStyle: .footnote)
+        idLabel.font = .preferredFont(forTextStyle: .footnote)
 
         let codeContainer = UIView()
         codeContainer.translatesAutoresizingMaskIntoConstraints = true
 
         let pageControl = UIPageControl()
         pageControl.translatesAutoresizingMaskIntoConstraints = false
-        pageControl.pageIndicatorTintColor = Asset.Color.systemGray6()
-        pageControl.currentPageIndicatorTintColor = Asset.Color.black()
+        pageControl.pageIndicatorTintColor = .systemGray6
+        pageControl.currentPageIndicatorTintColor = .black
         pageControl.addTarget(self, action: #selector(pageControlTapped(_:)), for: UIControl.Event.valueChanged)
 
         contentView.addSubview(scrollView)
@@ -246,7 +246,7 @@ final class EmbeddedCodesCheckoutViewController: UIViewController {
         codeCountLabel?.isHidden = codes.count == 1
         pageControl?.numberOfPages = codes.count
         pageControl?.pageIndicatorTintColor = .lightGray
-        pageControl?.currentPageIndicatorTintColor = Asset.Color.label()
+        pageControl?.currentPageIndicatorTintColor = .label
         pageControl?.isHidden = codes.count == 1
 
         let id = process?.links._self.href.suffix(4) ?? "offline"

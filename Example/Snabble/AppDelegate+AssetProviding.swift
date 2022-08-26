@@ -13,38 +13,32 @@ import UIKit
 
 extension AppDelegate: AssetProviding {
     func color(named name: String, domain: Any?) -> UIColor? {
-        nil
-    }
-
-    func color(named name: String, domain: Any?) -> SwiftUI.Color? {
-        nil
-    }
-
-    func preferredFont(forTextStyle style: UIFont.TextStyle, weight: UIFont.Weight?, domain: Any?) -> UIFont? {
-        nil
+        UIColor(named: name)
     }
 
     func image(named name: String, domain: Any?) -> UIImage? {
-        nil
+        UIImage(named: name)
     }
 
     func image(named name: String, domain: Any?) -> SwiftUI.Image? {
-        switch name {
-            // uncomment the following lines to use a custom map pin
-//        case "Snabble.Shop.Detail.mapPin":
-//            return SwiftUI.Image("scan-off")
-        default:
+        guard UIImage(named: name) != nil else {
             return nil
         }
+        return SwiftUI.Image(name)
     }
 
-    func localizedString(forKey: String, arguments: CVarArg..., domain: Any?) -> String? {
-        nil
+    func localizedString(forKey key: String, arguments: CVarArg..., domain: Any?) -> String? {
+        let format = Bundle.main.localizedString(forKey: key, value: key, table: nil)
+        if format != key {
+            return String.localizedStringWithFormat(format, arguments)
+        }
+        return nil
     }
 
     func url(forResource name: String?, withExtension ext: String?, domain: Any?) -> URL? {
-        nil
+        Bundle.main.url(forResource: name, withExtension: ext)
     }
+
     func appearance(for domain: Any?) -> CustomAppearance? {
         nil
     }

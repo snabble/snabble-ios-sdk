@@ -37,10 +37,9 @@ extension String {
         let attributes: [NSAttributedString.Key: Any] = [
             .font: UIFont.preferredFont(forTextStyle: .subheadline),
             .paragraphStyle: paragraphStyle,
-            .foregroundColor: UIColor.label,
-            .backgroundColor: UIColor.systemBackground
+            .foregroundColor: UIColor.label
         ]
-        attributedString.addAttributes(attributes, range: NSRange(location: 0, length: attributedString.length ))
+        attributedString.addAttributes(attributes, range: NSRange(location: 0, length: attributedString.length))
 
         var links: [NSRange] = []
 
@@ -51,7 +50,7 @@ extension String {
         }
 
         for range in links {
-            attributedString.addAttributes([.foregroundColor: UIColor.link,
+            attributedString.addAttributes([.foregroundColor: UIColor.accent(),
                                             .underlineStyle: 0], range: range)
 
         }

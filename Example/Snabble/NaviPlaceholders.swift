@@ -11,7 +11,7 @@ final class AccountViewController: UIViewController {
     init() {
         super.init(nibName: nil, bundle: nil)
 
-        self.title = NSLocalizedString("Account", comment: "")
+        self.title = NSLocalizedString("Sample.account", comment: "")
         self.tabBarItem.image = UIImage(systemName: "person")
         self.tabBarItem.selectedImage = UIImage(systemName: "person.fill")
     }

@@ -11,28 +11,28 @@ extension UIButton {
     /// add a "rounded button" appearance to this button
     public func makeSnabbleButton() {
         self.layer.cornerRadius = 8
-        self.backgroundColor = Asset.Color.accent()
-        self.tintColor = Asset.Color.onAccent()
+        self.backgroundColor = .accent()
+        self.tintColor = .onAccent()
     }
 
     /// add a "bordered button" appearance to this button
     public func makeBorderedButton() {
         self.layer.cornerRadius = 6
-        self.backgroundColor = Asset.Color.secondarySystemBackground()
+        self.backgroundColor = .secondarySystemBackground
         self.layer.borderWidth = 1 / UIScreen.main.scale
-        self.layer.borderColor = Asset.Color.border().cgColor
+        self.layer.borderColor = UIColor.border().cgColor
     }
 }
 
 extension UIView {
     /// add a "rounded card" appearance to this view
     public func addCornersAndShadow(backgroundColor: UIColor, cornerRadius: CGFloat) {
-        self.layer.shadowColor = Asset.Color.shadow().cgColor
+        self.layer.shadowColor = UIColor.shadow().cgColor
         self.layer.shadowOffset = CGSize(width: 0, height: 1)
         self.layer.shadowOpacity = 0.5
         self.layer.shadowRadius = 2.0
 
-        self.backgroundColor = Asset.Color.clear()
+        self.backgroundColor = .clear
 
         self.addBorderView(backgroundColor, cornerRadius)
     }

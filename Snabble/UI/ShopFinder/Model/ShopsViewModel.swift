@@ -62,6 +62,8 @@ extension ShopsViewModel: CLLocationManagerDelegate {
             break
         case .denied, .restricted, .notDetermined:
             distances.removeAll()
+        @unknown default:
+            distances.removeAll()
         }
     }
 

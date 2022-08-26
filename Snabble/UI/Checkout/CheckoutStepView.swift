@@ -37,8 +37,8 @@ final class CheckoutStepView: UIView {
         stackView.spacing = 8
 
         let textLabel = UILabel()
-        textLabel.textColor = Asset.Color.label()
-        textLabel.font = Asset.preferredFont(forTextStyle: .body)
+        textLabel.textColor = .label
+        textLabel.font = .preferredFont(forTextStyle: .body)
         textLabel.adjustsFontForContentSizeCategory = true
         textLabel.numberOfLines = 1
         textLabel.minimumScaleFactor = 13.0 / 17.0
@@ -46,8 +46,8 @@ final class CheckoutStepView: UIView {
         textLabel.allowsDefaultTighteningForTruncation = true
 
         let detailTextLabel = UILabel()
-        detailTextLabel.textColor = Asset.Color.label()
-        detailTextLabel.font = Asset.preferredFont(forTextStyle: .footnote)
+        detailTextLabel.textColor = .label
+        detailTextLabel.font = .preferredFont(forTextStyle: .footnote)
         detailTextLabel.adjustsFontForContentSizeCategory = true
         detailTextLabel.numberOfLines = 0
 
@@ -55,8 +55,8 @@ final class CheckoutStepView: UIView {
         imageView.contentMode = .scaleAspectFit
 
         let button = UIButton(type: .system)
-        button.setTitleColor(Asset.Color.systemRed(), for: .normal)
-        button.titleLabel?.font = Asset.preferredFont(forTextStyle: .footnote, weight: .medium)
+        button.setTitleColor(.systemRed, for: .normal)
+        button.titleLabel?.font = .preferredFont(forTextStyle: .footnote, weight: .medium)
         button.titleLabel?.adjustsFontForContentSizeCategory = true
         button.titleLabel?.textAlignment = .left
 

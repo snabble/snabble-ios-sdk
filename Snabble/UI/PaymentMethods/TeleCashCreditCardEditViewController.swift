@@ -65,7 +65,7 @@ public final class TeleCashCreditCardEditViewController: UIViewController {
     override public func viewDidLoad() {
         super.viewDidLoad()
 
-        view.backgroundColor = Asset.Color.systemBackground()
+        view.backgroundColor = .systemBackground
 
         if #available(iOS 15, *) {
             view.restrictDynamicTypeSize(from: nil, to: .extraExtraExtraLarge)
@@ -102,21 +102,21 @@ public final class TeleCashCreditCardEditViewController: UIViewController {
         view.addSubview(spinner)
 
         explanation.numberOfLines = 0
-        explanation.font = Asset.preferredFont(forTextStyle: .footnote)
+        explanation.font = .preferredFont(forTextStyle: .footnote)
         explanation.adjustsFontForContentSizeCategory = true
 
-        cardNumberLabel.font = Asset.preferredFont(forTextStyle: .body)
+        cardNumberLabel.font = .preferredFont(forTextStyle: .body)
         cardNumberLabel.adjustsFontForContentSizeCategory = true
 
-        cardNumber.font = Asset.preferredFont(forTextStyle: .body)
+        cardNumber.font = .preferredFont(forTextStyle: .body)
         cardNumber.adjustsFontForContentSizeCategory = true
         cardNumber.isEnabled = false
         cardNumber.borderStyle = .roundedRect
 
-        expDateLabel.font = Asset.preferredFont(forTextStyle: .body)
+        expDateLabel.font = .preferredFont(forTextStyle: .body)
         expDateLabel.adjustsFontForContentSizeCategory = true
 
-        expirationDate.font = Asset.preferredFont(forTextStyle: .body)
+        expirationDate.font = .preferredFont(forTextStyle: .body)
         expirationDate.adjustsFontForContentSizeCategory = true
         expirationDate.isEnabled = false
         expirationDate.borderStyle = .roundedRect

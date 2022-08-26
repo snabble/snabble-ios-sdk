@@ -35,7 +35,7 @@ public final class InFlightCheckoutContinuationViewController: UIViewController 
             view.restrictDynamicTypeSize(from: nil, to: .extraExtraExtraLarge)
         }
 
-        view.backgroundColor = Asset.Color.systemBackground()
+        view.backgroundColor = .systemBackground
 
         let activityIndicatorView = UIActivityIndicatorView(style: .medium)
         activityIndicatorView.hidesWhenStopped = true
@@ -44,7 +44,7 @@ public final class InFlightCheckoutContinuationViewController: UIViewController 
         let textLabel = UILabel()
         textLabel.text = Asset.localizedString(forKey: "Snabble.PaymentContinuation.message")
         textLabel.numberOfLines = 0
-        textLabel.font = Asset.preferredFont(forTextStyle: .body)
+        textLabel.font = .preferredFont(forTextStyle: .body)
         textLabel.adjustsFontForContentSizeCategory = true
 
         let stackview = UIStackView(arrangedSubviews: [ activityIndicatorView, textLabel ])

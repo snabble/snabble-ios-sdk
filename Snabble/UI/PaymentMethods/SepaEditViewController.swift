@@ -63,13 +63,13 @@ public final class SepaEditViewController: UIViewController {
             view.restrictDynamicTypeSize(from: nil, to: .extraExtraExtraLarge)
         }
 
-        view.backgroundColor = Asset.Color.systemBackground()
+        view.backgroundColor = .systemBackground
         scrollView.translatesAutoresizingMaskIntoConstraints = false
 
         view.addSubview(scrollView)
 
         saveButton.makeSnabbleButton()
-        saveButton.titleLabel?.font = Asset.preferredFont(forTextStyle: .headline)
+        saveButton.titleLabel?.font = .preferredFont(forTextStyle: .headline)
         saveButton.titleLabel?.adjustsFontForContentSizeCategory = true
         saveButton.translatesAutoresizingMaskIntoConstraints = false
         saveButton.setTitle(Asset.localizedString(forKey: "Snabble.save"), for: .normal)
@@ -78,7 +78,7 @@ public final class SepaEditViewController: UIViewController {
 
         hintLabel.translatesAutoresizingMaskIntoConstraints = false
         hintLabel.numberOfLines = 0
-        hintLabel.font = Asset.preferredFont(forTextStyle: .footnote)
+        hintLabel.font = .preferredFont(forTextStyle: .footnote)
         hintLabel.adjustsFontForContentSizeCategory = true
         hintLabel.text = Asset.localizedString(forKey: "Snabble.Payment.Sepa.hint")
         scrollView.addSubview(hintLabel)
@@ -89,14 +89,14 @@ public final class SepaEditViewController: UIViewController {
 
         nameLabel.translatesAutoresizingMaskIntoConstraints = false
         nameLabel.numberOfLines = 0
-        nameLabel.font = Asset.preferredFont(forTextStyle: .body)
+        nameLabel.font = .preferredFont(forTextStyle: .body)
         nameLabel.adjustsFontForContentSizeCategory = true
         nameLabel.text = Asset.localizedString(forKey: "Snabble.Payment.Sepa.name")
         scrollView.addSubview(nameLabel)
 
         ibanLabel.translatesAutoresizingMaskIntoConstraints = false
         ibanLabel.numberOfLines = 0
-        ibanLabel.font = Asset.preferredFont(forTextStyle: .body)
+        ibanLabel.font = .preferredFont(forTextStyle: .body)
         ibanLabel.adjustsFontForContentSizeCategory = true
         ibanLabel.text = Asset.localizedString(forKey: "Snabble.Payment.Sepa.iban")
         scrollView.addSubview(ibanLabel)
@@ -105,7 +105,7 @@ public final class SepaEditViewController: UIViewController {
         nameField.tag = InputField.name.rawValue
         nameField.keyboardType = .alphabet
         nameField.autocapitalizationType = .words
-        nameField.font = Asset.preferredFont(forTextStyle: .body)
+        nameField.font = .preferredFont(forTextStyle: .body)
         nameField.adjustsFontForContentSizeCategory = true
         nameField.delegate = self
         scrollView.addSubview(nameField)
@@ -113,7 +113,7 @@ public final class SepaEditViewController: UIViewController {
         ibanCountryField.translatesAutoresizingMaskIntoConstraints = false
         ibanCountryField.tag = InputField.country.rawValue
         ibanCountryField.text = "DE"
-        ibanCountryField.font = Asset.preferredFont(forTextStyle: .body)
+        ibanCountryField.font = .preferredFont(forTextStyle: .body)
         ibanCountryField.adjustsFontForContentSizeCategory = true
         ibanCountryField.delegate = self
         ibanCountryField.setContentHuggingPriority(.required, for: .horizontal)
@@ -127,7 +127,7 @@ public final class SepaEditViewController: UIViewController {
         let smallPhone = UIScreen.main.bounds.width <= 320
         ibanNumberField.clearButtonMode = smallPhone ? .never : .always
         ibanNumberField.placeholder = self.placeholderFor("DE")
-        ibanNumberField.font = Asset.preferredFont(forTextStyle: .body)
+        ibanNumberField.font = .preferredFont(forTextStyle: .body)
         ibanNumberField.adjustsFontForContentSizeCategory = true
         ibanNumberField.delegate = self
         scrollView.addSubview(ibanNumberField)
@@ -238,20 +238,20 @@ public final class SepaEditViewController: UIViewController {
 
         var showError = false
         if !valid {
-            self.ibanNumberField.textColor = Asset.Color.systemRed()
-            self.ibanLabel.textColor = Asset.Color.systemRed()
+            self.ibanNumberField.textColor = .systemRed
+            self.ibanLabel.textColor = .systemRed
             self.ibanLabel.text = Asset.localizedString(forKey: "Snabble.Payment.Sepa.invalidIBAN")
             showError = true
         }
         if name.isEmpty {
-            self.nameField.textColor = Asset.Color.systemRed()
-            self.nameLabel.textColor = Asset.Color.systemRed()
+            self.nameField.textColor = .systemRed
+            self.nameLabel.textColor = .systemRed
             self.nameLabel.text = Asset.localizedString(forKey: "Snabble.Payment.Sepa.invalidName")
             showError = true
         }
         if country.isEmpty {
-            self.ibanCountryField.textColor = Asset.Color.systemRed()
-            self.ibanLabel.textColor = Asset.Color.systemRed()
+            self.ibanCountryField.textColor = .systemRed
+            self.ibanLabel.textColor = .systemRed
             self.ibanLabel.text = Asset.localizedString(forKey: "Snabble.Payment.Sepa.missingCountry")
             showError = true
         }
@@ -330,7 +330,7 @@ public final class SepaEditViewController: UIViewController {
         textField.clearButtonMode = .never
         textField.returnKeyType = .next
         textField.borderStyle = .roundedRect
-        textField.layer.borderColor = Asset.Color.clear().cgColor
+        textField.layer.borderColor = UIColor.clear.cgColor
         textField.layer.borderWidth = 1
         textField.layer.cornerRadius = 6
         textField.delegate = self
@@ -380,10 +380,10 @@ public final class SepaEditViewController: UIViewController {
     }
 
     private func markTextfield(_ textField: UITextField, _ label: UILabel, _ valid: Bool) {
-        textField.textColor = valid ? Asset.Color.label() : Asset.Color.systemRed()
-        label.textColor = valid ? Asset.Color.label() : Asset.Color.systemRed()
+        textField.textColor = valid ? .label : .systemRed
+        label.textColor = valid ? .label : .systemRed
 
-        let borderColor: UIColor = valid ? Asset.Color.clear() : Asset.Color.systemRed()
+        let borderColor: UIColor = valid ? .clear : .systemRed
         textField.layer.borderColor = borderColor.cgColor
     }
 

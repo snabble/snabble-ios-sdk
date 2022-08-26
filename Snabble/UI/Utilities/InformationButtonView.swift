@@ -34,7 +34,7 @@ final class InformationButtonView: UIView {
 
         super.init(frame: frame)
 
-        backgroundColor = Asset.Color.clear()
+        backgroundColor = .clear
 
         addSubview(stackView)
 

@@ -44,7 +44,7 @@ public enum SnabbleUI {
 // Uses default implementations of the procotol
 private struct SnabbleAppearance: CustomAppearance {
     var accent: UIColor { UIColor(red: 0, green: 119.0 / 255.0, blue: 187.0 / 255.0, alpha: 1) }
-    var contrast: UIColor? { .white }
+    var onAccent: UIColor { .white }
     var titleIcon: UIImage? { nil }
 }
 

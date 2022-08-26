@@ -44,34 +44,12 @@ struct OnboardingItemView: View {
 
     @Environment(\.openURL) var openURL
 
-    var topPadding: CGFloat {
-        return 40 - (item.title != nil ? 30 : 0)
-    }
-
-    @ViewBuilder
-    var title: some View {
-        VStack {
-            if let title = item.title {
-                Text(title).font(.title)
-            } else {
-                EmptyView()
-            }
-        }
-    }
-
     @ViewBuilder
     var image: some View {
-        if let imageSource = item.imageSource {
-            if let image = item.image {
-                image
-                    .resizable()
-                    .scaledToFit()
-                    .padding([.top], topPadding)
-            } else {
-                Text(imageSource)
-                    .font(.system(size: 72))
-                    .padding([.top], topPadding)
-            }
+        if let image = item.image {
+            image
+                .resizable()
+                .scaledToFit()
         } else {
             EmptyView()
         }
@@ -83,7 +61,7 @@ struct OnboardingItemView: View {
             Button(action: {
                 isPresenting.toggle()
             }) {
-                Text(key: "Snabble.Onboarding.Terms.show")
+                Text(keyed: "Snabble.Onboarding.Link.show")
                     .font(.headline)
                     .foregroundColor(Color.accent())
             }
@@ -108,7 +86,7 @@ struct OnboardingItemView: View {
                 Text(item.attributedString)
             }
         } else {
-            AttributedText(htmlString: Asset.localizedString(forKey: item.text ?? ""), openURL: $urlResource)
+            AttributedText(htmlString: Asset.localizedString(forKey: item.text), openURL: $urlResource)
         }
     }
 
@@ -129,17 +107,16 @@ struct OnboardingItemView: View {
     }
 
     private func generateAttributedText() {
-        guard attributedText == nil, let text = item.text, text.containsHTML == true else { return }
+        guard attributedText == nil, item.text.containsHTML == true else { return }
 
         // create attributedText on main thread since HTML formatter will crash SwiftUI
         DispatchQueue.main.async {
-            self.attributedText = Asset.localizedString(forKey: text).attributedStringFromHTML
+            self.attributedText = Asset.localizedString(forKey: item.text).attributedStringFromHTML
         }
     }
 
     var body: some View {
         VStack(alignment: .center, spacing: 20) {
-            title
             image
             text
             footer
@@ -153,7 +130,9 @@ struct OnboardingItemView: View {
 
 struct OnboardingItemView_Previews: PreviewProvider {
     static var previews: some View {
-        let item1 = OnboardingItem(imageSource: "onboarding-image-1", text: "Scan your purchase yourself and pay directly in the app. ", prevButtonTitle: nil, nextButtonTitle: "Continue")
+        let item1 = OnboardingItem(
+            text: "Scan your purchase yourself and pay directly in the app."
+        )
         OnboardingItemView(item: item1)
     }
 }

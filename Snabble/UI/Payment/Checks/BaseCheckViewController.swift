@@ -53,14 +53,14 @@ class BaseCheckViewController: UIViewController {
     override public func loadView() {
         // set the main view components
         let contentView = UIView(frame: UIScreen.main.bounds)
-        contentView.backgroundColor = Asset.Color.systemBackground()
+        contentView.backgroundColor = .systemBackground
         if #available(iOS 15, *) {
             contentView.restrictDynamicTypeSize(from: nil, to: .extraExtraExtraLarge)
         }
 
         let scrollView = UIScrollView()
         scrollView.translatesAutoresizingMaskIntoConstraints = false
-        scrollView.backgroundColor = Asset.Color.systemBackground()
+        scrollView.backgroundColor = .systemBackground
         scrollView.showsVerticalScrollIndicator = false
         scrollView.alwaysBounceVertical = false
 
@@ -75,7 +75,7 @@ class BaseCheckViewController: UIViewController {
         cancelButton.makeSnabbleButton()
         cancelButton.titleLabel?.textAlignment = .center
         cancelButton.setTitle(Asset.localizedString(forKey: "Snabble.cancel"), for: .normal)
-        cancelButton.titleLabel?.font = Asset.preferredFont(forTextStyle: .headline)
+        cancelButton.titleLabel?.font = .preferredFont(forTextStyle: .headline)
         cancelButton.titleLabel?.adjustsFontForContentSizeCategory = true
         cancelButton.alpha = 0
         cancelButton.isUserInteractionEnabled = false
@@ -153,10 +153,10 @@ class BaseCheckViewController: UIViewController {
         textWrapper.translatesAutoresizingMaskIntoConstraints = false
         let text = UILabel()
         text.translatesAutoresizingMaskIntoConstraints = false
-        text.textColor = Asset.Color.label()
+        text.textColor = .label
         text.textAlignment = .center
         text.numberOfLines = 0
-        text.font = Asset.preferredFont(forTextStyle: .body)
+        text.font = .preferredFont(forTextStyle: .body)
         text.adjustsFontForContentSizeCategory = true
         textWrapper.addSubview(text)
         NSLayoutConstraint.activate([
@@ -206,9 +206,9 @@ class BaseCheckViewController: UIViewController {
         idWrapper.translatesAutoresizingMaskIntoConstraints = false
         let id = UILabel()
         id.translatesAutoresizingMaskIntoConstraints = false
-        id.textColor = Asset.Color.label()
+        id.textColor = .label
         id.textAlignment = .center
-        id.font = Asset.preferredFont(forTextStyle: .footnote)
+        id.font = .preferredFont(forTextStyle: .footnote)
         id.adjustsFontForContentSizeCategory = true
         idWrapper.addSubview(id)
         NSLayoutConstraint.activate([

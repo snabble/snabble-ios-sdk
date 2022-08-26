@@ -62,14 +62,14 @@ public final class ReceiptsListViewController: UITableViewController {
         emptyLabel.translatesAutoresizingMaskIntoConstraints = false
         emptyLabel.numberOfLines = 0
         emptyLabel.textAlignment = .center
-        emptyLabel.font = Asset.preferredFont(forTextStyle: .body)
+        emptyLabel.font = .preferredFont(forTextStyle: .body)
         emptyLabel.adjustsFontForContentSizeCategory = true
         view.addSubview(emptyLabel)
 
         let activityIndicator = UIActivityIndicatorView(style: .medium)
         activityIndicator.startAnimating()
         activityIndicator.hidesWhenStopped = true
-        activityIndicator.color = Asset.Color.systemGray()
+        activityIndicator.color = .systemGray
         activityIndicator.translatesAutoresizingMaskIntoConstraints = false
         view.addSubview(activityIndicator)
         self.activityIndicator = activityIndicator

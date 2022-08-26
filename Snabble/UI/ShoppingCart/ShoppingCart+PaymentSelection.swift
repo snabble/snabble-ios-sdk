@@ -324,7 +324,7 @@ final class PaymentMethodSelector {
         switch method {
         case .externalBilling, .customerCardPOS:
             let actions = paymentMethodDetails.map { paymentMethodDetail -> PaymentMethodAction in
-                var color: UIColor = Asset.Color.label()
+                var color: UIColor = .label
                 var detailText: String?
                 if case let PaymentMethodUserData.tegutEmployeeCard(data) = paymentMethodDetail.methodData {
                     detailText = data.cardNumber
@@ -332,7 +332,7 @@ final class PaymentMethodSelector {
 
                 if hasCartMethods && !isCartMethod {
                     detailText = Asset.localizedString(forKey: "Snabble.Shoppingcart.notForThisPurchase")
-                    color = Asset.Color.secondaryLabel()
+                    color = .secondaryLabel
                 }
 
                 let title = Self.attributedString(
@@ -358,7 +358,7 @@ final class PaymentMethodSelector {
                             let title = Self.attributedString(
                                 forText: method.displayName,
                                 withSubtitle: paymentMethodDetail.displayName,
-                                inColor: Asset.Color.label()
+                                inColor: .label
                             )
                             return PaymentMethodAction(
                                 title: title,
@@ -373,7 +373,7 @@ final class PaymentMethodSelector {
                         let title = Self.attributedString(
                             forText: method.displayName,
                             withSubtitle: Asset.localizedString(forKey: "Snabble.Shoppingcart.notForThisPurchase"),
-                            inColor: Asset.Color.secondaryLabel()
+                            inColor: .secondaryLabel
                         )
                         let action = PaymentMethodAction(
                             title: title,
@@ -389,7 +389,7 @@ final class PaymentMethodSelector {
                         let title = Self.attributedString(
                             forText: method.displayName,
                             withSubtitle: paymentMethodDetail.displayName,
-                            inColor: Asset.Color.label()
+                            inColor: .label
                         )
                         return PaymentMethodAction(
                             title: title,
@@ -406,7 +406,7 @@ final class PaymentMethodSelector {
                 let title = Self.attributedString(
                     forText: method.displayName,
                     withSubtitle: subtitle,
-                    inColor: Asset.Color.label())
+                    inColor: .label)
                 let action = PaymentMethodAction(
                     title: title,
                     paymentMethod: method,
@@ -423,7 +423,7 @@ final class PaymentMethodSelector {
                 let title = Self.attributedString(
                     forText: method.displayName,
                     withSubtitle: subtitle,
-                    inColor: Asset.Color.label()
+                    inColor: .label
                 )
                 let action = PaymentMethodAction(
                     title: title,
@@ -437,7 +437,7 @@ final class PaymentMethodSelector {
                 let title = Self.attributedString(
                     forText: method.displayName,
                     withSubtitle: Asset.localizedString(forKey: "Snabble.Shoppingcart.notForVendor"),
-                    inColor: Asset.Color.secondaryLabel()
+                    inColor: .secondaryLabel
                 )
                 let action = PaymentMethodAction(
                     title: title,
@@ -452,7 +452,7 @@ final class PaymentMethodSelector {
             break
         }
 
-        let title = Self.attributedString(forText: method.displayName, inColor: Asset.Color.label())
+        let title = Self.attributedString(forText: method.displayName, inColor: .label)
         let action = PaymentMethodAction(
             title: title,
             paymentMethod: method,
@@ -476,7 +476,7 @@ final class PaymentMethodSelector {
         if let subtitle = subtitle {
             let subtitleAttributes: [NSAttributedString.Key: Any] = [
                 .font: UIFont.systemFont(ofSize: 13),
-                .foregroundColor: Asset.Color.secondaryLabel()
+                .foregroundColor: UIColor.secondaryLabel
             ]
             let subTitle = NSAttributedString(string: subtitle, attributes: subtitleAttributes)
             title.append(subTitle)

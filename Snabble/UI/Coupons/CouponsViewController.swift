@@ -42,7 +42,7 @@ public final class CouponsViewController: UICollectionViewController {
     }
 
     private func configureCollectionView(_ collectionView: UICollectionView) {
-        collectionView.backgroundColor = Asset.Color.clear()
+        collectionView.backgroundColor = .clear
         collectionView.showsHorizontalScrollIndicator = false
         collectionView.clipsToBounds = false
         collectionView.register(CouponCollectionViewCell.self)

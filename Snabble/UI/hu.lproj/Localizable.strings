@@ -500,9 +500,13 @@
 
 "Snabble.Shop.Detail.openingHours" = "Opening hours";
 
+<<<<<<< HEAD
 "Snabble.Shop.Detail.shopNow" = "Start shopping";
 
 "Snabble.Shop.Detail.startNavigation" = "Szeretnéd elindítani a navigációt?";
+=======
+"Snabble.Shop.Detail.startNavigation" = "Do you like to start navigation?";
+>>>>>>> main
 
 "Snabble.Shop.Detail.title" = "Részletek";
 

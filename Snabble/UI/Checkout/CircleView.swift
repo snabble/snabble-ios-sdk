@@ -31,7 +31,7 @@ public struct CircleView_Previews: PreviewProvider {
         Group {
             UIViewPreview {
                 let view = CircleView(frame: .zero)
-                view.backgroundColor = Asset.Color.systemRed()
+                view.backgroundColor = .systemRed
                 return view
             }.previewLayout(.fixed(width: 300, height: 300))
                 .preferredColorScheme(.light)
