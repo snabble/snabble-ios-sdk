@@ -19,9 +19,9 @@ struct ShopLocation: Swift.Identifiable {
 extension View {
     func navigateToShopAlert(isPresented: Binding<Bool>, shop: ShopProviding) -> some View {
         self.alert(isPresented: isPresented) {
-            Alert(title: Text(key: "Snabble.Shop.Detail.startNavigation"),
+            Alert(title: Text(keyed: "Snabble.Shop.Detail.startNavigation"),
                   message: Text("\(shop.street)\n\(shop.postalCode) \(shop.city)"),
-                  primaryButton: .destructive(Text(key: "Snabble.yes")) {
+                  primaryButton: .destructive(Text(keyed: "Snabble.yes")) {
                 navigate(to: shop)
             },
                   secondaryButton: .cancel())

@@ -25,7 +25,7 @@ public struct ShopView: View {
             Button(action: {
                 viewModel.shopNow()
             }) {
-                Text(key: "Snabble.Shop.Detail.shopNow")
+                Text(keyed: "Snabble.Shop.Detail.shopNow")
             }
             .buttonStyle(AccentButtonStyle())
         } else {

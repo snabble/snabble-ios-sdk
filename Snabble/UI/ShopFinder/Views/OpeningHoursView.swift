@@ -22,7 +22,7 @@ public struct OpeningHoursView: View {
 
     public var body: some View {
         VStack(alignment: .center, spacing: 4) {
-            Text(key: "Snabble.Shop.Detail.openingHours")
+            Text(keyed: "Snabble.Shop.Detail.openingHours")
                 .font(.footnote)
                 .fontWeight(.semibold)
 
