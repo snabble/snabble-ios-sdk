@@ -89,7 +89,7 @@ public struct ShopAnnotationView: View {
                 .cornerRadius(8)
                 
                 Asset.image(named: "arrowtriangle.down.fill")
-                    .foregroundColor(.white)
+                    .foregroundColor(Color(UIColor.systemBackground))
             }
             .opacity(showTitle ? 0 : 1)
             
