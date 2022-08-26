@@ -18,6 +18,10 @@ private extension UIColor {
 extension UIColor {
     // MARK: - Snabble Colors
 
+    public static func named(_ name: String, domain: Any? = Asset.domain) -> UIColor? {
+        Asset.color(named: name, domain: domain)
+    }
+
     public static func border(in domain: Any? = Asset.domain) -> UIColor {
         Asset.color(named: "border", domain: domain) ?? .systemGray
     }
@@ -48,6 +52,13 @@ extension SwiftUI.Color {
 
 extension SwiftUI.Color {
     // MARK: - Snabble Colors
+
+    public static func named(_ name: String, domain: Any? = Asset.domain) -> SwiftUI.Color? {
+        guard let uiColor = UIColor.named(name, domain: domain) else {
+            return nil
+        }
+        return color(uiColor)
+    }
 
     public static func border(in domain: Any? = Asset.domain) -> SwiftUI.Color {
         color(UIColor.border(in: domain))
