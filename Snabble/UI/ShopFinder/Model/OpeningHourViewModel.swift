@@ -13,17 +13,6 @@ public protocol OpeningHourProvider {
     var hour: String? { get }
 }
 
-extension Asset {
-    public static func localizedString(forKey key: String, arguments: CVarArg..., table: String? = nil, value: String? = nil, fallback: String? = nil, domain: Any? = domain) -> String {
-        let string = localizedString(forKey: key, arguments: arguments, table: table, value: value, domain: domain)
-        
-        if string == key, fallback != nil {
-            return fallback!
-        }
-        return string
-    }
-}
-
 extension String {
     var localDayOfWeek: String {
         var calendar = Calendar(identifier: .gregorian)
@@ -49,7 +38,7 @@ public struct OpeningHourViewModel: OpeningHourProvider {
         } else {
             self.day = nil
         }
-        var hourText = Asset.localizedString(forKey: "Snabble.Shop.Detail.hour", fallback: "")
+        var hourText = Asset.localizedString(forKey: "Snabble.Shop.Detail.hour")
 
         self.hour = filteredSpecification
             .sorted(by: { $0.opens.prefix(2) < $1.opens.prefix(2) })
