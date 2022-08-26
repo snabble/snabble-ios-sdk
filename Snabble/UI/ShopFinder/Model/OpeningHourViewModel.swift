@@ -49,7 +49,7 @@ public struct OpeningHourViewModel: OpeningHourProvider {
         } else {
             self.day = nil
         }
-        var hourText = Asset.localizedString(forKey: "Sample.Shop.Detail.hour", fallback: "")
+        var hourText = Asset.localizedString(forKey: "Snabble.Shop.Detail.hour", fallback: "")
 
         self.hour = filteredSpecification
             .sorted(by: { $0.opens.prefix(2) < $1.opens.prefix(2) })

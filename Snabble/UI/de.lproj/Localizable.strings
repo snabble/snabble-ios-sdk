@@ -1,21 +1,3 @@
-"Sample.account" = "Profil";
-
-"Sample.Onboarding.accept" = "Akzeptieren";
-
-"Sample.Onboarding.message1" = "Mit Snabble scannst du deinen Einkauf selbst und bezahlt direkt in der App. Ohne in der Schlange zu stehen und ohne deinen Einkauf auf’s Band zu legen.";
-
-"Sample.Onboarding.message2" = "Betrete eine teilnehmende Filiale, starte den Einkauf und halte den Barcode eines Artikels vor die Kamera. Der Rest erklärt sich von selbst.";
-
-"Sample.Onboarding.message3" = "Bitte akzeptiere die Nutzungsbedingungen und lies die Datenschutzhinweise.";
-
-"Sample.scanner" = "Scanner";
-
-"Sample.Shop.Detail.hour" = "Uhr";
-
-"Sample.shoppingCart" = "Warenkorb";
-
-"Sample.shops" = "Filialen";
-
 "Snabble.addDiscount" = "Rabatt eingeben";
 
 "Snabble.AgeVerification.explanation" = "Für den Kauf bestimmter Artikel, wie z.B. Alkohol, ist ein Altersnachweis notwendig. Gib dazu die 7-stellige Zahl von der Rückseite deines Personalausweises ein.";

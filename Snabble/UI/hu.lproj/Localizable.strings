@@ -1,21 +1,3 @@
-"Sample.account" = "Account";
-
-"Sample.Onboarding.accept" = "Elfogadás";
-
-"Sample.Onboarding.message1" = "A Snabble segítségével saját magad szkenneled be a vásárolni kívánt termékeket, és közvetlenül az alkalmazásban fizetsz. Nem kell sorban állni a pénztár előtt, és a vásárolt termékeket nem kell az áruszalagra helyezni.";
-
-"Sample.Onboarding.message2" = "Lépj be egy résztvevő üzletbe, kezdd el a bevásárlást, és tartsd a termék vonalkódját a kamera elé. A többi magától értetődik.";
-
-"Sample.Onboarding.message3" = "Kérlek, fogadd el a felhasználási feltételeket és az adatvédelmi tudnivalókat.";
-
-"Sample.scanner" = "Scanner";
-
-"Sample.Shop.Detail.hour" = "h";
-
-"Sample.shoppingCart" = "Shopping Cart";
-
-"Sample.shops" = "Shops";
-
 "Snabble.addDiscount" = "Árengedmény megadása";
 
 "Snabble.AgeVerification.explanation" = "Meghatározott termékek, mint pl. alkohol vásárlásához igazolnod kell a korod. Ehhez személyazonosító igazolványod hátoldaláról másold be a 7 jegyű számot.";
@@ -500,13 +482,9 @@
 
 "Snabble.Shop.Detail.openingHours" = "Opening hours";
 
-<<<<<<< HEAD
 "Snabble.Shop.Detail.shopNow" = "Start shopping";
 
 "Snabble.Shop.Detail.startNavigation" = "Szeretnéd elindítani a navigációt?";
-=======
-"Snabble.Shop.Detail.startNavigation" = "Do you like to start navigation?";
->>>>>>> main
 
 "Snabble.Shop.Detail.title" = "Részletek";
 
