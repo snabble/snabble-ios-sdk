@@ -63,7 +63,7 @@ public final class SepaEditViewController: UIViewController {
             view.restrictDynamicTypeSize(from: nil, to: .extraExtraExtraLarge)
         }
 
-        view.backgroundColor = Asset.Color.systemBackground()
+        view.backgroundColor = .systemBackground
         scrollView.translatesAutoresizingMaskIntoConstraints = false
 
         view.addSubview(scrollView)
@@ -238,20 +238,20 @@ public final class SepaEditViewController: UIViewController {
 
         var showError = false
         if !valid {
-            self.ibanNumberField.textColor = Asset.Color.systemRed()
-            self.ibanLabel.textColor = Asset.Color.systemRed()
+            self.ibanNumberField.textColor = .systemRed
+            self.ibanLabel.textColor = .systemRed
             self.ibanLabel.text = Asset.localizedString(forKey: "Snabble.Payment.Sepa.invalidIBAN")
             showError = true
         }
         if name.isEmpty {
-            self.nameField.textColor = Asset.Color.systemRed()
-            self.nameLabel.textColor = Asset.Color.systemRed()
+            self.nameField.textColor = .systemRed
+            self.nameLabel.textColor = .systemRed
             self.nameLabel.text = Asset.localizedString(forKey: "Snabble.Payment.Sepa.invalidName")
             showError = true
         }
         if country.isEmpty {
-            self.ibanCountryField.textColor = Asset.Color.systemRed()
-            self.ibanLabel.textColor = Asset.Color.systemRed()
+            self.ibanCountryField.textColor = .systemRed
+            self.ibanLabel.textColor = .systemRed
             self.ibanLabel.text = Asset.localizedString(forKey: "Snabble.Payment.Sepa.missingCountry")
             showError = true
         }
@@ -330,7 +330,7 @@ public final class SepaEditViewController: UIViewController {
         textField.clearButtonMode = .never
         textField.returnKeyType = .next
         textField.borderStyle = .roundedRect
-        textField.layer.borderColor = Asset.Color.clear().cgColor
+        textField.layer.borderColor = UIColor.clear.cgColor
         textField.layer.borderWidth = 1
         textField.layer.cornerRadius = 6
         textField.delegate = self
@@ -380,10 +380,10 @@ public final class SepaEditViewController: UIViewController {
     }
 
     private func markTextfield(_ textField: UITextField, _ label: UILabel, _ valid: Bool) {
-        textField.textColor = valid ? Asset.Color.label() : Asset.Color.systemRed()
-        label.textColor = valid ? Asset.Color.label() : Asset.Color.systemRed()
+        textField.textColor = valid ? .label : .systemRed
+        label.textColor = valid ? .label : .systemRed
 
-        let borderColor: UIColor = valid ? Asset.Color.clear() : Asset.Color.systemRed()
+        let borderColor: UIColor = valid ? .clear : .systemRed
         textField.layer.borderColor = borderColor.cgColor
     }
 

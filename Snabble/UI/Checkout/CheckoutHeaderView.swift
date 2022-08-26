@@ -25,7 +25,7 @@ final class CheckoutHeaderView: UIView {
 
         let textLabel = UILabel()
         textLabel.translatesAutoresizingMaskIntoConstraints = false
-        textLabel.textColor = Asset.Color.label()
+        textLabel.textColor = .label
         textLabel.font = .preferredFont(forTextStyle: .body)
         textLabel.adjustsFontForContentSizeCategory = true
         textLabel.textAlignment = .center

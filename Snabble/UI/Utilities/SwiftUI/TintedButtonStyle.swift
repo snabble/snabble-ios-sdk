@@ -9,7 +9,7 @@
 
 import SwiftUI
 
-/// Tinted button style using `Color.accent()` as background color and `Color.label()` as text color
+/// Tinted button style using `Color.accent()` as background color and `Color.onAccent()` as text color
 public struct AccentButtonStyle: ButtonStyle {
     public func makeBody(configuration: Configuration) -> some View {
         configuration.label

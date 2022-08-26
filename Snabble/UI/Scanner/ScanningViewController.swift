@@ -96,7 +96,7 @@ final class ScanningViewController: UIViewController {
         }
         let spinner = UIActivityIndicatorView(style: .large)
         spinner.translatesAutoresizingMaskIntoConstraints = false
-        spinner.color = Asset.Color.systemGray()
+        spinner.color = .systemGray
         spinner.hidesWhenStopped = true
 
         let scanConfirmationView = ScanConfirmationView(frame: .zero)
@@ -132,7 +132,7 @@ final class ScanningViewController: UIViewController {
     override public func viewDidLoad() {
         super.viewDidLoad()
 
-        self.view.backgroundColor = Asset.Color.systemGray()
+        self.view.backgroundColor = .systemGray
 
         if let custom = self.customAppearance {
             scanConfirmationView?.setCustomAppearance(custom)
@@ -551,7 +551,7 @@ extension ScanningViewController {
         // HACK: set the action sheet buttons background
         if let alertContentView = alert.view.subviews.first?.subviews.first {
             for view in alertContentView.subviews {
-                view.backgroundColor = Asset.Color.systemBackground()
+                view.backgroundColor = .systemBackground
             }
         }
 

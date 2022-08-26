@@ -26,7 +26,7 @@ final class QRCheckoutViewController: UIViewController {
     private var customLabel: UILabel {
         let label = UILabel()
         label.translatesAutoresizingMaskIntoConstraints = false
-        label.textColor = Asset.Color.label()
+        label.textColor = .label
         label.textAlignment = .center
         label.numberOfLines = 0
         label.adjustsFontForContentSizeCategory = true
@@ -56,11 +56,11 @@ final class QRCheckoutViewController: UIViewController {
         if #available(iOS 15, *) {
             contentView.restrictDynamicTypeSize(from: nil, to: .extraExtraExtraLarge)
         }
-        contentView.backgroundColor = Asset.Color.systemBackground()
+        contentView.backgroundColor = .systemBackground
 
         let scrollView = UIScrollView()
         scrollView.translatesAutoresizingMaskIntoConstraints = false
-        scrollView.backgroundColor = Asset.Color.systemBackground()
+        scrollView.backgroundColor = .systemBackground
         scrollView.showsVerticalScrollIndicator = false
         scrollView.alwaysBounceVertical = false
 

@@ -42,7 +42,7 @@ public final class CouponViewController: UIViewController {
         super.init(nibName: nil, bundle: nil)
 
         title = Asset.localizedString(forKey: "Snabble.Coupons.title")
-        view.backgroundColor = Asset.Color.systemBackground()
+        view.backgroundColor = .systemBackground
     }
 
     required init?(coder: NSCoder) {
@@ -95,7 +95,7 @@ public final class CouponViewController: UIViewController {
         let textLabel = UILabel()
         textLabel.numberOfLines = 0
         textLabel.font = .preferredFont(forTextStyle: .headline)
-        textLabel.textColor = Asset.Color.accent()
+        textLabel.textColor = .accent()
         self.textLabel = textLabel
 
         let validityLabel = UILabel()
@@ -105,13 +105,13 @@ public final class CouponViewController: UIViewController {
 
         let button = UIButton(type: .system)
         button.setTitle(Asset.localizedString(forKey: "Snabble.Coupon.activate"), for: .normal)
-        button.setBackgroundColor(color: Asset.Color.accent(), for: .normal)
+        button.setBackgroundColor(color: .accent(), for: .normal)
         button.titleLabel?.font = .preferredFont(forTextStyle: .headline)
-        button.tintColor = Asset.Color.onAccent()
+        button.tintColor = .onAccent()
         button.addTarget(self, action: #selector(activateCoupon), for: .touchUpInside)
         self.button = button
 
-        let greenColor = Asset.Color.systemGreen()
+        let greenColor = UIColor.systemGreen
         let image = UIImage(systemName: "checkmark.circle")
         let checkMarkImageView = UIImageView(image: image)
         checkMarkImageView.tintColor = greenColor

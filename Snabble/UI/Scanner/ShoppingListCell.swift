@@ -16,7 +16,7 @@ final class ShoppingListCell: UITableViewCell {
         cellView.translatesAutoresizingMaskIntoConstraints = false
 
         super.init(style: style, reuseIdentifier: reuseIdentifier)
-        self.backgroundColor = Asset.Color.clear()
+        self.backgroundColor = .clear
         contentView.addSubview(cellView)
         self.cellView = cellView
 
