@@ -27,7 +27,8 @@ extension String {
     }
 }
 
-public struct OpeningHourViewModel: OpeningHourProvider {
+public struct OpeningHourViewModel: Swift.Identifiable, OpeningHourProvider {
+    public var id = UUID()
     public let day: String?
     public let hour: String?
 

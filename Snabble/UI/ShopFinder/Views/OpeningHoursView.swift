@@ -26,7 +26,7 @@ public struct OpeningHoursView: View {
                 .font(.headline)
 
             VStack(alignment: .trailing, spacing: 2) {
-                ForEach(shop.openingHoursViewModel, id: \.day) { viewModel in
+                ForEach(shop.openingHoursViewModel, id: \.id) { viewModel in
                     HStack(alignment: .top) {
                         if let day = viewModel.day {
                             Text(day)
