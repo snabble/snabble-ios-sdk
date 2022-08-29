@@ -13,7 +13,8 @@ import SwiftUI
 public struct AccentButtonStyle: ButtonStyle {
     public func makeBody(configuration: Configuration) -> some View {
         configuration.label
-            .padding(15)
+            .padding([.top, .bottom], 15)
+            .padding([.leading, .trailing], 22)
             .background(Color.accent())
             .foregroundColor(Color.onAccent())
             .clipShape(RoundedRectangle(cornerRadius: 10))

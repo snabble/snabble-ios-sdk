@@ -480,7 +480,11 @@
 
 "Snabble.Settings" = "Paramètres";
 
+"Snabble.Shop.Detail.hour" = "h";
+
 "Snabble.Shop.Detail.openingHours" = "Opening hours";
+
+"Snabble.Shop.Detail.shopNow" = "Start shopping";
 
 "Snabble.Shop.Detail.startNavigation" = "Do you like to start navigation?";
 

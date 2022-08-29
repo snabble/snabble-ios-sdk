@@ -18,14 +18,20 @@ public struct ShopsView: View {
         NavigationView {
             VStack {
                 List(viewModel.shops, id: \.id) { shop in
-                    ShopCellView(
-                        shop: shop,
-                        viewModel: viewModel
-                    )
+                    NavigationLink {
+                        ShopView(
+                            shop: shop,
+                            viewModel: viewModel
+                        )
+                    } label: {
+                        ShopCellView(
+                            shop: shop,
+                            viewModel: viewModel
+                        )
+                    }
                 }
                 .listStyle(PlainListStyle())
-                .navigationTitle(Asset.localizedString(forKey: "Snabble.Shop.Finder.title"))
-                .navigationBarTitleDisplayMode(.inline)
+                .navigationBarTitle(Asset.localizedString(forKey: "Snabble.Shop.Finder.title"), displayMode: .inline)
             }
         }
         .onAppear {
