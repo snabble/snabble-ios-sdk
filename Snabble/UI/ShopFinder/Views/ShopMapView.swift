@@ -85,7 +85,7 @@ public struct ShopAnnotationView: View {
                     }
                     .foregroundColor(.primary)
                 }
-                .padding(5)
+                .padding(6)
                 .background(Color(UIColor.systemBackground))
                 .cornerRadius(8)
                 
