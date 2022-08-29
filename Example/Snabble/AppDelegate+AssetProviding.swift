@@ -21,10 +21,6 @@ extension AppDelegate: AssetProviding {
     }
 
     func image(named name: String, domain: Any?) -> SwiftUI.Image? {
-        // uncomment the following lines to use a custom map image
-//        if name == "Snabble.Shop.Detail.mapPin" {
-//            return SwiftUI.Image("scan-off")
-//        }
         guard UIImage(named: name) != nil else {
             return nil
         }
