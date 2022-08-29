@@ -56,9 +56,9 @@ struct TimeRange: CustomStringConvertible {
         if let start = start, let end = end {
             return start + " – " + end
         } else if let start = start {
-            return Asset.localizedString(forKey: "Snabble.Shop.Detail.startTime") + start    // "ab "
+            return Asset.localizedString(forKey: "Snabble.Shop.Detail.startTime") + " " + start    // "ab"
         } else if let end = end {
-            return Asset.localizedString(forKey: "Snabble.Shop.Detail.endTime") + end // "bis "
+            return Asset.localizedString(forKey: "Snabble.Shop.Detail.endTime") + " " + end // "bis"
         }
         return ""
     }
