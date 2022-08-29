@@ -93,7 +93,7 @@ public struct ShopAnnotationView: View {
 
             mapMarker
         }
-       .onTapGesture {
+        .onTapGesture {
           withAnimation(.easeInOut) {
             showTitle.toggle()
           }

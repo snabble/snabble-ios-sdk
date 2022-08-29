@@ -39,11 +39,10 @@ public struct OpeningHourViewModel: Swift.Identifiable, OpeningHourProvider {
         } else {
             self.day = nil
         }
-        var hourText = Asset.localizedString(forKey: "Snabble.Shop.Detail.hour")
-
+        
         self.hour = filteredSpecification
             .sorted(by: { $0.opens.prefix(2) < $1.opens.prefix(2) })
-            .map { "\($0.opens.prefix(5)) \(hourText) – \($0.closes.prefix(5)) \(hourText)" }
+            .map { "\($0.opens.prefix(5)) – \($0.closes.prefix(5))" }
             .joined(separator: "\n")
     }
 }
