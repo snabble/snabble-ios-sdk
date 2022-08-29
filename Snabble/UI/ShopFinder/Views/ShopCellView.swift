@@ -40,7 +40,7 @@ private struct Secondary: ViewModifier {
     func body(content: Content) -> some View {
         content
             .font(.subheadline)
-            .foregroundColor(Color.named("Snabble.Shop.Finder.Secondary.foreground") ?? SwiftUI.Color(.systemGray))
+            .foregroundColor(Color.named("Snabble.Shop.Finder.Secondary.foreground") ?? .systemGray)
     }
 }
 
@@ -48,10 +48,10 @@ private struct YouAreHere: ViewModifier {
     func body(content: Content) -> some View {
         content
            .font(.footnote)
-           .foregroundColor(Color.named("Snabble.Shop.Finder.YouAreHere.foreground") ?? Color.onAccent())
+           .foregroundColor(Color.named("Snabble.Shop.Finder.YouAreHere.foreground") ?? .onAccent())
            .padding(.horizontal, 8)
            .padding(.vertical, 4)
-           .background(Color.named("Snabble.Shop.Finder.YouAreHere.background") ?? Color.accent())
+           .background(Color.named("Snabble.Shop.Finder.YouAreHere.background") ?? .accent())
            .clipShape(Capsule())
     }
 }
