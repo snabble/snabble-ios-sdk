@@ -50,10 +50,6 @@ public struct ShopAnnotationView: View {
     var mapMarker: some View {
         if let image: SwiftUI.Image = Asset.image(named: "Snabble.Shop.Detail.mapPin" ) {
             image
-                .renderingMode(.template)
-                .padding(1)
-                .background(Color(UIColor.systemBackground))
-                .clipShape(RoundedRectangle(cornerRadius: 4))
         } else {
             Group {
                 Asset.image(named: "mappin.and.ellipse")
@@ -85,7 +81,8 @@ public struct ShopAnnotationView: View {
                     }
                     .foregroundColor(.primary)
                 }
-                .padding(6)
+                .padding([.leading, .top, .bottom], 4)
+                .padding(.trailing, 8)
                 .background(Color(UIColor.systemBackground))
                 .cornerRadius(8)
                 
@@ -93,10 +90,8 @@ public struct ShopAnnotationView: View {
                     .foregroundColor(Color(UIColor.systemBackground))
             }
             .opacity(showTitle ? 0 : 1)
-            
-            mapMarker
-                .foregroundColor(colorScheme == .dark ? Color.onAccent() : Color.accent())
 
+            mapMarker
         }
        .onTapGesture {
           withAnimation(.easeInOut) {

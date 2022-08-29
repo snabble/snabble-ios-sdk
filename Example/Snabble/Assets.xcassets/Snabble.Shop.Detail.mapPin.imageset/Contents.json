@@ -3,6 +3,16 @@
     {
       "filename" : "scan-off.pdf",
       "idiom" : "universal"
+    },
+    {
+      "appearances" : [
+        {
+          "appearance" : "luminosity",
+          "value" : "dark"
+        }
+      ],
+      "filename" : "scan-on.pdf",
+      "idiom" : "universal"
     }
   ],
   "info" : {
