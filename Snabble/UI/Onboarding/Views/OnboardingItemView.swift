@@ -84,6 +84,7 @@ struct OnboardingItemView: View {
                 Text(AttributedString(attrString))
             } else {
                 Text(item.attributedString)
+                    .tint(.accent())
             }
         } else {
             AttributedText(htmlString: Asset.localizedString(forKey: item.text), openURL: $urlResource)
