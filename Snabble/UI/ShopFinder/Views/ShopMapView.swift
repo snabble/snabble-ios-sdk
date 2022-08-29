@@ -51,10 +51,9 @@ public struct ShopAnnotationView: View {
         if let image: SwiftUI.Image = Asset.image(named: "Snabble.Shop.Detail.mapPin" ) {
             image
         } else {
-            Group {
-                Asset.image(named: "mappin.and.ellipse")
-                    .font(.title)
-            }
+            Asset.image(named: "mappin.and.ellipse")
+                .foregroundColor(Color.accent())
+                .font(.title)
         }
     }
 
@@ -89,6 +88,7 @@ public struct ShopAnnotationView: View {
                 Asset.image(named: "arrowtriangle.down.fill")
                     .foregroundColor(Color(UIColor.systemBackground))
             }
+            .compositingGroup()
             .opacity(showTitle ? 0 : 1)
 
             mapMarker
