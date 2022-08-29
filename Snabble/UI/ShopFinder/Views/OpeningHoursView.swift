@@ -19,7 +19,8 @@ public extension ShopProviding {
 
 public struct OpeningHoursView: View {
     var shop: ShopProviding
-
+    @Environment(\.locale) private var locale: Locale
+    
     public var body: some View {
         VStack(alignment: .center, spacing: 4) {
             Text(keyed: "Snabble.Shop.Detail.openingHours")
