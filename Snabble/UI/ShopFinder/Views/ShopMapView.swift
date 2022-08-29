@@ -50,6 +50,7 @@ public struct ShopAnnotationView: View {
     var mapMarker: some View {
         if let image: SwiftUI.Image = Asset.image(named: "Snabble.Shop.Detail.mapPin" ) {
             image
+                .renderingMode(.template)
                 .padding(1)
                 .background(Color(UIColor.systemBackground))
                 .clipShape(RoundedRectangle(cornerRadius: 4))
