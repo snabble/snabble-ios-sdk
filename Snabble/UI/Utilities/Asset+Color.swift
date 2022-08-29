@@ -76,3 +76,170 @@ extension SwiftUI.Color {
         color(UIColor.onAccent(in: domain))
     }
 }
+
+extension SwiftUI.Color {
+    // MARK: - Semantic Colors
+
+    static var label: SwiftUI.Color {
+        color(.label)
+    }
+
+    static var secondaryLabel: SwiftUI.Color {
+        color(.secondaryLabel)
+    }
+
+    static var tertiaryLabel: SwiftUI.Color {
+        color(.tertiaryLabel)
+    }
+
+    static var quaternaryLabel: SwiftUI.Color {
+        color(.quaternaryLabel)
+    }
+
+    static var systemFill: SwiftUI.Color {
+        color(.systemFill)
+    }
+
+    static var secondarySystemFill: SwiftUI.Color {
+        color(.secondarySystemFill)
+    }
+
+    static var tertiarySystemFill: SwiftUI.Color {
+        color(.tertiarySystemFill)
+    }
+
+    static var quaternarySystemFill: SwiftUI.Color {
+        color(.quaternarySystemFill)
+    }
+
+    static var placeholderText: SwiftUI.Color {
+        color(.placeholderText)
+    }
+
+    @available(iOS 15.0, *)
+    static var tintColor: SwiftUI.Color {
+        color(.tintColor)
+    }
+
+    static var systemBackground: SwiftUI.Color {
+        color(.systemBackground)
+    }
+
+    static var secondarySystemBackground: SwiftUI.Color {
+        color(.secondarySystemBackground)
+    }
+
+    static var tertiarySystemBackground: SwiftUI.Color {
+        color(.tertiarySystemBackground)
+    }
+
+    static var systemGroupedBackground: SwiftUI.Color {
+        color(.systemGroupedBackground)
+    }
+
+    static var secondarySystemGroupedBackground: SwiftUI.Color {
+        color(.secondarySystemGroupedBackground)
+    }
+
+    static var tertiarySystemGroupedBackground: SwiftUI.Color {
+        color(.tertiarySystemGroupedBackground)
+    }
+
+    static var separator: SwiftUI.Color {
+        color(.separator)
+    }
+
+    static var opaqueSeparator: SwiftUI.Color {
+        color(.opaqueSeparator)
+    }
+
+    static var link: SwiftUI.Color {
+        color(.link)
+    }
+
+    static var darkText: SwiftUI.Color {
+        color(.darkText)
+    }
+
+    static var lightText: SwiftUI.Color {
+        color(.lightText)
+    }
+
+    static var systemBlue: SwiftUI.Color {
+        color(.systemBlue)
+    }
+
+    static var systemBrown: SwiftUI.Color {
+        color(.systemBrown)
+    }
+
+    @available(iOS 15.0, *)
+    static var systemCyan: SwiftUI.Color {
+        color(.systemCyan)
+    }
+
+    static var systemGreen: SwiftUI.Color {
+        color(.systemGreen)
+    }
+
+    static var systemIndigo: SwiftUI.Color {
+        color(.systemIndigo)
+    }
+
+    @available(iOS 15.0, *)
+    static var systemMint: SwiftUI.Color {
+        color(.systemMint)
+    }
+
+    static var systemOrange: SwiftUI.Color {
+        color(.systemOrange)
+    }
+
+    static var systemPink: SwiftUI.Color {
+        color(.systemPink)
+    }
+
+    static var systemPurple: SwiftUI.Color {
+        color(.systemPurple)
+    }
+
+    static var systemRed: SwiftUI.Color {
+        color(.systemRed)
+    }
+
+    static var systemTeal: SwiftUI.Color {
+        color(.systemTeal)
+    }
+
+    static var systemYellow: SwiftUI.Color {
+        color(.systemYellow)
+    }
+
+    static var systemGray: SwiftUI.Color {
+        color(.systemGray)
+    }
+
+    static var systemGray2: SwiftUI.Color {
+        color(.systemGray2)
+    }
+
+    static var systemGray3: SwiftUI.Color {
+        color(.systemGray3)
+    }
+
+    static var systemGray4: SwiftUI.Color {
+        color(.systemGray4)
+    }
+
+    static var systemGray5: SwiftUI.Color {
+        color(.systemGray5)
+    }
+
+    static var systemGray6: SwiftUI.Color {
+        color(.systemGray6)
+    }
+
+    static var clear: SwiftUI.Color {
+        color(.clear)
+    }
+}
