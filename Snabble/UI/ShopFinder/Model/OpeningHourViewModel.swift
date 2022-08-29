@@ -41,17 +41,29 @@ extension Date {
 }
 
 struct TimeRange: CustomStringConvertible {
-    let start: Date?
-    let end: Date?
+    let start: String?
+    let end: String?
+    let startDate: Date?
+    let endDate: Date?
 
     init(start: String?, end: String?) {
-        self.start = start?.dateFromServerTime
-        self.end = end?.dateFromServerTime
+        self.start = start
+        self.end = end
+        self.startDate = start?.dateFromServerTime
+        self.endDate = end?.dateFromServerTime
+    }
+
+    var startString: String? {
+        return self.startDate?.localTimeString ?? self.start
+    }
+
+    var endString: String? {
+        return self.endDate?.localTimeString ?? self.end
     }
 
     var description: String {
-        let start = self.start?.localTimeString
-        let end = self.end?.localTimeString
+        let start = startString
+        let end = endString
         
         if let start = start, let end = end {
             return start + " – " + end
