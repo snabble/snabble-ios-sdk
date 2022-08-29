@@ -52,7 +52,7 @@ public struct ShopAnnotationView: View {
             image
         } else {
             Asset.image(named: "mappin.and.ellipse")
-                .foregroundColor(Color.accent())
+                .foregroundColor(.accent())
                 .font(.title)
         }
     }
@@ -82,11 +82,11 @@ public struct ShopAnnotationView: View {
                 }
                 .padding([.leading, .top, .bottom], 4)
                 .padding(.trailing, 8)
-                .background(Color(UIColor.systemBackground))
+                .background(Color.systemBackground)
                 .cornerRadius(8)
                 
                 Asset.image(named: "arrowtriangle.down.fill")
-                    .foregroundColor(Color(UIColor.systemBackground))
+                    .foregroundColor(.systemBackground)
             }
             .compositingGroup()
             .opacity(showTitle ? 0 : 1)
@@ -151,7 +151,7 @@ public struct ShopMapView: View {
             }
         }
         .padding(10)
-        .background(Color(UIColor.systemBackground))
+        .background(Color.systemBackground)
         .foregroundColor(Color.accent())
         .cornerRadius(8)
         .shadow(color: .gray, radius: 3, x: 0, y: 0)
