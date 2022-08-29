@@ -33,7 +33,7 @@ public struct ShopView: View {
                 Spacer()
                 Asset.image(named: "location")
                     .font(.subheadline)
-                    .foregroundColor(.gray)
+                    .foregroundColor(Color(.systemGray))
                 DistanceView(distance: viewModel.distance(from: shop))
                 Button(action: {
                     showingAlert.toggle()
