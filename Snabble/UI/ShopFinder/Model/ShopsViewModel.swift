@@ -32,6 +32,10 @@ public final class ShopsViewModel: NSObject, ObservableObject {
     /// distances in meter to a shop by id
     @Published private(set) var distances: [String: Double]
 
+    /// Emits if the button on ShopView is tapped
+    /// - `Output` is the current visible shop
+    public let actionPublisher = PassthroughSubject<ShopProviding, Never>()
+
     public func distance(from shop: ShopProviding) -> Double? {
         distances[shop.id]
     }
