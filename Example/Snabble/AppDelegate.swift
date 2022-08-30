@@ -58,6 +58,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     private func transitionView(with shops: [Shop]) {
         let shopsViewController = ShopsViewController(shops: shops)
         shopsViewController.viewModel.shop = Snabble.shared.checkInManager.shop
+        shopsViewController.delegate = self
         self.shopsViewController = shopsViewController
         
         let accountViewController = AccountViewController()
@@ -129,5 +130,11 @@ extension AppDelegate: CheckInManagerDelegate {
 
     func checkInManager(_ checkInManager: CheckInManager, didCheckOutOf shop: Shop) {
         shopsViewController?.viewModel.shop = nil
+    }
+}
+
+extension AppDelegate: ShopsViewControllerDelegate {
+    func shopsViewController(_ viewController: SnabbleSDK.ShopsViewController, didSelectActionOnShop shop: ShopProviding) {
+        print(#function, shop)
     }
 }

@@ -8,11 +8,6 @@
 import Foundation
 import SwiftUI
 
-extension ShopsViewModel {
-    func shopNow() {
-    }
-}
-
 public struct ShopView: View {
     var shop: ShopProviding
 
@@ -23,7 +18,7 @@ public struct ShopView: View {
     var distance: some View {        
         if viewModel.isCurrent(shop) {
             Button(action: {
-                viewModel.shopNow()
+                viewModel.actionPublisher.send(shop)
             }) {
                 Text(keyed: "Snabble.Shop.Detail.shopNow")
             }
