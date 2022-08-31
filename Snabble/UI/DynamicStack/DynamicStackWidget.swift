@@ -1,5 +1,5 @@
 //
-//  DashboardWidget.swift
+//  Widget.swift
 //  Snabble
 //
 //  Created by Andreas Osberghaus on 31.08.22.
@@ -7,12 +7,12 @@
 
 import Foundation
 
-public protocol DashboardWidget: Codable {
+public protocol Widget: Codable {
     var id: String { get }
-    var type: DashboardWidgetType { get }
+    var type: WidgetType { get }
 }
 
-public enum DashboardWidgetType: String, Codable {
+public enum WidgetType: String, Codable {
     case text
     case image
     case button
@@ -20,9 +20,9 @@ public enum DashboardWidgetType: String, Codable {
     case purchases
 }
 
-public struct DashboardWidgetText: DashboardWidget, Codable {
+public struct WidgetText: Widget, Codable {
     public let id: String
-    public let type: DashboardWidgetType = .text
+    public let type: WidgetType = .text
     public let text: String
     public let textColorSource: String
     public let textStyleSource: String
@@ -35,20 +35,26 @@ public struct DashboardWidgetText: DashboardWidget, Codable {
     }
 }
 
-public struct DashboardWidgetImage: DashboardWidget, Codable, ImageSourcing {
+public struct WidgetImage: Widget, Codable, ImageSourcing {
     public let id: String
-    public let type: DashboardWidgetType = .image
+    public let type: WidgetType = .image
     public let imageSource: String?
 
     enum CodingKeys: String, CodingKey {
         case id
         case imageSource = "image"
     }
+
+    public init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        id = try container.decode(String.self, forKey: .id)
+        imageSource = try container.decode(String.self, forKey: .imageSource)
+    }
 }
 
-public struct DashboardWidgetButton: DashboardWidget, Codable {
+public struct WidgetButton: Widget, Codable {
     public let id: String
-    public let type: DashboardWidgetType = .button
+    public let type: WidgetType = .button
     public let text: String
     public let foregroundColorSource: String
     public let backgroundColorSource: String
@@ -61,9 +67,9 @@ public struct DashboardWidgetButton: DashboardWidget, Codable {
     }
 }
 
-public struct DashboardWidgetInformation: DashboardWidget, Codable, ImageSourcing {
+public struct WidgetInformation: Widget, Codable, ImageSourcing {
     public let id: String
-    public let type: DashboardWidgetType = .information
+    public let type: WidgetType = .information
     public let text: String
     public let imageSource: String?
     public let hideable: Bool
@@ -76,8 +82,8 @@ public struct DashboardWidgetInformation: DashboardWidget, Codable, ImageSourcin
     }
 }
 
-public struct DashboardWidgetPurchase: DashboardWidget, Codable {
+public struct WidgetPurchase: Widget, Codable {
     public let id: String
-    public let type: DashboardWidgetType = .purchases
+    public let type: WidgetType = .purchases
     public let projectId: Identifier<Project>?
 }

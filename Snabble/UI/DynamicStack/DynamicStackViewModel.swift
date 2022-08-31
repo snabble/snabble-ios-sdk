@@ -1,5 +1,5 @@
 //
-//  DashboardViewModel.swift
+//  DynamicStackViewModel.swift
 //  Snabble-SnabbleSDK
 //
 //  Created by Andreas Osberghaus on 31.08.22.
@@ -7,10 +7,10 @@
 
 import Foundation
 
-public class DashboardViewModel: NSObject, Decodable, ObservableObject {
+public class DynamicStackViewModel: NSObject, Decodable, ObservableObject {
 
-    public let configuration: DashboardConfiguration
-    public let widgets: [DashboardWidget]
+    public let configuration: DynamicStackConfiguration
+    public let widgets: [Widget]
 
     enum CodingKeys: String, CodingKey {
         case configuration
@@ -18,8 +18,8 @@ public class DashboardViewModel: NSObject, Decodable, ObservableObject {
     }
     
     public init(
-        configuration: DashboardConfiguration,
-        widgets: [DashboardWidget]
+        configuration: DynamicStackConfiguration,
+        widgets: [Widget]
     ) {
         self.configuration = configuration
         self.widgets = widgets
@@ -32,7 +32,7 @@ public class DashboardViewModel: NSObject, Decodable, ObservableObject {
 
     public required init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
-        self.configuration = try container.decode(DashboardConfiguration.self, forKey: .configuration)
+        self.configuration = try container.decode(DynamicStackConfiguration.self, forKey: .configuration)
 
         let wrappers = try container.decode([WidgetWrapper].self, forKey: .widgets)
         self.widgets = wrappers.map { $0.value }
@@ -40,8 +40,8 @@ public class DashboardViewModel: NSObject, Decodable, ObservableObject {
 }
 
 private struct WidgetWrapper: Decodable {
-    let type: DashboardWidgetType
-    let value: DashboardWidget
+    let type: WidgetType
+    let value: Widget
 
     enum CodingKeys: String, CodingKey {
         case type
@@ -49,19 +49,19 @@ private struct WidgetWrapper: Decodable {
 
     public init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
-        type = try container.decode(DashboardWidgetType.self, forKey: .type)
+        type = try container.decode(WidgetType.self, forKey: .type)
 
         switch type {
         case .text:
-            value = try DashboardWidgetText(from: decoder)
+            value = try WidgetText(from: decoder)
         case .image:
-            value = try DashboardWidgetImage(from: decoder)
+            value = try WidgetImage(from: decoder)
         case .button:
-            value = try DashboardWidgetButton(from: decoder)
+            value = try WidgetButton(from: decoder)
         case .information:
-            value = try DashboardWidgetInformation(from: decoder)
+            value = try WidgetInformation(from: decoder)
         case .purchases:
-            value = try DashboardWidgetPurchase(from: decoder)
+            value = try WidgetPurchase(from: decoder)
         }
     }
 }
