@@ -12,7 +12,7 @@ public class DynamicStackViewModel: NSObject, Decodable, ObservableObject {
     public let configuration: DynamicStackConfiguration
     public let widgets: [Widget]
 
-    enum CodingKeys: String, CodingKey {
+    private enum CodingKeys: String, CodingKey {
         case configuration
         case widgets
     }
@@ -26,7 +26,7 @@ public class DynamicStackViewModel: NSObject, Decodable, ObservableObject {
         super.init()
     }
 
-    enum WidgetsCodingKeys: String, CodingKey {
+    private enum WidgetsCodingKeys: String, CodingKey {
         case type
     }
 
@@ -43,7 +43,7 @@ private struct WidgetWrapper: Decodable {
     let type: WidgetType
     let value: Widget
 
-    enum CodingKeys: String, CodingKey {
+    private enum CodingKeys: String, CodingKey {
         case type
     }
 
