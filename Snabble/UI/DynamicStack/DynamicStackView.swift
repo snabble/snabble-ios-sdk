@@ -16,6 +16,19 @@ public struct DynamicStackView: View {
     }
 
     public var body: some View {
-        EmptyView()
+        List(viewModel.widgets, id: \.id) { widget in
+            switch widget.type {
+            case .text:
+                EmptyView()
+            case .image:
+                EmptyView()
+            case .button:
+                EmptyView()
+            case .information:
+                EmptyView()
+            case .purchases:
+                EmptyView()
+            }
+        }
     }
 }
