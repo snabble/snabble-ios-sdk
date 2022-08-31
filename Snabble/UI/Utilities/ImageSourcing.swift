@@ -12,14 +12,18 @@ import SwiftUI
 import UIKit
 
 public protocol ImageSourcing {
-    /// an option string for an image resource
-    var imageSource: String? { get }
+    /// Type of the image source
+    /// - It has to be `String` or `String?`
+    associatedtype ImageSource
+
+    /// describes the image source
+    var imageSource: ImageSource { get }
 }
 
 extension ImageSourcing {
     /// Resolve `imageSource` to `UIImage` or `nil` if nothing is available
     public var uiImage: UIImage? {
-        guard let source = imageSource else {
+        guard let source = imageSource as? String else {
             return nil
         }
         return UIImage(named: source)
@@ -29,7 +33,7 @@ extension ImageSourcing {
 extension ImageSourcing {
     /// Resolve `imageSource` to `Image` or `nil` if nothing is available
     public var image: SwiftUI.Image? {
-        guard let source = imageSource else {
+        guard let source = imageSource as? String else {
             return nil
         }
 
