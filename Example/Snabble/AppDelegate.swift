@@ -19,6 +19,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
         Asset.provider = self
 
+        let _: DashboardViewModel = loadJSON("Dashboard")
+
         setupAppearance()
 
         window = UIWindow(frame: UIScreen.main.bounds)
