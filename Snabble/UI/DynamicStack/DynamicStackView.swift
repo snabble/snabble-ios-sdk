@@ -30,5 +30,10 @@ public struct DynamicStackView: View {
                 EmptyView()
             }
         }
+        .padding()
+        .background(
+            viewModel.configuration.image?
+                .resizable()
+        )
     }
 }
