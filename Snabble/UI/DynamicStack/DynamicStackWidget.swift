@@ -38,17 +38,11 @@ public struct WidgetText: Widget, Codable {
 public struct WidgetImage: Widget, Codable, ImageSourcing {
     public let id: String
     public let type: WidgetType = .image
-    public let imageSource: String?
+    public let imageSource: String
 
     enum CodingKeys: String, CodingKey {
         case id
         case imageSource = "image"
-    }
-
-    public init(from decoder: Decoder) throws {
-        let container = try decoder.container(keyedBy: CodingKeys.self)
-        id = try container.decode(String.self, forKey: .id)
-        imageSource = try container.decode(String.self, forKey: .imageSource)
     }
 }
 
