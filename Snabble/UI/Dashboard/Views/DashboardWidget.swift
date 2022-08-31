@@ -7,15 +7,6 @@
 
 import SwiftUI
 
-/// supported widget types
-public enum WidgetType {
-    case image
-    case text
-    case button
-    case information
-    case previousPurchases
-}
-
 public enum ColorStyle: String {
     case label
     case secondaryLabel
@@ -85,20 +76,6 @@ private struct HeadlineStyle: ViewModifier {
     }
 }
 
-/// A widget implements the `WidgetProvider` protocol
-public protocol WidgetProvider: Codable, Swift.Identifiable {
-    /// the widget type
-    var type: WidgetType { get }
-}
-
-struct WidgetImage: WidgetProvider, ImageSourcing {
-    var type: WidgetType {
-        .image
-    }
-    var id: String
-    let imageSource: String?
-}
-
 protocol TextStyling {
     var textColorSource: String? { get }
     var textStyleSource: String? { get }
@@ -119,39 +96,6 @@ extension TextStyling {
     }
     var color: Color {
         return colorStyle.color
-    }
-}
-
-struct WidgetText: WidgetProvider, TextStyling {
-    var type: WidgetType {
-        .text
-    }
-    var id: String
-    let text: String
-    let textColorSource: String?
-    let textStyleSource: String?
-    
-    enum CodingKeys: String, CodingKey {
-        case id
-        case text
-        case textColorSource = "textColor"
-        case textStyleSource = "textStyle"
-    }
-    
-    init(id: String, text: String, colorSource: String? = nil, styleSource: String? = nil) {
-        self.id = id
-        self.text = text
-        self.textColorSource = colorSource
-        self.textStyleSource = styleSource
-    }
-    
-    init(from decoder: Decoder) throws {
-        let container = try decoder.container(keyedBy: CodingKeys.self)
-
-        self.id = try container.decode(String.self, forKey: .id)
-        self.text = try container.decode(String.self, forKey: .text)
-        self.textColorSource = try container.decodeIfPresent(String.self, forKey: .textColorSource)
-        self.textStyleSource = try container.decodeIfPresent(String.self, forKey: .textStyleSource)
     }
 }
 
