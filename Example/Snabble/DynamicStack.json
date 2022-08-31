@@ -1,0 +1,38 @@
+{
+  "configuration": {
+    "image": "Sample.Dashboard.teaser"
+  },
+  "widgets": [
+    {
+      "type": "image",
+      "id": "1",
+      "image": "Sample.Dashboard.image"
+    },
+    {
+      "type": "text",
+      "id": "2",
+      "text": "Sample.Dashboard.text",
+      "textColor": "label",
+      "textStyle": "title"
+    },
+    {
+      "type": "button",
+      "id": "3",
+      "text": "Sample.Dashboard.button",
+      "foregroundColor": "onAccent",
+      "backgroundColor": "accent"
+    },
+    {
+      "type": "information",
+      "id": "4",
+      "image": "Sample.Dashboard.Information.image",
+      "text": "Sample.Dashboard.Information.text",
+      "hideable": true
+    },
+    {
+      "type": "purchases",
+      "id": "5",
+      "projectId": "snabble-supermarkt-93481"
+    }
+  ]
+}

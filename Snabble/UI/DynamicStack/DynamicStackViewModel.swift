@@ -1,0 +1,67 @@
+//
+//  DynamicStackViewModel.swift
+//  Snabble-SnabbleSDK
+//
+//  Created by Andreas Osberghaus on 31.08.22.
+//
+
+import Foundation
+
+public class DynamicStackViewModel: NSObject, Decodable, ObservableObject {
+
+    public let configuration: DynamicStackConfiguration
+    public let widgets: [Widget]
+
+    private enum CodingKeys: String, CodingKey {
+        case configuration
+        case widgets
+    }
+    
+    public init(
+        configuration: DynamicStackConfiguration,
+        widgets: [Widget]
+    ) {
+        self.configuration = configuration
+        self.widgets = widgets
+        super.init()
+    }
+
+    private enum WidgetsCodingKeys: String, CodingKey {
+        case type
+    }
+
+    public required init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        self.configuration = try container.decode(DynamicStackConfiguration.self, forKey: .configuration)
+
+        let wrappers = try container.decode([WidgetWrapper].self, forKey: .widgets)
+        self.widgets = wrappers.map { $0.value }
+    }
+}
+
+private struct WidgetWrapper: Decodable {
+    let type: WidgetType
+    let value: Widget
+
+    private enum CodingKeys: String, CodingKey {
+        case type
+    }
+
+    public init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        type = try container.decode(WidgetType.self, forKey: .type)
+
+        switch type {
+        case .text:
+            value = try WidgetText(from: decoder)
+        case .image:
+            value = try WidgetImage(from: decoder)
+        case .button:
+            value = try WidgetButton(from: decoder)
+        case .information:
+            value = try WidgetInformation(from: decoder)
+        case .purchases:
+            value = try WidgetPurchase(from: decoder)
+        }
+    }
+}
