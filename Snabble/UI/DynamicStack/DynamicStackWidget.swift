@@ -20,7 +20,7 @@ public enum WidgetType: String, Codable {
     case purchases
 }
 
-public struct WidgetText: Widget, Codable {
+public struct WidgetText: Widget {
     public let id: String
     public let type: WidgetType = .text
     public let text: String
@@ -35,7 +35,7 @@ public struct WidgetText: Widget, Codable {
     }
 }
 
-public struct WidgetImage: Widget, Codable, ImageSourcing {
+public struct WidgetImage: Widget, ImageSourcing {
     public let id: String
     public let type: WidgetType = .image
     public let imageSource: String
@@ -46,7 +46,7 @@ public struct WidgetImage: Widget, Codable, ImageSourcing {
     }
 }
 
-public struct WidgetButton: Widget, Codable {
+public struct WidgetButton: Widget {
     public let id: String
     public let type: WidgetType = .button
     public let text: String
@@ -61,7 +61,7 @@ public struct WidgetButton: Widget, Codable {
     }
 }
 
-public struct WidgetInformation: Widget, Codable, ImageSourcing {
+public struct WidgetInformation: Widget, ImageSourcing {
     public let id: String
     public let type: WidgetType = .information
     public let text: String
@@ -76,7 +76,7 @@ public struct WidgetInformation: Widget, Codable, ImageSourcing {
     }
 }
 
-public struct WidgetPurchase: Widget, Codable {
+public struct WidgetPurchase: Widget {
     public let id: String
     public let type: WidgetType = .purchases
     public let projectId: Identifier<Project>?
