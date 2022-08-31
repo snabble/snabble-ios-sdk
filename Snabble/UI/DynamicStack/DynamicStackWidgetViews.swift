@@ -76,20 +76,20 @@ private struct HeadlineStyle: ViewModifier {
     }
 }
 
-protocol TextStyling {
-    var textColorSource: String? { get }
-    var textStyleSource: String? { get }
+public protocol WidgetTextStyling {
+    var textColorSource: String { get }
+    var textStyleSource: String { get }
 }
 
-extension TextStyling {
+public extension WidgetTextStyling {
     var textStyle: TextStyle {
-        if let source = self.textStyleSource, let style = TextStyle(rawValue: source) {
+        if let style = TextStyle(rawValue: self.textStyleSource) {
             return style
         }
         return .body
     }
     var colorStyle: ColorStyle {
-        if let source = self.textColorSource, let style = ColorStyle(rawValue: source) {
+        if let style = ColorStyle(rawValue: self.textColorSource) {
             return style
         }
         return .label
@@ -99,20 +99,25 @@ extension TextStyling {
     }
 }
 
-struct WidgetTextView: View {
+public protocol WidgetButtonStyling {
+    var foregroundColorSource: String { get }
+    var backgroundColorSource: String { get }
+}
+
+public struct WidgetTextView: View {
     var widget: WidgetText
     
-    var body: some View {
+    public var body: some View {
         Text(widget.text)
             .foregroundColor(widget.color)
             .textStyle(widget.textStyle)
     }
 }
 
-struct WidgetImageView: View {
+public struct WidgetImageView: View {
     let widget: WidgetImage
     
-    var body: some View {
+    public var body: some View {
         widget.image
     }
 }
