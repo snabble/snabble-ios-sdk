@@ -35,7 +35,7 @@ public struct WidgetButtonView: View {
 extension WidgetButton: WidgetButtonStyling {
     var foregroundColor: Color {
         guard let style = ColorStyle(rawValue: foregroundColorSource) else {
-            return .primary
+            return .accent()
         }
         return style.color
 

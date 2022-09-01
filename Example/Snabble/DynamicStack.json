@@ -34,7 +34,6 @@
           "type": "button",
           "id": "8",
           "text": "Sample.Dashboard.button",
-          "foregroundColor": "accent",
           "spacing": 16
       },
       {
