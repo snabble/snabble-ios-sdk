@@ -9,8 +9,10 @@ import Foundation
 
 public struct DynamicStackConfiguration: Codable, ImageSourcing {
     public let imageSource: String?
+    public let spacing: CGFloat?
 
     enum CodingKeys: String, CodingKey {
         case imageSource = "image"
+        case spacing
     }
 }

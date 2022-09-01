@@ -59,8 +59,8 @@ public struct DynamicStackView: View {
                         default:
                             EmptyView()
                         }
-                        if let space = widget.space {
-                            Spacer(minLength: space)
+                        if let spacing = widget.customSpacing ?? viewModel.configuration.spacing {
+                            Spacer(minLength: spacing)
                         }
                     }
                 }
