@@ -244,6 +244,6 @@ public enum ColorStyle: String {
             return .shadow()
         }
 
-        return Color.named(rawValue) ?? Color(rawValue)
+        return Color.named(rawValue) ?? SwiftUI.Color(rawValue)
     }
 }
