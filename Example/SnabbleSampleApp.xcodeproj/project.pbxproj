@@ -121,14 +121,10 @@
 		607FACD21AFB9204008FA782 /* Sources */ = {
 			isa = PBXGroup;
 			children = (
+				E1786E0028C0F99200CB7AF0 /* ViewController */,
 				E161B0F028B78F70005061C4 /* Utility */,
 				607FACD51AFB9204008FA782 /* AppDelegate.swift */,
-				E1DA449B28B3A2BD0034427D /* LoadingViewController.swift */,
 				E1DA445D28B3668C0034427D /* AppDelegate+AssetProviding.swift */,
-				3A64AF2F2710486300AF24C6 /* AccountViewController.swift */,
-				7605C5BE28AE4383000105A8 /* ShopsViewController.swift */,
-				76C7B74928BFA10700D94F4F /* DashboardViewController.swift */,
-				607FACD71AFB9204008FA782 /* ScannerViewController.swift */,
 				607FACDC1AFB9204008FA782 /* Assets.xcassets */,
 				607FACDE1AFB9204008FA782 /* LaunchScreen.xib */,
 				607FACD31AFB9204008FA782 /* Supporting Files */,
@@ -199,6 +195,18 @@
 				E1786CBE28BF351400CB7AF0 /* DynamicStack.json */,
 			);
 			name = DynamicStack;
+			sourceTree = "<group>";
+		};
+		E1786E0028C0F99200CB7AF0 /* ViewController */ = {
+			isa = PBXGroup;
+			children = (
+				E1DA449B28B3A2BD0034427D /* LoadingViewController.swift */,
+				3A64AF2F2710486300AF24C6 /* AccountViewController.swift */,
+				7605C5BE28AE4383000105A8 /* ShopsViewController.swift */,
+				76C7B74928BFA10700D94F4F /* DashboardViewController.swift */,
+				607FACD71AFB9204008FA782 /* ScannerViewController.swift */,
+			);
+			name = ViewController;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
