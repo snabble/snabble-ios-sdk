@@ -56,10 +56,8 @@ public struct DynamicStackView: View {
                             if let widget = widget as? WidgetPurchase {
                                 WidgetPurchaseView(widget: widget, viewModel: viewModel)
                             }
-                        default:
-                            EmptyView()
                         }
-                        if let spacing = widget.customSpacing ?? viewModel.configuration.spacing {
+                        if let spacing = viewModel.spacing(for: widget) {
                             Spacer(minLength: spacing)
                         }
                     }

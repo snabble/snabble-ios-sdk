@@ -6,19 +6,22 @@
       {
           "type": "image",
           "id": "1",
-          "image": "Dashboard/image"
+          "image": "Dashboard/image",
+          "spacing": 40
       },
       {
           "type": "text",
           "id": "2",
           "text": "Sample.Dashboard.title",
           "textColor": "accent",
-          "textStyle": "title"
+          "textStyle": "title",
+          "spacing": 4
       },
       {
           "type": "text",
           "id": "3",
-          "text": "Sample.Dashboard.text"
+          "text": "Sample.Dashboard.text",
+          "spacing": 32
       },
       {
           "type": "button",
@@ -31,7 +34,8 @@
           "type": "button",
           "id": "8",
           "text": "Sample.Dashboard.button",
-          "foregroundColor": "accent"
+          "foregroundColor": "accent",
+          "spacing": 16
       },
       {
           "type": "information",
