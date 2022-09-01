@@ -12,6 +12,20 @@ public protocol WidgetButtonStyling {
     var backgroundColor: Color { get }
 }
 
+public struct WidgetButtonStyle: ButtonStyle {
+    var foregroundColor: Color
+    var backgroundColor: Color
+    
+    public func makeBody(configuration: Configuration) -> some View {
+        configuration.label
+            .padding([.top, .bottom], 15)
+            .padding([.leading, .trailing], 22)
+            .background(backgroundColor)
+            .foregroundColor(foregroundColor)
+            .clipShape(RoundedRectangle(cornerRadius: 10))
+    }
+}
+
 public struct WidgetButtonView: View {
     let widget: WidgetButton
     @ObservedObject var viewModel: DynamicStackViewModel
@@ -23,9 +37,8 @@ public struct WidgetButtonView: View {
                 viewModel.actionPublisher.send(widget)
             }) {
                 Text(keyed: widget.text)
-                    .foregroundColor(widget.foregroundColor)
-                    .background(widget.backgroundColor)
             }
+            .buttonStyle(WidgetButtonStyle(foregroundColor: widget.foregroundColor, backgroundColor: widget.backgroundColor))
             Spacer()
         }
         .padding()
