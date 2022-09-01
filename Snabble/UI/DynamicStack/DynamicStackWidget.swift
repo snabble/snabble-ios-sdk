@@ -55,7 +55,7 @@ public struct WidgetButton: Widget {
     public let id: String
     public let type: WidgetType = .button
     public let text: String
-    public let foregroundColorSource: String
+    public let foregroundColorSource: String?
     public let backgroundColorSource: String?
     public let spacing: CGFloat?
 
