@@ -59,6 +59,9 @@ public struct DynamicStackView: View {
                         default:
                             EmptyView()
                         }
+                        if let space = widget.space {
+                            Spacer(minLength: space)
+                        }
                     }
                 }
                 .padding([.leading, .trailing], 30)
