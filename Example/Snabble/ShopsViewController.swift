@@ -14,8 +14,8 @@ final class ShopsViewController: SnabbleSDK.ShopsViewController {
         super.init(shops: shops)
 
         self.title = NSLocalizedString("Sample.shops", comment: "")
-        self.tabBarItem.image = UIImage(systemName: "house")
-        self.tabBarItem.selectedImage = UIImage(systemName: "house.fill")
+        self.tabBarItem.image = UIImage(named: "Navigation/TabBar/shops-off")
+        self.tabBarItem.selectedImage = UIImage(systemName: "Navigation/TabBar/shops-on")
     }
 
     required init?(coder: NSCoder) {

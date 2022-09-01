@@ -16,8 +16,8 @@ final class DashboardViewController: SnabbleSDK.DynamicStackViewController {
         
         self.title = "Snabble"
 
-        self.tabBarItem.image = UIImage(named: "scan-off")
-        self.tabBarItem.selectedImage = UIImage(named: "scan-on")
+        self.tabBarItem.image = UIImage(named: "Navigation/TabBar/home-off")
+        self.tabBarItem.selectedImage = UIImage(named: "Navigation/TabBar/home-on")
     }
 
     required init?(coder: NSCoder) {

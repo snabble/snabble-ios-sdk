@@ -67,13 +67,12 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         let viewModel: DynamicStackViewModel = loadJSON("DynamicStack")
         let dashboardViewController = DashboardViewController(viewModel: viewModel)
         dashboardViewController.delegate = self
-
         self.dashboardViewController = dashboardViewController
 
-//        let homeViewController = HomeViewController(shop: shops.first!)
+        let scannerViewController = ScannerViewController(shop: shops.first!)
 
         let tabBarController = UITabBarController()
-        tabBarController.viewControllers = [dashboardViewController, shopsViewController, accountViewController]
+        tabBarController.viewControllers = [dashboardViewController, scannerViewController, shopsViewController, accountViewController]
 
         window?.rootViewController = tabBarController
 

@@ -1,5 +1,5 @@
 //
-//  NaviPlaceholders.swift
+//  AccountViewController.swift
 //  SnabbleSampleApp
 //
 //  Copyright © 2021 snabble. All rights reserved.
@@ -11,9 +11,9 @@ final class AccountViewController: UIViewController {
     init() {
         super.init(nibName: nil, bundle: nil)
 
-        self.title = NSLocalizedString("Sample.account", comment: "")
-        self.tabBarItem.image = UIImage(systemName: "person")
-        self.tabBarItem.selectedImage = UIImage(systemName: "person.fill")
+        title = NSLocalizedString("Sample.account", comment: "")
+        tabBarItem.image = UIImage(named: "Navigation/TabBar/profil-off")
+        tabBarItem.selectedImage = UIImage(named: "Navigation/TabBar/profil-off")
     }
 
     required init?(coder: NSCoder) {

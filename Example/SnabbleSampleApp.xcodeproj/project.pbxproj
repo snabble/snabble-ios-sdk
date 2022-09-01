@@ -8,9 +8,9 @@
 
 /* Begin PBXBuildFile section */
 		33B22D0F540C105487D339A5 /* Pods_SnabbleSampleApp.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DF556383574523BFDDFFB356 /* Pods_SnabbleSampleApp.framework */; };
-		3A64AF302710486300AF24C6 /* NaviPlaceholders.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3A64AF2F2710486300AF24C6 /* NaviPlaceholders.swift */; };
+		3A64AF302710486300AF24C6 /* AccountViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3A64AF2F2710486300AF24C6 /* AccountViewController.swift */; };
 		607FACD61AFB9204008FA782 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 607FACD51AFB9204008FA782 /* AppDelegate.swift */; };
-		607FACD81AFB9204008FA782 /* HomeViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 607FACD71AFB9204008FA782 /* HomeViewController.swift */; };
+		607FACD81AFB9204008FA782 /* ScannerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 607FACD71AFB9204008FA782 /* ScannerViewController.swift */; };
 		607FACDD1AFB9204008FA782 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 607FACDC1AFB9204008FA782 /* Assets.xcassets */; };
 		607FACE01AFB9204008FA782 /* LaunchScreen.xib in Resources */ = {isa = PBXBuildFile; fileRef = 607FACDE1AFB9204008FA782 /* LaunchScreen.xib */; };
 		7605C47328AC9794000105A8 /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = 7605C47528AC9794000105A8 /* Localizable.strings */; };
@@ -37,12 +37,12 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
-		3A64AF2F2710486300AF24C6 /* NaviPlaceholders.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NaviPlaceholders.swift; sourceTree = "<group>"; };
+		3A64AF2F2710486300AF24C6 /* AccountViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AccountViewController.swift; sourceTree = "<group>"; };
 		50880F89ADD024AE5A2C5629 /* Snabble.podspec */ = {isa = PBXFileReference; explicitFileType = text.script.ruby; includeInIndex = 1; name = Snabble.podspec; path = ../Snabble.podspec; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.ruby; };
 		607FACD01AFB9204008FA782 /* SnabbleSampleApp.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = SnabbleSampleApp.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		607FACD41AFB9204008FA782 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		607FACD51AFB9204008FA782 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
-		607FACD71AFB9204008FA782 /* HomeViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeViewController.swift; sourceTree = "<group>"; };
+		607FACD71AFB9204008FA782 /* ScannerViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScannerViewController.swift; sourceTree = "<group>"; };
 		607FACDC1AFB9204008FA782 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		607FACDF1AFB9204008FA782 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/LaunchScreen.xib; sourceTree = "<group>"; };
 		7605C47428AC9794000105A8 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/Localizable.strings; sourceTree = "<group>"; };
@@ -125,10 +125,10 @@
 				607FACD51AFB9204008FA782 /* AppDelegate.swift */,
 				E1DA449B28B3A2BD0034427D /* LoadingViewController.swift */,
 				E1DA445D28B3668C0034427D /* AppDelegate+AssetProviding.swift */,
-				3A64AF2F2710486300AF24C6 /* NaviPlaceholders.swift */,
+				3A64AF2F2710486300AF24C6 /* AccountViewController.swift */,
 				7605C5BE28AE4383000105A8 /* ShopsViewController.swift */,
 				76C7B74928BFA10700D94F4F /* DashboardViewController.swift */,
-				607FACD71AFB9204008FA782 /* HomeViewController.swift */,
+				607FACD71AFB9204008FA782 /* ScannerViewController.swift */,
 				607FACDC1AFB9204008FA782 /* Assets.xcassets */,
 				607FACDE1AFB9204008FA782 /* LaunchScreen.xib */,
 				607FACD31AFB9204008FA782 /* Supporting Files */,
@@ -409,9 +409,9 @@
 				7605C5BF28AE4383000105A8 /* ShopsViewController.swift in Sources */,
 				E161B0F228B78F89005061C4 /* LoadJSON.swift in Sources */,
 				E1DA445E28B3668C0034427D /* AppDelegate+AssetProviding.swift in Sources */,
-				607FACD81AFB9204008FA782 /* HomeViewController.swift in Sources */,
+				607FACD81AFB9204008FA782 /* ScannerViewController.swift in Sources */,
 				E1DA449C28B3A2BD0034427D /* LoadingViewController.swift in Sources */,
-				3A64AF302710486300AF24C6 /* NaviPlaceholders.swift in Sources */,
+				3A64AF302710486300AF24C6 /* AccountViewController.swift in Sources */,
 				607FACD61AFB9204008FA782 /* AppDelegate.swift in Sources */,
 				76C7B74A28BFA10700D94F4F /* DashboardViewController.swift in Sources */,
 			);
