@@ -239,7 +239,19 @@ extension SwiftUI.Color {
         color(.systemGray6)
     }
 
+    static var lightGray: SwiftUI.Color {
+        color(.lightGray)
+    }
+
+    static var darkGray: SwiftUI.Color {
+        color(.darkGray)
+    }
+
     static var clear: SwiftUI.Color {
         color(.clear)
+    }
+
+    static var magenta: SwiftUI.Color {
+        color(.magenta)
     }
 }
