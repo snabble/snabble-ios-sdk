@@ -16,24 +16,32 @@ public struct DynamicStackView: View {
     }
 
     public var body: some View {
-        List(viewModel.widgets, id: \.id) { widget in
-            switch widget.type {
-            case .text:
-                EmptyView()
-            case .image:
-                EmptyView()
-            case .button:
-                EmptyView()
-            case .information:
-                EmptyView()
-            case .purchases:
-                EmptyView()
+        ScrollView {
+            VStack(alignment: .center) {
+                ForEach(viewModel.widgets, id: \.id) { widget in
+                    switch widget.type {
+                    case .text:
+                        EmptyView()
+                    case .image:
+                        EmptyView()
+                    case .button:
+                        EmptyView()
+                    case .information:
+                        EmptyView()
+                    case .purchases:
+                        EmptyView()
+                    }
+                }
             }
+            .padding(16)
+            .frame(
+                minWidth: 0,
+                maxWidth: .infinity,
+                minHeight: 0,
+                maxHeight: .infinity,
+                alignment: .topLeading
+            )
         }
-        .padding()
-        .background(
-            viewModel.configuration.image?
-                .resizable()
-        )
+        .background(viewModel.configuration.image, alignment: .top)
     }
 }
