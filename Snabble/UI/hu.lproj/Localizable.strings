@@ -82,6 +82,8 @@
 
 "Snabble.done" = "Kész";
 
+"Snabble.DynamicStack.Shop.show" = "Üzletek mutatása";
+
 "Snabble.edit" = "Szerkesztés";
 
 "Snabble.goToSettings" = "A beállításokhoz";
@@ -130,6 +132,14 @@
 "Snabble.NotForSale.ErrorMsg.scan" = "Ezt a terméket jelenleg sajnos nem lehet az alkalmazással kifizetni. Kérlek, fizesd a szokásos módon a kasszánál.";
 
 "Snabble.ok" = "OK";
+
+"Snabble.Onboarding.Deeplink.accessibility" = "open %@";
+
+"Snabble.Onboarding.done" = "Done";
+
+"Snabble.Onboarding.Link.show" = "Megtekintés";
+
+"Snabble.Onboarding.next" = "Tovább";
 
 "Snabble.Paydirekt.AuthorizationFailed.message" = "Kérlek, próbáld meg később még egyszer";
 
@@ -472,7 +482,12 @@
 
 "Snabble.Settings" = "Beállítások";
 
+/* <street and house number> in <ZIP code> <city name> */
+"Snabble.Shop.Address.accessibility" = "%1$@ %2$@ %3$@-ban";
+
 "Snabble.Shop.Detail.openingHours" = "Opening hours";
+
+"Snabble.Shop.Detail.Phonenumber.accessibility" = "Phonenumber %@";
 
 "Snabble.Shop.Detail.shopNow" = "Start shopping";
 
@@ -480,7 +495,43 @@
 
 "Snabble.Shop.Detail.title" = "Részletek";
 
+"Snabble.Shop.Details.contractingParty" = "Contracting Party";
+
+"Snabble.Shop.Details.friday" = "Péntek";
+
+"Snabble.Shop.Details.MapDisabled.actionTitle" = "Activate";
+
+"Snabble.Shop.Details.MapDisabled.title" = "You have disabled the use of %@.";
+
+"Snabble.Shop.Details.monday" = "Hétfő";
+
+"Snabble.Shop.Details.saturday" = "Szombat";
+
+"Snabble.Shop.Details.StartCall.accessibility" = "Call";
+
+"Snabble.Shop.Details.sunday" = "Vasárnap";
+
+"Snabble.Shop.Details.thursday" = "Csütörtök";
+
+"Snabble.Shop.Details.tuesday" = "Kedd";
+
+"Snabble.Shop.Details.wednesday" = "Szerda";
+
+"Snabble.Shop.Distance.accessibility" = "In %@";
+
+"Snabble.Shop.Finder.title" = "Üzlet";
+
 "Snabble.Shop.Finder.youarehere" = "Itt vagy";
+
+"Snabble.Shop.List.Colapse.accessibility" = "összecsukni";
+
+"Snabble.Shop.List.EventShopColapsed.accessibility" = "%@ összecsukva";
+
+"Snabble.Shop.List.EventShopExpanded.accessibility" = "%@ kinyitva";
+
+"Snabble.Shop.List.Expand.accessibility" = "kinyitni";
+
+"Snabble.Shop.List.ShowDetails.accessibility" = "Show shop details";
 
 "Snabble.Shopping.title" = "Bevásárlás";
 

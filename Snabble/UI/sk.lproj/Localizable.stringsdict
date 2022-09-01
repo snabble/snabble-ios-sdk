@@ -89,6 +89,28 @@
         <string>Platnosť už skončila</string>
       </dict>
     </dict>
+    <key>Snabble.Shop.Finder.storeCount</key>
+    <dict>
+      <key>NSStringLocalizedFormatKey</key>
+      <string>%#@localized_format_key@</string>
+      <key>localized_format_key</key>
+      <dict>
+        <key>NSStringFormatSpecTypeKey</key>
+        <string>NSStringPluralRuleType</string>
+        <key>NSStringFormatValueTypeKey</key>
+        <string>d</string>
+        <key>few</key>
+        <string>%d obchody</string>
+        <key>many</key>
+        <string>%d obchodov</string>
+        <key>one</key>
+        <string>%d obchod</string>
+        <key>other</key>
+        <string>%d  obchody/obchodov</string>
+        <key>zero</key>
+        <string>Žiadne obchody</string>
+      </dict>
+    </dict>
     <key>Snabble.Shoppingcart.numberOfItems</key>
     <dict>
       <key>NSStringLocalizedFormatKey</key>
