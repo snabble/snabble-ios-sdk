@@ -30,6 +30,13 @@
           "backgroundColor": "accent"
       },
       {
+          "type": "button",
+          "id": "8",
+          "text": "Sample.Dashboard.button",
+          "foregroundColor": "accent",
+          "backgroundColor": "clear"
+      },
+      {
           "type": "information",
           "id": "5",
           "image": "Dashboard/Information.image1",
