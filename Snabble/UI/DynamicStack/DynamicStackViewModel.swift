@@ -43,6 +43,12 @@ public class DynamicStackViewModel: NSObject, Decodable, ObservableObject {
     /// - `Output` is the current widget
     public let actionPublisher = PassthroughSubject<Widget, Never>()
 
+    func spacing(for widget: Widget) -> CGFloat? {
+        guard let lastItem = widgets.last, lastItem.id != widget.id else {
+            return widget.spacing
+        }
+        return widget.spacing ?? configuration.spacing
+    }
 }
 
 private struct WidgetWrapper: Decodable {
