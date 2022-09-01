@@ -8,23 +8,8 @@
 import SwiftUI
 
 public protocol WidgetButtonStyling {
-    var foregroundColorSource: String { get }
-    var backgroundColorSource: String { get }
-}
-
-public extension WidgetButtonStyling {
-    var foregroundColor: Color {
-        if let style = ColorStyle(rawValue: self.foregroundColorSource) {
-            return style.color
-        }
-        return Color.primary
-    }
-    var backgroundColor: Color {
-        if let style = ColorStyle(rawValue: self.backgroundColorSource) {
-            return style.color
-        }
-        return Color.systemBackground
-    }
+    var foregroundColor: Color { get }
+    var backgroundColor: Color { get }
 }
 
 public struct WidgetButtonView: View {
@@ -44,5 +29,20 @@ public struct WidgetButtonView: View {
             Spacer()
         }
         .padding()
+    }
+}
+
+extension WidgetButton: WidgetButtonStyling {
+    public var foregroundColor: Color {
+        if let style = ColorStyle(rawValue: foregroundColorSource) {
+            return style.color
+        }
+        return Color.primary
+    }
+    public var backgroundColor: Color {
+        if let style = ColorStyle(rawValue: backgroundColorSource) {
+            return style.color
+        }
+        return Color.systemBackground
     }
 }
