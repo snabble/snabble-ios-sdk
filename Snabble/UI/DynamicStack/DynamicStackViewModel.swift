@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import Combine
 
 public class DynamicStackViewModel: NSObject, Decodable, ObservableObject {
 
@@ -37,6 +38,11 @@ public class DynamicStackViewModel: NSObject, Decodable, ObservableObject {
         let wrappers = try container.decode([WidgetWrapper].self, forKey: .widgets)
         self.widgets = wrappers.map { $0.value }
     }
+
+    /// Emits if the widget triigers the action
+    /// - `Output` is the current widget
+    public let actionPublisher = PassthroughSubject<Widget, Never>()
+
 }
 
 private struct WidgetWrapper: Decodable {

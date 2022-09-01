@@ -1,38 +1,59 @@
 {
   "configuration": {
-    "image": "Sample.Dashboard.teaser"
+    "image": "Dashboard/teaser"
   },
   "widgets": [
-    {
-      "type": "image",
-      "id": "1",
-      "image": "Sample.Dashboard.image"
-    },
-    {
-      "type": "text",
-      "id": "2",
-      "text": "Sample.Dashboard.text",
-      "textColor": "label",
-      "textStyle": "title"
-    },
-    {
-      "type": "button",
-      "id": "3",
-      "text": "Sample.Dashboard.button",
-      "foregroundColor": "onAccent",
-      "backgroundColor": "accent"
-    },
-    {
-      "type": "information",
-      "id": "4",
-      "image": "Sample.Dashboard.Information.image",
-      "text": "Sample.Dashboard.Information.text",
-      "hideable": true
-    },
-    {
-      "type": "purchases",
-      "id": "5",
-      "projectId": "snabble-supermarkt-93481"
-    }
+      {
+          "type": "image",
+          "id": "1",
+          "image": "Dashboard/image"
+      },
+      {
+          "type": "text",
+          "id": "2",
+          "text": "Sample.Dashboard.title",
+          "textColor": "accent",
+          "textStyle": "title"
+      },
+      {
+          "type": "text",
+          "id": "3",
+          "text": "Sample.Dashboard.text",
+          "textColor": "label",
+          "textStyle": "body"
+      },
+      {
+          "type": "button",
+          "id": "4",
+          "text": "Sample.Dashboard.button",
+          "foregroundColor": "onAccent",
+          "backgroundColor": "accent"
+      },
+      {
+          "type": "button",
+          "id": "8",
+          "text": "Sample.Dashboard.button",
+          "foregroundColor": "accent",
+          "backgroundColor": "clear"
+      },
+      {
+          "type": "information",
+          "id": "5",
+          "image": "Dashboard/Information.image1",
+          "text": "Sample.Dashboard.Information.text1",
+          "hideable": true
+      },
+      {
+          "type": "information",
+          "id": "6",
+          "image": "Dashboard/Information.image2",
+          "text": "Sample.Dashboard.Information.text2",
+          "hideable": true
+      },
+      {
+          "type": "purchases",
+          "id": "7",
+          "projectId": "snabble-supermarkt-93481"
+      }
   ]
 }

@@ -1,5 +1,15 @@
 "Sample.account" = "Profil";
 
+"Sample.Dashboard.button" = "Jetzt starten";
+
+"Sample.Dashboard.Information.text1" = "Hinterlege direkt ein Bezahlverfahren, um schon bei deinem ersten Einkauf ohne Wartezeit einzukaufen.";
+
+"Sample.Dashboard.Information.text2" = "Nutze die Vorteile deiner Kundenkarten automatisch.";
+
+"Sample.Dashboard.text" = "Besuche eine unterstütze Filiale, um mit Snabble einzukaufen!";
+
+"Sample.Dashboard.title" = "Willkommen bei Snabble";
+
 "Sample.Onboarding.accept" = "Akzeptieren";
 
 "Sample.Onboarding.message1" = "Mit Snabble scannst du deinen Einkauf selbst und bezahlt direkt in der App. Ohne in der Schlange zu stehen und ohne deinen Einkauf auf’s Band zu legen.";

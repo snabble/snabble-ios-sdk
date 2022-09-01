@@ -11,8 +11,8 @@
         },
         {
             "imageSource": "Onboarding/onboarding-image-2",
-            "text": "Enter a participating Penny store, start shopping and hold the barcode of an article in front of the camera.",
-            "#text": "Sample.Onboarding.message2"
+            "#text": "Enter a participating Penny store, start shopping and hold the barcode of an article in front of the camera.",
+            "text": "Sample.Onboarding.message2"
         },
         {
             "imageSource": "Onboarding/onboarding-image-3",
