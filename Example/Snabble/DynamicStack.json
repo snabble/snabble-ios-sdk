@@ -1,12 +1,12 @@
 {
   "configuration": {
-    "image": "Sample.Dashboard.teaser"
+    "image": "Dashboard/teaser"
   },
   "widgets": [
       {
           "type": "image",
           "id": "1",
-          "image": "Sample.Dashboard.image"
+          "image": "Dashboard/image"
       },
       {
           "type": "text",
@@ -32,14 +32,14 @@
       {
           "type": "information",
           "id": "5",
-          "image": "Sample.Dashboard.Information.image1",
+          "image": "Dashboard/Information.image1",
           "text": "Sample.Dashboard.Information.text1",
           "hideable": true
       },
       {
           "type": "information",
           "id": "6",
-          "image": "Sample.Dashboard.Information.image2",
+          "image": "Dashboard/Information.image2",
           "text": "Sample.Dashboard.Information.text2",
           "hideable": true
       },
