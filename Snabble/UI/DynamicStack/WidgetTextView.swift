@@ -1,8 +1,8 @@
 //
-//  DashboardWidget.swift
-//  
+//  WidgetTextView.swift
+//  Snabble
 //
-//  Created by Uwe Tilemann on 30.08.22.
+//  Created by Uwe Tilemann on 01.09.22.
 //
 
 import SwiftUI
@@ -42,6 +42,7 @@ public enum TextStyle: String {
     case body
     case footnote
     case headline
+    case title
 }
 
 extension View {
@@ -53,6 +54,8 @@ extension View {
             return AnyView(modifier(FootnoteStyle()))
         case .headline:
             return AnyView(modifier(HeadlineStyle()))
+        case .title:
+            return AnyView(modifier(TitleStyle()))
         }
     }
 }
@@ -73,6 +76,12 @@ private struct HeadlineStyle: ViewModifier {
     func body(content: Content) -> some View {
         content
             .font(.headline)
+    }
+}
+private struct TitleStyle: ViewModifier {
+    func body(content: Content) -> some View {
+        content
+            .font(.title)
     }
 }
 
@@ -99,10 +108,6 @@ public extension WidgetTextStyling {
     }
 }
 
-public protocol WidgetButtonStyling {
-    var foregroundColorSource: String { get }
-    var backgroundColorSource: String { get }
-}
 
 public struct WidgetTextView: View {
     var widget: WidgetText
@@ -114,16 +119,3 @@ public struct WidgetTextView: View {
     }
 }
 
-public struct WidgetImageView: View {
-    let widget: WidgetImage
-    
-    public var body: some View {
-        widget.image
-    }
-}
-
-struct WidgetImageView_Previews: PreviewProvider {
-    static var previews: some View {
-        WidgetImageView(widget: WidgetImage(id: "1", imageSource: "emoji-3"))
-    }
-}

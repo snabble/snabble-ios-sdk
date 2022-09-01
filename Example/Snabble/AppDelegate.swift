@@ -14,7 +14,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     var window: UIWindow?
 
     var shopsViewController: ShopsViewController?
-
+    var dashboardViewController: DynamicStackViewController?
+    
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
 
         Asset.provider = self
@@ -62,10 +63,17 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         self.shopsViewController = shopsViewController
         
         let accountViewController = AccountViewController()
-        let homeViewController = HomeViewController(shop: shops.first!)
+        
+        let viewModel: DynamicStackViewModel = loadJSON("DynamicStack")
+        let dashboardViewController = DashboardViewController(viewModel: viewModel)
+        dashboardViewController.delegate = self
+
+        self.dashboardViewController = dashboardViewController
+
+//        let homeViewController = HomeViewController(shop: shops.first!)
 
         let tabBarController = UITabBarController()
-        tabBarController.viewControllers = [homeViewController, shopsViewController, accountViewController]
+        tabBarController.viewControllers = [dashboardViewController, shopsViewController, accountViewController]
 
         window?.rootViewController = tabBarController
 
@@ -136,5 +144,11 @@ extension AppDelegate: CheckInManagerDelegate {
 extension AppDelegate: ShopsViewControllerDelegate {
     func shopsViewController(_ viewController: SnabbleSDK.ShopsViewController, didSelectActionOnShop shop: ShopProviding) {
         print(#function, shop)
+    }
+}
+
+extension AppDelegate: DynamicStackViewControllerDelegate {
+    func dynamicStackViewController(_ viewController: SnabbleSDK.DynamicStackViewController, performAction id: String) {
+        print(#function, id)
     }
 }
