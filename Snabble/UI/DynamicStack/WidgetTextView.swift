@@ -39,9 +39,12 @@ public struct WidgetTextView: View {
     var widget: WidgetText
     
     public var body: some View {
-        Text(keyed: widget.text)
-            .foregroundColor(widget.color)
-            .font(widget.font)
+        HStack {
+            Text(keyed: widget.text)
+                .foregroundColor(widget.color)
+                .font(widget.font)
+            Spacer()
+        }
     }
 }
 

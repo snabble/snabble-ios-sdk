@@ -33,7 +33,7 @@ public struct DynamicStackView: View {
             teaser
             
             ScrollView(.vertical) {
-                VStack(alignment: .leading) {
+                VStack(alignment: .center) {
                     ForEach(viewModel.widgets, id: \.id) { widget in
                         switch widget.type {
                         case .image:
