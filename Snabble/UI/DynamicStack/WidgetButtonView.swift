@@ -32,12 +32,17 @@ public struct WidgetButtonView: View {
     @ObservedObject var viewModel: DynamicStackViewModel
     
     public var body: some View {
-        Button(action: {
-            viewModel.actionPublisher.send(widget)
-        }) {
-            Text(widget.text)
-                .foregroundColor(widget.foregroundColor)
-                .background(widget.backgroundColor)
+        HStack {
+            Spacer()
+            Button(action: {
+                viewModel.actionPublisher.send(widget)
+            }) {
+                Text(keyed: widget.text)
+                    .foregroundColor(widget.foregroundColor)
+                    .background(widget.backgroundColor)
+            }
+            Spacer()
         }
+        .padding()
     }
 }

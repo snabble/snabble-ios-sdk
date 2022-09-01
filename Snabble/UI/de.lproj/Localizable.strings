@@ -131,14 +131,6 @@
 
 "Snabble.ok" = "OK";
 
-"Snabble.Onboarding.Deeplink.accessibility" = "%@ öffnen";
-
-"Snabble.Onboarding.done" = "Fertig";
-
-"Snabble.Onboarding.Link.show" = "Ansehen";
-
-"Snabble.Onboarding.next" = "Weiter";
-
 "Snabble.Paydirekt.AuthorizationFailed.message" = "Bitte versuche es später nochmal";
 
 "Snabble.Paydirekt.AuthorizationFailed.title" = "Autorisierung fehlgeschlagen";
@@ -480,8 +472,6 @@
 
 "Snabble.Settings" = "Einstellungen";
 
-"Snabble.Shop.Detail.hour" = "Uhr";
-
 "Snabble.Shop.Detail.openingHours" = "Öffnungszeiten";
 
 "Snabble.Shop.Detail.shopNow" = "Jetzt hier einkaufen";
@@ -489,8 +479,6 @@
 "Snabble.Shop.Detail.startNavigation" = "Möchten Sie die Navigation starten?";
 
 "Snabble.Shop.Detail.title" = "Details";
-
-"Snabble.Shop.Finder.title" = "Shop";
 
 "Snabble.Shop.Finder.youarehere" = "Sie sind hier";
 

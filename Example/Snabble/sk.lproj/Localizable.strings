@@ -1,5 +1,17 @@
 "Sample.account" = "Account";
 
+"Sample.account (Copy)" = "Account";
+
+"Sample.Dashboard.button" = "Start now";
+
+"Sample.Dashboard.Information.text1" = "You can choose a payment method directly to make your first purchase without having to wait.";
+
+"Sample.Dashboard.Information.text2" = "Take advantage of your store cards automatically.";
+
+"Sample.Dashboard.text" = "Visit a supported store to shop with Snabble!";
+
+"Sample.Dashboard.title" = "Welcome to Snabble";
+
 "Sample.Onboarding.accept" = "Prijať";
 
 "Sample.Onboarding.message1" = "So Snabble naskenuješ svoj nákup sám/sama a zaplatíš priamo v aplikácii. Bez vystávania v rade a vykladania tvojho nákupu na pás.";

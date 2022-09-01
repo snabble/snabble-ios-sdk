@@ -64,6 +64,7 @@ private struct BodyStyle: ViewModifier {
     func body(content: Content) -> some View {
         content
             .font(.body)
+            .padding(.bottom, 8)
     }
 }
 private struct FootnoteStyle: ViewModifier {
@@ -76,12 +77,14 @@ private struct HeadlineStyle: ViewModifier {
     func body(content: Content) -> some View {
         content
             .font(.headline)
+            .padding(.bottom, 8)
     }
 }
 private struct TitleStyle: ViewModifier {
     func body(content: Content) -> some View {
         content
             .font(.title)
+            .padding([.top, .bottom], 12)
     }
 }
 
@@ -108,14 +111,12 @@ public extension WidgetTextStyling {
     }
 }
 
-
 public struct WidgetTextView: View {
     var widget: WidgetText
     
     public var body: some View {
-        Text(widget.text)
+        Text(keyed: widget.text)
             .foregroundColor(widget.color)
             .textStyle(widget.textStyle)
     }
 }
-

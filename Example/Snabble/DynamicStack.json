@@ -12,14 +12,14 @@
           "type": "text",
           "id": "2",
           "text": "Sample.Dashboard.title",
-          "textColor": "label",
+          "textColor": "accent",
           "textStyle": "title"
       },
       {
           "type": "text",
           "id": "3",
           "text": "Sample.Dashboard.text",
-          "textColor": "label",
+          "textColor": "accent",
           "textStyle": "body"
       },
       {

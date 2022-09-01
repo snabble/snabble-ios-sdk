@@ -15,4 +15,3 @@ public struct WidgetPurchaseView: View {
         Text(widget.projectId?.description ?? "no project ID")
     }
 }
-

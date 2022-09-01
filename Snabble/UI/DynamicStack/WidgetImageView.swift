@@ -12,9 +12,13 @@ public struct WidgetImageView: View {
     @ObservedObject var viewModel: DynamicStackViewModel
 
     public var body: some View {
-        widget.image
-            .onTapGesture {
-                viewModel.actionPublisher.send(widget)
-            }
+        HStack {
+            Spacer()
+            widget.image
+                .onTapGesture {
+                    viewModel.actionPublisher.send(widget)
+                }
+            Spacer()
+        }
     }
 }

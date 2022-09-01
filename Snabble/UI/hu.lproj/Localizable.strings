@@ -131,14 +131,6 @@
 
 "Snabble.ok" = "OK";
 
-"Snabble.Onboarding.Deeplink.accessibility" = "open %@";
-
-"Snabble.Onboarding.done" = "Done";
-
-"Snabble.Onboarding.Link.show" = "Megtekintés";
-
-"Snabble.Onboarding.next" = "Tovább";
-
 "Snabble.Paydirekt.AuthorizationFailed.message" = "Kérlek, próbáld meg később még egyszer";
 
 "Snabble.Paydirekt.AuthorizationFailed.title" = "Nem sikerült az azonosítás";
@@ -480,8 +472,6 @@
 
 "Snabble.Settings" = "Beállítások";
 
-"Snabble.Shop.Detail.hour" = "h";
-
 "Snabble.Shop.Detail.openingHours" = "Opening hours";
 
 "Snabble.Shop.Detail.shopNow" = "Start shopping";
@@ -489,8 +479,6 @@
 "Snabble.Shop.Detail.startNavigation" = "Szeretnéd elindítani a navigációt?";
 
 "Snabble.Shop.Detail.title" = "Részletek";
-
-"Snabble.Shop.Finder.title" = "Üzlet";
 
 "Snabble.Shop.Finder.youarehere" = "Itt vagy";
 

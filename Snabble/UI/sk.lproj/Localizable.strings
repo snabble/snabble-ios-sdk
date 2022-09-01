@@ -131,14 +131,6 @@
 
 "Snabble.ok" = "OK";
 
-"Snabble.Onboarding.Deeplink.accessibility" = "open %@";
-
-"Snabble.Onboarding.done" = "Done";
-
-"Snabble.Onboarding.Link.show" = "Prezrieť";
-
-"Snabble.Onboarding.next" = "Ďalej";
-
 "Snabble.Paydirekt.AuthorizationFailed.message" = "Skús neskôr znovu, prosím";
 
 "Snabble.Paydirekt.AuthorizationFailed.title" = "Autorizácia sa nepodarila";
@@ -480,8 +472,6 @@
 
 "Snabble.Settings" = "Nastavenia";
 
-"Snabble.Shop.Detail.hour" = "h";
-
 "Snabble.Shop.Detail.openingHours" = "Opening hours";
 
 "Snabble.Shop.Detail.shopNow" = "Start shopping";
@@ -489,8 +479,6 @@
 "Snabble.Shop.Detail.startNavigation" = "Chcete zapnúť navigáciu?";
 
 "Snabble.Shop.Detail.title" = "Detaily";
-
-"Snabble.Shop.Finder.title" = "Obchod";
 
 "Snabble.Shop.Finder.youarehere" = "Nachádzate sa tu";
 
