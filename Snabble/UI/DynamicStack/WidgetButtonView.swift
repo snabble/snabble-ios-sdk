@@ -33,11 +33,11 @@ private struct WidgetButtonStyle: ButtonStyle {
     
     public func makeBody(configuration: Configuration) -> some View {
         configuration.label
-            .padding([.top, .bottom], 15)
-            .padding([.leading, .trailing], 22)
-            .background(backgroundColor)
             .foregroundColor(foregroundColor)
-            .clipShape(RoundedRectangle(cornerRadius: 10))
+            .padding()
+            .frame(maxWidth: .infinity, minHeight: 44)
+            .background(backgroundColor)
+            .cornerRadius(8)
     }
 }
 
@@ -47,16 +47,18 @@ public struct WidgetButtonView: View {
     
     public var body: some View {
         HStack {
-            Spacer()
             Button(action: {
                 viewModel.actionPublisher.send(widget)
             }) {
                 Text(keyed: widget.text)
             }
-            .buttonStyle(WidgetButtonStyle(foregroundColor: widget.foregroundColor, backgroundColor: widget.backgroundColor))
-            Spacer()
+            .buttonStyle(
+                WidgetButtonStyle(
+                    foregroundColor: widget.foregroundColor,
+                    backgroundColor: widget.backgroundColor
+                )
+            )
         }
-        .padding()
     }
 }
 

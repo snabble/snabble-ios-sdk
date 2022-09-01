@@ -14,6 +14,7 @@ public enum ColorStyle: String {
     case onAccent
     case border
     case shadow
+    case clear
 
     var color: SwiftUI.Color {
         switch self {
@@ -29,7 +30,8 @@ public enum ColorStyle: String {
             return Color.border()
         case .shadow:
             return Color.shadow()
-
+        case .clear:
+            return Color.clear
         default:
             break
         }
