@@ -1,5 +1,5 @@
 //
-//  SampleViewController.swift
+//  ScannerViewController.swift
 //  Snabble Sample App
 //
 //  Copyright (c) 2021 snabble GmbH. All rights reserved.
@@ -9,7 +9,7 @@ import UIKit
 import SnabbleSDK
 import SwiftUI
 
-class HomeViewController: UIViewController {
+class ScannerViewController: UIViewController {
     
     private var buttonContainer = UIStackView()
     private var spinner = UIActivityIndicatorView()
@@ -25,8 +25,8 @@ class HomeViewController: UIViewController {
 
         self.title = "Snabble"
 
-        self.tabBarItem.image = UIImage(named: "scan-off")
-        self.tabBarItem.selectedImage = UIImage(named: "scan-on")
+        self.tabBarItem.image = UIImage(named: "Navigation/TabBar/scan-off")
+        self.tabBarItem.selectedImage = UIImage(named: "Navigation/TabBar/scan-on")
     }
 
     required init?(coder: NSCoder) {
@@ -69,7 +69,7 @@ class HomeViewController: UIViewController {
 
     @objc private func scannerButtonTapped(_ sender: Any) {
         let detector = BuiltinBarcodeDetector(detectorArea: .rectangle)
-        let scannerViewController = ScannerViewController(shoppingCart, shop, detector)
+        let scannerViewController = SnabbleSDK.ScannerViewController(shoppingCart, shop, detector)
         scannerViewController.scannerDelegate = self
 //        scannerViewController.shoppingCartDelegate = self
         scannerViewController.navigationItem.leftBarButtonItem = nil
@@ -84,13 +84,13 @@ class HomeViewController: UIViewController {
 
 }
 
-extension HomeViewController: ScannerDelegate {
+extension ScannerViewController: SnabbleSDK.ScannerDelegate {
     func scanMessage(for project: Project, _ shop: Shop, _ product: Product) -> ScanMessage? {
         return nil
     }
 }
 
-extension HomeViewController: ShoppingCartDelegate {
+extension ScannerViewController: ShoppingCartDelegate {
     func gotoPayment(
         _ method: RawPaymentMethod,
         _ detail: PaymentMethodDetail?,
@@ -126,14 +126,14 @@ extension HomeViewController: ShoppingCartDelegate {
 }
 
 /// implement this method to track an event generated from the SDK in your analytics system
-extension HomeViewController: AnalyticsDelegate {
+extension ScannerViewController: AnalyticsDelegate {
     func track(_ event: AnalyticsEvent) {
         NSLog("track: \(event)")
     }
 }
 
 /// implement these methods to show warning/info messages on-screen, e.g. as toasts
-extension HomeViewController: MessageDelegate {
+extension ScannerViewController: MessageDelegate {
     func showInfoMessage(_ message: String) {
         NSLog("warning: \(message)")
     }
@@ -143,7 +143,7 @@ extension HomeViewController: MessageDelegate {
     }
 }
 
-extension HomeViewController: PaymentDelegate {
+extension ScannerViewController: PaymentDelegate {
     func checkoutFinished(_ cart: ShoppingCart, _ process: CheckoutProcess?) {
         self.navigationController?.popViewController(animated: true)
     }
