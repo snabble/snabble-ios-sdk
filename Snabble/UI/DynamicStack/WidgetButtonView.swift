@@ -59,3 +59,5 @@ public struct WidgetButtonView: View {
         .padding()
     }
 }
+
+extension WidgetButton: WidgetButtonStyling {}

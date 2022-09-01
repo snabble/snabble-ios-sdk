@@ -46,7 +46,7 @@ public struct WidgetImage: Widget, ImageSourcing {
     }
 }
 
-public struct WidgetButton: Widget, WidgetButtonStyling {
+public struct WidgetButton: Widget {
     public let id: String
     public let type: WidgetType = .button
     public let text: String
