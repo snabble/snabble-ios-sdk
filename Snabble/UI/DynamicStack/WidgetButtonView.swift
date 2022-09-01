@@ -8,37 +8,8 @@
 import SwiftUI
 
 private protocol WidgetButtonStyling {
-    var foregroundColorSource: String { get }
-    var backgroundColorSource: String { get }
-}
-
-private extension WidgetButtonStyling {
-    var foregroundColor: Color {
-        if let style = ColorStyle(rawValue: self.foregroundColorSource) {
-            return style.color
-        }
-        return Color.primary
-    }
-    var backgroundColor: Color {
-        if let style = ColorStyle(rawValue: self.backgroundColorSource) {
-            return style.color
-        }
-        return Color.systemBackground
-    }
-}
-
-private struct WidgetButtonStyle: ButtonStyle {
-    var foregroundColor: Color
-    var backgroundColor: Color
-    
-    public func makeBody(configuration: Configuration) -> some View {
-        configuration.label
-            .foregroundColor(foregroundColor)
-            .padding()
-            .frame(maxWidth: .infinity, minHeight: 44)
-            .background(backgroundColor)
-            .cornerRadius(8)
-    }
+    var foregroundColor: Color { get }
+    var backgroundColor: Color? { get }
 }
 
 public struct WidgetButtonView: View {
@@ -51,15 +22,30 @@ public struct WidgetButtonView: View {
                 viewModel.actionPublisher.send(widget)
             }) {
                 Text(keyed: widget.text)
+                    .foregroundColor(widget.foregroundColor)
+                    .padding()
+                    .frame(maxWidth: .infinity, minHeight: 44)
+                    .background(widget.backgroundColor)
+                    .cornerRadius(8)
             }
-            .buttonStyle(
-                WidgetButtonStyle(
-                    foregroundColor: widget.foregroundColor,
-                    backgroundColor: widget.backgroundColor
-                )
-            )
         }
     }
 }
 
-extension WidgetButton: WidgetButtonStyling {}
+extension WidgetButton: WidgetButtonStyling {
+    var foregroundColor: Color {
+        guard let style = ColorStyle(rawValue: foregroundColorSource) else {
+            return .primary
+        }
+        return style.color
+
+    }
+    var backgroundColor: Color? {
+        guard
+            let source = backgroundColorSource,
+            let style = ColorStyle(rawValue: source) else {
+            return nil
+        }
+        return style.color
+    }
+}

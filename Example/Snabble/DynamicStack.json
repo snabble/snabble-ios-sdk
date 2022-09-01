@@ -18,9 +18,7 @@
       {
           "type": "text",
           "id": "3",
-          "text": "Sample.Dashboard.text",
-          "textColor": "label",
-          "textStyle": "body"
+          "text": "Sample.Dashboard.text"
       },
       {
           "type": "button",
@@ -33,8 +31,7 @@
           "type": "button",
           "id": "8",
           "text": "Sample.Dashboard.button",
-          "foregroundColor": "accent",
-          "backgroundColor": "clear"
+          "foregroundColor": "accent"
       },
       {
           "type": "information",

@@ -25,8 +25,8 @@ public struct WidgetText: Widget {
     public let id: String
     public let type: WidgetType = .text
     public let text: String
-    public let textColorSource: String
-    public let textStyleSource: String
+    public let textColorSource: String?
+    public let textStyleSource: String?
     public let customSpacing: CGFloat?
 
     enum CodingKeys: String, CodingKey {
@@ -56,7 +56,7 @@ public struct WidgetButton: Widget {
     public let type: WidgetType = .button
     public let text: String
     public let foregroundColorSource: String
-    public let backgroundColorSource: String
+    public let backgroundColorSource: String?
     public let customSpacing: CGFloat?
 
     enum CodingKeys: String, CodingKey {

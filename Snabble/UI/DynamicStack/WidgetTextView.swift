@@ -8,31 +8,8 @@
 import SwiftUI
 
 private protocol WidgetTextStyling {
-    var textColorSource: String { get }
-    var textStyleSource: String { get }
-}
-
-private extension WidgetTextStyling {
-    var textStyle: TextStyle {
-        if let style = TextStyle(rawValue: self.textStyleSource) {
-            return style
-        }
-        return .body
-    }
-    var colorStyle: ColorStyle {
-        if let style = ColorStyle(rawValue: self.textColorSource) {
-            return style
-        }
-        return .label
-    }
-
-    var color: Color {
-        return colorStyle.color
-    }
-
-    var font: Font {
-        textStyle.font
-    }
+    var textColor: Color { get }
+    var textFont: Font { get }
 }
 
 public struct WidgetTextView: View {
@@ -41,11 +18,29 @@ public struct WidgetTextView: View {
     public var body: some View {
         HStack {
             Text(keyed: widget.text)
-                .foregroundColor(widget.color)
-                .font(widget.font)
+                .foregroundColor(widget.textColor)
+                .font(widget.textFont)
             Spacer()
         }
     }
 }
 
-extension WidgetText: WidgetTextStyling {}
+extension WidgetText: WidgetTextStyling {
+    var textColor: Color {
+        guard
+            let source = textColorSource,
+            let style = ColorStyle(rawValue: source) else {
+            return .primary
+        }
+        return style.color
+    }
+
+    var textFont: Font {
+        guard
+            let source = textStyleSource,
+            let style = TextStyle(rawValue: source) else {
+            return .body
+        }
+        return style.font
+    }
+}
