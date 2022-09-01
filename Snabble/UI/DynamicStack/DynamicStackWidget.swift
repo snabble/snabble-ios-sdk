@@ -20,7 +20,7 @@ public enum WidgetType: String, Codable {
     case purchases
 }
 
-public struct WidgetText: Widget, WidgetTextStyling {
+public struct WidgetText: Widget {
     public let id: String
     public let type: WidgetType = .text
     public let text: String

@@ -7,12 +7,12 @@
 
 import SwiftUI
 
-public protocol WidgetButtonStyling {
+private protocol WidgetButtonStyling {
     var foregroundColorSource: String { get }
     var backgroundColorSource: String { get }
 }
 
-public extension WidgetButtonStyling {
+private extension WidgetButtonStyling {
     var foregroundColor: Color {
         if let style = ColorStyle(rawValue: self.foregroundColorSource) {
             return style.color
@@ -27,7 +27,7 @@ public extension WidgetButtonStyling {
     }
 }
 
-public struct WidgetButtonStyle: ButtonStyle {
+private struct WidgetButtonStyle: ButtonStyle {
     var foregroundColor: Color
     var backgroundColor: Color
     
