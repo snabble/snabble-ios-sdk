@@ -244,6 +244,6 @@ public enum ColorStyle: String {
             return .shadow()
         }
 
-        return Color(rawValue)
+        return Asset.color(named: rawValue)
     }
 }
