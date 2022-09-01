@@ -23,6 +23,7 @@ extension View {
         modifier(InformationStyle())
     }
 }
+
 public struct WidgetInformationView: View {
     let widget: WidgetInformation
     @ObservedObject var viewModel: DynamicStackViewModel

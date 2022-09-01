@@ -19,7 +19,7 @@
           "type": "text",
           "id": "3",
           "text": "Sample.Dashboard.text",
-          "textColor": "accent",
+          "textColor": "label",
           "textStyle": "body"
       },
       {
