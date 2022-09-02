@@ -21,8 +21,6 @@
           "type": "text",
           "id": "3",
           "text": "Sample.Dashboard.text",
-          "textColor": "label",
-          "textStyle": "body",
           "spacing": 32
       },
       {
@@ -36,8 +34,6 @@
           "type": "button",
           "id": "8",
           "text": "Sample.Dashboard.button",
-          "foregroundColor": "accent",
-          "backgroundColor": "clear",
           "spacing": 16
       },
       {
