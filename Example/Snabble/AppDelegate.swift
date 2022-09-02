@@ -62,7 +62,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         shopsViewController.delegate = self
         self.shopsViewController = shopsViewController
         
-        let accountViewController = AccountViewController()
+        let profileModel: DynamicStackViewModel = loadJSON("Profile")
+        let accountViewController = AccountViewController(viewModel: profileModel)
         
         let viewModel: DynamicStackViewModel = loadJSON("DynamicStack")
         let dashboardViewController = DashboardViewController(viewModel: viewModel)

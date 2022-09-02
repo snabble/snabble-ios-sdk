@@ -7,18 +7,20 @@
 
 import Foundation
 
-public protocol Widget: Codable {
+public protocol Widget: Decodable {
     var id: String { get }
     var type: WidgetType { get }
     var spacing: CGFloat? { get }
 }
 
-public enum WidgetType: String, Codable {
+public enum WidgetType: String, Decodable {
     case text
     case image
     case button
     case information
     case purchases
+    case section
+    case toggle
 }
 
 public struct WidgetText: Widget {
@@ -90,4 +92,36 @@ public struct WidgetPurchase: Widget {
     public let type: WidgetType = .purchases
     public let projectId: Identifier<Project>?
     public let spacing: CGFloat?
+}
+
+public struct WidgetToggle: Widget {
+    public let id: String
+    public let type: WidgetType = .toggle
+    public let text: String
+    public let spacing: CGFloat?
+}
+
+public struct WidgetSection: Widget {
+    public let id: String
+    public let type: WidgetType = .section
+    public let header: String
+    public let items: [Widget]
+    public let spacing: CGFloat?
+    
+    enum CodingKeys: String, CodingKey {
+        case id
+        case header
+        case items
+        case spacing
+    }
+    public init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        self.id = try container.decode(String.self, forKey: .id)
+        self.header = try container.decode(String.self, forKey: .header)
+        let wrappers = try container.decode([WidgetWrapper].self, forKey: .items)
+        self.items = wrappers.map { $0.value }
+
+        self.spacing = try container.decodeIfPresent(CGFloat.self, forKey: .spacing)
+
+    }
 }

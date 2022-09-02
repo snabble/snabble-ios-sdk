@@ -51,7 +51,7 @@ public class DynamicStackViewModel: NSObject, Decodable, ObservableObject {
     }
 }
 
-private struct WidgetWrapper: Decodable {
+struct WidgetWrapper: Decodable {
     let type: WidgetType
     let value: Widget
 
@@ -74,6 +74,10 @@ private struct WidgetWrapper: Decodable {
             value = try WidgetInformation(from: decoder)
         case .purchases:
             value = try WidgetPurchase(from: decoder)
+        case .section:
+            value = try WidgetSection(from: decoder)
+        case .toggle:
+            value = try WidgetToggle(from: decoder)
         }
     }
 }

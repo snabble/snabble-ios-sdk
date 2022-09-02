@@ -56,6 +56,10 @@ public struct DynamicStackView: View {
                             if let widget = widget as? WidgetPurchase {
                                 WidgetPurchaseView(widget: widget, viewModel: viewModel)
                             }
+                        case .toggle:
+                            EmptyView()
+                        case .section:
+                            EmptyView()
                         }
                         if let spacing = viewModel.spacing(for: widget) {
                             Spacer(minLength: spacing)

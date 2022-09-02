@@ -5,11 +5,13 @@
 //  Copyright © 2021 snabble. All rights reserved.
 //
 
-import UIKit
+import Foundation
+import SnabbleSDK
 
-final class AccountViewController: UIViewController {
-    init() {
-        super.init(nibName: nil, bundle: nil)
+final class AccountViewController: SnabbleSDK.ProfileViewController {
+
+    override init(viewModel: DynamicStackViewModel) {
+        super.init(viewModel: viewModel)
 
         title = NSLocalizedString("Sample.account", comment: "")
         tabBarItem.image = UIImage(named: "Navigation/TabBar/profil-off")

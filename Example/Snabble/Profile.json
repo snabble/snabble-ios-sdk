@@ -1,0 +1,29 @@
+{
+    "configuration": {
+    },
+    "widgets": [
+        {
+            "type": "section",
+            "id": "8",
+            "header": "Sample.Section.Profile.header",
+            "items" : [
+                {
+                    "type": "text",
+                    "id": "1",
+                    "text": "Sample.Section.Profile.paymentMethods",
+                    "showDisclosure": true
+                },
+                {
+                    "type": "toggle",
+                    "id": "2",
+                    "text": "Sample.Section.Profile.saveEnergy",
+                },
+                {
+                    "type": "button",
+                    "id": "3",
+                    "text": "Sample.Section.Profile.deleteAccount",
+                }
+            ]
+        }
+    ]
+}
