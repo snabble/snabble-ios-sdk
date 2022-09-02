@@ -26,34 +26,6 @@
           "spacing": 32
       },
       {
-          "type": "section",
-          "id": "23",
-          "header": "Sample.Section.Profile.header",
-          "items" : [
-              {
-                  "type": "text",
-                  "id": "11313123",
-                  "text": "Sample.Section.Profile.paymentMethods",
-                  "showDisclosure": true
-              },
-              {
-                  "type": "toggle",
-                  "id": "254351",
-                  "text": "Sample.Section.Profile.saveEnergy",
-              },
-              {
-                  "type": "toggle",
-                  "id": "523423",
-                  "text": "Sample.Section.Profile.showOnboarding",
-              },
-             {
-                  "type": "button",
-                  "id": "13675454",
-                  "text": "Sample.Section.Profile.deleteAccount",
-              }
-          ]
-      },
-      {
           "type": "button",
           "id": "4",
           "text": "Sample.Dashboard.button",
