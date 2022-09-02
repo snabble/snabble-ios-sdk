@@ -18,7 +18,19 @@
 
 "Sample.Onboarding.message3" = "Bitte akzeptiere die Nutzungsbedingungen und lies die Datenschutzhinweise.";
 
+"Sample.Profile.title" = "Profil";
+
 "Sample.scanner" = "Scanner";
+
+"Sample.Section.Profile.deleteAccount" = "Account löschen";
+
+"Sample.Section.Profile.header" = "Dein Profil";
+
+"Sample.Section.Profile.paymentMethods" = "Bezahlverfahren";
+
+"Sample.Section.Profile.saveEnergy" = "Strom sparen";
+
+"Sample.Section.Profile.showOnboarding" = "Zeige Onboarding";
 
 "Sample.shoppingCart" = "Warenkorb";
 

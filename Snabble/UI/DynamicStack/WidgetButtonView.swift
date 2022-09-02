@@ -14,7 +14,7 @@ private protocol WidgetButtonStyling {
 
 public struct WidgetButtonView: View {
     let widget: WidgetButton
-    @ObservedObject var viewModel: DynamicStackViewModel
+    @ObservedObject var viewModel: DynamicViewModel
     
     public var body: some View {
         HStack {

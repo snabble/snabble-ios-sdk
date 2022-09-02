@@ -9,9 +9,9 @@
 import Foundation
 import SnabbleSDK
 
-final class DashboardViewController: SnabbleSDK.DynamicStackViewController {
+final class DashboardViewController: SnabbleSDK.DynamicViewController {
     
-    override init(viewModel: DynamicStackViewModel) {
+    override init(viewModel: DynamicViewModel) {
         super.init(viewModel: viewModel)
         
         self.title = "Snabble"

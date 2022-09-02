@@ -1,6 +1,8 @@
 {
   "configuration": {
-    "image": "Dashboard/teaser"
+    "image": "Dashboard/teaser",
+    "style": "scroll",
+    "padding": 30
   },
   "widgets": [
       {

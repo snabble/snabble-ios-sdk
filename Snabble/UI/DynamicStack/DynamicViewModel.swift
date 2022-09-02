@@ -8,9 +8,9 @@
 import Foundation
 import Combine
 
-public class DynamicStackViewModel: NSObject, Decodable, ObservableObject {
+public class DynamicViewModel: NSObject, Decodable, ObservableObject {
 
-    public let configuration: DynamicStackConfiguration
+    public let configuration: DynamicViewConfiguration
     public let widgets: [Widget]
 
     private enum CodingKeys: String, CodingKey {
@@ -19,7 +19,7 @@ public class DynamicStackViewModel: NSObject, Decodable, ObservableObject {
     }
     
     public init(
-        configuration: DynamicStackConfiguration,
+        configuration: DynamicViewConfiguration,
         widgets: [Widget]
     ) {
         self.configuration = configuration
@@ -33,7 +33,7 @@ public class DynamicStackViewModel: NSObject, Decodable, ObservableObject {
 
     public required init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
-        self.configuration = try container.decode(DynamicStackConfiguration.self, forKey: .configuration)
+        self.configuration = try container.decode(DynamicViewConfiguration.self, forKey: .configuration)
 
         let wrappers = try container.decode([WidgetWrapper].self, forKey: .widgets)
         self.widgets = wrappers.map { $0.value }
@@ -51,7 +51,7 @@ public class DynamicStackViewModel: NSObject, Decodable, ObservableObject {
     }
 }
 
-private struct WidgetWrapper: Decodable {
+struct WidgetWrapper: Decodable {
     let type: WidgetType
     let value: Widget
 
@@ -74,6 +74,10 @@ private struct WidgetWrapper: Decodable {
             value = try WidgetInformation(from: decoder)
         case .purchases:
             value = try WidgetPurchase(from: decoder)
+        case .section:
+            value = try WidgetSection(from: decoder)
+        case .toggle:
+            value = try WidgetToggle(from: decoder)
         }
     }
 }

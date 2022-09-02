@@ -11,25 +11,25 @@ import SwiftUI
 import Combine
 
 /// Methods for managing callbacks for widges
-public protocol DynamicStackViewControllerDelegate: AnyObject {
+public protocol DynamicViewControllerDelegate: AnyObject {
 
     /// Tells the delegate that an widget will perform an action
-    func dynamicStackViewController(_ viewController: DynamicStackViewController, performAction id: String)
+    func dynamicStackViewController(_ viewController: DynamicViewController, performAction id: String)
 }
 
 /// A UIViewController wrapping SwiftUI's DynamicStackView
-open class DynamicStackViewController: UIHostingController<DynamicStackView> {
-    public weak var delegate: DynamicStackViewControllerDelegate?
+open class DynamicViewController: UIHostingController<DynamicView> {
+    public weak var delegate: DynamicViewControllerDelegate?
 
     private var cancellables = Set<AnyCancellable>()
 
-    public var viewModel: DynamicStackViewModel {
+    public var viewModel: DynamicViewModel {
         rootView.viewModel
     }
     /// Creates and returns an dynamic stack  view controller with the specified viewModel
     /// - Parameter viewModel: A view model that specifies the details to be shown. Default value is `.default`
-    public init(viewModel: DynamicStackViewModel) {
-        super.init(rootView: DynamicStackView(viewModel: viewModel))
+    public init(viewModel: DynamicViewModel) {
+        super.init(rootView: DynamicView(viewModel: viewModel))
     }
 
     @MainActor required dynamic public init?(coder aDecoder: NSCoder) {

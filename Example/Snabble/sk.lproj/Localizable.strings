@@ -1,4 +1,4 @@
-"Sample.account" = "Account";
+"Sample.account" = "Profil";
 
 "Sample.Dashboard.button" = "Start now";
 
@@ -18,9 +18,21 @@
 
 "Sample.Onboarding.message3" = "Prosím, akceptuj podmienky používania a prečítaj si pravidlá ochrany údajov.";
 
-"Sample.scanner" = "Scanner";
+"Sample.Profile.title" = "Profile";
 
-"Sample.shoppingCart" = "Shopping Cart";
+"Sample.scanner" = "Skener";
 
-"Sample.shops" = "Shops";
+"Sample.Section.Profile.deleteAccount" = "Delete Account";
+
+"Sample.Section.Profile.header" = "Your Profile";
+
+"Sample.Section.Profile.paymentMethods" = "Payment Methods";
+
+"Sample.Section.Profile.saveEnergy" = "Save energy";
+
+"Sample.Section.Profile.showOnboarding" = "Show Onboarding";
+
+"Sample.shoppingCart" = "Košík";
+
+"Sample.shops" = "Obchody";
 

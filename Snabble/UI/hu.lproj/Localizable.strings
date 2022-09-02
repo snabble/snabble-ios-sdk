@@ -332,6 +332,8 @@
 
 "Snabble.PostFinanceCard.payNow" = "Most fizetés a PostFinance kártyával";
 
+"Snabble.Profile.title" = "Profile";
+
 "Snabble.QRCode.codeXofY" = "%1$d / %2$d kód";
 
 "Snabble.QRCode.didPay" = "A pénztárnál fizettem";

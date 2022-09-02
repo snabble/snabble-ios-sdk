@@ -5,11 +5,26 @@
 //  Copyright © 2021 snabble. All rights reserved.
 //
 
-import UIKit
+import Foundation
+import SnabbleSDK
+import SwiftUI
 
-final class AccountViewController: UIViewController {
-    init() {
-        super.init(nibName: nil, bundle: nil)
+public struct ProfileView: View {
+    @ObservedObject public var viewModel: DynamicViewModel
+
+    public var body: some View {
+        NavigationView {
+            WidgetContainer(viewModel: viewModel, widgets: viewModel.widgets)
+                .navigationBarTitle(Asset.localizedString(forKey: "Sample.Profile.title"), displayMode: .inline)
+        }
+        .navigationViewStyle(.stack)
+   }
+}
+
+final class AccountViewController: SnabbleSDK.DynamicViewController {
+
+    override init(viewModel: DynamicViewModel) {
+        super.init(viewModel: viewModel)
 
         title = NSLocalizedString("Sample.account", comment: "")
         tabBarItem.image = UIImage(named: "Navigation/TabBar/profil-off")

@@ -14,7 +14,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     var window: UIWindow?
 
     var shopsViewController: ShopsViewController?
-    var dashboardViewController: DynamicStackViewController?
+    var dashboardViewController: DynamicViewController?
     
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
 
@@ -62,9 +62,11 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         shopsViewController.delegate = self
         self.shopsViewController = shopsViewController
         
-        let accountViewController = AccountViewController()
-        
-        let viewModel: DynamicStackViewModel = loadJSON("DynamicStack")
+        let profileModel: DynamicViewModel = loadJSON("Profile")
+        let accountViewController = AccountViewController(viewModel: profileModel)
+        accountViewController.delegate = self
+
+        let viewModel: DynamicViewModel = loadJSON("Dashboard")
         let dashboardViewController = DashboardViewController(viewModel: viewModel)
         dashboardViewController.delegate = self
         self.dashboardViewController = dashboardViewController
@@ -146,8 +148,8 @@ extension AppDelegate: ShopsViewControllerDelegate {
     }
 }
 
-extension AppDelegate: DynamicStackViewControllerDelegate {
-    func dynamicStackViewController(_ viewController: SnabbleSDK.DynamicStackViewController, performAction id: String) {
+extension AppDelegate: DynamicViewControllerDelegate {
+    func dynamicStackViewController(_ viewController: SnabbleSDK.DynamicViewController, performAction id: String) {
         print(#function, id)
     }
 }

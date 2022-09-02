@@ -9,7 +9,7 @@ import SwiftUI
 
 public struct WidgetImageView: View {
     let widget: WidgetImage
-    @ObservedObject var viewModel: DynamicStackViewModel
+    @ObservedObject var viewModel: DynamicViewModel
 
     public var body: some View {
         widget.image
