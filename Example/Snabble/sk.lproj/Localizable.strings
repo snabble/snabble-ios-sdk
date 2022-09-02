@@ -20,6 +20,16 @@
 
 "Sample.scanner" = "Scanner";
 
+"Sample.Section.Profile.deleteAccount" = "Delete Account";
+
+"Sample.Section.Profile.header" = "Your Profile";
+
+"Sample.Section.Profile.paymentMethods" = "Payment Methods";
+
+"Sample.Section.Profile.saveEnergy" = "Save energy";
+
+"Sample.Section.Profile.showOnboarding" = "Show Onboarding";
+
 "Sample.shoppingCart" = "Shopping Cart";
 
 "Sample.shops" = "Shops";

@@ -19,8 +19,13 @@
                     "text": "Sample.Section.Profile.saveEnergy",
                 },
                 {
-                    "type": "button",
+                    "type": "toggle",
                     "id": "3",
+                    "text": "Sample.Section.Profile.showOnboarding",
+                },
+               {
+                    "type": "button",
+                    "id": "4",
                     "text": "Sample.Section.Profile.deleteAccount",
                 }
             ]

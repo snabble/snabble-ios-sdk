@@ -14,7 +14,7 @@ public struct WidgetToggleView: View {
     
     public var body: some View {
         HStack {
-            Toggle(widget.text, isOn: $toggleValue)
+            Toggle(Asset.localizedString(forKey: widget.text), isOn: $toggleValue)
         }
     }
 }

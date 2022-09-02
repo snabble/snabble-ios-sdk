@@ -332,6 +332,8 @@
 
 "Snabble.PostFinanceCard.payNow" = "Zaplatiť kartou PostFinance teraz";
 
+"Snabble.Profile.title" = "Profile";
+
 "Snabble.QRCode.codeXofY" = "Kód %1$d z %2$d";
 
 "Snabble.QRCode.didPay" = "Zaplatil(a) som pri pokladni";

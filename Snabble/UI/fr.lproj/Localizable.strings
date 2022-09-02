@@ -332,6 +332,8 @@
 
 "Snabble.PostFinanceCard.payNow" = "Payer maintenant avec la carte PostFinance";
 
+"Snabble.Profile.title" = "Profile";
+
 "Snabble.QRCode.codeXofY" = "Code %1$d de %2$d";
 
 "Snabble.QRCode.didPay" = "Terminé";
