@@ -30,6 +30,7 @@ public struct WidgetText: Widget {
     public let textColorSource: String?
     public let textStyleSource: String?
     public let spacing: CGFloat?
+    public let showDisclosure: Bool?
 
     enum CodingKeys: String, CodingKey {
         case id
@@ -37,6 +38,7 @@ public struct WidgetText: Widget {
         case textColorSource = "textColor"
         case textStyleSource = "textStyle"
         case spacing
+        case showDisclosure
     }
 }
 

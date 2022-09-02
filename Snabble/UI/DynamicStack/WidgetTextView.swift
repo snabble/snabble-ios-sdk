@@ -11,6 +11,20 @@ private protocol WidgetTextStyling {
     var textColor: Color { get }
     var textFont: Font { get }
 }
+private struct NavigationWidget: ViewModifier {
+    let text: String
+    let active: Bool
+    
+    func body(content: Content) -> some View {
+        if active {
+            NavigationLink(text) {
+                content
+            }
+        } else {
+            content
+        }
+    }
+}
 
 public struct WidgetTextView: View {
     var widget: WidgetText
@@ -22,6 +36,7 @@ public struct WidgetTextView: View {
                 .font(widget.textFont)
             Spacer()
         }
+        .modifier(NavigationWidget(text: Asset.localizedString(forKey: widget.text), active: widget.showDisclosure == true))
     }
 }
 
