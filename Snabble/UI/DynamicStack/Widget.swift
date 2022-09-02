@@ -116,14 +116,15 @@ public struct WidgetSection: Widget {
         case items
         case spacing
     }
+
     public init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
         self.id = try container.decode(String.self, forKey: .id)
         self.header = try container.decode(String.self, forKey: .header)
+
         let wrappers = try container.decode([WidgetWrapper].self, forKey: .items)
         self.items = wrappers.map { $0.value }
 
         self.spacing = try container.decodeIfPresent(CGFloat.self, forKey: .spacing)
-
     }
 }

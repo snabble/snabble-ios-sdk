@@ -8,14 +8,14 @@
 import SwiftUI
 
 public struct WidgetView: View {
-    var widget: Widget
-    @ObservedObject var viewModel: DynamicStackViewModel
+    public var widget: Widget
+    @ObservedObject var viewModel: DynamicViewModel
 
     public var body: some View {
         if widget.type == .section, let widget = widget as? WidgetSection {
             WidgetSectionView(widget: widget, viewModel: viewModel)
         } else {
-            VStack(spacing: 0) {
+            Group {
                 switch widget.type {
                 case .image:
                     if let widget = widget as? WidgetImage {
@@ -53,9 +53,14 @@ public struct WidgetView: View {
 }
 
 public struct WidgetContainer: View {
-    @ObservedObject public var viewModel: DynamicStackViewModel
-    let widgets: [Widget]
+    @ObservedObject public var viewModel: DynamicViewModel
+    public let widgets: [Widget]
       
+    public init(viewModel: DynamicViewModel, widgets: [Widget]) {
+        self.viewModel = viewModel
+        self.widgets = widgets
+    }
+    
     public var body: some View {
         ForEach(widgets, id: \.id) { widget in
             WidgetView(widget: widget, viewModel: viewModel)

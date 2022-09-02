@@ -1,5 +1,6 @@
 {
     "configuration": {
+        "style": "list"
     },
     "widgets": [
         {

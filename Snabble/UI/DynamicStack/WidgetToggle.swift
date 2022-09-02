@@ -9,7 +9,7 @@ import SwiftUI
 
 public struct WidgetToggleView: View {
     var widget: WidgetToggle
-    @ObservedObject var viewModel: DynamicStackViewModel
+    @ObservedObject var viewModel: DynamicViewModel
     @State private var toggleValue = false
     
     public var body: some View {

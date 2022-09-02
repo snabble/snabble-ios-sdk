@@ -26,7 +26,7 @@ extension View {
 
 public struct WidgetInformationView: View {
     let widget: WidgetInformation
-    @ObservedObject var viewModel: DynamicStackViewModel
+    @ObservedObject var viewModel: DynamicViewModel
 
     public var body: some View {
         HStack(alignment: .top) {
