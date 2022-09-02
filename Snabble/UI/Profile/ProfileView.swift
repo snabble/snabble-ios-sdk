@@ -11,6 +11,10 @@ public struct ProfileView: View {
     @ObservedObject public var viewModel: DynamicStackViewModel
 
     public var body: some View {
-        DynamicStackView(viewModel: viewModel)
-    }
+        NavigationView {
+            WidgetContainer(viewModel: viewModel, widgets: viewModel.widgets)
+                .navigationBarTitle(Asset.localizedString(forKey: "Snabble.Profile.title"), displayMode: .inline)
+        }
+        .navigationViewStyle(.stack)
+   }
 }
