@@ -14,8 +14,8 @@ final class AccountViewController: DynamicViewController {
         super.init(viewModel: viewModel)
 
         title = NSLocalizedString("Sample.profile", comment: "")
-        tabBarItem.image = UIImage(named: "Navigation/TabBar/profil-off")
-        tabBarItem.selectedImage = UIImage(named: "Navigation/TabBar/profil-off")
+        tabBarItem.image = UIImage(named: "Navigation/TabBar/profile-off")
+        tabBarItem.selectedImage = UIImage(named: "Navigation/TabBar/profile-off")
     }
 
     required init?(coder: NSCoder) {
