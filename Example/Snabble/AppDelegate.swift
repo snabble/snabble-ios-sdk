@@ -65,7 +65,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         let profileModel: DynamicViewModel = loadJSON("Profile")
         let accountViewController = AccountViewController(viewModel: profileModel)
         
-        let viewModel: DynamicViewModel = loadJSON("DynamicStack")
+        let viewModel: DynamicViewModel = loadJSON("Dashboard")
         let dashboardViewController = DashboardViewController(viewModel: viewModel)
         dashboardViewController.delegate = self
         self.dashboardViewController = dashboardViewController
