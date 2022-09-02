@@ -38,16 +38,30 @@ public struct DynamicView: View {
                     VStack(alignment: .center) {
                         WidgetContainer(viewModel: viewModel, widgets: viewModel.widgets)
                     }
-                    .padding([.leading, .trailing], viewModel.configuration.padding ?? 0)
+                    .horizontalPadding(viewModel.configuration.padding)
                 }
             case .list:
                 List {
                     WidgetContainer(viewModel: viewModel, widgets: viewModel.widgets)
                 }
-                .padding([.leading, .trailing], viewModel.configuration.padding ?? 0)
+                .horizontalPadding(viewModel.configuration.padding)
                 .listStyle(.grouped)
             }
         }
-        
+    }
+}
+
+private extension View {
+    func horizontalPadding(_ padding: CGFloat?) -> some View {
+        modifier(HorizontalPadding(value: padding))
+    }
+}
+
+private struct HorizontalPadding: ViewModifier {
+    let value: CGFloat?
+
+    func body(content: Content) -> some View {
+        content
+            .padding([.leading, .trailing], value ?? 0)
     }
 }
