@@ -11,15 +11,19 @@ private protocol WidgetTextStyling {
     var textColor: Color { get }
     var textFont: Font { get }
 }
+
 private struct NavigationWidget: ViewModifier {
     let text: String
     let active: Bool
     
     func body(content: Content) -> some View {
         if active {
-            NavigationLink(text) {
+            HStack {
                 content
+                Spacer()
+                SwiftUI.Image(systemName: "chevron.right")
             }
+            .background(Color.systemBackground)
         } else {
             content
         }
@@ -28,7 +32,8 @@ private struct NavigationWidget: ViewModifier {
 
 public struct WidgetTextView: View {
     var widget: WidgetText
-    
+    @ObservedObject var viewModel: DynamicViewModel
+
     public var body: some View {
         HStack {
             Text(keyed: widget.text)
@@ -37,6 +42,9 @@ public struct WidgetTextView: View {
             Spacer()
         }
         .modifier(NavigationWidget(text: Asset.localizedString(forKey: widget.text), active: widget.showDisclosure ?? false))
+        .onTapGesture {
+            viewModel.actionPublisher.send(widget)
+        }
     }
 }
 

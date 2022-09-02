@@ -16,5 +16,8 @@ public struct WidgetToggleView: View {
         HStack {
             Toggle(Asset.localizedString(forKey: widget.text), isOn: $toggleValue)
         }
+        .onChange(of: toggleValue) { _ in
+            viewModel.actionPublisher.send(widget)
+        }
     }
 }

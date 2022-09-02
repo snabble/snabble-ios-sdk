@@ -23,7 +23,7 @@ public struct WidgetView: View {
                     }
                 case .text:
                     if let widget = widget as? WidgetText {
-                        WidgetTextView(widget: widget)
+                        WidgetTextView(widget: widget, viewModel: viewModel)
                     }
                 case .button:
                     if let widget = widget as? WidgetButton {

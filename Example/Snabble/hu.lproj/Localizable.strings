@@ -1,4 +1,4 @@
-"Sample.account" = "Account";
+"Sample.account" = "Profil";
 
 "Sample.Dashboard.button" = "Start now";
 
@@ -18,7 +18,9 @@
 
 "Sample.Onboarding.message3" = "Kérlek, fogadd el a felhasználási feltételeket és az adatvédelmi tudnivalókat.";
 
-"Sample.scanner" = "Scanner";
+"Sample.Profile.title" = "Profile";
+
+"Sample.scanner" = "Szkenner";
 
 "Sample.Section.Profile.deleteAccount" = "Delete Account";
 
@@ -30,7 +32,7 @@
 
 "Sample.Section.Profile.showOnboarding" = "Show Onboarding";
 
-"Sample.shoppingCart" = "Shopping Cart";
+"Sample.shoppingCart" = "Kosár";
 
-"Sample.shops" = "Shops";
+"Sample.shops" = "Üzletek";
 

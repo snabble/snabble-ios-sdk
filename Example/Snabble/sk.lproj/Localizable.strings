@@ -1,4 +1,4 @@
-"Sample.account" = "Account";
+"Sample.account" = "Profil";
 
 "Sample.Dashboard.button" = "Start now";
 
@@ -18,7 +18,9 @@
 
 "Sample.Onboarding.message3" = "Prosím, akceptuj podmienky používania a prečítaj si pravidlá ochrany údajov.";
 
-"Sample.scanner" = "Scanner";
+"Sample.Profile.title" = "Profile";
+
+"Sample.scanner" = "Skener";
 
 "Sample.Section.Profile.deleteAccount" = "Delete Account";
 
@@ -30,7 +32,7 @@
 
 "Sample.Section.Profile.showOnboarding" = "Show Onboarding";
 
-"Sample.shoppingCart" = "Shopping Cart";
+"Sample.shoppingCart" = "Košík";
 
-"Sample.shops" = "Shops";
+"Sample.shops" = "Obchody";
 

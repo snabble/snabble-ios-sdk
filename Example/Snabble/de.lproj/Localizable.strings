@@ -18,6 +18,8 @@
 
 "Sample.Onboarding.message3" = "Bitte akzeptiere die Nutzungsbedingungen und lies die Datenschutzhinweise.";
 
+"Sample.Profile.title" = "Profil";
+
 "Sample.scanner" = "Scanner";
 
 "Sample.Section.Profile.deleteAccount" = "Account löschen";
