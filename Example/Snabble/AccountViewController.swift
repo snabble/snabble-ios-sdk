@@ -13,7 +13,7 @@ final class AccountViewController: DynamicViewController {
     override init(viewModel: DynamicViewModel) {
         super.init(viewModel: viewModel)
 
-        title = NSLocalizedString("Sample.Profile.title", comment: "")
+        title = NSLocalizedString("Sample.profile", comment: "")
         tabBarItem.image = UIImage(named: "Navigation/TabBar/profil-off")
         tabBarItem.selectedImage = UIImage(named: "Navigation/TabBar/profil-off")
     }
