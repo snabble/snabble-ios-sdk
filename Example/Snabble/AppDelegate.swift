@@ -65,6 +65,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         let profileModel: DynamicViewModel = loadJSON("Profile")
         let accountViewController = AccountViewController(viewModel: profileModel)
         accountViewController.delegate = self
+        let accountNavigationController = UINavigationController(rootViewController: accountViewController)
 
         let viewModel: DynamicViewModel = loadJSON("Dashboard")
         let dashboardViewController = DashboardViewController(viewModel: viewModel)
@@ -74,7 +75,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         let scannerViewController = ScannerViewController(shop: shops.first!)
 
         let tabBarController = UITabBarController()
-        tabBarController.viewControllers = [dashboardViewController, scannerViewController, shopsViewController, accountViewController]
+        tabBarController.viewControllers = [dashboardViewController, scannerViewController, shopsViewController, accountNavigationController]
 
         window?.rootViewController = tabBarController
 
