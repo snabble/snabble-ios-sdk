@@ -94,6 +94,12 @@ public struct WidgetPurchase: Widget {
     public let type: WidgetType = .purchases
     public let projectId: Identifier<Project>?
     public let spacing: CGFloat?
+
+    enum CodingKeys: String, CodingKey {
+        case id
+        case projectId
+        case spacing
+    }
 }
 
 public struct WidgetToggle: Widget {
@@ -101,6 +107,12 @@ public struct WidgetToggle: Widget {
     public let type: WidgetType = .toggle
     public let text: String
     public let spacing: CGFloat?
+
+    enum CodingKeys: String, CodingKey {
+        case id
+        case text
+        case spacing
+    }
 }
 
 public struct WidgetSection: Widget {
