@@ -29,12 +29,16 @@ public struct DynamicListView: View {
     }
 
     public var body: some View {
-        ZStack {
-            teaser
-            List {
-                WidgetContainer(viewModel: viewModel, widgets: viewModel.widgets)
-            }
-            .listStyle(.grouped)
-        }
+            ZStack {
+                teaser
+//                NavigationView {
+                List {
+                    WidgetContainer(viewModel: viewModel, widgets: viewModel.widgets)
+                }
+                .listStyle(.grouped)
+//                }
+//                .navigationViewStyle(.stack)
+           }
+
     }
 }

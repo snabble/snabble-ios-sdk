@@ -12,39 +12,41 @@ public struct WidgetView: View {
     @ObservedObject var viewModel: DynamicStackViewModel
 
     public var body: some View {
-        VStack(spacing: 0) {
-            switch widget.type {
-            case .image:
-                if let widget = widget as? WidgetImage {
-                    WidgetImageView(widget: widget, viewModel: viewModel)
+        if widget.type == .section, let widget = widget as? WidgetSection {
+            WidgetSectionView(widget: widget, viewModel: viewModel)
+        } else {
+            VStack(spacing: 0) {
+                switch widget.type {
+                case .image:
+                    if let widget = widget as? WidgetImage {
+                        WidgetImageView(widget: widget, viewModel: viewModel)
+                    }
+                case .text:
+                    if let widget = widget as? WidgetText {
+                        WidgetTextView(widget: widget)
+                    }
+                case .button:
+                    if let widget = widget as? WidgetButton {
+                        WidgetButtonView(widget: widget, viewModel: viewModel)
+                    }
+                case .information:
+                    if let widget = widget as? WidgetInformation {
+                        WidgetInformationView(widget: widget, viewModel: viewModel)
+                    }
+                case .purchases:
+                    if let widget = widget as? WidgetPurchase {
+                        WidgetPurchaseView(widget: widget, viewModel: viewModel)
+                    }
+                case .toggle:
+                    if let widget = widget as? WidgetToggle {
+                        WidgetToggleView(widget: widget, viewModel: viewModel)
+                    }
+                case .section:
+                    EmptyView()
                 }
-            case .text:
-                if let widget = widget as? WidgetText {
-                    WidgetTextView(widget: widget)
+                if let spacing = viewModel.spacing(for: widget) {
+                    Spacer(minLength: spacing)
                 }
-            case .button:
-                if let widget = widget as? WidgetButton {
-                    WidgetButtonView(widget: widget, viewModel: viewModel)
-                }
-            case .information:
-                if let widget = widget as? WidgetInformation {
-                    WidgetInformationView(widget: widget, viewModel: viewModel)
-                }
-            case .purchases:
-                if let widget = widget as? WidgetPurchase {
-                    WidgetPurchaseView(widget: widget, viewModel: viewModel)
-                }
-            case .toggle:
-                if let widget = widget as? WidgetToggle {
-                    WidgetToggleView(widget: widget, viewModel: viewModel)
-                }
-            case .section:
-                if let widget = widget as? WidgetSection {
-                    WidgetSectionView(widget: widget, viewModel: viewModel)
-                }
-            }
-            if let spacing = viewModel.spacing(for: widget) {
-                Spacer(minLength: spacing)
             }
         }
     }
