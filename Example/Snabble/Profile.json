@@ -4,28 +4,84 @@
     "widgets": [
         {
             "type": "section",
-            "id": "8",
+            "id": "1",
             "header": "Sample.Section.Profile.header",
             "items" : [
                 {
                     "type": "text",
-                    "id": "1",
+                    "id": "123",
                     "text": "Sample.Section.Profile.paymentMethods",
                     "showDisclosure": true
                 },
                 {
                     "type": "toggle",
-                    "id": "2",
+                    "id": "232",
                     "text": "Sample.Section.Profile.saveEnergy",
                 },
                 {
                     "type": "toggle",
-                    "id": "3",
+                    "id": "3311231",
                     "text": "Sample.Section.Profile.showOnboarding",
                 },
                {
                     "type": "button",
-                    "id": "4",
+                    "id": "412313",
+                    "text": "Sample.Section.Profile.deleteAccount",
+                }
+            ]
+        },
+        {
+            "type": "section",
+            "id": "2",
+            "header": "Sample.Section.Profile.header",
+            "items" : [
+                {
+                    "type": "text",
+                    "id": "11313123",
+                    "text": "Sample.Section.Profile.paymentMethods",
+                    "showDisclosure": true
+                },
+                {
+                    "type": "toggle",
+                    "id": "254351",
+                    "text": "Sample.Section.Profile.saveEnergy",
+                },
+                {
+                    "type": "toggle",
+                    "id": "523423",
+                    "text": "Sample.Section.Profile.showOnboarding",
+                },
+               {
+                    "type": "button",
+                    "id": "13675454",
+                    "text": "Sample.Section.Profile.deleteAccount",
+                }
+            ]
+        },
+        {
+            "type": "section",
+            "id": "3",
+            "header": "Sample.Section.Profile.header",
+            "items" : [
+                {
+                    "type": "text",
+                    "id": "11234324",
+                    "text": "Sample.Section.Profile.paymentMethods",
+                    "showDisclosure": true
+                },
+                {
+                    "type": "toggle",
+                    "id": "265464",
+                    "text": "Sample.Section.Profile.saveEnergy",
+                },
+                {
+                    "type": "toggle",
+                    "id": "3967843652",
+                    "text": "Sample.Section.Profile.showOnboarding",
+                },
+               {
+                    "type": "button",
+                    "id": "44632523542",
                     "text": "Sample.Section.Profile.deleteAccount",
                 }
             ]

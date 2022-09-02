@@ -36,7 +36,7 @@ public struct WidgetTextView: View {
                 .font(widget.textFont)
             Spacer()
         }
-        .modifier(NavigationWidget(text: Asset.localizedString(forKey: widget.text), active: widget.showDisclosure == true))
+        .modifier(NavigationWidget(text: Asset.localizedString(forKey: widget.text), active: widget.showDisclosure ?? false))
     }
 }
 

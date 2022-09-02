@@ -18,7 +18,7 @@ public protocol ProfileViewControllerDelegate: AnyObject {
 }
 
 /// A UIViewController wrapping SwiftUI's DynamicStackView
-open class ProfileViewController: UIHostingController<ProfileView> {
+open class ProfileViewController: UIHostingController<DynamicListView> {
     public weak var delegate: ProfileViewControllerDelegate?
 
     private var cancellables = Set<AnyCancellable>()
@@ -29,7 +29,7 @@ open class ProfileViewController: UIHostingController<ProfileView> {
     /// Creates and returns an dynamic stack  view controller with the specified viewModel
     /// - Parameter viewModel: A view model that specifies the details to be shown. Default value is `.default`
     public init(viewModel: DynamicStackViewModel) {
-        super.init(rootView: ProfileView(viewModel: viewModel))
+        super.init(rootView: DynamicListView(viewModel: viewModel))
     }
 
     @MainActor required dynamic public init?(coder aDecoder: NSCoder) {

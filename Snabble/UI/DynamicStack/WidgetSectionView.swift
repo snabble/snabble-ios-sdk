@@ -12,10 +12,8 @@ public struct WidgetSectionView: View {
     @ObservedObject var viewModel: DynamicStackViewModel
 
     public var body: some View {
-        List {
-            Section(header: Text(keyed: widget.header)) {
-                WidgetContainer(viewModel: viewModel, widgets: widget.items)
-            }
-        }.listStyle(.grouped)
+        Section(header: Text(keyed: widget.header)) {
+            WidgetContainer(viewModel: viewModel, widgets: widget.items)
+        }
     }
 }

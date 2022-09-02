@@ -13,7 +13,7 @@ public struct ProfileView: View {
     public var body: some View {
         NavigationView {
             WidgetContainer(viewModel: viewModel, widgets: viewModel.widgets)
-                .navigationBarTitle(Asset.localizedString(forKey: "Snabble.Profile.title"), displayMode: .inline)
+                .navigationBarTitle(Asset.localizedString(forKey: "Snabble.DynamicList.title"), displayMode: .inline)
         }
         .navigationViewStyle(.stack)
    }
