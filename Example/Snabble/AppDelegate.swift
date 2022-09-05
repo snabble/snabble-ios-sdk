@@ -73,9 +73,10 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         self.dashboardViewController = dashboardViewController
 
         let scannerViewController = ScannerViewController(shop: shops.first!)
+        let scannerNavigationViewController = UINavigationController(rootViewController: scannerViewController)
 
         let tabBarController = UITabBarController()
-        tabBarController.viewControllers = [dashboardViewController, scannerViewController, shopsViewController, accountNavigationController]
+        tabBarController.viewControllers = [dashboardViewController, scannerNavigationViewController, shopsViewController, accountNavigationController]
 
         window?.rootViewController = tabBarController
 
