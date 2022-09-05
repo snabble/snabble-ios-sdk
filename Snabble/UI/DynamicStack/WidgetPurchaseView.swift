@@ -7,108 +7,105 @@
 
 import SwiftUI
 
-protocol PurchaseProvider: Swift.Identifiable {
-    var imageSource: String? { get }
+public protocol PurchaseProvider {
     var name: String { get }
     var amount: String { get }
     var date: Date { get }
 }
 
-private class OrderViewModel: ObservableObject {
-    
-    struct Order: PurchaseProvider, ImageSourcing {
-        let id = UUID()
-        let imageSource: String?
-        let name: String
-        let amount: String
-        let date: Date
-        
-        var time: String {
-            return Self.time(for: date)
-        }
-        
-        fileprivate static func time(for date: Date) -> String {
-            return Self.relativeDateTimeFormatter.localizedString(for: date, relativeTo: Date())
-        }
-
-        private static var relativeDateTimeFormatter: RelativeDateTimeFormatter = {
-            let formatter = RelativeDateTimeFormatter()
-            formatter.formattingContext = .listItem
-            formatter.dateTimeStyle = .named
-            return formatter
-        }()
-
-        private static var dateFormatter: DateFormatter = {
-            let dateFormatter = DateFormatter()
-            dateFormatter.dateStyle = .medium
-            dateFormatter.timeStyle = .none
-            return dateFormatter
-        }()
-
-        private static var timeFormatter: DateFormatter = {
-            let dateFormatter = DateFormatter()
-            dateFormatter.dateStyle = .none
-            dateFormatter.timeStyle = .medium
-            return dateFormatter
-        }()
-
-        private static func relativeDateString(for past: Date) -> String {
-            let now = Date()
-            let diff = Int(now.timeIntervalSinceReferenceDate - past.timeIntervalSinceReferenceDate)
-
-            var date = DateComponents()
-            switch diff {
-            case 0..<45:
-                date.second = diff
-            case 45..<90:
-                return Asset.localizedString(forKey: "Home.PreviousPurchases.oneMinuteAgo")
-            case 90..<3000:
-                date.minute = (diff + 30) / 60
-            case 3000..<6000:
-                return Asset.localizedString(forKey: "Home.PreviousPurchases.oneHourAgo")
-            case 6000..<86400:
-                date.hour = (diff + 2400) / 3600
-            default:
-                return "\(Self.dateFormatter.string(from: past))\n\(Self.timeFormatter.string(from: past)) \(Asset.localizedString(forKey: "Snabble.Receipts.oClock"))"
-            }
-
-            let fmt = DateComponentsFormatter()
-            fmt.unitsStyle = .full
-
-            let str = fmt.string(from: date) ?? ""
-            return Asset.localizedString(forKey: "Home.PreviousPurchases.ago", arguments: str)
-        }
-
+public extension PurchaseProvider {
+    var time: String {
+        time(for: date)
     }
-    @Published var orders: [Order] = {
-        return [
-            Order(imageSource: "Snabble.Shop.Detail.mapPin", name: "SDK Supermarket", amount: "€ 3,20", date: Date()),
-            Order(imageSource: "Snabble.Shop.Detail.mapPin", name: "SDK Supermarket", amount: "€ 16,99", date: Date(timeIntervalSinceNow: -3600)),
-            Order(imageSource: "Snabble.Shop.Detail.mapPin", name: "SDK Supermarket", amount: "€ 201.640,00", date: Date())
-        ]
-    }()
+
+    private func time(for date: Date) -> String {
+        Self.relativeDateTimeFormatter.localizedString(for: date, relativeTo: Date())
+    }
+
+    private static var relativeDateTimeFormatter: RelativeDateTimeFormatter {
+        let formatter = RelativeDateTimeFormatter()
+        formatter.formattingContext = .listItem
+        formatter.dateTimeStyle = .named
+        return formatter
+    }
+}
+
+extension Order: PurchaseProvider, ImageSourcing {
+    public var imageSource: String? {
+        "Snabble.Shop.Detail.mapPin"
+    }
+
+    public var amount: String {
+        formattedPrice(price)
+    }
+
+    public var name: String {
+        shopName
+    }
+
+    // MARK: - Price
+
+    private func formattedPrice(_ price: Int) -> String {
+        let divider = pow(10.0, 2 as Int)
+        let decimalPrice = Decimal(price) / divider
+        return Self.numberFormatter.string(for: decimalPrice)!
+    }
+
+    private static var numberFormatter: NumberFormatter {
+        let formatter = NumberFormatter()
+        formatter.minimumIntegerDigits = 1
+        formatter.minimumFractionDigits = 2
+        formatter.maximumFractionDigits = 2
+        formatter.numberStyle = .currency
+        return formatter
+    }
+}
+
+private class OrderViewModel: ObservableObject {
+    func load(for projectId: Identifier<Project>?) {
+        guard
+            let projectId = projectId,
+            let project = Snabble.shared.project(for: projectId) else {
+            return
+        }
+        OrderList.load(project) { [weak self] result in
+            do {
+                self?.providers = try result.get().receipts
+            } catch {
+                self?.providers = [
+                    Order(projectId: projectId, id: "2131-sad23", date: Date(), shopId: "1", shopName: "Supermarkt", price: 100, links: Order.OrderLinks(receipt: nil)),
+                    Order(projectId: projectId, id: "2131-sad23", date: Date(timeIntervalSinceNow: 500), shopId: "1", shopName: "Supermarkt", price: 100_000, links: Order.OrderLinks(receipt: nil))
+                ]
+            }
+        } // aldi-sued-ch-87cc7e
+    }
+
+    @Published var providers: [PurchaseProvider] = [
+        Order(projectId: "snabble-sdk-demo-beem8n", id: "2131-sad23", date: Date(), shopId: "1", shopName: "Supermarkt", price: 100, links: Order.OrderLinks(receipt: nil)),
+        Order(projectId: "snabble-sdk-demo-beem8n", id: "2131-sad23", date: Date(timeIntervalSinceNow: 500), shopId: "1", shopName: "Supermarkt", price: 100_000, links: Order.OrderLinks(receipt: nil))
+    ]
 }
 
 public struct WidgetOrderView: View {
-    fileprivate let order: OrderViewModel.Order
+    let provider: PurchaseProvider
     
     public var body: some View {
         VStack(alignment: .leading) {
             HStack {
-                if let image = order.image {
+                if let imageSource = provider as? ImageSourcing, let image = imageSource.image {
                     image
                         .resizable()
                         .frame(width: 14, height: 14)
                 }
                 Spacer()
-                Text(order.amount)
+                Text(provider.amount)
                     .font(.footnote)
                     .foregroundColor(.secondaryLabel)
             }
-            Text(order.name)
+            Text(provider.name)
                 .font(.subheadline)
             
-            Text(order.time)
+            Text(provider.time)
                 .font(.footnote)
                 .foregroundColor(.secondaryLabel)
         }
@@ -123,12 +120,12 @@ public struct WidgetPurchaseView: View {
     
     @ViewBuilder
     var orderView: some View {
-        if orderModel.orders.isEmpty {
+        if orderModel.providers.isEmpty {
             EmptyView()
         } else {
             VStack(alignment: .leading) {
                 
-                if orderModel.orders.count > 1 {
+                if orderModel.providers.count > 1 {
                     HStack {
                         Text(keyed: "Snabble.Dashboard.lastPurchases")
                         Spacer()
@@ -139,18 +136,20 @@ public struct WidgetPurchaseView: View {
                         }
                     }
                     HStack {
-                        WidgetOrderView(order: orderModel.orders[orderModel.orders.count - 2])
-                        WidgetOrderView(order: orderModel.orders[orderModel.orders.count - 1])
+                        WidgetOrderView(provider: orderModel.providers[orderModel.providers.count - 2])
+                        WidgetOrderView(provider: orderModel.providers[orderModel.providers.count - 1])
                     }
                 } else {
                     Text(keyed: "Snabble.Dashboard.lastPurchase")
-                    WidgetOrderView(order: orderModel.orders[0])
+                    WidgetOrderView(provider: orderModel.providers[0])
                 }
             }
         }
     }
     
     public var body: some View {
-        orderView
+        orderView.onAppear {
+            orderModel.load(for: widget.projectId)
+        }
     }
 }
