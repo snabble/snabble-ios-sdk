@@ -61,17 +61,18 @@ extension Order: PurchaseProvider, ImageSourcing {
     }
 }
 
-class OrderViewModel: ObservableObject {
+class OrderViewModel: ObservableObject, LoadableObject {
+    typealias Output = [PurchaseProvider]
+
     let projectId: Identifier<Project>
 
     private var project: Project {
         Snabble.shared.project(for: projectId)!
     }
 
-    @Published var providers: [PurchaseProvider] = [
-        Order(projectId: "snabble-sdk-demo-beem8n", id: "2131-sad23", date: Date(), shopId: "1", shopName: "Supermarkt", price: 100, links: Order.OrderLinks(receipt: nil)),
-        Order(projectId: "snabble-sdk-demo-beem8n", id: "2131-sad23", date: Date(timeIntervalSinceNow: 500), shopId: "1", shopName: "Supermarkt", price: 100_000, links: Order.OrderLinks(receipt: nil))
-    ]
+//    @Published var providers: [PurchaseProvider] = []
+
+    @Published private(set) var state: LoadingState<[PurchaseProvider]> = .idle
 
     init(projectId: Identifier<Project>) {
         self.projectId = projectId
@@ -81,7 +82,12 @@ class OrderViewModel: ObservableObject {
         guard let project = Snabble.shared.project(for: projectId) else {
             return
         }
+        state = .loading
         OrderList.load(project) { [weak self] result in
+            self?.state = .loaded([
+                Order(projectId: "snabble-sdk-demo-beem8n", id: "2131-sad23", date: Date(), shopId: "1", shopName: "Supermarkt", price: 100, links: Order.OrderLinks(receipt: nil)),
+                Order(projectId: "snabble-sdk-demo-beem8n", id: "2131-sad23", date: Date(timeIntervalSinceNow: 500), shopId: "1", shopName: "Supermarkt", price: 100_000, links: Order.OrderLinks(receipt: nil))
+            ])
 //            if let self = self {
 //                do {
 //                    self.providers = try result.get().receipts
@@ -137,15 +143,10 @@ public struct WidgetOrderView: View {
 }
 
 public struct WidgetPurchaseView: View {
-    let widget: WidgetPurchase
-    @ObservedObject var viewModel: DynamicViewModel
-    @ObservedObject var orderViewModel = OrderViewModel(projectId: "snabble-sdk-demo-beem8n")
+    @ObservedObject var viewModel: OrderViewModel
     
-    @ViewBuilder
-    var orderView: some View {
-        if orderViewModel.providers.isEmpty {
-            EmptyView()
-        } else {
+    public var body: some View {
+        AsyncContentView(source: viewModel) { output in
             VStack(alignment: .leading) {
                 HStack {
                     Text(keyed: "Snabble.Dashboard.lastPurchases")
@@ -157,17 +158,40 @@ public struct WidgetPurchaseView: View {
                     }
                 }
                 HStack {
-                    ForEach(orderViewModel.providers.prefix(2), id: \.date) { provider in
+                    ForEach(output.prefix(2), id: \.date) { provider in
                         WidgetOrderView(provider: provider)
                     }
                 }
             }
         }
     }
-    
-    public var body: some View {
-        orderView.onAppear {
-            orderViewModel.load()
+}
+
+enum LoadingState<Value> {
+    case idle
+    case loading
+    case failed(Error)
+    case loaded(Value)
+}
+
+protocol LoadableObject: ObservableObject {
+    associatedtype Output
+    var state: LoadingState<Output> { get }
+    func load()
+}
+
+struct AsyncContentView<Source: LoadableObject, Content: View>: View {
+    @ObservedObject var source: Source
+    var content: (Source.Output) -> Content
+
+    var body: some View {
+        switch source.state {
+        case .idle:
+            Color.clear.onAppear(perform: source.load)
+        case .loading, .failed:
+            EmptyView()
+        case .loaded(let output):
+            content(output)
         }
     }
 }
