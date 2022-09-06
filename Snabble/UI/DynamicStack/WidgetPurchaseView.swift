@@ -43,19 +43,27 @@ extension Order: PurchaseProviding, ImageSourcing {
         shopName
     }
 
+    private var project: Project? {
+        Snabble.shared.project(for: projectId)
+    }
+
     // MARK: - Price
 
     private func formattedPrice(_ price: Int) -> String {
-        let divider = pow(10.0, 2 as Int)
+        let divider = pow(10.0, project?.decimalDigits ?? 2 as Int)
         let decimalPrice = Decimal(price) / divider
-        return Self.numberFormatter.string(for: decimalPrice)!
+        return numberFormatter.string(for: decimalPrice)!
     }
 
-    private static var numberFormatter: NumberFormatter {
+    private var numberFormatter: NumberFormatter {
+        let project = Snabble.shared.project(for: projectId)
         let formatter = NumberFormatter()
         formatter.minimumIntegerDigits = 1
-        formatter.minimumFractionDigits = 2
-        formatter.maximumFractionDigits = 2
+        formatter.minimumFractionDigits = project?.decimalDigits ?? 2
+        formatter.maximumFractionDigits = project?.decimalDigits ?? 2
+        formatter.locale = Locale(identifier: project?.locale ?? Locale.current.identifier)
+        formatter.currencyCode = project?.currency ?? "EUR"
+        formatter.currencySymbol = project?.currencySymbol ?? "€"
         formatter.numberStyle = .currency
         return formatter
     }
@@ -69,8 +77,6 @@ class OrderViewModel: ObservableObject, LoadableObject {
     private var project: Project {
         Snabble.shared.project(for: projectId)!
     }
-
-//    @Published var providers: [PurchaseProvider] = []
 
     @Published private(set) var state: LoadingState<[PurchaseProviding]> = .idle
 
