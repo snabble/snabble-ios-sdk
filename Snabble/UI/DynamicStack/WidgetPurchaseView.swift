@@ -52,11 +52,10 @@ extension Order: PurchaseProviding, ImageSourcing {
     private func formattedPrice(_ price: Int) -> String {
         let divider = pow(10.0, project?.decimalDigits ?? 2 as Int)
         let decimalPrice = Decimal(price) / divider
-        return numberFormatter.string(for: decimalPrice)!
+        return numberFormatter(for: project).string(for: decimalPrice)!
     }
 
-    private var numberFormatter: NumberFormatter {
-        let project = Snabble.shared.project(for: projectId)
+    private func numberFormatter(for project: Project?) -> NumberFormatter {
         let formatter = NumberFormatter()
         formatter.minimumIntegerDigits = 1
         formatter.minimumFractionDigits = project?.decimalDigits ?? 2
