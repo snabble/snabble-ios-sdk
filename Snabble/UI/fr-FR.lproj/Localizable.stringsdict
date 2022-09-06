@@ -12,13 +12,13 @@
         <key>NSStringFormatValueTypeKey</key>
         <string>d</string>
         <key>many</key>
-        <string/>
+        <string>encore %d jours</string>
         <key>one</key>
-        <string>%d day remaining</string>
+        <string>encore %d jour</string>
         <key>other</key>
-        <string>%d days remaining</string>
+        <string>encore %d jours</string>
         <key>zero</key>
-        <string>Already expired</string>
+        <string>Expiré</string>
       </dict>
     </dict>
     <key>Snabble.Coupons.expiresInHours</key>
@@ -32,13 +32,13 @@
         <key>NSStringFormatValueTypeKey</key>
         <string>d</string>
         <key>many</key>
-        <string/>
+        <string>encore %d heures</string>
         <key>one</key>
-        <string>%d hour remaining</string>
+        <string>encore %d heure</string>
         <key>other</key>
-        <string>%d hours remaining</string>
+        <string>encore %d heures</string>
         <key>zero</key>
-        <string>Already expired</string>
+        <string>Expiré</string>
       </dict>
     </dict>
     <key>Snabble.Coupons.expiresInMinutes</key>
@@ -52,13 +52,13 @@
         <key>NSStringFormatValueTypeKey</key>
         <string>d</string>
         <key>many</key>
-        <string/>
+        <string>encore %d minutes</string>
         <key>one</key>
-        <string>%d minute remaining</string>
+        <string>encore %d minute</string>
         <key>other</key>
-        <string>%d minutes remaining</string>
+        <string>encore %d minutes</string>
         <key>zero</key>
-        <string>Already expired</string>
+        <string>Expiré</string>
       </dict>
     </dict>
     <key>Snabble.Coupons.expiresInWeeks</key>
@@ -72,13 +72,13 @@
         <key>NSStringFormatValueTypeKey</key>
         <string>d</string>
         <key>many</key>
-        <string/>
+        <string>encore %d semaines</string>
         <key>one</key>
-        <string>%d week remaining</string>
+        <string>encore %d semaine</string>
         <key>other</key>
-        <string>%d weeks remaining</string>
+        <string>encore %d semaines</string>
         <key>zero</key>
-        <string>Already expired</string>
+        <string>Expiré</string>
       </dict>
     </dict>
     <key>Snabble.Shop.Finder.storeCount</key>
@@ -94,11 +94,11 @@
         <key>many</key>
         <string/>
         <key>one</key>
-        <string>%d store</string>
+        <string>Filiale %d</string>
         <key>other</key>
-        <string>%d stores</string>
+        <string>Filiales %d</string>
         <key>zero</key>
-        <string>No stores</string>
+        <string>Aucune filiale</string>
       </dict>
     </dict>
     <key>Snabble.Shoppingcart.numberOfItems</key>
@@ -112,13 +112,13 @@
         <key>NSStringFormatValueTypeKey</key>
         <string>d</string>
         <key>many</key>
-        <string/>
+        <string>Article %d</string>
         <key>one</key>
-        <string>%d product</string>
+        <string>Article %d</string>
         <key>other</key>
-        <string>%d products</string>
+        <string>Article %d</string>
         <key>zero</key>
-        <string>%d products</string>
+        <string>Article %d</string>
       </dict>
     </dict>
   </dict>
