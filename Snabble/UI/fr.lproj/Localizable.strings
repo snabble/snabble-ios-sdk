@@ -78,6 +78,12 @@
 
 "Snabble.CreditCard.payNow" = "Payer maintenant avec la carte de crédit";
 
+"Snabble.Dashboard.lastPurchase" = "Your last purchase";
+
+"Snabble.Dashboard.lastPurchases" = "Your last purchases";
+
+"Snabble.Dashboard.lastPurchasesShowAll" = "Show All";
+
 "Snabble.delete" = "Effacer";
 
 "Snabble.done" = "Terminé";
@@ -331,8 +337,6 @@
 "Snabble.pleaseWait" = "Merci d’attendre…";
 
 "Snabble.PostFinanceCard.payNow" = "Payer maintenant avec la carte PostFinance";
-
-"Snabble.Profile.title" = "Profile";
 
 "Snabble.QRCode.codeXofY" = "Code %1$d de %2$d";
 

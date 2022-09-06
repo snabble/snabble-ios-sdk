@@ -1,0 +1,125 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<plist version="1.0">
+  <dict>
+    <key>Snabble.Coupons.expiresInDays</key>
+    <dict>
+      <key>NSStringLocalizedFormatKey</key>
+      <string>%#@localized_format_key@</string>
+      <key>localized_format_key</key>
+      <dict>
+        <key>NSStringFormatSpecTypeKey</key>
+        <string>NSStringPluralRuleType</string>
+        <key>NSStringFormatValueTypeKey</key>
+        <string>d</string>
+        <key>many</key>
+        <string>encore %d jours</string>
+        <key>one</key>
+        <string>encore %d jour</string>
+        <key>other</key>
+        <string>encore %d jours</string>
+        <key>zero</key>
+        <string>Expiré</string>
+      </dict>
+    </dict>
+    <key>Snabble.Coupons.expiresInHours</key>
+    <dict>
+      <key>NSStringLocalizedFormatKey</key>
+      <string>%#@localized_format_key@</string>
+      <key>localized_format_key</key>
+      <dict>
+        <key>NSStringFormatSpecTypeKey</key>
+        <string>NSStringPluralRuleType</string>
+        <key>NSStringFormatValueTypeKey</key>
+        <string>d</string>
+        <key>many</key>
+        <string>encore %d heures</string>
+        <key>one</key>
+        <string>encore %d heure</string>
+        <key>other</key>
+        <string>encore %d heures</string>
+        <key>zero</key>
+        <string>Expiré</string>
+      </dict>
+    </dict>
+    <key>Snabble.Coupons.expiresInMinutes</key>
+    <dict>
+      <key>NSStringLocalizedFormatKey</key>
+      <string>%#@localized_format_key@</string>
+      <key>localized_format_key</key>
+      <dict>
+        <key>NSStringFormatSpecTypeKey</key>
+        <string>NSStringPluralRuleType</string>
+        <key>NSStringFormatValueTypeKey</key>
+        <string>d</string>
+        <key>many</key>
+        <string>encore %d minutes</string>
+        <key>one</key>
+        <string>encore %d minute</string>
+        <key>other</key>
+        <string>encore %d minutes</string>
+        <key>zero</key>
+        <string>Expiré</string>
+      </dict>
+    </dict>
+    <key>Snabble.Coupons.expiresInWeeks</key>
+    <dict>
+      <key>NSStringLocalizedFormatKey</key>
+      <string>%#@localized_format_key@</string>
+      <key>localized_format_key</key>
+      <dict>
+        <key>NSStringFormatSpecTypeKey</key>
+        <string>NSStringPluralRuleType</string>
+        <key>NSStringFormatValueTypeKey</key>
+        <string>d</string>
+        <key>many</key>
+        <string>encore %d semaines</string>
+        <key>one</key>
+        <string>encore %d semaine</string>
+        <key>other</key>
+        <string>encore %d semaines</string>
+        <key>zero</key>
+        <string>Expiré</string>
+      </dict>
+    </dict>
+    <key>Snabble.Shop.Finder.storeCount</key>
+    <dict>
+      <key>NSStringLocalizedFormatKey</key>
+      <string>%#@localized_format_key@</string>
+      <key>localized_format_key</key>
+      <dict>
+        <key>NSStringFormatSpecTypeKey</key>
+        <string>NSStringPluralRuleType</string>
+        <key>NSStringFormatValueTypeKey</key>
+        <string>d</string>
+        <key>many</key>
+        <string/>
+        <key>one</key>
+        <string>Filiale %d</string>
+        <key>other</key>
+        <string>Filiales %d</string>
+        <key>zero</key>
+        <string>Aucune filiale</string>
+      </dict>
+    </dict>
+    <key>Snabble.Shoppingcart.numberOfItems</key>
+    <dict>
+      <key>NSStringLocalizedFormatKey</key>
+      <string>%#@localized_format_key@</string>
+      <key>localized_format_key</key>
+      <dict>
+        <key>NSStringFormatSpecTypeKey</key>
+        <string>NSStringPluralRuleType</string>
+        <key>NSStringFormatValueTypeKey</key>
+        <string>d</string>
+        <key>many</key>
+        <string>Article %d</string>
+        <key>one</key>
+        <string>Article %d</string>
+        <key>other</key>
+        <string>Article %d</string>
+        <key>zero</key>
+        <string>Article %d</string>
+      </dict>
+    </dict>
+  </dict>
+</plist>

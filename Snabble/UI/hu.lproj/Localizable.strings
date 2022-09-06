@@ -78,6 +78,12 @@
 
 "Snabble.CreditCard.payNow" = "Fizetés hitelkártyával";
 
+"Snabble.Dashboard.lastPurchase" = "Your last purchase";
+
+"Snabble.Dashboard.lastPurchases" = "Your last purchases";
+
+"Snabble.Dashboard.lastPurchasesShowAll" = "Show All";
+
 "Snabble.delete" = "Törlés";
 
 "Snabble.done" = "Kész";
@@ -133,9 +139,9 @@
 
 "Snabble.ok" = "OK";
 
-"Snabble.Onboarding.Deeplink.accessibility" = "open %@";
+"Snabble.Onboarding.Deeplink.accessibility" = "%@ megnyitása";
 
-"Snabble.Onboarding.done" = "Done";
+"Snabble.Onboarding.done" = "Kész";
 
 "Snabble.Onboarding.Link.show" = "Megtekintés";
 
@@ -332,8 +338,6 @@
 
 "Snabble.PostFinanceCard.payNow" = "Most fizetés a PostFinance kártyával";
 
-"Snabble.Profile.title" = "Profile";
-
 "Snabble.QRCode.codeXofY" = "%1$d / %2$d kód";
 
 "Snabble.QRCode.didPay" = "A pénztárnál fizettem";
@@ -487,11 +491,11 @@
 /* <street and house number> in <ZIP code> <city name> */
 "Snabble.Shop.Address.accessibility" = "%1$@ %2$@ %3$@-ban";
 
-"Snabble.Shop.Detail.openingHours" = "Opening hours";
+"Snabble.Shop.Detail.openingHours" = "Nyitvatartási idők";
 
 "Snabble.Shop.Detail.Phonenumber.accessibility" = "Phonenumber %@";
 
-"Snabble.Shop.Detail.shopNow" = "Start shopping";
+"Snabble.Shop.Detail.shopNow" = "Vásárolj be most itt";
 
 "Snabble.Shop.Detail.startNavigation" = "Szeretnéd elindítani a navigációt?";
 

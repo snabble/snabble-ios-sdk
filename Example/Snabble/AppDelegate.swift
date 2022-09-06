@@ -33,11 +33,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     }
 
     private func snabbleSetup() {
-        let APPID = "snabble-sdk-demo-app-oguh3x"
-        let APPSECRET = "2TKKEG5KXWY6DFOGTZKDUIBTNIRVCYKFZBY32FFRUUWIUAFEIBHQ===="
-        let apiConfig = SnabbleSDK.Config(appId: APPID, secret: APPSECRET, environment: .staging)
-
-        Snabble.setup(config: apiConfig) { [unowned self] snabble in
+        Snabble.setup(config: .staging) { [unowned self] snabble in
             // initial config parsed/loaded
             guard let project = snabble.projects.first else {
                 fatalError("project initialization failed - make sure APPID and APPSECRET are valid")
@@ -73,9 +69,10 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         self.dashboardViewController = dashboardViewController
 
         let scannerViewController = ScannerViewController(shop: shops.first!)
+        let scannerNavigationViewController = UINavigationController(rootViewController: scannerViewController)
 
         let tabBarController = UITabBarController()
-        tabBarController.viewControllers = [dashboardViewController, scannerViewController, shopsViewController, accountNavigationController]
+        tabBarController.viewControllers = [dashboardViewController, scannerNavigationViewController, shopsViewController, accountNavigationController]
 
         window?.rootViewController = tabBarController
 
