@@ -92,12 +92,13 @@ class OrderViewModel: ObservableObject, LoadableObject {
             if let self = self {
                 do {
                     let providers = try result.get().receipts
-                    self.state = .loaded(providers)
+                    if providers.isEmpty {
+                        self.state = .empty
+                    } else {
+                        self.state = .loaded(providers)
+                    }
                 } catch {
-                    self.state = .loaded([
-                        Order(projectId: self.projectId, id: "2131-sad23", date: Date(), shopId: "1", shopName: "Supermarkt", price: 100, links: Order.OrderLinks(receipt: nil)),
-                        Order(projectId: self.projectId, id: "2131-sad23", date: Date(timeIntervalSinceNow: 500), shopId: "1", shopName: "Supermarkt", price: 100_000, links: Order.OrderLinks(receipt: nil))
-                    ])
+                    self.state = .failed(error)
                 }
             }
         }
@@ -174,6 +175,7 @@ enum LoadingState<Value> {
     case loading
     case failed(Error)
     case loaded(Value)
+    case empty
 }
 
 protocol LoadableObject: ObservableObject {
@@ -190,7 +192,7 @@ struct AsyncContentView<Source: LoadableObject, Content: View>: View {
         switch source.state {
         case .idle:
             Color.clear.onAppear(perform: source.load)
-        case .loading, .failed:
+        case .loading, .failed, .empty:
             EmptyView()
         case .loaded(let output):
             content(output)
