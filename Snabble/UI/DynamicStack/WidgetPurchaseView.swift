@@ -7,13 +7,13 @@
 
 import SwiftUI
 
-public protocol PurchaseProvider {
+public protocol PurchaseProviding {
     var name: String { get }
     var amount: String { get }
     var date: Date { get }
 }
 
-public extension PurchaseProvider {
+public extension PurchaseProviding {
     var time: String {
         time(for: date)
     }
@@ -30,7 +30,7 @@ public extension PurchaseProvider {
     }
 }
 
-extension Order: PurchaseProvider, ImageSourcing {
+extension Order: PurchaseProviding, ImageSourcing {
     public var imageSource: String? {
         "Snabble.Shop.Detail.mapPin"
     }
@@ -62,7 +62,7 @@ extension Order: PurchaseProvider, ImageSourcing {
 }
 
 class OrderViewModel: ObservableObject, LoadableObject {
-    typealias Output = [PurchaseProvider]
+    typealias Output = [PurchaseProviding]
 
     let projectId: Identifier<Project>
 
@@ -72,7 +72,7 @@ class OrderViewModel: ObservableObject, LoadableObject {
 
 //    @Published var providers: [PurchaseProvider] = []
 
-    @Published private(set) var state: LoadingState<[PurchaseProvider]> = .idle
+    @Published private(set) var state: LoadingState<[PurchaseProviding]> = .idle
 
     init(projectId: Identifier<Project>) {
         self.projectId = projectId
@@ -116,7 +116,7 @@ class OrderViewModel: ObservableObject, LoadableObject {
 }
 
 public struct WidgetOrderView: View {
-    let provider: PurchaseProvider
+    let provider: PurchaseProviding
     
     public var body: some View {
         VStack(alignment: .leading) {
