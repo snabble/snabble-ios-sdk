@@ -71,7 +71,7 @@ class ScannerViewController: UIViewController {
         let detector = BuiltinBarcodeDetector(detectorArea: .rectangle)
         let scannerViewController = SnabbleSDK.ScannerViewController(shoppingCart, shop, detector)
         scannerViewController.scannerDelegate = self
-//        scannerViewController.shoppingCartDelegate = self
+        scannerViewController.shoppingCartDelegate = self
         scannerViewController.navigationItem.leftBarButtonItem = nil
         self.navigationController?.pushViewController(scannerViewController, animated: true)
     }
