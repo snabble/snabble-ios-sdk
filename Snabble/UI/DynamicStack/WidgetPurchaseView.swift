@@ -10,33 +10,13 @@ import SwiftUI
 public protocol PurchaseProviding {
     var name: String { get }
     var amount: String { get }
+    var time: String { get }
     var date: Date { get }
-}
-
-public extension PurchaseProviding {
-    var time: String {
-        time(for: date)
-    }
-
-    private func time(for date: Date) -> String {
-        Self.relativeDateTimeFormatter.localizedString(for: date, relativeTo: Date())
-    }
-
-    private static var relativeDateTimeFormatter: RelativeDateTimeFormatter {
-        let formatter = RelativeDateTimeFormatter()
-        formatter.formattingContext = .listItem
-        formatter.dateTimeStyle = .named
-        return formatter
-    }
 }
 
 extension Order: PurchaseProviding, ImageSourcing {
     public var imageSource: String? {
         "Snabble.Shop.Detail.mapPin"
-    }
-
-    public var amount: String {
-        formattedPrice(price)
     }
 
     public var name: String {
@@ -49,10 +29,14 @@ extension Order: PurchaseProviding, ImageSourcing {
 
     // MARK: - Price
 
-    private func formattedPrice(_ price: Int) -> String {
+    public var amount: String {
+        formattedPrice(price) ?? "N/A"
+    }
+
+    private func formattedPrice(_ price: Int) -> String? {
         let divider = pow(10.0, project?.decimalDigits ?? 2 as Int)
         let decimalPrice = Decimal(price) / divider
-        return numberFormatter(for: project).string(for: decimalPrice)!
+        return numberFormatter(for: project).string(for: decimalPrice)
     }
 
     private func numberFormatter(for project: Project?) -> NumberFormatter {
@@ -66,6 +50,22 @@ extension Order: PurchaseProviding, ImageSourcing {
         formatter.numberStyle = .currency
         return formatter
     }
+
+    // MARK: - Date
+    public var time: String {
+        time(for: date)
+    }
+
+    private func time(for date: Date) -> String {
+        Self.relativeDateTimeFormatter.localizedString(for: date, relativeTo: Date())
+    }
+
+    private static var relativeDateTimeFormatter: RelativeDateTimeFormatter = {
+        let formatter = RelativeDateTimeFormatter()
+        formatter.formattingContext = .listItem
+        formatter.dateTimeStyle = .named
+        return formatter
+    }()
 }
 
 class OrderViewModel: ObservableObject, LoadableObject {
