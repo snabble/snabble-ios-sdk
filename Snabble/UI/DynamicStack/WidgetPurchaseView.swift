@@ -89,20 +89,17 @@ class OrderViewModel: ObservableObject, LoadableObject {
         }
         state = .loading
         OrderList.load(project) { [weak self] result in
-            self?.state = .loaded([
-                Order(projectId: "snabble-sdk-demo-beem8n", id: "2131-sad23", date: Date(), shopId: "1", shopName: "Supermarkt", price: 100, links: Order.OrderLinks(receipt: nil)),
-                Order(projectId: "snabble-sdk-demo-beem8n", id: "2131-sad23", date: Date(timeIntervalSinceNow: 500), shopId: "1", shopName: "Supermarkt", price: 100_000, links: Order.OrderLinks(receipt: nil))
-            ])
-//            if let self = self {
-//                do {
-//                    self.providers = try result.get().receipts
-//                } catch {
-//                    self.providers = [
-//                        Order(projectId: self.projectId, id: "2131-sad23", date: Date(), shopId: "1", shopName: "Supermarkt", price: 100, links: Order.OrderLinks(receipt: nil)),
-//                        Order(projectId: self.projectId, id: "2131-sad23", date: Date(timeIntervalSinceNow: 500), shopId: "1", shopName: "Supermarkt", price: 100_000, links: Order.OrderLinks(receipt: nil))
-//                    ]
-//                }
-//            }
+            if let self = self {
+                do {
+                    let providers = try result.get().receipts
+                    self.state = .loaded(providers)
+                } catch {
+                    self.state = .loaded([
+                        Order(projectId: self.projectId, id: "2131-sad23", date: Date(), shopId: "1", shopName: "Supermarkt", price: 100, links: Order.OrderLinks(receipt: nil)),
+                        Order(projectId: self.projectId, id: "2131-sad23", date: Date(timeIntervalSinceNow: 500), shopId: "1", shopName: "Supermarkt", price: 100_000, links: Order.OrderLinks(receipt: nil))
+                    ])
+                }
+            }
         }
     }
 
