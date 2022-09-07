@@ -18,7 +18,7 @@
         <key>other</key>
         <string>encore %d jours</string>
         <key>zero</key>
-        <string>Expiré</string>
+        <string>Déjà expiré</string>
       </dict>
     </dict>
     <key>Snabble.Coupons.expiresInHours</key>
@@ -38,7 +38,7 @@
         <key>other</key>
         <string>encore %d heures</string>
         <key>zero</key>
-        <string>Expiré</string>
+        <string>Déjà expiré</string>
       </dict>
     </dict>
     <key>Snabble.Coupons.expiresInMinutes</key>
@@ -58,7 +58,7 @@
         <key>other</key>
         <string>encore %d minutes</string>
         <key>zero</key>
-        <string>Expiré</string>
+        <string>Déjà expiré</string>
       </dict>
     </dict>
     <key>Snabble.Coupons.expiresInWeeks</key>
@@ -78,7 +78,7 @@
         <key>other</key>
         <string>encore %d semaines</string>
         <key>zero</key>
-        <string>Expiré</string>
+        <string>Déjà expiré</string>
       </dict>
     </dict>
     <key>Snabble.Shop.Finder.storeCount</key>
@@ -92,13 +92,13 @@
         <key>NSStringFormatValueTypeKey</key>
         <string>d</string>
         <key>many</key>
-        <string/>
+        <string>%d succursales</string>
         <key>one</key>
-        <string>Filiale %d</string>
+        <string>%d succursale</string>
         <key>other</key>
-        <string>Filiales %d</string>
+        <string>%d succursales</string>
         <key>zero</key>
-        <string>Aucune filiale</string>
+        <string>No stores</string>
       </dict>
     </dict>
     <key>Snabble.Shoppingcart.numberOfItems</key>
@@ -112,13 +112,13 @@
         <key>NSStringFormatValueTypeKey</key>
         <string>d</string>
         <key>many</key>
-        <string>Article %d</string>
+        <string>%d articles</string>
         <key>one</key>
-        <string>Article %d</string>
+        <string>%d article</string>
         <key>other</key>
-        <string>Article %d</string>
+        <string>%d articles</string>
         <key>zero</key>
-        <string>Article %d</string>
+        <string>%d articles</string>
       </dict>
     </dict>
   </dict>
