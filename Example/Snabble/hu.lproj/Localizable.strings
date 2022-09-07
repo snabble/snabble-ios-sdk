@@ -8,6 +8,8 @@
 
 "Sample.Dashboard.title" = "Welcome to Snabble";
 
+"Sample.home" = "Start";
+
 "Sample.Onboarding.accept" = "Elfogadás";
 
 "Sample.Onboarding.message1" = "A Snabble segítségével saját magad szkenneled be a vásárolni kívánt termékeket, és közvetlenül az alkalmazásban fizetsz. Nem kell sorban állni a pénztár előtt, és a vásárolt termékeket nem kell az áruszalagra helyezni.";
