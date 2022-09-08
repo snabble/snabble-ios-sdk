@@ -34,8 +34,11 @@ public struct WidgetView: View {
                         WidgetInformationView(widget: widget, viewModel: viewModel)
                     }
                 case .purchases:
-                    if let widget = widget as? WidgetPurchase, let projectId = widget.projectId {
-                        WidgetPurchaseView(viewModel: OrderViewModel(projectId: projectId))
+                    if let widget = widget as? WidgetPurchase {
+                        WidgetPurchaseView(
+                            widget: widget,
+                            publisher: viewModel.actionPublisher
+                        )
                     }
                 case .toggle:
                     if let widget = widget as? WidgetToggle {

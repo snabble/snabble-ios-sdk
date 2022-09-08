@@ -8,6 +8,16 @@
 import Foundation
 import Combine
 
+public struct DynamicAction {
+    let widget: Widget
+    let userInfo: [String: Any]?
+
+    init(widget: Widget, userInfo: [String: Any]? = nil) {
+        self.widget = widget
+        self.userInfo = userInfo
+    }
+}
+
 public class DynamicViewModel: NSObject, Decodable, ObservableObject {
 
     public let configuration: DynamicViewConfiguration
@@ -40,8 +50,8 @@ public class DynamicViewModel: NSObject, Decodable, ObservableObject {
     }
 
     /// Emits if the widget triigers the action
-    /// - `Output` is the current widget
-    public let actionPublisher = PassthroughSubject<Widget, Never>()
+    /// - `Output` is a `DynamicAction`
+    public let actionPublisher = PassthroughSubject<DynamicAction, Never>()
 
     func spacing(for widget: Widget) -> CGFloat? {
         guard let lastItem = widgets.last, lastItem.id != widget.id else {

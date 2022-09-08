@@ -43,7 +43,7 @@ public struct WidgetTextView: View {
         }
         .modifier(NavigationWidget(text: Asset.localizedString(forKey: widget.text), active: widget.showDisclosure ?? false))
         .onTapGesture {
-            viewModel.actionPublisher.send(widget)
+            viewModel.actionPublisher.send(.init(widget: widget))
         }
     }
 }

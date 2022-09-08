@@ -9,6 +9,7 @@ import SwiftUI
 import Combine
 
 public protocol PurchaseProviding {
+    var id: String { get }
     var name: String { get }
     var amount: String { get }
     var time: String { get }
@@ -84,12 +85,6 @@ class OrderViewModel: ObservableObject, LoadableObject {
         self.projectId = projectId
     }
 
-    /// Emits if the widget triggers the main action
-    public let actionPublisher = PassthroughSubject<Void, Never>()
-
-    /// Emits if the selected `PurchaseProviding`
-    public let purchaseProdivingPublisher = PassthroughSubject<PurchaseProviding, Never>()
-
     func load() {
         guard let project = Snabble.shared.project(for: projectId) else {
             return
@@ -153,7 +148,17 @@ public struct WidgetOrderView: View {
 }
 
 public struct WidgetPurchaseView: View {
+    let widget: Widget
+    let publisher: PassthroughSubject<DynamicAction, Never>
+
     @ObservedObject var viewModel: OrderViewModel
+
+    init(widget: WidgetPurchase, publisher: PassthroughSubject<DynamicAction, Never>) {
+        self.widget = widget
+        self.publisher = publisher
+
+        viewModel = OrderViewModel(projectId: widget.projectId)
+    }
     
     public var body: some View {
         AsyncContentView(source: viewModel) { output in
@@ -162,15 +167,15 @@ public struct WidgetPurchaseView: View {
                     Text(keyed: "Snabble.Dashboard.lastPurchases")
                     Spacer()
                     Button(action: {
-                        viewModel.actionPublisher.send()
+                        publisher.send(.init(widget: widget, userInfo: nil))
                     }) {
                             Text(keyed: "Snabble.Dashboard.lastPurchasesShowAll")
                     }
                 }
                 HStack {
-                    ForEach(output.prefix(2), id: \.date) { provider in
+                    ForEach(output.prefix(2), id: \.id) { provider in
                         WidgetOrderView(provider: provider).onTapGesture {
-                            viewModel.purchaseProdivingPublisher.send(provider)
+                            publisher.send(.init(widget: widget, userInfo: ["providerId": provider.id]))
                         }
                     }
                 }

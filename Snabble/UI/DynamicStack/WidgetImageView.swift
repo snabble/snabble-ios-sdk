@@ -14,7 +14,7 @@ public struct WidgetImageView: View {
     public var body: some View {
         widget.image
             .onTapGesture {
-                viewModel.actionPublisher.send(widget)
+                viewModel.actionPublisher.send(.init(widget: widget))
             }
     }
 }
