@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import Combine
 
 public protocol PurchaseProviding {
     var name: String { get }
@@ -83,6 +84,12 @@ class OrderViewModel: ObservableObject, LoadableObject {
         self.projectId = projectId
     }
 
+    /// Emits if the widget triggers the main action
+    public let actionPublisher = PassthroughSubject<Void, Never>()
+
+    /// Emits if the selected `PurchaseProviding`
+    public let purchaseProdivingPublisher = PassthroughSubject<PurchaseProviding, Never>()
+
     func load() {
         guard let project = Snabble.shared.project(for: projectId) else {
             return
@@ -155,7 +162,7 @@ public struct WidgetPurchaseView: View {
                     Text(keyed: "Snabble.Dashboard.lastPurchases")
                     Spacer()
                     Button(action: {
-                        print("show all")
+                        viewModel.actionPublisher.send()
                     }) {
                             Text(keyed: "Snabble.Dashboard.lastPurchasesShowAll")
                     }

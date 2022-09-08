@@ -3,9 +3,9 @@ PODS:
   - Base32 (1.1.2)
   - Datatrans (2.1.0)
   - DeviceKit (4.6.1)
-  - GRDB.swift (5.26.0):
-    - GRDB.swift/standard (= 5.26.0)
-  - GRDB.swift/standard (5.26.0)
+  - GRDB.swift (5.26.1):
+    - GRDB.swift/standard (= 5.26.1)
+  - GRDB.swift/standard (5.26.1)
   - KeychainAccess (4.2.2)
   - OneTimePassword (3.2.0):
     - Base32 (~> 1.1.2)
@@ -65,7 +65,7 @@ SPEC CHECKSUMS:
   Base32: 163c298644d184e89ca4e00a996bad6bf5166390
   Datatrans: 6d599ac9031b44a4688ed8e3e31f35063258072a
   DeviceKit: 316f28290430467278b8a0d1c895968efa9e16e2
-  GRDB.swift: 1395cb3556df6b16ed69dfc74c3886abc75d2825
+  GRDB.swift: e98cd55ec99dea5da99355d588149063e4cfa0eb
   KeychainAccess: c0c4f7f38f6fc7bbe58f5702e25f7bd2f65abf51
   OneTimePassword: c00ecc908e67e6c5bfda9d50b0b2e4696d0b066e
   Pulley: a4c28c930958f42978d69631000bc1abb82cb232
