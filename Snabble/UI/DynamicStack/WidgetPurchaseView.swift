@@ -16,6 +16,120 @@ public protocol PurchaseProviding {
     var date: Date { get }
 }
 
+class OrderViewModel: ObservableObject, LoadableObject {
+    typealias Output = [PurchaseProviding]
+
+    let projectId: Identifier<Project>
+
+    private var project: Project {
+        Snabble.shared.project(for: projectId)!
+    }
+
+    @Published private(set) var state: LoadingState<[PurchaseProviding]> = .idle
+
+    init(projectId: Identifier<Project>) {
+        self.projectId = projectId
+    }
+
+    func load() {
+        guard let project = Snabble.shared.project(for: projectId) else {
+            return
+        }
+        state = .loading
+        OrderList.load(project) { [weak self] result in
+            if let self = self {
+                do {
+                    let providers = try result.get().receipts
+                    if providers.isEmpty {
+                        self.state = .empty
+                    } else {
+                        self.state = .loaded(providers)
+                    }
+                } catch {
+                    self.state = .failed(error)
+                }
+            }
+        }
+    }
+
+    private var numberFormatter: NumberFormatter {
+        let formatter = NumberFormatter()
+        formatter.minimumIntegerDigits = 1
+        formatter.minimumFractionDigits = project.decimalDigits
+        formatter.maximumFractionDigits = project.decimalDigits
+        formatter.locale = Locale(identifier: project.locale)
+        formatter.currencyCode = project.currency
+        formatter.currencySymbol = project.currencySymbol
+        formatter.numberStyle = .currency
+        return formatter
+    }
+
+}
+
+public struct WidgetPurchaseView: View {
+    let widget: Widget
+    let publisher: PassthroughSubject<DynamicAction, Never>
+
+    @ObservedObject var viewModel: OrderViewModel
+
+    init(widget: WidgetPurchase, publisher: PassthroughSubject<DynamicAction, Never>) {
+        self.widget = widget
+        self.publisher = publisher
+
+        viewModel = OrderViewModel(projectId: widget.projectId)
+    }
+    
+    public var body: some View {
+        AsyncContentView(source: viewModel) { output in
+            VStack(alignment: .leading) {
+                HStack {
+                    Text(keyed: "Snabble.Dashboard.lastPurchases")
+                    Spacer()
+                    Button(action: {
+                        publisher.send(.init(widget: widget, userInfo: nil))
+                    }) {
+                            Text(keyed: "Snabble.Dashboard.lastPurchasesShowAll")
+                    }
+                }
+                HStack {
+                    ForEach(output.prefix(2), id: \.id) { provider in
+                        WidgetOrderView(provider: provider).onTapGesture {
+                            publisher.send(.init(widget: widget, userInfo: ["providerId": provider.id]))
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+
+private struct WidgetOrderView: View {
+    let provider: PurchaseProviding
+
+    public var body: some View {
+        VStack(alignment: .leading) {
+            HStack {
+                if let imageSource = provider as? ImageSourcing, let image = imageSource.image {
+                    image
+                        .resizable()
+                        .frame(width: 14, height: 14)
+                }
+                Spacer()
+                Text(provider.amount)
+                    .font(.footnote)
+                    .foregroundColor(.secondaryLabel)
+            }
+            Text(provider.name)
+                .font(.subheadline)
+
+            Text(provider.time)
+                .font(.footnote)
+                .foregroundColor(.secondaryLabel)
+        }
+        .informationStyle()
+    }
+}
+
 extension Order: PurchaseProviding, ImageSourcing {
     public var imageSource: String? {
         "Snabble.Shop.Detail.mapPin"
@@ -68,118 +182,4 @@ extension Order: PurchaseProviding, ImageSourcing {
         formatter.dateTimeStyle = .named
         return formatter
     }()
-}
-
-class OrderViewModel: ObservableObject, LoadableObject {
-    typealias Output = [PurchaseProviding]
-
-    let projectId: Identifier<Project>
-
-    private var project: Project {
-        Snabble.shared.project(for: projectId)!
-    }
-
-    @Published private(set) var state: LoadingState<[PurchaseProviding]> = .idle
-
-    init(projectId: Identifier<Project>) {
-        self.projectId = projectId
-    }
-
-    func load() {
-        guard let project = Snabble.shared.project(for: projectId) else {
-            return
-        }
-        state = .loading
-        OrderList.load(project) { [weak self] result in
-            if let self = self {
-                do {
-                    let providers = try result.get().receipts
-                    if providers.isEmpty {
-                        self.state = .empty
-                    } else {
-                        self.state = .loaded(providers)
-                    }
-                } catch {
-                    self.state = .failed(error)
-                }
-            }
-        }
-    }
-
-    private var numberFormatter: NumberFormatter {
-        let formatter = NumberFormatter()
-        formatter.minimumIntegerDigits = 1
-        formatter.minimumFractionDigits = project.decimalDigits
-        formatter.maximumFractionDigits = project.decimalDigits
-        formatter.locale = Locale(identifier: project.locale)
-        formatter.currencyCode = project.currency
-        formatter.currencySymbol = project.currencySymbol
-        formatter.numberStyle = .currency
-        return formatter
-    }
-
-}
-
-public struct WidgetOrderView: View {
-    let provider: PurchaseProviding
-    
-    public var body: some View {
-        VStack(alignment: .leading) {
-            HStack {
-                if let imageSource = provider as? ImageSourcing, let image = imageSource.image {
-                    image
-                        .resizable()
-                        .frame(width: 14, height: 14)
-                }
-                Spacer()
-                Text(provider.amount)
-                    .font(.footnote)
-                    .foregroundColor(.secondaryLabel)
-            }
-            Text(provider.name)
-                .font(.subheadline)
-            
-            Text(provider.time)
-                .font(.footnote)
-                .foregroundColor(.secondaryLabel)
-        }
-        .informationStyle()
-    }
-}
-
-public struct WidgetPurchaseView: View {
-    let widget: Widget
-    let publisher: PassthroughSubject<DynamicAction, Never>
-
-    @ObservedObject var viewModel: OrderViewModel
-
-    init(widget: WidgetPurchase, publisher: PassthroughSubject<DynamicAction, Never>) {
-        self.widget = widget
-        self.publisher = publisher
-
-        viewModel = OrderViewModel(projectId: widget.projectId)
-    }
-    
-    public var body: some View {
-        AsyncContentView(source: viewModel) { output in
-            VStack(alignment: .leading) {
-                HStack {
-                    Text(keyed: "Snabble.Dashboard.lastPurchases")
-                    Spacer()
-                    Button(action: {
-                        publisher.send(.init(widget: widget, userInfo: nil))
-                    }) {
-                            Text(keyed: "Snabble.Dashboard.lastPurchasesShowAll")
-                    }
-                }
-                HStack {
-                    ForEach(output.prefix(2), id: \.id) { provider in
-                        WidgetOrderView(provider: provider).onTapGesture {
-                            publisher.send(.init(widget: widget, userInfo: ["providerId": provider.id]))
-                        }
-                    }
-                }
-            }
-        }
-    }
 }
