@@ -169,7 +169,9 @@ public struct WidgetPurchaseView: View {
                 }
                 HStack {
                     ForEach(output.prefix(2), id: \.date) { provider in
-                        WidgetOrderView(provider: provider)
+                        WidgetOrderView(provider: provider).onTapGesture {
+                            viewModel.purchaseProdivingPublisher.send(provider)
+                        }
                     }
                 }
             }
