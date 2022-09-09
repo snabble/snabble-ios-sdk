@@ -35,7 +35,10 @@ public struct WidgetView: View {
                     }
                 case .purchases:
                     if let widget = widget as? WidgetPurchase {
-                        WidgetPurchaseView(widget: widget, viewModel: viewModel)
+                        WidgetPurchaseView(
+                            widget: widget,
+                            viewModel: viewModel
+                        )
                     }
                 case .toggle:
                     if let widget = widget as? WidgetToggle {
@@ -44,7 +47,7 @@ public struct WidgetView: View {
                 case .section:
                     EmptyView()
                 }
-                if let spacing = viewModel.spacing(for: widget) {
+                if let spacing = widget.spacing {
                     Spacer(minLength: spacing)
                 }
             }

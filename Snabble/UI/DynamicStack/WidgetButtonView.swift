@@ -19,7 +19,7 @@ public struct WidgetButtonView: View {
     public var body: some View {
         HStack {
             Button(action: {
-                viewModel.actionPublisher.send(widget)
+                viewModel.actionPublisher.send(.init(widget: widget))
             }) {
                 Text(keyed: widget.text)
                     .foregroundColor(widget.foregroundColor)

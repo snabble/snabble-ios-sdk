@@ -23,7 +23,7 @@ class ScannerViewController: UIViewController {
 
         super.init(nibName: nil, bundle: nil)
 
-        self.title = "Snabble"
+        self.title = NSLocalizedString("Sample.scanner", comment: "")
 
         self.tabBarItem.image = UIImage(named: "Navigation/TabBar/scan-off")
         self.tabBarItem.selectedImage = UIImage(named: "Navigation/TabBar/scan-on")
@@ -71,7 +71,7 @@ class ScannerViewController: UIViewController {
         let detector = BuiltinBarcodeDetector(detectorArea: .rectangle)
         let scannerViewController = SnabbleSDK.ScannerViewController(shoppingCart, shop, detector)
         scannerViewController.scannerDelegate = self
-//        scannerViewController.shoppingCartDelegate = self
+        scannerViewController.shoppingCartDelegate = self
         scannerViewController.navigationItem.leftBarButtonItem = nil
         self.navigationController?.pushViewController(scannerViewController, animated: true)
     }

@@ -14,7 +14,7 @@ import Combine
 public protocol DynamicViewControllerDelegate: AnyObject {
 
     /// Tells the delegate that an widget will perform an action
-    func dynamicStackViewController(_ viewController: DynamicViewController, performAction id: String)
+    func dynamicStackViewController(_ viewController: DynamicViewController, performAction event: DynamicAction)
 }
 
 /// A UIViewController wrapping SwiftUI's DynamicStackView
@@ -39,8 +39,8 @@ open class DynamicViewController: UIHostingController<DynamicView> {
     open override func viewDidLoad() {
         super.viewDidLoad()
         viewModel.actionPublisher
-            .sink { [weak self] widget in
-                self?.delegate?.dynamicStackViewController(self!, performAction: widget.id)
+            .sink { [unowned self] action in
+                delegate?.dynamicStackViewController(self, performAction: action)
             }
             .store(in: &cancellables)
     }

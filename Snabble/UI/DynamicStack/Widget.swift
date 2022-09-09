@@ -10,6 +10,8 @@ import Foundation
 public protocol Widget: Decodable {
     var id: String { get }
     var type: WidgetType { get }
+    
+    /// Additional Bottom Spacing
     var spacing: CGFloat? { get }
 }
 
@@ -92,7 +94,7 @@ public struct WidgetInformation: Widget, ImageSourcing {
 public struct WidgetPurchase: Widget {
     public let id: String
     public let type: WidgetType = .purchases
-    public let projectId: Identifier<Project>?
+    public let projectId: Identifier<Project>
     public let spacing: CGFloat?
 
     enum CodingKeys: String, CodingKey {

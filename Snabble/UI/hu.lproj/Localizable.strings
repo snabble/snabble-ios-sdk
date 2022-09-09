@@ -34,7 +34,7 @@
 
 "Snabble.CC.3dsecureHint.retailer" = "Itt add meg az adataidat. Ezután átirányítunk a bankodhoz, hogy megerősítse az adataidat. Ekkor zárolunk 1 eurót (%@-re), majd a pénzt közvetlenül visszautaljuk.";
 
-"Snabble.CC.3dsecureHint.retailerWithPrice" = "Itt add meg az adataidat. Ezután átirányítunk a bankodhoz, hogy megerősítse az adataidat. Ekkor zárolunk %@-t (%@-re), majd a pénzt közvetlenül visszautaljuk.";
+"Snabble.CC.3dsecureHint.retailerWithPrice" = "Itt add meg az adataidat. Ezután átirányítunk a bankodhoz, hogy megerősítse az adataidat. Ekkor zárolunk %1$@-t (%2$@-re), majd a pénzt közvetlenül visszautaljuk.";
 
 "Snabble.CC.cardNumber" = "Kártyaszám";
 
@@ -78,17 +78,17 @@
 
 "Snabble.CreditCard.payNow" = "Fizetés hitelkártyával";
 
-"Snabble.Dashboard.lastPurchase" = "Your last purchase";
-
-"Snabble.Dashboard.lastPurchases" = "Your last purchases";
-
-"Snabble.Dashboard.lastPurchasesShowAll" = "Show All";
-
 "Snabble.delete" = "Törlés";
 
 "Snabble.done" = "Kész";
 
-"Snabble.DynamicStack.Shop.show" = "Üzletek mutatása";
+"Snabble.DynamicView.lastPurchase" = "Your last purchase";
+
+"Snabble.DynamicView.lastPurchases" = "Your last purchases";
+
+"Snabble.DynamicView.LastPurchases.all" = "Show All";
+
+"Snabble.DynamicView.Shop.show" = "Üzletek mutatása";
 
 "Snabble.edit" = "Szerkesztés";
 
@@ -403,11 +403,11 @@
 "Snabble.Scanner.Accessibility.eventMaxQuantityReached" = "Nem tudsz több terméket tenni a kosárba";
 
 /* Example: 3 times Banana for 3$ */
-"Snabble.Scanner.Accessibility.eventQuantityUpdate" = "%@ db %@ %@-ért";
+"Snabble.Scanner.Accessibility.eventQuantityUpdate" = "%1$@ db %2$@ %3$@-ért";
 
 "Snabble.Scanner.Accessibility.eventScannerOpened" = "Megnyitottad a szkennert.";
 
-"Snabble.Scanner.Accessibility.hintCartContent" = "A kosárban %@ termék van %@-ért.";
+"Snabble.Scanner.Accessibility.hintCartContent" = "A kosárban %1$@ termék van %2$@-ért.";
 
 "Snabble.Scanner.Accessibility.hintCartIsEmpty" = "A kosarad pillanatnyilag üres.";
 

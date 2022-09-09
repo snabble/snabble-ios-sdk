@@ -17,7 +17,7 @@ public struct WidgetToggleView: View {
             Toggle(Asset.localizedString(forKey: widget.text), isOn: $toggleValue)
         }
         .onChange(of: toggleValue) { _ in
-            viewModel.actionPublisher.send(widget)
+            viewModel.actionPublisher.send(.init(widget: widget))
         }
     }
 }
