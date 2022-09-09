@@ -75,7 +75,10 @@ final class ScannerDrawerViewController: UIViewController {
 
     override func loadView() {
         let contentView = UIView(frame: UIScreen.main.bounds)
-        contentView.translatesAutoresizingMaskIntoConstraints = false
+
+        if #available(iOS 15, *) {
+            contentView.restrictDynamicTypeSize(from: nil, to: .extraExtraExtraLarge)
+        }
 
         let effectView = UIVisualEffectView()
         effectView.translatesAutoresizingMaskIntoConstraints = false
@@ -128,11 +131,17 @@ final class ScannerDrawerViewController: UIViewController {
         wrapperStackView.addArrangedSubview(segmentedControl)
         wrapperStackView.addArrangedSubview(separatorSpacer)
 
+        self.effectView = effectView
+        self.checkoutBar = checkoutBar
+        self.segmentedControl = segmentedControl
+        self.innerSpacer = innerSpacer
+        self.bottomView = bottomView
+
         NSLayoutConstraint.activate([
             effectView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor),
             effectView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor),
-            effectView.topAnchor.constraint(equalTo: contentView.topAnchor),
-            effectView.bottomAnchor.constraint(equalTo: contentView.bottomAnchor),
+            effectView.topAnchor.constraint(equalTo: contentView.safeAreaLayoutGuide.topAnchor),
+            effectView.bottomAnchor.constraint(equalTo: contentView.safeAreaLayoutGuide.bottomAnchor),
 
             handleView.widthAnchor.constraint(equalToConstant: 35),
             handleView.centerXAnchor.constraint(equalTo: contentView.centerXAnchor),
@@ -160,19 +169,10 @@ final class ScannerDrawerViewController: UIViewController {
             bottomView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor),
             bottomView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor),
             bottomView.topAnchor.constraint(equalTo: separator.bottomAnchor),
-            bottomView.bottomAnchor.constraint(equalTo: contentView.bottomAnchor)
+            bottomView.bottomAnchor.constraint(equalTo: contentView.safeAreaLayoutGuide.bottomAnchor)
         ])
 
         self.view = contentView
-        self.effectView = effectView
-        self.checkoutBar = checkoutBar
-        self.segmentedControl = segmentedControl
-        self.innerSpacer = innerSpacer
-        self.bottomView = bottomView
-
-        if #available(iOS 15, *) {
-            self.view.restrictDynamicTypeSize(from: nil, to: .extraExtraExtraLarge)
-        }
     }
 
     override func viewDidLoad() {

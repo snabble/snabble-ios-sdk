@@ -89,10 +89,10 @@ final class ScanningViewController: UIViewController {
     }
 
     override public func loadView() {
-        super.loadView()
+        let view = UIView(frame: UIScreen.main.bounds)
 
         if #available(iOS 15, *) {
-            self.view.restrictDynamicTypeSize(from: nil, to: .extraExtraExtraLarge)
+            view.restrictDynamicTypeSize(from: nil, to: .extraExtraExtraLarge)
         }
         let spinner = UIActivityIndicatorView(style: .large)
         spinner.translatesAutoresizingMaskIntoConstraints = false
@@ -112,21 +112,23 @@ final class ScanningViewController: UIViewController {
         view.addSubview(scanConfirmationView)
         view.addSubview(messageView)
 
-        NSLayoutConstraint.activate([
-            spinner.topAnchor.constraint(equalTo: self.view.layoutMarginsGuide.topAnchor, constant: 40),
-            spinner.centerXAnchor.constraint(equalTo: self.view.centerXAnchor),
-            scanConfirmationView.leadingAnchor.constraint(equalTo: self.view.leadingAnchor, constant: 16),
-            scanConfirmationView.trailingAnchor.constraint(equalTo: self.view.trailingAnchor, constant: -16),
-            scanConfirmationView.centerXAnchor.constraint(equalTo: self.view.centerXAnchor),
-            scanConfirmationView.bottomAnchor.constraint(equalTo: self.view.bottomAnchor).usingVariable(&scanConfirmationViewBottom),
-            messageView.leadingAnchor.constraint(equalTo: self.view.leadingAnchor),
-            messageView.trailingAnchor.constraint(equalTo: self.view.trailingAnchor),
-            messageView.topAnchor.constraint(equalTo: self.view.topAnchor).usingVariable(&messageTopDistance)
-        ])
-
         self.spinner = spinner
         self.messageView = messageView
         self.scanConfirmationView = scanConfirmationView
+
+        NSLayoutConstraint.activate([
+            spinner.topAnchor.constraint(equalTo: view.layoutMarginsGuide.topAnchor, constant: 40),
+            spinner.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+            scanConfirmationView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16),
+            scanConfirmationView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -16),
+            scanConfirmationView.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+            scanConfirmationView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor).usingVariable(&scanConfirmationViewBottom),
+            messageView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+            messageView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+            messageView.topAnchor.constraint(equalTo: view.topAnchor).usingVariable(&messageTopDistance)
+        ])
+
+        self.view = view
     }
 
     override public func viewDidLoad() {
