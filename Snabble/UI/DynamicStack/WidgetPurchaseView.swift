@@ -32,10 +32,6 @@ class OrderViewModel: ObservableObject, LoadableObject {
     }
 
     func load() {
-        guard let project = Snabble.shared.project(for: projectId) else {
-            return
-        }
-        state = .loading
         OrderList.load(project) { [weak self] result in
             if let self = self {
                 do {
@@ -46,6 +42,10 @@ class OrderViewModel: ObservableObject, LoadableObject {
                         self.state = .loaded(providers)
                     }
                 } catch {
+                    // Needs Error View
+                    if case .loaded = self.state {
+                       return
+                    }
                     self.state = .failed(error)
                 }
             }
@@ -98,6 +98,8 @@ public struct WidgetPurchaseView: View {
                         .shadow(radius: dynamicViewModel.configuration.shadowRadius)
                     }
                 }
+            }.onAppear {
+                viewModel.load()
             }
         }
     }
