@@ -70,8 +70,8 @@ private final class BundleToken {
 // MARK: SwiftUI - Extensions
 
 extension SwiftUI.Image {
-    static func image(named name: String, systemName: String? = nil) -> SwiftUI.Image {
-        Asset.image(named: name) ?? SwiftUI.Image(systemName: systemName ?? name)
+    static func image(named name: String, systemName: String? = nil, domain: Any? = nil) -> SwiftUI.Image {
+        Asset.image(named: name, domain: domain ?? Asset.domain) ?? SwiftUI.Image(systemName: systemName ?? name)
     }
 }
 

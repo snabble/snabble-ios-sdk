@@ -94,7 +94,10 @@ public struct WidgetPurchaseView: View {
                 }
                 HStack {
                     ForEach(output.prefix(2), id: \.id) { provider in
-                        WidgetOrderView(provider: provider).onTapGesture {
+                        WidgetOrderView(
+                            provider: provider,
+                            projectId: viewModel.projectId
+                        ).onTapGesture {
                             dynamicViewModel.actionPublisher.send(.init(widget: widget, userInfo: ["id": provider.id]))
                         }
                         .shadow(radius: dynamicViewModel.configuration.shadowRadius)
@@ -109,11 +112,12 @@ public struct WidgetPurchaseView: View {
 
 private struct WidgetOrderView: View {
     let provider: PurchaseProviding
+    let projectId: Identifier<Project>
 
     public var body: some View {
         VStack(alignment: .leading) {
             HStack {
-                if let imageSource = provider as? ImageSourcing, let image = imageSource.image {
+                if let image = SwiftUI.Image.image(named: "Snabble.LastPurchases.storeIcon", domain: projectId) {
                     image
                         .resizable()
                         .frame(width: 14, height: 14)
@@ -134,11 +138,7 @@ private struct WidgetOrderView: View {
     }
 }
 
-extension Order: PurchaseProviding, ImageSourcing {
-    public var imageSource: String? {
-        "Snabble.Shop.Detail.mapPin"
-    }
-
+extension Order: PurchaseProviding {
     public var name: String {
         shopName
     }
