@@ -9,8 +9,8 @@ import Foundation
 import Combine
 
 public struct DynamicAction {
-    let widget: Widget
-    let userInfo: [String: Any]?
+    public let widget: Widget
+    public let userInfo: [String: Any]?
 
     init(widget: Widget, userInfo: [String: Any]? = nil) {
         self.widget = widget
