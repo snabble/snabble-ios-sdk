@@ -48,11 +48,7 @@ class OrderViewModel: ObservableObject, LoadableObject {
                         self.state = .loaded(providers)
                     }
                 } catch {
-                    // Needs Error View
-                    if case .loaded = self.state {
-                       return
-                    }
-                    self.state = .failed(error)
+                    self.state = .empty
                 }
             }
         }
@@ -104,9 +100,9 @@ public struct WidgetPurchaseView: View {
                         .shadow(radius: dynamicViewModel.configuration.shadowRadius)
                     }
                 }
-            }.onAppear {
-                viewModel.load()
             }
+        }.onAppear {
+            viewModel.load()
         }
     }
 }

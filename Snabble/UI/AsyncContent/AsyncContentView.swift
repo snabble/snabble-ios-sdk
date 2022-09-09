@@ -30,10 +30,20 @@ struct AsyncContentView<Source: LoadableObject, Content: View>: View {
         switch source.state {
         case .idle:
             Color.clear.onAppear(perform: source.load)
-        case .loading, .failed, .empty:
+        case .loading:
+            ProgressView()
+        case .failed:
+            ErrorView()
+        case .empty:
             EmptyView()
         case .loaded(let output):
             content(output)
         }
+    }
+}
+
+struct ErrorView: View {
+    var body: some View {
+        Text("Error")
     }
 }
