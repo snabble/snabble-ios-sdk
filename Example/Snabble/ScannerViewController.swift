@@ -23,7 +23,7 @@ class ScannerViewController: UIViewController {
 
         super.init(nibName: nil, bundle: nil)
 
-        self.title = "Snabble"
+        self.title = NSLocalizedString("Sample.scanner", comment: "")
 
         self.tabBarItem.image = UIImage(named: "Navigation/TabBar/scan-off")
         self.tabBarItem.selectedImage = UIImage(named: "Navigation/TabBar/scan-on")
