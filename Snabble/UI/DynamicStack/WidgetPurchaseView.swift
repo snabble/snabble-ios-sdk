@@ -117,7 +117,7 @@ private struct WidgetOrderView: View {
     public var body: some View {
         VStack(alignment: .leading) {
             HStack {
-                if let image = SwiftUI.Image.image(named: "Snabble.LastPurchases.storeIcon", domain: projectId) {
+                if let image = SwiftUI.Image.image(named: "Snabble.DynamicView.LastPurchases.storeIcon", domain: projectId) {
                     image
                         .resizable()
                         .frame(width: 14, height: 14)
