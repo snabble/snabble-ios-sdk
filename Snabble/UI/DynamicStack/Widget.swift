@@ -10,6 +10,8 @@ import Foundation
 public protocol Widget: Decodable {
     var id: String { get }
     var type: WidgetType { get }
+    
+    /// Additional Bottom Spacing
     var spacing: CGFloat? { get }
 }
 

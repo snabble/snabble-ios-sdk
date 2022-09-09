@@ -12,6 +12,7 @@ public struct DynamicViewConfiguration: Decodable, ImageSourcing {
     public let style: String?
     public let spacing: CGFloat?
     public let padding: CGFloat?
+    public let shadowRadius: CGFloat = 8
     
     enum CodingKeys: String, CodingKey {
         case imageSource = "image"

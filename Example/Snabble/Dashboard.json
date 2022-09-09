@@ -43,14 +43,16 @@
           "id": "5",
           "image": "Dashboard/Information.image1",
           "text": "Sample.Dashboard.Information.text1",
-          "hideable": true
+          "hideable": true,
+          "spacing": 16,
       },
       {
           "type": "information",
           "id": "6",
           "image": "Dashboard/Information.image2",
           "text": "Sample.Dashboard.Information.text2",
-          "hideable": true
+          "hideable": true,
+          "spacing": 32,
       },
       {
           "type": "purchases",

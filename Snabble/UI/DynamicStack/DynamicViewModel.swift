@@ -52,13 +52,6 @@ public class DynamicViewModel: NSObject, Decodable, ObservableObject {
     /// Emits if the widget triigers the action
     /// - `Output` is a `DynamicAction`
     public let actionPublisher = PassthroughSubject<DynamicAction, Never>()
-
-    func spacing(for widget: Widget) -> CGFloat? {
-        guard let lastItem = widgets.last, lastItem.id != widget.id else {
-            return widget.spacing
-        }
-        return widget.spacing ?? configuration.spacing
-    }
 }
 
 struct WidgetWrapper: Decodable {

@@ -39,5 +39,6 @@ public struct WidgetInformationView: View {
         .onTapGesture {
             viewModel.actionPublisher.send(.init(widget: widget))
         }
+        .shadow(radius: viewModel.configuration.shadowRadius)
     }
 }

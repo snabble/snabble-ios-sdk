@@ -68,15 +68,14 @@ class OrderViewModel: ObservableObject, LoadableObject {
 
 public struct WidgetPurchaseView: View {
     let widget: Widget
-    let publisher: PassthroughSubject<DynamicAction, Never>
 
+    @ObservedObject var dynamicViewModel: DynamicViewModel
     @ObservedObject var viewModel: OrderViewModel
 
-    init(widget: WidgetPurchase, publisher: PassthroughSubject<DynamicAction, Never>) {
+    init(widget: WidgetPurchase, viewModel dynamicViewModel: DynamicViewModel) {
         self.widget = widget
-        self.publisher = publisher
-
-        viewModel = OrderViewModel(projectId: widget.projectId)
+        self.dynamicViewModel = dynamicViewModel
+        self.viewModel = OrderViewModel(projectId: widget.projectId)
     }
     
     public var body: some View {
@@ -86,7 +85,7 @@ public struct WidgetPurchaseView: View {
                     Text(keyed: "Snabble.Dashboard.lastPurchases")
                     Spacer()
                     Button(action: {
-                        publisher.send(.init(widget: widget))
+                        dynamicViewModel.actionPublisher.send(.init(widget: widget))
                     }) {
                             Text(keyed: "Snabble.Dashboard.lastPurchasesShowAll")
                     }
@@ -94,8 +93,9 @@ public struct WidgetPurchaseView: View {
                 HStack {
                     ForEach(output.prefix(2), id: \.id) { provider in
                         WidgetOrderView(provider: provider).onTapGesture {
-                            publisher.send(.init(widget: widget, userInfo: ["id": provider.id]))
+                            dynamicViewModel.actionPublisher.send(.init(widget: widget, userInfo: ["id": provider.id]))
                         }
+                        .shadow(radius: dynamicViewModel.configuration.shadowRadius)
                     }
                 }
             }
