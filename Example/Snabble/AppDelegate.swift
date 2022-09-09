@@ -72,7 +72,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         let scannerNavigationViewController = UINavigationController(rootViewController: scannerViewController)
 
         let tabBarController = UITabBarController()
-        tabBarController.tabBar.isTranslucent = false
         tabBarController.viewControllers = [dashboardViewController, scannerNavigationViewController, shopsViewController, accountNavigationController]
 
         window?.rootViewController = tabBarController
