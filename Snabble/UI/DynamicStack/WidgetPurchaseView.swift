@@ -86,7 +86,7 @@ public struct WidgetPurchaseView: View {
                     Text(keyed: "Snabble.Dashboard.lastPurchases")
                     Spacer()
                     Button(action: {
-                        publisher.send(.init(widget: widget, userInfo: nil))
+                        publisher.send(.init(widget: widget))
                     }) {
                             Text(keyed: "Snabble.Dashboard.lastPurchasesShowAll")
                     }
@@ -94,7 +94,7 @@ public struct WidgetPurchaseView: View {
                 HStack {
                     ForEach(output.prefix(2), id: \.id) { provider in
                         WidgetOrderView(provider: provider).onTapGesture {
-                            publisher.send(.init(widget: widget, userInfo: ["providerId": provider.id]))
+                            publisher.send(.init(widget: widget, userInfo: ["id": provider.id]))
                         }
                     }
                 }
