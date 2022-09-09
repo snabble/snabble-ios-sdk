@@ -78,17 +78,17 @@
 
 "Snabble.CreditCard.payNow" = "Teraz zaplatiť kreditnou kartou";
 
-"Snabble.Dashboard.lastPurchase" = "Your last purchase";
-
-"Snabble.Dashboard.lastPurchases" = "Your last purchases";
-
-"Snabble.Dashboard.lastPurchasesShowAll" = "Show All";
-
 "Snabble.delete" = "Vymazať";
 
 "Snabble.done" = "Hotovo";
 
-"Snabble.DynamicStack.Shop.show" = "Zobraziť obchody";
+"Snabble.DynamicView.lastPurchase" = "Tvoj posledný nákup";
+
+"Snabble.DynamicView.lastPurchases" = "Tvoje posledné nákupy";
+
+"Snabble.DynamicView.LastPurchases.all" = "Všetko";
+
+"Snabble.DynamicView.Shop.show" = "Zobraziť obchody";
 
 "Snabble.edit" = "Upraviť";
 
@@ -493,7 +493,7 @@
 
 "Snabble.Shop.Detail.openingHours" = "Otváracie hodiny";
 
-"Snabble.Shop.Detail.Phonenumber.accessibility" = "Phonenumber %@";
+"Snabble.Shop.Detail.Phonenumber.accessibility" = "Telefónne číslo %@";
 
 "Snabble.Shop.Detail.shopNow" = "Teraz nakúpiť tu";
 
@@ -501,19 +501,19 @@
 
 "Snabble.Shop.Detail.title" = "Detaily";
 
-"Snabble.Shop.Details.contractingParty" = "Contracting Party";
+"Snabble.Shop.Details.contractingParty" = "Zmluvný partner";
 
 "Snabble.Shop.Details.friday" = "Piatok";
 
-"Snabble.Shop.Details.MapDisabled.actionTitle" = "Activate";
+"Snabble.Shop.Details.MapDisabled.actionTitle" = "Aktivovať";
 
-"Snabble.Shop.Details.MapDisabled.title" = "You have disabled the use of %@.";
+"Snabble.Shop.Details.MapDisabled.title" = "Deaktivoval/a si používanie služby %@.";
 
 "Snabble.Shop.Details.monday" = "Pondelok";
 
 "Snabble.Shop.Details.saturday" = "Sobota";
 
-"Snabble.Shop.Details.StartCall.accessibility" = "Call";
+"Snabble.Shop.Details.StartCall.accessibility" = "Zavolať";
 
 "Snabble.Shop.Details.sunday" = "Nedeľa";
 
@@ -523,7 +523,7 @@
 
 "Snabble.Shop.Details.wednesday" = "Streda";
 
-"Snabble.Shop.Distance.accessibility" = "In %@";
+"Snabble.Shop.Distance.accessibility" = "Vo vzdialenosti %@";
 
 "Snabble.Shop.Finder.title" = "Obchod";
 
@@ -537,7 +537,7 @@
 
 "Snabble.Shop.List.Expand.accessibility" = "otvoriť";
 
-"Snabble.Shop.List.ShowDetails.accessibility" = "Show shop details";
+"Snabble.Shop.List.ShowDetails.accessibility" = "Zobraziť detaily obchodu";
 
 "Snabble.Shopping.title" = "Nakúpiť";
 

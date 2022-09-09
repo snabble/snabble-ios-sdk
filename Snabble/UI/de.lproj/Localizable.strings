@@ -34,7 +34,7 @@
 
 "Snabble.CC.3dsecureHint.retailer" = "Gib deine Daten hier ein. Anschließend leiten wir dich zu deiner Bank weiter, um deine Daten zu bestätigen. Dabei reservieren wir 1 € (für %@) und buchen das Geld direkt wieder zurück.";
 
-"Snabble.CC.3dsecureHint.retailerWithPrice" = "Gib deine Daten hier ein. Anschließend leiten wir dich zu deiner Bank weiter, um deine Daten zu bestätigen. Dabei reservieren wir %@ (für %@) und buchen das Geld direkt wieder zurück.";
+"Snabble.CC.3dsecureHint.retailerWithPrice" = "Gib deine Daten hier ein. Anschließend leiten wir dich zu deiner Bank weiter, um deine Daten zu bestätigen. Dabei reservieren wir %1$@ (für %2$@) und buchen das Geld direkt wieder zurück.";
 
 "Snabble.CC.cardNumber" = "Kartennummer";
 
@@ -78,17 +78,17 @@
 
 "Snabble.CreditCard.payNow" = "Jetzt mit Kreditkarte bezahlen";
 
-"Snabble.Dashboard.lastPurchase" = "Dein letzter Einkauf";
-
-"Snabble.Dashboard.lastPurchases" = "Deine letzten Einkäufe";
-
-"Snabble.Dashboard.lastPurchasesShowAll" = "Alle";
-
 "Snabble.delete" = "Löschen";
 
 "Snabble.done" = "Fertig";
 
-"Snabble.DynamicStack.Shop.show" = "Filialen anzeigen";
+"Snabble.DynamicView.lastPurchase" = "Dein letzter Einkauf";
+
+"Snabble.DynamicView.lastPurchases" = "Deine letzten Einkäufe";
+
+"Snabble.DynamicView.LastPurchases.all" = "Alle";
+
+"Snabble.DynamicView.Shop.show" = "Filialen anzeigen";
 
 "Snabble.edit" = "Bearbeiten";
 
@@ -403,11 +403,11 @@
 "Snabble.Scanner.Accessibility.eventMaxQuantityReached" = "Du kannst nicht mehr Artikel in den Warenkorb legen";
 
 /* Example: 3 times Banana for 3$ */
-"Snabble.Scanner.Accessibility.eventQuantityUpdate" = "%@ mal %@ für %@";
+"Snabble.Scanner.Accessibility.eventQuantityUpdate" = "%1$@ mal %2$@ für %3$@";
 
 "Snabble.Scanner.Accessibility.eventScannerOpened" = "Du hast den Scanner geöffnet.";
 
-"Snabble.Scanner.Accessibility.hintCartContent" = "Im Warenkorb sind %@ Artikel für %@.";
+"Snabble.Scanner.Accessibility.hintCartContent" = "Im Warenkorb sind %1$@ Artikel für %2$@.";
 
 "Snabble.Scanner.Accessibility.hintCartIsEmpty" = "Dein Warenkorb ist aktuell leer.";
 

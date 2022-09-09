@@ -34,7 +34,7 @@
 
 "Snabble.CC.3dsecureHint.retailer" = "Per la verifica della tua carta di credito, dopo aver inserito i dati, sarai reindirizzato alla tua banca. Lì ti verrà chiesto di approvare un pagamento di 1,00 € a %@. L’importo di sarà immediatamente riaccreditato dopo la tua autorizzazione.";
 
-"Snabble.CC.3dsecureHint.retailerWithPrice" = "Per la verifica della tua carta di credito, dopo aver inserito i dati, sarai reindirizzato alla tua banca. Lì ti verrà chiesto di autorizzare un pagamento di %@ a %@. L’importo di sarà immediatamente riaccreditato dopo la tua autorizzazione.";
+"Snabble.CC.3dsecureHint.retailerWithPrice" = "Per la verifica della tua carta di credito, dopo aver inserito i dati, sarai reindirizzato alla tua banca. Lì ti verrà chiesto di autorizzare un pagamento di %1$@ a %2$@. L’importo di sarà immediatamente riaccreditato dopo la tua autorizzazione.";
 
 "Snabble.CC.cardNumber" = "Numero carta";
 
@@ -78,17 +78,17 @@
 
 "Snabble.CreditCard.payNow" = "Paga ora con carta di credito";
 
-"Snabble.Dashboard.lastPurchase" = "Your last purchase";
-
-"Snabble.Dashboard.lastPurchases" = "Your last purchases";
-
-"Snabble.Dashboard.lastPurchasesShowAll" = "Show All";
-
 "Snabble.delete" = "Cancella";
 
 "Snabble.done" = "Finito";
 
-"Snabble.DynamicStack.Shop.show" = "Show stores";
+"Snabble.DynamicView.lastPurchase" = "Your last purchase";
+
+"Snabble.DynamicView.lastPurchases" = "Your last purchases";
+
+"Snabble.DynamicView.LastPurchases.all" = "Show All";
+
+"Snabble.DynamicView.Shop.show" = "Show stores";
 
 "Snabble.edit" = "Modifica";
 
@@ -403,11 +403,11 @@
 "Snabble.Scanner.Accessibility.eventMaxQuantityReached" = "You reached the maximum count of items for the cart";
 
 /* Example: 3 times Banana for 3$ */
-"Snabble.Scanner.Accessibility.eventQuantityUpdate" = "%@ times %@ for %@";
+"Snabble.Scanner.Accessibility.eventQuantityUpdate" = "%1$@ times %2$@ for %3$@";
 
 "Snabble.Scanner.Accessibility.eventScannerOpened" = "You opened the scanner.";
 
-"Snabble.Scanner.Accessibility.hintCartContent" = "There are %@ items for %@ in your cart.";
+"Snabble.Scanner.Accessibility.hintCartContent" = "There are %1$@ items for %2$@ in your cart.";
 
 "Snabble.Scanner.Accessibility.hintCartIsEmpty" = "Your cart is empty.";
 

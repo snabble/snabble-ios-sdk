@@ -16,6 +16,12 @@ public protocol PurchaseProviding {
     var date: Date { get }
 }
 
+extension Array where Element == PurchaseProviding {
+    var title: String {
+        return count > 1 ? "Snabble.DynamicView.lastPurchases" : "Snabble.DynamicView.lastPurchase"
+    }
+}
+
 class OrderViewModel: ObservableObject, LoadableObject {
     typealias Output = [PurchaseProviding]
 
@@ -82,12 +88,12 @@ public struct WidgetPurchaseView: View {
         AsyncContentView(source: viewModel) { output in
             VStack(alignment: .leading) {
                 HStack {
-                    Text(keyed: "Snabble.Dashboard.lastPurchases")
+                    Text(keyed: output.title)
                     Spacer()
                     Button(action: {
                         dynamicViewModel.actionPublisher.send(.init(widget: widget))
                     }) {
-                            Text(keyed: "Snabble.Dashboard.lastPurchasesShowAll")
+                            Text(keyed: "Snabble.DynamicView.LastPurchases.all")
                     }
                 }
                 HStack {

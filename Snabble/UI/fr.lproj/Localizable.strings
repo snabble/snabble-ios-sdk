@@ -34,7 +34,7 @@
 
 "Snabble.CC.3dsecureHint.retailer" = "Entrez vos données ici. Ensuite, nous vous redirigeons vers votre banque pour confirmer vos données. Dans ce cas, nous réservons 1 € (pour %@) et nous reversons directement le montant.";
 
-"Snabble.CC.3dsecureHint.retailerWithPrice" = "Entrez vos données ici. Ensuite, nous vous redirigeons vers votre banque pour confirmer vos données. Dans ce cas, nous réservons %@ (pour %@) et nous reversons directement le montant.";
+"Snabble.CC.3dsecureHint.retailerWithPrice" = "Entrez vos données ici. Ensuite, nous vous redirigeons vers votre banque pour confirmer vos données. Dans ce cas, nous réservons %1$@ (pour %2$@) et nous reversons directement le montant.";
 
 "Snabble.CC.cardNumber" = "Numéro de carte";
 
@@ -78,17 +78,17 @@
 
 "Snabble.CreditCard.payNow" = "Payer maintenant avec une carte de crédit";
 
-"Snabble.Dashboard.lastPurchase" = "Votre dernier achat";
-
-"Snabble.Dashboard.lastPurchases" = "Vos derniers achats";
-
-"Snabble.Dashboard.lastPurchasesShowAll" = "Tous";
-
 "Snabble.delete" = "Effacer";
 
 "Snabble.done" = "Terminé";
 
-"Snabble.DynamicStack.Shop.show" = "Afficher les filiales";
+"Snabble.DynamicView.lastPurchase" = "Votre dernier achat";
+
+"Snabble.DynamicView.lastPurchases" = "Vos derniers achats";
+
+"Snabble.DynamicView.LastPurchases.all" = "Tous";
+
+"Snabble.DynamicView.Shop.show" = "Afficher les filiales";
 
 "Snabble.edit" = "Modifier";
 
@@ -403,11 +403,11 @@
 "Snabble.Scanner.Accessibility.eventMaxQuantityReached" = "Vous ne pouvez plus ajouter d’articles au panier";
 
 /* Example: 3 times Banana for 3$ */
-"Snabble.Scanner.Accessibility.eventQuantityUpdate" = "%@ %@ pour %@";
+"Snabble.Scanner.Accessibility.eventQuantityUpdate" = "%1$@ %2$@ pour %3$@";
 
 "Snabble.Scanner.Accessibility.eventScannerOpened" = "Vous avez ouvert le scanner.";
 
-"Snabble.Scanner.Accessibility.hintCartContent" = "Dans votre panier se trouvent %@ articles pour %@.";
+"Snabble.Scanner.Accessibility.hintCartContent" = "Dans votre panier se trouvent %1$@ articles pour %2$@.";
 
 "Snabble.Scanner.Accessibility.hintCartIsEmpty" = "Votre panier est vide.";
 

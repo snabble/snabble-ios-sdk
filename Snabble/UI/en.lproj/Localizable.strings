@@ -34,7 +34,7 @@
 
 "Snabble.CC.3dsecureHint.retailer" = "Enter your data here. We will then forward you to your bank to confirm your details. We reserve 1 € (for %@) and book the money back immediately.";
 
-"Snabble.CC.3dsecureHint.retailerWithPrice" = "Enter your data here. We will then forward you to your bank to confirm your details. We reserve %@ (for %@) and book the money back immediately.";
+"Snabble.CC.3dsecureHint.retailerWithPrice" = "Enter your data here. We will then forward you to your bank to confirm your details. We reserve %1$@ (for %2$@) and book the money back immediately.";
 
 "Snabble.CC.cardNumber" = "Card number";
 
@@ -78,17 +78,17 @@
 
 "Snabble.CreditCard.payNow" = "Pay now using Credit card";
 
-"Snabble.Dashboard.lastPurchase" = "Your last purchase";
-
-"Snabble.Dashboard.lastPurchases" = "Your last purchases";
-
-"Snabble.Dashboard.lastPurchasesShowAll" = "Show All";
-
 "Snabble.delete" = "Delete";
 
 "Snabble.done" = "Done";
 
-"Snabble.DynamicStack.Shop.show" = "Show stores";
+"Snabble.DynamicView.lastPurchase" = "Your last purchase";
+
+"Snabble.DynamicView.lastPurchases" = "Your last purchases";
+
+"Snabble.DynamicView.LastPurchases.all" = "Show All";
+
+"Snabble.DynamicView.Shop.show" = "Show stores";
 
 "Snabble.edit" = "Edit";
 
@@ -403,11 +403,11 @@
 "Snabble.Scanner.Accessibility.eventMaxQuantityReached" = "You reached the maximum count of items for the cart";
 
 /* Example: 3 times Banana for 3$ */
-"Snabble.Scanner.Accessibility.eventQuantityUpdate" = "%@ times %@ for %@";
+"Snabble.Scanner.Accessibility.eventQuantityUpdate" = "%1$@ times %2$@ for %3$@";
 
 "Snabble.Scanner.Accessibility.eventScannerOpened" = "You opened the scanner.";
 
-"Snabble.Scanner.Accessibility.hintCartContent" = "There are %@ items for %@ in your cart.";
+"Snabble.Scanner.Accessibility.hintCartContent" = "There are %1$@ items for %2$@ in your cart.";
 
 "Snabble.Scanner.Accessibility.hintCartIsEmpty" = "Your cart is empty.";
 
