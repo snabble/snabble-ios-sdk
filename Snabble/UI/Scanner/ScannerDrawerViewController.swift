@@ -293,7 +293,7 @@ extension ScannerDrawerViewController: PulleyDrawerViewControllerDelegate {
         let heightForItems = !shoppingCart.items.isEmpty ? heightForCartItems : heightForListItems
 
         let heightForSegmentedControl = shoppingList == nil ? 0 : segmentedControlHeight + separatorSpacerHeight
-        return minDrawerHeight + heightForSegmentedControl + totalsHeight + heightForItems
+        return minDrawerHeight + heightForSegmentedControl + totalsHeight + heightForItems + bottomSafeArea
     }
 
     public func drawerPositionDidChange(drawer: PulleyViewController, bottomSafeArea: CGFloat) {
@@ -312,14 +312,12 @@ extension ScannerDrawerViewController: PulleyDrawerViewControllerDelegate {
     }
 
     public func drawerChangedDistanceFromBottom(drawer: PulleyViewController, distance: CGFloat, bottomSafeArea: CGFloat) {
-        let height = self.view.bounds.height
-        let insets = UIEdgeInsets(top: 0, left: 0, bottom: height - distance, right: 0)
-        shoppingListTableVC.insets = insets
-        shoppingCartVC.insets = insets
+        updateOverlay(on: drawer, forDistance: distance)
+    }
 
-        let scanner = self.pulleyViewController?.primaryContentViewController as? ScanningViewController
-        // using 80% of height as the maximum avoids an ugly trailing animation
-        let offset = -min(distance, height * 0.8) / 2
+    private func updateOverlay(on drawer: PulleyViewController, forDistance distance: CGFloat) {
+        let scanner = drawer.primaryContentViewController as? ScanningViewController
+        let offset = -min(distance, view.bounds.height * 0.8) / 2
         scanner?.setOverlayOffset(offset)
     }
 }
