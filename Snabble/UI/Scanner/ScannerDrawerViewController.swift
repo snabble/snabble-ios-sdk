@@ -140,8 +140,8 @@ final class ScannerDrawerViewController: UIViewController {
         NSLayoutConstraint.activate([
             effectView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor),
             effectView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor),
-            effectView.topAnchor.constraint(equalTo: contentView.safeAreaLayoutGuide.topAnchor),
-            effectView.bottomAnchor.constraint(equalTo: contentView.safeAreaLayoutGuide.bottomAnchor),
+            effectView.topAnchor.constraint(equalTo: contentView.topAnchor),
+            effectView.bottomAnchor.constraint(equalTo: contentView.bottomAnchor),
 
             handleView.widthAnchor.constraint(equalToConstant: 35),
             handleView.centerXAnchor.constraint(equalTo: contentView.centerXAnchor),
