@@ -18,15 +18,15 @@
                     "type": "toggle",
                     "id": "2",
                     "text": "Sample.Section.Profile.saveEnergy",
-                    "key": "io.snabble.saveEnergy"
+                    "key": "io.snabble.sample.saveEnergy"
                 },
                 {
                     "type": "toggle",
                     "id": "3",
                     "text": "Sample.Section.Profile.showOnboarding",
-                    "key": "io.snabble.show.onboarding",
+                    "key": "io.snabble.sample.showOnboarding",
                 },
-               {
+                {
                     "type": "button",
                     "id": "4",
                     "text": "Sample.Section.Profile.deleteAccount",
