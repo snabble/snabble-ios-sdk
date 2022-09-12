@@ -108,11 +108,13 @@ public struct WidgetToggle: Widget {
     public let id: String
     public let type: WidgetType = .toggle
     public let text: String
+    public let key: String
     public let spacing: CGFloat?
 
     enum CodingKeys: String, CodingKey {
         case id
         case text
+        case key
         case spacing
     }
 }

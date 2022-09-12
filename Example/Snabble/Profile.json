@@ -18,11 +18,13 @@
                     "type": "toggle",
                     "id": "2",
                     "text": "Sample.Section.Profile.saveEnergy",
+                    "key": "io.snabble.saveEnergy"
                 },
                 {
                     "type": "toggle",
                     "id": "3",
                     "text": "Sample.Section.Profile.showOnboarding",
+                    "key": "io.snabble.show.onboarding",
                 },
                {
                     "type": "button",

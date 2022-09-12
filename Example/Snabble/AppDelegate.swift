@@ -75,7 +75,9 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
         window?.rootViewController = tabBarController
 
-        showOnboarding(on: tabBarController)
+        if UserDefaults.standard.bool(forKey: "io.snabble.show.onboarding") {
+            showOnboarding(on: tabBarController)
+        }
     }
 
     private func showOnboarding(on viewController: UIViewController) {

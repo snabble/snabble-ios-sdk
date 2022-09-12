@@ -33,5 +33,5 @@ extension AccountViewController: DynamicViewControllerDelegate {
         print(#function)
         print("widget:", widget.id)
         print("userInfo:", userInfo ?? [:])
-    }
+    }    
 }

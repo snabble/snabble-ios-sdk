@@ -10,14 +10,29 @@ import SwiftUI
 public struct WidgetToggleView: View {
     var widget: WidgetToggle
     @ObservedObject var viewModel: DynamicViewModel
-    @State private var toggleValue = false
+    @AppStorage var value: Bool
+
+    init(widget: WidgetToggle, viewModel: DynamicViewModel) {
+        self.widget = widget
+        self.viewModel = viewModel
+
+        self._value = AppStorage(
+            wrappedValue: UserDefaults.standard.bool(forKey: widget.key), widget.key,
+            store: .standard
+        )
+    }
     
     public var body: some View {
         HStack {
-            Toggle(Asset.localizedString(forKey: widget.text), isOn: $toggleValue)
+            Toggle(Asset.localizedString(forKey: widget.text), isOn: $value)
         }
-        .onChange(of: toggleValue) { newState in
-            viewModel.actionPublisher.send(.init(widget: widget, userInfo: ["value": newState]))
+        .onChange(of: value) { newState in
+            viewModel.actionPublisher.send(
+                .init(
+                    widget: widget,
+                    userInfo: [widget.key: newState]
+                )
+            )
         }
     }
 }
