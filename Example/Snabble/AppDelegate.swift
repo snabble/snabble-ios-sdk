@@ -147,7 +147,9 @@ extension AppDelegate: ShopsViewControllerDelegate {
 }
 
 extension AppDelegate: DynamicViewControllerDelegate {
-    func dynamicStackViewController(_ viewController: SnabbleSDK.DynamicViewController, performAction action: DynamicAction) {
-        print(#function, action)
+    func dynamicStackViewController(_ viewController: DynamicViewController, tappedWidget widget: Widget, userInfo: [String: Any]?) {
+        print(#function)
+        print("widget:", widget.id)
+        print("userInfo:", userInfo ?? [:])
     }
 }
