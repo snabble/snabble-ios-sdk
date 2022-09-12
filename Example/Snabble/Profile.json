@@ -24,7 +24,7 @@
                     "type": "toggle",
                     "id": "3",
                     "text": "Sample.Section.Profile.showOnboarding",
-                    "key": "io.snabble.sample.showOnboarding",
+                    "key": "io.snabble.sample.showOnboarding"
                 },
                 {
                     "type": "button",
