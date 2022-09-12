@@ -80,6 +80,8 @@ struct WidgetWrapper: Decodable {
             value = try WidgetSection(from: decoder)
         case .toggle:
             value = try WidgetToggle(from: decoder)
+        case .locationPermission:
+            value = try WidgetLocationPermission(from: decoder)
         }
     }
 }

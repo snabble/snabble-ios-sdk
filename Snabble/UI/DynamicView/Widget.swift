@@ -22,6 +22,7 @@ public enum WidgetType: String, Decodable {
     case information
     case purchases
     case section
+    case locationPermission
     case toggle
 }
 
@@ -33,7 +34,6 @@ public struct WidgetText: Widget {
     public let textStyleSource: String?
     public let showDisclosure: Bool?
     public let spacing: CGFloat?
-
 
     init(
         id: String,
@@ -231,5 +231,24 @@ public struct WidgetSection: Widget {
         self.items = wrappers.map { $0.value }
 
         self.spacing = try container.decodeIfPresent(CGFloat.self, forKey: .spacing)
+    }
+}
+
+public struct WidgetLocationPermission: Widget {
+    public let id: String
+    public let type: WidgetType = .locationPermission
+    public var spacing: CGFloat?
+
+    public init(
+        id: String,
+        spacing: CGFloat? = nil
+    ) {
+        self.id = id
+        self.spacing = spacing
+    }
+
+    enum CodingKeys: String, CodingKey {
+        case id
+        case spacing
     }
 }

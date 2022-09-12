@@ -44,7 +44,7 @@ public struct WidgetView: View {
                     if let widget = widget as? WidgetToggle {
                         WidgetToggleView(widget: widget, viewModel: viewModel)
                     }
-                case .section:
+                case .section, .locationPermission:
                     EmptyView()
                 }
                 if let spacing = widget.spacing {
