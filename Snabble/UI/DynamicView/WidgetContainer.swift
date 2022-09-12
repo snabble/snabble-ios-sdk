@@ -35,7 +35,7 @@ public struct WidgetView: View {
                     }
                 case .purchases:
                     if let widget = widget as? WidgetPurchase {
-                        WidgetPurchaseView(
+                        WidgetPurchasesView(
                             widget: widget,
                             viewModel: viewModel
                         )
