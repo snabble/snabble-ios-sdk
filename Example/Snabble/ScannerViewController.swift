@@ -64,7 +64,6 @@ class ScannerViewController: UIViewController {
             buttonContainer.centerXAnchor.constraint(equalTo: view.centerXAnchor),
             buttonContainer.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 32)
         ])
-
     }
 
     @objc private func scannerButtonTapped(_ sender: Any) {
@@ -81,7 +80,6 @@ class ScannerViewController: UIViewController {
         shoppingCartVC.shoppingCartDelegate = self
         self.navigationController?.pushViewController(shoppingCartVC, animated: true)
     }
-
 }
 
 extension ScannerViewController: SnabbleSDK.ScannerDelegate {

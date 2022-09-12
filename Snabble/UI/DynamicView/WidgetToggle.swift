@@ -16,8 +16,8 @@ public struct WidgetToggleView: View {
         HStack {
             Toggle(Asset.localizedString(forKey: widget.text), isOn: $toggleValue)
         }
-        .onChange(of: toggleValue) { _ in
-            viewModel.actionPublisher.send(.init(widget: widget))
+        .onChange(of: toggleValue) { newState in
+            viewModel.actionPublisher.send(.init(widget: widget, userInfo: ["value": newState]))
         }
     }
 }
