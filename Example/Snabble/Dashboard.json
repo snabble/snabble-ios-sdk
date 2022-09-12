@@ -26,6 +26,10 @@
           "spacing": 32
       },
       {
+          "type": "locationPermission",
+          "id": "134"
+      },
+      {
           "type": "button",
           "id": "4",
           "text": "Sample.Dashboard.button",
