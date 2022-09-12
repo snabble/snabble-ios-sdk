@@ -19,9 +19,8 @@ public struct DynamicAction {
 }
 
 public class DynamicViewModel: NSObject, Decodable, ObservableObject {
-
-    public let configuration: DynamicViewConfiguration
-    public let widgets: [Widget]
+    public var configuration: DynamicViewConfiguration
+    public var widgets: [Widget]
 
     private enum CodingKeys: String, CodingKey {
         case configuration
