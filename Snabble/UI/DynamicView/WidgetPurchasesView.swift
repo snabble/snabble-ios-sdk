@@ -1,5 +1,5 @@
 //
-//  WidgetPurchaseView.swift
+//  WidgetPurchasesView.swift
 //  Snabble
 //
 //  Created by Uwe Tilemann on 01.09.22.
@@ -22,7 +22,7 @@ extension Array where Element == PurchaseProviding {
     }
 }
 
-class OrderViewModel: ObservableObject, LoadableObject {
+class PurchasesViewModel: ObservableObject, LoadableObject {
     typealias Output = [PurchaseProviding]
 
     let projectId: Identifier<Project>
@@ -68,16 +68,16 @@ class OrderViewModel: ObservableObject, LoadableObject {
 
 }
 
-public struct WidgetPurchaseView: View {
+public struct WidgetPurchasesView: View {
     let widget: Widget
 
     @ObservedObject var dynamicViewModel: DynamicViewModel
-    @ObservedObject var viewModel: OrderViewModel
+    @ObservedObject var viewModel: PurchasesViewModel
 
     init(widget: WidgetPurchase, viewModel dynamicViewModel: DynamicViewModel) {
         self.widget = widget
         self.dynamicViewModel = dynamicViewModel
-        self.viewModel = OrderViewModel(projectId: widget.projectId)
+        self.viewModel = PurchasesViewModel(projectId: widget.projectId)
     }
     
     public var body: some View {
