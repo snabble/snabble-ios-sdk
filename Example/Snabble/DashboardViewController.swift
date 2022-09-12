@@ -13,11 +13,11 @@ final class DashboardViewController: SnabbleSDK.DynamicViewController {
     
     override init(viewModel: DynamicViewModel) {
         super.init(viewModel: viewModel)
-        
-        self.title = NSLocalizedString("Sample.home", comment: "")
 
-        self.tabBarItem.image = UIImage(named: "Navigation/TabBar/home-off")
-        self.tabBarItem.selectedImage = UIImage(named: "Navigation/TabBar/home-on")
+        title = NSLocalizedString("Sample.home", comment: "")
+
+        tabBarItem.image = UIImage(named: "Navigation/TabBar/home-off")
+        tabBarItem.selectedImage = UIImage(named: "Navigation/TabBar/home-on")
     }
 
     required init?(coder: NSCoder) {
