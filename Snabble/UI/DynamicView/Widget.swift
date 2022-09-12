@@ -31,8 +31,25 @@ public struct WidgetText: Widget {
     public let text: String
     public let textColorSource: String?
     public let textStyleSource: String?
-    public let spacing: CGFloat?
     public let showDisclosure: Bool?
+    public let spacing: CGFloat?
+
+
+    init(
+        id: String,
+        text: String,
+        textColorSource: String?,
+        textStyleSource: String?,
+        showDisclosure: Bool?,
+        spacing: CGFloat?
+    ) {
+        self.id = id
+        self.text = text
+        self.textColorSource = textColorSource
+        self.textStyleSource = textStyleSource
+        self.spacing = spacing
+        self.showDisclosure = showDisclosure
+    }
 
     enum CodingKeys: String, CodingKey {
         case id
@@ -50,6 +67,16 @@ public struct WidgetImage: Widget, ImageSourcing {
     public let imageSource: String
     public let spacing: CGFloat?
 
+    init(
+        id: String,
+        imageSource: String,
+        spacing: CGFloat? = nil
+    ) {
+        self.id = id
+        self.imageSource = imageSource
+        self.spacing = spacing
+    }
+
     enum CodingKeys: String, CodingKey {
         case id
         case imageSource = "image"
@@ -64,6 +91,20 @@ public struct WidgetButton: Widget {
     public let foregroundColorSource: String?
     public let backgroundColorSource: String?
     public let spacing: CGFloat?
+
+    public init(
+        id: String,
+        text: String,
+        foregroundColorSource: String? = nil,
+        backgroundColorSource: String? = nil,
+        spacing: CGFloat? = nil
+    ) {
+        self.id = id
+        self.text = text
+        self.foregroundColorSource = foregroundColorSource
+        self.backgroundColorSource = backgroundColorSource
+        self.spacing = spacing
+    }
 
     enum CodingKeys: String, CodingKey {
         case id
@@ -82,6 +123,20 @@ public struct WidgetInformation: Widget, ImageSourcing {
     public let hideable: Bool
     public let spacing: CGFloat?
 
+    init(
+        id: String,
+        text: String,
+        imageSource: String? = nil,
+        hideable: Bool,
+        spacing: CGFloat? = nil
+    ) {
+        self.id = id
+        self.text = text
+        self.imageSource = imageSource
+        self.hideable = hideable
+        self.spacing = spacing
+    }
+
     enum CodingKeys: String, CodingKey {
         case id
         case text
@@ -97,6 +152,16 @@ public struct WidgetPurchase: Widget {
     public let projectId: Identifier<Project>
     public let spacing: CGFloat?
 
+    init(
+        id: String,
+        projectId: Identifier<Project>,
+        spacing: CGFloat? = nil
+    ) {
+        self.id = id
+        self.projectId = projectId
+        self.spacing = spacing
+    }
+
     enum CodingKeys: String, CodingKey {
         case id
         case projectId
@@ -110,6 +175,18 @@ public struct WidgetToggle: Widget {
     public let text: String
     public let key: String
     public let spacing: CGFloat?
+
+    init(
+        id: String,
+        text: String,
+        key: String,
+        spacing: CGFloat? = nil
+    ) {
+        self.id = id
+        self.text = text
+        self.key = key
+        self.spacing = spacing
+    }
 
     enum CodingKeys: String, CodingKey {
         case id
@@ -125,6 +202,18 @@ public struct WidgetSection: Widget {
     public let header: String
     public let items: [Widget]
     public let spacing: CGFloat?
+
+    init(
+        id: String,
+        header: String,
+        items: [Widget],
+        spacing: CGFloat? = nil
+    ) {
+        self.id = id
+        self.header = header
+        self.items = items
+        self.spacing = spacing
+    }
     
     enum CodingKeys: String, CodingKey {
         case id
