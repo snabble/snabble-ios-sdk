@@ -12,7 +12,7 @@ import CoreLocation
 public class LocationPermissionViewModel: NSObject, ObservableObject {
     @Published public private(set) var widgets: [Widget] = []
 
-    private let locationManager: CLLocationManager
+    let locationManager: CLLocationManager
 
     init(locationManager: CLLocationManager = .init()) {
         self.locationManager = locationManager

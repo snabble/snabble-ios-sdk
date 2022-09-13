@@ -32,6 +32,8 @@ extension DashboardViewController: SnabbleSDK.DynamicViewControllerDelegate {
         switch widget.id {
         case "Snabble.LocationPermission.notDetermined":
             CLLocationManager().requestWhenInUseAuthorization()
+        case "Snabble.LocationPermission.denied-restricted":
+            CLLocationManager().requestLocationPermission(on: self)
         default:
             break
         }
