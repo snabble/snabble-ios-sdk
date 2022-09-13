@@ -1,38 +1,38 @@
-"Sample.Dashboard.button" = "Jetzt starten";
+"Dashboard.button" = "Jetzt starten";
 
-"Sample.Dashboard.Information.text1" = "Hinterlege direkt ein Bezahlverfahren, um schon bei deinem ersten Einkauf ohne Wartezeit einzukaufen.";
+"Dashboard.Information.text1" = "Hinterlege direkt ein Bezahlverfahren, um schon bei deinem ersten Einkauf ohne Wartezeit einzukaufen.";
 
-"Sample.Dashboard.Information.text2" = "Nutze die Vorteile deiner Kundenkarten automatisch.";
+"Dashboard.Information.text2" = "Nutze die Vorteile deiner Kundenkarten automatisch.";
 
-"Sample.Dashboard.text" = "Besuche eine unterstütze Filiale, um mit Snabble einzukaufen!";
+"Dashboard.text" = "Besuche eine unterstütze Filiale, um mit Snabble einzukaufen!";
 
-"Sample.Dashboard.title" = "Willkommen bei Snabble";
+"Dashboard.title" = "Willkommen bei Snabble";
 
-"Sample.home" = "Start";
+"home" = "Start";
 
-"Sample.Onboarding.accept" = "Akzeptieren";
+"Onboarding.accept" = "Akzeptieren";
 
-"Sample.Onboarding.message1" = "Mit Snabble scannst du deinen Einkauf selbst und bezahlt direkt in der App. Ohne in der Schlange zu stehen und ohne deinen Einkauf auf’s Band zu legen.";
+"Onboarding.message1" = "Mit Snabble scannst du deinen Einkauf selbst und bezahlt direkt in der App. Ohne in der Schlange zu stehen und ohne deinen Einkauf auf’s Band zu legen.";
 
-"Sample.Onboarding.message2" = "Betrete eine teilnehmende Filiale, starte den Einkauf und halte den Barcode eines Artikels vor die Kamera. Der Rest erklärt sich von selbst.";
+"Onboarding.message2" = "Betrete eine teilnehmende Filiale, starte den Einkauf und halte den Barcode eines Artikels vor die Kamera. Der Rest erklärt sich von selbst.";
 
-"Sample.Onboarding.message3" = "Bitte akzeptiere die Nutzungsbedingungen und lies die Datenschutzhinweise.";
+"Onboarding.message3" = "Bitte akzeptiere die Nutzungsbedingungen und lies die Datenschutzhinweise.";
 
-"Sample.profile" = "Profil";
+"profile" = "Profil";
 
-"Sample.scanner" = "Scanner";
+"Profile.deleteAccount" = "Account löschen";
 
-"Sample.Section.Profile.deleteAccount" = "Account löschen";
+"Profile.header" = "Dein Profil";
 
-"Sample.Section.Profile.header" = "Dein Profil";
+"Profile.paymentMethods" = "Bezahlverfahren";
 
-"Sample.Section.Profile.paymentMethods" = "Bezahlverfahren";
+"Profile.saveEnergy" = "Strom sparen";
 
-"Sample.Section.Profile.saveEnergy" = "Strom sparen";
+"Profile.showOnboarding" = "Zeige Onboarding";
 
-"Sample.Section.Profile.showOnboarding" = "Zeige Onboarding";
+"scanner" = "Scanner";
 
-"Sample.shoppingCart" = "Warenkorb";
+"shoppingCart" = "Warenkorb";
 
-"Sample.shops" = "Filialen";
+"shops" = "Filialen";
 

@@ -1,13 +1,12 @@
 phrase:
-  project_id: 3e43b3f90cf19e83c7d85652df5766ca
+  project_id: 02f8f3eb9dabfb0aa81565e94a450a78
   pull:
     targets:
     - file: ./Snabble/<locale_name>.lproj/Localizable.strings
       params:
         file_format: strings
-        tags: "Sample"
         encoding: "UTF-8"
-        fallback_locale_id: b220db5757be359631c55ec54fb65ac6
+        fallback_locale_id: 8a496aa8b2a5b608340772cdac21a04f
         include_empty_translations: true
         format_options:
             convert_placeholder: true
@@ -15,9 +14,8 @@ phrase:
     - file: ./Snabble/<locale_name>.lproj/Localizable.stringsdict
       params:
         file_format: stringsdict
-        tags: "Sample"
         encoding: "UTF-8"
-        fallback_locale_id: b220db5757be359631c55ec54fb65ac6
+        fallback_locale_id: 8a496aa8b2a5b608340772cdac21a04f
         include_empty_translations: true
         format_options:
             convert_placeholder: true
