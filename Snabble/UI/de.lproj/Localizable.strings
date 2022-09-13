@@ -1,3 +1,41 @@
+"Sample.Dashboard.button" = "Jetzt starten";
+
+"Sample.Dashboard.Information.text1" = "Hinterlege direkt ein Bezahlverfahren, um schon bei deinem ersten Einkauf ohne Wartezeit einzukaufen.";
+
+"Sample.Dashboard.Information.text2" = "Nutze die Vorteile deiner Kundenkarten automatisch.";
+
+"Sample.Dashboard.text" = "Besuche eine unterstütze Filiale, um mit Snabble einzukaufen!";
+
+"Sample.Dashboard.title" = "Willkommen bei Snabble";
+
+"Sample.home" = "Start";
+
+"Sample.Onboarding.accept" = "Akzeptieren";
+
+"Sample.Onboarding.message1" = "Mit Snabble scannst du deinen Einkauf selbst und bezahlt direkt in der App. Ohne in der Schlange zu stehen und ohne deinen Einkauf auf’s Band zu legen.";
+
+"Sample.Onboarding.message2" = "Betrete eine teilnehmende Filiale, starte den Einkauf und halte den Barcode eines Artikels vor die Kamera. Der Rest erklärt sich von selbst.";
+
+"Sample.Onboarding.message3" = "Bitte akzeptiere die Nutzungsbedingungen und lies die Datenschutzhinweise.";
+
+"Sample.profile" = "Profil";
+
+"Sample.scanner" = "Scanner";
+
+"Sample.Section.Profile.deleteAccount" = "Account löschen";
+
+"Sample.Section.Profile.header" = "Dein Profil";
+
+"Sample.Section.Profile.paymentMethods" = "Bezahlverfahren";
+
+"Sample.Section.Profile.saveEnergy" = "Strom sparen";
+
+"Sample.Section.Profile.showOnboarding" = "Zeige Onboarding";
+
+"Sample.shoppingCart" = "Warenkorb";
+
+"Sample.shops" = "Filialen";
+
 "Snabble.addDiscount" = "Rabatt eingeben";
 
 "Snabble.AgeVerification.explanation" = "Für den Kauf bestimmter Artikel, wie z.B. Alkohol, ist ein Altersnachweis notwendig. Gib dazu die 7-stellige Zahl von der Rückseite deines Personalausweises ein.";
@@ -87,6 +125,8 @@
 "Snabble.DynamicView.lastPurchases" = "Deine letzten Einkäufe";
 
 "Snabble.DynamicView.LastPurchases.all" = "Alle";
+
+"Snabble.DynamicView.LocationPermission.notDetermined" = "Standort freigeben";
 
 "Snabble.DynamicView.Shop.show" = "Filialen anzeigen";
 

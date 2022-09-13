@@ -6,30 +6,30 @@
         {
             "type": "section",
             "id": "1",
-            "header": "Sample.Section.Profile.header",
+            "header": "Profile.header",
             "items" : [
                 {
                     "type": "text",
                     "id": "1",
-                    "text": "Sample.Section.Profile.paymentMethods",
+                    "text": "Profile.paymentMethods",
                     "showDisclosure": true
                 },
                 {
                     "type": "toggle",
                     "id": "2",
-                    "text": "Sample.Section.Profile.saveEnergy",
+                    "text": "Profile.saveEnergy",
                     "key": "io.snabble.sample.saveEnergy"
                 },
                 {
                     "type": "toggle",
                     "id": "3",
-                    "text": "Sample.Section.Profile.showOnboarding",
+                    "text": "Profile.showOnboarding",
                     "key": "io.snabble.sample.showOnboarding"
                 },
                 {
                     "type": "button",
                     "id": "4",
-                    "text": "Sample.Section.Profile.deleteAccount",
+                    "text": "Profile.deleteAccount",
                 }
             ]
         }

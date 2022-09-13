@@ -14,7 +14,7 @@
       {
           "type": "text",
           "id": "2",
-          "text": "Sample.Dashboard.title",
+          "text": "Dashboard.title",
           "textColor": "accent",
           "textStyle": "title",
           "spacing": 4
@@ -22,7 +22,7 @@
       {
           "type": "text",
           "id": "3",
-          "text": "Sample.Dashboard.text",
+          "text": "Dashboard.text",
           "spacing": 32
       },
       {
@@ -32,21 +32,21 @@
       {
           "type": "button",
           "id": "4",
-          "text": "Sample.Dashboard.button",
+          "text": "Dashboard.button",
           "foregroundColor": "onAccent",
           "backgroundColor": "accent"
       },
       {
           "type": "button",
           "id": "8",
-          "text": "Sample.Dashboard.button",
+          "text": "Dashboard.button",
           "spacing": 16
       },
       {
           "type": "information",
           "id": "5",
           "image": "Dashboard/Information.image1",
-          "text": "Sample.Dashboard.Information.text1",
+          "text": "Dashboard.Information.text1",
           "hideable": true,
           "spacing": 16,
       },
@@ -54,7 +54,7 @@
           "type": "information",
           "id": "6",
           "image": "Dashboard/Information.image2",
-          "text": "Sample.Dashboard.Information.text2",
+          "text": "Dashboard.Information.text2",
           "hideable": true,
           "spacing": 32,
       },

@@ -14,7 +14,7 @@ final class DashboardViewController: SnabbleSDK.DynamicViewController {
     override init(viewModel: DynamicViewModel) {
         super.init(viewModel: viewModel)
 
-        title = NSLocalizedString("Sample.home", comment: "")
+        title = NSLocalizedString("home", comment: "")
 
         tabBarItem.image = UIImage(named: "Navigation/TabBar/home-off")
         tabBarItem.selectedImage = UIImage(named: "Navigation/TabBar/home-on")

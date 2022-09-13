@@ -13,7 +13,7 @@ final class ShopsViewController: SnabbleSDK.ShopsViewController {
     override init(shops: [ShopProviding]) {
         super.init(shops: shops)
 
-        self.title = NSLocalizedString("Sample.shops", comment: "")
+        self.title = NSLocalizedString("shops", comment: "")
         self.tabBarItem.image = UIImage(named: "Navigation/TabBar/shops-off")
         self.tabBarItem.selectedImage = UIImage(systemName: "Navigation/TabBar/shops-on")
     }

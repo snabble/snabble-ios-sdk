@@ -1,38 +1,38 @@
-"Sample.Dashboard.button" = "Start now";
+"Dashboard.button" = "Start now";
 
-"Sample.Dashboard.Information.text1" = "You can choose a payment method directly to make your first purchase without having to wait.";
+"Dashboard.Information.text1" = "Ulož priamo spôsob platby, aby si sa už pri prvom nákupe mohol/mohla vyhnúť radám pri pokladni.";
 
-"Sample.Dashboard.Information.text2" = "Take advantage of your store cards automatically.";
+"Dashboard.Information.text2" = "Využi automaticky výhody svojej zákazníckej karty.";
 
-"Sample.Dashboard.text" = "Visit a supported store to shop with Snabble!";
+"Dashboard.text" = "Pre nákup so Snabble navštív niektorý z podporovaných obchodov!";
 
-"Sample.Dashboard.title" = "Welcome to Snabble";
+"Dashboard.title" = "Vitaj v Snabble";
 
-"Sample.home" = "Štart";
+"home" = "Štart";
 
-"Sample.Onboarding.accept" = "Prijať";
+"Onboarding.accept" = "Prijať";
 
-"Sample.Onboarding.message1" = "So Snabble naskenuješ svoj nákup sám/sama a zaplatíš priamo v aplikácii. Bez vystávania v rade a vykladania tvojho nákupu na pás.";
+"Onboarding.message1" = "So Snabble naskenuješ svoj nákup sám/sama a zaplatíš priamo v aplikácii. Bez vystávania v rade a vykladania tvojho nákupu na pás.";
 
-"Sample.Onboarding.message2" = "Navštív niektorý zo zapojených obchodov, začni nakupovať a prilož kameru k čiarovým kódom tovarov. Ostatné už ide samé.";
+"Onboarding.message2" = "Navštív niektorý zo zapojených obchodov, začni nakupovať a prilož kameru k čiarovým kódom tovarov. Ostatné už ide samé.";
 
-"Sample.Onboarding.message3" = "Prosím, akceptuj podmienky používania a prečítaj si pravidlá ochrany údajov.";
+"Onboarding.message3" = "Prosím, akceptuj podmienky používania a prečítaj si pravidlá ochrany údajov.";
 
-"Sample.profile" = "Profile";
+"profile" = "Profil";
 
-"Sample.scanner" = "Skener";
+"Profile.deleteAccount" = "Vymazať konto";
 
-"Sample.Section.Profile.deleteAccount" = "Delete Account";
+"Profile.header" = "Tvoj profil";
 
-"Sample.Section.Profile.header" = "Your Profile";
+"Profile.paymentMethods" = "Spôsob platby";
 
-"Sample.Section.Profile.paymentMethods" = "Payment Methods";
+"Profile.saveEnergy" = "Šetrenie batérie";
 
-"Sample.Section.Profile.saveEnergy" = "Save energy";
+"Profile.showOnboarding" = "Zobraz Onboarding";
 
-"Sample.Section.Profile.showOnboarding" = "Show Onboarding";
+"scanner" = "Skener";
 
-"Sample.shoppingCart" = "Košík";
+"shoppingCart" = "Košík";
 
-"Sample.shops" = "Obchody";
+"shops" = "Obchody";
 
