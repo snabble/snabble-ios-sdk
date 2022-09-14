@@ -1,5 +1,5 @@
 //
-//  WidgetLocationPermissionView.swift
+//  WidgetButtonLocationPermissionView.swift
 //  Snabble
 //
 //  Created by Andreas Osberghaus on 12.09.22.
@@ -83,8 +83,8 @@ extension LocationPermissionViewModel: CLLocationManagerDelegate {
     }
 }
 
-public struct WidgetLocationPermissionView: View {
-    let widget: Widget
+public struct WidgetButtonLocationPermissionView: View {
+    let widget: WidgetButtonLocationPermission
 
     @ObservedObject private var viewModel = LocationPermissionViewModel()
     

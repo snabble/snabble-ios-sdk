@@ -18,64 +18,19 @@ public struct WidgetView: View {
             Group {
                 switch widget.type {
                 case .image:
-                    if let widget = widget as? WidgetImage {
-                        WidgetImageView(
-                            widget: widget
-                        )
-                        .onTapGesture {
-                            viewModel.actionPublisher.send(.init(widget: widget))
-                        }
-                    }
+                    image
                 case .text:
-                    if let widget = widget as? WidgetText {
-                        WidgetTextView(
-                            widget: widget
-                        )
-                        .onTapGesture {
-                            viewModel.actionPublisher.send(.init(widget: widget))
-                        }
-                    }
+                    text
                 case .button:
-                    if let widget = widget as? WidgetButton {
-                        WidgetButtonView(
-                            widget: widget
-                        ) {
-                            viewModel.actionPublisher.send(.init(widget: $0))
-                        }
-                    }
+                    button
                 case .information:
-                    if let widget = widget as? WidgetInformation {
-                        WidgetInformationView(
-                            widget: widget,
-                            shadowRadius: viewModel.configuration.shadowRadius
-                        )
-                        .onTapGesture {
-                            viewModel.actionPublisher.send(.init(widget: widget))
-                        }
-                    }
+                    information
                 case .purchases:
-                    if let widget = widget as? WidgetPurchase {
-                        WidgetPurchasesView(
-                            widget: widget,
-                            shadowRadius: viewModel.configuration.shadowRadius,
-                            action: {
-                                viewModel.actionPublisher.send($0)
-                            }
-                        )
-                    }
+                    lastPurchases
                 case .toggle:
-                    if let widget = widget as? WidgetToggle {
-                        WidgetToggleView(
-                            widget: widget,
-                            action: {
-                                viewModel.actionPublisher.send($0)
-                            }
-                        )
-                    }
-                case .locationPermission:
-                    if let widget = widget as? WidgetLocationPermission {
-                        WidgetLocationPermissionView(widget: widget)
-                    }
+                    toggle
+                case .buttonLocationPermission:
+                    buttonLocationPermission
                 case .section:
                     EmptyView()
                 }
@@ -83,6 +38,87 @@ public struct WidgetView: View {
                     Spacer(minLength: spacing)
                 }
             }
+        }
+    }
+
+    @ViewBuilder
+    var image: some View {
+        if let widget = widget as? WidgetImage {
+            WidgetImageView(
+                widget: widget
+            )
+            .onTapGesture {
+                viewModel.actionPublisher.send(.init(widget: widget))
+            }
+        }
+    }
+
+    @ViewBuilder
+    var text: some View {
+        if let widget = widget as? WidgetText {
+            WidgetTextView(
+                widget: widget
+            )
+            .onTapGesture {
+                viewModel.actionPublisher.send(.init(widget: widget))
+            }
+        }
+    }
+
+    @ViewBuilder
+    var button: some View {
+        if let widget = widget as? WidgetButton {
+            WidgetButtonView(
+                widget: widget,
+                action: { widget in
+                    viewModel.actionPublisher.send(.init(widget: widget))
+                }
+            )
+        }
+    }
+
+    @ViewBuilder
+    var information: some View {
+        if let widget = widget as? WidgetInformation {
+            WidgetInformationView(
+                widget: widget,
+                shadowRadius: viewModel.configuration.shadowRadius
+            )
+            .onTapGesture {
+                viewModel.actionPublisher.send(.init(widget: widget))
+            }
+        }
+    }
+
+    @ViewBuilder
+    var lastPurchases: some View {
+        if let widget = widget as? WidgetPurchase {
+            WidgetPurchasesView(
+                widget: widget,
+                shadowRadius: viewModel.configuration.shadowRadius,
+                action: { action in
+                    viewModel.actionPublisher.send(action)
+                }
+            )
+        }
+    }
+
+    @ViewBuilder
+    var toggle: some View {
+        if let widget = widget as? WidgetToggle {
+            WidgetToggleView(
+                widget: widget,
+                action: { action in
+                    viewModel.actionPublisher.send(action)
+                }
+            )
+        }
+    }
+
+    @ViewBuilder
+    var buttonLocationPermission: some View {
+        if let widget = widget as? WidgetButtonLocationPermission {
+            WidgetButtonLocationPermissionView(widget: widget)
         }
     }
 }

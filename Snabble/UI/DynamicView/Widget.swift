@@ -22,7 +22,7 @@ public enum WidgetType: String, Decodable {
     case information
     case purchases
     case section
-    case locationPermission
+    case buttonLocationPermission
     case toggle
 }
 
@@ -234,9 +234,9 @@ public struct WidgetSection: Widget {
     }
 }
 
-public struct WidgetLocationPermission: Widget {
+public struct WidgetButtonLocationPermission: Widget {
     public let id: String
-    public let type: WidgetType = .locationPermission
+    public let type: WidgetType = .buttonLocationPermission
     public var spacing: CGFloat?
 
     public init(
