@@ -11,7 +11,7 @@ import Combine
 import CoreLocation
 
 public class LocationPermissionViewModel: NSObject, ObservableObject {
-    @Published public private(set) var widgets: [Widget] = []
+    @Published public private(set) var widget: WidgetButton?
 
     @Published public var permissionDeniedOrRestricted: Bool = false
     @Published public var reducedAccuracy: Bool = false
@@ -27,23 +27,21 @@ public class LocationPermissionViewModel: NSObject, ObservableObject {
     private func update(with authorizationStatus: CLAuthorizationStatus) {
         switch authorizationStatus {
         case .authorizedAlways, .authorizedWhenInUse:
-            widgets = []
+            widget = nil
             permissionDeniedOrRestricted = false
         case .notDetermined:
-            widgets = [
-                WidgetButton(
-                    id: "Snabble.LocationPermission.notDetermined",
-                    text: "Snabble.DynamicView.LocationPermission.notDetermined",
-                    foregroundColorSource: "onAccent",
-                    backgroundColorSource: "accent"
-                )
-            ]
+            widget = WidgetButton(
+                id: "Snabble.LocationPermission.notDetermined",
+                text: "Snabble.DynamicView.LocationPermission.notDetermined",
+                foregroundColorSource: "onAccent",
+                backgroundColorSource: "accent"
+            )
             permissionDeniedOrRestricted = false
         case .denied, .restricted:
-            widgets = []
+            widget = nil
             permissionDeniedOrRestricted = true
         @unknown default:
-            widgets = []
+            widget = nil
             permissionDeniedOrRestricted = false
         }
     }
@@ -84,51 +82,49 @@ extension LocationPermissionViewModel: CLLocationManagerDelegate {
 }
 
 public struct WidgetButtonLocationPermissionView: View {
-    let widget: WidgetButtonLocationPermission
+    @ObservedObject private var viewModel: LocationPermissionViewModel
 
-    @ObservedObject private var viewModel = LocationPermissionViewModel()
+    init(viewModel: LocationPermissionViewModel = .init()) {
+        self.viewModel = viewModel
+    }
     
     public var body: some View {
-        VStack {
-            ForEach(viewModel.widgets, id: \.id) { widget in
-                if let buttonWidget = widget as? WidgetButton {
-                    WidgetButtonView(widget: buttonWidget) {
-                        viewModel.action(for: $0)
-                    }
-                }
+        if let widget = viewModel.widget {
+            WidgetButtonView(widget: widget) {
+                viewModel.action(for: $0)
             }
-        }
-        .alert(isPresented: $viewModel.permissionDeniedOrRestricted) {
-            Alert(
-                title: Text(keyed: "Snabble.DynamicView.LocationPermission.MissingPermission.title"),
-                message: Text(keyed: "Snabble.DynamicView.LocationPermission.MissingPermission.message"),
-                primaryButton:
-                        .default(
-                            Text(keyed: "Snabble.DynamicView.LocationPermission.openSettings"),
-                            action: {
-                                viewModel.openSettings()
-                            }),
-                secondaryButton:
-                        .cancel(
-                            Text(keyed: "Snabble.DynamicView.LocationPermission.notNow")
-                        )
-            )
-        }
-        .alert(isPresented: $viewModel.reducedAccuracy) {
-            Alert(
-                title: Text(keyed: "Snabble.DynamicView.LocationPermission.ReducedAccuracy.title"),
-                message: Text(keyed: "Snabble.DynamicView.LocationPermission.ReducedAccuracy.message"),
-                primaryButton:
-                        .default(
-                            Text(keyed: "Snabble.DynamicView.LocationPermission.openSettings"),
-                            action: {
-                                viewModel.openSettings()
-                            }),
-                secondaryButton:
-                        .cancel(
-                            Text(keyed: "Snabble.DynamicView.LocationPermission.notNow")
-                        )
-            )
+            .alert(isPresented: $viewModel.permissionDeniedOrRestricted) {
+                Alert(
+                    title: Text(keyed: "Snabble.DynamicView.LocationPermission.MissingPermission.title"),
+                    message: Text(keyed: "Snabble.DynamicView.LocationPermission.MissingPermission.message"),
+                    primaryButton:
+                            .default(
+                                Text(keyed: "Snabble.DynamicView.LocationPermission.openSettings"),
+                                action: {
+                                    viewModel.openSettings()
+                                }),
+                    secondaryButton:
+                            .cancel(
+                                Text(keyed: "Snabble.DynamicView.LocationPermission.notNow")
+                            )
+                )
+            }
+            .alert(isPresented: $viewModel.reducedAccuracy) {
+                Alert(
+                    title: Text(keyed: "Snabble.DynamicView.LocationPermission.ReducedAccuracy.title"),
+                    message: Text(keyed: "Snabble.DynamicView.LocationPermission.ReducedAccuracy.message"),
+                    primaryButton:
+                            .default(
+                                Text(keyed: "Snabble.DynamicView.LocationPermission.openSettings"),
+                                action: {
+                                    viewModel.openSettings()
+                                }),
+                    secondaryButton:
+                            .cancel(
+                                Text(keyed: "Snabble.DynamicView.LocationPermission.notNow")
+                            )
+                )
+            }
         }
     }
 }

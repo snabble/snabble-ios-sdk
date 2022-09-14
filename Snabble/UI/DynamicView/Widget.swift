@@ -16,13 +16,12 @@ public protocol Widget: Decodable {
 }
 
 public enum WidgetType: String, Decodable {
+    case snabble
     case text
     case image
     case button
     case information
-    case purchases
     case section
-    case buttonLocationPermission
     case toggle
 }
 
@@ -146,29 +145,6 @@ public struct WidgetInformation: Widget, ImageSourcing {
     }
 }
 
-public struct WidgetPurchase: Widget {
-    public let id: String
-    public let type: WidgetType = .purchases
-    public let projectId: Identifier<Project>
-    public let spacing: CGFloat?
-
-    init(
-        id: String,
-        projectId: Identifier<Project>,
-        spacing: CGFloat? = nil
-    ) {
-        self.id = id
-        self.projectId = projectId
-        self.spacing = spacing
-    }
-
-    enum CodingKeys: String, CodingKey {
-        case id
-        case projectId
-        case spacing
-    }
-}
-
 public struct WidgetToggle: Widget {
     public let id: String
     public let type: WidgetType = .toggle
@@ -234,21 +210,25 @@ public struct WidgetSection: Widget {
     }
 }
 
-public struct WidgetButtonLocationPermission: Widget {
+public struct WidgetSnabble: Widget {
     public let id: String
-    public let type: WidgetType = .buttonLocationPermission
+    public let type: WidgetType = .snabble
+    public let projectId: Identifier<Project>?
     public var spacing: CGFloat?
 
     public init(
         id: String,
+        projectId: Identifier<Project>? = nil,
         spacing: CGFloat? = nil
     ) {
         self.id = id
+        self.projectId = projectId
         self.spacing = spacing
     }
 
     enum CodingKeys: String, CodingKey {
         case id
+        case projectId
         case spacing
     }
 }

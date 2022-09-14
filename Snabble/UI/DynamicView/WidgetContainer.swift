@@ -25,12 +25,10 @@ public struct WidgetView: View {
                     button
                 case .information:
                     information
-                case .purchases:
-                    lastPurchases
                 case .toggle:
                     toggle
-                case .buttonLocationPermission:
-                    buttonLocationPermission
+                case .snabble:
+                    snabble
                 case .section:
                     EmptyView()
                 }
@@ -90,18 +88,18 @@ public struct WidgetView: View {
         }
     }
 
-    @ViewBuilder
-    var lastPurchases: some View {
-        if let widget = widget as? WidgetPurchase {
-            WidgetPurchasesView(
-                widget: widget,
-                shadowRadius: viewModel.configuration.shadowRadius,
-                action: { action in
-                    viewModel.actionPublisher.send(action)
-                }
-            )
-        }
-    }
+//    @ViewBuilder
+//    var lastPurchases: some View {
+//        if let widget = widget as? WidgetPurchase {
+//            WidgetPurchasesView(
+//                widget: widget,
+//                shadowRadius: viewModel.configuration.shadowRadius,
+//                action: { action in
+//                    viewModel.actionPublisher.send(action)
+//                }
+//            )
+//        }
+//    }
 
     @ViewBuilder
     var toggle: some View {
@@ -116,9 +114,22 @@ public struct WidgetView: View {
     }
 
     @ViewBuilder
-    var buttonLocationPermission: some View {
-        if let widget = widget as? WidgetButtonLocationPermission {
-            WidgetButtonLocationPermissionView(widget: widget)
+    var snabble: some View {
+        if let widget = widget as? WidgetSnabble {
+            switch widget.id {
+            case "io.snabble.dynamicView.locationPermission":
+                WidgetButtonLocationPermissionView()
+            case "io.snabble.dynamicView.lastPurchases":
+                WidgetPurchasesView(
+                    widget: widget,
+                    shadowRadius: viewModel.configuration.shadowRadius,
+                    action: { action in
+                        viewModel.actionPublisher.send(action)
+                    }
+                )
+            default:
+                EmptyView()
+            }
         }
     }
 }

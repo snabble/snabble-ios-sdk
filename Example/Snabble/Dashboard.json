@@ -26,8 +26,8 @@
           "spacing": 32
       },
       {
-          "type": "buttonLocationPermission",
-          "id": "134"
+          "type": "snabble",
+          "id": "io.snabble.dynamicView.locationPermission",
       },
       {
           "type": "button",
@@ -59,8 +59,8 @@
           "spacing": 32,
       },
       {
-          "type": "purchases",
-          "id": "7",
+          "type": "snabble",
+          "id": "io.snabble.dynamicView.lastPurchases",
           "projectId": "snabble-sdk-demo-beem8n"
       }
   ]

@@ -14,6 +14,8 @@ public protocol PurchaseProviding {
     var amount: String { get }
     var time: String { get }
     var date: Date { get }
+
+    var projectId: Identifier<Project> { get }
 }
 
 extension Array where Element == PurchaseProviding {
@@ -25,19 +27,19 @@ extension Array where Element == PurchaseProviding {
 class PurchasesViewModel: ObservableObject, LoadableObject {
     typealias Output = [PurchaseProviding]
 
-    let projectId: Identifier<Project>
-
-    private var project: Project {
-        Snabble.shared.project(for: projectId)!
-    }
+    let projectId: Identifier<Project>?
 
     @Published private(set) var state: LoadingState<[PurchaseProviding]> = .idle
 
-    init(projectId: Identifier<Project>) {
+    init(projectId: Identifier<Project>?) {
         self.projectId = projectId
     }
 
     func load() {
+        guard let projectId = projectId,
+              let project = Snabble.shared.project(for: projectId) else {
+            return state = .empty
+        }
         OrderList.load(project) { [weak self] result in
             if let self = self {
                 do {
@@ -53,19 +55,6 @@ class PurchasesViewModel: ObservableObject, LoadableObject {
             }
         }
     }
-
-    private var numberFormatter: NumberFormatter {
-        let formatter = NumberFormatter()
-        formatter.minimumIntegerDigits = 1
-        formatter.minimumFractionDigits = project.decimalDigits
-        formatter.maximumFractionDigits = project.decimalDigits
-        formatter.locale = Locale(identifier: project.locale)
-        formatter.currencyCode = project.currency
-        formatter.currencySymbol = project.currencySymbol
-        formatter.numberStyle = .currency
-        return formatter
-    }
-
 }
 
 public struct WidgetPurchasesView: View {
@@ -75,7 +64,7 @@ public struct WidgetPurchasesView: View {
 
     @ObservedObject private var viewModel: PurchasesViewModel
 
-    init(widget: WidgetPurchase, shadowRadius: CGFloat, action: @escaping (DynamicAction) -> Void) {
+    init(widget: WidgetSnabble, shadowRadius: CGFloat, action: @escaping (DynamicAction) -> Void) {
         self.widget = widget
         self.action = action
         self.shadowRadius = shadowRadius
@@ -97,8 +86,7 @@ public struct WidgetPurchasesView: View {
                 HStack {
                     ForEach(output.prefix(2), id: \.id) { provider in
                         WidgetOrderView(
-                            provider: provider,
-                            projectId: viewModel.projectId
+                            provider: provider
                         ).onTapGesture {
                             action(.init(widget: widget, userInfo: ["id": provider.id]))
                         }
@@ -114,12 +102,11 @@ public struct WidgetPurchasesView: View {
 
 private struct WidgetOrderView: View {
     let provider: PurchaseProviding
-    let projectId: Identifier<Project>
 
     public var body: some View {
         VStack(alignment: .leading) {
             HStack {
-                if let image = SwiftUI.Image.image(named: "Snabble.DynamicView.LastPurchases.project", domain: projectId) {
+                if let image = SwiftUI.Image.image(named: "Snabble.DynamicView.LastPurchases.project", domain: provider.projectId) {
                     image
                         .resizable()
                         .frame(width: 14, height: 14)
