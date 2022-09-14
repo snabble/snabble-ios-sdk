@@ -12,6 +12,7 @@ import CoreLocation
 
 public class LocationPermissionViewModel: NSObject, ObservableObject {
     @Published public private(set) var widgets: [Widget] = []
+    @Published public var permissionDeniedOrRestricted: Bool = false
 
     let locationManager: CLLocationManager
 
@@ -25,6 +26,7 @@ public class LocationPermissionViewModel: NSObject, ObservableObject {
         switch status {
         case .authorizedAlways, .authorizedWhenInUse:
             widgets = []
+            permissionDeniedOrRestricted = false
         case .notDetermined:
             widgets = [
                 WidgetButton(
@@ -34,6 +36,7 @@ public class LocationPermissionViewModel: NSObject, ObservableObject {
                     backgroundColorSource: "accent"
                 )
             ]
+            permissionDeniedOrRestricted = false
         case .denied, .restricted:
             widgets = [
                 WidgetButton(
@@ -43,13 +46,29 @@ public class LocationPermissionViewModel: NSObject, ObservableObject {
                     backgroundColorSource: "accent"
                 )
             ]
+            permissionDeniedOrRestricted = true
         @unknown default:
             widgets = []
+            permissionDeniedOrRestricted = false
         }
     }
 
     func action(for widget: WidgetButton) {
-        print("foobar")
+        switch widget.id {
+        case "Snabble.LocationPermission.notDetermined":
+            locationManager.requestWhenInUseAuthorization()
+        case "Snabble.LocationPermission.denied-restricted":
+            openSettings()
+        default:
+            break
+        }
+    }
+
+    func openSettings() {
+        let application = UIApplication.shared
+        if let url = URL(string: UIApplication.openSettingsURLString), application.canOpenURL(url) {
+            application.open(url)
+        }
     }
 }
 
@@ -77,6 +96,25 @@ public struct WidgetLocationPermissionView: View {
                     }
                 }
             }
+        }
+        .alert(isPresented: Binding<Bool>(
+            get: { viewModel.permissionDeniedOrRestricted },
+            set: { viewModel.permissionDeniedOrRestricted = $0 }
+        )) {
+            Alert(
+                title: Text(keyed: "Snabble.LocationRequired.MissingPermission.title"),
+                message: Text(keyed: "Snabble.LocationRequired.MissingPermission.message"),
+                primaryButton:
+                        .default(
+                            Text(keyed: "Snabble.LocationRequired.openSettings"),
+                            action: {
+                                viewModel.openSettings()
+                            }),
+                secondaryButton:
+                        .cancel(
+                            Text(keyed: "Snabble.LocationRequired.notNow")
+                        )
+            )
         }
     }
 }

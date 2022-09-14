@@ -72,7 +72,11 @@ public struct WidgetView: View {
                             }
                         )
                     }
-                case .section, .locationPermission:
+                case .locationPermission:
+                    if let widget = widget as? WidgetLocationPermission {
+                        WidgetLocationPermissionView(widget: widget)
+                    }
+                case .section:
                     EmptyView()
                 }
                 if let spacing = widget.spacing ?? viewModel.configuration.spacing {
