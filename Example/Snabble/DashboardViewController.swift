@@ -29,13 +29,6 @@ final class DashboardViewController: SnabbleSDK.DynamicViewController {
 
 extension DashboardViewController: SnabbleSDK.DynamicViewControllerDelegate {
     func dynamicStackViewController(_ viewController: DynamicViewController, tappedWidget widget: Widget, userInfo: [String: Any]?) {
-        switch widget.id {
-        case "Snabble.LocationPermission.notDetermined":
-            CLLocationManager().requestWhenInUseAuthorization()
-        case "Snabble.LocationPermission.denied-restricted":
-            CLLocationManager().requestLocationPermission(on: self)
-        default:
-            break
-        }
+        print(widget)
     }
 }
