@@ -277,8 +277,11 @@ public struct WidgetConnectWifi: Widget {
         guard let shop = Snabble.shared.checkInManager.shop else {
             return false
         }
+#if DEBUG
         // return true for testing widget
         return true
-//        return shop.customerNetworks?.isEmpty == false
+#else
+        return shop.customerNetworks?.isEmpty == false
+#endif
     }
 }
