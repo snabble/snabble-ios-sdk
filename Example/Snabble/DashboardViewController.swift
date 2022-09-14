@@ -33,6 +33,8 @@ extension DashboardViewController: SnabbleSDK.DynamicViewControllerDelegate {
         switch widget.id {
         case "io.snabble.dynamicView.startShopping":
             tabBarController?.selectedIndex = 1
+        case "io.snabble.dynamicView.stores":
+            tabBarController?.selectedIndex = 2
         default:
             break
         }

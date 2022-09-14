@@ -96,7 +96,9 @@
 
 "Snabble.DynamicView.Button.LocationPermission.ReducedAccuracy.title" = "Snabble benötigt deinen genauen Standort, um zu erkennen in welchem Shop du gerade einkaufst";
 
-"Snabble.DynamicView.Button.startshopping" = "Einkaufen beginnen";
+"Snabble.DynamicView.Button.startshopping" = "Jetzt hier einkaufen";
+
+"Snabble.DynamicView.Button.stores" = "Alle Filialen ansehen";
 
 "Snabble.DynamicView.lastPurchase" = "Dein letzter Einkauf";
 

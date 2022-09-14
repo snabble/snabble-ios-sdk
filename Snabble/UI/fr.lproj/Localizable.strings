@@ -98,6 +98,8 @@
 
 "Snabble.DynamicView.Button.startshopping" = "Start shopping";
 
+"Snabble.DynamicView.Button.stores" = "See all stores";
+
 "Snabble.DynamicView.lastPurchase" = "Votre dernier achat";
 
 "Snabble.DynamicView.lastPurchases" = "Vos derniers achats";

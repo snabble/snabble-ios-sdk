@@ -34,10 +34,8 @@
           "id": "io.snabble.dynamicView.startShopping",
       },
       {
-          "type": "button",
-          "id": "8",
-          "text": "Dashboard.button",
-          "spacing": 16
+          "type": "snabble",
+          "id": "io.snabble.dynamicView.stores",
       },
       {
           "type": "information",
