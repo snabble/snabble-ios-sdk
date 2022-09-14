@@ -13,26 +13,31 @@ public struct WidgetConnectWifiView: View {
 
     @ViewBuilder
     var image: some View {
-        if let image = widget.image {
+        if let image: SwiftUI.Image = Asset.image(named: "Snabble.DynamicView.wifi" ) {
             image
-                .renderingMode(.template)
+        } else {
+            Asset.image(named: "wifi")
                 .foregroundColor(.accent())
+                .font(.title)
+        }
+    }
+
+
+    public var body: some View {
+        if widget.isVisible {
+            HStack(alignment: .center) {
+                Text(keyed: "Snabble.DynamicView.wifi")
+                    .font(.subheadline)
+                Spacer()
+                image
+            }
+            .informationStyle()
+            .onTapGesture {
+                viewModel.actionPublisher.send(.init(widget: widget))
+            }
+            .shadow(radius: viewModel.configuration.shadowRadius)
         } else {
             EmptyView()
         }
-    }
-    
-    public var body: some View {
-        HStack(alignment: .center) {
-            Text(keyed: widget.text)
-                .font(.subheadline)
-            Spacer()
-            image
-        }
-        .informationStyle()
-        .onTapGesture {
-            viewModel.actionPublisher.send(.init(widget: widget))
-        }
-        .shadow(radius: viewModel.configuration.shadowRadius)
     }
 }

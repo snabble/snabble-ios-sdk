@@ -45,8 +45,6 @@
       {
           "type": "connectWifi",
           "id": "4711",
-          "text": "Dashboard.ConnectWifi.text",
-          "image": "Dashboard/ConnectWifi.image",
           "spacing": 16,
       },
       {

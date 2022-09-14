@@ -255,30 +255,30 @@ public struct WidgetLocationPermission: Widget {
 }
 
 /// type is `connectWifi`
-public struct WidgetConnectWifi: Widget, ImageSourcing {
+public struct WidgetConnectWifi: Widget {
     public let id: String
     public let type: WidgetType = .connectWifi
-    public let text: String
-    public let imageSource: String?
     public var spacing: CGFloat?
     
     public init(
         id: String,
-        text: String,
-        imageSource: String? = nil,
         spacing: CGFloat? = nil
     ) {
         self.id = id
-        self.text = text
-        self.imageSource = imageSource
         self.spacing = spacing
     }
 
     enum CodingKeys: String, CodingKey {
         case id
-        case text
-        case imageSource = "image"
         case spacing
     }
-
+    
+    public var isVisible: Bool {
+        guard let shop = Snabble.shared.checkInManager.shop else {
+            return false
+        }
+        // return true for testing widget
+        return true
+//        return shop.customerNetworks?.isEmpty == false
+    }
 }
