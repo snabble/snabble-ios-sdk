@@ -1,5 +1,7 @@
 "Dashboard.button" = "Start now";
 
+"Dashboard.ConnectWifi.text" = "Connect to free WiFi";
+
 "Dashboard.Information.text1" = "A fizetési módot közvetlenül elmentheted, így már az első vásárlásodnál is várakozási idő nélkül vásárolhatsz.";
 
 "Dashboard.Information.text2" = "Használd ki automatikusan az ügyfélkártyáid nyújtotta előnyöket.";

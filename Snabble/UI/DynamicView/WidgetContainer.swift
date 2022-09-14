@@ -29,6 +29,10 @@ public struct WidgetView: View {
                     if let widget = widget as? WidgetButton {
                         WidgetButtonView(widget: widget, viewModel: viewModel)
                     }
+                case .connectWifi:
+                    if let widget = widget as? WidgetConnectWifi {
+                        WidgetConnectWifiView(widget: widget, viewModel: viewModel)
+                    }
                 case .information:
                     if let widget = widget as? WidgetInformation {
                         WidgetInformationView(widget: widget, viewModel: viewModel)

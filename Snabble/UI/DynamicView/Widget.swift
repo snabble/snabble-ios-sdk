@@ -19,6 +19,7 @@ public enum WidgetType: String, Decodable {
     case text
     case image
     case button
+    case connectWifi
     case information
     case purchases
     case section
@@ -251,4 +252,33 @@ public struct WidgetLocationPermission: Widget {
         case id
         case spacing
     }
+}
+
+/// type is `connectWifi`
+public struct WidgetConnectWifi: Widget, ImageSourcing {
+    public let id: String
+    public let type: WidgetType = .connectWifi
+    public let text: String
+    public let imageSource: String?
+    public var spacing: CGFloat?
+    
+    public init(
+        id: String,
+        text: String,
+        imageSource: String? = nil,
+        spacing: CGFloat? = nil
+    ) {
+        self.id = id
+        self.text = text
+        self.imageSource = imageSource
+        self.spacing = spacing
+    }
+
+    enum CodingKeys: String, CodingKey {
+        case id
+        case text
+        case imageSource = "image"
+        case spacing
+    }
+
 }

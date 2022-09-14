@@ -72,6 +72,8 @@ struct WidgetWrapper: Decodable {
             value = try WidgetImage(from: decoder)
         case .button:
             value = try WidgetButton(from: decoder)
+        case .connectWifi:
+            value = try WidgetConnectWifi(from: decoder)
         case .information:
             value = try WidgetInformation(from: decoder)
         case .purchases:
