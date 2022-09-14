@@ -27,12 +27,26 @@ extension Array where Element == PurchaseProviding {
 class PurchasesViewModel: ObservableObject, LoadableObject {
     typealias Output = [PurchaseProviding]
 
-    let projectId: Identifier<Project>?
-
+    @Published private(set) var projectId: Identifier<Project>? {
+        didSet {
+            load()
+        }
+    }
     @Published private(set) var state: LoadingState<[PurchaseProviding]> = .idle
+
+    private var cancellables = Set<AnyCancellable>()
 
     init(projectId: Identifier<Project>?) {
         self.projectId = projectId
+
+        if projectId == nil {
+            Snabble.shared.checkInManager.shopPublisher
+                .sink { [weak self] shop in
+                    self?.projectId = shop?.projectId
+                }
+                .store(in: &cancellables)
+        }
+
     }
 
     func load() {
