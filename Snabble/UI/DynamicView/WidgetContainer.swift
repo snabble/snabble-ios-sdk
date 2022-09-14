@@ -88,19 +88,6 @@ public struct WidgetView: View {
         }
     }
 
-//    @ViewBuilder
-//    var lastPurchases: some View {
-//        if let widget = widget as? WidgetPurchase {
-//            WidgetPurchasesView(
-//                widget: widget,
-//                shadowRadius: viewModel.configuration.shadowRadius,
-//                action: { action in
-//                    viewModel.actionPublisher.send(action)
-//                }
-//            )
-//        }
-//    }
-
     @ViewBuilder
     var toggle: some View {
         if let widget = widget as? WidgetToggle {
