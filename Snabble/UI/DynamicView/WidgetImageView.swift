@@ -9,12 +9,8 @@ import SwiftUI
 
 public struct WidgetImageView: View {
     let widget: WidgetImage
-    @ObservedObject var viewModel: DynamicViewModel
 
     public var body: some View {
         widget.image
-            .onTapGesture {
-                viewModel.actionPublisher.send(.init(widget: widget))
-            }
     }
 }

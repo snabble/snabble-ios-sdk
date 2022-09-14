@@ -32,7 +32,6 @@ private struct NavigationWidget: ViewModifier {
 
 public struct WidgetTextView: View {
     var widget: WidgetText
-    @ObservedObject var viewModel: DynamicViewModel
 
     public var body: some View {
         HStack {
@@ -42,9 +41,6 @@ public struct WidgetTextView: View {
             Spacer()
         }
         .modifier(NavigationWidget(text: Asset.localizedString(forKey: widget.text), active: widget.showDisclosure ?? false))
-        .onTapGesture {
-            viewModel.actionPublisher.send(.init(widget: widget))
-        }
     }
 }
 
