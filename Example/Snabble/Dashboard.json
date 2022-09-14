@@ -36,6 +36,7 @@
       {
           "type": "snabble",
           "id": "io.snabble.dynamicView.stores",
+          "spacing": 16
       },
       {
           "type": "information",
