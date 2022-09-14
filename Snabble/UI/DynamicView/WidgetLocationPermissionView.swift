@@ -98,10 +98,7 @@ public struct WidgetLocationPermissionView: View {
                 }
             }
         }
-        .alert(isPresented: Binding<Bool>(
-            get: { viewModel.permissionDeniedOrRestricted },
-            set: { viewModel.permissionDeniedOrRestricted = $0 }
-        )) {
+        .alert(isPresented: $viewModel.permissionDeniedOrRestricted) {
             Alert(
                 title: Text(keyed: "Snabble.DynamicView.LocationPermission.MissingPermission.title"),
                 message: Text(keyed: "Snabble.DynamicView.LocationPermission.MissingPermission.message"),
@@ -117,10 +114,7 @@ public struct WidgetLocationPermissionView: View {
                         )
             )
         }
-        .alert(isPresented: Binding<Bool>(
-            get: { viewModel.reducedAccuracy },
-            set: { viewModel.reducedAccuracy = $0 }
-        )) {
+        .alert(isPresented: $viewModel.reducedAccuracy) {
             Alert(
                 title: Text(keyed: "Snabble.DynamicView.LocationPermission.ReducedAccuracy.title"),
                 message: Text(keyed: "Snabble.DynamicView.LocationPermission.ReducedAccuracy.message"),
