@@ -12,6 +12,7 @@ import CoreLocation
 
 public class LocationPermissionViewModel: NSObject, ObservableObject {
     @Published public private(set) var widgets: [Widget] = []
+
     @Published public var permissionDeniedOrRestricted: Bool = false
     @Published public var reducedAccuracy: Bool = false
 
@@ -23,8 +24,8 @@ public class LocationPermissionViewModel: NSObject, ObservableObject {
         self.locationManager.delegate = self
     }
 
-    private func update(with status: CLAuthorizationStatus) {
-        switch status {
+    private func update(with authorizationStatus: CLAuthorizationStatus) {
+        switch authorizationStatus {
         case .authorizedAlways, .authorizedWhenInUse:
             widgets = []
             permissionDeniedOrRestricted = false
@@ -39,14 +40,7 @@ public class LocationPermissionViewModel: NSObject, ObservableObject {
             ]
             permissionDeniedOrRestricted = false
         case .denied, .restricted:
-            widgets = [
-                WidgetButton(
-                    id: "Snabble.LocationPermission.denied-restricted",
-                    text: "Snabble.DynamicView.LocationPermission.denied-restricted",
-                    foregroundColorSource: "onAccent",
-                    backgroundColorSource: "accent"
-                )
-            ]
+            widgets = []
             permissionDeniedOrRestricted = true
         @unknown default:
             widgets = []
@@ -54,12 +48,21 @@ public class LocationPermissionViewModel: NSObject, ObservableObject {
         }
     }
 
+    private func update(with accuracyAuthorization: CLAccuracyAuthorization) {
+        switch accuracyAuthorization {
+        case .reducedAccuracy:
+            reducedAccuracy = true
+        case .fullAccuracy:
+            reducedAccuracy = false
+        @unknown default:
+            reducedAccuracy = false
+        }
+    }
+
     func action(for widget: WidgetButton) {
         switch widget.id {
         case "Snabble.LocationPermission.notDetermined":
             locationManager.requestWhenInUseAuthorization()
-        case "Snabble.LocationPermission.denied-restricted":
-            openSettings()
         default:
             break
         }
@@ -76,18 +79,14 @@ public class LocationPermissionViewModel: NSObject, ObservableObject {
 extension LocationPermissionViewModel: CLLocationManagerDelegate {
     public func locationManager(_ manager: CLLocationManager, didChangeAuthorization status: CLAuthorizationStatus) {
         update(with: status)
-        reducedAccuracy = manager.accuracyAuthorization == .reducedAccuracy
+        update(with: manager.accuracyAuthorization)
     }
 }
 
 public struct WidgetLocationPermissionView: View {
     let widget: Widget
 
-    @ObservedObject var viewModel = LocationPermissionViewModel()
-
-    init(widget: Widget) {
-        self.widget = widget
-    }
+    @ObservedObject private var viewModel = LocationPermissionViewModel()
     
     public var body: some View {
         VStack {
