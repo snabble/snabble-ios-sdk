@@ -19,39 +19,60 @@ public struct WidgetView: View {
                 switch widget.type {
                 case .image:
                     if let widget = widget as? WidgetImage {
-                        WidgetImageView(widget: widget, viewModel: viewModel)
+                        WidgetImageView(
+                            widget: widget
+                        )
+                        .onTapGesture {
+                            viewModel.actionPublisher.send(.init(widget: widget))
+                        }
                     }
                 case .text:
                     if let widget = widget as? WidgetText {
-                        WidgetTextView(widget: widget, viewModel: viewModel)
+                        WidgetTextView(
+                            widget: widget
+                        )
+                        .onTapGesture {
+                            viewModel.actionPublisher.send(.init(widget: widget))
+                        }
                     }
                 case .button:
                     if let widget = widget as? WidgetButton {
-                        WidgetButtonView(widget: widget, viewModel: viewModel)
+                        WidgetButtonView(
+                            widget: widget
+                        ) {
+                            viewModel.actionPublisher.send(.init(widget: $0))
+                        }
                     }
                 case .information:
                     if let widget = widget as? WidgetInformation {
-                        WidgetInformationView(widget: widget, viewModel: viewModel)
+                        WidgetInformationView(
+                            widget: widget,
+                            shadowRadius: viewModel.configuration.shadowRadius
+                        )
+                        .onTapGesture {
+                            viewModel.actionPublisher.send(.init(widget: widget))
+                        }
                     }
                 case .purchases:
                     if let widget = widget as? WidgetPurchase {
                         WidgetPurchasesView(
                             widget: widget,
-                            viewModel: viewModel
+                            shadowRadius: viewModel.configuration.shadowRadius,
+                            action: {
+                                viewModel.actionPublisher.send($0)
+                            }
                         )
                     }
                 case .toggle:
                     if let widget = widget as? WidgetToggle {
-                        WidgetToggleView(widget: widget, viewModel: viewModel)
-                    }
-                case .locationPermission:
-                    if let widget = widget as? WidgetLocationPermission {
-                        WidgetLocationPermissionView(
+                        WidgetToggleView(
                             widget: widget,
-                            viewModel: viewModel
+                            action: {
+                                viewModel.actionPublisher.send($0)
+                            }
                         )
                     }
-                case .section:
+                case .section, .locationPermission:
                     EmptyView()
                 }
                 if let spacing = widget.spacing ?? viewModel.configuration.spacing {

@@ -9,12 +9,12 @@ import SwiftUI
 
 public struct WidgetToggleView: View {
     var widget: WidgetToggle
-    @ObservedObject var viewModel: DynamicViewModel
+    var action: (DynamicAction) -> Void
     @AppStorage var value: Bool
 
-    init(widget: WidgetToggle, viewModel: DynamicViewModel) {
+    init(widget: WidgetToggle, action: @escaping (DynamicAction) -> Void) {
         self.widget = widget
-        self.viewModel = viewModel
+        self.action = action
 
         self._value = AppStorage(
             wrappedValue: UserDefaults.standard.bool(forKey: widget.key), widget.key,
@@ -27,12 +27,10 @@ public struct WidgetToggleView: View {
             Toggle(Asset.localizedString(forKey: widget.text), isOn: $value)
         }
         .onChange(of: value) { newState in
-            viewModel.actionPublisher.send(
-                .init(
-                    widget: widget,
-                    userInfo: [widget.key: newState]
-                )
-            )
+            action(.init(
+                widget: widget,
+                userInfo: [widget.key: newState]
+            ))
         }
     }
 }
