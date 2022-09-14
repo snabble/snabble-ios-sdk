@@ -7,17 +7,28 @@
 
 import Foundation
 import SwiftUI
+import Combine
 
 private class ButtonStartShoppingViewModel: ObservableObject {
-    @Published var widget: WidgetButton
+    @Published var widget: WidgetButton?
+
+    private var cancellables = Set<AnyCancellable>()
 
     init(widget: WidgetSnabble) {
-        self.widget = WidgetButton(
-            id: widget.id,
-            text: "Start Shopping",
-            foregroundColorSource: "onAccent",
-            backgroundColorSource: "accent"
-        )
+        Snabble.shared.checkInManager.shopPublisher
+            .sink { [weak self] shop in
+                if shop != nil {
+                    self?.widget = WidgetButton(
+                        id: widget.id,
+                        text: "Start Shopping",
+                        foregroundColorSource: "onAccent",
+                        backgroundColorSource: "accent"
+                    )
+                } else {
+                    self?.widget = nil
+                }
+            }
+            .store(in: &cancellables)
     }
 }
 
@@ -34,8 +45,10 @@ public struct WidgetButtonStartShoppingView: View {
     }
 
     public var body: some View {
-        WidgetButtonView(widget: viewModel.widget) { _ in
-            action(widget)
+        if let widget = viewModel.widget {
+            WidgetButtonView(widget: widget) { _ in
+                action(self.widget)
+            }
         }
     }
 }

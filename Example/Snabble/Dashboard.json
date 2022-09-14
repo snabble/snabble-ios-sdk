@@ -35,13 +35,6 @@
       },
       {
           "type": "button",
-          "id": "4",
-          "text": "Dashboard.button",
-          "foregroundColor": "onAccent",
-          "backgroundColor": "accent"
-      },
-      {
-          "type": "button",
           "id": "8",
           "text": "Dashboard.button",
           "spacing": 16
