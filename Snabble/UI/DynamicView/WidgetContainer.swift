@@ -114,6 +114,10 @@ public struct WidgetView: View {
                         viewModel.actionPublisher.send(action)
                     }
                 )
+            case "io.snabble.dynamicView.startShopping":
+                WidgetButtonStartShoppingView(widget: widget) {
+                    viewModel.actionPublisher.send(.init(widget: $0))
+                }
             default:
                 EmptyView()
             }

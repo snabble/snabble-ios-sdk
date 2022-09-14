@@ -30,6 +30,10 @@
           "id": "io.snabble.dynamicView.locationPermission",
       },
       {
+          "type": "snabble",
+          "id": "io.snabble.dynamicView.startShopping",
+      },
+      {
           "type": "button",
           "id": "4",
           "text": "Dashboard.button",
