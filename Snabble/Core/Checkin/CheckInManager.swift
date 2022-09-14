@@ -35,7 +35,7 @@ public class CheckInManager: NSObject {
     /// Current checked in `Shop`
     public var shop: Shop? {
         didSet {
-            shopPublisher.send(shop)
+            shopPublisher.send(nil)
             if let shop = oldValue {
                 checkedInAt = nil
                 delegate?.checkInManager(self, didCheckOutOf: shop)
