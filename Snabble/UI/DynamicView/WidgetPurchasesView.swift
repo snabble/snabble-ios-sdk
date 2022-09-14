@@ -73,7 +73,6 @@ public struct WidgetPurchasesView: View {
     let action: (DynamicAction) -> Void
     let shadowRadius: CGFloat
 
-//    @ObservedObject var dynamicViewModel: DynamicViewModel
     @ObservedObject private var viewModel: PurchasesViewModel
 
     init(widget: WidgetPurchase, shadowRadius: CGFloat, action: @escaping (DynamicAction) -> Void) {
