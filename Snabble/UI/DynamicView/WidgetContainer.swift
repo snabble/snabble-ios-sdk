@@ -58,7 +58,7 @@ public struct WidgetView: View {
                 case .section:
                     EmptyView()
                 }
-                if let spacing = widget.spacing {
+                if let spacing = widget.spacing ?? viewModel.configuration.spacing {
                     Spacer(minLength: spacing)
                 }
             }

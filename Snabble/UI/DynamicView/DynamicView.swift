@@ -35,7 +35,7 @@ public struct DynamicView: View {
             switch viewModel.configuration.stackStyle {
             case .scroll:
                 ScrollView(.vertical) {
-                    VStack(alignment: .center, spacing: viewModel.configuration.spacing) {
+                    VStack(alignment: .center) {
                         WidgetContainer(viewModel: viewModel, widgets: viewModel.widgets)
                     }
                     .horizontalPadding(viewModel.configuration.padding)
