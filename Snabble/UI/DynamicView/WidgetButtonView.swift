@@ -14,12 +14,12 @@ private protocol WidgetButtonStyling {
 
 public struct WidgetButtonView: View {
     let widget: WidgetButton
-    @ObservedObject var viewModel: DynamicViewModel
+    let action: (WidgetButton) -> Void
     
     public var body: some View {
         HStack {
             Button(action: {
-                viewModel.actionPublisher.send(.init(widget: widget))
+                action(widget)
             }) {
                 Text(keyed: widget.text)
                     .foregroundColor(widget.foregroundColor)

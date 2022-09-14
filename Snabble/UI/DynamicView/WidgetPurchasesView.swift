@@ -70,13 +70,16 @@ class PurchasesViewModel: ObservableObject, LoadableObject {
 
 public struct WidgetPurchasesView: View {
     let widget: Widget
+    let action: (DynamicAction) -> Void
+    let shadowRadius: CGFloat
 
-    @ObservedObject var dynamicViewModel: DynamicViewModel
-    @ObservedObject var viewModel: PurchasesViewModel
+//    @ObservedObject var dynamicViewModel: DynamicViewModel
+    @ObservedObject private var viewModel: PurchasesViewModel
 
-    init(widget: WidgetPurchase, viewModel dynamicViewModel: DynamicViewModel) {
+    init(widget: WidgetPurchase, shadowRadius: CGFloat, action: @escaping (DynamicAction) -> Void) {
         self.widget = widget
-        self.dynamicViewModel = dynamicViewModel
+        self.action = action
+        self.shadowRadius = shadowRadius
         self.viewModel = PurchasesViewModel(projectId: widget.projectId)
     }
     
@@ -87,7 +90,7 @@ public struct WidgetPurchasesView: View {
                     Text(keyed: output.title)
                     Spacer()
                     Button(action: {
-                        dynamicViewModel.actionPublisher.send(.init(widget: widget))
+                        action(.init(widget: widget))
                     }) {
                             Text(keyed: "Snabble.DynamicView.LastPurchases.all")
                     }
@@ -98,9 +101,9 @@ public struct WidgetPurchasesView: View {
                             provider: provider,
                             projectId: viewModel.projectId
                         ).onTapGesture {
-                            dynamicViewModel.actionPublisher.send(.init(widget: widget, userInfo: ["id": provider.id]))
+                            action(.init(widget: widget, userInfo: ["id": provider.id]))
                         }
-                        .shadow(radius: dynamicViewModel.configuration.shadowRadius)
+                        .shadow(radius: shadowRadius)
                     }
                 }
             }

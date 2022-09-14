@@ -26,7 +26,7 @@ extension View {
 
 public struct WidgetInformationView: View {
     let widget: WidgetInformation
-    @ObservedObject var viewModel: DynamicViewModel
+    let shadowRadius: CGFloat
 
     public var body: some View {
         HStack(alignment: .top) {
@@ -36,9 +36,6 @@ public struct WidgetInformationView: View {
             Spacer()
         }
         .informationStyle()
-        .onTapGesture {
-            viewModel.actionPublisher.send(.init(widget: widget))
-        }
-        .shadow(radius: viewModel.configuration.shadowRadius)
+        .shadow(radius: shadowRadius)
     }
 }
