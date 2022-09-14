@@ -1,41 +1,3 @@
-"Sample.Dashboard.button" = "Začať teraz";
-
-"Sample.Dashboard.Information.text1" = "Ulož priamo spôsob platby, aby si sa už pri prvom nákupe mohol/mohla vyhnúť radám pri pokladni.";
-
-"Sample.Dashboard.Information.text2" = "Využi automaticky výhody svojej zákazníckej karty.";
-
-"Sample.Dashboard.text" = "Pre nákup so Snabble navštív niektorý z podporovaných obchodov!";
-
-"Sample.Dashboard.title" = "Vitaj v Snabble";
-
-"Sample.home" = "Štart";
-
-"Sample.Onboarding.accept" = "Prijať";
-
-"Sample.Onboarding.message1" = "So Snabble naskenuješ svoj nákup sám/sama a zaplatíš priamo v aplikácii. Bez vystávania v rade a vykladania tvojho nákupu na pás.";
-
-"Sample.Onboarding.message2" = "Navštív niektorý zo zapojených obchodov, začni nakupovať a prilož kameru k čiarovým kódom tovarov. Ostatné už ide samé.";
-
-"Sample.Onboarding.message3" = "Prosím, akceptuj podmienky používania a prečítaj si pravidlá ochrany údajov.";
-
-"Sample.profile" = "Profil";
-
-"Sample.scanner" = "Skener";
-
-"Sample.Section.Profile.deleteAccount" = "Vymazať konto";
-
-"Sample.Section.Profile.header" = "Tvoj profil";
-
-"Sample.Section.Profile.paymentMethods" = "Spôsob platby";
-
-"Sample.Section.Profile.saveEnergy" = "Šetrenie batérie";
-
-"Sample.Section.Profile.showOnboarding" = "Zobraz Onboarding";
-
-"Sample.shoppingCart" = "Košík";
-
-"Sample.shops" = "Obchody";
-
 "Snabble.addDiscount" = "Zadať zľavu";
 
 "Snabble.AgeVerification.explanation" = "Na kúpu určitých produktov (napr. alkoholických produktov) je potrebné potvrdenie veku. Za týmto účelom zadaj 7-miestne číslo na zadnej strane svojho občianskeho preukazu.";
@@ -126,9 +88,23 @@
 
 "Snabble.DynamicView.LastPurchases.all" = "Všetko";
 
+"Snabble.DynamicView.LocationPermission.MissingPermission.message" = "Len tak môžeme zobraziť obchody v tvojej blízkosti a umožniť nákup.";
+
+"Snabble.DynamicView.LocationPermission.MissingPermission.title" = "Snabble potrebuje zistiť tvoju polohu";
+
 "Snabble.DynamicView.LocationPermission.notDetermined" = "Grant permission";
 
+"Snabble.DynamicView.LocationPermission.notNow" = "Teraz nie";
+
+"Snabble.DynamicView.LocationPermission.openSettings" = "Otvoriť nastavenia";
+
+"Snabble.DynamicView.LocationPermission.ReducedAccuracy.message" = "Otvor nastavenia, zvoľ položku „Poloha“ a aktivuj možnosť „Presná poloha“.";
+
+"Snabble.DynamicView.LocationPermission.ReducedAccuracy.title" = "Snabble potrebuje tvoju presnú polohu, aby rozpoznal, v ktorom obchode práve nakupuješ";
+
 "Snabble.DynamicView.Shop.show" = "Zobraziť obchody";
+
+"Snabble.DynamicView.wifi" = "Connect to free WiFi";
 
 "Snabble.edit" = "Upraviť";
 
@@ -156,18 +132,6 @@
 "Snabble.LimitsAlert.title" = "Pozor";
 
 "Snabble.loadingProductInformation" = "Načítanie informácií o produkte…";
-
-"Snabble.LocationRequired.MissingPermission.message" = "Len tak môžeme zobraziť obchody v tvojej blízkosti a umožniť nákup.";
-
-"Snabble.LocationRequired.MissingPermission.title" = "Snabble potrebuje zistiť tvoju polohu";
-
-"Snabble.LocationRequired.notNow" = "Teraz nie";
-
-"Snabble.LocationRequired.openSettings" = "Otvoriť nastavenia";
-
-"Snabble.LocationRequired.ReducedAccuracy.message" = "Otvor nastavenia, zvoľ položku „Poloha“ a aktivuj možnosť „Presná poloha“.";
-
-"Snabble.LocationRequired.ReducedAccuracy.title" = "Snabble potrebuje tvoju presnú polohu, aby rozpoznal, v ktorom obchode práve nakupuješ";
 
 "Snabble.networkError" = "Chyba spojenia";
 

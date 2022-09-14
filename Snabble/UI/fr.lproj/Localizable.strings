@@ -1,41 +1,3 @@
-"Sample.Dashboard.button" = "Commencer maintenant";
-
-"Sample.Dashboard.Information.text1" = "Enregistrez directement un mode de paiement pour pouvoir acheter dès maintenant.";
-
-"Sample.Dashboard.Information.text2" = "Profitez automatiquement des avantages de vos cartes de fidélité";
-
-"Sample.Dashboard.text" = "Visitez une boutique du programme pour faire vos achats avec Snabble !";
-
-"Sample.Dashboard.title" = "Bienvenue sur Snabble";
-
-"Sample.home" = "Démarrer";
-
-"Sample.Onboarding.accept" = "Accepter";
-
-"Sample.Onboarding.message1" = "Avec Snabble, vous scannez vous-même vos achats et vous payez directement dans l'application, sans faire la queue et sans mettre vos achats sur le tapis roulant.";
-
-"Sample.Onboarding.message2" = "Entrez dans un magasin participant, commencez vos achats et présentez le code-barres d'un article devant la caméra. Le reste s'explique de lui-même.";
-
-"Sample.Onboarding.message3" = "Merci d'accepter les conditions d'utilisation et de lire les informations sur la protection des données.";
-
-"Sample.profile" = "Profil";
-
-"Sample.scanner" = "Scanner";
-
-"Sample.Section.Profile.deleteAccount" = "Supprimer le compte";
-
-"Sample.Section.Profile.header" = "Votre profil";
-
-"Sample.Section.Profile.paymentMethods" = "Modalités de paiement";
-
-"Sample.Section.Profile.saveEnergy" = "Économiser de l'électricité";
-
-"Sample.Section.Profile.showOnboarding" = "Afficher l'intégration";
-
-"Sample.shoppingCart" = "Panier d'achat";
-
-"Sample.shops" = "Filiales";
-
 "Snabble.addDiscount" = "Entrer la réduction";
 
 "Snabble.AgeVerification.explanation" = "Pour l'achat de certains articles, comme l'alcool, un justificatif d'âge est nécessaire. Pour ce faire, saisissez le numéro à 7 chiffres figurant au dos de votre carte d'identité.";
@@ -126,9 +88,23 @@
 
 "Snabble.DynamicView.LastPurchases.all" = "Tous";
 
+"Snabble.DynamicView.LocationPermission.MissingPermission.message" = "Ceci est la seule façon pour nous d'afficher les magasins les plus proches de chez vous et de vous permettre de faire vos achats.";
+
+"Snabble.DynamicView.LocationPermission.MissingPermission.title" = "Snabble a besoin de votre localisation";
+
 "Snabble.DynamicView.LocationPermission.notDetermined" = "Grant permission";
 
+"Snabble.DynamicView.LocationPermission.notNow" = "Pas maintenant";
+
+"Snabble.DynamicView.LocationPermission.openSettings" = "Ouvrir les réglages";
+
+"Snabble.DynamicView.LocationPermission.ReducedAccuracy.message" = "Veuillez ouvrir les réglages, sélectionner \"Emplacement\" et activer \"Emplacement exact\"";
+
+"Snabble.DynamicView.LocationPermission.ReducedAccuracy.title" = "Snabble a besoin de votre position exacte pour savoir dans quel magasin vous faites vos achats.";
+
 "Snabble.DynamicView.Shop.show" = "Afficher les filiales";
+
+"Snabble.DynamicView.wifi" = "Connect to free WiFi";
 
 "Snabble.edit" = "Modifier";
 
@@ -156,18 +132,6 @@
 "Snabble.LimitsAlert.title" = "Veuillez noter";
 
 "Snabble.loadingProductInformation" = "Chargement des informations produit en cours...";
-
-"Snabble.LocationRequired.MissingPermission.message" = "Ceci est la seule façon pour nous d'afficher les magasins les plus proches de chez vous et de vous permettre de faire vos achats.";
-
-"Snabble.LocationRequired.MissingPermission.title" = "Snabble a besoin de votre localisation";
-
-"Snabble.LocationRequired.notNow" = "Pas maintenant";
-
-"Snabble.LocationRequired.openSettings" = "Ouvrir les réglages";
-
-"Snabble.LocationRequired.ReducedAccuracy.message" = "Veuillez ouvrir les réglages, sélectionner \"Emplacement\" et activer \"Emplacement exact\"";
-
-"Snabble.LocationRequired.ReducedAccuracy.title" = "Snabble a besoin de votre position exacte pour savoir dans quel magasin vous faites vos achats.";
 
 "Snabble.networkError" = "Erreur de connexion réseau";
 
