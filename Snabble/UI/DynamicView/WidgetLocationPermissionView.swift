@@ -7,6 +7,7 @@
 
 import Foundation
 import SwiftUI
+import Combine
 import CoreLocation
 
 public class LocationPermissionViewModel: NSObject, ObservableObject {
@@ -46,6 +47,10 @@ public class LocationPermissionViewModel: NSObject, ObservableObject {
             widgets = []
         }
     }
+
+    func action(for widget: WidgetButton) {
+        print("foobar")
+    }
 }
 
 extension LocationPermissionViewModel: CLLocationManagerDelegate {
@@ -56,24 +61,20 @@ extension LocationPermissionViewModel: CLLocationManagerDelegate {
 
 public struct WidgetLocationPermissionView: View {
     let widget: Widget
-    
-    @ObservedObject var dynamicViewModel: DynamicViewModel
-    @ObservedObject var viewModel: LocationPermissionViewModel
 
-    init(widget: Widget, viewModel dynamicViewModel: DynamicViewModel) {
+    @ObservedObject var viewModel = LocationPermissionViewModel()
+
+    init(widget: Widget) {
         self.widget = widget
-        self.dynamicViewModel = dynamicViewModel
-        self.viewModel = LocationPermissionViewModel()
     }
     
     public var body: some View {
         VStack {
             ForEach(viewModel.widgets, id: \.id) { widget in
                 if let buttonWidget = widget as? WidgetButton {
-                    WidgetButtonView(
-                        widget: buttonWidget,
-                        viewModel: dynamicViewModel
-                    )
+                    WidgetButtonView(widget: buttonWidget) {
+                        viewModel.action(for: $0)
+                    }
                 }
             }
         }
