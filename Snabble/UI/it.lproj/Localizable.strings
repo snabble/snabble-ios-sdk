@@ -82,25 +82,27 @@
 
 "Snabble.done" = "Finito";
 
+"Snabble.DynamicView.Button.LocationPermission.MissingPermission.message" = "This is necessary to show stores in your vicinity and allow you to shop there.";
+
+"Snabble.DynamicView.Button.LocationPermission.MissingPermission.title" = "Snabble needs your location";
+
+"Snabble.DynamicView.Button.LocationPermission.notDetermined" = "Grant permission";
+
+"Snabble.DynamicView.Button.LocationPermission.notNow" = "Ask me later";
+
+"Snabble.DynamicView.Button.LocationPermission.openSettings" = "Open Settings";
+
+"Snabble.DynamicView.Button.LocationPermission.ReducedAccuracy.message" = "Please go to Settings > Privacy, then select “Location Services” and activate “Precise Location”";
+
+"Snabble.DynamicView.Button.LocationPermission.ReducedAccuracy.title" = "Snabble requires your precise location to identify in which store you are currently shopping";
+
+"Snabble.DynamicView.Button.startshopping" = "Start shopping";
+
 "Snabble.DynamicView.lastPurchase" = "Your last purchase";
 
 "Snabble.DynamicView.lastPurchases" = "Your last purchases";
 
 "Snabble.DynamicView.LastPurchases.all" = "Show All";
-
-"Snabble.DynamicView.LocationPermission.MissingPermission.message" = "This is necessary to show stores in your vicinity and allow you to shop there.";
-
-"Snabble.DynamicView.LocationPermission.MissingPermission.title" = "Snabble needs your location";
-
-"Snabble.DynamicView.LocationPermission.notDetermined" = "Grant permission";
-
-"Snabble.DynamicView.LocationPermission.notNow" = "Ask me later";
-
-"Snabble.DynamicView.LocationPermission.openSettings" = "Open Settings";
-
-"Snabble.DynamicView.LocationPermission.ReducedAccuracy.message" = "Please go to Settings > Privacy, then select “Location Services” and activate “Precise Location”";
-
-"Snabble.DynamicView.LocationPermission.ReducedAccuracy.title" = "Snabble requires your precise location to identify in which store you are currently shopping";
 
 "Snabble.DynamicView.Shop.show" = "Show stores";
 

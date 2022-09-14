@@ -82,25 +82,27 @@
 
 "Snabble.done" = "Kész";
 
+"Snabble.DynamicView.Button.LocationPermission.MissingPermission.message" = "Csak így tudjuk megjeleníteni a közelben lévő üzleteket, és lehetővé tenni neked a bevásárlást.";
+
+"Snabble.DynamicView.Button.LocationPermission.MissingPermission.title" = "A Snabble-nek szüksége van a tartózkodási helyedre";
+
+"Snabble.DynamicView.Button.LocationPermission.notDetermined" = "Grant permission";
+
+"Snabble.DynamicView.Button.LocationPermission.notNow" = "Most nem";
+
+"Snabble.DynamicView.Button.LocationPermission.openSettings" = "Beállítások megnyitása";
+
+"Snabble.DynamicView.Button.LocationPermission.ReducedAccuracy.message" = "Nyisd meg a beállításokat, válaszd a „Tartózkodási hely“ lehetőséget, és aktiváld a „Pontos tartózkodási hely“ opciót";
+
+"Snabble.DynamicView.Button.LocationPermission.ReducedAccuracy.title" = "A Snabble-nek szüksége van a pontos tartózkodási helyedre, hogy felismerje, éppen melyik üzletben vásárolsz";
+
+"Snabble.DynamicView.Button.startshopping" = "Start shopping";
+
 "Snabble.DynamicView.lastPurchase" = "Utolsó bevásárlásod";
 
 "Snabble.DynamicView.lastPurchases" = "Utolsó bevásárlásaid";
 
 "Snabble.DynamicView.LastPurchases.all" = "Összes";
-
-"Snabble.DynamicView.LocationPermission.MissingPermission.message" = "Csak így tudjuk megjeleníteni a közelben lévő üzleteket, és lehetővé tenni neked a bevásárlást.";
-
-"Snabble.DynamicView.LocationPermission.MissingPermission.title" = "A Snabble-nek szüksége van a tartózkodási helyedre";
-
-"Snabble.DynamicView.LocationPermission.notDetermined" = "Grant permission";
-
-"Snabble.DynamicView.LocationPermission.notNow" = "Most nem";
-
-"Snabble.DynamicView.LocationPermission.openSettings" = "Beállítások megnyitása";
-
-"Snabble.DynamicView.LocationPermission.ReducedAccuracy.message" = "Nyisd meg a beállításokat, válaszd a „Tartózkodási hely“ lehetőséget, és aktiváld a „Pontos tartózkodási hely“ opciót";
-
-"Snabble.DynamicView.LocationPermission.ReducedAccuracy.title" = "A Snabble-nek szüksége van a pontos tartózkodási helyedre, hogy felismerje, éppen melyik üzletben vásárolsz";
 
 "Snabble.DynamicView.Shop.show" = "Üzletek mutatása";
 

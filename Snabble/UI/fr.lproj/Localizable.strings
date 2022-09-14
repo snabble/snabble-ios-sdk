@@ -82,25 +82,27 @@
 
 "Snabble.done" = "Terminé";
 
+"Snabble.DynamicView.Button.LocationPermission.MissingPermission.message" = "Ceci est la seule façon pour nous d'afficher les magasins les plus proches de chez vous et de vous permettre de faire vos achats.";
+
+"Snabble.DynamicView.Button.LocationPermission.MissingPermission.title" = "Snabble a besoin de votre localisation";
+
+"Snabble.DynamicView.Button.LocationPermission.notDetermined" = "Grant permission";
+
+"Snabble.DynamicView.Button.LocationPermission.notNow" = "Pas maintenant";
+
+"Snabble.DynamicView.Button.LocationPermission.openSettings" = "Ouvrir les réglages";
+
+"Snabble.DynamicView.Button.LocationPermission.ReducedAccuracy.message" = "Veuillez ouvrir les réglages, sélectionner \"Emplacement\" et activer \"Emplacement exact\"";
+
+"Snabble.DynamicView.Button.LocationPermission.ReducedAccuracy.title" = "Snabble a besoin de votre position exacte pour savoir dans quel magasin vous faites vos achats.";
+
+"Snabble.DynamicView.Button.startshopping" = "Start shopping";
+
 "Snabble.DynamicView.lastPurchase" = "Votre dernier achat";
 
 "Snabble.DynamicView.lastPurchases" = "Vos derniers achats";
 
 "Snabble.DynamicView.LastPurchases.all" = "Tous";
-
-"Snabble.DynamicView.LocationPermission.MissingPermission.message" = "Ceci est la seule façon pour nous d'afficher les magasins les plus proches de chez vous et de vous permettre de faire vos achats.";
-
-"Snabble.DynamicView.LocationPermission.MissingPermission.title" = "Snabble a besoin de votre localisation";
-
-"Snabble.DynamicView.LocationPermission.notDetermined" = "Grant permission";
-
-"Snabble.DynamicView.LocationPermission.notNow" = "Pas maintenant";
-
-"Snabble.DynamicView.LocationPermission.openSettings" = "Ouvrir les réglages";
-
-"Snabble.DynamicView.LocationPermission.ReducedAccuracy.message" = "Veuillez ouvrir les réglages, sélectionner \"Emplacement\" et activer \"Emplacement exact\"";
-
-"Snabble.DynamicView.LocationPermission.ReducedAccuracy.title" = "Snabble a besoin de votre position exacte pour savoir dans quel magasin vous faites vos achats.";
 
 "Snabble.DynamicView.Shop.show" = "Afficher les filiales";
 
