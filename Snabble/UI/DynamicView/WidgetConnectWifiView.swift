@@ -22,7 +22,6 @@ public struct WidgetConnectWifiView: View {
         }
     }
 
-
     public var body: some View {
         if widget.isVisible {
             HStack(alignment: .center) {
