@@ -13,6 +13,7 @@ import CoreLocation
 public class LocationPermissionViewModel: NSObject, ObservableObject {
     @Published public private(set) var widgets: [Widget] = []
     @Published public var permissionDeniedOrRestricted: Bool = false
+    @Published public var reducedAccuracy: Bool = false
 
     let locationManager: CLLocationManager
 
@@ -75,6 +76,7 @@ public class LocationPermissionViewModel: NSObject, ObservableObject {
 extension LocationPermissionViewModel: CLLocationManagerDelegate {
     public func locationManager(_ manager: CLLocationManager, didChangeAuthorization status: CLAuthorizationStatus) {
         update(with: status)
+        reducedAccuracy = manager.accuracyAuthorization == .reducedAccuracy
     }
 }
 
@@ -102,17 +104,36 @@ public struct WidgetLocationPermissionView: View {
             set: { viewModel.permissionDeniedOrRestricted = $0 }
         )) {
             Alert(
-                title: Text(keyed: "Snabble.LocationRequired.MissingPermission.title"),
-                message: Text(keyed: "Snabble.LocationRequired.MissingPermission.message"),
+                title: Text(keyed: "Snabble.DynamicView.LocationPermission.MissingPermission.title"),
+                message: Text(keyed: "Snabble.DynamicView.LocationPermission.MissingPermission.message"),
                 primaryButton:
                         .default(
-                            Text(keyed: "Snabble.LocationRequired.openSettings"),
+                            Text(keyed: "Snabble.DynamicView.LocationPermission.openSettings"),
                             action: {
                                 viewModel.openSettings()
                             }),
                 secondaryButton:
                         .cancel(
-                            Text(keyed: "Snabble.LocationRequired.notNow")
+                            Text(keyed: "Snabble.DynamicView.LocationPermission.notNow")
+                        )
+            )
+        }
+        .alert(isPresented: Binding<Bool>(
+            get: { viewModel.reducedAccuracy },
+            set: { viewModel.reducedAccuracy = $0 }
+        )) {
+            Alert(
+                title: Text(keyed: "Snabble.DynamicView.LocationPermission.ReducedAccuracy.title"),
+                message: Text(keyed: "Snabble.DynamicView.LocationPermission.ReducedAccuracy.message"),
+                primaryButton:
+                        .default(
+                            Text(keyed: "Snabble.DynamicView.LocationPermission.openSettings"),
+                            action: {
+                                viewModel.openSettings()
+                            }),
+                secondaryButton:
+                        .cancel(
+                            Text(keyed: "Snabble.DynamicView.LocationPermission.notNow")
                         )
             )
         }
