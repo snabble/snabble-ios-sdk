@@ -72,13 +72,13 @@ class PurchasesViewModel: ObservableObject, LoadableObject {
 }
 
 public struct WidgetPurchasesView: View {
-    let widget: WidgetLastPurchases
+    let widget: WidgetSnabble
     let action: (DynamicAction) -> Void
     let shadowRadius: CGFloat
 
     @ObservedObject private var viewModel: PurchasesViewModel
 
-    init(widget: WidgetLastPurchases, shadowRadius: CGFloat, action: @escaping (DynamicAction) -> Void) {
+    init(widget: WidgetSnabble, shadowRadius: CGFloat, action: @escaping (DynamicAction) -> Void) {
         self.widget = widget
         self.action = action
         self.shadowRadius = shadowRadius

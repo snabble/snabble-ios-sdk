@@ -27,9 +27,7 @@ public struct WidgetView: View {
                     information
                 case .toggle:
                     toggle
-                case .lastPurchases:
-                    lastPurchases
-                case .locationPermission, .allStores, .startShopping, .connectWifi:
+                case .locationPermission, .allStores, .startShopping, .connectWifi, .lastPurchases, .customerCard:
                     snabble
                 case .section:
                     EmptyView()
@@ -103,19 +101,6 @@ public struct WidgetView: View {
     }
 
     @ViewBuilder
-    var lastPurchases: some View {
-        if let widget = widget as? WidgetLastPurchases {
-            WidgetPurchasesView(
-                widget: widget,
-                shadowRadius: viewModel.configuration.shadowRadius,
-                action: { action in
-                    viewModel.actionPublisher.send(action)
-                }
-            )
-        }
-    }
-
-    @ViewBuilder
     var snabble: some View {
         if let widget = widget as? WidgetSnabble {
             switch widget.type {
@@ -134,6 +119,16 @@ public struct WidgetView: View {
                         widget: widget,
                         shadowRadius: viewModel.configuration.shadowRadius
                 )
+            case .lastPurchases:
+                WidgetPurchasesView(
+                    widget: widget,
+                    shadowRadius: viewModel.configuration.shadowRadius,
+                    action: { action in
+                        viewModel.actionPublisher.send(action)
+                    }
+                )
+            case .customerCard:
+                Text("CustomerCard")
             default:
                 EmptyView()
             }

@@ -23,8 +23,11 @@ public enum WidgetType: String, Decodable {
     case section
     case toggle
 
-    // Snabble
+    // Snabble Project
     case lastPurchases = "snabble.lastPurchases"
+    case customerCard = "snabble.customerCard"
+
+    // Snabble
     case allStores = "snabble.allStores"
     case startShopping = "snabble.startShopping"
     case locationPermission = "snabble.locationPermission"
@@ -216,31 +219,9 @@ public struct WidgetSection: Widget {
     }
 }
 
-public struct WidgetLastPurchases: Widget {
-    public let id: String
-    public let type: WidgetType = .lastPurchases
-    public let projectId: Identifier<Project>?
-    public var spacing: CGFloat?
-
-    public init(
-        id: String,
-        projectId: Identifier<Project>? = nil,
-        spacing: CGFloat? = nil
-    ) {
-        self.id = id
-        self.projectId = projectId
-        self.spacing = spacing
-    }
-
-    enum CodingKeys: String, CodingKey {
-        case id
-        case projectId
-        case spacing
-    }
-}
-
 public struct WidgetSnabble: Widget {
     public let id: String
     public let type: WidgetType
+    public let projectId: Identifier<Project>?
     public var spacing: CGFloat?
 }
