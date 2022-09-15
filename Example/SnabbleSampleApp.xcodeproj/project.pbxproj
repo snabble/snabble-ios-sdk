@@ -15,6 +15,7 @@
 		607FACE01AFB9204008FA782 /* LaunchScreen.xib in Resources */ = {isa = PBXBuildFile; fileRef = 607FACDE1AFB9204008FA782 /* LaunchScreen.xib */; };
 		7605C47328AC9794000105A8 /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = 7605C47528AC9794000105A8 /* Localizable.strings */; };
 		7605C5BF28AE4383000105A8 /* ShopsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7605C5BE28AE4383000105A8 /* ShopsViewController.swift */; };
+		76151FDD28D2FC6800C08D97 /* NetworkExtension.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 76151FDC28D2FC6800C08D97 /* NetworkExtension.framework */; };
 		76C7B74A28BFA10700D94F4F /* DashboardViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 76C7B74928BFA10700D94F4F /* DashboardViewController.swift */; };
 		76C7B79028C1ACD900D94F4F /* Profile.json in Resources */ = {isa = PBXBuildFile; fileRef = 76C7B78F28C1ACD900D94F4F /* Profile.json */; };
 		E127DB6F28C74A64005A7416 /* SnabbleConfig.swift in Sources */ = {isa = PBXBuildFile; fileRef = E127DB6E28C74A64005A7416 /* SnabbleConfig.swift */; };
@@ -52,6 +53,8 @@
 		7605C5BE28AE4383000105A8 /* ShopsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShopsViewController.swift; sourceTree = "<group>"; };
 		7605C5C128AE44B1000105A8 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		7605C5C228AE44D7000105A8 /* de */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = de; path = de.lproj/InfoPlist.strings; sourceTree = "<group>"; };
+		76151FDB28D2FC4800C08D97 /* SnabbleSampleApp.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = SnabbleSampleApp.entitlements; sourceTree = "<group>"; };
+		76151FDC28D2FC6800C08D97 /* NetworkExtension.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = NetworkExtension.framework; path = System/Library/Frameworks/NetworkExtension.framework; sourceTree = SDKROOT; };
 		76C7B74928BFA10700D94F4F /* DashboardViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DashboardViewController.swift; sourceTree = "<group>"; };
 		76C7B78F28C1ACD900D94F4F /* Profile.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = Profile.json; sourceTree = "<group>"; };
 		926E1E4B9E95CCD24DC69470 /* README.md */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = net.daringfireball.markdown; name = README.md; path = ../README.md; sourceTree = "<group>"; };
@@ -78,6 +81,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				33B22D0F540C105487D339A5 /* Pods_SnabbleSampleApp.framework in Frameworks */,
+				76151FDD28D2FC6800C08D97 /* NetworkExtension.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -103,6 +107,7 @@
 		607FACC71AFB9204008FA782 = {
 			isa = PBXGroup;
 			children = (
+				76151FDB28D2FC4800C08D97 /* SnabbleSampleApp.entitlements */,
 				E1662A64283DFED90093956C /* Changelog.md */,
 				607FACF51AFB993E008FA782 /* Podspec Metadata */,
 				607FACD21AFB9204008FA782 /* Sources */,
@@ -164,6 +169,7 @@
 		649282D5B1D228389A97EBA1 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				76151FDC28D2FC6800C08D97 /* NetworkExtension.framework */,
 				DF556383574523BFDDFFB356 /* Pods_SnabbleSampleApp.framework */,
 			);
 			name = Frameworks;
@@ -601,12 +607,13 @@
 			baseConfigurationReference = 99CBF1C675972D6DE2013A8B /* Pods-SnabbleSampleApp.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_ENTITLEMENTS = SnabbleSampleApp.entitlements;
 				DEVELOPMENT_TEAM = 53K7JS449L;
 				INFOPLIST_FILE = Snabble/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 14.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				MODULE_NAME = ExampleApp;
-				PRODUCT_BUNDLE_IDENTIFIER = io.snabble.exampleapp;
+				PRODUCT_BUNDLE_IDENTIFIER = io.snabble.example.app;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 5.0;
 			};
@@ -617,12 +624,13 @@
 			baseConfigurationReference = E8EE6FB299BC65798BFD7CD6 /* Pods-SnabbleSampleApp.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_ENTITLEMENTS = SnabbleSampleApp.entitlements;
 				DEVELOPMENT_TEAM = 53K7JS449L;
 				INFOPLIST_FILE = Snabble/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 14.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				MODULE_NAME = ExampleApp;
-				PRODUCT_BUNDLE_IDENTIFIER = io.snabble.exampleapp;
+				PRODUCT_BUNDLE_IDENTIFIER = io.snabble.example.app;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 5.0;
 			};

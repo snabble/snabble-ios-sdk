@@ -45,7 +45,14 @@ public struct WidgetView: View {
                     }
                 case .connectWifi:
                     if let widget = widget as? WidgetConnectWifi {
-                        WidgetConnectWifiView(widget: widget, viewModel: viewModel)
+                        WidgetConnectWifiView(
+                            widget: widget,
+                            shadowRadius: viewModel.configuration.shadowRadius
+                        )
+                        .onTapGesture {
+                            viewModel.actionPublisher.send(.init(widget: widget))
+                        }
+
                     }
                 case .information:
                     if let widget = widget as? WidgetInformation {
