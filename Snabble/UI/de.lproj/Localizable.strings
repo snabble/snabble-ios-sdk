@@ -82,23 +82,7 @@
 
 "Snabble.done" = "Fertig";
 
-"Snabble.DynamicView.Button.LocationPermission.MissingPermission.message" = "Nur so können wir Filialen in deiner Nähe anzeigen und dir das Einkaufen ermöglichen.";
-
-"Snabble.DynamicView.Button.LocationPermission.MissingPermission.title" = "Snabble benötigt deinen Standort";
-
-"Snabble.DynamicView.Button.LocationPermission.notDetermined" = "Standort freigeben";
-
-"Snabble.DynamicView.Button.LocationPermission.notNow" = "Nicht jetzt";
-
-"Snabble.DynamicView.Button.LocationPermission.openSettings" = "Einstellungen öffnen";
-
-"Snabble.DynamicView.Button.LocationPermission.ReducedAccuracy.message" = "Bitte öffne die Einstellungen, wähle „Standort“ und aktiviere „Genauer Standort“";
-
-"Snabble.DynamicView.Button.LocationPermission.ReducedAccuracy.title" = "Snabble benötigt deinen genauen Standort, um zu erkennen in welchem Shop du gerade einkaufst";
-
-"Snabble.DynamicView.Button.startshopping" = "Jetzt hier einkaufen";
-
-"Snabble.DynamicView.Button.stores" = "Alle Filialen ansehen";
+"Snabble.DynamicView.AllStores.button" = "Alle Filialen ansehen";
 
 "Snabble.DynamicView.lastPurchase" = "Dein letzter Einkauf";
 
@@ -106,7 +90,23 @@
 
 "Snabble.DynamicView.LastPurchases.all" = "Alle";
 
+"Snabble.DynamicView.LocationPermission.Button.notDetermined" = "Standort freigeben";
+
+"Snabble.DynamicView.LocationPermission.MissingPermission.message" = "Nur so können wir Filialen in deiner Nähe anzeigen und dir das Einkaufen ermöglichen.";
+
+"Snabble.DynamicView.LocationPermission.MissingPermission.title" = "Snabble benötigt deinen Standort";
+
+"Snabble.DynamicView.LocationPermission.notNow" = "Nicht jetzt";
+
+"Snabble.DynamicView.LocationPermission.openSettings" = "Einstellungen öffnen";
+
+"Snabble.DynamicView.LocationPermission.ReducedAccuracy.message" = "Bitte öffne die Einstellungen, wähle „Standort“ und aktiviere „Genauer Standort“";
+
+"Snabble.DynamicView.LocationPermission.ReducedAccuracy.title" = "Snabble benötigt deinen genauen Standort, um zu erkennen in welchem Shop du gerade einkaufst";
+
 "Snabble.DynamicView.Shop.show" = "Filialen anzeigen";
+
+"Snabble.DynamicView.StartShopping.button" = "Jetzt hier einkaufen";
 
 "Snabble.DynamicView.wifi" = "Verbinde Dich mit dem freien WLAN";
 

@@ -1,5 +1,5 @@
 //
-//  WidgetButtonLocationPermissionView.swift
+//  WidgetLocationPermissionView.swift
 //  Snabble
 //
 //  Created by Andreas Osberghaus on 12.09.22.
@@ -32,7 +32,7 @@ public class LocationPermissionViewModel: NSObject, ObservableObject {
         case .notDetermined:
             widget = WidgetButton(
                 id: "Snabble.LocationPermission.notDetermined",
-                text: "Snabble.DynamicView.Button.LocationPermission.notDetermined",
+                text: "Snabble.DynamicView.LocationPermission.Button.notDetermined",
                 foregroundColorSource: "onAccent",
                 backgroundColorSource: "accent"
             )
@@ -81,7 +81,7 @@ extension LocationPermissionViewModel: CLLocationManagerDelegate {
     }
 }
 
-public struct WidgetButtonLocationPermissionView: View {
+public struct WidgetLocationPermissionView: View {
     @ObservedObject private var viewModel: LocationPermissionViewModel
 
     init(viewModel: LocationPermissionViewModel = .init()) {
@@ -95,33 +95,33 @@ public struct WidgetButtonLocationPermissionView: View {
             }
             .alert(isPresented: $viewModel.permissionDeniedOrRestricted) {
                 Alert(
-                    title: Text(keyed: "Snabble.DynamicView.Button.LocationPermission.MissingPermission.title"),
-                    message: Text(keyed: "Snabble.DynamicView.Button.LocationPermission.MissingPermission.message"),
+                    title: Text(keyed: "Snabble.DynamicView.LocationPermission.MissingPermission.title"),
+                    message: Text(keyed: "Snabble.DynamicView.LocationPermission.MissingPermission.message"),
                     primaryButton:
                             .default(
-                                Text(keyed: "Snabble.DynamicView.Button.LocationPermission.openSettings"),
+                                Text(keyed: "Snabble.DynamicView.LocationPermission.openSettings"),
                                 action: {
                                     viewModel.openSettings()
                                 }),
                     secondaryButton:
                             .cancel(
-                                Text(keyed: "Snabble.DynamicView.Button.LocationPermission.notNow")
+                                Text(keyed: "Snabble.DynamicView.LocationPermission.notNow")
                             )
                 )
             }
             .alert(isPresented: $viewModel.reducedAccuracy) {
                 Alert(
-                    title: Text(keyed: "Snabble.DynamicView.Button.LocationPermission.ReducedAccuracy.title"),
-                    message: Text(keyed: "Snabble.DynamicView.Button.LocationPermission.ReducedAccuracy.message"),
+                    title: Text(keyed: "Snabble.DynamicView.LocationPermission.ReducedAccuracy.title"),
+                    message: Text(keyed: "Snabble.DynamicView.LocationPermission.ReducedAccuracy.message"),
                     primaryButton:
                             .default(
-                                Text(keyed: "Snabble.DynamicView.Button.LocationPermission.openSettings"),
+                                Text(keyed: "Snabble.DynamicView.LocationPermission.openSettings"),
                                 action: {
                                     viewModel.openSettings()
                                 }),
                     secondaryButton:
                             .cancel(
-                                Text(keyed: "Snabble.DynamicView.Button.LocationPermission.notNow")
+                                Text(keyed: "Snabble.DynamicView.LocationPermission.notNow")
                             )
                 )
             }

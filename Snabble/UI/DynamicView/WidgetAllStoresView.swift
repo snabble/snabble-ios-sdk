@@ -1,5 +1,5 @@
 //
-//  WidgetButtonStartShoppingView.swift
+//  WidgetAllStoresView.swift
 //  Snabble
 //
 //  Created by Andreas Osberghaus on 14.09.22.
@@ -9,7 +9,7 @@ import Foundation
 import SwiftUI
 import Combine
 
-private class ButtonStartShoppingViewModel: ObservableObject {
+private class AllStoresViewModel: ObservableObject {
     @Published var widget: WidgetButton?
 
     private var cancellables = Set<AnyCancellable>()
@@ -20,28 +20,31 @@ private class ButtonStartShoppingViewModel: ObservableObject {
                 if shop != nil {
                     self?.widget = WidgetButton(
                         id: widget.id,
-                        text: "Snabble.DynamicView.Button.startshopping",
+                        text: "Snabble.DynamicView.AllStores.button"
+                    )
+                } else {
+                    self?.widget = WidgetButton(
+                        id: widget.id,
+                        text: "Snabble.DynamicView.AllStores.button",
                         foregroundColorSource: "onAccent",
                         backgroundColorSource: "accent"
                     )
-                } else {
-                    self?.widget = nil
                 }
             }
             .store(in: &cancellables)
     }
 }
 
-public struct WidgetButtonStartShoppingView: View {
+public struct WidgetAllStoresView: View {
     let widget: WidgetSnabble
     let action: (WidgetSnabble) -> Void
 
-    @ObservedObject private var viewModel: ButtonStartShoppingViewModel
+    @ObservedObject private var viewModel: AllStoresViewModel
 
     init(widget: WidgetSnabble, action: @escaping (WidgetSnabble) -> Void) {
         self.widget = widget
         self.action = action
-        self.viewModel = ButtonStartShoppingViewModel(widget: widget)
+        self.viewModel = AllStoresViewModel(widget: widget)
     }
 
     public var body: some View {

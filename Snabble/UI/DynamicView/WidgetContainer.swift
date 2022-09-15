@@ -120,13 +120,13 @@ public struct WidgetView: View {
         if let widget = widget as? WidgetSnabble {
             switch widget.type {
             case .locationPermission:
-                WidgetButtonLocationPermissionView()
+                WidgetLocationPermissionView()
             case .startShopping:
-                WidgetButtonStartShoppingView(widget: widget) {
+                WidgetStartShoppingView(widget: widget) {
                     viewModel.actionPublisher.send(.init(widget: $0))
                 }
             case .allStores:
-                WidgetButtonStoresView(widget: widget) {
+                WidgetAllStoresView(widget: widget) {
                     viewModel.actionPublisher.send(.init(widget: $0))
                 }
             default:
