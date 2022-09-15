@@ -11,11 +11,7 @@ import NetworkExtension
 import Combine
 import Network
 
-protocol WifiHintViewData {
-    var text: String { get }
-}
-
-final class WidgetConnectWifiViewModel: ObservableObject {
+final class ConnectWifiViewModel: ObservableObject {
     private let pathMonitor: NWPathMonitor
 
     init() {
@@ -23,7 +19,6 @@ final class WidgetConnectWifiViewModel: ObservableObject {
 
         pathMonitor.pathUpdateHandler = { [weak self] _ in
             self?.isHidden = self!.verifyIsHidden()
-            self?.viewData = self
         }
         pathMonitor.start(queue: .main)
     }
@@ -33,8 +28,6 @@ final class WidgetConnectWifiViewModel: ObservableObject {
     }
 
     // MARK: Published
-
-    @Published var viewData: WifiHintViewData?
     @Published var isHidden = true
 
     private func verifyIsHidden() -> Bool {
@@ -45,39 +38,25 @@ final class WidgetConnectWifiViewModel: ObservableObject {
         guard !customerNetworks.isEmpty else {
             return true
         }
-
-        guard !isTesting else {
-            return false
-        }
-
+        #if DEBUG
+        return currentSSID == testSSID
+        #else
         if let currentSSID = currentSSID {
             return customerNetworks.contains(currentSSID)
         } else {
             return false
         }
+        #endif
     }
 
     @Published var isJoiningNetwork = false
     @Published var networkError: Error?
     
 #if DEBUG
-    // replace with your testing wifi
     let testSSID = "snabble"
 #endif
-    
-    var isTesting: Bool {
-#if DEBUG
-        return true
-#else
-        return false
-#endif
-    }
-    
-    var canJoinNetwork: Bool {
-        guard !isTesting else {
-            return true
-        }
 
+    var canJoinNetwork: Bool {
         guard let ssid = ssid, currentSSID != ssid else {
             return false
         }
@@ -117,7 +96,7 @@ final class WidgetConnectWifiViewModel: ObservableObject {
         let result = Snabble.shared.checkInManager.shop?.customerNetworks?.compactMap { $0.ssid } ?? []
         
 #if DEBUG
-        if isTesting, result.isEmpty {
+        if result.isEmpty {
             return [testSSID]
         }
 #endif
@@ -148,20 +127,23 @@ final class WidgetConnectWifiViewModel: ObservableObject {
     }
 }
 
-extension WidgetConnectWifiViewModel: WifiHintViewData {
+extension ConnectWifiViewModel {
     var text: String {
-        return Asset.localizedString(forKey: "Snabble.DynamicView.wifi", arguments: ssid ?? "unkown" )
+        guard let ssid = ssid else {
+            return Asset.localizedString(forKey: "Snabble.DynamicView.ConnectWifi.noSSID")
+        }
+        return Asset.localizedString(forKey: "Snabble.DynamicView.connectWifi", arguments: ssid)
     }
 }
 
 public struct WidgetConnectWifiView: View {
     let widget: WidgetSnabble
     let shadowRadius: CGFloat
-    @ObservedObject private var viewModel = WidgetConnectWifiViewModel()
+    @ObservedObject private var viewModel = ConnectWifiViewModel()
     
     @ViewBuilder
     var image: some View {
-        if let image: SwiftUI.Image = Asset.image(named: "Snabble.DynamicView.wifi" ) {
+        if let image: SwiftUI.Image = Asset.image(named: "Snabble.DynamicView.connectWifi") {
             image
         } else {
             Asset.image(named: viewModel.networkError == nil ? "wifi" : "wifi.exclamationmark")

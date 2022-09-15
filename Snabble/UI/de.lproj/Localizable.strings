@@ -84,6 +84,10 @@
 
 "Snabble.DynamicView.AllStores.button" = "Alle Filialen ansehen";
 
+"Snabble.DynamicView.connectWifi" = "Jetzt mit dem kostenlosen WLAN „%@“ verbinden";
+
+"Snabble.DynamicView.ConnectWifi.noSSID" = "Leider ist kein WLAN verfügbar";
+
 "Snabble.DynamicView.lastPurchase" = "Dein letzter Einkauf";
 
 "Snabble.DynamicView.lastPurchases" = "Deine letzten Einkäufe";
@@ -107,8 +111,6 @@
 "Snabble.DynamicView.Shop.show" = "Filialen anzeigen";
 
 "Snabble.DynamicView.StartShopping.button" = "Jetzt hier einkaufen";
-
-"Snabble.DynamicView.wifi" = "Jetzt mit dem kostenlosen WLAN „%@“ verbinden";
 
 "Snabble.edit" = "Bearbeiten";
 

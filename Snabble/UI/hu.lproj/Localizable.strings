@@ -84,6 +84,10 @@
 
 "Snabble.DynamicView.AllStores.button" = "See all stores";
 
+"Snabble.DynamicView.connectWifi" = "Kapcsolódás az ingyenes „%@“ WIFI-vel";
+
+"Snabble.DynamicView.ConnectWifi.noSSID" = "Unfortunately there is no WLAN available";
+
 "Snabble.DynamicView.lastPurchase" = "Utolsó bevásárlásod";
 
 "Snabble.DynamicView.lastPurchases" = "Utolsó bevásárlásaid";
@@ -107,8 +111,6 @@
 "Snabble.DynamicView.Shop.show" = "Üzletek mutatása";
 
 "Snabble.DynamicView.StartShopping.button" = "Start shopping";
-
-"Snabble.DynamicView.wifi" = "Kapcsolódás az ingyenes „%@“ WIFI-vel";
 
 "Snabble.edit" = "Szerkesztés";
 
