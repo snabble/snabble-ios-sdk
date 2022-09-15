@@ -39,6 +39,11 @@
           "spacing": 24
       },
       {
+          "type": "snabble.connectWifi",
+          "id": "4711",
+          "spacing": 16,
+      },
+      {
           "type": "information",
           "id": "7",
           "image": "Dashboard/Information.image1",

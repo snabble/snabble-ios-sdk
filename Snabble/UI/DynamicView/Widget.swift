@@ -28,6 +28,7 @@ public enum WidgetType: String, Decodable {
     case allStores = "snabble.allStores"
     case startShopping = "snabble.startShopping"
     case locationPermission = "snabble.locationPermission"
+    case connectWifi = "snabble.connectWifi"
 }
 
 public struct WidgetText: Widget {

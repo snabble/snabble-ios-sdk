@@ -29,7 +29,7 @@ public struct WidgetView: View {
                     toggle
                 case .lastPurchases:
                     lastPurchases
-                case .locationPermission, .allStores, .startShopping:
+                case .locationPermission, .allStores, .startShopping, .connectWifi:
                     snabble
                 case .section:
                     EmptyView()
@@ -129,6 +129,11 @@ public struct WidgetView: View {
                 WidgetAllStoresView(widget: widget) {
                     viewModel.actionPublisher.send(.init(widget: $0))
                 }
+            case .connectWifi:
+                WidgetConnectWifiView(
+                        widget: widget,
+                        shadowRadius: viewModel.configuration.shadowRadius
+                )
             default:
                 EmptyView()
             }
