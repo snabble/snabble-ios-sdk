@@ -1,41 +1,3 @@
-"Sample.Dashboard.button" = "Kezdés most";
-
-"Sample.Dashboard.Information.text1" = "A fizetési módot közvetlenül elmentheted, így már az első vásárlásodnál is várakozási idő nélkül vásárolhatsz.";
-
-"Sample.Dashboard.Information.text2" = "Használd ki automatikusan az ügyfélkártyáid nyújtotta előnyöket.";
-
-"Sample.Dashboard.text" = "Látogass el az egyik támogatott üzletbe, és vásárolj a Snabble-lel!";
-
-"Sample.Dashboard.title" = "Köszöntünk a Snabble-nél";
-
-"Sample.home" = "Start";
-
-"Sample.Onboarding.accept" = "Elfogadás";
-
-"Sample.Onboarding.message1" = "A Snabble segítségével saját magad szkenneled be a vásárolni kívánt termékeket, és közvetlenül az alkalmazásban fizetsz. Nem kell sorban állni a pénztár előtt, és a vásárolt termékeket nem kell az áruszalagra helyezni.";
-
-"Sample.Onboarding.message2" = "Lépj be egy résztvevő üzletbe, kezdd el a bevásárlást, és tartsd a termék vonalkódját a kamera elé. A többi magától értetődik.";
-
-"Sample.Onboarding.message3" = "Kérlek, fogadd el a felhasználási feltételeket és az adatvédelmi tudnivalókat.";
-
-"Sample.profile" = "Profil";
-
-"Sample.scanner" = "Szkenner";
-
-"Sample.Section.Profile.deleteAccount" = "Fiók törlése";
-
-"Sample.Section.Profile.header" = "Profilod";
-
-"Sample.Section.Profile.paymentMethods" = "Fizetési mód";
-
-"Sample.Section.Profile.saveEnergy" = "Energiatakarékosság";
-
-"Sample.Section.Profile.showOnboarding" = "Mutasd az Onboardingot";
-
-"Sample.shoppingCart" = "Kosár";
-
-"Sample.shops" = "Üzletek";
-
 "Snabble.addDiscount" = "Árengedmény megadása";
 
 "Snabble.AgeVerification.explanation" = "Meghatározott termékek, mint pl. alkohol vásárlásához igazolnod kell a korod. Ehhez személyazonosító igazolványod hátoldaláról másold be a 7 jegyű számot.";
@@ -120,15 +82,33 @@
 
 "Snabble.done" = "Kész";
 
+"Snabble.DynamicView.Button.LocationPermission.MissingPermission.message" = "Csak így tudjuk megjeleníteni a közelben lévő üzleteket, és lehetővé tenni neked a bevásárlást.";
+
+"Snabble.DynamicView.Button.LocationPermission.MissingPermission.title" = "A Snabble-nek szüksége van a tartózkodási helyedre";
+
+"Snabble.DynamicView.Button.LocationPermission.notDetermined" = "Grant permission";
+
+"Snabble.DynamicView.Button.LocationPermission.notNow" = "Most nem";
+
+"Snabble.DynamicView.Button.LocationPermission.openSettings" = "Beállítások megnyitása";
+
+"Snabble.DynamicView.Button.LocationPermission.ReducedAccuracy.message" = "Nyisd meg a beállításokat, válaszd a „Tartózkodási hely“ lehetőséget, és aktiváld a „Pontos tartózkodási hely“ opciót";
+
+"Snabble.DynamicView.Button.LocationPermission.ReducedAccuracy.title" = "A Snabble-nek szüksége van a pontos tartózkodási helyedre, hogy felismerje, éppen melyik üzletben vásárolsz";
+
+"Snabble.DynamicView.Button.startshopping" = "Start shopping";
+
+"Snabble.DynamicView.Button.stores" = "See all stores";
+
 "Snabble.DynamicView.lastPurchase" = "Utolsó bevásárlásod";
 
 "Snabble.DynamicView.lastPurchases" = "Utolsó bevásárlásaid";
 
 "Snabble.DynamicView.LastPurchases.all" = "Összes";
 
-"Snabble.DynamicView.LocationPermission.notDetermined" = "Grant permission";
-
 "Snabble.DynamicView.Shop.show" = "Üzletek mutatása";
+
+"Snabble.DynamicView.wifi" = "Connect to free WiFi";
 
 "Snabble.edit" = "Szerkesztés";
 
@@ -156,18 +136,6 @@
 "Snabble.LimitsAlert.title" = "Vedd figyelembe";
 
 "Snabble.loadingProductInformation" = "Termékinformációk betöltése…";
-
-"Snabble.LocationRequired.MissingPermission.message" = "Csak így tudjuk megjeleníteni a közelben lévő üzleteket, és lehetővé tenni neked a bevásárlást.";
-
-"Snabble.LocationRequired.MissingPermission.title" = "A Snabble-nek szüksége van a tartózkodási helyedre";
-
-"Snabble.LocationRequired.notNow" = "Most nem";
-
-"Snabble.LocationRequired.openSettings" = "Beállítások megnyitása";
-
-"Snabble.LocationRequired.ReducedAccuracy.message" = "Nyisd meg a beállításokat, válaszd a „Tartózkodási hely“ lehetőséget, és aktiváld a „Pontos tartózkodási hely“ opciót";
-
-"Snabble.LocationRequired.ReducedAccuracy.title" = "A Snabble-nek szüksége van a pontos tartózkodási helyedre, hogy felismerje, éppen melyik üzletben vásárolsz";
 
 "Snabble.networkError" = "Hálózati kapcsolat hiba";
 

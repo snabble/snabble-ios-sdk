@@ -18,66 +18,119 @@ public struct WidgetView: View {
             Group {
                 switch widget.type {
                 case .image:
-                    if let widget = widget as? WidgetImage {
-                        WidgetImageView(
-                            widget: widget
-                        )
-                        .onTapGesture {
-                            viewModel.actionPublisher.send(.init(widget: widget))
-                        }
-                    }
+                    image
                 case .text:
-                    if let widget = widget as? WidgetText {
-                        WidgetTextView(
-                            widget: widget
-                        )
-                        .onTapGesture {
-                            viewModel.actionPublisher.send(.init(widget: widget))
-                        }
-                    }
+                    text
                 case .button:
-                    if let widget = widget as? WidgetButton {
-                        WidgetButtonView(
-                            widget: widget
-                        ) {
-                            viewModel.actionPublisher.send(.init(widget: $0))
-                        }
-                    }
+                    button
                 case .information:
-                    if let widget = widget as? WidgetInformation {
-                        WidgetInformationView(
-                            widget: widget,
-                            shadowRadius: viewModel.configuration.shadowRadius
-                        )
-                        .onTapGesture {
-                            viewModel.actionPublisher.send(.init(widget: widget))
-                        }
-                    }
-                case .purchases:
-                    if let widget = widget as? WidgetPurchase {
-                        WidgetPurchasesView(
-                            widget: widget,
-                            shadowRadius: viewModel.configuration.shadowRadius,
-                            action: {
-                                viewModel.actionPublisher.send($0)
-                            }
-                        )
-                    }
+                    information
                 case .toggle:
-                    if let widget = widget as? WidgetToggle {
-                        WidgetToggleView(
-                            widget: widget,
-                            action: {
-                                viewModel.actionPublisher.send($0)
-                            }
-                        )
-                    }
-                case .section, .locationPermission:
+                    toggle
+                case .lastPurchases:
+                    lastPurchases
+                case .locationPermission, .allStores, .startShopping:
+                    snabble
+                case .section:
                     EmptyView()
                 }
                 if let spacing = widget.spacing ?? viewModel.configuration.spacing {
                     Spacer(minLength: spacing)
                 }
+            }
+        }
+    }
+
+    @ViewBuilder
+    var image: some View {
+        if let widget = widget as? WidgetImage {
+            WidgetImageView(
+                widget: widget
+            )
+            .onTapGesture {
+                viewModel.actionPublisher.send(.init(widget: widget))
+            }
+        }
+    }
+
+    @ViewBuilder
+    var text: some View {
+        if let widget = widget as? WidgetText {
+            WidgetTextView(
+                widget: widget
+            )
+            .onTapGesture {
+                viewModel.actionPublisher.send(.init(widget: widget))
+            }
+        }
+    }
+
+    @ViewBuilder
+    var button: some View {
+        if let widget = widget as? WidgetButton {
+            WidgetButtonView(
+                widget: widget,
+                action: { widget in
+                    viewModel.actionPublisher.send(.init(widget: widget))
+                }
+            )
+        }
+    }
+
+    @ViewBuilder
+    var information: some View {
+        if let widget = widget as? WidgetInformation {
+            WidgetInformationView(
+                widget: widget,
+                shadowRadius: viewModel.configuration.shadowRadius
+            )
+            .onTapGesture {
+                viewModel.actionPublisher.send(.init(widget: widget))
+            }
+        }
+    }
+
+    @ViewBuilder
+    var toggle: some View {
+        if let widget = widget as? WidgetToggle {
+            WidgetToggleView(
+                widget: widget,
+                action: { action in
+                    viewModel.actionPublisher.send(action)
+                }
+            )
+        }
+    }
+
+    @ViewBuilder
+    var lastPurchases: some View {
+        if let widget = widget as? WidgetLastPurchases {
+            WidgetPurchasesView(
+                widget: widget,
+                shadowRadius: viewModel.configuration.shadowRadius,
+                action: { action in
+                    viewModel.actionPublisher.send(action)
+                }
+            )
+        }
+    }
+
+    @ViewBuilder
+    var snabble: some View {
+        if let widget = widget as? WidgetSnabble {
+            switch widget.type {
+            case .locationPermission:
+                WidgetButtonLocationPermissionView()
+            case .startShopping:
+                WidgetButtonStartShoppingView(widget: widget) {
+                    viewModel.actionPublisher.send(.init(widget: $0))
+                }
+            case .allStores:
+                WidgetButtonStoresView(widget: widget) {
+                    viewModel.actionPublisher.send(.init(widget: $0))
+                }
+            default:
+                EmptyView()
             }
         }
     }

@@ -64,7 +64,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
         let viewModel: DynamicViewModel = loadJSON("Dashboard")
         let dashboardViewController = DashboardViewController(viewModel: viewModel)
-        dashboardViewController.delegate = self
         self.dashboardViewController = dashboardViewController
 
         let scannerViewController = ScannerViewController(shop: shops.first!)
@@ -144,13 +143,5 @@ extension AppDelegate: CheckInManagerDelegate {
 extension AppDelegate: ShopsViewControllerDelegate {
     func shopsViewController(_ viewController: SnabbleSDK.ShopsViewController, didSelectActionOnShop shop: ShopProviding) {
         print(#function, shop)
-    }
-}
-
-extension AppDelegate: DynamicViewControllerDelegate {
-    func dynamicStackViewController(_ viewController: DynamicViewController, tappedWidget widget: Widget, userInfo: [String: Any]?) {
-        print(#function)
-        print("widget:", widget.id)
-        print("userInfo:", userInfo ?? [:])
     }
 }

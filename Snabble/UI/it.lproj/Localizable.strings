@@ -1,41 +1,3 @@
-"Sample.Dashboard.button" = "Start now";
-
-"Sample.Dashboard.Information.text1" = "You can choose a payment method directly to make your first purchase without having to wait.";
-
-"Sample.Dashboard.Information.text2" = "Take advantage of your store cards automatically.";
-
-"Sample.Dashboard.text" = "Visit a supported store to shop with Snabble!";
-
-"Sample.Dashboard.title" = "Welcome to Snabble";
-
-"Sample.home" = "Start";
-
-"Sample.Onboarding.accept" = "Agree";
-
-"Sample.Onboarding.message1" = "Using Snabble, you scan your purchase yourself and pay directly in the app. No queueing and without putting your purchase on the belt.";
-
-"Sample.Onboarding.message2" = "Enter a participating store, start shopping and hold the barcode of an article in front of the camera. The rest is self-explanatory.";
-
-"Sample.Onboarding.message3" = "Please accept the terms of use and take note of the privacy policy.";
-
-"Sample.profile" = "Profile";
-
-"Sample.scanner" = "Scanner";
-
-"Sample.Section.Profile.deleteAccount" = "Delete Account";
-
-"Sample.Section.Profile.header" = "Your Profile";
-
-"Sample.Section.Profile.paymentMethods" = "Payment Methods";
-
-"Sample.Section.Profile.saveEnergy" = "Save energy";
-
-"Sample.Section.Profile.showOnboarding" = "Show Onboarding";
-
-"Sample.shoppingCart" = "Shopping Cart";
-
-"Sample.shops" = "Shops";
-
 "Snabble.addDiscount" = "Inserisci lo sconto";
 
 "Snabble.AgeVerification.explanation" = "Per l’acquisto di determinati articoli, come ad esempio gli alcolici, è necessario un documento che attesti l’età. Inserisci il numero a 7 cifre della parte posteriore del tuo documento di identità.";
@@ -120,15 +82,33 @@
 
 "Snabble.done" = "Finito";
 
+"Snabble.DynamicView.Button.LocationPermission.MissingPermission.message" = "This is necessary to show stores in your vicinity and allow you to shop there.";
+
+"Snabble.DynamicView.Button.LocationPermission.MissingPermission.title" = "Snabble needs your location";
+
+"Snabble.DynamicView.Button.LocationPermission.notDetermined" = "Grant permission";
+
+"Snabble.DynamicView.Button.LocationPermission.notNow" = "Ask me later";
+
+"Snabble.DynamicView.Button.LocationPermission.openSettings" = "Open Settings";
+
+"Snabble.DynamicView.Button.LocationPermission.ReducedAccuracy.message" = "Please go to Settings > Privacy, then select “Location Services” and activate “Precise Location”";
+
+"Snabble.DynamicView.Button.LocationPermission.ReducedAccuracy.title" = "Snabble requires your precise location to identify in which store you are currently shopping";
+
+"Snabble.DynamicView.Button.startshopping" = "Start shopping";
+
+"Snabble.DynamicView.Button.stores" = "See all stores";
+
 "Snabble.DynamicView.lastPurchase" = "Your last purchase";
 
 "Snabble.DynamicView.lastPurchases" = "Your last purchases";
 
 "Snabble.DynamicView.LastPurchases.all" = "Show All";
 
-"Snabble.DynamicView.LocationPermission.notDetermined" = "Grant permission";
-
 "Snabble.DynamicView.Shop.show" = "Show stores";
+
+"Snabble.DynamicView.wifi" = "Connect to free WiFi";
 
 "Snabble.edit" = "Modifica";
 
@@ -156,18 +136,6 @@
 "Snabble.LimitsAlert.title" = "Attenzione";
 
 "Snabble.loadingProductInformation" = "Caricamento informazioni sul prodotto…";
-
-"Snabble.LocationRequired.MissingPermission.message" = "This is necessary to show stores in your vicinity and allow you to shop there.";
-
-"Snabble.LocationRequired.MissingPermission.title" = "Snabble needs your location";
-
-"Snabble.LocationRequired.notNow" = "Ask me later";
-
-"Snabble.LocationRequired.openSettings" = "Open Settings";
-
-"Snabble.LocationRequired.ReducedAccuracy.message" = "Please go to Settings > Privacy, then select “Location Services” and activate “Precise Location”";
-
-"Snabble.LocationRequired.ReducedAccuracy.title" = "Snabble requires your precise location to identify in which store you are currently shopping";
 
 "Snabble.networkError" = "Errore di connessione di rete";
 

@@ -1,41 +1,3 @@
-"Sample.Dashboard.button" = "Jetzt starten";
-
-"Sample.Dashboard.Information.text1" = "Hinterlege direkt ein Bezahlverfahren, um schon bei deinem ersten Einkauf ohne Wartezeit einzukaufen.";
-
-"Sample.Dashboard.Information.text2" = "Nutze die Vorteile deiner Kundenkarten automatisch.";
-
-"Sample.Dashboard.text" = "Besuche eine unterstütze Filiale, um mit Snabble einzukaufen!";
-
-"Sample.Dashboard.title" = "Willkommen bei Snabble";
-
-"Sample.home" = "Start";
-
-"Sample.Onboarding.accept" = "Akzeptieren";
-
-"Sample.Onboarding.message1" = "Mit Snabble scannst du deinen Einkauf selbst und bezahlt direkt in der App. Ohne in der Schlange zu stehen und ohne deinen Einkauf auf’s Band zu legen.";
-
-"Sample.Onboarding.message2" = "Betrete eine teilnehmende Filiale, starte den Einkauf und halte den Barcode eines Artikels vor die Kamera. Der Rest erklärt sich von selbst.";
-
-"Sample.Onboarding.message3" = "Bitte akzeptiere die Nutzungsbedingungen und lies die Datenschutzhinweise.";
-
-"Sample.profile" = "Profil";
-
-"Sample.scanner" = "Scanner";
-
-"Sample.Section.Profile.deleteAccount" = "Account löschen";
-
-"Sample.Section.Profile.header" = "Dein Profil";
-
-"Sample.Section.Profile.paymentMethods" = "Bezahlverfahren";
-
-"Sample.Section.Profile.saveEnergy" = "Strom sparen";
-
-"Sample.Section.Profile.showOnboarding" = "Zeige Onboarding";
-
-"Sample.shoppingCart" = "Warenkorb";
-
-"Sample.shops" = "Filialen";
-
 "Snabble.addDiscount" = "Rabatt eingeben";
 
 "Snabble.AgeVerification.explanation" = "Für den Kauf bestimmter Artikel, wie z.B. Alkohol, ist ein Altersnachweis notwendig. Gib dazu die 7-stellige Zahl von der Rückseite deines Personalausweises ein.";
@@ -120,15 +82,33 @@
 
 "Snabble.done" = "Fertig";
 
+"Snabble.DynamicView.Button.LocationPermission.MissingPermission.message" = "Nur so können wir Filialen in deiner Nähe anzeigen und dir das Einkaufen ermöglichen.";
+
+"Snabble.DynamicView.Button.LocationPermission.MissingPermission.title" = "Snabble benötigt deinen Standort";
+
+"Snabble.DynamicView.Button.LocationPermission.notDetermined" = "Standort freigeben";
+
+"Snabble.DynamicView.Button.LocationPermission.notNow" = "Nicht jetzt";
+
+"Snabble.DynamicView.Button.LocationPermission.openSettings" = "Einstellungen öffnen";
+
+"Snabble.DynamicView.Button.LocationPermission.ReducedAccuracy.message" = "Bitte öffne die Einstellungen, wähle „Standort“ und aktiviere „Genauer Standort“";
+
+"Snabble.DynamicView.Button.LocationPermission.ReducedAccuracy.title" = "Snabble benötigt deinen genauen Standort, um zu erkennen in welchem Shop du gerade einkaufst";
+
+"Snabble.DynamicView.Button.startshopping" = "Jetzt hier einkaufen";
+
+"Snabble.DynamicView.Button.stores" = "Alle Filialen ansehen";
+
 "Snabble.DynamicView.lastPurchase" = "Dein letzter Einkauf";
 
 "Snabble.DynamicView.lastPurchases" = "Deine letzten Einkäufe";
 
 "Snabble.DynamicView.LastPurchases.all" = "Alle";
 
-"Snabble.DynamicView.LocationPermission.notDetermined" = "Standort freigeben";
-
 "Snabble.DynamicView.Shop.show" = "Filialen anzeigen";
+
+"Snabble.DynamicView.wifi" = "Verbinde Dich mit dem freien WLAN";
 
 "Snabble.edit" = "Bearbeiten";
 
@@ -156,18 +136,6 @@
 "Snabble.LimitsAlert.title" = "Bitte beachten";
 
 "Snabble.loadingProductInformation" = "Lade Produkt-Informationen…";
-
-"Snabble.LocationRequired.MissingPermission.message" = "Nur so können wir Filialen in deiner Nähe anzeigen und dir das Einkaufen ermöglichen.";
-
-"Snabble.LocationRequired.MissingPermission.title" = "Snabble benötigt deinen Standort";
-
-"Snabble.LocationRequired.notNow" = "Nicht jetzt";
-
-"Snabble.LocationRequired.openSettings" = "Einstellungen öffnen";
-
-"Snabble.LocationRequired.ReducedAccuracy.message" = "Bitte öffne die Einstellungen, wähle „Standort“ und aktiviere „Genauer Standort“";
-
-"Snabble.LocationRequired.ReducedAccuracy.title" = "Snabble benötigt deinen genauen Standort, um zu erkennen in welchem Shop du gerade einkaufst";
 
 "Snabble.networkError" = "Netzwerkverbindungsfehler";
 
