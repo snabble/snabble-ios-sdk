@@ -28,7 +28,7 @@ private class CustomerCardViewModel: ObservableObject {
     }
 
     private func widget(for project: Project?) {
-        if project?.customerCards != nil {
+        if !(project?.customerCards?.accepted?.isEmpty ?? true) {
             widget = WidgetInformation(
                 id: "Snabble.DynamicView.CustomerCard.information",
                 text: "Snabble.DynamicView.customerCard",
