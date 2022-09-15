@@ -60,6 +60,11 @@ final class WidgetConnectWifiViewModel: ObservableObject {
     @Published var isJoiningNetwork = false
     @Published var networkError: Error?
     
+#if DEBUG
+    // replace with your testing wifi
+    let testSSID = "snabble"
+#endif
+    
     var isTesting: Bool {
 #if DEBUG
         return true
@@ -110,9 +115,11 @@ final class WidgetConnectWifiViewModel: ObservableObject {
     private var customerNetworks: [String] {
         let result = Snabble.shared.checkInManager.shop?.customerNetworks?.compactMap { $0.ssid } ?? []
         
+#if DEBUG
         if isTesting, result.isEmpty {
-            return ["snabble"/*"SnapNet"*/]
+            return [testSSID]
         }
+#endif
         return result
     }
 
@@ -147,7 +154,7 @@ extension WidgetConnectWifiViewModel: WifiHintViewData {
 }
 
 public struct WidgetConnectWifiView: View {
-    let widget: WidgetConnectWifi
+    let widget: WidgetSnabble
     let shadowRadius: CGFloat
     @ObservedObject private var viewModel = WidgetConnectWifiViewModel()
     
@@ -172,7 +179,7 @@ public struct WidgetConnectWifiView: View {
     }
     
     public var body: some View {
-        if widget.isVisible {
+        if !viewModel.isHidden {
             HStack(alignment: .center) {
                 VStack(alignment: .leading) {
                     Text(keyed: viewModel.text)

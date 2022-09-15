@@ -39,7 +39,7 @@
           "spacing": 24
       },
       {
-          "type": "connectWifi",
+          "type": "snabble.connectWifi",
           "id": "4711",
           "spacing": 16,
       },

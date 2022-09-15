@@ -133,9 +133,7 @@ public struct WidgetView: View {
                 WidgetConnectWifiView(
                         widget: widget,
                         shadowRadius: viewModel.configuration.shadowRadius
-                ) {
-                    viewModel.actionPublisher.send(.init(widget: $0))
-                }
+                )
             default:
                 EmptyView()
             }

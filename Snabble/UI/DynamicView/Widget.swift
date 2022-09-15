@@ -19,7 +19,6 @@ public enum WidgetType: String, Decodable {
     case text
     case image
     case button
-    case connectWifi
     case information
     case section
     case toggle
@@ -29,6 +28,7 @@ public enum WidgetType: String, Decodable {
     case allStores = "snabble.allStores"
     case startShopping = "snabble.startShopping"
     case locationPermission = "snabble.locationPermission"
+    case connectWifi = "snabble.connectWifi"
 }
 
 public struct WidgetText: Widget {
@@ -236,38 +236,6 @@ public struct WidgetLastPurchases: Widget {
         case id
         case projectId
         case spacing
-    }
-}
-
-/// type is `connectWifi`
-public struct WidgetConnectWifi: Widget {
-    public let id: String
-    public let type: WidgetType = .connectWifi
-    public var spacing: CGFloat?
-    
-    public init(
-        id: String,
-        spacing: CGFloat? = nil
-    ) {
-        self.id = id
-        self.spacing = spacing
-    }
-
-    enum CodingKeys: String, CodingKey {
-        case id
-        case spacing
-    }
-    
-    public var isVisible: Bool {
-        guard let shop = Snabble.shared.checkInManager.shop else {
-            return false
-        }
-#if DEBUG
-        // return true for testing widget
-        return true
-#else
-        return shop.customerNetworks?.isEmpty == false
-#endif
     }
 }
 
