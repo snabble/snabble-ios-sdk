@@ -26,21 +26,21 @@
           "spacing": 32
       },
       {
-          "type": "snabble",
-          "id": "io.snabble.dynamicView.locationPermission",
+          "type": "snabble.locationPermission",
+          "id": "4",
       },
       {
-          "type": "snabble",
-          "id": "io.snabble.dynamicView.startShopping",
+          "type": "snabble.startShopping",
+          "id": "5",
       },
       {
-          "type": "snabble",
-          "id": "io.snabble.dynamicView.stores",
+          "type": "snabble.allStores",
+          "id": "6",
           "spacing": 24
       },
       {
           "type": "information",
-          "id": "5",
+          "id": "7",
           "image": "Dashboard/Information.image1",
           "text": "Dashboard.Information.text1",
           "hideable": true,
@@ -48,15 +48,15 @@
       },
       {
           "type": "information",
-          "id": "6",
+          "id": "8",
           "image": "Dashboard/Information.image2",
           "text": "Dashboard.Information.text2",
           "hideable": true,
           "spacing": 32,
       },
       {
-          "type": "snabble",
-          "id": "io.snabble.dynamicView.lastPurchases",
+          "type": "snabble.lastPurchases",
+          "id": "9",
           "projectId": "snabble-sdk-demo-beem8n"
       }
   ]

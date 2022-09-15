@@ -27,7 +27,9 @@ public struct WidgetView: View {
                     information
                 case .toggle:
                     toggle
-                case .snabble:
+                case .lastPurchases:
+                    lastPurchases
+                case .locationPermission, .allStores, .startShopping:
                     snabble
                 case .section:
                     EmptyView()
@@ -101,24 +103,29 @@ public struct WidgetView: View {
     }
 
     @ViewBuilder
+    var lastPurchases: some View {
+        if let widget = widget as? WidgetLastPurchases {
+            WidgetPurchasesView(
+                widget: widget,
+                shadowRadius: viewModel.configuration.shadowRadius,
+                action: { action in
+                    viewModel.actionPublisher.send(action)
+                }
+            )
+        }
+    }
+
+    @ViewBuilder
     var snabble: some View {
         if let widget = widget as? WidgetSnabble {
-            switch widget.id {
-            case "io.snabble.dynamicView.locationPermission":
+            switch widget.type {
+            case .locationPermission:
                 WidgetButtonLocationPermissionView()
-            case "io.snabble.dynamicView.lastPurchases":
-                WidgetPurchasesView(
-                    widget: widget,
-                    shadowRadius: viewModel.configuration.shadowRadius,
-                    action: { action in
-                        viewModel.actionPublisher.send(action)
-                    }
-                )
-            case "io.snabble.dynamicView.startShopping":
+            case .startShopping:
                 WidgetButtonStartShoppingView(widget: widget) {
                     viewModel.actionPublisher.send(.init(widget: $0))
                 }
-            case "io.snabble.dynamicView.stores":
+            case .allStores:
                 WidgetButtonStoresView(widget: widget) {
                     viewModel.actionPublisher.send(.init(widget: $0))
                 }

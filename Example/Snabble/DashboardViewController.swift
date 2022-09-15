@@ -30,10 +30,10 @@ final class DashboardViewController: SnabbleSDK.DynamicViewController {
 extension DashboardViewController: SnabbleSDK.DynamicViewControllerDelegate {
     func dynamicStackViewController(_ viewController: DynamicViewController, tappedWidget widget: Widget, userInfo: [String: Any]?) {
         print(widget)
-        switch widget.id {
-        case "io.snabble.dynamicView.startShopping":
+        switch widget.type {
+        case .startShopping:
             tabBarController?.selectedIndex = 1
-        case "io.snabble.dynamicView.stores":
+        case .allStores:
             tabBarController?.selectedIndex = 2
         default:
             break

@@ -16,13 +16,18 @@ public protocol Widget: Decodable {
 }
 
 public enum WidgetType: String, Decodable {
-    case snabble
     case text
     case image
     case button
     case information
     case section
     case toggle
+
+    // Snabble
+    case lastPurchases = "snabble.lastPurchases"
+    case allStores = "snabble.allStores"
+    case startShopping = "snabble.startShopping"
+    case locationPermission = "snabble.locationPermission"
 }
 
 public struct WidgetText: Widget {
@@ -210,9 +215,9 @@ public struct WidgetSection: Widget {
     }
 }
 
-public struct WidgetSnabble: Widget {
+public struct WidgetLastPurchases: Widget {
     public let id: String
-    public let type: WidgetType = .snabble
+    public let type: WidgetType = .lastPurchases
     public let projectId: Identifier<Project>?
     public var spacing: CGFloat?
 
@@ -231,4 +236,10 @@ public struct WidgetSnabble: Widget {
         case projectId
         case spacing
     }
+}
+
+public struct WidgetSnabble: Widget {
+    public let id: String
+    public let type: WidgetType
+    public var spacing: CGFloat?
 }
