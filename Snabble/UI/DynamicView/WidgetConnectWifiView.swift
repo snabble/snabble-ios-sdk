@@ -31,9 +31,9 @@ final class ConnectWifiViewModel: ObservableObject {
     @Published var isHidden = true
 
     private func verifyIsHidden() -> Bool {
-//        guard !BuildConfig.simulator else {
-//            return true
-//        }
+        guard !BuildConfig.simulator else {
+            return true
+        }
 
         guard !customerNetworks.isEmpty else {
             return true
