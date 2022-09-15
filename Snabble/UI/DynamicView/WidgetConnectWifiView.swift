@@ -100,10 +100,11 @@ final class WidgetConnectWifiViewModel: ObservableObject {
             // after a short delay, try to access https://snabble.io in the hope that
             // this forces any captive portal login screens to appear
             DispatchQueue.main.asyncAfter(deadline: .now() + 5) {
-                let snabbleURL = URL(string: "https://httpbin.org/status/200" /*"/https://snabble.io"*/)!
-                let captiveTask = URLSession.shared.dataTask(with: snabbleURL) { _, response, _ in
+                // the snabble app uses https://snabble.io and fetches about 90KB of data from snabbles home page
+                let testURL = URL(string: "https://httpbin.org/status/200")!
+                let captiveTask = URLSession.shared.dataTask(with: testURL) { _, response, _ in
                     let statusCode = (response as? HTTPURLResponse)?.statusCode ?? 0
-                    print("got statuscode \(statusCode) from \(snabbleURL)")
+                    print("got statuscode \(statusCode) from \(testURL)")
                 }
                 captiveTask.resume()
             }
