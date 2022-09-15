@@ -138,11 +138,13 @@ extension ConnectWifiViewModel {
 public struct WidgetConnectWifiView: View {
     let widget: WidgetConnectWifi
     let configuration: DynamicViewConfiguration
+    let action: (Widget) -> Void
     @ObservedObject private var viewModel: ConnectWifiViewModel
 
-    init(widget: WidgetConnectWifi, configuration: DynamicViewConfiguration) {
+    init(widget: WidgetConnectWifi, configuration: DynamicViewConfiguration, action: @escaping (Widget) -> Void) {
         self.widget = widget
         self.configuration = configuration
+        self.action = action
 
         self.viewModel = ConnectWifiViewModel(configuration: configuration)
     }
@@ -186,6 +188,7 @@ public struct WidgetConnectWifiView: View {
             .informationStyle()
             .onTapGesture {
                 viewModel.joinNetwork()
+                action(widget)
             }
             .shadow(radius: configuration.shadowRadius)
         }

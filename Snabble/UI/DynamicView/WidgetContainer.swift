@@ -125,8 +125,10 @@ public struct WidgetView: View {
 
     @ViewBuilder
     var locationPermission: some View {
-        if widget is WidgetLocationPermission {
-            WidgetLocationPermissionView()
+        if let widget = widget as? WidgetLocationPermission {
+            WidgetLocationPermissionView(widget: widget) {
+                viewModel.actionPublisher.send(.init(widget: $0))
+            }
         }
     }
 
@@ -154,7 +156,9 @@ public struct WidgetView: View {
             WidgetConnectWifiView(
                     widget: widget,
                     configuration: viewModel.configuration
-            )
+            ) {
+                viewModel.actionPublisher.send(.init(widget: $0))
+            }
         }
     }
 
@@ -164,7 +168,9 @@ public struct WidgetView: View {
             WidgetCustomerCardView(
                 widget: widget,
                 configuration: viewModel.configuration
-            )
+            ) {
+                viewModel.actionPublisher.send(.init(widget: $0))
+            }
         }
     }
 }

@@ -45,12 +45,14 @@ private class CustomerCardViewModel: ObservableObject {
 public struct WidgetCustomerCardView: View {
     let widget: WidgetCustomerCard
     let configuration: DynamicViewConfiguration
+    let action: (Widget) -> Void
 
     @ObservedObject private var viewModel: CustomerCardViewModel
 
-    init(widget: WidgetCustomerCard, configuration: DynamicViewConfiguration) {
+    init(widget: WidgetCustomerCard, configuration: DynamicViewConfiguration, action: @escaping (Widget) -> Void) {
         self.widget = widget
         self.configuration = configuration
+        self.action = action
         self.viewModel = CustomerCardViewModel(widget: widget)
     }
 
@@ -59,7 +61,9 @@ public struct WidgetCustomerCardView: View {
             WidgetInformationView(
                 widget: widget,
                 configuration: configuration
-            )
+            ).onTapGesture {
+                action(widget)
+            }
         }
     }
 }
