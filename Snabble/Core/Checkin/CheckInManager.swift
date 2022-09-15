@@ -7,6 +7,7 @@
 
 import Foundation
 import CoreLocation
+import Combine
 
 public protocol CheckInManagerDelegate: AnyObject {
     /// Tells the delegate when the manager did check out of a shop.
@@ -34,6 +35,7 @@ public class CheckInManager: NSObject {
     /// Current checked in `Shop`
     public var shop: Shop? {
         didSet {
+            shopPublisher.send(shop)
             if let shop = oldValue {
                 checkedInAt = nil
                 delegate?.checkInManager(self, didCheckOutOf: shop)
@@ -45,6 +47,8 @@ public class CheckInManager: NSObject {
             }
         }
     }
+
+    var shopPublisher = CurrentValueSubject<Shop?, Never>(nil)
 
     private func trackCheckIn(with shop: Shop) {
         guard let location = locationManager.location, let project = shop.project else { return }

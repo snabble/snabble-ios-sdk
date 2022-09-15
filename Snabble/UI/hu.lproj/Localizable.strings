@@ -82,17 +82,33 @@
 
 "Snabble.done" = "Kész";
 
+"Snabble.DynamicView.AllStores.button" = "See all stores";
+
 "Snabble.DynamicView.lastPurchase" = "Utolsó bevásárlásod";
 
 "Snabble.DynamicView.lastPurchases" = "Utolsó bevásárlásaid";
 
 "Snabble.DynamicView.LastPurchases.all" = "Összes";
 
-"Snabble.DynamicView.LocationPermission.notDetermined" = "Grant permission";
+"Snabble.DynamicView.LocationPermission.Button.notDetermined" = "Grant permission";
+
+"Snabble.DynamicView.LocationPermission.MissingPermission.message" = "Csak így tudjuk megjeleníteni a közelben lévő üzleteket, és lehetővé tenni neked a bevásárlást.";
+
+"Snabble.DynamicView.LocationPermission.MissingPermission.title" = "A Snabble-nek szüksége van a tartózkodási helyedre";
+
+"Snabble.DynamicView.LocationPermission.notNow" = "Most nem";
+
+"Snabble.DynamicView.LocationPermission.openSettings" = "Beállítások megnyitása";
+
+"Snabble.DynamicView.LocationPermission.ReducedAccuracy.message" = "Nyisd meg a beállításokat, válaszd a „Tartózkodási hely“ lehetőséget, és aktiváld a „Pontos tartózkodási hely“ opciót";
+
+"Snabble.DynamicView.LocationPermission.ReducedAccuracy.title" = "A Snabble-nek szüksége van a pontos tartózkodási helyedre, hogy felismerje, éppen melyik üzletben vásárolsz";
 
 "Snabble.DynamicView.Shop.show" = "Üzletek mutatása";
 
-"Snabble.DynamicView.wifi" = "Connect to free WiFi";
+"Snabble.DynamicView.StartShopping.button" = "Start shopping";
+
+"Snabble.DynamicView.wifi" = "Kapcsolódás az ingyenes „%@“ WIFI-vel";
 
 "Snabble.edit" = "Szerkesztés";
 
@@ -120,18 +136,6 @@
 "Snabble.LimitsAlert.title" = "Vedd figyelembe";
 
 "Snabble.loadingProductInformation" = "Termékinformációk betöltése…";
-
-"Snabble.LocationRequired.MissingPermission.message" = "Csak így tudjuk megjeleníteni a közelben lévő üzleteket, és lehetővé tenni neked a bevásárlást.";
-
-"Snabble.LocationRequired.MissingPermission.title" = "A Snabble-nek szüksége van a tartózkodási helyedre";
-
-"Snabble.LocationRequired.notNow" = "Most nem";
-
-"Snabble.LocationRequired.openSettings" = "Beállítások megnyitása";
-
-"Snabble.LocationRequired.ReducedAccuracy.message" = "Nyisd meg a beállításokat, válaszd a „Tartózkodási hely“ lehetőséget, és aktiváld a „Pontos tartózkodási hely“ opciót";
-
-"Snabble.LocationRequired.ReducedAccuracy.title" = "A Snabble-nek szüksége van a pontos tartózkodási helyedre, hogy felismerje, éppen melyik üzletben vásárolsz";
 
 "Snabble.networkError" = "Hálózati kapcsolat hiba";
 

@@ -82,17 +82,33 @@
 
 "Snabble.done" = "Hotovo";
 
+"Snabble.DynamicView.AllStores.button" = "See all stores";
+
 "Snabble.DynamicView.lastPurchase" = "Tvoj posledný nákup";
 
 "Snabble.DynamicView.lastPurchases" = "Tvoje posledné nákupy";
 
 "Snabble.DynamicView.LastPurchases.all" = "Všetko";
 
-"Snabble.DynamicView.LocationPermission.notDetermined" = "Grant permission";
+"Snabble.DynamicView.LocationPermission.Button.notDetermined" = "Grant permission";
+
+"Snabble.DynamicView.LocationPermission.MissingPermission.message" = "Len tak môžeme zobraziť obchody v tvojej blízkosti a umožniť nákup.";
+
+"Snabble.DynamicView.LocationPermission.MissingPermission.title" = "Snabble potrebuje zistiť tvoju polohu";
+
+"Snabble.DynamicView.LocationPermission.notNow" = "Teraz nie";
+
+"Snabble.DynamicView.LocationPermission.openSettings" = "Otvoriť nastavenia";
+
+"Snabble.DynamicView.LocationPermission.ReducedAccuracy.message" = "Otvor nastavenia, zvoľ položku „Poloha“ a aktivuj možnosť „Presná poloha“.";
+
+"Snabble.DynamicView.LocationPermission.ReducedAccuracy.title" = "Snabble potrebuje tvoju presnú polohu, aby rozpoznal, v ktorom obchode práve nakupuješ";
 
 "Snabble.DynamicView.Shop.show" = "Zobraziť obchody";
 
-"Snabble.DynamicView.wifi" = "Connect to free WiFi";
+"Snabble.DynamicView.StartShopping.button" = "Start shopping";
+
+"Snabble.DynamicView.wifi" = "Use the free “%@” wifi";
 
 "Snabble.edit" = "Upraviť";
 
@@ -120,18 +136,6 @@
 "Snabble.LimitsAlert.title" = "Pozor";
 
 "Snabble.loadingProductInformation" = "Načítanie informácií o produkte…";
-
-"Snabble.LocationRequired.MissingPermission.message" = "Len tak môžeme zobraziť obchody v tvojej blízkosti a umožniť nákup.";
-
-"Snabble.LocationRequired.MissingPermission.title" = "Snabble potrebuje zistiť tvoju polohu";
-
-"Snabble.LocationRequired.notNow" = "Teraz nie";
-
-"Snabble.LocationRequired.openSettings" = "Otvoriť nastavenia";
-
-"Snabble.LocationRequired.ReducedAccuracy.message" = "Otvor nastavenia, zvoľ položku „Poloha“ a aktivuj možnosť „Presná poloha“.";
-
-"Snabble.LocationRequired.ReducedAccuracy.title" = "Snabble potrebuje tvoju presnú polohu, aby rozpoznal, v ktorom obchode práve nakupuješ";
 
 "Snabble.networkError" = "Chyba spojenia";
 

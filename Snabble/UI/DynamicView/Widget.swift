@@ -21,10 +21,14 @@ public enum WidgetType: String, Decodable {
     case button
     case connectWifi
     case information
-    case purchases
     case section
-    case locationPermission
     case toggle
+
+    // Snabble
+    case lastPurchases = "snabble.lastPurchases"
+    case allStores = "snabble.allStores"
+    case startShopping = "snabble.startShopping"
+    case locationPermission = "snabble.locationPermission"
 }
 
 public struct WidgetText: Widget {
@@ -147,29 +151,6 @@ public struct WidgetInformation: Widget, ImageSourcing {
     }
 }
 
-public struct WidgetPurchase: Widget {
-    public let id: String
-    public let type: WidgetType = .purchases
-    public let projectId: Identifier<Project>
-    public let spacing: CGFloat?
-
-    init(
-        id: String,
-        projectId: Identifier<Project>,
-        spacing: CGFloat? = nil
-    ) {
-        self.id = id
-        self.projectId = projectId
-        self.spacing = spacing
-    }
-
-    enum CodingKeys: String, CodingKey {
-        case id
-        case projectId
-        case spacing
-    }
-}
-
 public struct WidgetToggle: Widget {
     public let id: String
     public let type: WidgetType = .toggle
@@ -235,21 +216,25 @@ public struct WidgetSection: Widget {
     }
 }
 
-public struct WidgetLocationPermission: Widget {
+public struct WidgetLastPurchases: Widget {
     public let id: String
-    public let type: WidgetType = .locationPermission
+    public let type: WidgetType = .lastPurchases
+    public let projectId: Identifier<Project>?
     public var spacing: CGFloat?
 
     public init(
         id: String,
+        projectId: Identifier<Project>? = nil,
         spacing: CGFloat? = nil
     ) {
         self.id = id
+        self.projectId = projectId
         self.spacing = spacing
     }
 
     enum CodingKeys: String, CodingKey {
         case id
+        case projectId
         case spacing
     }
 }
@@ -284,4 +269,10 @@ public struct WidgetConnectWifi: Widget {
         return shop.customerNetworks?.isEmpty == false
 #endif
     }
+}
+
+public struct WidgetSnabble: Widget {
+    public let id: String
+    public let type: WidgetType
+    public var spacing: CGFloat?
 }

@@ -82,17 +82,33 @@
 
 "Snabble.done" = "Terminé";
 
+"Snabble.DynamicView.AllStores.button" = "See all stores";
+
 "Snabble.DynamicView.lastPurchase" = "Your last purchase";
 
 "Snabble.DynamicView.lastPurchases" = "Your last purchases";
 
 "Snabble.DynamicView.LastPurchases.all" = "Show All";
 
-"Snabble.DynamicView.LocationPermission.notDetermined" = "Grant permission";
+"Snabble.DynamicView.LocationPermission.Button.notDetermined" = "Grant permission";
+
+"Snabble.DynamicView.LocationPermission.MissingPermission.message" = "This is necessary to show stores in your vicinity and allow you to shop there.";
+
+"Snabble.DynamicView.LocationPermission.MissingPermission.title" = "Snabble needs your location";
+
+"Snabble.DynamicView.LocationPermission.notNow" = "Ask me later";
+
+"Snabble.DynamicView.LocationPermission.openSettings" = "Open Settings";
+
+"Snabble.DynamicView.LocationPermission.ReducedAccuracy.message" = "Please go to Settings > Privacy, then select “Location Services” and activate “Precise Location”";
+
+"Snabble.DynamicView.LocationPermission.ReducedAccuracy.title" = "Snabble requires your precise location to identify in which store you are currently shopping";
 
 "Snabble.DynamicView.Shop.show" = "Show stores";
 
-"Snabble.DynamicView.wifi" = "Connect to free WiFi";
+"Snabble.DynamicView.StartShopping.button" = "Start shopping";
+
+"Snabble.DynamicView.wifi" = "Use the free “%@” wifi";
 
 "Snabble.edit" = "Éditer";
 
@@ -120,18 +136,6 @@
 "Snabble.LimitsAlert.title" = "À noter";
 
 "Snabble.loadingProductInformation" = "Chargement des informations de produit…";
-
-"Snabble.LocationRequired.MissingPermission.message" = "This is necessary to show stores in your vicinity and allow you to shop there.";
-
-"Snabble.LocationRequired.MissingPermission.title" = "Snabble needs your location";
-
-"Snabble.LocationRequired.notNow" = "Ask me later";
-
-"Snabble.LocationRequired.openSettings" = "Open Settings";
-
-"Snabble.LocationRequired.ReducedAccuracy.message" = "Please go to Settings > Privacy, then select “Location Services” and activate “Precise Location”";
-
-"Snabble.LocationRequired.ReducedAccuracy.title" = "Snabble requires your precise location to identify in which store you are currently shopping";
 
 "Snabble.networkError" = "Erreur de connexion au réseau";
 

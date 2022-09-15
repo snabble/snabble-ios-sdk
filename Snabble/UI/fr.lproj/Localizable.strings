@@ -82,17 +82,33 @@
 
 "Snabble.done" = "Terminé";
 
+"Snabble.DynamicView.AllStores.button" = "See all stores";
+
 "Snabble.DynamicView.lastPurchase" = "Votre dernier achat";
 
 "Snabble.DynamicView.lastPurchases" = "Vos derniers achats";
 
 "Snabble.DynamicView.LastPurchases.all" = "Tous";
 
-"Snabble.DynamicView.LocationPermission.notDetermined" = "Grant permission";
+"Snabble.DynamicView.LocationPermission.Button.notDetermined" = "Grant permission";
+
+"Snabble.DynamicView.LocationPermission.MissingPermission.message" = "Ceci est la seule façon pour nous d'afficher les magasins les plus proches de chez vous et de vous permettre de faire vos achats.";
+
+"Snabble.DynamicView.LocationPermission.MissingPermission.title" = "Snabble a besoin de votre localisation";
+
+"Snabble.DynamicView.LocationPermission.notNow" = "Pas maintenant";
+
+"Snabble.DynamicView.LocationPermission.openSettings" = "Ouvrir les réglages";
+
+"Snabble.DynamicView.LocationPermission.ReducedAccuracy.message" = "Veuillez ouvrir les réglages, sélectionner \"Emplacement\" et activer \"Emplacement exact\"";
+
+"Snabble.DynamicView.LocationPermission.ReducedAccuracy.title" = "Snabble a besoin de votre position exacte pour savoir dans quel magasin vous faites vos achats.";
 
 "Snabble.DynamicView.Shop.show" = "Afficher les filiales";
 
-"Snabble.DynamicView.wifi" = "Connect to free WiFi";
+"Snabble.DynamicView.StartShopping.button" = "Start shopping";
+
+"Snabble.DynamicView.wifi" = "Use the free “%@” wifi";
 
 "Snabble.edit" = "Modifier";
 
@@ -120,18 +136,6 @@
 "Snabble.LimitsAlert.title" = "Veuillez noter";
 
 "Snabble.loadingProductInformation" = "Chargement des informations produit en cours...";
-
-"Snabble.LocationRequired.MissingPermission.message" = "Ceci est la seule façon pour nous d'afficher les magasins les plus proches de chez vous et de vous permettre de faire vos achats.";
-
-"Snabble.LocationRequired.MissingPermission.title" = "Snabble a besoin de votre localisation";
-
-"Snabble.LocationRequired.notNow" = "Pas maintenant";
-
-"Snabble.LocationRequired.openSettings" = "Ouvrir les réglages";
-
-"Snabble.LocationRequired.ReducedAccuracy.message" = "Veuillez ouvrir les réglages, sélectionner \"Emplacement\" et activer \"Emplacement exact\"";
-
-"Snabble.LocationRequired.ReducedAccuracy.title" = "Snabble a besoin de votre position exacte pour savoir dans quel magasin vous faites vos achats.";
 
 "Snabble.networkError" = "Erreur de connexion réseau";
 
