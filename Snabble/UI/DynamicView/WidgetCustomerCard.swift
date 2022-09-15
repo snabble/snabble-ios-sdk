@@ -28,6 +28,7 @@ private class CustomerCardViewModel: ObservableObject {
     }
 
     private func widget(for project: Project?) {
+        // CustomerCardInfo is empty {} so it's needed to check `accepted`.
         if !(project?.customerCards?.accepted?.isEmpty ?? true) {
             widget = WidgetInformation(
                 id: "Snabble.DynamicView.CustomerCard.information",
