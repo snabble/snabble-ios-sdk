@@ -38,15 +38,15 @@ final class ConnectWifiViewModel: ObservableObject {
         guard !customerNetworks.isEmpty else {
             return true
         }
-        #if DEBUG
+#if DEBUG
         return currentSSID == testSSID
-        #else
+#else
         if let currentSSID = currentSSID {
             return customerNetworks.contains(currentSSID)
         } else {
             return false
         }
-        #endif
+#endif
     }
 
     @Published var isJoiningNetwork = false
@@ -76,10 +76,9 @@ final class ConnectWifiViewModel: ObservableObject {
 
             self?.networkError = error
 
-            // after a short delay, try to access https://snabble.io in the hope that
+            // after a short delay, try to access an url in the hope that
             // this forces any captive portal login screens to appear
             DispatchQueue.main.asyncAfter(deadline: .now() + 5) {
-                // the snabble app uses https://snabble.io and fetches about 90KB of data from snabbles home page
                 let testURL = URL(string: "https://httpbin.org/status/200")!
                 let captiveTask = URLSession.shared.dataTask(with: testURL) { _, response, _ in
                     let statusCode = (response as? HTTPURLResponse)?.statusCode ?? 0
