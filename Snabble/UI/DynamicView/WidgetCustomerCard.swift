@@ -53,6 +53,7 @@ public struct WidgetCustomerCardView: View {
         self.widget = widget
         self.configuration = configuration
         self.action = action
+
         self.viewModel = CustomerCardViewModel(widget: widget)
     }
 
