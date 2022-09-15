@@ -47,22 +47,6 @@
           "type": "snabble.customerCard",
           "id": "8",
           "projectId": "snabble-sdk-demo-beem8n",
-          "spacing": 16,
-      },
-      {
-          "type": "information",
-          "id": "9",
-          "image": "Dashboard/Information.image1",
-          "text": "Dashboard.Information.text1",
-          "hideable": true,
-          "spacing": 16,
-      },
-      {
-          "type": "information",
-          "id": "10",
-          "image": "Dashboard/Information.image2",
-          "text": "Dashboard.Information.text2",
-          "hideable": true,
           "spacing": 32,
       },
       {

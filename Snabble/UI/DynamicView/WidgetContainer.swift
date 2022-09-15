@@ -128,7 +128,10 @@ public struct WidgetView: View {
                     }
                 )
             case .customerCard:
-                Text("CustomerCard")
+                WidgetCustomerCardView(
+                    widget: widget,
+                    configuration: viewModel.configuration
+                )
             default:
                 EmptyView()
             }
