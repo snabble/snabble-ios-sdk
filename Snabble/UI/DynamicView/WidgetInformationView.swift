@@ -26,7 +26,7 @@ extension View {
 
 public struct WidgetInformationView: View {
     let widget: WidgetInformation
-    let shadowRadius: CGFloat
+    let configuration: DynamicViewConfiguration
 
     public var body: some View {
         HStack(alignment: .top) {
@@ -36,6 +36,6 @@ public struct WidgetInformationView: View {
             Spacer()
         }
         .informationStyle()
-        .shadow(radius: shadowRadius)
+        .shadow(radius: configuration.shadowRadius)
     }
 }

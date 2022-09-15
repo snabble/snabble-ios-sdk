@@ -27,8 +27,18 @@ public struct WidgetView: View {
                     information
                 case .toggle:
                     toggle
-                case .locationPermission, .allStores, .startShopping, .connectWifi, .lastPurchases, .customerCard:
-                    snabble
+                case .lastPurchases:
+                    lastPurchases
+                case .locationPermission:
+                    locationPermission
+                case .allStores:
+                    allStores
+                case .startShopping:
+                    startShopping
+                case .connectWifi:
+                    connectWifi
+                case .customerCard:
+                    customerCard
                 case .section:
                     EmptyView()
                 }
@@ -80,7 +90,7 @@ public struct WidgetView: View {
         if let widget = widget as? WidgetInformation {
             WidgetInformationView(
                 widget: widget,
-                shadowRadius: viewModel.configuration.shadowRadius
+                configuration: viewModel.configuration
             )
             .onTapGesture {
                 viewModel.actionPublisher.send(.init(widget: widget))
@@ -101,40 +111,60 @@ public struct WidgetView: View {
     }
 
     @ViewBuilder
-    var snabble: some View {
-        if let widget = widget as? WidgetSnabble {
-            switch widget.type {
-            case .locationPermission:
-                WidgetLocationPermissionView()
-            case .startShopping:
-                WidgetStartShoppingView(widget: widget) {
-                    viewModel.actionPublisher.send(.init(widget: $0))
+    var lastPurchases: some View {
+        if let widget = widget as? WidgetLastPurchases {
+            WidgetLastPurchasesView(
+                widget: widget,
+                configuration: viewModel.configuration,
+                action: { action in
+                    viewModel.actionPublisher.send(action)
                 }
-            case .allStores:
-                WidgetAllStoresView(widget: widget) {
-                    viewModel.actionPublisher.send(.init(widget: $0))
-                }
-            case .connectWifi:
-                WidgetConnectWifiView(
-                        widget: widget,
-                        shadowRadius: viewModel.configuration.shadowRadius
-                )
-            case .lastPurchases:
-                WidgetPurchasesView(
-                    widget: widget,
-                    shadowRadius: viewModel.configuration.shadowRadius,
-                    action: { action in
-                        viewModel.actionPublisher.send(action)
-                    }
-                )
-            case .customerCard:
-                WidgetCustomerCardView(
+            )
+        }
+    }
+
+    @ViewBuilder
+    var locationPermission: some View {
+        if widget is WidgetLocationPermission {
+            WidgetLocationPermissionView()
+        }
+    }
+
+    @ViewBuilder
+    var allStores: some View {
+        if let widget = widget as? WidgetAllStores {
+            WidgetAllStoresView(widget: widget) {
+                viewModel.actionPublisher.send(.init(widget: $0))
+            }
+        }
+    }
+
+    @ViewBuilder
+    var startShopping: some View {
+        if let widget = widget as? WidgetStartShopping {
+            WidgetStartShoppingView(widget: widget) {
+                viewModel.actionPublisher.send(.init(widget: $0))
+            }
+        }
+    }
+
+    @ViewBuilder
+    var connectWifi: some View {
+        if let widget = widget as? WidgetConnectWifi {
+            WidgetConnectWifiView(
                     widget: widget,
                     configuration: viewModel.configuration
-                )
-            default:
-                EmptyView()
-            }
+            )
+        }
+    }
+
+    @ViewBuilder
+    var customerCard: some View {
+        if let widget = widget as? WidgetCustomerCard {
+            WidgetCustomerCardView(
+                widget: widget,
+                configuration: viewModel.configuration
+            )
         }
     }
 }

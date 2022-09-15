@@ -219,9 +219,72 @@ public struct WidgetSection: Widget {
     }
 }
 
-public struct WidgetSnabble: Widget {
+public struct WidgetLocationPermission: Widget {
     public let id: String
-    public let type: WidgetType
+    public let type: WidgetType = .locationPermission
+    public var spacing: CGFloat?
+
+    enum CodingKeys: String, CodingKey {
+        case id
+        case spacing
+    }
+}
+
+public struct WidgetAllStores: Widget {
+    public let id: String
+    public let type: WidgetType = .allStores
+    public var spacing: CGFloat?
+
+    enum CodingKeys: String, CodingKey {
+        case id
+        case spacing
+    }
+}
+
+public struct WidgetStartShopping: Widget {
+    public let id: String
+    public let type: WidgetType = .startShopping
+    public var spacing: CGFloat?
+
+    enum CodingKeys: String, CodingKey {
+        case id
+        case spacing
+    }
+}
+
+public struct WidgetConnectWifi: Widget {
+    public let id: String
+    public let type: WidgetType = .connectWifi
+    public var spacing: CGFloat?
+
+    enum CodingKeys: String, CodingKey {
+        case id
+        case spacing
+    }
+}
+
+public struct WidgetLastPurchases: Widget {
+    public let id: String
+    public let type: WidgetType = .lastPurchases
     public let projectId: Identifier<Project>?
     public var spacing: CGFloat?
+
+    enum CodingKeys: String, CodingKey {
+        case id
+        case projectId
+        case spacing
+    }
+}
+
+public struct WidgetCustomerCard: Widget {
+    public let id: String
+    public let type: WidgetType = .customerCard
+    public let projectId: Identifier<Project>?
+    public var spacing: CGFloat?
+
+    enum CodingKeys: String, CodingKey {
+        case id
+        case projectId
+        case spacing
+    }
 }

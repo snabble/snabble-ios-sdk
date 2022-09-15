@@ -14,7 +14,7 @@ private class AllStoresViewModel: ObservableObject {
 
     private var cancellables = Set<AnyCancellable>()
 
-    init(widget: WidgetSnabble) {
+    init(widget: WidgetAllStores) {
         Snabble.shared.checkInManager.shopPublisher
             .sink { [weak self] shop in
                 if shop != nil {
@@ -36,12 +36,12 @@ private class AllStoresViewModel: ObservableObject {
 }
 
 public struct WidgetAllStoresView: View {
-    let widget: WidgetSnabble
-    let action: (WidgetSnabble) -> Void
+    let widget: WidgetAllStores
+    let action: (WidgetAllStores) -> Void
 
     @ObservedObject private var viewModel: AllStoresViewModel
 
-    init(widget: WidgetSnabble, action: @escaping (WidgetSnabble) -> Void) {
+    init(widget: WidgetAllStores, action: @escaping (WidgetAllStores) -> Void) {
         self.widget = widget
         self.action = action
         self.viewModel = AllStoresViewModel(widget: widget)

@@ -12,13 +12,9 @@ import Combine
 private class CustomerCardViewModel: ObservableObject {
     @Published var widget: WidgetInformation?
 
-    private let baseWidget: Widget
-
     private var cancellables = Set<AnyCancellable>()
 
-    init(widget: WidgetSnabble) {
-        self.baseWidget = widget
-
+    init(widget: WidgetCustomerCard) {
         if let projectId = widget.projectId,
            let project = Snabble.shared.project(for: projectId) {
             self.widget(for: project)
@@ -34,7 +30,7 @@ private class CustomerCardViewModel: ObservableObject {
     private func widget(for project: Project?) {
         if project?.customerCards != nil {
             widget = WidgetInformation(
-                id: baseWidget.id,
+                id: "Snabble.DynamicView.CustomerCard.information",
                 text: "Snabble.DynamicView.customerCard",
                 imageSource: "Snabble.DynamicView.customerCard",
                 hideable: false
@@ -46,12 +42,12 @@ private class CustomerCardViewModel: ObservableObject {
 }
 
 public struct WidgetCustomerCardView: View {
-    let widget: WidgetSnabble
+    let widget: WidgetCustomerCard
     let configuration: DynamicViewConfiguration
 
     @ObservedObject private var viewModel: CustomerCardViewModel
 
-    init(widget: WidgetSnabble, configuration: DynamicViewConfiguration) {
+    init(widget: WidgetCustomerCard, configuration: DynamicViewConfiguration) {
         self.widget = widget
         self.configuration = configuration
         self.viewModel = CustomerCardViewModel(widget: widget)
@@ -61,7 +57,7 @@ public struct WidgetCustomerCardView: View {
         if let widget = viewModel.widget {
             WidgetInformationView(
                 widget: widget,
-                shadowRadius: configuration.shadowRadius
+                configuration: configuration
             )
         }
     }
