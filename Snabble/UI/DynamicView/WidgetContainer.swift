@@ -29,6 +29,10 @@ public struct WidgetView: View {
                     toggle
                 case .lastPurchases:
                     lastPurchases
+                case .navigation:
+                    navigation
+                case .version:
+                    version
                 case .locationPermission:
                     locationPermission
                 case .allStores:
@@ -122,7 +126,25 @@ public struct WidgetView: View {
             )
         }
     }
+    
+    @ViewBuilder
+    var navigation: some View {
+        if let widget = widget as? WidgetNavigation {
+            WidgetNavigationView(widget: widget) {
+                viewModel.actionPublisher.send(.init(widget: $0))
+            }
+        }
+    }
 
+    @ViewBuilder
+    var version: some View {
+        if let widget = widget as? WidgetVersion {
+            WidgetVersionView(widget: widget) {
+                viewModel.actionPublisher.send(.init(widget: $0))
+            }
+        }
+    }
+    
     @ViewBuilder
     var locationPermission: some View {
         if let widget = widget as? WidgetLocationPermission {

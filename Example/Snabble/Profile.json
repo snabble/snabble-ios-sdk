@@ -32,6 +32,41 @@
                     "text": "Profile.deleteAccount",
                 }
             ]
+        },
+        {
+            "type": "section",
+            "id": "2",
+            "header": "Profile.legalNotes",
+            "items" : [
+                {
+                    "type": "navigation",
+                    "id": "1",
+                    "text": "Profile.imprint",
+                    "resource": "imprint.html"
+                },
+                {
+                    "type": "navigation",
+                    "id": "2",
+                    "text": "Profile.terms",
+                    "resource": "terms.html"
+                },
+                {
+                    "type": "navigation",
+                    "id": "3",
+                    "text": "Profile.privacy",
+                    "resource": "privacy.html"
+                },
+                {
+                    "type": "navigation",
+                    "id": "4",
+                    "text": "Profile.licences",
+                    "resource": "Acknowledgements.html"
+                },
+                {
+                    "type": "snabble.version",
+                    "id": "5"
+                }
+            ]
         }
     ]
 }

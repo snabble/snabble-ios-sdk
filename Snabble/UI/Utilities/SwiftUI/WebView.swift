@@ -10,7 +10,7 @@
 import SwiftUI
 import WebKit
 
-struct WebView: UIViewRepresentable {
+struct WebViewRepresentable: UIViewRepresentable {
     var url: URL
     @Binding var refresh: Bool
 
@@ -30,12 +30,12 @@ struct WebView: UIViewRepresentable {
     }
 
     class Coordinator: NSObject, WKNavigationDelegate {
-        var parent: WebView
+        var parent: WebViewRepresentable
         var isFinished = false
 
         @Binding var refresh: Bool
 
-        init(_ uiWebView: WebView, refresh: Binding<Bool>) {
+        init(_ uiWebView: WebViewRepresentable, refresh: Binding<Bool>) {
             self.parent = uiWebView
             _refresh = refresh
         }
@@ -51,7 +51,7 @@ struct WebView: UIViewRepresentable {
     }
 }
 
-struct ShowWebView: View {
+struct WebView: View {
     let url: URL
     @State private var refreshURL: Bool = false
 
@@ -59,7 +59,7 @@ struct ShowWebView: View {
         VStack {
             GeometryReader { geometry in
                 ScrollView(.vertical) {
-                    WebView(url: url, refresh: $refreshURL)
+                    WebViewRepresentable(url: url, refresh: $refreshURL)
                         .frame(width: geometry.size.width, height: geometry.size.height)
                 }
             }
