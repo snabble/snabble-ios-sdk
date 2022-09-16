@@ -45,5 +45,24 @@ extension AccountViewController: DynamicViewControllerDelegate {
         default:
             break
         }
+        
+        switch widget.id {
+        case "Profile.lastPurchases", "Profile.paymentMethods", "Profile.customerCard":
+            let viewController = UIHostingController(rootView: PlaceholderView(title: Asset.localizedString(forKey: widget.id)))
+            navigationController?.pushViewController(viewController, animated: true)
+
+        default:
+            break
+        }
     }    
+}
+
+struct PlaceholderView: View {
+    let title: String
+    
+    var body: some View {
+        Text(title)
+            .font(.title)
+            .navigationTitle(title)
+    }
 }
