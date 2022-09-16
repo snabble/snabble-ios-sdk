@@ -57,7 +57,7 @@ extension AccountViewController: DynamicViewControllerDelegate {
     }    
 }
 
-struct PlaceholderView: View {
+private struct PlaceholderView: View {
     let title: String
     
     var body: some View {
