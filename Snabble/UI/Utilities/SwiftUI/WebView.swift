@@ -51,11 +51,14 @@ struct WebViewRepresentable: UIViewRepresentable {
     }
 }
 
-struct WebView: View {
+public struct WebView: View {
     let url: URL
     @State private var refreshURL: Bool = false
 
-    var body: some View {
+    public init(url: URL) {
+        self.url = url
+    }
+    public var body: some View {
         VStack {
             GeometryReader { geometry in
                 ScrollView(.vertical) {
