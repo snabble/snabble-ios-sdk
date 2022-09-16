@@ -267,7 +267,7 @@ public struct WidgetVersion: Widget {
         let sdkVersion = SnabbleSDK.APIVersion.version
 
         let versionLine2 = BuildConfig.debug ? "SDK v\(sdkVersion)" : commit.prefix(6)
-        return "Version \(appVersion) \(versionLine2)"
+        return "Version\n\(appVersion) \(versionLine2)"
     }
 }
 
