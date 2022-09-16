@@ -14,11 +14,15 @@
 
 "profile" = "Profil";
 
+"Profile.customerCard" = "Customer Card";
+
 "Profile.deleteAccount" = "Fiók törlése";
 
 "Profile.header" = "Profilod";
 
 "Profile.imprint" = "Imprint";
+
+"Profile.lastPurchases" = "Last Purchases";
 
 "Profile.legalNotes" = "Legal Notes";
 
@@ -28,7 +32,11 @@
 
 "Profile.privacy" = "Privacy Policy";
 
+"Profile.pushMessages" = "Push Messages";
+
 "Profile.saveEnergy" = "Energiatakarékosság";
+
+"Profile.settings" = "Settings";
 
 "Profile.showOnboarding" = "Mutasd az Onboardingot";
 

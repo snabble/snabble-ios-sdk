@@ -14,11 +14,15 @@
 
 "profile" = "Profil";
 
+"Profile.customerCard" = "Kundenkarte";
+
 "Profile.deleteAccount" = "Account löschen";
 
 "Profile.header" = "Dein Profil";
 
 "Profile.imprint" = "Impressum";
+
+"Profile.lastPurchases" = "Vorherige Einkäufe";
 
 "Profile.legalNotes" = "Rechtliche Hinweise";
 
@@ -28,7 +32,11 @@
 
 "Profile.privacy" = "Datenschutzerklärung";
 
+"Profile.pushMessages" = "Push-Benachrichtigungen";
+
 "Profile.saveEnergy" = "Strom sparen";
+
+"Profile.settings" = "Einstellungen";
 
 "Profile.showOnboarding" = "Zeige Onboarding";
 

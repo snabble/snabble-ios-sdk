@@ -36,14 +36,33 @@ extension AccountViewController: DynamicViewControllerDelegate {
 
         switch widget.type {
         case .navigation:
-            if let widget = widget as? WidgetNavigation {
-                let url = Bundle.main.url(forResource: widget.resource, withExtension: nil)
-                let webViewController = WebViewController(url: url!)
+            if let widget = widget as? WidgetNavigation, let url = Bundle.main.url(forResource: widget.resource, withExtension: nil) {
+                // SnabbleSDK provides a SwiftUI WebView
+                let webViewController = UIHostingController(rootView: WebView(url: url))
                 webViewController.title = NSLocalizedString(widget.text, comment: "")
                 navigationController?.pushViewController(webViewController, animated: true)
             }
         default:
             break
         }
+        
+        switch widget.id {
+        case "Profile.lastPurchases", "Profile.paymentMethods", "Profile.customerCard":
+            let viewController = UIHostingController(rootView: PlaceholderView(title: Asset.localizedString(forKey: widget.id)))
+            navigationController?.pushViewController(viewController, animated: true)
+
+        default:
+            break
+        }
     }    
+}
+
+private struct PlaceholderView: View {
+    let title: String
+    
+    var body: some View {
+        Text(title)
+            .font(.title)
+            .navigationTitle(title)
+    }
 }

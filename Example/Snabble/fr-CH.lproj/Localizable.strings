@@ -14,11 +14,15 @@
 
 "profile" = "Profile";
 
+"Profile.customerCard" = "Customer Card";
+
 "Profile.deleteAccount" = "Delete Account";
 
 "Profile.header" = "Your Profile";
 
 "Profile.imprint" = "Imprint";
+
+"Profile.lastPurchases" = "Last Purchases";
 
 "Profile.legalNotes" = "Legal Notes";
 
@@ -28,7 +32,11 @@
 
 "Profile.privacy" = "Privacy Policy";
 
+"Profile.pushMessages" = "Push Messages";
+
 "Profile.saveEnergy" = "Save energy";
+
+"Profile.settings" = "Settings";
 
 "Profile.showOnboarding" = "Show Onboarding";
 

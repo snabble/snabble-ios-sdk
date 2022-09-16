@@ -10,16 +10,29 @@
             "items" : [
                 {
                     "type": "text",
-                    "id": "1",
+                    "id": "Profile.lastPurchases",
+                    "text": "Profile.lastPurchases",
+                    "showDisclosure": true
+                },
+                {
+                    "type": "text",
+                    "id": "Profile.paymentMethods",
                     "text": "Profile.paymentMethods",
                     "showDisclosure": true
                 },
                 {
-                    "type": "toggle",
-                    "id": "2",
-                    "text": "Profile.saveEnergy",
-                    "key": "io.snabble.sample.saveEnergy"
-                },
+                    "type": "text",
+                    "id": "Profile.customerCard",
+                    "text": "Profile.customerCard",
+                    "showDisclosure": true
+                }
+            ]
+        },
+        {
+            "type": "section",
+            "id": "2",
+            "header": "Profile.settings",
+            "items" : [
                 {
                     "type": "toggle",
                     "id": "3",
@@ -27,15 +40,16 @@
                     "key": "io.snabble.sample.showOnboarding"
                 },
                 {
-                    "type": "button",
-                    "id": "4",
-                    "text": "Profile.deleteAccount",
+                    "type": "toggle",
+                    "id": "2",
+                    "text": "Profile.pushMessages",
+                    "key": "io.snabble.sample.pushMessages"
                 }
             ]
         },
         {
             "type": "section",
-            "id": "2",
+            "id": "3",
             "header": "Profile.legalNotes",
             "items" : [
                 {
