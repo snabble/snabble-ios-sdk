@@ -22,8 +22,10 @@ private struct NavigationWidget: ViewModifier {
                 content
                 Spacer()
                 SwiftUI.Image(systemName: "chevron.right")
+                    .font(Font.subheadline.weight(.medium))
+                    .foregroundColor(.gray.opacity(0.666))
             }
-            .background(Color.systemBackground)
+            .background(Color.secondarySystemGroupedBackground)
         } else {
             content
         }

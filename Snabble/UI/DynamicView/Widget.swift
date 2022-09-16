@@ -22,6 +22,7 @@ public enum WidgetType: String, Decodable {
     case information
     case section
     case toggle
+    case navigation
 
     // Snabble Project
     case lastPurchases = "snabble.lastPurchases"
@@ -32,6 +33,7 @@ public enum WidgetType: String, Decodable {
     case startShopping = "snabble.startShopping"
     case locationPermission = "snabble.locationPermission"
     case connectWifi = "snabble.connectWifi"
+    case version = "snabble.version"
 }
 
 public struct WidgetText: Widget {
@@ -46,10 +48,10 @@ public struct WidgetText: Widget {
     init(
         id: String,
         text: String,
-        textColorSource: String?,
-        textStyleSource: String?,
+        textColorSource: String? = nil,
+        textStyleSource: String? = nil,
         showDisclosure: Bool?,
-        spacing: CGFloat?
+        spacing: CGFloat? = nil
     ) {
         self.id = id
         self.text = text
@@ -216,6 +218,56 @@ public struct WidgetSection: Widget {
         self.items = wrappers.map { $0.value }
 
         self.spacing = try container.decodeIfPresent(CGFloat.self, forKey: .spacing)
+    }
+}
+
+public struct WidgetNavigation: Widget {
+    public let id: String
+    public let type: WidgetType = .navigation
+    public let text: String
+    public let resource: String
+    public let spacing: CGFloat?
+
+    init(
+        id: String,
+        text: String,
+        resource: String,
+        spacing: CGFloat? = nil
+    ) {
+        self.id = id
+        self.text = text
+        self.resource = resource
+        self.spacing = spacing
+    }
+
+    enum CodingKeys: String, CodingKey {
+        case id
+        case text
+        case resource
+        case spacing
+    }
+}
+
+public struct WidgetVersion: Widget {
+    public let id: String
+    public let type: WidgetType = .version
+    public var spacing: CGFloat?
+
+    enum CodingKeys: String, CodingKey {
+        case id
+        case spacing
+    }
+    
+    public var versionString: String {
+        let version = Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String ?? "n/a"
+        let build = Bundle.main.infoDictionary?["CFBundleVersion"] as? String ?? "n/a"
+        let appVersion = "v\(version) (\(build))"
+
+        let commit = Bundle.main.infoDictionary?["SNGitCommit"] as? String ?? "n/a"
+        let sdkVersion = SnabbleSDK.APIVersion.version
+
+        let versionLine2 = BuildConfig.debug ? "SDK v\(sdkVersion)" : commit.prefix(6)
+        return "Version\n\(appVersion) \(versionLine2)"
     }
 }
 
