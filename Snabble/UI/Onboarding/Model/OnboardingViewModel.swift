@@ -10,6 +10,18 @@
 import Foundation
 import Combine
 
+public enum Onboarding {
+    private static let checkKey = "io.snabble.onboarding.wasPerformed"
+    
+    /// check if Onboarding must be performed
+    public static var isRequired: Bool {
+        return UserDefaults.standard.bool(forKey: checkKey) == false
+    }
+    static func wasPerformed() {
+        UserDefaults.standard.set(true, forKey: checkKey)
+    }
+}
+
 /// OnboardingViewModel describing the Onboading configuration
 public final class OnboardingViewModel: ObservableObject, Codable {
     /// the configuration
@@ -54,7 +66,13 @@ public final class OnboardingViewModel: ObservableObject, Codable {
     }
     /// Switched to `true` as soon as onboarding is completed.
     /// - Important: You are responsible to dismiss the associated view
-    @Published public var isDone: Bool = false
+    @Published public var isDone: Bool = false {
+        didSet {
+            if isDone {
+                Onboarding.wasPerformed()
+            }
+        }
+    }
 
     /// Current shown page
     @Published public var currentPage: Int = 0
