@@ -12,7 +12,7 @@ struct LinkDetailView: View {
     
     var body: some View {
         if let url = Asset.url(forResource: resource, withExtension: nil) {
-            ShowWebView(url: url)
+            WebView(url: url)
         }
     }
 }

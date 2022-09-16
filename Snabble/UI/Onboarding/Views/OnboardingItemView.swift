@@ -67,8 +67,7 @@ struct OnboardingItemView: View {
             }
             .sheet(isPresented: $isPresenting) {
                 if let url = Asset.url(forResource: resource, withExtension: nil) {
-                    ShowWebView(url: url)
-                        .padding()
+                    WebView(url: url)
                 }
             }
 
@@ -101,8 +100,7 @@ struct OnboardingItemView: View {
             }
             .sheet(isPresented: $showURL) {
                 if let url = urlResource {
-                    ShowWebView(url: url)
-                        .padding()
+                    WebView(url: url)
                 }
             }
     }
