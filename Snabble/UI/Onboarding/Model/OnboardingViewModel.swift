@@ -10,6 +10,17 @@
 import Foundation
 import Combine
 
+public enum Onboarding {
+    private static let checkKey = "io.snabble.onboarding.wasPerformed"
+    
+    public static var isRequired: Bool {
+        return UserDefaults.standard.bool(forKey: checkKey) == false
+    }
+    static func wasPerformed() {
+        UserDefaults.standard.set(true, forKey: checkKey)
+    }
+}
+
 /// OnboardingViewModel describing the Onboading configuration
 public final class OnboardingViewModel: ObservableObject, Codable {
     /// the configuration
@@ -67,6 +78,7 @@ public final class OnboardingViewModel: ObservableObject, Codable {
     func next(for element: OnboardingItem) -> OnboardingItem? {
         guard let item = items.next(after: element) else {
             isDone = true
+            Onboarding.wasPerformed()
             return nil
         }
         self.item = item
