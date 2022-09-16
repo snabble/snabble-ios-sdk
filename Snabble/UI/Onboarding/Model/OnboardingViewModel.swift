@@ -66,7 +66,13 @@ public final class OnboardingViewModel: ObservableObject, Codable {
     }
     /// Switched to `true` as soon as onboarding is completed.
     /// - Important: You are responsible to dismiss the associated view
-    @Published public var isDone: Bool = false
+    @Published public var isDone: Bool = false {
+        didSet {
+            if isDone {
+                Onboarding.wasPerformed()
+            }
+        }
+    }
 
     /// Current shown page
     @Published public var currentPage: Int = 0
@@ -79,7 +85,6 @@ public final class OnboardingViewModel: ObservableObject, Codable {
     func next(for element: OnboardingItem) -> OnboardingItem? {
         guard let item = items.next(after: element) else {
             isDone = true
-            Onboarding.wasPerformed()
             return nil
         }
         self.item = item
