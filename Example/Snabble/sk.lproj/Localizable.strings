@@ -14,11 +14,15 @@
 
 "profile" = "Profil";
 
+"Profile.customerCard" = "Customer Card";
+
 "Profile.deleteAccount" = "Vymazať konto";
 
 "Profile.header" = "Tvoj profil";
 
 "Profile.imprint" = "Imprint";
+
+"Profile.lastPurchases" = "Last Purchases";
 
 "Profile.legalNotes" = "Legal Notes";
 
@@ -28,7 +32,11 @@
 
 "Profile.privacy" = "Privacy Policy";
 
+"Profile.pushMessages" = "Push Messages";
+
 "Profile.saveEnergy" = "Šetrenie batérie";
+
+"Profile.settings" = "Settings";
 
 "Profile.showOnboarding" = "Zobraz Onboarding";
 
