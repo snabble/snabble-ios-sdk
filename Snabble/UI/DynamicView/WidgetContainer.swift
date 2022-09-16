@@ -29,7 +29,9 @@ public struct WidgetView: View {
                     toggle
                 case .lastPurchases:
                     lastPurchases
-                case .locationPermission, .allStores, .startShopping, .connectWifi:
+                case .navigation:
+                    navigation
+                case .locationPermission, .allStores, .startShopping, .connectWifi, .licences, .version:
                     snabble
                 case .section:
                     EmptyView()
@@ -114,6 +116,13 @@ public struct WidgetView: View {
             )
         }
     }
+    
+    @ViewBuilder
+    var navigation: some View {
+        if let widget = widget as? WidgetNavigation {
+            WidgetNavigationView(widget: widget)
+        }
+    }
 
     @ViewBuilder
     var snabble: some View {
@@ -134,6 +143,10 @@ public struct WidgetView: View {
                         widget: widget,
                         shadowRadius: viewModel.configuration.shadowRadius
                 )
+            case .licences:
+                Text("Licences")
+            case .version:
+                WidgetVersionView()
             default:
                 EmptyView()
             }

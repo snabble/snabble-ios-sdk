@@ -1,7 +1,3 @@
-"Dashboard.Information.text1" = "A fizetési módot közvetlenül elmentheted, így már az első vásárlásodnál is várakozási idő nélkül vásárolhatsz.";
-
-"Dashboard.Information.text2" = "Használd ki automatikusan az ügyfélkártyáid nyújtotta előnyöket.";
-
 "Dashboard.text" = "Látogass el az egyik támogatott üzletbe, és vásárolj a Snabble-lel!";
 
 "Dashboard.title" = "Köszöntünk a Snabble-nél";
@@ -22,11 +18,21 @@
 
 "Profile.header" = "Profilod";
 
+"Profile.imprint" = "Imprint";
+
+"Profile.legalNotes" = "Legal Notes";
+
+"Profile.licences" = "Licences";
+
 "Profile.paymentMethods" = "Fizetési mód";
+
+"Profile.privacy" = "Privacy Policy";
 
 "Profile.saveEnergy" = "Energiatakarékosság";
 
 "Profile.showOnboarding" = "Mutasd az Onboardingot";
+
+"Profile.terms" = "Terms";
 
 "scanner" = "Szkenner";
 

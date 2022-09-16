@@ -22,6 +22,7 @@ public enum WidgetType: String, Decodable {
     case information
     case section
     case toggle
+    case navigation
 
     // Snabble
     case lastPurchases = "snabble.lastPurchases"
@@ -29,6 +30,8 @@ public enum WidgetType: String, Decodable {
     case startShopping = "snabble.startShopping"
     case locationPermission = "snabble.locationPermission"
     case connectWifi = "snabble.connectWifi"
+    case licences = "snabble.licences"
+    case version = "snabble.version"
 }
 
 public struct WidgetText: Widget {
@@ -213,6 +216,33 @@ public struct WidgetSection: Widget {
         self.items = wrappers.map { $0.value }
 
         self.spacing = try container.decodeIfPresent(CGFloat.self, forKey: .spacing)
+    }
+}
+
+public struct WidgetNavigation: Widget {
+    public let id: String
+    public let type: WidgetType = .navigation
+    public let text: String
+    public let link: String
+    public let spacing: CGFloat?
+
+    init(
+        id: String,
+        text: String,
+        link: String,
+        spacing: CGFloat? = nil
+    ) {
+        self.id = id
+        self.text = text
+        self.link = link
+        self.spacing = spacing
+    }
+
+    enum CodingKeys: String, CodingKey {
+        case id
+        case text
+        case link
+        case spacing
     }
 }
 
