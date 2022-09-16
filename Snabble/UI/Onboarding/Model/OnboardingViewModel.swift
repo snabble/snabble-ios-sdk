@@ -13,6 +13,7 @@ import Combine
 public enum Onboarding {
     private static let checkKey = "io.snabble.onboarding.wasPerformed"
     
+    /// check if Onboarding must be performed
     public static var isRequired: Bool {
         return UserDefaults.standard.bool(forKey: checkKey) == false
     }
