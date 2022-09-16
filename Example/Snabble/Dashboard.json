@@ -40,28 +40,18 @@
       },
       {
           "type": "snabble.connectWifi",
-          "id": "4711",
-          "spacing": 16,
-      },
-      {
-          "type": "information",
           "id": "7",
-          "image": "Dashboard/Information.image1",
-          "text": "Dashboard.Information.text1",
-          "hideable": true,
           "spacing": 16,
       },
       {
-          "type": "information",
+          "type": "snabble.customerCard",
           "id": "8",
-          "image": "Dashboard/Information.image2",
-          "text": "Dashboard.Information.text2",
-          "hideable": true,
+          "projectId": "snabble-sdk-demo-beem8n",
           "spacing": 32,
       },
       {
           "type": "snabble.lastPurchases",
-          "id": "9",
+          "id": "11",
           "projectId": "snabble-sdk-demo-beem8n"
       }
   ]

@@ -24,7 +24,7 @@ extension Array where Element == PurchaseProviding {
     }
 }
 
-class PurchasesViewModel: ObservableObject, LoadableObject {
+class LastPurchasesViewModel: ObservableObject, LoadableObject {
     typealias Output = [PurchaseProviding]
 
     @Published private(set) var projectId: Identifier<Project>? {
@@ -71,18 +71,19 @@ class PurchasesViewModel: ObservableObject, LoadableObject {
     }
 }
 
-public struct WidgetPurchasesView: View {
+public struct WidgetLastPurchasesView: View {
     let widget: WidgetLastPurchases
+    let configuration: DynamicViewConfiguration
     let action: (DynamicAction) -> Void
-    let shadowRadius: CGFloat
 
-    @ObservedObject private var viewModel: PurchasesViewModel
+    @ObservedObject private var viewModel: LastPurchasesViewModel
 
-    init(widget: WidgetLastPurchases, shadowRadius: CGFloat, action: @escaping (DynamicAction) -> Void) {
+    init(widget: WidgetLastPurchases, configuration: DynamicViewConfiguration, action: @escaping (DynamicAction) -> Void) {
         self.widget = widget
+        self.configuration = configuration
         self.action = action
-        self.shadowRadius = shadowRadius
-        self.viewModel = PurchasesViewModel(projectId: widget.projectId)
+
+        self.viewModel = LastPurchasesViewModel(projectId: widget.projectId)
     }
     
     public var body: some View {
@@ -104,7 +105,7 @@ public struct WidgetPurchasesView: View {
                         ).onTapGesture {
                             action(.init(widget: widget, userInfo: ["id": provider.id]))
                         }
-                        .shadow(radius: shadowRadius)
+                        .shadow(radius: configuration.shadowRadius)
                     }
                 }
             }

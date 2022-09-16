@@ -23,8 +23,11 @@ public enum WidgetType: String, Decodable {
     case section
     case toggle
 
-    // Snabble
+    // Snabble Project
     case lastPurchases = "snabble.lastPurchases"
+    case customerCard = "snabble.customerCard"
+
+    // Snabble
     case allStores = "snabble.allStores"
     case startShopping = "snabble.startShopping"
     case locationPermission = "snabble.locationPermission"
@@ -216,21 +219,55 @@ public struct WidgetSection: Widget {
     }
 }
 
+public struct WidgetLocationPermission: Widget {
+    public let id: String
+    public let type: WidgetType = .locationPermission
+    public var spacing: CGFloat?
+
+    enum CodingKeys: String, CodingKey {
+        case id
+        case spacing
+    }
+}
+
+public struct WidgetAllStores: Widget {
+    public let id: String
+    public let type: WidgetType = .allStores
+    public var spacing: CGFloat?
+
+    enum CodingKeys: String, CodingKey {
+        case id
+        case spacing
+    }
+}
+
+public struct WidgetStartShopping: Widget {
+    public let id: String
+    public let type: WidgetType = .startShopping
+    public var spacing: CGFloat?
+
+    enum CodingKeys: String, CodingKey {
+        case id
+        case spacing
+    }
+}
+
+public struct WidgetConnectWifi: Widget {
+    public let id: String
+    public let type: WidgetType = .connectWifi
+    public var spacing: CGFloat?
+
+    enum CodingKeys: String, CodingKey {
+        case id
+        case spacing
+    }
+}
+
 public struct WidgetLastPurchases: Widget {
     public let id: String
     public let type: WidgetType = .lastPurchases
     public let projectId: Identifier<Project>?
     public var spacing: CGFloat?
-
-    public init(
-        id: String,
-        projectId: Identifier<Project>? = nil,
-        spacing: CGFloat? = nil
-    ) {
-        self.id = id
-        self.projectId = projectId
-        self.spacing = spacing
-    }
 
     enum CodingKeys: String, CodingKey {
         case id
@@ -239,8 +276,15 @@ public struct WidgetLastPurchases: Widget {
     }
 }
 
-public struct WidgetSnabble: Widget {
+public struct WidgetCustomerCard: Widget {
     public let id: String
-    public let type: WidgetType
+    public let type: WidgetType = .customerCard
+    public let projectId: Identifier<Project>?
     public var spacing: CGFloat?
+
+    enum CodingKeys: String, CodingKey {
+        case id
+        case projectId
+        case spacing
+    }
 }

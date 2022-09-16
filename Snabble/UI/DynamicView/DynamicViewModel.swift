@@ -78,10 +78,18 @@ struct WidgetWrapper: Decodable {
             value = try WidgetSection(from: decoder)
         case .toggle:
             value = try WidgetToggle(from: decoder)
+        case .locationPermission:
+            value = try WidgetLocationPermission(from: decoder)
+        case .allStores:
+            value = try WidgetAllStores(from: decoder)
+        case .startShopping:
+            value = try WidgetStartShopping(from: decoder)
+        case .connectWifi:
+            value = try WidgetConnectWifi(from: decoder)
         case .lastPurchases:
             value = try WidgetLastPurchases(from: decoder)
-        case .locationPermission, .allStores, .startShopping, .connectWifi:
-            value = try WidgetSnabble(from: decoder)
+        case .customerCard:
+            value = try WidgetCustomerCard(from: decoder)
         }
     }
 }

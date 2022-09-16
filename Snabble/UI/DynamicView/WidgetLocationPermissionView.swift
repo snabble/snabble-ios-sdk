@@ -82,16 +82,22 @@ extension LocationPermissionViewModel: CLLocationManagerDelegate {
 }
 
 public struct WidgetLocationPermissionView: View {
+    let widget: Widget
+    let action: (Widget) -> Void
+
     @ObservedObject private var viewModel: LocationPermissionViewModel
 
-    init(viewModel: LocationPermissionViewModel = .init()) {
-        self.viewModel = viewModel
+    init(widget: WidgetLocationPermission, action: @escaping (Widget) -> Void) {
+        self.widget = widget
+        self.action = action
+        self.viewModel = .init()
     }
     
     public var body: some View {
         if let widget = viewModel.widget {
             WidgetButtonView(widget: widget) {
                 viewModel.action(for: $0)
+                action(widget)
             }
             .alert(isPresented: $viewModel.permissionDeniedOrRestricted) {
                 Alert(

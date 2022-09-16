@@ -88,6 +88,8 @@
 
 "Snabble.DynamicView.ConnectWifi.noSSID" = "Leider ist kein WLAN verfügbar";
 
+"Snabble.DynamicView.customerCard" = "Nutze die Vorteile deiner Kundenkarten automatisch.";
+
 "Snabble.DynamicView.lastPurchase" = "Dein letzter Einkauf";
 
 "Snabble.DynamicView.lastPurchases" = "Deine letzten Einkäufe";
