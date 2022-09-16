@@ -8,9 +8,12 @@
 import SwiftUI
 
 public struct WidgetVersionView: View {
-    var widget: WidgetVersion
+    let widget: WidgetVersion
+    let action: (Widget) -> Void
     
     public var body: some View {
-        Text(widget.versionString)
+        Text(widget.versionString).onTapGesture {
+            action(widget)
+        }
     }
 }

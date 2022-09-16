@@ -137,7 +137,9 @@ public struct WidgetView: View {
     @ViewBuilder
     var version: some View {
         if let widget = widget as? WidgetVersion {
-            WidgetVersionView(widget: widget)
+            WidgetVersionView(widget: widget) {
+                viewModel.actionPublisher.send(.init(widget: $0))
+            }
         }
     }
     
