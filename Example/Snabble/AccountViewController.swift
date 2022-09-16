@@ -33,5 +33,17 @@ extension AccountViewController: DynamicViewControllerDelegate {
         print(#function)
         print("widget:", widget.id)
         print("userInfo:", userInfo ?? [:])
+
+        switch widget.type {
+        case .navigation:
+            if let widget = widget as? WidgetNavigation {
+                let url = Bundle.main.url(forResource: widget.resource, withExtension: nil)
+                let webViewController = WebViewController(url: url!)
+                webViewController.title = NSLocalizedString(widget.text, comment: "")
+                navigationController?.pushViewController(webViewController, animated: true)
+            }
+        default:
+            break
+        }
     }    
 }

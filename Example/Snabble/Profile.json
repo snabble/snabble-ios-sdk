@@ -42,25 +42,25 @@
                     "type": "navigation",
                     "id": "1",
                     "text": "Profile.imprint",
-                    "link": "imprint.html"
+                    "resource": "imprint.html"
                 },
                 {
                     "type": "navigation",
                     "id": "2",
                     "text": "Profile.terms",
-                    "link": "terms.html"
+                    "resource": "terms.html"
                 },
                 {
                     "type": "navigation",
                     "id": "3",
                     "text": "Profile.privacy",
-                    "link": "privacy.html"
+                    "resource": "privacy.html"
                 },
                 {
                     "type": "navigation",
                     "id": "4",
                     "text": "Profile.licences",
-                    "link": "Acknowledgements.html"
+                    "resource": "Acknowledgements.html"
                 },
                 {
                     "type": "snabble.version",

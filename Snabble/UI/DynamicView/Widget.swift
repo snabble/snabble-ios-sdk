@@ -48,10 +48,10 @@ public struct WidgetText: Widget {
     init(
         id: String,
         text: String,
-        textColorSource: String?,
-        textStyleSource: String?,
+        textColorSource: String? = nil,
+        textStyleSource: String? = nil,
         showDisclosure: Bool?,
-        spacing: CGFloat?
+        spacing: CGFloat? = nil
     ) {
         self.id = id
         self.text = text
@@ -225,25 +225,25 @@ public struct WidgetNavigation: Widget {
     public let id: String
     public let type: WidgetType = .navigation
     public let text: String
-    public let link: String
+    public let resource: String
     public let spacing: CGFloat?
 
     init(
         id: String,
         text: String,
-        link: String,
+        resource: String,
         spacing: CGFloat? = nil
     ) {
         self.id = id
         self.text = text
-        self.link = link
+        self.resource = resource
         self.spacing = spacing
     }
 
     enum CodingKeys: String, CodingKey {
         case id
         case text
-        case link
+        case resource
         case spacing
     }
 }

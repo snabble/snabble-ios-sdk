@@ -130,7 +130,9 @@ public struct WidgetView: View {
     @ViewBuilder
     var navigation: some View {
         if let widget = widget as? WidgetNavigation {
-            WidgetNavigationView(widget: widget)
+            WidgetNavigationView(widget: widget) {
+                viewModel.actionPublisher.send(.init(widget: $0))
+            }
         }
     }
 

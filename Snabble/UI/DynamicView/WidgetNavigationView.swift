@@ -7,25 +7,20 @@
 
 import SwiftUI
 
-struct LinkDetailView: View {
-    let resource: String
-    
-    var body: some View {
-        if let url = Asset.url(forResource: resource, withExtension: nil) {
-            WebView(url: url)
-        }
-    }
-}
-
 public struct WidgetNavigationView: View {
     let widget: WidgetNavigation
+    let action: (Widget) -> Void
     
     public var body: some View {
-        NavigationLink {
-            LinkDetailView(resource: widget.link)
-                .navigationTitle(Asset.localizedString(forKey: widget.text))
-        } label: {
-            Text(keyed: widget.text)
+        WidgetTextView(
+            widget: WidgetText(
+                id: "1",
+                text: widget.text,
+                showDisclosure: true,
+                spacing: widget.spacing
+            )
+        ).onTapGesture {
+            action(widget)
         }
     }
 }

@@ -27,6 +27,7 @@
 		E161B0F228B78F89005061C4 /* LoadJSON.swift in Sources */ = {isa = PBXBuildFile; fileRef = E161B0F128B78F89005061C4 /* LoadJSON.swift */; };
 		E1662A65283DFED90093956C /* Changelog.md in Resources */ = {isa = PBXBuildFile; fileRef = E1662A64283DFED90093956C /* Changelog.md */; };
 		E1786CBF28BF351400CB7AF0 /* Dashboard.json in Resources */ = {isa = PBXBuildFile; fileRef = E1786CBE28BF351400CB7AF0 /* Dashboard.json */; };
+		E191B6AC28D4658200220DB6 /* WebViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E191B6AB28D4658200220DB6 /* WebViewController.swift */; };
 		E1BEF67128B79B4900549104 /* imprint.html in Resources */ = {isa = PBXBuildFile; fileRef = E1BEF67028B79B4900549104 /* imprint.html */; };
 		E1DA445E28B3668C0034427D /* AppDelegate+AssetProviding.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1DA445D28B3668C0034427D /* AppDelegate+AssetProviding.swift */; };
 		E1DA449C28B3A2BD0034427D /* LoadingViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1DA449B28B3A2BD0034427D /* LoadingViewController.swift */; };
@@ -74,6 +75,7 @@
 		E161B0F128B78F89005061C4 /* LoadJSON.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoadJSON.swift; sourceTree = "<group>"; };
 		E1662A64283DFED90093956C /* Changelog.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = net.daringfireball.markdown; name = Changelog.md; path = ../documentation/Changelog.md; sourceTree = "<group>"; };
 		E1786CBE28BF351400CB7AF0 /* Dashboard.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = Dashboard.json; sourceTree = "<group>"; };
+		E191B6AB28D4658200220DB6 /* WebViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WebViewController.swift; sourceTree = "<group>"; };
 		E1BEF67028B79B4900549104 /* imprint.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = imprint.html; sourceTree = "<group>"; };
 		E1DA445D28B3668C0034427D /* AppDelegate+AssetProviding.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "AppDelegate+AssetProviding.swift"; sourceTree = "<group>"; };
 		E1DA449B28B3A2BD0034427D /* LoadingViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoadingViewController.swift; sourceTree = "<group>"; };
@@ -234,6 +236,7 @@
 				7605C5BE28AE4383000105A8 /* ShopsViewController.swift */,
 				76C7B74928BFA10700D94F4F /* DashboardViewController.swift */,
 				607FACD71AFB9204008FA782 /* ScannerViewController.swift */,
+				E191B6AB28D4658200220DB6 /* WebViewController.swift */,
 			);
 			name = ViewController;
 			sourceTree = "<group>";
@@ -450,6 +453,7 @@
 				7605C5BF28AE4383000105A8 /* ShopsViewController.swift in Sources */,
 				E161B0F228B78F89005061C4 /* LoadJSON.swift in Sources */,
 				E1DA445E28B3668C0034427D /* AppDelegate+AssetProviding.swift in Sources */,
+				E191B6AC28D4658200220DB6 /* WebViewController.swift in Sources */,
 				E127DB6F28C74A64005A7416 /* SnabbleConfig.swift in Sources */,
 				607FACD81AFB9204008FA782 /* ScannerViewController.swift in Sources */,
 				E1DA449C28B3A2BD0034427D /* LoadingViewController.swift in Sources */,
