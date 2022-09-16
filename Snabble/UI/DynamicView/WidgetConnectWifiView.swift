@@ -12,9 +12,13 @@ import Combine
 import Network
 
 final class ConnectWifiViewModel: ObservableObject {
+    let configuration: DynamicViewConfiguration
+
     private let pathMonitor: NWPathMonitor
 
-    init() {
+    init(configuration: DynamicViewConfiguration) {
+        self.configuration = configuration
+
         pathMonitor = NWPathMonitor(requiredInterfaceType: .wifi)
 
         pathMonitor.pathUpdateHandler = { [weak self] _ in
@@ -132,9 +136,18 @@ extension ConnectWifiViewModel {
 }
 
 public struct WidgetConnectWifiView: View {
-    let widget: WidgetSnabble
-    let shadowRadius: CGFloat
-    @ObservedObject private var viewModel = ConnectWifiViewModel()
+    let widget: WidgetConnectWifi
+    let configuration: DynamicViewConfiguration
+    let action: (Widget) -> Void
+    @ObservedObject private var viewModel: ConnectWifiViewModel
+
+    init(widget: WidgetConnectWifi, configuration: DynamicViewConfiguration, action: @escaping (Widget) -> Void) {
+        self.widget = widget
+        self.configuration = configuration
+        self.action = action
+
+        self.viewModel = ConnectWifiViewModel(configuration: configuration)
+    }
     
     @ViewBuilder
     var image: some View {
@@ -175,8 +188,9 @@ public struct WidgetConnectWifiView: View {
             .informationStyle()
             .onTapGesture {
                 viewModel.joinNetwork()
+                action(widget)
             }
-            .shadow(radius: shadowRadius)
+            .shadow(radius: configuration.shadowRadius)
         }
     }
 }

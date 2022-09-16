@@ -14,12 +14,12 @@ private class StartShoppingViewModel: ObservableObject {
 
     private var cancellables = Set<AnyCancellable>()
 
-    init(widget: WidgetSnabble) {
+    init(widget: WidgetStartShopping) {
         Snabble.shared.checkInManager.shopPublisher
             .sink { [weak self] shop in
                 if shop != nil {
                     self?.widget = WidgetButton(
-                        id: widget.id,
+                        id: "Snabble.DynamicView.StartShopping.button",
                         text: "Snabble.DynamicView.StartShopping.button",
                         foregroundColorSource: "onAccent",
                         backgroundColorSource: "accent"
@@ -33,12 +33,12 @@ private class StartShoppingViewModel: ObservableObject {
 }
 
 public struct WidgetStartShoppingView: View {
-    let widget: WidgetSnabble
-    let action: (WidgetSnabble) -> Void
+    let widget: WidgetStartShopping
+    let action: (WidgetStartShopping) -> Void
 
     @ObservedObject private var viewModel: StartShoppingViewModel
 
-    init(widget: WidgetSnabble, action: @escaping (WidgetSnabble) -> Void) {
+    init(widget: WidgetStartShopping, action: @escaping (WidgetStartShopping) -> Void) {
         self.widget = widget
         self.action = action
         self.viewModel = StartShoppingViewModel(widget: widget)
