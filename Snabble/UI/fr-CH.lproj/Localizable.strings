@@ -228,18 +228,17 @@
 
 "Snabble.Payment.SEPA.hint" = "Remarque : pour te protéger et protéger nos commerçants contre les abus, le commerçant te demandera de montrer ta carte bancaire lors de ton premier paiement par débit SEPA.";
 
-"Snabble.Payment.SEPA.IBAN" = "IBAN";
+"Snabble.Payment.SEPA.iban" = "IBAN";
 
-"Snabble.Payment.SEPA.InvalidIBAN" = "L’IBAN saisi n’est pas valide.";
+"Snabble.Payment.SEPA.invalidIBAN" = "L’IBAN saisi n’est pas valide.";
 
-"Snabble.Payment.SEPA.InvalidName" = "Merci de saisir un nom.";
+"Snabble.Payment.SEPA.invalidName" = "Merci de saisir un nom.";
 
 "Snabble.Payment.SEPA.missingCountry" = "Le code de pays ne peut pas être vide.";
 
-"Snabble.Payment.SEPA.Name" = "Nom";
+"Snabble.Payment.SEPA.name" = "Nom";
 
-/* ********* iOS SEPA and Creditcard Data *********, iOS only, this is used for the iOS-specific SEPA data entry and payment */
-"Snabble.Payment.SEPA.Title" = "Débit SEPA";
+"Snabble.Payment.SEPA.title" = "Débit SEPA";
 
 "Snabble.Payment.success" = "Merci pour ton achat !";
 

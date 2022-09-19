@@ -228,18 +228,17 @@
 
 "Snabble.Payment.SEPA.hint" = "Hinweis: Um dich und unsere Händler vor Missbrauch zu schützen, wird sich der Händler bei deiner ersten Zahlung per SEPA-Lastschrift deine Bankkarte zeigen lassen.";
 
-"Snabble.Payment.SEPA.IBAN" = "IBAN";
+"Snabble.Payment.SEPA.iban" = "IBAN";
 
-"Snabble.Payment.SEPA.InvalidIBAN" = "Die eingegebene IBAN ist ungültig.";
+"Snabble.Payment.SEPA.invalidIBAN" = "Die eingegebene IBAN ist ungültig.";
 
-"Snabble.Payment.SEPA.InvalidName" = "Bitte gib einen Namen ein.";
+"Snabble.Payment.SEPA.invalidName" = "Bitte gib einen Namen ein.";
 
 "Snabble.Payment.SEPA.missingCountry" = "Ländercode darf nicht leer sein.";
 
-"Snabble.Payment.SEPA.Name" = "Name";
+"Snabble.Payment.SEPA.name" = "Name";
 
-/* ********* iOS SEPA and Creditcard Data *********, iOS only, this is used for the iOS-specific SEPA data entry and payment */
-"Snabble.Payment.SEPA.Title" = "SEPA-Lastschrift";
+"Snabble.Payment.SEPA.title" = "SEPA-Lastschrift";
 
 "Snabble.Payment.success" = "Vielen Dank für deinen Einkauf";
 

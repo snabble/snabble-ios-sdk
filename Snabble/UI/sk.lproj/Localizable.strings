@@ -228,18 +228,17 @@
 
 "Snabble.Payment.SEPA.hint" = "Poznámka: Za účelom tvojej ochrany a ochrany našich obchodníkov pred zneužitím si obchodník pri tvojej prvej platbe prostredníctvom SEPA inkasa vyžiada tvoju bankovú kartu.";
 
-"Snabble.Payment.SEPA.IBAN" = "IBAN";
+"Snabble.Payment.SEPA.iban" = "IBAN";
 
-"Snabble.Payment.SEPA.InvalidIBAN" = "Zadaný IBAN je neplatný.";
+"Snabble.Payment.SEPA.invalidIBAN" = "Zadaný IBAN je neplatný.";
 
-"Snabble.Payment.SEPA.InvalidName" = "Zadaj meno, prosím.";
+"Snabble.Payment.SEPA.invalidName" = "Zadaj meno, prosím.";
 
 "Snabble.Payment.SEPA.missingCountry" = "Kód krajiny nesmie zostať prázdny.";
 
-"Snabble.Payment.SEPA.Name" = "Meno";
+"Snabble.Payment.SEPA.name" = "Meno";
 
-/* ********* iOS SEPA and Creditcard Data *********, iOS only, this is used for the iOS-specific SEPA data entry and payment */
-"Snabble.Payment.SEPA.Title" = "SEPA inkaso";
+"Snabble.Payment.SEPA.title" = "SEPA inkaso";
 
 "Snabble.Payment.success" = "Ďakujeme za tvoj nákup";
 

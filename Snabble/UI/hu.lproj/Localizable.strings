@@ -228,18 +228,17 @@
 
 "Snabble.Payment.SEPA.hint" = "Megjegyzés: A te és a kereskedőink visszaélésekkel szembeni védelme érdekében az első SEPA terhelési megbízásos fizetésednél a kereskedőnél megjelenik a bankkártyád.";
 
-"Snabble.Payment.SEPA.IBAN" = "IBAN";
+"Snabble.Payment.SEPA.iban" = "IBAN";
 
-"Snabble.Payment.SEPA.InvalidIBAN" = "A megadott IBAN érvénytelen.";
+"Snabble.Payment.SEPA.invalidIBAN" = "A megadott IBAN érvénytelen.";
 
-"Snabble.Payment.SEPA.InvalidName" = "Add meg a neved.";
+"Snabble.Payment.SEPA.invalidName" = "Add meg a neved.";
 
 "Snabble.Payment.SEPA.missingCountry" = "Az országkód nem lehet üres.";
 
-"Snabble.Payment.SEPA.Name" = "Név";
+"Snabble.Payment.SEPA.name" = "Név";
 
-/* ********* iOS SEPA and Creditcard Data *********, iOS only, this is used for the iOS-specific SEPA data entry and payment */
-"Snabble.Payment.SEPA.Title" = "SEPA terhelési megbízás";
+"Snabble.Payment.SEPA.title" = "SEPA terhelési megbízás";
 
 "Snabble.Payment.success" = "Köszönjük a vásárlásodat";
 
