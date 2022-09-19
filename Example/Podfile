@@ -3,6 +3,8 @@ platform :ios, deployment_target
 use_frameworks!
 inhibit_all_warnings!
 
+plugin 'cocoapods-pod-sign'
+
 target 'SnabbleSampleApp' do
   pod 'Snabble', :path => '../', :inhibit_warnings => false
   pod 'Snabble/Datatrans', :path => '../'

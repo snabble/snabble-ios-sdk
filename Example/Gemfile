@@ -1,5 +1,5 @@
 source "https://rubygems.org"
-
+gem "cocoapods-pod-sign"
 gem "cocoapods"
 gem "xcpretty"
 gem "fastlane"
