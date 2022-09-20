@@ -6,13 +6,12 @@
 //
 
 import Foundation
+import SwiftUI
 
 public protocol Widget: Decodable {
     var id: String { get }
     var type: WidgetType { get }
-    
-    /// Additional Bottom Spacing
-    var spacing: CGFloat? { get }
+    var padding: Padding? { get }
 }
 
 public enum WidgetType: String, Decodable {
@@ -43,7 +42,7 @@ public struct WidgetText: Widget {
     public let textColorSource: String?
     public let textStyleSource: String?
     public let showDisclosure: Bool?
-    public let spacing: CGFloat?
+    public let padding: Padding?
 
     init(
         id: String,
@@ -51,14 +50,14 @@ public struct WidgetText: Widget {
         textColorSource: String? = nil,
         textStyleSource: String? = nil,
         showDisclosure: Bool?,
-        spacing: CGFloat? = nil
+        padding: Padding? = nil
     ) {
         self.id = id
         self.text = text
         self.textColorSource = textColorSource
         self.textStyleSource = textStyleSource
-        self.spacing = spacing
         self.showDisclosure = showDisclosure
+        self.padding = padding
     }
 
     enum CodingKeys: String, CodingKey {
@@ -66,8 +65,8 @@ public struct WidgetText: Widget {
         case text
         case textColorSource = "textColor"
         case textStyleSource = "textStyle"
-        case spacing
         case showDisclosure
+        case padding
     }
 }
 
@@ -75,22 +74,22 @@ public struct WidgetImage: Widget, ImageSourcing {
     public let id: String
     public let type: WidgetType = .image
     public let imageSource: String
-    public let spacing: CGFloat?
+    public let padding: Padding?
 
     init(
         id: String,
         imageSource: String,
-        spacing: CGFloat? = nil
+        padding: Padding? = nil
     ) {
         self.id = id
         self.imageSource = imageSource
-        self.spacing = spacing
+        self.padding = padding
     }
 
     enum CodingKeys: String, CodingKey {
         case id
         case imageSource = "image"
-        case spacing
+        case padding
     }
 }
 
@@ -100,20 +99,20 @@ public struct WidgetButton: Widget {
     public let text: String
     public let foregroundColorSource: String?
     public let backgroundColorSource: String?
-    public let spacing: CGFloat?
+    public let padding: Padding?
 
     public init(
         id: String,
         text: String,
         foregroundColorSource: String? = nil,
         backgroundColorSource: String? = nil,
-        spacing: CGFloat? = nil
+        padding: Padding? = nil
     ) {
         self.id = id
         self.text = text
         self.foregroundColorSource = foregroundColorSource
         self.backgroundColorSource = backgroundColorSource
-        self.spacing = spacing
+        self.padding = padding
     }
 
     enum CodingKeys: String, CodingKey {
@@ -121,7 +120,7 @@ public struct WidgetButton: Widget {
         case text
         case foregroundColorSource = "foregroundColor"
         case backgroundColorSource = "backgroundColor"
-        case spacing
+        case padding
     }
 }
 
@@ -131,20 +130,20 @@ public struct WidgetInformation: Widget, ImageSourcing {
     public let text: String
     public let imageSource: String?
     public let hideable: Bool
-    public let spacing: CGFloat?
+    public let padding: Padding?
 
     init(
         id: String,
         text: String,
         imageSource: String? = nil,
         hideable: Bool,
-        spacing: CGFloat? = nil
+        padding: Padding? = nil
     ) {
         self.id = id
         self.text = text
         self.imageSource = imageSource
         self.hideable = hideable
-        self.spacing = spacing
+        self.padding = padding
     }
 
     enum CodingKeys: String, CodingKey {
@@ -152,7 +151,7 @@ public struct WidgetInformation: Widget, ImageSourcing {
         case text
         case imageSource = "image"
         case hideable
-        case spacing
+        case padding
     }
 }
 
@@ -161,25 +160,25 @@ public struct WidgetToggle: Widget {
     public let type: WidgetType = .toggle
     public let text: String
     public let key: String
-    public let spacing: CGFloat?
+    public let padding: Padding?
 
     init(
         id: String,
         text: String,
         key: String,
-        spacing: CGFloat? = nil
+        padding: Padding? = nil
     ) {
         self.id = id
         self.text = text
         self.key = key
-        self.spacing = spacing
+        self.padding = padding
     }
 
     enum CodingKeys: String, CodingKey {
         case id
         case text
         case key
-        case spacing
+        case padding
     }
 }
 
@@ -188,25 +187,25 @@ public struct WidgetSection: Widget {
     public let type: WidgetType = .section
     public let header: String
     public let items: [Widget]
-    public let spacing: CGFloat?
+    public let padding: Padding?
 
     init(
         id: String,
         header: String,
         items: [Widget],
-        spacing: CGFloat? = nil
+        padding: Padding? = nil
     ) {
         self.id = id
         self.header = header
         self.items = items
-        self.spacing = spacing
+        self.padding = padding
     }
     
     enum CodingKeys: String, CodingKey {
         case id
         case header
         case items
-        case spacing
+        case padding
     }
 
     public init(from decoder: Decoder) throws {
@@ -217,7 +216,7 @@ public struct WidgetSection: Widget {
         let wrappers = try container.decode([WidgetWrapper].self, forKey: .items)
         self.items = wrappers.map { $0.value }
 
-        self.spacing = try container.decodeIfPresent(CGFloat.self, forKey: .spacing)
+        self.padding = try container.decodeIfPresent(Padding.self, forKey: .padding)
     }
 }
 
@@ -226,36 +225,36 @@ public struct WidgetNavigation: Widget {
     public let type: WidgetType = .navigation
     public let text: String
     public let resource: String
-    public let spacing: CGFloat?
+    public let padding: Padding?
 
     init(
         id: String,
         text: String,
         resource: String,
-        spacing: CGFloat? = nil
+        padding: Padding? = nil
     ) {
         self.id = id
         self.text = text
         self.resource = resource
-        self.spacing = spacing
+        self.padding = padding
     }
 
     enum CodingKeys: String, CodingKey {
         case id
         case text
         case resource
-        case spacing
+        case padding
     }
 }
 
 public struct WidgetVersion: Widget {
     public let id: String
     public let type: WidgetType = .version
-    public var spacing: CGFloat?
+    public var padding: Padding?
 
     enum CodingKeys: String, CodingKey {
         case id
-        case spacing
+        case padding
     }
     
     public var versionString: String {
@@ -274,44 +273,44 @@ public struct WidgetVersion: Widget {
 public struct WidgetLocationPermission: Widget {
     public let id: String
     public let type: WidgetType = .locationPermission
-    public var spacing: CGFloat?
+    public var padding: Padding?
 
     enum CodingKeys: String, CodingKey {
         case id
-        case spacing
+        case padding
     }
 }
 
 public struct WidgetAllStores: Widget {
     public let id: String
     public let type: WidgetType = .allStores
-    public var spacing: CGFloat?
+    public var padding: Padding?
 
     enum CodingKeys: String, CodingKey {
         case id
-        case spacing
+        case padding
     }
 }
 
 public struct WidgetStartShopping: Widget {
     public let id: String
     public let type: WidgetType = .startShopping
-    public var spacing: CGFloat?
+    public var padding: Padding?
 
     enum CodingKeys: String, CodingKey {
         case id
-        case spacing
+        case padding
     }
 }
 
 public struct WidgetConnectWifi: Widget {
     public let id: String
     public let type: WidgetType = .connectWifi
-    public var spacing: CGFloat?
+    public var padding: Padding?
 
     enum CodingKeys: String, CodingKey {
         case id
-        case spacing
+        case padding
     }
 }
 
@@ -319,12 +318,12 @@ public struct WidgetLastPurchases: Widget {
     public let id: String
     public let type: WidgetType = .lastPurchases
     public let projectId: Identifier<Project>?
-    public var spacing: CGFloat?
+    public var padding: Padding?
 
     enum CodingKeys: String, CodingKey {
         case id
         case projectId
-        case spacing
+        case padding
     }
 }
 
@@ -332,11 +331,11 @@ public struct WidgetCustomerCard: Widget {
     public let id: String
     public let type: WidgetType = .customerCard
     public let projectId: Identifier<Project>?
-    public var spacing: CGFloat?
+    public var padding: Padding?
 
     enum CodingKeys: String, CodingKey {
         case id
         case projectId
-        case spacing
+        case padding
     }
 }
