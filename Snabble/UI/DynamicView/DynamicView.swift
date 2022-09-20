@@ -38,13 +38,13 @@ public struct DynamicView: View {
                     VStack(alignment: .center) {
                         WidgetContainer(viewModel: viewModel, widgets: viewModel.widgets)
                     }
-                    .horizontalPadding(viewModel.configuration.padding)
+                    .padding(viewModel.configuration.padding)
                 }
             case .list:
                 List {
                     WidgetContainer(viewModel: viewModel, widgets: viewModel.widgets)
                 }
-                .horizontalPadding(viewModel.configuration.padding)
+                .padding(viewModel.configuration.padding)
                 .listStyle(.grouped)
             }
         }

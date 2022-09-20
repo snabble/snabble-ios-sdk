@@ -2,7 +2,7 @@
   "configuration": {
     "image": "Dashboard/teaser",
     "style": "scroll",
-    "padding": 30
+    "padding": [ 30, 16 ]
   },
   "widgets": [
       {
