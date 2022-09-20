@@ -12,7 +12,7 @@ public struct DynamicViewConfiguration: Decodable, ImageSourcing {
     public let imageSource: String?
     public let style: String?
     public let spacing: CGFloat?
-    public let padding: EdgeInsets
+    public let padding: Padding?
     
     let shadowRadius: CGFloat = 8
     
@@ -33,21 +33,7 @@ public struct DynamicViewConfiguration: Decodable, ImageSourcing {
         self.imageSource = try container.decodeIfPresent(String.self, forKey: .imageSource)
         self.style = try container.decodeIfPresent(String.self, forKey: .style)
         self.spacing = try container.decodeIfPresent(CGFloat.self, forKey: .spacing)
-        if let padding = try container.decodeIfPresent(Array<CGFloat>.self, forKey: .padding) {
-            switch padding.count {
-            case 1:
-                self.padding = .init(top: padding[0], leading: padding[0], bottom: padding[0], trailing: padding[0])
-            case 2:
-                self.padding = .init(top: padding[1], leading: padding[0], bottom: padding[1], trailing: padding[0])
-            case 4:
-                self.padding = .init(top: padding[1], leading: padding[0], bottom: padding[2], trailing: padding[3])
-            default:
-                throw DecodingError.dataCorrupted(.init(codingPath: [CodingKeys.padding], debugDescription: "invalid number of values"))
-            }
-        } else {
-            padding = .init()
-        }
-
+        self.padding = try container.decodeIfPresent(Padding.self, forKey: .padding)
     }
 
     public var stackStyle: StackStyle {
