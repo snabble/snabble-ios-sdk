@@ -17,7 +17,7 @@ public struct WidgetNavigationView: View {
                 id: "1",
                 text: widget.text,
                 showDisclosure: true,
-                spacing: widget.spacing
+                padding: widget.padding
             )
         ).onTapGesture {
             action(widget)

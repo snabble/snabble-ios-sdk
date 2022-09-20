@@ -9,7 +9,9 @@
           "type": "image",
           "id": "1",
           "image": "Dashboard/image",
-          "spacing": 40
+          "padding": {
+              "bottom": 40
+          }
       },
       {
           "type": "text",
@@ -17,13 +19,17 @@
           "text": "Dashboard.title",
           "textColor": "accent",
           "textStyle": "title",
-          "spacing": 4
+          "padding": {
+              "bottom": 4
+          }
       },
       {
           "type": "text",
           "id": "3",
           "text": "Dashboard.text",
-          "spacing": 32
+          "padding": {
+              "bottom": 32
+          }
       },
       {
           "type": "snabble.locationPermission",
@@ -36,18 +42,24 @@
       {
           "type": "snabble.allStores",
           "id": "6",
-          "spacing": 24
+          "padding": {
+              "bottom": 24
+          }
       },
       {
           "type": "snabble.connectWifi",
           "id": "7",
-          "spacing": 16,
+          "padding": {
+              "bottom": 16
+          }
       },
       {
           "type": "snabble.customerCard",
           "id": "8",
           "projectId": "snabble-sdk-demo-beem8n",
-          "spacing": 32,
+          "padding": {
+              "bottom": 32
+          }
       },
       {
           "type": "snabble.lastPurchases",

@@ -46,10 +46,8 @@ public struct WidgetView: View {
                 case .section:
                     EmptyView()
                 }
-                if let spacing = widget.spacing ?? viewModel.configuration.spacing {
-                    Spacer(minLength: spacing)
-                }
             }
+            .padding(widget.padding?.edgeInsets ?? .init())
         }
     }
 
