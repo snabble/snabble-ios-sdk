@@ -11,7 +11,7 @@ public final class SnabbleSDKBundle: NSObject {
         let myBundle = Bundle(for: SnabbleSDKBundle.self)
 
         guard let resourceBundleURL = myBundle.url(forResource: "SnabbleSDK", withExtension: "bundle") else {
-            fatalError("SnabbleSDKResources.bundle not found!")
+            fatalError("SnabbleSDK.bundle not found!")
 
         }
 
