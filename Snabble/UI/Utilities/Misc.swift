@@ -124,7 +124,7 @@ extension UIImage {
             return img
         }
 
-        return UIImage(named: name, in: SnabbleSDKBundle.main, compatibleWith: nil)
+        return UIImage(named: name, in: SnabbleSDKBundle.resourceBundle, compatibleWith: nil)
     }
 }
 

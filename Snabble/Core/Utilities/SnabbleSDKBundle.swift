@@ -7,7 +7,17 @@
 import Foundation
 
 public final class SnabbleSDKBundle: NSObject {
-    private static let frameworkBundle = Bundle(for: SnabbleSDKBundle.self)
-    static let path = frameworkBundle.path(forResource: "SnabbleSDK", ofType: "bundle")!
-    public static let main = Bundle(path: path)!
+    static let resourceBundle: Bundle = {
+        let myBundle = Bundle(for: SnabbleSDKBundle.self)
+
+        guard let resourceBundleURL = myBundle.url(forResource: "SnabbleSDK", withExtension: "bundle") else {
+            fatalError("SnabbleSDKResources.bundle not found!")
+
+        }
+
+        guard let resourceBundle = Bundle(url: resourceBundleURL) else {
+            fatalError("Cannot access SnabbleSDKResources.bundle!")
+        }
+        return resourceBundle
+    }()
 }
