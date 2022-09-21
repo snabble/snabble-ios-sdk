@@ -48,7 +48,8 @@ let package = Package(
                 .product(name: "GRDB", package: "GRDB.swift"),
                 "Zip",
             ],
-            path: "Snabble/Core"),
+            path: "Snabble/Core"
+        ),
         
         .target(
             name: "SnabbleUI",
