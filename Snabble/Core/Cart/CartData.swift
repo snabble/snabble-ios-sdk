@@ -82,7 +82,12 @@ public struct CartCoupon: Codable {
 /// a product entry in a shopping cart.
 public struct CartItem: Codable {
     /// quantity or weight
-    public /*internal(set)*/ var quantity: Int
+    public internal(set) var quantity: Int
+    
+    public mutating func setQuantity(_ quantity: Int) {
+        self.quantity = quantity
+    }
+    
     /// the product
     public let product: Product
     /// the scanned code
