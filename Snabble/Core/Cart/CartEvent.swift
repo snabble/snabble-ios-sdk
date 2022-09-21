@@ -7,7 +7,7 @@
 import Foundation
 
 // MARK: send events
-enum CartEvent {
+public enum CartEvent {
     static func sessionStart(_ cart: ShoppingCart) {
         guard !cart.shopId.rawValue.isEmpty else {
             return
@@ -34,7 +34,7 @@ enum CartEvent {
         event.post()
     }
 
-    static func cart(_ cart: ShoppingCart) {
+    public static func cart(_ cart: ShoppingCart) {
         if cart.shopId.rawValue.isEmpty || (cart.items.isEmpty && cart.session.isEmpty) {
             return
         }

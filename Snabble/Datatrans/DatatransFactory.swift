@@ -4,6 +4,9 @@
 //  Copyright © 2021 snabble. All rights reserved.
 //
 
+import SnabbleCore
+import UIKit
+
 public enum DatatransFactory {
     private(set) static var appCallbackScheme: String?
 

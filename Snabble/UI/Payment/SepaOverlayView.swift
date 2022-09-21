@@ -5,6 +5,7 @@
 //
 
 import UIKit
+import SnabbleCore
 
 public protocol SepaOverlayViewModel {
     var title: String { get }

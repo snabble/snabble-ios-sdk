@@ -4,6 +4,8 @@
 //  Copyright © 2021 snabble. All rights reserved.
 //
 
+import SnabbleCore
+
 /// a protocol that users of `ShoppingCartViewController` must implement
 public protocol ShoppingCartDelegate: AnalyticsDelegate, MessageDelegate {
     /// called to determine if starting the checkout process is allowed/possible,

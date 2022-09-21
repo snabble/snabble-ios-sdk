@@ -6,6 +6,7 @@
 
 // assorted string hashes
 
+import Foundation
 import CommonCrypto
 
 extension String {

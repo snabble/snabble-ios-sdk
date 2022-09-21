@@ -6,6 +6,7 @@
 
 import UIKit
 import Pulley
+import SnabbleCore
 
 final class CheckoutBar: UIView {
     private weak var itemCountLabel: UILabel?
@@ -267,7 +268,7 @@ final class CheckoutBar: UIView {
             switch result {
             case .success(let info):
                 // force any required info to be re-requested on the next attempt
-                self.shoppingCart.requiredInformationData = []
+                self.shoppingCart.resetInformationData() // requiredInformationData = []
 
                 let detail = self.methodSelector?.selectedPaymentDetail
                 let cart = self.shoppingCart
@@ -359,8 +360,7 @@ extension CheckoutBar {
     }
 
     private func setTaxation(to taxation: RequiredInformation) {
-        self.shoppingCart.requiredInformationData.removeAll { $0.id == .taxation }
-        self.shoppingCart.requiredInformationData.append(taxation)
+        self.shoppingCart.setTaxation(to: taxation)
     }
 }
 

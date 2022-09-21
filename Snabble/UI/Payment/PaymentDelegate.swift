@@ -6,6 +6,7 @@
 
 import Foundation
 import UIKit
+import SnabbleCore
 
 /// a protocol that users of `PaymentProcess` must implement
 public protocol PaymentDelegate: AnalyticsDelegate, MessageDelegate {

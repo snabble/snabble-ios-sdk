@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import SnabbleCore
 
 protocol CheckoutStepsViewModelDelegate: AnyObject {
     func checkoutStepsViewModel(_ viewModel: CheckoutStepsViewModel, didUpdateCheckoutProcess checkoutProcess: CheckoutProcess)

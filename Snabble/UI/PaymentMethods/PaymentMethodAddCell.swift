@@ -5,6 +5,7 @@
 //
 
 import UIKit
+import SnabbleCore
 
 protocol PaymentMethodAddCellViewModel {
     var projectId: Identifier<Project> { get }

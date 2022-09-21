@@ -4,6 +4,9 @@
 //  Copyright © 2020 snabble. All rights reserved.
 //
 
+import Foundation
+import SnabbleCore
+
 protocol OriginPollerDelegate: AnyObject {
     func originPoller(_ originPoller: OriginPoller, didReceiveCandidate originCandidate: OriginCandidate)
 }

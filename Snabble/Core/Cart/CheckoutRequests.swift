@@ -53,7 +53,7 @@ extension ShoppingCart {
         }
     }
 
-    func cancelPendingCheckoutInfoRequest() {
+    public func cancelPendingCheckoutInfoRequest() {
         self.checkoutInfoTask?.cancel()
         self.checkoutInfoTask = nil
     }
@@ -136,7 +136,7 @@ extension SignedCheckoutInfo {
 }
 
 extension CheckoutProcess {
-    static func fetch(for project: Project, url: String, _ completion: @escaping (_ result: RawResult<CheckoutProcess, SnabbleError>) -> Void ) {
+    public static func fetch(for project: Project, url: String, _ completion: @escaping (_ result: RawResult<CheckoutProcess, SnabbleError>) -> Void ) {
         project.request(.get, url, timeout: 3) { request in
             guard let request = request else {
                 return completion(RawResult.failure(SnabbleError.noRequest))

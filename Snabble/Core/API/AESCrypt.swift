@@ -4,6 +4,7 @@
 //  Copyright © 2020 snabble. All rights reserved.
 //
 
+import Foundation
 import CommonCrypto
 
 public struct AESCrypt {

@@ -82,7 +82,7 @@ public struct CartCoupon: Codable {
 /// a product entry in a shopping cart.
 public struct CartItem: Codable {
     /// quantity or weight
-    public internal(set) var quantity: Int
+    public /*internal(set)*/ var quantity: Int
     /// the product
     public let product: Product
     /// the scanned code
@@ -96,6 +96,10 @@ public struct CartItem: Codable {
     /// optional manually entered discount
     public internal(set) var manualCoupon: Coupon?
 
+    public mutating func setManualCoupon(_ coupon: Coupon?) {
+        manualCoupon = coupon
+    }
+    
     public init(_ quantity: Int, _ product: Product, _ scannedCode: ScannedCode, _ customerCard: String?, _ roundingMode: RoundingMode) {
         self.quantity = quantity
         self.product = product
@@ -121,7 +125,7 @@ public struct CartItem: Codable {
     }
 
     /// init with a lookup product and a `LineItem`
-    init?(replacing item: CartItem, _ product: Product, _ shopId: Identifier<Shop>, _ lineItem: CheckoutInfo.LineItem) {
+    public init?(replacing item: CartItem, _ product: Product, _ shopId: Identifier<Shop>, _ lineItem: CheckoutInfo.LineItem) {
         guard let code = lineItem.scannedCode else {
             return nil
         }

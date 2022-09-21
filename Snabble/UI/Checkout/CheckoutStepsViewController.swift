@@ -7,6 +7,7 @@
 
 import Foundation
 import UIKit
+import SnabbleCore
 
 final class CheckoutStepsViewController: UIViewController {
     private(set) weak var tableView: UITableView?

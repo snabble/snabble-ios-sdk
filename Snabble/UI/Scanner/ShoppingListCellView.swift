@@ -5,7 +5,8 @@
 //  Created by Anastasia Mishur on 7.04.22.
 //
 
-import Foundation
+import UIKit
+import SnabbleCore
 
 final class ShoppingListCellView: UIView {
     private weak var productImage: UIImageView?

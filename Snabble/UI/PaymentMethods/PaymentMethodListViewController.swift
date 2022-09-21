@@ -5,6 +5,7 @@
 //
 
 import UIKit
+import SnabbleCore
 
 private struct ViewModel {
     init(detail: PaymentMethodDetail) {

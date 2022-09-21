@@ -6,6 +6,7 @@
 
 import UIKit
 import WCAG_Colors
+import SnabbleCore
 
 protocol ScanConfirmationViewDelegate: AnalyticsDelegate {
     func closeConfirmation(forItem item: CartItem?)
@@ -408,7 +409,7 @@ final class ScanConfirmationView: UIView {
         let actionSheet = UIAlertController(title: title, message: nil, preferredStyle: .actionSheet)
 
         actionSheet.addAction(UIAlertAction(title: Asset.localizedString(forKey: "Snabble.noDiscount"), style: .default) { _ in
-            self.cartItem.manualCoupon = nil
+            self.cartItem.setManualCoupon(nil)
             self.showQuantity(updateTextField: true)
             self.manualDiscountButton?.setTitle(title, for: .normal)
         })
@@ -419,7 +420,7 @@ final class ScanConfirmationView: UIView {
                 if cartQuantity > 0 {
                     self.cartItem.quantity = 1
                 }
-                self.cartItem.manualCoupon = coupon
+                self.cartItem.setManualCoupon(coupon)
                 self.showQuantity(updateTextField: true)
                 self.manualDiscountButton?.setTitle(coupon.name, for: .normal)
                 self.cartButton?.setTitle(Asset.localizedString(forKey: "Snabble.Scanner.addToCart"), for: .normal)

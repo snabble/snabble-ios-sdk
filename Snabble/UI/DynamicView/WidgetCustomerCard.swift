@@ -8,6 +8,7 @@
 import Foundation
 import SwiftUI
 import Combine
+import SnabbleCore
 
 private class CustomerCardViewModel: ObservableObject {
     @Published var widget: WidgetInformation?

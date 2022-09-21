@@ -5,6 +5,7 @@
 //
 
 import Foundation
+import SnabbleCore
 
 public struct ScanMessage {
     public let text: String

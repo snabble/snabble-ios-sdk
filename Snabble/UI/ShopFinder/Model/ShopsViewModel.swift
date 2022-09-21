@@ -9,6 +9,7 @@ import Foundation
 import Combine
 import CoreLocation
 import MapKit
+import SnabbleCore
 
 /// ShopFinderViewModel for objects implermenting the ShopInfoProvider protocol
 public final class ShopsViewModel: NSObject, ObservableObject {

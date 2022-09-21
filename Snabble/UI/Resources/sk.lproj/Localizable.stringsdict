@@ -1,0 +1,137 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<plist version="1.0">
+  <dict>
+    <key>Snabble.Coupons.expiresInDays</key>
+    <dict>
+      <key>NSStringLocalizedFormatKey</key>
+      <string>%#@localized_format_key@</string>
+      <key>localized_format_key</key>
+      <dict>
+        <key>NSStringFormatSpecTypeKey</key>
+        <string>NSStringPluralRuleType</string>
+        <key>NSStringFormatValueTypeKey</key>
+        <string>d</string>
+        <key>few</key>
+        <string>ešte %d dni</string>
+        <key>many</key>
+        <string>ešte %d dní</string>
+        <key>one</key>
+        <string>ešte %d deň</string>
+        <key>other</key>
+        <string>ešte %d dní</string>
+        <key>zero</key>
+        <string>Platnosť už skončila</string>
+      </dict>
+    </dict>
+    <key>Snabble.Coupons.expiresInHours</key>
+    <dict>
+      <key>NSStringLocalizedFormatKey</key>
+      <string>%#@localized_format_key@</string>
+      <key>localized_format_key</key>
+      <dict>
+        <key>NSStringFormatSpecTypeKey</key>
+        <string>NSStringPluralRuleType</string>
+        <key>NSStringFormatValueTypeKey</key>
+        <string>d</string>
+        <key>few</key>
+        <string>ešte %d hodiny</string>
+        <key>many</key>
+        <string>ešte %d hodín</string>
+        <key>one</key>
+        <string>ešte %d hodina</string>
+        <key>other</key>
+        <string>ešte %d hodín</string>
+        <key>zero</key>
+        <string>Platnosť už skončila</string>
+      </dict>
+    </dict>
+    <key>Snabble.Coupons.expiresInMinutes</key>
+    <dict>
+      <key>NSStringLocalizedFormatKey</key>
+      <string>%#@localized_format_key@</string>
+      <key>localized_format_key</key>
+      <dict>
+        <key>NSStringFormatSpecTypeKey</key>
+        <string>NSStringPluralRuleType</string>
+        <key>NSStringFormatValueTypeKey</key>
+        <string>d</string>
+        <key>few</key>
+        <string>ešte %d minúty</string>
+        <key>many</key>
+        <string>ešte %d minút</string>
+        <key>one</key>
+        <string>ešte %d minúta</string>
+        <key>other</key>
+        <string>ešte %d minút</string>
+        <key>zero</key>
+        <string>Platnosť už skončila</string>
+      </dict>
+    </dict>
+    <key>Snabble.Coupons.expiresInWeeks</key>
+    <dict>
+      <key>NSStringLocalizedFormatKey</key>
+      <string>%#@localized_format_key@</string>
+      <key>localized_format_key</key>
+      <dict>
+        <key>NSStringFormatSpecTypeKey</key>
+        <string>NSStringPluralRuleType</string>
+        <key>NSStringFormatValueTypeKey</key>
+        <string>d</string>
+        <key>few</key>
+        <string>ešte %d týždňov</string>
+        <key>many</key>
+        <string>ešte %d týždňov</string>
+        <key>one</key>
+        <string>ešte %d týždeň</string>
+        <key>other</key>
+        <string>ešte %d týždňov</string>
+        <key>zero</key>
+        <string>Platnosť už skončila</string>
+      </dict>
+    </dict>
+    <key>Snabble.Shop.Finder.storeCount</key>
+    <dict>
+      <key>NSStringLocalizedFormatKey</key>
+      <string>%#@localized_format_key@</string>
+      <key>localized_format_key</key>
+      <dict>
+        <key>NSStringFormatSpecTypeKey</key>
+        <string>NSStringPluralRuleType</string>
+        <key>NSStringFormatValueTypeKey</key>
+        <string>d</string>
+        <key>few</key>
+        <string>%d obchody</string>
+        <key>many</key>
+        <string>%d obchodov</string>
+        <key>one</key>
+        <string>%d obchod</string>
+        <key>other</key>
+        <string>%d  obchody/obchodov</string>
+        <key>zero</key>
+        <string>Žiadne obchody</string>
+      </dict>
+    </dict>
+    <key>Snabble.Shoppingcart.numberOfItems</key>
+    <dict>
+      <key>NSStringLocalizedFormatKey</key>
+      <string>%#@localized_format_key@</string>
+      <key>localized_format_key</key>
+      <dict>
+        <key>NSStringFormatSpecTypeKey</key>
+        <string>NSStringPluralRuleType</string>
+        <key>NSStringFormatValueTypeKey</key>
+        <string>d</string>
+        <key>few</key>
+        <string>%d položky</string>
+        <key>many</key>
+        <string>%d položiek</string>
+        <key>one</key>
+        <string>%d položka</string>
+        <key>other</key>
+        <string>%d položiek</string>
+        <key>zero</key>
+        <string>%d položiek</string>
+      </dict>
+    </dict>
+  </dict>
+</plist>

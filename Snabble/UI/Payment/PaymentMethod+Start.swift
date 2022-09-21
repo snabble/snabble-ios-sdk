@@ -5,6 +5,7 @@
 //
 
 import UIKit
+import SnabbleCore
 
 public final class PaymentMethodStartCheck {
     private var method: PaymentMethod

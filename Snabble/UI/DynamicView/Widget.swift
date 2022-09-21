@@ -7,6 +7,7 @@
 
 import Foundation
 import SwiftUI
+import SnabbleCore
 
 public protocol Widget: Decodable {
     var id: String { get }
@@ -263,7 +264,7 @@ public struct WidgetVersion: Widget {
         let appVersion = "v\(version) (\(build))"
 
         let commit = Bundle.main.infoDictionary?["SNGitCommit"] as? String ?? "n/a"
-        let sdkVersion = SnabbleSDK.APIVersion.version
+        let sdkVersion = SnabbleCore.APIVersion.version
 
         let versionLine2 = BuildConfig.debug ? "SDK v\(sdkVersion)" : commit.prefix(6)
         return "Version\n\(appVersion) \(versionLine2)"

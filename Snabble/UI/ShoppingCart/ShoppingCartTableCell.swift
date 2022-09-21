@@ -4,6 +4,9 @@
 //  Copyright © 2020 snabble. All rights reserved.
 //
 
+import UIKit
+import SnabbleCore
+
 protocol ShoppingCartTableDelegate: AnalyticsDelegate {
     func confirmDeletion(at row: Int)
     func updateQuantity(_ quantity: Int, at row: Int)

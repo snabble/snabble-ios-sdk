@@ -6,6 +6,7 @@
 //
 
 import UIKit
+import SnabbleCore
 
 public final class InFlightCheckoutContinuationViewController: UIViewController {
     private weak var activityIndicatorView: UIActivityIndicatorView?

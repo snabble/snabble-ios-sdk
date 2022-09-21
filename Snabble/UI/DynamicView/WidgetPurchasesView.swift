@@ -7,6 +7,7 @@
 
 import SwiftUI
 import Combine
+import SnabbleCore
 
 public protocol PurchaseProviding {
     var id: String { get }

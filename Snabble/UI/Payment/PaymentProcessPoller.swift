@@ -5,6 +5,7 @@
 //
 
 import Foundation
+import SnabbleCore
 
 public enum PaymentEvent {
     case paymentSuccess

@@ -5,6 +5,7 @@
 //
 
 import UIKit
+import SnabbleCore
 
 // base class for SupervisorCheckViewController and GatekeeperCheckViewController
 

@@ -4,8 +4,10 @@
 //  Copyright © 2020 snabble. All rights reserved.
 //
 
+import Foundation
 import GRDB
 import Zip
+import UIKit
 
 /// keys of well-known entries in the metadata table
 public enum MetadataKeys {

@@ -4,6 +4,8 @@
 //  Copyright © 2021 snabble. All rights reserved.
 //
 
+import Foundation
+
 public struct Company: Decodable {
     public let name: String
     public let city: String
@@ -269,8 +271,8 @@ public struct PriceOverrideCode: Decodable {
 }
 
 public struct CheckoutLimits: Decodable {
-    let notAllMethodsAvailable: Int?
-    let checkoutNotAvailable: Int?
+    public let notAllMethodsAvailable: Int?
+    public let checkoutNotAvailable: Int?
 }
 
 public struct ProjectMessages: Decodable {
@@ -452,7 +454,7 @@ public struct Project: Decodable, Identifiable {
         self.updateable = UpdateableProperties()
     }
 
-    static let none = Project()
+    public static let none = Project()
 
     // find the currencySymbol for the given currencyCode
     private static func currencySymbol(for currencyCode: String, locale: String) -> String {

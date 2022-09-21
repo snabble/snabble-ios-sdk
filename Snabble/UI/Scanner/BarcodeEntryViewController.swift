@@ -6,6 +6,7 @@
 
 import UIKit
 import AutoLayout_Helper
+import SnabbleCore
 
 public final class BarcodeEntryViewController: UIViewController {
     private let tableView = UITableView()

@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import SnabbleCore
 
 public extension Coupon {
     var isValid: Bool {

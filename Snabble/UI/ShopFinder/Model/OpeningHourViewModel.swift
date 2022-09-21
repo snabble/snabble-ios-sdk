@@ -7,6 +7,7 @@
 
 import Foundation
 import SwiftUI
+import SnabbleCore
 
 public protocol OpeningHourProvider {
     var day: String? { get }

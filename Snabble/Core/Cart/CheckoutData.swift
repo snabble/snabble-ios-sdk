@@ -30,7 +30,7 @@ public struct SignedCheckoutInfo: Decodable {
     var rawJson: [String: Any]?
 
     // only used for the embedded codes offline payment
-    init(_ paymentMethods: [RawPaymentMethod]) {
+    public init(_ paymentMethods: [RawPaymentMethod]) {
         self.checkoutInfo = CheckoutInfo(paymentMethods)
         self.signature = ""
         self.links = CheckoutLinks()
@@ -58,7 +58,7 @@ public enum PaymentState: String, Decodable, UnknownCaseRepresentable {
     case failed
     case unauthorized
 
-    static let endStates = Set<PaymentState>([ .successful, .failed, .transferred ])
+    public static let endStates = Set<PaymentState>([ .successful, .failed, .transferred ])
 
     public static let unknownCase = PaymentState.unknown
 }
@@ -97,8 +97,8 @@ public struct RequiredInformation: Codable {
         case takeaway
     }
 
-    static let taxationInhouse = RequiredInformation(id: .taxation, value: TaxationValue.inHouse.rawValue)
-    static let taxationTakeaway = RequiredInformation(id: .taxation, value: TaxationValue.takeaway.rawValue)
+    public static let taxationInhouse = RequiredInformation(id: .taxation, value: TaxationValue.inHouse.rawValue)
+    public static let taxationTakeaway = RequiredInformation(id: .taxation, value: TaxationValue.takeaway.rawValue)
 }
 
 public enum RequiredInformationType: String, Codable {
@@ -170,8 +170,8 @@ public struct CheckoutInfo: Decodable {
         }
 
         public struct PriceModifier: Codable {
-            let name: String
-            let price: Int
+            public let name: String
+            public let price: Int
         }
     }
 
@@ -246,7 +246,7 @@ public struct Fulfillment: Decodable {
 }
 
 extension Array where Element == Fulfillment {
-    var containsFailureState: Bool {
+    public var containsFailureState: Bool {
         !FulfillmentState.failureStates.isDisjoint(with: Set(map { $0.state }))
     }
 }
@@ -364,7 +364,7 @@ public struct CheckoutProcess: Decodable {
         exitToken != nil
     }
 
-    var isComplete: Bool {
+    public var isComplete: Bool {
         var complete: Bool
         switch paymentState {
         case .successful, .transferred:

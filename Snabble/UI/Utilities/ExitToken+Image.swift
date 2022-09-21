@@ -7,6 +7,7 @@
 
 import Foundation
 import UIKit
+import SnabbleCore
 
 public extension ExitToken {
     var image: UIImage? {

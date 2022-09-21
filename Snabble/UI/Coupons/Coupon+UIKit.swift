@@ -7,6 +7,7 @@
 
 import Foundation
 import UIKit
+import SnabbleCore
 
 extension Coupon {
     var backgroundColor: UIColor? {

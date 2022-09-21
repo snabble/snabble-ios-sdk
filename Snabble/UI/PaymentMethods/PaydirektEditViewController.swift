@@ -6,6 +6,7 @@
 
 import UIKit
 import WebKit
+import SnabbleCore
 
 private struct PaydirektAuthorizationResult: Decodable {
     let id: String
@@ -207,7 +208,7 @@ public final class PaydirektEditViewController: UIViewController {
 
     private func startAuthorization() {
         guard
-            let authUrl = Snabble.shared.metadata.links.paydirektCustomerAuthorization?.href,
+            let authUrl = Snabble.shared.paydirektAuthorizationHref,
             let projectId = projectId,
             let project = Snabble.shared.project(for: projectId)
         else {

@@ -6,6 +6,7 @@
 
 import UIKit
 import Pulley
+import SnabbleCore
 
 public final class ScannerViewController: PulleyViewController {
     private var customAppearance: CustomAppearance?
@@ -91,12 +92,12 @@ extension ScannerViewController: CustomizableAppearance {
 }
 
 extension ScannerViewController: InternalShoppingCartDelegate {
-    func shoppingCart(_ shoppingCart: ShoppingCart, didChangeCustomerCard customerCard: String?) {
+    public func shoppingCart(_ shoppingCart: ShoppingCart, didChangeCustomerCard customerCard: String?) {
         guard let drawer = self.drawerContentViewController as? ScannerDrawerViewController else { return }
         drawer.updateTotals()
     }
 
-    func shoppingCart(_ shoppingCart: ShoppingCart, violationsDetected violations: [CheckoutInfo.Violation]) {
+    public func shoppingCart(_ shoppingCart: ShoppingCart, violationsDetected violations: [CheckoutInfo.Violation]) {
         let alertController = UIAlertController(
             title: Asset.localizedString(forKey: "Snabble.Violations.title"),
             message: violations.message,

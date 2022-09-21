@@ -7,8 +7,8 @@
 import Foundation
 
 // response data from the telecash IPG Connect API
-struct ConnectGatewayResponse: Decodable {
-    enum Error: Swift.Error {
+public struct ConnectGatewayResponse: Decodable {
+    public enum Error: Swift.Error {
         case gateway(reason: String, code: String)
         case responseCode(String)
         case empty(variableLabel: String?)
@@ -42,7 +42,7 @@ struct ConnectGatewayResponse: Decodable {
     let responseCode: String
     let orderId: String
 
-    init(response: [[String: String]]) throws {
+    public init(response: [[String: String]]) throws {
         let reducedResponse = response.reduce([:], { (result: [String: String], element: [String: String]) in
             guard let name = element["name"], let value = element["value"], !value.isEmpty else {
                 return result
@@ -66,7 +66,7 @@ struct ConnectGatewayResponse: Decodable {
         orderId = instance.orderId
     }
 
-    init(from decoder: Decoder) throws {
+    public init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
 
         let failReason = try container.decodeIfPresent(String.self, forKey: .failReason)

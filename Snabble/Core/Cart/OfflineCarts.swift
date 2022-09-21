@@ -39,7 +39,7 @@ public final class OfflineCarts {
     private init() { }
 
     /// append a shopping cart to the list of carts that need to be sent later
-    func saveCartForLater(_ cart: ShoppingCart) {
+    public func saveCartForLater(_ cart: ShoppingCart) {
         guard !cart.items.isEmpty else {
             return
         }

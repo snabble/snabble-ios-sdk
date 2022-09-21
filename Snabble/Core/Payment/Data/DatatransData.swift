@@ -6,14 +6,14 @@
 
 import Foundation
 
-struct DatatransPaymentMethodToken: Codable, Equatable {
+public struct DatatransPaymentMethodToken: Codable, Equatable {
     let token: String
     let displayTitle: String
     let cardHolder: String?
     let expirationMonth: String?
     let expirationYear: String?
 
-    init(token: String, displayTitle: String, cardHolder: String?, expirationMonth: String?, expirationYear: String?) {
+    public init(token: String, displayTitle: String, cardHolder: String?, expirationMonth: String?, expirationYear: String?) {
         self.token = token
         self.displayTitle = displayTitle
         self.cardHolder = cardHolder
@@ -57,11 +57,11 @@ struct DatatransPaymentMethodToken: Codable, Equatable {
     }
 }
 
-enum DatatransMethod: String, Codable {
+public enum DatatransMethod: String, Codable {
     case twint
     case postFinanceCard
 
-    var rawMethod: RawPaymentMethod {
+    public var rawMethod: RawPaymentMethod {
         switch self {
         case .twint: return .twint
         case .postFinanceCard: return .postFinanceCard
@@ -81,23 +81,23 @@ extension RawPaymentMethod {
 
 // Usable for TWINT / PostFinance Card
 // - stores info from a plain Datatrans.PaymentMethodToken, with optional expiry date
-struct DatatransData: Codable, EncryptedPaymentData, Equatable {
-    static func == (lhs: DatatransData, rhs: DatatransData) -> Bool {
+public struct DatatransData: Codable, EncryptedPaymentData, Equatable {
+    public static func == (lhs: DatatransData, rhs: DatatransData) -> Bool {
         return true
     }
 
     // encrypted JSON string
-    let encryptedPaymentData: String
+    public let encryptedPaymentData: String
     // serial # of the certificate used to encrypt
-    let serial: String
+    public let serial: String
 
     // name of this payment method for display in table
-    var displayName: String { token.displayTitle }
+    public var displayName: String { token.displayTitle }
 
-    let originType = AcceptedOriginType.datatransAlias
+    public let originType = AcceptedOriginType.datatransAlias
 
-    let projectId: Identifier<Project>
-    let method: DatatransMethod
+    public let projectId: Identifier<Project>
+    public let method: DatatransMethod
     let token: DatatransPaymentMethodToken
 
     enum CodingKeys: String, CodingKey {
@@ -125,26 +125,26 @@ struct DatatransData: Codable, EncryptedPaymentData, Equatable {
         self.token = token
     }
 
-    var isExpired: Bool { token.isExpired }
+    public var isExpired: Bool { token.isExpired }
 
     var expirationDate: String? { token.expirationDate }
 }
 
 // Usable for Credit Cards
 // - stores info from a Datatrans.CardToken
-struct DatatransCreditCardData: Codable, EncryptedPaymentData, Equatable, BrandedCreditCard {
+public struct DatatransCreditCardData: Codable, EncryptedPaymentData, Equatable, BrandedCreditCard {
     // encrypted JSON string
-    let encryptedPaymentData: String
+    public let encryptedPaymentData: String
     // serial # of the certificate used to encrypt
-    let serial: String
+    public let serial: String
 
     // name of this payment method for display in table
-    var displayName: String { token.displayTitle }
+    public var displayName: String { token.displayTitle }
 
-    let originType = AcceptedOriginType.datatransCreditCardAlias
+    public let originType = AcceptedOriginType.datatransCreditCardAlias
 
-    let projectId: Identifier<Project>
-    let brand: CreditCardBrand
+    public let projectId: Identifier<Project>
+    public let brand: CreditCardBrand
     let token: DatatransPaymentMethodToken
 
     enum CodingKeys: String, CodingKey {
@@ -176,7 +176,7 @@ struct DatatransCreditCardData: Codable, EncryptedPaymentData, Equatable, Brande
         self.token = token
     }
 
-    var isExpired: Bool { token.isExpired }
+    public var isExpired: Bool { token.isExpired }
 
     var expirationDate: String? { token.expirationDate }
 }

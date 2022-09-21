@@ -6,6 +6,7 @@
 //
 
 import UIKit
+import SnabbleCore
 
 protocol ScanningMessageViewViewProvider {
     var messages: [ScanMessage] { get }

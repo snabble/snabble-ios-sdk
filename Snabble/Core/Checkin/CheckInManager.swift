@@ -48,7 +48,7 @@ public class CheckInManager: NSObject {
         }
     }
 
-    var shopPublisher = CurrentValueSubject<Shop?, Never>(nil)
+    public var shopPublisher = CurrentValueSubject<Shop?, Never>(nil)
 
     private func trackCheckIn(with shop: Shop) {
         guard let location = locationManager.location, let project = shop.project else { return }

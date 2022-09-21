@@ -4,6 +4,8 @@
 //  Copyright © 2022 snabble. All rights reserved.
 //
 
+import UIKit
+
 struct SelectionSheetAction {
     typealias ActionHandler = (SelectionSheetAction) -> Void
 

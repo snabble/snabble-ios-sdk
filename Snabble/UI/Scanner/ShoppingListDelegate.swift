@@ -5,6 +5,7 @@
 //
 
 import Foundation
+import SnabbleCore
 
 public protocol ShoppingListDelegate: AnalyticsDelegate {
     func shouldMarkItemDone(in: ShoppingList, sku: String) -> Int?

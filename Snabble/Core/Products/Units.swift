@@ -4,6 +4,8 @@
 //  Copyright © 2020 snabble. All rights reserved.
 //
 
+import Foundation
+
 public enum Dimension {
     case volume
     case capacity
@@ -69,7 +71,7 @@ public enum Units: String, Codable, Equatable {
         return Units(rawValue: rawValue)
     }
 
-    var hasDimension: Bool {
+    public var hasDimension: Bool {
         switch self {
         case .piece, .price:
             return false
@@ -78,11 +80,11 @@ public enum Units: String, Codable, Equatable {
         }
     }
 
-    func fractionalUnit(_ div: Int) -> Units? {
+    public func fractionalUnit(_ div: Int) -> Units? {
         return self.fractionalUnit(Decimal(div))
     }
 
-    func fractionalUnit(_ div: Decimal) -> Units? {
+    public func fractionalUnit(_ div: Decimal) -> Units? {
         guard let conv = Units.conversions[self.quantity] else {
             return nil
         }

@@ -7,6 +7,7 @@
 
 import Foundation
 import UIKit
+import SnabbleCore
 
 extension CheckoutInfo.Violation {
     public var text: String {

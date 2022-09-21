@@ -57,7 +57,7 @@ private enum Payload: Encodable {
     }
 }
 
-struct AppEvent: Encodable {
+public struct AppEvent: Encodable {
     private let type: EventType
     private let appId: String
     private let payload: Payload
@@ -95,22 +95,22 @@ struct AppEvent: Encodable {
         self.init(type: type, payload: session, project: project, shopId: shopId)
     }
 
-    init(error: String, project: Project, session: String? = nil, shopId: Identifier<Shop>? = nil) {
+    public init(error: String, project: Project, session: String? = nil, shopId: Identifier<Shop>? = nil) {
         let error = Payload.error(Message(message: error, session: session))
         self.init(type: .error, payload: error, project: project, shopId: shopId)
     }
 
-    init(log: String, project: Project, session: String? = nil, shopId: Identifier<Shop>? = nil) {
+    public init(log: String, project: Project, session: String? = nil, shopId: Identifier<Shop>? = nil) {
         let log = Payload.log(Message(message: log, session: session))
         self.init(type: .log, payload: log, project: project, shopId: shopId)
     }
 
-    init(key: String, value: String, comment: String = "", project: Project, shopId: Identifier<Shop>? = nil) {
+    public init(key: String, value: String, comment: String = "", project: Project, shopId: Identifier<Shop>? = nil) {
         let analytics = Payload.analytics(Analytics(key: key, value: value, comment: comment))
         self.init(type: .analytics, payload: analytics, project: project, shopId: shopId)
     }
 
-    init?(_ shoppingCart: ShoppingCart) {
+    public init?(_ shoppingCart: ShoppingCart) {
         let cart = shoppingCart.createCart()
         guard let project = Snabble.shared.project(for: shoppingCart.projectId) else {
             return nil
@@ -119,7 +119,7 @@ struct AppEvent: Encodable {
         self.init(type: .cart, payload: Payload.cart(cart), project: project, shopId: shoppingCart.shopId)
     }
 
-    init(scannedCode: String, codes: [(String, String)], project: Project) {
+    public init(scannedCode: String, codes: [(String, String)], project: Project) {
         var dict = [String: String]()
         for (code, template) in codes {
             dict[template] = code
@@ -131,7 +131,7 @@ struct AppEvent: Encodable {
 }
 
 extension AppEvent {
-    func post() {
+    public func post() {
         // use URLRequest/URLSession directly to avoid error logging loops when posting the event fails
         guard let url = Snabble.shared.urlFor(self.project.links.appEvents.href) else {
             return

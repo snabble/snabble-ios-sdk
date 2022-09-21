@@ -1,0 +1,762 @@
+"Snabble.addDiscount" = "Zadať zľavu";
+
+"Snabble.AgeVerification.explanation" = "Na kúpu určitých produktov (napr. alkoholických produktov) je potrebné potvrdenie veku. Za týmto účelom zadaj 7-miestne číslo na zadnej strane svojho občianskeho preukazu.";
+
+"Snabble.AgeVerification.Failed.message" = "Pre niektoré produkty v tvojom košíku platí vekový limit a tieto žiaľ nemôžeš kúpiť.";
+
+"Snabble.AgeVerification.Failed.title" = "Nespĺňaš vekový limit";
+
+"Snabble.AgeVerification.Pending.message" = "Pre niektoré produkty v tvojom košíku platí vekový limit. Za účelom pokračovania v nákupe vykonaj overenie tvojho veku.";
+
+"Snabble.AgeVerification.Pending.title" = "Overenie veku bolo úspešné";
+
+"Snabble.AgeVerification.placeholder" = "7 číslic";
+
+"Snabble.AgeVerification.title" = "Potvrdenie veku";
+
+"Snabble.askForPermission" = "Žiadať o povolenie";
+
+"Snabble.Biometry.Alert.laterButton" = "Teraz nie";
+
+"Snabble.Biometry.Alert.message" = "Chceš chrániť svoje online platby prostredníctvom %@?";
+
+"Snabble.Biometry.Alert.title" = "Aktivovať %@?";
+
+"Snabble.Biometry.enterCode" = "Zadanie kódu";
+
+"Snabble.Biometry.FaceId" = "Face ID";
+
+"Snabble.Biometry.locked" = "%@ je zablokovaná. Zadaj svoj kód na obrazovke uzamknutia, aby si ju znovu aktivoval.";
+
+"Snabble.Biometry.touchId" = "Touch ID";
+
+"Snabble.cancel" = "Zrušiť";
+
+"Snabble.CC.3dsecureHint.retailer" = "Zadaj svoje údaje tu. Následne ťa presmerujeme do tvojej banky za účelom potvrdenia tvojich údajov. Dovtedy si rezervujeme 1 € (na %@), a potom ti budú peniaze opäť priamo pripísané.";
+
+"Snabble.CC.3dsecureHint.retailerWithPrice" = "Zadaj svoje údaje tu. Následne ťa presmerujeme do tvojej banky za účelom potvrdenia tvojich údajov. Dovtedy si rezervujeme %@ (na %@), a potom ti budú peniaze opäť priamo pripísané.";
+
+"Snabble.CC.cardNumber" = "Číslo karty";
+
+"Snabble.CC.editingHint" = "Údaje tvojej kreditnej karty budeme uchovávať len v šifrovanej forme, a preto nemôžu byť spracované.";
+
+"Snabble.CC.noEntryPossible" = "Momentálne nemôžete uložiť žiadnu kreditnú kartu.";
+
+"Snabble.CC.validUntil" = "Platnosť";
+
+"Snabble.Checkout.done" = "Hotovo!";
+
+"Snabble.Checkout.error" = "Vyskytla sa chyba";
+
+"Snabble.Checkout.ID" = "Kontrolné ID";
+
+"Snabble.Checkout.payAtCashRegister" = "Zaplatiť pri pokladni";
+
+"Snabble.Checkout.title" = "Zaplatiť";
+
+"Snabble.Checkout.verifying" = "Overujem";
+
+"Snabble.Coupon.activate" = "Aktivovať";
+
+"Snabble.Coupon.activated" = "Aktivovaný";
+
+"Snabble.Coupon.countdown" = "Platnosť kupónu končí o %@ minút";
+
+"Snabble.Coupon.expired" = "Platnosť tohto kupónu už skončila.";
+
+"Snabble.Coupon.explanation" = "Tento kupón je teraz pre teba aktivovaný. Ak chceš využiť kupón, naskenuj výrobok v obchode a pridaj ho do nákupného košíka.";
+
+"Snabble.Coupon.validIndefinitely" = "platí neobmedzene";
+
+"Snabble.Coupons.expired" = "Platnosť už skončila";
+
+"Snabble.Coupons.expiresAtDate" = "platný do %@";
+
+"Snabble.Coupons.none" = "Kupóny nie sú k dispozícii";
+
+"Snabble.Coupons.title" = "Kupóny";
+
+"Snabble.CreditCard.payNow" = "Teraz zaplatiť kreditnou kartou";
+
+"Snabble.delete" = "Vymazať";
+
+"Snabble.done" = "Hotovo";
+
+"Snabble.DynamicView.AllStores.button" = "See all stores";
+
+"Snabble.DynamicView.connectWifi" = "Use the free “%@” wifi";
+
+"Snabble.DynamicView.ConnectWifi.noSSID" = "Unfortunately there is no WLAN available";
+
+"Snabble.DynamicView.customerCard" = "Take advantage of your store cards automatically.";
+
+"Snabble.DynamicView.lastPurchase" = "Tvoj posledný nákup";
+
+"Snabble.DynamicView.lastPurchases" = "Tvoje posledné nákupy";
+
+"Snabble.DynamicView.LastPurchases.all" = "Všetko";
+
+"Snabble.DynamicView.LocationPermission.Button.notDetermined" = "Grant permission";
+
+"Snabble.DynamicView.LocationPermission.MissingPermission.message" = "Len tak môžeme zobraziť obchody v tvojej blízkosti a umožniť nákup.";
+
+"Snabble.DynamicView.LocationPermission.MissingPermission.title" = "Snabble potrebuje zistiť tvoju polohu";
+
+"Snabble.DynamicView.LocationPermission.notNow" = "Teraz nie";
+
+"Snabble.DynamicView.LocationPermission.openSettings" = "Otvoriť nastavenia";
+
+"Snabble.DynamicView.LocationPermission.ReducedAccuracy.message" = "Otvor nastavenia, zvoľ položku „Poloha“ a aktivuj možnosť „Presná poloha“.";
+
+"Snabble.DynamicView.LocationPermission.ReducedAccuracy.title" = "Snabble potrebuje tvoju presnú polohu, aby rozpoznal, v ktorom obchode práve nakupuješ";
+
+"Snabble.DynamicView.Shop.show" = "Zobraziť obchody";
+
+"Snabble.DynamicView.StartShopping.button" = "Start shopping";
+
+"Snabble.edit" = "Upraviť";
+
+"Snabble.goToSettings" = "Prejsť na nastavenia";
+
+"Snabble.Hints.closedBags" = "Len tak ďalej! Prosím, uľahči prácu pokladníkom a nevkladaj svoje produkty priamo do uzavretých tašiek. Ďakujem!";
+
+"Snabble.Hints.continueScanning" = "Pokračovať v skenovaní";
+
+"Snabble.Hints.title" = "Poznámka od %@";
+
+"Snabble.InvalidDepositVoucher.errorMsg" = "Poukážky za vratné produkty môžu byť uplatnené len jedenkrát.";
+
+"Snabble.Keyguard.message" = "Tým zabezpečíme, že k tomuto spôsobu platby budeš mať prístup len ty sám/sama";
+
+"Snabble.Keyguard.requireScreenLock" = "Aby si mohol/mohla priradiť tento spôsob platby, musíš chrániť svoj smartfón uzamknutím displeja.";
+
+/* SECTION: Android KeyStore */
+"Snabble.Keyguard.title" = "Odomkni svoj smartfón, prosím";
+
+"Snabble.LimitsAlert.checkoutNotAvailable" = "Nad hodnotu tovaru %@ nie je možné nakupovať pomocou aplikácie.";
+
+"Snabble.LimitsAlert.notAllMethodsAvailable" = "Nad hodnotu tovaru %@ nie sú k dispozícii všetky spôsoby platby";
+
+"Snabble.LimitsAlert.title" = "Pozor";
+
+"Snabble.loadingProductInformation" = "Načítanie informácií o produkte…";
+
+"Snabble.networkError" = "Chyba spojenia";
+
+"Snabble.no" = "Nie";
+
+"Snabble.noDiscount" = "žiadna zľava";
+
+"Snabble.NotForSale.ErrorMsg.scan" = "Tento produkt momentálne nie je možné zaplatiť cez aplikáciu. Zaplať ho pri pokladni ako obvykle.";
+
+"Snabble.ok" = "OK";
+
+"Snabble.Onboarding.Deeplink.accessibility" = "Otvoriť %@";
+
+"Snabble.Onboarding.done" = "Hotovo";
+
+"Snabble.Onboarding.Link.show" = "Prezrieť";
+
+"Snabble.Onboarding.next" = "Ďalej";
+
+"Snabble.Paydirekt.AuthorizationFailed.message" = "Skús neskôr znovu, prosím";
+
+"Snabble.Paydirekt.AuthorizationFailed.title" = "Autorizácia sa nepodarila";
+
+"Snabble.Paydirekt.deleteAuthorization" = "Vymazať spôsob platby";
+
+"Snabble.Paydirekt.gotoWebsite" = "Prejsť na paydirekt.de";
+
+"Snabble.Paydirekt.payNow" = "Teraz zaplatiť prostredníctvom paydirekt";
+
+"Snabble.Paydirekt.savedAuthorization" = "Autorizácia aplikácie Snabble pre paydirekt bola úspešná. Ak chceš autorizáciu zrušiť, musíš sa prihlásiť do svojho konta paydirekt na webovej stránke. Pokiaľ nechceš, aby paydirekt bol v budúcnosti zobrazovaný ako spôsob platby, tu ho môžeš jednoducho odstrániť.";
+
+"Snabble.Paydirekt.title" = "paydirekt";
+
+/* SECTION: SnabbleAndroid */
+"Snabble.Payment.aborted" = "Platobný proces bol prerušený";
+
+"Snabble.Payment.add" = "Pridať spôsob platby";
+
+"Snabble.Payment.addPaymentOrigin" = "Chceš preniesť informácie o platbe do aplikácie?";
+
+"Snabble.Payment.backToCart" = "Späť na košík";
+
+"Snabble.Payment.backToHome" = "Späť na úvodnú stránku";
+
+"Snabble.Payment.CancelError.message" = "Platba teraz nemôže byť prerušená.";
+
+"Snabble.Payment.CancelError.title" = "Prerušenie nie je možné";
+
+"Snabble.Payment.confirm" = "Potvrdiť nákup";
+
+"Snabble.Payment.creditCard" = "Kreditná karta";
+
+"Snabble.Payment.CreditCard.error" = "Pri spracovaní tvojej platobnej karty sa vyskytla chyba";
+
+"Snabble.Payment.CreditCard.expireDate" = "Platnosť do: %@";
+
+"Snabble.Payment.Delete.message" = "Naozaj chceš odstrániť tento spôsob platby?";
+
+"Snabble.Payment.EmptyState.add" = "Pridať spôsob platby";
+
+"Snabble.Payment.EmptyState.message" = "Ešte nie je uložený žiadny spôsob platby.";
+
+"Snabble.Payment.errorStarting" = "Chyba pri vytvorení platobného procesu";
+
+"Snabble.Payment.noMethodAvailable" = "Tento nákup nie je možné vykonať pomocou tejto aplikácie.";
+
+"Snabble.Payment.offlineHint" = "Momentálne si offline a preto niektoré spôsoby platby nemusia byť k dispozícii";
+
+"Snabble.Payment.Online.message" = "Tvoj nákup musí potvrdiť zamestnanec obchodu.";
+
+"Snabble.Payment.payAtCashDesk" = "Zaplatiť pri pokladni";
+
+"Snabble.Payment.payAtSCO" = "Karta na EC termináli";
+
+"Snabble.Payment.payUsingCustomerCard" = "so zákazníckou kartou";
+
+"Snabble.Payment.payViaInvoice" = "na faktúru";
+
+"Snabble.Payment.PostFinanceCard.error" = "Pri spracovaní tvojej karty PostFinance sa vyskytla chyba";
+
+"Snabble.Payment.presentCode" = "Za účelom potvrdenia nákupu prilož tento kód pred Snabble monitor alebo ho ukáž zamestnancovi.";
+
+"Snabble.Payment.rejected" = "Nákup zamietnutý";
+
+"Snabble.Payment.rejectedHint" = "Tvoj nákup bol zamietnutý. Skontroluj svoj košík a začni platobný proces znovu.";
+
+"Snabble.Payment.SEPA.hint" = "Poznámka: Za účelom tvojej ochrany a ochrany našich obchodníkov pred zneužitím si obchodník pri tvojej prvej platbe prostredníctvom SEPA inkasa vyžiada tvoju bankovú kartu.";
+
+"Snabble.Payment.SEPA.iban" = "IBAN";
+
+"Snabble.Payment.SEPA.invalidIBAN" = "Zadaný IBAN je neplatný.";
+
+"Snabble.Payment.SEPA.invalidName" = "Zadaj meno, prosím.";
+
+"Snabble.Payment.SEPA.missingCountry" = "Kód krajiny nesmie zostať prázdny.";
+
+"Snabble.Payment.SEPA.name" = "Meno";
+
+"Snabble.Payment.SEPA.title" = "SEPA inkaso";
+
+"Snabble.Payment.success" = "Ďakujeme za tvoj nákup";
+
+"Snabble.Payment.Twint.error" = "Pri spracovaní tvojho účtu TWINT sa vyskytla chyba";
+
+"Snabble.Payment.usableAt" = "Použiteľné tu: %@";
+
+"Snabble.Payment.waiting" = "Čakanie na potvrdenie";
+
+"Snabble.PaymentCard.editingHint" = "Údaje o tvojej karte budeme uchovávať len v šifrovanej forme, a preto nemôžu byť spracované.";
+
+"Snabble.PaymentContinuation.message" = "Pokračovanie platby";
+
+"Snabble.PaymentError.msg" = "Tvoja platba nemohla byť vykonaná. Prosím, zaplať pri bežnej pokladni.\n\nOspravedlňujeme sa za nepríjemnosti.";
+
+"Snabble.PaymentError.title" = "Vyskytla sa chyba";
+
+"Snabble.PaymentError.tryAgain" = "Skúsiť znovu";
+
+"Snabble.PaymentMethods.add" = "Pridať spôsob platby";
+
+"Snabble.PaymentMethods.choose" = "Ktorý spôsob platby chceš pridať?";
+
+"Snabble.PaymentMethods.forAllRetailers" = "Pre všetky obchody";
+
+"Snabble.PaymentMethods.forSingleRetailer" = "Pre jednotlivé obchody";
+
+"Snabble.PaymentMethods.NoCodeAlert.biometry" = "Tvoj iPhone nie je chránený ani kódom, ani funkciou Touch ID/Face ID. V záujme svojej bezpečnosti pred zadaním IBAN alebo platobnej karty najprv nastav túto ochranu.";
+
+"Snabble.PaymentMethods.NoCodeAlert.noBiometry" = "Tvoj iPhone nie je chránený kódom. V záujme svojej bezpečnosti pred zadaním IBAN alebo platobnej karty najprv nastav túto ochranu.";
+
+"Snabble.PaymentMethods.noDeviceCode" = "Nepodporovaný iPhone";
+
+/* ********* iOS Payment Methods ********* */
+"Snabble.PaymentMethods.title" = "Spôsob platby";
+
+"Snabble.PaymentSelection.addNow" = "Pridať teraz";
+
+"Snabble.PaymentSelection.howToPay" = "Ako chceš zaplatiť za %@?";
+
+"Snabble.PaymentSelection.payNow" = "Zaplatiť %@ teraz";
+
+"Snabble.PaymentSelection.title" = "Zaplatiť";
+
+"Snabble.PaymentStatus.AddDebitCard.button" = "Áno, uložiť kartu v aplikácii";
+
+"Snabble.PaymentStatus.AddDebitCard.message" = "Naozaj chceš uložiť v aplikácii svoju kartu girocard, aby si nasledujúci nákup mohol/mohla zaplatiť inkasom? Kartu môžeš v budúcnosti nechať vo svojej peňaženke.";
+
+"Snabble.PaymentStatus.back" = "Späť";
+
+"Snabble.PaymentStatus.close" = "Zatvoriť";
+
+"Snabble.PaymentStatus.DebitCardAdded.message" = "Tvoja karta bola úspešne overená. Odteraz môžeš platiť SEPA inkasom. Svoju kartu girocard môžeš v budúcnosti nechať vo svojej peňaženke.";
+
+"Snabble.PaymentStatus.ExitCode.openExitGateTimed" = "Platnosť kódu je časovo obmedzená.";
+
+"Snabble.PaymentStatus.ExitCode.title" = "Kód ukončenia";
+
+"Snabble.PaymentStatus.Fulfillment.title" = "Dodanie";
+
+"Snabble.PaymentStatus.Payment.error" = "Tvoja platba nemohla byť vykonaná. Skús znovu alebo vyber iný spôsob platby.";
+
+"Snabble.PaymentStatus.Payment.title" = "Platba";
+
+"Snabble.PaymentStatus.Payment.tryAgain" = "Skúsiť znovu";
+
+"Snabble.PaymentStatus.Rating.send" = "Odoslať";
+
+"Snabble.PaymentStatus.Rating.title" = "Čo sa ti nepáčilo?";
+
+"Snabble.PaymentStatus.Ratings.thanks" = "Ďakujem!";
+
+"Snabble.PaymentStatus.Ratings.title" = "Páčilo sa ti nakupovanie?";
+
+"Snabble.PaymentStatus.Receipt.title" = "Pokladničný blok";
+
+"Snabble.PaymentStatus.step1" = "Lokalizácia v oblasti pokladní";
+
+"Snabble.PaymentStatus.step2" = "Povolenie tvojho nákupu";
+
+"Snabble.PaymentStatus.step3" = "Povolenie tvojej platby";
+
+"Snabble.PaymentStatus.Title.error" = "Ľutujeme, vyskytla sa chyba";
+
+"Snabble.PaymentStatus.Title.inProgress" = "Tvoj nákup bude uzavretý";
+
+"Snabble.PaymentStatus.Title.success" = "Ďakujeme za tvoj nákup!";
+
+"Snabble.PaymentStatus.Tobacco.error" = "Pri vydávaní cigariet sa vyskytol problém. Obráť sa na zamestnanca obchodu, prosím.";
+
+"Snabble.PaymentStatus.Tobacco.message" = "Zober si svoje cigarety, prosím.";
+
+"Snabble.PaymentStatus.Tobacco.title" = "Vydávanie cigariet";
+
+"Snabble.Payone.cardNumber" = "Číslo karty";
+
+"Snabble.Payone.cvc" = "Kontrolné číslo (CVC)";
+
+"Snabble.Payone.expireMonth" = "Koniec platnosti – mesiac (MM)";
+
+"Snabble.Payone.expireYear" = "Koniec platnosti – rok (RRRR)";
+
+"Snabble.Payone.incompleteForm" = "Vyplň formulár úplne, prosím.";
+
+"Snabble.Payone.lastname" = "Priezvisko";
+
+"Snabble.pleaseWait" = "Čakaj, prosím...";
+
+"Snabble.PostFinanceCard.payNow" = "Zaplatiť kartou PostFinance teraz";
+
+"Snabble.QRCode.codeXofY" = "Kód %1$d z %2$d";
+
+"Snabble.QRCode.didPay" = "Zaplatil(a) som pri pokladni";
+
+"Snabble.QRCode.DidPayDialog.cancel" = "Späť ku QR kódu";
+
+"Snabble.QRCode.DidPayDialog.message" = "Zaplatil(a) si pri pokladni, takže môžeme zrušiť nákupný kôš?";
+
+"Snabble.QRCode.DidPayDialog.ok" = "Áno, zrušiť nákupný kôš";
+
+"Snabble.QRCode.Entry.title" = "Kód: %d";
+
+"Snabble.QRCode.message" = "Predlož QR kód pri pokladni, prosím";
+
+"Snabble.QRCode.nextCode" = "Prejsť na kód %1$d z %2$d";
+
+"Snabble.QRCode.priceMayDiffer" = "Presná cena bude vypočítaná pri pokladni a môže sa líšiť od ceny, ktorá je tu zobrazená.";
+
+"Snabble.QRCode.showTheseCodes" = "Ukáž po sebe tieto %d kódy pri pokladni";
+
+"Snabble.QRCode.showThisCode" = "Ukáž tento kód pri pokladni";
+
+"Snabble.QRCode.title" = "Zaplatiť pri pokladni";
+
+"Snabble.QRCode.total" = "Celková suma:";
+
+"Snabble.Receipt.errorDownload" = "Nebolo možné stiahnuť potvrdenie";
+
+"Snabble.Receipt.pdfReaderUnavailable" = "Nenašla sa žiadna vhodná aplikácia na zobrazenie PDF";
+
+"Snabble.Receipts.loading" = "(načítava sa)";
+
+"Snabble.Receipts.noReceipts" = "Ešte si nenakupoval/a s aplikáciou Snabble";
+
+"Snabble.Receipts.oClock" = "Čas";
+
+"Snabble.Receipts.title" = "Predchádzajúce nákupy";
+
+"Snabble.remove" = "Odstrániť";
+
+"Snabble.SaleStop.errorMsg" = "Tieto produkty momentálne nie je možné zaplatiť cez aplikáciu. Zaplať ich pri pokladni ako obvykle:";
+
+"Snabble.SaleStop.ErrorMsg.one" = "Tento produkt momentálne nie je možné zaplatiť cez aplikáciu. Zaplať ho pri pokladni ako obvykle:";
+
+"Snabble.SaleStop.ErrorMsg.scan" = "Tento produkt momentálne nie je možné zaplatiť cez aplikáciu. Zaplať ho pri pokladni ako obvykle.";
+
+"Snabble.SaleStop.ErrorMsg.title" = "Prepáč";
+
+"Snabble.save" = "Uložiť";
+
+"Snabble.Scanner.Accessibility.actionHideHint" = "Skryť upozornenie natrvalo";
+
+"Snabble.Scanner.Accessibility.actionUnderstood" = "Rozumiem";
+
+"Snabble.Scanner.Accessibility.enterQuantity" = "Zadaj množstvo v %@";
+
+"Snabble.Scanner.Accessibility.eventBackInScanner" = "Si opäť v skeneri";
+
+"Snabble.Scanner.Accessibility.eventBarcodeDetected" = "Čiarový kód bol rozpoznaný";
+
+"Snabble.Scanner.Accessibility.eventCartOpened" = "Košík je otvorený";
+
+"Snabble.Scanner.Accessibility.eventMaxQuantityReached" = "Nemôžeš vložiť do košíka ďalšie položky";
+
+/* Example: 3 times Banana for 3$ */
+"Snabble.Scanner.Accessibility.eventQuantityUpdate" = "%@ krát %@ pre %@";
+
+"Snabble.Scanner.Accessibility.eventScannerOpened" = "Otvoril(a) si skener.";
+
+"Snabble.Scanner.Accessibility.hintCartContent" = "V košíku je %@ položiek pre %@.";
+
+"Snabble.Scanner.Accessibility.hintCartIsEmpty" = "Tvoj košík je momentálne prázdny.";
+
+"Snabble.Scanner.Accessibility.hintPermission" = "Na skenovanie potrebujeme od teba oprávnenie.";
+
+"Snabble.Scanner.addCodeAsIs" = "Pridať %@ takto";
+
+"Snabble.Scanner.addToCart" = "Pridať do košíka";
+
+"Snabble.Scanner.batterySaverHint" = "Činnosť skenera bola prerušená. Pre pokračovanie sa dotkni obrazovky, prosím.";
+
+"Snabble.Scanner.BundleDialog.headline" = "Výber jednotky balenia";
+
+"Snabble.Scanner.Camera.accessDenied" = "Prístup k fotoaparátu bol zamietnutý";
+
+"Snabble.Scanner.Camera.allowAccess" = "Na skenovanie čiarových kódov potrebujeme prístup k fotoaparátu. Povoľ prístup v nastaveniach a vráť sa sem opäť.";
+
+"Snabble.Scanner.couponAdded" = "Poukážka „%@“ je pridaná";
+
+"Snabble.Scanner.duplicateDepositScanned" = "Každý doklad o zálohe môže byť naskenovaný len raz.";
+
+"Snabble.Scanner.enterBarcode" = "Zadanie kódu";
+
+"Snabble.Scanner.enterCodeButton" = "Zadať\nčiarový kód";
+
+/* Text der Snackbar die Angezeigt wird, wenn der Benutzer noch nie ein Produkt gescannt hat */
+"Snabble.Scanner.firstScan" = "Naskenuj prvý produkt. Prilož čiarový kód produktu pod kameru.";
+
+"Snabble.Scanner.goToCart" = "Košík: %@";
+
+"Snabble.Scanner.GoToCart.empty" = "Košík";
+
+"Snabble.Scanner.introText" = "Naskenuj čiarové kódy produktov a vlož ich do svojho košíka.";
+
+"Snabble.Scanner.manualCouponAdded" = "K poslednej položke si zadal/a zľavnenú cenu. Upozorňujeme, že tvoj nákup bude skontrolovaný pracovníkom/pracovníčkou.";
+
+"Snabble.Scanner.multiPack" = "Nezabudni!";
+
+"Snabble.Scanner.networkError" = "Produkt nie je možné nájsť. Prosím, skontroluj svoje internetové pripojenie.";
+
+"Snabble.Scanner.noMatchesFound" = "Položka nebola nájdená";
+
+"Snabble.Scanner.plusDeposit" = "+ %@ záloha";
+
+"Snabble.Scanner.scannedAgeRestrictedProduct" = "Preto bude tvoj vek pri platbe jednorazovo skontrolovaný.";
+
+"Snabble.Scanner.scannedShelfCode" = "Odváž produkt a naskenuj čiarový kód na etikete";
+
+"Snabble.Scanner.scanningTitle" = "Naskenovať čiarový kód";
+
+"Snabble.Scanner.serverError" = "Produkt nie je možné nájsť.";
+
+"Snabble.Scanner.start" = "Spusti skener";
+
+"Snabble.Scanner.title" = "Skener";
+
+"Snabble.Scanner.torchButton" = "Svetlo";
+
+"Snabble.Scanner.unknownBarcode" = "Informácie o cene tohto produktu nie sú k dispozícii";
+
+"Snabble.Scanner.updateCart" = "Aktualizovať košík";
+
+"Snabble.SEPA.editingHint" = "Tvoje SEPA údaje budeme uchovávať len v šifrovanej forme, a preto nemôžu byť spracované.";
+
+"Snabble.SEPA.encryptionError" = "Chyba pri kódovaní";
+
+"Snabble.SEPA.iAgree" = "Súhlasím";
+
+"Snabble.SEPA.IbanTransferAlert.message" = "Chceš uložiť tieto údaje účtu (IBAN: %@) pre nákupy v budúcnosti?";
+
+"Snabble.SEPA.IbanTransferAlert.title" = "Uložiť údaje účtu";
+
+"Snabble.SEPA.mandate" = "Mandát na inkaso v SEPA";
+
+"Snabble.SEPA.payNow" = "SEPA platba teraz";
+
+"Snabble.SEPA.scoTransferHint" = "Ešte zadaj meno uvedené na karte, aby si ju mohol/mohla uložiť pre platby priamo prostredníctvom aplikácie.";
+
+"Snabble.Settings" = "Nastavenia";
+
+/* <street and house number> in <ZIP code> <city name> */
+"Snabble.Shop.Address.accessibility" = "%1$@ v %2$@ %3$@";
+
+"Snabble.Shop.Detail.openingHours" = "Otváracie hodiny";
+
+"Snabble.Shop.Detail.Phonenumber.accessibility" = "Telefónne číslo %@";
+
+"Snabble.Shop.Detail.shopNow" = "Teraz nakúpiť tu";
+
+"Snabble.Shop.Detail.startNavigation" = "Chcete zapnúť navigáciu?";
+
+"Snabble.Shop.Detail.title" = "Detaily";
+
+"Snabble.Shop.Details.contractingParty" = "Zmluvný partner";
+
+"Snabble.Shop.Details.friday" = "Piatok";
+
+"Snabble.Shop.Details.MapDisabled.actionTitle" = "Aktivovať";
+
+"Snabble.Shop.Details.MapDisabled.title" = "Deaktivoval/a si používanie služby %@.";
+
+"Snabble.Shop.Details.monday" = "Pondelok";
+
+"Snabble.Shop.Details.saturday" = "Sobota";
+
+"Snabble.Shop.Details.StartCall.accessibility" = "Zavolať";
+
+"Snabble.Shop.Details.sunday" = "Nedeľa";
+
+"Snabble.Shop.Details.thursday" = "Štvrtok";
+
+"Snabble.Shop.Details.tuesday" = "Utorok";
+
+"Snabble.Shop.Details.wednesday" = "Streda";
+
+"Snabble.Shop.Distance.accessibility" = "Vo vzdialenosti %@";
+
+"Snabble.Shop.Finder.title" = "Obchod";
+
+"Snabble.Shop.Finder.youarehere" = "Nachádzate sa tu";
+
+"Snabble.Shop.List.Colapse.accessibility" = "zatvoriť";
+
+"Snabble.Shop.List.EventShopColapsed.accessibility" = "%@ zatvorený";
+
+"Snabble.Shop.List.EventShopExpanded.accessibility" = "%@ otvorený";
+
+"Snabble.Shop.List.Expand.accessibility" = "otvoriť";
+
+"Snabble.Shop.List.ShowDetails.accessibility" = "Zobraziť detaily obchodu";
+
+"Snabble.Shopping.title" = "Nakúpiť";
+
+"Snabble.Shoppingcart.Accessibility.actionAdd" = "Pridať";
+
+"Snabble.Shoppingcart.Accessibility.actionDelete" = "Vymazať";
+
+"Snabble.Shoppingcart.Accessibility.actionUse" = "Použiť";
+
+"Snabble.Shoppingcart.Accessibility.cardEndsWith" = "Končí sa s %@";
+
+"Snabble.Shoppingcart.Accessibility.closeDialog" = "Zatvoriť dialóg";
+
+"Snabble.Shoppingcart.Accessibility.contextInCart" = "V košíku";
+
+"Snabble.Shoppingcart.Accessibility.decreaseQuantity" = "Znížiť počet";
+
+"Snabble.Shoppingcart.Accessibility.descriptionForPrice" = "pre %@";
+
+"Snabble.Shoppingcart.Accessibility.descriptionQuantity" = "%@ krát";
+
+"Snabble.Shoppingcart.Accessibility.descriptionWithDiscount" = "so zľavou";
+
+"Snabble.Shoppingcart.Accessibility.descriptionWithoutDiscount" = "bez zľavy";
+
+"Snabble.Shoppingcart.Accessibility.increaseQuantity" = "Zvýšiť počet";
+
+"Snabble.Shoppingcart.Accessibility.paymentMethod" = "Spôsob platby: %@";
+
+"Snabble.Shoppingcart.Accessibility.quantity" = "Počet";
+
+"Snabble.Shoppingcart.Accessibility.selected" = "Vybraté";
+
+"Snabble.Shoppingcart.articleRemoved" = "Položka bola odstránená";
+
+"Snabble.Shoppingcart.buyProducts" = "Kúpiť %1$d položky/položiek za %2$@";
+
+"Snabble.Shoppingcart.BuyProducts.now" = "Zaplatiť teraz";
+
+"Snabble.Shoppingcart.BuyProducts.one" = "Kúpiť %1$d položku za %2$@";
+
+"Snabble.Shoppingcart.BuyProducts.selectPaymentMethod" = "Vybrať spôsob platby";
+
+"Snabble.Shoppingcart.coupon" = "Poukážka";
+
+"Snabble.Shoppingcart.coupons" = "Poukážky";
+
+"Snabble.Shoppingcart.deposit" = "Záloha";
+
+"Snabble.Shoppingcart.discounts" = "Rabat";
+
+"Snabble.Shoppingcart.EmptyState.buttonTitle" = "Skenovať teraz";
+
+"Snabble.Shoppingcart.EmptyState.description" = "Košík je prázdny. Naskenuj čiarové kódy produktov, ktoré si chceš kúpiť.";
+
+"Snabble.Shoppingcart.EmptyState.restartButtonTitle" = "Začať nový nákup";
+
+"Snabble.Shoppingcart.EmptyState.restoreButtonTitle" = "Obnoviť predchádzajúci košík";
+
+"Snabble.Shoppingcart.EmptyState.title" = "Tvoj košík je ešte prázdny";
+
+"Snabble.Shoppingcart.giveaway" = "Darček zadarmo";
+
+"Snabble.Shoppingcart.howToPay" = "Ako chceš zaplatiť?";
+
+"Snabble.Shoppingcart.includesDeposit" = "vrátane zálohy";
+
+"Snabble.Shoppingcart.noPaymentData" = "Pridať teraz";
+
+"Snabble.Shoppingcart.notForThisPurchase" = "Pre tento nákup nie je k dispozícii";
+
+"Snabble.Shoppingcart.notForVendor" = "Nepodporovaná obchodom";
+
+"Snabble.Shoppingcart.removeItem" = "Naozaj chceš odstrániť %@ z košíka?";
+
+"Snabble.Shoppingcart.removeItems" = "Naozaj chceš odstrániť všetky produkty z košíka?";
+
+"Snabble.ShoppingCart.title" = "Košík";
+
+/* Hinweiß der angezeigt wird wenn ein Artikel der Einkaufsliste hinzugefügt wurde */
+"Snabble.ShoppingList.added" = "%@ uložené";
+
+/* Beschreibung für den Scan-Knopf */
+"Snabble.ShoppingList.AddItem.viaScan" = "Skenovanie produktov";
+
+/* Beschreibung für den Microfon-Knopf */
+"Snabble.ShoppingList.AddItem.viaVoice" = "Diktovanie produktov";
+
+"Snabble.ShoppingList.addToList" = "Pridať do zoznamu";
+
+"Snabble.ShoppingList.changeEntry" = "Zmeniť položku";
+
+"Snabble.ShoppingList.changeQuantity" = "Zmeniť množstvo";
+
+/* Titel des Drilldown Popups wenn ein Marke mehrere Projekte hat */
+"Snabble.ShoppingList.CreateList.drilldownTitle" = "Vytvoriť nový nákupný zoznam pre %@";
+
+/* Der Titel des Dialogs zur Erzeugung einer neuen Einkaufsliste */
+"Snabble.ShoppingList.CreateList.title" = "Vytvoriť nový nákupný zoznam";
+
+/* Name des zu editierenden Eintrags */
+"Snabble.ShoppingList.EditItem.name" = "Meno";
+
+/* Beim Editieren von Einträgen der Einkaufsliste darf der Name nicht leer sein */
+"Snabble.ShoppingList.EditItem.nameRequired" = "Meno nesmie zostať prázdne";
+
+/* Der Title beim Editieren von Einträgen der Einkaufsliste */
+"Snabble.ShoppingList.EditItem.title" = "Spracovanie záznamu";
+
+/* Der Löschen-Knopf beim Editieren von Einkaufslisten */
+"Snabble.ShoppingList.EditList.delete" = "Vymazať";
+
+/* Der Speichern-Knopf beim Editieren von Einkaufslisten */
+"Snabble.ShoppingList.EditList.save" = "Uložiť";
+
+/* Der Titel des Popups zum bearbeiten von Einkaufslisten */
+"Snabble.ShoppingList.EditList.title" = "Upraviť nákupný zoznam";
+
+"Snabble.ShoppingList.isDeleted" = "Nákupný zoznam bol vymazaný";
+
+/* Der Text wird angezeigt wenn man ein Element der Einkaufsliste wegwischt */
+"Snabble.ShoppingList.itemDeleted" = "%@ vymazané";
+
+/* Der Call-To-Action wenn man das löschen eines Elements der Einkaufsliste rückgänig machen möchte */
+"Snabble.ShoppingList.ItemDeleted.undo" = "Obnoviť";
+
+/* Der Inhalt der Snackbar wenn eine Einkaufsliste gelöscht wurde */
+"Snabble.ShoppingList.ListDeleted.title" = "Nákupný zoznam bol vymazaný";
+
+/* Der Call-To-Action wenn eine Einkaufsliste wiederhergestellt werden soll */
+"Snabble.ShoppingList.ListDeleted.undo" = "Obnoviť";
+
+/* Der Call-To-Action beim Empty-State Text wenn der Einkaufszettel noch leer ist  */
+"Snabble.ShoppingList.ListEmpty.add" = "Pridať produkt";
+
+/* Empty-State Text wenn der Einkaufszettel noch leer ist */
+"Snabble.ShoppingList.ListEmpty.title" = "Tvoj nákupný zoznam je prázdny.";
+
+/* Der Call-To-Action beim Empty-State Text wenn noch kein Einkaufszettel angelegt wurde */
+"Snabble.ShoppingList.NoLists.add" = "Vytvoriť nákupný zoznam";
+
+/* Der Empty-State wenn noch kein Einkaufszettel angelegt wurde */
+"Snabble.ShoppingList.NoLists.title" = "Ešte si nevytvoril/a žiadny nákupný zoznam.";
+
+"Snabble.ShoppingList.notAvailable" = "Nákupný zoznam nie je k dispozícii";
+
+/* Hinweiß der angezeigt wird wenn ein Artikel nicht gefunden wurde */
+"Snabble.ShoppingList.notFound" = "Neznámy produkt";
+
+/* Titel der Toolbar für den Sortiermodus */
+"Snabble.ShoppingList.OrderItems.title" = "Zmeniť usporiadanie";
+
+/* Der Hint der angezeigt wird wenn man einen Artikel per Suche hinzufügen möchte */
+"Snabble.ShoppingList.searchHint" = "Vyhľadať alebo zadať priamo";
+
+"Snabble.ShoppingList.Section.categories" = "Kategórie";
+
+"Snabble.ShoppingList.Section.products" = "Produkty";
+
+/* Der Titel der übersichtsseite der Einkaufslisten */
+"Snabble.ShoppingList.title" = "Nákupný zoznam";
+
+"Snabble.ShoppingList.updateQuantity" = "Aktualizovať množstvo";
+
+/* Man soll verschiedene Artikel mit einem "und" in die Einkaufsliste legen können. Hier geht es nur um das Wort "und" */
+"Snabble.ShoppingList.Voice.connectingWord" = "a";
+
+/* Hinweis der Eingeblendet wird wenn der Benutzer das erste mal vermutlich falsch mehrere Artikel zum Einkaufszettel ergänezen wollte */
+"Snabble.ShoppingList.Voice.details" = "Chceš pridať viac vecí do nákupného zoznamu? Tak spoj svoje jednotlivé položky použitím „a“ – napríklad takto: Toaletný papier a cestoviny a droždie";
+
+"Snabble.ShoppingList.Voice.discardCommand" = "Zamietnuť";
+
+"Snabble.ShoppingList.Voice.doneCommand" = "Hotovo";
+
+"Snabble.ShoppingList.Voice.example" = "Povedz teraz napríklad:\n\n„Chlieb a mydlo a vajíčka“\n\nPre dokončenie povedz „Hotovo“,\nalebo povedz „Zamietnuť“, ak nechceš uložiť zadanie";
+
+/* Der Hinweis der bei der Spracherkennung angezeigt werden soll was der Benutzer jetzt sagen soll */
+"Snabble.ShoppingList.Voice.hint" = "Čo potrebuješ?";
+
+/* Hinweis der Eingeblendet wird wenn der Benutzer das erste mal vermutlich falsch mehrere Artikel zum Einkaufszettel ergänezen wollte */
+"Snabble.ShoppingList.Voice.title" = "Tip";
+
+/* Der Titel der übersichtsseite der Einkaufslisten */
+"Snabble.ShoppingLists.title" = "Nákupné zoznamy";
+
+"Snabble.SpeechAndMicRequired.message" = "Len tak môžeš nadiktovať svoj nákupný zoznam.";
+
+"Snabble.SpeechAndMicRequired.title" = "Snabble potrebuje prístup k mikrofónu a rozpoznávaniu reči";
+
+"Snabble.Taxation.Consume.inhouse" = "konzumovať tu";
+
+"Snabble.Taxation.Consume.takeaway" = "zobrať so sebou";
+
+"Snabble.Taxation.consumeWhere" = "Chceš svoj nákup";
+
+"Snabble.Taxation.pleaseChoose" = "Vyber niektorú možnosť";
+
+"Snabble.TWINT.payNow" = "Zaplatiť cez TWINT teraz";
+
+"Snabble.undo" = "Vrátiť späť";
+
+"Snabble.Violations.couponAlreadyVoided" = "Jeden kupón už bol uplatnený a bude odstránený z nákupného koša";
+
+"Snabble.Violations.couponCurrentlyNotValid" = "Jeden kupón je momentálne neplatný a bude odstránený z nákupného koša";
+
+"Snabble.Violations.couponInvalid" = "Jeden kupón je neplatný a bude odstránený z nákupného koša";
+
+"Snabble.Violations.title" = "Neplatný nákupný kôš";
+
+"Snabble.yes" = "Áno";
+

@@ -4,6 +4,9 @@
 //  Copyright © 2021 snabble. All rights reserved.
 //
 
+import UIKit
+import SnabbleCore
+
 // child VC of the ScannerDrawerViewController: display the current shopping list
 
 final class ScannerShoppingListViewController: UITableViewController {

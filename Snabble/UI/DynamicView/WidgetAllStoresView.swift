@@ -8,6 +8,7 @@
 import Foundation
 import SwiftUI
 import Combine
+import SnabbleCore
 
 private class AllStoresViewModel: ObservableObject {
     @Published var widget: WidgetButton?

@@ -197,7 +197,7 @@ extension GS1Code {
         return newPrice.rounded(mode: roundingMode).intValue
     }
 
-    func getEmbeddedData(for encodingUnit: Units?, _ digits: Int, _ roundingMode: RoundingMode) -> (Int?, Units?) {
+    public func getEmbeddedData(for encodingUnit: Units?, _ digits: Int, _ roundingMode: RoundingMode) -> (Int?, Units?) {
         guard let encodingUnit = encodingUnit else {
             return (nil, nil)
         }

@@ -7,6 +7,7 @@
 
 import Foundation
 import UIKit
+import SnabbleCore
 
 public protocol CouponsViewControllerDelegate: AnyObject {
     func couponsViewController(_ viewController: CouponsViewController, didSelectCoupon coupon: Coupon)

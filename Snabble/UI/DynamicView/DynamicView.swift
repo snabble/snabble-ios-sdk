@@ -1,6 +1,6 @@
 //
 //  DashboardWidget.swift
-//  
+//
 //
 //  Created by Uwe Tilemann on 30.08.22.
 //

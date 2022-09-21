@@ -5,6 +5,7 @@
 //
 
 import UIKit
+import SnabbleCore
 
 extension PaymentMethodDetail {
     var icon: UIImage? {

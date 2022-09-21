@@ -5,6 +5,7 @@
 //
 
 import UIKit
+import SnabbleCore
 
 final class SupervisorCheckViewController: BaseCheckViewController {
     override func renderCode(_ content: String) -> UIImage? {

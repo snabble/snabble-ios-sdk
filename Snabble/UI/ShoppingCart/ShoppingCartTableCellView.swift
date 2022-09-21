@@ -5,6 +5,9 @@
 //  Created by Anastasia Mishur on 8.04.22.
 //
 
+import UIKit
+import SnabbleCore
+
 protocol ShoppingCardCellViewDelegate: AnyObject {
     func plusButtonTapped()
     func minusButtonTapped()

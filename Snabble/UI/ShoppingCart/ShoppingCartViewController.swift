@@ -5,6 +5,7 @@
 //
 
 import UIKit
+import SnabbleCore
 
 // standalone shopping cart
 // this embeds the ShoppingCartTableViewController as a child VC, plus a CheckoutBar
@@ -249,11 +250,11 @@ extension ShoppingCartViewController: AnalyticsDelegate {
 }
 
 extension ShoppingCartViewController: InternalShoppingCartDelegate {
-    func shoppingCart(_ shoppingCart: ShoppingCart, didChangeCustomerCard customerCard: String?) {
+    public func shoppingCart(_ shoppingCart: ShoppingCart, didChangeCustomerCard customerCard: String?) {
         updateTotals()
     }
 
-    func shoppingCart(_ shoppingCart: ShoppingCart, violationsDetected violations: [CheckoutInfo.Violation]) {
+    public func shoppingCart(_ shoppingCart: ShoppingCart, violationsDetected violations: [CheckoutInfo.Violation]) {
         let alertController = UIAlertController(
             title: Asset.localizedString(forKey: "Snabble.Violations.title"),
             message: violations.message,

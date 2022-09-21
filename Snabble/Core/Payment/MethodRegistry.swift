@@ -5,31 +5,37 @@
 //
 
 import Foundation
+import UIKit
 
-struct Methods {
-    let viewMethod: (PaymentMethodDetail, AnalyticsDelegate?) -> UIViewController
-    let entryMethod: (RawPaymentMethod, Identifier<Project>, AnalyticsDelegate?) -> UIViewController
+public struct Methods {
+    public let viewMethod: (PaymentMethodDetail, AnalyticsDelegate?) -> UIViewController
+    public let entryMethod: (RawPaymentMethod, Identifier<Project>, AnalyticsDelegate?) -> UIViewController
+    
+    public init(viewMethod: @escaping (PaymentMethodDetail, AnalyticsDelegate?) -> UIViewController, entryMethod: @escaping (RawPaymentMethod, Identifier<Project>, AnalyticsDelegate?) -> UIViewController) {
+        self.viewMethod = viewMethod
+        self.entryMethod = entryMethod
+    }
 }
 
-final class MethodRegistry {
+public final class MethodRegistry {
     private var methods = [RawPaymentMethod: Methods]()
 
-    func isMethodAvailable(_ method: RawPaymentMethod) -> Bool {
+    public func isMethodAvailable(_ method: RawPaymentMethod) -> Bool {
         if method.needsPlugin {
             return self.methods[method] != nil
         }
         return true
     }
 
-    func register(methods: Methods, for method: RawPaymentMethod) {
+    public func register(methods: Methods, for method: RawPaymentMethod) {
         self.methods[method] = methods
     }
 
-    func deregister(method: RawPaymentMethod) {
+    public func deregister(method: RawPaymentMethod) {
         self.methods[method] = nil
     }
 
-    func create(detail: PaymentMethodDetail, analyticsDelegate: AnalyticsDelegate?) -> UIViewController? {
+    public func create(detail: PaymentMethodDetail, analyticsDelegate: AnalyticsDelegate?) -> UIViewController? {
         guard let methods = self.methods[detail.rawMethod] else {
             return nil
         }
@@ -37,7 +43,7 @@ final class MethodRegistry {
         return methods.viewMethod(detail, analyticsDelegate)
     }
 
-    func createEntry(method: RawPaymentMethod, _ projectId: Identifier<Project>, _ analyticsDelegate: AnalyticsDelegate?) -> UIViewController? {
+    public func createEntry(method: RawPaymentMethod, _ projectId: Identifier<Project>, _ analyticsDelegate: AnalyticsDelegate?) -> UIViewController? {
         guard let methods = self.methods[method] else {
             return nil
         }

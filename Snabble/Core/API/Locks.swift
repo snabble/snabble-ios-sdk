@@ -8,10 +8,10 @@
 
 import Foundation
 
-final class ReadWriteLock {
+public final class ReadWriteLock {
     private var lock: pthread_rwlock_t
 
-    init() {
+    public init() {
         lock = pthread_rwlock_t()
         pthread_rwlock_init(&lock, nil)
     }
@@ -32,23 +32,23 @@ final class ReadWriteLock {
         pthread_rwlock_unlock(&lock)
     }
 
-    func reading<T>(_ closure: () -> T) -> T {
+    public func reading<T>(_ closure: () -> T) -> T {
         self.readLock()
         defer { self.unlock() }
         return closure()
     }
 
-    func writing<T>(_ closure: () -> T) -> T {
+    public func writing<T>(_ closure: () -> T) -> T {
         self.writeLock()
         defer { self.unlock() }
         return closure()
     }
 }
 
-final class Mutex {
+public final class Mutex {
     private var mutex: pthread_mutex_t
 
-    init() {
+    public init() {
         mutex = pthread_mutex_t()
         pthread_mutex_init(&mutex, nil)
     }
@@ -57,11 +57,11 @@ final class Mutex {
         pthread_mutex_destroy(&mutex)
     }
 
-    func lock() {
+    public func lock() {
         pthread_mutex_lock(&mutex)
     }
 
-    func unlock() {
+    public func unlock() {
         pthread_mutex_unlock(&mutex)
     }
 

@@ -6,7 +6,7 @@
 
 import Foundation
 
-protocol InternalShoppingCartDelegate: AnyObject {
+public protocol InternalShoppingCartDelegate: AnyObject {
     func shoppingCart(_ shoppingCart: ShoppingCart, didChangeCustomerCard customerCard: String?)
     func shoppingCart(_ shoppingCart: ShoppingCart, violationsDetected violations: [CheckoutInfo.Violation])
 }
@@ -26,6 +26,13 @@ public final class ShoppingCart: Codable {
     // required info we've already gathered
     public internal(set) var requiredInformationData: [RequiredInformation]
 
+    public func resetInformationData() {
+        requiredInformationData = []
+    }
+    public func setTaxation(to taxation: RequiredInformation) {
+        requiredInformationData.removeAll { $0.id == .taxation }
+        requiredInformationData.append(taxation)
+    }
     public let projectId: Identifier<Project>
     public let shopId: Identifier<Shop>
 
@@ -43,7 +50,7 @@ public final class ShoppingCart: Codable {
         }
     }
 
-    weak var delegate: InternalShoppingCartDelegate?
+    public weak var delegate: InternalShoppingCartDelegate?
 
     internal weak var eventTimer: Timer?
 
@@ -197,7 +204,7 @@ public final class ShoppingCart: Codable {
         self.save()
     }
 
-    func replaceItem(at index: Int, with replacement: CartItem) {
+    public func replaceItem(at index: Int, with replacement: CartItem) {
         self.items.remove(at: index)
         self.items.insert(replacement, at: index)
         self.save()
@@ -335,7 +342,7 @@ public final class ShoppingCart: Codable {
         CartEvent.cart(self)
     }
 
-    func generateNewUUID() {
+    public func generateNewUUID() {
         self.uuid = UUID().uuidString
     }
 }

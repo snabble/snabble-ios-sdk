@@ -8,6 +8,9 @@
 // used as a child view controller in both the standalone ShoppingCartViewController and
 // in the ScannerDrawerViewController
 
+import UIKit
+import SnabbleCore
+
 enum CartTableEntry {
     // our main item and any additional line items referring to it
     case cartItem(CartItem, [CheckoutInfo.LineItem])

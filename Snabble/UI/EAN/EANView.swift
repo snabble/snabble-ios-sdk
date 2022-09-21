@@ -12,6 +12,7 @@
 //
 
 import UIKit
+import SnabbleCore
 
 public final class EANView: UIView {
     /// the color to show the barcode's bars. default is black

@@ -123,8 +123,11 @@ extension UIImage {
         if let img = UIImage(named: name, in: Bundle.main, compatibleWith: nil) {
             return img
         }
-
-        return UIImage(named: name, in: SnabbleSDKBundle.resourceBundle, compatibleWith: nil)
+#if SWIFT_PACKAGE
+        return UIImage(named: name, in: Bundle.module, compatibleWith: nil)
+#else
+        return UIImage(named: name, in: SnabbleSDKBundle.main, compatibleWith: nil)
+#endif
     }
 }
 

@@ -27,7 +27,7 @@ public enum SnabbleError: Error, Equatable {
     // structured error from the snabble backend
     case apiError(error: SnabbleAPIError, statusCode: Int)
 
-    var details: [ErrorResponse]? {
+    public var details: [ErrorResponse]? {
         switch self {
         case .apiError(let apiError, _):
             return apiError.error.details
@@ -36,7 +36,7 @@ public enum SnabbleError: Error, Equatable {
         }
     }
 
-    var type: ErrorResponseType {
+    public var type: ErrorResponseType {
         switch self {
         case .apiError(let apiError, _):
             return apiError.error.type
@@ -53,7 +53,7 @@ public enum SnabbleError: Error, Equatable {
         }
     }
 
-    func isUrlError(_ code: URLError.Code) -> Bool {
+    public func isUrlError(_ code: URLError.Code) -> Bool {
         switch self {
         case .urlError(let urlError):
             return urlError.code == code
@@ -145,7 +145,7 @@ public struct SnabbleAPIError: Decodable, Error, Equatable {
     public let error: ErrorResponse
 }
 
-enum HTTPRequestMethod: String {
+public enum HTTPRequestMethod: String {
     case get = "GET"
     case post = "POST"
     case put = "PUT"
@@ -208,7 +208,7 @@ extension Project {
     ///   - parameters: the query parameters to append to the URL
     ///   - timeout: the timeout for the HTTP request (0 for the system default timeout)
     /// - Returns: the URLRequest
-    func request(_ method: HTTPRequestMethod, _ url: String, json: Bool = true, jwtRequired: Bool = true, parameters: [String: String]? = nil,
+    public func request(_ method: HTTPRequestMethod, _ url: String, json: Bool = true, jwtRequired: Bool = true, parameters: [String: String]? = nil,
                  timeout: TimeInterval, completion: @escaping (URLRequest?) -> Void) {
         request(method, url, json: json, jwtRequired: jwtRequired, queryItems: parameters?.queryItems(), timeout: timeout, completion: completion)
     }
@@ -222,7 +222,7 @@ extension Project {
     ///   - queryItems: the query parameters to append to the URL
     ///   - timeout: the timeout for the HTTP request (0 for the system default timeout)
     /// - Returns: the URLRequest
-    func request(_ method: HTTPRequestMethod, _ url: String, json: Bool = true, jwtRequired: Bool = true, queryItems: [URLQueryItem]?,
+    public func request(_ method: HTTPRequestMethod, _ url: String, json: Bool = true, jwtRequired: Bool = true, queryItems: [URLQueryItem]?,
                  timeout: TimeInterval, completion: @escaping (URLRequest?) -> Void) {
         guard
             let url = url.urlString(with: queryItems),
@@ -242,7 +242,7 @@ extension Project {
     ///   - body: the JSON data to send as the HTTP body
     ///   - timeout: the timeout for the HTTP request (0 for the system default timeout)
     /// - Returns: the URLRequest
-    func request(_ method: HTTPRequestMethod, _ url: String, body: Data, timeout: TimeInterval, completion: @escaping (URLRequest?) -> Void) {
+    public func request(_ method: HTTPRequestMethod, _ url: String, body: Data, timeout: TimeInterval, completion: @escaping (URLRequest?) -> Void) {
         guard let url = Snabble.shared.urlFor(url) else {
             return completion(nil)
         }
@@ -262,7 +262,7 @@ extension Project {
     ///   - body: the JSON object to send as the HTTP body
     ///   - timeout: the timeout for the HTTP request (0 for the system default timeout)
     /// - Returns: the URLRequest
-    func request<T: Encodable>(_ method: HTTPRequestMethod, _ url: String, body: T, timeout: TimeInterval = 0, _ completion: @escaping (URLRequest?) -> Void ) {
+    public func request<T: Encodable>(_ method: HTTPRequestMethod, _ url: String, body: T, timeout: TimeInterval = 0, _ completion: @escaping (URLRequest?) -> Void ) {
         guard let url = Snabble.shared.urlFor(url) else {
             return completion(nil)
         }
@@ -291,7 +291,7 @@ extension Project {
     ///   - timeout: the timeout for the HTTP request (0 for the system default timeout)
     /// - Returns: the URLRequest
     // swiftlint:disable:next function_parameter_count
-    func request(_ method: HTTPRequestMethod, _ url: URL, _ json: Bool, _ jwtRequired: Bool, _ timeout: TimeInterval, _ completion: @escaping (URLRequest) -> Void) {
+    public func request(_ method: HTTPRequestMethod, _ url: URL, _ json: Bool, _ jwtRequired: Bool, _ timeout: TimeInterval, _ completion: @escaping (URLRequest) -> Void) {
         var urlRequest = Snabble.request(url: url, timeout: timeout, json: json)
         urlRequest.httpMethod = method.rawValue
 
@@ -314,7 +314,7 @@ extension Project {
     ///   - completion: called on the main thread when the result is available.
     ///   - result: the parsed result object or error
     @discardableResult
-    func perform<T: Decodable>(_ request: URLRequest, _ completion: @escaping (_ result: Result<T, SnabbleError>) -> Void ) -> URLSessionDataTask {
+    public func perform<T: Decodable>(_ request: URLRequest, _ completion: @escaping (_ result: Result<T, SnabbleError>) -> Void ) -> URLSessionDataTask {
         return self.perform(request, returnRaw: false) { result, _, _ in
             completion(result)
         }
@@ -342,7 +342,7 @@ extension Project {
     ///   - result: the parsed result object or error
     ///   - response: the HTTPURLResponse object
     @discardableResult
-    func perform<T: Decodable>(_ request: URLRequest, _ completion: @escaping (_ result: Result<T, SnabbleError>, _ response: HTTPURLResponse?) -> Void ) -> URLSessionDataTask {
+    public func perform<T: Decodable>(_ request: URLRequest, _ completion: @escaping (_ result: Result<T, SnabbleError>, _ response: HTTPURLResponse?) -> Void ) -> URLSessionDataTask {
         return self.perform(request, returnRaw: false) { result, _, response in
             completion(result, response)
         }

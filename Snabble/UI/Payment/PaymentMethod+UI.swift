@@ -5,10 +5,11 @@
 //
 
 import Foundation
+import SnabbleCore
 
 /// map payment methods to icons and the UIViewControllers that implement them
 extension PaymentMethod {
-    var dataRequired: Bool {
+    public var dataRequired: Bool {
         switch self {
         case .deDirectDebit, .visa, .mastercard, .americanExpress,
              .externalBilling, .paydirektOneKlick, .twint, .postFinanceCard:

@@ -8,58 +8,63 @@
 import Foundation
 
 // data we get to perform initial tokenization
-struct PayoneTokenization: Decodable {
-    let merchantID: String
-    let portalID: String
-    let accountID: String
-    let hash: String
-    let isTesting: Bool?
+public struct PayoneTokenization: Decodable {
+    public let merchantID: String
+    public let portalID: String
+    public let accountID: String
+    public let hash: String
+    public let isTesting: Bool?
 
-    let preAuthInfo: PreAuthInfo
-    let links: PayoneLinks
+    public let preAuthInfo: PreAuthInfo
+    public let links: PayoneLinks
 
-    struct PreAuthInfo: Decodable {
-        let amount: Int
-        let currency: String
+    public struct PreAuthInfo: Decodable {
+        public let amount: Int
+        public let currency: String
     }
 
-    struct PayoneLinks: Decodable {
-        let preAuth: Link
+    public struct PayoneLinks: Decodable {
+        public let preAuth: Link
     }
 }
 
 // data we send to begin the pre-auth
-struct PayonePreAuthData: Encodable {
-    let pseudoCardPAN: String
-    let lastname: String
+public struct PayonePreAuthData: Encodable {
+    public let pseudoCardPAN: String
+    public let lastname: String
+    
+    public init(pseudoCardPAN: String, lastname: String) {
+        self.pseudoCardPAN = pseudoCardPAN
+        self.lastname = lastname
+    }
 }
 
 // response from POSTing the auth data
-struct PayonePreAuthResult: Decodable {
-    let status: PayonePreAuthStatus
+public struct PayonePreAuthResult: Decodable {
+    public let status: PayonePreAuthStatus
     let userID: String
-    let links: PayonePreAuthLinks
+    public let links: PayonePreAuthLinks
 
-    struct PayonePreAuthLinks: Decodable {
-        let scaChallenge: Link
-        let preAuthStatus: Link
-        let redirectSuccess: Link
-        let redirectError: Link
-        let redirectBack: Link
+    public struct PayonePreAuthLinks: Decodable {
+        public let scaChallenge: Link
+        public let preAuthStatus: Link
+        public let redirectSuccess: Link
+        public let redirectError: Link
+        public let redirectBack: Link
     }
 }
 
 // response from querying the `preAuthStatus` endpoint
-struct PayonePreAuthStatusResult: Decodable {
-    let status: PayonePreAuthStatus
+public struct PayonePreAuthStatusResult: Decodable {
+    public let status: PayonePreAuthStatus
 }
 
-enum PayonePreAuthStatus: String, Decodable, UnknownCaseRepresentable {
+public enum PayonePreAuthStatus: String, Decodable, UnknownCaseRepresentable {
     case unknown
 
     case pending
     case successful
     case failed
 
-    static let unknownCase = Self.unknown
+    public static let unknownCase = Self.unknown
 }

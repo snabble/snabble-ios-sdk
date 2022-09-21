@@ -8,20 +8,20 @@
 import Foundation
 
 // stores info from a PAYONE authorization
-struct PayoneCreditCardData: Codable, EncryptedPaymentData, Equatable, BrandedCreditCard {
+public struct PayoneCreditCardData: Codable, EncryptedPaymentData, Equatable, BrandedCreditCard {
     // encrypted JSON string
-    let encryptedPaymentData: String
+    public let encryptedPaymentData: String
     // serial # of the certificate used to encrypt
-    let serial: String
+    public let serial: String
 
     // name of this payment method for display in table
-    var displayName: String
-    let expirationDate: String // as "MM/YY"
+    public var displayName: String
+    public let expirationDate: String // as "MM/YY"
 
-    let originType = AcceptedOriginType.payonePseudoCardPAN
+    public let originType = AcceptedOriginType.payonePseudoCardPAN
 
-    let projectId: Identifier<Project>
-    let brand: CreditCardBrand
+    public let projectId: Identifier<Project>
+    public let brand: CreditCardBrand
 
     enum CodingKeys: String, CodingKey {
         case encryptedPaymentData, serial, projectId, brand, displayName, expirationDate
@@ -33,7 +33,7 @@ struct PayoneCreditCardData: Codable, EncryptedPaymentData, Equatable, BrandedCr
         let userID: String
     }
 
-    init?(gatewayCert: Data?, response: PayoneResponse, preAuthResult: PayonePreAuthResult, projectId: Identifier<Project>) {
+    public init?(gatewayCert: Data?, response: PayoneResponse, preAuthResult: PayonePreAuthResult, projectId: Identifier<Project>) {
         let requestOrigin = PayoneOrigin(pseudoCardPAN: response.pseudoCardPAN, name: response.lastname, userID: preAuthResult.userID)
 
         guard
@@ -51,7 +51,7 @@ struct PayoneCreditCardData: Codable, EncryptedPaymentData, Equatable, BrandedCr
         self.expirationDate = response.cardExpireDate
     }
 
-    var isExpired: Bool {
+    public var isExpired: Bool {
         let components = Calendar.current.dateComponents([.year, .month], from: Date())
         guard let year = components.year, let month = components.month else {
             return false
@@ -75,14 +75,14 @@ struct PayoneCreditCardData: Codable, EncryptedPaymentData, Equatable, BrandedCr
     }
 }
 
-struct PayoneResponse {
-    let pseudoCardPAN: String
+public struct PayoneResponse {
+    public let pseudoCardPAN: String
     let maskedCardPAN: String
     let brand: CreditCardBrand
     let cardExpireDate: String // MM/YY
-    let lastname: String
+    public let lastname: String
 
-    init?(response: [String: Any], lastname: String) {
+    public init?(response: [String: Any], lastname: String) {
         guard
             let status = response["status"] as? String,
             status == "VALID",

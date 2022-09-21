@@ -24,7 +24,7 @@ public enum CreditCardBrand: String, Codable, CaseIterable {
 
     // 3rd mapping: to the `paymentMethod` form field of the IPG card entry form
     // also used for mapping from/to Payone "cardtype"
-    var paymentMethod: String {
+    public  var paymentMethod: String {
         switch self {
         case .visa: return "V"
         case .mastercard: return "M"
@@ -33,7 +33,7 @@ public enum CreditCardBrand: String, Codable, CaseIterable {
     }
 
     // 4th mapping: to a user-facing string
-    var displayName: String {
+    public var displayName: String {
         switch self {
         case .visa: return "VISA"
         case .mastercard: return "Mastercard"
@@ -42,7 +42,7 @@ public enum CreditCardBrand: String, Codable, CaseIterable {
     }
 
     // 5th mapping: from brand to RawPaymentMethod
-    var method: RawPaymentMethod {
+    public var method: RawPaymentMethod {
         switch self {
         case .visa: return .creditCardVisa
         case .mastercard: return .creditCardMastercard
@@ -50,7 +50,7 @@ public enum CreditCardBrand: String, Codable, CaseIterable {
         }
     }
 
-    static func forMethod(_ method: RawPaymentMethod) -> CreditCardBrand? {
+    public static func forMethod(_ method: RawPaymentMethod) -> CreditCardBrand? {
         switch method {
         case .creditCardVisa: return .visa
         case .creditCardMastercard: return .mastercard
@@ -65,6 +65,6 @@ public enum CreditCardBrand: String, Codable, CaseIterable {
 }
 
 // so that we can access cc brands regardless of payment gateway
-protocol BrandedCreditCard {
+public protocol BrandedCreditCard {
     var brand: CreditCardBrand { get }
 }

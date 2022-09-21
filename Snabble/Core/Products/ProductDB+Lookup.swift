@@ -4,6 +4,8 @@
 //  Copyright © 2020 snabble. All rights reserved.
 //
 
+import Foundation
+
 extension ProductDB {
     func resolveProductsLookup(_ url: String, _ codes: [(String, String)], _ shopId: Identifier<Shop>, completion: @escaping (_ result: Result<ScannedProduct, ProductLookupError>) -> Void) {
         let group = DispatchGroup()

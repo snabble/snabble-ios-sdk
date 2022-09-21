@@ -7,6 +7,7 @@
 import Foundation
 import KeychainAccess
 import CoreLocation
+import UIKit
 
 /// General config data for using the snabble.
 /// Applications must call `Snabble.setup(config: completion:)` with an instance of this struct before they make their first API call.
@@ -144,12 +145,15 @@ public class Snabble {
             NotificationCenter.default.post(name: .metadataLoaded, object: nil)
         }
     }
-    static let methodRegistry = MethodRegistry()
+    public var paydirektAuthorizationHref: String? {
+        return metadata.links.paydirektCustomerAuthorization?.href
+    }
+    public static let methodRegistry = MethodRegistry()
 
     private(set) var providerPool: [Identifier<Project>: ProductProvider]
 
     /// Gateway certificates for payment routes
-    var certificates: [GatewayCertificate] {
+    public var certificates: [GatewayCertificate] {
         metadata.gatewayCertificates
     }
 
@@ -441,7 +445,7 @@ extension Snabble {
 }
 
 extension Snabble {
-    static var debugMode: Bool {
+    public static var debugMode: Bool {
         return _isDebugAssertConfiguration()
     }
 }
@@ -531,7 +535,11 @@ extension Snabble {
     private(set) static var appUserData: AppUserData?
     private static weak var appUserDataTask: URLSessionDataTask?
 
-    func fetchAppUserData(_ projectId: Identifier<Project>) {
+    public static var userAge : Int {
+        return appUserData?.age ?? 0
+    }
+    
+    public func fetchAppUserData(_ projectId: Identifier<Project>) {
         guard
             Self.appUserDataTask == nil,
             let project = project(for: projectId),

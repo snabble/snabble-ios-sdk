@@ -5,6 +5,7 @@
 //
 
 import UIKit
+import SnabbleCore
 
 public enum BarcodeDetectorArea {
     // a rectangle, centered vertically and about 30% of the view's height

@@ -7,11 +7,11 @@
 import Foundation
 import KeychainAccess
 
-enum PaymentMethodError: Error {
+public enum PaymentMethodError: Error {
     case unknownMethodError(String)
 }
 
-enum PaymentMethodUserData: Codable, Equatable {
+public enum PaymentMethodUserData: Codable, Equatable {
     case sepa(SepaData)
     case teleCashCreditCard(TeleCashCreditCardData)
     case tegutEmployeeCard(TegutEmployeeData)
@@ -21,7 +21,7 @@ enum PaymentMethodUserData: Codable, Equatable {
     case payoneCreditCard(PayoneCreditCardData)
     case leinweberCustomerNumber(LeinweberCustomerData)
 
-    enum CodingKeys: String, CodingKey {
+    public enum CodingKeys: String, CodingKey {
         case sepa
         case teleCashCreditCard
         case tegutEmployeeCard
@@ -34,7 +34,7 @@ enum PaymentMethodUserData: Codable, Equatable {
         case creditcard
     }
 
-    var data: EncryptedPaymentData {
+    public var data: EncryptedPaymentData {
         switch self {
         case .sepa(let data): return data
         case .teleCashCreditCard(let data): return data
@@ -47,7 +47,7 @@ enum PaymentMethodUserData: Codable, Equatable {
         }
     }
 
-    var additionalData: [String: String] {
+    public var additionalData: [String: String] {
         switch self {
         case .paydirektAuthorization(let data): return data.additionalData
         case .teleCashCreditCard(let data): return data.additionalData
@@ -149,44 +149,44 @@ public extension PaymentMethod {
 
 public struct PaymentMethodDetail: Equatable {
     public let id: UUID
-    let methodData: PaymentMethodUserData
+    public let methodData: PaymentMethodUserData
 
-    init(_ sepaData: SepaData) {
+    public init(_ sepaData: SepaData) {
         self.id = UUID()
         self.methodData = PaymentMethodUserData.sepa(sepaData)
     }
 
-    init(_ creditcardData: TeleCashCreditCardData) {
+    public init(_ creditcardData: TeleCashCreditCardData) {
         self.id = UUID()
         self.methodData = PaymentMethodUserData.teleCashCreditCard(creditcardData)
     }
 
-    init(_ tegutData: TegutEmployeeData) {
+    public init(_ tegutData: TegutEmployeeData) {
         self.id = UUID()
         self.methodData = PaymentMethodUserData.tegutEmployeeCard(tegutData)
     }
 
-    init(_ leinweberData: LeinweberCustomerData) {
+    public init(_ leinweberData: LeinweberCustomerData) {
         self.id = UUID()
         self.methodData = PaymentMethodUserData.leinweberCustomerNumber(leinweberData)
     }
 
-    init(_ paydirektData: PaydirektData) {
+    public init(_ paydirektData: PaydirektData) {
         self.id = UUID()
         self.methodData = PaymentMethodUserData.paydirektAuthorization(paydirektData)
     }
 
-    init(_ datatransData: DatatransData) {
+    public init(_ datatransData: DatatransData) {
         self.id = UUID()
         self.methodData = PaymentMethodUserData.datatransAlias(datatransData)
     }
 
-    init(_ datatransCardData: DatatransCreditCardData) {
+    public init(_ datatransCardData: DatatransCreditCardData) {
         self.id = UUID()
         self.methodData = PaymentMethodUserData.datatransCardAlias(datatransCardData)
     }
 
-    init(_ payoneData: PayoneCreditCardData) {
+    public init(_ payoneData: PayoneCreditCardData) {
         self.id = UUID()
         self.methodData = PaymentMethodUserData.payoneCreditCard(payoneData)
     }
@@ -207,8 +207,8 @@ public struct PaymentMethodDetail: Equatable {
         return self.methodData.data.serial
     }
 
-    public var data: SnabbleSDK.PaymentMethodData {
-        return SnabbleSDK.PaymentMethodData(self.displayName, self.encryptedData, self.originType, self.additionalData)
+    public var data: PaymentMethodData {
+        return PaymentMethodData(self.displayName, self.encryptedData, self.originType, self.additionalData)
     }
 
     public var isExpired: Bool {
@@ -364,11 +364,11 @@ public enum PaymentMethodDetails {
         storage.save(details)
     }
 
-    static func save(_ detail: PaymentMethodDetail) {
+    public static func save(_ detail: PaymentMethodDetail) {
         storage.save(detail)
     }
 
-    static func remove(_ detail: PaymentMethodDetail) {
+    public static func remove(_ detail: PaymentMethodDetail) {
         storage.remove(detail)
     }
 

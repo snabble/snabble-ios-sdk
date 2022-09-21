@@ -30,7 +30,7 @@ public enum RawPaymentMethod: String, Decodable {
     case postFinanceCard        // via Datatrans
     case twint                  // via Datatrans
 
-    static let orderedMethods: [RawPaymentMethod] = [
+    public static let orderedMethods: [RawPaymentMethod] = [
         // customer-specific methods
         .customerCardPOS, .externalBilling,
 
@@ -47,12 +47,12 @@ public enum RawPaymentMethod: String, Decodable {
 
     // roughly sorted by popularity
     // Apple Pay is not included here, needs separate treatment
-    static let preferredOnlineMethods: [RawPaymentMethod] = [
+    public static let preferredOnlineMethods: [RawPaymentMethod] = [
         .deDirectDebit, .creditCardVisa, .creditCardMastercard, .creditCardAmericanExpress, .paydirektOneKlick
     ]
 
     /// true if this method reqires additional data, like an IBAN or a credit card number
-    var dataRequired: Bool {
+    public var dataRequired: Bool {
         switch self {
         case .deDirectDebit, .creditCardVisa, .creditCardMastercard, .creditCardAmericanExpress,
              .externalBilling, .customerCardPOS, .paydirektOneKlick, .twint, .postFinanceCard:
@@ -75,7 +75,7 @@ public enum RawPaymentMethod: String, Decodable {
     }
 
     /// true if editing/entering this method requires a device passcode or biometry
-    var codeRequired: Bool {
+    public var codeRequired: Bool {
         switch self {
         case .deDirectDebit, .creditCardVisa, .creditCardMastercard, .creditCardAmericanExpress, .paydirektOneKlick,
              .twint, .postFinanceCard:

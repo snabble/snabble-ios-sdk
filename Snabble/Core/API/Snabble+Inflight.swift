@@ -12,12 +12,12 @@ extension Snabble {
     static let inFlightKey = "io.snabble.inFlightCheckout"
 
     public struct InFlightCheckout: Codable {
-        let url: String
-        let shop: Shop
-        let cart: ShoppingCart
+        public let url: String
+        public let shop: Shop
+        public let cart: ShoppingCart
     }
 
-    static func storeInFlightCheckout(url: String, shop: Shop, cart: ShoppingCart) {
+    public static func storeInFlightCheckout(url: String, shop: Shop, cart: ShoppingCart) {
         let inflight = InFlightCheckout(url: url, shop: shop, cart: cart)
         do {
             let data = try JSONEncoder().encode(inflight)
@@ -27,7 +27,7 @@ extension Snabble {
         }
     }
 
-    static func clearInFlightCheckout() {
+    public static func clearInFlightCheckout() {
         UserDefaults.standard.removeObject(forKey: Self.inFlightKey)
         UserDefaults.standard.synchronize()
     }

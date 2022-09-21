@@ -7,6 +7,7 @@
 import Foundation
 import UIKit
 import AVFoundation
+import SnabbleCore
 
 public protocol BarcodeDetectorDelegate: AnyObject {
     /// callback for a successful scan

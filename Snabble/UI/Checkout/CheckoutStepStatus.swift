@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import SnabbleCore
 
 enum CheckoutStepStatus: Hashable {
     case loading

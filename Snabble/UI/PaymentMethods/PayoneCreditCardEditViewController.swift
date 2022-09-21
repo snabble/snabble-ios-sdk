@@ -7,6 +7,7 @@
 import UIKit
 import WebKit
 import AutoLayout_Helper
+import SnabbleCore
 
 // sample data for testing:
 //
@@ -532,7 +533,7 @@ extension PayoneCreditCardEditViewController {
 
     fileprivate static let pageTemplate: String = { () -> String in
         guard
-            let path = SnabbleSDKBundle.resourceBundle.path(forResource: "payone-form", ofType: "html"),
+            let path = SnabbleSDKBundle.main.path(forResource: "payone-form", ofType: "html"),
             let data = try? Data(contentsOf: URL(fileURLWithPath: path))
         else {
             return ""

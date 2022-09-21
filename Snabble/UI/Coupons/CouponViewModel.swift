@@ -7,6 +7,7 @@
 
 import Foundation
 import UIKit
+import SnabbleCore
 
 class CouponViewModel {
     let coupon: Coupon

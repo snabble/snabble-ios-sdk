@@ -6,6 +6,7 @@
 
 import UIKit
 import DeviceKit
+import SnabbleCore
 
 final class EmbeddedCodesCheckoutViewController: UIViewController {
     private weak var stackViewLayout: UILayoutGuide?

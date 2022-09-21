@@ -6,7 +6,7 @@
 
 import Foundation
 
-protocol EncryptedPaymentData {
+public protocol EncryptedPaymentData {
     // encrypted JSON string
     var encryptedPaymentData: String { get }
 

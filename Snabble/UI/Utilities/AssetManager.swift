@@ -6,6 +6,7 @@
 
 import Foundation
 import UIKit
+import SnabbleCore
 
 public enum ImageAsset: String {
     // store icon, 24x24

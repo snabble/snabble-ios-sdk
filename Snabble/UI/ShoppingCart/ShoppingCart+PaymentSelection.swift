@@ -6,6 +6,7 @@
 
 import UIKit
 import SDCAlertView
+import SnabbleCore
 
 private struct PaymentMethodAction {
     let title: NSAttributedString

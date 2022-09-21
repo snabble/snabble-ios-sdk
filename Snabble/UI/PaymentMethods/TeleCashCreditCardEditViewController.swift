@@ -6,6 +6,7 @@
 
 import UIKit
 import WebKit
+import SnabbleCore
 
 // sample data for testing:
 //

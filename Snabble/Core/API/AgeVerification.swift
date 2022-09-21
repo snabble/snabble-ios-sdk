@@ -4,6 +4,8 @@
 //  Copyright © 2020 snabble. All rights reserved.
 //
 
+import Foundation
+
 enum AgeVerification {
     enum SettingsKeys {
         static let usersBirthday = "usersBirthday" // string in the format YYMMDD

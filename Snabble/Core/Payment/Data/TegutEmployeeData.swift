@@ -6,20 +6,20 @@
 
 import Foundation
 
-struct TegutEmployeeData: Codable, EncryptedPaymentData, Equatable {
+public struct TegutEmployeeData: Codable, EncryptedPaymentData, Equatable {
     // encrypted JSON string
-    let encryptedPaymentData: String
+    public let encryptedPaymentData: String
     // serial # of the certificate used to encrypt
-    let serial: String
+    public let serial: String
 
     // name of this payment method for display in table
-    let displayName: String
+    public let displayName: String
 
-    let isExpired = false
+    public let isExpired = false
 
-    let originType = AcceptedOriginType.tegutEmployeeID
+    public let originType = AcceptedOriginType.tegutEmployeeID
 
-    let cardNumber: String
+    public let cardNumber: String
 
     let projectId: Identifier<Project>
 
@@ -49,7 +49,7 @@ struct TegutEmployeeData: Codable, EncryptedPaymentData, Equatable {
         self.projectId = projectId
     }
 
-    init(from decoder: Decoder) throws {
+    public init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
         self.encryptedPaymentData = try container.decode(String.self, forKey: .encryptedPaymentData)
         self.serial = try container.decode(String.self, forKey: .serial)

@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import UIKit
 
 private extension Format {
     var validContentType: Bool {

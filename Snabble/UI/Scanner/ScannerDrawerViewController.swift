@@ -6,6 +6,7 @@
 
 import UIKit
 import Pulley
+import SnabbleCore
 
 final class ScannerDrawerViewController: UIViewController {
     private var shoppingList: ShoppingList?

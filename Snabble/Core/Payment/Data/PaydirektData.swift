@@ -6,18 +6,18 @@
 
 import Foundation
 
-struct PaydirektData: Codable, EncryptedPaymentData, Equatable {
+public struct PaydirektData: Codable, EncryptedPaymentData, Equatable {
     // encrypted JSON string
-    let encryptedPaymentData: String
+    public let encryptedPaymentData: String
     // serial # of the certificate used to encrypt
-    let serial: String
+    public let serial: String
 
     // name of this payment method for display in table
-    let displayName: String
+    public let displayName: String
 
-    let isExpired = false
+    public let isExpired = false
 
-    let originType = AcceptedOriginType.paydirektCustomerAuthorization
+    public let originType = AcceptedOriginType.paydirektCustomerAuthorization
 
     let deviceId: String
     let deviceName: String
@@ -34,7 +34,7 @@ struct PaydirektData: Codable, EncryptedPaymentData, Equatable {
         let customerAuthorizationURI: String
     }
 
-    init?(_ gatewayCert: Data?, _ authorizationURI: String, _ auth: PaydirektAuthorization) {
+    public init?(_ gatewayCert: Data?, _ authorizationURI: String, _ auth: PaydirektAuthorization) {
         let requestOrigin = PaydirektOrigin(clientID: Snabble.clientId, customerAuthorizationURI: authorizationURI)
 
         guard

@@ -10,6 +10,7 @@ import SystemConfiguration.CaptiveNetwork
 import NetworkExtension
 import Combine
 import Network
+import SnabbleCore
 
 final class ConnectWifiViewModel: ObservableObject {
     let configuration: DynamicViewConfiguration

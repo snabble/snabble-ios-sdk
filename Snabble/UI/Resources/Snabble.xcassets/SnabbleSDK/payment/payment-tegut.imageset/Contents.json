@@ -1,0 +1,12 @@
+{
+  "images" : [
+    {
+      "filename" : "payment-tegut.pdf",
+      "idiom" : "universal"
+    }
+  ],
+  "info" : {
+    "author" : "xcode",
+    "version" : 1
+  }
+}

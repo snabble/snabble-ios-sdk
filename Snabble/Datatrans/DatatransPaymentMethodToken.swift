@@ -5,6 +5,7 @@
 //
 
 import Datatrans
+import SnabbleCore
 
 extension DatatransPaymentMethodToken {
     init(savedPaymentMethod: SavedPaymentMethod) {

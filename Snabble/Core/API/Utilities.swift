@@ -4,6 +4,8 @@
 //  Copyright © 2020 snabble. All rights reserved.
 //
 
+import Foundation
+
 // MARK: - string-based enums
 
 /// for RawRepresentable enums, define a `unknownCase` fallback and a non-failable initializer
@@ -29,20 +31,20 @@ struct FailableDecodable<T: Decodable>: Decodable {
 }
 
 // MARK: - Logging
-enum Log {
-    static func info(_ str: String) {
+public enum Log {
+    public static func info(_ str: String) {
         NSLog("[snabble] INFO: %@", str)
     }
 
-    static func debug(_ str: String) {
+    public static func debug(_ str: String) {
         NSLog("[snabble] DEBUG: %@", str)
     }
 
-    static func warn(_ str: String) {
+    public static func warn(_ str: String) {
         NSLog("[snabble] WARN: %@", str)
     }
 
-    static func error(_ str: String) {
+    public static func error(_ str: String) {
         NSLog("[snabble] ERROR: %@", str)
     }
 }

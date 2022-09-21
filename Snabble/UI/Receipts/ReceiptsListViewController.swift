@@ -6,6 +6,7 @@
 
 import UIKit
 import QuickLook
+import SnabbleCore
 
 public final class ReceiptPreviewItem: NSObject, QLPreviewItem {
     public let receiptUrl: URL

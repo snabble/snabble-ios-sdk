@@ -6,18 +6,18 @@
 
 import Foundation
 
-struct SepaData: Codable, EncryptedPaymentData, Equatable {
+public struct SepaData: Codable, EncryptedPaymentData, Equatable {
     // encrypted JSON string
-    let encryptedPaymentData: String
+    public let encryptedPaymentData: String
     // serial # of the certificate used to encrypt
-    let serial: String
+    public let serial: String
 
     // name of this payment method for display in table
-    let displayName: String
+    public let displayName: String
 
-    let originType = AcceptedOriginType.iban
+    public let originType = AcceptedOriginType.iban
 
-    let isExpired = false
+    public let isExpired = false
 
     enum CodingKeys: String, CodingKey {
         case encryptedPaymentData, serial, displayName
@@ -28,7 +28,7 @@ struct SepaData: Codable, EncryptedPaymentData, Equatable {
         let iban: String
     }
 
-    init?(_ gatewayCert: Data?, _ name: String, _ iban: String) {
+    public init?(_ gatewayCert: Data?, _ name: String, _ iban: String) {
         let requestOrigin = DirectDebitRequestOrigin(name: name, iban: iban)
 
         guard

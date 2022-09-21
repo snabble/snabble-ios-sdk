@@ -6,18 +6,18 @@
 
 import Foundation
 
-struct TeleCashCreditCardData: Codable, EncryptedPaymentData, Equatable, BrandedCreditCard {
-    let encryptedPaymentData: String
-    let serial: String
-    let displayName: String
-    let originType = AcceptedOriginType.ipgHostedDataID
+public struct TeleCashCreditCardData: Codable, EncryptedPaymentData, Equatable, BrandedCreditCard {
+    public let encryptedPaymentData: String
+    public let serial: String
+    public let displayName: String
+    public let originType = AcceptedOriginType.ipgHostedDataID
 
     let cardHolder: String
-    let brand: CreditCardBrand
+    public let brand: CreditCardBrand
     let expirationMonth: String
     let expirationYear: String
     let version: Int
-    let projectId: Identifier<Project>?
+    public let projectId: Identifier<Project>?
 
     struct TeleCashRequestOrigin: PaymentRequestOrigin {
         // bump this when we add properties to the struct that might require invaliding previous versions
@@ -37,7 +37,7 @@ struct TeleCashCreditCardData: Codable, EncryptedPaymentData, Equatable, Branded
         case cardHolder, brand, expirationMonth, expirationYear, version, projectId
     }
 
-    init?(_ response: ConnectGatewayResponse, _ projectId: Identifier<Project>, _ storeId: String, certificate: Data?) {
+    public init?(_ response: ConnectGatewayResponse, _ projectId: Identifier<Project>, _ storeId: String, certificate: Data?) {
         guard let brand = CreditCardBrand(rawValue: response.brand.lowercased()) else {
             return nil
         }
@@ -67,7 +67,7 @@ struct TeleCashCreditCardData: Codable, EncryptedPaymentData, Equatable, Branded
         self.serial = serial
     }
 
-    init(from decoder: Decoder) throws {
+    public init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
         self.encryptedPaymentData = try container.decode(String.self, forKey: .encryptedPaymentData)
         self.serial = try container.decode(String.self, forKey: .serial)
@@ -125,11 +125,11 @@ struct TeleCashCreditCardData: Codable, EncryptedPaymentData, Equatable, Branded
     }
 
     // the card's expiration date as usally displayed, e.g. 09/2020
-    var expirationDate: String {
+    public var expirationDate: String {
         return "\(self.expirationMonth)/\(self.expirationYear)"
     }
 
-    var isExpired: Bool {
+    public var isExpired: Bool {
         let components = Calendar.current.dateComponents([.year, .month], from: Date())
         guard let year = components.year, let month = components.month else {
             return false

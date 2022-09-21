@@ -5,6 +5,7 @@
 //
 
 import PassKit
+import SnabbleCore
 
 final class ApplePayCheckoutViewController: UIViewController {
     private var authController: UIViewController?

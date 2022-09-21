@@ -5,6 +5,7 @@
 //
 
 import UIKit
+import SnabbleCore
 
 final class SupervisorRejectedViewController: UIViewController {
     private let process: CheckoutProcess?
@@ -71,7 +72,7 @@ final class SupervisorRejectedViewController: UIViewController {
         button.makeSnabbleButton()
         button.titleLabel?.font = .preferredFont(forTextStyle: .headline)
         button.titleLabel?.adjustsFontForContentSizeCategory = true
-        button.setTitle(SnabbleSDK.Asset.localizedString(forKey: "Snabble.Payment.backToCart"), for: .normal)
+        button.setTitle(Asset.localizedString(forKey: "Snabble.Payment.backToCart"), for: .normal)
         button.addTarget(self, action: #selector(backButtonTapped(_:)), for: .touchUpInside)
 
         contentView.addSubview(scrollView)

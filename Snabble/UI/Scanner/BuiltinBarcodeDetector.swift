@@ -6,6 +6,8 @@
 
 import Foundation
 import AVFoundation
+import UIKit
+import SnabbleCore
 
 extension ScanFormat {
     var avType: AVMetadataObject.ObjectType {

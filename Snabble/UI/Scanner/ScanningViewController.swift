@@ -6,6 +6,7 @@
 
 import UIKit
 import AVFoundation
+import SnabbleCore
 
 public extension Notification.Name {
     static let snabbleShowScanConfirmation = Notification.Name("snabbleShowScanConfirmation")
@@ -352,7 +353,7 @@ extension ScanningViewController: ScanConfirmationViewDelegate {
     }
 
     private func ageCheckRequired(for item: CartItem) -> ScanMessage? {
-        let userAge = Snabble.appUserData?.age ?? 0
+        let userAge = Snabble.userAge
 
         switch item.product.saleRestriction {
         case .none:

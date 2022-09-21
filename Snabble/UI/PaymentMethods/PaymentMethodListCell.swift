@@ -5,6 +5,7 @@
 //
 
 import UIKit
+import SnabbleCore
 
 protocol PaymentMethodListCellViewModel {
     var displayName: String { get }

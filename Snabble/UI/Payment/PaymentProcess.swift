@@ -4,6 +4,9 @@
 //  Copyright © 2021 snabble. All rights reserved.
 //
 
+import UIKit
+import SnabbleCore
+
 /// Manage the payment process
 public final class PaymentProcess {
     let signedCheckoutInfo: SignedCheckoutInfo

@@ -62,7 +62,7 @@ private final class BundleToken {
 #if SWIFT_PACKAGE
       return Bundle.module
 #else
-      return SnabbleSDKBundle.resourceBundle
+      return SnabbleSDKBundle.main
 #endif
   }()
 }

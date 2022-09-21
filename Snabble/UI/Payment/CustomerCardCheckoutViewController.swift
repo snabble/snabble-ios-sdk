@@ -5,6 +5,7 @@
 //
 
 import UIKit
+import SnabbleCore
 
 final class CustomerCardCheckoutViewController: UIViewController {
     private weak var iconWrapper: UIView?
