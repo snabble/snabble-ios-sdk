@@ -20,7 +20,6 @@
 		76AD21B328D4331A003D865A /* terms.html in Resources */ = {isa = PBXBuildFile; fileRef = 76AD21B228D4331A003D865A /* terms.html */; };
 		76C7B74A28BFA10700D94F4F /* DashboardViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 76C7B74928BFA10700D94F4F /* DashboardViewController.swift */; };
 		76C7B79028C1ACD900D94F4F /* Profile.json in Resources */ = {isa = PBXBuildFile; fileRef = 76C7B78F28C1ACD900D94F4F /* Profile.json */; };
-		C937614A2DE31A82DB8D4F8E /* Pods_SnabbleSampleApp.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 66ABC06A504C8DEFF3ABBBA4 /* Pods_SnabbleSampleApp.framework */; };
 		E127DB6F28C74A64005A7416 /* SnabbleConfig.swift in Sources */ = {isa = PBXBuildFile; fileRef = E127DB6E28C74A64005A7416 /* SnabbleConfig.swift */; };
 		E131CF1A28A3D45C00A844E1 /* SnabbleSampleAppTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E131CF1928A3D45C00A844E1 /* SnabbleSampleAppTests.swift */; };
 		E161B0EE28B76DD9005061C4 /* Onboarding.json in Resources */ = {isa = PBXBuildFile; fileRef = E161B0EB28B76357005061C4 /* Onboarding.json */; };
@@ -44,14 +43,12 @@
 
 /* Begin PBXFileReference section */
 		3A64AF2F2710486300AF24C6 /* AccountViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AccountViewController.swift; sourceTree = "<group>"; };
-		50880F89ADD024AE5A2C5629 /* Snabble.podspec */ = {isa = PBXFileReference; explicitFileType = text.script.ruby; includeInIndex = 1; name = Snabble.podspec; path = ../Snabble.podspec; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.ruby; };
 		607FACD01AFB9204008FA782 /* SnabbleSampleApp.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = SnabbleSampleApp.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		607FACD41AFB9204008FA782 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		607FACD51AFB9204008FA782 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		607FACD71AFB9204008FA782 /* ScannerViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScannerViewController.swift; sourceTree = "<group>"; };
 		607FACDC1AFB9204008FA782 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		607FACDF1AFB9204008FA782 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/LaunchScreen.xib; sourceTree = "<group>"; };
-		66ABC06A504C8DEFF3ABBBA4 /* Pods_SnabbleSampleApp.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_SnabbleSampleApp.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		7605C47428AC9794000105A8 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/Localizable.strings; sourceTree = "<group>"; };
 		7605C47628AC97B3000105A8 /* de */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = de; path = de.lproj/Localizable.strings; sourceTree = "<group>"; };
 		7605C5BE28AE4383000105A8 /* ShopsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShopsViewController.swift; sourceTree = "<group>"; };
@@ -64,8 +61,8 @@
 		76AD21B228D4331A003D865A /* terms.html */ = {isa = PBXFileReference; lastKnownFileType = text.html; path = terms.html; sourceTree = "<group>"; };
 		76C7B74928BFA10700D94F4F /* DashboardViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DashboardViewController.swift; sourceTree = "<group>"; };
 		76C7B78F28C1ACD900D94F4F /* Profile.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = Profile.json; sourceTree = "<group>"; };
+		76F9C69928DB120500311A4D /* iOS-SDK */ = {isa = PBXFileReference; lastKnownFileType = wrapper; name = "iOS-SDK"; path = ..; sourceTree = "<group>"; };
 		926E1E4B9E95CCD24DC69470 /* README.md */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = net.daringfireball.markdown; name = README.md; path = ../README.md; sourceTree = "<group>"; };
-		AFD2541676E9CFB77A0F1C62 /* Pods-SnabbleSampleApp.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-SnabbleSampleApp.release.xcconfig"; path = "Target Support Files/Pods-SnabbleSampleApp/Pods-SnabbleSampleApp.release.xcconfig"; sourceTree = "<group>"; };
 		E127DB6E28C74A64005A7416 /* SnabbleConfig.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SnabbleConfig.swift; sourceTree = "<group>"; };
 		E131CF1728A3D45C00A844E1 /* SnabbleSampleAppTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = SnabbleSampleAppTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		E131CF1928A3D45C00A844E1 /* SnabbleSampleAppTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SnabbleSampleAppTests.swift; sourceTree = "<group>"; };
@@ -78,7 +75,6 @@
 		E1DA445D28B3668C0034427D /* AppDelegate+AssetProviding.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "AppDelegate+AssetProviding.swift"; sourceTree = "<group>"; };
 		E1DA449B28B3A2BD0034427D /* LoadingViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoadingViewController.swift; sourceTree = "<group>"; };
 		F4CB4458C2FED892CA028D19 /* LICENSE */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text; name = LICENSE; path = ../LICENSE; sourceTree = "<group>"; };
-		F945FDA51F764DED76175ABA /* Pods-SnabbleSampleApp.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-SnabbleSampleApp.debug.xcconfig"; path = "Target Support Files/Pods-SnabbleSampleApp/Pods-SnabbleSampleApp.debug.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -87,7 +83,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				76151FDD28D2FC6800C08D97 /* NetworkExtension.framework in Frameworks */,
-				C937614A2DE31A82DB8D4F8E /* Pods_SnabbleSampleApp.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -101,25 +96,17 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
-		4E081A65AA96FF8F98D2029F /* Pods */ = {
-			isa = PBXGroup;
-			children = (
-				F945FDA51F764DED76175ABA /* Pods-SnabbleSampleApp.debug.xcconfig */,
-				AFD2541676E9CFB77A0F1C62 /* Pods-SnabbleSampleApp.release.xcconfig */,
-			);
-			path = Pods;
-			sourceTree = "<group>";
-		};
 		607FACC71AFB9204008FA782 = {
 			isa = PBXGroup;
 			children = (
+				76F9C69828DB120500311A4D /* Packages */,
 				76151FDB28D2FC4800C08D97 /* SnabbleSampleApp.entitlements */,
 				E1662A64283DFED90093956C /* Changelog.md */,
-				607FACF51AFB993E008FA782 /* Podspec Metadata */,
+				926E1E4B9E95CCD24DC69470 /* README.md */,
+				F4CB4458C2FED892CA028D19 /* LICENSE */,
 				607FACD21AFB9204008FA782 /* Sources */,
 				E131CF1828A3D45C00A844E1 /* SnabbleSampleAppTests */,
 				607FACD11AFB9204008FA782 /* Products */,
-				4E081A65AA96FF8F98D2029F /* Pods */,
 				649282D5B1D228389A97EBA1 /* Frameworks */,
 			);
 			sourceTree = "<group>";
@@ -162,21 +149,10 @@
 			name = "Supporting Files";
 			sourceTree = "<group>";
 		};
-		607FACF51AFB993E008FA782 /* Podspec Metadata */ = {
-			isa = PBXGroup;
-			children = (
-				50880F89ADD024AE5A2C5629 /* Snabble.podspec */,
-				926E1E4B9E95CCD24DC69470 /* README.md */,
-				F4CB4458C2FED892CA028D19 /* LICENSE */,
-			);
-			name = "Podspec Metadata";
-			sourceTree = "<group>";
-		};
 		649282D5B1D228389A97EBA1 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
 				76151FDC28D2FC6800C08D97 /* NetworkExtension.framework */,
-				66ABC06A504C8DEFF3ABBBA4 /* Pods_SnabbleSampleApp.framework */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -190,6 +166,14 @@
 				76AD21B228D4331A003D865A /* terms.html */,
 			);
 			name = Profile;
+			sourceTree = "<group>";
+		};
+		76F9C69828DB120500311A4D /* Packages */ = {
+			isa = PBXGroup;
+			children = (
+				76F9C69928DB120500311A4D /* iOS-SDK */,
+			);
+			name = Packages;
 			sourceTree = "<group>";
 		};
 		E131CF1828A3D45C00A844E1 /* SnabbleSampleAppTests */ = {
@@ -245,13 +229,11 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 607FACEF1AFB9204008FA782 /* Build configuration list for PBXNativeTarget "SnabbleSampleApp" */;
 			buildPhases = (
-				02E866AD37A407F929C524C2 /* [CP] Check Pods Manifest.lock */,
 				607FACCC1AFB9204008FA782 /* Sources */,
 				607FACCD1AFB9204008FA782 /* Frameworks */,
 				607FACCE1AFB9204008FA782 /* Resources */,
 				E18D963B27311A3200F21217 /* SwiftLint */,
 				E17C193028D9B01400D5BAA0 /* LicensePlist */,
-				E82103E89BC62FE58616D11C /* [CP] Embed Pods Frameworks */,
 			);
 			buildRules = (
 			);
@@ -353,28 +335,6 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXShellScriptBuildPhase section */
-		02E866AD37A407F929C524C2 /* [CP] Check Pods Manifest.lock */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputFileListPaths = (
-			);
-			inputPaths = (
-				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
-				"${PODS_ROOT}/Manifest.lock",
-			);
-			name = "[CP] Check Pods Manifest.lock";
-			outputFileListPaths = (
-			);
-			outputPaths = (
-				"$(DERIVED_FILE_DIR)/Pods-SnabbleSampleApp-checkManifestLockResult.txt",
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
-			showEnvVarsInLog = 0;
-		};
 		E17C193028D9B01400D5BAA0 /* LicensePlist */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
@@ -410,54 +370,6 @@
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "export PATH=\"$PATH:/opt/homebrew/bin\"\nif which mint > /dev/null; then\n  mint run SwiftLint swiftlint\nelse\n  echo \"warning: Mint not installed, download from https://github.com/yonaskolb/Mint\"\nfi\n";
-		};
-		E82103E89BC62FE58616D11C /* [CP] Embed Pods Frameworks */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-SnabbleSampleApp/Pods-SnabbleSampleApp-frameworks.sh",
-				"${BUILT_PRODUCTS_DIR}/AutoLayout-Helper/AutoLayout_Helper.framework",
-				"${BUILT_PRODUCTS_DIR}/Base32/Base32.framework",
-				"${BUILT_PRODUCTS_DIR}/DeviceKit/DeviceKit.framework",
-				"${BUILT_PRODUCTS_DIR}/GRDB.swift/GRDB.framework",
-				"${BUILT_PRODUCTS_DIR}/KeychainAccess/KeychainAccess.framework",
-				"${BUILT_PRODUCTS_DIR}/OneTimePassword/OneTimePassword.framework",
-				"${BUILT_PRODUCTS_DIR}/Pulley/Pulley.framework",
-				"${BUILT_PRODUCTS_DIR}/SDCAlertView/SDCAlertView.framework",
-				"${BUILT_PRODUCTS_DIR}/Snabble/SnabbleSDK.framework",
-				"${BUILT_PRODUCTS_DIR}/SwiftBase32/SwiftBase32.framework",
-				"${BUILT_PRODUCTS_DIR}/TrustKit/TrustKit.framework",
-				"${BUILT_PRODUCTS_DIR}/WCAG-Colors/WCAG_Colors.framework",
-				"${BUILT_PRODUCTS_DIR}/Zip/Zip.framework",
-				"${PODS_XCFRAMEWORKS_BUILD_DIR}/Datatrans/Datatrans.framework/Datatrans",
-				"${PODS_XCFRAMEWORKS_BUILD_DIR}/Datatrans/DTCardScanner.framework/DTCardScanner",
-				"${PODS_XCFRAMEWORKS_BUILD_DIR}/Datatrans/PPRiskMagnes.framework/PPRiskMagnes",
-			);
-			name = "[CP] Embed Pods Frameworks";
-			outputPaths = (
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/AutoLayout_Helper.framework",
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Base32.framework",
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/DeviceKit.framework",
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/GRDB.framework",
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/KeychainAccess.framework",
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/OneTimePassword.framework",
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Pulley.framework",
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/SDCAlertView.framework",
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/SnabbleSDK.framework",
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/SwiftBase32.framework",
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/TrustKit.framework",
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/WCAG_Colors.framework",
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Zip.framework",
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Datatrans.framework",
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/DTCardScanner.framework",
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/PPRiskMagnes.framework",
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-SnabbleSampleApp/Pods-SnabbleSampleApp-frameworks.sh\"\n";
-			showEnvVarsInLog = 0;
 		};
 /* End PBXShellScriptBuildPhase section */
 
@@ -635,7 +547,6 @@
 		};
 		607FACF01AFB9204008FA782 /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = F945FDA51F764DED76175ABA /* Pods-SnabbleSampleApp.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_ENTITLEMENTS = SnabbleSampleApp.entitlements;
@@ -652,7 +563,6 @@
 		};
 		607FACF11AFB9204008FA782 /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = AFD2541676E9CFB77A0F1C62 /* Pods-SnabbleSampleApp.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_ENTITLEMENTS = SnabbleSampleApp.entitlements;

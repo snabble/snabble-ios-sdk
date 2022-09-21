@@ -7,9 +7,9 @@
 //
 
 import Foundation
-import SnabbleSDK
+import SnabbleUI
 
-final class ShopsViewController: SnabbleSDK.ShopsViewController {
+final class ShopsViewController: SnabbleUI.ShopsViewController {
     override init(shops: [ShopProviding]) {
         super.init(shops: shops)
 

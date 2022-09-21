@@ -15,11 +15,11 @@ let package = Package(
             name: "SnabbleCore",
             targets: ["SnabbleCore"]),
         .library(
-            name: "SnabbleDatatrans",
-            targets: ["SnabbleDatatrans"]),
-        .library(
              name: "SnabbleUI",
              targets: ["SnabbleUI"]),
+        .library(
+            name: "SnabbleDatatrans",
+            targets: ["SnabbleDatatrans"]),
     ],
     dependencies: [
         // Dependencies declare other packages that this package depends on.
