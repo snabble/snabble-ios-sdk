@@ -8,7 +8,7 @@ on:
       - '**/*.swift'
 
 env:
-  DEVELOPER_DIR: /Applications/Xcode_13.4.1.app/Contents/Developer
+  DEVELOPER_DIR: /Applications/Xcode_14.0.app/Contents/Developer
 
 name: Lint
 jobs:
