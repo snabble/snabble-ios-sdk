@@ -7,6 +7,7 @@
 import Foundation
 import GRDB
 import Zip
+#warning("ProductDB.swift: remove UIKit dependency from SnabbleCore")
 import UIKit
 
 /// keys of well-known entries in the metadata table

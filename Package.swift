@@ -34,7 +34,7 @@ let package = Package(
         .package(url: "https://github.com/mattrubin/OneTimePassword.git", branch: "develop"),
         .package(url: "https://github.com/groue/GRDB.swift.git", branch: "master"),
         .package(url: "https://github.com/marmelroy/Zip.git", branch: "master"),
-        .package(url: "https://github.com/utilem/datatrans-ios-sdk.git", branch: "master"),
+        .package(url: "https://github.com/datatrans/ios-sdk.git", branch: "master"),
         .package(url: "https://github.com/snabble/AutoLayout-Helper.git", branch: "main"),
         .package(url: "https://github.com/sberrevoets/SDCAlertView.git", branch: "master"),
         .package(url: "https://github.com/devicekit/DeviceKit.git", branch: "master"),
@@ -78,7 +78,7 @@ let package = Package(
                 dependencies: [
                     "SnabbleCore",
                     "SnabbleUI",
-                    .product(name: "Datatrans", package: "datatrans-ios-sdk"),
+                    .product(name: "Datatrans", package: "ios-sdk"),
                 ],
                 path: "Snabble/Datatrans"
             )

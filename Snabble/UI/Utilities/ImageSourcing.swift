@@ -37,7 +37,7 @@ extension ImageSourcing {
             return nil
         }
 
-        if let img : SwiftUI.Image = Asset.image(named: source) {
+        if let img: SwiftUI.Image = Asset.image(named: source) {
             return img
         }
         

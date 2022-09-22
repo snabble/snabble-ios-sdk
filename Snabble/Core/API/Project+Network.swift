@@ -208,8 +208,7 @@ extension Project {
     ///   - parameters: the query parameters to append to the URL
     ///   - timeout: the timeout for the HTTP request (0 for the system default timeout)
     /// - Returns: the URLRequest
-    public func request(_ method: HTTPRequestMethod, _ url: String, json: Bool = true, jwtRequired: Bool = true, parameters: [String: String]? = nil,
-                 timeout: TimeInterval, completion: @escaping (URLRequest?) -> Void) {
+    public func request(_ method: HTTPRequestMethod, _ url: String, json: Bool = true, jwtRequired: Bool = true, parameters: [String: String]? = nil, timeout: TimeInterval, completion: @escaping (URLRequest?) -> Void) {
         request(method, url, json: json, jwtRequired: jwtRequired, queryItems: parameters?.queryItems(), timeout: timeout, completion: completion)
     }
 
@@ -222,8 +221,7 @@ extension Project {
     ///   - queryItems: the query parameters to append to the URL
     ///   - timeout: the timeout for the HTTP request (0 for the system default timeout)
     /// - Returns: the URLRequest
-    public func request(_ method: HTTPRequestMethod, _ url: String, json: Bool = true, jwtRequired: Bool = true, queryItems: [URLQueryItem]?,
-                 timeout: TimeInterval, completion: @escaping (URLRequest?) -> Void) {
+    public func request(_ method: HTTPRequestMethod, _ url: String, json: Bool = true, jwtRequired: Bool = true, queryItems: [URLQueryItem]?, timeout: TimeInterval, completion: @escaping (URLRequest?) -> Void) {
         guard
             let url = url.urlString(with: queryItems),
             let fullUrl = Snabble.shared.urlFor(url)

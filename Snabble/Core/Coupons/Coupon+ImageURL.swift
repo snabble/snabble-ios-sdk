@@ -6,6 +6,7 @@
 //
 
 import Foundation
+#warning("Coupon+ImageURL.swift: remove UIKit dependency from SnabbleCore")
 import UIKit
 
 private extension Format {

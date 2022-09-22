@@ -5,6 +5,7 @@
 //
 
 import Foundation
+#warning("MethodRegistry.swift: remove UIKit dependency from SnabbleCore")
 import UIKit
 
 public struct Methods {

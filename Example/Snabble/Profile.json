@@ -1,0 +1,86 @@
+{
+    "configuration": {
+        "style": "list"
+    },
+    "widgets": [
+        {
+            "type": "section",
+            "id": "1",
+            "header": "Profile.header",
+            "items" : [
+                {
+                    "type": "text",
+                    "id": "Profile.lastPurchases",
+                    "text": "Profile.lastPurchases",
+                    "showDisclosure": true
+                },
+                {
+                    "type": "text",
+                    "id": "Profile.paymentMethods",
+                    "text": "Profile.paymentMethods",
+                    "showDisclosure": true
+                },
+                {
+                    "type": "text",
+                    "id": "Profile.customerCard",
+                    "text": "Profile.customerCard",
+                    "showDisclosure": true
+                }
+            ]
+        },
+        {
+            "type": "section",
+            "id": "2",
+            "header": "Profile.settings",
+            "items" : [
+                {
+                    "type": "toggle",
+                    "id": "3",
+                    "text": "Profile.showOnboarding",
+                    "key": "io.snabble.sample.showOnboarding"
+                },
+                {
+                    "type": "toggle",
+                    "id": "2",
+                    "text": "Profile.pushMessages",
+                    "key": "io.snabble.sample.pushMessages"
+                }
+            ]
+        },
+        {
+            "type": "section",
+            "id": "3",
+            "header": "Profile.legalNotes",
+            "items" : [
+                {
+                    "type": "navigation",
+                    "id": "1",
+                    "text": "Profile.imprint",
+                    "resource": "imprint.html"
+                },
+                {
+                    "type": "navigation",
+                    "id": "2",
+                    "text": "Profile.terms",
+                    "resource": "terms.html"
+                },
+                {
+                    "type": "navigation",
+                    "id": "3",
+                    "text": "Profile.privacy",
+                    "resource": "privacy.html"
+                },
+                {
+                    "type": "navigation",
+                    "id": "4",
+                    "text": "Profile.licences",
+                    "resource": "Acknowledgements.html"
+                },
+                {
+                    "type": "snabble.version",
+                    "id": "5"
+                }
+            ]
+        }
+    ]
+}

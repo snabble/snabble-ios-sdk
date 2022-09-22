@@ -6,7 +6,7 @@
 
 import Foundation
 import OneTimePassword
-//import SwiftBase32
+#warning("TokenRegistry.swift: remove UIKit dependency from SnabbleCore")
 import UIKit
 
 // backend response
@@ -317,7 +317,6 @@ final class TokenRegistry {
 
     private func generatePassword(_ date: Date? = nil) -> String? {
         guard
-            //let secretData = SwiftBase32.base32DecodeToData(secret),
             let secretData = NSData(base32String: secret) as? Data,
             let generator = Generator(factor: .timer(period: 30), secret: secretData, algorithm: .sha256, digits: 8)
         else {

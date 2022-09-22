@@ -7,6 +7,7 @@
 import Foundation
 import KeychainAccess
 import CoreLocation
+#warning("Snabble.swift: remove UIKit dependency from SnabbleCore")
 import UIKit
 
 /// General config data for using the snabble.
@@ -535,7 +536,7 @@ extension Snabble {
     private(set) static var appUserData: AppUserData?
     private static weak var appUserDataTask: URLSessionDataTask?
 
-    public static var userAge : Int {
+    public static var userAge: Int {
         return appUserData?.age ?? 0
     }
     
