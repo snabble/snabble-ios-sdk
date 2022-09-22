@@ -119,7 +119,7 @@ final class ReceiptCell: UITableViewCell {
     private func showIcon(_ projectId: Identifier<Project>) {
         self.projectId = projectId
 
-        SnabbleUI.getAsset(.storeIcon, projectId: projectId) { [weak self] img in
+        SnabbleCI.getAsset(.storeIcon, projectId: projectId) { [weak self] img in
             if let img = img, self?.projectId == projectId {
                 self?.storeIcon.image = img
             } else {

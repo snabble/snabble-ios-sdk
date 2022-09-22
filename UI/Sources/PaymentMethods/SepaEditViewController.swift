@@ -288,7 +288,7 @@ public final class SepaEditViewController: UIViewController {
     private struct Empty: Decodable {}
 
     private func promoteCandidate(_ url: String, _ encryptedOrigin: String) {
-        let project = SnabbleUI.project
+        let project = SnabbleCI.project
 
         let origin = [ "origin": encryptedOrigin ]
         project.request(.post, url, body: origin, timeout: 2) { request in

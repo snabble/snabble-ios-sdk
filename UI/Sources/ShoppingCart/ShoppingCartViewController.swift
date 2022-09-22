@@ -47,7 +47,7 @@ public final class ShoppingCartViewController: UIViewController {
         }
         self.emptyState.addTo(self.view)
 
-        SnabbleUI.registerForAppearanceChange(self)
+        SnabbleCI.registerForAppearanceChange(self)
     }
 
     required init?(coder: NSCoder) {
@@ -234,7 +234,7 @@ extension ShoppingCartViewController: CustomizableAppearance {
         self.customAppearance = appearance
         self.shoppingCartTableVC.setCustomAppearance(appearance)
 
-        SnabbleUI.getAsset(.storeLogoSmall) { img in
+        SnabbleCI.getAsset(.storeLogoSmall) { img in
             if let image = img ?? appearance.titleIcon {
                 let imgView = UIImageView(image: image)
                 self.navigationItem.titleView = imgView

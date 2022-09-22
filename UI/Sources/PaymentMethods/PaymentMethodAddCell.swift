@@ -88,7 +88,7 @@ final class PaymentMethodAddCell: UITableViewCell {
         nameLabel?.text = viewModel.name
 
         projectId = viewModel.projectId
-        SnabbleUI.getAsset(.storeIcon, projectId: viewModel.projectId) { [weak self] img in
+        SnabbleCI.getAsset(.storeIcon, projectId: viewModel.projectId) { [weak self] img in
             if self?.projectId == viewModel.projectId {
                 self?.icon?.image = img
             }

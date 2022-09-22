@@ -61,7 +61,7 @@ final class ApplePayCheckoutViewController: UIViewController {
             return nil
         }
 
-        let project = SnabbleUI.project
+        let project = SnabbleCI.project
         let decimalDigits = project.decimalDigits
 
         let paymentRequest = PKPaymentRequest()
@@ -96,7 +96,7 @@ final class ApplePayCheckoutViewController: UIViewController {
             return completion(false)
         }
 
-        let project = SnabbleUI.project
+        let project = SnabbleCI.project
 
         project.request(.post, authorizeUrl, timeout: 4) { request in
             guard var request = request else {
@@ -145,7 +145,7 @@ final class ApplePayCheckoutViewController: UIViewController {
     private func cancelPayment() {
         self.delegate?.track(.paymentCancelled)
 
-        self.checkoutProcess.abort(SnabbleUI.project) { result in
+        self.checkoutProcess.abort(SnabbleCI.project) { result in
             switch result {
             case .success:
                 Snabble.clearInFlightCheckout()
@@ -170,7 +170,7 @@ final class ApplePayCheckoutViewController: UIViewController {
 
 extension ApplePayCheckoutViewController {
     private static func getCountryCode(from cart: ShoppingCart) -> String? {
-        let project = SnabbleUI.project
+        let project = SnabbleCI.project
         var countryCode: String?
         if let shop = project.shops.first(where: { $0.id == cart.shopId }) {
             countryCode = Self.get2LetterCountryCode(from: shop.countryCode)
@@ -218,7 +218,7 @@ extension ApplePayCheckoutViewController: PKPaymentAuthorizationViewControllerDe
     }
 
     private func waitForPaymentProcessing() {
-        let project = SnabbleUI.project
+        let project = SnabbleCI.project
         let poller = PaymentProcessPoller(checkoutProcess, project)
 
         poller.waitFor([.paymentSuccess]) { events in

@@ -281,7 +281,7 @@ extension PaymentProcess {
 
                 if let viewController = checkoutVC {
                     if let customizable = viewController as? CustomizableAppearance {
-                        customizable.setCustomAppearance(SnabbleUI.appearance)
+                        customizable.setCustomAppearance(SnabbleCI.appearance)
                     }
                     completion(.success(viewController))
                 } else {

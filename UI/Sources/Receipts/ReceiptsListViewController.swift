@@ -123,7 +123,7 @@ public final class ReceiptsListViewController: UITableViewController {
             return
         }
 
-        let poller = PaymentProcessPoller(process, SnabbleUI.project)
+        let poller = PaymentProcessPoller(process, SnabbleCI.project)
 
         poller.waitFor([.receipt]) { result in
             self.orderId = poller.updatedProcess.orderID
@@ -158,7 +158,7 @@ public final class ReceiptsListViewController: UITableViewController {
 
         if let orderId = self.orderId {
             if !orderIds.contains(orderId) {
-                let pending = OrderEntry.pending(SnabbleUI.project.name, SnabbleUI.project.id)
+                let pending = OrderEntry.pending(SnabbleCI.project.name, SnabbleCI.project.id)
                 orders.insert(pending, at: 0)
             }
         }

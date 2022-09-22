@@ -171,7 +171,7 @@ final class CheckoutBar: UIView {
 
     func updateTotals() {
         let numProducts = shoppingCart.numberOfProducts
-        let formatter = PriceFormatter(SnabbleUI.project)
+        let formatter = PriceFormatter(SnabbleCI.project)
         let backendCartInfo = shoppingCart.backendCartInfo
 
         let nilPrice: Bool
@@ -182,7 +182,7 @@ final class CheckoutBar: UIView {
             nilPrice = false
         }
 
-        let cartTotal = SnabbleUI.project.displayNetPrice ? backendCartInfo?.netPrice : backendCartInfo?.totalPrice
+        let cartTotal = SnabbleCI.project.displayNetPrice ? backendCartInfo?.netPrice : backendCartInfo?.totalPrice
 
         let totalPrice = nilPrice ? nil : (cartTotal ?? shoppingCart.total)
         if let total = totalPrice {
@@ -219,7 +219,7 @@ final class CheckoutBar: UIView {
     @objc private func checkoutTapped(_ sender: Any) {
         pauseScanning()
 
-        let project = SnabbleUI.project
+        let project = SnabbleCI.project
         self.shoppingCartDelegate?.checkoutAllowed(project: project, cart: shoppingCart) { start in
             if start {
                 if self.taxationInfoRequired() {
@@ -232,7 +232,7 @@ final class CheckoutBar: UIView {
     }
 
     private func startCheckout() {
-        let project = SnabbleUI.project
+        let project = SnabbleCI.project
         guard let paymentMethod = self.methodSelector?.selectedPaymentMethod else {
             let selection = PaymentMethodAddViewController(parentVC)
             parentVC?.navigationController?.pushViewController(selection, animated: true)
@@ -260,7 +260,7 @@ final class CheckoutBar: UIView {
         spinner.centerYAnchor.constraint(equalTo: button.centerYAnchor).isActive = true
         button.isEnabled = false
 
-        self.shoppingCart.createCheckoutInfo(SnabbleUI.project, timeout: 10) { result in
+        self.shoppingCart.createCheckoutInfo(SnabbleCI.project, timeout: 10) { result in
             spinner.stopAnimating()
             spinner.removeFromSuperview()
             button.isEnabled = true
@@ -372,9 +372,9 @@ extension CheckoutBar: PaymentMethodSelectorDelegate {
 
 extension CheckoutBar {
     private func checkCheckoutLimits(_ totalPrice: Int) {
-        let formatter = PriceFormatter(SnabbleUI.project)
+        let formatter = PriceFormatter(SnabbleCI.project)
 
-        if let notAllMethodsAvailable = SnabbleUI.project.checkoutLimits?.notAllMethodsAvailable {
+        if let notAllMethodsAvailable = SnabbleCI.project.checkoutLimits?.notAllMethodsAvailable {
             if totalPrice > notAllMethodsAvailable {
                 if !self.notAllMethodsAvailableShown {
                     let limit = formatter.format(notAllMethodsAvailable)
@@ -386,7 +386,7 @@ extension CheckoutBar {
             }
         }
 
-        if let checkoutNotAvailable = SnabbleUI.project.checkoutLimits?.checkoutNotAvailable {
+        if let checkoutNotAvailable = SnabbleCI.project.checkoutLimits?.checkoutNotAvailable {
             if totalPrice > checkoutNotAvailable {
                 if !self.checkoutNotAvailableShown {
                     let limit = formatter.format(checkoutNotAvailable)

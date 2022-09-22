@@ -8,7 +8,7 @@ import UIKit
 import SnabbleCore
 
 /// global settings for the Snabble UI classes
-public enum SnabbleUI {
+public enum SnabbleCI {
     private(set) static var appearance: CustomAppearance = SnabbleAppearance() {
         didSet {
             customizableAppearances.objects.forEach {
@@ -24,7 +24,7 @@ public enum SnabbleUI {
         self.project = project ?? .none
 
         if let project = project, project.id != Project.none.id, let manifestUrl = project.links.assetsManifest?.href {
-            SnabbleUI.initializeAssets(for: project.id, manifestUrl, downloadFiles: true)
+            SnabbleCI.initializeAssets(for: project.id, manifestUrl, downloadFiles: true)
         }
         Asset.domain = project?.id
         self.appearance = Asset.provider?.appearance(for: project?.id) ?? SnabbleAppearance()

@@ -31,7 +31,7 @@ public enum ImageAsset: String {
     case appBackgroundImage = "background-app"
 }
 
-extension SnabbleUI {
+extension SnabbleCI {
     // download manifests for all projects, calls `completion` when all downloads are done
     public static func initializeAssets(for projects: [Project], completion: @escaping () -> Void) {
         AssetManager.shared.initialize(projects, completion)
@@ -143,7 +143,7 @@ final class AssetManager {
     ///   - projectId: the project id. If nil, use `SnabbleUI.project.id`
     ///   - completion: called when the image has been retrieved
     func getAsset(_ asset: ImageAsset, _ bundlePath: String?, _ projectId: Identifier<Project>?, _ completion: @escaping (UIImage?) -> Void) {
-        let projectId = projectId ?? SnabbleUI.project.id
+        let projectId = projectId ?? SnabbleCI.project.id
         let name = asset.rawValue
 
         // if the manifest for the project hasn't been loaded yet, save the request for later

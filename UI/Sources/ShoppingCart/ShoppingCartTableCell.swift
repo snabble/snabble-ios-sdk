@@ -156,7 +156,7 @@ final class ShoppingCartTableCell: UITableViewCell {
     func setDiscount(for amount: Int) {
         self.cellView?.nameView?.nameLabel?.text = Asset.localizedString(forKey: "Snabble.Shoppingcart.discounts")
 
-        let formatter = PriceFormatter(SnabbleUI.project)
+        let formatter = PriceFormatter(SnabbleCI.project)
         self.cellView?.nameView?.priceLabel?.text = formatter.format(amount)
 
         if showImages {
@@ -289,13 +289,13 @@ final class ShoppingCartTableCell: UITableViewCell {
             self.unitsText = unitDisplay
             self.displayLineItemPrice(for: item.product, item: defaultItem, in: lineItems)
         } else {
-            let formatter = PriceFormatter(SnabbleUI.project)
+            let formatter = PriceFormatter(SnabbleCI.project)
             self.cellView?.nameView?.priceLabel?.text = formatter.format(item.price)
         }
     }
 
     private func displayLineItemPrice(for product: Product?, item: CheckoutInfo.LineItem, in lineItems: [CheckoutInfo.LineItem]) {
-        let formatter = PriceFormatter(SnabbleUI.project)
+        let formatter = PriceFormatter(SnabbleCI.project)
 
         var badgeColor: UIColor?
         var badgeText: String?

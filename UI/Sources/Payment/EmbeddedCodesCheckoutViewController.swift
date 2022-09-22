@@ -389,7 +389,7 @@ final class EmbeddedCodesCheckoutViewController: UIViewController {
     }
 
     private func setupIcon() {
-        SnabbleUI.getAsset(.checkoutOffline, bundlePath: "Checkout/\(SnabbleUI.project.id)/checkout-offline") { img in
+        SnabbleCI.getAsset(.checkoutOffline, bundlePath: "Checkout/\(SnabbleCI.project.id)/checkout-offline") { img in
             if let img = img {
                 self.topIcon?.image = img
                 self.topIcon?.heightAnchor.constraint(equalToConstant: img.size.height).usingPriority(.required - 1).isActive = true

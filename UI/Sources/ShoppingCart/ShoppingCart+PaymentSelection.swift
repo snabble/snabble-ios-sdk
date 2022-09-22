@@ -46,11 +46,11 @@ final class PaymentMethodSelector {
     private var userPaymentMethodDetails: [PaymentMethodDetail] {
         PaymentMethodDetails.read()
            .filter { $0.rawMethod.isAvailable }
-           .filter { $0.projectId != nil ? $0.projectId == SnabbleUI.project.id : true }
+           .filter { $0.projectId != nil ? $0.projectId == SnabbleCI.project.id : true }
     }
 
     private var projectPaymentMethods: [RawPaymentMethod] {
-        SnabbleUI.project.paymentMethods.filter { $0.isAvailable }
+        SnabbleCI.project.paymentMethods.filter { $0.isAvailable }
     }
 
     private var availableMethods: [RawPaymentMethod] {
@@ -183,7 +183,7 @@ final class PaymentMethodSelector {
         }
 
         // use Apple Pay, if possible
-        if availableOnlineMethods.contains(.applePay) && ApplePay.canMakePayments(with: SnabbleUI.project.id) {
+        if availableOnlineMethods.contains(.applePay) && ApplePay.canMakePayments(with: SnabbleCI.project.id) {
             return setSelectedPayment(.applePay, detail: nil)
         } else {
             availableOnlineMethods.removeAll { $0 == .applePay }
@@ -235,10 +235,10 @@ final class PaymentMethodSelector {
             detail == nil,
             let parent = parentVC,
             method.isAddingAllowed(showAlertOn: parent) == true,
-            let editVC = method.editViewController(with: SnabbleUI.project.id, parent)
+            let editVC = method.editViewController(with: SnabbleCI.project.id, parent)
         {
             parent.navigationController?.pushViewController(editVC, animated: true)
-        } else if method == .applePay && !ApplePay.canMakePayments(with: SnabbleUI.project.id) {
+        } else if method == .applePay && !ApplePay.canMakePayments(with: SnabbleCI.project.id) {
             ApplePay.openPaymentSetup()
         } else {
             setSelectedPayment(method, detail: detail)
@@ -419,7 +419,7 @@ final class PaymentMethodSelector {
             }
         case .applePay:
             if !hasCartMethods || isCartMethod {
-                let canMakePayments = ApplePay.canMakePayments(with: SnabbleUI.project.id)
+                let canMakePayments = ApplePay.canMakePayments(with: SnabbleCI.project.id)
                 let subtitle = canMakePayments ? nil : Asset.localizedString(forKey: "Snabble.Shoppingcart.noPaymentData")
                 let title = Self.attributedString(
                     forText: method.displayName,

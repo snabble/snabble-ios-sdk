@@ -6,8 +6,8 @@
 //
 
 import UIKit
-import SnabbleUI
 import SwiftUI
+import SnabbleUI
 
 final class AccountViewController: DynamicViewController {
     override init(viewModel: DynamicViewModel) {
@@ -25,7 +25,7 @@ final class AccountViewController: DynamicViewController {
 }
 
 extension AccountViewController: DynamicViewControllerDelegate {
-    func dynamicStackViewController(_ viewController: DynamicViewController, tappedWidget widget: SnabbleWidget, userInfo: [String: Any]?) {
+    func dynamicStackViewController(_ viewController: DynamicViewController, tappedWidget widget: SnabbleUI.Widget, userInfo: [String: Any]?) {
         print(#function)
         print("widget:", widget.id)
         print("userInfo:", userInfo ?? [:])

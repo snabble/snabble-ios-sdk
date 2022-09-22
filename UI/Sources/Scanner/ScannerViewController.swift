@@ -67,7 +67,7 @@ public final class ScannerViewController: PulleyViewController {
         self.tabBarItem.image = Asset.image(named: "SnabbleSDK/icon-scan-inactive")
         self.tabBarItem.selectedImage = Asset.image(named: "SnabbleSDK/icon-scan-active")
 
-        SnabbleUI.registerForAppearanceChange(self)
+        SnabbleCI.registerForAppearanceChange(self)
 
         shoppingCart.delegate = self
     }

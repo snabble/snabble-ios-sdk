@@ -231,7 +231,7 @@ final class ScanConfirmationView: UIView {
     private func doPresent(withProduct scannedProduct: ScannedProduct, withCode scannedCode: String, forCart cart: ShoppingCart) {
         self.shoppingCart = cart
 
-        let project = SnabbleUI.project
+        let project = SnabbleCI.project
         self.manualDiscountButton?.isHidden = project.manualCoupons.isEmpty
         self.manualDiscountButton?.setTitle(Asset.localizedString(forKey: "Snabble.addDiscount"), for: .normal)
 
@@ -337,7 +337,7 @@ final class ScanConfirmationView: UIView {
 
         self.quantityField?.isEnabled = self.cartItem.editable
 
-        let formatter = PriceFormatter(SnabbleUI.project)
+        let formatter = PriceFormatter(SnabbleCI.project)
         let formattedPrice = self.cartItem.priceDisplay(formatter)
         let quantityDisplay = self.cartItem.quantityDisplay()
 
@@ -403,7 +403,7 @@ final class ScanConfirmationView: UIView {
     }
 
     @objc private func manualDiscountTapped(_ sender: Any) {
-        let project = SnabbleUI.project
+        let project = SnabbleCI.project
 
         let title = Asset.localizedString(forKey: "Snabble.addDiscount")
         let actionSheet = UIAlertController(title: title, message: nil, preferredStyle: .actionSheet)

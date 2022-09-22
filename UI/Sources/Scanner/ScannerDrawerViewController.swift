@@ -67,7 +67,7 @@ final class ScannerDrawerViewController: UIViewController {
 
         super.init(nibName: nil, bundle: nil)
 
-        SnabbleUI.registerForAppearanceChange(self)
+        SnabbleCI.registerForAppearanceChange(self)
     }
 
     required init?(coder: NSCoder) {

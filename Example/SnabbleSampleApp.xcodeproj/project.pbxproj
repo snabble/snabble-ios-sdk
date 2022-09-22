@@ -16,7 +16,6 @@
 		7605C5BF28AE4383000105A8 /* ShopsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7605C5BE28AE4383000105A8 /* ShopsViewController.swift */; };
 		760F128428DC7E8F00D09D35 /* SnabbleCore in Frameworks */ = {isa = PBXBuildFile; productRef = 760F128328DC7E8F00D09D35 /* SnabbleCore */; };
 		760F128628DC7E8F00D09D35 /* SnabbleDatatrans in Frameworks */ = {isa = PBXBuildFile; productRef = 760F128528DC7E8F00D09D35 /* SnabbleDatatrans */; };
-		760F128828DC7E8F00D09D35 /* SnabbleUI in Frameworks */ = {isa = PBXBuildFile; productRef = 760F128728DC7E8F00D09D35 /* SnabbleUI */; };
 		7615200128D3559E00C08D97 /* Acknowledgements.html in Resources */ = {isa = PBXBuildFile; fileRef = 7615200028D3559E00C08D97 /* Acknowledgements.html */; };
 		76AD21B128D42513003D865A /* privacy.html in Resources */ = {isa = PBXBuildFile; fileRef = 76AD21B028D42513003D865A /* privacy.html */; };
 		76AD21B328D4331A003D865A /* terms.html in Resources */ = {isa = PBXBuildFile; fileRef = 76AD21B228D4331A003D865A /* terms.html */; };
@@ -27,6 +26,7 @@
 		E161B0EE28B76DD9005061C4 /* Onboarding.json in Resources */ = {isa = PBXBuildFile; fileRef = E161B0EB28B76357005061C4 /* Onboarding.json */; };
 		E161B0F228B78F89005061C4 /* LoadJSON.swift in Sources */ = {isa = PBXBuildFile; fileRef = E161B0F128B78F89005061C4 /* LoadJSON.swift */; };
 		E1786CBF28BF351400CB7AF0 /* Dashboard.json in Resources */ = {isa = PBXBuildFile; fileRef = E1786CBE28BF351400CB7AF0 /* Dashboard.json */; };
+		E19B0FC228DC902D00C87E8E /* SnabbleUI in Frameworks */ = {isa = PBXBuildFile; productRef = E19B0FC128DC902D00C87E8E /* SnabbleUI */; };
 		E1BEF67128B79B4900549104 /* imprint.html in Resources */ = {isa = PBXBuildFile; fileRef = E1BEF67028B79B4900549104 /* imprint.html */; };
 		E1DA445E28B3668C0034427D /* AppDelegate+AssetProviding.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1DA445D28B3668C0034427D /* AppDelegate+AssetProviding.swift */; };
 		E1DA449C28B3A2BD0034427D /* LoadingViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1DA449B28B3A2BD0034427D /* LoadingViewController.swift */; };
@@ -81,7 +81,7 @@
 			files = (
 				760F128428DC7E8F00D09D35 /* SnabbleCore in Frameworks */,
 				760F128628DC7E8F00D09D35 /* SnabbleDatatrans in Frameworks */,
-				760F128828DC7E8F00D09D35 /* SnabbleUI in Frameworks */,
+				E19B0FC228DC902D00C87E8E /* SnabbleUI in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -230,7 +230,7 @@
 			packageProductDependencies = (
 				760F128328DC7E8F00D09D35 /* SnabbleCore */,
 				760F128528DC7E8F00D09D35 /* SnabbleDatatrans */,
-				760F128728DC7E8F00D09D35 /* SnabbleUI */,
+				E19B0FC128DC902D00C87E8E /* SnabbleUI */,
 			);
 			productName = Snabble;
 			productReference = 607FACD01AFB9204008FA782 /* SnabbleSampleApp.app */;
@@ -682,7 +682,7 @@
 			isa = XCSwiftPackageProductDependency;
 			productName = SnabbleDatatrans;
 		};
-		760F128728DC7E8F00D09D35 /* SnabbleUI */ = {
+		E19B0FC128DC902D00C87E8E /* SnabbleUI */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = SnabbleUI;
 		};

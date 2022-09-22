@@ -29,7 +29,7 @@ public final class PaymentMethodStartCheck {
         switch method {
         case .deDirectDebit:
             let view = SepaOverlayView(frame: .zero)
-            let viewModel = SepaOverlayView.ViewModel(project: SnabbleUI.project)
+            let viewModel = SepaOverlayView.ViewModel(project: SnabbleCI.project)
             view.configure(with: viewModel)
 
             view.closeButton?.addTarget(self, action: #selector(dismissOverlay(_:)), for: .touchUpInside)
@@ -76,7 +76,7 @@ public final class PaymentMethodStartCheck {
     }
 
     @objc private func sepaShowDetailsTapped(_ gestureRecognizer: UITapGestureRecognizer) {
-        let msg = SnabbleUI.project.messages?.sepaMandate ?? ""
+        let msg = SnabbleCI.project.messages?.sepaMandate ?? ""
         let alert = UIAlertController(title: Asset.localizedString(forKey: "Snabble.Sepa.mandate"), message: msg, preferredStyle: .alert)
         alert.addAction(UIAlertAction(title: Asset.localizedString(forKey: "Snabble.ok"), style: .default, handler: nil))
         presenter?.present(alert, animated: true)

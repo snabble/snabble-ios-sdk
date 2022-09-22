@@ -228,7 +228,7 @@ final class CustomerCardCheckoutViewController: UIViewController {
     }
 
     private func setupIcons() {
-        SnabbleUI.getAsset(.checkoutOffline, bundlePath: "Checkout/\(SnabbleUI.project.id)/checkout-offline") { img in
+        SnabbleCI.getAsset(.checkoutOffline, bundlePath: "Checkout/\(SnabbleCI.project.id)/checkout-offline") { img in
             if let img = img {
                 self.iconImageView?.image = img
                 self.iconImageHeight?.constant = img.size.height

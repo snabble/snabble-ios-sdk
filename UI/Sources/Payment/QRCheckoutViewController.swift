@@ -210,7 +210,7 @@ final class QRCheckoutViewController: UIViewController {
     private func setupLabels() {
         self.checkoutIdLabel?.text = Asset.localizedString(forKey: "Snabble.Checkout.id") + ": " + String(process.links._self.href.suffix(4))
 
-        let formatter = PriceFormatter(shop.project ?? SnabbleUI.project)
+        let formatter = PriceFormatter(shop.project ?? SnabbleCI.project)
         // if we have a valid checkoutInfo, use the total from that, else what we've calculated in the cart
         let lineItems = process.pricing.lineItems.count
         let total = lineItems > 0 ? process.pricing.price.price : self.cart.total
@@ -223,7 +223,7 @@ final class QRCheckoutViewController: UIViewController {
     }
 
     private func startPoller() {
-        let poller = PaymentProcessPoller(self.process, SnabbleUI.project)
+        let poller = PaymentProcessPoller(self.process, SnabbleCI.project)
         poller.waitFor([.paymentSuccess]) { events in
             if let success = events[.paymentSuccess] {
                 self.paymentFinished(success, poller.updatedProcess)
@@ -236,7 +236,7 @@ final class QRCheckoutViewController: UIViewController {
         self.poller?.stop()
         self.poller = nil
 
-        self.process.abort(SnabbleUI.project) { result in
+        self.process.abort(SnabbleCI.project) { result in
             switch result {
             case .success:
                 Snabble.clearInFlightCheckout()

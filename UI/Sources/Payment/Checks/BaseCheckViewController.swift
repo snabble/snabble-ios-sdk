@@ -297,12 +297,12 @@ class BaseCheckViewController: UIViewController {
         switch checkoutProcess.rawPaymentMethod {
         case .qrCodeOffline, .customerCardPOS:
             asset = .checkoutOffline
-            bundlePath = "Checkout/\(SnabbleUI.project.id)/checkout-offline"
+            bundlePath = "Checkout/\(SnabbleCI.project.id)/checkout-offline"
         default:
             asset = .checkoutOnline
-            bundlePath = "Checkout/\(SnabbleUI.project.id)/checkout-online"
+            bundlePath = "Checkout/\(SnabbleCI.project.id)/checkout-online"
         }
-        SnabbleUI.getAsset(asset, bundlePath: bundlePath) { img in
+        SnabbleCI.getAsset(asset, bundlePath: bundlePath) { img in
             self.icon?.image = img
         }
 
@@ -314,7 +314,7 @@ class BaseCheckViewController: UIViewController {
     private func startTimer() {
         self.processTimer?.invalidate()
         self.processTimer = Timer.scheduledTimer(withTimeInterval: 1, repeats: false) { _ in
-            let project = SnabbleUI.project
+            let project = SnabbleCI.project
             self.checkoutProcess.update(project,
                                 taskCreated: { self.sessionTask = $0 },
                                 completion: { self.update($0) })
@@ -381,7 +381,7 @@ class BaseCheckViewController: UIViewController {
 
         self.stopTimer()
 
-        self.checkoutProcess.abort(SnabbleUI.project) { result in
+        self.checkoutProcess.abort(SnabbleCI.project) { result in
             switch result {
             case .success:
                 Snabble.clearInFlightCheckout()

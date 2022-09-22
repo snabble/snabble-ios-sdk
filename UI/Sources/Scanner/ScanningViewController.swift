@@ -82,7 +82,7 @@ final class ScanningViewController: UIViewController {
         self.tabBarItem.selectedImage = Asset.image(named: "SnabbleSDK/icon-scan-active")
         self.navigationItem.title = Asset.localizedString(forKey: "Snabble.Scanner.scanningTitle")
 
-        SnabbleUI.registerForAppearanceChange(self)
+        SnabbleCI.registerForAppearanceChange(self)
     }
 
     public required init?(coder aDecoder: NSCoder) {
@@ -337,7 +337,7 @@ extension ScanningViewController: ScanConfirmationViewDelegate {
             if let msg = self.ageCheckRequired(for: item) {
                 messages.append(msg)
             }
-            if let msg = self.scannerDelegate?.scanMessage(for: SnabbleUI.project, self.shop, item.product) {
+            if let msg = self.scannerDelegate?.scanMessage(for: SnabbleCI.project, self.shop, item.product) {
                 messages.append(msg)
             }
 
@@ -513,7 +513,7 @@ extension ScanningViewController {
 
     private func showNotForSale(for product: Product, withCode scannedCode: String) {
         self.tapticFeedback.notificationOccurred(.error)
-        if let msg = self.scannerDelegate?.scanMessage(for: SnabbleUI.project, self.shop, product) {
+        if let msg = self.scannerDelegate?.scanMessage(for: SnabbleCI.project, self.shop, product) {
             self.showMessage(msg)
             self.lastScannedCode = nil
         } else {
@@ -571,7 +571,7 @@ extension ScanningViewController {
         }
 
         // check override codes first
-        let project = SnabbleUI.project
+        let project = SnabbleCI.project
         if let match = CodeMatcher.matchOverride(code, project.priceOverrideCodes, project.id) {
             return self.productForOverrideCode(for: match, completion: completion)
         }
@@ -656,7 +656,7 @@ extension ScanningViewController {
     }
 
     private func checkValidCoupon(for scannedCode: String) -> Coupon? {
-        let project = SnabbleUI.project
+        let project = SnabbleCI.project
         let validCoupons = project.printedCoupons
 
         for coupon in validCoupons {
@@ -690,8 +690,8 @@ extension ScanningViewController {
         self.productProvider.productByScannableCodes(codes, self.shop.id) { result in
             switch result {
             case .success(let lookupResult):
-                let priceDigits = SnabbleUI.project.decimalDigits
-                let roundingMode = SnabbleUI.project.roundingMode
+                let priceDigits = SnabbleCI.project.decimalDigits
+                let roundingMode = SnabbleCI.project.roundingMode
                 let (embeddedData, encodingUnit) = gs1.getEmbeddedData(for: lookupResult.encodingUnit, priceDigits, roundingMode)
                 let result = ScannedProduct(lookupResult.product,
                                             gtin,
@@ -704,7 +704,7 @@ extension ScanningViewController {
                                             specifiedQuantity: lookupResult.specifiedQuantity)
                 completion(.product(result))
             case .failure(let error):
-                let event = AppEvent(scannedCode: originalCode, codes: codes, project: SnabbleUI.project)
+                let event = AppEvent(scannedCode: originalCode, codes: codes, project: SnabbleCI.project)
                 event.post()
                 completion(.failure(error))
             }
@@ -718,7 +718,7 @@ extension ScanningViewController {
             return self.lookupProduct(for: code, withTemplate: template, priceOverride: match.embeddedData, completion: completion)
         }
 
-        let matches = CodeMatcher.match(code, SnabbleUI.project.id)
+        let matches = CodeMatcher.match(code, SnabbleCI.project.id)
 
         guard !matches.isEmpty else {
             return completion(.failure(.notFound))
@@ -797,7 +797,7 @@ extension ScanningViewController: CustomizableAppearance {
         self.customAppearance = appearance
 
         self.scanConfirmationView?.setCustomAppearance(appearance)
-        SnabbleUI.getAsset(.storeLogoSmall) { img in
+        SnabbleCI.getAsset(.storeLogoSmall) { img in
             if let image = img ?? appearance.titleIcon {
                 let imgView = UIImageView(image: image)
                 self.navigationItem.titleView = imgView
