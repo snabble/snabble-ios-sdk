@@ -4,6 +4,6 @@
 //  Copyright © 2021 snabble. All rights reserved.
 //
 
-public enum APIVersion {
-    public static let version = "0.23.0"
+public var version: String {
+    "0.22.2"
 }

@@ -500,7 +500,7 @@ extension Snabble {
         sysctlbyname("hw.machine", &machine, &size, nil, 0)
         let hardwareString = String(cString: machine)
 
-        return "\(appDescriptor) \(osDescriptor) (\(hardwareString)) SDK/\(APIVersion.version)"
+        return "\(appDescriptor) \(osDescriptor) (\(hardwareString)) SDK/\(SnabbleCore.version)"
     }()
 }
 
