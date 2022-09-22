@@ -42,15 +42,13 @@ To integrate via a `Package.swift` manifest instead of Xcode, you can add
 Firebase to the dependencies array of your package:
 
 ```swift
-dependencies: [
+dependencies:[
   .package(
     name: "Snabble",
     url: "https://github.com/snabble/snabble-ios-sdk.git",
     .upToNextMajor(from: "0.22.2")
-  ),
-
-  // Any other dependencies you have...
-],
+  )
+]
 ```
 
 Then, in any target that depends on a Firebase product, add it to the `dependencies`
@@ -63,7 +61,7 @@ array of that target:
     // The product(s) you want (e.g. SnabbleCore).
     .product(name: "SnabbleCore", package: "Snabble"),
   ]
-),
+)
 ```
 
 ### Optional components
@@ -94,7 +92,9 @@ Snabble follows [semantic versioning](https://semver.org/) rules.
 Note that we are currently in initial development, with major version 0. Anything may change at any time.
 
 ## Documentation
-https://snabble.github.io/iOS-SDK/
+
+https://docs.snabble.io/docs/ios/
+
 ## Example project
 
 The Example folder contains an extremely simple example for an app. To compile:
