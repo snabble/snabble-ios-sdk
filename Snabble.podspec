@@ -5,7 +5,7 @@
 
 Pod::Spec.new do |s|
   s.name = 'Snabble'
-  s.version = '0.22.0'
+  s.version = '0.22.1'
   s.summary = 'The snabble iOS SDK'
 
   s.description = <<-DESC
@@ -16,7 +16,7 @@ Pod::Spec.new do |s|
   s.homepage = 'https://snabble.io/'
   s.license = { :type => 'MIT', :file => 'LICENSE' }
   s.author = { 'snabble GmbH' => 'info@snabble.io' }
-  s.source = { :git => 'https://github.com/snabble/iOS-SDK.git', :tag => "#{s.version}" }
+  s.source = { :git => 'https://github.com/snabble/snabble-ios-sdk.git', :tag => "#{s.version}" }
   s.social_media_url = 'https://twitter.com/snabble_io'
   s.module_name = 'SnabbleSDK'
 
@@ -60,7 +60,7 @@ Pod::Spec.new do |s|
 
   s.subspec 'Datatrans' do |dt|
     dt.dependency 'Snabble/UI'
-    dt.dependency 'Datatrans', '~> 2.1.0'
+    dt.dependency 'Datatrans', '~> 2.2.0'
 
     dt.source_files = 'Snabble/Datatrans/**/*.swift'
   end
