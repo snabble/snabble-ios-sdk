@@ -9,6 +9,14 @@ import Foundation
 import SwiftUI
 import SnabbleCore
 
+public protocol Widget: Decodable {
+    var id: String { get }
+    var type: WidgetType { get }
+    var padding: Padding? { get }
+}
+
+public typealias SnabbleWidget = Widget
+
 public enum WidgetType: String, Decodable {
     case text
     case image
@@ -28,12 +36,6 @@ public enum WidgetType: String, Decodable {
     case locationPermission = "snabble.locationPermission"
     case connectWifi = "snabble.connectWifi"
     case version = "snabble.version"
-}
-
-public protocol Widget: Decodable {
-    var id: String { get }
-    var type: WidgetType { get }
-    var padding: Padding? { get }
 }
 
 public struct WidgetText: Widget {

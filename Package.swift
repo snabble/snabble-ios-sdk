@@ -20,7 +20,7 @@ let package = Package(
                 name: "SnabbleUI",
                 targets: ["SnabbleUI"]
             ),
-        
+             
             .library(
                 name: "SnabbleDatatrans",
                 targets: ["SnabbleDatatrans"]
@@ -76,9 +76,10 @@ let package = Package(
             .target(
                 name: "SnabbleDatatrans",
                 dependencies: [
+                    .product(name: "Datatrans", package: "ios-sdk"),
                     "SnabbleCore",
                     "SnabbleUI",
-                    .product(name: "Datatrans", package: "ios-sdk"),
+                    //"ios-sdk",
                 ],
                 path: "Snabble/Datatrans"
             )

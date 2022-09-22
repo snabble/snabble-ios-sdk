@@ -14,10 +14,10 @@
 		607FACE01AFB9204008FA782 /* LaunchScreen.xib in Resources */ = {isa = PBXBuildFile; fileRef = 607FACDE1AFB9204008FA782 /* LaunchScreen.xib */; };
 		7605C47328AC9794000105A8 /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = 7605C47528AC9794000105A8 /* Localizable.strings */; };
 		7605C5BF28AE4383000105A8 /* ShopsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7605C5BE28AE4383000105A8 /* ShopsViewController.swift */; };
+		760F128428DC7E8F00D09D35 /* SnabbleCore in Frameworks */ = {isa = PBXBuildFile; productRef = 760F128328DC7E8F00D09D35 /* SnabbleCore */; };
+		760F128628DC7E8F00D09D35 /* SnabbleDatatrans in Frameworks */ = {isa = PBXBuildFile; productRef = 760F128528DC7E8F00D09D35 /* SnabbleDatatrans */; };
+		760F128828DC7E8F00D09D35 /* SnabbleUI in Frameworks */ = {isa = PBXBuildFile; productRef = 760F128728DC7E8F00D09D35 /* SnabbleUI */; };
 		7615200128D3559E00C08D97 /* Acknowledgements.html in Resources */ = {isa = PBXBuildFile; fileRef = 7615200028D3559E00C08D97 /* Acknowledgements.html */; };
-		76272DED28DB49F600A2C23C /* SnabbleCore in Frameworks */ = {isa = PBXBuildFile; productRef = 76272DEC28DB49F600A2C23C /* SnabbleCore */; };
-		76272DEF28DB49FA00A2C23C /* SnabbleUI in Frameworks */ = {isa = PBXBuildFile; productRef = 76272DEE28DB49FA00A2C23C /* SnabbleUI */; };
-		76272DF128DC371300A2C23C /* SnabbleDatatrans in Frameworks */ = {isa = PBXBuildFile; productRef = 76272DF028DC371300A2C23C /* SnabbleDatatrans */; };
 		76AD21B128D42513003D865A /* privacy.html in Resources */ = {isa = PBXBuildFile; fileRef = 76AD21B028D42513003D865A /* privacy.html */; };
 		76AD21B328D4331A003D865A /* terms.html in Resources */ = {isa = PBXBuildFile; fileRef = 76AD21B228D4331A003D865A /* terms.html */; };
 		76C7B74A28BFA10700D94F4F /* DashboardViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 76C7B74928BFA10700D94F4F /* DashboardViewController.swift */; };
@@ -50,6 +50,7 @@
 		607FACD71AFB9204008FA782 /* ScannerViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScannerViewController.swift; sourceTree = "<group>"; };
 		607FACDC1AFB9204008FA782 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		607FACDF1AFB9204008FA782 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/LaunchScreen.xib; sourceTree = "<group>"; };
+		7602E11428DC61F8009B379B /* snabble-ios-sdk */ = {isa = PBXFileReference; lastKnownFileType = wrapper; name = "snabble-ios-sdk"; path = ..; sourceTree = "<group>"; };
 		7605C47428AC9794000105A8 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/Localizable.strings; sourceTree = "<group>"; };
 		7605C47628AC97B3000105A8 /* de */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = de; path = de.lproj/Localizable.strings; sourceTree = "<group>"; };
 		7605C5BE28AE4383000105A8 /* ShopsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShopsViewController.swift; sourceTree = "<group>"; };
@@ -61,7 +62,6 @@
 		76AD21B228D4331A003D865A /* terms.html */ = {isa = PBXFileReference; lastKnownFileType = text.html; path = terms.html; sourceTree = "<group>"; };
 		76C7B74928BFA10700D94F4F /* DashboardViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DashboardViewController.swift; sourceTree = "<group>"; };
 		76C7B78F28C1ACD900D94F4F /* Profile.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = Profile.json; sourceTree = "<group>"; };
-		76D301FD28DC47BE00A8B6DE /* snabble-ios-sdk */ = {isa = PBXFileReference; lastKnownFileType = wrapper; name = "snabble-ios-sdk"; path = ..; sourceTree = "<group>"; };
 		E127DB6E28C74A64005A7416 /* SnabbleConfig.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SnabbleConfig.swift; sourceTree = "<group>"; };
 		E131CF1728A3D45C00A844E1 /* SnabbleSampleAppTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = SnabbleSampleAppTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		E131CF1928A3D45C00A844E1 /* SnabbleSampleAppTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SnabbleSampleAppTests.swift; sourceTree = "<group>"; };
@@ -79,9 +79,9 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				76272DEF28DB49FA00A2C23C /* SnabbleUI in Frameworks */,
-				76272DF128DC371300A2C23C /* SnabbleDatatrans in Frameworks */,
-				76272DED28DB49F600A2C23C /* SnabbleCore in Frameworks */,
+				760F128428DC7E8F00D09D35 /* SnabbleCore in Frameworks */,
+				760F128628DC7E8F00D09D35 /* SnabbleDatatrans in Frameworks */,
+				760F128828DC7E8F00D09D35 /* SnabbleUI in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -99,7 +99,7 @@
 			isa = PBXGroup;
 			children = (
 				76151FDB28D2FC4800C08D97 /* SnabbleSampleApp.entitlements */,
-				76D301FD28DC47BE00A8B6DE /* snabble-ios-sdk */,
+				7602E11428DC61F8009B379B /* snabble-ios-sdk */,
 				607FACD21AFB9204008FA782 /* Sources */,
 				E131CF1828A3D45C00A844E1 /* SnabbleSampleAppTests */,
 				607FACD11AFB9204008FA782 /* Products */,
@@ -228,9 +228,9 @@
 			);
 			name = SnabbleSampleApp;
 			packageProductDependencies = (
-				76272DEC28DB49F600A2C23C /* SnabbleCore */,
-				76272DEE28DB49FA00A2C23C /* SnabbleUI */,
-				76272DF028DC371300A2C23C /* SnabbleDatatrans */,
+				760F128328DC7E8F00D09D35 /* SnabbleCore */,
+				760F128528DC7E8F00D09D35 /* SnabbleDatatrans */,
+				760F128728DC7E8F00D09D35 /* SnabbleUI */,
 			);
 			productName = Snabble;
 			productReference = 607FACD01AFB9204008FA782 /* SnabbleSampleApp.app */;
@@ -674,17 +674,17 @@
 /* End XCConfigurationList section */
 
 /* Begin XCSwiftPackageProductDependency section */
-		76272DEC28DB49F600A2C23C /* SnabbleCore */ = {
+		760F128328DC7E8F00D09D35 /* SnabbleCore */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = SnabbleCore;
 		};
-		76272DEE28DB49FA00A2C23C /* SnabbleUI */ = {
-			isa = XCSwiftPackageProductDependency;
-			productName = SnabbleUI;
-		};
-		76272DF028DC371300A2C23C /* SnabbleDatatrans */ = {
+		760F128528DC7E8F00D09D35 /* SnabbleDatatrans */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = SnabbleDatatrans;
+		};
+		760F128728DC7E8F00D09D35 /* SnabbleUI */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = SnabbleUI;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};
