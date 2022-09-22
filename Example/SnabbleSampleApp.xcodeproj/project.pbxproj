@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 46;
+	objectVersion = 54;
 	objects = {
 
 /* Begin PBXBuildFile section */
@@ -377,6 +377,7 @@
 		};
 		E17C193028D9B01400D5BAA0 /* LicensePlist */ = {
 			isa = PBXShellScriptBuildPhase;
+			alwaysOutOfDate = 1;
 			buildActionMask = 2147483647;
 			files = (
 			);
@@ -395,6 +396,7 @@
 		};
 		E18D963B27311A3200F21217 /* SwiftLint */ = {
 			isa = PBXShellScriptBuildPhase;
+			alwaysOutOfDate = 1;
 			buildActionMask = 2147483647;
 			files = (
 			);
@@ -433,6 +435,8 @@
 				"${BUILT_PRODUCTS_DIR}/Zip/Zip.framework",
 				"${PODS_XCFRAMEWORKS_BUILD_DIR}/Datatrans/Datatrans.framework/Datatrans",
 				"${PODS_XCFRAMEWORKS_BUILD_DIR}/Datatrans/DTCardScanner.framework/DTCardScanner",
+				"${PODS_XCFRAMEWORKS_BUILD_DIR}/Datatrans/DTKlarna.framework/DTKlarna",
+				"${PODS_XCFRAMEWORKS_BUILD_DIR}/Datatrans/KlarnaMobileSDK.framework/KlarnaMobileSDK",
 				"${PODS_XCFRAMEWORKS_BUILD_DIR}/Datatrans/PPRiskMagnes.framework/PPRiskMagnes",
 			);
 			name = "[CP] Embed Pods Frameworks";
@@ -452,6 +456,8 @@
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Zip.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Datatrans.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/DTCardScanner.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/DTKlarna.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/KlarnaMobileSDK.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/PPRiskMagnes.framework",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -628,7 +634,8 @@
 				IPHONEOS_DEPLOYMENT_TARGET = 14.0;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				SDKROOT = iphoneos;
-				SWIFT_OPTIMIZATION_LEVEL = "-Owholemodule";
+				SWIFT_COMPILATION_MODE = wholemodule;
+				SWIFT_OPTIMIZATION_LEVEL = "-O";
 				VALIDATE_PRODUCT = YES;
 			};
 			name = Release;
@@ -642,7 +649,10 @@
 				DEVELOPMENT_TEAM = 53K7JS449L;
 				INFOPLIST_FILE = Snabble/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 14.0;
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
 				MODULE_NAME = ExampleApp;
 				PRODUCT_BUNDLE_IDENTIFIER = io.snabble.example.app;
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -659,7 +669,10 @@
 				DEVELOPMENT_TEAM = 53K7JS449L;
 				INFOPLIST_FILE = Snabble/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 14.0;
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
 				MODULE_NAME = ExampleApp;
 				PRODUCT_BUNDLE_IDENTIFIER = io.snabble.example.app;
 				PRODUCT_NAME = "$(TARGET_NAME)";

@@ -8,7 +8,7 @@ name: Datatrans, nameSpecified:
 body: 
 
 Datatrans iOS SDK …
-version: 2.1.0
+version: 2.2.0
 
 name: DeviceKit, nameSpecified: 
 body: Copyright (c) 2015 D…
@@ -38,7 +38,7 @@ name: Snabble, nameSpecified:
 body: MIT License
 
 Copyrig…
-version: 0.21.0
+version: 0.22.1
 
 name: SwiftBase32, nameSpecified: 
 body: The MIT License (MIT…
