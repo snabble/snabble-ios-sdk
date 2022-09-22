@@ -15,8 +15,6 @@ public protocol Widget: Decodable {
     var padding: Padding? { get }
 }
 
-public typealias SnabbleWidget = Widget
-
 public enum WidgetType: String, Decodable {
     case text
     case image
