@@ -15,16 +15,14 @@ let package = Package(
             name: "SnabbleCore",
             targets: ["SnabbleCore"]
         ),
-        
-            .library(
-                name: "SnabbleUI",
-                targets: ["SnabbleUI"]
-            ),
-             
-            .library(
-                name: "SnabbleDatatrans",
-                targets: ["SnabbleDatatrans"]
-            )
+        .library(
+            name: "SnabbleUI",
+            targets: ["SnabbleUI"]
+        ),
+        .library(
+            name: "SnabbleDatatrans",
+            targets: ["SnabbleDatatrans"]
+        )
     ],
     dependencies: [
         // Dependencies declare other packages that this package depends on.
@@ -56,32 +54,29 @@ let package = Package(
             ],
             path: "Snabble/Core"
         ),
-        
-            .target(
-                name: "SnabbleUI",
-                dependencies: [
-                    "SnabbleCore",
-                    "AutoLayout-Helper",
-                    "SDCAlertView",
-                    "DeviceKit",
-                    "Pulley",
-                    "WCAG-Colors",
-                ],
-                path: "Snabble/UI",
-                resources: [
-                    .process("Resources")
-                ]
-            ),
-        
-            .target(
-                name: "SnabbleDatatrans",
-                dependencies: [
-                    .product(name: "Datatrans", package: "ios-sdk"),
-                    "SnabbleCore",
-                    "SnabbleUI",
-                    //"ios-sdk",
-                ],
-                path: "Snabble/Datatrans"
-            )
+        .target(
+            name: "SnabbleUI",
+            dependencies: [
+                "SnabbleCore",
+                "AutoLayout-Helper",
+                "SDCAlertView",
+                "DeviceKit",
+                "Pulley",
+                "WCAG-Colors",
+            ],
+            path: "Snabble/UI",
+            resources: [
+                .process("Resources")
+            ]
+        ),
+        .target(
+            name: "SnabbleDatatrans",
+            dependencies: [
+                "SnabbleCore",
+                "SnabbleUI",
+                .product(name: "Datatrans", package: "ios-sdk"),
+            ],
+            path: "Snabble/Datatrans"
+        )
     ]
 )
