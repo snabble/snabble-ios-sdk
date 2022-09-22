@@ -268,7 +268,7 @@ final class ScanConfirmationView: UIView {
         if let embed = cartItem.scannedCode.embeddedData, product.referenceUnit?.hasDimension == true {
             quantity = embed
         }
-        self.cartItem.quantity = quantity
+        self.cartItem.setQuantity(quantity)
 
         self.priceLabel?.isHidden = false
 
@@ -418,7 +418,7 @@ final class ScanConfirmationView: UIView {
             actionSheet.addAction(UIAlertAction(title: coupon.name, style: .default) { _ in
                 let cartQuantity = self.shoppingCart.quantity(of: self.cartItem)
                 if cartQuantity > 0 {
-                    self.cartItem.quantity = 1
+                    self.cartItem.setQuantity(1)
                 }
                 self.cartItem.setManualCoupon(coupon)
                 self.showQuantity(updateTextField: true)
@@ -433,12 +433,12 @@ final class ScanConfirmationView: UIView {
     }
 
     @objc private func minusButtonTapped(_ sender: Any) {
-        self.cartItem.quantity -= 1
+        self.cartItem.setQuantity(self.cartItem.quantity - 1)
         self.showQuantity(updateTextField: true)
     }
 
     @objc private func plusButtonTapped(_ sender: Any) {
-        self.cartItem.quantity += 1
+        self.cartItem.setQuantity(self.cartItem.quantity + 1)
         self.showQuantity(updateTextField: true)
     }
 
@@ -457,7 +457,7 @@ extension ScanConfirmationView: UITextFieldDelegate {
             return false
         }
 
-        self.cartItem.quantity = qty
+        self.cartItem.setQuantity(qty)
         self.showQuantity(updateTextField: false)
 
         return true

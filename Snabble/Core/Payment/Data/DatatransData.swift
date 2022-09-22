@@ -70,7 +70,7 @@ public enum DatatransMethod: String, Codable {
 }
 
 extension RawPaymentMethod {
-    var datatransMethod: DatatransMethod? {
+    public var datatransMethod: DatatransMethod? {
         switch self {
         case .twint: return .twint
         case .postFinanceCard: return .postFinanceCard
@@ -108,7 +108,7 @@ public struct DatatransData: Codable, EncryptedPaymentData, Equatable {
         let alias: String
     }
 
-    init?(gatewayCert: Data?, method: DatatransMethod, token: DatatransPaymentMethodToken, projectId: Identifier<Project>) {
+    public init?(gatewayCert: Data?, method: DatatransMethod, token: DatatransPaymentMethodToken, projectId: Identifier<Project>) {
         let requestOrigin = DatatransOrigin(alias: token.token)
 
         guard
@@ -127,7 +127,7 @@ public struct DatatransData: Codable, EncryptedPaymentData, Equatable {
 
     public var isExpired: Bool { token.isExpired }
 
-    var expirationDate: String? { token.expirationDate }
+    public var expirationDate: String? { token.expirationDate }
 }
 
 // Usable for Credit Cards
@@ -157,7 +157,7 @@ public struct DatatransCreditCardData: Codable, EncryptedPaymentData, Equatable,
         let expiryYear: String? // 2-digit year
     }
 
-    init?(gatewayCert: Data?, brand: CreditCardBrand, token: DatatransPaymentMethodToken, projectId: Identifier<Project>) {
+    public init?(gatewayCert: Data?, brand: CreditCardBrand, token: DatatransPaymentMethodToken, projectId: Identifier<Project>) {
         let requestOrigin = DatatransCreditCardOrigin(alias: token.token,
                                                       expiryMonth: token.expirationMonth,
                                                       expiryYear: token.expirationYear)
@@ -178,5 +178,5 @@ public struct DatatransCreditCardData: Codable, EncryptedPaymentData, Equatable,
 
     public var isExpired: Bool { token.isExpired }
 
-    var expirationDate: String? { token.expirationDate }
+    public var expirationDate: String? { token.expirationDate }
 }

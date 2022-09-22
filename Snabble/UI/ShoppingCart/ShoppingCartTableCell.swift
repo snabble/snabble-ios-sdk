@@ -245,7 +245,7 @@ final class ShoppingCartTableCell: UITableViewCell {
 
         self.delegate?.track(.cartAmountChanged)
 
-        self.item?.quantity = self.quantity
+        self.item?.setQuantity(self.quantity)
         if reload {
             self.delegate?.updateQuantity(self.quantity, at: row)
         }
