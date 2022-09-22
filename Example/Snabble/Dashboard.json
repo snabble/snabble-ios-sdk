@@ -10,15 +10,7 @@
           "id": "1",
           "image": "Dashboard/image",
           "padding": {
-              "bottom": 40
-          }
-      },
-      {
-          "type": "image",
-          "id": "123",
-          "image": "SnabbleSDK/emoji-3",
-          "padding": {
-              "bottom": 10
+              "bottom": 16
           }
       },
       {
