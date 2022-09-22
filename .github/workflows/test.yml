@@ -39,10 +39,10 @@ jobs:
       #     key: ${{ runner.os }}-pods-${{ env.ImageVersion }}-${{ hashFiles('**/Podfile.lock') }}
       #     restore-keys: ${{ runner.os }}-pods-${{ env.ImageVersion }}
 
-      - name: Pods
-        run: |
-          cd Example
-          bundle exec pod install --clean-install --repo-update
+      # - name: Pods
+      #   run: |
+      #     cd Example
+      #     bundle exec pod install --clean-install --repo-update
 
       - name: Build
         run: |
