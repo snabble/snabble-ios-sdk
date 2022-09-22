@@ -1,0 +1,113 @@
+{
+  "pins" : [
+    {
+      "identity" : "autolayout-helper",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/snabble/AutoLayout-Helper.git",
+      "state" : {
+        "branch" : "main",
+        "revision" : "0e373cb4bffafd997958fff5b2785336deec2b8f"
+      }
+    },
+    {
+      "identity" : "base32",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/mattrubin/Base32.git",
+      "state" : {
+        "branch" : "1.1.2+spm",
+        "revision" : "d185e44c8b355d34d5c6c6ad502c60cba4599f69"
+      }
+    },
+    {
+      "identity" : "devicekit",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/devicekit/DeviceKit.git",
+      "state" : {
+        "branch" : "master",
+        "revision" : "20e0991f3975916ab0f6d58db84d8bc64f883537"
+      }
+    },
+    {
+      "identity" : "grdb.swift",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/groue/GRDB.swift.git",
+      "state" : {
+        "branch" : "master",
+        "revision" : "9e3eebf4c276efb8690bdeb13158bff321ae5fcf"
+      }
+    },
+    {
+      "identity" : "ios-sdk",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/datatrans/ios-sdk.git",
+      "state" : {
+        "branch" : "master",
+        "revision" : "7e3914079ced092a0a41e924cba67d8484491ef8"
+      }
+    },
+    {
+      "identity" : "keychainaccess",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/kishikawakatsumi/KeychainAccess.git",
+      "state" : {
+        "revision" : "84e546727d66f1adc5439debad16270d0fdd04e7",
+        "version" : "4.2.2"
+      }
+    },
+    {
+      "identity" : "onetimepassword",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/mattrubin/OneTimePassword.git",
+      "state" : {
+        "branch" : "develop",
+        "revision" : "c3d8989f09a72ad7b00be7a45f1a5446e5f9e19b"
+      }
+    },
+    {
+      "identity" : "pulley",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/52inc/Pulley.git",
+      "state" : {
+        "branch" : "master",
+        "revision" : "1728c7ce69857134db82ad82300772a4364d2af5"
+      }
+    },
+    {
+      "identity" : "sdcalertview",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/sberrevoets/SDCAlertView.git",
+      "state" : {
+        "branch" : "master",
+        "revision" : "904e119b81d6ac1d3330837307d5bcc46bf41d8b"
+      }
+    },
+    {
+      "identity" : "trustkit",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/datatheorem/TrustKit.git",
+      "state" : {
+        "revision" : "65d573e0e2687ea91ab0b1be377f9dd3eb1c2785",
+        "version" : "2.0.1"
+      }
+    },
+    {
+      "identity" : "wcag-colors",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/chrs1885/WCAG-Colors.git",
+      "state" : {
+        "branch" : "develop",
+        "revision" : "085adb26e4c51bd8faef1f9ddb78be97faab2be4"
+      }
+    },
+    {
+      "identity" : "zip",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/marmelroy/Zip.git",
+      "state" : {
+        "branch" : "master",
+        "revision" : "67fa55813b9e7b3b9acee9c0ae501def28746d76"
+      }
+    }
+  ],
+  "version" : 2
+}
