@@ -18,20 +18,20 @@ public enum Asset {
 
     // MARK: - Color
     public static func color(named name: String, domain: Any? = domain) -> UIColor? {
-        provider?.color(named: name, domain: domain) ?? UIColor(named: name, in: BundleToken.bundle, compatibleWith: nil)
+        provider?.color(named: name, domain: domain) ?? UIColor(named: name, in: Bundle.module, compatibleWith: nil)
     }
 
     // MARK: - Image
     public static func image(named name: String, domain: Any? = domain) -> UIImage? {
-        provider?.image(named: name, domain: domain) ?? UIImage(named: name, in: BundleToken.bundle, with: nil) ?? UIImage(systemName: name)
+        provider?.image(named: name, domain: domain) ?? UIImage(named: name, in: Bundle.module, with: nil) ?? UIImage(systemName: name)
     }
 
     public static func image(named name: String, domain: Any? = domain) -> SwiftUI.Image? {
         if let image: SwiftUI.Image = provider?.image(named: name, domain: domain) {
             return image
         }
-        if UIImage(named: name, in: BundleToken.bundle, with: nil) != nil {
-            return SwiftUI.Image(name, bundle: BundleToken.bundle)
+        if UIImage(named: name, in: Bundle.module, with: nil) != nil {
+            return SwiftUI.Image(name, bundle: Bundle.module)
         }
 
         if UIImage(systemName: name) != nil {
@@ -44,27 +44,15 @@ public enum Asset {
     // MARK: - Localized String
     public static func localizedString(forKey key: String, arguments: CVarArg..., table: String? = nil, value: String? = nil, domain: Any? = domain) -> String {
         guard let localizedString = provider?.localizedString(forKey: key, arguments: arguments, domain: domain) else {
-            let format = BundleToken.bundle.localizedString(forKey: key, value: value, table: table)
+            let format = Bundle.module.localizedString(forKey: key, value: value, table: table)
             return String.localizedStringWithFormat(format, arguments)
         }
         return localizedString
     }
 
     public static func url(forResource name: String?, withExtension ext: String?, domain: Any? = domain) -> URL? {
-        provider?.url(forResource: name, withExtension: ext, domain: domain) ?? BundleToken.bundle.url(forResource: name, withExtension: ext)
+        provider?.url(forResource: name, withExtension: ext, domain: domain) ?? Bundle.module.url(forResource: name, withExtension: ext)
     }
-}
-
-// MARK: - Bundle Token
-// swiftlint:disable:next convenience_type
-private final class BundleToken {
-  static let bundle: Bundle = {
-#if SWIFT_PACKAGE
-      return Bundle.module
-#else
-      return SnabbleSDKBundle.main
-#endif
-  }()
 }
 
 // MARK: SwiftUI - Extensions

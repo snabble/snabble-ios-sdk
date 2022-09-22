@@ -52,7 +52,10 @@ let package = Package(
                 .product(name: "GRDB", package: "GRDB.swift"),
                 "Zip",
             ],
-            path: "Core/Sources"
+            path: "Core",
+            resources: [
+                .process("Resources")
+            ]
         ),
         .target(
             name: "SnabbleUI",
@@ -64,7 +67,7 @@ let package = Package(
                 "Pulley",
                 "WCAG-Colors",
             ],
-            path: "UI/Sources",
+            path: "UI",
             resources: [
                 .process("Resources")
             ]

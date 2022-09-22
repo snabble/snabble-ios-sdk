@@ -20,7 +20,7 @@ struct PaymentDataEncrypter {
         let caName = "\(Snabble.shared.config.environment.name)-ca"
         guard
             let gatewayCert = gatewayCert,
-            let rootPath = SnabbleSDKBundle.main.path(forResource: caName, ofType: "der")
+            let rootPath = Bundle.module.path(forResource: caName, ofType: "der")
         else {
             return nil
         }
