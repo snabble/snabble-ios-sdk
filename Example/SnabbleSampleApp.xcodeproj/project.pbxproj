@@ -50,7 +50,6 @@
 		607FACD71AFB9204008FA782 /* ScannerViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScannerViewController.swift; sourceTree = "<group>"; };
 		607FACDC1AFB9204008FA782 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		607FACDF1AFB9204008FA782 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/LaunchScreen.xib; sourceTree = "<group>"; };
-		7602E11428DC61F8009B379B /* snabble-ios-sdk */ = {isa = PBXFileReference; lastKnownFileType = wrapper; name = "snabble-ios-sdk"; path = ..; sourceTree = "<group>"; };
 		7605C47428AC9794000105A8 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/Localizable.strings; sourceTree = "<group>"; };
 		7605C47628AC97B3000105A8 /* de */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = de; path = de.lproj/Localizable.strings; sourceTree = "<group>"; };
 		7605C5BE28AE4383000105A8 /* ShopsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShopsViewController.swift; sourceTree = "<group>"; };
@@ -58,6 +57,7 @@
 		7605C5C228AE44D7000105A8 /* de */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = de; path = de.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		76151FDB28D2FC4800C08D97 /* SnabbleSampleApp.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = SnabbleSampleApp.entitlements; sourceTree = "<group>"; };
 		7615200028D3559E00C08D97 /* Acknowledgements.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = Acknowledgements.html; sourceTree = "<group>"; };
+		763886C828DC8444007C3429 /* snabble-ios-sdk */ = {isa = PBXFileReference; lastKnownFileType = wrapper; name = "snabble-ios-sdk"; path = ..; sourceTree = "<group>"; };
 		76AD21B028D42513003D865A /* privacy.html */ = {isa = PBXFileReference; lastKnownFileType = text.html; path = privacy.html; sourceTree = "<group>"; };
 		76AD21B228D4331A003D865A /* terms.html */ = {isa = PBXFileReference; lastKnownFileType = text.html; path = terms.html; sourceTree = "<group>"; };
 		76C7B74928BFA10700D94F4F /* DashboardViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DashboardViewController.swift; sourceTree = "<group>"; };
@@ -99,7 +99,7 @@
 			isa = PBXGroup;
 			children = (
 				76151FDB28D2FC4800C08D97 /* SnabbleSampleApp.entitlements */,
-				7602E11428DC61F8009B379B /* snabble-ios-sdk */,
+				763886C828DC8444007C3429 /* snabble-ios-sdk */,
 				607FACD21AFB9204008FA782 /* Sources */,
 				E131CF1828A3D45C00A844E1 /* SnabbleSampleAppTests */,
 				607FACD11AFB9204008FA782 /* Products */,
