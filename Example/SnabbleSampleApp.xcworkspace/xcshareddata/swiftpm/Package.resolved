@@ -23,8 +23,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/devicekit/DeviceKit.git",
       "state" : {
-        "branch" : "master",
-        "revision" : "20e0991f3975916ab0f6d58db84d8bc64f883537"
+        "revision" : "20e0991f3975916ab0f6d58db84d8bc64f883537",
+        "version" : "4.7.0"
       }
     },
     {
@@ -32,8 +32,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/groue/GRDB.swift.git",
       "state" : {
-        "branch" : "master",
-        "revision" : "9e3eebf4c276efb8690bdeb13158bff321ae5fcf"
+        "revision" : "0ac435744a4c67c4ec23a4a671c0d53ce1fee7c6",
+        "version" : "6.0.0"
       }
     },
     {
@@ -41,8 +41,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/datatrans/ios-sdk.git",
       "state" : {
-        "branch" : "master",
-        "revision" : "7e3914079ced092a0a41e924cba67d8484491ef8"
+        "revision" : "7e3914079ced092a0a41e924cba67d8484491ef8",
+        "version" : "2.2.0"
       }
     },
     {
@@ -95,8 +95,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/chrs1885/WCAG-Colors.git",
       "state" : {
-        "branch" : "develop",
-        "revision" : "085adb26e4c51bd8faef1f9ddb78be97faab2be4"
+        "revision" : "b7f44fad81e8e17da7e6201265e1288e088e57f3",
+        "version" : "1.0.0"
       }
     },
     {
@@ -104,8 +104,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/marmelroy/Zip.git",
       "state" : {
-        "branch" : "master",
-        "revision" : "67fa55813b9e7b3b9acee9c0ae501def28746d76"
+        "revision" : "67fa55813b9e7b3b9acee9c0ae501def28746d76",
+        "version" : "2.1.2"
       }
     }
   ],

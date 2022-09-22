@@ -32,12 +32,12 @@ jobs:
           bundle config path vendor/bundle
           bundle install --jobs 4 --retry 3
 
-      - name: Pod Cache
-        uses: actions/cache@v3
-        with:
-          path: Example/Pods
-          key: ${{ runner.os }}-pods-${{ env.ImageVersion }}-${{ hashFiles('**/Podfile.lock') }}
-          restore-keys: ${{ runner.os }}-pods-${{ env.ImageVersion }}
+      # - name: Pod Cache
+      #   uses: actions/cache@v3
+      #   with:
+      #     path: Example/Pods
+      #     key: ${{ runner.os }}-pods-${{ env.ImageVersion }}-${{ hashFiles('**/Podfile.lock') }}
+      #     restore-keys: ${{ runner.os }}-pods-${{ env.ImageVersion }}
 
       - name: Pods
         run: |
