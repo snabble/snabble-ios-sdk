@@ -4,23 +4,23 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [0.22.1] - 2022-09-22
-### Changed
-* update repository reference in podspec
-
 ## [0.23.0] - 2022-09-22
 ### Added
 * Package.swift
 * Separate Swift packages (spm) for SnabbleCore, SnabbleUI and SnabbleDatatrans
 
 ### Changed
-* Repo name is now snabble-ios-sdk
+* Repo name is now `snabble-ios-sdk`
 * `SwiftBase32` replaced with `Base32`
-* Exammple App `SnabbleSampleApp` uses the new Swift package
-* All SDK resources (language files and images) moved from Snabble/UI to Snabble/UI/Resources
+* Example App `SnabbleSampleApp` uses Swift Package Manager
+* All SDK resources (language files and images) moved from Snabble/UI to UI/Resources
 
 ### Removed
 * All CocoaPods related stuff
+
+## [0.22.1] - 2022-09-22
+### Changed
+* update repository reference in podspec
 
 ## [0.22.0] - 2022-09-21
 ### Added
