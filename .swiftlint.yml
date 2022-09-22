@@ -1,10 +1,8 @@
 included:
- - Snabble
+ - UI
+ - Core
+ - Datatrans
  - Example
-
-excluded:
- - Example/Pods
-
 
 disabled_rules:
  - todo
