@@ -26,6 +26,10 @@
 		E131CF1A28A3D45C00A844E1 /* SnabbleSampleAppTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E131CF1928A3D45C00A844E1 /* SnabbleSampleAppTests.swift */; };
 		E161B0EE28B76DD9005061C4 /* Onboarding.json in Resources */ = {isa = PBXBuildFile; fileRef = E161B0EB28B76357005061C4 /* Onboarding.json */; };
 		E161B0F228B78F89005061C4 /* LoadJSON.swift in Sources */ = {isa = PBXBuildFile; fileRef = E161B0F128B78F89005061C4 /* LoadJSON.swift */; };
+		E176B3E928DDD33D00547F38 /* SnabbleCore in Frameworks */ = {isa = PBXBuildFile; productRef = E176B3E828DDD33D00547F38 /* SnabbleCore */; };
+		E176B3EB28DDD33D00547F38 /* SnabbleDatatrans in Frameworks */ = {isa = PBXBuildFile; productRef = E176B3EA28DDD33D00547F38 /* SnabbleDatatrans */; };
+		E176B3ED28DDD33D00547F38 /* SnabbleSDK in Frameworks */ = {isa = PBXBuildFile; productRef = E176B3EC28DDD33D00547F38 /* SnabbleSDK */; };
+		E176B3EF28DDD33D00547F38 /* SnabbleUI in Frameworks */ = {isa = PBXBuildFile; productRef = E176B3EE28DDD33D00547F38 /* SnabbleUI */; };
 		E1786CBF28BF351400CB7AF0 /* Dashboard.json in Resources */ = {isa = PBXBuildFile; fileRef = E1786CBE28BF351400CB7AF0 /* Dashboard.json */; };
 		E19B0FC228DC902D00C87E8E /* SnabbleUI in Frameworks */ = {isa = PBXBuildFile; productRef = E19B0FC128DC902D00C87E8E /* SnabbleUI */; };
 		E1BEF67128B79B4900549104 /* imprint.html in Resources */ = {isa = PBXBuildFile; fileRef = E1BEF67028B79B4900549104 /* imprint.html */; };
@@ -80,10 +84,14 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				E176B3ED28DDD33D00547F38 /* SnabbleSDK in Frameworks */,
 				760F128428DC7E8F00D09D35 /* SnabbleCore in Frameworks */,
+				E176B3EB28DDD33D00547F38 /* SnabbleDatatrans in Frameworks */,
 				760F128628DC7E8F00D09D35 /* SnabbleDatatrans in Frameworks */,
 				E19B0FC228DC902D00C87E8E /* SnabbleUI in Frameworks */,
 				E10C610828DDD1CC00928159 /* SnabbleSDK in Frameworks */,
+				E176B3EF28DDD33D00547F38 /* SnabbleUI in Frameworks */,
+				E176B3E928DDD33D00547F38 /* SnabbleCore in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -234,6 +242,10 @@
 				760F128528DC7E8F00D09D35 /* SnabbleDatatrans */,
 				E19B0FC128DC902D00C87E8E /* SnabbleUI */,
 				E10C610728DDD1CC00928159 /* SnabbleSDK */,
+				E176B3E828DDD33D00547F38 /* SnabbleCore */,
+				E176B3EA28DDD33D00547F38 /* SnabbleDatatrans */,
+				E176B3EC28DDD33D00547F38 /* SnabbleSDK */,
+				E176B3EE28DDD33D00547F38 /* SnabbleUI */,
 			);
 			productName = Snabble;
 			productReference = 607FACD01AFB9204008FA782 /* SnabbleSampleApp.app */;
@@ -292,6 +304,9 @@
 				de,
 			);
 			mainGroup = 607FACC71AFB9204008FA782;
+			packageReferences = (
+				E176B3E728DDD33D00547F38 /* XCRemoteSwiftPackageReference "snabble-ios-sdk" */,
+			);
 			productRefGroup = 607FACD11AFB9204008FA782 /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
@@ -676,6 +691,17 @@
 		};
 /* End XCConfigurationList section */
 
+/* Begin XCRemoteSwiftPackageReference section */
+		E176B3E728DDD33D00547F38 /* XCRemoteSwiftPackageReference "snabble-ios-sdk" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/snabble/snabble-ios-sdk";
+			requirement = {
+				branch = "spm-switch";
+				kind = branch;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
 /* Begin XCSwiftPackageProductDependency section */
 		760F128328DC7E8F00D09D35 /* SnabbleCore */ = {
 			isa = XCSwiftPackageProductDependency;
@@ -688,6 +714,26 @@
 		E10C610728DDD1CC00928159 /* SnabbleSDK */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = SnabbleSDK;
+		};
+		E176B3E828DDD33D00547F38 /* SnabbleCore */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = E176B3E728DDD33D00547F38 /* XCRemoteSwiftPackageReference "snabble-ios-sdk" */;
+			productName = SnabbleCore;
+		};
+		E176B3EA28DDD33D00547F38 /* SnabbleDatatrans */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = E176B3E728DDD33D00547F38 /* XCRemoteSwiftPackageReference "snabble-ios-sdk" */;
+			productName = SnabbleDatatrans;
+		};
+		E176B3EC28DDD33D00547F38 /* SnabbleSDK */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = E176B3E728DDD33D00547F38 /* XCRemoteSwiftPackageReference "snabble-ios-sdk" */;
+			productName = SnabbleSDK;
+		};
+		E176B3EE28DDD33D00547F38 /* SnabbleUI */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = E176B3E728DDD33D00547F38 /* XCRemoteSwiftPackageReference "snabble-ios-sdk" */;
+			productName = SnabbleUI;
 		};
 		E19B0FC128DC902D00C87E8E /* SnabbleUI */ = {
 			isa = XCSwiftPackageProductDependency;
