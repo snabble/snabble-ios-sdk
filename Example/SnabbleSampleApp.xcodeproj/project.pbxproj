@@ -21,6 +21,7 @@
 		76AD21B328D4331A003D865A /* terms.html in Resources */ = {isa = PBXBuildFile; fileRef = 76AD21B228D4331A003D865A /* terms.html */; };
 		76C7B74A28BFA10700D94F4F /* DashboardViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 76C7B74928BFA10700D94F4F /* DashboardViewController.swift */; };
 		76C7B79028C1ACD900D94F4F /* Profile.json in Resources */ = {isa = PBXBuildFile; fileRef = 76C7B78F28C1ACD900D94F4F /* Profile.json */; };
+		E10C610828DDD1CC00928159 /* SnabbleSDK in Frameworks */ = {isa = PBXBuildFile; productRef = E10C610728DDD1CC00928159 /* SnabbleSDK */; };
 		E127DB6F28C74A64005A7416 /* SnabbleConfig.swift in Sources */ = {isa = PBXBuildFile; fileRef = E127DB6E28C74A64005A7416 /* SnabbleConfig.swift */; };
 		E131CF1A28A3D45C00A844E1 /* SnabbleSampleAppTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E131CF1928A3D45C00A844E1 /* SnabbleSampleAppTests.swift */; };
 		E161B0EE28B76DD9005061C4 /* Onboarding.json in Resources */ = {isa = PBXBuildFile; fileRef = E161B0EB28B76357005061C4 /* Onboarding.json */; };
@@ -82,6 +83,7 @@
 				760F128428DC7E8F00D09D35 /* SnabbleCore in Frameworks */,
 				760F128628DC7E8F00D09D35 /* SnabbleDatatrans in Frameworks */,
 				E19B0FC228DC902D00C87E8E /* SnabbleUI in Frameworks */,
+				E10C610828DDD1CC00928159 /* SnabbleSDK in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -231,6 +233,7 @@
 				760F128328DC7E8F00D09D35 /* SnabbleCore */,
 				760F128528DC7E8F00D09D35 /* SnabbleDatatrans */,
 				E19B0FC128DC902D00C87E8E /* SnabbleUI */,
+				E10C610728DDD1CC00928159 /* SnabbleSDK */,
 			);
 			productName = Snabble;
 			productReference = 607FACD01AFB9204008FA782 /* SnabbleSampleApp.app */;
@@ -681,6 +684,10 @@
 		760F128528DC7E8F00D09D35 /* SnabbleDatatrans */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = SnabbleDatatrans;
+		};
+		E10C610728DDD1CC00928159 /* SnabbleSDK */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = SnabbleSDK;
 		};
 		E19B0FC128DC902D00C87E8E /* SnabbleUI */ = {
 			isa = XCSwiftPackageProductDependency;
