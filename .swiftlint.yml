@@ -1,12 +1,7 @@
 included:
- - UI
- - Core
- - Datatrans
-
- excluded:
- - Core/Tests
- - UI/Tests
- - Datatrans/Tests
+ - UI/Sources
+ - Core/Sources
+ - Datatrans/Sources
 
 disabled_rules:
  - todo
