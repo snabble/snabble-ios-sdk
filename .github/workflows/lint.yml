@@ -14,24 +14,33 @@ name: Lint
 jobs:
   SDK:
     name: SDK
-    runs-on: ubuntu-latest
+    runs-on: macos-12
     steps:
       - name: Checkout
         uses: actions/checkout@v3
 
-      - name: GitHub Action for SwiftLint
-        uses: sinoru/actions-swiftlint@v6
-        with:
-          swiftlint-version: '0.49.1'
+      - name: Install Mint
+        run: brew install mint
+
+      - name: Bootstrap
+        run: mint bootstrap
+
+      - name: Link
+        run: mint run SwiftLint swiftlint
   Sample:
     name: Sample
-    runs-on: ubuntu-latest
+    runs-on: macos-12
     steps:
       - name: Checkout
         uses: actions/checkout@v3
 
-      - name: GitHub Action for SwiftLint
-        uses: sinoru/actions-swiftlint@v6
-        with:
-          swiftlint-version: '0.49.1'
-          working-directory: Example
+      - name: Install Mint
+        run: brew install mint
+
+      - name: Bootstrap
+        run: mint bootstrap
+
+      - name: Link
+        run: |
+        cd Example
+        mint run SwiftLint swiftlint
