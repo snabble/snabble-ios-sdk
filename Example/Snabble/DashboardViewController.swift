@@ -7,10 +7,11 @@
 //
 
 import Foundation
-import SnabbleSDK
+import SnabbleUI
 import CoreLocation
+import UIKit
 
-final class DashboardViewController: SnabbleSDK.DynamicViewController {
+final class DashboardViewController: DynamicViewController {
     
     override init(viewModel: DynamicViewModel) {
         super.init(viewModel: viewModel)
@@ -27,7 +28,7 @@ final class DashboardViewController: SnabbleSDK.DynamicViewController {
     }
 }
 
-extension DashboardViewController: SnabbleSDK.DynamicViewControllerDelegate {
+extension DashboardViewController: DynamicViewControllerDelegate {
     func dynamicStackViewController(_ viewController: DynamicViewController, tappedWidget widget: Widget, userInfo: [String: Any]?) {
         print(widget)
         switch widget.type {

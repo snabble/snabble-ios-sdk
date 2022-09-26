@@ -10,7 +10,7 @@
           "id": "1",
           "image": "Dashboard/image",
           "padding": {
-              "bottom": 40
+              "bottom": 16
           }
       },
       {

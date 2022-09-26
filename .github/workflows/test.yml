@@ -9,8 +9,27 @@ env:
 
 name: Test
 jobs:
-  build:
-    name: Test
+  sdk:
+    name: SDK
+    runs-on: macos-12
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Set ImageVersion environment variable
+        run: echo "ImageVersion=$ImageVersion"  >> $GITHUB_ENV
+
+      - name: SPM Cache
+        uses: actions/cache@v3
+        with:
+          path: ~/Library/Caches/org.swift.swiftpm
+          key: ${{ runner.os }}-spm-${{ hashFiles('**/Package.resolved') }}
+          restore-keys: ${{ runner.os }}-spm-${{ env.ImageVersion }}
+
+      - name: Test
+        run: xcodebuild test -scheme SnabbleSDK-Package -destination 'platform=iOS Simulator,name=iPhone 14' -sdk iphonesimulator
+  sample:
+    name: Sample
     runs-on: macos-12
     steps:
       - name: Checkout
@@ -26,25 +45,20 @@ jobs:
           key: ${{ runner.os }}-gems-${{ env.ImageVersion }}-${{ hashFiles('**/Gemfile.lock') }}
           restore-keys: ${{ runner.os }}-gems-${{ env.ImageVersion }}
       
-      - name: Bundler
+      - name: Bundle Install
         run: |
           cd Example
           bundle config path vendor/bundle
           bundle install --jobs 4 --retry 3
 
-      - name: Pod Cache
+      - name: SPM Cache
         uses: actions/cache@v3
         with:
-          path: Example/Pods
-          key: ${{ runner.os }}-pods-${{ env.ImageVersion }}-${{ hashFiles('**/Podfile.lock') }}
-          restore-keys: ${{ runner.os }}-pods-${{ env.ImageVersion }}
+          path: ~/Library/Caches/org.swift.swiftpm
+          key: ${{ runner.os }}-spm-${{ hashFiles('**/Package.resolved') }}
+          restore-keys: ${{ runner.os }}-spm-${{ env.ImageVersion }}
 
-      - name: Pods
-        run: |
-          cd Example
-          bundle exec pod install --clean-install --repo-update
-
-      - name: Build
+      - name: Test
         run: |
           cd Example
           bundle exec fastlane test

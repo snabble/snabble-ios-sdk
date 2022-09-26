@@ -19,9 +19,9 @@ platform :ios do
   desc "Description of what the lane does"
   lane :test do
     run_tests(
-      device: "iPhone 13",
+      device: "iPhone 14",
       scheme: "SnabbleSampleApp",
-      clean: false,
+      clean: true,
       skip_build: true,
       configuration: "Debug"
     )

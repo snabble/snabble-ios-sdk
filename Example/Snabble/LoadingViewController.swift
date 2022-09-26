@@ -8,7 +8,6 @@
 
 import Foundation
 import UIKit
-import SnabbleSDK
 
 class LoadingViewController: UIViewController {
     private(set) weak var activityIndicatorView: UIActivityIndicatorView?

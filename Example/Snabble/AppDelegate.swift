@@ -6,14 +6,15 @@
 //
 
 import UIKit
-import SnabbleSDK
+import SnabbleCore
+import SnabbleUI
 
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate {
 
     var window: UIWindow?
 
-    var shopsViewController: ShopsViewController?
+    var shopsViewController: AppShopsViewController?
     var dashboardViewController: DynamicViewController?
     
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
@@ -40,7 +41,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             }
 
             // register the project with the UI components
-            SnabbleUI.register(project)
+            SnabbleCI.register(project)
             snabble.checkInManager.delegate = self
             snabble.checkInManager.shop = project.shops.first
 
@@ -53,7 +54,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     }
 
     private func transitionView(with shops: [Shop]) {
-        let shopsViewController = ShopsViewController(shops: shops)
+        let shopsViewController = AppShopsViewController(shops: shops)
         shopsViewController.viewModel.shop = Snabble.shared.checkInManager.shop
         shopsViewController.delegate = self
         self.shopsViewController = shopsViewController
@@ -66,7 +67,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         let dashboardViewController = DashboardViewController(viewModel: viewModel)
         self.dashboardViewController = dashboardViewController
 
-        let scannerViewController = ScannerViewController(shop: shops.first!)
+        let scannerViewController = AppScannerViewController(shop: shops.first!)
         let scannerNavigationViewController = UINavigationController(rootViewController: scannerViewController)
 
         let tabBarController = UITabBarController()
@@ -141,7 +142,7 @@ extension AppDelegate: CheckInManagerDelegate {
 }
 
 extension AppDelegate: ShopsViewControllerDelegate {
-    func shopsViewController(_ viewController: SnabbleSDK.ShopsViewController, didSelectActionOnShop shop: ShopProviding) {
+    func shopsViewController(_ viewController: ShopsViewController, didSelectActionOnShop shop: ShopProviding) {
         print(#function, shop)
     }
 }

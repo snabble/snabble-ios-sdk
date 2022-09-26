@@ -7,9 +7,9 @@
 //
 
 import Foundation
-import SnabbleSDK
+import SnabbleCore
 
-extension SnabbleSDK.Config {
+extension Config {
     static var appId: String {
         "snabble-sdk-demo-app-oguh3x"
     }

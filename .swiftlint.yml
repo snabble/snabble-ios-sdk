@@ -1,10 +1,7 @@
 included:
- - Snabble
- - Example
-
-excluded:
- - Example/Pods
-
+ - UI/Sources
+ - Core/Sources
+ - Datatrans/Sources
 
 disabled_rules:
  - todo

@@ -6,10 +6,12 @@
 //
 
 import UIKit
-import SnabbleSDK
+
+import SnabbleCore
+import SnabbleUI
 import SwiftUI
 
-class ScannerViewController: UIViewController {
+class AppScannerViewController: UIViewController {
     
     private var buttonContainer = UIStackView()
     private var spinner = UIActivityIndicatorView()
@@ -68,7 +70,7 @@ class ScannerViewController: UIViewController {
 
     @objc private func scannerButtonTapped(_ sender: Any) {
         let detector = BuiltinBarcodeDetector(detectorArea: .rectangle)
-        let scannerViewController = SnabbleSDK.ScannerViewController(shoppingCart, shop, detector)
+        let scannerViewController = ScannerViewController(shoppingCart, shop, detector)
         scannerViewController.scannerDelegate = self
         scannerViewController.shoppingCartDelegate = self
         scannerViewController.navigationItem.leftBarButtonItem = nil
@@ -82,13 +84,13 @@ class ScannerViewController: UIViewController {
     }
 }
 
-extension ScannerViewController: SnabbleSDK.ScannerDelegate {
+extension AppScannerViewController: ScannerDelegate {
     func scanMessage(for project: Project, _ shop: Shop, _ product: Product) -> ScanMessage? {
         return nil
     }
 }
 
-extension ScannerViewController: ShoppingCartDelegate {
+extension AppScannerViewController: ShoppingCartDelegate {
     func gotoPayment(
         _ method: RawPaymentMethod,
         _ detail: PaymentMethodDetail?,
@@ -124,14 +126,14 @@ extension ScannerViewController: ShoppingCartDelegate {
 }
 
 /// implement this method to track an event generated from the SDK in your analytics system
-extension ScannerViewController: AnalyticsDelegate {
+extension AppScannerViewController: AnalyticsDelegate {
     func track(_ event: AnalyticsEvent) {
         NSLog("track: \(event)")
     }
 }
 
 /// implement these methods to show warning/info messages on-screen, e.g. as toasts
-extension ScannerViewController: MessageDelegate {
+extension AppScannerViewController: MessageDelegate {
     func showInfoMessage(_ message: String) {
         NSLog("warning: \(message)")
     }
@@ -141,7 +143,7 @@ extension ScannerViewController: MessageDelegate {
     }
 }
 
-extension ScannerViewController: PaymentDelegate {
+extension AppScannerViewController: PaymentDelegate {
     func checkoutFinished(_ cart: ShoppingCart, _ process: CheckoutProcess?) {
         self.navigationController?.popViewController(animated: true)
     }

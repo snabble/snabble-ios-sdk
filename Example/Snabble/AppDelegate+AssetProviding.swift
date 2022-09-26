@@ -7,7 +7,7 @@
 //
 
 import Foundation
-import SnabbleSDK
+import SnabbleUI
 import SwiftUI
 import UIKit
 

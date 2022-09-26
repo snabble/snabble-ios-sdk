@@ -5,13 +5,14 @@
 //  Copyright © 2021 snabble. All rights reserved.
 //
 
-import Foundation
-import SnabbleSDK
+import UIKit
 import SwiftUI
+import SnabbleUI
 
 final class AccountViewController: DynamicViewController {
     override init(viewModel: DynamicViewModel) {
         super.init(viewModel: viewModel)
+        delegate = self
 
         title = NSLocalizedString("profile", comment: "")
         tabBarItem.image = UIImage(named: "Navigation/TabBar/profile-off")
@@ -21,15 +22,10 @@ final class AccountViewController: DynamicViewController {
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
-
-    override func viewDidLoad() {
-        super.viewDidLoad()
-        delegate = self
-    }
 }
 
 extension AccountViewController: DynamicViewControllerDelegate {
-    func dynamicStackViewController(_ viewController: DynamicViewController, tappedWidget widget: SnabbleSDK.Widget, userInfo: [String: Any]?) {
+    func dynamicStackViewController(_ viewController: DynamicViewController, tappedWidget widget: SnabbleUI.Widget, userInfo: [String: Any]?) {
         print(#function)
         print("widget:", widget.id)
         print("userInfo:", userInfo ?? [:])
@@ -50,11 +46,10 @@ extension AccountViewController: DynamicViewControllerDelegate {
         case "Profile.lastPurchases", "Profile.paymentMethods", "Profile.customerCard":
             let viewController = UIHostingController(rootView: PlaceholderView(title: Asset.localizedString(forKey: widget.id)))
             navigationController?.pushViewController(viewController, animated: true)
-
         default:
             break
         }
-    }    
+    }
 }
 
 private struct PlaceholderView: View {

@@ -2,7 +2,7 @@ phrase:
   project_id: 3e43b3f90cf19e83c7d85652df5766ca
   pull:
     targets:
-    - file: ./Snabble/UI/<locale_name>.lproj/Localizable.strings
+    - file: ./UI/Sources/Resources/<locale_name>.lproj/Localizable.strings
       params:
         file_format: strings
         encoding: "UTF-8"
@@ -11,7 +11,7 @@ phrase:
         format_options:
             convert_placeholder: true
             include_pluralized_keys: false
-    - file: ./Snabble/UI/<locale_name>.lproj/Localizable.stringsdict
+    - file: ./UI/Sources/Resources/<locale_name>.lproj/Localizable.stringsdict
       params:
         file_format: stringsdict
         encoding: "UTF-8"
