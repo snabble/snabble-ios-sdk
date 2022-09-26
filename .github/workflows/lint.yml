@@ -20,21 +20,10 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v3
 
-      - name: Cache Mint packages
-        uses: actions/cache@v3
+      - name: GitHub Action for SwiftLint
+        uses: sinoru/actions-swiftlint@v6
         with:
-          path: ${{ env.MINT_PATH }}
-          key: ${{ runner.os }}-mint-${{ hashFiles('**/Mintfile') }}
-          restore-keys: ${{ runner.os }}-mint-
-
-      - name: Install Mint
-        run: brew install mint
-
-      - name: Bootstrap
-        run: mint bootstrap
-
-      - name: Lint
-        run: mint run SwiftLint swiftlint
+          swiftlint-version: '0.49.1'
   Sample:
     name: Sample
     runs-on: macos-12
