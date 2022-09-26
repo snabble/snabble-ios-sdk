@@ -1,0 +1,413 @@
+{
+    "gatewayCertificates": [
+        {
+            "value": "MIIE5jCCAs6gAwIBAgIJAJeyxJBBLTrkMA0GCSqGSIb3DQEBCwUAMFQxCzAJBgNVBAYTAkRFMQowCAYDVQQIDAE+MQ0wCwYDVQQHDARCb25uMRUwEwYDVQQKDAxzbmFiYmxlIEdtYkgxEzARBgNVBAMMCnNuYWJibGUuaW8wHhcNMTgxMTE0MTY1NjA2WhcNMjAxMTEzMTY1NjA2WjARMQ8wDQYDVQQDDAZjbGllbnQwggIiMA0GCSqGSIb3DQEBAQUAA4ICDwAwggIKAoICAQDMTWWjXiOf15bNrXTiSm7zS6VzYDNWRwj1/J/AtxFmzoae4CnO1BMAmi4gLykUJIWMeGHtDMf+PuUPamZgO60h2M6Qivi3Yn6haOMQH7ae3WcH9i/2h4IGnbhlctwd1csO1nw7sQcaRdY3JC05bMiwfsycV3Sb2SzFXHbY6VPwIXuKVfW6EqsWGbpbGHHTesn4GUHrHWNThmpxVL5HuWWwHbXo8MUxa9D06F29N/hKWxTAweNZFJ7rFtjWiwkNGEp0Az/XOkeHWEwhWz+vNjeXL3Tgg58AsOL/+8VPMnQKVCsDjM/WiqCPeoXZrtirTYz84KPaAUIQlva5AwFsrzCkpbu9T3eZhO307CtKyrvtpciGkY/d7oTXuZXkTjtL7Sy71HcSEFShzOT7GjreuyasREvRxtK/k+DSGbQlO3Nhk2Y1Cy3DIPgHgUvm4Kfz6Rv6k32P/e+oko7qyTB7jRv5TFrvx8RrAMqyKkhGHyM3x8fCoC9Tsk5VT1l+Otz5h4F0wngSz84glpaJaJD9FCgG6lxJpvN77FLjBLdF6pXpK6q8tDZsv9HSFG/R2wpG/2INw53h7rjeyTzuyMc9grkIHzjjW+AFVFFf1wEaWjdu0/itFZhnossJZ4mYdyHEMHVDa7uC7yvJkG5Mc76V4uTBYFAHwdzsYb0E1TVHTxmpTwIDAQABMA0GCSqGSIb3DQEBCwUAA4ICAQBcPeiSLhE+rHxNeDEdHiQDrYlIlGrcxEC0xd/ytqnES8jvlwB+aQxUatCIVWOcvZB4PQlW0PYpqEJrpREOouvRXWxOirezrjbfBhJlqXMi556fOORomFXYFiskrIHCTJpjDDDeEP11vmhEGSZygUjLcXVROdYYBrY62xX9tgYOs+GggTh5pz5qVVLdLwpAkQVcNZ1aTXquqqvP57j9Repoqcunpmy0ouacpfXQb7JW9LiVBktDZWhIVTKmxvdZ1Q7NPrxuukBZjYGraOJWBzMGYemxmiicHpd28rIkKpnBVqV/RJJ4Cm6yajNA+FDfXlsnsp/QsVGzKkUmwlAGGIAP8Qiq5Q7ofLYffe+se7AXNThQAgtyUFNxZEHtF2WWAFW/mWPtJTlhi8fMFS6mmu0usrSKlJImOvEp2LD8cPd+h1MRqSxgIYJ50cNYmaXaDeMEWZ+f+fcjufw/jAzY+3mJMNgPx2Rcj0SpR7oRU4uyvQ+nU98ZkFgAMS4tBspD2Gt7WotOAYzkOEExsJLHnX8oTiRnNt3y3RiPeRxuiwEUVBpOZ6Eil8A1ORiGsCiUkochXOuqJwLy072QtdpMc+kc1fufQsrEOnTEUOnWSewgtYxyCGPV8o8FeYrwnlbcspiu+/RUxKX0NEGgcFVunpLBE3SNdsYP4c/hPoNSzRdsZQ==",
+            "validUntil": "2020-11-13T00:00:00Z"
+        }
+    ],
+    "links": {
+        "appUser": {
+            "href": "/apps/users/{appUserID}"
+        },
+        "appUserOrders": {
+            "href": "/apps/users/{appUserID}/orders"
+        },
+        "clientOrders": {
+            "href": "/clients/{clientID}/orders"
+        },
+        "createAppUser": {
+            "href": "/apps/test-app-xetha3/users"
+        },
+        "self": {
+            "href": "/metadata/app/test-app-xetha3/ios/0.0"
+        },
+        "telecashPreauth": {
+            "href": "/payment/telecash/testing/preAuth/{orderID}"
+        },
+        "telecashSecret": {
+            "href": "/payment/telecash/testing/secret"
+        }
+    },
+    "metadata": {
+        "cortexDecoderCustomerID": "SNA102820190001",
+        "cortexDecoderLicenseKey": "QphTZbVL9YBI7MGKUfhv3hfngy/F17ptVBpblfDsOlXIhKMvp7QLYoSO9qDslUp4grDRdUpB9n8UDhA/j7i5a5wBBOhP/jDAxgIqeyw8ggZjkVNDeXvTm1XEMgZg5qOZ8YOshSDdGW/vn9xvAG1LIKvz9Ehj7y9WGsEfEuyp1sWKnuJ7y1qchJUphhmO+GTfBGHXFLg4XlMXd6uOCZJ9XzGJSXxrKUX6erSI8bFNcF6MzNlLYVKDFNfiC1MR8m9wRVuElrR3Y4jlv94PCEKvogVfVDxyEF5EhfnbaqjZT3Xh2q/r4E6YTjEjjIXeCPiNkxk1UxGaEGmLpmxEjNmAnItPsF7rX7XnnqsGqBE/GUpeGZgO3eJ7ubFtgsysfTxo0iGF6P1fEa2IH4/CaK/c0L/1svH36aUf57mwzzWurS+4U8mRoqVZ6hhdxKmB5R7qHv+GlUGhAzS3/TKAeIiUQTwyXjxONGOW/WCyUzJcbqhQNgtJDhcR39P+X41WOc5FJ17w12qnM2D4GSqJu95qwltmoPLexC4MF05Id4DqMV0=",
+        "kill": false
+    },
+    "projects": [
+        {
+            "codeTemplates": {
+                "default": "{code:*}",
+                "ean13_instore": "2{code:5}{_}{embed:5}{ec}",
+                "ean13_instore_chk": "2{code:5}{i}{embed:5}{ec}",
+                "ean14_code128": "01{code:ean14}"
+            },
+            "currency": "EUR",
+            "customerCards": {
+                "accepted": [
+                    "knauber"
+                ]
+            },
+            "decimalDigits": 2,
+            "enableCheckout": true,
+            "encodedCodes": {
+                "prefix": "",
+                "separator": "\n",
+                "suffix": "",
+                "maxCodes": 100
+            },
+            "id": "test-ieme8a",
+            "links": {
+                "appEvents": {
+                    "href": "/test-ieme8a/events"
+                },
+                "appdb": {
+                    "href": "/test-ieme8a/appdb"
+                },
+                "assetsManifest": {
+                    "href": "/test-ieme8a/assets/manifest.json"
+                },
+                "bundlesForSku": {
+                    "href": "/test-ieme8a/products/bundlesForSku/{bundledSku}"
+                },
+                "checkoutInfo": {
+                    "href": "/test-ieme8a/checkout/info"
+                },
+                "news": {
+                    "href": "https://snabble.io/demodata/news.json"
+                },
+                "offerCategories": {
+                    "href": "https://snabble.io/demodata/offers.json"
+                },
+                "productByCode": {
+                    "href": "/test-ieme8a/products/code/{code}"
+                },
+                "productBySku": {
+                    "href": "/test-ieme8a/products/sku/{sku}"
+                },
+                "productByWeighItemId": {
+                    "href": "/test-ieme8a/products/weighItemId/{id}"
+                },
+                "productsBySku": {
+                    "href": "/test-ieme8a/products/search/bySkus"
+                },
+                "resolvedProductBySku": {
+                    "href": "/test-ieme8a/resolvedProducts/sku/{sku}"
+                },
+                "resolvedProductLookUp": {
+                    "href": "/test-ieme8a/resolvedProducts/lookUp"
+                },
+                "self": {
+                    "href": "/metadata/project/test-ieme8a"
+                },
+                "shops": {
+                    "href": "/test-ieme8a/shops"
+                },
+                "tokens": {
+                    "href": "/test-ieme8a/tokens"
+                }
+            },
+            "locale": "de_DE",
+            "name": "Test Projekt",
+            "paymentMethods": [
+                "encodedCodes",
+                "qrCodeOffline",
+                "encodedCodesCSV",
+                "deDirectDebit",
+                "creditCardMastercard",
+                "creditCardAmericanExpress",
+                "creditCardVisa"
+            ],
+            "priceOverrideCodes": [],
+            "pricePrefixes": [
+                "26"
+            ],
+            "qrCodeOffline": {
+                "prefix": "",
+                "separator": "\n",
+                "suffix": "",
+                "maxCodes": 100,
+                "format": "simple"
+            },
+            "roundingMode": "up",
+            "scanFormats": [
+                "ean8",
+                "ean13",
+                "code128"
+            ],
+            "searchableTemplates": [
+                "default",
+                "ean14_code128"
+            ],
+            "shops": [
+                {
+                    "city": "Bonnn",
+                    "country": "Deutschland",
+                    "countryCode": "deu",
+                    "email": "info@snabble.io",
+                    "external": null,
+                    "externalId": null,
+                    "id": "1775",
+                    "lat": 50.7225521,
+                    "links": {
+                        "self": {
+                            "href": "http://shops:8080/test-ieme8a/shops/1775"
+                        }
+                    },
+                    "lon": 7.0581994,
+                    "name": "tarent solutions GmbH",
+                    "openingHoursSpecification": [
+                        {
+                            "closes": "12:11:00",
+                            "dayOfWeek": "Monday",
+                            "opens": "11:11:00"
+                        }
+                    ],
+                    "phone": "+491717673249",
+                    "project": "test-ieme8a",
+                    "services": [],
+                    "state": "NRW",
+                    "street": "Rochusstraße 2-4",
+                    "zip": "53123"
+                },
+                {
+                    "city": "Bonn",
+                    "country": "deu",
+                    "countryCode": "gnq",
+                    "email": "info@snabble.io",
+                    "external": null,
+                    "externalId": "snabble id fuer den shop sss",
+                    "id": "1774",
+                    "lat": 50.7352963,
+                    "links": {
+                        "self": {
+                            "href": "http://shops:8080/test-ieme8a/shops/1774"
+                        }
+                    },
+                    "lon": 7.1001417,
+                    "name": "snabble GmbH",
+                    "openingHoursSpecification": [
+                        {
+                            "closes": "12:00:00",
+                            "dayOfWeek": "Monday",
+                            "opens": "10:00:00"
+                        },
+                        {
+                            "closes": "12:01:00",
+                            "dayOfWeek": "Tuesday",
+                            "opens": "12:00:00"
+                        }
+                    ],
+                    "phone": "+491717673249",
+                    "project": "test-ieme8a",
+                    "services": [
+                        "parking",
+                        "bakery"
+                    ],
+                    "state": "NRW",
+                    "street": "Acherstraße 26",
+                    "zip": "53111"
+                },
+                {
+                    "city": "Some City",
+                    "country": "Deutschland ",
+                    "countryCode": null,
+                    "email": "info@snabble.io",
+                    "external": null,
+                    "externalId": "shop",
+                    "id": "2311",
+                    "lat": 2,
+                    "links": {
+                        "self": {
+                            "href": "http://shops:8080/test-ieme8a/shops/2311"
+                        }
+                    },
+                    "lon": 2,
+                    "name": "snabble Shop 2",
+                    "openingHoursSpecification": [
+                        {
+                            "closes": "13:00:00",
+                            "dayOfWeek": "Tuesday",
+                            "opens": "12:00:00"
+                        },
+                        {
+                            "closes": "23:48:00",
+                            "dayOfWeek": "Monday",
+                            "opens": "12:48:00"
+                        }
+                    ],
+                    "phone": "12345",
+                    "project": "test-ieme8a",
+                    "services": [
+                        "parking",
+                        "bakery"
+                    ],
+                    "state": "NRW",
+                    "street": "Some Street",
+                    "zip": "12345"
+                }
+            ],
+            "texts": null,
+            "unitPrefixes": [
+                "25"
+            ],
+            "useGermanPrintPrefix": true,
+            "verifyInternalEanChecksum": true,
+            "weighPrefixes": [
+                "24"
+            ]
+        },
+        {
+            "codeTemplates": {
+                "default": "{code:*}",
+                "ean13_instore": "2{code:5}{_}{embed:5}{ec}",
+                "ean13_instore_chk": "2{code:5}{i}{embed:5}{ec}",
+                "ean14_code128": "01{code:ean14}"
+            },
+            "currency": "EUR",
+            "customerCards": {},
+            "decimalDigits": 2,
+            "enableCheckout": true,
+            "encodedCodes": {
+                "prefix": "",
+                "separator": "\n",
+                "suffix": "",
+                "maxCodes": 100
+            },
+            "id": "test-vpos-a51152",
+            "links": {
+                "appEvents": {
+                    "href": "/test-vpos-a51152/events"
+                },
+                "appdb": {
+                    "href": "/test-vpos-a51152/appdb"
+                },
+                "assetsManifest": {
+                    "href": "/test-vpos-a51152/assets/manifest.json"
+                },
+                "bundlesForSku": {
+                    "href": "/test-vpos-a51152/products/bundlesForSku/{bundledSku}"
+                },
+                "checkoutInfo": {
+                    "href": "/test-vpos-a51152/checkout/info"
+                },
+                "productByCode": {
+                    "href": "/test-vpos-a51152/products/code/{code}"
+                },
+                "productBySku": {
+                    "href": "/test-vpos-a51152/products/sku/{sku}"
+                },
+                "productByWeighItemId": {
+                    "href": "/test-vpos-a51152/products/weighItemId/{id}"
+                },
+                "productsBySku": {
+                    "href": "/test-vpos-a51152/products/search/bySkus"
+                },
+                "resolvedProductBySku": {
+                    "href": "/test-vpos-a51152/resolvedProducts/sku/{sku}"
+                },
+                "resolvedProductLookUp": {
+                    "href": "/test-vpos-a51152/resolvedProducts/lookUp"
+                },
+                "self": {
+                    "href": "/metadata/project/test-vpos-a51152"
+                },
+                "shops": {
+                    "href": "/test-vpos-a51152/shops"
+                },
+                "tokens": {
+                    "href": "/test-vpos-a51152/tokens"
+                }
+            },
+            "locale": "de_DE",
+            "name": "vPoS Test Projekt",
+            "paymentMethods": [
+                "encodedCodes",
+                "qrCodeOffline",
+                "encodedCodesCSV",
+                "deDirectDebit",
+                "creditCardMastercard",
+                "creditCardVisa"
+            ],
+            "priceOverrideCodes": [],
+            "pricePrefixes": [
+                "26"
+            ],
+            "qrCodeOffline": {
+                "prefix": "",
+                "separator": "\n",
+                "suffix": "",
+                "maxCodes": 100,
+                "format": "simple"
+            },
+            "roundingMode": "up",
+            "scanFormats": [
+                "ean8",
+                "ean13",
+                "code128"
+            ],
+            "searchableTemplates": [
+                "default",
+                "ean14_code128"
+            ],
+            "shops": [
+                {
+                    "city": "VPoS",
+                    "country": "",
+                    "countryCode": null,
+                    "email": "",
+                    "external": null,
+                    "externalId": null,
+                    "id": "3792",
+                    "lat": 0,
+                    "links": {
+                        "self": {
+                            "href": "http://shops:8080/test-vpos-a51152/shops/3792"
+                        }
+                    },
+                    "lon": 0,
+                    "name": "[TESTING] VPoS",
+                    "openingHoursSpecification": [],
+                    "phone": "0",
+                    "project": "test-vpos-a51152",
+                    "services": [],
+                    "state": "",
+                    "street": "VPoS Street",
+                    "zip": "00000"
+                },
+                {
+                    "city": "City",
+                    "country": "Germany",
+                    "countryCode": "deu",
+                    "email": "test@test.de",
+                    "external": null,
+                    "externalId": "integration-test",
+                    "id": "3852",
+                    "lat": 0,
+                    "links": {
+                        "self": {
+                            "href": "http://shops:8080/test-vpos-a51152/shops/3852"
+                        }
+                    },
+                    "lon": 0,
+                    "name": "Integration Test",
+                    "openingHoursSpecification": [],
+                    "phone": "+49123456",
+                    "project": "test-vpos-a51152",
+                    "services": [],
+                    "state": "State",
+                    "street": "Street 1",
+                    "zip": "12345"
+                }
+            ],
+            "texts": null,
+            "unitPrefixes": [
+                "25"
+            ],
+            "useGermanPrintPrefix": true,
+            "verifyInternalEanChecksum": true,
+            "weighPrefixes": [
+                "24"
+            ]
+        }
+    ]
+}

@@ -49,7 +49,17 @@ let package = Package(
                 .product(name: "GRDB", package: "GRDB.swift"),
                 "Zip",
             ],
-            path: "Core",
+            path: "Core/Sources",
+            resources: [
+                .process("Resources")
+            ]
+        ),
+        .testTarget(
+            name: "SnabbleCoreTests",
+            dependencies: [
+                "SnabbleCore"
+            ],
+            path: "Core/Tests",
             resources: [
                 .process("Resources")
             ]
@@ -64,7 +74,7 @@ let package = Package(
                 "Pulley",
                 "WCAG-Colors",
             ],
-            path: "UI",
+            path: "UI/Sources",
             resources: [
                 .process("Resources")
             ]
