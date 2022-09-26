@@ -9,8 +9,27 @@ env:
 
 name: Test
 jobs:
-  build:
-    name: Test
+  sdk:
+    name: Test SDK
+    runs-on: macos-12
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Set ImageVersion environment variable
+        run: echo "ImageVersion=$ImageVersion"  >> $GITHUB_ENV
+
+      - name: SPM Cache
+        uses: actions/cache@v3
+        with:
+          path: ~/Library/Caches/org.swift.swiftpm
+          key: ${{ runner.os }}-spm-${{ hashFiles('**/Package.resolved') }}
+          restore-keys: ${{ runner.os }}-spm-${{ env.ImageVersion }}
+
+      - name: Test
+        run: xcodebuild test -scheme SnabbleSDK-Package -destination 'platform=iOS Simulator,name=iPhone 14' -sdk iphonesimulator
+  sample:
+    name: Test SampleApp
     runs-on: macos-12
     steps:
       - name: Checkout
@@ -26,7 +45,7 @@ jobs:
           key: ${{ runner.os }}-gems-${{ env.ImageVersion }}-${{ hashFiles('**/Gemfile.lock') }}
           restore-keys: ${{ runner.os }}-gems-${{ env.ImageVersion }}
       
-      - name: Bundler
+      - name: Bundle Install
         run: |
           cd Example
           bundle config path vendor/bundle
@@ -39,7 +58,7 @@ jobs:
           key: ${{ runner.os }}-spm-${{ hashFiles('**/Package.resolved') }}
           restore-keys: ${{ runner.os }}-spm-${{ env.ImageVersion }}
 
-      - name: Build
+      - name: Test
         run: |
           cd Example
           bundle exec fastlane test
