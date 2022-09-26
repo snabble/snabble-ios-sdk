@@ -82,6 +82,15 @@
       }
     },
     {
+      "identity" : "snabble-ios-sdk",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/snabble/snabble-ios-sdk",
+      "state" : {
+        "branch" : "main",
+        "revision" : "8edea361539b8f9dde4ce9c782f3ef9a77088abf"
+      }
+    },
+    {
       "identity" : "trustkit",
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/datatheorem/TrustKit.git",

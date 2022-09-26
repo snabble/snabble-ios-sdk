@@ -690,7 +690,7 @@
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/snabble/snabble-ios-sdk";
 			requirement = {
-				branch = "spm-switch";
+				branch = main;
 				kind = branch;
 			};
 		};
