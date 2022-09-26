@@ -27,7 +27,7 @@ let package = Package(
         // Dependencies declare other packages that this package depends on.
         .package(url: "https://github.com/datatheorem/TrustKit.git", from: "2.0.1"),
         .package(url: "https://github.com/kishikawakatsumi/KeychainAccess.git", from: "4.2.2"),
-        .package(url: "https://github.com/mattrubin/Base32.git", branch: "1.1.2+spm"),
+        .package(url: "https://github.com/mattrubin/Base32.git", from: "1.2.0"),
         .package(url: "https://github.com/mattrubin/OneTimePassword.git", branch: "develop"),
         .package(url: "https://github.com/groue/GRDB.swift.git", from: "6.0.0"),
         .package(url: "https://github.com/marmelroy/Zip.git", from: "2.1.2"),
