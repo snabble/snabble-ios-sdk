@@ -2,7 +2,11 @@ included:
  - UI
  - Core
  - Datatrans
- - Example
+
+ excluded:
+ - Core/Tests
+ - UI/Tests
+ - Datatrans/Tests
 
 disabled_rules:
  - todo
