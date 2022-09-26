@@ -19,13 +19,20 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v3
 
+      - name: Cache Mint packages
+        uses: actions/cache@v3
+        with:
+          path: ${{ env.MINT_PATH }}
+          key: ${{ runner.os }}-mint-${{ hashFiles('**/Mintfile') }}
+          restore-keys: ${{ runner.os }}-mint-
+
       - name: Install Mint
         run: brew install mint
 
       - name: Bootstrap
         run: mint bootstrap
 
-      - name: Link
+      - name: Lint
         run: mint run SwiftLint swiftlint
   Sample:
     name: Sample
@@ -34,13 +41,20 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v3
 
+      - name: Cache Mint packages
+        uses: actions/cache@v3
+        with:
+          path: ${{ env.MINT_PATH }}
+          key: ${{ runner.os }}-mint-${{ hashFiles('**/Mintfile') }}
+          restore-keys: ${{ runner.os }}-mint-
+
       - name: Install Mint
         run: brew install mint
 
       - name: Bootstrap
         run: mint bootstrap
 
-      - name: Link
+      - name: Lint
         run: |
           cd Example
           mint run SwiftLint swiftlint
