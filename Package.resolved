@@ -5,8 +5,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/snabble/AutoLayout-Helper.git",
       "state" : {
-        "branch" : "main",
-        "revision" : "0e373cb4bffafd997958fff5b2785336deec2b8f"
+        "revision" : "0e373cb4bffafd997958fff5b2785336deec2b8f",
+        "version" : "1.1.0"
       }
     },
     {
@@ -59,7 +59,6 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/mattrubin/OneTimePassword.git",
       "state" : {
-        "branch" : "develop",
         "revision" : "c3d8989f09a72ad7b00be7a45f1a5446e5f9e19b"
       }
     },
@@ -68,8 +67,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/52inc/Pulley.git",
       "state" : {
-        "branch" : "master",
-        "revision" : "1728c7ce69857134db82ad82300772a4364d2af5"
+        "revision" : "355bb7c53d4d430334422ad05a97fbe43ce326db",
+        "version" : "2.9.1"
       }
     },
     {
@@ -77,8 +76,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/sberrevoets/SDCAlertView.git",
       "state" : {
-        "branch" : "master",
-        "revision" : "904e119b81d6ac1d3330837307d5bcc46bf41d8b"
+        "revision" : "925de6f34fc0c3d35264d16c056e43058d179b74",
+        "version" : "12.0.2"
       }
     },
     {
