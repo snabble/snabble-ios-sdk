@@ -42,5 +42,5 @@ jobs:
 
       - name: Link
         run: |
-        cd Example
-        mint run SwiftLint swiftlint
+          cd Example
+          mint run SwiftLint swiftlint
