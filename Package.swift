@@ -24,7 +24,7 @@ let package = Package(
         )
     ],
     dependencies: [
-        .package(url: "https://github.com/mattrubin/OneTimePassword.git", revision: "c3d8989f09a72ad7b00be7a45f1a5446e5f9e19b"),
+        .package(url: "https://github.com/snabble/OneTimePassword.git", from: "3.2.1"),
         .package(url: "https://github.com/datatheorem/TrustKit.git", from: "2.0.1"),
         .package(url: "https://github.com/kishikawakatsumi/KeychainAccess.git", from: "4.2.2"),
         .package(url: "https://github.com/mattrubin/Base32.git", from: "1.2.0"),
