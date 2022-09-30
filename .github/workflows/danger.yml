@@ -7,6 +7,10 @@ on:
       - '.swiftlint.yml'
       - '**/*.swift'
 
+env:
+  DEVELOPER_DIR: /Applications/Xcode_14.0.app/Contents/Developer
+  MINT_PATH: ${{ github.workspace }}/mint
+
 name: Danger
 jobs:
   SDK:
@@ -22,4 +26,33 @@ jobs:
             args: -b main --failOnErrors --no-publish-check
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          
+  TEST:
+    name: Danger
+    runs-on: macos-12
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Install Danger
+        uses: npm install -g danger
+
+      - name: Install Danger-Swift
+        uses: brew install danger/tap/danger-swift
+
+      - name: Install Mint
+        uses: brew install mint
+
+      - name: Cache Mint packages
+        uses: actions/cache@v3
+        with:
+          path: ${{ env.MINT_PATH }}
+          key: ${{ runner.os }}-mint-${{ hashFiles('**/Mintfile') }}
+          restore-keys: ${{ runner.os }}-mint-
+      
+      - name: Bootstrap
+        run: mint bootstrap
+
+      - name: Danger
+        run: mint run danger/swift locale -b main --failOnErrors --no-publish-check
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
