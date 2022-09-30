@@ -20,6 +20,9 @@ DerivedData
 *.hmap
 *.ipa
 
+# NPM
+node_modules
+
 # AppCode
 .idea/
 
