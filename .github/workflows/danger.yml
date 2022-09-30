@@ -36,9 +36,6 @@ jobs:
       - name: Install Danger
         run: npm install -g danger
 
-      - name: Install Danger-Swift
-        run: brew install danger/tap/danger-swift
-
       - name: Install Mint
         run: brew install mint
 
