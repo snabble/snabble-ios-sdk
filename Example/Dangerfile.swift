@@ -1,0 +1,3 @@
+import Danger
+
+SwiftLint.lint()

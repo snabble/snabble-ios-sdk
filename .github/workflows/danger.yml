@@ -33,8 +33,8 @@ jobs:
       - name: Bootstrap
         run: mint bootstrap
 
-      - name: Lint
-        run: mint run SwiftLint swiftlint
+      - name: Danger
+        run: mint run danger/swift ci -b main
   Sample:
     name: Sample
     runs-on: macos-12
@@ -55,7 +55,7 @@ jobs:
       - name: Bootstrap
         run: mint bootstrap
 
-      - name: Lint
+      - name: Danger
         run: |
           cd Example
-          mint run SwiftLint swiftlint
+          mint run danger/swift ci -b main
