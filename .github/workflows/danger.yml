@@ -34,13 +34,13 @@ jobs:
         uses: actions/checkout@v3
 
       - name: Install Danger
-        uses: npm install -g danger
+        run: npm install -g danger
 
       - name: Install Danger-Swift
-        uses: brew install danger/tap/danger-swift
+        run: brew install danger/tap/danger-swift
 
       - name: Install Mint
-        uses: brew install mint
+        run: brew install mint
 
       - name: Cache Mint packages
         uses: actions/cache@v3
