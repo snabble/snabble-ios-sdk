@@ -92,6 +92,14 @@
 		</dict>
 		<dict>
 			<key>File</key>
+			<string>ios.snabble.LicensePlist/swift</string>
+			<key>Title</key>
+			<string>swift</string>
+			<key>Type</key>
+			<string>PSChildPaneSpecifier</string>
+		</dict>
+		<dict>
+			<key>File</key>
 			<string>ios.snabble.LicensePlist/SwiftLint</string>
 			<key>Title</key>
 			<string>SwiftLint</string>
