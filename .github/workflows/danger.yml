@@ -11,10 +11,10 @@ env:
   DEVELOPER_DIR: /Applications/Xcode_14.0.app/Contents/Developer
   MINT_PATH: ${{ github.workspace }}/mint
 
-name: Lint
+name: Danger
 jobs:
   SDK:
-    name: SDK
+    name: Danger
     runs-on: macos-12
     steps:
       - name: Checkout
@@ -28,7 +28,7 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-node-
 
-      - name: NPM Install
+      - name: NPM install
         run: npm install
 
       - name: Cache Mint packages
@@ -41,43 +41,43 @@ jobs:
       - name: Install Mint
         run: brew install mint
 
-      - name: Bootstrap
+      - name: Mint bootstrap
         run: mint bootstrap
 
       - name: Danger
         run: mint run danger/swift ci -b main
-  Sample:
-    name: Sample
-    runs-on: macos-12
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v3
+  # Sample:
+  #   name: Sample
+  #   runs-on: macos-12
+  #   steps:
+  #     - name: Checkout
+  #       uses: actions/checkout@v3
 
-      - name: Cache npm dependencies
-        uses: actions/cache@v2
-        with:
-          path: node_modules
-          key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
-          restore-keys: |
-            ${{ runner.os }}-node-
+  #     - name: Cache npm dependencies
+  #       uses: actions/cache@v2
+  #       with:
+  #         path: node_modules
+  #         key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
+  #         restore-keys: |
+  #           ${{ runner.os }}-node-
 
-      - name: NPM Install
-        run: npm install
+  #     - name: NPM Install
+  #       run: npm install
 
-      - name: Cache Mint packages
-        uses: actions/cache@v3
-        with:
-          path: ${{ env.MINT_PATH }}
-          key: ${{ runner.os }}-mint-${{ hashFiles('**/Mintfile') }}
-          restore-keys: ${{ runner.os }}-mint-
+  #     - name: Cache Mint packages
+  #       uses: actions/cache@v3
+  #       with:
+  #         path: ${{ env.MINT_PATH }}
+  #         key: ${{ runner.os }}-mint-${{ hashFiles('**/Mintfile') }}
+  #         restore-keys: ${{ runner.os }}-mint-
 
-      - name: Install Mint
-        run: brew install mint
+  #     - name: Install Mint
+  #       run: brew install mint
 
-      - name: Bootstrap
-        run: mint bootstrap
+  #     - name: Bootstrap
+  #       run: mint bootstrap
 
-      - name: Danger
-        run: |
-          cd Example
-          mint run danger/swift ci -b main
+  #     - name: Danger
+  #       run: |
+  #         cd Example
+  #         mint run danger/swift ci -b main
