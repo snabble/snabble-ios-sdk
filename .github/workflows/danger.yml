@@ -26,30 +26,4 @@ jobs:
             args: -b main --failOnErrors --no-publish-check
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-  TEST:
-    name: Danger
-    runs-on: macos-12
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v3
-
-      - name: Install Danger
-        run: npm install -g danger
-
-      - name: Install Mint
-        run: brew install mint
-
-      - name: Cache Mint packages
-        uses: actions/cache@v3
-        with:
-          path: ${{ env.MINT_PATH }}
-          key: ${{ runner.os }}-mint-${{ hashFiles('**/Mintfile') }}
-          restore-keys: ${{ runner.os }}-mint-
-      
-      - name: Bootstrap
-        run: mint bootstrap
-
-      - name: Danger
-        run: mint run danger/swift ci -b main --failOnErrors --no-publish-check
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          
