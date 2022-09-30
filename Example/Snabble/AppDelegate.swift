@@ -22,9 +22,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         Asset.provider = self
 
         setupAppearance()
-
-
-
         
         window = UIWindow(frame: UIScreen.main.bounds)
         window?.backgroundColor = .systemBackground

@@ -18,8 +18,6 @@ extension AgeVerification {
         fmt.calendar = Calendar(identifier: .gregorian)
         fmt.dateFormat = "yyMMdd"
         fmt.timeZone = TimeZone(identifier: "UTC")
-
-
         
         return fmt
     }()
