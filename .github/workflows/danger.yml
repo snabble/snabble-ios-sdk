@@ -7,10 +7,6 @@ on:
       - '.swiftlint.yml'
       - '**/*.swift'
 
-env:
-  DEVELOPER_DIR: /Applications/Xcode_14.0.app/Contents/Developer
-  MINT_PATH: ${{ github.workspace }}/mint
-
 name: Danger
 jobs:
   SDK:
@@ -26,4 +22,4 @@ jobs:
             args: -b main --failOnErrors --no-publish-check
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          
+
