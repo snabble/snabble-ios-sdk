@@ -94,7 +94,7 @@ public struct WidgetLastPurchasesView: View {
                     Text(keyed: output.title)
                     Spacer()
                     Button(action: {
-                        action(.init(widget: widget))
+                        action(.init(widget: widget, userInfo: ["action": "more"]))
                     }) {
                             Text(keyed: "Snabble.DynamicView.LastPurchases.all")
                     }
@@ -104,7 +104,7 @@ public struct WidgetLastPurchasesView: View {
                         WidgetOrderView(
                             provider: provider
                         ).onTapGesture {
-                            action(.init(widget: widget, userInfo: ["id": provider.id]))
+                            action(.init(widget: widget, userInfo: ["action": "purchases", "id": provider.id]))
                         }
                         .shadow(radius: configuration.shadowRadius)
                     }

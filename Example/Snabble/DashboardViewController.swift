@@ -30,7 +30,7 @@ final class DashboardViewController: DynamicViewController {
 
 extension DashboardViewController: DynamicViewControllerDelegate {
     func dynamicStackViewController(_ viewController: DynamicViewController, tappedWidget widget: Widget, userInfo: [String: Any]?) {
-        print(widget)
+        print(widget, userInfo?.description ?? "no userInfo")
         switch widget.type {
         case .startShopping:
             tabBarController?.selectedIndex = 1
