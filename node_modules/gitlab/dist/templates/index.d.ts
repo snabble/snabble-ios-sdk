@@ -1,0 +1,11 @@
+export { default as ResourceAccessRequests } from './ResourceAccessRequests';
+export { default as ResourceAwardEmojis } from './ResourceAwardEmojis';
+export { default as ResourceBadges } from './ResourceBadges';
+export { default as ResourceCustomAttributes } from './ResourceCustomAttributes';
+export { default as ResourceDiscussions } from './ResourceDiscussions';
+export { default as ResourceIssueBoards } from './ResourceIssueBoards';
+export { default as ResourceMembers } from './ResourceMembers';
+export { default as ResourceMilestones } from './ResourceMilestones';
+export { default as ResourceNotes } from './ResourceNotes';
+export { default as ResourceTemplates } from './ResourceTemplates';
+export { default as ResourceVariables } from './ResourceVariables';
