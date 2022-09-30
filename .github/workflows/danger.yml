@@ -51,6 +51,8 @@ jobs:
       #     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - name: Danger
         run: mint run danger/swift ci -b main
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
   # Sample:
   #   name: Sample
   #   runs-on: macos-12
