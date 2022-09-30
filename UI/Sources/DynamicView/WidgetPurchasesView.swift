@@ -104,7 +104,7 @@ public struct WidgetLastPurchasesView: View {
                         WidgetOrderView(
                             provider: provider
                         ).onTapGesture {
-                            action(.init(widget: widget, userInfo: ["action": "purchases", "id": provider.id]))
+                            action(.init(widget: widget, userInfo: ["action": "purchase", "id": provider.id]))
                         }
                         .shadow(radius: configuration.shadowRadius)
                     }
