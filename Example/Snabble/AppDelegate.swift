@@ -23,6 +23,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
         setupAppearance()
 
+        
+
         window = UIWindow(frame: UIScreen.main.bounds)
         window?.backgroundColor = .systemBackground
         window?.rootViewController = LoadingViewController()
