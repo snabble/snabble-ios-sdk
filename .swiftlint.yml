@@ -2,6 +2,7 @@ included:
  - UI/Sources
  - Core/Sources
  - Datatrans/Sources
+ - Example/snabble
 
 disabled_rules:
  - todo

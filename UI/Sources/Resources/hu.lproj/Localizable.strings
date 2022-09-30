@@ -82,13 +82,13 @@
 
 "Snabble.done" = "Kész";
 
-"Snabble.DynamicView.AllStores.button" = "See all stores";
+"Snabble.DynamicView.AllStores.button" = "Minden üzlet megtekintése";
 
 "Snabble.DynamicView.connectWifi" = "Kapcsolódás az ingyenes „%@“ WIFI-vel";
 
-"Snabble.DynamicView.ConnectWifi.noSSID" = "Unfortunately there is no WLAN available";
+"Snabble.DynamicView.ConnectWifi.noSSID" = "Sajnos nincs elérhető WIFI";
 
-"Snabble.DynamicView.customerCard" = "Take advantage of your store cards automatically.";
+"Snabble.DynamicView.customerCard" = "Használd ki automatikusan az ügyfélkártyáid nyújtotta előnyöket.";
 
 "Snabble.DynamicView.lastPurchase" = "Utolsó bevásárlásod";
 
@@ -96,7 +96,7 @@
 
 "Snabble.DynamicView.LastPurchases.all" = "Összes";
 
-"Snabble.DynamicView.LocationPermission.Button.notDetermined" = "Grant permission";
+"Snabble.DynamicView.LocationPermission.Button.notDetermined" = "Tartózkodási hely engedélyezése";
 
 "Snabble.DynamicView.LocationPermission.MissingPermission.message" = "Csak így tudjuk megjeleníteni a közelben lévő üzleteket, és lehetővé tenni neked a bevásárlást.";
 
@@ -112,7 +112,7 @@
 
 "Snabble.DynamicView.Shop.show" = "Üzletek mutatása";
 
-"Snabble.DynamicView.StartShopping.button" = "Start shopping";
+"Snabble.DynamicView.StartShopping.button" = "Vásárolj be most itt";
 
 "Snabble.edit" = "Szerkesztés";
 

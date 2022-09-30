@@ -17,6 +17,7 @@ default_platform(:ios)
 
 platform :ios do
   desc "Description of what the lane does"
+  ENV["FASTLANE_XCODEBUILD_SETTINGS_TIMEOUT"] = "120"
   lane :test do
     run_tests(
       device: "iPhone 14",

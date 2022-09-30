@@ -82,13 +82,13 @@
 
 "Snabble.done" = "Hotovo";
 
-"Snabble.DynamicView.AllStores.button" = "See all stores";
+"Snabble.DynamicView.AllStores.button" = "Prezrieť všetky obchody";
 
-"Snabble.DynamicView.connectWifi" = "Use the free “%@” wifi";
+"Snabble.DynamicView.connectWifi" = "Pripojiť sa k bezplatnej WLAN sieti „%@“ teraz";
 
-"Snabble.DynamicView.ConnectWifi.noSSID" = "Unfortunately there is no WLAN available";
+"Snabble.DynamicView.ConnectWifi.noSSID" = "Ľutujeme, nie je k dispozícii žiadna WLAN sieť.";
 
-"Snabble.DynamicView.customerCard" = "Take advantage of your store cards automatically.";
+"Snabble.DynamicView.customerCard" = "Využi automaticky výhody svojej zákazníckej karty.";
 
 "Snabble.DynamicView.lastPurchase" = "Tvoj posledný nákup";
 
@@ -96,7 +96,7 @@
 
 "Snabble.DynamicView.LastPurchases.all" = "Všetko";
 
-"Snabble.DynamicView.LocationPermission.Button.notDetermined" = "Grant permission";
+"Snabble.DynamicView.LocationPermission.Button.notDetermined" = "Povoliť polohu";
 
 "Snabble.DynamicView.LocationPermission.MissingPermission.message" = "Len tak môžeme zobraziť obchody v tvojej blízkosti a umožniť nákup.";
 
@@ -112,7 +112,7 @@
 
 "Snabble.DynamicView.Shop.show" = "Zobraziť obchody";
 
-"Snabble.DynamicView.StartShopping.button" = "Start shopping";
+"Snabble.DynamicView.StartShopping.button" = "Teraz nakúpiť tu";
 
 "Snabble.edit" = "Upraviť";
 
