@@ -8,14 +8,13 @@ on:
       - '**/*.swift'
 
 env:
-  DEVELOPER_DIR: /Applications/Xcode_14.0.app/Contents/Developer
   MINT_PATH: ${{ github.workspace }}/mint
 
 name: Danger
 jobs:
   SDK:
     name: Danger
-    runs-on: ubuntu-latest
+    runs-on: macos-12
     steps:
       - name: Checkout
         uses: actions/checkout@v3
@@ -28,8 +27,8 @@ jobs:
       #     restore-keys: |
       #       ${{ runner.os }}-node-
 
-      # - name: NPM install
-      #   run: npm install
+      - name: NPM install
+        run: npm install -g danger
 
       - name: Cache Mint packages
         uses: actions/cache@v3
@@ -44,14 +43,14 @@ jobs:
       - name: Mint bootstrap
         run: mint bootstrap
 
-      - name: Danger
-        uses: danger/swift@3.14.0
-        with:
-            args: -b main --failOnErrors --no-publish-check
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       # - name: Danger
-      #   run: mint run danger/swift ci -b main
+      #   uses: danger/swift@3.14.0
+      #   with:
+      #       args: -b main --failOnErrors --no-publish-check
+      #   env:
+      #     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Danger
+        run: mint run danger/swift ci -b main
   # Sample:
   #   name: Sample
   #   runs-on: macos-12
