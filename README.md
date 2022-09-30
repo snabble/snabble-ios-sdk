@@ -102,7 +102,7 @@ The Example folder contains an extremely simple example for an app. To compile:
 ````
 $ git clone https://github.com/snabble/snabble-ios-sdk
 $ cd snabble-ios-sdk/Example
-$ open SnabbleSampleApp.xcworkspace
+$ open SnabbleSampleApp.xcodeproj
 ````
 
 To run this sample app, you will need an application identifier and a corresponding secret. [Contact us via e-mail](mailto:&#105;&#110;&#102;&#111;&#064;&#115;&#110;&#097;&#098;&#098;&#108;&#101;&#046;&#105;&#111;) for this information.
