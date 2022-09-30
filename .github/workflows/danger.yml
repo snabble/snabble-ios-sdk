@@ -14,7 +14,7 @@ name: Danger
 jobs:
   SDK:
     name: Danger
-    runs-on: macos-12
+    runs-on: ubuntu-latest
     steps:
       - name: Checkout
         uses: actions/checkout@v3
@@ -27,21 +27,12 @@ jobs:
       #     restore-keys: |
       #       ${{ runner.os }}-node-
 
-      - name: NPM install
-        run: npm install -g danger
-
-      - name: Cache Mint packages
-        uses: actions/cache@v3
+      - name: Danger
+        uses: docker://ghcr.io/danger/danger-swift-with-swiftlint:3.14.0
         with:
-          path: ${{ env.MINT_PATH }}
-          key: ${{ runner.os }}-mint-${{ hashFiles('**/Mintfile') }}
-          restore-keys: ${{ runner.os }}-mint-
-
-      - name: Install Mint
-        run: brew install mint
-
-      - name: Mint bootstrap
-        run: mint bootstrap
+            args: -b main --failOnErrors --no-publish-check
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       # - name: Danger
       #   uses: danger/swift@3.14.0
@@ -49,10 +40,10 @@ jobs:
       #       args: -b main --failOnErrors --no-publish-check
       #   env:
       #     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      - name: Danger
-        run: mint run danger/swift ci -b main
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      # - name: Danger
+      #   run: mint run danger/swift ci -b main
+      #   env:
+      #     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
   # Sample:
   #   name: Sample
   #   runs-on: macos-12
