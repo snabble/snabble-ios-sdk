@@ -19,16 +19,45 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v3
 
-      # - name: Cache npm dependencies
-      #   uses: actions/cache@v2
-      #   with:
-      #     path: node_modules
-      #     key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
-      #     restore-keys: |
-      #       ${{ runner.os }}-node-
-
       - name: Danger
         uses: docker://ghcr.io/danger/danger-swift-with-swiftlint:3.14.0
+        with:
+            args: -b main --failOnErrors --no-publish-check
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      # - name: Danger
+      #   uses: danger/swift@3.14.0
+      #   with:
+      #       args: -b main --failOnErrors --no-publish-check
+      #   env:
+      #     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      # - name: Danger
+      #   run: mint run danger/swift ci -b main
+      #   env:
+      #     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+  SDK2:
+    name: Danger
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Cache Mint packages
+        uses: actions/cache@v3
+        with:
+          path: ${{ env.MINT_PATH }}
+          key: ${{ runner.os }}-mint-${{ hashFiles('**/Mintfile') }}
+          restore-keys: ${{ runner.os }}-mint-
+      
+      - name: Install Mint
+        run: brew install mint
+
+      - name: Mint bootstrap
+        run: mint bootstrap
+
+      - name: Danger
+        uses: danger/swift@3.14.0
         with:
             args: -b main --failOnErrors --no-publish-check
         env:
