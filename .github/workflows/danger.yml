@@ -22,3 +22,4 @@ jobs:
             args: -b main --failOnErrors --no-publish-check
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          
