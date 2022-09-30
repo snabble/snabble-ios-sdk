@@ -50,6 +50,6 @@ jobs:
         run: mint bootstrap
 
       - name: Danger
-        run: mint run danger/swift locale -b main --failOnErrors --no-publish-check
+        run: mint run danger/swift ci -b main --failOnErrors --no-publish-check
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
