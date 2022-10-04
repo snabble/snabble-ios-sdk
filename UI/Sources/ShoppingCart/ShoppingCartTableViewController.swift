@@ -106,7 +106,9 @@ final class ShoppingCartTableViewController: UITableViewController {
             // whatever was covering us has been dismissed or popped
 
             // re-send our current cart to the backend so that the supervisor can see us shopping again
-            CartEvent.cart(self.shoppingCart)
+            //
+            // APPS-491: Only fire cart event on user interaction
+            // CartEvent.cart(self.shoppingCart)
         }
     }
 
