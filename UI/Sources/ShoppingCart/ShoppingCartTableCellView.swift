@@ -97,6 +97,8 @@ final class ShoppingCartTableCellView: UIView {
 
     public func updateQuantityText(withText text: String?) {
         quantityView?.quantityLabel?.text = text
+        quantityView?.updateMinusButton()
+
         weightView?.quantityLabel?.text = text
         entryView?.quantityTextField?.text = text
     }
@@ -410,13 +412,13 @@ extension ShoppingCartTableCellView {
         override init(frame: CGRect) {
             let minusButton = UIButton(type: .custom)
             minusButton.translatesAutoresizingMaskIntoConstraints = false
-            minusButton.setImage(Asset.image(named: "SnabbleSDK/icon-minus"), for: .normal)
+            minusButton.setImage(Asset.image(named: "trash"), for: .normal)
             minusButton.makeBorderedButton()
             minusButton.backgroundColor = .secondarySystemBackground
 
             let plusButton = UIButton(type: .custom)
             plusButton.translatesAutoresizingMaskIntoConstraints = false
-            plusButton.setImage(Asset.image(named: "SnabbleSDK/icon-plus"), for: .normal)
+            plusButton.setImage(Asset.image(named: "plus"), for: .normal)
             plusButton.makeBorderedButton()
             plusButton.backgroundColor = .secondarySystemBackground
 
@@ -465,6 +467,19 @@ extension ShoppingCartTableCellView {
 
         required init?(coder: NSCoder) {
             fatalError("init(coder:) has not been implemented")
+        }
+        
+        func updateMinusButton() {
+            guard let text = quantityLabel?.text,
+                  let quantity = Int(text) else {
+                return
+            }
+            
+            if quantity == 1 {
+                minusButton?.setImage(Asset.image(named: "trash"), for: .normal)
+            } else {
+                minusButton?.setImage(Asset.image(named: "minus"), for: .normal)
+            }
         }
     }
 }
