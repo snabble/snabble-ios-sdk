@@ -63,7 +63,7 @@ public final class ShoppingCartViewController: UIViewController {
 
         self.shoppingCart.delegate = self
 
-        self.trashButton = UIBarButtonItem(image: Asset.image(named: "SnabbleSDK/icon-trash"), style: .plain, target: self, action: #selector(self.trashButtonTapped(_:)))
+        self.trashButton = UIBarButtonItem(image: Asset.image(named: "trash"), style: .plain, target: self, action: #selector(self.trashButtonTapped(_:)))
 
         self.view.backgroundColor = .systemBackground
 

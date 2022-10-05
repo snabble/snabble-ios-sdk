@@ -4,6 +4,14 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.23.1] - 2022-10-05
+### Changed
+* Use systemNamed image for trash, minus and plus buttons
+* Display trash button in all quantity views if quantity equals 1
+
+### Removed
+* icon-trash, icon-minus and icon-plus image from asset catalog
+
 ## [0.23.0] - 2022-09-22
 ### Added
 * Danger to automate common code review chores

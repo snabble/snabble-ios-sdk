@@ -5,5 +5,5 @@
 //
 
 public var version: String {
-    "0.22.2"
+    "0.23.1"
 }

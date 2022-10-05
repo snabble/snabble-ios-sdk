@@ -167,7 +167,7 @@ public final class TeleCashCreditCardEditViewController: UIViewController {
             self.expDateLabel.text = Asset.localizedString(forKey: "Snabble.Cc.validUntil")
             self.explanation.text = Asset.localizedString(forKey: "Snabble.Cc.editingHint")
 
-            let deleteButton = UIBarButtonItem(image: Asset.image(named: "SnabbleSDK/icon-trash"), style: .plain, target: self, action: #selector(self.deleteButtonTapped(_:)))
+            let deleteButton = UIBarButtonItem(image: Asset.image(named: "trash"), style: .plain, target: self, action: #selector(self.deleteButtonTapped(_:)))
             self.navigationItem.rightBarButtonItem = deleteButton
         }
     }
