@@ -10,6 +10,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 * Display trash button in all quantity views if quantity equals 1
 * Only fire cart event on user interaction in shopping cart
 
+### Removed
+* icon-trash, icon-minus and icon-plus image from asset catalog
+
 ## [0.23.0] - 2022-09-22
 ### Added
 * Danger to automate common code review chores
@@ -24,6 +27,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Removed
 * All CocoaPods related stuff
+
+### Updated
+* Datatrans 2.3.1 (was 2.2.0)
 
 ## [0.22.1] - 2022-09-22
 ### Changed

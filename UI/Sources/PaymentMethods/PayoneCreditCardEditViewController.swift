@@ -97,7 +97,7 @@ public final class PayoneCreditCardEditViewController: UIViewController {
             self.expDateLabel.text = Asset.localizedString(forKey: "Snabble.Cc.validUntil")
             self.explanation.text = Asset.localizedString(forKey: "Snabble.Cc.editingHint")
 
-            let trash = UIImage.fromBundle("SnabbleSDK/icon-trash")
+            let trash: UIImage? = Asset.image(named: "trash")
             let deleteButton = UIBarButtonItem(image: trash, style: .plain, target: self, action: #selector(self.deleteButtonTapped(_:)))
             self.navigationItem.rightBarButtonItem = deleteButton
         } else {

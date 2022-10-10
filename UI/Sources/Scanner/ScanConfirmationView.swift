@@ -137,11 +137,11 @@ final class ScanConfirmationView: UIView {
         quantityStack.spacing = 8
 
         let minusButton = squareButton
-        minusButton.setImage(Asset.image(named: "SnabbleSDK/icon-minus"), for: .normal)
+        minusButton.setImage(Asset.image(named: "trash"), for: .normal)
         minusButton.addTarget(self, action: #selector(minusButtonTapped(_:)), for: .touchUpInside)
 
         let plusButton = squareButton
-        plusButton.setImage(Asset.image(named: "SnabbleSDK/icon-plus"), for: .normal)
+        plusButton.setImage(Asset.image(named: "plus"), for: .normal)
         plusButton.addTarget(self, action: #selector(plusButtonTapped(_:)), for: .touchUpInside)
 
         let quantityField = UITextField()
@@ -333,6 +333,8 @@ final class ScanConfirmationView: UIView {
         }
 
         self.minusButton?.isEnabled = quantity > 1
+        self.minusButton?.setImage(Asset.image(named: quantity > 1 ? "minus" : "trash"), for: .normal)
+        
         self.plusButton?.isEnabled = quantity < ShoppingCart.maxAmount
 
         self.quantityField?.isEnabled = self.cartItem.editable
