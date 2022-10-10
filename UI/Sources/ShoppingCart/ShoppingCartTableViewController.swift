@@ -101,15 +101,6 @@ final class ShoppingCartTableViewController: UITableViewController {
         super.viewDidAppear(animated)
 
         self.shoppingCartDelegate?.track(.viewShoppingCart)
-
-        if !self.isBeingPresented && !self.isMovingToParent {
-            // whatever was covering us has been dismissed or popped
-
-            // re-send our current cart to the backend so that the supervisor can see us shopping again
-
-            // Leave it or remove it? Only Gregor knows.
-            // CartEvent.cart(self.shoppingCart)
-        }
     }
 
     // MARK: notification handlers
