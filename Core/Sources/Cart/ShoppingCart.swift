@@ -339,8 +339,6 @@ public final class ShoppingCart: Codable {
         }
         self.items = newItems
         self.save(postEvent: false)
-        // APPS-491: Only fire cart event on user interaction
-        // CartEvent.cart(self)
     }
 
     public func generateNewUUID() {
