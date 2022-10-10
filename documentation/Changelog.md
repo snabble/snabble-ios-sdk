@@ -19,6 +19,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Removed
 * All CocoaPods related stuff
 
+### Updated
+* Datatrans 2.3.1 (was 2.2.0)
+
 ## [0.22.1] - 2022-09-22
 ### Changed
 * update repository reference in podspec
