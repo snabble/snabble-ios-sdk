@@ -11,6 +11,8 @@ import SwiftUI
 
 /// Tinted button style using `Color.accent()` as background color and `Color.onAccent()` as text color
 public struct AccentButtonStyle: ButtonStyle {
+    public init() { }
+    
     public func makeBody(configuration: Configuration) -> some View {
         configuration.label
             .padding([.top, .bottom], 15)
