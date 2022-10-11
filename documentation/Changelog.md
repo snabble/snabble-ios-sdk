@@ -8,6 +8,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 * Use systemNamed image for trash, minus and plus buttons
 * Display trash button in all quantity views if quantity equals 1
+* Only fire cart event on user interaction in shopping cart
 
 ### Removed
 * icon-trash, icon-minus and icon-plus image from asset catalog

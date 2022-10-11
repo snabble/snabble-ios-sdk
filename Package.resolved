@@ -14,8 +14,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/mattrubin/Base32.git",
       "state" : {
-        "branch" : "1.1.2+spm",
-        "revision" : "d185e44c8b355d34d5c6c6ad502c60cba4599f69"
+        "revision" : "6389546e8e9a34a9d9db452726900383f3e4ac57",
+        "version" : "1.2.0"
       }
     },
     {
@@ -57,9 +57,10 @@
     {
       "identity" : "onetimepassword",
       "kind" : "remoteSourceControl",
-      "location" : "https://github.com/mattrubin/OneTimePassword.git",
+      "location" : "https://github.com/snabble/OneTimePassword.git",
       "state" : {
-        "revision" : "c3d8989f09a72ad7b00be7a45f1a5446e5f9e19b"
+        "revision" : "b412d1f595cda264d98cb520bc7c8b9764914715",
+        "version" : "3.2.1"
       }
     },
     {

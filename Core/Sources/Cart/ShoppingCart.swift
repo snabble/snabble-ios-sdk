@@ -339,7 +339,6 @@ public final class ShoppingCart: Codable {
         }
         self.items = newItems
         self.save(postEvent: false)
-        CartEvent.cart(self)
     }
 
     public func generateNewUUID() {
