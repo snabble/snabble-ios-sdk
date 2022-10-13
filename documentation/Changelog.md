@@ -33,6 +33,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 * `SwiftBase32` replaced with `Base32`
 * Example App `SnabbleSampleApp` uses Swift Package Manager
 * All SDK resources (language files and images) moved from Snabble/UI to UI/Resources
+* WidgetInformation init() is now public
+* WidgetInformationView text font is subheadline, bigger spacing, horizontal center aligned
 
 ### Updated
 * Datatrans 2.3.1 (was 2.2.0)
