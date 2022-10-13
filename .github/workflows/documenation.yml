@@ -19,9 +19,15 @@ jobs:
       - name: Build Documentation
         run: xcodebuild docbuild -scheme SnabbleSDK-Package -destination 'platform=iOS Simulator,name=iPhone 14' -derivedDataPath ${{ runner.temp }}/derivedDataPath
 
-      - name: Static Website
+      - name: Static Website Core
         run: $(xcrun --find docc) process-archive transform-for-static-hosting ${{ runner.temp }}/derivedDataPath/Build/Products/Debug-iphonesimulator/SnabbleCore.doccarchive --output-path ./static-website --hosting-base-path /snabble-ios-sdk
 
+      - name: Static Website UI
+        run: $(xcrun --find docc) process-archive transform-for-static-hosting ${{ runner.temp }}/derivedDataPath/Build/Products/Debug-iphonesimulator/SnabbleUI.doccarchive --output-path ./website/ui --hosting-base-path /snabble-ios-sdk
+
+      - name: Move SnabbleUI
+        run: |
+            mv website/ui/documentation/snabbleui static-website/documentation
       - name: Zip
         run: zip -r static-website.zip static-website
 
