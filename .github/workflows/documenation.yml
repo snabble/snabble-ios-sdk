@@ -23,7 +23,9 @@ jobs:
       #   run: $(xcrun --find docc) process-archive transform-for-static-hosting ~/SnabbleSDK/docs/Build/Products/Debug-iphonesimulator/SnabbleCore.doccarchive --output-path ./static-website --hosting-base-path snabble.github.io/snabble-ios-sdk/
 
       - name: Zip
-        run: zip ~/static-website.zip static-website
+        run: |
+          ls -al
+          zip ~/static-website.zip static-website
 
       - name: Upload Artifacts
         uses: actions/upload-artifact@v2
