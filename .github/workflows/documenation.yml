@@ -20,7 +20,7 @@ jobs:
         run: xcodebuild docbuild -scheme SnabbleSDK-Package -destination 'platform=iOS Simulator,name=iPhone 14' -derivedDataPath ${{ runner.temp }}/derivedDataPath
 
       - name: Static Website
-        run: $(xcrun --find docc) process-archive transform-for-static-hosting ${{ runner.temp }}/derivedDataPath/Build/Products/Debug-iphonesimulator/SnabbleCore.doccarchive --output-path ./static-website --hosting-base-path docs.snabble.io/snabble-ios-sdk/
+        run: $(xcrun --find docc) process-archive transform-for-static-hosting ${{ runner.temp }}/derivedDataPath/Build/Products/Debug-iphonesimulator/SnabbleCore.doccarchive --output-path ./static-website --hosting-base-path /snabble-ios-sdk
 
       - name: Zip
         run: zip -r static-website.zip static-website
