@@ -20,7 +20,7 @@ jobs:
         run: xcodebuild docbuild -scheme SnabbleSDK-Package -destination 'platform=iOS Simulator,name=iPhone 14' -derivedDataPath ~/SnabbleSDK/docs
 
       - name: Static Website
-        run: $(xcrun --find docc) process-archive transform-for-static-hosting ~/SnabbleSDK/docs/Build/Products/Debug-iphonesimulator/SnabbleCore.doccarhive --output-path ./static-website --hosting-base-path snabble.github.io/snabble-ios-sdk/
+        run: $(xcrun --find docc) process-archive transform-for-static-hosting ~/SnabbleSDK/docs/Build/Products/Debug-iphonesimulator/SnabbleCore.doccarchive --output-path ./static-website --hosting-base-path snabble.github.io/snabble-ios-sdk/
 
       - name: Upload Artifacts
         uses: actions/upload-artifact@v2
