@@ -41,7 +41,10 @@ jobs:
         with:
           name: documentation
           path: static-website.zip
-        
+
+      - name: PWD
+        run: pwd
+
       - name: Unzip
         run: unzip -qq static-website.zip -d static-website
       
