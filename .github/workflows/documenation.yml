@@ -40,8 +40,8 @@ jobs:
         uses: actions/download-artifact@v3
         with:
           name: documentation
-          path: static-website.zip]
-          
+          path: static-website.zip
+
       - name: Unzip
         run: |
           pwd
