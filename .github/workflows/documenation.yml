@@ -40,13 +40,14 @@ jobs:
         uses: actions/download-artifact@v3
         with:
           name: documentation
-          path: static-website.zip
-
-      - name: PWD
-        run: pwd
-
+          path: static-website.zip]
+          
       - name: Unzip
-        run: unzip -qq static-website.zip -d ./
+        run: |
+          pwd
+          ls -al
+          unzip ~/static-website.zip -d ./
+          unzip static-website.zip -d ./
       
       - name: GitHub Pages Deploy
         uses: Cecilapp/GitHub-Pages-deploy@v3
