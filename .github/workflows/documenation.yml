@@ -23,15 +23,13 @@ jobs:
       #   run: $(xcrun --find docc) process-archive transform-for-static-hosting ~/SnabbleSDK/docs/Build/Products/Debug-iphonesimulator/SnabbleCore.doccarchive --output-path ./static-website --hosting-base-path snabble.github.io/snabble-ios-sdk/
 
       - name: Zip
-        run: |
-          ls -al
-          zip ~/static-website.zip static-website
+        run: zip -r static-website.zip static-website
 
       - name: Upload Artifacts
         uses: actions/upload-artifact@v2
         with:
           name: documentation
-          path: ~/static-website.zip
+          path: static-website.zip
 
   deploy:
     name: Deploy GitHub Page
@@ -42,7 +40,7 @@ jobs:
         uses: actions/download-artifact@v2
         with:
           name: documentation
-          path: ~/static-website.zip
+          path: static-website.zip
         
       - name: Unzip
         run: unzip -qq static-website.zip -d static-website
