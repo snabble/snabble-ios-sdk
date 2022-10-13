@@ -46,7 +46,6 @@ jobs:
         run: |
           pwd
           ls -al
-          unzip ~/static-website.zip -d ./
           unzip static-website.zip -d ./
       
       - name: GitHub Pages Deploy
