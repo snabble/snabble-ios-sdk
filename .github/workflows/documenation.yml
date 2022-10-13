@@ -28,8 +28,7 @@ jobs:
       - name: Upload Artifacts
         uses: actions/upload-artifact@v3
         with:
-          name: documentation
-          path: static-website.zip
+          name: documentation.zip
 
   deploy:
     name: Deploy GitHub Page
@@ -39,14 +38,13 @@ jobs:
       - name: Download Artifacts
         uses: actions/download-artifact@v3
         with:
-          name: documentation
-          path: static-website.zip
+          name: documentation.zip
 
       - name: Unzip
         run: |
           pwd
           ls -al
-          unzip static-website.zip -d ./
+          unzip documentation.zip -d ./
       
       - name: GitHub Pages Deploy
         uses: Cecilapp/GitHub-Pages-deploy@v3
