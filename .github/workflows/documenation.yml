@@ -29,7 +29,7 @@ jobs:
         uses: actions/upload-artifact@v2
         with:
           name: documentation
-          path: static-website.zip
+          path: ~/snabble-ios-sdk/static-website.zip
 
   deploy:
     name: Deploy GitHub Page
@@ -40,10 +40,10 @@ jobs:
         uses: actions/download-artifact@v2
         with:
           name: documentation
-          path: static-website.zip
+          path: ~/static-website.zip
         
       - name: Unzip
-        run: unzip -qq snabble-ios-sdk/static-website.zip -d static-website
+        run: unzip -qq static-website.zip -d static-website
       
       - name: GitHub Pages Deploy
         uses: Cecilapp/GitHub-Pages-deploy@v3
