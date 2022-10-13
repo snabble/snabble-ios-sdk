@@ -29,11 +29,10 @@ public struct WidgetInformationView: View {
     let configuration: DynamicViewConfiguration
 
     public var body: some View {
-        HStack(alignment: .top) {
+        HStack(spacing: 12) {
             widget.image
             Text(keyed: widget.text)
-                .font(.footnote)
-            Spacer()
+                .font(.subheadline)
         }
         .informationStyle()
         .shadow(radius: configuration.shadowRadius)
