@@ -42,10 +42,7 @@ jobs:
           name: documentation
 
       - name: Unzip
-        run: |
-          pwd
-          ls -al
-          unzip static-website.zip -d ./
+        run: unzip static-website.zip -d ./
       
       - name: GitHub Pages Deploy
         uses: Cecilapp/GitHub-Pages-deploy@v3
