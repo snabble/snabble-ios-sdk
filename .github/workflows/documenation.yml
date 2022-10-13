@@ -34,7 +34,7 @@ jobs:
   deploy:
     name: Deploy GitHub Page
     runs-on: ubuntu-latest
-    needs: docc
+    needs: DocC
     steps:
       - name: Download Artifacts
         uses: actions/download-artifact@v2
