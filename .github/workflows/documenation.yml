@@ -26,7 +26,7 @@ jobs:
         run: zip -r static-website.zip static-website
 
       - name: Upload Artifacts
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v3
         with:
           name: documentation
           path: static-website.zip
@@ -37,7 +37,7 @@ jobs:
     needs: DocC
     steps:
       - name: Download Artifacts
-        uses: actions/download-artifact@v2
+        uses: actions/download-artifact@v3
         with:
           name: documentation
           path: static-website.zip
@@ -46,7 +46,7 @@ jobs:
         run: pwd
 
       - name: Unzip
-        run: unzip -qq static-website.zip -d static-website
+        run: unzip -qq static-website.zip -d ./
       
       - name: GitHub Pages Deploy
         uses: Cecilapp/GitHub-Pages-deploy@v3
