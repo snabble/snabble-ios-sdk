@@ -43,7 +43,7 @@ jobs:
           path: static-website.zip
         
       - name: Unzip
-        run: unzip -qq static-website.zip -d static-website
+        run: unzip -qq snabble-ios-sdk/static-website.zip -d static-website
       
       - name: GitHub Pages Deploy
         uses: Cecilapp/GitHub-Pages-deploy@v3
