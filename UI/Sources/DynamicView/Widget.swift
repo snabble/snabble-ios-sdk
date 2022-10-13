@@ -133,7 +133,7 @@ public struct WidgetInformation: Widget, ImageSourcing {
     public let hideable: Bool
     public let padding: Padding?
 
-    init(
+    public init(
         id: String,
         text: String,
         imageSource: String? = nil,
