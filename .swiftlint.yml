@@ -1,7 +1,5 @@
 included:
- - UI/Sources
- - Core/Sources
- - Datatrans/Sources
+ - Sources
  - Example/snabble
 
 disabled_rules:
