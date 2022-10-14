@@ -26,9 +26,9 @@ jobs:
         run: $(xcrun --find docc) process-archive transform-for-static-hosting ${{ runner.temp }}/derivedDataPath/Build/Products/Debug-iphonesimulator/SnabbleUI.doccarchive --output-path ./website-ui --hosting-base-path /snabble-ios-sdk
 
       - name: Move SnabbleUI
-        run: | 
+        run: |
           mv website-ui/documentation/snabbleui static-website/documentation
-          mv website-ui/data/documentation/snabbleui.json static-website/data/documenation
+          mv website-ui/data/documentation/snabbleui.json static-website/data/documentation
           mv website-ui/data/documentation/snabbleui static-website/data/documentation
         
       - name: Zip
