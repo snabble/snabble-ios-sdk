@@ -14,11 +14,8 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v3
 
-      - name: Install Dependencies
-        run: |
-            npm install -g danger
-            brew install danger/tap/danger-swift
-            brew install swiftlint
+      - name: Install SwiftLint
+        run: brew install swiftlint
 
       - name: Danger
         uses: danger/swift@3.14.2
