@@ -7,7 +7,7 @@
 //
 
 import XCTest
-@testable import SnabbleSDK
+@testable import SnabbleCore
 
 class IBANTests: XCTestCase {
 

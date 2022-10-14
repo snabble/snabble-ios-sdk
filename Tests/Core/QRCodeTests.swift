@@ -6,7 +6,7 @@
 //
 
 import XCTest
-@testable import SnabbleSDK
+@testable import SnabbleCore
 
 class QRCodeTests: XCTestCase {
     var regularItems = [CartItem]()
