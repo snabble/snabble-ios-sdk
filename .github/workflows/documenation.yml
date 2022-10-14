@@ -19,6 +19,9 @@ jobs:
       - name: Build Documentation
         run: xcodebuild docbuild -scheme Snabble -destination 'platform=iOS Simulator,name=iPhone 14' -derivedDataPath ${{ runner.temp }}/derivedDataPath
 
+      - name: Create static-website folder
+        run: mkdir static-website
+        
       - name: Static Website Core
         run: $(xcrun --find docc) process-archive transform-for-static-hosting ${{ runner.temp }}/derivedDataPath/Build/Products/Debug-iphonesimulator/SnabbleCore.doccarchive --output-path ./static-website/core --hosting-base-path /snabble-ios-sdk/core
 
