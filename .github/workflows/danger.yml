@@ -14,8 +14,14 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v3
 
+      - name: Install Dependencies
+        uses: |
+            npm install -g danger # This installs Danger
+            brew install danger/tap/danger-swift # This installs Danger-Swift
+            brew install swiftlint # This is for the Danger SwiftLint plugin.
+
       - name: Danger
-        uses: docker://ghcr.io/danger/danger-swift-with-swiftlint:3.14.0
+        uses: danger/swift@3.14.2
         with:
             args: -b main --failOnErrors --no-publish-check
         env:
