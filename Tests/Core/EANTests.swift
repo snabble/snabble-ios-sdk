@@ -6,7 +6,7 @@
 //
 
 import XCTest
-@testable import SnabbleCore
+@testable import SnabbleSDK
 
 class EANTests: XCTestCase {
 

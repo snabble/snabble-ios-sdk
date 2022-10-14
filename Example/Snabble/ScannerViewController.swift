@@ -6,7 +6,6 @@
 //
 
 import UIKit
-
 import SnabbleCore
 import SnabbleUI
 import SwiftUI

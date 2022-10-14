@@ -7,7 +7,7 @@
 
 import XCTest
 
-@testable import SnabbleCore
+@testable import SnabbleSDK
 
 class SnabbleTests: XCTestCase {
     

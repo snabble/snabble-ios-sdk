@@ -6,7 +6,7 @@
 //
 
 import XCTest
-@testable import SnabbleCore
+@testable import SnabbleSDK
 
 struct Mock {
     static let defaultCode = ScannedCode(scannedCode: "1234567890123", templateId: "default", lookupCode: "1234567890123")

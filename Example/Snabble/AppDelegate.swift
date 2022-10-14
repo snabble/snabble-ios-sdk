@@ -6,8 +6,8 @@
 //
 
 import UIKit
-import SnabbleCore
 import SnabbleUI
+import SnabbleCore
 
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate {

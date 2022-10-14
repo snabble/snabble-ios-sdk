@@ -4,12 +4,16 @@
 import PackageDescription
 
 let package = Package(
-    name: "SnabbleSDK",
+    name: "Snabble",
     defaultLocalization: "en",
     platforms: [
         .iOS(.v14)
     ],
     products: [
+        .library(
+            name: "Snabble",
+            targets: ["SnabbleCore", "SnabbleUI"]
+        ),
         .library(
             name: "SnabbleCore",
             targets: ["SnabbleCore"]
@@ -48,7 +52,7 @@ let package = Package(
                 .product(name: "GRDB", package: "GRDB.swift"),
                 "Zip",
             ],
-            path: "Core/Sources",
+            path: "Sources/Core",
             resources: [
                 .process("Resources")
             ]
@@ -58,7 +62,7 @@ let package = Package(
             dependencies: [
                 "SnabbleCore"
             ],
-            path: "Core/Tests",
+            path: "Tests/Core",
             resources: [
                 .process("Resources")
             ]
@@ -73,7 +77,7 @@ let package = Package(
                 "Pulley",
                 "WCAG-Colors",
             ],
-            path: "UI/Sources",
+            path: "Sources/UI",
             resources: [
                 .process("Resources")
             ]
@@ -85,7 +89,7 @@ let package = Package(
                 "SnabbleUI",
                 .product(name: "Datatrans", package: "ios-sdk"),
             ],
-            path: "Datatrans/Sources"
+            path: "Sources/Datatrans"
         )
     ]
 )
