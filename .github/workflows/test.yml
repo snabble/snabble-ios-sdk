@@ -27,7 +27,7 @@ jobs:
           restore-keys: ${{ runner.os }}-spm-${{ env.ImageVersion }}
 
       - name: Test
-        run: xcodebuild test -scheme SnabbleSDK-Package -destination 'platform=iOS Simulator,name=iPhone 14' -sdk iphonesimulator
+        run: xcodebuild test -scheme Snabble-Package -destination 'platform=iOS Simulator,name=iPhone 14' -sdk iphonesimulator
   sample:
     name: Sample
     runs-on: macos-12

@@ -17,7 +17,7 @@ jobs:
         uses: actions/checkout@v3
 
       - name: Build Documentation
-        run: xcodebuild docbuild -scheme SnabbleSDK-Package -destination 'platform=iOS Simulator,name=iPhone 14' -derivedDataPath ${{ runner.temp }}/derivedDataPath
+        run: xcodebuild docbuild -scheme Snabble-Package -destination 'platform=iOS Simulator,name=iPhone 14' -derivedDataPath ${{ runner.temp }}/derivedDataPath
 
       - name: Static Website Core
         run: $(xcrun --find docc) process-archive transform-for-static-hosting ${{ runner.temp }}/derivedDataPath/Build/Products/Debug-iphonesimulator/SnabbleCore.doccarchive --output-path ./static-website/core --hosting-base-path /snabble-ios-sdk/core
