@@ -9,7 +9,7 @@ name: Danger
 jobs:
   SDK:
     name: Danger
-    runs-on: macos-latest
+    runs-on: ubuntu-latest
     steps:
       - name: Checkout
         uses: actions/checkout@v3
@@ -18,7 +18,7 @@ jobs:
         run: brew install swiftlint
 
       - name: Danger
-        uses: danger/swift@3.14.2
+        uses: danger/swift@3.14.0
         with:
             args: -b main --failOnErrors --no-publish-check
         env:
