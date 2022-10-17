@@ -2,6 +2,9 @@ included:
  - Sources
  - Example/snabble
 
+excluded:
+ - Tests
+
 disabled_rules:
  - todo
  - cyclomatic_complexity
