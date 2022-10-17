@@ -7,5 +7,3 @@ let changelogChanged = allSourceFiles.contains("CHANGELOG.md")
 if !changelogChanged {
   warn("No CHANGELOG entry added.")
 }
-
-SwiftLint.lint(inline: true)
