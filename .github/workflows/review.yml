@@ -1,7 +1,7 @@
 on:
   pull_request:
     paths:
-      - '.github/workflows/review.yml'
+      - '.github/workflows/lint.yml'
       - '.swiftlint.yml'
       - 'Dangerfile.swift'
       - '**/*.swift'
