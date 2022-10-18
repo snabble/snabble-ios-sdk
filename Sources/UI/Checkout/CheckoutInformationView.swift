@@ -81,7 +81,6 @@ extension CheckoutInformationView {
 }
 
 import SwiftUI
-import AutoLayout_Helper
 
 @available(iOS 13, *)
 public struct CheckoutInformationView_Previews: PreviewProvider {

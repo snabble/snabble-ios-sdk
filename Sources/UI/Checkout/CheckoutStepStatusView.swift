@@ -133,7 +133,6 @@ extension CheckoutStepStatus: CheckoutStepStatusViewModel {
 
 #if canImport(SwiftUI) && DEBUG
 import SwiftUI
-import AutoLayout_Helper
 
 @available(iOS 13, *)
 public struct CheckoutStepStatusView_Previews: PreviewProvider {

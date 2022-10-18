@@ -200,8 +200,8 @@ final class ScanConfirmationView: UIView {
             productStack.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -16),
             productStack.topAnchor.constraint(equalTo: closeButton.bottomAnchor, constant: 12),
 
-            quantityStack.leadingAnchor.constraint(greaterThanOrEqualTo: leadingAnchor, constant: 16).usingPriority(.almostRequired),
-            quantityStack.trailingAnchor.constraint(greaterThanOrEqualTo: trailingAnchor, constant: -16).usingPriority(.almostRequired),
+            quantityStack.leadingAnchor.constraint(greaterThanOrEqualTo: leadingAnchor, constant: 16).usingPriority(999),
+            quantityStack.trailingAnchor.constraint(greaterThanOrEqualTo: trailingAnchor, constant: -16).usingPriority(999),
             quantityStack.topAnchor.constraint(equalTo: productStack.bottomAnchor, constant: 16),
             quantityStack.bottomAnchor.constraint(equalTo: cartButton.topAnchor, constant: -16),
 

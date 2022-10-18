@@ -1,15 +1,6 @@
 {
   "pins" : [
     {
-      "identity" : "autolayout-helper",
-      "kind" : "remoteSourceControl",
-      "location" : "https://github.com/snabble/AutoLayout-Helper.git",
-      "state" : {
-        "revision" : "0e373cb4bffafd997958fff5b2785336deec2b8f",
-        "version" : "1.1.0"
-      }
-    },
-    {
       "identity" : "base32",
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/mattrubin/Base32.git",

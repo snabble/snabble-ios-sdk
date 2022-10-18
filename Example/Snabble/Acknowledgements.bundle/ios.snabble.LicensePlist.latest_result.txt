@@ -1,7 +1,5 @@
 name: LicensePlist, nameSpecified: , owner: mono0926, version: 3.23.4, source: https://github.com/mono0926/LicensePlist
 
-name: AutoLayout-Helper, nameSpecified: AutoLayout-Helper, owner: snabble, version: 1.1.0, source: https://github.com/snabble/AutoLayout-Helper
-
 name: Base32, nameSpecified: Base32, owner: mattrubin, version: 1.2.0, source: https://github.com/mattrubin/Base32
 
 name: DeviceKit, nameSpecified: DeviceKit, owner: devicekit, version: 4.7.0, source: https://github.com/devicekit/DeviceKit
