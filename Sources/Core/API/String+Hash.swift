@@ -20,9 +20,6 @@ extension String {
         }
     }
 
-
-    
-
     public var sha1: String {
         let data = Data(self.utf8)
         var digest = [UInt8](repeating: 0, count: Int(CC_SHA1_DIGEST_LENGTH))
