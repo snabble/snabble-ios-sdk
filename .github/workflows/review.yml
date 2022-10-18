@@ -19,7 +19,7 @@ jobs:
         uses: sinoru/actions-swiftlint@v6
         with:
           swiftlint-version: '0.49.1'
-          swiftlint-args: --config .swiftlint.yml
+          swiftlint-args: --config .swiftlint.yml --no-cache
 
       - name: Danger
         uses: danger/swift@3.14.2

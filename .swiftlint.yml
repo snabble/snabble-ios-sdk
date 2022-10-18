@@ -1,9 +1,6 @@
 included:
- - Sources
- - Example/snabble
-
-excluded:
- - Tests
+ - Sources/
+ - Example/snabble/
 
 disabled_rules:
  - todo
