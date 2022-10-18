@@ -18,6 +18,10 @@ extension NSLayoutConstraint {
         return self
     }
 
+    /// Returns the constraint sender with the passed priority.
+    ///
+    /// - Parameter priority: The priority as `Float` to be set.
+    /// - Returns: The sent constraint adjusted with the new priority.
     public func usingPriority(_ number: Float) -> Self {
         self.priority = .init(number)
         return self
