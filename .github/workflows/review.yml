@@ -17,9 +17,6 @@ jobs:
 
       - name: SwiftLint
         uses: sinoru/actions-swiftlint@v6
-        with:
-          swiftlint-version: '0.49.1'
-          working-directory: Sources
 
       - name: Danger
         uses: danger/swift@3.14.2
