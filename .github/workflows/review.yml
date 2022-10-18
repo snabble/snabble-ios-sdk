@@ -2,6 +2,7 @@ on:
   pull_request:
     paths:
       - '.github/workflows/review.yml'
+      - '.swiftlint.yml'
       - 'Dangerfile.swift'
       - '**/*.swift'
 
@@ -13,6 +14,11 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v3
+
+      - name: SwiftLint
+        uses: norio-nomura/action-swiftlint@3.2.1
+        with:
+          args: --config .swiftlint.yml 
 
       - name: Danger
         uses: danger/swift@3.14.2
