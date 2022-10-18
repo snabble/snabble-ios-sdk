@@ -5,7 +5,6 @@
 //
 
 import UIKit
-import AutoLayout_Helper
 import SnabbleCore
 
 final class ReceiptCell: UITableViewCell {

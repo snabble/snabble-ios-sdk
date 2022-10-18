@@ -35,7 +35,6 @@ let package = Package(
         .package(url: "https://github.com/groue/GRDB.swift.git", from: "6.0.0"),
         .package(url: "https://github.com/marmelroy/Zip.git", from: "2.1.2"),
         .package(url: "https://github.com/datatrans/ios-sdk.git", from: "2.2.0"),
-        .package(url: "https://github.com/snabble/AutoLayout-Helper.git", from: "1.1.0"),
         .package(url: "https://github.com/sberrevoets/SDCAlertView.git", from: "12.0.2"),
         .package(url: "https://github.com/devicekit/DeviceKit.git", from: "4.7.0"),
         .package(url: "https://github.com/52inc/Pulley.git", from: "2.9.1"),
@@ -71,7 +70,6 @@ let package = Package(
             name: "SnabbleUI",
             dependencies: [
                 "SnabbleCore",
-                "AutoLayout-Helper",
                 "SDCAlertView",
                 "DeviceKit",
                 "Pulley",

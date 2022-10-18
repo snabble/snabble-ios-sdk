@@ -23,7 +23,6 @@ class CircleView: UIView {
 
 #if canImport(SwiftUI) && DEBUG
 import SwiftUI
-import AutoLayout_Helper
 
 @available(iOS 13, *)
 public struct CircleView_Previews: PreviewProvider {

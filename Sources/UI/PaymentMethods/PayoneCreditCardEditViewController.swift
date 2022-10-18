@@ -6,7 +6,6 @@
 
 import UIKit
 import WebKit
-import AutoLayout_Helper
 import SnabbleCore
 
 // sample data for testing:
@@ -207,7 +206,12 @@ public final class PayoneCreditCardEditViewController: UIViewController {
         // container for the "display-only" mode
         displayContainer.translatesAutoresizingMaskIntoConstraints = false
         view.addSubview(displayContainer)
-        NSLayoutConstraint.activate(displayContainer.constraintsForAnchoringTo(boundsOf: view))
+        NSLayoutConstraint.activate([
+            displayContainer.topAnchor.constraint(equalTo: view.topAnchor),
+            displayContainer.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+            view.bottomAnchor.constraint(equalTo: displayContainer.bottomAnchor),
+            view.trailingAnchor.constraint(equalTo: displayContainer.trailingAnchor)
+        ])
 
         explanation.translatesAutoresizingMaskIntoConstraints = false
         explanation.numberOfLines = 0
@@ -266,16 +270,27 @@ public final class PayoneCreditCardEditViewController: UIViewController {
         // container for our webview
         webViewContainer.translatesAutoresizingMaskIntoConstraints = false
         self.view.addSubview(webViewContainer)
-        NSLayoutConstraint.activate(webViewContainer.constraintsForAnchoringTo(boundsOf: view))
+        NSLayoutConstraint.activate([
+            webViewContainer.topAnchor.constraint(equalTo: view.topAnchor),
+            webViewContainer.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+            view.bottomAnchor.constraint(equalTo: webViewContainer.bottomAnchor),
+            view.trailingAnchor.constraint(equalTo: webViewContainer.trailingAnchor)
+        ])
 
         let activityIndicator = UIActivityIndicatorView(style: .medium)
         activityIndicator.color = .systemGray
         activityIndicator.translatesAutoresizingMaskIntoConstraints = false
         activityIndicator.hidesWhenStopped = true
         webViewContainer.addSubview(activityIndicator)
-        NSLayoutConstraint.activate(
-            activityIndicator.constraintsForCenterIn(boundsOf: webViewContainer)
-        )
+        NSLayoutConstraint.activate([
+            activityIndicator.centerXAnchor.constraint(equalTo: webViewContainer.centerXAnchor),
+            activityIndicator.centerYAnchor.constraint(equalTo: webViewContainer.centerYAnchor),
+
+            activityIndicator.topAnchor.constraint(greaterThanOrEqualTo: webViewContainer.topAnchor),
+            activityIndicator.leadingAnchor.constraint(greaterThanOrEqualTo: webViewContainer.leadingAnchor),
+            webViewContainer.bottomAnchor.constraint(greaterThanOrEqualTo: activityIndicator.bottomAnchor),
+            webViewContainer.trailingAnchor.constraint(greaterThanOrEqualTo: activityIndicator.trailingAnchor)
+        ])
         self.activityIndicator = activityIndicator
 
         setupWebView(in: webViewContainer)
@@ -295,7 +310,12 @@ public final class PayoneCreditCardEditViewController: UIViewController {
         webView.translatesAutoresizingMaskIntoConstraints = false
 
         containerView.addSubview(webView)
-        NSLayoutConstraint.activate(webView.constraintsForAnchoringTo(boundsOf: containerView))
+        NSLayoutConstraint.activate([
+            webView.topAnchor.constraint(equalTo: containerView.topAnchor),
+            webView.leadingAnchor.constraint(equalTo: containerView.leadingAnchor),
+            containerView.bottomAnchor.constraint(equalTo: webView.bottomAnchor),
+            containerView.trailingAnchor.constraint(equalTo: webView.trailingAnchor)
+        ])
 
         self.webView = webView
     }

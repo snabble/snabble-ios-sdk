@@ -6,7 +6,6 @@
 
 import Foundation
 import UIKit
-import AutoLayout_Helper
 import SnabbleCore
 
 extension UIViewController {

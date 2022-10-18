@@ -7,7 +7,6 @@
 
 import Foundation
 import UIKit
-import AutoLayout_Helper
 
 protocol CheckoutHeaderViewModel {
     var statusViewModel: CheckoutStepStatusViewModel { get }
@@ -88,7 +87,6 @@ extension CheckoutStepStatus: CheckoutHeaderViewModel {
 
 #if canImport(SwiftUI) && DEBUG
 import SwiftUI
-import AutoLayout_Helper
 
 @available(iOS 13, *)
 public struct CheckoutHeaderView_Previews: PreviewProvider {
