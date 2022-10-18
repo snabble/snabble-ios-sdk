@@ -10,7 +10,7 @@ name: Review
 jobs:
   SDK:
     name: Review
-    runs-on: macos-latest
+    runs-on: ubuntu-latest
     steps:
       - name: Checkout
         uses: actions/checkout@v3
