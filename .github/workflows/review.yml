@@ -1,23 +1,24 @@
 on:
   pull_request:
     paths:
-      - '.github/workflows/lint.yml'
-      - '.swiftlint.yml'
+      - '.github/workflows/review.yml'
+      - 'Dangerfile.swift'
       - '**/*.swift'
 
-name: Danger
+name: Review
 jobs:
   SDK:
-    name: Danger
+    name: Review
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
         uses: actions/checkout@v3
 
       - name: Danger
-        uses: docker://ghcr.io/danger/danger-swift-with-swiftlint:3.14.0
+        uses: danger/swift@3.14.2
         with:
             args: -b main --failOnErrors --no-publish-check
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
 

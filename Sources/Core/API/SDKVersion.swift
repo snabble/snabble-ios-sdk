@@ -4,6 +4,6 @@
 //  Copyright © 2021 snabble. All rights reserved.
 //
 
-public var version: String {
+public var SDKVersion: String {
     "0.23.0"
 }

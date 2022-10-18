@@ -8,6 +8,7 @@
 import UIKit
 import SwiftUI
 import SnabbleUI
+import SnabbleCore
 
 final class AccountViewController: DynamicViewController {
     override init(viewModel: DynamicViewModel) {

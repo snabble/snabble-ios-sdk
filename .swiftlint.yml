@@ -1,8 +1,6 @@
 included:
- - UI/Sources
- - Core/Sources
- - Datatrans/Sources
- - Example/snabble
+ - Sources/
+ - Example/snabble/
 
 disabled_rules:
  - todo

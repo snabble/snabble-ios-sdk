@@ -1,7 +1,7 @@
 phrase:
   pull:
     targets:
-    - file: ./UI/Sources/Resources/<locale_name>.lproj/Localizable.strings
+    - file: ./Sources/UI/Resources/<locale_name>.lproj/Localizable.strings
       project_id: 3e43b3f90cf19e83c7d85652df5766ca
       params:
         file_format: strings
@@ -11,7 +11,7 @@ phrase:
         format_options:
             convert_placeholder: true
             include_pluralized_keys: false
-    - file: ./UI/Sources/Resources/<locale_name>.lproj/Localizable.stringsdict
+    - file: ./Sources/UI/Resources/<locale_name>.lproj/Localizable.stringsdict
       project_id: 3e43b3f90cf19e83c7d85652df5766ca
       params:
         file_format: stringsdict
