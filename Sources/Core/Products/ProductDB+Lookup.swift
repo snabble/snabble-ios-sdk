@@ -110,7 +110,7 @@ extension ProductDB {
         }
     }
 
-    func resolveProductLookup(_ url: String, _ sku: String, _ shopId: Identifier<Shop>, completion: @escaping (_ result: Result<Product, ProductLookupError>) -> Void) {
+    func resolveProductLookup(url: String, sku: String, shopId: Identifier<Shop>, completion: @escaping (_ result: Result<Product, ProductLookupError>) -> Void) {
         let session = Snabble.urlSession
 
         // TODO: is this the right value?

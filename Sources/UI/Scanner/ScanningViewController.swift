@@ -586,7 +586,7 @@ extension ScanningViewController {
         let templates = matches.map { $0.template.id }
         let codes = Array(zip(lookupCodes, templates))
 
-        self.productProvider.productByScannableCodes(codes, self.shop.id) { result in
+        self.productProvider.productBy(codes: codes, shopId: self.shop.id) { result in
             switch result {
             case .success(let lookupResult):
                 guard let parseResult = matches.first(where: { $0.template.id == lookupResult.templateId }) else {
@@ -687,7 +687,7 @@ extension ScanningViewController {
         }
 
         let codes = [(gtin, CodeTemplate.defaultName)]
-        self.productProvider.productByScannableCodes(codes, self.shop.id) { result in
+        self.productProvider.productBy(codes: codes, shopId: self.shop.id) { result in
             switch result {
             case .success(let lookupResult):
                 let priceDigits = SnabbleCI.project.decimalDigits
@@ -727,7 +727,7 @@ extension ScanningViewController {
         let lookupCodes = matches.map { $0.lookupCode }
         let templates = matches.map { $0.template.id }
         let codes = Array(zip(lookupCodes, templates))
-        self.productProvider.productByScannableCodes(codes, self.shop.id) { result in
+        self.productProvider.productBy(codes: codes, shopId: self.shop.id) { result in
             switch result {
             case .success(let lookupResult):
                 let newResult = ScannedProduct(lookupResult.product, code, match.transmissionCode,
@@ -746,7 +746,7 @@ extension ScanningViewController {
 
     private func lookupProduct(for code: String, withTemplate template: String, priceOverride: Int?, completion: @escaping (ScannerLookup) -> Void ) {
         let codes = [(code, template)]
-        self.productProvider.productByScannableCodes(codes, self.shop.id) { result in
+        self.productProvider.productBy(codes: codes, shopId: self.shop.id) { result in
             switch result {
             case .success(let lookupResult):
                 let transmissionCode = lookupResult.product.codes[0].transmissionCode

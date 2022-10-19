@@ -117,15 +117,15 @@ class MockProductDB: ProductProvider {
 
     func stopDatabaseUpdate() {}
 
-    func productBySku(_ sku: String, _ shopId: Identifier<Shop>) -> Product? {
+    func productBy(sku: String, shopId: Identifier<Shop>) -> Product? {
         return MockProductDB.productMap[sku]
     }
 
-    func productByScannableCodes(_ codes: [(String, String)], _ shopId: Identifier<Shop>) -> ScannedProduct? {
+    func productBy(codes: [(String, String)], shopId: Identifier<Shop>) -> ScannedProduct? {
         return nil
     }
 
-    func productsBySku(_ skus: [String], _ shopId: Identifier<Shop>) -> [Product] {
+    func productsBy(skus: [String], shopId: Identifier<Shop>) -> [Product] {
         var products = [Product]()
         skus.forEach {
             if let p = MockProductDB.productMap[$0] {
@@ -135,12 +135,12 @@ class MockProductDB: ProductProvider {
         return products
     }
 
-    func productsByName(_ name: String, filterDeposits: Bool) -> [Product] {
+    func productsBy(name: String, filterDeposits: Bool) -> [Product] {
         let products = MockProductDB.allProducts.filter { $0.name.contains(name) }
         return products
     }
 
-    func productsByScannableCodePrefix(_ prefix: String, filterDeposits: Bool, templates: [String]?, shopId: Identifier<Shop>) -> [Product] {
+    func productsBy(prefix: String, filterDeposits: Bool, templates: [String]?, shopId: Identifier<Shop>) -> [Product] {
         let products = MockProductDB.allProducts.filter { product in
             let matches = product.codes.filter { $0.template == "default" && $0.code.hasPrefix(prefix) }
             return matches.count > 0
@@ -152,11 +152,11 @@ class MockProductDB: ProductProvider {
         }
     }
 
-    func productBySku(_ sku: String, _ shopId: Identifier<Shop>, forceDownload: Bool, completion: @escaping (Result<Product, ProductLookupError>) -> ()) {
+    func productBy(sku: String, shopId: Identifier<Shop>, forceDownload: Bool, completion: @escaping (Result<Product, ProductLookupError>) -> ()) {
         completion(Result.failure(.notFound))
     }
 
-    func productByScannableCodes(_ codes: [(String, String)], _ shopId: Identifier<Shop>, forceDownload: Bool, completion: @escaping (Result<ScannedProduct, ProductLookupError>) -> ()) {
+    func productBy(codes: [(String, String)], shopId: Identifier<Shop>, forceDownload: Bool, completion: @escaping (Result<ScannedProduct, ProductLookupError>) -> ()) {
         completion(Result.failure(.notFound))
     }
 

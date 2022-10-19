@@ -113,13 +113,13 @@ public protocol ProductProvider: AnyObject {
     func stopDatabaseUpdate()
 
     /// get a product by its SKU
-    func productBySku(_ sku: String, _ shopId: Identifier<Shop>) -> Product?
+    func productBy(sku: String, shopId: Identifier<Shop>) -> Product?
 
     /// get a product by one of its scannable codes/templates
-    func productByScannableCodes(_ codes: [(String, String)], _ shopId: Identifier<Shop>) -> ScannedProduct?
+    func productBy(codes: [(String, String)], shopId: Identifier<Shop>) -> ScannedProduct?
 
     /// get a list of products by their SKUs
-    func productsBySku(_ skus: [String], _ shopId: Identifier<Shop>) -> [Product]
+    func productsBy(skus: [String], shopId: Identifier<Shop>) -> [Product]
 
     /// get products matching `name`
     ///
@@ -128,7 +128,7 @@ public protocol ProductProvider: AnyObject {
     /// - Parameter name: the string to search for. The search is case- and diacritic-insensitive
     /// - Returns: an array of matching `Product`s.
     ///   NB: the returned products do not have price information
-    func productsByName(_ name: String, filterDeposits: Bool) -> [Product]
+    func productsBy(name: String, filterDeposits: Bool) -> [Product]
 
     /// searches for products whose scannable codes start with `prefix`
     ///
@@ -138,7 +138,7 @@ public protocol ProductProvider: AnyObject {
     ///   - templates: if set, the search matches any of the templates passed. if nil, only the built-in `default` template is matched
     /// - Returns: an array of matching `Product`s
     ///   NB: the returned products do not have price information
-    func productsByScannableCodePrefix(_ prefix: String, filterDeposits: Bool, templates: [String]?, shopId: Identifier<Shop>) -> [Product]
+    func productsBy(prefix: String, filterDeposits: Bool, templates: [String]?, shopId: Identifier<Shop>) -> [Product]
 
     // MARK: - asynchronous variants of the product lookup methods
 
@@ -148,7 +148,7 @@ public protocol ProductProvider: AnyObject {
     ///   - sku: the sku to look for
     ///   - forceDownload: if true, skip the lookup in the local DB
     ///   - result: the product found or the error
-    func productBySku(_ sku: String, _ shopId: Identifier<Shop>, forceDownload: Bool, completion: @escaping (_ result: Result<Product, ProductLookupError>) -> Void )
+    func productBy(sku: String, shopId: Identifier<Shop>, forceDownload: Bool, completion: @escaping (_ result: Result<Product, ProductLookupError>) -> Void )
 
     /// asynchronously get a product by (one of) its scannable codes
     ///
@@ -156,8 +156,7 @@ public protocol ProductProvider: AnyObject {
     ///   - codes: the code/template pairs to look for
     ///   - forceDownload: if true, skip the lookup in the local DB
     ///   - result: the lookup result or the error
-    func productByScannableCodes(_ codes: [(String, String)], _ shopId: Identifier<Shop>, forceDownload: Bool,
-                                 completion: @escaping (_ result: Result<ScannedProduct, ProductLookupError>) -> Void )
+    func productBy(codes: [(String, String)], shopId: Identifier<Shop>, forceDownload: Bool, completion: @escaping (_ result: Result<ScannedProduct, ProductLookupError>) -> Void )
 
     var revision: Int64 { get }
     var lastProductUpdate: Date { get }
@@ -176,20 +175,20 @@ public extension ProductProvider {
         self.setup(update: .always, forceFullDownload: false, completion: completion)
     }
 
-    func productBySku(_ sku: String, _ shopId: Identifier<Shop>, completion: @escaping (_ result: Result<Product, ProductLookupError>) -> Void ) {
-        self.productBySku(sku, shopId, forceDownload: false, completion: completion)
+    func productBy(sku: String, shopId: Identifier<Shop>, completion: @escaping (_ result: Result<Product, ProductLookupError>) -> Void ) {
+        self.productBy(sku: sku, shopId: shopId, forceDownload: false, completion: completion)
     }
 
-    func productsByScannableCodePrefix(_ prefix: String, _ shopId: Identifier<Shop>) -> [Product] {
-        return self.productsByScannableCodePrefix(prefix, filterDeposits: true, templates: nil, shopId: shopId)
+    func productsBy(prefix: String, shopId: Identifier<Shop>) -> [Product] {
+        return self.productsBy(prefix: prefix, filterDeposits: true, templates: nil, shopId: shopId)
     }
 
     func productsByName(_ name: String) -> [Product] {
-        return self.productsByName(name, filterDeposits: true)
+        return self.productsBy(name: name, filterDeposits: true)
     }
 
-    func productByScannableCodes(_ codes: [(String, String)], _ shopId: Identifier<Shop>, completion: @escaping (_ result: Result<ScannedProduct, ProductLookupError>) -> Void ) {
-        self.productByScannableCodes(codes, shopId, forceDownload: false, completion: completion)
+    func productBy(codes: [(String, String)], shopId: Identifier<Shop>, completion: @escaping (_ result: Result<ScannedProduct, ProductLookupError>) -> Void ) {
+        self.productBy(codes: codes, shopId: shopId, forceDownload: false, completion: completion)
     }
 
     func removeDatabase() { }
@@ -753,7 +752,7 @@ extension ProductDB {
     ///
     /// - Parameter sku: the SKU of the product to get
     /// - Returns: a `Product` if found; nil otherwise
-    public func productBySku(_ sku: String, _ shopId: Identifier<Shop>) -> Product? {
+    public func productBy(sku: String, shopId: Identifier<Shop>) -> Product? {
         guard let db = self.db else {
             return nil
         }
@@ -767,7 +766,7 @@ extension ProductDB {
     ///
     /// - Parameter skus: SKUs of the products to get
     /// - Returns: an array of `Product`
-    public func productsBySku(_ skus: [String], _ shopId: Identifier<Shop>) -> [Product] {
+    public func productsBy(skus: [String], shopId: Identifier<Shop>) -> [Product] {
         guard let db = self.db, !skus.isEmpty else {
             return []
         }
@@ -776,7 +775,7 @@ extension ProductDB {
     }
 
     /// get a product by one of its scannable codes/template pairs
-    public func productByScannableCodes(_ codes: [(String, String)], _ shopId: Identifier<Shop>) -> ScannedProduct? {
+    public func productBy(codes: [(String, String)], shopId: Identifier<Shop>) -> ScannedProduct? {
         guard let db = self.db else {
             return nil
         }
@@ -792,7 +791,7 @@ extension ProductDB {
     ///   - name: the string to search for. The search is case- and diacritic-insensitive
     ///   - filterDeposits: if true, products with `isDeposit==true` are not returned
     /// - Returns: an array of matching Products
-    public func productsByName(_ name: String, filterDeposits: Bool = true) -> [Product] {
+    public func productsBy(name: String, filterDeposits: Bool = true) -> [Product] {
         guard let db = self.db else {
             return []
         }
@@ -811,7 +810,7 @@ extension ProductDB {
     ///   - prefix: the prefix to search for
     ///   - filterDeposits: if true, products with `isDeposit==true` are not returned
     /// - Returns: an array of matching Products
-    public func productsByScannableCodePrefix(_ prefix: String, filterDeposits: Bool, templates: [String]?, shopId: Identifier<Shop>) -> [Product] {
+    public func productsBy(prefix: String, filterDeposits: Bool, templates: [String]?, shopId: Identifier<Shop>) -> [Product] {
         guard let db = self.db else {
             return []
         }
@@ -821,7 +820,7 @@ extension ProductDB {
 
     // MARK: - asynchronous requests
 
-    private func lookupLocally(_ forceDownload: Bool) -> Bool {
+    private func lookupLocally(forceDownload: Bool) -> Bool {
         let now = Date.timeIntervalSinceReferenceDate
         let age = now - self.lastProductUpdate.timeIntervalSinceReferenceDate
         let ageOk = age < self.config.maxProductDatabaseAge
@@ -837,8 +836,8 @@ extension ProductDB {
     ///   - forceDownload: if true, skip the lookup in the local DB
     ///   - product: the product found, or nil.
     ///   - error: whether an error occurred during the lookup.
-    public func productBySku(_ sku: String, _ shopId: Identifier<Shop>, forceDownload: Bool, completion: @escaping (_ result: Result<Product, ProductLookupError>) -> Void) {
-        if self.lookupLocally(forceDownload), let product = self.productBySku(sku, shopId) {
+    public func productBy(sku: String, shopId: Identifier<Shop>, forceDownload: Bool, completion: @escaping (_ result: Result<Product, ProductLookupError>) -> Void) {
+        if self.lookupLocally(forceDownload: forceDownload), let product = self.productBy(sku: sku, shopId: shopId) {
             DispatchQueue.main.async {
                 if product.availability == .notAvailable {
                     completion(.failure(.notFound))
@@ -850,7 +849,7 @@ extension ProductDB {
         }
 
         if let url = self.project.links.resolvedProductBySku?.href {
-            self.resolveProductLookup(url, sku, shopId, completion: completion)
+            self.resolveProductLookup(url: url, sku: sku, shopId: shopId, completion: completion)
         } else {
             completion(.failure(.notFound))
         }
@@ -866,9 +865,8 @@ extension ProductDB {
     ///   - forceDownload: if true, skip the lookup in the local DB
     ///   - product: the product found, or nil.
     ///   - error: whether an error occurred during the lookup.
-    public func productByScannableCodes(_ codes: [(String, String)], _ shopId: Identifier<Shop>, forceDownload: Bool,
-                                        completion: @escaping (_ result: Result<ScannedProduct, ProductLookupError>) -> Void) {
-        if self.lookupLocally(forceDownload), let result = self.productByScannableCodes(codes, shopId) {
+    public func productBy(codes: [(String, String)], shopId: Identifier<Shop>, forceDownload: Bool, completion: @escaping (_ result: Result<ScannedProduct, ProductLookupError>) -> Void) {
+        if self.lookupLocally(forceDownload: forceDownload), let result = self.productBy(codes: codes, shopId: shopId) {
             DispatchQueue.main.async {
                 if result.product.availability == .notAvailable {
                     completion(.failure(.notFound))
