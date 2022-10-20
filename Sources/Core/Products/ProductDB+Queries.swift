@@ -45,14 +45,14 @@ extension ProductDB {
         where s.code = ? and s.template = ?
         """
 
-    func productBySku(_ dbQueue: DatabaseQueue, _ sku: String, _ shopId: Identifier<Shop>) -> Product? {
+    func productBy(_ dbQueue: DatabaseQueue, sku: String, shopId: Identifier<Shop>) -> Product? {
         do {
             let row = try dbQueue.inDatabase { db in
                 return try self.fetchOne(db,
-                    ProductDB.productQuery + " where p.sku = ?",
+                    sql: ProductDB.productQuery + " where p.sku = ?",
                     arguments: [shopId.rawValue, self.defaultAvailability, sku])
             }
-            return self.productFromRow(dbQueue, row, shopId)
+            return self.productFrom(dbQueue, row: row, shopId: shopId)
         } catch {
             self.logError("productBySku db error: \(error)")
         }
@@ -60,24 +60,24 @@ extension ProductDB {
         return nil
     }
 
-    func productsBySku(_ dbQueue: DatabaseQueue, _ skus: [String], _ shopId: Identifier<Shop>) -> [Product] {
+    func productsBy(_ dbQueue: DatabaseQueue, skus: [String], shopId: Identifier<Shop>) -> [Product] {
         do {
             let list = skus.map { "\'\($0)\'" }.joined(separator: ",")
             let rows = try dbQueue.inDatabase { db in
                 return try self.fetchAll(db,
-                    ProductDB.productQuery + " where p.sku in (\(list))",
+                    sql: ProductDB.productQuery + " where p.sku in (\(list))",
                     arguments: [shopId.rawValue, self.defaultAvailability])
             }
-            return rows.compactMap { self.productFromRow(dbQueue, $0, shopId) }
+            return rows.compactMap { self.productFrom(dbQueue, row: $0, shopId: shopId) }
         } catch {
             self.logError("productsBySku db error: \(error)")
         }
         return []
     }
 
-    func productByScannableCodes(_ dbQueue: DatabaseQueue, _ codes: [(String, String)], _ shopId: Identifier<Shop>) -> ScannedProduct? {
+    func productBy(_ dbQueue: DatabaseQueue, codes: [(String, String)], shopId: Identifier<Shop>) -> ScannedProduct? {
         for (code, template) in codes {
-            if let result = self.productByScannableCode(dbQueue, code, template, shopId) {
+            if let result = self.productBy(dbQueue, code: code, template: template, shopId: shopId) {
                 return result
             }
         }
@@ -85,16 +85,16 @@ extension ProductDB {
         return nil
     }
 
-    private func productByScannableCode(_ dbQueue: DatabaseQueue, _ code: String, _ template: String, _ shopId: Identifier<Shop>) -> ScannedProduct? {
+    private func productBy(_ dbQueue: DatabaseQueue, code: String, template: String, shopId: Identifier<Shop>) -> ScannedProduct? {
         do {
             let row = try dbQueue.inDatabase { db in
                 return try fetchOne(
                     db,
-                    ProductDB.productQueryUnits,
+                    sql: ProductDB.productQueryUnits,
                     arguments: [shopId.rawValue, self.defaultAvailability, code, template]
                 )
             }
-            if let product = productFromRow(dbQueue, row, shopId) {
+            if let product = productFrom(dbQueue, row: row, shopId: shopId) {
                 let codeEntry = product.codes.first { $0.code == code }
                 let transmissionCode = codeEntry?.transmissionCode
                 let specifiedQuantity = codeEntry?.specifiedQuantity
@@ -105,7 +105,7 @@ extension ProductDB {
                                       specifiedQuantity: specifiedQuantity)
             } else {
                 if let code = extractLeadingZeros(from: code) {
-                    return productByScannableCode(dbQueue, code, template, shopId)
+                    return productBy(dbQueue, code: code, template: template, shopId: shopId)
                 }
             }
         } catch {
@@ -131,25 +131,25 @@ extension ProductDB {
         }
     }
 
-    func productsByName(_ dbQueue: DatabaseQueue, _ name: String, _ filterDeposits: Bool, _ shopId: Identifier<Shop>) -> [Product] {
+    func productsBy(_ dbQueue: DatabaseQueue, name: String, filterDeposits: Bool, shopId: Identifier<Shop>) -> [Product] {
         do {
             let limit = name.count < 5 ? name.count * 100 : -1
             let depositCondition = filterDeposits ? "and isDeposit = 0" : ""
             let rows = try dbQueue.inDatabase { db in
                 return try self.fetchAll(db,
-                    ProductDB.productQuery + " " + """
+                    sql: ProductDB.productQuery + " " + """
                     where p.sku in (select sku from searchByName where name match ? limit ?) \(depositCondition)
                     """,
                     arguments: [shopId.rawValue, self.defaultAvailability, "\(name)*", limit])
             }
-            return rows.compactMap { self.productFromRow(dbQueue, $0, shopId, fetchPriceAndBundles: false) }
+            return rows.compactMap { self.productFrom(dbQueue, row: $0, shopId: shopId, fetchPriceAndBundles: false) }
         } catch {
             self.logError("productsByName db error: \(error)")
         }
         return []
     }
 
-    func productsByScannableCodePrefix(_ dbQueue: DatabaseQueue, _ prefix: String, _ filterDeposits: Bool, _ templates: [String]?, _ shopId: Identifier<Shop>) -> [Product] {
+    func productsBy(_ dbQueue: DatabaseQueue, prefix: String, filterDeposits: Bool, templates: [String]?, shopId: Identifier<Shop>) -> [Product] {
         do {
             let limit = 100 //  prefix.count < 5 ? prefix.count * 100 : -1
             let depositCondition = filterDeposits ? "and isDeposit = 0" : ""
@@ -157,7 +157,7 @@ extension ProductDB {
             let list = templateNames.map { "\'\($0)\'" }.joined(separator: " , ")
             let rows = try dbQueue.inDatabase { db in
                 return try self.fetchAll(db,
-                    ProductDB.productQuery + " " + """
+                    sql: ProductDB.productQuery + " " + """
                     join scannableCodes s on s.sku = p.sku
                     where s.template in (\(list))
                         and ((s.code glob ?) or (s.sku glob?))
@@ -169,22 +169,22 @@ extension ProductDB {
                     """,
                     arguments: [ shopId.rawValue, self.defaultAvailability, "\(prefix)*", "\(prefix)*", limit])
             }
-            return rows.compactMap { self.productFromRow(dbQueue, $0, shopId, fetchPriceAndBundles: false) }
+            return rows.compactMap { self.productFrom(dbQueue, row: $0, shopId: shopId, fetchPriceAndBundles: false) }
         } catch {
             self.logError("productByScannableCodePrefix db error: \(error)")
         }
         return []
     }
 
-    func productsBundling(_ dbQueue: DatabaseQueue, _ sku: String, _ shopId: Identifier<Shop>) -> [Product] {
+    func productsBy(_ dbQueue: DatabaseQueue, bundledSku sku: String, shopId: Identifier<Shop>) -> [Product] {
         do {
             let rows = try dbQueue.inDatabase { db in
                 return try self.fetchAll(db,
-                    ProductDB.productQuery + " where p.bundledSku = ?",
+                    sql: ProductDB.productQuery + " where p.bundledSku = ?",
                     arguments: [shopId.rawValue, self.defaultAvailability, sku])
             }
             // get all bundles
-            let bundles = rows.compactMap { self.productFromRow(dbQueue, $0, shopId) }
+            let bundles = rows.compactMap { self.productFrom(dbQueue, row: $0, shopId: shopId) }
             // remove bundles w/o price
             return bundles.filter { $0.listPrice != 0 }
         } catch {
@@ -196,7 +196,7 @@ extension ProductDB {
     func metadata(_ dbQueue: DatabaseQueue) -> [String: String] {
         do {
             let rows = try dbQueue.inDatabase { db in
-                return try self.fetchAll(db, "select * from metadata")
+                return try self.fetchAll(db, sql: "select * from metadata")
             }
 
             let tuples = rows.compactMap { ($0["key"], $0["value"]) as? (String, String) }
@@ -221,7 +221,7 @@ extension ProductDB {
         Log.info("FTS index built in \(elapsed)s")
     }
 
-    private func productFromRow(_ dbQueue: DatabaseQueue, _ row: Row?, _ shopId: Identifier<Shop>, fetchPriceAndBundles: Bool = true) -> Product? {
+    private func productFrom(_ dbQueue: DatabaseQueue, row: Row?, shopId: Identifier<Shop>, fetchPriceAndBundles: Bool = true) -> Product? {
         guard
             let row = row,
             let sku = row["sku"] as? String
@@ -230,7 +230,7 @@ extension ProductDB {
         }
 
         let priceRow: Row
-        if fetchPriceAndBundles, let pRow = self.getPriceRowForSku(dbQueue, sku, shopId) {
+        if fetchPriceAndBundles, let pRow = self.getPriceFor(dbQueue, sku: sku, shopId: shopId) {
             priceRow = pRow
         } else {
             priceRow = row
@@ -240,11 +240,11 @@ extension ProductDB {
         let depositSku = row["depositSku"] as? String
 
         var depositPrice: Int?
-        if fetchPriceAndBundles, let dSku = depositSku, let depositProduct = self.productBySku(dbQueue, dSku, shopId) {
+        if fetchPriceAndBundles, let dSku = depositSku, let depositProduct = self.productBy(dbQueue, sku: dSku, shopId: shopId) {
             depositPrice = depositProduct.price(nil)
         }
 
-        let bundles = fetchPriceAndBundles ? self.productsBundling(dbQueue, sku, shopId) : []
+        let bundles = fetchPriceAndBundles ? self.productsBy(dbQueue, bundledSku: sku, shopId: shopId) : []
 
         let codes = self.buildCodes(row)
 
@@ -281,7 +281,7 @@ extension ProductDB {
         return product
     }
 
-    private func getPriceRowForSku(_ dbQueue: DatabaseQueue, _ sku: String, _ shopId: Identifier<Shop>) -> Row? {
+    private func getPriceFor(_ dbQueue: DatabaseQueue, sku: String, shopId: Identifier<Shop>) -> Row? {
         // find the highest priority category that has a price
         let priceQuery = """
             select * from prices
@@ -293,7 +293,7 @@ extension ProductDB {
         do {
             let row = try dbQueue.inDatabase { db in
                 return try self.fetchOne(db,
-                    priceQuery,
+                    sql: priceQuery,
                     arguments: [shopId.rawValue, sku])
             }
             if row != nil {
@@ -303,7 +303,7 @@ extension ProductDB {
 
             // no price in the category, try the default category, 0
             let row2 = try dbQueue.inDatabase { db in
-                return try self.fetchOne(db, "select * from prices where pricingCategory = 0 and sku = ?", arguments: [sku])
+                return try self.fetchOne(db, sql: "select * from prices where pricingCategory = 0 and sku = ?", arguments: [sku])
             }
             return row2
         } catch {
@@ -363,23 +363,23 @@ extension ProductDB {
 
     // timing-logging wrappers around Row.fetchOne/fetchAll
 
-    private func fetchOne(_ db: Database, _ query: String, arguments: StatementArguments = StatementArguments()) throws -> Row? {
+    private func fetchOne(_ db: Database, sql query: String, arguments: StatementArguments = StatementArguments()) throws -> Row? {
         let start = Date.timeIntervalSinceReferenceDate
         defer {
-            self.logSlowQuery(db, query, arguments, start)
+            self.logSlowQuery(db, sql: query, arguments: arguments, start)
         }
         return try Row.fetchOne(db, sql: query, arguments: arguments, adapter: nil)
     }
 
-    private func fetchAll(_ db: Database, _ query: String, arguments: StatementArguments = StatementArguments()) throws -> [Row] {
+    private func fetchAll(_ db: Database, sql query: String, arguments: StatementArguments = StatementArguments()) throws -> [Row] {
         let start = Date.timeIntervalSinceReferenceDate
         defer {
-            self.logSlowQuery(db, query, arguments, start)
+            self.logSlowQuery(db, sql: query, arguments: arguments, start)
         }
         return try Row.fetchAll(db, sql: query, arguments: arguments, adapter: nil)
     }
 
-    private func logSlowQuery(_ db: Database, _ query: String, _ arguments: StatementArguments, _ start: TimeInterval) {
+    private func logSlowQuery(_ db: Database, sql query: String, arguments: StatementArguments, _ start: TimeInterval) {
         let elapsed = Date.timeIntervalSinceReferenceDate - start
 
         if Snabble.debugMode && elapsed >= 0.03 {
@@ -388,7 +388,7 @@ extension ProductDB {
         }
     }
 
-    private func queryPlan(_ db: Database, _ query: String, _ arguments: StatementArguments = StatementArguments()) {
+    private func queryPlan(_ db: Database, sql query: String, _ arguments: StatementArguments = StatementArguments()) {
         do {
             for explain in try Row.fetchAll(db, sql: "EXPLAIN QUERY PLAN " + query, arguments: arguments) {
                 Log.debug("EXPLAIN: \(explain)")

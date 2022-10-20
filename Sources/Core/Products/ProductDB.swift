@@ -757,7 +757,7 @@ extension ProductDB {
             return nil
         }
 
-        return self.productBySku(db, sku, shopId)
+        return self.productBy(db, sku: sku, shopId: shopId)
     }
 
     /// get a list of products by their SKUs
@@ -771,7 +771,7 @@ extension ProductDB {
             return []
         }
 
-        return self.productsBySku(db, skus, shopId)
+        return self.productsBy(db, skus: skus, shopId: shopId)
     }
 
     /// get a product by one of its scannable codes/template pairs
@@ -780,7 +780,7 @@ extension ProductDB {
             return nil
         }
 
-        return self.productByScannableCodes(db, codes, shopId)
+        return self.productBy(db, codes: codes, shopId: shopId)
     }
 
     /// get products matching `name`
@@ -800,7 +800,7 @@ extension ProductDB {
             Log.warn("productsByName called, but useFTS not set")
         }
 
-        return self.productsByName(db, name, filterDeposits, "")
+        return self.productsBy(db, name: name, filterDeposits: filterDeposits, shopId: "")
     }
 
     ///
@@ -815,7 +815,7 @@ extension ProductDB {
             return []
         }
 
-        return self.productsByScannableCodePrefix(db, prefix, filterDeposits, templates, shopId)
+        return self.productsBy(db, prefix: prefix, filterDeposits: filterDeposits, templates: templates, shopId: shopId)
     }
 
     // MARK: - asynchronous requests
