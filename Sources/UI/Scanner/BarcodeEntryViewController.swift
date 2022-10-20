@@ -116,10 +116,10 @@ extension BarcodeEntryViewController: UISearchBarDelegate {
     // MARK: - search bar
     public func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
         if !searchText.isEmpty {
-            let products = self.productProvider?.productsByScannableCodePrefix(searchText,
-                                                                              filterDeposits: true,
-                                                                              templates: SnabbleCI.project.searchableTemplates,
-                                                                              shopId: self.shopId)
+            let products = self.productProvider?.productsBy(prefix: searchText,
+                                                            filterDeposits: true,
+                                                            templates: SnabbleCI.project.searchableTemplates,
+                                                            shopId: self.shopId)
             self.filteredProducts = removeDuplicates(products ?? []).sorted { prod1, prod2 in
                 let code1 = prod1.codes.filter { $0.code.hasPrefix(searchText) }.first ?? prod1.codes.first!
                 let code2 = prod2.codes.filter { $0.code.hasPrefix(searchText) }.first ?? prod2.codes.first!

@@ -116,7 +116,7 @@ public struct CartItem: Codable {
 
     /// init with a freshly retrieved copy of `item.product`.
     init?(updating item: CartItem, _ provider: ProductProvider, _ shopId: Identifier<Shop>, _ customerCard: String?) {
-        guard let product = provider.productBySku(item.product.sku, shopId) else {
+        guard let product = provider.productBy(sku: item.product.sku, shopId: shopId) else {
             return nil
         }
 

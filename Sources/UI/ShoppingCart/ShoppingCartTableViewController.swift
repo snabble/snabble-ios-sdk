@@ -201,7 +201,7 @@ final class ShoppingCartTableViewController: UITableViewController {
                 // propagate the change to the shopping cart
                 if let lineItem = items.first, items.count == 1, let sku = lineItem.sku, sku != cartItem.product.sku {
                     let provider = Snabble.shared.productProvider(for: SnabbleCI.project)
-                    let product = provider.productBySku(sku, self.shoppingCart.shopId)
+                    let product = provider.productBy(sku: sku, shopId: self.shoppingCart.shopId)
                     if let product = product, let replacement = CartItem(replacing: cartItem, product, self.shoppingCart.shopId, lineItem) {
                         cart.replaceItem(at: index, with: replacement)
                     } else {
@@ -487,7 +487,7 @@ extension ShoppingCartTableViewController {
 
             group.enter()
 
-            provider.productBySku(sku, self.shoppingCart.shopId) { result in
+            provider.productBy(sku: sku, shopId: self.shoppingCart.shopId) { result in
                 switch result {
                 case .failure(let error):
                     Log.error("error in pending lookup for \(sku): \(error)")
