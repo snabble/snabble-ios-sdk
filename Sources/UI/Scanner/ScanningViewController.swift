@@ -30,7 +30,7 @@ final class ScanningViewController: UIViewController {
 
     private let tapticFeedback = UINotificationFeedbackGenerator()
 
-    private let productProvider: ProductProvider
+    private let productProvider: ProductProviding
     private let shoppingCart: ShoppingCart
     private let shop: Shop
 

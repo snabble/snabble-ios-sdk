@@ -21,8 +21,6 @@
 		76C7B79028C1ACD900D94F4F /* Profile.json in Resources */ = {isa = PBXBuildFile; fileRef = 76C7B78F28C1ACD900D94F4F /* Profile.json */; };
 		E127DB6F28C74A64005A7416 /* SnabbleConfig.swift in Sources */ = {isa = PBXBuildFile; fileRef = E127DB6E28C74A64005A7416 /* SnabbleConfig.swift */; };
 		E131CF1A28A3D45C00A844E1 /* SnabbleSampleAppTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E131CF1928A3D45C00A844E1 /* SnabbleSampleAppTests.swift */; };
-		E134A4F328F98825001C04B4 /* SnabbleDatatrans in Frameworks */ = {isa = PBXBuildFile; productRef = E134A4F228F98825001C04B4 /* SnabbleDatatrans */; };
-		E134A4F728F98BB9001C04B4 /* Snabble in Frameworks */ = {isa = PBXBuildFile; productRef = E134A4F628F98BB9001C04B4 /* Snabble */; };
 		E161B0EE28B76DD9005061C4 /* Onboarding.json in Resources */ = {isa = PBXBuildFile; fileRef = E161B0EB28B76357005061C4 /* Onboarding.json */; };
 		E161B0F228B78F89005061C4 /* LoadJSON.swift in Sources */ = {isa = PBXBuildFile; fileRef = E161B0F128B78F89005061C4 /* LoadJSON.swift */; };
 		E1786CBF28BF351400CB7AF0 /* Dashboard.json in Resources */ = {isa = PBXBuildFile; fileRef = E1786CBE28BF351400CB7AF0 /* Dashboard.json */; };
@@ -56,7 +54,6 @@
 		7605C5C228AE44D7000105A8 /* de */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = de; path = de.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		76151FDB28D2FC4800C08D97 /* SnabbleSampleApp.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = SnabbleSampleApp.entitlements; sourceTree = "<group>"; };
 		7615200028D3559E00C08D97 /* Acknowledgements.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = Acknowledgements.html; sourceTree = "<group>"; };
-		763886C828DC8444007C3429 /* snabble-ios-sdk */ = {isa = PBXFileReference; lastKnownFileType = wrapper; name = "snabble-ios-sdk"; path = ..; sourceTree = "<group>"; };
 		76AD21B028D42513003D865A /* privacy.html */ = {isa = PBXFileReference; lastKnownFileType = text.html; path = privacy.html; sourceTree = "<group>"; };
 		76AD21B228D4331A003D865A /* terms.html */ = {isa = PBXFileReference; lastKnownFileType = text.html; path = terms.html; sourceTree = "<group>"; };
 		76C7B74928BFA10700D94F4F /* DashboardViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DashboardViewController.swift; sourceTree = "<group>"; };
@@ -78,8 +75,6 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				E134A4F728F98BB9001C04B4 /* Snabble in Frameworks */,
-				E134A4F328F98825001C04B4 /* SnabbleDatatrans in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -97,7 +92,6 @@
 			isa = PBXGroup;
 			children = (
 				76151FDB28D2FC4800C08D97 /* SnabbleSampleApp.entitlements */,
-				763886C828DC8444007C3429 /* snabble-ios-sdk */,
 				607FACD21AFB9204008FA782 /* Sources */,
 				E131CF1828A3D45C00A844E1 /* SnabbleSampleAppTests */,
 				607FACD11AFB9204008FA782 /* Products */,
@@ -226,8 +220,6 @@
 			);
 			name = SnabbleSampleApp;
 			packageProductDependencies = (
-				E134A4F228F98825001C04B4 /* SnabbleDatatrans */,
-				E134A4F628F98BB9001C04B4 /* Snabble */,
 			);
 			productName = Snabble;
 			productReference = 607FACD01AFB9204008FA782 /* SnabbleSampleApp.app */;
@@ -683,17 +675,6 @@
 			};
 		};
 /* End XCRemoteSwiftPackageReference section */
-
-/* Begin XCSwiftPackageProductDependency section */
-		E134A4F228F98825001C04B4 /* SnabbleDatatrans */ = {
-			isa = XCSwiftPackageProductDependency;
-			productName = SnabbleDatatrans;
-		};
-		E134A4F628F98BB9001C04B4 /* Snabble */ = {
-			isa = XCSwiftPackageProductDependency;
-			productName = Snabble;
-		};
-/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = 607FACC81AFB9204008FA782 /* Project object */;
 }

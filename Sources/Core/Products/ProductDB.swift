@@ -80,38 +80,7 @@ public enum AppDbAvailability {
     case inProgress
 }
 
-public protocol ProductProvider: AnyObject {
-    /// initialize a ProductDB instance with the given configuration
-    /// - parameter config: a `SnabbleAPIConfig` object
-    /// - parameter project: the snabble `Project`
-    init(_ config: Config, _ project: Project)
-
-    /// Check if a database file is present for this project
-    func databaseExists() -> Bool
-
-    /// Setup the product database
-    ///
-    /// The database can be used as soon as this method returns.
-    ///
-    /// - parameter update: if `.always` or `.ifOlderThan` , attempt to update the database to the latest revision
-    /// - parameter forceFullDownload: if true, force a full download of the product database
-    /// - parameter completion: This is called asynchronously on the main thread after the automatic database update check has finished
-    /// - parameter dataAvailable: indicates if new data is available
-    func setup(update: ProductDbUpdate, forceFullDownload: Bool, completion: @escaping ((_ dataAvailable: AppDbAvailability) -> Void))
-
-    /// attempt to resume a previously interrupted update of the product database
-    /// calling this method when there is no previous resumable download has no effect.
-    ///
-    /// - parameter completion: This is called asynchronously on the main thread after the database update check has finished
-    /// - parameter dataAvailable: indicates if new data is available
-    func resumeIncompleteUpdate(completion: @escaping (_ dataAvailable: AppDbAvailability) -> Void)
-
-    /// stop the currently running product database update, if one is in progress.
-    ///
-    /// if possible, this will create the necessary resume data so that the download can be continued later
-    /// by calling `resumeIncompleteUpdate(completion:)`
-    func stopDatabaseUpdate()
-
+public protocol ProductProviding: AnyObject {
     /// get a product by its SKU
     func productBy(sku: String, shopId: Identifier<Shop>) -> Product?
 
@@ -157,24 +126,9 @@ public protocol ProductProvider: AnyObject {
     ///   - forceDownload: if true, skip the lookup in the local DB
     ///   - result: the lookup result or the error
     func productBy(codes: [(String, String)], shopId: Identifier<Shop>, forceDownload: Bool, completion: @escaping (_ result: Result<ScannedProduct, ProductLookupError>) -> Void )
-
-    var revision: Int64 { get }
-    var lastProductUpdate: Date { get }
-
-    var appDbAvailability: AppDbAvailability { get }
-
-    var schemaVersionMajor: Int { get }
-    var schemaVersionMinor: Int { get }
-
-    /// use only during development/debugging
-    func removeDatabase()
 }
 
-public extension ProductProvider {
-    func setup(completion: @escaping (AppDbAvailability) -> Void ) {
-        self.setup(update: .always, forceFullDownload: false, completion: completion)
-    }
-
+public extension ProductProviding {
     func productBy(sku: String, shopId: Identifier<Shop>, completion: @escaping (_ result: Result<Product, ProductLookupError>) -> Void ) {
         self.productBy(sku: sku, shopId: shopId, forceDownload: false, completion: completion)
     }
@@ -190,8 +144,64 @@ public extension ProductProvider {
     func productBy(codes: [(String, String)], shopId: Identifier<Shop>, completion: @escaping (_ result: Result<ScannedProduct, ProductLookupError>) -> Void ) {
         self.productBy(codes: codes, shopId: shopId, forceDownload: false, completion: completion)
     }
+}
 
+public protocol PersistenceVersioning: AnyObject {
+    /// returns the persistence object
+    var database: AnyObject? { get }
+    /// returns the path to the persistence object
+    var databasePath: String { get }
+    
+    /// Check if a database file is present for this project
+    func databaseExists() -> Bool
+
+    /// Setup the product database
+    ///
+    /// The database can be used as soon as this method returns.
+    ///
+    /// - parameter update: if `.always` or `.ifOlderThan` , attempt to update the database to the latest revision
+    /// - parameter forceFullDownload: if true, force a full download of the product database
+    /// - parameter completion: This is called asynchronously on the main thread after the automatic database update check has finished
+    /// - parameter dataAvailable: indicates if new data is available
+    func setup(update: ProductDbUpdate, forceFullDownload: Bool, completion: @escaping ((_ dataAvailable: AppDbAvailability) -> Void))
+
+    /// attempt to resume a previously interrupted update of the product database
+    /// calling this method when there is no previous resumable download has no effect.
+    ///
+    /// - parameter completion: This is called asynchronously on the main thread after the database update check has finished
+    /// - parameter dataAvailable: indicates if new data is available
+    func resumeIncompleteUpdate(completion: @escaping (_ dataAvailable: AppDbAvailability) -> Void)
+
+    /// stop the currently running product database update, if one is in progress.
+    ///
+    /// if possible, this will create the necessary resume data so that the download can be continued later
+    /// by calling `resumeIncompleteUpdate(completion:)`
+    func stopDatabaseUpdate()
+
+    var revision: Int64 { get }
+    var lastProductUpdate: Date { get }
+
+    var appDbAvailability: AppDbAvailability { get }
+    
+    var schemaVersionMajor: Int { get }
+    var schemaVersionMinor: Int { get }
+
+    /// use only during development/debugging
+    func removeDatabase()
+}
+
+public extension PersistenceVersioning {
+    func setup(completion: @escaping (AppDbAvailability) -> Void ) {
+        self.setup(update: .always, forceFullDownload: false, completion: completion)
+    }
     func removeDatabase() { }
+}
+
+public protocol ProductProvider: AnyObject, ProductProviding, PersistenceVersioning {
+    /// initialize a ProductDB instance with the given configuration
+    /// - parameter config: a `SnabbleAPIConfig` object
+    /// - parameter project: the snabble `Project`
+    init(_ config: Config, _ project: Project)
 }
 
 public enum ProductDbUpdate {
@@ -249,6 +259,14 @@ final class ProductDB: ProductProvider {
     }
     private let switchMutex = Mutex()
 
+    public var database: AnyObject? {
+        return db
+    }
+    
+    public var databasePath: String {
+        return self.dbPathname()
+    }
+    
     /// initialize a ProductDB instance with the given configuration
     /// - parameter config: a `ProductDBConfiguration` object
     public init(_ config: Config, _ project: Project) {

@@ -23,8 +23,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/groue/GRDB.swift.git",
       "state" : {
-        "revision" : "0ac435744a4c67c4ec23a4a671c0d53ce1fee7c6",
-        "version" : "6.0.0"
+        "revision" : "13e1f4d7c2896a6a9293102f664e5311e017ffb2",
+        "version" : "6.1.0"
       }
     },
     {
@@ -70,6 +70,15 @@
       "state" : {
         "revision" : "925de6f34fc0c3d35264d16c056e43058d179b74",
         "version" : "12.0.2"
+      }
+    },
+    {
+      "identity" : "snabble-ios-sdk",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/snabble/snabble-ios-sdk",
+      "state" : {
+        "branch" : "main",
+        "revision" : "7f68f78bebcca8142b08758eadfaea9d47b9b4c7"
       }
     },
     {

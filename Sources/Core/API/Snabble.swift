@@ -294,11 +294,20 @@ public class Snabble {
             completion()
         }
     }
+    
+    /// Set up  database for project
+    /// - Parameter project: `Project` associated to register the product provider
+    /// - Parameter providerPolicy: `ProductProvidingPolicy` use default or combine database access to retrieve products
+    public func setup(for project: Project, completion: @escaping (AppDbAvailability) -> Void  ) {
+        let productDB = productDatabase(for: project)
 
-    /// Product Provider for a project
+        productDB.setup(completion: completion)
+    }
+
+    /// Product Database for a project
     /// - Parameter project: `Project` associated to the product provider
-    /// - Returns: `ProductProvider` to retrieve products
-    public func productProvider(for project: Project) -> ProductProvider {
+    /// - Returns: `ProductProviding` to retrieve products
+    public func productDatabase(for project: Project) -> ProductProvider {
         assert(!project.id.rawValue.isEmpty && project.id != Project.none.id, "empty projects don't have a product provider")
         if let provider = providerPool[project.id] {
             return provider
@@ -308,6 +317,14 @@ public class Snabble {
             return provider
         }
     }
+    
+    
+    /// Product Provider for a project
+    /// - Parameter project: `Project` associated to the product provider
+    /// - Returns: `ProductProviding` to retrieve products
+    public func productProvider(for project: Project) -> ProductProviding {
+        return productDatabase(for: project).productProvider
+    }
 
     /// Removes database for a project
     ///
@@ -315,7 +332,7 @@ public class Snabble {
     /// - Warning: For debugging only
     /// - Parameter project: `Project` of the database to be deleted
     public func removeDatabase(of project: Project) {
-        let provider = productProvider(for: project)
+        let provider = productDatabase(for: project)
         provider.removeDatabase()
         providerPool[project.id] = nil
     }
