@@ -6,7 +6,7 @@ name: DeviceKit, nameSpecified: DeviceKit, owner: devicekit, version: 4.7.0, sou
 
 name: GRDB.swift, nameSpecified: GRDB.swift, owner: groue, version: 6.1.0, source: https://github.com/groue/GRDB.swift
 
-name: GRDBQuery, nameSpecified: GRDBQuery, owner: groue, version: , source: https://github.com/groue/GRDBQuery
+name: GRDBQuery, nameSpecified: GRDBQuery, owner: groue, version: 0.5.1, source: https://github.com/groue/GRDBQuery
 
 name: ios-sdk, nameSpecified: Datatrans, owner: datatrans, version: 2.3.1, source: https://github.com/datatrans/ios-sdk
 
