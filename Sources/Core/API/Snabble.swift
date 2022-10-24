@@ -295,12 +295,10 @@ public class Snabble {
         }
     }
     
-    /// Set up  database for project
+    /// Set up database for project
     /// - Parameter project: `Project` associated to setup the product database
-    public func setup(for project: Project, completion: @escaping (AppDbAvailability) -> Void  ) {
-        let productDB = productDatabase(for: project)
-
-        productDB.setup(completion: completion)
+    public func setupProductDatabase(for project: Project, completion: @escaping (AppDbAvailability) -> Void  ) {
+        productProvider(for: project).setup(completion: completion)
     }
 
     /// Product MVVM model for use with SwiftUI
@@ -308,17 +306,21 @@ public class Snabble {
     /// - Parameter shop: `Shop` shop used to access the products
     /// - Returns: `ProductViewModel` the model to access the products for a shop
     public func productViewModel(for project: Project, shop: Shop) -> ProductViewModel? {
-        let productDB = productDatabase(for: project)
-        guard let db = productDB.database else {
+        let productProvider = productProvider(for: project)
+        guard let database = productProvider.database else {
             return nil
         }
-        return ProductViewModel(database: db, shopID: shop.id, availability: productDB.productAvailability)
+        return ProductViewModel(
+            database: database,
+            shopID: shop.id,
+            availability: productProvider.productAvailability
+        )
     }
     
     /// Product Database for a project
     /// - Parameter project: `Project` associated to the product provider
     /// - Returns: `ProductProvider` the products database
-    public func productDatabase(for project: Project) -> ProductProvider {
+    public func productProvider(for project: Project) -> ProductProvider {
         assert(!project.id.rawValue.isEmpty && project.id != Project.none.id, "empty projects don't have a product provider")
         if let provider = providerPool[project.id] {
             return provider
@@ -328,13 +330,6 @@ public class Snabble {
             return provider
         }
     }
-    
-    /// Product Provider for a project
-    /// - Parameter project: `Project` associated to the product provider
-    /// - Returns: `ProductProviding` to retrieve products
-    public func productProvider(for project: Project) -> ProductProviding {
-        return productDatabase(for: project)
-    }
 
     /// Removes database for a project
     ///
@@ -342,7 +337,7 @@ public class Snabble {
     /// - Warning: For debugging only
     /// - Parameter project: `Project` of the database to be deleted
     public func removeDatabase(of project: Project) {
-        let provider = productDatabase(for: project)
+        let provider = productProvider(for: project)
         provider.removeDatabase()
         providerPool[project.id] = nil
     }

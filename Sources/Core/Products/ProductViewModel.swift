@@ -49,7 +49,7 @@ public final class ProductViewModel: ObservableObject {
     var database: AppDatabase
     var shopId: SnabbleCore.Identifier<Shop>
     
-    //    @Binding var product: Product
+    // @Binding var product: Product
     @Published public var products: [Product]
     @Published public var scannedProduct: ScannedProduct?
     
