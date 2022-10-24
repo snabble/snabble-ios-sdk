@@ -304,6 +304,14 @@ public class Snabble {
         productDB.setup(completion: completion)
     }
 
+    public func productViewModel(for project: Project, shop: Shop) -> ProductViewModel? {
+        let productDB = productDatabase(for: project)
+        guard let db = productDB.database else {
+            return nil
+        }
+        return ProductViewModel(database: db, shopID: shop.id, availability: productDB.productAvailability)
+    }
+    
     /// Product Database for a project
     /// - Parameter project: `Project` associated to the product provider
     /// - Returns: `ProductProviding` to retrieve products
@@ -318,12 +326,11 @@ public class Snabble {
         }
     }
     
-    
     /// Product Provider for a project
     /// - Parameter project: `Project` associated to the product provider
     /// - Returns: `ProductProviding` to retrieve products
     public func productProvider(for project: Project) -> ProductProviding {
-        return productDatabase(for: project).productProvider
+        return productDatabase(for: project)
     }
 
     /// Removes database for a project

@@ -46,7 +46,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             snabble.checkInManager.shop = project.shops.first
 
             // initialize the product database for this project
-            snabble.setup(for: project, providerPolicy: .default) { [unowned self] _ in
+            snabble.setup(for: project) { [unowned self] _ in
                 transitionView(with: project.shops)
             }
         }

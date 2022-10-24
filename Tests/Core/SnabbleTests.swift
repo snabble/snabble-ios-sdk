@@ -61,7 +61,9 @@ class SnabbleTests: XCTestCase {
                                  resolvedProductLookUp: Link(href: "/test-ieme8a/resolvedProducts/lookUp"))
         let testProject = Project("test-ieme8a", links: links)
         let pdb = Snabble.shared.productProvider(for: testProject)
-        pdb.setup(update: .never, forceFullDownload: false, completion: { _ in })
+        
+        let database = Snabble.shared.productDatabase(for: testProject)
+        database.setup(update: .never, forceFullDownload: false, completion: { _ in })
 
         NSLog("start db tests")
         let shopId: Identifier<Shop> = "8"

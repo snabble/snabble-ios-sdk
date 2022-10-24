@@ -11,7 +11,7 @@ import GRDB
 import GRDBQuery
 import SwiftUI
 
-struct AppDatabase {
+public struct AppDatabase {
     /// Creates an `AppDatabase`, and make sure the database schema is ready.
     init(_ dbWriter: any DatabaseWriter) throws {
         self.dbWriter = dbWriter
@@ -39,139 +39,123 @@ extension AppDatabase {
     }
 }
 
-public class ProductViewModel: ObservableObject {
-    var database: AppDatabase
-    /// default availabilty (if no record in `availabilities` is found
-    public var defaultAvailability = ProductAvailability.inStock
-   
-    @Binding var product: Product
-    @Binding var products: [Product]
-    
-    var cancellable = Set<AnyCancellable>()
-
-    public init?(db: DatabaseQueue) {
-        do {            
-            // Create the AppDatabase
-            self.database = try AppDatabase(db)
-        } catch {
-            print(error)
-            return nil
-        }
-    }
-
-    public init?(path: String) {
-        do {
-            let dbPool = try DatabasePool(path: path)
-            
-            // Create the AppDatabase
-            self.database = try AppDatabase(dbPool)
-        } catch {
-            print(error)
-            return nil
-        }
+extension Product: Swift.Identifiable {
+    public var id: String {
+        return sku
     }
 }
 
+public final class ProductViewModel: ObservableObject {
+    var database: AppDatabase
+    var shopId: SnabbleCore.Identifier<Shop>
+    
+    //    @Binding var product: Product
+    @Published public var products: [Product]
+    @Published public var scannedProduct: ScannedProduct?
+    
+    var cancellable = Set<AnyCancellable>()
+
+    /// default availabilty (if no record in `availabilities` is found
+    public var defaultAvailability: ProductAvailability
+    
+    public init?(database db: AnyObject, shopID: SnabbleCore.Identifier<Shop>, availability: ProductAvailability = .inStock) {
+        guard let database = db as? DatabaseQueue else {
+            return nil
+        }
+        do {
+            self.database = try AppDatabase(database)
+            self.shopId = shopID
+            self.defaultAvailability = availability
+            self.products = []
+            self.scannedProduct = nil
+        } catch {
+            fatalError("can't access database")
+        }
+    }
+    
+    /// Emits if the widget triigers the action
+    /// - `Output` is a `DynamicAction`
+    public let actionPublisher = PassthroughSubject<Product, Never>()
+}
+
 extension ProductViewModel: ProductProviding {
-    public func productBy(codes: [(String, String)], shopId:SnabbleCore.Identifier<Shop>, forceDownload: Bool, completion: @escaping (Result<ScannedProduct, ProductLookupError>) -> Void) {
-    }
     
-    public func productBy(sku: String, shopId: SnabbleCore.Identifier<Shop>, forceDownload: Bool, completion: @escaping (Result<Product, ProductLookupError>) -> Void) {
-    }
-    
-    public func productsBy(prefix: String, filterDeposits: Bool, templates: [String]?, shopId: SnabbleCore.Identifier<Shop>) -> [Product] {
-        let sql = SQLQuery.productSql(prefix: prefix, filterDeposits: filterDeposits, templates: templates, shopId: shopId, availability: self.defaultAvailability)
-       
-        ProductRequestBy(sql: sql)
+    func requestProducts(with configuration: ProductFetchConfiguration) {
+        ProductRequest(fetchConfiguration: configuration)
             .publisher(in: self.database)
             .sink { completion in
-                switch (completion) {
+                switch completion {
                 case .failure(let error):
                     print(error)
                 case .finished:
                     print("finished")
                 }
             } receiveValue: { [weak self] products in
-                guard let self = self else { return }
                 
-                self.products = products
+                self?.products = products
                 print("got \(products)")
             }
             .store(in: &cancellable)
+    }
+    
+    public var productAvailability: ProductAvailability {
+        return defaultAvailability
+    }
+    
+    public func productBy(codes: [(String, String)], shopId: SnabbleCore.Identifier<Shop>, forceDownload: Bool, completion: @escaping (Result<ScannedProduct, ProductLookupError>) -> Void) {
+        completion(Result.failure(.notFound))
+    }
+    
+    public func productBy(sku: String, shopId: SnabbleCore.Identifier<Shop>, forceDownload: Bool, completion: @escaping (Result<Product, ProductLookupError>) -> Void) {
+        completion(Result.failure(.notFound))
+    }
+    
+    public func productsBy(prefix: String, filterDeposits: Bool, templates: [String]?, shopId: SnabbleCore.Identifier<Shop>) -> [Product] {
+        guard !prefix.isEmpty else {
+            self.products = []
+            return []
+        }
+        
+        let sql = SQLQuery.productSql(prefix: prefix, filterDeposits: filterDeposits, templates: templates, shopId: shopId, availability: self.productAvailability)
+        let fetchConfiguration = ProductFetchConfiguration(sql: sql, shopId: shopId, fetchPricesAndBundles: false, productAvailability: self.productAvailability)
+        requestProducts(with: fetchConfiguration)
 
         return []
     }
     
+    public func productsBy(prefix: String) -> [Product] {
+        productsBy(prefix: prefix, shopId: self.shopId)
+    }
+    
     public func productsBy(name: String, filterDeposits: Bool) -> [Product] {
+        let sql = SQLQuery.productSql(name: name, filterDeposits: filterDeposits, shopId: shopId, availability: self.defaultAvailability)
+        let fetchConfiguration = ProductFetchConfiguration(sql: sql, shopId: shopId, fetchPricesAndBundles: true, productAvailability: self.productAvailability)
+        requestProducts(with: fetchConfiguration)
+
         return []
     }
     
     public func productsBy(skus: [String], shopId: SnabbleCore.Identifier<Shop>) -> [Product] {
-        return []
+        
+        let sql = SQLQuery.productSql(skus: skus, shopId: shopId, availability: self.defaultAvailability)
+        let fetchConfiguration = ProductFetchConfiguration(sql: sql, shopId: shopId, fetchPricesAndBundles: true, productAvailability: self.productAvailability)
+        requestProducts(with: fetchConfiguration)
 
+        return []
     }
     
     public func productBy(codes: [(String, String)], shopId: SnabbleCore.Identifier<Shop>) -> ScannedProduct? {
+//        let sql = SQLQuery.productSql(code: code, template: template, shopId: shopId, availability: self.defaultAvailability)
+
         return nil
     }
     
     public func productBy(sku: String, shopId: SnabbleCore.Identifier<Shop>) -> Product? {
+        
+        let sql = SQLQuery.productSql(sku: sku, shopId: shopId, availability: self.defaultAvailability)
+        let fetchConfiguration = ProductFetchConfiguration(sql: sql, shopId: shopId, fetchPricesAndBundles: true, productAvailability: self.productAvailability)
+        requestProducts(with: fetchConfiguration)
+
         return nil
-    }
-}
-
-struct ProductRequestBy: Queryable {
-    var sql: (query: String, arguments: StatementArguments)
-    
-    static var defaultValue: [Products] { [] }
-
-    func publisher(in appDatabase: AppDatabase) -> AnyPublisher<[Products], Error> {
-        // Build the publisher from the general-purpose read-only access
-        // granted by `appDatabase.databaseReader`.
-        // Some apps will prefer to call a dedicated method of `appDatabase`.
-        ValueObservation
-            .tracking { db in
-                let rows = try Row.fetchAll(db, sql: sql.query, arguments: sql.arguments)
-                
-                return rows.compactMap { self.productFrom(db, row: $0, shopId: shopId, fetchPriceAndBundles: false) }
-            }
-            .publisher(
-                in: appDatabase.databaseReader,
-                // The `.immediate` scheduling feeds the view right on
-                // subscription, and avoids an undesired animation when the
-                // application starts.
-                scheduling: .immediate)
-            .eraseToAnyPublisher()
-    }
-}
-
-struct PriceRequestBy: Queryable {
-    var sku: String
-    var shopId: SnabbleCore.Identifier<Shop>
-    
-    static var defaultValue: [Row] { [] }
-
-    func publisher(in appDatabase: AppDatabase) -> AnyPublisher<[Row], Error> {
-        // Build the publisher from the general-purpose read-only access
-        // granted by `appDatabase.databaseReader`.
-        // Some apps will prefer to call a dedicated method of `appDatabase`.
-        ValueObservation
-            .tracking { db in
-                let firstSQL = SQLQuery.priceSql(sku: sku, shopId: shopId)
-                let prices = try Row.fetchAll(db, sql: firstSQL.query, arguments: firstSQL.arguments)
-                if !prices.isEmpty {
-                    return prices
-                }
-                
-                let secondSQL = SQLQuery.priceSql(sku: sku)
-                return try Prices.fetchAll(db, sql: secondSQL.query, arguments: secondSQL.arguments)
-            }
-            .publisher(
-                in: appDatabase.databaseReader,
-                // The `.immediate` scheduling feeds the view right on
-                // subscription, and avoids an undesired animation when the
-                // application starts.
-                scheduling: .immediate)
-            .eraseToAnyPublisher()
     }
 }

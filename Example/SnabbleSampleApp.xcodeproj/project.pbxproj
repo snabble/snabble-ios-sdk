@@ -19,6 +19,8 @@
 		76AD21B328D4331A003D865A /* terms.html in Resources */ = {isa = PBXBuildFile; fileRef = 76AD21B228D4331A003D865A /* terms.html */; };
 		76C7B74A28BFA10700D94F4F /* DashboardViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 76C7B74928BFA10700D94F4F /* DashboardViewController.swift */; };
 		76C7B79028C1ACD900D94F4F /* Profile.json in Resources */ = {isa = PBXBuildFile; fileRef = 76C7B78F28C1ACD900D94F4F /* Profile.json */; };
+		76CE06912902DC0000E643A6 /* SnabbleCore in Frameworks */ = {isa = PBXBuildFile; productRef = 76CE06902902DC0000E643A6 /* SnabbleCore */; };
+		76CE06932902DC0000E643A6 /* SnabbleUI in Frameworks */ = {isa = PBXBuildFile; productRef = 76CE06922902DC0000E643A6 /* SnabbleUI */; };
 		E127DB6F28C74A64005A7416 /* SnabbleConfig.swift in Sources */ = {isa = PBXBuildFile; fileRef = E127DB6E28C74A64005A7416 /* SnabbleConfig.swift */; };
 		E131CF1A28A3D45C00A844E1 /* SnabbleSampleAppTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E131CF1928A3D45C00A844E1 /* SnabbleSampleAppTests.swift */; };
 		E161B0EE28B76DD9005061C4 /* Onboarding.json in Resources */ = {isa = PBXBuildFile; fileRef = E161B0EB28B76357005061C4 /* Onboarding.json */; };
@@ -58,6 +60,7 @@
 		76AD21B228D4331A003D865A /* terms.html */ = {isa = PBXFileReference; lastKnownFileType = text.html; path = terms.html; sourceTree = "<group>"; };
 		76C7B74928BFA10700D94F4F /* DashboardViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DashboardViewController.swift; sourceTree = "<group>"; };
 		76C7B78F28C1ACD900D94F4F /* Profile.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = Profile.json; sourceTree = "<group>"; };
+		76CE06962902ED8C00E643A6 /* snabble-ios-sdk */ = {isa = PBXFileReference; lastKnownFileType = wrapper; name = "snabble-ios-sdk"; path = ..; sourceTree = "<group>"; };
 		E127DB6E28C74A64005A7416 /* SnabbleConfig.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SnabbleConfig.swift; sourceTree = "<group>"; };
 		E131CF1728A3D45C00A844E1 /* SnabbleSampleAppTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = SnabbleSampleAppTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		E131CF1928A3D45C00A844E1 /* SnabbleSampleAppTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SnabbleSampleAppTests.swift; sourceTree = "<group>"; };
@@ -75,6 +78,8 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				76CE06932902DC0000E643A6 /* SnabbleUI in Frameworks */,
+				76CE06912902DC0000E643A6 /* SnabbleCore in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -91,6 +96,7 @@
 		607FACC71AFB9204008FA782 = {
 			isa = PBXGroup;
 			children = (
+				76CE06962902ED8C00E643A6 /* snabble-ios-sdk */,
 				76151FDB28D2FC4800C08D97 /* SnabbleSampleApp.entitlements */,
 				607FACD21AFB9204008FA782 /* Sources */,
 				E131CF1828A3D45C00A844E1 /* SnabbleSampleAppTests */,
@@ -220,6 +226,8 @@
 			);
 			name = SnabbleSampleApp;
 			packageProductDependencies = (
+				76CE06902902DC0000E643A6 /* SnabbleCore */,
+				76CE06922902DC0000E643A6 /* SnabbleUI */,
 			);
 			productName = Snabble;
 			productReference = 607FACD01AFB9204008FA782 /* SnabbleSampleApp.app */;
@@ -279,7 +287,7 @@
 			);
 			mainGroup = 607FACC71AFB9204008FA782;
 			packageReferences = (
-				E176B3E728DDD33D00547F38 /* XCRemoteSwiftPackageReference "snabble-ios-sdk" */,
+				76CE068F2902DC0000E643A6 /* XCRemoteSwiftPackageReference "snabble-ios-sdk" */,
 			);
 			productRefGroup = 607FACD11AFB9204008FA782 /* Products */;
 			projectDirPath = "";
@@ -666,15 +674,28 @@
 /* End XCConfigurationList section */
 
 /* Begin XCRemoteSwiftPackageReference section */
-		E176B3E728DDD33D00547F38 /* XCRemoteSwiftPackageReference "snabble-ios-sdk" */ = {
+		76CE068F2902DC0000E643A6 /* XCRemoteSwiftPackageReference "snabble-ios-sdk" */ = {
 			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/snabble/snabble-ios-sdk";
+			repositoryURL = "https://github.com/snabble/snabble-ios-sdk.git";
 			requirement = {
-				branch = main;
+				branch = "db-refactor";
 				kind = branch;
 			};
 		};
 /* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		76CE06902902DC0000E643A6 /* SnabbleCore */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 76CE068F2902DC0000E643A6 /* XCRemoteSwiftPackageReference "snabble-ios-sdk" */;
+			productName = SnabbleCore;
+		};
+		76CE06922902DC0000E643A6 /* SnabbleUI */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 76CE068F2902DC0000E643A6 /* XCRemoteSwiftPackageReference "snabble-ios-sdk" */;
+			productName = SnabbleUI;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = 607FACC81AFB9204008FA782 /* Project object */;
 }

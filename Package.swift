@@ -50,6 +50,7 @@ let package = Package(
                 "Base32",
                 "OneTimePassword",
                 .product(name: "GRDB", package: "GRDB.swift"),
+                "GRDBQuery",
                 "Zip",
             ],
             path: "Sources/Core",

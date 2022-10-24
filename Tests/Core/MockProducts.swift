@@ -9,6 +9,10 @@ import XCTest
 @testable import SnabbleCore
 
 class MockProductDB: ProductProvider {
+    var productAvailability: SnabbleCore.ProductAvailability = .inStock
+    var database: AnyObject? = nil
+    var databasePath: String = "empty"
+    
 
     func databaseExists() -> Bool {
         return false

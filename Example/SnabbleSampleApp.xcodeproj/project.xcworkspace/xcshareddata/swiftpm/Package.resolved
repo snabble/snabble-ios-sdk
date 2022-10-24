@@ -28,6 +28,15 @@
       }
     },
     {
+      "identity" : "grdbquery",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/groue/GRDBQuery.git",
+      "state" : {
+        "branch" : "main",
+        "revision" : "b01616a35b2800976b960700f84723dc18eb8cb5"
+      }
+    },
+    {
       "identity" : "ios-sdk",
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/datatrans/ios-sdk.git",
@@ -70,15 +79,6 @@
       "state" : {
         "revision" : "925de6f34fc0c3d35264d16c056e43058d179b74",
         "version" : "12.0.2"
-      }
-    },
-    {
-      "identity" : "snabble-ios-sdk",
-      "kind" : "remoteSourceControl",
-      "location" : "https://github.com/snabble/snabble-ios-sdk",
-      "state" : {
-        "branch" : "main",
-        "revision" : "7f68f78bebcca8142b08758eadfaea9d47b9b4c7"
       }
     },
     {

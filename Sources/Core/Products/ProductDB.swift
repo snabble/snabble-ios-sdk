@@ -81,6 +81,7 @@ public enum AppDbAvailability {
 }
 
 public protocol ProductProviding: AnyObject {
+    
     /// get a product by its SKU
     func productBy(sku: String, shopId: Identifier<Shop>) -> Product?
 
@@ -126,6 +127,8 @@ public protocol ProductProviding: AnyObject {
     ///   - forceDownload: if true, skip the lookup in the local DB
     ///   - result: the lookup result or the error
     func productBy(codes: [(String, String)], shopId: Identifier<Shop>, forceDownload: Bool, completion: @escaping (_ result: Result<ScannedProduct, ProductLookupError>) -> Void )
+    
+    var productAvailability: ProductAvailability { get }
 }
 
 public extension ProductProviding {
@@ -229,7 +232,7 @@ final class ProductDB: ProductProvider {
     public private(set) var schemaVersionMinor = 0
     /// default availabilty (if no record in `availabilities` is found
     public private(set) var defaultAvailability = ProductAvailability.inStock
-
+  
     /// date of last successful product update (i.e, whenever we last got a HTTP status 200 or 304)
     public private(set) var lastProductUpdate = Date(timeIntervalSinceReferenceDate: 0)
 
@@ -265,6 +268,10 @@ final class ProductDB: ProductProvider {
     
     public var databasePath: String {
         return self.dbPathname()
+    }
+    
+    public var productAvailability: ProductAvailability {
+        return defaultAvailability
     }
     
     /// initialize a ProductDB instance with the given configuration
