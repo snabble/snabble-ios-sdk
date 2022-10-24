@@ -62,8 +62,8 @@ class SnabbleTests: XCTestCase {
         let testProject = Project("test-ieme8a", links: links)
         let pdb = Snabble.shared.productProvider(for: testProject)
         
-        let database = Snabble.shared.productDatabase(for: testProject)
-        database.setup(update: .never, forceFullDownload: false, completion: { _ in })
+        let productProvider = Snabble.shared.productProvider(for: testProject)
+        productProvider.setup(update: .never, forceFullDownload: false, completion: { _ in })
 
         NSLog("start db tests")
         let shopId: Identifier<Shop> = "8"
