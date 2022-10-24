@@ -296,14 +296,17 @@ public class Snabble {
     }
     
     /// Set up  database for project
-    /// - Parameter project: `Project` associated to register the product provider
-    /// - Parameter providerPolicy: `ProductProvidingPolicy` use default or combine database access to retrieve products
+    /// - Parameter project: `Project` associated to setup the product database
     public func setup(for project: Project, completion: @escaping (AppDbAvailability) -> Void  ) {
         let productDB = productDatabase(for: project)
 
         productDB.setup(completion: completion)
     }
 
+    /// Product MVVM model for use with SwiftUI
+    /// - Parameter project: `Project` project used to access the products
+    /// - Parameter shop: `Shop` shop used to access the products
+    /// - Returns: `ProductViewModel` the model to access the products for a shop
     public func productViewModel(for project: Project, shop: Shop) -> ProductViewModel? {
         let productDB = productDatabase(for: project)
         guard let db = productDB.database else {
@@ -314,7 +317,7 @@ public class Snabble {
     
     /// Product Database for a project
     /// - Parameter project: `Project` associated to the product provider
-    /// - Returns: `ProductProviding` to retrieve products
+    /// - Returns: `ProductProvider` the products database
     public func productDatabase(for project: Project) -> ProductProvider {
         assert(!project.id.rawValue.isEmpty && project.id != Project.none.id, "empty projects don't have a product provider")
         if let provider = providerPool[project.id] {
