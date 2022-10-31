@@ -9,6 +9,24 @@ import GRDB
 
 extension ProductAvailability: DatabaseValueConvertible { }
 
+extension String {
+    /// check if `code` is a potential 14/13/12/8-digit GTIN code embedded in an or GTIN-14
+    /// - Parameter code: the code to test
+    /// - Returns: the `code` shortened or `nil`
+    func extractLeadingZerosFromCode() -> String? {
+        switch self.count {
+        case 12 where self.hasPrefix("0000"):
+            return String(self.suffix(8))
+        case 13 where self.hasPrefix("0"):
+            return String(self.suffix(12))
+        case 14 where self.hasPrefix("0"):
+            return String(self.suffix(13))
+        default:
+            return nil
+        }
+    }
+}
+
 // MARK: - low-level db queries
 extension ProductDB {
 
@@ -66,7 +84,7 @@ extension ProductDB {
                                       transmissionTemplateId: transmissionTemplate,
                                       specifiedQuantity: specifiedQuantity)
             } else {
-                if let code = extractLeadingZeros(from: code) {
+                if let code = code.extractLeadingZerosFromCode() {
                     return productBy(dbQueue, code: code, template: template, shopId: shopId)
                 }
             }
@@ -77,21 +95,21 @@ extension ProductDB {
         return nil
     }
 
-    /// check if `code` is a potential 14/13/12/8-digit GTIN code embedded in an or GTIN-14
-    /// - Parameter code: the code to test
-    /// - Returns: the `code` shortened or `nil`
-    private func extractLeadingZeros(from code: String) -> String? {
-        switch code.count {
-        case 12 where code.hasPrefix("0000"):
-            return String(code.suffix(8))
-        case 13 where code.hasPrefix("0"):
-            return String(code.suffix(12))
-        case 14 where code.hasPrefix("0"):
-            return String(code.suffix(13))
-        default:
-            return nil
-        }
-    }
+//    /// check if `code` is a potential 14/13/12/8-digit GTIN code embedded in an or GTIN-14
+//    /// - Parameter code: the code to test
+//    /// - Returns: the `code` shortened or `nil`
+//    private func extractLeadingZeros(from code: String) -> String? {
+//        switch code.count {
+//        case 12 where code.hasPrefix("0000"):
+//            return String(code.suffix(8))
+//        case 13 where code.hasPrefix("0"):
+//            return String(code.suffix(12))
+//        case 14 where code.hasPrefix("0"):
+//            return String(code.suffix(13))
+//        default:
+//            return nil
+//        }
+//    }
     
     func productsBy(_ dbQueue: DatabaseQueue, name: String, filterDeposits: Bool, shopId: Identifier<Shop>) -> [Product] {
         do {

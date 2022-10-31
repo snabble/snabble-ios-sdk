@@ -15,7 +15,6 @@ struct ProductFetchConfiguration {
     let fetchPricesAndBundles: Bool
     let productAvailability: ProductAvailability
 
-    let codes: [(String, String)]
     let productHandler: ((Result<Product, ProductLookupError>) -> Void)?
     let scannedProductHandler: ((Result<ScannedProduct, ProductLookupError>) -> Void)?
 
@@ -30,7 +29,6 @@ struct ProductFetchConfiguration {
         self.shopId = shopId
         self.fetchPricesAndBundles = fetchPricesAndBundles
         self.productAvailability = productAvailability
-        self.codes = codes
         self.productHandler = productHandler
         self.scannedProductHandler = scannedProductHandler
 
@@ -64,6 +62,55 @@ struct ProductRequest: Queryable {
                 // application starts.
                 scheduling: .immediate)
             .eraseToAnyPublisher()
+    }
+    
+    func publisher(in appDatabase: AppDatabase, codes: [(String, String)]) -> AnyPublisher<[ScannedProduct], Error> {
+        // Build the publisher from the general-purpose read-only access
+        // granted by `appDatabase.databaseReader`.
+        // Some apps will prefer to call a dedicated method of `appDatabase`.
+        ValueObservation
+            .tracking { db in
+                
+                for (code, template) in codes {
+                    if let scannedProduct = product(db, code: code, template: template, configuration: fetchConfiguration) {
+                        return [scannedProduct]
+                    }
+                }
+                return []
+            }
+            .publisher(
+                in: appDatabase.databaseReader,
+                // The `.immediate` scheduling feeds the view right on
+                // subscription, and avoids an undesired animation when the
+                // application starts.
+                scheduling: .immediate)
+            .eraseToAnyPublisher()
+    }
+    
+    private func product(_ db: Database, code: String, template: String, configuration: ProductFetchConfiguration) -> ScannedProduct? {
+
+        do {
+            let sql = SQLQuery.productSql(code: code, template: template, shopId: configuration.shopId, availability: configuration.productAvailability)
+                        
+            if let row = try? Row.fetchOne(db, sql: sql.query, arguments: sql.arguments),
+               let product = try product(db, from: row, configuration: configuration) {
+                let codeEntry = product.codes.first { $0.code == code }
+                let transmissionCode = codeEntry?.transmissionCode
+                let specifiedQuantity = codeEntry?.specifiedQuantity
+                let transmissionTemplate = codeEntry?.transmissionTemplate
+                return ScannedProduct(product, code, transmissionCode,
+                                      templateId: template,
+                                      transmissionTemplateId: transmissionTemplate,
+                                      specifiedQuantity: specifiedQuantity)
+            } else {
+                if let code = code.extractLeadingZerosFromCode() {
+                    return product(db, code: code, template: template, configuration: configuration)
+                }
+            }
+        } catch {
+            print("productByScannableCode db error: \(error)")
+        }
+        return nil
     }
     
     private func product(_ db: Database, from row: Row, configuration: ProductFetchConfiguration) throws -> Product? {
@@ -132,3 +179,4 @@ struct ProductRequest: Queryable {
         return Product.Deposit(sku: sku, price: depositPrice)
     }
 }
+

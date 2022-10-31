@@ -74,7 +74,7 @@ public final class ProductViewModel: ObservableObject {
     }
     
     /// Emits if the widget triigers the action
-    /// - `Output` is a `DynamicAction`
+    /// - `Output` is a `Product`
     public let actionPublisher = PassthroughSubject<Product, Never>()
 }
 
@@ -94,6 +94,24 @@ extension ProductViewModel: ProductProviding {
                 
                 self?.products = products
                 print("got \(products)")
+            }
+            .store(in: &cancellable)
+    }
+    
+    func requestScannedProduct(with configuration: ProductFetchConfiguration, codes: [(String, String)]) {
+        ProductRequest(fetchConfiguration: configuration)
+            .publisher(in: self.database, codes: codes)
+            .sink { completion in
+                switch completion {
+                case .failure(let error):
+                    print(error)
+                case .finished:
+                    print("finished")
+                }
+            } receiveValue: { [weak self] products in
+                
+                self?.scannedProduct = products.first
+                print("got scanned product: \(products)")
             }
             .store(in: &cancellable)
     }
@@ -125,6 +143,14 @@ extension ProductViewModel: ProductProviding {
     
     public func productsBy(prefix: String) -> [Product] {
         productsBy(prefix: prefix, shopId: self.shopId)
+    }
+    
+    public func productBy(code: String) -> [ScannedProduct] {
+        let fetchConfiguration = ProductFetchConfiguration(sql: ("", []), shopId: shopId, fetchPricesAndBundles: false, productAvailability: self.productAvailability)
+
+        requestScannedProduct(with: fetchConfiguration, codes: [(code, "default")])
+
+        return []
     }
     
     public func productsBy(name: String, filterDeposits: Bool) -> [Product] {

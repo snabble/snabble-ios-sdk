@@ -44,6 +44,27 @@ public struct ProductRowView: View {
     }
 }
 
+struct SearchBar: View {
+    @Binding var searchText: String
+
+    var body: some View {
+        ZStack {
+            Rectangle()
+                .foregroundColor(.secondarySystemBackground)
+            HStack {
+                Image(systemName: "magnifyingglass")
+                TextField("Code", text: $searchText)
+            }
+            .foregroundColor(.secondaryLabel)
+            .padding(.leading, 13)
+        }
+        .frame(height: 40)
+        .cornerRadius(12)
+        .padding()
+    }
+    
+}
+
 public struct ProductSearchView: View {
     @EnvironmentStateObject var viewModel: ProductViewModel
     
@@ -58,15 +79,15 @@ public struct ProductSearchView: View {
     public var body: some View {
         NavigationView {
             VStack {
-                TextField("Code", text: $searchText)
-                    .frame(minHeight: 32)
-                    .padding([.leading, .trailing], 8)
-                    .background(Color.themeSearchTextField)
-                    .cornerRadius(6)
-                    .padding()
+                SearchBar(searchText: $searchText)
 
                 List(viewModel.products, id: \.id) { product in
                     ProductRowView(product: product)
+                        .onTapGesture {
+                            if let code = product.codes.first {
+                                _ = viewModel.productBy(code: code.code)
+                            }
+                        }
                 }
                 .navigationBarTitleDisplayMode(.inline)
                 .navigationTitle("Search Products")
@@ -79,8 +100,3 @@ public struct ProductSearchView: View {
     }
 }
 
-extension Color {
-    static var themeSearchTextField: Color {
-        return Color(red: 220.0 / 255.0, green: 230.0 / 255.0, blue: 230.0 / 255.0, opacity: 1.0)
-    }
-}
