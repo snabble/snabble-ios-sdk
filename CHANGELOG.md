@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Removed
 * AutoLayout-Helper Dependencies - Moved function in the SDK
+* Public init for ShoppingCart
 
 ### Changed
 * renamed ProductProvider functions by removing unnamed (underscore) arguments
