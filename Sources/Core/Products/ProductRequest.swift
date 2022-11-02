@@ -15,8 +15,8 @@ struct ProductFetchConfiguration {
     let fetchPricesAndBundles: Bool
     let productAvailability: ProductAvailability
 
-    let productHandler: ((Result<Product, ProductLookupError>) -> Void)?
-    let scannedProductHandler: ((Result<ScannedProduct, ProductLookupError>) -> Void)?
+    let productHandler: ((Result<Product, ProductLookupError>) -> Void)
+    let scannedProductHandler: ((Result<ScannedProduct, ProductLookupError>) -> Void)
 
     var query: String {
         return sql.query
@@ -24,7 +24,7 @@ struct ProductFetchConfiguration {
     var arguments: StatementArguments {
         return sql.arguments
     }
-    init(sql: (query: String, arguments: StatementArguments), shopId: SnabbleCore.Identifier<Shop>, fetchPricesAndBundles: Bool = true, productAvailability: ProductAvailability = .inStock, codes: [(String, String)] = [], productHandler: @escaping ((Result<Product, ProductLookupError>) -> Void) = {_ in}, scannedProductHandler: @escaping ((Result<ScannedProduct, ProductLookupError>) -> Void) = {_ in}) {
+    init(sql: (query: String, arguments: StatementArguments) = ("", []), shopId: SnabbleCore.Identifier<Shop>, fetchPricesAndBundles: Bool = true, productAvailability: ProductAvailability = .inStock, codes: [(String, String)] = [], productHandler: @escaping ((Result<Product, ProductLookupError>) -> Void) = {_ in}, scannedProductHandler: @escaping ((Result<ScannedProduct, ProductLookupError>) -> Void) = {_ in}) {
         self.sql = sql
         self.shopId = shopId
         self.fetchPricesAndBundles = fetchPricesAndBundles

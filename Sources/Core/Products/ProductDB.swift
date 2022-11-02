@@ -200,12 +200,7 @@ public extension ProductStoring {
     func removeDatabase() { }
 }
 
-public protocol ProductProvider: AnyObject, ProductProviding, ProductStoring {
-    /// initialize a ProductDB instance with the given configuration
-    /// - parameter config: a `SnabbleAPIConfig` object
-    /// - parameter project: the snabble `Project`
-    init(_ config: Config, _ project: Project)
-}
+public typealias ProductProvider = ProductProviding & ProductStoring
 
 public enum ProductDbUpdate {
     case always
@@ -275,7 +270,8 @@ final class ProductDB: ProductProvider {
     }
     
     /// initialize a ProductDB instance with the given configuration
-    /// - parameter config: a `ProductDBConfiguration` object
+    /// - parameter config: a `Config` structure
+    /// - parameter project: the snabble `Project`
     public init(_ config: Config, _ project: Project) {
         self.config = config
         self.project = project

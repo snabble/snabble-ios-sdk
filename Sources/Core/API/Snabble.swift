@@ -305,8 +305,8 @@ public class Snabble {
     /// - Parameter project: `Project` project used to access the products
     /// - Parameter shop: `Shop` shop used to access the products
     /// - Returns: `ProductViewModel` the model to access the products for a shop
-    public func productViewModel(for project: Project, shop: Shop) -> ProductViewModel? {
-        ProductViewModel(
+    public func productViewModel(for project: Project, shop: Shop) -> ProductModel? {
+        ProductModel(
             productProvider: productProvider(for: project),
             shopID: shop.id
         )

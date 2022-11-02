@@ -24,12 +24,12 @@ open class ProductSearchViewController: UIHostingController<ProductSearchView> {
 
     private var cancellables = Set<AnyCancellable>()
 
-    public var viewModel: ProductViewModel {
+    public var viewModel: ProductModel {
         rootView.viewModel
     }
     /// Creates and returns an dynamic stack  view controller with the specified viewModel
     /// - Parameter viewModel: A view model that specifies the details to be shown. Default value is `.default`
-    public init(viewModel: ProductViewModel) {
+    public init(viewModel: ProductModel) {
         super.init(rootView: ProductSearchView(viewModel: viewModel))
     }
 

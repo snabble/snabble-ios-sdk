@@ -66,11 +66,11 @@ struct SearchBar: View {
 }
 
 public struct ProductSearchView: View {
-    @EnvironmentStateObject var viewModel: ProductViewModel
+    @EnvironmentStateObject var viewModel: ProductModel
     
     @State private var searchText = ""
     
-    public init(viewModel: ProductViewModel) {
+    public init(viewModel: ProductModel) {
         _viewModel = EnvironmentStateObject { _ in
             viewModel
         }
