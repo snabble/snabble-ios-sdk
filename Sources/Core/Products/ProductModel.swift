@@ -1,5 +1,5 @@
 //
-//  File.swift
+//  ProductModel.swift
 //  
 //
 //  Created by Uwe Tilemann on 21.10.22.
