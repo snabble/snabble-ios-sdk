@@ -41,7 +41,7 @@ extension DashboardViewController: DynamicViewControllerDelegate {
         case .lastPurchases:
             if let project = Snabble.shared.projects.first,
                let shop = project.shops.first,
-               let viewModel = Snabble.shared.productViewModel(for: project, shop: shop) {
+               let viewModel = Snabble.shared.productModel(for: project, shop: shop) {
                 let view = ProductSearchView(viewModel: viewModel)
                 
                 let productVC = UIHostingController(rootView: view)

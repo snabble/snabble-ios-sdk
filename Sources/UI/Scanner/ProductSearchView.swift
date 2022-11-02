@@ -66,12 +66,12 @@ struct SearchBar: View {
 }
 
 public struct ProductSearchView: View {
-    @EnvironmentStateObject var viewModel: ProductModel
+    @EnvironmentStateObject var model: ProductModel
     
     @State private var searchText = ""
     
     public init(viewModel: ProductModel) {
-        _viewModel = EnvironmentStateObject { _ in
+        _model = EnvironmentStateObject { _ in
             viewModel
         }
     }
@@ -81,11 +81,11 @@ public struct ProductSearchView: View {
             VStack {
                 SearchBar(searchText: $searchText)
 
-                List(viewModel.products, id: \.id) { product in
+                List(model.products, id: \.id) { product in
                     ProductRowView(product: product)
                         .onTapGesture {
                             if let code = product.codes.first {
-                                _ = viewModel.productBy(code: code.code)
+                                _ = model.productBy(code: code.code)
                             }
                         }
                 }
@@ -94,7 +94,7 @@ public struct ProductSearchView: View {
                 .listStyle(.plain)
             }
             .onChange(of: searchText) { _ in
-                _ = viewModel.productsBy(prefix: searchText)
+                _ = model.productsBy(prefix: searchText)
             }
         }
     }
