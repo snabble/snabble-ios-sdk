@@ -26,11 +26,6 @@ public struct AppDatabase {
 }
 
 // MARK: - Database Access: Reads
-
-// This demo app does not provide any specific reading method, and instead
-// gives an unrestricted read-only access to the rest of the application.
-// In your app, you are free to choose another path, and define focused
-// reading methods.
 extension AppDatabase {
     /// Provides a read-only access to the database
     var databaseReader: DatabaseReader {
@@ -86,13 +81,18 @@ extension ProductModel: ProductProviding {
                 switch completion {
                 case .failure(let error):
                     print(error)
+                    configuration.productHandler(Result.failure(ProductLookupError.from(error) ?? .notFound))
                 case .finished:
-                    print("finished")
+                    break
                 }
             } receiveValue: { [weak self] products in
-                
                 self?.products = products
-                print("got \(products)")
+                
+                if let product = products.first {
+                    configuration.productHandler(Result.success(product))
+                } else {
+                    configuration.scannedProductHandler(Result.failure(.notFound))
+                }
             }
             .store(in: &cancellable)
     }
@@ -104,13 +104,14 @@ extension ProductModel: ProductProviding {
                 switch completion {
                 case .failure(let error):
                     print(error)
+                    configuration.scannedProductHandler(Result.failure(ProductLookupError.from(error) ?? .notFound))
                 case .finished:
-                    print("finished")
+                    break
                 }
             } receiveValue: { [weak self] products in
                 
                 self?.scannedProduct = products.first
-                print("got scanned product: \(products)")
+                
                 if let scannedProduct = self?.scannedProduct {
                     configuration.scannedProductHandler(Result.success(scannedProduct))
                 } else {
