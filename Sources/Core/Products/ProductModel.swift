@@ -72,7 +72,7 @@ public final class ProductModel: ObservableObject {
     public let actionPublisher = PassthroughSubject<Product, Never>()
 }
 
-extension ProductModel: ProductProviding {
+extension ProductModel {
     
     func requestProducts(with configuration: ProductFetchConfiguration) {
         ProductRequest(fetchConfiguration: configuration)
@@ -120,6 +120,9 @@ extension ProductModel: ProductProviding {
             }
             .store(in: &cancellable)
     }
+}
+
+extension ProductModel: ProductProviding {
     
     public var productAvailability: ProductAvailability {
         return defaultAvailability
@@ -148,25 +151,6 @@ extension ProductModel: ProductProviding {
         let sql = SQLQuery.productSql(prefix: prefix, filterDeposits: filterDeposits, templates: templates, shopId: shopId, availability: self.productAvailability)
         let fetchConfiguration = ProductFetchConfiguration(sql: sql, shopId: shopId, fetchPricesAndBundles: false, productAvailability: self.productAvailability)
         requestProducts(with: fetchConfiguration)
-
-        return []
-    }
-    
-    public func productsBy(prefix: String) -> [Product] {
-        productsBy(prefix: prefix, shopId: self.shopId)
-    }
-    
-    public func productBy(code: String) -> [ScannedProduct] {
-        let fetchConfiguration = ProductFetchConfiguration(shopId: shopId, fetchPricesAndBundles: false, productAvailability: self.productAvailability, scannedProductHandler: { result in
-            switch result {
-            case .success(let product):
-                print("success handler \(product.product.sku)")
-            case .failure(let error):
-                print("success handler failed: \(error)")
-            }
-        })
-
-        requestScannedProduct(with: fetchConfiguration, codes: [(code, "default")])
 
         return []
     }
@@ -205,3 +189,33 @@ extension ProductModel: ProductProviding {
         return nil
     }
 }
+
+extension ProductModel {
+    public func productsBy(prefix: String) -> [Product] {
+        productsBy(prefix: prefix, shopId: self.shopId)
+    }
+    
+    public func productBy(sku: String) -> Product? {
+        self.productBy(sku: sku, shopId: self.shopId)
+    }
+    
+    public func productBy(sku: String, completion: @escaping (Result<Product, ProductLookupError>) -> Void) {
+        self.productBy(sku: sku, shopId: self.shopId, forceDownload: true, completion: completion)
+    }
+    
+    public func productBy(code: String) -> [ScannedProduct] {
+        let fetchConfiguration = ProductFetchConfiguration(shopId: shopId, fetchPricesAndBundles: false, productAvailability: self.productAvailability, scannedProductHandler: { result in
+            switch result {
+            case .success(let product):
+                print("success handler \(product.product.sku)")
+            case .failure(let error):
+                print("success handler failed: \(error)")
+            }
+        })
+        
+        requestScannedProduct(with: fetchConfiguration, codes: [(code, "default")])
+        
+        return []
+    }
+}
+
