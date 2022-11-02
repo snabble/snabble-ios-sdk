@@ -20,7 +20,7 @@ class AppScannerViewController: UIViewController {
 
     init(shop: Shop) {
         self.shop = shop
-        self.shoppingCart = ShoppingCart(with: CartConfig(shop: shop))
+        self.shoppingCart = Snabble.shared.shoppingCartManager.shoppingCart(for: shop)
 
         super.init(nibName: nil, bundle: nil)
 

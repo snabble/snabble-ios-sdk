@@ -33,6 +33,7 @@ public struct WidgetInformationView: View {
             widget.image
             Text(keyed: widget.text)
                 .font(.subheadline)
+            Spacer()
         }
         .informationStyle()
         .shadow(radius: configuration.shadowRadius)

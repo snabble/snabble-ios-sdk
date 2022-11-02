@@ -2,7 +2,7 @@ name: LicensePlist, nameSpecified: , owner: mono0926, version: 3.23.4, source: h
 
 name: Base32, nameSpecified: Base32, owner: mattrubin, version: 1.2.0, source: https://github.com/mattrubin/Base32
 
-name: DeviceKit, nameSpecified: DeviceKit, owner: devicekit, version: 4.7.0, source: https://github.com/devicekit/DeviceKit
+name: DeviceKit, nameSpecified: DeviceKit, owner: devicekit, version: 5.0.0, source: https://github.com/devicekit/DeviceKit
 
 name: GRDB.swift, nameSpecified: GRDB.swift, owner: groue, version: 6.1.0, source: https://github.com/groue/GRDB.swift
 

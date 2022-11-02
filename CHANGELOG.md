@@ -10,13 +10,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Removed
 * AutoLayout-Helper Dependencies - Moved function in the SDK
+* Public init for ShoppingCart
 
 ### Changed
 * renamed ProductProvider functions by removing unnamed (underscore) arguments
+* Information Widget takes full width
 
 ### Updated
 * groue/GRDB.swift 6.1.0 (was 6.0.0)
 * groue/GRDBQuery 0.5.1
+* devicekit/DeviceKit 5.0.0 (was 4.7.0)
 
 ## [0.23.0] - 2022-10-11
 
