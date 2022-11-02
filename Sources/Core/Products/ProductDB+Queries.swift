@@ -95,22 +95,6 @@ extension ProductDB {
         return nil
     }
 
-//    /// check if `code` is a potential 14/13/12/8-digit GTIN code embedded in an or GTIN-14
-//    /// - Parameter code: the code to test
-//    /// - Returns: the `code` shortened or `nil`
-//    private func extractLeadingZeros(from code: String) -> String? {
-//        switch code.count {
-//        case 12 where code.hasPrefix("0000"):
-//            return String(code.suffix(8))
-//        case 13 where code.hasPrefix("0"):
-//            return String(code.suffix(12))
-//        case 14 where code.hasPrefix("0"):
-//            return String(code.suffix(13))
-//        default:
-//            return nil
-//        }
-//    }
-    
     func productsBy(_ dbQueue: DatabaseQueue, name: String, filterDeposits: Bool, shopId: Identifier<Shop>) -> [Product] {
         do {
             let sql = SQLQuery.productSql(name: name, filterDeposits: filterDeposits, shopId: shopId, availability: self.defaultAvailability)
