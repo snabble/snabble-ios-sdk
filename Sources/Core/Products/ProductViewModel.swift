@@ -9,7 +9,6 @@ import Foundation
 import Combine
 import GRDB
 import GRDBQuery
-import SwiftUI
 
 public struct AppDatabase {
     /// Creates an `AppDatabase`, and make sure the database schema is ready.

@@ -179,4 +179,3 @@ struct ProductRequest: Queryable {
         return Product.Deposit(sku: sku, price: depositPrice)
     }
 }
-

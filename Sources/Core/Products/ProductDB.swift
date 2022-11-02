@@ -149,7 +149,7 @@ public extension ProductProviding {
     }
 }
 
-public protocol PersistenceVersioning: AnyObject {
+public protocol ProductStoring: AnyObject {
     /// returns the persistence object
     var database: AnyObject? { get }
     /// returns the path to the persistence object
@@ -193,14 +193,14 @@ public protocol PersistenceVersioning: AnyObject {
     func removeDatabase()
 }
 
-public extension PersistenceVersioning {
+public extension ProductStoring {
     func setup(completion: @escaping (AppDbAvailability) -> Void ) {
         self.setup(update: .always, forceFullDownload: false, completion: completion)
     }
     func removeDatabase() { }
 }
 
-public protocol ProductProvider: AnyObject, ProductProviding, PersistenceVersioning {
+public protocol ProductProvider: AnyObject, ProductProviding, ProductStoring {
     /// initialize a ProductDB instance with the given configuration
     /// - parameter config: a `SnabbleAPIConfig` object
     /// - parameter project: the snabble `Project`
