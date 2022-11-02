@@ -14,6 +14,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 * renamed ProductProvider functions by removing unnamed (underscore) arguments
+* Information Widget takes full width
 
 ### Updated
 * groue/GRDB.swift 6.1.0 (was 6.0.0)
