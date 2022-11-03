@@ -327,11 +327,11 @@ public final class ShoppingCart: Codable {
             return
         }
 
-        let provider = Snabble.shared.productProvider(for: project)
+        let store = Snabble.shared.productStore(for: project)
         var newItems = [CartItem]()
         for item in self.items {
             // TODO: don't rely on on products being available locally?
-            if let newItem = CartItem(updating: item, provider, self.shopId, customerCard) {
+            if let newItem = CartItem(updating: item, store, self.shopId, customerCard) {
                 newItems.append(newItem)
             } else {
                 newItems.append(item)

@@ -200,7 +200,7 @@ public extension ProductStoring {
     func removeDatabase() { }
 }
 
-public typealias ProductProvider = ProductProviding & ProductStoring
+public typealias ProductStore = ProductProviding & ProductStoring
 
 public enum ProductDbUpdate {
     case always
@@ -208,7 +208,7 @@ public enum ProductDbUpdate {
     case ifOlderThan(Int) // age in seconds
 }
 
-final class ProductDB: ProductProvider {
+final class ProductDB: ProductStore {
     internal let supportedSchemaVersion = "1"
 
     private let dbName = "products.sqlite3"

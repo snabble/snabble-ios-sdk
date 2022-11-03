@@ -52,14 +52,14 @@ public final class ProductModel: ObservableObject {
     /// default availabilty (if no record in `availabilities` is found
     public var defaultAvailability: ProductAvailability
     
-    public init?(productProvider: ProductProvider, shopID: SnabbleCore.Identifier<Shop>) {
-        guard let database = productProvider.database as? DatabaseQueue else {
+    public init?(productStore: ProductStore, shopID: SnabbleCore.Identifier<Shop>) {
+        guard let database = productStore.database as? DatabaseQueue else {
             return nil
         }
         do {
             self.database = try AppDatabase(database)
             self.shopId = shopID
-            self.defaultAvailability = productProvider.productAvailability
+            self.defaultAvailability = productStore.productAvailability
             self.products = []
             self.scannedProduct = nil
         } catch {

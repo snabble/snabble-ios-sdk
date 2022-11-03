@@ -151,7 +151,7 @@ public class Snabble {
     }
     public static let methodRegistry = MethodRegistry()
 
-    private(set) var providerPool: [Identifier<Project>: ProductProvider]
+    private(set) var providerPool: [Identifier<Project>: ProductStore]
 
     /// Gateway certificates for payment routes
     public var certificates: [GatewayCertificate] {
@@ -298,7 +298,7 @@ public class Snabble {
     /// Set up database for project
     /// - Parameter project: `Project` associated to setup the product database
     public func setupProductDatabase(for project: Project, completion: @escaping (AppDbAvailability) -> Void  ) {
-        productProvider(for: project).setup(completion: completion)
+        productStore(for: project).setup(completion: completion)
     }
 
     /// Product MVVM model for use with SwiftUI
@@ -307,22 +307,22 @@ public class Snabble {
     /// - Returns: `ProductViewModel` the model to access the products for a shop
     public func productModel(for project: Project, shop: Shop) -> ProductModel? {
         ProductModel(
-            productProvider: productProvider(for: project),
+            productStore: productStore(for: project),
             shopID: shop.id
         )
     }
     
     /// Product Database for a project
     /// - Parameter project: `Project` associated to the product provider
-    /// - Returns: `ProductProvider` the products database
-    public func productProvider(for project: Project) -> ProductProvider {
+    /// - Returns: `ProductStore` the products database
+    public func productStore(for project: Project) -> ProductStore {
         assert(!project.id.rawValue.isEmpty && project.id != Project.none.id, "empty projects don't have a product provider")
-        if let provider = providerPool[project.id] {
-            return provider
+        if let store = providerPool[project.id] {
+            return store
         } else {
-            let provider = ProductDB(config, project)
-            providerPool[project.id] = provider
-            return provider
+            let store = ProductDB(config, project)
+            providerPool[project.id] = store
+            return store
         }
     }
 
@@ -332,8 +332,8 @@ public class Snabble {
     /// - Warning: For debugging only
     /// - Parameter project: `Project` of the database to be deleted
     public func removeDatabase(of project: Project) {
-        let provider = productProvider(for: project)
-        provider.removeDatabase()
+        let store = productStore(for: project)
+        store.removeDatabase()
         providerPool[project.id] = nil
     }
 }

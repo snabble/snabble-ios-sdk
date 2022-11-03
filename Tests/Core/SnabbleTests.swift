@@ -60,10 +60,10 @@ class SnabbleTests: XCTestCase {
                                  resolvedProductBySku: Link(href: "/test-ieme8a/resolvedProducts/sku/{sku}"),
                                  resolvedProductLookUp: Link(href: "/test-ieme8a/resolvedProducts/lookUp"))
         let testProject = Project("test-ieme8a", links: links)
-        let pdb = Snabble.shared.productProvider(for: testProject)
+        let pdb = Snabble.shared.productStore(for: testProject)
         
-        let productProvider = Snabble.shared.productProvider(for: testProject)
-        productProvider.setup(update: .never, forceFullDownload: false, completion: { _ in })
+        let productStore = Snabble.shared.productStore(for: testProject)
+        productStore.setup(update: .never, forceFullDownload: false, completion: { _ in })
 
         NSLog("start db tests")
         let shopId: Identifier<Shop> = "8"
