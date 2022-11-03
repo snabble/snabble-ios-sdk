@@ -26,6 +26,7 @@ public struct AppDatabase {
 }
 
 // MARK: - Database Access: Reads
+
 extension AppDatabase {
     /// Provides a read-only access to the database
     var databaseReader: DatabaseReader {
@@ -33,18 +34,23 @@ extension AppDatabase {
     }
 }
 
+/// Make a product `Swift.Identifiable`
 extension Product: Swift.Identifiable {
     public var id: String {
         return sku
     }
 }
 
+// MARK: - Publisher object that emits published products
+
 public final class ProductModel: ObservableObject {
     var database: AppDatabase
     var shopId: SnabbleCore.Identifier<Shop>
     
-    // @Binding var product: Product
+    /// Emits changes on requested array of `Product`
     @Published public var products: [Product]
+    
+    /// Emits changes on a requested `ScannedProduct`
     @Published public var scannedProduct: ScannedProduct?
     
     var cancellable = Set<AnyCancellable>()
@@ -71,6 +77,8 @@ public final class ProductModel: ObservableObject {
     /// - `Output` is a `Product`
     public let actionPublisher = PassthroughSubject<Product, Never>()
 }
+
+// MARK: - Database Publisher
 
 extension ProductModel {
     
@@ -121,6 +129,8 @@ extension ProductModel {
             .store(in: &cancellable)
     }
 }
+
+// MARK: - ProductProviding implementation
 
 extension ProductModel: ProductProviding {
     
@@ -189,6 +199,8 @@ extension ProductModel: ProductProviding {
         return nil
     }
 }
+
+// MARK: - ProductProviding convenience functions
 
 extension ProductModel {
     public func productsBy(prefix: String) -> [Product] {

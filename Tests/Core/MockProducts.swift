@@ -8,7 +8,7 @@
 import XCTest
 @testable import SnabbleCore
 
-class MockProductDB: ProductProvider {
+class MockProductDB: ProductStore {
     var productAvailability: SnabbleCore.ProductAvailability = .inStock
     var database: AnyObject? = nil
     var databasePath: String = "empty"
