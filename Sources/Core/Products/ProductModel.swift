@@ -45,9 +45,9 @@ extension Product: Swift.Identifiable {
 
 public final class ProductModel: ObservableObject {
     var database: AppDatabase
-    var shop: Shop
-    
-    var shopId: SnabbleCore.Identifier<Shop> {
+   
+    public var shop: Shop
+    public var shopId: SnabbleCore.Identifier<Shop> {
         return shop.id
     }
     

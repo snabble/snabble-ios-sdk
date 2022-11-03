@@ -13,12 +13,14 @@ public struct ProductAddView: View {
     @EnvironmentStateObject var model: ProductModel
     @Environment(\.presentationMode) var presentationMode
     var product: Product
+//    @StateObject private var cartItemModel: CartItemModel?
     
     public init(viewModel: ProductModel, product: Product) {
         _model = EnvironmentStateObject { _ in
             viewModel
         }
         self.product = product
+//        self.cartItemModel = CartItemModel(shop: viewModel.shop, scannedProduct: <#T##ScannedProduct#>, scannedCode: <#T##String#>)
     }
     
     @ViewBuilder
@@ -57,7 +59,6 @@ public struct ProductAddView: View {
                 .font(.headline)
             
             price
-            
             button
             
             Spacer()
@@ -65,7 +66,6 @@ public struct ProductAddView: View {
         .padding()
         .onAppear {
             _ = model.scannedProduct(for: product)
-//            _ = model.productBy(sku: product.sku)
         }
     }
 }
