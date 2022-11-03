@@ -1,8 +1,8 @@
 //
-//  ProductSearchViewController.swift
+//  ProductAddViewController.swift
 //  
 //
-//  Created by Uwe Tilemann on 22.10.22.
+//  Created by Uwe Tilemann on 03.11.22.
 //
 
 import SnabbleCore
@@ -11,15 +11,15 @@ import SwiftUI
 import Combine
 
 /// Methods for managing callbacks for widges
-public protocol ProductSearchViewControllerDelegate: AnyObject {
+public protocol ProductAddViewControllerDelegate: AnyObject {
 
     /// Tells the delegate that an widget will perform an action
-    func productSearchViewViewController(_ viewController: ProductSearchViewController, tappedProduct product: Product)
+    func productAddViewViewController(_ viewController: ProductAddViewController, tappedProduct product: Product)
 }
 
 /// A UIViewController wrapping SwiftUI's DynamicStackView
-open class ProductSearchViewController: UIHostingController<ProductSearchView> {
-    public weak var delegate: ProductSearchViewControllerDelegate?
+open class ProductAddViewController: UIHostingController<ProductAddView> {
+    public weak var delegate: ProductAddViewControllerDelegate?
 
     private var cancellables = Set<AnyCancellable>()
 
@@ -28,8 +28,8 @@ open class ProductSearchViewController: UIHostingController<ProductSearchView> {
     }
     /// Creates and returns an dynamic stack  view controller with the specified viewModel
     /// - Parameter viewModel: A view model that specifies the details to be shown. Default value is `.default`
-    public init(viewModel: ProductModel) {
-        super.init(rootView: ProductSearchView(viewModel: viewModel))
+    public init(viewModel: ProductModel, product: Product) {
+        super.init(rootView: ProductAddView(viewModel: viewModel, product: product))
     }
 
     @MainActor required dynamic public init?(coder aDecoder: NSCoder) {
@@ -40,7 +40,7 @@ open class ProductSearchViewController: UIHostingController<ProductSearchView> {
         super.viewDidLoad()
         viewModel.productActionPublisher
             .sink { [unowned self] product in
-                delegate?.productSearchViewViewController(self, tappedProduct: product)
+                delegate?.productAddViewViewController(self, tappedProduct: product)
             }
             .store(in: &cancellables)
     }

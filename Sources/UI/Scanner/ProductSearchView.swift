@@ -84,9 +84,7 @@ public struct ProductSearchView: View {
                 List(model.products, id: \.id) { product in
                     ProductRowView(product: product)
                         .onTapGesture {
-                            if let code = product.codes.first {
-                                _ = model.productBy(code: code.code)
-                            }
+                            model.productActionPublisher.send(product)
                         }
                 }
                 .navigationBarTitleDisplayMode(.inline)

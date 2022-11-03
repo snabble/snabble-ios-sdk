@@ -45,7 +45,11 @@ extension Product: Swift.Identifiable {
 
 public final class ProductModel: ObservableObject {
     var database: AppDatabase
-    var shopId: SnabbleCore.Identifier<Shop>
+    var shop: Shop
+    
+    var shopId: SnabbleCore.Identifier<Shop> {
+        return shop.id
+    }
     
     /// Emits changes on requested array of `Product`
     @Published public var products: [Product]
@@ -58,13 +62,13 @@ public final class ProductModel: ObservableObject {
     /// default availabilty (if no record in `availabilities` is found
     public var defaultAvailability: ProductAvailability
     
-    public init?(productStore: ProductStore, shopID: SnabbleCore.Identifier<Shop>) {
+    public init?(productStore: ProductStore, shop: Shop) {
         guard let database = productStore.database as? DatabaseQueue else {
             return nil
         }
         do {
             self.database = try AppDatabase(database)
-            self.shopId = shopID
+            self.shop = shop
             self.defaultAvailability = productStore.productAvailability
             self.products = []
             self.scannedProduct = nil
@@ -73,9 +77,13 @@ public final class ProductModel: ObservableObject {
         }
     }
     
-    /// Emits if the widget triigers the action
+    /// Emits if a Product action
     /// - `Output` is a `Product`
-    public let actionPublisher = PassthroughSubject<Product, Never>()
+    public let productActionPublisher = PassthroughSubject<Product, Never>()
+
+    /// Emits if a ScannedProduct action
+    /// - `Output` is a `ScannedProduct`
+    public let scannedProductActionPublisher = PassthroughSubject<ScannedProduct, Never>()
 }
 
 // MARK: - Database Publisher
@@ -215,8 +223,20 @@ extension ProductModel {
         self.productBy(sku: sku, shopId: self.shopId, forceDownload: true, completion: completion)
     }
     
+    public func scannedProduct(for product: Product) -> ScannedProduct? {
+        guard let codeEntry = product.codes.first else {
+            return nil
+        }
+                
+        let fetchConfiguration = ProductFetchConfiguration(shopId: shopId, fetchPricesAndBundles: true, productAvailability: self.productAvailability)
+        
+        requestScannedProduct(with: fetchConfiguration, codes: [(codeEntry.code, codeEntry.template)])
+
+        return nil
+    }
+    
     public func productBy(code: String) -> [ScannedProduct] {
-        let fetchConfiguration = ProductFetchConfiguration(shopId: shopId, fetchPricesAndBundles: false, productAvailability: self.productAvailability, scannedProductHandler: { result in
+        let fetchConfiguration = ProductFetchConfiguration(shopId: shopId, fetchPricesAndBundles: true, productAvailability: self.productAvailability, scannedProductHandler: { result in
             switch result {
             case .success(let product):
                 print("success handler \(product.product.sku)")

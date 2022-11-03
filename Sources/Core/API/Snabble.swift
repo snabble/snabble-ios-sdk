@@ -306,10 +306,7 @@ public class Snabble {
     /// - Parameter shop: `Shop` shop used to access the products
     /// - Returns: `ProductViewModel` the model to access the products for a shop
     public func productModel(for project: Project, shop: Shop) -> ProductModel? {
-        ProductModel(
-            productStore: productStore(for: project),
-            shopID: shop.id
-        )
+        ProductModel(productStore: productStore(for: project), shop: shop)
     }
     
     /// Product Database for a project

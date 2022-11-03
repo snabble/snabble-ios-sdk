@@ -30,6 +30,26 @@ final class DashboardViewController: DynamicViewController {
     }
 }
 
+extension DashboardViewController: ProductAddViewControllerDelegate {
+    func productAddViewViewController(_ viewController: SnabbleUI.ProductAddViewController, tappedProduct product: SnabbleCore.Product) {
+        print("want add product to cart")
+    }
+}
+
+extension DashboardViewController: ProductSearchViewControllerDelegate {
+    func productSearchViewViewController(_ viewController: SnabbleUI.ProductSearchViewController, tappedProduct product: SnabbleCore.Product) {
+        print("product tapped: \(product)")
+
+        let model = viewController.viewModel
+        let productAddVC = ProductAddViewController(viewModel: model, product: product)
+        productAddVC.delegate = self
+        
+        viewController.dismiss(animated: true) {
+            self.present(productAddVC, animated: true)
+        }
+    }
+}
+
 extension DashboardViewController: DynamicViewControllerDelegate {
     func dynamicStackViewController(_ viewController: DynamicViewController, tappedWidget widget: SnabbleUI.Widget, userInfo: [String: Any]?) {
         print(widget, userInfo?.description ?? "no userInfo")
@@ -42,9 +62,10 @@ extension DashboardViewController: DynamicViewControllerDelegate {
             if let project = Snabble.shared.projects.first,
                let shop = project.shops.first,
                let viewModel = Snabble.shared.productModel(for: project, shop: shop) {
-                let view = ProductSearchView(viewModel: viewModel)
+
+                let productVC = ProductSearchViewController(viewModel: viewModel)
+                productVC.delegate = self
                 
-                let productVC = UIHostingController(rootView: view)
                 self.present(productVC, animated: true)
             }
             
