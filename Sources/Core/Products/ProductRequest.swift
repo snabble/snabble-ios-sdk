@@ -24,7 +24,12 @@ struct ProductFetchConfiguration {
     var arguments: StatementArguments {
         return sql.arguments
     }
-    init(sql: (query: String, arguments: StatementArguments) = ("", []), shopId: SnabbleCore.Identifier<Shop>, fetchPricesAndBundles: Bool = true, productAvailability: ProductAvailability = .inStock, codes: [(String, String)] = [], productHandler: @escaping ((Result<Product, ProductLookupError>) -> Void) = {_ in}, scannedProductHandler: @escaping ((Result<ScannedProduct, ProductLookupError>) -> Void) = {_ in}) {
+    init(sql: (query: String, arguments: StatementArguments) = ("", []),
+         shopId: SnabbleCore.Identifier<Shop>,
+         fetchPricesAndBundles: Bool = true,
+         productAvailability: ProductAvailability = .inStock,
+         productHandler: @escaping ((Result<Product, ProductLookupError>) -> Void) = {_ in},
+         scannedProductHandler: @escaping ((Result<ScannedProduct, ProductLookupError>) -> Void) = {_ in}) {
         self.sql = sql
         self.shopId = shopId
         self.fetchPricesAndBundles = fetchPricesAndBundles
@@ -46,7 +51,6 @@ struct ProductRequest: Queryable {
     func publisher(in appDatabase: AppDatabase) -> AnyPublisher<[Product], Error> {
         // Build the publisher from the general-purpose read-only access
         // granted by `appDatabase.databaseReader`.
-        // Some apps will prefer to call a dedicated method of `appDatabase`.
         ValueObservation
             .tracking { db in
                 let rows = try Row.fetchAll(db, sql: fetchConfiguration.query, arguments: fetchConfiguration.arguments)
@@ -64,19 +68,18 @@ struct ProductRequest: Queryable {
             .eraseToAnyPublisher()
     }
     
-    func publisher(in appDatabase: AppDatabase, codes: [(String, String)]) -> AnyPublisher<[ScannedProduct], Error> {
+    func publisher(in appDatabase: AppDatabase, codes: [(String, String)]) -> AnyPublisher<ScannedProduct?, Error> {
         // Build the publisher from the general-purpose read-only access
         // granted by `appDatabase.databaseReader`.
-        // Some apps will prefer to call a dedicated method of `appDatabase`.
         ValueObservation
             .tracking { db in
                 
                 for (code, template) in codes {
                     if let scannedProduct = product(db, code: code, template: template, configuration: fetchConfiguration) {
-                        return [scannedProduct]
+                        return scannedProduct
                     }
                 }
-                return []
+                return nil
             }
             .publisher(
                 in: appDatabase.databaseReader,

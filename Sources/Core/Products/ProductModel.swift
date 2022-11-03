@@ -116,9 +116,9 @@ extension ProductModel {
                 case .finished:
                     break
                 }
-            } receiveValue: { [weak self] products in
+            } receiveValue: { [weak self] product in
                 
-                self?.scannedProduct = products.first
+                self?.scannedProduct = product
                 
                 if let scannedProduct = self?.scannedProduct {
                     configuration.scannedProductHandler(Result.success(scannedProduct))
@@ -137,13 +137,7 @@ extension ProductModel: ProductProviding {
     public var productAvailability: ProductAvailability {
         return defaultAvailability
     }
-    
-    public func productBy(codes: [(String, String)], shopId: SnabbleCore.Identifier<Shop>, forceDownload: Bool, completion: @escaping (Result<ScannedProduct, ProductLookupError>) -> Void) {
-        let fetchConfiguration = ProductFetchConfiguration(shopId: shopId, fetchPricesAndBundles: false, productAvailability: self.productAvailability, scannedProductHandler: completion)
 
-        requestScannedProduct(with: fetchConfiguration, codes: codes)
-    }
-    
     public func productBy(sku: String, shopId: SnabbleCore.Identifier<Shop>, forceDownload: Bool, completion: @escaping (Result<Product, ProductLookupError>) -> Void) {
         
         let sql = SQLQuery.productSql(sku: sku, shopId: shopId, availability: self.productAvailability)
@@ -151,7 +145,7 @@ extension ProductModel: ProductProviding {
         
         requestProducts(with: fetchConfiguration)
     }
-    
+
     public func productsBy(prefix: String, filterDeposits: Bool, templates: [String]?, shopId: SnabbleCore.Identifier<Shop>) -> [Product] {
         guard !prefix.isEmpty else {
             self.products = []
@@ -164,7 +158,7 @@ extension ProductModel: ProductProviding {
 
         return []
     }
-    
+
     public func productsBy(name: String, filterDeposits: Bool) -> [Product] {
         let sql = SQLQuery.productSql(name: name, filterDeposits: filterDeposits, shopId: shopId, availability: self.productAvailability)
         let fetchConfiguration = ProductFetchConfiguration(sql: sql, shopId: shopId, fetchPricesAndBundles: true, productAvailability: self.productAvailability)
@@ -172,7 +166,7 @@ extension ProductModel: ProductProviding {
 
         return []
     }
-    
+
     public func productsBy(skus: [String], shopId: SnabbleCore.Identifier<Shop>) -> [Product] {
         
         let sql = SQLQuery.productSql(skus: skus, shopId: shopId, availability: self.productAvailability)
@@ -181,20 +175,26 @@ extension ProductModel: ProductProviding {
 
         return []
     }
-    
-    public func productBy(codes: [(String, String)], shopId: SnabbleCore.Identifier<Shop>) -> ScannedProduct? {
-        let fetchConfiguration = ProductFetchConfiguration(shopId: shopId, fetchPricesAndBundles: false, productAvailability: self.productAvailability)
 
-        requestScannedProduct(with: fetchConfiguration, codes: codes)
-
-        return nil
-    }
-    
     public func productBy(sku: String, shopId: SnabbleCore.Identifier<Shop>) -> Product? {
         
         let sql = SQLQuery.productSql(sku: sku, shopId: shopId, availability: self.productAvailability)
         let fetchConfiguration = ProductFetchConfiguration(sql: sql, shopId: shopId, fetchPricesAndBundles: true, productAvailability: self.productAvailability)
         requestProducts(with: fetchConfiguration)
+
+        return nil
+    }
+
+    public func productBy(codes: [(String, String)], shopId: SnabbleCore.Identifier<Shop>, forceDownload: Bool, completion: @escaping (Result<ScannedProduct, ProductLookupError>) -> Void) {
+        let fetchConfiguration = ProductFetchConfiguration(shopId: shopId, fetchPricesAndBundles: false, productAvailability: self.productAvailability, scannedProductHandler: completion)
+
+        requestScannedProduct(with: fetchConfiguration, codes: codes)
+    }
+
+    public func productBy(codes: [(String, String)], shopId: SnabbleCore.Identifier<Shop>) -> ScannedProduct? {
+        let fetchConfiguration = ProductFetchConfiguration(shopId: shopId, fetchPricesAndBundles: false, productAvailability: self.productAvailability)
+
+        requestScannedProduct(with: fetchConfiguration, codes: codes)
 
         return nil
     }
