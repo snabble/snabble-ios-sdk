@@ -12,6 +12,11 @@ final class GatekeeperCheckViewController: BaseCheckViewController {
         return QRCode.generate(for: content, scale: 5)
     }
 
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        text?.text = nil
+    }
+
     // gatekeeper decision depends on the process' checks as well as the payment and fulfillment status
     override func checkContinuation(for process: CheckoutProcess) -> CheckResult {
         if process.hasFailedChecks {
