@@ -8,7 +8,7 @@
 import SnabbleCore
 import Combine
 
-// MARK: - Publisher object that emits published products
+// MARK: - Publisher object that emits a published cartItem and encapsulate the card item business logic
 
 public final class CartItemModel: ObservableObject {
     
@@ -27,7 +27,7 @@ public final class CartItemModel: ObservableObject {
         }
         let product = cartItem.product
         var quantity = cartItem.effectiveQuantity
-
+        
         if quantity < 1 && product.type != .userMustWeigh {
             quantity = 1
         } else if quantity > ShoppingCart.maxAmount {
@@ -48,7 +48,7 @@ public final class CartItemModel: ObservableObject {
               let product = scannedProduct?.product else {
             return false
         }
-
+        
         // suppress display when price == 0
         var hasPrice = product.price(self.shoppingCart.customerCard) != 0
         if cartItem.encodingUnit == .price {
@@ -77,7 +77,7 @@ public final class CartItemModel: ObservableObject {
     public var alreadyInCart = false
     
     private var cancellables = Set<AnyCancellable>()
-
+    
     func setupItem() {
         guard let scannedProduct = self.scannedProduct,
               let code = scannedProduct.product.codes.first?.code else {
@@ -86,12 +86,12 @@ public final class CartItemModel: ObservableObject {
         
         let project = SnabbleCI.project
         let product = scannedProduct.product
-
+        
         var embeddedData = scannedProduct.embeddedData
         if let embed = embeddedData, product.type == .depositReturnVoucher, scannedProduct.encodingUnit == .price {
             embeddedData = -1 * embed
         }
-
+        
         let scannedCode = ScannedCode(
             scannedCode: code,
             transmissionCode: scannedProduct.transmissionCode,
@@ -102,7 +102,7 @@ public final class CartItemModel: ObservableObject {
             templateId: scannedProduct.templateId ?? CodeTemplate.defaultName,
             transmissionTemplateId: scannedProduct.transmissionTemplateId,
             lookupCode: scannedProduct.lookupCode)
-
+        
         self.cartItem = CartItem(1, scannedProduct.product, scannedCode, self.shoppingCart.customerCard, project.roundingMode)
         
         guard let cartItem = self.cartItem else {
@@ -110,18 +110,18 @@ public final class CartItemModel: ObservableObject {
         }
         let cartQuantity = cartItem.canMerge ? self.shoppingCart.quantity(of: cartItem) : 0
         alreadyInCart = cartQuantity > 0
-
+        
         let initialQuantity = scannedProduct.specifiedQuantity ?? 1
         var quantity = cartQuantity + initialQuantity
         if product.type == .userMustWeigh {
             quantity = 0
         }
-
+        
         if let embed = cartItem.scannedCode.embeddedData, product.referenceUnit?.hasDimension == true {
             quantity = embed
         }
         self.cartItem?.setQuantity(quantity)
-
+        
     }
     
     public init(productModel: ProductModel, product: Product) {
@@ -137,6 +137,10 @@ public final class CartItemModel: ObservableObject {
         
         _ = productModel.scannedProduct(for: product)
     }
+    
+}
+
+extension CartItemModel {
     
     public func quantityIncrement() {
         guard let cartItem = self.cartItem else {
