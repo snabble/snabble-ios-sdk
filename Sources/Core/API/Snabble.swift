@@ -297,8 +297,11 @@ public class Snabble {
     
     /// Set up database for project
     /// - Parameter project: `Project` associated to setup the product database
-    public func setupProductDatabase(for project: Project, completion: @escaping (ProductStoreAvailability) -> Void  ) {
-        productStore(for: project).setup(completion: completion)
+    @discardableResult
+    public func setupProductDatabase(for project: Project, completion: @escaping (ProductStoreAvailability) -> Void) -> ProductStore {
+        let productStore = productStore(for: project)
+        productStore.setup(completion: completion)
+        return productStore
     }
     
     /// Product Database for a project
