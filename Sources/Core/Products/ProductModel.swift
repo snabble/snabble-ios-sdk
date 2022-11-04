@@ -55,13 +55,21 @@ public final class ProductModel: ObservableObject {
     @Published public var products: [Product]
     
     /// Emits changes on a requested `ScannedProduct`
-    @Published public var scannedProduct: ScannedProduct?
+    public var scannedProduct: ScannedProduct? {
+        didSet {
+            scannedProductPublisher.send(scannedProduct)
+        }
+    }
     
     var cancellable = Set<AnyCancellable>()
 
     /// default availabilty (if no record in `availabilities` is found
     public var defaultAvailability: ProductAvailability
     
+    /// Emits if a ScannedProduct changed
+    /// - `Output` is an optional `ScannedProduct`
+    public var scannedProductPublisher = CurrentValueSubject<ScannedProduct?, Never>(nil)
+
     public init?(productStore: ProductStore, shop: Shop) {
         guard let database = productStore.database as? DatabaseQueue else {
             return nil
@@ -77,13 +85,9 @@ public final class ProductModel: ObservableObject {
         }
     }
     
-    /// Emits if a Product action
+    /// Emits a Product action
     /// - `Output` is a `Product`
     public let productActionPublisher = PassthroughSubject<Product, Never>()
-
-    /// Emits if a ScannedProduct action
-    /// - `Output` is a `ScannedProduct`
-    public let scannedProductActionPublisher = PassthroughSubject<ScannedProduct, Never>()
 }
 
 // MARK: - Database Publisher
@@ -233,20 +237,5 @@ extension ProductModel {
         requestScannedProduct(with: fetchConfiguration, codes: [(codeEntry.code, codeEntry.template)])
 
         return nil
-    }
-    
-    public func productBy(code: String) -> [ScannedProduct] {
-        let fetchConfiguration = ProductFetchConfiguration(shopId: shopId, fetchPricesAndBundles: true, productAvailability: self.productAvailability, scannedProductHandler: { result in
-            switch result {
-            case .success(let product):
-                print("success handler \(product.product.sku)")
-            case .failure(let error):
-                print("success handler failed: \(error)")
-            }
-        })
-        
-        requestScannedProduct(with: fetchConfiguration, codes: [(code, "default")])
-        
-        return []
     }
 }

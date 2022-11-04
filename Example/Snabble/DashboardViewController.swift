@@ -30,22 +30,14 @@ final class DashboardViewController: DynamicViewController {
     }
 }
 
-extension DashboardViewController: ProductAddViewControllerDelegate {
-    func productAddViewViewController(_ viewController: SnabbleUI.ProductAddViewController, tappedProduct product: SnabbleCore.Product) {
-        print("want add product to cart")
-    }
-}
-
 extension DashboardViewController: ProductSearchViewControllerDelegate {
     func productSearchViewViewController(_ viewController: SnabbleUI.ProductSearchViewController, tappedProduct product: SnabbleCore.Product) {
-        print("product tapped: \(product)")
 
-        let model = viewController.viewModel
-        let productAddVC = ProductAddViewController(viewModel: model, product: product)
-        productAddVC.delegate = self
+        let model = CartItemModel(productModel: viewController.viewModel, product: product)
+        let itemAddVC = CartItemAddViewController(viewModel: model)
         
         viewController.dismiss(animated: true) {
-            self.present(productAddVC, animated: true)
+            self.present(itemAddVC, animated: true)
         }
     }
 }
