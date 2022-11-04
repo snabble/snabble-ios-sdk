@@ -8,9 +8,9 @@
 import Foundation
 import GRDB
 
-// MARK: - ProductDB implementation of ProductProviding
+// MARK: - ProductDatabase implementation of ProductProviding
 
-extension ProductDB: ProductProviding {
+extension ProductDatabase: ProductProviding {
     public var productAvailability: ProductAvailability {
         return defaultAvailability
     }

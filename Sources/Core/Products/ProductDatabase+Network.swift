@@ -1,5 +1,5 @@
 //
-//  ProductDB+Network.swift
+//  ProductDatabase+Network.swift
 //
 //  Copyright © 2020 snabble. All rights reserved.
 //
@@ -15,7 +15,7 @@ enum AppDbResponse {
     case aborted    // download was aborted. app may attempt resuming later
 }
 
-extension ProductDB {
+extension ProductDatabase {
     fileprivate static let sqlType = "application/vnd+snabble.appdb+sql"
     fileprivate static let sqliteType = "application/vnd+snabble.appdb+sqlite3"
     private static let contentTypes = "\(sqlType),\(sqliteType)"
@@ -42,7 +42,7 @@ extension ProductDB {
                 return completion(.httpError)
             }
 
-            request.setValue(ProductDB.contentTypes, forHTTPHeaderField: "Accept")
+            request.setValue(ProductDatabase.contentTypes, forHTTPHeaderField: "Accept")
 
             let session = appDbSession(completion)
             downloadTask = session.downloadTask(with: request)
@@ -72,14 +72,14 @@ extension ProductDB {
 final class AppDBDownloadDelegate: CertificatePinningDelegate, URLSessionDownloadDelegate {
     private var completion: (AppDbResponse) -> Void
     private var response: URLResponse?
-    private weak var productDb: ProductDB?
+    private weak var productDb: ProductDatabase?
     private let start = Date.timeIntervalSinceReferenceDate
     private var bytesReceived: Int64 = 0
     private var mbps = 0.0 // megabytes/second
 
     private var tmpFile: URL?
 
-    init(_ productDb: ProductDB, _ completion: @escaping (AppDbResponse) -> Void) {
+    init(_ productDb: ProductDatabase, _ completion: @escaping (AppDbResponse) -> Void) {
         self.productDb = productDb
         self.completion = completion
     }
@@ -144,11 +144,11 @@ final class AppDBDownloadDelegate: CertificatePinningDelegate, URLSessionDownloa
                 completion(.noUpdate)
             } else {
                 switch response.allHeaderFields["Content-Type"] as? String {
-                case ProductDB.sqliteType:
+                case ProductDatabase.sqliteType:
                     completion(.full(db: tmpFile))
                     // completionHandler is responsible for deleting the temp file
                     self.tmpFile = nil
-                case ProductDB.sqlType:
+                case ProductDatabase.sqlType:
                     completion(.diff(lines: tmpFile))
                     // completionHandler is responsible for deleting the temp file
                     self.tmpFile = nil

@@ -1,5 +1,5 @@
 //
-//  ProductDB+Queries.swift
+//  ProductDatabase+Queries.swift
 //
 //  Copyright © 2020 snabble. All rights reserved.
 //
@@ -28,7 +28,7 @@ extension String {
 }
 
 // MARK: - low-level db queries
-extension ProductDB {
+extension ProductDatabase {
 
     func productBy(_ dbQueue: DatabaseQueue, sku: String, shopId: Identifier<Shop>) -> Product? {
         do {

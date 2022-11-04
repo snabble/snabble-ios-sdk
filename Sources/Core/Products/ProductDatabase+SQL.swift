@@ -1,5 +1,5 @@
 //
-//  ProductDB+SQL.swift
+//  ProductDatabase+SQL.swift
 //  
 //
 //  Created by Uwe Tilemann on 23.10.22.

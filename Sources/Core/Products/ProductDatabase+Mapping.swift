@@ -1,5 +1,5 @@
 //
-//  ProductDB+Mapping.swift
+//  ProductDatabase+Mapping.swift
 //  
 //
 //  Created by Uwe Tilemann on 23.10.22.

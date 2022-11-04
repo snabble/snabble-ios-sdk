@@ -67,7 +67,7 @@ final class ScanningViewController: UIViewController {
 
         self.shoppingCart = cart
 
-        self.productProvider = Snabble.shared.productStore(for: project)
+        self.productProvider = Snabble.shared.productProvider(for: project)
 
         self.barcodeDetector = detector
         self.barcodeDetector.scanFormats = project.scanFormats

@@ -75,7 +75,7 @@ public class Snabble {
     private init(config: Config, tokenRegistry: TokenRegistry) {
         self.config = config
         self.tokenRegistry = tokenRegistry
-        self.providerPool = [:]
+        self.databases = [:]
 
         if let metadataPath = config.seedMetadata {
             if let metadata = Metadata.readResource(metadataPath) {
@@ -151,7 +151,7 @@ public class Snabble {
     }
     public static let methodRegistry = MethodRegistry()
 
-    private(set) var providerPool: [Identifier<Project>: ProductStore]
+    private var databases: [Identifier<Project>: ProductDatabase]
 
     /// Gateway certificates for payment routes
     public var certificates: [GatewayCertificate] {
@@ -297,25 +297,36 @@ public class Snabble {
     
     /// Set up database for project
     /// - Parameter project: `Project` associated to setup the product database
-    @discardableResult
-    public func setupProductDatabase(for project: Project, completion: @escaping (ProductStoreAvailability) -> Void) -> ProductStore {
-        let productStore = productStore(for: project)
-        productStore.setup(completion: completion)
-        return productStore
+    public func setupProductDatabase(for project: Project, completion: @escaping (ProductStoreAvailability) -> Void) {
+        productDatabase(for: project).setup(completion: completion)
     }
     
     /// Product Database for a project
     /// - Parameter project: `Project` associated to the product provider
     /// - Returns: `ProductStore` the products database
-    public func productStore(for project: Project) -> ProductStore {
+    private func productDatabase(for project: Project) -> ProductDatabase {
         assert(!project.id.rawValue.isEmpty && project.id != Project.none.id, "empty projects don't have a product provider")
-        if let store = providerPool[project.id] {
-            return store
+        if let database = databases[project.id] {
+            return database
         } else {
-            let store = ProductDB(config, project)
-            providerPool[project.id] = store
-            return store
+            let database = ProductDatabase(config, project)
+            databases[project.id] = database
+            return database
         }
+    }
+
+    /// ProductProviding for a project
+    /// - Parameter project: `Project` associated to the product provider
+    /// - Returns: `ProductProviding` the products database
+    public func productProvider(for project: Project) -> ProductProviding {
+        productDatabase(for: project)
+    }
+
+    /// ProductStore for a project
+    /// - Parameter project: `Project` associated to the product provider
+    /// - Returns: `ProductStore` the products database
+    public func productStore(for project: Project) -> ProductStoring {
+        productDatabase(for: project)
     }
 
     /// Removes database for a project
@@ -324,9 +335,9 @@ public class Snabble {
     /// - Warning: For debugging only
     /// - Parameter project: `Project` of the database to be deleted
     public func removeDatabase(of project: Project) {
-        let store = productStore(for: project)
-        store.removeDatabase()
-        providerPool[project.id] = nil
+        let productDatabase = productDatabase(for: project)
+        productDatabase.removeDatabase()
+        databases[project.id] = nil
     }
 }
 

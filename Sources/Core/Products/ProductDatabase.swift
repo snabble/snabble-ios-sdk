@@ -1,5 +1,5 @@
 //
-//  ProductDB.swift
+//  ProductDatabase.swift
 //
 //  Copyright © 2020 snabble. All rights reserved.
 //
@@ -7,7 +7,7 @@
 import Foundation
 import GRDB
 import Zip
-#warning("ProductDB.swift: remove UIKit dependency from SnabbleCore")
+#warning("ProductDatabase.swift: remove UIKit dependency from SnabbleCore")
 import UIKit
 
 /// keys of well-known entries in the metadata table
@@ -20,15 +20,13 @@ public enum MetadataKeys {
     fileprivate static let appLastUpdate = "app_lastUpdate"
 }
 
-public typealias ProductStore = ProductStoring & ProductProviding
-
 public enum ProductDbUpdate {
     case always
     case never
     case ifOlderThan(Int) // age in seconds
 }
 
-final class ProductDB: ProductStoring {
+final class ProductDatabase: ProductStoring {
     
     internal let supportedSchemaVersion = "1"
 
@@ -98,7 +96,7 @@ final class ProductDB: ProductStoring {
         return self.useFTS
     }
     
-    /// initialize a ProductDB instance with the given configuration
+    /// initialize a ProductDatabase instance with the given configuration
     /// - parameter config: a `Config` structure
     /// - parameter project: the snabble `Project`
     public init(_ config: Config, _ project: Project) {
