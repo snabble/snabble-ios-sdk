@@ -303,7 +303,7 @@ public class Snabble {
     
     /// Product Database for a project
     /// - Parameter project: `Project` associated to the product provider
-    /// - Returns: `ProductStore` the products database
+    /// - Returns: `ProductDatabase` the products database
     private func productDatabase(for project: Project) -> ProductDatabase {
         assert(!project.id.rawValue.isEmpty && project.id != Project.none.id, "empty projects don't have a product provider")
         if let database = databases[project.id] {

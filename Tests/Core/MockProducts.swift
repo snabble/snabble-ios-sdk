@@ -8,7 +8,7 @@
 import XCTest
 @testable import SnabbleCore
 
-class MockProductDB: ProductStore {
+class MockProductDB: ProductStoring & ProductProviding {
     var supportFulltextSearch: Bool {
         return true
     }
