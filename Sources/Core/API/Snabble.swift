@@ -300,14 +300,6 @@ public class Snabble {
     public func setupProductDatabase(for project: Project, completion: @escaping (ProductStoreAvailability) -> Void  ) {
         productStore(for: project).setup(completion: completion)
     }
-
-    /// Product MVVM model for use with SwiftUI
-    /// - Parameter project: `Project` project used to access the products
-    /// - Parameter shop: `Shop` shop used to access the products
-    /// - Returns: `ProductViewModel` the model to access the products for a shop
-    public func productModel(for project: Project, shop: Shop) -> ProductModel? {
-        ProductModel(productStore: productStore(for: project), shop: shop)
-    }
     
     /// Product Database for a project
     /// - Parameter project: `Project` associated to the product provider
