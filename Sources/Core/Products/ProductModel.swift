@@ -111,7 +111,7 @@ extension ProductModel {
                 if let product = products.first {
                     configuration.productHandler(Result.success(product))
                 } else {
-                    configuration.scannedProductHandler(Result.failure(.notFound))
+                    configuration.productHandler(Result.failure(.notFound))
                 }
             }
             .store(in: &cancellable)
