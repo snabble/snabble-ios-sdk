@@ -11,7 +11,6 @@ import SnabbleCore
 import SnabbleUI
 import CoreLocation
 import UIKit
-import SwiftUI
 
 final class DashboardViewController: DynamicViewController {
     
