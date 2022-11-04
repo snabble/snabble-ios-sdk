@@ -20,187 +20,7 @@ public enum MetadataKeys {
     fileprivate static let appLastUpdate = "app_lastUpdate"
 }
 
-/// the return type from `productByScannableCodes`
-public struct ScannedProduct {
-    /// contains the product found
-    public let product: Product
-    /// can be used to override the code that gets sent to the backend, e.g. when an EAN-8 is scanned, but the backend requires EAN-13s
-    public let transmissionCode: String?
-    /// the template that was used to match this code, if any
-    public let templateId: String?
-    /// the template we should use to generate the QR code, if not same as `templateId`
-    public let transmissionTemplateId: String?
-    /// the embedded data from the scanned code (from the {embed} template component), if any
-    public let embeddedData: Int?
-    /// the units of the embedded data, if any
-    public let encodingUnit: Units?
-    /// optional override for the product's price per `referenceUnit`
-    public let referencePriceOverride: Int?
-    /// optional override for the product's price
-    public let priceOverride: Int?
-    /// the lookup code we used to find the product in the database
-    public let lookupCode: String
-    /// the specified quantity
-    public let specifiedQuantity: Int?
-
-    public init(_ product: Product,
-                _ lookupCode: String,
-                _ transmissionCode: String?,
-                templateId: String? = nil,
-                transmissionTemplateId: String? = nil,
-                embeddedData: Int? = nil,
-                encodingUnit: Units? = nil,
-                referencePriceOverride: Int? = nil,
-                specifiedQuantity: Int?,
-                priceOverride: Int? = nil) {
-        self.product = product
-        self.lookupCode = lookupCode
-        self.transmissionCode = transmissionCode
-        self.templateId = templateId
-        self.transmissionTemplateId = transmissionTemplateId
-        self.embeddedData = embeddedData
-        self.encodingUnit = encodingUnit ?? product.encodingUnit
-        self.referencePriceOverride = referencePriceOverride
-        self.specifiedQuantity = specifiedQuantity
-        self.priceOverride = priceOverride
-    }
-}
-
-/// status of the last appdb update call
-public enum AppDbAvailability {
-    /// update is in progress or hasn't started yet
-    case unknown
-    /// update returned new data
-    case newData
-    /// update did not return new data
-    case unchanged
-    /// update was aborted and has received incomplete data.
-    case incomplete
-    /// an update is already in progress
-    case inProgress
-}
-
-public protocol ProductProviding: AnyObject {
-    
-    /// get a product by its SKU
-    func productBy(sku: String, shopId: Identifier<Shop>) -> Product?
-
-    /// get a product by one of its scannable codes/templates
-    func productBy(codes: [(String, String)], shopId: Identifier<Shop>) -> ScannedProduct?
-
-    /// get a list of products by their SKUs
-    func productsBy(skus: [String], shopId: Identifier<Shop>) -> [Product]
-
-    /// get products matching `name`
-    ///
-    /// The project's `useFTS` flag must be `true` for this to work.
-    ///
-    /// - Parameter name: the string to search for. The search is case- and diacritic-insensitive
-    /// - Returns: an array of matching `Product`s.
-    ///   NB: the returned products do not have price information
-    func productsBy(name: String, filterDeposits: Bool) -> [Product]
-
-    /// searches for products whose scannable codes start with `prefix`
-    ///
-    /// - Parameters:
-    ///   - prefix: the prefix to search for
-    ///   - filterDeposits: if true, products with `isDeposit==true` are not returned
-    ///   - templates: if set, the search matches any of the templates passed. if nil, only the built-in `default` template is matched
-    /// - Returns: an array of matching `Product`s
-    ///   NB: the returned products do not have price information
-    func productsBy(prefix: String, filterDeposits: Bool, templates: [String]?, shopId: Identifier<Shop>) -> [Product]
-
-    // MARK: - asynchronous variants of the product lookup methods
-
-    /// asynchronously get a product by its SKU
-    ///
-    /// - Parameters:
-    ///   - sku: the sku to look for
-    ///   - forceDownload: if true, skip the lookup in the local DB
-    ///   - result: the product found or the error
-    func productBy(sku: String, shopId: Identifier<Shop>, forceDownload: Bool, completion: @escaping (_ result: Result<Product, ProductLookupError>) -> Void )
-
-    /// asynchronously get a product by (one of) its scannable codes
-    ///
-    /// - Parameters:
-    ///   - codes: the code/template pairs to look for
-    ///   - forceDownload: if true, skip the lookup in the local DB
-    ///   - result: the lookup result or the error
-    func productBy(codes: [(String, String)], shopId: Identifier<Shop>, forceDownload: Bool, completion: @escaping (_ result: Result<ScannedProduct, ProductLookupError>) -> Void )
-    
-    var productAvailability: ProductAvailability { get }
-}
-
-public extension ProductProviding {
-    func productBy(sku: String, shopId: Identifier<Shop>, completion: @escaping (_ result: Result<Product, ProductLookupError>) -> Void ) {
-        self.productBy(sku: sku, shopId: shopId, forceDownload: false, completion: completion)
-    }
-
-    func productsBy(prefix: String, shopId: Identifier<Shop>) -> [Product] {
-        return self.productsBy(prefix: prefix, filterDeposits: true, templates: nil, shopId: shopId)
-    }
-
-    func productsByName(_ name: String) -> [Product] {
-        return self.productsBy(name: name, filterDeposits: true)
-    }
-
-    func productBy(codes: [(String, String)], shopId: Identifier<Shop>, completion: @escaping (_ result: Result<ScannedProduct, ProductLookupError>) -> Void ) {
-        self.productBy(codes: codes, shopId: shopId, forceDownload: false, completion: completion)
-    }
-}
-
-public protocol ProductStoring: AnyObject {
-    /// returns the persistence object
-    var database: AnyObject? { get }
-    /// returns the path to the persistence object
-    var databasePath: String { get }
-    
-    /// Check if a database file is present for this project
-    func databaseExists() -> Bool
-
-    /// Setup the product database
-    ///
-    /// The database can be used as soon as this method returns.
-    ///
-    /// - parameter update: if `.always` or `.ifOlderThan` , attempt to update the database to the latest revision
-    /// - parameter forceFullDownload: if true, force a full download of the product database
-    /// - parameter completion: This is called asynchronously on the main thread after the automatic database update check has finished
-    /// - parameter dataAvailable: indicates if new data is available
-    func setup(update: ProductDbUpdate, forceFullDownload: Bool, completion: @escaping ((_ dataAvailable: AppDbAvailability) -> Void))
-
-    /// attempt to resume a previously interrupted update of the product database
-    /// calling this method when there is no previous resumable download has no effect.
-    ///
-    /// - parameter completion: This is called asynchronously on the main thread after the database update check has finished
-    /// - parameter dataAvailable: indicates if new data is available
-    func resumeIncompleteUpdate(completion: @escaping (_ dataAvailable: AppDbAvailability) -> Void)
-
-    /// stop the currently running product database update, if one is in progress.
-    ///
-    /// if possible, this will create the necessary resume data so that the download can be continued later
-    /// by calling `resumeIncompleteUpdate(completion:)`
-    func stopDatabaseUpdate()
-
-    var revision: Int64 { get }
-    var lastProductUpdate: Date { get }
-
-    var appDbAvailability: AppDbAvailability { get }
-    
-    var schemaVersionMajor: Int { get }
-    var schemaVersionMinor: Int { get }
-
-    /// use only during development/debugging
-    func removeDatabase()
-}
-
-public extension ProductStoring {
-    func setup(completion: @escaping (AppDbAvailability) -> Void ) {
-        self.setup(update: .always, forceFullDownload: false, completion: completion)
-    }
-    func removeDatabase() { }
-}
-
-public typealias ProductStore = ProductProviding & ProductStoring
+public typealias ProductStore = ProductStoring & ProductProviding
 
 public enum ProductDbUpdate {
     case always
@@ -208,7 +28,8 @@ public enum ProductDbUpdate {
     case ifOlderThan(Int) // age in seconds
 }
 
-final class ProductDB: ProductStore {
+final class ProductDB: ProductStoring {
+    
     internal let supportedSchemaVersion = "1"
 
     private let dbName = "products.sqlite3"
@@ -229,9 +50,9 @@ final class ProductDB: ProductStore {
     public private(set) var defaultAvailability = ProductAvailability.inStock
   
     /// date of last successful product update (i.e, whenever we last got a HTTP status 200 or 304)
-    public private(set) var lastProductUpdate = Date(timeIntervalSinceReferenceDate: 0)
+    public private(set) var lastUpdate = Date(timeIntervalSinceReferenceDate: 0)
 
-    public private(set) var appDbAvailability = AppDbAvailability.unknown
+    public private(set) var availability = ProductStoreAvailability.unknown
 
     private var updateInProgress = false
 
@@ -264,9 +85,17 @@ final class ProductDB: ProductStore {
     public var databasePath: String {
         return self.dbPathname()
     }
+
+    public var isUpToDate: Bool {
+        let now = Date.timeIntervalSinceReferenceDate
+        let age = now - self.lastUpdate.timeIntervalSinceReferenceDate
+        let ageOk = age < self.config.maxProductDatabaseAge
+        
+        return ageOk
+    }
     
-    public var productAvailability: ProductAvailability {
-        return defaultAvailability
+    public var supportFulltextSearch: Bool {
+        return self.useFTS
     }
     
     /// initialize a ProductDB instance with the given configuration
@@ -288,7 +117,7 @@ final class ProductDB: ProductStore {
         return dbDir.path
     }
 
-    func databaseExists() -> Bool {
+    var databaseExists: Bool {
         return FileManager.default.fileExists(atPath: self.dbPathname())
     }
 
@@ -298,7 +127,7 @@ final class ProductDB: ProductStore {
     ///   - forceFullDownload: if true, force a full download of the product database
     ///   - completion: This is called asynchronously on the main thread after the automatic database update check has finished
     ///   - dataAvailable: indicates if the database was updated
-    public func setup(update: ProductDbUpdate = .always, forceFullDownload: Bool = false, completion: @escaping (_ dataAvailable: AppDbAvailability) -> Void ) {
+    public func setup(update: ProductDbUpdate = .always, forceFullDownload: Bool = false, completion: @escaping (_ dataAvailable: ProductStoreAvailability) -> Void ) {
         // remove comments to simulate first app installation
 //        let dbFile = self.dbPathname()
 //        let fileManager = FileManager.default
@@ -322,7 +151,7 @@ final class ProductDB: ProductStore {
             doUpdate = false
         case .ifOlderThan(let age):
             let now = Date()
-            let diff = Calendar.current.dateComponents([.second], from: self.lastProductUpdate, to: now)
+            let diff = Calendar.current.dateComponents([.second], from: self.lastUpdate, to: now)
             doUpdate = diff.second! > age
         }
 
@@ -342,9 +171,9 @@ final class ProductDB: ProductStore {
     ///   - forceFullDownload: if true, force a full download of the product database
     ///   - completion: This is called asynchronously on the main thread, after the update check has finished.
     ///   - dataAvailable: indicates if new data is available
-    private func updateDatabase(forceFullDownload: Bool, completion: @escaping (_ dataAvailable: AppDbAvailability) -> Void ) {
+    private func updateDatabase(forceFullDownload: Bool, completion: @escaping (_ dataAvailable: ProductStoreAvailability) -> Void ) {
         let schemaVersion = "\(self.schemaVersionMajor).\(self.schemaVersionMinor)"
-        let revision = (forceFullDownload || !self.databaseExists()) ? 0 : self.revision
+        let revision = (forceFullDownload || !self.databaseExists) ? 0 : self.revision
 
         if self.updateInProgress {
             return completion(.inProgress)
@@ -356,8 +185,8 @@ final class ProductDB: ProductStore {
         }
     }
 
-    public func resumeIncompleteUpdate(completion: @escaping (_ dataAvailable: AppDbAvailability) -> Void ) {
-        guard self.appDbAvailability == .incomplete else {
+    public func resumeIncompleteUpdate(completion: @escaping (_ dataAvailable: ProductStoreAvailability) -> Void ) {
+        guard self.availability == .incomplete else {
             return
         }
 
@@ -374,22 +203,22 @@ final class ProductDB: ProductStore {
     public func stopDatabaseUpdate() {
         downloadTask?.cancel { [self] data in
             resumeData = data
-            appDbAvailability = data != nil ? .incomplete : .unknown
+            availability = data != nil ? .incomplete : .unknown
         }
     }
 
-    private func processAppDbResponse(_ dbResponse: AppDbResponse, _ completion: @escaping (_ dataAvailable: AppDbAvailability) -> Void ) {
+    private func processAppDbResponse(_ dbResponse: AppDbResponse, _ completion: @escaping (_ dataAvailable: ProductStoreAvailability) -> Void ) {
         DispatchQueue.global(qos: .userInitiated).async {
             let tempDbPath = self.dbPathname(temporary: true)
             let performSwitch: Bool
-            var dataAvailable = AppDbAvailability.unknown
+            var dataAvailable = ProductStoreAvailability.unknown
             switch dbResponse {
             case .diff(let updateFile):
                 Log.info("db update: got diff")
                 performSwitch = self.copyAndUpdateDatabase(updateFile, tempDbPath)
                 if performSwitch {
                     dataAvailable = .newData
-                    self.lastProductUpdate = Date()
+                    self.lastUpdate = Date()
                 } else {
                     Log.error("applying delta update failed, forcing full db download")
                     self.updateInProgress = false
@@ -401,13 +230,13 @@ final class ProductDB: ProductStore {
                 performSwitch = self.writeFullDatabase(dbFile, tempDbPath)
                 if performSwitch {
                     dataAvailable = .newData
-                    self.lastProductUpdate = Date()
+                    self.lastUpdate = Date()
                 }
             case .noUpdate:
                 Log.info("db update: no new data")
                 performSwitch = false
                 dataAvailable = .unchanged
-                self.lastProductUpdate = Date()
+                self.lastUpdate = Date()
             case .httpError, .dataError:
                 Log.info("db update: http error or no data")
                 performSwitch = false
@@ -440,7 +269,7 @@ final class ProductDB: ProductStore {
 
             DispatchQueue.main.async {
                 self.updateInProgress = false
-                self.appDbAvailability = dataAvailable
+                self.availability = dataAvailable
                 completion(dataAvailable)
             }
         }
@@ -612,7 +441,7 @@ final class ProductDB: ProductStore {
     }
 
     private func checkIntegrity(_ dbQueue: DatabaseQueue) throws -> Bool {
-        if !databaseExists() {
+        if !databaseExists {
             Log.info("skip integrity check on first full d/l")
             return true
         }
@@ -724,7 +553,7 @@ final class ProductDB: ProductStore {
                 self.schemaVersionMinor = Int(value) ?? 0
             case MetadataKeys.appLastUpdate:
                 if let date = Formatter.iso8601.date(from: value) {
-                    self.lastProductUpdate = date
+                    self.lastUpdate = date
                 }
             case MetadataKeys.defaultAvailability:
                 self.defaultAvailability = ProductAvailability(rawValue: Int(value) ?? 0)
@@ -764,148 +593,5 @@ final class ProductDB: ProductStore {
             let fileUrl = self.dbDirectory.appendingPathComponent(file)
             try? fileManager.removeItem(at: fileUrl)
         }
-    }
-}
-
-// MARK: - product access methods
-extension ProductDB {
-    /// get a product by its SKU
-    ///
-    /// - Parameter sku: the SKU of the product to get
-    /// - Returns: a `Product` if found; nil otherwise
-    public func productBy(sku: String, shopId: Identifier<Shop>) -> Product? {
-        guard let db = self.db else {
-            return nil
-        }
-
-        return self.productBy(db, sku: sku, shopId: shopId)
-    }
-
-    /// get a list of products by their SKUs
-    ///
-    /// the ordering of the returned products is unspecified
-    ///
-    /// - Parameter skus: SKUs of the products to get
-    /// - Returns: an array of `Product`
-    public func productsBy(skus: [String], shopId: Identifier<Shop>) -> [Product] {
-        guard let db = self.db, !skus.isEmpty else {
-            return []
-        }
-
-        return self.productsBy(db, skus: skus, shopId: shopId)
-    }
-
-    /// get a product by one of its scannable codes/template pairs
-    public func productBy(codes: [(String, String)], shopId: Identifier<Shop>) -> ScannedProduct? {
-        guard let db = self.db else {
-            return nil
-        }
-
-        return self.productBy(db, codes: codes, shopId: shopId)
-    }
-
-    /// get products matching `name`
-    ///
-    /// The project's `useFTS` flag must be `true` for this to work.
-    ///
-    /// - Parameters:
-    ///   - name: the string to search for. The search is case- and diacritic-insensitive
-    ///   - filterDeposits: if true, products with `isDeposit==true` are not returned
-    /// - Returns: an array of matching Products
-    public func productsBy(name: String, filterDeposits: Bool = true) -> [Product] {
-        guard let db = self.db else {
-            return []
-        }
-
-        if !self.useFTS {
-            Log.warn("productsByName called, but useFTS not set")
-        }
-
-        return self.productsBy(db, name: name, filterDeposits: filterDeposits, shopId: "")
-    }
-
-    ///
-    /// searches for products whose scannable code starts with `prefix`
-    ///
-    /// - Parameters:
-    ///   - prefix: the prefix to search for
-    ///   - filterDeposits: if true, products with `isDeposit==true` are not returned
-    /// - Returns: an array of matching Products
-    public func productsBy(prefix: String, filterDeposits: Bool, templates: [String]?, shopId: Identifier<Shop>) -> [Product] {
-        guard let db = self.db else {
-            return []
-        }
-
-        return self.productsBy(db, prefix: prefix, filterDeposits: filterDeposits, templates: templates, shopId: shopId)
-    }
-
-    // MARK: - asynchronous requests
-
-    private func lookupLocally(forceDownload: Bool) -> Bool {
-        let now = Date.timeIntervalSinceReferenceDate
-        let age = now - self.lastProductUpdate.timeIntervalSinceReferenceDate
-        let ageOk = age < self.config.maxProductDatabaseAge
-        return !forceDownload && ageOk
-    }
-
-    /// asynchronously get a product by its SKU
-    ///
-    /// invokes the completion handler on the main thread with the result of the lookup
-    ///
-    /// - Parameters:
-    ///   - sku: the SKU to look for
-    ///   - forceDownload: if true, skip the lookup in the local DB
-    ///   - product: the product found, or nil.
-    ///   - error: whether an error occurred during the lookup.
-    public func productBy(sku: String, shopId: Identifier<Shop>, forceDownload: Bool, completion: @escaping (_ result: Result<Product, ProductLookupError>) -> Void) {
-        if self.lookupLocally(forceDownload: forceDownload), let product = self.productBy(sku: sku, shopId: shopId) {
-            DispatchQueue.main.async {
-                if product.availability == .notAvailable {
-                    completion(.failure(.notFound))
-                } else {
-                    completion(.success(product))
-                }
-            }
-            return
-        }
-
-        if let url = self.project.links.resolvedProductBySku?.href {
-            self.resolveProductLookup(url: url, sku: sku, shopId: shopId, completion: completion)
-        } else {
-            completion(.failure(.notFound))
-        }
-    }
-
-    /// asynchronously get a product by (one of) it scannable codes
-    ///
-    /// invokes the completion handler on the main thread with the result of the lookup
-    ///
-    /// - Parameters:
-    ///   - codes: the codes/templates to look for
-    ///   - shopId: the shop id
-    ///   - forceDownload: if true, skip the lookup in the local DB
-    ///   - product: the product found, or nil.
-    ///   - error: whether an error occurred during the lookup.
-    public func productBy(codes: [(String, String)], shopId: Identifier<Shop>, forceDownload: Bool, completion: @escaping (_ result: Result<ScannedProduct, ProductLookupError>) -> Void) {
-        if self.lookupLocally(forceDownload: forceDownload), let result = self.productBy(codes: codes, shopId: shopId) {
-            DispatchQueue.main.async {
-                if result.product.availability == .notAvailable {
-                    completion(.failure(.notFound))
-                } else {
-                    completion(.success(result))
-                }
-            }
-            return
-        }
-
-        if let url = self.project.links.resolvedProductLookUp?.href {
-            self.resolveProductsLookup(url, codes, shopId, completion: completion)
-        } else {
-            completion(.failure(.notFound))
-        }
-    }
-
-    func logError(_ msg: String) {
-        self.project.logError(msg)
     }
 }

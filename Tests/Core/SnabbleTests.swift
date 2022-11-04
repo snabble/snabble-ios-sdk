@@ -76,18 +76,18 @@ class SnabbleTests: XCTestCase {
         products = pdb.productsBy(skus: ["22","23"], shopId: shopId)
         XCTAssertEqual(products.count, 2, "skus 22+23 not found")
 
-        XCTAssertNil(pdb.productBy(codes: [("1234", "default")], shopId: shopId), "unexpected product found")
-        XCTAssertNotNil(pdb.productBy(codes: [("0885580466671", "default")], shopId: shopId), "ean 0885580466671 not found")
+        XCTAssertNil(pdb.scannedProductBy(codes: [("1234", "default")], shopId: shopId), "unexpected product found")
+        XCTAssertNotNil(pdb.scannedProductBy(codes: [("0885580466671", "default")], shopId: shopId), "ean 0885580466671 not found")
 
-        XCTAssertNotNil(pdb.productBy(codes: [("0885580466671", "default"), ("0885580466671", "ean13_instore"), ("0885580466671", "ean13_instore_chk") ], shopId: shopId), "ean 0885580466671 not found")
+        XCTAssertNotNil(pdb.scannedProductBy(codes: [("0885580466671", "default"), ("0885580466671", "ean13_instore"), ("0885580466671", "ean13_instore_chk") ], shopId: shopId), "ean 0885580466671 not found")
 
-        XCTAssertNotNil(pdb.productBy(codes: [("32323", "ean13_instore_chk")], shopId: shopId), "weightItem XYZ not found")
+        XCTAssertNotNil(pdb.scannedProductBy(codes: [("32323", "ean13_instore_chk")], shopId: shopId), "weightItem XYZ not found")
 
         let hoodies = pdb.productsByName("hoodie")
         XCTAssertTrue(hoodies.count > 0, "no hoodies found")
         if hoodies.count > 0 {
             XCTAssertNotNil(pdb.productBy(sku: hoodies[0].sku, shopId: shopId), "sku lookup fail")
-            XCTAssertNotNil(pdb.productBy(codes: [(hoodies[0].codes.first!.code, "default")], shopId: shopId), "ean lookup fail")
+            XCTAssertNotNil(pdb.scannedProductBy(codes: [(hoodies[0].codes.first!.code, "default")], shopId: shopId), "ean lookup fail")
         }
 
         // check for codes beginning with 4 - there should be some
@@ -102,12 +102,12 @@ class SnabbleTests: XCTestCase {
         XCTAssertNotNil(prod)
         XCTAssertEqual(prod?.codes.count, 2)
 
-        let prod1 = pdb.productBy(codes: [("40084015", "default")], shopId: shopId)
+        let prod1 = pdb.scannedProductBy(codes: [("40084015", "default")], shopId: shopId)
         XCTAssertNotNil(prod1)
         XCTAssertEqual(prod1?.product.codes.count, 2)
         XCTAssertEqual(prod1?.transmissionCode, nil)
 
-        let prod2 = pdb.productBy(codes: [("0000040084015", "default")], shopId: shopId)
+        let prod2 = pdb.scannedProductBy(codes: [("0000040084015", "default")], shopId: shopId)
         XCTAssertNotNil(prod2)
         XCTAssertEqual(prod2?.product.codes.count, 2)
         XCTAssertEqual(prod2?.transmissionCode, "40084015")
@@ -132,17 +132,17 @@ class SnabbleTests: XCTestCase {
             expectation.fulfill()
         }
 
-        pdb.productBy(codes: [("0885580466671", "default")], shopId: shopId, forceDownload: true) { result in
+        pdb.scannedProductBy(codes: [("0885580466671", "default")], shopId: shopId, forceDownload: true) { result in
             self.assertOk(result, "d/l product by ean failed")
             expectation.fulfill()
         }
 
-        pdb.productBy(codes: [("0885580466671", "default"),("0885580466671", "ean13_instore"),("0885580466671", "ean13_instore_chk")], shopId: shopId, forceDownload: true) { result in
+        pdb.scannedProductBy(codes: [("0885580466671", "default"),("0885580466671", "ean13_instore"),("0885580466671", "ean13_instore_chk")], shopId: shopId, forceDownload: true) { result in
             self.assertOk(result, "d/l product by ean failed")
             expectation.fulfill()
         }
 
-        pdb.productBy(codes: [("1234", "default")], shopId: shopId, forceDownload: true) { result in
+        pdb.scannedProductBy(codes: [("1234", "default")], shopId: shopId, forceDownload: true) { result in
             self.assertError(result, "unexpected product")
             expectation.fulfill()
         }
@@ -152,7 +152,7 @@ class SnabbleTests: XCTestCase {
 //            expectation.fulfill()
 //        }
 
-        pdb.productBy(codes: [("1234", "ean13_instore_chk")], shopId: shopId, forceDownload: true) { result in
+        pdb.scannedProductBy(codes: [("1234", "ean13_instore_chk")], shopId: shopId, forceDownload: true) { result in
             self.assertError(result, "unexpected product")
             expectation.fulfill()
         }

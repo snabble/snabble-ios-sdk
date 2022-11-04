@@ -9,12 +9,19 @@ import XCTest
 @testable import SnabbleCore
 
 class MockProductDB: ProductStore {
+    var supportFulltextSearch: Bool {
+        return true
+    }
+    
+    var isUpToDate: Bool {
+        return true
+    }
+    
     var productAvailability: SnabbleCore.ProductAvailability = .inStock
     var database: AnyObject? = nil
     var databasePath: String = "empty"
     
-
-    func databaseExists() -> Bool {
+    var databaseExists: Bool {
         return false
     }
 
@@ -22,8 +29,8 @@ class MockProductDB: ProductStore {
     var schemaVersionMinor = 0
     var revision: Int64 = 0
 
-    var lastProductUpdate = Date()
-    var appDbAvailability = AppDbAvailability.unknown
+    var lastUpdate = Date()
+    var availability = ProductStoreAvailability.unknown
 
     static let p1 = Product(sku: "1",
                         name: "product 1",
@@ -113,11 +120,11 @@ class MockProductDB: ProductStore {
         }
     }
 
-    func setup(update: ProductDbUpdate = .always, forceFullDownload: Bool = false, completion: @escaping ((AppDbAvailability) -> ())) { }
+    func setup(update: ProductDbUpdate = .always, forceFullDownload: Bool = false, completion: @escaping ((ProductStoreAvailability) -> ())) { }
 
-    func updateDatabase(forceFullDownload: Bool = false, completion: @escaping (AppDbAvailability) -> ()) {}
+    func updateDatabase(forceFullDownload: Bool = false, completion: @escaping (ProductStoreAvailability) -> ()) {}
 
-    func resumeIncompleteUpdate(completion: @escaping (AppDbAvailability) -> ()) {}
+    func resumeIncompleteUpdate(completion: @escaping (ProductStoreAvailability) -> ()) {}
 
     func stopDatabaseUpdate() {}
 
@@ -125,7 +132,7 @@ class MockProductDB: ProductStore {
         return MockProductDB.productMap[sku]
     }
 
-    func productBy(codes: [(String, String)], shopId: Identifier<Shop>) -> ScannedProduct? {
+    func scannedProductBy(codes: [(String, String)], shopId: Identifier<Shop>) -> ScannedProduct? {
         return nil
     }
 
@@ -160,7 +167,7 @@ class MockProductDB: ProductStore {
         completion(Result.failure(.notFound))
     }
 
-    func productBy(codes: [(String, String)], shopId: Identifier<Shop>, forceDownload: Bool, completion: @escaping (Result<ScannedProduct, ProductLookupError>) -> ()) {
+    func scannedProductBy(codes: [(String, String)], shopId: Identifier<Shop>, forceDownload: Bool, completion: @escaping (Result<ScannedProduct, ProductLookupError>) -> ()) {
         completion(Result.failure(.notFound))
     }
 

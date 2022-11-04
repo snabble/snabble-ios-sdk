@@ -197,13 +197,13 @@ extension ProductModel: ProductProviding {
         return nil
     }
 
-    public func productBy(codes: [(String, String)], shopId: SnabbleCore.Identifier<Shop>, forceDownload: Bool, completion: @escaping (Result<ScannedProduct, ProductLookupError>) -> Void) {
+    public func scannedProductBy(codes: [(String, String)], shopId: SnabbleCore.Identifier<Shop>, forceDownload: Bool, completion: @escaping (Result<ScannedProduct, ProductLookupError>) -> Void) {
         let fetchConfiguration = ProductFetchConfiguration(shopId: shopId, fetchPricesAndBundles: false, productAvailability: self.productAvailability, scannedProductHandler: completion)
 
         requestScannedProduct(with: fetchConfiguration, codes: codes)
     }
 
-    public func productBy(codes: [(String, String)], shopId: SnabbleCore.Identifier<Shop>) -> ScannedProduct? {
+    public func scannedProductBy(codes: [(String, String)], shopId: SnabbleCore.Identifier<Shop>) -> ScannedProduct? {
         let fetchConfiguration = ProductFetchConfiguration(shopId: shopId, fetchPricesAndBundles: false, productAvailability: self.productAvailability)
 
         requestScannedProduct(with: fetchConfiguration, codes: codes)

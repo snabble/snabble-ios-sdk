@@ -32,7 +32,7 @@ extension ProductDB {
 
     func productBy(_ dbQueue: DatabaseQueue, sku: String, shopId: Identifier<Shop>) -> Product? {
         do {
-            let sql = SQLQuery.productSql(sku: sku, shopId: shopId, availability: self.defaultAvailability)
+            let sql = SQLQuery.productSql(sku: sku, shopId: shopId, availability: self.productAvailability)
             let row = try dbQueue.inDatabase { db in
                 return try self.fetchOne(db, sql: sql.query, arguments: sql.arguments)
             }
@@ -46,7 +46,7 @@ extension ProductDB {
 
     func productsBy(_ dbQueue: DatabaseQueue, skus: [String], shopId: Identifier<Shop>) -> [Product] {
         do {
-            let sql = SQLQuery.productSql(skus: skus, shopId: shopId, availability: self.defaultAvailability)
+            let sql = SQLQuery.productSql(skus: skus, shopId: shopId, availability: self.productAvailability)
             
             let rows = try dbQueue.inDatabase { db in
                 return try self.fetchAll(db, sql: sql.query, arguments: sql.arguments)
@@ -70,7 +70,7 @@ extension ProductDB {
 
     private func productBy(_ dbQueue: DatabaseQueue, code: String, template: String, shopId: Identifier<Shop>) -> ScannedProduct? {
         do {
-            let sql = SQLQuery.productSql(code: code, template: template, shopId: shopId, availability: self.defaultAvailability)
+            let sql = SQLQuery.productSql(code: code, template: template, shopId: shopId, availability: self.productAvailability)
             let row = try dbQueue.inDatabase { db in
                 return try fetchOne(db, sql: sql.query, arguments: sql.arguments)
             }
@@ -97,7 +97,7 @@ extension ProductDB {
 
     func productsBy(_ dbQueue: DatabaseQueue, name: String, filterDeposits: Bool, shopId: Identifier<Shop>) -> [Product] {
         do {
-            let sql = SQLQuery.productSql(name: name, filterDeposits: filterDeposits, shopId: shopId, availability: self.defaultAvailability)
+            let sql = SQLQuery.productSql(name: name, filterDeposits: filterDeposits, shopId: shopId, availability: self.productAvailability)
             let rows = try dbQueue.inDatabase { db in
                 return try self.fetchAll(db, sql: sql.query, arguments: sql.arguments)
             }
@@ -110,7 +110,7 @@ extension ProductDB {
 
     func productsBy(_ dbQueue: DatabaseQueue, prefix: String, filterDeposits: Bool, templates: [String]?, shopId: Identifier<Shop>) -> [Product] {
         do {
-            let sql = SQLQuery.productSql(prefix: prefix, filterDeposits: filterDeposits, templates: templates, shopId: shopId, availability: self.defaultAvailability)
+            let sql = SQLQuery.productSql(prefix: prefix, filterDeposits: filterDeposits, templates: templates, shopId: shopId, availability: self.productAvailability)
             
             let rows = try dbQueue.inDatabase { db in
                 return try self.fetchAll(db, sql: sql.query, arguments: sql.arguments)
