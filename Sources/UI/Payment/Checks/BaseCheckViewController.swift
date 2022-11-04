@@ -25,7 +25,7 @@ class BaseCheckViewController: UIViewController {
     weak var idWrapper: UIView?
 
     private weak var icon: UIImageView?
-    private weak var text: UILabel?
+    weak var text: UILabel?
     private weak var code: UIImageView?
     private weak var id: UILabel?
 
