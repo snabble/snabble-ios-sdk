@@ -20,7 +20,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Updated
 * groue/GRDB.swift 6.1.0 (was 6.0.0)
-* groue/GRDBQuery 0.5.1
 * devicekit/DeviceKit 5.0.0 (was 4.7.0)
 
 ## [0.23.0] - 2022-10-11
