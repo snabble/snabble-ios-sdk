@@ -28,15 +28,6 @@
       }
     },
     {
-      "identity" : "grdbquery",
-      "kind" : "remoteSourceControl",
-      "location" : "https://github.com/groue/GRDBQuery.git",
-      "state" : {
-        "revision" : "df514f2bd74548f94e082f3233022190e594fce4",
-        "version" : "0.5.1"
-      }
-    },
-    {
       "identity" : "ios-sdk",
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/datatrans/ios-sdk.git",
