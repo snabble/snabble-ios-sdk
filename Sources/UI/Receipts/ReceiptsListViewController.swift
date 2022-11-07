@@ -44,10 +44,9 @@ public final class ReceiptsListViewController: UITableViewController {
     private var orderId: String?
     private weak var analyticsDelegate: AnalyticsDelegate?
 
-    public init(_ process: CheckoutProcess?, _ analyticsDelegate: AnalyticsDelegate) {
+    public init(checkoutProcess process: CheckoutProcess?) {
         self.process = process
         self.orderId = process?.orderID
-        self.analyticsDelegate = analyticsDelegate
 
         super.init(nibName: nil, bundle: nil)
 
