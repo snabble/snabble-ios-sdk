@@ -1,15 +1,6 @@
 {
   "pins" : [
     {
-      "identity" : "autolayout-helper",
-      "kind" : "remoteSourceControl",
-      "location" : "https://github.com/snabble/AutoLayout-Helper.git",
-      "state" : {
-        "revision" : "0e373cb4bffafd997958fff5b2785336deec2b8f",
-        "version" : "1.1.0"
-      }
-    },
-    {
       "identity" : "base32",
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/mattrubin/Base32.git",
@@ -23,8 +14,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/devicekit/DeviceKit.git",
       "state" : {
-        "revision" : "20e0991f3975916ab0f6d58db84d8bc64f883537",
-        "version" : "4.7.0"
+        "revision" : "691fe8112cca20ebf0020a1709d4e0205400311c",
+        "version" : "5.0.0"
       }
     },
     {
@@ -32,8 +23,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/groue/GRDB.swift.git",
       "state" : {
-        "revision" : "0ac435744a4c67c4ec23a4a671c0d53ce1fee7c6",
-        "version" : "6.0.0"
+        "revision" : "3df9e8e5c10bd152f02d9aa349a21a0c527e6bda",
+        "version" : "6.2.0"
       }
     },
     {
@@ -41,8 +32,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/datatrans/ios-sdk.git",
       "state" : {
-        "revision" : "7e3914079ced092a0a41e924cba67d8484491ef8",
-        "version" : "2.2.0"
+        "revision" : "9f799e820372df52fee7587ea9135ceb6485469f",
+        "version" : "2.3.1"
       }
     },
     {

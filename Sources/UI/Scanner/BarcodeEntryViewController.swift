@@ -12,7 +12,7 @@ public final class BarcodeEntryViewController: UIViewController {
     private let searchBar = UISearchBar()
     private var bottomMargin: NSLayoutConstraint?
 
-    private weak var productProvider: ProductProvider?
+    private weak var productProvider: ProductProviding?
     private let shopId: Identifier<Shop>
 
     private let completion: ((String, ScanFormat?, String?) -> Void)
@@ -25,7 +25,7 @@ public final class BarcodeEntryViewController: UIViewController {
 
     public weak var analyticsDelegate: AnalyticsDelegate?
 
-    public init(_ productProvider: ProductProvider,
+    public init(_ productProvider: ProductProviding,
                 _ shopId: Identifier<Shop>,
                 showSku: Bool = false,
                 completion: @escaping (String, ScanFormat?, String?) -> Void

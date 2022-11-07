@@ -7,6 +7,7 @@
 //
 
 import Foundation
+import SnabbleCore
 import SnabbleUI
 import CoreLocation
 import UIKit
@@ -29,13 +30,14 @@ final class DashboardViewController: DynamicViewController {
 }
 
 extension DashboardViewController: DynamicViewControllerDelegate {
-    func dynamicStackViewController(_ viewController: DynamicViewController, tappedWidget widget: Widget, userInfo: [String: Any]?) {
+    func dynamicStackViewController(_ viewController: DynamicViewController, tappedWidget widget: SnabbleUI.Widget, userInfo: [String: Any]?) {
         print(widget, userInfo?.description ?? "no userInfo")
         switch widget.type {
         case .startShopping:
             tabBarController?.selectedIndex = 1
         case .allStores:
             tabBarController?.selectedIndex = 2
+            
         default:
             break
         }
