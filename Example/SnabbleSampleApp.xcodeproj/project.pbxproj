@@ -15,7 +15,6 @@
 		7605C47328AC9794000105A8 /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = 7605C47528AC9794000105A8 /* Localizable.strings */; };
 		7605C5BF28AE4383000105A8 /* ShopsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7605C5BE28AE4383000105A8 /* ShopsViewController.swift */; };
 		7615200128D3559E00C08D97 /* Acknowledgements.html in Resources */ = {isa = PBXBuildFile; fileRef = 7615200028D3559E00C08D97 /* Acknowledgements.html */; };
-		7626962A291A90D7001A61C5 /* ReceiptListContainerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 76269629291A90D7001A61C5 /* ReceiptListContainerViewController.swift */; };
 		76AD21B128D42513003D865A /* privacy.html in Resources */ = {isa = PBXBuildFile; fileRef = 76AD21B028D42513003D865A /* privacy.html */; };
 		76AD21B328D4331A003D865A /* terms.html in Resources */ = {isa = PBXBuildFile; fileRef = 76AD21B228D4331A003D865A /* terms.html */; };
 		76C7B74A28BFA10700D94F4F /* DashboardViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 76C7B74928BFA10700D94F4F /* DashboardViewController.swift */; };
@@ -57,7 +56,6 @@
 		7605C5C228AE44D7000105A8 /* de */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = de; path = de.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		76151FDB28D2FC4800C08D97 /* SnabbleSampleApp.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = SnabbleSampleApp.entitlements; sourceTree = "<group>"; };
 		7615200028D3559E00C08D97 /* Acknowledgements.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = Acknowledgements.html; sourceTree = "<group>"; };
-		76269629291A90D7001A61C5 /* ReceiptListContainerViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReceiptListContainerViewController.swift; sourceTree = "<group>"; };
 		76AD21B028D42513003D865A /* privacy.html */ = {isa = PBXFileReference; lastKnownFileType = text.html; path = privacy.html; sourceTree = "<group>"; };
 		76AD21B228D4331A003D865A /* terms.html */ = {isa = PBXFileReference; lastKnownFileType = text.html; path = terms.html; sourceTree = "<group>"; };
 		76C7B74928BFA10700D94F4F /* DashboardViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DashboardViewController.swift; sourceTree = "<group>"; };
@@ -204,7 +202,6 @@
 				3A64AF2F2710486300AF24C6 /* AccountViewController.swift */,
 				7605C5BE28AE4383000105A8 /* ShopsViewController.swift */,
 				76C7B74928BFA10700D94F4F /* DashboardViewController.swift */,
-				76269629291A90D7001A61C5 /* ReceiptListContainerViewController.swift */,
 				607FACD71AFB9204008FA782 /* ScannerViewController.swift */,
 			);
 			name = ViewController;
@@ -382,7 +379,6 @@
 				607FACD81AFB9204008FA782 /* ScannerViewController.swift in Sources */,
 				E1DA449C28B3A2BD0034427D /* LoadingViewController.swift in Sources */,
 				3A64AF302710486300AF24C6 /* AccountViewController.swift in Sources */,
-				7626962A291A90D7001A61C5 /* ReceiptListContainerViewController.swift in Sources */,
 				607FACD61AFB9204008FA782 /* AppDelegate.swift in Sources */,
 				76C7B74A28BFA10700D94F4F /* DashboardViewController.swift in Sources */,
 			);

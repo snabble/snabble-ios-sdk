@@ -40,13 +40,18 @@ extension DashboardViewController: DynamicViewControllerDelegate {
             tabBarController?.selectedIndex = 2
         case .lastPurchases:
             if let action = userInfo?["action"] as? String, action == "more" {
-                let viewController = ReceiptListContainerViewController()
+                let viewController = ReceiptsListViewController(checkoutProcess: nil)
+                viewController.navigationItem.rightBarButtonItem = UIBarButtonItem(barButtonSystemItem: .done, target: self, action: #selector(dismiss(_:)))
                 let navigationController = UINavigationController(rootViewController: viewController)
-
-                self.present(navigationController, animated: true)
+                present(navigationController, animated: true)
             }
         default:
             break
         }
+    }
+
+    @objc
+    private func dismiss(_ sender: UIBarButtonItem) {
+        dismiss(animated: true)
     }
 }
