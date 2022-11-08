@@ -30,6 +30,7 @@ final class DashboardViewController: DynamicViewController {
 }
 
 extension DashboardViewController: DynamicViewControllerDelegate {
+
     func dynamicStackViewController(_ viewController: DynamicViewController, tappedWidget widget: SnabbleUI.Widget, userInfo: [String: Any]?) {
         print(widget, userInfo?.description ?? "no userInfo")
         switch widget.type {
@@ -37,7 +38,13 @@ extension DashboardViewController: DynamicViewControllerDelegate {
             tabBarController?.selectedIndex = 1
         case .allStores:
             tabBarController?.selectedIndex = 2
-            
+        case .lastPurchases:
+            if let action = userInfo?["action"] as? String, action == "more" {
+                let viewController = ReceiptListContainerViewController()
+                let navigationController = UINavigationController(rootViewController: viewController)
+
+                self.present(navigationController, animated: true)
+            }
         default:
             break
         }

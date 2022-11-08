@@ -44,7 +44,11 @@ extension AccountViewController: DynamicViewControllerDelegate {
         }
         
         switch widget.id {
-        case "Profile.lastPurchases", "Profile.paymentMethods", "Profile.customerCard":
+        case "Profile.lastPurchases":
+            let viewController = ReceiptsListViewController(checkoutProcess: nil)
+            navigationController?.pushViewController(viewController, animated: true)
+
+        case "Profile.paymentMethods", "Profile.customerCard":
             let viewController = UIHostingController(rootView: PlaceholderView(title: Asset.localizedString(forKey: widget.id)))
             navigationController?.pushViewController(viewController, animated: true)
         default:
