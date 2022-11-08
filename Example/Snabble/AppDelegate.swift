@@ -43,7 +43,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             // register the project with the UI components
             SnabbleCI.register(project)
             snabble.checkInManager.delegate = self
-            snabble.checkInManager.shop = project.shops.first
+            snabble.checkInManager.startUpdating()
 
             // initialize the product database for this project
             snabble.setupProductDatabase(for: project) { [unowned self] _ in
