@@ -70,7 +70,7 @@
          </BuildableReference>
       </BuildableProductRunnable>
       <LocationScenarioReference
-         identifier = "../Snabble/Snabble.gpx"
+         identifier = "../../Snabble/Snabble.gpx"
          referenceType = "0">
       </LocationScenarioReference>
    </LaunchAction>
