@@ -22,7 +22,7 @@ final class ReceiptListContainerViewController: UIViewController {
         controller.view.translatesAutoresizingMaskIntoConstraints = false
         self.view.addSubview(controller.view)
         
-        self.navigationItem.rightBarButtonItem = UIBarButtonItem(barButtonSystemItem: .done, target: self, action: #selector(dismissReceipts(_:)))
+        self.navigationItem.rightBarButtonItem = UIBarButtonItem(barButtonSystemItem: .done, target: self, action: #selector(dismiss(_:)))
 
         NSLayoutConstraint.activate([
             controller.view.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 0),
@@ -35,7 +35,7 @@ final class ReceiptListContainerViewController: UIViewController {
     }
     
     @objc
-    func dismissReceipts(_ sender: UIBarButtonItem) {
+    func dismiss(_ sender: UIBarButtonItem) {
         self.dismiss(animated: true)
     }
 }
