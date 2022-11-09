@@ -20,8 +20,9 @@ public final class ReceiptsListViewController: UITableViewController {
     private var orders: [OrderEntry]?
     private var process: CheckoutProcess?
     private var orderId: String?
-    private weak var analyticsDelegate: AnalyticsDelegate?
-    
+
+    public weak var analyticsDelegate: AnalyticsDelegate?
+
     public init(checkoutProcess process: CheckoutProcess?) {
         self.process = process
         self.orderId = process?.orderID
