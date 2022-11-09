@@ -36,14 +36,15 @@ public final class ReceiptsListViewController: UITableViewController {
     private let emptyLabel = UILabel()
     private weak var activityIndicator: UIActivityIndicatorView?
 
-    private var quickLookDataSources: [QuicklookPreviewControllerDataSource] = []
+//    private var quickLookDataSources: [QuicklookPreviewControllerDataSource] = []
 
     private var orderList: OrderList?
     private var orders: [OrderEntry]?
     private var process: CheckoutProcess?
     private var orderId: String?
     private weak var analyticsDelegate: AnalyticsDelegate?
-
+    private var detailViewController: ReceiptsDetailViewController?
+    
     public init(checkoutProcess process: CheckoutProcess?) {
         self.process = process
         self.orderId = process?.orderID
@@ -94,6 +95,12 @@ public final class ReceiptsListViewController: UITableViewController {
         self.startReceiptPolling()
     }
 
+    deinit {
+        detailViewController = nil
+        orders = nil
+        orderList = nil
+    }
+    
     override public func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
 
@@ -218,14 +225,40 @@ extension ReceiptsListViewController {
 
         activityIndicator?.startAnimating()
         tableView.allowsSelection = false
-        showOrder(order, for: project) { [weak self] _ in
+        
+        if detailViewController == nil {
+            detailViewController = ReceiptsDetailViewController()
+        }
+        detailViewController?.showOrder(order, for: project) { [weak self] _ in
             self?.activityIndicator?.stopAnimating()
             tableView.allowsSelection = true
         }
     }
 }
 
-extension ReceiptsListViewController {
+public final class ReceiptsDetailViewController: UIViewController {
+//    private var order: OrderEntry
+//    private var project: Project
+    
+    private var quickLookDataSources: [QuicklookPreviewControllerDataSource] = []
+    private weak var analyticsDelegate: AnalyticsDelegate?
+
+    init(/*order: OrderEntry, project: Project*/) {
+//        self.order = order
+//        self.project = project
+
+        super.init(nibName: nil, bundle: nil)
+    }
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+    override public func viewDidLoad() {
+        super.viewDidLoad()
+    }
+}
+
+extension ReceiptsDetailViewController {
     func showOrder(_ order: Order, for project: Project, receiptReceived: @escaping (Result<URL, Error>) -> Void) {
         order.getReceipt(project) { [weak self] result in
             receiptReceived(result)
@@ -276,7 +309,7 @@ final class QuicklookPreviewControllerDataSource: QLPreviewControllerDataSource 
     }
 }
 
-extension ReceiptsListViewController: QLPreviewControllerDelegate {
+extension ReceiptsDetailViewController: QLPreviewControllerDelegate {
     public func previewControllerDidDismiss(_ controller: QLPreviewController) {
         quickLookDataSources.removeAll {
             $0.item.isEqual(controller.currentPreviewItem)

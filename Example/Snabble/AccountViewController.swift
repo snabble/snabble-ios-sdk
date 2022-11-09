@@ -51,6 +51,14 @@ extension AccountViewController: DynamicViewControllerDelegate {
         case "Profile.paymentMethods", "Profile.customerCard":
             let viewController = UIHostingController(rootView: PlaceholderView(title: Asset.localizedString(forKey: widget.id)))
             navigationController?.pushViewController(viewController, animated: true)
+        case "Profile.resetAppID":
+            let alert = UIAlertController(title: "Create new app user id?", message: "You will irrevocably lose all previous orders.", preferredStyle: .alert)
+            alert.addAction(UIAlertAction(title: Asset.localizedString(forKey: "ok"), style: .destructive) { _ in
+                Snabble.shared.appUserId = nil
+            })
+            alert.addAction(UIAlertAction(title: Asset.localizedString(forKey: "cancel"), style: .cancel, handler: nil))
+            self.present(alert, animated: true)
+
         default:
             break
         }
