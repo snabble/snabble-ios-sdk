@@ -44,6 +44,22 @@ extension DashboardViewController: DynamicViewControllerDelegate {
                 viewController.navigationItem.rightBarButtonItem = UIBarButtonItem(barButtonSystemItem: .done, target: self, action: #selector(dismiss(_:)))
                 let navigationController = UINavigationController(rootViewController: viewController)
                 present(navigationController, animated: true)
+            } else if let action = userInfo?["action"] as? String, action == "purchase",
+                      let orderID = userInfo?["id"] as? String, let projectID = (widget as? WidgetLastPurchases)?.projectId {
+                
+                let detailViewController = ReceiptsDetailViewController()
+
+                detailViewController.getReceipt(orderID: orderID, projectID: projectID) { [weak self] result in
+                    
+                    switch result {
+                    case .success:
+                        self?.present(detailViewController, animated: true)
+                        
+                    case .failure:
+                        break
+                    }
+                }
+                
             }
         default:
             break
