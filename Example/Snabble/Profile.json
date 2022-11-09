@@ -40,10 +40,10 @@
                     "key": "io.snabble.sample.showOnboarding"
                 },
                 {
-                    "type": "toggle",
-                    "id": "2",
-                    "text": "Profile.pushMessages",
-                    "key": "io.snabble.sample.pushMessages"
+                    "type": "button",
+                    "id": "Profile.resetAppID",
+                    "text": "Profile.resetAppID",
+                    "key": "io.snabble.sample.resetAppID"
                 }
             ]
         },
