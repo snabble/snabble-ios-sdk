@@ -35,7 +35,7 @@ struct AsyncContentView<Source: LoadableObject, Content: View>: View {
         case .failed:
             ErrorView()
         case .empty:
-            EmptyView()
+            HStack(spacing: 0) {}
         case .loaded(let output):
             content(output)
         }
