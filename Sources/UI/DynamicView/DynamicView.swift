@@ -49,7 +49,7 @@ public struct DynamicView: View {
             }
         }
         .onAppear {
-            viewModel.update = true
+            viewModel.objectWillChange.send()
         }
     }
 }
