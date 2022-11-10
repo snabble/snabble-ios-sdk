@@ -43,6 +43,8 @@ public struct WidgetView: View {
                     connectWifi
                 case .customerCard:
                     customerCard
+                case .developerMode:
+                    developerMode
                 case .section:
                     EmptyView()
                 }
@@ -191,6 +193,13 @@ public struct WidgetView: View {
             ) {
                 viewModel.actionPublisher.send(.init(widget: $0))
             }
+        }
+    }
+
+    @ViewBuilder
+    var developerMode: some View {
+        if let widget = widget as? WidgetDeveloperMode {
+            WidgetDeveloperModeView(widget: widget)
         }
     }
 }

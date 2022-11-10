@@ -23,6 +23,7 @@ public enum WidgetType: String, Decodable {
     case section
     case toggle
     case navigation
+    case developerMode
 
     // Snabble Project
     case lastPurchases = "snabble.lastPurchases"
@@ -340,3 +341,23 @@ public struct WidgetCustomerCard: Widget {
         case padding
     }
 }
+
+public struct WidgetDeveloperMode: Widget {
+    public let id: String
+    public let type: WidgetType = .developerMode
+    public let padding: Padding?
+
+    init(
+        id: String,
+        padding: Padding? = nil
+    ) {
+        self.id = id
+        self.padding = padding
+    }
+
+    enum CodingKeys: String, CodingKey {
+        case id
+        case padding
+    }
+}
+

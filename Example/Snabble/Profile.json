@@ -79,6 +79,10 @@
                 {
                     "type": "snabble.version",
                     "id": "5"
+                },
+                {
+                    "type": "developerMode",
+                    "id": "6"
                 }
             ]
         }
