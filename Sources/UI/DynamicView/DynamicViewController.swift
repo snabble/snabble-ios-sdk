@@ -44,4 +44,9 @@ open class DynamicViewController: UIHostingController<DynamicView> {
             }
             .store(in: &cancellables)
     }
+    
+    open override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        viewModel.update = true
+    }
 }

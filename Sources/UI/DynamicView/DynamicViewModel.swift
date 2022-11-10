@@ -22,6 +22,8 @@ public class DynamicViewModel: NSObject, Decodable, ObservableObject {
     public var configuration: DynamicViewConfiguration
     public var widgets: [Widget]
 
+    @Published public var update: Bool = false
+    
     private enum CodingKeys: String, CodingKey {
         case configuration
         case widgets
