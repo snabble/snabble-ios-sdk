@@ -121,12 +121,6 @@ public protocol ShopProviding: AddressProviding {
     var openingHoursSpecification: [OpeningHoursSpecification] { get }
 }
 
-extension SnabbleCore.Identifier: Swift.Identifiable {
-    public var id: Value.RawIdentifier {
-        return self.rawValue
-    }
-}
-
 public extension ShopProviding {
     /// convenience accessor for the shop's location
     var location: CLLocation {
