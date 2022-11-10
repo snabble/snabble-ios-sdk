@@ -43,7 +43,6 @@
                     "type": "button",
                     "id": "Profile.resetAppID",
                     "text": "Profile.resetAppID",
-                    "key": "io.snabble.sample.resetAppID"
                 }
             ]
         },
