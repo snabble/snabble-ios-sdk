@@ -5,27 +5,7 @@
 //
 
 import UIKit
-import QuickLook
 import SnabbleCore
-
-public final class ReceiptPreviewItem: NSObject, QLPreviewItem {
-    public let receiptUrl: URL
-    public let title: String
-
-    public var previewItemURL: URL? {
-        return self.receiptUrl
-    }
-
-    public var previewItemTitle: String? {
-        return self.title
-    }
-
-    public init(_ receiptUrl: URL, _ title: String) {
-        self.receiptUrl = receiptUrl
-        self.title = title
-        super.init()
-    }
-}
 
 enum OrderEntry {
     case pending(String, Identifier<Project>)    // shop name, project id
@@ -35,8 +15,6 @@ enum OrderEntry {
 public final class ReceiptsListViewController: UITableViewController {
     private let emptyLabel = UILabel()
     private weak var activityIndicator: UIActivityIndicatorView?
-
-    private var quickLookDataSources: [QuicklookPreviewControllerDataSource] = []
 
     private var orderList: OrderList?
     private var orders: [OrderEntry]?
@@ -95,6 +73,11 @@ public final class ReceiptsListViewController: UITableViewController {
         self.startReceiptPolling()
     }
 
+    deinit {
+        orders = nil
+        orderList = nil
+    }
+    
     override public func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
 
@@ -219,68 +202,22 @@ extension ReceiptsListViewController {
 
         activityIndicator?.startAnimating()
         tableView.allowsSelection = false
-        showOrder(order, for: project) { [weak self] _ in
+
+        let detailViewController = ReceiptsDetailViewController()
+
+        detailViewController.getReceipt(order: order, project: project) { [weak self] result in
             self?.activityIndicator?.stopAnimating()
             tableView.allowsSelection = true
-        }
-    }
-}
-
-extension ReceiptsListViewController {
-    func showOrder(_ order: Order, for project: Project, receiptReceived: @escaping (Result<URL, Error>) -> Void) {
-        order.getReceipt(project) { [weak self] result in
-            receiptReceived(result)
-
+            
             switch result {
-            case .success(let targetURL):
-                let formatter = DateFormatter()
-                formatter.dateStyle = .medium
-                formatter.timeStyle = .none
 
-                let title = formatter.string(from: order.date)
+            case .success:
+                self?.navigationController?.pushViewController(detailViewController, animated: true)
+                self?.analyticsDelegate?.track(.viewReceiptDetail)
 
-                self?.showQuicklook(for: targetURL, with: title)
-            case .failure(let error):
-                Log.error("error saving receipt: \(error)")
+            case .failure:
+                break
             }
-        }
-    }
-
-    private func showQuicklook(for url: URL, with title: String) {
-        let receiptPreviewItem = ReceiptPreviewItem(url, title)
-        let dataSource = QuicklookPreviewControllerDataSource(item: receiptPreviewItem)
-
-        let previewController = QLPreviewController()
-        previewController.dataSource = dataSource
-        previewController.delegate = self
-        navigationController?.pushViewController(previewController, animated: true)
-
-        quickLookDataSources.append(dataSource)
-
-        analyticsDelegate?.track(.viewReceiptDetail)
-    }
-}
-
-final class QuicklookPreviewControllerDataSource: QLPreviewControllerDataSource {
-    let item: QLPreviewItem
-
-    init(item: QLPreviewItem) {
-        self.item = item
-    }
-
-    public func numberOfPreviewItems(in controller: QLPreviewController) -> Int {
-        1
-    }
-
-    public func previewController(_ controller: QLPreviewController, previewItemAt index: Int) -> QLPreviewItem {
-        item
-    }
-}
-
-extension ReceiptsListViewController: QLPreviewControllerDelegate {
-    public func previewControllerDidDismiss(_ controller: QLPreviewController) {
-        quickLookDataSources.removeAll {
-            $0.item.isEqual(controller.currentPreviewItem)
         }
     }
 }
