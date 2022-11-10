@@ -48,6 +48,9 @@ public struct DynamicView: View {
                 .listStyle(.grouped)
             }
         }
+        .onAppear {
+            viewModel.update = true
+        }
     }
 }
 
