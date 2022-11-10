@@ -19,6 +19,12 @@ public struct Identifier<Value: Identifiable>: RawRepresentable {
     }
 }
 
+extension SnabbleCore.Identifier: Swift.Identifiable {
+    public var id: Value.RawIdentifier {
+        return self.rawValue
+    }
+}
+
 // MARK: - Codable
 
 extension Identifier: Codable {
