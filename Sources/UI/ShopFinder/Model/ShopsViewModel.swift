@@ -127,12 +127,6 @@ extension SnabbleCore.Identifier: Swift.Identifiable {
     }
 }
 
-//extension ShopProviding {
-//    public var id: String {
-//        return "\(latitude)-\(longitude)"
-//    }
-//}
-
 public extension ShopProviding {
     /// convenience accessor for the shop's location
     var location: CLLocation {
