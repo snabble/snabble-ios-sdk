@@ -54,6 +54,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
     private func transitionView(with shops: [Shop]) {
         let shopsViewController = AppShopsViewController(shops: shops)
+
+        Snabble.shared.checkInManager.verifyDeveloperCheckin()
         shopsViewController.viewModel.shop = Snabble.shared.checkInManager.shop
         shopsViewController.delegate = self
         self.shopsViewController = shopsViewController

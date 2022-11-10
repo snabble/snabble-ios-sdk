@@ -12,8 +12,12 @@ public struct WidgetVersionView: View {
     let action: (Widget) -> Void
     
     public var body: some View {
-        Text(widget.versionString).onTapGesture {
-            action(widget)
-        }
+        Text(widget.versionString)
+            .onTapGesture(count: 5) {
+                DeveloperMode.toggle()
+            }
+            .onTapGesture {
+                action(widget)
+            }
     }
 }

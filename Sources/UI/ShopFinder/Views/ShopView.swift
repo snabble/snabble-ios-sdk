@@ -5,7 +5,7 @@
 //  Created by Uwe Tilemann on 17.08.22.
 //
 
-import Foundation
+import SnabbleCore
 import SwiftUI
 
 public struct ShopView: View {
@@ -42,7 +42,18 @@ public struct ShopView: View {
             }
         }
     }
-
+    
+    @ViewBuilder
+    var checkInButton: some View {
+        if DeveloperMode.showCheckIn {
+            Button(action: {
+                DeveloperMode.toggleCheckIn(for: shop)
+            }) {
+                Text(isCheckedIn() ? "[Check Out]" : "[Check In]")
+            }
+        }
+    }
+    
     public var body: some View {
         ScrollView(.vertical) {
             VStack(spacing: 20) {
@@ -50,6 +61,7 @@ public struct ShopView: View {
                     .frame(minHeight: 300)
 
                 VStack(spacing: 0) {
+                    checkInButton
                     AddressView(provider: shop)
                 }
                 .font(.body)
@@ -64,5 +76,9 @@ public struct ShopView: View {
             }
         }
         .navigationTitle(shop.name)
+    }
+    
+    private func isCheckedIn() -> Bool {
+        return Snabble.shared.checkInManager.shop?.id == self.shop.id
     }
 }

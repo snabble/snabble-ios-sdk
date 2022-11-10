@@ -31,7 +31,7 @@ public final class ShopsViewModel: NSObject, ObservableObject {
     @Published public var shop: ShopProviding?
 
     /// distances in meter to a shop by id
-    @Published private(set) var distances: [String: Double]
+    @Published private(set) var distances: [Identifier<Shop>: Double]
 
     /// Emits if the button on ShopView is tapped
     /// - `Output` is the current visible shop
@@ -77,7 +77,7 @@ extension ShopsViewModel: CLLocationManagerDelegate {
             return
         }
 
-        var distances: [String: Double] = [:]
+        var distances: [Identifier<Shop>: Double] = [:]
         shops.forEach {
             distances[$0.id] = $0.distance(from: location)
         }
@@ -103,6 +103,7 @@ extension ShopsViewModel: CLLocationManagerDelegate {
 }
 
 public protocol ShopProviding: AddressProviding {
+    var id: Identifier<Shop> { get }
     var name: String { get }
 
     var email: String { get }
@@ -120,11 +121,17 @@ public protocol ShopProviding: AddressProviding {
     var openingHoursSpecification: [OpeningHoursSpecification] { get }
 }
 
-extension ShopProviding {
-    public var id: String {
-        return "\(latitude)-\(longitude)"
+extension SnabbleCore.Identifier: Swift.Identifiable {
+    public var id: Value.RawIdentifier {
+        return self.rawValue
     }
 }
+
+//extension ShopProviding {
+//    public var id: String {
+//        return "\(latitude)-\(longitude)"
+//    }
+//}
 
 public extension ShopProviding {
     /// convenience accessor for the shop's location
