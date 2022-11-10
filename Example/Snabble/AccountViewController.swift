@@ -59,7 +59,8 @@ extension AccountViewController: DynamicViewControllerDelegate {
             })
             alert.addAction(UIAlertAction(title: Asset.localizedString(forKey: "cancel"), style: .cancel, handler: nil))
             self.present(alert, animated: true)
-
+        case "io.snabble.developerMode":
+            print("show developer settings")
         default:
             break
         }

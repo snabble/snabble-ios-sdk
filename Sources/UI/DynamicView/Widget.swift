@@ -360,4 +360,3 @@ public struct WidgetDeveloperMode: Widget {
         case padding
     }
 }
-

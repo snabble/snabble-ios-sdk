@@ -8,27 +8,38 @@ import SwiftUI
 import Combine
 
 public class DeveloperModeViewModel: NSObject, ObservableObject {
-    @Published public private(set) var widgets: [Widget] = []
+    public private(set) var widget = WidgetText(
+        id: "io.snabble.developerMode",
+        text: "Profile.developerMode",
+        showDisclosure: true
+    )
     @Published public private(set) var isEnabled: Bool = false
 
     override init() {
-        self.isEnabled = UserDefaults.standard.bool(forKey: "io.snabble.developerMode")
+        self.isEnabled = DeveloperMode.isEnabled
     }
 }
 
 public struct WidgetDeveloperModeView: View {
     let widget: WidgetDeveloperMode
+    let action: (Widget) -> Void
 
     @ObservedObject private var viewModel: DeveloperModeViewModel
 
-    init(widget: WidgetDeveloperMode) {
+    init(widget: WidgetDeveloperMode, action: @escaping (Widget) -> Void) {
         self.widget = widget
+        self.action = action
         self.viewModel = .init()
     }
 
     public var body: some View {
-        
-
-        Text("Entwickler Modus")
+        if viewModel.isEnabled {
+            WidgetTextView(widget: viewModel.widget)
+                .onTapGesture {
+                    action(viewModel.widget)
+                }
+        } else {
+            EmptyView()
+        }
     }
 }

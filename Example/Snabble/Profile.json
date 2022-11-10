@@ -82,7 +82,7 @@
                 },
                 {
                     "type": "developerMode",
-                    "id": "6"
+                    "id": "io.snabble.developerMode"
                 }
             ]
         }
