@@ -142,7 +142,7 @@ public enum DeveloperMode {
         alert.alertController?.addAction(UIAlertAction(title: Asset.localizedString(forKey: "ok"), style: .default) { _ in
             let text = alert.alertController?.textFields?.first?.text ?? ""
 
-            let magicWord = "c25hYmJsZXJ1bHo="
+            let magicWord = Asset.localizedString(forKey: "Snabble").lowercased().data(using: .utf8)!.base64EncodedString()
             let base64 = text.lowercased().data(using: .utf8)!.base64EncodedString()
             if base64 == magicWord {
                 UserDefaults.standard.set(true, forKey: Self.key)
