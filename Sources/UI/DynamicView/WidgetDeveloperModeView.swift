@@ -11,7 +11,7 @@ public class DeveloperModeViewModel: NSObject, ObservableObject {
     public private(set) var widget = WidgetText(
         id: "io.snabble.developerMode",
         text: "Profile.developerMode",
-        showDisclosure: true
+        showDisclosure: false
     )
     @Published public private(set) var isEnabled: Bool = false
 
@@ -22,22 +22,25 @@ public class DeveloperModeViewModel: NSObject, ObservableObject {
 
 public struct WidgetDeveloperModeView: View {
     let widget: WidgetDeveloperMode
-    let action: (Widget) -> Void
 
-    @ObservedObject private var viewModel: DeveloperModeViewModel
+    @ObservedObject private var developerModel: DeveloperModeViewModel
+    @ObservedObject private var viewModel: DynamicViewModel
 
-    init(widget: WidgetDeveloperMode, action: @escaping (Widget) -> Void) {
+    init(widget: WidgetDeveloperMode, viewModel: DynamicViewModel) {
         self.widget = widget
-        self.action = action
-        self.viewModel = .init()
+        self.viewModel = viewModel
+        self.developerModel = .init()
     }
 
     public var body: some View {
-        if viewModel.isEnabled {
-            WidgetTextView(widget: viewModel.widget)
-                .onTapGesture {
-                    action(viewModel.widget)
+        if self.developerModel.isEnabled {
+            NavigationLink(destination: {
+                List {
+                    WidgetContainer(viewModel: self.viewModel, widgets: widget.items)
                 }
+            }) {
+                WidgetTextView(widget: developerModel.widget)
+            }
         } else {
             EmptyView()
         }

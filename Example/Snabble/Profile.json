@@ -40,10 +40,42 @@
                     "key": "io.snabble.sample.showOnboarding"
                 },
                 {
-                    "type": "button",
-                    "id": "Profile.resetAppID",
-                    "text": "Profile.resetAppID",
-                    "key": "io.snabble.sample.resetAppID"
+                    "type": "developerMode",
+                    "id": "io.snabble.developerMode",
+                    "items": [
+                        {
+                            "type": "multiValue",
+                            "id": "io.snabble.environment",
+                            "text": "Profile.environment",
+                            "values": [
+                                {
+                                    "id": "io.snabble.environment.testing",
+                                    "text": "Profile.Environment.testing"
+                                },
+                                {
+                                    "id": "io.snabble.environment.staging",
+                                    "text": "Profile.Environment.staging"
+                                },
+                                {
+                                    "id": "io.snabble.environment.production",
+                                    "text": "Profile.Environment.production"
+                                }
+                            ]
+                        },
+                        {
+                            "type": "button",
+                            "id": "Profile.resetAppID",
+                            "text": "Profile.resetAppID",
+                            "key": "io.snabble.resetAppID"
+                        },
+                        {
+                            "type": "button",
+                            "id": "Profile.resetClientID",
+                            "text": "Profile.resetClientID",
+                            "key": "io.snabble.resetClientID"
+                        }
+
+                    ]
                 }
             ]
         },
@@ -79,10 +111,6 @@
                 {
                     "type": "snabble.version",
                     "id": "5"
-                },
-                {
-                    "type": "developerMode",
-                    "id": "io.snabble.developerMode"
                 }
             ]
         }

@@ -96,6 +96,8 @@ struct WidgetWrapper: Decodable {
             value = try WidgetCustomerCard(from: decoder)
         case .developerMode:
             value = try WidgetDeveloperMode(from: decoder)
-        }
+        case .multiValue:
+            value = try WidgetMultiValue(from: decoder)
+       }
     }
 }

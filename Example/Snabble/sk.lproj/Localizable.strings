@@ -18,6 +18,16 @@
 
 "Profile.deleteAccount" = "Vymazať konto";
 
+"Profile.developerMode" = "Developer Settings";
+
+"Profile.environment" = "Environment ";
+
+"Profile.Environment.production" = "Production";
+
+"Profile.Environment.staging" = "Staging";
+
+"Profile.Environment.testing" = "Testing";
+
 "Profile.header" = "Tvoj profil";
 
 "Profile.imprint" = "Imprint";
@@ -35,6 +45,8 @@
 "Profile.pushMessages" = "Push Messages";
 
 "Profile.resetAppID" = "Reset AppID";
+
+"Profile.resetClientID" = "Reset Client ID";
 
 "Profile.saveEnergy" = "Šetrenie batérie";
 

@@ -157,6 +157,17 @@ public enum DeveloperMode {
         alert.show()
     }
     
+    public static func config(for string: String) -> Snabble.Environment? {
+        
+        if let env = Snabble.Environment(rawValue: string) {
+            return env
+        }
+        if let last = string.components(separatedBy: ".").last, let env = Snabble.Environment(rawValue: last) {
+            return env
+        }
+        return nil
+    }
+    
     static var showCheckIn: Bool {
         return Self.isEnabled || BuildConfig.debug
     }

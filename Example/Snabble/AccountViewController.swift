@@ -9,6 +9,7 @@ import UIKit
 import SwiftUI
 import SnabbleUI
 import SnabbleCore
+import KeychainAccess
 
 final class AccountViewController: DynamicViewController {
     override init(viewModel: DynamicViewModel) {
@@ -59,8 +60,23 @@ extension AccountViewController: DynamicViewControllerDelegate {
             })
             alert.addAction(UIAlertAction(title: Asset.localizedString(forKey: "cancel"), style: .cancel, handler: nil))
             self.present(alert, animated: true)
-        case "io.snabble.developerMode":
-            print("show developer settings")
+            
+        case "Profile.resetClientID":
+            let alert = UIAlertController(title: "Create new client id?", message: "You will irrevocably lose all previous orders.", preferredStyle: .alert)
+            alert.addAction(UIAlertAction(title: Asset.localizedString(forKey: "ok"), style: .destructive) { _ in
+                UserDefaults.standard.removeObject(forKey: "Snabble.api.clientId")
+                let keychain = Keychain(service: "io.snabble.sdk")
+                keychain["Snabble.api.clientId"] = nil
+                _ = Snabble.clientId
+                Snabble.shared.appUserId = nil
+            })
+            alert.addAction(UIAlertAction(title: Asset.localizedString(forKey: "cancel"), style: .cancel, handler: nil))
+            self.present(alert, animated: true)
+
+        case "io.snabble.environment":
+            if let value = userInfo?["value"] as? String, let env = DeveloperMode.config(for: value) {
+                print("switch environment to \(env)")
+            }
         default:
             break
         }

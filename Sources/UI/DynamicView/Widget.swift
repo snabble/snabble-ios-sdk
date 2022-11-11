@@ -24,6 +24,7 @@ public enum WidgetType: String, Decodable {
     case toggle
     case navigation
     case developerMode
+    case multiValue
 
     // Snabble Project
     case lastPurchases = "snabble.lastPurchases"
@@ -345,18 +346,74 @@ public struct WidgetCustomerCard: Widget {
 public struct WidgetDeveloperMode: Widget {
     public let id: String
     public let type: WidgetType = .developerMode
+    public let items: [Widget]
     public let padding: Padding?
 
     init(
         id: String,
+        items: [Widget],
         padding: Padding? = nil
     ) {
         self.id = id
+        self.items = items
         self.padding = padding
     }
 
     enum CodingKeys: String, CodingKey {
         case id
+        case items
+        case padding
+    }
+    
+    public init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        self.id = try container.decode(String.self, forKey: .id)
+
+        let wrappers = try container.decode([WidgetWrapper].self, forKey: .items)
+        self.items = wrappers.map { $0.value }
+
+        self.padding = try container.decodeIfPresent(Padding.self, forKey: .padding)
+    }
+}
+
+public struct WidgetMultiValue: Widget {
+    
+    public struct WidgetValue: Hashable, Decodable {
+        public let id: String
+        public let text: String
+        
+        init(id: String, text: String) {
+            self.id = id
+            self.text = text
+        }
+        enum CodingKeys: String, CodingKey {
+            case id
+            case text
+        }
+    }
+    
+    public let id: String
+    public let type: WidgetType = .multiValue
+    public let text: String
+    public let values: [WidgetValue]
+    public let padding: Padding?
+    
+    init(
+        id: String,
+        text: String,
+        values: [WidgetValue],
+        padding: Padding? = nil
+    ) {
+        self.id = id
+        self.text = text
+        self.values = values
+        self.padding = padding
+    }
+
+    enum CodingKeys: String, CodingKey {
+        case id
+        case text
+        case values
         case padding
     }
 }
