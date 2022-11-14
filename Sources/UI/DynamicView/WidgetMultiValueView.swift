@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-class MultiValueViewModel: ObservableObject {
+public class MultiValueViewModel: ObservableObject {
     
     public var key: String {
         return widget.id
@@ -61,7 +61,7 @@ public struct WidgetMultiValueView: View {
                     .contentShape(Rectangle())
                     .onTapGesture {
                         viewModel.selectedValue = value.id
-                        action(.init(widget: widget, userInfo: ["value": value.id]))
+                        action(.init(widget: widget, userInfo: ["model": viewModel, "value": value.id]))
                     }
                     
                 }

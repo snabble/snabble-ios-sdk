@@ -54,28 +54,14 @@ extension AccountViewController: DynamicViewControllerDelegate {
             navigationController?.pushViewController(viewController, animated: true)
             
         case "Profile.resetAppID":
-            let alert = UIAlertController(title: "Create new app user id?", message: "You will irrevocably lose all previous orders.", preferredStyle: .alert)
-            alert.addAction(UIAlertAction(title: Asset.localizedString(forKey: "ok"), style: .destructive) { _ in
-                Snabble.shared.appUserId = nil
-            })
-            alert.addAction(UIAlertAction(title: Asset.localizedString(forKey: "cancel"), style: .cancel, handler: nil))
-            self.present(alert, animated: true)
+            DeveloperMode.resetAppId(viewController: viewController)
             
         case "Profile.resetClientID":
-            let alert = UIAlertController(title: "Create new client id?", message: "You will irrevocably lose all previous orders.", preferredStyle: .alert)
-            alert.addAction(UIAlertAction(title: Asset.localizedString(forKey: "ok"), style: .destructive) { _ in
-                UserDefaults.standard.removeObject(forKey: "Snabble.api.clientId")
-                let keychain = Keychain(service: "io.snabble.sdk")
-                keychain["Snabble.api.clientId"] = nil
-                _ = Snabble.clientId
-                Snabble.shared.appUserId = nil
-            })
-            alert.addAction(UIAlertAction(title: Asset.localizedString(forKey: "cancel"), style: .cancel, handler: nil))
-            self.present(alert, animated: true)
+            DeveloperMode.resetClientId(viewController: viewController)
 
         case "io.snabble.environment":
-            if let value = userInfo?["value"] as? String, let env = DeveloperMode.config(for: value) {
-                print("switch environment to \(env)")
+            if let value = userInfo?["value"] as? String, let model = userInfo?["model"] as? MultiValueViewModel, let env = DeveloperMode.environment(for: value) {
+                DeveloperMode.switchEnvironment(environment: env, model: model, viewController: viewController)
             }
         default:
             break
