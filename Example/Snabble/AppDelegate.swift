@@ -34,7 +34,9 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     }
 
     private func snabbleSetup() {
-        Snabble.setup(config: .staging) { [unowned self] snabble in
+        let config = Config.config(for: DeveloperMode.environmentMode)
+        
+        Snabble.setup(config: config) { [unowned self] snabble in
             // initial config parsed/loaded
             guard let project = snabble.projects.first else {
                 fatalError("project initialization failed - make sure APPID and APPSECRET are valid")

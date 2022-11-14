@@ -34,6 +34,21 @@ public class MultiValueViewModel: ObservableObject {
     }
 }
 
+extension WidgetMultiValue.WidgetValue {
+    public func contains(string: String?) -> Bool {
+        guard string != nil else {
+            return false
+        }
+        guard self.id != string else {
+            return true
+        }
+        if let last = self.id.components(separatedBy: ".").last, last == string {
+            return true
+        }
+        return false
+    }
+}
+
 public struct WidgetMultiValueView: View {
     var widget: WidgetMultiValue
     let action: (DynamicAction) -> Void
@@ -53,7 +68,7 @@ public struct WidgetMultiValueView: View {
                     HStack(spacing: 0) {
                         Text(Asset.localizedString(forKey: value.text))
                         Spacer()
-                        if value.id == viewModel.selectedValue {
+                        if value.contains(string: viewModel.selectedValue) {
                             Image(systemName: "checkmark")
                                 .foregroundColor(.blue)
                         }

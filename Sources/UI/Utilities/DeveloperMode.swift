@@ -10,8 +10,6 @@ import SnabbleCore
 import KeychainAccess
 
 extension CheckInManager {
-    static let developerCheckInKey = "io.snabble.checkInShopId"
-    
     func shop(for provider: ShopProviding) -> Shop? {
         return projects
             .flatMap({ $0.shops })
@@ -23,7 +21,7 @@ extension CheckInManager {
     }
     
     public func verifyDeveloperCheckin() {
-        if DeveloperMode.showCheckIn, let checkInShopId = UserDefaults.standard.string(forKey: Self.developerCheckInKey) {
+        if DeveloperMode.showCheckIn, let checkInShopId = UserDefaults.standard.string(forKey: DeveloperMode.Keys.checkInShop.rawValue) {
             if let shop = projects
                 .flatMap({ $0.shops })
                 .first(where: { "\($0.id)" == checkInShopId }) {
@@ -34,14 +32,14 @@ extension CheckInManager {
 
     func developerCheckin(at fakeShop: ShopProviding, persist: Bool = false) {
         if persist {
-            UserDefaults.standard.set("\(fakeShop.id)", forKey: Self.developerCheckInKey)
+            UserDefaults.standard.set("\(fakeShop.id)", forKey: DeveloperMode.Keys.checkInShop.rawValue)
         }
         stopUpdating()
         shop = shop(for: fakeShop)
     }
 
     func developerCheckout() {
-        UserDefaults.standard.removeObject(forKey: Self.developerCheckInKey)
+        UserDefaults.standard.removeObject(forKey: DeveloperMode.Keys.checkInShop.rawValue)
 
         shop = nil
         startUpdating()
@@ -52,20 +50,20 @@ public enum DeveloperMode {
     
     public enum Keys: String {
         case activation = "io.snabble.developerMode"
+        case checkInShop = "io.snabble.checkInShopId"
         case environment = "io.snabble.environment"
 
         var value: Any? {
             return UserDefaults.standard.value(forKey: self.rawValue)
         }
+        
+        func remove() {
+            UserDefaults.standard.removeObject(forKey: self.rawValue)
+        }
     }
     
     static var isEnabled: Bool {
-        let isEnabled = UserDefaults.standard.bool(forKey: Self.Keys.activation.rawValue)
-        
-        if isEnabled {
-            
-        }
-        return isEnabled
+        return UserDefaults.standard.bool(forKey: Self.Keys.activation.rawValue)
     }
 }
 
@@ -196,17 +194,33 @@ public extension DeveloperMode {
             
             let alert = UIAlertController(title: "Clean Restart required", message: "Delete all databases and restart app?", preferredStyle: .alert)
             alert.addAction(UIAlertAction(title: "Yes", style: .default) { _ in
-                self.setEnvironmentMode(environment)
                                 
-//                let appSupport = FileManager.default.urls(for: .applicationSupportDirectory, in: .userDomainMask)[0]
-//                for project in Snabble.shared.projects {
-//                    let db = appSupport.appendingPathComponent(project.id.rawValue, isDirectory: true).appendingPathComponent("products.sqlite3")
-//                    try? FileManager.default.removeItem(at: db)
-//                }
-//                Defaults.reset(.autoCheckinShop)
-//                CFPreferencesAppSynchronize(kCFPreferencesCurrentApplication)
-//
-//                ProjectSwitcher.syncAndExit(message: "Switching servers...", wait: 1)
+                let appSupport = FileManager.default.urls(for: .applicationSupportDirectory, in: .userDomainMask)[0]
+
+                do {
+                    for project in Snabble.shared.projects {
+                        let db = appSupport.appendingPathComponent(project.id.rawValue, isDirectory: true).appendingPathComponent("products.sqlite3")
+                        
+                        if FileManager.default.fileExists(atPath: db.path) {
+                            print("remove db at: \(db)")
+                            try FileManager.default.removeItem(at: db)
+                        }
+                    }
+                    self.setEnvironmentMode(environment)
+                    DeveloperMode.Keys.checkInShop.remove()
+                    
+                    UserDefaults.standard.synchronize()
+                    CFPreferencesAppSynchronize(kCFPreferencesCurrentApplication)
+                    
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
+                        exit(0)
+                    }
+                } catch {
+                    print(error)
+                    
+                    self.setEnvironmentMode(Snabble.shared.environment)
+                    model.selectedValue = "io.snabble.environment." + Snabble.shared.environment.rawValue
+                }
             })
             alert.addAction(UIAlertAction(title: "No", style: .cancel) { _ in
                 self.setEnvironmentMode(Snabble.shared.environment)
