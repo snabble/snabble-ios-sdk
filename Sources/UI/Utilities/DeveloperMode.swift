@@ -105,11 +105,13 @@ public extension DeveloperMode {
             if password == "SnabbelDeveloperPassword" {
                 password = "Snabble"
             }
-            let magicWord = password.data(using: .utf8)!.base64EncodedString()
-            let base64 = text.data(using: .utf8)!.base64EncodedString()
-            if base64 == magicWord {
-                UserDefaults.standard.developerMode = true
-                print("DeveloperMode is on")
+            if let magicData = password.data(using: .utf8),
+               let inputData = text.data(using: .utf8) {
+                
+                if magicData.base64EncodedData() == inputData.base64EncodedData() {
+                    UserDefaults.standard.developerMode = true
+                    print("DeveloperMode is on")
+                }
             }
             alert.dismiss(animated: false)
         })
