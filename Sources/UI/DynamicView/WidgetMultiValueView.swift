@@ -81,6 +81,7 @@ public struct WidgetMultiValueView: View {
                     
                 }
             }
+            .listStyle(.grouped)
         }) {
             Text(keyed: widget.text)
         }

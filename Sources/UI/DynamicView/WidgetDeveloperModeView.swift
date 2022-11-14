@@ -38,6 +38,7 @@ public struct WidgetDeveloperModeView: View {
                 List {
                     WidgetContainer(viewModel: self.viewModel, widgets: widget.items)
                 }
+                .listStyle(.grouped)
             }) {
                 WidgetTextView(widget: developerModel.widget)
             }
