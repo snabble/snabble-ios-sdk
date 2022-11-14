@@ -66,7 +66,7 @@ public struct WidgetMultiValueView: View {
             List {
                 ForEach(widget.values, id: \.self) { value in
                     HStack(spacing: 0) {
-                        Text(Asset.localizedString(forKey: value.text))
+                        Text(keyed: value.text)
                         Spacer()
                         if value.contains(string: viewModel.selectedValue) {
                             Image(systemName: "checkmark")
