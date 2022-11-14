@@ -152,6 +152,7 @@ final class AssetManager {
                 let request = AssetRequest(asset: asset, bundlePath: bundlePath, projectId: projectId, completion: completion)
                 self.pendingRequests.append(request)
             }
+            completion(nil)
             return
         }
 
