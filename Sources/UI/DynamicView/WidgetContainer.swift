@@ -200,14 +200,6 @@ public struct WidgetView: View {
         }
     }
 
-//    @ViewBuilder
-//    var developerMode: some View {
-//        if let widget = widget as? WidgetDeveloperMode {
-//            WidgetDeveloperModeView(widget: widget) {
-//                viewModel.actionPublisher.send(.init(widget: $0))
-//            }
-//        }
-//    }
     @ViewBuilder
     var multiValue: some View {
         if let widget = widget as? WidgetMultiValue {
