@@ -63,7 +63,19 @@ public enum DeveloperMode {
     }
     
     static var isEnabled: Bool {
-        return UserDefaults.standard.bool(forKey: Self.Keys.activation.rawValue)
+        return UserDefaults.standard.developerMode
+    }
+}
+
+public extension UserDefaults {
+    @objc
+    var developerMode: Bool {
+        get {
+            return bool(forKey: DeveloperMode.Keys.activation.rawValue)
+        }
+        set {
+            set(newValue, forKey: DeveloperMode.Keys.activation.rawValue)
+        }
     }
 }
 
@@ -72,7 +84,7 @@ public extension DeveloperMode {
         if Self.isEnabled == false {
             ask()
         } else {
-            UserDefaults.standard.set(false, forKey: Self.Keys.activation.rawValue)
+            UserDefaults.standard.developerMode = false
             print("DeveloperMode is off")
         }
     }
@@ -89,10 +101,14 @@ public extension DeveloperMode {
         alert.alertController?.addAction(UIAlertAction(title: Asset.localizedString(forKey: "ok"), style: .default) { _ in
             let text = alert.alertController?.textFields?.first?.text ?? ""
 
-            let magicWord = Asset.localizedString(forKey: "Snabble").lowercased().data(using: .utf8)!.base64EncodedString()
-            let base64 = text.lowercased().data(using: .utf8)!.base64EncodedString()
+            var password = Asset.localizedString(forKey: "SnabbelDeveloperPassword")
+            if password == "SnabbelDeveloperPassword" {
+                password = "Snabble"
+            }
+            let magicWord = password.data(using: .utf8)!.base64EncodedString()
+            let base64 = text.data(using: .utf8)!.base64EncodedString()
             if base64 == magicWord {
-                UserDefaults.standard.set(true, forKey: Self.Keys.activation.rawValue)
+                UserDefaults.standard.developerMode = true
                 print("DeveloperMode is on")
             }
             alert.dismiss(animated: false)

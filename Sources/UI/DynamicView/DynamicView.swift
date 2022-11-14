@@ -5,15 +5,24 @@
 //  Created by Uwe Tilemann on 30.08.22.
 //
 
+import Combine
 import SwiftUI
 
 public struct DynamicView: View {
     @ObservedObject public var viewModel: DynamicViewModel
-
+    @State private var refresher: AnyCancellable
+    
     public init(viewModel: DynamicViewModel) {
         self.viewModel = viewModel
+        
+        self.refresher = UserDefaults.standard
+            .publisher(for: \.developerMode)
+            .handleEvents(receiveOutput: { _ in
+                viewModel.objectWillChange.send()
+            })
+            .sink { _ in }
     }
-    
+        
     @ViewBuilder
     var teaser: some View {
         if let image = viewModel.configuration.image {

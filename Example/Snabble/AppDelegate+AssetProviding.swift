@@ -32,6 +32,10 @@ extension AppDelegate: AssetProviding {
         if format != key {
             return String.localizedStringWithFormat(format, arguments)
         }
+        if key == "SnabbelDeveloperPassword" {
+            // default password is "Snabble" if return nil here
+            return nil
+        }
         return nil
     }
 
