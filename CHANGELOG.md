@@ -7,6 +7,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [unreleased]
 
 ### Added
+* DeveloperMode with 5 tabs on profile version field
+* Default developer password is "Snabble" customizable via AssetProviding key "SnabbleDeveloperPassword"
+* CheckIn / CheckOut for selected shops in DeveloperMode
+* Last Purchases and Receipts available for DynamicViews (eg. Dashboard / Profile Tab in SampleApp)
+* New WidgetMultiValue and corresponding SwiftUI view to display/store UserDefault Values
 
 ### Removed
 * AutoLayout-Helper Dependencies - Moved function in the SDK
