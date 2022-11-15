@@ -116,7 +116,7 @@ public struct ShopMapView: View {
     @State private var currentLocation: CurrentLocation = .shop
     @State private var showLocation = false
     // 50,73448° N, 7,07530° O is snabbles home location
-    @State private var region = MKCoordinateRegion(center: CLLocationCoordinate2D(latitude: 50.73448, longitude: 7.07530), span: MKCoordinateSpan(latitudeDelta: 0.5, longitudeDelta: 0.5))
+    @State private var region = MKCoordinateRegion(center: CLLocationCoordinate2D(latitude: 50.73448, longitude: 7.07530), latitudinalMeters: 2000, longitudinalMeters: 2000)
 
     @ViewBuilder
     var mapView: some View {
@@ -129,7 +129,6 @@ public struct ShopMapView: View {
             MapAnnotation(coordinate: place.shop.location.coordinate) {
                 ShopAnnotationView(shopLocation: place)
                     .shadow(color: .gray, radius: 3, x: 2, y: 2)
-                
             }
         }
     }
@@ -181,7 +180,6 @@ public struct ShopMapView: View {
                 }
             }
         }
-
     }
 }
 

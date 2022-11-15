@@ -28,6 +28,9 @@ public class MultiValueViewModel: ObservableObject {
             objectWillChange.send()
         }
     }
+    var titleForSelectedValue: String? {
+        return widget.values.first(where: { $0.contains(string: selectedValue) })?.text
+    }
     
     init(widget: WidgetMultiValue) {
         self.widget = widget
@@ -61,6 +64,19 @@ public struct WidgetMultiValueView: View {
         self.viewModel = .init(widget: widget)
     }
 
+    @ViewBuilder
+    public var title: some View {
+        if let selection = viewModel.titleForSelectedValue {
+            HStack {
+                Text(keyed: widget.text)
+                Spacer()
+                Text(keyed: selection)
+                    .foregroundColor(.secondary)
+            }
+        } else {
+            Text(keyed: widget.text)
+        }
+    }
     public var body: some View {
         NavigationLink(destination: {
             List {
@@ -83,7 +99,7 @@ public struct WidgetMultiValueView: View {
             }
             .listStyle(.grouped)
         }) {
-            Text(keyed: widget.text)
+            title
         }
     }
 }
