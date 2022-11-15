@@ -59,7 +59,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
         Snabble.shared.checkInManager.verifyDeveloperCheckin()
         shopsViewController.viewModel.shop = Snabble.shared.checkInManager.shop
-        shopsViewController.delegate = self
         self.shopsViewController = shopsViewController
         
         let profileModel: DynamicViewModel = loadJSON("Profile")
@@ -141,11 +140,5 @@ extension AppDelegate: CheckInManagerDelegate {
 
     func checkInManager(_ checkInManager: CheckInManager, didCheckOutOf shop: Shop) {
         shopsViewController?.viewModel.shop = nil
-    }
-}
-
-extension AppDelegate: ShopsViewControllerDelegate {
-    func shopsViewController(_ viewController: ShopsViewController, didSelectActionOnShop shop: ShopProviding) {
-        print(#function, shop)
     }
 }

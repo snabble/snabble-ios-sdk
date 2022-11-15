@@ -17,9 +17,18 @@ final class AppShopsViewController: ShopsViewController {
         self.title = NSLocalizedString("shops", comment: "")
         self.tabBarItem.image = UIImage(named: "Navigation/TabBar/shops-off")
         self.tabBarItem.selectedImage = UIImage(systemName: "Navigation/TabBar/shops-on")
+        
+        self.delegate = self
     }
 
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
+    }
+}
+
+extension AppShopsViewController: ShopsViewControllerDelegate {
+    func shopsViewController(_ viewController: ShopsViewController, didSelectActionOnShop shop: ShopProviding) {
+        print(#function, shop)
+        tabBarController?.selectedIndex = 1
     }
 }
