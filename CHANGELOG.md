@@ -19,6 +19,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 * Update device location to search for shops
 
 ### Changed
+* updated certificates
 * renamed ProductProvider to ProductStore
 * renamed ProductStore functions by removing unnamed (underscore) arguments
 * Information Widget takes full width
