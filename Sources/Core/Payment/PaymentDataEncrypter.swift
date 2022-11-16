@@ -91,7 +91,10 @@ struct PaymentDataEncrypter {
         SecTrustSetAnchorCertificates(secTrust, anchors)
 
         // check if cerficate and root match
-        guard SecTrustEvaluateWithError(secTrust, nil) else {
+        var error: CFError?
+        
+        guard SecTrustEvaluateWithError(secTrust, &error) else {
+            print("error: \(String(describing: error))")
             return nil
         }
 
