@@ -180,7 +180,7 @@ public final class SepaEditViewController: UIViewController {
         super.viewWillAppear(animated)
 
         if let detail = self.detail {
-            self.hintLabel.text = Asset.localizedString(forKey: "Snabble.Sepa.editingHint")
+            self.hintLabel.text = Asset.localizedString(forKey: "Snabble.SEPA.editingHint")
 
             self.saveButton.isHidden = true
 
@@ -209,7 +209,7 @@ public final class SepaEditViewController: UIViewController {
             self.ibanNumberField.text = iban
             self.ibanNumberField.isEnabled = false
 
-            self.hintLabel.text = Asset.localizedString(forKey: "Snabble.Sepa.scoTransferHint")
+            self.hintLabel.text = Asset.localizedString(forKey: "Snabble.SEPA.scoTransferHint")
         } else {
             self.nameField.becomeFirstResponder()
         }

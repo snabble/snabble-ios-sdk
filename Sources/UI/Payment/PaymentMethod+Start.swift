@@ -72,12 +72,12 @@ public final class PaymentMethodStartCheck {
         }
 
         presenter.dismissOverlay()
-        self.requestBiometricAuthentication(on: presenter, reason: Asset.localizedString(forKey: "Snabble.Sepa.payNow"), completionHandler)
+        self.requestBiometricAuthentication(on: presenter, reason: Asset.localizedString(forKey: "Snabble.SEPA.payNow"), completionHandler)
     }
 
     @objc private func sepaShowDetailsTapped(_ gestureRecognizer: UITapGestureRecognizer) {
         let msg = SnabbleCI.project.messages?.sepaMandate ?? ""
-        let alert = UIAlertController(title: Asset.localizedString(forKey: "Snabble.Sepa.mandate"), message: msg, preferredStyle: .alert)
+        let alert = UIAlertController(title: Asset.localizedString(forKey: "Snabble.SEPA.mandate"), message: msg, preferredStyle: .alert)
         alert.addAction(UIAlertAction(title: Asset.localizedString(forKey: "Snabble.ok"), style: .default, handler: nil))
         presenter?.present(alert, animated: true)
     }

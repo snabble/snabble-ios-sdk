@@ -108,7 +108,7 @@ extension CheckoutStep {
     init(originCandidate: OriginCandidate, savedIbans: Set<String>) {
         status = nil
         if let origin = originCandidate.origin, !savedIbans.contains(origin) {
-            text = Asset.localizedString(forKey: "Snabble.Sepa.IbanTransferAlert.message", arguments: origin)
+            text = Asset.localizedString(forKey: "Snabble.SEPA.IbanTransferAlert.message", arguments: origin)
             actionTitle = Asset.localizedString(forKey: "Snabble.PaymentStatus.AddDebitCard.button")
         } else {
             text = Asset.localizedString(forKey: "Snabble.PaymentStatus.DebitCardAdded.message")

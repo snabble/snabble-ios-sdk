@@ -143,10 +143,10 @@ public final class SepaOverlayView: UIView {
     }
 
     public struct ViewModel: SepaOverlayViewModel {
-        public let title: String = Asset.localizedString(forKey: "Snabble.Sepa.mandate")
+        public let title: String = Asset.localizedString(forKey: "Snabble.SEPA.mandate")
         public let text: NSAttributedString
 
-        public let successButtonTitle: String = Asset.localizedString(forKey: "Snabble.Sepa.iAgree")
+        public let successButtonTitle: String = Asset.localizedString(forKey: "Snabble.SEPA.iAgree")
 
         public init(project: Project?) {
             let text = project?.messages?.sepaMandateShort ?? ""
