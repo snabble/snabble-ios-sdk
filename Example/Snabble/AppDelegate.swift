@@ -34,7 +34,9 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     }
 
     private func snabbleSetup() {
-        Snabble.setup(config: .staging) { [unowned self] snabble in
+        let config = Config.config(for: DeveloperMode.environmentMode)
+        
+        Snabble.setup(config: config) { [unowned self] snabble in
             // initial config parsed/loaded
             guard let project = snabble.projects.first else {
                 fatalError("project initialization failed - make sure APPID and APPSECRET are valid")
@@ -57,7 +59,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
         Snabble.shared.checkInManager.verifyDeveloperCheckin()
         shopsViewController.viewModel.shop = Snabble.shared.checkInManager.shop
-        shopsViewController.delegate = self
         self.shopsViewController = shopsViewController
         
         let profileModel: DynamicViewModel = loadJSON("Profile")
@@ -139,11 +140,5 @@ extension AppDelegate: CheckInManagerDelegate {
 
     func checkInManager(_ checkInManager: CheckInManager, didCheckOutOf shop: Shop) {
         shopsViewController?.viewModel.shop = nil
-    }
-}
-
-extension AppDelegate: ShopsViewControllerDelegate {
-    func shopsViewController(_ viewController: ShopsViewController, didSelectActionOnShop shop: ShopProviding) {
-        print(#function, shop)
     }
 }

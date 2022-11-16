@@ -153,6 +153,11 @@ public class Snabble {
 
     private var databases: [Identifier<Project>: ProductDatabase]
 
+    /// Current environment
+    public var environment: Environment {
+        return self.config.environment
+    }
+
     /// Gateway certificates for payment routes
     public var certificates: [GatewayCertificate] {
         metadata.gatewayCertificates
@@ -205,7 +210,7 @@ public class Snabble {
         )
         shared?.update(completion: completion)
     }
-
+    
     /// update Snabble
     /// - Parameter completion: completionHandler informs about the status
     public func update(completion: @escaping (Snabble) -> Void) {

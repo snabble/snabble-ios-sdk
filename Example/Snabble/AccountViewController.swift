@@ -9,6 +9,7 @@ import UIKit
 import SwiftUI
 import SnabbleUI
 import SnabbleCore
+import KeychainAccess
 
 final class AccountViewController: DynamicViewController {
     override init(viewModel: DynamicViewModel) {
@@ -53,13 +54,15 @@ extension AccountViewController: DynamicViewControllerDelegate {
             navigationController?.pushViewController(viewController, animated: true)
             
         case "Profile.resetAppID":
-            let alert = UIAlertController(title: "Create new app user id?", message: "You will irrevocably lose all previous orders.", preferredStyle: .alert)
-            alert.addAction(UIAlertAction(title: Asset.localizedString(forKey: "ok"), style: .destructive) { _ in
-                Snabble.shared.appUserId = nil
-            })
-            alert.addAction(UIAlertAction(title: Asset.localizedString(forKey: "cancel"), style: .cancel, handler: nil))
-            self.present(alert, animated: true)
+            DeveloperMode.resetAppId(viewController: viewController)
+            
+        case "Profile.resetClientID":
+            DeveloperMode.resetClientId(viewController: viewController)
 
+        case "io.snabble.environment":
+            if let value = userInfo?["value"] as? String, let model = userInfo?["model"] as? MultiValueViewModel, let env = DeveloperMode.environment(for: value) {
+                DeveloperMode.switchEnvironment(environment: env, model: model, viewController: viewController)
+            }
         default:
             break
         }

@@ -14,7 +14,9 @@ public struct WidgetView: View {
     public var body: some View {
         if widget.type == .section, let widget = widget as? WidgetSection {
             WidgetSectionView(widget: widget, viewModel: viewModel)
-        } else {
+        } else if widget.type == .developerMode, let widget = widget as? WidgetDeveloperMode {
+            WidgetDeveloperModeView(widget: widget, viewModel: viewModel)
+       } else {
             Group {
                 switch widget.type {
                 case .image:
@@ -43,8 +45,12 @@ public struct WidgetView: View {
                     connectWifi
                 case .customerCard:
                     customerCard
+                case .developerMode:
+                    EmptyView()
                 case .section:
                     EmptyView()
+                case .multiValue:
+                    multiValue
                 }
             }
             .padding(widget.padding?.edgeInsets ?? .init())
@@ -191,6 +197,15 @@ public struct WidgetView: View {
             ) {
                 viewModel.actionPublisher.send(.init(widget: $0))
             }
+        }
+    }
+
+    @ViewBuilder
+    var multiValue: some View {
+        if let widget = widget as? WidgetMultiValue {
+            WidgetMultiValueView(widget: widget, action: { action in
+                viewModel.actionPublisher.send(action)
+            })
         }
     }
 }

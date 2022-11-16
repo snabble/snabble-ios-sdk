@@ -5,12 +5,11 @@
 //  Created by Uwe Tilemann on 10.11.22.
 //
 
-import SnabbleCore
 import UIKit
+import SnabbleCore
+import KeychainAccess
 
 extension CheckInManager {
-    static let developerCheckInKey = "io.snabble.checkInShopId"
-    
     func shop(for provider: ShopProviding) -> Shop? {
         return projects
             .flatMap({ $0.shops })
@@ -22,7 +21,7 @@ extension CheckInManager {
     }
     
     public func verifyDeveloperCheckin() {
-        if DeveloperMode.showCheckIn, let checkInShopId = UserDefaults.standard.string(forKey: Self.developerCheckInKey) {
+        if DeveloperMode.showCheckIn, let checkInShopId = UserDefaults.standard.string(forKey: DeveloperMode.Keys.checkInShop.rawValue) {
             if let shop = projects
                 .flatMap({ $0.shops })
                 .first(where: { "\($0.id)" == checkInShopId }) {
@@ -33,99 +32,59 @@ extension CheckInManager {
 
     func developerCheckin(at fakeShop: ShopProviding, persist: Bool = false) {
         if persist {
-            UserDefaults.standard.set("\(fakeShop.id)", forKey: Self.developerCheckInKey)
+            UserDefaults.standard.set("\(fakeShop.id)", forKey: DeveloperMode.Keys.checkInShop.rawValue)
         }
         stopUpdating()
         shop = shop(for: fakeShop)
     }
 
     func developerCheckout() {
-        UserDefaults.standard.removeObject(forKey: Self.developerCheckInKey)
+        UserDefaults.standard.removeObject(forKey: DeveloperMode.Keys.checkInShop.rawValue)
 
         shop = nil
         startUpdating()
     }
 }
 
-class AlertView {
-    private var window: UIWindow?
-    public var alertController: UIAlertController?
-    private var presentingViewController: ClearViewController
-    
-    init(title: String?, message: String?) {
-        self.window = UIWindow(frame: UIScreen.main.bounds)
-        self.presentingViewController = ClearViewController()
-        self.window?.rootViewController = self.presentingViewController
-        self.window?.windowLevel = UIWindow.Level.alert + 1
-        
-        self.alertController = UIAlertController(title: title, message: message, preferredStyle: .alert)
-    }
-    
-    func show() {
-        if let alertController = alertController {
-            DispatchQueue.main.async {
-                self.window?.makeKeyAndVisible()
-                self.window?.rootViewController?.present(alertController, animated: true, completion: nil)
-            }
-        }
-    }
-    
-    func addAction(_ action: UIAlertAction) {
-        if let alertController = alertController {
-            alertController.addAction(action)
-        }
-    }
-    
-    func addCancelButton(string: String) {
-        if let alertController = alertController {
-            alertController.addAction(UIAlertAction(title: string, style: .cancel, handler: nil))
-        }
-    }
-    func dismiss(animated: Bool) {
-        DispatchQueue.main.async {
-            self.window?.rootViewController?.dismiss(animated: animated, completion: nil)
-            self.window?.rootViewController = nil
-            self.window?.isHidden = true
-            UIApplication.shared.windows.first!.makeKeyAndVisible()
-            self.window = nil
-            self.alertController = nil
-        }
-    }
-}
-
-// In the case of view controller-based status bar style, make sure we use the same style for our view controller
-private class ClearViewController: UIViewController {
-    
-    init() {
-        super.init(nibName: nil, bundle: nil)
-    }
-    
-    required init?(coder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
-    }
-    
-    fileprivate override var preferredStatusBarStyle: UIStatusBarStyle {
-        return view.window?.windowScene?.statusBarManager?.statusBarStyle ?? .default
-    }
-
-    fileprivate override var prefersStatusBarHidden: Bool {
-        return view.window?.windowScene?.statusBarManager?.isStatusBarHidden ?? false
-    }
-}
-
 public enum DeveloperMode {
     
-    static let key = "io.snabble.developerMode"
-    
-    static var isEnabled: Bool {
-        return UserDefaults.standard.bool(forKey: Self.key)
+    public enum Keys: String {
+        case activation = "io.snabble.developerMode"
+        case checkInShop = "io.snabble.checkInShopId"
+        case environment = "io.snabble.environment"
+
+        var value: Any? {
+            return UserDefaults.standard.value(forKey: self.rawValue)
+        }
+        
+        func remove() {
+            UserDefaults.standard.removeObject(forKey: self.rawValue)
+        }
     }
     
+    static var isEnabled: Bool {
+        return UserDefaults.standard.developerMode
+    }
+}
+
+public extension UserDefaults {
+    @objc
+    var developerMode: Bool {
+        get {
+            return bool(forKey: DeveloperMode.Keys.activation.rawValue)
+        }
+        set {
+            set(newValue, forKey: DeveloperMode.Keys.activation.rawValue)
+        }
+    }
+}
+
+public extension DeveloperMode {
     static func toggle() {
         if Self.isEnabled == false {
             ask()
         } else {
-            UserDefaults.standard.set(false, forKey: Self.key)
+            UserDefaults.standard.developerMode = false
             print("DeveloperMode is off")
         }
     }
@@ -142,11 +101,17 @@ public enum DeveloperMode {
         alert.alertController?.addAction(UIAlertAction(title: Asset.localizedString(forKey: "ok"), style: .default) { _ in
             let text = alert.alertController?.textFields?.first?.text ?? ""
 
-            let magicWord = "c25hYmJsZXJ1bHo="
-            let base64 = text.lowercased().data(using: .utf8)!.base64EncodedString()
-            if base64 == magicWord {
-                UserDefaults.standard.set(true, forKey: Self.key)
-                print("DeveloperMode is on")
+            var password = Asset.localizedString(forKey: "SnabbelDeveloperPassword")
+            if password == "SnabbelDeveloperPassword" {
+                password = "Snabble"
+            }
+            if let magicData = password.data(using: .utf8),
+               let inputData = text.data(using: .utf8) {
+                
+                if magicData.base64EncodedData() == inputData.base64EncodedData() {
+                    UserDefaults.standard.developerMode = true
+                    print("DeveloperMode is on")
+                }
             }
             alert.dismiss(animated: false)
         })
@@ -156,7 +121,9 @@ public enum DeveloperMode {
         
         alert.show()
     }
-    
+}
+
+public extension DeveloperMode {
     static var showCheckIn: Bool {
         return Self.isEnabled || BuildConfig.debug
     }
@@ -186,6 +153,99 @@ public enum DeveloperMode {
             }))
         
             alert.show()
+        }
+    }
+}
+
+public extension DeveloperMode {
+    static func environment(for string: String) -> Snabble.Environment? {
+        
+        if let env = Snabble.Environment(rawValue: string) {
+            return env
+        }
+        if let last = string.components(separatedBy: ".").last, let env = Snabble.Environment(rawValue: last) {
+            return env
+        }
+        return nil
+    }
+    
+    static var environmentMode: Snabble.Environment {
+        guard let value = Self.Keys.environment.value as? String, let env = environment(for: value) else {
+            return BuildConfig.debug ? .staging : .production
+        }
+        return env
+    }
+    static func setEnvironmentMode(_ mode: Snabble.Environment) {
+        UserDefaults.standard.set("\(mode.rawValue)", forKey: Self.Keys.environment.rawValue)
+
+    }
+}
+
+public extension DeveloperMode {
+    
+    static func resetAppId(viewController: DynamicViewController) {
+        let alert = UIAlertController(title: "Create new app user id?", message: "You will irrevocably lose all previous orders.", preferredStyle: .alert)
+        alert.addAction(UIAlertAction(title: Asset.localizedString(forKey: "ok"), style: .destructive) { _ in
+            Snabble.shared.appUserId = nil
+        })
+        alert.addAction(UIAlertAction(title: Asset.localizedString(forKey: "cancel"), style: .cancel, handler: nil))
+        viewController.present(alert, animated: true)
+    }
+    
+    static func resetClientId(viewController: DynamicViewController) {
+        let alert = UIAlertController(title: "Create new client id?", message: "You will irrevocably lose all previous orders.", preferredStyle: .alert)
+        alert.addAction(UIAlertAction(title: Asset.localizedString(forKey: "ok"), style: .destructive) { _ in
+            UserDefaults.standard.removeObject(forKey: "Snabble.api.clientId")
+            let keychain = Keychain(service: "io.snabble.sdk")
+            keychain["Snabble.api.clientId"] = nil
+            _ = Snabble.clientId
+            Snabble.shared.appUserId = nil
+        })
+        alert.addAction(UIAlertAction(title: Asset.localizedString(forKey: "cancel"), style: .cancel, handler: nil))
+        viewController.present(alert, animated: true)
+    }
+    
+    static func switchEnvironment(environment: Snabble.Environment, model: MultiValueViewModel, viewController: DynamicViewController) {
+        
+        if Snabble.shared.environment != environment {
+            print("will switch environment to \(environment)")
+            
+            let alert = UIAlertController(title: "Clean Restart required", message: "Delete all databases and restart app?", preferredStyle: .alert)
+            alert.addAction(UIAlertAction(title: "Yes", style: .default) { _ in
+                                
+                let appSupport = FileManager.default.urls(for: .applicationSupportDirectory, in: .userDomainMask)[0]
+
+                do {
+                    for project in Snabble.shared.projects {
+                        let db = appSupport.appendingPathComponent(project.id.rawValue, isDirectory: true).appendingPathComponent("products.sqlite3")
+                        
+                        if FileManager.default.fileExists(atPath: db.path) {
+                            print("remove db at: \(db)")
+                            try FileManager.default.removeItem(at: db)
+                        }
+                    }
+                    self.setEnvironmentMode(environment)
+                    DeveloperMode.Keys.checkInShop.remove()
+                    
+                    UserDefaults.standard.synchronize()
+                    CFPreferencesAppSynchronize(kCFPreferencesCurrentApplication)
+                    
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
+                        exit(0)
+                    }
+                } catch {
+                    print(error)
+                    
+                    self.setEnvironmentMode(Snabble.shared.environment)
+                    model.selectedValue = "io.snabble.environment." + Snabble.shared.environment.rawValue
+                }
+            })
+            alert.addAction(UIAlertAction(title: "No", style: .cancel) { _ in
+                self.setEnvironmentMode(Snabble.shared.environment)
+                model.selectedValue = "io.snabble.environment." + Snabble.shared.environment.rawValue
+            })
+            
+            viewController.present(alert, animated: true)
         }
     }
 }

@@ -18,6 +18,16 @@
 
 "Profile.deleteAccount" = "Account löschen";
 
+"Profile.developerMode" = "Entwickler-Einstellungen";
+
+"Profile.environment" = "Umgebung";
+
+"Profile.Environment.production" = "Production";
+
+"Profile.Environment.staging" = "Staging";
+
+"Profile.Environment.testing" = "Testing";
+
 "Profile.header" = "Dein Profil";
 
 "Profile.imprint" = "Impressum";
@@ -35,6 +45,8 @@
 "Profile.pushMessages" = "Push-Benachrichtigungen";
 
 "Profile.resetAppID" = "AppID zurücksetzen";
+
+"Profile.resetClientID" = "Client ID zurücksetzen";
 
 "Profile.saveEnergy" = "Strom sparen";
 

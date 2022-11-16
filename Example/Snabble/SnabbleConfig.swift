@@ -36,4 +36,15 @@ extension Config {
             environment: .testing
         )
     }
+    
+    static func config(for environment: Snabble.Environment) -> Self {
+        switch environment {
+        case .testing:
+            return Self.testing
+        case .staging:
+            return Self.staging
+        case .production:
+            return Self.production
+        }
+    }
 }
