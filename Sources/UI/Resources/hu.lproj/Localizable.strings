@@ -461,6 +461,9 @@
 
 "Snabble.Scanner.noMatchesFound" = "Termék nem található";
 
+/* Text to be displayed in scanner if the app is not checked into a shop. */
+"Snabble.Scanner.notCheckedIn" = "Visit a store to use the scanner.";
+
 "Snabble.Scanner.plusDeposit" = "+ %@ betétdíj";
 
 "Snabble.Scanner.scannedAgeRestrictedProduct" = "A fizetésnél egyszeri alkalommal ellenőrizzük a korodat.";
