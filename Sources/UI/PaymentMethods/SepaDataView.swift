@@ -80,7 +80,8 @@ public struct SepaDataView: View {
             .keyboardType(.numberPad)
     }
     
-    public var body: some View {
+    @ViewBuilder
+    var editor: some View {
         Form {
             Section(
                 content: {
@@ -114,12 +115,42 @@ public struct SepaDataView: View {
         .onChange(of: action) { _ in
             if self.model.isValid {
                 hideKeyboard()
-                self.model.actionPublisher.send()
+                self.model.actionPublisher.send(["action": "save"])
             }
         }
-
         .onAppear {
             localCountryCode = Locale.current.countryCode
+        }
+    }
+    
+    @ViewBuilder
+    var display: some View {
+        Form {
+            Section(
+                content: {
+                    HStack {
+                        if let imageName = model.imageName, let uiImage = Asset.image(named: "SnabbleSDK/payment/" + imageName) {
+                            Image(uiImage: uiImage)
+                        }
+                        Text(model.iban)
+                    }
+                }
+            )
+        }
+        .navigationBarItems(trailing: 
+            Button(action: {
+                self.model.actionPublisher.send(["action": "remove"])
+            }) {
+                Image(systemName: "trash")
+            }
+        )
+    }
+    
+    public var body: some View {
+        if model.isEditable {
+            editor
+        } else {
+            display
         }
     }
 }

@@ -162,7 +162,7 @@ extension PaymentMethodListViewController {
             case .sepa:
                 editVC = SepaEditViewController(detail, self.analyticsDelegate)
             case .payoneSepa:
-                editVC = SepaDataEditViewController(viewModel: SepaDataModel())
+                editVC = SepaDataEditViewController(viewModel: SepaDataModel(detail: detail))
             case .teleCashCreditCard:
                 editVC = TeleCashCreditCardEditViewController(detail, self.analyticsDelegate)
             case .paydirektAuthorization:

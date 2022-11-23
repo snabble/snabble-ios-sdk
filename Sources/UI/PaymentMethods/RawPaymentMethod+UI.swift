@@ -10,12 +10,7 @@ import SnabbleCore
 
 extension PaymentMethodDetail {
     var icon: UIImage? {
-        switch self.methodData {
-        case .tegutEmployeeCard:
-            return Asset.image(named: "SnabbleSDK/payment/payment-tegut")
-        default:
-            return self.rawMethod.icon
-        }
+        return Asset.image(named: "SnabbleSDK/payment/" + self.imageName)
     }
 }
 
@@ -50,21 +45,7 @@ extension RawPaymentMethod {
     }
 
     public var icon: UIImage? {
-        switch self {
-        case .deDirectDebit:
-            return Asset.image(named: "SnabbleSDK/payment/payment-sepa")
-        case .creditCardVisa:
-            return Asset.image(named: "SnabbleSDK/payment/payment-visa")
-        case .creditCardMastercard: return Asset.image(named: "SnabbleSDK/payment/payment-mastercard")
-        case .creditCardAmericanExpress: return Asset.image(named: "SnabbleSDK/payment/payment-amex")
-        case .gatekeeperTerminal: return Asset.image(named: "SnabbleSDK/payment/payment-sco")
-        case .paydirektOneKlick: return Asset.image(named: "SnabbleSDK/payment/payment-paydirekt")
-        case .applePay: return Asset.image(named: "SnabbleSDK/payment/payment-apple-pay")
-        case .twint: return Asset.image(named: "SnabbleSDK/payment/payment-twint")
-        case .postFinanceCard: return Asset.image(named: "SnabbleSDK/payment/payment-postfinance")
-        case .qrCodePOS, .qrCodeOffline, .externalBilling, .customerCardPOS:
-            return Asset.image(named: "SnabbleSDK/payment/payment-pos")
-        }
+        return Asset.image(named: "SnabbleSDK/payment/" + self.imageName)
     }
 
     func editViewController(with projectId: Identifier<Project>?, _ analyticsDelegate: AnalyticsDelegate?) -> UIViewController? {

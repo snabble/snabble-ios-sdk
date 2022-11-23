@@ -9,13 +9,16 @@ import SnabbleCore
 
 public final class PaymentMethodStartCheck {
     private var method: PaymentMethod
+    private var detail: PaymentMethodDetail?
     private weak var presenter: UIViewController?
     public weak var messageDelegate: MessageDelegate?
     private var completionHandler: ((Bool) -> Void)?
 
     public init(for method: PaymentMethod,
+                detail: PaymentMethodDetail?,
                 on presenter: UIViewController) {
         self.method = method
+        self.detail = detail
         self.presenter = presenter
     }
 
@@ -28,19 +31,23 @@ public final class PaymentMethodStartCheck {
         self.completionHandler = completion
         switch method {
         case .deDirectDebit:
-            let view = SepaOverlayView(frame: .zero)
-            let viewModel = SepaOverlayView.ViewModel(project: SnabbleCI.project)
-            view.configure(with: viewModel)
-
-            view.closeButton?.addTarget(self, action: #selector(dismissOverlay(_:)), for: .touchUpInside)
-            view.successButton?.addTarget(self, action: #selector(sepaSuccessButtonTapped(_:)), for: .touchUpInside)
-
-            let tapGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(sepaShowDetailsTapped(_:)))
-            view.textLabel?.addGestureRecognizer(tapGestureRecognizer)
-            view.textLabel?.isUserInteractionEnabled = true
-
-            presenter.showOverlay(with: view)
-
+            if case .payoneSepa(let _) = detail?.methodData {
+                self.requestBiometricAuthentication(on: presenter, reason: Asset.localizedString(forKey: "Snabble.SEPA.payNow"), completion)
+            } else {
+                let view = SepaOverlayView(frame: .zero)
+                let viewModel = SepaOverlayView.ViewModel(project: SnabbleCI.project)
+                view.configure(with: viewModel)
+                
+                view.closeButton?.addTarget(self, action: #selector(dismissOverlay(_:)), for: .touchUpInside)
+                view.successButton?.addTarget(self, action: #selector(sepaSuccessButtonTapped(_:)), for: .touchUpInside)
+                
+                let tapGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(sepaShowDetailsTapped(_:)))
+                view.textLabel?.addGestureRecognizer(tapGestureRecognizer)
+                view.textLabel?.isUserInteractionEnabled = true
+                
+                presenter.showOverlay(with: view)
+            }
+            
         case .visa, .mastercard, .americanExpress:
             self.requestBiometricAuthentication(on: presenter, reason: Asset.localizedString(forKey: "Snabble.CreditCard.payNow"), completion)
 

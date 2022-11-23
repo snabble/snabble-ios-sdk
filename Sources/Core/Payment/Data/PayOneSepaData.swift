@@ -26,13 +26,14 @@ public struct PayoneSepaData: Codable, EncryptedPaymentData, Equatable {
 
     private struct DirectDebitRequestOrigin: PaymentRequestOrigin {
         let iban: String
+        let name: String
         let lastname: String
         let city: String
         let countryCode: String
     }
 
     public init?(_ gatewayCert: Data?, iban: String, lastName: String, city: String, countryCode: String) {
-        let requestOrigin = DirectDebitRequestOrigin(iban: iban, lastname: lastName, city: city, countryCode: countryCode)
+        let requestOrigin = DirectDebitRequestOrigin(iban: iban, name: lastName, lastname: lastName, city: city, countryCode: countryCode)
 
         guard
             let encrypter = PaymentDataEncrypter(gatewayCert),

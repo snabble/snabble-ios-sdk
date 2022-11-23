@@ -9,6 +9,8 @@ import KeychainAccess
 
 public enum PaymentMethodError: Error {
     case unknownMethodError(String)
+    case invalidCertificate
+    case encryptionError
 }
 
 public enum PaymentMethodUserData: Codable, Equatable {
@@ -265,6 +267,45 @@ public struct PaymentMethodDetail: Equatable {
             return payoneData.projectId
         case .sepa, .payoneSepa, .tegutEmployeeCard, .paydirektAuthorization, .leinweberCustomerNumber:
             return nil
+        }
+    }
+}
+
+extension PaymentMethodDetail {
+    public var imageName: String {
+        switch self.methodData {
+        case .tegutEmployeeCard:
+            return "payment-tegut"
+
+        default:
+            return self.rawMethod.imageName
+        }
+    }
+}
+
+extension RawPaymentMethod {
+    public var imageName: String {
+        switch self {
+        case .deDirectDebit:
+            return "payment-sepa"
+        case .creditCardVisa:
+            return "payment-visa"
+        case .creditCardMastercard:
+            return "payment-mastercard"
+        case .creditCardAmericanExpress:
+            return "payment-amex"
+        case .gatekeeperTerminal:
+            return "payment-sco"
+        case .paydirektOneKlick:
+            return "payment-paydirekt"
+        case .applePay:
+            return "payment-apple-pay"
+        case .twint:
+            return "payment-twint"
+        case .postFinanceCard:
+            return "payment-postfinance"
+        case .qrCodePOS, .qrCodeOffline, .externalBilling, .customerCardPOS:
+            return "payment-pos"
         }
     }
 }

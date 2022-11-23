@@ -461,6 +461,9 @@
 
 "Snabble.Scanner.noMatchesFound" = "Product not found";
 
+/* Text to be displayed in scanner if the app is not checked into a shop. */
+"Snabble.Scanner.notCheckedIn" = "Visit a store to use the scanner.";
+
 "Snabble.Scanner.plusDeposit" = "+ %@ deposit";
 
 "Snabble.Scanner.scannedAgeRestrictedProduct" = "Your age will be checked once at the time of payment.";

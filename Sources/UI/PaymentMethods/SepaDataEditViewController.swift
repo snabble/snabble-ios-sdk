@@ -15,7 +15,7 @@ import SnabbleCore
 public protocol SepaDataEditViewControllerDelegate: AnyObject {
 
     /// Tells the delegate that an widget will perform an action
-    func sepaDataEditViewControllerWillSave(_ viewController: SepaDataEditViewController)
+    func sepaDataEditViewControllerWillSave(_ viewController: SepaDataEditViewController, userInfo:[String:Any]?)
 }
 
 
@@ -43,8 +43,8 @@ open class SepaDataEditViewController: UIHostingController<SepaDataView> {
     open override func viewDidLoad() {
         super.viewDidLoad()
         viewModel.actionPublisher
-            .sink { [unowned self] account in
-                delegate?.sepaDataEditViewControllerWillSave(self)
+            .sink { [unowned self] info in
+                delegate?.sepaDataEditViewControllerWillSave(self, userInfo: info)
             }
             .store(in: &cancellables)
     }
@@ -52,18 +52,38 @@ open class SepaDataEditViewController: UIHostingController<SepaDataView> {
 
 extension SepaDataEditViewController: SepaDataEditViewControllerDelegate {
     
+    func remove(model: SepaDataModel) {
+        model.remove()
+    }
+    
     func save(model: SepaDataModel) {
-        if model.isValid, let cert = Snabble.shared.certificates.first, let sepaData = PayoneSepaData(cert.data, iban: model.iban, lastName: model.lastname, city: model.city, countryCode: model.countryCode) {
-            let detail = PaymentMethodDetail(sepaData)
-            PaymentMethodDetails.save(detail)
-        } else {
-            let alert = AlertView(title: nil, message: Asset.localizedString(forKey: "Snabble.SEPA.encryptionError"))
-            
-            alert.alertController?.addAction(UIAlertAction(title: Asset.localizedString(forKey: "ok"), style: .default))
-            alert.show()
+        Task {
+            do {
+                try await model.save()
+            } catch {
+                DispatchQueue.main.async {
+                    let alert = AlertView(title: nil, message: Asset.localizedString(forKey: "Snabble.SEPA.encryptionError"))
+                    
+                    alert.alertController?.addAction(UIAlertAction(title: Asset.localizedString(forKey: "ok"), style: .default))
+                    alert.show()
+                }
+            }
         }
     }
-    public func sepaDataEditViewControllerWillSave(_ viewController: SepaDataEditViewController) {
-        self.save(model: viewController.viewModel)
+
+    public func sepaDataEditViewControllerWillSave(_ viewController: SepaDataEditViewController, userInfo:[String:Any]?) {
+        if let action = userInfo?["action"] as? String {
+            switch action {
+            case "save":
+                self.save(model: viewController.viewModel)
+                
+            case "remove":
+                self.remove(model: viewController.viewModel)
+                
+            default:
+                print("unahndled action: \(action)")
+                break
+            }
+        }
     }
 }

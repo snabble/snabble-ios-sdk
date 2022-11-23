@@ -461,6 +461,9 @@
 
 "Snabble.Scanner.noMatchesFound" = "Položka nebola nájdená";
 
+/* Text to be displayed in scanner if the app is not checked into a shop. */
+"Snabble.Scanner.notCheckedIn" = "Visit a store to use the scanner.";
+
 "Snabble.Scanner.plusDeposit" = "+ %@ záloha";
 
 "Snabble.Scanner.scannedAgeRestrictedProduct" = "Preto bude tvoj vek pri platbe jednorazovo skontrolovaný.";
