@@ -7,7 +7,7 @@
 
 import Foundation
 
-public struct PayOneSepaData: Codable, EncryptedPaymentData, Equatable {
+public struct PayoneSepaData: Codable, EncryptedPaymentData, Equatable {
     // encrypted JSON string
     public let encryptedPaymentData: String
     // serial # of the certificate used to encrypt
@@ -26,13 +26,13 @@ public struct PayOneSepaData: Codable, EncryptedPaymentData, Equatable {
 
     private struct DirectDebitRequestOrigin: PaymentRequestOrigin {
         let iban: String
-        let lastName: String
+        let lastname: String
         let city: String
         let countryCode: String
     }
 
     public init?(_ gatewayCert: Data?, iban: String, lastName: String, city: String, countryCode: String) {
-        let requestOrigin = DirectDebitRequestOrigin(iban: iban, lastName: lastName, city: city, countryCode: countryCode)
+        let requestOrigin = DirectDebitRequestOrigin(iban: iban, lastname: lastName, city: city, countryCode: countryCode)
 
         guard
             let encrypter = PaymentDataEncrypter(gatewayCert),

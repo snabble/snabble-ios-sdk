@@ -19,6 +19,7 @@ public enum PaymentMethodUserData: Codable, Equatable {
     case datatransAlias(DatatransData)
     case datatransCardAlias(DatatransCreditCardData)
     case payoneCreditCard(PayoneCreditCardData)
+    case payoneSepa(PayoneSepaData)
     case leinweberCustomerNumber(LeinweberCustomerData)
 
     public enum CodingKeys: String, CodingKey {
@@ -28,6 +29,7 @@ public enum PaymentMethodUserData: Codable, Equatable {
         case paydirektAuthorization
         case datatransAlias, datatransCardAlias
         case payoneCreditCard
+        case payoneSepa
         case leinweberCustomerNumber
 
         // old and bad name - only used in the migration code below
@@ -43,6 +45,7 @@ public enum PaymentMethodUserData: Codable, Equatable {
         case .datatransAlias(let data): return data
         case .datatransCardAlias(let data): return data
         case .payoneCreditCard(let data): return data
+        case .payoneSepa(let data): return data
         case .leinweberCustomerNumber(let data): return data
         }
     }
@@ -73,7 +76,9 @@ public enum PaymentMethodUserData: Codable, Equatable {
             self = .datatransCardAlias(datatransCardData)
         } else if let payoneData = try container.decodeIfPresent(PayoneCreditCardData.self, forKey: .payoneCreditCard) {
             self = .payoneCreditCard(payoneData)
-        } else if let leinweberData = try container.decodeIfPresent(LeinweberCustomerData.self, forKey: .leinweberCustomerNumber) {
+        } else if let payoneSepa = try container.decodeIfPresent(PayoneSepaData.self, forKey: .payoneSepa) {
+            self = .payoneSepa(payoneSepa)
+       } else if let leinweberData = try container.decodeIfPresent(LeinweberCustomerData.self, forKey: .leinweberCustomerNumber) {
             self = .leinweberCustomerNumber(leinweberData)
         } else {
             throw PaymentMethodError.unknownMethodError("unknown payment method")
@@ -90,6 +95,7 @@ public enum PaymentMethodUserData: Codable, Equatable {
         case .datatransAlias(let data): try container.encode(data, forKey: .datatransAlias)
         case .datatransCardAlias(let data): try container.encode(data, forKey: .datatransCardAlias)
         case .payoneCreditCard(let data): try container.encode(data, forKey: .payoneCreditCard)
+        case .payoneSepa(let data): try container.encode(data, forKey: .payoneSepa)
         case .leinweberCustomerNumber(let data): try container.encode(data, forKey: .leinweberCustomerNumber)
         }
     }
@@ -190,6 +196,11 @@ public struct PaymentMethodDetail: Equatable {
         self.id = UUID()
         self.methodData = PaymentMethodUserData.payoneCreditCard(payoneData)
     }
+    public init(_ payoneSepaData: PayoneSepaData) {
+        self.id = UUID()
+        self.methodData = PaymentMethodUserData.payoneSepa(payoneSepaData)
+    }
+
 
     public var displayName: String {
         return self.methodData.data.displayName
@@ -217,7 +228,7 @@ public struct PaymentMethodDetail: Equatable {
 
     public var rawMethod: RawPaymentMethod {
         switch self.methodData {
-        case .sepa: return .deDirectDebit
+        case .sepa, .payoneSepa: return .deDirectDebit
         case .tegutEmployeeCard, .leinweberCustomerNumber:
             return .externalBilling
         case .paydirektAuthorization:
@@ -252,7 +263,7 @@ public struct PaymentMethodDetail: Equatable {
             return datatransData.projectId
         case .payoneCreditCard(let payoneData):
             return payoneData.projectId
-        case .sepa, .tegutEmployeeCard, .paydirektAuthorization, .leinweberCustomerNumber:
+        case .sepa, .payoneSepa, .tegutEmployeeCard, .paydirektAuthorization, .leinweberCustomerNumber:
             return nil
         }
     }

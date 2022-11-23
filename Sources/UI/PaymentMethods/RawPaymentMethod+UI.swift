@@ -5,6 +5,7 @@
 //
 
 import UIKit
+import SwiftUI
 import SnabbleCore
 
 extension PaymentMethodDetail {
@@ -96,7 +97,7 @@ extension RawPaymentMethod {
             return nil
         }
         if descriptor.acceptedOriginTypes?.contains(.payoneSepaData) == true {
-            return UIHostingController(rootView: CustomerCardDetailView(image: SwiftUI.Image("Snabble.DynamicView.customerCard")))
+            return SepaDataEditViewController(viewModel: SepaDataModel())
         } else {
             return SepaEditViewController(nil, analyticsDelegate)
         }

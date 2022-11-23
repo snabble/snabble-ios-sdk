@@ -322,6 +322,8 @@ public struct CheckoutProcess: Decodable {
 
     public struct PaymentPreauthInformation: Decodable {
         public let merchantID: String? // for Apple Pay
+        public let markup: String? // for PayOneSepa
+        public let mandateIdentification: String? // for PayOneSepa
     }
 
     enum CodingKeys: String, CodingKey {

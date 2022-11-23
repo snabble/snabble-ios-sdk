@@ -7,96 +7,49 @@
 
 import SwiftUI
 import Combine
-
-public protocol SepaDataProviding {
-    var iban: String { get }
-    var lastname: String { get }
-    var city: String? { get }
-    var countryCode: String? { get }
-}
-
-public struct SepaAccount: SepaDataProviding {
-    
-    public var iban: String
-    public var lastname: String
-    public var city: String?
-    public var countryCode: String?
-
-    init(iban: String, lastname: String, city: String? = nil, countryCode: String? = nil) {
-        self.iban = iban
-        self.lastname = lastname
-        self.city = city
-        self.countryCode = countryCode
+#if canImport(UIKit)
+extension View {
+    func hideKeyboard() {
+        UIApplication.shared.sendAction(#selector(UIResponder.resignFirstResponder), to: nil, from: nil, for: nil)
     }
 }
+#endif
 
-public enum SepaStrings: String {
-    case iban
-    case lastname
-    case city
-    case countryCode
-    
-    case save
-    
-    case invalidIBAN
-    case invalidName
-    case missingLastname
-    
-    case missingCity
-    case missingCountry
-    
-    public var localizedString: String {
-        return Asset.localizedString(forKey: "Snabble.Payment.SEPA.\(self.rawValue)")
+fileprivate struct Country {
+    let id: String
+    var name: String
+}
+
+fileprivate func getLocales() -> [Country] {
+    if #available(iOS 16, *) {
+        let locales = Locale.Region.isoRegions
+            .filter { $0.isISORegion && $0.subRegions.isEmpty }
+            .compactMap { Country(id: $0.identifier, name: Locale.current.localizedString(forRegionCode: $0.identifier) ?? $0.identifier)}
+        return locales
+    } else {
+        let locales = Locale.isoRegionCodes
+            .compactMap { Country(id: $0, name: Locale.current.localizedString(forRegionCode: $0) ?? $0)}
+        return locales
     }
 }
 
-public final class SepaDataModel: SepaDataProviding, ObservableObject {
-
-    @Published public var iban: String
-    @Published public var lastname: String
-    @Published public var city: String?
-    @Published public var countryCode: String?
-
-    public enum Policy {
-        case simple
-        case extended
-    }
-    public private(set) var policy: Policy = .simple
+public struct CountryPicker: View {
+    @Binding var selectedCountry: String
     
-    init(policy: SepaDataModel.Policy, iban: String, lastname: String, city: String? = nil, countryCode: String? = nil) {
-        self.policy = policy
-        self.iban = iban
-        self.lastname = lastname
-        self.city = city
-        self.countryCode = countryCode
-    }
-
-    /// Emits on action
-    /// - `Output` is the current selected account
-    public let actionPublisher = PassthroughSubject<SepaDataProviding, Never>()
-  
-    @Published public var isValid = false {
-        didSet {
-            if errorMessage.isEmpty == false {
-                self.errorMessage = ""
+    public var body: some View {
+        Picker(SepaStrings.countryCode.localizedString, selection: $selectedCountry) {
+            ForEach(getLocales(), id: \.id) { country in
+                Text(country.name).tag(country.id)
             }
         }
     }
-
-    // output
-    @Published public var hintMessage = ""
-    @Published public var errorMessage: String = ""
-    
-    public var debounce: RunLoop.SchedulerTimeType.Stride = 0.5
-    public var minimumInputCount: Int = 3
-    
-    private var cancellables = Set<AnyCancellable>()
 }
 
 public struct SepaDataView: View {
     @ObservedObject var model: SepaDataModel
     @State private var action = false
-
+    @State private var localCountryCode = "DE"
+    
     public init(model: SepaDataModel) {
         self.model = model
     }
@@ -114,11 +67,32 @@ public struct SepaDataView: View {
         .opacity(!self.model.isValid ? 0.5 : 1.0)
     }
 
+    @ViewBuilder
+    var ibanCountry: some View {
+        TextField(localCountryCode, text: $model.ibanCountry)
+            .frame(width: 40)
+            .keyboardType(.asciiCapable)
+    }
+    
+    @ViewBuilder
+    var ibanNumber: some View {
+        TextField(SepaStrings.iban.localizedString, text: $model.ibanNumber)
+            .keyboardType(.numberPad)
+    }
+    
     public var body: some View {
         Form {
             Section(
                 content: {
-                    TextField(SepaStrings.lastname.localizedString, text: $model.iban)
+                    TextField(SepaStrings.lastname.localizedString, text: $model.lastname)
+                    HStack {
+                        ibanCountry
+                        ibanNumber
+                    }
+                    if model.policy == .extended {
+                        TextField(SepaStrings.city.localizedString, text: $model.city)
+                        CountryPicker(selectedCountry: $model.countryCode)
+                    }
                 },
                 footer: {
                     Text(model.hintMessage)
@@ -136,6 +110,16 @@ public struct SepaDataView: View {
                             .foregroundColor(.red)
                     }
                 })
+        }
+        .onChange(of: action) { _ in
+            if self.model.isValid {
+                hideKeyboard()
+                self.model.actionPublisher.send()
+            }
+        }
+
+        .onAppear {
+            localCountryCode = Locale.current.countryCode
         }
     }
 }

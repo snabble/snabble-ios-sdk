@@ -115,11 +115,11 @@ public final class PaymentProcess {
         let details = PaymentMethodDetails.read()
         for detail in details {
             switch detail.methodData {
-            case .sepa:
+            case .sepa, .payoneSepa:
                 let useDirectDebit = methods.first { $0.method == .deDirectDebit } != nil
                 if useDirectDebit {
-                    let telecash = PaymentMethod.deDirectDebit(detail.data)
-                    results.append(telecash)
+                    let debitData = PaymentMethod.deDirectDebit(detail.data)
+                    results.append(debitData)
                 }
             case .tegutEmployeeCard:
                 let tegut = methods.first {
