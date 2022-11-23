@@ -37,6 +37,7 @@ public final class OnboardingViewController: UIHostingController<OnboardingView>
     public init(viewModel: OnboardingViewModel) {
         super.init(rootView: OnboardingView(viewModel: viewModel))
         isModalInPresentation = true
+        modalPresentationStyle = .overFullScreen
     }
     
     @MainActor required dynamic init?(coder aDecoder: NSCoder) {
