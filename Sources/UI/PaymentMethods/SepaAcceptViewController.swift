@@ -193,6 +193,6 @@ extension SepaAcceptViewController: SepaAcceptViewControllerDelegate {
     
     @objc
     private func dismiss() {
-        dismiss(animated: true)
+        self.navigationController?.popViewController(animated: true)
     }
 }
