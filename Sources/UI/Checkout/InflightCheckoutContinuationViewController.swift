@@ -98,7 +98,6 @@ public final class InFlightCheckoutContinuationViewController: UIViewController 
                     cart: cart,
                     paymentDelegate: self?.paymentDelegate
                 )
-
                 if let checkoutViewController = checkoutViewController {
                     self?.navigationController?.pushViewController(checkoutViewController, animated: true)
                 } else {

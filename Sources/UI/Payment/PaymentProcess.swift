@@ -325,7 +325,7 @@ extension PaymentProcess {
         guard let rawMethod = RawPaymentMethod(rawValue: process.paymentMethod) else {
             return nil
         }
-        guard !process.isComplete else {
+        guard !PaymentState.endStates.contains(process.paymentState) else {
             let checkoutStepsViewController = CheckoutStepsViewController(
                 shop: shop,
                 shoppingCart: cart,
