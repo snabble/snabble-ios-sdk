@@ -130,6 +130,7 @@ public struct CheckoutInfo: Decodable {
     }
 
     public struct Violation: Codable {
+        // swiftlint:disable:next type_name
         public enum `Type`: String, Codable, UnknownCaseRepresentable {
             public static var unknownCase: Self = .unknown
 
