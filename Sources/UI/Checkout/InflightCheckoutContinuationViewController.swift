@@ -92,16 +92,31 @@ public final class InFlightCheckoutContinuationViewController: UIViewController 
                 if let shoppingCart = self?.shoppingCart, cart.uuid == shoppingCart.uuid {
                     cart = shoppingCart
                 }
-                let checkoutVC = PaymentProcess.checkoutViewController(for: process,
-                                                                       shop: inFlightCheckout.shop,
-                                                                       cart: cart,
-                                                                       paymentDelegate: self?.paymentDelegate)
-                if let checkout = checkoutVC {
-                    self?.navigationController?.pushViewController(checkout, animated: true)
+                let checkoutViewController = PaymentProcess.checkoutViewController(
+                    for: process,
+                    shop: inFlightCheckout.shop,
+                    cart: cart,
+                    paymentDelegate: self?.paymentDelegate
+                )
+                
+                if let checkoutViewController = checkoutViewController {
+                    self?.navigationController?.pushViewController(checkoutViewController, animated: true)
+                } else {
+                    self?.dismiss()
                 }
             case .failure(let error):
                 print("can't get in-flight checkout process: \(error)")
+                self?.dismiss()
             }
+        }
+    }
+
+    private func dismiss() {
+        Snabble.clearInFlightCheckout()
+        if isBeingPresented {
+            presentingViewController?.dismiss(animated: true)
+        } else {
+            navigationController?.popViewController(animated: true)
         }
     }
 }

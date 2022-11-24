@@ -293,55 +293,39 @@ extension PaymentProcess {
                 }
                 self.startFailed(method, shop: self.shop, error, completion)
             }
-            
-            func sepaCheck(process: CheckoutProcess) {
-                let sepaCheckVC = SepaAcceptViewController(viewModel: SepaAcceptModel(process: process)) {
-        
-                    self.sepaAuthorize(process: process, project: project, detail: detail)
-                }
-                completion(.success(sepaCheckVC))
-            }
-
-            
+                        
             switch result.result {
             case .success(let process):
                 Snabble.storeInFlightCheckout(url: process.links._self.href,
                                               shop: self.shop,
                                               cart: self.cart)
-
                 checkoutProcess(process: process)
 
-//                if case .payoneSepa(_) = detail?.methodData, process.paymentPreauthInformation?.markup != nil {
-//                    sepaCheck(process: process)
-//                } else {
-//                    checkoutProcess(process: process)
-//                }
             case .failure(let error):
                 errorHandler(error: error)
             }
         }
     }
-    private struct Empty: Decodable {}
+    private struct EmptyDecodable: Decodable {}
+    private struct EmptyEncodable: Encodable {}
 
-    func sepaAuthorize(process: CheckoutProcess, project: Project, detail: PaymentMethodDetail?) {
-        print("project: \(project.id), id: \(process.id), paymentStatus: \(process.paymentState)")
-        
-        let authID = Snabble.clientId // shared.appUserId?.value  ?? process.id // process.paymentPreauthInformation?.mandateIdentification ?? process.id // ?? process.checks.first?.id ?? process.paymentPreauthInformation?.mandateIdentification ?? id
-        
-        let urlString = "/\(project.id)/checkout/payments/\(authID)/authorize"
+    static func sepaAuthorize(process: CheckoutProcess) {
+        guard let urlString = process.links.authorizePayment?.href else {
+            return
+        }
+        let project = SnabbleCI.project
 
-        let origin = [ "origin": detail?.encryptedData ]
-        project.request(.post, urlString, body: origin, timeout: 2) { request in
+        project.request(.post, urlString, body: EmptyEncodable(), timeout: 2) { request in
             guard let request = request else {
                 return
             }
 
-            project.perform(request) { (_ result : Result<Empty, SnabbleError>, response) in
+            project.perform(request) { (_ result : Result<EmptyDecodable, SnabbleError>, response) in
                 
                 print("result: \(result), status: \(String(describing: response?.statusCode))")
                 
-                if response?.statusCode == 201 { // created
-//                    self.goBack()
+                if response?.statusCode == 204 { // No Content
+
                 }
             }
         }
@@ -354,8 +338,24 @@ extension PaymentProcess {
         guard let rawMethod = RawPaymentMethod(rawValue: process.paymentMethod) else {
             return nil
         }
+        guard !process.isComplete else {
+            let checkoutStepsViewController = CheckoutStepsViewController(
+                shop: shop,
+                shoppingCart: cart,
+                checkoutProcess: process
+            )
+            checkoutStepsViewController.paymentDelegate = paymentDelegate
+            return checkoutStepsViewController
+        }
         switch process.routingTarget {
         case .none:
+            if process.paymentState == .unauthorized, process.links.authorizePayment != nil {
+                let sepaCheckViewController = SepaAcceptViewController(viewModel: SepaAcceptModel(process: process)) {
+                    Self.sepaAuthorize(process: process)
+                }
+                return sepaCheckViewController
+            }
+            
             let checkoutDisplay = rawMethod.checkoutDisplayViewController(shop: shop,
                                                                           checkoutProcess: process,
                                                                           shoppingCart: cart,

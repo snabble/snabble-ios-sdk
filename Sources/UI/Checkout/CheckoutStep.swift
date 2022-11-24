@@ -119,7 +119,7 @@ extension CheckoutStep {
     }
     
     init(authorizeLink: Link, paymentState: PaymentState, markup: String?) {
-        status = paymentState == .unauthorized ? .loading : .aborted
+        status = nil // paymentState == .unauthorized ? .loading : .aborted
         text = Asset.localizedString(forKey: "Snabble.Payment.SEPA.title")
 
         actionTitle = Asset.localizedString(forKey: "Snabble.Payment.SEPA.iAgree")
