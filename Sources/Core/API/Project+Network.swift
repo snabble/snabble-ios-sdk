@@ -287,8 +287,7 @@ extension Project {
     ///   - json: if true, add "application/json" as the "Accept" and "Content-Type" HTTP Headers
     ///   - jwtRequired: if true, this request requires authorization via JWT
     ///   - timeout: the timeout for the HTTP request (0 for the system default timeout)
-    /// - Returns: the URLRequest
-    // swiftlint:disable:next function_parameter_count
+    ///   - completion: the URLRequest
     public func request(_ method: HTTPRequestMethod, _ url: URL, _ json: Bool, _ jwtRequired: Bool, _ timeout: TimeInterval, _ completion: @escaping (URLRequest) -> Void) {
         var urlRequest = Snabble.request(url: url, timeout: timeout, json: json)
         urlRequest.httpMethod = method.rawValue

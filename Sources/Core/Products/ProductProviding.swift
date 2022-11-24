@@ -134,7 +134,7 @@ public extension ProductProviding {
     }
 
     /// get a product by one of its scannable codes/templates
-    func scannedProductPublisherBy(codes: [(String, String)], shopId: Identifier<Shop>) ->  Future<ScannedProduct?, Never> {
+    func scannedProductPublisherBy(codes: [(String, String)], shopId: Identifier<Shop>) -> Future<ScannedProduct?, Never> {
         Future { promise in
             let product = self.scannedProductBy(codes: codes, shopId: shopId)
             
