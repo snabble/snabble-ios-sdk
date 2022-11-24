@@ -92,23 +92,12 @@ public final class InFlightCheckoutContinuationViewController: UIViewController 
                 if let shoppingCart = self?.shoppingCart, cart.uuid == shoppingCart.uuid {
                     cart = shoppingCart
                 }
-                var checkoutViewController: UIViewController?
-                if !process.isComplete {
-                    checkoutViewController = PaymentProcess.checkoutViewController(
-                        for: process,
-                        shop: inFlightCheckout.shop,
-                        cart: cart,
-                        paymentDelegate: self?.paymentDelegate
-                    )
-                } else {
-                    let checkoutStepsViewController = CheckoutStepsViewController(
-                        shop: inFlightCheckout.shop,
-                        shoppingCart: cart,
-                        checkoutProcess: process
-                    )
-                    checkoutStepsViewController.paymentDelegate = self?.paymentDelegate
-                    checkoutViewController = checkoutStepsViewController
-                }
+                let checkoutViewController = PaymentProcess.checkoutViewController(
+                    for: process,
+                    shop: inFlightCheckout.shop,
+                    cart: cart,
+                    paymentDelegate: self?.paymentDelegate
+                )
 
                 if let checkoutViewController = checkoutViewController {
                     self?.navigationController?.pushViewController(checkoutViewController, animated: true)

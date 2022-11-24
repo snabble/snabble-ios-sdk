@@ -325,6 +325,15 @@ extension PaymentProcess {
         guard let rawMethod = RawPaymentMethod(rawValue: process.paymentMethod) else {
             return nil
         }
+        guard !process.isComplete else {
+            let checkoutStepsViewController = CheckoutStepsViewController(
+                shop: shop,
+                shoppingCart: cart,
+                checkoutProcess: process
+            )
+            checkoutStepsViewController.paymentDelegate = paymentDelegate
+            return checkoutStepsViewController
+        }
         switch process.routingTarget {
         case .none:
             let checkoutDisplay = rawMethod.checkoutDisplayViewController(shop: shop,
