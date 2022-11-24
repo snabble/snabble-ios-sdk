@@ -24,9 +24,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 * renamed ProductStore functions by removing unnamed (underscore) arguments
 * Information Widget takes full width
 * Change GateKeeper `text` to `nil`
+* Inflight Checkoout Status prüfen APPS-546
 
 ### Updated
-* groue/GRDB.swift 6.1.0 (was 6.0.0)
+* datatrans/ios-sdk 2.4.0 (was 2.3.0)
+* groue/GRDB.swift 6.3.1 (was 6.0.0)
 * devicekit/DeviceKit 5.0.0 (was 4.7.0)
 
 ## [0.23.0] - 2022-10-11
