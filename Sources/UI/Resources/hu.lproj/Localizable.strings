@@ -226,15 +226,23 @@
 
 "Snabble.Payment.rejectedHint" = "A bevásárlás elutasításra került. Ellenőrizd a kosaradat, és próbáld meg újra a fizetést.";
 
+"Snabble.Payment.SEPA.city" = "City";
+
+"Snabble.Payment.SEPA.countryCode" = "Country";
+
 "Snabble.Payment.SEPA.hint" = "Megjegyzés: A te és a kereskedőink visszaélésekkel szembeni védelme érdekében az első SEPA terhelési megbízásos fizetésednél a kereskedőnél megjelenik a bankkártyád.";
 
 "Snabble.Payment.SEPA.iban" = "IBAN";
 
 "Snabble.Payment.SEPA.invalidIBAN" = "A megadott IBAN érvénytelen.";
 
-"Snabble.Payment.SEPA.invalidName" = "Add meg a neved.";
+"Snabble.Payment.SEPA.invalidIBANCountry" = "The entered IBAN country code is incorrect.";
+
+"Snabble.Payment.SEPA.missingCity" = "Please enter a city.";
 
 "Snabble.Payment.SEPA.missingCountry" = "Az országkód nem lehet üres.";
+
+"Snabble.Payment.SEPA.missingName" = "Add meg a neved.";
 
 "Snabble.Payment.SEPA.name" = "Név";
 

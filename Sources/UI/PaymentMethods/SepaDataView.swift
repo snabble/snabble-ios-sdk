@@ -7,6 +7,8 @@
 
 import SwiftUI
 import Combine
+import SnabbleCore
+
 #if canImport(UIKit)
 extension View {
     func hideKeyboard() {
@@ -39,8 +41,37 @@ public struct CountryPicker: View {
     public var body: some View {
         Picker(SepaStrings.countryCode.localizedString, selection: $selectedCountry) {
             ForEach(getLocales(), id: \.id) { country in
-                Text(country.name).tag(country.id)
+                Text(country.name)
+                    .tag(country.id)
             }
+        }
+    }
+}
+
+public struct IbanCountryPicker: View {
+    @Binding var selectedCountry: String
+    
+    public var body: some View {
+        Picker(SepaStrings.countryCode.localizedString, selection: $selectedCountry) {
+            ForEach(IBAN.countries, id: \.self) { country in
+                Text(country)
+                    .tag(country)
+            }
+        }
+    }
+}
+
+extension View {
+    /// Applies the given transform if the given condition evaluates to `true`.
+    /// - Parameters:
+    ///   - condition: The condition to evaluate.
+    ///   - transform: The transform to apply to the source `View`.
+    /// - Returns: Either the original `View` or the modified `View` if the condition is `true`.
+    @ViewBuilder func `if`<Content: View>(_ condition: Bool, transform: (Self) -> Content) -> some View {
+        if condition {
+            transform(self)
+        } else {
+            self
         }
     }
 }
@@ -59,7 +90,7 @@ public struct SepaDataView: View {
         Button(action: {
             action.toggle()
         }) {
-            Text(SepaStrings.save.localizedString)
+            Text(keyed: "Snabble.save")
                 .frame(maxWidth: .infinity)
         }
         .buttonStyle(AccentButtonStyle())
@@ -69,14 +100,15 @@ public struct SepaDataView: View {
 
     @ViewBuilder
     var ibanCountry: some View {
-        TextField(localCountryCode, text: $model.ibanCountry)
-            .frame(width: 40)
-            .keyboardType(.asciiCapable)
+        IbanCountryPicker(selectedCountry: $model.ibanCountry)
+            .frame(width: 60, height:35)
+            .foregroundColor(Color.accent())
     }
     
     @ViewBuilder
     var ibanNumber: some View {
         TextField(SepaStrings.iban.localizedString, text: $model.ibanNumber)
+//            .textFieldStyle(.roundedBorder)
             .keyboardType(.numberPad)
     }
     
@@ -105,11 +137,14 @@ public struct SepaDataView: View {
                     button
                 },
                 footer: {
-                    if !model.errorMessage.isEmpty {
-                        Text(model.errorMessage)
-                            .font(.footnote)
-                            .foregroundColor(.red)
-                    }
+                    Text(keyed: "Snabble.Payment.SEPA.hint")
+                        .font(.footnote)
+                        .foregroundColor(.gray)
+//                    if !model.errorMessage.isEmpty {
+//                        Text(model.errorMessage)
+//                            .font(.footnote)
+//                            .foregroundColor(.red)
+//                    }
                 })
         }
         .onChange(of: action) { _ in

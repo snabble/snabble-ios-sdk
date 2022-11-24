@@ -226,15 +226,23 @@
 
 "Snabble.Payment.rejectedHint" = "Tvoj nákup bol zamietnutý. Skontroluj svoj košík a začni platobný proces znovu.";
 
+"Snabble.Payment.SEPA.city" = "City";
+
+"Snabble.Payment.SEPA.countryCode" = "Country";
+
 "Snabble.Payment.SEPA.hint" = "Poznámka: Za účelom tvojej ochrany a ochrany našich obchodníkov pred zneužitím si obchodník pri tvojej prvej platbe prostredníctvom SEPA inkasa vyžiada tvoju bankovú kartu.";
 
 "Snabble.Payment.SEPA.iban" = "IBAN";
 
 "Snabble.Payment.SEPA.invalidIBAN" = "Zadaný IBAN je neplatný.";
 
-"Snabble.Payment.SEPA.invalidName" = "Zadaj meno, prosím.";
+"Snabble.Payment.SEPA.invalidIBANCountry" = "The entered IBAN country code is incorrect.";
+
+"Snabble.Payment.SEPA.missingCity" = "Please enter a city.";
 
 "Snabble.Payment.SEPA.missingCountry" = "Kód krajiny nesmie zostať prázdny.";
+
+"Snabble.Payment.SEPA.missingName" = "Zadaj meno, prosím.";
 
 "Snabble.Payment.SEPA.name" = "Meno";
 

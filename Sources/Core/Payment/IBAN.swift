@@ -56,6 +56,9 @@ public enum IBAN {
         "VA": (22, "•• •••• •••• •••• •••• ••")
     ]
 
+    public static var countries: [String] {
+        return info.keys.compactMap( { $0 } )
+    }
     public static func length(_ country: String) -> Int? {
         return info[country]?.0
     }

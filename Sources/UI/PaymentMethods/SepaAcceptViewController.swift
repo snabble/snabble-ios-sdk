@@ -22,7 +22,7 @@ public protocol SepaAcceptViewControllerDelegate: AnyObject {
 open class SepaAcceptViewController: UIHostingController<SepaAcceptView> {
     public weak var delegate: SepaAcceptViewControllerDelegate?
 
-    private var completionHandler: ((RawResult<CheckoutProcess, SnabbleError>) -> Void)?
+    private var completionHandler: (() -> Void)?
     private var cancellables = Set<AnyCancellable>()
 
     public var viewModel: SepaAcceptModel {
@@ -30,7 +30,7 @@ open class SepaAcceptViewController: UIHostingController<SepaAcceptView> {
     }
     /// Creates and returns an dynamic stack  view controller with the specified viewModel
     /// - Parameter viewModel: A view model that specifies the details to be shown. Default value is `.default`
-    public init(viewModel: SepaAcceptModel, completion: @escaping (_ result: RawResult<CheckoutProcess, SnabbleError>) -> Void ) {
+    public init(viewModel: SepaAcceptModel, completion: @escaping () -> Void ) {
         super.init(rootView: SepaAcceptView(model: viewModel))
        
         self.completionHandler = completion
@@ -56,14 +56,14 @@ extension SepaAcceptViewController: SepaAcceptViewControllerDelegate {
     func accept(model: SepaAcceptModel) {
         Task {
             do {
-                try await model.accept(completion: completionHandler ?? { _ in })
+                try await model.accept(completion: completionHandler ?? { })
 
                 DispatchQueue.main.async {
                     self.dismiss()
                 }
             } catch {
                 DispatchQueue.main.async {
-                    let alert = AlertView(title: nil, message: Asset.localizedString(forKey: "Snabble.SEPA.encryptionError"))
+                    let alert = AlertView(title: nil, message: Asset.localizedString(forKey: "Snabble.SEPA.authorizingError"))
                     
                     alert.alertController?.addAction(UIAlertAction(title: Asset.localizedString(forKey: "ok"), style: .default) { _ in
                         self.dismiss()

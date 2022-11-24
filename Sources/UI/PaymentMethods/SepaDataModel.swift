@@ -11,7 +11,7 @@ import SnabbleCore
 
 public enum SepaStrings: String {
     case iban
-    case lastname
+    case lastname = "name"
     case city
     case countryCode
     
@@ -21,7 +21,7 @@ public enum SepaStrings: String {
     case invalidIBANCountry
     case invalidIBANNumber
 
-    case missingLastname
+    case missingName
     case missingCity
     case missingCountry
     
@@ -30,28 +30,28 @@ public enum SepaStrings: String {
     }
 }
 
-public extension String {
-    var ibanCountry: String? {
+extension String {
+    func firstIndexOf(charactersIn: String) -> Index? {
         let index = self.firstIndex { (character) -> Bool in
             if let unicodeScalar = character.unicodeScalars.first, character.unicodeScalars.count == 1 {
                 return CharacterSet(charactersIn: "0123456789").contains(unicodeScalar)
             }
             return false
         }
-        if let index = index {
+        return index
+    }
+}
+
+public extension String {
+    var ibanCountry: String? {
+        if let index = self.firstIndexOf(charactersIn: "0123456789") {
             return String(self.prefix(upTo:index))
         }
         return nil
     }
     
     var ibanNumber: String? {
-        let index = self.firstIndex { (character) -> Bool in
-            if let unicodeScalar = character.unicodeScalars.first, character.unicodeScalars.count == 1 {
-                return CharacterSet(charactersIn: "0123456789").contains(unicodeScalar)
-            }
-            return false
-        }
-        if let index = index {
+        if let index = self.firstIndexOf(charactersIn: "0123456789") {
             return String(self.suffix(from: index))
         }
         return nil
@@ -221,9 +221,9 @@ public final class SepaDataModel: ObservableObject {
                 } else if !validIbanCountry {
                     return SepaStrings.invalidIBANCountry.localizedString
                 } else if !validIbanNumber {
-                    return SepaStrings.invalidIBANNumber.localizedString
+                    return SepaStrings.invalidIBAN.localizedString
                 } else if !validLastname {
-                    return SepaStrings.missingLastname.localizedString
+                    return SepaStrings.missingName.localizedString
                 } else if !validCity && self.policy == .extended {
                     return SepaStrings.missingCity.localizedString
                 }

@@ -226,15 +226,23 @@
 
 "Snabble.Payment.rejectedHint" = "Your purchase was denied. Please check your cart and start the checkout again.";
 
+"Snabble.Payment.SEPA.city" = "City";
+
+"Snabble.Payment.SEPA.countryCode" = "Country";
+
 "Snabble.Payment.SEPA.hint" = "Nota: per proteggere te e i nostri commercianti da frodi, quando effettuerai il primo pagamento con addebito diretto SEPA, il commerciante chiederà di vedere la tua carta di credito.";
 
 "Snabble.Payment.SEPA.iban" = "IBAN";
 
 "Snabble.Payment.SEPA.invalidIBAN" = "L’IBAN inserito non è valido.";
 
-"Snabble.Payment.SEPA.invalidName" = "Inserisci un nome.";
+"Snabble.Payment.SEPA.invalidIBANCountry" = "The entered IBAN country code is incorrect.";
+
+"Snabble.Payment.SEPA.missingCity" = "Please enter a city.";
 
 "Snabble.Payment.SEPA.missingCountry" = "Il codice paese non può essere vuoto.";
+
+"Snabble.Payment.SEPA.missingName" = "Inserisci un nome.";
 
 "Snabble.Payment.SEPA.name" = "Nome";
 

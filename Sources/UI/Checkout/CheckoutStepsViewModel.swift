@@ -147,6 +147,10 @@ final class CheckoutStepsViewModel {
         if let originCandidate = originCandidate, originCandidate.isValid {
             steps.append(CheckoutStep(originCandidate: originCandidate, savedIbans: savedIbans))
         }
+        if let authorize = checkoutProcess.links.authorizePayment {
+            steps.append(CheckoutStep(authorizeLink: authorize, paymentState: paymentState, markup: checkoutProcess.paymentPreauthInformation?.markup))
+
+        }
         return steps
     }
 

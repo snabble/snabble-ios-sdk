@@ -265,6 +265,7 @@ extension PaymentProcess {
 
         let project = shop.project ?? .none
         let id = self.cart.uuid
+        
         self.signedCheckoutInfo.createCheckoutProcess(project, id: id, paymentMethod: method, timeout: Self.createTimeout) { result in
             self.hudTimer?.invalidate()
             UIApplication.shared.mainKeyWindow?.isUserInteractionEnabled = true
@@ -294,14 +295,9 @@ extension PaymentProcess {
             }
             
             func sepaCheck(process: CheckoutProcess) {
-                let sepaCheckVC = SepaAcceptViewController(viewModel: SepaAcceptModel(process: process)) { result in
-                    switch result.result {
-                    case .success(let process):
-                        checkoutProcess(process: process)
-                    
-                    case .failure(let error):
-                        errorHandler(error: error)
-                    }
+                let sepaCheckVC = SepaAcceptViewController(viewModel: SepaAcceptModel(process: process)) {
+        
+                    self.sepaAuthorize(process: process, project: project, detail: detail)
                 }
                 completion(.success(sepaCheckVC))
             }
@@ -312,18 +308,45 @@ extension PaymentProcess {
                 Snabble.storeInFlightCheckout(url: process.links._self.href,
                                               shop: self.shop,
                                               cart: self.cart)
-                
-                if case .payoneSepa(_) = detail?.methodData, process.paymentPreauthInformation?.markup != nil {
-                    sepaCheck(process: process)
-                } else {
-                    checkoutProcess(process: process)
-                }
+
+                checkoutProcess(process: process)
+
+//                if case .payoneSepa(_) = detail?.methodData, process.paymentPreauthInformation?.markup != nil {
+//                    sepaCheck(process: process)
+//                } else {
+//                    checkoutProcess(process: process)
+//                }
             case .failure(let error):
                 errorHandler(error: error)
             }
         }
     }
+    private struct Empty: Decodable {}
 
+    func sepaAuthorize(process: CheckoutProcess, project: Project, detail: PaymentMethodDetail?) {
+        print("project: \(project.id), id: \(process.id), paymentStatus: \(process.paymentState)")
+        
+        let authID = Snabble.clientId // shared.appUserId?.value  ?? process.id // process.paymentPreauthInformation?.mandateIdentification ?? process.id // ?? process.checks.first?.id ?? process.paymentPreauthInformation?.mandateIdentification ?? id
+        
+        let urlString = "/\(project.id)/checkout/payments/\(authID)/authorize"
+
+        let origin = [ "origin": detail?.encryptedData ]
+        project.request(.post, urlString, body: origin, timeout: 2) { request in
+            guard let request = request else {
+                return
+            }
+
+            project.perform(request) { (_ result : Result<Empty, SnabbleError>, response) in
+                
+                print("result: \(result), status: \(String(describing: response?.statusCode))")
+                
+                if response?.statusCode == 201 { // created
+//                    self.goBack()
+                }
+            }
+        }
+    }
+    
     static func checkoutViewController(for process: CheckoutProcess,
                                        shop: Shop,
                                        cart: ShoppingCart,

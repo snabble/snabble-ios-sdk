@@ -54,9 +54,11 @@ public final class SepaAcceptModel: ObservableObject {
 }
 
 extension SepaAcceptModel {
-    public func accept(completion: @escaping (_ result: RawResult<CheckoutProcess, SnabbleError>) -> Void ) async throws {
-                
+    public func accept(completion: () -> Void ) async throws {
+        
         print("will authorize")
+        completion()
+        
 //        do {
 //
 //        } catch {

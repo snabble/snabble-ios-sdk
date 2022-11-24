@@ -117,6 +117,15 @@ extension CheckoutStep {
         image = nil
         detailText = nil
     }
+    
+    init(authorizeLink: Link, paymentState: PaymentState, markup: String?) {
+        status = paymentState == .unauthorized ? .loading : .aborted
+        text = Asset.localizedString(forKey: "Snabble.Payment.SEPA.title")
+
+        actionTitle = Asset.localizedString(forKey: "Snabble.Payment.SEPA.iAgree")
+        detailText = markup?.replacingOccurrences(of: "+", with: " ").removingPercentEncoding
+        image = nil
+    }
 }
 
 private extension Fulfillment {
