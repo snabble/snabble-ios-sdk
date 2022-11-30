@@ -111,8 +111,8 @@ public struct ShopMapView: View {
         case user
     }
 
-    @State var mode: Mode = .shop
-    var region: MKCoordinateRegion {
+    @State private var mode: Mode = .shop
+    private var region: MKCoordinateRegion {
         switch mode {
         case .user:
             return userLocation?.region ?? MKCoordinateRegion.region(for: shop)
