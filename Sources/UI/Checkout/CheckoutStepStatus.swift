@@ -33,11 +33,11 @@ extension CheckoutStepStatus {
 extension CheckoutStepStatus {
     static func from(paymentState: PaymentState) -> Self {
         switch paymentState {
-        case .processing, .transferred, .pending:
+        case .processing, .transferred, .pending, .unauthorized:
             return .loading
         case .successful:
             return .success
-        case .failed, .unauthorized, .unknown:
+        case .failed, .unknown:
             return .failure
         }
     }

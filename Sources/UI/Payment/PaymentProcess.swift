@@ -306,31 +306,29 @@ extension PaymentProcess {
             }
         }
     }
-    private struct EmptyDecodable: Decodable {}
-    private struct EmptyEncodable: Encodable {}
 
-    static func sepaAuthorize(process: CheckoutProcess) {
-        guard let urlString = process.links.authorizePayment?.href else {
-            return
-        }
-        let project = SnabbleCI.project
-
-        project.request(.post, urlString, body: EmptyEncodable(), timeout: 2) { request in
-            guard let request = request else {
-                return
-            }
-
-            project.perform(request) { (_ result : Result<EmptyDecodable, SnabbleError>, response) in
-                
-                print("result: \(result), status: \(String(describing: response?.statusCode))")
-                
-                if response?.statusCode == 204 { // No Content
-
-                }
-            }
-        }
-    }
-    
+//    static func sepaAuthorize(process: CheckoutProcess) {
+//        guard let urlString = process.links.authorizePayment?.href else {
+//            return
+//        }
+//        let project = SnabbleCI.project
+//
+//        project.request(.post, urlString, body: EmptyEncodable(), timeout: 2) { request in
+//            guard let request = request else {
+//                return
+//            }
+//
+//            project.perform(request) { (_ result : Result<EmptyDecodable, SnabbleError>, response) in
+//
+//                print("result: \(result), status: \(String(describing: response?.statusCode))")
+//
+//                if response?.statusCode == 204 { // No Content
+//
+//                }
+//            }
+//        }
+//    }
+//
     static func checkoutViewController(for process: CheckoutProcess,
                                        shop: Shop,
                                        cart: ShoppingCart,
@@ -351,7 +349,7 @@ extension PaymentProcess {
         case .none:
             if process.paymentState == .unauthorized, process.links.authorizePayment != nil {
                 let sepaCheckViewController = SepaAcceptViewController(viewModel: SepaAcceptModel(process: process)) {
-                    Self.sepaAuthorize(process: process)
+                    //Self.sepaAuthorize(process: process)
                 }
                 return sepaCheckViewController
             }

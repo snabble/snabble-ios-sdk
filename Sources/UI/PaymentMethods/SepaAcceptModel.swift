@@ -13,6 +13,7 @@ public final class SepaAcceptModel: ObservableObject {
     public var actionPublisher = PassthroughSubject<[String: Any]?, Never>()
     
     let process: CheckoutProcess
+    var poller: PaymentProcessPoller?
     
     init(process: CheckoutProcess) {
         self.process = process
@@ -53,12 +54,67 @@ public final class SepaAcceptModel: ObservableObject {
     }
 }
 
+fileprivate struct EmptyDecodable: Decodable {}
+fileprivate struct EmptyEncodable: Encodable {}
+
 extension SepaAcceptModel {
+    
+    func sepaAuthorize() {
+        guard let urlString = process.links.authorizePayment?.href else {
+            return
+        }
+        let project = SnabbleCI.project
+
+        project.request(.post, urlString, body: EmptyEncodable(), timeout: 2) { request in
+            guard let request = request else {
+                return
+            }
+
+            project.perform(request) { (_ result : Result<EmptyDecodable, SnabbleError>, response) in
+                
+                print("result: \(result), status: \(String(describing: response?.statusCode))")
+                
+                if response?.statusCode == 204 { // No Content
+                    self.waitForPaymentProcessing()
+                } else {
+                    self.actionPublisher.send(["action": "authorizingFailed"])
+                }
+            }
+        }
+    }
+    private func waitForPaymentProcessing() {
+        let project = SnabbleCI.project
+        let poller = PaymentProcessPoller(process, project)
+
+        poller.waitFor([.paymentSuccess]) { events in
+            if events[.paymentSuccess] != nil {
+                self.paymentFinished(process: poller.updatedProcess)
+            } else {
+                print("poller received: \(events)")
+            }
+        }
+
+        self.poller = poller
+    }
+
+    private func paymentFinished(process: CheckoutProcess) {
+        self.poller = nil
+
+        print("paymentFinished - paymentState: \(process.paymentState)")
+        actionPublisher.send(["action": "paymentFinished"])
+        
+//        let paymentDisplay = CheckoutStepsViewController(shop: shop,
+//                                                         shoppingCart: shoppingCart,
+//                                                         checkoutProcess: checkoutProcess)
+//        paymentDisplay.paymentDelegate = delegate
+//        self.navigationController?.pushViewController(paymentDisplay, animated: true)
+    }
+
     public func accept(completion: () -> Void ) async throws {
         
         print("will authorize")
-        completion()
-        
+//        completion()
+        sepaAuthorize()
 //        do {
 //
 //        } catch {

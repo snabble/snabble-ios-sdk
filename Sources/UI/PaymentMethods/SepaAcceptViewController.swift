@@ -80,6 +80,15 @@ extension SepaAcceptViewController: SepaAcceptViewControllerDelegate {
             case "accept":
                 self.accept(model: viewController.viewModel)
                 
+            case "paymentFinished":
+                print("paymentFinsihed")
+
+            case "paymentFailed":
+                print("paymentFailed")
+
+            case "authorizingFailed":
+                print("authorizingFailed")
+
             default:
                 print("unahndled action: \(action)")
                 break

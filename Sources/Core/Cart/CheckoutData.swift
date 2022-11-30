@@ -387,6 +387,84 @@ public struct CheckoutProcess: Decodable {
 
         return complete
     }
+    
+    /// replication of backend checkout state
+    /// https://github.com/snabble/checkout/blob/2006e2e963bfbbec4045030cbb86d11858cd298a/processes/checkout_process.go#L165
+    ///
+    ///     func (process *CheckoutProcess) State() State {
+    ///         if process.Payments.IsTransferred() {
+    ///              return Transferred
+    ///        }
+    ///        if process.Payments.IsFailed() {
+    ///            return PaymentFailed
+    ///        }
+    ///        if process.PaymentStateIsSuccessful() && (process.anyFulfillmentIsReadyButNotDone() || !process.receiptWasGeneratedOrShouldBeSkipped()) {
+    ///            return Finalizing
+    ///        }
+    ///        if process.PaymentStateIsSuccessful() && process.allFulfillmentsFinal() && process.receiptWasGeneratedOrShouldBeSkipped() {
+    ///            return Final
+    ///        }
+    ///        if process.anyCheckFailed() || process.anyFulfillmentAllocationFailed() || process.anyCouponVoidingFailed() {
+    ///            return PreconditionsNotMet
+    ///        }
+    ///        if process.Aborted {
+    ///            return UserAborted
+    ///        }
+    ///        if process.anyCheckPending() || process.anyFulfillmentIsPending() || process.AnyCouponVoidingPending() {
+    ///            return CheckingPreconditions
+    ///        }
+    ///        if !process.Payments.IsInitialized() {
+    ///            return PreconditionsSatisfied
+    ///        }
+    ///        if process.Payments.IsAuthorizing() {
+    ///            return AuthorizingPayments
+    ///        }
+    ///        if process.Payments.IsAuthorized() {
+    ///            return AuthorizedPayments
+    ///        }
+    ///        if process.Payments.IsProcessing() {
+    ///            return ProcessingPayments
+    ///        }
+    ///
+    ///        return Open
+    ///    }
+    ///
+    public enum State {
+        case open
+        case transferred
+        
+        case paymentFailed
+        case userAborted
+
+        case finalizing
+        case final
+
+        case preconditionsNotMet
+        case checkingPreconditions
+        case preconditionsSatisfied
+        
+        case authorizingPayments
+        case authorizedPayments
+        case processingPayments
+    }
+//    public var checkoutState: State {
+//        switch paymentState  {
+//        case .transferred:
+//            return .transferred
+//        case .failed
+//            return .paymentFailed
+//        case .unknown:
+//            return .open
+//        case .pending:
+//            return .preconditionsSatisfied
+//        case .processing:
+//            return .processingPayments
+//        case .successful:
+//            return fulfillmentsDone() ? .final : .finalizing
+//        case .unauthorized:
+//            <#code#>
+//        }
+//    }
 }
 
 // MARK: - Fulfillment convenience methods

@@ -62,11 +62,11 @@ extension CheckoutStep {
 extension CheckoutStep {
     init(paymentState: PaymentState) {
         switch paymentState {
-        case .unknown, .failed, .unauthorized:
+        case .unknown, .failed:
             status = .failure
             detailText = Asset.localizedString(forKey: "Snabble.PaymentStatus.Payment.error")
             actionTitle = nil
-        case .pending, .processing, .transferred:
+        case .pending, .processing, .transferred, .unauthorized:
             status = .loading
             detailText = nil
             actionTitle = nil
@@ -123,7 +123,7 @@ extension CheckoutStep {
         text = Asset.localizedString(forKey: "Snabble.Payment.SEPA.title")
 
         actionTitle = Asset.localizedString(forKey: "Snabble.Payment.SEPA.iAgree")
-        detailText = markup?.replacingOccurrences(of: "+", with: " ").removingPercentEncoding
+        detailText = nil // markup?.replacingOccurrences(of: "+", with: " ").removingPercentEncoding
         image = nil
     }
 }
