@@ -22,7 +22,7 @@ final class SupervisorCheckViewController: BaseCheckViewController {
         if process.allChecksSuccessful {
             return .finalizeCheckout
         }
-
+        
         return .continuePolling
     }
 

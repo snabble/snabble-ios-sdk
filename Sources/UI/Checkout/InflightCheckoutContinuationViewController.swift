@@ -94,9 +94,11 @@ public final class InFlightCheckoutContinuationViewController: UIViewController 
                 }
                 let checkoutViewController = PaymentProcess.checkoutViewController(
                     for: process,
+                    paymentDetail: nil,
                     shop: inFlightCheckout.shop,
                     cart: cart,
-                    paymentDelegate: self?.paymentDelegate
+                    paymentDelegate: self?.paymentDelegate,
+                    completion: { _ in }
                 )
 
                 if let checkoutViewController = checkoutViewController {

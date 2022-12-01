@@ -125,6 +125,19 @@ public final class SepaDataModel: ObservableObject {
     }
     private var paymentDetail: PaymentMethodDetail?
     
+    public var paymentDetailName: String? {
+        if let detail = paymentDetail, case .payoneSepa(let data) = detail.methodData {
+            return data.lastName
+        }
+        return nil
+    }
+    public var paymentDetailMandate: String? {
+        if let detail = paymentDetail, case .payoneSepa(let data) = detail.methodData {
+            return data.mandateReference
+        }
+        return nil
+    }
+
     private var countryIsValid: Bool {
         return IBAN.length(self.ibanCountry.uppercased()) != nil
     }

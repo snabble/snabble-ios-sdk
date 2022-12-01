@@ -20,8 +20,12 @@ public struct PayoneSepaData: Codable, EncryptedPaymentData, Equatable {
     
     public var originType = AcceptedOriginType.payoneSepaData
     
+    public let lastName: String
+    
+    public var mandateReference: String
+    
     enum CodingKeys: String, CodingKey {
-        case encryptedPaymentData, serial, displayName
+        case encryptedPaymentData, serial, displayName, lastName, mandateReference
     }
 
     private struct DirectDebitRequestOrigin: PaymentRequestOrigin {
@@ -45,5 +49,17 @@ public struct PayoneSepaData: Codable, EncryptedPaymentData, Equatable {
         self.serial = serial
 
         self.displayName = IBAN.displayName(iban)
+        self.lastName = lastName
+        self.mandateReference = ""
     }
+    
+    public init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        self.encryptedPaymentData = try container.decode(String.self, forKey: .encryptedPaymentData)
+        self.serial = try container.decode(String.self, forKey: .serial)
+        self.displayName = try container.decode(String.self, forKey: .displayName)
+        self.lastName = try container.decode(String.self, forKey: .lastName)
+        self.mandateReference = try container.decode(String.self, forKey: .mandateReference)
+    }
+
 }

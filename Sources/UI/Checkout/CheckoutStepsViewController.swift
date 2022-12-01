@@ -201,6 +201,14 @@ extension CheckoutStepsViewController: CheckoutStepsViewModelDelegate {
         doneButton?.isEnabled = checkoutProcess.isComplete
         if checkoutProcess.isComplete {
             Snabble.clearInFlightCheckout()
+        } else if checkoutProcess.paymentState == .unauthorized && checkoutProcess.links.authorizePayment != nil {
+            guard self.navigationController?.topViewController?.isKind(of: SepaAcceptViewController.self) == false else {
+                return
+            }
+            let sepaCheckViewController = SepaAcceptViewController(viewModel: SepaAcceptModel(process: checkoutProcess, paymentDetail: nil)) {
+                //Self.sepaAuthorize(process: process)
+            }
+            self.navigationController?.pushViewController(sepaCheckViewController, animated: true)
         }
     }
 

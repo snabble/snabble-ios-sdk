@@ -108,7 +108,6 @@ public struct SepaDataView: View {
     @ViewBuilder
     var ibanNumber: some View {
         TextField(SepaStrings.iban.localizedString, text: $model.ibanNumber)
-//            .textFieldStyle(.roundedBorder)
             .keyboardType(.numberPad)
     }
     
@@ -139,12 +138,7 @@ public struct SepaDataView: View {
                 footer: {
                     Text(keyed: "Snabble.Payment.SEPA.hint")
                         .font(.footnote)
-                        .foregroundColor(.gray)
-//                    if !model.errorMessage.isEmpty {
-//                        Text(model.errorMessage)
-//                            .font(.footnote)
-//                            .foregroundColor(.red)
-//                    }
+                        .foregroundColor(.secondaryLabel)
                 })
         }
         .onChange(of: action) { _ in
@@ -163,21 +157,33 @@ public struct SepaDataView: View {
         Form {
             Section(
                 content: {
-                    HStack {
-                        if let imageName = model.imageName, let uiImage = Asset.image(named: "SnabbleSDK/payment/" + imageName) {
-                            Image(uiImage: uiImage)
+                    VStack(alignment: .leading) {
+                        HStack {
+                            if let imageName = model.imageName, let uiImage = Asset.image(named: "SnabbleSDK/payment/" + imageName) {
+                                Image(uiImage: uiImage)
+                            }
+                            Text(model.iban)
                         }
-                        Text(model.iban)
+                        HStack {
+                            if let lastName = model.paymentDetailName {
+                                Text(SepaStrings.lastname.localizedString + ": " + lastName)
+                            }
+                            if let mandate = model.paymentDetailMandate {
+                                Spacer()
+                                Text(mandate)
+                            }
+                        }
+                        .font(.footnote)
+                        .foregroundColor(.secondaryLabel)
                     }
                 }
             )
         }
-        .navigationBarItems(trailing: 
-            Button(action: {
-                self.model.actionPublisher.send(["action": "remove"])
-            }) {
-                Image(systemName: "trash")
-            }
+        .navigationBarItems(trailing: Button(action: {
+            askForRemove()
+        }) {
+            Image(systemName: "trash")
+        }
         )
     }
     
@@ -187,6 +193,21 @@ public struct SepaDataView: View {
         } else {
             display
         }
+    }
+    private func askForRemove() {
+        let alert = AlertView(title: Asset.localizedString(forKey: "Snabble.Payment.SEPA.title"), message: Asset.localizedString(forKey: "Snabble.Payment.SEPA.remove"))
+
+        alert.alertController?.addAction(UIAlertAction(title: Asset.localizedString(forKey: "Snabble.delete"), style: .default) { _ in
+            self.model.actionPublisher.send(["action": "remove"])
+            alert.dismiss(animated: false)
+        })
+
+        alert.alertController?.addAction(UIAlertAction(title: Asset.localizedString(forKey: "cancel"), style: .cancel, handler: { _ in
+            alert.dismiss(animated: false)
+        }))
+    
+        alert.show()
+
     }
 }
 

@@ -429,6 +429,8 @@ public struct CheckoutProcess: Decodable {
     ///        return Open
     ///    }
     ///
+    ///
+    // TODO: implement a state machine using State
     public enum State {
         case open
         case transferred
@@ -447,24 +449,6 @@ public struct CheckoutProcess: Decodable {
         case authorizedPayments
         case processingPayments
     }
-//    public var checkoutState: State {
-//        switch paymentState  {
-//        case .transferred:
-//            return .transferred
-//        case .failed
-//            return .paymentFailed
-//        case .unknown:
-//            return .open
-//        case .pending:
-//            return .preconditionsSatisfied
-//        case .processing:
-//            return .processingPayments
-//        case .successful:
-//            return fulfillmentsDone() ? .final : .finalizing
-//        case .unauthorized:
-//            <#code#>
-//        }
-//    }
 }
 
 // MARK: - Fulfillment convenience methods

@@ -122,8 +122,8 @@ extension CheckoutStep {
         status = nil // paymentState == .unauthorized ? .loading : .aborted
         text = Asset.localizedString(forKey: "Snabble.Payment.SEPA.title")
 
-        actionTitle = Asset.localizedString(forKey: "Snabble.Payment.SEPA.iAgree")
-        detailText = nil // markup?.replacingOccurrences(of: "+", with: " ").removingPercentEncoding
+        actionTitle = nil
+        detailText = nil
         image = nil
     }
 }

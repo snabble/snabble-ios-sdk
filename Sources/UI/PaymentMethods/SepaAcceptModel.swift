@@ -13,10 +13,13 @@ public final class SepaAcceptModel: ObservableObject {
     public var actionPublisher = PassthroughSubject<[String: Any]?, Never>()
     
     let process: CheckoutProcess
+    let paymentDetail: PaymentMethodDetail?
+
     var poller: PaymentProcessPoller?
     
-    init(process: CheckoutProcess) {
+    init(process: CheckoutProcess, paymentDetail: PaymentMethodDetail? = nil) {
         self.process = process
+        self.paymentDetail = paymentDetail
     }
     
     public var markup: String? {
@@ -59,13 +62,15 @@ fileprivate struct EmptyEncodable: Encodable {}
 
 extension SepaAcceptModel {
     
-    func sepaAuthorize() {
+    func sepaAuthorize(completion: @escaping () -> Void) {
         guard let urlString = process.links.authorizePayment?.href else {
             return
         }
         let project = SnabbleCI.project
+       
+        let data = [ "mandateReference": process.paymentPreauthInformation?.mandateIdentification ]
 
-        project.request(.post, urlString, body: EmptyEncodable(), timeout: 2) { request in
+        project.request(.post, urlString, body: data, timeout: 2) { request in
             guard let request = request else {
                 return
             }
@@ -75,7 +80,18 @@ extension SepaAcceptModel {
                 print("result: \(result), status: \(String(describing: response?.statusCode))")
                 
                 if response?.statusCode == 204 { // No Content
-                    self.waitForPaymentProcessing()
+                
+                    if let detail = self.paymentDetail, case .payoneSepa(let data) = detail.methodData, let mandateReference = self.process.paymentPreauthInformation?.mandateIdentification {
+                        var sepaData = data
+                         
+                        sepaData.mandateReference = mandateReference
+                        let detail = PaymentMethodDetail(sepaData)
+
+                        PaymentMethodDetails.save(detail)
+
+                    }
+                    completion()
+//                    self.waitForPaymentProcessing()
                 } else {
                     self.actionPublisher.send(["action": "authorizingFailed"])
                 }
@@ -110,16 +126,10 @@ extension SepaAcceptModel {
 //        self.navigationController?.pushViewController(paymentDisplay, animated: true)
     }
 
-    public func accept(completion: () -> Void ) async throws {
+    public func accept(completion: @escaping () -> Void ) async throws {
         
         print("will authorize")
-//        completion()
-        sepaAuthorize()
-//        do {
-//
-//        } catch {
-//            //  throw an error
-//        }
+        sepaAuthorize(completion: completion)
     }
 }
 

@@ -272,10 +272,13 @@ extension PaymentProcess {
             self.hideBlurOverlay()
             
             func checkoutProcess(process: CheckoutProcess) {
+                
                 let checkoutVC = Self.checkoutViewController(for: process,
+                                                             paymentDetail: detail,
                                                              shop: self.shop,
                                                              cart: self.cart,
-                                                             paymentDelegate: self.paymentDelegate)
+                                                             paymentDelegate: self.paymentDelegate,
+                                                             completion: completion)
                 
                 if let viewController = checkoutVC {
                     if let customizable = viewController as? CustomizableAppearance {
@@ -307,32 +310,12 @@ extension PaymentProcess {
         }
     }
 
-//    static func sepaAuthorize(process: CheckoutProcess) {
-//        guard let urlString = process.links.authorizePayment?.href else {
-//            return
-//        }
-//        let project = SnabbleCI.project
-//
-//        project.request(.post, urlString, body: EmptyEncodable(), timeout: 2) { request in
-//            guard let request = request else {
-//                return
-//            }
-//
-//            project.perform(request) { (_ result : Result<EmptyDecodable, SnabbleError>, response) in
-//
-//                print("result: \(result), status: \(String(describing: response?.statusCode))")
-//
-//                if response?.statusCode == 204 { // No Content
-//
-//                }
-//            }
-//        }
-//    }
-//
     static func checkoutViewController(for process: CheckoutProcess,
+                                       paymentDetail: PaymentMethodDetail?,
                                        shop: Shop,
                                        cart: ShoppingCart,
-                                       paymentDelegate: PaymentDelegate?) -> UIViewController? {
+                                       paymentDelegate: PaymentDelegate?,
+                                       completion: @escaping (_ result: Result<UIViewController, SnabbleError>) -> Void) -> UIViewController? {
         guard let rawMethod = RawPaymentMethod(rawValue: process.paymentMethod) else {
             return nil
         }
@@ -347,17 +330,20 @@ extension PaymentProcess {
         }
         switch process.routingTarget {
         case .none:
-            if process.paymentState == .unauthorized, process.links.authorizePayment != nil {
-                let sepaCheckViewController = SepaAcceptViewController(viewModel: SepaAcceptModel(process: process)) {
-                    //Self.sepaAuthorize(process: process)
-                }
-                return sepaCheckViewController
-            }
-            
             let checkoutDisplay = rawMethod.checkoutDisplayViewController(shop: shop,
                                                                           checkoutProcess: process,
                                                                           shoppingCart: cart,
                                                                           delegate: paymentDelegate)
+
+           if process.paymentState == .unauthorized, process.links.authorizePayment != nil {
+                let sepaCheckViewController = SepaAcceptViewController(viewModel: SepaAcceptModel(process: process, paymentDetail: paymentDetail)) {
+                    if let display = checkoutDisplay {
+                        completion(.success(display))
+                    }
+                }
+                return sepaCheckViewController
+            }
+
             if let display = checkoutDisplay {
                 return display
             } else {
