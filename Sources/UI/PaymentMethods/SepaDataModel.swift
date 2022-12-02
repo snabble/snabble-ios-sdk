@@ -15,6 +15,9 @@ public enum SepaStrings: String {
     case city
     case countryCode
     
+    case payer
+    case mandate
+    
     case save
     
     case invalidIBAN

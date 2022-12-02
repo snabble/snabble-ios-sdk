@@ -240,6 +240,8 @@
 
 "Snabble.Payment.SEPA.invalidName" = "Please enter a valid lastname.";
 
+"Snabble.Payment.SEPA.mandate" = "Mandate Reference No.";
+
 "Snabble.Payment.SEPA.missingCity" = "Add meg a várost.";
 
 "Snabble.Payment.SEPA.missingCountry" = "Az országkód nem lehet üres.";
@@ -247,6 +249,8 @@
 "Snabble.Payment.SEPA.missingName" = "Add meg a neved.";
 
 "Snabble.Payment.SEPA.name" = "Név";
+
+"Snabble.Payment.SEPA.payer" = "Payer";
 
 "Snabble.Payment.SEPA.title" = "SEPA terhelési megbízás";
 

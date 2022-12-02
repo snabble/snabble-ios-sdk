@@ -240,6 +240,8 @@
 
 "Snabble.Payment.SEPA.invalidName" = "Please enter a valid lastname.";
 
+"Snabble.Payment.SEPA.mandate" = "Mandate Reference No.";
+
 "Snabble.Payment.SEPA.missingCity" = "Please enter a city.";
 
 "Snabble.Payment.SEPA.missingCountry" = "Country code cannot be empty.";
@@ -247,6 +249,8 @@
 "Snabble.Payment.SEPA.missingName" = "Please enter your surname.";
 
 "Snabble.Payment.SEPA.name" = "Lastname";
+
+"Snabble.Payment.SEPA.payer" = "Payer";
 
 "Snabble.Payment.SEPA.title" = "SEPA direct debit";
 

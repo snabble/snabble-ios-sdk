@@ -163,11 +163,11 @@ public struct SepaDataDisplayView: View {
                         }
                         HStack {
                             if let lastName = model.paymentDetailName {
-                                Text(SepaStrings.lastname.localizedString + ": " + lastName)
+                                Text(SepaStrings.payer.localizedString + ": " + lastName)
                             }
                             if let mandate = model.paymentDetailMandate {
                                 Spacer()
-                                Text(mandate)
+                                Text(SepaStrings.mandate.localizedString + ": " + mandate)
                             }
                         }
                         .font(.footnote)
