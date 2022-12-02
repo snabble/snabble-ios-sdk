@@ -238,6 +238,8 @@
 
 "Snabble.Payment.SEPA.invalidIBANCountry" = "A megadott IBAN-országkód hibás.";
 
+"Snabble.Payment.SEPA.invalidName" = "Please enter a valid lastname.";
+
 "Snabble.Payment.SEPA.missingCity" = "Add meg a várost.";
 
 "Snabble.Payment.SEPA.missingCountry" = "Az országkód nem lehet üres.";

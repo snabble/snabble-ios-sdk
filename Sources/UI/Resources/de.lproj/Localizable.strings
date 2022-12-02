@@ -238,6 +238,8 @@
 
 "Snabble.Payment.SEPA.invalidIBANCountry" = "Der eingegebene IBAN Ländercode ist falsch.";
 
+"Snabble.Payment.SEPA.invalidName" = "Bitte gib einen Nachnamen ein.";
+
 "Snabble.Payment.SEPA.missingCity" = "Bitte gib eine Stadt ein.";
 
 "Snabble.Payment.SEPA.missingCountry" = "Ländercode darf nicht leer sein.";

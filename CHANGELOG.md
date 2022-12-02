@@ -7,6 +7,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [unreleased]
 
 ### Added
+* PayOne SEPA payment
+
+## [0.24.0] - 2022-12-02
+
+### Added
 * DeveloperMode with 5 tabs on profile version field
 * Default developer password is "Snabble" customizable via AssetProviding key "SnabbleDeveloperPassword"
 * CheckIn / CheckOut for selected shops in DeveloperMode
@@ -25,6 +30,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 * Information Widget takes full width
 * Change GateKeeper `text` to `nil`
 * Inflight Checkoout Status prüfen APPS-546
+* SwiftUI modification error APPS-523
+* Beenden der App während des Bezahlvorgangs APPS-421
 
 ### Updated
 * datatrans/ios-sdk 2.4.0 (was 2.3.0)

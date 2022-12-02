@@ -100,7 +100,6 @@ public final class InFlightCheckoutContinuationViewController: UIViewController 
                     paymentDelegate: self?.paymentDelegate,
                     completion: { _ in }
                 )
-
                 if let checkoutViewController = checkoutViewController {
                     self?.navigationController?.pushViewController(checkoutViewController, animated: true)
                 } else {

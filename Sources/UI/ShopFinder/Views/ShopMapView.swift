@@ -103,29 +103,31 @@ public struct ShopAnnotationView: View {
 }
 
 public struct ShopMapView: View {
-    var shop: ShopProviding
-    var userLocation: CLLocation?
-    
-    @State var tracking: MapUserTrackingMode = .follow
-    
-    enum CurrentLocation {
+    let shop: ShopProviding
+    let userLocation: CLLocation?
+
+    enum Mode {
         case shop
         case user
     }
-    
-    @State private var currentLocation: CurrentLocation = .shop
-    @State private var showLocation = false
-    // 50,73448° N, 7,07530° O is snabbles home location
-    @State private var region = MKCoordinateRegion(center: CLLocationCoordinate2D(latitude: 50.73448, longitude: 7.07530), latitudinalMeters: 2000, longitudinalMeters: 2000)
+
+    @State private var mode: Mode = .shop
+    private var region: MKCoordinateRegion {
+        switch mode {
+        case .user:
+            return userLocation?.region ?? MKCoordinateRegion.region(for: shop)
+        case .shop:
+            return MKCoordinateRegion.region(for: shop)
+        }
+    }
 
     @ViewBuilder
     var mapView: some View {
-        Map(coordinateRegion: $region,
-            interactionModes: MapInteractionModes.all,
+        Map(coordinateRegion: .init(get: { region }, set: { _ in }),
+            interactionModes: .all,
             showsUserLocation: true,
-            userTrackingMode: $tracking,
+            userTrackingMode: .constant(.none),
             annotationItems: [ShopLocation(shop: shop)]) { place in
-
             MapAnnotation(coordinate: place.shop.location.coordinate) {
                 ShopAnnotationView(shopLocation: place)
                     .shadow(color: .gray, radius: 3, x: 2, y: 2)
@@ -137,16 +139,14 @@ public struct ShopMapView: View {
     var locationControl: some View {
         VStack(spacing: 12) {
             Button(action: {
-                currentLocation = .shop
-                showLocation = true
+                mode = .shop
             }) {
-                Asset.image(named: currentLocation == .shop ? "house.fill" : "house")
+                Asset.image(named: mode == .shop ? "house.fill" : "house")
             }
             Button(action: {
-                currentLocation = .user
-                showLocation = true
+                mode = .user
             }) {
-                Asset.image(named: currentLocation == .user ? "location.fill" : "location")
+                Asset.image(named: mode == .user ? "location.fill" : "location")
             }
         }
         .padding(10)
@@ -157,39 +157,22 @@ public struct ShopMapView: View {
     }
     
     public var body: some View {
-        
         ZStack(alignment: .topTrailing) {
             mapView
             locationControl
                 .padding()
                 .zIndex(1)
         }
-        .onAppear {
-            region = MKCoordinateRegion.region(for: shop)
-        }
-        .onChange(of: showLocation) { _ in
-            showLocation = false
-            withAnimation(.easeInOut) {
-                switch currentLocation {
-                case .shop:
-                    region = MKCoordinateRegion.region(for: shop)
-                case .user:
-                    if let userRegion = userLocation?.region {
-                        region = userRegion
-                    }
-                }
-            }
-        }
     }
 }
 
-extension CLLocation {
+private extension CLLocation {
     var region: MKCoordinateRegion? {
         MKCoordinateRegion(center: coordinate, latitudinalMeters: 2000, longitudinalMeters: 2000)
     }
 }
 
-extension MKCoordinateRegion {
+private extension MKCoordinateRegion {
     static func region(for shop: ShopProviding) -> MKCoordinateRegion {
         MKCoordinateRegion(center: shop.location.coordinate, latitudinalMeters: 2000, longitudinalMeters: 2000)
     }
