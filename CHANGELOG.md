@@ -26,6 +26,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 * Change GateKeeper `text` to `nil`
 * Inflight Checkoout Status prüfen APPS-546
 * SwiftUI modification error APPS-523
+* Beenden der App während des Bezahlvorgangs APPS-421
 
 ### Updated
 * datatrans/ios-sdk 2.4.0 (was 2.3.0)
