@@ -68,6 +68,6 @@ extension DashboardViewController: DynamicViewControllerDelegate {
 
     @objc
     private func dismiss(_ sender: UIBarButtonItem) {
-        self. dismiss(animated: true)
+        self.dismiss(animated: true)
     }
 }

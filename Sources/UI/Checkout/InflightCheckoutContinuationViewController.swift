@@ -94,11 +94,9 @@ public final class InFlightCheckoutContinuationViewController: UIViewController 
                 }
                 let checkoutViewController = PaymentProcess.checkoutViewController(
                     for: process,
-                    paymentDetail: nil,
                     shop: inFlightCheckout.shop,
                     cart: cart,
-                    paymentDelegate: self?.paymentDelegate,
-                    completion: { _ in }
+                    paymentDelegate: self?.paymentDelegate
                 )
                 if let checkoutViewController = checkoutViewController {
                     self?.navigationController?.pushViewController(checkoutViewController, animated: true)

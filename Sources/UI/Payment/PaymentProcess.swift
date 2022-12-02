@@ -274,11 +274,9 @@ extension PaymentProcess {
             func checkoutProcess(process: CheckoutProcess) {
                 
                 let checkoutVC = Self.checkoutViewController(for: process,
-                                                             paymentDetail: detail,
                                                              shop: self.shop,
                                                              cart: self.cart,
-                                                             paymentDelegate: self.paymentDelegate,
-                                                             completion: completion)
+                                                             paymentDelegate: self.paymentDelegate)
                 
                 if let viewController = checkoutVC {
                     if let customizable = viewController as? CustomizableAppearance {
@@ -311,11 +309,9 @@ extension PaymentProcess {
     }
 
     static func checkoutViewController(for process: CheckoutProcess,
-                                       paymentDetail: PaymentMethodDetail?,
                                        shop: Shop,
                                        cart: ShoppingCart,
-                                       paymentDelegate: PaymentDelegate?,
-                                       completion: @escaping (_ result: Result<UIViewController, SnabbleError>) -> Void) -> UIViewController? {
+                                       paymentDelegate: PaymentDelegate?) -> UIViewController? {
         guard let rawMethod = RawPaymentMethod(rawValue: process.paymentMethod) else {
             return nil
         }
