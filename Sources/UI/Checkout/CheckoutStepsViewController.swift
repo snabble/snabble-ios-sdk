@@ -206,11 +206,9 @@ extension CheckoutStepsViewController: CheckoutStepsViewModelDelegate {
                 return
             }
             let paymentDetail = PaymentMethodDetail.paymentDetailFor(rawMethod: checkoutProcess.rawPaymentMethod)
-            
             let sepaCheckViewController = SepaAcceptViewController(viewModel: SepaAcceptModel(process: checkoutProcess, paymentDetail: paymentDetail))
             
             self.present(sepaCheckViewController, animated: true)
-//            self.navigationController?.pushViewController(sepaCheckViewController, animated: true)
         }
     }
 
