@@ -226,9 +226,9 @@
 
 "Snabble.Payment.rejectedHint" = "A bevásárlás elutasításra került. Ellenőrizd a kosaradat, és próbáld meg újra a fizetést.";
 
-"Snabble.Payment.SEPA.city" = "City";
+"Snabble.Payment.SEPA.city" = "Város";
 
-"Snabble.Payment.SEPA.countryCode" = "Country";
+"Snabble.Payment.SEPA.countryCode" = "Ország";
 
 "Snabble.Payment.SEPA.hint" = "Megjegyzés: A te és a kereskedőink visszaélésekkel szembeni védelme érdekében az első SEPA terhelési megbízásos fizetésednél a kereskedőnél megjelenik a bankkártyád.";
 
@@ -236,9 +236,9 @@
 
 "Snabble.Payment.SEPA.invalidIBAN" = "A megadott IBAN érvénytelen.";
 
-"Snabble.Payment.SEPA.invalidIBANCountry" = "The entered IBAN country code is incorrect.";
+"Snabble.Payment.SEPA.invalidIBANCountry" = "A megadott IBAN-országkód hibás.";
 
-"Snabble.Payment.SEPA.missingCity" = "Please enter a city.";
+"Snabble.Payment.SEPA.missingCity" = "Add meg a várost.";
 
 "Snabble.Payment.SEPA.missingCountry" = "Az országkód nem lehet üres.";
 
@@ -470,7 +470,7 @@
 "Snabble.Scanner.noMatchesFound" = "Termék nem található";
 
 /* Text to be displayed in scanner if the app is not checked into a shop. */
-"Snabble.Scanner.notCheckedIn" = "Visit a store to use the scanner.";
+"Snabble.Scanner.notCheckedIn" = "A szkenner használatához fáradj be egy üzletbe.";
 
 "Snabble.Scanner.plusDeposit" = "+ %@ betétdíj";
 
@@ -501,6 +501,8 @@
 "Snabble.SEPA.IbanTransferAlert.message" = "Elmented ezeket a számlaadatokat (IBAN: %@) a jövőbeni bevásárlásokhoz?";
 
 "Snabble.SEPA.IbanTransferAlert.title" = "Számla adatainak mentése";
+
+"Snabble.SEPA.iDoNotAgree" = "I do not agree";
 
 "Snabble.SEPA.mandate" = "SEPA terhelési megbízás";
 

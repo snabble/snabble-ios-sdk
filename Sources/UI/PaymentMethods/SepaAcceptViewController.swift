@@ -22,7 +22,6 @@ public protocol SepaAcceptViewControllerDelegate: AnyObject {
 open class SepaAcceptViewController: UIHostingController<SepaAcceptView> {
     public weak var delegate: SepaAcceptViewControllerDelegate?
 
-    private var completionHandler: (() -> Void)?
     private var cancellables = Set<AnyCancellable>()
 
     public var viewModel: SepaAcceptModel {
@@ -30,11 +29,11 @@ open class SepaAcceptViewController: UIHostingController<SepaAcceptView> {
     }
     /// Creates and returns an dynamic stack  view controller with the specified viewModel
     /// - Parameter viewModel: A view model that specifies the details to be shown. Default value is `.default`
-    public init(viewModel: SepaAcceptModel, completion: @escaping () -> Void ) {
+    public init(viewModel: SepaAcceptModel) {
         super.init(rootView: SepaAcceptView(model: viewModel))
        
-        self.completionHandler = completion
         self.delegate = self
+        modalPresentationStyle = .overFullScreen
     }
 
     @MainActor required dynamic public init?(coder aDecoder: NSCoder) {
@@ -53,44 +52,62 @@ open class SepaAcceptViewController: UIHostingController<SepaAcceptView> {
 
 extension SepaAcceptViewController: SepaAcceptViewControllerDelegate {
         
-    func accept(model: SepaAcceptModel) {
+    func showErrorMessage(title: String?, message: String?) {
+        DispatchQueue.main.async {
+            let alert = AlertView(title: title, message: message)
+            
+            alert.alertController?.addAction(UIAlertAction(title: Asset.localizedString(forKey: "ok"), style: .default) { _ in
+                self.dismiss()
+            })
+            alert.show()
+        }
+    }
+
+    func perform(action: String) {
+        guard action == "accept" || action == "decline" else {
+            return
+        }
+        
         Task {
             do {
-                try await model.accept(completion: completionHandler ?? { })
+                switch action {
+                case "accept":
+                    try await self.viewModel.accept()
+                case "decline":
+                    try await self.viewModel.decline()
+                default:
+                    break
+                }
 
                 DispatchQueue.main.async {
                     self.dismiss()
                 }
             } catch {
-                DispatchQueue.main.async {
-                    let alert = AlertView(title: nil, message: Asset.localizedString(forKey: "Snabble.SEPA.authorizingError"))
-                    
-                    alert.alertController?.addAction(UIAlertAction(title: Asset.localizedString(forKey: "ok"), style: .default) { _ in
-                        self.dismiss()
-                    })
-                    alert.show()
-                }
+                showErrorMessage(title: nil, message: Asset.localizedString(forKey: "Snabble.SEPA.authorizingError"))
             }
         }
+
     }
 
     public func sepaAcceptViewController(_ viewController: SepaAcceptViewController, userInfo:[String:Any]?) {
+        guard viewController == self else {
+            return
+        }
+        
         if let action = userInfo?["action"] as? String {
             switch action {
-            case "accept":
-                self.accept(model: viewController.viewModel)
+            case "accept", "decline":
+                self.perform(action: action)
                 
-            case "paymentFinished":
-                print("paymentFinsihed")
-
-            case "paymentFailed":
-                print("paymentFailed")
-
             case "authorizingFailed":
-                print("authorizingFailed")
+                showErrorMessage(title: nil, message: Asset.localizedString(forKey: "Snabble.SEPA.authorizingError"))
 
+            case "cancelPaymentFailed":
+                showErrorMessage(title: Asset.localizedString(forKey: "Snabble.Payment.CancelError.title"),
+                                 message: Asset.localizedString(forKey: "Snabble.Payment.CancelError.message"))
+                
             default:
-                print("unahndled action: \(action)")
+                print("unhandled action: \(action)")
                 break
             }
         }
@@ -98,6 +115,10 @@ extension SepaAcceptViewController: SepaAcceptViewControllerDelegate {
     
     @objc
     private func dismiss() {
-        self.navigationController?.popViewController(animated: true)
+        if let viewController = presentingViewController {
+            viewController.dismiss(animated: true)
+        } else {
+            navigationController?.popViewController(animated: true)
+        }
     }
 }

@@ -14,8 +14,6 @@ public final class SepaAcceptModel: ObservableObject {
     
     let process: CheckoutProcess
     let paymentDetail: PaymentMethodDetail?
-
-    var poller: PaymentProcessPoller?
     
     init(process: CheckoutProcess, paymentDetail: PaymentMethodDetail? = nil) {
         self.process = process
@@ -58,11 +56,11 @@ public final class SepaAcceptModel: ObservableObject {
 }
 
 fileprivate struct EmptyDecodable: Decodable {}
-fileprivate struct EmptyEncodable: Encodable {}
 
 extension SepaAcceptModel {
     
-    func sepaAuthorize(completion: @escaping () -> Void) {
+    public func accept() async throws {
+
         guard let urlString = process.links.authorizePayment?.href else {
             return
         }
@@ -76,60 +74,36 @@ extension SepaAcceptModel {
             }
 
             project.perform(request) { (_ result : Result<EmptyDecodable, SnabbleError>, response) in
-                
-                print("result: \(result), status: \(String(describing: response?.statusCode))")
-                
+                                
                 if response?.statusCode == 204 { // No Content
                 
                     if let detail = self.paymentDetail, case .payoneSepa(let data) = detail.methodData, let mandateReference = self.process.paymentPreauthInformation?.mandateIdentification {
                         var sepaData = data
                          
                         sepaData.mandateReference = mandateReference
-                        let detail = PaymentMethodDetail(sepaData)
+                        let newDetail = PaymentMethodDetail(sepaData)
 
-                        PaymentMethodDetails.save(detail)
-
+                        PaymentMethodDetails.save(newDetail)
+                        PaymentMethodDetails.remove(detail)
                     }
-                    completion()
-//                    self.waitForPaymentProcessing()
                 } else {
                     self.actionPublisher.send(["action": "authorizingFailed"])
                 }
             }
         }
     }
-    private func waitForPaymentProcessing() {
-        let project = SnabbleCI.project
-        let poller = PaymentProcessPoller(process, project)
+    
+    public func decline() async throws {
+        
+        process.abort(SnabbleCI.project) { (result : Result<CheckoutProcess, SnabbleError>) in
+            switch result {
+            case .success:
+                Snabble.clearInFlightCheckout()
 
-        poller.waitFor([.paymentSuccess]) { events in
-            if events[.paymentSuccess] != nil {
-                self.paymentFinished(process: poller.updatedProcess)
-            } else {
-                print("poller received: \(events)")
+            case .failure:
+                self.actionPublisher.send(["action": "cancelPaymentFailed"])
             }
         }
-
-        self.poller = poller
-    }
-
-    private func paymentFinished(process: CheckoutProcess) {
-        self.poller = nil
-
-        print("paymentFinished - paymentState: \(process.paymentState)")
-        actionPublisher.send(["action": "paymentFinished"])
-        
-//        let paymentDisplay = CheckoutStepsViewController(shop: shop,
-//                                                         shoppingCart: shoppingCart,
-//                                                         checkoutProcess: checkoutProcess)
-//        paymentDisplay.paymentDelegate = delegate
-//        self.navigationController?.pushViewController(paymentDisplay, animated: true)
-    }
-
-    public func accept(completion: @escaping () -> Void ) async throws {
-        
-        print("will authorize")
-        sepaAuthorize(completion: completion)
     }
 }
 

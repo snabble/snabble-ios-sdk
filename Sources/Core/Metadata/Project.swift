@@ -315,6 +315,9 @@ public struct Project: Decodable, Identifiable {
     public var paymentMethods: [RawPaymentMethod] {
         paymentMethodDescriptors.map { $0.id }
     }
+    public var availablePaymentMethods: [RawPaymentMethod] {
+        paymentMethods.filter { $0.isAvailable }
+    }
 
     public let displayNetPrice: Bool
 

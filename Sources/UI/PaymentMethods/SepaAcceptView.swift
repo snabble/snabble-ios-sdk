@@ -24,7 +24,7 @@ public struct SepaAcceptView: View {
     }
     
     @ViewBuilder
-    var button: some View {
+    var acceptButton: some View {
         Button(action: {
             model.actionPublisher.send(["action": "accept"])
         }) {
@@ -34,10 +34,21 @@ public struct SepaAcceptView: View {
         .buttonStyle(AccentButtonStyle())
     }
     
+    @ViewBuilder
+    var declineButton: some View {
+        Button(action: {
+            model.actionPublisher.send(["action": "decline"])
+        }) {
+            Text(keyed: "Snabble.SEPA.iDoNotAgree")
+                .frame(maxWidth: .infinity)
+        }
+    }
+
     public var body: some View {
         VStack {
             text
-            button
+            acceptButton
+            declineButton
         }
         .padding()
     }

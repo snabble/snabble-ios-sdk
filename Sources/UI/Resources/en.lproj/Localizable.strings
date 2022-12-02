@@ -502,6 +502,8 @@
 
 "Snabble.SEPA.IbanTransferAlert.title" = "Save payment data";
 
+"Snabble.SEPA.iDoNotAgree" = "I do not agree";
+
 "Snabble.SEPA.mandate" = "SEPA direct debit mandate";
 
 "Snabble.SEPA.payNow" = "Pay now using SEPA";

@@ -502,6 +502,8 @@
 
 "Snabble.SEPA.IbanTransferAlert.title" = "Kontodaten speichern";
 
+"Snabble.SEPA.iDoNotAgree" = "Ich stimme nicht zu";
+
 "Snabble.SEPA.mandate" = "SEPA-Lastschriftmandat";
 
 "Snabble.SEPA.payNow" = "Jetzt mit SEPA bezahlen";

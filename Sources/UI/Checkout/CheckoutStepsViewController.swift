@@ -202,13 +202,15 @@ extension CheckoutStepsViewController: CheckoutStepsViewModelDelegate {
         if checkoutProcess.isComplete {
             Snabble.clearInFlightCheckout()
         } else if checkoutProcess.paymentState == .unauthorized && checkoutProcess.links.authorizePayment != nil {
-            guard self.navigationController?.topViewController?.isKind(of: SepaAcceptViewController.self) == false else {
+            guard self.presentedViewController == nil || self.presentedViewController?.isKind(of: SepaAcceptViewController.self) == false else {
                 return
             }
-            let sepaCheckViewController = SepaAcceptViewController(viewModel: SepaAcceptModel(process: checkoutProcess, paymentDetail: nil)) {
-                //Self.sepaAuthorize(process: process)
-            }
-            self.navigationController?.pushViewController(sepaCheckViewController, animated: true)
+            let paymentDetail = PaymentMethodDetail.paymentDetailFor(rawMethod: checkoutProcess.rawPaymentMethod)
+            
+            let sepaCheckViewController = SepaAcceptViewController(viewModel: SepaAcceptModel(process: checkoutProcess, paymentDetail: paymentDetail))
+            
+            self.present(sepaCheckViewController, animated: true)
+//            self.navigationController?.pushViewController(sepaCheckViewController, animated: true)
         }
     }
 

@@ -35,3 +35,30 @@ extension PaymentMethod {
         return self.rawMethod.displayName
     }
 }
+
+extension PaymentMethodDetail {
+    public static var userPaymentMethodDetails: [PaymentMethodDetail] {
+        PaymentMethodDetails.read()
+           .filter { $0.rawMethod.isAvailable }
+           .filter { $0.projectId != nil ? $0.projectId == SnabbleCI.project.id : true }
+    }
+    
+    public static func paymentDetailFor(rawMethod: RawPaymentMethod?) -> PaymentMethodDetail? {
+        guard let rawMethod = rawMethod else {
+            return nil
+        }
+        guard SnabbleCI.project.availablePaymentMethods.contains(rawMethod) else {
+            return nil
+        }
+
+        guard rawMethod.dataRequired else {
+            return nil
+        }
+        let userMethods = userPaymentMethodDetails
+        
+        guard let userMethod = userMethods.first(where: { $0.rawMethod == rawMethod }) else {
+            return nil
+        }
+        return userMethod
+    }
+}

@@ -195,9 +195,9 @@ public struct SepaDataView: View {
         }
     }
     private func askForRemove() {
-        let alert = AlertView(title: Asset.localizedString(forKey: "Snabble.Payment.SEPA.title"), message: Asset.localizedString(forKey: "Snabble.Payment.SEPA.remove"))
+        let alert = AlertView(title: Asset.localizedString(forKey: "Snabble.Payment.SEPA.title"), message: Asset.localizedString(forKey: "Snabble.Payment.Delete.message"))
 
-        alert.alertController?.addAction(UIAlertAction(title: Asset.localizedString(forKey: "Snabble.delete"), style: .default) { _ in
+        alert.alertController?.addAction(UIAlertAction(title: Asset.localizedString(forKey: "Snabble.delete"), style: .destructive) { _ in
             self.model.actionPublisher.send(["action": "remove"])
             alert.dismiss(animated: false)
         })

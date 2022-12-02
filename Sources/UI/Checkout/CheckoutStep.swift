@@ -117,15 +117,6 @@ extension CheckoutStep {
         image = nil
         detailText = nil
     }
-    
-    init(authorizeLink: Link, paymentState: PaymentState, markup: String?) {
-        status = nil // paymentState == .unauthorized ? .loading : .aborted
-        text = Asset.localizedString(forKey: "Snabble.Payment.SEPA.title")
-
-        actionTitle = nil
-        detailText = nil
-        image = nil
-    }
 }
 
 private extension Fulfillment {

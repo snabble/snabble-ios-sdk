@@ -369,6 +369,9 @@ public struct CheckoutProcess: Decodable {
     }
 
     public var isComplete: Bool {
+        guard aborted == false else {
+            return true
+        }
         var complete: Bool
         switch paymentState {
         case .successful, .transferred:
@@ -378,7 +381,11 @@ public struct CheckoutProcess: Decodable {
         case .pending:
             complete = fulfillments.containsFailureState
         case .processing, .unauthorized, .unknown:
-            complete = false
+            if routingTarget == .none, paymentState == .unauthorized, links.authorizePayment == nil {
+                complete = true
+            } else {
+                complete = false
+            }
         }
 
         if requiresExitToken && exitToken?.value == nil && exitToken?.format == nil {
@@ -386,68 +393,6 @@ public struct CheckoutProcess: Decodable {
         }
 
         return complete
-    }
-    
-    /// replication of backend checkout state
-    /// https://github.com/snabble/checkout/blob/2006e2e963bfbbec4045030cbb86d11858cd298a/processes/checkout_process.go#L165
-    ///
-    ///     func (process *CheckoutProcess) State() State {
-    ///         if process.Payments.IsTransferred() {
-    ///              return Transferred
-    ///        }
-    ///        if process.Payments.IsFailed() {
-    ///            return PaymentFailed
-    ///        }
-    ///        if process.PaymentStateIsSuccessful() && (process.anyFulfillmentIsReadyButNotDone() || !process.receiptWasGeneratedOrShouldBeSkipped()) {
-    ///            return Finalizing
-    ///        }
-    ///        if process.PaymentStateIsSuccessful() && process.allFulfillmentsFinal() && process.receiptWasGeneratedOrShouldBeSkipped() {
-    ///            return Final
-    ///        }
-    ///        if process.anyCheckFailed() || process.anyFulfillmentAllocationFailed() || process.anyCouponVoidingFailed() {
-    ///            return PreconditionsNotMet
-    ///        }
-    ///        if process.Aborted {
-    ///            return UserAborted
-    ///        }
-    ///        if process.anyCheckPending() || process.anyFulfillmentIsPending() || process.AnyCouponVoidingPending() {
-    ///            return CheckingPreconditions
-    ///        }
-    ///        if !process.Payments.IsInitialized() {
-    ///            return PreconditionsSatisfied
-    ///        }
-    ///        if process.Payments.IsAuthorizing() {
-    ///            return AuthorizingPayments
-    ///        }
-    ///        if process.Payments.IsAuthorized() {
-    ///            return AuthorizedPayments
-    ///        }
-    ///        if process.Payments.IsProcessing() {
-    ///            return ProcessingPayments
-    ///        }
-    ///
-    ///        return Open
-    ///    }
-    ///
-    ///
-    // TODO: implement a state machine using State
-    public enum State {
-        case open
-        case transferred
-        
-        case paymentFailed
-        case userAborted
-
-        case finalizing
-        case final
-
-        case preconditionsNotMet
-        case checkingPreconditions
-        case preconditionsSatisfied
-        
-        case authorizingPayments
-        case authorizedPayments
-        case processingPayments
     }
 }
 

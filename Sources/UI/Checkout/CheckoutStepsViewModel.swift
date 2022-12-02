@@ -128,7 +128,7 @@ final class CheckoutStepsViewModel {
         case .qrCodeOffline:
             break
         default:
-            steps.append(.init(paymentState: paymentState))
+            steps.append(.init(paymentState: checkoutProcess.aborted ? .failed : paymentState))
         }
 
         let fulfillmentSteps = checkoutProcess.fulfillments.map({ fulfillment in

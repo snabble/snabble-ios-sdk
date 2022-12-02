@@ -335,15 +335,6 @@ extension PaymentProcess {
                                                                           shoppingCart: cart,
                                                                           delegate: paymentDelegate)
 
-           if process.paymentState == .unauthorized, process.links.authorizePayment != nil {
-                let sepaCheckViewController = SepaAcceptViewController(viewModel: SepaAcceptModel(process: process, paymentDetail: paymentDetail)) {
-                    if let display = checkoutDisplay {
-                        completion(.success(display))
-                    }
-                }
-                return sepaCheckViewController
-            }
-
             if let display = checkoutDisplay {
                 return display
             } else {
