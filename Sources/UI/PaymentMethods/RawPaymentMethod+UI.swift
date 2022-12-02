@@ -51,7 +51,6 @@ extension RawPaymentMethod {
     func editViewController(with projectId: Identifier<Project>?, _ analyticsDelegate: AnalyticsDelegate?) -> UIViewController? {
         switch self {
         case .deDirectDebit:
-//            return SepaEditViewController(nil, analyticsDelegate)
             return sepaEditViewController(projectId, analyticsDelegate)
 
         case .paydirektOneKlick:

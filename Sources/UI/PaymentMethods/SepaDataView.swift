@@ -61,22 +61,7 @@ public struct IbanCountryPicker: View {
     }
 }
 
-extension View {
-    /// Applies the given transform if the given condition evaluates to `true`.
-    /// - Parameters:
-    ///   - condition: The condition to evaluate.
-    ///   - transform: The transform to apply to the source `View`.
-    /// - Returns: Either the original `View` or the modified `View` if the condition is `true`.
-    @ViewBuilder func `if`<Content: View>(_ condition: Bool, transform: (Self) -> Content) -> some View {
-        if condition {
-            transform(self)
-        } else {
-            self
-        }
-    }
-}
-
-public struct SepaDataView: View {
+public struct SepaDataEditorView: View {
     @ObservedObject var model: SepaDataModel
     @State private var action = false
     @State private var localCountryCode = "DE"
@@ -152,8 +137,20 @@ public struct SepaDataView: View {
         }
     }
     
+    public var body: some View {
+        editor
+    }
+}
+
+public struct SepaDataDisplayView: View {
+    @ObservedObject var model: SepaDataModel
+    
+    public init(model: SepaDataModel) {
+        self.model = model
+    }
+    
     @ViewBuilder
-    var display: some View {
+    var displayData: some View {
         Form {
             Section(
                 content: {
@@ -180,7 +177,7 @@ public struct SepaDataView: View {
             )
         }
         .navigationBarItems(trailing: Button(action: {
-            askForRemove()
+            askToRemove()
         }) {
             Image(systemName: "trash")
         }
@@ -188,13 +185,10 @@ public struct SepaDataView: View {
     }
     
     public var body: some View {
-        if model.isEditable {
-            editor
-        } else {
-            display
-        }
+        displayData
     }
-    private func askForRemove() {
+    
+    private func askToRemove() {
         let alert = AlertView(title: Asset.localizedString(forKey: "Snabble.Payment.SEPA.title"), message: Asset.localizedString(forKey: "Snabble.Payment.Delete.message"))
 
         alert.alertController?.addAction(UIAlertAction(title: Asset.localizedString(forKey: "Snabble.delete"), style: .destructive) { _ in
@@ -208,6 +202,22 @@ public struct SepaDataView: View {
     
         alert.show()
 
+    }
+}
+
+public struct SepaDataView: View {
+    @ObservedObject var model: SepaDataModel
+    
+    public init(model: SepaDataModel) {
+        self.model = model
+    }
+    
+    public var body: some View {
+        if model.isEditable {
+            SepaDataEditorView(model: model)
+        } else {
+            SepaDataDisplayView(model: model)
+        }
     }
 }
 
