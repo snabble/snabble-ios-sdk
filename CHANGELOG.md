@@ -6,6 +6,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [unreleased]
 
+## [0.24.0] - 2022-12-02
+
 ### Added
 * DeveloperMode with 5 tabs on profile version field
 * Default developer password is "Snabble" customizable via AssetProviding key "SnabbleDeveloperPassword"

@@ -226,15 +226,25 @@
 
 "Snabble.Payment.rejectedHint" = "Tvoj nákup bol zamietnutý. Skontroluj svoj košík a začni platobný proces znovu.";
 
+"Snabble.Payment.SEPA.city" = "Mesto";
+
+"Snabble.Payment.SEPA.countryCode" = "Krajina";
+
 "Snabble.Payment.SEPA.hint" = "Poznámka: Za účelom tvojej ochrany a ochrany našich obchodníkov pred zneužitím si obchodník pri tvojej prvej platbe prostredníctvom SEPA inkasa vyžiada tvoju bankovú kartu.";
 
 "Snabble.Payment.SEPA.iban" = "IBAN";
 
 "Snabble.Payment.SEPA.invalidIBAN" = "Zadaný IBAN je neplatný.";
 
-"Snabble.Payment.SEPA.invalidName" = "Zadaj meno, prosím.";
+"Snabble.Payment.SEPA.invalidIBANCountry" = "Zadaný IBAN kód krajiny je nesprávny.";
+
+"Snabble.Payment.SEPA.invalidName" = "Please enter a valid lastname.";
+
+"Snabble.Payment.SEPA.missingCity" = "Zadaj mesto, prosím.";
 
 "Snabble.Payment.SEPA.missingCountry" = "Kód krajiny nesmie zostať prázdny.";
+
+"Snabble.Payment.SEPA.missingName" = "Zadaj meno, prosím.";
 
 "Snabble.Payment.SEPA.name" = "Meno";
 
@@ -462,7 +472,7 @@
 "Snabble.Scanner.noMatchesFound" = "Položka nebola nájdená";
 
 /* Text to be displayed in scanner if the app is not checked into a shop. */
-"Snabble.Scanner.notCheckedIn" = "Visit a store to use the scanner.";
+"Snabble.Scanner.notCheckedIn" = "Choď do obchodu a použi skener.";
 
 "Snabble.Scanner.plusDeposit" = "+ %@ záloha";
 
@@ -493,6 +503,8 @@
 "Snabble.SEPA.IbanTransferAlert.message" = "Chceš uložiť tieto údaje účtu (IBAN: %@) pre nákupy v budúcnosti?";
 
 "Snabble.SEPA.IbanTransferAlert.title" = "Uložiť údaje účtu";
+
+"Snabble.SEPA.iDoNotAgree" = "I do not agree";
 
 "Snabble.SEPA.mandate" = "Mandát na inkaso v SEPA";
 
