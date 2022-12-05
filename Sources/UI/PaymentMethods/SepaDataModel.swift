@@ -136,7 +136,7 @@ public final class SepaDataModel: ObservableObject {
     }
     public var paymentDetailMandate: String? {
         if let detail = paymentDetail, case .payoneSepa(let data) = detail.methodData {
-            return data.mandateReference
+            return data.mandateReference.isEmpty ? nil : data.mandateReference
         }
         return nil
     }
