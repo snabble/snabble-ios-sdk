@@ -7,7 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [unreleased]
 
 ### Added
-* PayOne SEPA payment
+* PayOne SEPA payment #APPS-513
 
 ## [0.24.0] - 2022-12-02
 
