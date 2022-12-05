@@ -18,7 +18,7 @@ jobs:
       - name: SwiftLint
         uses: norio-nomura/action-swiftlint@3.2.1
         with:
-          args: --config .swiftlint.yml 
+          args: --config .swiftlint.yml --strict
 
       - name: Danger
         uses: danger/swift@3.15.0
