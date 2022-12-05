@@ -203,7 +203,6 @@ public struct PaymentMethodDetail: Equatable {
         self.methodData = PaymentMethodUserData.payoneSepa(payoneSepaData)
     }
 
-
     public var displayName: String {
         return self.methodData.data.displayName
     }
