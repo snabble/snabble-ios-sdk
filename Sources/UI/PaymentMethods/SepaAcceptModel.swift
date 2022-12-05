@@ -46,16 +46,15 @@ public final class SepaAcceptModel: ObservableObject {
     </head>
     <body>
 """
-        let trail  = """
+        let trail = """
     </body>
 </html>
 """
-        
         return head + body + trail
     }
 }
 
-fileprivate struct EmptyDecodable: Decodable {}
+private struct EmptyDecodable: Decodable {}
 
 extension SepaAcceptModel {
     
@@ -73,7 +72,7 @@ extension SepaAcceptModel {
                 return
             }
 
-            project.perform(request) { (_ result : Result<EmptyDecodable, SnabbleError>, response) in
+            project.perform(request) { (_ result: Result<EmptyDecodable, SnabbleError>, response) in
                                 
                 if response?.statusCode == 204 { // No Content
                 
@@ -95,7 +94,7 @@ extension SepaAcceptModel {
     
     public func decline() async throws {
         
-        process.abort(SnabbleCI.project) { (result : Result<CheckoutProcess, SnabbleError>) in
+        process.abort(SnabbleCI.project) { (result: Result<CheckoutProcess, SnabbleError>) in
             switch result {
             case .success:
                 Snabble.clearInFlightCheckout()
@@ -106,4 +105,3 @@ extension SepaAcceptModel {
         }
     }
 }
-
