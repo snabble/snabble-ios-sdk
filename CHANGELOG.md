@@ -6,6 +6,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [unreleased]
 
+### Added
+* SwiftLint Strict Mode on GitHub Actions
+
 ## [0.24.0] - 2022-12-02
 
 ### Added
