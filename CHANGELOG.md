@@ -10,7 +10,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 * SwiftLint Strict Mode on GitHub Actions
 
 ### Updated
-* groue/GRDB.swift 6.5.0 (was 6.0.0)
+* groue/GRDB.swift 6.5.0 (was 6.3.1)
+* realm/SwiftLint 0.50.1 (was 0.50.0)
 
 ## [0.24.0] - 2022-12-02
 
