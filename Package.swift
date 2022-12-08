@@ -32,7 +32,7 @@ let package = Package(
         .package(url: "https://github.com/datatheorem/TrustKit.git", from: "2.0.1"),
         .package(url: "https://github.com/kishikawakatsumi/KeychainAccess.git", from: "4.2.2"),
         .package(url: "https://github.com/mattrubin/Base32.git", from: "1.2.0"),
-        .package(url: "https://github.com/groue/GRDB.swift.git", from: "6.3.1"),
+        .package(url: "https://github.com/groue/GRDB.swift.git", from: "6.5.0"),
         .package(url: "https://github.com/marmelroy/Zip.git", from: "2.1.2"),
         .package(url: "https://github.com/datatrans/ios-sdk.git", from: "2.4.0"),
         .package(url: "https://github.com/sberrevoets/SDCAlertView.git", from: "12.0.2"),
