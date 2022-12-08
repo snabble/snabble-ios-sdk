@@ -258,9 +258,9 @@ public final class SepaDataModel: ObservableObject {
             return
         }
 
-        isLastnameValidPublisher
-            .combineLatest(isIbanCountryValidPublisher, isIbanNumberValidPublisher, isCityValidPublisher)
-            .map { validLastname, validIbanCountry, validIbanNumber, validCity in
+        isIbanCountryValidPublisher
+            .combineLatest(isIbanNumberValidPublisher)
+            .map { validIbanCountry, validIbanNumber in
                 if !validIbanCountry && !validIbanNumber {
                     return SepaStrings.invalidIBAN.localizedString
                 } else if !validIbanCountry {
