@@ -23,10 +23,11 @@ public struct PayoneSepaData: Codable, EncryptedPaymentData, Equatable {
     public let projectId: Identifier<Project>
     public let lastName: String
     
-    public var mandateReference: String
+    public var mandateReference: String?
+    public var mandateMarkup: String?
     
     enum CodingKeys: String, CodingKey {
-        case encryptedPaymentData, serial, displayName, projectId, lastName, mandateReference
+        case encryptedPaymentData, serial, displayName, projectId, lastName, mandateReference, mandateMarkup
     }
 
     private struct DirectDebitRequestOrigin: PaymentRequestOrigin {
@@ -36,7 +37,7 @@ public struct PayoneSepaData: Codable, EncryptedPaymentData, Equatable {
         let countryCode: String
     }
 
-    public init?(_ gatewayCert: Data?, iban: String, lastName: String, city: String, countryCode: String, projectId: Identifier<Project>) {
+    public init?(_ gatewayCert: Data?, iban: String, lastName: String, city: String, countryCode: String, projectId: Identifier<Project>, mandateReference: String? = nil, mandateMarkup: String? = nil) {
         let requestOrigin = DirectDebitRequestOrigin(iban: iban, lastname: lastName, city: city, countryCode: countryCode)
 
         guard
@@ -52,7 +53,9 @@ public struct PayoneSepaData: Codable, EncryptedPaymentData, Equatable {
         self.displayName = IBAN.displayName(iban)
         self.projectId = projectId
         self.lastName = lastName
-        self.mandateReference = ""
+        
+        self.mandateReference = mandateReference
+        self.mandateMarkup = mandateMarkup
     }
     
     public init(from decoder: Decoder) throws {
@@ -63,6 +66,7 @@ public struct PayoneSepaData: Codable, EncryptedPaymentData, Equatable {
         self.projectId = try container.decode(Identifier<Project>.self, forKey: .projectId)
         self.lastName = try container.decode(String.self, forKey: .lastName)
         self.mandateReference = try container.decode(String.self, forKey: .mandateReference)
+        self.mandateMarkup = try container.decodeIfPresent(String.self, forKey: .mandateMarkup)
     }
 
 }

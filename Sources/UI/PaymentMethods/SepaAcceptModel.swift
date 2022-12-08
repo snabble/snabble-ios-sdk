@@ -80,6 +80,8 @@ extension SepaAcceptModel {
                         var sepaData = data
                          
                         sepaData.mandateReference = mandateReference
+                        sepaData.mandateMarkup = self.process.paymentPreauthInformation?.markup
+                        
                         let newDetail = PaymentMethodDetail(sepaData)
 
                         PaymentMethodDetails.save(newDetail)
