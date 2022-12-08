@@ -130,6 +130,7 @@ public struct CheckoutInfo: Decodable {
     }
 
     public struct Violation: Codable {
+        // swiftlint:disable type_name
         public enum `Type`: String, Codable, UnknownCaseRepresentable {
             public static var unknownCase: Self = .unknown
 
@@ -139,6 +140,7 @@ public struct CheckoutInfo: Decodable {
             case unknown
         }
         public let type: `Type`
+        // swiftlint:enable type_name
         public let refersTo: String?
         public let message: String
     }

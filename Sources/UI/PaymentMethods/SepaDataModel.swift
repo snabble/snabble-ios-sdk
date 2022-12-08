@@ -49,7 +49,7 @@ extension String {
 public extension String {
     var ibanCountry: String? {
         if let index = self.firstIndexOf(charactersIn: "0123456789") {
-            return String(self.prefix(upTo:index))
+            return String(self.prefix(upTo: index))
         }
         return nil
     }

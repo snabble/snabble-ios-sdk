@@ -18,7 +18,6 @@ public protocol SepaDataEditViewControllerDelegate: AnyObject {
     func sepaDataEditViewControllerWillSave(_ viewController: SepaDataEditViewController, userInfo: [String: Any]?)
 }
 
-
 /// A UIViewController wrapping SwiftUI's DynamicStackView
 open class SepaDataEditViewController: UIHostingController<SepaDataView> {
     public weak var delegate: SepaDataEditViewControllerDelegate?
@@ -71,7 +70,7 @@ extension SepaDataEditViewController: SepaDataEditViewControllerDelegate {
         }
     }
 
-    public func sepaDataEditViewControllerWillSave(_ viewController: SepaDataEditViewController, userInfo:[String:Any]?) {
+    public func sepaDataEditViewControllerWillSave(_ viewController: SepaDataEditViewController, userInfo: [String: Any]?) {
         if let action = userInfo?["action"] as? String {
             switch action {
             case "save":
@@ -81,8 +80,7 @@ extension SepaDataEditViewController: SepaDataEditViewControllerDelegate {
                 self.remove(model: viewController.viewModel)
                 
             default:
-                print("unahndled action: \(action)")
-                break
+                print("unhandled action: \(action)")
             }
         }
     }

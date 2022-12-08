@@ -31,7 +31,7 @@ public final class PaymentMethodStartCheck {
         self.completionHandler = completion
         switch method {
         case .deDirectDebit:
-            if case .payoneSepa(_) = detail?.methodData {
+            if case .payoneSepa = detail?.methodData {
                 self.requestBiometricAuthentication(on: presenter, reason: Asset.localizedString(forKey: "Snabble.SEPA.payNow"), completion)
             } else {
                 let view = SepaOverlayView(frame: .zero)

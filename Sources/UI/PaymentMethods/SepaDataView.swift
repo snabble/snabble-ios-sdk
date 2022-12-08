@@ -17,12 +17,12 @@ extension View {
 }
 #endif
 
-fileprivate struct Country {
+private struct Country {
     let id: String
     var name: String
 }
 
-fileprivate func getLocales() -> [Country] {
+private func getLocales() -> [Country] {
     if #available(iOS 16, *) {
         let locales = Locale.Region.isoRegions
             .filter { $0.isISORegion && $0.subRegions.isEmpty }
@@ -86,7 +86,7 @@ public struct SepaDataEditorView: View {
     @ViewBuilder
     var ibanCountry: some View {
         IbanCountryPicker(selectedCountry: $model.ibanCountry)
-            .frame(width: 60, height:35)
+            .frame(width: 60, height: 35)
             .foregroundColor(Color.accent())
     }
     
@@ -220,4 +220,3 @@ public struct SepaDataView: View {
         }
     }
 }
-
