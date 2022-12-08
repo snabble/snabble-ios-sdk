@@ -264,7 +264,9 @@ public struct PaymentMethodDetail: Equatable {
             return datatransData.projectId
         case .payoneCreditCard(let payoneData):
             return payoneData.projectId
-        case .sepa, .payoneSepa, .tegutEmployeeCard, .paydirektAuthorization, .leinweberCustomerNumber:
+        case .payoneSepa(let payoneSepaData):
+            return payoneSepaData.projectId
+        case .sepa, .tegutEmployeeCard, .paydirektAuthorization, .leinweberCustomerNumber:
             return nil
         }
     }

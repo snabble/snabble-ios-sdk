@@ -127,6 +127,7 @@ public final class SepaDataModel: ObservableObject {
         return isValid ? self.sanitzedIban : ""
     }
     private var paymentDetail: PaymentMethodDetail?
+    private var projectId: Identifier<Project>?
     
     public var paymentDetailName: String? {
         if let detail = paymentDetail, case .payoneSepa(let data) = detail.methodData {
@@ -253,8 +254,9 @@ public final class SepaDataModel: ObservableObject {
             .store(in: &cancellables)
     }
     
-    public init(paymentDetail: PaymentMethodDetail? = nil, iban: String, lastname: String, city: String? = nil, countryCode: String? = nil) {
+    public init(paymentDetail: PaymentMethodDetail? = nil, iban: String, lastname: String, city: String? = nil, countryCode: String? = nil, projectId: Identifier<Project>? = nil) {
         self.paymentDetail = paymentDetail
+        self.projectId = projectId
         self.policy = (city != nil && countryCode != nil) ? .extended : .simple
         
         self.ibanCountry = iban.ibanCountry ?? countryCode ?? ""
@@ -266,12 +268,12 @@ public final class SepaDataModel: ObservableObject {
         setupPublishers()
     }
     
-    public convenience init() {
-        self.init(iban: "", lastname: "", city: "", countryCode: Locale.current.countryCode)
+    public convenience init(projectId: Identifier<Project>) {
+        self.init(iban: "", lastname: "", city: "", countryCode: Locale.current.countryCode, projectId: projectId)
     }
     
-    public convenience init(detail: PaymentMethodDetail) {
-        self.init(paymentDetail: detail, iban: detail.displayName, lastname: "", city: "", countryCode: Locale.current.countryCode)
+    public convenience init(detail: PaymentMethodDetail, projectId: Identifier<Project>?) {
+        self.init(paymentDetail: detail, iban: detail.displayName, lastname: "", city: "", countryCode: Locale.current.countryCode, projectId: projectId)
     }
 }
 
@@ -295,7 +297,7 @@ extension SepaDataModel {
     public func save() async throws {
         if self.isValid,
            let cert = Snabble.shared.certificates.first,
-           let sepaData = PayoneSepaData(cert.data, iban: self.iban, lastName: self.lastname, city: self.city, countryCode: self.countryCode) {
+           let sepaData = PayoneSepaData(cert.data, iban: self.iban, lastName: self.lastname, city: self.city, countryCode: self.countryCode, projectId: projectId ?? SnabbleCI.project.id) {
             
             let detail = PaymentMethodDetail(sepaData)
             PaymentMethodDetails.save(detail)

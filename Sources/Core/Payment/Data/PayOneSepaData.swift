@@ -20,12 +20,13 @@ public struct PayoneSepaData: Codable, EncryptedPaymentData, Equatable {
     
     public var originType = AcceptedOriginType.payoneSepaData
     
+    public let projectId: Identifier<Project>
     public let lastName: String
     
     public var mandateReference: String
     
     enum CodingKeys: String, CodingKey {
-        case encryptedPaymentData, serial, displayName, lastName, mandateReference
+        case encryptedPaymentData, serial, displayName, projectId, lastName, mandateReference
     }
 
     private struct DirectDebitRequestOrigin: PaymentRequestOrigin {
@@ -35,7 +36,7 @@ public struct PayoneSepaData: Codable, EncryptedPaymentData, Equatable {
         let countryCode: String
     }
 
-    public init?(_ gatewayCert: Data?, iban: String, lastName: String, city: String, countryCode: String) {
+    public init?(_ gatewayCert: Data?, iban: String, lastName: String, city: String, countryCode: String, projectId: Identifier<Project>) {
         let requestOrigin = DirectDebitRequestOrigin(iban: iban, lastname: lastName, city: city, countryCode: countryCode)
 
         guard
@@ -49,6 +50,7 @@ public struct PayoneSepaData: Codable, EncryptedPaymentData, Equatable {
         self.serial = serial
 
         self.displayName = IBAN.displayName(iban)
+        self.projectId = projectId
         self.lastName = lastName
         self.mandateReference = ""
     }
@@ -58,6 +60,7 @@ public struct PayoneSepaData: Codable, EncryptedPaymentData, Equatable {
         self.encryptedPaymentData = try container.decode(String.self, forKey: .encryptedPaymentData)
         self.serial = try container.decode(String.self, forKey: .serial)
         self.displayName = try container.decode(String.self, forKey: .displayName)
+        self.projectId = try container.decode(Identifier<Project>.self, forKey: .projectId)
         self.lastName = try container.decode(String.self, forKey: .lastName)
         self.mandateReference = try container.decode(String.self, forKey: .mandateReference)
     }

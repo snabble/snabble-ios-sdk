@@ -148,7 +148,9 @@ public final class PaymentMethodAddViewController: UITableViewController {
                 return datatransCardData.projectId == projectId
             case .payoneCreditCard(let payoneData):
                 return payoneData.projectId == projectId
-            case .sepa, .payoneSepa, .tegutEmployeeCard, .paydirektAuthorization, .leinweberCustomerNumber:
+            case .payoneSepa(let payoneSepaData):
+                return payoneSepaData.projectId == projectId
+            case .sepa, .tegutEmployeeCard, .paydirektAuthorization, .leinweberCustomerNumber:
                 return Snabble.shared.project(for: projectId)?.paymentMethods.contains(detail.rawMethod) ?? false
             }
         }.count

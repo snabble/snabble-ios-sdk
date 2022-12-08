@@ -77,7 +77,7 @@ extension RawPaymentMethod {
             return nil
         }
         if descriptor.acceptedOriginTypes?.contains(.payoneSepaData) == true {
-            return SepaDataEditViewController(viewModel: SepaDataModel())
+            return SepaDataEditViewController(viewModel: SepaDataModel(projectId: projectId))
         } else {
             return SepaEditViewController(nil, analyticsDelegate)
         }
