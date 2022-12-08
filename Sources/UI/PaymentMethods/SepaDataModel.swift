@@ -267,15 +267,8 @@ public final class SepaDataModel: ObservableObject {
                     return SepaStrings.invalidIBANCountry.localizedString
                 } else if !validIbanNumber {
                     return SepaStrings.invalidIBAN.localizedString
-                } else if !validLastname {
-                    return SepaStrings.missingName.localizedString
-                } else if !validCity && self.policy == .extended {
-                    return SepaStrings.missingCity.localizedString
                 }
-                if !self.hasIbanLength {
-                    return SepaStrings.missingIBAN.localizedString
-                }
-
+                
                 return ""
             }
             .assign(to: \SepaDataModel.hintMessage, onWeak: self)
