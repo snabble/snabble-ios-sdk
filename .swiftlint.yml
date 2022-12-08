@@ -1,6 +1,6 @@
 included:
  - Sources
- - Example/snabble
+ - Example/Snabble
 
 disabled_rules:
  - todo
