@@ -246,6 +246,8 @@
 
 "Snabble.Payment.SEPA.missingCountry" = "Az országkód nem lehet üres.";
 
+"Snabble.Payment.SEPA.missingIBAN" = "Please enter a IBAN.";
+
 "Snabble.Payment.SEPA.missingName" = "Add meg a neved.";
 
 "Snabble.Payment.SEPA.name" = "Név";

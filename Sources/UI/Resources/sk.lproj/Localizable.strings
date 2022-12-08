@@ -246,6 +246,8 @@
 
 "Snabble.Payment.SEPA.missingCountry" = "Kód krajiny nesmie zostať prázdny.";
 
+"Snabble.Payment.SEPA.missingIBAN" = "Please enter a IBAN.";
+
 "Snabble.Payment.SEPA.missingName" = "Zadaj meno, prosím.";
 
 "Snabble.Payment.SEPA.name" = "Meno";

@@ -65,7 +65,7 @@ public struct PayoneSepaData: Codable, EncryptedPaymentData, Equatable {
         self.displayName = try container.decode(String.self, forKey: .displayName)
         self.projectId = try container.decode(Identifier<Project>.self, forKey: .projectId)
         self.lastName = try container.decode(String.self, forKey: .lastName)
-        self.mandateReference = try container.decode(String.self, forKey: .mandateReference)
+        self.mandateReference = try container.decodeIfPresent(String.self, forKey: .mandateReference)
         self.mandateMarkup = try container.decodeIfPresent(String.self, forKey: .mandateMarkup)
     }
 

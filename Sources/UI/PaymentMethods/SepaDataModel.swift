@@ -329,7 +329,7 @@ extension SepaDataModel {
     public func save() async throws {
         if self.isValid,
            let cert = Snabble.shared.certificates.first,
-           let sepaData = PayoneSepaData(cert.data, iban: self.iban, lastName: self.lastname, city: self.city, countryCode: self.countryCode, projectId: projectId ?? SnabbleCI.project.id, mandateReference: self.mandateReference, mandateMarkup: self.mandateMarkup) {
+           let sepaData = PayoneSepaData(cert.data, iban: self.iban, lastName: self.lastname, city: self.city, countryCode: self.countryCode, projectId: self.projectId ?? SnabbleCI.project.id, mandateReference: self.mandateReference, mandateMarkup: self.mandateMarkup) {
             
             let detail = PaymentMethodDetail(sepaData)
             PaymentMethodDetails.save(detail)

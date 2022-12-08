@@ -246,6 +246,8 @@
 
 "Snabble.Payment.SEPA.missingCountry" = "Ländercode darf nicht leer sein.";
 
+"Snabble.Payment.SEPA.missingIBAN" = "Bitte gib eine IBAN ein.";
+
 "Snabble.Payment.SEPA.missingName" = "Bitte gib Deinen Nachnamen ein.";
 
 "Snabble.Payment.SEPA.name" = "Nachname";
