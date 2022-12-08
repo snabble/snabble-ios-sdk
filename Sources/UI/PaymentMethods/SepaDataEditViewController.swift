@@ -15,7 +15,7 @@ import SnabbleCore
 public protocol SepaDataEditViewControllerDelegate: AnyObject {
 
     /// Tells the delegate that an widget will perform an action
-    func sepaDataEditViewControllerWillSave(_ viewController: SepaDataEditViewController, userInfo:[String:Any]?)
+    func sepaDataEditViewControllerWillSave(_ viewController: SepaDataEditViewController, userInfo: [String: Any]?)
 }
 
 

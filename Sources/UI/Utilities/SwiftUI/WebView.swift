@@ -24,6 +24,9 @@ struct WebViewRepresentable: UIViewRepresentable {
         let webView = WKWebView()
 
         webView.navigationDelegate = context.coordinator
+        webView.isOpaque = false
+        webView.backgroundColor = .clear
+
         return webView
     }
 
@@ -92,6 +95,4 @@ public struct HTMLView: View {
             }
         }
     }
-
 }
-

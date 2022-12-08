@@ -68,7 +68,7 @@ extension RawPaymentMethod {
         return nil
     }
     
-    private func sepaEditViewController(_ projectId: Identifier<Project>?, _ analyticsDelegate: AnalyticsDelegate?) -> UIViewController?  {
+    private func sepaEditViewController(_ projectId: Identifier<Project>?, _ analyticsDelegate: AnalyticsDelegate?) -> UIViewController? {
         guard
             let projectId = projectId,
             let project = Snabble.shared.project(for: projectId),

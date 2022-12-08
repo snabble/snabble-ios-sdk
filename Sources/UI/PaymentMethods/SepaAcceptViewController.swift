@@ -14,9 +14,8 @@ import SnabbleCore
 public protocol SepaAcceptViewControllerDelegate: AnyObject {
 
     /// Tells the delegate that an widget will perform an action
-    func sepaAcceptViewController(_ viewController: SepaAcceptViewController, userInfo:[String:Any]?)
+    func sepaAcceptViewController(_ viewController: SepaAcceptViewController, userInfo: [String: Any]?)
 }
-
 
 /// A UIViewController wrapping SwiftUI's DynamicStackView
 open class SepaAcceptViewController: UIHostingController<SepaAcceptView> {
@@ -89,7 +88,7 @@ extension SepaAcceptViewController: SepaAcceptViewControllerDelegate {
 
     }
 
-    public func sepaAcceptViewController(_ viewController: SepaAcceptViewController, userInfo:[String:Any]?) {
+    public func sepaAcceptViewController(_ viewController: SepaAcceptViewController, userInfo: [String: Any]?) {
         guard viewController == self else {
             return
         }
@@ -108,7 +107,6 @@ extension SepaAcceptViewController: SepaAcceptViewControllerDelegate {
                 
             default:
                 print("unhandled action: \(action)")
-                break
             }
         }
     }
