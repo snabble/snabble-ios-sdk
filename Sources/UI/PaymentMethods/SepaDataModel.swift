@@ -286,7 +286,7 @@ public final class SepaDataModel: ObservableObject {
             .store(in: &cancellables)
     }
 
-    public init(paymentDetail: PaymentMethodDetail? = nil, iban: String, lastname: String, city: String? = nil, countryCode: String? = nil, projectId: Identifier<Project>? = nil) {
+    public init(paymentDetail: PaymentMethodDetail? = nil, iban: String, lastname: String, city: String? = nil, countryCode: String? = "DE", projectId: Identifier<Project>? = nil) {
         self.paymentDetail = paymentDetail
         self.projectId = projectId
         self.policy = (city != nil && countryCode != nil) ? .extended : .simple
@@ -301,11 +301,11 @@ public final class SepaDataModel: ObservableObject {
     }
 
     public convenience init(projectId: Identifier<Project>) {
-        self.init(iban: "", lastname: "", city: "", countryCode: Locale.current.countryCode, projectId: projectId)
+        self.init(iban: "", lastname: "", city: "", projectId: projectId)
     }
 
     public convenience init(detail: PaymentMethodDetail, projectId: Identifier<Project>?) {
-        self.init(paymentDetail: detail, iban: detail.displayName, lastname: "", city: "", countryCode: Locale.current.countryCode, projectId: projectId)
+        self.init(paymentDetail: detail, iban: detail.displayName, lastname: "", city: "", projectId: projectId)
     }
 }
 

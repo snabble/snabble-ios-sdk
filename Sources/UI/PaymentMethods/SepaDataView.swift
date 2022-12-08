@@ -132,9 +132,6 @@ public struct SepaDataEditorView: View {
                 self.model.actionPublisher.send(["action": "save"])
             }
         }
-        .onAppear {
-            localCountryCode = Locale.current.countryCode
-        }
     }
     
     public var body: some View {
