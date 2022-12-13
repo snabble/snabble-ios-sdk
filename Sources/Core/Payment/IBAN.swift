@@ -89,7 +89,7 @@ public enum IBAN {
         let iban = iban.replacingOccurrences(of: " ", with: "")
         let country = String(iban.prefix(2))
         
-        guard let placeholder = IBAN.placeholder(country), placeholder.replacingOccurrences(of: " ", with: "").count == iban.count-2 else {
+        guard let placeholder = IBAN.placeholder(country), placeholder.replacingOccurrences(of: " ", with: "").count == iban.count - 2 else {
             return iban
         }
         
@@ -103,7 +103,7 @@ public enum IBAN {
             if char == " " {
                 result.append(" ")
             } else {
-                let currentIndex = iban.index(iban.startIndex, offsetBy:offset)
+                let currentIndex = iban.index(iban.startIndex, offsetBy: offset)
                 result.append(String(iban[currentIndex]))
                 offset += 1
             }
@@ -183,14 +183,15 @@ public class IBANFormatter: Formatter {
         var result = ""
 
         for char in String(placeholder[placeholder.startIndex...]) {
-            if offset < inLength {
-                if char == " " {
-                    result.append(" ")
-                } else {
-                    let currentIndex = iban.index(iban.startIndex, offsetBy:offset)
-                    result.append(String(iban[currentIndex]))
-                    offset += 1
-                }
+            guard offset < inLength else {
+                continue
+            }
+            if char == " " {
+                result.append(" ")
+            } else {
+                let currentIndex = iban.index(iban.startIndex, offsetBy:offset)
+                result.append(String(iban[currentIndex]))
+                offset += 1
             }
         }
         return result
