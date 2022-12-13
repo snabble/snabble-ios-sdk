@@ -189,7 +189,7 @@ public class IBANFormatter: Formatter {
             if char == " " {
                 result.append(" ")
             } else {
-                let currentIndex = iban.index(iban.startIndex, offsetBy:offset)
+                let currentIndex = iban.index(iban.startIndex, offsetBy: offset)
                 result.append(String(iban[currentIndex]))
                 offset += 1
             }
