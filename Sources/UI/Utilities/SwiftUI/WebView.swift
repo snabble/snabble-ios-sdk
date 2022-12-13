@@ -11,7 +11,9 @@ import SwiftUI
 import WebKit
 
 struct WebViewRepresentable: UIViewRepresentable {
-    var url: URL
+    var url: URL?
+    var string: String?
+    
     @Binding var refresh: Bool
 
     func makeCoordinator() -> Coordinator {
@@ -22,11 +24,18 @@ struct WebViewRepresentable: UIViewRepresentable {
         let webView = WKWebView()
 
         webView.navigationDelegate = context.coordinator
+        webView.isOpaque = false
+        webView.backgroundColor = .clear
+
         return webView
     }
 
     func updateUIView(_ uiView: WKWebView, context: Context) {
-        uiView.loadFileURL(url, allowingReadAccessTo: url.deletingLastPathComponent())
+        if let url = self.url {
+            uiView.loadFileURL(url, allowingReadAccessTo: url.deletingLastPathComponent())
+        } else if let string = self.string {
+            uiView.loadHTMLString(string, baseURL: self.url)
+        }
     }
 
     class Coordinator: NSObject, WKNavigationDelegate {
@@ -63,6 +72,24 @@ public struct WebView: View {
             GeometryReader { geometry in
                 ScrollView(.vertical) {
                     WebViewRepresentable(url: url, refresh: $refreshURL)
+                        .frame(width: geometry.size.width, height: geometry.size.height)
+                }
+            }
+        }
+    }
+}
+
+public struct HTMLView: View {
+    let string: String
+    @State private var refreshURL: Bool = false
+    public init(string: String) {
+        self.string = string
+    }
+    public var body: some View {
+        VStack {
+            GeometryReader { geometry in
+                ScrollView(.vertical) {
+                    WebViewRepresentable(string: string, refresh: $refreshURL)
                         .frame(width: geometry.size.width, height: geometry.size.height)
                 }
             }

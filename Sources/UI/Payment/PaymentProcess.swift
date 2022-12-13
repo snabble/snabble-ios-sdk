@@ -115,11 +115,11 @@ public final class PaymentProcess {
         let details = PaymentMethodDetails.read()
         for detail in details {
             switch detail.methodData {
-            case .sepa:
+            case .sepa, .payoneSepa:
                 let useDirectDebit = methods.first { $0.method == .deDirectDebit } != nil
                 if useDirectDebit {
-                    let telecash = PaymentMethod.deDirectDebit(detail.data)
-                    results.append(telecash)
+                    let debitData = PaymentMethod.deDirectDebit(detail.data)
+                    results.append(debitData)
                 }
             case .tegutEmployeeCard:
                 let tegut = methods.first {
@@ -265,20 +265,19 @@ extension PaymentProcess {
 
         let project = shop.project ?? .none
         let id = self.cart.uuid
+        
         self.signedCheckoutInfo.createCheckoutProcess(project, id: id, paymentMethod: method, timeout: Self.createTimeout) { result in
             self.hudTimer?.invalidate()
             UIApplication.shared.mainKeyWindow?.isUserInteractionEnabled = true
             self.hideBlurOverlay()
-            switch result.result {
-            case .success(let process):
-                Snabble.storeInFlightCheckout(url: process.links._self.href,
-                                              shop: self.shop,
-                                              cart: self.cart)
+            
+            func checkoutProcess(process: CheckoutProcess) {
+                
                 let checkoutVC = Self.checkoutViewController(for: process,
                                                              shop: self.shop,
                                                              cart: self.cart,
                                                              paymentDelegate: self.paymentDelegate)
-
+                
                 if let viewController = checkoutVC {
                     if let customizable = viewController as? CustomizableAppearance {
                         customizable.setCustomAppearance(SnabbleCI.appearance)
@@ -287,33 +286,24 @@ extension PaymentProcess {
                 } else {
                     self.paymentDelegate?.showWarningMessage(Asset.localizedString(forKey: "Snabble.Payment.errorStarting"))
                 }
-                /*
-                switch process.routingTarget {
-                case .none:
-                    let checkoutDisplay = method.rawMethod.checkoutDisplayViewController(shop: self.shop,
-                                                                                         checkoutProcess: process,
-                                                                                         shoppingCart: self.cart,
-                                                                                         delegate: self.paymentDelegate)
-                    if let display = checkoutDisplay {
-                        completion(.success(display))
-                    } else {
-                        self.paymentDelegate?.showWarningMessage(Asset.localizedString(forKey: "Snabble.Payment.errorStarting"))
-                    }
-                case .supervisor:
-                    let supervisor = SupervisorCheckViewController(shop: self.shop, shoppingCart: self.cart, checkoutProcess: process)
-                    supervisor.delegate = self.paymentDelegate
-                    completion(.success(supervisor))
-                case .gatekeeper:
-                    let gatekeeper = GatekeeperCheckViewController(shop: self.shop, shoppingCart: self.cart, checkoutProcess: process)
-                    gatekeeper.delegate = self.paymentDelegate
-                    completion(.success(gatekeeper))
-                }
-                 */
-            case .failure(let error):
+            }
+            
+            func errorHandler(error: SnabbleError) {
                 if !error.isUrlError(.timedOut) {
                     self.cart.generateNewUUID()
                 }
                 self.startFailed(method, shop: self.shop, error, completion)
+            }
+                        
+            switch result.result {
+            case .success(let process):
+                Snabble.storeInFlightCheckout(url: process.links._self.href,
+                                              shop: self.shop,
+                                              cart: self.cart)
+                checkoutProcess(process: process)
+
+            case .failure(let error):
+                errorHandler(error: error)
             }
         }
     }
@@ -340,6 +330,7 @@ extension PaymentProcess {
                                                                           checkoutProcess: process,
                                                                           shoppingCart: cart,
                                                                           delegate: paymentDelegate)
+
             if let display = checkoutDisplay {
                 return display
             } else {

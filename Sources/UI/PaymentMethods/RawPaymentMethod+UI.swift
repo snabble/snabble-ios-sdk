@@ -5,16 +5,12 @@
 //
 
 import UIKit
+import SwiftUI
 import SnabbleCore
 
 extension PaymentMethodDetail {
     var icon: UIImage? {
-        switch self.methodData {
-        case .tegutEmployeeCard:
-            return Asset.image(named: "SnabbleSDK/payment/payment-tegut")
-        default:
-            return self.rawMethod.icon
-        }
+        return Asset.image(named: "SnabbleSDK/payment/" + self.imageName)
     }
 }
 
@@ -49,27 +45,14 @@ extension RawPaymentMethod {
     }
 
     public var icon: UIImage? {
-        switch self {
-        case .deDirectDebit:
-            return Asset.image(named: "SnabbleSDK/payment/payment-sepa")
-        case .creditCardVisa:
-            return Asset.image(named: "SnabbleSDK/payment/payment-visa")
-        case .creditCardMastercard: return Asset.image(named: "SnabbleSDK/payment/payment-mastercard")
-        case .creditCardAmericanExpress: return Asset.image(named: "SnabbleSDK/payment/payment-amex")
-        case .gatekeeperTerminal: return Asset.image(named: "SnabbleSDK/payment/payment-sco")
-        case .paydirektOneKlick: return Asset.image(named: "SnabbleSDK/payment/payment-paydirekt")
-        case .applePay: return Asset.image(named: "SnabbleSDK/payment/payment-apple-pay")
-        case .twint: return Asset.image(named: "SnabbleSDK/payment/payment-twint")
-        case .postFinanceCard: return Asset.image(named: "SnabbleSDK/payment/payment-postfinance")
-        case .qrCodePOS, .qrCodeOffline, .externalBilling, .customerCardPOS:
-            return Asset.image(named: "SnabbleSDK/payment/payment-pos")
-        }
+        return Asset.image(named: "SnabbleSDK/payment/" + self.imageName)
     }
 
     func editViewController(with projectId: Identifier<Project>?, _ analyticsDelegate: AnalyticsDelegate?) -> UIViewController? {
         switch self {
         case .deDirectDebit:
-            return SepaEditViewController(nil, analyticsDelegate)
+            return sepaEditViewController(projectId, analyticsDelegate)
+
         case .paydirektOneKlick:
             return PaydirektEditViewController(nil, for: projectId, with: analyticsDelegate)
         case .creditCardMastercard, .creditCardVisa, .creditCardAmericanExpress:
@@ -84,7 +67,22 @@ extension RawPaymentMethod {
 
         return nil
     }
-
+    
+    private func sepaEditViewController(_ projectId: Identifier<Project>?, _ analyticsDelegate: AnalyticsDelegate?) -> UIViewController? {
+        guard
+            let projectId = projectId,
+            let project = Snabble.shared.project(for: projectId),
+            let descriptor = project.paymentMethodDescriptors.first(where: { $0.id == self })
+        else {
+            return nil
+        }
+        if descriptor.acceptedOriginTypes?.contains(.payoneSepaData) == true {
+            return SepaDataEditViewController(viewModel: SepaDataModel(projectId: projectId))
+        } else {
+            return SepaEditViewController(nil, analyticsDelegate)
+        }
+    }
+    
     private func creditCardEditViewController(_ projectId: Identifier<Project>?, _ analyticsDelegate: AnalyticsDelegate?) -> UIViewController? {
         guard
             let projectId = projectId,

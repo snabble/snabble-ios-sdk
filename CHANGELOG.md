@@ -8,6 +8,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 * SwiftLint Strict Mode on GitHub Actions
+* PayOne SEPA payment #APPS-513
 
 ### Updated
 * groue/GRDB.swift 6.5.0 (was 6.3.1)

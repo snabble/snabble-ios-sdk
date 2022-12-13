@@ -45,6 +45,7 @@ public enum AcceptedOriginType: String, Codable {
     case datatransAlias
     case datatransCreditCardAlias
     case payonePseudoCardPAN
+    case payoneSepaData
     case leinweberCustomerID
 }
 
@@ -321,6 +322,8 @@ public struct CheckoutProcess: Decodable {
 
     public struct PaymentPreauthInformation: Decodable {
         public let merchantID: String? // for Apple Pay
+        public let markup: String? // for PayOneSepa
+        public let mandateIdentification: String? // for PayOneSepa
     }
 
     enum CodingKeys: String, CodingKey {
@@ -365,6 +368,9 @@ public struct CheckoutProcess: Decodable {
     }
 
     public var isComplete: Bool {
+        guard aborted == false else {
+            return true
+        }
         var complete: Bool
         switch paymentState {
         case .successful, .transferred:
@@ -374,7 +380,11 @@ public struct CheckoutProcess: Decodable {
         case .pending:
             complete = fulfillments.containsFailureState
         case .processing, .unauthorized, .unknown:
-            complete = false
+            if routingTarget == .none, paymentState == .unauthorized, links.authorizePayment == nil {
+                complete = true
+            } else {
+                complete = false
+            }
         }
 
         if requiresExitToken && exitToken?.value == nil && exitToken?.format == nil {

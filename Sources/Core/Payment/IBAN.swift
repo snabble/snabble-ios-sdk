@@ -56,6 +56,10 @@ public enum IBAN {
         "VA": (22, "•• •••• •••• •••• •••• ••")
     ]
 
+    public static var countries: [String] {
+        return info.keys.compactMap({ $0 })
+    }
+
     public static func length(_ country: String) -> Int? {
         return info[country]?.0
     }
@@ -79,5 +83,22 @@ public enum IBAN {
         let end = placeholder.index(placeholder.endIndex, offsetBy: -2)
 
         return prefix + String(placeholder[start..<end]) + suffix
+    }
+    
+    // see https://en.wikipedia.org/wiki/International_Bank_Account_Number#Modulo_operation_on_IBAN
+    public static func verify(iban: String) -> Bool {
+        var rawBytes = Array(iban.utf8)
+        while rawBytes.count < 4 {
+            rawBytes.append(0)
+        }
+
+        let bytes = rawBytes[4 ..< rawBytes.count] + rawBytes[0 ..< 4]
+
+        let check = bytes.reduce(0) { result, digit in
+            let int = Int(digit)
+            return int > 64 ? (100 * result + int - 55) % 97 : (10 * result + int - 48) % 97
+        }
+
+        return check == 1
     }
 }

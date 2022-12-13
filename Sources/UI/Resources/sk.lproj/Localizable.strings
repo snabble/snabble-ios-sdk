@@ -240,13 +240,19 @@
 
 "Snabble.Payment.SEPA.invalidName" = "Please enter a valid lastname.";
 
+"Snabble.Payment.SEPA.mandate" = "Mandate Reference No.";
+
 "Snabble.Payment.SEPA.missingCity" = "Zadaj mesto, prosím.";
 
 "Snabble.Payment.SEPA.missingCountry" = "Kód krajiny nesmie zostať prázdny.";
 
+"Snabble.Payment.SEPA.missingIBAN" = "Please enter a IBAN.";
+
 "Snabble.Payment.SEPA.missingName" = "Zadaj meno, prosím.";
 
 "Snabble.Payment.SEPA.name" = "Meno";
+
+"Snabble.Payment.SEPA.payer" = "Payer";
 
 "Snabble.Payment.SEPA.title" = "SEPA inkaso";
 
