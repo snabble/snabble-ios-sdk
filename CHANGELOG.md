@@ -12,7 +12,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 * added IBANFormatter for IBAN number textfield
-* If PayOneSepaData returns just one country no use of country picker for IBANs
+* If PayOneSepaData returns just one country no use of country picker for IBANs APPS-589
 
 ### Updated
 * groue/GRDB.swift 6.5.0 (was 6.3.1)
