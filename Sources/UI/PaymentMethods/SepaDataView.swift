@@ -17,7 +17,11 @@ extension View {
 }
 #endif
 
-private struct Country {
+private struct Country: Equatable, Comparable {
+    static func < (lhs: Country, rhs: Country) -> Bool {
+        lhs.name < rhs.name
+    }
+
     let id: String
     var name: String
 }
@@ -27,10 +31,12 @@ private func getLocales() -> [Country] {
         let locales = Locale.Region.isoRegions
             .filter { $0.isISORegion && $0.subRegions.isEmpty }
             .compactMap { Country(id: $0.identifier, name: Locale.current.localizedString(forRegionCode: $0.identifier) ?? $0.identifier)}
+            .sorted()
         return locales
     } else {
         let locales = Locale.isoRegionCodes
             .compactMap { Country(id: $0, name: Locale.current.localizedString(forRegionCode: $0) ?? $0)}
+            .sorted()
         return locales
     }
 }
@@ -47,16 +53,33 @@ public struct CountryPicker: View {
         }
     }
 }
+extension String {
+    var flag: String {
+        let base : UInt32 = 127397
+        var s = ""
+        for v in self.unicodeScalars {
+            s.unicodeScalars.append(UnicodeScalar(base + v.value)!)
+        }
+        return String(s)
+    }
+}
 
 public struct IbanCountryPicker: View {
+    var model: SepaDataModel
     @Binding var selectedCountry: String
     
     public var body: some View {
-        Picker(SepaStrings.countryCode.localizedString, selection: $selectedCountry) {
-            ForEach(IBAN.countries, id: \.self) { country in
-                Text(country)
-                    .tag(country)
+        if model.countries.count == 1, let country = model.countries.first {
+            Text(country.flag + " " + country)
+                .foregroundColor(.gray)
+        } else {
+            Picker("", selection: $selectedCountry) {
+                ForEach(model.countries.sorted(), id: \.self) { country in
+                    Text(country)
+                        .tag(country)
+                }
             }
+            .frame(width: 64)
         }
     }
 }
@@ -65,6 +88,7 @@ public struct SepaDataEditorView: View {
     @ObservedObject var model: SepaDataModel
     @State private var action = false
     @State private var localCountryCode = "DE"
+    @State private var formatter = IBANFormatter()
     
     public init(model: SepaDataModel) {
         self.model = model
@@ -84,15 +108,14 @@ public struct SepaDataEditorView: View {
     }
 
     @ViewBuilder
-    var ibanCountry: some View {
-        IbanCountryPicker(selectedCountry: $model.ibanCountry)
-            .frame(width: 60, height: 35)
+    var ibanCountryView: some View {
+        IbanCountryPicker(model: model, selectedCountry: $localCountryCode)
             .foregroundColor(Color.accent())
     }
     
     @ViewBuilder
-    var ibanNumber: some View {
-        TextField(SepaStrings.iban.localizedString, text: $model.ibanNumber)
+    var ibanNumberView: some View {
+        TextField(SepaStrings.iban.localizedString, value: $model.ibanNumber, formatter: formatter)
             .keyboardType(.numberPad)
     }
     
@@ -103,8 +126,15 @@ public struct SepaDataEditorView: View {
                 content: {
                     TextField(SepaStrings.lastname.localizedString, text: $model.lastname)
                     HStack {
-                        ibanCountry
-                        ibanNumber
+                        ibanCountryView
+                        ibanNumberView
+                    }
+                    .onChange(of: localCountryCode) { newCountry in
+                        localCountryCode = newCountry
+                        if let placeholder = IBAN.placeholder(newCountry) {
+                            formatter.placeholder = placeholder
+                        }
+                        self.model.ibanCountry = newCountry
                     }
                     if model.policy == .extended {
                         TextField(SepaStrings.city.localizedString, text: $model.city)
@@ -126,10 +156,12 @@ public struct SepaDataEditorView: View {
                         .foregroundColor(.secondaryLabel)
                 })
         }
+        .navigationTitle(Asset.localizedString(forKey:"Snabble.Payment.SEPA.title"))
+        .navigationBarTitleDisplayMode(.inline)
         .onChange(of: action) { _ in
             if self.model.isValid {
                 hideKeyboard()
-                self.model.actionPublisher.send(["action": "save"])
+                self.save()
             }
         }
     }
@@ -137,10 +169,26 @@ public struct SepaDataEditorView: View {
     public var body: some View {
         editor
     }
+    func save() {
+        Task {
+            do {
+                try await self.model.save()
+            } catch {
+                DispatchQueue.main.async {
+                    let alert = AlertView(title: nil, message: Asset.localizedString(forKey: "Snabble.SEPA.encryptionError"))
+                    
+                    alert.alertController?.addAction(UIAlertAction(title: Asset.localizedString(forKey: "ok"), style: .default))
+                    alert.show()
+                }
+            }
+        }
+    }
+
 }
 
 public struct SepaDataDisplayView: View {
     @ObservedObject var model: SepaDataModel
+    @State private var showingAlert = false
     
     public init(model: SepaDataModel) {
         self.model = model
@@ -174,31 +222,23 @@ public struct SepaDataDisplayView: View {
             )
         }
         .navigationBarItems(trailing: Button(action: {
-            askToRemove()
+            showingAlert = true
         }) {
             Image(systemName: "trash")
         }
         )
+        .alert(isPresented: $showingAlert) {
+            Alert(title: Text(Asset.localizedString(forKey: "Snabble.Payment.SEPA.title")),
+                  message: Text(Asset.localizedString(forKey: "Snabble.Payment.Delete.message")),
+                  dismissButton: .destructive(Text(Asset.localizedString(forKey: "Snabble.delete"))) {
+                self.model.remove()
+            })
+        }
+
     }
     
     public var body: some View {
         displayData
-    }
-    
-    private func askToRemove() {
-        let alert = AlertView(title: Asset.localizedString(forKey: "Snabble.Payment.SEPA.title"), message: Asset.localizedString(forKey: "Snabble.Payment.Delete.message"))
-
-        alert.alertController?.addAction(UIAlertAction(title: Asset.localizedString(forKey: "Snabble.delete"), style: .destructive) { _ in
-            self.model.actionPublisher.send(["action": "remove"])
-            alert.dismiss(animated: false)
-        })
-
-        alert.alertController?.addAction(UIAlertAction(title: Asset.localizedString(forKey: "cancel"), style: .cancel, handler: { _ in
-            alert.dismiss(animated: false)
-        }))
-    
-        alert.show()
-
     }
 }
 

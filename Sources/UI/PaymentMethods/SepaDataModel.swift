@@ -35,10 +35,10 @@ public enum SepaStrings: String {
 }
 
 extension String {
-    func firstIndexOf(charactersIn: String) -> Index? {
+    func firstIndexOf(charactersIn string: String) -> Index? {
         let index = self.firstIndex { (character) -> Bool in
             if let unicodeScalar = character.unicodeScalars.first, character.unicodeScalars.count == 1 {
-                return CharacterSet(charactersIn: "0123456789").contains(unicodeScalar)
+                return CharacterSet(charactersIn: string).contains(unicodeScalar)
             }
             return false
         }
@@ -141,6 +141,18 @@ public final class SepaDataModel: ObservableObject {
 
     private var projectId: Identifier<Project>?
 
+    public var countries: [String] {
+        let all = IBAN.countries
+
+        if PayoneSepaData.countries.count == 1, let countryCode = PayoneSepaData.countries.first {
+            if countryCode == "*" {
+                return all
+            }
+            return [countryCode]
+        }
+        return PayoneSepaData.countries
+    }
+
     public var paymentDetailName: String? {
         if let detail = paymentDetail, case .payoneSepa(let data) = detail.methodData {
             return data.lastName
@@ -181,6 +193,10 @@ public final class SepaDataModel: ObservableObject {
         let trimmed = self.ibanNumber.replacingOccurrences(of: " ", with: "")
         
         return country + trimmed
+    }
+
+    private var IBANLength: Int {
+        return IBAN.length(self.ibanCountry.uppercased()) ?? 0
     }
 
     public enum Policy {
@@ -268,7 +284,12 @@ public final class SepaDataModel: ObservableObject {
                 } else if !validIbanNumber {
                     return SepaStrings.invalidIBAN.localizedString
                 }
-                
+                if self.sanitzedIban.count < self.IBANLength {
+                    return ""
+                }
+                if !self.ibanIsValid {
+                    return SepaStrings.invalidIBAN.localizedString
+                }
                 return ""
             }
             .assign(to: \SepaDataModel.hintMessage, onWeak: self)

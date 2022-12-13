@@ -84,6 +84,51 @@ public enum IBAN {
 
         return prefix + String(placeholder[start..<end]) + suffix
     }
+       
+    public static func prettyPrint(_ iban: String) -> String {
+        let iban = iban.replacingOccurrences(of: " ", with: "")
+        let country = String(iban.prefix(2))
+        
+        guard let placeholder = IBAN.placeholder(country), placeholder.replacingOccurrences(of: " ", with: "").count == iban.count-2 else {
+            return iban
+        }
+        
+        var offset: Int = 4
+        let prefix = String(iban.prefix(offset))
+        
+        let start = placeholder.index(placeholder.startIndex, offsetBy: 2)
+        var result = prefix
+        
+        for char in String(placeholder[start...]) {
+            if char == " " {
+                result.append(" ")
+            } else {
+                let currentIndex = iban.index(iban.startIndex, offsetBy:offset)
+                result.append(String(iban[currentIndex]))
+                offset += 1
+            }
+        }
+        
+        return result
+    }
+    
+    public static func numberFormatter(country: String) -> NumberFormatter? {
+        guard let placeholder = placeholder(country) else {
+            return nil
+        }
+        var result = ""
+        for char in String(placeholder) {
+            if char == " " {
+                result.append(" ")
+            } else {
+                result.append("#")
+            }
+        }
+        let formatter = NumberFormatter()
+        
+        formatter.positiveFormat = result
+        return formatter
+    }
     
     // see https://en.wikipedia.org/wiki/International_Bank_Account_Number#Modulo_operation_on_IBAN
     public static func verify(iban: String) -> Bool {
@@ -100,5 +145,80 @@ public enum IBAN {
         }
 
         return check == 1
+    }
+}
+
+public class IBANFormatter: Formatter {
+    public var placeholder: String {
+        didSet {
+            print("IBAN placeholder: \(placeholder)")
+        }
+    }
+    let characterSet = CharacterSet(charactersIn: "0123456789 ")
+
+    public init(country: String = "DE") {
+        if let placeholder = IBAN.placeholder(country) {
+            self.placeholder = placeholder
+        } else {
+            self.placeholder = IBAN.placeholder("DE")!
+        }
+        super.init()
+    }
+
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+
+    private func isValid(_ value: String) -> Bool {
+        guard let invalidRange = value.rangeOfCharacter(from: characterSet.inverted) else {
+            return true
+        }
+        return invalidRange.isEmpty
+    }
+
+    private func convert(string: String) -> String {
+        let iban = string.replacingOccurrences(of: " ", with: "")
+        let inLength = iban.count
+        var offset: Int = 0
+        var result = ""
+
+        for char in String(placeholder[placeholder.startIndex...]) {
+            if offset < inLength {
+                if char == " " {
+                    result.append(" ")
+                } else {
+                    let currentIndex = iban.index(iban.startIndex, offsetBy:offset)
+                    result.append(String(iban[currentIndex]))
+                    offset += 1
+                }
+            }
+        }
+        return result
+    }
+
+    public override func string(for obj: Any?) -> String? {
+        guard let string = obj as? String else {
+            return nil
+        }
+        return convert(string: string)
+    }
+
+    public override func getObjectValue(_ obj: AutoreleasingUnsafeMutablePointer<AnyObject?>?,
+                                        for string: String,
+                                        errorDescription error: AutoreleasingUnsafeMutablePointer<NSString?>?) -> Bool {
+        let hexValue = convert(string: string)
+
+        obj?.pointee = hexValue as AnyObject
+        return true
+    }
+
+    public override func isPartialStringValid(
+        _ partialString: String,
+        newEditingString newString: AutoreleasingUnsafeMutablePointer<NSString?>?,
+        errorDescription error: AutoreleasingUnsafeMutablePointer<NSString?>?
+    ) -> Bool {
+        guard partialString.count <= placeholder.count else { return false }
+
+        return isValid(partialString)
     }
 }
