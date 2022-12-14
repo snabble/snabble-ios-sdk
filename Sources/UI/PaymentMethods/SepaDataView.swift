@@ -48,15 +48,33 @@ public struct CountryPicker: View {
     }
 }
 
+extension String {
+    var flag: String {
+        let base : UInt32 = 127397
+        var s = ""
+        for v in self.unicodeScalars {
+            s.unicodeScalars.append(UnicodeScalar(base + v.value)!)
+        }
+        return String(s)
+    }
+}
+
 public struct IbanCountryPicker: View {
+    var model: SepaDataModel
     @Binding var selectedCountry: String
     
     public var body: some View {
-        Picker(SepaStrings.countryCode.localizedString, selection: $selectedCountry) {
-            ForEach(IBAN.countries, id: \.self) { country in
-                Text(country)
-                    .tag(country)
+        if model.countries.count == 1, let country = model.countries.first {
+            Text(country.flag + " " + country)
+                .foregroundColor(.gray)
+        } else {
+            Picker("", selection: $selectedCountry) {
+                ForEach(model.countries.sorted(), id: \.self) { country in
+                    Text(country)
+                        .tag(country)
+                }
             }
+            .frame(width: 64)
         }
     }
 }
@@ -85,8 +103,7 @@ public struct SepaDataEditorView: View {
 
     @ViewBuilder
     var ibanCountry: some View {
-        IbanCountryPicker(selectedCountry: $model.ibanCountry)
-            .frame(width: 60, height: 35)
+        IbanCountryPicker(model: model, selectedCountry: $localCountryCode)
             .foregroundColor(Color.accent())
     }
     
@@ -105,6 +122,10 @@ public struct SepaDataEditorView: View {
                     HStack {
                         ibanCountry
                         ibanNumber
+                    }
+                    .onChange(of: localCountryCode) { newCountry in
+                        localCountryCode = newCountry
+                        self.model.ibanCountry = newCountry
                     }
                     if model.policy == .extended {
                         TextField(SepaStrings.city.localizedString, text: $model.city)

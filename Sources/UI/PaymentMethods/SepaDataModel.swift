@@ -141,6 +141,18 @@ public final class SepaDataModel: ObservableObject {
 
     private var projectId: Identifier<Project>?
 
+    public var countries: [String] {
+          let all = IBAN.countries
+
+          if PayoneSepaData.countries.count == 1, let countryCode = PayoneSepaData.countries.first {
+              if countryCode == "*" {
+                  return all
+              }
+              return [countryCode]
+          }
+          return PayoneSepaData.countries
+      }
+
     public var paymentDetailName: String? {
         if let detail = paymentDetail, case .payoneSepa(let data) = detail.methodData {
             return data.lastName
