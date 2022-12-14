@@ -50,12 +50,12 @@ public struct CountryPicker: View {
 
 extension String {
     var flag: String {
-        let base : UInt32 = 127397
-        var s = ""
-        for v in self.unicodeScalars {
-            s.unicodeScalars.append(UnicodeScalar(base + v.value)!)
+        let base: UInt32 = 127397
+        var result = ""
+        for char in self.unicodeScalars {
+            result.unicodeScalars.append(UnicodeScalar(base + char.value)!)
         }
-        return String(s)
+        return String(result)
     }
 }
 
