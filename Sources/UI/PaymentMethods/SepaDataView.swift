@@ -49,13 +49,15 @@ public struct CountryPicker: View {
 }
 
 extension String {
-    var flag: String {
+    var flag: String? {
         let base: UInt32 = 127397
         var result = ""
         for char in self.unicodeScalars {
-            result.unicodeScalars.append(UnicodeScalar(base + char.value)!)
+            if let flagScalar = UnicodeScalar(base + char.value) {
+                result.unicodeScalars.append(flagScalar)
+            }
         }
-        return String(result)
+        return result.isEmpty ? nil : String(result)
     }
 }
 
@@ -65,11 +67,16 @@ public struct IbanCountryPicker: View {
     
     public var body: some View {
         if model.countries.count == 1, let country = model.countries.first {
-            Text(country.flag + " " + country)
-                .foregroundColor(.gray)
+            if let flag = country.flag {
+                Text(flag + " " + country)
+                    .foregroundColor(.systemGray)
+            } else {
+                Text(country)
+                    .foregroundColor(.systemGray)
+            }
         } else {
             Picker("", selection: $selectedCountry) {
-                ForEach(model.countries.sorted(), id: \.self) { country in
+                ForEach(model.countries, id: \.self) { country in
                     Text(country)
                         .tag(country)
                 }

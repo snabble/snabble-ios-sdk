@@ -146,12 +146,12 @@ public final class SepaDataModel: ObservableObject {
 
           if PayoneSepaData.countries.count == 1, let countryCode = PayoneSepaData.countries.first {
               if countryCode == "*" {
-                  return all
+                  return all.sorted()
               }
               return [countryCode]
           }
-          return PayoneSepaData.countries
-      }
+        return PayoneSepaData.countries.sorted()
+    }
 
     public var paymentDetailName: String? {
         if let detail = paymentDetail, case .payoneSepa(let data) = detail.methodData {
