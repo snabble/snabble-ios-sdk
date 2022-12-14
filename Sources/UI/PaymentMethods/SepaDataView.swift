@@ -72,7 +72,6 @@ public struct SepaDataEditorView: View {
     @ObservedObject var model: SepaDataModel
     @State private var action = false
     @State private var localCountryCode = "DE"
-    @State private var formatter = IBANFormatter()
     
     public init(model: SepaDataModel) {
         self.model = model
@@ -99,7 +98,7 @@ public struct SepaDataEditorView: View {
     
     @ViewBuilder
     var ibanNumberView: some View {
-        TextField(SepaStrings.iban.localizedString, value: $model.ibanNumber, formatter: formatter)
+        TextField(SepaStrings.iban.localizedString, value: $model.ibanNumber, formatter: model.formatter)
             .keyboardType(.numberPad)
     }
     
@@ -115,10 +114,7 @@ public struct SepaDataEditorView: View {
                     }
                     .onChange(of: localCountryCode) { newCountry in
                         localCountryCode = newCountry
-                        if let placeholder = IBAN.placeholder(newCountry) {
-                            formatter.placeholder = placeholder
-                        }
-                        self.model.ibanCountry = newCountry
+                        self.model.ibanCountry = localCountryCode
                     }
                     if model.policy == .extended {
                         TextField(SepaStrings.city.localizedString, text: $model.city)

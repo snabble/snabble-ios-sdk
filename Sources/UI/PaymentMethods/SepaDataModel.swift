@@ -108,7 +108,15 @@ extension Publisher where Failure == Never {
 
 public final class SepaDataModel: ObservableObject {
     
-    @Published public var ibanCountry: String
+    public let formatter = IBANFormatter()
+
+    @Published public var ibanCountry: String {
+        didSet {
+            if let placeholder = IBAN.placeholder(ibanCountry) {
+                formatter.placeholder = placeholder
+            }
+        }
+    }
     @Published public var ibanNumber: String
     @Published public var lastname: String
     @Published public var city: String

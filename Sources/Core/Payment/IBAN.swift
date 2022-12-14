@@ -149,10 +149,7 @@ public enum IBAN {
 }
 
 public class IBANFormatter: Formatter {
-    public var placeholder: String {
-        didSet {
-        }
-    }
+    public var placeholder: String
     let characterSet = CharacterSet(charactersIn: "0123456789 ")
 
     public init(country: String = "DE") {
