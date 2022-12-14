@@ -4,7 +4,9 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [0.25.0] - unreleased
+## [0.26.0] - unreleased
+
+## [0.25.0] - 2022-12-14
 
 ### Added
 * SwiftLint Strict Mode on GitHub Actions
@@ -15,7 +17,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Updated
 * groue/GRDB.swift 6.5.0 (was 6.3.1)
-* realm/SwiftLint 0.50.1 (was 0.50.0)
+* realm/SwiftLint 0.50.3 (was 0.50.0)
 
 ## [0.24.0] - 2022-12-02
 
