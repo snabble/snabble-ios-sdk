@@ -316,6 +316,8 @@ extension SepaDataModel {
         PaymentMethodDetails.remove(detail)
 
         paymentDetail = nil
+        ibanNumber = ""
+
         setupPublishers()
     }
 
