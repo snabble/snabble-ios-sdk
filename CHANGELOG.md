@@ -13,7 +13,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 * PayOne SEPA payment #APPS-513
 
 ### Changed
-* Reset IBAN number on SEPA payment remove action
+* Reset IBAN number on SEPA payment remove action #APPS-590
 
 ### Updated
 * groue/GRDB.swift 6.5.0 (was 6.3.1)
