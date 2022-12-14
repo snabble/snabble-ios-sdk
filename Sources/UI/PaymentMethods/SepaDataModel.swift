@@ -315,7 +315,11 @@ extension SepaDataModel {
         }
         PaymentMethodDetails.remove(detail)
 
-        paymentDetail = nil
+        self.ibanNumber = ""
+        self.lastname = ""
+        self.city = ""
+        self.paymentDetail = nil
+
         setupPublishers()
     }
 

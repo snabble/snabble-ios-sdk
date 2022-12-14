@@ -6,6 +6,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [0.26.0] - unreleased
 
+### Changed
+* Reset IBAN number on SEPA payment remove action #APPS-590
+
 ## [0.25.0] - 2022-12-14
 
 ### Added
