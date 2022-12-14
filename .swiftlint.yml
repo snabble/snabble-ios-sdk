@@ -30,7 +30,6 @@ opt_in_rules:
  - operator_usage_whitespace
  - override_in_extension
  - toggle_bool
- - unused_import
  - yoda_condition
 
 nesting:
