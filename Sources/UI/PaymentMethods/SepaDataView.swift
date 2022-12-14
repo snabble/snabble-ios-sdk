@@ -53,34 +53,18 @@ public struct CountryPicker: View {
         }
     }
 }
-extension String {
-    var flag: String {
-        let base: UInt32 = 127397
-        var result = ""
-        for char in self.unicodeScalars {
-            result.unicodeScalars.append(UnicodeScalar(base + char.value)!)
-        }
-        return String(result)
-    }
-}
 
 public struct IbanCountryPicker: View {
-    var model: SepaDataModel
     @Binding var selectedCountry: String
     
     public var body: some View {
-        if model.countries.count == 1, let country = model.countries.first {
-            Text(country.flag + " " + country)
-                .foregroundColor(.gray)
-        } else {
-            Picker("", selection: $selectedCountry) {
-                ForEach(model.countries.sorted(), id: \.self) { country in
-                    Text(country)
-                        .tag(country)
-                }
+        Picker("", selection: $selectedCountry) {
+            ForEach(IBAN.countries.sorted(), id: \.self) { country in
+                Text(country)
+                    .tag(country)
             }
-            .frame(width: 64)
         }
+        .frame(width: 64)
     }
 }
 
@@ -109,7 +93,7 @@ public struct SepaDataEditorView: View {
 
     @ViewBuilder
     var ibanCountryView: some View {
-        IbanCountryPicker(model: model, selectedCountry: $localCountryCode)
+        IbanCountryPicker(selectedCountry: $localCountryCode)
             .foregroundColor(Color.accent())
     }
     
