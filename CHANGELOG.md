@@ -12,6 +12,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 * SwiftLint Strict Mode on GitHub Actions
 * PayOne SEPA payment #APPS-513
 
+### Changed
+* Reset IBAN number on SEPA payment remove action
+
 ### Updated
 * groue/GRDB.swift 6.5.0 (was 6.3.1)
 * realm/SwiftLint 0.50.3 (was 0.50.0)
