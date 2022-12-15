@@ -35,10 +35,10 @@ public enum SepaStrings: String {
 }
 
 extension String {
-    func firstIndexOf(charactersIn: String) -> Index? {
+    func firstIndexOf(charactersIn string: String) -> Index? {
         let index = self.firstIndex { (character) -> Bool in
             if let unicodeScalar = character.unicodeScalars.first, character.unicodeScalars.count == 1 {
-                return CharacterSet(charactersIn: "0123456789").contains(unicodeScalar)
+                return CharacterSet(charactersIn: string).contains(unicodeScalar)
             }
             return false
         }
@@ -108,7 +108,15 @@ extension Publisher where Failure == Never {
 
 public final class SepaDataModel: ObservableObject {
     
-    @Published public var ibanCountry: String
+    public let formatter = IBANFormatter()
+
+    @Published public var ibanCountry: String {
+        didSet {
+            if let placeholder = IBAN.placeholder(ibanCountry) {
+                formatter.placeholder = placeholder
+            }
+        }
+    }
     @Published public var ibanNumber: String
     @Published public var lastname: String
     @Published public var city: String
@@ -193,6 +201,10 @@ public final class SepaDataModel: ObservableObject {
         let trimmed = self.ibanNumber.replacingOccurrences(of: " ", with: "")
         
         return country + trimmed
+    }
+
+    private var IBANLength: Int {
+        return IBAN.length(self.ibanCountry.uppercased()) ?? 0
     }
 
     public enum Policy {
@@ -280,7 +292,12 @@ public final class SepaDataModel: ObservableObject {
                 } else if !validIbanNumber {
                     return SepaStrings.invalidIBAN.localizedString
                 }
-                
+                if self.sanitzedIban.count < self.IBANLength {
+                    return ""
+                }
+                if !self.ibanIsValid {
+                    return SepaStrings.invalidIBAN.localizedString
+                }
                 return ""
             }
             .assign(to: \SepaDataModel.hintMessage, onWeak: self)
@@ -327,7 +344,11 @@ extension SepaDataModel {
         }
         PaymentMethodDetails.remove(detail)
 
-        paymentDetail = nil
+        self.ibanNumber = ""
+        self.lastname = ""
+        self.city = ""
+        self.paymentDetail = nil
+
         setupPublishers()
     }
 
