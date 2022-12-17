@@ -96,7 +96,7 @@ public struct SepaDataEditorView: View {
     @ObservedObject var model: SepaDataModel
     @State private var action = false
     @State private var localCountryCode = "DE"
-    
+
     public init(model: SepaDataModel) {
         self.model = model
     }
@@ -122,8 +122,13 @@ public struct SepaDataEditorView: View {
     
     @ViewBuilder
     var ibanNumberView: some View {
-        TextField(SepaStrings.iban.localizedString, value: $model.ibanNumber, formatter: model.formatter)
-            .keyboardType(.numberPad)
+        UIKitTextField(label: SepaStrings.iban.localizedString,
+                       text: $model.ibanNumber,
+                       formatter: model.formatter,
+                       focusable: $model.fieldFocus,
+                       keyboardType: .numberPad,
+                       returnKeyType: .next,
+                       tag: SepaDataModel.Field.iban.tag)
     }
     
     @ViewBuilder
@@ -131,7 +136,13 @@ public struct SepaDataEditorView: View {
         Form {
             Section(
                 content: {
-                    TextField(SepaStrings.lastname.localizedString, text: $model.lastname)
+                    UIKitTextField(label: SepaStrings.lastname.localizedString,
+                                   text: $model.lastname,
+                                   formatter: nil,
+                                   focusable: $model.fieldFocus,
+                                   keyboardType: .default,
+                                   returnKeyType: .next,
+                                   tag: SepaDataModel.Field.lastname.tag)
                     HStack {
                         ibanCountryView
                         ibanNumberView
@@ -141,7 +152,13 @@ public struct SepaDataEditorView: View {
                         self.model.ibanCountry = localCountryCode
                     }
                     if model.policy == .extended {
-                        TextField(SepaStrings.city.localizedString, text: $model.city)
+                        UIKitTextField(label: SepaStrings.city.localizedString,
+                                       text: $model.city,
+                                       formatter: nil,
+                                       focusable: $model.fieldFocus,
+                                       returnKeyType: .done,
+                                       tag: SepaDataModel.Field.city.tag)
+
                         CountryPicker(selectedCountry: $model.countryCode)
                     }
                 },
@@ -153,6 +170,12 @@ public struct SepaDataEditorView: View {
             Section(
                 content: {
                     button
+                        .onChange(of: action) { _ in
+                            if self.model.isValid {
+                                hideKeyboard()
+                                self.save()
+                            }
+                        }
                 },
                 footer: {
                     Text(keyed: "Snabble.Payment.SEPA.hint")
@@ -162,12 +185,6 @@ public struct SepaDataEditorView: View {
         }
         .navigationTitle(Asset.localizedString(forKey: "Snabble.Payment.SEPA.title"))
         .navigationBarTitleDisplayMode(.inline)
-        .onChange(of: action) { _ in
-            if self.model.isValid {
-                hideKeyboard()
-                self.save()
-            }
-        }
     }
     
     public var body: some View {

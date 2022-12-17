@@ -110,6 +110,29 @@ public final class SepaDataModel: ObservableObject {
     
     public let formatter = IBANFormatter()
 
+    enum Field: Int, CaseIterable {
+        case lastname
+        case iban
+        case city
+        
+        var tag: Int {
+            return self.rawValue
+        }
+        static func focused(fields: [Bool]) -> Field? {
+            guard fields.count == Self.allCases.count else {
+                return nil
+            }
+            for (index, focused) in fields.enumerated() {
+                if focused {
+                    return Self.allCases[index]
+                }
+            }
+            return nil
+        }
+    }
+
+    @Published var fieldFocus = [false, false, false]
+
     @Published public var ibanCountry: String {
         didSet {
             if let placeholder = IBAN.placeholder(ibanCountry) {
@@ -125,20 +148,6 @@ public final class SepaDataModel: ObservableObject {
     public var mandateReference: String?
     public var mandateMarkup: String?
 
-    public var isEditable: Bool {
-        return paymentDetail == nil
-    }
-
-    /// subscribe to this Publisher to start your login process
-    public var actionPublisher = PassthroughSubject<[String: Any]?, Never>()
-
-    public var iban: String {
-        if let detail = paymentDetail, case .payoneSepa(let data) = detail.methodData {
-            return data.displayName
-        }
-        return isValid ? self.sanitzedIban : ""
-    }
-
     private var paymentDetail: PaymentMethodDetail? {
         didSet {
             DispatchQueue.main.async {
@@ -149,37 +158,8 @@ public final class SepaDataModel: ObservableObject {
 
     private var projectId: Identifier<Project>?
 
-    public var countries: [String] {
-          let all = IBAN.countries
-
-          if PayoneSepaData.countries.count == 1, let countryCode = PayoneSepaData.countries.first {
-              if countryCode == "*" {
-                  return all.sorted()
-              }
-              return [countryCode]
-          }
-        return PayoneSepaData.countries.sorted()
-    }
-
-    public var paymentDetailName: String? {
-        if let detail = paymentDetail, case .payoneSepa(let data) = detail.methodData {
-            return data.lastName
-        }
-        return nil
-    }
-
-    public var paymentDetailMandate: String? {
-        if let detail = paymentDetail, case .payoneSepa(let data) = detail.methodData {
-            return data.mandateReference
-        }
-        return nil
-    }
-
-    public var paymentDetailMarkup: String? {
-        if let detail = paymentDetail, case .payoneSepa(let data) = detail.methodData {
-            return data.mandateMarkup
-        }
-        return nil
+    public var isEditable: Bool {
+        return paymentDetail == nil
     }
 
     private var countryIsValid: Bool {
@@ -213,6 +193,10 @@ public final class SepaDataModel: ObservableObject {
     }
     public private(set) var policy: Policy = .simple
 
+    // output
+    @Published public var hintMessage = ""
+    @Published public var errorMessage: String = ""
+
     @Published public var isValid = false {
         didSet {
             if errorMessage.isEmpty == false {
@@ -221,15 +205,26 @@ public final class SepaDataModel: ObservableObject {
         }
     }
 
-    // output
-    @Published public var hintMessage = ""
-    @Published public var errorMessage: String = ""
-
     public var debounce: RunLoop.SchedulerTimeType.Stride = 0.5
     public var minimumInputCount: Int = 2
 
     private var cancellables = Set<AnyCancellable>()
 
+    private lazy var isFocusedValidPublisher: AnyPublisher<Bool, Never> = {
+        $fieldFocus
+            .receive(on: RunLoop.main)
+            .map { newFocus in
+                if let newField = Field.focused(fields: newFocus) {
+                    if newField != .iban, self.sanitzedIban.count > 2, !self.ibanIsValid {
+                        return false
+                    }
+                }
+                return true
+            }
+            .eraseToAnyPublisher()
+
+    }()
+    
     private lazy var isLastnameValidPublisher: AnyPublisher<Bool, Never> = {
         $lastname
             .debounce(for: debounce, scheduler: RunLoop.main)
@@ -283,8 +278,8 @@ public final class SepaDataModel: ObservableObject {
         }
 
         isIbanCountryValidPublisher
-            .combineLatest(isIbanNumberValidPublisher)
-            .map { validIbanCountry, validIbanNumber in
+            .combineLatest(isIbanNumberValidPublisher, isFocusedValidPublisher)
+            .map { validIbanCountry, validIbanNumber, validFocus in
                 if !validIbanCountry && !validIbanNumber {
                     return SepaStrings.invalidIBAN.localizedString
                 } else if !validIbanCountry {
@@ -292,9 +287,15 @@ public final class SepaDataModel: ObservableObject {
                 } else if !validIbanNumber {
                     return SepaStrings.invalidIBAN.localizedString
                 }
+                // an iban was entered, but not complete length
+                if !validFocus {
+                    return SepaStrings.invalidIBAN.localizedString
+                }
+                // no error message while entering iban and entered length < required length
                 if self.sanitzedIban.count < self.IBANLength {
                     return ""
                 }
+                // check for valid iban
                 if !self.ibanIsValid {
                     return SepaStrings.invalidIBAN.localizedString
                 }
@@ -332,6 +333,47 @@ public final class SepaDataModel: ObservableObject {
 }
 
 extension SepaDataModel {
+
+    public var iban: String {
+        if let detail = paymentDetail, case .payoneSepa(let data) = detail.methodData {
+            return data.displayName
+        }
+        return isValid ? self.sanitzedIban : ""
+    }
+
+    public var countries: [String] {
+          let all = IBAN.countries
+
+          if PayoneSepaData.countries.count == 1, let countryCode = PayoneSepaData.countries.first {
+              if countryCode == "*" {
+                  return all.sorted()
+              }
+              return [countryCode]
+          }
+        return PayoneSepaData.countries.sorted()
+    }
+
+    public var paymentDetailName: String? {
+        if let detail = paymentDetail, case .payoneSepa(let data) = detail.methodData {
+            return data.lastName
+        }
+        return nil
+    }
+
+    public var paymentDetailMandate: String? {
+        if let detail = paymentDetail, case .payoneSepa(let data) = detail.methodData {
+            return data.mandateReference
+        }
+        return nil
+    }
+
+    public var paymentDetailMarkup: String? {
+        if let detail = paymentDetail, case .payoneSepa(let data) = detail.methodData {
+            return data.mandateMarkup
+        }
+        return nil
+    }
+
     public var imageName: String? {
         return paymentDetail?.imageName
     }
