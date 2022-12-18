@@ -12,25 +12,25 @@ import SnabbleCore
 struct UIKitTextField: UIViewRepresentable {
 
     static var isSwitching = false
-    static weak var endingTextField: UITextField? = nil
+    static weak var endingTextField: UITextField?
     
     var label: String? = nil
     @Binding var text: String
     
-    var formatter: Formatter? = nil
+    var formatter: Formatter?
     
-    var focusable: Binding<[Bool]>? = nil
-    var isSecureTextEntry: Binding<Bool>? = nil
+    var focusable: Binding<[Bool]>?
+    var isSecureTextEntry: Binding<Bool>?
 
     var keyboardType: UIKeyboardType = .default
     var returnKeyType: UIReturnKeyType = .default
     var autocapitalizationType: UITextAutocapitalizationType = .words
-    var textContentType: UITextContentType? = nil
+    var textContentType: UITextContentType?
 
-    var tag: Int? = nil
-    var inputAccessoryView: UIToolbar? = nil
+    var tag: Int?
+    var inputAccessoryView: UIToolbar?
     
-    var onCommit: (() -> Void)? = nil
+    var onCommit: (() -> Void)?
 
     func makeUIView(context: UIViewRepresentableContext<UIKitTextField>) -> UITextField {
         let textField = UITextField(frame: .zero)
@@ -96,8 +96,8 @@ struct UIKitTextField: UIViewRepresentable {
             UIKitTextField.endingTextField = nil
             guard var focusable = control.focusable?.wrappedValue else { return }
             
-            for i in 0...(focusable.count - 1) {
-                focusable[i] = (textField.tag == i)
+            for index in 0...(focusable.count - 1) {
+                focusable[index] = (textField.tag == index)
             }
             if UIKitTextField.isSwitching {
                 UIKitTextField.isSwitching = false
@@ -112,8 +112,8 @@ struct UIKitTextField: UIViewRepresentable {
                 return true
             }
             
-            for i in 0...(focusable.count - 1) {
-                focusable[i] = (textField.tag + 1 == i)
+            for index in 0...(focusable.count - 1) {
+                focusable[index] = (textField.tag + 1 == index)
             }
             
             if control.focusable?.wrappedValue != focusable {
@@ -152,11 +152,11 @@ struct UIKitTextField: UIViewRepresentable {
             
             if let char = string.cString(using: String.Encoding.utf8) {
                 let isBackSpace = strcmp(char, "\\b")
-                if (isBackSpace == -92) {
+                if isBackSpace == -92 {
                     backSpace = true
                 }
             }
-            if string == "" && backSpace {           // backspace inserts nothing, but we need to accept it.
+            if string.isEmpty && backSpace {           // backspace inserts nothing, but we need to accept it.
                 return true
             }
             guard let formatter = control.formatter else {
