@@ -146,8 +146,6 @@ struct UIKitTextField: UIViewRepresentable {
                 return true
             }
             
-            let updatedText = text.replacingCharacters(in: textRange, with: string)
-            
             var backSpace = false
             
             if let char = string.cString(using: String.Encoding.utf8) {
@@ -163,13 +161,18 @@ struct UIKitTextField: UIViewRepresentable {
                 return true
             }
             
+            let updatedText = text.replacingCharacters(in: textRange, with: string)
+            
             if let formattedText = formatter.string(for: updatedText) {
                 var textFieldRange: UITextRange?
+                let updatedLength = updatedText.lengthOfBytes(using: .utf8)
+                let formattedLength = formattedText.lengthOfBytes(using: .utf8)
+                let offset = (formattedLength - updatedLength)
                 
                 if range.location < formattedText.lengthOfBytes(using: .utf8) - 1,
                    let oldFieldRange = textField.selectedTextRange,
-                   let newStart = textField.position(from: oldFieldRange.start, offset: 1),
-                   let newEnd = textField.position(from: oldFieldRange.end, offset: 1),
+                   let newStart = textField.position(from: oldFieldRange.start, offset: offset > 0 ? offset + 1 : 1),
+                   let newEnd = textField.position(from: oldFieldRange.end, offset: offset > 0 ? offset + 1 : 1),
                    let newRange = textField.textRange(from: newStart, to: newEnd) {
                     textFieldRange = newRange
                 }
@@ -178,7 +181,9 @@ struct UIKitTextField: UIViewRepresentable {
                 control.text = formattedText
                 
                 if let newRange = textFieldRange {
-                    textField.selectedTextRange = newRange
+                    DispatchQueue.main.async {
+                        textField.selectedTextRange = newRange
+                    }
                 }
                 return false
             }
