@@ -68,8 +68,7 @@ extension String {
 }
 
 public struct IbanCountryPicker: View {
-    var model: SepaDataModel
-    @Binding var selectedCountry: String
+    @ObservedObject var model: SepaDataModel
     
     public var body: some View {
         if model.countries.count == 1, let country = model.countries.first {
@@ -81,7 +80,7 @@ public struct IbanCountryPicker: View {
                     .foregroundColor(.systemGray)
             }
         } else {
-            Picker("", selection: $selectedCountry) {
+            Picker("", selection: $model.ibanCountry) {
                 ForEach(model.countries, id: \.self) { country in
                     Text(country)
                         .tag(country)
@@ -95,7 +94,6 @@ public struct IbanCountryPicker: View {
 public struct SepaDataEditorView: View {
     @ObservedObject var model: SepaDataModel
     @State private var action = false
-    @State private var localCountryCode = "DE"
 
     public init(model: SepaDataModel) {
         self.model = model
@@ -116,7 +114,7 @@ public struct SepaDataEditorView: View {
 
     @ViewBuilder
     var ibanCountryView: some View {
-        IbanCountryPicker(model: model, selectedCountry: $localCountryCode)
+        IbanCountryPicker(model: model)
             .foregroundColor(Color.accent())
     }
     
@@ -146,10 +144,6 @@ public struct SepaDataEditorView: View {
                     HStack {
                         ibanCountryView
                         ibanNumberView
-                    }
-                    .onChange(of: localCountryCode) { newCountry in
-                        localCountryCode = newCountry
-                        self.model.ibanCountry = localCountryCode
                     }
                     if model.policy == .extended {
                         UIKitTextField(label: SepaStrings.city.localizedString,
