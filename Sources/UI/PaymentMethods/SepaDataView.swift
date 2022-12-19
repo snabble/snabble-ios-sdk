@@ -62,7 +62,6 @@ public struct IbanCountryPicker: View {
                         .tag(country)
                 }
             }
-            .frame(width: 64)
         }
     }
 }
@@ -107,8 +106,8 @@ public struct SepaDataEditorView: View {
             Section(
                 content: {
                     TextField(SepaStrings.lastname.localizedString, text: $model.lastname)
-                    HStack {
-                        ibanCountryView
+                    HStack() {
+                        ibanCountryView.fixedSize()
                         ibanNumberView
                     }
                     if model.policy == .extended {
