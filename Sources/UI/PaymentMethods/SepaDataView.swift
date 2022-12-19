@@ -105,7 +105,7 @@ public struct SepaDataEditorView: View {
             Section(
                 content: {
                     TextField(SepaStrings.lastname.localizedString, text: $model.lastname)
-                    HStack() {
+                    HStack {
                         ibanCountryView.fixedSize()
                         ibanNumberView
                     }
