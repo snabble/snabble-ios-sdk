@@ -69,7 +69,6 @@ public struct IbanCountryPicker: View {
 public struct SepaDataEditorView: View {
     @ObservedObject var model: SepaDataModel
     @State private var action = false
-    @State private var localCountryCode = "DE"
     
     public init(model: SepaDataModel) {
         self.model = model
