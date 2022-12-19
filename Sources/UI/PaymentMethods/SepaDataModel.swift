@@ -122,10 +122,8 @@ public final class SepaDataModel: ObservableObject {
             guard fields.count == Self.allCases.count else {
                 return nil
             }
-            for (index, focused) in fields.enumerated() {
-                if focused {
-                    return Self.allCases[index]
-                }
+            if let index = fields.firstIndex(where: { $0 == true }) {
+                return Self.allCases[index]
             }
             return nil
         }

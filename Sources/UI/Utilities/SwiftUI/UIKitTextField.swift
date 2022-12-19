@@ -14,7 +14,7 @@ struct UIKitTextField: UIViewRepresentable {
     static var isSwitching = false
     static weak var endingTextField: UITextField?
     
-    var label: String? = nil
+    var label: String?
     @Binding var text: String
     
     var formatter: Formatter?
@@ -164,7 +164,7 @@ struct UIKitTextField: UIViewRepresentable {
             }
             
             if let formattedText = formatter.string(for: updatedText) {
-                var textFieldRange: UITextRange? = nil
+                var textFieldRange: UITextRange?
                 
                 if range.location < formattedText.lengthOfBytes(using: .utf8) - 1,
                    let oldFieldRange = textField.selectedTextRange,
