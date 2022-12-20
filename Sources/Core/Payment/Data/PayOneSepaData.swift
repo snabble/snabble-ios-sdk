@@ -30,7 +30,7 @@ public struct PayoneSepaData: Codable, EncryptedPaymentData, Equatable {
         case encryptedPaymentData, serial, displayName, projectId, lastName, mandateReference, mandateMarkup
     }
 
-    /// array of supported SEPA countries, return a list if iso country names or `"*"` for all
+    /// array of supported IBAN countries, return a list if iso country names or `"*"` for all. (see IBAN.countries)
     public static var countries: [String] = ["DE"]
 
     private struct DirectDebitRequestOrigin: PaymentRequestOrigin {
