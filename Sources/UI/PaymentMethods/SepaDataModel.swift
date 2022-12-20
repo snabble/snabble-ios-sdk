@@ -35,10 +35,10 @@ public enum SepaStrings: String {
 }
 
 extension String {
-    func firstIndexOf(charactersIn: String) -> Index? {
+    func firstIndexOf(charactersIn string: String) -> Index? {
         let index = self.firstIndex { (character) -> Bool in
             if let unicodeScalar = character.unicodeScalars.first, character.unicodeScalars.count == 1 {
-                return CharacterSet(charactersIn: "0123456789").contains(unicodeScalar)
+                return CharacterSet(charactersIn: string).contains(unicodeScalar)
             }
             return false
         }
@@ -129,6 +129,18 @@ public final class SepaDataModel: ObservableObject {
             return data.displayName
         }
         return isValid ? self.sanitzedIban : ""
+    }
+
+    public var countries: [String] {
+          let all = IBAN.countries
+
+          if PayoneSepaData.countries.count == 1, let countryCode = PayoneSepaData.countries.first {
+              if countryCode == "*" {
+                  return all.sorted()
+              }
+              return [countryCode]
+          }
+        return PayoneSepaData.countries.sorted()
     }
 
     private var paymentDetail: PaymentMethodDetail? {

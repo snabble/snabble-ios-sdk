@@ -30,6 +30,9 @@ public struct PayoneSepaData: Codable, EncryptedPaymentData, Equatable {
         case encryptedPaymentData, serial, displayName, projectId, lastName, mandateReference, mandateMarkup
     }
 
+    /// array of supported IBAN countries, return a list if iso country names or `"*"` for all. (see IBAN.countries for all possible country codes)
+    public static var countries: [String] = ["DE"]
+
     private struct DirectDebitRequestOrigin: PaymentRequestOrigin {
         let iban: String
         let lastname: String

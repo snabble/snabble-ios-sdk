@@ -49,13 +49,18 @@ public struct CountryPicker: View {
 }
 
 public struct IbanCountryPicker: View {
-    @Binding var selectedCountry: String
+    @ObservedObject var model: SepaDataModel
     
     public var body: some View {
-        Picker(SepaStrings.countryCode.localizedString, selection: $selectedCountry) {
-            ForEach(IBAN.countries, id: \.self) { country in
-                Text(country)
-                    .tag(country)
+        if model.countries.count == 1, let country = model.countries.first {
+            Text(country)
+                .foregroundColor(.systemGray)
+        } else {
+            Picker("", selection: $model.ibanCountry) {
+                ForEach(model.countries, id: \.self) { country in
+                    Text(country)
+                        .tag(country)
+                }
             }
         }
     }
@@ -64,7 +69,6 @@ public struct IbanCountryPicker: View {
 public struct SepaDataEditorView: View {
     @ObservedObject var model: SepaDataModel
     @State private var action = false
-    @State private var localCountryCode = "DE"
     
     public init(model: SepaDataModel) {
         self.model = model
@@ -84,14 +88,13 @@ public struct SepaDataEditorView: View {
     }
 
     @ViewBuilder
-    var ibanCountry: some View {
-        IbanCountryPicker(selectedCountry: $model.ibanCountry)
-            .frame(width: 60, height: 35)
+    var ibanCountryView: some View {
+        IbanCountryPicker(model: model)
             .foregroundColor(Color.accent())
     }
     
     @ViewBuilder
-    var ibanNumber: some View {
+    var ibanNumberView: some View {
         TextField(SepaStrings.iban.localizedString, text: $model.ibanNumber)
             .keyboardType(.numberPad)
     }
@@ -103,8 +106,8 @@ public struct SepaDataEditorView: View {
                 content: {
                     TextField(SepaStrings.lastname.localizedString, text: $model.lastname)
                     HStack {
-                        ibanCountry
-                        ibanNumber
+                        ibanCountryView.fixedSize()
+                        ibanNumberView
                     }
                     if model.policy == .extended {
                         TextField(SepaStrings.city.localizedString, text: $model.city)
