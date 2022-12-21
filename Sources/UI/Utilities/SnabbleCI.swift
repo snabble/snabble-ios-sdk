@@ -27,6 +27,7 @@ public enum SnabbleCI {
             SnabbleCI.initializeAssets(for: project.id, manifestUrl, downloadFiles: true)
         }
         Asset.domain = project?.id
+        Core.domain = project?.id
         self.appearance = Asset.provider?.appearance(for: project?.id) ?? SnabbleAppearance()
     }
     

@@ -154,7 +154,10 @@ public final class ShoppingCart: Codable {
         }
 
         defer { self.save() }
-        if item.canMerge, let index = self.items.firstIndex(where: { $0.product.sku == item.product.sku }) {
+        let mergeFlag = Core.shoppingCart(self, shouldMergeItem: item) ?? true
+
+        if mergeFlag == true,
+            item.canMerge, let index = self.items.firstIndex(where: { $0.product.sku == item.product.sku }) {
             var existing = self.items[index]
             if existing.canMerge {
                 existing.quantity += item.quantity
@@ -229,7 +232,10 @@ public final class ShoppingCart: Codable {
 
     /// current quantity. returns 0 if not present or item cannot be merged with others
     public func quantity(of cartItem: CartItem) -> Int {
-        if let existing = self.items.first(where: { $0.product.sku == cartItem.product.sku }) {
+        let mergeFlag = Core.shoppingCart(self, shouldMergeItem: cartItem) ?? true
+        
+        if mergeFlag == true,
+            let existing = self.items.first(where: { $0.product.sku == cartItem.product.sku }) {
             return existing.canMerge ? existing.quantity : 0
         }
 
