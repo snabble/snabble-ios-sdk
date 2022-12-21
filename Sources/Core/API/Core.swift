@@ -21,4 +21,3 @@ public enum Core {
         return provider?.shoppingCart(shoppingCart, shouldMergeItem: item, domain: domain)
     }
 }
-
