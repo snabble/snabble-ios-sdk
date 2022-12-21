@@ -238,21 +238,21 @@
 
 "Snabble.Payment.SEPA.invalidIBANCountry" = "A megadott IBAN-országkód hibás.";
 
-"Snabble.Payment.SEPA.invalidName" = "Please enter a valid lastname.";
+"Snabble.Payment.SEPA.invalidName" = "Add meg a vezetéknevedet.";
 
-"Snabble.Payment.SEPA.mandate" = "Mandate Reference No.";
+"Snabble.Payment.SEPA.mandate" = "Megbízás hivatkozási sz.";
 
 "Snabble.Payment.SEPA.missingCity" = "Add meg a várost.";
 
 "Snabble.Payment.SEPA.missingCountry" = "Az országkód nem lehet üres.";
 
-"Snabble.Payment.SEPA.missingIBAN" = "Please enter a IBAN.";
+"Snabble.Payment.SEPA.missingIBAN" = "Add meg az IBAN-számot.";
 
 "Snabble.Payment.SEPA.missingName" = "Add meg a neved.";
 
 "Snabble.Payment.SEPA.name" = "Név";
 
-"Snabble.Payment.SEPA.payer" = "Payer";
+"Snabble.Payment.SEPA.payer" = "Fizetésre kötelezett";
 
 "Snabble.Payment.SEPA.title" = "SEPA terhelési megbízás";
 
@@ -458,7 +458,7 @@
 
 "Snabble.Scanner.enterBarcode" = "Kód megadása";
 
-"Snabble.Scanner.enterCodeButton" = "Vonalkód\nmegadása";
+"Snabble.Scanner.enterCodeButton" = "Vonalkód\megadása";
 
 /* Text der Snackbar die Angezeigt wird, wenn der Benutzer noch nie ein Produkt gescannt hat */
 "Snabble.Scanner.firstScan" = "Szkenneld be az első termékedet. Ehhez tartsd a termék vonalkódját a kamerához.";
@@ -510,7 +510,7 @@
 
 "Snabble.SEPA.IbanTransferAlert.title" = "Számla adatainak mentése";
 
-"Snabble.SEPA.iDoNotAgree" = "I do not agree";
+"Snabble.SEPA.iDoNotAgree" = "Nem járulok hozzá";
 
 "Snabble.SEPA.mandate" = "SEPA terhelési megbízás";
 
