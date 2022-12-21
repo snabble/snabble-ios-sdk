@@ -14,7 +14,7 @@ public enum Core {
     public static weak var provider: CoreProviding?
 
     /// Reference to the current domain
-    public internal(set) static var domain: Any?
+    public static var domain: Any?
 
     // MARK: - ShoppingCartMerging
     public static func shoppingCart(_ shoppingCart: ShoppingCart, shouldMergeItem item: CartItem, domain: Any? = domain) -> Bool? {
