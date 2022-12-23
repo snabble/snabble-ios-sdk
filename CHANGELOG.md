@@ -6,13 +6,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [0.27.0] - unreleased
 
-## Added
+### Added
+* CoreProviding protocol to enable control of merging cart items. #APPS-597
 
-## Fixed
+### Fixed
 
-## Removed
+### Removed
 
-## Updated
+### Updated
 
 ## [0.26.0] - 2022-12-21
 
