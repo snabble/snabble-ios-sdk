@@ -7,6 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [0.27.0] - unreleased
 
 ### Added
+* Added helper text for PayOne SEPA payments. #APPS-595
 * CoreProviding protocol to enable control of merging cart items. #APPS-597
 
 ### Fixed

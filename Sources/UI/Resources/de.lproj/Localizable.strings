@@ -504,6 +504,8 @@
 
 "Snabble.SEPA.encryptionError" = "Fehler bei der Verschlüsselung";
 
+"Snabble.SEPA.helper" = "Bitte gib die Daten für SEPA-Lastschrift ein.";
+
 "Snabble.SEPA.iAgree" = "Ich stimme zu";
 
 "Snabble.SEPA.IbanTransferAlert.message" = "Möchtest du diese Kontodaten (IBAN: %@) für zukünftige Einkäufe speichern?";

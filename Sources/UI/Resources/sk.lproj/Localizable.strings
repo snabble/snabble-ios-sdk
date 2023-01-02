@@ -504,6 +504,8 @@
 
 "Snabble.SEPA.encryptionError" = "Chyba pri kódovaní";
 
+"Snabble.SEPA.helper" = "Please enter the data for SEPA direct debit.";
+
 "Snabble.SEPA.iAgree" = "Súhlasím";
 
 "Snabble.SEPA.IbanTransferAlert.message" = "Chceš uložiť tieto údaje účtu (IBAN: %@) pre nákupy v budúcnosti?";
