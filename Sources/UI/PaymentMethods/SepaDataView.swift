@@ -124,6 +124,7 @@ public struct SepaDataEditorView: View {
                         .font(.footnote)
                         .foregroundColor(.red)
                 })
+            .textCase(nil)
             Section(
                 content: {
                     button
