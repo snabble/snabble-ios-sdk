@@ -504,6 +504,8 @@
 
 "Snabble.SEPA.encryptionError" = "Errore durante la codifica";
 
+"Snabble.SEPA.helper" = "Please enter the data for SEPA direct debit.";
+
 "Snabble.SEPA.iAgree" = "Acconsento";
 
 "Snabble.SEPA.IbanTransferAlert.message" = "Vuoi salvare questi dati del conto (IBAN: %@) per gli acquisti futuri?";

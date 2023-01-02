@@ -114,6 +114,11 @@ public struct SepaDataEditorView: View {
                         CountryPicker(selectedCountry: $model.countryCode)
                     }
                 },
+                header: {
+                    Text(keyed: "Snabble.SEPA.helper")
+                        .font(.footnote)
+                        .foregroundColor(.secondaryLabel)
+                },
                 footer: {
                     Text(model.hintMessage)
                         .font(.footnote)
