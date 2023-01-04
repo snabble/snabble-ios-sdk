@@ -265,10 +265,7 @@ public struct WidgetVersion: Widget {
         let build = Bundle.main.infoDictionary?["CFBundleVersion"] as? String ?? "n/a"
         let appVersion = "v\(version) (\(build))"
 
-        let commit = Bundle.main.infoDictionary?["SNGitCommit"] as? String ?? "n/a"
-        let sdkVersion = SDKVersion
-
-        let versionLine2 = BuildConfig.debug ? "SDK v\(sdkVersion)" : commit.prefix(6)
+        let versionLine2 = BuildConfig.debug ? "SDK v\(SDKVersion)" : "SDK Debug"
         return "Version\n\(appVersion) \(versionLine2)"
     }
 }
