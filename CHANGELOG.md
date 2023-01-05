@@ -11,6 +11,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 * CoreProviding protocol to enable control of merging cart items. #APPS-597
 
 ### Fixed
+* Use a default barcode width to calculate a camera zoom factor #APPS-623
 
 ### Removed
 

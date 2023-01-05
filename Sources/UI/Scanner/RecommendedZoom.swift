@@ -22,17 +22,19 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 
 @available(iOS 15, *)
 public enum RecommendedZoom {
-    public static func factor(for videoInput: AVCaptureDeviceInput, codeWidth: Int) -> Float {
+    public static var defaultBarcodeWidth: Int { 50 }
+
+    public static func factor(for videoInput: AVCaptureDeviceInput, codeWidth: Int?) -> Float {
         let deviceMinimumFocusDistance = Float(videoInput.device.minimumFocusDistance)
         guard deviceMinimumFocusDistance != -1 else {
             return 1
         }
 
         let deviceFieldOfView = videoInput.device.activeFormat.videoFieldOfView
-        let minimumSubjectDistanceForCode = minimumSubjectDistanceForCode(fieldOfView: deviceFieldOfView, width: codeWidth)
+        let minimumSubjectDistanceForCode = minimumSubjectDistanceForCode(fieldOfView: deviceFieldOfView, width: codeWidth ?? defaultBarcodeWidth)
         if minimumSubjectDistanceForCode < deviceMinimumFocusDistance {
             let zoomFactor = deviceMinimumFocusDistance / minimumSubjectDistanceForCode
-            return zoomFactor
+            return min(zoomFactor, Float(videoInput.device.maxAvailableVideoZoomFactor))
         }
         return 1
     }

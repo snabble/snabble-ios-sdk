@@ -186,10 +186,7 @@ public final class BuiltinBarcodeDetector: BarcodeDetector {
 
     @available(iOS 15, *)
     private func setRecommendedZoomFactor() {
-        guard
-            let videoInput = self.videoInput,
-            let expectedBarcodeWidth = self.expectedBarcodeWidth
-        else {
+        guard let videoInput = self.videoInput else {
             return
         }
 
