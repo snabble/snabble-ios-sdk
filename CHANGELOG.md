@@ -4,7 +4,7 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [0.27.0] - unreleased
+## [0.27.0] - 2023-01-05
 
 ### Added
 * Added helper text for PayOne SEPA payments. #APPS-595
@@ -16,6 +16,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Removed
 
 ### Updated
+* groue/GRDB.swift 6.6.0 (was 6.5.0)
+* datatrans/ios-sdk 2.5.0 (was 2.4.0)
 
 ## [0.26.0] - 2022-12-21
 

@@ -23,8 +23,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/groue/GRDB.swift.git",
       "state" : {
-        "revision" : "7b63ddf54232db97943759e2b022cf61c5d9e745",
-        "version" : "6.5.0"
+        "revision" : "c3cc998fc14efa356259e5d01d8910e82de080ad",
+        "version" : "6.6.0"
       }
     },
     {
@@ -32,8 +32,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/datatrans/ios-sdk.git",
       "state" : {
-        "revision" : "600981cf9e4fe421c13105ec9d5ee4b6568c3e97",
-        "version" : "2.4.0"
+        "revision" : "1fb9ce8e3a5f6ebc6c3de2da58907776854bf716",
+        "version" : "2.5.0"
       }
     },
     {
