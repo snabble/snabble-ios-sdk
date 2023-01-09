@@ -175,7 +175,9 @@ final class ScanningViewController: UIViewController {
         if let messageView = messageView {
             self.view.bringSubviewToFront(messageView)
         }
-        self.barcodeDetector.resumeScanning()
+        if !self.confirmationVisible {
+            self.barcodeDetector.resumeScanning()
+        }
     }
 
     override public func viewDidLayoutSubviews() {
@@ -186,8 +188,6 @@ final class ScanningViewController: UIViewController {
 
     override public func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
-
-        self.displayScanConfirmationView(hidden: true)
 
         self.barcodeDetector.pauseScanning()
         self.barcodeDetector.scannerWillDisappear()
