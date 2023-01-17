@@ -9,7 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 
 ### Fixed
-* Use of https://captive.apple.com to check for captive portals
+* Use of https://captive.apple.com to check for captive portals #APPS-638
 
 ### Removed
 
