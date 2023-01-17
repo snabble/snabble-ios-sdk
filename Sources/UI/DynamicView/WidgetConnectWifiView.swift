@@ -79,9 +79,14 @@ final class ConnectWifiViewModel: ObservableObject {
 
             // after a short delay, try to access an url in the hope that
             // this forces any captive portal login screens to appear
-            DispatchQueue.main.asyncAfter(deadline: .now() + 5) {
-                let testURL = URL(string: "https://httpbin.org/status/200")!
-                let captiveTask = URLSession.shared.dataTask(with: testURL) { _, response, _ in
+            DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
+                let testURL = URL(string: "https://captive.apple.com")!
+                let captiveTask = URLSession.shared.dataTask(with: testURL) { _, response, error in
+                    if error != nil {
+                        DispatchQueue.main.async {
+                            self?.networkError = error
+                        }
+                    }
                     let statusCode = (response as? HTTPURLResponse)?.statusCode ?? 0
                     print("got statuscode \(statusCode) from \(testURL)")
                 }
