@@ -504,7 +504,7 @@
 
 "Snabble.SEPA.encryptionError" = "Hiba a titkosítás során";
 
-"Snabble.SEPA.helper" = "Please enter the data for SEPA direct debit.";
+"Snabble.SEPA.helper" = "Kérlek, add meg az adatokat a SEPA terhelési megbízáshoz.";
 
 "Snabble.SEPA.iAgree" = "Hozzájárulok";
 
