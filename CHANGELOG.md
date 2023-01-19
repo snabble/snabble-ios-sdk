@@ -4,16 +4,13 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [0.29.0] - unreleased
-
-### Added
+## [0.29.0] - 2023-01-19
 
 ### Fixed
 * Use of https://captive.apple.com to check for captive portals #APPS-638
 
-### Removed
-
 ### Updated
+* groue/GRDB.swift 6.6.1 (was 6.6.0)
 
 ## [0.28.0] - 2023-01-11
 
