@@ -113,6 +113,20 @@ public class Snabble {
                 return "prod"
             }
         }
+
+        /// Verification for the `appId`
+        ///
+        /// The secret and `appId` can only be used for demo cases
+        public var secret: String {
+            switch self {
+            case .testing:
+                return "BWXJ2BFC2JRKRNW4QBASQCF2TTANPTVPOXQJM57JDIECZJQHZWOQ===="
+            case .staging:
+                return "P3SZXAPPVAZA5JWYXVKFSGGBN4ZV7CKCWJPQDMXSUMNPZ5IPB6NQ===="
+            case .production:
+                return "2TKKEG5KXWY6DFOGTZKDUIBTNIRVCYKFZBY32FFRUUWIUAFEIBHQ===="
+            }
+        }
     }
 
     /// Snabble instance is accessible after calling `Snabble.setup(config:, completion:)`
