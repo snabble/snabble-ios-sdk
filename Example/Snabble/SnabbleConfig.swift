@@ -13,27 +13,31 @@ extension Config {
     static var appId: String {
         "snabble-sdk-demo-app-oguh3x"
     }
+
     static var production: Self {
-        .init(
+        let environment: Snabble.Environment = .production
+        return .init(
             appId: appId,
-            secret: "2TKKEG5KXWY6DFOGTZKDUIBTNIRVCYKFZBY32FFRUUWIUAFEIBHQ====",
-            environment: .production
+            secret: environment.secret,
+            environment: environment
         )
     }
 
     static var staging: Self {
-        .init(
+        let environment: Snabble.Environment = .staging
+        return .init(
             appId: appId,
-            secret: "P3SZXAPPVAZA5JWYXVKFSGGBN4ZV7CKCWJPQDMXSUMNPZ5IPB6NQ====",
-            environment: .staging
+            secret: environment.secret,
+            environment: environment
         )
     }
 
     static var testing: Self {
-        .init(
+        let environment: Snabble.Environment = .testing
+        return .init(
             appId: appId,
-            secret: "BWXJ2BFC2JRKRNW4QBASQCF2TTANPTVPOXQJM57JDIECZJQHZWOQ====",
-            environment: .testing
+            secret: environment.secret,
+            environment: environment
         )
     }
     
