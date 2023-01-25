@@ -166,9 +166,16 @@ final class CheckoutStepsViewController: UIViewController {
 
     @objc private func stepActionTouchedUpInside(_ sender: UIButton) {
         guard let originCandidate = viewModel.originCandidate else { return }
-        let sepaViewController = SepaEditViewController(originCandidate, paymentDelegate)
-        sepaViewController.delegate = self
-        navigationController?.pushViewController(sepaViewController, animated: true)
+        if let project = Snabble.shared.project(for: shop.projectId),
+           project.paymentMethodDescriptors.first(where: { $0.acceptedOriginTypes?.contains(.payoneSepaData) ?? false }) != nil {
+            let sepaViewController = SepaDataEditViewController(viewModel: SepaDataModel(iban: originCandidate.origin, projectId: shop.projectId))
+            sepaViewController.delegate = self
+            navigationController?.pushViewController(sepaViewController, animated: true)
+        } else {
+            let sepaViewController = SepaEditViewController(originCandidate, paymentDelegate)
+            sepaViewController.delegate = self
+            navigationController?.pushViewController(sepaViewController, animated: true)
+        }
     }
 
     @objc private func doneButtonTouchedUpInside(_ sender: UIButton) {
@@ -241,6 +248,13 @@ private extension UITableView {
 extension CheckoutStepsViewController: SepaEditViewControllerDelegate {
     func sepaEditViewControllerDidSave(iban: String) {
         viewModel.savedIbans.insert(iban)
+        viewModel.update()
+    }
+}
+
+extension CheckoutStepsViewController: SepaDataEditViewControllerDelegate {
+    func sepaDataEditViewControllerWillSave(_ viewController: SepaDataEditViewController, userInfo: [String : Any]?) {
+        viewController.sepaDataEditViewControllerWillSave(viewController, userInfo: userInfo)
         viewModel.update()
     }
 }

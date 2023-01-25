@@ -305,8 +305,8 @@ public final class SepaDataModel: ObservableObject {
         setupPublishers()
     }
 
-    public convenience init(projectId: Identifier<Project>) {
-        self.init(iban: "", lastname: "", city: "", projectId: projectId)
+    public convenience init(iban: String? = nil, projectId: Identifier<Project>) {
+        self.init(iban: iban ?? "", lastname: "", city: "", projectId: projectId)
     }
 
     public convenience init(detail: PaymentMethodDetail, projectId: Identifier<Project>?) {
