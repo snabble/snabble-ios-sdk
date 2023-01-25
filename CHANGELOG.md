@@ -8,7 +8,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 * Add documentation to used secrets APPS-544
-
+* Add PayOne SEPA data transfer for payment with GiroCard at the SCO #APPS-612
+  
 ### Fixed
 
 ### Removed
