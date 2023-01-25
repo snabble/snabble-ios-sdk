@@ -10,7 +10,7 @@ import UIKit
 import SnabbleCore
 
 final class CheckoutStepsViewController: UIViewController {
-    
+
     private(set) weak var tableView: UITableView?
     private(set) weak var headerView: CheckoutHeaderView?
     private(set) weak var doneButton: UIButton?
