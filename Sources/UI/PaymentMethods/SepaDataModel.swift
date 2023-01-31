@@ -89,9 +89,9 @@ extension Publisher where Failure == Never {
 }
 
 public final class SepaDataModel: ObservableObject {
-    
+
     public var formatter: IBANFormatter
-  
+
     @Published public var ibanCountry: String {
         didSet {
             if !ibanCountry.isEmpty {
@@ -148,7 +148,7 @@ public final class SepaDataModel: ObservableObject {
 
     public var hasIbanLength: Bool {
         let length = (IBAN.length(self.ibanCountry.uppercased()) ?? 22)
-        
+
         return self.sanitzedIban.count == length
     }
 
@@ -159,10 +159,10 @@ public final class SepaDataModel: ObservableObject {
     private var sanitzedIban: String {
         let country = self.ibanCountry.uppercased()
         let trimmed = self.ibanNumber.replacingOccurrences(of: " ", with: "")
-        
+
         return country + trimmed
     }
-    
+
     public var IBANLength: Int {
         return IBAN.length(self.ibanCountry.uppercased()) ?? 0
     }
@@ -176,7 +176,7 @@ public final class SepaDataModel: ObservableObject {
     // output
     @Published public var hintMessage = ""
     @Published public var errorMessage: String = ""
-    
+
     @Published public var isValid = false {
         didSet {
             if isValid == true, errorMessage.isEmpty == false {
@@ -243,8 +243,8 @@ public final class SepaDataModel: ObservableObject {
         }
 
         isIbanCountryValidPublisher
-            .combineLatest(isIbanNumberValidPublisher /*, isFocusedValidPublisher*/)
-            .map { validIbanCountry, validIbanNumber /*, validFocus*/ in
+            .combineLatest(isIbanNumberValidPublisher)
+            .map { validIbanCountry, validIbanNumber in
                 if !validIbanCountry && !validIbanNumber {
                     return SepaStrings.invalidIBAN.localizedString
                 } else if !validIbanCountry {
@@ -275,7 +275,6 @@ public final class SepaDataModel: ObservableObject {
             .assign(to: \SepaDataModel.hintMessage, onWeak: self)
             .store(in: &cancellables)
 
-        
         isFormValidPublisher
             .assign(to: \.isValid, onWeak: self)
             .store(in: &cancellables)
@@ -295,7 +294,7 @@ public final class SepaDataModel: ObservableObject {
 
         setupPublishers()
     }
-    
+
     public convenience init(iban: String? = nil, countryCode: String = "DE", projectId: Identifier<Project>) {
         self.init(iban: iban ?? "", lastname: "", city: "", countryCode: countryCode, projectId: projectId)
     }
@@ -351,10 +350,10 @@ extension SepaDataModel {
         if self.isValid,
            let cert = Snabble.shared.certificates.first,
            let sepaData = PayoneSepaData(cert.data, iban: self.iban, lastName: self.lastname, city: self.city, countryCode: self.ibanCountry, projectId: self.projectId ?? SnabbleCI.project.id, mandateReference: self.mandateReference, mandateMarkup: self.mandateMarkup) {
-            
+
             let detail = PaymentMethodDetail(sepaData)
             PaymentMethodDetails.save(detail)
-            
+
             paymentDetail = detail
 
             DispatchQueue.main.async {
