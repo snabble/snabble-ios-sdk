@@ -22,27 +22,9 @@ public enum SepaStrings: String {
     
     case invalidIBAN
     case invalidIBANCountry
-    case invalidIBANNumber
-
-    case missingIBAN
-    case missingName
-    case missingCity
-    case missingCountry
     
     public var localizedString: String {
         return Asset.localizedString(forKey: "Snabble.Payment.SEPA.\(self.rawValue)")
-    }
-}
-
-extension String {
-    func firstIndexOf(charactersIn string: String) -> Index? {
-        let index = self.firstIndex { (character) -> Bool in
-            if let unicodeScalar = character.unicodeScalars.first, character.unicodeScalars.count == 1 {
-                return CharacterSet(charactersIn: string).contains(unicodeScalar)
-            }
-            return false
-        }
-        return index
     }
 }
 
@@ -108,11 +90,18 @@ extension Publisher where Failure == Never {
 
 public final class SepaDataModel: ObservableObject {
     
-    @Published public var ibanCountry: String
+    public var formatter: IBANFormatter
+  
+    @Published public var ibanCountry: String {
+        didSet {
+            if !ibanCountry.isEmpty {
+                self.formatter = IBANFormatter(country: ibanCountry)
+            }
+        }
+    }
     @Published public var ibanNumber: String
     @Published public var lastname: String
     @Published public var city: String
-    @Published public var countryCode: String
 
     public var mandateReference: String?
     public var mandateMarkup: String?
@@ -153,38 +142,17 @@ public final class SepaDataModel: ObservableObject {
 
     private var projectId: Identifier<Project>?
 
-    public var paymentDetailName: String? {
-        if let detail = paymentDetail, case .payoneSepa(let data) = detail.methodData {
-            return data.lastName
-        }
-        return nil
-    }
-
-    public var paymentDetailMandate: String? {
-        if let detail = paymentDetail, case .payoneSepa(let data) = detail.methodData {
-            return data.mandateReference
-        }
-        return nil
-    }
-
-    public var paymentDetailMarkup: String? {
-        if let detail = paymentDetail, case .payoneSepa(let data) = detail.methodData {
-            return data.mandateMarkup
-        }
-        return nil
-    }
-
-    private var countryIsValid: Bool {
+    public var countryIsValid: Bool {
         return IBAN.length(self.ibanCountry.uppercased()) != nil
     }
 
-    private var hasIbanLength: Bool {
+    public var hasIbanLength: Bool {
         let length = (IBAN.length(self.ibanCountry.uppercased()) ?? 22)
         
         return self.sanitzedIban.count == length
     }
 
-    private var ibanIsValid: Bool {
+    public var ibanIsValid: Bool {
         return hasIbanLength && IBAN.verify(iban: self.sanitzedIban)
     }
 
@@ -194,6 +162,10 @@ public final class SepaDataModel: ObservableObject {
         
         return country + trimmed
     }
+    
+    public var IBANLength: Int {
+        return IBAN.length(self.ibanCountry.uppercased()) ?? 0
+    }
 
     public enum Policy {
         case simple
@@ -201,19 +173,19 @@ public final class SepaDataModel: ObservableObject {
     }
     public private(set) var policy: Policy = .simple
 
+    // output
+    @Published public var hintMessage = ""
+    @Published public var errorMessage: String = ""
+    
     @Published public var isValid = false {
         didSet {
-            if errorMessage.isEmpty == false {
+            if isValid == true, errorMessage.isEmpty == false {
                 self.errorMessage = ""
             }
         }
     }
 
-    // output
-    @Published public var hintMessage = ""
-    @Published public var errorMessage: String = ""
-
-    public var debounce: RunLoop.SchedulerTimeType.Stride = 0.5
+    public var debounce: RunLoop.SchedulerTimeType.Stride = 0.25
     public var minimumInputCount: Int = 2
 
     private var cancellables = Set<AnyCancellable>()
@@ -231,7 +203,7 @@ public final class SepaDataModel: ObservableObject {
             .debounce(for: debounce, scheduler: RunLoop.main)
             .removeDuplicates()
             .map { code in
-                return IBAN.placeholder(code.uppercased()) != nil
+                return IBAN.length(code.uppercased()) != nil
             }
             .eraseToAnyPublisher()
     }()
@@ -271,8 +243,8 @@ public final class SepaDataModel: ObservableObject {
         }
 
         isIbanCountryValidPublisher
-            .combineLatest(isIbanNumberValidPublisher)
-            .map { validIbanCountry, validIbanNumber in
+            .combineLatest(isIbanNumberValidPublisher /*, isFocusedValidPublisher*/)
+            .map { validIbanCountry, validIbanNumber /*, validFocus*/ in
                 if !validIbanCountry && !validIbanNumber {
                     return SepaStrings.invalidIBAN.localizedString
                 } else if !validIbanCountry {
@@ -280,33 +252,52 @@ public final class SepaDataModel: ObservableObject {
                 } else if !validIbanNumber {
                     return SepaStrings.invalidIBAN.localizedString
                 }
-                
+                // no error message while entering iban and entered length < required length
+                if self.sanitzedIban.count < self.IBANLength {
+                    return ""
+                }
+                // check for valid iban
+                if !self.ibanIsValid {
+                    return SepaStrings.invalidIBAN.localizedString
+                }
+                return ""
+            }
+            .assign(to: \SepaDataModel.errorMessage, onWeak: self)
+            .store(in: &cancellables)
+
+        isIbanNumberValidPublisher
+            .map { validIbanNumber in
+                if let hintState = self.formatter.hintState {
+                    return hintState.localizedString
+                }
                 return ""
             }
             .assign(to: \SepaDataModel.hintMessage, onWeak: self)
             .store(in: &cancellables)
 
+        
         isFormValidPublisher
             .assign(to: \.isValid, onWeak: self)
             .store(in: &cancellables)
     }
 
-    public init(paymentDetail: PaymentMethodDetail? = nil, iban: String, lastname: String, city: String? = nil, countryCode: String? = "DE", projectId: Identifier<Project>? = nil) {
+    public init(paymentDetail: PaymentMethodDetail? = nil, iban: String, lastname: String, city: String? = nil, countryCode: String = "DE", projectId: Identifier<Project>? = nil) {
         self.paymentDetail = paymentDetail
         self.projectId = projectId
-        self.policy = (city != nil && countryCode != nil) ? .extended : .simple
+        self.policy = (city != nil) ? .extended : .simple
 
-        self.ibanCountry = iban.ibanCountry ?? countryCode ?? ""
+        let country = iban.ibanCountry ?? countryCode
+        self.formatter = IBANFormatter(country: country)
+        self.ibanCountry = country
         self.ibanNumber = iban.ibanNumber ?? ""
         self.lastname = lastname
         self.city = city ?? ""
-        self.countryCode = countryCode ?? ""
 
         setupPublishers()
     }
-
-    public convenience init(iban: String? = nil, projectId: Identifier<Project>) {
-        self.init(iban: iban ?? "", lastname: "", city: "", projectId: projectId)
+    
+    public convenience init(iban: String? = nil, countryCode: String = "DE", projectId: Identifier<Project>) {
+        self.init(iban: iban ?? "", lastname: "", city: "", countryCode: countryCode, projectId: projectId)
     }
 
     public convenience init(detail: PaymentMethodDetail, projectId: Identifier<Project>?) {
@@ -315,6 +306,27 @@ public final class SepaDataModel: ObservableObject {
 }
 
 extension SepaDataModel {
+    public var paymentDetailName: String? {
+        if let detail = paymentDetail, case .payoneSepa(let data) = detail.methodData {
+            return data.lastName
+        }
+        return nil
+    }
+
+    public var paymentDetailMandate: String? {
+        if let detail = paymentDetail, case .payoneSepa(let data) = detail.methodData {
+            return data.mandateReference
+        }
+        return nil
+    }
+
+    public var paymentDetailMarkup: String? {
+        if let detail = paymentDetail, case .payoneSepa(let data) = detail.methodData {
+            return data.mandateMarkup
+        }
+        return nil
+    }
+
     public var imageName: String? {
         return paymentDetail?.imageName
     }
@@ -338,7 +350,7 @@ extension SepaDataModel {
     public func save() async throws {
         if self.isValid,
            let cert = Snabble.shared.certificates.first,
-           let sepaData = PayoneSepaData(cert.data, iban: self.iban, lastName: self.lastname, city: self.city, countryCode: self.countryCode, projectId: self.projectId ?? SnabbleCI.project.id, mandateReference: self.mandateReference, mandateMarkup: self.mandateMarkup) {
+           let sepaData = PayoneSepaData(cert.data, iban: self.iban, lastName: self.lastname, city: self.city, countryCode: self.ibanCountry, projectId: self.projectId ?? SnabbleCI.project.id, mandateReference: self.mandateReference, mandateMarkup: self.mandateMarkup) {
             
             let detail = PaymentMethodDetail(sepaData)
             PaymentMethodDetails.save(detail)

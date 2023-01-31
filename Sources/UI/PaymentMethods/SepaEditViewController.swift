@@ -480,11 +480,9 @@ extension SepaEditViewController: UITextFieldDelegate {
             let index = iban.index(iban.startIndex, offsetBy: country.count)
             iban = String(iban[index...])
         }
-        if let placeholder = IBAN.placeholder(country) {
-            return self.formatIban(placeholder, iban)
-        } else {
-            return iban
-        }
+        let placeholder = IBAN.placeholder(country)
+        
+        return self.formatIban(placeholder, iban)
     }
 
     private func formatIban(_ pattern: String, _ text: String) -> String {
