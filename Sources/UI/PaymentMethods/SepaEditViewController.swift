@@ -422,7 +422,7 @@ extension SepaEditViewController: UITextFieldDelegate {
     }
 
     private func placeholderFor(_ country: String) -> String {
-        return IBAN.placeholder(country) ?? "IBAN"
+        return IBAN.placeholder(country)
     }
 
     public func textFieldShouldReturn(_ textField: UITextField) -> Bool {
