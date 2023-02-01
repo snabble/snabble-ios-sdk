@@ -128,11 +128,15 @@ struct IBANHintView: View {
     var content: some View {
         VStack(alignment: .leading, spacing: 0) {
             placeholder
-            message
-                .font(.footnote)
-                .padding(.top, topPadding)
-                .padding(.bottom, bottomPadding)
-        }
+            HStack {
+                message
+                    .font(.footnote)
+                    .padding(.top, topPadding)
+                    .padding(.bottom, bottomPadding)
+                Spacer()
+            }
+            .frame(minWidth: 280)
+       }
     }
 
     var body: some View {
