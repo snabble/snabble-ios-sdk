@@ -22,6 +22,7 @@ public enum SepaStrings: String {
     
     case invalidIBAN
     case invalidIBANCountry
+    case validIBAN
     
     public var localizedString: String {
         return Asset.localizedString(forKey: "Snabble.Payment.SEPA.\(self.rawValue)")

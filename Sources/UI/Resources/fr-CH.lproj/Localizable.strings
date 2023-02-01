@@ -232,6 +232,22 @@
 
 "Snabble.Payment.SEPA.hint" = "Remarque : pour te protéger et protéger nos commerçants contre les abus, le commerçant te demandera de montrer ta carte bancaire lors de ton premier paiement par débit SEPA.";
 
+"Snabble.Payment.SEPA.Hint.account" = "Account number";
+
+"Snabble.Payment.SEPA.Hint.accountType" = "Account type";
+
+"Snabble.Payment.SEPA.Hint.bank" = "Bank number";
+
+"Snabble.Payment.SEPA.Hint.branchCode" = "Branch code";
+
+"Snabble.Payment.SEPA.Hint.checksum" = "Checksum";
+
+"Snabble.Payment.SEPA.Hint.controlCode" = "Control code";
+
+"Snabble.Payment.SEPA.Hint.miscCode" = "Other function";
+
+"Snabble.Payment.SEPA.Hint.regionCode" = "Region code";
+
 "Snabble.Payment.SEPA.iban" = "IBAN";
 
 "Snabble.Payment.SEPA.invalidIBAN" = "L’IBAN saisi n’est pas valide.";
@@ -255,6 +271,8 @@
 "Snabble.Payment.SEPA.payer" = "Payer";
 
 "Snabble.Payment.SEPA.title" = "Débit SEPA";
+
+"Snabble.Payment.SEPA.validIBAN" = "Valid IBAN";
 
 "Snabble.Payment.success" = "Merci pour ton achat !";
 
@@ -648,6 +666,8 @@
 "Snabble.Shoppingcart.removeItem" = "Es-tu sûr(e) de vouloir supprimer %@ ?";
 
 "Snabble.Shoppingcart.removeItems" = "Es-tu sûr(e) de vouloir supprimer tous les produits du panier ?";
+
+"Snabble.Shoppingcart.saved" = "saved";
 
 "Snabble.ShoppingCart.title" = "Panier";
 

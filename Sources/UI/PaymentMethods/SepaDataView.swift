@@ -112,10 +112,10 @@ struct IBANHintView: View {
     var message: some View {
         if model.ibanNumber.count == model.formatter.placeholder.count {
             if model.ibanIsValid {
-                Label("validIBAN", systemImage: "checkmark.circle.fill")
+                Label(SepaStrings.validIBAN.localizedString, systemImage: "checkmark.circle.fill")
                     .foregroundColor(.green)
             } else {
-                Label("invalidIBAN", systemImage: "xmark.circle.fill")
+                Label(SepaStrings.invalidIBAN.localizedString, systemImage: "xmark.circle.fill")
                     .foregroundColor(.red)
             }
         } else {

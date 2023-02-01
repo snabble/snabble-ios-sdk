@@ -232,6 +232,22 @@
 
 "Snabble.Payment.SEPA.hint" = "Megjegyzés: A te és a kereskedőink visszaélésekkel szembeni védelme érdekében az első SEPA terhelési megbízásos fizetésednél a kereskedőnél megjelenik a bankkártyád.";
 
+"Snabble.Payment.SEPA.Hint.account" = "Account number";
+
+"Snabble.Payment.SEPA.Hint.accountType" = "Account type";
+
+"Snabble.Payment.SEPA.Hint.bank" = "Bank number";
+
+"Snabble.Payment.SEPA.Hint.branchCode" = "Branch code";
+
+"Snabble.Payment.SEPA.Hint.checksum" = "Checksum";
+
+"Snabble.Payment.SEPA.Hint.controlCode" = "Control code";
+
+"Snabble.Payment.SEPA.Hint.miscCode" = "Other function";
+
+"Snabble.Payment.SEPA.Hint.regionCode" = "Region code";
+
 "Snabble.Payment.SEPA.iban" = "IBAN";
 
 "Snabble.Payment.SEPA.invalidIBAN" = "A megadott IBAN érvénytelen.";
@@ -255,6 +271,8 @@
 "Snabble.Payment.SEPA.payer" = "Fizetésre kötelezett";
 
 "Snabble.Payment.SEPA.title" = "SEPA terhelési megbízás";
+
+"Snabble.Payment.SEPA.validIBAN" = "Valid IBAN";
 
 "Snabble.Payment.success" = "Köszönjük a vásárlásodat";
 
@@ -648,6 +666,8 @@
 "Snabble.Shoppingcart.removeItem" = "%@ tényleg eltávolítod?";
 
 "Snabble.Shoppingcart.removeItems" = "Az összes terméket eltávolítod a kosárból?";
+
+"Snabble.Shoppingcart.saved" = "megtakarítva";
 
 "Snabble.ShoppingCart.title" = "Kosár";
 
