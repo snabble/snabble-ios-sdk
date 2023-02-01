@@ -18,7 +18,7 @@ extension View {
 #endif
 
 struct UIKitLabel: UIViewRepresentable {
-    fileprivate var configuration = { (view: UILabel) in }
+    fileprivate var configuration = { (_: UILabel) in }
 
     func makeUIView(context: UIViewRepresentableContext<Self>) -> UILabel {
         let label = UILabel()
@@ -98,7 +98,7 @@ struct IBANHintView: View {
                 .padding(.top, 4)
         } else {
             GeometryReader { geom in
-                UIKitLabel() {
+                UIKitLabel {
                     $0.attributedText = attributedString
                     $0.lineBreakMode = model.lineBreakMode
                     $0.numberOfLines = 1
@@ -126,7 +126,7 @@ struct IBANHintView: View {
 
     @ViewBuilder
     var content: some View {
-        VStack(alignment: .leading, spacing:0) {
+        VStack(alignment: .leading, spacing: 0) {
             placeholder
             message
                 .font(.footnote)

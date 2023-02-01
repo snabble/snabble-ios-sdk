@@ -26,7 +26,9 @@ extension UITextField {
 
 protocol TextChangeFormatter {
     func textFieldShouldEndEditing(_ textField: UITextField) -> Bool
+    // swiftlint:disable large_tuple
     func textField(_ textField: UITextField, shouldChangeCharactersIn range: NSRange, replacementString string: String) -> (updatedText: String?, updatedRange: UITextRange?, shouldChange: Bool)
+    // swiftlint:enable large_tuple
 }
 
 extension FormatterSelectionHint {
@@ -66,7 +68,7 @@ struct UIKitTextField<Content: View>: UIViewRepresentable {
          autocapitalizationType: UITextAutocapitalizationType = .words,
          textContentType: UITextContentType? = nil,
          tag: Int? = nil,
-        content: (() -> Content)? = nil) {
+         content: (() -> Content)? = nil) {
         self.label = label
         self._text = text
         self.formatter = formatter

@@ -22,7 +22,6 @@ extension String {
 // DE75512108001245126199
 // NL02ABNA0123456789
 
-
 /**
  Supported official IBAN (ISO 13616) formats see:
  https://de.wikipedia.org/wiki/Internationale_Bankkontonummer#IBAN-Struktur_in_verschiedenen_Ländern
@@ -57,6 +56,7 @@ extension String {
  */
 
 public enum IBAN {
+    // swiftlint:disable large_tuple
     private static let info: [String: (length: Int, mapping: [String], format: String)] = [
         "AD": (24, ["4!n", "4!n", "12!c"], "pp bbbb ssss kkkk kkkk kkkk"),
         "AT": (20, ["5!n", "11!n"], "pp bbbb bkkk kkkk kkkk"),
@@ -98,6 +98,7 @@ public enum IBAN {
         "SM": (27, ["1!a", "5!n", "5!n", "12!c"], "pp Kbbb bbss sssk kkkk kkkk kkk"),
         "VA": (22, ["3!n", "15!n"], "pp bbbk kkkk kkkk kkkk kk")
     ]
+    // swiftlint:enable large_tuple
 
     public enum ControlChar: String {
         case digits = "n"
@@ -116,7 +117,7 @@ public enum IBAN {
         for item in mapping {
             func split() -> (count: Int, control: ControlChar)? {
                 if let countIndex = item.firstIndexOf(charactersIn: "!nace"),
-                   let count = Int(String(item.prefix(upTo:countIndex))),
+                   let count = Int(String(item.prefix(upTo: countIndex))),
                    let controlIndex = item.firstIndexOf(charactersIn: "nace"),
                    let controlChar = ControlChar(rawValue: String(item.suffix(from: controlIndex))) {
                     return (count, controlChar)
@@ -138,7 +139,7 @@ public enum IBAN {
     }
 
     public static let formatCharacters: [Character] = ["p", "b", "d", "k", "K", "r", "s", "X"]
-    public static var formatKeys: String = { formatCharacters.reduce("", { "\($0)\($1)" } ) }()  // "pbdkKrsX"
+    public static var formatKeys: String = { formatCharacters.reduce("", { "\($0)\($1)" }) }()  // "pbdkKrsX"
 
     public static var formatCharacterSet: CharacterSet {
         return CharacterSet(charactersIn: formatKeys)
@@ -149,7 +150,7 @@ public enum IBAN {
             fatalError("invalid country: \(country)")
         }
         let offset = string.count - string.replacingOccurrences(of: " ", with: "").count
-        return String(string.prefix(length+offset-2))
+        return String(string.prefix(length + offset - 2))
     }
 
     public static func placeholder(_ country: String, with placeholderChar: Character = "•") -> String {

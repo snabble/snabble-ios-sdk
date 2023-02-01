@@ -111,10 +111,10 @@ extension IBANFormatter {
         guard let offset = currentOffset, offset <= formatString.count else {
             return nil
         }
-        let saveOffset = min(offset, formatString.count-1)
+        let saveOffset = min(offset, formatString.count - 1)
         var index = formatString.index(formatString.startIndex, offsetBy: saveOffset)
         if formatString[index] == " " {
-            let nextOffset = offset < formatString.count-1 ? offset + 1 : formatString.count - 1
+            let nextOffset = offset < formatString.count - 1 ? offset + 1 : formatString.count - 1
             index = formatString.index(formatString.startIndex, offsetBy: nextOffset)
         }
         return index

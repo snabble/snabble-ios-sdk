@@ -26,6 +26,7 @@ extension IBANFormatter: TextChangeFormatter {
         return true
     }
 
+    // swiftlint:disable large_tuple
     func textField(_ textField: UITextField, shouldChangeCharactersIn range: NSRange, replacementString string: String) -> (updatedText: String?, updatedRange: UITextRange?, shouldChange: Bool) {
         guard let text = textField.text,
               let textRange = Range(range, in: text) else {
@@ -39,7 +40,7 @@ extension IBANFormatter: TextChangeFormatter {
 
             if range.location < formattedText.count - 1, NSMaxRange(range) + length < formattedText.count {
                 let offset = (formattedText.count - updatedText.count)
-                let inserted = formattedText[formattedText.index(formattedText.startIndex, offsetBy: range.location)...formattedText.index(formattedText.startIndex, offsetBy: range.location+length-1)]
+                let inserted = formattedText[formattedText.index(formattedText.startIndex, offsetBy: range.location)...formattedText.index(formattedText.startIndex, offsetBy: range.location + length - 1)]
 
                 let spaceInserted = inserted != string
 
@@ -54,4 +55,5 @@ extension IBANFormatter: TextChangeFormatter {
         }
         return (nil, nil, true)
     }
+    // swiftlint:enable large_tuple
 }

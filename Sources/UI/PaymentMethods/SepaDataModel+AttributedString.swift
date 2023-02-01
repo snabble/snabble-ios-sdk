@@ -10,13 +10,13 @@ import UIKit
 
 extension SepaDataModel {
     var emptyRange: NSRange? {
-        guard ibanNumber.count > 0 else {
+        guard !ibanNumber.isEmpty else {
             return nil
         }
-        return NSRange(location: ibanNumber.count, length: formatter.placeholder.count-ibanNumber.count)
+        return NSRange(location: ibanNumber.count, length: formatter.placeholder.count - ibanNumber.count)
     }
     var inputRange: NSRange? {
-        guard ibanNumber.count > 0 else {
+        guard !ibanNumber.isEmpty else {
             return nil
         }
         return NSRange(location: 0, length: ibanNumber.count)
@@ -32,7 +32,7 @@ extension SepaDataModel {
         guard let offset = formatter.currentOffset  else {
             return .byTruncatingTail
         }
-        return offset < formatter.placeholder.count/2 ? .byTruncatingTail : .byTruncatingHead
+        return offset < formatter.placeholder.count / 2 ? .byTruncatingTail : .byTruncatingHead
     }
 
     func attributedInputPlaceholder(_ placeholderString: String) -> NSAttributedString {

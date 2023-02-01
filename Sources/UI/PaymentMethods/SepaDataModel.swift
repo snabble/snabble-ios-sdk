@@ -267,7 +267,7 @@ public final class SepaDataModel: ObservableObject {
             .store(in: &cancellables)
 
         isIbanNumberValidPublisher
-            .map { validIbanNumber in
+            .map { _ in
                 if let hintState = self.formatter.hintState {
                     return hintState.localizedString
                 }
