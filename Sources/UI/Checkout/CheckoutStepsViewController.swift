@@ -253,7 +253,7 @@ extension CheckoutStepsViewController: SepaEditViewControllerDelegate {
 }
 
 extension CheckoutStepsViewController: SepaDataEditViewControllerDelegate {
-    func sepaDataEditViewControllerWillSave(_ viewController: SepaDataEditViewController, userInfo: [String : Any]?) {
+    func sepaDataEditViewControllerWillSave(_ viewController: SepaDataEditViewController, userInfo: [String: Any]?) {
         viewController.sepaDataEditViewControllerWillSave(viewController, userInfo: userInfo)
         viewModel.update()
     }
