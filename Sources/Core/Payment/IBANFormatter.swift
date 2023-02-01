@@ -14,7 +14,7 @@ public protocol FormatterSelectionHint {
 
 public class IBANFormatter: Formatter, FormatterSelectionHint {
     public var ibanDefinition: IBANDefinition
-        
+
     public var placeholder: String {
         return ibanDefinition.placeholder
     }
@@ -28,7 +28,7 @@ public class IBANFormatter: Formatter, FormatterSelectionHint {
     }
 
     public var currentOffset: Int?
-    
+
     public var currentControlChar: IBAN.ControlChar {
         guard let index = self.currentIndex,
                 let controlChar = IBAN.ControlChar(rawValue: String(ibanDefinition.keyboardMapping[index])) else {
@@ -42,11 +42,13 @@ public class IBANFormatter: Formatter, FormatterSelectionHint {
             
         super.init()
     }
-    public func placeholder(with char: Character) -> String {
-        return IBAN.placeholder(ibanDefinition.country, with: char)
-    }
+
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
+    }
+
+    public func placeholder(with char: Character) -> String {
+        return IBAN.placeholder(ibanDefinition.country, with: char)
     }
 
     private func isValid(_ value: String) -> Bool {
@@ -129,16 +131,12 @@ extension IBANFormatter {
         case regionCode
         case branchCode
         case miscCode
-        
+
         public var message: String {
             return self.rawValue
         }
-        
-        public var localizedString: String {
-            return NSLocalizedString(message, comment: "")
-        }
     }
-    
+
     /*
      pp  zweistellige Prüfsumme
      b   Stelle der Bankleitzahl 
@@ -154,7 +152,7 @@ extension IBANFormatter {
             return nil
         }
         let char = formatString[index]
-        
+
         switch char {
         case "p":
             return .checksum

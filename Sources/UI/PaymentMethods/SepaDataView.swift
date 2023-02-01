@@ -18,15 +18,13 @@ extension View {
 #endif
 
 struct UIKitLabel: UIViewRepresentable {
-    
-    fileprivate var configuration = { (view: UILabel) in
-    }
+    fileprivate var configuration = { (view: UILabel) in }
 
     func makeUIView(context: UIViewRepresentableContext<Self>) -> UILabel {
         let label = UILabel()
         return label
     }
-    
+
     func updateUIView(_ uiView: UILabel, context: UIViewRepresentableContext<Self>) {
         configuration(uiView)
     }
@@ -75,6 +73,7 @@ struct IBANHintView: View {
     private var hintMessage: String {
         return model.hintMessage.isEmpty ? IBANFormatter.HintState.checksum.localizedString : model.hintMessage
     }
+
     private var topPadding: CGFloat {
         if #available(iOS 15.0, *) {
             return 0
@@ -82,6 +81,7 @@ struct IBANHintView: View {
             return -10
         }
     }
+
     private var bottomPadding: CGFloat {
         if #available(iOS 15.0, *) {
             return 0
@@ -123,6 +123,7 @@ struct IBANHintView: View {
                 .foregroundColor(.secondary)
         }
     }
+
     @ViewBuilder
     var content: some View {
         VStack(alignment: .leading, spacing:0) {
@@ -131,8 +132,8 @@ struct IBANHintView: View {
                 .font(.footnote)
                 .padding(.top, topPadding)
                 .padding(.bottom, bottomPadding)
-       }
-   }
+        }
+    }
 
     var body: some View {
         content
@@ -144,7 +145,7 @@ struct IBANHintView: View {
 
 struct IBANErrorView: View {
     @ObservedObject var model: SepaDataModel
-    
+
     @ViewBuilder
     var content: some View {
         if !model.errorMessage.isEmpty {
@@ -161,7 +162,7 @@ struct IBANErrorView: View {
 
 public struct CountryPicker: View {
     @Binding var selectedCountry: String
-    
+
     public var body: some View {
         Picker(SepaStrings.countryCode.localizedString, selection: $selectedCountry) {
             ForEach(getLocales(), id: \.id) { country in
@@ -174,7 +175,7 @@ public struct CountryPicker: View {
 
 public struct IbanCountryPicker: View {
     @ObservedObject var model: SepaDataModel
-    
+
     public var body: some View {
         if model.countries.count == 1, let country = model.countries.first {
             Text(country)
@@ -193,12 +194,12 @@ public struct IbanCountryPicker: View {
 public struct SepaDataEditorView: View {
     @ObservedObject var model: SepaDataModel
     @State private var country: String
-    
+
     public init(model: SepaDataModel) {
         self.model = model
         country = model.formatter.ibanDefinition.country
     }
-    
+
     @ViewBuilder
     var button: some View {
         Button(action: {
@@ -221,7 +222,7 @@ public struct SepaDataEditorView: View {
         IbanCountryPicker(model: model)
             .foregroundColor(Color.accent())
     }
-    
+
     @ViewBuilder
     var ibanNumberView: some View {
         UIKitTextField(SepaStrings.iban.localizedString, text: $model.ibanNumber, formatter: model.formatter) {
@@ -236,6 +237,7 @@ public struct SepaDataEditorView: View {
             CountryPicker(selectedCountry: $model.ibanCountry)
         }
     }
+
     @ViewBuilder
     var footerView: some View {
         if !model.errorMessage.isEmpty {
@@ -244,9 +246,9 @@ public struct SepaDataEditorView: View {
             Text(keyed: "Snabble.Payment.SEPA.hint")
                 .font(.footnote)
                 .foregroundColor(.secondaryLabel)
-
         }
     }
+
     public var body: some View {
         Form {
             Section(
@@ -278,11 +280,11 @@ public struct SepaDataEditorView: View {
 
 public struct SepaDataDisplayView: View {
     @ObservedObject var model: SepaDataModel
-    
+
     public init(model: SepaDataModel) {
         self.model = model
     }
-    
+
     @ViewBuilder
     var displayData: some View {
         Form {
@@ -317,11 +319,11 @@ public struct SepaDataDisplayView: View {
         }
         )
     }
-    
+
     public var body: some View {
         displayData
     }
-    
+
     private func askToRemove() {
         let alert = AlertView(title: Asset.localizedString(forKey: "Snabble.Payment.SEPA.title"), message: Asset.localizedString(forKey: "Snabble.Payment.Delete.message"))
 
@@ -335,17 +337,16 @@ public struct SepaDataDisplayView: View {
         }))
     
         alert.show()
-
     }
 }
 
 public struct SepaDataView: View {
     @ObservedObject var model: SepaDataModel
-    
+
     public init(model: SepaDataModel) {
         self.model = model
     }
-    
+
     public var body: some View {
         if model.isEditable {
             SepaDataEditorView(model: model)

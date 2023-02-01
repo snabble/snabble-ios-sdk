@@ -9,6 +9,12 @@ import Foundation
 import UIKit
 import SnabbleCore
 
+extension IBANFormatter.HintState {
+    public var localizedString: String {
+        return Asset.localizedString(forKey: "Snabble.Payment.SEPA.Hint.\(message)")
+    }
+}
+
 extension IBANFormatter: TextChangeFormatter {
     func textFieldShouldEndEditing(_ textField: UITextField) -> Bool {
         guard let text = textField.text else {
@@ -19,7 +25,7 @@ extension IBANFormatter: TextChangeFormatter {
         }
         return true
     }
-    
+
     func textField(_ textField: UITextField, shouldChangeCharactersIn range: NSRange, replacementString string: String) -> (updatedText: String?, updatedRange: UITextRange?, shouldChange: Bool) {
         guard let text = textField.text,
               let textRange = Range(range, in: text) else {
@@ -30,13 +36,13 @@ extension IBANFormatter: TextChangeFormatter {
         if let formattedText = self.string(for: updatedText) {
             var textFieldRange: UITextRange?
             let length = string.count
-            
+
             if range.location < formattedText.count - 1, NSMaxRange(range) + length < formattedText.count {
                 let offset = (formattedText.count - updatedText.count)
                 let inserted = formattedText[formattedText.index(formattedText.startIndex, offsetBy: range.location)...formattedText.index(formattedText.startIndex, offsetBy: range.location+length-1)]
-                
+
                 let spaceInserted = inserted != string
-                
+
                 if let oldFieldRange = textField.selectedTextRange,
                    let newStart = textField.position(from: oldFieldRange.start, offset: spaceInserted ? offset + length : length),
                    let newEnd = textField.position(from: oldFieldRange.end, offset: spaceInserted ? offset + length : length),

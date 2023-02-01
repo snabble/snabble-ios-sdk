@@ -56,7 +56,7 @@ struct UIKitTextField<Content: View>: UIViewRepresentable {
 
     var tag: Int?
     var content: Content?
-    
+
     init(_ label: String? = nil,
          text: Binding<String>,
          formatter: Formatter? = nil,
@@ -82,11 +82,11 @@ struct UIKitTextField<Content: View>: UIViewRepresentable {
     func makeUIView(context: UIViewRepresentableContext<UIKitTextField>) -> UITextField {
         let textField = UITextField(frame: .zero)
         textField.delegate = context.coordinator
-        
+
         textField.placeholder = self.label
         textField.returnKeyType = returnKeyType
         textField.autocapitalizationType = autocapitalizationType
-        
+
         if let formatter = self.formatter as? FormatterSelectionHint {
             textField.keyboardType = formatter.currentControlChar == .digits ? .numberPad : .default
         } else {
@@ -103,17 +103,15 @@ struct UIKitTextField<Content: View>: UIViewRepresentable {
             contentView.autoresizingMask = [.flexibleWidth, .flexibleHeight]
             contentView.isOpaque = false
             contentView.backgroundColor = .clear
-            
             contentView.sizeToFit()
 
             let keyboardToolbar = UIToolbar(frame: CGRect(x: 0, y: 0, width: 320, height: 44))
-            
             let leftButton = UIBarButtonItem(customView: contentView)
             let flexSpace = UIBarButtonItem(barButtonSystemItem: .flexibleSpace, target: nil, action: nil)
             let doneButton = UIBarButtonItem(barButtonSystemItem: .done, target: textField, action: #selector(UITextField.endEditing(_:)))
             keyboardToolbar.items = [leftButton, flexSpace, doneButton]
             keyboardToolbar.sizeToFit()
-            
+
             textField.inputAccessoryView = keyboardToolbar
 
         }
@@ -127,11 +125,11 @@ struct UIKitTextField<Content: View>: UIViewRepresentable {
         uiView.text = text
         uiView.isSecureTextEntry = isSecureTextEntry?.wrappedValue ?? false
     }
-        
+
     func makeCoordinator() -> Coordinator {
         Coordinator(self)
     }
-    
+
     final class Coordinator: NSObject, UITextFieldDelegate {
 
         let control: UIKitTextField
@@ -171,7 +169,7 @@ struct UIKitTextField<Content: View>: UIViewRepresentable {
             guard let formatter = control.formatter as? TextChangeFormatter else {
                 return true
             }
-            
+
             let result = formatter.textField(textField, shouldChangeCharactersIn: range, replacementString: string)
             if result.shouldChange == false, let updatedText = result.updatedText {
                 textField.text = updatedText

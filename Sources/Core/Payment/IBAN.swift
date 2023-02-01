@@ -98,14 +98,14 @@ public enum IBAN {
         "SM": (27, ["1!a", "5!n", "5!n", "12!c"], "pp Kbbb bbss sssk kkkk kkkk kkk"),
         "VA": (22, ["3!n", "15!n"], "pp bbbk kkkk kkkk kkkk kk")
     ]
-    
+
     public enum ControlChar: String {
         case digits = "n"
         case uppercaseLetters = "a"
         case alphanumerics = "c"
         case space = "e"
     }
-    
+
     public static func keyboardMapping(_ country: String) -> String {
         guard let mapping = self.info[country]?.mapping, let length = length(country) else {
             fatalError("invalid country: \(country)")
@@ -136,14 +136,14 @@ public enum IBAN {
         let pretty = IBAN.prettyPrint(string)
         return String(pretty.suffix(pretty.count - 2))
     }
-    
+
     public static let formatCharacters: [Character] = ["p", "b", "d", "k", "K", "r", "s", "X"]
     public static var formatKeys: String = { formatCharacters.reduce("", { "\($0)\($1)" } ) }()  // "pbdkKrsX"
-    
+
     public static var formatCharacterSet: CharacterSet {
         return CharacterSet(charactersIn: formatKeys)
     }
-    
+
     public static func formatString(_ country: String) -> String {
         guard let string = self.info[country]?.format, let length = length(country) else {
             fatalError("invalid country: \(country)")
@@ -159,15 +159,15 @@ public enum IBAN {
         }
         return result
     }
-    
+
     public static var countries: [String] {
         return info.keys.compactMap({ $0 })
     }
-    
+
     public static func length(_ country: String) -> Int? {
         return info[country]?.length
     }
-    
+
     public static func displayName(_ iban: String) -> String {
         let country = String(iban.prefix(2))
         let prefix = String(iban.prefix(4))
@@ -184,7 +184,7 @@ public enum IBAN {
 
         return prefix + String(placeholder[start..<end]) + suffix
     }
-    
+
     public static func validCharacterSet(_ country: String) -> CharacterSet {
         var charset = CharacterSet(charactersIn: "0123456789 ")
         
@@ -196,7 +196,6 @@ public enum IBAN {
         if mapping.contains(where: { $0 == Character(ControlChar.alphanumerics.rawValue) }) {
             charset.formUnion(.alphanumerics)
         }
-        
         return charset
     }
 
@@ -230,17 +229,17 @@ extension IBAN {
         let iban = iban.replacingOccurrences(of: " ", with: "")
         let country = String(iban.prefix(2))
         let placeholder = IBAN.placeholder(country)
-        
+
         guard placeholder.replacingOccurrences(of: " ", with: "").count == iban.count - 2 else {
             return iban
         }
-        
+
         var offset: Int = 4
         let prefix = String(iban.prefix(offset))
-        
+
         let start = placeholder.index(placeholder.startIndex, offsetBy: 2)
         var result = prefix
-        
+
         for char in String(placeholder[start...]) {
             if char == " " {
                 result.append(" ")
@@ -250,7 +249,6 @@ extension IBAN {
                 offset += 1
             }
         }
-        
         return result
     }
 }
@@ -260,10 +258,10 @@ public struct IBANDefinition {
     public let formatString: String
     public let placeholder: String
     public let keyboardMapping: String
-    
+
     public init(country: String) {
         self.country = country
-        
+
         self.formatString = IBAN.formatString(country)
         self.placeholder = IBAN.placeholder(country)
         self.keyboardMapping = IBAN.keyboardMapping(country)

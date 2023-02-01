@@ -27,7 +27,7 @@ extension SepaDataModel {
     var inputPlaceholderString: String {
         return formatter.placeholder(with: "#")
     }
-    
+
     var lineBreakMode: NSLineBreakMode {
         guard let offset = formatter.currentOffset  else {
             return .byTruncatingTail
@@ -48,7 +48,6 @@ extension SepaDataModel {
                 NSAttributedString.Key.font: font,
                 NSAttributedString.Key.foregroundColor: UIColor.secondaryLabel
             ])
-        
         if let emptyRange = emptyRange {
             string.addAttributes([NSAttributedString.Key.foregroundColor: UIColor.secondaryLabel], range: emptyRange)
         }
@@ -57,7 +56,7 @@ extension SepaDataModel {
         }
         return NSAttributedString(attributedString: string)
     }
-    
+
     var attributedInputPlaceholderString: NSAttributedString {
         return attributedInputPlaceholder(inputPlaceholderString)
     }
