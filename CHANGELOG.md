@@ -11,6 +11,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 * Add PayOne SEPA data transfer for payment with GiroCard at the SCO #APPS-612
 
 ### Fixed
+* Added DashboardBackground.colorset for SampleApp #APPS-655
 
 ### Removed
 
