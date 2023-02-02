@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 * Add documentation to used secrets APPS-544
 * Add PayOne SEPA data transfer for payment with GiroCard at the SCO #APPS-612
 * Add PayOne SEPA formatter to enter IBANs in a human readable format #APPS-593
+* Add wepP support for coupon images #APPS-680
 
 ### Fixed
 * Added DashboardBackground.colorset for SampleApp #APPS-655

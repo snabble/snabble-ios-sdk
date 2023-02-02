@@ -11,7 +11,7 @@ import UIKit
 
 private extension Format {
     var validContentType: Bool {
-        return ["image/png", "image/jpg", "image/jpeg", "image/gif"].contains(contentType)
+        return ["image/png", "image/jpg", "image/jpeg", "image/gif", "image/webp"].contains(contentType)
     }
 }
 
