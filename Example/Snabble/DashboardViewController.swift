@@ -22,6 +22,7 @@ final class DashboardViewController: DynamicViewController {
 
         tabBarItem.image = UIImage(named: "Navigation/TabBar/home-off")
         tabBarItem.selectedImage = UIImage(named: "Navigation/TabBar/home-on")
+        self.view.backgroundColor = UIColor(named: "DashboardBackground")
     }
 
     required init?(coder: NSCoder) {
