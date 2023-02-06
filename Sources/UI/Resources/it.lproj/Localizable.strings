@@ -343,6 +343,8 @@
 
 "Snabble.PaymentStatus.Rating.title" = "What was not good?";
 
+"Snabble.PaymentStatus.Rating.title2" = "What can we do even better?";
+
 "Snabble.PaymentStatus.Ratings.thanks" = "Thank you!";
 
 "Snabble.PaymentStatus.Ratings.title" = "Did you like the purchase?";

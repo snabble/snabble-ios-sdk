@@ -4,7 +4,7 @@
 //
 //  Created by Andreas Osberghaus on 04.10.21.
 //
-
+#if !SWIFTUI_PROFILE
 import Foundation
 import UIKit
 import QuartzCore
@@ -37,4 +37,5 @@ public struct CircleView_Previews: PreviewProvider {
         }
     }
 }
+#endif
 #endif

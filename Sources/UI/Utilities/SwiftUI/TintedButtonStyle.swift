@@ -20,5 +20,7 @@ public struct AccentButtonStyle: ButtonStyle {
             .background(Color.accent())
             .foregroundColor(Color.onAccent())
             .clipShape(RoundedRectangle(cornerRadius: 10))
+            .scaleEffect(configuration.isPressed ? 1.1 : 1)
+            .animation(.easeOut, value: configuration.isPressed)
     }
 }

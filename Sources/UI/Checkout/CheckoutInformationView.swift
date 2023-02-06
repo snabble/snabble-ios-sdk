@@ -6,12 +6,37 @@
 //
 
 import Foundation
-import UIKit
 
 protocol CheckoutInformationViewModel {
     var text: String { get }
     var actionTitle: String? { get }
 }
+
+#if SWIFTUI_PROFILE
+import SwiftUI
+import Combine
+
+struct CheckoutInformationView: View {
+    var model: CheckoutInformationViewModel
+    @EnvironmentObject var checkoutModel: CheckoutModel
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: 4) {
+            Text(model.text)
+            if let title = model.actionTitle {
+                Button(action: {
+                    checkoutModel.actionPublisher.send(["action" : title])
+                }) {
+                    Text(title)
+                        .foregroundColor(.systemRed)
+                }
+            }
+        }
+        .font(.footnote)
+    }
+}
+#else
+import UIKit
 
 final class CheckoutInformationView: UIView {
     private(set) weak var textLabel: UILabel?
@@ -62,6 +87,7 @@ final class CheckoutInformationView: UIView {
         button?.isHidden = viewModel.actionTitle == nil
     }
 }
+#endif
 
 extension CheckoutStep: CheckoutInformationViewModel {}
 
@@ -79,7 +105,9 @@ extension CheckoutInformationView {
         }
     }
 }
+#endif
 
+#if !SWIFTUI_PROFILE
 import SwiftUI
 
 @available(iOS 13, *)

@@ -10,10 +10,35 @@ import UIKit
 
 protocol CheckoutStepStatusViewModel {
     var circleColor: UIColor? { get }
+#if SWIFTUI_PROFILE
+    var image: SwiftUI.Image? { get }
+#else
     var image: UIImage? { get }
+#endif
     var isLoading: Bool { get }
 }
 
+#if SWIFTUI_PROFILE
+import SwiftUI
+
+struct CheckoutStepStatusView: View {
+    var model: CheckoutStepStatusViewModel
+    var large: Bool = false
+
+    var body: some View {
+        ZStack {
+            if let image = model.isLoading ? Image(systemName: "circle.fill") : model.image {
+                image
+                    .font(large ? .system(size: 144) : .headline)
+                    .foregroundColor(Color(model.isLoading ? .secondarySystemGroupedBackground : model.circleColor ?? .secondarySystemGroupedBackground))
+            }
+            if model.isLoading {
+                ProgressView()
+            }
+        }
+    }
+}
+#else
 final class CheckoutStepStatusView: UIView {
     private(set) weak var circleView: CircleView?
     private(set) weak var activityIndicatorView: UIActivityIndicatorView?
@@ -95,6 +120,7 @@ final class CheckoutStepStatusView: UIView {
         }
     }
 }
+#endif
 
 extension CheckoutStepStatus: CheckoutStepStatusViewModel {
     var isLoading: Bool {
@@ -118,7 +144,19 @@ extension CheckoutStepStatus: CheckoutStepStatusViewModel {
             return .systemGray5
         }
     }
-
+    
+#if SWIFTUI_PROFILE
+    var image: Image? {
+        switch self {
+        case .loading:
+            return nil
+        case .success:
+            return Image(systemName: "checkmark.circle.fill")
+        case .failure, .aborted:
+            return Image(systemName: "xmark.circle.fill")
+       }
+    }
+#else
     var image: UIImage? {
         switch self {
         case .loading:
@@ -127,11 +165,12 @@ extension CheckoutStepStatus: CheckoutStepStatusViewModel {
             return UIImage(systemName: "checkmark")
         case .failure, .aborted:
             return UIImage(systemName: "xmark")
-        }
+       }
     }
+#endif
 }
 
-#if canImport(SwiftUI) && DEBUG
+#if canImport(SwiftUI) && DEBUG && !SWIFTUI_PROFILE
 import SwiftUI
 
 @available(iOS 13, *)

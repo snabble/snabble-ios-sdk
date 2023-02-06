@@ -5,6 +5,7 @@
 //  Created by Andreas Osberghaus on 29.10.21.
 //
 
+#if !SWIFTUI_PROFILE
 import Foundation
 import UIKit
 
@@ -38,3 +39,4 @@ final class CheckoutStepTableViewCell: UITableViewCell, ReuseIdentifiable {
         stepView?.prepareForReuse()
     }
 }
+#endif

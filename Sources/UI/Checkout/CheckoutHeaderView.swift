@@ -6,12 +6,32 @@
 //
 
 import Foundation
-import UIKit
 
 protocol CheckoutHeaderViewModel {
     var statusViewModel: CheckoutStepStatusViewModel { get }
     var text: String { get }
 }
+
+#if SWIFTUI_PROFILE
+import SwiftUI
+
+struct CheckoutHeaderView: View {
+    var model: CheckoutHeaderViewModel
+    
+    init(model: CheckoutHeaderViewModel) {
+        self.model = model
+    }
+    var body: some View {
+        VStack(spacing: 12) {
+            CheckoutStepStatusView(model: model.statusViewModel, large: true)
+                .shadow(color: Color("Shadow"), radius: 4, x: 2, y: 2)
+            Text(model.text)
+        }
+    }
+}
+
+#else
+import UIKit
 
 final class CheckoutHeaderView: UIView {
     private(set) weak var statusView: CheckoutStepStatusView?
@@ -67,6 +87,7 @@ final class CheckoutHeaderView: UIView {
         textLabel?.text = viewModel.text
     }
 }
+#endif
 
 extension CheckoutStepStatus: CheckoutHeaderViewModel {
     var text: String {
@@ -85,7 +106,7 @@ extension CheckoutStepStatus: CheckoutHeaderViewModel {
     }
 }
 
-#if canImport(SwiftUI) && DEBUG
+#if canImport(SwiftUI) && DEBUG && !SWIFTUI_PROFILE
 import SwiftUI
 
 @available(iOS 13, *)

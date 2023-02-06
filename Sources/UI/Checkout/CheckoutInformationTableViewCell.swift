@@ -4,7 +4,7 @@
 //
 //  Created by Andreas Osberghaus on 29.10.21.
 //
-
+#if !SWIFTUI_PROFILE
 import Foundation
 import UIKit
 
@@ -33,3 +33,4 @@ final class CheckoutInformationTableViewCell: UITableViewCell, ReuseIdentifiable
         fatalError("init(coder:) has not been implemented")
     }
 }
+#endif
