@@ -14,7 +14,7 @@ final class SupervisorCheckViewController: BaseCheckViewController {
 
     // supervisors are only concerned with checks: if there are failed checks, bail out,
     // and if all checks pass, finalize the checkout
-    override func checkContinuation(for process: CheckoutProcess) -> CheckResult {
+    override func checkContinuation(for process: CheckoutProcess) -> CheckModel.CheckResult {
         if process.hasFailedChecks {
             return .rejectCheckout
         }

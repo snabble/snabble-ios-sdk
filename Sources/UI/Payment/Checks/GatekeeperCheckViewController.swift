@@ -18,7 +18,7 @@ final class GatekeeperCheckViewController: BaseCheckViewController {
     }
 
     // gatekeeper decision depends on the process' checks as well as the payment and fulfillment status
-    override func checkContinuation(for process: CheckoutProcess) -> CheckResult {
+    override func checkContinuation(for process: CheckoutProcess) -> CheckModel.CheckResult {
         if process.hasFailedChecks {
             return .rejectCheckout
         }
