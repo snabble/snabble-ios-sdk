@@ -16,7 +16,7 @@ protocol CheckModelDelegate: AnyObject {
     func checkoutAborted(process: CheckoutProcess)
 }
 
-open class CheckModel: CheckModelDelegate {
+final class CheckModel: CheckModelDelegate {
     
     private(set) var checkoutProcess: CheckoutProcess
     let shoppingCart: ShoppingCart
