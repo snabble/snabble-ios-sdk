@@ -338,11 +338,11 @@ extension PaymentProcess {
             }
         case .supervisor:
             let supervisor = SupervisorCheckViewController(shop: shop, shoppingCart: cart, checkoutProcess: process)
-            supervisor.delegate = paymentDelegate
+            supervisor.paymentDelegate = paymentDelegate
             return supervisor
         case .gatekeeper:
             let gatekeeper = GatekeeperCheckViewController(shop: shop, shoppingCart: cart, checkoutProcess: process)
-            gatekeeper.delegate = paymentDelegate
+            gatekeeper.paymentDelegate = paymentDelegate
             return gatekeeper
         }
     }

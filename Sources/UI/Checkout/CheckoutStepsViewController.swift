@@ -112,6 +112,10 @@ struct CheckoutView: View {
 }
 
 final class CheckoutStepsViewController: UIHostingController<CheckoutView> {
+//    var checkoutProcess: SnabbleCore.CheckoutProcess { self.viewModel.checkoutProcess }
+//    var shoppingCart: SnabbleCore.ShoppingCart { self.viewModel.shoppingCart }
+//    var shop: SnabbleCore.Shop { self.viewModel.shop }
+    
     weak var paymentDelegate: PaymentDelegate? {
         didSet {
             self.model.paymentDelegate = paymentDelegate
@@ -215,7 +219,7 @@ extension CheckoutStepsViewController: CheckoutStepsViewModelDelegate {
 }
 #else
 
-final class CheckoutStepsViewController: UIViewController {
+final class CheckoutStepsViewController: UIViewController, CheckoutProcessing {
     private(set) weak var tableView: UITableView?
     private(set) weak var headerView: CheckoutHeaderView?
     private(set) weak var doneButton: UIButton?

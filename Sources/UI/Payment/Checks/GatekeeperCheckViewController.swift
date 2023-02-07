@@ -7,18 +7,24 @@
 import UIKit
 import SnabbleCore
 
-final class GatekeeperCheckViewController: BaseCheckViewController {
-    override func renderCode(_ content: String) -> UIImage? {
-        return QRCode.generate(for: content, scale: 5)
+final class GatekeeperViewModel: ObservableObject, CheckViewModel {
+    
+    @Published var checkModel: CheckModel
+    @Published var codeImage: UIImage?
+    
+    init(checkModel: CheckModel) {
+        self.checkModel = checkModel
+        self.checkModel.continuation = checkContinuation(_:)
+        
+        self.codeImage = QRCode.generate(for: self.checkModel.codeContent, scale: 5)
     }
-
-    override func viewWillAppear(_ animated: Bool) {
-        super.viewWillAppear(animated)
-        text?.text = nil
+    convenience init(shop: Shop, shoppingCart: ShoppingCart, checkoutProcess: CheckoutProcess) {
+        let model = CheckModel(shop: shop, shoppingCart: shoppingCart, checkoutProcess: checkoutProcess)
+        self.init(checkModel: model)
     }
 
     // gatekeeper decision depends on the process' checks as well as the payment and fulfillment status
-    override func checkContinuation(for process: CheckoutProcess) -> CheckModel.CheckResult {
+    func checkContinuation(_ process: CheckoutProcess) -> CheckModel.CheckResult {
         if process.hasFailedChecks {
             return .rejectCheckout
         }
@@ -38,8 +44,26 @@ final class GatekeeperCheckViewController: BaseCheckViewController {
         if process.allChecksSuccessful {
             return .finalizeCheckout
         }
-
         return .continuePolling
+    }
+}
+
+final class GatekeeperCheckViewController: BaseCheckViewController {
+
+    init(shop: Shop, shoppingCart: ShoppingCart, checkoutProcess: CheckoutProcess) {
+        super.init()
+        
+        self.viewModel = GatekeeperViewModel(shop: shop, shoppingCart: shoppingCart, checkoutProcess: checkoutProcess)
+        self.viewModel?.checkModel.delegate = self
+    }
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        text?.text = nil
     }
 
     override func arrangeLayout() {

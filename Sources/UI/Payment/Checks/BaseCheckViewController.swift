@@ -6,122 +6,18 @@
 
 import UIKit
 import SnabbleCore
+import Combine
 
 // base class for SupervisorCheckViewController and GatekeeperCheckViewController
 
-protocol CheckModelDelegate: AnyObject {
-    func checkContinuation(for process: CheckoutProcess) -> CheckModel.CheckResult
-    func checkoutRejected(process: CheckoutProcess)
-    func checkoutFinalized(process: CheckoutProcess)
-    func checkoutAborted(process: CheckoutProcess)
-}
-
-final class CheckModel: CheckModelDelegate {
-    
-    private(set) var checkoutProcess: CheckoutProcess
-    let shoppingCart: ShoppingCart
-    let shop: Shop
-
-    private weak var processTimer: Timer?
-    private var sessionTask: URLSessionTask?
-    
-    weak var paymentDelegate: PaymentDelegate?
-    weak var delegate: CheckModelDelegate?
-    
-    init(shop: Shop, shoppingCart: ShoppingCart, checkoutProcess: CheckoutProcess) {
-        self.shop = shop
-        self.shoppingCart = shoppingCart
-        self.checkoutProcess = checkoutProcess
+class BaseCheckViewController: UIViewController, CheckoutProcessing, CheckModelDelegate {
+    var shoppingCart: SnabbleCore.ShoppingCart {
+        self.checkModel.shoppingCart
     }
-    
-    // MARK: - polling timer
-    func startTimer() {
-        self.processTimer?.invalidate()
-        self.processTimer = Timer.scheduledTimer(withTimeInterval: 1, repeats: false) { _ in
-            let project = SnabbleCI.project
-            self.checkoutProcess.update(project,
-                                taskCreated: { self.sessionTask = $0 },
-                                completion: { self.update($0) })
-        }
+    var shop: SnabbleCore.Shop {
+        self.checkModel.shop
     }
-
-    private func stopTimer() {
-        self.processTimer?.invalidate()
-
-        self.sessionTask?.cancel()
-        self.sessionTask = nil
-    }
-    
-    private func update(_ result: RawResult<CheckoutProcess, SnabbleError>) {
-        switch result.result {
-        case .success(let process):
-            checkoutProcess = process
-
-            switch checkContinuation(for: process) {
-            case .continuePolling:
-                self.startTimer()
-            case .rejectCheckout:
-                self.checkoutRejected(process: process)
-            case .finalizeCheckout:
-                self.checkoutFinalized(process: process)
-            }
-
-        case .failure(let error):
-            Log.error(String(describing: error))
-        }
-    }
-    
-    // MARK: - process updates
-    enum CheckResult {
-        case continuePolling
-        case rejectCheckout
-        case finalizeCheckout
-    }
-
-    func checkContinuation(for process: CheckoutProcess) -> CheckResult {
-        guard let delegate = delegate else {
-            fatalError("delegate must be set")
-        }
-        return delegate.checkContinuation(for: process)
-    }
-    
-    func checkoutRejected(process: SnabbleCore.CheckoutProcess) {
-        delegate?.checkoutRejected(process: process)
-    }
-    
-    func checkoutFinalized(process: SnabbleCore.CheckoutProcess) {
-        delegate?.checkoutFinalized(process: process)
-    }
-    
-    func checkoutAborted(process: SnabbleCore.CheckoutProcess) {
-        Snabble.clearInFlightCheckout()
-        self.shoppingCart.generateNewUUID()
-        delegate?.checkoutAborted(process: process)
-    }
-
-    @objc func cancelPayment() {
-        self.paymentDelegate?.track(.paymentCancelled)
-        self.stopTimer()
-
-        self.checkoutProcess.abort(SnabbleCI.project) { result in
-            switch result {
-            case .success(let process):
-                self.checkoutAborted(process: process)
-            case .failure:
-                let alertView = AlertView(title: Asset.localizedString(forKey: "Snabble.Payment.CancelError.title"),
-                                          message: Asset.localizedString(forKey: "Snabble.Payment.CancelError.message"))
-                alertView.addAction(UIAlertAction(title: Asset.localizedString(forKey: "Snabble.ok"), style: .default) { _ in
-                    self.startTimer()
-                })
-                alertView.show()
-            }
-        }
-    }
-}
-
-class BaseCheckViewController: UIViewController, CheckModelDelegate {
-    
-    private var checkoutProcess: CheckoutProcess {
+    var checkoutProcess: CheckoutProcess {
         self.checkModel.checkoutProcess
     }
 
@@ -142,23 +38,36 @@ class BaseCheckViewController: UIViewController, CheckModelDelegate {
     private var initialBrightness: CGFloat = 0
     private let arrowIconHeight: CGFloat = 30
 
-    weak var delegate: PaymentDelegate? {
+    weak var paymentDelegate: PaymentDelegate? {
         didSet {
-            self.checkModel.paymentDelegate = delegate
+            self.checkModel.paymentDelegate = paymentDelegate
         }
     }
+    private var cancellables = Set<AnyCancellable>()
+
+    var checkModel: CheckModel {
+        guard let checkModel = viewModel?.checkModel else {
+            fatalError("no viewModel set")
+        }
+        return checkModel
+    }
     
-    let checkModel: CheckModel
+    var viewModel: CheckViewModel?
     
-    init(shop: Shop, shoppingCart: ShoppingCart, checkoutProcess: CheckoutProcess) {
-        let model = CheckModel(shop: shop, shoppingCart: shoppingCart, checkoutProcess: checkoutProcess)
-        self.checkModel = model
-        
+//    init(checkModel: CheckModel) {
+//        self.checkModel = checkModel
+//        super.init(nibName: nil, bundle: nil)
+//
+//        self.checkModel.delegate = self
+//    }
+    
+    init() {
+//        let model = CheckModel(shop: shop, shoppingCart: shoppingCart, checkoutProcess: checkoutProcess)
+
+//        self.init(checkModel: model)
         super.init(nibName: nil, bundle: nil)
 
-        self.checkModel.delegate = self
         self.hidesBottomBarWhenPushed = true
-
         title = Asset.localizedString(forKey: "Snabble.Payment.confirm")
     }
 
@@ -336,6 +245,12 @@ class BaseCheckViewController: UIViewController, CheckModelDelegate {
         self.idWrapper = idWrapper
         self.id = id
 
+        self.checkModel.assetPublisher()
+            .sink { [unowned self] image in
+                self.icon?.image = image
+            }
+            .store(in: &cancellables)
+
         arrangeLayout()
     }
 
@@ -356,18 +271,16 @@ class BaseCheckViewController: UIViewController, CheckModelDelegate {
 
         if self.initialBrightness < 0.5 {
             UIScreen.main.brightness = 0.5
-            self.delegate?.track(.brightnessIncreased)
+            self.paymentDelegate?.track(.brightnessIncreased)
         }
-
-        self.setIcons()
-
-        let codeContent = codeContent()
-        self.code?.image = renderCode(codeContent)
+        
+        self.code?.image = viewModel?.codeImage // renderCode(self.checkModel.codeContent)
         self.text?.text = Asset.localizedString(forKey: "Snabble.Payment.Online.message")
 
         self.id?.text = String(checkModel.checkoutProcess.id.suffix(4))
 
-        checkModel.startTimer()
+        checkModel.startCheck()
+        updateUI()
     }
 
     override public func viewWillDisappear(_ animated: Bool) {
@@ -379,8 +292,7 @@ class BaseCheckViewController: UIViewController, CheckModelDelegate {
 
     override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
         super.traitCollectionDidChange(previousTraitCollection)
-
-        setIcons()
+        updateUI()
     }
 
     // MARK: - override points
@@ -392,29 +304,25 @@ class BaseCheckViewController: UIViewController, CheckModelDelegate {
         fatalError("clients must override")
     }
 
-    func checkContinuation(for process: CheckoutProcess) -> CheckModel.CheckResult {
-        fatalError("clients must override")
-    }
-    
     func checkoutRejected(process: SnabbleCore.CheckoutProcess) {
         let reject = SupervisorRejectedViewController(process)
-        self.checkModel.shoppingCart.generateNewUUID()
-        reject.delegate = self.delegate
+        self.shoppingCart.generateNewUUID()
+        reject.delegate = self.paymentDelegate
         self.navigationController?.pushViewController(reject, animated: true)
     }
     
     func checkoutFinalized(process: SnabbleCore.CheckoutProcess) {
         guard
             let method = process.rawPaymentMethod,
-            let checkoutDisplay = method.checkoutDisplayViewController(shop: self.checkModel.shop,
-                                                                       checkoutProcess: process,
-                                                                       shoppingCart: self.checkModel.shoppingCart,
-                                                                       delegate: delegate)
+            let checkoutDisplay = method.checkoutDisplayViewController(
+                shop: self.shop,
+                checkoutProcess: process,
+                shoppingCart: self.shoppingCart,
+                delegate: paymentDelegate)
         else {
-            self.delegate?.showWarningMessage(Asset.localizedString(forKey: "Snabble.Payment.errorStarting"))
+            self.paymentDelegate?.showWarningMessage(Asset.localizedString(forKey: "Snabble.Payment.errorStarting"))
             return
         }
-
         self.navigationController?.pushViewController(checkoutDisplay, animated: true)
     }
     
@@ -426,35 +334,12 @@ class BaseCheckViewController: UIViewController, CheckModelDelegate {
         }
     }
 
-    private func codeContent() -> String {
-        switch checkoutProcess.rawPaymentMethod {
-        case .gatekeeperTerminal:
-            let handoverInformation = checkoutProcess.paymentInformation?.handoverInformation
-            return handoverInformation ?? "snabble:checkoutProcess:\(checkoutProcess.id)"
-        default:
-            return checkoutProcess.id
-        }
-    }
-
-    private func setIcons() {
-        let asset: ImageAsset
-        let bundlePath: String
-        switch checkoutProcess.rawPaymentMethod {
-        case .qrCodeOffline, .customerCardPOS:
-            asset = .checkoutOffline
-            bundlePath = "Checkout/\(SnabbleCI.project.id)/checkout-offline"
-        default:
-            asset = .checkoutOnline
-            bundlePath = "Checkout/\(SnabbleCI.project.id)/checkout-online"
-        }
-        SnabbleCI.getAsset(asset, bundlePath: bundlePath) { img in
-            self.icon?.image = img
-        }
-
+    func updateUI() {
         let scaledArrowWrapperHeight = UIFontMetrics.default.scaledValue(for: self.arrowIconHeight)
         self.arrowWrapper?.heightAnchor.constraint(equalToConstant: scaledArrowWrapperHeight).usingPriority(.defaultHigh + 1).isActive = true
     }
-
+    
+    
     @objc private func cancelPayment() {
         self.checkModel.cancelPayment()
     }
