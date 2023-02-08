@@ -7,26 +7,15 @@
 import UIKit
 import SnabbleCore
 
-final class SupervisorViewModel: ObservableObject, CheckViewModel {
+final class SupervisorViewModel: BaseCheckViewModel {
     
-    @Published var checkModel: CheckModel
-    @Published var codeImage: UIImage?
-    
-    init(checkModel: CheckModel) {
-        self.checkModel = checkModel
-        self.checkModel.continuation = checkContinuation(_:)
-        
+    override func updateCodeImage() {
         self.codeImage = PDF417.generate(for: self.checkModel.codeContent, scale: 2)
     }
-    
-    convenience init(shop: Shop, shoppingCart: ShoppingCart, checkoutProcess: CheckoutProcess) {
-        let model = CheckModel(shop: shop, shoppingCart: shoppingCart, checkoutProcess: checkoutProcess)
-        self.init(checkModel: model)
-    }
-    
+
     // supervisors are only concerned with checks: if there are failed checks, bail out,
     // and if all checks pass, finalize the checkout
-    func checkContinuation(_ process: CheckoutProcess) -> CheckModel.CheckResult {
+    override func checkContinuation(_ process: CheckoutProcess) -> CheckModel.CheckResult {
         if process.hasFailedChecks {
             return .rejectCheckout
         }
@@ -34,11 +23,30 @@ final class SupervisorViewModel: ObservableObject, CheckViewModel {
         if process.allChecksSuccessful {
             return .finalizeCheckout
         }
-
         return .continuePolling
     }
 }
 
+#if SWIFTUI_PROFILE
+import SwiftUI
+
+struct SupervisorView: View {
+    @ObservedObject var model: SupervisorViewModel
+    
+    var body: some View {
+        VStack {
+            
+        }
+    }
+}
+
+final class SupervisorCheckViewController: BaseCheckViewController<SupervisorView> {
+    convenience init(model: SupervisorViewModel) {
+        self.init(model: model, rootView: SupervisorView(model: model))
+    }
+}
+
+#else
 final class SupervisorCheckViewController: BaseCheckViewController {
 
     init(shop: Shop, shoppingCart: ShoppingCart, checkoutProcess: CheckoutProcess) {
@@ -64,3 +72,4 @@ final class SupervisorCheckViewController: BaseCheckViewController {
         }
     }
 }
+#endif

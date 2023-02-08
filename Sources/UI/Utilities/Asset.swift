@@ -53,6 +53,10 @@ public enum Asset {
     public static func url(forResource name: String?, withExtension ext: String?, domain: Any? = domain) -> URL? {
         provider?.url(forResource: name, withExtension: ext, domain: domain) ?? Bundle.module.url(forResource: name, withExtension: ext)
     }
+    
+    public static func gatekeeper(viewModel: GatekeeperViewModel, domain: Any? = domain) -> UIViewController? {
+        provider?.gatekeeper(viewModel: viewModel, domain: domain)
+    }
 }
 
 // MARK: SwiftUI - Extensions

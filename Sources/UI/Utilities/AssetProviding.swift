@@ -63,4 +63,8 @@ public protocol AppearanceProviding: AnyObject {
     func appearance(for domain: Any?) -> CustomAppearance?
 }
 
-public typealias AssetProviding = ImageProviding & ColorProviding & StringProviding & UrlProviding & AppearanceProviding
+public protocol ViewProviding: AnyObject {
+    func gatekeeper(viewModel: GatekeeperViewModel, domain: Any?) -> UIViewController?
+}
+
+public typealias AssetProviding = ImageProviding & ColorProviding & StringProviding & UrlProviding & AppearanceProviding & ViewProviding

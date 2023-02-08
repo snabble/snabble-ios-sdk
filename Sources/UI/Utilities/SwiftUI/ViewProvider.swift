@@ -24,11 +24,14 @@ public struct ViewProvider {
 
 public enum ViewProviderStore {
     public static var providers: [String: () -> any View] = [:]
-    
+    public static var types: [String: any View.Type] = [:]
+
     public static func register(view: @escaping () -> any View, for key: String) {
         providers[key] = view
     }
-    
+    public static func register(type: any View.Type, for key: String) {
+        types[key] = type
+    }
     public static func hasView(for key: String) -> Bool {
         return providers[key] != nil
     }

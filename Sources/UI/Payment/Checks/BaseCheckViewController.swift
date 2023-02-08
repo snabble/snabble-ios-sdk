@@ -8,18 +8,100 @@ import UIKit
 import SnabbleCore
 import Combine
 
-// base class for SupervisorCheckViewController and GatekeeperCheckViewController
+open class BaseCheckViewModel: ObservableObject, CheckViewModel {
+    @Published public var checkModel: CheckModel
+    @Published public var codeImage: UIImage?
+    @Published public var headerImage: UIImage?
+    
+    public weak var paymentDelegate: PaymentDelegate? {
+        didSet {
+            checkModel.paymentDelegate = paymentDelegate
+        }
+    }
+    public var idString: String {
+        return String(checkModel.checkoutProcess.id.suffix(4))
+    }
+    private var cancellables = Set<AnyCancellable>()
 
-class BaseCheckViewController: UIViewController, CheckoutProcessing, CheckModelDelegate {
-    var shoppingCart: SnabbleCore.ShoppingCart {
-        self.checkModel.shoppingCart
+    public init(checkModel: CheckModel) {
+        self.checkModel = checkModel
+        self.checkModel.continuation = checkContinuation(_:)
+        
+        self.checkModel.assetPublisher()
+            .sink { [unowned self] image in
+                self.headerImage = image
+            }
+            .store(in: &cancellables)
+        updateCodeImage()
     }
-    var shop: SnabbleCore.Shop {
-        self.checkModel.shop
+
+    public convenience init(shop: Shop, shoppingCart: ShoppingCart, checkoutProcess: CheckoutProcess, paymentDelegate: PaymentDelegate? = nil) {
+        let model = CheckModel(shop: shop, shoppingCart: shoppingCart, checkoutProcess: checkoutProcess)
+        self.init(checkModel: model)
+        self.paymentDelegate = paymentDelegate
     }
-    var checkoutProcess: CheckoutProcess {
-        self.checkModel.checkoutProcess
+    
+    func updateCodeImage() {
     }
+
+    // gatekeeper decision depends on the process' checks as well as the payment and fulfillment status
+    func checkContinuation(_ process: CheckoutProcess) -> CheckModel.CheckResult {
+        return .rejectCheckout
+    }
+}
+
+#if SWIFTUI_PROFILE
+import SwiftUI
+
+// base class for SupervisorCheckViewController and GatekeeperCheckViewController
+open class BaseCheckViewController<Content: View>: UIHostingController<Content>, CheckViewModelProviding, CheckoutProcessing, CheckModelDelegate {
+    
+    public var viewModel: CheckViewModel?
+    
+    public init(model: CheckViewModel, rootView: Content) {
+        super.init(rootView: rootView)
+        self.viewModel = model
+        self.checkModel.delegate = self
+        
+        self.hidesBottomBarWhenPushed = true
+        title = Asset.localizedString(forKey: "Snabble.Payment.confirm")
+    }
+    
+    @MainActor required dynamic public init?(coder aDecoder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+    
+//    @MainActor required dynamic public init?(coder aDecoder: NSCoder) {
+//        fatalError("init(coder:) has not been implemented")
+//    }
+    
+    private var initialBrightness: CGFloat = 0.0
+        
+    public override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        
+        self.initialBrightness = UIScreen.main.brightness
+        if self.initialBrightness < 0.5 {
+            UIScreen.main.brightness = 0.5
+            self.paymentDelegate?.track(.brightnessIncreased)
+        }
+        UIApplication.shared.isIdleTimerDisabled = true
+        
+        checkModel.startCheck()
+    }
+
+    override public func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
+
+        UIScreen.main.brightness = self.initialBrightness
+        UIApplication.shared.isIdleTimerDisabled = false
+    }
+}
+
+#else
+
+// base class for SupervisorCheckViewController and GatekeeperCheckViewController
+class BaseCheckViewController: UIViewController, CheckViewModelProviding, CheckoutProcessing, CheckModelDelegate {
 
     weak var stackView: UIStackView?
     weak var iconWrapper: UIView?
@@ -44,27 +126,10 @@ class BaseCheckViewController: UIViewController, CheckoutProcessing, CheckModelD
         }
     }
     private var cancellables = Set<AnyCancellable>()
-
-    var checkModel: CheckModel {
-        guard let checkModel = viewModel?.checkModel else {
-            fatalError("no viewModel set")
-        }
-        return checkModel
-    }
     
     var viewModel: CheckViewModel?
     
-//    init(checkModel: CheckModel) {
-//        self.checkModel = checkModel
-//        super.init(nibName: nil, bundle: nil)
-//
-//        self.checkModel.delegate = self
-//    }
-    
     init() {
-//        let model = CheckModel(shop: shop, shoppingCart: shoppingCart, checkoutProcess: checkoutProcess)
-
-//        self.init(checkModel: model)
         super.init(nibName: nil, bundle: nil)
 
         self.hidesBottomBarWhenPushed = true
@@ -247,6 +312,7 @@ class BaseCheckViewController: UIViewController, CheckoutProcessing, CheckModelD
 
         self.checkModel.assetPublisher()
             .sink { [unowned self] image in
+                self.viewModel?.headerImage = image
                 self.icon?.image = image
             }
             .store(in: &cancellables)
@@ -267,8 +333,6 @@ class BaseCheckViewController: UIViewController, CheckoutProcessing, CheckModelD
             self.cancelButton?.isUserInteractionEnabled = true
         }
 
-        UIApplication.shared.isIdleTimerDisabled = true
-
         if self.initialBrightness < 0.5 {
             UIScreen.main.brightness = 0.5
             self.paymentDelegate?.track(.brightnessIncreased)
@@ -278,8 +342,11 @@ class BaseCheckViewController: UIViewController, CheckoutProcessing, CheckModelD
         self.text?.text = Asset.localizedString(forKey: "Snabble.Payment.Online.message")
 
         self.id?.text = String(checkModel.checkoutProcess.id.suffix(4))
-
+       
+        UIApplication.shared.isIdleTimerDisabled = true
+        
         checkModel.startCheck()
+
         updateUI()
     }
 
@@ -300,40 +367,6 @@ class BaseCheckViewController: UIViewController, CheckoutProcessing, CheckModelD
         fatalError("clients must override")
     }
 
-    func renderCode(_ content: String) -> UIImage? {
-        fatalError("clients must override")
-    }
-
-    func checkoutRejected(process: SnabbleCore.CheckoutProcess) {
-        let reject = SupervisorRejectedViewController(process)
-        self.shoppingCart.generateNewUUID()
-        reject.delegate = self.paymentDelegate
-        self.navigationController?.pushViewController(reject, animated: true)
-    }
-    
-    func checkoutFinalized(process: SnabbleCore.CheckoutProcess) {
-        guard
-            let method = process.rawPaymentMethod,
-            let checkoutDisplay = method.checkoutDisplayViewController(
-                shop: self.shop,
-                checkoutProcess: process,
-                shoppingCart: self.shoppingCart,
-                delegate: paymentDelegate)
-        else {
-            self.paymentDelegate?.showWarningMessage(Asset.localizedString(forKey: "Snabble.Payment.errorStarting"))
-            return
-        }
-        self.navigationController?.pushViewController(checkoutDisplay, animated: true)
-    }
-    
-    func checkoutAborted(process: SnabbleCore.CheckoutProcess) {
-        if let cartVC = self.navigationController?.viewControllers.first(where: { $0 is ShoppingCartViewController}) {
-            self.navigationController?.popToViewController(cartVC, animated: true)
-        } else {
-            self.navigationController?.popToRootViewController(animated: true)
-        }
-    }
-
     func updateUI() {
         let scaledArrowWrapperHeight = UIFontMetrics.default.scaledValue(for: self.arrowIconHeight)
         self.arrowWrapper?.heightAnchor.constraint(equalToConstant: scaledArrowWrapperHeight).usingPriority(.defaultHigh + 1).isActive = true
@@ -344,3 +377,56 @@ class BaseCheckViewController: UIViewController, CheckoutProcessing, CheckModelD
         self.checkModel.cancelPayment()
     }
 }
+#endif
+
+extension CheckViewModelProviding where Self: UIViewController {
+    var checkModel: CheckModel {
+        guard let checkModel = viewModel?.checkModel else {
+            fatalError("no viewModel set")
+        }
+        return checkModel
+    }
+    public var paymentDelegate: PaymentDelegate? {
+        return self.checkModel.paymentDelegate
+    }
+    public var shoppingCart: SnabbleCore.ShoppingCart {
+        self.checkModel.shoppingCart
+    }
+    public var shop: SnabbleCore.Shop {
+        self.checkModel.shop
+    }
+    public var checkoutProcess: CheckoutProcess {
+        self.checkModel.checkoutProcess
+    }
+    
+    public func checkoutRejected(process: SnabbleCore.CheckoutProcess) {
+        let reject = SupervisorRejectedViewController(process)
+        self.shoppingCart.generateNewUUID()
+        reject.delegate = self.paymentDelegate
+        self.navigationController?.pushViewController(reject, animated: true)
+    }
+    
+    public func checkoutFinalized(process: SnabbleCore.CheckoutProcess) {
+        guard
+            let method = process.rawPaymentMethod,
+            let checkoutDisplay = method.checkoutDisplayViewController(
+                shop: self.shop,
+                checkoutProcess: process,
+                shoppingCart: self.shoppingCart,
+                delegate: self.paymentDelegate)
+        else {
+            self.paymentDelegate?.showWarningMessage(Asset.localizedString(forKey: "Snabble.Payment.errorStarting"))
+            return
+        }
+        self.navigationController?.pushViewController(checkoutDisplay, animated: true)
+    }
+    
+    public func checkoutAborted(process: SnabbleCore.CheckoutProcess) {
+        if let cartVC = self.navigationController?.viewControllers.first(where: { $0 is ShoppingCartViewController}) {
+            self.navigationController?.popToViewController(cartVC, animated: true)
+        } else {
+            self.navigationController?.popToRootViewController(animated: true)
+        }
+    }
+}
+

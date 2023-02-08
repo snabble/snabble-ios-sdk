@@ -122,6 +122,9 @@ struct RatingButton: View {
             }
         }) {
             ratingItem.rating.image
+                .resizable()
+                .scaledToFit()
+                .frame(maxWidth: 40, maxHeight: 40)
         }
         .buttonStyle(AnimatedButtonStyle(selected: selected))
     }
@@ -146,9 +149,7 @@ struct CheckoutRatingView: View {
                     .opacity(message.isEmpty ? 0.25 : 1)
             }
             .cornerRadius(6)
-       } else {
-            Spacer()
-        }
+       }
     }
     @ViewBuilder
     var ratingSelection: some View {

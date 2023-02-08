@@ -9,45 +9,50 @@ import UIKit
 import SnabbleCore
 import Combine
 
-protocol CheckViewModel {
+public protocol CheckViewModel {
     var checkModel: CheckModel { get }
     var codeImage: UIImage? { get }
+    var headerImage: UIImage? { set get }
 }
 
-protocol CheckoutProcessing {
+public protocol CheckViewModelProviding {
+    var viewModel: CheckViewModel? { get }
+}
+
+public protocol CheckoutProcessing {
     var checkoutProcess: CheckoutProcess { get }
     var shoppingCart: ShoppingCart { get }
     var shop: Shop { get }
     var paymentDelegate: PaymentDelegate? { get }
 }
 
-protocol CheckModelDelegate: AnyObject {
+public protocol CheckModelDelegate: AnyObject {
     func checkoutRejected(process: CheckoutProcess)
     func checkoutFinalized(process: CheckoutProcess)
     func checkoutAborted(process: CheckoutProcess)
 }
 
-final class CheckModel: CheckoutProcessing, CheckModelDelegate {
+public final class CheckModel: CheckoutProcessing, CheckModelDelegate {
     
-    private(set) var checkoutProcess: CheckoutProcess
-    let shoppingCart: ShoppingCart
-    let shop: Shop
+    public private(set) var checkoutProcess: CheckoutProcess
+    public let shoppingCart: ShoppingCart
+    public let shop: Shop
     
     private weak var processTimer: Timer?
     private var sessionTask: URLSessionTask?
     
-    weak var paymentDelegate: PaymentDelegate?
-    weak var delegate: CheckModelDelegate?
+    public weak var paymentDelegate: PaymentDelegate?
+    public weak var delegate: CheckModelDelegate?
     
-    var continuation: ((_ process: CheckoutProcess) -> CheckModel.CheckResult)?
+    public var continuation: ((_ process: CheckoutProcess) -> CheckModel.CheckResult)?
     
-    init(shop: Shop, shoppingCart: ShoppingCart, checkoutProcess: CheckoutProcess) {
+    public init(shop: Shop, shoppingCart: ShoppingCart, checkoutProcess: CheckoutProcess) {
         self.shop = shop
         self.shoppingCart = shoppingCart
         self.checkoutProcess = checkoutProcess
     }
     
-    func startCheck() {
+    public func startCheck() {
         startTimer()
     }
     
@@ -90,34 +95,34 @@ final class CheckModel: CheckoutProcessing, CheckModelDelegate {
     }
     
     // MARK: - process updates
-    enum CheckResult {
+    public enum CheckResult {
         case continuePolling
         case rejectCheckout
         case finalizeCheckout
     }
     
-    func checkContinuation(for process: CheckoutProcess) -> CheckResult {
+    public func checkContinuation(for process: CheckoutProcess) -> CheckResult {
         guard let continuation = self.continuation else {
             fatalError("continuation(_ process:CheckoutProcess) must be set")
         }
         return continuation(process)
     }
     
-    func checkoutRejected(process: SnabbleCore.CheckoutProcess) {
+    public func checkoutRejected(process: SnabbleCore.CheckoutProcess) {
         delegate?.checkoutRejected(process: process)
     }
     
-    func checkoutFinalized(process: SnabbleCore.CheckoutProcess) {
+    public func checkoutFinalized(process: SnabbleCore.CheckoutProcess) {
         delegate?.checkoutFinalized(process: process)
     }
     
-    func checkoutAborted(process: SnabbleCore.CheckoutProcess) {
+    public func checkoutAborted(process: SnabbleCore.CheckoutProcess) {
         Snabble.clearInFlightCheckout()
         self.shoppingCart.generateNewUUID()
         delegate?.checkoutAborted(process: process)
     }
     
-    func cancelPayment() {
+    public func cancelPayment() {
         self.paymentDelegate?.track(.paymentCancelled)
         self.stopTimer()
         
