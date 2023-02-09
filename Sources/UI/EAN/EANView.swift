@@ -58,7 +58,7 @@ public final class EANView: UIView {
         guard let ctx = UIGraphicsGetCurrentContext() else {
             return
         }
-        let bgColor = self.backgroundColor ?? .systemBackground
+        let bgColor = self.backgroundColor ?? .white
         let bottomPadding = CGFloat(showDigits ? self.scale * 3 : 0)
 
         bgColor.setFill()
@@ -148,7 +148,7 @@ public final class EANView: UIView {
                            width: scale * width,
                            height: scale * digitHeight)
         let label = UILabel(frame: frame)
-        label.backgroundColor = self.backgroundColor ?? .systemBackground
+        label.backgroundColor = self.backgroundColor ?? .white
         label.textColor = self.digitsColor
         label.textAlignment = .center
         label.font = UIFont.monospacedDigitSystemFont(ofSize: CGFloat(scale * (digitHeight - 1)), weight: .medium)

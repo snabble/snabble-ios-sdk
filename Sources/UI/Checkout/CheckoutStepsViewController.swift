@@ -112,9 +112,6 @@ struct CheckoutView: View {
 }
 
 final class CheckoutStepsViewController: UIHostingController<CheckoutView> {
-//    var checkoutProcess: SnabbleCore.CheckoutProcess { self.viewModel.checkoutProcess }
-//    var shoppingCart: SnabbleCore.ShoppingCart { self.viewModel.shoppingCart }
-//    var shop: SnabbleCore.Shop { self.viewModel.shop }
     
     weak var paymentDelegate: PaymentDelegate? {
         didSet {
