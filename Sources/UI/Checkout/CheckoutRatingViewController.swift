@@ -118,6 +118,13 @@ final class CheckoutRatingViewController: UIViewController {
         self.rightButton = rightButton
 
         NSLayoutConstraint.activate([
+            leftButton.widthAnchor.constraint(equalToConstant: 38).usingPriority(.defaultHigh + 2),
+            leftButton.heightAnchor.constraint(equalToConstant: 38).usingPriority(.defaultHigh + 2),
+            middleButton.widthAnchor.constraint(equalToConstant: 38).usingPriority(.defaultHigh + 2),
+            middleButton.heightAnchor.constraint(equalToConstant: 38).usingPriority(.defaultHigh + 2),
+            rightButton.widthAnchor.constraint(equalToConstant: 38).usingPriority(.defaultHigh + 2),
+            rightButton.heightAnchor.constraint(equalToConstant: 38).usingPriority(.defaultHigh + 2),
+
             textLabel.topAnchor.constraint(equalTo: view.topAnchor),
             detailTextLabel.topAnchor.constraint(equalTo: textLabel.bottomAnchor, constant: 16),
             view.bottomAnchor.constraint(greaterThanOrEqualTo: detailTextLabel.bottomAnchor),

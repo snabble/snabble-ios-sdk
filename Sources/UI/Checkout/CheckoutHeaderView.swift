@@ -17,15 +17,16 @@ import SwiftUI
 
 struct CheckoutHeaderView: View {
     var model: CheckoutHeaderViewModel
-    
+
     init(model: CheckoutHeaderViewModel) {
         self.model = model
     }
     var body: some View {
         VStack(spacing: 12) {
+            Text(model.text)
+                .font(.headline)
             CheckoutStepStatusView(model: model.statusViewModel, large: true)
                 .shadow(color: Color("Shadow"), radius: 4, x: 2, y: 2)
-            Text(model.text)
         }
     }
 }

@@ -49,16 +49,16 @@ final class SupervisorCheckViewController: BaseCheckViewController<SupervisorVie
 #else
 final class SupervisorCheckViewController: BaseCheckViewController {
 
-    init(shop: Shop, shoppingCart: ShoppingCart, checkoutProcess: CheckoutProcess) {
-        super.init()
-        
-        self.viewModel = SupervisorViewModel(shop: shop, shoppingCart: shoppingCart, checkoutProcess: checkoutProcess)
-        self.viewModel?.checkModel.delegate = self
-    }
+//    init(shop: Shop, shoppingCart: ShoppingCart, checkoutProcess: CheckoutProcess) {
+//        super.init()
+//        
+//        self.viewModel = SupervisorViewModel(shop: shop, shoppingCart: shoppingCart, checkoutProcess: checkoutProcess)
+//        self.viewModel?.checkModel.delegate = self
+//    }
 
-    required init?(coder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
-    }
+//    required init?(coder: NSCoder) {
+//        fatalError("init(coder:) has not been implemented")
+//    }
 
     override func arrangeLayout() {
         if let iconWrapper = iconWrapper,

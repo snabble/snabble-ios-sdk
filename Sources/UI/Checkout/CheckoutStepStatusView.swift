@@ -29,7 +29,7 @@ struct CheckoutStepStatusView: View {
         ZStack {
             if let image = model.isLoading ? Image(systemName: "circle.fill") : model.image {
                 image
-                    .font(large ? .system(size: 144) : .headline)
+                    .font(large ? .system(size: 152) : .headline)
                     .foregroundColor(Color(model.isLoading ? .secondarySystemGroupedBackground : model.circleColor ?? .secondarySystemGroupedBackground))
             }
             if model.isLoading {

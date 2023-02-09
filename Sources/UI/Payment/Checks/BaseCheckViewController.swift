@@ -71,10 +71,6 @@ open class BaseCheckViewController<Content: View>: UIHostingController<Content>,
         fatalError("init(coder:) has not been implemented")
     }
     
-//    @MainActor required dynamic public init?(coder aDecoder: NSCoder) {
-//        fatalError("init(coder:) has not been implemented")
-//    }
-    
     private var initialBrightness: CGFloat = 0.0
         
     public override func viewWillAppear(_ animated: Bool) {
@@ -129,12 +125,20 @@ class BaseCheckViewController: UIViewController, CheckViewModelProviding, Checko
     
     var viewModel: CheckViewModel?
     
-    init() {
+    public init(model: CheckViewModel) {
         super.init(nibName: nil, bundle: nil)
-
+        self.viewModel = model
+        self.checkModel.delegate = self
+        
         self.hidesBottomBarWhenPushed = true
         title = Asset.localizedString(forKey: "Snabble.Payment.confirm")
     }
+//   init() {
+//        super.init(nibName: nil, bundle: nil)
+//
+//        self.hidesBottomBarWhenPushed = true
+//        title = Asset.localizedString(forKey: "Snabble.Payment.confirm")
+//    }
 
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")

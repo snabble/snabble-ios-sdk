@@ -85,6 +85,9 @@ public final class RatingModel: ObservableObject {
         for i in ratingItems.indices {
             ratingItems[i].isActive = (i == index)
         }
+        if selectedRating?.rating == .high {
+            sendFeedback("")
+        }
     }
 
     func sendFeedback(_ message: String) {
@@ -105,7 +108,7 @@ extension RatingModel {
         return selectedRating?.rating.messageEnabled ?? false
     }
     var minHeight: CGFloat {
-        return hasFeedbackSend ? 80 : (showTextEditor ? 225 : 150)
+        return hasFeedbackSend ? 60 : (showTextEditor ? 225 : 100)
     }
 }
 
@@ -136,21 +139,30 @@ struct CheckoutRatingView: View {
     
     @State private var message: String = ""
     @State private var height: CGFloat = 0
-
+    @State private var thanks: Bool = false
+    
     @ViewBuilder
     var textEditor: some View {
         if model.showTextEditor {
-            ZStack(alignment: .leading) {
-                if message.isEmpty {
-                    UIKitTextView(text: .constant(model.ratingPrompt), font: .footnote)
-                        .disabled(true)
+            VStack {
+                ZStack(alignment: .leading) {
+                    if message.isEmpty {
+                        UIKitTextView(text: .constant(model.ratingPrompt), font: .footnote)
+                            .disabled(true)
+                    }
+                    UIKitTextView(text: $message, returnKeyType: .done, font: .body)
+                        .opacity(message.isEmpty ? 0.25 : 1)
                 }
-                UIKitTextView(text: $message, returnKeyType: .done, font: .body)
-                    .opacity(message.isEmpty ? 0.25 : 1)
+                .cornerRadius(6)
+                
+                sendButton
+                    .buttonStyle(AccentButtonStyle())
+                    .disabled(model.selectionIndex == nil)
+                customView
             }
-            .cornerRadius(6)
-       }
+        }
     }
+    
     @ViewBuilder
     var ratingSelection: some View {
         HStack(spacing: 40) {
@@ -164,7 +176,9 @@ struct CheckoutRatingView: View {
     @ViewBuilder
     var sendButton: some View {
         Button(action: {
-            model.sendFeedback(message)
+            withAnimation {
+                model.sendFeedback(message)
+            }
         }) {
             HStack {
                 Spacer()
@@ -177,37 +191,55 @@ struct CheckoutRatingView: View {
     @ViewBuilder
     var stateContent: some View {
         if model.hasFeedbackSend {
-            VStack(spacing: 0) {
-                Text(keyed: "Snabble.PaymentStatus.Ratings.thanks")
-                Spacer()
+            Group {
+                if thanks {
+                    HStack {
+                        Text("🙏")
+                            .font(.title)
+                        Text("Danke für dein Feedback!")
+                            .font(.headline)
+                    }
+
+                } else {
+                    VStack(spacing: 8) {
+                        Text(keyed: Asset.localizedString(forKey: "Snabble.PaymentStatus.Ratings.title"))
+                            .font(.headline)
+                        Text(Asset.localizedString(forKey: "Snabble.PaymentStatus.Ratings.thanks"))
+                    }
+                }
+            }
+            .onTapGesture {
+                thanks.toggle()
             }
         } else {
             VStack(spacing: 8) {
+                Text(keyed: Asset.localizedString(forKey: "Snabble.PaymentStatus.Ratings.title"))
+                    .font(.headline)
                 ratingSelection
                 textEditor
-                sendButton
-                    .buttonStyle(AccentButtonStyle())
-                    .disabled(model.selectionIndex == nil)
-            }
+           }
         }
     }
     var body: some View {
         VStack(alignment: .center, spacing: 8) {
-            Text(keyed: Asset.localizedString(forKey: "Snabble.PaymentStatus.Ratings.title"))
-                .font(.headline)
             stateContent
-            customView
         }
-        .onAppear {
-            if _customView.isAvailable {
+        .onChange(of: model.selectionIndex) { newIndex in
+            if model.showTextEditor, _customView.isAvailable {
                 height = 40
+            } else {
+                height = 0
+            }
+        }
+        .onChange(of: model.hasFeedbackSend) { newFeedback in
+            if newFeedback {
+                height = 0
             }
         }
         .frame(minWidth: 300, minHeight: model.minHeight + height, idealHeight: model.minHeight + height, maxHeight: model.minHeight + height)
         .padding([.leading, .trailing, .bottom], 20)
-        .padding([.top], 10)
+        .padding([.top], model.hasFeedbackSend ? 20 : 10)
         .background(Color.secondarySystemGroupedBackground)
         .clipShape(RoundedRectangle(cornerRadius: 12))
-        .shadow(color: Color("Shadow"), radius: 8, x: 4, y: 4)
     }
 }

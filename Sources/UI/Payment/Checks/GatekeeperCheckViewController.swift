@@ -122,16 +122,16 @@ final class GatekeeperCheckViewController: BaseCheckViewController<GatekeeperVie
 
 final class GatekeeperCheckViewController: BaseCheckViewController {
 
-    init(shop: Shop, shoppingCart: ShoppingCart, checkoutProcess: CheckoutProcess) {
-        super.init()
-        
-        self.viewModel = GatekeeperViewModel(shop: shop, shoppingCart: shoppingCart, checkoutProcess: checkoutProcess)
-        self.viewModel?.checkModel.delegate = self
-    }
+//    init(shop: Shop, shoppingCart: ShoppingCart, checkoutProcess: CheckoutProcess) {
+//        super.init()
+//        
+//        self.viewModel = GatekeeperViewModel(shop: shop, shoppingCart: shoppingCart, checkoutProcess: checkoutProcess)
+//        self.viewModel?.checkModel.delegate = self
+//    }
     
-    required init?(coder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
-    }
+//    required init?(coder: NSCoder) {
+//        fatalError("init(coder:) has not been implemented")
+//    }
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)

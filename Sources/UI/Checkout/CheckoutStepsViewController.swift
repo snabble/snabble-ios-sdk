@@ -80,34 +80,56 @@ struct CheckoutStepRow: View {
 struct CheckoutView: View {
     @ObservedObject var model: CheckoutModel
     @Environment(\.presentationMode) var presentationMode
+    @ViewProvider("custom-success") var customView
 
-    var body: some View {
-        VStack {
-            CheckoutHeaderView(model: model.stepsModel.headerViewModel)
-            List {
-                ForEach(model.checkoutSteps) { step in
-                    CheckoutStepRow(step:step).environmentObject(model)
-                }
-            }
-            .cornerRadius(12)
-
-            CheckoutRatingView(model: model.ratingModel)
-                .padding([.top, .bottom], 20)
-
-            Button(action: {
-                model.done()
-                presentationMode.wrappedValue.dismiss()
-            }) {
-                HStack {
-                    Spacer()
-                    Text(Asset.localizedString(forKey: "Snabble.done"))
-                        .fontWeight(.bold)
-                    Spacer()
-                }
-            }
-            .buttonStyle(AccentButtonStyle())
+    init(model: CheckoutModel) {
+        self.model = model
+        
+        if #unavailable(iOS 16.0) {
+            UITableView.appearance().backgroundColor = .clear
         }
-        .padding([.leading, .trailing], 20)
+    }
+    
+    var body: some View {
+        ZStack(alignment: .top) {
+            if model.isComplete {
+                customView
+            }
+            VStack {
+                CheckoutHeaderView(model: model.stepsModel.headerViewModel)
+                    .padding(.top, 50)
+                
+                List {
+                    ForEach(model.checkoutSteps) { step in
+                        CheckoutStepRow(step:step).environmentObject(model)
+                    }
+                }
+                .clearBackground()
+                .padding(.top, -20)
+                .padding([.leading, .trailing], 4)
+                .cornerRadius(12)
+                .shadow(color: Color("Shadow"), radius: 6, x: 3, y: 3)
+
+                CheckoutRatingView(model: model.ratingModel)
+                   .padding(20)
+                   .shadow(color: Color("Shadow"), radius: 6, x: 3, y: 3)
+
+                Button(action: {
+                    model.done()
+                    presentationMode.wrappedValue.dismiss()
+                }) {
+                    HStack {
+                        Spacer()
+                        Text(Asset.localizedString(forKey: "Snabble.done"))
+                            .fontWeight(.bold)
+                        Spacer()
+                    }
+                }
+                .buttonStyle(AccentButtonStyle())
+                .padding([.leading, .trailing], 20)
+            }
+        }
+        .edgesIgnoringSafeArea(.top)
     }
 }
 
@@ -216,7 +238,7 @@ extension CheckoutStepsViewController: CheckoutStepsViewModelDelegate {
 }
 #else
 
-final class CheckoutStepsViewController: UIViewController, CheckoutProcessing {
+final class CheckoutStepsViewController: UIViewController /*, CheckoutProcessing */ {
     private(set) weak var tableView: UITableView?
     private(set) weak var headerView: CheckoutHeaderView?
     private(set) weak var doneButton: UIButton?
