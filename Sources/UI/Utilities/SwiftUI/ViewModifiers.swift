@@ -4,7 +4,6 @@
 //
 //  Created by Uwe Tilemann on 03.02.23.
 //
-
 import SwiftUI
 
 struct ClearBackgroundModifier: ViewModifier {
@@ -47,18 +46,16 @@ struct MultiColorModifier: ViewModifier {
         } else {
             content
                 .foregroundColor(color)
-                    .background(Color.white)
-                    .clipShape(PaddingCircle(percent: 20))
+                .background(Color.white)
+                .clipShape(PaddingCircle(percent: 20))
         }
     }
 }
-
 extension View {
     func multiColor(_ color: Color) -> some View {
         modifier(MultiColorModifier(color: color))
     }
 }
-
 
 struct DoneKeyboardModifier: ViewModifier {
     func body(content: Content) -> some View {
