@@ -8,11 +8,9 @@ import SwiftUI
 import Combine
 
 public final class GatekeeperViewModel: BaseCheckViewModel {
-    
     override func updateCodeImage() {
         self.codeImage = QRCode.generate(for: self.checkModel.codeContent, scale: 5)
     }
-
     // gatekeeper decision depends on the process' checks as well as the payment and fulfillment status
     override func checkContinuation(_ process: CheckoutProcess) -> CheckModel.CheckResult {
         if process.hasFailedChecks {
@@ -37,7 +35,6 @@ public final class GatekeeperViewModel: BaseCheckViewModel {
         return .continuePolling
     }
 }
-
 
 struct UpArrow: View {
     var y: CGFloat = 0
