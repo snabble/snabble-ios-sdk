@@ -8,11 +8,6 @@ import SnabbleCore
 import SwiftUI
 import Combine
 
-struct CheckoutStepItem: Swift.Identifiable, Equatable {
-    let id = UUID()
-    let checkoutStep: CheckoutStep
-}
-
 final class CheckoutModel: ObservableObject {
 
     weak var paymentDelegate: PaymentDelegate? {
@@ -24,7 +19,7 @@ final class CheckoutModel: ObservableObject {
 
     @Published var stepsModel: CheckoutStepsViewModel
     @Published var isComplete: Bool = false
-    @Published var checkoutSteps: [CheckoutStepItem] = []
+    @Published var checkoutSteps: [CheckoutStep] = []
     
     let ratingModel: RatingModel
 
@@ -34,15 +29,10 @@ final class CheckoutModel: ObservableObject {
     }
     
     func update(checkoutSteps: [CheckoutStep]) {
-        var array = [CheckoutStepItem]()
-        
-        for step in checkoutSteps {
-            array.append(CheckoutStepItem(checkoutStep: step))
-        }
-        self.checkoutSteps = array
+        self.checkoutSteps = checkoutSteps
     }
     
-    func isLast(step: CheckoutStepItem) -> Bool {
+    func isLast(step: CheckoutStep) -> Bool {
         guard let last = checkoutSteps.last else {
             return false
         }
@@ -67,14 +57,14 @@ final class CheckoutModel: ObservableObject {
 }
 
 struct CheckoutStepRow: View {
-    var step: CheckoutStepItem
-    
+    var step: CheckoutStep
+
     var body: some View {
-        switch step.checkoutStep.kind {
+        switch step.kind {
         case .default:
-            CheckoutStepView(model: step.checkoutStep)
+            CheckoutStepView(model: step)
         case .information:
-            CheckoutInformationView(model: step.checkoutStep)
+            CheckoutInformationView(model: step)
         }
     }
 }
@@ -90,9 +80,7 @@ struct CheckoutView: View {
     @ObservedObject var model: CheckoutModel
     @Environment(\.presentationMode) var presentationMode
     @ViewProvider(.successCheckout) var customView
-    @State private var showCustom = true
-    @State private var count = 1
-
+    
     @State private var height1: CGFloat = .zero
     @State private var height2: CGFloat = .zero
 
@@ -108,12 +96,9 @@ struct CheckoutView: View {
     var topContent: some View {
         VStack {
             CheckoutHeaderView(model: model.stepsModel.headerViewModel)
-                .padding(.top, 50)
-                .onTapGesture {
-                    showCustom.toggle()
-                }
+            
             LazyVStack(alignment: .leading, spacing: 0) {
-                ForEach(model.checkoutSteps) { step in
+                ForEach(model.checkoutSteps, id:\.self) { step in
                     CheckoutStepRow(step:step).environmentObject(model)
                         .padding(10)
                     
@@ -127,66 +112,38 @@ struct CheckoutView: View {
             .clipShape(RoundedRectangle(cornerRadius: 12))
             .padding([.leading, .trailing], 20)
             .shadow(color: Color("Shadow"), radius: 6, x: 3, y: 3)
-            
         }
     }
     
-    @ViewBuilder
-    var button: some View {
-        Button(action: {
-            model.done()
-            presentationMode.wrappedValue.dismiss()
-        }) {
-            HStack {
-                Spacer()
-                Text(Asset.localizedString(forKey: "Snabble.done"))
-                    .fontWeight(.bold)
-                Spacer()
-            }
-        }
-        .buttonStyle(AccentButtonStyle())
-        .padding([.leading, .trailing], 20)
-    }
-
     var body: some View {
-        ZStack(alignment: .top) {
-            if model.isComplete {
-                customView
-            }
-            VStack(spacing: 0) {
-                GeometryReader { geom in
-                    ScrollView(.vertical, showsIndicators: false) {
-                        VStack(spacing: 0) {
-                            topContent
-                                .background(GeometryReader {
-                                    Color.clear
-                                        .preference(key: ViewHeightKey.self, value: $0.frame(in: .local).size.height)
-                                })
-                                .onPreferenceChange(ViewHeightKey.self) {
-                                    self.height1 = $0
-                                }
-                            
-                            VStack(spacing: 0) {
-                                CheckoutRatingView(model: model.ratingModel)
-                                    .padding(20)
-                                    .shadow(color: Color("Shadow"), radius: 6, x: 3, y: 3)
-                                Spacer()
-                                
-                                button
-                                .background(GeometryReader {
-                                        Color.clear
-                                            .preference(key: ViewHeightKey.self, value: $0.frame(in: .local).size.height)
-                                    })
-                            }
-                            .frame(height: max(geom.size.height - self.height1, self.height2))
-                        }
-                    }
-                    .onPreferenceChange(ViewHeightKey.self) {
-                        self.height2 = $0
+        NavigationView {
+            ZStack(alignment: .top) {
+                if model.isComplete {
+                    customView
+                }
+                ScrollView(.vertical, showsIndicators: false) {
+                    topContent
+                    
+                    if model.isComplete {
+                        CheckoutRatingView(model: model.ratingModel)
+                            .padding(20)
+                            .shadow(color: Color("Shadow"), radius: 6, x: 3, y: 3)
                     }
                 }
             }
-            .frame(maxWidth: .infinity)
+            .toolbar {
+                ToolbarItem(placement: .bottomBar) {
+                    Button(action: {
+                        model.done()
+                        presentationMode.wrappedValue.dismiss()
+                    }) {
+                        Text(Asset.localizedString(forKey: "Snabble.done"))
+                            .fontWeight(.bold)
+                            .frame(maxWidth: .infinity)
+                    }
+                    .buttonStyle(AccentButtonStyle())
+                }
+            }
         }
         .edgesIgnoringSafeArea(.top)
     }
@@ -201,23 +158,27 @@ final class CheckoutStepsViewController: UIHostingController<CheckoutView> {
     }
     
     private var cancellables = Set<AnyCancellable>()
+    
     let model: CheckoutModel
 
     var viewModel: CheckoutStepsViewModel {
         self.model.stepsModel
     }
 
-    init(shop: Shop, shoppingCart: ShoppingCart, checkoutProcess: CheckoutProcess?) {
+    init(model: CheckoutModel) {
+        self.model = model
+        
+        super.init(rootView: CheckoutView(model: self.model))
+        viewModel.delegate = self
+    }
+    
+    convenience init(shop: Shop, shoppingCart: ShoppingCart, checkoutProcess: CheckoutProcess?) {
         let stepsModel = CheckoutStepsViewModel(
             shop: shop,
             checkoutProcess: checkoutProcess,
             shoppingCart: shoppingCart
         )
-        
-        self.model = CheckoutModel(stepsModel: stepsModel)
-        
-        super.init(rootView: CheckoutView(model: self.model))
-        stepsModel.delegate = self
+        self.init(model: CheckoutModel(stepsModel: stepsModel))
     }
 
     required init?(coder: NSCoder) {
@@ -227,14 +188,15 @@ final class CheckoutStepsViewController: UIHostingController<CheckoutView> {
     override func viewDidLoad() {
         super.viewDidLoad()
         self.model.actionPublisher
-            .sink { [unowned self] info in
-                if info?["action"] != nil {
-                    self.stepAction()
-                }
+            .sink { [weak self] info in
+                self?.stepAction(userInfo: info)
             }
             .store(in: &cancellables)
-
+#if MOCK_CHECKOUT
+        self.model.update(checkoutSteps: CheckoutStep.mockModel)
+#else
         self.model.update(checkoutSteps: viewModel.steps)
+#endif
     }
 
     override func viewWillAppear(_ animated: Bool) {
@@ -244,7 +206,9 @@ final class CheckoutStepsViewController: UIHostingController<CheckoutView> {
 
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
+#if !MOCK_CHECKOUT
         viewModel.startTimer()
+#endif
         paymentDelegate?.track(.viewCheckoutSteps)
     }
 
@@ -253,7 +217,11 @@ final class CheckoutStepsViewController: UIHostingController<CheckoutView> {
         navigationController?.setNavigationBarHidden(false, animated: false)
     }
     
-    @objc func stepAction() {
+    @objc func stepAction(userInfo: [String: Any]?) {
+        if let userInfo = userInfo {
+            print("action: \(userInfo)")
+        }
+        
         guard let originCandidate = viewModel.originCandidate else { return }
         if let project = Snabble.shared.project(for: viewModel.shop.projectId),
            project.paymentMethodDescriptors.first(where: { $0.acceptedOriginTypes?.contains(.payoneSepaData) ?? false }) != nil {

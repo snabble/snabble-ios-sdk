@@ -12,6 +12,7 @@ protocol CheckoutStepViewModel {
     var detailText: String? { get }
     var actionTitle: String? { get }
     var image: UIImage? { get }
+    var userInfo: [String: Any]? { get }
 }
 
 struct CheckoutStepView: View {
@@ -27,6 +28,12 @@ struct CheckoutStepView: View {
             CheckoutStepStatusView(model: model.statusViewModel)
             VStack {
                 Text(model.text)
+                    .onTapGesture {
+                        if model.actionTitle == nil {
+                            checkoutModel.actionPublisher.send(model.userInfo)
+                        }
+                    }
+
                 if let detail = model.detailText {
                     Text(detail)
                 }

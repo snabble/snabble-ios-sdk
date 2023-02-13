@@ -22,6 +22,8 @@ struct CheckoutStepStatusView: View {
                 image
                     .font(large ? .system(size: 152) : .headline)
                     .multiColor(Color(model.isLoading ? .secondarySystemGroupedBackground : model.circleColor ?? .secondarySystemGroupedBackground))
+                    .overlay((PaddingCircle(percent: 10).stroke((model.isLoading && large) ? Color.secondary.opacity(0.5) : Color.clear, lineWidth: 1))
+)
             }
             if model.isLoading {
                 ProgressView()

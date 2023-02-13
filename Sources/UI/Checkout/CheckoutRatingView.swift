@@ -226,8 +226,7 @@ struct CheckoutRatingView: View {
             }
         }
         .frame(maxWidth: .infinity, minHeight: model.minHeight + height, idealHeight: model.minHeight + height, maxHeight: model.minHeight + height)
-        .padding([.leading, .trailing, .bottom], 20)
-        .padding([.top], model.hasFeedbackSend ? 20 : 10)
+        .padding(20)
         .background(Color.secondarySystemGroupedBackground)
         .clipShape(RoundedRectangle(cornerRadius: 12))
     }
