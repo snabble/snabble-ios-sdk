@@ -135,11 +135,10 @@ struct RatingButton: View {
 
 struct CheckoutRatingView: View {
     @ObservedObject var model: RatingModel
-    @ViewProvider("custom-rating") var customView
+    @ViewProvider(.ratingAccessory) var customView
     
     @State private var message: String = ""
     @State private var height: CGFloat = 0
-    @State private var thanks: Bool = false
     
     @ViewBuilder
     var textEditor: some View {
@@ -168,7 +167,11 @@ struct CheckoutRatingView: View {
         HStack(spacing: 40) {
             ForEach(model.ratingItems, id: \.id) { item in
                 RatingButton(model: model, ratingItem: item)
-                    .scaleEffect(item == model.selectedRating ? 1.3 : 1)
+                    .background(
+                        Circle()
+                            .frame(width: 50, height:50)
+                            .foregroundColor(item == model.selectedRating ? Color(white: 0.8) : .clear)
+                    )
             }
         }
         .padding([.top, .bottom], 8)
@@ -191,25 +194,11 @@ struct CheckoutRatingView: View {
     @ViewBuilder
     var stateContent: some View {
         if model.hasFeedbackSend {
-            Group {
-                if thanks {
-                    HStack {
-                        Text("🙏")
-                            .font(.title)
-                        Text("Danke für dein Feedback!")
-                            .font(.headline)
-                    }
-
-                } else {
-                    VStack(spacing: 8) {
-                        Text(keyed: Asset.localizedString(forKey: "Snabble.PaymentStatus.Ratings.title"))
-                            .font(.headline)
-                        Text(Asset.localizedString(forKey: "Snabble.PaymentStatus.Ratings.thanks"))
-                    }
-                }
-            }
-            .onTapGesture {
-                thanks.toggle()
+            HStack {
+                Text("🙏")
+                    .font(.title)
+                Text(keyed: "Snabble.PaymentStatus.Ratings.thanksForFeedback")
+                    .font(.headline)
             }
         } else {
             VStack(spacing: 8) {
@@ -236,7 +225,7 @@ struct CheckoutRatingView: View {
                 height = 0
             }
         }
-        .frame(minWidth: 300, minHeight: model.minHeight + height, idealHeight: model.minHeight + height, maxHeight: model.minHeight + height)
+        .frame(maxWidth: .infinity, minHeight: model.minHeight + height, idealHeight: model.minHeight + height, maxHeight: model.minHeight + height)
         .padding([.leading, .trailing, .bottom], 20)
         .padding([.top], model.hasFeedbackSend ? 20 : 10)
         .background(Color.secondarySystemGroupedBackground)

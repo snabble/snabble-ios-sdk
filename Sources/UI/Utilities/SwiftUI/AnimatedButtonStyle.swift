@@ -12,8 +12,6 @@ struct AnimatedButtonStyle: ButtonStyle {
     
     func makeBody(configuration: Configuration) -> some View {
         configuration.label
-            .scaleEffect((configuration.isPressed && selected) ? 1.3 : 1)
             .animation(.easeOut, value: (configuration.isPressed && selected))
     }
 }
-

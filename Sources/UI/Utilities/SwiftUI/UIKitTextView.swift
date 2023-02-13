@@ -43,10 +43,18 @@ struct UIKitTextView: UIViewRepresentable {
             self.control = control
         }
 
+        func textViewShouldBeginEditing(_ textView: UITextView) -> Bool {
+            if let scrollView = textView.enclosingScrollView {
+                let rect = textView.convert(textView.frame, to: scrollView )
+                DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+                    scrollView.scrollRectToVisible(rect, animated: true)
+                }
+            }
+            return true
+        }
         func textViewShouldEndEditing(_ textView: UITextView) -> Bool {
             return true
         }
-
         @objc func textViewDidChange(_ textView: UITextView) {
             control.text = textView.text ?? ""
         }
@@ -60,3 +68,15 @@ struct UIKitTextView: UIViewRepresentable {
     }
 }
 
+extension UIView {
+    var enclosingScrollView: UIScrollView? {
+        var next: UIView? = self
+        repeat {
+            next = next?.superview
+            if let scrollview = next as? UIScrollView {
+                return scrollview
+            }
+        } while next != nil
+        return nil
+    }
+}

@@ -9,10 +9,18 @@ import SwiftUI
 
 @propertyWrapper
 public struct ViewProvider {
-    private let key: String
+    public enum Name: String {
+        case ratingAccessory
+        case successCheckout
+    }
+    private let key: ViewProvider.Name
 
-    public init(_ key: String) {
+    public init(_ key: ViewProvider.Name) {
         self.key = key
+    }
+    public init(wrappedValue: @escaping () -> any View, _ key: ViewProvider.Name) {
+        self.key = key
+        ViewProviderStore.register(view: wrappedValue, for: key)
     }
     public var isAvailable: Bool {
         ViewProviderStore.hasView(for: key)
@@ -24,20 +32,17 @@ public struct ViewProvider {
 
 public enum ViewProviderStore {
     public static var providers: [String: () -> any View] = [:]
-    public static var types: [String: any View.Type] = [:]
 
-    public static func register(view: @escaping () -> any View, for key: String) {
-        providers[key] = view
+    public static func register(view: @escaping () -> any View, for key: ViewProvider.Name) {
+        providers[key.rawValue] = view
     }
-    public static func register(type: any View.Type, for key: String) {
-        types[key] = type
-    }
-    public static func hasView(for key: String) -> Bool {
-        return providers[key] != nil
+
+    public static func hasView(for key: ViewProvider.Name) -> Bool {
+        return providers[key.rawValue] != nil
     }
     
-    public static func makeView(key: String) -> AnyView {
-        if let view = providers[key] {
+    public static func makeView(key: ViewProvider.Name) -> AnyView {
+        if let view = providers[key.rawValue] {
             return AnyView(view())
         } else {
             return AnyView(EmptyView())

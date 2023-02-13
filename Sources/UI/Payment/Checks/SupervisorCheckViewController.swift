@@ -3,8 +3,7 @@
 //
 //  Copyright © 2022 snabble. All rights reserved.
 //
-
-import UIKit
+import SwiftUI
 import SnabbleCore
 
 final class SupervisorViewModel: BaseCheckViewModel {
@@ -27,8 +26,6 @@ final class SupervisorViewModel: BaseCheckViewModel {
     }
 }
 
-#if SWIFTUI_PROFILE
-import SwiftUI
 
 struct SupervisorView: View {
     @ObservedObject var model: SupervisorViewModel
@@ -45,31 +42,3 @@ final class SupervisorCheckViewController: BaseCheckViewController<SupervisorVie
         self.init(model: model, rootView: SupervisorView(model: model))
     }
 }
-
-#else
-final class SupervisorCheckViewController: BaseCheckViewController {
-
-//    init(shop: Shop, shoppingCart: ShoppingCart, checkoutProcess: CheckoutProcess) {
-//        super.init()
-//        
-//        self.viewModel = SupervisorViewModel(shop: shop, shoppingCart: shoppingCart, checkoutProcess: checkoutProcess)
-//        self.viewModel?.checkModel.delegate = self
-//    }
-
-//    required init?(coder: NSCoder) {
-//        fatalError("init(coder:) has not been implemented")
-//    }
-
-    override func arrangeLayout() {
-        if let iconWrapper = iconWrapper,
-           let textWrapper = textWrapper,
-           let idWrapper = idWrapper,
-           let codeWrapper = codeWrapper {
-            stackView?.addArrangedSubview(iconWrapper)
-            stackView?.addArrangedSubview(textWrapper)
-            stackView?.addArrangedSubview(codeWrapper)
-            stackView?.addArrangedSubview(idWrapper)
-        }
-    }
-}
-#endif

@@ -347,6 +347,8 @@
 
 "Snabble.PaymentStatus.Ratings.thanks" = "Thank you!";
 
+"Snabble.PaymentStatus.Ratings.thanksForFeedback" = "Thanks for your feedback!";
+
 "Snabble.PaymentStatus.Ratings.title" = "Did you like the purchase?";
 
 "Snabble.PaymentStatus.Receipt.title" = "Receipt";

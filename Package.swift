@@ -78,8 +78,7 @@ let package = Package(
             path: "Sources/UI",
             resources: [
                 .process("Resources")
-            ],
-            swiftSettings: [.define("SWIFTUI_PROFILE", .when(configuration: .debug))]
+            ]
         ),
         .target(
             name: "SnabbleDatatrans",
