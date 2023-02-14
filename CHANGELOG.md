@@ -11,10 +11,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 * Add PayOne SEPA data transfer for payment with GiroCard at the SCO #APPS-612
 * Add PayOne SEPA formatter to enter IBANs in a human readable format #APPS-593
 * Add wepP support for coupon images #APPS-680
-* Add SwifUI based checkout with app injetction for custom views #APPS-678
+* Add SwiftUI based checkout with app injetction for custom views #APPS-678
+* Add SwiftUI base customer gatekeeper view controller #APPS-679
 
 ### Fixed
 * Added DashboardBackground.colorset for SampleApp #APPS-655
+* Default EAN barcode background color is white #APPS-680
 
 ### Removed
 
