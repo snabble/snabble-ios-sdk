@@ -96,6 +96,7 @@ struct CheckoutView: View {
     var topContent: some View {
         VStack {
             CheckoutHeaderView(model: model.stepsModel.headerViewModel)
+                .padding(.top, 10)
             
             LazyVStack(alignment: .leading, spacing: 0) {
                 ForEach(model.checkoutSteps, id: \.self) { step in

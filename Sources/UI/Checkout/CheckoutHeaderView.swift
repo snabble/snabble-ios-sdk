@@ -20,7 +20,7 @@ struct CheckoutHeaderView: View {
         self.model = model
     }
     var body: some View {
-        VStack(spacing: 12) {
+        VStack(spacing: 20) {
             Text(model.text)
                 .font(.headline)
             CheckoutStepStatusView(model: model.statusViewModel, large: true)
