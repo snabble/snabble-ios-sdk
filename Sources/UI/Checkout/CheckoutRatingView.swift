@@ -11,6 +11,7 @@ struct RatingItem: Swift.Identifiable, Equatable {
     var id: String { rating.rawValue }
     var isActive: Bool = false
     let rating: RatingModel.Rating
+    var image: SwiftUI.Image { isActive ? rating.imageSelect : rating.image }
 }
 
 public final class RatingModel: ObservableObject {
@@ -59,6 +60,21 @@ public final class RatingModel: ObservableObject {
                 anImage = Asset.image(named: "SnabbleSDK/emoji-2")
             case .high:
                 anImage = Asset.image(named: "SnabbleSDK/emoji-3")
+            default:
+                break
+            }
+            return anImage ?? SwiftUI.Image(systemName: "xmark")
+        }
+        var imageSelect: SwiftUI.Image {
+            var anImage: SwiftUI.Image?
+            
+            switch self {
+            case .low:
+                anImage = Asset.image(named: "SnabbleSDK/emoji-1-select")
+            case .medium:
+                anImage = Asset.image(named: "SnabbleSDK/emoji-2-select")
+            case .high:
+                anImage = Asset.image(named: "SnabbleSDK/emoji-3-select")
             default:
                 break
             }
@@ -115,21 +131,19 @@ extension RatingModel {
 struct RatingButton: View {
     var model: RatingModel
     var ratingItem: RatingItem
-    @State var selected = false
     
     var body: some View {
         Button(action: {
             withAnimation {
                 model.tap(ratingItem: ratingItem)
-                selected = ratingItem.isActive
             }
         }) {
-            ratingItem.rating.image
+            ratingItem.image
                 .resizable()
                 .scaledToFit()
-                .frame(maxWidth: 40, maxHeight: 40)
+                .frame(maxWidth: 50, maxHeight: 50)
         }
-        .buttonStyle(AnimatedButtonStyle(selected: selected))
+        .buttonStyle(AnimatedButtonStyle(selected: ratingItem.isActive))
     }
 }
 
@@ -167,11 +181,6 @@ struct CheckoutRatingView: View {
         HStack(spacing: 40) {
             ForEach(model.ratingItems, id: \.id) { item in
                 RatingButton(model: model, ratingItem: item)
-                    .background(
-                        Circle()
-                            .frame(width: 50, height:50)
-                            .foregroundColor(item == model.selectedRating ? Color(white: 0.8) : .clear)
-                    )
             }
         }
         .padding([.top, .bottom], 8)
@@ -183,12 +192,9 @@ struct CheckoutRatingView: View {
                 model.sendFeedback(message)
             }
         }) {
-            HStack {
-                Spacer()
-                Text(keyed: "Snabble.PaymentStatus.Rating.send")
-                    .fontWeight(.bold)
-                Spacer()
-            }
+            Text(keyed: "Snabble.PaymentStatus.Rating.send")
+                .fontWeight(.bold)
+                .frame(maxWidth: .infinity)
         }
     }
     @ViewBuilder
@@ -196,7 +202,7 @@ struct CheckoutRatingView: View {
         if model.hasFeedbackSend {
             HStack {
                 Text("🙏")
-                    .font(.title)
+                    .font(.largeTitle)
                 Text(keyed: "Snabble.PaymentStatus.Ratings.thanksForFeedback")
                     .font(.headline)
             }

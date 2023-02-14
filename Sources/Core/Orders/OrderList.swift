@@ -104,31 +104,40 @@ extension Order {
             }
         }
     }
-
-    private func download(_ project: Project, _ targetPath: URL, completion: @escaping (Result<URL, Error>) -> Void ) {
-        guard let link = self.links.receipt?.href else {
+   
+    public static func download(_ project: Project, receipt: Link?, completion: @escaping (Result<URL, Error>) -> Void ) {
+        guard let link = receipt?.href else {
             Log.error("error downloading receipt: no receipt link?!?")
             return completion(.failure(SnabbleError.noRequest))
         }
-
         project.request(.get, link, timeout: 10) { request in
             guard let request = request else {
                 completion(.failure(SnabbleError.noRequest))
                 return
             }
-
+            
             let session = Snabble.urlSession
             let task = session.downloadTask(with: request) { location, _, error in
                 if let error = error {
                     Log.error("error downloading receipt: \(String(describing: error))")
                     return completion(.failure(error))
                 }
-
+                
                 guard let location = location else {
                     Log.error("error downloading receipt: no location?!?")
                     return completion(.failure(SnabbleError.noRequest))
                 }
-
+                completion(.success(location))
+            }
+            task.resume()
+        }
+    }
+    
+    private func download(_ project: Project, _ targetPath: URL, completion: @escaping (Result<URL, Error>) -> Void ) {
+        
+        Order.download(project, receipt: self.links.receipt) { result in
+            switch result {
+            case .success(let location):
                 do {
                     try FileManager.default.moveItem(at: location, to: targetPath)
                     completion(.success(targetPath))
@@ -136,8 +145,11 @@ extension Order {
                     Log.error("error saving receipt: \(error)")
                     completion(.failure(SnabbleError.invalid))
                 }
+
+            case .failure(let error):
+                completion(.failure(error))
+
             }
-            task.resume()
         }
     }
 }

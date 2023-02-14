@@ -219,7 +219,21 @@ final class CheckoutStepsViewController: UIHostingController<CheckoutView> {
     
     @objc func stepAction(userInfo: [String: Any]?) {
         if let userInfo = userInfo {
-            print("action: \(userInfo)")
+            if let receiptLink = userInfo["receiptLink"] as? SnabbleCore.Link, let url = URL(string: receiptLink.href) {
+                let detailViewController = ReceiptsDetailViewController()
+
+                detailViewController.getReceipt(orderID: url.lastPathComponent, projectID: viewModel.shop.projectId) { [weak self] result in
+                    
+                    switch result {
+                    case .success:
+                        self?.present(detailViewController, animated: true)
+                        
+                    case .failure:
+                        break
+                    }
+                }
+                return
+            }
         }
         
         guard let originCandidate = viewModel.originCandidate else { return }
