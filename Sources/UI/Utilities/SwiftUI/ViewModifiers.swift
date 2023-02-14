@@ -42,11 +42,11 @@ struct MultiColorModifier: ViewModifier {
         if #available(iOS 15.0, *) {
             content
                 .symbolRenderingMode(.palette)
-                .foregroundStyle(.white, color, color)
+                .foregroundStyle(Color.systemBackground, color, color)
         } else {
             content
                 .foregroundColor(color)
-                .background(Color.white)
+                .background(Color.systemBackground)
                 .clipShape(PaddingCircle(percent: 20))
         }
     }
