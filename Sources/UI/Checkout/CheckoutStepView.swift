@@ -42,7 +42,7 @@ struct CheckoutStepView: View {
                 }
                 if let action = model.actionTitle {
                     Button(action: {
-                        checkoutModel.actionPublisher.send(["action" : model.text])
+                        checkoutModel.actionPublisher.send(["action": model.text])
                     }) {
                         Text(action)
                     }

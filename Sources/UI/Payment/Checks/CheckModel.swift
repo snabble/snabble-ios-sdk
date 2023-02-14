@@ -12,7 +12,7 @@ import Combine
 public protocol CheckViewModel {
     var checkModel: CheckModel { get }
     var codeImage: UIImage? { get }
-    var headerImage: UIImage? { set get }
+    var headerImage: UIImage? { get set }
 }
 
 public protocol CheckViewModelProviding {
@@ -169,7 +169,7 @@ extension CheckModel {
         return (asset, bundlePath)
     }
     
-    func assetPublisher() -> AnyPublisher<UIImage?, Never>  {
+    func assetPublisher() -> AnyPublisher<UIImage?, Never> {
         Future<UIImage?, Never> { promise in
             let asset = self.asset
             

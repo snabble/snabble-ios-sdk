@@ -98,8 +98,8 @@ struct CheckoutView: View {
             CheckoutHeaderView(model: model.stepsModel.headerViewModel)
             
             LazyVStack(alignment: .leading, spacing: 0) {
-                ForEach(model.checkoutSteps, id:\.self) { step in
-                    CheckoutStepRow(step:step).environmentObject(model)
+                ForEach(model.checkoutSteps, id: \.self) { step in
+                    CheckoutStepRow(step: step).environmentObject(model)
                         .padding(10)
                     
                     if !model.isLast(step: step) {

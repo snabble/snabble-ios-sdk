@@ -47,7 +47,7 @@ struct UpArrow: View {
         SwiftUI.Image(systemName: "arrow.up")
             .font(Font(.init(.application, size: 40)))
             .foregroundColor(Color.accent())
-            .offset(y: (y - (offset*5)))
+            .offset(y: (y - (offset * 5)))
             .onAppear {
                 withAnimation(animation) {
                     offset = maxY
@@ -61,7 +61,7 @@ struct GatekeeperView: View {
 
     @ViewBuilder
     var content: some View {
-        VStack(spacing:8) {
+        VStack(spacing: 8) {
             if let uiImage = model.headerImage {
                 SwiftUI.Image(uiImage: uiImage)
                     .padding([.top, .bottom], 20)

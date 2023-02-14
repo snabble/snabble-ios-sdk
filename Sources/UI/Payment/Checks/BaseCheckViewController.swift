@@ -141,4 +141,3 @@ extension CheckViewModelProviding where Self: UIViewController {
         }
     }
 }
-

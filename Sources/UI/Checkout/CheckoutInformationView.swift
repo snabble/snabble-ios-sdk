@@ -27,7 +27,7 @@ struct CheckoutInformationView: View {
                 }
             if let title = model.actionTitle {
                 Button(action: {
-                    checkoutModel.actionPublisher.send(["action" : title])
+                    checkoutModel.actionPublisher.send(["action": title])
                 }) {
                     Text(title)
                         .foregroundColor(.systemRed)

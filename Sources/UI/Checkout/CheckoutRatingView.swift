@@ -95,11 +95,11 @@ public final class RatingModel: ObservableObject {
     }
 
     func tap(ratingItem: RatingItem) {
-        guard let index = ratingItems.firstIndex(where: { $0.id == ratingItem.id } ) else { return }
+        guard let index = ratingItems.firstIndex(where: { $0.id == ratingItem.id }) else { return }
         
         selectionIndex = index
-        for i in ratingItems.indices {
-            ratingItems[i].isActive = (i == index)
+        for idx in ratingItems.indices {
+            ratingItems[idx].isActive = (idx == index)
         }
         if selectedRating?.rating == .high {
             sendFeedback("")
@@ -219,7 +219,7 @@ struct CheckoutRatingView: View {
         VStack(alignment: .center, spacing: 8) {
             stateContent
         }
-        .onChange(of: model.selectionIndex) { newIndex in
+        .onChange(of: model.selectionIndex) { _ in
             if model.showTextEditor, _customView.isAvailable {
                 height = 40
             } else {
