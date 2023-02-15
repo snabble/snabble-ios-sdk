@@ -46,10 +46,11 @@ public final class CheckModel: CheckoutProcessing, CheckModelDelegate {
     
     public var continuation: ((_ process: CheckoutProcess) -> CheckModel.CheckResult)?
     
-    public init(shop: Shop, shoppingCart: ShoppingCart, checkoutProcess: CheckoutProcess) {
+    public init(shop: Shop, shoppingCart: ShoppingCart, checkoutProcess: CheckoutProcess, paymentDelegate: PaymentDelegate?) {
         self.shop = shop
         self.shoppingCart = shoppingCart
         self.checkoutProcess = checkoutProcess
+        self.paymentDelegate = paymentDelegate
     }
     
     public func startCheck() {
@@ -134,7 +135,8 @@ public final class CheckModel: CheckoutProcessing, CheckModelDelegate {
                 let alertView = AlertView(title: Asset.localizedString(forKey: "Snabble.Payment.CancelError.title"),
                                           message: Asset.localizedString(forKey: "Snabble.Payment.CancelError.message"))
                 alertView.addAction(UIAlertAction(title: Asset.localizedString(forKey: "Snabble.ok"), style: .default) { _ in
-                    self.startTimer()
+                    //self.startTimer()
+                   // self.checkoutAborted(process: self.checkoutProcess)
                 })
                 alertView.show()
             }

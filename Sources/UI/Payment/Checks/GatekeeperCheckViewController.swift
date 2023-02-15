@@ -25,7 +25,7 @@ public final class GatekeeperViewModel: BaseCheckViewModel {
 
         // gatekeepers also have to wait until the payment moves to e.g. `.transferred`
         // or `.processing`, e.g. for payments via the physical card readers
-        if process.paymentState == .pending {
+        if [.pending, .processing].contains(process.paymentState) {
             return .continuePolling
         }
 
