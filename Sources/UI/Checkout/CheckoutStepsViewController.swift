@@ -44,6 +44,8 @@ final class CheckoutModel: ObservableObject {
         updateShoppingCart(for: self.stepsModel.checkoutProcess)
         paymentDelegate?.checkoutFinished(self.stepsModel.shoppingCart, self.stepsModel.checkoutProcess)
         paymentDelegate?.track(.checkoutStepsClosed)
+        
+        actionPublisher.send(["action": "done"])
     }
 
     private func updateShoppingCart(for checkoutProcess: CheckoutProcess?) {
@@ -136,7 +138,6 @@ struct CheckoutView: View {
                 ToolbarItem(placement: .bottomBar) {
                     Button(action: {
                         model.done()
-                        presentationMode.wrappedValue.dismiss()
                     }) {
                         Text(Asset.localizedString(forKey: "Snabble.done"))
                             .fontWeight(.bold)
@@ -220,6 +221,9 @@ final class CheckoutStepsViewController: UIHostingController<CheckoutView> {
     
     @objc func stepAction(userInfo: [String: Any]?) {
         if let userInfo = userInfo {
+            if let action = userInfo["action"] as? String, action == "done" {
+                navigationController?.popToRootViewController(animated: false)
+            }
             if let receiptLink = userInfo["receiptLink"] as? SnabbleCore.Link, let url = URL(string: receiptLink.href) {
                 let detailViewController = ReceiptsDetailViewController()
 
