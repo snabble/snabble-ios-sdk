@@ -25,7 +25,8 @@ public final class GatekeeperViewModel: BaseCheckViewModel {
 
         // gatekeepers also have to wait until the payment moves to e.g. `.transferred`
         // or `.processing`, e.g. for payments via the physical card readers
-        if [.pending, .processing].contains(process.paymentState) {
+        //if [.pending, .processing].contains(process.paymentState) {
+        if [.pending].contains(process.paymentState) {
             return .continuePolling
         }
 
@@ -58,6 +59,7 @@ struct UpArrow: View {
 
 struct GatekeeperView: View {
     @ObservedObject var model: GatekeeperViewModel
+    @Environment(\.presentationMode) var presentationMode
 
     @ViewBuilder
     var content: some View {
@@ -77,7 +79,8 @@ struct GatekeeperView: View {
             Spacer()
             Button(action: {
                 model.checkModel.cancelPayment()
-            }) {
+                presentationMode.wrappedValue.dismiss()
+           }) {
                 Text(keyed: Asset.localizedString(forKey: "Snabble.cancel"))
                     .fontWeight(.bold)
                     .foregroundColor(Color.accent())

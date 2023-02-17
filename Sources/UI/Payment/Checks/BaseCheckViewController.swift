@@ -69,7 +69,12 @@ open class BaseCheckViewController<Content: View>: UIHostingController<Content>,
     }
     
     private var initialBrightness: CGFloat = 0.0
-        
+    
+    open override func willMove(toParent parent: UIViewController?) {
+        super.willMove(toParent: parent)
+        print("willMove")
+    }
+
     public override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         

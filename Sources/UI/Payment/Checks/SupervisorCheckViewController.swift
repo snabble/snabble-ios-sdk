@@ -26,6 +26,7 @@ final class SupervisorViewModel: BaseCheckViewModel {
 
 struct SupervisorView: View {
     @ObservedObject var model: SupervisorViewModel
+    @Environment(\.presentationMode) var presentationMode
 
     @ViewBuilder
     var content: some View {
@@ -41,7 +42,8 @@ struct SupervisorView: View {
             Spacer()
             Button(action: {
                 model.checkModel.cancelPayment()
-            }) {
+                presentationMode.wrappedValue.dismiss()
+           }) {
                 Text(keyed: Asset.localizedString(forKey: "Snabble.cancel"))
                     .fontWeight(.bold)
                     .foregroundColor(Color.accent())
