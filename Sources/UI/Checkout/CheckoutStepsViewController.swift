@@ -139,7 +139,7 @@ struct CheckoutView: View {
                     Button(action: {
                         model.done()
                     }) {
-                        Text(Asset.localizedString(forKey: "Snabble.done"))
+                        Text(Asset.localizedString(forKey: "Snabble.PaymentStatus.close"))
                             .fontWeight(.bold)
                             .frame(maxWidth: .infinity)
                     }

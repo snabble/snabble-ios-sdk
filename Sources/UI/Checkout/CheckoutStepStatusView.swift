@@ -27,6 +27,7 @@ struct CheckoutStepStatusView: View {
             }
             if model.isLoading {
                 ProgressView()
+                    .padding(.trailing, large ? 0 : 1)
             }
         }
     }

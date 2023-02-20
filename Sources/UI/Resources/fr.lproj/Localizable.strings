@@ -339,11 +339,15 @@
 
 "Snabble.PaymentStatus.Payment.tryAgain" = "Réessayer";
 
+/* Button to submit the feedback on the checkout screen after a successful checkout. */
 "Snabble.PaymentStatus.Rating.send" = "Envoyer";
 
 "Snabble.PaymentStatus.Rating.title" = "Tout s'est bien passé ?";
 
 "Snabble.PaymentStatus.Rating.title2" = "What can we do even better?";
+
+/* Placeholder text in the input text field on the checkout screen after a successful checkout. */
+"Snabble.PaymentStatus.Ratings.feedbackPlaceholder" = "Feel free to give us more feedback (optional)";
 
 "Snabble.PaymentStatus.Ratings.thanks" = "Merci !";
 

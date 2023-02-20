@@ -38,7 +38,6 @@ open class BaseCheckViewModel: ObservableObject, CheckViewModel {
     public convenience init(shop: Shop, shoppingCart: ShoppingCart, checkoutProcess: CheckoutProcess, paymentDelegate: PaymentDelegate? = nil) {
         let model = CheckModel(shop: shop, shoppingCart: shoppingCart, checkoutProcess: checkoutProcess, paymentDelegate: paymentDelegate)
         self.init(checkModel: model)
-        //self.paymentDelegate = paymentDelegate
     }
     
     func updateCodeImage() {

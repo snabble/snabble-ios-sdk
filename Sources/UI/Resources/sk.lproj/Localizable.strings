@@ -339,15 +339,19 @@
 
 "Snabble.PaymentStatus.Payment.tryAgain" = "Skúsiť znovu";
 
+/* Button to submit the feedback on the checkout screen after a successful checkout. */
 "Snabble.PaymentStatus.Rating.send" = "Odoslať";
 
 "Snabble.PaymentStatus.Rating.title" = "Čo sa ti nepáčilo?";
 
 "Snabble.PaymentStatus.Rating.title2" = "Čo by sme mohli vylepšiť?";
 
+/* Placeholder text in the input text field on the checkout screen after a successful checkout. */
+"Snabble.PaymentStatus.Ratings.feedbackPlaceholder" = "Feel free to give us more feedback (optional)";
+
 "Snabble.PaymentStatus.Ratings.thanks" = "Ďakujem!";
 
-"Snabble.PaymentStatus.Ratings.thanksForFeedback" = "Thanks for your feedback!";
+"Snabble.PaymentStatus.Ratings.thanksForFeedback" = "Ďakujem za tvoju spätnú väzbu!";
 
 "Snabble.PaymentStatus.Ratings.title" = "Páčilo sa ti nakupovanie?";
 

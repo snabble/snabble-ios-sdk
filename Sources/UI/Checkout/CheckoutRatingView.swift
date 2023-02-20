@@ -42,10 +42,8 @@ public final class RatingModel: ObservableObject {
         }
         var prompt: String {
             switch self {
-            case .low:
-                return Asset.localizedString(forKey: "Snabble.PaymentStatus.Rating.title")
-            case .medium:
-                return Asset.localizedString(forKey: "Snabble.PaymentStatus.Rating.title2")
+            case .low, .medium:
+                return Asset.localizedString(forKey: "Snabble.PaymentStatus.Ratings.feedbackPlaceholder")
             default:
                 return ""
             }

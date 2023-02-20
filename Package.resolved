@@ -23,8 +23,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/groue/GRDB.swift.git",
       "state" : {
-        "revision" : "ba68e3b02d9ed953a0c9ff43183f856f20c9b7ce",
-        "version" : "6.6.1"
+        "revision" : "e76cda27dce9595a833a23cfd26bbc27553cd305",
+        "version" : "6.7.0"
       }
     },
     {
@@ -68,8 +68,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/sberrevoets/SDCAlertView.git",
       "state" : {
-        "revision" : "925de6f34fc0c3d35264d16c056e43058d179b74",
-        "version" : "12.0.2"
+        "revision" : "8d821711afc967b44c74bbd57ba2b2bfeaefb118",
+        "version" : "12.0.3"
       }
     },
     {

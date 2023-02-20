@@ -21,6 +21,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Removed
 
 ### Updated
+* groue/GRDB.swift 6.7.0 (was 6.6.1)
 * getsentry/sentry-cocoa 8.1.0 (was 8.0.0)
 * sberrevoets/SDCAlertView 12.0.3 (was 12.0.2)
 

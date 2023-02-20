@@ -135,8 +135,7 @@ public final class CheckModel: CheckoutProcessing, CheckModelDelegate {
                 let alertView = AlertView(title: Asset.localizedString(forKey: "Snabble.Payment.CancelError.title"),
                                           message: Asset.localizedString(forKey: "Snabble.Payment.CancelError.message"))
                 alertView.addAction(UIAlertAction(title: Asset.localizedString(forKey: "Snabble.ok"), style: .default) { _ in
-                    //self.startTimer()
-                   // self.checkoutAborted(process: self.checkoutProcess)
+                    self.startTimer()
                 })
                 alertView.show()
             }

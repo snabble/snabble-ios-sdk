@@ -25,7 +25,6 @@ public final class GatekeeperViewModel: BaseCheckViewModel {
 
         // gatekeepers also have to wait until the payment moves to e.g. `.transferred`
         // or `.processing`, e.g. for payments via the physical card readers
-        //if [.pending, .processing].contains(process.paymentState) {
         if [.pending].contains(process.paymentState) {
             return .continuePolling
         }
@@ -66,6 +65,10 @@ struct GatekeeperView: View {
         VStack(spacing: 8) {
             if let uiImage = model.headerImage {
                 SwiftUI.Image(uiImage: uiImage)
+                    .padding([.top, .bottom], 20)
+            } else {
+                SwiftUI.Image(systemName: "platter.filled.bottom.and.arrow.down.iphone")
+                    .font(.system(size: 152))
                     .padding([.top, .bottom], 20)
             }
             UpArrow()
