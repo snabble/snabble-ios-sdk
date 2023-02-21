@@ -12,6 +12,10 @@ import SwiftUI
 import UIKit
 
 extension AppDelegate: AssetProviding {
+    func gatekeeper(viewModel: SnabbleUI.GatekeeperViewModel, domain: Any?) -> UIViewController? {
+        return nil
+    }
+    
     func color(named name: String, domain: Any?) -> UIColor? {
         UIColor(named: name)
     }

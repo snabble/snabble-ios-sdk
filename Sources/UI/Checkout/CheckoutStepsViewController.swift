@@ -2,140 +2,203 @@
 //  CheckoutStepsViewController.swift
 //  Snabble
 //
-//  Created by Andreas Osberghaus on 13.10.21.
+//  Created by Uwe Tilemann on 06.02.23.
 //
-
-import Foundation
-import UIKit
 import SnabbleCore
+import SwiftUI
+import Combine
 
-final class CheckoutStepsViewController: UIViewController {
-    private(set) weak var tableView: UITableView?
-    private(set) weak var headerView: CheckoutHeaderView?
-    private(set) weak var doneButton: UIButton?
+final class CheckoutModel: ObservableObject {
 
-    private weak var ratingViewController: CheckoutRatingViewController?
-
-    weak var paymentDelegate: PaymentDelegate?
-
-    private typealias ItemIdentifierType = CheckoutStep
-
-    private func cellProvider(_ tableView: UITableView, _ indexPath: IndexPath, _ step: ItemIdentifierType) -> UITableViewCell? {
-        switch step.kind {
-        case .default:
-            let cell = tableView.dequeueReusable(CheckoutStepTableViewCell.self, for: indexPath)
-            cell.stepView?.configure(with: step)
-            return cell
-
-        case .information:
-            let cell = tableView.dequeueReusable(CheckoutInformationTableViewCell.self, for: indexPath)
-            cell.informationView?.configure(with: step)
-            cell.informationView?.button?.addTarget(self, action: #selector(stepActionTouchedUpInside), for: .touchUpInside)
-            return cell
+    weak var paymentDelegate: PaymentDelegate? {
+        didSet {
+            self.ratingModel.analyticsDelegate = paymentDelegate
         }
     }
+    var actionPublisher = PassthroughSubject<[String: Any]?, Never>()
 
-    private var diffableDataSource: UITableViewDiffableDataSource<Int, ItemIdentifierType>?
+    @Published var stepsModel: CheckoutStepsViewModel
+    @Published var isComplete: Bool = false
+    @Published var checkoutSteps: [CheckoutStep] = []
+    
+    let ratingModel: RatingModel
 
-    let viewModel: CheckoutStepsViewModel
-    var shop: Shop {
-        viewModel.shop
+    init(stepsModel: CheckoutStepsViewModel) {
+        self.stepsModel = stepsModel
+        self.ratingModel = RatingModel(shop: stepsModel.shop)
+    }
+    
+    func update(checkoutSteps: [CheckoutStep]) {
+        self.checkoutSteps = checkoutSteps
+    }
+    
+    func isLast(step: CheckoutStep) -> Bool {
+        guard let last = checkoutSteps.last else {
+            return false
+        }
+        return step == last
+    }
+    
+    func done() {
+        Snabble.shared.fetchAppUserData(self.stepsModel.shop.projectId)
+        updateShoppingCart(for: self.stepsModel.checkoutProcess)
+        paymentDelegate?.checkoutFinished(self.stepsModel.shoppingCart, self.stepsModel.checkoutProcess)
+        paymentDelegate?.track(.checkoutStepsClosed)
+        
+        actionPublisher.send(["action": "done"])
     }
 
-    var checkoutProcess: CheckoutProcess? {
-        viewModel.checkoutProcess
+    private func updateShoppingCart(for checkoutProcess: CheckoutProcess?) {
+        switch checkoutProcess?.paymentState {
+        case .successful, .transferred:
+            self.stepsModel.shoppingCart.removeAll(endSession: true, keepBackup: false)
+        default:
+            self.stepsModel.shoppingCart.generateNewUUID()
+        }
+    }
+}
+
+struct CheckoutStepRow: View {
+    var step: CheckoutStep
+
+    var body: some View {
+        switch step.kind {
+        case .default:
+            CheckoutStepView(model: step)
+        case .information:
+            CheckoutInformationView(model: step)
+        }
+    }
+}
+
+private struct ViewHeightKey: PreferenceKey {
+    static var defaultValue: CGFloat { 0 }
+    static func reduce(value: inout Value, nextValue: () -> Value) {
+        value += nextValue()
+    }
+}
+
+struct CheckoutView: View {
+    @ObservedObject var model: CheckoutModel
+    @Environment(\.presentationMode) var presentationMode
+    @ViewProvider(.successCheckout) var customView
+    
+    @State private var height1: CGFloat = .zero
+    @State private var height2: CGFloat = .zero
+
+    init(model: CheckoutModel) {
+        self.model = model
+        
+        if #unavailable(iOS 16.0) {
+            UITableView.appearance().backgroundColor = .clear
+        }
+    }
+    
+    @ViewBuilder
+    var topContent: some View {
+        VStack {
+            CheckoutHeaderView(model: model.stepsModel.headerViewModel)
+                .padding(.top, 10)
+            
+            LazyVStack(alignment: .leading, spacing: 0) {
+                ForEach(model.checkoutSteps, id: \.self) { step in
+                    CheckoutStepRow(step: step).environmentObject(model)
+                        .padding(10)
+                    
+                    if !model.isLast(step: step) {
+                        Divider()
+                            .padding(.leading, 40)
+                    }
+                }
+            }
+            .background(Color.secondarySystemGroupedBackground)
+            .clipShape(RoundedRectangle(cornerRadius: 12))
+            .padding([.leading, .trailing], 20)
+            .shadow(color: Color("Shadow"), radius: 6, x: 3, y: 3)
+        }
+    }
+    
+    var body: some View {
+        NavigationView {
+            ZStack(alignment: .top) {
+                if model.isComplete {
+                    customView
+                }
+                ScrollView(.vertical, showsIndicators: false) {
+                    topContent
+                    
+                    if model.isComplete {
+                        CheckoutRatingView(model: model.ratingModel)
+                            .padding(20)
+                            .shadow(color: Color("Shadow"), radius: 6, x: 3, y: 3)
+                    }
+                }
+            }
+            .toolbar {
+                ToolbarItem(placement: .bottomBar) {
+                    Button(action: {
+                        model.done()
+                    }) {
+                        Text(Asset.localizedString(forKey: "Snabble.PaymentStatus.close"))
+                            .fontWeight(.bold)
+                            .frame(maxWidth: .infinity)
+                    }
+                    .buttonStyle(AccentButtonStyle())
+                }
+            }
+        }
+        .edgesIgnoringSafeArea(.top)
+    }
+}
+
+final class CheckoutStepsViewController: UIHostingController<CheckoutView> {
+    
+    weak var paymentDelegate: PaymentDelegate? {
+        didSet {
+            self.model.paymentDelegate = paymentDelegate
+        }
+    }
+    
+    private var cancellables = Set<AnyCancellable>()
+    
+    let model: CheckoutModel
+
+    var viewModel: CheckoutStepsViewModel {
+        self.model.stepsModel
     }
 
-    var shoppingCart: ShoppingCart {
-        viewModel.shoppingCart
+    init(model: CheckoutModel) {
+        self.model = model
+        
+        super.init(rootView: CheckoutView(model: self.model))
+        viewModel.delegate = self
     }
-
-    private weak var processTimer: Timer?
-    private var processSessionTask: URLSessionDataTask?
-
-    init(shop: Shop, shoppingCart: ShoppingCart, checkoutProcess: CheckoutProcess?) {
-        viewModel = CheckoutStepsViewModel(
+    
+    convenience init(shop: Shop, shoppingCart: ShoppingCart, checkoutProcess: CheckoutProcess?) {
+        let stepsModel = CheckoutStepsViewModel(
             shop: shop,
             checkoutProcess: checkoutProcess,
             shoppingCart: shoppingCart
         )
-        super.init(nibName: nil, bundle: nil)
-        viewModel.delegate = self
+        self.init(model: CheckoutModel(stepsModel: stepsModel))
     }
 
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
 
-    override func loadView() {
-        let view = UIView(frame: UIScreen.main.bounds)
-
-        if #available(iOS 15, *) {
-            view.restrictDynamicTypeSize(from: nil, to: .extraExtraExtraLarge)
-        }
-
-        let tableView = UITableView(frame: view.bounds, style: .insetGrouped)
-        tableView.translatesAutoresizingMaskIntoConstraints = false
-        tableView.estimatedRowHeight = 44
-        tableView.register(CheckoutStepTableViewCell.self)
-        tableView.register(CheckoutInformationTableViewCell.self)
-        tableView.allowsSelection = false
-        tableView.contentInset = .init(top: 0, left: 0, bottom: 48 + 16 + 16, right: 0)
-        let diffableDataSource = UITableViewDiffableDataSource<Int, ItemIdentifierType>(
-            tableView: tableView,
-            cellProvider: cellProvider
-        )
-        tableView.dataSource = diffableDataSource
-        self.diffableDataSource = diffableDataSource
-
-        view.addSubview(tableView)
-        self.tableView = tableView
-
-        let headerView = CheckoutHeaderView()
-        tableView.tableHeaderView = headerView
-        self.headerView = headerView
-
-        let ratingViewController = CheckoutRatingViewController(shop: shop)
-        ratingViewController.shouldRequestReview = false
-        ratingViewController.analyticsDelegate = paymentDelegate
-        addChild(ratingViewController)
-        tableView.tableFooterView = ratingViewController.view
-        ratingViewController.didMove(toParent: self)
-        self.ratingViewController = ratingViewController
-
-        let doneButton = UIButton(type: .system)
-        doneButton.translatesAutoresizingMaskIntoConstraints = false
-        doneButton.setTitle(Asset.localizedString(forKey: "Snabble.done"), for: .normal)
-        doneButton.makeSnabbleButton()
-        doneButton.titleLabel?.font = .preferredFont(forTextStyle: .body, weight: .medium)
-        doneButton.titleLabel?.adjustsFontForContentSizeCategory = true
-        doneButton.addTarget(self, action: #selector(doneButtonTouchedUpInside(_:)), for: .touchUpInside)
-        doneButton.isEnabled = false
-        view.addSubview(doneButton)
-        self.doneButton = doneButton
-
-        NSLayoutConstraint.activate([
-            tableView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
-            tableView.topAnchor.constraint(equalTo: view.topAnchor),
-            view.trailingAnchor.constraint(equalTo: tableView.trailingAnchor),
-
-            tableView.contentLayoutGuide.widthAnchor.constraint(equalTo: view.widthAnchor),
-            doneButton.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 24),
-            view.trailingAnchor.constraint(equalTo: doneButton.trailingAnchor, constant: 24),
-
-            doneButton.heightAnchor.constraint(equalToConstant: 48),
-            view.safeAreaLayoutGuide.bottomAnchor.constraint(equalTo: doneButton.bottomAnchor, constant: 16),
-            tableView.bottomAnchor.constraint(equalTo: view.bottomAnchor)
-        ])
-
-        self.view = view
-    }
-
     override func viewDidLoad() {
         super.viewDidLoad()
-        headerView?.configure(with: viewModel.headerViewModel)
-        tableView?.updateHeaderViews()
-        update(with: viewModel.steps, animate: false)
+        self.model.actionPublisher
+            .sink { [weak self] info in
+                self?.stepAction(userInfo: info)
+            }
+            .store(in: &cancellables)
+#if MOCK_CHECKOUT
+        self.model.update(checkoutSteps: CheckoutStep.mockModel)
+#else
+        self.model.update(checkoutSteps: viewModel.steps)
+#endif
     }
 
     override func viewWillAppear(_ animated: Bool) {
@@ -145,7 +208,9 @@ final class CheckoutStepsViewController: UIViewController {
 
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
+#if !MOCK_CHECKOUT
         viewModel.startTimer()
+#endif
         paymentDelegate?.track(.viewCheckoutSteps)
     }
 
@@ -153,22 +218,33 @@ final class CheckoutStepsViewController: UIViewController {
         super.viewWillDisappear(animated)
         navigationController?.setNavigationBarHidden(false, animated: false)
     }
+    
+    @objc func stepAction(userInfo: [String: Any]?) {
+        if let userInfo = userInfo {
+            if let action = userInfo["action"] as? String, action == "done" {
+                navigationController?.popToRootViewController(animated: false)
+            }
+            if let receiptLink = userInfo["receiptLink"] as? SnabbleCore.Link, let url = URL(string: receiptLink.href) {
+                let detailViewController = ReceiptsDetailViewController()
 
-    override func viewDidDisappear(_ animated: Bool) {
-        super.viewDidDisappear(animated)
-        viewModel.stopTimer()
-    }
-
-    override func viewWillLayoutSubviews() {
-        super.viewWillLayoutSubviews()
-        tableView?.updateHeaderViews()
-    }
-
-    @objc private func stepActionTouchedUpInside(_ sender: UIButton) {
+                detailViewController.getReceipt(orderID: url.lastPathComponent, projectID: viewModel.shop.projectId) { [weak self] result in
+                    
+                    switch result {
+                    case .success:
+                        self?.present(detailViewController, animated: true)
+                        
+                    case .failure:
+                        break
+                    }
+                }
+                return
+            }
+        }
+        
         guard let originCandidate = viewModel.originCandidate else { return }
-        if let project = Snabble.shared.project(for: shop.projectId),
+        if let project = Snabble.shared.project(for: viewModel.shop.projectId),
            project.paymentMethodDescriptors.first(where: { $0.acceptedOriginTypes?.contains(.payoneSepaData) ?? false }) != nil {
-            let sepaViewController = SepaDataEditViewController(viewModel: SepaDataModel(iban: originCandidate.origin, projectId: shop.projectId))
+            let sepaViewController = SepaDataEditViewController(viewModel: SepaDataModel(iban: originCandidate.origin, projectId: viewModel.shop.projectId))
             sepaViewController.delegate = self
             navigationController?.pushViewController(sepaViewController, animated: true)
         } else {
@@ -177,35 +253,12 @@ final class CheckoutStepsViewController: UIViewController {
             navigationController?.pushViewController(sepaViewController, animated: true)
         }
     }
-
-    @objc private func doneButtonTouchedUpInside(_ sender: UIButton) {
-        Snabble.shared.fetchAppUserData(shop.projectId)
-        updateShoppingCart(for: checkoutProcess)
-        paymentDelegate?.checkoutFinished(viewModel.shoppingCart, viewModel.checkoutProcess)
-        navigationController?.popToRootViewController(animated: false)
-        paymentDelegate?.track(.checkoutStepsClosed)
-    }
-
-    private func updateShoppingCart(for checkoutProcess: CheckoutProcess?) {
-        switch checkoutProcess?.paymentState {
-        case .successful, .transferred:
-            shoppingCart.removeAll(endSession: true, keepBackup: false)
-        default:
-            shoppingCart.generateNewUUID()
-        }
-    }
-
-    private func update(with steps: [ItemIdentifierType], animate: Bool = true) {
-        var snapshot = NSDiffableDataSourceSnapshot<Int, ItemIdentifierType>()
-        snapshot.appendSections([0])
-        snapshot.appendItems(steps, toSection: 0)
-        diffableDataSource?.apply(snapshot, animatingDifferences: animate)
-    }
 }
 
 extension CheckoutStepsViewController: CheckoutStepsViewModelDelegate {
     func checkoutStepsViewModel(_ viewModel: CheckoutStepsViewModel, didUpdateCheckoutProcess checkoutProcess: CheckoutProcess) {
-        doneButton?.isEnabled = checkoutProcess.isComplete
+        self.model.isComplete = checkoutProcess.isComplete
+        
         if checkoutProcess.isComplete {
             Snabble.clearInFlightCheckout()
         } else if checkoutProcess.paymentState == .unauthorized && checkoutProcess.links.authorizePayment != nil {
@@ -220,28 +273,13 @@ extension CheckoutStepsViewController: CheckoutStepsViewModelDelegate {
     }
 
     func checkoutStepsViewModel(_ viewModel: CheckoutStepsViewModel, didUpdateSteps steps: [CheckoutStep]) {
-        update(with: steps, animate: true)
+        self.model.update(checkoutSteps: steps)
     }
 
-    func checkoutStepsViewModel(_ viewModel: CheckoutStepsViewModel, didUpdateHeaderViewModel headerViewModel: CheckoutHeaderViewModel) {
-        headerView?.configure(with: headerViewModel)
-    }
+    func checkoutStepsViewModel(_ viewModel: CheckoutStepsViewModel, didUpdateHeaderViewModel headerViewModel: CheckoutHeaderViewModel) { }
 
     func checkoutStepsViewModel(_ viewModel: CheckoutStepsViewModel, didUpdateExitToken exitToken: ExitToken) {
-        paymentDelegate?.exitToken(exitToken, for: shop)
-    }
-}
-
-private extension UITableView {
-    func updateHeaderViews() {
-        updateHeaderViewHeight(for: tableHeaderView)
-        updateHeaderViewHeight(for: tableFooterView)
-    }
-
-    func updateHeaderViewHeight(for header: UIView?) {
-        guard let header = header else { return }
-        let fittingSize = CGSize(width: bounds.width - (safeAreaInsets.left + safeAreaInsets.right), height: 0)
-        header.frame.size = header.systemLayoutSizeFitting(fittingSize, withHorizontalFittingPriority: .required, verticalFittingPriority: .fittingSizeLevel)
+        paymentDelegate?.exitToken(exitToken, for: viewModel.shop)
     }
 }
 

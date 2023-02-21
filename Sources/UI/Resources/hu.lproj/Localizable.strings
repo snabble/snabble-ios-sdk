@@ -232,21 +232,21 @@
 
 "Snabble.Payment.SEPA.hint" = "Megjegyzés: A te és a kereskedőink visszaélésekkel szembeni védelme érdekében az első SEPA terhelési megbízásos fizetésednél a kereskedőnél megjelenik a bankkártyád.";
 
-"Snabble.Payment.SEPA.Hint.account" = "Account number";
+"Snabble.Payment.SEPA.Hint.account" = "Számlaszám";
 
-"Snabble.Payment.SEPA.Hint.accountType" = "Account type";
+"Snabble.Payment.SEPA.Hint.accountType" = "Számla típusa";
 
-"Snabble.Payment.SEPA.Hint.bank" = "Bank number";
+"Snabble.Payment.SEPA.Hint.bank" = "Bankazonosító kód";
 
-"Snabble.Payment.SEPA.Hint.branchCode" = "Branch code";
+"Snabble.Payment.SEPA.Hint.branchCode" = "Fiók száma";
 
-"Snabble.Payment.SEPA.Hint.checksum" = "Checksum";
+"Snabble.Payment.SEPA.Hint.checksum" = "Ellenőrző összeg";
 
-"Snabble.Payment.SEPA.Hint.controlCode" = "Control code";
+"Snabble.Payment.SEPA.Hint.controlCode" = "Ellenőrző jel";
 
-"Snabble.Payment.SEPA.Hint.miscCode" = "Other function";
+"Snabble.Payment.SEPA.Hint.miscCode" = "egyéb funkció";
 
-"Snabble.Payment.SEPA.Hint.regionCode" = "Region code";
+"Snabble.Payment.SEPA.Hint.regionCode" = "Regionális kód";
 
 "Snabble.Payment.SEPA.iban" = "IBAN";
 
@@ -272,7 +272,7 @@
 
 "Snabble.Payment.SEPA.title" = "SEPA terhelési megbízás";
 
-"Snabble.Payment.SEPA.validIBAN" = "Valid IBAN";
+"Snabble.Payment.SEPA.validIBAN" = "Érvényes IBAN";
 
 "Snabble.Payment.success" = "Köszönjük a vásárlásodat";
 
@@ -339,11 +339,19 @@
 
 "Snabble.PaymentStatus.Payment.tryAgain" = "Megpróbálom újra";
 
+/* Button to submit the feedback on the checkout screen after a successful checkout. */
 "Snabble.PaymentStatus.Rating.send" = "Elküldés";
 
 "Snabble.PaymentStatus.Rating.title" = "Mi nem volt jó?";
 
+"Snabble.PaymentStatus.Rating.title2" = "Mit tudnánk még jobban csinálni?";
+
+/* Placeholder text in the input text field on the checkout screen after a successful checkout. */
+"Snabble.PaymentStatus.Ratings.feedbackPlaceholder" = "Feel free to give us more feedback (optional)";
+
 "Snabble.PaymentStatus.Ratings.thanks" = "Köszönjük!";
+
+"Snabble.PaymentStatus.Ratings.thanksForFeedback" = "Köszönjük a visszajelzésedet!";
 
 "Snabble.PaymentStatus.Ratings.title" = "Tetszett a vásárlás?";
 

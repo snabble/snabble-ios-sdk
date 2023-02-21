@@ -20,7 +20,8 @@ struct CheckoutStep {
     let detailText: String?
     let actionTitle: String?
     let image: UIImage?
-
+    let userInfo: [String: Any]?
+    
     var kind: Kind {
         if status == nil, detailText == nil, image == nil {
             return .information
@@ -56,6 +57,7 @@ extension CheckoutStep {
         status = nil
         detailText = nil
         image = nil
+        userInfo = nil
     }
 }
 
@@ -77,6 +79,7 @@ extension CheckoutStep {
         }
         text = Asset.localizedString(forKey: "Snabble.PaymentStatus.Payment.title")
         image = nil
+        userInfo = nil
     }
 }
 
@@ -87,6 +90,8 @@ extension CheckoutStep {
         image = nil
         detailText = fulfillment.detailText(for: status!)
         actionTitle = nil
+        userInfo = nil
+
     }
 
     init(exitToken: ExitToken, paymentState: PaymentState) {
@@ -95,6 +100,8 @@ extension CheckoutStep {
         image = exitToken.image
         detailText = image != nil ? Asset.localizedString(forKey: "Snabble.PaymentStatus.ExitCode.openExitGateTimed") : nil
         actionTitle = nil
+        userInfo = nil
+
     }
 
     init(receiptLink: Link, paymentState: PaymentState) {
@@ -103,6 +110,7 @@ extension CheckoutStep {
         image = nil
         detailText = nil
         actionTitle = nil
+        userInfo = ["receiptLink": receiptLink]
     }
 
     init(originCandidate: OriginCandidate, savedIbans: Set<String>) {
@@ -116,6 +124,7 @@ extension CheckoutStep {
         }
         image = nil
         detailText = nil
+        userInfo = nil
     }
 }
 
@@ -145,3 +154,46 @@ private extension Fulfillment {
         }
     }
 }
+
+#if DEBUG
+extension CheckoutStep {
+    static func loadJSON<T: Decodable>(_ string: String) -> T {
+        do {
+            let decoder = JSONDecoder()
+            return try decoder.decode(T.self, from: string.data(using: .utf8) ?? Data())
+        } catch {
+            fatalError("Couldn't parse \(string) as \(T.self):\n\(error)")
+        }
+    }
+
+    static let mockExitToken: ExitToken = {
+        let token: ExitToken = loadJSON("""
+    { "format": "qr", "value": "4711" }
+    """)
+        return token
+    }()
+    static let mockFulfillment: Fulfillment = {
+        return loadJSON("""
+    { "id": "4711", "refersTo": ["referer"], "type": "A fulfillment type", "state": "allocated" }
+    """)
+    }()
+    static let mockOriginCandidate: OriginCandidate = {
+        return loadJSON("""
+    { }
+    """)
+    }()
+    static let savedIbans: Set<String> = []
+    
+    static let mockModel: [CheckoutStep] = {
+        return [
+            CheckoutStep(paymentState: .pending),
+            CheckoutStep(paymentState: .successful),
+            CheckoutStep(paymentState: .failed),
+            CheckoutStep(text: "MockStep MockStep MockStep MockStep MockStep MockStep MockStep MockStep MockStep ", actionTitle: "Push me"),
+            CheckoutStep(exitToken: mockExitToken, paymentState: .successful),
+            CheckoutStep(fulfillment: mockFulfillment, paymentState: .successful),
+            CheckoutStep(originCandidate: mockOriginCandidate, savedIbans: savedIbans)
+        ]
+    }()
+}
+#endif

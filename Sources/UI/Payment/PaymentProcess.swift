@@ -337,13 +337,17 @@ extension PaymentProcess {
                 return nil
             }
         case .supervisor:
-            let supervisor = SupervisorCheckViewController(shop: shop, shoppingCart: cart, checkoutProcess: process)
-            supervisor.delegate = paymentDelegate
+            let model = SupervisorViewModel(shop: shop, shoppingCart: cart, checkoutProcess: process, paymentDelegate: paymentDelegate)
+            let supervisor = SupervisorCheckViewController(model: model)
             return supervisor
         case .gatekeeper:
-            let gatekeeper = GatekeeperCheckViewController(shop: shop, shoppingCart: cart, checkoutProcess: process)
-            gatekeeper.delegate = paymentDelegate
-            return gatekeeper
+            let model = GatekeeperViewModel(shop: shop, shoppingCart: cart, checkoutProcess: process, paymentDelegate: paymentDelegate)
+            if let object = Asset.gatekeeper(viewModel: model) {
+                return object
+            } else {
+                let gatekeeper = GatekeeperCheckViewController(model: model)
+                return gatekeeper
+            }
         }
     }
 }

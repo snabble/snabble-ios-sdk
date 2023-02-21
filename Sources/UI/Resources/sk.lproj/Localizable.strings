@@ -232,21 +232,21 @@
 
 "Snabble.Payment.SEPA.hint" = "Poznámka: Za účelom tvojej ochrany a ochrany našich obchodníkov pred zneužitím si obchodník pri tvojej prvej platbe prostredníctvom SEPA inkasa vyžiada tvoju bankovú kartu.";
 
-"Snabble.Payment.SEPA.Hint.account" = "Account number";
+"Snabble.Payment.SEPA.Hint.account" = "Číslo účtu";
 
-"Snabble.Payment.SEPA.Hint.accountType" = "Account type";
+"Snabble.Payment.SEPA.Hint.accountType" = "Typ účtu";
 
-"Snabble.Payment.SEPA.Hint.bank" = "Bank number";
+"Snabble.Payment.SEPA.Hint.bank" = "Identifikačný kód banky";
 
-"Snabble.Payment.SEPA.Hint.branchCode" = "Branch code";
+"Snabble.Payment.SEPA.Hint.branchCode" = "Číslo pobočky";
 
-"Snabble.Payment.SEPA.Hint.checksum" = "Checksum";
+"Snabble.Payment.SEPA.Hint.checksum" = "Kontrolný súčet";
 
-"Snabble.Payment.SEPA.Hint.controlCode" = "Control code";
+"Snabble.Payment.SEPA.Hint.controlCode" = "Kontrolný znak";
 
-"Snabble.Payment.SEPA.Hint.miscCode" = "Other function";
+"Snabble.Payment.SEPA.Hint.miscCode" = "Ďalšia funkcia";
 
-"Snabble.Payment.SEPA.Hint.regionCode" = "Region code";
+"Snabble.Payment.SEPA.Hint.regionCode" = "Kód regiónu";
 
 "Snabble.Payment.SEPA.iban" = "IBAN";
 
@@ -272,7 +272,7 @@
 
 "Snabble.Payment.SEPA.title" = "SEPA inkaso";
 
-"Snabble.Payment.SEPA.validIBAN" = "Valid IBAN";
+"Snabble.Payment.SEPA.validIBAN" = "Platný IBAN";
 
 "Snabble.Payment.success" = "Ďakujeme za tvoj nákup";
 
@@ -339,11 +339,19 @@
 
 "Snabble.PaymentStatus.Payment.tryAgain" = "Skúsiť znovu";
 
+/* Button to submit the feedback on the checkout screen after a successful checkout. */
 "Snabble.PaymentStatus.Rating.send" = "Odoslať";
 
 "Snabble.PaymentStatus.Rating.title" = "Čo sa ti nepáčilo?";
 
+"Snabble.PaymentStatus.Rating.title2" = "Čo by sme mohli vylepšiť?";
+
+/* Placeholder text in the input text field on the checkout screen after a successful checkout. */
+"Snabble.PaymentStatus.Ratings.feedbackPlaceholder" = "Feel free to give us more feedback (optional)";
+
 "Snabble.PaymentStatus.Ratings.thanks" = "Ďakujem!";
+
+"Snabble.PaymentStatus.Ratings.thanksForFeedback" = "Ďakujem za tvoju spätnú väzbu!";
 
 "Snabble.PaymentStatus.Ratings.title" = "Páčilo sa ti nakupovanie?";
 
