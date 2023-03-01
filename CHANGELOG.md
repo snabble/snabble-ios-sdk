@@ -4,7 +4,7 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## unreleased
+## [unreleased]
 
 ### Added
 
@@ -13,6 +13,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Removed
 
 ### Updated
+
+## [0.30.1] - 2023-03-01
+
+### Updated
+* groue/GRDB.swift 6.7.0 (was 6.6.1)
+* sberrevoets/SDCAlertView 12.0.3 (was 12.0.2)
+* datatrans/ios-sdk 2.6.0 (was 2.5.0)
 
 ## [0.30.0] - 2023-02-21
 
@@ -27,13 +34,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 * Added DashboardBackground.colorset for SampleApp #APPS-655
 * Default EAN barcode background color is white #APPS-680
-
-### Removed
-
-### Updated
-* groue/GRDB.swift 6.7.0 (was 6.6.1)
-* getsentry/sentry-cocoa 8.1.0 (was 8.0.0)
-* sberrevoets/SDCAlertView 12.0.3 (was 12.0.2)
 
 ## [0.29.0] - 2023-01-19
 
