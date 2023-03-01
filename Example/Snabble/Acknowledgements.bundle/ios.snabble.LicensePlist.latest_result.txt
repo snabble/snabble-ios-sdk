@@ -4,9 +4,9 @@ name: Base32, nameSpecified: Base32, owner: mattrubin, version: 1.2.0, source: h
 
 name: DeviceKit, nameSpecified: DeviceKit, owner: devicekit, version: 5.0.0, source: https://github.com/devicekit/DeviceKit
 
-name: GRDB.swift, nameSpecified: GRDB.swift, owner: groue, version: 6.6.1, source: https://github.com/groue/GRDB.swift
+name: GRDB.swift, nameSpecified: GRDB.swift, owner: groue, version: 6.8.0, source: https://github.com/groue/GRDB.swift
 
-name: ios-sdk, nameSpecified: Datatrans, owner: datatrans, version: 2.5.0, source: https://github.com/datatrans/ios-sdk
+name: ios-sdk, nameSpecified: Datatrans, owner: datatrans, version: 2.6.0, source: https://github.com/datatrans/ios-sdk
 
 name: KeychainAccess, nameSpecified: KeychainAccess, owner: kishikawakatsumi, version: 4.2.2, source: https://github.com/kishikawakatsumi/KeychainAccess
 
@@ -14,7 +14,7 @@ name: OneTimePassword, nameSpecified: OneTimePassword, owner: snabble, version: 
 
 name: Pulley, nameSpecified: Pulley, owner: 52inc, version: 2.9.1, source: https://github.com/52inc/Pulley
 
-name: SDCAlertView, nameSpecified: SDCAlertView, owner: sberrevoets, version: 12.0.2, source: https://github.com/sberrevoets/SDCAlertView
+name: SDCAlertView, nameSpecified: SDCAlertView, owner: sberrevoets, version: 12.0.3, source: https://github.com/sberrevoets/SDCAlertView
 
 name: TrustKit, nameSpecified: TrustKit, owner: datatheorem, version: 2.0.1, source: https://github.com/datatheorem/TrustKit
 

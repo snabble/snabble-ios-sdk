@@ -17,7 +17,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [0.30.1] - 2023-03-01
 
 ### Updated
-* groue/GRDB.swift 6.7.0 (was 6.6.1)
+* groue/GRDB.swift 6.8.0 (was 6.6.1)
 * sberrevoets/SDCAlertView 12.0.3 (was 12.0.2)
 * datatrans/ios-sdk 2.6.0 (was 2.5.0)
 
