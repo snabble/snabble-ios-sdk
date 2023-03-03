@@ -9,6 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 
 ### Fixed
+* Removed/considered UIKIT dependencies from Core #APPS-717
 
 ### Removed
 
