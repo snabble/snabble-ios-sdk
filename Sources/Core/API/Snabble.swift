@@ -7,8 +7,6 @@
 import Foundation
 import KeychainAccess
 import CoreLocation
-#warning("Snabble.swift: remove UIKit dependency from SnabbleCore")
-import UIKit
 
 /// General config data for using the snabble.
 /// Applications must call `Snabble.setup(config: completion:)` with an instance of this struct before they make their first API call.
@@ -519,7 +517,7 @@ extension Snabble {
 
         return request
     }
-
+        
     private static let userAgent: String? = {
         guard
             let bundleDict = Bundle.main.infoDictionary,
@@ -531,8 +529,23 @@ extension Snabble {
         }
 
         let appDescriptor = appName + "/" + appVersion + "(" + appBuild + ")"
-        let osDescriptor = "\(UIDevice.current.systemName)/\(UIDevice.current.systemVersion)"
-
+        
+        let osDescriptor: String = {
+            let version = ProcessInfo.processInfo.operatingSystemVersion
+            let versionString = "\(version.majorVersion).\(version.minorVersion).\(version.patchVersion)"
+#if os(iOS)
+            return "iOS/\(versionString)"
+#elseif os(watchOS)
+            return "watchOS/\(versionString)"
+#elseif os(tvOS)
+            return "tvOS/\(versionString)"
+#elseif os(macOS)
+            return "macOS/\(versionString)"
+#else
+            return "unknown/\(versionString)"
+#endif
+        }()
+        
         var size = 0
         sysctlbyname("hw.machine", nil, &size, nil, 0)
         var machine = [CChar](repeating: 0, count: size)

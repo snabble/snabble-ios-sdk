@@ -7,8 +7,10 @@
 import Foundation
 import GRDB
 import Zip
-#warning("ProductDatabase.swift: remove UIKit dependency from SnabbleCore")
+
+#if canImport(UIKit)
 import UIKit
+#endif
 
 /// keys of well-known entries in the metadata table
 public enum MetadataKeys {
@@ -56,6 +58,7 @@ final class ProductDatabase: ProductStoring {
 
     internal var resumeData: Data?
 
+#if os(iOS)
     private var backgroundTaskIdentifier: UIBackgroundTaskIdentifier = .invalid {
         didSet {
             if oldValue != .invalid {
@@ -63,8 +66,11 @@ final class ProductDatabase: ProductStoring {
             }
         }
     }
+#endif
+
     internal var downloadTask: URLSessionDownloadTask? {
         willSet {
+#if os(iOS)
             if newValue != nil {
                 backgroundTaskIdentifier = UIApplication.shared.beginBackgroundTask(expirationHandler: { [self] in
                     backgroundTaskIdentifier = .invalid
@@ -72,6 +78,7 @@ final class ProductDatabase: ProductStoring {
             } else {
                 backgroundTaskIdentifier = .invalid
             }
+#endif
         }
     }
     private let switchMutex = Mutex()

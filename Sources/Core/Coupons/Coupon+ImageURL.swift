@@ -6,8 +6,9 @@
 //
 
 import Foundation
-#warning("Coupon+ImageURL.swift: remove UIKit dependency from SnabbleCore")
+#if canImport(UIKit)
 import UIKit
+#endif
 
 private extension Format {
     var validContentType: Bool {
@@ -18,11 +19,16 @@ private extension Format {
 extension Coupon {
     /// map image resolution names to what best fits @3x/@2x
     private static var imageSizes: [String] {
-        var sizes = [ "xhdpi", "hdpi", "mdpi", "ldpi", "thumbnail" ]
+        let defaultSizes = [ "xhdpi", "hdpi", "mdpi", "ldpi", "thumbnail" ]
+#if os(iOS)
+        var sizes = defaultSizes
         if UIScreen.main.scale >= 3 {
             sizes.insert("xxhdpi", at: 0)
         }
         return sizes
+#else
+        return defaultSizes
+#endif
     }
 
     public var imageURL: URL? {
