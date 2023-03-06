@@ -354,10 +354,47 @@ struct PaymentMethodDetailStorage {
         return []
     }
 
+    private func added(_ details: [PaymentMethodDetail]) -> [PaymentMethodDetail] {
+        let stored = self.read()
+        
+        var added = [PaymentMethodDetail]()
+        
+        for detail in details {
+            if !stored.contains(detail) {
+                added.append(detail)
+            }
+        }
+        return added
+    }
+    private func removed(_ details: [PaymentMethodDetail]) -> [PaymentMethodDetail] {
+        let stored = self.read()
+        
+        var removed = [PaymentMethodDetail]()
+        
+        for detail in stored {
+            if !details.contains(detail) {
+                removed.append(detail)
+            }
+        }
+        return removed
+    }
+
     func save(_ details: [PaymentMethodDetail]) {
         do {
+            let added = added(details)
+            let removed = removed(details)
+            
             let data = try JSONEncoder().encode(details)
             self.keychain[self.key] = String(bytes: data, encoding: .utf8)!
+            
+            if !added.isEmpty {
+                for detail in added {
+                    NotificationCenter.default.post(name: .snabblePaymentMethodAdded, object: nil, userInfo: [ "detail": detail ])
+                }
+            }
+            if !removed.isEmpty {
+                NotificationCenter.default.post(name: .snabblePaymentMethodDeleted, object: nil)
+            }
         } catch {
             Log.error("\(error)")
         }

@@ -129,8 +129,10 @@ final class PaymentMethodSelector {
     private func selectMethodIfValid(_ detail: PaymentMethodDetail? = nil) {
         if let detail = detail {
             // method was added, check if we can use it
-            let ok = self.shoppingCart.paymentMethods?.contains { $0.method == detail.rawMethod }
-            if ok == true {
+            let inCart = self.shoppingCart.paymentMethods?.contains { $0.method == detail.rawMethod }
+            if inCart == true {
+                self.setSelectedPayment(detail.rawMethod, detail: detail)
+            } else if self.userPaymentMethodDetails.contains(detail), detail != self.selectedPaymentDetail {
                 self.setSelectedPayment(detail.rawMethod, detail: detail)
             }
         } else {
