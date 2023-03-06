@@ -6,8 +6,10 @@
 
 import Foundation
 import OneTimePassword
-#warning("TokenRegistry.swift: remove UIKit dependency from SnabbleCore")
+
+#if canImport(UIKit)
 import UIKit
+#endif
 
 // backend response
 private struct AppUserResponse: Decodable {
@@ -67,9 +69,11 @@ final class TokenRegistry {
         self.appId = appId
         self.secret = secret
 
+#if os(iOS)
         let nc = NotificationCenter.default
         nc.addObserver(self, selector: #selector(appEnteredForeground(_:)), name: UIApplication.willEnterForegroundNotification, object: nil)
         nc.addObserver(self, selector: #selector(appEnteredBackground(_:)), name: UIApplication.didEnterBackgroundNotification, object: nil)
+#endif
     }
 
     /// get the JWT for `project`, retrieving a new one if no token existed or it was expired
