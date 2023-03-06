@@ -361,20 +361,16 @@ struct PaymentMethodDetailStorage {
             func added() -> [PaymentMethodDetail] {
                 var added = [PaymentMethodDetail]()
                 
-                for detail in details {
-                    if !stored.contains(detail) {
-                        added.append(detail)
-                    }
+                for detail in details where !stored.contains(detail) {
+                    added.append(detail)
                 }
                 return added
             }
             func removed() -> [PaymentMethodDetail] {
                 var removed = [PaymentMethodDetail]()
                 
-                for detail in stored {
-                    if !details.contains(detail) {
-                        removed.append(detail)
-                    }
+                for detail in stored where !details.contains(detail) {
+                    removed.append(detail)
                 }
                 return removed
             }
