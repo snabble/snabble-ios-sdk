@@ -357,7 +357,7 @@ struct PaymentMethodDetailStorage {
     func save(_ details: [PaymentMethodDetail]) {
         do {
             let stored = self.read()
-            
+
             func added() -> [PaymentMethodDetail] {
                 var added = [PaymentMethodDetail]()
                 
@@ -381,10 +381,10 @@ struct PaymentMethodDetailStorage {
 
             let added = added()
             let removed = removed()
-            
+
             let data = try JSONEncoder().encode(details)
             self.keychain[self.key] = String(bytes: data, encoding: .utf8)!
-            
+
             if !added.isEmpty {
                 for detail in added {
                     NotificationCenter.default.post(name: .snabblePaymentMethodAdded, object: nil, userInfo: [ "detail": detail ])
