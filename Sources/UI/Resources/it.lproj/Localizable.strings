@@ -276,6 +276,8 @@
 
 "Snabble.Payment.success" = "Grazie per il tuo acquisto";
 
+"Snabble.Payment.transferCart" = "Transfer shopping cart";
+
 "Snabble.Payment.Twint.error" = "Si è verificato un errore nell’elaborazione del tuo account TWINT";
 
 "Snabble.Payment.usableAt" = "Utilizzabile presso: %@";

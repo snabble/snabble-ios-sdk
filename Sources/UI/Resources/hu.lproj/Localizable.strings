@@ -276,6 +276,8 @@
 
 "Snabble.Payment.success" = "Köszönjük a vásárlásodat";
 
+"Snabble.Payment.transferCart" = "Transfer shopping cart";
+
 "Snabble.Payment.Twint.error" = "A TWINT-fiókod feldolgozása során hiba történt";
 
 "Snabble.Payment.usableAt" = "Itt használható: %@";
@@ -340,14 +342,14 @@
 "Snabble.PaymentStatus.Payment.tryAgain" = "Megpróbálom újra";
 
 /* Button to submit the feedback on the checkout screen after a successful checkout. */
-"Snabble.PaymentStatus.Rating.send" = "Elküldés";
+"Snabble.PaymentStatus.Rating.send" = "Visszajelzés elküldése";
 
 "Snabble.PaymentStatus.Rating.title" = "Mi nem volt jó?";
 
 "Snabble.PaymentStatus.Rating.title2" = "Mit tudnánk még jobban csinálni?";
 
 /* Placeholder text in the input text field on the checkout screen after a successful checkout. */
-"Snabble.PaymentStatus.Ratings.feedbackPlaceholder" = "Feel free to give us more feedback (optional)";
+"Snabble.PaymentStatus.Ratings.feedbackPlaceholder" = "Szívesen fogadjuk további visszajelzésedet (opcionális)";
 
 "Snabble.PaymentStatus.Ratings.thanks" = "Köszönjük!";
 

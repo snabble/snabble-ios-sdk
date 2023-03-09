@@ -276,6 +276,8 @@
 
 "Snabble.Payment.success" = "Ďakujeme za tvoj nákup";
 
+"Snabble.Payment.transferCart" = "Transfer shopping cart";
+
 "Snabble.Payment.Twint.error" = "Pri spracovaní tvojho účtu TWINT sa vyskytla chyba";
 
 "Snabble.Payment.usableAt" = "Použiteľné tu: %@";
@@ -340,14 +342,14 @@
 "Snabble.PaymentStatus.Payment.tryAgain" = "Skúsiť znovu";
 
 /* Button to submit the feedback on the checkout screen after a successful checkout. */
-"Snabble.PaymentStatus.Rating.send" = "Odoslať";
+"Snabble.PaymentStatus.Rating.send" = "Odoslať spätnú väzbu";
 
 "Snabble.PaymentStatus.Rating.title" = "Čo sa ti nepáčilo?";
 
 "Snabble.PaymentStatus.Rating.title2" = "Čo by sme mohli vylepšiť?";
 
 /* Placeholder text in the input text field on the checkout screen after a successful checkout. */
-"Snabble.PaymentStatus.Ratings.feedbackPlaceholder" = "Feel free to give us more feedback (optional)";
+"Snabble.PaymentStatus.Ratings.feedbackPlaceholder" = "Neváhaj nám poskytnúť ďalšiu spätnú väzbu (nepovinné)";
 
 "Snabble.PaymentStatus.Ratings.thanks" = "Ďakujem!";
 

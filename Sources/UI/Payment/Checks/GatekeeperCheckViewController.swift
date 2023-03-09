@@ -100,5 +100,6 @@ struct GatekeeperView: View {
 final class GatekeeperCheckViewController: BaseCheckViewController<GatekeeperView> {
     convenience init(model: GatekeeperViewModel) {
         self.init(model: model, rootView: GatekeeperView(model: model))
+        title = Asset.localizedString(forKey: "Snabble.Payment.transferCart")
     }
 }
