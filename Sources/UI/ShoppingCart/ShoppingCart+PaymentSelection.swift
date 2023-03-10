@@ -287,7 +287,7 @@ final class PaymentMethodSelector {
                 }
             }
 
-            let icon = isAnyActive && !action.active ? action.icon?.grayscale() : action.icon
+            let icon = isAnyActive && !(action.active || action.methodDetail != nil) ? action.icon?.grayscale() : action.icon
             alertAction.imageView.image = icon
 
             if action.active {
