@@ -9,6 +9,7 @@ import UIKit
 import SnabbleCore
 
 protocol ShoppingCardCellViewDelegate: AnyObject {
+    func trashItemButtonTapped()
     func plusButtonTapped()
     func minusButtonTapped()
 }
@@ -22,6 +23,7 @@ final class ShoppingCartTableCellView: UIView {
     public weak var weightView: WeightView?
     public weak var entryView: EntryView?
     public weak var quantityView: QuantityView?
+    public weak var trashView: TrashView?
 
     weak var delegate: ShoppingCardCellViewDelegate?
 
@@ -34,8 +36,9 @@ final class ShoppingCartTableCellView: UIView {
         let weightView = WeightView(frame: .zero)
         let entryView = EntryView(frame: .zero)
         let quantityView = QuantityView(frame: .zero)
+        let trashView = TrashView(frame: .zero)
 
-        let stackView = UIStackView(arrangedSubviews: [imageView, badgeView, nameView, weightView, entryView, quantityView])
+        let stackView = UIStackView(arrangedSubviews: [imageView, badgeView, nameView, weightView, entryView, quantityView, trashView])
         stackView.translatesAutoresizingMaskIntoConstraints = false
         stackView.spacing = 4
         stackView.axis = .horizontal
@@ -50,6 +53,7 @@ final class ShoppingCartTableCellView: UIView {
         self.weightView = weightView
         self.entryView = entryView
         self.quantityView = quantityView
+        self.trashView = trashView
 
         super.init(frame: frame)
 
@@ -57,6 +61,10 @@ final class ShoppingCartTableCellView: UIView {
 
         quantityView.plusButton?.addTarget(self, action: #selector(plusButtonTapped(_:)), for: .touchUpInside)
         quantityView.minusButton?.addTarget(self, action: #selector(minusButtonTapped(_:)), for: .touchUpInside)
+        
+        weightView.trashButton?.addTarget(self, action: #selector(trashItemButtonTapped(_:)), for: .touchUpInside)
+        entryView.trashButton?.addTarget(self, action: #selector(trashItemButtonTapped(_:)), for: .touchUpInside)
+        trashView.trashButton?.addTarget(self, action: #selector(trashItemButtonTapped(_:)), for: .touchUpInside)
 
         NSLayoutConstraint.activate([
             stackView.topAnchor.constraint(equalTo: topAnchor),
@@ -80,6 +88,10 @@ final class ShoppingCartTableCellView: UIView {
 
     @objc private func minusButtonTapped(_ sender: Any) {
         delegate?.minusButtonTapped()
+    }
+
+    @objc private func trashItemButtonTapped(_ sender: Any) {
+        delegate?.trashItemButtonTapped()
     }
 
     public func updateBadgeText(withText text: String?) {
@@ -121,7 +133,7 @@ final class ShoppingCartTableCellView: UIView {
     }
 
     public func updateRightDisplay(withMode mode: RightDisplay) {
-        [quantityView, weightView, entryView].forEach { $0?.isHidden = true }
+        [quantityView, weightView, entryView, trashView].forEach { $0?.isHidden = true }
         switch mode {
         case .none:
             break
@@ -131,6 +143,8 @@ final class ShoppingCartTableCellView: UIView {
             weightView?.isHidden = false
         case .weightEntry:
             entryView?.isHidden = false
+        case .trash:
+            trashView?.isHidden = false
         }
     }
 }
@@ -301,6 +315,7 @@ extension ShoppingCartTableCellView {
     }
 
     final class WeightView: UIView {
+        private(set) weak var trashButton: UIButton?
         private(set) weak var unitLabel: UILabel?
         private(set) weak var quantityLabel: UILabel?
 
@@ -317,16 +332,24 @@ extension ShoppingCartTableCellView {
             unitLabel.font = .preferredFont(forTextStyle: .footnote, weight: .semibold)
             unitLabel.adjustsFontForContentSizeCategory = true
             unitLabel.textColor = .label
-            unitLabel.textAlignment = .center
+            unitLabel.textAlignment = .left
             unitLabel.setContentHuggingPriority(.required, for: .horizontal)
+
+            let trashButton = UIButton(type: .custom)
+            trashButton.translatesAutoresizingMaskIntoConstraints = false
+            trashButton.setImage(Asset.image(named: "trash"), for: .normal)
+            trashButton.makeBorderedButton()
+            trashButton.backgroundColor = .secondarySystemBackground
 
             super.init(frame: frame)
 
             addSubview(unitLabel)
             addSubview(quantityLabel)
+            addSubview(trashButton)
 
             self.unitLabel = unitLabel
             self.quantityLabel = quantityLabel
+            self.trashButton = trashButton
 
             NSLayoutConstraint.activate([
                 quantityLabel.topAnchor.constraint(greaterThanOrEqualToSystemSpacingBelow: topAnchor, multiplier: 1),
@@ -338,11 +361,20 @@ extension ShoppingCartTableCellView {
                 unitLabel.centerYAnchor.constraint(equalTo: centerYAnchor),
 
                 quantityLabel.leadingAnchor.constraint(equalTo: leadingAnchor),
-                unitLabel.leadingAnchor.constraint(equalTo: quantityLabel.trailingAnchor, constant: 8),
-                trailingAnchor.constraint(equalTo: unitLabel.trailingAnchor),
+                unitLabel.leadingAnchor.constraint(equalTo: quantityLabel.trailingAnchor, constant: 4),
+                trashButton.leadingAnchor.constraint(equalTo: unitLabel.trailingAnchor),
 
                 quantityLabel.widthAnchor.constraint(equalToConstant: 34),
-                unitLabel.widthAnchor.constraint(equalToConstant: 18)
+                unitLabel.widthAnchor.constraint(equalToConstant: 18),
+                
+                trashButton.widthAnchor.constraint(equalToConstant: 32),
+                trashButton.heightAnchor.constraint(equalToConstant: 32),
+                
+                trashButton.topAnchor.constraint(greaterThanOrEqualTo: topAnchor),
+                bottomAnchor.constraint(greaterThanOrEqualTo: trashButton.bottomAnchor),
+                trashButton.centerYAnchor.constraint(equalTo: centerYAnchor),
+                
+                trailingAnchor.constraint(equalTo: trashButton.trailingAnchor)
             ])
         }
 
@@ -352,6 +384,7 @@ extension ShoppingCartTableCellView {
     }
 
     final class EntryView: UIView {
+        private(set) weak var trashButton: UIButton?
         private(set) weak var unitLabel: UILabel?
         private(set) weak var quantityTextField: UITextField?
 
@@ -371,16 +404,24 @@ extension ShoppingCartTableCellView {
             unitLabel.translatesAutoresizingMaskIntoConstraints = false
             unitLabel.font = UIFont.systemFont(ofSize: 13, weight: .semibold)
             unitLabel.textColor = .label
-            unitLabel.textAlignment = .center
+            unitLabel.textAlignment = .left
             unitLabel.setContentHuggingPriority(.required, for: .horizontal)
+
+            let trashButton = UIButton(type: .custom)
+            trashButton.translatesAutoresizingMaskIntoConstraints = false
+            trashButton.setImage(Asset.image(named: "trash"), for: .normal)
+            trashButton.makeBorderedButton()
+            trashButton.backgroundColor = .secondarySystemBackground
 
             super.init(frame: frame)
 
             addSubview(quantityTextField)
             addSubview(unitLabel)
+            addSubview(trashButton)
 
             self.quantityTextField = quantityTextField
             self.unitLabel = unitLabel
+            self.trashButton = trashButton
 
             NSLayoutConstraint.activate([
                 quantityTextField.topAnchor.constraint(greaterThanOrEqualToSystemSpacingBelow: topAnchor, multiplier: 1),
@@ -392,10 +433,20 @@ extension ShoppingCartTableCellView {
                 unitLabel.centerYAnchor.constraint(equalTo: centerYAnchor),
 
                 quantityTextField.widthAnchor.constraint(equalToConstant: 80),
+                unitLabel.widthAnchor.constraint(equalToConstant: 18),
+                
+                trashButton.widthAnchor.constraint(equalToConstant: 32),
+                trashButton.heightAnchor.constraint(equalToConstant: 32),
 
                 quantityTextField.leadingAnchor.constraint(equalTo: leadingAnchor),
-                unitLabel.leadingAnchor.constraint(equalTo: quantityTextField.trailingAnchor, constant: 8),
-                trailingAnchor.constraint(equalTo: unitLabel.trailingAnchor)
+                unitLabel.leadingAnchor.constraint(equalTo: quantityTextField.trailingAnchor, constant: 4),
+                trashButton.leadingAnchor.constraint(equalTo: unitLabel.trailingAnchor),
+
+                trashButton.topAnchor.constraint(greaterThanOrEqualTo: topAnchor),
+                bottomAnchor.constraint(greaterThanOrEqualTo: trashButton.bottomAnchor),
+                trashButton.centerYAnchor.constraint(equalTo: centerYAnchor),
+                
+                trailingAnchor.constraint(equalTo: trashButton.trailingAnchor)
             ])
         }
 
@@ -480,6 +531,39 @@ extension ShoppingCartTableCellView {
             } else {
                 minusButton?.setImage(Asset.image(named: "minus"), for: .normal)
             }
+        }
+    }
+
+    final class TrashView: UIView {
+        private(set) weak var trashButton: UIButton?
+        
+        override init(frame: CGRect) {
+            let trashButton = UIButton(type: .custom)
+            trashButton.translatesAutoresizingMaskIntoConstraints = false
+            trashButton.setImage(Asset.image(named: "trash"), for: .normal)
+            trashButton.makeBorderedButton()
+            trashButton.backgroundColor = .secondarySystemBackground
+
+            super.init(frame: frame)
+            addSubview(trashButton)
+
+            self.trashButton = trashButton
+
+            NSLayoutConstraint.activate([
+                trashButton.leadingAnchor.constraint(equalTo: leadingAnchor),
+                
+                trashButton.widthAnchor.constraint(equalToConstant: 32),
+                trashButton.heightAnchor.constraint(equalToConstant: 32),
+                
+                trashButton.topAnchor.constraint(greaterThanOrEqualTo: topAnchor),
+                bottomAnchor.constraint(greaterThanOrEqualTo: trashButton.bottomAnchor),
+                trashButton.centerYAnchor.constraint(equalTo: centerYAnchor),
+                
+                trailingAnchor.constraint(equalTo: trashButton.trailingAnchor)
+            ])
+        }
+        required init?(coder: NSCoder) {
+            fatalError("init(coder:) has not been implemented")
         }
     }
 }

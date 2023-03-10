@@ -26,6 +26,7 @@ enum RightDisplay {
     case buttons
     case weightEntry
     case weightDisplay
+    case trash
 }
 
 final class ShoppingCartTableCell: UITableViewCell {
@@ -216,7 +217,7 @@ final class ShoppingCartTableCell: UITableViewCell {
     func setCouponItem(_ coupon: CartCoupon, for lineItem: CheckoutInfo.LineItem?) {
         self.quantity = 1
         self.cellView?.nameView?.nameLabel?.text = coupon.coupon.name
-        self.rightDisplay = .none
+        self.rightDisplay = .trash
 
         self.quantityText = "1"
 
@@ -233,6 +234,13 @@ final class ShoppingCartTableCell: UITableViewCell {
         }
     }
 
+    private func trashItem(at row: Int) {
+        guard self.item != nil else {
+            return
+        }
+        self.delegate?.confirmDeletion(at: row)
+    }
+    
     private func updateQuantity(at row: Int, reload: Bool = true) {
         guard let item = self.item else {
             return
@@ -339,6 +347,11 @@ final class ShoppingCartTableCell: UITableViewCell {
 }
 
 extension ShoppingCartTableCell: ShoppingCardCellViewDelegate {
+    func trashItemButtonTapped() {
+        guard let row = self.row else { return }
+        self.trashItem(at: row)
+    }
+
     func minusButtonTapped() {
         guard let row = self.row else { return }
         if self.quantity > 0 {

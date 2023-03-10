@@ -26,6 +26,18 @@ enum CartTableEntry {
 
     // sums up the total discounts
     case discount(Int)
+    
+    var canEdit: Bool {
+        switch self {
+            // user stuff is editable
+        case .cartItem: return true
+        case .coupon: return true
+            // stuff we get from the backend isn't
+        case .lineItem: return false
+        case .discount: return false
+        case .giveaway: return false
+        }
+    }
 }
 
 final class ShoppingCartTableViewController: UITableViewController {
@@ -309,7 +321,8 @@ extension ShoppingCartTableViewController: ShoppingCartTableDelegate {
         }
 
         let product = item.product
-
+        let quantity = item.quantity
+        
         let msg = Asset.localizedString(forKey: "Snabble.Shoppingcart.removeItem", arguments: product.name)
         let alert = UIAlertController(title: nil, message: msg, preferredStyle: .alert)
 
@@ -318,7 +331,7 @@ extension ShoppingCartTableViewController: ShoppingCartTableDelegate {
         })
 
         alert.addAction(UIAlertAction(title: Asset.localizedString(forKey: "Snabble.no"), style: .cancel) { _ in
-            self.shoppingCart.setQuantity(1, at: row)
+            self.shoppingCart.setQuantity(quantity, at: row)
             let indexPath = IndexPath(row: row, section: 0)
             self.tableView.reloadRows(at: [indexPath], with: .none)
         })
@@ -393,16 +406,7 @@ extension ShoppingCartTableViewController {
         }
 
         let item = self.items[indexPath.row]
-
-        switch item {
-        // user stuff is editable
-        case .cartItem: return true
-        case .coupon: return true
-        // stuff we get from the backend isn't
-        case .lineItem: return false
-        case .discount: return false
-        case .giveaway: return false
-        }
+        return item.canEdit
     }
 
     // call tableView.deleteRows(at:) inside a CATransaction block so that we can reload the tableview afterwards
