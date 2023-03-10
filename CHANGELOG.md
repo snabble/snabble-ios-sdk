@@ -7,6 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [unreleased]
 
 ### Added
+* Added new Phrase key Snabble.Payment.transferCart for GatekeeperCheck #APPS-724
 
 ### Fixed
 * Removed/considered UIKIT dependencies from Core #APPS-717
