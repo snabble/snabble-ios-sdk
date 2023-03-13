@@ -13,6 +13,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 * Removed/considered UIKIT dependencies from Core #APPS-717
 * Send notification for added removed payment methods #APPS-714
+* Some available payment methods are displayed disabled #APPS-720
 
 ### Removed
 
