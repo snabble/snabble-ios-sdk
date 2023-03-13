@@ -11,7 +11,27 @@
 import UIKit
 import SnabbleCore
 
-enum CartTableEntry {
+enum CartTableEntry: Swift.Identifiable {
+    var id: String {
+        switch self {
+        case .cartItem(let cartItem, _):
+            return cartItem.uuid
+            
+        case .coupon(let cartCoupon, _):
+            return cartCoupon.uuid
+            
+            // stuff we get from the backend isn't
+        case .lineItem(let lineItem, _):
+            return lineItem.id
+            
+        case .discount(let discount):
+            return String(discount)
+            
+        case .giveaway(let lineItem):
+            return lineItem.id
+        }
+    }
+    
     // our main item and any additional line items referring to it
     case cartItem(CartItem, [CheckoutInfo.LineItem])
 

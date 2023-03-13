@@ -10,6 +10,7 @@ import SnabbleCore
 // standalone shopping cart
 // this embeds the ShoppingCartTableViewController as a child VC, plus a CheckoutBar
 
+#if !SWIFTUI_PROFILE
 public final class ShoppingCartViewController: UIViewController {
     private let shoppingCartTableVC: ShoppingCartTableViewController
     private let bottomWrapper = UIView()
@@ -269,3 +270,4 @@ extension ShoppingCartViewController: InternalShoppingCartDelegate {
         present(alertController, animated: true)
     }
 }
+#endif
