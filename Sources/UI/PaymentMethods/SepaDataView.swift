@@ -296,7 +296,7 @@ public struct SepaDataDisplayView: View {
                 content: {
                     VStack(alignment: .leading) {
                         HStack {
-                            if let imageName = model.imageName, let uiImage = Asset.image(named: "SnabbleSDK/payment/" + imageName) {
+                            if let imageName = model.imageName, let uiImage: UIImage = Asset.image(named: "SnabbleSDK/payment/" + imageName) {
                                 Image(uiImage: uiImage)
                             }
                             Text(model.iban)

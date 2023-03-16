@@ -115,6 +115,45 @@ open class ShoppingCartViewModel: ObservableObject {
 //            }
 //        }
     }
+    
+    private func confirmDeletion(at index: Int) {
+        
+    }
+    
+    private func trashItem(item: CartItem) {
+        guard let index = items.firstIndex(where: { $0.id == item.uuid }) else {
+            return
+        }
+        self.confirmDeletion(at: index)
+    }
+    private func updateQuantity(itemModel: CartItemModel, reload: Bool = true) {
+        guard let index = items.firstIndex(where: { $0.id == itemModel.item.uuid }) else {
+            return
+        }
+        guard case .cartItem = self.items[index] else {
+            return
+        }
+
+        if itemModel.quantity == 0 && itemModel.item.product.type != .userMustWeigh {
+            self.confirmDeletion(at: index)
+            return
+        }
+
+//        self.delegate?.track(.cartAmountChanged)
+
+        if reload {
+            self.updateQuantity(itemModel.quantity, at: index)
+        }
+    }
+    
+    func updateQuantity(_ quantity: Int, at row: Int) {
+        guard case .cartItem = self.items[row] else {
+            return
+        }
+
+        self.shoppingCart.setQuantity(quantity, at: row)
+        NotificationCenter.default.post(name: .snabbleCartUpdated, object: self)
+    }
 
     private func setupItems(_ cart: ShoppingCart) {
         self.items = []
@@ -226,14 +265,22 @@ open class ShoppingCartViewModel: ObservableObject {
         voucherError.toggle()
     }
 
-    func increment(item: CartItem) {
-        print("+ \(item)")
+    func decrement(itemModel: CartItemModel) {
+        print("- \(itemModel.title)")
+        if itemModel.quantity > 0 {
+            itemModel.quantity -= 1
+            updateQuantity(itemModel: itemModel)
+        }
     }
-    func decrement(item: CartItem) {
-        print("- \(item)")
+    
+    func increment(itemModel: CartItemModel) {
+        print("+ \(itemModel.title)")
+        if itemModel.quantity < ShoppingCart.maxAmount {
+            itemModel.quantity += 1
+            updateQuantity(itemModel: itemModel)
+        }
     }
 }
-
 extension ShoppingCartViewModel {
     private struct PendingLookup {
         let index: Int

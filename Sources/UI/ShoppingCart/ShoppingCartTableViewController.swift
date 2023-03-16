@@ -58,6 +58,9 @@ enum CartTableEntry: Swift.Identifiable {
         case .giveaway: return false
         }
     }
+    static func rowFor(item: CartItem, in array: [CartTableEntry]) -> Int? {
+        return array.firstIndex(where: { $0.id == item.uuid })
+    }
 }
 
 final class ShoppingCartTableViewController: UITableViewController {

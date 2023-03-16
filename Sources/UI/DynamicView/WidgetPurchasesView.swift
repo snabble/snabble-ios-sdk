@@ -122,11 +122,9 @@ private struct WidgetOrderView: View {
     public var body: some View {
         VStack(alignment: .leading) {
             HStack {
-                if let image = SwiftUI.Image.image(named: "Snabble.DynamicView.LastPurchases.project", domain: provider.projectId) {
-                    image
-                        .resizable()
-                        .frame(width: 14, height: 14)
-                }
+                SwiftUI.Image.image(named: "Snabble.DynamicView.LastPurchases.project", domain: provider.projectId)
+                    .resizable()
+                    .frame(width: 14, height: 14)
                 Spacer()
                 Text(provider.amount)
                     .font(.footnote)

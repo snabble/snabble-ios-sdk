@@ -11,65 +11,6 @@ import SnabbleCore
 struct CartRowView: View {
     var item: CartTableEntry
 
-//    @ViewBuilder
-//    var image: some View {
-//        if let image = item.image {
-//            image
-//                .resizable()
-//                .scaledToFit()
-//                .clipShape(RoundedRectangle(cornerRadius: 4))
-//                .frame(width: 48, height: 48)
-//                .padding(0)
-//                .padding(.trailing, 8)
-//        }
-//    }
-//
-//    @ViewBuilder
-//    var price: some View {
-//        if item.hasDiscount {
-//            HStack {
-//                Text(model.formatter.string(for: item.regularPrice) ?? "")
-//                    .strikethrough(true)
-//                    .font(.footnote)
-//                    .foregroundColor(.secondary)
-//                Text(model.formatter.string(for: item.discountedPrice) ?? "")
-//                    .font(.footnote)
-//                    .foregroundColor(.secondary)
-//           }
-//
-//        } else {
-//            Text(model.formatter.string(for: item.regularPrice) ?? "")
-//                .font(.footnote)
-//                .foregroundColor(.secondary)
-//        }
-//    }
-//    @ViewBuilder
-//    var discount: some View {
-//        if item.hasDiscount {
-//            HStack(spacing: 0) {
-//                Spacer()
-//                ZStack {
-//                    Image(systemName: "seal.fill")
-//                        .resizable()
-//                        .scaledToFit()
-//                        .frame(width: 40, height: 40)
-//                        .foregroundColor(.red)
-//
-//                    Image(systemName: "percent")
-//                        .font(.title)
-//                        .fontWeight(.bold)
-//                        .foregroundColor(.white)
-//                        .opacity(0.66)
-//                    Text("\(item.discount)")
-//                        .font(.headline)
-//                        .fontWeight(.heavy)
-//                        .foregroundColor(.white)
-//                        .shadow(color: Color(.sRGBLinear, white: 0, opacity: 0.66), radius: 2)
-//                }
-//            }
-//        }
-//    }
-    
     @ViewBuilder
     var itemView: some View {
         switch item {
@@ -80,8 +21,8 @@ struct CartRowView: View {
 //
 //        case .lineItem(let item, let lineItems):
 //            LineItemView(item, for: lineItems)
-//        case .discount(let amount):
-//            DiscountView(for: amount)
+        case .discount(let amount):
+            DiscountView(amount: amount)
 //        case .giveaway(let lineItem):
 //            GiveawayView(for: lineItem)
         default:
@@ -104,12 +45,9 @@ struct CartRowView: View {
     }
 }
 
-public struct ShoppingCartView: View {
+public struct ShoppingCartItemsView: View {
     @ObservedObject var cartModel: ShoppingCartViewModel
-    
-    init(shoppingCart: ShoppingCart) {
-        self.cartModel = ShoppingCartViewModel(shoppingCart: shoppingCart)
-    }
+
     public var body: some View {
         VStack {
             if cartModel.items.isEmpty {
@@ -127,7 +65,6 @@ public struct ShoppingCartView: View {
                 .background(Color.clear)
 //                .scrollContentBackground(.hidden)
             }
-
         }
         .alert(isPresented: $cartModel.productError) {
             Alert(
@@ -150,6 +87,18 @@ public struct ShoppingCartView: View {
                                      cartModel.voucherError = false
                                  }))
         }
+    }
+}
+
+public struct ShoppingCartView: View {
+    @ObservedObject var cartModel: ShoppingCartViewModel
+    
+    init(shoppingCart: ShoppingCart) {
+        self.cartModel = ShoppingCartViewModel(shoppingCart: shoppingCart)
+    }
+    
+    public var body: some View {
+        ShoppingCartItemsView(cartModel: cartModel)
     }
     
 }

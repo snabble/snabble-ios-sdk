@@ -34,6 +34,18 @@ struct PaddingCircle: Shape {
         return path
     }
 }
+extension Image {
+    func cartImageModifier(padding: CGFloat = 0) -> some View {
+        self
+            .resizable()
+            .scaledToFit()
+            .padding(padding)
+            .clipShape(RoundedRectangle(cornerRadius: 4))
+            .frame(width: 48, height: 48)
+            .padding(0)
+            .padding(.trailing, 4)
+   }
+}
 
 struct MultiColorModifier: ViewModifier {
     var color: Color

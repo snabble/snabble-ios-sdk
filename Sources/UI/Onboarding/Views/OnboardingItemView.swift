@@ -99,9 +99,7 @@ struct OnboardingItemView: View {
                 showURL.toggle()
             }
             .sheet(isPresented: $showURL) {
-                if let url = urlResource {
-                    WebView(url: url)
-                }
+                WebView(url: urlResource)
             }
     }
 

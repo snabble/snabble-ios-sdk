@@ -66,9 +66,9 @@ struct CartStepperView: View {
         }
     }
     func plus() {
-        cartModel.increment(item: itemModel.item)
+        cartModel.increment(itemModel: itemModel)
     }
     func minus() {
-        cartModel.decrement(item: itemModel.item)
+        cartModel.decrement(itemModel: itemModel)
     }
 }

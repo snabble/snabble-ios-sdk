@@ -45,13 +45,13 @@ extension Snabble {
                     kTSKIncludeSubdomains: true,
                     kTSKDisableDefaultReportUri: true,
                     kTSKPublicKeyHashes: Snabble.CAHashes
-                ],
+                ] as [String: Any],
                 "snabble-testing.io": [
                     kTSKExpirationDate: "2025-09-15",
                     kTSKIncludeSubdomains: true,
                     kTSKDisableDefaultReportUri: true,
                     kTSKPublicKeyHashes: Snabble.CAHashes
-                ],
+                ] as [String: Any],
                 "snabble-staging.io": [
                     kTSKExpirationDate: "2025-09-15",
                     kTSKIncludeSubdomains: true,
