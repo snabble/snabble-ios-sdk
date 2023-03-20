@@ -8,6 +8,41 @@
 import SwiftUI
 import SnabbleCore
 
+//struct CouponItemView: View {
+//    let coupon: CartCoupon
+//    @ObservedObject var itemModel: CartItemModel
+//
+//    init(coupon: CartCoupon, for lineItem: CheckoutInfo.LineItem) {
+//        self.itemModel = CartItemModel(item: item, for: lineItems)
+//    }
+//
+//    init(coupon: CartCoupon) {
+//        self.coupon = coupon
+//    }
+//    var body: some View {
+//
+//    }
+//    func setCouponItem(_ coupon: CartCoupon, for lineItem: CheckoutInfo.LineItem?) {
+//        self.quantity = 1
+//        self.cellView?.nameView?.nameLabel?.text = coupon.coupon.name
+//        self.rightDisplay = .trash
+//
+//        self.quantityText = "1"
+//
+//        let redeemed = lineItem?.redeemed == true
+//
+//        if showImages {
+//            let icon: UIImage? = Asset.image(named: "SnabbleSDK/icon-percent")
+//            self.cellView?.imageView?.imageView?.image = icon?.recolored(with: redeemed ? .label : .systemGray)
+//            self.leftDisplay = .image
+//        } else {
+//            self.leftDisplay = .badge
+//            self.badgeText = "%"
+//            self.badgeColor = redeemed ? .systemRed : .systemGray
+//        }
+//    }
+//}
+
 struct CartRowView: View {
     var item: CartTableEntry
 
@@ -31,17 +66,6 @@ struct CartRowView: View {
     }
     var body: some View {
         itemView
-//        HStack(spacing: 0) {
-//            image
-//            VStack(alignment: .leading) {
-//                Text(item.name)
-//                    .font(.subheadline)
-//                price
-//            }
-//            discount
-//            Spacer()
-//            CartStepper(item: item)
-//        }
     }
 }
 
@@ -87,7 +111,22 @@ public struct ShoppingCartItemsView: View {
                                      cartModel.voucherError = false
                                  }))
         }
-    }
+        .alert(isPresented: $cartModel.confirmDeletion) {
+            Alert(
+                title: Text(""),
+                message: Text(cartModel.deletionMessage),
+                primaryButton:
+                        .destructive(Text(keyed: "Snabble.yes"),
+                                     action: {
+                                         cartModel.processDeletion()
+                                     }),
+                secondaryButton:
+                        .cancel(Text(keyed: "Snabble.no"),
+                                action: {
+                                    cartModel.cancelDeletion()
+                                }))
+        }
+   }
 }
 
 public struct ShoppingCartView: View {

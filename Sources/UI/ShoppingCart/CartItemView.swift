@@ -54,11 +54,12 @@ struct CartItemView: View {
     var price: some View {
         if itemModel.hasDiscount {
             HStack {
+                Text(itemModel.discountedPriceString)
+                    .font(.footnote)
+                    .fontWeight(.bold)
+                    .foregroundColor(.primary)
                 Text(itemModel.regularPriceString)
                     .strikethrough(true)
-                    .font(.footnote)
-                    .foregroundColor(.secondary)
-                Text(itemModel.discountedPriceString)
                     .font(.footnote)
                     .foregroundColor(.secondary)
             }
@@ -66,7 +67,8 @@ struct CartItemView: View {
         } else {
             Text(itemModel.regularPriceString)
                 .font(.footnote)
-                .foregroundColor(.secondary)
+                .fontWeight(.bold)
+                .foregroundColor(.primary)
         }
     }
     @ViewBuilder
@@ -98,17 +100,35 @@ struct CartItemView: View {
             EmptyView()
         }
     }
+    @ViewBuilder
+    var additionalInfo: some View {
+        if let discountName = itemModel.discountName {
+            HStack {
+                Text(itemModel.discountString)
+                Spacer()
+                Text(discountName)
+            }
+            .font(.footnote)
+            .foregroundColor(.secondary)
+            .padding(.leading, 54)
+            .padding(.trailing, 8)
+            .padding(.bottom, 4)
+        }
+    }
     
     var body: some View {
-        HStack {
-            leftView
-            VStack(alignment: .leading) {
-                Text(itemModel.title)
-                price
+        VStack {
+            HStack {
+                leftView
+                VStack(alignment: .leading) {
+                    Text(itemModel.title)
+                    price
+                }
+                filler
+                rightView
+                    .padding(.trailing, 8)
             }
-            filler
-            rightView
-                .padding(.trailing, 8)
+            additionalInfo
         }
     }
 }

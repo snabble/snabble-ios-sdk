@@ -9,17 +9,30 @@ import Foundation
 import Combine
 import SnabbleCore
 
-open class ShoppingCartViewModel: ObservableObject {
+open class ShoppingCartViewModel: ObservableObject, Swift.Identifiable, Equatable {
+    public let id = UUID()
+    
+    public static func == (lhs: ShoppingCartViewModel, rhs: ShoppingCartViewModel) -> Bool {
+        lhs.id == rhs.id
+    }
+    
     let shoppingCart: ShoppingCart
     let formatter: NumberFormatter
     weak var shoppingCartDelegate: ShoppingCartDelegate?
 
     @Published var items = [CartTableEntry]()
-
+    
     private var knownImages = Set<String>()
     internal var showImages = false
 
     var itemCount: Int { items.count }
+
+    func row(for itemModel: CartItemModel) -> Int? {
+        guard let index = items.firstIndex(where: { $0.id == itemModel.item.uuid }) else {
+            return nil
+        }
+        return index
+    }
 
     init(shoppingCart: ShoppingCart) {
         self.shoppingCart = shoppingCart
@@ -38,12 +51,12 @@ open class ShoppingCartViewModel: ObservableObject {
         self.shoppingCart.cancelPendingCheckoutInfoRequest()
 
         // ignore notifcation sent from this class
-//        if let object = notification.object as? ShoppingCartViewModel, object == self {
-//            return
-//        }
+        if let object = notification.object as? ShoppingCartViewModel, object == self {
+            return
+        }
 
         // if we're on-screen, check for errors from the last checkoutInfo creation/update
-        if /*self.view.window != nil,*/ let error = self.shoppingCart.lastCheckoutInfoError {
+        if let error = self.shoppingCart.lastCheckoutInfoError {
             switch error.type {
             case .saleStop:
                 if let offendingSkus = error.details?.compactMap({ $0.sku }) {
@@ -57,7 +70,6 @@ open class ShoppingCartViewModel: ObservableObject {
         }
 
         self.setupItems(self.shoppingCart)
-
         self.getMissingImages()
     }
 
@@ -116,26 +128,11 @@ open class ShoppingCartViewModel: ObservableObject {
 //        }
     }
     
-    private func confirmDeletion(at index: Int) {
-        
-    }
-    
-    private func trashItem(item: CartItem) {
-        guard let index = items.firstIndex(where: { $0.id == item.uuid }) else {
-            return
-        }
-        self.confirmDeletion(at: index)
-    }
     private func updateQuantity(itemModel: CartItemModel, reload: Bool = true) {
         guard let index = items.firstIndex(where: { $0.id == itemModel.item.uuid }) else {
             return
         }
         guard case .cartItem = self.items[index] else {
-            return
-        }
-
-        if itemModel.quantity == 0 && itemModel.item.product.type != .userMustWeigh {
-            self.confirmDeletion(at: index)
             return
         }
 
@@ -243,6 +240,27 @@ open class ShoppingCartViewModel: ObservableObject {
         let imgIndex = cart.items.firstIndex { $0.product.imageUrl != nil }
         self.showImages = imgIndex != nil
     }
+
+    private func delete(itemModel: CartItemModel) {
+        guard let index = row(for: itemModel) else {
+            return
+        }
+ 
+        if case .cartItem = self.items[index] {
+//            let product = item.product
+//            self.shoppingCartDelegate?.track(.deletedFromCart(product.sku))
+
+            self.items.remove(at: index)
+            self.shoppingCart.remove(at: index)
+        } else if case .coupon(let coupon, _) = self.items[index] {
+            self.items.remove(at: index)
+            self.shoppingCart.removeCoupon(coupon.coupon)
+        }
+        
+        NotificationCenter.default.post(name: .snabbleCartUpdated, object: self)
+        self.updateView()
+    }
+
     @Published var productError: Bool = false
     @Published var voucherError: Bool = false
     var productErrorMessage: String = ""
@@ -265,11 +283,45 @@ open class ShoppingCartViewModel: ObservableObject {
         voucherError.toggle()
     }
 
+    @Published var confirmDeletion: Bool = false
+    var deletionMessage: String = ""
+    var deletionItem: CartItemModel?
+    
+    private func confirmDeletion(itemModel: CartItemModel) {
+        
+        deletionItem = itemModel
+        deletionMessage = Asset.localizedString(forKey: "Snabble.Shoppingcart.removeItem", arguments: itemModel.item.product.name)
+
+        confirmDeletion.toggle()
+    }
+
+    func cancelDeletion() {
+        deletionMessage = ""
+        deletionItem = nil
+    }
+
+    func processDeletion() {
+        guard let item = deletionItem else {
+            return
+        }
+        
+        self.delete(itemModel: item)
+        
+        deletionMessage = ""
+        deletionItem = nil
+    }
+    
+    func trash(itemModel: CartItemModel) {
+        confirmDeletion(itemModel: itemModel)
+    }
+    
     func decrement(itemModel: CartItemModel) {
         print("- \(itemModel.title)")
-        if itemModel.quantity > 0 {
+        if itemModel.quantity > 1 {
             itemModel.quantity -= 1
             updateQuantity(itemModel: itemModel)
+        } else if itemModel.quantity == 1 {
+            confirmDeletion(itemModel: itemModel)
         }
     }
     
@@ -281,6 +333,7 @@ open class ShoppingCartViewModel: ObservableObject {
         }
     }
 }
+
 extension ShoppingCartViewModel {
     private struct PendingLookup {
         let index: Int

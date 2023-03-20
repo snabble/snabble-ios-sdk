@@ -45,26 +45,48 @@ open class CartItemModel: ObservableObject {
         } else if product.type == .preWeighed {
             self.rightDisplay = .weightDisplay
         }
-
         self.loadImage()
     }
 }
 
 extension CartItemModel {
 
+    var priceModifier: (price: Int, text: String) {
+        var modifiedPrice = 0
+        var text = ""
+        
+        for lineItem in lineItems {
+            guard let modifiers = lineItem.priceModifiers else { continue }
+            let modSum = modifiers.reduce(0, { $0 + $1.price })
+            let modText = modifiers.reduce("", { $0 + $1.name })
+            modifiedPrice += modSum * lineItem.amount
+            text += modText
+        }
+        return (modifiedPrice, text)
+    }
+    
+    var couponText: String {
+        let coupons = lineItems.filter { $0.type == .coupon }
+        return coupons.reduce("", { $0 + ($1.name ?? "") })
+    }
+    
     var discount: Int {
         let discounts = lineItems.filter { $0.type == .discount }
         let discount = discounts.reduce(0) { $0 + $1.amount * ($1.price ?? 0) }
         if discount != 0 {
             return discount
         }
-        var modifiedPrice = 0
-        for lineItem in lineItems {
-            guard let modifiers = lineItem.priceModifiers else { continue }
-            let modSum = modifiers.reduce(0, { $0 + $1.price })
-            modifiedPrice += modSum * lineItem.amount
+        return priceModifier.price
+    }
+
+    var discountName: String? {
+        let name = priceModifier.text
+        if !name.isEmpty {
+            return name
         }
-        return modifiedPrice
+        let couponName = couponText
+        
+        return couponName.isEmpty ? nil : couponName
     }
     
     var regularPrice: Int {
@@ -124,7 +146,6 @@ extension CartItemModel {
 
     var discountPercentString: String {
         return "-\(discountPercent)%"
-//        return "\(discountPercent)"
     }
 }
 
@@ -148,6 +169,7 @@ extension CartItemModel {
             self.image = img
             return
         }
+        // SDK Supermarket hack to resolve wrong domain in data
         if url.host == "snabble.io" {
             let path = url.path
             
