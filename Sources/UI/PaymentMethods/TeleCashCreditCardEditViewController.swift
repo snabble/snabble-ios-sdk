@@ -240,7 +240,7 @@ public final class TeleCashCreditCardEditViewController: UIViewController {
             .replacingOccurrences(of: "{{orderId}}", with: vaultItem.orderId)
             .replacingOccurrences(of: "{{parentUri}}", with: "https://snabble.io")
 
-        self.webView?.loadHTMLString(page, baseURL: URL(string: "https://snabble.i"))
+        self.webView?.loadHTMLString(page, baseURL: URL(string: "https://snabble.io"))
     }
 
     private func threeDSecureHint(for projectId: Identifier<Project>?, _ vaultItem: TelecashVaultItem) -> String {
