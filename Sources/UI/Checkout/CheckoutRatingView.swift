@@ -155,7 +155,7 @@ struct CheckoutRatingView: View {
     @ViewBuilder
     var textEditor: some View {
         if model.showTextEditor {
-            VStack {
+            VStack(spacing: 8) {
                 ZStack(alignment: .leading) {
                     if message.isEmpty {
                         UIKitTextView(text: .constant(model.ratingPrompt), font: .footnote)
@@ -169,6 +169,7 @@ struct CheckoutRatingView: View {
                 sendButton
                     .buttonStyle(AccentButtonStyle())
                     .disabled(model.selectionIndex == nil)
+                
                 customView
             }
         }

@@ -37,6 +37,10 @@ extension UIColor {
     public static func onAccent(in domain: Any? = Asset.domain) -> UIColor {
         Asset.color(named: "onAccent", domain: domain) ?? accent(in: domain).contrast ?? .label
     }
+
+    public static func checkoutGreen(in domain: Any? = Asset.domain) -> UIColor {
+        Asset.color(named: "checkout-green", domain: domain) ?? .green
+    }
 }
 
 import SwiftUI
@@ -74,6 +78,10 @@ extension SwiftUI.Color {
 
     public static func onAccent(in domain: Any? = Asset.domain) -> SwiftUI.Color {
         color(UIColor.onAccent(in: domain))
+    }
+
+    public static func checkoutGreen(in domain: Any? = Asset.domain) -> SwiftUI.Color {
+        color(UIColor.checkoutGreen(in: domain))
     }
 }
 
