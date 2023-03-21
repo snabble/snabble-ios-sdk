@@ -17,10 +17,13 @@ open class ShoppingCartViewModel: ObservableObject, Swift.Identifiable, Equatabl
     }
     
     let shoppingCart: ShoppingCart
-    let formatter: NumberFormatter
+
     weak var shoppingCartDelegate: ShoppingCartDelegate?
 
-    @Published var items = [CartTableEntry]()
+    var items = [CartTableEntry]()
+    
+    @Published var cartItems = [CartItemModel]()
+    @Published var updated = false
     
     private var knownImages = Set<String>()
     internal var showImages = false
@@ -33,12 +36,12 @@ open class ShoppingCartViewModel: ObservableObject, Swift.Identifiable, Equatabl
         }
         return index
     }
+    public var formatter: PriceFormatter {
+        PriceFormatter(SnabbleCI.project)
+    }
 
     init(shoppingCart: ShoppingCart) {
         self.shoppingCart = shoppingCart
-        self.formatter = NumberFormatter()
-        self.formatter.numberStyle = .currency
-        self.formatter.maximumFractionDigits = 2
 
         let nc = NotificationCenter.default
         nc.addObserver(self, selector: #selector(self.shoppingCartUpdated(_:)), name: .snabbleCartUpdated, object: nil)
@@ -71,6 +74,7 @@ open class ShoppingCartViewModel: ObservableObject, Swift.Identifiable, Equatabl
 
         self.setupItems(self.shoppingCart)
         self.getMissingImages()
+
     }
 
     private func getMissingImages() {
@@ -101,31 +105,7 @@ open class ShoppingCartViewModel: ObservableObject, Swift.Identifiable, Equatabl
     }
 
     func updateView(at row: Int? = nil) {
-//        let currentCount = self.items.count
         self.setupItems(self.shoppingCart)
-//        if self.items.count != currentCount {
-//            self.tableView.reloadData()
-//        } else {
-//            if let row = row {
-//                UIView.performWithoutAnimation {
-//                    let offset = self.tableView.contentOffset
-//                    let indexPath = IndexPath(row: row, section: 0)
-//                    self.tableView.reloadRows(at: [indexPath], with: .none)
-//                    self.tableView.contentOffset = offset
-//                }
-//            } else {
-//                if !self.items.isEmpty {
-//                    self.tableView.reloadData()
-//                }
-//            }
-//        }
-//
-//        // avoid ugly visual glitch
-//        if self.items.isEmpty && self.isEditing {
-//            DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
-//                self.setEditing(false, animated: false)
-//            }
-//        }
     }
     
     private func updateQuantity(itemModel: CartItemModel, reload: Bool = true) {
@@ -239,8 +219,23 @@ open class ShoppingCartViewModel: ObservableObject, Swift.Identifiable, Equatabl
         // check if any of the cart items's products has an associated image
         let imgIndex = cart.items.firstIndex { $0.product.imageUrl != nil }
         self.showImages = imgIndex != nil
+        
+        updateCartItems()
     }
-
+    
+    private func updateCartItems() {
+        var newItems = [CartItemModel]()
+        
+        for item in items {
+            if case .cartItem(let item, let lineItems) = item {
+                let cartItem = CartItemModel(item: item, for: lineItems)
+                newItems.append(cartItem)
+            }
+        }
+        self.cartItems = newItems
+        updated.toggle()
+    }
+    
     private func delete(itemModel: CartItemModel) {
         guard let index = row(for: itemModel) else {
             return
@@ -391,5 +386,36 @@ extension ShoppingCartViewModel {
             }
             // self.tableView?.reloadData()
         }
+    }
+}
+
+extension ShoppingCartViewModel {
+    func itemsMatchingType<T: ShoppingCartItemPricing>(_ type: T.Type) -> [T] {
+      return cartItems.compactMap { $0 as? T }
+    }
+
+    var priceItems: [ShoppingCartItemPricing] {
+        return itemsMatchingType(CartItemModel.self)
+    }
+    
+    var regularTotal: Int {
+        var result: Int = 0
+        
+        priceItems.forEach { result += $0.regularPrice }
+        
+        return result
+    }
+    
+    var total: Int {
+        var result: Int = 0
+        
+        priceItems.forEach { result += $0.discountedPrice }
+        
+        return result
+    }
+}
+extension ShoppingCartViewModel {
+    var numberOfProductsString: String {
+        return Asset.localizedString(forKey: "Snabble.Shoppingcart.numberOfItems", arguments: self.shoppingCart.numberOfProducts)
     }
 }

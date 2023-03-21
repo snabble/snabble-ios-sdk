@@ -34,6 +34,33 @@ struct PaddingCircle: Shape {
         return path
     }
 }
+
+struct CartInfoModifier: ViewModifier {
+    var leading: CGFloat
+    
+    init(leading: CGFloat = 0.0) {
+        self.leading = leading
+    }
+    func body(content: Content) -> some View {
+        content
+            .font(.footnote)
+            .foregroundColor(.secondary)
+            .padding(.leading, leading)
+            .padding(.trailing, 8)
+//            .padding(.top, 4)
+            .padding(.bottom, 2)
+    }
+}
+
+extension View {
+    func cartInfo() -> some View {
+        modifier(CartInfoModifier())
+    }
+    func cartInfo(leading: CGFloat) -> some View {
+        modifier(CartInfoModifier(leading: leading))
+    }
+}
+
 extension Image {
     func cartImageModifier(padding: CGFloat = 0) -> some View {
         self

@@ -10,21 +10,74 @@ import Combine
 import SnabbleCore
 import SwiftUI
 
-open class CartItemModel: ObservableObject {
+public protocol ShoppingCartItem: Swift.Identifiable {
+    var id: UUID { get }
+    var title: String { get }
+    var leftDisplay: LeftDisplay { get }
+    var rightDisplay: RightDisplay { get }
+    var image: SwiftUI.Image? { get }
+}
+
+public protocol ShoppingCartItemCounting {
+    var quantity: Int { get set }
+}
+
+public protocol ShoppingCartItemPricing {
+    var regularPrice: Int { get }
+    var discount: Int { get }
+    var discountName: String? { get }
+    var formatter: PriceFormatter { get }
+}
+
+public extension ShoppingCartItemPricing {
+    var hasDiscount: Bool {
+        return discount != 0
+    }
+    var discountedPrice: Int {
+        guard hasDiscount else {
+            return regularPrice
+        }
+        return regularPrice + discount
+    }
+
+    var discountPercent: Int {
+        guard hasDiscount else { return 0 }
+        return Int(100.0 - 100.0 / Double(regularPrice) * Double(discountedPrice))
+    }
+}
+
+public extension ShoppingCartItemPricing {
+    var discountString: String {
+        return formatter.format(discount) + " ≙ \(discountPercentString)"
+    }
+    
+    var discountedPriceString: String {
+        return formatter.format(discountedPrice)
+    }
+
+    var discountPercentString: String {
+        return "-\(discountPercent)%"
+    }
+    var regularPriceString: String {
+        guard self.regularPrice != 0 else {
+            return ""
+        }
+        return formatter.format(regularPrice)
+    }
+}
+
+open class CartItemModel: ObservableObject, ShoppingCartItem, ShoppingCartItemCounting {
+    public let id = UUID()
     let item: CartItem
     let lineItems: [CheckoutInfo.LineItem]
 
-    @Published var quantity: Int
-    @Published var title: String
+    @Published public var quantity: Int
+    @Published public var title: String
 
-    @Published var leftDisplay: LeftDisplay = .none
-    @Published var rightDisplay: RightDisplay = .buttons
-    @Published var image: SwiftUI.Image?
+    @Published public var leftDisplay: LeftDisplay = .none
+    @Published public var rightDisplay: RightDisplay = .buttons
+    @Published public var image: SwiftUI.Image?
     
-    var formatter: PriceFormatter {
-        PriceFormatter(SnabbleCI.project)
-    }
-
     init(item: CartItem, for lineItems: [CheckoutInfo.LineItem]) {
         self.item = item
         self.lineItems = lineItems
@@ -49,7 +102,11 @@ open class CartItemModel: ObservableObject {
     }
 }
 
-extension CartItemModel {
+extension CartItemModel: ShoppingCartItemPricing {
+
+    public var formatter: PriceFormatter {
+        PriceFormatter(SnabbleCI.project)
+    }
 
     var priceModifier: (price: Int, text: String) {
         var modifiedPrice = 0
@@ -69,8 +126,12 @@ extension CartItemModel {
         let coupons = lineItems.filter { $0.type == .coupon }
         return coupons.reduce("", { $0 + ($1.name ?? "") })
     }
+    var discountText: String {
+        let discounts = lineItems.filter { $0.type == .discount }
+        return discounts.reduce("", { $0 + ($1.name ?? "") })
+    }
     
-    var discount: Int {
+    public var discount: Int {
         let discounts = lineItems.filter { $0.type == .discount }
         let discount = discounts.reduce(0) { $0 + $1.amount * ($1.price ?? 0) }
         if discount != 0 {
@@ -79,17 +140,20 @@ extension CartItemModel {
         return priceModifier.price
     }
 
-    var discountName: String? {
+    public var discountName: String? {
         let name = priceModifier.text
         if !name.isEmpty {
             return name
         }
         let couponName = couponText
-        
-        return couponName.isEmpty ? nil : couponName
+        if !couponName.isEmpty {
+            return couponName
+        }
+        let discountText = discountText
+        return discountText.isEmpty ? nil : discountText
     }
     
-    var regularPrice: Int {
+    public var regularPrice: Int {
         guard let defaultItem = lineItems.first(where: { $0.type == .default }), defaultItem.priceModifiers == nil else {
             return item.price
         }
@@ -106,24 +170,19 @@ extension CartItemModel {
         return depositTotal
     }
     
-    var discountedPrice: Int {
-        guard hasDiscount else {
-            return regularPrice
-        }
-        return regularPrice + discount
-    }
-
-    var discountPercent: Int {
-        return Int(100.0 - 100.0 / Double(regularPrice) * Double(discountedPrice))
-    }
-
     var hasDeposit: Bool {
         return depositTotal != nil
     }
-    var hasDiscount: Bool {
-        return discount != 0
+    
+    var depositDetailString: String? {
+        guard let deposit = depositTotal else {
+            return nil
+        }
+        let depositName = lineItems.first(where: { $0.type == .deposit })?.name
+        
+        return formatter.format(regularPrice - deposit) + " + " + formatter.format(deposit) + " " + (depositName ?? "")
     }
-
+    
     var regularPriceString: String {
         guard self.regularPrice != 0 else {
             return ""
@@ -134,18 +193,6 @@ extension CartItemModel {
             return "\(total) \(includesDeposit)"
         }
         return formatter.format(regularPrice)
-    }
-    
-    var discountString: String {
-        return formatter.format(discount)
-    }
-    
-    var discountedPriceString: String {
-        return formatter.format(discountedPrice)
-    }
-
-    var discountPercentString: String {
-        return "-\(discountPercent)%"
     }
 }
 

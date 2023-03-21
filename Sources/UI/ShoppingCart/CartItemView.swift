@@ -47,9 +47,13 @@ struct DiscountBadgeView: View {
 struct CartItemView: View {
     @ObservedObject var itemModel: CartItemModel
     
+    init(itemModel: CartItemModel) {
+        self.itemModel = itemModel
+    }
     init(item: CartItem, for lineItems: [CheckoutInfo.LineItem]) {
         self.itemModel = CartItemModel(item: item, for: lineItems)
     }
+    
     @ViewBuilder
     var price: some View {
         if itemModel.hasDiscount {
@@ -74,9 +78,6 @@ struct CartItemView: View {
     @ViewBuilder
     var filler: some View {
         Spacer(minLength: 0)
-        if itemModel.hasDiscount {
-            DiscountBadgeView(discount: itemModel.discountPercentString)
-        }
     }
         
     @ViewBuilder
@@ -108,28 +109,30 @@ struct CartItemView: View {
                 Spacer()
                 Text(discountName)
             }
-            .font(.footnote)
-            .foregroundColor(.secondary)
-            .padding(.leading, 54)
-            .padding(.trailing, 8)
-            .padding(.bottom, 4)
+            .cartInfo()
+        } else if let depositInfo = itemModel.depositDetailString {
+            Text(depositInfo)
+                .cartInfo()
         }
     }
     
     var body: some View {
-        VStack {
-            HStack {
-                leftView
-                VStack(alignment: .leading) {
-                    Text(itemModel.title)
-                    price
+        HStack {
+            leftView
+            VStack(alignment: .leading, spacing: 4) {
+                HStack {
+                    VStack(alignment: .leading, spacing: 2) {
+                        Text(itemModel.title)
+                        price
+                    }
+                    filler
+                    rightView
+                        .padding(.trailing, 8)
                 }
-                filler
-                rightView
-                    .padding(.trailing, 8)
+                additionalInfo
             }
-            additionalInfo
         }
+        .listRowBackground(itemModel.hasDiscount ? Color.tertiarySystemGroupedBackground : Color.systemBackground)
     }
 }
 

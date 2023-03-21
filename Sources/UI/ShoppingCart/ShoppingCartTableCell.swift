@@ -14,14 +14,14 @@ protocol ShoppingCartTableDelegate: AnalyticsDelegate {
     var showImages: Bool { get }
 }
 
-enum LeftDisplay {
+ public enum LeftDisplay {
     case none
     case image
     case emptyImage
     case badge
 }
 
-enum RightDisplay {
+public enum RightDisplay {
     case none
     case buttons
     case weightEntry

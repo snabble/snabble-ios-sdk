@@ -8,7 +8,7 @@
 import SwiftUI
 import SnabbleCore
 
-//struct CouponItemView: View {
+// struct CouponItemView: View {
 //    let coupon: CartCoupon
 //    @ObservedObject var itemModel: CartItemModel
 //
@@ -41,7 +41,7 @@ import SnabbleCore
 //            self.badgeColor = redeemed ? .systemRed : .systemGray
 //        }
 //    }
-//}
+// }
 
 struct CartRowView: View {
     var item: CartTableEntry
@@ -69,24 +69,29 @@ struct CartRowView: View {
     }
 }
 
-public struct ShoppingCartItemsView: View {
+public struct ShoppingCartItemsView<Footer: View>: View {
     @ObservedObject var cartModel: ShoppingCartViewModel
 
+    var footer: Footer
+    
     public var body: some View {
         VStack {
             if cartModel.items.isEmpty {
                 Spacer()
             } else {
                 List {
-                    ForEach(cartModel.items) { item in
-                        CartRowView(item: item)
-                            .environmentObject(cartModel)
+                    Section(footer: footer) {
+                        ForEach(cartModel.cartItems, id: \.id) { item in
+                            CartItemView(itemModel: item)
+                                .environmentObject(cartModel)
+                        }
+                        .listRowInsets(EdgeInsets(top: 4, leading: 10, bottom: 4, trailing: 4))
+                        .listRowBackground(Color.clear)
                     }
-                    .listRowInsets(EdgeInsets(top: 4, leading: 10, bottom: 4, trailing: 4))
-                    .listRowBackground(Color.clear)
                 }
                 .listStyle(PlainListStyle())
                 .background(Color.clear)
+
 //                .scrollContentBackground(.hidden)
             }
         }
@@ -131,13 +136,56 @@ public struct ShoppingCartItemsView: View {
 
 public struct ShoppingCartView: View {
     @ObservedObject var cartModel: ShoppingCartViewModel
-    
+    @State var total: Int = 0
+    @State var regularTotal: Int = 0
+
     init(shoppingCart: ShoppingCart) {
         self.cartModel = ShoppingCartViewModel(shoppingCart: shoppingCart)
     }
     
-    public var body: some View {
-        ShoppingCartItemsView(cartModel: cartModel)
+    @ViewBuilder
+    var footer: some View {
+        HStack(spacing: 0) {
+            SwiftUI.Image(systemName: "cart")
+                .cartImageModifier(padding: 10)
+                .padding(.leading, -8)
+                .padding(.trailing, 10)
+            
+            VStack(alignment: .leading, spacing: 8) {
+                if total != regularTotal {
+                    HStack {
+                        Text(cartModel.formatter.format(regularTotal))
+                            .strikethrough()
+                        Text(cartModel.formatter.format(regularTotal - total) + " " + Asset.localizedString(forKey: "Snabble.Shoppingcart.saved"))
+
+                    }
+                    .foregroundColor(.secondary)
+                }
+                Text(cartModel.formatter.format(total))
+                    .font(.headline)
+            }
+            Spacer()
+            Text(cartModel.numberOfProductsString)
+        }
+        .listRowBackground(Color.tertiarySystemGroupedBackground)
+
     }
     
+    public var body: some View {
+        if cartModel.cartItems.isEmpty {
+            Text(keyed: "Snabble.Shoppingcart.EmptyState.description")
+        } else {
+            ShoppingCartItemsView(cartModel: cartModel, footer: footer)
+                .onAppear {
+                    updateView()
+                }
+                .onChange(of: cartModel.updated) { _ in
+                    updateView()
+                }
+        }
+    }
+    private func updateView() {
+        total = cartModel.total
+        regularTotal = cartModel.regularTotal
+    }
 }
