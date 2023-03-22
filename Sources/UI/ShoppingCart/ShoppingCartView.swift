@@ -43,29 +43,20 @@ import SnabbleCore
 //    }
 // }
 
-struct CartRowView: View {
-    var item: CartTableEntry
-
-    @ViewBuilder
-    var itemView: some View {
-        switch item {
-        case .cartItem(let item, let lineItems):
-            CartItemView(item: item, for: lineItems)
-//        case .coupon(let coupon, let lineItem):
-//            CouponItemView(coupon, for: lineItem)
-//
-//        case .lineItem(let item, let lineItems):
-//            LineItemView(item, for: lineItems)
-        case .discount(let amount):
-            DiscountView(amount: amount)
-//        case .giveaway(let lineItem):
-//            GiveawayView(for: lineItem)
-        default:
-            EmptyView()
+struct HiddenScrollView: ViewModifier {
+    func body(content: Content) -> some View {
+        if #available(iOS 16.0, *) {
+            content
+                .scrollContentBackground(.hidden)
+        } else {
+            content
         }
     }
-    var body: some View {
-        itemView
+}
+
+extension View {
+    func hiddenScrollView() -> some View {
+        return modifier(HiddenScrollView())
     }
 }
 
@@ -85,14 +76,14 @@ public struct ShoppingCartItemsView<Footer: View>: View {
                             CartItemView(itemModel: item)
                                 .environmentObject(cartModel)
                         }
+                        .onDelete(perform: delete)
                         .listRowInsets(EdgeInsets(top: 4, leading: 10, bottom: 4, trailing: 4))
                         .listRowBackground(Color.clear)
                     }
                 }
                 .listStyle(PlainListStyle())
                 .background(Color.clear)
-
-//                .scrollContentBackground(.hidden)
+                .hiddenScrollView()
             }
         }
         .alert(isPresented: $cartModel.productError) {
@@ -131,51 +122,64 @@ public struct ShoppingCartItemsView<Footer: View>: View {
                                     cartModel.cancelDeletion()
                                 }))
         }
-   }
+    }
+    private func delete(at offset: IndexSet) {
+        cartModel.trash(at: offset)
+    }
 }
 
 public struct ShoppingCartView: View {
     @ObservedObject var cartModel: ShoppingCartViewModel
     @State var total: Int = 0
     @State var regularTotal: Int = 0
-
-    init(shoppingCart: ShoppingCart) {
+    @State var badgeView: Bool = UserDefaults.displayBadgedDiscount
+    let compactMode: Bool
+    
+    init(shoppingCart: ShoppingCart, compactMode: Bool = false) {
         self.cartModel = ShoppingCartViewModel(shoppingCart: shoppingCart)
+        self.compactMode = compactMode
     }
     
     @ViewBuilder
     var footer: some View {
-        HStack(spacing: 0) {
-            SwiftUI.Image(systemName: "cart")
-                .cartImageModifier(padding: 10)
-                .padding(.leading, -8)
-                .padding(.trailing, 10)
-            
-            VStack(alignment: .leading, spacing: 8) {
-                if total != regularTotal {
-                    HStack {
-                        Text(cartModel.formatter.format(regularTotal))
-                            .strikethrough()
-                        Text(cartModel.formatter.format(regularTotal - total) + " " + Asset.localizedString(forKey: "Snabble.Shoppingcart.saved"))
-
+        if !compactMode {
+            HStack(spacing: 0) {
+                SwiftUI.Image(systemName: "cart")
+                    .cartImageModifier(padding: 10)
+                    .padding(.leading, -8)
+                    .padding(.trailing, 10)
+                
+                VStack(alignment: .leading, spacing: 8) {
+                    if total != regularTotal {
+                        HStack {
+                            Text(cartModel.formatter.format(regularTotal))
+                                .strikethrough()
+                            Text(cartModel.formatter.format(regularTotal - total) + " " + Asset.localizedString(forKey: "Snabble.Shoppingcart.saved"))
+                            
+                        }
+                        .foregroundColor(.secondary)
                     }
-                    .foregroundColor(.secondary)
+                    Text(cartModel.formatter.format(total))
+                        .font(.headline)
                 }
-                Text(cartModel.formatter.format(total))
-                    .font(.headline)
+                Spacer()
+                Text(cartModel.numberOfProductsString)
             }
-            Spacer()
-            Text(cartModel.numberOfProductsString)
+            .onTapGesture(count: 3) {
+                badgeView.toggle()
+            }
+            .listRowBackground(Color.tertiarySystemGroupedBackground)
         }
-        .listRowBackground(Color.tertiarySystemGroupedBackground)
-
     }
     
     public var body: some View {
         if cartModel.cartItems.isEmpty {
-            Text(keyed: "Snabble.Shoppingcart.EmptyState.description")
+            if !compactMode {
+                Text(keyed: "Snabble.Shoppingcart.EmptyState.description")
+            }
         } else {
             ShoppingCartItemsView(cartModel: cartModel, footer: footer)
+                .drawDiscountBadge(badgeView)
                 .onAppear {
                     updateView()
                 }

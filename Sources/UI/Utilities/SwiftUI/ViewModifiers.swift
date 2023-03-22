@@ -47,7 +47,6 @@ struct CartInfoModifier: ViewModifier {
             .foregroundColor(.secondary)
             .padding(.leading, leading)
             .padding(.trailing, 8)
-//            .padding(.top, 4)
             .padding(.bottom, 2)
     }
 }

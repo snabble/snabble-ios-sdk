@@ -228,7 +228,7 @@ open class ShoppingCartViewModel: ObservableObject, Swift.Identifiable, Equatabl
         
         for item in items {
             if case .cartItem(let item, let lineItems) = item {
-                let cartItem = CartItemModel(item: item, for: lineItems)
+                let cartItem = CartItemModel(item: item, for: lineItems, showImages: showImages)
                 newItems.append(cartItem)
             }
         }
@@ -308,6 +308,16 @@ open class ShoppingCartViewModel: ObservableObject, Swift.Identifiable, Equatabl
     
     func trash(itemModel: CartItemModel) {
         confirmDeletion(itemModel: itemModel)
+    }
+    
+    func trash(at offset: IndexSet) {
+        guard let firstIndex = offset.first else {
+            return
+        }
+        guard cartItems.indices.contains(firstIndex) else {
+            return
+        }
+        trash(itemModel: cartItems[firstIndex])
     }
     
     func decrement(itemModel: CartItemModel) {

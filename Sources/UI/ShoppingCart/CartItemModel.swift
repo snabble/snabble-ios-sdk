@@ -16,6 +16,7 @@ public protocol ShoppingCartItem: Swift.Identifiable {
     var leftDisplay: LeftDisplay { get }
     var rightDisplay: RightDisplay { get }
     var image: SwiftUI.Image? { get }
+    var showImages: Bool { get set }
 }
 
 public protocol ShoppingCartItemCounting {
@@ -47,10 +48,14 @@ public extension ShoppingCartItemPricing {
 }
 
 public extension ShoppingCartItemPricing {
-    var discountString: String {
+    
+    var discountAndPercentString: String {
         return formatter.format(discount) + " ≙ \(discountPercentString)"
     }
-    
+    var discountString: String {
+        return formatter.format(discount)
+    }
+
     var discountedPriceString: String {
         return formatter.format(discountedPrice)
     }
@@ -70,7 +75,8 @@ open class CartItemModel: ObservableObject, ShoppingCartItem, ShoppingCartItemCo
     public let id = UUID()
     let item: CartItem
     let lineItems: [CheckoutInfo.LineItem]
-
+    public var showImages: Bool
+    
     @Published public var quantity: Int
     @Published public var title: String
 
@@ -78,7 +84,7 @@ open class CartItemModel: ObservableObject, ShoppingCartItem, ShoppingCartItemCo
     @Published public var rightDisplay: RightDisplay = .buttons
     @Published public var image: SwiftUI.Image?
     
-    init(item: CartItem, for lineItems: [CheckoutInfo.LineItem]) {
+    init(item: CartItem, for lineItems: [CheckoutInfo.LineItem], showImages: Bool = true) {
         self.item = item
         self.lineItems = lineItems
         
@@ -98,6 +104,8 @@ open class CartItemModel: ObservableObject, ShoppingCartItem, ShoppingCartItemCo
         } else if product.type == .preWeighed {
             self.rightDisplay = .weightDisplay
         }
+        self.showImages = showImages
+        
         self.loadImage()
     }
 }
@@ -193,6 +201,22 @@ extension CartItemModel: ShoppingCartItemPricing {
             return "\(total) \(includesDeposit)"
         }
         return formatter.format(regularPrice)
+    }
+}
+
+extension CartItemModel {
+    var badgeText: String? {
+        var badgeText: String?
+//        if item.manualCoupon != nil {
+//            badgeText = "%"
+//        }
+        let saleRestricton = item.product.saleRestriction
+        switch saleRestricton {
+        case .none: ()
+        case .age(let age): badgeText = "\(age)"
+        case .fsk: badgeText = "FSK"
+        }
+        return badgeText
     }
 }
 

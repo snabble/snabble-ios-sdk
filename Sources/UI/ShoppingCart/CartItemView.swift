@@ -8,50 +8,28 @@
 import SwiftUI
 import SnabbleCore
 
-struct DiscountBadgeView: View {
-    let discount: String
-    
-    let showBadge: Bool
-    let showBadgeLabel: Bool
-    let showPercentValue: Bool
-    
-    init(discount: String, showBadge: Bool = true, showBadgeLabel: Bool = true, showPercentValue: Bool = true) {
-        self.discount = discount
-        self.showBadge = showBadge
-        self.showBadgeLabel = showBadgeLabel
-        self.showPercentValue = showPercentValue
+extension Text {
+    func cartPrice() -> some View {
+        self
+            .font(.footnote)
+            .fontWeight(.bold)
+            .foregroundColor(.primary)
     }
-    
-    var body: some View {
-        ZStack {
-            if let image = Asset.image(named: "SnabbleSDK/icon-discount") {
-                image
-                    .resizable()
-                    .scaledToFit()
-                    .frame(width: 44, height: 44)
-                    .foregroundColor(.red)
-            }
-            Image(systemName: "percent")
-                .font(Font.title.weight(.heavy))
-                .foregroundColor(.white)
-                .opacity(0.33)
-            Text(discount)
-                .font(.footnote)
-                .fontWeight(.bold)
-                .foregroundColor(.white)
-                .shadow(color: Color(.sRGBLinear, white: 0, opacity: 0.66), radius: 2)
-        }
+
+    func strikethroughPrice() -> some View {
+        self
+            .font(.footnote)
+            .strikethrough(true)
+            .foregroundColor(.secondary)
     }
 }
 
 struct CartItemView: View {
     @ObservedObject var itemModel: CartItemModel
-    
+    @Environment(\.drawDiscountBadge) var badgeView
+
     init(itemModel: CartItemModel) {
         self.itemModel = itemModel
-    }
-    init(item: CartItem, for lineItems: [CheckoutInfo.LineItem]) {
-        self.itemModel = CartItemModel(item: item, for: lineItems)
     }
     
     @ViewBuilder
@@ -59,35 +37,47 @@ struct CartItemView: View {
         if itemModel.hasDiscount {
             HStack {
                 Text(itemModel.discountedPriceString)
-                    .font(.footnote)
-                    .fontWeight(.bold)
-                    .foregroundColor(.primary)
+                    .cartPrice()
                 Text(itemModel.regularPriceString)
-                    .strikethrough(true)
-                    .font(.footnote)
-                    .foregroundColor(.secondary)
+                    .strikethroughPrice()
             }
             
         } else {
             Text(itemModel.regularPriceString)
-                .font(.footnote)
-                .fontWeight(.bold)
-                .foregroundColor(.primary)
+                .cartPrice()
         }
     }
+    
     @ViewBuilder
-    var filler: some View {
-        Spacer(minLength: 0)
+    var imageView: some View {
+        ZStack(alignment: .topLeading) {
+            if let image = itemModel.image {
+                image
+                    .cartImageModifier()
+            } else if itemModel.leftDisplay == .emptyImage {
+                SwiftUI.Image(systemName: "basket")
+                    .cartImageModifier(padding: 10)
+            }
+            if let badgeText = itemModel.badgeText {
+                Text(badgeText)
+                    .font(.footnote)
+                    .padding([.top, .bottom], 1)
+                    .padding([.leading, .trailing], 2)
+                    .background(RoundedRectangle(cornerRadius: 4).foregroundColor(.red))
+                    .foregroundColor(.white)
+            }
+        }
     }
-        
+    
     @ViewBuilder
     var leftView: some View {
-        if let image = itemModel.image {
-            image
-                .cartImageModifier()
-        } else if itemModel.leftDisplay == .emptyImage {
-            SwiftUI.Image(systemName: "basket")
-                .cartImageModifier(padding: 10)
+        ZStack(alignment: .topTrailing) {
+            imageView
+            if badgeView, itemModel.hasDiscount {
+                DiscountBadgeView(discount: itemModel.discountPercentString)
+                    .padding(.top, -10)
+                    .padding(.trailing, -6)
+            }
         }
     }
     
@@ -101,11 +91,12 @@ struct CartItemView: View {
             EmptyView()
         }
     }
+
     @ViewBuilder
     var additionalInfo: some View {
         if let discountName = itemModel.discountName {
             HStack {
-                Text(itemModel.discountString)
+                Text(badgeView ? itemModel.discountString : itemModel.discountAndPercentString)
                 Spacer()
                 Text(discountName)
             }
@@ -125,39 +116,13 @@ struct CartItemView: View {
                         Text(itemModel.title)
                         price
                     }
-                    filler
+                    Spacer(minLength: 0)
                     rightView
                         .padding(.trailing, 8)
                 }
                 additionalInfo
             }
         }
-        .listRowBackground(itemModel.hasDiscount ? Color.tertiarySystemGroupedBackground : Color.systemBackground)
-    }
-}
-
-struct DiscountView: View {
-    let amount: String
-    
-    init(amount: Int) {
-        self.amount = PriceFormatter(SnabbleCI.project).format(amount)
-    }
-    @ViewBuilder
-    var leftView: some View {
-        SwiftUI.Image(systemName: "percent")
-            .cartImageModifier(padding: 10)
-    }
-    
-    var body: some View {
-        HStack {
-            leftView
-            VStack(alignment: .leading) {
-                Text(Asset.localizedString(forKey: "Snabble.Shoppingcart.discounts"))
-                Text(amount)
-                    .font(.footnote)
-                    .foregroundColor(.secondary)
-
-            }
-        }
+        .listRowBackground(!badgeView && itemModel.hasDiscount ? Color.tertiarySystemGroupedBackground : Color.clear)
     }
 }

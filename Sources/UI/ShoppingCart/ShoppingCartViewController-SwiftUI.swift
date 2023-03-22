@@ -29,8 +29,8 @@ open class ShoppingCartViewController: UIHostingController<ShoppingCartView> {
         rootView.cartModel
     }
 
-    public init(shoppingCart: ShoppingCart) {
-        let rootView = ShoppingCartView(shoppingCart: shoppingCart)
+    public init(shoppingCart: ShoppingCart, compactMode: Bool = false) {
+        let rootView = ShoppingCartView(shoppingCart: shoppingCart, compactMode: compactMode)
         super.init(rootView: rootView)
     }
     
