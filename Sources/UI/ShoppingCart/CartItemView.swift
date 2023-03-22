@@ -26,8 +26,7 @@ extension Text {
 
 struct CartItemView: View {
     @ObservedObject var itemModel: CartItemModel
-    @Environment(\.drawDiscountBadge) var badgeView
-
+    
     init(itemModel: CartItemModel) {
         self.itemModel = itemModel
     }
@@ -49,14 +48,16 @@ struct CartItemView: View {
     }
     
     @ViewBuilder
-    var imageView: some View {
+    var leftView: some View {
         ZStack(alignment: .topLeading) {
-            if let image = itemModel.image {
-                image
-                    .cartImageModifier()
-            } else if itemModel.leftDisplay == .emptyImage {
-                SwiftUI.Image(systemName: "basket")
-                    .cartImageModifier(padding: 10)
+            if itemModel.showImages {
+                if let image = itemModel.image {
+                    image
+                        .cartImageModifier()
+                } else if itemModel.leftDisplay == .emptyImage {
+                    SwiftUI.Image(systemName: "basket")
+                        .cartImageModifier(padding: 10)
+                }
             }
             if let badgeText = itemModel.badgeText {
                 Text(badgeText)
@@ -65,18 +66,6 @@ struct CartItemView: View {
                     .padding([.leading, .trailing], 2)
                     .background(RoundedRectangle(cornerRadius: 4).foregroundColor(.red))
                     .foregroundColor(.white)
-            }
-        }
-    }
-    
-    @ViewBuilder
-    var leftView: some View {
-        ZStack(alignment: .topTrailing) {
-            imageView
-            if badgeView, itemModel.hasDiscount {
-                DiscountBadgeView(discount: itemModel.discountPercentString)
-                    .padding(.top, -10)
-                    .padding(.trailing, -6)
             }
         }
     }
@@ -91,12 +80,12 @@ struct CartItemView: View {
             EmptyView()
         }
     }
-
+    
     @ViewBuilder
     var additionalInfo: some View {
         if let discountName = itemModel.discountName {
             HStack {
-                Text(badgeView ? itemModel.discountString : itemModel.discountAndPercentString)
+                Text(itemModel.discountString)
                 Spacer()
                 Text(discountName)
             }
@@ -110,7 +99,7 @@ struct CartItemView: View {
     var body: some View {
         HStack {
             leftView
-            VStack(alignment: .leading, spacing: 4) {
+            VStack(alignment: .leading, spacing: 12) {
                 HStack {
                     VStack(alignment: .leading, spacing: 2) {
                         Text(itemModel.title)
@@ -123,6 +112,6 @@ struct CartItemView: View {
                 additionalInfo
             }
         }
-        .listRowBackground(!badgeView && itemModel.hasDiscount ? Color.tertiarySystemGroupedBackground : Color.clear)
+        .listRowBackground(itemModel.hasDiscount ? Color.tertiarySystemGroupedBackground : Color.clear)
     }
 }

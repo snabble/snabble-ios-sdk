@@ -63,6 +63,7 @@ enum CartTableEntry: Swift.Identifiable {
     }
 }
 
+#if !SWIFTUI_PROFILE
 final class ShoppingCartTableViewController: UITableViewController {
     private var customAppearance: CustomAppearance?
 
@@ -251,15 +252,9 @@ final class ShoppingCartTableViewController: UITableViewController {
             }
         }
 
-        for coupon in cart.coupons {
-            if let lineItems = cart.backendCartInfo?.lineItems {
-                let couponItem = lineItems.filter { $0.couponID == coupon.coupon.id }.first
-                let item = CartTableEntry.coupon(coupon, couponItem)
-                self.items.append(item)
-            } else {
-                let item = CartTableEntry.coupon(coupon, nil)
-                self.items.append(item)
-            }
+        for coupon in self.coupons {
+            let item = CartTableEntry.coupon(coupon.cartCoupon, coupon.lineItem)
+            self.items.append(item)
         }
 
         // perform any pending lookups
@@ -281,29 +276,15 @@ final class ShoppingCartTableViewController: UITableViewController {
         }
 
         // find all giveaways
-        if let lineItems = cart.backendCartInfo?.lineItems {
-            let giveaways = lineItems.filter { $0.type == .giveaway }
-            giveaways.forEach {
-                self.items.append(CartTableEntry.giveaway($0))
-            }
+        self.giveaways.forEach {
+            self.items.append(CartTableEntry.giveaway($0))
         }
 
         // add all discounts and priceModifiers for the "total discounts" entry
-        if let lineItems = cart.backendCartInfo?.lineItems {
-            var totalDiscounts = 0
-            let discounts = lineItems.filter { $0.type == .discount }
-            totalDiscounts = discounts.reduce(0) { $0 + $1.amount * ($1.price ?? 0) }
-
-            for lineItem in lineItems {
-                guard let modifiers = lineItem.priceModifiers else { continue }
-                let modSum = modifiers.reduce(0, { $0 + $1.price })
-                totalDiscounts += modSum * lineItem.amount
-            }
-
-            if totalDiscounts != 0 {
-                let item = CartTableEntry.discount(totalDiscounts)
-                self.items.append(item)
-            }
+        let totalDiscount = self.totalDiscount
+        if totalDiscount != 0 {
+            let item = CartTableEntry.discount(totalDiscount)
+            self.items.append(item)
         }
 
         // check if any of the cart items's products has an associated image
@@ -311,6 +292,41 @@ final class ShoppingCartTableViewController: UITableViewController {
         self.showImages = imgIndex != nil
     }
 
+    var coupons: [(cartCoupon: CartCoupon, lineItem: CheckoutInfo.LineItem?)] {
+        var coupons = [(cartCoupon: CartCoupon, lineItem: CheckoutInfo.LineItem?)]()
+
+        for coupon in self.shoppingCart.coupons {
+            let couponItem = self.shoppingCart.backendCartInfo?.lineItems.filter { $0.couponID == coupon.coupon.id }.first
+
+            coupons.append((coupon, couponItem))
+        }
+        return coupons
+    }
+    
+    var giveaways: [CheckoutInfo.LineItem] {
+        guard let lineItems = self.shoppingCart.backendCartInfo?.lineItems else {
+            return 0
+        }
+        return lineItems.filter { $0.type == .giveaway }
+    }
+    
+    var totalDiscount: Int {
+        guard let lineItems = self.shoppingCart.backendCartInfo?.lineItems else {
+            return 0
+        }
+        var totalDiscounts = 0
+        
+        let discounts = lineItems.filter { $0.type == .discount }
+        totalDiscounts = discounts.reduce(0) { $0 + $1.amount * ($1.price ?? 0) }
+
+        for lineItem in lineItems {
+            guard let modifiers = lineItem.priceModifiers else { continue }
+            let modSum = modifiers.reduce(0, { $0 + $1.price })
+            totalDiscounts += modSum * lineItem.amount
+        }
+        return totalDiscounts
+    }
+    
     private func showProductError(_ skus: [String]) {
         var offendingProducts = [String]()
         for sku in skus {
@@ -546,3 +562,5 @@ extension ShoppingCartTableViewController {
         }
     }
 }
+#endif
+

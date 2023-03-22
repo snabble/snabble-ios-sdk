@@ -8,6 +8,8 @@
 import UIKit
 import SnabbleCore
 
+#if !SWIFTUI_PROFILE
+
 protocol ShoppingCardCellViewDelegate: AnyObject {
     func trashItemButtonTapped()
     func plusButtonTapped()
@@ -567,3 +569,4 @@ extension ShoppingCartTableCellView {
         }
     }
 }
+#endif

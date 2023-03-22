@@ -11,7 +11,7 @@ import SnabbleCore
 import SwiftUI
 
 public protocol ShoppingCartItem: Swift.Identifiable {
-    var id: UUID { get }
+    var id: String { get }
     var title: String { get }
     var leftDisplay: LeftDisplay { get }
     var rightDisplay: RightDisplay { get }
@@ -71,18 +71,35 @@ public extension ShoppingCartItemPricing {
     }
 }
 
-open class CartItemModel: ObservableObject, ShoppingCartItem, ShoppingCartItemCounting {
-    public let id = UUID()
+open class GenericCartItemModel: ObservableObject, ShoppingCartItem {
+    public var id: String {
+        return UUID().uuidString
+    }
+    
+    @Published public var title: String
+    @Published public var leftDisplay: LeftDisplay
+    @Published public var rightDisplay: RightDisplay
+
+    @Published public var image: SwiftUI.Image?
+    
+    public var showImages: Bool
+    init(title: String, leftDisplay: LeftDisplay = .none, rightDisplay: RightDisplay = .none, image: SwiftUI.Image? = nil, showImages: Bool = false) {
+        self.title = title
+        self.leftDisplay = leftDisplay
+        self.rightDisplay = rightDisplay
+        self.image = image
+        self.showImages = showImages
+    }
+}
+
+open class CartItemModel: GenericCartItemModel, ShoppingCartItemCounting {
+    public override var id: String {
+        return item.uuid
+    }
     let item: CartItem
     let lineItems: [CheckoutInfo.LineItem]
-    public var showImages: Bool
     
     @Published public var quantity: Int
-    @Published public var title: String
-
-    @Published public var leftDisplay: LeftDisplay = .none
-    @Published public var rightDisplay: RightDisplay = .buttons
-    @Published public var image: SwiftUI.Image?
     
     init(item: CartItem, for lineItems: [CheckoutInfo.LineItem], showImages: Bool = true) {
         self.item = item
@@ -93,8 +110,9 @@ open class CartItemModel: ObservableObject, ShoppingCartItem, ShoppingCartItemCo
         self.quantity = defaultItem?.weight ?? defaultItem?.amount ?? item.quantity
 
         let product = item.product
-        self.title = defaultItem?.name ?? product.name
-
+        
+        super.init(title: defaultItem?.name ?? product.name)
+        
         if item.editable {
             if product.type == .userMustWeigh {
                 self.rightDisplay = .weightEntry
@@ -228,9 +246,9 @@ extension CartItemModel {
             let imgUrl = self.item.product.imageUrl,
             var url = URL(string: imgUrl)
         else {
-            // if self.showImages {
+            if self.showImages {
                 self.leftDisplay = .emptyImage
-            // }
+            }
             return
         }
 

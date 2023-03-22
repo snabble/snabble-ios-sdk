@@ -7,13 +7,6 @@
 import UIKit
 import SnabbleCore
 
-protocol ShoppingCartTableDelegate: AnalyticsDelegate {
-    func confirmDeletion(at row: Int)
-    func updateQuantity(_ quantity: Int, at row: Int)
-    func makeRowVisible(row: Int)
-    var showImages: Bool { get }
-}
-
  public enum LeftDisplay {
     case none
     case image
@@ -27,6 +20,14 @@ public enum RightDisplay {
     case weightEntry
     case weightDisplay
     case trash
+}
+
+#if !SWIFTUI_PROFILE
+protocol ShoppingCartTableDelegate: AnalyticsDelegate {
+    func confirmDeletion(at row: Int)
+    func updateQuantity(_ quantity: Int, at row: Int)
+    func makeRowVisible(row: Int)
+    var showImages: Bool { get }
 }
 
 final class ShoppingCartTableCell: UITableViewCell {
@@ -452,3 +453,4 @@ extension ShoppingCartTableCell {
         self.task?.resume()
     }
 }
+#endif
