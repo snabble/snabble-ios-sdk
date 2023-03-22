@@ -59,7 +59,7 @@ struct DiscountBadgeView: View {
     
     var body: some View {
         ZStack {
-            if let image = Asset.image(named: "SnabbleSDK/icon-discount") {
+            if self.showBadge, let image = Asset.image(named: "SnabbleSDK/icon-discount") {
                 image
                     .resizable()
                     .scaledToFit()
@@ -67,16 +67,19 @@ struct DiscountBadgeView: View {
                     .foregroundColor(.red)
                     .shadow(radius: 4, x: 0, y: 2)
             }
-            Image(systemName: "percent")
-                .font(Font.title.weight(.bold))
-                .foregroundColor(.white)
-                .opacity(0.33)
-            Text(discount)
-                .font(.footnote)
-                .fontWeight(.bold)
-                .foregroundColor(.white)
-                .shadow(color: Color(.sRGBLinear, white: 0, opacity: 0.66), radius: 2)
+            if self.showBadgeLabel {
+                Image(systemName: "percent")
+                    .font(Font.title.weight(.bold))
+                    .foregroundColor(.white)
+                    .opacity(0.33)
+            }
+            if self.showPercentValue {
+                Text(discount)
+                    .font(.footnote)
+                    .fontWeight(.bold)
+                    .foregroundColor(.white)
+                    .shadow(color: Color(.sRGBLinear, white: 0, opacity: 0.66), radius: 2)
+            }
         }
     }
 }
-
