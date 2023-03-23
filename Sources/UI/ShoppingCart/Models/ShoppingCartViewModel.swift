@@ -283,6 +283,7 @@ extension ShoppingCartViewModel {
     var totalDiscountItem: CartTableEntry {
         return CartTableEntry.discount(totalDiscount)
     }
+
     var totalDiscount: Int {
         guard let lineItems = self.shoppingCart.backendCartInfo?.lineItems else {
             return 0
@@ -298,6 +299,10 @@ extension ShoppingCartViewModel {
             totalDiscounts += modSum * lineItem.amount
         }
         return totalDiscounts
+    }
+
+    var totalDiscountString: String {
+        formatter.format(totalDiscount)
     }
 }
 
@@ -490,11 +495,22 @@ extension ShoppingCartViewModel {
         }
         return total + totalDiscount
     }
-    
+    var regularTotalString: String {
+        guard let regularTotal = regularTotal else {
+            return ""
+        }
+        return formatter.format(regularTotal)
+    }
     var total: Int? {
         let cartTotal = SnabbleCI.project.displayNetPrice ? shoppingCart.backendCartInfo?.netPrice : shoppingCart.backendCartInfo?.totalPrice
 
         return cartTotal ?? shoppingCart.total
+    }
+    var totalString: String {
+        guard let total = total else {
+            return ""
+        }
+        return formatter.format(total)
     }
 }
 

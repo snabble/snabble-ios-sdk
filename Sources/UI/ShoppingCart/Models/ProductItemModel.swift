@@ -24,7 +24,7 @@ open class ProductItemModel: CartItemModel, ShoppingCartItemCounting {
         self.lineItems = lineItems
         
         let defaultItem = lineItems.first { $0.type == .default }
-
+        
         self.quantity = defaultItem?.weight ?? defaultItem?.amount ?? item.quantity
 
         let product = item.product

@@ -25,14 +25,14 @@ public struct ShoppingCartFooterView: View {
                 VStack(alignment: .leading, spacing: 8) {
                     if total != regularTotal {
                         HStack {
-                            Text(cartModel.formatter.format(regularTotal))
+                            Text(cartModel.regularTotalString)
                                 .strikethrough()
-                            Text(cartModel.formatter.format(regularTotal - total) + " " + Asset.localizedString(forKey: "Snabble.Shoppingcart.saved"))
+                            Text(cartModel.totalDiscountString + " " + Asset.localizedString(forKey: "Snabble.Shoppingcart.saved"))
                             
                         }
                         .foregroundColor(.secondary)
                     }
-                    Text(cartModel.formatter.format(total))
+                    Text(cartModel.totalString)
                         .font(.headline)
                 }
                 Spacer()

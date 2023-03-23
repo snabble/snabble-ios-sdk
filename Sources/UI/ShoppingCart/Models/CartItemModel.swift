@@ -34,6 +34,7 @@ public extension ShoppingCartItemPricing {
     var hasDiscount: Bool {
         return discount != 0
     }
+
     var discountedPrice: Int {
         guard hasDiscount else {
             return regularPrice
@@ -52,6 +53,7 @@ public extension ShoppingCartItemPricing {
     var discountAndPercentString: String {
         return formatter.format(discount) + " ≙ \(discountPercentString)"
     }
+
     var discountString: String {
         return formatter.format(discount)
     }
@@ -63,6 +65,7 @@ public extension ShoppingCartItemPricing {
     var discountPercentString: String {
         return "-\(discountPercent)%"
     }
+
     var regularPriceString: String {
         guard self.regularPrice != 0 else {
             return ""
