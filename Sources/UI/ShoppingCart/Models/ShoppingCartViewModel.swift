@@ -30,7 +30,7 @@ open class ShoppingCartViewModel: ObservableObject, Swift.Identifiable, Equatabl
     
     @Published var confirmDeletion: Bool = false
     var deletionMessage: String = ""
-    var deletionItem: CartItemModel?
+    var deletionItemIndex: Int?
     
     @Published var items = [CartTableEntry]()
 
@@ -185,11 +185,7 @@ extension ShoppingCartViewModel {
         self.updateView()
     }
     
-    private func delete(itemModel: CartItemModel) {
-        guard let index = index(for: itemModel) else {
-            return
-        }
-        
+    private func delete(at index: Int) {
         if case .cartItem = self.items[index] {
             //            let product = item.product
             //            self.shoppingCartDelegate?.track(.deletedFromCart(product.sku))
@@ -205,28 +201,51 @@ extension ShoppingCartViewModel {
         self.updateView()
     }
     
-    private func confirmDeletion(itemModel: CartItemModel) {
+    private func delete(itemModel: CartItemModel) {
+        guard let index = index(for: itemModel) else {
+            return
+        }
+        delete(at: index)
+    }
+
+    private func confirmDeletion(at index: Int) {
+        var name: String?
         
-        deletionItem = itemModel
-        deletionMessage = Asset.localizedString(forKey: "Snabble.Shoppingcart.removeItem", arguments: itemModel.title)
+        if case .cartItem(let item, _) = self.items[index] {
+            name = item.product.name
+        } else if case .coupon(let cartCoupon, _) = self.items[index] {
+            name = cartCoupon.coupon.name
+        }
+        guard let name = name else {
+            return
+        }
+        deletionItemIndex = index
+        deletionMessage = Asset.localizedString(forKey: "Snabble.Shoppingcart.removeItem", arguments: name)
         
         confirmDeletion.toggle()
     }
     
+    private func confirmDeletion(itemModel: CartItemModel) {
+        guard let index = index(for: itemModel) else {
+            return
+        }
+        confirmDeletion(at: index)
+    }
+    
     func cancelDeletion() {
         deletionMessage = ""
-        deletionItem = nil
+        deletionItemIndex = nil
     }
     
     func processDeletion() {
-        guard let item = deletionItem else {
+        guard let index = deletionItemIndex else {
             return
         }
         
-        self.delete(itemModel: item)
+        self.delete(at: index)
         
         deletionMessage = ""
-        deletionItem = nil
+        deletionItemIndex = nil
     }
 }
 
@@ -237,13 +256,8 @@ extension ShoppingCartViewModel {
     }
 
     func trash(at offset: IndexSet) {
-        guard let firstIndex = offset.first else {
-            return
-        }
-//        guard cartItems.indices.contains(firstIndex) else {
-//            return
-//        }
-//        trash(itemModel: cartItems[firstIndex])
+        let index = offset[offset.startIndex]
+        confirmDeletion(at: index)
     }
     
     func decrement(itemModel: ProductItemModel) {
@@ -469,34 +483,26 @@ extension ShoppingCartViewModel {
     }
 }
 
-extension ShoppingCartViewModel {
-    func itemsMatchingType<T: ShoppingCartItemPricing>(_ type: T.Type) -> [T] {
-      return [] // cartItems.compactMap { $0 as? T }
+extension ShoppingCartViewModel {    
+    var regularTotal: Int? {
+        guard let total = self.total else {
+            return nil
+        }
+        return total + totalDiscount
     }
+    
+    var total: Int? {
+        let cartTotal = SnabbleCI.project.displayNetPrice ? shoppingCart.backendCartInfo?.netPrice : shoppingCart.backendCartInfo?.totalPrice
 
-    var priceItems: [ShoppingCartItemPricing] {
-        return itemsMatchingType(ProductItemModel.self)
-    }
-    
-    var regularTotal: Int {
-        var result: Int = 0
-        
-        priceItems.forEach { result += $0.regularPrice }
-        
-        return result
-    }
-    
-    var total: Int {
-        var result: Int = 0
-        
-        priceItems.forEach { result += $0.discountedPrice }
-        
-        return result
+        return cartTotal ?? shoppingCart.total
     }
 }
 
 extension ShoppingCartViewModel {
+    var numberOfProducts: Int {
+        return self.shoppingCart.numberOfProducts
+    }
     var numberOfProductsString: String {
-        return Asset.localizedString(forKey: "Snabble.Shoppingcart.numberOfItems", arguments: self.shoppingCart.numberOfProducts)
+        return Asset.localizedString(forKey: "Snabble.Shoppingcart.numberOfItems", arguments: self.numberOfProducts)
     }
 }

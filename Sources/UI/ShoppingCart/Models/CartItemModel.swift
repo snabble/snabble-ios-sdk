@@ -91,4 +91,3 @@ open class CartItemModel: ObservableObject, ShoppingCartItem {
         self.showImages = showImages
     }
 }
-
