@@ -1,8 +1,8 @@
 //
-//  CartItemModel.swift
+//  File.swift
 //  
 //
-//  Created by Uwe Tilemann on 14.03.23.
+//  Created by Uwe Tilemann on 23.03.23.
 //
 
 import Foundation
@@ -10,89 +10,7 @@ import Combine
 import SnabbleCore
 import SwiftUI
 
-public protocol ShoppingCartItem: Swift.Identifiable {
-    var id: String { get }
-    var title: String { get }
-    var leftDisplay: LeftDisplay { get }
-    var rightDisplay: RightDisplay { get }
-    var image: SwiftUI.Image? { get }
-    var showImages: Bool { get set }
-}
-
-public protocol ShoppingCartItemCounting {
-    var quantity: Int { get set }
-}
-
-public protocol ShoppingCartItemPricing {
-    var regularPrice: Int { get }
-    var discount: Int { get }
-    var discountName: String? { get }
-    var formatter: PriceFormatter { get }
-}
-
-public extension ShoppingCartItemPricing {
-    var hasDiscount: Bool {
-        return discount != 0
-    }
-    var discountedPrice: Int {
-        guard hasDiscount else {
-            return regularPrice
-        }
-        return regularPrice + discount
-    }
-
-    var discountPercent: Int {
-        guard hasDiscount else { return 0 }
-        return Int(100.0 - 100.0 / Double(regularPrice) * Double(discountedPrice))
-    }
-}
-
-public extension ShoppingCartItemPricing {
-    
-    var discountAndPercentString: String {
-        return formatter.format(discount) + " ≙ \(discountPercentString)"
-    }
-    var discountString: String {
-        return formatter.format(discount)
-    }
-
-    var discountedPriceString: String {
-        return formatter.format(discountedPrice)
-    }
-
-    var discountPercentString: String {
-        return "-\(discountPercent)%"
-    }
-    var regularPriceString: String {
-        guard self.regularPrice != 0 else {
-            return ""
-        }
-        return formatter.format(regularPrice)
-    }
-}
-
-open class GenericCartItemModel: ObservableObject, ShoppingCartItem {
-    public var id: String {
-        return UUID().uuidString
-    }
-    
-    @Published public var title: String
-    @Published public var leftDisplay: LeftDisplay
-    @Published public var rightDisplay: RightDisplay
-
-    @Published public var image: SwiftUI.Image?
-    
-    public var showImages: Bool
-    init(title: String, leftDisplay: LeftDisplay = .none, rightDisplay: RightDisplay = .none, image: SwiftUI.Image? = nil, showImages: Bool = false) {
-        self.title = title
-        self.leftDisplay = leftDisplay
-        self.rightDisplay = rightDisplay
-        self.image = image
-        self.showImages = showImages
-    }
-}
-
-open class CartItemModel: GenericCartItemModel, ShoppingCartItemCounting {
+open class ProductItemModel: CartItemModel, ShoppingCartItemCounting {
     public override var id: String {
         return item.uuid
     }
@@ -111,7 +29,7 @@ open class CartItemModel: GenericCartItemModel, ShoppingCartItemCounting {
 
         let product = item.product
         
-        super.init(title: defaultItem?.name ?? product.name)
+        super.init(title: defaultItem?.name ?? product.name, showImages: showImages)
         
         if item.editable {
             if product.type == .userMustWeigh {
@@ -122,13 +40,12 @@ open class CartItemModel: GenericCartItemModel, ShoppingCartItemCounting {
         } else if product.type == .preWeighed {
             self.rightDisplay = .weightDisplay
         }
-        self.showImages = showImages
         
         self.loadImage()
     }
 }
 
-extension CartItemModel: ShoppingCartItemPricing {
+extension ProductItemModel: ShoppingCartItemPricing {
 
     public var formatter: PriceFormatter {
         PriceFormatter(SnabbleCI.project)
@@ -222,7 +139,7 @@ extension CartItemModel: ShoppingCartItemPricing {
     }
 }
 
-extension CartItemModel {
+extension ProductItemModel {
     var badgeText: String? {
         var badgeText: String?
 //        if item.manualCoupon != nil {
@@ -238,7 +155,7 @@ extension CartItemModel {
     }
 }
 
-extension CartItemModel {
+extension ProductItemModel {
     private static var imageCache = [String: SwiftUI.Image]()
 
     private func loadImage() {
@@ -254,7 +171,7 @@ extension CartItemModel {
 
         self.leftDisplay = .image
 
-        if let img = CartItemModel.imageCache[imgUrl] {
+        if let img = ProductItemModel.imageCache[imgUrl] {
             self.image = img
             return
         }
@@ -272,7 +189,7 @@ extension CartItemModel {
 
             if let uiImage = UIImage(data: data) {
                 let image = SwiftUI.Image(uiImage: uiImage)
-                CartItemModel.imageCache[imgUrl] = image
+                ProductItemModel.imageCache[imgUrl] = image
                 DispatchQueue.main.async {
                     self?.image = image
                 }
@@ -280,5 +197,4 @@ extension CartItemModel {
         }
         task.resume()
     }
-
 }

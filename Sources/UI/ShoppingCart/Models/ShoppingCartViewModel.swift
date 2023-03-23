@@ -30,11 +30,11 @@ open class ShoppingCartViewModel: ObservableObject, Swift.Identifiable, Equatabl
     
     @Published var confirmDeletion: Bool = false
     var deletionMessage: String = ""
-    var deletionItem: GenericCartItemModel?
+    var deletionItem: CartItemModel?
     
     @Published var items = [CartTableEntry]()
 
-    func index(for itemModel: GenericCartItemModel) -> Int? {
+    func index(for itemModel: CartItemModel) -> Int? {
         guard let index = items.firstIndex(where: { $0.id == itemModel.id }) else {
             return nil
         }
@@ -133,7 +133,7 @@ open class ShoppingCartViewModel: ObservableObject, Swift.Identifiable, Equatabl
 }
 
 extension ShoppingCartViewModel {
-    private func updateQuantity(itemModel: CartItemModel, reload: Bool = true) {
+    private func updateQuantity(itemModel: ProductItemModel, reload: Bool = true) {
         guard let index = items.firstIndex(where: { $0.id == itemModel.item.uuid }) else {
             return
         }
@@ -185,7 +185,7 @@ extension ShoppingCartViewModel {
         self.updateView()
     }
     
-    private func delete(itemModel: GenericCartItemModel) {
+    private func delete(itemModel: CartItemModel) {
         guard let index = index(for: itemModel) else {
             return
         }
@@ -205,7 +205,7 @@ extension ShoppingCartViewModel {
         self.updateView()
     }
     
-    private func confirmDeletion(itemModel: GenericCartItemModel) {
+    private func confirmDeletion(itemModel: CartItemModel) {
         
         deletionItem = itemModel
         deletionMessage = Asset.localizedString(forKey: "Snabble.Shoppingcart.removeItem", arguments: itemModel.title)
@@ -232,7 +232,7 @@ extension ShoppingCartViewModel {
 
 extension ShoppingCartViewModel {
 
-    func trash(itemModel: GenericCartItemModel) {
+    func trash(itemModel: CartItemModel) {
         confirmDeletion(itemModel: itemModel)
     }
 
@@ -246,7 +246,7 @@ extension ShoppingCartViewModel {
 //        trash(itemModel: cartItems[firstIndex])
     }
     
-    func decrement(itemModel: CartItemModel) {
+    func decrement(itemModel: ProductItemModel) {
         print("- \(itemModel.title)")
         if itemModel.quantity > 1 {
             itemModel.quantity -= 1
@@ -256,7 +256,7 @@ extension ShoppingCartViewModel {
         }
     }
     
-    func increment(itemModel: CartItemModel) {
+    func increment(itemModel: ProductItemModel) {
         print("+ \(itemModel.title)")
         if itemModel.quantity < ShoppingCart.maxAmount {
             itemModel.quantity += 1
@@ -475,7 +475,7 @@ extension ShoppingCartViewModel {
     }
 
     var priceItems: [ShoppingCartItemPricing] {
-        return itemsMatchingType(CartItemModel.self)
+        return itemsMatchingType(ProductItemModel.self)
     }
     
     var regularTotal: Int {

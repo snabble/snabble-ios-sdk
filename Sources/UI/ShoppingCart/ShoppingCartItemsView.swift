@@ -28,7 +28,7 @@ extension ShoppingCartViewModel {
     @ViewBuilder
     func view(for item: CartTableEntry) -> some View {
         if case .cartItem(let item, let lineItems) = item {
-            let itemModel = CartItemModel(item: item, for: lineItems, showImages: showImages)
+            let itemModel = ProductItemModel(item: item, for: lineItems, showImages: showImages)
             CartItemView(itemModel: itemModel)
         } else if case .coupon(let coupon, let lineItem) = item {
             let itemModel = CouponCartItemModel(cartCoupon: coupon, for: lineItem, showImages: showImages)

@@ -8,7 +8,7 @@
 import SwiftUI
 import SnabbleCore
 
-open class CouponCartItemModel: GenericCartItemModel, ShoppingCartItemCounting {
+open class CouponCartItemModel: CartItemModel, ShoppingCartItemCounting {
    
     @Published public var quantity: Int
     

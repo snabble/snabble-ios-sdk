@@ -25,9 +25,9 @@ extension Text {
 }
 
 struct CartItemView: View {
-    @ObservedObject var itemModel: CartItemModel
+    @ObservedObject var itemModel: ProductItemModel
     
-    init(itemModel: CartItemModel) {
+    init(itemModel: ProductItemModel) {
         self.itemModel = itemModel
     }
     

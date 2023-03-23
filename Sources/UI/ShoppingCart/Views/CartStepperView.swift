@@ -21,7 +21,7 @@ struct BorderedButtonStyle: ButtonStyle {
 }
 
 struct CartStepperView: View {
-    @ObservedObject var itemModel: CartItemModel
+    @ObservedObject var itemModel: ProductItemModel
     @EnvironmentObject var cartModel: ShoppingCartViewModel
 
     @ViewBuilder
