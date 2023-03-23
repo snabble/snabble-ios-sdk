@@ -50,8 +50,8 @@ public struct ShoppingCartFooterView: View {
             .onAppear {
                 updateView()
             }
-            .padding(.leading, -10)
-            .padding(.trailing, -10)
+            .padding(.leading, -8)
+            .padding(.trailing, -8)
             .listRowBackground(Color.tertiarySystemGroupedBackground)
     }
     

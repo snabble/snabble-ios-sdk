@@ -490,10 +490,10 @@ extension ShoppingCartViewModel {
 
 extension ShoppingCartViewModel {    
     var regularTotal: Int? {
-        guard let total = self.total else {
+        guard let total = shoppingCart.total else {
             return nil
         }
-        return total + totalDiscount
+        return total
     }
     var regularTotalString: String {
         guard let regularTotal = regularTotal else {
