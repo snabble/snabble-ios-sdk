@@ -124,6 +124,7 @@ struct CheckoutView: View {
             ZStack(alignment: .top) {
                 if model.isComplete {
                     customView
+                        .edgesIgnoringSafeArea(.top)
                 }
                 ScrollView(.vertical, showsIndicators: false) {
                     topContent
@@ -148,7 +149,6 @@ struct CheckoutView: View {
                 }
             }
         }
-        .edgesIgnoringSafeArea(.top)
     }
 }
 
