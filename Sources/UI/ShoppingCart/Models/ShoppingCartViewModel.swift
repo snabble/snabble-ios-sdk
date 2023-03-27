@@ -51,8 +51,7 @@ open class ShoppingCartViewModel: ObservableObject, Swift.Identifiable, Equatabl
     init(shoppingCart: ShoppingCart) {
         self.shoppingCart = shoppingCart
         
-        let nc = NotificationCenter.default
-        nc.addObserver(self, selector: #selector(self.shoppingCartUpdated(_:)), name: .snabbleCartUpdated, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(self.shoppingCartUpdated(_:)), name: .snabbleCartUpdated, object: nil)
         
         self.setupItems(self.shoppingCart)
     }
@@ -154,7 +153,8 @@ extension ShoppingCartViewModel {
         guard let index = cartIndex(for: itemModel) else {
             return
         }
-        //        self.delegate?.track(.cartAmountChanged)
+        
+        self.shoppingCartDelegate?.track(.cartAmountChanged)
         
         if reload {
             self.updateQuantity(itemModel.quantity, at: index)
@@ -199,9 +199,9 @@ extension ShoppingCartViewModel {
     }
     
     private func delete(at index: Int) {
-        if case .cartItem = self.items[index] {
-            //            let product = item.product
-            //            self.shoppingCartDelegate?.track(.deletedFromCart(product.sku))
+        if case .cartItem(let item, _) = self.items[index] {
+
+            self.shoppingCartDelegate?.track(.deletedFromCart(item.product.sku))
             
             self.items.remove(at: index)
             self.shoppingCart.remove(at: index)
@@ -291,6 +291,7 @@ extension ShoppingCartViewModel {
         }
     }
 }
+
 extension ShoppingCartViewModel {
     func discountItems(item: CartItem, for lineItems: [CheckoutInfo.LineItem]) -> [ShoppingCartItemDiscount] {
         let discounts = lineItems.filter { $0.type == .discount }
@@ -504,7 +505,6 @@ extension ShoppingCartViewModel {
                     Log.warn("no replacement for item #\(index) found")
                 }
             }
-            // self.tableView?.reloadData()
         }
     }
 }
