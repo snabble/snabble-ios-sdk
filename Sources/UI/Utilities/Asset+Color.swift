@@ -38,8 +38,11 @@ extension UIColor {
         Asset.color(named: "onAccent", domain: domain) ?? accent(in: domain).contrast ?? .label
     }
 
-    public static func checkoutGreen(in domain: Any? = Asset.domain) -> UIColor {
-        Asset.color(named: "checkout-green", domain: domain) ?? .green
+    public static func systemGreen(in domain: Any? = Asset.domain) -> UIColor {
+        Asset.color(named: "systemGreen", domain: domain) ?? .systemGreen
+    }
+    public static func systemRed(in domain: Any? = Asset.domain) -> UIColor {
+        Asset.color(named: "systemRed", domain: domain) ?? .systemRed
     }
 }
 
@@ -80,8 +83,11 @@ extension SwiftUI.Color {
         color(UIColor.onAccent(in: domain))
     }
 
-    public static func checkoutGreen(in domain: Any? = Asset.domain) -> SwiftUI.Color {
-        color(UIColor.checkoutGreen(in: domain))
+    public static func systemGreen(in domain: Any? = Asset.domain) -> SwiftUI.Color {
+        color(UIColor.systemGreen(in: domain))
+    }
+    public static func systemRed(in domain: Any? = Asset.domain) -> SwiftUI.Color {
+        color(UIColor.systemRed(in: domain))
     }
 }
 
@@ -187,7 +193,7 @@ extension SwiftUI.Color {
     }
 
     static var systemGreen: SwiftUI.Color {
-        color(.systemGreen)
+        systemGreen()
     }
 
     static var systemIndigo: SwiftUI.Color {
@@ -212,7 +218,7 @@ extension SwiftUI.Color {
     }
 
     static var systemRed: SwiftUI.Color {
-        color(.systemRed)
+        systemRed()
     }
 
     static var systemTeal: SwiftUI.Color {
