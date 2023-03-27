@@ -175,11 +175,22 @@ final class ScanningViewController: UIViewController {
         if let messageView = messageView {
             self.view.bringSubviewToFront(messageView)
         }
-        if !self.confirmationVisible {
+        if !self.confirmationVisible && self.pulleyViewController?.drawerPosition != .open {
             self.barcodeDetector.resumeScanning()
         }
+        NotificationCenter.default.addObserver(self, selector: #selector(textFieldDidBeginEditing(_:)), name: .textFieldDidBeginEditing, object: nil)
     }
-
+    
+    @objc
+    func textFieldDidBeginEditing(_ notification: Notification) {
+        guard let textField = notification.object as? UITextField else {
+            return
+        }
+        if textField.tag == ShoppingCart.textFieldMagic {
+            self.pulleyViewController?.setDrawerPosition(position: .open, animated: true)
+        }
+    }
+    
     override public func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
 
@@ -189,6 +200,8 @@ final class ScanningViewController: UIViewController {
     override public func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
 
+        NotificationCenter.default.removeObserver(self)
+        
         self.barcodeDetector.pauseScanning()
         self.barcodeDetector.scannerWillDisappear()
 

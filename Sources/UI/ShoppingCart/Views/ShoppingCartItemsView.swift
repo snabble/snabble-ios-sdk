@@ -28,11 +28,14 @@ extension ShoppingCartViewModel {
     @ViewBuilder
     func view(for item: CartTableEntry) -> some View {
         if case .cartItem(let item, let lineItems) = item {
-            let itemModel = ProductItemModel(item: item, for: lineItems, showImages: showImages)
+            let discounts: [ShoppingCartItemDiscount] = discountItems(item: item, for: lineItems)
+            let itemModel = ProductItemModel(item: item, for: lineItems, discounts:discounts, showImages: showImages)
             CartItemView(itemModel: itemModel)
         } else if case .coupon(let coupon, let lineItem) = item {
             let itemModel = CouponCartItemModel(cartCoupon: coupon, for: lineItem, showImages: showImages)
             CouponItemView(itemModel: itemModel)
+        } else if case .discount(let int) = item {
+            DiscountItemView(amount: int, description: totalDiscountDescription, showImages: showImages)
         }
     }
 }

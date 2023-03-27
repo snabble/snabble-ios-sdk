@@ -17,11 +17,13 @@ open class ProductItemModel: CartItemModel, ShoppingCartItemCounting {
     let item: CartItem
     let lineItems: [CheckoutInfo.LineItem]
     
+    @Published public var discounts: [ShoppingCartItemDiscount]
     @Published public var quantity: Int
     
-    init(item: CartItem, for lineItems: [CheckoutInfo.LineItem], showImages: Bool = true) {
+    init(item: CartItem, for lineItems: [CheckoutInfo.LineItem], discounts: [ShoppingCartItemDiscount] = [], showImages: Bool = true) {
         self.item = item
         self.lineItems = lineItems
+        self.discounts = discounts
         
         let defaultItem = lineItems.first { $0.type == .default }
         
@@ -42,6 +44,26 @@ open class ProductItemModel: CartItemModel, ShoppingCartItemCounting {
         }
         
         self.loadImage()
+    }
+}
+
+extension ProductItemModel {
+    var showWeight: Bool {
+        return item.product.referenceUnit?.hasDimension == true || item.product.type == .userMustWeigh
+    }
+    var showQuantity: Bool {
+        return item.product.type == .singleItem || showWeight
+    }
+    var encodingUnit: Units? {
+        return item.encodingUnit ?? item.product.encodingUnit
+    }
+    
+    var quantityText: String? {
+        return showQuantity ? "\(item.effectiveQuantity)" : nil
+    }
+
+    var unitString: String? {
+        return showWeight ? encodingUnit?.display : nil
     }
 }
 
@@ -67,33 +89,18 @@ extension ProductItemModel: ShoppingCartItemPricing {
     
     var couponText: String {
         let coupons = lineItems.filter { $0.type == .coupon }
-        return coupons.reduce("", { $0 + ($1.name ?? "") })
+        return coupons.reduce("", { $0 + ($1.redeemed == true ? $1.name ?? "" : "") })
     }
     var discountText: String {
         let discounts = lineItems.filter { $0.type == .discount }
         return discounts.reduce("", { $0 + ($1.name ?? "") })
     }
-    
-    public var discount: Int {
-        let discounts = lineItems.filter { $0.type == .discount }
-        let discount = discounts.reduce(0) { $0 + $1.amount * ($1.price ?? 0) }
-        if discount != 0 {
-            return discount
-        }
+        
+    public var modifiedPrice: Int {
         return priceModifier.price
     }
-
-    public var discountName: String? {
-        let name = priceModifier.text
-        if !name.isEmpty {
-            return name
-        }
-        let couponName = couponText
-        if !couponName.isEmpty {
-            return couponName
-        }
-        let discountText = discountText
-        return discountText.isEmpty ? nil : discountText
+    public var modifiedPriceText: String {
+        return priceModifier.text
     }
     
     public var regularPrice: Int {

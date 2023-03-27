@@ -229,9 +229,9 @@ public struct SepaDataEditorView: View {
 
     @ViewBuilder
     var ibanNumberView: some View {
-        UIKitTextField(SepaStrings.iban.localizedString, text: $model.ibanNumber, formatter: model.formatter) {
+        UIKitTextField(SepaStrings.iban.localizedString, text: $model.ibanNumber, formatter: model.formatter, content: {
             IBANHintView(model: model)
-        }
+        })
     }
 
     @ViewBuilder

@@ -9,6 +9,10 @@ import Foundation
 import Combine
 import SnabbleCore
 
+public extension ShoppingCart {
+    static let textFieldMagic: Int = 0x4711
+}
+
 open class ShoppingCartViewModel: ObservableObject, Swift.Identifiable, Equatable {
     public let id = UUID()
     
@@ -115,8 +119,11 @@ open class ShoppingCartViewModel: ObservableObject, Swift.Identifiable, Equatabl
         newItems.append(contentsOf: self.remainingItems)
         // find all giveaways
         newItems.append(contentsOf: givawayItems)
-        // add all discounts and priceModifiers for the "total discounts" entry
-        newItems.append(totalDiscountItem)
+        
+        // add all discounts (without priceModifiers) for the "total discounts" entry
+        if cart.totalCartDiscount != 0 {
+            newItems.append(totalDiscountItem)
+        }
         
         let pendingLookups = self.pendingLookups
         // perform any pending lookups
@@ -133,14 +140,20 @@ open class ShoppingCartViewModel: ObservableObject, Swift.Identifiable, Equatabl
 }
 
 extension ShoppingCartViewModel {
-    private func updateQuantity(itemModel: ProductItemModel, reload: Bool = true) {
+    func cartIndex(for itemModel: ProductItemModel) -> Int? {
         guard let index = items.firstIndex(where: { $0.id == itemModel.item.uuid }) else {
-            return
+            return nil
         }
         guard case .cartItem = self.items[index] else {
+            return nil
+        }
+        return index
+    }
+    
+    private func updateQuantity(itemModel: ProductItemModel, reload: Bool = true) {
+        guard let index = cartIndex(for: itemModel) else {
             return
         }
-        
         //        self.delegate?.track(.cartAmountChanged)
         
         if reload {
@@ -278,29 +291,37 @@ extension ShoppingCartViewModel {
         }
     }
 }
-
 extension ShoppingCartViewModel {
+    func discountItems(item: CartItem, for lineItems: [CheckoutInfo.LineItem]) -> [ShoppingCartItemDiscount] {
+        let discounts = lineItems.filter { $0.type == .discount }
+
+        var discountItems = [ShoppingCartItemDiscount]()
+        let cartDiscountID = shoppingCart.cartDiscountLineItems?.first?.discountID
+        
+        for discount in discounts {
+            if cartDiscountID == nil, let total = discount.totalPrice {
+                let discountCartItem = ShoppingCartItemDiscount(discount: total, name: discount.name)
+                discountItems.append(discountCartItem)
+            } else if discount.discountID != cartDiscountID, let total = discount.totalPrice {
+                let discountCartItem = ShoppingCartItemDiscount(discount: total, name: discount.name)
+                discountItems.append(discountCartItem)
+            }
+        }
+        return discountItems
+    }
+    
     var totalDiscountItem: CartTableEntry {
         return CartTableEntry.discount(totalDiscount)
     }
 
     var totalDiscount: Int {
-        guard let lineItems = self.shoppingCart.backendCartInfo?.lineItems else {
-            return 0
-        }
-        var totalDiscounts = 0
-        
-        let discounts = lineItems.filter { $0.type == .discount }
-        totalDiscounts = discounts.reduce(0) { $0 + $1.amount * ($1.price ?? 0) }
-
-        for lineItem in lineItems {
-            guard let modifiers = lineItem.priceModifiers else { continue }
-            let modSum = modifiers.reduce(0, { $0 + $1.price })
-            totalDiscounts += modSum * lineItem.amount
-        }
-        return totalDiscounts
+        return self.shoppingCart.totalCartDiscount
     }
-
+    
+    var totalDiscountDescription: String? {
+        return self.shoppingCart.cartDiscountDescription
+    }
+    
     var totalDiscountString: String {
         formatter.format(totalDiscount)
     }

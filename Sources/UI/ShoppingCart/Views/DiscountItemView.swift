@@ -10,26 +10,37 @@ import SnabbleCore
 
 struct DiscountItemView: View {
     let amount: String
+    var description: String?
+    let showImages: Bool
     
-    init(amount: Int) {
+    init(amount: Int, description: String? = nil, showImages: Bool = true) {
         self.amount = PriceFormatter(SnabbleCI.project).format(amount)
+        self.description = description
+        self.showImages = showImages
     }
+
     @ViewBuilder
     var leftView: some View {
-        SwiftUI.Image(systemName: "percent")
-            .cartImageModifier(padding: 10)
+        if showImages {
+            SwiftUI.Image(systemName: "percent")
+                .cartImageModifier(padding: 10)
+        }
     }
     
     var body: some View {
         HStack {
             leftView
-            VStack(alignment: .leading) {
+            VStack(alignment: .leading, spacing: 12) {
                 Text(Asset.localizedString(forKey: "Snabble.Shoppingcart.discounts"))
-                Text(amount)
-                    .font(.footnote)
-                    .foregroundColor(.secondary)
-
-            }
+                HStack {
+                    Text(amount)
+                        .cartPrice()
+                    Spacer()
+                    Text(description ?? "")
+                }
+                .cartInfo()
+           }
         }
+        .listRowBackground(Color.tertiarySystemGroupedBackground)
     }
 }

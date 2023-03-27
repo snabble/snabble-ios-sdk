@@ -35,7 +35,7 @@ struct CartItemView: View {
     var price: some View {
         if itemModel.hasDiscount {
             HStack {
-                Text(itemModel.discountedPriceString)
+                Text(itemModel.reducedPriceString)
                     .cartPrice()
                 Text(itemModel.regularPriceString)
                     .strikethroughPrice()
@@ -76,6 +76,12 @@ struct CartItemView: View {
         case .buttons:
             CartStepperView(itemModel: itemModel)
             
+        case .weightEntry:
+            CartWeightView(itemModel: itemModel, editable: true)
+            
+        case .weightDisplay:
+            CartWeightView(itemModel: itemModel)
+
         default:
             EmptyView()
         }
@@ -83,16 +89,27 @@ struct CartItemView: View {
     
     @ViewBuilder
     var additionalInfo: some View {
-        if let discountName = itemModel.discountName {
-            HStack {
-                Text(itemModel.discountString)
-                Spacer()
-                Text(discountName)
-            }
-            .cartInfo()
-        } else if let depositInfo = itemModel.depositDetailString {
+        if let depositInfo = itemModel.depositDetailString {
             Text(depositInfo)
                 .cartInfo()
+        }
+        if let modifiedPriceString = itemModel.modifiedPriceString {
+            HStack {
+                Text(modifiedPriceString)
+                Spacer()
+                Text(itemModel.modifiedPriceText)
+            }
+            .cartInfo()
+        }
+        ForEach(itemModel.discounts) { discount in
+            if let discountPriceString = itemModel.formatter.format(discount.discount) {
+                HStack {
+                    Text(discountPriceString)
+                    Spacer()
+                    Text(discount.name)
+                }
+                .cartInfo()
+            }
         }
     }
     

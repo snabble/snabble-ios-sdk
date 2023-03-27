@@ -20,7 +20,7 @@ open class CouponCartItemModel: CartItemModel, ShoppingCartItemCounting {
         self.lineItem = lineItem
         self.quantity = 1
         
-        super.init(title: cartCoupon.coupon.name, leftDisplay: showImages ? .image : .badge, rightDisplay: .trash)
+        super.init(title: cartCoupon.coupon.name, leftDisplay: showImages ? .image : .badge, rightDisplay: .trash, showImages: showImages)
         
         if showImages {
             if let icon: UIImage = Asset.image(named: "SnabbleSDK/icon-percent") {
@@ -40,7 +40,23 @@ open class CouponCartItemModel: CartItemModel, ShoppingCartItemCounting {
 struct CouponItemView: View {
     @ObservedObject var itemModel: CouponCartItemModel
     
+    @ViewBuilder
+    var leftView: some View {
+        if itemModel.showImages {
+            SwiftUI.Image(systemName: "percent")
+                .cartImageModifier(padding: 10)
+                .foregroundColor(itemModel.isRedeemed ? .red : .gray)
+        }
+    }
+
     var body: some View {
-        Text(itemModel.title)
+        HStack {
+            leftView
+            VStack(alignment: .leading, spacing: 12) {
+                Text(itemModel.title)
+                Text(itemModel.cartCoupon.coupon.description ?? "")
+                    .cartInfo()
+            }
+        }
     }
 }

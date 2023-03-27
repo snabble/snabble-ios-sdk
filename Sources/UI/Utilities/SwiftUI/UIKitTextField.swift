@@ -43,6 +43,10 @@ extension FormatterSelectionHint {
     }
 }
 
+public extension Notification.Name {
+    static let textFieldDidBeginEditing = Notification.Name("textFieldDidBeginEditing")
+}
+
 struct UIKitTextField<Content: View>: UIViewRepresentable {
 
     var label: String?
@@ -55,10 +59,13 @@ struct UIKitTextField<Content: View>: UIViewRepresentable {
     var returnKeyType: UIReturnKeyType = .default
     var autocapitalizationType: UITextAutocapitalizationType = .words
     var textContentType: UITextContentType?
+    var textAlignment: NSTextAlignment = .left
 
     var tag: Int?
     var content: Content?
-
+    var font: UIFont?
+    var onSubmit: (() -> Void)?
+    
     init(_ label: String? = nil,
          text: Binding<String>,
          formatter: Formatter? = nil,
@@ -67,7 +74,10 @@ struct UIKitTextField<Content: View>: UIViewRepresentable {
          returnKeyType: UIReturnKeyType = .default,
          autocapitalizationType: UITextAutocapitalizationType = .words,
          textContentType: UITextContentType? = nil,
+         textAlignment: NSTextAlignment = .left,
          tag: Int? = nil,
+         font: UIFont? = nil,
+         onSubmit: (() -> Void)? = nil,
          content: (() -> Content)? = nil) {
         self.label = label
         self._text = text
@@ -77,7 +87,10 @@ struct UIKitTextField<Content: View>: UIViewRepresentable {
         self.returnKeyType = returnKeyType
         self.autocapitalizationType = autocapitalizationType
         self.textContentType = textContentType
+        self.textAlignment = textAlignment
         self.tag = tag
+        self.font = font
+        self.onSubmit = onSubmit
         self.content = content?()
     }
 
@@ -96,8 +109,16 @@ struct UIKitTextField<Content: View>: UIViewRepresentable {
         }
         textField.isSecureTextEntry = isSecureTextEntry?.wrappedValue ?? false
         textField.textContentType = textContentType
+        textField.textAlignment = textAlignment
+        
+        textField.borderStyle = .roundedRect
+        textField.backgroundColor = .secondarySystemBackground
+
         if let tag = tag {
             textField.tag = tag
+        }
+        if let font = font {
+            textField.font = font
         }
         if let content = self.content {
             let contentView: UIView = UIHostingController(rootView: content).view
@@ -110,7 +131,7 @@ struct UIKitTextField<Content: View>: UIViewRepresentable {
             let keyboardToolbar = UIToolbar(frame: CGRect(x: 0, y: 0, width: 320, height: 44))
             let leftButton = UIBarButtonItem(customView: contentView)
             let flexSpace = UIBarButtonItem(barButtonSystemItem: .flexibleSpace, target: nil, action: nil)
-            let doneButton = UIBarButtonItem(barButtonSystemItem: .done, target: textField, action: #selector(UITextField.endEditing(_:)))
+            let doneButton = UIBarButtonItem(barButtonSystemItem: .done, target: textField, action: #selector(Coordinator.endEditing(_:)))
             keyboardToolbar.items = [leftButton, flexSpace, doneButton]
             keyboardToolbar.sizeToFit()
 
@@ -118,6 +139,8 @@ struct UIKitTextField<Content: View>: UIViewRepresentable {
 
         }
         textField.addTarget(context.coordinator, action: #selector(Coordinator.textFieldDidChange(_:)), for: .editingChanged)
+        textField.addTarget(context.coordinator, action: #selector(Coordinator.endEditing(_:)), for: .editingDidEnd)
+        
         textField.setContentCompressionResistancePriority(.defaultLow, for: .horizontal)
 
         return textField
@@ -139,7 +162,24 @@ struct UIKitTextField<Content: View>: UIViewRepresentable {
         init(_ control: UIKitTextField) {
             self.control = control
         }
+        
+        func textFieldShouldReturn(_: UITextField) -> Bool {
+            if let onSubmit = control.onSubmit {
+                onSubmit()
+            }
+            return true
+        }
+        
+        @objc func endEditing(_ textField: UITextField) {
+            let _ = textField.endEditing(true)
+            if let onSubmit = control.onSubmit {
+                onSubmit()
+            }
+        }
 
+        func textFieldDidBeginEditing(_ textField: UITextField) {
+            NotificationCenter.default.post(name: .textFieldDidBeginEditing, object: textField)
+        }
         func textFieldShouldEndEditing(_ textField: UITextField) -> Bool {
             if let formatter = control.formatter as? TextChangeFormatter {
                 return formatter.textFieldShouldEndEditing(textField)
@@ -196,7 +236,10 @@ extension UIKitTextField where Content == EmptyView {
          returnKeyType: UIReturnKeyType = .default,
          autocapitalizationType: UITextAutocapitalizationType = .words,
          textContentType: UITextContentType? = nil,
-         tag: Int? = nil) {
+         textAlignment: NSTextAlignment = .left,
+         tag: Int? = nil,
+         font: UIFont? = nil,
+         onSubmit: (() -> Void)? = nil) {
         self.label = label
         self._text = text
         self.formatter = formatter
@@ -205,8 +248,10 @@ extension UIKitTextField where Content == EmptyView {
         self.returnKeyType = returnKeyType
         self.autocapitalizationType = autocapitalizationType
         self.textContentType = textContentType
+        self.textAlignment = textAlignment
         self.tag = tag
-
+        self.font = font
+        self.onSubmit = onSubmit
         self.content = nil
     }
 }

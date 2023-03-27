@@ -23,54 +23,67 @@ public protocol ShoppingCartItemCounting {
     var quantity: Int { get set }
 }
 
+public protocol ShoppingCartItemDiscounting: Swift.Identifiable {
+    var discount: Int { get }
+    var name: String { get }
+}
+
+public struct ShoppingCartItemDiscount: ShoppingCartItemDiscounting {
+    public let id = UUID().uuidString
+    
+    public var discount: Int
+    public var name: String
+    
+    init(discount: Int, name: String? = nil) {
+        self.discount = discount
+        self.name = name ?? "Discount"
+    }
+}
+
 public protocol ShoppingCartItemPricing {
     var regularPrice: Int { get }
-    var discount: Int { get }
-    var discountName: String? { get }
+    var modifiedPrice: Int { get }
+    var discounts: [ShoppingCartItemDiscount] { get }
     var formatter: PriceFormatter { get }
 }
 
 public extension ShoppingCartItemPricing {
     var hasDiscount: Bool {
-        return discount != 0
+        return !discounts.isEmpty || modifiedPrice != 0
     }
 
-    var discountedPrice: Int {
+    var totalDiscount: Int {
+        let totalDiscount = discounts.reduce(0, { $0 + $1.discount })
+        return totalDiscount
+    }
+    var reducedPrice: Int {
         guard hasDiscount else {
             return regularPrice
         }
-        return regularPrice + discount
-    }
-
-    var discountPercent: Int {
-        guard hasDiscount else { return 0 }
-        return Int(100.0 - 100.0 / Double(regularPrice) * Double(discountedPrice))
+        return regularPrice + totalDiscount + modifiedPrice
     }
 }
 
 public extension ShoppingCartItemPricing {
     
-    var discountAndPercentString: String {
-        return formatter.format(discount) + " ≙ \(discountPercentString)"
+    var reducedPriceString: String {
+        return formatter.format(reducedPrice)
     }
 
-    var discountString: String {
-        return formatter.format(discount)
-    }
-
-    var discountedPriceString: String {
-        return formatter.format(discountedPrice)
-    }
-
-    var discountPercentString: String {
-        return "-\(discountPercent)%"
-    }
-
-    var regularPriceString: String {
-        guard self.regularPrice != 0 else {
-            return ""
+    var regularPriceString: String? {
+        let price = self.regularPrice
+        guard price != 0 else {
+            return nil
         }
-        return formatter.format(regularPrice)
+        return formatter.format(price)
+    }
+    
+    var modifiedPriceString: String? {
+        let price = modifiedPrice
+        guard price != 0 else {
+            return nil
+        }
+        return formatter.format(price)
     }
 }
 

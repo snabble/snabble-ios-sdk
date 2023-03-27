@@ -16,7 +16,11 @@ public final class ShoppingCart: Codable {
     public private(set) var items: [CartItem]
     public private(set) var session: String
     public private(set) var lastSaved: Date?
-    public private(set) var backendCartInfo: BackendCartInfo?
+    public private(set) var backendCartInfo: BackendCartInfo? {
+        didSet {
+            self.updateDiscounts()
+        }
+    }
     public private(set) var paymentMethods: [PaymentMethodDescription]?
     public private(set) var lastCheckoutInfoError: SnabbleError?
     public private(set) var coupons: [CartCoupon]
@@ -133,6 +137,7 @@ public final class ShoppingCart: Codable {
             self.backupSession = savedCart.backupSession
             self.backendCartInfo = savedCart.backendCartInfo
         }
+        updateDiscounts()
     }
 
     /// check if this cart is outdated (ie. it was last saved more than `config.maxAge` seconds ago)
@@ -261,6 +266,57 @@ public final class ShoppingCart: Codable {
         items.append(contentsOf: coupons)
 
         return items
+    }
+
+    func packedDiscountItems(lineItems: [CheckoutInfo.LineItem]) -> [String:Int] {
+        var frequencyTable = [String:Int]()
+        
+        for item in lineItems where item.type == .discount && item.discountID != nil {
+            guard let identifier = item.discountID else {
+                continue
+            }
+            frequencyTable[identifier] = (frequencyTable[identifier] ?? 0 ) + 1
+        }
+        return frequencyTable
+    }
+
+    private var discountHash: [String:Int] = [:]
+    public var totalCartDiscount: Int = 0
+
+    public var discountLineItems: [CheckoutInfo.LineItem] {
+        guard let lineItems = self.backendCartInfo?.lineItems else {
+            return []
+        }
+        return lineItems.filter { $0.type == .discount }
+    }
+
+    public var cartDiscountLineItems: [CheckoutInfo.LineItem]? {
+        guard let lineItems = self.backendCartInfo?.lineItems else {
+            return nil
+        }
+        discountHash = packedDiscountItems(lineItems: lineItems)
+        for (key, value) in discountHash {
+            if value > 1, value == numberOfItems {
+                return discountLineItems.filter { $0.discountID == key }
+            }
+        }
+        return nil
+    }
+    
+    public var cartDiscountDescription: String? {
+        guard let discounts = cartDiscountLineItems else {
+            return nil
+        }
+        return discounts.first?.name
+    }
+    
+    func updateDiscounts() {
+        totalCartDiscount = 0
+        
+        guard let discounts = cartDiscountLineItems else {
+            return
+        }
+        totalCartDiscount = discounts.reduce(0) { $0 + $1.amount * ($1.price ?? 0) }
     }
 
     /// return the the total price of all products. nil if unknown, i.e. when there are products with unknown prices in the cart
