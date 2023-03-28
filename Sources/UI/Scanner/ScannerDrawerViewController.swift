@@ -13,11 +13,7 @@ final class ScannerDrawerViewController: UIViewController {
     private var shoppingListTableVC: ScannerShoppingListViewController
 
     private let shoppingCart: ShoppingCart
-#if SWIFTUI_PROFILE
     private var shoppingCartVC: ShoppingCartViewController
-#else
-    private var shoppingCartVC: ShoppingCartTableViewController
-#endif
     
     private let projectId: Identifier<Project>
 
@@ -67,11 +63,8 @@ final class ScannerDrawerViewController: UIViewController {
         self.shoppingCart = shoppingCart
 
         self.shoppingListTableVC = ScannerShoppingListViewController()
-#if SWIFTUI_PROFILE
         self.shoppingCartVC = ShoppingCartViewController(shoppingCart: shoppingCart, compactMode: true)
-#else
-        self.shoppingCartVC = ShoppingCartTableViewController(shoppingCart)
-#endif
+
         super.init(nibName: nil, bundle: nil)
 
         SnabbleCI.registerForAppearanceChange(self)
