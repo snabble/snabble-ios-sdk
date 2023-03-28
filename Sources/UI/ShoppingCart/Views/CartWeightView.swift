@@ -1,5 +1,5 @@
 //
-//  File.swift
+//  CartWeightView.swift
 //  
 //
 //  Created by Uwe Tilemann on 24.03.23.

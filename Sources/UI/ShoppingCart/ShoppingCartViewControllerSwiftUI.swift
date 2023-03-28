@@ -23,8 +23,6 @@ open class ShoppingCartViewController: UIHostingController<ShoppingCartView> {
         }
     }
 
-//    private var cancellables = Set<AnyCancellable>()
-
     public var viewModel: ShoppingCartViewModel {
         rootView.cartModel
     }
@@ -40,10 +38,5 @@ open class ShoppingCartViewController: UIHostingController<ShoppingCartView> {
 
     open override func viewDidLoad() {
         super.viewDidLoad()
-//        viewModel.actionPublisher
-//            .sink { [weak self] shop in
-//                self?.delegate?.shopsViewController(self!, didSelectActionOnShop: shop)
-//            }
-//            .store(in: &cancellables)
     }
 }
