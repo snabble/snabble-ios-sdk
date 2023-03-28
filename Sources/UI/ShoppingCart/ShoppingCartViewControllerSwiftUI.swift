@@ -15,7 +15,7 @@ public protocol ShoppingCartViewControllerDelegate: AnyObject {
     func shoppingCartViewController(_ viewController: ShoppingCartViewController, didSelectActionOnShop shop: ShopProviding)
 }
 
-/// A UIViewController wrapping SwiftUI's ShopsView
+/// A UIViewController wrapping SwiftUI's ShoppingCartView
 open class ShoppingCartViewController: UIHostingController<ShoppingCartView> {
     public weak var shoppingCartDelegate: ShoppingCartDelegate? {
         didSet {
