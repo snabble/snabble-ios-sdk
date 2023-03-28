@@ -304,7 +304,7 @@ extension ShoppingCartViewModel {
             
             let modifiedPrice = modSum * lineItem.amount
             if modifiedPrice != 0 {
-                let discountCartItem = ShoppingCartItemDiscount(discount: modifiedPrice, name: modText)
+                let discountCartItem = ShoppingCartItemDiscount(discount: modifiedPrice, name: modText, type: .priceModifier)
                 discountItems.append(discountCartItem)
             }
         }
@@ -314,10 +314,10 @@ extension ShoppingCartViewModel {
         
         for discount in discounts {
             if cartDiscountID == nil, let total = discount.totalPrice {
-                let discountCartItem = ShoppingCartItemDiscount(discount: total, name: discount.name)
+                let discountCartItem = ShoppingCartItemDiscount(discount: total, name: discount.name, type: discount.discountRuleID)
                 discountItems.append(discountCartItem)
             } else if discount.discountID != cartDiscountID, let total = discount.totalPrice {
-                let discountCartItem = ShoppingCartItemDiscount(discount: total, name: discount.name)
+                let discountCartItem = ShoppingCartItemDiscount(discount: total, name: discount.name, type: discount.discountRuleID)
                 discountItems.append(discountCartItem)
             }
         }

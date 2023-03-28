@@ -29,19 +29,34 @@ public protocol ShoppingCartItemDiscounting: Swift.Identifiable {
 }
 
 public struct ShoppingCartItemDiscount: ShoppingCartItemDiscounting {
-    public enum DiscountType {
+    public enum DiscountType: String {
         case unknown
         case priceModifier
-        case totalDiscount
+        case discountedProduct = "discounted_product"
+        case totalDiscount = "total-discount"
     }
     public let id = UUID().uuidString
     
     public var discount: Int
     public var name: String
+    public var type: DiscountType
     
     init(discount: Int, name: String? = nil, type: DiscountType = .unknown) {
         self.discount = discount
         self.name = name ?? "Discount"
+        self.type = type
+    }
+    init(discount: Int, name: String? = nil, type: String? = nil) {
+        self.discount = discount
+        self.name = name ?? "Discount"
+        self.type = .unknown
+        if let typeString = type {
+            if let discountType = DiscountType(rawValue: typeString) {
+                self.type = discountType
+            } else {
+                print("unknown discountType \(name ?? "n/a"): \(typeString)")
+            }
+        }
     }
 }
 
