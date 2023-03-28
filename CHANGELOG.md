@@ -4,16 +4,14 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [unreleased]
-
-### Added
+## [0.32.0] - 2023-03-28
 
 ### Fixed
 * Finetuning design checkout page #APPS-753
 
-### Removed
-
 ### Updated
+* groue/GRDB.swift 6.10.0 (was 6.9.2)
+* datatrans/ios-sdk 2.7.1 (was 2.6.0)
 
 ## [0.31.0] - 2023-03-15
 
