@@ -68,7 +68,6 @@ extension ProductItemModel {
 }
 
 extension ProductItemModel: ShoppingCartItemPricing {
-
     public var formatter: PriceFormatter {
         PriceFormatter(SnabbleCI.project)
     }
