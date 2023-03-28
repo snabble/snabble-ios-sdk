@@ -36,7 +36,7 @@ open class ShoppingCartViewModel: ObservableObject, Swift.Identifiable, Equatabl
     var deletionMessage: String = ""
     var deletionItemIndex: Int?
     
-    @Published var items = [CartTableEntry]()
+    @Published var items = [CartEntry]()
 
     func index(for itemModel: CartItemModel) -> Int? {
         guard let index = items.firstIndex(where: { $0.id == itemModel.id }) else {
@@ -108,7 +108,7 @@ open class ShoppingCartViewModel: ObservableObject, Swift.Identifiable, Equatabl
     }
     
     private func setupItems(_ cart: ShoppingCart) {
-        var newItems = [CartTableEntry]()
+        var newItems = [CartEntry]()
         
         // all regular cart items
         newItems.append(contentsOf: self.cartItemEntries)
@@ -324,8 +324,8 @@ extension ShoppingCartViewModel {
         return discountItems
     }
     
-    var totalDiscountItem: CartTableEntry {
-        return CartTableEntry.discount(totalDiscount)
+    var totalDiscountItem: CartEntry {
+        return CartEntry.discount(totalDiscount)
     }
 
     var totalDiscount: Int {
@@ -342,11 +342,11 @@ extension ShoppingCartViewModel {
 }
 
 extension ShoppingCartViewModel {
-    var cartItemEntries: [CartTableEntry] {
-        var items = [CartTableEntry]()
+    var cartItemEntries: [CartEntry] {
+        var items = [CartEntry]()
         
         for cartItem in cartItems {
-            let item = CartTableEntry.cartItem(cartItem.cartItem, cartItem.lineItems)
+            let item = CartEntry.cartItem(cartItem.cartItem, cartItem.lineItems)
             items.append(item)
         }
         return items
@@ -391,12 +391,12 @@ extension ShoppingCartViewModel {
 }
 
 extension ShoppingCartViewModel {
-    var couponItems: [CartTableEntry] {
-        var items = [CartTableEntry]()
+    var couponItems: [CartEntry] {
+        var items = [CartEntry]()
         
         // all coupons
         for coupon in self.coupons {
-            let item = CartTableEntry.coupon(coupon.cartCoupon, coupon.lineItem)
+            let item = CartEntry.coupon(coupon.cartCoupon, coupon.lineItem)
             items.append(item)
         }
         return items
@@ -416,11 +416,11 @@ extension ShoppingCartViewModel {
 }
 
 extension ShoppingCartViewModel {
-    var givawayItems: [CartTableEntry] {
-        var items = [CartTableEntry]()
+    var givawayItems: [CartEntry] {
+        var items = [CartEntry]()
         
         self.giveaways.forEach {
-            items.append(CartTableEntry.giveaway($0))
+            items.append(CartEntry.giveaway($0))
         }
         return items
     }
@@ -436,10 +436,10 @@ extension ShoppingCartViewModel {
 
 extension ShoppingCartViewModel {
     // the remaining lineItems
-    var remainingItems: [CartTableEntry] {
-        var items = [CartTableEntry]()
+    var remainingItems: [CartEntry] {
+        var items = [CartEntry]()
         for lineItem in remainingLineItems {
-            let item = CartTableEntry.lineItem(lineItem.lineItem, lineItem.additionalItems)
+            let item = CartEntry.lineItem(lineItem.lineItem, lineItem.additionalItems)
             items.append(item)
         }
         return items

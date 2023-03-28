@@ -10,6 +10,21 @@ import Combine
 import SnabbleCore
 import SwiftUI
 
+public enum LeftDisplay {
+    case none
+    case image
+    case emptyImage
+    case badge
+}
+
+public enum RightDisplay {
+    case none
+    case buttons
+    case weightEntry
+    case weightDisplay
+    case trash
+}
+
 public protocol ShoppingCartItem: Swift.Identifiable {
     var id: String { get }
     var title: String { get }
@@ -33,7 +48,7 @@ public struct ShoppingCartItemDiscount: ShoppingCartItemDiscounting {
         case unknown
         case priceModifier
         case discountedProduct = "discounted_product"
-        case totalDiscount = "total-discount"
+        case totalDiscount = "total_discount"
     }
     public let id = UUID().uuidString
     

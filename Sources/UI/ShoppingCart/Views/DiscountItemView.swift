@@ -32,15 +32,16 @@ struct DiscountItemView: View {
             leftView
             VStack(alignment: .leading, spacing: 12) {
                 Text(Asset.localizedString(forKey: "Snabble.Shoppingcart.discounts"))
-                HStack {
+                HStack(alignment: .top) {
                     Text(amount)
                         .cartPrice()
                     Spacer()
                     Text(description ?? "")
+                    Asset.image(named: "discount-badge")
                 }
                 .cartInfo()
            }
         }
-        .listRowBackground(Color.tertiarySystemGroupedBackground)
+        .listRowBackground(Color.clear)
     }
 }

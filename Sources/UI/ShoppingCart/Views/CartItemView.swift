@@ -110,10 +110,11 @@ struct CartItemView: View {
 
         ForEach(itemModel.discounts) { discount in
             if let discountPriceString = itemModel.formatter.format(discount.discount) {
-                HStack {
+                HStack(alignment: .top) {
                     Text(discountPriceString)
                     Spacer()
                     Text(discount.name)
+                    Asset.image(named: "discount-badge")
                 }
                 .cartInfo()
             }
@@ -136,6 +137,6 @@ struct CartItemView: View {
                 additionalInfo
             }
         }
-        .listRowBackground(itemModel.hasDiscount ? Color.tertiarySystemGroupedBackground : Color.clear)
+        .listRowBackground(Color.clear)
     }
 }
