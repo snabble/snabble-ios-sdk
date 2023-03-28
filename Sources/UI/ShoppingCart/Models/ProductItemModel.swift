@@ -72,20 +72,6 @@ extension ProductItemModel: ShoppingCartItemPricing {
     public var formatter: PriceFormatter {
         PriceFormatter(SnabbleCI.project)
     }
-
-    var priceModifier: (price: Int, text: String) {
-        var modifiedPrice = 0
-        var text = ""
-        
-        for lineItem in lineItems {
-            guard let modifiers = lineItem.priceModifiers else { continue }
-            let modSum = modifiers.reduce(0, { $0 + $1.price })
-            let modText = modifiers.reduce("", { $0 + $1.name })
-            modifiedPrice += modSum * lineItem.amount
-            text += modText
-        }
-        return (modifiedPrice, text)
-    }
     
     var couponText: String {
         let coupons = lineItems.filter { $0.type == .coupon }
@@ -96,13 +82,6 @@ extension ProductItemModel: ShoppingCartItemPricing {
         return discounts.reduce("", { $0 + ($1.name ?? "") })
     }
         
-    public var modifiedPrice: Int {
-        return priceModifier.price
-    }
-    public var modifiedPriceText: String {
-        return priceModifier.text
-    }
-    
     public var regularPrice: Int {
         guard let defaultItem = lineItems.first(where: { $0.type == .default }), defaultItem.priceModifiers == nil else {
             return item.price
@@ -146,12 +125,11 @@ extension ProductItemModel: ShoppingCartItemPricing {
     }
 }
 
-extension ProductItemModel {
-    var badgeText: String? {
+extension ProductItemModel: ShoppingCartItemBadging {
+        
+    public var badgeText: String? {
         var badgeText: String?
-//        if item.manualCoupon != nil {
-//            badgeText = "%"
-//        }
+
         let saleRestricton = item.product.saleRestriction
         switch saleRestricton {
         case .none: ()

@@ -268,8 +268,8 @@ public final class ShoppingCart: Codable {
         return items
     }
 
-    func packedDiscountItems(lineItems: [CheckoutInfo.LineItem]) -> [String:Int] {
-        var frequencyTable = [String:Int]()
+    func packedDiscountItems(lineItems: [CheckoutInfo.LineItem]) -> [String: Int] {
+        var frequencyTable = [String: Int]()
         
         for item in lineItems where item.type == .discount && item.discountID != nil {
             guard let identifier = item.discountID else {
@@ -280,7 +280,7 @@ public final class ShoppingCart: Codable {
         return frequencyTable
     }
 
-    private var discountHash: [String:Int] = [:]
+    private var discountHash: [String: Int] = [:]
     public var totalCartDiscount: Int = 0
 
     public var discountLineItems: [CheckoutInfo.LineItem] {

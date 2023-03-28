@@ -171,8 +171,7 @@ struct UIKitTextField<Content: View>: UIViewRepresentable {
         }
         
         @objc func endEditing(_ textField: UITextField) {
-            let _ = textField.endEditing(true)
-            if let onSubmit = control.onSubmit {
+            if textField.endEditing(true), let onSubmit = control.onSubmit {
                 onSubmit()
             }
         }

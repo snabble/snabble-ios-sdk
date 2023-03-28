@@ -294,9 +294,22 @@ extension ShoppingCartViewModel {
 
 extension ShoppingCartViewModel {
     func discountItems(item: CartItem, for lineItems: [CheckoutInfo.LineItem]) -> [ShoppingCartItemDiscount] {
-        let discounts = lineItems.filter { $0.type == .discount }
 
         var discountItems = [ShoppingCartItemDiscount]()
+        
+        for lineItem in lineItems {
+            guard let modifiers = lineItem.priceModifiers else { continue }
+            let modSum = modifiers.reduce(0, { $0 + $1.price })
+            let modText = modifiers.reduce("", { $0 + $1.name })
+            
+            let modifiedPrice = modSum * lineItem.amount
+            if modifiedPrice != 0 {
+                let discountCartItem = ShoppingCartItemDiscount(discount: modifiedPrice, name: modText)
+                discountItems.append(discountCartItem)
+            }
+        }
+        
+        let discounts = lineItems.filter { $0.type == .discount }
         let cartDiscountID = shoppingCart.cartDiscountLineItems?.first?.discountID
         
         for discount in discounts {

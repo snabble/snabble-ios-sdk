@@ -29,12 +29,17 @@ public protocol ShoppingCartItemDiscounting: Swift.Identifiable {
 }
 
 public struct ShoppingCartItemDiscount: ShoppingCartItemDiscounting {
+    public enum DiscountType {
+        case unknown
+        case priceModifier
+        case totalDiscount
+    }
     public let id = UUID().uuidString
     
     public var discount: Int
     public var name: String
     
-    init(discount: Int, name: String? = nil) {
+    init(discount: Int, name: String? = nil, type: DiscountType = .unknown) {
         self.discount = discount
         self.name = name ?? "Discount"
     }
@@ -42,14 +47,13 @@ public struct ShoppingCartItemDiscount: ShoppingCartItemDiscounting {
 
 public protocol ShoppingCartItemPricing {
     var regularPrice: Int { get }
-    var modifiedPrice: Int { get }
     var discounts: [ShoppingCartItemDiscount] { get }
     var formatter: PriceFormatter { get }
 }
 
 public extension ShoppingCartItemPricing {
     var hasDiscount: Bool {
-        return !discounts.isEmpty || modifiedPrice != 0
+        return !discounts.isEmpty
     }
 
     var totalDiscount: Int {
@@ -60,7 +64,7 @@ public extension ShoppingCartItemPricing {
         guard hasDiscount else {
             return regularPrice
         }
-        return regularPrice + totalDiscount + modifiedPrice
+        return regularPrice + totalDiscount
     }
 }
 
@@ -77,13 +81,15 @@ public extension ShoppingCartItemPricing {
         }
         return formatter.format(price)
     }
-    
-    var modifiedPriceString: String? {
-        let price = modifiedPrice
-        guard price != 0 else {
-            return nil
-        }
-        return formatter.format(price)
+}
+
+public protocol ShoppingCartItemBadging {
+    var badgeText: String? { get }
+}
+
+public extension ShoppingCartItemBadging {
+    var badgeColor: ColorStyle {
+        return .systemRed
     }
 }
 

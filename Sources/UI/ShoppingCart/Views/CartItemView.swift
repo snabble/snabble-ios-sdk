@@ -24,6 +24,25 @@ extension Text {
     }
 }
 
+struct BadgeTextView: View {
+    let badgeText: String
+    let badgeColor: SwiftUI.Color
+    
+    init(badgeText: String?, badgeColor: ColorStyle? = nil) {
+        self.badgeText = badgeText ?? "%"
+        self.badgeColor = badgeColor?.color ?? .systemRed
+    }
+    
+    var body: some View {
+        Text(badgeText)
+            .font(.footnote)
+            .padding([.top, .bottom], 1)
+            .padding([.leading, .trailing], 2)
+            .background(RoundedRectangle(cornerRadius: 4).foregroundColor(badgeColor))
+            .foregroundColor(.white)
+    }
+}
+
 struct CartItemView: View {
     @ObservedObject var itemModel: ProductItemModel
     
@@ -37,12 +56,12 @@ struct CartItemView: View {
             HStack {
                 Text(itemModel.reducedPriceString)
                     .cartPrice()
-                Text(itemModel.regularPriceString)
+                Text(itemModel.regularPriceString ?? "")
                     .strikethroughPrice()
             }
             
         } else {
-            Text(itemModel.regularPriceString)
+            Text(itemModel.regularPriceString ?? "")
                 .cartPrice()
         }
     }
@@ -60,12 +79,7 @@ struct CartItemView: View {
                 }
             }
             if let badgeText = itemModel.badgeText {
-                Text(badgeText)
-                    .font(.footnote)
-                    .padding([.top, .bottom], 1)
-                    .padding([.leading, .trailing], 2)
-                    .background(RoundedRectangle(cornerRadius: 4).foregroundColor(.red))
-                    .foregroundColor(.white)
+                BadgeTextView(badgeText: badgeText)
             }
         }
     }
@@ -93,14 +107,7 @@ struct CartItemView: View {
             Text(depositInfo)
                 .cartInfo()
         }
-        if let modifiedPriceString = itemModel.modifiedPriceString {
-            HStack {
-                Text(modifiedPriceString)
-                Spacer()
-                Text(itemModel.modifiedPriceText)
-            }
-            .cartInfo()
-        }
+
         ForEach(itemModel.discounts) { discount in
             if let discountPriceString = itemModel.formatter.format(discount.discount) {
                 HStack {

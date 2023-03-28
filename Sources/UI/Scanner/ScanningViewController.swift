@@ -83,8 +83,14 @@ final class ScanningViewController: UIViewController {
         self.navigationItem.title = Asset.localizedString(forKey: "Snabble.Scanner.scanningTitle")
 
         SnabbleCI.registerForAppearanceChange(self)
+        
+        NotificationCenter.default.addObserver(self, selector: #selector(textFieldDidBeginEditing(_:)), name: .textFieldDidBeginEditing, object: nil)
     }
 
+    deinit {
+        NotificationCenter.default.removeObserver(self)
+    }
+    
     public required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
@@ -178,7 +184,6 @@ final class ScanningViewController: UIViewController {
         if !self.confirmationVisible && self.pulleyViewController?.drawerPosition != .open {
             self.barcodeDetector.resumeScanning()
         }
-        NotificationCenter.default.addObserver(self, selector: #selector(textFieldDidBeginEditing(_:)), name: .textFieldDidBeginEditing, object: nil)
     }
     
     @objc
@@ -199,8 +204,6 @@ final class ScanningViewController: UIViewController {
 
     override public func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
-
-        NotificationCenter.default.removeObserver(self)
         
         self.barcodeDetector.pauseScanning()
         self.barcodeDetector.scannerWillDisappear()

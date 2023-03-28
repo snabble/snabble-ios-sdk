@@ -29,7 +29,7 @@ extension ShoppingCartViewModel {
     func view(for item: CartTableEntry) -> some View {
         if case .cartItem(let item, let lineItems) = item {
             let discounts: [ShoppingCartItemDiscount] = discountItems(item: item, for: lineItems)
-            let itemModel = ProductItemModel(item: item, for: lineItems, discounts:discounts, showImages: showImages)
+            let itemModel = ProductItemModel(item: item, for: lineItems, discounts: discounts, showImages: showImages)
             CartItemView(itemModel: itemModel)
         } else if case .coupon(let coupon, let lineItem) = item {
             let itemModel = CouponCartItemModel(cartCoupon: coupon, for: lineItem, showImages: showImages)
