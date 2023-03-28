@@ -48,9 +48,9 @@ extension CheckoutStepStatus: CheckoutStepStatusViewModel {
         case .loading:
             return .clear
         case .success:
-            return .systemGreen
+            return .systemGreen()
         case .failure:
-            return .systemRed
+            return .systemRed()
         case .aborted:
             return .systemGray5
         }

@@ -102,7 +102,8 @@ struct CheckoutView: View {
             
             LazyVStack(alignment: .leading, spacing: 0) {
                 ForEach(model.checkoutSteps, id: \.self) { step in
-                    CheckoutStepRow(step: step).environmentObject(model)
+                    CheckoutStepRow(step: step)
+                        .environmentObject(model)
                         .padding(10)
                     
                     if !model.isLast(step: step) {
@@ -112,9 +113,9 @@ struct CheckoutView: View {
                 }
             }
             .background(Color.secondarySystemGroupedBackground)
-            .clipShape(RoundedRectangle(cornerRadius: 12))
+            .clipShape(RoundedRectangle(cornerRadius: 8))
             .padding([.leading, .trailing], 20)
-            .shadow(color: Color("Shadow"), radius: 6, x: 3, y: 3)
+            .shadow(color: Color("Shadow"), radius: 8, x: 0, y: 4)
         }
     }
     
@@ -123,6 +124,7 @@ struct CheckoutView: View {
             ZStack(alignment: .top) {
                 if model.isComplete {
                     customView
+                        .edgesIgnoringSafeArea(.top)
                 }
                 ScrollView(.vertical, showsIndicators: false) {
                     topContent
@@ -130,7 +132,7 @@ struct CheckoutView: View {
                     if model.isComplete {
                         CheckoutRatingView(model: model.ratingModel)
                             .padding(20)
-                            .shadow(color: Color("Shadow"), radius: 6, x: 3, y: 3)
+                            .shadow(color: Color("Shadow"), radius: 8, x: 0, y: 4)
                     }
                 }
             }
@@ -147,7 +149,6 @@ struct CheckoutView: View {
                 }
             }
         }
-        .edgesIgnoringSafeArea(.top)
     }
 }
 

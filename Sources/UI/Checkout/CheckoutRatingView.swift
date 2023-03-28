@@ -122,7 +122,7 @@ extension RatingModel {
         return selectedRating?.rating.messageEnabled ?? false
     }
     var minHeight: CGFloat {
-        return hasFeedbackSend ? 60 : (showTextEditor ? 225 : 100)
+        return hasFeedbackSend ? 100 : (showTextEditor ? 256 : 128)
     }
 }
 
@@ -139,7 +139,7 @@ struct RatingButton: View {
             ratingItem.image
                 .resizable()
                 .scaledToFit()
-                .frame(maxWidth: 50, maxHeight: 50)
+                .frame(maxWidth: 52, maxHeight: 52)
         }
         .buttonStyle(AnimatedButtonStyle(selected: ratingItem.isActive))
     }
@@ -155,7 +155,7 @@ struct CheckoutRatingView: View {
     @ViewBuilder
     var textEditor: some View {
         if model.showTextEditor {
-            VStack {
+            VStack(spacing: 8) {
                 ZStack(alignment: .leading) {
                     if message.isEmpty {
                         UIKitTextView(text: .constant(model.ratingPrompt), font: .footnote)
@@ -169,6 +169,7 @@ struct CheckoutRatingView: View {
                 sendButton
                     .buttonStyle(AccentButtonStyle())
                     .disabled(model.selectionIndex == nil)
+                
                 customView
             }
         }
@@ -181,7 +182,6 @@ struct CheckoutRatingView: View {
                 RatingButton(model: model, ratingItem: item)
             }
         }
-        .padding([.top, .bottom], 8)
     }
     @ViewBuilder
     var sendButton: some View {
@@ -208,9 +208,10 @@ struct CheckoutRatingView: View {
             VStack(spacing: 8) {
                 Text(keyed: Asset.localizedString(forKey: "Snabble.PaymentStatus.Ratings.title"))
                     .font(.headline)
+                    .frame(minHeight: 28)
                 ratingSelection
                 textEditor
-           }
+            }
         }
     }
     var body: some View {
@@ -229,9 +230,9 @@ struct CheckoutRatingView: View {
                 height = 0
             }
         }
-        .frame(maxWidth: .infinity, minHeight: model.minHeight + height, idealHeight: model.minHeight + height, maxHeight: model.minHeight + height)
         .padding(20)
+        .frame(maxWidth: .infinity, minHeight: model.minHeight + height, idealHeight: model.minHeight + height, maxHeight: model.minHeight + height)
         .background(Color.secondarySystemGroupedBackground)
-        .clipShape(RoundedRectangle(cornerRadius: 12))
+        .clipShape(RoundedRectangle(cornerRadius: 8))
     }
 }

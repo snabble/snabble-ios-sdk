@@ -112,7 +112,7 @@ public final class CouponViewController: UIViewController {
         button.addTarget(self, action: #selector(activateCoupon), for: .touchUpInside)
         self.button = button
 
-        let greenColor = UIColor.systemGreen
+        let greenColor = UIColor.systemGreen()
         let image = UIImage(systemName: "checkmark.circle")
         let checkMarkImageView = UIImageView(image: image)
         checkMarkImageView.tintColor = greenColor
