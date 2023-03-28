@@ -149,7 +149,7 @@ public enum ColorStyle: String {
                 return .systemCyan
             }
         case .systemGreen:
-            return .systemGreen
+            return .systemGreen()
         case .systemIndigo:
             return .systemIndigo
         case .systemMint:
@@ -163,7 +163,7 @@ public enum ColorStyle: String {
         case .systemPurple:
             return .systemPurple
         case .systemRed:
-            return .systemRed
+            return .systemRed()
         case .systemTeal:
             return .systemTeal
         case .systemYellow:
