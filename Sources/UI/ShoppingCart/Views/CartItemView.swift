@@ -109,15 +109,15 @@ struct CartItemView: View {
         }
 
         ForEach(itemModel.discounts) { discount in
-            if let discountPriceString = itemModel.formatter.format(discount.discount) {
-                HStack(alignment: .top) {
-                    Text(discountPriceString)
-                    Spacer()
-                    Text(discount.name)
-                    Asset.image(named: "discount-badge")
+            HStack(alignment: .top) {
+                if discount.discount != 0 {
+                    Text(itemModel.formatter.format(discount.discount))
                 }
-                .cartInfo()
+                Spacer()
+                Text(discount.name)
+                Asset.image(named: "discount-badge")
             }
+            .cartInfo()
         }
     }
     

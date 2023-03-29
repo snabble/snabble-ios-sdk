@@ -4,9 +4,9 @@ name: Base32, nameSpecified: Base32, owner: mattrubin, version: 1.2.0, source: h
 
 name: DeviceKit, nameSpecified: DeviceKit, owner: devicekit, version: 5.0.0, source: https://github.com/devicekit/DeviceKit
 
-name: GRDB.swift, nameSpecified: GRDB.swift, owner: groue, version: 6.9.2, source: https://github.com/groue/GRDB.swift
+name: GRDB.swift, nameSpecified: GRDB.swift, owner: groue, version: 6.10.0, source: https://github.com/groue/GRDB.swift
 
-name: ios-sdk, nameSpecified: Datatrans, owner: datatrans, version: 2.6.0, source: https://github.com/datatrans/ios-sdk
+name: ios-sdk, nameSpecified: Datatrans, owner: datatrans, version: 2.7.1, source: https://github.com/datatrans/ios-sdk
 
 name: KeychainAccess, nameSpecified: KeychainAccess, owner: kishikawakatsumi, version: 4.2.2, source: https://github.com/kishikawakatsumi/KeychainAccess
 
