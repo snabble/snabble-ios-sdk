@@ -44,12 +44,6 @@ extension AppDelegate: AssetProviding {
     }
 
     func url(forResource name: String?, withExtension ext: String?, domain: Any?) -> URL? {
-        let url = URL(string: "\(name ?? "")\(ext ?? "")")
-        
-        if let scheme = url?.scheme, scheme == "snabble", let resource = url?.absoluteString {
-            let start = resource.index(resource.startIndex, offsetBy: scheme.count + "://".count)
-            return Bundle.main.url(forResource: String(resource[start...]), withExtension: ext)
-        }
         return Bundle.main.url(forResource: name, withExtension: ext)
     }
 
