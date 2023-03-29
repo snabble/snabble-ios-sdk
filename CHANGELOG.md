@@ -8,13 +8,22 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+### Removed
+
+### Changed
+
+### Updated
+* realm/SwiftLint 0.51.0 (was 0.50.3)
+
+## [0.32.0] - 2023-03-28
+
 ### Fixed
 * Finetuning design checkout page #APPS-753
 
-### Removed
-
 ### Updated
 * Refactured ShoppingCart #APPS-730
+* groue/GRDB.swift 6.10.0 (was 6.9.2)
+* datatrans/ios-sdk 2.7.1 (was 2.6.0)
 
 ## [0.31.0] - 2023-03-15
 
