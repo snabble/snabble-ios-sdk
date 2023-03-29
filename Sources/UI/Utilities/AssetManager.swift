@@ -72,7 +72,7 @@ struct Manifest: Codable {
             case x3 = "3x"
         }
     }
-    // swiftlint:enable identifier_name nesting
+    // swiftlint:enable identifier_name
 }
 
 extension Manifest.File {
