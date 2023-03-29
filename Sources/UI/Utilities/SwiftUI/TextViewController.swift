@@ -63,7 +63,7 @@ struct AttributedText: UIViewRepresentable {
     typealias UIViewType = UITextView
 
     let htmlString: String
-    @Binding var openURL: URL
+    @Binding var openURL: URL?
 
     @State private var attributedText: NSAttributedString?
 

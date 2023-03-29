@@ -10,6 +10,8 @@ import Combine
 import SnabbleCore
 
 #if canImport(UIKit)
+import UIKit
+
 extension View {
     func hideKeyboard() {
         UIApplication.shared.sendAction(#selector(UIResponder.resignFirstResponder), to: nil, from: nil, for: nil)
@@ -296,7 +298,7 @@ public struct SepaDataDisplayView: View {
                 content: {
                     VStack(alignment: .leading) {
                         HStack {
-                            if let imageName = model.imageName, let uiImage = Asset.image(named: "SnabbleSDK/payment/" + imageName) {
+                            if let imageName = model.imageName, let uiImage: UIImage = Asset.image(named: "SnabbleSDK/payment/" + imageName) {
                                 Image(uiImage: uiImage)
                             }
                             Text(model.iban)

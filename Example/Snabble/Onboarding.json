@@ -19,7 +19,7 @@
             "#text": "Onboarding.message3",
             "#text": "Please accept the terms of use and take note of the privacy policy.",
             "text": "Please accept the [terms](snabble://terms.html) of use and take note of the [privacy](snabble://privacy.html) policy.",
-            "#text": "Es gelten die <a href=\"teo://terms\">Nutzungsbedingungen</a>. Bitte beachte unsere Hinweise zum <a href=\"teo://privacy\">Datenschutz</a>.",
+            "#text": "Es gelten die <a href=\"snabble://terms.html\">Nutzungsbedingungen</a>. Bitte beachte unsere Hinweise zum <a href=\"snabble://privacy.html\">Datenschutz</a>.",
             "link": "imprint.html",
             "customButtonTitle": "Onboarding.accept"
         }
