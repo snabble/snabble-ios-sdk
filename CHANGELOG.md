@@ -8,6 +8,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 * Fixed Xcode 14.3 warnings and errors #APPS-765
+## [unreleased]
+
+### Added
+
+### Removed
+
+### Changed
+
+### Updated
+* realm/SwiftLint 0.51.0 (was 0.50.3)
 
 ## [0.32.0] - 2023-03-28
 
