@@ -145,7 +145,7 @@ struct CartItemView: View {
                         Text(itemModel.title)
                         price
                     }
-                    Spacer(minLength: 0)
+                    Spacer(minLength: 4)
                     rightView
                         .padding(.trailing, 8)
                 }

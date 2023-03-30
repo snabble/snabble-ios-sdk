@@ -13,8 +13,9 @@ struct BorderedButtonStyle: ButtonStyle {
     func makeBody(configuration: Configuration) -> some View {
         configuration.label
             .padding(4)
+            .background(Color.secondarySystemBackground)
             .overlay(
-                RoundedRectangle(cornerRadius: 4)
+                RoundedRectangle(cornerRadius: 6)
                     .stroke(Color.gray, lineWidth: 0.5)
                 )
     }
