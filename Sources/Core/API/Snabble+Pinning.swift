@@ -57,7 +57,7 @@ extension Snabble {
                     kTSKIncludeSubdomains: true,
                     kTSKDisableDefaultReportUri: true,
                     kTSKPublicKeyHashes: Snabble.CAHashes
-                ]
+                ] as [String: Any]
             ]
         ]
 

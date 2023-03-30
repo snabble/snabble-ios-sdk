@@ -10,7 +10,7 @@
 import SwiftUI
 
 struct URLModifier: ViewModifier {
-    @Binding var url: URL
+    @Binding var url: URL?
 
     func body(content: Content) -> some View {
         if #available(iOS 15, *) {
@@ -28,8 +28,14 @@ struct URLModifier: ViewModifier {
     }
 }
 extension View {
-    func handle(with url: Binding<URL>) -> some View {
+    func handle(with url: Binding<URL?>) -> some View {
         modifier(URLModifier(url: url))
+    }
+}
+
+extension URL: Swift.Identifiable {
+    public var id: String {
+        return self.absoluteString
     }
 }
 
@@ -37,8 +43,7 @@ struct OnboardingItemView: View {
     var item: OnboardingItem
 
     @State var isPresenting: Bool = false
-    @State var showURL: Bool = false
-    @State var urlResource: URL = URL(fileURLWithPath: "/")
+    @State var urlResource: URL?
 
     @State private var attributedText: NSAttributedString?
 
@@ -95,11 +100,8 @@ struct OnboardingItemView: View {
         attributedTextView
             .multilineTextAlignment(.center)
             .handle(with: $urlResource)
-            .onChange(of: urlResource) { _ in
-                showURL.toggle()
-            }
-            .sheet(isPresented: $showURL) {
-                WebView(url: urlResource)
+            .sheet(item: $urlResource) { url in
+                WebView(url: url)
             }
     }
 

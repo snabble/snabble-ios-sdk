@@ -44,7 +44,7 @@ extension AppDelegate: AssetProviding {
     }
 
     func url(forResource name: String?, withExtension ext: String?, domain: Any?) -> URL? {
-        Bundle.main.url(forResource: name, withExtension: ext)
+        return Bundle.main.url(forResource: name, withExtension: ext)
     }
 
     func appearance(for domain: Any?) -> CustomAppearance? {
