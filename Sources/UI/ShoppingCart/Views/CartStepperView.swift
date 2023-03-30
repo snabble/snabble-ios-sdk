@@ -23,18 +23,19 @@ struct BorderedButtonStyle: ButtonStyle {
 struct CartStepperView: View {
     @ObservedObject var itemModel: ProductItemModel
     @EnvironmentObject var cartModel: ShoppingCartViewModel
+    @ScaledMetric var scale: CGFloat = 1
 
     @ViewBuilder
     var minusImage: some View {
         Image(systemName: itemModel.quantity == 1 ? "trash" : "minus")
             .foregroundColor(.accentColor)
-            .frame(width: 22, height: 22)
+            .frame(width: 22 * scale, height: 22 * scale)
     }
     @ViewBuilder
     var plusImage: some View {
         Image(systemName: "plus")
             .foregroundColor(.accentColor)
-            .frame(width: 22, height: 22)
+            .frame(width: 22 * scale, height: 22 * scale)
     }
 
     var body: some View {
@@ -52,7 +53,7 @@ struct CartStepperView: View {
             Text("\(itemModel.quantity)")
                 .font(.footnote)
                 .fontWeight(.bold)
-                .frame(minWidth: 20)
+                .frame(minWidth: 20 * scale)
 
             Button( action: {
                 withAnimation {

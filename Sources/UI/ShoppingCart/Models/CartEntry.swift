@@ -42,19 +42,4 @@ enum CartEntry: Swift.Identifiable {
 
     // sums up the total discounts
     case discount(Int)
-    
-    var canEdit: Bool {
-        switch self {
-            // user stuff is editable
-        case .cartItem: return true
-        case .coupon: return true
-            // stuff we get from the backend isn't
-        case .lineItem: return false
-        case .discount: return false
-        case .giveaway: return false
-        }
-    }
-    static func rowFor(item: CartItem, in array: [CartEntry]) -> Int? {
-        return array.firstIndex(where: { $0.id == item.uuid })
-    }
 }

@@ -24,6 +24,14 @@ extension Text {
     }
 }
 
+extension ShoppingCartItemDiscount {
+
+    @ViewBuilder
+    public var image: SwiftUI.Image? {
+        Asset.image(named: "discount-badge")
+    }
+}
+
 struct BadgeTextView: View {
     let badgeText: String
     let badgeColor: SwiftUI.Color
@@ -45,6 +53,7 @@ struct BadgeTextView: View {
 
 struct CartItemView: View {
     @ObservedObject var itemModel: ProductItemModel
+    @ScaledMetric var scale: CGFloat = 1
     
     init(itemModel: ProductItemModel) {
         self.itemModel = itemModel
@@ -115,7 +124,13 @@ struct CartItemView: View {
                 }
                 Spacer()
                 Text(discount.name)
-                Asset.image(named: "discount-badge")
+                
+                if let image = discount.image {
+                    image
+                        .resizable()
+                        .aspectRatio(contentMode: .fit)
+                        .frame(width: 16 * scale, height: 16 * scale)
+                }
             }
             .cartInfo()
         }

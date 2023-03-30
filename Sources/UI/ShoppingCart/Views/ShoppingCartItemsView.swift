@@ -33,6 +33,7 @@ extension ShoppingCartViewModel {
             CartItemView(itemModel: itemModel)
         } else if case .discount(let int) = item {
             DiscountItemView(amount: int, description: totalDiscountDescription, showImages: showImages)
+                .deleteDisabled(true)
         }
     }
 }

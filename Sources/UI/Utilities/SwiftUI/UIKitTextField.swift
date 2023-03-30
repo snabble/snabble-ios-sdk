@@ -65,7 +65,7 @@ struct UIKitTextField<Content: View>: UIViewRepresentable {
     var content: Content?
     var font: UIFont?
     var onSubmit: (() -> Void)?
-    
+
     init(_ label: String? = nil,
          text: Binding<String>,
          formatter: Formatter? = nil,
@@ -149,6 +149,7 @@ struct UIKitTextField<Content: View>: UIViewRepresentable {
     func updateUIView(_ uiView: UITextField, context: Context) {
         uiView.text = text
         uiView.isSecureTextEntry = isSecureTextEntry?.wrappedValue ?? false
+        uiView.font = self.font
     }
 
     func makeCoordinator() -> Coordinator {

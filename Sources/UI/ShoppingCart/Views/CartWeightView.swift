@@ -26,7 +26,8 @@ struct CartWeightView: View {
     @ObservedObject var itemModel: ProductItemModel
     let editable: Bool
     @EnvironmentObject var cartModel: ShoppingCartViewModel
-    
+    @ScaledMetric var scale: CGFloat = 1
+
     @State private var weightText: String = ""
     
     init(itemModel: ProductItemModel, editable: Bool = false) {
@@ -38,7 +39,7 @@ struct CartWeightView: View {
     var minusImage: some View {
         Image(systemName: "trash")
             .foregroundColor(.accentColor)
-            .frame(width: 22, height: 22)
+            .frame(width: 22 * scale, height: 22 * scale)
     }
     
     @ViewBuilder
@@ -49,26 +50,26 @@ struct CartWeightView: View {
                            keyboardType: .numberPad,
                            textAlignment: .right,
                            tag: ShoppingCart.textFieldMagic,
-                           font: UIFont.systemFont(ofSize: 13, weight: .semibold),
+                           font: UIFont.systemFont(ofSize: 13 * scale, weight: .semibold),
                            onSubmit: {
                 cartModel.updateQuantity($weightText, for: itemModel)
             },
                            content: {
                 Text("")
             })
-            .frame(maxWidth: 80, maxHeight: 26)
+            .frame(maxWidth: 80 * scale, maxHeight: 26 * scale)
         } else if let value = itemModel.quantityText {
             Text(value)
-                .font(Font.system(size: 13, weight: .semibold))
+                .font(Font.system(size: 13 * scale, weight: .semibold))
         }
     }
 
     var body: some View {
-        HStack(spacing: 8) {
+        HStack(spacing: 8 * scale) {
             valueView
             
             Text(itemModel.unitString ?? "")
-                .font(Font.system(size: 13, weight: .semibold))
+                .font(Font.system(size: 13 * scale, weight: .semibold))
                 
             Button( action: {
                 withAnimation {
