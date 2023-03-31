@@ -6,17 +6,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## unreleased
 
-### Fixed
-* Fixed Xcode 14.3 warnings and errors #APPS-765
-
 ### Added
 
 ### Removed
 
 ### Changed
+* Refactured ShoppingCart #APPS-730
+
+### Fixed
+* Fixed Xcode 14.3 warnings and errors #APPS-765
 
 ### Updated
-* Refactured ShoppingCart #APPS-730
 * realm/SwiftLint 0.51.0 (was 0.50.3)
 
 ## [0.32.0] - 2023-03-28
