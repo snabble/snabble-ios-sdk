@@ -44,9 +44,7 @@ struct CartInfoModifier: ViewModifier {
     func body(content: Content) -> some View {
         content
             .font(.footnote)
-            // .foregroundColor(.secondary)
             .padding(.leading, leading)
-//            .padding(.top, 2)
             .padding(.trailing, 8)
             .padding(.bottom, 4)
     }

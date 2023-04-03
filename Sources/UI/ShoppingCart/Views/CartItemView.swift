@@ -139,7 +139,7 @@ struct CartItemView: View {
     var body: some View {
         HStack {
             leftView
-            VStack(alignment: .leading, spacing: 12) {
+            VStack(alignment: .leading, spacing: 2) {
                 HStack {
                     VStack(alignment: .leading, spacing: 2) {
                         Text(itemModel.title)
@@ -149,6 +149,7 @@ struct CartItemView: View {
                     rightView
                         .padding(.trailing, 8)
                 }
+                .padding([.top, .bottom], 6)
                 additionalInfo
             }
         }
