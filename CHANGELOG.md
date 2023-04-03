@@ -4,20 +4,24 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## unreleased
-
-### Fixed
-* Fixed Xcode 14.3 warnings and errors #APPS-765
 ## [unreleased]
 
 ### Added
 
 ### Removed
 
-### Changed
+### Fixed
+
+### Updated
+
+## [0.32.1] - 2023-04-03
+
+### Fixed
+* Xcode 14.3 warnings and errors #APPS-765
 
 ### Updated
 * realm/SwiftLint 0.51.0 (was 0.50.3)
+* groue/GRDB.swift 6.10.1 (was 6.10.0)
 
 ## [0.32.0] - 2023-03-28
 
