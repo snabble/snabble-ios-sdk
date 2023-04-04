@@ -35,6 +35,43 @@ struct PaddingCircle: Shape {
     }
 }
 
+struct CartInfoModifier: ViewModifier {
+    var leading: CGFloat
+    
+    init(leading: CGFloat = 0.0) {
+        self.leading = leading
+    }
+    func body(content: Content) -> some View {
+        content
+            .font(.footnote)
+            .padding(.leading, leading)
+            .padding(.trailing, 8)
+            .padding(.bottom, 4)
+    }
+}
+
+extension View {
+    func cartInfo() -> some View {
+        modifier(CartInfoModifier())
+    }
+    func cartInfo(leading: CGFloat) -> some View {
+        modifier(CartInfoModifier(leading: leading))
+    }
+}
+
+extension Image {
+    func cartImageModifier(padding: CGFloat = 0) -> some View {
+        self
+            .resizable()
+            .scaledToFit()
+            .padding(padding)
+            .clipShape(RoundedRectangle(cornerRadius: 4))
+            .frame(width: 48, height: 48)
+            .padding(0)
+            .padding(.trailing, 4)
+   }
+}
+
 struct MultiColorModifier: ViewModifier {
     var color: Color
     

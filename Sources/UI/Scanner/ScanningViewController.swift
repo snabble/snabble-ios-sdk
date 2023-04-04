@@ -83,8 +83,14 @@ final class ScanningViewController: UIViewController {
         self.navigationItem.title = Asset.localizedString(forKey: "Snabble.Scanner.scanningTitle")
 
         SnabbleCI.registerForAppearanceChange(self)
+        
+        NotificationCenter.default.addObserver(self, selector: #selector(textFieldDidBeginEditing(_:)), name: .textFieldDidBeginEditing, object: nil)
     }
 
+    deinit {
+        NotificationCenter.default.removeObserver(self)
+    }
+    
     public required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
@@ -175,11 +181,21 @@ final class ScanningViewController: UIViewController {
         if let messageView = messageView {
             self.view.bringSubviewToFront(messageView)
         }
-        if !self.confirmationVisible {
+        if !self.confirmationVisible && self.pulleyViewController?.drawerPosition != .open {
             self.barcodeDetector.resumeScanning()
         }
     }
-
+    
+    @objc
+    func textFieldDidBeginEditing(_ notification: Notification) {
+        guard let textField = notification.object as? UITextField else {
+            return
+        }
+        if textField.tag == ShoppingCart.textFieldMagic {
+            self.pulleyViewController?.setDrawerPosition(position: .open, animated: true)
+        }
+    }
+    
     override public func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
 
@@ -188,7 +204,7 @@ final class ScanningViewController: UIViewController {
 
     override public func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
-
+        
         self.barcodeDetector.pauseScanning()
         self.barcodeDetector.scannerWillDisappear()
 
