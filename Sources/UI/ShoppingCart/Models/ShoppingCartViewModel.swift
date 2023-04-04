@@ -311,10 +311,10 @@ extension ShoppingCartViewModel {
         
         for discount in discounts {
             if cartDiscountID == nil, let total = discount.totalPrice {
-                let discountCartItem = ShoppingCartItemDiscount(discount: total, name: discount.name, type: discount.discountRuleID)
+                let discountCartItem = ShoppingCartItemDiscount(discount: total, name: discount.name, type: .discountedProduct)
                 discountItems.append(discountCartItem)
             } else if discount.discountID != cartDiscountID, let total = discount.totalPrice {
-                let discountCartItem = ShoppingCartItemDiscount(discount: total, name: discount.name, type: discount.discountRuleID)
+                let discountCartItem = ShoppingCartItemDiscount(discount: total, name: discount.name, type: .discountedProduct)
                 discountItems.append(discountCartItem)
             }
         }
