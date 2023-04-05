@@ -77,7 +77,7 @@ class AppScannerViewController: UIViewController {
     }
 
     @objc private func shoppingCartButtonTapped(_ sender: Any) {
-        let shoppingCartVC = ShoppingCartViewController(shoppingCart)
+        let shoppingCartVC = ShoppingCartViewController(shoppingCart: shoppingCart)
         shoppingCartVC.shoppingCartDelegate = self
         self.navigationController?.pushViewController(shoppingCartVC, animated: true)
     }

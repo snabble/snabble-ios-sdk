@@ -238,8 +238,9 @@ public final class TeleCashCreditCardEditViewController: UIViewController {
             .replacingOccurrences(of: "{{header}}", with: threeDSecureHint(for: projectId, vaultItem))
             .replacingOccurrences(of: "{{hostedDataId}}", with: UUID().uuidString)
             .replacingOccurrences(of: "{{orderId}}", with: vaultItem.orderId)
+            .replacingOccurrences(of: "{{parentUri}}", with: "https://snabble.io")
 
-        self.webView?.loadHTMLString(page, baseURL: nil)
+        self.webView?.loadHTMLString(page, baseURL: URL(string: "https://snabble.io"))
     }
 
     private func threeDSecureHint(for projectId: Identifier<Project>?, _ vaultItem: TelecashVaultItem) -> String {
@@ -418,6 +419,7 @@ extension TeleCashCreditCardEditViewController {
                 <input type="hidden" name="checkoutoption" value="simpleform"/>
                 <input type="hidden" name="assignToken" value="false"/>
                 <input type="hidden" name="hostURI" value="*"/>
+                <input type="hidden" name="parentUri" value="{{parentUri}}"/>
                 <input type="hidden" name="language" value="{{locale}}"/>
                 <input type="hidden" name="authenticateTransaction" value="true"/>
                 <input type="hidden" name="threeDSRequestorChallengeIndicator" value="04"/>

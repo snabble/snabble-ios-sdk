@@ -13,8 +13,8 @@ final class ScannerDrawerViewController: UIViewController {
     private var shoppingListTableVC: ScannerShoppingListViewController
 
     private let shoppingCart: ShoppingCart
-    private var shoppingCartVC: ShoppingCartTableViewController
-
+    private var shoppingCartVC: ShoppingCartViewController
+    
     private let projectId: Identifier<Project>
 
     private var customAppearance: CustomAppearance?
@@ -63,7 +63,7 @@ final class ScannerDrawerViewController: UIViewController {
         self.shoppingCart = shoppingCart
 
         self.shoppingListTableVC = ScannerShoppingListViewController()
-        self.shoppingCartVC = ShoppingCartTableViewController(shoppingCart)
+        self.shoppingCartVC = ShoppingCartViewController(shoppingCart: shoppingCart, compactMode: true)
 
         super.init(nibName: nil, bundle: nil)
 
