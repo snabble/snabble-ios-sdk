@@ -6,16 +6,21 @@
 //
 
 import Foundation
-import UIKit
 import SnabbleCore
+import Combine
+import SwiftUI
 
-class CouponViewModel {
+class CouponViewModel : ObservableObject {
+
     let coupon: Coupon
 
     var title: String { coupon.name }
     var subtitle: String? { coupon.description }
     var text: String? { coupon.promotionDescription }
     var disclaimer: String? { coupon.disclaimer }
+    
+    @Published
+    var image: UIImage?
 
     var code: String? { coupon.code }
 
@@ -67,13 +72,15 @@ class CouponViewModel {
         }
 
         let session = URLSession.shared
-        let task = session.dataTask(with: imageUrl) { data, _, _ in
+        let task = session.dataTask(with: imageUrl) { [weak self] data, _, _ in
             DispatchQueue.main.async {
                 guard let data = data else {
                     return completion(nil)
                 }
 
                 let image = UIImage(data: data)
+                self?.image = image
+                
                 completion(image)
             }
         }
