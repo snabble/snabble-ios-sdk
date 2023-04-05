@@ -8,6 +8,22 @@ import UIKit
 import WebKit
 import SnabbleCore
 
+// sample data for testing:
+//
+// Visa: 4716 9719 4035 3559, Expiry: any future date, CVV: any 3-digit number
+// Mastercard: 5404 1277 2073 9582, Expiry: any future date, CVV: any 3-digit number
+// Amex: 3751 4472 6036 141, Expiry: any future date, CVV: any 4-digit number
+//
+// 3DSecure password for all: 12345
+//
+// Backend only supports 3-D Secure verification.
+// See: https://docs.payone.com/pages/releaseview.action?pageId=6390627
+//
+// These credit card numbers (PAN) will simulate successful payment transactions
+// for cards taking part in 3-D Secure. The processing is again identical for all
+// credit card types. A test with a single type is sufficient
+//
+
 public final class PayoneCreditCardEditViewController: UIViewController {
     private let webViewContainer = UIView()
     private weak var activityIndicator: UIActivityIndicatorView?
