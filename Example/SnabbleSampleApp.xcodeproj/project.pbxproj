@@ -19,8 +19,6 @@
 		76AD21B328D4331A003D865A /* terms.html in Resources */ = {isa = PBXBuildFile; fileRef = 76AD21B228D4331A003D865A /* terms.html */; };
 		76C7B74A28BFA10700D94F4F /* DashboardViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 76C7B74928BFA10700D94F4F /* DashboardViewController.swift */; };
 		76C7B79028C1ACD900D94F4F /* Profile.json in Resources */ = {isa = PBXBuildFile; fileRef = 76C7B78F28C1ACD900D94F4F /* Profile.json */; };
-		76CE06912902DC0000E643A6 /* SnabbleCore in Frameworks */ = {isa = PBXBuildFile; productRef = 76CE06902902DC0000E643A6 /* SnabbleCore */; };
-		76CE06932902DC0000E643A6 /* SnabbleUI in Frameworks */ = {isa = PBXBuildFile; productRef = 76CE06922902DC0000E643A6 /* SnabbleUI */; };
 		E127DB6F28C74A64005A7416 /* SnabbleConfig.swift in Sources */ = {isa = PBXBuildFile; fileRef = E127DB6E28C74A64005A7416 /* SnabbleConfig.swift */; };
 		E131CF1A28A3D45C00A844E1 /* SnabbleSampleAppTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E131CF1928A3D45C00A844E1 /* SnabbleSampleAppTests.swift */; };
 		E161B0EE28B76DD9005061C4 /* Onboarding.json in Resources */ = {isa = PBXBuildFile; fileRef = E161B0EB28B76357005061C4 /* Onboarding.json */; };
@@ -78,8 +76,6 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				76CE06932902DC0000E643A6 /* SnabbleUI in Frameworks */,
-				76CE06912902DC0000E643A6 /* SnabbleCore in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -226,8 +222,6 @@
 			);
 			name = SnabbleSampleApp;
 			packageProductDependencies = (
-				76CE06902902DC0000E643A6 /* SnabbleCore */,
-				76CE06922902DC0000E643A6 /* SnabbleUI */,
 			);
 			productName = Snabble;
 			productReference = 607FACD01AFB9204008FA782 /* SnabbleSampleApp.app */;
@@ -287,7 +281,6 @@
 			);
 			mainGroup = 607FACC71AFB9204008FA782;
 			packageReferences = (
-				76CE068F2902DC0000E643A6 /* XCRemoteSwiftPackageReference "snabble-ios-sdk" */,
 				E16C0F0129DF018400C8515F /* XCRemoteSwiftPackageReference "SwiftLint" */,
 			);
 			productRefGroup = 607FACD11AFB9204008FA782 /* Products */;
@@ -660,14 +653,6 @@
 /* End XCConfigurationList section */
 
 /* Begin XCRemoteSwiftPackageReference section */
-		76CE068F2902DC0000E643A6 /* XCRemoteSwiftPackageReference "snabble-ios-sdk" */ = {
-			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/snabble/snabble-ios-sdk.git";
-			requirement = {
-				branch = "db-refactor";
-				kind = branch;
-			};
-		};
 		E16C0F0129DF018400C8515F /* XCRemoteSwiftPackageReference "SwiftLint" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/realm/SwiftLint.git";
@@ -679,16 +664,6 @@
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
-		76CE06902902DC0000E643A6 /* SnabbleCore */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = 76CE068F2902DC0000E643A6 /* XCRemoteSwiftPackageReference "snabble-ios-sdk" */;
-			productName = SnabbleCore;
-		};
-		76CE06922902DC0000E643A6 /* SnabbleUI */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = 76CE068F2902DC0000E643A6 /* XCRemoteSwiftPackageReference "snabble-ios-sdk" */;
-			productName = SnabbleUI;
-		};
 		E16C0F0229DF018D00C8515F /* SwiftLintPlugin */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = "plugin:SwiftLintPlugin";
