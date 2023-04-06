@@ -217,12 +217,12 @@
 				607FACCC1AFB9204008FA782 /* Sources */,
 				607FACCD1AFB9204008FA782 /* Frameworks */,
 				607FACCE1AFB9204008FA782 /* Resources */,
-				E18D963B27311A3200F21217 /* SwiftLint */,
 				E17C193028D9B01400D5BAA0 /* LicensePlist */,
 			);
 			buildRules = (
 			);
 			dependencies = (
+				E16C0F0329DF018D00C8515F /* PBXTargetDependency */,
 			);
 			name = SnabbleSampleApp;
 			packageProductDependencies = (
@@ -288,6 +288,7 @@
 			mainGroup = 607FACC71AFB9204008FA782;
 			packageReferences = (
 				76CE068F2902DC0000E643A6 /* XCRemoteSwiftPackageReference "snabble-ios-sdk" */,
+				E16C0F0129DF018400C8515F /* XCRemoteSwiftPackageReference "SwiftLint" */,
 			);
 			productRefGroup = 607FACD11AFB9204008FA782 /* Products */;
 			projectDirPath = "";
@@ -346,25 +347,6 @@
 			shellPath = /bin/sh;
 			shellScript = "export PATH=\"$PATH:/opt/homebrew/bin\"\nif which mint > /dev/null; then\n  if [ $CONFIGURATION = \"Debug\" ]; then\n    mint run LicensePlist license-plist --output-path Snabble/Acknowledgements.bundle --html-path Snabble/Acknowledgements.html --prefix ios.snabble.LicensePlist\n  fi\nelse\n  echo \"warning: Mint not installed, download from https://github.com/yonaskolb/Mint\"\nfi\n\n";
 		};
-		E18D963B27311A3200F21217 /* SwiftLint */ = {
-			isa = PBXShellScriptBuildPhase;
-			alwaysOutOfDate = 1;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputFileListPaths = (
-			);
-			inputPaths = (
-			);
-			name = SwiftLint;
-			outputFileListPaths = (
-			);
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "export PATH=\"$PATH:/opt/homebrew/bin\"\nif which mint > /dev/null; then\n  cd ..\n  mint run swiftlint lint\nelse\n  echo \"warning: Mint not installed, download from https://github.com/yonaskolb/Mint\"\nfi\n";
-		};
 /* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
@@ -399,6 +381,10 @@
 			isa = PBXTargetDependency;
 			target = 607FACCF1AFB9204008FA782 /* SnabbleSampleApp */;
 			targetProxy = E131CF1B28A3D45C00A844E1 /* PBXContainerItemProxy */;
+		};
+		E16C0F0329DF018D00C8515F /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			productRef = E16C0F0229DF018D00C8515F /* SwiftLintPlugin */;
 		};
 /* End PBXTargetDependency section */
 
@@ -682,6 +668,14 @@
 				kind = branch;
 			};
 		};
+		E16C0F0129DF018400C8515F /* XCRemoteSwiftPackageReference "SwiftLint" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/realm/SwiftLint.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 0.51.0;
+			};
+		};
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
@@ -694,6 +688,10 @@
 			isa = XCSwiftPackageProductDependency;
 			package = 76CE068F2902DC0000E643A6 /* XCRemoteSwiftPackageReference "snabble-ios-sdk" */;
 			productName = SnabbleUI;
+		};
+		E16C0F0229DF018D00C8515F /* SwiftLintPlugin */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = "plugin:SwiftLintPlugin";
 		};
 /* End XCSwiftPackageProductDependency section */
 	};
