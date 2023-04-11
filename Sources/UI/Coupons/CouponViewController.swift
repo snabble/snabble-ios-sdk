@@ -11,7 +11,7 @@ import SwiftUI
 
 extension CouponViewModel {
     var buttonTitle: String {
-        Asset.localizedString(forKey: coupon.isActivated ?  "Snabble.Coupon.deactivate" : "Snabble.Coupon.activate")
+        Asset.localizedString(forKey: coupon.isActivated ? "Snabble.Coupon.deactivate" : "Snabble.Coupon.activate")
     }
     
     @objc
@@ -92,8 +92,6 @@ public struct CouponView: View {
         VStack {
             Button(action: {
                 couponModel.toggleActivation()
-                print("coupon \(couponModel.coupon.isActivated ? "is active." : "is deactived.")")
-                
             }) {
                 Text(couponModel.buttonTitle)
                     .fontWeight(.bold)
@@ -129,8 +127,7 @@ public struct CouponView: View {
             }
         }
         .onAppear {
-            let _ = couponModel.loadImage() { _ in
-                print("image loaded")
+            _ = couponModel.loadImage { _ in
             }
         }
         .navigationTitle(Asset.localizedString(forKey: "Snabble.Coupons.title"))

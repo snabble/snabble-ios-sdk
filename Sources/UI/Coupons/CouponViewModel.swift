@@ -10,7 +10,7 @@ import SnabbleCore
 import Combine
 import SwiftUI
 
-class CouponViewModel : ObservableObject {
+class CouponViewModel: ObservableObject {
 
     let coupon: Coupon
 
