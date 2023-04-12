@@ -39,6 +39,7 @@ let package = Package(
         .package(url: "https://github.com/devicekit/DeviceKit.git", from: "5.0.0"),
         .package(url: "https://github.com/52inc/Pulley.git", from: "2.9.1"),
         .package(url: "https://github.com/chrs1885/WCAG-Colors.git", from: "1.0.0"),
+        .package(url: "https://github.com/realm/SwiftLint", exact: "0.51.0"),
     ],
     targets: [
         .target(
@@ -54,7 +55,8 @@ let package = Package(
             path: "Sources/Core",
             resources: [
                 .process("Resources")
-            ]
+            ],
+            plugins: [.plugin(name: "SwiftLintPlugin", package: "SwiftLint")]
         ),
         .testTarget(
             name: "SnabbleCoreTests",
@@ -78,7 +80,8 @@ let package = Package(
             path: "Sources/UI",
             resources: [
                 .process("Resources")
-            ]
+            ],
+            plugins: [.plugin(name: "SwiftLintPlugin", package: "SwiftLint")]
         ),
         .target(
             name: "SnabbleDatatrans",
