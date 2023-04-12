@@ -62,6 +62,8 @@
 
 "Snabble.Coupon.countdown" = "Coupon läuft in %@ Minuten ab";
 
+"Snabble.Coupon.deactivate" = "Deaktivieren";
+
 "Snabble.Coupon.expired" = "Dieser Coupon ist bereits abgelaufen.";
 
 "Snabble.Coupon.explanation" = "Dein Coupon ist jetzt für dich aktiviert. Bitte scanne das Produkt im Shop und lege es in deinen Warenkorb, um von den Vorteilen des Coupons zu profitieren.";
