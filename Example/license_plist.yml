@@ -1,0 +1,4 @@
+options:
+  xcodeprojPath: "SnabbleSampleApp.xcodeproj"
+  prefix: ios.snabble.LicensePlist
+  htmlPath: Snabble/Acknowledgements.html
