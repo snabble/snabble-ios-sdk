@@ -68,6 +68,8 @@
 
 "Snabble.Coupon.explanation" = "A kuponod most már aktiválva van számodra. Szkenneld be a terméket az üzletben, és tedd a kosaradba, hogy kihasználhasd a kupon előnyeit.";
 
+"Snabble.Coupon.notUsable" = "The conditions of the coupon are not yet met.";
+
 "Snabble.Coupon.validIndefinitely" = "korlátlanul érvényes";
 
 "Snabble.Coupons.expired" = "Már lejárt";
