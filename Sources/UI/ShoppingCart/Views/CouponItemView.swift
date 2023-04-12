@@ -49,4 +49,3 @@ struct CouponItemView: View {
         .listRowBackground(Color.clear)
     }
 }
-
