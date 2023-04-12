@@ -14,6 +14,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 * Refactured ShoppingCart #APPS-730
 
 ### Updated
+* groue/GRDB.swift 6.10.2 (was 6.10.1)
 
 ## [0.32.1] - 2023-04-03
 
