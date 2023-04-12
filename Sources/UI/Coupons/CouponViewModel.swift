@@ -87,4 +87,10 @@ class CouponViewModel: ObservableObject {
         task.resume()
         return task
     }
+
+    func loadImage() {
+        _ = loadImage() { [weak self] image in
+            self?.image = image
+        }
+    }
 }

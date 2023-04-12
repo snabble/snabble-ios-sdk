@@ -127,8 +127,7 @@ public struct CouponView: View {
             }
         }
         .onAppear {
-            _ = couponModel.loadImage { _ in
-            }
+            couponModel.loadImage()
         }
         .navigationTitle(Asset.localizedString(forKey: "Snabble.Coupons.title"))
     }
