@@ -89,7 +89,7 @@ class CouponViewModel: ObservableObject {
     }
 
     func loadImage() {
-        _ = loadImage() { [weak self] image in
+        _ = loadImage { [weak self] image in
             self?.image = image
         }
     }
