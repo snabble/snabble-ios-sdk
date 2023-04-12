@@ -22,6 +22,8 @@ class CouponViewModel: ObservableObject {
     @Published
     var image: UIImage?
 
+    private weak var imageTask: URLSessionDataTask?
+
     var code: String? { coupon.code }
 
     init(coupon: Coupon) {
@@ -65,32 +67,26 @@ class CouponViewModel: ObservableObject {
         return abs(diff.hour!) <= 72
     }
 
-    func loadImage(completion: @escaping (UIImage?) -> Void) -> URLSessionDataTask? {
+    @discardableResult
+    func loadImage(completion: ((UIImage?) -> Void)? = nil) -> URLSessionDataTask? {
         guard let imageUrl = coupon.imageURL else {
-            completion(nil)
+            completion?(nil)
             return nil
         }
-
-        let session = URLSession.shared
-        let task = session.dataTask(with: imageUrl) { [weak self] data, _, _ in
+        imageTask?.cancel()
+        imageTask = URLSession.shared.dataTask(with: imageUrl) { [weak self] data, _, _ in
             DispatchQueue.main.async {
                 guard let data = data else {
-                    return completion(nil)
+                    return completion?(nil) ?? ()
                 }
 
                 let image = UIImage(data: data)
                 self?.image = image
                 
-                completion(image)
+                completion?(image)
             }
         }
-        task.resume()
-        return task
-    }
-
-    func loadImage() {
-        _ = loadImage { [weak self] image in
-            self?.image = image
-        }
+        imageTask?.resume()
+        return imageTask
     }
 }
