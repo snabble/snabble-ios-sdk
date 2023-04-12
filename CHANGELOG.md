@@ -12,7 +12,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 * Refactured ShoppingCart #APPS-730
-* Refactured CouponViewController #APPS-764
+* Coupons can be deactivated on coupon page #APPS-764
 
 ### Updated
 
