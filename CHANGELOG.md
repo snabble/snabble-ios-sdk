@@ -16,6 +16,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 * Inform user if an activated coupon could not applied to a cart #APPS-792
 
 ### Updated
+* groue/GRDB.swift 6.10.2 (was 6.10.1)
 
 ## [0.32.1] - 2023-04-03
 

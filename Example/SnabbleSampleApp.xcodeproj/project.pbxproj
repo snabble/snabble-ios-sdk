@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 54;
+	objectVersion = 53;
 	objects = {
 
 /* Begin PBXBuildFile section */
@@ -221,11 +221,11 @@
 				607FACCC1AFB9204008FA782 /* Sources */,
 				607FACCD1AFB9204008FA782 /* Frameworks */,
 				607FACCE1AFB9204008FA782 /* Resources */,
-				E17C193028D9B01400D5BAA0 /* LicensePlist */,
 			);
 			buildRules = (
 			);
 			dependencies = (
+				E1BFF2C729E6AB4100E6AE37 /* PBXTargetDependency */,
 				E16C0F0329DF018D00C8515F /* PBXTargetDependency */,
 			);
 			name = SnabbleSampleApp;
@@ -295,6 +295,7 @@
 			mainGroup = 607FACC71AFB9204008FA782;
 			packageReferences = (
 				E16C0F0129DF018400C8515F /* XCRemoteSwiftPackageReference "SwiftLint" */,
+				E1BFF2C529E6A98800E6AE37 /* XCRemoteSwiftPackageReference "LicensePlist" */,
 			);
 			productRefGroup = 607FACD11AFB9204008FA782 /* Products */;
 			projectDirPath = "";
@@ -333,28 +334,6 @@
 		};
 /* End PBXResourcesBuildPhase section */
 
-/* Begin PBXShellScriptBuildPhase section */
-		E17C193028D9B01400D5BAA0 /* LicensePlist */ = {
-			isa = PBXShellScriptBuildPhase;
-			alwaysOutOfDate = 1;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputFileListPaths = (
-			);
-			inputPaths = (
-			);
-			name = LicensePlist;
-			outputFileListPaths = (
-			);
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "export PATH=\"$PATH:/opt/homebrew/bin\"\nif which mint > /dev/null; then\n  if [ $CONFIGURATION = \"Debug\" ]; then\n    mint run LicensePlist license-plist --output-path Snabble/Acknowledgements.bundle --html-path Snabble/Acknowledgements.html --prefix ios.snabble.LicensePlist\n  fi\nelse\n  echo \"warning: Mint not installed, download from https://github.com/yonaskolb/Mint\"\nfi\n\n";
-		};
-/* End PBXShellScriptBuildPhase section */
-
 /* Begin PBXSourcesBuildPhase section */
 		607FACCC1AFB9204008FA782 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
@@ -391,6 +370,10 @@
 		E16C0F0329DF018D00C8515F /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			productRef = E16C0F0229DF018D00C8515F /* SwiftLintPlugin */;
+		};
+		E1BFF2C729E6AB4100E6AE37 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			productRef = E1BFF2C629E6AB4100E6AE37 /* LicensePlistBuildTool */;
 		};
 /* End PBXTargetDependency section */
 
@@ -674,6 +657,14 @@
 				minimumVersion = 0.51.0;
 			};
 		};
+		E1BFF2C529E6A98800E6AE37 /* XCRemoteSwiftPackageReference "LicensePlist" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/mono0926/LicensePlist";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 3.0.0;
+			};
+		};
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
@@ -696,6 +687,11 @@
 		E1AABF0D29E53A2D00D83490 /* SnabbleUI */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = SnabbleUI;
+		};
+		E1BFF2C629E6AB4100E6AE37 /* LicensePlistBuildTool */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = E1BFF2C529E6A98800E6AE37 /* XCRemoteSwiftPackageReference "LicensePlist" */;
+			productName = "plugin:LicensePlistBuildTool";
 		};
 /* End XCSwiftPackageProductDependency section */
 	};
