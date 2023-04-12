@@ -6,16 +6,23 @@
 //
 
 import Foundation
-import UIKit
 import SnabbleCore
+import Combine
+import SwiftUI
 
-class CouponViewModel {
+class CouponViewModel: ObservableObject {
+
     let coupon: Coupon
 
     var title: String { coupon.name }
     var subtitle: String? { coupon.description }
     var text: String? { coupon.promotionDescription }
     var disclaimer: String? { coupon.disclaimer }
+    
+    @Published
+    var image: UIImage?
+
+    private weak var imageTask: URLSessionDataTask?
 
     var code: String? { coupon.code }
 
@@ -60,24 +67,26 @@ class CouponViewModel {
         return abs(diff.hour!) <= 72
     }
 
-    func loadImage(completion: @escaping (UIImage?) -> Void) -> URLSessionDataTask? {
+    @discardableResult
+    func loadImage(completion: ((UIImage?) -> Void)? = nil) -> URLSessionDataTask? {
         guard let imageUrl = coupon.imageURL else {
-            completion(nil)
+            completion?(nil)
             return nil
         }
-
-        let session = URLSession.shared
-        let task = session.dataTask(with: imageUrl) { data, _, _ in
+        imageTask?.cancel()
+        imageTask = URLSession.shared.dataTask(with: imageUrl) { [weak self] data, _, _ in
             DispatchQueue.main.async {
                 guard let data = data else {
-                    return completion(nil)
+                    return completion?(nil) ?? ()
                 }
 
                 let image = UIImage(data: data)
-                completion(image)
+                self?.image = image
+                
+                completion?(image)
             }
         }
-        task.resume()
-        return task
+        imageTask?.resume()
+        return imageTask
     }
 }
